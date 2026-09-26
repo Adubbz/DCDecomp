@@ -29,28 +29,79 @@ extern "C" void abort(void);
 extern "C" void free(void *storage);
 extern "C" void *__vt__Q23std9exception[];
 extern "C" void *__vt__Q23std13bad_exception[];
+/* What std::exception::what and std::bad_exception::what return. */
+extern const char ExceptionWhat[];
+extern const char BadExceptionWhat[];
+extern "C" __declspec(data) void (*thandler__3std)(void);
+extern "C" __declspec(data) void (*uhandler__3std)(void);
+extern "C" __declspec(data) MWGlobalDestructor *__global_destructor_chain;
 
-// These live in .data and .bss rather than in the small-data area, so they
-// are reached by absolute address.
+#ifdef NON_MATCHING // draft declarations
+#pragma exceptions on
+namespace std {
+/**
+ * Base class of every exception the standard library throws.
+ */
+class exception {
+public:
+    virtual ~exception() throw();
+    virtual const char *what() const throw();
+};
 
 /**
- * Handler std::terminate calls to end the program.
+ * Exception thrown in place of one a function's exception specification does not allow.
  */
-extern "C" void (*thandler__3std)(void) __attribute__((section(".data")));
-
+class bad_exception : public exception {
+public:
+    virtual ~bad_exception() throw();
+    virtual const char *what() const throw();
+};
+} // namespace std
 /**
- * Handler std::unexpected calls when a function throws a type it did not declare.
+ * Destroys the constructed prefix of an array whose construction was interrupted.
  */
-extern "C" void (*uhandler__3std)(void) __attribute__((section(".data")));
+class MWPartialArrayDestructor {
+private:
+    void *array;
+    unsigned int element_size;
+    unsigned int count;
+    MWRuntimeObjectFunction destructor;
 
-/**
- * Head of the list of global objects whose destructors run at exit.
- */
-extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(".bss")));
+public:
+    unsigned int constructed;
 
-// The runtime support routines up to std::bad_exception::what are built with
-// instruction scheduling, which fills branch delay slots.
-#pragma schedule on
+    MWPartialArrayDestructor(void *array, unsigned int element_size, unsigned int count,
+                             MWRuntimeObjectFunction destructor) {
+        this->array = array;
+        this->element_size = element_size;
+        this->count = count;
+        this->destructor = destructor;
+        constructed = this->count;
+    }
+
+    ~MWPartialArrayDestructor() {
+        unsigned char *element;
+
+        if (constructed < count && destructor != NULL) {
+            for (element = (unsigned char *) array + element_size * constructed; constructed > 0;
+                 constructed--) {
+                element -= element_size;
+                destructor(element, -1);
+            }
+        }
+    }
+};
+#endif
+
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
 
 /**
  * Runs a constructor over every element of an array.
@@ -60,24 +111,23 @@ extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(
  * @size 0x12C
  */
 #ifdef NON_MATCHING
+#pragma schedule on
+#pragma optimization_level 4
+#pragma padloop on
 void __construct_array(void *array, MWRuntimeObjectFunction constructor,
                        MWRuntimeObjectFunction destructor, unsigned int element_size,
                        unsigned int count) {
-    unsigned char *element = (unsigned char *) array;
-    unsigned int constructed = 0;
-    for (; constructed < count; ++constructed, element += element_size) {
+    MWPartialArrayDestructor partial(array, element_size, count, destructor);
+    unsigned char *element;
+
+    for (partial.constructed = 0, element = (unsigned char *) array; partial.constructed < count;
+         partial.constructed++, element += element_size) {
         constructor(element, 1);
     }
-
-    // The runtime reaches this cleanup path when construction is unwound.
-    if (constructed < count && destructor != NULL) {
-        element = (unsigned char *) array + constructed * element_size;
-        while (constructed-- != 0) {
-            element -= element_size;
-            destructor(element, -1);
-        }
-    }
 }
+#pragma padloop reset
+#pragma optimization_level reset
+#pragma schedule reset
 #else
 INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
 #endif
@@ -89,6 +139,7 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
  * @size 0x14C
  */
 #ifdef NON_MATCHING
+#pragma schedule on
 void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
                             MWRuntimeObjectFunction destructor, unsigned int element_size,
                             unsigned int count) {
@@ -120,6 +171,7 @@ void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructo
     }
     return array;
 }
+#pragma schedule reset
 #else
 INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
 #endif
@@ -130,13 +182,13 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
  * @address 0x122550
  * @size 0x40
  */
-#ifdef NON_MATCHING
-void __dl(void *storage) {
+#pragma schedule on
+#pragma exceptions on
+void __dl(void *storage) throw() {
     free(storage);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dl__FPv);
-#endif
+#pragma exceptions reset
+#pragma schedule reset
 /**
  * Destroys a `std::exception`.
  *
@@ -144,19 +196,19 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dl__FPv);
  * @address 0x122590
  * @size 0x6C
  */
-#ifdef NON_MATCHING
-extern "C" void *__dt__Q23std9exceptionFv(void *exception, int mode) {
-    if (exception != NULL) {
-        *(void ***) exception = __vt__Q23std9exception;
-        if (mode > 0) {
-            __dl(exception);
+#pragma schedule on
+#pragma exceptions on
+extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw() {
+    if (self != NULL) {
+        *self = __vt__Q23std9exception;
+        if (flag > 0) {
+            __dl(self);
         }
     }
-    return exception;
+    return self;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
-#endif
+#pragma exceptions reset
+#pragma schedule reset
 /**
  * Gives a `std::exception`'s description.
  *
@@ -164,19 +216,12 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std9exceptionFv);
  * @address 0x122600
  * @size 0xC
  */
+#pragma schedule on
 extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
     (void) exception;
-    return "exception";
+    return ExceptionWhat;
 }
-
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
-
+#pragma schedule reset
 /**
  * Reports whether a thrown type matches a catch clause's type.
  *
@@ -185,94 +230,100 @@ INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
  * @size 0x26C
  */
 #ifdef NON_MATCHING
-int __throw_catch_compare(char *thrown_type, char *caught_type, int *pointer_adjustment) {
-    *pointer_adjustment = 0;
-    if (caught_type == NULL) {
-        return 1;
-    }
+#pragma schedule on
+extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type,
+                                      long *pointer_adjustment) {
+    const char *thrown;
+    const char *caught;
 
-    char *caught = caught_type;
+    *pointer_adjustment = 0;
+    if ((caught = caught_type) == NULL) {
+        // catch (...)
+        return true;
+    }
+    thrown = thrown_type;
+
     if (*caught == 'P') {
-        ++caught;
+        caught++;
         if (*caught == 'C') {
-            ++caught;
+            caught++;
         }
         if (*caught == 'V') {
-            ++caught;
+            caught++;
         }
-        if (*caught == 'v' && (*thrown_type == 'P' || *thrown_type == '*')) {
-            return 1;
+        if (*caught == 'v') {
+            // catch (cv void *) takes any thrown pointer
+            if (*thrown == 'P' || *thrown == '*') {
+                return true;
+            }
+        }
+        caught = caught_type;
+    }
+
+    switch (*thrown) {
+    case '*':
+    case '!':
+        // A thrown class lists each base class name followed by its offset.
+        if (*thrown++ != *caught++) {
+            return false;
+        }
+        for (;;) {
+            if (*thrown == *caught++) {
+                if (*thrown++ == '!') {
+                    long offset;
+
+                    for (offset = 0; *thrown != '!';) {
+                        offset = offset * 10 + *thrown++ - '0';
+                    }
+                    *pointer_adjustment = offset;
+                    return true;
+                }
+            } else {
+                while (*thrown++ != '!') {
+                }
+                while (*thrown++ != '!') {
+                }
+                if (*thrown == 0) {
+                    return false;
+                }
+                caught = caught_type + 1;
+            }
+        }
+        return false;
+    }
+
+    while ((*thrown == 'P' || *thrown == 'R') && *thrown == *caught) {
+        thrown++;
+        caught++;
+        if (*caught == 'C') {
+            if (*thrown == 'C') {
+                thrown++;
+            }
+            caught++;
+        }
+        if (*thrown == 'C') {
+            return false;
+        }
+
+        if (*caught == 'V') {
+            if (*thrown == 'V') {
+                thrown++;
+            }
+            caught++;
+        }
+        if (*thrown == 'V') {
+            return false;
         }
     }
 
-    if (*thrown_type == '!' || *thrown_type == '*') {
-        if (*thrown_type != *caught_type) {
-            return 0;
-        }
-        char *base = thrown_type + 1;
-        while (*base != '\0') {
-            char *candidate = caught_type + 1;
-            while (*base != *candidate) {
-                while (*base != '\0' && *base != '!') {
-                    ++base;
-                }
-                if (*base == '\0') {
-                    return 0;
-                }
-                ++base;
-                while (*base != '\0' && *base != '!') {
-                    ++base;
-                }
-                if (*base == '\0') {
-                    return 0;
-                }
-                ++base;
-                candidate = caught_type + 1;
-            }
-            while (*base == *candidate && *base != '\0' && *base != '!') {
-                ++base;
-                ++candidate;
-            }
-            if (*candidate == '\0' && *base == '!') {
-                ++base;
-                int adjustment = 0;
-                while (*base >= '0' && *base <= '9') {
-                    adjustment = adjustment * 10 + (*base++ - '0');
-                }
-                *pointer_adjustment = adjustment;
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-    while (*thrown_type == 'P' || *thrown_type == 'R') {
-        if (*thrown_type != *caught_type) {
-            return 0;
-        }
-        ++thrown_type;
-        ++caught_type;
-        if (*caught_type == 'C') {
-            if (*thrown_type == 'C') {
-                ++thrown_type;
-            }
-            ++caught_type;
-        }
-        if (*thrown_type == 'C') {
-            return 0;
-        }
-        if (*caught_type == 'V') {
-            if (*thrown_type == 'V') {
-                ++thrown_type;
-            }
-            ++caught_type;
-        }
-        if (*thrown_type == 'V') {
-            return 0;
+    for (; *thrown == *caught; thrown++, caught++) {
+        if (*thrown == 0) {
+            return true;
         }
     }
-    return strcmp(thrown_type, caught_type) == 0;
+    return false;
 }
+#pragma schedule reset
 #else
 INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
 #endif
@@ -283,9 +334,11 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
  * @address 0x122880
  * @size 0x24
  */
+#pragma schedule on
 extern "C" void unexpected__3stdFv() {
     uhandler__3std();
 }
+#pragma schedule reset
 /**
  * Calls the handler that ends the program after an unrecoverable exception.
  *
@@ -293,9 +346,11 @@ extern "C" void unexpected__3stdFv() {
  * @address 0x1228B0
  * @size 0x24
  */
+#pragma schedule on
 extern "C" void terminate__3stdFv() {
     thandler__3std();
 }
+#pragma schedule reset
 /**
  * The default unexpected-exception handler, which terminates.
  *
@@ -303,9 +358,11 @@ extern "C" void terminate__3stdFv() {
  * @address 0x1228E0
  * @size 0x24
  */
+#pragma schedule on
 extern "C" void duhandler__3stdFv() {
     thandler__3std();
 }
+#pragma schedule reset
 /**
  * The default terminate handler, which stops the program.
  *
@@ -313,9 +370,11 @@ extern "C" void duhandler__3stdFv() {
  * @address 0x122910
  * @size 0x1C
  */
+#pragma schedule on
 extern "C" void dthandler__3stdFv() {
     abort();
 }
+#pragma schedule reset
 /**
  * Records one global object so that its destructor runs at exit.
  *
@@ -323,6 +382,7 @@ extern "C" void dthandler__3stdFv() {
  * @address 0x122930
  * @size 0x24
  */
+#pragma schedule on
 void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
                                MWGlobalDestructor *record) {
     record->next = __global_destructor_chain;
@@ -331,6 +391,7 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
     __global_destructor_chain = record;
     return object;
 }
+#pragma schedule reset
 /**
  * Starts the C++ runtime: its handlers and its global-object list.
  *
@@ -338,20 +399,22 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
  * @address 0x122960
  * @size 0x54
  */
-#ifdef NON_MATCHING
+#pragma schedule on
+#pragma optimization_level 4
+#pragma padloop on
 extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start,
                                       void *overlay_end) {
     void (**initializer)(void) = (void (**)(void)) first;
-    void (**end)(void) = (void (**)(void)) last;
-    while (initializer < end) {
-        (*initializer++)();
+    if ((void (**)(void)) first < (void (**)(void)) last) {
+        do {
+            (*initializer)();
+            initializer++;
+        } while (initializer < (void (**)(void)) last);
     }
-    (void) overlay_start;
-    (void) overlay_end;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __initialize_cpp_rts);
-#endif
+#pragma padloop reset
+#pragma optimization_level reset
+#pragma schedule reset
 /**
  * Reads an unsigned number out of a mangled type name.
  *
@@ -359,6 +422,7 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __initialize_cpp_rts);
  * @address 0x1229C0
  * @size 0xA0
  */
+#pragma schedule on
 char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
     unsigned int first = (unsigned char) encoded[0];
     if ((first & 1) == 0) {
@@ -379,6 +443,7 @@ char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
     *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
+#pragma schedule reset
 /**
  * Reads a signed number out of a mangled type name.
  *
@@ -386,6 +451,7 @@ char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
  * @address 0x122A60
  * @size 0xA0
  */
+#pragma schedule on
 char *__DecodeSignedNumber(char *encoded, int *value) {
     signed char first = encoded[0];
     if ((first & 1) == 0) {
@@ -406,6 +472,7 @@ char *__DecodeSignedNumber(char *encoded, int *value) {
     *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
+#pragma schedule reset
 /**
  * Ends a catch clause and releases the exception it caught.
  *
@@ -413,11 +480,13 @@ char *__DecodeSignedNumber(char *encoded, int *value) {
  * @address 0x122B00
  * @size 0x38
  */
-void __end__catch(MWCatchRecord *record) {
+#pragma schedule on
+extern "C" void __end__catch(MWCatchRecord *record) {
     if (record->object != NULL && record->destructor != NULL) {
         record->destructor(record->object, -1);
     }
 }
+#pragma schedule reset
 /**
  * Raises an exception a function did not declare, through the unexpected handler.
  *
@@ -426,13 +495,15 @@ void __end__catch(MWCatchRecord *record) {
  * @size 0x1C0
  */
 #ifdef NON_MATCHING
-void __unexpected(void *exception_record) {
+#pragma schedule on
+extern "C" void __unexpected(void *exception_record) {
     // The retail unwinder first offers the exception to the unexpected handler,
     // then terminates if that handler returns instead of throwing an allowed type.
     unexpected__3stdFv();
     terminate__3stdFv();
     (void) exception_record;
 }
+#pragma schedule reset
 #else
 INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
 #endif
@@ -443,20 +514,22 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
  * @address 0x122D00
  * @size 0x84
  */
-#ifdef NON_MATCHING
-extern "C" void *__dt__Q23std13bad_exceptionFv(void *exception, int mode) {
-    if (exception != NULL) {
-        *(void ***) exception = __vt__Q23std13bad_exception;
-        *(void ***) exception = __vt__Q23std9exception;
-        if (mode > 0) {
-            __dl(exception);
+#pragma schedule on
+#pragma exceptions on
+extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw() {
+    if (self != NULL) {
+        *self = __vt__Q23std13bad_exception;
+        if (self != NULL) {
+            *self = __vt__Q23std9exception;
+        }
+        if (flag > 0) {
+            __dl(self);
         }
     }
-    return exception;
+    return self;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
-#endif
+#pragma exceptions reset
+#pragma schedule reset
 /**
  * Gives a `std::bad_exception`'s description.
  *
@@ -464,11 +537,11 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __dt__Q23std13bad_exceptionFv);
  * @address 0x122D90
  * @size 0xC
  */
+#pragma schedule on
 extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception) {
     (void) exception;
-    return "bad_exception";
+    return BadExceptionWhat;
 }
-
 #pragma schedule reset
 
 /**

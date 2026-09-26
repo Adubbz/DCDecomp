@@ -84,14 +84,7 @@ public:
      * @size 0xC0
      */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
-    /**
-     * Rebuilds the cloth's packet for this frame and draws it into a VIF packet.
-     *
-     * @mangled DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
-     * @address 0x13C530
-     * @size 0xC0
-     */
+                        VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2);
 };

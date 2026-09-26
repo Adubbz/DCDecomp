@@ -84,13 +84,14 @@ CTexture *MenuOption;
 /** Holds the georama parts of a town the player is not standing in. */
 extern CEditPartsInfo BtEditPartsInfo;
 
+extern u8 MesWinTexBuff_12[0x100];
+
 #ifdef NON_MATCHING // draft declarations
 #include <cstdlib>
 
 #include "editmenu.hpp"
 #include "menu_inventory.hpp"
 
-extern u8 MesWinTexBuff_12[0x100];
 extern CTexture *SaveMenuMojiTextbl[4];
 extern CTexture *PerBoardTex;
 #endif
@@ -801,7 +802,6 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
     return x;
 }
 
-#ifdef NON_MATCHING
 int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     int length = 0;
     short *code = mes->GetTextLineDataTop_system(mes_no);
@@ -809,7 +809,7 @@ int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     if (code != NULL) {
         while (1) {
             short c = *code++;
-            if ((unsigned int) (c + 0x100) < 2U || code == NULL) {
+            if ((unsigned int) (c + 0x100) <= 1U || code == NULL) {
                 break;
             }
             length++;
@@ -817,9 +817,6 @@ int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     }
     return length;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", GetMsgLengthMenu__FP6ClsMesi);
-#endif
 /**
  * Gives the texture and the cell within it that one georama element draws from.
  *
@@ -1134,19 +1131,23 @@ static int AtoraBoardGoToPos(int *enable, int pos, int min) {
     return pos;
 }
 
-#ifdef NON_MATCHING
 int GetAtraMsgNo(int map_no, int element) {
     int mes_no;
 
     if (element < 0 || element >= 100) {
         mes_no = 999;
     } else {
-        mes_no = GetEditAtraData(map_no, element)->msg_no + (map_no * 200 + 1000);
-        if (map_no == 2 && element == 1) {
-            int count = SaveData->GetGameIntFlag(1);
-            if (count > 0) {
-                mes_no += count + 0x1C;
-            }
+        EDIT_ELEMENT_ATRA *atra = GetEditAtraData(map_no, element);
+        mes_no = atra->msg_no + (map_no * 200 + 1000);
+        switch (map_no) {
+            case 2:
+                if (element == 1) {
+                    int count = SaveData->GetGameIntFlag(1);
+                    if (count > 0) {
+                        mes_no += count + 0x1C;
+                    }
+                }
+                break;
         }
         if (element >= 40) {
             mes_no += 40;
@@ -1157,9 +1158,6 @@ int GetAtraMsgNo(int map_no, int element) {
     }
     return mes_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", GetAtraMsgNo__Fii);
-#endif
 #ifdef NON_MATCHING
 static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
     int mes_no;
@@ -1241,24 +1239,20 @@ static void AtoraTipGetTexPos(int tip_no, int &x, int &y) {
         y = (tex_no / 7) * 36;
     }
 }
-#ifdef NON_MATCHING
 static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha) {
     int u;
     int v;
     CTexture *texture = RetCTexAtora(tip_no, u, v);
     CRect_i_ source(u, v, 0x24, 0x24);
-    int green = 0x80;
-    int blue = 0x80;
-
+    int red, green, blue;
+    blue = green = red = 0x80;
     if (dark != 0) {
+        red = 0x80;
         green = 0x44;
         blue = 0;
     }
-    DrawMenu2DSprite(texture, CRect_i_(x, y, source.width, source.height - 1), source, 0x80, green, blue, alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, y, source.width, source.height - 1), source, red, green, blue, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);
-#endif
 
 static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
     if (gold) {
@@ -1465,10 +1459,9 @@ static void MenuAtoraAfterFadeIn() {
     CommonMenuMes2.MakeMesWin(msg_no >= 0 ? msg_no + 1000 : 0);
 }
 
-#ifdef NON_MATCHING
 void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 *buffer) {
     MenuAtoraSel.unk_04 = open_mode;
-    InitPersonalBoardMode((CUserStatus *) SaveData->GetDngStatus(), (PERSONAL_BOARD *) &MenuAtoraSel.unk_14, 2, edit_map + 3);
+    InitPersonalBoardMode((CUserStatus *) SaveData->GetDngStatus(), &MenuAtoraSel.board, 2, edit_map + 3);
     MenuAtoraSel.prev_mes_buff = CommonMenuMes2.buff;
     AtoraTextureBaseBlock = texture_blocks[0];
     AtoraTextureReadBlock = texture_blocks[1];
@@ -1485,7 +1478,7 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     AtoraNameMes.unk_17B0 = MesWinTexBuff_12;
     memset(AtoraNameMes.unk_17B0, 0, 0x100);
     AtoraNameMes.rows = 4;
-    u8 widths[6] = {0x10, 0x0C, 0x0C, 0x0C, 0x0C, 0x10};
+    s8 widths[7] = {0x10, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C};
     AtoraNameMes.char_width = widths[GetMenuLangFlag()];
     AtoraNameMes.narrow_gaiji_set = 2;
     for (int i = 0; i < 10; i++) {
@@ -1494,43 +1487,40 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     }
     AtoraNameMes.mes_made = -1;
     AtoraNameMes.narrow_gaiji = 1;
-    NowTipHavePt = (ATORA_TIP_HAVE *) MenuAtoraSel.unk_44;
+    NowTipHavePt = (ATORA_TIP_HAVE *) &MenuAtoraSel.board.held_item;
     MenuAtoraSel.unk_17E = 0;
-    MenuAtoraSel.tip_pos = 0;
+    MenuAtoraSel.board.cursor = 0;
     MenuAtoraSel.step = 1;
     MenuAtoraSel.step_count = 0;
     SetMenuAtraEventFlag(0);
     CMenuCursor *cursor = SaveData->GetMenuCursor();
     if (cursor->reset_pos == 0) {
         MenuAtoraSel.mode = cursor->mode[3];
-        if (MenuAtoraSel.mode < 0 || MenuAtoraSel.mode >= 2) {
+        if (MenuAtoraSel.mode < 0 || MenuAtoraSel.mode > 1) {
             MenuAtoraSel.mode = 0;
         }
-        s16 pos = cursor->pos[3];
+        int pos = cursor->pos[3];
         switch (MenuAtoraSel.mode) {
             case 0:
                 MenuAtoraSel.board_pos = pos;
                 break;
             case 1:
-                MenuAtoraSel.tip_pos = pos;
-                MenuAtoraSel.unk_2C = MenuAtoraSel.tip_pos / 5 - 2;
-                if (MenuAtoraSel.unk_2C < 0) {
-                    MenuAtoraSel.unk_2C = 0;
+                MenuAtoraSel.board.cursor = pos;
+                MenuAtoraSel.board.top_row = MenuAtoraSel.board.cursor / 5 - 2;
+                if (MenuAtoraSel.board.top_row < 0) {
+                    MenuAtoraSel.board.top_row = 0;
                 }
                 break;
         }
     } else {
         MenuAtoraSel.mode = 0;
         MenuAtoraSel.board_pos = 0;
-        MenuAtoraSel.tip_pos = 0;
+        MenuAtoraSel.board.cursor = 0;
     }
     if (GetMenuAtraEventFlag() != 0) {
         MenuAtoraSel.board_pos = MenuAtoraSel.unk_198;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", InitMenuAtora1__FiiPiP1);
-#endif
 
 void InitMenuAtoraSelect(int map_no) {
     int place;
@@ -1562,7 +1552,7 @@ void InitMenuAtoraSelect(int map_no) {
             CommonMenuAtoraInfo->Load(MenuAtoraSel.map_no, SaveData, 1);
         }
     }
-    MenuAtoraSel.tip_list = SaveData->GetElemData(map);
+    MenuAtoraSel.board.unk_2C = SaveData->GetElemData(map);
     next = CommonMenuAtoraInfo->GetNextPartsNum(-1);
     AtoraTipInfoInit();
     count = AtraBoardMaxNum(MenuAtoraSel.map_no);
@@ -1572,11 +1562,11 @@ void InitMenuAtoraSelect(int map_no) {
     info = SearchAtoraInfo(MenuAtoraSel.board_pos);
     if (MenuAtoraSel.mode == 0) {
         if (info != NULL) {
-            if (MenuAtoraSel.tip_pos > 0 && info->elements[MenuAtoraSel.tip_pos - 1].id < 0) {
-                MenuAtoraSel.tip_pos = 0;
+            if (MenuAtoraSel.board.cursor > 0 && info->elements[MenuAtoraSel.board.cursor - 1].id < 0) {
+                MenuAtoraSel.board.cursor = 0;
             }
         } else {
-            MenuAtoraSel.tip_pos = 0;
+            MenuAtoraSel.board.cursor = 0;
         }
     }
     MenuAtoraSel.scroll_y = 146.0f - 130.0f * MenuAtoraSel.board_pos;
@@ -1584,9 +1574,9 @@ void InitMenuAtoraSelect(int map_no) {
         MenuAtoraSel.cursor_x = 38.0f;
         MenuAtoraSel.cursor_y = 175.0f;
     } else {
-        place = MenuAtoraSel.tip_pos % 4;
+        place = MenuAtoraSel.board.cursor % 4;
         MenuAtoraSel.cursor_x = place * 58 + 334;
-        place = (MenuAtoraSel.tip_pos >> 2) - MenuAtoraSel.unk_2C;
+        place = (MenuAtoraSel.board.cursor >> 2) - MenuAtoraSel.board.top_row;
         if (place < 0) {
             place = 0;
         }
@@ -1638,7 +1628,7 @@ static void ExitAtoraSelect() {
                 pos = MenuAtoraSel.board_pos;
                 break;
             case 1:
-                pos = MenuAtoraSel.tip_pos;
+                pos = MenuAtoraSel.board.cursor;
                 break;
         }
         cursor->pos[3] = pos;
@@ -1845,21 +1835,21 @@ static void DrawAtoraSelect(int fade) {
         }
         AtoraBoardFadeEffect();
     }
-    int count = PersonalRetMax(MenuAtoraSel.unk_18);
-    MenuAtoraSel.unk_24 += ((float) (0x7F - MenuAtoraSel.unk_2C * 0x28) - MenuAtoraSel.unk_24) / 4.0f;
-    int board_y = (int) MenuAtoraSel.unk_24;
+    int count = PersonalRetMax(MenuAtoraSel.board.page);
+    MenuAtoraSel.board.y += ((float) (0x7F - MenuAtoraSel.board.top_row * 0x28) - MenuAtoraSel.board.y) / 4.0f;
+    int board_y = (int) MenuAtoraSel.board.y;
     MenuTextureReload(PerBoardTex->block);
     DrawPerBoardDraw(0, count, 0x168, board_y, 0x81, 0x121, PerBoardTex, 0x80);
     if (AtoraTextureEnterFlag != 0) {
         MenuTextureReload(AtoraTextureReadBlock);
-        CommonIconDraw(MenuAtoraSel.unk_18, count, 0x168, board_y + 1, 0x81, 0x121, alpha);
+        CommonIconDraw(MenuAtoraSel.board.page, count, 0x168, board_y + 1, 0x81, 0x121, alpha);
     }
     MenuTextureReload(PerBoardTex->block);
-    PersonalBoardTagDraw(MenuAtoraSel.unk_18, 0x154, 0x78, PerBoardTex, 0, 0x80);
+    PersonalBoardTagDraw(MenuAtoraSel.board.page, 0x154, 0x78, PerBoardTex, 0, 0x80);
     if (PerBoardTex != NULL) {
         MenuTextureReload(PerBoardTex->block);
         PersonalBoardDrawWaku(0x154, 0x78, PerBoardTex, 0x80);
-        PersonalBoardScrlBarDraw(count, 0x154, 0x78, MenuAtoraSel.unk_28, MenuAtoraSel.unk_2C, PerBoardTex, 0x80);
+        PersonalBoardScrlBarDraw(count, 0x154, 0x78, MenuAtoraSel.board.scroll, MenuAtoraSel.board.top_row, PerBoardTex, 0x80);
         PersonalBoardMaxDraw(count, 0x154, 0x78, PerBoardTex, 0x80);
     }
     AtoraNameDraw(0);
@@ -1876,7 +1866,7 @@ static void DrawAtoraSelect(int fade) {
             if (info == NULL) {
                 cursor_x = 76.0f;
                 cursor_y = 176.0f;
-            } else if (MenuAtoraSel.tip_pos == 0) {
+            } else if (MenuAtoraSel.board.cursor == 0) {
                 cursor_x = 56.0f;
                 cursor_y = 176.0f;
                 waku_x = (int) 58.0f;
@@ -1884,8 +1874,8 @@ static void DrawAtoraSelect(int fade) {
                 waku_size = 0x56;
             } else {
                 waku_size = 0x24;
-                cursor_x = (MenuAtoraSel.tip_pos + 2) % 3 * 0x2C + 0x92;
-                if (MenuAtoraSel.tip_pos > 0 && MenuAtoraSel.tip_pos < 4) {
+                cursor_x = (MenuAtoraSel.board.cursor + 2) % 3 * 0x2C + 0x92;
+                if (MenuAtoraSel.board.cursor > 0 && MenuAtoraSel.board.cursor < 4) {
                     cursor_y = 167.0f;
                 } else {
                     cursor_y = 210.0f;
@@ -1895,8 +1885,8 @@ static void DrawAtoraSelect(int fade) {
             }
             break;
         case 1: {
-            cursor_x = MenuAtoraSel.tip_pos % 5 * 0x28 + 0x14E;
-            int row = MenuAtoraSel.tip_pos / 5 - MenuAtoraSel.unk_2C;
+            cursor_x = MenuAtoraSel.board.cursor % 5 * 0x28 + 0x14E;
+            int row = MenuAtoraSel.board.cursor / 5 - MenuAtoraSel.board.top_row;
             if (row < 0) {
                 row = 0;
             }
@@ -1919,7 +1909,7 @@ static void DrawAtoraSelect(int fade) {
         switch (MenuAtoraSel.mode) {
             case 0:
                 if (info != NULL) {
-                    if (MenuAtoraSel.tip_pos > 0 && info->elements[MenuAtoraSel.tip_pos - 1].enabled != 0) {
+                    if (MenuAtoraSel.board.cursor > 0 && info->elements[MenuAtoraSel.board.cursor - 1].enabled != 0) {
                         cursor_x += 27.0f;
                         cursor_y += 12.0f;
                         MenuAtoraSel.unk_188 = 0x60;
@@ -1929,7 +1919,7 @@ static void DrawAtoraSelect(int fade) {
                 }
                 break;
             case 1:
-                if (MenuAtoraSel.tip_pos >= 0 && MenuAtoraSel.tip_list[MenuAtoraSel.tip_pos] >= 0) {
+                if (MenuAtoraSel.board.cursor >= 0 && MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor] >= 0) {
                     cursor_x += 25.0f;
                     cursor_y += 12.0f;
                     MenuAtoraSel.unk_188 = 0x60;
@@ -1963,12 +1953,12 @@ static void DrawAtoraSelect(int fade) {
             if (info == NULL) {
                 draw_waku = 0;
             }
-            if (open_mode == 2 && MenuAtoraSel.tip_pos > 0 && event != 0) {
+            if (open_mode == 2 && MenuAtoraSel.board.cursor > 0 && event != 0) {
                 draw_waku = 0;
             }
         }
         if (MenuAtoraSel.step == 3 ||
-            (MenuAtoraSel.mode == 0 && MenuAtoraSel.tip_pos == 0 && MenuAtoraSel.map_no == 5)) {
+            (MenuAtoraSel.mode == 0 && MenuAtoraSel.board.cursor == 0 && MenuAtoraSel.map_no == 5)) {
             draw_waku = 0;
         }
         if (draw_waku != 0) {
@@ -2057,7 +2047,7 @@ static int SeitonAtoraTipBoardSub() {
     }
     tip_table[0] = 3;
     moved = 0;
-    list = MenuAtoraSel.tip_list;
+    list = MenuAtoraSel.board.unk_2C;
     for (i = 0; i < 119; i++) {
         for (j = i + 1; j < 120; j++) {
             if (CompTip(list[i], list[j]) > 0) {
@@ -2178,12 +2168,12 @@ int MenuAtoraSelectKey() {
                     break;
             }
             int villages = GetAtoraMaxVillage();
-            int page = MenuAtoraSel.unk_18;
+            int page = MenuAtoraSel.board.page;
             if (GamePad.Down(0xA) != 0) {
                 if (NowTipHavePt->tip_no < 0) {
-                    MenuAtoraSel.unk_18++;
-                    if (villages < MenuAtoraSel.unk_18) {
-                        MenuAtoraSel.unk_18 = 3;
+                    MenuAtoraSel.board.page++;
+                    if (villages < MenuAtoraSel.board.page) {
+                        MenuAtoraSel.board.page = 3;
                     }
                 } else {
                     ComMenuSePlay(2);
@@ -2191,15 +2181,15 @@ int MenuAtoraSelectKey() {
             }
             if (GamePad.Down(5) != 0) {
                 if (NowTipHavePt->tip_no < 0) {
-                    MenuAtoraSel.unk_18--;
-                    if (MenuAtoraSel.unk_18 < 3) {
-                        MenuAtoraSel.unk_18 = villages;
+                    MenuAtoraSel.board.page--;
+                    if (MenuAtoraSel.board.page < 3) {
+                        MenuAtoraSel.board.page = villages;
                     }
                 } else {
                     ComMenuSePlay(2);
                 }
             }
-            if (page != MenuAtoraSel.unk_18) {
+            if (page != MenuAtoraSel.board.page) {
                 result = 20;
             }
             switch (result) {
@@ -2215,7 +2205,7 @@ int MenuAtoraSelectKey() {
                         ComMenuSePlay(2);
                     } else {
                         CommonMenuAtoraInfo->Save(MenuAtoraSel.map_no, SaveData);
-                        MenuAtoraSel.map_no = MenuAtoraSel.unk_18 - 3;
+                        MenuAtoraSel.map_no = MenuAtoraSel.board.page - 3;
                         AtoraTextureEnterFlag = 0;
                         int max = AtraBoardMaxNum(MenuAtoraSel.map_no);
                         if (MenuAtoraSel.board_pos >= max) {
@@ -2242,7 +2232,7 @@ int MenuAtoraSelectKey() {
     int mes_no = 0;
     switch (MenuAtoraSel.mode) {
         case 0: {
-            int no = AtoraMsgNoGet(MenuAtoraSel.map_no, MenuAtoraSel.board_pos, MenuAtoraSel.tip_pos);
+            int no = AtoraMsgNoGet(MenuAtoraSel.map_no, MenuAtoraSel.board_pos, MenuAtoraSel.board.cursor);
             mes_no = no + 1000;
             if (no < 0) {
                 mes_no = 0;
@@ -2253,7 +2243,7 @@ int MenuAtoraSelectKey() {
             break;
         }
         case 1: {
-            int tip_no = MenuAtoraSel.tip_list[MenuAtoraSel.tip_pos];
+            int tip_no = MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor];
             int base = MenuAtoraSel.map_no * 200 + 1000;
             if (tip_no >= 0) {
                 mes_no = base + AtoraTipOnlyMsgNoGet(MenuAtoraSel.map_no, tip_no);
@@ -2285,7 +2275,7 @@ static int AtoraBoardKey() {
     int movable[8];
     int open_mode = MenuAtoraSel.unk_04;
     int max = AtraBoardMaxNum(MenuAtoraSel.map_no);
-    int old_cursor = MenuAtoraSel.tip_pos;
+    int old_cursor = MenuAtoraSel.board.cursor;
     int old_pos = MenuAtoraSel.board_pos;
     int moved = 0;
     int result = 0;
@@ -2293,71 +2283,71 @@ static int AtoraBoardKey() {
 
     if (GamePad.Down(0x1000) != 0) {
         moved = 1;
-        if (MenuAtoraSel.tip_pos == 0) {
+        if (MenuAtoraSel.board.cursor == 0) {
             if (MenuAtoraSel.board_pos > 0) {
                 MenuAtoraSel.board_pos--;
             }
-            MenuAtoraSel.tip_pos = 0;
-        } else if (MenuAtoraSel.tip_pos >= 4 && MenuAtoraSel.tip_pos < 7) {
-            MenuAtoraSel.tip_pos -= 3;
+            MenuAtoraSel.board.cursor = 0;
+        } else if (MenuAtoraSel.board.cursor >= 4 && MenuAtoraSel.board.cursor < 7) {
+            MenuAtoraSel.board.cursor -= 3;
         } else if (MenuAtoraSel.board_pos > 0) {
             MenuAtoraSel.board_pos--;
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-            MenuAtoraSel.tip_pos += 3;
-            int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.tip_pos - 1, 3);
+            MenuAtoraSel.board.cursor += 3;
+            int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 3);
             if (movable[slot] != 0) {
-                MenuAtoraSel.tip_pos = slot + 1;
+                MenuAtoraSel.board.cursor = slot + 1;
             } else {
-                MenuAtoraSel.tip_pos -= 3;
-                slot = AtoraBoardGoToPos(movable, MenuAtoraSel.tip_pos - 1, 0);
+                MenuAtoraSel.board.cursor -= 3;
+                slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 0);
                 if (movable[slot] != 0) {
-                    MenuAtoraSel.tip_pos = slot + 1;
+                    MenuAtoraSel.board.cursor = slot + 1;
                 } else {
-                    MenuAtoraSel.tip_pos = 0;
+                    MenuAtoraSel.board.cursor = 0;
                 }
             }
         }
     } else if (GamePad.Down(0x4000) != 0) {
         moved = 1;
-        if (MenuAtoraSel.tip_pos == 0) {
+        if (MenuAtoraSel.board.cursor == 0) {
             if (MenuAtoraSel.board_pos < max - 1) {
                 MenuAtoraSel.board_pos++;
             }
-        } else if (MenuAtoraSel.tip_pos >= 4 && MenuAtoraSel.tip_pos < 7) {
+        } else if (MenuAtoraSel.board.cursor >= 4 && MenuAtoraSel.board.cursor < 7) {
             if (MenuAtoraSel.board_pos < max - 1) {
                 MenuAtoraSel.board_pos++;
-                MenuAtoraSel.tip_pos -= 3;
+                MenuAtoraSel.board.cursor -= 3;
                 AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-                int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.tip_pos - 1, 0);
+                int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 0);
                 if (movable[slot] != 0) {
-                    MenuAtoraSel.tip_pos = slot + 1;
+                    MenuAtoraSel.board.cursor = slot + 1;
                 } else {
-                    MenuAtoraSel.tip_pos = 0;
+                    MenuAtoraSel.board.cursor = 0;
                 }
             }
         } else {
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-            MenuAtoraSel.tip_pos += 3;
-            int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.tip_pos - 1, 3);
+            MenuAtoraSel.board.cursor += 3;
+            int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 3);
             if (movable[slot] != 0) {
-                MenuAtoraSel.tip_pos = slot + 1;
+                MenuAtoraSel.board.cursor = slot + 1;
             } else if (MenuAtoraSel.board_pos < max - 1) {
                 MenuAtoraSel.board_pos++;
-                MenuAtoraSel.tip_pos -= 3;
+                MenuAtoraSel.board.cursor -= 3;
                 AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-                slot = AtoraBoardGoToPos(movable, MenuAtoraSel.tip_pos - 1, 0);
+                slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 0);
                 if (movable[slot] != 0) {
-                    MenuAtoraSel.tip_pos = slot + 1;
+                    MenuAtoraSel.board.cursor = slot + 1;
                 } else {
-                    MenuAtoraSel.tip_pos = 0;
+                    MenuAtoraSel.board.cursor = 0;
                 }
             }
         }
     } else if (GamePad.Down(0x8000) != 0) {
         moved = 1;
-        MenuAtoraSel.tip_pos--;
-        if (MenuAtoraSel.tip_pos <= 0 || MenuAtoraSel.tip_pos == 3) {
-            MenuAtoraSel.tip_pos = 0;
+        MenuAtoraSel.board.cursor--;
+        if (MenuAtoraSel.board.cursor <= 0 || MenuAtoraSel.board.cursor == 3) {
+            MenuAtoraSel.board.cursor = 0;
         }
     } else if (GamePad.Down(0x2000) != 0) {
         moved = 1;
@@ -2370,9 +2360,9 @@ static int AtoraBoardKey() {
         int to_list = 0;
         if (info == NULL || event != 0) {
             to_list = 1;
-        } else if (movable[MenuAtoraSel.tip_pos] != 0) {
-            MenuAtoraSel.tip_pos++;
-            if (MenuAtoraSel.tip_pos == 4 || MenuAtoraSel.tip_pos == 7) {
+        } else if (movable[MenuAtoraSel.board.cursor] != 0) {
+            MenuAtoraSel.board.cursor++;
+            if (MenuAtoraSel.board.cursor == 4 || MenuAtoraSel.board.cursor == 7) {
                 to_list = 1;
             }
         } else {
@@ -2380,10 +2370,10 @@ static int AtoraBoardKey() {
         }
         if (to_list != 0) {
             MenuAtoraSel.mode = 1;
-            MenuAtoraSel.tip_pos = MenuAtoraSel.unk_2C * 5 + 5;
+            MenuAtoraSel.board.cursor = MenuAtoraSel.board.top_row * 5 + 5;
         }
         if (MenuAtoraSel.mode == 1) {
-            MenuAtoraSel.unk_1C[0] = 1;
+            MenuAtoraSel.board.cursor_area = 1;
         }
     }
     if (MenuAtoraSel.mode == 0) {
@@ -2393,7 +2383,7 @@ static int AtoraBoardKey() {
             event = AtoraCompOrEvent(info);
         }
         if (event != 0) {
-            MenuAtoraSel.tip_pos = 0;
+            MenuAtoraSel.board.cursor = 0;
         }
     }
     if (moved == 0) {
@@ -2409,7 +2399,7 @@ static int AtoraBoardKey() {
                 if (MenuAtoraSel.unk_04 == 1) {
                     MenuAtoraSel.step = 10;
                     se = 2;
-                } else if (MenuAtoraSel.tip_pos == 0) {
+                } else if (MenuAtoraSel.board.cursor == 0) {
                     int held = NowTipHavePt->tip_no;
                     if (held >= 0) {
                         se = 2;
@@ -2429,7 +2419,7 @@ static int AtoraBoardKey() {
                     return 0;
                 } else {
                     AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-                    int slot = MenuAtoraSel.tip_pos - 1;
+                    int slot = MenuAtoraSel.board.cursor - 1;
                     if (NowTipHavePt->tip_no < 0) {
                         if (info->elements[slot].enabled == 0) {
                             se = 2;
@@ -2477,7 +2467,7 @@ static int AtoraBoardKey() {
                             if (AtoraAllTipGet(info->parts_no) != 0) {
                                 ComMenuSePlay(15);
                                 MenuAtoraSel.step = 4;
-                                MenuAtoraSel.tip_pos = 0;
+                                MenuAtoraSel.board.cursor = 0;
                                 MenuAtoraSel.step_count = 0;
                             } else {
                                 se = 5;
@@ -2499,7 +2489,7 @@ static int AtoraBoardKey() {
             }
         }
     }
-    if (old_cursor != MenuAtoraSel.tip_pos || old_pos != MenuAtoraSel.board_pos) {
+    if (old_cursor != MenuAtoraSel.board.cursor || old_pos != MenuAtoraSel.board_pos) {
         se = 0;
     }
     ComMenuSePlay(se);
@@ -2511,9 +2501,9 @@ INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
 
 static int AtoraTipKey() {
     int result = 0;
-    int pos = MenuAtoraSel.tip_pos;
+    int pos = MenuAtoraSel.board.cursor;
     int mode = MenuAtoraSel.mode;
-    int page = MenuAtoraSel.unk_18;
+    int page = MenuAtoraSel.board.page;
 
     switch (PersonalBoardKey()) {
         case 1: {
@@ -2526,13 +2516,13 @@ static int AtoraTipKey() {
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, enable);
             MenuAtoraSel.mode = 0;
             if (info == NULL || event != 0) {
-                MenuAtoraSel.tip_pos = 0;
+                MenuAtoraSel.board.cursor = 0;
             } else {
-                int slot = AtoraBoardGoToPos(enable, MenuAtoraSel.tip_pos < MenuAtoraSel.unk_2C * 5 + 10 ? 2 : 5, 0);
+                int slot = AtoraBoardGoToPos(enable, MenuAtoraSel.board.cursor < MenuAtoraSel.board.top_row * 5 + 10 ? 2 : 5, 0);
                 if (enable[slot]) {
-                    MenuAtoraSel.tip_pos = slot + 1;
+                    MenuAtoraSel.board.cursor = slot + 1;
                 } else {
-                    MenuAtoraSel.tip_pos = 0;
+                    MenuAtoraSel.board.cursor = 0;
                 }
             }
             ComMenuSePlay(0);
@@ -2540,11 +2530,11 @@ static int AtoraTipKey() {
         }
     }
     if (MenuAtoraSel.mode == 1) {
-        if (pos != MenuAtoraSel.tip_pos || mode != MenuAtoraSel.mode || page != MenuAtoraSel.unk_18) {
+        if (pos != MenuAtoraSel.board.cursor || mode != MenuAtoraSel.mode || page != MenuAtoraSel.board.page) {
             ComMenuSePlay(0);
         }
         if (GamePad.Down(0x40)) {
-            s16 *tip = &MenuAtoraSel.tip_list[MenuAtoraSel.tip_pos];
+            s16 *tip = &MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor];
             if (NowTipHavePt->tip_no == *tip) {
                 ComMenuSePlay(2);
             } else {
@@ -2552,7 +2542,7 @@ static int AtoraTipKey() {
                 s16 tip_no = *tip;
                 *tip = NowTipHavePt->tip_no;
                 NowTipHavePt->tip_no = tip_no;
-                NowTipHavePt->slot = MenuAtoraSel.tip_pos;
+                NowTipHavePt->slot = MenuAtoraSel.board.cursor;
                 NowTipHavePt->mode = 1;
                 NowTipHavePt->parts_no = -1;
             }
@@ -2579,8 +2569,8 @@ static void AtoraMenuTipCancel() {
 
     switch (NowTipHavePt->mode) {
         case 1:
-            tip_no = MenuAtoraSel.tip_list[NowTipHavePt->slot];
-            MenuAtoraSel.tip_list[NowTipHavePt->slot] = NowTipHavePt->tip_no;
+            tip_no = MenuAtoraSel.board.unk_2C[NowTipHavePt->slot];
+            MenuAtoraSel.board.unk_2C[NowTipHavePt->slot] = NowTipHavePt->tip_no;
             NowTipHavePt->tip_no = tip_no;
             break;
         case 0:

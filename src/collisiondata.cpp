@@ -90,7 +90,6 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1631);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1632__2);
 INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
 
-#ifdef NON_MATCHING
 /**
  * Clears the debug overlay's state.
  *
@@ -99,22 +98,28 @@ INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
  * @size 0xC8
  */
 void DebugInfomationInit(void) {
-    for (int i = 0; i < 21; i++) {
-        DebugStatus[i] = 0;
-    }
+    DebugStatus[0] = 0;
+    DebugStatus[1] = 0;
+    DebugStatus[2] = 0;
+    DebugStatus[3] = 0;
     DebugStatus[5] = 1;
+    DebugStatus[6] = 0;
+    DebugStatus[4] = 0;
+    DebugStatus[7] = 0;
     DebugStatus[8] = 150;
     DebugStatus[9] = -1;
+    DebugStatus[10] = 0;
     DebugStatus[11] = 100;
+    DebugStatus[12] = 0;
     DebugStatus[13] = 16;
+    DebugStatus[14] = 0;
     DebugStatus[15] = 16;
+    DebugStatus[16] = 0;
+    DebugStatus[17] = 0;
     DebugStatus[18] = 400;
     DebugStatus[19] = 1;
-    DebugInfoNowCursor = 0;
+    DebugStatus[20] = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationInit__Fv);
-#endif
 
 #ifdef NON_MATCHING
 /**
@@ -286,7 +291,6 @@ int CCollisionData::Set(float *pos, int damage, int life, float radius, float un
     // With every record in use nothing is set and no index is returned.
 }
 
-#ifdef NON_MATCHING
 /**
  * Reports which recorded hit reaches the player.
  *
@@ -296,36 +300,42 @@ int CCollisionData::Set(float *pos, int damage, int life, float radius, float un
  */
 int CCollisionData::CheckHitUser(float *position, int mask, float height) {
     sceVu0FVECTOR user_position;
+    sceVu0FVECTOR hit_position;
     sceVu0CopyVector(user_position, position);
     user_position[1] = 0.0f;
+    float user_top;
     float user_bottom = position[1];
-    float user_top = user_bottom + height;
+    user_top = user_bottom + height;
     for (int i = 0; i < 96; i++) {
-        COLLISION_HIT *record = &hit[i];
-        if (active[i] == 0 || (mask & record->unk_48) == 0 ||
-            record->unk_70 != record->unk_74) {
+        if (active[i] == 0 || (mask & hit[i].unk_48) == 0 || hit[i].unk_70 != hit[i].unk_74) {
             continue;
         }
-        sceVu0FVECTOR hit_position;
-        sceVu0CopyVector(hit_position, record->pos);
+        sceVu0CopyVector(hit_position, hit[i].pos);
         hit_position[1] = 0.0f;
-        if (DistVector(user_position, hit_position) > record->radius) {
+        if (DistVector(user_position, hit_position) > hit[i].radius) {
             continue;
         }
-        float hit_bottom = record->pos[1] - record->radius;
-        float hit_top = record->pos[1] + record->radius;
-        if ((user_top <= hit_top && hit_bottom < user_top) ||
-            (user_bottom <= hit_top && hit_bottom < user_bottom) ||
-            (hit_top <= user_top && user_bottom < hit_bottom) ||
-            (user_top <= hit_top && hit_bottom < user_bottom)) {
+        int miss = 1;
+        float hit_top = hit[i].pos[1] + hit[i].radius;
+        float hit_bottom = hit[i].pos[1] - hit[i].radius;
+        if (!(hit_top < user_top) && hit_bottom < user_top) {
+            miss = 0;
+        }
+        if (!(hit_top < user_bottom) && hit_bottom < user_bottom) {
+            miss = 0;
+        }
+        if (hit_top <= user_top && !(hit_bottom <= user_bottom)) {
+            miss = 0;
+        }
+        if (!(hit_top < user_top) && hit_bottom < user_bottom) {
+            miss = 0;
+        }
+        if (miss == 0) {
             return i;
         }
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", CheckHitUser__14CCollisionDataFPfif);
-#endif
 
 /**
  * Records the push a hit gives whatever it struck.

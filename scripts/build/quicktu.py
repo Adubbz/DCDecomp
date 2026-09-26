@@ -101,7 +101,9 @@ def ours(obj, name):
             continue
         label = LABEL.match(line.strip())
         if label:
-            taking = label.group(2) == name
+            # Retail spells a template argument the way splat does.
+            taking = (label.group(2) == name or
+                      label.group(2).replace('<1>', '_1_') == name)
             base = int(label.group(1), 16)
             continue
         if taking:
@@ -271,6 +273,8 @@ def main():
             total = 0
             for symbol, name in sorted(names.items()):
                 symbol = symbol.replace(stem[1], stem[0])
+                # Retail spells a template argument the way splat does.
+                name = name.replace('<1>', '_1_')
                 try:
                     theirs = retail_function(args.image, name)
                 except SystemExit:

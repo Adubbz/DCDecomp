@@ -360,7 +360,14 @@ def rename_sections(elf, mappings, parser):
     export_constants has bound it, so an entry naming one is handed back for
     a second pass over the written object.
     """
-    symbols = {symbol.name: symbol for symbol in elf.symtab.symbols}
+    # A compiler-numbered constant can share its name with a retail constant
+    # spliced in from assembly; the section to rename is the writable one.
+    symbols = {}
+    for symbol in elf.symtab.symbols:
+        held = symbols.get(symbol.name)
+        if held is None or (0 < held.st_shndx < len(elf.sections)
+                            and elf.sections[held.st_shndx].name == ".rodata"):
+            symbols[symbol.name] = symbol
     renamed = {}
     deferred = {}
     for section_name, names in mappings.items():
@@ -688,6 +695,17 @@ def main():
         # it required but not present
         for name in dropped:
             arguments += ["--strip-symbol", name]
+        subprocess.run([objcopy] + arguments + [str(args.object), str(args.object)],
+                       check=True)
+
+    # Sections retail's link never kept -- the exception tables of the runtime
+    # functions compiled with exceptions on: retail's table is empty.
+    removed = fixups.get("remove_sections", [])
+    if removed:
+        objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
+        arguments = []
+        for name in removed:
+            arguments += ["--remove-section", name]
         subprocess.run([objcopy] + arguments + [str(args.object), str(args.object)],
                        check=True)
 

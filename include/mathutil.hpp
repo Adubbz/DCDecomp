@@ -48,7 +48,8 @@ void __dl(void *);
  * @address 0x122610
  * @size 0x26C
  */
-int __throw_catch_compare(char *thrown_type, char *caught_type, int *pointer_adjustment);
+extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type,
+                                      long *pointer_adjustment);
 
 /**
  * Calls the handler for an exception a function did not declare.
@@ -157,7 +158,7 @@ extern "C" void __end__catch(MWCatchRecord *record);
  * @address 0x122B40
  * @size 0x1C0
  */
-void __unexpected(void *exception_record);
+extern "C" void __unexpected(void *exception_record);
 
 /**
  * Starts the MetroWerks runtime.

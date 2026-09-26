@@ -2,41 +2,25 @@
 
 #include <libvu0.h>
 
-#include <cstdio>
-#include <cstring>
-
 #include "btactstatus.hpp"
 #include "btitem.hpp"
 #include "btmisc.hpp"
-#include "camerafollow.hpp"
 #include "character.hpp"
-#include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
-#include "dispctrl.hpp"
 #include "dngmessageman.hpp"
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
-#include "dungeonmap.hpp"
-#include "dungeonparts.hpp"
-#include "edit.hpp"
-#include "editloop3.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
-#include "mainitemmodel.hpp"
-#include "mathutil.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_save.hpp"
-#include "monstorunit.hpp"
-#include "motionmodel.hpp"
 #include "nowload.hpp"
-#include "savedata.hpp"
 #include "snd.hpp"
 #include "sysmes.hpp"
 #include "userstatus.hpp"
-#include "weaponeffect.hpp"
 
 /* Battle item handling: treasure boxes, pickups and thrown items. */
 
@@ -145,228 +129,87 @@ extern int escape_chr;
  */
 extern int escape_sled;
 
-/**
- * Model of the item a pickup presentation holds up.
- */
-extern CFrame *itemBoxModel;
+extern "C" CDataAlloc2<1> BtCashBuffer;
 
-/**
- * Camera the dungeon currently draws through.
- */
-extern CCameraFollow *NowCamera__3;
+#include <cstdio>
+#include <cstring>
 
-/**
- * Camera that follows the player.
- */
-extern "C" CCameraFollow MainCamera__4;
+#include "btmisc.hpp"
+#include "camerafollow.hpp"
+#include "collision.hpp"
+#include "dispctrl.hpp"
+#include "dungeonmap.hpp"
+#include "dungeonparts.hpp"
+#include "edit.hpp"
+#include "editloop3.hpp"
+#include "mainitemmodel.hpp"
+#include "mathutil.hpp"
+#include "mds.hpp"
+#include "monstorunit.hpp"
+#include "motionmodel.hpp"
+#include "savedata.hpp"
+#include "texture.hpp"
+#include "vector.hpp"
+#include "weaponeffect.hpp"
 
-/**
- * Camera that stands in for the player's while an event runs.
- */
-extern "C" CCameraFollow SubCamera;
-
-/**
- * Marks the active item icons as loaded by the battle item-list flow.
- */
-extern s32 BtItemListCashFlag;
-
-/**
- * Model file of each party member, by character number.
- */
 extern char *charaNameTbl[6];
-
-/**
- * First weapon of each party member, by character number.
- */
 extern int defWeapon__4[6];
-
-/**
- * Trail effect drawn behind the swung weapon.
- */
+extern char *ITEM_NAME_TBL_NEW[];
 extern "C" CWeaponEffect CWeaponFx;
-
-/**
- * Model of the weapon the current character holds.
- */
 extern "C" CCharacter *NowWeapon;
-
-/**
- * Step the treasure-chest presentations are on.
- */
+extern s32 BtItemListCashFlag;
 extern int BtGetTreasurebox_Sled;
-
-/**
- * Item the large treasure chest holds.
- */
-extern int TreasureboxBig_itemNo;
-
-/**
- * Pose the large-chest presentation holds the item in.
- */
-extern int TreasureboxBig_itemType;
-
-/**
- * Character model the pickup presentations animate.
- */
-extern s32 itemOpenItemChr;
-
-/**
- * Lid animation of the large treasure chest.
- */
-extern "C" CMotionModel itemOpenBig;
-
-/**
- * Which Atla pickup presentation is running.
- */
-extern s32 atraShortGetType;
-
-/**
- * Effect model the short Atla pickup draws.
- */
-extern s32 shortAtraEffectPtr;
-
-/**
- * Event number of the Atla being picked up.
- */
-extern int BtAtraGetNo;
-
-/**
- * Step the Atla pickup presentation is on.
- */
 extern int BtGetAtraBoll_Sled;
-
-/**
- * Event the party is standing on, or -1 when none is.
- */
-extern s32 iventActive;
-
-/**
- * Size the large chest's item grows to as it rises.
- */
+extern int TreasureboxBig_itemNo;
+extern int TreasureboxBig_itemType;
 extern float TreasureboxBig_itemScale;
-
-/**
- * Stage of the large chest's opening the dungeon draw follows.
- */
-extern s32 itemOpenBigFlag;
-
-/**
- * Size the large chest's item is drawn at.
- */
-extern float itemWeponScale;
-
-/**
- * Opening effect of the large treasure chest.
- */
-extern "C" CMotionModel itemOpenBigFx;
-
-/**
- * Lid animation of the small treasure chest.
- */
-extern "C" CMotionModel itemOpenSmall;
-
-/**
- * Stage of the small chest's opening the dungeon draw follows.
- */
-extern s32 itemOpenSmallFlag;
-
-/**
- * Size the small chest's item is drawn at.
- */
-extern float itemNormalScale;
-
-/**
- * Nonzero while the player holds the floor's map.
- */
-extern "C" int BtEquipMap;
-
-/**
- * Opening effect of the small treasure chest.
- */
-extern "C" CMotionModel itemOpenSmallFx;
-
-/**
- * Atla the short pickup presentation is showing.
- */
 extern int BtAtraGetID;
-
-/**
- * Stage of the Atla pickup the dungeon draw follows.
- */
+extern int BtAtraGetNo;
+extern CFrame *itemBoxModel;
+extern s32 itemOpenBigFlag;
+extern s32 itemOpenSmallFlag;
+extern float itemWeponScale;
+extern float itemNormalScale;
+extern s32 iventActive;
+extern "C" CCameraFollow SubCamera;
+extern "C" CCameraFollow MainCamera__4;
+extern CCameraFollow *NowCamera__3;
+extern "C" int BtEquipMap;
+extern "C" int BtEquipMasuisyou;
+extern s32 atraShortGetType;
 extern s32 atraGetStatus;
-
+extern float atraGetStatusRate;
 /**
  * Fade-in level of the Atla pickup's light, up to 256.
  */
 extern float atraGetStatusRate__2;
 
-/**
- * Whether the Atla pickup's message board is up.
- */
 extern s32 atraGetMsgBord;
-
-/**
- * Fade-in level of the Atla pickup's message board, up to 128.
- */
 extern float atraGetMsgBordRate;
-
-/**
- * Where the player stood when the Atla pickup began.
- */
 extern sceVu0FVECTOR atraGetPos;
-
-/**
- * Which way the player faced when the Atla pickup began.
- */
 extern sceVu0FVECTOR atraGetRot;
-
-/**
- * Screen fade of the dungeon.
- */
 extern "C" CDispCtrl DispFade__3;
-
-/**
- * Set to skip motion blending for the next frame.
- */
 extern "C" s32 driveNoInterpolate;
-
-/**
- * Effect model of the short Atla pickup.
- */
-extern "C" CCharacter shortAtraEffect;
-
-/**
- * Whether the escape effect is drawn.
- */
 extern s32 EscapeFlag;
-
-/**
- * Effect model of the escape presentation.
- */
+extern u_int *itemOpenItemChr;
+extern u_int *shortAtraEffectPtr;
+extern "C" CActiveItemPack activeItem;
+extern "C" CMotionModel itemOpenBig;
+extern "C" CMotionModel itemOpenBigFx;
+extern "C" CMotionModel itemOpenSmall;
+extern "C" CMotionModel itemOpenSmallFx;
+extern "C" CCharacter shortAtraEffect;
 extern "C" CCharacter EscapeEffect;
 
-/**
- * Items in the player's quick-use slots and the models they draw with.
- */
-extern "C" CActiveItemPack activeItem;
-
-/**
- * Work buffer the pickup presentations load their models, textures and sounds into.
- */
-extern "C" CDataAlloc2<1> BtCashBuffer;
+void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name);
+void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
+void getCharacterVector(float *vector, float pitch);
 
 /**
  * Computes the quantity represented by an acquired attachment.
  */
 int createAttachVolume(int item_no, int dungeon);
 
-/**
- * Puts one party member in the player's hands, loading them if need be.
- *
- * @mangled selectChrUnit__Fii
- * @address 0x1D1030
- * @size 0x368
- */
 void selectChrUnit(int chara_no, int reload) {
     char name[64];
     char name1[64];
@@ -384,8 +227,8 @@ void selectChrUnit(int chara_no, int reload) {
     wait_now_loading_vsync();
     size = (u_int) (((size >> 6) + 1) << 6) >> 2;
     u_int *weapon0 = &read_buffer[size];
-    int weapon = defWeapon__4[chara_no];
-    BtGetWeaponNamePath3(name, path, weapon);
+    int weapon_no = defWeapon__4[chara_no];
+    BtGetWeaponNamePath3(name, path, weapon_no);
     BtGetWeaponNamePath3(name1, path, defWeapon__4[chara_no] + 1);
     BtGetWeaponNamePath3(name2, path,
                          UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
@@ -418,10 +261,15 @@ void selectChrUnit(int chara_no, int reload) {
     nowUnitNow = UserStatus->cur_chara;
     if (UserStatus->CheckLife() == 0) {
         CUserStatus *user = UserStatus;
-        int chara = user->cur_chara;
-        user->hp[chara] = 1;
+        int cur_chara = user->cur_chara;
+        user->hp[cur_chara] = 1;
     }
 }
+/**
+ * Marks the active item icons as loaded by the battle item-list flow.
+ */
+extern s32 BtItemListCashFlag;
+
 /**
  * Loads the image used by the active item icons.
  *
@@ -509,7 +357,7 @@ void BtGetTreasureboxBig_Init() {
     LoadFileBG(texture_path, (u_long128 *) img, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     chr = BtCashBuffer.base + BtCashBuffer.used * 16;
-    itemOpenItemChr = (s32) chr;
+    itemOpenItemChr = (u_int *) chr;
     LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) chr, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
@@ -751,7 +599,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
     LoadFileBG(texture_path, (u_long128 *) img, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     chr = BtCashBuffer.base + BtCashBuffer.used * 16;
-    itemOpenItemChr = (s32) chr;
+    itemOpenItemChr = (u_int *) chr;
     LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) chr, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
@@ -903,6 +751,10 @@ int BtGetTreasureboxSmall_Loop() {
     }
     return done;
 }
+/** The pickup model shared with the treasure chests, and the short presentation's effect pack. */
+extern char BtAtraShortCharaFile[];
+extern char BtAtraShortEffectFile[];
+
 /**
  * Starts the short presentation for picking up an Atla.
  *
@@ -911,8 +763,6 @@ int BtGetTreasureboxSmall_Loop() {
  * @size 0x180
  */
 void BtAtraGetShort_Init() {
-    u_char *chr;
-    u_char *effect;
     int size;
 
     atraShortGetType = 1;
@@ -920,27 +770,31 @@ void BtAtraGetShort_Init() {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    chr = BtCashBuffer.base + BtCashBuffer.used * 16;
-    itemOpenItemChr = (s32) chr;
-    LoadFileBG("dun/mainchara/c01d_ex00.chr", (u_long128 *) chr, &size);
+    LoadFileBG(BtAtraShortCharaFile,
+               (u_long128 *) (itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)),
+               &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    effect = BtCashBuffer.base + BtCashBuffer.used * 16;
-    shortAtraEffectPtr = (s32) effect;
-    LoadFileBG("dun/effect/saget.chr", (u_long128 *) effect, &size);
+    LoadFileBG(BtAtraShortEffectFile,
+               (u_long128 *) (shortAtraEffectPtr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)),
+               &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(1, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     DngMessMan.unk_00 = 0;
     ResetMovePower();
-
-    CUserStatus *user = UserStatus;
-
-    user->step_disable = 1;
+    CUserStatus *status = UserStatus;
+    int one = 1;
+    status->step_disable = one;
     BtAtraGetNo = iventActive;
     iventActive = -1;
     BtGetAtraBoll_Sled = 0;
-    BtActStatus.unk_09C = 1;
+    BtActStatus.unk_09C = one;
 }
+INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
+
+/** The effect configuration file inside an effect pack, shared by the pickup and escape presentations. */
+extern char BtEffectInfoFile[];
+
 /**
  * Runs the Atla pickup presentation and reports when it ends.
  *
@@ -1234,9 +1088,9 @@ int BtGetGateKey_Loop() {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
                 itemBoxModel->SetReference(CharaMain.frame->SearchFrame("item"));
-                itemBoxModel->SetPosition(0.0f, 0.0f, 0.0f);
+                itemBoxModel->SetPosition((0, 0.0f), (0, (0, 0.0f)), (0, (0, 0.0f)));
                 itemBoxModel->SetRotation(0.0f, 0.0f, 0.0f);
-                itemBoxModel->SetScale(1.0f, 1.0f, 1.0f);
+                itemBoxModel->SetScale((0, (0, 1.0f)), 1.0f, (0, 1.0f));
                 gateItemFlag = 1;
                 GateKey_Sled++;
             }
@@ -1547,7 +1401,7 @@ int BtEscape_Loop() {
     switch (escape_sled) {
         case 0:
             if (SndSPSeSyncBG() == 0 && ReadBGSync() == 0) {
-                EscapeEffect.LoadPackData2((u_int *) escape_chr, "info.cfg", &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
+                EscapeEffect.LoadPackData2((u_int *) escape_chr, BtEffectInfoFile, &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
                 EscapeEffect.SetMotion(0, 6);
                 EscapeEffect.motion_type.state.time = 10.0f;
                 EscapeFlag = 1;
@@ -1556,7 +1410,7 @@ int BtEscape_Loop() {
                 EscapeEffect.SetPosition(position);
                 EscapeEffect.SetRotation(rotation);
                 EdFadeInit();
-                EdFadeOut(0x78, 0.0f, 0.0f, 0.0f);
+                EdFadeOut(0x78, (0, 0.0f), (0, 0.0f), 0.0f);
                 SndSPSePlay(8, -1);
                 escape_sled++;
             }
@@ -1579,16 +1433,15 @@ int BtEscape_Loop() {
  * @size 0x1B0
  */
 void BtSetActiveItemModel(u_int *buffer) {
+    u_int *texture;
+    int i;
+    int size;
+    ITEM_PACK *pack;
+    int item_no;
     char model_path[64];
     char texture_path[64];
     int model_size;
     int texture_size;
-    int i;
-    u_int *texture;
-    int size;
-    ITEM_PACK *pack;
-    int item_no;
-
     pack = &UserStatus->item_pack;
 
     for (i = 0; i < 3; i++) {
@@ -1654,13 +1507,6 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
     sceVu0ApplyMatrix(velocity, rotation, velocity);
 }
 
-/**
- * Gives the direction the main character faces, tilted by the given pitch.
- *
- * @mangled getCharacterVector__FPff
- * @address 0x1D41A0
- * @size 0xC0
- */
 void getCharacterVector(float *vector, float pitch) {
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
     sceVu0FVECTOR rotation;

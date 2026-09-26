@@ -9,7 +9,6 @@
 
 #include <cassert>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <libpkt.h>
 
@@ -29,11 +28,10 @@
 #include "snd.hpp"
 #include "sound.hpp"
 #include "sysmes.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "visualvu1.hpp"
+#include <cstdlib>
 #include <libpkt.h>
 #include "rect.hpp"
-#endif
 
 /**
  * Cloth instance currently receiving configuration commands.
@@ -91,22 +89,6 @@ static void CommandPOLYDIVE(void **argv);
  * Creates and attaches an exclusion bound for the cloth.
  */
 static void CommandBOUND(void **argv);
-/**
- * Reads one command's arguments into the argument buffers.
- */
-static int GetArg(input_str &input, int *args, void **argv);
-/**
- * Reads the next keyword and finds its command table entry.
- */
-static int SearchCommand(input_str &input, int *command);
-/**
- * Steps the input past whitespace.
- */
-static int SkipSpace(input_str &input);
-/**
- * Reports whether a character is not whitespace.
- */
-static int CheckChar(char c);
 
 /**
  *              Names one keyword of the cloth configuration file.
@@ -145,6 +127,12 @@ static void (*CommandExe[9])(void **) = {
     CommandBOUND,
 };
 
+
+static int GetArg(input_str &input, int *args, void **argv);
+static int SearchCommand(input_str &input, int *command);
+static int SkipSpace(input_str &input);
+static int CheckChar(char c);
+
 /**
  * Reads one model's cloth description and attaches the simulation.
  *
@@ -154,7 +142,7 @@ static void (*CommandExe[9])(void **) = {
  */
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     char words[16][256];
-    char *argv[16];
+    void *argv[16];
     int command;
 
     DataBuffer = alloc;
@@ -183,7 +171,7 @@ CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
         if (result < 0) {
             printf("error!!\n");
         }
-        CommandExe[command]((void **) argv);
+        CommandExe[command](argv);
     }
     return pCloth;
 }
@@ -270,47 +258,42 @@ static void CommandPOLYDIVE(void **argv) {
  */
 static void CommandBOUND(void **argv) {
     sceVu0FVECTOR vectors[4];
-    int arg;
-    CBound *bound;
-    CFrame *frame;
-    int i;
-    float width;
-    float height;
-    float depth;
+    CBound *bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
 
-    bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
     if (bound == NULL) {
         return;
     }
-    arg = 0;
-    frame = ParentFrame->SearchFrame((char *) argv[arg++]);
+    int arg = 0;
+    CFrame *frame = ParentFrame->SearchFrame((char *) argv[arg++]);
     if (frame == NULL) {
         return;
     }
-    // The box's up direction, the two ends of its axis, and its half extents.
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         vectors[i][0] = *(float *) argv[arg];
-        vectors[i][1] = *(float *) argv[(u_int) (arg + 1)];
-        vectors[i][2] = *(float *) argv[(u_int) (arg + 2)];
+        vectors[i][1] = *(float *) argv[(int) (arg + 1)];
+        vectors[i][2] = *(float *) argv[(int) (arg + 2)];
         arg += 3;
         vectors[i][3] = 1.0f;
     }
     vectors[0][3] = 0.0f;
     bound->SetDir(frame, vectors[1], vectors[2], vectors[0], vectors[3][0], vectors[3][1]);
-    depth = vectors[3][2];
-    height = vectors[3][1];
-    width = vectors[3][0];
-    bound->extent[0] = width;
-    bound->extent[1] = height;
-    bound->extent[2] = depth;
+    float x;
+    float y;
+    float z;
+    z = vectors[3][2];
+    y = vectors[3][1];
+    x = vectors[3][0];
+    bound->extent[0] = x;
+    bound->extent[1] = y;
+    bound->extent[2] = z;
     if (bound->extent[0] > 0.0f) {
-        bound->reciprocal[0] = 1.0f / width;
+        bound->reciprocal[0] = 1.0f / x;
     }
     if (bound->extent[1] > 0.0f) {
-        bound->reciprocal[1] = 1.0f / height;
+        bound->reciprocal[1] = 1.0f / y;
     }
     if (bound->extent[2] > 0.0f) {
-        bound->reciprocal[2] = 1.0f / depth;
+        bound->reciprocal[2] = 1.0f / z;
     }
     bound->friction = *(float *) argv[arg];
     if (pBound == NULL) {

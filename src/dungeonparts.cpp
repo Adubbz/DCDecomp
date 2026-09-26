@@ -1,7 +1,6 @@
 #include "dungeonparts.hpp"
 
 #include "frame.hpp"
-#ifdef NON_MATCHING // draft includes
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -15,17 +14,18 @@
 #include "boxvu0.hpp"
 #include "mglib.hpp"
 #include "editloop.hpp"
-#endif
 
 #ifdef NON_MATCHING
 /* The floors each dungeon keeps Atla off, one list per dungeon, ending at -1. */
-static int noEntry0[] = {4, 8, 11, -1};
-static int noEntry1[] = {4, 9, 12, -1};
-static int noEntry2[] = {5, 9, 12, -1};
-static int noEntry3[] = {5, 9, 13, -1};
-static int noEntry4[] = {4, 8, 11, -1};
-static int noEntry5[] = {19, 20, 21, 22, 23, -1};
-static int *noEntryTbl[6] = {noEntry0, noEntry1, noEntry2, noEntry3, noEntry4, noEntry5};
+static int noEntryTbl00[] = {4, 8, 11, -1};
+static int noEntryTbl01[] = {4, 9, 12, -1};
+static int noEntryTbl02[] = {5, 9, 12, -1};
+static int noEntryTbl03[] = {5, 9, 13, -1};
+static int noEntryTbl04[] = {4, 8, 11, -1};
+static int noEntryTbl05[] = {19, 20, 21, 22, 23, -1};
+static int *noEntryTbl[6] = {noEntryTbl00, noEntryTbl01, noEntryTbl02, noEntryTbl03, noEntryTbl04, noEntryTbl05};
+#else
+extern int *noEntryTbl[6];
 #endif
 
 /**
@@ -282,25 +282,18 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf
  * @address 0x1C0940
  * @size 0x74
  */
-#ifdef NON_MATCHING
 int chkAtraFloor(int dungeon, int floor) {
     if (dungeon >= 6) {
         return 0;
     }
-    for (int i = 0;; i++) {
-        int barred = noEntryTbl[dungeon][i];
-
-        if (barred == -1) {
-            return 1;
-        }
-        if (floor == barred) {
+    int *floors = noEntryTbl[dungeon];
+    for (int i = 0; floors[i] != -1; i++) {
+        if (floor == floors[i]) {
             return 0;
         }
     }
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", chkAtraFloor__Fii);
-#endif
 /**
  * Builds the list of Atla one dungeon may hand out.
  *
@@ -551,7 +544,6 @@ void CDungeonParts::SetHealZone(float *position, float width, float depth) {
  * @address 0x1C16D0
  * @size 0x17C
  */
-#ifdef NON_MATCHING
 void CDungeonParts::Draw() {
     sceVu0FVECTOR position;
 
@@ -560,27 +552,25 @@ void CDungeonParts::Draw() {
             continue;
         }
         int turn = (int) ((float) direction + frame_turn[i]);
-        if (turn >= 4) {
+        if (turn > 3) {
             turn -= 3;
         }
         float angle = (float) turn;
-        if (angle == 3.0f) {
+        if (3.0f == angle) {
             angle = -1.0f;
         }
-        frame[i]->SetRotation(0.0f, (3.1415927f * (-90.0f * angle)) / 180.0f, 0.0f);
+        angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
+        frame[i]->SetRotation(0.0f, angle, 0.0f);
+
         sceVu0CopyVector(position, pos);
-        float *offset = frame_offset[i];
-        position[0] += offset[0];
-        position[1] += offset[1];
-        position[2] += offset[2];
+        position[0] += frame_offset[i][0];
+        position[1] += frame_offset[i][1];
+        position[2] += frame_offset[i][2];
         position[3] = 1.0f;
         frame[i]->SetPosition(position);
         MGDraw(frame[i]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", Draw__13CDungeonPartsFv);
-#endif
 /**
  * Chooses the level of detail each of a part's frames draws at.
  *
@@ -588,54 +578,58 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", Draw__13CDungeonPartsFv);
  * @address 0x1C1850
  * @size 0x348
  */
-#ifdef NON_MATCHING
 void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
     sceVu0FVECTOR position;
 
     for (int i = 0; i < 6; i++) {
-        if (frame[i] == NULL) {
+        CFrame *model = frame[i];
+        if (model == NULL) {
             continue;
         }
+
         int model_turn = (int) ((float) direction + frame_turn[i]);
-        if (model_turn >= 4) {
+        if (model_turn > 3) {
             model_turn -= 3;
         }
         float angle = (float) model_turn;
-        if (angle == 3.0f) {
+        if (3.0f == angle) {
             angle = -1.0f;
         }
-        frame[i]->SetRotation(0.0f, (3.1415927f * (-90.0f * angle)) / 180.0f, 0.0f);
+        angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
+        model->SetRotation(0.0f, angle, 0.0f);
+
         sceVu0CopyVector(position, pos);
-        float *offset = frame_offset[i];
-        position[0] += offset[0];
-        position[1] += offset[1];
-        position[2] += offset[2];
+        position[0] += frame_offset[i][0];
+        position[1] += frame_offset[i][1];
+        position[2] += frame_offset[i][2];
         position[3] = 1.0f;
         frame[i]->SetPosition(position);
     }
-    if (collision == NULL) {
+    CFrame *model = collision;
+    if (model == NULL) {
         return;
     }
     if (fixed == 1) {
-        int collision_turn = turn + collision_turn;
-        if (collision_turn >= 4) {
+        int collision_turn = turn + this->collision_turn;
+        if (collision_turn > 3) {
             collision_turn -= 3;
         }
         if (collision_turn == 3) {
             collision_turn = -1;
         }
-        collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
-        collision->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
+        model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
+        float y = 0.0f;
+        collision->SetPosition(160.0f * (float) x, y, 160.0f * (float) z);
         return;
     }
-    int collision_turn = (int) (frame_turn[0] + (float) collision_turn);
-    if (collision_turn >= 4) {
+    int collision_turn = (int) (frame_turn[0] + (float) this->collision_turn);
+    if (collision_turn > 3) {
         collision_turn -= 3;
     }
     if (collision_turn == 3) {
         collision_turn = -1;
     }
-    collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
+    model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
     sceVu0CopyVector(position, pos);
     position[0] += frame_offset[0][0];
     position[1] += frame_offset[0][1];
@@ -643,9 +637,6 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
     position[3] = 1.0f;
     collision->SetPosition(frame_offset[0]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", DrawCalc__13CDungeonPartsFiiii);
-#endif
 
 /**
  * Clears one dungeon part.

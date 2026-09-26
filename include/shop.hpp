@@ -227,13 +227,13 @@ void ChargeShopMaxDraw(int, int, int, int);
 void ChargeShopBoardDraw(int, int, int);
 
 /**
- * Totals what the goods currently marked for purchase cost.
+ * Totals the prices of goods currently marked for purchase.
  *
  * @mangled BuyMoneyCheck2__Fv
  * @address 0x1EB3A0
  * @size 0x1A0
  */
-int BuyMoneyCheck2(void);
+static int BuyMoneyCheck2(void);
 
 /**
  * Orders two items for the shop's sort.
@@ -281,13 +281,13 @@ int SeitonShopAttachBoardSub(ATTACH_LIST *);
 int ItemShopLoop2(void);
 
 /**
- * Moves the shop cursor between the goods side and the player's side.
+ * Moves the shop cursor between the goods side and the player's side and returns zero.
  *
  * @mangled CheckSideKey2__Fv
  * @address 0x1EC170
  * @size 0x1F4
  */
-void CheckSideKey2(void);
+int CheckSideKey2(void);
 
 /**
  * Draws the running total the purchase will come to.

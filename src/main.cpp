@@ -33,14 +33,12 @@
 #include "sysmes.hpp"
 #include "texture.hpp"
 #include "visualvu1.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "dungeonmap.hpp"
 #include "water.hpp"
 #include "shot_effect.hpp"
 #include "hitmark.hpp"
 #include "textureanime.hpp"
 #include "object.hpp"
-#endif
 #include "title/bombeffect.hpp"
 #include "title/majinbeem.hpp"
 
@@ -1188,9 +1186,7 @@ void MemCheckInit() {
     TexManager.Initialize(16352);
     result = TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
-    float r, g, b, a;
-    g = a = r = b = 0.0f;
-    MGSetBGColor(r, g, b, a);
+    MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
     if (sceMcInit())
         printf("libmc initialize faild\n");
     mem_chk_mode = 0;
@@ -1295,17 +1291,21 @@ void TrialStart() {}
 int CheckTrialEnd() { return 0; }
 
 #ifdef NON_MATCHING
+/* MAP_NPC_MODEL's members as its copy assignment reaches them; the tail is alignment padding. */
+struct DraftNpcModelLayout {
+    CCharacter chara;
+    float pos[4];
+    float unk_11C0[4];
+    s32 parts_no;
+    s32 used;
+    s32 unk_11D8;
+    s32 unk_11DC;
+    float draw_pos[16][4];
+    s32 draw_param[16];
+    s32 draw_num;
+};
 MAP_NPC_MODEL &MAP_NPC_MODEL::operator=(const MAP_NPC_MODEL &src) {
-    chara = src.chara;
-    memcpy(pos, src.pos, sizeof(pos));
-    memcpy(unk_11C0, src.unk_11C0, sizeof(unk_11C0));
-    parts_no = src.parts_no;
-    used = src.used;
-    unk_11D8 = src.unk_11D8;
-    unk_11DC = src.unk_11DC;
-    memcpy(draw_pos, src.draw_pos, sizeof(draw_pos));
-    memcpy(draw_param, src.draw_param, sizeof(draw_param));
-    draw_num = src.draw_num;
+    *(DraftNpcModelLayout *) this = *(const DraftNpcModelLayout *) &src;
     return *this;
 }
 #else
@@ -1319,30 +1319,62 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @size 0x43C
  */
 #ifdef NON_MATCHING
+/* CCharacter's members as its copy assignment reaches them. */
+struct DraftCharacterLayout : public CObject {
+    float body_width;
+    float body_height;
+    float body_depth;
+    CFrame *frame;
+    CFrame *shadow_frame;
+    float images[4];
+    char *unk_0D4;
+    s32 unk_0D8;
+    CTextureAnime tex_anime;
+    tagFRAME_INF *unk_2cc;
+    tagFRAME_INF *unk_2d0;
+    tagMOTION_TYPE motion_type;
+    tagMOTION_TYPE shadow_motion_type;
+    s32 motion_start[CHARA_MOTION_MAX];
+    s32 motion_end[CHARA_MOTION_MAX];
+    MotionParam unk_420[CHARA_MOTION_MAX];
+    MotionParam unk_820[CHARA_MOTION_MAX];
+    tagMOTION_TYPE *motion[CHARA_MOTION_MAX];
+    tagMOTION_TYPE *shadow_motion[CHARA_MOTION_MAX];
+    float motion_speed;
+    s32 flags;
+    s32 motion_no;
+    float unk_C6C;
+    s32 motion_state;
+    CCloth **cloth;
+    CCloth *cloth_buf[8];
+    s32 unk_C98;
+    s32 unk_C9C;
+    s32 unk_CA0;
+    sceVu0FVECTOR unk_CB0[2];
+    sceVu0FVECTOR unk_CD0;
+    sceVu0FVECTOR ambient_offset;
+    float fade[4];
+    CFakePointLight point_light[CHARA_POINT_LIGHT_MAX];
+    CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];
+    s32 foot_sound_id;
+    s32 foot_sound_enable;
+    s32 unk_DE0;
+    s32 event_enable;
+    CHARA_EVENT event[CHARA_EVENT_MAX];
+    CHARA_UNK_1068 unk_1068[16];
+};
 CCharacter &CCharacter::operator=(const CCharacter &src) {
-    CObject::operator=(src);
-    memcpy((char *) this + sizeof(CObject), (const char *) &src + sizeof(CObject),
-           sizeof(CCharacter) - sizeof(CObject));
+    *(DraftCharacterLayout *) this = *(const DraftCharacterLayout *) &src;
     return *this;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
 #endif
-/**
- * Copies one object over another, field by field.
- *
- * @mangled __as__7CObjectFRC7CObject
- * @address 0x1431E0
- * @size 0x74
- */
-CObject &CObject::operator=(const CObject &source) {
-    float w;
-    float z;
-    float y;
-    float x;
 
-    // The three words after the mass are not carried over.
+CObject &CObject::operator=(const CObject &source) {
+    // The three words after the mass are alignment padding and are not carried over.
     mass = source.mass;
+    float w, z, y, x;
     x = source.pos[0];
     y = source.pos[1];
     z = source.pos[2];
@@ -1361,30 +1393,28 @@ CObject &CObject::operator=(const CObject &source) {
     *(CVector3_f_ *) scale = *(const CVector3_f_ *) source.scale;
     return *this;
 }
-#ifdef NON_MATCHING
+/* CWater's members as its copy assignment reaches them. */
+struct DraftWaterLayout {
+    s32 rows;
+    s32 columns;
+    float *height;
+    float height_ab[2];
+    sceVu0FVECTOR vertex[4];
+    u_int *packet;
+    float unk_064[2];
+    CVisualPolyVu1 visual;
+    float unk_090;
+    float wave_speed;
+    float damping;
+    float unk_09C;
+    float unk_0A0;
+    s32 unk_0A4;
+    CFrameVu1 frame;
+};
 CWater &CWater::operator=(CWater &src) {
-    rows = src.rows;
-    columns = src.columns;
-    height = src.height;
-    height_a = src.height_a;
-    height_b = src.height_b;
-    memcpy(vertex, src.vertex, sizeof(vertex));
-    packet[0] = src.packet[0];
-    packet[1] = src.packet[1];
-    packet[2] = src.packet[2];
-    visual = src.visual;
-    memcpy(color, src.color, sizeof(color));
-    wave_speed = src.wave_speed;
-    damping = src.damping;
-    unk_09C = src.unk_09C;
-    unk_0A0 = src.unk_0A0;
-    unk_0A4 = src.unk_0A4;
-    frame = src.frame;
+    *(DraftWaterLayout *) this = *(DraftWaterLayout *) &src;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__6CWaterFR6CWater);
-#endif
 /**
  * Copies one polygon visual over another, field by field.
  *
@@ -1403,16 +1433,24 @@ CVisualPolyVu1 &CVisualPolyVu1::operator=(const CVisualPolyVu1 &src) {
  * @address 0x143390
  * @size 0x5C
  */
-#ifdef NON_MATCHING
+/* The full layout: CVisual's words, then the vector-unit block and its size. */
+struct DraftVisualVu1Layout {
+    CVisual base;
+    s32 unk_10;
+    s32 unk_14;
+    u_int *vu_data;
+    u_int vu_size;
+};
 CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
-    unk_00 = src.unk_00;
-    unk_04 = src.unk_04;
-    unk_0C = src.unk_0C;
+    DraftVisualVu1Layout *dst_layout = (DraftVisualVu1Layout *) this;
+    const DraftVisualVu1Layout *src_layout = (const DraftVisualVu1Layout *) &src;
+    dst_layout->base = src_layout->base;
+    dst_layout->unk_10 = src_layout->unk_10;
+    dst_layout->unk_14 = src_layout->unk_14;
+    dst_layout->vu_data = src_layout->vu_data;
+    dst_layout->vu_size = src_layout->vu_size;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__10CVisualVu1FRC10CVisualVu1);
-#endif
 /**
  * Copies one visual over another, field by field.
  *
@@ -1481,6 +1519,16 @@ void CMajinBeem::Initialize() {
     active = 0;
     alphas[59] = 0.0f;
 }
+/* The constructors the compiler writes for arrays of these classes, written out by hand: the
+   compiler only emits them where an array needs one, which this unit's source no longer holds.
+   The names below stand for the compiler's own symbols (see config/object_fixups.json), which
+   this unit may not also declare under C linkage. */
+extern "C" void *GeneratedCharacterCtor(void *self);
+extern "C" void *GeneratedTextureAnimeCtor(void *self, CTexAnimeData *data, int count);
+extern "C" void *GeneratedObjectCtor(void *self, float mass);
+extern "C" void *GeneratedHitMarkVtable[];
+extern "C" void *__ct__7CObjectFv(void *self);
+
 /**
  * Constructs one map character slot.
  *
@@ -1488,15 +1536,10 @@ void CMajinBeem::Initialize() {
  * @address 0x143500
  * @size 0x30
  */
-#ifdef NON_MATCHING
-/* The compiler emits the constructor for arrays of slots. */
-void DraftNpcModelArray() {
-    MAP_NPC_MODEL *models = new MAP_NPC_MODEL[16];
-    delete[] models;
+extern "C" void *__ct__13MAP_NPC_MODELFv(void *self) {
+    GeneratedCharacterCtor(self);
+    return self;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
-#endif
 /**
  * Constructs a character with no model, motion or texture animation.
  *
@@ -1506,10 +1549,14 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
  */
 #ifdef NON_MATCHING
 /* The compiler emits the inline constructor out of line for arrays of characters. */
+#pragma push
+#pragma dont_inline on
 void DraftCharacterArray() {
     CCharacter *characters = new CCharacter[16];
     delete[] characters;
 }
+void DraftCharacterArray();
+#pragma pop
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __ct__10CCharacterFv);
 #endif
@@ -1528,15 +1575,9 @@ MotionParam::MotionParam() {}
  * @address 0x143620
  * @size 0x28
  */
-#ifdef NON_MATCHING
-/* The compiler emits the argument-less constructor for arrays of animations. */
-void DraftTextureAnimeArray() {
-    CTextureAnime *animes = new CTextureAnime[16];
-    delete[] animes;
+extern "C" void *__ct__13CTextureAnimeFv(void *self) {
+    return GeneratedTextureAnimeCtor(self, NULL, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
-#endif
 /**
  * Constructs an object at the origin with an identity transform.
  *
@@ -1544,15 +1585,9 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
  * @address 0x143650
  * @size 0x28
  */
-#ifdef NON_MATCHING
-/* The compiler emits the argument-less constructor for arrays of objects. */
-void DraftObjectArray() {
-    CObject *objects = new CObject[16];
-    delete[] objects;
+extern "C" void *__ct__7CObjectFv(void *self) {
+    return GeneratedObjectCtor(self, 1.0f);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
-#endif
 /**
  * Constructs a projectile effect.
  *
@@ -1560,15 +1595,12 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
  * @address 0x143680
  * @size 0x54
  */
-#ifdef NON_MATCHING
-/* The compiler emits the constructor for arrays of projectile effects. */
-void DraftShotEffectArray() {
-    CSHOT_EFFECT *effects = new CSHOT_EFFECT[16];
-    delete[] effects;
+extern "C" void *__ct__12CSHOT_EFFECTFv(void *self) {
+    GeneratedCharacterCtor((u_char *) self + 0x10);
+    u_char *array = (u_char *) self + 0x11C0;
+    __construct_array(array, (MWRuntimeObjectFunction) GeneratedCharacterCtor, NULL, 0x11B0, 8);
+    return self;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
-#endif
 /**
  * Constructs a hit marker.
  *
@@ -1576,15 +1608,11 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
  * @address 0x1436E0
  * @size 0x3C
  */
-#ifdef NON_MATCHING
-/* The compiler emits the constructor for arrays of hit markers. */
-void DraftHitMarkArray() {
-    CHitMark *marks = new CHitMark[16];
-    delete[] marks;
+extern "C" void *__ct__8CHitMarkFv(void *self) {
+    __ct__7CObjectFv(self);
+    *(void **) ((u_char *) self + 0xA0) = GeneratedHitMarkVtable;
+    return self;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
-#endif
 /**
  * Takes a run of quadwords out of the six-thousand-quadword arena.
  *

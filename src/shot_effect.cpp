@@ -28,18 +28,27 @@ int GetWeaponElementAttr(int element);
  * @address 0x1ABC40
  * @size 0xCC
  */
+#include "character.hpp"
+
+/* Draft declarations for this file. CSHOT_EFFECT's unnamed block holds the eight effect models 0x11C0 bytes into the object. */
+struct CSHOT_EFFECT_MODELS {
+    u8 unk_0000[0x11C0];
+    CCharacter chara[8];
+};
+
 void CSHOT::draw() {
     for (int shot = 0; shot < 12; shot++) {
         if (used[shot] != 0) {
-            // Each slingshot has its own 32x32 cell in the effect texture, four to a row.
-            int texture_cell = NowWeaponHave->item_no - ITEM_WEAPON_WOODENSLINGSHOT_BROKEN;
+            int texture_cell = NowWeaponHave->item_no - 299;
             texture_cell--;
             if (texture_cell <= 0) {
                 texture_cell = 0;
             }
-            int cell_x = (texture_cell % 4) << 5;
-            int cell_y = (texture_cell >> 2) << 5;
-            set3DCellModel(pos[shot], "basefx01", unk_09[shot], cell_x, cell_y, 32, 32, 128);
+            int x = (texture_cell % 4) << 5;
+            int y = (texture_cell / 4) << 5;
+            set3DCellModel(pos[shot], "basefx01", unk_09[shot],
+                           x, y,
+                           32, 32, 128);
         }
     }
 }
@@ -92,26 +101,26 @@ void CSHOT_EFFECT::Draw() {
     TexManager.ReloadTexture(Vif1Packet, unk_A154);
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] != 0) {
-            CCharacter *model = &chara[slot];
+            CCharacter *chara = &((CSHOT_EFFECT_MODELS *) this)->chara[slot];
             sceVu0FVECTOR position;
             sceVu0FVECTOR jittered;
 
-            model->Step();
-            // A slot with a random rate draws at a random offset of up to that rate on each axis.
+            chara->Step();
             if (!(random_rate[slot] < 0.0f)) {
-                model->GetPosition(position);
-                jittered[0] = position[0] + 2.0f * (random_rate[slot] * rand()) / 2147483648.0f -
-                              random_rate[slot];
-                jittered[1] = position[1] + 2.0f * (random_rate[slot] * rand()) / 2147483648.0f -
-                              random_rate[slot];
-                jittered[2] = position[2] + 2.0f * (random_rate[slot] * rand()) / 2147483648.0f -
-                              random_rate[slot];
+                // Drawing temporarily offsets the model by a random amount on each axis.
+                chara->GetPosition(position);
+                float r = random_rate[slot];
+                jittered[0] = position[0] + 2.0f * (r * (float) rand()) / 2147483648.0f - r;
+                r = random_rate[slot];
+                jittered[1] = position[1] + 2.0f * (r * (float) rand()) / 2147483648.0f - r;
+                r = random_rate[slot];
+                jittered[2] = position[2] + 2.0f * (r * (float) rand()) / 2147483648.0f - r;
                 jittered[3] = 1.0f;
-                model->SetPosition(jittered);
+                chara->SetPosition(jittered);
             }
-            model->Draw();
+            chara->Draw();
             if (!(random_rate[slot] < 0.0f)) {
-                model->SetPosition(position);
+                chara->SetPosition(position);
             }
         }
     }
@@ -284,9 +293,10 @@ void CSHOT_EFFECT::EndEffect() {
             phase[slot] = 2;
             int motion = effect_data->motion[phase[slot]];
             if (motion != -1) {
-                chara[slot].motion_type.state.time =
-                    (float) chara[slot].motion_type.motion_info[motion].start;
-                chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
+                CSHOT_EFFECT_MODELS *models = (CSHOT_EFFECT_MODELS *) this;
+                models->chara[slot].motion_type.state.time =
+                    (float) models->chara[slot].motion_type.motion_info[motion].start;
+                models->chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
             }
         }
     }
@@ -330,7 +340,6 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex
     effect_data = description;
     return effect_data == NULL ? 0 : 1;
 }
-
 int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
                          CDataAlloc2<1> *allocator, int slots) {
     char name[64];
@@ -621,31 +630,44 @@ int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int elemen
  * @size 0x230
  */
 void CSHOT_MACHINGUN::Step() {
-    for (int slot = 0; slot < 16; slot++) {
-        if (unk_280[slot] > 0) {
-            unk_280[slot]++;
-            if (unk_280[slot] >= 240) {
-                unk_280[slot] = 0;
-            } else {
-                int result = checkCollision(position[slot], position[slot], velocity[slot], 2, 2.0f);
-                if (result == SHOT_COLLISION_MAP) {
-                    OzumondShotEffect.Set(position[slot]);
-                    unk_280[slot] = 0;
-                }
-                if (result == SHOT_COLLISION_MONSTER) {
-                    NowColData->Set(position[slot], unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
-                    s8 elem = NowWeaponHave->best_elem;
-                    CCollisionData *attr_col = NowColData;
-                    attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
-                    NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
-                    NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
-                    NowColData->SetUserID(5, 6);
-                    unk_280[slot] = 0;
-                }
-                position[slot][0] += velocity[slot][0];
-                position[slot][1] += velocity[slot][1];
-                position[slot][2] += velocity[slot][2];
-            }
+    int slot;
+    SHOT_COLLISION_RESULT result;
+    float *pos;
+    int elem;
+    CCollisionData *col;
+
+    for (slot = 0; slot < 16; slot++) {
+        if (unk_280[slot] <= 0) {
+            continue;
         }
+
+        unk_280[slot]++;
+        if (unk_280[slot] >= 240) {
+            unk_280[slot] = 0;
+            continue;
+        }
+
+        pos = position[slot];
+        result = checkCollision(pos, pos, velocity[slot], 2, 2.0f);
+        if (result == SHOT_COLLISION_MAP) {
+            OzumondShotEffect.Set(pos);
+            unk_280[slot] = 0;
+        }
+        if (result == SHOT_COLLISION_MONSTER) {
+            NowColData->Set(pos, unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
+            elem = NowWeaponHave->best_elem;
+            col = NowColData;
+            col->hit[col->now_hit].flags = GetWeaponElementAttr(elem);
+            NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
+            NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
+            CCollisionData *target = NowColData;
+            target->hit[target->now_hit].owner = 5;
+            target->hit[target->now_hit].unk_60 = 6;
+            unk_280[slot] = 0;
+        }
+
+        pos[0] += velocity[slot][0];
+        position[slot][1] += velocity[slot][1];
+        position[slot][2] += velocity[slot][2];
     }
 }

@@ -1,3 +1,4 @@
+#pragma helper_mask_gpr 0x30
 #include "shot_firebar.hpp"
 
 #include <cstdlib>
@@ -12,7 +13,8 @@
 #include "texture.hpp"
 #include "weaponelement.hpp"
 
-int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage, int element) {
+int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage,
+                        int element) {
     sceVu0FVECTOR step;
 
     direction[3] = 1.0f;
@@ -21,22 +23,24 @@ int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage, i
 
     for (int particle = 0; particle < 24; particle++) {
         sceVu0CopyVector(position[particle + start_index], origin);
-        position[particle + start_index][0] = origin[0] + step[0] * (float) particle;
-        position[particle + start_index][1] = origin[1] + step[1] * (float) particle;
-        position[particle + start_index][2] = origin[2] + step[2] * (float) particle;
-        velocity[particle + start_index][0] = 0.01f * direction[0];
-        velocity[particle + start_index][1] = 0.01f * direction[1];
-        velocity[particle + start_index][2] = 0.01f * direction[2];
-        size[particle + start_index] = 3.0f + 0.3f * (float) particle;
-        opacity[particle + start_index] = 180.0f - 8.0f * (float) particle;
+        float start_x = origin[0];
+        float distance = (float) particle;
+        position[particle + start_index][0] = start_x + step[0] * distance;
+        position[particle + start_index][1] = origin[1] + step[1] * distance;
+        position[particle + start_index][2] = origin[2] + step[2] * distance;
+        velocity[particle + start_index][0] = direction[0] * 0.01f;
+        velocity[particle + start_index][1] = direction[1] * 0.01f;
+        velocity[particle + start_index][2] = direction[2] * 0.01f;
+        size[particle + start_index] = 3.0f + distance * 0.3f;
+        float fade = distance * 8.0f;
+        opacity[particle + start_index] = 180.0f - fade;
         state[particle + start_index] = 0;
     }
 
-    init_damage = collision_damage;
-    init_element = element;
+    *(int *) &opacity[63] = collision_damage;
+    damage[63] = element;
     return -1;
 }
-
 int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, int element) {
     sceVu0FVECTOR step;
 
@@ -102,22 +106,28 @@ void CSHOT_FIREBAR::Step(void) {
         }
     }
 }
-#ifdef NON_MATCHING
 void CSHOT_FIREBAR::Draw(void) {
-    bool texture_loaded = false;
+    int texture_loaded;
+    int column;
+    int row;
+    int particle;
 
-    for (int particle = 0; particle < 24; particle++) {
+    texture_loaded = 0;
+
+    for (particle = 0; particle < 24; particle++) {
         if (state[particle] == -1) {
             continue;
         }
         if (!texture_loaded) {
             TexManager.ReloadTexture(Vif1Packet, 0x46);
-            texture_loaded = true;
+            texture_loaded = 1;
         }
 
-        int column;
-        int row;
         switch (texture_cell[particle]) {
+        case WEAPON_ELEMENT_FIRE:
+            column = 0;
+            row = 1;
+            break;
         case WEAPON_ELEMENT_COLD:
             column = 1;
             row = 1;
@@ -134,7 +144,6 @@ void CSHOT_FIREBAR::Draw(void) {
             column = 2;
             row = 1;
             break;
-        case WEAPON_ELEMENT_FIRE:
         default:
             column = 0;
             row = 1;
@@ -144,7 +153,3 @@ void CSHOT_FIREBAR::Draw(void) {
                        row << 7, 0x80, 0x80, (u8) (int) opacity[particle]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Draw__13CSHOT_FIREBARFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_firebar", @1211);

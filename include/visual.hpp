@@ -156,7 +156,7 @@ public:
 
     /* Every one of them, because a block that is kept can be rebuilt and one that is not cannot. */
     /**
-     * Clears the model visual's data pointer and packet.
+     * Clears the model visual's data pointer and packet buffers.
      *
      * @mangled Initialize__13CVisualMDTVu1Fv
      * @address 0x134F70

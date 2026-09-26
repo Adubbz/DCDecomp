@@ -275,8 +275,9 @@ void CTextureAnime::LoadCFGFile(char *script, int script_size) {
     CScriptInterpreter interpreter;
     interpreter.SetScript(script, script_size);
     interpreter.SetTAG((TAG_PARAM *) Command__4, 5);
+    int command;
     for (;;) {
-        int command = interpreter.GetNextTAG();
+        command = interpreter.GetNextTAG();
         if (command < 0) {
             break;
         }

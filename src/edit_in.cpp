@@ -2,7 +2,6 @@
 
 #include <libvu0.h>
 
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -11,39 +10,44 @@
 #include "camera.hpp"
 #include "camerafollow.hpp"
 #include "character.hpp"
-#include "clsmes.hpp"
 #include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
-#include "dispctrl.hpp"
-#include "ebattle.hpp"
-#include "edit.hpp"
 #include "edit_in.hpp"
 #include "editground.hpp"
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "editpartsinfo.hpp"
-#include "effectgroup.hpp"
-#include "effectmacro.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
-#include "gamemode.hpp"
-#include "gamepad.hpp"
 #include "mainselect.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
-#include "menu_misc.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
-#include "objanime.hpp"
 #include "rect.hpp"
-#include "savedata.hpp"
 #include "scriptinterpreter.hpp"
-#include "snd.hpp"
 #include "texture.hpp"
 #include "water.hpp"
+
+#include <cmath>
+
+#include "battlemenu.hpp"
+#include "clsmes.hpp"
+#include "dispctrl.hpp"
+#include "ebattle.hpp"
+#include "edit.hpp"
+#include "effectgroup.hpp"
+#include "effectmacro.hpp"
+#include "gamemode.hpp"
+#include "gamepad.hpp"
+#include "menu_misc.hpp"
+#include "objanime.hpp"
+#include "savedata.hpp"
+#include "snd.hpp"
+#include "sysmes.hpp"
 
 /* The arenas the interior carves the read buffer into. */
 extern CDataAlloc2<1> EdWorkBuffer;
@@ -83,107 +87,127 @@ extern CNPCharacter EdVillager[10];
 extern int setTexAnimCnt;
 extern float setTexAnimCntf;
 
-/* Map jump the player arrives through when entering an interior, and the part that holds it. */
+/* Map jump the player arrives through when entering an interior. */
 extern int EdInteriorJumpID;
-extern int EdInteriorPartsNo;
 
-/* How far the interior camera stands from the player, as an index into its distances. */
-extern int camera_dist_mode;
-/* The interior's texture animations and the table they are read into. */
-extern CTextureAnime TexAnime;
-extern CTexAnimeData TexAnimeData[64];
-
-/* Interior state the editor units share. */
-extern int EdInteriorDoorSound;
-extern int EdInteriorStartEvent;
-extern int EdDebugCameraFlag;
-extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
-extern int EdDrawOffFlag;
-extern int EdDrawOffMapShadow;
-extern int EdPauseFlag;
-extern CEffectGroup EdEffectGroup;
-
-/* What the interior is doing this frame: walking about, or leaving through a door. */
-extern int GameMode;
-/* The time one frame advances everything by. */
-extern float NowTime;
-/* The camera that follows the player, and the one the player looks through. */
-extern CCameraFollow MainCamera;
-extern CCameraFollow ViewCamera;
-/* Frames left before a door the player walked into opens. */
-extern int door_open_cnt;
-/* Where the player stands and faces while a door plays its motion. */
-extern sceVu0FVECTOR fix_chara_pos;
-extern sceVu0FVECTOR fix_chara_rot;
-/* Whether the debug camera stays put instead of following the player. */
-extern int fix_camera;
-/* The camera the interior draws through this frame. */
-extern CCamera *NowCamera;
-/* Frames the interior has run, and frames a held key has been held. */
-extern int loop_counter;
-extern int key_counter;
-/* Whether the interior is leaving for the menu, and whether it is coming back from it. */
-extern int goto_menu;
-extern int goto_return_menu;
-/* Whether a simple event, one the player only reads, is running. */
-extern int simple_event;
-/* Characters that stand in for the interior's moving parts. */
-extern CCharacter MotionParts[4];
-/* Number of camera markers the interior defines. */
-extern int camera_num;
-/* Name of the interior, whether events may start in it, and the map jump the menu was left for. */
-extern char EdInteriorName[];
-extern int EdDebugEventEnable;
-extern int MenuMapJumpMode;
-
-/**
- * Where the camera sits for one camera marker of the interior, and the box the player must stand in.
- */
+/* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
     u8 unk_000[0x60];
-    CFrame frame;      /**< Places the camera at the marker's position in the world. */
-    sceVu0FVECTOR max; /**< Far corner of the box, in the marker's space. */
-    sceVu0FVECTOR min; /**< Near corner of the box, in the marker's space. */
-    int link_id;       /**< Link number of the marker; 0 for the camera used outside every box. */
+    CFrame frame;
+    sceVu0FVECTOR max;
+    sceVu0FVECTOR min;
+    int link_id;
     u8 unk_2e4[0xC];
 };
 
-/* The camera marker the interior camera is placed from, and how many more frames the player must
-   stand in another marker's box before the camera switches to it. */
-extern INTERIOR_CAMERA *active_camera;
-extern int camera_change_count;
+extern int EdInteriorDoorSound;
+extern int EdInteriorStartEvent;
+extern int EdInteriorPartsNo;
+extern char EdInteriorName[];
+extern int EdDebugCameraFlag;
+extern int EdDebugEventEnable;
+extern int EdDrawOffFlag;
+extern int EdDrawOffMapShadow;
+extern int EdPauseFlag;
+extern int MenuMapJumpMode;
+extern CEffectGroup EdEffectGroup;
+extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
-/* Routines defined later in this unit, and the editor routines of other units that the interior calls. */
+
+static void LoadScript();
 static void LoadInfo(char *script, int size);
-static void setTexAnim();
-void DrawWaterSurface(CCamera *camera);
-void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
-                     ED_EVENT_INFO *event);
-void EdEventBackSpriteDraw();
-void EdDrawItem();
-void EdEventSpriteDraw();
-static int LoadTexture();
-static void LoadChara();
-void LoadData();
-void EdDoorCloseSe(int door_no, float *position);
-static void MoveCamera(CCameraFollow *camera);
-static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
-int GetInteriorOutFlag();
-int LoadPTS(CMapParts *parts, u_int *archive);
-int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
+void EdDoorCloseSe(int door_sound, float *position);
 void EdDoorOpenSe(int door_sound, float *position);
 void EdSetCharaCursor(int on);
 void EdEventNPCStep();
 float EdAGetViewAngleH();
 float EdAGetViewAngleV();
 void EdASetViewAngle(float h, float v);
+void EdEyeCamera(CCamera *camera, CCharacter *chara);
 void EdViewModeOff();
 void EdInitMesParam();
+void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
+                     ED_EVENT_INFO *event);
+void EdEventBackSpriteDraw();
+void EdDrawItem();
+void EdEventSpriteDraw();
+static void setTexAnim();
+static void RunEvent(int event_no, CCamera *camera);
+static void RunSystemEvent(int event_no, CCamera *camera);
+static void InitWorkBuffer();
 static void StepWater();
 static void MainDraw();
 static void MoveCharacter();
+static void MoveCamera(CCameraFollow *camera);
+static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
 static void VillagerCollision();
+static int LoadTexture();
+static void LoadChara();
+void LoadData();
+
+int LoadPTS(CMapParts *parts, u_int *archive);
+/**
+ * Views one function point as the words it is copied in.
+ */
+struct EPARTS_FUNC_WORDS {
+    u_int words[sizeof(EPARTS_FUNC_DATA) / sizeof(u_int)]; /**< The record, one word at a time. */
+};
+
+int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
+void DrawWaterSurface(CCamera *camera);
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
+
+/* Word-aligned image of one function marker as stored in a part resource. */
+struct EPARTS_FUNC_RECORD {
+    int words[0x30];
+};
+/** Whether the camera stays at the interior's fixed camera markers. */
+static int fix_camera = 1;
+
+/** Which of the three follow distances the camera is at. */
+static int camera_dist_mode = 1;
+
+#if defined(NON_MATCHING)
+static int GameMode;
+static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
+static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
+static float NowTime;
+static CCamera *NowCamera;
+static int loop_counter;
+static int key_counter;
+static int goto_menu;
+static int goto_return_menu;
+static int door_open_cnt;
+static sceVu0FVECTOR fix_chara_pos;
+static sceVu0FVECTOR fix_chara_rot;
+static int camera_num;
+static INTERIOR_CAMERA *active_camera;
+static int camera_change_count;
+static int simple_event;
+static CCharacter MotionParts[4];
+static CTextureAnime TexAnime;
+static CTexAnimeData TexAnimeData[64];
+#else
+extern int GameMode;
+extern CCameraFollow MainCamera;
+extern CCameraFollow ViewCamera;
+extern float NowTime;
+extern CCamera *NowCamera;
+extern int loop_counter;
+extern int key_counter;
+extern int goto_menu;
+extern int goto_return_menu;
+extern int door_open_cnt;
+extern sceVu0FVECTOR fix_chara_pos;
+extern sceVu0FVECTOR fix_chara_rot;
+extern int camera_num;
+extern INTERIOR_CAMERA *active_camera;
+extern int camera_change_count;
+extern int simple_event;
+extern CCharacter MotionParts[4];
+extern CTextureAnime TexAnime;
+extern CTexAnimeData TexAnimeData[64];
+#endif
 
 /**
  * Identifies the kind of editor effect requested.
@@ -421,7 +445,8 @@ static void InitWorkBuffer() {
  * @size 0x478
  */
 int EditInInit(float time, char *name) {
-    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, 255.0f, 255.0f);
+    float density = 255.0f;
+    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, density, density);
     memset(EdInInfo, 0, sizeof(EDIT_IN_INFO));
     EdInInfo->projection = 800.0f;
     strcpy(EdInInfo->name, name);
@@ -439,19 +464,20 @@ int EditInInit(float time, char *name) {
     BG_READ_INFO *info = GetReadBGFile(1);
     if (info != NULL) {
         char *text = (char *) EdNPCBuffer.Alloc((info->size >> 4) + 1);
-        memcpy(text, info->buffer, info->size);
+        memcpy(text, info->buffer, (int) info->size);
         LoadInfo(text, info->size);
     }
     LoadData();
-    int used = EdNPCBuffer.used;
-    u_char *start = EdNPCBuffer.base + used * 16;
-    int remaining = EdNPCBuffer.limit - used;
-    EdVillagerBuffer.base = start;
+    int remaining;
+    u_char *base = EdNPCBuffer.base + EdNPCBuffer.used * 16;
+    remaining = EdNPCBuffer.limit - EdNPCBuffer.used;
+    EdVillagerBuffer.base = base;
     EdVillagerBuffer.limit = remaining;
     EdVillagerBuffer.used = 0;
     printf("buffer %d\n", remaining);
     LoadChara();
-    MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
+    int far_z = 0xFFFF;
+    MGSetRenderInfo(EdInInfo->projection, 5.0f, far_z);
     MGSetPLight(EdInInfo->light_direction, EdInInfo->light_colour);
     MGSetAmbient(EdInInfo->ambient);
     MGSetBGColor(EdInInfo->background_colour);
@@ -460,12 +486,14 @@ int EditInInit(float time, char *name) {
     if (Chara != NULL) {
         Chara->SetPosition(0.0f, 0.0f, 0.0f);
     }
-    EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
+    float zero1 = 0.0f;
+    EdFadeIn(0x40, zero1, zero1, zero1);
     door_open_cnt = 0;
     GameMode = 0;
     Chara->unk_C98 = 0;
     Chara->SetPosition(0.0f, 0.0f, 0.0f);
-    Chara->SetRotation(0.0f, 0.0f, 0.0f);
+    float zero3 = 0.0f;
+    Chara->SetRotation(zero3, zero3, zero3);
     GetMapJumpPos(Chara);
     Chara->ClothStep(-1);
     if (EdInteriorDoorSound >= 0) {
@@ -1092,8 +1120,9 @@ static void MoveCharacter() {
         Chara->GetPosition(position);
         Chara->GetRotation(rotation);
         EPARTS_FUNC_DATA *jump;
-        if ((jump = SearchMapJump(position, rotation)) != NULL) {
+        if (jump = SearchMapJump(position, rotation)) {
             int motion;
+
             EdMoveCharaInit();
             motion = 0;
             door_open_cnt = 140;
@@ -1108,8 +1137,7 @@ static void MoveCharacter() {
             Chara->Step();
             Chara->ClothStep(-1);
             GameMode = 1;
-            float zero = 0.0f;
-            EdFadeOut(100, zero, zero, zero);
+            EdFadeOut(100, 0.0f, 0.0f, 0.0f);
         }
     }
 }
@@ -1409,36 +1437,37 @@ static int LoadTexture() {
         return 0;
     }
     char *ext = file->name;
-    while (*ext) {
-        if (*ext == '.') {
+    char c;
+    while ((c = *ext) != '\0') {
+        if (c == '.') {
             ext++;
             break;
         }
         ext++;
     }
-    u_int *cfg = NULL;
-    int cfg_size;
+    u_int *data = NULL;
+    int size;
     TexAnime.Initialize(NULL, 0);
     if (strcmp(ext, "img") == 0) {
         texdata[0].name = (char *) file->buffer;
     } else {
         u_int *found;
-        int found_size;
+        int cfg_size;
         if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
             texdata[0].name = (char *) found;
         }
-        if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &found_size, NULL) > 0) {
+        if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
             TexAnime.Initialize(TexAnimeData, 64);
-            cfg = found;
-            cfg_size = found_size;
+            data = found;
+            size = cfg_size;
             for (int i = 0; i < 64; i++) {
                 TexAnimeData[i].Initialize();
             }
         }
     }
     TexManager.LoadTextureBlockEX(15, texdata);
-    if (cfg != NULL) {
-        TexAnime.LoadCFGFile((char *) cfg, cfg_size);
+    if (data != NULL) {
+        TexAnime.LoadCFGFile((char *) data, size);
     }
     EdNPCBuffer.Alloc((file->size >> 4) + 1);
     return 0;
@@ -1644,14 +1673,6 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     parts->SetRotation(header->rotation[0], header->rotation[1], header->rotation[2]);
     return 0;
 }
-
-/**
- * Views one function point as the words it is copied in.
- */
-struct EPARTS_FUNC_WORDS {
-    u_int words[sizeof(EPARTS_FUNC_DATA) / sizeof(u_int)]; /**< The record, one word at a time. */
-};
-
 /**
  * Collects the function points one interior part defines.
  *
@@ -1664,13 +1685,11 @@ int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     int i;
     EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
 
-    i = 0;
-    while (i < header->func_count) {
-        *(EPARTS_FUNC_WORDS *) points = *(EPARTS_FUNC_WORDS *) source;
+    for (i = 0; i < header->func_count; points++) {
+        *(EPARTS_FUNC_RECORD *) points = *(EPARTS_FUNC_RECORD *) source;
         source++;
         points->parts = (CMapParts *) parts_no;
         i++;
-        points++;
     }
     return header->func_count;
 }
@@ -2032,20 +2051,19 @@ static void CommandWATER_SURFACE(void **arguments) {
  */
 static void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
+
     if (info != NULL) {
-        int index = 0;
+        int i = 0;
         while (1) {
-            u_int offset = index * sizeof(sceVu0FVECTOR);
-            offset += (u_int) info;
-            EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) offset;
-            if (wave->active == 0.0f && wave->z == 0.0f) {
+            if (info->wave[i].active == 0.0f && info->wave[i].z == 0.0f) {
+                EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) &((EDIT_WATER_WAVE_INFO *) info)[i];
                 wave->x = (float) *(int *) arguments[0];
                 wave->y = (float) *(int *) arguments[1];
                 wave->z = *(float *) arguments[3];
                 wave->active = *(float *) arguments[2];
                 break;
             }
-            index++;
+            i++;
         }
     }
 }

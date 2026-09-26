@@ -1378,21 +1378,22 @@ void InitChargeShop(int *state, int shop_no, int mode) {
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }
 
-#ifdef NON_MATCHING
 void ChargeShopLimmitCheck() {
     int max = ChargeShopMax[ShopMenu.board.page];
+    int top = ShopMenu.stock_top_row;
     int rows = max / 5;
     int last_top = rows - 4;
 
     if (last_top < 0) {
         last_top = 0;
     }
-    if (max - 1 < ShopMenu.board.cursor && ShopMenu.side == 0) {
+    int cursor = ShopMenu.board.cursor;
+    if (max - 1 < cursor && ShopMenu.side == 0) {
         while (ShopMenu.board.cursor >= max) {
             ShopMenu.board.cursor -= 5;
         }
         ShopMenu.stock_top_row = ShopMenu.board.cursor / 5 - 3;
-        if ((s8) ShopMenu.stock_top_row < 0) {
+        if (ShopMenu.stock_top_row < 0) {
             ShopMenu.stock_top_row = 0;
         }
         ShopMenu.stock_y = 0x8A - ShopMenu.stock_top_row * 0x28;
@@ -1402,7 +1403,7 @@ void ChargeShopLimmitCheck() {
         ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
         return;
     }
-    if (last_top < ShopMenu.stock_top_row) {
+    if (last_top < top) {
         while (last_top < ShopMenu.stock_top_row) {
             ShopMenu.stock_top_row--;
         }
@@ -1410,9 +1411,6 @@ void ChargeShopLimmitCheck() {
         ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);
-#endif
 
 static void ExitChargeShop() {
     ShopMenuExit();
@@ -1635,8 +1633,8 @@ int ChargeShopKey() {
                                     ComMenuSePlay(2);
                                 } else {
                                     if (IsEnableTrushThrow(held) != 0) {
-                                        board->trash.anim = 1;
-                                        board->trash.frame = 0;
+                                        board->trash_anim = 1;
+                                        board->trash_frame = 0;
                                         InitAllHaveData();
                                     }
                                     ComMenuSePlay(2);
@@ -2364,36 +2362,41 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
     return total;
 }
 
-#ifdef NON_MATCHING
-int BuyMoneyCheck2() {
-    int max[3] = {100, 60, 40};
+/**
+ * Totals the prices of goods currently marked for purchase.
+ *
+ * @mangled BuyMoneyCheck2__Fv
+ * @address 0x1EB3A0
+ * @size 0x1A0
+ */
+static int BuyMoneyCheck2() {
     int total = 0;
+    int max[3] = {100, 60, 40};
+    int i;
     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
 
-    for (int i = 0; i < 100; i++) {
+    for (i = 0; i < 100; i++) {
         if (ItemBoardInfo[i] == 1) {
             total += CalItemMoney(pack->item[i], 0);
         }
     }
     for (int chara = 0; chara < 6; chara++) {
-        for (int i = 0; i < 10; i++) {
+        for (i = 0; i < 10; i++) {
             if (WeaponBoardInfo[chara][i] == 1) {
-                WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[chara][i];
-                total += CalItemMoney(weapon->item_no, 0) + WeaponCalMoney(weapon, 0);
+                WEAPON_HAVE *weapon = &((WEAPON_HAVE *) ((CUserStatus *) ShopUserStatusPt)->chara_weapons[chara])[i];
+                total += CalItemMoney(weapon->item_no, 0);
+                total += WeaponCalMoney(weapon, 0);
             }
         }
     }
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
-    for (int i = 0; i < 40; i++, attach++) {
+    for (i = 0; i < 40; i++, attach++) {
         if (AttachBoardInfo[i] == 1) {
             total += CalItemMoney(attach->id, 0);
         }
     }
     return total;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", BuyMoneyCheck2__Fv);
-#endif
 
 /**
  * Totals what the goods currently marked for sale fetch.
@@ -2757,8 +2760,7 @@ int ItemShopLoop2() {
     return done;
 }
 
-#ifdef NON_MATCHING
-void CheckSideKey2() {
+int CheckSideKey2() {
     int se;
 
     if (GamePad.Down(0x9000) != 0) {
@@ -2777,13 +2779,16 @@ void CheckSideKey2() {
                 SetItemShopTalkMode(23, 1);
             }
             if ((flags & 2) || (flags & 4)) {
+                int balance;
+                int buy;
                 int money = ShopUserStatusPt->money;
-                int buy = BuyMoneyCheck2();
-                int balance = money + (SellMoneyCheck2() - buy);
+                buy = BuyMoneyCheck2();
+                int sell = SellMoneyCheck2();
+                balance = money + (sell - buy);
                 if (balance < 0) {
                     SetItemShopTalkMode(21, 1);
                     se = 2;
-                } else if (balance >= 0x10000) {
+                } else if (balance > 0xFFFF) {
                     SetItemShopTalkMode(22, 1);
                     se = 2;
                 } else {
@@ -2801,10 +2806,8 @@ void CheckSideKey2() {
         ShopMenu.side = 1;
         ShopMenu.board.cursor = (ShopMenu.board.top_row + 3) * 5;
     }
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", CheckSideKey2__Fv);
-#endif
 
 /**
  * Draws the item shop's board with its goods and their prices.
@@ -2860,13 +2863,12 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
 
 #ifdef NON_MATCHING
 void DrawMoneyCheckBoard2(int x, int y, int alpha) {
-    int u;
-    int v;
-
     DrawMenu2DSprite(ShopBoard, CRect_i_(x, y + 1, 0x60, 0x1B), CRect_i_(0xD0, 0xC0, 0x60, 0x1C), alpha);
     int buy = BuyMoneyCheck2();
     int balance = SellMoneyCheck2() - buy;
     RECT digits = {0, 0xDC, 0xC, 0xC};
+    int u;
+    int v;
     if (balance < 0) {
         digits.y += 0xC;
         u = 0x84;
@@ -2877,10 +2879,11 @@ void DrawMoneyCheckBoard2(int x, int y, int alpha) {
         u = 0x78;
         v = 0xF4;
     }
+    int number_x = x + 0x54;
     int number_y = y + 7;
-    int left = DrawMenuNumber(abs(balance), x + 0x54, number_y, ShopBoard, digits, 1, alpha);
+    number_x = DrawMenuNumber(abs(balance), number_x, number_y, ShopBoard, digits, 1, alpha);
     if (balance != 0) {
-        DrawMenu2DSprite(ShopBoard, CRect_i_(left - 0xC, number_y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
+        DrawMenu2DSprite(ShopBoard, CRect_i_(number_x - 0xC, number_y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
     }
 }
 #else
@@ -3028,51 +3031,53 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
     }
 }
 
-#ifdef NON_MATCHING
 void DrawSellTicket22(int x, int y, int top, int bottom, int alpha) {
+    int page = ShopMenu.board.page;
     int max[3] = {100, 60, 40};
+    int i;
+    int j;
+    int item_no;
     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+    WEAPON_HAVE *weapons;
 
-    switch (ShopMenu.board.page) {
+    switch (page) {
         case 0:
-            for (int i = 0; i < 100; i++) {
+            for (i = 0; i < 100; i++) {
                 if (ItemBoardInfo[i] == 1) {
-                    int item_no = pack->item[i];
+                    item_no = pack->item[i];
                     if (item_no >= 0x84) {
                         DrawLocalTicket(x, y, top, bottom, i, item_no, alpha);
                     }
                 }
             }
-            return;
+            break;
         case 1:
-            for (int chara = 0; chara < 6; chara++) {
-                WEAPON_HAVE *weapons = ShopUserStatusPt->chara_weapons[chara];
-                for (int i = 0; i < 10; i++) {
-                    if (WeaponBoardInfo[chara][i] == 1) {
-                        int item_no = weapons[i].item_no;
+            for (i = 0; i < 6; i++) {
+                weapons = (WEAPON_HAVE *) ((char *) ShopUserStatusPt + i * sizeof(ShopUserStatusPt->chara_weapons[0]) +
+                                           0x450C);
+                for (j = 0; j < 10; j++) {
+                    if (WeaponBoardInfo[i][j] == 1) {
+                        item_no = weapons[j].item_no;
                         if (item_no >= 0x101) {
-                            DrawLocalTicket(x, y, top, bottom, i + chara * 10, item_no, 0x80);
+                            DrawLocalTicket(x, y, top, bottom, j + i * 10, item_no, 0x80);
                         }
                     }
                 }
             }
-            return;
+            break;
         case 2:
-            for (int i = 0; i < 40; i++) {
+            for (i = 0; i < 40; i++) {
                 if (AttachBoardInfo[i] == 1) {
-                    int item_no = attach[i].id;
+                    item_no = attach[i].id;
                     if (item_no >= 0x51) {
                         DrawLocalTicket(x, y, top, bottom, i, item_no, 0x80);
                     }
                 }
             }
-            return;
+            break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", DrawSellTicket22__Fiiiii);
-#endif
 #ifdef NON_MATCHING
 void ShopCancelGoodReturn2() {
     int count = -1;
@@ -3362,24 +3367,28 @@ static void SetShopTalkMsgPos() {
     CommonMenuMes3.AutoSet(msg_pos);
 }
 
-#ifdef NON_MATCHING
+INCLUDE_RODATA("asm/nonmatchings/shop", @819);
+INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
+INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);
+INCLUDE_RODATA("asm/nonmatchings/shop", @1180);
+INCLUDE_RODATA("asm/nonmatchings/shop", @1181);
+
 void ItemShopGetPacFileName(int kind, int shop_no, char *name) {
     char *names[2][18] = {
         {"p13", "p31", "p39", "p54", "p74", "c03", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
         {"p02", "p32", "p35", "p36", "p36", "p36", "p36", "p37", "p49", "p55", "p75", "c03", "p41", "p02", "p32", "p38",
          "c03", "c03"}};
     char file[32];
-    char path[64] = "commenu/shopchara/";
 
     strcpy(file, names[kind][shop_no]);
     strcat(file, "a.pac");
-    strcat(path, file);
-    strcpy(name, path);
+    {
+        char path[64] = "commenu/shopchara/";
+
+        strcat(path, file);
+        strcpy(name, path);
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetPacFileName__FiiPc);
-#endif
-#ifdef NON_MATCHING
 void ItemShopGetImgFileName(int kind, int shop_no, char *name) {
     char *names[2][18] = {
         {"p13a", "p31a", "p39a", "p54a", "p74a", "c03c", "", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -3390,9 +3399,6 @@ void ItemShopGetImgFileName(int kind, int shop_no, char *name) {
     strcpy(name, names[kind][shop_no]);
     strcat(name, "01.img");
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopGetImgFileName__FiiPc);
-#endif
 
 void ItemShopMemoryAlloc() {
     ShopBoardInfo = (s32 *) ShopCashBuffer.Alloc(0x78);
@@ -3752,46 +3758,6 @@ void ItemShopSelectKey2() {
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @819);
-INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
-INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @1180);
-INCLUDE_RODATA("asm/nonmatchings/shop", @1181);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2107);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2108);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2109);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2110);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2111);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2112);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2113);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2114);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2115);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2116);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2117);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2118);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2119);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2120__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2121__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2122__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2126);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2127__2);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2128);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2129);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2130);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2131);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2132);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2133);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2134);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2135);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2136);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2137);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2138);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2139);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2140);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2141);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2142);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2143);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2146);
 #ifdef NON_MATCHING
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     u8 taken[0xF8];
@@ -4098,8 +4064,8 @@ int ItemShopKey2() {
                                 ComMenuSePlay(2);
                                 s16 held = ShopHaveItemPt->item_no;
                                 if (held >= 0x51 && held_info != 1 && IsEnableTrushThrow(held) != 0) {
-                                    board->trash.anim = 1;
-                                    board->trash.frame = 0;
+                                    board->trash_anim = 1;
+                                    board->trash_frame = 0;
                                     ShopHaveItemPt->item_no = 0;
                                 }
                                 break;
@@ -4643,7 +4609,6 @@ static int AlreadyGetMardanWeapon() {
     return flag;
 }
 
-#ifdef NON_MATCHING
 void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     FishMenu.buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
     FishMenu.buffer = MenuCalcBufAlignment(FishMenu.buffer);
@@ -4664,17 +4629,13 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
         SaveData->SetFishingPoint(0);
         FishMenu.point = SaveData->GetFishingPoint();
     }
-    if (FishMenu.point >= 10000) {
+    if (FishMenu.point > 9999) {
         FishMenu.point = 9999;
     }
     StayTex = TexManager.GetTexture("stayframe", -1);
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", InitFishingExchange__FP1Pii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @2943);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
 #ifdef NON_MATCHING
 int FishMenuTextureLoad() {
@@ -5211,6 +5172,10 @@ void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
+/** The fishing screens' frame-buffer backdrop and message pack, shared with FishMenuTextureLoad. */
+extern char FishFrameImage[];
+extern char FishMessageFile[];
+
 /**
  * Leaves the fishing record view and releases its texture block.
  *
@@ -5225,26 +5190,30 @@ static void ExitFishRecord() {
     GamePad.MenuModeOff();
 }
 
-#ifdef NON_MATCHING
 void FishRecordTextureEnter() {
     if (ReadBGSync() != 0) {
         return;
     }
     BG_READ_INFO *file = GetReadBGFile(0);
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = FishRecordMenu.tex_block;
-    texture.name = (char *) GetPackFile((u_int *) file->buffer, "fishrec.img", NULL);
+    LOADTEXTURE_INFO2 texture[3] = {
+        {FishFrameImage, 0, 0},
+        {NULL, 0, 0},
+        {NULL, 0, 0},
+    };
+    texture[0].block_no = FishRecordMenu.tex_block;
+    texture[1].block_no = FishRecordMenu.tex_block;
+    texture[1].name = (char *) GetPackFile((u_int *) file->buffer, "fishrec.img", NULL);
     TexManager.DeleteTextureBlock(FishRecordMenu.tex_block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, texture);
     FishMenuTex = TexManager.GetTexture("fprecbrd", -1);
-    InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "fishmes.bin", NULL));
+    InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
     CommonMenuMes2.mes_made = -1;
     AtoraNameMes.mes_made = -1;
     for (int i = 0; i < 5; i++) {
         SV_FISH_DATA *rank = GetFishingRankData(FishRecordMenu.top + i);
         if (rank != NULL) {
-            AtoraNameMes.mes_no[i] = GetFishMsgNo(*(s16 *) rank);
+            AtoraNameMes.mes_no[i] = GetFishMsgNo(*(int *) rank);
         } else {
             AtoraNameMes.mes_no[i] = 0;
         }
@@ -5253,11 +5222,6 @@ void FishRecordTextureEnter() {
     FishRecordMenu.cursor_y = 0x7E;
     FishRecordMenu.ready = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", FishRecordTextureEnter__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @3274);
-INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
 
 /**
  * Handles one frame of fishing record input and returns the mode it leaves the view in.

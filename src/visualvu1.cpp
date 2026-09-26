@@ -149,6 +149,49 @@ int CVisualVu1::RemakeData(unsigned int *data) {
 }
 
 /**
+ * One over the length of the first three components of a vector, from the vector unit.
+ */
+static inline float InverseLength(float *vector) {
+    register float *p0 = vector;
+    register int root;
+    register float length = 0.0f;
+
+    asm {
+        lqc2       vf4, 0(p0)
+        vmul.xyz   vf4, vf4, vf4
+        vnop
+        vnop
+        vnop
+        vmr32.xy   vf5, vf4
+        vnop
+        vnop
+        vnop
+        vmr32.x    vf6, vf5
+        vnop
+        vnop
+        vnop
+        vadd.x     vf7, vf4, vf5
+        vnop
+        vnop
+        vnop
+        vadd.x     vf5, vf6, vf7
+        vrsqrt     Q, vf0w, vf5x
+        vwaitq
+        cfc2.ni    root, $vi22
+        mtc1       root, length
+    }
+
+    return length;
+}
+
+/**
+ * Whether a render flag is clear.
+ */
+static inline bool IsOff(int flag) {
+    return !flag;
+}
+
+/**
  * Draws the visual into a VIF packet.
  *
  * @mangled DrawVu1__10CVisualVu1FP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii
@@ -157,9 +200,8 @@ int CVisualVu1::RemakeData(unsigned int *data) {
  */
 int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
-    int size;
-
     sceVif1PkTerminate(packet);
+    int size;
     sceVif1PkReserve(packet, size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info,
                                                         program, draw_state, unknown1, unknown2));
     return size;
@@ -321,50 +363,6 @@ void CVisualMDTVu1::Initialize(void) {
 CVisualMDTVu1::CVisualMDTVu1(void) {
     CVisualMDTVu1::Initialize();
 }
-
-/**
- * One over the length of the first three components of a vector, from the vector unit.
- */
-static inline float InverseLength(float *vector) {
-    register float *p0 = vector;
-    register int root;
-    register float length = 0.0f;
-
-    asm {
-        lqc2       vf4, 0(p0)
-        vmul.xyz   vf4, vf4, vf4
-        vnop
-        vnop
-        vnop
-        vmr32.xy   vf5, vf4
-        vnop
-        vnop
-        vnop
-        vmr32.x    vf6, vf5
-        vnop
-        vnop
-        vnop
-        vadd.x     vf7, vf4, vf5
-        vnop
-        vnop
-        vnop
-        vadd.x     vf5, vf6, vf7
-        vrsqrt     Q, vf0w, vf5x
-        vwaitq
-        cfc2.ni    root, $vi22
-        mtc1       root, length
-    }
-
-    return length;
-}
-
-/**
- * Whether a render flag is clear.
- */
-static inline bool IsOff(int flag) {
-    return !flag;
-}
-
 /**
  * Draws the visual into a packet through the vector unit.
  *
@@ -597,9 +595,8 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     *packet++ = 0;
     return packet - start;
 }
-
 /**
- * Writes one strip's vector-unit upload and gives back its length in quadwords.
+ * Writes one vector-unit upload header and gives back its length in words.
  *
  * @mangled SetVuData__FiP1PUiP1P1P1P1i
  * @address 0x135970
@@ -608,28 +605,28 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
 static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *vertex,
                      u_long128 *normal, u_long128 *uv, u_long128 *colour, int prim) {
     u_int *header = (u_int *) block;
+    u_int *cursor = (u_int *) block;
     u_long128 *vertex_out;
     u_long128 *normal_out;
     u_long128 *uv_out;
     u_long128 *colour_out;
-    int size;
 
     header[0] = count | 0x8000;
     if (prim != 4) {
-        header[1] = 0x302DC000;
-        header += 2;
+        cursor[1] = 0x302DC000;
+        cursor += 2;
     } else {
-        header[1] = 0x302E4000;
-        header += 2;
+        cursor[1] = 0x302E4000;
+        cursor += 2;
     }
-    header[0] = 0x412;
-    header[1] = 0;
-    header[2] = count;
-    header[3] = prim;
+    cursor[0] = 0x412;
+    cursor[1] = 0;
+    cursor[2] = count;
+    cursor[3] = prim;
     if (colour != NULL) {
-        header[4] = 0x100;
+        cursor[4] = 0x100;
     } else {
-        header[4] = 0;
+        cursor[4] = 0;
     }
     vertex_out = &block[2];
     normal_out = &vertex_out[count];
@@ -645,13 +642,12 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
             index++;
         }
     }
-    size = count * 3 + 2;
+    int size = count * 3 + 2;
     if (colour != NULL) {
         size = count * 4 + 2;
     }
     return size;
 }
-
 /**
  * Builds a model's VU data block and returns its size in quadwords.
  *
@@ -773,79 +769,55 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
     vu_size = word >> 2;
     return vu_size;
 }
-
-/**
- * Rebuilds a VU data block from retained model data and returns its size in quadwords.
- *
- * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
- * @address 0x135E50
- * @size 0x288
- */
 int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0) {
-    int quads;
     int strip;
-    int word;
-    int stride;
-    u_long128 *colour;
-    u_int *index;
-    int remaining;
-    MDT_HEADER *header;
-    u_int *mesh;
-    u_long128 *vertex;
-    MDT_MATERIAL *materials;
-    MDT_MATERIAL *info;
-    int strips;
-    int prim;
-    int material;
-    int count;
-    int limit;
-    u_long128 *colour_out;
-    int size;
-    int i;
-    u_long128 *out;
-    u_int *source;
+    MDT_HEADER *header = (MDT_HEADER *) data;
+    int word = 0;
+    int quads = 0;
 
-    header = (MDT_HEADER *) data;
-    word = 0;
-    quads = 0;
     vu_data = block;
-    mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
-    vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
-    colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
+    u_int *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
+    int stride;
+    u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
+    u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
     }
-    materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
-    index = mesh + 4;
-    strips = mesh[2];
+    MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
+    u_int *index = mesh + 4;
+    int strips = mesh[2];
     for (strip = 0; strip < strips; strip++) {
-        remaining = index[1];
-        prim = index[0];
-        material = index[2];
-        info = &materials[material];
+        int remaining = index[1];
+        int prim = index[0];
+        int material = index[2];
+        MDT_MATERIAL *info = &materials[material];
         index += 3;
         if (material != -1) {
             word += 16;
             word += SetMaterial(&block[word], info);
         }
-        limit = 0x36;
+        int count;
+        int limit = 0x36;
         if (colour != NULL) {
             limit = 0x21;
         }
-        size = 0;
+        count = 0;
         while (remaining > 0) {
             count = limit;
             if (remaining < limit) {
                 count = remaining;
             }
             word += 4;
-            source = index;
+            int i;
+            u_long128 *out;
+            u_int *source = index;
             index += count * stride;
             out = (u_long128 *) &block[word] + 2;
-            colour_out = out + count * 3;
+            u_long128 *colour_out = out + count * 3;
+            int size;
             if (colour == NULL) {
                 for (i = count; i > 0; i--) {
                     *out++ = vertex[source[0]];

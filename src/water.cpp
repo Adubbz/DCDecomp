@@ -109,28 +109,28 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
-#ifdef NON_MATCHING
-extern "C" void DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
+extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
     if (water->CheckClip() != 0) {
-        return;
+        return 0;
     }
 
-    sceGsTest test = mgPixelTest;
-    test.bits.ate = 0;
-    test.bits.date = 0;
     sceVif1PkCnt(draw_packet, 0);
     sceVif1PkOpenDirectCode(draw_packet, 0);
     sceVif1PkOpenGifTag(draw_packet, *(u_long128 *) &GiftagAD);
+    sceGsTest test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.date = 0;
     sceVif1PkAddGsAD(draw_packet, SCE_GS_TEST_1, *(u_long *) &test);
     sceVif1PkCloseGifTag(draw_packet);
     sceVif1PkCloseDirectCode(draw_packet);
 
     sceVu0FMATRIX local_to_world;
     water->frame.GetLWMatrix(local_to_world);
-    water->CreateVUData(water->packet[DBuffID == 0], &mgRenderInfo);
+    u_int *vu_packet = water->packet[!DBuffID + 1];
+    water->CreateVUData(vu_packet, &mgRenderInfo);
     info->unk_324 = 0;
-    water->visual.DrawVu1(draw_packet, local_to_world, info, (VU1_PROGRAM) 15, NULL, 0, 0);
+    int size = water->visual.DrawVu1(draw_packet, local_to_world, info, (VU1_PROGRAM) 15, NULL, 0, 0);
 
     sceVif1PkCnt(draw_packet, 0);
     sceVif1PkOpenDirectCode(draw_packet, 0);
@@ -138,61 +138,51 @@ extern "C" void DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     sceVif1PkAddGsAD(draw_packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkCloseGifTag(draw_packet);
     sceVif1PkCloseDirectCode(draw_packet);
+    return size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
-#endif
-#ifdef NON_MATCHING
 int CWater::CheckClip(void) {
-    sceVu0FVECTOR corner0;
-    sceVu0FVECTOR corner1;
-    sceVu0FVECTOR corner2;
-    sceVu0FVECTOR corner3;
-    sceVu0FVECTOR high;
-    sceVu0FVECTOR low;
+    sceVu0FVECTOR box[2];
+    sceVu0FVECTOR corner[4];
 
-    frame.GetWorldPosition(corner0, vertex[0]);
-    frame.GetWorldPosition(corner1, vertex[1]);
-    frame.GetWorldPosition(corner2, vertex[2]);
-    frame.GetWorldPosition(corner3, vertex[3]);
-    VectorMaxMin(high, low, corner0, corner1, corner2, corner3);
-    return MGClipBox((CBoxVu0 *) low);
+    frame.GetWorldPosition(corner[0], vertex[0]);
+    frame.GetWorldPosition(corner[1], vertex[1]);
+    frame.GetWorldPosition(corner[2], vertex[2]);
+    frame.GetWorldPosition(corner[3], vertex[3]);
+    VectorMaxMin(box[0], box[1], corner[0], corner[1], corner[2], corner[3]);
+    return MGClipBox((CBoxVu0 *) box);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", CheckClip__6CWaterFv);
-#endif
-#ifdef NON_MATCHING
 void CWater::Hamon(void) {
-    float *source = height_a;
+    int i;
+    int j;
+    float *source;
     float *target;
 
     // The two buffers hold this step and the last; the older one is written.
-    if (height == source) {
+    if (height == height_a) {
+        source = height_a;
         target = height_b;
     } else {
-        target = source;
+        target = height_a;
         source = height_b;
     }
     height = target;
 
     float speed = wave_speed * wave_speed;
     float centre = 2.0f * (1.0f - 2.0f * speed);
+    float loss = damping;
 
-    for (int i = 1; i < rows - 1; i++) {
-        for (int j = 1; j < columns - 1; j++) {
+    for (i = 1; i < rows - 1; i++) {
+        for (j = 1; j < columns - 1; j++) {
             float *cell = &source[j + i * columns];
             float *out = &target[j + i * columns];
-            float around = cell[-1] + cell[1];
-
-            around += cell[columns];
-            around = cell[-columns] + around;
-            *out = around * speed + (centre * *cell - *out) - damping * (*cell - *out);
+            float around = *(cell - columns) + (cell[-1] + cell[1] + *(cell + columns));
+            around *= speed;
+            float d = centre * *cell;
+            float o = *out;
+            *out = around + (d - o) - loss * (*cell - o);
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", Hamon__6CWaterFv);
-#endif
 
 void CWater::SetVertex(float *v0, float *v1, float *v2, float *v3) {
     sceVu0CopyVector(vertex[0], v0);
@@ -247,22 +237,18 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     CreateVUData(packet[2], &info);
     unk_0A4 = 1;
 }
-#ifdef NON_MATCHING
 CWater::CWater(void) {
     rows = 0;
     columns = 0;
-    packet[0] = NULL;
-    packet[1] = NULL;
     packet[2] = NULL;
+    packet[1] = NULL;
+    packet[0] = NULL;
     color[0] = 0x80;
     color[1] = 0x80;
     color[2] = 0x80;
     color[3] = 0x80;
-    wave_speed = 0.96f;
-    damping = 0.01f;
+    wave_speed = 0.1f;
+    damping = 0.015f;
     unk_09C = 0.0f;
     unk_0A0 = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", __ct__6CWaterFv);
-#endif

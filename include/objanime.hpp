@@ -89,9 +89,12 @@ struct EDIT_EFFECT_INFO {
     s32 unk_24;
     u8 unk_28[8];
     sceVu0FVECTOR offset; /**< Distance from the frame to the effect; also the first end of a line sound source. */
-    sceVu0FVECTOR unk_40;
+    u8 unk_40[16];
     sceVu0FVECTOR colour; /**< Colour of the light that the effect gives; also the second end of a line sound source, whose fourth component says whether that end is set. */
-    sceVu0FVECTOR values; /**< Marker parameters; a sound source keeps its sound effect, full-volume distance and inaudible distance here. */
+    float sound_no;       /**< Sound effect emitted by this effect. */
+    float near_distance;  /**< Distance at which the sound has full volume. */
+    float far_distance;   /**< Distance beyond which the sound is inaudible. */
+    u8 unk_6C[4];
 };
 
 STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);

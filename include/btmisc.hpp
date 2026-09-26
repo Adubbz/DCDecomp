@@ -58,7 +58,7 @@ void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
 void getFramePos(CFrameVu1 *frame, char *name, float *position);
 
 /**
- * Builds the resource name of one weapon.
+ * Builds the resource name for an absolute weapon item identifier.
  *
  * @mangled makeWeaponName__FPci
  * @address 0x1B6F80

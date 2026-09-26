@@ -260,6 +260,11 @@ extern u_long128 *BtlMenuReadBuf;
 extern s32 MenuExtendReadBlock;
 
 /**
+ * Texture block holding the item menu's weapon icons.
+ */
+extern s32 ItemMenuWeaponIconReadBlock;
+
+/**
  * Language the battle menu's text is drawn in.
  */
 extern s32 BtlMenuNowLang;
@@ -321,7 +326,6 @@ extern CCamera MenuCamera;
 
 static int GetVisitInfo(int place, int menu_mode);
 
-#ifdef NON_MATCHING // draft declarations
 #include <cstdlib>
 
 #include "battle_globals.hpp"
@@ -348,7 +352,6 @@ extern CTexture *AttachIcon;
 extern CTexture *CharaStatus;
 extern CTexture *NonCharaFace;
 extern s32 BtlMDSBuildCnt;
-extern s32 ItemMenuWeaponIconReadBlock;
 extern u_long128 *BtlMenuCharaChangeBuf;
 
 /* Where one party member's weapon model stands on the weapon page. */
@@ -391,7 +394,7 @@ static void MenuCharaPolyDraw();
 static int WorldMapMoveKey();
 static void DrawWorldMap(int alpha);
 extern float mapmovev[4];
-#endif
+extern s16 TrushMoveMax[3];
 
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
@@ -465,7 +468,7 @@ void SetEscapeDngFlag(int flag) {
     EscapeDngFlg = flag;
 }
 
-s16 GetEscapeDngFlag() {
+int GetEscapeDngFlag() {
     return EscapeDngFlg;
 }
 
@@ -656,14 +659,15 @@ int GetLimmitMsg(void) {
     }
     return message;
 }
-#ifdef NON_MATCHING
 void DrawBattleMain() {
     int pos[2];
     int icons[8];
 
     GetMenuIconPos(MenuSelect[1], pos);
-    SysCur[0] += ((float) (pos[0] - 0x2C) - SysCur[0]) / 4.0f;
-    SysCur[1] += ((float) pos[1] - SysCur[1]) / 4.0f;
+    int x = pos[0] - 0x2C;
+    int y = pos[1];
+    SysCur[0] += ((float) x - SysCur[0]) / 4.0f;
+    SysCur[1] += ((float) y - SysCur[1]) / 4.0f;
     GetMenuModeMax();
     BtlMenuMekeIconInfo(icons, BtlMenuMode);
     MENU_ICON_INFO *info = GetMenuIconInfo(icons[MenuSelect[1]]);
@@ -671,7 +675,7 @@ void DrawBattleMain() {
     if (MenuSelect[1] == 4) {
         switch (NowGetGameFlagForBtlMenu(BtlMenuMode)) {
             case 0: {
-                s16 escape[2] = {0x0F, 0x10};
+                s16 escape[3] = {0x1B, 0x1C, 0x0F};
                 mes_no = escape[GetEscapeDngFlag()];
                 break;
             }
@@ -711,14 +715,11 @@ void DrawBattleMain() {
             CommonMenuMes1.DrawMesWin();
         }
     }
-    DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, NorMenuIcon[MenuSelect[1]].y - 8.0f, info->unk_1C + 0x4A, 0x22, 0,
-                 StayTex, 0x80);
-    int cursor_x = (int) SysCur[0];
-    DrawMenuObjectVibe(cursor_x, (int) SysCur[1], 1, 0x40);
+    int width = info->unk_1C + 0x4A;
+    float waku_y = NorMenuIcon[MenuSelect[1]].y - 8.0f;
+    DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, waku_y, width, 0x22, 0, StayTex, 0x80);
+    DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], 1, 0x40);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBattleMain__Fv);
-#endif
 #ifdef NON_MATCHING
 void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     int bar_x = x - 5;
@@ -732,7 +733,8 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     if (max_hp < 1.0f) {
         max_hp = 1.0f;
     }
-    WEAPON_HAVE *weapon = &status->chara_weapons[chara][status->equipped_weapon_slot[chara]];
+    int slot = status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) status + chara * sizeof(status->chara_weapons[0]) + 0x450C) + slot;
     if (weapon == NULL) {
         return;
     }
@@ -779,7 +781,8 @@ void DngComStatus(int x, int y, int chara, int alpha) {
     if (max_hp < 1.0f) {
         max_hp = 32.0f;
     }
-    WEAPON_HAVE *weapon = &status->chara_weapons[chara][status->equipped_weapon_slot[chara]];
+    int slot = status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) status + chara * sizeof(status->chara_weapons[0]) + 0x450C) + slot;
     if (weapon == NULL) {
         return;
     }
@@ -848,44 +851,48 @@ void DngComStatus(int x, int y, int chara, int alpha) {
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DngComStatus__Fiiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @885__2);
-#ifdef NON_MATCHING
+
+/* The status board texture's name. Retail keeps one copy of the string, emitted with DngComStatus. */
+extern char CharaStatusTextureName[];
+
 void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, int) {
     int u;
     int v;
-    int panel_x = (int) (x - 144.0f);
+    int px = (int) (x - 144.0f);
     float top = 1.0f + y;
-    int panel_y = (int) (top - 24.0f);
-    CTexture *texture = TexManager.GetTexture("charastb", -1);
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+    int py = (int) (top - 24.0f);
+    CTexture *texture = TexManager.GetTexture(CharaStatusTextureName, -1);
 
-    DrawMenu2DSprite(texture, CRect_i_(panel_x, panel_y - 1, 0x100, 0x88), CRect_i_(0, 0, 0x100, 0x88), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(px, py - 1, 0x100, 0x88), CRect_i_(0, 0, 0x100, 0x88), alpha);
     RECT digits = {0x40, 0x88, 0xC, 0xE};
-    DrawMenuNumber(status->unk_4348[chara], panel_x + 0x5E, panel_y + 0x72, texture, digits, 1, alpha);
-    DngComStatus((int) (x - 132.0f), (int) (10.0f + y), chara, alpha);
-    int name_x = (int) (x - 110.0f);
-    int name_y = (int) (top - 18.0f);
+    DrawMenuNumber((int) BtlMenuStatusPt->unk_field_1[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
+
+    px = (int) (x - 132.0f);
+    py = (int) (10.0f + y);
+    DngComStatus(px, py, chara, alpha);
+    px = (int) (x - 110.0f);
+    py = (int) (top - 18.0f);
     CTexture *fonts[3] = {BtlAlpha, BtlKata, BtlHira};
-    CharaSelectNameDraw2(name_x, name_y, (short *) BtlMenuSaveDataPt->GetCharaName(chara), fonts, alpha);
-    int weapon_x = (int) (x - 118.0f - 12.0f);
-    int weapon_y = (int) (70.0f + y);
-    WEAPON_HAVE *weapon = &status->chara_weapons[chara][status->equipped_weapon_slot[chara]];
+    CharaSelectNameDraw2(px, py, (short *) BtlMenuSaveDataPt->GetCharaName(chara), fonts, alpha);
+    px = (int) (x - 118.0f - 12.0f);
+    py = (int) (70.0f + y);
+    int slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
+    WEAPON_HAVE *row = BtlMenuStatusPt->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &row[slot];
     if (weapon != NULL) {
         CTexture *icon = RetCTex(weapon->item_no, u, v);
         if (icon != NULL) {
             WEAPON_HAVE total;
             WeaponAllValueSet(weapon, &total, 0);
-            DrawMenu2DSprite(icon, CRect_i_(weapon_x + 2, weapon_y + 2, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
-            DrawMenuNumber(total.attack, weapon_x + 0x20, weapon_y + 0x14, texture, digits, 1, alpha);
+            DrawMenu2DSprite(icon, CRect_i_(px + 2, py + 2, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+            DrawMenuNumber(total.attack, px + 0x20, py + 0x14, texture, digits, 1, alpha);
         }
     }
-    (void) (int) (x - 34.0f);
-    (void) (int) (64.0f + y);
-    int msg_x = (int) (x - 40.0f);
-    CharaStatusMsgDraw(msg_x, (int) (68.0f + y), chara, 1, alpha);
+    px = (int) (x - 34.0f);
+    py = (int) (64.0f + y);
+    px = (int) (x - 40.0f);
+    CharaStatusMsgDraw(px, (int) (68.0f + y), chara, 1, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawSelCharaStatus__Fffiiiiii);
-#endif
 
 /**
  * Draws the battle menu's Atora selection screen.
@@ -931,20 +938,20 @@ static void BtlMenuTexBlockEnter() {
     VillageName = TexManager.GetTexture("vilname", -1);
     VillageBar = TexManager.GetTexture("viltag", -1);
 }
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @934);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @935__2);
-#ifdef NON_MATCHING
 void BattleMenuTexEnter() {
-    LOADTEXTURE_INFO2 texture = {0};
-    int blocks[2] = {0, 0};
+    LOADTEXTURE_INFO2 textures[4] = {
+        {"#frame_image#640#448#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
-    texture.block_no = BtlMenuReadBlock;
+    textures[0].block_no = BtlMenuReadBlock;
+    textures[1].block_no = BtlMenuReadBlock;
+    textures[2].block_no = BtlMenuReadBlock;
     BG_READ_INFO *file = GetReadBGFile(0);
-    texture.name = (char *) GetPackFile((u_int *) file->buffer, "btlmenu.img", NULL);
+    textures[2].name = (char *) GetPackFile((u_int *) file->buffer, "btlmenu.img", NULL);
+    int blocks[2] = {0, -1};
     blocks[0] = BtlMenuReadBlock;
     MenuTextureDelete(blocks);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, textures);
     BtlMenuTexBlockEnter();
     GetAtraMsgReadBuf = (short *) GetPackFile((u_int *) file->buffer, "atrames.bin", NULL);
     short *mes = (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL);
@@ -953,14 +960,6 @@ void BattleMenuTexEnter() {
     BtlMenuReadEndFlag = 1;
     MenuMes.SetBuffInfo(mes);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuTexEnter__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @940__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @941);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @942);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @962);
-#ifdef NON_MATCHING
 void ExitBattleMenu(int) {
     int count = 0;
     s16 *item = MenuItemPackPt->item;
@@ -972,17 +971,17 @@ void ExitBattleMenu(int) {
             *item = -1;
         }
     }
-    s16 *quick = MenuItemPackPt->quick_item_slot;
-    for (int i = 0; i < 3; i++, quick++) {
-        if (*quick >= 0x84) {
+    item = MenuItemPackPt->quick_item_slot;
+    for (int i = 0; i < 3; i++, item++) {
+        if (*item >= 0x84) {
             count += MenuItemPackPt->quick_item_qty[i];
         } else {
-            *quick = -1;
+            *item = -1;
             MenuItemPackPt->quick_item_qty[i] = 0;
         }
     }
     MenuItemPackPt->item_count = count;
-    int blocks[5] = {0, 0, 0, 0, 0};
+    int blocks[6] = {0, 0, 0, 0, 0, -1};
     blocks[0] = BtlMenuReadBlock;
     blocks[1] = MenuExtendReadBlock;
     blocks[2] = BtlMenuExReadBlock;
@@ -993,19 +992,19 @@ void ExitBattleMenu(int) {
     TexManager.CleanUpTextureList();
     ItemVolumeStep.Initialize();
     MenuWepLevelUp.CheckSnd();
-    if (BtlMenuMode == 0) {
-        LOADTEXTURE_INFO2 texture = {0};
-        texture.block_no = BtlMenuReadBlock;
-        TexManager.LoadTextureBlock(-1, &texture);
+    switch (BtlMenuMode) {
+        case 0: {
+            LOADTEXTURE_INFO2 textures[2] = {{"#frame_image0#640#448#4", 0, 0}, {NULL, 0, 0}};
+            textures[0].block_no = BtlMenuReadBlock;
+            TexManager.LoadTextureBlock(-1, textures);
+            break;
+        }
     }
     SndSetBgmVol(BtlMenuBGMvol);
     InitReadBG();
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ExitBattleMenu__Fi);
-#endif
 #ifdef NON_MATCHING
 void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuMode = mode;
@@ -1252,7 +1251,6 @@ void BattleMenuDraw() {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuDraw__Fv);
 #endif
-#ifdef NON_MATCHING
 int BattleMenuCursor() {
     int result;
 
@@ -1317,14 +1315,13 @@ int BattleMenuCursor() {
             break;
     }
     MenuWepLevelUp.StepSnd();
-    if (BtlMenuMode == 0) {
-        SetEscapeDngFlag(EscapeDungeonMode());
+    switch (BtlMenuMode) {
+        case 0:
+            SetEscapeDngFlag(EscapeDungeonMode());
+            break;
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCursor__Fv);
-#endif
 
 /**
  * Slides the bar icons into place and opens the menu once they have all arrived.
@@ -1387,7 +1384,6 @@ static int BattleMenuExit() {
     }
     return 1;
 }
-#ifdef NON_MATCHING
 int BattleMenuSelect() {
     if (MenuWarningMsgFlag != 0) {
         if (GamePad.Down(0x60) != 0) {
@@ -1405,7 +1401,7 @@ int BattleMenuSelect() {
     }
     if (GamePad.Down(0x6000) != 0) {
         MenuSelect[1]++;
-        if (max - 1 < MenuSelect[1]) {
+        if (MenuSelect[1] > max - 1) {
             MenuSelect[1] = 0;
         }
     }
@@ -1453,7 +1449,7 @@ int BattleMenuSelect() {
                         break;
                     case 1:
                         map = GetNowMapTransAtraMap(MapNo);
-                        if (map < 0 || map >= 6) {
+                        if (map < 0 || map > 5) {
                             map = 0;
                         }
                         break;
@@ -1469,10 +1465,10 @@ int BattleMenuSelect() {
                         ComMenuSePlay(2);
                         return 1;
                     default:
-                    case 0:
-                    case 2:
-                    case 10:
                     case 1:
+                    case 10:
+                    case 2:
+                    case 0:
                         InitMenuMove(flag, MenuExtendReadBlock, buffer);
                         BtlWakuMake2 = 0;
                         break;
@@ -1506,18 +1502,12 @@ int BattleMenuSelect() {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuSelect__Fv);
-#endif
-#ifdef NON_MATCHING
 int ToFromSelect(int out) {
-    MENU_ICON_POS home[8] = {{70.0f, 28.0f}, {-150.0f, 88.0f}, {-150.0f, 128.0f}, {-150.0f, 168.0f},
-                             {-150.0f, 208.0f}, {-150.0f, 248.0f}, {-150.0f, 288.0f}, {-150.0f, 328.0f}};
-    int pos[2];
-
-    if (out < 0 || out >= 2) {
+    if (out < 0 || out > 1) {
         return -1;
     }
+    int home[8][2] = {{70, 28}, {100, 48}, {86, 38}, {50, 40}, {90, 40}, {94, 30}, {80, 40}, {70, 28}};
+    int pos[2];
     float hide_x = -224.0f;
     if (BtlMenuNowLang > 0) {
         hide_x = -258.0f;
@@ -1532,21 +1522,19 @@ int ToFromSelect(int out) {
             pos[0] = (int) hide_x;
             pos[1] = i * 0x28 + 0x48;
         } else {
-            pos[0] = (int) home[i].x;
-            pos[1] = (int) home[i].y;
+            pos[0] = home[i][0];
+            pos[1] = home[i][1];
         }
-        float *x = &NorMenuIcon[i].x;
-        float dx = (float) pos[0] - *x;
-        float *y = &NorMenuIcon[i].y;
-        float dy = (float) pos[1] - *y;
-        *x += dx / 4.0f;
-        *y += dy / 4.0f;
+        float dx = (float) pos[0] - NorMenuIcon[i].x;
+        float dy = (float) pos[1] - NorMenuIcon[i].y;
+        NorMenuIcon[i].x += dx / 4.0f;
+        NorMenuIcon[i].y += dy / 4.0f;
         if ((float) abs((int) dx) < 2.0f) {
-            *x = pos[0];
-            axes = 1;
+            NorMenuIcon[i].x = pos[0];
+            axes++;
         }
         if ((float) abs((int) dy) < 2.0f) {
-            *y = pos[1];
+            NorMenuIcon[i].y = pos[1];
             axes++;
         }
         if (axes >= 2) {
@@ -1558,9 +1546,6 @@ int ToFromSelect(int out) {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ToFromSelect__Fi);
-#endif
 
 /**
  * Puts the menu cursor back on the icon of the mode the menu is returning to.
@@ -2110,7 +2095,6 @@ void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepDamageDraw__F4RECTP11WEAPON_HAVEi);
 #endif
-#ifdef NON_MATCHING
 void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     int v = 0;
 
@@ -2123,10 +2107,6 @@ void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     rect.y = y + 0xF;
     DrawWepDamageDraw(rect, weapon, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepStatus__FiiP11WEAPON_HAVEii);
-#endif
-#ifdef NON_MATCHING
 void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
     if (data == NULL) {
@@ -2137,9 +2117,8 @@ void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     CRect_i_ source(0x110, 0xCC, 0x10, 0x10);
     CRect_i_ dest(x, y, source.width, source.height);
     RECT digits = {0xD4, 0x1F4, 0xC, 0xD};
-    int elem = weapon->best_elem;
-    if (elem < 5) {
-        DrawMenu2DSprite(MenuCharaFace, CRect_i_(x, y - 0x10, 0x20, 0x10), CRect_i_(0xE0, elem * 16, 0x20, 0x10), alpha);
+    if (weapon->best_elem < 5) {
+        DrawMenu2DSprite(MenuCharaFace, CRect_i_(x, y - 0x10, 0x20, 0x10), CRect_i_(0xE0, weapon->best_elem * 16, 0x20, 0x10), alpha);
     }
     int values[4] = {0, 0, 0, 0};
     values[0] = total.attack;
@@ -2147,25 +2126,17 @@ void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     values[2] = total.speed;
     values[3] = total.magic;
     float rate = GetNowWeaponRate(&total);
-    int limit[4] = {0, 99, 99, 0};
-    limit[0] = data->attack_max;
-    limit[3] = data->magic_max;
+    int limit[4] = {data->attack_max, 99, 99, data->magic_max};
     limit[0] = (int) ((float) limit[0] * rate);
     limit[3] = (int) ((float) limit[3] * rate);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++, dest.y += source.height, source.y += source.height) {
         if (limit[i] < values[i]) {
             values[i] = limit[i];
         }
         DrawMenu2DSprite(WepStatus, dest, source, alpha);
         DrawMenuNumber(values[i], dest.x + source.width + digits.width * 3 - 2, dest.y + 2, WepStatus, digits, 1, alpha);
-        int step = source.height;
-        dest.y += step;
-        source.y += step;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi);
-#endif
 
 /**
  * Draws the board a weapon's name sits on.
@@ -2324,15 +2295,11 @@ static void WepStatusVolumeDraw(RECT rect, int width, int *value, int color, int
     }
 }
 
-#ifdef NON_MATCHING
 void DrawWeaponStatusWaku(int x, int y, int width, int limit) {
     spRGBA colours[2][2] = {{{0x3B, 0x68, 0x56, 0x80}, {0x3B, 0x68, 0x56, 0x80}}, {{0x00, 0x00, 0xE6, 0x80}, {0x00, 0x00, 0xE6, 0x80}}};
     CRect_i_ rect(x - 1, y - 1, width + 2, 10);
     DrawMenuSideGradation(rect, &colours[limit][0], &colours[limit][1]);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusWaku__Fiiii);
-#endif
 
 /**
  * Draws the mark that says a weapon value has reached its ceiling.
@@ -2345,17 +2312,15 @@ static void DrawLimmitMax(int x, int y, int alpha) {
     DrawMenu2DSprite(WepStatus, CRect_i_(x, y, 0x1E, 0xA), CRect_i_(0xF8, 0x158, 0x1E, 0xA), alpha);
 }
 
-#ifdef NON_MATCHING
 void DrawBtlMenuLRCursor(int x, int y, int width, int alpha) {
-    int draw_y = (int) ((float) y + 4.0f * sinf((float) (3.141592653589793 * ((double) (CursorVibeCnt % 79) - 40.0) / 40.0)));
+    int count = CursorVibeCnt % 79;
+    double pi = 3.1415927f;
+    int draw_y = (int) ((float) y + 4.0f * sinf((float) (pi * ((double) count - 40.0) / 40.0)));
     CRect_i_ source(0x62, 0x14, 0x1A, 0x18);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, draw_y, source.width, source.height), source, alpha);
     source.x += source.width;
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x + width, draw_y, source.width, source.height), source, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBtlMenuLRCursor__Fiiii);
-#endif
 #ifdef NON_MATCHING
 void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
@@ -2535,7 +2500,6 @@ void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponElemTag__FiiP11WEAPON_HAVEiii);
 #endif
-#ifdef NON_MATCHING
 void DrawWeaponVsMonster(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
@@ -2561,20 +2525,21 @@ void DrawWeaponVsMonster(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     float rate = GetNowWeaponRate(weapon);
     for (int i = 0; i < 10; i++) {
         int limited = 0;
-        s8 *value = &weapon->vs_monster[i];
         volume[1] = weapon->vs_monster[i] + bonus[i];
         volume[1] = (int) ((float) volume[1] * rate);
         if (volume[1] >= 99) {
             limited = 1;
             volume[1] = 99;
         }
-        volume[2] = *value;
+        volume[2] = weapon->vs_monster[i];
         if (volume[2] >= 99) {
             volume[2] = 99;
         }
         float length = (float) (volume[1] << 6) / (float) volume[0];
+        int width = (int) length;
         DrawWeaponStatusWaku(row.x, row.y, (int) length, limited);
-        WepStatusVolumeDraw(row, 0x40, volume, i + 12, alpha, build, target[i] - *value);
+        int diff = target[i] - weapon->vs_monster[i];
+        WepStatusVolumeDraw(row, 0x40, volume, i + 12, alpha, build, diff);
         if (limited != 0) {
             DrawLimmitMax(row.x + 0x1E, row.y + 4, 0x80);
         }
@@ -2585,9 +2550,6 @@ void DrawWeaponVsMonster(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponVsMonster__FiiP11WEAPON_HAVEiii);
-#endif
 
 /**
  * Draws the three tag pages of a weapon and highlights the one the cursor is on.
@@ -4127,31 +4089,36 @@ static void WepAttachHaveCancel() {
         }
     }
 }
-#ifdef NON_MATCHING
 void WeaponMenuAttachModeKey() {
-    if (WepMenu.unk_02 == 8 || WepMenu.unk_02 == 10 || WepMenu.unk_02 == 9 || WepMenu.unk_02 == 11) {
-        s8 page = WepMenu.unk_178;
-        if (GamePad.Down(0xA) != 0) {
-            WepMenu.unk_178++;
-            if (WepMenu.unk_178 >= 3) {
-                WepMenu.unk_178 = 0;
+    switch (WepMenu.unk_02) {
+        case 11:
+        case 9:
+        case 10:
+        case 8: {
+            int page = WepMenu.unk_178;
+            if (GamePad.Down(0xA) != 0) {
+                WepMenu.unk_178++;
+                if (WepMenu.unk_178 > 2) {
+                    WepMenu.unk_178 = 0;
+                }
             }
-        }
-        if (GamePad.Down(5) != 0) {
-            WepMenu.unk_178--;
-            if (WepMenu.unk_178 < 0) {
-                WepMenu.unk_178 = 2;
+            if (GamePad.Down(5) != 0) {
+                WepMenu.unk_178--;
+                if (WepMenu.unk_178 < 0) {
+                    WepMenu.unk_178 = 2;
+                }
             }
-        }
-        if (page != WepMenu.unk_178) {
-            int rows[3] = {5, 4, 9};
-            if (rows[WepMenu.unk_178] < WepMenu.unk_179) {
-                WepMenu.unk_179 = rows[WepMenu.unk_178];
+            if (page != WepMenu.unk_178) {
+                int rows[3] = {5, 4, 9};
+                if (rows[WepMenu.unk_178] < WepMenu.unk_179) {
+                    WepMenu.unk_179 = rows[WepMenu.unk_178];
+                }
+                ComMenuSePlay(0);
             }
-            ComMenuSePlay(0);
+            break;
         }
     }
-    s8 row = WepMenu.unk_179;
+    int row = WepMenu.unk_179;
     s16 mode = WepMenu.unk_02;
     WeaponMenuSelectKeyLockFlag = 0;
     switch (mode) {
@@ -4172,9 +4139,6 @@ void WeaponMenuAttachModeKey() {
         ComMenuSePlay(0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuAttachModeKey__Fv);
-#endif
 
 /**
  * Handles input on the weapon menu's equipped weapon row.
@@ -4195,10 +4159,9 @@ static void WeaponMenuActWepKey() {
         WepAttachHaveCancel();
     }
 }
-#ifdef NON_MATCHING
 void WeaponMenuTagKey() {
-    s16 rows[3] = {5, 4, 10};
     int moved = 0;
+    s16 rows[3] = {5, 4, 10};
 
     if (WepMenu.unk_179 < 0) {
         WepMenu.unk_179 = 0;
@@ -4211,7 +4174,7 @@ void WeaponMenuTagKey() {
         case 0:
             if (GamePad.Down(0x1000) != 0) {
                 moved = 1;
-                if (WepMenu.unk_179 > 0) {
+                if (0 < WepMenu.unk_179) {
                     WepMenu.unk_179--;
                 } else if (WepMenu.unk_06 != 0) {
                     WepMenu.unk_02 = 9;
@@ -4231,7 +4194,7 @@ void WeaponMenuTagKey() {
         case 1:
             if (GamePad.Down(0x1000) != 0) {
                 moved = 1;
-                if (WepMenu.unk_179 > 0) {
+                if (0 < WepMenu.unk_179) {
                     WepMenu.unk_179--;
                 } else if (WepMenu.unk_06 != 0) {
                     WepMenu.unk_02 = 9;
@@ -4299,17 +4262,14 @@ void WeaponMenuTagKey() {
                 WepMenu.unk_02 = 10;
                 WepMenu.board.cursor = (WepMenu.board.top_row + 2) * 5;
                 return;
-            case 1:
             case 0:
+            case 1:
                 WepMenu.unk_02 = 10;
                 WepMenu.board.cursor = (WepMenu.board.top_row + 2) * 5;
                 break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
-#endif
 
 /**
  * Moves the cursor across the sockets of the selected weapon and fits or takes off the attachment held.
@@ -4465,18 +4425,18 @@ static void WeaponMenuAttachKey() {
         ComMenuSePlay(1);
     }
 }
-#ifdef NON_MATCHING
 void RepairAndLevelUpDraw(int x, int y, int alpha) {
-    int items[2] = {0xB1, 0xB2};
     int u;
     int v;
 
     MenuHelpWinDraw(x - 10, y, 10.7f, 2.2f, alpha);
     int row_y = y + 0xE;
     MenuTextureReload(BtlMenuReadBlock);
+    int items[2] = {0xB1, 0xB2};
     for (int i = 0; i < 2; i++) {
-        s16 item_no = items[i];
-        int count = GetNowItemNum(item_no, MenuItemPackPt);
+        int count;
+        int item_no = items[i];
+        count = GetNowItemNum(item_no, MenuItemPackPt);
         CTexture *icon = RetCTex(item_no, u, v);
         DrawMenu2DSprite(icon, CRect_i_(x + 0x10, row_y, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
         DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x9A, row_y + 8, 0x10, 0x10), CRect_i_(0x60, 0x58, 0x10, 0x10), alpha);
@@ -4488,10 +4448,11 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
         row_y += 0x22;
     }
     MenuTextureReload(CommonMenuMes3.tex_block);
+    int count_x;
     int name_x = x + 0x36;
     CommonMenuMes3.line_pos[0].x = name_x;
     CommonMenuMes3.line_pos[0].y = y + 0xC;
-    int count_x = x + 0x4A;
+    count_x = x + 0x4A;
     CommonMenuMes3.line_pos[1].x = count_x;
     CommonMenuMes3.line_pos[1].y = y + 0x1C;
     CommonMenuMes3.line_pos[2].x = name_x;
@@ -4506,47 +4467,39 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
-#endif
-#ifdef NON_MATCHING
 void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
+    MenuTextureReload(BtlMenuReadBlock);
     float size[7][2] = {{14.2f, 0.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}};
     s8 offset[7][2] = {{-8, 0}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}};
     int build;
 
-    MenuTextureReload(BtlMenuReadBlock);
     MenuHelpWinDraw(x - 0xE + offset[BtlMenuNowLang][0], y - 0xC + offset[BtlMenuNowLang][1], size[BtlMenuNowLang][0],
                     size[BtlMenuNowLang][1], 0x80);
     CommonMenuMes1.stay_frame = 0;
     CommonMenuMes1.line_pos[0].x = x;
     CommonMenuMes1.line_pos[0].y = y - 6;
-    int next_y = y + CommonMenuMes1.char_height;
+    y += CommonMenuMes1.char_height;
     CommonMenuMes1.line_pos[1].x = x;
-    CommonMenuMes1.line_pos[1].y = next_y - 6;
-    int row_y = next_y + 0x1E;
+    CommonMenuMes1.line_pos[1].y = y - 6;
+    y += 0x1E;
     int count = WeaponStatusBuildUp(GetNowSelectWeapon(), build);
     for (int i = 0; i < count; i++) {
         int selected = 0;
         if (i == cursor) {
             selected = 1;
         }
-        DrawWeaponNameBoard(x + 0x10, row_y, selected, 0x80, 0x6E);
+        DrawWeaponNameBoard(x + 0x10, y, selected, 0x80, 0x6E);
         int name_x = GetWeaponNamePutX(x + 0x76, CommonMenuMes1.GetMesWidth_system(CommonMenuMes1.mes_no[i]));
-        int line = i + 2;
-        if (line >= 0 && line < 10) {
-            CommonMenuMes1.line_pos[line].x = name_x;
-            CommonMenuMes1.line_pos[line].y = row_y + 5;
+        if (i + 2 >= 0 && i + 2 < 10) {
+            CommonMenuMes1.line_pos[i + 2].x = name_x;
+            CommonMenuMes1.line_pos[i + 2].y = y + 5;
         }
-        row_y += 0x26;
+        y += 0x26;
     }
     MenuTextureReload(CommonMenuMes1.tex_block);
     CommonMenuMes1.Step();
     CommonMenuMes1.DrawMesWin();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
-#endif
 #ifdef NON_MATCHING
 void WeaponMenuDraw() {
     static int ct = 0;
@@ -5002,9 +4955,7 @@ static int ItemTrushKey(int *, int *, int slot) {
     }
     return swapped;
 }
-#ifdef NON_MATCHING
 void DrawTrushItem() {
-    static int ncnt = 0;
     int items[7];
     int values[7];
 
@@ -5021,22 +4972,22 @@ void DrawTrushItem() {
     int entry = first[page];
     int y = 0x7E;
     MenuTextureReload(ItemMenuWeaponIconReadBlock);
+    static int ncnt = 0;
     int bright = (int) (112.0f + 48.0f * sinf(3.1415927f * (float) (ncnt - 0x3C) / 60.0f));
     for (int i = 0; i < 3; i++) {
         if ((ItemMenuMode.overflow_pages & (1 << (i + 1))) && page == i) {
-            for (int j = 0; j < ItemMenuMode.overflow_count[i]; j++) {
+            for (int j = 0; j < ItemMenuMode.overflow_count[i]; j++, entry++) {
                 DrawMenu2DSprite(CharaStatus, CRect_i_(0x138, y, 0x2A, 0x29), CRect_i_(0xC2, 0xD6, 0x2A, 0x2A), bright, bright,
                                  bright, 0x80);
                 DrawIconParts(items[entry], 0x13C, y + 6, 0, 0x280, 0x80, values[entry]);
                 y += 0x2E;
-                entry++;
             }
             break;
         }
     }
     (void) count;
     ncnt++;
-    if (ncnt >= 0x3C) {
+    if (ncnt > 0x3B) {
         ncnt = 0;
     }
     MenuTextureReload(AtoraNameMes.tex_block);
@@ -5047,9 +4998,6 @@ void DrawTrushItem() {
     AtoraNameMes.edge_alpha = 0x80;
     DrawMenuClsMes(&AtoraNameMes, 0x34, 0x152);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawTrushItem__Fv);
-#endif
 
 /**
  * Remembers where the item page's cursor stood and closes it.
@@ -5084,22 +5032,18 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
     size = LoadFileBGMenuData("wepchara.img", buffer);
     ItemMenuAlreadyReadWepIconTexFlag = 0;
 }
-#ifdef NON_MATCHING
 void ReadSyncItemMenuWepIcon() {
     BG_READ_INFO *file = GetReadBGFile(0);
-    LOADTEXTURE_INFO2 texture = {0};
+    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
-    texture.block_no = ItemMenuWeaponIconReadBlock;
-    texture.name = (char *) file->buffer;
+    textures[0].block_no = ItemMenuWeaponIconReadBlock;
+    textures[1].name = (char *) file->buffer;
+    textures[1].block_no = ItemMenuWeaponIconReadBlock;
     CharaStatus = TexManager.GetTexture("status", -1);
     TexManager.DeleteTextureBlock(ItemMenuWeaponIconReadBlock);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, textures);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ReadSyncItemMenuWepIcon__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @4334);
 
 /**
  * Opens the item page on one party member, restoring the mode it was left in.
@@ -5243,10 +5187,8 @@ static void InitItemTrushStart() {
     }
 }
 
-#ifdef NON_MATCHING
 void ExistItemMenu() {
-    int blocks[3] = {0, 0, 0};
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+    int blocks[3] = {0, 0, -1};
 
     blocks[0] = MenuExtendReadBlock;
     blocks[1] = ItemMenuWeaponIconReadBlock;
@@ -5254,16 +5196,13 @@ void ExistItemMenu() {
     TexManager.CleanUpTextureList();
     BtlMenuTexBlockEnter();
     for (int i = 0; i < 6; i++) {
-        int slot = status->equipped_weapon_slot[i];
-        if (slot < 0 || slot >= 10) {
+        int slot = BtlMenuStatusPt->equipped_weapon_slot[i];
+        if (0 > slot || slot >= 10) {
             EquipDefaultWeapon(i);
         }
     }
     ForBackMenu();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ExistItemMenu__Fv);
-#endif
 
 /**
  * Moves the item page from one party member to the next.
@@ -5769,8 +5708,8 @@ int ItemMenuMainKey() {
                             if (held < 0x51) {
                                 ComMenuSePlay(2);
                             } else if (IsEnableTrushThrow(held) != 0) {
-                                board->trash.anim = 1;
-                                board->trash.frame = 0;
+                                board->trash_anim = 1;
+                                board->trash_frame = 0;
                                 InitHaveData(BtlHaveItemPt);
                                 ComMenuSePlay(1);
                             } else {
@@ -6476,23 +6415,22 @@ void ItemMenuModeDraw() {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeDraw__Fv);
 #endif
-#ifdef NON_MATCHING
 int ItemMenuModeKey() {
     if (ItemMenuMode.mode == 5) {
-        int count = ItemMenuMode.overflow_count[ItemMenuMode.board.page];
-        if (ItemMenuMode.board.cursor >= count) {
+        int count = TrushMoveMax[ItemMenuMode.board.page];
+        if (count <= ItemMenuMode.board.cursor) {
             ItemMenuMode.board.cursor = count - 1;
         }
     }
     if (GamePad.Down(0x1000) != 0) {
         switch (ItemMenuMode.mode) {
-            case 3:
             case 2:
+            case 3:
                 ItemMenuMode.board.cursor = 0;
                 ItemMenuMode.mode = 0;
                 break;
             case 5:
-                if (ItemMenuMode.board.cursor > 0) {
+                if (0 < ItemMenuMode.board.cursor) {
                     ItemMenuMode.board.cursor--;
                 }
                 if (ItemMenuMode.board.cursor < 0) {
@@ -6510,7 +6448,7 @@ int ItemMenuModeKey() {
             case 5: {
                 ItemMenuMode.board.cursor++;
                 int count = ItemMenuMode.overflow_count[ItemMenuMode.board.page];
-                if (ItemMenuMode.board.cursor >= count) {
+                if (count <= ItemMenuMode.board.cursor) {
                     ItemMenuMode.board.cursor = count - 1;
                 }
                 if (ItemMenuMode.board.cursor < 0) {
@@ -6531,7 +6469,7 @@ int ItemMenuModeKey() {
     if (GamePad.Down(0x8000) != 0) {
         switch (ItemMenuMode.mode) {
             case 0:
-                if (ItemMenuMode.board.cursor > 0) {
+                if (0 < ItemMenuMode.board.cursor) {
                     ItemMenuMode.board.cursor--;
                 }
                 break;
@@ -6580,9 +6518,8 @@ int ItemMenuModeKey() {
             int rows[4] = {0, 2, 0, 0};
             if ((ItemMenuMode.overflow_pages & (1 << (ItemMenuMode.board.page + 1))) && ItemMenuMode.overflow != 0) {
                 ItemMenuMode.board.cursor = rows[old_mode];
-                int last = ItemMenuMode.overflow_count[ItemMenuMode.board.page] - 1;
-                if (last < ItemMenuMode.board.cursor) {
-                    ItemMenuMode.board.cursor = last;
+                if (ItemMenuMode.board.cursor > ItemMenuMode.overflow_count[ItemMenuMode.board.page] - 1) {
+                    ItemMenuMode.board.cursor = ItemMenuMode.overflow_count[ItemMenuMode.board.page] - 1;
                 }
                 ItemMenuMode.mode = 5;
             }
@@ -6590,23 +6527,22 @@ int ItemMenuModeKey() {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeKey__Fv);
-#endif
-#ifdef NON_MATCHING
 void ActiveItemDraw(int x, int y, int alpha) {
     RECT digits = {0x90, 0xDC, 0xC, 0xC};
-    int slot_x = x + 0xE;
 
     MenuTextureReload(ItemMenuWeaponIconReadBlock);
+    int slot_x = x + 0xE;
+    int slot_y;
     DrawMenu2DSprite(CharaStatus, CRect_i_(slot_x, y + 1, 0xE0, 0x4F), CRect_i_(0, 0, 0xE0, 0x50), alpha);
     s16 *items = MenuItemPackPt->quick_item_slot;
     s16 *counts = MenuItemPackPt->quick_item_qty;
     for (int i = 0; i < 3; i++) {
         s16 item_no = items[i];
         if (item_no >= 0x84) {
-            slot_x = x + 0x22 + (i << 6);
-            int slot_y = y + 0x1F;
+            if (item_no >= 0x84) {
+                slot_x = x + 0x22 + (i << 6);
+            }
+            slot_y = y + 0x1F;
             DrawMenu2DSprite(CharaStatus, CRect_i_(slot_x, slot_y, 0x2C, 0x2C), CRect_i_(0x128, 0, 0x2C, 0x2C), alpha);
             DrawIconParts(item_no, slot_x + 6, slot_y + 6, 0, 0x280, alpha, 0);
             s16 count = counts[i];
@@ -6615,14 +6551,12 @@ void ActiveItemDraw(int x, int y, int alpha) {
             }
         }
     }
-    if (BtlMenuMode != 0) {
-        return;
+    switch (BtlMenuMode) {
+        case 0:
+            DngActiveItemTextureCopy();
+            break;
     }
-    DngActiveItemTextureCopy();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ActiveItemDraw__Fiii);
-#endif
 
 /**
  * Steps and draws the party member's model on the item page.
@@ -6815,7 +6749,6 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
 #endif
-#ifdef NON_MATCHING
 void ItemNaviCursor(int item_no) {
     s8 shown[3] = {0, 0, 0};
     ITEM_DATA *data = GetItemData(item_no);
@@ -6839,7 +6772,9 @@ void ItemNaviCursor(int item_no) {
             }
             if (item_no == 0xB0) {
                 shown[1] = 1;
-                if ((float) ((CUserStatus *) BtlMenuStatusPt)->hp[ItemMenuMode.chara] <= 0.0f) {
+                int chara = ItemMenuMode.chara;
+                CDngStatusData *status = BtlMenuStatusPt;
+                if ((float) status->hp[chara] <= 0.0f) {
                     shown[0] = 1;
                 }
             }
@@ -6864,10 +6799,8 @@ void ItemNaviCursor(int item_no) {
             int px = pos[i][0];
             int py = pos[i][1];
             CRect_i_ texel(0xD8, 0, 0x28, 0x14);
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2; j++, py -= 0x14, texel.x -= 0x28) {
                 DrawMenu2DSprite(BtStatus, CRect_i_(px, py, texel.width, texel.height), texel, 0x80);
-                py -= 0x14;
-                texel.x -= 0x28;
             }
         }
     }
@@ -6875,17 +6808,13 @@ void ItemNaviCursor(int item_no) {
         ct = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemNaviCursor__Fi);
-#endif
-#ifdef NON_MATCHING
 void CharaStatusMsgDraw(int x, int y, int chara, int shared, int alpha) {
     static float statusCnt = -3.1415927f;
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
 
     int bob_y = (int) ((float) y + 4.0f * sinf(statusCnt));
+    int condition;
     int icon = -1;
-    int condition = status->unk_42C8[chara];
+    condition = BtlMenuStatusPt->GetActiveCharaStatus(chara);
     if (condition & 0x40) {
         icon = 5;
     }
@@ -6901,16 +6830,18 @@ void CharaStatusMsgDraw(int x, int y, int chara, int shared, int alpha) {
     if (condition & 4) {
         icon = 3;
     }
-    if (status->hp[chara] <= 0 || (condition & 2)) {
+    if (BtlMenuStatusPt->hp[chara] <= 0 || (condition & 2)) {
         icon = 0;
     }
     if (icon >= 0) {
-        DrawMenu2DSprite(BtStatus, CRect_i_(x, bob_y, 0x44, 0x23), CRect_i_(icon / 3 * 0x44 + 0x78, icon % 3 * 0x24 + 0x14, 0x44, 0x24),
-                         alpha);
+        int u = icon / 3 * 0x44 + 0x78;
+        int v = icon % 3 * 0x24 + 0x14;
+        DrawMenu2DSprite(BtStatus, CRect_i_(x, bob_y, 0x44, 0x23), CRect_i_(u, v, 0x44, 0x24), alpha);
     }
     float period;
     if (shared != 0) {
-        period = 50.0f * (float) status->party_size;
+        float count = BtlMenuStatusPt->GetPartySize();
+        period = 50.0f * count;
     } else {
         period = 50.0f;
     }
@@ -6919,9 +6850,6 @@ void CharaStatusMsgDraw(int x, int y, int chara, int shared, int alpha) {
         statusCnt = -3.1415927f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", CharaStatusMsgDraw__Fiiiii);
-#endif
 
 /**
  * Runs the Atla page and returns to the menu bar when it closes.
@@ -7363,12 +7291,6 @@ int MenuMoveKey() {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", MenuMoveKey__Fv);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6221);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6222);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6223);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6224);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6225);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6226);
 #ifdef NON_MATCHING
 void DrawMenuMove() {
     int x;
@@ -7592,29 +7514,31 @@ void DrawMenuMove() {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMenuMove__Fv);
 #endif
-#ifdef NON_MATCHING
 void DrawEscapeItem(int x, int y, int alpha) {
     float widths[7] = {8.6f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f};
     int u;
     int v;
 
-    MenuHelpWinDraw(x, y, widths[BtlMenuNowLang], 1.0f, alpha);
+    float height = 1.0f;
+    MenuHelpWinDraw(x, y, widths[BtlMenuNowLang], height, alpha);
     int row_y = y + 0x10;
     MenuTextureReload(BtlMenuReadBlock);
     if (PerBoardTex == NULL) {
         PerBoardTex = TexManager.GetTexture("perbrd", -1);
     }
-    CommonMoneyBoardDraw(x, y - 0x1E, ((CUserStatus *) BtlMenuStatusPt)->money, alpha);
+    int money = ((CUserStatus *) BtlMenuStatusPt)->money;
+    CommonMoneyBoardDraw(x, y - 0x1E, money, alpha);
     int count = GetNowItemNum(0xAF, MenuItemPackPt);
     CTexture *icon = RetCTex(0xAF, u, v);
     DrawMenu2DSprite(icon, CRect_i_(x + 0x14, row_y, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
     DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x86, row_y + 8, 0x10, 0x10), CRect_i_(0x60, 0x58, 0x10, 0x10), alpha);
-    DrawMenuNumber(count, x + 0xA2 + GetNumberKeta(count) * 6, row_y + 8, StayTex, NumberSprite[1], 2, alpha);
+    int number_x = x + 0xA2;
+    number_x += GetNumberKeta(count) * 6;
+    DrawMenuNumber(count, number_x, row_y + 8, StayTex, NumberSprite[1], 2, alpha);
     s16 messages[7] = {0x138, 0x1A8, 0x1A8, 0x1A8, 0x1A8, 0x1A8, 0x1A8};
-    s16 message = messages[BtlMenuNowLang];
-    if (CommonMenuMes1.mes_made != message) {
+    if (CommonMenuMes1.mes_made != messages[BtlMenuNowLang]) {
         CommonMenuMes1.mes_no[0] = 0x113;
-        CommonMenuMes1.MakeMesWin(message);
+        CommonMenuMes1.MakeMesWin(messages[BtlMenuNowLang]);
     }
     if (BtlMenuNowLang > 0) {
         row_y += 0x10;
@@ -7628,34 +7552,30 @@ void DrawEscapeItem(int x, int y, int alpha) {
     CommonMenuMes1.stay_frame = 0;
     DrawMenuClsMes(&CommonMenuMes1, x + 0x38, row_y - 0x10);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawEscapeItem__Fiii);
-#endif
-#ifdef NON_MATCHING
+/**
+ * Appends the world map archive name of a region to a path.
+ */
+inline void AddWorldMapFileName(char *path, int region) {
+    char *files[6] = {"matatagi.pac", "queen.pac", "musuka.pac", "moon.pac", "dark.pac", "lastdng.pac"};
+
+    strcat(path, files[region]);
+}
+
 static void StartLoadWorldMap(int region, u_long128 *buffer) {
     char path[64];
     int size;
 
-    if (region < 0 || region >= 6) {
+    if (region < 0 || region > 5) {
         return;
     }
     GetPathReadDifferntLang(path);
     strcat(path, "map/");
-    char *files[6] = {"matatagi.pac", "queen.pac", "musuka.pac", "moon.pac", "dark.pac", "lastdng.pac"};
-    strcat(path, files[region]);
+    AddWorldMapFileName(path, region);
     StartReadBG();
     LoadFileBG(path, buffer, &size);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", StartLoadWorldMap__FiP1);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6229);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6234);
-#ifdef NON_MATCHING
 int LoadWorldMap() {
-    if (ReadBGSync() != 0) {
-        return 0;
-    }
+    if (ReadBGSync() == 0) {
     BG_READ_INFO *file = GetReadBGFile(0);
     char img_format[32] = "w_map_1%d.img";
     char cfg_format[32] = "w_map1%d.cfg";
@@ -7664,16 +7584,15 @@ int LoadWorldMap() {
     sprintf(img, img_format, MenuMove.load_map + 1);
     sprintf(cfg, cfg_format, MenuMove.load_map + 1);
     LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
-    u_int *pack = (u_int *) file->buffer;
     textures[0].block_no = MenuMove.tex_block;
     textures[1].block_no = MenuMove.tex_block;
     textures[2].block_no = MenuMove.tex_block;
     textures[3].block_no = MenuMove.tex_block;
-    textures[1].name = (char *) GetPackFile(pack, "w_map_02.img", NULL);
-    textures[2].name = (char *) GetPackFile(pack, img, NULL);
-    textures[3].name = (char *) GetPackFile(pack, "menumove.img", NULL);
+    textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "w_map_02.img", NULL);
+    textures[2].name = (char *) GetPackFile((u_int *) file->buffer, img, NULL);
+    textures[3].name = (char *) GetPackFile((u_int *) file->buffer, "menumove.img", NULL);
     TexManager.DeleteTextureBlock(MenuMove.tex_block);
-    int blocks[2] = {0, 0};
+    int blocks[2] = {0, -1};
     blocks[0] = MenuMove.tex_block;
     MenuTextureDelete(blocks);
     TexManager.CleanUpTextureList();
@@ -7681,14 +7600,14 @@ int LoadWorldMap() {
     TexManager.LoadTextureBlockEX(-1, textures);
     MenuMoveTex = TexManager.GetTexture("menumove", -1);
     if (MenuMove.mode == 5) {
-        InitMenuMesSet(5, (short *) GetPackFile(pack, "allmenu.mes", NULL));
+        InitMenuMesSet(5, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
     }
-    u_char *model = (u_char *) file->buffer + ((file->size >> 6) + 1) * 64;
+    u_long128 *model = file->buffer + ((((file->size >> 6) + 1) << 6) >> 4);
     MenuCharaFrame.Initialize();
-    MenuExCashBuffer.base = model;
+    MenuExCashBuffer.base = (u_char *) model;
     MenuExCashBuffer.limit = 0xCF80;
     MenuExCashBuffer.used = 0;
-    MenuCharaFrame.LoadPackData(pack, cfg, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
+    MenuCharaFrame.LoadPackData((u_int *) file->buffer, cfg, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
     mapo[2] = 0.0f;
     mapo[1] = 0.0f;
     mapo[0] = 0.0f;
@@ -7699,13 +7618,9 @@ int LoadWorldMap() {
     MenuCharaFrame.motion_speed = -1.0f;
     MapMoveCursor = MenuCharaFrame.frame->SearchFrame(TownOrDngPos[MenuMove.cursor].frame);
     return 1;
+    }
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", LoadWorldMap__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6248);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6249);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @6250);
 
 /**
  * Steps and draws the party's marker over the world map.

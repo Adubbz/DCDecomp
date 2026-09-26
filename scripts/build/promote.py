@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BLOCK = re.compile(
-    r"#ifdef[ \t]+NON_MATCHING[ \t]*\n(?P<body>.*?)\n#else[ \t]*\n"
+    r"#ifdef[ \t]+NON_MATCHING[ \t]*\n(?P<body>(?:(?!\n#(?:ifdef|endif)\b).)*?)\n#else[ \t]*\n"
     r"(?P<marker>[ \t]*INCLUDE_ASM\(\"(?P<dir>[^\"]+)\",[ \t]*(?P<name>[^)]+)\);)[ \t]*\n#endif",
     re.S)
 LIVE = re.compile(

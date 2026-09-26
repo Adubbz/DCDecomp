@@ -50,24 +50,9 @@ extern char BtCfgCash[64];
 extern int BtCfgFlag;
 
 /**
- * Number of floors in each dungeon.
- */
-extern int maxFloorTbl[7];
-
-/**
- * Crossfades the battle music and the field ambience from the distance of the nearest monster.
- */
-extern void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volume);
-
-/**
  * The message shown for the cached map jump.
  */
 extern int BtSteebMsgNo;
-
-/**
- * "itempack", the texture the status panel draws from; the constant topStatusInfo emits.
- */
-extern char itempack_name[];
 
 /**
  * Arena the steeb message file is read into.
@@ -505,66 +490,68 @@ void StepWaterLing(void) {
         }
     }
 }
-
 /**
- * Mixes the battle music against the ambience by the distance to the nearest active monster
- * and returns that distance.
+ * Chooses the stance the player takes from the nearest monster.
  *
  * @mangled SetBattleStyle__Fii
  * @address 0x1AFE90
  * @size 0x1D0
  */
-float SetBattleStyle(int dungeon, int keep_bgm) {
-    float monster_position[4];
-    float player_position[4];
+/** Number of floors in each dungeon. */
+extern "C" int maxFloorTbl[7];
+
+void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volume);
+
+static inline int MonstorAliveCheck(int no, int alive) {
+    if (no >= 0 && no < 17) {
+        alive = NowMonstorUnit->monster[no].unk_0D4;
+    }
+    return alive;
+}
+
+float SetBattleStyle(int map_no, int preserve_bgm) {
+    float nearest = 10000;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR player;
     float bgm_volume;
     float ambient_volume;
-    float distance;
-    float nearest_distance;
-    int i;
-    int active;
+    int alive;
 
-    nearest_distance = 10000;
-    sceVu0CopyVector(player_position, CharaMain.pos);
-
-    for (i = 0; i < 16; i++) {
-        if (NowMonstorUnit->monster[i].state != -1) {
-            if (i >= 0 && i < 17) {
-                active = NowMonstorUnit->monster[i].unk_0D4;
-            }
-
-            if (active != 0) {
-                NowMonstorUnit->chara[i][0].GetPosition(monster_position);
-                distance = DistVector(player_position, monster_position);
-
-                if (distance < nearest_distance) {
-                    nearest_distance = distance;
-                }
-            }
+    sceVu0CopyVector(player, CharaMain.pos);
+    for (int i = 0; i < 16; i++) {
+        if (NowMonstorUnit->monster[i].state == -1) {
+            continue;
+        }
+        alive = MonstorAliveCheck(i, alive);
+        if (alive == 0) {
+            continue;
+        }
+        NowMonstorUnit->chara[i][0].GetPosition(position);
+        float distance = DistVector(player, position);
+        if (distance < nearest) {
+            nearest = distance;
         }
     }
-
-    if (dungeon != 5) {
-        int max_floor = maxFloorTbl[dungeon];
-        CUserStatus *status = UserStatus;
-
-        if (status->cur_floor < max_floor - 1) {
-            BtBattleMusic_Excg(nearest_distance, &bgm_volume, &ambient_volume);
-
-            if (!(ambient_volume <= 0.0f)) {
+    if (map_no != 5) {
+        CUserStatus *status;
+        int floors = maxFloorTbl[map_no];
+        status = UserStatus;
+        if (status->cur_floor < floors - 1) {
+            BtBattleMusic_Excg(nearest, &bgm_volume, &ambient_volume);
+            if (ambient_volume > 0.0f) {
                 SndAmbientPlay(0);
             }
-
-            if (keep_bgm == 0) {
+            if (preserve_bgm == 0) {
                 SndSetBgmVolf(bgm_volume);
             }
-
             SndAmbientSetVolf(ambient_volume);
         }
     }
-
-    return nearest_distance;
+    return nearest;
 }
+/** The stay frame texture, shared with topStatusInfo. */
+extern char StayFrameTextureName[];
+
 /**
  * Draws a three-digit value out of the number sheet.
  *
@@ -572,30 +559,24 @@ float SetBattleStyle(int dungeon, int keep_bgm) {
  * @address 0x1B0060
  * @size 0x1F8
  */
-int ValuePrint(int x, int y, int value, int row, u8 alpha) {
-    CTexture *digits = TexManager.GetTexture("stayframe", -1);
-    int top = row * 12 + 176;
-    int drawn = 0;
-    int place = value / 100;
-
-    if (place > 0) {
-        set2DSprite(Vif1Packet, digits, CRect_i_(x, y, 12, 12),
-                    CRect_i_(place * 12, top, 12, 12), alpha);
-        value -= place * 100;
+int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
+    CTexture *texture = TexManager.GetTexture(StayFrameTextureName, -1);
+    int source_y = palette * 12 + 0xB0;
+    int count = 0;
+    int digit = value / 100;
+    if (digit > 0) {
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
+        value -= digit * 100;
         x += 12;
-        drawn++;
+        count++;
     }
-
-    place = value / 10;
-    set2DSprite(Vif1Packet, digits, CRect_i_(x, y, 12, 12), CRect_i_(place * 12, top, 12, 12),
-                alpha);
-
-    place = value % 10;
-    set2DSprite(Vif1Packet, digits, CRect_i_(x + 12, y, 12, 12),
-                CRect_i_(place * 12, top, 12, 12), alpha);
-
-    return drawn + 2;
+    digit = value / 10;
+    set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
+    digit = value % 10;
+    set2DSprite(Vif1Packet, texture, CRect_i_(x + 12, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
+    return count + 2;
 }
+INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @778);
 /**
  * Clears the pulse that warns of low life.
  *
@@ -748,6 +729,9 @@ void topStatusInfo(int x, int y, int blend_mode) {
 INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", topStatusInfo__Fiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1150);
+
+/** The status panel texture, shared with topStatusInfo. */
+extern char StatusTextureName[];
 /**
  * Reports whether the party is suffering one status ailment.
  *
@@ -802,7 +786,6 @@ int BtStatusErrColorSet(void) {
 
     return ailing;
 }
-
 /**
  * How tall the current character stands.
  */
@@ -845,7 +828,6 @@ void BtStatusErrStep(void) {
 
     BtStatusErrColorSet();
 }
-
 /**
  * Inflicts one status ailment on the party.
  *
@@ -902,20 +884,17 @@ void BtSetStatusErr(int status) {
  * @size 0x16C
  */
 void BtStatusErrDraw(int y) {
-    CTexture *texture = TexManager.GetTexture(itempack_name, -1);
+    CTexture *texture = TexManager.GetTexture(StatusTextureName, -1);
     int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
-    int icon_cell[5][2] = {{1, 0}, {0, 1}, {1, 1}, {1, 2}, {0, 2}};
-    int flags = UserStatus->unk_42C8[UserStatus->cur_chara];
-
+    int icon_cells[5][2] = {{1, 0}, {0, 1}, {1, 1}, {1, 2}, {0, 2}};
+    int status = UserStatus->unk_42C8[UserStatus->cur_chara];
     for (int icon = 4; icon >= 0; icon--) {
-        if (flags & status_flags[icon]) {
+        if (status & status_flags[icon]) {
             set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35),
-                        CRect_i_(icon_cell[icon][0] * 62 + 132, icon_cell[icon][1] * 36 + 84, 62,
-                                 36));
+                        CRect_i_(icon_cells[icon][0] * 62 + 132, icon_cells[icon][1] * 36 + 84, 62, 36));
         }
     }
 }
-
 /**
  * Draws one item into the reserved slot area.
  *
@@ -1128,7 +1107,6 @@ int BtMapJumpLoad(char *map_name) {
     BtCfgFlag = 1;
     return 1;
 }
-
 /**
  * Draws a textured cell in world space.
  *

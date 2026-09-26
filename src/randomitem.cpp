@@ -83,8 +83,7 @@ void CRandomItem::MapSymbolDraw(void) {
         if (id[i] != -1 && amount[i] == -1) {
             int x = (int) (0.1f * (position[i][0] - 80.0f));
             int y = (int) (0.1f * (position[i][2] - 80.0f));
-            set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x184, y + 0x48, 8, 8),
-                        CRect_i_(0x50, 0x68, 8, 8));
+            set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x184, y + 0x48, 8, 8), CRect_i_(0x50, 0x68, 8, 8));
         }
     }
 }

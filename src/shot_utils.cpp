@@ -100,14 +100,12 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
     sceVu0CopyVector(hit_position, position);
     return SHOT_COLLISION_NONE;
 }
-
 void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width,
                     s32 height, u8 blend) {
     sceVu0IVECTOR top_left;
     sceVu0IVECTOR top_right;
     sceVu0IVECTOR bottom_left;
     sceVu0IVECTOR bottom_right;
-    CRect_i_ cell;
     CTexture *texture = TexManager.GetTexture(texture_name, -1);
 
     world[3] = 1.0f;
@@ -119,11 +117,7 @@ void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, 
         bottom_left[0] = top_left[0];
         bottom_left[1] = bottom_right[1];
         bottom_left[2] = bottom_right[2];
-        cell.x = x;
-        cell.y = y;
-        cell.width = width;
-        cell.height = height;
-        set3DSprite(Vif1Packet, texture, cell, top_left, top_right, bottom_left, bottom_right,
-                    blend);
+        set3DSprite(Vif1Packet, texture, CRect_i_(x, y, width, height), top_left, top_right,
+                    bottom_left, bottom_right, blend);
     }
 }

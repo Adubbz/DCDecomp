@@ -65,24 +65,14 @@ extern CCamera MenuCamera;
 /** Frame texture the main menu draws its icons in. */
 extern CTexture *StayTex;
 
-/** Texture scratch of the first common menu message window. */
-extern u8 MesWinTexBuff_01[0x100];
-
-/** Texture scratch of the second common menu message window. */
-extern u8 MesWinTexBuff_02[0x100];
-
-/** Texture scratch of the third common menu message window. */
-extern u8 MesWinTexBuff_11[0x100];
-
-/** Texture scratch of the Atora name message window. */
-extern u8 MesWinTexBuff_12[0x100];
-
-#ifdef NON_MATCHING // draft declarations
 #include "sysmes.hpp"
 
+extern u8 MesWinTexBuff_01[0x100];
+extern u8 MesWinTexBuff_02[0x100];
+extern u8 MesWinTexBuff_11[0x100];
+extern u8 MesWinTexBuff_12[0x100];
 extern int MenuShadowReadBlock;
 extern int asort_top_type;
-#endif
 
 /**
  * Draws the mark over an item that cannot be set.
@@ -306,7 +296,6 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     put_x -= size[2] >> 1;
     mes->text_x = put_x;
 }
-
 /**
  * Resets a menu message window to its empty default layout.
  */
@@ -1068,8 +1057,8 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     InitHaveData(&PerBoardPt->held_item);
     InitHaveWep(&PerBoardPt->weapon);
     PerBoardPt->unk_15C = -1;
-    PerBoardPt->trash.anim = 0;
-    PerBoardPt->trash.frame = 0;
+    PerBoardPt->trash_anim = 0;
+    PerBoardPt->trash_frame = 0;
     DeleteMenuTrushMark();
     s16 full = -1;
     if (PerBoardStatusPt->unk_431C != 0) {
@@ -1081,8 +1070,7 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
             full = 2;
         }
         for (int i = 0; i < 6; i++) {
-            WEAPON_HAVE *row = PerBoardStatusPt->chara_weapons[i];
-            if (row[10].item_no >= 0x101) {
+            if (((CUserStatus *) PerBoardStatusPt)->chara_weapons[i][10].item_no >= 0x101) {
                 full = 1;
                 break;
             }
@@ -1170,6 +1158,9 @@ int PersonalBoardKeySub() {
     int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
     int max = PersonalRetMax(page);
+
+
+
 
     if (GamePad.Down(0x1000) != 0) {
         switch (PerBoardPt->cursor_area) {
@@ -1273,8 +1264,8 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     int chara = cell / 10;
     int slot = cell % 10;
     CUserStatus *status = PerBoardStatusPt;
-    WEAPON_HAVE *row = status->chara_weapons[chara];
-    WEAPON_HAVE *weapon = &row[slot];
+    WEAPON_HAVE *weapons = status->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &weapons[slot];
     int weapon_no = weapon->item_no;
 
     if (kind == 0) {
@@ -1395,25 +1386,27 @@ int PersonalBoardItemGetorSwap(int board_pos) {
 void PersonalBoardItemCancel() {
     IHAVEITEM *have = &PerBoardPt->held_item;
     int cell = have->unk_0C;
-    int chara;
-    int slot;
 
     switch (have->unk_04) {
-        case 0: {
+        case 0:
+        {
             s16 *item = &PerBoardPt->item_pack->item[cell];
-            s16 *vol = &PerBoardPt->item_pack->item_vol[cell];
+            s16 *volume = &PerBoardPt->item_pack->item_vol[cell];
             MenuDataSwap(item, &have->item_no);
-            MenuDataSwap(vol, &have->volume);
-            break;
+            MenuDataSwap(volume, &have->volume);
         }
+            break;
         case 1: {
-            int held = have->item_no;
+            int chara;
+            int slot;
+            int held;
+            held = have->item_no;
             if (held >= 0x101) {
                 chara = cell / 10;
                 slot = cell % 10;
-                CUserStatus *status = PerBoardStatusPt;
-                WEAPON_HAVE *row = status->chara_weapons[chara];
-                WEAPON_HAVE *weapon = &row[slot];
+                WEAPON_HAVE *weapons = (WEAPON_HAVE *) ((char *) PerBoardStatusPt +
+                                                        chara * sizeof(PerBoardStatusPt->chara_weapons[0]) + 0x450C);
+                WEAPON_HAVE *weapon = &weapons[slot];
                 int placed = weapon->item_no;
                 MenuDataSwap(&PerBoardPt->weapon, weapon);
                 have->item_no = placed;
@@ -1439,7 +1432,7 @@ void PersonalBoardItemCancel() {
             break;
         }
     }
-    if (have->item_no < 0x51) {
+    if (have->item_no <= 0x50) {
         InitHaveData(have);
         InitHaveWep(&PerBoardPt->weapon);
         PerBoardPt->unk_15C = -1;
@@ -1763,12 +1756,13 @@ void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned c
         rows = 1;
     }
     int length = (int) (456.0f / rows - 8.0f);
-    if (114.0f < length) {
+    if (114.0f < (float) length) {
         length = 0x69;
     }
     CRect_i_ source(0xAE, 0x14, 8, 4);
-    float bar_y = (y + 0x16) + 114.0f * top_row / rows;
-    bar_y = scroll += (bar_y - scroll) / 4.0f;
+    float bar_y = (float) (y + 0x16) + 114.0f * top_row / rows;
+    bar_y = scroll + (bar_y - scroll) / 4.0f;
+    scroll = bar_y;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) bar_y, 8, 4), source, alpha);
     source.y += 4;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, (int) (4.0f + bar_y), 8, length + 1), source, alpha);
@@ -1862,8 +1856,9 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
 }
 #ifdef NON_MATCHING
 void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha) {
+    int board_y = y;
     for (int row = 0; row < 26; row++) {
-        DrawPersonalBoardBase(x, y, top, bottom, 5, texture, alpha);
+        DrawPersonalBoardBase(x, board_y, top, bottom, 5, texture, alpha);
         int draw_mark = 0;
         switch (mark) {
             case 0:
@@ -1881,7 +1876,7 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
         }
         if (draw_mark != 0) {
             int mark_x = x - 4;
-            int mark_y = y - 8;
+            int mark_y = board_y - 8;
             int v = 0x3C;
             int height = 0x10;
             if (mark_y + 0x10 >= top && mark_y < bottom) {
@@ -1890,12 +1885,14 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 spRGBA left;
                 spRGBA right;
                 left.r = left.g = left.b = 0x80;
-                right.r = right.g = right.b = 0x80 - 9;
-                left.a = alpha;
+                right.r = right.g = right.b = 0x80 - step;
                 right.a = alpha;
+                left.a = alpha;
                 for (int i = 0; i < 5; i++) {
-                    set2DSprite(GetVif1Packet(), texture, CRect_i_(mark_x, mark_y, 0x28, height),
-                                CRect_i_(0x20, v, 0x28, height), &left, &right, &left, &right, 1);
+                    CRect_i_ texel(0x20, v, 0x28, height);
+                    CRect_i_ screen(mark_x, mark_y, 0x28, height);
+                    set2DSprite(GetVif1Packet(), texture, screen, texel, &left, &right, &left, &right, 1);
+
                     left.r = left.g = left.b = right.r;
                     right.r = right.g = right.b = right.r - step;
                     step--;
@@ -1903,8 +1900,8 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 }
             }
         }
-        y += 0x28;
-        if (bottom < y) {
+        board_y += 0x28;
+        if (bottom < board_y) {
             break;
         }
     }
@@ -1912,34 +1909,41 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
 #endif
+/* The trash can's animation fields, which CommonTrushDraw reaches as one record. */
+struct PERSONAL_BOARD_TRASH {
+    s16 anim;
+    u8 unk_02[2];
+    s32 frame;
+};
+
 void CommonTrushDraw(int x, int y, int alpha) {
     PERSONAL_BOARD *board = PerBoardPt;
-    PERSONAL_BOARD_TRASH *trash = &board->trash;
+    PERSONAL_BOARD_TRASH *trash = (PERSONAL_BOARD_TRASH *) &board->trash_anim;
     CRect_i_ source(0x190, 0x90, 0x30, 0x30);
     CRect_i_ dest(x, y + 1, 0x30, 0x2F);
 
     switch (trash->anim) {
-        case 1: {
-            int frame = trash->frame;
-            if (frame <= 3 || frame > 12) {
-                source.x -= 0x30;
-            } else if (frame > 6 && frame < 10) {
-                source.x += 0x30;
-            }
-            DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-            trash->frame++;
-            if (frame > 15) {
-                trash->anim = 0;
-                trash->frame = 0;
-            }
-            break;
+    case 1: {
+        int frame = trash->frame;
+        if (frame <= 3 || frame > 12) {
+            source.x -= 0x30;
+        } else if (frame > 6 && frame <= 9) {
+            source.x += 0x30;
         }
-        default:
-            if (board->cursor_area == 2) {
-                source.x = 0x130;
-            }
-            DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-            break;
+        DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
+        trash->frame++;
+        if (frame > 15) {
+            trash->anim = 0;
+            trash->frame = 0;
+        }
+        break;
+    }
+    default:
+        if (board->cursor_area == 2) {
+            source.x = 0x130;
+        }
+        DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
+        break;
     }
 }
 int IsEnableTrushThrow(int item_no) {
@@ -2020,8 +2024,8 @@ s16 SearchBoardNowPosItemExist(int page, int cell) {
             int chara = cell / 10;
             int slot = cell % 10;
             CUserStatus *status = PerBoardStatusPt;
-            WEAPON_HAVE *row = status->chara_weapons[chara];
-            WEAPON_HAVE *weapon = &row[slot];
+            WEAPON_HAVE *weapons = status->chara_weapons[chara];
+            WEAPON_HAVE *weapon = &weapons[slot];
             if (weapon != NULL) {
                 item_no = weapon->item_no;
             }
@@ -2051,6 +2055,7 @@ int GetBoardSpace(int item_no, int *page) {
             int i;
             ITEM_PACK *pack = &PerBoardStatusPt->item_pack;
             quick = 0;
+
             for (i = 0; i < 3; i++) {
                 quick += pack->quick_item_qty[i];
             }
@@ -2079,6 +2084,8 @@ int GetBoardSpace(int item_no, int *page) {
             int i;
             DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
             for (i = 0; i < max; i++) {
+
+
                 if (items[i].id < 0x51) {
                     space = i;
                     break;
@@ -2086,6 +2093,7 @@ int GetBoardSpace(int item_no, int *page) {
             }
             break;
         }
+
     }
     return space;
 }
@@ -2255,10 +2263,9 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     }
     return swapped;
 }
-#ifdef NON_MATCHING
-void SeitonAttachBoard(ATTACH_LIST *list) {
+int SeitonAttachBoard(ATTACH_LIST *list) {
     if (list == NULL) {
-        return;
+        return 0;
     }
     for (int i = 0; i < 5; i++) {
         if (SeitonAttachBoardSub(list) != 0) {
@@ -2270,9 +2277,6 @@ void SeitonAttachBoard(ATTACH_LIST *list) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
-#endif
 
 int WhatIsKindofItem(int item_no) {
     COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
@@ -2429,9 +2433,9 @@ int GetNowModeMaxNum(int page, int *over) {
         case 1:
             for (int chara = 0; chara < 6; chara++) {
                 int i;
-                WEAPON_HAVE *row = status->chara_weapons[chara];
+                WEAPON_HAVE *weapons = status->chara_weapons[chara];
                 for (i = 0; i < 11; i++) {
-                    if (row[i].item_no >= 0x101) {
+                    if (weapons[i].item_no >= 0x101) {
                         count++;
                         if (i == 10 && over != NULL) {
                             *over = chara + 1;
@@ -2440,7 +2444,7 @@ int GetNowModeMaxNum(int page, int *over) {
                 }
             }
             break;
-        case 2: {
+        case 2:
             int i;
             DNG_CONSUMABLE *items = status->consumable_items;
             for (i = 0; i < 43; i++) {
@@ -2449,10 +2453,10 @@ int GetNowModeMaxNum(int page, int *over) {
                 }
             }
             if (over != NULL && count > 40) {
+
                 *over = 1;
             }
             break;
-        }
     }
     return count;
 }

@@ -131,7 +131,11 @@ void GlobalNameInit(void) {
  */
 void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     StartReadBG();
-    buffer = buffer == NULL ? (u_long128 *) read_buffer : buffer;
+    if (buffer == NULL) {
+        buffer = (u_long128 *) read_buffer;
+    } else {
+        buffer = (u_long128 *) buffer;
+    }
     LoadFileBGMenuData("nameregi.pak", MenuCalcBufAlignment(buffer));
     NameSelect.language = GetMenuLangFlag();
     GamePad.MenuModeOn(0x78);
@@ -203,28 +207,26 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
     cell_y = (code / 10) * 0x16;
     return texture;
 }
-
 /**
- * Draws the name being entered; the character argument goes unused.
+ * Draws a party member's name.
  *
  * @mangled DrawCharaName__Fiiiii
  * @address 0x238760
  * @size 0x118
  */
 void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
-    int left = x;
+    int draw_x = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
 
     for (int index = 0; index < 10; index++) {
         int texture_x;
         int texture_y;
         CTexture *texture = GetNameTextureInfo(textures, CharaName[index], texture_x, texture_y);
-        DrawMenu2DSprite(texture, CRect_i_(left, y, 22, 22), CRect_i_(texture_x, texture_y, 22, 22), (u8) brightness,
-                         (u8) brightness, (u8) brightness, blend_mode);
-        left += 22;
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 22, 22), CRect_i_(texture_x, texture_y, 22, 22), brightness, brightness,
+                         brightness, blend_mode);
+        draw_x += 22;
     }
 }
-
 /**
  * Draws the four corners of the frame around the name being entered, pulling them inward as the frame counter cycles.
  *
@@ -248,7 +250,6 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
                          (u8) brightness, blend_mode);
     }
 }
-
 /**
  * Draws the top of the name-entry screen: the party member's face and title, the name being entered and the cursor over it.
  *
@@ -575,17 +576,15 @@ static int NameCompare(short *first, short *second) {
     }
     return 1;
 }
-
 /**
- * Reports whether the entered name may be used: 2 when it is blank, 0 when it
- * is reserved or an earlier party member already has it, 1 otherwise.
+ * Reports whether the entered name may be used.
  *
  * @mangled CheckName__Fv
  * @address 0x239A40
  * @size 0x160
  */
 int CheckName() {
-    s16 reserved[2][10] = {
+    s16 blank_names[2][10] = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {230, 230, 230, 230, 230, 230, 230, 230, 230, 230},
     };
@@ -599,8 +598,8 @@ int CheckName() {
     if (blank_characters >= 10) {
         return 2;
     }
-    for (int index = 0; index < 2; index++) {
-        if (NameCompare(CharaName, reserved[index]) == 0) {
+    for (int blank = 0; blank < 2; blank++) {
+        if (NameCompare(CharaName, blank_names[blank]) == 0) {
             return 0;
         }
     }
@@ -900,62 +899,13 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterKey__Fv);
 void NameDefaultSet(int chara_no) {
     int language = GetMenuLangFlag();
     s16 default_names[7][6][11] = {
-        {
-            {20, 1, 46},
-            {12, 47, 5},
-            {60, 43, 222},
-            {41, 77, 222},
-            {3, 46, 56, 56},
-            {5, 63, 35, 46, 70},
-        },
-        {
-            {181, 202, 188, 201},
-            {185, 196, 188, 202},
-            {168, 202, 205, 202},
-            {179, 208, 189, 212},
-            {182, 201, 194, 188, 194, 188},
-            {176, 206, 200, 202, 201, 191},
-        },
-        {
-            {181, 202, 188, 201},
-            {185, 196, 188, 202},
-            {168, 202, 205, 202},
-            {179, 208, 189, 212},
-            {182, 201, 194, 188, 194, 188},
-            {176, 206, 200, 202, 201, 191},
-        },
-        {
-            {181, 202, 188, 201},
-            {185, 196, 188, 202},
-            {168, 202, 205, 202},
-            {179, 208, 189, 212},
-            {182, 201, 194, 188, 194, 188},
-            {176, 206, 200, 202, 201, 191},
-        },
-        {
-            {181, 202, 188, 201},
-            {185, 196, 188, 202},
-            {168, 202, 205, 202},
-            {179, 208, 189, 212},
-            {182, 201, 194, 188, 194, 188},
-            {176, 206, 200, 202, 201, 191},
-        },
-        {
-            {181, 202, 188, 201},
-            {185, 196, 188, 202},
-            {168, 202, 205, 202},
-            {179, 208, 189, 212},
-            {182, 201, 194, 188, 194, 188},
-            {176, 206, 200, 202, 201, 191},
-        },
-        {
-            {181, 202, 188, 201},
-            {185, 196, 188, 202},
-            {168, 202, 205, 202},
-            {179, 208, 189, 212},
-            {182, 201, 194, 188, 194, 188},
-            {176, 206, 200, 202, 201, 191},
-        },
+        {{20, 1, 46}, {12, 47, 5}, {60, 43, 222}, {41, 77, 222}, {3, 46, 56, 56}, {5, 63, 35, 46, 70}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
+        {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
     };
     s16 *name = SaveData->GetCharaName(chara_no);
     int length;
@@ -1041,7 +991,6 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
         put_x -= 0x14 - step;
     }
 }
-
 /**
  * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
  *
@@ -1124,14 +1073,13 @@ int GetMsgLengthCharaName(int chara_no) {
  * @size 0xB0
  */
 void InitOpeningBook(u_long128 *buffer, int *blocks) {
-    u_long128 *work = buffer;
-
-    if (buffer == NULL) {
-        work = (u_long128 *) read_buffer;
+    u_long128 *load_buffer = buffer;
+    if (load_buffer == NULL) {
+        load_buffer = (u_long128 *) read_buffer;
     }
-    work = MenuCalcBufAlignment(work);
+    load_buffer = MenuCalcBufAlignment(load_buffer);
     StartReadBG();
-    LoadFileBGMenuData("openbook.pak", work);
+    LoadFileBGMenuData("openbook.pak", load_buffer);
     OpenBook.tex_block = blocks[0];
     OpenBook.unk_004 = blocks[1];
     OpenBook.open = 0;

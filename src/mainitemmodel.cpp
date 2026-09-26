@@ -1,6 +1,8 @@
+#pragma argument_flag 0
+#pragma argument_flag_ones 33,34,39,59,225,254,266,268
 #include "mainitemmodel.hpp"
 #include <cstdio>
-#ifdef NON_MATCHING // draft includes
+#pragma argument_flag_ones 58
 #include <cstring>
 #include <libvu0.h>
 #include "dataalloc.hpp"
@@ -15,7 +17,6 @@
 #include "snd.hpp"
 #include "itemdata.hpp"
 #include "dun/gameloop.hpp"
-#endif
 
 int CMainItemModel::GetFreeCashNo(void) {
     for (int i = 0; i < 6; i++) {
@@ -33,24 +34,23 @@ int CMainItemModel::GetFreeModelNo(void) {
     }
     return -1;
 }
-#ifdef NON_MATCHING
 extern CDataAlloc2<1> BtItemCashArea[6];
 
 int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data,
                                  int texture_size) {
-    LOADTEXTURE_INFO2 texture[2] = {};
     int slot = GetFreeCashNo();
 
     if (slot == -1) {
         return -1;
     }
+    BtItemCashArea[slot].Reset();
+    u_char *buffer = BtItemCashArea[slot].base + BtItemCashArea[slot].used * 16;
     CDataAlloc2<1> *area = &BtItemCashArea[slot];
-    area->used = 0;
-    u_char *buffer = area->base + area->used * 16;
     area->Alloc((texture_size >> 4) + 1);
     memcpy(buffer, texture_data, texture_size);
     TexManager.DeleteTextureBlock(slot + 0x38);
     TexManager.CleanUpBuffer();
+    LOADTEXTURE_INFO2 texture[2] = {};
     texture[0].name = (char *) buffer;
     texture[0].block_no = slot + 0x38;
     TexManager.LoadTextureBlockEX(slot + 0x38, texture);
@@ -62,24 +62,22 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
     model_cash[model_no] = slot;
     return model_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetCashModel__14CMainItemModelFiPUiPUii);
-#endif
-#ifdef NON_MATCHING
+/** The message logged when a cached model's last user lets it go. */
+extern char MainItemRemoveMessage[];
+
+/** The message logged when a model is put in a hand. */
+extern char MainItemHandMessage[];
+
 void CMainItemModel::DeleteModel(int index) {
     cash_lock[model_cash[index]]--;
     if (cash_lock[model_cash[index]] <= 0) {
         cash[model_cash[index]] = NULL;
         cash_lock[model_cash[index]] = 0;
-        printf("remove !!\n");
+        printf(MainItemRemoveMessage);
     }
     model[index] = -1;
     model_cash[index] = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", DeleteModel__14CMainItemModelFi);
-#endif
-#ifdef NON_MATCHING
 int CMainItemModel::SetHandModel(int source) {
     int index = GetFreeModelNo();
 
@@ -87,17 +85,15 @@ int CMainItemModel::SetHandModel(int source) {
         return -1;
     }
     model[index] = 1;
-    CFrame *placement = &frame[index];
-    placement->SetPosition(0.0f, 0.0f, 0.0f);
-    placement->SetRotation(1.5707964f, 0.0f, 0.0f);
+    float zero = 0.0f;
+    frame[index].SetPosition(zero, zero, zero);
+    float rot = 1.5707964f;
+    frame[index].SetRotation(rot, 0.0f, 0.0f);
     model_cash[index] = model_cash[source];
     cash_lock[model_cash[source]]++;
-    printf("code = %d, lock = %d\n", index, cash_lock[model_cash[source]]);
+    printf(MainItemHandMessage, index, cash_lock[model_cash[source]]);
     return index;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetHandModel__14CMainItemModelFi);
-#endif
 void CMainItemModel::AllReleasItem(void) {
     for (int i = 0; i < 16; i++) {
         switch (model[i]) {
@@ -122,75 +118,77 @@ int CMainItemModel::SetThrowModel(int model_index, float *position, float *headi
     cash_lock[model_cash[model_index]]++;
     return slot;
 }
-#ifdef NON_MATCHING
 void CMainItemModel::Draw(void) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
     CFrame *hand = CharaMain.frame->SearchFrame("item");
+    int i;
+    s32 *slot;
+    CFrame *placement;
 
-    for (int i = 0; i < 16; i++) {
-        CFrame *placement = &frame[i];
-        CFrame *item = (CFrame *) cash[model_cash[i]];
+    for (i = 0; i < 16; i++) {
         switch (model[i]) {
-            case -1:
-            case 0:
-                break;
             case 1:
-                TexManager.ReloadTexture(Vif1Packet, model_cash[i] + 0x38);
+                slot = &model_cash[i];
+                TexManager.ReloadTexture(Vif1Packet, *slot + 0x38);
+                placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 placement->GetRotation(rotation);
-                item->SetPosition(position);
-                item->SetRotation(rotation[0], rotation[1], rotation[2]);
-                item->SetReference(hand);
-                MGDraw(item);
+                ((CFrame *) cash[*slot])->SetPosition(position);
+                ((CFrame *) cash[*slot])->SetRotation(rotation[0], rotation[1], rotation[2]);
+                ((CFrame *) cash[*slot])->SetReference(hand);
+                MGDraw((CFrame *) cash[*slot]);
                 break;
             case 2:
-                TexManager.ReloadTexture(Vif1Packet, model_cash[i] + 0x38);
+                slot = &model_cash[i];
+                TexManager.ReloadTexture(Vif1Packet, *slot + 0x38);
+                placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 placement->GetRotation(rotation);
                 placement->SetPosition(position);
-                item->SetPosition(position);
-                item->SetRotation(rotation[0], rotation[1], rotation[2]);
-                item->DeleteReference();
-                MGDraw(item);
+                ((CFrame *) cash[*slot])->SetPosition(position);
+                ((CFrame *) cash[*slot])->SetRotation(rotation[0], rotation[1], rotation[2]);
+                ((CFrame *) cash[*slot])->DeleteReference();
+                MGDraw((CFrame *) cash[*slot]);
                 break;
             case 3:
-                TexManager.ReloadTexture(Vif1Packet, model_cash[i] + 0x38);
-                item->DeleteReference();
+                slot = &model_cash[i];
+                TexManager.ReloadTexture(Vif1Packet, *slot + 0x38);
+                ((CFrame *) cash[*slot])->DeleteReference();
+                placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 placement->GetRotation(rotation);
-                item->SetPosition(position);
-                item->SetRotation(rotation[0], rotation[1], rotation[2]);
-                MGDraw(item);
+                ((CFrame *) cash[*slot])->SetPosition(position);
+                ((CFrame *) cash[*slot])->SetRotation(rotation[0], rotation[1], rotation[2]);
+                MGDraw((CFrame *) cash[*slot]);
+                break;
+            case -1:
+            case 0:
                 break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Draw__14CMainItemModelFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @796__2);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
-#ifdef NON_MATCHING
 int ItemThrowStep(float *position, float *velocity);
 extern "C" CSHOT_EFFECT MasekiEffect[5];
 
 void CMainItemModel::Step(void) {
+    int i;
+    int result;
+    CFrame *placement;
+    int item_no;
     sceVu0FVECTOR position;
-    sceVu0FVECTOR direction = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR direction = {0.0f, 1.0f, 0.0f, 0.0f};
 
-    for (int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         switch (model[i]) {
-            case -1:
-            case 0:
             case 1:
-            case 3:
                 break;
             case 2: {
-                CFrame *placement = &frame[i];
+                placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
-                int result = ItemThrowStep(position, velocity[i]);
+                result = ItemThrowStep(position, velocity[i]);
                 placement->SetPosition(position);
                 if (result == 2) {
                     throw_time[i] = 45;
@@ -200,7 +198,7 @@ void CMainItemModel::Step(void) {
                     break;
                 }
                 throw_time[i] = 0;
-                int item_no = cash_item[model_cash[i]];
+                item_no = cash_item[model_cash[i]];
                 switch (item_no) {
                     case 0xA0:
                         NowColData->Set(position, 8, 5, 8.0f, 1.0f, 2, 2, 0, 0);
@@ -216,6 +214,11 @@ void CMainItemModel::Step(void) {
                         break;
                     case 0xA9:
                         NowColData->Set(position, 2, 5, 8.0f, 1.0f, 2, 2, 0x200, 0);
+                        DeleteModel(i);
+                        break;
+                    case 0x9F:
+                    default:
+                        SetBombEffect(position, 3, (selectMapNo + 1) * 30, 1.0f);
                         DeleteModel(i);
                         break;
                     case 0x98:
@@ -242,39 +245,28 @@ void CMainItemModel::Step(void) {
                         DeleteModel(i);
                         break;
                     }
-                    default:
-                        SetBombEffect(position, 3, (selectMapNo + 1) * 30, 1.0f);
-                        DeleteModel(i);
-                        break;
                 }
                 break;
             }
+            case 3:
+            case -1:
+            case 0:
+                break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Step__14CMainItemModelFv);
-#endif
-#ifdef NON_MATCHING
 void CMainItemModel::Initialize(void) {
-    int i;
-
-    for (i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         cash[i] = NULL;
         cash_lock[i] = 0;
         throw_time[i] = 0;
     }
-    for (i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++) {
         model[i] = -1;
-        CFrame *placement = &frame[i];
-        placement->SetPosition(0.0f, 0.0f, 0.0f);
-        placement->SetRotation(3.1415927f, 0.0f, 0.0f);
+        frame[i].SetPosition(0.0f, 0.0f, 0.0f);
+        frame[i].SetRotation(3.1415927f, 0.0f, 0.0f);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Initialize__14CMainItemModelFv);
-#endif
-#ifdef NON_MATCHING
 extern ITEM_DATA ITEM_LIST[175];
 
 int CActiveItemPack::CheckStatusType(void) {
@@ -285,9 +277,10 @@ int CActiveItemPack::CheckStatusType(void) {
     }
     int item_no = item[now];
     type = -1;
+    if (item_no == -1) {
+        return 0;
+    }
     switch (item_no) {
-        case -1:
-            return 0;
         case 145:
         case 146:
         case 147:
@@ -315,6 +308,3 @@ int CActiveItemPack::CheckStatusType(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", CheckStatusType__15CActiveItemPackFv);
-#endif

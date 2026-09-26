@@ -35,7 +35,6 @@ void LangsetInit(void) {
     SetDataBuffer(&TextureData, 300000);
     SetPacketReadBuffer(40000, 300000);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
-
     LOADTEXTURE_INFO textures[] = {
         {"#frame_image_mes#640#448#4", 26, 0},
         {"#fukidashibase#640#224#4", 26, 0},
@@ -43,7 +42,6 @@ void LangsetInit(void) {
         {"titledat/lang_set.img", 0, 0},
         {"", 0, 0},
     };
-
     TexManager.Initialize(0x3FE0);
     TexManager.LoadTextureBlock(-1, textures, read_buffer);
     GamePad.SetAutoRepeat(0x5000, 30, 9);
@@ -96,7 +94,6 @@ int LangsetProc(void) {
     }
     return 0;
 }
-
 /** Fills in a rectangle's position and size. */
 static inline void SetRect(RECT *rect, int x, int y, int width, int height) {
     rect->x = x;

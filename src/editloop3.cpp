@@ -114,6 +114,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                      int function_count, ED_EVENT_POINT *points, int point_count) {
     int has_extent;
     int created;
+    int j;
     volatile int point_offset[4];
 
     for (int i = 0; i < 8 && indices != NULL; i++) {
@@ -142,7 +143,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
             if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
                 kind = function->kind;
             } else if (function->link_id ==
-                       ((ED_EVENT_POINT *) ((int) points + point_offset[0]))->map_no) {
+                       ((ED_EVENT_POINT *) (point_offset[0] + (int) points))->map_no) {
                 if (kind == 2) {
                     sceVu0CopyVector(point->position, function->position);
                     sceVu0CopyVector(point->rotation, function->rotation);
@@ -214,7 +215,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->unk_60[0] = 6.0f;
                     point->unk_60[3] = function->values[0];
                     point->side = (int) function->values[1];
-                    for (int j = 0; j < function_count; j++) {
+                    for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
                         if (other->kind == 20 && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
@@ -233,7 +234,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->unk_60[0] = 6.0f;
                     point->unk_60[3] = function->values[0];
                     point->linked_value = (int) function->values[1];
-                    for (int j = 0; j < function_count; j++) {
+                    for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
                         if (other->kind == 19 && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
@@ -1540,7 +1541,6 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     }
     MGSetAmbient(old_ambient);
 }
-#ifdef NON_MATCHING
 void EdDrawLensFlare(float time, CFrame **sky) {
     int sky_index = (int) (time / 3.0f);
     if (!EdCheckTime(time, (0, 10.0f), 4.0f))
@@ -1574,7 +1574,9 @@ void EdDrawLensFlare(float time, CFrame **sky) {
         next = 0;
 
     static float color[12][3] = {
-        {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 128.0f}, {0.0f, 255.0f, 128.0f}, {0.0f, 255.0f, 128.0f}, {0.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}};
+        {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 128.0f, 0.0f},
+        {255.0f, 128.0f, 0.0f},   {255.0f, 128.0f, 0.0f},   {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f},
+        {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}};
     unsigned char red = (unsigned char) (color[current][0] * inverse + color[next][0] * fraction);
     unsigned char green = (unsigned char) (color[current][1] * inverse + color[next][1] * fraction);
     unsigned char blue = (unsigned char) (color[current][2] * inverse + color[next][2] * fraction);
@@ -1585,7 +1587,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     mgPickZBuff->x = screen[0];
     mgPickZBuff->y = screen[1];
     if (mgPickZBuff->z >= 0) {
-        if (screen[2] + 100 < mgPickZBuff->z)
+        if (mgPickZBuff->z > screen[2] + 100)
             return;
         TexManager.ReloadTexture(GetVif1Packet(), 23);
         CTexture *texture = TexManager.GetTexture("lensfler", 23);
@@ -1593,13 +1595,6 @@ void EdDrawLensFlare(float time, CFrame **sky) {
             LensFlare(texture, position, red, green, blue);
     }
 }
-#else
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1673);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1674);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1675);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @1676);
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdDrawLensFlare__FfPP6CFrame);
-#endif
 void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky) {
     int current = (int) clock;
     int next = (int) clock + 1;
@@ -3123,7 +3118,6 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     TexManager.LoadTextureBlockEX(block, textures);
     return 1;
 }
-#ifdef NON_MATCHING
 int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
@@ -3147,12 +3141,15 @@ int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->event_status = 1;
-    npc->chara.foot_sound[3].frame = 128.0f;
-    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
+    npc->chara.ambient_offset[3] = 128.0f;
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
-    if (argument_count >= 4) {
+    if (argument_count > 3) {
         GetPosition(stack, position);
-        rotation[1] = GetStackFloat(stack + 3);
+        stack += 3;
+        rotation[1] = GetStackFloat(stack++);
+        rotation[2] = 0.0f;
+        rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
     npc->chara.SetPosition(position);
@@ -3160,11 +3157,7 @@ int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->chara.SetMotion(0, 0);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _LOAD_IN_VILLAGER__FP12RS_STACKDATAi);
-#endif
 
-#ifdef NON_MATCHING
 int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
@@ -3184,12 +3177,15 @@ int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->event_status = 0;
-    npc->chara.foot_sound[3].frame = 128.0f;
-    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
+    npc->chara.ambient_offset[3] = 128.0f;
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
-    if (argument_count >= 4) {
+    if (argument_count > 3) {
         GetPosition(stack, position);
-        rotation[1] = GetStackFloat(stack + 3);
+        stack += 3;
+        rotation[1] = GetStackFloat(stack++);
+        rotation[2] = 0.0f;
+        rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
     npc->chara.SetPosition(position);
@@ -3197,9 +3193,6 @@ int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->chara.SetMotion(0, 0);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _LOAD_OUT_VILLAGER__FP12RS_STACKDATAi);
-#endif
 
 static int _LOAD_VILLAGER(RS_STACKDATA *, int) {
     EdVillagerBuffer.used = 0;
@@ -4509,20 +4502,16 @@ static int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     int index = EdEventInfo.talk_npc_id;
     int status = 0;
     if (index >= 0 && index < EdEventInfo.npc_count) {
-        CNPCharacter *npcs = EdEventInfo.npcs;
-        status = npcs[index].event_status;
+        CNPCharacter *npc = &EdEventInfo.npcs[index];
+        status = npc->event_status;
     }
     SetStack(stack, status);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _GET_TALKNPC_STATUS__FP12RS_STACKDATAi);
-#endif
 
 /**
  * Camera offsets used for each of the three talk-camera views.
@@ -5083,21 +5072,18 @@ static int _DRAW_SHADOW(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR plane;
-    RS_STACKDATA *distance_argument = stack + 3;
     GetPosition(stack, plane);
+    stack += 3;
     if (EdEventInfo.edit_ground != NULL) {
-        float distance = GetStackFloat(distance_argument);
-        sceVu0CopyVector(EdEventInfo.edit_ground->clip_plane, plane);
-        EdEventInfo.edit_ground->clip_plane[3] = distance;
+        float distance = GetStackFloat(stack++);
+        CEditGround *ground = EdEventInfo.edit_ground;
+        sceVu0CopyVector(ground->clip_plane, plane);
+        ground->clip_plane[3] = distance;
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _SET_CLIP_POINT__FP12RS_STACKDATAi);
-#endif
 
 static int _DRAW_EDIT_WATER(RS_STACKDATA *stack, int) {
     if (EdEventInfo.edit_ground != NULL)
@@ -5553,19 +5539,14 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _ASQ_CHECK(RS_STACKDATA *stack, int) {
-    RS_STACKDATA *result = (0, stack + 1);
-    CActionSeq *sequence = GetActSeq(GetStackInt(stack));
+    CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
     if (sequence == NULL)
         return 0;
-    int ended = sequence->CheckEnd();
-    SetStack(result, (0, ((ended != 0) ^ 1) & 0xFF));
+    int end = sequence->CheckEnd();
+    SetStack(stack++, ((end != 0) ^ 1) & 0xFF);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_CHECK__FP12RS_STACKDATAi);
-#endif
 
 static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < argument_count; i++)
@@ -6787,9 +6768,11 @@ void RunEvent(CRunScript *script, int program, CDataAlloc2<1> *arena) {
     script->run(program);
 }
 
+/**
+ * Starts an event script using the shared event-script runner.
+ */
 int EdRunEvent(int program, CDataAlloc2<1> *arena) {
     RunEvent(&EdEventScript, program, arena);
-    return 1;
 }
 
 int EdResumeEvent() {

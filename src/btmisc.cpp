@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "btitem.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "dataalloc.hpp"
@@ -17,9 +16,9 @@
 #include "framevu1.hpp"
 #include "itemdata.hpp"
 #include "mds.hpp"
-#include "menu_save.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
+#include "menu_save.hpp"
 
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
@@ -109,6 +108,7 @@ void makeWeaponName(char *name, int weapon_no) {
         if (weapon_no >= 0x101 && weapon_no < 0x12B) {
             chara_no = 0;
         }
+
         if (weapon_no >= 0x12B && weapon_no < 0x13A) {
             chara_no = 1;
         }
@@ -142,6 +142,12 @@ void makeWeaponName(char *name, int weapon_no) {
  * @address 0x1B7120
  * @size 0x124
  */
+/** The model file extension, shared with the hit-value unit. */
+extern char MdsExtension[];
+
+/** Base name of each item's model and texture files, beginning with attachments. */
+extern char *ITEM_NAME_TBL_NEW[];
+
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);
     if (item_no >= 0x101) {
@@ -154,30 +160,14 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
         strcat(model_path, ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START]);
     }
     strcpy(texture_path, model_path);
-    strcat(model_path, ".mds");
+    strcat(model_path, MdsExtension);
     strcat(texture_path, ".img");
     printf("mds = %s\n", model_path);
     printf("img = %s\n", texture_path);
 }
-
-/**
- * Buffer the weapon model's file name is built in.
- */
 extern char nameWepBuff_mds[];
-
-/**
- * Buffer the weapon texture's file name is built in.
- */
 extern char nameWepBuff_img[];
 
-/**
- * Builds the model and texture file names of one of a character's weapons into
- * the two given buffers.
- *
- * @mangled BtGetWeaponNamePath2__FPcPcii
- * @address 0x1B7250
- * @size 0x158
- */
 void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
     char number[32];
@@ -197,33 +187,21 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     strcpy(name, nameWepBuff_mds);
     strcpy(path, nameWepBuff_img);
 }
+extern int defWeapon[6];
 
-/**
- * First weapon of each character's chain, which weapon file numbers count from.
- */
-extern int defWeapon__2[6];
-
-/**
- * Builds the model and effect names for an absolute weapon item identifier.
- *
- * @mangled BtGetWeaponNamePath3__FPcPci
- * @address 0x1B73B0
- * @size 0xB4
- */
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
-    int chara_no = 0;
-
-    if (weapon_no < 0x101) {
-        chara_no = 0;
-        return;
-    }
-    WEAPON_DATA *weapon = GetWeaponData(weapon_no);
-    if (weapon != NULL) {
-        chara_no = (s8) weapon->owner;
-        int offset = weapon_no - defWeapon__2[chara_no];
-
-        printf("offset %d\n", offset);
-        BtGetWeaponNamePath2(name, effect_name, chara_no, offset);
+    WEAPON_DATA *weapon;
+    int chara_no;
+    if (weapon_no <= 0x100) {
+        weapon = NULL;
+    } else {
+        weapon = GetWeaponData(weapon_no);
+        if (weapon != NULL) {
+            chara_no = (s8) weapon->owner;
+            weapon_no -= defWeapon[chara_no];
+            printf("offset %d\n", weapon_no);
+            BtGetWeaponNamePath2(name, effect_name, chara_no, weapon_no);
+        }
     }
 }
 /**

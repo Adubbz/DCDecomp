@@ -324,45 +324,39 @@ EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
 void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
                unsigned char blue) {
     sceVu0IVECTOR screen;
-    int visible;
-    int screen_x;
-    int screen_y;
-    int size;
-    int half;
-    int x;
-    int y;
-    float offset;
-    float shift;
-    int i;
 
     if (texture == 0) {
         return;
     }
 
-    visible = MGRotTransPers2D(screen, position, 0);
-    screen_x = screen[0];
-    screen_y = screen[1];
-    float flare_offset[8] = {0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f};
-    float flare_size[8] = {0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f};
+    int visible = MGRotTransPers2D(screen, position, 0);
+    int screen_x = screen[0];
+    int screen_y = screen[1];
+    float flare_offset[8] = { 0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f };
+    float flare_size[8] = { 0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f };
+
+    int size;
+    int x;
+    int y;
+    int i;
 
     for (i = 0; i < 8; i++) {
-        offset = flare_offset[i];
+        float offset = flare_offset[i];
         size = (int) (64.0f * flare_size[i]);
-        shift = 320 - screen_x;
-        shift *= offset;
-        x = (int) shift;
+        float dx = (float) (320 - screen_x);
+        dx *= offset;
+        x = (int) dx;
         x += screen_x;
-        half = size >> 1;
-        x -= half;
-        shift = 224 - screen_y;
-        shift *= offset;
-        y = (int) shift;
+        x -= size >> 1;
+        float dy = (float) (224 - screen_y);
+        dy *= offset;
+        y = (int) dy;
         y += screen_y;
-        y -= half;
+        y -= size >> 1;
 
         if (visible && 0 <= screen_x && screen_x < 640 && 0 <= screen_y && screen_y < 448) {
             setbilinear(1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x, y, size, size), CRect_i_(0, 0, 64, 64));
+            set2DSprite(Vif1Packet, texture, CRect_i_(x, y, size, size), CRect_i_(0, 0, 0x40, 0x40));
         }
     }
 
@@ -370,22 +364,22 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         int center_x = 0;
         int center_y = 0;
 
-        if (screen_x >= 320) {
+        if (!(screen_x < 320)) {
             center_x = 320 - (screen_x - 320);
         }
         if (screen_x < 320) {
             center_x = screen_x;
         }
-        if (screen_y >= 224) {
+        if (!(screen_y < 224)) {
             center_y = 224 - (screen_y - 224);
         }
         if (screen_y < 224) {
             center_y = screen_y;
         }
 
-        float alpha = (float) ((center_x + center_y) >> 1) / 2.7f;
-        (int) alpha;
-        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, (unsigned char) (int) alpha);
+        float level = (float) ((center_x + center_y) >> 1) / 2.7f;
+        int alpha = (int) level;
+        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, (unsigned char) (int) level);
     }
 }
 /**
@@ -1120,11 +1114,13 @@ void SndSetSePanf(int se_no, float pan, int voice) {
     }
 }
 void SndPlayFootSound(int kind, int foot, float *position) {
-    int se_no = (foot > 0) + (kind * 4 + 500);
     float volume;
     float pan;
+    int se_no = kind * 4 + 500 + (foot > 0);
 
-    SndGetVolPan(&volume, &pan, position, 50.0f, 300.0f);
+    float near = 50.0f;
+    float far = 300.0f;
+    SndGetVolPan(&volume, &pan, position, near, far);
     SndSePlay(se_no, volume, pan, 0);
 }
 
@@ -1573,28 +1569,28 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @800);
  * @address 0x15BAB0
  * @size 0xF4
  */
-#ifdef NON_MATCHING
 void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
-    CScriptInterpreter interpreter;
-    int i;
-    int tag;
-
+    u8 *clear;
+    u8 *data = (u8 *) script;
+    clear = (u8 *) info;
     memset(info, 0, sizeof(SND_INFO));
-    for (i = 0; i < (int) sizeof(SND_INFO); i++) {
-        ((s8 *) info)[i] = 0;
+    for (u_int i = 0; i < sizeof(SND_INFO); i++) {
+        *clear++ = 0;
     }
 
     se_list = 0;
     SoundInfo = info;
-    interpreter.SetScript(script, script_size);
-    interpreter.SetTAG(Command__3, 2);
-    while ((tag = interpreter.GetNextTAG()) >= 0) {
+    CScriptInterpreter interpreter;
+    interpreter.SetScript((char *) data, script_size);
+    interpreter.SetTAG((TAG_PARAM *) Command__3, 2);
+    for (;;) {
+        int tag = interpreter.GetNextTAG();
+        if (tag < 0) {
+            break;
+        }
         CommandExe__3[tag](interpreter.arguments);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", LoadSoundInfo__FP8SND_INFOPci);
-#endif
 static void CommandREVERBE(void **arguments) {
     SoundInfo->reverb_mode = *(s32 *) arguments[0];
     SoundInfo->reverb_depth = *(s32 *) arguments[1];

@@ -13,10 +13,11 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#ifdef NON_MATCHING
-extern ITEM_DATA ITEM_LIST[];
 extern CItemBombEffect *NowBombEffect;
 extern CShockWave *NowShockWave;
+
+#ifdef NON_MATCHING
+extern ITEM_DATA ITEM_LIST[];
 
 static const int bomb_uv[4][2] = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
 #endif
@@ -28,34 +29,61 @@ static const int bomb_uv[4][2] = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
  * @address 0x1D5580
  * @size 0x16C
  */
-#ifdef NON_MATCHING
 int checkItemUsed(int slot) {
-    int character = UserStatus->cur_chara;
-    s16 item = UserStatus->active_item[slot];
+    int character;
+    float water_now;
+    float water_max;
+    int condition;
+    s16 hp;
+    s16 max_hp;
+
+    character = UserStatus->cur_chara;
+    water_now = UserStatus->water_now[character];
+    water_max = UserStatus->water_max[character];
+    hp = UserStatus->hp[character];
+    max_hp = UserStatus->max_hp[character];
+    condition = UserStatus->unk_42C8[character];
+    int usable = 1;
+    ITEM_PACK *pack = &UserStatus->item_pack;
+    s16 item = pack->quick_item_slot[slot];
 
     if (item == -1) {
         return 0;
     }
-    if (item == 0xAA || item == 0x9B || item == 0x95 || item == 0x94) {
-        return UserStatus->hp[character] < UserStatus->max_hp[character];
+    switch (item) {
+    case 0x91:
+    case 0x92:
+    case 0x93:
+        if (!(0.2f + water_now < water_max)) {
+            usable = 0;
+        }
+        break;
+    case 0x97:
+        if ((condition & 0x10) == 0) {
+            usable = 0;
+        }
+        break;
+    case 0x99:
+        if ((condition & 0x40) == 0) {
+            usable = 0;
+        }
+        break;
+    case 0x9A:
+        if ((condition & 0x74) == 0) {
+            usable = 0;
+        }
+        break;
+    case 0x94:
+    case 0x95:
+    case 0x9B:
+    case 0xAA:
+        if (hp >= max_hp) {
+            usable = 0;
+        }
+        break;
     }
-    if (item == 0x9A) {
-        return (UserStatus->unk_42C8[character] & 0x74) != 0;
-    }
-    if (item == 0x99) {
-        return (UserStatus->unk_42C8[character] & 0x40) != 0;
-    }
-    if (item == 0x97) {
-        return (UserStatus->unk_42C8[character] & 0x10) != 0;
-    }
-    if (item == 0x93 || item == 0x92 || item == 0x91) {
-        return UserStatus->water_max[character] > UserStatus->water_now[character] + 0.01f;
-    }
-    return 1;
+    return usable;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", checkItemUsed__Fi);
-#endif
 
 /**
  * Spends one use of a running item.
@@ -117,43 +145,39 @@ INCLUDE_ASM("asm/nonmatchings/itembombeffect", usedActiveItem__FP11CUserStatusi)
  * @address 0x1D5940
  * @size 0x1F0
  */
-#ifdef NON_MATCHING
 int SetBombEffect(float *position, int owner, int damage, float scale) {
     int collision_slot = -1;
 
     for (int effect_no = 0; effect_no < 3; effect_no++) {
-        CItemBombEffect *effect = &NowBombEffect[effect_no];
-        if (effect->CheckBomb() != 0) {
+        if (NowBombEffect[effect_no].CheckBomb() != 0) {
             continue;
         }
 
-        effect->SetBomb(position, scale);
+        NowBombEffect[effect_no].SetBomb(position, scale);
         SndSePlay(0x6C, -1, 0);
         collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale,
                                         0.0f, owner, 3, 0, 0);
         if (collision_slot != -1) {
-            NowColData->hit[NowColData->now_hit].unk_70 = 10;
-            NowColData->hit[NowColData->now_hit].unk_74 = 10;
+            CCollisionData *collision = NowColData;
+            collision->hit[collision->now_hit].unk_70 = 10;
+            collision->hit[collision->now_hit].unk_74 = 10;
         }
 
         if (scale > 1.0f) {
-            sceVu0CopyVector(NowShockWave->position, position);
-            NowShockWave->position[3] = 1.0f;
-            NowShockWave->radius_scale = 30.0f * scale;
-            NowShockWave->base_radius = 30.0f * scale;
-            NowShockWave->radius = 0.0f;
-            NowShockWave->expand_steps = 15.0f * scale;
-            NowShockWave->phase = 0.0f;
-            NowShockWave->alpha = 0.0f;
-            NowShockWave->unk_28 = 1;
+            CShockWave *wave = NowShockWave;
+            sceVu0CopyVector(wave->position, position);
+            wave->position[3] = 1.0f;
+            wave->base_radius = wave->radius_scale = 30.0f * scale;
+            wave->radius = 0.0f;
+            wave->expand_steps = 15.0f * scale;
+            wave->phase = 0.0f;
+            wave->alpha = 0.0f;
+            wave->unk_28 = 1;
         }
         break;
     }
     return collision_slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", SetBombEffect__FPfiif);
-#endif
 
 /**
  * Draws the bomb's blast and its shock wave.

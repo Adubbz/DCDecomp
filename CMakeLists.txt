@@ -190,13 +190,16 @@ carve_part(main.sdata.part2b.s
            main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F68
-           main.sdata.part2f.s=2A1F90-2A1F98
            main.sdata.edit_in-a.s=2A1FA0-2A1FE8
-           main.sdata.btitem-a.s=2A1FF0-2A20C8
+           main.sdata.part2f-2A1FF0.s=2A1FF0-2A2028
+           main.sdata.part2f-2A2030.s=2A2030-2A2048
+           main.sdata.part2f-2A2050.s=2A2058-2A2078
+           main.sdata.part2f-2A2050-2A2088.s=2A2088-2A20B0
+           main.sdata.part2f-2A2050-2A20B8.s=2A20B8-2A20C0
            main.sdata.battlemenu-tail.s=2A20F8-2A2100
-           main.sdata.editmenu-a.s=2A2140-2A2150
-           main.sdata.memcard-a.s=2A2158-2A21A0
-           main.sdata.part2g.s=2A21C0-2A21C8
+           main.sdata.editmenu-after-2A2148.s=2A2148-2A2150
+           main.sdata.memcard-a.s=2A2158-2A2168
+           main.sdata.memcard-a-2A2170.s=2A2170-2A2190
            main.sdata.part2e.s=2A21F0-2A21F8)
 carve_part(main.sdata.part3.s
            main.sdata.part3.s=2A22E0-2A2380)
@@ -228,7 +231,7 @@ carve_part(main.bss.part5.s
            main.bss.part5d.s=1D48FB0-1D4A430
            main.bss.part5g.s=1D4A480-1D4A4D0
            main.bss.part5h.s=1D4A630-1D54940
-           main.bss.edit_in-a.s=1D54950-1D569A0)
+           main.bss.part5h-1D54950.s=1D54950-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
@@ -242,7 +245,7 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4h.s=2A2730-2A2740
            main.sbss.part4c.s=2A27AC-2A294C
            main.sbss.part4g.s=2A29A4-2A29AC
-           main.sbss.editloop-a.s=2A29D4-2A29DC
+           main.sbss.part4g-2A29B0.s=2A29D4-2A29DC
            main.sbss.part4e.s=2A2A54-2A2A64
            main.sbss.part4f.s=2A2A80-2A2AD0
            main.sbss.edit_in-a.s=2A2AFC-2A2B20
@@ -252,8 +255,9 @@ carve_part(main.sbss.part4b.s
 # runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s
            main.sbss.part5.s=2A2BF8-2A2C48
-           main.sbss.btitem-a.s=2A2C4C-2A2C68
-           main.sbss.part5c.s=2A2C74-2A2E84
+           main.sbss.part5-2A2C4C.s=2A2C4C-2A2C68
+           main.sbss.part5c.s=2A2C74-2A2DA4
+           main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
            main.sbss.memcard-a.s=2A2F08-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
            main.sbss.denter-tail.s=2A2F68-2A2FD0)
@@ -268,41 +272,52 @@ carve_part(main.sbss.part5.s
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27E7D0
            main.data.btitem-a.s=27E810-27EAD0
-           main.data.btitem-b.s=27EAE0-27EB30
+           main.data.part6-27EAE0.s=27EB10-27EB30
            main.data.part6f.s=291850-291B80
            main.data.part6k.s=292704-292750
-           main.data.shop-local.s=292770-2927B0
+           main.data.shop-local.s=292770-2927A0
+           main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292830
-           main.data.shop-ticket.s=292840-2936E0
-           main.data.shop-ticket-after.s=293700-293860
+           main.data.shop-filenames-after.s=2929B0-292AC0
+           main.data.shop-filenames-after-292AE4.s=292AE4-292E90
+           main.data.shop-filenames-after-292EE0.s=292F20-292F60
+           main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293030
+           main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
+           main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293160
+           main.data.shop-filenames-after-292EE0-292FA0-293170.s=2931E0-293308
+           main.data.shop-filenames-after-292EE0-292FA0-293358.s=293370-293470
+           main.data.shop-filenames-after-292EE0-2934D0.s=2934D0-293560
+           main.data.shop-filenames-after-292EE0-2934D0-293570.s=293580-293590
+           main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s=2935A0-2936E0
+           main.data.shop-ticket-after.s=293700-293790
            main.data.battlemenu-tail.s=293960-293990
-           main.data.menu_misc-b.s=293B88-293BF0
+           main.data.battlemenu-tail-293B90.s=293B90-293BF0
            main.data.memcard-a.s=293EBC-293FE0
            main.data.menu_save-a.s=294044-294150
-           main.data.part6g.s=2941C0-294460
+           main.data.part6g.s=2941C0-2942D0
+           main.data.part6g-2942F0.s=2942F0-294460
            main.data.part6j.s=295644-295660
-           main.data.eastking-tail.s=2956D0-295810
+           main.data.eastking-tail.s=2956D0-2957F0
+           main.data.menu_manual-after.s=295800-295810
            main.data.part6d.s=295830-295840
-           main.data.part6b.s=2959A0-2959C0
+           main.data.part6b.s=2959B0-2959C0
            main.data.battle_globals-gap.s=295B18-295B50
            main.data.battle_globals-b.s=295EF0-295FC0)
 carve_part(main.data.part4.s
            main.data.part4.s=25DFB0-266810
            main.data.part4b.s=2668C0-266B70
            main.data.part4m.s=266B90-266E10
-           main.data.ebattle-a.s=266E90-266ED0
+           main.data.part4m-266E90.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
-           main.data.part4i.s=269A30-269AD0
-           main.data.part4f.s=269B60-269BA0
            main.data.part4g.s=26A5E8-26A640
-           main.data.edit_in-c.s=26A7F0-26AE10
-           main.data.edit_in-b.s=26AE40-26AE60
+           main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
+           main.data.part4g-26AE40.s=26AE40-26AE60
            main.data.shot_freefuncs-a.s=26AFF8-26B040
-           main.data.motionmodel-a.s=26B0D0-26B1B0
+           main.data.motionmodel-a.s=26B0E0-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0
            main.data.motionmodel-b.s=26B1D0-26B1F0
-           main.data.btmisc-a.s=26B250-26B2C0
+           main.data.motionmodel-b-26B250.s=26B250-26B2C0
            main.data.part4d.s=26B310-279EB0)
 # itemdata.cpp supplies the texture lists TEIGIImgLoad builds, between the
 # command tables and the weapon definitions the unit already owns.
@@ -327,14 +342,18 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.sbss.part8.s
      ${PARTS_DIR}/main.sbss.part9.s)
 
-# fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
+# visualvu1.cpp and visualshadow.cpp now emit the four Visual vtables at
+# 0x2A1168-0x2A11E0, the last of main.rdata.part4.s.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.data.part7.s
      ${PARTS_DIR}/main.rdata.part4.s)
 
-# langset.cpp now owns LangsetInit's texture list template at 0x296630-0x29666C.
+# water.cpp now emits CVisualPolyVu1's vtable, all of main.rdata.part6.s.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.data.part7b.s)
+     ${PARTS_DIR}/main.rdata.part6.s)
+
+# fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.data.part7.s)
 
 # actionseq.cpp now owns the complete data run at 0x2540B0-0x2540C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
@@ -343,6 +362,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 # gameutil.cpp now owns the complete small-data run at 0x2A25A0-0x2A25A4.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.sbss.part4.s)
+
+# langset.cpp now emits LangsetInit's texture table, all of main.data.part7b.s.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.data.part7b.s)
 
 set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
 add_custom_command(

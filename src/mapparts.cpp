@@ -35,11 +35,12 @@ void CMapParts::SetRotation(float x, float y, float z) {
 
 void CMapParts::SetRotY(int rot_y) {
     float angle;
+    float zero = 0.0f;
 
     // A part faces one of four directions, so each step is a quarter turn.
     this->rot_y = rot_y;
     angle = 0.5f * (3.1415927f * rot_y);
-    SetRotation(0.0f, angle, 0.0f);
+    SetRotation(zero, angle, 0.0f);
 }
 
 int CMapParts::GetRotY() {

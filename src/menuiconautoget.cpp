@@ -1,3 +1,5 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
 #include "menuiconautoget.hpp"
 
 #include <cstring>
@@ -46,36 +48,33 @@ int CMenuIconAutoGet::GetSpace(void) {
     }
     return -1;
 }
-#ifdef NON_MATCHING
 int CMenuIconAutoGet::IconAutoMove(void) {
-    static const int destination_x[3] = {92, 156, 220};
-    CDngStatusData *dungeon_status = SaveData->GetDngStatus();
     int moving = 0;
+    CDngStatusData *dungeon_status = SaveData->GetDngStatus();
+    int i;
+    ITEM_PACK *pack = &dungeon_status->item_pack;
+    int destination_x[3] = {92, 156, 220};
 
-    for (int i = 0; i < 3; i++) {
-        MENU_AUTO_GET_ICON *moving_icon = &icon[i];
-        if (moving_icon->item > 0) {
+    for (i = 0; i < 3; i++) {
+        if (icon[i].item > 0) {
             moving = 1;
-            moving_icon->x += (destination_x[moving_icon->slot] - moving_icon->x) / 4.0f;
-            moving_icon->y += (105.0f - moving_icon->y) / 4.0f;
-            if (moving_icon->x - destination_x[moving_icon->slot] < 4.0f) {
-                int slot = moving_icon->slot;
-                if (dungeon_status->inventory.quick_item_slot[slot] <= 0) {
-                    dungeon_status->inventory.quick_item_slot[slot] = moving_icon->item;
-                    dungeon_status->inventory.quick_item_qty[slot] = 1;
-                    dungeon_status->quick_item_icon_count[slot] = moving_icon->count;
+            icon[i].x += (destination_x[icon[i].slot] - icon[i].x) / 4.0f;
+            icon[i].y += (105.0f - icon[i].y) / 4.0f;
+            if (icon[i].x - destination_x[icon[i].slot] < 4.0f) {
+                int slot = icon[i].slot;
+                if (pack->quick_item_slot[slot] <= 0) {
+                    pack->quick_item_slot[slot] = icon[i].item;
+                    pack->quick_item_qty[slot] = 1;
+                    dungeon_status->quick_item_icon_count[slot] = icon[i].count;
                 } else {
-                    dungeon_status->inventory.quick_item_qty[slot]++;
+                    pack->quick_item_qty[slot]++;
                 }
-                memset(moving_icon, -1, sizeof(*moving_icon));
+                memset(&icon[i], -1, sizeof(icon[i]));
             }
         }
     }
     return moving;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IconAutoMove__16CMenuIconAutoGetFv);
-#endif
 
 void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, float x, float y) {
     icon[index].slot = slot;
@@ -84,7 +83,6 @@ void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, 
     icon[index].x = x;
     icon[index].y = y;
 }
-#ifdef NON_MATCHING
 void CMenuIconAutoGet::IconAutoMoveDraw(void) {
     for (int i = 0; i < 3; i++) {
         if (icon[i].item >= 0x84) {
@@ -92,6 +90,3 @@ void CMenuIconAutoGet::IconAutoMoveDraw(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IconAutoMoveDraw__16CMenuIconAutoGetFv);
-#endif

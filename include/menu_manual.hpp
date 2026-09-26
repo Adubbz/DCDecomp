@@ -50,7 +50,7 @@ extern ClsMes *ManualMsg;
  * @address 0x00233520
  * @size 0x38
  */
-s8 GetNowManualPartTgaNum();
+int GetNowManualPartTgaNum();
 
 /**
  * Reports whether the party has the item that unlocks the manual.

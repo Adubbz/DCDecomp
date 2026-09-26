@@ -398,25 +398,27 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
 }
 
 #ifdef NON_MATCHING
-int SetAttachMentValue(int item_no, int, short level, ATTACH_LIST *attachment) {
-    ATTACH_DATA *data;
-
-    if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START || attachment == NULL) {
+int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
+    if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    data = GetAttachData(item_no);
-    if (data == NULL) {
+    ATTACH_LIST *attachment = (ATTACH_LIST *) &SaveData->GetDngStatus()->consumable_items[slot];
+    ATTACH_DATA *data = GetAttachData(item_no);
+    int kind = attachment->item_no;
+    if (kind < ITEM_ATTACH_START || kind >= ITEM_DUNGEON_START) {
         return -1;
     }
+    memset(attachment, 0, sizeof(ATTACH_LIST));
+    attachment->item_no = kind;
     memcpy(attachment, data, sizeof(ATTACH_LIST));
-    attachment->item_no = item_no;
-    if (level < 1) {
+    if (level <= 0) {
         level = 1;
-    } else if (level > 3) {
+    }
+    if (level > 3) {
         level = 3;
     }
-    if (item_no >= ITEM_ATTACH_ATTACK && item_no <= ITEM_ATTACH_MAGICAL_POWER) {
-        attachment->status[item_no - ITEM_ATTACH_ATTACK] += level;
+    if (kind >= ITEM_ATTACH_ATTACK && kind <= ITEM_ATTACH_MAGICAL_POWER) {
+        attachment->status[kind - ITEM_ATTACH_ATTACK] += level;
     }
     return 0;
 }
@@ -1045,30 +1047,33 @@ int DngActItemModelBuild(int wait) {
     }
     return 1;
 }
-
-void DngActiveItemTextureCopy(void) {
-    char source[] = "itemicon";
-    char destination[] = "reserved";
-    int slot;
-
-    if (UserStatus == NULL) {
-        return;
-    }
-    for (slot = 0; slot < 3; slot++) {
-        int item_no = BtlMenuStatusPt->item_pack.quick_item_slot[slot];
-        COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-        if (item_no >= ITEM_DUNGEON_START && info != NULL && info->icon_index >= 0) {
-            int icon = info->icon_index;
-            setItemToReserved(source, (icon & 7) * 32, (icon >> 3) * 32,
-                              destination, slot * 32 + 32, 0);
-        }
-    }
-}
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveItemTextureCopy__Fv);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1728__2);
+
+int DngActiveItemTextureCopy(void) {
+    int i;
+    ITEM_PACK *pack = &UserStatus->item_pack;
+    if (pack == NULL) {
+        return -1;
+    }
+    char source[] = "itemicon";
+    for (i = 0; i < 3; i++) {
+        int item_no = pack->quick_item_slot[i];
+        if (item_no >= ITEM_DUNGEON_START) {
+            COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+            if (info != NULL) {
+                int icon = info->icon_index;
+                if (icon >= 0 && icon <= 256) {
+                    int u = (icon % 8) * 32;
+                    int v = (icon >> 3) * 32;
+                    setItemToReserved(source, u, v, "itempack", i * 32 + 32, 0);
+                }
+            }
+        }
+    }
+    return 1;
+}
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1841);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2044);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2045);
@@ -1078,34 +1083,27 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
-#ifdef NON_MATCHING
-void DngActiveWeaponTextureCopy(void) {
-    char source[] = "weaponicon";
-    char destination[] = "reserved";
-    int weapons[3];
-    int index;
+int DngActiveWeaponTextureCopy(void) {
+    int chara = UserStatus->cur_chara;
+    char source[] = "wepicon";
+    int slot = UserStatus->equipped_weapon_slot[chara];
+    WEAPON_HAVE *owned = UserStatus->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &owned[slot];
+    int default_no = GetDefaultWeaponNo(chara);
+    s16 pos[3][2] = {{0, 0}, {0, 32}, {32, 32}};
+    s16 weapons[3] = {weapon->item_no, default_no + 1, default_no};
 
-    if (UserStatus == NULL) {
-        return;
-    }
-    weapons[0] = BtlMenuStatusPt
-                     ->chara_weapons[UserStatus->cur_chara]
-                                    [BtlMenuStatusPt->equipped_weapon_slot[UserStatus->cur_chara]]
-                     .item_no;
-    weapons[2] = GetDefaultWeaponNo(UserStatus->cur_chara);
-    weapons[1] = weapons[2] + 1;
-    for (index = 0; index < 3; index++) {
-        COM_ITEM_INFO *info = GetCommonItemInfo(weapons[index]);
+    for (int i = 0; i < 3; i++) {
+        COM_ITEM_INFO *info = GetCommonItemInfo(weapons[i]);
         if (info != NULL) {
             int icon = info->icon_index;
-            setItemToReserved(source, (icon & 7) * 32, (icon >> 3) * 32,
-                              destination, index * 32, 0);
+            int u = (icon % 8) * 32;
+            int v = (icon >> 3) * 32;
+            setItemToReserved(source, u, v, "itempack", pos[i][0], pos[i][1]);
         }
     }
+    return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActiveWeaponTextureCopy__Fv);
-#endif
 
 s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     s16 item_no;

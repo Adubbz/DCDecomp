@@ -183,11 +183,8 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
  * @address 0x166170
  * @size 0x68
  */
-static int end_check(float value, float target, float step) {
-    if (step > 0.0f) {
-        return value > target ? 1 : 0;
-    }
-    return value < target ? 1 : 0;
+int end_check(float value, float target, float step) {
+    return step > 0.0f ? (value > target ? 1 : 0) : (value < target ? 1 : 0);
 }
 /**
  * Advances one object animation by a frame.
@@ -404,7 +401,7 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
             return 0;
     }
     effect->map_flag = func->completion_flag;
-    if ((u8) func->frame_name[0] != 0) {
+    if ((u_char) func->frame_name[0] != 0) {
         strcpy(effect->frame_name, (char *) func->frame_name);
     } else {
         strcpy(effect->frame_name, frame->name);
@@ -412,10 +409,10 @@ int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effe
     effect->start = ConvertTime(func->start_time);
     effect->end = ConvertTime(func->end_time);
     for (int i = 0; i < 4; i++) {
-        effect->offset[i] = func->position[i];
-        effect->unk_40[i] = func->rotation[i];
-        effect->colour[i] = func->parameters[i];
-        effect->values[i] = func->values[i];
+        (&effect->offset)[0][i] = (&func->position)[0][i];
+        (&effect->offset)[1][i] = (&func->position)[1][i];
+        (&effect->offset)[2][i] = (&func->position)[2][i];
+        (&effect->offset)[3][i] = (&func->position)[3][i];
     }
     effect->offset[3] = 1.0f;
     InitEditEffect(frame, effect);
@@ -489,9 +486,6 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
     sceVu0FVECTOR position;
     float scale;
     int kind;
-    float x;
-    float y;
-    float z;
 
     if (effect == NULL) {
         return;
@@ -512,18 +506,20 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             Candle.Draw();
             scale *= 0.1f;
             position[1] -= 4.0f;
-            if (effect->values[0] > 0.0f) {
+            if (effect->sound_no > 0.0f) {
                 break;
             }
         case 1:
         case 2:
         case 3:
-            z = 0.1f * position[2];
-            y = 0.1f * position[1];
-            x = 0.1f * position[0];
-            Fire.pos[0] = 10.0f * x;
-            Fire.pos[1] = 10.0f * y;
-            Fire.pos[2] = 10.0f * z;
+            {
+                float z = 0.1f * position[2];
+                float y = 0.1f * position[1];
+                float x = 0.1f * position[0];
+                Fire.pos[0] = 10.0f * x;
+                Fire.pos[1] = 10.0f * y;
+                Fire.pos[2] = 10.0f * z;
+            }
             Fire.pos[3] = 1.0f;
             position[3] = 1.0f;
             if (effect->kind == 1) {

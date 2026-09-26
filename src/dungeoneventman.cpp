@@ -32,7 +32,6 @@ CDungeonEvent *CDungeonEventMan::SearchSlot(void) {
     return NULL;
 }
 
-#ifdef NON_MATCHING
 void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
     for (int i = 0; i < 96; i++) {
         int active;
@@ -41,19 +40,19 @@ void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
         } else {
             active = 0;
         }
-        if (active != 0 && script_no == event[i].event->script_no) {
-            if (enable != 0) {
-                event[i].Start();
-            }
-            if (enable == 0) {
-                event[i].Stop();
+        if (active != 0) {
+            int event_script_no = event[i].event->script_no;
+            if (script_no == event_script_no) {
+                if (enable != 0) {
+                    event[i].Start();
+                }
+                if (enable == 0) {
+                    event[i].Stop();
+                }
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeoneventman", SearchDataSwitch__16CDungeonEventManFii);
-#endif
 void CDungeonEventMan::SearchItemEventHold(int script_no) {
     for (int i = 0; i < 96; i++) {
         int active;

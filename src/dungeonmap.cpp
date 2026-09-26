@@ -1,6 +1,7 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 1008
+#pragma argument_flag_ones
 
 #include "dungeonmap.hpp"
 
@@ -452,16 +453,16 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
             if (draw != 1)
                 continue;
 
-            CDungeonParts *part;
             int direction = this->cells[cell_no].direction;
-
-            part = &this->parts[this->cells[cell_no].parts_no];
-            part->direction = direction;
-            part = &this->parts[this->cells[cell_no].parts_no];
-            part->pos[0] = world_x;
-            part->pos[1] = 0.0f;
-            part->pos[2] = world_z;
-            part->pos[3] = 1.0f;
+            CDungeonParts *direction_part = &this->parts[this->cells[cell_no].parts_no];
+            direction_part->direction = direction;
+            {
+                CDungeonParts *position_part = &this->parts[this->cells[cell_no].parts_no];
+                position_part->pos[0] = world_x;
+                position_part->pos[1] = 0.0f;
+                position_part->pos[2] = world_z;
+                position_part->pos[3] = 1.0f;
+            }
             for (npc_no = 0; npc_no < 4; npc_no++) {
                 if (this->npc[npc_no].parts_no == this->cells[cell_no].parts_no) {
                     this->ReservNPC_Draw(npc_no, world_x, 0.0f, world_z,
@@ -1003,6 +1004,11 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     }
 }
 
+/* 189 of 202 instructions. Retail's loop test forms `&parts[parts_no]` and the
+ * body reads the fire positions at 0x20 from it; mwcc carries only the scaled
+ * index across the test and folds the 0x490 into the load displacement. A
+ * `CDungeonParts *` local recovers the 0x20 offsets but forms the base inside
+ * the body, which trades three differences for four. */
 void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
     float pos[4];
     int i;
@@ -1024,7 +1030,6 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
                 if (this->cells[no].parts_no != MAP_PARTS_NONE && this->cells[no].unk_08 <= 240.0f &&
                     this->cells[no].unk_0C == 1) {
                     CDungeonParts *part;
-
                     for (i = 0; i < (part = &this->parts[this->cells[no].parts_no])->fire_num; i++) {
                         float x;
                         float y;
@@ -1193,7 +1198,6 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
     }
 }
 
-#ifdef NON_MATCHING
 /* 193 of 201 instructions. The small box's case is retail's. The large box's
  * differs only in where the two zero arguments to SetRotation are set up:
  * retail puts them in the load delay slot after the lid angle, ahead of the
@@ -1246,9 +1250,6 @@ void CDungeonMap::DrawItemBox(float *pos) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawItemBox__11CDungeonMapFPf);
-#endif
 
 void CDungeonMap::DrawAtraBoll(float *pos) {
     float draw_pos[4];
@@ -2204,7 +2205,6 @@ found:
     return event_no;
 }
 
-#ifdef NON_MATCHING
 /**
  * Places treasure boxes, trap circles, and atla events on one floor.
  */
@@ -2212,19 +2212,19 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
     float box_pos[4];
     float object_pos[4];
     int atra_no[6];
+    int special;
     int object_count;
-    int target_count;
-    int i;
     int valid;
     int event_no;
-    int event_coord;
-    int j;
+    int event_x;
+    int event_y;
+    int target_count;
 
     if (enabled != 1) {
         return;
     }
 
-    int special = 0;
+    special = 0;
     if (place_atla == 0)
         special = 1;
     object_count = 0;
@@ -2265,7 +2265,7 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
     }
 
     this->initTrapCircle();
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if ((int) ((100.0f * (float) rand()) / 2147483648.0f) < 21) {
             SearchiDoPutArea(this->cells, 0, 0, 20, 20, object_pos);
             valid = 1;
@@ -2282,8 +2282,8 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
 
     if (place_atla != 0) {
         object_count = 0;
-        target_count = BtAtraFloorCyoice(selectMapNo, floor_no, atra_no);
-        while (object_count < target_count) {
+        int atra_count = BtAtraFloorCyoice(selectMapNo, floor_no, atra_no);
+        while (object_count < atra_count) {
             SearchiDoPutArea(this->cells, 0, 0, 20, 20, object_pos);
             valid = 1;
             if (this->CheckTreasureBox(object_pos, 20.0f) == 0)
@@ -2297,9 +2297,9 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
                 this->atra[this->atra_num].phase = 0.0f;
                 this->atra[this->atra_num].atra_no = atra_no[object_count];
                 this->atra[this->atra_num].used = 1;
-                for (i = 0; i < 48; i++) {
-                    if (this->events[i].kind == -1) {
-                        event_no = i;
+                for (int k = 0; k < 48; k++) {
+                    if (this->events[k].kind == -1) {
+                        event_no = k;
                         goto found_atla_event;
                     }
                 }
@@ -2309,8 +2309,8 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
             found_atla_event:
                 this->events[event_no].kind = 3;
                 this->events[event_no].unk_0C = 0;
-                this->events[event_no].unk_00 = event_coord;
-                this->events[event_no].unk_04 = event_coord;
+                this->events[event_no].unk_00 = event_x;
+                this->events[event_no].unk_04 = event_y;
                 this->events[event_no].index = this->atra_num;
                 sceVu0CopyVector(this->events[event_no].pos, object_pos);
                 this->events[event_no].radius = 13.0f;
@@ -2320,9 +2320,6 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildEventData__11CDungeonMapFiii);
-#endif
 
 void CDungeonMap::SetMimicEvent(float x, float y, float z, int item_no, int kind) {
     float pos[4];
@@ -3091,11 +3088,9 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
 
     return num;
 }
-
-/**
- * Builds a floor: places the rooms, joins them with corridors, fills the grid
- * with map parts and picks the set of parts that the floor draws with.
- */
+/* MWCC emits its own jump table for the switch, which lands where retail keeps
+ * @3191, and a .data template for `map_no`, which is retail's @3162 at the end
+ * of this unit's data run. */
 void CDungeonMap::buildRandomMap(int room_max, int full) {
     int w;
     int h;
@@ -3193,10 +3188,11 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
                 near_no = -1;
                 near_dist = 10000;
                 for (j = 0; j < roomStackCnt - 1; j++) {
-                    w = (roomStack[roomStackCnt - 1].x + (int) (roomStack[roomStackCnt - 1].width >> 1)) -
-                        (roomStack[j].x + (int) (roomStack[j].width >> 1));
-                    h = (roomStack[roomStackCnt - 1].y + (int) (roomStack[roomStackCnt - 1].height >> 1)) -
-                        (roomStack[j].y + (int) (roomStack[j].height >> 1));
+                    w = (roomStack[roomStackCnt - 1].x + roomStack[roomStackCnt - 1].width / 2) -
+                        (roomStack[j].x + roomStack[j].width / 2);
+                    h = (roomStack[roomStackCnt - 1].y + roomStack[roomStackCnt - 1].height / 2) -
+                        (roomStack[j].y + roomStack[j].height / 2);
+
                     dist = (int) sqrt((double) (w * w + h * h));
                     if (dist < near_dist) {
                         near_no = j;

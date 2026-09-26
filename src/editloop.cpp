@@ -21,38 +21,33 @@
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "collision.hpp"
-#include "dataalloc.hpp"
-#include "dataread.hpp"
 #include "dataset.hpp"
 #include "debugfont.hpp"
-#include "dngstatusdata.hpp"
-#include "ebattle.hpp"
-#include "edit.hpp"
 #include "edit_in.hpp"
 #include "editarea.hpp"
-#include "editground.hpp"
-#include "editloop.hpp"
-#include "editloop3.hpp"
-#include "editmapscript.hpp"
-#include "editpartsinfo.hpp"
-#include "effect.hpp"
 #include "effectgroup.hpp"
-#include "effectmacro.hpp"
-#include "fishing.hpp"
+#include "menuitemstep.hpp"
+#include "dataread.hpp"
+#include "dataalloc.hpp"
+#include "dngstatusdata.hpp"
+#include "ebattle.hpp"
+#include "editloop.hpp"
+#include "editmapscript.hpp"
+#include "editloop3.hpp"
+#include "edit.hpp"
+#include "editpartsinfo.hpp"
+#include "editground.hpp"
+#include "effect.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
-#include "mainselect.hpp"
 #include "mapparts.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
-#include "memcard.hpp"
-#include "menu_draw.hpp"
 #include "menu_misc.hpp"
-#include "menuitemstep.hpp"
 #include "mglib.hpp"
-#include "nowload.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
 #include "objectframe.hpp"
@@ -62,7 +57,6 @@
 #include "snd.hpp"
 #include "sysmes.hpp"
 #include "texture.hpp"
-#include "wind.hpp"
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
@@ -224,26 +218,25 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 extern u8 EditCharaData[0x960];
 extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
+#include "wind.hpp"
+#include "memcard.hpp"
+#include "fishing.hpp"
+#include "effectmacro.hpp"
+#include "nowload.hpp"
+#include "menu_draw.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern CFrameVu1 *SkyFrame[4];
-extern CFrameVu1 *SkyBackFrame;
-extern CWind EdWind;
 extern CFrame *SunFrame[4];
 extern C3DSprite SystemEffect[8];
 extern u8 def_light[0xC0];
-extern CTextureAnime TexAnime;
-extern CTexAnimeData TexAnimeData[0x40];
-extern CTexture *StayTexture;
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
 
-/* Defined in editmapscript.cpp, whose header does not declare it. */
-void PlayAmbient(float volume);
-
-/* editloop's own functions, in the order the unit defines them; the prototypes
- * let each call ahead of its definition. */
+/* editloop's own functions, in the order the unit defines them. Each is still
+ * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
+ * ahead of their definitions. */
 /**
  * Starts a map event and optionally adopts a camera viewpoint.
  */
@@ -300,37 +293,85 @@ int EditInit(void *param);
 int EditLoop(void);
 void EditLoad(void);
 void EditPartsObjectOnOff();
-void MainMode(void);
-void EditMode(void);
-
-/* Defined in edit_in.cpp and editloop3.cpp, whose headers do not declare them. */
 int EditInLoop(void);
 void EditInInit(float time, char *name);
+int EdMenuMode(void);
+void EdExitMenu(void);
+void MainMode(void);
+void EditMode(void);
+void EdMapJump(int hour, char *name);
 void EdSelectVillager(VILLAGER_INFO *info, float time, EDIT_MAP_INFO *map);
 void EdInitVilager(VILLAGER_INFO *info, CEditGround *ground, u_long128 *buffer);
 void EdInitVillagerOnOff(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGround *ground);
 void EdEventNPCStep(void);
+void EdDoorOpenSe(int door_no, float *position);
+void EdDoorCloseSe(int door_no, float *position);
+void EdSetAmbientVol(float volume);
+void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *position, float *direction);
+int SndGetBgmNo(void);
+void EdSaveFrameImageTask(void);
+int SystemMesCheck(void);
+int EdEventInit(int event_no, CDataAlloc2<1> *alloc, char *script);
+void MapJump(int map_no, int entrance);
+void PlayAmbient(float volume);
+extern CCameraFollow TalkCamera;
+extern CCameraFollow ViewCamera;
 extern int MenuMapJumpMode;
+extern int main_select_menu_no;
 extern int chg_time_cnt;
 extern int bgm_vol;
-extern u_int Vu_prog0f[];
+extern u_long128 Vu_prog0f;
+extern CEffectGroup EdEffectGroup;
+extern int binary;
+extern CFrameVu1 *SkyBackFrame;
 extern int NowSelectParts;
 extern int NowSelectAngle;
 extern float NowCursorRotY;
+extern CTextureAnime TexAnime;
+extern CTexAnimeData TexAnimeData;
+extern CTexture *StayTexture;
+extern CWind EdWind;
 extern float NowPartsCursorPos[4];
-extern CMapParts *OldFocusParts;
-extern int OldSelectAngle;
-
-/** The ground the player has built on one map, as the save holds it. */
+extern int EdBeforeInBgmNo;
+extern int EdDrawOffMap;
+extern int EdThunderEffectFlag;
+extern int EdInteriorFlag;
+extern char EditEmptyText[];
+extern int fobject_list;
+extern int partseffect_list;
+extern int objeffect_list;
+extern int objtimer_list;
+extern ED_EXCHANGE_INFO EdExchangeInfo;
+/* The ground the player has built on one map, as the save holds it. */
 struct ED_GRD_DATA {
     u8 unk_00[0x64];
     int unk_64; /**< Zero until the map's own build event has been seen. */
 };
 
-/* Defined in ebattle.cpp and editloop3.cpp, whose headers do not declare them. */
+/* The names of the interiors the debug menu offers. */
+extern CMapParts *OldFocusParts;
+extern int OldSelectAngle;
+extern CCameraFollow EditCamera;
 void EBDraw(void);
+void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers,
+                     int *marks, int shadow, ED_EVENT_INFO *event);
+void EdDrawItem(void);
 void EdEventBackSpriteDraw(void);
 void EdEventSpriteDraw(void);
+void EffectMacroStep(float *wind);
+void EffectWaterSpray(CEffectGroup *group, float *position, float *size, int count, int index);
+void FishLineDraw(int kind);
+void FishingDrawFish(void);
+/* Mode the loop returns to once the debug menu closes. */
+/* Buffer the parts archive is read into. */
+/**
+ * A part already built while the map loads, so later copies can share it.
+ */
+struct LOADED_PARTS {
+    char name[0x20];  /**< Resource name the part was built from. */
+    CMapParts *parts; /**< Part built from that name. */
+};
+void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);
 
 /**
  * Appends the active language suffix used by editor resource names.
@@ -2369,15 +2410,6 @@ public:
         this->height = height;
     }
 };
-
-/**
- * Draws the banner that fades in when a new day starts: the day count, the
- * weekday and the bar beneath them.
- *
- * @mangled DrawDay__Fv
- * @address 0x17D040
- * @size 0x9A8
- */
 void DrawDay() {
     if (draw_day_flag != 0) {
         int week;
@@ -2485,10 +2517,11 @@ void DrawDay() {
             default:
                 break;
             }
-            drawn = 0;
-            for (; count > 0; count--) {
+            int n;
+            for (n = count; n > 0; n--) {
                 number = cell;
-                value = digit[count - 1];
+                value = digit[n - 1];
+
                 number.x += number.width * (value % 5);
                 number.y += number.height * (value / 5);
                 set2DSprite(GetVif1Packet(), texture,
@@ -2717,9 +2750,7 @@ void MainEditMode() {
 
     float step = 0.0011133334f;
 
-    EDIT_CONFIG_VIEW *config = (EDIT_CONFIG_VIEW *) SaveData->GetConfigData();
-
-    if (config->unk_0C == 0) {
+    if (((int *) SaveData->GetConfigData())[3] == 0) {
         step /= 2.0f;
     }
     if (change_time_event != 0) {
@@ -2794,8 +2825,8 @@ void MainEditMode() {
     char night_window[10] = "win2";
 
     for (level = 0; level < 4; level++) {
-        CMapParts *object = &ObjParts[parts];
-        CFrame *frame = object->frame[level];
+        CMapParts *obj = &ObjParts[parts];
+        CFrame *frame = obj->frame[level];
 
         FrameOnOff(frame, day_window, day_on);
         FrameOnOff(frame, night_window, night_on);
@@ -3371,12 +3402,13 @@ void MoveEditCursor() {
         cursor_scale[0] *= 0.6f;
     }
 
-    float camera_angle = EditCamera.GetAngle();
-    float step_x;
     float step_z;
+    float camera_angle;
+    float step_x;
     float forward;
     float right;
 
+    camera_angle = EditCamera.GetAngle();
     right = EdGetLXf(2);
     forward = EdGetLYf(2);
 
@@ -3482,7 +3514,7 @@ void MoveEditCursor() {
     OldFocusParts = NowFocusParts;
     NowFocusParts = pEditGround->GetParts(pos[0], pos[1], pos[2]);
     static int parts_no = 0;
-    if ((EditMenuStatus.mode == 0 || EditMenuStatus.mode == 1) && EdPadDown(0x40, 2) != 0) {
+    if ((u_int) EditMenuStatus.mode < 2 && EdPadDown(0x40, 2) != 0) {
         int sound = 13;
 
         if (MapNo == 4) {
@@ -3593,7 +3625,7 @@ void MoveEditCursor() {
 
         EdEditMainHelpMes(CheckEditToWalk(walk));
     }
-    if (EditMenuStatus.mode == 0 || EditMenuStatus.mode == 1) {
+    if ((u_int) EditMenuStatus.mode < 2) {
         EdEditBuildHelpMes(NowSelectParts);
     }
     if (EditMenuStatus.mode == 3) {
@@ -3672,9 +3704,7 @@ int LoadTexture() {
                                NULL, NULL);
     CharaCursor1->SetAttr(cursor_attr, 1, 0x200);
 
-    float cursor_scale = 2.5f;
-
-    CharaCursor1->SetScale(cursor_scale, cursor_scale, cursor_scale);
+    CharaCursor1->SetScale(2.5f, 2.5f, 2.5f);
     CharaCursor2 = LoadMDSFile(GetPackFile(read_buffer, "bic.mds", NULL), &EtcDataBuffer, 0,
                                NULL, NULL);
     CharaCursor2->SetAttr(cursor_attr, 1, 0x200);
@@ -3734,14 +3764,14 @@ int LoadTexture() {
         blocks[entered].block_no = 0;
         blocks[entered].unk_08 = 0;
         TexManager.LoadTextureBlock(-1, blocks);
-        TexAnime.Initialize(TexAnimeData, 0x40);
+        TexAnime.Initialize(&TexAnimeData, 0x40);
 
         int anime_size;
         char *anime = (char *) GetPackFile(menu_data, "texanime.cfg", &anime_size);
 
         if (anime != NULL) {
             for (int i = 0; i < 64; i++) {
-                TexAnimeData[i].Initialize();
+                (&TexAnimeData)[i].Initialize();
             }
             TexAnime.LoadCFGFile(anime, anime_size);
         }
@@ -3767,7 +3797,6 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
-
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
@@ -3911,7 +3940,7 @@ void LoadGroundData() {
         MotionParts[i].Initialize();
         if (info->name[0] != '\0') {
             data = (u_int *) EdLoadFile(info->name);
-            MotionParts[i].InitializeTexAnime(TexAnimeData, 64);
+            MotionParts[i].InitializeTexAnime(&TexAnimeData, 64);
             MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer__2, i + 0x1B,
                                          &DataBuffer__2, 0);
             MotionParts[i].SetPosition(info->values[0], info->values[1], info->values[2]);

@@ -6190,8 +6190,6 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     SetWeaponColor();
 }
 
-FUZZY_MATCH("asm/nonmatchings/dun/gameloop", LoadWeapon2__FPUiPUiPUiii)
-
 void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
                  int chara, int reload) {
     int weapon_kind[6] = {1, 4, 6, 5, 10, 7};
@@ -6224,8 +6222,7 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     CUserStatus *status = UserStatus;
     s8 owner = status->cur_chara;
 
-    // One scratch integer serves the weapon's place in the table and then the
-    // block count the effect models start from.
+    // The weapon's item number, counted from its character's first weapon.
     int work = status->chara_weapons[owner][status->equipped_weapon_slot[owner]].item_no;
 
     work -= weapon_first[chara];
@@ -6236,10 +6233,13 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     EquipWeaponFrame(&MainWeapon, chara, CharaMainHandViewFlag);
 
     // The effect models take whatever the weapon models leave.
-    work = WeaponModelBuffer.used;
+    u8 *free_start;
+    u8 *weapon_end;
+    int used = WeaponModelBuffer.used;
 
-    u8 *free_start = WeaponModelBuffer.base + work * 16;
-    s64 free_size = 0x33450 - CharaModelBuffer.used - work;
+    weapon_end = WeaponModelBuffer.base + used * 16;
+    free_start = weapon_end;
+    s64 free_size = 0x33450 - CharaModelBuffer.used - used;
 
     WEffectModelBuffer.base = free_start;
     WEffectModelBuffer.limit = free_size;
@@ -6718,7 +6718,7 @@ int BtCheckDamageProc(void) {
                 ruby_effect_id = -1;
             }
 
-            int damage = NowColData->hit[no].damage;
+            int damage = NowColData->Get(no)->damage;
             int guard = UserStatus->unk_4348[UserStatus->cur_chara];
             int monster;
             int roll;
@@ -6732,12 +6732,15 @@ int BtCheckDamageProc(void) {
                 damage = 0;
             }
 
-            monster = -1;
+            int owner = NowColData->hit[no].owner;
 
-            if (NowColData->hit[no].owner != -1) {
-                monster = (NowColData->hit[no].owner - 200) / 5;
+            monster = -1;
+            if (owner != -1) {
+                monster = (owner - 200) / 5;
+                CMonstorUnit *unit = NowMonstorUnit;
+
                 if (monster >= 0 && monster < 16) {
-                    NowMonstorUnit->monster[monster].last_hit_damage = damage;
+                    unit->monster[monster].last_hit_damage = damage;
                 }
                 NowMonstorUnit->chara[monster][0].GetPosition(from);
             }
@@ -6775,8 +6778,12 @@ int BtCheckDamageProc(void) {
                 if (slot == -1) {
                     BtSetStatusErr(4);
                 } else {
+                    // &who->active_item_vol[slot], spelled so the index is added first.
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6799,7 +6806,10 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6822,7 +6832,10 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6845,7 +6858,10 @@ int BtCheckDamageProc(void) {
                     DngMessMan.unk_1C = 0;
                 } else {
                     CUserStatus *who = UserStatus;
-                    s32 *vol = &who->active_item_vol[slot];
+                    unsigned int address = slot * sizeof(s32);
+
+                    address += (unsigned int) who;
+                    s32 *vol = &((CUserStatus *) address)->active_item_vol[0];
 
                     if (--(*vol) <= 0) {
                         DelActiveItem(slot + 1);
@@ -6912,13 +6928,14 @@ int BtCheckDamageProc(void) {
                 }
             }
 
-            int kind = NowColData->hit[no].kind;
+            COLLISION_HIT *hits = NowColData->hit;
+            int kind = hits[no].kind;
 
-            if (kind == 2 || kind == 4) {
+            if (kind == 2 || hits[no].kind == 4) {
                 sceVu0FVECTOR at;
                 sceVu0FVECTOR away;
 
-                sceVu0CopyVector(at, NowColData->hit[no].pos);
+                sceVu0CopyVector(at, hits[no].pos);
                 GamePad.SetVibration(1, 0xDC, 0xC);
 
                 if (blown != 0) {
@@ -7986,7 +8003,11 @@ void autoCamTrial(void) {
 
         i = 0;
         while (NowDngMap->parts[i].frame[0] != NULL) {
-            frame = i == -1 ? NULL : NowDngMap->parts[i].unk_004;
+            if (i == -1) {
+                frame = NULL;
+            } else {
+                frame = NowDngMap->parts[i].unk_004;
+            }
 
             if (frame != NULL) {
                 CDungeonParts *part = &NowDngMap->parts[i];
@@ -8012,20 +8033,26 @@ void autoCamTrial(void) {
         }
     } else {
         CFrame *frame;
-        int j;
         int i;
+        int j;
 
         for (j = 0; j < 20; j++) {
             for (i = 0; i < 20; i++) {
                 CDungeonMap *map = NowDngMap;
                 s32 parts_no = map->cells[i + j * 20].parts_no;
 
-                frame = parts_no == -1 ? NULL : map->parts[parts_no].unk_004;
+                if (parts_no == -1) {
+                    frame = NULL;
+                } else {
+                    frame = map->parts[parts_no].unk_004;
+                }
+
+                MAP_CELL *cell = &map->cells[i + j * 20];
 
                 if (frame == NULL) {
                     continue;
                 }
-                if (!(map->cells[i + j * 20].unk_08 <= 240.0f)) {
+                if (!(cell->unk_08 <= 240.0f)) {
                     continue;
                 }
 

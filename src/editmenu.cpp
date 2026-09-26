@@ -10,17 +10,14 @@
 #include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "edit.hpp"
-#include "editloop.hpp"
 #include "editpartsinfo.hpp"
 #include "frame.hpp"
 #include "gamepad.hpp"
-#include "mainselect.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_manual.hpp"
 #include "menu_misc.hpp"
 #include "menu_save.hpp"
-#include "menuitemstep.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -99,28 +96,17 @@ extern int EdMenuExTextureBlock1;
 /** Texture block containing the edit menu's third extra texture set. */
 extern int EdMenuExTextureBlock2;
 
-/** Work area after the edit menu's data, where its pages read their files. */
+#include "editloop.hpp"
+#include "mainselect.hpp"
+#include "menuitemstep.hpp"
+
 extern u_long128 *EdMenuWorkBuf;
-
-/** How opaque the edit menu's help window draws. */
 extern s16 EdMenuHelpWinAlpha;
-
-/** The message the edit menu's second window shows. */
 extern int EdMenuMesNo2;
-
-/** Whether the edit menu's second window message is to be made. */
 extern int EdMenuMesMake2;
-
-/** Screen position of the edit menu's help window. */
 extern float WindowPos[2];
-
-/** Width of the edit menu's help window. */
 extern float EditMenuWinW;
-
-/** Height of the edit menu's help window. */
 extern float EditMenuWinH;
-
-/** The texture the personal board's pieces come from. */
 extern CTexture *PerBoardTex;
 
 /**
@@ -1186,28 +1172,15 @@ static float AnalyzeRequestPer() {
 }
 #ifdef NON_MATCHING
 static int AnalyzeBarDraw() {
-    float parts_total;
-    float parts_complete;
-    float elements_total;
-    int elements_done;
-    int parts_done;
-    int filled;
-    int x;
-    int i;
-    int top;
-    int digit_x;
-    int digits;
-    int number;
-    float goal;
-    float edge;
-    float fill;
+    float parts_total = 0.0f;
+    float parts_complete = 0.0f;
+    float elements_total = 0.0f;
+    int elements_done = 0;
+    int parts_done = 0;
     float per[3];
     float target[3];
 
-    elements_total = parts_complete = parts_total = 0.0f;
-    elements_done = 0;
-    parts_done = 0;
-    for (i = 0; i < 24; i++) {
+    for (int i = 0; i < 24; i++) {
         EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(i);
         if (info != NULL && info->stock > 0) {
             parts_total += 1.0f;
@@ -1217,10 +1190,7 @@ static int AnalyzeBarDraw() {
                     parts_complete += 1.0f;
                 }
             }
-            for (int j = 0; j < 6; j++) {
-                if (info->elements[j].id < 0) {
-                    break;
-                }
+            for (int j = 0; j < 6 && info->elements[j].id >= 0; j++) {
                 elements_total += 1.0f;
                 if (info->elements[j].enabled != 0) {
                     elements_done++;
@@ -1229,8 +1199,8 @@ static int AnalyzeBarDraw() {
         }
     }
     s16 *elements = (s16 *) SaveData->GetElemData(NowEditMap);
-    for (i = 0; i < 128; i++) {
-        if (elements[i] > -1) {
+    for (int i = 0; i < 128; i++) {
+        if (elements[i] >= 0) {
             elements_done++;
         }
     }
@@ -1246,63 +1216,53 @@ static int AnalyzeBarDraw() {
         per[1] = 100.0f * parts_complete / parts_total;
     }
     per[2] = AnalyzeRequestPer();
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         target[i] = 144.0f * per[i] / 100.0f;
         if (!(target[i] <= 144.0f)) {
             target[i] = 144.0f;
         }
     }
-    filled = 0;
-    x = -0x3D;
-    for (i = 0; i < 3; i++) {
+    int filled = 0;
+    int x = -0x3D;
+    for (int i = 0; i < 3; i++) {
         x += 0xB5;
         if (i != filled) {
             break;
         }
         AnalyzeFill[i] += 2.0f + 2.0f * ButtonAdd;
-        goal = target[i];
+        float goal = target[i];
         if (goal < AnalyzeFill[i]) {
             AnalyzeFill[i] = goal;
         }
-        fill = AnalyzeFill[i];
-        edge = 0.08f * fill;
-        if (8.0f < edge) {
-            edge = 8.0f;
+        float fill = AnalyzeFill[i];
+        float cap = 0.08f * fill;
+        if (cap > 8.0f) {
+            cap = 8.0f;
         }
-        top = (int) (286.0f - fill);
-        CRect_i_ bar_destination;
-        CRect_i_ bar_source;
-        bar_source.x = 0;
-        bar_source.y = i * 16 + 8;
-        bar_source.width = 0x36;
-        bar_source.height = 7;
-        int height = (int) fill;
-        bar_destination.x = x;
-        bar_destination.y = top;
-        bar_destination.width = 0x36;
-        bar_destination.height = height;
-        DrawMenu2DSprite(AnaBar, bar_destination, bar_source, 0x80);
-        DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) edge), CRect_i_(0, i * 16, 0x36, 8), 0x80);
-        edge = 0.1f * AnalyzeFill[i];
+        int top = (int) (286.0f - fill);
+        DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) fill), CRect_i_(0, i * 16 + 8, 0x36, 7), 0x80);
+        DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) cap), CRect_i_(0, i * 16, 0x36, 8), 0x80);
+        float shade = 0.1f * AnalyzeFill[i];
         if (!(AnalyzeFill[i] <= 0.0f)) {
-            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x11C - top) - edge)),
+            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + shade), 10, (int) ((float) (0x11C - top) - shade)),
                              CRect_i_(0x56, 0x36, 10, 9), 0x80);
         }
-        number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
+        int number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
         if (per[i] < (float) number) {
             number = (int) per[i];
         }
-        digit_x = x + 0x1B;
-        for (digits = GetNumberKeta(number); digits != 0; digits--, digit_x -= 13) {
+        int digit_x = x + 0x1B;
+        for (int digits = GetNumberKeta(number); digits != 0; digits--) {
             int digit = number % 10;
             int u = digit * 13;
             int v = 0x6F;
-            if (digit > 8) {
+            if (digit >= 9) {
                 u = 0;
                 v = 0x5E;
             }
             DrawMenu2DSprite(AnaBar, CRect_i_(digit_x, top - 0x1E, 0x10, 0x18), CRect_i_(u, v, 13, 0x11), 0x8C);
             number /= 10;
+            digit_x -= 13;
         }
         DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x28, top - 0x1E, 0xF, 0x13), CRect_i_(13, 0x5E, 13, 0x11), 0x80);
         if (0.4f * goal <= AnalyzeFill[i]) {
@@ -1320,50 +1280,47 @@ INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeBarDraw__Fv);
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {
-        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50),
-                         CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50),
+                         0x80);
     }
-
-    float slide = 0x280 - EdEffectCt * 16;
-    int right = (int) (80.0f + slide);
-    if (slide < 0.0f) {
-        slide = 0.0f;
+    float left = (float) (0x280 - EdEffectCt * 16);
+    int width = (int) (80.0f + left);
+    if (left < 0.0f) {
+        left = 0.0f;
     }
-    right = (int) (right - slide);
-    if (right < 0) {
-        right = 0;
+    width = (int) ((float) width - left);
+    if (width < 0) {
+        width = 0;
     }
-    FadeTexX((int) slide, right, 0x280, 0, "frame_image", 0);
+    FadeTexX((int) left, width, 0x280, 0, "frame_image", 0);
     DrawMoveMenuIcon();
-
     int alpha = EdEffectCt * 4;
     if (alpha > 0x80) {
         alpha = 0x80;
     }
-    int brightness = EdEffectCt + 0x10;
-    if (brightness > 0x40) {
-        brightness = 0x40;
+    int bright = EdEffectCt + 16;
+    if (bright > 0x40) {
+        bright = 0x40;
     }
-    AnalyzeBackDraw(alpha, brightness);
-
+    AnalyzeBackDraw(alpha, bright);
     int done = 0;
-    float fill = EdEffectCt * 20;
-    if (640.0f < fill) {
-        fill = 640.0f;
+    float bar = (float) (EdEffectCt * 20);
+    if (640.0f < bar) {
+        bar = 640.0f;
     }
-    if (560.0f < fill) {
+    if (560.0f < bar) {
         done = AnalyzeBarDraw();
     }
-    if (640.0f < fill) {
-        fill = 640.0f;
+    if (640.0f < bar) {
+        bar = 640.0f;
     }
-    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) fill, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
-    for (int x = 0x75; x < fill; x += 0xB5) {
-        int width = (int) (fill - x);
-        if (width > 0x3C) {
-            width = 0x3C;
+    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+    for (int x = 0x75; (float) x < bar; x += 0xB5) {
+        int w = (int) (bar - (float) x);
+        if (w > 0x3C) {
+            w = 0x3C;
         }
-        DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+        DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, w, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
     }
     CalMoveFromMenuIcon();
     EdEffectCt++;

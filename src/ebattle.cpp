@@ -73,6 +73,30 @@ extern int debug_mode;
 extern CTexture *tex;
 extern CTexture *tex2;
 
+/**
+ * Stores one motion segment used to convert animation time into battle frames.
+ */
+struct EB_MOTION_ENTRY {
+    int motion_no;
+    float start;
+    float end;
+    float speed;
+    int duration;
+};
+
+/**
+ * Stores one timed controller prompt in an event battle.
+ */
+struct EB_KEY_ENTRY {
+    int frame;
+    int buttons;
+    int mode;
+    int pressed;
+    int complete;
+    int early;
+    int reserved;
+};
+
 extern CCharacter *eb_chara;
 extern int eb_cool_flag;
 extern int eb_result;
@@ -169,46 +193,40 @@ void EBInitIntro(void) {
     // The wipe opens from the right edge, so it starts with no width.
     draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
 }
-
-/**
- * Records the motions an event battle plays on a character, with each motion's frame range and length.
- *
- * @mangled EBSetMotion__FP10CCharacterPi
- * @address 0x1682B0
- * @size 0x168
- */
 void EBSetMotion(CCharacter *character, int *motions) {
-    int index;
-
     if (character == NULL) {
         return;
     }
-    for (index = 0;; index++) {
-        int motion_no = motions[index];
+
+    int i;
+    for (i = 0;; i++) {
+        int motion_no = motions[i];
         if (motion_no < 0) {
             break;
         }
-        eb_motion[index].motion_no = motion_no;
+        eb_motion[i].motion_no = motion_no;
     }
-    eb_motion[index].motion_no = -1;
+    eb_motion[i].motion_no = -1;
+
     eb_chara = character;
-    for (index = 0;; index++) {
-        if (eb_motion[index].motion_no < 0) {
+    for (i = 0;; i++) {
+        if (eb_motion[i].motion_no < 0) {
             break;
         }
-        MOTION_INFO *info = eb_chara->GetMotionInfo(eb_motion[index].motion_no);
+        MOTION_INFO *info = eb_chara->GetMotionInfo(eb_motion[i].motion_no);
         if (info == NULL) {
             return;
         }
-        float start = info->start;
-        float end = info->end;
-        eb_motion[index].start = start;
-        eb_motion[index].end = end;
-        eb_motion[index].speed = info->speed;
-        int frames = (end - start) / info->speed;
+        float start = (float) info->start;
+        float end = (float) info->end;
+        eb_motion[i].start = start;
+        eb_motion[i].end = end;
+        eb_motion[i].speed = info->speed;
+        int frames = (int) ((end - start) / info->speed);
         eb_end_count += frames;
-        eb_motion[index].frames = frames;
+        eb_motion[i].frames = frames;
     }
+
     ebattle_flag = 1;
     eb_cool_flag = 1;
     GamePad.MenuModeOn(0x50);
@@ -218,20 +236,12 @@ void EBDebug(int mode) {
     debug_mode = mode;
 }
 
-/**
- * Adds a button prompt at a point in the event battle's motions, converted to a frame count.
- *
- * @mangled EBSetKey__Ffii
- * @address 0x168430
- * @size 0x12C
- */
 void EBSetKey(float time, int buttons, int mode) {
     if (eb_key_num < 64) {
-        EB_KEY *key = &eb_key[eb_key_num++];
-
+        EB_KEY_ENTRY *key = (EB_KEY_ENTRY *) &eb_key[eb_key_num++];
         key->frame = 0;
-        for (int index = 0;; index++) {
-            EB_MOTION *motion = &eb_motion[index];
+        for (int i = 0;; i++) {
+            EB_MOTION *motion = &eb_motion[i];
             if (motion->motion_no < 0) {
                 break;
             }
@@ -247,9 +257,9 @@ void EBSetKey(float time, int buttons, int mode) {
             mode = 5;
         }
         key->mode = mode;
-        key->passed = 0;
-        key->hit = 0;
-        key->highlight = 0;
+        key->early = 0;
+        key->complete = 0;
+        key->reserved = 0;
     }
 }
 
@@ -412,7 +422,6 @@ int EBLoop() {
     eb_count++;
     return 0;
 }
-
 /**
  * Draws the event battle's prompt strip, its opening caution mark and its result overlay.
  *
@@ -506,10 +515,7 @@ void EBDraw() {
  * @size 0x260
  */
 void DrawButton(int buttons, int x, int y, float scale, int early) {
-    int cross;
-    int circle;
-
-    if (x < -32) {
+    if (x < -0x20) {
         return;
     }
     if (x > 0x280) {
@@ -517,58 +523,37 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
     }
     if (early != 0) {
         DrawButtonSub(x, y, 0, 0x60, scale);
-        return;
-    }
-    if (buttons & 0x20) {
+    } else if ((buttons & 0x20) != 0) {
         DrawButtonSub(x, y, 0, 0, scale);
-        return;
-    }
-    if (buttons & 0x10) {
+    } else if ((buttons & 0x10) != 0) {
         DrawButtonSub(x, y, 0x20, 0, scale);
-        return;
-    }
-    if (buttons & 0x80) {
+    } else if ((buttons & 0x80) != 0) {
         DrawButtonSub(x, y, 0x40, 0, scale);
-        return;
-    }
-    if (buttons & 0x40) {
+    } else if ((buttons & 0x40) != 0) {
         DrawButtonSub(x, y, 0x60, 0, scale);
-        return;
-    }
-    if (buttons & 0x1000) {
-        if (buttons & 0x8000) {
+    } else if ((buttons & 0x1000) != 0) {
+        if ((buttons & 0x8000) != 0) {
             DrawButtonSub(x, y, 0x20, 0x40, scale);
-            return;
-        }
-        if (buttons & 0x2000) {
+        } else if ((buttons & 0x2000) != 0) {
             DrawButtonSub(x, y, 0, 0x40, scale);
-            return;
+        } else {
+            DrawButtonSub(x, y, 0, 0x20, scale);
         }
-        DrawButtonSub(x, y, 0, 0x20, scale);
-        return;
-    }
-    cross = buttons & 0x8000;
-    if (cross != 0) {
+    } else if ((buttons & 0x8000) != 0) {
         DrawButtonSub(x, y, 0x60, 0x20, scale);
-        return;
-    }
-    circle = buttons & 0x2000;
-    if (circle != 0) {
+    } else if ((buttons & 0x2000) != 0) {
         DrawButtonSub(x, y, 0x40, 0x20, scale);
-        return;
-    }
-    if (buttons & 0x4000) {
-        if (cross != 0) {
+    } else if ((buttons & 0x4000) != 0) {
+        if ((buttons & 0x8000) != 0) {
             DrawButtonSub(x, y, 0x60, 0x40, scale);
-            return;
-        }
-        if (circle != 0) {
+        } else if ((buttons & 0x2000) != 0) {
             DrawButtonSub(x, y, 0x40, 0x40, scale);
+        } else {
+            DrawButtonSub(x, y, 0x20, 0x20, scale);
             return;
         }
-        DrawButtonSub(x, y, 0x20, 0x20, scale);
-        return;
     }
+
 }
 /**
  * Draws one button prompt at a scale.
@@ -647,45 +632,56 @@ void draw_ok_loop() {
  */
 static void draw_ok(int x) {
     static sceVu0FVECTOR dir[8] = {
-        {1.0f, 0.0f, 0.0f, 0.0f},
-        {-1.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, -1.0f, 0.0f, 0.0f},
-        {1.0f, 1.0f, 0.0f, 0.0f},
-        {1.0f, -1.0f, 0.0f, 0.0f},
-        {-1.0f, 1.0f, 0.0f, 0.0f},
-        {-1.0f, -1.0f, 0.0f, 0.0f},
+        {1.0f, 0.0f, 0.0f, 0.0f},   {-1.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, -1.0f, 0.0f, 0.0f},
+        {1.0f, 1.0f, 0.0f, 0.0f},   {1.0f, -1.0f, 0.0f, 0.0f},
+        {-1.0f, 1.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
     };
 
-    if (ok_draw_cnt > 0) {
-        CRect_i_ good_texel(0, 0xD0, 0x1A, 0x10);
-        CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
-        CRect_i_ star_texel(0x20, 0x60, 0x20, 0x20);
-        CRect_i_ *texel = &good_texel;
-        sceVu0FVECTOR offset;
+    if (ok_draw_cnt <= 0) {
+        return;
+    }
 
-        if (ok_type != 0) {
-            texel = &cool_texel;
-        }
-        if ((ok_draw_cnt / 3) % 2 != 0) {
-            int left = 200 - (texel->width >> 1);
-            int top = 318 - texel->height;
-            CRect_i_ screen(left, top, texel->width, texel->height);
-            set2DSprite(GetVif1Packet(), tex2, screen, texel->x, texel->y);
-        }
-        texel = &star_texel;
-        int center = x + 0x18;
-        for (int i = 0; i < 8; i++) {
-            sceVu0Normalize(dir[i], dir[i]);
-            sceVu0ScaleVector(offset, dir[i], 2.0f * (30 - ok_draw_cnt));
-            int screen_x = center + (int) offset[0] - (texel->width >> 1);
-            int bottom = (int) offset[1] + 0x160;
-            int screen_y = bottom - texel->height - 2;
-            int alpha = 0x80 - (int) (128.0 * (float) (30 - ok_draw_cnt * 2) / 30.0);
-            if (alpha > 0) {
-                CRect_i_ screen(screen_x, screen_y, texel->width, texel->height);
-                set2DSprite(GetVif1Packet(), tex, screen, star_texel, alpha);
-            }
+    CRect_i_ success_texel(0, 0xD0, 0x1A, 0x10);
+    CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
+    CRect_i_ spark_texel(0x20, 0x60, 0x20, 0x20);
+    sceVu0FVECTOR offset;
+    CRect_i_ *texel = &success_texel;
+    if (ok_type != 0) {
+        texel = &cool_texel;
+    }
+    if ((ok_draw_cnt / 3) % 2 != 0) {
+        int width = texel->width;
+        int left = 200 - (int) (width >> 1);
+        int height = texel->height;
+        int top = 318 - height;
+        CRect_i_ result_screen(left, top, width, height);
+
+        set2DSprite(GetVif1Packet(), tex2, result_screen, texel->x, texel->y);
+    }
+
+    texel = &spark_texel;
+    int base = x + 0x18;
+    for (int i = 0; i < 8; ++i) {
+        sceVu0Normalize(dir[i], dir[i]);
+        sceVu0ScaleVector(offset, dir[i], 2.0f * (float) (30 - ok_draw_cnt));
+        int half;
+        int left;
+        int top;
+        int alpha;
+        int height;
+        int width;
+        int bottom;
+        width = texel->width;
+        half = width >> 1;
+        left = base + (int) offset[0] - half;
+        bottom = (int) offset[1] + 0x160;
+        height = texel->height;
+        top = bottom - height - 2;
+        alpha = 0x80 - (int) ((float) (30 - ok_draw_cnt * 2) * 128.0 / 30.0);
+        if (alpha > 0) {
+            CRect_i_ screen(left, top, width, height);
+            set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
         }
     }
 }

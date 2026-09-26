@@ -159,16 +159,18 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
 }
 
 void CEditPartsInfo::Initialize(int georama_no) {
-    EDIT_PARTS_ATRA empty_part;
     int plot;
-    int element;
     int name;
+    char **names;
+    int element;
     EDIT_PARTS_ATRA *source;
+    EDIT_PARTS_ATRA empty_part;
 
     memset(&empty_part, 0, sizeof(empty_part));
     for (element = 0; element < 6; element++) {
         empty_part.elements[element].unk_04 = -1;
     }
+
     unk_1624 = 0;
     for (plot = 0; plot < 24; plot++) {
         if (georama_no < 0 || georama_no >= 6) {
@@ -187,11 +189,13 @@ void CEditPartsInfo::Initialize(int georama_no) {
             parts[plot].elements[element].id = source->elements[element].id;
             parts[plot].elements[element].unk_04 = source->elements[element].unk_04;
             parts[plot].elements[element].enabled = 0;
-            parts[plot].elements[element].names[0] = NULL;
+            names = parts[plot].elements[element].names;
+            names[0] = NULL;
             for (name = 0; name < 4; name++) {
-                parts[plot].elements[element].names[name] = NULL;
-                if (source->elements[element].names[name] != NULL && source->elements[element].names[name][0] != '\0') {
-                    parts[plot].elements[element].names[name] = source->elements[element].names[name];
+                names[name] = NULL;
+                if (source->elements[element].names[name] != NULL &&
+                    source->elements[element].names[name][0] != '\0') {
+                    names[name] = source->elements[element].names[name];
                 }
             }
             parts[plot].elements[element].unk_1C = source->elements[element].unk_18;

@@ -233,7 +233,7 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments);
  * @address 0x00231D90
  * @size 0x90
  */
-void SeitonAttachBoard(ATTACH_LIST *attachments);
+int SeitonAttachBoard(ATTACH_LIST *attachments);
 
 /**
  * Returns the inventory category containing an item identifier.
