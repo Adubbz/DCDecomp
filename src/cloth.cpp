@@ -56,7 +56,6 @@ void CCloth::Draw() {
  * @address 0x13B7A0
  * @size 0x100
  */
-#ifdef NON_MATCHING
 void CCloth::Clear() {
     sceVu0FMATRIX matrix;
     int i;
@@ -68,21 +67,18 @@ void CCloth::Clear() {
     sceVu0ApplyMatrix(last_position, matrix, position);
     for (j = 0; j < num_j; j++) {
         for (i = 0; i < num_i; i++) {
-            float *p = point[i][j];
-            float *s = speed[i][j];
-            s[0] = 0.0f;
-            s[1] = 0.0f;
-            s[2] = 0.0f;
+            float *velocity = speed[i][j];
+            float *vertex = point[i][j];
+            velocity[0] = 0.0f;
+            velocity[1] = 0.0f;
+            velocity[2] = 0.0f;
             if (frame != NULL) {
-                sceVu0ApplyMatrix(p, matrix, home[i][j]);
-                sceVu0CopyVector(last[i][j], p);
+                sceVu0ApplyMatrix(point[i][j], matrix, home[i][j]);
+                sceVu0CopyVector(last[i][j], point[i][j]);
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", Clear__6CClothFv);
-#endif
 /**
  * Advances the cloth simulation, pushing its vertices out of the exclusion boxes.
  *
