@@ -159,7 +159,7 @@ static int fix_camera = 1;
 /** Which of the three follow distances the camera is at. */
 static int camera_dist_mode = 1;
 
-#ifdef NON_MATCHING
+#if defined(NON_MATCHING)
 static int GameMode;
 static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
 static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
@@ -180,6 +180,23 @@ static CCharacter MotionParts[4];
 static CTextureAnime TexAnime;
 static CTexAnimeData TexAnimeData[64];
 #else
+extern int GameMode;
+extern CCameraFollow MainCamera;
+extern CCameraFollow ViewCamera;
+extern float NowTime;
+extern CCamera *NowCamera;
+extern int loop_counter;
+extern int key_counter;
+extern int goto_menu;
+extern int goto_return_menu;
+extern int door_open_cnt;
+extern sceVu0FVECTOR fix_chara_pos;
+extern sceVu0FVECTOR fix_chara_rot;
+extern int camera_num;
+extern INTERIOR_CAMERA *active_camera;
+extern int camera_change_count;
+extern int simple_event;
+extern CCharacter MotionParts[4];
 extern CTextureAnime TexAnime;
 extern CTexAnimeData TexAnimeData[64];
 #endif
@@ -419,7 +436,6 @@ static void InitWorkBuffer() {
  * @address 0x19BE30
  * @size 0x478
  */
-#ifdef NON_MATCHING
 int EditInInit(float time, char *name) {
     float density = 255.0f;
     MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, density, density);
@@ -452,7 +468,8 @@ int EditInInit(float time, char *name) {
     EdVillagerBuffer.used = 0;
     printf("buffer %d\n", remaining);
     LoadChara();
-    MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
+    int far_z = 0xFFFF;
+    MGSetRenderInfo(EdInInfo->projection, 5.0f, far_z);
     MGSetPLight(EdInInfo->light_direction, EdInInfo->light_colour);
     MGSetAmbient(EdInInfo->ambient);
     MGSetBGColor(EdInInfo->background_colour);
@@ -473,7 +490,7 @@ int EditInInit(float time, char *name) {
     Chara->ClothStep(-1);
     if (EdInteriorDoorSound >= 0) {
         sceVu0FVECTOR position;
-        sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR reference = {0.0f, 0.0f, 10.0f, 0.0f};
         Chara->GetPosition(position);
         position[2] -= 10.0f;
         SndSetCamera(position, reference);
@@ -501,10 +518,6 @@ int EditInInit(float time, char *name) {
     EdInitSoundSrc();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", EditInInit__FfPc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @469__4);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @886__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @891__2);
 INCLUDE_RODATA("asm/nonmatchings/edit_in", @892__2);

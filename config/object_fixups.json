@@ -468,7 +468,20 @@
       "MoveCamera__FP13CCameraFollow": "MoveCamera__FP13CCameraFollow__2",
       "TexAnime": "TexAnime__2",
       "TexAnimeData": "TexAnimeData__2",
-      "LoadTexture__Fv": "LoadTexture__Fv__2"
+      "LoadTexture__Fv": "LoadTexture__Fv__2",
+      "GameMode": "GameMode__2",
+      "door_open_cnt": "door_open_cnt__2",
+      "NowCamera": "NowCamera__2",
+      "NowTime": "NowTime__2",
+      "goto_menu": "goto_menu__2",
+      "goto_return_menu": "goto_return_menu__2",
+      "key_counter": "key_counter__2",
+      "loop_counter": "loop_counter__2",
+      "MainCamera": "MainCamera__2",
+      "ViewCamera": "ViewCamera__2",
+      "fix_chara_pos": "fix_chara_pos__2",
+      "fix_chara_rot": "fix_chara_rot__2",
+      "MotionParts": "MotionParts__2"
     },
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
@@ -516,29 +529,33 @@
       "@1605",
       "@1606",
       "@1399",
-      "@1400"
+      "@1400",
+      "@469__4"
     ],
     "sections": {
       ".edit_in-c1641": [
-        "@391"
+        "@410"
       ],
       ".edit_in-c1637__2": [
-        "@387"
+        "@406"
       ],
       ".edit_in-c1639__2": [
-        "@389"
+        "@408"
       ],
       ".edit_in-camera_distance_1155": [
         "camera_distance$1155"
       ],
       ".edit_in-c1538": [
-        "@314"
+        "@333"
       ],
       ".edit_in-c1563": [
-        "@339"
+        "@358"
       ],
       ".edit_in-texdata_1374": [
         "texdata$1374"
+      ],
+      ".edit_in-c458": [
+        "@161"
       ]
     }
   },

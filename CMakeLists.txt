@@ -313,7 +313,8 @@ carve_part(main.data.part4.s
            main.data.part4h.s=269400-269460
            main.data.part4j.s=269494-269498
            main.data.part4j-2694A8.s=269880-269930
-           main.data.part4g.s=26A5E8-26A690
+           main.data.part4g.s=26A5E8-26A640
+           main.data.part4g-26A650.s=26A650-26A690
            main.data.part4g-26A6A0.s=26A6A0-26A6B0
            main.data.part4g-26A6A0-26A770.s=26A770-26A7B0
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10

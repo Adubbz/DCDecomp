@@ -517,6 +517,8 @@ SECTIONS
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
         main.data.part4g.s.o (.data)   // 0x0026a5e8
+        edit_in.cpp.o (.edit_in-c458) // 0x0026a640 @458
+        main.data.part4g-26A650.s.o (.data) // 0x0026a650
         edit_in.cpp.o (.edit_in-camera_distance_1155) // 0x0026a690 camera_distance$1155
         . = ALIGN(8);
         main.data.part4g-26A6A0.s.o (.data) // 0x0026a6a0
