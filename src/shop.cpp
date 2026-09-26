@@ -3543,8 +3543,9 @@ void InitItemShop2(int *state, int shop_no, int mode) {
 
 #ifdef NON_MATCHING
 void ItemShopSelectKey2() {
-    u8 held[0xF8];
-    u8 taken[0xF8];
+    int i;
+    SHOP_ITEM_RECORD work[2];
+    int no[2];
 
     if (GamePad.Down(0x1000) != 0) {
         ShopMenu.board.cursor -= 5;
@@ -3621,61 +3622,62 @@ void ItemShopSelectKey2() {
         }
         int shop_info = ShopBoardInfo[cursor];
         int have_info = ShopHaveItemPt->unk_00;
-        memset(taken, 0, sizeof(taken));
+        memset(work, 0, sizeof(work));
         SHOP_ITEMLIST *good = &ShopListPt[cursor];
+        int held_kind;
         int good_kind = WhatIsKindofItem(good->item_no);
-        int good_no = good->item_no;
+        no[0] = good->item_no;
         switch (good_kind) {
             case 0:
-                *(int *) taken = *(int *) &good->data;
+                work[0].volume = good->data.volume;
                 break;
             case 1:
-                memcpy(taken, &good->data, sizeof(WEAPON_HAVE));
+                memcpy(&work[0], &good->data, sizeof(WEAPON_HAVE));
                 break;
             case 2:
-                memcpy(taken, &good->data, sizeof(ATTACH_LIST));
+                memcpy(&work[0], &good->data, sizeof(ATTACH_LIST));
                 break;
             default:
                 InitShopItemListData(good);
                 break;
         }
-        int held_kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
-        int held_no = ShopHaveItemPt->item_no;
+        held_kind = WhatIsKindofItem(ShopHaveItemPt->item_no);
+        no[1] = ShopHaveItemPt->item_no;
         switch (held_kind) {
             case 0:
-                *(int *) held = ShopHaveItemPt->volume;
+                work[1].volume = ShopHaveItemPt->volume;
                 break;
             case 1:
-                memcpy(held, ShopHaveWepPt, sizeof(WEAPON_HAVE));
+                memcpy(&work[1], ShopHaveWepPt, sizeof(WEAPON_HAVE));
                 break;
             case 2:
-                memcpy(held, ShopHaveAttachPt, sizeof(ATTACH_LIST));
+                memcpy(&work[1], ShopHaveAttachPt, sizeof(ATTACH_LIST));
                 break;
         }
         switch (good_kind) {
             case 0:
-                ShopHaveItemPt->volume = *(int *) taken;
+                ShopHaveItemPt->volume = work[0].volume;
                 break;
             case 1:
-                memcpy(ShopHaveWepPt, taken, sizeof(WEAPON_HAVE));
+                memcpy(ShopHaveWepPt, &work[0], sizeof(WEAPON_HAVE));
                 break;
             case 2:
-                memcpy(ShopHaveAttachPt, taken, sizeof(ATTACH_LIST));
+                memcpy(ShopHaveAttachPt, &work[0], sizeof(ATTACH_LIST));
                 break;
         }
-        ShopHaveItemPt->item_no = good_no;
+        ShopHaveItemPt->item_no = no[0];
         switch (held_kind) {
             case 0:
-                *(int *) &good->data = *(int *) held;
+                good->data.volume = work[1].volume;
                 break;
             case 1:
-                memcpy(&good->data, held, sizeof(WEAPON_HAVE));
+                memcpy(&good->data, &work[1], sizeof(WEAPON_HAVE));
                 break;
             case 2:
-                memcpy(&good->data, held, sizeof(ATTACH_LIST));
+                memcpy(&good->data, &work[1], sizeof(ATTACH_LIST));
                 break;
         }
-        good->item_no = held_no;
+        good->item_no = no[1];
         ShopHaveItemPt->unk_00 = shop_info;
         ShopBoardInfo[cursor] = have_info;
         if (ShopHaveItemPt->item_no < 0x51) {
@@ -3694,13 +3696,14 @@ void ItemShopSelectKey2() {
             return;
         }
         if (ShopBoardInfo[ShopMenu.board.cursor] == 1) {
+            int money = ShopUserStatusPt->money;
             int item_no = ShopListPt[ShopMenu.board.cursor].item_no;
             int price = CalItemMoney(item_no, 0);
             int enable = 1;
             if (item_no < 0x51) {
                 enable = 0;
             }
-            if (ShopUserStatusPt->money < price) {
+            if (money < price) {
                 enable = 0;
                 SetItemShopTalkMode(21, 1);
             }
@@ -3715,44 +3718,52 @@ void ItemShopSelectKey2() {
             int owner = WhoIsWeaponEquip(item_no);
             switch (page) {
                 case 0: {
+                    int j;
                     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                     max = pack->num;
-                    for (int i = 0; i < 3; i++) {
-                        if (pack->quick_item_slot[i] >= 0x84) {
-                            used += pack->quick_item_qty[i];
+                    for (j = 0; j < 3; j++) {
+                        if (pack->quick_item_slot[j] >= 0x84) {
+                            used += pack->quick_item_qty[j];
                         }
                     }
-                    for (int i = 0; i < max; i++) {
-                        if (pack->item[i] >= 0x84) {
+                    for (int k = 0; k < max; k++) {
+                        if (pack->item[k] >= 0x84) {
                             used++;
                         }
                     }
                     break;
                 }
-                case 1:
+                case 1: {
+                    int j;
                     max = 10;
-                    for (int i = 0; i < 10; i++) {
-                        if (ShopUserStatusPt->chara_weapons[owner][i].item_no >= 0x101) {
+                    CUserStatus *status = ShopUserStatusPt;
+                    WEAPON_HAVE *weapons = status->chara_weapons[owner];
+                    for (j = 0; j < 10; j++) {
+                        if (weapons[j].item_no >= 0x101) {
                             used++;
                         }
                     }
                     break;
-                case 2:
+                }
+                case 2: {
+                    int j;
                     max = 40;
-                    for (int i = 0; i < 40; i++) {
-                        if (ShopUserStatusPt->consumable_items[i].id >= 0x51) {
+                    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
+                    for (j = 0; j < 40; j++) {
+                        if (attach[j].id >= 0x51) {
                             used++;
                         }
                     }
                     break;
+                }
             }
             if (ShopDataMove.item_no > 0) {
                 used++;
             }
-            for (int i = 0; i < 30; i++) {
-                if (page >= 0 && page == WhatIsKindofItem(ShopListPt[i].item_no) && ShopBoardInfo[i] == 2) {
+            for (int k = 0; k < 30; k++) {
+                if (page >= 0 && page == WhatIsKindofItem(ShopListPt[k].item_no) && ShopBoardInfo[k] == 2) {
                     if (page == 1) {
-                        if (owner == WhoIsWeaponEquip(ShopListPt[i].item_no)) {
+                        if (owner == WhoIsWeaponEquip(ShopListPt[k].item_no)) {
                             used++;
                         }
                     } else {
