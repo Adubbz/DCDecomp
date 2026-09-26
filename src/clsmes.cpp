@@ -2687,9 +2687,15 @@ void ClsMes::DrawMesWin(void) {
         int row = this->win_line[no].y / this->char_height;
 
         if (this->line_pos[row].x < 0 || this->line_pos[row].y < 0) {
-            int sx = ox + (this->win_line[no].x + this->text_x + dx);
-            int sy = oy + (this->win_line[no].y + this->text_y + dy) - 3;
-            CRect_i_ screen(sx, sy, gw, gh);
+            int line_x = this->win_line[no].x + this->text_x;
+            int line_y = this->win_line[no].y + this->text_y;
+            int sx = ox + (line_x + dx);
+            CRect_i_ screen;
+            screen.x = sx;
+            int sy = oy + (line_y + dy) - 3;
+            screen.y = sy;
+            screen.width = gw;
+            screen.height = gh;
             CRect_i_ texel(u, v, gw, gh);
 
             if (this->win_line[no].code >= -0x2DF) {
@@ -2712,13 +2718,14 @@ void ClsMes::DrawMesWin(void) {
                 }
             }
         } else {
-            int sx = this->win_line[no].x + this->line_pos[row].x + dx;
-            int sy = this->win_line[no].y + this->line_pos[row].y + dy;
-            CRect_i_ screen(sx, sy - row * this->char_height, gw, gh);
+            int sx = this->win_line[no].x + this->line_pos[row].x;
+            int sy = this->win_line[no].y + this->line_pos[row].y;
+            sy += dy;
+            CRect_i_ screen(sx + dx, sy - row * this->char_height, gw, gh);
             CRect_i_ texel(u, v, gw, gh);
 
             if (this->win_line[no].code >= -0x2DF) {
-                this->Myset2DSprite_Fuchi(Vif1Packet, texture, sx,
+                this->Myset2DSprite_Fuchi(Vif1Packet, texture, sx + dx,
                                           sy - row * this->char_height, gw, gh, u, v, gw, gh);
             }
 
