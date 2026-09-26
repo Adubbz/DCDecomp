@@ -1897,7 +1897,7 @@ static void DrawItemDataView(int item_no) {
     if (0 <= item_no && item_no < ITEM_ATTACH_START) {
         return;
     }
-    // Retail keeps these range tests although nothing depends on them.
+    // The attachment index computed here goes unused.
     if (item_no >= ITEM_ATTACH_START && item_no < 0xFF) {
         int index = item_no - ITEM_ATTACH_START;
         if (index < 0) {

@@ -20,8 +20,8 @@
 #include "userstatus.hpp"
 
 /**
- * "err %d\n". Retail builds this code in one unit with fishing.cpp, so the check prints through
- * fishing's copy of the format.
+ * The "err %d\n" format held in fishing.cpp's constants, which the polygon check prints its
+ * overflow count with.
  */
 extern char fishing_err_format[];
 
