@@ -183,7 +183,7 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
  * @address 0x166170
  * @size 0x68
  */
-int end_check(float value, float target, float step) {
+static int end_check(float value, float target, float step) {
     return step > 0.0f ? (value > target ? 1 : 0) : (value < target ? 1 : 0);
 }
 /**
