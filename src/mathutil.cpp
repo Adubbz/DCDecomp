@@ -179,7 +179,6 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
  * @address 0x122550
  * @size 0x40
  */
-#ifdef NON_MATCHING
 #pragma schedule on
 #pragma exceptions on
 void __dl(void *storage) throw() {
@@ -187,9 +186,6 @@ void __dl(void *storage) throw() {
 }
 #pragma exceptions reset
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __dl__FPv);
-#endif
 /**
  * Destroys a `std::exception`.
  *

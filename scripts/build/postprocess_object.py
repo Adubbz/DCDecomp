@@ -698,6 +698,17 @@ def main():
         subprocess.run([objcopy] + arguments + [str(args.object), str(args.object)],
                        check=True)
 
+    # Sections retail's link never kept -- the exception tables of the runtime
+    # functions compiled with exceptions on: retail's table is empty.
+    removed = fixups.get("remove_sections", [])
+    if removed:
+        objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
+        arguments = []
+        for name in removed:
+            arguments += ["--remove-section", name]
+        subprocess.run([objcopy] + arguments + [str(args.object), str(args.object)],
+                       check=True)
+
     rename_symbols(args.object, fixups.get("symbols", {}))
     # GNU assembly cannot spell MWCC's angle-bracket template names. Splat
     # uses the same deterministic safe spelling for definitions and callers.

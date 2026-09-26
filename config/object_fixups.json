@@ -1234,6 +1234,11 @@
       "@1036",
       "@1037",
       "@1039"
+    ],
+    "remove_sections": [
+      ".exception",
+      ".exceptix",
+      ".rel.exceptix"
     ]
   },
   "src/mglib.cpp": {
