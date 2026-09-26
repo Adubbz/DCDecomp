@@ -27238,7 +27238,7 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 1,
-          "evaluate_first": 0
+          "evaluate_first": 1
         },
         {
           "type": "binary32",

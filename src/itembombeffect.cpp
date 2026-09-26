@@ -13,10 +13,11 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#ifdef NON_MATCHING
-extern ITEM_DATA ITEM_LIST[];
 extern CItemBombEffect *NowBombEffect;
 extern CShockWave *NowShockWave;
+
+#ifdef NON_MATCHING
+extern ITEM_DATA ITEM_LIST[];
 
 static const int bomb_uv[4][2] = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
 #endif
@@ -144,43 +145,39 @@ INCLUDE_ASM("asm/nonmatchings/itembombeffect", usedActiveItem__FP11CUserStatusi)
  * @address 0x1D5940
  * @size 0x1F0
  */
-#ifdef NON_MATCHING
 int SetBombEffect(float *position, int owner, int damage, float scale) {
     int collision_slot = -1;
 
     for (int effect_no = 0; effect_no < 3; effect_no++) {
-        CItemBombEffect *effect = &NowBombEffect[effect_no];
-        if (effect->CheckBomb() != 0) {
+        if (NowBombEffect[effect_no].CheckBomb() != 0) {
             continue;
         }
 
-        effect->SetBomb(position, scale);
+        NowBombEffect[effect_no].SetBomb(position, scale);
         SndSePlay(0x6C, -1, 0);
         collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale,
                                         0.0f, owner, 3, 0, 0);
         if (collision_slot != -1) {
-            NowColData->hit[NowColData->now_hit].unk_70 = 10;
-            NowColData->hit[NowColData->now_hit].unk_74 = 10;
+            CCollisionData *collision = NowColData;
+            collision->hit[collision->now_hit].unk_70 = 10;
+            collision->hit[collision->now_hit].unk_74 = 10;
         }
 
         if (scale > 1.0f) {
-            sceVu0CopyVector(NowShockWave->position, position);
-            NowShockWave->position[3] = 1.0f;
-            NowShockWave->radius_scale = 30.0f * scale;
-            NowShockWave->base_radius = 30.0f * scale;
-            NowShockWave->radius = 0.0f;
-            NowShockWave->expand_steps = 15.0f * scale;
-            NowShockWave->phase = 0.0f;
-            NowShockWave->alpha = 0.0f;
-            NowShockWave->unk_28 = 1;
+            CShockWave *wave = NowShockWave;
+            sceVu0CopyVector(wave->position, position);
+            wave->position[3] = 1.0f;
+            wave->base_radius = wave->radius_scale = 30.0f * scale;
+            wave->radius = 0.0f;
+            wave->expand_steps = 15.0f * scale;
+            wave->phase = 0.0f;
+            wave->alpha = 0.0f;
+            wave->unk_28 = 1;
         }
         break;
     }
     return collision_slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", SetBombEffect__FPfiif);
-#endif
 
 /**
  * Draws the bomb's blast and its shock wave.
