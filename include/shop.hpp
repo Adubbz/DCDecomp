@@ -501,15 +501,6 @@ void InitFishRecordView(u_long128 *, int *, int);
 void FishRecordTextureEnter(void);
 
 /**
- * Draws the fishing record board: each rank, its fish and its size.
- *
- * @mangled FishRecordViewBoard__Fiii
- * @address 0x1F35F0
- * @size 0x648
- */
-void FishRecordViewBoard(int, int, int);
-
-/**
  * Runs one frame of the fish record view and returns the mode its input handler left.
  *
  * @mangled FishRecordViewLoop__Fv

@@ -5381,87 +5381,96 @@ static int FishRecordViewKey() {
     return ret;
 }
 
-#ifdef NON_MATCHING
-void FishRecordViewBoard(int x, int y, int alpha) {
-    int widths[3] = {0x54, 0x5A, 0};
+/**
+ * Draws the fishing record board: each rank, its fish and its size.
+ *
+ * @mangled FishRecordViewBoard__Fiii
+ * @address 0x1F35F0
+ * @size 0x648
+ */
+static void FishRecordViewBoard(int x, int y, int alpha) {
+    int pos_x;
+    int pos_y;
 
     MenuTextureReload(FishMenu.tex_block);
     DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, 0x160, 0xD0), CRect_i_(0, 0, 0x160, 0xD0), alpha);
-    int head_x = x + 0x10;
+    int head_y = y - 0xE;
+    pos_x = x + 0x10;
     CRect_i_ head(0x160, 0x1A, 0x44, 0x1C);
-    for (int i = 0; i < 3; i++) {
+    int widths[3] = {0x54, 0x5A, 0};
+    for (int i = 0; i <= 2; i++, head.y += head.height) {
         if (i == 2) {
             head.width = 0x74;
         }
-        DrawMenu2DSprite(FishMenuTex, CRect_i_(head_x, y - 0xE, head.width, head.height - 1), head, alpha);
-        head_x += widths[i];
-        head.y += head.height;
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(pos_x, head_y, head.width, head.height - 1), head, alpha);
+        pos_x += widths[i];
     }
     int bar_x = x + 0x144;
+    float length = 23.5f;
     int bar_y = (int) ((float) (y + 0x2A) + 6.3f * FishRecordMenu.top);
     CRect_i_ source(0x110, 0xD0, 8, 4);
     DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y, 8, 4), source, alpha);
     source.y += 4;
-    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y + 4, 8, (int) 23.5f), source, alpha);
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y + 4, 8, (int) length), source, alpha);
     source.y += 4;
-    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, (int) ((float) (bar_y + 4) + 23.5f), 8, 4), source, alpha);
-    int row_x = x + 0x12;
-    int row_y = y + 6;
-    for (int i = 0; i < 5; i++) {
+    DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, (int) ((float) (bar_y + 4) + length), 8, 4), source, alpha);
+    pos_x = x + 0x12;
+    pos_y = y + 6;
+    for (int i = 0; i < 5; i++, pos_y += 0x22) {
         int rank_no = FishRecordMenu.top + i;
-        SV_FISH_DATA *rank = GetFishingRankData(rank_no);
+        SV_FISH_DATA *record = GetFishingRankData(rank_no);
         RECT digits = {0x158, 0xDC, 0xE, 0x12};
         if (rank_no == FishRecordMenu.cursor) {
             digits.y += digits.height;
         }
         CRect_i_ medal(0x160, 0, 0x20, 0x1B);
-        int medal_x = row_x + 0x10;
+        int medal_x = pos_x + 0x10;
         if (rank_no != 0) {
             medal.x += 0x20;
             if (rank_no == FishRecordMenu.cursor) {
                 medal.x += 0x20;
             }
         }
-        DrawMenu2DSprite(FishMenuTex, CRect_i_(medal_x, row_y + 0x14, medal.width, medal.height - 1), medal, alpha);
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(medal_x, pos_y + 0x14, medal.width, medal.height - 1), medal, alpha);
         int number_x = medal_x + 0x14;
         if (GetNumberKeta(rank_no + 1) >= 2) {
             number_x += digits.width >> 1;
         }
-        DrawMenuNumber(rank_no + 1, number_x, row_y + 0x18, FishMenuTex, digits, 1, alpha);
+        DrawMenuNumber(rank_no + 1, number_x, pos_y + 0x18, FishMenuTex, digits, 1, alpha);
         int size = 0;
-        if (rank != NULL) {
-            size = (int) ((float *) rank)[1];
+        if (record != NULL) {
+            size = (int) record->rank;
         }
         if (size > 0) {
-            DrawMenuNumber(size, row_x + 0xFE, row_y + 0x18, FishMenuTex, digits, 1, alpha);
-            int unit_width = digits.width * 2;
-            DrawMenu2DSprite(FishMenuTex, CRect_i_(row_x + 0xFE, row_y + 0x16, unit_width, digits.height),
-                             CRect_i_(digits.x + digits.width * 10, digits.y, unit_width, digits.height), alpha);
+            DrawMenuNumber(size, pos_x + 0xFE, pos_y + 0x18, FishMenuTex, digits, 1, alpha);
+            DrawMenu2DSprite(FishMenuTex, CRect_i_(pos_x + 0xFE, pos_y + 0x16, digits.width * 2, digits.height),
+                             CRect_i_(digits.x + digits.width * 10, digits.y, digits.width * 2, digits.height), alpha);
             if (i >= 0 && i < 10) {
-                AtoraNameMes.line_pos[i].x = row_x + 0x3E;
-                AtoraNameMes.line_pos[i].y = row_y + 0x14;
+                AtoraNameMes.line_pos[i].x = pos_x + 0x3E;
+                AtoraNameMes.line_pos[i].y = pos_y + 0x14;
             }
         }
-        row_y += 0x22;
     }
     if (GetMardanGareyanFlag() != 0) {
-        DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x134, y + 0xB6, 0x28, 0x28), CRect_i_(0x1D8, 0xB4, 0x28, 0x28), alpha);
+        pos_x = x + 0x134;
+        pos_y = y + 0xB6;
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(pos_x, pos_y, 0x28, 0x28), CRect_i_(0x1D8, 0xB4, 0x28, 0x28), alpha);
     }
-    int target_y = y + 0x14 + (FishRecordMenu.cursor - FishRecordMenu.top) * 0x22;
-    FishRecordMenu.cursor_y += (int) ((float) (target_y - FishRecordMenu.cursor_y) / 4.0f);
-    if (abs(FishRecordMenu.cursor_y - target_y) < 2) {
-        FishRecordMenu.cursor_y = target_y;
+    int row = FishRecordMenu.cursor - FishRecordMenu.top;
+    pos_y = y + 0x14 + row * 0x22;
+    pos_x = x + 0x16;
+    pos_x = (int) (pos_x - 0x1C);
+    FishRecordMenu.cursor_y += (int) ((float) (pos_y - FishRecordMenu.cursor_y) / 4.0f);
+    if (abs(FishRecordMenu.cursor_y - pos_y) < 2) {
+        FishRecordMenu.cursor_y = pos_y;
     }
-    int cursor_y = FishRecordMenu.cursor_y;
+    pos_y = FishRecordMenu.cursor_y;
     MenuTextureReload(CommonMenuMes2.tex_block);
     AtoraNameMes.edge_alpha = alpha;
     AtoraNameMes.Step();
     AtoraNameMes.DrawMesWin();
-    DrawMenuObjectVibe(x + 0x16 - 0x1C, cursor_y, 1, 0x40);
+    DrawMenuObjectVibe(pos_x, pos_y, 1, 0x40);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", FishRecordViewBoard__Fiii);
-#endif
 
 /**
  * Draws one frame of the fishing record view.

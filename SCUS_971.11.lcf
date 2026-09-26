@@ -584,7 +584,11 @@ SECTIONS
         shop.cpp.o (.shopdata-fishdraw) // 0x00292a90 @3177
         main.data.shop-fishdraw.s.o (.data) // 0x00292aa0
         shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
-        main.data.shop-filenames-after-292AE4.s.o (.data) // 0x00292ae4
+        . = ALIGN(8);
+        shop.cpp.o (.shopdata-fishrecview-a) // 0x00292ae8 @3333
+        . = ALIGN(16);
+        shop.cpp.o (.shopdata-fishrecview-b) // 0x00292b00 @3345
+        main.data.shop-fishrecview-after.s.o (.data) // 0x00292b10
         battlemenu.cpp.o (.battlemenu-c731__6) // 0x00292e50 @731__6
         battlemenu.cpp.o (.battlemenu-c789__3) // 0x00292e60 @789__3
         battlemenu.cpp.o (.battlemenu-c791__2) // 0x00292e70 @791__2

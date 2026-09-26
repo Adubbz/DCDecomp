@@ -55,6 +55,12 @@
       ],
       ".shopdata-fishdraw": [
         "@2057"
+      ],
+      ".shopdata-fishrecview-a": [
+        "@2201"
+      ],
+      ".shopdata-fishrecview-b": [
+        "@2213"
       ]
     },
     "rekey_sections": [
@@ -149,6 +155,18 @@
         ".shopdata-fishrec",
         [
           36
+        ]
+      ],
+      [
+        ".shopdata-fishrecview-a",
+        [
+          12
+        ]
+      ],
+      [
+        ".shopdata-fishrecview-b",
+        [
+          16
         ]
       ]
     ],

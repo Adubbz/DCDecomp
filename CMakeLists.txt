@@ -279,7 +279,7 @@ carve_part(main.data.part6.s
            main.data.shop-checkbuy-b.s=2927CC-292820
            main.data.shop-filenames-after.s=2929B0-292A60
            main.data.shop-fishdraw.s=292AA0-292AC0
-           main.data.shop-filenames-after-292AE4.s=292AE4-292E50
+           main.data.shop-fishrecview-after.s=292B10-292E50
            main.data.battlemenu-292E88.s=292E88-292E90
            main.data.battlemenu-292F38.s=292F38-292F40
            main.data.battlemenu-292F58.s=292F58-292F60
