@@ -2274,7 +2274,6 @@ int MenuAtoraSelectKey() {
     return result;
 }
 
-#ifdef NON_MATCHING
 static int AtoraBoardKey() {
     int movable[8];
     int open_mode = MenuAtoraSel.unk_04;
@@ -2284,28 +2283,31 @@ static int AtoraBoardKey() {
     int moved = 0;
     int result = 0;
     int se = -1;
+    int to;
 
     if (GamePad.Down(0x1000) != 0) {
         moved = 1;
         if (MenuAtoraSel.board.cursor == 0) {
-            if (MenuAtoraSel.board_pos > 0) {
+            if (0 < MenuAtoraSel.board_pos) {
                 MenuAtoraSel.board_pos--;
             }
             MenuAtoraSel.board.cursor = 0;
         } else if (MenuAtoraSel.board.cursor >= 4 && MenuAtoraSel.board.cursor < 7) {
             MenuAtoraSel.board.cursor -= 3;
-        } else if (MenuAtoraSel.board_pos > 0) {
+        } else if (0 < MenuAtoraSel.board_pos) {
             MenuAtoraSel.board_pos--;
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
             MenuAtoraSel.board.cursor += 3;
-            int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 3);
-            if (movable[slot] != 0) {
-                MenuAtoraSel.board.cursor = slot + 1;
+            to = MenuAtoraSel.board.cursor - 1;
+            to = AtoraBoardGoToPos(movable, to, 3);
+            if (movable[to] != 0) {
+                MenuAtoraSel.board.cursor = to + 1;
             } else {
                 MenuAtoraSel.board.cursor -= 3;
-                slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 0);
-                if (movable[slot] != 0) {
-                    MenuAtoraSel.board.cursor = slot + 1;
+                to = MenuAtoraSel.board.cursor - 1;
+                to = AtoraBoardGoToPos(movable, to, 0);
+                if (movable[to] != 0) {
+                    MenuAtoraSel.board.cursor = to + 1;
                 } else {
                     MenuAtoraSel.board.cursor = 0;
                 }
@@ -2322,9 +2324,10 @@ static int AtoraBoardKey() {
                 MenuAtoraSel.board_pos++;
                 MenuAtoraSel.board.cursor -= 3;
                 AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-                int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 0);
-                if (movable[slot] != 0) {
-                    MenuAtoraSel.board.cursor = slot + 1;
+                to = MenuAtoraSel.board.cursor - 1;
+                to = AtoraBoardGoToPos(movable, to, 0);
+                if (movable[to] != 0) {
+                    MenuAtoraSel.board.cursor = to + 1;
                 } else {
                     MenuAtoraSel.board.cursor = 0;
                 }
@@ -2332,16 +2335,18 @@ static int AtoraBoardKey() {
         } else {
             AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
             MenuAtoraSel.board.cursor += 3;
-            int slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 3);
-            if (movable[slot] != 0) {
-                MenuAtoraSel.board.cursor = slot + 1;
+            to = MenuAtoraSel.board.cursor - 1;
+            to = AtoraBoardGoToPos(movable, to, 3);
+            if (movable[to] != 0) {
+                MenuAtoraSel.board.cursor = to + 1;
             } else if (MenuAtoraSel.board_pos < max - 1) {
                 MenuAtoraSel.board_pos++;
                 MenuAtoraSel.board.cursor -= 3;
                 AtoraBoardEnableMovePos(MenuAtoraSel.board_pos, movable);
-                slot = AtoraBoardGoToPos(movable, MenuAtoraSel.board.cursor - 1, 0);
-                if (movable[slot] != 0) {
-                    MenuAtoraSel.board.cursor = slot + 1;
+                to = MenuAtoraSel.board.cursor - 1;
+                to = AtoraBoardGoToPos(movable, to, 0);
+                if (movable[to] != 0) {
+                    MenuAtoraSel.board.cursor = to + 1;
                 } else {
                     MenuAtoraSel.board.cursor = 0;
                 }
@@ -2405,7 +2410,7 @@ static int AtoraBoardKey() {
                     se = 2;
                 } else if (MenuAtoraSel.board.cursor == 0) {
                     int held = NowTipHavePt->tip_no;
-                    if (held >= 0) {
+                    if (0 <= held) {
                         se = 2;
                     } else if (full == 0 && held < 0 && open_mode == 2 && NowEditMap == MenuAtoraSel.map_no) {
                         MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
@@ -2499,9 +2504,6 @@ static int AtoraBoardKey() {
     ComMenuSePlay(se);
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraBoardKey__Fv);
-#endif
 
 static int AtoraTipKey() {
     int result = 0;
