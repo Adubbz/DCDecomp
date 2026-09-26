@@ -41,7 +41,6 @@
 extern s32 BtlMenuMode;
 extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
-extern u_long128 *WepMenuEffectReadBuf;
 extern int CharaFileBGReadNo;
 extern u_long128 *CharaChangeBaseBuf;
 extern s16 charachangeid;
@@ -873,8 +872,8 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
             }
         }
     }
-    WepMenuEffectReadBuf = MenuWeaponModelBuildBuffer + 0xEC01;
-    WepMenuEffectReadBuf = MenuCalcBufAlignment(WepMenuEffectReadBuf);
+    WepMenuEffectReadBuf = (CWeaponLevelUp *) (MenuWeaponModelBuildBuffer + 0xEC01);
+    WepMenuEffectReadBuf = (CWeaponLevelUp *) MenuCalcBufAlignment((u_long128 *) WepMenuEffectReadBuf);
     printf("read buffer           = %p\n", read_buffer);
     printf("model build buffer    = %p\n", MenuWeaponModelBuildBuffer);
     printf("WeaponBuffer Size     = %d\n", (int) MenuExCashBuffer.limit);

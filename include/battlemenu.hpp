@@ -11,6 +11,7 @@
 // names but not where they live.
 class CCharacter;
 class ClsMes;
+class CWeaponLevelUp;
 struct RECT;
 struct WEAPON_HAVE;
 
@@ -157,6 +158,9 @@ struct MENU_ICON_POS {
 };
 
 STATIC_ASSERT(sizeof(MENU_ICON_POS) == 0x8);
+
+/** Buffer the weapon menu's level-up, build-up and repair effects are read into. */
+extern CWeaponLevelUp *WepMenuEffectReadBuf;
 
 /**
  * Gives the weapon a party member starts with.

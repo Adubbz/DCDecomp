@@ -368,7 +368,6 @@ static void WeaponMenuActWepKey();
 static void WeaponMenuAttachWepKey();
 static void WeaponMenuAttachKey();
 extern s32 WeaponMenuSelectKeyLockFlag;
-extern CWeaponLevelUp *WepMenuEffectReadBuf;
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
