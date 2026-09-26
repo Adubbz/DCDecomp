@@ -81,9 +81,6 @@ extern s16 AnalyzeBackBlockCnt;
 /** How far each of the analysis page's three bars has filled, in screen columns. */
 extern float AnalyzeFill[3];
 
-/** The texture the menu's plain frame comes from. */
-extern CTexture *StayTex;
-
 /** Texture block containing the edit menu's main page textures. */
 extern int EdMenuTextureBlock;
 
