@@ -508,15 +508,26 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     return count;
 }
 #ifdef NON_MATCHING
-extern CDranMapField *NowDranMapField;
+static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
+    if (parts_no == -1) {
+        return NULL;
+    }
+    return map->parts[parts_no].collision;
+}
 
-int setCollisionData(CDungeonMap *map, CCPoly *polys, float *position, float radius, float height) {
-    static int around[9][2] = {{0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1},
-                               {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+static inline int PartsCollisionTurn(CDungeonMap *map, int parts_no) {
+    if (parts_no == -1) {
+        return 0;
+    }
+    return map->parts[parts_no].collision_turn;
+}
+
+int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radius, float height) {
     CBoxVu0 box;
-    sceVu0FVECTOR part_pos;
     int count = 0;
+    CFrame *collision;
     int i;
+    int turn;
 
     box.max[0] = position[0] + radius;
     box.max[1] = position[1] + radius * height;
@@ -524,15 +535,19 @@ int setCollisionData(CDungeonMap *map, CCPoly *polys, float *position, float rad
     box.min[0] = position[0] - radius;
     box.min[1] = position[1] - radius * height;
     box.min[2] = position[2] - radius;
+    int around[9][2] = {{0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
     if (map->unk_BDEC != 1) {
+        sceVu0FVECTOR part_pos;
+
         for (i = 0; map->parts[i].frame[0] != NULL; i++) {
-            CFrame *collision = i == -1 ? NULL : map->parts[i].collision;
+            collision = PartsCollision(map, i);
             if (collision == NULL) {
                 continue;
             }
             sceVu0CopyVector(part_pos, map->parts[i].frame_offset[0]);
-            int turn = (int) map->parts[i].frame_turn[0] + (i == -1 ? 0 : map->parts[i].collision_turn);
-            if (turn >= 4) {
+            turn = (int) map->parts[i].frame_turn[0];
+            turn += PartsCollisionTurn(map, i);
+            if (turn > 3) {
                 turn -= 3;
             }
             if (turn == 3) {
@@ -540,46 +555,56 @@ int setCollisionData(CDungeonMap *map, CCPoly *polys, float *position, float rad
             }
             collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) turn)) / 180.0f, 0.0f);
             collision->SetPosition(part_pos);
-            count += collision->PickUpNearPoly(&polys[count], box);
+            count += collision->PickUpNearPoly(&poly[count], box);
         }
         for (i = 0; i < 24; i++) {
             if (map->boxes[i].used != 0) {
-                map->box_collision_model->SetPosition(map->boxes[i].pos);
-                count += map->box_collision_model->PickUpNearPoly(&polys[count], box);
+                collision = map->box_collision_model;
+                collision->SetPosition(map->boxes[i].pos);
+                count += collision->PickUpNearPoly(&poly[count], box);
             }
         }
-        return NowDranMapField->AddCollision(polys, map->CreateCollision(polys, box, count), box);
+        count = map->CreateCollision(poly, box, count);
+        count = NowDranMapField->AddCollision(poly, count, box);
+    } else {
+        CFrame *model;
+
+        for (int j = 0; j < 9; j++) {
+            int x = (int) (position[0] / 160.0f);
+            int z = (int) (position[2] / 160.0f);
+            x += around[j][0];
+            z += around[j][1];
+            if (x < 0 || x > 19 || z < 0 || z > 19) {
+                continue;
+            }
+            int parts_no = map->cells[x + z * 20].parts_no;
+            model = PartsCollision(map, parts_no);
+            if (model == NULL) {
+                continue;
+            }
+            float angle = (float) map->cells[x + z * 20].direction;
+            angle += (float) PartsCollisionTurn(map, parts_no);
+            if (angle > 3.0f) {
+                angle -= 3.0f;
+            }
+            if (angle == 3.0f) {
+                angle = -1.0f;
+            }
+            angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
+            model->SetRotation(0.0f, angle, 0.0f);
+            model->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
+            count += model->PickUpNearPoly(&poly[count], box);
+        }
+        for (int k = 0; k < 24; k++) {
+            if (map->boxes[k].used != 0) {
+                model = map->box_collision_model;
+                model->SetPosition(map->boxes[k].pos);
+                count += model->PickUpNearPoly(&poly[count], box);
+            }
+        }
+        count = map->CreateCollision(poly, box, count);
     }
-    for (i = 0; i < 9; i++) {
-        int x = (int) (position[0] / 160.0f) + around[i][0];
-        int z = (int) (position[2] / 160.0f) + around[i][1];
-        if (x < 0 || x >= 20 || z < 0 || z >= 20) {
-            continue;
-        }
-        MAP_CELL *cell = &map->cells[x + z * 20];
-        int parts_no = cell->parts_no;
-        CFrame *collision = parts_no == -1 ? NULL : map->parts[parts_no].collision;
-        if (collision == NULL) {
-            continue;
-        }
-        float turn = (float) cell->direction + (float) (parts_no == -1 ? 0 : map->parts[parts_no].collision_turn);
-        if (turn > 3.0f) {
-            turn -= 3.0f;
-        }
-        if (turn == 3.0f) {
-            turn = -1.0f;
-        }
-        collision->SetRotation(0.0f, (3.1415927f * (-90.0f * turn)) / 180.0f, 0.0f);
-        collision->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
-        count += collision->PickUpNearPoly(&polys[count], box);
-    }
-    for (i = 0; i < 24; i++) {
-        if (map->boxes[i].used != 0) {
-            map->box_collision_model->SetPosition(map->boxes[i].pos);
-            count += map->box_collision_model->PickUpNearPoly(&polys[count], box);
-        }
-    }
-    return map->CreateCollision(polys, box, count);
+    return count;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", setCollisionData__FP11CDungeonMapP6CCPolyPfff);
