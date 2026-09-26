@@ -737,7 +737,8 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     if (max_hp < 1.0f) {
         max_hp = 1.0f;
     }
-    WEAPON_HAVE *weapon = &status->chara_weapons[chara][status->equipped_weapon_slot[chara]];
+    int slot = status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) status + chara * sizeof(status->chara_weapons[0]) + 0x450C) + slot;
     if (weapon == NULL) {
         return;
     }
@@ -784,7 +785,8 @@ void DngComStatus(int x, int y, int chara, int alpha) {
     if (max_hp < 1.0f) {
         max_hp = 32.0f;
     }
-    WEAPON_HAVE *weapon = &status->chara_weapons[chara][status->equipped_weapon_slot[chara]];
+    int slot = status->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) status + chara * sizeof(status->chara_weapons[0]) + 0x450C) + slot;
     if (weapon == NULL) {
         return;
     }
@@ -864,7 +866,8 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, i
 
     DrawMenu2DSprite(texture, CRect_i_(px, py - 1, 0x100, 0x88), CRect_i_(0, 0, 0x100, 0x88), alpha);
     RECT digits = {0x40, 0x88, 0xC, 0xE};
-    DrawMenuNumber(((CUserStatus *) BtlMenuStatusPt)->unk_4348[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
+    DrawMenuNumber(BtlMenuStatusPt->unk_field_1[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
+
     px = (int) (x - 132.0f);
     py = (int) (10.0f + y);
     DngComStatus(px, py, chara, alpha);
@@ -874,7 +877,8 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, i
     CharaSelectNameDraw2(px, py, (short *) BtlMenuSaveDataPt->GetCharaName(chara), fonts, alpha);
     px = (int) (x - 118.0f - 12.0f);
     py = (int) (70.0f + y);
-    WEAPON_HAVE *weapon = &((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara][((CUserStatus *) BtlMenuStatusPt)->equipped_weapon_slot[chara]];
+    int slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
+    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) BtlMenuStatusPt + chara * sizeof(BtlMenuStatusPt->chara_weapons[0]) + 0x450C) + slot;
     if (weapon != NULL) {
         CTexture *icon = RetCTex(weapon->item_no, u, v);
         if (icon != NULL) {
