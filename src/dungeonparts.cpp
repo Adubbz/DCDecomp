@@ -115,9 +115,9 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
  * The items a treasure box can hold on one floor.
  */
 struct ITEM_PUT_SET {
-    int floor;      /**< Floor the list is for, counted from one; -1 ends the table. */
+    int floor; /**< Floor the list is for, counted from one; -1 ends the table. */
     int unk_04;
-    int item[128];  /**< Items a box on the floor can hold, ended by -1. */
+    int item[128]; /**< Items a box on the floor can hold, ended by -1. */
 };
 
 extern ITEM_PUT_SET *ItemPutListPtr[14];
@@ -125,17 +125,24 @@ extern ITEM_PUT_SET *ItemPutListPtr[14];
 int GetNumHowManyItemsHave(int item_no);
 
 int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
-    s16 rate[0x17C / 2];
-    int candidate[128];
+    int candidate[144];
+    s16 rate[400];
     ITEM_PUT_SET *list = ItemPutListPtr[dungeon + kind * 7];
-    int i;
+    int j;
+    int held;
     int count;
+    int pick;
     int tries;
+    int item_no;
+    float roll;
+    int wanted;
+    int i;
+    s16 *table;
 
-    memcpy(rate, ItemSetRateTbl[dungeon], sizeof(rate));
+    memcpy(rate, &ItemSetRateTbl[dungeon], 0x17C);
     // Weapons the player already holds come up less often.
     for (i = 0x101; i < 0x17C; i++) {
-        int held = GetNumHowManyItemsHave(i);
+        held = GetNumHowManyItemsHave(i);
         if (held > 0) {
             if (held == 1) {
                 rate[i - 1] -= 10;
@@ -148,9 +155,13 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             }
         }
     }
-    int wanted = -1;
-    for (i = 0; list[i].floor != -1; i++) {
-        if (floor + 1 == list[i].floor) {
+    int k = 0;
+    wanted = -1;
+    for (;; k++) {
+        if (list[k].floor == -1) {
+            break;
+        }
+        if (floor + 1 == list[k].floor) {
             wanted = floor + 1;
         }
     }
@@ -161,46 +172,79 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             wanted = 0xFF;
         }
     }
-    for (i = 0; wanted != list[i].floor;) {
-        i++;
-        if (i >= 128) {
+    int n = 0;
+    do {
+        if (wanted == list[n].floor) {
+            break;
+        }
+        n++;
+        if (n >= 128) {
             printf("err itembox list \n");
             return -1;
         }
-    }
-    ITEM_PUT_SET *set = &list[i];
-    count = 0;
-    for (int j = 0; set->item[j] != -1; j++) {
-        int item_no = set->item[j];
-        if (small != 0) {
+    } while (1);
+    if (small != 0) {
+        count = 0;
+        for (j = 0; list[n].item[j] != -1; j++) {
+            item_no = list[n].item[j];
             if (item_no >= 0x51 && item_no < 0x101) {
                 candidate[count++] = item_no;
             }
-        } else if (item_no >= 0x101) {
-            candidate[count++] = item_no;
         }
+        table = rate;
+        tries = 0;
+        do {
+            roll = ((float) count * (float) rand()) / 2.1474836e9f;
+            pick = (int) roll;
+            if (roll - (float) pick > 0.0f) {
+                pick++;
+            }
+            if (pick < 0 || pick >= count) {
+                pick = 0;
+            }
+            int chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            item_no = candidate[pick];
+            if (table[item_no - 1] < chance) {
+                goto picked;
+            }
+            tries++;
+        } while (tries < 0xFFFF);
+        item_no = -1;
+    picked:
+        return item_no;
     }
-    if (small == 0 && count == 0) {
-        return -1;
-    }
-    tries = 0;
-    while (1) {
-        float roll = ((float) count * (float) rand()) / 2.1474836e9f;
-        int pick = (int) roll;
-        if (roll - (float) pick > 0.0f) {
-            pick++;
+    if (small == 0) {
+        count = 0;
+        for (j = 0; list[n].item[j] != -1; j++) {
+            item_no = list[n].item[j];
+            if (item_no >= 0x101) {
+                candidate[count++] = item_no;
+            }
         }
-        if (pick < 0 || pick >= count) {
-            pick = 0;
-        }
-        int item_no = candidate[pick];
-        if (rate[item_no - 1] < (int) ((100.0f * (float) rand()) / 2.1474836e9f)) {
-            return item_no;
-        }
-        tries++;
-        if (tries >= 0xFFFF) {
+        if (count == 0) {
             return -1;
         }
+        table = rate;
+        tries = 0;
+        do {
+            roll = ((float) count * (float) rand()) / 2.1474836e9f;
+            pick = (int) roll;
+            if (roll - (float) pick > 0.0f) {
+                pick++;
+            }
+            if (pick < 0 || pick >= count) {
+                pick = 0;
+            }
+            int chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            item_no = candidate[pick];
+            if (table[item_no - 1] < chance) {
+                goto chosen;
+            }
+            tries++;
+        } while (tries < 0xFFFF);
+        item_no = -1;
+    chosen:
+        return item_no;
     }
 }
 #else
