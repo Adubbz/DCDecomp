@@ -1296,13 +1296,12 @@ void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
     DrawMenu2DSprite(StayTex, CRect_i_(num_x - 10, y + 5, 12, 12), CRect_i_(120, digit.y, 12, 12), alpha);
     DrawMenuNumber(info->stock - info->placed, num_x - 7, y + 5, StayTex, digit, 1, alpha);
 }
-#ifdef NON_MATCHING
 void DrawAtora(int x, int y, int parts_index, int alpha) {
     int u;
     int v;
     unsigned char colour[4];
 
-    if (y < -100 || y >= 0x1CD) {
+    if (y < -100 || y > 0x1CC) {
         return;
     }
     EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(parts_index);
@@ -1319,7 +1318,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
         v = 0x78;
     }
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 0x100, 0x78), CRect_i_(0, v, 0x100, 0x79), alpha);
-    if (info->stock > 0 && MenuAtoraSel.map_no != 5) {
+    if (0 < info->stock && MenuAtoraSel.map_no != 5) {
         AtoraPlateDrawHaichiBar(info, x, y, alpha);
     }
     int picture_x = x + 0x20;
@@ -1380,19 +1379,27 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
             }
         }
     } else {
+        int base_x = x + 0x70;
+        int base_y = y + 6;
         int count = 0;
-        for (int i = 0; i < 6 && info->elements[i].id >= 0; i++) {
-            count++;
+        for (int i = 0; i < 6; i++) {
+            if (info->elements[i].id < 0) {
+                break;
+            }
+            if (0 <= info->elements[i].id) {
+                count++;
+            }
         }
         float wave = cosf(3.1415927f * CompMsgCt / (160.0f + (count >> 1)));
-        float sway = 6.0f * wave;
-        int base_x = (int) ((float) (x + 0x70 - 6) + sway);
-        int base_y = (int) ((float) (y + 6) + 2.0f * wave);
-        float width = 128.0f + sway;
+        base_x = (int) ((float) (base_x - 6) + 6.0f * wave);
+        base_y = (int) ((float) base_y + 2.0f * wave);
+        float width = 128.0f + 6.0f * wave;
+        (int) width;
         float height = 88.0f + 3.0f * wave;
-        int draw_x = (int) ((float) base_x + 8.0f * cosf(3.1415927f * CompMsgCt / (180.0f + count)));
-        int draw_y = (int) ((float) base_y + 4.0f * sinf(3.1415927f * CompMsgCt / (140.0f + count)));
-        DrawMenu2DSprite(CompleteTex, CRect_i_(draw_x, draw_y, (int) width, (int) height), CRect_i_(0, 0x28, 0x80, 0x58),
+        (int) height;
+        base_x = (int) ((float) base_x + 8.0f * cosf(3.1415927f * CompMsgCt / (180.0f + count)));
+        base_y = (int) ((float) base_y + 4.0f * sinf(3.1415927f * CompMsgCt / (140.0f + count)));
+        DrawMenu2DSprite(CompleteTex, CRect_i_(base_x, base_y, (int) width, (int) height), CRect_i_(0, 0x28, 0x80, 0x58),
                          alpha);
     }
     CompMsgCt++;
@@ -1400,9 +1407,6 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
         CompMsgCt = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtora__Fiiii);
-#endif
 
 static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 18, 18), CRect_i_(184, 346, 18, 18), alpha);
