@@ -340,6 +340,7 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex
     effect_data = description;
     return effect_data == NULL ? 0 : 1;
 }
+
 int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
                          CDataAlloc2<1> *allocator, int slots) {
     char name[64];

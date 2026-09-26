@@ -41,6 +41,7 @@ int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage,
     damage[63] = element;
     return -1;
 }
+
 int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, int element) {
     sceVu0FVECTOR step;
 

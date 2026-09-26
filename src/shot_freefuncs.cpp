@@ -786,6 +786,7 @@ int BtStatusErrColorSet(void) {
 
     return ailing;
 }
+
 /**
  * How tall the current character stands.
  */

@@ -132,6 +132,7 @@ static void LoadChara();
 void LoadData();
 
 int LoadPTS(CMapParts *parts, u_int *archive);
+
 /**
  * Views one function point as the words it is copied in.
  */

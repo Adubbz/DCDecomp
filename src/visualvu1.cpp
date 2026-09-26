@@ -648,6 +648,7 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
     }
     return size;
 }
+
 /**
  * Builds a model's VU data block and returns its size in quadwords.
  *
