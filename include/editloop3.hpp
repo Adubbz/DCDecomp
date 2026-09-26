@@ -19,6 +19,7 @@ struct EPARTS_FUNC_DATA;
 struct RS_STACKDATA;
 struct OBJ_ANIME_SEQ;
 struct VILLAGER_INFO;
+struct EDIT_MAP_INFO;
 class CEditGround;
 
 /**
@@ -39,6 +40,15 @@ STATIC_ASSERT(sizeof(ED_EXCHANGE_INFO) == 0x1C);
 extern ED_EXCHANGE_INFO EdExchangeInfo;
 
 /**
+ * Resets the villager slots and loads each selected villager's character, or queues its read.
+ *
+ * @mangled EdInitVilager__FP13VILLAGER_INFOP11CEditGroundP1
+ * @address 0x185F40
+ * @size 0x17C
+ */
+void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *ground, u_long128 *buffer);
+
+/**
  * Loads a villager from an already resident character pack.
  *
  * @mangled EdLoadVillager__FPUiPcP12CNPCharacterP14CDataAlloc2_1_
@@ -55,6 +65,15 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
  * @size 0xC8
  */
 int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena);
+
+/**
+ * Decides which placed villagers are drawn from the state of the parts they stand on.
+ *
+ * @mangled EdInitVillagerOnOff__FP12CNPCharacterP13VILLAGER_INFOP11CEditGround
+ * @address 0x186360
+ * @size 0x1A4
+ */
+void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers, CEditGround *ground);
 
 /**
  * Places the initialized event villagers at their selected map positions.
@@ -112,6 +131,15 @@ int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPol
  * @size 0x1F0
  */
 void EdMapJump(int kind, char *name);
+
+/**
+ * Chooses the villagers on the map for the given time and fills the villager table.
+ *
+ * @mangled EdSelectVillager__FP13VILLAGER_INFOfP13EDIT_MAP_INFO
+ * @address 0x1857E0
+ * @size 0x30C
+ */
+int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_info);
 
 /**
  * Tests whether one villager is currently permitted to appear.
@@ -316,6 +344,24 @@ int EdGetTime(float time);
  * @size 0x234
  */
 int EdEventAllClear();
+
+/**
+ * Advances the event's player and non-player characters by one frame, cloth included.
+ *
+ * @mangled EdEventNPCStep__Fv
+ * @address 0x1987D0
+ * @size 0x1FC
+ */
+int EdEventNPCStep();
+
+/**
+ * Draws the event sprites layered behind the scene.
+ *
+ * @mangled EdEventBackSpriteDraw__Fv
+ * @address 0x198C70
+ * @size 0x4C
+ */
+int EdEventBackSpriteDraw();
 
 /**
  * Returns the villager involved in the active conversation.

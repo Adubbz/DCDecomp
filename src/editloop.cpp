@@ -293,26 +293,8 @@ int EditInit(void *param);
 int EditLoop(void);
 void EditLoad(void);
 void EditPartsObjectOnOff();
-int EditInLoop(void);
-void EditInInit(float time, char *name);
-int EdMenuMode(void);
-void EdExitMenu(void);
 void MainMode(void);
 void EditMode(void);
-void EdMapJump(int hour, char *name);
-void EdSelectVillager(VILLAGER_INFO *info, float time, EDIT_MAP_INFO *map);
-void EdInitVilager(VILLAGER_INFO *info, CEditGround *ground, u_long128 *buffer);
-void EdInitVillagerOnOff(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGround *ground);
-void EdEventNPCStep(void);
-void EdDoorOpenSe(int door_no, float *position);
-void EdDoorCloseSe(int door_no, float *position);
-void EdSetAmbientVol(float volume);
-void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *position, float *direction);
-int SndGetBgmNo(void);
-void EdSaveFrameImageTask(void);
-int SystemMesCheck(void);
-int EdEventInit(int event_no, CDataAlloc2<1> *alloc, char *script);
-void MapJump(int map_no, int entrance);
 void PlayAmbient(float volume);
 extern CCameraFollow TalkCamera;
 extern CCameraFollow ViewCamera;
@@ -341,7 +323,6 @@ extern int fobject_list;
 extern int partseffect_list;
 extern int objeffect_list;
 extern int objtimer_list;
-extern ED_EXCHANGE_INFO EdExchangeInfo;
 /* The ground the player has built on one map, as the save holds it. */
 struct ED_GRD_DATA {
     u8 unk_00[0x64];
@@ -353,15 +334,7 @@ extern CMapParts *OldFocusParts;
 extern int OldSelectAngle;
 extern CCameraFollow EditCamera;
 void EBDraw(void);
-void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers,
-                     int *marks, int shadow, ED_EVENT_INFO *event);
-void EdDrawItem(void);
-void EdEventBackSpriteDraw(void);
 void EdEventSpriteDraw(void);
-void EffectMacroStep(float *wind);
-void EffectWaterSpray(CEffectGroup *group, float *position, float *size, int count, int index);
-void FishLineDraw(int kind);
-void FishingDrawFish(void);
 /* Mode the loop returns to once the debug menu closes. */
 /* Buffer the parts archive is read into. */
 /**

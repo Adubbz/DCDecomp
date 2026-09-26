@@ -435,6 +435,24 @@ int EdGetMapFlag(int flag_no);
 int EdSetMapFlag(int flag_no, int value);
 
 /**
+ * Applies the editor-specific layout and reveal settings to its message windows.
+ *
+ * @mangled EdInitMesParam__Fv
+ * @address 0x1781D0
+ * @size 0x1B0
+ */
+void EdInitMesParam();
+
+/**
+ * Enables or disables the cursor drawn over the controlled character.
+ *
+ * @mangled EdSetCharaCursor__Fi
+ * @address 0x17CBE0
+ * @size 0xC
+ */
+void EdSetCharaCursor(int on);
+
+/**
  * Loads the player model and motion archive used by an editor event.
  *
  * @mangled EdLoadMainChara__FPcPcP14CDataAlloc2_1_

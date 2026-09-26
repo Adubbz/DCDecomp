@@ -116,20 +116,6 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 static void LoadScript();
 static void LoadInfo(char *script, int size);
-void EdDoorCloseSe(int door_sound, float *position);
-void EdDoorOpenSe(int door_sound, float *position);
-void EdSetCharaCursor(int on);
-void EdEventNPCStep();
-float EdAGetViewAngleH();
-float EdAGetViewAngleV();
-void EdASetViewAngle(float h, float v);
-void EdEyeCamera(CCamera *camera, CCharacter *chara);
-void EdViewModeOff();
-void EdInitMesParam();
-void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
-                     ED_EVENT_INFO *event);
-void EdEventBackSpriteDraw();
-void EdDrawItem();
 void EdEventSpriteDraw();
 static void setTexAnim();
 static void RunEvent(int event_no, CCamera *camera);
