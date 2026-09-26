@@ -2262,10 +2262,9 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     }
     return swapped;
 }
-#ifdef NON_MATCHING
-void SeitonAttachBoard(ATTACH_LIST *list) {
+int SeitonAttachBoard(ATTACH_LIST *list) {
     if (list == NULL) {
-        return;
+        return 0;
     }
     for (int i = 0; i < 5; i++) {
         if (SeitonAttachBoardSub(list) != 0) {
@@ -2277,9 +2276,6 @@ void SeitonAttachBoard(ATTACH_LIST *list) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SeitonAttachBoard__FP11ATTACH_LIST);
-#endif
 
 int WhatIsKindofItem(int item_no) {
     COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
