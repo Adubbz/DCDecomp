@@ -584,7 +584,10 @@ SECTIONS
         . = ALIGN(16);
         battlemenu.cpp.o (.battlemenu-c963) // 0x00292f00 @963
         . = ALIGN(16);
-        main.data.shop-filenames-after-292EE0.s.o (.data) // 0x00292f20
+        battlemenu.cpp.o (.battlemenu-c969__2) // 0x00292f20 @969__2
+        main.data.battlemenu-292F38.s.o (.data) // 0x00292f38
+        battlemenu.cpp.o (.battlemenu-c970) // 0x00292f40 @970
+        main.data.battlemenu-292F58.s.o (.data) // 0x00292f58
         battlemenu.cpp.o (.battlemenu-c1239__2) // 0x00292f60 @1239__2
         battlemenu.cpp.o (.battlemenu-c1270) // 0x00292fa0 @1270
         . = ALIGN(8);

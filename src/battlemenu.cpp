@@ -342,7 +342,7 @@ extern s32 BtlMenuExReadBlock;
 extern s32 BtlMenuManualReadBlock;
 extern s32 MenuExTextureReadFlag;
 extern float PosAngle;
-extern s16 BtlHelpWinAlpha;
+extern s32 BtlHelpWinAlpha;
 extern float HelpWinHead[2];
 extern float BtlHelpWinW;
 extern float BtlHelpWinH;
@@ -1004,7 +1004,6 @@ void ExitBattleMenu(int) {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
-#ifdef NON_MATCHING
 void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuMode = mode;
     BtlMenuReadBlock = texture_blocks[0];
@@ -1016,19 +1015,22 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuNowLang = GetMenuLangFlag();
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
-    if (BtlMenuMode == 0) {
-        LOADTEXTURE_INFO2 texture = {0};
-        int blocks[5] = {0, 0, 0, 0, 0};
-        texture.block_no = BtlMenuReadBlock;
-        blocks[0] = BtlMenuReadBlock;
-        blocks[1] = MenuExtendReadBlock;
-        blocks[2] = BtlMenuExReadBlock;
-        blocks[3] = BtlMenuManualReadBlock;
-        blocks[4] = MenuShadowReadBlock;
-        MenuTextureDelete(blocks);
-        TexManager.CleanUpBuffer();
-        TexManager.CleanUpTextureList();
-        TexManager.LoadTextureBlockEX(-1, &texture);
+    switch (BtlMenuMode) {
+        case 0: {
+            LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}};
+            texture[0].block_no = BtlMenuReadBlock;
+            int blocks[6] = {0, 0, 0, 0, 0, -1};
+            blocks[0] = BtlMenuReadBlock;
+            blocks[1] = MenuExtendReadBlock;
+            blocks[2] = BtlMenuExReadBlock;
+            blocks[3] = BtlMenuManualReadBlock;
+            blocks[4] = MenuShadowReadBlock;
+            MenuTextureDelete(blocks);
+            TexManager.CleanUpBuffer();
+            TexManager.CleanUpTextureList();
+            TexManager.LoadTextureBlockEX(-1, texture);
+            break;
+        }
     }
     BtlMenuReadBuf = BtlMenuBufferSet(BtlMenuMode);
     BtlMenuReadBuf = MenuCalcBufAlignment(BtlMenuReadBuf);
@@ -1064,9 +1066,8 @@ void BattleMenuInit(int *texture_blocks, int mode) {
             break;
     }
     SetInteriorOutFlag(0);
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-    DngWepHavePt = status->chara_weapons[0];
-    MenuItemPackPt = &status->item_pack;
+    DngWepHavePt = BtlMenuStatusPt->chara_weapons[0];
+    MenuItemPackPt = &BtlMenuStatusPt->item_pack;
     MenuChara.unk_02 = 6;
     PosAngle = 6.2831855f / MenuChara.unk_02;
     ItemVolumeStep.CheckItemVolume();
@@ -1083,7 +1084,7 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     if (CheckItemThrow(NULL, NULL) != 0) {
         BattleMenuFlag = 25;
         BtlEffectFlag = -1;
-        status->unk_431C = 1;
+        BtlMenuStatusPt->overflow_flag = 1;
         for (int i = 1; i < 8; i++) {
             NorMenuIcon[i].x = -230.0f;
         }
@@ -1099,12 +1100,6 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     MenuWarningMsgFlag = 0;
     BtlMenuBGMvol = SndGetBgmVol();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuInit__FPii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1011__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1012);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1013);
 
 /**
  * Suppresses a draw flag while an Atla event or a character page is showing.
