@@ -2223,40 +2223,51 @@ void DrawChargeShop() {
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
 #endif
-#ifdef NON_MATCHING
-void ChargeShopMaxDraw(int max, int x, int y, int alpha) {
-    DrawMenu2DSprite(ShopBoard, CRect_i_(x + 0xD2, y - 0x28 + 1, 0x30, 0x2F), CRect_i_(0x100, 0x90, 0x30, 0x30), alpha);
-    RECT digits = {0x90, 0xDC, 0xC, 0xD};
-    DrawMenuNumber(max, x + 0xF7, y - 0xE, ShopBoard, digits, 1, alpha);
+/**
+ * Draws the charge shop's capacity plate: how many slots the board has and how many hold a good.
+ *
+ * @mangled ChargeShopMaxDraw__Fiiii
+ * @address 0x1EAD50
+ * @size 0x1EC
+ */
+static void ChargeShopMaxDraw(int max, int x, int y, int alpha) {
+    int left = x + 0xD2;
+    int top = y - 0x28;
+
+    DrawMenu2DSprite(ShopBoard, CRect_i_(left, top + 1, 0x30, 0x2F), CRect_i_(0x100, 0x90, 0x30, 0x30), alpha);
+    RECT digits = {0x90, 0xDC, 12, 13};
+    left = x + 0xF7;
+    top = y - 0xE;
+    DrawMenuNumber(max, left, top, ShopBoard, digits, 1, alpha);
+    left = x + 0xF2;
+    top = y - 0x22;
     int count = 0;
+    int i;
     switch (ShopMenu.board.page) {
         case 0:
-            for (int i = 0; i < 60; i++) {
+            for (i = 0; i < 60; i++) {
                 if (ShopStockPt->dungeon_items[i] >= 0x84) {
                     count++;
                 }
             }
             break;
         case 1:
-            for (int i = 0; i < 30; i++) {
+            for (i = 0; i < 30; i++) {
                 if (ShopStockPt->weapons[i].item_no >= 0x101) {
                     count++;
                 }
             }
             break;
         case 2:
-            for (int i = 0; i < 30; i++) {
+            for (i = 0; i < 30; i++) {
                 if (ShopStockPt->attachments[i].item_no >= 0x51) {
                     count++;
                 }
             }
             break;
     }
-    DrawMenuNumber(count, x + 0xF2, y - 0x22, ShopBoard, digits, 1, alpha);
+    DrawMenuNumber(count, left, top, ShopBoard, digits, 1, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopMaxDraw__Fiiii);
-#endif
 
 void ChargeShopBoardDraw(int x, int y, int alpha) {
     s16 items[120];
@@ -2861,14 +2872,21 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
     DrawCheckButton(x + 0xA8, y + 0xAA, 0x80);
 }
 
-#ifdef NON_MATCHING
-void DrawMoneyCheckBoard2(int x, int y, int alpha) {
+/**
+ * Draws the running total the purchase will come to.
+ *
+ * @mangled DrawMoneyCheckBoard2__Fiii
+ * @address 0x1EC640
+ * @size 0x18C
+ */
+static void DrawMoneyCheckBoard2(int x, int y, int alpha) {
     DrawMenu2DSprite(ShopBoard, CRect_i_(x, y + 1, 0x60, 0x1B), CRect_i_(0xD0, 0xC0, 0x60, 0x1C), alpha);
     int buy = BuyMoneyCheck2();
     int balance = SellMoneyCheck2() - buy;
     RECT digits = {0, 0xDC, 0xC, 0xC};
     int u;
     int v;
+
     if (balance < 0) {
         digits.y += 0xC;
         u = 0x84;
@@ -2879,16 +2897,13 @@ void DrawMoneyCheckBoard2(int x, int y, int alpha) {
         u = 0x78;
         v = 0xF4;
     }
-    int number_x = x + 0x54;
-    int number_y = y + 7;
-    number_x = DrawMenuNumber(abs(balance), number_x, number_y, ShopBoard, digits, 1, alpha);
+    x = (int) (x + 0x54);
+    y = (int) (y + 7);
+    x = DrawMenuNumber(abs(balance), x, y, ShopBoard, digits, 1, alpha);
     if (balance != 0) {
-        DrawMenu2DSprite(ShopBoard, CRect_i_(number_x - 0xC, number_y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
+        DrawMenu2DSprite(ShopBoard, CRect_i_(x - 0xC, y, 0xC, 0xC), CRect_i_(u, v, 0xC, 0xC), alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", DrawMoneyCheckBoard2__Fiii);
-#endif
 
 /**
  * Draws the shop's confirmation button.
@@ -4636,56 +4651,67 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
+/** The fishing screens' frame-buffer backdrop and message pack, shared by FishMenuTextureLoad and FishRecordTextureEnter. */
+extern char FishFrameImage[];
+extern char FishMessageFile[];
+
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
-#ifdef NON_MATCHING
-int FishMenuTextureLoad() {
+/**
+ * Enters the fishing menu's textures once they have been read.
+ *
+ * @mangled FishMenuTextureLoad__Fv
+ * @address 0x1F15D0
+ * @size 0x2AC
+ */
+static int FishMenuTextureLoad() {
     int done = 0;
 
-    if (FishMenu.ready != 0) {
-        return 1;
-    }
-    if (ReadBGSync() == 0) {
-        BG_READ_INFO *file = GetReadBGFile(0);
-        LOADTEXTURE_INFO2 texture = {0};
-        texture.block_no = FishMenu.tex_block;
-        texture.name = (char *) GetPackFile((u_int *) file->buffer, "fishing.img", NULL);
-        TexManager.DeleteTextureBlock(FishMenu.tex_block);
-        TexManager.CleanUpTextureList();
-        TexManager.LoadTextureBlockEX(-1, &texture);
-        FishMenuTex = TexManager.GetTexture("fishbrd", -1);
-        WepIcon = TexManager.GetTexture("wepicon", -1);
-        ItemIcon = TexManager.GetTexture("itemicon", -1);
-        InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "fishmes.bin", NULL));
-        CommonMenuMes2.mes_made = -1;
-        AtoraNameMes.Preset(1);
-        for (int i = 0; i < 5; i++) {
-            AtoraNameMes.mes_no[i] = GetExchangeItemList(i)->item_no + 100;
+    if (FishMenu.ready == 0) {
+        if (ReadBGSync() == 0) {
+            BG_READ_INFO *file = GetReadBGFile(0);
+            LOADTEXTURE_INFO2 texture[3] = {
+                {FishFrameImage, 0, 0},
+                {NULL, 0, 0},
+                {NULL, 0, 0},
+            };
+            texture[0].block_no = FishMenu.tex_block;
+            texture[1].block_no = FishMenu.tex_block;
+            texture[1].name = (char *) GetPackFile((u_int *) file->buffer, "fishing.img", NULL);
+            TexManager.DeleteTextureBlock(FishMenu.tex_block);
+            TexManager.CleanUpTextureList();
+            TexManager.LoadTextureBlockEX(-1, texture);
+            FishMenuTex = TexManager.GetTexture("fishbrd", -1);
+            WepIcon = TexManager.GetTexture("wepicon", -1);
+            ItemIcon = TexManager.GetTexture("itemicon", -1);
+            InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
+            CommonMenuMes2.mes_made = -1;
+            AtoraNameMes.Preset(1);
+            for (int i = 0; i < 5; i++) {
+                AtoraNameMes.mes_no[i] = GetExchangeItemList(i)->item_no + 100;
+            }
+            AtoraNameMes.narrow_gaiji = 1;
+            AtoraNameMes.style = 4;
+            AtoraNameMes.value_signed = 0;
+            AtoraNameMes.value_show = 1;
+            AtoraNameMes.mes_made = -1;
+            AtoraNameMes.MakeMesWin(0xC8);
+            AtoraNameMes.Step();
+            FishMenu.ready = 1;
+            CommonMenuMes3.value_signed = 0;
+            CommonMenuMes3.value_show = 1;
+            CommonMenuMes3.stay_frame = 1;
+            CommonMenuMes3.value = 0;
+            int digits = GetNumberKeta(0);
+            CommonMenuMes3.mes_made = -1;
+            CommonMenuMes3.MakeMesWin(digits + 0xCD);
+            FishMenu.cursor_y = 0x7E;
+            done = 1;
         }
-        AtoraNameMes.narrow_gaiji = 1;
-        AtoraNameMes.style = 4;
-        AtoraNameMes.value_signed = 0;
-        AtoraNameMes.value_show = 1;
-        AtoraNameMes.mes_made = -1;
-        AtoraNameMes.MakeMesWin(0xC8);
-        AtoraNameMes.Step();
-        FishMenu.ready = 1;
-        CommonMenuMes3.value_signed = 0;
-        CommonMenuMes3.value_show = 1;
-        CommonMenuMes3.stay_frame = 1;
-        CommonMenuMes3.value = 0;
-        int digits = GetNumberKeta(0);
-        CommonMenuMes3.mes_made = -1;
-        CommonMenuMes3.MakeMesWin(digits + 0xCD);
-        FishMenu.cursor_y = 0x7E;
+    } else {
         done = 1;
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", FishMenuTextureLoad__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @2962);
-INCLUDE_RODATA("asm/nonmatchings/shop", @2963);
 INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
 #ifdef NON_MATCHING
 int FishingExchangeKey() {
@@ -5171,10 +5197,6 @@ void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode) {
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
-
-/** The fishing screens' frame-buffer backdrop and message pack, shared with FishMenuTextureLoad. */
-extern char FishFrameImage[];
-extern char FishMessageFile[];
 
 /**
  * Leaves the fishing record view and releases its texture block.

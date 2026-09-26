@@ -273,11 +273,12 @@ carve_part(main.data.part6.s
            main.data.btitem-a.s=27E810-27EAD0
            main.data.part6f.s=291850-291B80
            main.data.part6k.s=292704-292750
-           main.data.shop-local.s=292770-2927A0
+           main.data.shop-local.s=292770-292790
            main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0
-           main.data.shop-checkbuy-b.s=2927CC-292830
-           main.data.shop-filenames-after.s=2929B0-292AC0
+           main.data.shop-checkbuy-b.s=2927CC-292820
+           main.data.shop-filenames-after.s=2929B0-292A60
+           main.data.shop-fishdraw.s=292A90-292AC0
            main.data.shop-filenames-after-292AE4.s=292AE4-292E50
            main.data.battlemenu-292E88.s=292E88-292E90
            main.data.battlemenu-292F38.s=292F38-292F40

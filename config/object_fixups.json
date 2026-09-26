@@ -9,13 +9,13 @@
         "@1007"
       ],
       ".shopdata-ticket": [
-        "@1604"
+        "@1651"
       ],
       ".shopdata-checkbuy-a": [
-        "@1367"
+        "@1398"
       ],
       ".shopdata-checkbuy-b": [
-        "@1368"
+        "@1399"
       ],
       ".shopdata-local-a": [
         "@1034"
@@ -24,18 +24,27 @@
         "@1035"
       ],
       ".shopdata-filenames": [
-        "@1774",
-        "@1775",
-        "@1795"
+        "@1821",
+        "@1822",
+        "@1842"
       ],
       ".shopdata-buymoney": [
-        "@1268"
+        "@1299"
       ],
       ".shopdata-fishrec": [
-        "@1940"
+        "@2002"
       ],
       ".shopdata-sellticket": [
-        "@1644"
+        "@1691"
+      ],
+      ".shopdata-chargemax": [
+        "@1207"
+      ],
+      ".shopdata-moneycheck": [
+        "@1608"
+      ],
+      ".shopdata-fishtex": [
+        "@1954"
       ]
     },
     "rekey_sections": [
@@ -47,6 +56,12 @@
       ],
       [
         ".shopdata-local-b",
+        [
+          16
+        ]
+      ],
+      [
+        ".shopdata-chargemax",
         [
           16
         ]
@@ -70,6 +85,12 @@
         ]
       ],
       [
+        ".shopdata-moneycheck",
+        [
+          16
+        ]
+      ],
+      [
         ".shopdata-ticket",
         [
           16
@@ -87,6 +108,12 @@
           144,
           64,
           144
+        ]
+      ],
+      [
+        ".shopdata-fishtex",
+        [
+          36
         ]
       ],
       [
