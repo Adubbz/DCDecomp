@@ -862,8 +862,7 @@ SECTIONS
 		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20f8
 		editmenu.cpp.o (.sdata)        // 0x002a2100
 		memcard.cpp.o (.memcard-c1322) // 0x002a2140 @1322
-		main.sdata.editmenu-after-2A2148.s.o (.sdata) // 0x002a2148
-		memcard.cpp.o (.sdata) // 0x002a2150
+		memcard.cpp.o (.sdata) // 0x002a2148
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_save.cpp.o (.sdata) // 0x002a2168 @3260, @3261__2
 		main.sdata.memcard-a-2A2170.s.o (.sdata) // 0x002a2170
