@@ -818,13 +818,13 @@ int EdCheckViewMode(void);
 void EdCreateVillagerTable(EDIT_MAP_INFO *info);
 
 /**
- * Draws one event-point marker at the requested size.
+ * Draws the markers of the event points active at the given time.
  *
  * @mangled EdEventPointDraw__FP14ED_EVENT_POINTif
  * @address 0x184750
  * @size 0x300
  */
-void EdEventPointDraw(ED_EVENT_POINT *point, int kind, float size);
+void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time);
 
 /**
  * Gives back the motion a door plays for one state.
