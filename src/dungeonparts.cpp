@@ -252,19 +252,29 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", PresetSmallItemNo_Get__Fiiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @646__2);
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
-#ifdef NON_MATCHING
+
 /**
  * An area of one map part where an item can be put down.
  */
 struct ITEM_FREE_AREA {
-    s8 parts_no;          /**< Map part the areas lie on; -1 ends the table. */
-    s8 count;             /**< Number of boxes that follow. */
-    s8 direction;         /**< Quarter turns the boxes are given in. */
+    s8 parts_no;  /**< Map part the areas lie on; -1 ends the table. */
+    s8 count;     /**< Number of boxes that follow. */
+    s8 direction; /**< Quarter turns the boxes are given in. */
     u8 unk_03;
-    float box[4][6];      /**< Each box as its two corners, in tenths of a unit. */
+    float box[4][6]; /**< Each box as its two corners, at a tenth of world scale. */
 };
 
+/**
+ * The areas where items can be put down on each map.
+ */
 extern ITEM_FREE_AREA *ItemFreeAreaAll[];
+
+/**
+ * Scales a coordinate from the item area table up to world scale.
+ */
+static inline float ToWorldScale(float coordinate) {
+    return coordinate * 10.0f;
+}
 
 int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
     float quad[196][4][3];
@@ -289,7 +299,7 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    px[0] = areas[a].box[b][0] * 10.0f;
+                    px[0] = ToWorldScale(areas[a].box[b][0]);
                     py[0] = areas[a].box[b][1] * 10.0f;
                     pz[0] = areas[a].box[b][2] * 10.0f;
                     px[3] = areas[a].box[b][3] * 10.0f;
@@ -348,9 +358,7 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
     out[3] = 1.0f;
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf);
-#endif
+
 /**
  * Reports whether an Atla may be placed on one floor.
  *
