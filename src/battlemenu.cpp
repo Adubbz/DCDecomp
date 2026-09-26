@@ -720,21 +720,21 @@ void DrawBattleMain() {
     DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, waku_y, width, 0x22, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], 1, 0x40);
 }
-#ifdef NON_MATCHING
 void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     int bar_x = x - 5;
     int bar_y = y + 3;
-    if (bar_y >= 0xDD) {
+    if (bar_y > 0xDC) {
         bar_y--;
     }
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+    CDngStatusData *status = BtlMenuStatusPt;
     float hp = status->hp[chara];
     float max_hp = status->max_hp[chara];
     if (max_hp < 1.0f) {
         max_hp = 1.0f;
     }
     int slot = status->equipped_weapon_slot[chara];
-    WEAPON_HAVE *weapon = (WEAPON_HAVE *) ((char *) status + chara * sizeof(status->chara_weapons[0]) + 0x450C) + slot;
+    WEAPON_HAVE *weapons = status->chara_weapons[chara];
+    WEAPON_HAVE *weapon = &weapons[slot];
     if (weapon == NULL) {
         return;
     }
@@ -743,11 +743,13 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     if (max_whp < 1.0f) {
         max_whp = 1.0f;
     }
-    int water = (int) status->water_now[chara];
-    int max_water = (int) status->water_max[chara];
+    int water = (int) status->stat_float_b[chara];
+    int max_water = (int) status->stat_float_a[chara];
+    float values[4] = {hp, max_hp, whp, max_whp};
     MGFillBox(CRect_i_((bar_x - 3) * 16, ((bar_y - 2) >> 1) * 16, 0x3A0, 0x30), 0x14, 0x14, 0x14, alpha);
-    int hp_len = (s8) (int) (52.0f * hp / max_hp);
+    int hp_len = (int) (52.0f * hp / max_hp);
     MGFillBox(CRect_i_(bar_x * 16, (bar_y >> 1) * 16, 0x340, 0x20), 0x4F, 0x4F, 0x4F, alpha);
+    CRect_i_ hp_rect(bar_x * 16, (bar_y >> 1) * 16, hp_len * 16, 0x20);
     int r = 0x4D;
     int g = 0xE7;
     int b = 0xA5;
@@ -756,20 +758,17 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
         g = 0x76;
         b = 0xEA;
     }
-    MGFillBox(CRect_i_(bar_x * 16, (bar_y >> 1) * 16, hp_len * 16, 0x20), r, g, b, alpha);
+    MGFillBox(hp_rect, r, g, b, alpha);
     MGFillBox(CRect_i_((bar_x + 1) * 16, ((bar_y + 4) >> 1) * 16, 0x3A0, 0x30), 0x14, 0x14, 0x14, alpha);
     float whp_len = 52.0f * whp / max_whp;
+    int whp_width = (int) whp_len;
     MGFillBox(CRect_i_((bar_x + 4) * 16, ((bar_y + 6) >> 1) * 16, 0x340, 0x20), 0x4F, 0x4F, 0x4F, alpha);
-    MGFillBox(CRect_i_((bar_x + 4) * 16, ((bar_y + 6) >> 1) * 16, (s8) (int) whp_len * 16, 0x20), 0xFF, 0xB1, 0x49,
-              alpha);
+    MGFillBox(CRect_i_((bar_x + 4) * 16, ((bar_y + 6) >> 1) * 16, (int) whp_len * 16, 0x20), 0xFF, 0xB1, 0x49, alpha);
     MGFillBox(CRect_i_((bar_x + 5) * 16, ((bar_y + 10) >> 1) * 16, 0x3A0, 0x40), 0x14, 0x14, 0x14, alpha);
+    int water_len = water * 0x34 / max_water;
     MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, 0x340, 0x20), 0x4F, 0x4F, 0x4F, alpha);
-    MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, water * 0x34 / max_water * 16, 0x20), 0xC8, 0xEF,
-              0xF2, alpha);
+    MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, water_len * 16, 0x20), 0xC8, 0xEF, 0xF2, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawOtherCharaStatus__Fiiii);
-#endif
 #ifdef NON_MATCHING
 void DngComStatus(int x, int y, int chara, int alpha) {
     CTexture *texture = TexManager.GetTexture("charastb", -1);

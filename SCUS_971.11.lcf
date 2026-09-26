@@ -574,6 +574,8 @@ SECTIONS
         main.data.shop-filenames-after.s.o (.data) // 0x002929B0
         shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
         main.data.shop-filenames-after-292AE4.s.o (.data) // 0x00292ae4
+        battlemenu.cpp.o (.battlemenu-c731__6) // 0x00292e50 @731__6
+        main.data.battlemenu-292E60.s.o (.data) // 0x00292e60
         battlemenu.cpp.o (.battlemenu-c889__4) // 0x00292e90 @889__4
         battlemenu.cpp.o (.battlemenu-c890__4) // 0x00292ea0 @890__4
         . = ALIGN(16);

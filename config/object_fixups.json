@@ -162,74 +162,131 @@
   },
   "src/battlemenu.cpp": {
     "sections": {
-      ".battlemenu-town-ref": [
-        "@1493"
+      ".battlemenu-c889__4": [
+        "@230"
       ],
-      ".battlemenu-town-pos": [
-        "@1494"
+      ".battlemenu-c890__4": [
+        "@231"
       ],
       ".battlemenu-texenter": [
-        "@225"
-      ],
-      ".battlemenu-texenter-s": [
-        "@226"
-      ],
-      ".battlemenu-c4433": [
-        "@1224"
-      ],
-      ".battlemenu-c1239__2": [
-        "@345"
-      ],
-      ".battlemenu-c1249": [
-        "@356"
-      ],
-      ".battlemenu-c1270": [
-        "@378"
-      ],
-      ".battlemenu-c3967": [
-        "@1026"
-      ],
-      ".battlemenu-c3968": [
-        "@1027"
-      ],
-      ".battlemenu-c2056": [
-        "@605"
-      ],
-      ".battlemenu-c2057": [
-        "@606"
-      ],
-      ".battlemenu-c2058": [
-        "@607"
-      ],
-      ".battlemenu-c2059": [
-        "@608"
-      ],
-      ".battlemenu-c5492": [
-        "@1311"
-      ],
-      ".battlemenu-c4331": [
-        "@1144"
-      ],
-      ".battlemenu-c1292__2": [
-        "@388"
-      ],
-      ".battlemenu-c3657": [
-        "@827"
+        "@267"
       ],
       ".battlemenu-c959": [
-        "@248"
+        "@290"
       ],
       ".battlemenu-c963": [
-        "@252"
+        "@294"
       ],
-      ".battlemenu-c6227": [
-        "@1539"
+      ".battlemenu-c1239__2": [
+        "@387"
+      ],
+      ".battlemenu-c1270": [
+        "@420"
+      ],
+      ".battlemenu-c1292__2": [
+        "@430"
+      ],
+      ".battlemenu-c1717": [
+        "@483"
+      ],
+      ".battlemenu-c1725": [
+        "@491"
+      ],
+      ".battlemenu-c1728": [
+        "@494"
+      ],
+      ".battlemenu-c1729": [
+        "@495"
+      ],
+      ".battlemenu-c1879": [
+        "@618"
+      ],
+      ".battlemenu-c2056": [
+        "@647"
+      ],
+      ".battlemenu-c2057": [
+        "@648"
+      ],
+      ".battlemenu-c2058": [
+        "@649"
+      ],
+      ".battlemenu-c2059": [
+        "@650"
+      ],
+      ".battlemenu-c3657": [
+        "@869"
+      ],
+      ".battlemenu-c3967": [
+        "@1068"
+      ],
+      ".battlemenu-c3968": [
+        "@1069"
       ],
       ".battlemenu-c4290": [
-        "@1106"
+        "@1148"
       ],
       ".battlemenu-c4291": [
-        "@1107"
+        "@1149"
+      ],
+      ".battlemenu-c4331": [
+        "@1186"
+      ],
+      ".battlemenu-c4433": [
+        "@1266"
+      ],
+      ".battlemenu-c5492": [
+        "@1353"
+      ],
+      ".battlemenu-c5503": [
+        "@1362"
+      ],
+      ".battlemenu-c5742": [
+        "@1421"
+      ],
+      ".battlemenu-town-ref": [
+        "@1535"
+      ],
+      ".battlemenu-town-pos": [
+        "@1536"
+      ],
+      ".battlemenu-c6185": [
+        "@1552"
+      ],
+      ".battlemenu-c6188": [
+        "@1555"
+      ],
+      ".battlemenu-c6227": [
+        "@1581"
+      ],
+      ".battlemenu-c6232": [
+        "@1591"
+      ],
+      ".battlemenu-c6233": [
+        "@1592"
+      ],
+      ".battlemenu-c6235": [
+        "@1594"
+      ],
+      ".battlemenu-c702__2": [
+        "@166"
+      ],
+      ".battlemenu-texenter-s": [
+        "@268"
+      ],
+      ".battlemenu-c1249": [
+        "@398"
+      ],
+      ".battlemenu-c3682": [
+        "@894"
+      ],
+      ".battlemenu-c3929": [
+        "@1043"
+      ],
+      ".battlemenu-c5711": [
+        "@1392"
+      ],
+      ".battlemenu-c6236": [
+        "@1595"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -237,17 +294,11 @@
       ".battlemenu-init_4293": [
         "init$4293"
       ],
-      ".battlemenu-c5711": [
-        "@1350"
-      ],
       ".battlemenu-ct_5739": [
         "ct$5739"
       ],
       ".battlemenu-init_5740": [
         "init$5740"
-      ],
-      ".battlemenu-c5742": [
-        "@1379"
       ],
       ".battlemenu-statusCnt_5776": [
         "statusCnt$5776"
@@ -255,56 +306,8 @@
       ".battlemenu-init_5777": [
         "init$5777"
       ],
-      ".battlemenu-c1717": [
-        "@441"
-      ],
-      ".battlemenu-c1879": [
-        "@576"
-      ],
-      ".battlemenu-c6185": [
-        "@1510"
-      ],
-      ".battlemenu-c6188": [
-        "@1513"
-      ],
-      ".battlemenu-c1725": [
-        "@449"
-      ],
-      ".battlemenu-c1728": [
-        "@452"
-      ],
-      ".battlemenu-c1729": [
-        "@453"
-      ],
-      ".battlemenu-c3929": [
-        "@1001"
-      ],
-      ".battlemenu-c5503": [
-        "@1320"
-      ],
-      ".battlemenu-c6232": [
-        "@1549"
-      ],
-      ".battlemenu-c6233": [
-        "@1550"
-      ],
-      ".battlemenu-c6235": [
-        "@1552"
-      ],
-      ".battlemenu-c6236": [
-        "@1553"
-      ],
-      ".battlemenu-c889__4": [
-        "@188"
-      ],
-      ".battlemenu-c890__4": [
-        "@189"
-      ],
-      ".battlemenu-c702__2": [
-        "@166"
-      ],
-      ".battlemenu-c3682": [
-        "@852"
+      ".battlemenu-c731__6": [
+        "@196"
       ]
     },
     "rodata_exports": [

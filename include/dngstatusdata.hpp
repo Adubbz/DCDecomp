@@ -255,6 +255,8 @@ private:
     char unk_42C6[2];
     s32 unk_field_4468[6];
     s16 unk_field_2[6];
+
+public:
     float stat_float_a[6];
     float stat_float_b[6];
 
