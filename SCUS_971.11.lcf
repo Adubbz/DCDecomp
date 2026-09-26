@@ -542,10 +542,7 @@ SECTIONS
         . = ALIGN(0x10);
         dungeoneventman.cpp.o (.data) // 0x0027a0a0
         main.data.itemdata-a.s.o (.data) // 0x0027a0b0
-        itemdata.cpp.o (.itemdata1)     // 0x0027a610
-        . = ALIGN(0x10);
-        main.data.itemdata-b.s.o (.data) // 0x0027a6a0
-        itemdata.cpp.o (.data)          // 0x0027a6c0
+        itemdata.cpp.o (.data)          // 0x0027a610
         main.data.part6.s.o (.data)
         btitem.cpp.o (.btitemdata1)  // 0x0027e7d0
         . = ALIGN(0x10);
