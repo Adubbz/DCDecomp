@@ -1513,115 +1513,124 @@ static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha)
     MenuTextureReload(PerBoardTex->block);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 0x28, length), CRect_i_(0x114, v, 0x28, length), alpha);
 }
-#ifdef NON_MATCHING
-void CommonIconDraw(int page, int count, int x, int y, int state, int alpha, int scale) {
+
+void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int alpha) {
     int value;
     int draw_x;
+    int weapon_x = x + 4;
+    int draw_y = y;
+    CTexture *icon;
 
     switch (page) {
         case 2: {
             if (PerBoardPt->unk_00 == 1) {
                 MenuTextureReload(MenuShadowReadBlock);
             } else {
-                CTexture *icon = TexManager.GetTexture("wepicon", -1);
+                icon = TexManager.GetTexture("wepicon", -1);
                 if (icon != NULL) {
                     MenuTextureReload(icon->block);
                     WepIcon = icon;
                 }
             }
             draw_x = x + 2;
-            DNG_CONSUMABLE *items = PerBoardPt->consumables;
+            ATTACH_LIST *attach = (ATTACH_LIST *) PerBoardPt->consumables;
             for (int i = 0; i < count; i++) {
-                int id = items[i].id;
+                int id = attach[i].item_no;
                 if (id >= 0x5B && id < 0x5F) {
-                    value = ((s16 *) items[i].unk_02)[id - 0x5A];
+                    value = attach[i].status[id - 0x5B];
                 }
                 if (id == 0x5A) {
-                    value = ((s16 *) items[i].unk_02)[0];
+                    value = attach[i].unk_02;
                 }
-                DrawIconParts(id, draw_x, y, state, alpha, scale, value);
+                DrawIconParts(id, draw_x, draw_y, top, bottom, alpha, value);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
                     draw_x = x + 2;
-                    y += 0x28;
+                    draw_y += 0x28;
                 }
             }
-            return;
+            break;
         }
         case 0: {
             draw_x = x;
-            s16 *items = PerBoardPt->item_pack->item;
-            for (int i = 0; i < 3; i++) {
+            int quick;
+            int slot;
+            ITEM_PACK *pack = PerBoardPt->item_pack;
+            s16 *items = pack->item;
+            quick = 0;
+            for (slot = 0; slot < 3; slot++) {
+                quick += pack->quick_item_qty[slot];
             }
             for (int i = 0; i < count; i++) {
-                DrawIconParts(items[i], draw_x, y, state, alpha, scale, 0);
+                DrawIconParts(items[i], draw_x, draw_y, top, bottom, alpha, 0);
                 if (MenuTrushMark[i] != 0) {
-                    DrawDontSetItemMark(draw_x, y, state, alpha, scale);
+                    DrawDontSetItemMark(draw_x, draw_y, top, bottom, alpha);
                 }
                 draw_x += 0x28;
                 if (i % 5 == 4) {
                     draw_x = x;
-                    y += 0x28;
+                    draw_y += 0x28;
                 }
             }
-            return;
+            break;
         }
         case 1: {
+            int party;
+            int item_no;
+            WEAPON_HAVE *weapons;
             int chara = 0;
-            WEAPON_HAVE *weapons = PerBoardStatusPt->chara_weapons[0];
-            CTexture *icon = TexManager.GetTexture("wepicon", -1);
+            weapons = PerBoardStatusPt->chara_weapons[0];
+            icon = TexManager.GetTexture("wepicon", -1);
             if (icon != NULL) {
                 MenuTextureReload(icon->block);
                 WepIcon = icon;
             }
-            draw_x = x + 4;
-            int party = PerBoardStatusPt->party_size;
+            draw_x = weapon_x;
+            party = PerBoardStatusPt->party_size;
             for (int i = 0; i < count; i++) {
                 int slot = i % 10;
-                int item_no = weapons[slot].item_no;
-                int owner = i / 10;
-                int equipped = PerBoardStatusPt->equipped_weapon_slot[owner];
-                if (party >= owner + 1 && equipped >= 0 && slot == equipped) {
-                    DrawNowEquipWeaponMark(draw_x - 2, y - 4, state + 1, alpha, scale);
+                item_no = weapons[slot].item_no;
+                int equipped = PerBoardStatusPt->equipped_weapon_slot[i / 10];
+                if (party >= i / 10 + 1 && equipped >= 0 && slot == equipped) {
+                    DrawNowEquipWeaponMark(draw_x - 2, draw_y - 4, top + 1, bottom, alpha);
                     if (icon != NULL) {
                         MenuTextureReload(icon->block);
                     }
                 }
-                DrawIconParts(item_no, draw_x, y, state, alpha, scale, 0);
+                DrawIconParts(item_no, draw_x, draw_y, top, bottom, alpha, 0);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
-                    draw_x = x + 4;
-                    y += 0x28;
+                    draw_x = weapon_x;
+                    draw_y += 0x28;
                     if (i != 0 && slot == 9) {
                         chara++;
-                        weapons = PerBoardStatusPt->chara_weapons[chara];
+                        CUserStatus *status = PerBoardStatusPt;
+                        weapons = status->chara_weapons[chara];
                     }
                 }
             }
-            return;
+            break;
         }
         case 3:
         case 4:
         case 5:
         case 6:
         case 7:
-        case 8:
-            draw_x = x + 2;
+        case 8: {
+            int left = weapon_x - 2;
+            draw_x = left;
             for (int i = 0; i < 120; i++) {
-                DrawAtoraParts(draw_x, y, PerBoardPt->unk_2C[i], state, alpha - 4, scale);
+                DrawAtoraParts(draw_x, draw_y, PerBoardPt->unk_2C[i], top, bottom - 4, alpha);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
-                    draw_x = x + 2;
-                    y += 0x28;
+                    draw_x = left;
+                    draw_y += 0x28;
                 }
             }
-        default:
-            return;
+            break;
+        }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
-#endif
 
 void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha) {
     DrawMenu2DSprite(texture, CRect_i_(x, y + 1, 0x14, 0xBF), CRect_i_(0, 0, 0x14, 0xC0), alpha);

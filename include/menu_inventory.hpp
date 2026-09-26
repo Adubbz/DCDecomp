@@ -63,13 +63,13 @@ int PersonalRetMax(int board_mode);
 void DrawPersonalBoard(int x, int y, int board_mode, int cursor_pos, int alpha);
 
 /**
- * Draws a common inventory icon with its quantity and state overlays.
+ * Draws the icons of one personal board page, five to a row, clipped to the board's top and bottom.
  *
  * @mangled CommonIconDraw__Fiiiiiii
  * @address 0x0022FAD0
  * @size 0x4F0
  */
-void CommonIconDraw(int x, int y, int item_no, int quantity, int state, int alpha, int scale);
+void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int alpha);
 
 /**
  * Draws the frame surrounding a personal inventory board.
