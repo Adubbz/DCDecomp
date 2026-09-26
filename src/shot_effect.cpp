@@ -70,7 +70,7 @@ void CSHOT::step() {
         if (unk_280[shot] == 0) {
             SHOT_COLLISION_RESULT result =
                 checkCollision(hit_position, pos[shot], vector[shot], 2, 2.0f);
-            if (result == 0) {
+            if (result == SHOT_COLLISION_NONE) {
                 pos[shot][0] += vector[shot][0];
                 pos[shot][1] += vector[shot][1];
                 pos[shot][2] += vector[shot][2];
@@ -164,7 +164,7 @@ void CSHOT_EFFECT::Step() {
         chara[slot].GetPosition(position);
         chara[slot].GetPosition(hit_position);
 
-        int result = 0;
+        SHOT_COLLISION_RESULT result = SHOT_COLLISION_NONE;
         if (phase[slot] < 2) {
             result = checkCollision(hit_position, position, velocity[slot], effect_data->unk_048,
                                     effect_data->radius[phase[slot]]);
@@ -211,7 +211,7 @@ void CSHOT_EFFECT::Step() {
             }
         }
 
-        if (result == 0) {
+        if (result == SHOT_COLLISION_NONE) {
             position[0] += velocity[slot][0];
             position[1] += velocity[slot][1];
             position[2] += velocity[slot][2];
