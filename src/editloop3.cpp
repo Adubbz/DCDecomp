@@ -7143,7 +7143,52 @@ int EdNowTalkCharaInfoID() {
     return talk_chara_info_id;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Closes the conversation window and leaves it ready for the next message.
+ */
+static inline void EdCloseTalkMes() {
+    EditMes1.text_rate = EditMes1.text_rate_set;
+    EditMes1.mes_made = -1;
+    EditMes1.fade_in = 0;
+    EditMes1.text_columns = 0x46;
+    EditMes1.text_rows = 0xA;
+    EditMes1.text_len = 0;
+    EditMes1.text_width = 0;
+    EditMes1.text_height = 0;
+    EditMes1.fade = 0.0f;
+    EditMes1.fade_in = 1;
+    EditMes1.text_rate = EditMes1.text_rate_set;
+    EditMes1.waiting = 0;
+    EditMes1.text_at = 0.0f;
+    EditMes1.text_no = 0;
+    EditMes1.text_from = 0;
+    EditMes1.page_from = 0;
+    EditMes1.InitMesWinTbl();
+    EditMes1.clut_now = EditMes1.clut_default;
+    EditMes1.wait = 0;
+    EditMes1.blink = 0;
+    EditMes1.auto_page_wait = 0;
+    EditMes1.mes_made = -1;
+    EditMes1.edge_alpha = 0x80;
+    for (int i = 0; i < 10; i++)
+        EditMes1.mes_no[i] = -1;
+    for (int i = 0; i < 8; i++)
+        EditMes1.values[i] = 0;
+    EditMes1.value = 0;
+    EditMes1.value_signed = 0;
+    EditMes1.value_show = 1;
+    EditMes1.value_narrow = 0;
+    EditMes1.space_width = -1;
+    EditMes1.space_area = -1;
+    EditMes1.cursor_row = -1;
+    EditMes1.cursor_y = 0;
+    EditMes1.cursor_lit = 0;
+    for (int i = 0; i < 10; i++) {
+        EditMes1.line_pos[i].x = -1;
+        EditMes1.line_pos[i].y = -1;
+    }
+}
+
 /**
  * Runs the talking-to-a-villager mode for one frame.
  *
@@ -7152,53 +7197,56 @@ int EdNowTalkCharaInfoID() {
  * @size 0xEBC
  */
 int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selection) {
+    /** Camera offsets from the speakers' midpoint for each of the three talk-camera views. */
+    static sceVu0FVECTOR vv[3] = {
+        {-18.8f, 7.1f, -21.3f, 1.0f},
+        {21.0f, 6.5f, -5.7f, 1.0f},
+        {22.6f, 6.9f, 16.5f, 1.0f},
+    };
+
     GamePad.MenuModeOn(0x78);
     ReadBG();
-    if (camera != NULL) {
+    if (camera != NULL)
         camera->FollowOff();
-    }
     EditMes1.Step();
 
-    CCharacter *villager = &talk_villager__2->chara;
-    talk_villager__2->near_camera = 1;
+    CNPCharacter *villager = talk_villager__2;
+    villager->near_camera = 1;
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR villager_position;
     sceVu0FVECTOR player_rotation;
     sceVu0FVECTOR villager_rotation;
     sceVu0FVECTOR direction;
     player->GetPosition(player_position);
-    villager->GetPosition(villager_position);
     player->GetRotation(player_rotation);
-    villager->GetRotation(villager_rotation);
+    villager->chara.GetPosition(villager_position);
+    villager->chara.GetRotation(villager_rotation);
     sceVu0SubVector(direction, villager_position, player_position);
     float player_yaw = atan2f(direction[0], direction[2]);
     float villager_yaw = atan2f(-direction[0], -direction[2]);
-    player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.2f, 0);
-    villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.2f, 0);
+    player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.1f, 0);
     player->SetRotation(player_rotation);
-    if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0) {
-        villager->SetRotation(villager_rotation);
-    }
+    villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.1f, 0);
+    if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0)
+        villager->chara.SetRotation(villager_rotation);
 
     sceVu0FVECTOR reference;
     sceVu0AddVector(reference, player_position, villager_position);
     sceVu0ScaleVector(reference, reference, 0.5f);
     reference[1] += 15.0f;
     if (camera != NULL) {
-        static const sceVu0FVECTOR offsets[3] = {
-            {25.0f, 12.0f, -35.0f, 0.0f},
-            {-25.0f, 12.0f, -35.0f, 0.0f},
-            {0.0f, 18.0f, -45.0f, 0.0f},
-        };
-        sceVu0FMATRIX rotation;
-        sceVu0FVECTOR offset;
-        sceVu0FVECTOR camera_position;
-        sceVu0UnitMatrix(rotation);
-        sceVu0RotMatrixY(rotation, rotation, player_yaw);
-        sceVu0ApplyMatrix(offset, rotation, offsets[talk_camera]);
-        sceVu0AddVector(camera_position, reference, offset);
+        camera->FollowOff();
         camera->SetRef(reference);
+    }
+    sceVu0FVECTOR camera_position;
+    sceVu0FMATRIX rotation;
+    sceVu0UnitMatrix(rotation);
+    sceVu0RotMatrixY(rotation, rotation, player_yaw);
+    sceVu0ApplyMatrix(camera_position, rotation, vv[talk_camera]);
+    sceVu0AddVector(camera_position, reference, camera_position);
+    if (camera != NULL)
         camera->SetPos(camera_position);
+    if (camera != NULL) {
         sceVu0FMATRIX view;
         sceVu0FVECTOR eye;
         camera->GetCameraMatrix(view);
@@ -7206,72 +7254,141 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
         MGSetViewMatrix(view, eye);
     }
 
-    int choice_count = 0;
-    while (choice_count < 16 && EdEventInfo.talk_messages[choice_count] >= 0) {
-        choice_count++;
-    }
     if (EdEventInfo.talk_select_prompt < 0) {
         talk_mode = 1;
         TalkMesNo = EdEventInfo.talk_messages[0];
-    } else if (talk_mode == 0) {
+    } else {
         TalkMesNo = EdEventInfo.talk_select_message;
     }
 
-    if (talk_mode == 0) {
-        if (GamePad.Down(0x1000) != 0 && choice_count > 0) {
-            talk_select--;
-            if (talk_select < 0) {
-                talk_select = choice_count - 1;
+    int choice_count = 0;
+    for (;;) {
+        if (EdEventInfo.talk_messages[choice_count] < 0)
+            break;
+        choice_count++;
+    }
+    SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
+
+    switch (talk_mode) {
+        case 1:
+            if (GamePad.Down(0x60) != 0) {
+                if (EditMes1.State() == 3) {
+                    EdCloseTalkMes();
+                    if (camera != NULL)
+                        camera->FollowOn();
+                    villager->chara.SetMotion(0, 0);
+                    GamePad.AutoRepeatOff();
+                    GamePad.MenuModeOff();
+                    return 1;
+                }
+                if (EditMes1.State() == 5)
+                    EditMes1.GoNextPage();
+                else
+                    EditMes1.text_rate = 0.0f;
             }
-        }
-        if (GamePad.Down(0x4000) != 0 && choice_count > 0) {
-            talk_select++;
-            if (talk_select >= choice_count) {
-                talk_select = 0;
-            }
-        }
-        EditMes1.cursor_row = talk_select;
-        if (GamePad.Down(0x40) != 0 && EditMes1.State() == 3 && choice_count > 0) {
-            talk_mode = 1;
-            TalkMesMake = 1;
-            TalkMesNo = EdEventInfo.talk_messages[talk_select];
-            if (selection != NULL) {
-                *selection = talk_select;
-            }
-        }
-    } else if (GamePad.Down(0x60) != 0) {
-        if (EditMes1.State() == 3) {
             EditMes1.cursor_row = -1;
-            if (camera != NULL) {
-                camera->FollowOn();
+            villager->chara.SetMotion(3, 0);
+            break;
+        case 0:
+            if (GamePad.Down(0x1000) != 0) {
+                talk_select--;
+                if (talk_select < 0)
+                    talk_select = choice_count - 1;
             }
-            GamePad.AutoRepeatOff();
-            GamePad.MenuModeOff();
-            return 1;
-        }
-        if (EditMes1.State() == 5) {
-            EditMes1.GoNextPage();
-        } else {
-            EditMes1.text_rate = 0.0f;
-        }
+            if (GamePad.Down(0x4000) != 0) {
+                talk_select++;
+                if (talk_select > choice_count - 1)
+                    talk_select = 0;
+            }
+            if (GamePad.Down(0x40) != 0) {
+                if (EditMes1.State() == 3) {
+                    talk_mode = 1;
+                    TalkMesMake = 1;
+                    TalkMesNo = EdEventInfo.talk_messages[talk_select];
+                    if (EdEventInfo.talk_select_prompt == 0 && talk_select == 3) {
+                        SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
+                        if (npc != NULL)
+                            npc->flags |= 2;
+                    }
+                    if ((talk_select == 0 && EdEventInfo.talk_select_prompt > 0 &&
+                         EdEventInfo.talk_select_prompt != 4) ||
+                        (talk_select > 0 && EdEventInfo.talk_select_prompt == 4)) {
+                        EdCloseTalkMes();
+                        if (camera != NULL)
+                            camera->FollowOn();
+                        villager->chara.SetMotion(0, 0);
+                        GamePad.AutoRepeatOff();
+                        GamePad.MenuModeOff();
+                        if (EdEventInfo.talk_select_prompt == 4) {
+                            EdSetShopNo(EdEventInfo.talk_messages[talk_select]);
+                            if (talk_select == 1)
+                                return 2;
+                            if (talk_select == 2)
+                                return 3;
+                            if (talk_select == 3)
+                                return 2;
+                            if (talk_select == 4)
+                                return 2;
+                        }
+                        EdSetShopNo(EdEventInfo.talk_messages[0]);
+                        if (EdEventInfo.talk_select_prompt == 1)
+                            return 2;
+                        if (EdEventInfo.talk_select_prompt == 2)
+                            return 3;
+                        if (EdEventInfo.talk_select_prompt == 3) {
+                            if (selection != NULL)
+                                *selection = EdEventInfo.talk_messages[0];
+                            return 4;
+                        }
+                        return 1;
+                    }
+                } else {
+                    EditMes1.text_rate = 0.0f;
+                }
+            }
+            if (GamePad.Down(0x20) != 0) {
+                GamePad.AutoRepeatOff();
+                GamePad.MenuModeOff();
+                EdCloseTalkMes();
+                if (camera != NULL)
+                    camera->FollowOn();
+                villager->chara.SetMotion(0, 0);
+                return 1;
+            }
+            EditMes1.cursor_row = talk_select;
+            villager->chara.SetMotion(0, 0);
+            break;
     }
 
-    int window_position[2];
-    if (mode == 0) {
-        EditMes1.AutoSetSub(player, villager, window_position);
+    int talk_position[4];
+    if (talk_mode == 0) {
+        if (mode != 0) {
+            EditMes1.tail_on = 0;
+            EditMes1.auto_pos = 8;
+        }
+        EditMes1.AutoSetSub(player, &villager->chara, talk_position);
+        EditMes1.AutoSet(talk_position);
     } else {
-        EditMes1.AutoSetSub(villager, player, window_position);
+        EditMes1.tail_on = 1;
+        EditMes1.auto_pos = 0;
+        EditMes1.AutoSetSub(&villager->chara, player, talk_position);
+        EditMes1.AutoSet(talk_position);
     }
-    EditMes1.AutoSet(window_position);
-    if (TalkMesMake != 0) {
-        EditMes1.text_rate = 0.0f;
-        TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
+
+    switch (talk_mode) {
+        case 0:
+            if (TalkMesMake != 0) {
+                EditMes1.text_rate = 0.0f;
+                TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
+            }
+            break;
+        case 1:
+            if (TalkMesMake != 0)
+                TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
+            break;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdTalkMode__FP10CCharacterP13CCameraFollowiPi);
-#endif
 
 ED_SPRITE::ED_SPRITE() {
 }

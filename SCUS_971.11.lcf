@@ -507,6 +507,7 @@ SECTIONS
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
         main.data.part4g.s.o (.data)   // 0x0026a5e8
+        editloop3.cpp.o (.editloop3-vv_2757) // 0x0026a610 vv$2757
         edit_in.cpp.o (.editininit)    // 0x0026a640
         edit_in.cpp.o (.editindraw)    // 0x0026a650
         edit_in.cpp.o (.editinmove)    // 0x0026a670

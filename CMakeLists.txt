@@ -310,7 +310,7 @@ carve_part(main.data.part4.s
            main.data.part4m.s=266B90-266E10
            main.data.part4m-266E90.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
-           main.data.part4g.s=26A5E8-26A640
+           main.data.part4g.s=26A5E8-26A610
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
            main.data.part4g-26AE40.s=26AE40-26AE60
            main.data.shot_freefuncs-a.s=26AFF8-26B040
