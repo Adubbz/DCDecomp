@@ -6591,180 +6591,218 @@ static void MenuCharaPolyDraw() {
     MenuCharaFrame.Draw();
     SetItemMenuOldAmbient();
 }
-#ifdef NON_MATCHING
 void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+    int draw_x;
+    int draw_y;
 
-    if (CharaStatus == NULL) {
-        return;
-    }
-    MenuTextureReload(ItemMenuWeaponIconReadBlock);
-    DrawMenu2DSprite(CharaStatus, CRect_i_(x, y + 1, 0xFC, 0x85), CRect_i_(0, 0x50, 0xFC, 0x86), alpha);
-    RECT digits = {0x100, 0x60, 0xC, 0xE};
-    DrawMenuNumber(status->unk_4348[chara], x + 0x64, y + 0x24, CharaStatus, digits, 1, alpha);
-    if (MenuExTextureReadFlag == 2 && chara < status->party_size) {
-        MenuTextureReload(MenuExtendReadBlock);
-        MGSetWindowRect(CRect_i_(x + 0x82, 0x5D, 0x76, 0x3F));
-        MenuPolygonDraw(alpha, MenuCharaPolyDraw);
-        MGSetWindowRect();
-        spRGBA top = {0x80, 0x80, 0x80, 0};
-        spRGBA bottom = {0x80, 0x80, 0x80, (u8) alpha};
+    if (CharaStatus != NULL) {
         MenuTextureReload(ItemMenuWeaponIconReadBlock);
-        CRect_i_ screen(x + 0x7E, y + 0x6F, 0x7E, 0x17);
-        CRect_i_ texel(0x7E, 0xBE, 0x7E, 0x18);
-        set2DSprite(GetVif1Packet(), CharaStatus, screen, texel, &top, &top, &bottom, &bottom, 1);
-    }
-    MenuTextureReload(BtlMenuReadBlock);
-    CharaStatusMsgDraw(x + 0x6E, y + 0x14, chara, 0, alpha);
-    int hp = status->hp[chara];
-    int max_hp = status->max_hp[chara];
-    if (max_hp <= 0) {
-        max_hp = 1;
-    }
-    WEAPON_HAVE *weapon;
-    int slot = status->equipped_weapon_slot[chara];
-    if (slot < 0) {
-        weapon = &ItemMenuMode.board.weapon;
-    } else {
-        weapon = &status->chara_weapons[chara][slot];
-    }
-    float durability = 0.0f;
-    float max_durability = 0.0f;
-    if (weapon != NULL) {
-        durability = weapon->durability_f;
-        max_durability = (float) weapon->durability;
-    }
-    if (max_durability < 0.0f) {
-        max_durability = 1.0f;
-    }
-    MenuTextureReload(ItemMenuWeaponIconReadBlock);
-    int hp_w = max_hp * 0x99 / 200;
-    int wep_w = (int) (153.0f * max_durability / 99.0f);
-    CRect_i_ bar(0x154, 0, 4, 0x10);
-    int hp_y = y + 0x41;
-    DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x22, hp_y, hp_w, 0x10), bar, alpha);
-    DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x1A + hp_w, hp_y, 0xA, 0x10), CRect_i_(0x154, 0, 0xA, 0x10), alpha);
-    int wep_y = y + 0x51;
-    DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x22, wep_y, wep_w, 0x10), bar, alpha);
-    DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x1A + wep_w, wep_y, 0xA, 0x10), CRect_i_(0x158, 0, 0xA, 0x10), alpha);
-    int water_cells = (int) (status->water_max[chara] / 10.0f);
-    int cell_x = x + 0x1E;
-    int water_y = y + 0x62;
-    for (int i = 0; i < water_cells - 1; i++) {
-        DrawMenu2DSprite(CharaStatus, CRect_i_(cell_x, water_y + 2, 0x12, 0x15), CRect_i_(0x154, 0x10, 0x12, 0x14), alpha);
-        cell_x += 0x12;
-    }
-    DrawMenu2DSprite(CharaStatus, CRect_i_(cell_x, water_y + 2, 0x18, 0x15), CRect_i_(0x166, 0x10, 0x18, 0x14), alpha);
-    float hp_fill = (float) (hp_w * hp) / (float) max_hp;
-    int danger = 0;
-    float low = 0.3f * (float) max_hp;
-    if ((float) hp < low) {
-        danger = 1;
-    }
-    if ((float) hp < 0.15f * (float) max_hp) {
-        danger++;
-    }
-    GRADATION_COLOR_INFO2 colors;
-    GRADATION_COLOR_INFO2 *gradation = GetGradationColorInfo2(danger + 0x16);
-    memcpy(&colors, gradation, sizeof(colors));
-    colors.colors[3].a = alpha;
-    colors.colors[2].a = alpha;
-    colors.colors[1].a = alpha;
-    colors.colors[0].a = alpha;
-    CRect_i_ hp_bar(x + 0x1F, y + 0x46, (int) hp_fill, 6);
-    DrawMenuColorGradation(hp_bar, &gradation->colors[0], &gradation->colors[1], &gradation->colors[2], &gradation->colors[3]);
-    int values[2];
-    values[0] = hp;
-    values[1] = max_hp;
-    DrawStatusNumberNowAndMax(values, x + 0x3C + hp_w, y + 0x47, 1, alpha);
-    int flash = hp_fill < low ? 1 : 0;
-    if (flash != MenuCharaFrame.motion_no) {
-        MenuCharaFrame.motion_no = flash;
-        MenuCharaFrame.flags = 0;
-        MenuCharaFrame.motion_speed = -1.0f;
-    }
-    memcpy(&colors, GetGradationColorInfo2(0x19), sizeof(colors));
-    colors.colors[3].a = alpha;
-    colors.colors[2].a = alpha;
-    colors.colors[1].a = alpha;
-    colors.colors[0].a = alpha;
-    CRect_i_ wep_bar(x + 0x1F, y + 0x56, (int) ((float) wep_w * durability / max_durability), 6);
-    DrawMenuColorGradation(wep_bar, &colors.colors[0], &colors.colors[1], &colors.colors[2], &colors.colors[3]);
-    values[0] = GetDispVolumeForFloat(durability);
-    values[1] = (int) max_durability;
-    DrawStatusNumberNowAndMax(values, x + 0x3C + wep_w, y + 0x57, 1, alpha);
-    int drop_x = x + 0x20;
-    int drop_y = y + 0x60;
-    int drops = (int) status->water_now[chara] / 10;
-    for (int i = 0; i < drops; i++) {
-        DrawMenu2DSprite(CharaStatus, CRect_i_(drop_x, drop_y, 0x10, 0x14), CRect_i_(0x128, 0x2C, 0x10, 0x14), alpha);
-        drop_x += 0x12;
-    }
-    int rest = (int) status->water_now[chara] % 10;
-    if (rest != 0) {
-        DrawMenu2DSprite(CharaStatus, CRect_i_(drop_x, drop_y, 0x10, 0x14),
-                         CRect_i_((3 - (int) ((float) rest / 2.5f)) * 0x10 + 0x128, 0x2C, 0x10, 0x14), alpha);
-    }
-    int tab_y = y - 0x14;
-    int party = status->party_size;
-    int tab = 0;
-    int right = 0;
-    for (int i = 0; i <= party; i++) {
-        if (tab == chara) {
-            if (right != 0) {
-                int tab_x = x + 0x10 + chara * 0xC;
-                DrawMenu2DSprite(CharaStatus, CRect_i_(tab_x, tab_y - 1, 0x20, 0x1B), CRect_i_(0, 0xD8, 0x20, 0x1C), alpha);
-                DrawMenu2DSprite(CharaStatus, CRect_i_(tab_x + 0x20, tab_y - 1, 0x5E, 0x1B), CRect_i_(0x20, 0xD8, 0x4A, 0x1C), alpha);
-                DrawMenu2DSprite(CharaStatus, CRect_i_(tab_x + 0x7E, tab_y - 1, 0x20, 0x1B), CRect_i_(0x6A, 0xD8, 0x20, 0x1C), alpha);
-            } else {
-                right = 1;
-                tab = party - 1;
-            }
-        } else {
-            int tab_x = tab * 0xC + (x + 0x10 + right * 0x69);
-            int u;
-            if (right == 0) {
-                u = 0xA6;
-                tab++;
-            } else {
-                u = 0x8A;
-                tab--;
-                if (GetMenuLangFlag() > 0) {
-                    tab_x += 0x14;
-                }
-            }
-            DrawMenu2DSprite(CharaStatus, CRect_i_(tab_x, tab_y + 2, 0x1C, 0x13), CRect_i_(u, 0xD8, 0x1C, 0x14), alpha);
+        DrawMenu2DSprite(CharaStatus, CRect_i_(x, y + 1, 0xFC, 0x85), CRect_i_(0, 0x50, 0xFC, 0x86), alpha);
+        int level = BtlMenuStatusPt->unk_field_1[chara];
+        RECT number_rect = {0x100, 0x60, 0xC, 0xE};
+        DrawMenuNumber(level, x + 0x64, y + 0x24, CharaStatus, number_rect, 1, alpha);
+        if (MenuExTextureReadFlag == 2 && chara < BtlMenuStatusPt->party_size) {
+            MenuTextureReload(MenuExtendReadBlock);
+            MGSetWindowRect(CRect_i_(x + 0x82, 0x5D, 0x76, 0x3F));
+            MenuPolygonDraw(alpha, MenuCharaPolyDraw);
+            MGSetWindowRect();
+            spRGBA top;
+            spRGBA bottom;
+            top.r = top.g = top.b = bottom.r = bottom.g = bottom.b = 0x80;
+            top.a = 0;
+            bottom.a = alpha;
+            MenuTextureReload(ItemMenuWeaponIconReadBlock);
+            draw_x = x + 0x7E;
+            draw_y = y + 0x6E;
+            set2DSprite(GetVif1Packet(), CharaStatus, CRect_i_(draw_x, draw_y + 1, 0x7E, 0x17),
+                        CRect_i_(0x7E, 0xBE, 0x7E, 0x18), &top, &top, &bottom, &bottom, 1);
         }
-    }
-    s16 item_no = weapon->item_no;
-    int icon_x = x + 0x16;
-    int icon_y = y + 0x10;
-    int u;
-    int v;
-    RetCTex(item_no, u, v);
-    CTexture *icons = TexManager.GetTexture("wepicon", -1);
-    if (icons != NULL && item_no >= 0x101) {
-        WEAPON_HAVE total;
+        MenuTextureReload(BtlMenuReadBlock);
+        draw_x = x + 0x6E;
+        draw_y = y + 0x14;
+        CharaStatusMsgDraw(draw_x, draw_y, chara, 0, alpha);
+        CDngStatusData *status = BtlMenuStatusPt;
+        int hp = status->hp[chara];
+        int max_hp = status->max_hp[chara];
+        if (max_hp <= 0) {
+            max_hp = 1;
+        }
+        WEAPON_HAVE *weapon;
+        int slot = status->equipped_weapon_slot[chara];
+        if (slot < 0) {
+            weapon = &ItemMenuMode.board.weapon;
+        } else {
+            WEAPON_HAVE *row = status->chara_weapons[chara];
+            weapon = &row[slot];
+        }
+        float durability;
+        float durability_max;
+        durability_max = durability = 0.0f;
+        if (weapon != NULL) {
+            durability = weapon->durability_f;
+            durability_max = weapon->durability;
+        }
+        if (durability_max < 0.0f) {
+            durability_max = 1.0f;
+        }
         MenuTextureReload(ItemMenuWeaponIconReadBlock);
-        WeaponAllValueSet(weapon, &total, 0);
-        DrawMenu2DSprite(icons, CRect_i_(icon_x, icon_y, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
-        DrawMenuNumber(total.attack, icon_x + 0x20, icon_y + 0x14, CharaStatus, digits, 1, alpha);
+        int hp_width = max_hp * 153 / 200;
+        int durability_width = 153.0f * durability_max / 99.0f;
+        CRect_i_ bar_src(0x154, 0, 4, 0x10);
+        draw_y = y + 0x41;
+        DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x22, draw_y, hp_width, 0x10), bar_src, alpha);
+        DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x1A + hp_width, draw_y, 0xA, 0x10), CRect_i_(0x154, 0, 0xA, 0x10),
+                         alpha);
+        draw_y = y + 0x51;
+        DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x22, draw_y, durability_width, 0x10), bar_src, alpha);
+        DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x1A + durability_width, draw_y, 0xA, 0x10),
+                         CRect_i_(0x158, 0, 0xA, 0x10), alpha);
+        float thirst_value = BtlMenuStatusPt->stat_float_a[chara];
+        int thirst = thirst_value / 10.0f;
+        draw_x = x + 0x1E;
+        draw_y = y + 0x62;
+        for (int i = 0; i < thirst - 1; i++) {
+            DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y + 2, 0x12, 0x15), CRect_i_(0x154, 0x10, 0x12, 0x14),
+                             alpha);
+            draw_x += 0x12;
+        }
+        DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y + 2, 0x18, 0x15), CRect_i_(0x166, 0x10, 0x18, 0x14),
+                         alpha);
+        draw_x = x + 0x1F;
+        draw_y = y + 0x47;
+        float hp_fill = (float) (hp_width * hp) / (float) max_hp;
+        int color = 0;
+        float low_hp = 0.3f * (float) max_hp;
+        if ((float) hp < low_hp) {
+            color++;
+        }
+        if ((float) hp < 0.15f * (float) max_hp) {
+            color++;
+        }
+        GRADATION_COLOR_INFO2 *info = GetGradationColorInfo2(color + 0x16);
+        GRADATION_COLOR_INFO2 gradation;
+        memcpy(&gradation, info, sizeof(gradation));
+        gradation.colors[3].a = alpha;
+        gradation.colors[2].a = alpha;
+        gradation.colors[1].a = alpha;
+        gradation.colors[0].a = alpha;
+        DrawMenuColorGradation(CRect_i_(draw_x, draw_y - 1, (int) hp_fill, 6), &info->colors[0], &info->colors[1],
+                               &info->colors[2], &info->colors[3]);
+        int values[2] = {hp, max_hp};
+        draw_x = x + 0x3C + hp_width;
+        draw_y = y + 0x47;
+        DrawStatusNumberNowAndMax(values, draw_x, draw_y, 1, alpha);
+        int motion;
+        int now_motion = MenuCharaFrame.motion_no;
+        if (hp_fill < low_hp) {
+            motion = 1;
+        } else {
+            motion = 0;
+        }
+        if (motion != now_motion) {
+            MenuCharaFrame.SetMotion(motion, 0);
+        }
+        draw_x = x + 0x1F;
+        draw_y = y + 0x56;
+        hp_fill = (float) durability_width * durability / durability_max;
+        int durability_color;
+        if (durability < 0.3f * durability_max) {
+            durability_color = 0x1A;
+        } else {
+            durability_color = 0x19;
+        }
+        info = GetGradationColorInfo2(0x19);
+        memcpy(&gradation, info, sizeof(gradation));
+        gradation.colors[3].a = alpha;
+        gradation.colors[2].a = alpha;
+        gradation.colors[1].a = alpha;
+        gradation.colors[0].a = alpha;
+        DrawMenuColorGradation(CRect_i_(draw_x, draw_y, (int) hp_fill, 6), &gradation.colors[0], &gradation.colors[1],
+                               &gradation.colors[2], &gradation.colors[3]);
+        draw_x = x + 0x3C + durability_width;
+        draw_y = y + 0x57;
+        values[0] = GetDispVolumeForFloat(durability);
+        values[1] = (int) durability_max;
+        DrawStatusNumberNowAndMax(values, draw_x, draw_y, 1, alpha);
+        draw_x = x + 0x20;
+        draw_y = y + 0x60;
+        int drops = (int) BtlMenuStatusPt->stat_float_b[chara] / 10;
+        for (int i = 0; i < drops; i++) {
+            DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y, 0x10, 0x14), CRect_i_(0x128, 0x2C, 0x10, 0x14),
+                             alpha);
+            draw_x += 0x12;
+        }
+        drops = (int) BtlMenuStatusPt->stat_float_b[chara] % 10;
+        if (drops != 0) {
+            DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y, 0x10, 0x14),
+                             CRect_i_(0x128 + (3 - (int) (drops / 2.5f)) * 0x10, 0x2C, 0x10, 0x14), alpha);
+        }
+        draw_y = y - 0x14;
+        int party_size = BtlMenuStatusPt->party_size;
+        int tab = 0;
+        int i = 0;
+        int after = 0;
+        int tex_x;
+        int tex_y;
+        for (; i <= party_size; i++) {
+            if (tab == chara) {
+                if (after != 0) {
+                    draw_x = x + 0x10 + chara * 0xC;
+                    DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y - 1, 0x20, 0x1B), CRect_i_(0, 0xD8, 0x20, 0x1C),
+                                     alpha);
+                    DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x + 0x20, draw_y - 1, 0x5E, 0x1B),
+                                     CRect_i_(0x20, 0xD8, 0x4A, 0x1C), alpha);
+                    DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x + 0x7E, draw_y - 1, 0x20, 0x1B),
+                                     CRect_i_(0x6A, 0xD8, 0x20, 0x1C), alpha);
+                } else {
+                    after = 1;
+                    tab = party_size - 1;
+                }
+            } else {
+                draw_x = tab * 0xC + (x + 0x10 + after * 0x69);
+                draw_y = y - 0x14;
+                tex_y = 0xD8;
+                if (after == 0) {
+                    tex_x = 0xA6;
+                    tab++;
+                } else {
+                    tex_x = 0x8A;
+                    tab--;
+                    if (GetMenuLangFlag() > 0) {
+                        draw_x += 0x14;
+                    }
+                }
+                DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y + 2, 0x1C, 0x13), CRect_i_(tex_x, tex_y, 0x1C, 0x14),
+                                 alpha);
+            }
+        }
+        int item_no = weapon->item_no;
+        draw_x = x + 0x16;
+        draw_y = y + 0x10;
+        RetCTex(item_no, tex_x, tex_y);
+        CTexture *icon = TexManager.GetTexture("wepicon", -1);
+        if (icon != NULL && item_no >= 0x101) {
+            MenuTextureReload(ItemMenuWeaponIconReadBlock);
+            WEAPON_HAVE total;
+            WeaponAllValueSet(weapon, &total, 0);
+            DrawMenu2DSprite(icon, CRect_i_(draw_x, draw_y, 0x20, 0x20), CRect_i_(tex_x, tex_y, 0x20, 0x20), alpha);
+            DrawMenuNumber(total.attack, draw_x + 0x20, draw_y + 0x14, CharaStatus, number_rect, 1, alpha);
+        }
+        MenuTextureReload(CommonMenuMes3.tex_block);
+        int mes_no = chara + 0xC2;
+        if (CommonMenuMes3.mes_made != mes_no) {
+            CommonMenuMes3.MakeMesWin(mes_no);
+        }
+        int name_length = GetMsgLengthCharaName(chara);
+        CommonMenuMes3.edge_alpha = alpha;
+        CommonMenuMes3.stay_frame = 0;
+        s8 char_width[7] = {8, 6, 6, 6, 6, 6, 6};
+        s8 name_offset[7] = {0, 6, 6, 6, 6, 6, 6};
+        int lang = BtlMenuNowLang;
+        DrawMenuClsMes(&CommonMenuMes3, x + 0x5A + chara * 0xC - name_length * char_width[lang] + name_offset[lang],
+                       y - 0x12);
     }
-    MenuTextureReload(CommonMenuMes3.tex_block);
-    int name = chara + 0xC2;
-    if (CommonMenuMes3.mes_made != name) {
-        CommonMenuMes3.MakeMesWin(name);
-    }
-    int length = GetMsgLengthCharaName(chara);
-    CommonMenuMes3.edge_alpha = alpha;
-    CommonMenuMes3.stay_frame = 0;
-    s8 char_w[7] = {8, 6, 6, 6, 6, 6, 6};
-    s8 offset[7] = {0, 6, 6, 6, 6, 6, 6};
-    DrawMenuClsMes(&CommonMenuMes3, offset[BtlMenuNowLang] + ((x + 0x5A + chara * 0xC) - length * char_w[BtlMenuNowLang]), y - 0x12);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
-#endif
 void ItemNaviCursor(int item_no) {
     s8 shown[3] = {0, 0, 0};
     ITEM_DATA *data = GetItemData(item_no);

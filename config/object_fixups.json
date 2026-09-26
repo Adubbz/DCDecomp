@@ -237,6 +237,24 @@
       ".battlemenu-c2127__3": [
         "@796"
       ],
+      ".battlemenu-c2195": [
+        "@854"
+      ],
+      ".battlemenu-c2196": [
+        "@855"
+      ],
+      ".battlemenu-c2197": [
+        "@856"
+      ],
+      ".battlemenu-c2198": [
+        "@857"
+      ],
+      ".battlemenu-c2199": [
+        "@858"
+      ],
+      ".battlemenu-c2250": [
+        "@909"
+      ],
       ".battlemenu-c3657": [
         "@1109"
       ],
@@ -265,31 +283,31 @@
         "@1602"
       ],
       ".battlemenu-c5742": [
-        "@1661"
+        "@1813"
       ],
       ".battlemenu-town-ref": [
-        "@1775"
+        "@1927"
       ],
       ".battlemenu-town-pos": [
-        "@1776"
+        "@1928"
       ],
       ".battlemenu-c6185": [
-        "@1792"
+        "@1944"
       ],
       ".battlemenu-c6188": [
-        "@1795"
+        "@1947"
       ],
       ".battlemenu-c6227": [
-        "@1821"
+        "@1973"
       ],
       ".battlemenu-c6232": [
-        "@1831"
+        "@1983"
       ],
       ".battlemenu-c6233": [
-        "@1832"
+        "@1984"
       ],
       ".battlemenu-c6235": [
-        "@1834"
+        "@1986"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -310,10 +328,10 @@
         "@1283"
       ],
       ".battlemenu-c5711": [
-        "@1632"
+        "@1784"
       ],
       ".battlemenu-c6236": [
-        "@1835"
+        "@1987"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -333,23 +351,17 @@
       ".battlemenu-init_5777": [
         "init$5777"
       ],
-      ".battlemenu-c2195": [
-        "@854"
+      ".battlemenu-c5534": [
+        "@1634"
       ],
-      ".battlemenu-c2196": [
-        "@855"
+      ".battlemenu-c5556": [
+        "@1656"
       ],
-      ".battlemenu-c2197": [
-        "@856"
+      ".battlemenu-c5592": [
+        "@1693"
       ],
-      ".battlemenu-c2198": [
-        "@857"
-      ],
-      ".battlemenu-c2199": [
-        "@858"
-      ],
-      ".battlemenu-c2250": [
-        "@909"
+      ".battlemenu-c5593": [
+        "@1694"
       ]
     },
     "rodata_exports": [
