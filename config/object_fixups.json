@@ -582,34 +582,34 @@
         "@161"
       ],
       ".editindraw": [
-        "@414",
-        "@436"
+        "@413",
+        "@435"
       ],
       ".editinpause": [
-        "@476"
+        "@475"
       ],
       ".editinmove": [
-        "@543",
-        "@544"
+        "@542",
+        "@543"
       ],
       ".editincamdist": [
         "camera_distance$1155"
       ],
       ".editincampos": [
-        "@651"
+        "@650"
       ],
       ".editintex": [
         "texdata$1374"
       ],
       ".editinload": [
+        "@859",
         "@860",
         "@861",
-        "@862",
-        "@863"
+        "@862"
       ],
       ".editinpts": [
-        "@894",
-        "@919"
+        "@893",
+        "@918"
       ],
       ".editinfixpos": [
         "fix_pos$1123"

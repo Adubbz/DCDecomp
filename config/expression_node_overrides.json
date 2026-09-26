@@ -13970,6 +13970,62 @@
           "value": "0x0.0p+0",
           "value_bits": "0x00000000",
           "ordinal": 4,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 5,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 6,
+          "evaluate_first": 1
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 7,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 8,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 9,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 10,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 11,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x0.0p+0",
+          "value_bits": "0x00000000",
+          "ordinal": 12,
           "evaluate_first": 0
         },
         {
@@ -13997,6 +14053,20 @@
           "type": "binary32",
           "value": "0x1.fe00000000000p+7",
           "value_bits": "0x437f0000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.fe00000000000p+7",
+          "value_bits": "0x437f0000",
+          "ordinal": 2,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.9000000000000p+9",
+          "value_bits": "0x44480000",
           "ordinal": 1,
           "evaluate_first": 0
         }

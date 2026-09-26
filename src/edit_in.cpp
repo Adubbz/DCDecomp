@@ -446,8 +446,7 @@ static void InitWorkBuffer() {
  * @size 0x478
  */
 int EditInInit(float time, char *name) {
-    float density = 255.0f;
-    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, density, density);
+    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, 255.0f, 255.0f);
     memset(EdInInfo, 0, sizeof(EDIT_IN_INFO));
     EdInInfo->projection = 800.0f;
     strcpy(EdInInfo->name, name);
@@ -465,20 +464,19 @@ int EditInInit(float time, char *name) {
     BG_READ_INFO *info = GetReadBGFile(1);
     if (info != NULL) {
         char *text = (char *) EdNPCBuffer.Alloc((info->size >> 4) + 1);
-        memcpy(text, info->buffer, (int) info->size);
+        memcpy(text, info->buffer, info->size);
         LoadInfo(text, info->size);
     }
     LoadData();
-    int remaining;
-    u_char *base = EdNPCBuffer.base + EdNPCBuffer.used * 16;
-    remaining = EdNPCBuffer.limit - EdNPCBuffer.used;
-    EdVillagerBuffer.base = base;
+    int used = EdNPCBuffer.used;
+    u_char *start = EdNPCBuffer.base + used * 16;
+    int remaining = EdNPCBuffer.limit - used;
+    EdVillagerBuffer.base = start;
     EdVillagerBuffer.limit = remaining;
     EdVillagerBuffer.used = 0;
     printf("buffer %d\n", remaining);
     LoadChara();
-    int far_z = 0xFFFF;
-    MGSetRenderInfo(EdInInfo->projection, 5.0f, far_z);
+    MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
     MGSetPLight(EdInInfo->light_direction, EdInInfo->light_colour);
     MGSetAmbient(EdInInfo->ambient);
     MGSetBGColor(EdInInfo->background_colour);
@@ -487,14 +485,12 @@ int EditInInit(float time, char *name) {
     if (Chara != NULL) {
         Chara->SetPosition(0.0f, 0.0f, 0.0f);
     }
-    float zero1 = 0.0f;
-    EdFadeIn(0x40, zero1, zero1, zero1);
+    EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
     door_open_cnt = 0;
     GameMode = 0;
     Chara->unk_C98 = 0;
     Chara->SetPosition(0.0f, 0.0f, 0.0f);
-    float zero3 = 0.0f;
-    Chara->SetRotation(zero3, zero3, zero3);
+    Chara->SetRotation(0.0f, 0.0f, 0.0f);
     GetMapJumpPos(Chara);
     Chara->ClothStep(-1);
     if (EdInteriorDoorSound >= 0) {
