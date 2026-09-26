@@ -583,49 +583,53 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
     sceVu0FVECTOR position;
 
     for (int i = 0; i < 6; i++) {
-        if (frame[i] == NULL) {
+        CFrame **slot = &frame[i];
+        CFrame *model = *slot;
+        if (model == NULL) {
             continue;
         }
         int model_turn = (int) ((float) direction + frame_turn[i]);
-        if (model_turn >= 4) {
+        if (model_turn > 3) {
             model_turn -= 3;
         }
         float angle = (float) model_turn;
-        if (angle == 3.0f) {
+        if (3.0f == angle) {
             angle = -1.0f;
         }
-        frame[i]->SetRotation(0.0f, (3.1415927f * (-90.0f * angle)) / 180.0f, 0.0f);
+        angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
+        model->SetRotation(0.0f, angle, 0.0f);
+
         sceVu0CopyVector(position, pos);
-        float *offset = frame_offset[i];
-        position[0] += offset[0];
-        position[1] += offset[1];
-        position[2] += offset[2];
+        position[0] += frame_offset[i][0];
+        position[1] += frame_offset[i][1];
+        position[2] += frame_offset[i][2];
         position[3] = 1.0f;
-        frame[i]->SetPosition(position);
+        (*slot)->SetPosition(position);
     }
-    if (collision == NULL) {
+    CFrame *model = collision;
+    if (model == NULL) {
         return;
     }
     if (fixed == 1) {
-        int collision_turn = turn + collision_turn;
-        if (collision_turn >= 4) {
+        int collision_turn = turn + this->collision_turn;
+        if (collision_turn > 3) {
             collision_turn -= 3;
         }
         if (collision_turn == 3) {
             collision_turn = -1;
         }
-        collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
+        model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
         collision->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
         return;
     }
-    int collision_turn = (int) (frame_turn[0] + (float) collision_turn);
-    if (collision_turn >= 4) {
+    int collision_turn = (int) (frame_turn[0] + (float) this->collision_turn);
+    if (collision_turn > 3) {
         collision_turn -= 3;
     }
     if (collision_turn == 3) {
         collision_turn = -1;
     }
-    collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
+    model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
     sceVu0CopyVector(position, pos);
     position[0] += frame_offset[0][0];
     position[1] += frame_offset[0][1];
