@@ -1936,8 +1936,8 @@ static void DrawAtoraSelect(int fade) {
         if (tip_no >= 0) {
             CTexture *texture = RetCTexAtora(tip_no, u, v);
             if (texture != NULL) {
-                float sway_x = 7.0f * cosf(0.0805537f * CursorVibeCnt);
-                float sway_y = 5.0f * sinf(0.1163553f * CursorVibeCnt);
+                float sway_x = 7.0f * cosf(0.0805536583f * CursorVibeCnt);
+                float sway_y = 5.0f * sinf(0.116355285f * CursorVibeCnt);
                 int tip_x = (int) (2.0f + (MenuAtoraSel.cursor_x + sway_x));
                 int tip_y = (int) (MenuAtoraSel.cursor_y + sway_y - 14.0f);
                 CRect_i_ source(u, v, 0x24, 0x24);
@@ -3578,8 +3578,8 @@ void DrawMenuSave(char *) {
     if (hand_x > 0 && hand_y > 0) {
         static int ct = 0;
         CRect_i_ size(0, 0, 0x20, 0x20);
-        float draw_x = (float) hand_x + 7.0f * cosf(0.0805537f * ct);
-        float draw_y = (float) hand_y + 5.0f * sinf(0.1163553f * ct);
+        float draw_x = (float) hand_x + 7.0f * cosf(0.0805536583f * ct);
+        float draw_y = (float) hand_y + 5.0f * sinf(0.116355285f * ct);
         CRect_i_ source(0x160, 0xD6, 0x20, 0x20);
         DrawMenu2DSprite(SaveBoard, CRect_i_((int) (5.0f + draw_x), (int) (3.0f + draw_y), size.width, size.height),
                          source, 0, 0, 0, alpha);
