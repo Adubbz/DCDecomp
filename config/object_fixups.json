@@ -1916,14 +1916,15 @@
   },
   "src/shot_freefuncs.cpp": {
     "symbols": {
-      "StatusTextureName": "@1150"
+      "StatusTextureName": "@1150",
+      "StayFrameTextureName": "@778"
     },
     "sections": {
       ".shot_freefuncs-c1238": [
-        "@204"
+        "@219"
       ],
       ".shot_freefuncs-c1239": [
-        "@205"
+        "@220"
       ]
     }
   }

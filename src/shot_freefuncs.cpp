@@ -386,6 +386,9 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
     }
     return nearest;
 }
+/** The stay frame texture, shared with topStatusInfo. */
+extern char StayFrameTextureName[];
+
 /**
  * Draws a three-digit value out of the number sheet.
  *
@@ -393,23 +396,23 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
  * @address 0x1B0060
  * @size 0x1F8
  */
-#ifdef NON_MATCHING
 int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
-    CTexture *texture = TexManager.GetTexture("status", -1);
-    int digits[3] = {value / 100, (value / 10) % 10, value % 10};
-    int first = digits[0] > 0 ? 0 : 1;
-    int source_y = palette * 12 + 176;
-    for (int digit = first; digit < 3; digit++) {
-        CRect_i_ destination(x, y, 12, 12);
-        CRect_i_ source(digits[digit] * 12, source_y, 12, 12);
-        set2DSprite(Vif1Packet, texture, destination, source, alpha);
+    CTexture *texture = TexManager.GetTexture(StayFrameTextureName, -1);
+    int source_y = palette * 12 + 0xB0;
+    int count = 0;
+    int digit = value / 100;
+    if (digit > 0) {
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
+        value -= digit * 100;
         x += 12;
+        count++;
     }
-    return 3 - first;
+    digit = value / 10;
+    set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
+    digit = value % 10;
+    set2DSprite(Vif1Packet, texture, CRect_i_(x + 12, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
+    return count + 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", ValuePrint__FiiiiUc);
-#endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @778);
 /**
  * Clears the pulse that warns of low life.
