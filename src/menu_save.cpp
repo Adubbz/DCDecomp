@@ -904,17 +904,16 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
 #endif
-#ifdef NON_MATCHING
 void DrawNewFileTemplete(int x, int y, int alpha) {
-    spRGBA start = {0x80, 0x80, 0x80, 0};
-    spRGBA end = {0x80, 0x80, 0x80, 0};
     int start_alpha;
     int end_alpha;
 
     if (y % 2 != 0) {
         y++;
     }
+    spRGBA start = {0x80, 0x80, 0x80, 0};
     start.a = alpha;
+    spRGBA end = {0x80, 0x80, 0x80, 0};
     end.a = alpha;
 
     // Top edge: two corners and the run between them.
@@ -955,9 +954,6 @@ void DrawNewFileTemplete(int x, int y, int alpha) {
     set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E),
                 CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &start, &start, &end, &end, 1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
-#endif
 
 int InitExistData(void) {
     int port;

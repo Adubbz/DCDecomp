@@ -846,6 +846,8 @@ SECTIONS
 		main.sdata.editmenu-after-2A2140.s.o (.sdata) // 0x002a2140
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
+		menu_save.cpp.o (.sdata) // 0x002a2168 @3260, @3261__2
+		main.sdata.memcard-a-2A2170.s.o (.sdata) // 0x002a2170
 		menu_dungeon.cpp.o (.sdata) // 0x002a2190 @1730, @1732
 		. = ALIGN(8);
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0
