@@ -841,6 +841,7 @@ SECTIONS
 		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
 		snd.cpp.o (.sdata)             // 0x002a1ed8
 		main.sdata.snd-tail.s.o (.sdata) // 0x002a1ef0
+		fireomni.cpp.o (.sdata)        // 0x002a1ef8
 		candleeffect.cpp.o (.sdata)    // 0x002a1efc
 		main.sdata.candleeffect-tail.s.o (.sdata) // 0x002a1f00
 		ebattle.cpp.o (.sdata)         // 0x002a1f14

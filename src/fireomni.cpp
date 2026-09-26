@@ -64,24 +64,30 @@ void CFireOmni::SetTexture(CTexture *core_texture, CTexture *glow_texture) {
     this->glow = glow_texture;
     this->texture_set = 1;
 }
-#ifdef NON_MATCHING
 void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale,
                          int layers, float camera_offset) {
-    (void) unused0;
-    (void) unused1;
-    (void) colour;
+    sceVu0FVECTOR camera_direction;
+    sceVu0FVECTOR camera_ref;
+    int near_top_left[4];
+    int near_bottom_right[4];
+    sceVu0FVECTOR world;
+    int top_left[4];
+    int bottom_right[4];
+    int top_right[4];
+    int bottom_left[4];
+    sceGsTest test;
+    sceGsZbuf zbuffer;
+    sceGsAlpha alpha;
 
     if (texture_set == 0) {
         if (core == NULL) {
-            core = TexManager.GetTexture((char *) "lightling", -1);
+            core = TexManager.GetTexture("lightling", -1);
         }
         if (glow == NULL) {
-            glow = TexManager.GetTexture((char *) "blender", -1);
+            glow = TexManager.GetTexture("blender", -1);
         }
     }
 
-    sceVu0FVECTOR camera_direction;
-    sceVu0FVECTOR camera_ref;
     camera->GetPos(camera_direction);
     camera->GetRef(camera_ref);
     sceVu0SubVector(camera_direction, camera_direction, camera_ref);
@@ -94,25 +100,29 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
         sceVif1PkOpenDirectCode(Vif1Packet, 0);
         sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
         sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 0x61);
-        u_long test = *(u_long *) &mgPixelTest;
-        u_long zbuffer = *(u_long *) &mgZBuffer;
-        u_long alpha = *(u_long *) &mgAlpha;
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, (test & ~0x10001ULL) | 0x10000ULL);
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1,
-                         (zbuffer & ~0x100000000ULL) | 0x100000000ULL);
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, (alpha & ~0xFFULL) | 0x48);
+        test = mgPixelTest;
+        test.bits.ate = 0;
+        test.bits.zte = 1;
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+        zbuffer = mgZBuffer;
+        zbuffer.bits.zmsk = 1;
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
+        alpha = mgAlpha;
+        alpha.bits.a = 0;
+        alpha.bits.b = 2;
+        alpha.bits.c = 0;
+        alpha.bits.d = 1;
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
         sceVif1PkCloseGifTag(Vif1Packet);
         sceVif1PkCloseDirectCode(Vif1Packet);
 
-        sceVu0FVECTOR world = {pos[0], pos[1] + 25.0f, pos[2], 1.0f};
-        int top_left[4];
-        int bottom_right[4];
-        if (MGRotTransPers3DSprite(top_left, bottom_right, world, scale * 18.0f, scale * 9.0f,
-                                   1) == 1) {
-            CRect_i_ core_source(0, 0, 64, 64);
-            CRect_i_ glow_source(2, 2, 124, 124);
-            set3DSpriteFog(Vif1Packet, core, core_source, top_left, bottom_right, &white);
-            set3DSpriteFog(Vif1Packet, glow, glow_source, top_left, bottom_right, &white);
+        world[0] = pos[0];
+        world[1] = pos[1] + 4.6f;
+        world[2] = pos[2];
+        world[3] = 1.0f;
+        if (MGRotTransPers3DSprite(top_left, bottom_right, world, 18.0f * scale, 9.0f * scale, 1) == 1) {
+            set3DSpriteFog(Vif1Packet, core, CRect_i_(0, 0, 64, 64), top_left, bottom_right, &white);
+            set3DSpriteFog(Vif1Packet, glow, CRect_i_(2, 2, 124, 124), top_left, bottom_right, &white);
         }
     }
 
@@ -121,48 +131,53 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
         sceVif1PkOpenDirectCode(Vif1Packet, 0);
         sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
         sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 0x61);
-        u_long test = *(u_long *) &mgPixelTest;
-        u_long zbuffer = *(u_long *) &mgZBuffer;
-        u_long alpha = *(u_long *) &mgAlpha;
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, (test & ~0x10001ULL) | 0x10000ULL);
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1,
-                         (zbuffer & ~0x100000000ULL) | 0x100000000ULL);
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, (alpha & ~0xFFULL) | 0x48);
+        test = mgPixelTest;
+        test.bits.ate = 0;
+        test.bits.zte = 1;
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+        zbuffer = mgZBuffer;
+        zbuffer.bits.zmsk = 1;
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
+        alpha = mgAlpha;
+        alpha.bits.a = 0;
+        alpha.bits.b = 2;
+        alpha.bits.c = 0;
+        alpha.bits.d = 1;
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
         sceVif1PkCloseGifTag(Vif1Packet);
         sceVif1PkCloseDirectCode(Vif1Packet);
 
         flicker_count++;
         srand(flicker_seed);
-        if (flicker_count > 4) {
-            flicker_width = 1.0f + 0.1f * (float) rand() / 2.1474836e9f;
-            flicker_height = flicker_width;
+        if (flicker_count >= 5) {
+            flicker_height = flicker_width = 1.0f + 0.1f * rand() / 2147483648.0f;
             flicker_count = 0;
         }
 
-        sceVu0FVECTOR world = {pos[0], pos[1] + 25.0f, pos[2], 1.0f};
-        int far_top_left[4];
-        int far_bottom_right[4];
-        if (MGRotTransPers3DSprite(far_top_left, far_bottom_right, world,
-                                   flicker_width * 45.0f * scale,
-                                   flicker_height * 45.0f * scale / 2.0f, 1) == 1) {
-            int near_top_left[4] = {far_top_left[0], far_top_left[1], far_top_left[2],
-                                    far_top_left[3]};
-            int near_bottom_right[4] = {far_bottom_right[0], far_bottom_right[1],
-                                        far_bottom_right[2], far_bottom_right[3]};
+        world[0] = pos[0];
+        world[1] = pos[1] + 4.6f;
+        world[2] = pos[2];
+        world[3] = 1.0f;
+        if (MGRotTransPers3DSprite(top_left, bottom_right, world, 45.0f * flicker_width * scale,
+                                   45.0f * flicker_height * scale / 2.0f, 1) == 1) {
+            top_right[0] = bottom_right[0];
+            top_right[1] = top_left[1];
+            top_right[2] = top_left[2];
+            top_right[3] = top_left[3];
+            bottom_left[0] = top_left[0];
+            bottom_left[1] = bottom_right[1];
+            bottom_left[2] = bottom_right[2];
+            bottom_left[3] = bottom_right[3];
             world[0] += camera_direction[0];
             world[1] += camera_direction[1];
             world[2] += camera_direction[2];
             if (MGRotTransPers3DSprite(near_top_left, near_bottom_right, world,
-                                       scale * 45.0f + flicker_width,
-                                       (scale * 45.0f + flicker_height) / 2.0f, 0) == 1) {
-                far_top_left[2] = near_top_left[2];
-                near_top_left[2] = near_bottom_right[2];
-                far_bottom_right[2] = near_top_left[2];
-                near_bottom_right[2] = near_top_left[2];
+                                       45.0f * scale + flicker_width,
+                                       (45.0f * scale + flicker_height) / 2.0f, 0) == 1) {
+                top_right[2] = top_left[2] = bottom_left[2] = bottom_right[2] = near_top_left[2];
             }
-            CRect_i_ source(0, 0, 64, 64);
-            set3DSpriteFog(Vif1Packet, core, source, far_top_left, near_top_left,
-                           near_bottom_right, far_bottom_right, 0x80);
+            set3DSpriteFog(Vif1Packet, core, CRect_i_(0, 0, 64, 64), top_left, top_right,
+                           bottom_left, bottom_right, 0x80);
         }
     }
 
@@ -176,10 +191,6 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/fireomni", DrawFire__9CFireOmniFiiP7CCameraPffif);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/fireomni", @298__3);
 
 void CFireOmni::RasterStep(void) {
     float phase = this->raster_phase + ((2.0f * (float) rand()) / 2.1474836e9f);
