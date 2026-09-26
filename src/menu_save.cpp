@@ -1041,12 +1041,16 @@ int SaveEnableCheck(void) {
     }
     return 1;
 }
+
+/** Screen y of the event item board's scroll bar, eased toward its target. */
+extern float EventBarY;
+
+/** The item pack the event item selection menu lists. */
+extern ITEM_PACK *EventItemPackPt;
 #ifdef NON_MATCHING
 extern float EventBoardPos[2];
-extern float EventBarY;
 extern float MiniCur[2];
 extern int EventItemMoveY;
-extern ITEM_PACK *EventItemPackPt;
 extern int MiniEventTexReadFlag;
 extern CTexture *StayTex;
 extern CTexture *MiniEventBoard;
@@ -1314,35 +1318,44 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
     y += rect.height + 0x32;
     DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(u, 0xC6, width, 0x1E), alpha);
 }
-#ifdef NON_MATCHING
-extern s16 EventBoardHeight[2];
-extern s16 EventBoardEdge[2];
+
+/** Extra height of the event item board in each menu language. */
+extern s8 kakudai_tate_lang[7];
+
+/** Extra width of the event item board's side pieces in each menu language. */
+extern s8 kakudai_yoko_lang[7];
 
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
-    int height = EventBoardHeight[lang];
-    int edge = EventBoardEdge[lang] + 6;
+    int height = kakudai_tate_lang[lang];
+    int extra = kakudai_yoko_lang[lang];
+    int rows;
+    float bar_height;
 
-    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0x1C, y, 0xD2, height), 0x1C, 0xD2, lang, alpha);
-    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0x1C - edge, y, edge, height), 0x14, 6, lang, alpha);
-    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 8 - edge, y, 0x14, height), 0, 0x14, lang, alpha);
-    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0xEE, y, edge, height), 0xEC, 6, lang, alpha);
-    DrawEventAndFishMenuBoard_Ver(texture, CRect_i_(x + 0xEE + edge, y, 0x20, height), 0xF4, 0x20, lang, alpha);
-    int rows = EventItemPackPt->num / 5;
+    CRect_i_ center(x + 0x1C, y, 0xD2, height);
+    DrawEventAndFishMenuBoard_Ver(texture, center, 0x1C, 0xD2, lang, alpha);
+    int edge = extra + 6;
+    CRect_i_ left_inner(x + 0x1C - edge, y, edge, height);
+    CRect_i_ left_outer(x + 8 - edge, y, 0x14, height);
+    DrawEventAndFishMenuBoard_Ver(texture, left_inner, 0x14, 6, lang, alpha);
+    DrawEventAndFishMenuBoard_Ver(texture, left_outer, 0, 0x14, lang, alpha);
+    CRect_i_ right_inner(x + 0xEE, y, edge, height);
+    CRect_i_ right_outer(x + 0xEE + edge, y, 0x20, height);
+    DrawEventAndFishMenuBoard_Ver(texture, right_inner, 0xEC, 6, lang, alpha);
+    DrawEventAndFishMenuBoard_Ver(texture, right_outer, 0xF4, 0x20, lang, alpha);
+
+    rows = EventItemPackPt->num / 5;
     if (rows <= 0) {
         rows = 1;
     }
-    float bar = 136.0f / (float) rows;
-    if (bar > 68.0f) {
-        bar = 68.0f;
+    bar_height = 136.0f / rows;
+    if (68.0f < bar_height) {
+        bar_height = 68.0f;
     }
-    EventBarY += ((float) (int) ((float) (y + 0x3C) + (68.0f * (float) MiniMenu.scroll_row) / (float) rows) -
-                  EventBarY) / 4.0f;
-    DrawMenu2DSprite(texture, CRect_i_(x + 0xF6 + edge, (int) EventBarY, 8, (int) bar), CRect_i_(0, 0xE4, 8, 0xC),
-                     alpha);
+    int bar_x = x + 0xF6 + edge;
+    EventBarY += ((int) ((y + 0x3C) + (68.0f * MiniMenu.scroll_row) / rows) - EventBarY) / 4.0f;
+    int bar_y = EventBarY;
+    DrawMenu2DSprite(texture, CRect_i_(bar_x, bar_y, 8, (int) bar_height), CRect_i_(0, 0xE4, 8, 0xC), alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
-#endif
 #ifdef NON_MATCHING
 static void EventItemSelectDraw(void) {
     s16 items[100];
