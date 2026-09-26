@@ -477,9 +477,11 @@ INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
  * @address 0x1690E0
  * @size 0x260
  */
-#ifdef NON_MATCHING
 void DrawButton(int buttons, int x, int y, float scale, int early) {
-    if (x < -0x20 || x >= 0x281) {
+    if (x < -0x20) {
+        return;
+    }
+    if (x > 0x280) {
         return;
     }
     if (early != 0) {
@@ -505,12 +507,17 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
     } else if ((buttons & 0x2000) != 0) {
         DrawButtonSub(x, y, 0x40, 0x20, scale);
     } else if ((buttons & 0x4000) != 0) {
-        DrawButtonSub(x, y, 0x20, 0x20, scale);
+        if ((buttons & 0x8000) != 0) {
+            DrawButtonSub(x, y, 0x60, 0x40, scale);
+        } else if ((buttons & 0x2000) != 0) {
+            DrawButtonSub(x, y, 0x40, 0x40, scale);
+        } else {
+            DrawButtonSub(x, y, 0x20, 0x20, scale);
+            return;
+        }
     }
+
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", DrawButton__Fiiifi);
-#endif
 /**
  * Draws one button prompt at a scale.
  *
@@ -588,6 +595,13 @@ void draw_ok_loop() {
  */
 #ifdef NON_MATCHING
 static void draw_ok(int x) {
+    static sceVu0FVECTOR dir[8] = {
+        {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},   {-1.0f, 1.0f, 0.0f, 0.0f},
+        {-1.0f, 0.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
+        {0.0f, -1.0f, 0.0f, 0.0f},  {1.0f, -1.0f, 0.0f, 0.0f},
+    };
+
     if (ok_draw_cnt <= 0) {
         return;
     }
@@ -595,30 +609,35 @@ static void draw_ok(int x) {
     CRect_i_ success_texel(0, 0xD0, 0x1A, 0x10);
     CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
     CRect_i_ spark_texel(0x20, 0x60, 0x20, 0x20);
-    CRect_i_ *result_texel = ok_type == 0 ? &success_texel : &cool_texel;
-    if (((ok_draw_cnt / 3) & 1) != 0) {
-        CRect_i_ result_screen(0xC8 - result_texel->width / 2,
-                               0x13E - result_texel->height,
-                               result_texel->width, result_texel->height);
-        set2DSprite(GetVif1Packet(), tex2, result_screen, result_texel->x, result_texel->y);
+    sceVu0FVECTOR offset;
+    CRect_i_ *texel = &success_texel;
+    if (ok_type != 0) {
+        texel = &cool_texel;
+    }
+    if ((ok_draw_cnt / 3) % 2 != 0) {
+        int width = texel->width;
+        int half = width >> 1;
+        int left = 200 - half;
+        int height = texel->height;
+        CRect_i_ result_screen(left, 318 - height, width, height);
+        set2DSprite(GetVif1Packet(), tex2, result_screen, texel->x, texel->y);
     }
 
-    sceVu0FVECTOR directions[8] = {
-        {1.0f, 0.0f, 0.0f, 0.0f},   {1.0f, 1.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f, 0.0f},   {-1.0f, 1.0f, 0.0f, 0.0f},
-        {-1.0f, 0.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
-        {0.0f, -1.0f, 0.0f, 0.0f},  {1.0f, -1.0f, 0.0f, 0.0f},
-    };
-    int age = 30 - ok_draw_cnt;
-    int alpha = 0x80 - ((30 - ok_draw_cnt * 2) * 0x80) / 30;
-    for (int i = 0; i < 8 && alpha > 0; ++i) {
-        sceVu0FVECTOR offset;
-        sceVu0Normalize(directions[i], directions[i]);
-        sceVu0ScaleVector(offset, directions[i], 2.0f * (float) age);
-        CRect_i_ screen(x + 0x18 + (int) offset[0] - spark_texel.width / 2,
-                        (int) offset[1] + 0x15E - spark_texel.height,
-                        spark_texel.width, spark_texel.height);
-        set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
+    texel = &spark_texel;
+    int base = x + 0x18;
+    for (int i = 0; i < 8; ++i) {
+        sceVu0Normalize(dir[i], dir[i]);
+        sceVu0ScaleVector(offset, dir[i], 2.0f * (float) (30 - ok_draw_cnt));
+        int width = texel->width;
+        int half = width >> 1;
+        int left = base + (int) offset[0] - half;
+        int height = texel->height;
+        int top = (int) offset[1] + 0x160 - (height + 2);
+        int alpha = 0x80 - (int) ((float) (30 - ok_draw_cnt * 2) * 128.0 / 30.0);
+        if (alpha > 0) {
+            CRect_i_ screen(left, top, width, height);
+            set2DSprite(GetVif1Packet(), tex, screen, *texel, (unsigned char) alpha);
+        }
     }
 }
 #else
