@@ -1202,47 +1202,53 @@ int EventItemSelectLoop(int *result) {
 }
 #ifdef NON_MATCHING
 static int EventItemSelectKey(int *result) {
-    LOADTEXTURE_INFO2 texture[4] = {};
-    int done = 0;
+    int done;
+    int last;
+    int num;
+    int index;
+    int accepted;
     int i;
     s16 *slot;
 
     if (MiniEventTexReadFlag == 0) {
-        if (ReadBGSync() != 0) {
+        if (ReadBGSync() == 0) {
+            LOADTEXTURE_INFO2 texture[4] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+            texture[0].block_no = MiniEventTextureBlock;
+            texture[1].block_no = MiniEventTextureBlock;
+            texture[2].block_no = MiniEventTextureBlock;
+            BG_READ_INFO *file = GetReadBGFile(0);
+            texture[1].name = (char *) GetPackFile((u_int *) file->buffer, "eventmnu.img", NULL);
+            texture[2].name = (char *) GetPackFile((u_int *) file->buffer, "fishmnu.img", NULL);
+            TexManager.DeleteTextureBlock(MiniEventTextureBlock);
+            TexManager.LoadTextureBlockEX(-1, texture);
+            MiniEventBoard = TexManager.GetTexture("eventmnu", -1);
+            FishFoodBoard = TexManager.GetTexture("fishmnu", -1);
+            ItemIcon = TexManager.GetTexture("itemicon", -1);
+            InitMenuMesSet(1, (short *) GetPackFile((u_int *) file->buffer, "eventuse.bin", NULL));
+            CommonMenuMes2.MakeMesWin(0);
+            CommonMenuMes2.Step();
+            MiniEventTexReadFlag = 1;
+        } else {
             return 0;
         }
-        BG_READ_INFO *file = GetReadBGFile(0);
-        texture[0].block_no = MiniEventTextureBlock;
-        texture[1].block_no = MiniEventTextureBlock;
-        texture[2].block_no = MiniEventTextureBlock;
-        texture[0].name = (char *) GetPackFile((u_int *) file->buffer, "eventmnu.img", NULL);
-        texture[1].name = (char *) GetPackFile((u_int *) file->buffer, "fishmnu.img", NULL);
-        TexManager.DeleteTextureBlock(MiniEventTextureBlock);
-        TexManager.LoadTextureBlockEX(-1, texture);
-        MiniEventBoard = TexManager.GetTexture("eventmnu", -1);
-        FishFoodBoard = TexManager.GetTexture("fishmnu", -1);
-        ItemIcon = TexManager.GetTexture("itemicon", -1);
-        InitMenuMesSet(1, (short *) GetPackFile((u_int *) file->buffer, "eventuse.bin", NULL));
-        CommonMenuMes2.MakeMesWin(0);
-        CommonMenuMes2.Step();
-        MiniEventTexReadFlag = 1;
     }
-    int last = MiniMenu.cursor;
-    int num = EventItemPackPt->num;
+    done = 0;
+    last = MiniMenu.cursor;
+    num = EventItemPackPt->num;
     switch (MiniMenu.state) {
         case 1:
             if (GamePad.Down(0x60) != 0) {
                 MiniMenu.state = 0;
             }
             break;
-        case 0: {
-            if (GamePad.Down(0x1000) != 0 && MiniMenu.cursor >= 5) {
+        case 0:
+            if (GamePad.Down(0x1000) != 0 && MiniMenu.cursor > 4) {
                 MiniMenu.cursor -= 5;
             }
             if (GamePad.Down(0x4000) != 0 && MiniMenu.cursor < num - 5) {
                 MiniMenu.cursor += 5;
             }
-            if (GamePad.Down(0x8000) != 0 && MiniMenu.cursor > 0) {
+            if (GamePad.Down(0x8000) != 0 && 0 < MiniMenu.cursor) {
                 MiniMenu.cursor--;
             }
             if (GamePad.Down(0x2000) != 0 && MiniMenu.cursor < num - 1) {
@@ -1263,31 +1269,32 @@ static int EventItemSelectKey(int *result) {
                 break;
             }
             if (GamePad.Down(0x40) != 0) {
-                int index = -1;
-                slot = NULL;
+                index = -1;
                 if (MiniMenu.cursor < MiniMenu.event_item_num) {
                     int n = 0;
                     slot = EventItemPackPt->item;
-                    for (index = 0; index < EventItemPackPt->num; index++, slot++) {
-                        if (*slot >= 0x84) {
+                    for (index = 0; index < EventItemPackPt->num; index++) {
+                        if (*slot >= ITEM_DUNGEON_START) {
                             if (MiniMenu.cursor == n) {
                                 *result = *slot;
                                 break;
                             }
                             n++;
                         }
+                        slot++;
+                        if (index == EventItemPackPt->num - 1) {
+                            index = EventItemPackPt->num;
+                        }
                     }
                 }
-                int accepted = 0;
-                if (slot != NULL) {
-                    for (i = 0; MiniMenu.usable[i] >= 0x84 && i < 13; i++) {
-                        if (MiniMenu.usable[i] == *result) {
-                            accepted = 1;
-                            if (MiniMenu.vanish != 0 && index >= 0 && index < EventItemPackPt->num) {
-                                EventItemPackPt->item[index] = 0;
-                            }
-                            break;
+                accepted = 0;
+                for (i = 0; slot != NULL && MiniMenu.usable[i] >= ITEM_DUNGEON_START && i < 13; i++) {
+                    if (MiniMenu.usable[i] == *result) {
+                        accepted = 1;
+                        if (MiniMenu.vanish != 0 && 0 <= index && index < EventItemPackPt->num) {
+                            EventItemPackPt->item[index] = 0;
                         }
+                        break;
                     }
                 }
                 if (slot == NULL) {
@@ -1310,26 +1317,22 @@ static int EventItemSelectKey(int *result) {
                 done = 1;
             }
             break;
-        }
     }
-    slot = NULL;
+    s16 *item = NULL;
     if (MiniMenu.cursor < MiniMenu.event_item_num) {
         int n = 0;
-        s16 *item = EventItemPackPt->item;
-        for (i = 0; i < EventItemPackPt->num; i++, item++) {
-            if (*item >= 0x84) {
+        item = EventItemPackPt->item;
+        for (int j = 0; j < EventItemPackPt->num; j++) {
+            if (*item >= ITEM_DUNGEON_START) {
                 if (MiniMenu.cursor == n) {
-                    slot = item;
                     break;
                 }
                 n++;
             }
+            item++;
         }
     }
-    int message = 0;
-    if (slot != NULL) {
-        message = *slot <= 0 ? 0 : *slot + 500;
-    }
+    int message = item != NULL ? (0 < *item ? *item + 500 : 0) : 0;
     if (CommonMenuMes2.mes_made != message) {
         CommonMenuMes2.MakeMesWin(message);
     }
@@ -1396,9 +1399,20 @@ static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha
 #ifdef NON_MATCHING
 static void EventItemSelectDraw(void) {
     s16 items[100];
-    s8 message_pos[2][2] = {{0, 0}, {0, 0}};
+    float left;
+    float top;
+    float icon_x;
+    float row_top;
     int alpha;
+    int x;
+    int y;
+    int clip_bottom;
     int i;
+    int clip_top;
+    int row_y;
+    CTexture *board;
+    int count;
+    int board_x;
 
     if (MiniEventTexReadFlag == 0) {
         return;
@@ -1419,56 +1433,65 @@ static void EventItemSelectDraw(void) {
             }
             break;
     }
-    float left = EventBoardPos[0];
-    float top = EventBoardPos[1];
-    int clip_bottom_y = (int) top;
-    CTexture *board = MiniMenu.fish_mode != 0 ? FishFoodBoard : MiniEventBoard;
-    int clip_top = (int) (56.0f + top);
-    int clip_bottom = (int) (136.0f + top);
-    int icon_x = (int) (32.0f + left);
-    int board_x = (int) (28.0f + left);
-    int target = (int) ((56.0f + top) - (float) (MiniMenu.scroll_row * 0x28));
-    EventItemMoveY += (target - EventItemMoveY) >> 2;
-    if (abs(EventItemMoveY - target) < 4) {
-        EventItemMoveY = target;
+    left = EventBoardPos[0];
+    top = EventBoardPos[1];
+    x = left;
+    y = top;
+    board = MiniMenu.fish_mode != 0 ? FishFoodBoard : MiniEventBoard;
+    row_top = 56.0f + top;
+    clip_top = row_top;
+    clip_bottom = 136.0f + top;
+    icon_x = 32.0f + left;
+    x = icon_x;
+    count = 0;
+    board_x = 28.0f + left;
+    row_y = row_top - MiniMenu.scroll_row * 0x28;
+    EventItemMoveY += (row_y - EventItemMoveY) >> 2;
+    if (abs(EventItemMoveY - row_y) < 4) {
+        EventItemMoveY = row_y;
     }
-    int row_y = EventItemMoveY;
+    row_y = EventItemMoveY;
     for (i = 0; i < EventItemPackPt->num / 5; i++) {
         DrawEventItemBoard(board_x, row_y, clip_top, clip_bottom, alpha, board);
         row_y += 0x28;
     }
     memset(items, 0, sizeof(items));
-    int count = 0;
-    for (i = 0; i < EventItemPackPt->num; i++) {
-        if (EventItemPackPt->item[i] >= 0x84) {
-            items[count++] = EventItemPackPt->item[i];
+    i = 0;
+    for (int j = 0; j < EventItemPackPt->num; j++) {
+        if (EventItemPackPt->item[j] >= ITEM_DUNGEON_START) {
+            items[i++] = EventItemPackPt->item[j];
         }
     }
     row_y = EventItemMoveY;
-    for (i = 0; i < 100 && clip_bottom >= clip_bottom_y; i++) {
-        clip_bottom_y = row_y + 4;
-        DrawIconParts(items[i], icon_x, clip_bottom_y, clip_top, clip_bottom, alpha, 0);
-        icon_x += 0x2A;
+    for (i = 0; i < 100; i++) {
+        if (clip_bottom < y) {
+            break;
+        }
+        y = row_y + 4;
+        DrawIconParts(items[i], x, y, clip_top, clip_bottom, alpha, 0);
+        x += 0x2A;
+        count++;
         if (i % 5 == 4) {
-            icon_x = (int) (32.0f + left);
+            x = icon_x;
             row_y += 0x28;
         }
     }
-    DrawEventAndFishMenuBoard(board, (int) left, (int) top, alpha, MiniMenu.lang);
-    int cursor = MiniMenu.cursor;
-    int cursor_x = (int) (6.0f + left + (float) (((cursor + 5) % 5) * 0x2A));
-    int cursor_y = (int) (60.0f + top + (float) (((cursor - MiniMenu.scroll_row * 5) / 5) * 0x28));
-    DrawMenuWaku((float) (cursor_x + 0x10), (float) (cursor_y - 9), 0x24, 0x24, 0, StayTex, alpha);
-    MiniCur[0] += ((float) cursor_x - MiniCur[0]) / 4.0f;
-    MiniCur[1] += ((float) cursor_y - MiniCur[1]) / 4.0f;
-    DrawMenuObjectVibe((int) MiniCur[0], (int) MiniCur[1], 1, 0x40);
+    DrawEventAndFishMenuBoard(board, left, top, alpha, MiniMenu.lang);
+    y = MiniMenu.cursor;
+    x = 6.0f + left + ((y + 5) % 5) * 0x2A;
+    y = 60.0f + top + ((y - MiniMenu.scroll_row * 5) / 5) * 0x28;
+    DrawMenuWaku(x + 0x10, y - 9, 0x24, 0x24, 0, StayTex, alpha);
+    MiniCur[0] += (x - MiniCur[0]) / 4.0f;
+    MiniCur[1] += (y - MiniCur[1]) / 4.0f;
+    DrawMenuObjectVibe(MiniCur[0], MiniCur[1], 1, 0x40);
     CursorVibeCnt++;
     if (CursorVibeCnt >= 0x405F7E00) {
         CursorVibeCnt = 0;
     }
     CommonMenuMes2.edge_alpha = alpha;
-    DrawMenuClsMes(&CommonMenuMes2, (int) (20.0f + left + (float) message_pos[MiniMenu.lang][0]),
-                   (int) (146.0f + top + (float) message_pos[MiniMenu.lang][1]));
+    s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}};
+    DrawMenuClsMes(&CommonMenuMes2, 20.0f + left + message_pos[MiniMenu.lang][0],
+                   146.0f + top + message_pos[MiniMenu.lang][1]);
     if (MiniMenu.state == 1) {
         if (CommonMenuMes1.mes_made != 1) {
             CommonMenuMes1.MakeMesWin(1);

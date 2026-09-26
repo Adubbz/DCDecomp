@@ -35,69 +35,67 @@ void CMenuItemStep::LoopStep(int interval) {
 }
 #ifdef NON_MATCHING
 void CMenuItemStep::CheckItemVolume(void) {
+    int slot;
+    ITEM_PACK *pack;
     int elapsed = pending_volume;
-    if (elapsed <= 0) {
-        return;
-    }
 
-    int preservation[100];
-    memset(preservation, 0, sizeof(preservation));
-    CDngStatusData *status = SaveData->GetDngStatus();
-    int item_count = status->inventory.item_capacity;
-    unk_0E = 0;
+    if (elapsed > 0) {
+        int preservation[100];
+        memset(preservation, 0, sizeof(preservation));
+        pack = &SaveData->GetDngStatus()->item_pack;
+        unk_0E = 0;
 
-    for (int slot = 0; slot < item_count; slot++) {
-        s16 &item = status->inventory.dungeon_items[slot];
-        if (item != ITEM_ICE_BLOCK && item != ITEM_SMALL_ICE && item != ITEM_TINY_ICE) {
-            continue;
-        }
+        for (slot = 0; slot < pack->num; slot++) {
+            if (pack->item[slot] == ITEM_ICE_BLOCK || pack->item[slot] == ITEM_SMALL_ICE ||
+                pack->item[slot] == ITEM_TINY_ICE) {
+                int neighbor[4] = {-1, -1, -1, -1};
+                int row = slot / 5;
+                if (row != 0) {
+                    preservation[slot - 5] += 100;
+                }
+                if (row != pack->num / 5) {
+                    preservation[slot + 5] += 100;
+                }
+                int column = slot % 5;
+                if (column != 0) {
+                    preservation[slot - 1] += 100;
+                }
+                if (column != 4) {
+                    preservation[slot + 1] += 100;
+                }
 
-        int row = slot / 5;
-        int column = slot % 5;
-        if (row != 0) {
-            preservation[slot - 5] += 100;
-        }
-        if (row != item_count / 5) {
-            preservation[slot + 5] += 100;
-        }
-        if (column != 0) {
-            preservation[slot - 1] += 100;
-        }
-        if (column != 4) {
-            preservation[slot + 1] += 100;
-        }
-
-        status->inventory.item_vol[slot] -= elapsed;
-        if (status->inventory.item_vol[slot] <= 0) {
-            item++;
-            if (item >= ITEM_TINY_ICE + 1) {
-                item = -1;
-            } else {
-                status->inventory.item_vol[slot] = GetItemData(item)->vol;
+                pack->item_vol[slot] -= elapsed;
+                if (pack->item_vol[slot] <= 0) {
+                    pack->item[slot]++;
+                    if (pack->item[slot] >= ITEM_TINY_ICE + 1) {
+                        pack->item[slot] = -1;
+                    } else {
+                        pack->item_vol[slot] = GetItemData(pack->item[slot])->vol;
+                    }
+                }
             }
         }
-    }
 
-    for (int slot = 0; slot < item_count; slot++) {
-        s16 &item = status->inventory.dungeon_items[slot];
-        if (item != ITEM_FLAPPING_FISH) {
-            continue;
+        for (slot = 0; slot < pack->num; slot++) {
+            if (pack->item[slot] == ITEM_FLAPPING_FISH) {
+                if (preservation[slot] > 100) {
+                    preservation[slot] = 100;
+                }
+                float kept = 100.0f - preservation[slot];
+                int loss = elapsed * kept / 100.0f;
+                pack->item_vol[slot] = pack->item_vol[slot] - loss;
+                if (pack->item_vol[slot] <= 0) {
+                    pack->item[slot]++;
+                }
+            }
         }
-        if (preservation[slot] > 100) {
-            preservation[slot] = 100;
-        }
-        int loss = (int) ((float) elapsed * (100.0f - preservation[slot]) / 100.0f);
-        status->inventory.item_vol[slot] -= loss;
-        if (status->inventory.item_vol[slot] <= 0) {
-            item++;
-        }
-    }
 
-    if (unk_10[unk_0E] >= ITEM_DUNGEON_START) {
-        unk_0A = 1;
+        if (unk_10[unk_0E] >= ITEM_DUNGEON_START) {
+            unk_0A = 1;
+        }
+        pending_volume = 0;
+        frame = 0;
     }
-    pending_volume = 0;
-    frame = 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menuitemstep", CheckItemVolume__13CMenuItemStepFv);
