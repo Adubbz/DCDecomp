@@ -3733,7 +3733,7 @@ static int WeaponSelectKey() {
                 switch (WepMenu.board.cursor) {
                     case 0: {
                         CDngStatusData *status_data = BtlMenuStatusPt;
-                        s32 zone;
+                        int zone;
                         if (status_data->GetActiveCharaStatus(WepMenu.chara) & 0x20) {
                             ComMenuSePlay(2);
                             WepMenu.unk_0C = 11;
@@ -3859,7 +3859,7 @@ static int WeaponSelectKey() {
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 7;
                             ComMenuSePlay(2);
-                        } else if (item_no == 268 && GetMenuHebikiriFlag() == 0) {
+                        } else if (item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 5;
                             ComMenuSePlay(2);
