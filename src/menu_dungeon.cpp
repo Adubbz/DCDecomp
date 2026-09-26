@@ -4,6 +4,7 @@
 
 #include "menu_dungeon.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -1235,25 +1236,153 @@ int CharaChangeKey(void) {
     return result;
 }
 
-#ifdef NON_MATCHING
-void CharaChangeDraw(void) {
-    int index;
-    int party_size = UserStatus != NULL ? UserStatus->party_size : 0;
+/** Screen position of the character change ring's centre. */
+extern int QuickCharaPos[2];
 
-    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 0, 0, 0, 96);
-    for (index = 0; index < party_size; index++) {
-        int x = quick_change_positions != NULL ? quick_change_positions[index * 2]
-                                               : 120 + index * 72;
-        int y = quick_change_positions != NULL ? quick_change_positions[index * 2 + 1] : 190;
-        int alpha = index == quick_change_selected ? 128 : 64;
-        DrawMenuObjectVibe(x, y, index, alpha);
+/** Radius of the character change ring, which grows while the ring turns. */
+extern float changeMenu_long;
+
+/** Frame texture drawn around the selected portrait. */
+extern CTexture *StayTex;
+
+/**
+ * Name of the frame texture drawn around the selected portrait.
+ */
+extern char stay_frame_name[];
+
+void CharaChangeDraw(void) {
+    int alpha;
+    int i;
+    int cursor_x;
+    int cursor_y;
+    float step;
+    float turn;
+    float angle;
+
+    setbilinear(0);
+    FrameImageDraw(100, 0x80);
+    if (CharaChangeReadFlag != 0) {
+        MenuTextureReload(CharaChangeTexBlock);
+        CTexture *frame = TexManager.GetTexture(stay_frame_name, -1);
+        int frame_x = QuickCharaPos[0] - 2.0f * changeMenu_long;
+        int frame_y = QuickCharaPos[1] - 1.4f * changeMenu_long;
+        alpha = 0x80;
+        switch (ChangeMenu.unk_03) {
+            case 6:
+            case 5:
+                alpha = 0x80 - ChangeMenu.unk_4c * 4;
+                if (alpha < 0) {
+                    alpha = 0;
+                }
+                break;
+        }
+        step = 6.2831855f / ChangeMenu.unk_02;
+        switch (ChangeMenu.unk_03) {
+            case 6:
+            case 5:
+                changeMenu_long += ChangeMenu.unk_4c;
+                turn = step / 20.0f;
+                if (ChangeMenu.unk_44 < 0.0f) {
+                    turn = -turn;
+                }
+                for (i = 0; i < ChangeMenu.unk_02; i++) {
+                    angle = 3.1415927f + (step * ChangeMenu.unk_38[i] + turn * ChangeMenu.unk_4c);
+                    ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
+                    ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+                }
+                break;
+            case 1:
+                turn = step / 20.0f;
+                if (ChangeMenu.unk_44 < 0.0f) {
+                    turn = -turn;
+                }
+                for (i = 0; i < ChangeMenu.unk_02; i++) {
+                    angle = 3.1415927f + (step * ChangeMenu.unk_38[i] + turn * ChangeMenu.unk_04);
+                    ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
+                    ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+                }
+                break;
+        }
+        CTexture *portraits = QuickCharaTex;
+        for (int chara = 0; chara < ChangeMenu.unk_02; chara++) {
+            float x = QuickCharaPos[0] + ChangeMenu.unk_08[chara][0];
+            float y = QuickCharaPos[1] + ChangeMenu.unk_08[chara][1];
+            int shade = 0x80;
+            int u = chara * 0x30;
+            int v = 0;
+            if (chara > 2) {
+                u = (chara - 3) * 0x30;
+                v = 0x30;
+            }
+            if (ChangeStatusDataPt != NULL && ChangeStatusDataPt->hp[chara] <= 0) {
+                shade = 0x40;
+            }
+            DrawMenu2DSprite(portraits, CRect_i_(x, y, 0x30, 0x30), CRect_i_(u, v, 0x30, 0x30), shade,
+                             shade, shade, alpha);
+        }
+        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
+            ChangeMenu.unk_03 != 4) {
+            DrawMenuWaku(QuickCharaPos[0] - changeMenu_long - 11.0f, QuickCharaPos[1] - 12, 0x34, 0x34, 0,
+                         StayTex, 0x80);
+        }
+        if (ChangeMenu.unk_03 == 2 || ChangeMenu.unk_03 == 3 || ChangeMenu.unk_03 == 4) {
+            AllFadeForMenu(0x40);
+            CommonMenuMes3.stay_frame = 1;
+            CommonMenuMes3.auto_pos = 5;
+            MenuTextureReload(CommonMenuMes3.tex_block);
+            CommonMenuMes3.Step();
+            CommonMenuMes3.DrawMesWin();
+            cursor_x = CommonMenuMes3.text_x - 0x1E;
+            cursor_y = CommonMenuMes3.text_y + 0x10 + ChangeMenu.unk_01 * 0x18;
+            ChangeMenu.unk_54 += (cursor_x - ChangeMenu.unk_54) / 4.0f;
+            ChangeMenu.unk_58 += (cursor_y - ChangeMenu.unk_58) / 4.0f;
+            cursor_x = ChangeMenu.unk_54;
+            cursor_y = ChangeMenu.unk_58;
+        } else {
+            CommonMenuMes3.auto_pos = -1;
+            cursor_x = QuickCharaPos[0] - changeMenu_long - 32.0f;
+            cursor_y = QuickCharaPos[1] + 6;
+            if (cursor_x < -40 || cursor_x > 640 || cursor_y < -40 || cursor_y > 450) {
+                cursor_x = 650;
+                cursor_y = 450;
+            }
+        }
+        CursorVibeCnt++;
+        if (CursorVibeCnt > 1080000) {
+            CursorVibeCnt = 0;
+        }
+        if (ChangeMenu.unk_5c != 0) {
+            MenuTextureReload(CharaChangeTexBlock);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x124, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x124, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
+            int value = (u16) ChangeStatusDataPt->dead_mask;
+            RECT value_digits = {0x70, 0x74, 0xC, 0xC};
+            DrawMenuNumber(value, 0xB7, 0x12C, QuickCharaTex, value_digits, 0, alpha);
+            MenuHelpWinDraw(100, 0x140, 10.6f, 0.9f, alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x150, 0x20, 0x20), CRect_i_(0, 0x60, 0x20, 0x20), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x104, 0x158, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10), alpha);
+            MenuTextureReload(CommonMenuMes1.tex_block);
+            CommonMenuMes1.line_pos[0].x = 0xA0;
+            CommonMenuMes1.line_pos[0].y = 0x14A;
+            CommonMenuMes1.line_pos[1].x = 0xAA;
+            CommonMenuMes1.line_pos[1].y = 0x15E;
+            CommonMenuMes1.Step();
+            CommonMenuMes1.DrawMesWin();
+            RECT count_digits = {0, 0x9E, 0xC, 0x12};
+            ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
+            int count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
+            int count_x = 0x122;
+            count_x += (count_digits.width >> 1) * GetNumberKeta(count);
+            DrawMenuNumber(count, count_x, 0x158, count_digits, StayTex, 0, 0, 0x1C0, alpha);
+        }
+        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
+            ChangeMenu.unk_03 != 4) {
+            DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
+        }
+        setbilinear(1);
     }
-    CommonMenuMes3.Step();
-    CommonMenuMes3.DrawMesWin();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
-#endif
 
 int DngActItemModelReadStart(u_long128 *buffer) {
     char model_path[64];

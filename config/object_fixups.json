@@ -1818,33 +1818,36 @@
       ],
       ".charachangedata": [
         "@1106",
-        "@1117"
+        "@1117",
+        "@1309",
+        "@1310"
       ],
       ".itemmodeldata": [
-        "@1279"
+        "@1380"
       ],
       ".menu_dungeon-c1707": [
-        "@1307"
+        "@1408"
       ],
       ".menu_dungeon-c1731": [
-        "@1326"
+        "@1427"
       ],
       ".itemviewdata": [
-        "@1425",
-        "@1430",
-        "@1431",
-        "@1432"
+        "@1526",
+        "@1531",
+        "@1532",
+        "@1533"
       ],
       ".itemgetdata": [
-        "@1526",
-        "@1527"
+        "@1625",
+        "@1626"
       ],
       ".itemdataview": [
-        "@1553"
+        "@1652"
       ]
     },
     "symbols": {
       "chara_change_frame_image": "@1301",
+      "stay_frame_name": "@1349",
       "item_view_frame_image": "@1841"
     },
     "rodata_exports": [

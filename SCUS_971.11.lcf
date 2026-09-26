@@ -689,7 +689,6 @@ SECTIONS
         main.data.menu_dungeon-b.s.o (.data) // 0x00294230
         menu_dungeon.cpp.o (.charachangedata) // 0x00294250
         . = ALIGN(0x10);
-        main.data.menu_dungeon-a.s.o (.data) // 0x002942a0
         menu_dungeon.cpp.o (.itemmodeldata) // 0x002942c0
         . = ALIGN(0x10);
         menu_dungeon.cpp.o (.menu_dungeon-c1707) // 0x002942d0 @1707
