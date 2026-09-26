@@ -1242,9 +1242,6 @@ extern int QuickCharaPos[2];
 /** Radius of the character change ring, which grows while the ring turns. */
 extern float changeMenu_long;
 
-/** Frame texture drawn around the selected portrait. */
-extern CTexture *StayTex;
-
 /**
  * Name of the frame texture drawn around the selected portrait.
  */
@@ -1843,12 +1840,6 @@ int DebugItemGetKey(void) {
     }
     return result;
 }
-
-/** Texture of the item icon sheet. */
-extern CTexture *ItemIcon;
-
-/** Texture of the weapon icon sheet. */
-extern CTexture *WepIcon;
 
 void DebugItemGetDraw(void) {
     CTexture *sheets[5] = {ItemIcon, ItemIcon, WepIcon, WepIcon, WepIcon};

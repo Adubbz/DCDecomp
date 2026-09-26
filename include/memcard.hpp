@@ -381,6 +381,21 @@ extern s32 CursorVibeCnt;
 extern CEditPartsInfo *CommonMenuAtoraInfo;
 
 /**
+ * The stay-frame texture that menu selection frames, digits and the hand cursor draw from.
+ */
+extern CTexture *StayTex;
+
+/**
+ * The texture of the item icons.
+ */
+extern CTexture *ItemIcon;
+
+/**
+ * The texture of the weapon icons.
+ */
+extern CTexture *WepIcon;
+
+/**
  * The texture that the georama board's plates, gauges and frames draw from.
  */
 extern CTexture *Sozai;
