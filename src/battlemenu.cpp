@@ -1102,7 +1102,6 @@ static int BtlMenuDrawSpecialFlag(int flag) {
     }
     return flag;
 }
-#ifdef NON_MATCHING
 void BattleMenuDraw() {
     int text_x;
     int text_y;
@@ -1129,7 +1128,7 @@ void BattleMenuDraw() {
             }
             break;
         case 28:
-            bright = (int) ((float) bright + 4.0f * BtlEffectCt);
+            bright += 4.0f * BtlEffectCt;
             if (bright > 0x80) {
                 bright = 0x80;
             }
@@ -1235,9 +1234,6 @@ void BattleMenuDraw() {
     }
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuDraw__Fv);
-#endif
 int BattleMenuCursor() {
     int result;
 
