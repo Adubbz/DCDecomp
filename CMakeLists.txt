@@ -328,7 +328,7 @@ carve_part(main.data.part4.s
 # itemdata.cpp supplies the texture lists TEIGIImgLoad builds, between the
 # command tables and the weapon definitions the unit already owns.
 carve_part(main.data.part5.s
-           main.data.itemdata-a.s=27A090-27A610
+           main.data.itemdata-a.s=27A0A0-27A610
            main.data.itemdata-b.s=27A6A0-27A6C0)
 carve_part(main.rdata.part5.s
            main.rdata.part5.s=2A1390-2A1490)

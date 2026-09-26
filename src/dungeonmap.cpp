@@ -3068,19 +3068,9 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
 
     return num;
 }
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @3190);
-#ifdef NON_MATCHING
-/* Every instruction is retail's but for one saved register: retail builds a
- * 0xB0 frame over s0-s8 and mwcc builds 0xA0 over s0-s7, so `room_max` lands
- * in s7 rather than s8 and `j`, `near_no` and `near_dist` shift with it.
- * Retail keeps one more local alive across the calls than mwcc does; no
- * ordering of the declarations reproduces which one.
- *
- * Compiling this also moves data. MWCC emits its own jump table for the
- * switch, which has to land where retail keeps @3191 -- so that marker
- * comes out and the @3190 one moves above the function -- and it emits a
- * .data template for `map_no`, which expands this unit's source-owned data
- * range through @3162. Both are undone here. */
+/* MWCC emits its own jump table for the switch, which lands where retail keeps
+ * @3191, and a .data template for `map_no`, which is retail's @3162 at the end
+ * of this unit's data run. */
 void CDungeonMap::buildRandomMap(int room_max, int full) {
     int w;
     int h;
@@ -3178,16 +3168,11 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
                 near_no = -1;
                 near_dist = 10000;
                 for (j = 0; j < roomStackCnt - 1; j++) {
-                    int room_center_x = roomStack[roomStackCnt - 1].width >> 1;
-                    room_center_x += roomStack[roomStackCnt - 1].x;
-                    int other_center_x = roomStack[j].width >> 1;
-                    other_center_x += roomStack[j].x;
-                    w = room_center_x - other_center_x;
-                    int room_center_y = roomStack[roomStackCnt - 1].height >> 1;
-                    room_center_y += roomStack[roomStackCnt - 1].y;
-                    int other_center_y = roomStack[j].height >> 1;
-                    other_center_y += roomStack[j].y;
-                    h = room_center_y - other_center_y;
+                    w = (roomStack[roomStackCnt - 1].x + roomStack[roomStackCnt - 1].width / 2) -
+                        (roomStack[j].x + roomStack[j].width / 2);
+                    h = (roomStack[roomStackCnt - 1].y + roomStack[roomStackCnt - 1].height / 2) -
+                        (roomStack[j].y + roomStack[j].height / 2);
+
                     dist = (int) sqrt((double) (w * w + h * h));
                     if (dist < near_dist) {
                         near_no = j;
@@ -3273,9 +3258,6 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     this->SetUnderLoad();
     printf("map build success!!\n");
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", buildRandomMap__11CDungeonMapFii);
-#endif
 
 void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     int i;

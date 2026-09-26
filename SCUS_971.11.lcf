@@ -545,6 +545,7 @@ SECTIONS
         btsysscript.cpp.o (.data)    // 0x0026b2e0
         main.data.part4d.s.o (.data) // 0x0026b310
         dungeonmap.cpp.o (.data)
+        . = ALIGN(0x10);
         main.data.itemdata-a.s.o (.data)
         itemdata.cpp.o (.itemdata1)     // 0x0027a610
         . = ALIGN(0x10);
