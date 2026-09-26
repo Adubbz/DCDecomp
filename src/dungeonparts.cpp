@@ -377,25 +377,38 @@ int chkAtraFloor(int dungeon, int floor) {
 extern int CenterFloorTbl[6];
 
 /**
+ * One Atla a dungeon can hand out.
+ */
+struct ATRA_APPEAR {
+    int id;    /**< Atla; -1 ends the table. */
+    int floor; /**< Floor it lies on counted from one, or -1 or -2 for any upper or lower floor. */
+    int count; /**< How many floors it is put on when the floor is not fixed. */
+};
+
+/**
+ * The Atla each dungeon hands out, ended by an entry whose id is -1.
+ */
+extern ATRA_APPEAR *AtraAppearData[6];
+
+/**
+ * The number of floors in each dungeon.
+ */
+extern int MaxFloorTbl[6];
+
+/**
+ * Records that one Atla lies on one floor of a dungeon.
+ */
+static inline void RegisterAtra(int dungeon, int floor, int atra_id) {
+    ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, atra_id);
+}
+
+/**
  * Builds the list of Atla one dungeon may hand out.
  *
  * @mangled BtAtraListMake__Fi
  * @address 0x1C09C0
  * @size 0x358
  */
-#ifdef NON_MATCHING
-/**
- * One Atla a dungeon can hand out.
- */
-struct ATRA_APPEAR {
-    int id;     /**< Atla; -1 ends the table. */
-    int floor;  /**< Floor it lies on counted from one, or -1 or -2 for any upper or lower floor. */
-    int count;  /**< How many floors it is put on when the floor is not fixed. */
-};
-
-extern ATRA_APPEAR *AtraAppearData[6];
-extern int MaxFloorTbl[6];
-
 void BtAtraListMake(int dungeon) {
     if (dungeon >= 6) {
         return;
@@ -415,7 +428,7 @@ void BtAtraListMake(int dungeon) {
             lower += appear[count].count;
         }
         if (floor != -1 && floor != -2) {
-            ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, --floor, count);
+            RegisterAtra(dungeon, --floor, count);
         }
     }
     int i;
@@ -424,7 +437,7 @@ void BtAtraListMake(int dungeon) {
         while (placed == 0) {
             int floor = (int) (((float) (center - 1) * (float) rand()) / 2.1474836e9f);
             if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
+                RegisterAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
@@ -435,7 +448,7 @@ void BtAtraListMake(int dungeon) {
             int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f);
             floor += center;
             if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
+                RegisterAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
@@ -446,9 +459,7 @@ void BtAtraListMake(int dungeon) {
         UserStatus->atra_data[dungeon][j].refcount = appear[j].count;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
-#endif
+
 /**
  * Selects the atla identifiers that appear on a floor: keeps the fixed ones,
  * draws each open slot from the dungeon's list for its half, packs them to the

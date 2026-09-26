@@ -253,6 +253,11 @@
       "@3190"
     ]
   },
+  "src/dungeonparts.cpp": {
+    "symbols": {
+      "MaxFloorTbl": "MaxFloorTbl__2"
+    }
+  },
   "src/battlemenu.cpp": {
     "sections": {
       ".battlemenu-c731__6": [
