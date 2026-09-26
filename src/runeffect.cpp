@@ -36,7 +36,6 @@ static void addBlendSprite(sceVif1Packet *packet, u_long tex0,
 }
 #endif
 
-#ifdef NON_MATCHING
 /**
  * Draws two textures blended over one another.
  *
@@ -49,35 +48,85 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
                   const CRect_i_ &first_source, CTexture *second_texture,
                   const CRect_i_ &second_destination, const CRect_i_ &second_source) {
     sceGsTex0 frame;
-    sceGsTest test = mgPixelTest;
-    sceGsZbuf zbuffer = mgZBuffer;
-    sceGsAlpha alpha = mgAlpha;
-    MGGetFBuffTex(&frame);
-    test.bits.ate = 0;
-    test.bits.zte = 1;
-    test.bits.ztst = 1;
-    zbuffer.bits.zmsk = 1;
-    alpha.bits.a = 1;
-    alpha.bits.b = 2;
-    alpha.bits.c = 0;
-    alpha.bits.d = 0;
+    sceGsTest test;
+    sceGsZbuf zbuffer;
+    sceGsAlpha alpha;
+    float q = 1.0f;
 
+    MGGetFBuffTex(&frame);
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, 0x61);
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, *(u_long *) &frame);
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(destination >> 5, width, format, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(destination >> 5, width, format, 0));
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.zte = 1;
+    test.bits.ztst = 1;
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuffer = mgZBuffer;
+    zbuffer.bits.zmsk = 1;
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
-    addBlendSprite(packet, first_texture->tex0, first_destination, first_source, 0x106, 0x80, 0);
-    addBlendSprite(packet, first_texture->tex0, first_destination, first_source, 0x156, 0x80, 0);
+
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x106);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, first_texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(first_source.x << 4, first_source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00,
+                                      (first_destination.y << 4) + 0x7900, 0, 0));
+    // This pass takes the bottom texel row from x rather than y.
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((first_source.x + first_source.width) << 4,
+                                   (first_source.x + first_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00,
+                                      ((first_destination.y + first_destination.height) << 4) + 0x7900,
+                                      0, 0));
+
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x156);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, first_texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(first_source.x << 4, first_source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00,
+                                      (first_destination.y << 4) + 0x7900, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((first_source.x + first_source.width) << 4,
+                                   (first_source.y + first_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00,
+                                      ((first_destination.y + first_destination.height) << 4) + 0x7900,
+                                      0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
+
+    zbuffer = mgZBuffer;
+    zbuffer.bits.zmsk = 1;
+    sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
+    alpha = mgAlpha;
+    alpha.bits.a = 1;
+    alpha.bits.b = 2;
+    alpha.bits.c = 0;
+    alpha.bits.d = 0;
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
-    addBlendSprite(packet, second_texture->tex0, second_destination, second_source, 0x156, 0x80,
-                   0);
+
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x156);
+    sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
+    sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, second_texture->tex0);
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(second_source.x << 4, second_source.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2((second_destination.x << 4) + 0x6C00,
+                                      (second_destination.y << 4) + 0x7900, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV,
+                     SCE_GS_SET_UV((second_source.x + second_source.width) << 4,
+                                   (second_source.y + second_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
+                     SCE_GS_SET_XYZF2(((second_destination.x + second_destination.width) << 4) + 0x6C00,
+                                      ((second_destination.y + second_destination.height) << 4) + 0x7900,
+                                      0, 0));
+
     sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
                      SCE_GS_SET_FRAME(frame.TBP0 >> 5, frame.TBW, frame.PSM, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
@@ -86,9 +135,6 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/runeffect", blendTextuer__FP13sceVif1PacketiiiP8CTextureRC8CRect_i_RC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_);
-#endif
 /**
  * Fills the blend table with one period of a sine.
  *
