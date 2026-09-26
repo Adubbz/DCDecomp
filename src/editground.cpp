@@ -490,35 +490,43 @@ static inline float Magnitude(float value) {
 
 #ifdef NON_MATCHING
 void CEditGround::EditAreaClip(CCamera *camera, float range) {
-    sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR target;
-    sceVu0FVECTOR view;
-    sceVu0FVECTOR forward;
-    float distance[4];
-    float depth[4];
     CBoxVu0 box;
-    sceVu0FVECTOR centre;
-    sceVu0FVECTOR offset;
-    sceVu0FVECTOR corner[4];
+    sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR ref;
+    sceVu0FVECTOR dir;
+    sceVu0FVECTOR forward;
+    float dists[4];
+    float dots[4];
+    sceVu0FVECTOR to_center;
+    sceVu0FVECTOR center;
+    sceVu0FVECTOR corner_a;
+    sceVu0FVECTOR corner_b;
+    sceVu0FVECTOR corner_max;
+    sceVu0FVECTOR corner_min;
+    float facing;
     int i;
 
     if (camera != NULL) {
         camera->GetPos(eye);
-        camera->GetRef(target);
-        sceVu0SubVector(view, target, eye);
+        camera->GetRef(ref);
+        sceVu0SubVector(dir, ref, eye);
         if (GetAreaCode(eye[0], eye[1], eye[2]) < 0) {
-            sceVu0SubVector(forward, target, eye);
+            sceVu0SubVector(forward, ref, eye);
             forward[1] = 0.0f;
             sceVu0Normalize(forward, forward);
             sceVu0ScaleVector(forward, forward, 500.0f);
-            sceVu0AddVector(target, eye, forward);
+            sceVu0AddVector(ref, eye, forward);
         }
     } else {
-        sceVu0CopyVector(eye, target);
-        sceVu0CopyVector(view, target);
+        sceVu0CopyVector(eye, ref);
+        sceVu0CopyVector(dir, ref);
     }
-    for (i = 0; i < 4 && areas[i] != NULL; i++) {
+    facing = 0.0f;
+    for (i = 0; i < 4; i++) {
         CEditArea *area = areas[i];
+        if (area == NULL) {
+            break;
+        }
         area->GetOffset(box.min);
         box.min[1] -= 2.0f * area->GetUnitAlt();
         box.min[3] = 1.0f;
@@ -526,62 +534,70 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
         box.max[0] += area->GetUnitSize() * (float) area->GetWidth();
         box.max[1] += 32.0f * area->GetUnitAlt();
         box.max[2] += area->GetUnitSize() * (float) area->GetHeight();
-        distance[i] = -1.0f;
-        depth[i] = -1.0f;
-        if (MGClipBox(&box) != 0) {
+        dists[i] = -1.0f;
+        dots[i] = -1.0f;
+        if (MGClipBox(&box)) {
             area_visible[i] = 0;
             continue;
         }
         area_visible[i] = 1;
-        sceVu0AddVector(centre, box.max, box.min);
-        sceVu0ScaleVector(centre, centre, 0.5f);
-        sceVu0SubVector(offset, centre, eye);
-        depth[i] = sceVu0InnerProduct(offset, view);
+        sceVu0AddVector(center, box.max, box.min);
+        sceVu0ScaleVector(center, center, 0.5f);
+        sceVu0SubVector(to_center, center, eye);
+        dots[i] = sceVu0InnerProduct(to_center, dir);
+        if (dots[i] > 0.0f) {
+            facing += 1.0f;
+        }
         // The corners of the area on the ground, for the distance from the target to its edge.
-        sceVu0CopyVector(corner[0], box.max);
-        corner[0][1] = 0.0f;
-        sceVu0CopyVector(corner[1], box.min);
-        corner[1][1] = 0.0f;
-        corner[2][0] = box.max[0];
-        corner[2][1] = 0.0f;
-        corner[2][2] = box.min[2];
-        corner[3][0] = box.min[0];
-        corner[3][1] = 0.0f;
-        corner[3][2] = box.max[2];
+        sceVu0CopyVector(corner_max, box.max);
+        corner_max[1] = 0.0f;
+        sceVu0CopyVector(corner_min, box.min);
+        corner_min[1] = 0.0f;
+        corner_a[0] = box.max[0];
+        corner_a[1] = 0.0f;
+        corner_a[2] = box.min[2];
+        corner_b[0] = box.min[0];
+        corner_b[1] = 0.0f;
+        corner_b[2] = box.max[2];
         int side_x = 0;
         int side_z = 0;
-        if (target[0] < box.min[0]) {
+        if (ref[0] < box.min[0]) {
             side_x = -1;
         }
-        if (target[0] > box.max[0]) {
+        if (ref[0] > box.max[0]) {
             side_x = 1;
         }
-        if (target[2] < box.min[2]) {
+        if (ref[2] < box.min[2]) {
             side_z = -1;
         }
-        if (target[2] > box.max[2]) {
+        if (ref[2] > box.max[2]) {
             side_z = 1;
         }
+        float d;
         if (side_x < 0 && side_z < 0) {
-            distance[i] = DistVector(target, corner[1]);
+            dists[i] = DistVector(ref, corner_min);
         } else if (side_x == 0 && side_z < 0) {
-            distance[i] = Magnitude(target[2] - corner[1][2]);
+            d = ref[2] - corner_min[2];
+            dists[i] = d < 0.0f ? -d : d;
         } else if (side_x > 0 && side_z < 0) {
-            distance[i] = DistVector(target, corner[2]);
+            dists[i] = DistVector(ref, corner_a);
         } else if (side_x < 0 && side_z == 0) {
-            distance[i] = Magnitude(target[0] - corner[1][0]);
+            d = ref[0] - corner_min[0];
+            dists[i] = d < 0.0f ? -d : d;
         } else if (side_x == 0 && side_z == 0) {
-            distance[i] = 0.0f;
+            dists[i] = 0.0f;
         } else if (side_x > 0 && side_z == 0) {
-            distance[i] = Magnitude(target[0] - corner[0][0]);
+            d = ref[0] - corner_max[0];
+            dists[i] = d < 0.0f ? -d : d;
         } else if (side_x < 0 && side_z > 0) {
-            distance[i] = DistVector(target, corner[3]);
+            dists[i] = DistVector(ref, corner_b);
         } else if (side_x == 0 && side_z > 0) {
-            distance[i] = Magnitude(target[2] - corner[0][2]);
+            d = ref[2] - corner_max[2];
+            dists[i] = d < 0.0f ? -d : d;
         } else if (side_x > 0 && side_z > 0) {
-            distance[i] = DistVector(target, corner[0]);
+            dists[i] = DistVector(ref, corner_max);
         }
-        if (range > 0.0f && distance[i] > range) {
+        if (range > 0.0f && dists[i] > range) {
             area_visible[i] = 0;
         }
     }
@@ -590,42 +606,61 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
         return;
     }
     int nearest = -1;
-    int nearest_distance = -1;
-    for (i = 0; i < 4 && areas[i] != NULL; i++) {
-        if (area_visible[i] != 0 && distance[i] >= 0.0f) {
-            if (nearest < 0 || (float) nearest_distance > distance[i]) {
-                nearest = i;
-                nearest_distance = (int) distance[i];
-            }
+    int nearest_dist = -1;
+    for (int j = 0; j < 4; j++) {
+        if (areas[j] == NULL) {
+            break;
+        }
+        if (area_visible[j] == 0) {
+            continue;
+        }
+        if (dists[j] < 0.0f) {
+            continue;
+        }
+        if (nearest < 0) {
+            nearest = j;
+            nearest_dist = dists[j];
+        } else if (nearest_dist > dists[j]) {
+            nearest = j;
+            nearest_dist = dists[j];
         }
     }
     switch (map_no) {
         case 1:
-            if (distance[0] > distance[2]) {
-                if (area_visible[2] != 0) {
+            if (dists[0] > dists[2]) {
+                if (area_visible[2]) {
                     area_visible[0] = 0;
                     area_visible[2] = 1;
                 }
-            } else if (area_visible[0] != 0) {
-                area_visible[0] = 1;
-                area_visible[2] = 0;
+            } else {
+                if (area_visible[0]) {
+                    area_visible[0] = 1;
+                    area_visible[2] = 0;
+                }
             }
             if (range > 0.0f) {
-                if (clip_plane[3] < 0.0f || clip_plane[3] >= 1200.0f) {
+                if (clip_plane[3] < 0.0f || !(clip_plane[3] < 1200.0f)) {
                     clip_plane[0] = eye[0];
                     clip_plane[1] = eye[1];
                     clip_plane[2] = eye[2];
                     clip_plane[3] = 1200.0f;
                 }
-                return;
+            } else {
+                clip_plane[3] = -1.0f;
             }
-            clip_plane[3] = -1.0f;
-            return;
+            break;
         case 2:
-            for (i = 0; i < 4 && areas[i] != NULL; i++) {
-                area_visible[i] = i == nearest;
-                if (distance[i] > 0.0f && distance[i] < 600.0f) {
-                    area_visible[i] = 1;
+            for (int k = 0; k < 4; k++) {
+                if (areas[k] == NULL) {
+                    break;
+                }
+                if (k == nearest) {
+                    area_visible[k] = 1;
+                } else {
+                    area_visible[k] = 0;
+                }
+                if (dists[k] > 0.0f && dists[k] < 600.0f) {
+                    area_visible[k] = 1;
                 }
             }
             break;
