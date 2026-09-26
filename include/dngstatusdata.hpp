@@ -259,8 +259,6 @@ private:
 public:
     float stat_float_a[6];
     float stat_float_b[6];
-
-public:
     s32 overflow_flag;
     s32 special_flag_238;
     s32 skill_owned[6]; /**< Whether each playable character has received their event skill. */
