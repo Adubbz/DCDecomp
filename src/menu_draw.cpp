@@ -287,6 +287,7 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     put_x -= size[2] >> 1;
     mes->text_x = put_x;
 }
+
 /**
  * Resets a menu message window to its empty default layout.
  */

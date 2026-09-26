@@ -4677,11 +4677,13 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
+
 /** The fishing screens' frame-buffer backdrop and message pack, shared by FishMenuTextureLoad and FishRecordTextureEnter. */
 extern char FishFrameImage[];
 extern char FishMessageFile[];
 
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
+
 /**
  * Enters the fishing menu's textures once they have been read.
  *

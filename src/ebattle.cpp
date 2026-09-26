@@ -422,6 +422,7 @@ int EBLoop() {
     eb_count++;
     return 0;
 }
+
 /**
  * Draws the event battle's prompt strip, its opening caution mark and its result overlay.
  *

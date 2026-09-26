@@ -227,6 +227,7 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
         draw_x += 22;
     }
 }
+
 /**
  * Draws the four corners of the frame around the name being entered, pulling them inward as the frame counter cycles.
  *
@@ -250,6 +251,7 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
                          (u8) brightness, blend_mode);
     }
 }
+
 /**
  * Draws the top of the name-entry screen: the party member's face and title, the name being entered and the cursor over it.
  *
@@ -850,6 +852,7 @@ void NameEnterDraw(void) {
         setbilinear(1);
     }
 }
+
 /**
  * Moves the cursor across the keyboard and enters the character it settles on.
  *
@@ -1704,6 +1707,7 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
         put_x -= 0x14 - step;
     }
 }
+
 /**
  * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
  *

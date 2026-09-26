@@ -255,6 +255,7 @@ void EquipDefaultWeapon(int chara_no) {
         }
     }
 }
+
 /**
  * Draws the menu's empty-slot picture from a named texture at a screen position.
  *
@@ -721,6 +722,7 @@ void SetMenuWeaponModelReference(int index, int frame_no, int value) {
 int GetMenuWeaponModelFrameNo(int index) {
     return MenuWeaponModelInfo[index][0];
 }
+
 /**
  * Enters a menu page's weapon models and textures from their read files and returns the outcome.
  *
@@ -1322,6 +1324,7 @@ void MonsterNameDraw() {
         }
     }
 }
+
 /**
  * Loads the textures and message windows of the dungeon escape prompt.
  *
