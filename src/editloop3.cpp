@@ -3141,6 +3141,10 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
 
 /**
  * Activates and places the villager selected by an editor-event script.
+ *
+ * @mangled _LOAD_IN_VILLAGER__FP12RS_STACKDATAi
+ * @address 0x18CD60
+ * @size 0x1FC
  */
 static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
@@ -3184,6 +3188,10 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
 
 /**
  * Removes the villager selected by an editor-event script.
+ *
+ * @mangled _LOAD_OUT_VILLAGER__FP12RS_STACKDATAi
+ * @address 0x18CF60
+ * @size 0x1C0
  */
 static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
@@ -4531,6 +4539,10 @@ static int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
 
 /**
  * Pushes the active conversation villager's event status onto the script stack.
+ *
+ * @mangled _GET_TALKNPC_STATUS__FP12RS_STACKDATAi
+ * @address 0x191530
+ * @size 0x74
  */
 static int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     int index = EdEventInfo.talk_npc_id;
@@ -4925,6 +4937,10 @@ static int _GET_CAMERA_ROTATE(RS_STACKDATA *stack, int) {
 
 /**
  * Requests a camera reset on the next event frame, facing back along the reset yaw.
+ *
+ * @mangled _RESET_CAMERA__FP12RS_STACKDATAi
+ * @address 0x1928F0
+ * @size 0x38
  */
 static int _RESET_CAMERA(RS_STACKDATA *stack, int) {
     EdEventInfo.reset_camera_angle = GetStackInt(stack);
@@ -5101,6 +5117,10 @@ static int _DRAW_SHADOW(RS_STACKDATA *stack, int) {
 
 /**
  * Stores the editor ground's event clipping plane from script arguments.
+ *
+ * @mangled _SET_CLIP_POINT__FP12RS_STACKDATAi
+ * @address 0x1931F0
+ * @size 0x8C
  */
 static int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR plane;
@@ -5571,6 +5591,10 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
 
 /**
  * Pushes whether an editor action-sequence slot is still running onto the script stack.
+ *
+ * @mangled _ASQ_CHECK__FP12RS_STACKDATAi
+ * @address 0x194B70
+ * @size 0x74
  */
 static int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
@@ -5589,6 +5613,10 @@ static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
 
 /**
  * Starts an object animation with up to three rotation keys, converting radians to degrees.
+ *
+ * @mangled _OBJ_ANIME__FP12RS_STACKDATAi
+ * @address 0x194C70
+ * @size 0x29C
  */
 static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     int object = GetStackInt(stack++);
