@@ -168,23 +168,25 @@ void CMainItemModel::Draw(void) {
 }
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
-#ifdef NON_MATCHING
 int ItemThrowStep(float *position, float *velocity);
 extern "C" CSHOT_EFFECT MasekiEffect[5];
 
 void CMainItemModel::Step(void) {
-    sceVu0FVECTOR position;
-    sceVu0FVECTOR direction = {0.0f, 0.0f, 0.0f, 0.0f};
+    int i;
+    int result;
     CFrame *placement;
+    int item_no;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR direction = {0.0f, 1.0f, 0.0f, 0.0f};
 
-    for (int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         switch (model[i]) {
             case 1:
                 break;
             case 2: {
                 placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
-                int result = ItemThrowStep(position, velocity[i]);
+                result = ItemThrowStep(position, velocity[i]);
                 placement->SetPosition(position);
                 if (result == 2) {
                     throw_time[i] = 45;
@@ -194,7 +196,7 @@ void CMainItemModel::Step(void) {
                     break;
                 }
                 throw_time[i] = 0;
-                int item_no = cash_item[model_cash[i]];
+                item_no = cash_item[model_cash[i]];
                 switch (item_no) {
                     case 0xA0:
                         NowColData->Set(position, 8, 5, 8.0f, 1.0f, 2, 2, 0, 0);
@@ -251,9 +253,6 @@ void CMainItemModel::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Step__14CMainItemModelFv);
-#endif
 #ifdef NON_MATCHING
 void CMainItemModel::Initialize(void) {
     for (int i = 0; i < 6; i++) {

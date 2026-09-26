@@ -555,7 +555,8 @@ SECTIONS
         btitem.cpp.o (.btitem-c792__2) // 0x0027ead0 @792__2
         mainitemmodel.cpp.o (.mainitemmodel-c862) // 0x0027eae0 @862
         . = ALIGN(16);
-        main.data.part6-27EAE0.s.o (.data) // 0x0027eb00
+        mainitemmodel.cpp.o (.mainitemmodel-c937) // 0x0027eb00 @937
+        main.data.part6-27EAE0.s.o (.data) // 0x0027eb10
         weaponeffect.cpp.o (.data)   // 0x0027eb30
         monstorunit.cpp.o (.data)    // 0x0027eb50
         runscript_opcodes.cpp.o (.data) // 0x00291830
