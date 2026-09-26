@@ -544,7 +544,6 @@ void CDungeonParts::SetHealZone(float *position, float width, float depth) {
  * @address 0x1C16D0
  * @size 0x17C
  */
-#ifdef NON_MATCHING
 void CDungeonParts::Draw() {
     sceVu0FVECTOR position;
 
@@ -553,27 +552,25 @@ void CDungeonParts::Draw() {
             continue;
         }
         int turn = (int) ((float) direction + frame_turn[i]);
-        if (turn >= 4) {
+        if (turn > 3) {
             turn -= 3;
         }
         float angle = (float) turn;
-        if (angle == 3.0f) {
+        if (3.0f == angle) {
             angle = -1.0f;
         }
-        frame[i]->SetRotation(0.0f, (3.1415927f * (-90.0f * angle)) / 180.0f, 0.0f);
+        angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
+        frame[i]->SetRotation(0.0f, angle, 0.0f);
+
         sceVu0CopyVector(position, pos);
-        float *offset = frame_offset[i];
-        position[0] += offset[0];
-        position[1] += offset[1];
-        position[2] += offset[2];
+        position[0] += frame_offset[i][0];
+        position[1] += frame_offset[i][1];
+        position[2] += frame_offset[i][2];
         position[3] = 1.0f;
         frame[i]->SetPosition(position);
         MGDraw(frame[i]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", Draw__13CDungeonPartsFv);
-#endif
 /**
  * Chooses the level of detail each of a part's frames draws at.
  *
