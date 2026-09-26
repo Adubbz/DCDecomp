@@ -281,7 +281,6 @@ int CEditGround::SetRoadParts(float x, float y, float z, int column_step, int ro
     return 1;
 }
 
-#ifdef NON_MATCHING
 int CEditGround::DeleteMapParts(int *out_plot, int *out_rot_y, float x, float y, float z) {
     int area_code = GetAreaCode(x, y, z);
     if (area_code < 0) {
@@ -328,8 +327,8 @@ int CEditGround::DeleteMapParts(int *out_plot, int *out_rot_y, float x, float y,
         }
     }
     sceVu0FVECTOR position;
-    part->GetPosition(position);
-    area->DeleteMapParts(id, parts, (float) (1.0f + position[0]), position[1], 1.0f + position[2]);
+    parts[id].GetPosition(position);
+    area->DeleteMapParts(id, parts, (float) (1.0f + position[0]), position[1], (float) (1.0f + position[2]));
     if (parts[id].subtype == 2) {
         SetRiverParts(position[0], position[1], position[2], 1, 0);
         SetRiverParts(position[0], position[1], position[2], 0, 1);
@@ -344,13 +343,10 @@ int CEditGround::DeleteMapParts(int *out_plot, int *out_rot_y, float x, float y,
     }
     *out_plot = parts[id].parts_no;
     *out_rot_y = parts[id].rot_y;
-    part->Initialize();
+    parts[id].Initialize();
     parts[id].handle = -1;
     return id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", DeleteMapParts__11CEditGroundFPiPifff);
-#endif
 
 int CEditGround::GetAreaCode(float x, float y, float z) {
     for (int i = 0; i < 4; i++) {
