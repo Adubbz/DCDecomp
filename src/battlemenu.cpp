@@ -727,8 +727,8 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     if (max_whp < 1.0f) {
         max_whp = 1.0f;
     }
-    int water = (int) status->stat_float_b[chara];
-    int max_water = (int) status->stat_float_a[chara];
+    int water = (int) status->water[chara];
+    int max_water = (int) status->max_water[chara];
     float values[4] = {hp, max_hp, whp, max_whp};
     MGFillBox(CRect_i_((bar_x - 3) * 16, ((bar_y - 2) >> 1) * 16, 0x3A0, 0x30), 0x14, 0x14, 0x14, alpha);
     int hp_len = (int) (52.0f * hp / max_hp);
@@ -815,7 +815,7 @@ void DngComStatus(int x, int y, int chara, int alpha) {
         y += 0x10;
         row_y += 0x10;
     }
-    int drops = (int) BtlMenuStatusPt->stat_float_a[chara] / 10;
+    int drops = (int) BtlMenuStatusPt->max_water[chara] / 10;
     int drop_x = left + 0x12;
     for (int i = 0; i < drops - 1; i++) {
         DrawMenu2DSprite(texture, CRect_i_(drop_x, y + 5, 0x12, 0x13), CRect_i_(0x22, 0x9C, 0x12, 0x14), alpha);
@@ -823,12 +823,12 @@ void DngComStatus(int x, int y, int chara, int alpha) {
     }
     DrawMenu2DSprite(texture, CRect_i_(drop_x, y + 5, 0x18, 0x14), CRect_i_(0x34, 0x9C, 0x18, 0x14), alpha);
     int water_alpha = (alpha * 0x50) >> 7;
-    int full_drops = (int) BtlMenuStatusPt->stat_float_b[chara] / 10;
+    int full_drops = (int) BtlMenuStatusPt->water[chara] / 10;
     for (int i = 0; i < full_drops; i++) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + i * 0x12, y, 0x10, 0x14), CRect_i_(0, 0x88, 0x10, 0x14),
                          water_alpha);
     }
-    int rest = (int) BtlMenuStatusPt->stat_float_b[chara] % 10;
+    int rest = (int) BtlMenuStatusPt->water[chara] % 10;
     if (rest != 0) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + full_drops * 0x12, y, 0x10, 0x14),
                          CRect_i_((3 - (int) ((float) rest / 2.5f)) * 16, 0x88, 0x10, 0x14), water_alpha);
@@ -6709,7 +6709,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
         DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x22, draw_y, durability_width, 0x10), bar_src, alpha);
         DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x1A + durability_width, draw_y, 0xA, 0x10),
                          CRect_i_(0x158, 0, 0xA, 0x10), alpha);
-        float thirst_value = BtlMenuStatusPt->stat_float_a[chara];
+        float thirst_value = BtlMenuStatusPt->max_water[chara];
         int thirst = thirst_value / 10.0f;
         draw_x = x + 0x1E;
         draw_y = y + 0x62;
@@ -6778,13 +6778,13 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
         DrawStatusNumberNowAndMax(values, draw_x, draw_y, 1, alpha);
         draw_x = x + 0x20;
         draw_y = y + 0x60;
-        int drops = (int) BtlMenuStatusPt->stat_float_b[chara] / 10;
+        int drops = (int) BtlMenuStatusPt->water[chara] / 10;
         for (int i = 0; i < drops; i++) {
             DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y, 0x10, 0x14), CRect_i_(0x128, 0x2C, 0x10, 0x14),
                              alpha);
             draw_x += 0x12;
         }
-        drops = (int) BtlMenuStatusPt->stat_float_b[chara] % 10;
+        drops = (int) BtlMenuStatusPt->water[chara] % 10;
         if (drops != 0) {
             DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y, 0x10, 0x14),
                              CRect_i_(0x128 + (3 - (int) (drops / 2.5f)) * 0x10, 0x2C, 0x10, 0x14), alpha);
