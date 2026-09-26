@@ -1129,11 +1129,16 @@ int BoardModeChangeKey() {
 }
 #ifdef NON_MATCHING
 void PersonalBoardLimmitCheck() {
-    int *cursor = &PerBoardPt->cursor;
-    int max = PersonalRetMax(PerBoardPt->page);
-
-    int rows = max / 5;
-    int last_top = rows - 4;
+    int *cursor;
+    int max;
+    int rows;
+    int top_row;
+    int last_top;
+    cursor = &PerBoardPt->cursor;
+    max = PersonalRetMax(PerBoardPt->page);
+    top_row = PerBoardPt->top_row;
+    rows = max / 5;
+    last_top = rows - 4;
 
     if (last_top < 0) {
         last_top = 0;
@@ -1143,8 +1148,9 @@ void PersonalBoardLimmitCheck() {
             *cursor -= 5;
         }
         PerBoardPt->top_row = *cursor / 5 - 3;
-        if (PerBoardPt->top_row < 0) {
-            PerBoardPt->top_row = 0;
+        int *top = &PerBoardPt->top_row;
+        if (*top < 0) {
+            *top = 0;
         }
         PerBoardPt->y = 0x7F - PerBoardPt->top_row * 0x28;
         if (rows <= 0) {
@@ -1153,7 +1159,7 @@ void PersonalBoardLimmitCheck() {
         PerBoardPt->scroll = 140.0f + 114.0f * PerBoardPt->top_row / rows;
         return;
     }
-    if (last_top < PerBoardPt->top_row) {
+    if (last_top < top_row) {
         if (last_top < 0) {
             last_top = 0;
         }
