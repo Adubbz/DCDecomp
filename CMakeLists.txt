@@ -234,7 +234,8 @@ carve_part(main.bss.part5.s
            main.bss.part5b.s=1D3D1D0-1D3DD20
            main.bss.part5d.s=1D48FB0-1D4A430
            main.bss.part5g.s=1D4A480-1D4A4D0
-           main.bss.part5h.s=1D4A630-1D569A0)
+           main.bss.part5h.s=1D4A630-1D54940
+           main.bss.part5h-1D54950.s=1D54950-1D569A0)
 carve_part(main.sbss.part3.s
            main.sbss.part3.s=2A24FC-2A2500)
 carve_part(main.sbss.part4.s
@@ -315,7 +316,7 @@ carve_part(main.data.part4.s
            main.data.part4j.s=269494-269498
            main.data.part4j-2694A8.s=269880-269930
            main.data.part4g.s=26A5E8-26A640
-           main.data.part4g-26A650.s=26A650-26A690
+           main.data.part4g-26A650.s=26A650-26A670
            main.data.part4g-26A6A0.s=26A6A0-26A6B0
            main.data.part4g-26A6A0-26A770.s=26A770-26A7B0
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10

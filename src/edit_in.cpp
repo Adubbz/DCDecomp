@@ -1094,7 +1094,6 @@ static void StepWater() {
  * @address 0x19DCF0
  * @size 0x38C
  */
-#ifdef NON_MATCHING
 static void MoveCharacter() {
     sceVu0FVECTOR follow;
     static sceVu0FVECTOR fix_pos;
@@ -1112,7 +1111,7 @@ static void MoveCharacter() {
     EdMoveCharaInfo.unk_a0 = 0;
     EdMoveChara();
     if (EdDebugCameraFlag != 0 && GamePad.Down(0x20) != 0) {
-        fix_camera = fix_camera == 0;
+        fix_camera = !fix_camera;
         MainCamera.GetPos(fix_pos);
     }
     if (fix_camera != 0) {
@@ -1132,13 +1131,15 @@ static void MoveCharacter() {
         return;
     }
     if (EdMoveCharaInfo.unk_a0 == 0 && EdPadDown(0x40, 1) != 0) {
-        sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR start = {-40.5f, 0.0f, -12.55f, 1.0f};
         sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
         Chara->GetPosition(position);
         Chara->GetRotation(rotation);
-        EPARTS_FUNC_DATA *jump = SearchMapJump(position, rotation);
-        if (jump != NULL) {
+        EPARTS_FUNC_DATA *jump;
+        if (jump = SearchMapJump(position, rotation)) {
             int motion;
+
             EdMoveCharaInit();
             motion = 0;
             door_open_cnt = 140;
@@ -1157,9 +1158,6 @@ static void MoveCharacter() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCharacter__Fv);
-#endif
 /**
  * Applies the right stick to the interior camera, holding its height and distance in
  * range.

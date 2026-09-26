@@ -518,6 +518,8 @@ SECTIONS
         main.data.part4g.s.o (.data)   // 0x0026a5e8
         edit_in.cpp.o (.edit_in-c458) // 0x0026a640 @458
         main.data.part4g-26A650.s.o (.data) // 0x0026a650
+        edit_in.cpp.o (.edit_in-c1141) // 0x0026a670 @1141
+        edit_in.cpp.o (.edit_in-c1142) // 0x0026a680 @1142
         edit_in.cpp.o (.edit_in-camera_distance_1155) // 0x0026a690 camera_distance$1155
         . = ALIGN(8);
         main.data.part4g-26A6A0.s.o (.data) // 0x0026a6a0
@@ -1035,6 +1037,8 @@ SECTIONS
 		main.bss.part5g.s.o (.bss)     // 0x01d4a480
 		editloop3.cpp.o (.edbss5)      // 0x01d4a4d0
 		main.bss.part5h.s.o (.bss)     // 0x01d4a630
+		edit_in.cpp.o (.edit_in-fixpos) // 0x01d54940 fix_pos$1123
+		main.bss.part5h-1D54950.s.o (.bss) // 0x01d54950
 		dungeonmap.cpp.o (.bss)
 		main.bss.part6.s.o (.bss)
 		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl, then MonsterTexAnim

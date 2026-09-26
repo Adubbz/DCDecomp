@@ -557,28 +557,37 @@
     ],
     "sections": {
       ".edit_in-c1641": [
-        "@410"
+        "@438"
       ],
       ".edit_in-c1637__2": [
-        "@406"
+        "@434"
       ],
       ".edit_in-c1639__2": [
-        "@408"
+        "@436"
       ],
       ".edit_in-camera_distance_1155": [
         "camera_distance$1155"
       ],
       ".edit_in-c1538": [
-        "@333"
+        "@361"
       ],
       ".edit_in-c1563": [
-        "@358"
+        "@386"
       ],
       ".edit_in-texdata_1374": [
         "texdata$1374"
       ],
       ".edit_in-c458": [
         "@161"
+      ],
+      ".edit_in-c1141": [
+        "@225"
+      ],
+      ".edit_in-c1142": [
+        "@226"
+      ],
+      ".edit_in-fixpos": [
+        "fix_pos$1123"
       ]
     }
   },
