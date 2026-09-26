@@ -725,7 +725,7 @@
         "init$1907"
       ],
       ".edsuffix": [
-        "@1048"
+        "@1212"
       ],
       ".editloop-time_flag_2188": [
         "time_flag$2188"
@@ -740,10 +740,10 @@
         "init$2228"
       ],
       ".editloop-c2232": [
-        "@925"
+        "@1089"
       ],
       ".editloop-c2233": [
-        "@926"
+        "@1090"
       ],
       ".editloop-now_obj_2241": [
         "now_obj$2241"
@@ -752,10 +752,10 @@
         "init$2242"
       ],
       ".editloop-c2597": [
-        "@1241"
+        "@1405"
       ],
       ".editloop-c2598": [
-        "@1242"
+        "@1406"
       ],
       ".editloop-camera_dist_mode_2599": [
         "camera_dist_mode$2599"
@@ -764,10 +764,10 @@
         "init$2600"
       ],
       ".editloop-c2602": [
-        "@1246"
+        "@1410"
       ],
       ".editloop-c2625": [
-        "@1268"
+        "@1432"
       ],
       ".editloop-parts_no_2646": [
         "parts_no$2646"
@@ -776,13 +776,13 @@
         "init$2647"
       ],
       ".editloop-c2743": [
-        "@1364"
+        "@1528"
       ],
       ".editloop-c2744": [
-        "@1365"
+        "@1529"
       ],
       ".editloop-c2757": [
-        "@1378"
+        "@1542"
       ]
     },
     "rekey_sections": [
@@ -831,7 +831,8 @@
       "@2850",
       "@2851",
       "@2852",
-      "@2853"
+      "@2853",
+      "@2122"
     ],
     "globalize_symbols": [
       "RunEvent__FiP7CCamera",
