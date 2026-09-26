@@ -616,10 +616,10 @@ static void draw_ok(int x) {
     }
     if ((ok_draw_cnt / 3) % 2 != 0) {
         int width = texel->width;
-        int half = width >> 1;
-        int left = 200 - half;
+        int left = 200 - (width >> 1);
         int height = texel->height;
         CRect_i_ result_screen(left, 318 - height, width, height);
+
         set2DSprite(GetVif1Packet(), tex2, result_screen, texel->x, texel->y);
     }
 
@@ -632,11 +632,12 @@ static void draw_ok(int x) {
         int half = width >> 1;
         int left = base + (int) offset[0] - half;
         int height = texel->height;
-        int top = (int) offset[1] + 0x160 - (height + 2);
+        int top = (int) offset[1] + 0x160;
+        top = top - height - 2;
         int alpha = 0x80 - (int) ((float) (30 - ok_draw_cnt * 2) * 128.0 / 30.0);
         if (alpha > 0) {
             CRect_i_ screen(left, top, width, height);
-            set2DSprite(GetVif1Packet(), tex, screen, *texel, (unsigned char) alpha);
+            set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
         }
     }
 }
