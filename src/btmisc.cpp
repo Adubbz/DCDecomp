@@ -47,12 +47,6 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) 
     }
     return (CFrame *) LoadMDSFile(file, buffer, 0, NULL, NULL);
 }
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @887__4);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @888__3);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @889__3);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @890__3);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @891__3);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @892__3);
 CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
     int size;
     unsigned int *file = GetPackFile(pack, name, &size);
@@ -104,16 +98,17 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position) {
  * @address 0x1B6F80
  * @size 0x198
  */
-#ifdef NON_MATCHING
 void makeWeaponName(char *name, int weapon_no) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
     int first[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
-    char number[32];
+    char number[16];
     int chara_no = 0;
 
     if (weapon_no >= 0x101) {
         if (weapon_no >= 0x101 && weapon_no < 0x12B) {
+            chara_no = 0;
         }
+
         if (weapon_no >= 0x12B && weapon_no < 0x13A) {
             chara_no = 1;
         }
@@ -140,12 +135,6 @@ void makeWeaponName(char *name, int weapon_no) {
     }
     strcat(name, number);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", makeWeaponName__FPci);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @919__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @920__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
 /**
  * Builds the model and texture paths of one item.
  *
@@ -179,7 +168,6 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
 extern char nameWepBuff_mds[];
 extern char nameWepBuff_img[];
 
-#ifdef NON_MATCHING
 void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
     char number[32];
@@ -199,28 +187,19 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     strcpy(name, nameWepBuff_mds);
     strcpy(path, nameWepBuff_img);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath2__FPcPcii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @946);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @947);
 #ifdef NON_MATCHING
-void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
-    static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+extern int defWeapon[6];
 
-    if (weapon_no < 0x101) {
+void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
+    WEAPON_DATA *weapon;
+    int chara_no;
+    if (weapon_no <= 0x100 || (weapon = GetWeaponData(weapon_no)) == NULL) {
         return;
     }
-
-    WEAPON_DATA *weapon = GetWeaponData(weapon_no);
-    if (weapon != NULL) {
-        // The identifier counts on from the first weapon of the chain.
-        int chara_no = weapon->owner;
-        int offset = weapon_no - defWeapon[chara_no];
-
-        printf("offset %d\n", offset);
-        BtGetWeaponNamePath2(name, effect_name, chara_no, offset);
-    }
+    chara_no = (s8) weapon->owner;
+    weapon_no -= defWeapon[chara_no];
+    printf("offset %d\n", weapon_no);
+    BtGetWeaponNamePath2(name, effect_name, chara_no, weapon_no);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath3__FPcPci);

@@ -540,6 +540,9 @@ SECTIONS
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0
         main.data.motionmodel-gap.s.o (.data) // 0x0026b1c8
         main.data.motionmodel-b.s.o (.data) // 0x0026b1d0
+        btmisc.cpp.o (.data)         // 0x0026b1f0 makeWeaponName's and BtGetWeaponNamePath2's tables
+        . = ALIGN(0x10);
+        main.data.motionmodel-b-26B250.s.o (.data) // 0x0026b250
         weaponelement.cpp.o (.data)  // 0x0026b2c0
         btsysscript.cpp.o (.data)    // 0x0026b2e0
         main.data.part4d.s.o (.data) // 0x0026b310
