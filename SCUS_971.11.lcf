@@ -669,6 +669,9 @@ SECTIONS
         editmenu.cpp.o (.data)       // 0x00293ca0
         . = ALIGN(0x10);
         main.data.editmenu-after.s.o (.data) // 0x00293cd0
+        editmenu.cpp.o (.editmenu-c627) // 0x00293d20 @627__4
+        editmenu.cpp.o (.editmenu-c646) // 0x00293d38 @646__4
+        . = ALIGN(16);
         memorycardaccess.cpp.o (.data) // 0x00293d50
         memcard.cpp.o (.data) // 0x00293e40
         main.data.memcard-a.s.o (.data) // 0x00293ebc
@@ -839,6 +842,8 @@ SECTIONS
 		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20d8
 		editmenu.cpp.o (.sdata)        // 0x002a2100
 		main.sdata.editmenu-after.s.o (.sdata) // 0x002a2120
+		editmenu.cpp.o (.editmenu-c630) // 0x002a2138 @630__5
+		main.sdata.editmenu-after-2A2140.s.o (.sdata) // 0x002a2140
 		memcard.cpp.o (.sdata) // 0x002a2150
 		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
 		menu_dungeon.cpp.o (.sdata) // 0x002a2190 @1730, @1732

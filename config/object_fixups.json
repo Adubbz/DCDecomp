@@ -1945,5 +1945,38 @@
         "@220"
       ]
     }
+  },
+  "src/editmenu.cpp": {
+    "sections": {
+      ".editmenu-c627": [
+        "@207"
+      ],
+      ".editmenu-c646": [
+        "@226"
+      ],
+      ".editmenu-c630": [
+        "@210"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".editmenu-c627",
+        [
+          24
+        ]
+      ],
+      [
+        ".editmenu-c630",
+        [
+          8
+        ]
+      ],
+      [
+        ".editmenu-c646",
+        [
+          12
+        ]
+      ]
+    ]
   }
 }
