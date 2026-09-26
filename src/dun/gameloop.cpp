@@ -3915,7 +3915,7 @@ void MoveChara(void) {
                                                                 }
                                                                 if (info.unk_60 != 0) {
                                                                     BtActStatus.unk_044 =
-                                                                        pos[1] - info.ground_height;
+                                                                        pos[1] - info.ground_point[1];
                                                                 }
                                                             } else {
                                                                 sceVu0FVECTOR moved;
@@ -4031,7 +4031,7 @@ void MoveChara(void) {
                                                                 }
                                                                 if (info.unk_60 != 0) {
                                                                     BtActStatus.unk_044 =
-                                                                        pos[1] - info.ground_height;
+                                                                        pos[1] - info.ground_point[1];
                                                                 }
                                                             }
                                                         } else {
@@ -4813,7 +4813,7 @@ void MoveChara(void) {
                         BtActStatus.unk_092 = foot.attr.ground_kind;
                     }
                     if (info.unk_60 != 0) {
-                        BtActStatus.unk_044 = pos[1] - info.ground_height;
+                        BtActStatus.unk_044 = pos[1] - info.ground_point[1];
                     }
                     CharaMain.SetPosition(pos);
                     if (pos[1] <= -30.0f) {

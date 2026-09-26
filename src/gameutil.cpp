@@ -1091,7 +1091,7 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
             out_info->ground_poly = poly;
             out_info->poly = poly;
             out_info->unk_60 = 1;
-            *(u_long128 *) out_info->unk_c0 = *(u_long128 *) hit;
+            *(u_long128 *) out_info->ground_point = *(u_long128 *) hit;
             if (!(hit[1] <= from[1] + velocity[1] - 4.0f - drop)) {
                 out_info->unk_00 = 1;
                 if (poly.normal[1] < 0.5f && !(poly.normal[1] <= -0.5f)) {

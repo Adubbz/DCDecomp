@@ -413,9 +413,7 @@ struct MoveCheckInfo {
     s32 unk_60;         /**< 1 where the step found ground below it. */
     u8 unk_64[0xC];
     CCPoly poly; /**< Polygon that the step landed on. */
-    u8 unk_c0[0x4];
-    float ground_height; /**< Height of the ground below the step. */
-    u8 unk_c8[0x8];
+    sceVu0FVECTOR ground_point; /**< Point where the step found ground below it. */
 };
 
 STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);
