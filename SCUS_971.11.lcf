@@ -737,8 +737,7 @@ SECTIONS
         . = ALIGN(0x10);
         battle_globals.cpp.o (.nameenterdata1) // 0x00295a10 DrawNameTemplete's tab tables, CheckName's reserved names
         . = ALIGN(0x10);
-        battle_globals.cpp.o (.nameenterdata2) // 0x00295aa0 NameEnterDraw local tables
-        main.data.battle_globals-gap.s.o (.data) // 0x00295b18
+        battle_globals.cpp.o (.nameenterdata2) // 0x00295aa0 NameEnterDraw's and NameEnterKey's local tables
         battle_globals.cpp.o (.nameenterdata3) // 0x00295b50 NameDefaultSet's default names
         . = ALIGN(0x10);
         main.data.battle_globals-b.s.o (.data) // 0x00295ef0
@@ -1022,6 +1021,11 @@ SECTIONS
 		menu_dungeon.cpp.o (.sbss) // 0x002a2f60, DunEnterDraw's counter and guard
 		. = ALIGN(4);
 		main.sbss.denter-tail.s.o (.sbss) // 0x002a2f68
+		battle_globals.cpp.o (.nameenterkey-up_or_down_942) // 0x002a2fc4 up_or_down$942
+		. = ALIGN(4);
+		battle_globals.cpp.o (.nameenterkey-init_943) // 0x002a2fc8 init$943
+		. = ALIGN(4);
+		main.sbss.battle_globals-tail.s.o (.sbss) // 0x002a2fcc
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
 		main.sbss.part5b.s.o (.sbss)   // 0x002a2fd8
