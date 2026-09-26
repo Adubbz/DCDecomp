@@ -696,7 +696,7 @@ SECTIONS
         memcard.cpp.o (.memcard-c2683) // 0x00293fd0 @2683
         menu_save.cpp.o (.data) // 0x00293fe0
         . = ALIGN(0x10);
-        main.data.menu_save-b.s.o (.data) // 0x00294110
+        main.data.menu_save-b.s.o (.data) // 0x00294140
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         main.data.part6g.s.o (.data) // 0x002941c0

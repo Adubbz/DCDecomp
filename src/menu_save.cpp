@@ -1096,11 +1096,15 @@ extern int MiniEventTexReadFlag;
 
 /** Texture of the cursor frame. */
 extern CTexture *StayTex;
-#ifdef NON_MATCHING
+
+/** Board texture of the event item selection menu. */
 extern CTexture *MiniEventBoard;
+
+/** Board texture of the fish food selection menu. */
 extern CTexture *FishFoodBoard;
+
+/** Icon sheet of the consumable items. */
 extern CTexture *ItemIcon;
-#endif
 
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
     int i;
@@ -1200,7 +1204,7 @@ int EventItemSelectLoop(int *result) {
     }
     return ret;
 }
-#ifdef NON_MATCHING
+
 static int EventItemSelectKey(int *result) {
     int done;
     int last;
@@ -1332,22 +1336,21 @@ static int EventItemSelectKey(int *result) {
             item++;
         }
     }
-    int message = item != NULL ? (0 < *item ? *item + 500 : 0) : 0;
+    int message;
+    if (item != NULL) {
+        if (0 < *item) {
+            message = *item + 500;
+        } else {
+            message = 0;
+        }
+    } else {
+        message = 0;
+    }
     if (CommonMenuMes2.mes_made != message) {
         CommonMenuMes2.MakeMesWin(message);
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectKey__FPi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3548);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3549);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3550);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3551);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3552);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3553);
-INCLUDE_RODATA("asm/nonmatchings/menu_save", @3554);
 
 static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int width, int unused, int alpha) {
     int y = rect.y;
