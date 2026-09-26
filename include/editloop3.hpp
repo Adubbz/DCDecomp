@@ -418,15 +418,6 @@ int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count);
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count);
 
 /**
- * Stores the editor ground's event clipping plane from script arguments.
- *
- * @mangled _SET_CLIP_POINT__FP12RS_STACKDATAi
- * @address 0x1931F0
- * @size 0x8C
- */
-int _SET_CLIP_POINT(RS_STACKDATA *stack, int argument_count);
-
-/**
  * Pushes whether an editor action-sequence slot has finished onto the script stack.
  *
  * @mangled _ASQ_CHECK__FP12RS_STACKDATAi

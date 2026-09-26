@@ -5081,7 +5081,10 @@ static int _DRAW_SHADOW(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
+/**
+ * Stores the editor ground's event clipping plane from script arguments.
+ */
+static int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR plane;
     GetPosition(stack, plane);
     stack += 3;
