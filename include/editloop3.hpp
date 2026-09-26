@@ -418,15 +418,6 @@ int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count);
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count);
 
 /**
- * Pushes the active conversation villager's event status onto the script stack.
- *
- * @mangled _GET_TALKNPC_STATUS__FP12RS_STACKDATAi
- * @address 0x191530
- * @size 0x74
- */
-int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int argument_count);
-
-/**
  * Stores the editor ground's event clipping plane from script arguments.
  *
  * @mangled _SET_CLIP_POINT__FP12RS_STACKDATAi

@@ -4505,7 +4505,10 @@ static int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
+/**
+ * Pushes the active conversation villager's event status onto the script stack.
+ */
+static int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     int index = EdEventInfo.talk_npc_id;
     int status = 0;
     if (index >= 0 && index < EdEventInfo.npc_count) {
