@@ -440,9 +440,9 @@ void BtAtraListMake(int dungeon) {
         }
     }
     for (int j = 0; j < count; j++) {
-        UserStatus->atra_data[dungeon][j].unk_00 = appear[j].id;
-        UserStatus->atra_data[dungeon][j].unk_04 = appear[j].floor;
-        UserStatus->atra_data[dungeon][j].unk_08 = appear[j].count;
+        UserStatus->atra_data[dungeon][j].id = appear[j].id;
+        UserStatus->atra_data[dungeon][j].floor = appear[j].floor;
+        UserStatus->atra_data[dungeon][j].refcount = appear[j].count;
     }
 }
 #else
@@ -468,9 +468,9 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     int center = CenterFloorTbl[dungeon];
     ((CDngStatusData *) UserStatus)->SetCopyAtraList(dungeon, floor, atra);
     for (int j = 0; j < 100; j++) {
-        registry[j].id = UserStatus->atra_data[dungeon][j].unk_00;
-        registry[j].floor = UserStatus->atra_data[dungeon][j].unk_04;
-        registry[j].refcount = UserStatus->atra_data[dungeon][j].unk_08;
+        registry[j].id = UserStatus->atra_data[dungeon][j].id;
+        registry[j].floor = UserStatus->atra_data[dungeon][j].floor;
+        registry[j].refcount = UserStatus->atra_data[dungeon][j].refcount;
     }
     int half = -1;
     if (floor > center - 1) {

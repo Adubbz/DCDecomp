@@ -4528,7 +4528,7 @@ void MoveChara(void) {
                         int atra_no = NowDngMap->atra[i].atra_no;
 
                         if (atra_no != -1) {
-                            int atra = UserStatus->atra_data[selectMapNo][atra_no].unk_00;
+                            int atra = UserStatus->atra_data[selectMapNo][atra_no].id;
 
                             getAtraToSaveData(atra, atra_no, SaveData, selectMapNo,
                                               UserStatus->cur_floor);
