@@ -1094,17 +1094,11 @@ extern int EventItemMoveY;
 /** Nonzero once the event item selection menu's textures have loaded. */
 extern int MiniEventTexReadFlag;
 
-/** Texture of the cursor frame. */
-extern CTexture *StayTex;
-
 /** Board texture of the event item selection menu. */
 extern CTexture *MiniEventBoard;
 
 /** Board texture of the fish food selection menu. */
 extern CTexture *FishFoodBoard;
-
-/** Icon sheet of the consumable items. */
-extern CTexture *ItemIcon;
 
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
     int i;

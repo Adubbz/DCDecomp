@@ -95,9 +95,6 @@ extern CDataAlloc2<1> EdMenuBuffer;
 /** Steps item volumes for the menus. */
 extern CMenuItemStep ItemVolumeStep;
 
-/** Texture of the frame drawn while a menu waits for its data. */
-extern CTexture *StayTex;
-
 /** Arena the shopkeeper's model and the item shop's board tables are read into. */
 extern CDataAlloc2<1> ShopCashBuffer;
 
@@ -106,12 +103,6 @@ extern CDataAlloc2<1> ShopCashBuffer2;
 
 /** Texture the shop board frame, tags and tickets are drawn from. */
 extern CTexture *ShopBoard;
-
-/** Icon sheet of the consumable items. */
-extern CTexture *ItemIcon;
-
-/** Icon sheet of the weapons. */
-extern CTexture *WepIcon;
 
 /** Per-slot state (0 = empty, 1 = held, 2 = just moved) of the personal item board. */
 extern s32 *ItemBoardInfo;

@@ -39,7 +39,6 @@
 #include "weaponlevelup.hpp"
 
 extern s32 BtlMenuMode;
-extern CTexture *WepIcon;
 extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
 extern u_long128 *WepMenuEffectReadBuf;

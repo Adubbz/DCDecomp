@@ -47,12 +47,6 @@ extern s8 MenuTrushMark[100];
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
-/** Icon sheet of the consumable items. */
-extern CTexture *ItemIcon;
-
-/** Icon sheet of the weapons. */
-extern CTexture *WepIcon;
-
 /** Texture of the personal inventory board. */
 extern CTexture *PerBoardTex;
 
@@ -61,9 +55,6 @@ extern int ItemMenuWeaponIconReadBlock;
 
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
-
-/** Frame texture the main menu draws its icons in. */
-extern CTexture *StayTex;
 
 #include "sysmes.hpp"
 

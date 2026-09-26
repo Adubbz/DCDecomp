@@ -170,24 +170,9 @@ extern CTexture *WepStatus;
 extern CTexture *MenuCharaFace;
 
 /**
- * Texture the weapon icons are drawn from.
- */
-extern CTexture *WepIcon;
-
-/**
- * Texture the item icons are drawn from.
- */
-extern CTexture *ItemIcon;
-
-/**
  * Texture the personal boards are drawn from.
  */
 extern CTexture *PerBoardTex;
-
-/**
- * Texture the frames and digits are drawn from.
- */
-extern CTexture *StayTex;
 
 /**
  * Points to the item pack the battle menu shows.
