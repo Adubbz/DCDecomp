@@ -13,21 +13,21 @@
         "@1007"
       ],
       ".shopdata-filenames": [
-        "@1707",
-        "@1708",
-        "@1728"
+        "@1734",
+        "@1735",
+        "@1755"
       ],
       ".shopdata-ticket": [
-        "@1577"
+        "@1604"
       ],
       ".shopdata-buymoney": [
-        "@1241"
+        "@1268"
       ],
       ".shopdata-checkbuy-a": [
-        "@1340"
+        "@1367"
       ],
       ".shopdata-checkbuy-b": [
-        "@1341"
+        "@1368"
       ],
       ".shopdata-local-a": [
         "@1034"
@@ -36,7 +36,7 @@
         "@1035"
       ],
       ".shopdata-fishrec": [
-        "@1873"
+        "@1900"
       ]
     },
     "rekey_sections": [

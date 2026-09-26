@@ -1378,21 +1378,22 @@ void InitChargeShop(int *state, int shop_no, int mode) {
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }
 
-#ifdef NON_MATCHING
 void ChargeShopLimmitCheck() {
     int max = ChargeShopMax[ShopMenu.board.page];
+    int top = ShopMenu.stock_top_row;
     int rows = max / 5;
     int last_top = rows - 4;
 
     if (last_top < 0) {
         last_top = 0;
     }
-    if (max - 1 < ShopMenu.board.cursor && ShopMenu.side == 0) {
+    int cursor = ShopMenu.board.cursor;
+    if (max - 1 < cursor && ShopMenu.side == 0) {
         while (ShopMenu.board.cursor >= max) {
             ShopMenu.board.cursor -= 5;
         }
         ShopMenu.stock_top_row = ShopMenu.board.cursor / 5 - 3;
-        if ((s8) ShopMenu.stock_top_row < 0) {
+        if (ShopMenu.stock_top_row < 0) {
             ShopMenu.stock_top_row = 0;
         }
         ShopMenu.stock_y = 0x8A - ShopMenu.stock_top_row * 0x28;
@@ -1402,7 +1403,7 @@ void ChargeShopLimmitCheck() {
         ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
         return;
     }
-    if (last_top < ShopMenu.stock_top_row) {
+    if (last_top < top) {
         while (last_top < ShopMenu.stock_top_row) {
             ShopMenu.stock_top_row--;
         }
@@ -1410,9 +1411,6 @@ void ChargeShopLimmitCheck() {
         ShopMenu.stock_scroll = 142.0f + 114.0f * ShopMenu.stock_top_row / rows;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ChargeShopLimmitCheck__Fv);
-#endif
 
 static void ExitChargeShop() {
     ShopMenuExit();
