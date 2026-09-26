@@ -578,6 +578,8 @@ SECTIONS
         main.data.shop-ticket.s.o (.data) // 0x00292840
         shop.cpp.o (.shopdata-filenames) // 0x00292850
         main.data.shop-filenames-after.s.o (.data) // 0x002929B0
+        shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
+        main.data.shop-filenames-after-292AE4.s.o (.data) // 0x00292ae4
         battlemenu.cpp.o (.battlemenu-texenter) // 0x00292eb0 @936__2
         battlemenu.cpp.o (.battlemenu-c959) // 0x00292ee0 @959
         . = ALIGN(16);

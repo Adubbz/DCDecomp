@@ -1,5 +1,9 @@
 {
   "src/shop.cpp": {
+    "symbols": {
+      "FishFrameImage": "@2948",
+      "FishMessageFile": "@2964"
+    },
     "sections": {
       ".shopdata-prefix": [
         "PriceList",
@@ -30,6 +34,9 @@
       ],
       ".shopdata-local-b": [
         "@1035"
+      ],
+      ".shopdata-fishrec": [
+        "@1873"
       ]
     },
     "rekey_sections": [
@@ -75,6 +82,12 @@
           144,
           64,
           144
+        ]
+      ],
+      [
+        ".shopdata-fishrec",
+        [
+          36
         ]
       ]
     ]

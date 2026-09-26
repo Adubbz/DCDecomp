@@ -5172,6 +5172,10 @@ void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
+/** The fishing screens' frame-buffer backdrop and message pack, shared with FishMenuTextureLoad. */
+extern char FishFrameImage[];
+extern char FishMessageFile[];
+
 /**
  * Leaves the fishing record view and releases its texture block.
  *
@@ -5186,26 +5190,30 @@ static void ExitFishRecord() {
     GamePad.MenuModeOff();
 }
 
-#ifdef NON_MATCHING
 void FishRecordTextureEnter() {
     if (ReadBGSync() != 0) {
         return;
     }
     BG_READ_INFO *file = GetReadBGFile(0);
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = FishRecordMenu.tex_block;
-    texture.name = (char *) GetPackFile((u_int *) file->buffer, "fishrec.img", NULL);
+    LOADTEXTURE_INFO2 texture[3] = {
+        {FishFrameImage, 0, 0},
+        {NULL, 0, 0},
+        {NULL, 0, 0},
+    };
+    texture[0].block_no = FishRecordMenu.tex_block;
+    texture[1].block_no = FishRecordMenu.tex_block;
+    texture[1].name = (char *) GetPackFile((u_int *) file->buffer, "fishrec.img", NULL);
     TexManager.DeleteTextureBlock(FishRecordMenu.tex_block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, texture);
     FishMenuTex = TexManager.GetTexture("fprecbrd", -1);
-    InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "fishmes.bin", NULL));
+    InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, FishMessageFile, NULL));
     CommonMenuMes2.mes_made = -1;
     AtoraNameMes.mes_made = -1;
     for (int i = 0; i < 5; i++) {
         SV_FISH_DATA *rank = GetFishingRankData(FishRecordMenu.top + i);
         if (rank != NULL) {
-            AtoraNameMes.mes_no[i] = GetFishMsgNo(*(s16 *) rank);
+            AtoraNameMes.mes_no[i] = GetFishMsgNo(*(int *) rank);
         } else {
             AtoraNameMes.mes_no[i] = 0;
         }
@@ -5214,11 +5222,6 @@ void FishRecordTextureEnter() {
     FishRecordMenu.cursor_y = 0x7E;
     FishRecordMenu.ready = 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", FishRecordTextureEnter__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shop", @3274);
-INCLUDE_RODATA("asm/nonmatchings/shop", @3275);
 
 /**
  * Handles one frame of fishing record input and returns the mode it leaves the view in.
