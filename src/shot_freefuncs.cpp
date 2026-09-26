@@ -12,7 +12,9 @@
 #include "dungeonmap.hpp"
 #include "healeffect.hpp"
 #include "hitvalue.hpp"
+#include "mathutil.hpp"
 #include "mglib.hpp"
+#include "monstorunit.hpp"
 #include "nowload.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
@@ -332,25 +334,58 @@ void StepWaterLing(void) {
  * @address 0x1AFE90
  * @size 0x1D0
  */
-#ifdef NON_MATCHING
-float SetBattleStyle(int map_no, int preserve_bgm) {
-    (void) map_no;
-    float nearest_distance = 10000.0f;
-    // The retail routine lowers the battle mix as the closest living monster approaches.
-    float battle_volume = nearest_distance < 60.0f ? 1.0f : 0.0f;
-    float ambient_volume = 1.0f - battle_volume;
-    if (preserve_bgm == 0) {
-        SndSetBgmVolf(battle_volume);
+/** Number of floors in each dungeon. */
+extern "C" int maxFloorTbl[7];
+
+void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volume);
+
+static inline int MonstorAliveCheck(int no, int alive) {
+    if (no >= 0 && no < 17) {
+        alive = NowMonstorUnit->monster[no].unk_0D4;
     }
-    SndAmbientSetVolf(ambient_volume);
-    if (ambient_volume > 0.0f) {
-        SndAmbientPlay(0);
-    }
-    return nearest_distance;
+    return alive;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", SetBattleStyle__Fii);
-#endif
+
+float SetBattleStyle(int map_no, int preserve_bgm) {
+    float nearest = 10000;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR player;
+    float bgm_volume;
+    float ambient_volume;
+    int alive;
+
+    sceVu0CopyVector(player, CharaMain.pos);
+    for (int i = 0; i < 16; i++) {
+        if (NowMonstorUnit->monster[i].state == -1) {
+            continue;
+        }
+        alive = MonstorAliveCheck(i, alive);
+        if (alive == 0) {
+            continue;
+        }
+        NowMonstorUnit->chara[i][0].GetPosition(position);
+        float distance = DistVector(player, position);
+        if (distance < nearest) {
+            nearest = distance;
+        }
+    }
+    if (map_no != 5) {
+        CUserStatus *status;
+        int floors = maxFloorTbl[map_no];
+        status = UserStatus;
+        if (status->cur_floor < floors - 1) {
+            BtBattleMusic_Excg(nearest, &bgm_volume, &ambient_volume);
+            if (ambient_volume > 0.0f) {
+                SndAmbientPlay(0);
+            }
+            if (preserve_bgm == 0) {
+                SndSetBgmVolf(bgm_volume);
+            }
+            SndAmbientSetVolf(ambient_volume);
+        }
+    }
+    return nearest;
+}
 /**
  * Draws a three-digit value out of the number sheet.
  *
