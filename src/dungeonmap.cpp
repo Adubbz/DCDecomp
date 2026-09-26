@@ -1198,6 +1198,7 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
     }
 }
 
+#ifdef NON_MATCHING
 /* 193 of 201 instructions. The small box's case is retail's. The large box's
  * differs only in where the two zero arguments to SetRotation are set up:
  * retail puts them in the load delay slot after the lid angle, ahead of the
@@ -1250,6 +1251,9 @@ void CDungeonMap::DrawItemBox(float *pos) {
         }
     }
 }
+#else
+INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawItemBox__11CDungeonMapFPf);
+#endif
 
 void CDungeonMap::DrawAtraBoll(float *pos) {
     float draw_pos[4];
