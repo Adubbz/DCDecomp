@@ -112,7 +112,11 @@
   "src/main.cpp": {
     "symbols": {
       "gamemode_empty_string": "@567",
-      "@1171": "@905"
+      "@1171": "@905",
+      "GeneratedTextureAnimeCtor": "__ct__13CTextureAnimeFP13CTexAnimeDatai",
+      "GeneratedObjectCtor": "__ct__7CObjectFf",
+      "GeneratedHitMarkVtable": "__vt__8CHitMark",
+      "GeneratedCharacterCtor": "__ct__10CCharacterFv"
     },
     "sections": {
       ".gamemodesdata": [

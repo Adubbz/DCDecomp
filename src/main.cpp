@@ -1519,6 +1519,16 @@ void CMajinBeem::Initialize() {
     active = 0;
     alphas[59] = 0.0f;
 }
+/* The constructors the compiler writes for arrays of these classes, written out by hand: the
+   compiler only emits them where an array needs one, which this unit's source no longer holds.
+   The names below stand for the compiler's own symbols (see config/object_fixups.json), which
+   this unit may not also declare under C linkage. */
+extern "C" void *GeneratedCharacterCtor(void *self);
+extern "C" void *GeneratedTextureAnimeCtor(void *self, CTexAnimeData *data, int count);
+extern "C" void *GeneratedObjectCtor(void *self, float mass);
+extern "C" void *GeneratedHitMarkVtable[];
+extern "C" void *__ct__7CObjectFv(void *self);
+
 /**
  * Constructs one map character slot.
  *
@@ -1526,19 +1536,10 @@ void CMajinBeem::Initialize() {
  * @address 0x143500
  * @size 0x30
  */
-#ifdef NON_MATCHING
-/* The compiler emits the constructor for arrays of slots. */
-#pragma push
-#pragma dont_inline on
-void DraftNpcModelArray() {
-    MAP_NPC_MODEL *models = new MAP_NPC_MODEL[16];
-    delete[] models;
+extern "C" void *__ct__13MAP_NPC_MODELFv(void *self) {
+    GeneratedCharacterCtor(self);
+    return self;
 }
-void DraftNpcModelArray();
-#pragma pop
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__13MAP_NPC_MODELFv);
-#endif
 /**
  * Constructs a character with no model, motion or texture animation.
  *
@@ -1574,19 +1575,9 @@ MotionParam::MotionParam() {}
  * @address 0x143620
  * @size 0x28
  */
-#ifdef NON_MATCHING
-/* The compiler emits the argument-less constructor for arrays of animations. */
-#pragma push
-#pragma dont_inline on
-void DraftTextureAnimeArray() {
-    CTextureAnime *animes = new CTextureAnime[16];
-    delete[] animes;
+extern "C" void *__ct__13CTextureAnimeFv(void *self) {
+    return GeneratedTextureAnimeCtor(self, NULL, 0);
 }
-void DraftTextureAnimeArray();
-#pragma pop
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
-#endif
 /**
  * Constructs an object at the origin with an identity transform.
  *
@@ -1594,19 +1585,9 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__13CTextureAnimeFv);
  * @address 0x143650
  * @size 0x28
  */
-#ifdef NON_MATCHING
-/* The compiler emits the argument-less constructor for arrays of objects. */
-#pragma push
-#pragma dont_inline on
-void DraftObjectArray() {
-    CObject *objects = new CObject[16];
-    delete[] objects;
+extern "C" void *__ct__7CObjectFv(void *self) {
+    return GeneratedObjectCtor(self, 1.0f);
 }
-void DraftObjectArray();
-#pragma pop
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
-#endif
 /**
  * Constructs a projectile effect.
  *
@@ -1614,19 +1595,12 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__7CObjectFv);
  * @address 0x143680
  * @size 0x54
  */
-#ifdef NON_MATCHING
-/* The compiler emits the constructor for arrays of projectile effects. */
-#pragma push
-#pragma dont_inline on
-void DraftShotEffectArray() {
-    CSHOT_EFFECT *effects = new CSHOT_EFFECT[16];
-    delete[] effects;
+extern "C" void *__ct__12CSHOT_EFFECTFv(void *self) {
+    GeneratedCharacterCtor((u_char *) self + 0x10);
+    u_char *array = (u_char *) self + 0x11C0;
+    __construct_array(array, (MWRuntimeObjectFunction) GeneratedCharacterCtor, NULL, 0x11B0, 8);
+    return self;
 }
-void DraftShotEffectArray();
-#pragma pop
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
-#endif
 /**
  * Constructs a hit marker.
  *
@@ -1634,19 +1608,11 @@ INCLUDE_ASM("asm/nonmatchings/main", __ct__12CSHOT_EFFECTFv);
  * @address 0x1436E0
  * @size 0x3C
  */
-#ifdef NON_MATCHING
-/* The compiler emits the constructor for arrays of hit markers. */
-#pragma push
-#pragma dont_inline on
-void DraftHitMarkArray() {
-    CHitMark *marks = new CHitMark[16];
-    delete[] marks;
+extern "C" void *__ct__8CHitMarkFv(void *self) {
+    __ct__7CObjectFv(self);
+    *(void **) ((u_char *) self + 0xA0) = GeneratedHitMarkVtable;
+    return self;
 }
-void DraftHitMarkArray();
-#pragma pop
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__8CHitMarkFv);
-#endif
 /**
  * Takes a run of quadwords out of the six-thousand-quadword arena.
  *
