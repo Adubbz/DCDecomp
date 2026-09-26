@@ -8470,7 +8470,6 @@ void MenuClsMes::Step() {
     }
 }
 
-#ifdef NON_MATCHING
 /**
  * Shifts a message line's x left by five pixels for each of its characters.
  */
@@ -8479,7 +8478,6 @@ static inline int MesLineX(int x, int len) {
 }
 
 void MenuClsMes::Draw1(int x, int y, int) {
-    int name_x;
     if (message != NULL && weapon != NULL) {
         int row_y = y;
         int option;
@@ -8530,10 +8528,10 @@ void MenuClsMes::Draw1(int x, int y, int) {
                     }
                 }
                 MenuTextureReload(message->tex_block);
-                name_x = x + 0xB;
+                x = (int) (x + 0xB);
                 row_y = y - option_count * 10;
                 for (option = 0; option < option_count; option++, row_y += left.height) {
-                    SetLinePos(message, option, MesLineX(name_x + 0x11, message->GetMesLen_system(message->mes_no[option])),
+                    SetLinePos(message, option, MesLineX(x + 0x11, message->GetMesLen_system(message->mes_no[option])),
                                row_y);
                 }
                 message->edge_alpha = alpha;
@@ -8542,6 +8540,3 @@ void MenuClsMes::Draw1(int x, int y, int) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", Draw1__10MenuClsMesFiii);
-#endif
