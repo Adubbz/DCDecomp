@@ -24,15 +24,15 @@
         "@1056"
       ],
       ".shopdata-filenames": [
-        "@1896",
-        "@1897",
-        "@1917"
+        "@1967",
+        "@1968",
+        "@1988"
       ],
       ".shopdata-buymoney": [
         "@1374"
       ],
       ".shopdata-fishrec": [
-        "@2137"
+        "@2208"
       ],
       ".shopdata-sellticket": [
         "@1766"
@@ -44,7 +44,7 @@
         "@1683"
       ],
       ".shopdata-fishtex": [
-        "@2029"
+        "@2100"
       ],
       ".shopdata-person": [
         "@1038",
@@ -54,13 +54,13 @@
         "@1272"
       ],
       ".shopdata-fishdraw": [
-        "@2057"
+        "@2128"
       ],
       ".shopdata-fishrecview-a": [
-        "@2201"
+        "@2272"
       ],
       ".shopdata-fishrecview-b": [
-        "@2213"
+        "@2284"
       ]
     },
     "rekey_sections": [

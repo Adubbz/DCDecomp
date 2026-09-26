@@ -290,15 +290,6 @@ int CheckSideKey2(void);
 void DrawSellTicket22(int, int, int, int, int);
 
 /**
- * Puts every marked good back where it came from.
- *
- * @mangled ShopCancelGoodReturn2__Fv
- * @address 0x1ECF90
- * @size 0x4E0
- */
-void ShopCancelGoodReturn2(void);
-
-/**
  * Builds the file name of a shopkeeper's model archive.
  *
  * @mangled ItemShopGetPacFileName__FiiPc

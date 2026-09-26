@@ -576,6 +576,8 @@ static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int cl
 
 static void ItemShopGoodInitialize(int shop_no);
 
+static void ShopCancelGoodReturn2();
+
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
 }
@@ -3101,18 +3103,31 @@ void DrawSellTicket22(int x, int y, int top, int bottom, int alpha) {
             break;
     }
 }
-#ifdef NON_MATCHING
-void ShopCancelGoodReturn2() {
+
+/**
+ * Puts every marked good back where it came from.
+ *
+ * @mangled ShopCancelGoodReturn2__Fv
+ * @address 0x1ECF90
+ * @size 0x4E0
+ */
+static void ShopCancelGoodReturn2() {
     int count = -1;
     int page = -1;
-    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
-    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+    s32 *info;
+    ATTACH_LIST *attach = (ATTACH_LIST *) ShopUserStatusPt->consumable_items;
+    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
+    WEAPON_HAVE *weapon;
+    int space;
+    int chara_no;
+    int slot_no;
 
+    // Gather every marked item, weapon and attachment into the work buffer.
     for (int i = 0; i < 100; i++) {
         if (ItemBoardInfo[i] == 1) {
             count++;
             ShopWorkBuf[count].item_no = pack->item[i];
-            *(int *) &ShopWorkBuf[count].data = pack->item_vol[i];
+            ShopWorkBuf[count].data.volume = pack->item_vol[i];
             pack->item[i] = 0;
             pack->item_vol[i] = 0;
             ItemBoardInfo[i] = 0;
@@ -3120,11 +3135,14 @@ void ShopCancelGoodReturn2() {
     }
     for (int i = 0; i < 60; i++) {
         if (WeaponBoardInfo[0][i] == 1) {
-            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[i / 10][i % 10];
-            int item_no = weapon->item_no;
-            if (item_no >= 0x101) {
+            chara_no = i / 10;
+            slot_no = i % 10;
+            CUserStatus *status = ShopUserStatusPt;
+            WEAPON_HAVE *row = status->chara_weapons[chara_no];
+            weapon = &row[slot_no];
+            if (weapon->item_no >= 0x101) {
                 count++;
-                ShopWorkBuf[count].item_no = item_no;
+                ShopWorkBuf[count].item_no = weapon->item_no;
                 memcpy(&ShopWorkBuf[count].data, weapon, sizeof(WEAPON_HAVE));
                 InitHaveWep(weapon);
                 WeaponBoardInfo[0][i] = 0;
@@ -3134,35 +3152,38 @@ void ShopCancelGoodReturn2() {
     for (int i = 0; i < 40; i++) {
         if (AttachBoardInfo[i] == 1 && attach != NULL) {
             count++;
-            ATTACH_LIST *list = (ATTACH_LIST *) &attach[i];
+            ATTACH_LIST *list = &attach[i];
             ShopWorkBuf[count].item_no = list->item_no;
             memcpy(&ShopWorkBuf[count].data, list, sizeof(ATTACH_LIST));
             InitHaveAttach(list);
             AttachBoardInfo[i] = 0;
         }
     }
+    // Put the goods on the shop board back on the board they came from.
     for (int i = 0; i < 30; i++) {
         if (ShopBoardInfo[i] == 2) {
             int item_no = ShopListPt[i].item_no;
             if (item_no >= 0x51) {
-                int space = GetBoardSpace(item_no, &page);
+                space = GetBoardSpace(item_no, &page);
                 if (space >= 0) {
-                    s32 *info;
                     switch (page) {
                         case 0:
                             pack->item[space] = item_no;
-                            pack->item_vol[space] = *(int *) &ShopListPt[i].data;
+                            pack->item_vol[space] = ShopListPt[i].data.param[0];
                             info = ItemBoardInfo;
                             break;
                         case 1: {
-                            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[space / 10][space % 10];
+                            chara_no = space / 10;
+                            slot_no = space % 10;
+                            WEAPON_HAVE *row = ((CUserStatus *) ShopUserStatusPt)->chara_weapons[chara_no];
+                            weapon = &row[slot_no];
                             memcpy(weapon, &ShopListPt[i].data, sizeof(WEAPON_HAVE));
                             weapon->item_no = item_no;
                             info = WeaponBoardInfo[0];
                             break;
                         }
                         case 2: {
-                            ATTACH_LIST *list = (ATTACH_LIST *) &attach[space];
+                            ATTACH_LIST *list = &attach[space];
                             memcpy(list, &ShopListPt[i].data, sizeof(ATTACH_LIST));
                             list->item_no = item_no;
                             info = AttachBoardInfo;
@@ -3176,10 +3197,11 @@ void ShopCancelGoodReturn2() {
             }
         }
     }
+    // Refill the emptied shop slots from the work buffer.
     int next = 0;
     for (int i = 0; i < 30; i++) {
         if (ShopListPt[i].item_no < 0x51) {
-            if (count < next) {
+            if (next > count) {
                 break;
             }
             ShopBoardInfo[i] = 1;
@@ -3189,9 +3211,6 @@ void ShopCancelGoodReturn2() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
-#endif
 
 /**
  * Chooses the line the shopkeeper says for the shop's current state.
