@@ -374,6 +374,24 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
                       float *camera_reference);
 
 /**
+ * Plays the sound one kind of door makes when it opens.
+ *
+ * @mangled EdDoorOpenSe__FiPf
+ * @address 0x172100
+ * @size 0x58
+ */
+void EdDoorOpenSe(int door_no, float *position);
+
+/**
+ * Plays the sound one kind of door makes when it closes.
+ *
+ * @mangled EdDoorCloseSe__FiPf
+ * @address 0x172160
+ * @size 0x58
+ */
+void EdDoorCloseSe(int door_no, float *position);
+
+/**
  * Selects the default depth-of-field parameters for a level.
  *
  * @mangled EdSetDOFLevel__Fi
@@ -419,6 +437,16 @@ void EdInitThunderEffect();
 void EdThunderEffect(int map, CEditGround *ground);
 
 /**
+ * Draws one editor character with its shadow, cursor and event state.
+ *
+ * @mangled EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO
+ * @address 0x1725F0
+ * @size 0x4C8
+ */
+void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CNPCharacter *npcs,
+                     int *npc_draw_masks, int draw_shadows, ED_EVENT_INFO *event);
+
+/**
  * Starts effects attached to the supplied map parts.
  *
  * @mangled EnterPartsEffect__FP9CMapPartsP16EPARTS_FUNC_DATAP16EDIT_EFFECT_INFOi
@@ -454,6 +482,15 @@ void EdSetUseItem(int *items);
  * @size 0x30
  */
 void EdGetItemFile(int item_no, char *model_path, char *texture_path);
+
+/**
+ * Draws the item the player is holding up.
+ *
+ * @mangled EdDrawItem__Fv
+ * @address 0x173380
+ * @size 0x58
+ */
+void EdDrawItem(void);
 
 /**
  * Returns the item selected by the editor menu.
@@ -781,13 +818,13 @@ int EdCheckViewMode(void);
 void EdCreateVillagerTable(EDIT_MAP_INFO *info);
 
 /**
- * Draws one event-point marker at the requested size.
+ * Draws the markers of the event points active at the given time.
  *
  * @mangled EdEventPointDraw__FP14ED_EVENT_POINTif
  * @address 0x184750
  * @size 0x300
  */
-void EdEventPointDraw(ED_EVENT_POINT *point, int kind, float size);
+void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time);
 
 /**
  * Gives back the motion a door plays for one state.
@@ -814,7 +851,6 @@ int EdInitEventParam(void);
  * @mangled EdInitEventPoint__FP9CMapPartsPsP16EPARTS_FUNC_DATAiP14ED_EVENT_POINTi
  * @address 0x183D50
  * @size 0x600
- * @unknownret
  */
 int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *funcs, int count, ED_EVENT_POINT *points, int max_points);
 
@@ -972,7 +1008,6 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
  * @mangled EdTalkMode__FP10CCharacterP13CCameraFollowiPi
  * @address 0x199090
  * @size 0xEBC
- * @unknownret
  */
 int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selection);
 

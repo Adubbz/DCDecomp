@@ -37,6 +37,24 @@ extern EDIT_IN_INFO *EdInInfo;
 extern CGroundWater Water[1];
 
 /**
+ * Builds everything one interior runs on: its data, models, script and camera.
+ *
+ * @mangled EditInInit__FfPc
+ * @address 0x19BE30
+ * @size 0x478
+ */
+int EditInInit(float time, char *name);
+
+/**
+ * Runs one frame of the interior and reports when it is to be left.
+ *
+ * @mangled EditInLoop__Fv
+ * @address 0x19C2B0
+ * @size 0x1014
+ */
+int EditInLoop();
+
+/**
  * Finds the map jump the player is standing on and facing.
  *
  * @mangled SearchMapJump__FPfPf

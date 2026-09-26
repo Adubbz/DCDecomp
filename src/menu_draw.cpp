@@ -47,12 +47,6 @@ extern s8 MenuTrushMark[100];
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
-/** Icon sheet of the consumable items. */
-extern CTexture *ItemIcon;
-
-/** Icon sheet of the weapons. */
-extern CTexture *WepIcon;
-
 /** Texture of the personal inventory board. */
 extern CTexture *PerBoardTex;
 
@@ -61,9 +55,6 @@ extern int ItemMenuWeaponIconReadBlock;
 
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
-
-/** Frame texture the main menu draws its icons in. */
-extern CTexture *StayTex;
 
 #include "sysmes.hpp"
 
@@ -296,8 +287,11 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     put_x -= size[2] >> 1;
     mes->text_x = put_x;
 }
-#ifdef NON_MATCHING
-static void ResetMenuMes(ClsMes *mes) {
+
+/**
+ * Resets a menu message window to its empty default layout.
+ */
+static inline void ResetMenuMes(ClsMes *mes) {
     mes->text_columns = 0x46;
     mes->text_rows = 10;
     mes->text_len = 0;
@@ -488,9 +482,6 @@ void InitMenuMesSet(int mode, short *buff) {
             return;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitMenuMesSet__FiPs);
-#endif
 
 void DrawMenuClsMes(ClsMes *message, int x, int y) {
     if (message != NULL) {
@@ -652,25 +643,27 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
         }
     }
 }
-#ifdef NON_MATCHING
 void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *name, int dim) {
     CTexture texture = *TexManager.GetTexture(name, -1);
     spRGBA left;
     spRGBA right;
 
-    texture.tex0 &= ~((u_long) 1 << 34);
+    // Retail tests the local copy's address, which is never null, so a missing texture is not caught here.
+    if (&texture == NULL) {
+        return;
+    }
+    ((sceGsTex0 *) &texture.tex0)->bits.tcc = 0;
     sceGsTexa texa = mgTexa;
     texa.AEM = 1;
     texa.TA0 = 0x80;
     MGSetGsTEXA(&texa);
-    left.r = left.g = left.b = 0x40;
     right.r = right.g = right.b = 0x40;
+    left.r = left.g = left.b = 0x40;
     if (left_width != 0) {
-        left.a = 0x80;
         right.a = 0x80;
-        CRect_i_ dest(0, 0, left_x, 0x1C0);
-        CRect_i_ source(0, 0, left_x, 0x1BF);
-        set2DSprite(GetVif1Packet(), &texture, dest, source, &left, &right, &left, &right, 1);
+        left.a = 0x80;
+        set2DSprite(GetVif1Packet(), &texture, CRect_i_(0, 0, left_x, 0x1C0), CRect_i_(0, 0, left_x, 0x1BF), &left, &right,
+                    &left, &right, 1);
     }
     left.a = 0x80;
     right.a = 0;
@@ -689,16 +682,11 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     if (right_width != 0) {
         right.a = 0x80;
         left.a = 0x80;
-        int x = right_x + right_width;
-        int width = 0x280 - right_x - right_width;
-        set2DSprite(GetVif1Packet(), &texture, CRect_i_(x, 0, width, 0x1C0), CRect_i_(x, 0, width, 0x1BF), &left, &right,
-                    &left, &right, 1);
+        set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, 0x1C0),
+                    CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, 0x1BF), &left, &right, &left, &right, 1);
     }
     MGSetGsTEXA(NULL);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", FadeTexX__FiiiiPci);
-#endif
 
 CTexture *RetCTex(short item_no, int &u, int &v) {
     CTexture *texture;
@@ -1122,14 +1110,12 @@ int BoardModeChangeKey() {
     }
     return 0;
 }
-#ifdef NON_MATCHING
 void PersonalBoardLimmitCheck() {
     int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
     int max = PersonalRetMax(page);
     int top_row = PerBoardPt->top_row;
-    int rows = max / 5;
-    int last_top = rows - 4;
+    int last_top = max / 5 - 4;
 
     if (last_top < 0) {
         last_top = 0;
@@ -1139,11 +1125,11 @@ void PersonalBoardLimmitCheck() {
             *cursor -= 5;
         }
         PerBoardPt->top_row = *cursor / 5 - 3;
-        int *top = &PerBoardPt->top_row;
-        if (*top < 0) {
-            *top = 0;
+        if (PerBoardPt->top_row < 0) {
+            PerBoardPt->top_row = 0;
         }
         PerBoardPt->y = 0x7F - PerBoardPt->top_row * 0x28;
+        int rows = max / 5;
         if (rows <= 0) {
             rows = 4;
         }
@@ -1154,15 +1140,11 @@ void PersonalBoardLimmitCheck() {
         if (last_top < 0) {
             last_top = 0;
         }
-        int *top;
-        while (last_top < *(top = &PerBoardPt->top_row)) {
-            (*top)--;
+        while (last_top < PerBoardPt->top_row) {
+            PerBoardPt->top_row--;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
-#endif
 int PersonalBoardKeySub() {
     int left = 0;
     int area = PerBoardPt->cursor_area;
@@ -1524,115 +1506,124 @@ static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha)
     MenuTextureReload(PerBoardTex->block);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 0x28, length), CRect_i_(0x114, v, 0x28, length), alpha);
 }
-#ifdef NON_MATCHING
-void CommonIconDraw(int page, int count, int x, int y, int state, int alpha, int scale) {
+
+void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int alpha) {
     int value;
     int draw_x;
+    int weapon_x = x + 4;
+    int draw_y = y;
+    CTexture *icon;
 
     switch (page) {
         case 2: {
             if (PerBoardPt->unk_00 == 1) {
                 MenuTextureReload(MenuShadowReadBlock);
             } else {
-                CTexture *icon = TexManager.GetTexture("wepicon", -1);
+                icon = TexManager.GetTexture("wepicon", -1);
                 if (icon != NULL) {
                     MenuTextureReload(icon->block);
                     WepIcon = icon;
                 }
             }
             draw_x = x + 2;
-            DNG_CONSUMABLE *items = PerBoardPt->consumables;
+            ATTACH_LIST *attach = (ATTACH_LIST *) PerBoardPt->consumables;
             for (int i = 0; i < count; i++) {
-                int id = items[i].id;
+                int id = attach[i].item_no;
                 if (id >= 0x5B && id < 0x5F) {
-                    value = ((s16 *) items[i].unk_02)[id - 0x5A];
+                    value = attach[i].status[id - 0x5B];
                 }
                 if (id == 0x5A) {
-                    value = ((s16 *) items[i].unk_02)[0];
+                    value = attach[i].unk_02;
                 }
-                DrawIconParts(id, draw_x, y, state, alpha, scale, value);
+                DrawIconParts(id, draw_x, draw_y, top, bottom, alpha, value);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
                     draw_x = x + 2;
-                    y += 0x28;
+                    draw_y += 0x28;
                 }
             }
-            return;
+            break;
         }
         case 0: {
             draw_x = x;
-            s16 *items = PerBoardPt->item_pack->item;
-            for (int i = 0; i < 3; i++) {
+            int quick;
+            int slot;
+            ITEM_PACK *pack = PerBoardPt->item_pack;
+            s16 *items = pack->item;
+            quick = 0;
+            for (slot = 0; slot < 3; slot++) {
+                quick += pack->quick_item_qty[slot];
             }
             for (int i = 0; i < count; i++) {
-                DrawIconParts(items[i], draw_x, y, state, alpha, scale, 0);
+                DrawIconParts(items[i], draw_x, draw_y, top, bottom, alpha, 0);
                 if (MenuTrushMark[i] != 0) {
-                    DrawDontSetItemMark(draw_x, y, state, alpha, scale);
+                    DrawDontSetItemMark(draw_x, draw_y, top, bottom, alpha);
                 }
                 draw_x += 0x28;
                 if (i % 5 == 4) {
                     draw_x = x;
-                    y += 0x28;
+                    draw_y += 0x28;
                 }
             }
-            return;
+            break;
         }
         case 1: {
+            int party;
+            int item_no;
+            WEAPON_HAVE *weapons;
             int chara = 0;
-            WEAPON_HAVE *weapons = PerBoardStatusPt->chara_weapons[0];
-            CTexture *icon = TexManager.GetTexture("wepicon", -1);
+            weapons = PerBoardStatusPt->chara_weapons[0];
+            icon = TexManager.GetTexture("wepicon", -1);
             if (icon != NULL) {
                 MenuTextureReload(icon->block);
                 WepIcon = icon;
             }
-            draw_x = x + 4;
-            int party = PerBoardStatusPt->party_size;
+            draw_x = weapon_x;
+            party = PerBoardStatusPt->party_size;
             for (int i = 0; i < count; i++) {
                 int slot = i % 10;
-                int item_no = weapons[slot].item_no;
-                int owner = i / 10;
-                int equipped = PerBoardStatusPt->equipped_weapon_slot[owner];
-                if (party >= owner + 1 && equipped >= 0 && slot == equipped) {
-                    DrawNowEquipWeaponMark(draw_x - 2, y - 4, state + 1, alpha, scale);
+                item_no = weapons[slot].item_no;
+                int equipped = PerBoardStatusPt->equipped_weapon_slot[i / 10];
+                if (party >= i / 10 + 1 && equipped >= 0 && slot == equipped) {
+                    DrawNowEquipWeaponMark(draw_x - 2, draw_y - 4, top + 1, bottom, alpha);
                     if (icon != NULL) {
                         MenuTextureReload(icon->block);
                     }
                 }
-                DrawIconParts(item_no, draw_x, y, state, alpha, scale, 0);
+                DrawIconParts(item_no, draw_x, draw_y, top, bottom, alpha, 0);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
-                    draw_x = x + 4;
-                    y += 0x28;
+                    draw_x = weapon_x;
+                    draw_y += 0x28;
                     if (i != 0 && slot == 9) {
                         chara++;
-                        weapons = PerBoardStatusPt->chara_weapons[chara];
+                        CUserStatus *status = PerBoardStatusPt;
+                        weapons = status->chara_weapons[chara];
                     }
                 }
             }
-            return;
+            break;
         }
         case 3:
         case 4:
         case 5:
         case 6:
         case 7:
-        case 8:
-            draw_x = x + 2;
+        case 8: {
+            int left = weapon_x - 2;
+            draw_x = left;
             for (int i = 0; i < 120; i++) {
-                DrawAtoraParts(draw_x, y, PerBoardPt->unk_2C[i], state, alpha - 4, scale);
+                DrawAtoraParts(draw_x, draw_y, PerBoardPt->unk_2C[i], top, bottom - 4, alpha);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
-                    draw_x = x + 2;
-                    y += 0x28;
+                    draw_x = left;
+                    draw_y += 0x28;
                 }
             }
-        default:
-            return;
+            break;
+        }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonIconDraw__Fiiiiiii);
-#endif
 
 void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha) {
     DrawMenu2DSprite(texture, CRect_i_(x, y + 1, 0x14, 0xBF), CRect_i_(0, 0, 0x14, 0xC0), alpha);
@@ -1865,11 +1856,12 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
         x += 0x28;
     }
 }
-#ifdef NON_MATCHING
+
 void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha) {
-    int board_y = y;
+    int row_y = y;
+    int board_x = x;
     for (int row = 0; row < 26; row++) {
-        DrawPersonalBoardBase(x, board_y, top, bottom, 5, texture, alpha);
+        DrawPersonalBoardBase(board_x, row_y, top, bottom, 5, texture, alpha);
         int draw_mark = 0;
         switch (mark) {
             case 0:
@@ -1887,10 +1879,10 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
         }
         if (draw_mark != 0) {
             int mark_x = x - 4;
-            int mark_y = board_y - 8;
+            int mark_y = row_y - 8;
             int v = 0x3C;
             int height = 0x10;
-            if (mark_y + 0x10 >= top && mark_y < bottom) {
+            if (top <= mark_y + 0x10 && mark_y < bottom) {
                 MenuTextureClip(mark_y, v, height, top, bottom);
                 int step = 9;
                 spRGBA left;
@@ -1900,10 +1892,8 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 right.a = alpha;
                 left.a = alpha;
                 for (int i = 0; i < 5; i++) {
-                    CRect_i_ texel(0x20, v, 0x28, height);
-                    CRect_i_ screen(mark_x, mark_y, 0x28, height);
-                    set2DSprite(GetVif1Packet(), texture, screen, texel, &left, &right, &left, &right, 1);
-
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(mark_x, mark_y, 0x28, height),
+                                CRect_i_(0x20, v, 0x28, height), &left, &right, &left, &right, 1);
                     left.r = left.g = left.b = right.r;
                     right.r = right.g = right.b = right.r - step;
                     step--;
@@ -1911,15 +1901,13 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 }
             }
         }
-        board_y += 0x28;
-        if (bottom < board_y) {
+        row_y += 0x28;
+        if (bottom < row_y) {
             break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", DrawPerBoardDraw__FiiiiiiP8CTexturei);
-#endif
+
 /* The trash can's animation fields, which CommonTrushDraw reaches as one record. */
 struct PERSONAL_BOARD_TRASH {
     s16 anim;
@@ -2020,7 +2008,8 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
     RECT digits = {0, 0xDC, 12, 12};
     DrawMenuNumber(money, x + 0x55, y + 8, PerBoardTex, digits, 0, alpha);
 }
-s16 SearchBoardNowPosItemExist(int page, int cell) {
+
+int SearchBoardNowPosItemExist(int page, int cell) {
     int item_no = -1;
 
     switch (page) {

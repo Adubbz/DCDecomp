@@ -70,12 +70,10 @@ extern s16 PrevEastKingSndNo;
 /** Buffer used to reload the background music that preceded the event. */
 extern u_int *EastKingSndReadBuf;
 
-INCLUDE_RODATA("asm/nonmatchings/eastking", @354__3);
-#ifdef NON_MATCHING
 /**
  * Restores the East King message window to its initial empty state.
  */
-static void ResetEastKingMessage() {
+static inline void ResetEastKingMessage() {
     EastKingMsgCls.text_columns = 0x46;
     EastKingMsgCls.text_rows = 10;
     EastKingMsgCls.text_len = 0;
@@ -98,8 +96,6 @@ static void ResetEastKingMessage() {
     EastKingMsgCls.edge_alpha = 0x80;
     for (int slot = 0; slot < 10; slot++) {
         EastKingMsgCls.mes_no[slot] = -1;
-        EastKingMsgCls.line_pos[slot].x = -1;
-        EastKingMsgCls.line_pos[slot].y = -1;
     }
     for (int value = 0; value < 8; value++) {
         EastKingMsgCls.values[value] = 0;
@@ -113,50 +109,50 @@ static void ResetEastKingMessage() {
     EastKingMsgCls.cursor_row = -1;
     EastKingMsgCls.cursor_y = 0;
     EastKingMsgCls.cursor_lit = 0;
+    for (int line = 0; line < 10; line++) {
+        EastKingMsgCls.line_pos[line].x = -1;
+        EastKingMsgCls.line_pos[line].y = -1;
+    }
 }
 
 void EastKingTextureEnter() {
-    if (EastKing.resources_ready != 0 || ReadBGSync() != 0 || SndBgmSyncBG() != 0) {
-        return;
+    if (EastKing.resources_ready == 0 && ReadBGSync() == 0 && SndBgmSyncBG() == 0) {
+        LOADTEXTURE_INFO2 textures[] = {
+            {"#frame_image#640#448#4", EastKing.texture_block, 0},
+            {NULL, EastKing.texture_block, 0},
+            {NULL, 0, 0},
+        };
+        BG_READ_INFO *archive = GetReadBGFile(0);
+        char image_name[64] = "st.img";
+        sprintf(image_name, image_name, EastKing.event_no);
+        textures[1].name = (char *) GetPackFile((u_int *) archive->buffer, image_name, NULL);
+        TexManager.DeleteTextureBlock(EastKing.texture_block);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, textures);
+
+        u_long128 *buffer_end = EastKing.load_buffer + (archive->size >> 4) + 1;
+        s16 *messages = (s16 *) GetPackFile((u_int *) archive->buffer, "eastking.bin", NULL);
+        ResetEastKingMessage();
+        EastKingMsgCls.SetMesFukidashi(4);
+        s8 font_width[] = {16, 14, 14, 14, 14, 14, 14};
+        EastKingMsgCls.char_width = font_width[GetMenuLangFlag()];
+        EastKingMsgCls.char_height = 0x16;
+        EastKingMsgCls.columns = 0x1E;
+        EastKingMsgCls.text_rate = 0.0f;
+        EastKingMsgCls.text_rate_set = 0.0f;
+        EastKingMsgCls.centre_rows = 1;
+        EastKingMsgCls.tex_block = 0x1A;
+        EastKingMsgCls.unk_17B0 = buffer_end;
+        EastKingMsgCls.SetBuff(messages);
+        EastKingMsgCls.mes_made = -1;
+        EastKingMsgCls.unk_02C = 0x10;
+        EastKingMsgCls.unk_030 = 0x10;
+        EastKingMsgCls.page_arrow = 1;
+        EastKing.resources_ready = 1;
+        EastKingMsg.draw_message = 1;
+        SndBgmPlay(0);
     }
-
-    BG_READ_INFO *archive = GetReadBGFile(0);
-    char image_name[64] = "st.img";
-    sprintf(image_name, image_name, EastKing.event_no);
-    LOADTEXTURE_INFO2 textures[] = {
-        {(char *)"#frame_image#640#448#4", EastKing.texture_block, 0},
-        {(char *)GetPackFile((u_int *)archive->buffer, image_name, NULL), EastKing.texture_block, 0},
-        {NULL, 0, 0},
-    };
-    TexManager.DeleteTextureBlock(EastKing.texture_block);
-    TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, textures);
-
-    EastKingMsgCls.unk_17B0 = EastKing.load_buffer + archive->size / 16 + 1;
-    s16 *messages = (s16 *)GetPackFile((u_int *)archive->buffer, (char *)"eastking.bin", NULL);
-    ResetEastKingMessage();
-    EastKingMsgCls.SetMesFukidashi(4);
-    static s8 font_width[] = {16, 14, 14, 14, 14, 14, 14};
-    EastKingMsgCls.char_width = font_width[GetMenuLangFlag()];
-    EastKingMsgCls.char_height = 0x16;
-    EastKingMsgCls.columns = 0x1E;
-    EastKingMsgCls.text_rate = 0.0f;
-    EastKingMsgCls.text_rate_set = 0.0f;
-    EastKingMsgCls.centre_rows = 1;
-    EastKingMsgCls.tex_block = 0x1A;
-    EastKingMsgCls.SetBuff(messages);
-    EastKingMsgCls.mes_made = -1;
-    EastKingMsgCls.unk_02C = 0x10;
-    EastKingMsgCls.unk_030 = 0x10;
-    EastKingMsgCls.page_arrow = 1;
-    EastKing.resources_ready = 1;
-    EastKingMsg.draw_message = 1;
-    SndBgmPlay(0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/eastking", EastKingTextureEnter__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/eastking", @371__4);
 
 /**
  * Draws the current East King event message.

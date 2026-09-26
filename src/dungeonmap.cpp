@@ -896,7 +896,6 @@ void CDungeonMap::DrawFireFreeStyle(CFrameVu1 *frame, CCameraFollow *camera) {
     }
 }
 
-#ifdef NON_MATCHING
 void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     float fire_pos[4];
     float frame_pos[4];
@@ -940,14 +939,15 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
 
                 if (this->cells[no].parts_no != MAP_PARTS_NONE &&
                     this->cells[no].unk_08 <= 160.0f * (3.0f + this->draw_dist_scale)) {
-                    for (j = 0; j < this->parts[this->cells[no].parts_no].fire_num; j++) {
+                    CDungeonParts *part;
+
+                    for (j = 0; j < (part = &this->parts[this->cells[no].parts_no])->fire_num; j++) {
                         float turn;
                         float rot_x;
                         float rot_z;
+                        float height;
                         float angle;
                         float dist;
-
-                        CDungeonParts *part = &this->parts[this->cells[no].parts_no];
 
                         fire_pos[0] = part->fire_pos[j][0];
                         fire_pos[1] = part->fire_pos[j][1];
@@ -971,11 +971,13 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
                         }
 
                         fire_pos[0] = rot_x + 16.0f * (float) col;
-                        fire_pos[2] = rot_z + 16.0f * (float) row;
+                        rot_z += 16.0f * (float) row;
+                        fire_pos[2] = rot_z;
+                        height = fire_pos[1];
 
                         this->fire.pos[0] = 10.0f * fire_pos[0];
-                        this->fire.pos[1] = 10.0f * fire_pos[1];
-                        this->fire.pos[2] = 10.0f * fire_pos[2];
+                        this->fire.pos[1] = 10.0f * height;
+                        this->fire.pos[2] = 10.0f * rot_z;
                         this->fire.pos[3] = 1.0f;
                         this->fire.DrawFire(1, 1, (CCamera *) camera, frame_pos, 1.0f, param,
                                             15.0f);
@@ -1001,9 +1003,6 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
         SndSetSeVol(53, 0, 0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawFire__11CDungeonMapFP9CFrameVu1P13CCameraFollow);
-#endif
 
 /* 189 of 202 instructions. Retail's loop test forms `&parts[parts_no]` and the
  * body reads the fire positions at 0x20 from it; mwcc carries only the scaled
@@ -1300,7 +1299,7 @@ int CDungeonMap::CreateCollision(CCPoly *poly, CBoxVu0 box, int num) {
 }
 
 /** Labels each room while a special linked room is selected. */
-s32 scanRoomInfoWork[16][16];
+s32 scanRoomInfoWork[256];
 
 /** Gives the 20 x 20 grid that the map builder works on. */
 BUILD_MAP_INFO buildMapDat[400];
@@ -1343,74 +1342,77 @@ static int buildRoom(int x, int y, int w, int h, int room_no) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 /**
  * Converts the builder flags and adjacency data into drawable map parts.
  */
 void mapPartsFilter(void) {
-    int row;
     int col;
+    int row;
     int room_no;
     int table_no;
+    int north;
+    int south;
+    int east;
+    int west;
 
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
-            BUILD_MAP_INFO *cell = &buildMapDat[col + row * 20];
-
-            if ((cell->unk_48 & 2) == 2) {
+            // A corridor cell joins every neighbour that shares one of its rooms.
+            if ((buildMapDat[col + row * 20].unk_48 & 2) == 2) {
                 int mask = 15;
-                BUILD_MAP_INFO *north = &buildMapDat[col + (row - 1) * 20];
-                BUILD_MAP_INFO *south = &buildMapDat[col + (row + 1) * 20];
-                BUILD_MAP_INFO *east = &buildMapDat[col + 1 + row * 20];
-                BUILD_MAP_INFO *west = &buildMapDat[col - 1 + row * 20];
+                int north = buildMapDat[col + (row - 1) * 20].unk_48;
+                int south = buildMapDat[col + (row + 1) * 20].unk_48;
+                int east = buildMapDat[col + row * 20 + 1].unk_48;
+                int west = buildMapDat[col + row * 20 - 1].unk_48;
+
                 int allow_north = 1;
-                int allow_south = (south->unk_48 & 5) != 1;
-                int allow_east = (east->unk_48 & 5) != 1;
-                int allow_west = 1;
-
-                if ((north->unk_48 & 5) == 1)
+                if ((north & 5) == 1)
                     allow_north = 0;
-                if ((west->unk_48 & 5) == 1)
-                    allow_west = 0;
-
-                if ((north->unk_48 & 0x180) != 0 && north->unk_04 != 0) {
+                if ((north & 0x180) != 0 && buildMapDat[col + (row - 1) * 20].unk_04 != 0)
                     allow_north = 0;
-                }
-                if ((south->unk_48 & 0x180) != 0 && south->unk_04 != 2) {
+                int allow_south = 1;
+                if ((south & 5) == 1)
                     allow_south = 0;
-                }
-                if ((east->unk_48 & 0x180) != 0 && east->unk_04 != 1) {
+                if ((south & 0x180) != 0 && buildMapDat[col + (row + 1) * 20].unk_04 != 2)
+                    allow_south = 0;
+                int allow_east = 1;
+                if ((east & 5) == 1)
                     allow_east = 0;
-                }
-                if ((west->unk_48 & 0x180) != 0 && west->unk_04 != 3) {
+                if ((east & 0x180) != 0 && buildMapDat[col + row * 20 + 1].unk_04 != 1)
+                    allow_east = 0;
+                int allow_west = 1;
+                if ((west & 5) == 1)
                     allow_west = 0;
-                }
+                if ((west & 0x180) != 0 && buildMapDat[col + row * 20 - 1].unk_04 != 3)
+                    allow_west = 0;
+
                 for (room_no = 0; room_no < 16; room_no++) {
-                    if (cell->link[room_no] == 1) {
-                        if (north->link[room_no] == 1 && allow_north != 0)
+                    if (buildMapDat[col + row * 20].link[room_no] == 1) {
+                        if (buildMapDat[col + (row - 1) * 20].link[room_no] == 1 && allow_north != 0)
                             mask &= ~1;
-                        if (south->link[room_no] == 1 && allow_south != 0)
+                        if (buildMapDat[col + (row + 1) * 20].link[room_no] == 1 && allow_south != 0)
                             mask &= ~8;
-                        if (east->link[room_no] == 1 && allow_east != 0)
+                        if (buildMapDat[col + row * 20 + 1].link[room_no] == 1 && allow_east != 0)
                             mask &= ~2;
-                        if (west->link[room_no] == 1 && allow_west != 0)
+                        if (buildMapDat[col + row * 20 - 1].link[room_no] == 1 && allow_west != 0)
                             mask &= ~4;
                     }
                 }
                 for (table_no = 0; table_no < 15; table_no++) {
                     if (mask == chainTableRoad[table_no][0]) {
-                        cell->kind = chainTableRoad[table_no][1];
-                        cell->unk_04 = chainTableRoad[table_no][2];
+                        buildMapDat[col + row * 20].kind = chainTableRoad[table_no][1];
+                        buildMapDat[col + row * 20].unk_04 = chainTableRoad[table_no][2];
                     }
                 }
             }
 
-            if ((cell->unk_48 & 1) == 1) {
+            // A room cell joins the neighbouring room cells.
+            if ((buildMapDat[col + row * 20].unk_48 & 1) == 1) {
                 int mask = 15;
-                int north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 & 1 : 0;
-                int south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 & 1 : 0;
-                int east = col != 19 ? buildMapDat[col + 1 + row * 20].unk_48 & 1 : 0;
-                int west = col != 0 ? buildMapDat[col - 1 + row * 20].unk_48 & 1 : 0;
+                north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 & 1 : 0;
+                south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 & 1 : 0;
+                east = col != 19 ? buildMapDat[col + row * 20 + 1].unk_48 & 1 : 0;
+                west = col != 0 ? buildMapDat[col + row * 20 - 1].unk_48 & 1 : 0;
                 if (north == 1)
                     mask &= ~1;
                 if (south == 1)
@@ -1421,46 +1423,58 @@ void mapPartsFilter(void) {
                     mask &= ~4;
                 for (table_no = 0; table_no < 8; table_no++) {
                     if (mask == chainTableRoom[table_no][0]) {
-                        cell->kind = chainTableRoom[table_no][1];
-                        cell->unk_04 = chainTableRoom[table_no][2];
+                        buildMapDat[col + row * 20].kind = chainTableRoom[table_no][1];
+                        buildMapDat[col + row * 20].unk_04 = chainTableRoom[table_no][2];
                     }
                 }
             }
 
-            if ((cell->unk_48 & 0x404) == 4) {
-                int mask = (buildMapDat[col + (row - 1) * 20].unk_48 & 1) == 1;
+            // A door faces the room cell beside it.
+            if ((buildMapDat[col + row * 20].unk_48 & 0x404) == 4) {
+                int mask = 0;
+
+                if ((buildMapDat[col + (row - 1) * 20].unk_48 & 1) == 1)
+                    mask |= 1;
                 if ((buildMapDat[col + (row + 1) * 20].unk_48 & 1) == 1)
                     mask |= 8;
-                if ((buildMapDat[col + 1 + row * 20].unk_48 & 1) == 1)
+                if ((buildMapDat[col + row * 20 + 1].unk_48 & 1) == 1)
                     mask |= 2;
-                if ((buildMapDat[col - 1 + row * 20].unk_48 & 1) == 1)
+                if ((buildMapDat[col + row * 20 - 1].unk_48 & 1) == 1)
                     mask |= 4;
                 for (table_no = 0; table_no < 4; table_no++) {
                     if (mask == chainTableDoor[table_no][0])
-                        cell->kind = chainTableDoor[table_no][1];
+                        buildMapDat[col + row * 20].kind = chainTableDoor[table_no][1];
                 }
             }
-            if ((cell->unk_48 & 8) == 8) {
-                cell->kind = MAP_PARTS_HEAL_SPRING_NORTH;
-                cell->unk_04 = 0;
+            if ((buildMapDat[col + row * 20].unk_48 & 8) == 8) {
+                buildMapDat[col + row * 20].kind = MAP_PARTS_HEAL_SPRING_NORTH;
+                buildMapDat[col + row * 20].unk_04 = 0;
             }
-            if ((cell->unk_48 & 0x40) == 0x40) {
-                if ((100.0f * (float) rand()) / 2147483648.0f > 50.0f) {
-                    cell->kind = MAP_PARTS_PILLAR_2;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x40) == 0x40) {
+                if ((100.0f * (float) rand()) / 2147483648.0f <= 50.0f) {
+                    buildMapDat[col + row * 20].kind = MAP_PARTS_PILLAR_1;
                 } else {
-                    cell->kind = MAP_PARTS_PILLAR_1;
+                    buildMapDat[col + row * 20].kind = MAP_PARTS_PILLAR_2;
                 }
-                cell->unk_04 = 0;
+                buildMapDat[col + row * 20].unk_04 = 0;
             }
 
-            if ((cell->unk_48 & 0x10) == 0x10) {
+            // A dividing wall joins the walls and rooms around it.
+            if ((buildMapDat[col + row * 20].unk_48 & 0x10) == 0x10) {
                 int mask = 0;
-                int north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 : 0;
-                int south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 : 0;
-                int east = col != 19 ? buildMapDat[col + 1 + row * 20].unk_48 : 0;
-                int west = col != 0 ? buildMapDat[col - 1 + row * 20].unk_48 : 0;
+
+                north = south = east = west = 0;
+
+                if (row != 0)
+                    north = buildMapDat[col + (row - 1) * 20].unk_48;
+                if (row != 19)
+                    south = buildMapDat[col + (row + 1) * 20].unk_48;
+                if (col != 19)
+                    east = buildMapDat[col + row * 20 + 1].unk_48;
+                if (col != 0)
+                    west = buildMapDat[col + row * 20 - 1].unk_48;
                 if ((north & 0x10) == 0x10)
-                    mask = 1;
+                    mask |= 1;
                 if ((south & 0x10) == 0x10)
                     mask |= 8;
                 if ((east & 0x10) == 0x10)
@@ -1477,17 +1491,24 @@ void mapPartsFilter(void) {
                     mask |= 0x40;
                 for (table_no = 0; table_no < 6; table_no++) {
                     if (mask == chainTableDivid[table_no][0])
-                        cell->kind = chainTableDivid[table_no][1];
+                        buildMapDat[col + row * 20].kind = chainTableDivid[table_no][1];
                 }
             }
-            if ((cell->unk_48 & 0x20) == 0x20) {
+            if ((buildMapDat[col + row * 20].unk_48 & 0x20) == 0x20) {
                 int mask = 0;
-                int north = row != 0 ? buildMapDat[col + (row - 1) * 20].unk_48 : 0;
-                int south = row != 19 ? buildMapDat[col + (row + 1) * 20].unk_48 : 0;
-                int east = col != 19 ? buildMapDat[col + 1 + row * 20].unk_48 : 0;
-                int west = col != 0 ? buildMapDat[col - 1 + row * 20].unk_48 : 0;
+
+                north = south = east = west = 0;
+
+                if (row != 0)
+                    north = buildMapDat[col + (row - 1) * 20].unk_48;
+                if (row != 19)
+                    south = buildMapDat[col + (row + 1) * 20].unk_48;
+                if (col != 19)
+                    east = buildMapDat[col + row * 20 + 1].unk_48;
+                if (col != 0)
+                    west = buildMapDat[col + row * 20 - 1].unk_48;
                 if ((north & 0x10) == 0x10)
-                    mask = 1;
+                    mask |= 1;
                 if ((south & 0x10) == 0x10)
                     mask |= 8;
                 if ((east & 0x10) == 0x10)
@@ -1496,21 +1517,18 @@ void mapPartsFilter(void) {
                     mask |= 4;
                 for (table_no = 0; table_no < 2; table_no++) {
                     if (mask == chainTableDividDoor[table_no][0])
-                        cell->kind = chainTableDividDoor[table_no][1];
+                        buildMapDat[col + row * 20].kind = chainTableDividDoor[table_no][1];
                 }
             }
-            if ((cell->unk_48 & 0x80) == 0x80)
-                cell->kind = MAP_PARTS_STAIR_DOWN;
-            if ((cell->unk_48 & 0x100) == 0x100)
-                cell->kind = MAP_PARTS_STAIR_UP;
-            if ((cell->unk_48 & 0x200) == 0x200)
-                cell->kind = MAP_PARTS_URA_ENTRANCE_NORTH;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x80) == 0x80)
+                buildMapDat[col + row * 20].kind = MAP_PARTS_STAIR_DOWN;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x100) == 0x100)
+                buildMapDat[col + row * 20].kind = MAP_PARTS_STAIR_UP;
+            if ((buildMapDat[col + row * 20].unk_48 & 0x200) == 0x200)
+                buildMapDat[col + row * 20].kind = MAP_PARTS_URA_ENTRANCE_NORTH;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", mapPartsFilter__Fv);
-#endif
 
 static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
     for (int i = 0; i < 400; i++) {
@@ -2512,7 +2530,6 @@ void CDungeonMap::buildDummyModel() {
     }
 }
 
-#ifdef NON_MATCHING
 /**
  * Selects a special door, labels its connected area, and places its key item.
  */
@@ -2520,25 +2537,26 @@ void CDungeonMap::GetRoomLinkInfo(void) {
     int door_pos[32][2];
     int room_list[32];
     float pos[4];
-    int result_no = 0;
-    int door_count = 0;
-    int stair_x = 0;
-    int stair_y = 0;
-    int x;
-    int y;
-    int i;
-    int room_count;
-    int active;
-    int direction_mask;
+    int door_count;
+    int stair_x;
+    int stair_y;
     int door_part;
+    int result_no;
+    int direction_mask;
+    int room_count;
+    int x;
     int propagation_mask;
+    int active;
+    int y;
 
-    for (i = 0; i < 4; i++)
+    result_no = 0;
+    for (int i = 0; i < 4; i++)
         this->room_link[i].used = 0;
-    for (i = 0; i < 256; i++)
-        scanRoomInfoWork[0][i] = -1;
+    for (int i = 0; i < 256; i++)
+        scanRoomInfoWork[i] = -1;
 
     // Record the stair cell and every candidate room-to-corridor door.
+    door_count = 0;
     for (y = 0; y < 16; y++) {
         for (x = 0; x < 16; x++) {
             if (this->cells[x + y * 20].parts_no == MAP_PARTS_STAIR_DOWN) {
@@ -2562,42 +2580,44 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         }
     }
 
-    i = (int) (((float) door_count * (float) rand()) / 2147483648.0f);
-    x = door_pos[i][0];
-    y = door_pos[i][1];
-    scanRoomInfoWork[y][x] = 9;
+    int door_no = (int) (((float) door_count * (float) rand()) / 2147483648.0f);
+    x = door_pos[door_no][0];
+    y = door_pos[door_no][1];
+    scanRoomInfoWork[x + y * 16] = 9;
     buildMapDat[x + y * 20].unk_48 |= 0x400;
     this->room_link[0].door_x = x;
     this->room_link[0].door_y = y;
     this->room_link[0].unk_14 = 0;
 
-    direction_mask = (buildMapDat[x + (y - 1) * 20].unk_48 & 2) == 2;
+    direction_mask = 0;
+    if ((buildMapDat[x + (y - 1) * 20].unk_48 & 2) == 2)
+        direction_mask = 1;
     if ((buildMapDat[x + (y + 1) * 20].unk_48 & 2) == 2)
         direction_mask = 8;
-    if ((buildMapDat[x + 1 + y * 20].unk_48 & 2) == 2)
+    if ((buildMapDat[x + y * 20 + 1].unk_48 & 2) == 2)
         direction_mask = 2;
-    if ((buildMapDat[x - 1 + y * 20].unk_48 & 2) == 2)
+    if ((buildMapDat[x + y * 20 - 1].unk_48 & 2) == 2)
         direction_mask = 4;
     switch (direction_mask) {
-        case 4:
-            door_part = MAP_PARTS_ROOM_GATE_WEST;
-            scanRoomInfoWork[y][x + 1] = 0;
-            scanRoomInfoWork[y][x - 1] = 1;
-            break;
-        case 8:
-            door_part = MAP_PARTS_ROOM_GATE_SOUTH;
-            scanRoomInfoWork[y - 1][x] = 0;
-            scanRoomInfoWork[y + 1][x] = 1;
+        case 1:
+            door_part = MAP_PARTS_ROOM_GATE_NORTH;
+            scanRoomInfoWork[x + (y - 1) * 16] = 0;
+            scanRoomInfoWork[x + (y + 1) * 16] = 1;
             break;
         case 2:
             door_part = MAP_PARTS_ROOM_GATE_EAST;
-            scanRoomInfoWork[y][x + 1] = 0;
-            scanRoomInfoWork[y][x - 1] = 1;
+            scanRoomInfoWork[x + y * 16 + 1] = 0;
+            scanRoomInfoWork[x + y * 16 - 1] = 1;
             break;
-        case 1:
-            door_part = MAP_PARTS_ROOM_GATE_NORTH;
-            scanRoomInfoWork[y - 1][x] = 0;
-            scanRoomInfoWork[y + 1][x] = 1;
+        case 8:
+            door_part = MAP_PARTS_ROOM_GATE_SOUTH;
+            scanRoomInfoWork[x + (y - 1) * 16] = 0;
+            scanRoomInfoWork[x + (y + 1) * 16] = 1;
+            break;
+        case 4:
+            door_part = MAP_PARTS_ROOM_GATE_WEST;
+            scanRoomInfoWork[x + y * 16 + 1] = 0;
+            scanRoomInfoWork[x + y * 16 - 1] = 1;
             break;
         default:
             printf("ERROR !!\n");
@@ -2610,87 +2630,90 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         active = 0;
         for (y = 1; y < 15; y++) {
             for (x = 1; x < 15; x++) {
-                int label = scanRoomInfoWork[y][x];
-                if (label != -1 && label != 9) {
-                    int flags = buildMapDat[x + y * 20].unk_48 & 7;
-                    switch (flags) {
-                        case 5:
-                            propagation_mask = 3;
-                            break;
-                        case 1:
-                            propagation_mask = 5;
-                            break;
-                        case 2:
-                            propagation_mask = 0x86;
-                            break;
-                    }
+                if (scanRoomInfoWork[x + y * 16] == -1 || scanRoomInfoWork[x + y * 16] == 9) {
+                    continue;
+                }
+                switch (buildMapDat[x + y * 20].unk_48 & 7) {
+                    case 2:
+                        propagation_mask = 0x86;
+                        break;
+                    case 1:
+                        propagation_mask = 5;
+                        break;
+                    case 5:
+                        propagation_mask = 3;
+                        break;
+                    default:
+                        direction_mask = 0;
+                        break;
+                }
 
-                    if (buildMapDat[x + (y - 1) * 20].kind != MAP_PARTS_NONE &&
-                        scanRoomInfoWork[y - 1][x] == -1 &&
-                        (propagation_mask & buildMapDat[x + (y - 1) * 20].unk_48) != 0) {
-                        int shared = 0;
-                        for (i = 0; i < 16; i++) {
-                            if (buildMapDat[x + y * 20].link[i] == 1 &&
-                                buildMapDat[x + (y - 1) * 20].link[i] == 1)
-                                shared = 1;
-                        }
-                        if (shared != 0) {
-                            scanRoomInfoWork[y - 1][x] = label;
-                            active = 1;
-                        }
+                if (buildMapDat[x + (y - 1) * 20].kind != MAP_PARTS_NONE &&
+                    scanRoomInfoWork[x + (y - 1) * 16] == -1 &&
+                    (propagation_mask & buildMapDat[x + (y - 1) * 20].unk_48) != 0) {
+                    int shared = 0;
+
+                    for (int i = 0; i < 16; i++) {
+                        if (buildMapDat[x + y * 20].link[i] == 1 && buildMapDat[x + (y - 1) * 20].link[i] == 1)
+                            shared = 1;
                     }
-                    if (buildMapDat[x + (y + 1) * 20].kind != MAP_PARTS_NONE &&
-                        scanRoomInfoWork[y + 1][x] == -1 &&
-                        (propagation_mask & buildMapDat[x + (y + 1) * 20].unk_48) != 0) {
-                        int shared = 0;
-                        for (i = 0; i < 16; i++) {
-                            if (buildMapDat[x + y * 20].link[i] == 1 &&
-                                buildMapDat[x + (y + 1) * 20].link[i] == 1)
-                                shared = 1;
-                        }
-                        if (shared != 0) {
-                            scanRoomInfoWork[y + 1][x] = label;
-                            active = 1;
-                        }
+                    if (shared != 0) {
+                        scanRoomInfoWork[x + (y - 1) * 16] = scanRoomInfoWork[x + y * 16];
+                        active = 1;
                     }
-                    if (buildMapDat[x - 1 + y * 20].kind != MAP_PARTS_NONE &&
-                        scanRoomInfoWork[y][x - 1] == -1 &&
-                        (propagation_mask & buildMapDat[x - 1 + y * 20].unk_48) != 0) {
-                        int shared = 0;
-                        for (i = 0; i < 16; i++) {
-                            if (buildMapDat[x + y * 20].link[i] == 1 &&
-                                buildMapDat[x - 1 + y * 20].link[i] == 1)
-                                shared = 1;
-                        }
-                        if (shared != 0) {
-                            scanRoomInfoWork[y][x - 1] = label;
-                            active = 1;
-                        }
+                }
+                if (buildMapDat[x + (y + 1) * 20].kind != MAP_PARTS_NONE &&
+                    scanRoomInfoWork[x + (y + 1) * 16] == -1 &&
+                    (propagation_mask & buildMapDat[x + (y + 1) * 20].unk_48) != 0) {
+                    int shared = 0;
+
+                    for (int i = 0; i < 16; i++) {
+                        if (buildMapDat[x + y * 20].link[i] == 1 && buildMapDat[x + (y + 1) * 20].link[i] == 1)
+                            shared = 1;
                     }
-                    if (buildMapDat[x + 1 + y * 20].kind != MAP_PARTS_NONE &&
-                        scanRoomInfoWork[y][x + 1] == -1 &&
-                        (propagation_mask & buildMapDat[x + 1 + y * 20].unk_48) != 0) {
-                        int shared = 0;
-                        for (i = 0; i < 16; i++) {
-                            if (buildMapDat[x + y * 20].link[i] == 1 &&
-                                buildMapDat[x + 1 + y * 20].link[i] == 1)
-                                shared = 1;
-                        }
-                        if (shared != 0) {
-                            scanRoomInfoWork[y][x + 1] = label;
-                            active = 1;
-                        }
+                    if (shared != 0) {
+                        scanRoomInfoWork[x + (y + 1) * 16] = scanRoomInfoWork[x + y * 16];
+                        active = 1;
+                    }
+                }
+                if (buildMapDat[x + y * 20 - 1].kind != MAP_PARTS_NONE &&
+                    scanRoomInfoWork[x + y * 16 - 1] == -1 &&
+                    (propagation_mask & buildMapDat[x + y * 20 - 1].unk_48) != 0) {
+                    int shared = 0;
+
+                    for (int i = 0; i < 16; i++) {
+                        if (buildMapDat[x + y * 20].link[i] == 1 && buildMapDat[x + y * 20 - 1].link[i] == 1)
+                            shared = 1;
+                    }
+                    if (shared != 0) {
+                        scanRoomInfoWork[x + y * 16 - 1] = scanRoomInfoWork[x + y * 16];
+                        active = 1;
+                    }
+                }
+                if (buildMapDat[x + y * 20 + 1].kind != MAP_PARTS_NONE &&
+                    scanRoomInfoWork[x + y * 16 + 1] == -1 &&
+                    (propagation_mask & buildMapDat[x + y * 20 + 1].unk_48) != 0) {
+                    int shared = 0;
+
+                    for (int i = 0; i < 16; i++) {
+                        if (buildMapDat[x + y * 20].link[i] == 1 && buildMapDat[x + y * 20 + 1].link[i] == 1)
+                            shared = 1;
+                    }
+                    if (shared != 0) {
+                        scanRoomInfoWork[x + y * 16 + 1] = scanRoomInfoWork[x + y * 16];
+                        active = 1;
                     }
                 }
             }
         }
     }
 
-    int target_label = scanRoomInfoWork[stair_y + 1][stair_x];
+    // The item goes in a room on the stair's side of the door.
+    int target_label = scanRoomInfoWork[stair_x + (stair_y + 1) * 16];
     room_count = 0;
     active = 1;
-    for (i = 0; i < this->room_num; i++) {
-        if (target_label == scanRoomInfoWork[this->rooms[i].y + 1][this->rooms[i].x + 1]) {
+    for (int i = 0; i < this->room_num; i++) {
+        if (target_label == scanRoomInfoWork[this->rooms[i].x + (this->rooms[i].y + 1) * 16 + 1]) {
             room_list[room_count++] = i;
         }
     }
@@ -2699,12 +2722,14 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         active = 0;
     }
     while (active != 0) {
-        i = (int) (((float) room_count * (float) rand()) / 2147483648.0f);
-        if (i < 0 || i > room_count)
-            i = 0;
-        ROOM_INFO *room = &this->rooms[room_list[i]];
-        SearchiDoPutArea(this->cells, room->x, room->y, room->width, room->height, pos);
-        int valid = 1;
+        int valid;
+
+        int list_no = (int) (((float) room_count * (float) rand()) / 2147483648.0f);
+        if (list_no < 0 || list_no > room_count)
+            list_no = 0;
+        SearchiDoPutArea(this->cells, this->rooms[room_list[list_no]].x, this->rooms[room_list[list_no]].y,
+                         this->rooms[room_list[list_no]].width, this->rooms[room_list[list_no]].height, pos);
+        valid = 1;
         if (this->CheckTreasureBox(pos, 20.0f) == 0)
             valid = 0;
         if (this->CheckAtra(pos, 20.0f) == 0)
@@ -2712,23 +2737,21 @@ void CDungeonMap::GetRoomLinkInfo(void) {
         if (this->CheckTrapCircle(pos, 20.0f) != NULL)
             valid = 0;
         if (valid != 0) {
-            if (this->SetTreasureBox(pos, selectMapNo + 216, 1, 0) == -1)
+            if (this->SetTreasureBox(pos, selectMapNo + 216, 1, 0) == -1) {
+                active = 0;
                 return;
+            }
             this->room_link[0].item_x = (pos[0] + 80.0f) / 160.0f;
             this->room_link[0].item_y = (pos[2] + 80.0f) / 160.0f;
-            this->cells[this->room_link[0].door_x + this->room_link[0].door_y * 20].parts_no = door_part;
-            this->cells[this->room_link[0].door_x + this->room_link[0].door_y * 20].direction = 0;
+            this->cells[this->room_link[result_no].door_x + this->room_link[result_no].door_y * 20].parts_no =
+                door_part;
+            this->cells[this->room_link[result_no].door_x + this->room_link[result_no].door_y * 20].direction = 0;
             this->room_link[0].used = 1;
             result_no++;
             active = 0;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", GetRoomLinkInfo__11CDungeonMapFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @2859);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @2860);
 
 void CDungeonMap::SetUnderLoad() {
     for (int i = 0; i < 20; i++) {

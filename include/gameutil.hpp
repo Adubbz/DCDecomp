@@ -141,11 +141,12 @@ STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
  */
 struct tagFRAME_INF {
     s32 parent_frame;             /**< Parent frame used to build the driven frame's transform. */
-    s32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
+    u32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
     sceVu0FVECTOR *base_vertices; /**< Arena copy of the visual's undeformed vertices. */
     u8 unk_0C[4];
-    sceVu0FMATRIX matrix; /**< Transform the driver interpolates into the frame. */
-    u8 unk_50[128];
+    sceVu0FMATRIX matrix;           /**< Transform the driver interpolates into the frame. */
+    sceVu0FMATRIX bone_base_matrix; /**< Inverse bind pose of the bone that skins the frame. */
+    sceVu0FMATRIX bone_matrix;      /**< Accumulated transform of the bone that skins the frame. */
 };
 
 STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
@@ -208,7 +209,7 @@ struct tagMOTION_TYPE {
     s32 unk_6C;
     s32 unk_70;
     s32 unk_74;
-    s32 unk_78;
+    float unk_78;
     s32 unk_7C;
 } __attribute__((aligned(16)));
 
@@ -267,8 +268,8 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
 Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list);
 
 /**
- * Applies one motion's frame to a model, blending between two motions, and
- * gives back the next driver in the list.
+ * Skins one bone of a model: moves each weighted vertex toward the bone's
+ * transform, and gives back the next driver in the list.
  *
  * @mangled MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List
  * @address 0x148860
@@ -412,9 +413,7 @@ struct MoveCheckInfo {
     s32 unk_60;         /**< 1 where the step found ground below it. */
     u8 unk_64[0xC];
     CCPoly poly; /**< Polygon that the step landed on. */
-    u8 unk_c0[0x4];
-    float ground_height; /**< Height of the ground below the step. */
-    u8 unk_c8[0x8];
+    sceVu0FVECTOR ground_point; /**< Point where the step found ground below it. */
 };
 
 STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);

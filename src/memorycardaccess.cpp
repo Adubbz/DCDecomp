@@ -794,25 +794,31 @@ int CMemoryCardAccess::MakeDir() {
     }
     return 0;
 }
-#ifdef NON_MATCHING
+
 int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
-    char path[0x28];
+    char name[0x28];
     int cmd;
     int result;
-    SAVEDATA_INFO *info = &this->file_info[file_no];
+    char *data;
+    SAVEDATA_INFO *info;
+    int i;
+    MC_ERROR_INFO *error;
+    int dungeon;
 
+    info = &this->file_info[file_no];
     switch ((this->step - 1) % 4) {
         case 0:
-            strcpy(path, this->file_name);
-            strcat(path, "%d");
-            sprintf(path, path, file_no);
-            if (sceMcOpen(this->port, 1, path, 1) != 0) {
+            strcpy(name, this->file_name);
+            strcat(name, "%d");
+            sprintf(name, name, file_no);
+            if (sceMcOpen(this->port, 1, name, 1) == 0) {
+                this->step++;
+            } else {
                 return -1;
             }
-            this->step++;
             break;
         case 1:
-            if (sceMcSync(1, &cmd, &result) == 0) {
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
             if (cmd != 2) {
@@ -831,14 +837,15 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
             this->transferred = 0;
             this->transfer_size = 0x136A7;
             this->error.retry_count = 0;
-            memset(this->read_buffer, 0, this->transfer_size);
-            if (sceMcRead(this->fd, this->read_buffer, this->transfer_size) != 0) {
+            memset((void *) this->read_buffer, 0, this->transfer_size);
+            if (sceMcRead(this->fd, this->read_buffer, this->transfer_size) == 0) {
+                this->step++;
+            } else {
                 return -1;
             }
-            this->step++;
             break;
         case 2:
-            if (sceMcSync(1, &cmd, &result) == 0) {
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
             if (cmd != 5 || (cmd == 5 && result < 0)) {
@@ -848,77 +855,75 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
                 this->error.retry_count++;
                 if (this->error.retry_count > 100) {
                     printf("getinfo read error \n");
-                    if (sceMcClose(this->fd) != 0) {
+                    if (sceMcClose(this->fd) == 0) {
+                        this->step++;
+                    } else {
                         return -1;
                     }
-                    this->step++;
                     break;
                 }
             }
             this->transferred += result;
-            if (this->transferred >= this->transfer_size) {
-                if (sceMcClose(this->fd) != 0) {
-                    return -1;
-                }
+            if (this->transferred < this->transfer_size) {
+                break;
+            }
+            if (sceMcClose(this->fd) == 0) {
                 this->step++;
+            } else {
+                return -1;
             }
             break;
-        case 3: {
-            if (sceMcSync(1, &cmd, &result) == 0) {
+        case 3:
+            if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
-            int i;
-            char *scan = this->read_buffer;
-            for (i = 0; i < this->transfer_size; i++) {
-                if (memcmp(scan, "darkcloud", 9) == 0) {
+            i = 0;
+            data = this->read_buffer;
+            while (i < this->transfer_size) {
+                if (memcmp(data, "darkcloud", 9) == 0) {
+                    i = this->transfer_size;
                     break;
                 }
-                scan++;
+                data++;
+                i++;
             }
-            if (*scan == 'd' && strcmp(this->GetVersion(), scan) != 0) {
+            error = &this->error;
+            if (*data == 'd' && strcmp(this->GetVersion(), data) != 0) {
                 this->step++;
-                this->error.step = this->step;
-                this->error.file_no = file_no;
-                this->error.code = 1;
+                error->step = this->step;
+                error->file_no = file_no;
+                error->code = 1;
                 return 1;
             }
             if (this->transferred < this->transfer_size) {
-                this->error.code = 3;
-                this->error.file_no = this->file_no;
+                error->code = 3;
+                error->file_no = this->file_no;
                 this->step++;
                 printf("not enough size\n");
                 return 1;
             }
-            CSaveData *save = (CSaveData *) this->read_buffer;
             info->state = 1;
             info->file_no = file_no + 1;
-            memcpy(info->name, save->GetCharaName(0), 0x20);
-            info->map_no = save->map_no;
-            info->play_time = (float) save->GetPlayTime();
-            info->party_size = save->GetDngStatus()->GetPartySize();
+            memcpy(info->name, ((CSaveData *) this->read_buffer)->GetCharaName(0), sizeof(info->name));
+            info->map_no = ((CSaveData *) this->read_buffer)->map_no;
+            info->play_time = ((CSaveData *) this->read_buffer)->GetPlayTime();
+            info->party_size = ((CSaveData *) this->read_buffer)->GetDngStatus()->GetPartySize();
             info->quest_total = 0;
-            for (i = 0; i < 6; i++) {
-                info->quest_total += save->QuestDungeon(i, 0);
+            for (dungeon = 0; dungeon < 6; dungeon++) {
+                info->quest_total += ((CSaveData *) this->read_buffer)->QuestDungeon(dungeon, 0);
             }
-            info->quest_total += save->QuestDungeon(6, 0);
-            if (info->quest_total >= 10000) {
+            info->quest_total += ((CSaveData *) this->read_buffer)->QuestDungeon(6, 0);
+            if (info->quest_total > 9999) {
                 info->quest_total = 9999;
             }
             this->step++;
             return 1;
-        }
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memorycardaccess", GetSaveFileInfoFromMc__17CMemoryCardAccessFi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @892__5);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @893__4);
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @894__4);
 
 int CMemoryCardAccess::GetAllSaveFileInfo() {
     int result;

@@ -36,7 +36,9 @@ struct EPARTS_INFO_HEADER {
  * as an offset from the archive and a length.
  */
 struct EPARTS_ARCHIVE {
-    u8 unk_00[0x48];
+    s32 unk_00;
+    s32 info_offset; /**< Offset of the part definition from the archive. */
+    u8 unk_08[0x40];
     s32 offset_48; /**< Offset of the level-of-detail 0 model from the archive. */
     s32 offset_4c; /**< Offset of the level-of-detail 1 model from the archive. */
     s32 offset_50; /**< Offset of the level-of-detail 2 model from the archive. */

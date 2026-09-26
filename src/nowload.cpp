@@ -1,3 +1,5 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
 #include "common.h"
 
 #include <eekernel.h>
@@ -143,7 +145,6 @@ void init_now_loading(int title_number) {
     MGInitVSyncCallBack(VSyncCallBack_Load);
 }
 
-#ifdef NON_MATCHING
 /**
  * Draws the loading screen and advances its fade once per vertical sync.
  *
@@ -153,82 +154,82 @@ void init_now_loading(int title_number) {
  */
 int VSyncCallBack_Load(int field) {
     (void) field;
-    if (end_flag == 0) {
-        VSyncField = !((*(volatile u_long *) 0x12001000 >> 13) & 1);
-        if (nl_start_cnt == 0) {
-            sceDmaSync(DmaCH1, 0, 0);
-            sceVif1PkReset(&nlPacket);
-            if (map_title_no == 0x321) {
-                if (logo_count == 0) {
-                    CRect_i_ screen(0x60, 0xC0, 0x1C0, 0x40);
-                    CRect_i_ source(0, 0, 0x1C0, 0x40);
-                    set2DSprite(&nlPacket, &nl_tex, screen, source, (u_char) col_cnt);
-                }
+    if (end_flag) {
+        now_loading_vsync_end = 1;
+        return 0;
+    }
+    VSyncField = !((*(volatile u_long *) 0x12001000 >> 13) & 1);
+    if (nl_start_cnt == 0) {
+        sceDmaSync(DmaCH1, 0, 0);
+        sceVif1PkReset(&nlPacket);
+        if (map_title_no == 0x321) {
+            if (logo_count == 0) {
+                set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
+                            CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+            }
+            if (logo_count == 1) {
+                set2DSprite(&nlPacket, &nl_tex2, CRect_i_(0x100, 0xA0, 0x80, 0x80),
+                            CRect_i_(0, 0, 0x80, 0x80), (u_char) (int) col_cnt);
+            }
+            if (count__2 == 0) {
+                col_cnt += col_add * 2.0f;
+            }
+            if (col_cnt > 128.0f) {
+                count__2 = 220;
+                col_cnt = 128.0f;
+                col_add *= -1.0f;
+            }
+            if (col_cnt < 0.0f) {
+                count__2 = 100;
+                col_cnt = 0.0f;
+                col_add *= -1.0f;
                 if (logo_count == 1) {
-                    CRect_i_ screen(0x100, 0xA0, 0x80, 0x80);
-                    CRect_i_ source(0, 0, 0x80, 0x80);
-                    set2DSprite(&nlPacket, &nl_tex2, screen, source, (u_char) col_cnt);
-                }
-                if (count__2 == 0) {
-                    col_cnt += col_add * 2.0f;
-                }
-                if (col_cnt > 128.0f) {
-                    count__2 = 220;
-                    col_cnt = 128.0f;
-                    col_add *= -1.0f;
-                }
-                if (col_cnt < 0.0f) {
-                    count__2 = 100;
-                    col_cnt = 0.0f;
-                    col_add *= -1.0f;
-                    if (logo_count == 1) {
-                        end_flag = 1;
-                    }
-                    logo_count++;
-                }
-            } else {
-                CRect_i_ screen(0x80, 0xA0, 0x180, 0x80);
-                CRect_i_ source(0, 0, 0x180, 0x80);
-                set2DSprite(&nlPacket, &nl_tex, screen, source, (u_char) col_cnt);
-                if (count__2 == 0) {
-                    col_cnt += col_add;
-                }
-                if (col_cnt > 128.0f) {
-                    count__2 = 120;
-                    col_cnt = 128.0f;
-                    col_add *= -1.0f;
-                }
-                if (col_cnt < 0.0f) {
                     end_flag = 1;
-                    col_cnt = 0.0f;
                 }
+                logo_count++;
             }
             count__2--;
             if (count__2 < 0) {
                 count__2 = 0;
             }
-            sceVif1PkEnd(&nlPacket, 0);
-            sceVif1PkTerminate(&nlPacket);
-            iFlushCache(0);
-            sceDmaSend(DmaCH1, nlPacket.pBase);
+        } else {
+            set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x80, 0xA0, 0x180, 0x80),
+                        CRect_i_(0, 0, 0x180, 0x80), (u_char) (int) col_cnt);
+            if (count__2 == 0) {
+                col_cnt += col_add;
+            }
+            if (col_cnt > 128.0f) {
+                count__2 = 120;
+                col_cnt = 128.0f;
+                col_add *= -1.0f;
+            }
+            if (col_cnt < 0.0f) {
+                end_flag = 1;
+                col_cnt = 0.0f;
+            }
+            count__2--;
+            if (count__2 < 0) {
+                count__2 = 0;
+            }
         }
-        nl_start_cnt--;
-        if (nl_start_cnt < 0) {
-            nl_start_cnt = 0;
-        }
-        sceGsDrawEnv1 *draw = DBuffID != 0 ? &nowloadDB.draw1 : &nowloadDB.draw0;
-        sceGsSetHalfOffset(draw, 0x800, 0x800, VSyncField);
-        iSyncDCache(&nowloadDB, &nlPacket);
-        sceGsSwapDBuff(&nowloadDB, DBuffID);
-        DBuffID = !DBuffID;
-        sceDmaSync(DmaCH2, 0, 0);
+        sceVif1PkEnd(&nlPacket, 0);
+        sceVif1PkTerminate(&nlPacket);
+        iFlushCache(0);
+        sceDmaSend(DmaCH1, nlPacket.pBase);
     }
+    nl_start_cnt--;
+    if (nl_start_cnt < 0) {
+        nl_start_cnt = 0;
+    }
+    sceGsDrawEnv1 *draw = DBuffID != 0 ? &nowloadDB.draw1 : &nowloadDB.draw0;
+    sceGsSetHalfOffset(draw, 0x800, 0x800, VSyncField);
+    iSyncDCache(&nowloadDB, (u_char *) &nowloadDB + sizeof(nowloadDB));
+    sceGsSwapDBuff(&nowloadDB, DBuffID);
+    DBuffID = !DBuffID;
+    sceDmaSync(DmaCH2, 0, 0);
     now_loading_vsync_end = 1;
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/nowload", VSyncCallBack_Load__Fi);
-#endif
 
 /**
  * Uploads a named image and its palette to video memory and records where they went.

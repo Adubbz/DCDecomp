@@ -51,9 +51,6 @@ extern s32 BtLoadMapType;
 /** The dungeon floor that the player is on. */
 extern "C" CDungeonMap MainDungeonMap;
 
-/** The events of the floor the dungeon is drawing. */
-extern CDungeonEventMan *NowEventMan;
-
 /** The events of the floor that the player is on. */
 extern "C" CDungeonEventMan DngEventMan;
 

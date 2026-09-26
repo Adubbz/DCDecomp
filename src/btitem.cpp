@@ -12,6 +12,7 @@
 #include "dngstatusdata.hpp"
 #include "dun/gameloop.hpp"
 #include "frame.hpp"
+#include "framevu1.hpp"
 #include "gamepad.hpp"
 #include "menu_draw.hpp"
 #include "menu_dungeon.hpp"
@@ -177,7 +178,6 @@ extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;
 extern s32 atraShortGetType;
 extern s32 atraGetStatus;
-extern float atraGetStatusRate;
 extern s32 atraGetMsgBord;
 extern float atraGetMsgBordRate;
 extern sceVu0FVECTOR atraGetPos;
@@ -285,22 +285,18 @@ void LoadActiveItemIcon(void) {
  * @address 0x1D13F0
  * @size 0x418
  */
-#ifdef NON_MATCHING
 void BtGetTreasureboxBig_Init() {
-    char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
-                            "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
-                            "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
-    char model_path[64];
-    char texture_path[64];
-    int size;
-    TREASURE_BOX *box = &NowDngMap->boxes[NowDngMap->events[iventActive].index];
-    int item_no = box->item_no;
+    u_char *mds;
+    u_char *img;
+    u_char *chr;
+    int item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
     if (((CDngStatusData *) UserStatus)->CheckWeaponRot(item_no) >= 10) {
         SndSePlay(0xCE, -1, 0);
         SetSystemMes(((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) + 0x49, -1, 5, 0, NULL, NULL);
-        NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = -20.0f;
+        int index = NowDngMap->events[iventActive].index;
+        NowDngMap->boxes[index].lid_angle = -20.0f;
         SetMIniMapStatus(0);
         iventInfo = -1;
         CMonUnitHold = 1;
@@ -308,7 +304,10 @@ void BtGetTreasureboxBig_Init() {
         CEffectHold = 1;
         CEffectHyde = 1;
         DngMessMan.unk_00 = 0;
-        UserStatus->step_disable = 1;
+
+        CUserStatus *user = UserStatus;
+
+        user->step_disable = 1;
         BtActStatus.unk_00C = 0;
         BtActStatus.unk_09C = 1;
         BtGetTreasurebox_Sled = 10;
@@ -328,6 +327,14 @@ void BtGetTreasureboxBig_Init() {
     if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 3) {
         TreasureboxBig_itemType = 3;
     }
+
+    char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
+                            "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
+                            "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
+    char model_path[64];
+    char texture_path[64];
+    int size;
+
     TreasureboxBig_itemNo = item_no;
     NowDngMap->events[iventActive].kind = -1;
     BtGetItemNamePath(model_path, texture_path, item_no);
@@ -335,28 +342,31 @@ void BtGetTreasureboxBig_Init() {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    itemOpenItemMds = (int) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(model_path, (u_long128 *) itemOpenItemMds, &size);
+    mds = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemMds = (int) mds;
+    LoadFileBG(model_path, (u_long128 *) mds, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    itemOpenItemImg = (int) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(texture_path, (u_long128 *) itemOpenItemImg, &size);
+    img = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemImg = (int) img;
+    LoadFileBG(texture_path, (u_long128 *) img, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) itemOpenItemChr, &size);
+    chr = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemChr = (u_int *) chr;
+    LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) chr, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenBig.frame->SetRotation(0.0f, 0.0f, 0.0f);
     DngMessMan.unk_00 = 0;
-    UserStatus->step_disable = 1;
+
+    CUserStatus *user = UserStatus;
+
+    user->step_disable = 1;
     BtActStatus.unk_00C = 0;
     BtActStatus.unk_09C = 1;
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Init__Fv);
-#endif
 /**
  * Runs the large treasure chest's presentation and reports when it ends.
  *
@@ -364,7 +374,6 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Init__Fv);
  * @address 0x1D1810
  * @size 0x7A8
  */
-#ifdef NON_MATCHING
 int BtGetTreasureboxBig_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR item_position;
@@ -375,7 +384,7 @@ int BtGetTreasureboxBig_Loop() {
             if (SndSPSeSyncBG() == 0 && ReadBGSync() == 0) {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
-                CharaMain.LoadPackData(itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
+                CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
                 BtActStatus.unk_054 = 0;
                 BtGetTreasurebox_Sled++;
             }
@@ -388,10 +397,10 @@ int BtGetTreasureboxBig_Loop() {
             CMonUnitHyde = 1;
             CEffectHold = 1;
             CEffectHyde = 1;
-            TREASURE_BOX *box = &NowDngMap->boxes[NowDngMap->events[iventActive].index];
-            sceVu0CopyVector(position, box->pos);
-            box->lid_angle = -30.0f;
-            box->unk_24 = 0;
+            int index = NowDngMap->events[iventActive].index;
+            sceVu0CopyVector(position, NowDngMap->boxes[index].pos);
+            NowDngMap->boxes[index].lid_angle = -30.0f;
+            NowDngMap->boxes[index].unk_24 = 0;
             itemOpenBig.frame->SetPosition(position);
             itemOpenBigFx.frame->SetPosition(position);
             itemOpenBigFx.frame->SetRotation(0.0f, 0.0f, 0.0f);
@@ -428,7 +437,7 @@ int BtGetTreasureboxBig_Loop() {
             CharaMain.SetPosition(position);
             CharaMain.SetRotation(0.0f, 0.0f, 0.0f);
             BtActStatus.unk_00C = 0x2C;
-            itemOpenBig.motion.state.time = 10.0f;
+            itemOpenBig.motion.unk_78 = 10.0f;
             itemOpenBigFx.motion.state.time = 10.0f;
             itemOpenBigFlag = 1;
             SubCamera = MainCamera__4;
@@ -439,15 +448,16 @@ int BtGetTreasureboxBig_Loop() {
             break;
         }
         case 2: {
-            setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, NowCamera__3, "cam", "int");
+            CCameraFollow *camera = NowCamera__3;
+            setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
             float time = itemOpenBigFx.motion.state.time;
             if (!(time <= 14.0f) && time < 15.0f) {
                 SndSePlay(0xCE, -1, 0);
                 SndSPSePlay(2, -1);
             }
-            time = itemOpenBigFx.motion.state.time;
-            if (!(time <= 50.0f) && time <= 55.0f) {
-                float scale = TreasureboxBig_itemScale / 5.0f * (time - 50.0f);
+            float now = itemOpenBigFx.motion.state.time;
+            if (!(now <= 50.0f) && now <= 55.0f) {
+                float scale = TreasureboxBig_itemScale / 5.0f * (now - 50.0f);
                 itemWeponScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
@@ -459,8 +469,9 @@ int BtGetTreasureboxBig_Loop() {
             }
             break;
         }
-        case 3:
-            setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, NowCamera__3, "cam", "int");
+        case 3: {
+            CCameraFollow *camera = NowCamera__3;
+            setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
             if (GamePad.Down(0x60) != 0) {
                 BtActStatus.unk_054 = 1;
                 TexManager.DeleteTextureBlock(0x1C);
@@ -486,6 +497,7 @@ int BtGetTreasureboxBig_Loop() {
                 done = 1;
             }
             break;
+        }
         case 10:
             if (GamePad.Down(0x60) != 0) {
                 ClearSystemMes();
@@ -504,9 +516,6 @@ int BtGetTreasureboxBig_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Loop__Fv);
-#endif
 /**
  * Opens the small treasure chest and starts its presentation.
  *
@@ -514,14 +523,10 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxBig_Loop__Fv);
  * @address 0x1D1FC0
  * @size 0x4A0
  */
-#ifdef NON_MATCHING
 void BtGetTreasureboxSmall_Init(int chance) {
-    char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
-                            "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
-                            "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
-    char model_path[64];
-    char texture_path[64];
-    int size;
+    u_char *mds;
+    u_char *img;
+    u_char *chr;
     int item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
@@ -534,7 +539,8 @@ void BtGetTreasureboxSmall_Init(int chance) {
         if (full == 2) {
             SetSystemMes(0x51, -1, 5, 0, NULL, NULL);
         }
-        NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = -20.0f;
+        int index = NowDngMap->events[iventActive].index;
+        NowDngMap->boxes[index].lid_angle = -20.0f;
         SetMIniMapStatus(0);
         iventInfo = -1;
         CMonUnitHold = 1;
@@ -542,15 +548,25 @@ void BtGetTreasureboxSmall_Init(int chance) {
         CEffectHold = 1;
         CEffectHyde = 1;
         DngMessMan.unk_00 = 0;
-        UserStatus->step_disable = 1;
+
+        CUserStatus *user = UserStatus;
+
+        user->step_disable = 1;
         BtActStatus.unk_09C = 1;
         BtActStatus.unk_00C = 0;
         BtGetTreasurebox_Sled = 10;
         autoCamTrial();
         return;
     }
+    char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
+                            "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
+                            "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
+    char model_path[64];
+    char texture_path[64];
+    int size;
+
     NowDngMap->events[iventActive].kind = -1;
-    if (ITEM_NAME_TBL_NEW[item_no - 81] == NULL) {
+    if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
         item_no = 0x66;
     }
     int volume = createAttachVolume(item_no, chance);
@@ -558,7 +574,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
     BtGetTreasureboxSmall_itemNo = item_no;
     BtGetTreasureboxSmall_itemVolume = volume;
     strcpy(model_path, "dun/item/main_data/");
-    strcat(model_path, ITEM_NAME_TBL_NEW[item_no - 81]);
+    strcat(model_path, ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START]);
     strcpy(texture_path, model_path);
     strcat(model_path, ".mds");
     strcat(texture_path, ".img");
@@ -568,28 +584,31 @@ void BtGetTreasureboxSmall_Init(int chance) {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    itemOpenItemMds = (int) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(model_path, (u_long128 *) itemOpenItemMds, &size);
+    mds = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemMds = (int) mds;
+    LoadFileBG(model_path, (u_long128 *) mds, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    itemOpenItemImg = (int) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(texture_path, (u_long128 *) itemOpenItemImg, &size);
+    img = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemImg = (int) img;
+    LoadFileBG(texture_path, (u_long128 *) img, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16);
-    LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) itemOpenItemChr, &size);
+    chr = BtCashBuffer.base + BtCashBuffer.used * 16;
+    itemOpenItemChr = (u_int *) chr;
+    LoadFileBG(chara_files[UserStatus->cur_chara], (u_long128 *) chr, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenSmall.frame->SetRotation(0.0f, 0.0f, 0.0f);
     DngMessMan.unk_00 = 0;
-    UserStatus->step_disable = 1;
+
+    CUserStatus *user = UserStatus;
+
+    user->step_disable = 1;
     BtActStatus.unk_09C = 1;
     BtActStatus.unk_00C = 0;
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Init__Fi);
-#endif
 /**
  * Runs the small treasure chest's presentation and reports when it ends.
  *
@@ -597,9 +616,7 @@ INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Init__Fi);
  * @address 0x1D2460
  * @size 0x690
  */
-#ifdef NON_MATCHING
 int BtGetTreasureboxSmall_Loop() {
-    sceVu0FVECTOR position;
     int done = 0;
 
     switch (BtGetTreasurebox_Sled) {
@@ -608,23 +625,25 @@ int BtGetTreasureboxSmall_Loop() {
                 SndSPSeSyncBG();
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
-                CharaMain.LoadPackData(itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
+                CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
                 BtActStatus.unk_054 = 0;
                 BtGetTreasurebox_Sled++;
             }
             autoCamTrial();
             break;
         case 1: {
+            sceVu0FVECTOR position;
+
             SetMIniMapStatus(0);
             iventInfo = -1;
             CMonUnitHold = 1;
             CMonUnitHyde = 1;
             CEffectHold = 1;
             CEffectHyde = 1;
-            TREASURE_BOX *box = &NowDngMap->boxes[NowDngMap->events[iventActive].index];
-            sceVu0CopyVector(position, box->pos);
-            box->lid_angle = -30.0f;
-            box->unk_24 = 0;
+            int index = NowDngMap->events[iventActive].index;
+            sceVu0CopyVector(position, NowDngMap->boxes[index].pos);
+            NowDngMap->boxes[index].lid_angle = -30.0f;
+            NowDngMap->boxes[index].unk_24 = 0;
             itemOpenSmall.frame->SetPosition(position);
             itemOpenSmallFx.frame->SetPosition(position);
             itemOpenSmallFx.frame->SetRotation(0.0f, 0.0f, 0.0f);
@@ -653,9 +672,9 @@ int BtGetTreasureboxSmall_Loop() {
                 SndSePlay(0xCF, -1, 0);
                 SndSPSePlay(2, -1);
             }
-            time = itemOpenSmallFx.motion.state.time;
-            if (!(time <= 50.0f) && time <= 55.0f) {
-                float scale = 0.2f * (time - 50.0f);
+            float now = itemOpenSmallFx.motion.state.time;
+            if (!(now <= 50.0f) && now <= 55.0f) {
+                float scale = 0.2f * (now - 50.0f);
                 itemNormalScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
@@ -687,6 +706,8 @@ int BtGetTreasureboxSmall_Loop() {
                 } else {
                     ((CDngStatusData *) UserStatus)->GetItem(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume);
                 }
+                sceVu0FVECTOR position;
+
                 sceVu0CopyVector(position, CharaMain.pos);
                 position[2] += 10.0f;
                 CharaMain.SetPosition(position);
@@ -724,9 +745,6 @@ int BtGetTreasureboxSmall_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
-#endif
 /** The pickup model shared with the treasure chests, and the short presentation's effect pack. */
 extern char BtAtraShortCharaFile[];
 extern char BtAtraShortEffectFile[];
@@ -766,22 +784,7 @@ void BtAtraGetShort_Init() {
     BtGetAtraBoll_Sled = 0;
     BtActStatus.unk_09C = one;
 }
-INCLUDE_RODATA("asm/nonmatchings/btitem", @656__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @657__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @658__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @659__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @660);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @661);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @747);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @754);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @755);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @792);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @793);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @794__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @795__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @796);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
 
 /** The effect configuration file inside an effect pack, shared by the pickup and escape presentations. */
 extern char BtEffectInfoFile[];
@@ -793,7 +796,6 @@ extern char BtEffectInfoFile[];
  * @address 0x1D2C70
  * @size 0x61C
  */
-#ifdef NON_MATCHING
 int BtAtraGetShort_Loop(int map_no, int floor) {
     sceVu0FVECTOR position;
     int done = -1;
@@ -801,9 +803,9 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
     switch (BtGetAtraBoll_Sled) {
         case 0:
             if (SndSPSeSyncBG() == 0 && ReadBGSync() == 0) {
-                CharaMain.LoadPackData(itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
+                CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
                 BtActStatus.unk_054 = 0;
-                shortAtraEffect.LoadPackData2(shortAtraEffectPtr, "info.cfg", &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
+                shortAtraEffect.LoadPackData2((u_int *) shortAtraEffectPtr, "info.cfg", &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
                 SetMIniMapStatus(0);
                 iventInfo = -1;
                 atraGetStatus = 1;
@@ -814,17 +816,18 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 sceVu0CopyVector(atraGetPos, CharaMain.pos);
                 CharaMain.GetRotation(atraGetRot);
                 driveNoInterpolate = 1;
-                ATRA_BOLL *boll = &NowDngMap->atra[NowDngMap->events[BtAtraGetNo].index];
-                shortAtraEffect.SetPosition(boll->pos);
+                int index = NowDngMap->events[BtAtraGetNo].index;
+                shortAtraEffect.SetPosition(NowDngMap->atra[index].pos);
                 shortAtraEffect.SetRotation(0.0f, 0.0f, 0.0f);
                 shortAtraEffect.SetMotion(0, 6);
-                atraGetStatusRate = 0.0f;
-                int atra_id = ((CDngStatusData *) UserStatus)->atra_registry[map_no][boll->atra_no].id;
+                atraGetStatusRate__2 = 0.0f;
+                CDngStatusData *status = (CDngStatusData *) UserStatus;
+                int atra_id = status->atra_registry[map_no][NowDngMap->atra[index].atra_no].id;
                 BtAtraGetID = atra_id;
                 NowDngMap->atra[NowDngMap->events[BtAtraGetNo].index].used = 0;
                 NowDngMap->events[BtAtraGetNo].kind = -1;
-                getAtraToSaveData(atra_id, boll->atra_no, SaveData, map_no, floor);
-                sceVu0CopyVector(position, boll->pos);
+                getAtraToSaveData(atra_id, NowDngMap->atra[index].atra_no, SaveData, map_no, floor);
+                sceVu0CopyVector(position, NowDngMap->atra[index].pos);
                 CharaMain.SetPosition(position);
                 CharaMain.SetRotation(0.0f, 0.0f, 0.0f);
                 BtActStatus.unk_00C = 0x2E;
@@ -838,8 +841,8 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             autoCamTrial();
             break;
         case 1: {
-            if (atraGetStatusRate < 256.0f) {
-                atraGetStatusRate += 2.0f;
+            if (atraGetStatusRate__2 < 256.0f) {
+                atraGetStatusRate__2 += 2.0f;
             }
             float time = shortAtraEffect.motion_type.state.time;
             if (!(time < 53.0f) && time < 54.0f) {
@@ -899,9 +902,6 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtAtraGetShort_Loop__Fii);
-#endif
 
 /**
  * Opens the small character-select window in the given selection mode.
@@ -1523,7 +1523,6 @@ void getCharacterVector(float *vector, float pitch) {
  * @address 0x1D4260
  * @size 0x2D4
  */
-#ifdef NON_MATCHING
 int ItemThrowStep(float *position, float *velocity) {
     sceVu0FVECTOR next;
     sceVu0FVECTOR direction;
@@ -1538,8 +1537,7 @@ int ItemThrowStep(float *position, float *velocity) {
     sceVu0Normalize(direction, velocity);
     for (int unit = 0; unit < 16; unit++) {
         for (int i = 0; i < 16; i++) {
-            MONSTOR_EFFECT_STATE *effect = &NowMonstorUnit->effect[unit];
-            if (effect->timer[i] != 0 && DistVector(effect->position[i], position) <= 1.5f + effect->radius[i]) {
+            if (NowMonstorUnit->effect[unit].timer[i] != 0 && DistVector(NowMonstorUnit->effect[unit].position[i], position) <= 1.5f + NowMonstorUnit->effect[unit].radius[i]) {
                 return 2;
             }
         }
@@ -1563,6 +1561,3 @@ int ItemThrowStep(float *position, float *velocity) {
     sceVu0CopyVector(position, next);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", ItemThrowStep__FPfPf);
-#endif

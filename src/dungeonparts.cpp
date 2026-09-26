@@ -14,6 +14,7 @@
 #include "boxvu0.hpp"
 #include "mglib.hpp"
 #include "editloop.hpp"
+#include "userstatus.hpp"
 
 #ifdef NON_MATCHING
 /* The floors each dungeon keeps Atla off, one list per dungeon, ending at -1. */
@@ -29,59 +30,85 @@ extern int *noEntryTbl[6];
 #endif
 
 /**
+ * Chance out of a hundred that each item is turned down when drawn, one table per dungeon.
+ */
+extern s16 *ItemSetRateTbl[7];
+
+/**
+ * The floor that divides each dungeon's lower item lists from its upper ones.
+ */
+extern int floorNum[7];
+
+/**
  * Gives the two items the clown offers on one floor.
  *
  * @mangled GetPieroItem__FiiPiPi
  * @address 0x1BFAB0
  * @size 0x440
  */
-#ifdef NON_MATCHING
-/**
- * The items the clown can offer on the floors either side of a dungeon's midpoint.
- */
-struct PIERO_ITEM_SET {
-    int count[2];     /**< Number of items in each of the two lists. */
-    int item[2][64];  /**< The two lists the clown's offers are drawn from. */
-};
+void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
+    PIERO_ITEM_SET *list = PieroItemListPtr[map_no + ura_dungeon * 7];
+    s16 *rate = ItemSetRateTbl[map_no];
+    int count0;
+    int count1;
+    int pick0;
+    int pick1;
+    int chance;
 
-extern PIERO_ITEM_SET *PieroItemListPtr[14];
-extern s16 *ItemSetRateTbl[7];
-extern int floorNum[7];
-
-static int PickPieroItem(int count, int *items, s16 *rate) {
-    int pick = -1;
-
-    while (pick == -1) {
-        pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
-        if (pick >= count) {
-            pick = 0;
+    if (UserStatus->cur_floor < floorNum[map_no]) {
+        count0 = list[0].count[0];
+        count1 = list[0].count[1];
+        pick1 = pick0 = -1;
+        while (pick0 == -1) {
+            pick0 = (int) (((float) count0 * (float) rand()) / 2.1474836e9f);
+            if (pick0 >= count0) {
+                pick0 = 0;
+            }
+            chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            if (rate[list[0].item[0][pick0] - 1] >= chance) {
+                pick0 = -1;
+            }
         }
-        if (rate[items[pick] - 1] >= (int) ((100.0f * (float) rand()) / 2.1474836e9f)) {
-            pick = -1;
+        while (pick1 == -1) {
+            pick1 = (int) (((float) count1 * (float) rand()) / 2.1474836e9f);
+            if (pick1 >= count1) {
+                pick1 = 0;
+            }
+            chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            if (rate[list[0].item[1][pick1] - 1] >= chance) {
+                pick1 = -1;
+            }
         }
-    }
-    return pick;
-}
-
-void GetPieroItem(int dungeon, int kind, int *first, int *second) {
-    PIERO_ITEM_SET *list = PieroItemListPtr[dungeon + kind * 7];
-    s16 *rate = ItemSetRateTbl[dungeon];
-
-    if (((CDngStatusData *) UserStatus)->cur_floor < floorNum[dungeon]) {
-        int a = PickPieroItem(list[0].count[0], list[0].item[0], rate);
-        int b = PickPieroItem(list[0].count[1], list[0].item[1], rate);
-        *first = list[0].item[0][a];
-        *second = list[0].item[1][b];
+        *item0 = list[0].item[0][pick0];
+        *item1 = list[0].item[1][pick1];
         return;
     }
-    int a = PickPieroItem(list[1].count[0], list[1].item[0], rate);
-    int b = PickPieroItem(list[1].count[1], list[1].item[1], rate);
-    *first = list[1].item[0][a];
-    *second = list[1].item[1][b];
+    count0 = list[1].count[0];
+    count1 = list[1].count[1];
+    pick1 = pick0 = -1;
+    while (pick0 == -1) {
+        pick0 = (int) (((float) count0 * (float) rand()) / 2.1474836e9f);
+        if (pick0 >= count0) {
+            pick0 = 0;
+        }
+        chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+        if (rate[list[1].item[0][pick0] - 1] >= chance) {
+            pick0 = -1;
+        }
+    }
+    while (pick1 == -1) {
+        pick1 = (int) (((float) count1 * (float) rand()) / 2.1474836e9f);
+        if (pick1 >= count1) {
+            pick1 = 0;
+        }
+        chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+        if (rate[list[1].item[1][pick1] - 1] >= chance) {
+            pick1 = -1;
+        }
+    }
+    *item0 = list[1].item[0][pick0];
+    *item1 = list[1].item[1][pick1];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", GetPieroItem__FiiPiPi);
-#endif
 #ifdef NON_MATCHING
 /**
  * The items a treasure box can hold on one floor.
@@ -97,17 +124,25 @@ extern ITEM_PUT_SET *ItemPutListPtr[14];
 int GetNumHowManyItemsHave(int item_no);
 
 int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
-    s16 rate[0x17C / 2];
-    int candidate[128];
+    int candidate[144];
+    s16 rate[400];
     ITEM_PUT_SET *list = ItemPutListPtr[dungeon + kind * 7];
-    int i;
+    int j;
+    int held;
     int count;
+    int pick;
     int tries;
+    int item_no;
+    float roll;
+    int wanted;
+    int i;
+    s16 *table;
 
-    memcpy(rate, ItemSetRateTbl[dungeon], sizeof(rate));
+    // Retail copies from the pointer table itself rather than from the dungeon's rate list.
+    memcpy(rate, &ItemSetRateTbl[dungeon], 0x17C);
     // Weapons the player already holds come up less often.
     for (i = 0x101; i < 0x17C; i++) {
-        int held = GetNumHowManyItemsHave(i);
+        held = GetNumHowManyItemsHave(i);
         if (held > 0) {
             if (held == 1) {
                 rate[i - 1] -= 10;
@@ -120,9 +155,13 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             }
         }
     }
-    int wanted = -1;
-    for (i = 0; list[i].floor != -1; i++) {
-        if (floor + 1 == list[i].floor) {
+    int k = 0;
+    wanted = -1;
+    for (;; k++) {
+        if (list[k].floor == -1) {
+            break;
+        }
+        if (floor + 1 == list[k].floor) {
             wanted = floor + 1;
         }
     }
@@ -133,46 +172,79 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             wanted = 0xFF;
         }
     }
-    for (i = 0; wanted != list[i].floor;) {
-        i++;
-        if (i >= 128) {
+    int n = 0;
+    do {
+        if (wanted == list[n].floor) {
+            break;
+        }
+        n++;
+        if (n >= 128) {
             printf("err itembox list \n");
             return -1;
         }
-    }
-    ITEM_PUT_SET *set = &list[i];
-    count = 0;
-    for (int j = 0; set->item[j] != -1; j++) {
-        int item_no = set->item[j];
-        if (small != 0) {
+    } while (1);
+    if (small != 0) {
+        count = 0;
+        for (j = 0; list[n].item[j] != -1; j++) {
+            item_no = list[n].item[j];
             if (item_no >= 0x51 && item_no < 0x101) {
                 candidate[count++] = item_no;
             }
-        } else if (item_no >= 0x101) {
-            candidate[count++] = item_no;
         }
+        table = rate;
+        tries = 0;
+        do {
+            roll = ((float) count * (float) rand()) / 2.1474836e9f;
+            pick = (int) roll;
+            if (roll - (float) pick > 0.0f) {
+                pick++;
+            }
+            if (pick < 0 || pick >= count) {
+                pick = 0;
+            }
+            int chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            item_no = candidate[pick];
+            if (table[item_no - 1] < chance) {
+                goto picked;
+            }
+            tries++;
+        } while (tries < 0xFFFF);
+        item_no = -1;
+    picked:
+        return item_no;
     }
-    if (small == 0 && count == 0) {
-        return -1;
-    }
-    tries = 0;
-    while (1) {
-        float roll = ((float) count * (float) rand()) / 2.1474836e9f;
-        int pick = (int) roll;
-        if (roll - (float) pick > 0.0f) {
-            pick++;
+    if (small == 0) {
+        count = 0;
+        for (j = 0; list[n].item[j] != -1; j++) {
+            item_no = list[n].item[j];
+            if (item_no >= 0x101) {
+                candidate[count++] = item_no;
+            }
         }
-        if (pick < 0 || pick >= count) {
-            pick = 0;
-        }
-        int item_no = candidate[pick];
-        if (rate[item_no - 1] < (int) ((100.0f * (float) rand()) / 2.1474836e9f)) {
-            return item_no;
-        }
-        tries++;
-        if (tries >= 0xFFFF) {
+        if (count == 0) {
             return -1;
         }
+        table = rate;
+        tries = 0;
+        do {
+            roll = ((float) count * (float) rand()) / 2.1474836e9f;
+            pick = (int) roll;
+            if (roll - (float) pick > 0.0f) {
+                pick++;
+            }
+            if (pick < 0 || pick >= count) {
+                pick = 0;
+            }
+            int chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            item_no = candidate[pick];
+            if (table[item_no - 1] < chance) {
+                goto chosen;
+            }
+            tries++;
+        } while (tries < 0xFFFF);
+        item_no = -1;
+    chosen:
+        return item_no;
     }
 }
 #else
@@ -186,7 +258,7 @@ INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
  */
 struct ITEM_FREE_AREA {
     s8 parts_no;          /**< Map part the areas lie on; -1 ends the table. */
-    u8 count;             /**< Number of boxes that follow. */
+    s8 count;             /**< Number of boxes that follow. */
     s8 direction;         /**< Quarter turns the boxes are given in. */
     u8 unk_03;
     float box[4][6];      /**< Each box as its two corners, in tenths of a unit. */
@@ -194,50 +266,51 @@ struct ITEM_FREE_AREA {
 
 extern ITEM_FREE_AREA *ItemFreeAreaAll[];
 
-void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
-    float corner[4][4];
+int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
     float quad[196][4][3];
+    float px[4];
+    float py[4];
+    float pz[4];
     int count = 0;
     ITEM_FREE_AREA *areas = ItemFreeAreaAll[selectMapNo];
 
     for (int cy = y; cy < y + height; cy++) {
         for (int cx = x; cx < x + width; cx++) {
-            MAPPARTS *cell = &cells[cy * 20 + cx];
-            int parts_no = cell->parts_no;
-            int direction = cell->direction;
+            int parts_no = (cells + cy * 20)[cx].parts_no;
+            int direction = (cells + cy * 20)[cx].direction;
             for (int a = 0; areas[a].parts_no != -1 && count < 196; a++) {
                 if (parts_no != areas[a].parts_no) {
                     continue;
                 }
                 for (int b = 0; b < areas[a].count; b++) {
-                    int turn = areas[a].direction + direction;
-                    if (turn >= 4) {
+                    int turn = areas[a].direction;
+                    turn += direction;
+                    if (turn > 3) {
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    float *box = areas[a].box[b];
-                    corner[0][0] = 10.0f * box[0];
-                    corner[1][0] = 10.0f * box[1];
-                    corner[2][0] = 10.0f * box[2];
-                    corner[0][3] = 10.0f * box[3];
-                    corner[1][3] = 10.0f * box[4];
-                    corner[2][3] = 10.0f * box[5];
-                    corner[0][1] = corner[0][3];
-                    corner[1][1] = corner[1][0];
-                    corner[2][1] = corner[2][0];
-                    corner[0][2] = corner[0][0];
-                    corner[1][2] = corner[1][0];
-                    corner[2][2] = corner[2][3];
+                    px[0] = areas[a].box[b][0] * 10.0f;
+                    py[0] = areas[a].box[b][1] * 10.0f;
+                    pz[0] = areas[a].box[b][2] * 10.0f;
+                    px[3] = areas[a].box[b][3] * 10.0f;
+                    py[3] = areas[a].box[b][4] * 10.0f;
+                    pz[3] = areas[a].box[b][5] * 10.0f;
+                    px[1] = px[3];
+                    py[1] = py[0];
+                    pz[1] = pz[0];
+                    px[2] = px[0];
+                    py[2] = py[0];
+                    pz[2] = pz[3];
                     for (int k = 0; k < 4; k++) {
                         if (count < 196) {
-                            float cz = corner[2][k];
-                            float cxv = corner[0][k];
-                            quad[count][k][0] = -cz * sinf(angle) - cxv * cosf(angle);
+                            float cz;
+                            float cxv;
+                            quad[count][k][0] = -(cz = pz[k]) * sinf(angle) - (cxv = px[k]) * cosf(angle);
                             quad[count][k][2] = -cxv * sinf(angle) + cz * cosf(angle);
                             quad[count][k][0] *= -1.0f;
                             quad[count][k][0] += 160.0f * (float) cx;
                             quad[count][k][2] += 160.0f * (float) cy;
-                            quad[count][k][1] = corner[1][k];
+                            quad[count][k][1] = py[k];
                         }
                     }
                     count++;
@@ -249,10 +322,10 @@ void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, floa
         }
     }
     int pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
-    float min_x = quad[pick][0][0];
-    float max_x = min_x;
-    float min_z = quad[pick][0][2];
-    float max_z = min_z;
+    float max_x = quad[pick][0][0];
+    float min_x = max_x;
+    float max_z = quad[pick][0][2];
+    float min_z = max_z;
     for (int k = 1; k < 4; k++) {
         if (min_x > quad[pick][k][0]) {
             min_x = quad[pick][k][0];
@@ -267,10 +340,13 @@ void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, floa
             max_z = quad[pick][k][2];
         }
     }
-    out[0] = min_x + ((max_x - min_x) * (float) rand()) / 2.1474836e9f;
+    float span_x = max_x - min_x;
+    float span_z = max_z - min_z;
+    out[0] = min_x + (span_x * (float) rand()) / 2.1474836e9f;
     out[1] = quad[pick][0][1];
-    out[2] = min_z + ((max_z - min_z) * (float) rand()) / 2.1474836e9f;
+    out[2] = min_z + (span_z * (float) rand()) / 2.1474836e9f;
     out[3] = 1.0f;
+    return count;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf);
@@ -294,6 +370,12 @@ int chkAtraFloor(int dungeon, int floor) {
     }
     return 1;
 }
+
+/**
+ * The floor each dungeon's upper half ends on.
+ */
+extern int CenterFloorTbl[6];
+
 /**
  * Builds the list of Atla one dungeon may hand out.
  *
@@ -312,12 +394,9 @@ struct ATRA_APPEAR {
 };
 
 extern ATRA_APPEAR *AtraAppearData[6];
-extern int CenterFloorTbl[6];
 extern int MaxFloorTbl[6];
 
 void BtAtraListMake(int dungeon) {
-    CDngStatusData *status = (CDngStatusData *) UserStatus;
-
     if (dungeon >= 6) {
         return;
     }
@@ -336,7 +415,7 @@ void BtAtraListMake(int dungeon) {
             lower += appear[count].count;
         }
         if (floor != -1 && floor != -2) {
-            status->SetGetAtra(dungeon, floor - 1, count);
+            ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, --floor, count);
         }
     }
     int i;
@@ -344,8 +423,8 @@ void BtAtraListMake(int dungeon) {
         int placed = 0;
         while (placed == 0) {
             int floor = (int) (((float) (center - 1) * (float) rand()) / 2.1474836e9f);
-            if (status->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                status->SetGetAtra(dungeon, floor, -2);
+            if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
+                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
@@ -353,44 +432,53 @@ void BtAtraListMake(int dungeon) {
     for (i = 0; i < lower; i++) {
         int placed = 0;
         while (placed == 0) {
-            int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f) + center;
-            if (status->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                status->SetGetAtra(dungeon, floor, -2);
+            int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f);
+            floor += center;
+            if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
+                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
     }
-    for (i = 0; i < count; i++) {
-        status->atra_registry[dungeon][i].id = appear[i].id;
-        status->atra_registry[dungeon][i].floor = appear[i].floor;
-        status->atra_registry[dungeon][i].refcount = appear[i].count;
+    for (int j = 0; j < count; j++) {
+        UserStatus->atra_data[dungeon][j].id = appear[j].id;
+        UserStatus->atra_data[dungeon][j].floor = appear[j].floor;
+        UserStatus->atra_data[dungeon][j].refcount = appear[j].count;
     }
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
 #endif
-#ifdef NON_MATCHING
+/**
+ * Selects the atla identifiers that appear on a floor: keeps the fixed ones,
+ * draws each open slot from the dungeon's list for its half, packs them to the
+ * front and returns how many there are.
+ *
+ * @mangled BtAtraFloorCyoice__FiiPi
+ * @address 0x1C0D20
+ * @size 0x2A0
+ */
 int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
-    DNG_ATRA_REGISTRY_ENTRY registry[100];
+    DNG_ATRA_REGISTRY_ENTRY registry[128];
     int packed[8];
-    CDngStatusData *status = (CDngStatusData *) UserStatus;
-    int i;
 
     if (dungeon >= 6) {
         return 0;
     }
-    status->GetMaxAtraNum(dungeon, floor);
+    ((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor);
     int center = CenterFloorTbl[dungeon];
-    status->SetCopyAtraList(dungeon, floor, atra);
-    for (i = 0; i < 100; i++) {
-        registry[i] = status->atra_registry[dungeon][i];
+    ((CDngStatusData *) UserStatus)->SetCopyAtraList(dungeon, floor, atra);
+    for (int j = 0; j < 100; j++) {
+        registry[j].id = UserStatus->atra_data[dungeon][j].id;
+        registry[j].floor = UserStatus->atra_data[dungeon][j].floor;
+        registry[j].refcount = UserStatus->atra_data[dungeon][j].refcount;
     }
     int half = -1;
     if (floor > center - 1) {
         half = -2;
     }
     int count = 0;
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
         if (atra[i] >= 0) {
             count++;
         } else if (atra[i] == -2) {
@@ -407,31 +495,45 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
             count++;
         }
     }
-    for (i = 0; i < 8; i++) {
-        packed[i] = -1;
+    for (int k = 0; k < 8; k++) {
+        packed[k] = -1;
     }
     int out = 0;
-    for (i = 0; i < 8; i++) {
-        if (atra[i] >= 0) {
-            packed[out++] = atra[i];
+    for (int m = 0; m < 8; m++) {
+        if (atra[m] >= 0) {
+            packed[out++] = atra[m];
         }
     }
     memcpy(atra, packed, sizeof(packed));
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraFloorCyoice__FiiPi);
-#endif
 #ifdef NON_MATCHING
-extern CDranMapField *NowDranMapField;
+/**
+ * Gives a map part's collision model, or null for an empty cell.
+ */
+static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
+    if (parts_no == -1) {
+        return NULL;
+    }
+    return map->parts[parts_no].collision;
+}
 
-int setCollisionData(CDungeonMap *map, CCPoly *polys, float *position, float radius, float height) {
-    static int around[9][2] = {{0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1},
-                               {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+/**
+ * Gives the quarter turns a map part's collision model is given, or 0 for an empty cell.
+ */
+static inline int PartsCollisionTurn(CDungeonMap *map, int parts_no) {
+    if (parts_no == -1) {
+        return 0;
+    }
+    return map->parts[parts_no].collision_turn;
+}
+
+int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radius, float height) {
     CBoxVu0 box;
-    sceVu0FVECTOR part_pos;
     int count = 0;
+    CFrame *collision;
     int i;
+    int turn;
 
     box.max[0] = position[0] + radius;
     box.max[1] = position[1] + radius * height;
@@ -439,15 +541,19 @@ int setCollisionData(CDungeonMap *map, CCPoly *polys, float *position, float rad
     box.min[0] = position[0] - radius;
     box.min[1] = position[1] - radius * height;
     box.min[2] = position[2] - radius;
+    int around[9][2] = {{0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
     if (map->unk_BDEC != 1) {
+        sceVu0FVECTOR part_pos;
+
         for (i = 0; map->parts[i].frame[0] != NULL; i++) {
-            CFrame *collision = i == -1 ? NULL : map->parts[i].collision;
+            collision = PartsCollision(map, i);
             if (collision == NULL) {
                 continue;
             }
             sceVu0CopyVector(part_pos, map->parts[i].frame_offset[0]);
-            int turn = (int) map->parts[i].frame_turn[0] + (i == -1 ? 0 : map->parts[i].collision_turn);
-            if (turn >= 4) {
+            turn = (int) map->parts[i].frame_turn[0];
+            turn += PartsCollisionTurn(map, i);
+            if (turn > 3) {
                 turn -= 3;
             }
             if (turn == 3) {
@@ -455,46 +561,56 @@ int setCollisionData(CDungeonMap *map, CCPoly *polys, float *position, float rad
             }
             collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) turn)) / 180.0f, 0.0f);
             collision->SetPosition(part_pos);
-            count += collision->PickUpNearPoly(&polys[count], box);
+            count += collision->PickUpNearPoly(&poly[count], box);
         }
         for (i = 0; i < 24; i++) {
             if (map->boxes[i].used != 0) {
-                map->box_collision_model->SetPosition(map->boxes[i].pos);
-                count += map->box_collision_model->PickUpNearPoly(&polys[count], box);
+                collision = map->box_collision_model;
+                collision->SetPosition(map->boxes[i].pos);
+                count += collision->PickUpNearPoly(&poly[count], box);
             }
         }
-        return NowDranMapField->AddCollision(polys, map->CreateCollision(polys, box, count), box);
+        count = map->CreateCollision(poly, box, count);
+        count = NowDranMapField->AddCollision(poly, count, box);
+    } else {
+        CFrame *model;
+
+        for (int j = 0; j < 9; j++) {
+            int x = (int) (position[0] / 160.0f);
+            int z = (int) (position[2] / 160.0f);
+            x += around[j][0];
+            z += around[j][1];
+            if (x < 0 || x > 19 || z < 0 || z > 19) {
+                continue;
+            }
+            int parts_no = map->cells[x + z * 20].parts_no;
+            model = PartsCollision(map, parts_no);
+            if (model == NULL) {
+                continue;
+            }
+            float angle = (float) map->cells[x + z * 20].direction;
+            angle += (float) PartsCollisionTurn(map, parts_no);
+            if (angle > 3.0f) {
+                angle -= 3.0f;
+            }
+            if (angle == 3.0f) {
+                angle = -1.0f;
+            }
+            angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
+            model->SetRotation(0.0f, angle, 0.0f);
+            model->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
+            count += model->PickUpNearPoly(&poly[count], box);
+        }
+        for (int k = 0; k < 24; k++) {
+            if (map->boxes[k].used != 0) {
+                model = map->box_collision_model;
+                model->SetPosition(map->boxes[k].pos);
+                count += model->PickUpNearPoly(&poly[count], box);
+            }
+        }
+        count = map->CreateCollision(poly, box, count);
     }
-    for (i = 0; i < 9; i++) {
-        int x = (int) (position[0] / 160.0f) + around[i][0];
-        int z = (int) (position[2] / 160.0f) + around[i][1];
-        if (x < 0 || x >= 20 || z < 0 || z >= 20) {
-            continue;
-        }
-        MAP_CELL *cell = &map->cells[x + z * 20];
-        int parts_no = cell->parts_no;
-        CFrame *collision = parts_no == -1 ? NULL : map->parts[parts_no].collision;
-        if (collision == NULL) {
-            continue;
-        }
-        float turn = (float) cell->direction + (float) (parts_no == -1 ? 0 : map->parts[parts_no].collision_turn);
-        if (turn > 3.0f) {
-            turn -= 3.0f;
-        }
-        if (turn == 3.0f) {
-            turn = -1.0f;
-        }
-        collision->SetRotation(0.0f, (3.1415927f * (-90.0f * turn)) / 180.0f, 0.0f);
-        collision->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
-        count += collision->PickUpNearPoly(&polys[count], box);
-    }
-    for (i = 0; i < 24; i++) {
-        if (map->boxes[i].used != 0) {
-            map->box_collision_model->SetPosition(map->boxes[i].pos);
-            count += map->box_collision_model->PickUpNearPoly(&polys[count], box);
-        }
-    }
-    return map->CreateCollision(polys, box, count);
+    return count;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/dungeonparts", setCollisionData__FP11CDungeonMapP6CCPolyPfff);

@@ -146,87 +146,72 @@ void EffectHamon(CEffectGroup *group, float *position, float size) {
 }
 #ifdef NON_MATCHING
 void DepthOfField(float *focus, int level, int alpha, int blur) {
-    static float displacement[21][15];
-    sceGsTex0 frame_texture;
-    sceGsTex0 blur_texture;
+    static float rd[21][15];
+    sceGsTex0 frame;
+    sceGsTex0 image;
     sceGsTest test;
     sceGsZbuf zbuffer;
-    sceVu0FVECTOR focus_vertices[4] = {
-        {0.0f, 0.0f, 0.0f, 1.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f},
+    int i;
+    int j;
+    int k;
+
+    MGGetFBuffTex(&frame);
+    image = *(sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0;
+    frame.PSM = SCE_GS_PSMCT24;
+    MGStretchMoveImage(&frame, CRect_i_(0, 0, 0x2800, 0xE00), &image, CRect_i_(0, 0, 0x1400, 0xE00));
+    MGStretchMoveImage(&image, CRect_i_(0, 0, 0x1400, 0xE00), &image, CRect_i_(0x1400, 0, 0xA00, 0xE00));
+
+    sceVu0FVECTOR vertex[4] = {
+        {0.0f, 0.0f, focus[0], 1.0f},
+        {0.0f, 0.0f, focus[0] + 30.0f, 1.0f},
+        {0.0f, 0.0f, focus[1], 1.0f},
+        {0.0f, 0.0f, focus[1] + 20.0f, 1.0f},
     };
-    int screen_depth[4];
-    int strip;
-    int column;
-    int row;
-
-    MGGetFBuffTex(&frame_texture);
-    blur_texture = *(sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0;
-    blur_texture.TBW = 16;
-
-    // Downsample the frame horizontally and then vertically into the blur texture.
-    MGStretchMoveImage(&frame_texture, CRect_i_(0, 0, 0x2800, 0xE00), &blur_texture,
-                       CRect_i_(0, 0, 0x1400, 0xE00));
-    MGStretchMoveImage(&blur_texture, CRect_i_(0, 0, 0x1400, 0xE00), &blur_texture,
-                       CRect_i_(0x1400, 0, 0xA00, 0xE00));
-
-    focus_vertices[0][2] = focus[0];
-    focus_vertices[1][2] = focus[0] + 30.0f;
-    focus_vertices[2][2] = focus[1];
-    focus_vertices[3][2] = focus[1] + 20.0f;
-    for (column = 0; column < 4; column++) {
-        sceVu0ApplyMatrix(focus_vertices[column], mgRenderInfo.screen, focus_vertices[column]);
-        focus_vertices[column][2] /= focus_vertices[column][3];
-        screen_depth[column] = (int) focus_vertices[column][2];
+    int screen[4][4];
+    for (i = 0; i < 4; i++) {
+        sceVu0ApplyMatrix(vertex[i], mgRenderInfo.screen, vertex[i]);
+        vertex[i][2] /= vertex[i][3];
+        screen[i][2] = (int) vertex[i][2];
     }
-
-    test = mgPixelTest;
-    test.bits.ate = 0;
-    test.bits.aref = 0;
-    test.bits.atst = 2;
-    test.bits.zte = 1;
-    test.bits.ztst = 2;
-    zbuffer = mgZBuffer;
-    zbuffer.bits.zmsk = 1;
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
     sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 0x61);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX0_1, *(u_long *) &blur_texture);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX0_1, *(u_long *) &image);
+    test = mgPixelTest;
+    test.bits.ate = 0;
+    test.bits.aref = 0;
+    test.bits.atst = 1;
+    test.bits.zte = 1;
+    test.bits.ztst = 2;
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
+    zbuffer = mgZBuffer;
+    zbuffer.bits.zmsk = 1;
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, 0x80808080);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, 0));
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 
-    // Draw the coarse texture above and below the focused depth range.
-    for (strip = 0; strip < 1; strip++) {
+    for (i = 0; i < 1; i++) {
         sceVif1PkCnt(Vif1Packet, 0);
         sceVif1PkOpenDirectCode(Vif1Packet, 0);
         sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
-        for (row = 0; row < 8; row++) {
-            int y = row * 0x200;
+        for (k = 0; k < 8; k++) {
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x15C);
-            for (column = 0; column < 41; column++) {
-                int x = column * 0x100 + 0x6C00;
-                int u = column * 0x80;
-                int depth = screen_depth[(column + strip) & 1];
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ,
-                                 ((u_long) alpha << 24) | 0x808080);
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV,
-                                 (u_long) u | ((u_long) y << 16));
+            for (j = 0; j < 41; j++) {
+                int x = (j << 8) + 0x6C00;
+                int v = k << 9;
+                int y = v + 0x7900;
+                int u = j << 7;
+                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
+                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 (u_long) x | ((u_long) (y + 0x7900) << 16) |
-                                     ((u_long) depth << 32));
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV,
-                                 (u_long) u | ((u_long) (y + 0x200) << 16));
+                                 SCE_GS_SET_XYZF2(x, y, screen[(j + i) % 2][2], 0));
+                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v + 0x200));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 (u_long) x | ((u_long) (y + 0x7B00) << 16) |
-                                     ((u_long) depth << 32));
+                                 SCE_GS_SET_XYZF2(x, y + 0x200, screen[(j + i) % 2][2], 0));
             }
         }
         sceVif1PkCloseGifTag(Vif1Packet);
@@ -238,47 +223,50 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
     if (level >= 2) {
         if (blur > 0) {
-            for (column = 0; column < 21; column++) {
-                for (row = 0; row < 15; row++) {
-                    float &offset = displacement[column][row];
-                    offset += 0.2f * (float) blur *
-                              ((float) rand() / 2.1474836e9f - 0.5f);
-                    if (offset < 0.0f) {
-                        offset = 0.0f;
-                    }
-                    if (offset > (float) blur) {
-                        offset = (float) blur;
+            for (i = 0; i < 21; i++) {
+                for (j = 0; j < 15; j++) {
+                    if (blur > 0) {
+                        rd[i][j] += 0.2f * ((float) blur * ((float) rand() / 2147483648.0f - 0.5f));
+                        if (rd[i][j] < 0.0f) {
+                            rd[i][j] = 0.0f;
+                        }
+                        if (rd[i][j] > (float) blur) {
+                            rd[i][j] = (float) blur;
+                        }
+                    } else {
+                        rd[i][j] = 0.0f;
                     }
                 }
             }
+        }
+        if (blur > 0) {
             alpha = 0x80;
         }
-
-        for (row = 0; row < 14; row++) {
-            int y = row * 0x100;
+        for (j = 0; j < 14; j++) {
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x15C);
-            sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ,
-                             ((u_long) alpha << 24) | 0x808080);
-            for (column = 0; column < 21; column++) {
-                int x = column * 0x200 + 0x6C00;
-                int u = column * 0x80 + 0x1400;
-                int depth = screen_depth[2 + (column & 1)];
-                int upper_x = x;
-                int lower_x = x;
+            sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
+            for (i = 0; i < 21; i++) {
+                int x = (i << 9) + 0x6C00;
+                int v = j << 8;
+                int y = v + 0x7900;
+                int y2 = y + 0x100;
+                int u = (i << 7) + 0x1400;
+                int v2 = v + 0x100;
                 if (blur > 0) {
-                    upper_x -= (int) displacement[column][row];
-                    lower_x -= (int) displacement[column][row + 1];
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                                     SCE_GS_SET_XYZF2(x - (int) rd[i][j], y, screen[2 + i % 2][2], 0));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v2));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                                     SCE_GS_SET_XYZF2(x - (int) rd[i][j + 1], y2, screen[2 + i % 2][2], 0));
+                } else {
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                                     SCE_GS_SET_XYZF2(x, y, screen[2 + i % 2][2], 0));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v2));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
+                                     SCE_GS_SET_XYZF2(x, y2, screen[2 + i % 2][2], 0));
                 }
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV,
-                                 (u_long) u | ((u_long) y << 16));
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 (u_long) upper_x | ((u_long) (y + 0x7900) << 16) |
-                                     ((u_long) depth << 32));
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV,
-                                 (u_long) u | ((u_long) (y + 0x100) << 16));
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 (u_long) lower_x | ((u_long) (y + 0x7A00) << 16) |
-                                     ((u_long) depth << 32));
             }
         }
     }

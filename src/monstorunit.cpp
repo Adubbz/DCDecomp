@@ -1357,9 +1357,7 @@ void CMonstorUnit::Step(int pause) {
                 WorkBuffer__2->Reset();
                 monster[unk_090].collision_poly = (CCPoly *) WorkBuffer__2->Alloc(2000);
                 chara[unk_090][0].GetPosition(position);
-                float collision_radius = 30.0f;
-                float collision_height = 5.0f;
-                monster[unk_090].unk_050 = setCollisionData(NowDngMap, monster[unk_090].collision_poly, position, 30, 5);
+                monster[unk_090].unk_050 = setCollisionData(NowDngMap, monster[unk_090].collision_poly, position, 30.0f, 5.0f);
                 int original_count = monster[unk_090].unk_050;
                 box.max[0] = 30.0f + position[0];
                 box.max[1] = 80.0f + position[1];
@@ -1783,8 +1781,7 @@ int CMonstorUnit::SetupViewMonstor(int model_no, float *position, int event_flag
     chara[unk_090][0] = base_chara[model_no][0];
     chara[unk_090][0].motion[0] = &chara[unk_090][0].motion_type;
     chara[unk_090][0].SetPosition(position);
-    float zero = 0.0f;
-    chara[unk_090][0].SetRotation(zero, zero, zero);
+    chara[unk_090][0].SetRotation(0.0f, 0.0f, 0.0f);
     if (UserStatus->cur_georama == 3 && UserStatus->cur_floor == 17 && unk_090 == 1) {
         InitBee(chara[1][0].frame, 15);
     }

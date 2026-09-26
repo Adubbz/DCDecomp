@@ -17,7 +17,6 @@ public:
      * @mangled __as__7CObjectFRC7CObject
      * @address 0x1431E0
      * @size 0x74
-     * @unknownret
      */
     CObject &operator=(const CObject &);
 

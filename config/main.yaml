@@ -392,7 +392,7 @@ segments:
       - {start: 0x19b7f8, type: .rodata, name: hitmark}
       - {start: 0x19b9c8, type: .rodata, name: collisiondata}
       - {start: 0x19bc18, type: .rodata, name: hitvalue}
-      - {start: 0x19bc40, type: .rodata, name: motionmodel}
+      - {start: 0x19bc38, type: .rodata, name: motionmodel}
       - {start: 0x19bc90, type: .rodata, name: btmisc}
       - {start: 0x19bd88, type: .rodata, name: weaponelement}
       - {start: 0x19bd90, type: .rodata, name: btsysscript}

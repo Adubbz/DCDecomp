@@ -116,21 +116,6 @@ extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 static void LoadScript();
 static void LoadInfo(char *script, int size);
-void EdDoorCloseSe(int door_sound, float *position);
-void EdDoorOpenSe(int door_sound, float *position);
-void EdSetCharaCursor(int on);
-void EdEventNPCStep();
-float EdAGetViewAngleH();
-float EdAGetViewAngleV();
-void EdASetViewAngle(float h, float v);
-void EdEyeCamera(CCamera *camera, CCharacter *chara);
-void EdViewModeOff();
-void EdInitMesParam();
-void EdDrawCharacter(CCharacter *chara, int detail, int count, CNPCharacter *villagers, int *marks, int shadow,
-                     ED_EVENT_INFO *event);
-void EdEventBackSpriteDraw();
-void EdDrawItem();
-void EdEventSpriteDraw();
 static void setTexAnim();
 static void RunEvent(int event_no, CCamera *camera);
 static void RunSystemEvent(int event_no, CCamera *camera);
@@ -144,7 +129,16 @@ static void VillagerCollision();
 static int LoadTexture();
 static void LoadChara();
 void LoadData();
+
 int LoadPTS(CMapParts *parts, u_int *archive);
+
+/**
+ * Views one function point as the words it is copied in.
+ */
+struct EPARTS_FUNC_WORDS {
+    u_int words[sizeof(EPARTS_FUNC_DATA) / sizeof(u_int)]; /**< The record, one word at a time. */
+};
+
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
 void DrawWaterSurface(CCamera *camera);
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
@@ -437,8 +431,7 @@ static void InitWorkBuffer() {
  * @size 0x478
  */
 int EditInInit(float time, char *name) {
-    float density = 255.0f;
-    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, density, density);
+    MGSetFogParm(10000.0f, 50000.0f, 0, 0, 0, 255.0f, 255.0f);
     memset(EdInInfo, 0, sizeof(EDIT_IN_INFO));
     EdInInfo->projection = 800.0f;
     strcpy(EdInInfo->name, name);
@@ -456,20 +449,19 @@ int EditInInit(float time, char *name) {
     BG_READ_INFO *info = GetReadBGFile(1);
     if (info != NULL) {
         char *text = (char *) EdNPCBuffer.Alloc((info->size >> 4) + 1);
-        memcpy(text, info->buffer, (int) info->size);
+        memcpy(text, info->buffer, info->size);
         LoadInfo(text, info->size);
     }
     LoadData();
-    int remaining;
-    u_char *base = EdNPCBuffer.base + EdNPCBuffer.used * 16;
-    remaining = EdNPCBuffer.limit - EdNPCBuffer.used;
-    EdVillagerBuffer.base = base;
+    int used = EdNPCBuffer.used;
+    u_char *start = EdNPCBuffer.base + used * 16;
+    int remaining = EdNPCBuffer.limit - used;
+    EdVillagerBuffer.base = start;
     EdVillagerBuffer.limit = remaining;
     EdVillagerBuffer.used = 0;
     printf("buffer %d\n", remaining);
     LoadChara();
-    int far_z = 0xFFFF;
-    MGSetRenderInfo(EdInInfo->projection, 5.0f, far_z);
+    MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
     MGSetPLight(EdInInfo->light_direction, EdInInfo->light_colour);
     MGSetAmbient(EdInInfo->ambient);
     MGSetBGColor(EdInInfo->background_colour);
@@ -478,14 +470,12 @@ int EditInInit(float time, char *name) {
     if (Chara != NULL) {
         Chara->SetPosition(0.0f, 0.0f, 0.0f);
     }
-    float zero1 = 0.0f;
-    EdFadeIn(0x40, zero1, zero1, zero1);
+    EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
     door_open_cnt = 0;
     GameMode = 0;
     Chara->unk_C98 = 0;
     Chara->SetPosition(0.0f, 0.0f, 0.0f);
-    float zero3 = 0.0f;
-    Chara->SetRotation(zero3, zero3, zero3);
+    Chara->SetRotation(0.0f, 0.0f, 0.0f);
     GetMapJumpPos(Chara);
     Chara->ClothStep(-1);
     if (EdInteriorDoorSound >= 0) {
@@ -518,9 +508,6 @@ int EditInInit(float time, char *name) {
     EdInitSoundSrc();
     return 0;
 }
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @886__2);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @891__2);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @892__2);
 /**
  * Runs one frame of the interior and reports when it is to be left.
  *
@@ -528,82 +515,84 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @892__2);
  * @address 0x19C2B0
  * @size 0x1014
  */
-#ifdef NON_MATCHING
 int EditInLoop() {
     sceVu0FMATRIX view;
     sceVu0FVECTOR position;
-    sceVu0FVECTOR eye;
-    sceVu0FVECTOR dir;
-    CMapParts *parts[10];
-    static int old_mode;
 
-    if (EdSystemMesCheck() != 0 || EdCheckItemOver() != 0) {
+    if (EdSystemMesCheck() || EdCheckItemOver()) {
         EdSetKeyMode(0);
     } else {
         EdSetKeyMode(0xFFFF);
     }
-    if (EdPadDown(0x800, 4) != 0) {
+    if (EdPadDown(0x800, 4)) {
         goto_return_menu = 1;
     }
     int hour = (int) (NowTime / 3.0f);
     if (GameMode != 14) {
-        if (EdCheckViewMode() == 0) {
+        if (!EdCheckViewMode()) {
             MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
         } else {
             MGSetRenderInfo(600.0f, 4.0f, 65535.0f);
         }
     }
     Chara->GetPosition(position);
-    if (GameMode != 5 && GameMode != 7 && GameMode != 6) {
-        OBJ_ANIME_SEQ *anime = EdInInfo->obj_anime;
-        for (int i = 0; i < obj_anime_num; i++, anime++) {
-            int flag = anime->completion_flag;
-            if (flag <= 0 || EdGetMapFlag(flag) == 0) {
-                ObjAnimePlay(anime);
+    switch (GameMode) {
+        case 6:
+        case 7:
+        case 5:
+            break;
+        default:
+            int i;
+            OBJ_ANIME_SEQ *anime = EdInInfo->obj_anime;
+            for (i = 0; i < obj_anime_num; i++, anime++) {
+                int flag = anime->completion_flag;
+                if (flag <= 0 || EdGetMapFlag(flag) == 0) {
+                    ObjAnimePlay(anime);
+                }
             }
-        }
-        StepWater();
+            StepWater();
+            break;
     }
     if (fix_camera != 0 && camera_num > 0 && GameMode == 0) {
         SetCameraPos((CFrame *) InteriorParts[0].frame[0], &MainCamera, Chara);
     }
     EdSetCharaCursor(0);
     switch (GameMode) {
-    case 0:
-        if (loop_counter > 0) {
-            MoveCharacter();
-        }
-        EdSetCharaCursor(1);
-        for (int i = 0; i < 10; i++) {
-            CNPCharacter *villager = &EdVillager[i];
-            villager->Step();
-            villager->ShadowStep();
-            villager->chara.ClothStep(0);
-        }
-        NowCamera = &MainCamera;
-        if (EdCheckViewMode() != 0) {
-            NowCamera = &ViewCamera;
-        }
-        break;
-    case 4: {
-        NowCamera = &EventCamera;
-        Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
-        EdEventInfo.current_time = NowTime;
-        int result = EdEventMode(&EventCamera, 0);
-        if (result != 0) {
-            GameMode = 0;
+        case 0:
+            if (loop_counter > 0) {
+                MoveCharacter();
+            }
+            EdSetCharaCursor(1);
+            for (int i = 0; i < 10; i++) {
+                EdVillager[i].Step();
+                EdVillager[i].ShadowStep();
+                EdVillager[i].chara.ClothStep(0);
+            }
             NowCamera = &MainCamera;
-            switch (result) {
-            case 7:
-                if (MapNo == 3 && strcmp(EdInteriorName, "i04h04") == 0) {
-                    EdInteriorDoorSound = -1;
+            if (EdCheckViewMode() != 0) {
+                NowCamera = &ViewCamera;
+            }
+            break;
+        case 4: {
+            NowCamera = &EventCamera;
+            Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
+            EdEventInfo.current_time = NowTime;
+            int result = EdEventMode(&EventCamera, 0);
+            if (result != 0) {
+                GameMode = 0;
+                NowCamera = &MainCamera;
+                if (result == 7) {
+                    if (MapNo == 3 && strcmp(EdInteriorName, "i04h04") == 0) {
+                        EdInteriorDoorSound = -1;
+                    }
+                    return 1;
                 }
-                return 1;
-            case 8:
-                return 99;
-            case 9:
-                GameMode = 3;
-            default:
+                if (result == 8) {
+                    return 99;
+                }
+                if (result == 9) {
+                    GameMode = 3;
+                }
                 if (EdEventInfo.reset_camera_angle < 0) {
                     sceVu0FVECTOR pos;
                     sceVu0FVECTOR ref;
@@ -613,149 +602,130 @@ int EditInLoop() {
                     MainCamera.SetRef(ref);
                 }
                 camera_change_count = 0;
-                break;
             }
+            VillagerCollision();
+            EdEventNPCStep();
+            goto_return_menu = 0;
+            break;
         }
-        VillagerCollision();
-        EdEventNPCStep();
-        goto_return_menu = 0;
-        break;
-    }
-    case 1: {
-        NowCamera = &MainCamera;
-        Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
-        Chara->Step();
-        Chara->ShadowStep();
-        Chara->SetPosition(fix_chara_pos);
-        Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
-        Chara->ClothStep(0);
-        for (int i = 0; i < 10; i++) {
-            CNPCharacter *villager = &EdVillager[i];
-            villager->Step();
-            villager->ShadowStep();
-            villager->chara.ClothStep(0);
-        }
-        door_open_cnt--;
-        if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
-            sceVu0FVECTOR pos;
-            Chara->GetPosition(pos);
-            EdDoorOpenSe(EdInteriorDoorSound, pos);
-        }
-        if (door_open_cnt < 0) {
-            door_open_cnt = 0;
-            GameMode = 2;
-        }
-        break;
-    }
-    case 2:
-        NowCamera = &MainCamera;
-        EdStopSoundSrc();
-        if (EdEventInfo.map_jump_bgm_stop != 0) {
-            SndBgmFadeOutStop();
-        } else {
-            EdBeforeInBgmNo = -1;
-        }
-        return 1;
-    case 3: {
-        sceVu0FVECTOR direction;
-        NowCamera = &MainCamera;
-        if (EdCheckViewMode() != 0) {
-            NowCamera = &ViewCamera;
-        }
-        Chara->SetMotion(0, 0);
-        Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
-        Chara->Step();
-        Chara->ShadowStep();
-        Chara->ClothStep(0);
-        for (int i = 0; i < 10; i++) {
-            CNPCharacter *villager = &EdVillager[i];
-            villager->Step();
-            villager->ShadowStep();
-            villager->chara.ClothStep(0);
-        }
-        CNPCharacter *talker = EdNowTalkChara();
-        float distance = Chara->GetDistance(talker->chara);
-        Chara->GetDir(talker->chara, direction);
-        float pitch = -atan2f(-Chara->body_height + (1.3f + talker->chara.body_height + direction[1]), distance);
-        float yaw = atan2f(direction[0], direction[2]);
-        float h = EdAGetViewAngleH();
-        float v = EdAGetViewAngleV();
-        h = AngleInterpolate(h, yaw, 0.05f, 0);
-        v = AngleInterpolate(v, pitch, 0.03f, 0);
-        EdASetViewAngle(h, v);
-        EdEyeCamera(&ViewCamera, Chara);
-        int settled = 1;
-        if (EdCheckViewMode() != 0) {
-            float d = h - yaw;
-            if (d < 0.0f) {
-                d = -d;
-            }
-            settled = 0;
-            if (d < 0.001f) {
-                d = v - pitch;
-                if (d < 0.0f) {
-                    d = -d;
-                }
-                if (d < 0.001f) {
-                    settled = 1;
-                }
-            }
-        }
-        if (settled) {
-            int event_no;
-            EdASetViewAngle(yaw, pitch);
-            event_no = 0;
-            int result = EdTalkMode(Chara, NULL, EdCheckViewMode(), &event_no);
-            if (result != 0) {
-                if (result == 2) {
-                    goto_menu = 3;
-                }
-                if (result == 3) {
-                    goto_menu = 4;
-                }
-                if (result == 4 && event_no > 0) {
-                    RunEvent(event_no, NowCamera);
-                }
-                GameMode = 0;
-            }
-        }
-        break;
-    }
-    case 6:
-        Chara->SetMotion(Chara->motion_no, 1);
-        Chara->Step();
-        Chara->ShadowStep();
-        for (int i = 0; i < 10; i++) {
-            CNPCharacter *villager = &EdVillager[i];
-            villager->chara.SetMotion(villager->chara.motion_no, 1);
-            villager->Step();
-            villager->ShadowStep();
-        }
-        break;
-    case 7:
-        MenuMapJumpMode = -1;
-        if (EdMenuMode() != 0) {
-            GameMode = 0;
-            EdExitMenu();
-            if (GetInteriorOutFlag() != 0) {
-                EdViewModeOff();
-                return 1;
-            }
+        case 1: {
+            NowCamera = &MainCamera;
+            CVector3_f_ velocity(0.0f, 0.0f, 0.0f);
+            Chara->SetVelocity(velocity);
+            Chara->Step();
+            Chara->ShadowStep();
+            Chara->SetPosition(fix_chara_pos);
+            Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
+            Chara->ClothStep(0);
             for (int i = 0; i < 10; i++) {
-                CNPCharacter *villager = &EdVillager[i];
-                villager->chara.SetMotion(villager->chara.motion_no, 0);
-                villager->Step();
-                villager->ShadowStep();
+                EdVillager[i].Step();
+                EdVillager[i].ShadowStep();
+                EdVillager[i].chara.ClothStep(0);
             }
-            return 0;
+            door_open_cnt--;
+            if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
+                sceVu0FVECTOR pos;
+                Chara->GetPosition(pos);
+                EdDoorOpenSe(EdInteriorDoorSound, pos);
+            }
+            if (door_open_cnt < 0) {
+                door_open_cnt = 0;
+                GameMode = 2;
+            }
+            break;
         }
-        break;
+        case 2:
+            NowCamera = &MainCamera;
+            EdStopSoundSrc();
+            if (EdEventInfo.map_jump_bgm_stop != 0) {
+                SndBgmFadeOutStop();
+            } else {
+                EdBeforeInBgmNo = -1;
+            }
+            return 1;
+        case 3: {
+            sceVu0FVECTOR direction;
+            NowCamera = &MainCamera;
+            if (EdCheckViewMode() != 0) {
+                NowCamera = &ViewCamera;
+            }
+            Chara->SetMotion(0, 0);
+            Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
+            Chara->Step();
+            Chara->ShadowStep();
+            Chara->ClothStep(0);
+            for (int i = 0; i < 10; i++) {
+                EdVillager[i].Step();
+                EdVillager[i].ShadowStep();
+                EdVillager[i].chara.ClothStep(0);
+            }
+            CNPCharacter *talker = EdNowTalkChara();
+            float distance = Chara->GetDistance(talker->chara);
+            Chara->GetDir(talker->chara, direction);
+            float pitch = -atan2f(-Chara->body_height + (1.3f + talker->chara.body_height + direction[1]), distance);
+            float yaw = atan2f(direction[0], direction[2]);
+            float h = EdAGetViewAngleH();
+            float v = EdAGetViewAngleV();
+            h = AngleInterpolate(h, yaw, 0.05f, 0);
+            v = AngleInterpolate(v, pitch, 0.03f, 0);
+            EdASetViewAngle(h, v);
+            EdEyeCamera(&ViewCamera, Chara);
+            if (EdCheckViewMode() == 0 || ((h - yaw < 0.0f ? -(h - yaw) : h - yaw) < 0.001f && (v - pitch < 0.0f ? -(v - pitch) : v - pitch) < 0.001f)) {
+                int event_no;
+                EdASetViewAngle(yaw, pitch);
+                event_no = 0;
+                int result = EdTalkMode(Chara, NULL, EdCheckViewMode(), &event_no);
+                if (result != 0) {
+                    if (result == 2) {
+                        goto_menu = 3;
+                    }
+                    if (result == 3) {
+                        goto_menu = 4;
+                    }
+                    if (result == 4 && event_no > 0) {
+                        RunEvent(event_no, NowCamera);
+                    }
+                    GameMode = 0;
+                }
+            }
+            break;
+        }
+        case 6:
+            Chara->SetMotion(Chara->motion_no, 1);
+            Chara->Step();
+            Chara->ShadowStep();
+            for (int i = 0; i < 10; i++) {
+                EdVillager[i].chara.SetMotion(EdVillager[i].chara.motion_no, 1);
+                EdVillager[i].Step();
+                EdVillager[i].ShadowStep();
+            }
+            break;
+        case 7:
+            MenuMapJumpMode = -1;
+            if (EdMenuMode() != 0) {
+                GameMode = 0;
+                EdExitMenu();
+                if (GetInteriorOutFlag() != 0) {
+                    EdViewModeOff();
+                    return 1;
+                }
+                for (int i = 0; i < 10; i++) {
+                    EdVillager[i].chara.SetMotion(EdVillager[i].chara.motion_no, 0);
+                    EdVillager[i].Step();
+                    EdVillager[i].ShadowStep();
+                }
+                return 0;
+            }
+            break;
     }
     if (EdEventInfo.lighting_override != 0) {
         MGSetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
         MGSetAmbient(EdEventInfo.ambient_color);
     }
     NowCamera->Step(1);
+    sceVu0FVECTOR eye;
+    sceVu0FVECTOR dir;
+    CMapParts *parts[64];
     NowCamera->GetCameraMatrix(view);
     NowCamera->GetPos(eye);
     NowCamera->GetDir(dir);
@@ -807,11 +777,11 @@ int EditInLoop() {
     }
     if (EdDebugEventEnable != 0 && (start_event_no > 0 || start_system_event > 0)) {
         if (start_system_event > 0) {
-            if (EdEventInit(start_system_event, &EdNPCBuffer, EdSystemEventData) != 0) {
+            if (EdEventInit(start_system_event, &EdNPCBuffer, (char *) EdSystemEventData) != 0) {
                 EdInitMesParam();
                 GameMode = 4;
             }
-        } else if (EdEventInit(start_event_no, &EdNPCBuffer, EdEventData) != 0) {
+        } else if (EdEventInit(start_event_no, &EdNPCBuffer, (char *) EdEventData) != 0) {
             EdInitMesParam();
             GameMode = 4;
         } else if (EdEventInfo.return_code == 9) {
@@ -824,11 +794,12 @@ int EditInLoop() {
     } else {
         simple_event = 0;
     }
+    static int old_mode;
     if (GameMode == 5 && GamePad.Down(0x800) != 0) {
         GameMode = old_mode;
         EdSePlay((ED_SOUND_ID) 2, -1);
         PlayTimeCountFlag(1);
-    } else if (GameMode != 4 && goto_return_menu != 0 && loop_counter >= 2 && GameMode == 0) {
+    } else if (GameMode != 4 && goto_return_menu != 0 && loop_counter > 1 && GameMode == 0) {
         old_mode = GameMode;
         GameMode = 5;
         EdSePlay((ED_SOUND_ID) 1, -1);
@@ -853,9 +824,6 @@ int EditInLoop() {
     SndStep();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", EditInLoop__Fv);
-#endif
 /**
  * Draws the interior for one frame.
  *
@@ -864,13 +832,9 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", EditInLoop__Fv);
  * @size 0x6AC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void MainDraw() {
     sceVu0FVECTOR position;
-    sceVu0FVECTOR light = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR ref;
-    sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
-    int marks_store[10];
+    int i;
 
     if (EdDrawOffFlag != 0) {
         return;
@@ -888,23 +852,24 @@ static void MainDraw() {
         TexManager.ReloadTexture(GetVif1Packet(), 15);
         TexAnime.TexAnime(15);
         setTexAnim();
-        for (int i = 0; i < parts_num; i++) {
-            InteriorParts[i].DrawParts(NowTime, light, 0, 0, NULL);
+        sceVu0FVECTOR distance = {0.0f, 1000.0f, 10000.0f, 1000000.0f};
+        for (i = 0; i < parts_num; i++) {
+            InteriorParts[i].DrawParts(NowTime, distance, 0, 0, NULL);
         }
     }
     sceGsTex0 frame;
     CRect_i_ screen;
     sceGsTex0 water;
-    sceGsZbuf zbuf;
     MGGetFBuffTex(&frame);
     screen.x = 0;
     screen.y = 0;
     screen.width = 0x280;
     screen.height = 0xE0;
-    *(u_long *) &water = TexManager.GetTexture("water_buff", -1)->tex0;
+    water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&frame, screen, &water, 0, 0, 0);
+    sceVu0FVECTOR ref;
     MainCamera.GetRef(ref);
-    zbuf = mgZBuffer;
+    sceGsZbuf zbuf = mgZBuffer;
     zbuf.bits.zmsk = 1;
     MGSetGsZBUF(&zbuf);
     DrawWaterSurface(NowCamera);
@@ -917,6 +882,7 @@ static void MainDraw() {
     }
     ED_EVENT_INFO *event = NULL;
     int detail = 3;
+    int marks_store[10];
     int *marks = marks_store;
     if (EdCheckViewMode() != 0) {
         detail = 0;
@@ -924,7 +890,7 @@ static void MainDraw() {
     if (GameMode == 2) {
         marks = NULL;
     } else {
-        for (int i = 0; i < 10; i++) {
+        for (i = 0; i < 10; i++) {
             marks_store[i] = 3;
         }
     }
@@ -934,25 +900,26 @@ static void MainDraw() {
     }
     EdDrawCharacter(Chara, detail, 10, EdVillager, marks, 1, event);
     TexManager.ReloadTexture(GetVif1Packet(), 0x18);
+    sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
     if (GameMode != 5 || EdPauseFlag == 0) {
         EditEffectStep();
         EffectMacroStep(wind);
         EdEffectGroup.Step(1);
-        for (int i = 0; i < 4; i++) {
+        for (i = 0; i < 4; i++) {
             MotionParts[i].Step();
         }
     }
     EditEffectStep2();
     if (EdDrawOffMap == 0) {
         EDIT_EFFECT_INFO *effect = EdInInfo->effects;
-        for (int i = 0; i < effect_num; i++, effect++) {
+        for (i = 0; i < effect_num; i++, effect++) {
             if (CheckEditEffect(effect, NowTime) != 0) {
                 DrawEditEffect(effect, NowCamera, &EdEffectGroup);
             }
         }
     }
     EdEffectGroup.Draw();
-    for (int i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         TexManager.ReloadTexture(GetVif1Packet(), i + 0x32);
         MotionParts[i].Draw();
     }
@@ -978,35 +945,33 @@ static void MainDraw() {
     EdSystemMesDraw();
     static int debug_flag = 0;
     static int debug_menu_mode = 0;
-    char pause_texture[] = "pause";
-    if (EdDebugParamDrawOff == 0 && (GameMode == 5 || EdPauseFlag != 0)) {
-        TexManager.ReloadTexture(GetVif1Packet(), 0x14);
-        CRect_i_ fade;
-        fade.x = 0;
-        fade.y = 0;
-        fade.width = 0x2800;
-        fade.height = 0xE00;
-        MGFillBox(fade, 0, 0, 0, 0x40);
-        setbilinear(0);
-        CRect_i_ texel;
-        CRect_i_ place;
-        texel.x = 0;
-        texel.y = 0;
-        texel.width = 0x80;
-        texel.height = 0x28;
-        place.x = 0x100;
-        place.y = 0xCC;
-        place.width = 0x80;
-        place.height = 0x28;
-        sceVif1Packet *packet = GetVif1Packet();
-        set2DSprite(packet, TexManager.GetTexture(pause_texture, -1), place, texel, 0x80);
+    if (EdDebugParamDrawOff == 0) {
+        char pause_texture[] = "pause";
+        if (GameMode == 5 || EdPauseFlag != 0) {
+            TexManager.ReloadTexture(GetVif1Packet(), 0x14);
+            CRect_i_ fade;
+            fade.x = 0;
+            fade.y = 0;
+            fade.width = 0x2800;
+            fade.height = 0xE00;
+            MGFillBox(fade, 0, 0, 0, 0x40);
+            setbilinear(0);
+            CRect_i_ place;
+            CRect_i_ texel;
+            texel.x = 0;
+            texel.y = 0;
+            texel.width = 0x80;
+            texel.height = 0x28;
+            place.x = 0x100;
+            place.y = 0xCC;
+            place.width = 0x80;
+            place.height = 0x28;
+            sceVif1Packet *packet = GetVif1Packet();
+            set2DSprite(packet, TexManager.GetTexture(pause_texture, -1), place, texel, 0x80);
+        }
     }
     EdFadeInOut();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", MainDraw__Fv__2);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1082__2);
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
  *
@@ -1031,13 +996,13 @@ void DrawWaterSurface(CCamera *camera) {
         }
         CWater *water = &surface->water;
         sceVu0CopyVector(position, surface->offset);
-        if (surface->follow_x) {
+        if (surface->follow[0]) {
             position[0] = eye[0] + 50.0f * dir[0];
         }
-        if (surface->follow_y) {
+        if (surface->follow[1]) {
             position[1] = eye[1];
         }
-        if (surface->follow_z) {
+        if (surface->follow[2]) {
             position[2] = eye[2] + 50.0f * dir[2];
         }
         CVector3_f_ rotation;
@@ -1263,27 +1228,28 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_
  * @address 0x19E520
  * @size 0x3F8
  */
-#ifdef NON_MATCHING
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR local;
-    INTERIOR_CAMERA cameras[8];
-    sceVu0FMATRIX matrix;
+    int i;
     EPARTS_FUNC_DATA *point = func_point;
     int count;
+    INTERIOR_CAMERA *entry;
 
     chara->GetPosition(position);
+    INTERIOR_CAMERA cameras[8];
+    sceVu0FMATRIX matrix;
     count = 0;
-    for (int i = 0; i < func_num; i++, point++) {
+    for (i = 0; i < func_num; i++, point++) {
         if (point->kind == 7) {
-            INTERIOR_CAMERA *entry = &cameras[count];
+            entry = &cameras[count];
             entry->link_id = point->link_id;
             CFrame *owner = (CFrame *) point->parts;
-            sceVu0CopyVector(entry->min, point->position);
-            sceVu0CopyVector(entry->max, point->rotation);
+            sceVu0CopyVector(entry->min, point->parameters);
+            sceVu0CopyVector(entry->max, point->values);
             sceVu0UnitMatrix(matrix);
             if (owner != NULL) {
-                CFrame *found = owner->SearchFrame(point->frame_name);
+                CFrame *found = owner->SearchFrame((char *) point->frame_name);
                 if (found != NULL) {
                     found->GetLWMatrix(matrix);
                 }
@@ -1301,14 +1267,15 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
     }
     INTERIOR_CAMERA *inside = NULL;
     static int cnt = 0;
-    for (int i = 0; i < count; i++) {
-        INTERIOR_CAMERA *entry = &cameras[i];
+    for (i = 0; i < count; i++) {
+        entry = &cameras[i];
         if (entry->link_id == 0) {
             inside = entry;
             continue;
         }
+        float (*inverse)[4] = entry->frame.GetInverseMatrix();
         position[3] = 1.0f;
-        sceVu0ApplyMatrix(local, entry->frame.GetInverseMatrix(), position);
+        sceVu0ApplyMatrix(local, inverse, position);
         if (!(local[0] < entry->min[0]) && !(local[1] < entry->min[1]) && !(local[2] < entry->min[2]) &&
             local[0] <= entry->max[0] && local[1] <= entry->max[1] && local[2] <= entry->max[2]) {
             inside = entry;
@@ -1316,7 +1283,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         }
     }
     cnt++;
-    if (cnt >= 61) {
+    if (cnt > 60) {
         cnt = 0;
     }
     if (active_camera == NULL) {
@@ -1335,7 +1302,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         camera_change_count--;
     }
     if (active_camera != NULL) {
-        sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 1.0f};
         active_camera->frame.GetWorldPosition(eye, eye);
         position[1] += 17.0f;
         camera->SetPos(eye);
@@ -1344,9 +1311,6 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         camera->SetNextRef(NULL, position[0], position[1], position[2]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", SetCameraPos__FP6CFrameP7CCameraP10CCharacter);
-#endif
 /**
  * Collects the collision polygons of the interior parts meeting a box.
  *
@@ -1503,10 +1467,7 @@ static void LoadChara() {
  * @address 0x19EED0
  * @size 0x818
  */
-#ifdef NON_MATCHING
 void LoadData() {
-    CFrame *frames[9];
-
     func_point = new ((u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16)) EPARTS_FUNC_DATA[128];
     EdNPCBuffer.Alloc(0x600);
     for (int i = 0; i < 128; i++) {
@@ -1519,8 +1480,11 @@ void LoadData() {
         archive = (u_int *) file->buffer;
     }
     int count;
-    u_int *pts;
-    for (count = 0; (pts = SearchPTS(archive, count)) != NULL; count++) {
+    for (count = 0;; count++) {
+        u_int *pts = SearchPTS(archive, count);
+        if (pts == NULL) {
+            break;
+        }
         CMapParts *parts = &InteriorParts[count];
         LoadPTS(parts, pts);
         parts->handle = count;
@@ -1534,19 +1498,23 @@ void LoadData() {
                 EdPartsObjectOnOff(parts, info, EdInteriorJumpID + 1);
             }
         }
+        CFrame *frames[9];
         for (int i = 0; i < 9; i++) {
             frames[i] = NULL;
         }
         for (int i = 0; i < 4; i++) {
-            frames[i] = (CFrame *) parts->frame[i];
+            CFrame *frame = parts->frame[i];
+            frames[i] = frame;
         }
         frames[4] = parts->shadow_frame;
         frames[5] = parts->GetCollisionFrame();
         frames[6] = parts->shade_frame;
         frames[7] = parts->unk_104;
-        CFrame *extra = parts->unk_0DC;
-        if (extra != NULL) {
-            extra->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+        CFrame *extra;
+        if (parts->unk_0DC == NULL) {
+            extra = NULL;
+        } else {
+            parts->unk_0DC->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
             parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
             extra = parts->unk_0DC;
         }
@@ -1559,21 +1527,21 @@ void LoadData() {
         }
         for (; first < func_num; first++, point++) {
             EnterPartsEffect(parts, point, EdInInfo->effects, 32);
-            if (obj_anime_num < 32 && InitObjAnime(frames, 9, point, &EdInInfo->obj_anime[obj_anime_num]) != 0) {
-                obj_anime_num++;
+            if (obj_anime_num < 32) {
+                OBJ_ANIME_SEQ *seq = &EdInInfo->obj_anime[obj_anime_num];
+                if (InitObjAnime(frames, 9, point, seq) != 0) {
+                    obj_anime_num++;
+                }
             }
         }
         EdInitEventPoint(parts, NULL, func_point, func_num, EdInInfo->event_points, 32);
     }
     parts_num = count;
     for (int i = 0; i < func_num; i++) {
-        EPARTS_FUNC_DATA *point = &func_point[i];
-        point->parts = (CMapParts *) InteriorParts[(int) point->parts].frame[0];
-        int flag = func_point[i].completion_flag;
-        if (flag > 0 && SaveData->GetMapInitFlag(MapNo, flag) == 0) {
+        func_point[i].parts = (CMapParts *) InteriorParts[(int) func_point[i].parts].frame[0];
+        if (func_point[i].completion_flag > 0 && SaveData->GetMapInitFlag(MapNo, func_point[i].completion_flag) == 0) {
             SaveData->SetMapInitFlag(MapNo, func_point[i].completion_flag, 1);
-            EPARTS_FUNC_DATA *set = &func_point[i];
-            SaveData->SetMapFlag(MapNo, set->completion_flag, (s8) set->unk_28[0] == 0);
+            SaveData->SetMapFlag(MapNo, func_point[i].completion_flag, !(s8) func_point[i].unk_28[0]);
         }
     }
     camera_num = 0;
@@ -1585,14 +1553,13 @@ void LoadData() {
     }
     for (int i = 0; i < 4; i++) {
         EDIT_MOTION_PARTS_INFO *motion = &EdInInfo->motion_parts[i];
-        CCharacter *chara = &MotionParts[i];
-        chara->Initialize();
+        MotionParts[i].Initialize();
         if (motion->name[0] != '\0') {
             LoadFile(motion->name, read_buffer, NULL);
-            chara->LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
-            chara->SetPosition(motion->values[0], motion->values[1], motion->values[2]);
-            chara->SetRotation(motion->values[3], motion->values[4], motion->values[5]);
-            chara->SetScale(motion->values[6], motion->values[7], motion->values[8]);
+            MotionParts[i].LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
+            MotionParts[i].SetPosition(motion->values[0], motion->values[1], motion->values[2]);
+            MotionParts[i].SetRotation(motion->values[3], motion->values[4], motion->values[5]);
+            MotionParts[i].SetScale(motion->values[6], motion->values[7], motion->values[8]);
         }
     }
     for (int i = 0; i < 1; i++) {
@@ -1600,37 +1567,36 @@ void LoadData() {
     }
     for (int i = 0; i < 1; i++) {
         EDIT_WATER_INFO *info = &EdInInfo->water_surfaces[i];
-        if (info->type > 0) {
-            CGroundWater *surface = &Water[i];
-            CWater *water = &surface->water;
-            sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2], 1.0f};
-            sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2], 1.0f};
-            sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_c[2], 1.0f};
-            sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_c[2], 1.0f};
-
-            surface->draw = 1;
-            strcpy(surface->name, info->name);
-            surface->parts_no = info->parts_no;
-            sceVu0CopyVector(surface->offset, info->corner_c);
-            for (int j = 0; j < 3; j++) {
-                (&surface->follow_x)[j] = (&info->follow_x)[j];
-            }
-            for (int j = 0; j < 4; j++) {
-                sceVu0CopyVector((float *) &surface->ripples[j], (float *) &info->wave[j]);
-            }
-            water->SetVertex(near_left, near_right, far_left, far_right);
-            water->frame.SetPosition(info->corner_c);
-            water->SetSize(info->type, info->number, &EdNPCBuffer);
-            water->SetParam(info->texture_scroll[0], info->texture_scroll[1], info->texture_scroll[2],
-                            info->texture_scroll[3]);
-            water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
+        if (info->type <= 0) {
+            break;
         }
+        CWater *water;
+        int j;
+        CGroundWater *surface = &Water[i];
+        water = &surface->water;
+        sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2], 1.0f};
+        sceVu0FVECTOR near_right = {info->corner_b[0], info->corner_a[1], info->corner_a[2], 1.0f};
+        sceVu0FVECTOR far_left = {info->corner_a[0], info->corner_a[1], info->corner_b[2], 1.0f};
+        sceVu0FVECTOR far_right = {info->corner_b[0], info->corner_a[1], info->corner_b[2], 1.0f};
+
+        surface->draw = 1;
+        strcpy(surface->name, info->name);
+        surface->parts_no = info->parts_no;
+        sceVu0CopyVector(surface->offset, info->corner_c);
+        for (int j = 0; j < 3; j++) {
+            surface->follow[j] = info->follow[j];
+        }
+        for (j = 0; j < 4; j++) {
+            sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].x);
+        }
+        water->SetVertex(near_left, near_right, far_left, far_right);
+        water->frame.SetPosition(info->corner_c);
+        water->SetSize(info->type, info->number, &EdNPCBuffer);
+        water->SetParam(info->texture_scroll[0], info->texture_scroll[1], info->texture_scroll[2],
+                        info->texture_scroll[3]);
+        water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadData__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
 /**
  * Builds one interior part from its archive entry.
  *
@@ -2050,9 +2016,9 @@ static void CommandWATER_SURFACE(void **arguments) {
         surface->unk_50 = *(int *) arguments[16];
         surface->unk_54 = *(int *) arguments[17];
         surface->unk_58 = *(int *) arguments[18];
-        surface->follow_x = *(int *) arguments[19];
-        surface->follow_y = *(int *) arguments[20];
-        surface->follow_z = *(int *) arguments[21];
+        surface->follow[0] = *(int *) arguments[19];
+        surface->follow[1] = *(int *) arguments[20];
+        surface->follow[2] = *(int *) arguments[21];
         surface->parts_no = -1;
         water_info = surface;
     }

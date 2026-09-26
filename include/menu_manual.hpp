@@ -104,7 +104,7 @@ void InitMenuManual(int *result, u_long128 *load_buffer);
  * @address 0x00233F00
  * @size 0x588
  */
-s16 SetManualMsgBuffer();
+int SetManualMsgBuffer();
 
 /**
  * Releases manual-menu state and restores the surrounding menu.

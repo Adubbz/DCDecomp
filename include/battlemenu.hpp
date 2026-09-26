@@ -11,6 +11,7 @@
 // names but not where they live.
 class CCharacter;
 class ClsMes;
+class CWeaponLevelUp;
 struct RECT;
 struct WEAPON_HAVE;
 
@@ -79,7 +80,7 @@ struct MENU_CHARA_INFO {
     s8 unk_02;
     s8 unk_03;
     float unk_04;
-    float unk_08;
+    s32 unk_08;
 };
 
 STATIC_ASSERT(sizeof(MENU_CHARA_INFO) == 0xC);
@@ -157,6 +158,11 @@ struct MENU_ICON_POS {
 };
 
 STATIC_ASSERT(sizeof(MENU_ICON_POS) == 0x8);
+
+/**
+ * Buffer the weapon menu's level-up, build-up and repair effects are read into.
+ */
+extern CWeaponLevelUp *WepMenuEffectReadBuf;
 
 /**
  * Gives the weapon a party member starts with.
@@ -239,7 +245,7 @@ void SetInteriorOutFlag(int flag);
  * @address 0x1F3FD0
  * @size 0xC
  */
-s16 GetInteriorOutFlag(void);
+int GetInteriorOutFlag(void);
 
 /**
  * Chooses the message that explains why the party may not leave the zone.

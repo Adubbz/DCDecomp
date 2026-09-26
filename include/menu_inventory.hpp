@@ -63,13 +63,13 @@ int PersonalRetMax(int board_mode);
 void DrawPersonalBoard(int x, int y, int board_mode, int cursor_pos, int alpha);
 
 /**
- * Draws a common inventory icon with its quantity and state overlays.
+ * Draws the icons of one personal board page, five to a row, clipped to the board's top and bottom.
  *
  * @mangled CommonIconDraw__Fiiiiiii
  * @address 0x0022FAD0
  * @size 0x4F0
  */
-void CommonIconDraw(int x, int y, int item_no, int quantity, int state, int alpha, int scale);
+void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int alpha);
 
 /**
  * Draws the frame surrounding a personal inventory board.
@@ -119,13 +119,14 @@ void PersonalBoardScrlBarDraw(int x, int y, int count, float &scroll, unsigned c
 void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha);
 
 /**
- * Draws one complete personal-board view.
+ * Draws the rows of a personal board's slot grid down to the clip bottom, with a divider bar above the third row
+ * (mark 1) or above every other row (mark 2).
  *
  * @mangled DrawPerBoardDraw__FiiiiiiP8CTexturei
  * @address 0x00230DC0
  * @size 0x298
  */
-void DrawPerBoardDraw(int x, int y, int board_mode, int cursor_pos, int top_pos, int count, CTexture *texture, int alpha);
+void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha);
 
 /**
  * Draws the common trash target used by inventory boards.
@@ -155,13 +156,13 @@ int IsEnableTrushThrow(int item_no);
 void CommonMoneyBoardDraw(int x, int y, int money, int alpha);
 
 /**
- * Returns whether an item occupies a specified board position.
+ * Returns the item in one cell of an inventory board page, or -1 when the cell or page holds none.
  *
  * @mangled SearchBoardNowPosItemExist__Fii
  * @address 0x002314E0
  * @size 0xE0
  */
-s16 SearchBoardNowPosItemExist(int board_mode, int board_pos);
+int SearchBoardNowPosItemExist(int board_mode, int board_pos);
 
 /**
  * Finds an available inventory-board slot for an item kind.
@@ -299,13 +300,13 @@ int GetNowItemNum(short item_no, ITEM_PACK *items);
 void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items);
 
 /**
- * Returns the maximum entry count for an inventory-board mode.
+ * Counts the filled entries of an inventory board page and flags through the pointer when they overflow its room.
  *
  * @mangled GetNowModeMaxNum__FiPi
  * @address 0x00232290
  * @size 0x1FC
  */
-int GetNowModeMaxNum(int board_mode, int *maximum);
+int GetNowModeMaxNum(int board_mode, int *overflow);
 
 /**
  * Initializes a held-weapon record from its weapon definition.

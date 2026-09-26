@@ -4,16 +4,18 @@
 
 #include "menu_dungeon.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-#include "btmisc.hpp"
 #include "battlemenu.hpp"
+#include "btmisc.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "debugfont.hpp"
 #include "dun/gameloop.hpp"
 #include "editatra.hpp"
 #include "gamepad.hpp"
@@ -28,8 +30,8 @@
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
-#include "snd.hpp"
 #include "shot_freefuncs.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
 
@@ -397,34 +399,37 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
     }
 }
 
-#ifdef NON_MATCHING
 int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
+    CDngStatusData *status;
+    ATTACH_LIST *attach;
+    ATTACH_DATA *data;
+    s16 held_no;
+
     if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    ATTACH_LIST *attachment = (ATTACH_LIST *) &SaveData->GetDngStatus()->consumable_items[slot];
-    ATTACH_DATA *data = GetAttachData(item_no);
-    int kind = attachment->item_no;
-    if (kind < ITEM_ATTACH_START || kind >= ITEM_DUNGEON_START) {
+    status = SaveData->GetDngStatus();
+    DNG_CONSUMABLE *items = status->consumable_items;
+    attach = (ATTACH_LIST *) &items[slot];
+    data = GetAttachData(item_no);
+    held_no = attach->item_no;
+    if (held_no < ITEM_ATTACH_START || held_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    memset(attachment, 0, sizeof(ATTACH_LIST));
-    attachment->item_no = kind;
-    memcpy(attachment, data, sizeof(ATTACH_LIST));
+    memset(attach, 0, sizeof(ATTACH_LIST));
+    attach->item_no = held_no;
+    memcpy(attach, data, sizeof(ATTACH_LIST));
     if (level <= 0) {
         level = 1;
     }
     if (level > 3) {
         level = 3;
     }
-    if (kind >= ITEM_ATTACH_ATTACK && kind <= ITEM_ATTACH_MAGICAL_POWER) {
-        attachment->status[kind - ITEM_ATTACH_ATTACK] += level;
+    if (held_no >= ITEM_ATTACH_ATTACK && held_no <= ITEM_ATTACH_MAGICAL_POWER) {
+        attach->status[held_no - ITEM_ATTACH_ATTACK] += level;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", SetAttachMentValue__FiisP11ATTACH_LIST);
-#endif
 
 int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     int volume;
@@ -864,25 +869,91 @@ static void DrawDunEnterBack(int alpha) {
     MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
-#ifdef NON_MATCHING
-static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
-    int source_x = DEnterMenu.dungeon < 6 ? DEnterMenu.dungeon * 32
-                                          : (DEnterMenu.dungeon - 6) * 32;
-    int source_y = DEnterMenu.dungeon < 6 ? 0 : 128;
-    int clipped_y = y;
-    int clipped_source = source_x;
-    int height = 28;
+/**
+ * Texture block the character change menu loads its pictures into.
+ */
+extern s16 CharaChangeTexBlock;
 
-    MenuTextureClip(clipped_y, clipped_source, height, top, bottom);
-    if (clipped_y < bottom) {
-        DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, clipped_y, 112, height),
-                         CRect_i_(source_y, clipped_source, 112, height), alpha);
-        DrawDunNumberClip(x + 88, y + 8, top, bottom, (floor / 10) % 10, alpha);
-        DrawDunNumberClip(x + 100, y + 8, top, bottom, floor % 10, alpha);
+/**
+ * Set once the character change menu's files have been read.
+ */
+extern s16 CharaChangeReadFlag;
+
+/**
+ * Buffer past the character change menu's pictures, where its models are read.
+ */
+extern u_long128 *chara_change_buf;
+
+/**
+ * Texture of the character change menu's portraits.
+ */
+extern CTexture *QuickCharaTex;
+
+/**
+ * Name of the frame-buffer texture the character change menu's pictures are drawn into.
+ */
+extern char chara_change_frame_image[];
+
+INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
+static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
+    int position = y;
+    int height;
+    int source;
+    int u;
+
+    if (y < bottom) {
+        height = 0x1C;
+        u = 0;
+        source = DEnterMenu.dungeon * 32;
+        if (DEnterMenu.dungeon >= 6) {
+            u = 0x80;
+            source = (DEnterMenu.dungeon - 6) * 32;
+        }
+        MenuTextureClip(position, source, height, top, bottom);
+        if (position + height >= top) {
+            DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, position, 0x70, height),
+                             CRect_i_(u, source, 0x70, height), alpha);
+        }
+        if (DEnterMenu.dungeon == 5) {
+            floor = BtGetFloorLevel(floor - 1);
+        }
+        int offset = 0;
+        if (floor < 10) {
+            offset = -6;
+        }
+        if (DEnterMenu.dungeon == 5 || DEnterMenu.dungeon == 6) {
+            if (floor < 10) {
+                offset = -12;
+            }
+            if (floor >= 10 && floor < 100) {
+                offset = -6;
+            }
+            if (floor >= 100) {
+                offset = 0;
+                if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() == 1) {
+                    offset += 4;
+                }
+            }
+        }
+        s8 name_width[7][7] = {
+            {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+        };
+        x = offset + (x + name_width[GetMenuLangFlag()][DEnterMenu.dungeon]);
+        position = y;
+        RECT digits = {0, 0xC0, 0x10, 0x1C};
+        if (y + height >= top) {
+            DrawMenuNumber(floor, x, y, digits, DunLogBoard2, 0, top, bottom, alpha);
+        }
     }
 }
 
+#ifdef NON_MATCHING
 /** Buffer that holds the character-change screen's asynchronously read data. */
 static u_long128 *quick_change_buffer;
 /** Optional pairs of screen coordinates for the selectable party members. */
@@ -905,86 +976,424 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     GamePad.MenuModeOn(0x78);
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1349);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1350__3);
-#ifdef NON_MATCHING
 int CharaChangeLoop(void) {
-    int result = CharaChangeKey();
-
-    ReadBG();
+    if (ReadBGSync() == 0 && CharaChangeReadFlag == 0) {
+        LOADTEXTURE_INFO2 table[] = {
+            {chara_change_frame_image, 0, 0},
+            {NULL, 0, 0},
+            {NULL, 0, 0},
+        };
+        table[0].block_no = CharaChangeTexBlock;
+        table[1].block_no = CharaChangeTexBlock;
+        BG_READ_INFO *file = GetReadBGFile(0);
+        if (file == NULL) {
+            return 1;
+        }
+        table[1].name = (char *) GetPackFile((u_int *) file->buffer, "quickchr.img", NULL);
+        TexManager.DeleteTextureBlock(CharaChangeTexBlock);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, table);
+        QuickCharaTex = TexManager.GetTexture("quickchara", -1);
+        chara_change_buf = file->buffer + (file->size >> 4) + 4;
+        chara_change_buf = MenuCalcBufAlignment(chara_change_buf);
+        CharaChangeReadFlag = 1;
+        InitMenuMesSet(0, (s16 *) GetPackFile((u_int *) file->buffer, "qchr.mes", NULL));
+        CommonMenuMes3.auto_pos = -1;
+        CommonMenuMes3.Preset(1);
+        int message = 1;
+        if (ChangeMenu.unk_52 == 1) {
+            message = 4;
+        }
+        if (ChangeMenu.unk_52 == 2) {
+            message = 5;
+        }
+        CommonMenuMes3.MakeMesWin(message);
+        CommonMenuMes1.Preset(1);
+        CommonMenuMes1.MakeMesWin(3);
+    }
+    int result = 0;
+    if (CharaChangeReadFlag != 0) {
+        result = CharaChangeKey();
+    }
     CharaChangeDraw();
     ItemVolumeStep.LoopStep(60);
     if (result != 0) {
-        MenuTextureReload(quick_change_texture_block);
+        MenuTextureReload(CharaChangeTexBlock);
         DngActiveWeaponTextureCopy();
+        CharaChangeReadFlag = 0;
         ItemVolumeStep.CheckItemVolume();
         GamePad.MenuModeOff();
         GamePad.AutoRepeatOff();
-        TexManager.DeleteTextureBlock(quick_change_texture_block);
+        TexManager.DeleteTextureBlock(CharaChangeTexBlock);
         TexManager.CleanUpTextureList();
+        LOADTEXTURE_INFO2 restore[] = {
+            {chara_change_frame_image, 0, 0},
+            {NULL, 0, 0},
+        };
+        restore[0].block_no = CharaChangeTexBlock;
+        TexManager.LoadTextureBlockEX(-1, restore);
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeLoop__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1373);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1374);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1375);
-#ifdef NON_MATCHING
-int CharaChangeKey(void) {
-    int previous = quick_change_selected;
-    int party_size = UserStatus != NULL ? UserStatus->party_size : 1;
 
-    if (GamePad.Down(0x3000)) {
-        quick_change_selected--;
-    } else if (GamePad.Down(0xC000)) {
-        quick_change_selected++;
-    }
-    if (quick_change_selected < 0) {
-        quick_change_selected = party_size - 1;
-    } else if (quick_change_selected >= party_size) {
-        quick_change_selected = 0;
-    }
-    if (previous != quick_change_selected) {
-        CharaChangeInitToGL(quick_change_buffer, quick_change_selected);
-        ComMenuSePlay(0);
-    }
-    if (GamePad.Down(0x40) && UserStatus != NULL) {
-        UserStatus->cur_chara = quick_change_selected;
-        ComMenuSePlay(1);
-        return 1;
-    }
-    if (GamePad.Down(0x20)) {
-        ComMenuSePlay(2);
-        return quick_change_state == 2 ? 2 : 1;
-    }
-    return 0;
+/**
+ * Status of the party the character change menu picks from.
+ */
+extern CDngStatusData *ChangeStatusDataPt;
+
+/**
+ * Makes a character the party's leader.
+ */
+static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
+    status->unk_04 = chara;
 }
+
+int CharaChangeKey(void) {
+    int result = 0;
+
+    ReadBG();
+    switch (ChangeMenu.unk_03) {
+        case 5:
+            ChangeMenu.unk_4c++;
+            if (ReadBGSync() == 0 && ChangeMenu.unk_4c > 0x10) {
+                BtMenuLoadChara();
+                StartReadBG();
+                CharaChangeInitToGL2(0);
+                ChangeMenu.unk_03 = 6;
+            }
+            break;
+        case 6:
+            ChangeMenu.unk_4c++;
+            if (ReadBGSync() == 0 && ChangeMenu.unk_4c > 0x10) {
+                BtMenuLoad2(0);
+                LockOffTargte();
+                InitReadBG();
+                return 1;
+            }
+            break;
+        case 3:
+        case 4: {
+            int message = 1;
+            if (ChangeMenu.unk_52 == 1) {
+                message = 4;
+            }
+            if (ChangeMenu.unk_52 == 2) {
+                message = 5;
+            }
+            if (CommonMenuMes3.mes_made != message) {
+                CommonMenuMes3.MakeMesWin(message);
+            }
+            if (GamePad.Down(0x60)) {
+                if (ChangeMenu.unk_5c != 0) {
+                    ChangeMenu.unk_03 = 2;
+                    CommonMenuMes3.MakeMesWin(ChangeMenu.unk_52 == 0 ? 1 : 2);
+                } else {
+                    ChangeMenu.unk_03 = 0;
+                }
+                ComMenuSePlay(2);
+            }
+            break;
+        }
+        case 1:
+            ChangeMenu.unk_04 += 1.0f;
+            if (ChangeMenu.unk_04 >= 21.0f) {
+                if (ChangeMenu.unk_44 > 0.0f) {
+                    for (int i = 0; i < 6; i++) {
+                        ChangeMenu.unk_38[i]++;
+                        if (ChangeMenu.unk_38[i] == ChangeMenu.unk_02) {
+                            ChangeMenu.unk_38[i] = 0;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < ChangeMenu.unk_02; i++) {
+                        ChangeMenu.unk_38[i]--;
+                        if (ChangeMenu.unk_38[i] == -1) {
+                            ChangeMenu.unk_38[i] = ChangeMenu.unk_02 - 1;
+                        }
+                    }
+                }
+                ChangeMenu.unk_03 = 0;
+                ChangeMenu.unk_04 = 0.0f;
+                ChangeMenu.unk_44 = 0.0f;
+            }
+            break;
+        case 2: {
+            int message = 1;
+            if (ChangeMenu.unk_52 == 1 || ChangeMenu.unk_52 == 2) {
+                message = 2;
+            }
+            if (CommonMenuMes3.mes_made != message) {
+                CommonMenuMes3.MakeMesWin(message);
+            }
+            if (GamePad.Down(0x5000)) {
+                if (ChangeMenu.unk_01 > 0) {
+                    ChangeMenu.unk_01 = 0;
+                } else {
+                    ChangeMenu.unk_01 = 1;
+                }
+                ComMenuSePlay(0);
+            }
+            if (GamePad.Down(0x40)) {
+                ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
+                int count = GetNowItemNum(0xAE, pack);
+                if (ChangeMenu.unk_01 != 0) {
+                    result = 2;
+                    ComMenuSePlay(1);
+                } else if (ChangeMenu.unk_52 == 1) {
+                    ComMenuSePlay(2);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                } else if (ChangeMenu.unk_52 == 2) {
+                    ComMenuSePlay(2);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                } else if (count > 0) {
+                    ChangeMenu.unk_03 = 0;
+                    ComMenuSePlay(1);
+                } else {
+                    ComMenuSePlay(2);
+                }
+            } else if (GamePad.Down(0x20)) {
+                ComMenuSePlay(2);
+            }
+            break;
+        }
+        case 0: {
+            if (GamePad.Down(0x40)) {
+                if (ChangeMenu.unk_00 > ChangeMenu.unk_02 - 1) {
+                    ComMenuSePlay(2);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                }
+                if (ChangeMenu.unk_52 == 1) {
+                    ComMenuSePlay(2);
+                    CommonMenuMes3.MakeMesWin(4);
+                    ChangeMenu.unk_03 = 3;
+                    return 0;
+                }
+                if (ChangeMenu.unk_52 == 2) {
+                    CommonMenuMes3.MakeMesWin(5);
+                    ChangeMenu.unk_03 = 3;
+                    ComMenuSePlay(2);
+                    return 0;
+                }
+                CDngStatusData *status = ChangeStatusDataPt;
+                int hp = status->hp[ChangeMenu.unk_00];
+                int flags = status->GetActiveCharaStatus(ChangeMenu.unk_00);
+                if (hp <= 0 || (flags & 2)) {
+                    ComMenuSePlay(2);
+                    return 0;
+                }
+                if (ChangeMenu.unk_00 != status->unk_04) {
+                    ComMenuSePlay(1);
+                    SetStatusChara(ChangeStatusDataPt, ChangeMenu.unk_00);
+                    if (ChangeMenu.unk_5c == 1) {
+                        ChangeStatusDataPt->LostItem(0xAE);
+                    }
+                    ChangeMenu.unk_4c = 0;
+                    ChangeMenu.unk_03 = 5;
+                    ChangeMenu.unk_5c = 0;
+                    return 0;
+                }
+                ComMenuSePlay(1);
+            } else if (GamePad.Down(0x20)) {
+                if (ChangeStatusDataPt->hp[ChangeStatusDataPt->unk_04] < 0 || ChangeMenu.unk_5c != 0) {
+                    ChangeMenu.unk_03 = 2;
+                    ChangeMenu.unk_01 = 0;
+                    ChangeMenu.unk_54 = CommonMenuMes3.text_x - 0x1E;
+                    ChangeMenu.unk_58 = CommonMenuMes3.text_y + 0x10 + ChangeMenu.unk_01 * 24;
+                } else {
+                    result = 1;
+                }
+                ComMenuSePlay(2);
+            }
+            int previous = ChangeMenu.unk_00;
+            if (GamePad.Down(0x3000)) {
+                ChangeMenu.unk_44 = 1.0f;
+                ChangeMenu.unk_00--;
+                if (ChangeMenu.unk_00 < 0) {
+                    ChangeMenu.unk_00 = ChangeMenu.unk_02 - 1;
+                }
+            }
+            if (GamePad.Down(0xC000)) {
+                ChangeMenu.unk_44 = -1.0f;
+                ChangeMenu.unk_00++;
+                if (ChangeMenu.unk_02 - 1 < ChangeMenu.unk_00) {
+                    ChangeMenu.unk_00 = 0;
+                }
+            }
+            if (previous != ChangeMenu.unk_00) {
+                ChangeMenu.unk_03 = 1;
+                BreakReadBG();
+                u_long128 *buffer = chara_change_buf;
+                CharaChangeInitToGL(buffer, ChangeMenu.unk_00);
+                ComMenuSePlay(0);
+            }
+            break;
+        }
+        case 7:
+            ChangeMenu.unk_4c += 7;
+            if (ChangeMenu.unk_4c > 0xFA) {
+                result = 2;
+            }
+            break;
+    }
+    return result;
+}
+
+/**
+ * Screen position of the character change ring's centre.
+ */
+extern int QuickCharaPos[2];
+
+/**
+ * Radius of the character change ring, which grows while the ring turns.
+ */
+extern float changeMenu_long;
+
+/**
+ * Name of the frame texture drawn around the selected portrait.
+ */
+extern char stay_frame_name[];
 
 void CharaChangeDraw(void) {
-    int index;
-    int party_size = UserStatus != NULL ? UserStatus->party_size : 0;
+    int alpha;
+    int i;
+    int cursor_x;
+    int cursor_y;
+    float step;
+    float turn;
+    float angle;
 
-    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 0, 0, 0, 96);
-    for (index = 0; index < party_size; index++) {
-        int x = quick_change_positions != NULL ? quick_change_positions[index * 2]
-                                               : 120 + index * 72;
-        int y = quick_change_positions != NULL ? quick_change_positions[index * 2 + 1] : 190;
-        int alpha = index == quick_change_selected ? 128 : 64;
-        DrawMenuObjectVibe(x, y, index, alpha);
+    setbilinear(0);
+    FrameImageDraw(100, 0x80);
+    if (CharaChangeReadFlag != 0) {
+        MenuTextureReload(CharaChangeTexBlock);
+        CTexture *frame = TexManager.GetTexture(stay_frame_name, -1);
+        int frame_x = QuickCharaPos[0] - 2.0f * changeMenu_long;
+        int frame_y = QuickCharaPos[1] - 1.4f * changeMenu_long;
+        alpha = 0x80;
+        switch (ChangeMenu.unk_03) {
+            case 6:
+            case 5:
+                alpha = 0x80 - ChangeMenu.unk_4c * 4;
+                if (alpha < 0) {
+                    alpha = 0;
+                }
+                break;
+        }
+        step = 6.2831855f / ChangeMenu.unk_02;
+        switch (ChangeMenu.unk_03) {
+            case 6:
+            case 5:
+                changeMenu_long += ChangeMenu.unk_4c;
+                turn = step / 20.0f;
+                if (ChangeMenu.unk_44 < 0.0f) {
+                    turn = -turn;
+                }
+                for (i = 0; i < ChangeMenu.unk_02; i++) {
+                    angle = 3.1415927f + (step * ChangeMenu.unk_38[i] + turn * ChangeMenu.unk_4c);
+                    ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
+                    ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+                }
+                break;
+            case 1:
+                turn = step / 20.0f;
+                if (ChangeMenu.unk_44 < 0.0f) {
+                    turn = -turn;
+                }
+                for (i = 0; i < ChangeMenu.unk_02; i++) {
+                    angle = 3.1415927f + (step * ChangeMenu.unk_38[i] + turn * ChangeMenu.unk_04);
+                    ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
+                    ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+                }
+                break;
+        }
+        CTexture *portraits = QuickCharaTex;
+        for (int chara = 0; chara < ChangeMenu.unk_02; chara++) {
+            float x = QuickCharaPos[0] + ChangeMenu.unk_08[chara][0];
+            float y = QuickCharaPos[1] + ChangeMenu.unk_08[chara][1];
+            int shade = 0x80;
+            int u = chara * 0x30;
+            int v = 0;
+            if (chara > 2) {
+                u = (chara - 3) * 0x30;
+                v = 0x30;
+            }
+            if (ChangeStatusDataPt != NULL && ChangeStatusDataPt->hp[chara] <= 0) {
+                shade = 0x40;
+            }
+            DrawMenu2DSprite(portraits, CRect_i_(x, y, 0x30, 0x30), CRect_i_(u, v, 0x30, 0x30), shade,
+                             shade, shade, alpha);
+        }
+        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
+            ChangeMenu.unk_03 != 4) {
+            DrawMenuWaku(QuickCharaPos[0] - changeMenu_long - 11.0f, QuickCharaPos[1] - 12, 0x34, 0x34, 0,
+                         StayTex, 0x80);
+        }
+        if (ChangeMenu.unk_03 == 2 || ChangeMenu.unk_03 == 3 || ChangeMenu.unk_03 == 4) {
+            AllFadeForMenu(0x40);
+            CommonMenuMes3.stay_frame = 1;
+            CommonMenuMes3.auto_pos = 5;
+            MenuTextureReload(CommonMenuMes3.tex_block);
+            CommonMenuMes3.Step();
+            CommonMenuMes3.DrawMesWin();
+            cursor_x = CommonMenuMes3.text_x - 0x1E;
+            cursor_y = CommonMenuMes3.text_y + 0x10 + ChangeMenu.unk_01 * 0x18;
+            ChangeMenu.unk_54 += (cursor_x - ChangeMenu.unk_54) / 4.0f;
+            ChangeMenu.unk_58 += (cursor_y - ChangeMenu.unk_58) / 4.0f;
+            cursor_x = ChangeMenu.unk_54;
+            cursor_y = ChangeMenu.unk_58;
+        } else {
+            CommonMenuMes3.auto_pos = -1;
+            cursor_x = QuickCharaPos[0] - changeMenu_long - 32.0f;
+            cursor_y = QuickCharaPos[1] + 6;
+            if (cursor_x < -40 || cursor_x > 640 || cursor_y < -40 || cursor_y > 450) {
+                cursor_x = 650;
+                cursor_y = 450;
+            }
+        }
+        CursorVibeCnt++;
+        if (CursorVibeCnt > 1080000) {
+            CursorVibeCnt = 0;
+        }
+        if (ChangeMenu.unk_5c != 0) {
+            MenuTextureReload(CharaChangeTexBlock);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x124, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x124, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
+            int value = (u16) ChangeStatusDataPt->dead_mask;
+            RECT value_digits = {0x70, 0x74, 0xC, 0xC};
+            DrawMenuNumber(value, 0xB7, 0x12C, QuickCharaTex, value_digits, 0, alpha);
+            MenuHelpWinDraw(100, 0x140, 10.6f, 0.9f, alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x150, 0x20, 0x20), CRect_i_(0, 0x60, 0x20, 0x20), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x104, 0x158, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10), alpha);
+            MenuTextureReload(CommonMenuMes1.tex_block);
+            CommonMenuMes1.line_pos[0].x = 0xA0;
+            CommonMenuMes1.line_pos[0].y = 0x14A;
+            CommonMenuMes1.line_pos[1].x = 0xAA;
+            CommonMenuMes1.line_pos[1].y = 0x15E;
+            CommonMenuMes1.Step();
+            CommonMenuMes1.DrawMesWin();
+            RECT count_digits = {0, 0x9E, 0xC, 0x12};
+            ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
+            int count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
+            int count_x = 0x122;
+            count_x += (count_digits.width >> 1) * GetNumberKeta(count);
+            DrawMenuNumber(count, count_x, 0x158, count_digits, StayTex, 0, 0, 0x1C0, alpha);
+        }
+        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
+            ChangeMenu.unk_03 != 4) {
+            DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
+        }
+        setbilinear(1);
     }
-    CommonMenuMes3.Step();
-    CommonMenuMes3.DrawMesWin();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
-#endif
 
 int DngActItemModelReadStart(u_long128 *buffer) {
     char model_path[64];
@@ -1021,35 +1430,63 @@ int DngActItemModelReadStart(u_long128 *buffer) {
     return 0;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Quick-use item slots and the models they draw with.
+ */
+extern "C" CActiveItemPack activeItem;
+
 int DngActItemModelBuild(int wait) {
-    int slot;
-    int read_index = 0;
+    BG_READ_INFO *model;
+    BG_READ_INFO *texture;
+    u_int *model_buffer;
+    u_int *texture_buffer;
+    int texture_size;
+    int read_index;
+    int i;
 
     if (ReadBGSync() != 0) {
-        if (!wait) {
+        if (wait != 0) {
+            while (ReadBGSync() != 0) {
+            }
+        } else {
             ReadBG();
             return 0;
         }
-        while (ReadBGSync() != 0) {
-        }
     }
-    for (slot = 0; slot < 3; slot++) {
-        int item_no = BtlMenuStatusPt->item_pack.quick_item_slot[slot];
-        if (item_no >= ITEM_DUNGEON_START) {
-            BG_READ_INFO *model = GetReadBGFile(read_index++);
-            BG_READ_INFO *texture = GetReadBGFile(read_index++);
-            if (model != NULL && texture != NULL) {
-                mainItemModel.SetCashModel(item_no, (u_int *) model->buffer,
-                                           (u_int *) texture->buffer, texture->size);
-            }
+    ITEM_PACK *pack = &BtlMenuStatusPt->item_pack;
+    int items[3] = {pack->quick_item_slot[0], pack->quick_item_slot[1], pack->quick_item_slot[2]};
+    read_index = 0;
+    for (i = 0; i < 3; i++) {
+        if (items[i] < ITEM_DUNGEON_START) {
+            continue;
         }
+        model = GetReadBGFile(read_index * 2);
+        texture = GetReadBGFile(read_index * 2 + 1);
+        read_index++;
+        if (model != NULL) {
+            model_buffer = (u_int *) model->buffer;
+        }
+        if (texture != NULL) {
+            texture_buffer = (u_int *) texture->buffer;
+            texture_size = texture->size;
+        }
+        if (model == NULL || texture == NULL) {
+            continue;
+        }
+        if (activeItem.model[i + 1] != -1) {
+            activeItem.models->DeleteModel(activeItem.model[i + 1]);
+            activeItem.model[i + 1] = -1;
+        }
+        if (activeItem.model[i + 1] != -1) {
+            activeItem.models->DeleteModel(activeItem.model[i + 1]);
+        }
+        activeItem.model[i + 1] =
+            activeItem.models->SetCashModel(items[i], model_buffer, texture_buffer, texture_size);
+        activeItem.model[i + 5] = 0;
+        activeItem.item[i + 1] = items[i];
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DngActItemModelBuild__Fi);
-#endif
 
 int DngActiveItemTextureCopy(void) {
     int i;
@@ -1118,7 +1555,7 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     return GetCommonItemInfo((s32) item_no)->msg + 0x64;
 }
 
-s16 GetWeaponMsgNo2(s32 item_no) {
+int GetWeaponMsgNo2(s32 item_no) {
     COM_ITEM_INFO *info;
 
     info = GetCommonItemInfo(item_no);
@@ -1243,39 +1680,57 @@ int InitItemPolygonView(int item_no, u_long128 *buffer) {
     ItemPolyView = NULL;
     return 0;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Buffer the item preview's model is read into.
+ */
+extern CDataAlloc2<1> MenuItemCashBuffer;
+
+/**
+ * Name of the frame-buffer texture the item preview's pictures are drawn into.
+ */
+extern char item_view_frame_image[];
 
 static int EnterItemPolygonView(void) {
     BG_READ_INFO *model;
     BG_READ_INFO *texture;
 
-    if (ReadBGSync() != 0 || polyreadflag != 0 || MDebugItemPolyViewFlag != 0) {
-        return 0;
+    if (ReadBGSync() == 0 && polyreadflag == 0 && MDebugItemPolyViewFlag == 0) {
+        LOADTEXTURE_INFO2 table[] = {
+            {item_view_frame_image, 0, 0},
+            {NULL, 0, 0},
+            {NULL, 0, 0},
+        };
+        table[0].block_no = BtlMenuExReadBlock;
+        table[1].block_no = BtlMenuExReadBlock;
+        model = GetReadBGFile(0);
+        texture = GetReadBGFile(1);
+        table[1].name = (char *) texture->buffer;
+        TexManager.DeleteTextureBlock(BtlMenuExReadBlock);
+        TexManager.CleanUpTextureList();
+        TexManager.LoadTextureBlockEX(-1, table);
+        if (model == NULL) {
+            return 0;
+        }
+        if (texture == NULL) {
+            return 0;
+        }
+        MenuItemCashBuffer.base = (u_char *) (texture->buffer + (texture->size >> 4) + 1);
+        MenuItemCashBuffer.limit = 0x6080;
+        MenuItemCashBuffer.Reset();
+        MDebugItemPolyViewFlag = 1;
+        ItemPolyView = (CFrame *) LoadMDSFile((u_int *) model->buffer, &MenuItemCashBuffer, 0, NULL, NULL);
+        sceVu0FVECTOR position = {4.0f, 0.0f, 0.0f, 1.0f};
+        float rotation[3] = {0.0f, 0.0f, 0.0f};
+        float scale[3] = {3.0f, 3.0f, 3.0f};
+        // Each copy moves a whole vector, one float more than the rotation and scale hold.
+        memcpy(menudebugpos, position, sizeof(sceVu0FVECTOR));
+        memcpy(menudebugrot, rotation, sizeof(sceVu0FVECTOR));
+        memcpy(menudebugrscale, scale, sizeof(sceVu0FVECTOR));
+        return 1;
     }
-    model = GetReadBGFile(0);
-    texture = GetReadBGFile(1);
-    if (model == NULL || texture == NULL) {
-        return 0;
-    }
-    MenuEffectCashBuffer.base = (u8 *) texture->buffer + texture->size;
-    MenuEffectCashBuffer.limit = 0x6000;
-    MenuEffectCashBuffer.Reset();
-    ItemPolyView = (CFrame *) LoadMDSFile((u_int *) model->buffer, &MenuEffectCashBuffer, 0,
-                                         (char **) 0, (char **) 0);
-    if (ItemPolyView == NULL) {
-        return 0;
-    }
-    menudebugpos[0] = 0.0f;
-    menudebugpos[1] = 0.0f;
-    menudebugpos[2] = 96.0f;
-    menudebugrot[0] = menudebugrot[1] = menudebugrot[2] = 0.0f;
-    menudebugrscale[0] = menudebugrscale[1] = menudebugrscale[2] = 1.0f;
-    MDebugItemPolyViewFlag = 1;
-    return 1;
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", EnterItemPolygonView__Fv);
-#endif
 
 static void LocalDrawItemPolygonView(void) {
     float turn;
@@ -1406,60 +1861,88 @@ int DebugItemGetKey(void) {
     return result;
 }
 
-#ifdef NON_MATCHING
 void DebugItemGetDraw(void) {
-    int item_no = ConvDebugSelectToExcelListNo(ItemAutoGet.selection);
-    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-    int icon_x;
-    int icon_y;
-    CTexture *icons;
+    CTexture *sheets[5] = {ItemIcon, ItemIcon, WepIcon, WepIcon, WepIcon};
+    int sheet_y[5] = {0, 0x100, 0, 0x100, 0x200};
+    CTexture *sheet = sheets[ItemAutoGet.page];
+    int y = sheet_y[ItemAutoGet.page];
+    int height = 0x100;
 
-    MGFillBox(CRect_i_(70, 40, 256, 128), 0, 0, 0, 128);
-    icons = RetCTex(item_no, icon_x, icon_y);
-    if (icons != NULL) {
-        MenuTextureReload(-1);
-        DrawMenu2DSprite(icons, CRect_i_(70, 80, 256, 128),
-                         CRect_i_(0, 0, 256, 128), 128);
-        DrawMenu2DSprite(icons,
-                         CRect_i_(46 + (ItemAutoGet.selection & 7) * 32,
-                                  80 + ((ItemAutoGet.selection & 0x3F) >> 3) * 32,
-                                  32, 32),
-                         CRect_i_(icon_x, icon_y, 32, 32), 128);
+    if (ItemAutoGet.page == 4) {
+        height = 0x80;
     }
-    DrawMenuObjectVibe(46 + (ItemAutoGet.selection & 7) * 32,
-                       80 + ((ItemAutoGet.selection & 0x3F) >> 3) * 32, 1, 64);
-    if (info != NULL && CommonMenuMes2.mes_made != info->msg + 500) {
-        CommonMenuMes2.MakeMesWin(info->msg + 500);
+    if (sheet != NULL) {
+        MenuTextureReload(sheet->block);
     }
+    MGFillBox(CRect_i_(0x460, 0x280, 0x1000, 0x800), 0, 0, 0, 0x60);
+    DrawMenu2DSprite(sheet, CRect_i_(0x46, 0x50, 0x100, height), CRect_i_(0, y, 0x100, height), 0x80);
+    int item_no = ConvDebugSelectToExcelListNo(ItemAutoGet.selection);
     if (ItemAutoGet.show_model) {
         DrawItemDataView(item_no);
     }
+    int cell = ItemAutoGet.selection - ItemAutoGet.page * 64;
+    DrawMenuObjectVibe((cell % 8) * 32 + 0x2E, (cell / 8) * 32 + 0x50, 1, 0x40);
+    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+    if (info != NULL) {
+        int message = info->msg + 500;
+        if (CommonMenuMes2.mes_made != message) {
+            CommonMenuMes2.MakeMesWin(message);
+        }
+    }
 }
+
+/**
+ * Submode the battle menu runs in.
+ */
+extern s32 BtlMenuMode;
+
+/**
+ * Debug text the dungeon menus print their item data into.
+ */
+extern CDebugFont MenuDbgMsg;
+
+/**
+ * Formats of the lines the item data view prints.
+ */
+extern char *ItemTemplete[];
 
 static void DrawItemDataView(int item_no) {
-    COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
-    RECT digits = {0x20, 0x48, 12, 12};
+    int block;
 
-    MGFillBox(CRect_i_(350, 60, 230, 300), 8, 8, 16, 112);
-    if (info != NULL && DunLogBoard != NULL) {
-        DrawMenuNumber(item_no, 374, 84, DunLogBoard, digits, 128, 0);
-        DrawMenuNumber(info->icon_index, 374, 108, DunLogBoard, digits, 128, 0);
-        DrawMenuNumber(info->msg, 374, 132, DunLogBoard, digits, 128, 0);
+    switch (BtlMenuMode) {
+        case 0:
+            block = 0xC;
+            break;
+        case 1:
+            block = 0x1F;
+            break;
     }
-    if (item_no > 0x83) {
-        if (GamePad.Down(0x10)) {
-            polyreadflag = InitItemPolygonView(item_no, BtlMenuReadBuf);
+    MenuTextureReload(block);
+    int line = 0;
+    char type[128] = "";
+    if (0 <= item_no && item_no < ITEM_ATTACH_START) {
+        return;
+    }
+    // The attachment index computed here goes unused.
+    if (item_no >= ITEM_ATTACH_START && item_no < 0xFF) {
+        int index = item_no - ITEM_ATTACH_START;
+        if (index < 0) {
+            index = 0;
         }
-        if (polyreadflag == 0) {
-            polyreadflag = EnterItemPolygonView();
-        }
-        if (polyreadflag != 0) {
-            DrawItemPolygonView();
-        }
+    }
+    if (MDebugItemPolyViewFlag == 0) {
+        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], "-----ItemData View-----\n");
+        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], ItemTemplete[line++], item_no);
+        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], ItemTemplete[line], type);
+        type[0] = '\0';
+    }
+    if (GamePad.Down(0x10)) {
+        polyreadflag = InitItemPolygonView(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), BtlMenuReadBuf);
+    }
+    if (polyreadflag == 0) {
+        polyreadflag = EnterItemPolygonView();
+    }
+    if (polyreadflag != 0) {
+        DrawItemPolygonView();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DebugItemGetDraw__Fv);
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawItemDataView__Fi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2140__2);

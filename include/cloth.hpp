@@ -76,6 +76,13 @@ public:
 
     virtual void Initialize(CDataAlloc2<1> *alloc);
     virtual void Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc);
+    /**
+     * Rebuilds the cloth's packet for this frame and draws it through the vector unit.
+     *
+     * @mangled DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii
+     * @address 0x13C470
+     * @size 0xC0
+     */
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,

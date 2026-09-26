@@ -29,16 +29,17 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
 void initBlendCnt(int count, float scale);
 
 /**
- * Blends a texture region into a clipped destination with depth testing.
+ * Copies a frame-buffer region into a work texture in two-line strips that
+ * sway sideways by a depth-scaled wave, then blends a texture over the copy.
  *
  * @mangled blendTextuerTest__FP13sceVif1PacketiiiRC8CRect_i_P8CTextureRC8CRect_i_RC8CRect_i_ff
  * @address 0x162D80
  * @size 0x6E4
  */
 void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int format,
-                      const CRect_i_ &destination_rect, CTexture *texture,
-                      const CRect_i_ &texture_rect, const CRect_i_ &source_rect, float depth,
-                      float phase);
+                      const CRect_i_ &source, CTexture *texture,
+                      const CRect_i_ &texture_destination, const CRect_i_ &texture_source,
+                      float depth, float phase);
 
 class CRunEffect {
 public:

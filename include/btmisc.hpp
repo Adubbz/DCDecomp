@@ -4,8 +4,10 @@
 
 #include "dataalloc_fwd.hpp"
 
+class CCamera;
 class CFrame;
 class CFrameVu1;
+class CSaveData;
 
 /**
  * Loads a model from a pack file.
@@ -34,6 +36,16 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
  */
 CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
                        char **model_name, char **texture_name);
+
+/**
+ * Puts the camera on the two named frames of a model's path.
+ *
+ * @mangled setCameraPassData__FP9CFrameVu1P7CCameraPcPc
+ * @address 0x1B6E80
+ * @size 0xA4
+ */
+void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
+                       char *reference_name);
 
 /**
  * Gives the world position of one frame of a model.
@@ -81,6 +93,15 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);
  * @size 0xB4
  */
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no);
+
+/**
+ * Records in the save file that an Atla has been collected.
+ *
+ * @mangled getAtraToSaveData__FiiP9CSaveDataii
+ * @address 0x1B7470
+ * @size 0xBC
+ */
+void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
 
 /**
  * Stops the current battle music.

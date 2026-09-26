@@ -251,14 +251,19 @@ public:
      */
     s32 GetActiveCharaStatus(int chara_no) { return unk_field_4468[chara_no]; }
 
+    /**
+     * Returns the weapon slot one character has equipped.
+     */
+    s8 GetEquipWeaponSlot(int chara_no) { return equipped_weapon_slot[chara_no]; }
+
 private:
     char unk_42C6[2];
     s32 unk_field_4468[6];
     s16 unk_field_2[6];
-    float stat_float_a[6];
-    float stat_float_b[6];
 
 public:
+    float max_water[6]; /**< Most water each character can hold, ten to a drop. */
+    float water[6];     /**< Water each character holds now. */
     s32 overflow_flag;
     s32 special_flag_238;
     s32 skill_owned[6]; /**< Whether each playable character has received their event skill. */

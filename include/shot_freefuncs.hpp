@@ -42,7 +42,8 @@ STATIC_ASSERT(sizeof(WATER_WAVE_LING) == 0x20);
 void WaterSplash_Init(void);
 
 /**
- * Reports whether the party stands in healing water.
+ * Reports whether the party stands in the water of the nearest map part, records the surface
+ * point in CheckWaterInfo and starts the splash as they enter it.
  *
  * @mangled CheckHealingWater__Fv
  * @address 0x1AF3B0
@@ -87,7 +88,8 @@ void DrawWaterLing(void);
 void StepWaterLing(void);
 
 /**
- * Chooses the stance the player takes from the nearest monster.
+ * Mixes the battle music against the ambience by the distance to the nearest active monster
+ * and returns that distance.
  *
  * @mangled SetBattleStyle__Fii
  * @address 0x1AFE90
@@ -214,13 +216,15 @@ void setItemToReserved(char *, int, int, char *, int, int);
 void BtMapJumpCashClear(void);
 
 /**
- * Reads the map a jump leads to, along with its message buffer.
+ * Loads the steeb message file for the current floor if it changed, then reads the map a jump
+ * leads to, its treasure-box models and item-get motions; returns 0 when that map is already
+ * loaded, 1 otherwise.
  *
  * @mangled BtMapJumpLoad__FPc
  * @address 0x1B20E0
  * @size 0x70C
  */
-void BtMapJumpLoad(char *);
+int BtMapJumpLoad(char *);
 
 /**
  * Draws a textured cell in world space.

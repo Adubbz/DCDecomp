@@ -1,3 +1,6 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+
 #include "effect.hpp"
 
 #include <libgraph.h>
@@ -95,15 +98,13 @@ void CEffect::SetEffect(CEffectParam *parameters) {
     }
 }
 
-#ifdef NON_MATCHING
 void CEffect::Step(int unused) {
-    (void) unused;
     if (active == 0) {
         return;
     }
 
     frame++;
-    if (lifetime < frame) {
+    if (frame > lifetime) {
         frame = 0;
         active = 0;
     }
@@ -111,11 +112,14 @@ void CEffect::Step(int unused) {
     sceVu0AddVector(velocity, velocity, acceleration);
     if ((position_oscillation_flags & 1) != 0) {
         float phase = (float) frame;
-        for (int axis = 0; axis < 3; axis++) {
-            if (position_oscillation_scale[axis] > 0.0f) {
-                position[axis] += position_oscillation_scale[axis] *
-                                  Sinf(phase * position_oscillation_rate[axis]);
-            }
+        if (position_oscillation_scale[0] > 0.0f) {
+            position[0] += position_oscillation_scale[0] * Sinf(phase * position_oscillation_rate[0]);
+        }
+        if (position_oscillation_scale[1] > 0.0f) {
+            position[1] += position_oscillation_scale[1] * Sinf(phase * position_oscillation_rate[1]);
+        }
+        if (position_oscillation_scale[2] > 0.0f) {
+            position[2] += position_oscillation_scale[2] * Sinf(phase * position_oscillation_rate[2]);
         }
     }
 
@@ -123,11 +127,11 @@ void CEffect::Step(int unused) {
     scale[1] += scale_velocity[1];
     if ((scale_oscillation_flags & 1) != 0) {
         float phase = (float) frame;
-        for (int axis = 0; axis < 2; axis++) {
-            if (scale_oscillation_scale[axis] > 0.0f) {
-                scale[axis] += scale_oscillation_scale[axis] *
-                               Sinf(phase * scale_oscillation_rate[axis]);
-            }
+        if (scale_oscillation_scale[0] > 0.0f) {
+            scale[0] += scale_oscillation_scale[0] * Sinf(phase * scale_oscillation_rate[0]);
+        }
+        if (scale_oscillation_scale[1] > 0.0f) {
+            scale[1] += scale_oscillation_scale[1] * Sinf(phase * scale_oscillation_rate[1]);
         }
     }
 
@@ -139,11 +143,7 @@ void CEffect::Step(int unused) {
         opacity = 1.0f;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Step__7CEffectFi);
-#endif
 
-#ifdef NON_MATCHING
 void CEffect::Draw(void) {
     if (active == 0 || texture == NULL) {
         return;
@@ -152,39 +152,37 @@ void CEffect::Draw(void) {
     position[3] = 1.0f;
     float sprite_width = scale[0] * width;
     float sprite_height = scale[1] * height;
+    int top_left[4];
+    int bottom_right[4];
     int screen[4][4];
-    if (draw_mode == 0) {
-        if (MGRotTransPers3DSprite(screen[0], screen[1], position, sprite_width, sprite_height,
-                                   0) == 0) {
-            return;
-        }
-    } else {
-        float corner[4][4];
+    float corner[4][4];
+    if (draw_mode != 0) {
         for (int i = 0; i < 4; i++) {
             sceVu0CopyVector(corner[i], position);
         }
-        float half_width = sprite_width / 2.0f;
-        float half_height = sprite_height / 2.0f;
-        corner[0][0] -= half_width;
-        corner[0][2] -= half_height;
-        corner[1][0] += half_width;
-        corner[1][2] -= half_height;
-        corner[2][0] -= half_width;
-        corner[2][2] += half_height;
-        corner[3][0] += half_width;
-        corner[3][2] += half_height;
+        corner[0][0] -= sprite_width / 2.0f;
+        corner[0][2] -= sprite_height / 2.0f;
+        corner[1][0] += sprite_width / 2.0f;
+        corner[1][2] -= sprite_height / 2.0f;
+        corner[2][0] -= sprite_width / 2.0f;
+        corner[2][2] += sprite_height / 2.0f;
+        corner[3][0] += sprite_width / 2.0f;
+        corner[3][2] += sprite_height / 2.0f;
         for (int i = 0; i < 4; i++) {
             if (MGRotTransPers(screen[i], corner[i], 0) == 0) {
                 return;
             }
         }
+    } else if (MGRotTransPers3DSprite(top_left, bottom_right, position, sprite_width,
+                                      sprite_height, 0) == 0) {
+        return;
     }
 
     if (render_flags != 0) {
         sceGsZbuf zbuffer = mgZBuffer;
+        sceGsAlpha alpha = mgAlpha;
         zbuffer.bits.zmsk = 1;
         MGSetGsZBUF(&zbuffer);
-        sceGsAlpha alpha = mgAlpha;
         if ((render_flags & 1) != 0) {
             alpha.bits.a = 0;
             alpha.bits.b = 2;
@@ -203,37 +201,33 @@ void CEffect::Draw(void) {
     // Texture changes lag their corresponding source rectangle by one draw.
     CTexture *draw_texture = texture;
     CRect_i_ draw_texel = texel;
-    CEffectTextureFrame *animation = texture_frames;
-    if (animation != NULL) {
+    CEffectTextureFrame *animation;
+    if (texture_frames != NULL) {
         int animation_frame = frame;
         if (texture_frame_period > 0) {
             animation_frame %= texture_frame_period;
         }
-        while (animation != NULL) {
+        for (animation = texture_frames; animation != NULL; animation = animation->next) {
             if (animation_frame < animation->end_frame) {
                 texture = animation->texture;
                 draw_texel = animation->texel;
                 break;
             }
-            animation = animation->next;
         }
     }
 
-    spRGBA colour = {0x68, 0x80, 0x80, (u8) (opacity * 128.0f)};
-    if (draw_mode == 0) {
-        set3DSprite(GetVif1Packet(), draw_texture, draw_texel, screen[0], screen[1], &colour);
-    } else {
+    spRGBA colour = {0x68, 0x80, 0x80, (int) (opacity * 128.0f)};
+    if (draw_mode != 0) {
         set3DSprite(GetVif1Packet(), draw_texture, draw_texel, screen[0], screen[1], screen[2],
                     screen[3], &colour);
+    } else {
+        set3DSprite(GetVif1Packet(), draw_texture, draw_texel, top_left, bottom_right, &colour);
     }
     if (render_flags != 0) {
         MGSetGsZBUF(NULL);
         MGSetGsALPHA(NULL);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effect", Draw__7CEffectFv);
-#endif
 
 void CEffectParam::Initialize(void) {
     lifetime = 0;

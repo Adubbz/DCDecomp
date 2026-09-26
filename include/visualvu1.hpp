@@ -94,20 +94,22 @@ public:
     CVisualVu1(void);
 
     /**
+     * Builds a model's VU data block and returns its size in quadwords.
+     *
      * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
      * @address 0x135AA0
      * @size 0x3A8
-     * @unknownret
      */
-    void CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
+    int CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
 
     /**
+     * Rebuilds a VU data block from retained model data and returns its size in quadwords.
+     *
      * @mangled CreateVUdataFromMDTRemake__10CVisualVu1FPUiPUii
      * @address 0x135E50
      * @size 0x288
-     * @unknownret
      */
-    void CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
+    int CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
 };
 
 class CVisualPolyVu1 : public CVisualVu1 {

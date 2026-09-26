@@ -8,9 +8,9 @@
  * Records what has become of one atla of one floor.
  */
 struct ATRA_SAVE {
-    s32 unk_00;
-    s32 unk_04;
-    s32 unk_08;
+    s32 id;       /**< Atla the record is for. */
+    s32 floor;    /**< Floor the atla lies on counted from one, or -1 or -2 for any upper or lower floor. */
+    s32 refcount; /**< How many of the floor's atla slots still ask for this atla. */
 };
 
 STATIC_ASSERT(sizeof(ATRA_SAVE) == 0xC);
@@ -60,6 +60,8 @@ public:
     void SetNextLife(int chara_no, s16 value, float ratio);
 
     /**
+     * Drains the active character's water, then moves every water and HP gauge one step.
+     *
      * @mangled Step__11CUserStatusFi
      * @address 0x1BEA50
      * @size 0x388

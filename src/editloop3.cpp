@@ -115,15 +115,13 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
     int has_extent;
     int created;
     int j;
-    volatile int point_offset[4];
 
     for (int i = 0; i < 8 && indices != NULL; i++) {
         int point_index = indices[i];
         if (point_index <= 0)
             continue;
 
-        point_offset[0] = point_index * sizeof(ED_EVENT_POINT);
-        ED_EVENT_POINT *point = (ED_EVENT_POINT *) ((int) points + point_offset[0]);
+        ED_EVENT_POINT *point = &points[point_index];
         if (point->event_type != 1)
             continue;
 
@@ -142,8 +140,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
             int kind = function->kind;
             if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
                 kind = function->kind;
-            } else if (function->link_id ==
-                       ((ED_EVENT_POINT *) (point_offset[0] + (int) points))->map_no) {
+            } else if (function->link_id == points[point_index].map_no) {
                 if (kind == 2) {
                     sceVu0CopyVector(point->position, function->position);
                     sceVu0CopyVector(point->rotation, function->rotation);
@@ -365,37 +362,39 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
         if (CheckEventPoint(p, time) == 0)
             continue;
         switch (p->event_type) {
+            case 2:
+                break;
             case 3:
                 if (p->linked_value <= 0)
-                    break;
-            case 2: {
-                sceVu0FVECTOR position;
-                sceVu0FVECTOR rotation;
-                sceVu0CopyVector(position, p->position);
-                sceVu0CopyVector(rotation, p->rotation);
-                CMapObject *object = p->map_object;
-                if (p->parts_no >= 0) {
-                    object = ground->GetPartsObject(p->parts_no);
-                    if (object == NULL)
-                        break;
-                    GetPosRot(object, position, rotation);
-                } else if (object != NULL) {
-                    GetPosRot(object, position, rotation);
-                }
-                if (p->event_type == 2 && marker != NULL) {
-                    marker->SetPosition(position);
-                    marker->SetRotation(0.0f, rotation[1], 0.0f);
-                    MGDraw(marker);
-                }
-                if (p->event_type == 3) {
-                    sceVu0CopyVector(effect->position, position);
-                    effect->half_width = 2.0f * sys_eff_sc;
-                    effect->half_height = sys_eff_sc;
-                    effect->position[1] += 1.0f;
-                    effect->Draw();
-                }
+                    continue;
                 break;
-            }
+            default:
+                continue;
+        }
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR rotation;
+        sceVu0CopyVector(position, p->position);
+        sceVu0CopyVector(rotation, p->rotation);
+        CMapObject *object = p->map_object;
+        if (p->parts_no >= 0) {
+            object = ground->GetPartsObject(p->parts_no);
+            if (object == NULL)
+                continue;
+            GetPosRot(object, position, rotation);
+        } else if (object != NULL) {
+            GetPosRot(object, position, rotation);
+        }
+        if (p->event_type == 2 && marker != NULL) {
+            marker->SetPosition(position);
+            marker->SetRotation(0.0f, rotation[1], 0.0f);
+            MGDraw(marker);
+        }
+        if (p->event_type == 3) {
+            sceVu0CopyVector(effect->position, position);
+            effect->half_width = 2.0f * sys_eff_sc;
+            effect->half_height = sys_eff_sc;
+            effect->position[1] += 1.0f;
+            effect->Draw();
         }
     }
 }
@@ -645,30 +644,41 @@ static void RestoreVillagerInfo(VILLAGER_INFO *villagers) {
         villagers[i] = restore_info[i];
 }
 
-void EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_info) {
+/**
+ * Chooses the villagers on the map for the given time and fills the villager table.
+ *
+ * @mangled EdSelectVillager__FP13VILLAGER_INFOfP13EDIT_MAP_INFO
+ * @address 0x1857E0
+ * @size 0x30C
+ * @note Returns the copy loop's final counter (10); callers ignore it.
+ */
+int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_info) {
     EdInitVillagerTable(clock, map_info);
     EdGetTime(clock);
 
-    for (int i = 0; i < 10; i++)
+    int i;
+    for (i = 0; i < 10; i++)
         select_table[i] = -1;
 
     int selected_count = 0;
-    int i;
     for (i = 0; i < 16 && selected_count < 6; i++) {
         int action = appear[i].action;
         if (action == 4 || action == 2)
             select_table[selected_count++] = i;
     }
     for (i = 0; i < 10 && selected_count < 6; i++) {
+        int j;
+        int duplicate;
         int index = appear_table[i];
         if (index < 0)
             break;
         int action = appear[index].action;
         if (action == 3 || action == 1)
             continue;
-        int duplicate = 0;
-        for (int j = 0; j < selected_count; j++) {
-            if (select_table[j] == index) {
+        duplicate = 0;
+        for (j = 0; j < selected_count; j++) {
+            int selected = select_table[j];
+            if (selected == index) {
                 duplicate = 1;
                 break;
             }
@@ -691,6 +701,7 @@ void EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_
     }
     if (i < 9)
         villagers[i].name[0] = '\0';
+    return i;
 }
 
 int EdCheckVillagerIn(int index, VILLAGER_INFO *villagers) {
@@ -874,12 +885,14 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers,
 
 void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
                            CEditGround *ground, float (*transform)[4]) {
+    int i;
+
     if (MapNo > 10) {
         RestoreVillagerInfo(info);
-        for (int i = 0; i < 10; i++) {
+        for (i = 0; i < 10; i++) {
             int draw = 1;
-            VILLAGER_INFO *entry = &info[i];
-            if (entry->index >= 0) {
+            if (info[i].index >= 0) {
+                VILLAGER_INFO *entry = &info[i];
                 sceVu0FVECTOR position;
                 sceVu0FVECTOR rotation;
                 sceVu0FVECTOR people_position;
@@ -913,18 +926,16 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
     int stationary_target = villager_count >> 1;
     int moving_target = villager_count - stationary_target;
     int random_state = rand();
-    for (int i = 0; i < 10; i++)
+    for (i = 0; i < 10; i++)
         info[i].placed = 0;
     while (info[villager_count].name[0] != '\0')
         villager_count++;
 
     int stationary_count = 0;
-    for (int i = 0; i < 10; i++) {
-        VILLAGER_INFO *entry = &info[i];
-        int *placed = &entry->placed;
-        if (entry->placed == 0 && entry->initial_motion == 0) {
+    for (i = 0; i < 10; i++) {
+        if (info[i].placed == 0 && info[i].initial_motion == 0) {
             stationary_count++;
-            *placed = 1;
+            info[i].placed = 1;
             if (stationary_count >= stationary_target)
                 break;
         }
@@ -941,21 +952,18 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         int selected = GetRandomMoveVillager(info);
         if (selected < 0)
             break;
-        int *motion;
-        int *placed = &info[selected].placed;
         info[selected].placed = 1;
-        motion = &info[selected].initial_motion;
         info[selected].initial_motion = 1;
         int failed = 0;
         int avoid_count = 0;
         sceVu0FVECTOR avoid_positions[11];
         if (transform != NULL)
             sceVu0CopyVector(avoid_positions[avoid_count++], *transform);
-        for (int i = 0; i < 10; i++) {
-            if (*motion != 0)
+        for (i = 0; i < 10; i++) {
+            if (info[selected].initial_motion != 0)
                 sceVu0CopyVector(avoid_positions[avoid_count++], info[i].position);
         }
-        for (int i = 0; i < avoid_count; i++)
+        for (i = 0; i < avoid_count; i++)
             avoid_positions[i][3] = 200.0f;
 
         sceVu0FVECTOR random_position;
@@ -969,14 +977,14 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         for (;;) {
             if (ground->GetRandomPlanePos(random_position, avoid_positions,
                                           avoid_count, reference) != 0) {
-                sceVu0CopyVector(((VILLAGER_INFO *) info)[selected].position, random_position);
+                sceVu0CopyVector(info[selected].position, random_position);
                 break;
             }
             if (reference[3] > 500.0f) {
                 reference[3] = -1.0f;
                 if (ground->GetRandomPlanePos(random_position, avoid_positions,
                                               avoid_count, reference) != 0) {
-                    sceVu0CopyVector(((VILLAGER_INFO *) info)[selected].position, random_position);
+                    sceVu0CopyVector(info[selected].position, random_position);
                     break;
                 }
                 failed = 1;
@@ -985,7 +993,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
             reference[3] += 100.0f;
         }
         if (failed != 0)
-            *placed = 0;
+            info[selected].placed = 0;
         moving_count++;
     }
 
@@ -996,7 +1004,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
         selected = GetRandomVillager(info);
     }
 
-    for (int i = 0; i < 10; i++) {
+    for (i = 0; i < 10; i++) {
         VILLAGER_INFO *entry = &info[i];
         if (entry->placed != 0) {
             sceVu0FVECTOR position;
@@ -1041,7 +1049,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
             character->chara.SetPosition(position);
             character->chara.SetRotation(rotation[0], rotation[1], rotation[2]);
             villagers[i].draw_enabled = draw;
-            character->chara.SetMotion(0, 0);
+            villagers[i].chara.SetMotion(0, 0);
         }
     }
     srand(random_state);
@@ -1104,65 +1112,106 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
     CEditGround *ground = EdExchangeInfo.ground;
     CCharacter *player = EdExchangeInfo.player;
     CCamera *camera = EdExchangeInfo.camera;
+    int i;
 
-    for (int i = 0; i < 10; i++) {
-        CNPCharacter *villager = &EdVillager[i];
+    for (i = 0; i < 10; i++) {
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR rotation;
+        EdVillager[i].near_camera = 0;
         VILLAGER_INFO *info = &villagers[i];
-        villager->near_camera = 0;
-        if (info->placed == 0 || (info->character_no >= 0 && villager->initialized == 0)) {
+        if (info->placed == 0) {
             continue;
         }
-
-        int draw = info->character_no < 0;
+        sceVu0CopyVector(position, info->position);
+        sceVu0CopyVector(rotation, info->rotation);
+        if (info->character_no >= 0 && EdVillager[i].draw_enabled == 0) {
+            continue;
+        }
         if (info->character_no >= 0 && info->initial_motion == 0) {
             EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(info->character_no);
-            if (parts->unk_08 != 0 && parts->elements[info->model_no].enabled != 0) {
-                draw = 1;
+            if (parts->unk_08 == 0 || parts->elements[info->model_no].enabled == 0) {
+                continue;
             }
+            EdVillager[i].near_camera = 1;
+            sceVu0CopyVector(position, info->position);
+            sceVu0CopyVector(rotation, info->rotation);
         } else {
-            draw = 1;
+            EdVillager[i].near_camera = 1;
+            sceVu0CopyVector(position, info->position);
+            sceVu0CopyVector(rotation, info->rotation);
         }
-        villager->near_camera = draw;
-        if (draw == 0) {
-            continue;
-        }
-
         if (info->initial_motion == 0) {
-            villager->chara.SetPosition(info->position);
-            villager->chara.SetRotation(info->rotation[0], info->rotation[1], info->rotation[2]);
+            EdVillager[i].chara.SetPosition(position);
+            EdVillager[i].chara.SetRotation(rotation[0], rotation[1], rotation[2]);
         } else {
             sceVu0FVECTOR player_position;
             sceVu0FVECTOR villager_position;
             player->GetPosition(player_position);
-            villager->chara.GetPosition(villager_position);
-            villager->sequence_enabled = 1;
-            if (DistVector(player_position, villager_position) < 20.0f) {
-                villager->sequence_enabled = 0;
+            CNPCharacter *npc = &EdVillager[i];
+            sceVu0CopyVector(villager_position, npc->chara.pos);
+            float distance = DistVector(player_position, villager_position);
+            EdVillager[i].sequence_enabled = 1;
+            if (distance < 20.0f) {
+                EdVillager[i].sequence_enabled = 0;
+                EdVillager[i].chara.SetMotion(0, 0);
             }
-            EdSetVillagerNextPos(villager, info, ground);
+            EdSetVillagerNextPos(npc, info, ground);
         }
     }
 
     int indices[10];
     float distances[10];
     GetNearVill(camera, player, EdVillager, indices, distances);
-    for (int i = 0; i < 2 && distances[i] >= 0.0f; i++) {
-        if (distances[i] < 150.0f) {
-            EdVillager[indices[i]].near_camera = 1;
+    for (int j = 0; j < 2; j++) {
+        if (distances[j] < 0.0f) {
+            break;
+        }
+        if (distances[j] < 150.0f) {
+            EdVillager[indices[j]].near_camera = 1;
         }
     }
 
-    for (int i = 0; i < 10; i++) {
-        CNPCharacter *villager = &EdVillager[i];
-        villager->Step();
-        villager->ShadowStep();
-        villager->chara.ClothStep(0);
-        if (villager->sequence_enabled != 0) {
+    for (i = 0; i < 10; i++) {
+        EdVillager[i].Step();
+        EdVillager[i].ShadowStep();
+        EdVillager[i].chara.ClothStep(0);
+        if (EdVillager[i].event_status != 0) {
             sceVu0FVECTOR position;
-            villager->chara.GetPosition(position);
-            position[1] = ground->GetAlt(position[0], position[1], position[2]);
-            villager->chara.SetPosition(position);
-            villager->chara.FootSoundEnable(villager->CheckDraw() != 0);
+            sceVu0FVECTOR hit;
+            sceVu0CopyVector(position, EdVillager[i].chara.pos);
+            float altitude = ground->GetAlt(position[0], position[1], position[2]);
+            EdVillager[i].chara.SetPosition(position[0], altitude, position[2]);
+            EdVillager[i].chara.FootSoundEnable(0);
+            if (EdVillager[i].CheckDraw()) {
+                EdVillager[i].chara.FootSoundEnable(1);
+                WorkBuffer__2->used = 0;
+                CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
+                int count = ground->PickUpEditAreaPoly(polys, position[0], position[1], position[2]);
+                CMapParts *parts = ground->GetParts(position[0], position[1], position[2]);
+                if (parts != NULL) {
+                    CBoxVu0 box;
+                    box.max[0] = position[0] + 20.0f;
+                    box.min[0] = position[0] - 20.0f;
+                    box.max[2] = position[2] + 20.0f;
+                    box.min[2] = position[2] - 20.0f;
+                    box.max[1] = 1000.0f;
+                    box.min[1] = -1000.0f;
+                    CFrame *frame = parts->GetCollisionFrame();
+                    if (frame != NULL) {
+                        count += frame->PickUpNearPoly(polys + count, box);
+                    }
+                }
+                if (count > 0) {
+                    CCPoly poly;
+                    position[1] += 30.0f;
+                    if (GetFootPoly(position, 1000.0f, &poly, hit, polys, count, 0)) {
+                        altitude = hit[1];
+                        EdVillager[i].chara.SetFootSoundID(poly.attr.foot_sound);
+                    }
+                }
+                position[1] = altitude;
+                EdVillager[i].chara.SetPosition(position);
+            }
         }
     }
 }
@@ -1347,9 +1396,9 @@ int EdGetTime(float time) {
         period = 0;
     if (EdCheckTime(time, 2.5f, 5.5f) != 0)
         period = 1;
-    if (EdCheckTime(time, (0, 5.5f), 8.5f) != 0)
+    if (EdCheckTime(time, 5.5f, 8.5f) != 0)
         period = 2;
-    if (EdCheckTime(time, (0, 8.5f), 11.5f) != 0)
+    if (EdCheckTime(time, 8.5f, 11.5f) != 0)
         period = 3;
     return period;
 }
@@ -1362,14 +1411,30 @@ void EdLimitShadowLight(float light[][4], float scale) {
 
 void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
                CCamera *camera, int *follow_axes) {
+    sceVu0FVECTOR ambient;
+    sceVu0FVECTOR old_ambient;
     sceVu0FMATRIX identity;
+    sceVu0FVECTOR position;
+    sceVu0FVECTOR cloud_position;
+
     sceVu0UnitMatrix(identity);
     identity[3][1] = 2100.0f;
 
+    CFrameVu1 *current_sky;
+    CFrameVu1 *following_sky;
     int transition;
-    int sky_index = (int) (clock / 3.0f);
-    int next_sky = sky_index + 1;
-    int previous_sky = sky_index - 1;
+    int sky_index;
+    int next_sky;
+    int next_sun;
+    CFrame *current_sun;
+    CFrame *moon;
+    int sun_index;
+    CFrame *following_sun;
+    int previous_sky;
+
+    sky_index = (int) (clock / 3.0f);
+    next_sky = sky_index + 1;
+    previous_sky = sky_index - 1;
     if (EditMapInfo->time_stop != 0) {
         clock = 0.0f;
         sky_index = 0;
@@ -1380,12 +1445,11 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         next_sky = 0;
     if (previous_sky < 0)
         previous_sky = (int) previous_sky;
-    CFrameVu1 *current_sky = sky[sky_index];
-    CFrameVu1 *following_sky = sky[next_sky];
+    current_sky = sky[sky_index];
+    following_sky = sky[next_sky];
     if (current_sky != NULL && following_sky == NULL)
         following_sky = (CFrameVu1 *) following_sky;
 
-    sceVu0FVECTOR position;
     camera->GetPos(position);
     if (follow_axes[0] == 0)
         position[0] = 0.0f;
@@ -1393,7 +1457,6 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         position[1] = 0.0f;
     if (follow_axes[2] == 0)
         position[2] = 0.0f;
-    sceVu0FVECTOR cloud_position;
     sceVu0CopyVector(cloud_position, position);
     cloud_position[1] -= 50.0f;
 
@@ -1410,24 +1473,22 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     MGDraw(clouds);
     mgRenderInfo.unk_340 = 0;
 
-    sceVu0FVECTOR old_ambient;
-    sceVu0FVECTOR ambient;
     MGGetAmbient(old_ambient);
     sceVu0CopyVector(ambient, old_ambient);
     transition = 0;
-    int sun_index = 2;
+    sun_index = 2;
     if (clock >= 9.0f && clock < 12.0f)
         sun_index = 3;
     if (clock >= 0.0f && clock < 3.5f)
         sun_index = 0;
     if (clock >= 3.5f && clock < 5.5f)
         sun_index = 1;
-    int next_sun = sun_index + 1;
-    if (next_sun >= 4)
+    next_sun = sun_index + 1;
+    if (next_sun > 3)
         next_sun = 0;
-    CFrame *current_sun = sun[sun_index];
-    CFrame *following_sun = sun[next_sun];
-    CFrame *moon = sun[2];
+    current_sun = sun[sun_index];
+    following_sun = sun[next_sun];
+    moon = sun[2];
     if (EditMapInfo->time_stop != 0) {
         next_sun = 0;
         sun_index = 0;
@@ -1446,7 +1507,8 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         ambient[3] = 2.0f * (128.0f * (3.5f - clock));
         transition = 1;
     }
-    float alpha = ambient[3];
+    float *ambient_alpha = &ambient[3];
+    float alpha = *ambient_alpha;
     float adjusted_clock = clock;
     if (clock > 10.0f)
         adjusted_clock = clock - 12.0f;
@@ -1456,20 +1518,19 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     float moon_rotation = 1.2f * (3.141592f * ((clock - 4.0f) / 6.0f) - 1.5707964f);
     if (sun_index != 2) {
         float absolute_rotation = sun_rotation < 0.0f ? -sun_rotation : sun_rotation;
-        if (absolute_rotation < 3.141592f) {
+        if (absolute_rotation < 1.57f) {
             TexManager.ReloadTexture(Vif1Packet, 7);
             if (transition != 0) {
-                ambient[3] = 128.0f - alpha;
+                *ambient_alpha = 128.0f - alpha;
                 MGSetAmbient(ambient);
                 if (next_sun != 2 && following_sun != NULL) {
                     following_sun->SetTransMatrix(identity);
-                    float rotation_y = 0.0f;
-                    following_sun->SetRotation(0.0f, rotation_y, sun_rotation);
+                    following_sun->SetRotation(0.0f, 0.0f, sun_rotation);
                     following_sun->SetPosition(position);
                     MGDraw(following_sun);
                 }
             }
-            ambient[3] = alpha;
+            *ambient_alpha = alpha;
             if (sun_index != 2 && current_sun != NULL) {
                 current_sun->SetTransMatrix(identity);
                 MGSetAmbient(ambient);
@@ -1488,34 +1549,34 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     MGDraw(clouds);
     mgRenderInfo.unk_340 = 0;
 
-    ambient[3] = 128.0f;
-    int sky_transition = 0;
+    *ambient_alpha = 128.0f;
+    transition = 0;
     if (clock > 2.0f && clock < 3.0f) {
-        ambient[3] = 128.0f * (3.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (3.0f - clock);
+        transition = 1;
     }
     if (clock > 5.0f && clock < 6.0f) {
-        ambient[3] = 128.0f * (6.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (6.0f - clock);
+        transition = 1;
     }
     if (clock > 8.0f && clock < 9.0f) {
-        ambient[3] = 128.0f * (9.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (9.0f - clock);
+        transition = 1;
     }
     if (clock > 11.0f) {
-        ambient[3] = 128.0f * (12.0f - clock);
-        sky_transition = 1;
+        *ambient_alpha = 128.0f * (12.0f - clock);
+        transition = 1;
     }
     float sky_alpha = ambient[3];
-    if (sky_transition != 0) {
-        ambient[3] = 128.0f - sky_alpha;
+    if (transition != 0) {
+        *ambient_alpha = 128.0f - sky_alpha;
         MGSetAmbient(ambient);
         TexManager.ReloadTexture(Vif1Packet, next_sky + 3);
         if (following_sky != NULL)
             following_sky->SetPosition(position);
         MGDraw(following_sky);
     }
-    ambient[3] = sky_alpha;
+    *ambient_alpha = sky_alpha;
     MGSetAmbient(ambient);
     TexManager.ReloadTexture(Vif1Packet, sky_index + 3);
     if (current_sky != NULL)
@@ -1524,14 +1585,14 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     MGSetAmbient(old_ambient);
 
     if (sun_index == 2 && moon != NULL) {
-        ambient[3] = 0.0f;
+        *ambient_alpha = 0.0f;
         if (clock > 5.5f && clock < 9.0) {
             TexManager.ReloadTexture(Vif1Packet, 7);
-            ambient[3] = 128.0f;
+            *ambient_alpha = 128.0f;
             if (clock > 5.5f && clock < 6.0f)
-                ambient[3] = 128.0f - 2.0f * (128.0f * (6.0f - clock));
+                *ambient_alpha = 128.0f - 2.0f * (128.0f * (6.0f - clock));
             if (clock > 8.5f && clock < 9.0f)
-                ambient[3] = 2.0f * (128.0f * (9.0f - clock));
+                *ambient_alpha = 2.0f * (128.0f * (9.0f - clock));
             MGSetAmbient(ambient);
             moon->SetTransMatrix(identity);
             moon->SetRotation(0.0f, 0.0f, moon_rotation);
@@ -3118,7 +3179,15 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     TexManager.LoadTextureBlockEX(block, textures);
     return 1;
 }
-int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
+
+/**
+ * Activates and places the villager selected by an editor-event script.
+ *
+ * @mangled _LOAD_IN_VILLAGER__FP12RS_STACKDATAi
+ * @address 0x18CD60
+ * @size 0x1FC
+ */
+static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
@@ -3158,7 +3227,14 @@ int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
+/**
+ * Removes the villager selected by an editor-event script.
+ *
+ * @mangled _LOAD_OUT_VILLAGER__FP12RS_STACKDATAi
+ * @address 0x18CF60
+ * @size 0x1C0
+ */
+static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
@@ -4502,7 +4578,14 @@ static int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
+/**
+ * Pushes the active conversation villager's event status onto the script stack.
+ *
+ * @mangled _GET_TALKNPC_STATUS__FP12RS_STACKDATAi
+ * @address 0x191530
+ * @size 0x74
+ */
+static int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     int index = EdEventInfo.talk_npc_id;
     int status = 0;
     if (index >= 0 && index < EdEventInfo.npc_count) {
@@ -4513,20 +4596,16 @@ int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-/**
- * Camera offsets used for each of the three talk-camera views.
- *
- * Retail keeps this inside `_SET_TALK_CAMERA` and calls it `vv`; the name is
- * held apart because `EdTalkMode`'s assembly still references its own `vv`,
- * which the compiled copy would otherwise absorb.
- */
-static sceVu0FVECTOR talk_camera_ref[3] = {
-    {-18.8f, 7.1f, -21.3f, 1.0f},
-    {21.0f, 6.5f, -5.7f, 1.0f},
-    {22.6f, 6.9f, 16.5f, 1.0f},
-};
-
 static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
+    /**
+     * Camera offsets from the speakers' midpoint for each of the three talk-camera views.
+     */
+    static sceVu0FVECTOR vv[3] = {
+        {-18.8f, 7.1f, -21.3f, 1.0f},
+        {21.0f, 6.5f, -5.7f, 1.0f},
+        {22.6f, 6.9f, 16.5f, 1.0f},
+    };
+
     int view = GetStackInt(stack);
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR npc_position;
@@ -4551,7 +4630,7 @@ static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
     sceVu0FMATRIX rotation;
     sceVu0UnitMatrix(rotation);
     sceVu0RotMatrixY(rotation, rotation, angle);
-    sceVu0ApplyMatrix(camera_position, rotation, talk_camera_ref[view]);
+    sceVu0ApplyMatrix(camera_position, rotation, vv[view]);
     sceVu0AddVector(camera_position, midpoint, camera_position);
     if (camera != NULL)
         camera->SetPos(camera_position);
@@ -4899,9 +4978,16 @@ static int _GET_CAMERA_ROTATE(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+/**
+ * Requests a camera reset on the next event frame, facing back along the reset yaw.
+ *
+ * @mangled _RESET_CAMERA__FP12RS_STACKDATAi
+ * @address 0x1928F0
+ * @size 0x38
+ */
 static int _RESET_CAMERA(RS_STACKDATA *stack, int) {
     EdEventInfo.reset_camera_angle = GetStackInt(stack);
-    EdEventInfo.reset_camera_yaw = 3.1415927f;
+    EdEventInfo.reset_camera_yaw = 3.141592f;
     return 1;
 }
 
@@ -5072,7 +5158,14 @@ static int _DRAW_SHADOW(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
+/**
+ * Stores the editor ground's event clipping plane from script arguments.
+ *
+ * @mangled _SET_CLIP_POINT__FP12RS_STACKDATAi
+ * @address 0x1931F0
+ * @size 0x8C
+ */
+static int _SET_CLIP_POINT(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR plane;
     GetPosition(stack, plane);
     stack += 3;
@@ -5539,7 +5632,14 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _ASQ_CHECK(RS_STACKDATA *stack, int) {
+/**
+ * Pushes whether an editor action-sequence slot is still running onto the script stack.
+ *
+ * @mangled _ASQ_CHECK__FP12RS_STACKDATAi
+ * @address 0x194B70
+ * @size 0x74
+ */
+static int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
     if (sequence == NULL)
         return 0;
@@ -5554,6 +5654,13 @@ static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+/**
+ * Starts an object animation with up to three rotation keys, converting radians to degrees.
+ *
+ * @mangled _OBJ_ANIME__FP12RS_STACKDATAi
+ * @address 0x194C70
+ * @size 0x29C
+ */
 static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     int object = GetStackInt(stack++);
     int animation = GetStackInt(stack++);
@@ -5569,18 +5676,18 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     first[1] = GetStackFloat(stack++);
     first[2] = GetStackFloat(stack++);
     if (angle_mode == 0) {
-        first[0] = 180.0f * first[0] / 3.1415927f;
-        first[1] = 180.0f * first[1] / 3.1415927f;
-        first[2] = 180.0f * first[2] / 3.1415927f;
+        first[0] = 180.0f * first[0] / 3.141592f;
+        first[1] = 180.0f * first[1] / 3.141592f;
+        first[2] = 180.0f * first[2] / 3.141592f;
     }
     if (argument_count >= 10) {
         second[0] = GetStackFloat(stack++);
         second[1] = GetStackFloat(stack++);
         second[2] = GetStackFloat(stack++);
         if (angle_mode == 0) {
-            second[0] = 180.0f * second[0] / 3.1415927f;
-            second[1] = 180.0f * second[1] / 3.1415927f;
-            second[2] = 180.0f * second[2] / 3.1415927f;
+            second[0] = 180.0f * second[0] / 3.141592f;
+            second[1] = 180.0f * second[1] / 3.141592f;
+            second[2] = 180.0f * second[2] / 3.141592f;
         }
     }
     if (argument_count >= 13) {
@@ -5588,9 +5695,9 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
         third[1] = GetStackFloat(stack++);
         third[2] = GetStackFloat(stack);
         if (angle_mode == 0) {
-            third[0] = 180.0f * third[0] / 3.1415927f;
-            third[1] = 180.0f * third[1] / 3.1415927f;
-            third[2] = 180.0f * third[2] / 3.1415927f;
+            third[0] = 180.0f * third[0] / 3.141592f;
+            third[1] = 180.0f * third[1] / 3.141592f;
+            third[2] = 180.0f * third[2] / 3.141592f;
         }
     }
     init_obj_anime(object, animation, angle_mode, playback_mode, first, second, third);
@@ -7106,7 +7213,52 @@ int EdNowTalkCharaInfoID() {
     return talk_chara_info_id;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Closes the conversation window and leaves it ready for the next message.
+ */
+static inline void EdCloseTalkMes() {
+    EditMes1.text_rate = EditMes1.text_rate_set;
+    EditMes1.mes_made = -1;
+    EditMes1.fade_in = 0;
+    EditMes1.text_columns = 0x46;
+    EditMes1.text_rows = 0xA;
+    EditMes1.text_len = 0;
+    EditMes1.text_width = 0;
+    EditMes1.text_height = 0;
+    EditMes1.fade = 0.0f;
+    EditMes1.fade_in = 1;
+    EditMes1.text_rate = EditMes1.text_rate_set;
+    EditMes1.waiting = 0;
+    EditMes1.text_at = 0.0f;
+    EditMes1.text_no = 0;
+    EditMes1.text_from = 0;
+    EditMes1.page_from = 0;
+    EditMes1.InitMesWinTbl();
+    EditMes1.clut_now = EditMes1.clut_default;
+    EditMes1.wait = 0;
+    EditMes1.blink = 0;
+    EditMes1.auto_page_wait = 0;
+    EditMes1.mes_made = -1;
+    EditMes1.edge_alpha = 0x80;
+    for (int i = 0; i < 10; i++)
+        EditMes1.mes_no[i] = -1;
+    for (int i = 0; i < 8; i++)
+        EditMes1.values[i] = 0;
+    EditMes1.value = 0;
+    EditMes1.value_signed = 0;
+    EditMes1.value_show = 1;
+    EditMes1.value_narrow = 0;
+    EditMes1.space_width = -1;
+    EditMes1.space_area = -1;
+    EditMes1.cursor_row = -1;
+    EditMes1.cursor_y = 0;
+    EditMes1.cursor_lit = 0;
+    for (int i = 0; i < 10; i++) {
+        EditMes1.line_pos[i].x = -1;
+        EditMes1.line_pos[i].y = -1;
+    }
+}
+
 /**
  * Runs the talking-to-a-villager mode for one frame.
  *
@@ -7115,53 +7267,58 @@ int EdNowTalkCharaInfoID() {
  * @size 0xEBC
  */
 int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selection) {
+    /**
+     * Camera offsets from the speakers' midpoint for each of the three talk-camera views.
+     */
+    static sceVu0FVECTOR vv[3] = {
+        {-18.8f, 7.1f, -21.3f, 1.0f},
+        {21.0f, 6.5f, -5.7f, 1.0f},
+        {22.6f, 6.9f, 16.5f, 1.0f},
+    };
+
     GamePad.MenuModeOn(0x78);
     ReadBG();
-    if (camera != NULL) {
+    if (camera != NULL)
         camera->FollowOff();
-    }
     EditMes1.Step();
 
-    CCharacter *villager = &talk_villager__2->chara;
-    talk_villager__2->near_camera = 1;
+    CNPCharacter *villager = talk_villager__2;
+    villager->near_camera = 1;
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR villager_position;
     sceVu0FVECTOR player_rotation;
     sceVu0FVECTOR villager_rotation;
     sceVu0FVECTOR direction;
     player->GetPosition(player_position);
-    villager->GetPosition(villager_position);
     player->GetRotation(player_rotation);
-    villager->GetRotation(villager_rotation);
+    villager->chara.GetPosition(villager_position);
+    villager->chara.GetRotation(villager_rotation);
     sceVu0SubVector(direction, villager_position, player_position);
     float player_yaw = atan2f(direction[0], direction[2]);
     float villager_yaw = atan2f(-direction[0], -direction[2]);
-    player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.2f, 0);
-    villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.2f, 0);
+    player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.1f, 0);
     player->SetRotation(player_rotation);
-    if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0) {
-        villager->SetRotation(villager_rotation);
-    }
+    villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.1f, 0);
+    if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0)
+        villager->chara.SetRotation(villager_rotation);
 
     sceVu0FVECTOR reference;
     sceVu0AddVector(reference, player_position, villager_position);
     sceVu0ScaleVector(reference, reference, 0.5f);
     reference[1] += 15.0f;
     if (camera != NULL) {
-        static const sceVu0FVECTOR offsets[3] = {
-            {25.0f, 12.0f, -35.0f, 0.0f},
-            {-25.0f, 12.0f, -35.0f, 0.0f},
-            {0.0f, 18.0f, -45.0f, 0.0f},
-        };
-        sceVu0FMATRIX rotation;
-        sceVu0FVECTOR offset;
-        sceVu0FVECTOR camera_position;
-        sceVu0UnitMatrix(rotation);
-        sceVu0RotMatrixY(rotation, rotation, player_yaw);
-        sceVu0ApplyMatrix(offset, rotation, offsets[talk_camera]);
-        sceVu0AddVector(camera_position, reference, offset);
+        camera->FollowOff();
         camera->SetRef(reference);
+    }
+    sceVu0FVECTOR camera_position;
+    sceVu0FMATRIX rotation;
+    sceVu0UnitMatrix(rotation);
+    sceVu0RotMatrixY(rotation, rotation, player_yaw);
+    sceVu0ApplyMatrix(camera_position, rotation, vv[talk_camera]);
+    sceVu0AddVector(camera_position, reference, camera_position);
+    if (camera != NULL)
         camera->SetPos(camera_position);
+    if (camera != NULL) {
         sceVu0FMATRIX view;
         sceVu0FVECTOR eye;
         camera->GetCameraMatrix(view);
@@ -7169,72 +7326,141 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
         MGSetViewMatrix(view, eye);
     }
 
-    int choice_count = 0;
-    while (choice_count < 16 && EdEventInfo.talk_messages[choice_count] >= 0) {
-        choice_count++;
-    }
     if (EdEventInfo.talk_select_prompt < 0) {
         talk_mode = 1;
         TalkMesNo = EdEventInfo.talk_messages[0];
-    } else if (talk_mode == 0) {
+    } else {
         TalkMesNo = EdEventInfo.talk_select_message;
     }
 
-    if (talk_mode == 0) {
-        if (GamePad.Down(0x1000) != 0 && choice_count > 0) {
-            talk_select--;
-            if (talk_select < 0) {
-                talk_select = choice_count - 1;
+    int choice_count = 0;
+    for (;;) {
+        if (EdEventInfo.talk_messages[choice_count] < 0)
+            break;
+        choice_count++;
+    }
+    SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
+
+    switch (talk_mode) {
+        case 1:
+            if (GamePad.Down(0x60) != 0) {
+                if (EditMes1.State() == 3) {
+                    EdCloseTalkMes();
+                    if (camera != NULL)
+                        camera->FollowOn();
+                    villager->chara.SetMotion(0, 0);
+                    GamePad.AutoRepeatOff();
+                    GamePad.MenuModeOff();
+                    return 1;
+                }
+                if (EditMes1.State() == 5)
+                    EditMes1.GoNextPage();
+                else
+                    EditMes1.text_rate = 0.0f;
             }
-        }
-        if (GamePad.Down(0x4000) != 0 && choice_count > 0) {
-            talk_select++;
-            if (talk_select >= choice_count) {
-                talk_select = 0;
-            }
-        }
-        EditMes1.cursor_row = talk_select;
-        if (GamePad.Down(0x40) != 0 && EditMes1.State() == 3 && choice_count > 0) {
-            talk_mode = 1;
-            TalkMesMake = 1;
-            TalkMesNo = EdEventInfo.talk_messages[talk_select];
-            if (selection != NULL) {
-                *selection = talk_select;
-            }
-        }
-    } else if (GamePad.Down(0x60) != 0) {
-        if (EditMes1.State() == 3) {
             EditMes1.cursor_row = -1;
-            if (camera != NULL) {
-                camera->FollowOn();
+            villager->chara.SetMotion(3, 0);
+            break;
+        case 0:
+            if (GamePad.Down(0x1000) != 0) {
+                talk_select--;
+                if (talk_select < 0)
+                    talk_select = choice_count - 1;
             }
-            GamePad.AutoRepeatOff();
-            GamePad.MenuModeOff();
-            return 1;
-        }
-        if (EditMes1.State() == 5) {
-            EditMes1.GoNextPage();
-        } else {
-            EditMes1.text_rate = 0.0f;
-        }
+            if (GamePad.Down(0x4000) != 0) {
+                talk_select++;
+                if (talk_select > choice_count - 1)
+                    talk_select = 0;
+            }
+            if (GamePad.Down(0x40) != 0) {
+                if (EditMes1.State() == 3) {
+                    talk_mode = 1;
+                    TalkMesMake = 1;
+                    TalkMesNo = EdEventInfo.talk_messages[talk_select];
+                    if (EdEventInfo.talk_select_prompt == 0 && talk_select == 3) {
+                        SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
+                        if (npc != NULL)
+                            npc->flags |= 2;
+                    }
+                    if ((talk_select == 0 && EdEventInfo.talk_select_prompt > 0 &&
+                         EdEventInfo.talk_select_prompt != 4) ||
+                        (talk_select > 0 && EdEventInfo.talk_select_prompt == 4)) {
+                        EdCloseTalkMes();
+                        if (camera != NULL)
+                            camera->FollowOn();
+                        villager->chara.SetMotion(0, 0);
+                        GamePad.AutoRepeatOff();
+                        GamePad.MenuModeOff();
+                        if (EdEventInfo.talk_select_prompt == 4) {
+                            EdSetShopNo(EdEventInfo.talk_messages[talk_select]);
+                            if (talk_select == 1)
+                                return 2;
+                            if (talk_select == 2)
+                                return 3;
+                            if (talk_select == 3)
+                                return 2;
+                            if (talk_select == 4)
+                                return 2;
+                        }
+                        EdSetShopNo(EdEventInfo.talk_messages[0]);
+                        if (EdEventInfo.talk_select_prompt == 1)
+                            return 2;
+                        if (EdEventInfo.talk_select_prompt == 2)
+                            return 3;
+                        if (EdEventInfo.talk_select_prompt == 3) {
+                            if (selection != NULL)
+                                *selection = EdEventInfo.talk_messages[0];
+                            return 4;
+                        }
+                        return 1;
+                    }
+                } else {
+                    EditMes1.text_rate = 0.0f;
+                }
+            }
+            if (GamePad.Down(0x20) != 0) {
+                GamePad.AutoRepeatOff();
+                GamePad.MenuModeOff();
+                EdCloseTalkMes();
+                if (camera != NULL)
+                    camera->FollowOn();
+                villager->chara.SetMotion(0, 0);
+                return 1;
+            }
+            EditMes1.cursor_row = talk_select;
+            villager->chara.SetMotion(0, 0);
+            break;
     }
 
-    int window_position[2];
-    if (mode == 0) {
-        EditMes1.AutoSetSub(player, villager, window_position);
+    int talk_position[4];
+    if (talk_mode == 0) {
+        if (mode != 0) {
+            EditMes1.tail_on = 0;
+            EditMes1.auto_pos = 8;
+        }
+        EditMes1.AutoSetSub(player, &villager->chara, talk_position);
+        EditMes1.AutoSet(talk_position);
     } else {
-        EditMes1.AutoSetSub(villager, player, window_position);
+        EditMes1.tail_on = 1;
+        EditMes1.auto_pos = 0;
+        EditMes1.AutoSetSub(&villager->chara, player, talk_position);
+        EditMes1.AutoSet(talk_position);
     }
-    EditMes1.AutoSet(window_position);
-    if (TalkMesMake != 0) {
-        EditMes1.text_rate = 0.0f;
-        TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
+
+    switch (talk_mode) {
+        case 0:
+            if (TalkMesMake != 0) {
+                EditMes1.text_rate = 0.0f;
+                TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
+            }
+            break;
+        case 1:
+            if (TalkMesMake != 0)
+                TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
+            break;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdTalkMode__FP10CCharacterP13CCameraFollowiPi);
-#endif
 
 ED_SPRITE::ED_SPRITE() {
 }

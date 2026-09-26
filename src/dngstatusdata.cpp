@@ -873,8 +873,8 @@ void CDngStatusData::Initialize(void) {
             this->chara_weapons[t][q].item_no = -1;
         }
 
-        this->stat_float_a[t] = 30.0f;
-        this->stat_float_b[t] = 30.0f;
+        this->max_water[t] = 30.0f;
+        this->water[t] = 30.0f;
         this->skill_owned[t] = 0;
     }
 

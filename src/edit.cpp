@@ -943,7 +943,23 @@ void EdThunderEffect(int map, CEditGround *ground) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/edit", @435);
+/**
+ * Reports whether a villager's model is set up and enabled for drawing.
+ */
+static inline int IsVisible(CNPCharacter *npc) {
+    return (bool) (npc->initialized != 0 && npc->draw_enabled != 0);
+}
+
+/**
+ * Reports whether a villager's model is set up and enabled for its shadow pass.
+ */
+static inline int IsShadowVisible(CNPCharacter *npc) {
+    bool visible = false;
+    if (npc->initialized != 0 && npc->draw_enabled != 0) {
+        visible = true;
+    }
+    return visible;
+}
 
 /**
  * Draws one editor character with its shadow, cursor and event state.
@@ -952,92 +968,93 @@ INCLUDE_RODATA("asm/nonmatchings/edit", @435);
  * @address 0x1725F0
  * @size 0x4C8
  */
-#ifdef NON_MATCHING
-void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count,
-                     CNPCharacter *npcs, int *npc_draw_masks, int draw_shadows,
-                     ED_EVENT_INFO *event) {
+void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CNPCharacter *npcs, int *npc_draw_masks,
+                     int draw_shadows, ED_EVENT_INFO *event) {
+    int i;
+
     if (EdDebugCharaDrawOff != 0) {
         player_draw_mask = 0;
     }
-
     if (event != NULL) {
+        draw_shadows = 0;
         player_draw_mask = 3;
         if (event->player_draw == 0) {
-            player_draw_mask = 2;
+            player_draw_mask &= ~1;
         }
         if (event->player_shadow_draw == 0) {
             player_draw_mask &= ~2;
+        } else {
+            draw_shadows |= 1;
         }
-        draw_shadows = event->player_shadow_draw != 0;
-
         if (npc_draw_masks != NULL) {
-            for (int i = 0; i < npc_count; i++) {
+            for (i = 0; i < npc_count; i++) {
                 if (event->npc_draw[i] == 0) {
                     npc_draw_masks[i] = 0;
                 }
                 if (event->npc_shadow_draw[i] == 0) {
                     npc_draw_masks[i] &= ~2;
                 } else {
-                    draw_shadows = 1;
+                    draw_shadows |= 1;
                 }
             }
         }
-
-        for (int i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
+        // Villagers the event wants in front are drawn before the shadows.
+        for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
             CNPCharacter *npc = &npcs[i];
-            if (npc->CheckDraw() != 0 && event->npc_draw_before[i] != 0 && (npc_draw_masks[i] & 1) != 0 && npc->initialized != 0 && npc->draw_enabled != 0) {
-                npc_draw_masks[i] = 0;
-                TexManager.ReloadTexture(Vif1Packet, npc->unk_148C);
-                npc->chara.TextureAnime(npc->unk_148C);
-                npc->Draw();
+            if (npc->CheckDraw() != 0 && event->npc_draw_before[i] != 0 && (npc_draw_masks[i] & 1) != 0) {
+                if (IsVisible(&npcs[i])) {
+                    npc_draw_masks[i] = 0;
+                    TexManager.ReloadTexture(Vif1Packet, npcs[i].unk_148C);
+                    npc->chara.TextureAnime(npcs[i].unk_148C);
+                    CCharacter *chara = &npc->chara;
+                    chara->Draw();
+                }
             }
         }
     }
-
     if (draw_shadows != 0) {
         sceVu0FMATRIX light_direction;
-        sceVu0FMATRIX light_colour;
         sceVu0FMATRIX shadow_direction;
+        sceVu0FMATRIX light_colour;
         sceVu0FMATRIX saved_colour;
+
         MGGetPLight(light_direction, light_colour);
         sceVu0CopyMatrix(shadow_direction, light_direction);
         sceVu0CopyMatrix(saved_colour, light_colour);
         EdLimitShadowLight(shadow_direction, 3.0f);
         MGSetPLight(shadow_direction, light_colour);
-        TexManager.ReloadTexture(Vif1Packet, 0x16);
-        CTexture *shadow = TexManager.GetTexture((char *) "shadow_buff", -1);
-        MGBeginDrawShadow(*(sceGsTex0 *) &shadow->tex0);
-
+        TexManager.ReloadTexture(Vif1Packet, 22);
+        MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buff", -1)->tex0);
         if (player_draw_mask & 2) {
             player->DrawShadow();
         }
-        for (int i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
-            if ((npc_draw_masks[i] & 2) != 0 && npcs[i].initialized != 0 && npcs[i].draw_enabled != 0) {
-                npcs[i].DrawShadow();
+        for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
+            if (npc_draw_masks[i] & 2) {
+                if (IsShadowVisible(&npcs[i])) {
+                    CCharacter *chara = &npcs[i].chara;
+                    chara->DrawShadow();
+                }
             }
         }
         MGEndDrawShadow(0x34);
-        MGSetPLight(light_direction, saved_colour);
+        MGSetPLight(light_direction, light_colour);
     }
-
     if (player_draw_mask & 1) {
         TexManager.ReloadTexture(Vif1Packet, 8);
         player->TextureAnime(8);
         player->Draw();
     }
-
-    for (int i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
-        CNPCharacter *npc = &npcs[i];
-        if (npc->CheckDraw() != 0 && (npc_draw_masks[i] & 1) != 0 && npc->initialized != 0 && npc->draw_enabled != 0) {
-            TexManager.ReloadTexture(Vif1Packet, npc->unk_148C);
-            npc->chara.TextureAnime(npc->unk_148C);
-            npc->Draw();
+    for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
+        if (npcs[i].CheckDraw() != 0 && (npc_draw_masks[i] & 1) != 0) {
+            if (IsVisible(&npcs[i])) {
+                TexManager.ReloadTexture(Vif1Packet, npcs[i].unk_148C);
+                npcs[i].chara.TextureAnime(npcs[i].unk_148C);
+                CCharacter *chara = &npcs[i].chara;
+                chara->Draw();
+            }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit", EdDrawCharacter__FP10CCharacteriiP12CNPCharacterPiiP13ED_EVENT_INFO);
-#endif
 
 /* Giving a map part one more effect: the description table is scanned from the front for an entry
    nothing has claimed, the effect is built on the part's own frame, and the part is told which

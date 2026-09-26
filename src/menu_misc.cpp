@@ -29,6 +29,7 @@
 
 #include <cstring>
 
+#include "bt_shot_effect.hpp"
 #include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "dngstatusdata.hpp"
@@ -38,10 +39,8 @@
 #include "weaponlevelup.hpp"
 
 extern s32 BtlMenuMode;
-extern CTexture *WepIcon;
 extern u_long128 *WeaponRead_Buf;
 extern u_long128 *MenuWeaponModelBuildBuffer;
-extern u_long128 *WepMenuEffectReadBuf;
 extern int CharaFileBGReadNo;
 extern u_long128 *CharaChangeBaseBuf;
 extern s16 charachangeid;
@@ -64,7 +63,7 @@ extern s32 CharaMainHandViewFlag;
 extern "C" CCharacter *NowWeapon;
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
-extern int MenuWeaponTestCase;
+int MenuWeaponTestCase = 1;
 
 /** The amount the last item use gave, a base value plus a random part. */
 extern int MenuItemUseVolume;
@@ -105,11 +104,13 @@ extern s16 DngEscapeBlock;
 /** Whether the dungeon escape prompt is closing and fades to black. */
 extern s16 DngEscapeEndFlag;
 
-/** The currently selected answer in the dungeon escape prompt. */
-extern s16 DngEscapeSelect;
-
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
-extern s16 DngEscapeAlpha;
+s16 DngEscapeAlpha = 0x80;
+
+/**
+ * The dungeon escape prompt's chosen answer, 1 or 2.
+ */
+s16 DngEscapeSelect = 1;
 
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern CCharacter MenuCharaFrame;
@@ -130,6 +131,11 @@ extern "C" const char *charaFile[6];
  * Provides the file extension appended to character model file names.
  */
 extern "C" const char CharaFileExtension[5];
+
+/**
+ * Names the synthetic texture a menu builds from the current frame image.
+ */
+extern "C" const char FrameImageTexture[];
 
 /** Frame numbers of the menu's cached weapon models. */
 extern int MenuWeaponModelData[42];
@@ -251,34 +257,38 @@ void EquipDefaultWeapon(int chara_no) {
         }
     }
 }
-#ifdef NON_MATCHING
+
+/**
+ * Draws the menu's empty-slot picture from a named texture at a screen position.
+ *
+ * @mangled DrawMenuNothing__FiiiiPcii
+ * @address 0x20C070
+ * @size 0x360
+ */
 void DrawMenuNothing(int x, int y, int width, int height, char *name, int custom, int alpha) {
-    int u;
-    int v;
     CTexture *texture = TexManager.GetTexture(name, -1);
     int inner_w = width - 0x24;
     int inner_h = height - 0x24;
+    int u;
+    int v;
 
-    if (custom == 0) {
-        u = 0xD4;
-        v = 0x159;
+    switch (custom) {
+        case 0:
+            u = 0xD4;
+            v = 0x159;
+            break;
     }
     DrawMenu2DSprite(texture, CRect_i_(x, y, 0x12, 0x12), CRect_i_(u, v, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x + 0x12, y, inner_w, 0x12), CRect_i_(u + 0x10, v, 4, 0x12), alpha);
-    int right = x + 0x12 + inner_w;
-    DrawMenu2DSprite(texture, CRect_i_(right, y, 0x12, 0x12), CRect_i_(u + 0x12, v, 0x12, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y, 0x12, 0x12), CRect_i_(u + 0x12, v, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x, y + 0x12, 0x12, inner_h), CRect_i_(u, v + 0xE, 0x12, 4), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(right, y + 0x12, 0x12, inner_h), CRect_i_(u + 0x12, v + 0xE, 0x12, 4), alpha);
-    int bottom = y + 0x12 + inner_h;
-    DrawMenu2DSprite(texture, CRect_i_(x, bottom, 0x12, 0x12), CRect_i_(u, v + 0x12, 0x12, 0x12), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(x + 0x12, bottom, inner_w, 0x12), CRect_i_(u + 0x10, v + 0x12, 4, 0x12), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(right, bottom, 0x12, 0x12), CRect_i_(u + 0x12, v + 0x12, 0x12, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y + 0x12, 0x12, inner_h), CRect_i_(u + 0x12, v + 0xE, 0x12, 4), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x, y + 0x12 + inner_h, 0x12, 0x12), CRect_i_(u, v + 0x12, 0x12, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12, y + 0x12 + inner_h, inner_w, 0x12), CRect_i_(u + 0x10, v + 0x12, 4, 0x12), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y + 0x12 + inner_h, 0x12, 0x12), CRect_i_(u + 0x12, v + 0x12, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x - 0x33 + (inner_w >> 1), y - 1 + (inner_h >> 1), 0x86, 0x22),
                      CRect_i_(0xFA, 0x1D2, 0x86, 0x22), alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DrawMenuNothing__FiiiiPcii);
-#endif
 
 int GetMenuItemUseVolume() {
     return MenuItemUseVolume;
@@ -690,19 +700,6 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     }
     return 1;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @985__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @986__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @987);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @988);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @989);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @990__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @992__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @993__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @994);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @995);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @996__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @997);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1002);
 static int *GetMenuWeaponModelData(int index) {
     return &MenuWeaponModelData[index];
 }
@@ -727,29 +724,43 @@ void SetMenuWeaponModelReference(int index, int frame_no, int value) {
 int GetMenuWeaponModelFrameNo(int index) {
     return MenuWeaponModelInfo[index][0];
 }
-#ifdef NON_MATCHING
+
+/**
+ * Enters a menu page's weapon models and textures from their read files and returns the outcome.
+ *
+ * @mangled EnterWeaponModel__Fiii
+ * @address 0x20D4C0
+ * @size 0x464
+ */
 int EnterWeaponModel(int chara, int texture_block, int) {
-    char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
-    char *names[6] = {"c01", "c04", "c06", "c05", "c10", "c18"};
-    char order[16];
-    char model[32];
-    char image[32];
-    char chr[32];
     BG_READ_INFO *pack = GetReadBGFile(0);
     BG_READ_INFO *shadow = GetReadBGFile(1);
     BG_READ_INFO *effect = GetReadBGFile(2);
+    // Built and indexed but never read.
+    char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
+    char *shadow_name = shadows[chara];
     s16 max = MenuCharaWeaponMax[chara];
+    char *names[6] = {"c01", "c04", "c06", "c05", "c10", "c18"};
+    char order[42];
+    char image[32];
+    char model[32];
+    char chr[32];
 
     switch (GetNowTestNo()) {
         case 0:
             break;
         case 1: {
-            LOADTEXTURE_INFO2 texture = {0};
-            texture.block_no = MenuShadowReadBlock;
-            texture.name = (char *) shadow->buffer;
+            LOADTEXTURE_INFO2 texture[3] = {
+                {"#frame_menuwep_dmy#640#448#4", 0, 0},
+                {NULL, 0, 0},
+                {NULL, 0, 0},
+            };
+            texture[0].block_no = MenuShadowReadBlock;
+            texture[1].block_no = MenuShadowReadBlock;
+            texture[1].name = (char *) shadow->buffer;
             TexManager.DeleteTextureBlock(MenuShadowReadBlock);
             TexManager.CleanUpTextureList();
-            TexManager.LoadTextureBlockEX(-1, &texture);
+            TexManager.LoadTextureBlockEX(-1, texture);
             WepIcon = TexManager.GetTexture("wepicon", MenuShadowReadBlock);
             for (int i = 0; i < max; i++) {
                 order[i] = i;
@@ -757,35 +768,35 @@ int EnterWeaponModel(int chara, int texture_block, int) {
             InitMenuWeaponModelData();
             for (int i = 0; i < max; i++) {
                 char *name = names[chara];
-                strcpy(model, name);
                 strcpy(image, name);
+                strcpy(model, name);
                 strcpy(chr, name);
                 int no = order[i];
-                if (no >= 0 && no < 10) {
+                if (0 <= no && no <= 9) {
                     strcat(chr, "w0%d");
                     sprintf(chr, chr, no);
-                    strcat(model, "w0%d");
-                    sprintf(model, model, no);
                     strcat(image, "w0%d");
                     sprintf(image, image, no);
+                    strcat(model, "w0%d");
+                    sprintf(model, model, no);
                 } else if (no >= 10) {
                     strcat(chr, "w%d");
                     sprintf(chr, chr, no);
-                    strcat(model, "w%d");
-                    sprintf(model, model, no);
                     strcat(image, "w%d");
                     sprintf(image, image, no);
+                    strcat(model, "w%d");
+                    sprintf(model, model, no);
                 } else {
                     strcat(chr, "w01");
-                    strcat(model, "w01");
-                    strcat(image, "w01d");
+                    strcat(image, "w01");
+                    strcat(model, "w01d");
                 }
                 strcat(chr, ".chr");
-                strcat(model, ".img");
-                strcat(image, ".mds");
+                strcat(image, ".img");
+                strcat(model, ".mds");
                 u_int *file = GetPackFile((u_int *) pack->buffer, chr, NULL);
                 if (file != NULL) {
-                    *(u_int **) GetMenuWeaponModelData(i) = file;
+                    *GetMenuWeaponModelData(i) = (int) file;
                 }
             }
             u_long128 *build;
@@ -802,17 +813,6 @@ int EnterWeaponModel(int chara, int texture_block, int) {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", EnterWeaponModel__Fiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1032);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1033);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1034__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1035__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1036__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1037__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1038__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1039__2);
 void WeaponModelBuildFunc(int chara, int texture_block) {
     printf("weapon model build func start\n");
     InitMenuWeaponModelReference();
@@ -876,8 +876,8 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
             }
         }
     }
-    WepMenuEffectReadBuf = MenuWeaponModelBuildBuffer + 0xEC01;
-    WepMenuEffectReadBuf = MenuCalcBufAlignment(WepMenuEffectReadBuf);
+    WepMenuEffectReadBuf = (CWeaponLevelUp *) (MenuWeaponModelBuildBuffer + 0xEC01);
+    WepMenuEffectReadBuf = (CWeaponLevelUp *) MenuCalcBufAlignment((u_long128 *) WepMenuEffectReadBuf);
     printf("read buffer           = %p\n", read_buffer);
     printf("model build buffer    = %p\n", MenuWeaponModelBuildBuffer);
     printf("WeaponBuffer Size     = %d\n", (int) MenuExCashBuffer.limit);
@@ -1326,11 +1326,17 @@ void MonsterNameDraw() {
         }
     }
 }
-#ifdef NON_MATCHING
+
+/**
+ * Loads the textures and message windows of the dungeon escape prompt.
+ *
+ * @mangled DngEscapeMsgInit__FP6ClsMesP6ClsMesi
+ * @address 0x20EF90
+ * @size 0x2AC
+ */
 void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     char path[64];
-    char name[8] = "d0%do";
-    int size[4];
+    int file_size;
 
     if (title == NULL || choice == NULL) {
         return;
@@ -1342,40 +1348,45 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     strcpy(path, GetMenuTextureDir());
     strcat(path, "d0%do.img");
     sprintf(path, path, no);
-    LoadFile(path, read_buffer, &size[0]);
-    LOADTEXTURE_INFO2 texture = {0};
-    texture.block_no = 0x17;
-    texture.name = (char *) read_buffer;
-    TexManager.DeleteTextureBlock(0x17);
+    LoadFile(path, read_buffer, &file_size);
+    int block = 0x17;
+    char *image = (char *) read_buffer;
+    LOADTEXTURE_INFO2 texture[3] = {
+        {(char *) FrameImageTexture, block, 0},
+        {image, block, 0},
+        {NULL, 0, 0},
+    };
+    int size[4];
+    TexManager.DeleteTextureBlock(block);
     TexManager.CleanUpTextureList();
-    TexManager.LoadTextureBlockEX(-1, &texture);
+    TexManager.LoadTextureBlockEX(-1, texture);
     GamePad.MenuModeOn(0x78);
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
+    char name[8] = "d0%do";
     sprintf(name, name, no);
     DngEscapeTex = TexManager.GetTexture(name, -1);
     CharaNameMes = title;
     DngMenuMes = choice;
     int lang = GetMenuLangFlag();
-    u8 title_x[7] = {0xB4, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0};
+    u_char title_x[7] = {0xB4, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0};
     CharaNameMes->text_x = title_x[lang];
     CharaNameMes->text_y = 0x8C;
     CharaNameMes->mes_made = -1;
     CharaNameMes->MakeMesWin(dungeon + 0x14);
+    // Built but never read: the choice window is right-aligned by its measured width instead.
     s16 choice_x[7] = {0x154, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0};
+    int right = 0x280;
     DngMenuMes->mes_made = -1;
     DngMenuMes->MakeMesWin(12);
     DngMenuMes->NeedMesWinWH(DngMenuMes->mes_made, size);
-    DngMenuMes->text_x = 0x280 - size[2] - 0x26;
+    right -= size[2];
+    DngMenuMes->text_x = right - 0x26;
     DngMenuMes->text_y = 0x140;
     DngEscapeSelect = 1;
     DngEscapeEndFlag = 0;
     DngEscapeAlpha = 0x80;
-    DngEscapeBlock = 0x17;
+    DngEscapeBlock = block;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngEscapeMsgInit__FP6ClsMesP6ClsMesi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1341);
 
 void DngEscapeMsgDraw() {
     AllFadeForMenu(0x80);

@@ -5,17 +5,13 @@
 #include <cstring>
 
 #include "dataalloc.hpp"
+#include "mathutil.hpp"
 #include "mdt.hpp"
 #include "mglib.hpp"
+#include "renderinfo.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
 #include "visual.hpp"
-#ifdef NON_MATCHING // draft includes
-#include <cmath>
-#include <libpkt.h>
-#include "mathutil.hpp"
-#include "renderinfo.hpp"
-#endif
 
 extern CDataAlloc2<1> *ActiveData;
 
@@ -150,6 +146,49 @@ CVisual::CVisual(void) {
 
 int CVisualVu1::RemakeData(unsigned int *data) {
     return 0;
+}
+
+/**
+ * One over the length of the first three components of a vector, from the vector unit.
+ */
+static inline float InverseLength(float *vector) {
+    register float *p0 = vector;
+    register int root;
+    register float length = 0.0f;
+
+    asm {
+        lqc2       vf4, 0(p0)
+        vmul.xyz   vf4, vf4, vf4
+        vnop
+        vnop
+        vnop
+        vmr32.xy   vf5, vf4
+        vnop
+        vnop
+        vnop
+        vmr32.x    vf6, vf5
+        vnop
+        vnop
+        vnop
+        vadd.x     vf7, vf4, vf5
+        vnop
+        vnop
+        vnop
+        vadd.x     vf5, vf6, vf7
+        vrsqrt     Q, vf0w, vf5x
+        vwaitq
+        cfc2.ni    root, $vi22
+        mtc1       root, length
+    }
+
+    return length;
+}
+
+/**
+ * Whether a render flag is clear.
+ */
+static inline bool IsOff(int flag) {
+    return !flag;
 }
 
 /**
@@ -331,14 +370,10 @@ CVisualMDTVu1::CVisualMDTVu1(void) {
  * @address 0x135000
  * @size 0x964
  */
-#ifdef NON_MATCHING
-/* One over the length of the first three components of a vector. */
-static float InverseLength(float *vector) {
-    return 1.0f / sqrtf(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2]);
-}
-
 int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *draw_state, int unknown1, int unknown2) {
+    u_int *start;
+    u_int *header;
     sceVu0FVECTOR shadow_point;
     sceVu0FVECTOR shadow_normal;
     sceVu0FMATRIX shadow_matrix;
@@ -347,11 +382,14 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     sceVu0FVECTOR eye;
     sceVu0FMATRIX inverse;
     sceVu0FMATRIX clip_matrix;
-    u_int *start;
-    u_int *header;
-    u_int *p;
-    int lighting;
-    int shadow_fog;
+    u_int *tag;
+    u_int *unpack;
+    u_int *data;
+    bool lighting;
+    u_int color;
+    float x;
+    float y;
+    float z;
 
     if (vu_data == NULL || vu_size == 0) {
         return 0;
@@ -364,60 +402,64 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         MulMatrix(screen_matrix, info->view_scaled, matrix);
     }
     start = packet;
-    p = packet;
-    *p++ = 0x10000000;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    header = p;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0x50000004;
-    *p++ = 0x8003;
-    *p++ = 0x10000000;
-    *p++ = 0xE;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0x1A;
-    *p++ = 0;
-    lighting = 0;
-    if (info->unk_320 == 0 && info->unk_340 == 0) {
-        lighting = 1;
+    tag = packet;
+    *packet++ = 0x10000000;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    header = packet;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0x50000004;
+    *packet++ = 0x8003;
+    *packet++ = 0x10000000;
+    *packet++ = 0xE;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0x1A;
+    *packet++ = 0;
+    lighting = false;
+    if (IsOff(info->unk_320) && IsOff(info->unk_340)) {
+        lighting = true;
     }
-    shadow_fog = info->unk_324 != 0;
-    if (shadow_fog) {
-        shadow_fog = info->unk_320 == 0;
-    }
-    *p++ = ((program == 15) << 8) | ((info->unk_320 == 0) << 3) | (shadow_fog << 5) | 0x40 |
-           (lighting << 4);
-    *p++ = 0;
-    *p++ = 0x1B;
-    *p++ = 0;
-    *p++ = info->fog_red | (info->fog_green << 8) | (info->fog_blue << 16);
-    *p++ = 0;
-    *p++ = 0x3D;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0x0300003C;
-    *p++ = 0x020000AA;
-    u_int *unpack = p;
-    *p++ = 0;
-    *p++ = program * 2;
-    *p++ = info->unk_33C;
-    *p++ = info->unk_310;
-    *p++ = 0;
-    ((u_long128 *) p)[0] = ((u_long128 *) screen_matrix)[0];
-    ((u_long128 *) p)[1] = ((u_long128 *) screen_matrix)[1];
-    ((u_long128 *) p)[2] = ((u_long128 *) screen_matrix)[2];
-    ((u_long128 *) p)[3] = ((u_long128 *) screen_matrix)[3];
-    p += 16;
+    *packet++ = ((program == 15) << 8) |
+                ((!info->unk_320 << 3) |
+                 (((((info->unk_324 != 0 && !info->unk_320)) << 5) | 0x40) | (lighting * 16)));
+    *packet++ = 0;
+    *packet++ = 0x1B;
+    *packet++ = 0;
+    color = info->fog_red;
+    color |= info->fog_green << 8;
+    color |= info->fog_blue << 16;
+    *packet++ = color;
+    *packet++ = 0;
+    *packet++ = 0x3D;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0x0300003C;
+    *packet++ = 0x020000AA;
+    unpack = packet;
+    packet++;
+    data = packet;
+    *packet++ = program * 2;
+    *packet++ = info->unk_33C;
+    *packet++ = info->unk_310;
+    *packet++ = 0;
+    *(u_long128 *) packet = *(u_long128 *) screen_matrix[0];
+    packet += 4;
+    *(u_long128 *) packet = *(u_long128 *) screen_matrix[1];
+    packet += 4;
+    *(u_long128 *) packet = *(u_long128 *) screen_matrix[2];
+    packet += 4;
+    *(u_long128 *) packet = *(u_long128 *) screen_matrix[3];
+    packet += 4;
 
     // The normal matrix is the model matrix with its axes rescaled to unit length.
-    float x = InverseLength(matrix[0]);
-    float y = InverseLength(matrix[1]);
-    float z = InverseLength(matrix[2]);
+    x = InverseLength(matrix[0]);
+    y = InverseLength(matrix[1]);
+    z = InverseLength(matrix[2]);
     if (info->unk_320 != 0) {
         sceVu0ScaleVector(normal_matrix[0], matrix[0], x * x);
         sceVu0ScaleVector(normal_matrix[1], matrix[1], y * y);
@@ -430,33 +472,46 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     normal_matrix[0][3] = 0.0f;
     normal_matrix[1][3] = 0.0f;
     normal_matrix[2][3] = 0.0f;
-    sceVu0CopyVector(normal_matrix[3], matrix[3]);
-    ((u_long128 *) p)[0] = ((u_long128 *) normal_matrix)[0];
-    ((u_long128 *) p)[1] = ((u_long128 *) normal_matrix)[1];
-    ((u_long128 *) p)[2] = ((u_long128 *) normal_matrix)[2];
-    ((u_long128 *) p)[3] = ((u_long128 *) normal_matrix)[3];
-    p += 16;
+    *(u_long128 *) packet = *(u_long128 *) normal_matrix[0];
+    packet += 4;
+    *(u_long128 *) packet = *(u_long128 *) normal_matrix[1];
+    packet += 4;
+    *(u_long128 *) packet = *(u_long128 *) normal_matrix[2];
+    packet += 4;
+    *(u_long128 *) packet = *(u_long128 *) normal_matrix[3];
+    packet += 4;
 
     if (unknown2 == 0) {
-        ((u_long128 *) p)[0] = ((u_long128 *) info->light_direction)[0];
-        ((u_long128 *) p)[1] = ((u_long128 *) info->light_direction)[1];
-        ((u_long128 *) p)[2] = ((u_long128 *) info->light_direction)[2];
-        ((u_long128 *) p)[3] = ((u_long128 *) info->light_direction)[3];
-        ((u_long128 *) p)[4] = ((u_long128 *) info->light_color)[0];
-        ((u_long128 *) p)[5] = ((u_long128 *) info->light_color)[1];
-        ((u_long128 *) p)[6] = ((u_long128 *) info->light_color)[2];
-        ((u_long128 *) p)[7] = ((u_long128 *) info->light_color)[3];
-        ((u_long128 *) p)[8] = *(u_long128 *) info->ambient;
-        ((u_long128 *) p)[9] = *(u_long128 *) info->scale;
-        ((u_long128 *) p)[10] = *(u_long128 *) info->offset;
-        ((u_long128 *) p)[11] = *(u_long128 *) info->clip_max;
-        ((u_long128 *) p)[12] = *(u_long128 *) info->clip_min;
-        p += 52;
-        ((float *) p)[0] = info->fog_a;
-        ((float *) p)[1] = info->fog_near;
-        ((float *) p)[2] = info->fog_far;
-        ((float *) p)[3] = info->fog_b;
-        p += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_direction[0];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_direction[1];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_direction[2];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_direction[3];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_color[0];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_color[1];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_color[2];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->light_color[3];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->ambient;
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->scale;
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->offset;
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->clip_max;
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->clip_min;
+        packet += 4;
+        *packet++ = *(u_int *) &info->fog_a;
+        *packet++ = *(u_int *) &info->fog_near;
+        *packet++ = *(u_int *) &info->fog_far;
+        *packet++ = *(u_int *) &info->fog_b;
         if (info->unk_33C != 0) {
             eye[0] = info->position[0];
             eye[1] = info->position[1];
@@ -465,68 +520,81 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
             sceVu0CopyMatrix(inverse, matrix);
             sceVu0InversMatrix(inverse, inverse);
             sceVu0ApplyMatrix(eye, inverse, eye);
-            *(u_long128 *) p = *(u_long128 *) eye;
+            *(u_long128 *) packet = *(u_long128 *) eye;
+            packet += 4;
+        } else {
+            packet += 4;
         }
-        p += 4;
         MulMatrix(clip_matrix, info->perspective, info->view_scaled);
         MulMatrix(clip_matrix, clip_matrix, matrix);
-        ((u_long128 *) p)[0] = ((u_long128 *) clip_matrix)[0];
-        ((u_long128 *) p)[1] = ((u_long128 *) clip_matrix)[1];
-        ((u_long128 *) p)[2] = ((u_long128 *) clip_matrix)[2];
-        ((u_long128 *) p)[3] = ((u_long128 *) clip_matrix)[3];
-        ((u_long128 *) p)[4] = ((u_long128 *) info->viewport)[0];
-        ((u_long128 *) p)[5] = ((u_long128 *) info->viewport)[1];
-        ((u_long128 *) p)[6] = ((u_long128 *) info->viewport)[2];
-        ((u_long128 *) p)[7] = ((u_long128 *) info->viewport)[3];
-        p += 32;
+        *(u_long128 *) packet = *(u_long128 *) clip_matrix[0];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) clip_matrix[1];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) clip_matrix[2];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) clip_matrix[3];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->viewport[0];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->viewport[1];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->viewport[2];
+        packet += 4;
+        *(u_long128 *) packet = *(u_long128 *) info->viewport[3];
+        packet += 4;
         if (info->unk_320 != 0) {
             MulMatrix(shadow_matrix, info->shadow, matrix);
             MulMatrix(shadow_matrix, info->view_scaled, shadow_matrix);
             MulMatrix(shadow_matrix, info->perspective, shadow_matrix);
         }
-        *p++ = 0x8000;
-        *p++ = info->unk_320 == 0 ? 0x302EC000 : 0x3022C000;
-        *p++ = 0x412;
-        *p++ = 0;
-        *p++ = 0x8001;
-        *p++ = 0x102E8000;
-        *p++ = 0xE;
-        *p++ = 0;
-        *p++ = 0;
-        *p++ = 0;
-        *p++ = 0x3F;
-        *p++ = 0;
+        if (info->unk_320 == 0) {
+            *packet++ = 0x8000;
+            *packet++ = 0x302EC000;
+            *packet++ = 0x412;
+            *packet++ = 0;
+        } else {
+            *packet++ = 0x8000;
+            *packet++ = 0x3022C000;
+            *packet++ = 0x412;
+            *packet++ = 0;
+        }
+        *packet++ = 0x8001;
+        *packet++ = 0x102E8000;
+        *packet++ = 0xE;
+        *packet++ = 0;
+        *packet++ = 0;
+        *packet++ = 0;
+        *packet++ = 0x3F;
+        *packet++ = 0;
     }
-    *unpack = (((p - unpack - 1) >> 2) << 16) | 0x6C000000;
+    *unpack = (((packet - data) >> 2) << 16) | 0x6C000000;
     if (info->unk_320 != 0) {
-        p += SetShadowData(p, shadow_matrix);
+        packet += SetShadowData(packet, shadow_matrix);
     }
-    *header |= (p - header) >> 2;
-    *p++ = vu_size | 0x30000000;
-    *p++ = (u_int) vu_data;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0x10000003;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0;
-    *p++ = 0x50000002;
-    *p++ = 0x8001;
-    *p++ = 0x10000000;
-    *p++ = 0xE;
-    *p++ = 0;
-    *p++ = 1;
-    *p++ = 0;
-    *p++ = 0x1A;
-    *p++ = 0;
-    return (p - start) >> 2;
+    *tag |= (packet - header) >> 2;
+    *packet++ = vu_size | 0x30000000;
+    *packet++ = (u_int) vu_data;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0x10000003;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0;
+    *packet++ = 0x50000002;
+    *packet++ = 0x8001;
+    *packet++ = 0x10000000;
+    *packet++ = 0xE;
+    *packet++ = 0;
+    *packet++ = 1;
+    *packet++ = 0;
+    *packet++ = 0x1A;
+    *packet++ = 0;
+    return packet - start;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", DrawVu1__10CVisualVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-#endif
 /**
  * Writes one vector-unit upload header and gives back its length in words.
  *
@@ -580,96 +648,128 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
     }
     return size;
 }
-#ifdef NON_MATCHING
-static u_long128 VuDataEnd;
 
-int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int prim_hint) {
-    MDT_HEADER *header = (MDT_HEADER *) data;
-    int first = 1;
-    int word = 0;
-    u_long128 end = VuDataEnd;
+/**
+ * Builds a model's VU data block and returns its size in quadwords.
+ *
+ * @mangled CreateVUdataFromMDT__10CVisualVu1FPUiPUiii
+ * @address 0x135AA0
+ * @size 0x3A8
+ */
+int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1) {
+    int first;
+    int strip;
+    int word;
+    int stride;
+    u_long128 *colour;
+    int remaining;
+    u_int *index;
+    MDT_MATERIAL *info;
+    MDT_HEADER *header;
+    u_int *mesh;
+    u_long128 *vertex;
+    u_long128 *normal;
+    u_long128 *uv;
+    MDT_MATERIAL *materials;
+    int strips;
+    int prim;
+    int material;
+    int unpack;
+    int qwc;
+    int limit;
+    int handle;
+    int continued;
+    int size;
+    int count;
+
+    header = (MDT_HEADER *) data;
+    first = 1;
+    word = 0;
+    u_int end[4] = {0x13000000, 0, 0, 0};
 
     vu_data = block;
-    u_int *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
-    u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
-    u_long128 *normal = (u_long128 *) ((u_char *) data + header->unk_14[1]);
-    u_long128 *uv = (u_long128 *) ((u_char *) data + header->unk_2c[1]);
+    mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
+    vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
+    normal = (u_long128 *) ((u_char *) data + header->unk_14[1]);
+    uv = (u_long128 *) ((u_char *) data + header->unk_2c[1]);
     if (header->unk_2c[1] <= 0) {
         uv = vertex;
     }
-    u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
-    int stride;
+    colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
     }
-    MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
-    u_int *index = mesh + 4;
-    int strips = mesh[2];
-    for (int strip = 0; strip < strips; strip++) {
-        int remaining = index[1];
-        int prim = index[0];
-        int material = index[2];
-        MDT_MATERIAL *info = &materials[material];
+    materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
+    index = mesh + 4;
+    strips = mesh[2];
+    for (strip = 0; strip < strips; strip++) {
+        remaining = index[1];
+        prim = index[0];
+        material = index[2];
+        info = &materials[material];
         index += 3;
         if (material != -1) {
-            int handle = TexManager.GetTextureHandle(info->texture, -1);
-            CTexture *texture = TexManager.GetTexture(handle);
-            word += SetTEX0(&block[word], texture->tex0, TexManager.GetTexture(handle)->tex1);
+            handle = TexManager.GetTextureHandle(info->texture, -1);
+            word += SetTEX0(&block[word], TexManager.GetTexture(handle)->tex0,
+                            TexManager.GetTexture(handle)->tex1);
             word += SetMaterial(&block[word], info);
         }
-        int limit = 0x36;
+        limit = 0x36;
         if (colour != NULL) {
             limit = 0x21;
         }
+        continued = 0;
         while (remaining > 0) {
-            int count = limit;
+            count = limit;
             if (remaining < limit) {
                 count = remaining;
             }
+            qwc = 0;
             block[word] = 0;
-            block[word + 1] = 0;
-            block[word + 2] = 0;
-            int unpack = word + 3;
+            block[(u_int) (word + 1)] = 0;
+            block[(u_int) (word + 2)] = 0;
+            unpack = word + 3;
             block[unpack] = 0x6C008000;
             word += 4;
-            int size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv,
-                                 colour, prim);
+            size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv, colour,
+                             prim);
             // A strip that carries on in the next chunk repeats its last two vertices.
             if (prim == 4 && limit < remaining) {
                 index -= stride * 2;
                 remaining += 2;
             }
             index += count * stride;
+            qwc += size;
             word += size * 4;
-            block[unpack] |= size << 16;
+            block[(u_int) unpack] |= qwc << 16;
             block[word] = 0;
-            block[word + 1] = 0;
-            block[word + 2] = 0;
-            if (prim_hint == 0) {
+            block[(u_int) (word + 1)] = 0;
+            block[(u_int) (word + 2)] = 0;
+            if (!continued) {
                 if (first) {
-                    block[word + 3] = 0x14000000;
+                    block[(u_int) (word + 3)] = 0x14000000;
+                    word += 4;
                     first = 0;
                 } else {
-                    block[word + 3] = 0x14000001;
+                    block[(u_int) (word + 3)] = 0x14000001;
+                    word += 4;
                 }
+                continued = 1;
             } else {
-                block[word + 3] = 0x17000000;
+                block[(u_int) (word + 3)] = 0x17000000;
+                word += 4;
             }
-            word += 4;
             remaining -= limit;
         }
-        *(u_long128 *) &block[word] = end;
+        *(u_long128 *) &block[word] = *(u_long128 *) end;
         word += 4;
     }
     vu_size = word >> 2;
     return vu_size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/visualvu1", CreateVUdataFromMDT__10CVisualVu1FPUiPUiii);
-#endif
 int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0) {
     int strip;
     MDT_HEADER *header = (MDT_HEADER *) data;

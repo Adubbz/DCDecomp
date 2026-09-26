@@ -90,7 +90,7 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *);
 int WeaponStatusBuildUp(WEAPON_HAVE *, int &);
 
 /**
- * Applies a weapon's values to named frames of the menu character model.
+ * Shows the intact or broken model frame of weapon 0x110 by its remaining durability.
  *
  * @mangled MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE
  * @address 0x20CF30
@@ -171,7 +171,7 @@ void MenuWeaponEffectSet(int);
 int GetNowTestNo();
 
 /**
- * Starts the background read of a weapon model file and reports whether it was started.
+ * Reads a character's menu weapon models and shadow image into a buffer and, in a dungeon, starts its weapon effect read; returns 0 when a read fails.
  *
  * @mangled StartReadWepMDS__FP1i
  * @address 0x20D1D0
@@ -243,7 +243,7 @@ int DngWeaponEquipModelBuild(int, int, u_long128 *);
 int GetNowActiveCharaStatus(int);
 
 /**
- * Sets the menu character model's motion from its status bits.
+ * Switches the menu character model to its hurt motion when its status or HP calls for it, and sets the motion's speed.
  *
  * @mangled SetNowCharaMotionNo__Fi
  * @address 0x20DEF0
@@ -270,7 +270,7 @@ void SetItemMenuColor(int);
 void SetItemMenuOldAmbient();
 
 /**
- * Starts the background read of a menu character model file and reports whether it was started.
+ * Starts the background read of a menu character model file; returns 1 when the read could not be queued and 0 otherwise.
  *
  * @mangled StartLoadCharaMDS__FP1ii
  * @address 0x20E1A0
@@ -414,7 +414,7 @@ void DngEscapeMsgDraw();
 int DngEscapeMsgLoop();
 
 /**
- * Collects the party's special items and weapons into the given arrays and reports whether there are any.
+ * Collects what the party holds beyond its inventory's room, which must be thrown away, and reports whether there is any.
  *
  * @mangled CheckItemThrow__FPiPi
  * @address 0x20F4D0
@@ -477,7 +477,7 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int);
 void WeaponStarDraw(int, int, WEAPON_HAVE *, int);
 
 /**
- * Changes a weapon into another one, carrying over and adjusting its values, and reports success.
+ * Applies one of the R gate's weapon effects by kind: fill its ABS, lower a random stat, raise or lower its maximum WHp, restore or quarter its WHp; returns -1 without a weapon.
  *
  * @mangled WeaponDataChangeByRGate__FP11WEAPON_HAVEi
  * @address 0x20FCE0

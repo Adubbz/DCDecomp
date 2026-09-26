@@ -4,6 +4,7 @@
 
 #include <libvu0.h>
 
+#include "character.hpp"
 #include "dataalloc_fwd.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
@@ -18,7 +19,8 @@ class CFrame;
 class CSHOT_EFFECT {
 public:
     BT_SHOT_EFFECT *effect_data; /**< Description shared by the active effect slots. */
-    u8 unk_0004[0x9F3C];
+    CCharacter template_chara; /**< Model read from the pack that every slot's character is copied from. */
+    CCharacter chara[8];       /**< Model that each projectile-effect slot draws and animates. */
     sceVu0FVECTOR velocity[8]; /**< Movement applied to each projectile-effect slot. */
     s16 source_id[8];          /**< Source identifier supplied when each slot starts. */
     s32 phase_delay[8];        /**< Remaining delay before each slot changes phase. */
@@ -34,9 +36,9 @@ public:
     float random_rate[8]; /**< Randomization rate of each effect slot. */
     s32 life_time[8];     /**< Lifetime of each effect slot. */
     s32 enemy_attribute[8]; /**< Enemy attribute of each effect slot. */
-    u8 no_sound[8];         /**< Whether sound is suppressed for each effect slot. */
-    u8 wait[8];             /**< Delay applied to each effect slot. */
-    u8 wait_state[8];       /**< Secondary delay state of each effect slot. */
+    char no_sound[8];       /**< Whether sound is suppressed for each effect slot. */
+    char wait[8];           /**< Delay applied to each effect slot. */
+    char wait_state[8];     /**< Secondary delay state of each effect slot. */
     s32 status;       /**< Shared runtime status reset whenever a shot starts. */
     s32 slot_count;   /**< Number of effect slots initialized by the loader. */
     s32 current_slot; /**< Currently selected effect slot, or -1. */
@@ -49,17 +51,16 @@ public:
      * @mangled Draw__12CSHOT_EFFECTFv
      * @address 0x1ABF20
      * @size 0x25C
-     * @unknownret
      */
     void Draw(void);
 
     /**
-     * Advances every active projectile-effect slot.
+     * Advances every active projectile-effect slot: plays its motions through their phases, moves
+     * it, records its hit, and ends it when its last motion finishes.
      *
      * @mangled Step__12CSHOT_EFFECTFv
      * @address 0x1AC180
      * @size 0x9B0
-     * @unknownret
      */
     void Step(void);
 
@@ -69,7 +70,6 @@ public:
      * @mangled EndEffect__12CSHOT_EFFECTFv
      * @address 0x1ACB30
      * @size 0xD4
-     * @unknownret
      */
     void EndEffect(void);
 
@@ -83,34 +83,34 @@ public:
     void OffEffect(int slot);
 
     /**
-     * Loads projectile-effect resources and initializes their runtime slots.
+     * Loads the effect's model file into the pack, reads its model from it and gives every slot
+     * a copy; returns 1, or 0 when a description is already loaded.
      *
      * @mangled Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1ACC70
      * @size 0x5E4
-     * @unknownret
      */
     int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
-     * Initializes projectile-effect slots from an already loaded resource.
+     * Reads the effect's model from a pack that is already loaded and gives every slot a copy;
+     * returns 1, or 0 when a description is already loaded.
      *
      * @mangled Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i
      * @address 0x1AD260
      * @size 0x5A8
-     * @unknownret
      */
     int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
 
     /**
-     * Reinitializes projectile-effect slots from a replacement description.
+     * Gives every slot a fresh copy of the template character and switches to a replacement
+     * description; returns 1.
      *
      * @mangled ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_
      * @address 0x1AD810
      * @size 0x508
-     * @unknownret
      */
-    void ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
+    int ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
 
     /**
      * Selects whether the current projectile effect loops.
@@ -122,8 +122,8 @@ public:
     void SetLoop(int loop);
 
     /**
-     * Starts one shot effect and gives back the slot it went into, or -1
-     * where none was free.
+     * Starts one shot effect and gives back the slot it went into; with no
+     * description loaded or no free slot it returns without a value.
      *
      * @mangled Set__12CSHOT_EFFECTFPfPfiiiP6CFramei
      * @address 0x1ADD60

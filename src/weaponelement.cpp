@@ -751,8 +751,6 @@ void CWeaponElement::Draw_Thunder() {
     // left, bottom right. A bolt uses the same four as the ends of its arc.
     int corner[4][4];
     sceVu0FVECTOR base;
-    int bolt_uv[4][2] = {{0x00, 0x30}, {0x18, 0x30}, {0x00, 0x98}, {0x00, 0x98}};
-    sceVu0FVECTOR pos;
     CTexture *texture;
     int i;
     float width;
@@ -761,8 +759,6 @@ void CWeaponElement::Draw_Thunder() {
     sceVu0CopyVector(base, *origin);
 
     for (i = 0; i < count; i++) {
-        CRect_i_ rect;
-
         if (alpha[i] <= 0.0f) {
             continue;
         }
@@ -780,17 +776,14 @@ void CWeaponElement::Draw_Thunder() {
         corner[2][1] = corner[3][1];
         corner[2][2] = corner[3][2];
 
-        rect.x = 0;
-        rect.y = 0;
-        rect.width = 0x30;
-        rect.height = 0x30;
-        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8) alpha[i]);
+        set3DSprite(Vif1Packet, texture, CRect_i_(0, 0, 0x30, 0x30), corner[0], corner[1], corner[2],
+                    corner[3], (u8) alpha[i]);
     }
 
-    for (i = 0; i < bolt_count; i++) {
-        CRect_i_ rect;
+    int bolt_uv[4][2] = {{0x00, 0x30}, {0x18, 0x30}, {0x00, 0x98}, {0x00, 0x98}};
+    sceVu0FVECTOR pos;
 
+    for (i = 0; i < bolt_count; i++) {
         // A bolt is one tall sprite stood between the two sparks it arcs
         // across, so each end gives a point above and a point below it.
         sceVu0CopyVector(pos, offset[bolt_head[i]]);
@@ -805,12 +798,10 @@ void CWeaponElement::Draw_Thunder() {
         MGRotTransPers(corner[3], pos, 0);
 
         int shape = bolt_frame[i];
+        int u = bolt_uv[shape][0];
+        int v = bolt_uv[shape][1];
 
-        rect.x = bolt_uv[shape][0];
-        rect.y = bolt_uv[shape][1];
-        rect.width = 0x18;
-        rect.height = 0x68;
-        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8) (1.6f * alpha[bolt_head[i]]));
+        set3DSprite(Vif1Packet, texture, CRect_i_(u, v, 0x18, 0x68), corner[0], corner[1], corner[2],
+                    corner[3], (u8) (1.6f * alpha[bolt_head[i]]));
     }
 }

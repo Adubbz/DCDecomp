@@ -1,6 +1,11 @@
 #pragma once
 
 /**
+ * Base name of each item's model and texture files, beginning with attachments.
+ */
+extern char *ITEM_NAME_TBL_NEW[];
+
+/**
  * Puts one party member in the player's hands, loading them if need be.
  *
  * @mangled selectChrUnit__Fii
@@ -89,3 +94,12 @@ void BtEscape_Init(void);
  * @size 0x98
  */
 void setShotVector(float *velocity, float speed, float angle_y, float angle_x);
+
+/**
+ * Gives the direction the main character faces, tilted by the given pitch.
+ *
+ * @mangled getCharacterVector__FPff
+ * @address 0x1D41A0
+ * @size 0xC0
+ */
+void getCharacterVector(float *vector, float pitch);

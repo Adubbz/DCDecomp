@@ -1,15 +1,21 @@
 #include "shot_effect.hpp"
 
+#include <cstdio>
 #include <cstdlib>
 
 #include "collisiondata.hpp"
+#include "dataread.hpp"
 #include "dun/gameloop.hpp"
 #include "hit_machingun_effect.hpp"
+#include "itembombeffect.hpp"
 #include "itemdata.hpp"
+#include "mathutil.hpp"
+#include "mds.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
 #include "shot_effect_pack.hpp"
 #include "shot_utils.hpp"
+#include "snd.hpp"
 #include "texture.hpp"
 
 
@@ -53,7 +59,6 @@ void CSHOT::draw() {
  * @address 0x1ABD10
  * @size 0x204
  */
-#ifdef NON_MATCHING
 void CSHOT::step() {
     sceVu0FVECTOR hit_position;
 
@@ -71,12 +76,12 @@ void CSHOT::step() {
                 pos[shot][2] += vector[shot][2];
             } else {
                 NowColData->Set(pos[shot], damage[shot], 1, 3.0f, 0.0f, 2, 2, 0, 0);
-                COLLISION_HIT &hit = NowColData->hit[NowColData->now_hit];
-                hit.owner = 1;
-                hit.unk_60 = 0;
-                hit.flags = GetWeaponElementAttr(NowWeaponHave->best_elem);
-                hit.weapon_flags = NowWeaponHave->flags;
-                hit.vs_monster = NowWeaponHave->vs_monster;
+                NowColData->SetUserID(1, 0);
+                s8 elem = NowWeaponHave->best_elem;
+                CCollisionData *attr_col = NowColData;
+                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
+                NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
+                NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
                 used[shot] = 0;
             }
         }
@@ -87,9 +92,6 @@ void CSHOT::step() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
-#endif
 
 void CSHOT_EFFECT::Draw() {
     if (effect_data == NULL) {
@@ -124,65 +126,166 @@ void CSHOT_EFFECT::Draw() {
     }
 }
 
-#ifdef NON_MATCHING
 void CSHOT_EFFECT::Step() {
-    if (effect_data == NULL) {
-        return;
-    }
-
-    sceVu0FVECTOR hit_position;
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] == 0) {
             continue;
         }
 
-        int current_phase = phase[slot];
-        if (current_phase < 0 || current_phase >= 4) {
-            active[slot] = 0;
+        int motion = effect_data->motion[phase[slot]];
+        float time = chara[slot].motion_type.state.time;
+        MOTION_INFO *info = chara[slot].motion_type.motion_info;
+        float end = (float) info[motion].end;
+
+        // A looping effect only steps its motion forward until it reaches the loop phase.
+        if (loop[slot] != -1) {
+            if (phase[slot] < loop[slot] && time >= end - 1.0f && time <= end) {
+                phase[slot]++;
+                chara[slot].SetMotion(effect_data->motion[phase[slot]], 4);
+            }
             continue;
         }
 
+        // The starting motion hands over to the flying one when it finishes.
+        if (phase[slot] == 0 && time >= end - 1.0f && time <= end) {
+            phase[slot]++;
+            motion = effect_data->motion[phase[slot]];
+            if (motion == -1) {
+                active[slot] = 0;
+                continue;
+            }
+            chara[slot].motion_type.state.time =
+                (float) chara[slot].motion_type.motion_info[motion].start;
+            chara[slot].SetMotion(effect_data->motion[phase[slot]], 4);
+        }
+
+        sceVu0FVECTOR hit_position;
+        sceVu0FVECTOR position;
+        chara[slot].GetPosition(position);
+        chara[slot].GetPosition(hit_position);
+
         SHOT_COLLISION_RESULT result = SHOT_COLLISION_NONE;
-        if (current_phase < 2) {
-            result = checkCollision(hit_position, hit_position, velocity[slot],
-                                    effect_data->unk_048,
-                                    effect_data->radius[current_phase]);
+        if (phase[slot] < 2) {
+            result = checkCollision(hit_position, position, velocity[slot], effect_data->unk_048,
+                                    effect_data->radius[phase[slot]]);
         }
 
         if (life_time[slot] > 0) {
             life_time[slot]--;
         }
-        if (effect_data->radius[current_phase] > 0.0f && life_time[slot] != 0) {
-            int hit_index = NowColData->Set(hit_position, damage[slot], 2,
-                                            effect_data->radius[current_phase], 1.0f,
-                                            effect_data->unk_048, effect_data->unk_044,
-                                            effect_data->unk_040, 0);
-            if (hit_index != -1) {
-                COLLISION_HIT &hit = NowColData->hit[hit_index];
-                hit.owner = user_id[slot];
-                hit.unk_60 = user_sub_id[slot];
-                hit.weapon_flags = weapon_status[slot];
-                hit.vs_monster = vs_monster[slot];
-                hit.monster_no = user_id_2[slot];
-                hit.target_kind = enemy_attribute[slot];
+
+        if (!(effect_data->radius[phase[slot]] <= 0.0f) && life_time[slot] != 0) {
+            // After each hit the effect waits its delay before it can hit again.
+            if (wait_state[slot] <= 0) {
+                int hit = NowColData->Set(hit_position, damage[slot], 2,
+                                          effect_data->radius[phase[slot]], 1.0f,
+                                          effect_data->unk_048, effect_data->unk_044,
+                                          effect_data->unk_040, 0);
+                if (hit != -1) {
+                    NowColData->SetUserID(user_id[slot], user_sub_id[slot]);
+                    NowColData->hit[NowColData->now_hit].weapon_flags = weapon_status[slot];
+                    NowColData->hit[NowColData->now_hit].vs_monster = vs_monster[slot];
+                    NowColData->hit[NowColData->now_hit].monster_no = user_id_2[slot];
+                    NowColData->hit[NowColData->now_hit].target_kind = enemy_attribute[slot];
+                    // Hits of kind 3 throw along the flight, or at the player once it stops.
+                    if (effect_data->unk_044 == 3) {
+                        velocity[slot][3] = 1.0f;
+                        if (effect_data->speed[phase[slot]] <= 0.0f) {
+                            sceVu0FVECTOR player;
+                            sceVu0FVECTOR direction;
+                            sceVu0CopyVector(player, CharaMain.pos);
+                            direction[0] = player[0] - position[0];
+                            direction[1] = 0.0f;
+                            direction[2] = player[2] - position[2];
+                            direction[3] = 1.0f;
+                            sceVu0Normalize(direction, direction);
+                            NowColData->SetVelocity(hit, direction, 1.0f);
+                        } else {
+                            NowColData->SetVelocity(hit, velocity[slot], 1.0f);
+                        }
+                    }
+                    wait_state[slot] = wait[slot];
+                }
+            } else {
+                wait_state[slot]--;
             }
         }
 
-        if (phase_delay[slot] > 0) {
-            phase_delay[slot]--;
-        }
-        if ((result != SHOT_COLLISION_NONE && current_phase == 1) ||
-            (phase_delay[slot] == 0 && current_phase < 3)) {
+        if (result == SHOT_COLLISION_NONE) {
+            position[0] += velocity[slot][0];
+            position[1] += velocity[slot][1];
+            position[2] += velocity[slot][2];
+            chara[slot].SetPosition(position);
+            // A flying effect that runs out of time skips straight to its last phase.
+            if (phase[slot] == 1 && phase_delay[slot] != -1) {
+                phase_delay[slot]--;
+                if (phase_delay[slot] == -1) {
+                    phase[slot] += 2;
+                    motion = effect_data->motion[phase[slot]];
+                    if (motion == -1) {
+                        active[slot] = 0;
+                        switch (effect_data->unk_054) {
+                            case 100:
+                                SetBombEffect(hit_position, effect_data->unk_048,
+                                              effect_data->unk_05C, effect_data->unk_058);
+                                break;
+                        }
+                        continue;
+                    }
+                    if (phase[slot] != -1) {
+                        chara[slot].motion_type.state.time =
+                            (float) chara[slot].motion_type.motion_info[motion].start;
+                        chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
+                        sceVu0Normalize(velocity[slot], velocity[slot]);
+                        sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot],
+                                             effect_data->speed[phase[slot]]);
+                        if (effect_data->sound[phase[slot]] != -1 && no_sound[slot] == 0) {
+                            SndSePlay(effect_data->sound[phase[slot]], -1, 0);
+                        }
+                    }
+                }
+            }
+        } else if (phase[slot] == 1) {
+            // A flying effect that hits something moves on to its impact phase.
             phase[slot]++;
-            if (effect_data->motion[phase[slot]] == -1) {
+            motion = effect_data->motion[phase[slot]];
+            if (motion == -1) {
                 active[slot] = 0;
+                switch (effect_data->unk_054) {
+                    case 100:
+                        SetBombEffect(hit_position, effect_data->unk_048, effect_data->unk_05C,
+                                      effect_data->unk_058);
+                        break;
+                }
+                continue;
+            }
+            if (motion != -1) {
+                chara[slot].motion_type.state.time =
+                    (float) chara[slot].motion_type.motion_info[motion].start;
+                chara[slot].SetMotion(effect_data->motion[phase[slot]], 6);
+                sceVu0Normalize(velocity[slot], velocity[slot]);
+                sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot],
+                                     effect_data->speed[phase[slot]]);
+                if (effect_data->sound[phase[slot]] != -1 && no_sound[slot] == 0) {
+                    SndSePlay(effect_data->sound[phase[slot]], -1, 0);
+                }
+            }
+        }
+
+        // The effect ends when the motion of its impact or last phase finishes.
+        if ((phase[slot] == 2 || phase[slot] == 3) &&
+            chara[slot].motion_type.state.time >= end - 1.0f &&
+            chara[slot].motion_type.state.time < end) {
+            active[slot] = 0;
+            switch (effect_data->unk_054) {
+                case 100:
+                    SetBombEffect(hit_position, effect_data->unk_048, effect_data->unk_05C,
+                                  effect_data->unk_058);
+                    break;
             }
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
-#endif
 
 void CSHOT_EFFECT::EndEffect() {
     for (int slot = 0; slot < 8; slot++) {
@@ -210,69 +313,68 @@ void CSHOT_EFFECT::OffEffect(s32 slot) {
     }
 }
 
-#ifdef NON_MATCHING
-int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *resource,
-                        int texture_block, CDataAlloc2<1> *allocator, int slots) {
-    (void) resource;
-    (void) allocator;
-    if (effect_data != NULL || description == NULL) {
+int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
+                        CDataAlloc2<1> *allocator, int slots) {
+    char name[64];
+
+    if (effect_data != NULL) {
         return 0;
     }
 
-    effect_data = description;
+    sprintf(name, "dun/effect/%s.chr", description->model_name);
+    LoadFile(name, pack, NULL);
+    wait_now_loading_vsync();
     unk_A154 = texture_block;
+    sprintf(name, "%s.cfg", description->model_name);
+
+    template_chara.Initialize();
+    template_chara.LoadPackData3(pack, name, allocator, unk_A154, allocator, 1, 0x10);
+
     slot_count = slots;
-    for (int slot = 0; slot < 8; slot++) {
-        active[slot] = 0;
-        phase[slot] = 0;
-        user_id[slot] = -1;
-        user_id_2[slot] = -1;
+    for (int slot = 0; slot < slots; slot++) {
+        chara[slot] = template_chara;
+        chara[slot].motion[0] = &chara[slot].motion_type;
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) template_chara.frame, allocator);
     }
-    current_slot = -1;
-    return 1;
+
+    effect_data = description;
+    return effect_data == NULL ? 0 : 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_effect", @899);
-INCLUDE_RODATA("asm/nonmatchings/shot_effect", @900);
-#ifdef NON_MATCHING
-int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *resource,
-                         int texture_block, CDataAlloc2<1> *allocator, int slots) {
-    (void) resource;
-    (void) allocator;
-    if (effect_data != NULL || description == NULL) {
+
+int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
+                         CDataAlloc2<1> *allocator, int slots) {
+    char name[64];
+
+    if (effect_data != NULL) {
         return 0;
     }
 
-    effect_data = description;
+    sprintf(name, "%s.cfg", description->model_name);
     unk_A154 = texture_block;
+    template_chara.Initialize();
+    template_chara.LoadPackData3(pack, name, allocator, texture_block, allocator, 1, 0x10);
+
     slot_count = slots;
-    for (int slot = 0; slot < slots && slot < 8; slot++) {
-        active[slot] = 0;
-        phase[slot] = 0;
+    for (int slot = 0; slot < slots; slot++) {
+        chara[slot] = template_chara;
+        chara[slot].motion[0] = &chara[slot].motion_type;
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) template_chara.frame, allocator);
     }
-    current_slot = -1;
+
+    effect_data = description;
+    return effect_data == NULL ? 0 : 1;
+}
+
+int CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
+    for (int slot = 0; slot < slot_count; slot++) {
+        chara[slot] = template_chara;
+        chara[slot].motion[0] = &chara[slot].motion_type;
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) template_chara.frame, allocator);
+    }
+
+    effect_data = description;
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Entry2__12CSHOT_EFFECTFP14BT_SHOT_EFFECTPUiiP14CDataAlloc2_1_i);
-#endif
-
-#ifdef NON_MATCHING
-void CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
-    (void) allocator;
-    effect_data = description;
-    for (int slot = 0; slot < 8; slot++) {
-        active[slot] = 0;
-        phase[slot] = 0;
-        phase_delay[slot] = description != NULL ? description->life_time : 0;
-    }
-    current_slot = -1;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", ReEntry__12CSHOT_EFFECTFP14BT_SHOT_EFFECTP14CDataAlloc2_1_);
-#endif
 
 void CSHOT_EFFECT::SetLoop(s32 loop) {
     s32 slot;
@@ -283,38 +385,76 @@ void CSHOT_EFFECT::SetLoop(s32 loop) {
     }
 }
 
-#ifdef NON_MATCHING
-int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id,
-                      int source, CFrame *frame, int initial_phase) {
-    (void) frame;
+int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id, int source,
+                      CFrame *parent, int initial_phase) {
+    int slot = -1;
+
     current_slot = -1;
     if (effect_data == NULL) {
-        return -1;
+        printf("******** shot err ***********\n");
+        return;
     }
 
-    int slot = 0;
-    while (slot < slot_count && active[slot] != 0) {
-        slot++;
+    for (int i = 0; i < slot_count; i++) {
+        if (active[i] == 0) {
+            slot = i;
+            break;
+        }
     }
-    if (slot >= slot_count || slot >= 8) {
-        return -1;
+    if (slot == -1) {
+        return;
     }
 
-    phase[slot] = initial_phase == -1 ? (effect_data->motion[0] == -1) : initial_phase;
+    // An effect with no first-phase motion starts in its flying phase.
+    int start_phase = 0;
+    if (effect_data->motion[0] == -1) {
+        start_phase++;
+    }
+    phase[slot] = start_phase;
+    if (initial_phase != -1) {
+        phase[slot] = initial_phase;
+    }
+
     if (effect_data->unk_010 == 0) {
         position[3] = 1.0f;
         target[3] = 1.0f;
         sceVu0SubVector(velocity[slot], target, position);
         sceVu0Normalize(velocity[slot], velocity[slot]);
+        if (parent == NULL) {
+            if (effect_data->unk_014 != 0) {
+                sceVu0FMATRIX rotation;
+                LookAtMatrixZ(rotation, velocity[slot]);
+                chara[slot].frame->SetTransMatrix(rotation);
+            }
+            chara[slot].frame->DeleteReference();
+        } else {
+            chara[slot].frame->SetReference(parent);
+            chara[slot].SetPosition(0.0f, 0.0f, 0.0f);
+            chara[slot].SetRotation(0.0f, -1.5707964f, 0.0f);
+        }
         sceVu0ScaleVectorXYZ(velocity[slot], velocity[slot], effect_data->speed[phase[slot]]);
     }
 
+    if (phase[slot] == 0) {
+        chara[slot].SetMotion(effect_data->motion[0], 6);
+        chara[slot].motion_type.state.time =
+            (float) chara[slot].motion_type.motion_info[effect_data->motion[0]].start;
+    } else {
+        chara[slot].SetMotion(effect_data->motion[1], 4);
+        chara[slot].motion_type.state.time =
+            (float) chara[slot].motion_type.motion_info[effect_data->motion[1]].start;
+    }
+    if (parent == NULL) {
+        chara[slot].SetPosition(position);
+    }
+
+    damage[slot] = effect_data->unk_03C;
+    phase_delay[slot] = effect_data->life_time;
     active[slot] = 1;
     user_id[slot] = owner;
     user_sub_id[slot] = sub_id;
+    weapon_status[slot] = 1;
     source_id[slot] = source;
-    damage[slot] = effect_data->unk_03C;
-    phase_delay[slot] = effect_data->life_time;
     loop[slot] = -1;
     random_rate[slot] = -1.0f;
     life_time[slot] = -1;
@@ -327,10 +467,6 @@ int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id,
     wait_state[slot] = 0;
     return slot;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Set__12CSHOT_EFFECTFPfPfiiiP6CFramei);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_effect", @977__2);
 
 void CSHOT_EFFECT::SetWait(s32 wait) {
     s32 slot;

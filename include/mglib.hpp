@@ -98,6 +98,11 @@ extern MG_PICKZ mgPickZBuff[16];
 extern sceGifTag GiftagAD;
 extern sceGsDBuff mgDBuff;
 extern sceVu0FVECTOR mgBackColor;
+
+/**
+ * All-zero matrix; passed as both point-light matrices it turns the lights off.
+ */
+extern sceVu0FMATRIX mgZeroMatrix;
 extern CRect_i_ mgWindowRect;
 extern sceGsTexa mgTexa;
 
@@ -273,7 +278,6 @@ void MGSetGsTEST(sceGsTest *test);
  * @mangled MGFillBox__FRC8CRect_i_UcUcUcUc
  * @address 0x12FA70
  * @size 0x2C0
- * @unknownret
  */
 void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
                unsigned char a);

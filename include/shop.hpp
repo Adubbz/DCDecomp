@@ -209,15 +209,6 @@ int ChargeShopKey(void);
 void DrawChargeShop(void);
 
 /**
- * Draws the plate saying an item is already fully charged.
- *
- * @mangled ChargeShopMaxDraw__Fiiii
- * @address 0x1EAD50
- * @size 0x1EC
- */
-void ChargeShopMaxDraw(int, int, int, int);
-
-/**
  * Draws the charge shop's personal board: its frame, scroll bar, tags and icons.
  *
  * @mangled ChargeShopBoardDraw__Fiii
@@ -288,15 +279,6 @@ int ItemShopLoop2(void);
  * @size 0x1F4
  */
 int CheckSideKey2(void);
-
-/**
- * Draws the running total the purchase will come to.
- *
- * @mangled DrawMoneyCheckBoard2__Fiii
- * @address 0x1EC640
- * @size 0x18C
- */
-void DrawMoneyCheckBoard2(int, int, int);
 
 /**
  * Draws the price tickets of everything marked on the player's side.
@@ -447,15 +429,6 @@ void ClearFishMardanGarayanNum(void);
 void InitFishingExchange(u_long128 *, int *, int);
 
 /**
- * Enters the fishing menu's textures once they have been read.
- *
- * @mangled FishMenuTextureLoad__Fv
- * @address 0x1F15D0
- * @size 0x2AC
- */
-int FishMenuTextureLoad(void);
-
-/**
  * Handles one frame of fishing exchange input and returns the mode it leaves the exchange in.
  *
  * @mangled FishingExchangeKey__Fv
@@ -463,15 +436,6 @@ int FishMenuTextureLoad(void);
  * @size 0xB94
  */
 int FishingExchangeKey(void);
-
-/**
- * Draws the fishing exchange's goods, their prices and its help window.
- *
- * @mangled FishExchangeItemDraw__Fiii
- * @address 0x1F2480
- * @size 0x788
- */
-void FishExchangeItemDraw(int, int, int);
 
 /**
  * Draws one frame of the fishing exchange.
@@ -535,15 +499,6 @@ void InitFishRecordView(u_long128 *, int *, int);
  * @size 0x1DC
  */
 void FishRecordTextureEnter(void);
-
-/**
- * Draws the fishing record board: each rank, its fish and its size.
- *
- * @mangled FishRecordViewBoard__Fiii
- * @address 0x1F35F0
- * @size 0x648
- */
-void FishRecordViewBoard(int, int, int);
 
 /**
  * Runs one frame of the fish record view and returns the mode its input handler left.

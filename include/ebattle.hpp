@@ -30,6 +30,15 @@ int EBLoop();
 void EBFinishSound(int fade_bgm, int play_fanfare);
 
 /**
+ * Disables the editor camera-view mode.
+ *
+ * @mangled EdViewModeOff__Fv
+ * @address 0x169D80
+ * @size 0xC
+ */
+void EdViewModeOff();
+
+/**
  * Aims the editor camera from the character's head position.
  *
  * @mangled EdEyeCamera__FP7CCameraP10CCharacter
@@ -37,6 +46,33 @@ void EBFinishSound(int fade_bgm, int play_fanfare);
  * @size 0x128
  */
 void EdEyeCamera(CCamera *camera, CCharacter *character);
+
+/**
+ * Returns the horizontal editor camera angle.
+ *
+ * @mangled EdAGetViewAngleH__Fv
+ * @address 0x16A130
+ * @size 0xC
+ */
+float EdAGetViewAngleH();
+
+/**
+ * Returns the vertical editor camera angle.
+ *
+ * @mangled EdAGetViewAngleV__Fv
+ * @address 0x16A140
+ * @size 0xC
+ */
+float EdAGetViewAngleV();
+
+/**
+ * Sets both editor camera angles.
+ *
+ * @mangled EdASetViewAngle__Fff
+ * @address 0x16A150
+ * @size 0x10
+ */
+void EdASetViewAngle(float horizontal, float vertical);
 
 /**
  * Assigns the enemy-battle motion sequence for a character.

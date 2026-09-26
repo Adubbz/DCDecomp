@@ -21,9 +21,11 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mathutil.hpp"
+#include "mdt.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "texture.hpp"
+#include "visualvu1.hpp"
 
 /* Shared helpers: the IOP midi bridge, motion interpolation, collision and
  * ground queries, and 2D sprite setup. */
@@ -91,8 +93,6 @@ int ezTransToIOP(void *iop_address, void *ee_address, int size) {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/gameutil", @414__4);
-
 /**
  * Interpolates between two quaternions along the shorter arc.
  *
@@ -140,94 +140,331 @@ static void QuatSlerp(float *from, float *to, float t, float *out) {
     out[3] = scale_from * from[3] + scale_to * to_z;
     out[0] = scale_from * from[0] + scale_to * to_w;
 }
-#ifdef NON_MATCHING
-Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
-    u32 next_key = 0;
-    u32 previous_key;
-    u32 target_key;
-    float amount;
-    float value[4];
-    float from_quaternion[4];
-    float to_quaternion[4];
-    float *from;
-    float *to;
-    CFrame *target;
 
-    while (next_key < list->key_count &&
-           *(u32 *) ((u8 *) list->keys + next_key * 0x20) <= state->frame) {
-        next_key++;
+/**
+ * Finds the last key of a driver that stands at or before a motion frame.
+ */
+static inline int SearchMotKey(Mot_List *list, u_int frame) {
+    int middle;
+    int low = 0;
+    int high = list->key_count;
+
+    while (low < high) {
+        middle = (low + high) >> 1;
+        if (list->keys[middle].frame <= frame) {
+            low = middle + 1;
+        } else {
+            high = middle;
+        }
     }
-    if (next_key == 0 || next_key >= list->key_count) {
-        return list->next;
-    }
-    previous_key = next_key - 1;
-    target_key = next_key;
-    from = (float *) ((u8 *) list->keys + previous_key * 0x20 + 0x10);
-    to = (float *) ((u8 *) list->keys + target_key * 0x20 + 0x10);
+    return low - 1;
+}
+
+Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
+    int key;
+    int next;
+    float t;
+
+    key = SearchMotKey(list, state->frame);
     if (state->next_frame == state->frame + 1) {
-        u32 from_frame = *(u32 *) ((u8 *) list->keys + previous_key * 0x20);
-        u32 to_frame = *(u32 *) ((u8 *) list->keys + target_key * 0x20);
-        amount = to_frame == from_frame + 1
-                     ? state->blend
-                     : (state->time - from_frame) / (float) (to_frame - from_frame);
+        u_int time;
+        u_int next_time;
+
+        next = key + 1;
+        next_time = list->keys[next].frame;
+        time = list->keys[key].frame;
+        if ((next_time != time + 1) != 0) {
+            t = (state->time - (float) time) / ((float) next_time - (float) time);
+        } else {
+            t = state->blend;
+        }
     } else {
-        amount = state->blend;
+        if (state->next_frame == list->keys[state->next_frame - 1].frame) {
+            next = state->next_frame - 1;
+        } else {
+            int found = SearchMotKey(list, state->next_frame);
+
+            next = found;
+        }
+        t = state->blend;
     }
-    if (amount < 0.0f || amount > 1.0f) {
-        return list->next;
-    }
-    target = frame + list->frame;
-    if (list->type == 0) {
-        sceVu0CopyVector(from_quaternion, from);
-        sceVu0CopyVector(to_quaternion, to);
-        QuatSlerp(from_quaternion, to_quaternion, amount, value);
-        target->SetTransMatrix(value);
-    } else {
-        sceVu0InterVectorXYZ(value, to, from, amount);
-        if (list->type == 1) {
-            target->SetScale(value);
-        } else if (list->type == 2) {
-            target->SetPosition(value);
-        } else if (list->type == 0x1E && state->camera != NULL) {
-            frame->GetWorldPosition(value, value);
-            state->camera->SetPos(value);
-        } else if (list->type == 0x1F && state->camera != NULL) {
-            frame->GetWorldPosition(value, value);
-            state->camera->SetRef(value);
+    if (!(t < 0.0f) && t <= 1.0f && key < list->key_count && next < list->key_count) {
+        float s;
+        sceVu0FVECTOR value;
+        sceVu0FVECTOR rotation;
+        sceVu0FVECTOR from;
+        sceVu0FVECTOR to;
+        CFrameVu1 *target = &((CFrameVu1 *) frame)[list->frame];
+
+        switch (list->type) {
+            case 0:
+                sceVu0CopyVector(from, list->keys[key].value);
+                sceVu0CopyVector(to, list->keys[next].value);
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    QuatSlerp(from, to, t, rotation);
+                    target->SetTransMatrix(rotation);
+                } else {
+                    from[0] = -from[0];
+                    to[0] = -to[0];
+                    if (t <= 0.0001f) {
+                        target->SetTransMatrix(from);
+                    }
+                    if (!(t < 0.9999f)) {
+                        target->SetTransMatrix(to);
+                    }
+                }
+                break;
+            case 1:
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                } else {
+                    if (t <= 0.0001f) {
+                        sceVu0CopyVectorXYZ(value, list->keys[key].value);
+                    }
+                    if (!(t < 0.9999f)) {
+                        sceVu0CopyVectorXYZ(value, list->keys[next].value);
+                    }
+                }
+                target->SetScale(value[0], value[1], value[2]);
+                break;
+            case 2:
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                } else {
+                    if (t <= 0.0001f) {
+                        sceVu0CopyVectorXYZ(value, list->keys[key].value);
+                    }
+                    if (!(t < 0.9999f)) {
+                        sceVu0CopyVectorXYZ(value, list->keys[next].value);
+                    }
+                }
+                target->local[3][0] = value[0];
+                target->local[3][1] = value[1];
+                target->local[3][2] = value[2];
+                target->world_valid = 0;
+                break;
+            case 12: {
+                int vertex;
+                MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
+                u_int frame_no;
+
+                target->attr.unk_0A = 1;
+                frame_no = list->frame;
+                if (!(t <= 0.0001f) && t < 0.9999f) {
+                    while (frame_no == list->frame) {
+                        vertex = list->target - 1;
+                        sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                        sceVu0CopyVectorXYZ(vertices[vertex], value);
+                        list = list->next;
+                        switch ((int) list) {
+                            case 0:
+                                return NULL;
+                        }
+                    }
+                } else {
+                    if (t <= 0.0001f) {
+                        while (frame_no == list->frame) {
+                            vertex = list->target - 1;
+                            sceVu0CopyVectorXYZ(vertices[vertex], list->keys[key].value);
+                            list = list->next;
+                            switch ((int) list) {
+                                case 0:
+                                    return NULL;
+                            }
+                        }
+                    }
+                    if (!(t < 0.9999f)) {
+                        while (frame_no == list->frame) {
+                            vertex = list->target - 1;
+                            sceVu0CopyVectorXYZ(vertices[vertex], list->keys[next].value);
+                            list = list->next;
+                            switch ((int) list) {
+                                case 0:
+                                    return NULL;
+                            }
+                        }
+                    }
+                }
+                return list;
+            }
+            case 30:
+                if (state->camera != NULL) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                    frame->GetWorldPosition(value, value);
+                    state->camera->SetPos(NULL, value[0], value[1], value[2]);
+                }
+                break;
+            case 31:
+                if (state->camera != NULL) {
+                    sceVu0InterVectorXYZ(value, list->keys[next].value, list->keys[key].value, t);
+                    frame->GetWorldPosition(value, value);
+                    state->camera->SetRef(NULL, value[0], value[1], value[2]);
+                }
+                break;
+            case 40: {
+                MDT_HEADER *model;
+                MDT_MATERIAL *material;
+
+                s = 1.0f - t;
+                model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
+                material[list->target].unk_00[3] =
+                    1.0f - (s * list->keys[key].value[0] + t * list->keys[next].value[0]);
+                target->attr.unk_0A = 2;
+                break;
+            }
+            case 41: {
+                MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                MDT_MATERIAL *material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
+
+                sceVu0InterVectorXYZ(material[list->target].unk_00, list->keys[next].value,
+                                     list->keys[key].value, t);
+                target->attr.unk_0A = 2;
+                break;
+            }
+            case 32:
+                if (state->camera != NULL) {
+                    s = 1.0f - t;
+                    state->camera->SetRoll(
+                        -(3.1415927f * ((s * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
+                }
+                break;
+            case 33:
+                if (state->camera != NULL) {
+                    s = 1.0f - t;
+                    MGSetProjection(
+                        0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (s * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
+                }
+                break;
+            case 50:
+                if (list->keys[key].value[0] < 1.0f) {
+                    target->attr.draw_on = 0;
+                } else {
+                    target->attr.draw_on = 3;
+                }
+                break;
+            case 51:
+                if (list->keys[key].value[0] < 1.0f) {
+                    target->attr.draw_on = 2;
+                } else {
+                    target->attr.draw_on = 1;
+                }
+                break;
         }
     }
     return list->next;
 }
 
+/**
+ * Working copy of the skinned frame's vertices that the bone weights move.
+ */
+static sceVu0FVECTOR def_vrtx[3000];
+
 Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info,
                       Mot_List *list) {
-    u32 key;
-    CFrame *target;
+    static sceVu0FMATRIX Bone_Matrix;
+    static sceVu0FMATRIX Bone_Matrix_inv;
+    static sceVu0FMATRIX Bone_Matrix_Base;
+    static sceVu0FVECTOR *vert;
+    CFrameVu1 *target;
+    u_int i;
 
     if (list->type == 200) {
         return list->next;
     }
-    target = frame + list->frame;
-    if (list->target != frame_info[list->frame].parent_frame) {
-        sceVu0CopyMatrix(frame_info[list->target].matrix, target->local);
+    target = &((CFrameVu1 *) frame)[list->target];
+    if (list->target == frame_info[list->frame].parent_frame) {
+        CFrameVu1 *owner = &((CFrameVu1 *) frame)[list->frame];
+        MDT_HEADER *model = (MDT_HEADER *) owner->GetVisual()->GetMDTDataAddress();
+
+        vert = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
+        if (frame_info[list->frame].vertex_count > 3000) {
+            printf("###### MAX_VERTX OVER %d/%d######\n", frame_info[list->frame].vertex_count, 3000);
+        }
+        memcpy(def_vrtx, frame_info[list->frame].base_vertices,
+               frame_info[list->frame].vertex_count * sizeof(sceVu0FVECTOR));
+        sceVu0UnitMatrix(Bone_Matrix);
+        sceVu0UnitMatrix(Bone_Matrix_Base);
+        sceVu0InversMatrix(Bone_Matrix_inv, frame_info[list->frame].matrix);
+        owner->attr.unk_0A = 1;
+        sceVu0UnitMatrix(frame_info[list->target].bone_base_matrix);
+        sceVu0UnitMatrix(frame_info[list->target].bone_matrix);
+    } else {
+        sceVu0FMATRIX local;
+        sceVu0FVECTOR translation;
+
+        sceVu0CopyMatrix(local, target->local);
+        MulMatrix(Bone_Matrix, frame_info[frame_info[list->target].parent_frame].bone_matrix, local);
+        MulMatrix(Bone_Matrix_Base, frame_info[frame_info[list->target].parent_frame].bone_base_matrix,
+                  motion->base_matrices[list->target]);
+        sceVu0CopyMatrix(frame_info[list->target].bone_base_matrix, Bone_Matrix_Base);
+        sceVu0CopyMatrix(frame_info[list->target].bone_matrix, Bone_Matrix);
+        sceVu0CopyVector(translation, Bone_Matrix_Base[3]);
+        sceVu0InversMatrix(Bone_Matrix_Base, Bone_Matrix_Base);
+        sceVu0CopyVector(Bone_Matrix_Base[3], translation);
     }
-    for (key = 0; key < list->key_count; key++) {
-        u32 vertex = *(u32 *) ((u8 *) list->keys + key * 0x20);
-        float *offset = (float *) ((u8 *) list->keys + key * 0x20 + 0x10);
-        if (frame_info[list->frame].base_vertices != NULL &&
-            vertex < frame_info[list->frame].vertex_count) {
-            sceVu0FVECTOR *base = frame_info[list->frame].base_vertices;
-            base[vertex][0] += offset[0];
-            base[vertex][1] += offset[1];
-            base[vertex][2] += offset[2];
+    for (i = 0; i < list->key_count; i++) {
+        sceVu0FVECTOR weight;
+        register float *weight_ptr;
+        register float *bone;
+        register float *base;
+        register float *inverse;
+        register float *source;
+        register float *deformed;
+        register float *out;
+
+        weight[0] = 0.01f * list->keys[i].value[0];
+        out = vert[list->keys[i].frame];
+        source = frame_info[list->frame].base_vertices[list->keys[i].frame];
+        base = (float *) Bone_Matrix_Base;
+        bone = (float *) Bone_Matrix;
+        deformed = def_vrtx[list->keys[i].frame];
+        weight_ptr = weight;
+        inverse = (float *) Bone_Matrix_inv;
+        // Move the vertex toward the bone's transform by its weight, then map it back into the
+        // skinned frame's space.
+        asm {
+            lqc2        vf4, 0x30(base)
+            lqc2        vf10, 0(source)
+            lqc2        vf1, 0(base)
+            lqc2        vf2, 0x10(base)
+            lqc2        vf3, 0x20(base)
+            vsub.xyz    vf15, vf10, vf4
+            vaddx.w     vf15, vf0, vf0x
+            lqc2        vf5, 0(bone)
+            lqc2        vf6, 0x10(bone)
+            lqc2        vf7, 0x20(bone)
+            lqc2        vf8, 0x30(bone)
+            vmulax.xyzw ACC, vf1, vf15x
+            vmadday.xyzw ACC, vf2, vf15y
+            vmaddaz.xyzw ACC, vf3, vf15z
+            vmaddaw.xyzw ACC, vf4, vf15w
+            vmsubw.xyz  vf15, vf4, vf0w
+            vaddx.w     vf15, vf0, vf0x
+            lqc2        vf9, 0(weight_ptr)
+            lqc2        vf11, 0(deformed)
+            vmulax.xyzw ACC, vf5, vf15x
+            vmadday.xyzw ACC, vf6, vf15y
+            vmaddaz.xyzw ACC, vf7, vf15z
+            vmaddaw.xyzw ACC, vf8, vf15w
+            vmsubw.xyz  vf15, vf10, vf0w
+            vmulaw.xyzw ACC, vf11, vf0w
+            lqc2        vf20, 0(inverse)
+            lqc2        vf21, 0x10(inverse)
+            lqc2        vf22, 0x20(inverse)
+            lqc2        vf23, 0x30(inverse)
+            vmaddx.xyz  vf11, vf15, vf9x
+            sqc2        vf11, 0(deformed)
+            vmulax.xyzw ACC, vf20, vf11x
+            vmadday.xyzw ACC, vf21, vf11y
+            vmaddaz.xyzw ACC, vf22, vf11z
+            vmaddw.xyzw vf16, vf23, vf11w
+            sqc2        vf16, 0(out)
         }
     }
     return list->next;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc__FP6CFrameP12MOTION_STATEP8Mot_List);
-INCLUDE_ASM("asm/nonmatchings/gameutil", MotionProc2__FP6CFrameP14tagMOTION_TYPEP12tagFRAME_INFP8Mot_List);
-#endif
 
 void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
                  tagFRAME_INF *frame_info) {
@@ -785,53 +1022,109 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
     return hits;
 }
 
-#ifdef NON_MATCHING
-int MoveCheck(float *position, float *velocity, float *out_position, MoveCheckInfo *out_info,
-              CCPoly *polys, int poly_num, int mode) {
+int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
+              int poly_num, int mode) {
+    int hit_wall;
+    CCPoly *wall;
+    int poly_no;
+    int i;
+    float drop;
+    sceVu0FVECTOR hit;
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
-    sceVu0FVECTOR hit;
-    sceVu0FVECTOR ground_probe;
-    CCPoly ground;
-    int wall;
+    CCPoly poly;
+    sceVu0FVECTOR probe;
+    sceVu0FVECTOR centre;
 
-    memset(out_info, 0, sizeof(MoveCheckInfo));
-    sceVu0CopyVector(from, position);
-    from[1] += 4.0f;
-    sceVu0AddVector(to, from, velocity);
-    wall = CheckHit(polys, poly_num, from, to, hit, 0, mode);
-    if (wall >= 0) {
-        sceVu0FVECTOR normal;
-        float into_wall;
-
-        sceVu0Normalize(normal, polys[wall].normal);
-        into_wall = sceVu0InnerProduct(velocity, normal);
-        to[0] -= normal[0] * into_wall;
-        to[2] -= normal[2] * into_wall;
+    out_pos[0] = pos[0];
+    out_pos[1] = pos[1];
+    out_pos[2] = pos[2];
+    from[0] = pos[0] + velocity[0];
+    from[1] = 17.0f + pos[1];
+    // The probe steps along Z by the X velocity; retail uses velocity[0] for both horizontal coordinates.
+    from[2] = pos[2] + velocity[0];
+    to[0] = from[0];
+    to[1] = 4.0f + pos[1] + velocity[1];
+    to[2] = from[2];
+    if (CheckHit(polys, poly_num, from, to, hit, 0, mode) >= 0) {
+        velocity[2] = 0.0f;
+        velocity[0] = 0.0f;
     }
-    sceVu0CopyVector(ground_probe, to);
-    ground_probe[1] -= 4.0f;
-    if (GetFootPoly(ground_probe, 15.0f, &ground, hit, polys, poly_num, mode)) {
-        out_info->unk_60 = 1;
-        out_info->poly = ground;
-        out_info->ground_height = hit[1];
-        if (to[1] - 6.0f < hit[1]) {
-            out_info->unk_00 = 1;
-            sceVu0CopyVector(to, hit);
+    from[0] = pos[0];
+    from[1] = 4.0f + pos[1];
+    from[2] = pos[2];
+    to[0] = from[0] + velocity[0];
+    to[1] = from[1] + velocity[1];
+    to[2] = from[2] + velocity[2];
+    poly_no = CheckHit(polys, poly_num, from, to, hit, 0, mode);
+    hit_wall = poly_no >= 0;
+    if (hit_wall == 0) {
+        from[0] = to[0];
+        from[1] = to[1];
+        from[2] = to[2];
+        to[0] = from[0];
+        to[1] = from[1] - 4.0f;
+        to[2] = from[2];
+    } else {
+        wall = &polys[poly_no];
+        sceVu0Normalize(wall->normal, wall->normal);
+        if (wall->normal[1] < 0.5f && !(wall->normal[1] <= -0.5f)) {
+            to[0] = pos[0];
+            to[1] = pos[1];
+            to[2] = pos[2];
+        } else {
+            from[0] = hit[0];
+            from[1] = 4.0f + hit[1];
+            from[2] = hit[2];
+            to[0] = from[0];
+            to[1] = from[1] - 4.0f;
+            to[2] = from[2];
         }
     }
-    if (!out_info->unk_00) {
-        to[1] -= 4.0f;
+    out_info->unk_60 = 0;
+    out_info->unk_00 = 0;
+    drop = 2.0f;
+    if (!(velocity[1] <= 0.1f)) {
+        drop = 0.0f;
     }
-    if (CheckWidth(polys, poly_num, to, 5.0f, out_position, mode) == 0) {
-        sceVu0CopyVector(out_position, to);
+    sceVu0CopyVector(probe, from);
+    for (i = 0; i < 2; i++) {
+        if (GetFootPoly(probe, 15.0f, &poly, hit, polys, poly_num, mode) != 0) {
+            sceVu0Normalize(poly.normal, poly.normal);
+            out_info->ground_poly = poly;
+            out_info->poly = poly;
+            out_info->unk_60 = 1;
+            *(u_long128 *) out_info->ground_point = *(u_long128 *) hit;
+            if (!(hit[1] <= from[1] + velocity[1] - 4.0f - drop)) {
+                out_info->unk_00 = 1;
+                if (poly.normal[1] < 0.5f && !(poly.normal[1] <= -0.5f)) {
+                    i = 2;
+                }
+            } else {
+                out_info->unk_00 = 0;
+            }
+            break;
+        }
+        probe[0] += 0.01f;
+        probe[2] += 0.001f;
     }
-    return wall >= 0;
+    if (out_info->unk_00 != 0) {
+        out_pos[0] = hit[0];
+        out_pos[1] = hit[1];
+        out_pos[2] = hit[2];
+    } else {
+        out_pos[0] = to[0];
+        out_pos[1] = to[1];
+        out_pos[2] = to[2];
+    }
+    *(u_long128 *) centre = *(u_long128 *) out_pos;
+    centre[1] += 4.0f;
+    if (CheckWidth(polys, poly_num, centre, 5.0f, to, mode) != 0) {
+        out_pos[0] = to[0];
+        out_pos[2] = to[2];
+    }
+    return hit_wall;
 }
-
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", MoveCheck__FPfPfPfP13MoveCheckInfoP6CCPolyii);
-#endif
 
 /**
  * Describes the surface of a collision triangle, in the shape that CCPoly

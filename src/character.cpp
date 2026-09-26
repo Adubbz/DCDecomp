@@ -55,168 +55,163 @@ void zcross(float z, float *from, float *to, float *out) {
  * @address 0x137440
  * @size 0xA38
  */
-#ifdef NON_MATCHING
 int scissior(float out[][4], float first[][4], float second[][4], float near_z) {
     float first_distance[4];
     float second_distance[4];
+    int count;
+    int first_front;
+    int second_front;
     int first_behind;
     int second_behind;
     int first_crosses;
-    int second_crosses;
     int pair_crosses;
-    int crossing_count;
-    int vertex;
-    int next_vertex;
+    int second_crosses;
     int i;
-    bool using_second;
-    float first_01;
-    float first_12;
-    float first_20;
-    float second_01;
-    float second_12;
-    float second_20;
-    float pair_0;
-    float pair_1;
-    float pair_2;
-    int total_crosses;
+    int total;
 
-    crossing_count = 0;
+    count = 0;
+    first_front = 0;
+    second_front = 0;
     first_behind = 0;
     second_behind = 0;
+    first_crosses = 0;
+    pair_crosses = 0;
+    second_crosses = 0;
     for (i = 0; i < 3; i++) {
         first_distance[i] = first[i][2] - near_z;
         second_distance[i] = second[i][2] - near_z;
-        if (first_distance[i] <= 0.0f) {
+        if (!(first_distance[i] <= 0.0f)) {
+            first_front++;
+        } else {
             first_behind++;
         }
-        if (second_distance[i] <= 0.0f) {
+        if (!(second_distance[i] <= 0.0f)) {
+            second_front++;
+        } else {
             second_behind++;
         }
     }
 
-    first_01 = first_distance[0] * first_distance[1];
-    first_crosses = first_01 < 0.0f;
-    first_12 = first_distance[1] * first_distance[2];
-    if (first_12 < 0.0f) {
+    if (first_distance[0] * first_distance[1] < 0.0f) {
         first_crosses++;
     }
-    first_20 = first_distance[2] * first_distance[0];
-    if (first_20 < 0.0f) {
+    if (first_distance[1] * first_distance[2] < 0.0f) {
+        first_crosses++;
+    }
+    if (first_distance[2] * first_distance[0] < 0.0f) {
         first_crosses++;
     }
 
-    second_01 = second_distance[0] * second_distance[1];
-    second_crosses = second_01 < 0.0f;
-    second_12 = second_distance[1] * second_distance[2];
-    if (second_12 < 0.0f) {
+    if (second_distance[0] * second_distance[1] < 0.0f) {
         second_crosses++;
     }
-    second_20 = second_distance[2] * second_distance[0];
-    if (second_20 < 0.0f) {
+    if (second_distance[1] * second_distance[2] < 0.0f) {
+        second_crosses++;
+    }
+    if (second_distance[2] * second_distance[0] < 0.0f) {
         second_crosses++;
     }
 
-    pair_0 = first_distance[0] * second_distance[0];
-    pair_crosses = pair_0 < 0.0f;
-    pair_1 = first_distance[1] * second_distance[1];
-    if (pair_1 < 0.0f) {
+    if (first_distance[0] * second_distance[0] < 0.0f) {
         pair_crosses++;
     }
-    pair_2 = first_distance[2] * second_distance[2];
-    if (pair_2 < 0.0f) {
+    if (first_distance[1] * second_distance[1] < 0.0f) {
+        pair_crosses++;
+    }
+    if (first_distance[2] * second_distance[2] < 0.0f) {
         pair_crosses++;
     }
 
-    total_crosses = first_crosses + second_crosses + pair_crosses;
-    if (total_crosses == 0) {
-        for (i = 0; i < 5; i++) {
-            sceVu0CopyVector(out[i], first[0]);
+    total = first_crosses + second_crosses + pair_crosses;
+    if (total == 0) {
+        for (int j = 0; j < 5; j++) {
+            *(u_long128 *) out[j] = *(u_long128 *) first[0];
         }
         return 0;
     }
 
-    if (total_crosses == 4 && pair_crosses == 0) {
-        if (first_01 < 0.0f) {
-            zcross(near_z, first[0], first[1], out[crossing_count++]);
+    if (total == 4 && pair_crosses == 0) {
+        if (first_distance[0] * first_distance[1] < 0.0f) {
+            zcross(near_z, first[0], first[1], out[count++]);
         }
-        if (first_12 < 0.0f) {
-            zcross(near_z, first[1], first[2], out[crossing_count++]);
+        if (first_distance[1] * first_distance[2] < 0.0f) {
+            zcross(near_z, first[1], first[2], out[count++]);
         }
-        if (first_20 < 0.0f) {
-            zcross(near_z, first[2], first[0], out[crossing_count++]);
+        if (first_distance[2] * first_distance[0] < 0.0f) {
+            zcross(near_z, first[2], first[0], out[count++]);
         }
         if (second_distance[0] * second_distance[2] < 0.0f) {
-            zcross(near_z, second[0], second[2], out[crossing_count++]);
+            zcross(near_z, second[0], second[2], out[count++]);
         }
         if (second_distance[2] * second_distance[1] < 0.0f) {
-            zcross(near_z, second[2], second[1], out[crossing_count++]);
+            zcross(near_z, second[2], second[1], out[count++]);
         }
         if (second_distance[1] * second_distance[0] < 0.0f) {
-            zcross(near_z, second[1], second[0], out[crossing_count++]);
+            zcross(near_z, second[1], second[0], out[count++]);
         }
-    } else if ((unsigned int) (total_crosses - 3) < 2) {
-        if (pair_0 < 0.0f) {
-            zcross(near_z, first[0], second[0], out[crossing_count++]);
+    } else if (total == 3 || total == 4) {
+        if (first_distance[0] * second_distance[0] < 0.0f) {
+            zcross(near_z, first[0], second[0], out[count++]);
         }
-        if (first_01 < 0.0f) {
-            zcross(near_z, first[0], first[1], out[crossing_count++]);
+        if (first_distance[0] * first_distance[1] < 0.0f) {
+            zcross(near_z, first[0], first[1], out[count++]);
         }
-        if (second_01 < 0.0f) {
-            zcross(near_z, second[0], second[1], out[crossing_count++]);
+        if (second_distance[0] * second_distance[1] < 0.0f) {
+            zcross(near_z, second[0], second[1], out[count++]);
         }
-        if (pair_1 < 0.0f) {
-            zcross(near_z, first[1], second[1], out[crossing_count++]);
+        if (first_distance[1] * second_distance[1] < 0.0f) {
+            zcross(near_z, first[1], second[1], out[count++]);
         }
-        if (second_12 < 0.0f) {
-            zcross(near_z, second[1], second[2], out[crossing_count++]);
+        if (second_distance[1] * second_distance[2] < 0.0f) {
+            zcross(near_z, second[1], second[2], out[count++]);
         }
-        if (first_12 < 0.0f) {
-            zcross(near_z, first[1], first[2], out[crossing_count++]);
+        if (first_distance[1] * first_distance[2] < 0.0f) {
+            zcross(near_z, first[1], first[2], out[count++]);
         }
-        if (pair_2 < 0.0f) {
-            zcross(near_z, first[2], second[2], out[crossing_count++]);
+        if (first_distance[2] * second_distance[2] < 0.0f) {
+            zcross(near_z, first[2], second[2], out[count++]);
         }
-        if (first_20 < 0.0f) {
-            zcross(near_z, first[2], first[0], out[crossing_count++]);
+        if (first_distance[2] * first_distance[0] < 0.0f) {
+            zcross(near_z, first[2], first[0], out[count++]);
         }
-        if (second_20 < 0.0f) {
-            zcross(near_z, second[2], second[0], out[crossing_count++]);
+        if (second_distance[2] * second_distance[0] < 0.0f) {
+            zcross(near_z, second[2], second[0], out[count++]);
         }
-    } else if (total_crosses == 5) {
-        vertex = 0;
-        using_second = false;
-        if (pair_0 < 0.0f) {
-            zcross(near_z, first[0], second[0], out[crossing_count++]);
-        } else if (pair_1 < 0.0f) {
-            zcross(near_z, first[1], second[1], out[crossing_count++]);
+    } else if (total == 5) {
+        int vertex = 0;
+        int on_second = 0;
+        if (first_distance[0] * second_distance[0] < 0.0f) {
+            zcross(near_z, first[0], second[0], out[count++]);
+        } else if (first_distance[1] * second_distance[1] < 0.0f) {
+            zcross(near_z, first[1], second[1], out[count++]);
             vertex = 1;
-        } else if (pair_2 < 0.0f) {
-            zcross(near_z, first[2], second[2], out[crossing_count++]);
+        } else if (first_distance[2] * second_distance[2] < 0.0f) {
+            zcross(near_z, first[2], second[2], out[count++]);
             vertex = 2;
         }
 
-        for (i = 0; i < 3; i++) {
-            next_vertex = vertex + 1;
-            if (next_vertex > 2) {
-                next_vertex = 0;
+        for (int side = 0; side < 3; side++) {
+            int next = vertex + 1;
+            if (next > 2) {
+                next = 0;
             }
-            if (using_second) {
-                if (second_distance[vertex] * second_distance[next_vertex] < 0.0f) {
-                    zcross(near_z, second[vertex], second[next_vertex], out[crossing_count++]);
-                    using_second = true;
+            if (on_second == 0) {
+                if (first_distance[vertex] * first_distance[next] < 0.0f) {
+                    zcross(near_z, first[vertex], first[next], out[count++]);
+                    on_second = 0;
                 }
-                if (first_distance[vertex] * first_distance[next_vertex] < 0.0f) {
-                    zcross(near_z, first[vertex], first[next_vertex], out[crossing_count++]);
-                    using_second = false;
+                if (second_distance[vertex] * second_distance[next] < 0.0f) {
+                    zcross(near_z, second[vertex], second[next], out[count++]);
+                    on_second = 1;
                 }
             } else {
-                if (first_distance[vertex] * first_distance[next_vertex] < 0.0f) {
-                    zcross(near_z, first[vertex], first[next_vertex], out[crossing_count++]);
-                    using_second = false;
+                if (second_distance[vertex] * second_distance[next] < 0.0f) {
+                    zcross(near_z, second[vertex], second[next], out[count++]);
+                    on_second = 1;
                 }
-                if (second_distance[vertex] * second_distance[next_vertex] < 0.0f) {
-                    zcross(near_z, second[vertex], second[next_vertex], out[crossing_count++]);
-                    using_second = true;
+                if (first_distance[vertex] * first_distance[next] < 0.0f) {
+                    zcross(near_z, first[vertex], first[next], out[count++]);
+                    on_second = 0;
                 }
             }
             vertex++;
@@ -225,24 +220,20 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
             }
         }
     } else {
-        printf("%d*******\n", total_crosses);
+        printf("%d*******\n", total);
     }
 
-    if (crossing_count == 0) {
-        for (i = 0; i < 5; i++) {
-            sceVu0CopyVector(out[i], first[0]);
+    if (count == 0) {
+        for (int j = 0; j < 5; j++) {
+            *(u_long128 *) out[j] = *(u_long128 *) first[0];
         }
     } else {
-        for (i = crossing_count; i < 5; i++) {
-            sceVu0CopyVector(out[i], out[i - crossing_count]);
+        for (int j = count; j < 5; j++) {
+            *(u_long128 *) out[j] = *(u_long128 *) out[j - count];
         }
     }
-    return crossing_count;
+    return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/character", scissior__FPA4_fPA4_fPA4_ff);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/character", @648);
 
 void CVisualVu1::SetMDTDataAddress(unsigned int *data) {
 }
@@ -379,8 +370,6 @@ void CCharacter::SetMotionCamera(CCamera *camera) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", GetMotionParam__10CCharacterFiPiPiPiPi);
-
 tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *out_start,
                                            int *out_end, int *out_set) {
     int index;
@@ -394,7 +383,7 @@ tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *o
     // holds the number is the one whose range covers it.
     for (i = 0; i < CHARA_MOTION_MAX; i++) {
         if (this->motion[i] != NULL) {
-            if (motion_no < this->motion_start[i]) {
+            if (this->motion_start[i] > motion_no) {
                 continue;
             }
             if (!(motion_no < this->motion_end[i])) {
@@ -609,8 +598,6 @@ void CCharacter::Step() {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", ShadowStep__10CCharacterFv);
-
 void CCharacter::ShadowStep() {
     int index;
     int i;
@@ -632,7 +619,7 @@ void CCharacter::ShadowStep() {
             continue;
         }
         start = this->motion_start[i];
-        if (motion_no < start) {
+        if (start > motion_no) {
             continue;
         }
         if (motion_no >= this->motion_end[i]) {
@@ -783,8 +770,6 @@ void CCharacter::SetScale(float *scale) {
     CCharacter::SetScale(scale[0], scale[1], scale[2]);
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", Draw__10CCharacterFv);
-
 void CCharacter::Draw() {
     sceVu0FVECTOR ambient;
     sceVu0FVECTOR saved_ambient;
@@ -797,6 +782,8 @@ void CCharacter::Draw() {
     int fade;
     int light;
     int i;
+    int colour_no;
+    int cloth_no;
     float distance;
     float level;
 
@@ -856,15 +843,15 @@ void CCharacter::Draw() {
         light_colour[light][3] = this->point_light[i].colour[3];
 
         light--;
-        if (light < 3) {
+        if (light <= 2) {
             break;
         }
     }
 
     if (fade) {
         sceVu0ScaleVectorXYZ(ambient, ambient, this->fade[0]);
-        for (i = 0; i < 4; i++) {
-            sceVu0ScaleVectorXYZ(light_colour[i], light_colour[i], this->fade[0]);
+        for (colour_no = 0; colour_no < 4; colour_no++) {
+            sceVu0ScaleVectorXYZ(light_colour[colour_no], light_colour[colour_no], this->fade[0]);
         }
     }
 
@@ -879,9 +866,9 @@ void CCharacter::Draw() {
     MGSetPLight(light_direction, light_colour);
     MGDraw(this->frame);
 
-    for (i = 0; i < CHARA_CLOTH_MAX; i++) {
-        if (this->cloth[i] != NULL) {
-            this->cloth[i]->Draw();
+    for (cloth_no = 0; cloth_no < CHARA_CLOTH_MAX; cloth_no++) {
+        if (this->cloth[cloth_no] != NULL) {
+            this->cloth[cloth_no]->Draw();
         }
     }
 

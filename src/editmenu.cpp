@@ -81,9 +81,6 @@ extern s16 AnalyzeBackBlockCnt;
 /** How far each of the analysis page's three bars has filled, in screen columns. */
 extern float AnalyzeFill[3];
 
-/** The texture the menu's plain frame comes from. */
-extern CTexture *StayTex;
-
 /** Texture block containing the edit menu's main page textures. */
 extern int EdMenuTextureBlock;
 
@@ -509,45 +506,35 @@ static void DrawMoveMenuIcon() {
                          (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
 }
-#ifdef NON_MATCHING
-/** The screen position an icon animates to when it leaves for its own page. */
-struct EDIT_MENU_ICON_TARGET {
-    s16 x;
-    s16 y;
-};
-
 static int CalMoveFromMenuIcon() {
-    static const EDIT_MENU_ICON_TARGET panel_target[6] = {
-        {0x50, 0x34}, {0x50, 0x34}, {0x50, 0x20}, {0x5E, 0x1E}, {0x50, 0x34}, {0x50, 0x34},
-    };
-    static const s16 offscreen_x = -250;
-    int icon_max = GetEditMenuMax();
+    int done = 0;
     int arrived_count = 0;
+    s16 target[13] = {0x50, 0x34, 0x50, 0x34, 0x50, 0x20, 0x5E, 0x1E, 0x50, 0x34, 0x50, 0x34, -250};
+    int icon_max = GetEditMenuMax();
 
+    int x;
+    int y;
     for (int i = 0; i < icon_max; i++) {
         int arrived_axes = 0;
-        s16 target_x;
-        s16 target_y;
-
-        if (i == EditSwitch - 9) {
-            target_x = panel_target[i].x;
-            target_y = panel_target[i].y;
+        if (i != EditSwitch - 9) {
+            x = target[12];
+            y = (int) MenuIconPos[i][1];
         } else {
-            target_x = offscreen_x;
-            target_y = (s16) MenuIconPos[i][1];
+            x = target[i * 2];
+            y = target[i * 2 + 1];
         }
 
-        float delta_x = (float) target_x - MenuIconPos[i][0];
+        float delta_x = x - MenuIconPos[i][0];
         MenuIconPos[i][0] += delta_x / 4.0f;
         if (abs((int) delta_x) < 4.0f) {
-            MenuIconPos[i][0] = target_x;
+            MenuIconPos[i][0] = x;
             arrived_axes++;
         }
 
-        float delta_y = (float) target_y - MenuIconPos[i][1];
+        float delta_y = y - MenuIconPos[i][1];
         MenuIconPos[i][1] += delta_y / 4.0f;
         if (abs((int) delta_y) < 4.0f) {
-            MenuIconPos[i][1] = target_y;
+            MenuIconPos[i][1] = y;
             arrived_axes++;
         }
 
@@ -555,11 +542,11 @@ static int CalMoveFromMenuIcon() {
             arrived_count++;
         }
     }
-    return arrived_count >= icon_max;
+    if (arrived_count >= icon_max) {
+        done = 1;
+    }
+    return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", CalMoveFromMenuIcon__Fv);
-#endif
 /**
  * Moves the edit menu icons back to their resting positions.
  */
@@ -719,7 +706,6 @@ int EditMenuLoop() {
     EditMenuDraw();
     return result;
 }
-#ifdef NON_MATCHING
 void EditMenuDraw() {
     int text_x;
     int text_y;
@@ -771,7 +757,7 @@ void EditMenuDraw() {
             break;
     }
     CursorVibeCnt++;
-    if (CursorVibeCnt >= 3.4906585f) {
+    if (CursorVibeCnt >= 1080000000) {
         CursorVibeCnt = 0;
     }
     MenuTextureReload(CommonMenuMes2.tex_block);
@@ -780,25 +766,27 @@ void EditMenuDraw() {
     CommonMenuMes2.text_x = (int) (WindowPos[0] + text_x);
     CommonMenuMes2.text_y = (int) (WindowPos[1] + text_y);
     if (EdMenuTextureReadEndFlag != 0) {
-        if (EditSwitch != 15) {
-            EdMenuHelpWinAlpha += 8;
-            if (EdMenuHelpWinAlpha > 0x80) {
-                EdMenuHelpWinAlpha = 0x80;
-            }
-            CommonMenuMes2.edge_alpha += 8;
-            if (CommonMenuMes2.edge_alpha > 0x80) {
-                CommonMenuMes2.edge_alpha = 0x80;
-            }
-        } else {
-            EdMenuHelpWinAlpha -= 8;
-            if (EdMenuHelpWinAlpha < 0) {
-                EdMenuHelpWinAlpha = 0;
-            }
-            CommonMenuMes2.edge_alpha = EdMenuHelpWinAlpha;
+        switch (EditSwitch) {
+            case 15:
+                EdMenuHelpWinAlpha -= 8;
+                if (EdMenuHelpWinAlpha < 0) {
+                    EdMenuHelpWinAlpha = 0;
+                }
+                CommonMenuMes2.edge_alpha = EdMenuHelpWinAlpha;
+                break;
+            default:
+                EdMenuHelpWinAlpha += 8;
+                if (EdMenuHelpWinAlpha > 0x80) {
+                    EdMenuHelpWinAlpha = 0x80;
+                }
+                CommonMenuMes2.edge_alpha += 8;
+                if (CommonMenuMes2.edge_alpha > 0x80) {
+                    CommonMenuMes2.edge_alpha = 0x80;
+                }
+                break;
         }
         if (GetDrawHelpWindow(MakeWin2Flag) != 0) {
-            int x = (int) WindowPos[0];
-            MenuHelpWinDraw(x, (int) WindowPos[1], EditMenuWinW, EditMenuWinH, EdMenuHelpWinAlpha);
+            MenuHelpWinDraw((int) WindowPos[0], (int) WindowPos[1], EditMenuWinW, EditMenuWinH, EdMenuHelpWinAlpha);
             if (EdMenuMesMake2 != 0) {
                 EdMenuMesMake2 = CommonMenuMes2.MakeMesWin(EdMenuMesNo2);
             }
@@ -808,17 +796,16 @@ void EditMenuDraw() {
     }
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuDraw__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @573__2);
-#ifdef NON_MATCHING
 static int EditMenuStart() {
     u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
     int icon_max = GetEditMenuMax();
     u8 x[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     int brightness;
+    int x_offset;
+    int y_offset;
+    int i;
+    int icon;
 
     if (icon_max == 5) {
         for (int i = 0; i < icon_max; i++) {
@@ -840,10 +827,10 @@ static int EditMenuStart() {
     if (brightness > 0x80) {
         brightness = 0x80;
     }
-    for (int i = 0; i < GetEditMenuMax(); i++) {
-        int y_offset = 0;
-        int x_offset = 0;
-        s8 icon = EditMenuIconID[i];
+    for (i = 0; i < GetEditMenuMax(); i++) {
+        y_offset = 0;
+        x_offset = 0;
+        icon = EditMenuIconID[i];
         GetMenuIconInfo(icon);
         int selected = 0;
         if (i == EdCur.selection) {
@@ -852,22 +839,21 @@ static int EditMenuStart() {
             brightness = 0x80;
             selected = 1;
         }
-        int draw_x = (int) (MenuIconPos[i][0] - x_offset);
-        DrawMainMenuIcon(draw_x, (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
+        DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
     if (ReadBGSync() == 0 && EdMenuTextureReadEndFlag == 0) {
-        LOADTEXTURE_INFO2 texture = {0};
-        int blocks[5] = {0, 0, 0, 0, 0};
-        texture.block_no = EdMenuTextureBlock;
+        LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#448#4"}};
+        textures[1].block_no = textures[0].block_no = EdMenuTextureBlock;
         BG_READ_INFO *file = GetReadBGFile(0);
-        texture.name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);
+        textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);
+        int blocks[5] = {0, 0, 0, 0, -1};
         blocks[0] = EdMenuTextureBlock;
         blocks[1] = EdMenuExTextureBlock;
         blocks[2] = EdMenuExTextureBlock1;
         blocks[3] = EdMenuExTextureBlock2;
         MenuTextureDelete(blocks);
         TexManager.CleanUpTextureList();
-        TexManager.LoadTextureBlockEX(-1, &texture);
+        TexManager.LoadTextureBlockEX(-1, textures);
         Analyze = TexManager.GetTexture("analyzeB", EdMenuTextureBlock);
         AnaBar = TexManager.GetTexture("anabar", EdMenuTextureBlock);
         PerBoardTex = TexManager.GetTexture("perbrd", EdMenuTextureBlock);
@@ -878,24 +864,13 @@ static int EditMenuStart() {
         EdMenuTextureReadEndFlag = 1;
     }
     EdEffectCt++;
-    if (EdEffectCt > 16 && EdMenuTextureReadEndFlag != 0) {
+    if (EdEffectCt >= 17 && EdMenuTextureReadEndFlag != 0) {
         EditSwitch = 2;
         EdCur.selection = 0;
         EdEffectCt = 0;
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", EditMenuStart__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @583);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @584__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @585__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @586__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @587__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @588__2);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @589__3);
-INCLUDE_RODATA("asm/nonmatchings/editmenu", @590__3);
 
 /**
  * Draws the edit menu page and its selected icon.
@@ -1194,15 +1169,28 @@ static float AnalyzeRequestPer() {
 }
 #ifdef NON_MATCHING
 static int AnalyzeBarDraw() {
-    float parts_total = 0.0f;
-    float parts_complete = 0.0f;
-    float elements_total = 0.0f;
-    int elements_done = 0;
-    int parts_done = 0;
+    float parts_total;
+    float parts_complete;
+    float elements_total;
+    int elements_done;
+    int parts_done;
+    int filled;
+    int x;
+    int i;
+    int top;
+    int digit_x;
+    int digits;
+    int number;
+    float goal;
+    float edge;
+    float fill;
     float per[3];
     float target[3];
 
-    for (int i = 0; i < 24; i++) {
+    elements_total = parts_complete = parts_total = 0.0f;
+    elements_done = 0;
+    parts_done = 0;
+    for (i = 0; i < 24; i++) {
         EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(i);
         if (info != NULL && info->stock > 0) {
             parts_total += 1.0f;
@@ -1212,7 +1200,10 @@ static int AnalyzeBarDraw() {
                     parts_complete += 1.0f;
                 }
             }
-            for (int j = 0; j < 6 && info->elements[j].id >= 0; j++) {
+            for (int j = 0; j < 6; j++) {
+                if (info->elements[j].id < 0) {
+                    break;
+                }
                 elements_total += 1.0f;
                 if (info->elements[j].enabled != 0) {
                     elements_done++;
@@ -1221,8 +1212,8 @@ static int AnalyzeBarDraw() {
         }
     }
     s16 *elements = (s16 *) SaveData->GetElemData(NowEditMap);
-    for (int i = 0; i < 128; i++) {
-        if (elements[i] >= 0) {
+    for (i = 0; i < 128; i++) {
+        if (elements[i] > -1) {
             elements_done++;
         }
     }
@@ -1238,53 +1229,63 @@ static int AnalyzeBarDraw() {
         per[1] = 100.0f * parts_complete / parts_total;
     }
     per[2] = AnalyzeRequestPer();
-    for (int i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++) {
         target[i] = 144.0f * per[i] / 100.0f;
         if (!(target[i] <= 144.0f)) {
             target[i] = 144.0f;
         }
     }
-    int filled = 0;
-    int x = -0x3D;
-    for (int i = 0; i < 3; i++) {
+    filled = 0;
+    x = -0x3D;
+    for (i = 0; i < 3; i++) {
         x += 0xB5;
         if (i != filled) {
             break;
         }
         AnalyzeFill[i] += 2.0f + 2.0f * ButtonAdd;
-        float goal = target[i];
+        goal = target[i];
         if (goal < AnalyzeFill[i]) {
             AnalyzeFill[i] = goal;
         }
-        float fill = AnalyzeFill[i];
-        float cap = 0.08f * fill;
-        if (cap > 8.0f) {
-            cap = 8.0f;
+        fill = AnalyzeFill[i];
+        edge = 0.08f * fill;
+        if (8.0f < edge) {
+            edge = 8.0f;
         }
-        int top = (int) (286.0f - fill);
-        DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) fill), CRect_i_(0, i * 16 + 8, 0x36, 7), 0x80);
-        DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) cap), CRect_i_(0, i * 16, 0x36, 8), 0x80);
-        float shade = 0.1f * AnalyzeFill[i];
+        top = (int) (286.0f - fill);
+        CRect_i_ bar_destination;
+        CRect_i_ bar_source;
+        bar_source.x = 0;
+        bar_source.y = i * 16 + 8;
+        bar_source.width = 0x36;
+        bar_source.height = 7;
+        int height = (int) fill;
+        bar_destination.x = x;
+        bar_destination.y = top;
+        bar_destination.width = 0x36;
+        bar_destination.height = height;
+        DrawMenu2DSprite(AnaBar, bar_destination, bar_source, 0x80);
+        DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) edge), CRect_i_(0, i * 16, 0x36, 8), 0x80);
+        edge = 0.1f * AnalyzeFill[i];
         if (!(AnalyzeFill[i] <= 0.0f)) {
-            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + shade), 10, (int) ((float) (0x11C - top) - shade)),
+            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x11C - top) - edge)),
                              CRect_i_(0x56, 0x36, 10, 9), 0x80);
         }
-        int number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
+        number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
         if (per[i] < (float) number) {
             number = (int) per[i];
         }
-        int digit_x = x + 0x1B;
-        for (int digits = GetNumberKeta(number); digits != 0; digits--) {
+        digit_x = x + 0x1B;
+        for (digits = GetNumberKeta(number); digits != 0; digits--, digit_x -= 13) {
             int digit = number % 10;
             int u = digit * 13;
             int v = 0x6F;
-            if (digit >= 9) {
+            if (digit > 8) {
                 u = 0;
                 v = 0x5E;
             }
             DrawMenu2DSprite(AnaBar, CRect_i_(digit_x, top - 0x1E, 0x10, 0x18), CRect_i_(u, v, 13, 0x11), 0x8C);
             number /= 10;
-            digit_x -= 13;
         }
         DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x28, top - 0x1E, 0xF, 0x13), CRect_i_(13, 0x5E, 13, 0x11), 0x80);
         if (0.4f * goal <= AnalyzeFill[i]) {

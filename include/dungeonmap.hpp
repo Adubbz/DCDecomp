@@ -359,6 +359,9 @@ public:
     void DrawRaster(CFrameVu1 *);
 
     /**
+     * Draws the water surface nearest to a position, with its waterfall, and
+     * sets the volume of the water sound.
+     *
      * @mangled DrawWater__11CDungeonMapFPfi
      * @address 0x1C4940
      * @size 0x494

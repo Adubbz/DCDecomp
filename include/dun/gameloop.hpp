@@ -18,6 +18,7 @@ struct WEAPON_HAVE;
 class CFrame;
 class CCollisionData;
 class CDngMessageMan;
+class CDungeonEventMan;
 class CDungeonMap;
 class CDranMapField;
 class CHitValue;
@@ -135,6 +136,21 @@ extern CCollisionData *NowColData;
 
 /** Weapon currently equipped by the player character. */
 extern WEAPON_HAVE *NowWeaponHave;
+
+/**
+ * Event manager of the floor the player is on.
+ */
+extern CDungeonEventMan *NowEventMan;
+
+/**
+ * Fade-in level of the Atlamillia pickup's light, up to 256.
+ */
+extern float atraGetStatusRate__2;
+
+/**
+ * Pack buffer the dungeon started with, reused for every map load.
+ */
+extern u_int *old_read_buffer;
 
 /**
  * @mangled LoadBaseTexture__Fv
@@ -657,22 +673,11 @@ void DepthOfField(float *focus, int steps, int strength, int mode);
 void DrawBee(CFrame *frame, int block_no);
 
 /**
- * Draws the Georama editor's sprites over the frame.
- *
- * @mangled EdEventSpriteDraw__Fv
- * @address 0x1989D0
- * @size 0x2A0
- * @unknownret
- */
-void EdEventSpriteDraw(void);
-
-/**
  * Draws the event battle's own overlay.
  *
  * @mangled EBDraw__Fv
  * @address 0x168B80
  * @size 0x560
- * @unknownret
  */
 void EBDraw(void);
 

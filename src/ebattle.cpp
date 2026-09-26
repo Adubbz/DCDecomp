@@ -25,13 +25,13 @@
  * Stores one event-battle key and its timing state.
  */
 struct EB_KEY {
-    int unk_00;
-    int unk_04;
-    int unk_08;
-    int unk_0C;
-    int unk_10;
-    int unk_14;
-    int unk_18;
+    int frame;     /**< Battle frame the prompt reaches the hit mark on. */
+    int buttons;   /**< Buttons the prompt asks for. */
+    int mode;      /**< How early the prompt lights before the hit mark; 0 never. */
+    int pressed;   /**< Buttons pressed so far while the prompt is live. */
+    int hit;       /**< Whether the prompt has been answered. */
+    int passed;    /**< Whether the prompt has gone past the hit mark. */
+    int highlight; /**< Whether the prompt is drawn lit this frame. */
 };
 
 STATIC_ASSERT(sizeof(EB_KEY) == 0x1C);
@@ -310,166 +310,204 @@ int EBIntroLoop(void) {
  * @address 0x168690
  * @size 0x4E4
  */
-#ifdef NON_MATCHING
 int EBLoop() {
     if (ebattle_flag == 0) {
         return 1;
     }
-    if (eb_finish_cnt > 1) {
-        --eb_finish_cnt;
+    if (eb_finish_cnt > 0) {
+        if (eb_finish_cnt == 1) {
+            EBExit();
+            return eb_result;
+        }
+        eb_finish_cnt--;
         return 0;
     }
-    if (eb_finish_cnt == 1) {
-        EBExit();
-        return eb_result;
-    }
-
     if (eb_count == 0 && play_fanfare != 0) {
-        int sound_size;
+        int size;
         StartReadBG();
-        SndSPSeLoadBG(0x2F, read_buffer, &sound_size);
+        SndSPSeLoadBG(0x2F, read_buffer, &size);
     }
     ReadBG();
 
-    EB_KEY_ENTRY *keys = (EB_KEY_ENTRY *) eb_key;
-    EB_KEY_ENTRY *active = NULL;
-    int timing_grade = 0;
-    for (int i = 0; i < eb_key_num; ++i) {
-        EB_KEY_ENTRY &key = keys[i];
-        float distance = (float) (eb_count - key.frame) * speed;
-        int early_window = key.mode > 0 ? (6 - key.mode) * 64 : 0;
-        key.early = distance <= 16.0f - (float) early_window && early_window > 0;
+    int i;
+    float scale = speed;
+    EB_KEY *active = NULL;
+    int cool = 0;
+    for (i = 0; i < eb_key_num; i++) {
+        EB_KEY *key = &eb_key[i];
+        float distance = eb_count - key->frame;
+        distance *= scale;
+        int early = 0;
+        if (key->mode > 0) {
+            early = (6 - key->mode) << 6;
+        }
+        key->highlight = 0;
         if (distance > 0.0f) {
-            if (distance >= 48.0f) {
-                key.complete = 1;
-            } else if (distance < 24.0f) {
-                timing_grade = 1;
+            if (distance < 48.0f) {
+                active = key;
+            } else {
+                key->passed = 1;
+            }
+            if (distance < 24.0f) {
+                cool = 1;
+            }
+        } else {
+            if (distance > -16.0f) {
+                active = key;
+            }
+            if (early > 0 && distance <= 16.0f - early) {
+                key->highlight = 1;
             }
         }
-        if (distance > -16.0f && distance < 48.0f) {
-            active = &key;
+        if (debug_mode != 0 && eb_count == key->frame) {
+            SndSePlay(9, -1, 0);
+            SndSePlay(1, -1, 0);
         }
     }
 
     int failed = 0;
-    if (active == NULL) {
-        failed = GamePad.GetPadDown() != 0;
-    } else {
+    if (active != NULL) {
         active->pressed |= GamePad.GetPadDown();
         if (active->pressed == active->buttons) {
-            if (active->complete == 0) {
-                SndSePlay(timing_grade != 0 ? 10 : 9, -1, 0);
-                int button = (int) (active - keys);
-                set_draw_ok(timing_grade, button);
-                eb_cool_flag &= timing_grade;
-                ++eb_key_count;
+            if (active->hit == 0) {
+                if (cool) {
+                    SndSePlay(10, -1, 0);
+                } else {
+                    SndSePlay(9, -1, 0);
+                }
+                set_draw_ok(cool, active - eb_key);
+                eb_cool_flag &= cool;
+                eb_key_count++;
             }
-            active->complete = 1;
+            active->hit = 1;
         }
         if (active->buttons != (active->buttons | active->pressed)) {
             failed = 1;
         }
+    } else if (GamePad.GetPadDown()) {
+        failed = 1;
+    }
+    for (i = 0; i < eb_key_num; i++) {
+        EB_KEY *key = &eb_key[i];
+        if (key->passed == 0) {
+            break;
+        }
+        if (key->buttons != key->pressed) {
+            failed = 1;
+        }
     }
 
-    if (failed != 0 && debug_mode == 0 && eb_key_count < eb_key_num &&
-        EdDebugParamDrawOff == 0) {
+    if (failed && debug_mode == 0 && eb_key_count < eb_key_num && EdDebugParamDrawOff == 0) {
         SndBgmFadeOut(40, 0);
         eb_finish_cnt = 80;
         eb_result = -1;
-        ++eb_count;
+        eb_count++;
         return 0;
     }
-
     if (eb_count == eb_end_count - 100 && fade_bgm != 0) {
         SndBgmFadeOut(100, 0);
     }
-    if (eb_count < eb_end_count) {
-        old_time = now_time;
-        draw_ok_loop();
-        ++eb_count;
+    if (eb_count >= eb_end_count) {
+        if (play_fanfare != 0) {
+            while (SndSPSeSyncBG() != 0) {
+            }
+            SndSPSePlay(0x2F, -1);
+        }
+        eb_finish_cnt = 160;
+        eb_result = (eb_cool_flag != 0) + 1;
         return 0;
     }
-
-    if (play_fanfare != 0) {
-        while (SndSPSeSyncBG() != 0) {
-        }
-        SndSPSePlay(0x2F, -1);
-    }
-    eb_finish_cnt = 160;
-    eb_result = (eb_cool_flag != 0) + 1;
+    old_time = now_time;
+    draw_ok_loop();
+    eb_count++;
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBLoop__Fv);
-#endif
+
 /**
- * Draws the event battle's prompt strip and result overlay.
+ * Draws the event battle's prompt strip, its opening caution mark and its result overlay.
+ *
+ * @mangled EBDraw__Fv
+ * @address 0x168B80
+ * @size 0x560
  */
-#ifdef NON_MATCHING
 void EBDraw() {
-    if ((ebattle_intro_flag == 0 && ebattle_flag == 0) || EdDebugParamDrawOff != 0) {
+    if (ebattle_intro_flag == 0 && ebattle_flag == 0) {
         return;
     }
-
     setbilinear(0);
-    TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+    if (EdDebugParamDrawOff != 0) {
+        return;
+    }
     if (eb_finish_cnt > 0) {
-        CRect_i_ result_screen;
-        CRect_i_ result_texel;
+        TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+        CRect_i_ texel;
+        texel.x = texel.y = texel.width = texel.height = 0;
         if (eb_result < 0) {
-            result_texel = CRect_i_(0, 0x50, 0x92, 0x3C);
-        } else if (eb_result == 2) {
-            result_texel = CRect_i_(0, 0, 0x100, 0x46);
-        } else {
-            result_texel = CRect_i_(0, 0x92, 0xB8, 0x40);
+            texel = CRect_i_(0, 0x50, 0x92, 0x3C);
         }
-        if (eb_result < 1 && ((eb_finish_cnt >> 2) & 1) == 0) {
-            return;
+        if (eb_result == 2) {
+            texel = CRect_i_(0, 0, 0x100, 0x46);
         }
-        result_screen = CRect_i_(0x140 - result_texel.width / 2,
-                                 0xE0 - result_texel.height / 2,
-                                 result_texel.width, result_texel.height);
-        set2DSprite(GetVif1Packet(), tex2, result_screen, 0, result_texel.y);
+        if (eb_result == 1) {
+            texel = CRect_i_(0, 0x92, 0xB8, 0x40);
+        }
+        int left = 0x140 - (texel.width >> 1);
+        int top = 0xE0 - (texel.height >> 1);
+        if (eb_result > 0 || (eb_finish_cnt >> 2) % 2 != 0) {
+            set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, texel.width, texel.height), texel.x, texel.y);
+        }
         return;
     }
 
-    CRect_i_ dark_bar(0, 0xA0, 0x280, 0x10);
-    CRect_i_ top_line(0xA8, 0xA0, 0x40, 0x10);
-    CRect_i_ bottom_line(0xC0, 0xA0, 0x10, 0x10);
+    CRect_i_ bar(0, 0xA00, 0x2800, 0x100);
+    CRect_i_ left_edge(0xA80, 0xA00, 0x400, 0x100);
+    CRect_i_ right_edge(0xC00, 0xA00, 0x100, 0x100);
     if (ebattle_intro_flag != 0) {
-        dark_bar.x += draw_rect.x;
-        top_line.x += draw_rect.x;
-        bottom_line.x += draw_rect.x;
-    }
-    MGFillBox(dark_bar, 0, 0x28, 0xA0, 0x40);
-    MGFillBox(top_line, 0xFF, 0xFF, 0xFF, 0x20);
-    MGFillBox(bottom_line, 0xFF, 0xFF, 0xFF, 0x20);
-
-    if (ebattle_intro_flag != 0) {
-        if (((eb_intro_cnt >> 2) & 1) != 0) {
-            CRect_i_ caution(0x140 - 0x49, 0xE0 - 0x1E, 0x92, 0x3C);
-            set2DSprite(GetVif1Packet(), tex2, caution, Caution[0], Caution[1]);
+        TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+        int shift = draw_rect.x << 4;
+        bar.x += shift;
+        left_edge.x += shift;
+        right_edge.x += shift;
+        MGFillBox(bar, 0, 0x28, 0xA0, 0x40);
+        MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
+        MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
+        if ((eb_intro_cnt >> 2) % 2 != 0) {
+            int left = 0x140 - (Caution[2] >> 1);
+            int top = 0xE0 - (Caution[3] >> 1);
+            set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, Caution[2], Caution[3]), Caution[0], Caution[1]);
         }
-        if ((eb_intro_cnt & 7) == 0) {
+        if (eb_intro_cnt % 8 == 0) {
             SndSePlay(8, -1, 0);
         }
         return;
     }
+    if (ebattle_flag == 0) {
+        return;
+    }
+    TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
+    MGFillBox(bar, 0, 0x28, 0xA0, 0x40);
+    MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
+    MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
+    eb_chara->GetMotionInfo(eb_chara->motion_no);
 
-    EB_KEY_ENTRY *keys = (EB_KEY_ENTRY *) eb_key;
-    for (int i = eb_key_count; i < eb_key_num; ++i) {
-        float position = 200.0f - (float) (eb_count - keys[i].frame) * speed;
-        DrawButton(keys[i].buttons, (int) position, 0x140, button_scale(i), keys[i].early);
+    float scale = speed;
+    for (int i = eb_key_count; i < eb_key_num; i++) {
+        EB_KEY *key = &eb_key[i];
+        float delta = eb_count - key->frame;
+        delta *= scale;
+        float position = 200.0f - delta;
+        int x = position;
+        DrawButton(key->buttons, x, 0x140, button_scale(i), key->highlight);
     }
     if (eb_key_count > 0) {
-        EB_KEY_ENTRY &previous = keys[eb_key_count - 1];
-        float position = 200.0f - (float) (eb_count - previous.frame) * speed;
-        draw_ok((int) position);
+        EB_KEY *key = &eb_key[eb_key_count - 1];
+        float delta = eb_count - key->frame;
+        delta *= scale;
+        float position = 200.0f - delta;
+        int x = position;
+        draw_ok(x);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBDraw__Fv);
-#endif
 /**
  * Draws one button prompt of the event battle.
  *

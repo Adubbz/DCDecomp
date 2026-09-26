@@ -105,6 +105,16 @@ extern OPENING_BOOK OpenBook;
 extern "C" s16 *CharaName;
 
 /**
+ * The work area the storybook hands to the name-entry screen once its pages are read.
+ */
+extern u_long128 *OpeningReadBuf;
+
+/**
+ * The message window font's texture work area.
+ */
+extern u8 MesWinTexBuff_02[0x100];
+
+/**
  * Gives every party member their default name.
  *
  * @mangled GlobalNameInit__Fv
@@ -160,19 +170,6 @@ void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     NameSelect.name_pos = 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
 /**
  * Gives the name-entry screen's textures back and closes it.
  *
@@ -234,59 +231,139 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
         draw_x += 22;
     }
 }
+
 /**
- * Draws the frame around the name being entered, bobbing it with a sine.
+ * Draws the four corners of the frame around the name being entered, pulling them inward as the frame counter cycles.
  *
  * @mangled DrawNameRegiWaku__Fiiiii
  * @address 0x238880
  * @size 0x1F0
  */
-#ifdef NON_MATCHING
 void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
-    int inset = NameSelect.frame % 29;
-    if (inset > 14) {
-        inset = 28 - inset;
-    }
-    const int corner_x[4] = {x + inset, x + size - inset, x + inset, x + size - inset};
-    const int corner_y[4] = {y + inset, y + inset, y + size - inset, y + size - inset};
-    const int source_x[4] = {0, 16, 0, 16};
-    const int source_y[4] = {0, 0, 16, 16};
-    for (int corner = 0; corner < 4; corner++) {
-        CRect_i_ destination(corner_x[corner], corner_y[corner], 12, 12);
-        CRect_i_ source(source_x[corner], source_y[corner], 16, 16);
-        DrawMenu2DSprite(NameTemp, destination, source, (u8) brightness,
-                         (u8) brightness, (u8) brightness, blend_mode);
+    float inset = 0.1f * (NameSelect.frame % 29);
+    int edge[4];
+
+    edge[0] = x + inset;
+    edge[1] = y + inset;
+    edge[2] = x + size - inset;
+    edge[3] = y + size - inset;
+    s16 corner[4][2] = {{edge[0], edge[1]}, {edge[2], edge[1]}, {edge[0], edge[3]}, {edge[2], edge[3]}};
+    s16 cell[4][2] = {{480, 296}, {496, 296}, {480, 312}, {496, 312}};
+    for (int index = 0; index < 4; index++) {
+        DrawMenu2DSprite(NameTemp, CRect_i_(corner[index][0], corner[index][1], 12, 12),
+                         CRect_i_(cell[index][0], cell[index][1], 16, 16), (u8) brightness, (u8) brightness,
+                         (u8) brightness, blend_mode);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawNameRegiWaku__Fiiiii);
-#endif
+
 /**
- * Draws the name being entered above the keyboard.
+ * Draws the top of the name-entry screen: the party member's face and title, the name being entered and the cursor over it.
  *
  * @mangled DrawCharaNameUp__Fiiii
  * @address 0x238A70
  * @size 0x628
  */
-#ifdef NON_MATCHING
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
-    CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
-    for (int index = 0; index < 10; index++) {
-        int texture_x;
-        int texture_y;
-        CTexture *texture =
-            GetNameTextureInfo(textures, CharaName[index], texture_x, texture_y);
-        CRect_i_ destination(x + 95 + index * 22, y + 30, 22, 23);
-        CRect_i_ source(texture_x, texture_y, 22, 23);
-        DrawMenu2DSprite(texture, destination, source, (u8) brightness,
-                         (u8) brightness, (u8) brightness, blend_mode);
+    int left;
+    int top;
+    int character = NameSelect.chara_no;
+    left = x - 2;
+    top = y + 14;
+    int face_x = 0;
+    int face_y = character * 106;
+    int length;
+
+    if (character > 2) {
+        face_x = 106;
+        face_y = (character - 3) * 106;
     }
-    DrawNameRegiWaku(x + 93 + NameSelect.name_pos * 22, y + 28, 26,
-                     brightness, blend_mode);
+    DrawMenu2DSprite(CharaFace, CRect_i_(left, top, 88, 88), CRect_i_(face_x, face_y, 106, 106), blend_mode);
+    DrawMenuHelpWindow(TexManager.GetTexture("window", -1), -1, left + 102, top + 16, 8.6f, 1.0f, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 97, top + 16, 26, 23), CRect_i_(0, 256, 26, 24), (u8) brightness,
+                     (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 123, top + 16, 210, 23), CRect_i_(26, 256, 172, 24), (u8) brightness,
+                     (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 333, top + 16, 26, 23), CRect_i_(198, 256, 26, 24), (u8) brightness,
+                     (u8) brightness, (u8) brightness, blend_mode);
+
+    MenuTextureReload(AtoraNameMes.tex_block);
+    int message_length = AtoraNameMes.GetMesLen_system(character - 1220);
+    float char_width[7] = {18.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f};
+    float width = char_width[NameSelect.language];
+    AtoraNameMes.line_pos[0].x = 290.0f - width * (message_length / 2.0f);
+    AtoraNameMes.line_pos[0].y = 82;
+    AtoraNameMes.edge_alpha = blend_mode;
+    AtoraNameMes.Step();
+    AtoraNameMes.DrawMesWin();
+    MenuTextureReload(NameSelect.texture_block);
+
+    if (NameSelect.area < 6) {
+        CRect_i_ destination(left + 89, top + 25, 24, 24);
+        CRect_i_ source(24, 472, 24, 24);
+        DrawMenu2DSprite(NameTemp, destination, source, blend_mode);
+        source.x += 25;
+        destination.x = left + 331;
+        DrawMenu2DSprite(NameTemp, destination, source, blend_mode);
+    }
+
+    left = x + 120;
+    top = y + 58;
+    DrawCharaName(character, left, top, brightness, blend_mode);
+
+    left = x + 122;
+    top = y + 82;
+    if (NameSelect.area == 7) {
+        for (length = 10; length > 0; length--) {
+            if (CharaName[length - 1] != 0 && CharaName[length - 1] != 0xE6) {
+                break;
+            }
+        }
+    }
+    for (int i = 0; i < 10; i++) {
+        int shade = brightness;
+        if (NameSelect.area == 7 && length <= i) {
+            shade = 0x38;
+        }
+        DrawMenu2DSprite(NameTemp, CRect_i_(left, top, 18, 2), CRect_i_(470, 328, 18, 2), (u8) shade, (u8) shade,
+                         (u8) shade, blend_mode);
+        left += 22;
+    }
+
+    int position = NameSelect.name_pos;
+    if (position >= 10) {
+        position = 9;
+    }
+    left = x + 110 + position * 22;
+    top = y + 48;
+    switch (NameSelect.state) {
+        case 1:
+        case 2:
+            break;
+        default:
+            if (NameSelect.area < 6) {
+                DrawNameRegiWaku(left, top, 30, brightness, blend_mode);
+                int frame = NameSelect.frame - 15;
+                if (NameSelect.area >= 6) {
+                    frame = 0;
+                }
+                top = (top - 20) + 4.0f * sinf(0.20943952f * (frame % 31));
+                DrawMenu2DSprite(NameTemp, CRect_i_(left + 20, top, 24, 24), CRect_i_(488, 328, 24, 24), (u8) brightness,
+                                 (u8) brightness, (u8) brightness, blend_mode);
+            }
+            break;
+    }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
 /**
  * Draws the character keyboard the name is entered from.
  *
@@ -779,6 +856,7 @@ void NameEnterDraw(void) {
         setbilinear(1);
     }
 }
+
 /**
  * Moves the cursor across the keyboard and enters the character it settles on.
  *
@@ -786,36 +864,751 @@ void NameEnterDraw(void) {
  * @address 0x23A840
  * @size 0x1F28
  */
-#ifdef NON_MATCHING
-int NameEnterKey() {
-    if (GamePad.Down(0x1000)) {
-        NameSelect.side_row = (NameSelect.side_row + 79) % 80;
+s32 NameEnterKey(void) {
+    int language;
+    int chara_no;
+    int cursor;
+    int side_row;
+    int name_pos;
+    int action;
+    int mes_no;
+    int input_mode;
+    int se;
+
+    if (NameSelect.loaded == 0) {
+        return 0;
     }
-    if (GamePad.Down(0x4000)) {
-        NameSelect.side_row = (NameSelect.side_row + 1) % 80;
+    language = NameSelect.language;
+    chara_no = NameSelect.chara_no;
+    switch (NameSelect.state) {
+        case 2:
+            if (NameSelect.state_count >= 84) {
+                GamePad.AutoRepeatOff();
+                GamePad.MenuModeOff();
+                NameSelect.state = 3;
+                return 1;
+            }
+            return 0;
+        case 6:
+            if (NameSelect.state_count > 8) {
+                NameSelect.state = 0;
+            }
+            break;
     }
-    if (GamePad.Down(0x8000)) {
-        NameSelect.side_row = (NameSelect.side_row + 70) % 80;
+
+    cursor = NameSelect.cursor;
+    side_row = NameSelect.side_row;
+    name_pos = NameSelect.name_pos;
+    action = -1;
+    mes_no = -1;
+    switch (NameSelect.area) {
+        case 6:
+            mes_no = chara_no + 100;
+            if (GamePad.Down(0x40) || GamePad.Down(0x20)) {
+                NameSelect.area = 5;
+                NameSelect.state = 0;
+            }
+            break;
+        case 7:
+        case 8:
+            if (NameSelect.area == 7) {
+                mes_no = 91;
+            }
+            if (NameSelect.area == 8) {
+                mes_no = 95;
+            }
+            if (GamePad.Down(0x40)) {
+                NameSelect.state = 0;
+                action = 50;
+            } else if (GamePad.Down(0x20)) {
+                NameSelect.area = 4;
+                NameSelect.state = 0;
+            }
+            break;
+        case 4:
+            if (NameSelect.input_mode > 1) {
+                NameSelect.side_row = 0;
+            }
+            switch (NameSelect.side_row) {
+                case 0: {
+                    int wrap = InputModeOrikaeshi[NameSelect.input_mode];
+
+                    if (GamePad.Down(0x4000)) {
+                        int rows = 5;
+
+                        switch (NameSelect.input_mode) {
+                            case 3:
+                                rows -= 2;
+                            case 2:
+                                rows -= 1;
+                                break;
+                        }
+                        if (NameSelect.cursor / wrap < rows) {
+                            NameSelect.cursor += wrap;
+                        }
+                    } else if (GamePad.Down(0x8000)) {
+                        if (NameSelect.cursor % wrap != 0) {
+                            NameSelect.cursor--;
+                        } else if (NameSelect.input_mode > 1) {
+                            NameSelect.cursor += wrap - 1;
+                        } else {
+                            NameSelect.side_row = NameSelect.cursor / wrap + 1;
+                        }
+                    } else if (GamePad.Down(0x2000)) {
+                        if (wrap - 1 != NameSelect.cursor % wrap) {
+                            NameSelect.cursor++;
+                        } else if (NameSelect.input_mode > 1) {
+                            NameSelect.cursor -= wrap - 1;
+                        } else {
+                            NameSelect.side_row = NameSelect.cursor / wrap + 1;
+                        }
+                    } else if (GamePad.Down(0x1000)) {
+                        int row = NameSelect.cursor / wrap;
+
+                        if (0 < row) {
+                            NameSelect.cursor -= wrap;
+                        } else if (row <= 0) {
+                            NameSelect.area = 5;
+                            if (NameSelect.cursor < 4) {
+                                NameSelect.cursor += 6;
+                            } else if (NameSelect.cursor >= 4 && NameSelect.cursor < 7) {
+                                NameSelect.cursor = 10;
+                            } else {
+                                NameSelect.cursor = 5;
+                            }
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    int column = -1;
+
+                    if (GamePad.Down(0x1000)) {
+                        if (NameSelect.side_row == 1) {
+                            NameSelect.side_row = 0;
+                            NameSelect.area = 5;
+                            NameSelect.cursor = 5;
+                        } else {
+                            NameSelect.side_row--;
+                        }
+                    } else if (GamePad.Down(0x4000)) {
+                        if (NameSelect.side_row < 6) {
+                            NameSelect.side_row++;
+                        }
+                    } else if (GamePad.Down(0x8000)) {
+                        column = 1;
+                    } else if (GamePad.Down(0x2000)) {
+                        column = 0;
+                    }
+                    if (column != -1) {
+                        NameSelect.cursor = (NameSelect.side_row - 1) * 10 + column * 9;
+                        NameSelect.side_row = 0;
+                    }
+                    break;
+                }
+            }
+            if (GamePad.Down(0x40)) {
+                action = 100;
+            } else if (GamePad.Down(0x20)) {
+                action = 250;
+            }
+            break;
+        case 5: {
+            int first_key[3] = {0, 2, 2};
+
+            if (GamePad.Down(0x1000)) {
+                switch (language) {
+                    case 0:
+                        if (NameSelect.cursor >= 6) {
+                            if (NameSelect.cursor < 8) {
+                                NameSelect.cursor = 0;
+                            } else if (NameSelect.cursor < 10) {
+                                NameSelect.cursor = 1;
+                            } else if (NameSelect.cursor == 10) {
+                                NameSelect.cursor = 2;
+                            }
+                        }
+                        break;
+                    case 1:
+                    default:
+                        if (NameSelect.cursor >= 6) {
+                            if (NameSelect.cursor < 10) {
+                                NameSelect.cursor = 2;
+                            } else if (NameSelect.cursor < 11) {
+                                NameSelect.cursor = 3;
+                            } else if (NameSelect.cursor == 10) {
+                                NameSelect.cursor = 4;
+                            }
+                        }
+                        break;
+                }
+            } else if (GamePad.Down(0x4000)) {
+                if (NameSelect.cursor >= 6) {
+                    NameSelect.area = 4;
+                    switch (NameSelect.cursor) {
+                        case 6:
+                        case 7:
+                            NameSelect.cursor = 0;
+                            break;
+                        case 8:
+                            NameSelect.cursor = 1;
+                            break;
+                        case 9:
+                            NameSelect.cursor = 3;
+                            break;
+                        case 10:
+                            NameSelect.cursor = 4;
+                            break;
+                    }
+                } else if (NameSelect.cursor < 6) {
+                    switch (language) {
+                        case 0:
+                            switch (NameSelect.cursor) {
+                                case 0:
+                                    NameSelect.cursor = 6;
+                                    break;
+                                case 1:
+                                    NameSelect.cursor = 8;
+                                    break;
+                                case 5:
+                                    NameSelect.cursor = 8;
+                                    NameSelect.area = 4;
+                                    break;
+                                default:
+                                    NameSelect.cursor = 10;
+                                    break;
+                            }
+                            break;
+                        case 1:
+                        default:
+                            switch (NameSelect.cursor) {
+                                case 2:
+                                    NameSelect.cursor = 6;
+                                    break;
+                                case 3:
+                                    NameSelect.cursor = 10;
+                                    break;
+                                case 5:
+                                    NameSelect.cursor = 8;
+                                    NameSelect.area = 4;
+                                    break;
+                                default:
+                                    NameSelect.cursor = 10;
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+            static s8 up_or_down = 0;
+            if (GamePad.Down(0x8000)) {
+                switch (language) {
+                    case 0:
+                        switch (NameSelect.cursor) {
+                            case 0:
+                            case 6:
+                                NameSelect.cursor = 5;
+                                break;
+                            case 5:
+                                if (up_or_down != 0) {
+                                    NameSelect.cursor = 4;
+                                } else {
+                                    NameSelect.cursor = 10;
+                                }
+                                break;
+                            default:
+                                NameSelect.cursor--;
+                                break;
+                        }
+                        break;
+                    case 1:
+                    default:
+                        switch (NameSelect.cursor) {
+                            case 2:
+                            case 6:
+                                NameSelect.cursor = 5;
+                                break;
+                            case 5:
+                                if (up_or_down != 0) {
+                                    NameSelect.cursor = 4;
+                                } else {
+                                    NameSelect.cursor = 10;
+                                }
+                                break;
+                            default:
+                                NameSelect.cursor--;
+                                break;
+                        }
+                        break;
+                }
+            } else if (GamePad.Down(0x2000)) {
+                switch (language) {
+                    case 0:
+                        switch (NameSelect.cursor) {
+                            case 5:
+                                if (up_or_down == 0) {
+                                    NameSelect.cursor = 0;
+                                } else {
+                                    NameSelect.cursor = 6;
+                                }
+                                break;
+                            case 10:
+                                NameSelect.cursor = 5;
+                                break;
+                            default:
+                                NameSelect.cursor++;
+                                break;
+                        }
+                        break;
+                    case 1:
+                    default:
+                        switch (NameSelect.cursor) {
+                            case 5:
+                                if (up_or_down == 0) {
+                                    NameSelect.cursor = 2;
+                                } else {
+                                    NameSelect.cursor = 6;
+                                }
+                                break;
+                            case 10:
+                                NameSelect.cursor = 5;
+                                break;
+                            default:
+                                NameSelect.cursor++;
+                                break;
+                        }
+                        break;
+                }
+            }
+            if (GamePad.Down(0x20)) {
+                action = 250;
+            } else if (GamePad.Down(0x40)) {
+                NameSelect.pushed_tab = NameSelect.cursor;
+                if (NameSelect.cursor < 4) {
+                    if (NameSelect.input_mode != NameSelect.cursor) {
+                        NameSelect.input_mode = NameSelect.cursor;
+                    }
+                } else {
+                    NameSelect.state = 6;
+                    NameSelect.state_count = 0;
+                    int tab_action[7] = {700, 49, 500, 600, 200, 300, 800};
+                    action = tab_action[NameSelect.cursor - 4];
+                }
+            }
+            break;
+        }
     }
-    if (GamePad.Down(0x2000)) {
-        NameSelect.side_row = (NameSelect.side_row + 10) % 80;
+
+    if (GamePad.Down(0x800) && NameSelect.area < 6) {
+        action = 49;
     }
-    if (GamePad.Down(0x40) && NameSelect.name_pos < 10) {
-        int base = NameSelect.input_mode == 0 ? 1 : 82;
-        CharaName[NameSelect.name_pos++] = base + NameSelect.side_row;
+    GamePad.Down(0x10);
+    if (GamePad.Down(0x4)) {
+        action = 500;
     }
-    if (GamePad.Down(0x20) && NameSelect.name_pos > 0) {
-        CharaName[--NameSelect.name_pos] = 0;
+    if (GamePad.Down(0x8)) {
+        action = 600;
     }
-    if (GamePad.Down(0x80)) {
-        NameSelect.input_mode = NameSelect.input_mode == 0 ? 2 : 0;
+    if (NameSelect.area < 6) {
+        if (GamePad.Down(0x2)) {
+            action = 400;
+        }
+        if (GamePad.Down(0x1)) {
+            action = 450;
+        }
     }
-    NameSelect.state_count = CheckName();
-    return NameSelect.state_count;
+
+    input_mode = NameSelect.input_mode;
+    switch (action) {
+        case -1:
+            break;
+        case 100: {
+            int pos;
+            int base;
+            int key;
+            int raw_key;
+
+            key = NameSelect.cursor;
+            pos = NameSelect.name_pos;
+
+            switch (input_mode) {
+                case 1:
+                case 0:
+                    if (input_mode == 1) {
+                        base = 82;
+                    } else {
+                        base = 1;
+                    }
+                    if (NameSelect.side_row == 0) {
+                        int column = key % 10;
+
+                        if (column < 5) {
+                            key = column + (key / 10) * 5;
+                        } else {
+                            key = column + 25 + (key / 10) * 5;
+                        }
+                        if (key < 36) {
+                            raw_key = key;
+                        } else {
+                            if (key >= 40 && key < 46) {
+                                key -= 2;
+                            } else if (key >= 50 && key < 54) {
+                                key -= 4;
+                            } else if (key >= 55 && key < 60) {
+                                key -= 5;
+                            } else {
+                                switch (key) {
+                                    case 49:
+                                        key--;
+                                    case 47:
+                                        key--;
+                                    case 45:
+                                    case 39:
+                                        key--;
+                                    case 37:
+                                        key--;
+                                        break;
+                                    default:
+                                        key = 230 - base;
+                                        break;
+                                }
+                            }
+                        }
+                        if (pos >= 10) {
+                            pos--;
+                        }
+                        CharaName[pos] = key + base;
+                        if (NameSelect.name_pos < 10) {
+                            NameSelect.name_pos++;
+                        }
+                    } else {
+                        switch (NameSelect.side_row) {
+                            case 1:
+                                if (0 < pos) {
+                                    int prev = CharaName[pos - 1];
+
+                                    if ((prev >= 6 && prev < 21) || (prev >= 26 && prev < 31) || (prev >= 87 && prev < 102) ||
+                                        (prev >= 107 && prev < 112)) {
+                                        CharaName[pos - 1] += 50;
+                                    } else if (prev == 3) {
+                                        CharaName[pos - 1] = 81;
+                                    }
+                                }
+                                break;
+                            case 2:
+                                if (0 < pos) {
+                                    int prev = CharaName[pos - 1];
+
+                                    if ((prev >= 26 && prev < 31) || (prev >= 107 && prev < 112)) {
+                                        CharaName[pos - 1] += 45;
+                                    }
+                                }
+                                break;
+                            case 3:
+                                key = 222 - base;
+                                if (pos >= 10) {
+                                    pos--;
+                                }
+                                CharaName[pos] = key + base;
+                                if (NameSelect.name_pos < 10) {
+                                    NameSelect.name_pos++;
+                                }
+                                break;
+                            default:
+                                CharaName[pos] = 230;
+                                break;
+                        }
+                    }
+                    break;
+                case 2:
+                    key = (key < 52) ? key : ((key < 62) ? key + 28 : 68);
+                    if (pos >= 10) {
+                        pos--;
+                    }
+                    CharaName[pos] = key + 162;
+                    if (NameSelect.name_pos < 10) {
+                        NameSelect.name_pos++;
+                    }
+                    break;
+                case 3:
+                    if (key < 12) {
+                        raw_key = key;
+                    } else {
+                        if (key > 11 && key < 15) {
+                            key += 1;
+                        } else if (key >= 15 && key < 20) {
+                            key += 2;
+                        } else if (key >= 20 && key < 25) {
+                            key += 21;
+                        } else {
+                            key = 16;
+                        }
+                    }
+                    if (pos >= 10) {
+                        pos--;
+                    }
+                    CharaName[pos] = key + 214;
+                    if (NameSelect.name_pos < 10) {
+                        NameSelect.name_pos++;
+                    }
+                    printf("now Input CHaraID = %d\n", CharaName[pos]);
+                    break;
+            }
+            break;
+        }
+        case 900: {
+            int pos = NameSelect.name_pos;
+            int chara;
+
+            if (pos <= 0) {
+                pos = 0;
+            }
+            chara = CharaName[pos];
+            if ((chara >= 36 && chara < 39) || (chara >= 117 && chara < 120)) {
+                CharaName[pos] += 11;
+            } else if ((chara >= 47 && chara < 50) || (chara >= 128 && chara < 131)) {
+                CharaName[pos] -= 11;
+            }
+            if (chara == 18) {
+                CharaName[pos] = 50;
+            } else if (chara == 50) {
+                CharaName[pos] = 68;
+            } else if (chara == 68) {
+                CharaName[pos] = 18;
+            } else if ((chara >= 6 && chara < 21) || (chara >= 26 && chara < 31) || (chara >= 87 && chara < 102) ||
+                       (chara >= 107 && chara < 112)) {
+                CharaName[pos] += 50;
+            } else if ((chara >= 56 && chara < 71) || (chara >= 76 && chara < 81) || (chara >= 137 && chara < 152) ||
+                       (chara >= 157 && chara < 162)) {
+                CharaName[pos] -= 50;
+            }
+            if (chara >= 162 && chara < 188) {
+                CharaName[pos] += 26;
+            } else if (chara >= 188 && chara < 214) {
+                CharaName[pos] -= 26;
+            }
+            break;
+        }
+        case 200:
+            for (int i = NameSelect.name_pos + 1; i <= 11; i++) {
+                CharaName[i - 1] = CharaName[i];
+            }
+            break;
+        case 250:
+            if (NameSelect.name_pos >= 10) {
+                NameSelect.name_pos--;
+                CharaName[NameSelect.name_pos] = 230;
+            } else if (0 < NameSelect.name_pos) {
+                CharaName[NameSelect.name_pos] = 230;
+                NameSelect.name_pos--;
+            } else {
+                CharaName[0] = 230;
+            }
+            break;
+        case 300: {
+            int pos = NameSelect.name_pos;
+            int i;
+
+            for (i = 9; i >= pos; i--) {
+                CharaName[i + 1] = CharaName[i];
+            }
+            CharaName[i + 1] = 230;
+            for (i = 10; i < 32; i++) {
+                CharaName[i] = 230;
+            }
+            break;
+        }
+        case 400:
+            switch (language) {
+                case 0:
+                    if (input_mode < 3) {
+                        NameSelect.input_mode = input_mode + 1;
+                    } else {
+                        NameSelect.input_mode = 0;
+                    }
+                    break;
+                case 1:
+                default:
+                    if (input_mode < 3) {
+                        NameSelect.input_mode++;
+                    } else {
+                        NameSelect.input_mode = 2;
+                    }
+                    break;
+            }
+            break;
+        case 450:
+            switch (language) {
+                case 0:
+                    if (0 < input_mode) {
+                        NameSelect.input_mode = input_mode - 1;
+                    } else {
+                        NameSelect.input_mode = 3;
+                    }
+                    break;
+                case 1:
+                default:
+                    if (input_mode > 2) {
+                        NameSelect.input_mode--;
+                    } else {
+                        NameSelect.input_mode = 3;
+                    }
+                    break;
+            }
+            break;
+        case 500:
+            if (0 < NameSelect.name_pos) {
+                if (NameSelect.name_pos >= 10) {
+                    NameSelect.name_pos--;
+                }
+                NameSelect.name_pos--;
+            }
+            break;
+        case 600:
+            if (NameSelect.name_pos < 10) {
+                NameSelect.name_pos++;
+            }
+            break;
+        case 800:
+            NameSelect.area = 6;
+            NameSelect.state = 8;
+            break;
+        case 700:
+            NameDefaultSet(NameSelect.chara_no);
+            break;
+        case 49:
+            switch (CheckName()) {
+                case 1: {
+                    int length;
+                    int i;
+
+                    NameSelect.area = 7;
+                    for (length = 10; length > 0; length--) {
+                        if (CharaName[length - 1] != 0 && CharaName[length - 1] != 230) {
+                            break;
+                        }
+                    }
+                    for (i = 0; i < length; i++) {
+                        if (CharaName[i] == 0) {
+                            CharaName[i] = 230;
+                        }
+                    }
+                    for (; length < 32; length++) {
+                        CharaName[length] = 0;
+                    }
+                    break;
+                }
+                case 0:
+                    for (int i = 0; i < 10; i++) {
+                        CharaName[i] = 0;
+                    }
+                    NameSelect.name_pos = 0;
+                    break;
+                case 2:
+                    NameDefaultSet(NameSelect.chara_no);
+                    mes_no = 95;
+                    NameSelect.area = 8;
+                    break;
+            }
+            break;
+        case 50:
+            for (int i = 0; i < 10; i++) {
+                printf("CharaName[%d][%d] = %d\n", chara_no, i, CharaName[i]);
+            }
+            GamePad.AutoRepeatOff();
+            GamePad.MenuModeOff();
+            NameSelect.area = 4;
+            NameSelect.state = 2;
+            NameSelect.state_count = 0;
+            break;
+    }
+
+    if (input_mode != NameSelect.input_mode && NameSelect.area != 5) {
+        int cur;
+        int row;
+        int column;
+
+        switch (NameSelect.input_mode) {
+            case 1:
+            case 3:
+                if (input_mode == 2) {
+                    cur = NameSelect.cursor;
+                    row = cur / 13;
+                    column = cur % 13;
+
+                    if (NameSelect.input_mode == 1 && column == 12) {
+                        NameSelect.side_row = row + 1;
+                    } else {
+                        if (column >= 5) {
+                            column--;
+                        }
+                        if (NameSelect.input_mode == 3) {
+                            while (column >= 10) {
+                                column--;
+                            }
+                            if (NameSelect.language > 0) {
+                                while (row >= 3) {
+                                    row--;
+                                }
+                            }
+                        }
+                        NameSelect.cursor = column + row * 10;
+                    }
+                }
+                break;
+            case 2: {
+                cur = NameSelect.cursor;
+                row = cur / 10;
+                column = cur % 10;
+
+                if (NameSelect.side_row > 0) {
+                    NameSelect.cursor = NameSelect.side_row * 13 - 1;
+                } else {
+                    if (column >= 5) {
+                        column++;
+                    }
+                    if (row >= 4) {
+                        row = 4;
+                    }
+                    NameSelect.cursor = column + row * 13;
+                }
+                break;
+            }
+        }
+    }
+    if (NameSelect.input_mode == 3) {
+        while (NameSelect.cursor >= 40) {
+            NameSelect.cursor -= 10;
+        }
+    }
+    if (NameSelect.input_mode == 2) {
+        while (NameSelect.cursor >= 66) {
+            NameSelect.cursor -= 13;
+        }
+    }
+
+    se = -1;
+    if (cursor != NameSelect.cursor || side_row != NameSelect.side_row) {
+        se = 0;
+    }
+    if (name_pos != NameSelect.name_pos || input_mode != NameSelect.input_mode) {
+        se = 1;
+    }
+    if (GamePad.Down(0x40)) {
+        se = 1;
+    }
+    if (GamePad.Down(0x20) || action == 200 || action == 250) {
+        se = 2;
+    }
+    if (CommonMenuMes3.mes_made != 0) {
+        CommonMenuMes3.MakeMesWin(0);
+    }
+    if (CommonMenuMes2.mes_made != mes_no) {
+        CommonMenuMes2.MakeMesWin(mes_no);
+    }
+    ComMenuSePlay(se);
+    return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterKey__Fv);
-#endif
 /**
  * Gives one party member their default name for the chosen language.
  *
@@ -918,41 +1711,60 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
         put_x -= 0x14 - step;
     }
 }
+
 /**
- * Draws a party member's name on the save board, in a gradient.
+ * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
  *
  * @mangled DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA
  * @address 0x23CB50
  * @size 0x284
  */
-#ifdef NON_MATCHING
-void DrawSaveBoardCharaName2(int x, int y, short *name, CTexture **textures,
-                             spRGBA top, spRGBA bottom) {
-    int length = 10;
-    while (length > 0 && name[length - 1] == 0) {
-        length--;
+void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGBA top, spRGBA bottom) {
+    spRGBA shadow_top = {10, 10, 10, top.a};
+    spRGBA shadow_bottom = {10, 10, 10, bottom.a};
+    int narrow;
+    int put_x;
+    CTexture *texture;
+    int last;
+
+    last = 9;
+    while (name[last] == 0 && last > 0) {
+        last--;
     }
-    int draw_x = x + 54 + length * 10;
-    spRGBA shadow_top = {0, 0, 0, top.a};
-    spRGBA shadow_bottom = {0, 0, 0, bottom.a};
-    for (int index = length - 1; index >= 0; index--) {
-        int texture_x;
-        int texture_y;
-        CTexture *texture =
-            GetNameTextureInfo(textures, name[index], texture_x, texture_y);
-        CRect_i_ source(texture_x, texture_y, 22, 23);
-        CRect_i_ shadow(draw_x + 2, y + 2, 22, 21);
-        CRect_i_ destination(draw_x, y, 22, 21);
-        DrawMenu2DSprite(texture, shadow, source, &shadow_top, &shadow_top,
+
+    narrow = 0;
+    int width = (last + 1) * 0x16;
+    if (width >= 0xB0) {
+        narrow = 1;
+    }
+
+    int tume = 0;
+    for (int i = last; i >= 0; i--) {
+        tume += GetFontLRTumeW(i, name[i - 1], name[i]);
+    }
+    if (narrow == 1) {
+        width -= tume;
+    }
+
+    put_x = x + 0x36 + (width >> 1) - ((width / (last + 1)) >> 1);
+
+    for (; last >= 0; last--) {
+        int cell_x;
+        int cell_y;
+        texture = GetNameTextureInfo(textures, name[last], cell_x, cell_y);
+        CRect_i_ cell(cell_x, cell_y, 0x16, 0x17);
+
+        DrawMenu2DSprite(texture, CRect_i_(put_x + 2, y + 2, 0x16, 0x15), cell, &shadow_top, &shadow_top,
                          &shadow_bottom, &shadow_bottom);
-        DrawMenu2DSprite(texture, destination, source, &top, &top, &bottom, &bottom);
-        draw_x -= 20 - GetFontLRTumeW(index, index > 0 ? name[index - 1] : 0,
-                                      name[index]);
+        DrawMenu2DSprite(texture, CRect_i_(put_x, y, 0x16, 0x15), cell, &top, &top, &bottom, &bottom);
+
+        int step = 0;
+        if (last >= 0 && narrow == 1) {
+            step = GetFontLRTumeW(last, name[last - 1], name[last]);
+        }
+        put_x -= 0x14 - step;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawSaveBoardCharaName2__FiiPsPP8CTexture6spRGBA6spRGBA);
-#endif
 /**
  * Gives how wide a party member's name draws.
  *
@@ -998,42 +1810,112 @@ void InitOpeningBook(u_long128 *buffer, int *blocks) {
     OpenBook.unk_00C = 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
 /**
- * Turns the storybook's pages with the pad.
+ * Steps the storybook that plays before the game begins: reads its pages, fades them in and out on the pad, then hands over to naming the hero.
  *
  * @mangled OpeningBookKey__Fv
  * @address 0x23CF10
  * @size 0x664
  */
-#ifdef NON_MATCHING
 int OpeningBookKey() {
+    int result;
+
     ReadBG();
+    result = 0;
     switch (OpenBook.step) {
         case 0:
-            if (ReadBGSync() == 0) {
+            if (OpenBook.open == 0 && ReadBGSync() == 0) {
+                LOADTEXTURE_INFO2 info[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+
+                info[0].block_no = OpenBook.tex_block;
+                info[1].block_no = OpenBook.tex_block;
+                BG_READ_INFO *read = GetReadBGFile(0);
+                info[1].name = (char *) GetPackFile((u_int *) read->buffer, "opentex.img", NULL);
+                TexManager.DeleteTextureBlock(OpenBook.tex_block);
+                TexManager.CleanUpTextureList();
+                TexManager.LoadTextureBlockEX(-1, info);
+                OpeningReadBuf = read->buffer + (read->size >> 4) + 1;
+                OpeningReadBuf = MenuCalcBufAlignment(OpeningReadBuf);
+                short *mes = (short *) GetPackFile((u_int *) read->buffer, "opmes.bin", NULL);
+
+                CommonMenuMes2.text_columns = 0x46;
+                CommonMenuMes2.text_rows = 10;
+                CommonMenuMes2.text_len = 0;
+                CommonMenuMes2.text_width = 0;
+                CommonMenuMes2.text_height = 0;
+                CommonMenuMes2.fade = 0.0f;
+                CommonMenuMes2.fade_in = 1;
+                CommonMenuMes2.text_rate = CommonMenuMes2.text_rate_set;
+                CommonMenuMes2.waiting = 0;
+                CommonMenuMes2.text_at = 0.0f;
+                CommonMenuMes2.text_no = 0;
+                CommonMenuMes2.text_from = 0;
+                CommonMenuMes2.page_from = 0;
+                CommonMenuMes2.InitMesWinTbl();
+                CommonMenuMes2.clut_now = CommonMenuMes2.clut_default;
+                CommonMenuMes2.wait = 0;
+                CommonMenuMes2.blink = 0;
+                CommonMenuMes2.auto_page_wait = 0;
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.edge_alpha = 0x80;
+                for (int i = 0; i < 10; i++) {
+                    CommonMenuMes2.mes_no[i] = -1;
+                }
+                for (int i = 0; i < 8; i++) {
+                    CommonMenuMes2.values[i] = 0;
+                }
+                CommonMenuMes2.value = 0;
+                CommonMenuMes2.value_signed = 0;
+                CommonMenuMes2.value_show = 1;
+                CommonMenuMes2.value_narrow = 0;
+                CommonMenuMes2.space_width = -1;
+                CommonMenuMes2.space_area = -1;
+                CommonMenuMes2.cursor_row = -1;
+                CommonMenuMes2.cursor_y = 0;
+                CommonMenuMes2.cursor_lit = 0;
+                for (int i = 0; i < 10; i++) {
+                    CommonMenuMes2.line_pos[i].x = -1;
+                    CommonMenuMes2.line_pos[i].y = -1;
+                }
+                CommonMenuMes2.SetMesFukidashi(4);
+                CommonMenuMes2.text_rate = 0.0f;
+                CommonMenuMes2.text_rate_set = 0.0f;
+                CommonMenuMes2.page_arrow = 1;
+                CommonMenuMes2.centre_rows = 1;
+                CommonMenuMes2.columns = 40;
+                CommonMenuMes2.rows = 3;
+                int language = GetMenuLangFlag();
+                if (language > 0) {
+                    CommonMenuMes2.char_width--;
+                }
+                CommonMenuMes2.tex_block = 0x1A;
+                CommonMenuMes2.unk_17B0 = MesWinTexBuff_02;
+                CommonMenuMes2.SetBuff(mes);
+                CommonMenuMes2.edge_alpha = OpenBook.unk_00C;
                 OpenBook.open = 1;
-                OpenBook.fade = 128;
+                OpenBook.fade = 0x80;
+                s8 text_y[7] = {20, 16, 16, 16, 16, 16, 16};
+                CommonMenuMes2.text_y = text_y[language] + 300;
+                CommonMenuMes2.mes_made = -1;
+                CommonMenuMes2.MakeMesWin(100);
             }
-            if (OpenBook.open && OpenBook.fade > 0) {
+            if (OpenBook.open != 0) {
                 OpenBook.fade--;
+                if (OpenBook.fade <= 0) {
+                    OpenBook.fade = 0;
+                }
             }
-            if (OpenBook.open && OpenBook.fade == 0) {
+            if (OpenBook.fade <= 0) {
                 OpenBook.step = 1;
+                OpenBook.unk_00C = 0;
             }
             break;
         case 1:
             OpenBook.unk_00C += 2;
-            if (OpenBook.unk_00C >= 128) {
-                OpenBook.unk_00C = 128;
+            if (OpenBook.unk_00C >= 0x80) {
+                OpenBook.unk_00C = 0x80;
                 OpenBook.step = 2;
-            }
-            break;
-        case 2:
-            if (GamePad.Down(0x40)) {
-                OpenBook.step = OpenBook.unk_006 > 10 ? 4 : 3;
+                OpenBook.fade = 0;
             }
             break;
         case 3:
@@ -1041,26 +1923,32 @@ int OpeningBookKey() {
             if (OpenBook.unk_00C <= 0) {
                 OpenBook.unk_00C = 0;
                 OpenBook.unk_006++;
+                CommonMenuMes2.MakeMesWin(OpenBook.unk_006 + 100);
                 OpenBook.step = 1;
             }
             break;
+        case 2:
+            if (GamePad.Down(0x40)) {
+                OpenBook.step = 3;
+                if (OpenBook.unk_006 >= 11) {
+                    OpenBook.step = 4;
+                }
+            }
+            break;
         case 4:
-            if (OpenBook.unk_00C > 0) {
-                OpenBook.unk_00C--;
-            } else {
-                InitNameRegist(0, OpenBook.unk_004, NULL);
+            OpenBook.unk_00C--;
+            if (OpenBook.unk_00C <= 0 && OpenBook.step == 4 && OpenBook.unk_00C <= 0) {
+                CommonMenuMes2.page_arrow = 0;
+                InitNameRegist(0, OpenBook.unk_004, OpeningReadBuf);
                 OpenBook.step = 5;
             }
             break;
         case 5:
-            NameEnterKey();
-            return NameSelect.state_count;
+            result = NameEnterKey();
+            break;
     }
-    return 0;
+    return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", OpeningBookKey__Fv);
-#endif
 /**
  * Draws the storybook page by page.
  *

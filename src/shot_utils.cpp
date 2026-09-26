@@ -6,6 +6,7 @@
 
 #include <cstdio>
 
+#include "charaheight.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dranmapfield.hpp"
@@ -19,29 +20,33 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#ifdef NON_MATCHING
+/**
+ * The "err %d\n" format held in fishing.cpp's constants, which the polygon check prints its
+ * overflow count with.
+ */
+extern char fishing_err_format[];
+
 SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float *movement,
                                      s32 target_mode, float radius) {
+    sceVu0FVECTOR destination;
+    int active;
+
     WorkBuffer__2->used = 0;
     CCPoly *polygons = (CCPoly *) WorkBuffer__2->Alloc(0x500);
     int polygon_count = setCollisionData(NowDngMap, polygons, position, 20.0f, 1.5f);
     if (polygon_count >= 256) {
-        printf("over col poly! %d\n", polygon_count);
+        printf(fishing_err_format, polygon_count);
     }
 
-    sceVu0FVECTOR destination = {
-        position[0] + movement[0],
-        position[1] + movement[1],
-        position[2] + movement[2],
-        0.0f,
-    };
+    destination[0] = position[0] + movement[0];
+    destination[1] = position[1] + movement[1];
+    destination[2] = position[2] + movement[2];
 
     if (target_mode != 2) {
         sceVu0FVECTOR player_position;
-        float player_height[6] = {16.0f, 14.0f, 16.0f, 16.0f, 18.0f, 15.0f};
 
         sceVu0CopyVector(player_position, CharaMain.pos);
-        player_position[1] += player_height[UserStatus->cur_chara];
+        player_position[1] += CharaHeight(UserStatus);
         if (DistVector(player_position, destination) <= radius + 6.0f) {
             sceVu0CopyVector(hit_position, player_position);
             return SHOT_COLLISION_PLAYER;
@@ -50,16 +55,21 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
 
     if (target_mode != 1) {
         for (int monster_no = 0; monster_no < 16; monster_no++) {
-            MONSTOR *monster = &NowMonstorUnit->monster[monster_no];
-            if (monster->state == -1 || monster->unk_0D4 == 0) {
+            if (NowMonstorUnit->monster[monster_no].state == -1) {
                 continue;
             }
-            MONSTOR_EFFECT_STATE *effect = &NowMonstorUnit->effect[monster_no];
+            if (monster_no >= 0 && monster_no < 17) {
+                active = NowMonstorUnit->monster[monster_no].unk_0D4;
+            }
+            if (active == 0) {
+                continue;
+            }
             for (int sphere_no = 0; sphere_no < 16; sphere_no++) {
-                if (effect->timer[sphere_no] != 0 &&
-                    DistVector(effect->position[sphere_no], position) <=
-                        radius + effect->radius[sphere_no]) {
-                    sceVu0CopyVector(hit_position, effect->position[sphere_no]);
+                if (NowMonstorUnit->effect[monster_no].timer[sphere_no] != 0 &&
+                    DistVector(NowMonstorUnit->effect[monster_no].position[sphere_no], position) <=
+                        radius + NowMonstorUnit->effect[monster_no].radius[sphere_no]) {
+                    sceVu0CopyVector(hit_position,
+                                     NowMonstorUnit->effect[monster_no].position[sphere_no]);
                     return SHOT_COLLISION_MONSTER;
                 }
             }
@@ -68,11 +78,12 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
 
     int hit = CheckHit(polygons, polygon_count, position, destination, hit_position, 1, 4);
     if (hit >= 0) {
-        int field_no = polygons[hit].attr.unk_44;
+        CCPoly *poly = &polygons[hit];
+        int field_no = poly->attr.ground_kind;
         if (field_no > 0 && field_no < 13) {
             DRAN_MAP_FIELD_SET *field_set = (DRAN_MAP_FIELD_SET *) NowDranMapField;
-            if (field_set->state[field_no] >= 2) {
-                field_set->state[field_no]--;
+            if (field_set->state[field_no - 1] >= 2) {
+                ((DRAN_MAP_FIELD_SET *) NowDranMapField)->state[field_no - 1]--;
             }
         }
         return SHOT_COLLISION_MAP;
@@ -81,9 +92,6 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
     sceVu0CopyVector(hit_position, position);
     return SHOT_COLLISION_NONE;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_utils", checkCollision__FPfPfPfif);
-#endif
 void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width,
                     s32 height, u8 blend) {
     sceVu0IVECTOR top_left;

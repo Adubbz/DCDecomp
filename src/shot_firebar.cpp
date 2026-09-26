@@ -41,69 +41,62 @@ int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage,
     damage[63] = element;
     return -1;
 }
-#ifdef NON_MATCHING
-int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage,
-                       int element) {
+
+int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, int element) {
     sceVu0FVECTOR step;
 
     direction[3] = 1.0f;
     sceVu0Normalize(direction, direction);
     sceVu0ScaleVectorXYZ(step, direction, 2.0f);
 
+    // Each particle travels from where it is to its place along the new stream, the farther
+    // ones over more steps.
     for (int particle = 0; particle < 24; particle++) {
-        int slot = particle + start_index;
-        float distance = (float) particle;
-        float travel_steps = distance * 0.5f + 1.0f;
-        velocity[slot][0] =
-            (origin[0] + step[0] * distance - position[slot][0]) / travel_steps;
-        velocity[slot][1] =
-            (origin[1] + step[1] * distance - position[slot][1]) / travel_steps;
-        velocity[slot][2] =
-            (origin[2] + step[2] * distance - position[slot][2]) / travel_steps;
-        state[slot] = 0;
-        size[slot] = 3.0f + distance * 0.3f + (3.0f * (float) rand()) / 2147483648.0f;
-        opacity[slot] = 180.0f - distance * 8.0f;
+        velocity[particle + start_index][0] =
+            (origin[0] + step[0] * (float) particle - position[particle + start_index][0]) /
+            (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][1] =
+            (origin[1] + step[1] * (float) particle - position[particle + start_index][1]) /
+            (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][2] =
+            (origin[2] + step[2] * (float) particle - position[particle + start_index][2]) /
+            (1.0f + 0.5f * (float) particle);
+        state[particle + start_index] = 0;
+        size[particle + start_index] =
+            3.0f + 0.3f * (float) particle + 3.0f * (float) rand() / 2147483648.0f;
+        opacity[particle + start_index] = 180.0f - 8.0f * (float) particle;
         damage[particle] = collision_damage;
         texture_cell[particle] = element;
     }
     return -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Set__13CSHOT_FIREBARFPfPfii);
-#endif
 void CSHOT_FIREBAR::Rset(void) {
     // A state of -1 is what stops a slot being drawn.
     for (int i = 0; i < 24; i++) {
         state[i] = -1;
     }
 }
-#ifdef NON_MATCHING
 void CSHOT_FIREBAR::Step(void) {
-    static int collision_timer = 0;
-    static char initialized = 0;
+    static int msg_cnt = 0;
 
-    if (initialized == 0) {
-        collision_timer = 0;
-        initialized = 1;
-    }
-    collision_timer++;
-    if (collision_timer >= 30) {
-        collision_timer = 0;
+    // The particles hit what they touch once every thirty steps.
+    msg_cnt++;
+    if (msg_cnt >= 30) {
+        msg_cnt = 0;
     }
 
     for (int particle = 0; particle < 24; particle++) {
         if (state[particle] != -1 && state[particle] == 0) {
             opacity[particle] -= 4.0f;
             size[particle] += 0.06f;
-            if (collision_timer == 0) {
-                NowColData->Set(position[particle], damage[particle], 2, 4.0f, 1.0f,
-                                2, 2, 0, 0);
-                COLLISION_HIT *hit = &NowColData->hit[NowColData->now_hit];
-                hit->owner = 5;
-                hit->unk_60 = 6;
-                hit->weapon_flags = NowWeaponHave->flags;
-                hit->vs_monster = NowWeaponHave->vs_monster;
-                hit->flags = GetWeaponElementAttr(NowWeaponHave->best_elem);
+            if (msg_cnt == 0) {
+                NowColData->Set(position[particle], damage[particle], 2, 4.0f, 1.0f, 2, 2, 0, 0);
+                NowColData->SetUserID(5, 6);
+                NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
+                NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
+                s8 elem = NowWeaponHave->best_elem;
+                CCollisionData *attr_col = NowColData;
+                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
             }
             position[particle][0] += velocity[particle][0];
             position[particle][1] += velocity[particle][1];
@@ -114,9 +107,6 @@ void CSHOT_FIREBAR::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Step__13CSHOT_FIREBARFv);
-#endif
 void CSHOT_FIREBAR::Draw(void) {
     int texture_loaded;
     int column;

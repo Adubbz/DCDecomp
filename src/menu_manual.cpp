@@ -77,42 +77,49 @@ static s16 ManualImgLoad() {
     ManualMenu.images_ready = 0;
     return ManualMenu.images_ready;
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @489__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @496__5);
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @497__5);
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @498__5);
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @499__4);
-#ifdef NON_MATCHING
+
+/**
+ * Name of the frame-buffer texture the page images are drawn into.
+ */
+extern char manual_frame_image[];
+
 s16 ManualImgEnter() {
     if (ManualMenu.images_ready == 0 && ReadBGSync() == 0) {
-        BG_READ_INFO *primary = GetReadBGFile(0);
-        char pack_name[32];
-        sprintf(pack_name, "%d_%d.img", ManualMenu.category + 1, ManualMenu.entry + 1);
         LOADTEXTURE_INFO2 image_table[] = {
-            {(char *)"#frame_image#640#448#4", ManualMenu.image_texture_block, 0},
-            {(char *)GetPackFile((u_int *)primary->buffer, pack_name, NULL), ManualMenu.image_texture_block, 0},
+            {manual_frame_image, 0, 0},
+            {NULL, 0, 0},
             {NULL, 0, 0},
         };
+        image_table[0].block_no = ManualMenu.image_texture_block;
+        image_table[1].block_no = ManualMenu.image_texture_block;
+        BG_READ_INFO *primary = GetReadBGFile(0);
+        char pack_name[32] = "%d_%d.img";
+        sprintf(pack_name, pack_name, ManualMenu.category + 1, ManualMenu.entry + 1);
+        image_table[1].name = (char *) GetPackFile((u_int *) primary->buffer, pack_name, NULL);
         TexManager.DeleteTextureBlock(ManualMenu.image_texture_block);
         TexManager.CleanUpTextureList();
         TexManager.LoadTextureBlockEX(-1, image_table);
 
         BG_READ_INFO *extra = GetReadBGFile(1);
         if (extra != NULL) {
-            sprintf(pack_name, "%d_%db.img", ManualMenu.category + 1, ManualMenu.entry + 1);
             LOADTEXTURE_INFO2 extra_table[] = {
-                {(char *)"#frame_image1#640#448#4", ManualMenu.extra_texture_block, 0},
-                {(char *)GetPackFile((u_int *)extra->buffer, pack_name, NULL), ManualMenu.extra_texture_block, 0},
+                {"#frame_image1#640#448#4", 0, 0},
+                {NULL, 0, 0},
                 {NULL, 0, 0},
             };
+            extra_table[0].block_no = ManualMenu.extra_texture_block;
+            extra_table[1].block_no = ManualMenu.extra_texture_block;
+            char extra_name[32] = "%d_%db.img";
+            sprintf(extra_name, extra_name, ManualMenu.category + 1, ManualMenu.entry + 1);
+            extra_table[1].name = (char *) GetPackFile((u_int *) extra->buffer, extra_name, NULL);
             TexManager.DeleteTextureBlock(ManualMenu.extra_texture_block);
             TexManager.CleanUpTextureList();
             TexManager.LoadTextureBlockEX(-1, extra_table);
         }
 
-        static char *prefix[] = {(char *)"a_", (char *)"b_", (char *)"c_", (char *)"d_"};
         int image_count = GetNowManualPartTgaNum();
         for (int image = 0; image < image_count; image++) {
+            char *prefix[] = {"a_", "b_", "c_", "d_"};
             char texture_name[32];
             strcpy(texture_name, prefix[ManualMenu.category]);
             strcat(texture_name, "%d_%d");
@@ -125,10 +132,6 @@ s16 ManualImgEnter() {
     }
     return ManualMenu.images_ready;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", ManualImgEnter__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @505__3);
 void DrawPrevNextCursor() {
     CTexture *texture = TexManager.GetTexture("mncursor", -1);
     if (texture == NULL) {
@@ -215,8 +218,11 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
     ManualMenu.char_width = CommonMenuMes3.char_width;
 }
-#ifdef NON_MATCHING
-static void ResetManualMessage(ClsMes *message) {
+
+/**
+ * Empties a message window and puts its layout back to the defaults.
+ */
+static inline void ResetManualMessage(ClsMes *message) {
     message->text_columns = 0x46;
     message->text_rows = 10;
     message->text_len = 0;
@@ -239,8 +245,6 @@ static void ResetManualMessage(ClsMes *message) {
     message->edge_alpha = 0x80;
     for (int slot = 0; slot < 10; slot++) {
         message->mes_no[slot] = -1;
-        message->line_pos[slot].x = -1;
-        message->line_pos[slot].y = -1;
     }
     for (int value = 0; value < 8; value++) {
         message->values[value] = 0;
@@ -254,21 +258,28 @@ static void ResetManualMessage(ClsMes *message) {
     message->cursor_row = -1;
     message->cursor_y = 0;
     message->cursor_lit = 0;
+    for (int line = 0; line < 10; line++) {
+        message->line_pos[line].x = -1;
+        message->line_pos[line].y = -1;
+    }
 }
 
-s16 SetManualMsgBuffer() {
+int SetManualMsgBuffer() {
     if (ManualMenu.messages_ready == 0 && ReadBGSync() == 0) {
         BG_READ_INFO *archive = GetReadBGFile(0);
-        u_int *font = GetPackFile((u_int *)archive->buffer, (char *)"mncursor.img", NULL);
         LOADTEXTURE_INFO2 font_table[] = {
-            {(char *)"#frame_image#640#448#4", ManualMenu.common_texture_block, 0},
-            {(char *)font, ManualMenu.common_texture_block, 0},
+            {manual_frame_image, 0, 0},
+            {NULL, 0, 0},
             {NULL, 0, 0},
         };
+        font_table[0].block_no = ManualMenu.common_texture_block;
+        font_table[1].block_no = ManualMenu.common_texture_block;
+        char font_name[32] = "mncursor.img";
+        font_table[1].name = (char *) GetPackFile((u_int *) archive->buffer, font_name, NULL);
         TexManager.DeleteTextureBlock(ManualMenu.common_texture_block);
         TexManager.CleanUpTextureList();
         TexManager.LoadTextureBlockEX(-1, font_table);
-        ManualMenu.load_buffer = MenuCalcBufAlignment(archive->buffer + archive->size / 16 + 1);
+        ManualMenu.load_buffer = archive->buffer + (archive->size >> 4) + 1;
 
         ResetManualMessage(ManualMsg);
         ManualMsg->Preset(4);
@@ -276,7 +287,11 @@ s16 SetManualMsgBuffer() {
         ManualMsg->char_height = 0x16;
         ManualMsg->tex_block = 0x1A;
         ManualMsg->unk_17B0 = CommonMenuMes1.unk_17B0;
-        s16 *messages = (s16 *)GetPackFile((u_int *)archive->buffer, (char *)"manual.bin", NULL);
+        for (int slot = 0; slot < 10; slot++) {
+            ClsMes *window = ManualMsg;
+            window->mes_no[slot] = -1;
+        }
+        s16 *messages = (s16 *) GetPackFile((u_int *) archive->buffer, "manual.bin", NULL);
         ManualMsg->SetBuff(messages);
         ManualMsg->mes_made = -1;
         ManualMsg->stay_frame = 1;
@@ -288,14 +303,13 @@ s16 SetManualMsgBuffer() {
         CommonMenuMes3.SetBuff(messages);
         CommonMenuMes3.rows = 3;
         CommonMenuMes3.char_width = ManualMsg->char_width;
+        for (int slot = 0; slot < 10; slot++) {
+            CommonMenuMes3.mes_no[slot] = -1;
+        }
         ManualMenu.messages_ready = 1;
     }
     return ManualMenu.messages_ready;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", SetManualMsgBuffer__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @606__5);
 void ExitManualMenu() {
     int texture_blocks[] = {ManualMenu.common_texture_block, ManualMenu.image_texture_block,
                             ManualMenu.extra_texture_block, -1};
@@ -310,7 +324,14 @@ void ExitManualMenu() {
 int GetNowManualMenuMode() {
     return ManualMenu.mode;
 }
-#ifdef NON_MATCHING
+
+/**
+ * Puts a message window's choice cursor on a line, or takes it away for a negative line.
+ */
+static inline void SetCursorRow(ClsMes *message, int row) {
+    message->cursor_row = row;
+}
+
 int MenuManualKey() {
     ReadBG();
     int closed = 0;
@@ -321,20 +342,24 @@ int MenuManualKey() {
             }
             break;
         case 1:
-            if (++ManualMenu.transition_frame >= 33) {
+            ManualMenu.transition_frame++;
+            if (ManualMenu.transition_frame > 32) {
                 ExitManualMenu();
                 closed = 1;
             }
             break;
         case 2: {
-            int minimum = 0;
-            int maximum = 0;
-            int *selection = NULL;
+            int minimum;
+            int maximum;
+            int *selection;
             if (ManualMenu.selection_level == -2) {
+                minimum = 0;
                 maximum = 3;
                 selection = &ManualMenu.category;
-            } else if (ManualMenu.selection_level == -1) {
-                static int entry_max[] = {4, 4, 3, 2};
+            }
+            if (ManualMenu.selection_level == -1) {
+                int entry_max[] = {4, 4, 3, 2};
+                minimum = 0;
                 maximum = entry_max[ManualMenu.category];
                 selection = &ManualMenu.entry;
             }
@@ -347,10 +372,14 @@ int MenuManualKey() {
                     (*selection)++;
                     ComMenuSePlay(0);
                 }
-                if (*selection < minimum) *selection = maximum;
-                if (*selection > maximum) *selection = minimum;
+                if (*selection < minimum) {
+                    *selection = maximum;
+                }
+                if (*selection > maximum) {
+                    *selection = minimum;
+                }
                 if (ManualMenu.selection_level == -2) {
-                    ManualMsg->cursor_row = *selection;
+                    SetCursorRow(ManualMsg, *selection);
                     CommonMenuMes3.cursor_row = -1;
                 } else {
                     CommonMenuMes3.cursor_row = *selection;
@@ -361,12 +390,12 @@ int MenuManualKey() {
             }
             if (GamePad.Down(0x40)) {
                 if (ManualMenu.selection_level == -1) {
-                    ManualMenu.selection_level = 0;
+                    ManualMenu.selection_level++;
                     ManualMenu.mode = 3;
                     ManualMenu.message_page = 0;
                     ManualImgLoad();
                 } else if (ManualMenu.selection_level == -2) {
-                    ManualMenu.selection_level = -1;
+                    ManualMenu.selection_level++;
                     CommonMenuMes3.cursor_row = 0;
                 }
                 ComMenuSePlay(1);
@@ -375,36 +404,29 @@ int MenuManualKey() {
                     ManualMenu.mode = 1;
                     ManualMsg->Preset(1);
                     CommonMenuMes3.SetBuff(ManualMenu.common_message_buffer);
-                    for (int slot = 0; slot < 10; slot++) CommonMenuMes3.mes_no[slot] = -1;
+                    for (int slot = 0; slot < 10; slot++) {
+                        CommonMenuMes3.mes_no[slot] = -1;
+                    }
                     CommonMenuMes3.Preset(4);
                     CommonMenuMes3.char_width = ManualMenu.char_width;
                     ManualMsg->SetBuff(ManualMenu.menu_message_buffer);
                     ManualMsg->Preset(1);
-                } else {
-                    ManualMenu.selection_level = -2;
-                    ManualMenu.entry = 0;
+                } else if (ManualMenu.selection_level == -1) {
+                    ManualMenu.selection_level--;
+                    *selection = 0;
                 }
                 ComMenuSePlay(2);
             }
             break;
         }
-        case 3:
-            CommonMenuMes3.cursor_row = -1;
-            ManualMsg->cursor_row = -1;
-            ManualMenu.transition_frame++;
-            ManualImgEnter();
-            if (ManualMenu.images_ready && ManualMenu.transition_frame >= 33) {
-                ManualMenu.mode = 5;
-                ManualMenu.transition_frame = 0;
-            }
-            break;
         case 4:
             CommonMenuMes3.cursor_row = -1;
-            ManualMsg->cursor_row = -1;
+            SetCursorRow(ManualMsg, -1);
             if (GamePad.Down(0x204A)) {
                 if (CommonMenuMes3.State() == 5) {
                     CommonMenuMes3.GoNextPage();
                 } else if (CommonMenuMes3.State() == 3) {
+                    int image_count = GetNowManualPartTgaNum();
                     ManualMenu.image_page++;
                     ManualMenu.message_page++;
                     if ((ManualMenu.category == 0 && ManualMenu.entry == 4 &&
@@ -415,7 +437,7 @@ int MenuManualKey() {
                          ManualMenu.message_page == 1)) {
                         ManualMenu.image_page--;
                     }
-                    if (ManualMenu.image_page >= GetNowManualPartTgaNum()) {
+                    if (ManualMenu.image_page >= image_count) {
                         ManualMenu.mode = 2;
                         ManualMenu.selection_level = -1;
                     }
@@ -429,9 +451,9 @@ int MenuManualKey() {
                     (ManualMenu.category == 2 && ManualMenu.entry == 3 &&
                      ManualMenu.message_page == 1)) {
                     ManualMenu.message_page--;
-                } else if (ManualMenu.image_page > 0) {
-                    ManualMenu.image_page--;
+                } else if (0 < ManualMenu.image_page) {
                     ManualMenu.message_page--;
+                    ManualMenu.image_page--;
                 }
                 ComMenuSePlay(2);
             } else if (GamePad.Down(0x20)) {
@@ -440,42 +462,71 @@ int MenuManualKey() {
                 ComMenuSePlay(2);
             }
             break;
+        case 3:
+            CommonMenuMes3.cursor_row = -1;
+            SetCursorRow(ManualMsg, -1);
+            ManualMenu.transition_frame++;
+            ManualImgEnter();
+            if (ManualMenu.images_ready != 0 && ManualMenu.transition_frame > 32) {
+                ManualMenu.mode = 5;
+                ManualMenu.transition_frame = 0;
+            }
+            break;
         case 5:
             CommonMenuMes3.cursor_row = -1;
-            ManualMsg->cursor_row = -1;
-            if (++ManualMenu.transition_frame >= 33) ManualMenu.mode = 4;
+            SetCursorRow(ManualMsg, -1);
+            ManualMenu.transition_frame++;
+            if (ManualMenu.transition_frame > 32) {
+                ManualMenu.mode = 4;
+            }
             break;
     }
     return closed;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", MenuManualKey__Fv);
-#endif
-#ifdef NON_MATCHING
+
 void MenuManualDraw() {
     if (ManualMenu.mode >= 3 && ManualMenu.mode < 6 && ManualMenu.images_ready != 0) {
         MenuTextureReload(ManualMenu.image_texture_block);
         int image_count = GetNowManualPartTgaNum();
-        int target = -ManualMenu.image_page * 0x280;
-        float distance = (float)(target - ManualMenu.image_offset);
-        ManualMenu.image_offset += (int)(distance / 4.0f);
-        int distance_int = (int) distance;
-        if (distance_int >= -3 && distance_int <= 3) ManualMenu.image_offset = target;
+        int target = -(ManualMenu.image_page * 0x280);
+        float distance = target - ManualMenu.image_offset;
+        ManualMenu.image_offset += (int) (distance / 4.0f);
+        if (abs((int) distance) <= 3.0) {
+            ManualMenu.image_offset = target;
+        }
         int x = ManualMenu.image_offset;
         for (int image = 0; image < image_count; image++, x += 0x280) {
-            if (image == 3) MenuTextureReload(ManualMenu.extra_texture_block);
-            if (x >= 0x281) continue;
+            if (image == 3) {
+                MenuTextureReload(ManualMenu.extra_texture_block);
+            }
             int source_x = 0;
-            int width = 0x280;
             int screen_x = x;
+            if (x > 0x280) {
+                break;
+            }
+            int width = 0x280;
             MenuTextureClip(screen_x, source_x, width, 0, 0x280);
-            if (width > 0x280) width = 0x280;
-            if (width < 0) width = 0;
+            if (width > 0x280) {
+                width = 0x280;
+            }
+            if (width < 0) {
+                width = 0;
+            }
             CRect_i_ screen(screen_x, 0, width, 0x1C0);
             CRect_i_ texel(source_x, 0, width, 0x1C0);
             CTexture *texture = ManualMenuTex[image];
             if (texture != NULL) {
-                set2DSprite(GetVif1Packet(), texture, screen, texel, 0x64, 0x64, 0x64, 0x80);
+                set2DSprite(GetVif1Packet(), texture, screen, texel, 100, 100, 100, 0x80);
+            } else {
+                int previous = image - 1;
+                while (ManualMenuTex[previous] == NULL) {
+                    if (--previous <= 0) {
+                        break;
+                    }
+                }
+                if (previous >= 0) {
+                    set2DSprite(GetVif1Packet(), texture, screen, texel, 0x50, 0x50, 0x50, 0x80);
+                }
             }
         }
         MenuTextureReload(ManualMenu.common_texture_block);
@@ -485,6 +536,3 @@ void MenuManualDraw() {
         DrawManualMsg();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", MenuManualDraw__Fv);
-#endif

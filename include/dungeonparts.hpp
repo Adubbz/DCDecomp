@@ -126,12 +126,9 @@ struct PARTS_WATER {
     s32 used; /**< 1 if the part shows water. */
     u8 unk_04[12];
     float vertex[4][4]; /**< Four corners of the water surface. */
-    u8 red;             /**< Red part of the colour of the water. */
-    u8 unk_51[3];
-    u8 green; /**< Green part of the colour of the water. */
-    u8 unk_55[3];
-    u8 blue; /**< Blue part of the colour of the water. */
-    u8 unk_59[3];
+    s32 red;            /**< Red part of the colour of the water. */
+    s32 green;          /**< Green part of the colour of the water. */
+    s32 blue;           /**< Blue part of the colour of the water. */
     s32 has_fall; /**< 1 if the part shows a waterfall. */
 };
 
@@ -220,6 +217,22 @@ STATIC_ASSERT(sizeof(PARTS_WATER) == 0x60);
 STATIC_ASSERT(sizeof(CDungeonParts) == 0x1D0);
 
 /**
+ * The items the clown can offer on one side of a dungeon's midpoint.
+ */
+struct PIERO_ITEM_SET {
+    int count[2];    /**< Number of items in each of the two lists. */
+    int item[2][64]; /**< The two lists the clown's two offers are drawn from. */
+};
+
+STATIC_ASSERT(sizeof(PIERO_ITEM_SET) == 0x208);
+
+/**
+ * The clown's item lists, seven dungeons and then their back floors, each
+ * pointing at the lists for the floors below and above the midpoint.
+ */
+extern PIERO_ITEM_SET *PieroItemListPtr[14];
+
+/**
  * Gives the two items the clown offers on one floor.
  *
  * @mangled GetPieroItem__FiiPiPi
@@ -238,14 +251,14 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1);
 int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small);
 
 /**
- * Selects a random open world position in a rectangular group of cells.
+ * Selects a random open world position in a rectangular group of cells, and
+ * returns how many placement boxes the cells offered.
  *
  * @mangled SearchiDoPutArea__FP8MAPPARTSiiiiPf
  * @address 0x1C03C0
  * @size 0x578
- * @unknownret
  */
-void SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *pos);
+int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *pos);
 
 /**
  * Selects the atla identifiers that appear on a floor.

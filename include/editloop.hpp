@@ -160,9 +160,7 @@ struct EDIT_WATER_INFO {
     int unk_58;
     u8 unk_5c[0x4];
     sceVu0FVECTOR texture_scroll; /**< Texture offset and scroll rates. */
-    int follow_x; /**< Whether the surface keeps ahead of the camera along X. */
-    int follow_y; /**< Whether the surface keeps level with the camera. */
-    int follow_z; /**< Whether the surface keeps ahead of the camera along Z. */
+    int follow[3];                /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
     u8 unk_7c[0x4];
     EDIT_WATER_WAVE_INFO wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
 };
@@ -268,8 +266,16 @@ union EDIT_MAP_WORK_INFO {
 struct EDIT_CONFIG_VIEW {
     u8 unk_00[0x8];
     int clock_hidden; /**< Whether the player has turned the editor clock off. */
-    u8 unk_0C[0x4];
+    int unk_0C;
     int message_speed; /**< Whether editor messages use the faster reveal rate. */
+};
+
+/**
+ * One of the georama's element slots; the interior test map fills all of them.
+ */
+struct EDIT_ELEMENT_INFO {
+    int unk_00;
+    int unk_04;
 };
 
 /**
@@ -406,6 +412,7 @@ STATIC_ASSERT(sizeof(EDIT_MAP_WORK_INFO) == 0x12000);
 STATIC_ASSERT(sizeof(EDIT_MAP_INFO) == 0x2C260);
 STATIC_ASSERT(sizeof(ED_EVENT_POINT) == 0x90);
 STATIC_ASSERT(sizeof(VILLAGER_INFO) == 0x90);
+STATIC_ASSERT(sizeof(EDIT_ELEMENT_INFO) == 0x8);
 
 /** Whether the current editor map is an interior. */
 extern int EdInteriorFlag;
@@ -424,6 +431,24 @@ int EdGetMapFlag(int flag_no);
 
 /** Sets a map-completion flag on the active Georama map. */
 int EdSetMapFlag(int flag_no, int value);
+
+/**
+ * Applies the editor-specific layout and reveal settings to its message windows.
+ *
+ * @mangled EdInitMesParam__Fv
+ * @address 0x1781D0
+ * @size 0x1B0
+ */
+void EdInitMesParam();
+
+/**
+ * Enables or disables the cursor drawn over the controlled character.
+ *
+ * @mangled EdSetCharaCursor__Fi
+ * @address 0x17CBE0
+ * @size 0xC
+ */
+void EdSetCharaCursor(int on);
 
 /**
  * Loads the player model and motion archive used by an editor event.

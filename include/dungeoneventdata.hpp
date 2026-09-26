@@ -12,8 +12,7 @@ class CFrame;
  */
 class CDungeonEvent {
 public:
-    s8 state; /**< Runtime allocation state initialized when the dungeon starts. */
-    u8 unk_01[0xF];
+    char name[16];           /**< Name of the frame in the map part's collision that places the event. */
     CFrame *placement_frame; /**< Root frame positioned and rotated with the map part. */
     CFrame *trigger_frame;   /**< Child frame whose transform locates and faces the event. */
     float radius; /**< Distance at which the event starts. */
