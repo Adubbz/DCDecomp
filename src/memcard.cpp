@@ -1238,7 +1238,6 @@ static void AtoraTipGetTexPos(int tip_no, int &x, int &y) {
         y = (tex_no / 7) * 36;
     }
 }
-#ifdef NON_MATCHING
 static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha) {
     int u;
     int v;
@@ -1253,9 +1252,6 @@ static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha
     }
     DrawMenu2DSprite(texture, CRect_i_(x, y, source.width, source.height - 1), source, red, green, blue, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraTipObjectOrPerson__Fiiiii);
-#endif
 
 static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
     if (gold) {
