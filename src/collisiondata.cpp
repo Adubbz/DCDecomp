@@ -166,8 +166,7 @@ static inline void ClearMapEvent(CDungeonMap *map) {
 }
 
 /**
- * Moves the debug overlay's cursor with the pad and changes the setting under
- * it. Returns the code of an entry that closes the overlay, or 0.
+ * Moves through the debug overlay's pages with the pad.
  *
  * @mangled DebugInfomationIF__Fv
  * @address 0x1B47C0
