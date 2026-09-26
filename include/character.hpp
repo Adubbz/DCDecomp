@@ -95,6 +95,15 @@ public:
 STATIC_ASSERT(sizeof(MotionParam) == 0x80);
 
 /**
+ * Clips a triangle against the near plane, giving back the polygon that survives.
+ *
+ * @mangled scissior__FPA4_fPA4_fPA4_ff
+ * @address 0x137440
+ * @size 0xA38
+ */
+int scissior(float out[][4], float first[][4], float second[][4], float near_z);
+
+/**
  * Moves and animates one character in the world.
  */
 class CCharacter : public CObject {
