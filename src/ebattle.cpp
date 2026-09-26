@@ -193,41 +193,44 @@ void EBInitIntro(void) {
     // The wipe opens from the right edge, so it starts with no width.
     draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
 }
-#ifdef NON_MATCHING
 void EBSetMotion(CCharacter *character, int *motions) {
     if (character == NULL) {
         return;
     }
 
-    EB_MOTION_ENTRY *motion_entries = (EB_MOTION_ENTRY *) eb_motion;
-    int motion_index;
-    for (motion_index = 0; motions[motion_index] >= 0; ++motion_index) {
-        motion_entries[motion_index].motion_no = motions[motion_index];
+    int i;
+    for (i = 0;; i++) {
+        int motion_no = motions[i];
+        if (motion_no < 0) {
+            break;
+        }
+        eb_motion[i].motion_no = motion_no;
     }
-    motion_entries[motion_index].motion_no = -1;
+    eb_motion[i].motion_no = -1;
 
     eb_chara = character;
-    for (motion_index = 0; motion_entries[motion_index].motion_no >= 0; ++motion_index) {
-        MOTION_INFO *info = character->GetMotionInfo(motion_entries[motion_index].motion_no);
+    for (i = 0;; i++) {
+        if (eb_motion[i].motion_no < 0) {
+            break;
+        }
+        MOTION_INFO *info = eb_chara->GetMotionInfo(eb_motion[i].motion_no);
         if (info == NULL) {
             return;
         }
-
-        EB_MOTION_ENTRY &entry = motion_entries[motion_index];
-        entry.start = (float) info->start;
-        entry.end = (float) info->end;
-        entry.speed = info->speed;
-        entry.duration = (int) ((entry.end - entry.start) / entry.speed);
-        eb_end_count += entry.duration;
+        float start = (float) info->start;
+        float end = (float) info->end;
+        eb_motion[i].start = start;
+        eb_motion[i].end = end;
+        eb_motion[i].speed = info->speed;
+        int frames = (int) ((end - start) / info->speed);
+        eb_end_count += frames;
+        eb_motion[i].frames = frames;
     }
 
     ebattle_flag = 1;
     eb_cool_flag = 1;
     GamePad.MenuModeOn(0x50);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EBSetMotion__FP10CCharacterPi);
-#endif
 
 void EBDebug(int mode) {
     debug_mode = mode;
