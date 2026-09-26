@@ -87,12 +87,14 @@ extern CEditPartsInfo BtEditPartsInfo;
 
 extern u8 MesWinTexBuff_12[0x100];
 
+/** The four lettering textures that the save file boards draw with. */
+extern CTexture *SaveMenuMojiTextbl[4];
+
 #ifdef NON_MATCHING // draft declarations
 #include <cstdlib>
 
 #include "menu_inventory.hpp"
 
-extern CTexture *SaveMenuMojiTextbl[4];
 extern CTexture *PerBoardTex;
 #endif
 
@@ -3437,15 +3439,14 @@ int MenuSaveKey() {
     }
     return SaveMenu.result;
 }
-#ifdef NON_MATCHING
 void DrawMenuSave(char *) {
     if (SaveMenu.texture_ready == 0) {
         return;
     }
     setbilinear(0);
     switch (SaveMenu.unk_0) {
-        case 1:
         case 0:
+        case 1:
             break;
         case 2:
             AllFillBoxForMenu(0, 0, 0, 0x80);
@@ -3467,32 +3468,44 @@ void DrawMenuSave(char *) {
             break;
     }
     MenuTextureReload(SaveMenu.block_no);
-    float board_y = SaveMenu.unk_10;
-    SaveMenu.unk_10 = (int) (board_y + ((150.0f - 150.0f * SaveMenu.file_no) - board_y) / 4.0f);
-    float y = SaveMenu.unk_10;
+    float y = 150.0f - 150.0f * SaveMenu.file_no;
+    SaveMenu.unk_10 += (y - SaveMenu.unk_10) / 4.0f;
+    y = SaveMenu.unk_10;
+    float board_x = 140.0f;
     int bright = 0x80;
-    int key = SaveMenu.key_no;
-    if (key == 19 || key == 17 || key == 14 || key == 13 || key == 12 || key == 9) {
-        bright = 0x40;
+    switch (SaveMenu.key_no) {
+        case 9:
+        case 12:
+        case 13:
+        case 14:
+        case 17:
+        case 19:
+            bright = 0x40;
+            break;
     }
     int show = 0;
-    if (key == 13 || key == 12 || key == 9 || key == 8 || key == 7) {
-        show = 1;
+    switch (SaveMenu.key_no) {
+        case 7:
+        case 8:
+        case 9:
+        case 12:
+        case 13:
+            show = 1;
+            break;
     }
     if (SaveMenu.key_no == 1 && SaveMenu.unk_0 == 0 && SaveMenu.loaded != 0) {
         show = 1;
     }
-    if (show != 0 && (unsigned int) (McAccess.GetFuncNo() - 4) >= 2U) {
-        if (McAccess.file_info != NULL) {
+    if (show != 0 && (unsigned int) (McAccess.GetFuncNo() - 4) > 1U) {
+        MC_CARD_INFO *mcinfo = McAccess.card;
+        if (mcinfo != NULL) {
             for (int i = 0; i < 12; i++) {
                 SAVEDATA_INFO *file = &McAccess.file_info[i];
                 if (file != NULL) {
                     if (file->state == 0) {
-                        int board_x = (int) 140.0f;
-                        DrawNewFileTemplete(board_x, (int) y, alpha);
+                        DrawNewFileTemplete((int) board_x, (int) y, alpha);
                     } else {
-                        int board_x = (int) 140.0f;
-                        DrawSaveBoard(file, SaveMenuMojiTextbl, board_x, (int) y, bright, alpha);
+                        DrawSaveBoard(file, SaveMenuMojiTextbl, (int) board_x, (int) y, bright, alpha);
                     }
                     y += 150.0f;
                 }
@@ -3501,7 +3514,7 @@ void DrawMenuSave(char *) {
             printf("mcinfo is NULL\n");
         }
     }
-    float text_pos[2] = {0.0f, 0.0f};
+    float text_pos[2] = {-20.0f, -20.0f};
     CommonMenuMes2.auto_pos = -1;
     switch (McAccess.GetFuncNo()) {
         case 1:
@@ -3511,16 +3524,16 @@ void DrawMenuSave(char *) {
                     text_pos[1] = 154.0f;
                     CommonMenuMes2.auto_pos = 5;
                     break;
-                case 17:
-                case 3:
-                case 16:
                 case 15:
+                case 16:
+                case 3:
+                case 17:
                     text_pos[0] = 184.0f;
                     text_pos[1] = 152.0f;
                     CommonMenuMes2.auto_pos = 5;
                     break;
-                case 12:
                 case 9:
+                case 12:
                     text_pos[0] = 246.0f;
                     text_pos[1] = 156.0f;
                     CommonMenuMes2.auto_pos = 5;
@@ -3538,8 +3551,8 @@ void DrawMenuSave(char *) {
                     text_pos[0] = 196.0f;
                     text_pos[1] = 140.0f;
                     CommonMenuMes2.auto_pos = 5;
-                case 11:
                 case 25:
+                case 11:
                     text_pos[0] = 196.0f;
                     text_pos[1] = 140.0f;
                     CommonMenuMes2.auto_pos = 5;
@@ -3565,14 +3578,13 @@ void DrawMenuSave(char *) {
     if (CommonMenuMes2.edge_alpha < 0) {
         CommonMenuMes2.edge_alpha = 0;
     }
-    int mes_x = (int) text_pos[0];
-    DrawMenuClsMes(&CommonMenuMes2, mes_x, (int) text_pos[1]);
+    DrawMenuClsMes(&CommonMenuMes2, (int) text_pos[0], (int) text_pos[1]);
     int hand_x = -1;
     int hand_y = -1;
     CommonMenuMes2.cursor_row = -1;
     switch (SaveMenu.key_no) {
-        case 3:
         case 2:
+        case 3:
             CommonMenuMes2.cursor_row = SaveMenu.file_no + 2;
             break;
         case 7:
@@ -3582,24 +3594,29 @@ void DrawMenuSave(char *) {
             }
             break;
     }
-    if (hand_x > 0 && hand_y > 0) {
+    if (0 < hand_x && 0 < hand_y) {
         static int ct = 0;
-        CRect_i_ size(0, 0, 0x20, 0x20);
+        RECT hand = {0x160, 0xD6, 0x20, 0x20};
         float draw_x = (float) hand_x + 7.0f * cosf(0.0805536583f * ct);
         float draw_y = (float) hand_y + 5.0f * sinf(0.116355285f * ct);
         CRect_i_ source(0x160, 0xD6, 0x20, 0x20);
-        DrawMenu2DSprite(SaveBoard, CRect_i_((int) (5.0f + draw_x), (int) (3.0f + draw_y), size.width, size.height),
+        DrawMenu2DSprite(SaveBoard, CRect_i_((int) (5.0f + draw_x), (int) (3.0f + draw_y), hand.width, hand.height),
                          source, 0, 0, 0, alpha);
-        DrawMenu2DSprite(SaveBoard, CRect_i_((int) draw_x, (int) draw_y, size.width, size.height), source, alpha);
+        DrawMenu2DSprite(SaveBoard, CRect_i_((int) draw_x, (int) draw_y, hand.width, hand.height), source, alpha);
         ct++;
         if (!((float) ct < 105299.0f)) {
             ct = 0;
         }
     }
-    if (SaveMenu.key_no != 0 && SaveMenu.key_no != 3 && SaveMenu.key_no != 1) {
-        SaveMenu.unk_28 = 0;
-    } else {
-        SaveMenu.unk_28++;
+    switch (SaveMenu.key_no) {
+        case 1:
+        case 3:
+        case 0:
+            SaveMenu.unk_28++;
+            break;
+        default:
+            SaveMenu.unk_28 = 0;
+            break;
     }
     switch (SaveMenu.unk_0) {
         case 0:
@@ -3611,10 +3628,6 @@ void DrawMenuSave(char *) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuSave__FPc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/memcard", @2730);
 
 static int SaveMenuKeyFadeIn() {
     if (SaveMenu.unk_28 > 14) {

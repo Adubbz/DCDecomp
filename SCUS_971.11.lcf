@@ -679,6 +679,7 @@ SECTIONS
         memcard.cpp.o (.memcard-c2252) // 0x00293f20 @2252
         memcard.cpp.o (.memcard-c2391) // 0x00293f50 @2391
         main.data.memcard-a-293F60.s.o (.data) // 0x00293f60
+        memcard.cpp.o (.memcard-c2683) // 0x00293fd0 @2683
         menu_save.cpp.o (.data) // 0x00293fe0
         main.data.menu_save-a.s.o (.data) // 0x00294044
         menu_dungeon.cpp.o (.data)   // 0x00294150
@@ -866,7 +867,7 @@ SECTIONS
 		editmenu.cpp.o (.sdata)        // 0x002a2100
 		memcard.cpp.o (.memcard-c1322) // 0x002a2140 @1322
 		memcard.cpp.o (.sdata) // 0x002a2148
-		main.sdata.memcard-a.s.o (.sdata) // 0x002a2158
+		main.sdata.memcard-a.s.o (.sdata) // 0x002a2160
 		menu_save.cpp.o (.sdata) // 0x002a2168 @3260, @3261__2
 		main.sdata.memcard-a-2A2170.s.o (.sdata) // 0x002a2170
 		menu_dungeon.cpp.o (.sdata) // 0x002a2190 @1730, @1732
@@ -979,7 +980,7 @@ SECTIONS
 		. = ALIGN(4);
 		memcard.cpp.o (.sbss) // 0x002a2e90
 		. = ALIGN(4);
-		main.sbss.memcard-a.s.o (.sbss) // 0x002a2f18
+		main.sbss.memcard-a.s.o (.sbss) // 0x002a2f20
 		menu_dungeon.cpp.o (.menuerrorcnt) // 0x002a2f50
 		main.sbss.denter-gap.s.o (.sbss) // 0x002a2f54
 		menu_dungeon.cpp.o (.denterstatus) // 0x002a2f5c
