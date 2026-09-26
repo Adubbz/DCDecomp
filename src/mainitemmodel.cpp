@@ -1,7 +1,6 @@
 #include "mainitemmodel.hpp"
 #include <cstdio>
-#pragma argument_flag_ones 0
-#ifdef NON_MATCHING // draft includes
+#pragma argument_flag_ones 58
 #include <cstring>
 #include <libvu0.h>
 #include "dataalloc.hpp"
@@ -16,7 +15,6 @@
 #include "snd.hpp"
 #include "itemdata.hpp"
 #include "dun/gameloop.hpp"
-#endif
 
 int CMainItemModel::GetFreeCashNo(void) {
     for (int i = 0; i < 6; i++) {
@@ -34,7 +32,6 @@ int CMainItemModel::GetFreeModelNo(void) {
     }
     return -1;
 }
-#ifdef NON_MATCHING
 extern CDataAlloc2<1> BtItemCashArea[6];
 
 int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data,
@@ -63,24 +60,22 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
     model_cash[model_no] = slot;
     return model_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetCashModel__14CMainItemModelFiPUiPUii);
-#endif
-#ifdef NON_MATCHING
+/** The message logged when a cached model's last user lets it go. */
+extern char MainItemRemoveMessage[];
+
+/** The message logged when a model is put in a hand. */
+extern char MainItemHandMessage[];
+
 void CMainItemModel::DeleteModel(int index) {
     cash_lock[model_cash[index]]--;
     if (cash_lock[model_cash[index]] <= 0) {
         cash[model_cash[index]] = NULL;
         cash_lock[model_cash[index]] = 0;
-        printf("remove !!\n");
+        printf(MainItemRemoveMessage);
     }
     model[index] = -1;
     model_cash[index] = -1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", DeleteModel__14CMainItemModelFi);
-#endif
-#ifdef NON_MATCHING
 int CMainItemModel::SetHandModel(int source) {
     int index = GetFreeModelNo();
 
@@ -94,12 +89,9 @@ int CMainItemModel::SetHandModel(int source) {
     frame[index].SetRotation(rot, 0.0f, 0.0f);
     model_cash[index] = model_cash[source];
     cash_lock[model_cash[source]]++;
-    printf("code = %d, lock = %d\n", index, cash_lock[model_cash[source]]);
+    printf(MainItemHandMessage, index, cash_lock[model_cash[source]]);
     return index;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", SetHandModel__14CMainItemModelFi);
-#endif
 void CMainItemModel::AllReleasItem(void) {
     for (int i = 0; i < 16; i++) {
         switch (model[i]) {
@@ -124,7 +116,6 @@ int CMainItemModel::SetThrowModel(int model_index, float *position, float *headi
     cash_lock[model_cash[model_index]]++;
     return slot;
 }
-#ifdef NON_MATCHING
 void CMainItemModel::Draw(void) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
@@ -175,10 +166,6 @@ void CMainItemModel::Draw(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Draw__14CMainItemModelFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @796__2);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
 #ifdef NON_MATCHING
@@ -283,7 +270,6 @@ void CMainItemModel::Initialize(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Initialize__14CMainItemModelFv);
 #endif
-#ifdef NON_MATCHING
 extern ITEM_DATA ITEM_LIST[175];
 
 int CActiveItemPack::CheckStatusType(void) {
@@ -325,6 +311,3 @@ int CActiveItemPack::CheckStatusType(void) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", CheckStatusType__15CActiveItemPackFv);
-#endif

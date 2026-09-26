@@ -321,7 +321,6 @@ EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
     return GetEditAtraData(ground, number + 40);
 }
 
-#ifdef NON_MATCHING
 void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
                unsigned char blue) {
     sceVu0IVECTOR screen;
@@ -383,9 +382,6 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, (unsigned char) (int) level);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", LensFlare__FP8CTexturePfUcUcUc);
-#endif
 /**
  * Starts the sound manager once, and loads its effect table.
  *
@@ -1575,8 +1571,9 @@ INCLUDE_RODATA("asm/nonmatchings/snd", @800);
  */
 #ifdef NON_MATCHING
 void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
-    u8 *clear = (u8 *) info;
-
+    u8 *clear;
+    u8 *data = (u8 *) script;
+    clear = (u8 *) info;
     memset(info, 0, sizeof(SND_INFO));
     for (u_int i = 0; i < sizeof(SND_INFO); i++) {
         *clear++ = 0;
@@ -1585,7 +1582,7 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
     se_list = 0;
     SoundInfo = info;
     CScriptInterpreter interpreter;
-    interpreter.SetScript(script, script_size);
+    interpreter.SetScript((char *) data, script_size);
     interpreter.SetTAG((TAG_PARAM *) Command__3, 2);
     for (;;) {
         int tag = interpreter.GetNextTAG();

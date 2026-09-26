@@ -65,7 +65,6 @@ extern CCamera MenuCamera;
 /** Frame texture the main menu draws its icons in. */
 extern CTexture *StayTex;
 
-#ifdef NON_MATCHING // draft declarations
 #include "sysmes.hpp"
 
 extern u8 MesWinTexBuff_01[0x100];
@@ -74,7 +73,6 @@ extern u8 MesWinTexBuff_11[0x100];
 extern u8 MesWinTexBuff_12[0x100];
 extern int MenuShadowReadBlock;
 extern int asort_top_type;
-#endif
 
 /**
  * Draws the mark over an item that cannot be set.
@@ -1047,7 +1045,6 @@ void SetMenuTrushMark(ITEM_PACK *items) {
 void DeleteMenuTrushMark() {
     memset(MenuTrushMark, 0, sizeof(MenuTrushMark));
 }
-#ifdef NON_MATCHING
 void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode, int page) {
     PerBoardStatusPt = status;
     PerBoardPt = board;
@@ -1095,10 +1092,6 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", InitPersonalBoardMode__FP11CUserStatusP14PERSONAL_BOARDii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_draw", @1073);
 
 int BoardModeChangeKey() {
     int board_mode = PerBoardPt->page;
@@ -1172,7 +1165,6 @@ void PersonalBoardLimmitCheck() {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardLimmitCheck__Fv);
 #endif
-#ifdef NON_MATCHING
 int PersonalBoardKeySub() {
     int left = 0;
     int area = PerBoardPt->cursor_area;
@@ -1245,9 +1237,6 @@ int PersonalBoardKeySub() {
     }
     return left;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardKeySub__Fv);
-#endif
 
 int PersonalBoardKey() {
     BoardModeChangeKey();
@@ -1282,7 +1271,6 @@ int PersonalBoardItemPush(IHAVEITEM *item, int board_pos) {
     return enabled;
 }
 
-#ifdef NON_MATCHING
 int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     int result = 0;
     int kind = WhatIsKindofItem(have->item_no);
@@ -1364,9 +1352,6 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardWeaponPush__FP9IHAVEITEMi);
-#endif
 
 /**
  * Swaps an attachment between the held item and the personal board.
@@ -1960,7 +1945,6 @@ void CommonTrushDraw(int x, int y, int alpha) {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_draw", CommonTrushDraw__Fiii);
 #endif
-#ifdef NON_MATCHING
 int IsEnableTrushThrow(int item_no) {
     int enable = 0;
 
@@ -2014,9 +1998,6 @@ int IsEnableTrushThrow(int item_no) {
     }
     return enable;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", IsEnableTrushThrow__Fi);
-#endif
 
 void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
     int top = y + 2;
@@ -2059,7 +2040,6 @@ s16 SearchBoardNowPosItemExist(int page, int cell) {
     }
     return item_no;
 }
-#ifdef NON_MATCHING
 int GetBoardSpace(int item_no, int *page) {
     int space = -1;
 
@@ -2116,9 +2096,6 @@ int GetBoardSpace(int item_no, int *page) {
     }
     return space;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetBoardSpace__FiPi);
-#endif
 
 void SwapItem(ITEM_PACK *items, int first_pos, int second_pos) {
     s16 item = items->item[first_pos];
@@ -2431,7 +2408,6 @@ void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
         }
     }
 }
-#ifdef NON_MATCHING
 int GetNowModeMaxNum(int page, int *over) {
     CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
     int count = 0;
@@ -2487,9 +2463,6 @@ int GetNowModeMaxNum(int page, int *over) {
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", GetNowModeMaxNum__FiPi);
-#endif
 
 void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
     WEAPON_DATA *data;

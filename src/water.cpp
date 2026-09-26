@@ -109,9 +109,6 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
-#ifdef NON_MATCHING
-/* Retail's function returns the packet size from CVisualVu1::DrawVu1; water.hpp still declares it void. */
-#define DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1 DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1_int
 extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
     if (water->CheckClip() != 0) {
@@ -143,11 +140,6 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     sceVif1PkCloseDirectCode(draw_packet);
     return size;
 }
-#undef DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1
-#else
-INCLUDE_ASM("asm/nonmatchings/water", DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1);
-#endif
-#ifdef NON_MATCHING
 int CWater::CheckClip(void) {
     sceVu0FVECTOR box[2];
     sceVu0FVECTOR corner[4];
@@ -159,9 +151,6 @@ int CWater::CheckClip(void) {
     VectorMaxMin(box[0], box[1], corner[0], corner[1], corner[2], corner[3]);
     return MGClipBox((CBoxVu0 *) box);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", CheckClip__6CWaterFv);
-#endif
 void CWater::Hamon(void) {
     int i;
     int j;
@@ -248,7 +237,6 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     CreateVUData(packet[2], &info);
     unk_0A4 = 1;
 }
-#ifdef NON_MATCHING
 CWater::CWater(void) {
     rows = 0;
     columns = 0;
@@ -259,11 +247,8 @@ CWater::CWater(void) {
     color[1] = 0x80;
     color[2] = 0x80;
     color[3] = 0x80;
-    wave_speed = 0.96f;
-    damping = 0.01f;
+    wave_speed = 0.1f;
+    damping = 0.015f;
     unk_09C = 0.0f;
     unk_0A0 = 0.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", __ct__6CWaterFv);
-#endif

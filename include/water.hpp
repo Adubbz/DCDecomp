@@ -78,7 +78,7 @@ public:
      * @address 0x160F20
      * @size 0x1DC
      */
-    void DrawVu1(RenderInfo *info, sceVif1Packet *packet, RenderInfo *parent_info);
+    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, RenderInfo *parent_info);
 
     /**
      * Clips the surface against the view using the world-space box its four
@@ -145,5 +145,5 @@ STATIC_ASSERT(sizeof(CWater) == 0x320);
  * back-reference that MWCC 2.3.3 does not emit, so the member function above
  * cannot carry it. Declared here as it stands instead, for the callers that
  * have to reach it. */
-extern "C" void DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *render_info,
-                                                                 sceVif1Packet *packet, void *unk);
+extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *render_info,
+                                                                sceVif1Packet *packet, void *unk);

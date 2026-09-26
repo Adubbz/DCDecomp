@@ -194,7 +194,11 @@ carve_part(main.sdata.part2b.s
            main.sdata.snd-tail.s=2A1EF0-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F78
-           main.sdata.part2f.s=2A1F90-2A20C8
+           main.sdata.part2f.s=2A1F98-2A1FE8
+           main.sdata.part2f-2A1FF0.s=2A1FF0-2A2048
+           main.sdata.part2f-2A2050.s=2A2058-2A2080
+           main.sdata.part2f-2A2050-2A2088.s=2A2088-2A20B0
+           main.sdata.part2f-2A2050-2A20B8.s=2A20B8-2A20C0
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
            main.sdata.editmenu-after.s=2A2120-2A2150
            main.sdata.memcard-a.s=2A2158-2A21A0
@@ -247,14 +251,17 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4h.s=2A2730-2A2740
            main.sbss.part4c.s=2A27AC-2A294C
            main.sbss.part4d.s=2A2958-2A2994
-           main.sbss.part4g.s=2A29A4-2A29DC
+           main.sbss.part4g.s=2A29A4-2A29AC
+           main.sbss.part4g-2A29B0.s=2A29D4-2A29DC
            main.sbss.part4e.s=2A2A54-2A2A64
            main.sbss.part4f.s=2A2A80-2A2BF0)
 # CheckDmg owns its local static effect index and initialization guard, and
 # runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s
-           main.sbss.part5.s=2A2BF8-2A2C68
-           main.sbss.part5c.s=2A2C74-2A2E84
+           main.sbss.part5.s=2A2BF8-2A2C48
+           main.sbss.part5-2A2C4C.s=2A2C4C-2A2C68
+           main.sbss.part5c.s=2A2C74-2A2DA4
+           main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
            main.sbss.memcard-a.s=2A2F08-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
            main.sbss.denter-tail.s=2A2F68-2A2FD0)
@@ -263,7 +270,8 @@ carve_part(main.sbss.part5.s
 # shop.cpp supplies the start of its own run between part6f and part6k, and
 # battlemenu.cpp supplies the travel page's and DrawWepHole's templates at the end of its run.
 carve_part(main.data.part6.s
-           main.data.part6.s=27E790-27EB30
+           main.data.part6.s=27E790-27EAD0
+           main.data.part6-27EAE0.s=27EB00-27EB30
            main.data.part6f.s=291850-291B80
            main.data.part6k.s=292704-292750
            main.data.shop-local.s=292770-2927A0
@@ -271,9 +279,20 @@ carve_part(main.data.part6.s
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292830
            main.data.shop-ticket.s=292840-292850
-           main.data.shop-filenames-after.s=2929B0-2936E0
-           main.data.shop-ticket-after.s=293700-293860
-           main.data.battlemenu-tail.s=293960-293C60
+           main.data.shop-filenames-after.s=2929B0-292EB0
+           main.data.shop-filenames-after-292EE0.s=292F20-292F60
+           main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293030
+           main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
+           main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293160
+           main.data.shop-filenames-after-292EE0-292FA0-293170.s=2931E0-293308
+           main.data.shop-filenames-after-292EE0-292FA0-293358.s=293370-293470
+           main.data.shop-filenames-after-292EE0-2934D0.s=2934D0-293560
+           main.data.shop-filenames-after-292EE0-2934D0-293570.s=293580-293590
+           main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s=2935A0-2936E0
+           main.data.shop-ticket-after.s=293700-293790
+           main.data.battlemenu-tail.s=293960-293A80
+           main.data.battlemenu-tail-293AB0.s=293AB0-293BF0
+           main.data.battlemenu-tail-293C20.s=293C20-293C60
            main.data.part6h.s=293C80-293CA0
            main.data.editmenu-after.s=293CD0-293D50
            main.data.memcard-a.s=293EBC-293FE0
@@ -282,20 +301,22 @@ carve_part(main.data.part6.s
            main.data.part6j.s=295644-2957F0
            main.data.menu_manual-after.s=295800-295810
            main.data.part6d.s=295830-295840
-           main.data.part6b.s=2959A0-295A10
-           main.data.battle_globals-a.s=295A70-295AA0
+           main.data.part6b.s=2959A0-2959C0
+           main.data.part6b-2959D0.s=2959D0-295A10
            main.data.battle_globals-gap.s=295B18-295B50
-           main.data.battle_globals-b.s=295B50-295FF0)
+           main.data.battle_globals-b.s=295EF0-295FF0)
 carve_part(main.data.part4.s
-           main.data.part4.s=25DF70-266810
+           main.data.part4.s=25DFB0-266810
            main.data.part4b.s=2668C0-266B70
            main.data.part4m.s=266B90-266ED0
            main.data.part4c.s=266FB0-269320
-           main.data.part4h.s=269400-269480
-           main.data.part4j.s=269494-269930
-           main.data.part4i.s=269A30-269AD0
-           main.data.part4f.s=269B60-269BA0
-           main.data.part4g.s=26A5E8-26AE60
+           main.data.part4h.s=269400-269460
+           main.data.part4j.s=269494-269498
+           main.data.part4j-2694A8.s=269880-269930
+           main.data.part4g.s=26A5E8-26A690
+           main.data.part4g-26A6A0.s=26A6A0-26A7B0
+           main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
+           main.data.part4g-26AE40.s=26AE40-26AE60
            main.data.part4k.s=26AE80-26AE90
            main.data.fishing-a.s=26AFE0-26B0C0
            main.data.motionmodel-a.s=26B0E0-26B1B0
@@ -329,6 +350,10 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 # 0x2A1168-0x2A11E0, the last of main.rdata.part4.s.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.rdata.part4.s)
+
+# water.cpp now emits CVisualPolyVu1's vtable, all of main.rdata.part6.s.
+list(REMOVE_ITEM STATIC_SECTION_SOURCES
+     ${PARTS_DIR}/main.rdata.part6.s)
 
 # fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
 list(REMOVE_ITEM STATIC_SECTION_SOURCES

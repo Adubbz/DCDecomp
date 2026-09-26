@@ -32,7 +32,6 @@
 #include "texture.hpp"
 #include "water.hpp"
 
-#ifdef NON_MATCHING // draft includes
 #include <cmath>
 
 #include "battlemenu.hpp"
@@ -49,7 +48,6 @@
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "sysmes.hpp"
-#endif
 
 /* The arenas the interior carves the read buffer into. */
 extern CDataAlloc2<1> EdWorkBuffer;
@@ -92,7 +90,6 @@ extern float setTexAnimCntf;
 /* Map jump the player arrives through when entering an interior. */
 extern int EdInteriorJumpID;
 
-#ifdef NON_MATCHING // draft declarations
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
     u8 unk_000[0x60];
@@ -116,27 +113,6 @@ extern int MenuMapJumpMode;
 extern CEffectGroup EdEffectGroup;
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
-static int GameMode;
-static float NowTime;
-static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
-static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
-static CCamera *NowCamera;
-static int loop_counter;
-static int key_counter;
-static int goto_menu;
-static int goto_return_menu;
-static int door_open_cnt;
-static int camera_dist_mode;
-static sceVu0FVECTOR fix_chara_pos;
-static sceVu0FVECTOR fix_chara_rot;
-static int fix_camera;
-static int camera_num;
-static INTERIOR_CAMERA *active_camera;
-static int camera_change_count;
-static int simple_event;
-static CCharacter MotionParts[4];
-static CTextureAnime TexAnime;
-static CTexAnimeData TexAnimeData[64];
 
 static void LoadScript();
 static void LoadInfo(char *script, int size);
@@ -177,6 +153,32 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
 struct EPARTS_FUNC_RECORD {
     int words[0x30];
 };
+/** Whether the camera stays at the interior's fixed camera markers. */
+static int fix_camera = 1;
+
+/** Which of the three follow distances the camera is at. */
+static int camera_dist_mode = 1;
+
+#ifdef NON_MATCHING
+static int GameMode;
+static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
+static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
+static float NowTime;
+static CCamera *NowCamera;
+static int loop_counter;
+static int key_counter;
+static int goto_menu;
+static int goto_return_menu;
+static int door_open_cnt;
+static sceVu0FVECTOR fix_chara_pos;
+static sceVu0FVECTOR fix_chara_rot;
+static int camera_num;
+static INTERIOR_CAMERA *active_camera;
+static int camera_change_count;
+static int simple_event;
+static CCharacter MotionParts[4];
+static CTextureAnime TexAnime;
+static CTexAnimeData TexAnimeData[64];
 #endif
 
 /**
@@ -1151,9 +1153,8 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCharacter__Fv);
  * @size 0x164
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void MoveCamera(CCameraFollow *camera) {
-    static float camera_distance[3] = {50.0f, 80.0f, 110.0f};
+    static float camera_distance[3] = {20.0f, 60.0f, 100.0f};
 
     float horizontal = GamePad.GetRXf();
     camera->AddHeight(-GamePad.GetRYf());
@@ -1162,10 +1163,10 @@ static void MoveCamera(CCameraFollow *camera) {
     }
     camera->AddAngle(0.04f * -horizontal);
     if (GamePad.On(8) != 0) {
-        camera->AddAngle(-0.0174533f);
+        camera->AddAngle(-0.017453292f);
     }
     if (GamePad.On(4) != 0) {
-        camera->AddAngle(0.0174533f);
+        camera->AddAngle(0.017453292f);
     }
     camera->SetDistance(camera_distance[camera_dist_mode]);
     if (GamePad.Down(0x10) != 0) {
@@ -1175,9 +1176,6 @@ static void MoveCamera(CCameraFollow *camera) {
         camera_dist_mode = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", MoveCamera__FP13CCameraFollow__2);
-#endif
 /**
  * Finds the map jump the player is standing on.
  *
@@ -1632,7 +1630,6 @@ INCLUDE_RODATA("asm/nonmatchings/edit_in", @1537);
  * @address 0x19F6F0
  * @size 0x238
  */
-#ifdef NON_MATCHING
 int LoadPTS(CMapParts *parts, u_int *archive) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
     u_int *names[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -1676,7 +1673,7 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     } else {
         parts->unk_0DC = NULL;
     }
-    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     position[0] = header->position[0];
     position[1] = header->position[1];
     position[2] = header->position[2];
@@ -1684,9 +1681,6 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     parts->SetRotation(header->rotation[0], header->rotation[1], header->rotation[2]);
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
-#endif
 /**
  * Collects the function points one interior part defines.
  *
@@ -1694,7 +1688,6 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", LoadPTS__FP9CMapPartsPUi);
  * @address 0x19F930
  * @size 0x74
  */
-#ifdef NON_MATCHING
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
     int i;
@@ -1708,9 +1701,6 @@ int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     }
     return header->func_count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", GetFuncPoint__FiPUiP16EPARTS_FUNC_DATA);
-#endif
 /**
  * Uploads the interior's texture-animation state to the graphics synthesizer.
  *
@@ -1818,7 +1808,6 @@ static void CommandAMBIENT(void **arguments) {
  * @size 0x128
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandLIGHT_C(void **arguments) {
     sceVu0FVECTOR direction;
     int light = *(int *) arguments[6];
@@ -1838,9 +1827,6 @@ static void CommandLIGHT_C(void **arguments) {
     EdInInfo->light_colour[light][2] = *(float *) arguments[5];
     EdInInfo->light_colour[light][3] = 128.0f;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandLIGHT_C__FPPv__2);
-#endif
 /**
  * Sets the interior's fog distances and colour.
  *
@@ -1929,7 +1915,6 @@ static void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandFIRE(void **arguments) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
@@ -1944,9 +1929,6 @@ static void CommandFIRE(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_FIRE, (char *) arguments[0], position, scale, rotation);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
-#endif
 /**
  * Places a flame effect in the interior.
  *
@@ -1955,7 +1937,6 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFIRE__FPPv__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandFLAME(void **arguments) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
@@ -1970,9 +1951,6 @@ static void CommandFLAME(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_FLAME, (char *) arguments[0], position, scale, rotation);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
-#endif
 /**
  * Places a glow effect in the interior.
  *
@@ -1981,7 +1959,6 @@ INCLUDE_ASM("asm/nonmatchings/edit_in", CommandFLAME__FPPv__2);
  * @size 0x94
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandBRIGHT(void **arguments) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
@@ -1996,9 +1973,6 @@ static void CommandBRIGHT(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_BRIGHT, (char *) arguments[0], position, scale, rotation);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandBRIGHT__FPPv__2);
-#endif
 /**
  * Turns the interior's debug drawing on.
  *
@@ -2083,7 +2057,6 @@ static void CommandWATER_SURFACE(void **arguments) {
  * @size 0x9C
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef NON_MATCHING
 static void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
 
@@ -2102,6 +2075,3 @@ static void CommandWATER_SHAKE(void **arguments) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/edit_in", CommandWATER_SHAKE__FPPv__2);
-#endif

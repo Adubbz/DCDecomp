@@ -288,7 +288,6 @@ int EditInit(void *param);
 int EditLoop(void);
 void EditLoad(void);
 void EditPartsObjectOnOff();
-#ifdef NON_MATCHING
 int EditInLoop(void);
 void EditInInit(float time, char *name);
 int EdMenuMode(void);
@@ -350,7 +349,6 @@ struct ED_GRD_DATA {
 };
 
 /* The names of the interiors the debug menu offers. */
-static char *InteriorList[64];
 extern CMapParts *OldFocusParts;
 extern int OldSelectAngle;
 extern CCameraFollow EditCamera;
@@ -365,9 +363,7 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *size, int cou
 void FishLineDraw(int kind);
 void FishingDrawFish(void);
 /* Mode the loop returns to once the debug menu closes. */
-static int old_mode;
 /* Buffer the parts archive is read into. */
-static u_int *parts_read_buffer;
 /**
  * A part already built while the map loads, so later copies can share it.
  */
@@ -376,6 +372,10 @@ struct LOADED_PARTS {
     CMapParts *parts; /**< Part built from that name. */
 };
 void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc);
+#ifdef NON_MATCHING
+static char *InteriorList[64];
+static int old_mode;
+static u_int *parts_read_buffer;
 #endif
 
 /**
@@ -2737,7 +2737,6 @@ void EditMode() {
  * @address 0x17DEA0
  * @size 0x7A4
  */
-#ifdef NON_MATCHING
 void MainEditMode() {
     if (EdEventInfo.lighting_override != 0) {
         MGSetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
@@ -2904,9 +2903,6 @@ void MainEditMode() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", MainEditMode__Fv);
-#endif
 /**
  * Steps the player while a door plays its motion, holding them and the camera
  * at the place the door fixed.
@@ -3350,52 +3346,6 @@ void VillagerCollision() {
         }
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2737);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2738);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2739);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2740);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2741);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2742);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2747);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2748);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2749);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2750);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2751);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2752);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2753);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2754);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2755);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2756);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2803);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2804);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2805);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2806);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2807);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2808);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2809);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2810);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2811);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2812);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2813);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2814);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2815);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2816);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2817);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2818);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2819);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2820);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2821);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2822);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2850);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2851);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2852);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2853);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @2999);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3000);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3001);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3002);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3003);
-INCLUDE_RODATA("asm/nonmatchings/editloop", @3004);
 /**
  * Says whether the ground under the editor's cursor can be walked on, and
  * gives back the place on it the player would stand.
@@ -3478,7 +3428,6 @@ int CheckEditToWalk(float *position) {
  * @address 0x1800C0
  * @size 0xB40
  */
-#ifdef NON_MATCHING
 void MoveEditCursor() {
     float pos[4];
     float camera_distance[3] = {1000.0f, 2000.0f, 4000.0f};
@@ -3722,9 +3671,6 @@ void MoveEditCursor() {
         EdEditMoveHelpMes();
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", MoveEditCursor__Fv);
-#endif
 /**
  * Enters the editor map's textures once they have been read.
  *
@@ -3732,7 +3678,6 @@ INCLUDE_ASM("asm/nonmatchings/editloop", MoveEditCursor__Fv);
  * @address 0x180C00
  * @size 0x878
  */
-#ifdef NON_MATCHING
 int LoadTexture() {
     int entered;
     int image;
@@ -3891,9 +3836,16 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop", LoadTexture__Fv);
-#endif
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2850);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2851);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2852);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2853);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @2999);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3000);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3001);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3002);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3003);
+INCLUDE_RODATA("asm/nonmatchings/editloop", @3004);
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.

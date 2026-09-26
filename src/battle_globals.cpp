@@ -104,25 +104,6 @@ extern OPENING_BOOK OpenBook;
 /** The name currently being edited. */
 extern "C" s16 *CharaName;
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @348__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1505);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
-
 /**
  * Gives every party member their default name.
  *
@@ -142,7 +123,6 @@ void GlobalNameInit(void) {
  * @address 0x2384A0
  * @size 0x190
  */
-#ifdef NON_MATCHING
 void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     StartReadBG();
     if (buffer == NULL) {
@@ -179,9 +159,20 @@ void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     NameDefaultSet(NameSelect.chara_no);
     NameSelect.name_pos = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", InitNameRegist__FiiP1);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @481__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1349__3);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1350__5);
 /**
  * Gives the name-entry screen's textures back and closes it.
  *
@@ -230,7 +221,6 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
  * @address 0x238760
  * @size 0x118
  */
-#ifdef NON_MATCHING
 void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
     int draw_x = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
@@ -244,9 +234,6 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
         draw_x += 22;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", DrawCharaName__Fiiiii);
-#endif
 /**
  * Draws the frame around the name being entered, bobbing it with a sine.
  *
@@ -523,7 +510,6 @@ static int NameCompare(short *first, short *second) {
  * @address 0x239A40
  * @size 0x160
  */
-#ifdef NON_MATCHING
 int CheckName() {
     s16 blank_names[2][10] = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -551,9 +537,6 @@ int CheckName() {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", CheckName__Fv);
-#endif
 /**
  * Draws the name-entry screen.
  *
@@ -840,7 +823,6 @@ INCLUDE_ASM("asm/nonmatchings/battle_globals", NameEnterKey__Fv);
  * @address 0x23C770
  * @size 0x110
  */
-#ifdef NON_MATCHING
 void NameDefaultSet(int chara_no) {
     int language = GetMenuLangFlag();
     s16 default_names[7][6][11] = {
@@ -863,9 +845,6 @@ void NameDefaultSet(int chara_no) {
         name[length] = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", NameDefaultSet__Fi);
-#endif
 /**
  * Gives the kerning between two name characters.
  *
@@ -1002,7 +981,6 @@ int GetMsgLengthCharaName(int chara_no) {
  * @address 0x23CE60
  * @size 0xB0
  */
-#ifdef NON_MATCHING
 void InitOpeningBook(u_long128 *buffer, int *blocks) {
     u_long128 *load_buffer = buffer;
     if (load_buffer == NULL) {
@@ -1019,9 +997,10 @@ void InitOpeningBook(u_long128 *buffer, int *blocks) {
     OpenBook.fade = 128;
     OpenBook.unk_00C = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battle_globals", InitOpeningBook__FP1Pi);
-#endif
+
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1511__4);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1558__2);
+INCLUDE_RODATA("asm/nonmatchings/battle_globals", @1559__3);
 /**
  * Turns the storybook's pages with the pad.
  *

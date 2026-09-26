@@ -7,12 +7,10 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mglib.hpp"
-#ifdef NON_MATCHING // draft includes
 #include <cstring>
 #include "bound.hpp"
 #include "wind.hpp"
 #include "texture.hpp"
-#endif
 
 /**
  * Draws the simulated cloth through a temporary world-space frame.
@@ -570,7 +568,6 @@ INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP14CDataAlloc2_1_);
  * @address 0x13D050
  * @size 0x200
  */
-#ifdef NON_MATCHING
 void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     int *strip;
 
@@ -609,6 +606,3 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     }
     Initialize(alloc);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", Initialize__6CClothFP10MDT_HEADERP14CDataAlloc2_1_);
-#endif

@@ -22,7 +22,6 @@ int GetWeaponElementAttr(int element);
  * @address 0x1ABC40
  * @size 0xCC
  */
-#ifdef NON_MATCHING
 #include "character.hpp"
 
 /* Draft declarations for this file. CSHOT_EFFECT's unnamed block holds the eight effect models 0x11C0 bytes into the object. */
@@ -47,10 +46,6 @@ void CSHOT::draw() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", draw__5CSHOTFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_effect", @625__2);
 /**
  * Advances the twelve projectiles of one shot.
  *
@@ -96,7 +91,6 @@ void CSHOT::step() {
 INCLUDE_ASM("asm/nonmatchings/shot_effect", step__5CSHOTFv);
 #endif
 
-#ifdef NON_MATCHING
 void CSHOT_EFFECT::Draw() {
     if (effect_data == NULL) {
         return;
@@ -129,9 +123,6 @@ void CSHOT_EFFECT::Draw() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Draw__12CSHOT_EFFECTFv);
-#endif
 
 #ifdef NON_MATCHING
 void CSHOT_EFFECT::Step() {
@@ -193,7 +184,6 @@ void CSHOT_EFFECT::Step() {
 INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__12CSHOT_EFFECTFv);
 #endif
 
-#ifdef NON_MATCHING
 void CSHOT_EFFECT::EndEffect() {
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] != 0 && (phase[slot] == 1 || phase[slot] == 0)) {
@@ -208,9 +198,6 @@ void CSHOT_EFFECT::EndEffect() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", EndEffect__12CSHOT_EFFECTFv);
-#endif
 
 void CSHOT_EFFECT::OffEffect(s32 slot) {
     if (slot != -1) {

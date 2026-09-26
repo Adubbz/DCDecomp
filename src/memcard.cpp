@@ -1245,9 +1245,9 @@ static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha
     CTexture *texture = RetCTexAtora(tip_no, u, v);
     CRect_i_ source(u, v, 0x24, 0x24);
     int red, green, blue;
-
-    red = green = blue = 0x80;
+    blue = green = red = 0x80;
     if (dark != 0) {
+        red = 0x80;
         green = 0x44;
         blue = 0;
     }

@@ -1370,7 +1370,6 @@ CCharacter &CCharacter::operator=(const CCharacter &src) {
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
 #endif
-#ifdef NON_MATCHING
 
 CObject &CObject::operator=(const CObject &source) {
     // The three words after the mass are alignment padding and are not carried over.
@@ -1394,9 +1393,6 @@ CObject &CObject::operator=(const CObject &source) {
     *(CVector3_f_ *) scale = *(const CVector3_f_ *) source.scale;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__7CObjectFRC7CObject);
-#endif
 /* CWater's members as its copy assignment reaches them. */
 struct DraftWaterLayout {
     s32 rows;
@@ -1437,7 +1433,6 @@ CVisualPolyVu1 &CVisualPolyVu1::operator=(const CVisualPolyVu1 &src) {
  * @address 0x143390
  * @size 0x5C
  */
-#ifdef NON_MATCHING
 /* The full layout: CVisual's words, then the vector-unit block and its size. */
 struct DraftVisualVu1Layout {
     CVisual base;
@@ -1456,9 +1451,6 @@ CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
     dst_layout->vu_size = src_layout->vu_size;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__10CVisualVu1FRC10CVisualVu1);
-#endif
 /**
  * Copies one visual over another, field by field.
  *

@@ -204,7 +204,6 @@ void getCharacterVector(float *vector, float pitch);
  */
 int createAttachVolume(int item_no, int dungeon);
 
-#ifdef NON_MATCHING
 void selectChrUnit(int chara_no, int reload) {
     char name[64];
     char name1[64];
@@ -260,16 +259,6 @@ void selectChrUnit(int chara_no, int reload) {
         user->hp[cur_chara] = 1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", selectChrUnit__Fii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @635__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @636);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @637);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @638);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @639__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @640__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @641);
 /**
  * Marks the active item icons as loaded by the battle item-list flow.
  */
@@ -789,6 +778,10 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @795__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @796);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
 INCLUDE_RODATA("asm/nonmatchings/btitem", @902);
+
+/** The effect configuration file inside an effect pack, shared by the pickup and escape presentations. */
+extern char BtEffectInfoFile[];
+
 /**
  * Runs the Atla pickup presentation and reports when it ends.
  *
@@ -927,7 +920,6 @@ void BtMiniChrSelect_Init(int type) {
  * @address 0x1D32D0
  * @size 0x128
  */
-#ifdef NON_MATCHING
 int BtMiniChrSelect_Loop() {
     static int frameWait;
     int done = 0;
@@ -966,9 +958,6 @@ int BtMiniChrSelect_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtMiniChrSelect_Loop__Fv);
-#endif
 /**
  * Opens the small item-select window.
  *
@@ -1077,7 +1066,6 @@ void BtGetGateKey_Init(int item_no) {
  * @address 0x1D36A0
  * @size 0x3D0
  */
-#ifdef NON_MATCHING
 int BtGetGateKey_Loop() {
     sceVu0FVECTOR eye;
     sceVu0FVECTOR ref;
@@ -1155,10 +1143,6 @@ int BtGetGateKey_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtGetGateKey_Loop__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btitem", @969);
 
 void BtGetAttach_Init(int dungeon, int item_no) {
     int volume = 0;
@@ -1399,7 +1383,6 @@ INCLUDE_RODATA("asm/nonmatchings/btitem", @735__3);
  * @address 0x1D3D40
  * @size 0x18C
  */
-#ifdef NON_MATCHING
 int BtEscape_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
@@ -1408,7 +1391,7 @@ int BtEscape_Loop() {
     switch (escape_sled) {
         case 0:
             if (SndSPSeSyncBG() == 0 && ReadBGSync() == 0) {
-                EscapeEffect.LoadPackData2((u_int *) escape_chr, "info.cfg", &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
+                EscapeEffect.LoadPackData2((u_int *) escape_chr, BtEffectInfoFile, &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
                 EscapeEffect.SetMotion(0, 6);
                 EscapeEffect.motion_type.state.time = 10.0f;
                 EscapeFlag = 1;
@@ -1432,9 +1415,6 @@ int BtEscape_Loop() {
     }
     return done;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", BtEscape_Loop__Fv);
-#endif
 /**
  * Builds the models of the items in the active slots.
  *
@@ -1513,7 +1493,6 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
     sceVu0ApplyMatrix(velocity, rotation, velocity);
 }
 
-#ifdef NON_MATCHING
 void getCharacterVector(float *vector, float pitch) {
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
     sceVu0FVECTOR rotation;
@@ -1529,9 +1508,6 @@ void getCharacterVector(float *vector, float pitch) {
     sceVu0MulMatrix(matrix, yaw, tilt);
     sceVu0ApplyMatrix(vector, matrix, forward);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btitem", getCharacterVector__FPff);
-#endif
 /**
  * Advances a thrown item along its arc.
  *

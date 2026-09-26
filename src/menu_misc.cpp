@@ -27,7 +27,6 @@
 #include "weapon_buildup.hpp"
 #include "weaponeffect.hpp"
 
-#ifdef NON_MATCHING // draft includes
 #include <cstring>
 
 #include "btactstatus.hpp"
@@ -51,7 +50,8 @@ extern u_long128 *menud0wepReadBuf;
 extern u_long128 *menud1wepReadBuf;
 extern u_long128 *menud2wepReadBuf;
 extern char MenureadFile[64];
-extern char MenuWepDir[];
+/** The directory the weapon models are read from. */
+extern const char MenuWepDir[];
 extern int defWeapon__5[6];
 extern u_long128 *MenuWepIconCharaChangePtr;
 extern u_long128 *MenuVoiceLoadPtr;
@@ -62,7 +62,6 @@ extern "C" CSHOT_EFFECT *NowMainEffect;
 extern "C" CSHOT_EFFECT CharaMainEffectCrash;
 extern s32 CharaMainHandViewFlag;
 extern "C" CCharacter *NowWeapon;
-#endif
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
 extern int MenuWeaponTestCase;
@@ -582,7 +581,6 @@ int WeaponStatusBuildUp(WEAPON_HAVE *weapon, int &enabled_count) {
     }
     return total;
 }
-#ifdef NON_MATCHING
 void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     if (chara == NULL || weapon == NULL) {
         return;
@@ -607,11 +605,6 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     whole->attr.draw_on = show_whole;
     broken->attr.draw_on = show_broken;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MenuWeaponSpSet__FP10CCharacterP11WEAPON_HAVE);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @914__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @915__2);
 
 void SetMenuCharaEffectReadFlag(int flag) {
     MenuCharaEffectReadFlag = flag;
@@ -637,7 +630,6 @@ static void SetWepEffectMenuReadBuf(u_long128 *buf) {
     WepEffectMenuReadBuf = buf;
 }
 
-#ifdef NON_MATCHING
 BT_SHOT_EFFECT *DngWepEffectReadStart() {
     char path[64];
     int size;
@@ -655,10 +647,6 @@ BT_SHOT_EFFECT *DngWepEffectReadStart() {
     SetMenuCharaEffectReadFlag(1);
     return GetDngWepEffectPointer();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", DngWepEffectReadStart__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @936__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @947__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @948);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @949);
@@ -841,8 +829,6 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1036__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1037__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1038__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1039__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1040__2);
-#ifdef NON_MATCHING
 void WeaponModelBuildFunc(int chara, int texture_block) {
     printf("weapon model build func start\n");
     InitMenuWeaponModelReference();
@@ -914,17 +900,6 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     printf("WeaponBuffer address  = %p\n", MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
     printf("WepMenuEffectReadBuf = %p\n", WepMenuEffectReadBuf);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponModelBuildFunc__Fii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1104);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1105);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1106);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1107);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1108);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1109);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1110);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1111);
 int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     TexManager.DeleteTextureBlock(texture_block);
     u_int **first = (u_int **) GetMenuWeaponModelData(0);
@@ -969,7 +944,6 @@ int GetNowActiveCharaStatus(int chara_no) {
     }
     return BtlMenuStatusPt->GetActiveCharaStatus(chara_no);
 }
-#ifdef NON_MATCHING
 void SetNowCharaMotionNo(int chara) {
     int status = GetNowActiveCharaStatus(chara);
     CUserStatus *st = (CUserStatus *) BtlMenuStatusPt;
@@ -992,9 +966,6 @@ void SetNowCharaMotionNo(int chara) {
     MOTION_INFO *info = MenuCharaFrame.GetMotionInfo(motion);
     info->speed = speed[GetNowMotionStepCnt(status)];
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", SetNowCharaMotionNo__Fi);
-#endif
 
 /**
  * Sets the menu ambient colour for one character's status effects.
@@ -1055,7 +1026,6 @@ void SetItemMenuColor(int chara) {
 void SetItemMenuOldAmbient() {
     MGSetAmbient(MenuCharaOldAmbient);
 }
-#ifdef NON_MATCHING
 int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     char path[64];
     char name[32];
@@ -1075,11 +1045,6 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", StartLoadCharaMDS__FP1ii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1176);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1177);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1178);
 #ifdef NON_MATCHING
 void MenuCharaMDSBuild2(int chara, int texture_block) {
@@ -1195,7 +1160,7 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_misc", CharaChangeInitToGL__FP1i);
 #endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", MenuWepDir);
+const char MenuWepDir[64] = "commenu/weapon/";
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1206);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1207__2);
@@ -1203,7 +1168,6 @@ INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1236);
-#ifdef NON_MATCHING
 void CharaChangeInitToGL2(int load_icon) {
     int size;
 
@@ -1219,12 +1183,6 @@ void CharaChangeInitToGL2(int load_icon) {
         printf("*** voice read err \n");
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CharaChangeInitToGL2__Fi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1242);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1243);
-#ifdef NON_MATCHING
 void BtMenuLoadChara() {
     s8 chara = charachangeid;
     CUserStatus *status = UserStatus;
@@ -1236,13 +1194,6 @@ void BtMenuLoadChara() {
     SetWeaponColor();
     MainChara_Effect(WepEffectMenuPt, (u_int *) WepEffectMenuReadBuf, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoadChara__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1250);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1251);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1254);
-#ifdef NON_MATCHING
 void BtMenuLoad2(int load_texture) {
     if (load_texture != 0) {
         BG_READ_INFO *file = GetReadBGFile(0);
@@ -1261,9 +1212,6 @@ void BtMenuLoad2(int load_texture) {
     BtActStatus.unk_00C = 0;
     BtActStatus.action_on = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", BtMenuLoad2__Fi);
-#endif
 
 /**
  * Checks whether all East King event flags are set.
@@ -1294,7 +1242,6 @@ int GetMonsterNameDrawFlag() {
     return CharaNameDrawFlag;
 }
 
-#ifdef NON_MATCHING
 void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
     CharaNameMes = NULL;
     if (mes == NULL) {
@@ -1354,10 +1301,6 @@ void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
     }
     CharaNameDrawCase = 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", MonsterNameInit__FP6ClsMesPsPUc);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1287__2);
 
 void MonsterNameMake(int mes_no) {
     if (CharaNameMes != NULL) {
@@ -1622,7 +1565,6 @@ int DefaultWeaponOptionSet(int weapon_no) {
     return data->flags;
 }
 
-#ifdef NON_MATCHING
 void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
     int draw_x = x;
     int draw_y = y;
@@ -1667,11 +1609,6 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponOptionStatusDraw__FP11WEAPON_HAVEiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1507);
-#ifdef NON_MATCHING
 void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     if (weapon == NULL) {
         return;
@@ -1691,10 +1628,6 @@ void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
         DrawMenu2DSprite(texture, CRect_i_(x, y + 0x16, 0x14, 0x14), CRect_i_(0x10A, 0x162, 0x14, 0x14), alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", WeaponStarDraw__FiiP11WEAPON_HAVEi);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1536);
 
 /**
  * Randomly reduces one value in a weapon's status array.

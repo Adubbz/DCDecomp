@@ -153,7 +153,9 @@ INCLUDE_RODATA("asm/nonmatchings/btmisc", @921__2);
  * @address 0x1B7120
  * @size 0x124
  */
-#ifdef NON_MATCHING
+/** The model file extension, shared with the hit-value unit. */
+extern char MdsExtension[];
+
 /** Base name of each item's model and texture files, beginning with attachments. */
 extern char *ITEM_NAME_TBL_NEW[];
 
@@ -169,18 +171,11 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
         strcat(model_path, ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START]);
     }
     strcpy(texture_path, model_path);
-    strcat(model_path, ".mds");
+    strcat(model_path, MdsExtension);
     strcat(texture_path, ".img");
     printf("mds = %s\n", model_path);
     printf("img = %s\n", texture_path);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetItemNamePath__FPcPci);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @928__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @929__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @930__2);
-INCLUDE_RODATA("asm/nonmatchings/btmisc", @931__3);
 extern char nameWepBuff_mds[];
 extern char nameWepBuff_img[];
 

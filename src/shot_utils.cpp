@@ -84,7 +84,6 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
 #else
 INCLUDE_ASM("asm/nonmatchings/shot_utils", checkCollision__FPfPfPfif);
 #endif
-#ifdef NON_MATCHING
 void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width,
                     s32 height, u8 blend) {
     sceVu0IVECTOR top_left;
@@ -106,6 +105,3 @@ void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, 
                     bottom_left, bottom_right, blend);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_utils", set3DCellModel__FPfPcfiiiiUc);
-#endif
