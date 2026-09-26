@@ -180,6 +180,12 @@
       ".battlemenu-c963": [
         "@294"
       ],
+      ".battlemenu-c969__2": [
+        "@299"
+      ],
+      ".battlemenu-c970": [
+        "@300"
+      ],
       ".battlemenu-c1239__2": [
         "@416"
       ],
@@ -217,58 +223,58 @@
         "@679"
       ],
       ".battlemenu-c3657": [
-        "@898"
+        "@957"
       ],
       ".battlemenu-c3967": [
-        "@1097"
+        "@1156"
       ],
       ".battlemenu-c3968": [
-        "@1098"
+        "@1157"
       ],
       ".battlemenu-c4290": [
-        "@1177"
+        "@1236"
       ],
       ".battlemenu-c4291": [
-        "@1178"
+        "@1237"
       ],
       ".battlemenu-c4331": [
-        "@1215"
+        "@1274"
       ],
       ".battlemenu-c4433": [
-        "@1295"
+        "@1354"
       ],
       ".battlemenu-c5492": [
-        "@1382"
+        "@1441"
       ],
       ".battlemenu-c5503": [
-        "@1391"
-      ],
-      ".battlemenu-c5742": [
         "@1450"
       ],
+      ".battlemenu-c5742": [
+        "@1509"
+      ],
       ".battlemenu-town-ref": [
-        "@1564"
+        "@1623"
       ],
       ".battlemenu-town-pos": [
-        "@1565"
+        "@1624"
       ],
       ".battlemenu-c6185": [
-        "@1581"
+        "@1640"
       ],
       ".battlemenu-c6188": [
-        "@1584"
+        "@1643"
       ],
       ".battlemenu-c6227": [
-        "@1610"
+        "@1669"
       ],
       ".battlemenu-c6232": [
-        "@1620"
+        "@1679"
       ],
       ".battlemenu-c6233": [
-        "@1621"
+        "@1680"
       ],
       ".battlemenu-c6235": [
-        "@1623"
+        "@1682"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -280,16 +286,16 @@
         "@427"
       ],
       ".battlemenu-c3682": [
-        "@923"
+        "@982"
       ],
       ".battlemenu-c3929": [
-        "@1072"
+        "@1131"
       ],
       ".battlemenu-c5711": [
-        "@1421"
+        "@1480"
       ],
       ".battlemenu-c6236": [
-        "@1624"
+        "@1683"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -309,11 +315,11 @@
       ".battlemenu-init_5777": [
         "init$5777"
       ],
-      ".battlemenu-c969__2": [
-        "@299"
+      ".battlemenu-c2127__3": [
+        "@741"
       ],
-      ".battlemenu-c970": [
-        "@300"
+      ".battlemenu-c2169": [
+        "@783"
       ]
     },
     "rodata_exports": [

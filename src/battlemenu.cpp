@@ -2593,20 +2593,20 @@ static void DrawWeaponTagBoard(int x, int y, WEAPON_HAVE *weapon, int value_x, i
     }
 }
 
-#ifdef NON_MATCHING
-void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *weapon, int equipped, int selected,
-                    int alpha) {
+void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *weapon, int equipped,
+                           int selected, int alpha) {
     if (weapon == NULL) {
         return;
     }
     MenuTextureReload(MenuExtendReadBlock);
+    int draw_x;
     float spin = 0.0f;
-    sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR position = {0.0f, -1.3f, 0.0f, 1.0f};
     position[0] = depth;
     if (model != NULL) {
         if (equipped != 0) {
             position[1] = -1.3f + sinf(WepFrameRate);
-            WepFrameRate += 0.3490659f;
+            WepFrameRate += 0.34906587f;
             float limit = 3.1415927f;
             if (limit <= WepFrameRate) {
                 WepFrameRate = limit;
@@ -2630,15 +2630,16 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
             if (rot_x > 3.141592653589793) {
                 rot_x -= 3.1415927f;
             }
-            float rot_y = 0.0f + spin;
-            if (rot_y > 3.141592653589793) {
-                rot_y -= 3.1415927f;
+            float rot_y = 0.0f;
+            spin = rot_y + spin;
+            if (spin > 3.141592653589793) {
+                spin -= 3.1415927f;
             }
-            float rot_z = 0.6283185f;
+            float rot_z = 0.62831855f;
             if (rot_z > 3.141592653589793) {
                 rot_z -= 3.1415927f;
             }
-            model->SetRotation(rot_x, rot_y, rot_z);
+            model->SetRotation(rot_x, spin, rot_z);
         }
         model->Draw();
     }
@@ -2652,8 +2653,14 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         case 5:
         case 6:
         case 7:
-            DrawWepStatus(x + 2, y + 0x66, weapon, equipped, alpha);
+            draw_x = x + 2;
+            DrawWepStatus(draw_x, y + 0x66, weapon, equipped, alpha);
             DrawWepVolumeDisplay(x, y + 0x14, weapon, alpha);
+            break;
+        case 8:
+        case 9:
+        case 10:
+        case 11:
             break;
     }
     DrawWeaponNameBoard(x - 0x11, y - 0x32, equipped, alpha, 0x80);
@@ -2675,17 +2682,16 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
     } else {
         WeaponOptionStatusDraw(weapon, x + 0x50, y - 0x12, alpha);
     }
-    float centre[2] = {0.5f, 0.5f};
-    int hole_x = (int) ((float) (x + 0x52) - (float) (GetWeaponHoleNum(weapon->item_no) * 0x12 + 10) * centre[selected]);
+    float hole_scale[2] = {0.75f, 1.0f};
+    float width = GetWeaponHoleNum(weapon->item_no) * 0x12 + 10;
+    width *= hole_scale[selected];
+    draw_x = (int) ((float) (x + 0x52) - width);
     if (WepMenu.unk_02 >= 8) {
-        DrawWepHole(hole_x, 0xB8, weapon, selected, alpha);
+        DrawWepHole(draw_x, 0xB8, weapon, selected, alpha);
         MenuTextureReload(MenuShadowReadBlock);
-        DrawWepAttach(hole_x + 0xE, 0xBE, weapon, selected, alpha);
+        DrawWepAttach(draw_x + 0xE, 0xBE, weapon, selected, alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawAallWeapon__FiifP10CCharacterP11WEAPON_HAVEiii);
-#endif
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2244);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2245);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2246__2);

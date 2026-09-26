@@ -193,7 +193,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.edit_in-a.s=2A1FA0-2A1FE8
            main.sdata.part2f-2A1FF0.s=2A1FF0-2A2028
            main.sdata.part2f-2A2030.s=2A2030-2A2048
-           main.sdata.part2f-2A2050.s=2A2058-2A2078
+           main.sdata.part2f-2A2050.s=2A2058-2A2070
            main.sdata.part2f-2A2050-2A2088.s=2A2088-2A20B0
            main.sdata.part2f-2A2050-2A20B8.s=2A20B8-2A20C0
            main.sdata.battlemenu-tail.s=2A20F8-2A2100
@@ -287,7 +287,7 @@ carve_part(main.data.part6.s
            main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293030
            main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
            main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293160
-           main.data.shop-filenames-after-292EE0-292FA0-293170.s=2931E0-293308
+           main.data.battlemenu-2931F0.s=2931F0-293308
            main.data.shop-filenames-after-292EE0-292FA0-293358.s=293370-293470
            main.data.shop-filenames-after-292EE0-2934D0.s=2934D0-293560
            main.data.shop-filenames-after-292EE0-2934D0-293570.s=293580-293590
