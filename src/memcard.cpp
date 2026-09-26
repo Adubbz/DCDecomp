@@ -3053,7 +3053,6 @@ INCLUDE_ASM("asm/nonmatchings/memcard", MenuOptionKey__Fv);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2345);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2346);
 INCLUDE_RODATA("asm/nonmatchings/memcard", @2347);
-#ifdef NON_MATCHING
 void DrawMenuOption() {
     setbilinear(0);
     if (OptionMenu.texture_ready == 0) {
@@ -3062,13 +3061,14 @@ void DrawMenuOption() {
     MenuTextureReload(OptionMenu.block_no);
     int alpha = 0x80;
     switch (OptionMenu.step) {
-        case 0:
-            break;
         case 1:
             alpha = OptionMenu.step_count * 7;
             break;
         case 2:
             alpha = 0x80 - OptionMenu.step_count * 7;
+            break;
+        case 0:
+            alpha = 0x80;
             break;
     }
     if (alpha >= 0x80) {
@@ -3095,66 +3095,76 @@ void DrawMenuOption() {
     DrawOptionLRCur(right, alpha);
     int target_x;
     int target_y;
-    if (OptionMenu.buttons != 1) {
-        target_x = column * 0x47 + 0x15C;
-        if (row == 6) {
-            if (column != 3) {
-                target_x = column * 0x24 + 0x15C;
-            } else {
-                target_x = 0x1C8;
+    switch (OptionMenu.buttons) {
+        case 1:
+            target_x = 0x192;
+            target_y = 0x126;
+            break;
+        default:
+            target_x = column * 0x47 + 0x15C;
+            if (row == 6) {
+                if (column != 3) {
+                    target_x = column * 0x24 + 0x15C;
+                } else {
+                    target_x = 0x1C8;
+                }
             }
-        }
-        if (row < 6) {
-            target_y = row * 0x1E + 0x5A;
-        } else {
-            target_y = (row - 6) * 0x1E + 0x5A;
-        }
-    } else {
-        target_x = 0x192;
-        target_y = 0x126;
+            if (row < 6) {
+                target_y = row * 0x1E + 0x5A;
+            } else {
+                target_y = (row - 6) * 0x1E + 0x5A;
+            }
+            break;
     }
     OptionMenu.cursor_x += ((float) target_x - OptionMenu.cursor_x) / 4.0f;
     OptionMenu.cursor_y += ((float) target_y - OptionMenu.cursor_y) / 4.0f;
     int width;
-    if (OptionMenu.buttons != 1) {
-        width = 0x3C;
-        if (row == 6 && column != 3) {
-            width = 0x24;
-        }
-    } else {
-        width = 0x40;
+    switch (OptionMenu.buttons) {
+        case 1:
+            width = 0x40;
+            break;
+        default:
+            width = 0x3C;
+            if (row == 6 && column != 3) {
+                width = 0x24;
+            }
+            break;
     }
-    if (OptionMenu.step != 2 && OptionMenu.step != 1) {
-        static int OpMenuWakuCnt = 0;
-        static int OptionCurCnt = 0;
-        float shrink = 0.2f * OpMenuWakuCnt;
-        int left = (int) ((float) (target_x + 0x14) + shrink);
-        int top = (int) ((float) (target_y - 9) + shrink);
-        int right_x = (int) ((float) (target_x + 0x14 + width) - shrink);
-        int bottom = (int) ((float) (target_y + 0x11) - shrink);
-        CRect_i_ corner(0xB2, 0xF8, 8, 8);
-        DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height), corner, alpha);
-        int u = corner.x + corner.width;
-        DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height),
-                         CRect_i_(u, corner.y, corner.width, corner.height), alpha);
-        int v = corner.y + corner.height;
-        DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height),
-                         CRect_i_(corner.x, v, corner.width, corner.height), alpha);
-        DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height),
-                         CRect_i_(u, v, corner.width, corner.height), alpha);
-        OpMenuWakuCnt++;
-        if (OpMenuWakuCnt < 0 || OpMenuWakuCnt >= 30) {
-            OpMenuWakuCnt = 0;
-        }
-        float hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805537f * OptionCurCnt);
-        float hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.1163553f * OptionCurCnt);
-        CRect_i_ hand(0xD2, 0xF8, 0x20, 0x20);
-        DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0,
-                         (alpha * 100) >> 7);
-        DrawMenu2DSprite(MenuOption, CRect_i_((int) hand_x, (int) hand_y, 0x20, 0x20), hand, alpha);
-        OptionCurCnt++;
-        if (OptionCurCnt > 0x107AC0 || OptionCurCnt < 0) {
-            OptionCurCnt = 0;
+    switch (OptionMenu.step) {
+        case 1:
+        case 2:
+            break;
+        default: {
+            static int OpMenuWakuCnt = 0;
+            static int OptionCurCnt = 0;
+            int left = (int) ((float) (target_x + 0x14) + 0.2f * OpMenuWakuCnt);
+            int top = (int) ((float) (target_y - 9) + 0.2f * OpMenuWakuCnt);
+            int right_x = (int) ((float) (target_x + 0x14 + width) - 0.2f * OpMenuWakuCnt);
+            int bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
+            RECT corner = {0xB2, 0xF8, 0x10, 0x10};
+            DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height),
+                             CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height),
+                             CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height),
+                             CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height),
+                             CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
+            OpMenuWakuCnt++;
+            if (OpMenuWakuCnt < 0 || OpMenuWakuCnt >= 30) {
+                OpMenuWakuCnt = 0;
+            }
+            float hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805536583f * OptionCurCnt);
+            float hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.116355285f * OptionCurCnt);
+            CRect_i_ hand(0xD2, 0xF8, 0x20, 0x20);
+            DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0,
+                             (alpha * 100) >> 7);
+            DrawMenu2DSprite(MenuOption, CRect_i_((int) hand_x, (int) hand_y, 0x20, 0x20), hand, alpha);
+            OptionCurCnt++;
+            if (OptionCurCnt > 0x107AC0 || OptionCurCnt < 0) {
+                OptionCurCnt = 0;
+            }
+            break;
         }
     }
     if (OptionMenu.step != 0) {
@@ -3162,28 +3172,26 @@ void DrawMenuOption() {
     } else {
         OptionMenu.step_count = 0;
     }
-    if (OptionMenu.mode == 0) {
-        float win_x;
-        float win_y;
-        float win_w;
-        float win_h;
-        int text_x;
-        int text_y;
-        DrawMenu2DSprite(MenuOption, CRect_i_(0x50, 0x28, 0xAA, 0x28), CRect_i_(0xB3, 0x118, 0xAA, 0x28), alpha);
-        GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
-        int help_x = (int) win_x;
-        MenuHelpWinDraw(help_x, (int) win_y, win_w, win_h, alpha);
-        GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
-        CommonMenuMes2.edge_alpha = alpha;
-        MenuTextureReload(CommonMenuMes2.tex_block);
-        int mes_x = (int) (win_x + text_x);
-        DrawMenuClsMes(&CommonMenuMes2, mes_x, (int) (win_y + text_y));
+    switch (OptionMenu.mode) {
+        case 0: {
+            float win_x;
+            float win_y;
+            float win_w;
+            float win_h;
+            int text_x;
+            int text_y;
+            DrawMenu2DSprite(MenuOption, CRect_i_(0x50, 0x28, 0xAA, 0x28), CRect_i_(0xB3, 0x118, 0xAA, 0x28), alpha);
+            GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
+            MenuHelpWinDraw((int) win_x, (int) win_y, win_w, win_h, alpha);
+            GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
+            CommonMenuMes2.edge_alpha = alpha;
+            MenuTextureReload(CommonMenuMes2.tex_block);
+            DrawMenuClsMes(&CommonMenuMes2, (int) (win_x + text_x), (int) (win_y + text_y));
+            break;
+        }
     }
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawMenuOption__Fv);
-#endif
 
 int OptionMenuFadeOutStart() {
     int result = 0;

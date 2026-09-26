@@ -256,7 +256,7 @@ carve_part(main.sbss.part5.s
            main.sbss.part5c.s=2A2C74-2A2D80
            main.sbss.battlemenu-2A2D85.s=2A2D85-2A2DA4
            main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
-           main.sbss.memcard-a.s=2A2F08-2A2F50
+           main.sbss.memcard-a.s=2A2F18-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
            main.sbss.denter-tail.s=2A2F68-2A2FD0)
 # The weapon build-up and level-up local templates stand in this residual run,
@@ -295,7 +295,8 @@ carve_part(main.data.part6.s
            main.data.battlemenu-293750.s=293750-293790
            main.data.battlemenu-tail.s=293960-293990
            main.data.battlemenu-tail-293B90.s=293B90-293BF0
-           main.data.memcard-a.s=293EBC-293FE0
+           main.data.memcard-a.s=293EBC-293F50
+           main.data.memcard-a-293F60.s=293F60-293FE0
            main.data.menu_save-a.s=294044-294150
            main.data.part6g.s=2941C0-2942D0
            main.data.part6g-2942F0.s=2942F0-294460
