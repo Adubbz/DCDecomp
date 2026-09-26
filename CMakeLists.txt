@@ -289,7 +289,8 @@ carve_part(main.data.part6.s
            main.data.shop-filenames-after-292EE0-2934D0-293570.s=293580-293590
            main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s=2935A0-2936E0
            main.data.shop-ticket-after.s=293700-293790
-           main.data.battlemenu-tail.s=293960-293A80
+           main.data.battlemenu-tail.s=293960-293990
+           main.data.battlemenu-tail-293A10.s=293A10-293A80
            main.data.battlemenu-tail-293AB0.s=293AB0-293BF0
            main.data.battlemenu-tail-293C20.s=293C20-293C60
            main.data.part6h.s=293C80-293CA0

@@ -647,18 +647,6 @@ BT_SHOT_EFFECT *DngWepEffectReadStart() {
     SetMenuCharaEffectReadFlag(1);
     return GetDngWepEffectPointer();
 }
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @947__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @948);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @949);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @950);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @951);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @952);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @956);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @957);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @958__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @959__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @960__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @961);
 
 void MenuWeaponEffectSet(int effect_no) {
     SetMenuCharaEffectReadFlag(0);
@@ -670,16 +658,15 @@ int GetNowTestNo() {
     return MenuWeaponTestCase;
 }
 
-#ifdef NON_MATCHING
 int StartReadWepMDS(u_long128 *buffer, int chara) {
+    if (ReadBGSync() == 1) {
+        BreakReadBG();
+    }
     char path[64] = "commenu/c";
     char *numbers[6] = {"01", "04", "06", "05", "10", "18"};
     char image[64];
     int size;
 
-    if (ReadBGSync() == 1) {
-        BreakReadBG();
-    }
     strcat(path, numbers[chara]);
     strcat(path, "wtes.chr");
     WeaponRead_Buf = MenuCalcBufAlignment(buffer);
@@ -687,25 +674,22 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     if (LoadFileBG(path, buffer, &size) == 0) {
         return 0;
     }
-    u_long128 *next = MenuCalcBufAlignment(buffer + (size >> 4) + 1);
+    buffer += (size >> 4) + 1;
+    buffer = MenuCalcBufAlignment(buffer);
     GetPathReadDifferntLang(image);
-    char *shadows[6] = {"kgetoan", "kgesyao", "kgegoro", "kgeruby", "kgeunga", "kgeozu"};
-    strcat(image, shadows[chara]);
+    char *names[6] = {"kgetoan", "kgesyao", "kgegoro", "kgeruby", "kgeunga", "kgeozu"};
+    strcat(image, names[chara]);
     strcat(image, "2.img");
-    if (LoadFileBG(image, next, &size) == 0) {
+    if (LoadFileBG(image, buffer, &size) == 0) {
         return 0;
     }
     if (BtlMenuMode == 0) {
-        SetWepEffectMenuReadBuf(next + (size >> 4) + 1);
+        buffer += (size >> 4) + 1;
+        SetWepEffectMenuReadBuf(buffer);
         DngWepEffectReadStart();
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", StartReadWepMDS__FP1i);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @969__3);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @970__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @985__2);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @986__3);
 INCLUDE_RODATA("asm/nonmatchings/menu_misc", @987);
