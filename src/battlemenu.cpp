@@ -383,7 +383,7 @@ static void WeaponMenuActWepKey();
 static void WeaponMenuAttachWepKey();
 static void WeaponMenuAttachKey();
 extern s32 WeaponMenuSelectKeyLockFlag;
-extern u_long128 *WepMenuEffectReadBuf;
+extern CWeaponLevelUp *WepMenuEffectReadBuf;
 extern CDataAlloc2<1> MenuExCashBuffer;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
@@ -3641,24 +3641,26 @@ static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
 
 /**
  * Moves the cursor across the weapon list and opens what it settles on.
+ *
+ * @mangled WeaponSelectKey__Fv
+ * @address 0x1FDF20
+ * @size 0x178C
  */
-static int WeaponSelectKey(void);
-
-#ifdef NON_MATCHING
 static int WeaponSelectKey() {
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-    int old_chara = WepMenu.chara;
+    int result = 0;
+    int chara_num = 6;
+    int prev_chara = WepMenu.chara;
 
     switch (WepMenu.unk_02) {
         case 0: {
-            int handled = 0;
-            if (GamePad.Down(0x8000) != 0 && WepMenu.weapon_slot > 0) {
+            int done = 0;
+            if (GamePad.Down(0x8000) && 0 < WepMenu.weapon_slot) {
                 WepMenu.weapon_slot--;
             }
-            if (GamePad.Down(0x2000) != 0 && WepMenu.weapon_slot < 9) {
+            if (GamePad.Down(0x2000) && WepMenu.weapon_slot < 9) {
                 WepMenu.weapon_slot++;
             }
-            if (GamePad.Down(0x20) != 0) {
+            if (GamePad.Down(0x20)) {
                 ComMenuSePlay(2);
                 switch (WepMenu.unk_00) {
                     case 2:
@@ -3673,30 +3675,32 @@ static int WeaponSelectKey() {
                         WepMenu.unk_10 = 0;
                         break;
                 }
-                handled = 1;
-            } else if (GamePad.Down(0x40) != 0) {
-                if (WepMenu.unk_00 == 0) {
-                    if (DngWepHavePt[WepMenu.weapon_slot].item_no < GetDefaultWeaponNo(WepMenu.chara)) {
-                        ComMenuSePlay(2);
-                    } else {
-                        WepMenu.unk_02 = 1;
-                        WepMenu.board.cursor = 0;
-                        ComMenuSePlay(1);
-                    }
+                done = 1;
+            } else if (GamePad.Down(0x40)) {
+                switch (WepMenu.unk_00) {
+                    case 0:
+                        if (GetDefaultWeaponNo(WepMenu.chara) > DngWepHavePt[WepMenu.weapon_slot].item_no) {
+                            ComMenuSePlay(2);
+                        } else {
+                            WepMenu.unk_02 = 1;
+                            WepMenu.board.cursor = 0;
+                            ComMenuSePlay(1);
+                        }
+                        break;
                 }
-                handled = 1;
+                done = 1;
             }
-            if (handled == 0) {
-                if (GamePad.Down(0xA) != 0) {
+            if (!done) {
+                if (GamePad.Down(0xA)) {
                     WepMenu.chara++;
-                    if (WepMenu.chara >= 6) {
+                    if (WepMenu.chara >= chara_num) {
                         WepMenu.chara = 0;
                     }
                 }
-                if (GamePad.Down(5) != 0) {
+                if (GamePad.Down(5)) {
                     WepMenu.chara--;
                     if (WepMenu.chara < 0) {
-                        WepMenu.chara = 5;
+                        WepMenu.chara = chara_num - 1;
                     }
                 }
             }
@@ -3704,54 +3708,58 @@ static int WeaponSelectKey() {
         }
         case 1: {
             WEAPON_HAVE *weapon = GetNowSelectWeapon();
-            int options = NowWeaponStatusValue(weapon);
-            if (GamePad.Down(0x1000) != 0) {
-                if (WepMenu.board.cursor > 0 && WepMenu.board.cursor < 5) {
+            int status = NowWeaponStatusValue(weapon);
+            if (GamePad.Down(0x1000)) {
+                if (0 < WepMenu.board.cursor && WepMenu.board.cursor < 5) {
                     WepMenu.board.cursor--;
                 } else {
-                    WepMenu.board.cursor = WeaponMenuKastumSelectUp(WepMenu.board.cursor, options);
+                    WepMenu.board.cursor = WeaponMenuKastumSelectUp(WepMenu.board.cursor, status);
                 }
             }
-            if (GamePad.Down(0x4000) != 0) {
+            if (GamePad.Down(0x4000)) {
                 if (WepMenu.board.cursor >= 3) {
-                    WepMenu.board.cursor = WeaponMenuKastumSelectDown(WepMenu.board.cursor + 1, options);
+                    WepMenu.board.cursor = WeaponMenuKastumSelectDown(WepMenu.board.cursor + 1, status);
                 } else {
                     WepMenu.board.cursor++;
                 }
             }
-            if (GamePad.Down(0x2000) != 0 && WepMenu.board.cursor == 0) {
+            if (GamePad.Down(0x2000) && WepMenu.board.cursor == 0) {
                 WepMenu.unk_0C = 12;
                 WepMenu.unk_09[0] = 1;
                 ComMenuSePlay(0);
-            } else if (GamePad.Down(0x40) != 0) {
+            } else if (GamePad.Down(0x40)) {
                 s8 slot = WepMenu.weapon_slot;
                 NowWeaponStatusValue(weapon);
                 switch (WepMenu.board.cursor) {
-                    case 0:
-                        if (status->unk_42C8[WepMenu.chara] & 0x20) {
+                    case 0: {
+                        CDngStatusData *status_data = BtlMenuStatusPt;
+                        s32 zone;
+                        if (status_data->GetActiveCharaStatus(WepMenu.chara) & 0x20) {
                             ComMenuSePlay(2);
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 3;
-                        } else if (status->res_limit_zone_current == 10) {
+                        } else if ((zone = BtlMenuStatusPt->res_limit_zone_current) == 10) {
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 4;
                             ComMenuSePlay(2);
-                        } else if (WepMenu.chara >= status->party_size) {
+                        } else if (BtlMenuStatusPt->party_size <= WepMenu.chara) {
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 2;
                             ComMenuSePlay(2);
                         } else {
-                            status->equipped_weapon_slot[WepMenu.chara] = slot;
-                            WepFrameRate = 0;
+                            BtlMenuStatusPt->equipped_weapon_slot[WepMenu.chara] = slot;
+                            WepFrameRate = 0.0f;
                             WepMenu.unk_0C = 5;
-                            int cur = status->cur_chara;
-                            if (BtlMenuMode == 0 && ((cur == 5 && WepMenu.chara == 5) || (cur == 3 && WepMenu.chara == 3))) {
+                            int chara = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
+                            if (BtlMenuMode == 0 &&
+                                ((chara == 5 && WepMenu.chara == 5) || (chara == 3 && WepMenu.chara == 3))) {
                                 StartReadBG();
                                 DngWepEffectReadStart();
                             }
-                            ComMenuSePlay(0x17);
+                            ComMenuSePlay(23);
                         }
                         break;
+                    }
                     case 1: {
                         WepMenu.unk_02 = 10;
                         WepMenu.board.cursor = 0;
@@ -3762,23 +3770,20 @@ static int WeaponSelectKey() {
                         int max = PersonalRetMax(2);
                         if (cursor->reset_pos == 0) {
                             WepMenu.unk_02 = cursor->mode[2];
-                            if (WepMenu.unk_02 < 8 || WepMenu.unk_02 >= 12) {
+                            if (WepMenu.unk_02 < 8 || WepMenu.unk_02 > 11) {
                                 WepMenu.unk_02 = 10;
                             }
                             WepMenu.board.cursor = cursor->pos[2];
                             switch (WepMenu.unk_02) {
-                                case 11:
-                                    break;
                                 case 9:
                                     if (holes - 1 < WepMenu.board.cursor) {
                                         WepMenu.board.cursor = holes - 1;
                                     }
                                     break;
-                                case 10: {
+                                case 10:
                                     WepMenu.board.top_row = WepMenu.board.cursor / 5;
-                                    int last = max / 5 - 4;
-                                    if (last < WepMenu.board.top_row) {
-                                        WepMenu.board.top_row = last;
+                                    if (max / 5 - 4 < WepMenu.board.top_row) {
+                                        WepMenu.board.top_row = max / 5 - 4;
                                         while (max < WepMenu.board.cursor) {
                                             WepMenu.board.cursor -= 5;
                                         }
@@ -3787,16 +3792,16 @@ static int WeaponSelectKey() {
                                         }
                                     }
                                     break;
-                                }
                                 case 8:
                                     WepMenu.board.cursor = 0;
+                                    break;
+                                case 11:
                                     break;
                             }
                         } else {
                             WepMenu.board.top_row = WepMenu.board.cursor / 5;
-                            int last = max / 5 - 4;
-                            if (last < WepMenu.board.top_row) {
-                                WepMenu.board.top_row = last;
+                            if (max / 5 - 4 < WepMenu.board.top_row) {
+                                WepMenu.board.top_row = max / 5 - 4;
                                 while (max < WepMenu.board.cursor) {
                                     WepMenu.board.cursor -= 5;
                                 }
@@ -3813,8 +3818,9 @@ static int WeaponSelectKey() {
                         if (WepMenu.board.cursor < 0) {
                             WepMenu.board.cursor = 0;
                         }
-                        WepMenu.board.y = 0x7F - WepMenu.board.top_row * 0x28;
-                        WepMenu.board.scroll = 140.0f + 114.0f * WepMenu.board.top_row / (max / 5);
+                        int pages = max / 5;
+                        WepMenu.board.y = 127 - WepMenu.board.top_row * 40;
+                        WepMenu.board.scroll = 140.0f + 114.0f * WepMenu.board.top_row / pages;
                         ComMenuSePlay(1);
                         break;
                     }
@@ -3822,24 +3828,29 @@ static int WeaponSelectKey() {
                         WepMenu.unk_02 = 2;
                         WepMenu.unk_178 = 1;
                         WepMenu.unk_07 = weapon->best_elem;
-                        if (WepMenu.unk_07 < 0 || WepMenu.unk_07 >= 5) {
+                        if (WepMenu.unk_07 < 0 || WepMenu.unk_07 > 4) {
                             WepMenu.unk_07 = 0;
                         }
                         ComMenuSePlay(1);
                         break;
                     case 3:
-                        if (GetNowItemNum(0xB1, MenuItemPackPt) <= 0) {
+                        if (GetNowItemNum(ITEM_REPAIR_POWDER, MenuItemPackPt) <= 0) {
                             ComMenuSePlay(2);
-                        } else if (ItemUseFunc(status, 0xB1, WepMenu.chara, 4, weapon) == 2) {
-                            DeleteItemAfterUseItem(0xB1, MenuItemPackPt);
-                            ComMenuSePlay(0x18);
-                            if (IsDefaultWeapon(weapon->item_no) >= 0) {
-                                SetMenuWeaponModelReference(slot, 1, 1);
-                            }
-                            MenuWepLevelUp.WepRecover(weapon, &DngWeaponFrm[slot], (CWeaponLevelUp *) WepMenuEffectReadBuf, 0);
-                            WepMenu.unk_0C = 10;
                         } else {
-                            ComMenuSePlay(2);
+                            int chara = WepMenu.chara;
+                            CUserStatus *status_data = (CUserStatus *) BtlMenuStatusPt;
+                            if (ItemUseFunc(status_data, ITEM_REPAIR_POWDER, chara, 4, weapon) == 2) {
+                                DeleteItemAfterUseItem(ITEM_REPAIR_POWDER, MenuItemPackPt);
+                                ComMenuSePlay(24);
+                                if (IsDefaultWeapon(weapon->item_no) >= 0) {
+                                    SetMenuWeaponModelReference(slot, 1, 1);
+                                }
+                                MenuWepLevelUp.WepRecover(weapon, &DngWeaponFrm[slot],
+                                                          WepMenuEffectReadBuf, BtlMenuExReadBlock);
+                                WepMenu.unk_0C = 10;
+                            } else {
+                                ComMenuSePlay(2);
+                            }
                         }
                         break;
                     case 4: {
@@ -3848,7 +3859,7 @@ static int WeaponSelectKey() {
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 7;
                             ComMenuSePlay(2);
-                        } else if (item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+                        } else if (item_no == 268 && GetMenuHebikiriFlag() == 0) {
                             WepMenu.unk_0C = 11;
                             WepMenu.unk_08 = 5;
                             ComMenuSePlay(2);
@@ -3864,9 +3875,12 @@ static int WeaponSelectKey() {
                         break;
                     }
                     case 5: {
-                        int count = 0;
-                        for (int i = 0; i < 40; i++) {
-                            if (status->consumable_items[i].id >= 0x51) {
+                        int count;
+                        int i;
+                        DNG_CONSUMABLE *items = BtlMenuStatusPt->consumable_items;
+                        count = 0;
+                        for (i = 0; i < 40; i++) {
+                            if (items[i].id >= 81) {
                                 count++;
                             }
                         }
@@ -3887,7 +3901,7 @@ static int WeaponSelectKey() {
                         ComMenuSePlay(1);
                         break;
                 }
-            } else if (GamePad.Down(0x20) != 0) {
+            } else if (GamePad.Down(0x20)) {
                 WepMenu.unk_02 = 0;
                 ComMenuSePlay(2);
             }
@@ -3895,27 +3909,27 @@ static int WeaponSelectKey() {
         }
         case 2:
             WepMenu.unk_178 = 1;
-            if (GamePad.Down(0xF) != 0) {
+            if (GamePad.Down(0xF)) {
                 ComMenuSePlay(2);
             }
-            if (GamePad.Down(0x1000) != 0 && WepMenu.unk_07 > 0) {
+            if (GamePad.Down(0x1000) && 0 < WepMenu.unk_07) {
                 WepMenu.unk_07--;
             }
-            if (GamePad.Down(0x4000) != 0 && WepMenu.unk_07 < 4) {
+            if (GamePad.Down(0x4000) && WepMenu.unk_07 < 4) {
                 WepMenu.unk_07++;
             }
-            if (GamePad.Down(0x40) != 0) {
-                WEAPON_HAVE total;
+            if (GamePad.Down(0x40)) {
                 WEAPON_HAVE *weapon = GetNowSelectWeapon();
-                WeaponAllValueSet(weapon, &total, 0);
-                if (WeaponMenuCheckEnableSetElem(weapon, &total, WepMenu.unk_07) != 0) {
+                WEAPON_HAVE value;
+                WeaponAllValueSet(weapon, &value, 0);
+                if (WeaponMenuCheckEnableSetElem(weapon, &value, WepMenu.unk_07)) {
                     ComMenuSePlay(2);
                 } else {
                     ComMenuSePlay(1);
                 }
-            } else if (GamePad.Down(0x20) != 0) {
+            } else if (GamePad.Down(0x20)) {
                 WepMenu.unk_02 = 1;
-                if (BtlMenuMode == 0 && status->cur_chara == 3 && WepMenu.chara == 3) {
+                if (BtlMenuMode == 0 && ((CUserStatus *) BtlMenuStatusPt)->cur_chara == 3 && WepMenu.chara == 3) {
                     StartReadBG();
                     DngWepEffectReadStart();
                 }
@@ -3923,45 +3937,46 @@ static int WeaponSelectKey() {
             }
             break;
         case 3:
-            if (GamePad.Down(0x5000) != 0) {
+            if (GamePad.Down(0x5000)) {
                 if (WepMenu.board.cursor != 0) {
                     WepMenu.board.cursor = 0;
                 } else {
                     WepMenu.board.cursor = 1;
                 }
             }
-            if (WepMenu.board.cursor == 0 && GamePad.Down(0x40) != 0) {
-                int slot = WepMenu.weapon_slot;
+            if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
+                s8 slot = WepMenu.weapon_slot;
                 if (DngWepHavePt[slot].unk_14 < GetWeaponMaxExp(&DngWepHavePt[slot])) {
-                    DeleteItemAfterUseItem(0xB2, MenuItemPackPt);
+                    DeleteItemAfterUseItem(ITEM_POWERUP_POWDER, MenuItemPackPt);
                 }
-                MenuWepLevelUp.SetLevelUpValue(&DngWepHavePt[slot], &DngWeaponFrm[slot], (CWeaponLevelUp *) WepMenuEffectReadBuf,
-                                               0);
+                MenuWepLevelUp.SetLevelUpValue(&DngWepHavePt[slot], &DngWeaponFrm[slot],
+                                               WepMenuEffectReadBuf, BtlMenuExReadBlock);
                 WepMenu.unk_0C = 7;
                 WepMenu.unk_02 = 0;
                 WepMenu.board.cursor = 0;
                 ComMenuSePlay(1);
-            } else if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40) != 0) || GamePad.Down(0x20) != 0) {
+            } else if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40)) || GamePad.Down(0x20)) {
                 WepMenu.unk_02 = 1;
                 WepMenu.board.cursor = 4;
                 ComMenuSePlay(2);
             }
             break;
         case 4:
-            if (GamePad.Down(0x5000) != 0) {
+            if (GamePad.Down(0x5000)) {
                 if (WepMenu.board.cursor != 0) {
                     WepMenu.board.cursor = 0;
                 } else {
                     WepMenu.board.cursor = 1;
                 }
             }
-            if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40) != 0) || GamePad.Down(0x20) != 0) {
+            if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40)) || GamePad.Down(0x20)) {
                 WepMenu.unk_02 = 1;
                 WepMenu.board.cursor = 5;
                 ComMenuSePlay(2);
-            } else if (WepMenu.board.cursor == 0 && GamePad.Down(0x40) != 0) {
-                MenuWepLevelUp.SetStatusBreak(&DngWepHavePt[WepMenu.weapon_slot], &DngWeaponFrm[WepMenu.weapon_slot],
-                                              (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16), 0);
+            } else if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
+                int slot = WepMenu.weapon_slot;
+                CWeaponLevelUp *buffer = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
+                MenuWepLevelUp.SetStatusBreak(&DngWepHavePt[slot], &DngWeaponFrm[slot], buffer, BtlMenuExReadBlock);
                 WepMenu.unk_0C = 8;
                 WepMenu.unk_02 = 0;
                 WepMenu.board.cursor = 0;
@@ -3969,15 +3984,15 @@ static int WeaponSelectKey() {
             }
             break;
         case 5: {
-            WEP_BUILDUP_INFO builds[7];
-            int build;
             WEAPON_HAVE *weapon = GetNowSelectWeapon();
-            EnableBuildUpModel(builds, weapon);
-            int count = WeaponStatusBuildUp(weapon, build);
-            if (GamePad.Down(0x1000) != 0) {
+            WEP_BUILDUP_INFO info[7];
+            int build_up;
+            EnableBuildUpModel(info, weapon);
+            int count = WeaponStatusBuildUp(weapon, build_up);
+            if (GamePad.Down(0x1000)) {
                 WepMenu.board.cursor--;
             }
-            if (GamePad.Down(0x4000) != 0) {
+            if (GamePad.Down(0x4000)) {
                 WepMenu.board.cursor++;
             }
             if (WepMenu.board.cursor < 0) {
@@ -3986,20 +4001,20 @@ static int WeaponSelectKey() {
             if (count - 1 < WepMenu.board.cursor) {
                 WepMenu.board.cursor = 0;
             }
-            if (GamePad.Down(0x20) != 0) {
+            if (GamePad.Down(0x20)) {
                 WepMenu.board.cursor = 6;
                 WepMenu.unk_02 = 1;
-            } else if (GamePad.Down(0x40) != 0) {
+            } else if (GamePad.Down(0x40)) {
                 int attached = 0;
                 for (int i = 0; i < GetWeaponHoleNum(weapon->item_no); i++) {
-                    if (((ATTACH_LIST *) &weapon->attach[i])->item_no >= 0x51) {
+                    if (weapon->attach[i].item_no >= 81) {
                         attached++;
                     }
                 }
-                WEP_BUILDUP_INFO *choice = &builds[WepMenu.board.cursor];
-                s16 enabled = choice->enabled;
+                int weapon_no = info[WepMenu.board.cursor].weapon_no;
+                int enabled = info[WepMenu.board.cursor].enabled;
                 if (enabled == 1 && attached == 0) {
-                    MenuWepLevelUp.buildup_weapon_no = choice->weapon_no;
+                    MenuWepLevelUp.buildup_weapon_no = weapon_no;
                     WepMenu.unk_02 = 6;
                     WepMenu.board.cursor = 1;
                 } else if (enabled == 0) {
@@ -4013,20 +4028,20 @@ static int WeaponSelectKey() {
             break;
         }
         case 6:
-            if (GamePad.Down(0x5000) != 0) {
+            if (GamePad.Down(0x5000)) {
                 if (WepMenu.board.cursor != 0) {
                     WepMenu.board.cursor = 0;
                 } else {
                     WepMenu.board.cursor = 1;
                 }
             }
-            if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40) != 0) || GamePad.Down(0x20) != 0) {
+            if ((WepMenu.board.cursor == 1 && GamePad.Down(0x40)) || GamePad.Down(0x20)) {
                 WepMenu.unk_02 = 1;
                 WepMenu.board.cursor = 6;
                 ComMenuSePlay(2);
-            } else if (WepMenu.board.cursor == 0 && GamePad.Down(0x40) != 0) {
+            } else if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
                 MenuWepLevelUp.SetBuildUp(&DngWepHavePt[WepMenu.weapon_slot], &DngWeaponFrm[WepMenu.weapon_slot],
-                                          (CWeaponLevelUp *) WepMenuEffectReadBuf, 0);
+                                          WepMenuEffectReadBuf, BtlMenuExReadBlock);
                 WepMenu.unk_0C = 9;
                 WepMenu.unk_02 = 0;
                 WepMenu.board.cursor = 0;
@@ -4034,43 +4049,47 @@ static int WeaponSelectKey() {
             }
             break;
         case 7:
-            if (GamePad.Down(5) != 0) {
+            if (GamePad.Down(5)) {
                 WepMenu.unk_178--;
                 if (WepMenu.unk_178 < 0) {
                     WepMenu.unk_178 = 2;
                 }
                 ComMenuSePlay(0);
             }
-            if (GamePad.Down(0xA) != 0) {
+            if (GamePad.Down(0xA)) {
                 WepMenu.unk_178++;
-                if (WepMenu.unk_178 >= 3) {
+                if (WepMenu.unk_178 > 2) {
                     WepMenu.unk_178 = 0;
                 }
                 ComMenuSePlay(0);
             }
-            if (GamePad.Down(0x20) != 0) {
+            if (GamePad.Down(0x20)) {
                 WepMenu.unk_02 = 5;
                 ComMenuSePlay(2);
             }
             break;
     }
-    if (old_chara != WepMenu.chara) {
-        int cur = status->cur_chara;
-        if (BtlMenuMode == 0 && cur == old_chara) {
-            DngWeaponEquipModelBuild(cur, MenuExtendReadBlock, BtlMenuReadBuf);
+    if (prev_chara != WepMenu.chara) {
+        int chara = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
+        if (BtlMenuMode == 0 && chara == prev_chara) {
+            DngWeaponEquipModelBuild(chara, MenuExtendReadBlock, BtlMenuReadBuf);
         }
-        DngWepHavePt = status->chara_weapons[WepMenu.chara];
-        if (StartReadWepMDS(BtlMenuReadBuf, WepMenu.chara) != 0) {
+        int selected_chara = WepMenu.chara;
+        CDngStatusData *status_data = BtlMenuStatusPt;
+        DngWepHavePt = status_data->chara_weapons[selected_chara];
+        if (StartReadWepMDS(BtlMenuReadBuf, WepMenu.chara)) {
             MenuExTextureReadFlag = 0;
             WepMenu.unk_0C = 4;
             WepMenu.unk_10 = 0;
-            if (abs(old_chara - WepMenu.chara) >= 2) {
+            if (abs(prev_chara - WepMenu.chara) > 1) {
                 for (int i = 0; i < 6; i++) {
-                    SysChara[i].unk_04 = (SysChara[i].unk_00 - WepMenu.chara) * 0x6E + 0x10E;
+                    SysChara[i].unk_04 = (SysChara[i].unk_00 - WepMenu.chara) * 110 + 270;
                 }
             }
-            DngWepHavePt = status->chara_weapons[WepMenu.chara];
-            WepMenu.weapon_slot = status->equipped_weapon_slot[WepMenu.chara];
+            int next_chara = WepMenu.chara;
+            CDngStatusData *next_status_data = BtlMenuStatusPt;
+            DngWepHavePt = next_status_data->chara_weapons[next_chara];
+            WepMenu.weapon_slot = BtlMenuStatusPt->equipped_weapon_slot[WepMenu.chara];
             if (WepMenu.weapon_slot < 0 || WepMenu.weapon_slot >= 10) {
                 WepMenu.weapon_slot = 0;
             }
@@ -4078,15 +4097,13 @@ static int WeaponSelectKey() {
             WepPolyPos = 2.0f + 16.0f * -WepMenu.weapon_slot;
             WepMenu.unk_0C = 0;
             WepMenu.unk_10 = 0;
+            result = 0;
         } else {
             ComMenuSePlay(2);
         }
     }
-    return 0;
+    return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponSelectKey__Fv);
-#endif
 
 /**
  * Stores a menu's cursor position in the saved menu cursors.
