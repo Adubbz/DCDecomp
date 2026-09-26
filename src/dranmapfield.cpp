@@ -79,22 +79,23 @@ int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     }
     return count;
 }
-#ifdef NON_MATCHING
+/* LoadModel's message, which retail's unit holds once. */
+extern "C" char OverMessage[];
+
 void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->collision_count < 12) {
         set->collision[set->collision_count] = (CFrame *) LoadCollisionFile(pack, arena);
-        set->collision[set->collision_count]->SetPosition(0.0f, 0.0f, 0.0f);
-        set->collision[set->collision_count]->SetRotation(0.0f, 0.0f, 0.0f);
+        float zero = 0.0f;
+        set->collision[set->collision_count]->SetPosition(zero, zero, zero);
+        float zero2 = 0.0f;
+        set->collision[set->collision_count]->SetRotation(zero2, zero2, zero2);
         set->collision_count++;
     } else {
-        printf(" ************* over!!\n");
+        printf(OverMessage);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dranmapfield", LoadCollision__13CDranMapFieldFPUiP14CDataAlloc2_1_);
-#endif
 /**
  * Draws every active drainage-field model that has finished loading.
  *

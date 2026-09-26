@@ -1863,5 +1863,10 @@
         "__vt__14CVisualPolyVu1"
       ]
     }
+  },
+  "src/dranmapfield.cpp": {
+    "symbols": {
+      "OverMessage": "@3606"
+    }
   }
 }
