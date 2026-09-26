@@ -28,34 +28,61 @@ static const int bomb_uv[4][2] = {{0, 0}, {1, 0}, {0, 1}, {1, 1}};
  * @address 0x1D5580
  * @size 0x16C
  */
-#ifdef NON_MATCHING
 int checkItemUsed(int slot) {
-    int character = UserStatus->cur_chara;
-    s16 item = UserStatus->active_item[slot];
+    int character;
+    float water_now;
+    float water_max;
+    int condition;
+    s16 hp;
+    s16 max_hp;
+
+    character = UserStatus->cur_chara;
+    water_now = UserStatus->water_now[character];
+    water_max = UserStatus->water_max[character];
+    hp = UserStatus->hp[character];
+    max_hp = UserStatus->max_hp[character];
+    condition = UserStatus->unk_42C8[character];
+    int usable = 1;
+    ITEM_PACK *pack = &UserStatus->item_pack;
+    s16 item = pack->quick_item_slot[slot];
 
     if (item == -1) {
         return 0;
     }
-    if (item == 0xAA || item == 0x9B || item == 0x95 || item == 0x94) {
-        return UserStatus->hp[character] < UserStatus->max_hp[character];
+    switch (item) {
+    case 0x91:
+    case 0x92:
+    case 0x93:
+        if (!(0.2f + water_now < water_max)) {
+            usable = 0;
+        }
+        break;
+    case 0x97:
+        if ((condition & 0x10) == 0) {
+            usable = 0;
+        }
+        break;
+    case 0x99:
+        if ((condition & 0x40) == 0) {
+            usable = 0;
+        }
+        break;
+    case 0x9A:
+        if ((condition & 0x74) == 0) {
+            usable = 0;
+        }
+        break;
+    case 0x94:
+    case 0x95:
+    case 0x9B:
+    case 0xAA:
+        if (hp >= max_hp) {
+            usable = 0;
+        }
+        break;
     }
-    if (item == 0x9A) {
-        return (UserStatus->unk_42C8[character] & 0x74) != 0;
-    }
-    if (item == 0x99) {
-        return (UserStatus->unk_42C8[character] & 0x40) != 0;
-    }
-    if (item == 0x97) {
-        return (UserStatus->unk_42C8[character] & 0x10) != 0;
-    }
-    if (item == 0x93 || item == 0x92 || item == 0x91) {
-        return UserStatus->water_max[character] > UserStatus->water_now[character] + 0.01f;
-    }
-    return 1;
+    return usable;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/itembombeffect", checkItemUsed__Fi);
-#endif
 
 /**
  * Spends one use of a running item.

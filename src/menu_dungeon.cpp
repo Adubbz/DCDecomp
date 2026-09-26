@@ -398,21 +398,23 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
 }
 
 #ifdef NON_MATCHING
-int SetAttachMentValue(int item_no, int, short level, ATTACH_LIST *attachment) {
-    ATTACH_DATA *data;
-
-    if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START || attachment == NULL) {
+int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
+    if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    data = GetAttachData(item_no);
-    if (data == NULL) {
+    ATTACH_LIST *attachment = (ATTACH_LIST *) &SaveData->GetDngStatus()->consumable_items[slot];
+    ATTACH_DATA *data = GetAttachData(item_no);
+    item_no = attachment->item_no;
+    if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
     }
-    memcpy(attachment, data, sizeof(ATTACH_LIST));
+    memset(attachment, 0, sizeof(ATTACH_LIST));
     attachment->item_no = item_no;
-    if (level < 1) {
+    memcpy(attachment, data, sizeof(ATTACH_LIST));
+    if (level <= 0) {
         level = 1;
-    } else if (level > 3) {
+    }
+    if (level > 3) {
         level = 3;
     }
     if (item_no >= ITEM_ATTACH_ATTACK && item_no <= ITEM_ATTACH_MAGICAL_POWER) {
