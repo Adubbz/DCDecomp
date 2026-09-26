@@ -1913,5 +1913,18 @@
     "rodata_exports": [
       "@1383"
     ]
+  },
+  "src/shot_freefuncs.cpp": {
+    "symbols": {
+      "StatusTextureName": "@1150"
+    },
+    "sections": {
+      ".shot_freefuncs-c1238": [
+        "@172"
+      ],
+      ".shot_freefuncs-c1239": [
+        "@173"
+      ]
+    }
   }
 }

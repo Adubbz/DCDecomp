@@ -322,7 +322,7 @@ carve_part(main.data.part4.s
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
            main.data.part4g-26AE40.s=26AE40-26AE60
            main.data.part4k.s=26AE80-26AE90
-           main.data.fishing-a.s=26AFE0-26B0C0
+           main.data.fishing-a.s=26AFE0-26B070
            main.data.motionmodel-a.s=26B0E0-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0
            main.data.motionmodel-b.s=26B1D0-26B1F0

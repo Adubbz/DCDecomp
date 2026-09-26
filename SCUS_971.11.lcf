@@ -535,6 +535,10 @@ SECTIONS
         main.data.part4k.s.o (.data)   // 0x0026ae80
         fishing.cpp.o (.data)          // 0x0026ae90
         main.data.fishing-a.s.o (.data) // 0x0026afe0
+        shot_freefuncs.cpp.o (.shot_freefuncs-c1238) // 0x0026b070 @1238
+        . = ALIGN(16);
+        shot_freefuncs.cpp.o (.shot_freefuncs-c1239) // 0x0026b090 @1239
+        . = ALIGN(16);
         healeffect.cpp.o (.data)       // 0x0026b0c0
         main.data.motionmodel-a.s.o (.data) // 0x0026b0e0
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0

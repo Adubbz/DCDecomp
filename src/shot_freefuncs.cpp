@@ -528,6 +528,9 @@ void topStatusInfo(int x, int y, int blend_mode) {
 INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", topStatusInfo__Fiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/shot_freefuncs", @1150);
+
+/** The status panel texture, shared with topStatusInfo. */
+extern char StatusTextureName[];
 /**
  * Reports whether the party is suffering one status ailment.
  *
@@ -666,23 +669,18 @@ void BtSetStatusErr(int status) {
  * @address 0x1B1D80
  * @size 0x16C
  */
-#ifdef NON_MATCHING
 void BtStatusErrDraw(int y) {
-    static const int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
-    CTexture *texture = TexManager.GetTexture("status", -1);
-    int draw_x = 430;
+    CTexture *texture = TexManager.GetTexture(StatusTextureName, -1);
+    int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
+    int icon_cells[5][2] = {{1, 0}, {0, 1}, {1, 1}, {1, 2}, {0, 2}};
+    int status = UserStatus->unk_42C8[UserStatus->cur_chara];
     for (int icon = 4; icon >= 0; icon--) {
-        if (StatusErrCheck(status_flags[icon])) {
-            CRect_i_ destination(draw_x, y - 10, 62, 35);
-            CRect_i_ source(132 + icon * 62, 84, 62, 36);
-            set2DSprite(Vif1Packet, texture, destination, source, 128);
-            draw_x -= 32;
+        if (status & status_flags[icon]) {
+            set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35),
+                        CRect_i_(icon_cells[icon][0] * 62 + 132, icon_cells[icon][1] * 36 + 84, 62, 36));
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", BtStatusErrDraw__Fi);
-#endif
 /**
  * Draws one item into the reserved slot area.
  *
