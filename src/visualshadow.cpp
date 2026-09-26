@@ -338,8 +338,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                     edges[0] = corner[0].edge;
                     edges[1] = corner[1].edge;
                     edges[2] = corner[2].edge;
-                    // Retail keeps each corner's byte offset in a variable and reuses it for the
-                    // vertex, eye and projected arrays; indexing the arrays compiles differently.
+                    // Each corner's byte offset is shared by the vertex, eye and projected arrays.
                     offset_a = a * sizeof(sceVu0FVECTOR);
                     out[1] = *(u_long128 *) ((u_char *) vertices + offset_a);
                     offset_b = b * sizeof(sceVu0FVECTOR);
