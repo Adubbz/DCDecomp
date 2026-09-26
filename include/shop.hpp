@@ -227,13 +227,13 @@ void ChargeShopMaxDraw(int, int, int, int);
 void ChargeShopBoardDraw(int, int, int);
 
 /**
- * Totals what the goods currently marked for purchase cost.
+ * Totals the prices of goods currently marked for purchase.
  *
  * @mangled BuyMoneyCheck2__Fv
  * @address 0x1EB3A0
  * @size 0x1A0
  */
-int BuyMoneyCheck2(void);
+static int BuyMoneyCheck2(void);
 
 /**
  * Orders two items for the shop's sort.

@@ -180,7 +180,6 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
     sequence->completion_flag = func->completion_flag;
     return 1;
 }
-#ifdef NON_MATCHING
 /**
  * Reports whether an animated value has passed its target in the direction it moves.
  *
@@ -191,19 +190,6 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
 int end_check(float value, float target, float step) {
     return step > 0.0f ? (value > target ? 1 : 0) : (value < target ? 1 : 0);
 }
-#else
-#ifdef NON_MATCHING
-static int end_check(float value, float target, float speed) {
-    // Which way the value is travelling decides which side of the target ends it.
-    if (!(speed <= 0.0f)) {
-        return !(value <= target);
-    }
-    return value < target;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/objanime", end_check__Ffff);
-#endif
-#endif
 /**
  * Advances one object animation by a frame.
  *

@@ -3181,10 +3181,16 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
                 near_no = -1;
                 near_dist = 10000;
                 for (j = 0; j < roomStackCnt - 1; j++) {
-                    w = (roomStack[roomStackCnt - 1].x + (roomStack[roomStackCnt - 1].width >> 1)) -
-                         (roomStack[j].x + (roomStack[j].width >> 1));
-                    h = (roomStack[roomStackCnt - 1].y + (roomStack[roomStackCnt - 1].height >> 1)) -
-                         (roomStack[j].y + (roomStack[j].height >> 1));
+                    int room_center_x = roomStack[roomStackCnt - 1].width >> 1;
+                    room_center_x += roomStack[roomStackCnt - 1].x;
+                    int other_center_x = roomStack[j].width >> 1;
+                    other_center_x += roomStack[j].x;
+                    w = room_center_x - other_center_x;
+                    int room_center_y = roomStack[roomStackCnt - 1].height >> 1;
+                    room_center_y += roomStack[roomStackCnt - 1].y;
+                    int other_center_y = roomStack[j].height >> 1;
+                    other_center_y += roomStack[j].y;
+                    h = room_center_y - other_center_y;
                     dist = (int) sqrt((double) (w * w + h * h));
                     if (dist < near_dist) {
                         near_no = j;
@@ -3261,7 +3267,7 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
         int no = (int) ((3.0f * (float) rand()) / 2147483648.0f);
         int map_no[3] = {0xC4, 0xC6, 0xCD};
 
-        if (no < 0 || no >= 3) {
+        if (no < 0 || no > 2) {
             no = 0;
         }
         this->unk_0464 = map_no[no];

@@ -1117,7 +1117,6 @@ void SndSetSePanf(int se_no, float pan, int voice) {
         CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
     }
 }
-#ifdef NON_MATCHING
 void SndPlayFootSound(int kind, int foot, float *position) {
     float volume;
     float pan;
@@ -1128,9 +1127,6 @@ void SndPlayFootSound(int kind, int foot, float *position) {
     SndGetVolPan(&volume, &pan, position, near, far);
     SndSePlay(se_no, volume, pan, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/snd", SndPlayFootSound__FiiPf);
-#endif
 
 /**
  * Calculates the volume and stereo balance of a sound at a world position.

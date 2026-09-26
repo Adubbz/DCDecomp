@@ -1397,7 +1397,6 @@ CObject &CObject::operator=(const CObject &source) {
 #else
 INCLUDE_ASM("asm/nonmatchings/main", __as__7CObjectFRC7CObject);
 #endif
-#ifdef NON_MATCHING
 /* CWater's members as its copy assignment reaches them. */
 struct DraftWaterLayout {
     s32 rows;
@@ -1420,9 +1419,6 @@ CWater &CWater::operator=(CWater &src) {
     *(DraftWaterLayout *) this = *(DraftWaterLayout *) &src;
     return *this;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__6CWaterFR6CWater);
-#endif
 /**
  * Copies one polygon visual over another, field by field.
  *

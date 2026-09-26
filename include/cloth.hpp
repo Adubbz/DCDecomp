@@ -77,7 +77,7 @@ public:
     virtual void Initialize(CDataAlloc2<1> *alloc);
     virtual void Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, RenderInfo *unknown, int arg1, int arg2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2);
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, sceVif1Packet *unknown, int arg1, int arg2);
+                        VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2);
 };

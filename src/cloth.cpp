@@ -325,16 +325,12 @@ INCLUDE_ASM("asm/nonmatchings/cloth", Step__6CClothFi);
  * @address 0x13C470
  * @size 0xC0
  */
-#ifdef NON_MATCHING
 int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                    RenderInfo *unknown, int arg1, int arg2) {
+                    u_long128 *draw_state, int arg1, int arg2) {
     CreateVUData(vu_block[DBuffID]);
     visual_vu_data = vu_block[DBuffID];
-    return CVisualVu1::DrawVu1(packet, matrix, info, program, unknown, arg2, 0);
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, arg2, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-#endif
 /**
  * Draws the cloth into a VIF packet.
  *
@@ -342,16 +338,12 @@ INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFPUiPA4_fP10RenderInfo11VU
  * @address 0x13C530
  * @size 0xC0
  */
-#ifdef NON_MATCHING
 int CCloth::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                    VU1_PROGRAM program, sceVif1Packet *unknown, int arg1, int arg2) {
+                    VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2) {
     CreateVUData(vu_block[DBuffID]);
     visual_vu_data = vu_block[DBuffID];
-    return CVisualVu1::DrawVu1(packet, matrix, info, program, unknown, arg2, 0);
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, arg2, 0);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/cloth", DrawVu1__6CClothFP13sceVif1PacketPA4_fP10RenderInfo11VU1_PROGRAMP1ii);
-#endif
 /**
  * Builds the packet that draws the cloth and gives back its size.
  *

@@ -260,6 +260,11 @@ extern u_long128 *BtlMenuReadBuf;
 extern s32 MenuExtendReadBlock;
 
 /**
+ * Texture block holding the item menu's weapon icons.
+ */
+extern s32 ItemMenuWeaponIconReadBlock;
+
+/**
  * Language the battle menu's text is drawn in.
  */
 extern s32 BtlMenuNowLang;
@@ -348,7 +353,6 @@ extern CTexture *AttachIcon;
 extern CTexture *CharaStatus;
 extern CTexture *NonCharaFace;
 extern s32 BtlMDSBuildCnt;
-extern s32 ItemMenuWeaponIconReadBlock;
 extern u_long128 *BtlMenuCharaChangeBuf;
 
 /* Where one party member's weapon model stands on the weapon page. */

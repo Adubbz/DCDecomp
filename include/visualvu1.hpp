@@ -69,7 +69,7 @@ public:
      * @address 0x135000
      * @size 0x964
      */
-    virtual int DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, RenderInfo *,
+    virtual int DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, u_long128 *,
                         int, int);
 
     /**
@@ -79,7 +79,7 @@ public:
      * @address 0x134BC0
      * @size 0xC4
      */
-    virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, sceVif1Packet *,
+    virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, u_long128 *,
                         int, int);
 
     s32 unk_0C; /**< Unknown base-visual state following the virtual table pointer. */

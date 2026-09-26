@@ -162,7 +162,6 @@ int CWater::CheckClip(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/water", CheckClip__6CWaterFv);
 #endif
-#ifdef NON_MATCHING
 void CWater::Hamon(void) {
     int i;
     int j;
@@ -195,9 +194,6 @@ void CWater::Hamon(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", Hamon__6CWaterFv);
-#endif
 
 void CWater::SetVertex(float *v0, float *v1, float *v2, float *v3) {
     sceVu0CopyVector(vertex[0], v0);

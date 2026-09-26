@@ -2027,7 +2027,6 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
     RECT digits = {0, 0xDC, 12, 12};
     DrawMenuNumber(money, x + 0x55, y + 8, PerBoardTex, digits, 0, alpha);
 }
-#ifdef NON_MATCHING
 s16 SearchBoardNowPosItemExist(int page, int cell) {
     int item_no = -1;
 
@@ -2060,9 +2059,6 @@ s16 SearchBoardNowPosItemExist(int page, int cell) {
     }
     return item_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", SearchBoardNowPosItemExist__Fii);
-#endif
 #ifdef NON_MATCHING
 int GetBoardSpace(int item_no, int *page) {
     int space = -1;

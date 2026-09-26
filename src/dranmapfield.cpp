@@ -65,7 +65,6 @@ INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @522__2);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @523);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @524);
 INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @525);
-#ifdef NON_MATCHING
 int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
@@ -80,9 +79,6 @@ int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dranmapfield", AddCollision__13CDranMapFieldFP6CCPolyi7CBoxVu0);
-#endif
 #ifdef NON_MATCHING
 void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
@@ -118,7 +114,6 @@ void CDranMapField::Draw(void) {
         }
     }
 }
-#ifdef NON_MATCHING
 void CDranMapField::Step(void) {
     int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
@@ -145,6 +140,3 @@ void CDranMapField::Step(void) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dranmapfield", Step__13CDranMapFieldFv);
-#endif

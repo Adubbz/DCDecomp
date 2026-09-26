@@ -2364,8 +2364,15 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
     return total;
 }
 
+/**
+ * Totals the prices of goods currently marked for purchase.
+ *
+ * @mangled BuyMoneyCheck2__Fv
+ * @address 0x1EB3A0
+ * @size 0x1A0
+ */
 #ifdef NON_MATCHING
-int BuyMoneyCheck2() {
+static int BuyMoneyCheck2() {
     int total = 0;
     int max[3] = {100, 60, 40};
     int i;
@@ -2779,13 +2786,16 @@ int CheckSideKey2() {
                 SetItemShopTalkMode(23, 1);
             }
             if ((flags & 2) || (flags & 4)) {
+                int balance;
+                int buy;
                 int money = ShopUserStatusPt->money;
-                int buy = BuyMoneyCheck2();
-                int balance = money + (SellMoneyCheck2() - buy);
+                buy = BuyMoneyCheck2();
+                int sell = SellMoneyCheck2();
+                balance = money + (sell - buy);
                 if (balance < 0) {
                     SetItemShopTalkMode(21, 1);
                     se = 2;
-                } else if (balance >= 0x10000) {
+                } else if (balance > 0xFFFF) {
                     SetItemShopTalkMode(22, 1);
                     se = 2;
                 } else {
