@@ -76,24 +76,17 @@ void CRandomItem::Draw(void) {
                          0x80);
     }
 }
-#ifdef NON_MATCHING
 void CRandomItem::MapSymbolDraw(void) {
     CTexture *texture = TexManager.GetTexture("itempack", -1);
-    CRect_i_ source(0x50, 0x68, 8, 8);
 
     for (int i = 0; i < 32; i++) {
         if (id[i] != -1 && amount[i] == -1) {
-            int x = (int) (0.96f * (position[i][0] - 80.0f));
-            int y = (int) (0.96f * (position[i][2] - 80.0f));
-            CRect_i_ destination(x + 0x184, y + 0x48, 8, 8);
-            set2DSprite(Vif1Packet, texture, destination, source);
+            int x = (int) (0.1f * (position[i][0] - 80.0f));
+            int y = (int) (0.1f * (position[i][2] - 80.0f));
+            set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x184, y + 0x48, 8, 8), CRect_i_(0x50, 0x68, 8, 8));
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/randomitem", MapSymbolDraw__11CRandomItemFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/randomitem", @1383);
 int CRandomItem::checkEvent(void) {
     for (int i = 0; i < 32; i++) {
         int event = pickup_event[i];

@@ -1879,5 +1879,10 @@
     "rodata_exports": [
       "@535"
     ]
+  },
+  "src/randomitem.cpp": {
+    "rodata_exports": [
+      "@1383"
+    ]
   }
 }

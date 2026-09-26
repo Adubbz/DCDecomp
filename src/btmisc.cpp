@@ -193,13 +193,16 @@ extern int defWeapon[6];
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
     WEAPON_DATA *weapon;
     int chara_no;
-    if (weapon_no <= 0x100 || (weapon = GetWeaponData(weapon_no)) == NULL) {
-        return;
+    switch (weapon_no <= 0x100) {
+    case 0:
+        weapon = GetWeaponData(weapon_no);
+        if (weapon != NULL) {
+            chara_no = (s8) weapon->owner;
+            weapon_no -= defWeapon[chara_no];
+            printf("offset %d\n", weapon_no);
+            BtGetWeaponNamePath2(name, effect_name, chara_no, weapon_no);
+        }
     }
-    chara_no = (s8) weapon->owner;
-    weapon_no -= defWeapon[chara_no];
-    printf("offset %d\n", weapon_no);
-    BtGetWeaponNamePath2(name, effect_name, chara_no, weapon_no);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/btmisc", BtGetWeaponNamePath3__FPcPci);
