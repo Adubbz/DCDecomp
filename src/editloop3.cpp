@@ -5539,7 +5539,6 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef NON_MATCHING
 int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
     if (sequence == NULL)
@@ -5548,9 +5547,6 @@ int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     SetStack(stack++, ((end != 0) ^ 1) & 0xFF);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", _ASQ_CHECK__FP12RS_STACKDATAi);
-#endif
 
 static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < argument_count; i++)
