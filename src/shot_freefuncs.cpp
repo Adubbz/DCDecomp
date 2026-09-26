@@ -1035,7 +1035,7 @@ int BtMapJumpLoad(char *map_name) {
     MainDungeonMap.initSubmap(&MapModelBuffer);
     for (int slot = 0; slot < 64; slot++) {
         CDungeonEvent *event = &DngEventMan.slot[slot];
-        event->state = 0;
+        event->name[0] = '\0';
         event->script_no = -1;
         event->parts_id = -1;
         event->unk_34 = 0;

@@ -126,12 +126,9 @@ struct PARTS_WATER {
     s32 used; /**< 1 if the part shows water. */
     u8 unk_04[12];
     float vertex[4][4]; /**< Four corners of the water surface. */
-    u8 red;             /**< Red part of the colour of the water. */
-    u8 unk_51[3];
-    u8 green; /**< Green part of the colour of the water. */
-    u8 unk_55[3];
-    u8 blue; /**< Blue part of the colour of the water. */
-    u8 unk_59[3];
+    s32 red;            /**< Red part of the colour of the water. */
+    s32 green;          /**< Green part of the colour of the water. */
+    s32 blue;           /**< Blue part of the colour of the water. */
     s32 has_fall; /**< 1 if the part shows a waterfall. */
 };
 

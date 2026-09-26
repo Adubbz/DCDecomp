@@ -1420,7 +1420,7 @@ void GameInit(void) {
     for (int i = 0; i < 64; i++) {
         CDungeonEvent *slot = &DngEventMan.slot[i];
 
-        slot->state = 0;
+        slot->name[0] = '\0';
         slot->script_no = -1;
         slot->parts_id = -1;
         slot->unk_34 = 0;
