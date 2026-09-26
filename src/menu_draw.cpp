@@ -1402,22 +1402,30 @@ int PersonalBoardItemGetorSwap(int board_pos) {
     }
     return result;
 }
-#ifdef NON_MATCHING
 void PersonalBoardItemCancel() {
     IHAVEITEM *have = &PerBoardPt->held_item;
     int cell = have->unk_0C;
 
     switch (have->unk_04) {
         case 0:
-            MenuDataSwap(&PerBoardPt->item_pack->item[cell], &have->item_no);
-            MenuDataSwap(&PerBoardPt->item_pack->item_vol[cell], &have->volume);
+        {
+            s16 *item = &PerBoardPt->item_pack->item[cell];
+            s16 *volume = &PerBoardPt->item_pack->item_vol[cell];
+            MenuDataSwap(item, &have->item_no);
+            MenuDataSwap(volume, &have->volume);
+        }
             break;
         case 1: {
-            int held = have->item_no;
+            int chara;
+            int slot;
+            int held;
+            held = have->item_no;
             if (held >= 0x101) {
-                int chara = cell / 10;
-                int slot = cell % 10;
-                WEAPON_HAVE *weapon = &PerBoardStatusPt->chara_weapons[chara][slot];
+                chara = cell / 10;
+                slot = cell % 10;
+                WEAPON_HAVE *weapons = (WEAPON_HAVE *) ((char *) PerBoardStatusPt +
+                                                        chara * sizeof(PerBoardStatusPt->chara_weapons[0]) + 0x450C);
+                WEAPON_HAVE *weapon = &weapons[slot];
                 int placed = weapon->item_no;
                 MenuDataSwap(&PerBoardPt->weapon, weapon);
                 have->item_no = placed;
@@ -1433,7 +1441,8 @@ void PersonalBoardItemCancel() {
             break;
         }
         case 2: {
-            DNG_CONSUMABLE *item = &PerBoardStatusPt->consumable_items[cell];
+            DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
+            DNG_CONSUMABLE *item = &items[cell];
             int held = have->item_no;
             int placed = item->id;
             MenuDataSwap((ATTACH_LIST *) item, &PerBoardPt->held_attach);
@@ -1442,15 +1451,12 @@ void PersonalBoardItemCancel() {
             break;
         }
     }
-    if (have->item_no < 0x51) {
+    if (have->item_no <= 0x50) {
         InitHaveData(have);
         InitHaveWep(&PerBoardPt->weapon);
         PerBoardPt->unk_15C = -1;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_draw", PersonalBoardItemCancel__Fv);
-#endif
 
 int PersonalRetMax(int board_mode) {
     int max = 0;
