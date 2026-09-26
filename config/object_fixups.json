@@ -1979,5 +1979,12 @@
         ]
       ]
     ]
+  },
+  "src/menuiconautoget.cpp": {
+    "sections": {
+      ".menuiconautoget-c1515": [
+        "@37"
+      ]
+    }
   }
 }

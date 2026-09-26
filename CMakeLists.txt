@@ -305,7 +305,7 @@ carve_part(main.data.part6.s
            main.data.part6j.s=295644-2957F0
            main.data.menu_manual-after.s=295800-295810
            main.data.part6d.s=295830-295840
-           main.data.part6b.s=2959A0-2959C0
+           main.data.part6b.s=2959B0-2959C0
            main.data.part6b-2959D0.s=2959D0-295A10
            main.data.battle_globals-gap.s=295B18-295B50
            main.data.battle_globals-b.s=295EF0-295FF0)

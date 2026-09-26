@@ -693,7 +693,9 @@ SECTIONS
         main.data.part6d.s.o (.data) // 0x00295830
         weaponlevelup.cpp.o (.data)  // 0x00295840
         . = ALIGN(16);               // the tail of the unit's last template
-        main.data.part6b.s.o (.data) // 0x002959a0
+        menuiconautoget.cpp.o (.menuiconautoget-c1515) // 0x002959a0 @1515__3
+        . = ALIGN(16);
+        main.data.part6b.s.o (.data) // 0x002959b0
         battle_globals.cpp.o (.battle_globals-c365__3) // 0x002959c0 @365__3
         . = ALIGN(8);
         main.data.part6b-2959D0.s.o (.data) // 0x002959d0

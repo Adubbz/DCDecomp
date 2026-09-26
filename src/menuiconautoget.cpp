@@ -48,7 +48,6 @@ int CMenuIconAutoGet::GetSpace(void) {
     }
     return -1;
 }
-#ifdef NON_MATCHING
 int CMenuIconAutoGet::IconAutoMove(void) {
     int moving = 0;
     CDngStatusData *dungeon_status = SaveData->GetDngStatus();
@@ -57,29 +56,25 @@ int CMenuIconAutoGet::IconAutoMove(void) {
     int destination_x[3] = {92, 156, 220};
 
     for (i = 0; i < 3; i++) {
-        MENU_AUTO_GET_ICON *moving_icon = &icon[i];
-        if (moving_icon->item > 0) {
+        if (icon[i].item > 0) {
             moving = 1;
-            moving_icon->x += (destination_x[moving_icon->slot] - moving_icon->x) / 4.0f;
-            moving_icon->y += (105.0f - moving_icon->y) / 4.0f;
-            if (moving_icon->x - destination_x[moving_icon->slot] < 4.0f) {
-                int slot = moving_icon->slot;
+            icon[i].x += (destination_x[icon[i].slot] - icon[i].x) / 4.0f;
+            icon[i].y += (105.0f - icon[i].y) / 4.0f;
+            if (icon[i].x - destination_x[icon[i].slot] < 4.0f) {
+                int slot = icon[i].slot;
                 if (pack->quick_item_slot[slot] <= 0) {
-                    pack->quick_item_slot[slot] = moving_icon->item;
+                    pack->quick_item_slot[slot] = icon[i].item;
                     pack->quick_item_qty[slot] = 1;
-                    dungeon_status->quick_item_icon_count[slot] = moving_icon->count;
+                    dungeon_status->quick_item_icon_count[slot] = icon[i].count;
                 } else {
                     pack->quick_item_qty[slot]++;
                 }
-                memset(moving_icon, -1, sizeof(*moving_icon));
+                memset(&icon[i], -1, sizeof(icon[i]));
             }
         }
     }
     return moving;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuiconautoget", IconAutoMove__16CMenuIconAutoGetFv);
-#endif
 
 void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, float x, float y) {
     icon[index].slot = slot;
