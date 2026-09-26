@@ -156,7 +156,7 @@ int IsEnableTrushThrow(int item_no);
 void CommonMoneyBoardDraw(int x, int y, int money, int alpha);
 
 /**
- * Returns whether an item occupies a specified board position.
+ * Returns the item in one cell of an inventory board page, or -1 when the cell or page holds none.
  *
  * @mangled SearchBoardNowPosItemExist__Fii
  * @address 0x002314E0
@@ -300,13 +300,13 @@ int GetNowItemNum(short item_no, ITEM_PACK *items);
 void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items);
 
 /**
- * Returns the maximum entry count for an inventory-board mode.
+ * Counts the filled entries of an inventory board page and flags through the pointer when they overflow its room.
  *
  * @mangled GetNowModeMaxNum__FiPi
  * @address 0x00232290
  * @size 0x1FC
  */
-int GetNowModeMaxNum(int board_mode, int *maximum);
+int GetNowModeMaxNum(int board_mode, int *overflow);
 
 /**
  * Initializes a held-weapon record from its weapon definition.
