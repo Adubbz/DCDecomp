@@ -4406,6 +4406,10 @@ INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
 #endif
 #ifdef NON_MATCHING
 void ItemShopDraw2() {
+    int cur_x;
+    int pos_y;
+    int count;
+    int top_row;
     int text_x;
     int text_y;
 
@@ -4429,16 +4433,17 @@ void ItemShopDraw2() {
     FrameImageDraw(bright, 0x80);
     if (ShopMenu.ready != 0) {
         MenuTextureReload(ShopMenu.tex_block);
-        int count = PersonalRetMax(ShopMenu.board.page);
-        ShopMenu.board.y += ((float) (0x7F - ShopMenu.board.top_row * 0x28) - ShopMenu.board.y) / 4.0f;
-        int cur_x = 0x168;
-        int board_y = (int) ShopMenu.board.y;
+        count = PersonalRetMax(ShopMenu.board.page);
+        pos_y = 0x7F - ShopMenu.board.top_row * 0x28;
+        ShopMenu.board.y += ((float) pos_y - ShopMenu.board.y) / 4.0f;
+        cur_x = 0x168;
+        pos_y = (int) ShopMenu.board.y;
         int mark = 0;
         if (ShopMenu.board.page == 1) {
             mark = 2;
         }
-        DrawPerBoardDraw(mark, count, 0x168, board_y, 0x81, 0x121, PerBoardTex, 0x80);
-        CommonIconDraw(ShopMenu.board.page, count, 0x16A, board_y + 6, 0x81, 0x121, 0x80);
+        DrawPerBoardDraw(mark, count, 0x168, pos_y, 0x81, 0x121, PerBoardTex, 0x80);
+        CommonIconDraw(ShopMenu.board.page, count, 0x16A, pos_y + 6, 0x81, 0x121, 0x80);
         PersonalBoardOptionDraw(ShopMenu.board.page, count, 0x154, 0x78, PerBoardTex, 0x80);
         CommonTrushDraw(0x232, 0x10C, 0x80);
         CommonMoneyBoardDraw(0x163, 0x120, ShopUserStatusPt->money, 0x80);
@@ -4447,16 +4452,15 @@ void ItemShopDraw2() {
         ChargeShopLRDraw(0x80);
         ShopDataMove.IconAutoMoveDraw();
         ShopDataMove.IconAutoMove(ChargeOrShopFlag, 0);
-        int top_row;
         switch (ShopMenu.side) {
-            case 0:
             case 2:
+            case 0:
                 cur_x = 0x22;
                 top_row = ShopMenu.stock_top_row;
                 break;
             case 1:
                 cur_x = 0x144;
-                top_row = (u8) ShopMenu.board.top_row;
+                top_row = ShopMenu.board.top_row;
                 break;
         }
         int state = 0;
@@ -4464,8 +4468,6 @@ void ItemShopDraw2() {
             state = 2;
         } else {
             switch (ShopMenu.side) {
-                case 2:
-                    break;
                 case 1:
                     state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor) < 0x51 ? 0 : 1;
                     break;
@@ -4474,11 +4476,15 @@ void ItemShopDraw2() {
                         state = 1;
                     }
                     break;
+                case 2:
+                    break;
             }
         }
         int on_button = 0;
-        if (ShopMenu.side == 2) {
-            on_button = 1;
+        switch (ShopMenu.side) {
+            case 2:
+                on_button = 1;
+                break;
         }
         ShopCurDraw(cur_x, 0x84, ShopMenu.board.cursor, top_row, on_button, state, 0x80);
         DrawShopIcon(0x4C, 0x2A, 0, 0x80);
@@ -4498,35 +4504,41 @@ void ItemShopDraw2() {
                     if (money < 0) {
                         money = 1;
                     }
-                    DrawBigSellTicket(selling, money, cursor % 5 * 0x28 + 0x4A,
-                                      (int) (6.0f + ShopMenu.stock_y + (float) (cursor / 5 * 0x28)), 0x80);
+                    cur_x = cursor % 5 * 0x28 + 0x4A;
+                    pos_y = (int) (6.0f + ShopMenu.stock_y + (float) (cursor / 5 * 0x28));
+                    DrawBigSellTicket(selling, money, cur_x, pos_y, 0x80);
                 }
                 break;
             }
             case 1:
                 if (ShopMenu.talk_mode == 14) {
-                    int cursor = ShopMenu.board.cursor;
                     int item_no;
                     switch (ShopMenu.board.page) {
-                        case 0:
-                            item_no = ShopUserStatusPt->item_pack.item[cursor];
+                        case 0: {
+                            CUserStatus *status = ShopUserStatusPt;
+                            item_no = status->item_pack.item[ShopMenu.board.cursor];
                             break;
-                        case 2:
-                            item_no = ShopUserStatusPt->consumable_items[cursor].id;
+                        }
+                        case 2: {
+                            CUserStatus *status = ShopUserStatusPt;
+                            item_no = status->consumable_items[ShopMenu.board.cursor].id;
                             break;
-                        case 1:
-                            item_no = ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10].item_no;
+                        }
+                        case 1: {
+                            CUserStatus *status = ShopUserStatusPt;
+                            item_no = status->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10].item_no;
                             break;
+                        }
                     }
                     int ticket_y = (int) (6.0f + ShopMenu.board.y);
                     int money = CalItemMoney(item_no, 1);
                     if (item_no >= 0x101) {
-                        money += WeaponCalMoney(&ShopUserStatusPt->chara_weapons[cursor / 10][cursor % 10], 1);
+                        money += WeaponCalMoney(&ShopUserStatusPt->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10], 1);
                     }
                     if (money <= 0) {
                         money = 1;
                     }
-                    DrawBigSellTicket(1, money, cursor % 5 * 0x28 + 0x16A, ticket_y + cursor / 5 * 0x28, 0x80);
+                    DrawBigSellTicket(1, money, ShopMenu.board.cursor % 5 * 0x28 + 0x16A, ticket_y + ShopMenu.board.cursor / 5 * 0x28, 0x80);
                 }
                 break;
         }
