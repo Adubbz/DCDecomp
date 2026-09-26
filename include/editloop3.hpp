@@ -398,12 +398,3 @@ void EdDrawLensFlare(float time, CFrame **sky);
  * @size 0x1BC
  */
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count);
-
-/**
- * Pushes whether an editor action-sequence slot has finished onto the script stack.
- *
- * @mangled _ASQ_CHECK__FP12RS_STACKDATAi
- * @address 0x194B70
- * @size 0x74
- */
-int _ASQ_CHECK(RS_STACKDATA *stack, int argument_count);

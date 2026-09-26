@@ -5570,7 +5570,10 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _ASQ_CHECK(RS_STACKDATA *stack, int) {
+/**
+ * Pushes whether an editor action-sequence slot is still running onto the script stack.
+ */
+static int _ASQ_CHECK(RS_STACKDATA *stack, int) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
     if (sequence == NULL)
         return 0;
