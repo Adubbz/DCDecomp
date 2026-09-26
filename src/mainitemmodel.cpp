@@ -1,3 +1,5 @@
+#pragma argument_flag 0
+#pragma argument_flag_ones 33,34,39,59,225,254,266,268
 #include "mainitemmodel.hpp"
 #include <cstdio>
 #pragma argument_flag_ones 58
@@ -253,7 +255,6 @@ void CMainItemModel::Step(void) {
         }
     }
 }
-#ifdef NON_MATCHING
 void CMainItemModel::Initialize(void) {
     for (int i = 0; i < 6; i++) {
         cash[i] = NULL;
@@ -266,9 +267,6 @@ void CMainItemModel::Initialize(void) {
         frame[i].SetRotation(3.1415927f, 0.0f, 0.0f);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/mainitemmodel", Initialize__14CMainItemModelFv);
-#endif
 extern ITEM_DATA ITEM_LIST[175];
 
 int CActiveItemPack::CheckStatusType(void) {
