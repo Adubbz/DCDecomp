@@ -1447,13 +1447,19 @@ int DngEscapeMsgLoop() {
     DngEscapeMsgDraw();
     return result;
 }
-#ifdef NON_MATCHING
 int CheckItemThrow(int *items, int *values) {
+    int i;
+    int any = 0;
     int found = 0;
-    ITEM_PACK *pack = &((CUserStatus *) BtlMenuStatusPt)->item_pack;
+    ITEM_PACK *pack;
+    WEAPON_HAVE *weapons;
+    int item_no;
+    ATTACH_LIST *extra;
 
-    for (int i = 0; i < 3; i++) {
-        int item_no = pack->item[pack->num + i];
+    pack = &((CUserStatus *) BtlMenuStatusPt)->item_pack;
+
+    for (i = 0; i < 3; i++) {
+        item_no = pack->item[pack->num + i];
         if (item_no >= 0x84) {
             found++;
             if (items != NULL) {
@@ -1464,46 +1470,41 @@ int CheckItemThrow(int *items, int *values) {
             }
         }
     }
-    for (int i = 0; i < 6; i++) {
-        WEAPON_HAVE *weapon = &((CUserStatus *) BtlMenuStatusPt)->chara_weapons[i][10];
-        int item_no = weapon->item_no;
+    for (i = 0; i < 6; i++) {
+        weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[i];
+        item_no = weapons[10].item_no;
         if (item_no >= 0x101) {
             found++;
             if (items != NULL) {
                 items[3] = item_no;
             }
             if (values != NULL) {
-                values[3] = weapon->unk_02;
+                values[3] = weapons[10].unk_02;
             }
             break;
         }
     }
-    DNG_CONSUMABLE *extra = &((CUserStatus *) BtlMenuStatusPt)->consumable_items[40];
-    for (int i = 0; i < 3; i++) {
-        ATTACH_LIST *list = (ATTACH_LIST *) &extra[i];
-        int item_no = list->item_no;
+    extra = (ATTACH_LIST *) ((CUserStatus *) BtlMenuStatusPt)->consumable_items;
+    for (i = 0; i < 3; i++) {
+        item_no = extra[i + 40].item_no;
         if (item_no >= 0x51) {
             found++;
             if (items != NULL) {
                 items[i + 4] = item_no;
             }
             if (values != NULL && item_no >= 0x5B && item_no < 0x5F) {
-                values[i + 4] = ((s16 *) list)[item_no - 0x5A];
+                values[i + 4] = (&extra[i + 40].item_no)[item_no - 0x57];
             }
             if (values != NULL && item_no == 0x5A) {
-                values[i + 4] = list->unk_02;
+                values[i + 4] = extra[i + 40].unk_02;
             }
         }
     }
-    int any = 0;
     if (found > 0) {
         any = 1;
     }
     return any;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_misc", CheckItemThrow__FPiPi);
-#endif
 void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
     if (weapon->best_elem >= 5) {
         weapon = (WEAPON_HAVE *) weapon;
