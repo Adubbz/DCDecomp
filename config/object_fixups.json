@@ -1869,5 +1869,10 @@
     "symbols": {
       "OverMessage": "@3606"
     }
+  },
+  "src/shot_firebar.cpp": {
+    "rodata_exports": [
+      "@1211"
+    ]
   }
 }

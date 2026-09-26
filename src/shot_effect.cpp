@@ -496,10 +496,14 @@ int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int elemen
  */
 #ifdef NON_MATCHING
 void CSHOT_MACHINGUN::Step() {
-    for (int slot = 0; slot < 16; slot++) {
-        SHOT_COLLISION_RESULT result;
-        float *pos;
-        int *timer;
+    int slot;
+    SHOT_COLLISION_RESULT result;
+    float *pos;
+    int *timer;
+    int elem;
+    CCollisionData *col;
+
+    for (slot = 0; slot < 16; slot++) {
         timer = &unk_280[slot];
         if (unk_280[slot] <= 0) {
             continue;
@@ -519,13 +523,14 @@ void CSHOT_MACHINGUN::Step() {
         }
         if (result == SHOT_COLLISION_MONSTER) {
             NowColData->Set(pos, unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
-            int elem = NowWeaponHave->best_elem;
-            CCollisionData *col = NowColData;
+            elem = NowWeaponHave->best_elem;
+            col = NowColData;
             col->hit[col->now_hit].flags = GetWeaponElementAttr(elem);
             NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
             NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
-            NowColData->hit[NowColData->now_hit].owner = 5;
-            NowColData->hit[NowColData->now_hit].unk_60 = 6;
+            CCollisionData *target = NowColData;
+            target->hit[target->now_hit].owner = 5;
+            target->hit[target->now_hit].unk_60 = 6;
             *timer = 0;
         }
 

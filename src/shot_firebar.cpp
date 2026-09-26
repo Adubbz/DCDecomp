@@ -1,3 +1,4 @@
+#pragma helper_mask_gpr 0x30
 #include "shot_firebar.hpp"
 
 #include <cstdlib>
@@ -116,22 +117,28 @@ void CSHOT_FIREBAR::Step(void) {
 #else
 INCLUDE_ASM("asm/nonmatchings/shot_firebar", Step__13CSHOT_FIREBARFv);
 #endif
-#ifdef NON_MATCHING
 void CSHOT_FIREBAR::Draw(void) {
-    bool texture_loaded = false;
+    int texture_loaded;
+    int column;
+    int row;
+    int particle;
 
-    for (int particle = 0; particle < 24; particle++) {
+    texture_loaded = 0;
+
+    for (particle = 0; particle < 24; particle++) {
         if (state[particle] == -1) {
             continue;
         }
         if (!texture_loaded) {
             TexManager.ReloadTexture(Vif1Packet, 0x46);
-            texture_loaded = true;
+            texture_loaded = 1;
         }
 
-        int column;
-        int row;
         switch (texture_cell[particle]) {
+        case WEAPON_ELEMENT_FIRE:
+            column = 0;
+            row = 1;
+            break;
         case WEAPON_ELEMENT_COLD:
             column = 1;
             row = 1;
@@ -148,7 +155,6 @@ void CSHOT_FIREBAR::Draw(void) {
             column = 2;
             row = 1;
             break;
-        case WEAPON_ELEMENT_FIRE:
         default:
             column = 0;
             row = 1;
@@ -158,7 +164,3 @@ void CSHOT_FIREBAR::Draw(void) {
                        row << 7, 0x80, 0x80, (u8) (int) opacity[particle]);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_firebar", Draw__13CSHOT_FIREBARFv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/shot_firebar", @1211);
