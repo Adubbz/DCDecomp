@@ -1125,11 +1125,17 @@ void BattleMenuDraw() {
 
     setbilinear(0);
     MenuWorldTrans(&MenuCamera);
-    sceVif1PkCall(GetVif1Packet(), &Vu_prog0f, 0);
+    sceVif1PkCall(GetVif1Packet(), (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(GetVif1Packet());
     MenuTextureReload(BtlMenuReadBlock);
     CTexture frame = *TexManager.GetTexture("frame_image", -1);
-    frame.tex0 &= ~((u_long) 1 << 34);
+    CTexture *texture = &frame;
+    int tcc = 0;
+    if (texture != NULL) {
+        ((sceGsTex0 *) &frame.tex0)->bits.tcc = tcc;
+    } else {
+        return;
+    }
     int bright = 0x40;
     switch (BattleMenuFlag) {
         case -1:
@@ -1139,7 +1145,7 @@ void BattleMenuDraw() {
             }
             break;
         case 28:
-            bright = (int) ((float) 0x40 + 4.0f * BtlEffectCt);
+            bright = (int) ((float) bright + 4.0f * BtlEffectCt);
             if (bright > 0x80) {
                 bright = 0x80;
             }
@@ -1198,20 +1204,22 @@ void BattleMenuDraw() {
     }
     int draw_help = BtlMenuDrawSpecialFlag(BtlWakuMake2);
     if (BtlMenuReadEndFlag != 0) {
-        if (BattleMenuFlag != 28) {
-            BtlHelpWinAlpha += 9;
-            if (BtlHelpWinAlpha > 0x80) {
-                BtlHelpWinAlpha = 0x80;
-            }
-        } else {
-            BtlHelpWinAlpha -= 8;
-            if (BtlHelpWinAlpha < 0) {
-                BtlHelpWinAlpha = 0;
-            }
+        switch (BattleMenuFlag) {
+            case 28:
+                BtlHelpWinAlpha -= 8;
+                if (BtlHelpWinAlpha < 0) {
+                    BtlHelpWinAlpha = 0;
+                }
+                break;
+            default:
+                BtlHelpWinAlpha += 9;
+                if (BtlHelpWinAlpha > 0x80) {
+                    BtlHelpWinAlpha = 0x80;
+                }
+                break;
         }
         if (draw_help != 0) {
-            int help_x = (int) HelpWinHead[0];
-            MenuHelpWinDraw(help_x, (int) HelpWinHead[1], BtlHelpWinW, BtlHelpWinH, BtlHelpWinAlpha);
+            MenuHelpWinDraw((int) HelpWinHead[0], (int) HelpWinHead[1], BtlHelpWinW, BtlHelpWinH, BtlHelpWinAlpha);
         }
     }
     MenuTextureReload(CommonMenuMes2.tex_block);
@@ -1225,7 +1233,8 @@ void BattleMenuDraw() {
         CommonMenuMes2.DrawMesWin();
     }
     setbilinear(0);
-    if (BtlMenuDrawSpecialFlag(1) != 0) {
+    draw_help = BtlMenuDrawSpecialFlag(1);
+    if (draw_help != 0) {
         DrawBtlMenuBar();
     }
     if (WepMenu.unk_02 != 5) {
@@ -1612,12 +1621,10 @@ INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1513__2);
 INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1514__2);
 #ifdef NON_MATCHING
 int BattleMenuCharaKey() {
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-
     switch (MenuChara.unk_03) {
         case 4:
-            MenuChara.unk_08 += 1.0f;
-            if (ReadBGSync() == 0 && MenuChara.unk_08 > 20.0f) {
+            MenuChara.unk_08++;
+            if (ReadBGSync() == 0 && MenuChara.unk_08 > 20) {
                 BtMenuLoadChara();
                 BreakReadBG();
                 StartReadBG();
@@ -1626,8 +1633,8 @@ int BattleMenuCharaKey() {
             }
             break;
         case 5:
-            MenuChara.unk_08 += 1.0f;
-            if (ReadBGSync() == 0 && MenuChara.unk_08 > 20.0f) {
+            MenuChara.unk_08++;
+            if (ReadBGSync() == 0 && MenuChara.unk_08 > 20) {
                 BtMenuLoad2(1);
                 LockOffTargte();
                 ExitBattleMenu(1);
@@ -1636,28 +1643,30 @@ int BattleMenuCharaKey() {
             break;
         case 1: {
             if (BtlMenuExReadFlag == 0) {
-                if (ReadBGSync() != 0) {
+                if (ReadBGSync() == 0) {
+                    LOADTEXTURE_INFO2 texture[3] = {{"#frame_image_charamenu#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    texture[0].block_no = BtlMenuExReadBlock;
+                    texture[1].block_no = BtlMenuExReadBlock;
+                    BG_READ_INFO *file = GetReadBGFile(0);
+                    texture[1].name = (char *) file->buffer;
+                    BtlMenuCharaChangeBuf = file->buffer + (file->size >> 4) + 1;
+                    BtlMenuCharaChangeBuf = MenuCalcBufAlignment(BtlMenuCharaChangeBuf);
+                    int blocks[2] = {0, -1};
+                    blocks[0] = BtlMenuExReadBlock;
+                    MenuTextureDelete(blocks);
+                    TexManager.CleanUpTextureList();
+                    TexManager.LoadTextureBlockEX(-1, texture);
+                    BtlMenuTexBlockEnter();
+                    MenuCharaFace = TexManager.GetTexture("charaface", BtlMenuExReadBlock);
+                    BtStatus = TexManager.GetTexture("btstatus2", BtlMenuExReadBlock);
+                    NonCharaFace = TexManager.GetTexture("nonchara", BtlMenuExReadBlock);
+                    BtlAlpha = TexManager.GetTexture("alphabet", BtlMenuExReadBlock);
+                    BtlHira = TexManager.GetTexture("hira", BtlMenuExReadBlock);
+                    BtlKata = TexManager.GetTexture("kata", BtlMenuExReadBlock);
+                    BtlMenuExReadFlag = 1;
+                } else {
                     return 1;
                 }
-                LOADTEXTURE_INFO2 texture = {0};
-                int blocks[2] = {0, 0};
-                texture.block_no = BtlMenuExReadBlock;
-                BG_READ_INFO *file = GetReadBGFile(0);
-                texture.name = (char *) file->buffer;
-                BtlMenuCharaChangeBuf = file->buffer + (file->size >> 4) + 1;
-                BtlMenuCharaChangeBuf = MenuCalcBufAlignment(BtlMenuCharaChangeBuf);
-                blocks[0] = BtlMenuExReadBlock;
-                MenuTextureDelete(blocks);
-                TexManager.CleanUpTextureList();
-                TexManager.LoadTextureBlockEX(-1, &texture);
-                BtlMenuTexBlockEnter();
-                MenuCharaFace = TexManager.GetTexture("charaface", BtlMenuExReadBlock);
-                BtStatus = TexManager.GetTexture("btstatus2", BtlMenuExReadBlock);
-                NonCharaFace = TexManager.GetTexture("nonchara", BtlMenuExReadBlock);
-                BtlAlpha = TexManager.GetTexture("alphabet", BtlMenuExReadBlock);
-                BtlHira = TexManager.GetTexture("hira", BtlMenuExReadBlock);
-                BtlKata = TexManager.GetTexture("kata", BtlMenuExReadBlock);
-                BtlMenuExReadFlag = 1;
             }
             int done = ToFromSelect(0);
             if (BtlMenuExReadFlag != 0) {
@@ -1678,8 +1687,8 @@ int BattleMenuCharaKey() {
             int done = ToFromSelect(1);
             MenuChara.unk_04 += 1.0f;
             if (!(MenuChara.unk_04 <= 20.0f) && done == 1) {
-                int blocks[2] = {0, 0};
                 ForBackMenu();
+                int blocks[2] = {0, -1};
                 blocks[0] = BtlMenuExReadBlock;
                 MenuTextureDelete(blocks);
                 TexManager.CleanUpTextureList();
@@ -1712,7 +1721,7 @@ int BattleMenuCharaKey() {
                     if (SysChara[i].unk_01 == 0) {
                         int chara = SysChara[i].unk_00;
                         int mes_no = chara + 0x1E;
-                        if (status->party_size - 1 < chara) {
+                        if (BtlMenuStatusPt->party_size - 1 < chara) {
                             mes_no = 0x27;
                         }
                         if (CommonMenuMes2.mes_made != mes_no) {
@@ -1747,7 +1756,7 @@ int BattleMenuCharaKey() {
                 MenuChara.unk_03 = 3;
                 MenuChara.unk_04 = 0.0f;
                 MenuChara.unk_00++;
-                if (MenuChara.unk_00 >= 6) {
+                if (MenuChara.unk_00 > 5) {
                     MenuChara.unk_00 = 0;
                 }
                 ComMenuSePlay(0);
@@ -1759,39 +1768,48 @@ int BattleMenuCharaKey() {
                 BtlEffectCt = 0;
                 ComMenuSePlay(2);
             } else if (GamePad.Down(0x40) != 0) {
-                if (BtlMenuMode != 0) {
-                    ComMenuSePlay(2);
-                } else {
-                    s8 cur = status->cur_chara;
-                    if (cur == 5 && BtActStatus.unk_092 == 10) {
-                        CommonMenuMes1.MakeMesWin(0x1A1);
-                        ComMenuSePlay(2);
-                    } else {
-                        for (int i = 0; i < MenuChara.unk_02; i++) {
-                            if (SysChara[i].unk_01 != 0) {
-                                continue;
-                            }
-                            int chara = SysChara[i].unk_00;
-                            if (status->party_size - 1 < chara) {
-                                ComMenuSePlay(2);
-                                return 1;
-                            }
-                            if (status->hp[chara] <= 0 || (status->unk_42C8[chara] & 2)) {
-                                ComMenuSePlay(2);
-                                return 1;
-                            }
-                            if (chara != cur) {
-                                status->cur_chara = chara;
-                                ComMenuSePlay(1);
-                                MenuChara.unk_03 = 4;
-                                MenuChara.unk_08 = 0.0f;
-                                return 1;
+                switch (BtlMenuMode) {
+                    case 0: {
+                        int i;
+                        CDngStatusData *status = BtlMenuStatusPt;
+                        char *active = &status->unk_04;
+                        char cur = *active;
+                        if (cur == 5 && BtActStatus.unk_092 == 10) {
+                            CommonMenuMes1.MakeMesWin(0x1A1);
+                            ComMenuSePlay(2);
+                        } else {
+                            for (i = 0; i < MenuChara.unk_02; i++) {
+                                if (SysChara[i].unk_01 != 0) {
+                                    continue;
+                                }
+                                int chara = SysChara[i].unk_00;
+                                if (status->party_size - 1 < chara) {
+                                    ComMenuSePlay(2);
+                                    return 1;
+                                }
+                                s16 hp = status->hp[chara];
+                                int condition = status->GetActiveCharaStatus(chara);
+                                if (hp <= 0 || (condition & 2)) {
+                                    ComMenuSePlay(2);
+                                    return 1;
+                                }
+                                if (chara != cur) {
+                                    *active = chara;
+                                    ComMenuSePlay(1);
+                                    MenuChara.unk_03 = 4;
+                                    MenuChara.unk_08 = 0;
+                                    return 1;
+                                }
                             }
                         }
+                        break;
                     }
+                    default:
+                        ComMenuSePlay(2);
+                        break;
                 }
             }
-            if (old != MenuChara.unk_00 && MenuChara.unk_00 < status->party_size && BtlMenuCharaChangeBuf != NULL &&
+            if (old != MenuChara.unk_00 && MenuChara.unk_00 < BtlMenuStatusPt->party_size && BtlMenuCharaChangeBuf != NULL &&
                 BtlMenuMode == 0) {
                 BreakReadBG();
                 CharaChangeInitToGL(BtlMenuCharaChangeBuf, MenuChara.unk_00);
@@ -1806,8 +1824,6 @@ INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCharaKey__Fv);
 #endif
 #ifdef NON_MATCHING
 void DrawCharaSelect() {
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-
     if (BtlMenuExReadFlag == 0) {
         return;
     }
@@ -1822,10 +1838,10 @@ void DrawCharaSelect() {
             bright = (int) (128.0f - 12.0f * MenuChara.unk_04);
             ring_alpha = bright;
             break;
-        case 5:
         case 4:
-            bright = 0x80 - (int) MenuChara.unk_08 * 3;
-            ring_alpha = 0x80 - (int) MenuChara.unk_08 * 10;
+        case 5:
+            bright = 0x80 - MenuChara.unk_08 * 3;
+            ring_alpha = 0x80 - MenuChara.unk_08 * 10;
             break;
     }
     if (ring_alpha > 0x80) {
@@ -1851,7 +1867,7 @@ void DrawCharaSelect() {
         case 1:
             for (int i = 0; i < MenuChara.unk_02; i++) {
                 float radius = chara_r_long / 20.0f * MenuChara.unk_04;
-                float angle = 3.1415927f + PosAngle * SysChara[i].unk_01;
+                float angle = 3.1415927f + (PosAngle * (SysChara[i].unk_01 - 1.0f) + PosAngle / 20.0f * MenuChara.unk_04);
                 SysChara[i].unk_04 = radius * cosf(angle);
                 SysChara[i].unk_08 = radius * sinf(angle);
             }
@@ -1864,35 +1880,39 @@ void DrawCharaSelect() {
                 SysChara[i].unk_08 = radius * sin(angle);
             }
             break;
-        case 4:
         case 5:
+        case 4:
             chara_r_long += MenuChara.unk_08;
             for (int i = 0; i < MenuChara.unk_02; i++) {
                 float radius = chara_r_long;
-                float angle = 3.1415927f + PosAngle * SysChara[i].unk_01;
+                float angle = 3.1415927f + (PosAngle * SysChara[i].unk_01 + MenuCharaMove * MenuChara.unk_08);
                 SysChara[i].unk_04 = radius * cos(angle);
                 SysChara[i].unk_08 = radius * sin(angle);
             }
             break;
     }
     for (int i = 0; i < MenuChara.unk_02; i++) {
-        SYS_CHARA_INFO *chara = &SysChara[i];
-        float face_x = 394.0f + chara->unk_04;
-        float draw_x = face_x;
-        float face_y = 120.0f + chara->unk_08;
-        float size = 90.0f;
+        float size;
+        float draw_x;
+        float move;
+        float face_x;
+        float face_y;
+        face_x = 394.0f + SysChara[i].unk_04;
+        draw_x = face_x;
+        face_y = 120.0f + SysChara[i].unk_08;
+        size = 90.0f;
         int face_alpha = bright;
         int status_alpha = bright;
         int panel_alpha = 0;
-        float move = MenuCharaMove;
-        if ((!(move <= 0.0f) && MenuChara.unk_02 - 1 == chara->unk_01) || (move < 0.0f && chara->unk_01 == 1)) {
+        move = MenuCharaMove;
+        if ((!(move <= 0.0f) && MenuChara.unk_02 - 1 == SysChara[i].unk_01) || (move < 0.0f && SysChara[i].unk_01 == 1)) {
             float step = 0.6666667f * MenuChara.unk_04;
             draw_x = face_x - step;
-            size = 90.0f + step;
+            size += step;
             panel_alpha = (int) (128.0f * MenuChara.unk_04 / 21.0f);
             status_alpha = 0x80 - panel_alpha;
         }
-        if (chara->unk_01 == 0) {
+        if (SysChara[i].unk_01 == 0) {
             float time = MenuChara.unk_04;
             float scale = 0.6666667f;
             draw_x = face_x + scale * (time - 20.0f - 1.0f);
@@ -1905,40 +1925,42 @@ void DrawCharaSelect() {
             } else if (MenuChara.unk_03 == 3) {
                 panel_alpha = (int) (128.0f - 10.0f * time);
             }
-            if (MenuChara.unk_03 == 2 || MenuChara.unk_03 == 1 || MenuChara.unk_03 == 4 || MenuChara.unk_03 == 5) {
-                size += grow;
-                draw_x -= grow;
-                status_alpha = 0;
-                face_alpha = bright;
-                panel_alpha = bright;
+            switch (MenuChara.unk_03) {
+                case 5:
+                case 4:
+                case 1:
+                case 2:
+                    size += grow;
+                    draw_x -= grow;
+                    status_alpha = 0;
+                    face_alpha = bright;
+                    panel_alpha = bright;
+                    break;
             }
         }
-        int draw_face = 1;
-        if (i < status->party_size) {
+        if (i < BtlMenuStatusPt->party_size) {
+            float status_x = 23.0f + face_x;
+            float status_y = 86.0f + face_y;
             if (status_alpha > 0x80) {
                 status_alpha = 0x80;
             }
             if (status_alpha < 0) {
                 status_alpha = 0;
             }
-            DrawOtherCharaStatus((int) (23.0f + face_x), (int) (86.0f + face_y), i, status_alpha);
-            float panel_x = 394.0f + chara->unk_04 - 29.0f;
-            float panel_y = 120.0f + chara->unk_08 - 3.0f;
+            DrawOtherCharaStatus((int) status_x, (int) status_y, i, status_alpha);
+            float panel_x = 394.0f + SysChara[i].unk_04 - 29.0f;
+            float panel_y = 120.0f + SysChara[i].unk_08 - 3.0f;
             if (panel_alpha > 0x80) {
                 panel_alpha = 0x80;
             }
             if (panel_alpha < 0) {
                 panel_alpha = 0;
             }
-            if (!(panel_x < -300.0f) && !((float) 0x28A < panel_x) && !(face_y < -130.0f) && !(face_y > 448.0f)) {
-                MenuTextureReload(BtlMenuExReadBlock);
-                DrawSelCharaStatus(panel_x, panel_y, i, panel_alpha, (int) size, face_alpha, (int) draw_x, (int) face_y);
-            } else {
-                draw_face = 0;
+            if (panel_x < -300.0f || (float) 0x28A < panel_x || face_y < -130.0f || 448.0f < face_y) {
+                continue;
             }
-        }
-        if (draw_face == 0) {
-            continue;
+            MenuTextureReload(BtlMenuExReadBlock);
+            DrawSelCharaStatus(panel_x, panel_y, i, panel_alpha, (int) size, face_alpha, (int) draw_x, (int) face_y);
         }
         MenuTextureReload(BtlMenuExReadBlock);
         CTexture *face = MenuCharaFace;
@@ -1950,12 +1972,14 @@ void DrawCharaSelect() {
             v = (i - 3) * 0x6A;
         }
         int shade = 0x80;
-        if (status->hp[i] <= 0 || (status->unk_42C8[i] & 2)) {
+        s16 hp = BtlMenuStatusPt->hp[i];
+        int condition = BtlMenuStatusPt->GetActiveCharaStatus(i);
+        if (hp <= 0 || (condition & 2)) {
             shade = 0x50;
         }
-        if (i >= status->party_size) {
+        if (i >= BtlMenuStatusPt->party_size) {
             face = NonCharaFace;
-            if (chara->unk_01 == 0) {
+            if (SysChara[i].unk_01 == 0) {
                 face = TexManager.GetTexture("nonchara2", -1);
                 v = 0xC;
                 u = 0xC;
@@ -1975,12 +1999,12 @@ void DrawCharaSelect() {
             face_alpha = 0;
         }
         if (MenuChara.unk_03 == 5 || MenuChara.unk_03 == 4) {
-            face_alpha = 0x80 - (int) MenuChara.unk_08 * 2;
+            face_alpha = 0x80 - MenuChara.unk_08 * 2;
             if (face_alpha < 0) {
                 face_alpha = 0;
             }
         }
-        if (draw_x > 0.0f && draw_x < 640.0f && face_y > 0.0f && face_y < 448.0f) {
+        if (0.0f < draw_x && draw_x < 640.0f && 0.0f < face_y && face_y < 448.0f) {
             DrawMenu2DSprite(face, CRect_i_((int) draw_x, (int) face_y, (int) size, (int) size), CRect_i_(u, v, width, width),
                              shade, shade, shade, face_alpha);
         }
@@ -1994,15 +2018,16 @@ void DrawCharaSelect() {
             CommonMenuMes1.stay_frame = 1;
             CommonMenuMes1.Step();
             CommonMenuMes1.DrawMesWin();
-            return;
-        case 5:
-        case 4:
-        case 2:
+            break;
         case 1:
-            return;
+        case 2:
+        case 4:
+        case 5:
+            break;
         default: {
-            float waku_x = 394.0f + chara_r_long * cosf(3.1415927f) - 184.0f;
-            float waku_y = 120.0f + chara_r_long * sinf(3.1415927f) - 26.0f;
+            float angle = 3.1415927f;
+            float waku_x = 394.0f + chara_r_long * cosf(angle) - 184.0f;
+            float waku_y = 120.0f + chara_r_long * sinf(angle) - 26.0f;
             int width = 0x102;
             int cursor_x = 0x3C;
             int i;
@@ -2011,9 +2036,9 @@ void DrawCharaSelect() {
                     break;
                 }
             }
-            if (SysChara[i].unk_00 >= status->party_size) {
+            if (BtlMenuStatusPt->party_size <= SysChara[i].unk_00) {
                 cursor_x = 0xA0;
-                waku_x = (float) (0x18A + chara_r_long * cos(3.1415927f) - 30.0);
+                waku_x = (float) (0x18A + chara_r_long * cos(angle) - 30.0);
                 width = 0x6E;
             }
             SysCur[0] += ((float) cursor_x - SysCur[0]) / 4.0f;
@@ -2321,8 +2346,11 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     RECT pos = {0, 0, 0x1E, -8};
     pos.x = x + 0x4B;
     pos.y = y + 0x30;
+    s16 gauge[2] = {0, 0};
     float now = weapon->durability_f;
+    gauge[0] = (int) now;
     int durability = weapon->durability;
+    gauge[1] = durability;
     int number_x = pos.x;
     int bar_y = pos.y;
     int shown = (int) now;
@@ -2341,8 +2369,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     colours.colors[2].a = alpha;
     colours.colors[1].a = alpha;
     colours.colors[0].a = alpha;
-    CRect_i_ bar(pos.x, bar_y, fill, 8);
-    DrawMenuColorGradation(bar, &colours.colors[0], &colours.colors[1], &colours.colors[2], &colours.colors[3]);
+    DrawMenuColorGradation(CRect_i_(pos.x, bar_y, fill, 8), &colours.colors[0], &colours.colors[1], &colours.colors[2], &colours.colors[3]);
     int number_y = bar_y + pos.height;
     for (int digits = GetNumberKeta(durability) - 1; digits > 0; digits--) {
         number_x += pos.width;
@@ -2356,7 +2383,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     bar_y = pos.y;
     int max_exp = GetWeaponMaxExp(weapon);
     int exp_len = (weapon->unk_14 << 7) / max_exp;
-    if (exp_len >= 0x7F) {
+    if (exp_len > 0x7E) {
         exp_len = 0x7E;
     }
     DrawMenu2DSprite(WepStatus, CRect_i_(pos.x, bar_y, exp_len, 8), CRect_i_(0x100, 0x78, 8, 8), alpha);
@@ -2382,9 +2409,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         target[3] = built->magic;
     }
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
-    int limit[4] = {0, 99, 99, 0};
-    limit[0] = data->attack_max;
-    limit[3] = data->magic_max;
+    int limit[4] = {data->attack_max, 99, 99, data->magic_max};
     if (build == 0) {
         for (int i = 0; i < 4; i++) {
             bonus[i] = GetWeaponAttachStatusUp(weapon, i + 1);
@@ -2401,10 +2426,11 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         limit[0] = (int) ((float) limit[0] * rate);
         limit[3] = (int) ((float) limit[3] * rate);
     }
-    RECT row = {0, 0, 0, 0};
+    RECT row = {0, 0, -4, -2};
     row.x = x + 0x4A;
     row.y = y + 0x60;
-    int volume[3] = {100, 0, 0};
+    int volume[3] = {0, 0, 0};
+    volume[0] = 100;
     for (int i = 0; i < 4; i++) {
         int limited = 0;
         int base = values[i];
@@ -2422,8 +2448,9 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         if (length > 0x80) {
             length = 0x80;
         }
+        int diff = target[i] - base;
         DrawWeaponStatusWaku(row.x, row.y, length, limited);
-        WepStatusVolumeDraw(row, 0x80, volume, i + 3, alpha, build, target[i] - base);
+        WepStatusVolumeDraw(row, 0x80, volume, i + 3, alpha, build, diff);
         if (limited != 0) {
             DrawLimmitMax(row.x + 4, row.y + 3, 0x80);
         }
@@ -2953,8 +2980,6 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
 
 #ifdef NON_MATCHING
 void DrawWeaponSelectDialog(int x, int y, int alpha) {
-    static int warmcnt = 0;
-    static int levelbrinkcnt = 0;
     s8 shift = 0;
 
     if (BtlMenuNowLang > 0) {
@@ -2962,12 +2987,15 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     }
     int left = x + shift;
     int top = y + shift;
+    int bright;
     WEAPON_HAVE *weapon = GetNowSelectWeapon();
     int repair_items = GetNowItemNum(0xB1, MenuItemPackPt);
     int options = NowWeaponStatusValue(weapon);
     int title_v = 0x68;
-    if (WepMenu.unk_0C == 5) {
-        title_v = 0x108;
+    switch (WepMenu.unk_0C) {
+        case 5:
+            title_v += 0xA0;
+            break;
     }
     DrawMenu2DSprite(WepStatus, CRect_i_(left, top + 1, 0x60, 0x1F), CRect_i_(0x120, title_v, 0x60, 0x20), alpha);
     CRect_i_ source(0x120, 0x88, 0x60, 0x20);
@@ -2978,10 +3006,11 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
         build_x = left + 0x28;
     }
     DrawMenu2DSprite(WepStatus, CRect_i_(build_x, top + 0x35, 0x60, 0x1F), CRect_i_(0x120, 0x148, 0x60, 0x20), alpha);
-    int bright = 0x80;
+    bright = 0x80;
     if (repair_items <= 0 || weapon->durability_f == (float) weapon->durability) {
         bright = 0x40;
     }
+    static int warmcnt = 0;
     int default_no = GetDefaultWeaponNo(WepMenu.chara);
     if ((weapon->durability_f <= 0.1f * weapon->durability || weapon->item_no == default_no) && repair_items > 0) {
         bright = abs((int) (50.0f * sinf((float) warmcnt / 12.0f))) + 0x78;
@@ -2992,32 +3021,35 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     }
     DrawMenu2DSprite(WepStatus, CRect_i_(left, top + 0x4F, 0x60, 0x1F), source, bright, bright, bright, alpha);
     source.y += 0x20;
-    int level_bright = 0x80;
+    static int levelbrinkcnt = 0;
+    bright = 0x80;
     levelbrinkcnt++;
     if (levelbrinkcnt > 1000000) {
         levelbrinkcnt = 0;
     }
     CRect_i_ dest(left, top + 0x69, 0x60, 0x1F);
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i <= 3; i++) {
         if (options & (1 << i)) {
-            DrawMenu2DSprite(WepStatus, dest, source, level_bright, level_bright, level_bright, alpha);
+            DrawMenu2DSprite(WepStatus, dest, source, bright, bright, bright, alpha);
             dest.y += 0x1A;
         }
         source.y += 0x20;
         if (i == 2) {
-            int build = 0;
             source.y += 0x20;
+            int build = 0;
             WeaponStatusBuildUp(weapon, build);
             int attached = GetNowWeaponAttachNum(weapon);
             if (build > 0 && attached == 0) {
-                level_bright += abs((int) (40.0f * sinf((float) levelbrinkcnt / 12.0f)));
+                bright += abs((int) (40.0f * sinf((float) levelbrinkcnt / 12.0f)));
             }
         }
     }
-    if (WepMenu.unk_0C != 13 && WepMenu.unk_0C != 12) {
-        return;
+    switch (WepMenu.unk_0C) {
+        case 12:
+        case 13:
+            DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x64, y + 0x33, 0x60, 0x1F), CRect_i_(0, 0x80, 0x60, 0x20), 0x80);
+            break;
     }
-    DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x64, y + 0x33, 0x60, 0x1F), CRect_i_(0, 0x80, 0x60, 0x20), 0x80);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
@@ -7351,6 +7383,7 @@ int MenuMoveKey() {
 }
 #ifdef NON_MATCHING
 void DrawMenuMove() {
+    int alpha;
     int x;
     int y;
     int size[4];
@@ -7360,7 +7393,7 @@ void DrawMenuMove() {
         FrameImageDraw(0x40, 0x80);
     }
     BtlMenuTexBlockEnter();
-    int alpha = 0x80;
+    alpha = 0x80;
     switch (MenuMove.state) {
         case 1:
             alpha = MenuMove.counter * 6;
@@ -7377,11 +7410,20 @@ void DrawMenuMove() {
     }
     float ease = 4.0f;
     switch (MenuMove.mode) {
+        case 0:
+        case 2:
+            ease = 4.0f;
+            break;
+        case 10:
+            break;
+    }
+    switch (MenuMove.mode) {
         case 0: {
             DrawEscapeItem(0x32, 0x140, alpha);
-            int center = 0x140 - (CommonMenuMes3.char_width >> 1);
+            int half = CommonMenuMes3.char_width >> 1;
+            y = 0x140 - half;
             CommonMenuMes3.NeedMesWinWH(CommonMenuMes3.mes_made, size);
-            CommonMenuMes3.text_x = center - (size[2] >> 1) + 0xA;
+            CommonMenuMes3.text_x = y - (size[2] >> 1) + 0xA;
             CommonMenuMes3.text_y = 0x7E;
             CommonMenuMes3.stay_frame = 1;
             if (MenuMove.state == 2) {
@@ -7394,24 +7436,21 @@ void DrawMenuMove() {
             y = MenuMove.cursor * 0x1C + 0xD2;
             break;
         }
-        case 10:
-        case 2: {
-            int center = 0x140 - (CommonMenuMes3.char_width >> 1);
+        case 2:
+        case 10: {
+            int half = CommonMenuMes3.char_width >> 1;
+            y = 0x140 - half;
             CommonMenuMes3.NeedMesWinWH(CommonMenuMes3.mes_made, size);
-            int width = size[2];
-            CommonMenuMes3.text_x = center - (width >> 1) + 0xA;
-            if (MenuMove.mode == 10 && CommonMenuMes3.mes_made > 0 && width >= 0x28 && size[3] < 0xC9) {
+            CommonMenuMes3.text_x = y - (size[2] >> 1) + 0xA;
+            if (MenuMove.mode == 10 && CommonMenuMes3.mes_made > 0 && size[2] >= 0x28 && size[3] < 0xC9) {
                 CommonMenuMes3.text_y = 0x94;
-                MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x1A, CommonMenuMes3.text_y - 4, 8.0f + (float) width, 2.0f + (float) size[3],
+                MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x1A, CommonMenuMes3.text_y - 4, 8.0f + (float) size[2], 2.0f + (float) size[3],
                                  alpha, 0, 0, StayTex);
             }
-            if (MenuMove.mode == 2 && CommonMenuMes3.mes_made > 0) {
-                int width2 = size[2];
-                if (width2 >= 0x28 && size[3] < 0xC9) {
-                    CommonMenuMes3.text_y = 0x92;
-                    MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x1A, CommonMenuMes3.text_y - 4, 8.0f + (float) width2,
-                                     2.0f + (float) size[3], alpha, 0, 0, StayTex);
-                }
+            if (MenuMove.mode == 2 && CommonMenuMes3.mes_made > 0 && size[2] >= 0x28 && size[3] < 0xC9) {
+                CommonMenuMes3.text_y = 0x92;
+                MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x1A, CommonMenuMes3.text_y - 4, 8.0f + (float) size[2],
+                                 2.0f + (float) size[3], alpha, 0, 0, StayTex);
             }
             CommonMenuMes3.stay_frame = 0;
             CommonMenuMes3.edge_alpha = alpha;
@@ -7421,8 +7460,8 @@ void DrawMenuMove() {
             y = MenuMove.cursor * 0x1C + 0xD2;
             break;
         }
-        case 1:
-        case 5: {
+        case 5:
+        case 1: {
             WORLD_MAP_POS *next = (WORLD_MAP_POS *) NextWorldPos;
             if (next != NULL) {
                 x = next->x;
@@ -7439,8 +7478,10 @@ void DrawMenuMove() {
             }
             ease = 3.0f;
             int map_alpha = 0x80;
-            if (MenuMove.state == 2) {
-                map_alpha = alpha;
+            switch (MenuMove.state) {
+                case 2:
+                    map_alpha = alpha;
+                    break;
             }
             if (MenuMove.ready != 0 && MenuCharaFrame.frame != NULL) {
                 DrawWorldMap(map_alpha);
@@ -7451,59 +7492,64 @@ void DrawMenuMove() {
     SysCur[0] += ((float) x - SysCur[0]) / ease;
     SysCur[1] += ((float) y - SysCur[1]) / ease;
     int arrived = 1;
-    if (MenuMove.mode == 5 || MenuMove.mode == 1) {
-        if (!((float) abs((int) (SysCur[0] - (float) x)) <= 4.0f) && !((float) abs((int) (SysCur[1] - (float) y)) <= 4.0f)) {
-            arrived = 0;
-        }
-        if (MenuMove.state != 4 || MenuMove.state != 2) {
-            CommonMenuMes3.stay_frame = 0;
-        }
+    switch (MenuMove.mode) {
+        case 1:
+        case 5:
+            if (!((float) abs((int) (SysCur[0] - (float) x)) <= 4.0f) && !((float) abs((int) (SysCur[1] - (float) y)) <= 4.0f)) {
+                arrived = 0;
+            }
+            if (MenuMove.state != 4 || MenuMove.state != 2) {
+                CommonMenuMes3.stay_frame = 0;
+            }
+            break;
     }
+    int waku_x = x + 0x1A;
+    int waku_y = y - 2;
     float width = 1.0f;
     switch (MenuMove.mode) {
-        case 2:
-        case 10:
         case 0:
+        case 10:
+        case 2:
             if (MenuMove.cursor != 0) {
                 width = 98.0f;
             } else {
                 width = 98.0f;
             }
             break;
-        case 5:
         case 1:
+        case 5:
             GetMenuLangFlag();
             width = (float) CommonMenuMes3.GetMesWidth_system(CommonMenuMes3.mes_no[0]);
-            CommonMenuMes3.text_x = (int) ((double) (s16) x - (double) width / 2.0);
+            CommonMenuMes3.text_x = (int) ((double) x - (double) width / 2.0);
             CommonMenuMes3.text_y = y - 0x22;
             break;
     }
-    int cur_x = (int) SysCur[0];
-    int cur_y = (int) SysCur[1];
+    x = (int) SysCur[0];
+    y = (int) SysCur[1];
     switch (MenuMove.state) {
-        case 2:
-        case 1:
-            break;
         case 0:
             switch (MenuMove.mode) {
-                case 2:
-                case 10:
                 case 0:
-                    DrawMenuWaku((float) (x + 0x1A), (float) (y - 2), (int) width, 0x1A, 0, StayTex, 0x80);
-                    DrawMenuObjectVibe(cur_x, cur_y, 1, 0x40);
+                case 10:
+                case 2:
+                    DrawMenuWaku((float) waku_x, (float) waku_y, (int) width, 0x1A, 0, StayTex, 0x80);
+                    DrawMenuObjectVibe(x, y, 1, 0x40);
                     break;
-                case 5:
-                case 1: {
+                case 1:
+                case 5: {
                     MenuTextureReload(MenuMove.tex_block);
                     DrawMapCheck(0x80);
                     CRect_i_ texel(0xE0, 0, 0x20, 0x20);
-                    DrawObjectVibe(cur_x + 2, cur_y + 2, MenuMoveTex, texel, 0xA, 0x50);
-                    DrawObjectVibe(cur_x, cur_y, MenuMoveTex, texel, 0x80, 0x80);
+                    DrawObjectVibe(x + 2, y + 2, MenuMoveTex, texel, 0xA, 0x50);
+                    DrawObjectVibe(x, y, MenuMoveTex, texel, 0x80, 0x80);
                     CommonMenuMes3.stay_frame = 0;
                     MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x18, CommonMenuMes3.text_y - 0xE, 1.0f + width, 0.0f, 0x80, 0, 0, StayTex);
                     break;
                 }
             }
+            break;
+        case 1:
+        case 2:
             break;
         case 4:
             MenuHelpWinDraw2(CommonMenuMes3.text_x - 0x18, CommonMenuMes3.text_y - 0xE, 1.0f + width, 0.0f, 0x80, 0, 0, StayTex);
@@ -7537,7 +7583,7 @@ void DrawMenuMove() {
         GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
         if (GetMenuLangFlag() > 0) {
             win_x -= 12.0f;
-            win_w += 1.2f;
+            win_w = 1.2f + win_w;
         }
         MenuHelpWinDraw((int) win_x, (int) win_y, win_w, win_h, 0x80);
         int text_x;
@@ -7557,17 +7603,21 @@ void DrawMenuMove() {
         DrawMenu2DSprite(MenuMoveTex, CRect_i_(0x3C, 0x28, title_w, 0x28), CRect_i_(0, 0, title_w, 0x28), 0x80);
     }
     if (MenuMove.state == 7 && GetInteriorOutFlag() != 0) {
-        int fade = MenuMove.counter * 3;
-        if (fade > 0x80) {
-            fade = 0x80;
+        alpha = MenuMove.counter * 3;
+        if (alpha > 0x80) {
+            alpha = 0x80;
         }
-        AllFadeForMenu(fade);
+        AllFadeForMenu(alpha);
     }
-    if (MenuMove.state != 4 && MenuMove.state != 0) {
-        MenuMove.counter++;
-        return;
+    switch (MenuMove.state) {
+        case 0:
+        case 4:
+            MenuMove.counter = 0;
+            break;
+        default:
+            MenuMove.counter++;
+            break;
     }
-    MenuMove.counter = 0;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMenuMove__Fv);
@@ -8398,73 +8448,72 @@ void MenuClsMes::Step() {
 }
 
 #ifdef NON_MATCHING
+static inline int MesLineX(int x, int len) {
+    return x - len * 5;
+}
+
 void MenuClsMes::Draw1(int x, int y, int) {
-    if (message == NULL || weapon == NULL) {
-        return;
-    }
-    switch (mode) {
-        case 2:
-        case 1: {
-            if (option_flags == 0 || option_flags == 1) {
-                return;
-            }
-            int row_y = y - option_count * 0xA;
-            DrawMenu2DSprite(PerBoardTex, CRect_i_(x + 0x1E, row_y - 0x17, 0x52, 0x17), CRect_i_(0x80, 0x68, 0x52, 0x18), alpha);
-            DrawMenu2DSprite(PerBoardTex, CRect_i_(x - 0x24, y - 0xA, 0x20, 0x20), CRect_i_(0x80, 0x80, 0x20, 0x20), alpha);
-            CRect_i_ left(0x20, 0x80, 0x20, 0x18);
-            CRect_i_ middle(0x40, 0x80, 0x14, 0x18);
-            CRect_i_ right(0x78, 0x80, 8, 0x18);
-            CRect_i_ icon(0xEC, 0x50, 0x14, 0x14);
-            CTexture *faces = TexManager.GetTexture("charaface", -1);
-            for (int i = 1; i < 14; i++) {
-                if (i == 8) {
-                    icon.x -= icon.width;
+    int name_x;
+    if (message != NULL && weapon != NULL) {
+        int row_y = y;
+        int option;
+        switch (mode) {
+            case 0:
+                break;
+            case 1:
+            case 2:
+                if (option_flags == 0 || option_flags == 1) {
+                    return;
                 }
-                if (option_flags & (1 << i)) {
-                    if (IsWeaponOptionGoodOrBad(i) != 0) {
-                        right.y = 0x80;
-                        middle.y = 0x80;
-                        left.y = 0x80;
-                    } else {
-                        right.y = 0x68;
-                        middle.y = 0x68;
-                        left.y = 0x68;
+                row_y -= option_count * 10;
+                DrawMenu2DSprite(PerBoardTex, CRect_i_(x + 0x1E, row_y - 0x17, 0x52, 0x17), CRect_i_(0x80, 0x68, 0x52, 0x18),
+                                 alpha);
+                DrawMenu2DSprite(PerBoardTex, CRect_i_(x - 0x24, y - 10, 0x20, 0x20), CRect_i_(0x80, 0x80, 0x20, 0x20), alpha);
+                CRect_i_ left(0x20, 0x80, 0x20, 0x18);
+                CRect_i_ middle(0x40, 0x80, 0x14, 0x18);
+                CRect_i_ right(0x78, 0x80, 0x8, 0x18);
+                CRect_i_ icon_src(0xEC, 0x50, 0x14, 0x14);
+                CTexture *face = TexManager.GetTexture("charaface", -1);
+                for (option = 1; option <= 13; option++) {
+                    if (option == 8) {
+                        icon_src.x -= icon_src.width;
                     }
-                    int row = i;
-                    if (i >= 8) {
-                        row = i - 7;
+                    if (option_flags & (1 << option)) {
+                        if (IsWeaponOptionGoodOrBad(option)) {
+                            left.y = middle.y = right.y = 0x80;
+                        } else {
+                            left.y = middle.y = right.y = 0x68;
+                        }
+                        int icon = option;
+                        if (option > 7) {
+                            icon = option - 7;
+                        }
+                        if (option == 8 && icon == 1) {
+                            icon++;
+                        }
+                        if (option == 9 && icon == 2) {
+                            icon--;
+                        }
+                        icon_src.y = icon_src.height * (icon - 1) + 0x50;
+                        DrawMenu2DSprite(PerBoardTex, CRect_i_(x, row_y, left.width, left.height), left, alpha);
+                        DrawMenu2DSprite(PerBoardTex, CRect_i_(x + left.width, row_y, 100, middle.height), middle, alpha);
+                        DrawMenu2DSprite(PerBoardTex, CRect_i_(x + left.width + 100, row_y, right.width, right.height),
+                                         right, alpha);
+                        DrawMenu2DSprite(face, CRect_i_(x + 2, row_y + 2, 0x14, 0x15), icon_src, alpha);
+                        row_y += left.height;
                     }
-                    if (i == 8 && row == 1) {
-                        row++;
-                    }
-                    if (i == 9 && row == 2) {
-                        row--;
-                    }
-                    icon.y = icon.height * (row - 1) + 0x50;
-                    DrawMenu2DSprite(PerBoardTex, CRect_i_(x, row_y, left.width, left.height), left, alpha);
-                    DrawMenu2DSprite(PerBoardTex, CRect_i_(x + left.width, row_y, 0x64, middle.height), middle, alpha);
-                    DrawMenu2DSprite(PerBoardTex, CRect_i_(x + left.width + 0x64, row_y, right.width, right.height), right, alpha);
-                    DrawMenu2DSprite(faces, CRect_i_(x + 2, row_y + 2, 0x14, 0x15), icon, alpha);
-                    row_y += left.height;
                 }
-            }
-            MenuTextureReload(message->tex_block);
-            int text_y = y - option_count * 0xA;
-            for (int i = 0; i < option_count; i++) {
-                int text_x = x + 0xB + 0x11 - message->GetMesLen_system(message->mes_no[i]) * 5;
-                ClsMes *mes = message;
-                if (i >= 0 && i < 10) {
-                    mes->line_pos[i].x = text_x;
-                    mes->line_pos[i].y = text_y;
+                MenuTextureReload(message->tex_block);
+                name_x = x + 0xB;
+                row_y = y - option_count * 10;
+                for (option = 0; option < option_count; option++, row_y += left.height) {
+                    SetLinePos(message, option, MesLineX(name_x + 0x11, message->GetMesLen_system(message->mes_no[option])),
+                               row_y);
                 }
-                text_y += left.height;
-            }
-            message->edge_alpha = alpha;
-            message->DrawMesWin();
-            break;
+                message->edge_alpha = alpha;
+                message->DrawMesWin();
+                break;
         }
-        case 0:
-            break;
     }
 }
 #else
