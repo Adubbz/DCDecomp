@@ -272,7 +272,7 @@ carve_part(main.data.part6.s
            main.data.part6.s=27E790-27E7D0
            main.data.btitem-a.s=27E810-27EAD0
            main.data.part6f.s=291850-291B80
-           main.data.part6k.s=292704-292750
+           main.data.part6k.s=292704-292710
            main.data.shop-local.s=292770-292790
            main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0

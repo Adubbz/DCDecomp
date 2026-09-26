@@ -101,6 +101,9 @@ extern CTexture *StayTex;
 /** Arena the shopkeeper's model and the item shop's board tables are read into. */
 extern CDataAlloc2<1> ShopCashBuffer;
 
+/** Arena the shopkeeper's model data is built in, carved from the menu buffer past ShopCashBuffer. */
+extern CDataAlloc2<1> ShopCashBuffer2;
+
 /** Texture the shop board frame, tags and tickets are drawn from. */
 extern CTexture *ShopBoard;
 
@@ -152,9 +155,6 @@ extern s16 ChargeOrShopFlag;
 #include "menu_misc.hpp"
 #include "stockitem.hpp"
 
-extern CDataAlloc2<1> ShopCashBuffer2;
-
-static void ShopMasterVectorSet(int);
 static int ChargeSelectKey();
 static void ShopModelMsgFunc(int);
 #endif
@@ -1242,11 +1242,24 @@ static int ShopPersonReadStart(int shop_no, int person_no) {
 }
 
 /**
- * Builds the shopkeeper's model using the current shop data.
+ * Sets the shopkeeper's model direction toward the menu camera.
  */
-static int ShopPersonBuild(int, int);
+static void ShopMasterVectorSet(int);
 
-#ifdef NON_MATCHING
+/**
+ * Stores in @p rest how many quadwords of a @p total quadword buffer are left once @p used are taken.
+ */
+static inline void GetRestSize(int &rest, int total, int used) {
+    rest = total - used;
+}
+
+/**
+ * Builds the shopkeeper's model using the current shop data.
+ *
+ * @mangled ShopPersonBuild__Fii
+ * @address 0x1E8040
+ * @size 0x268
+ */
 static int ShopPersonBuild(int kind, int shop_no) {
     char name[64];
     int size;
@@ -1268,7 +1281,7 @@ static int ShopPersonBuild(int kind, int shop_no) {
     texture[1].name = (char *) GetPackFile(pack, name, &size);
     TexManager.DeleteTextureBlock(ShopMenu.person_tex_block);
     TexManager.LoadTextureBlockEX(-1, texture);
-    size = EdMenuBuffer.limit - ShopCashBuffer.limit;
+    GetRestSize(size, EdMenuBuffer.limit, ShopCashBuffer.limit);
     int limit = size;
     ShopCashBuffer2.base = model_area;
     ShopCashBuffer2.limit = limit;
@@ -1291,14 +1304,6 @@ static int ShopPersonBuild(int kind, int shop_no) {
     ShopMenu.unk_1A0 = 0;
     return 2;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ShopPersonBuild__Fii);
-#endif
-
-/**
- * Sets the shopkeeper's model direction toward the menu camera.
- */
-static void ShopMasterVectorSet(int);
 
 /**
  * Draws the shopkeeper and points the menu camera at them.
@@ -3388,9 +3393,6 @@ static void SetShopTalkMsgPos() {
     CommonMenuMes3.AutoSet(msg_pos);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/shop", @819);
-INCLUDE_RODATA("asm/nonmatchings/shop", @837__3);
-INCLUDE_RODATA("asm/nonmatchings/shop", @838__2);
 INCLUDE_RODATA("asm/nonmatchings/shop", @1180);
 INCLUDE_RODATA("asm/nonmatchings/shop", @1181);
 

@@ -561,6 +561,7 @@ SECTIONS
         main.data.part6f.s.o (.data) // 0x00291850
         shop.cpp.o (.shopdata-prefix) // 0x00291b80
         main.data.part6k.s.o (.data) // 0x00292704
+        shop.cpp.o (.shopdata-person) // 0x00292710 @820__2
         shop.cpp.o (.shopdata-local-a) // 0x00292750
         shop.cpp.o (.shopdata-local-b) // 0x00292760
         main.data.shop-local.s.o (.data) // 0x00292770
