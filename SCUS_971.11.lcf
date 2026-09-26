@@ -564,7 +564,8 @@ SECTIONS
         shop.cpp.o (.shopdata-person) // 0x00292710 @820__2
         shop.cpp.o (.shopdata-local-a) // 0x00292750
         shop.cpp.o (.shopdata-local-b) // 0x00292760
-        main.data.shop-local.s.o (.data) // 0x00292770
+        shop.cpp.o (.shopdata-plate) // 0x00292770 @1363__2
+        . = ALIGN(16);
         shop.cpp.o (.shopdata-chargemax) // 0x00292790 @1377
         shop.cpp.o (.shopdata-buymoney) // 0x002927A0
         main.data.shop-buymoney.s.o (.data) // 0x002927AC
@@ -871,6 +872,8 @@ SECTIONS
 		main.sdata.edit_in-a.s.o (.sdata) // 0x002a1fa0
 		btitem.cpp.o (.sdata)          // 0x002a1fe8
 		main.sdata.part2f-2A1FF0.s.o (.sdata) // 0x002a1ff0
+		shop.cpp.o (.sdata)            // 0x002a1ff8 @1350__2
+		main.sdata.shop-a.s.o (.sdata) // 0x002a2000
 		battlemenu.cpp.o (.battlemenu-c702__2) // 0x002a2028 @702__2
 		. = ALIGN(8);
 		battlemenu.cpp.o (.battlemenu-c782__2) // 0x002a2030 @782__2

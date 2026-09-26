@@ -156,7 +156,6 @@ extern s16 ChargeOrShopFlag;
 #include "stockitem.hpp"
 
 static int ChargeSelectKey();
-static void ShopModelMsgFunc(int);
 #endif
 
 /**
@@ -2109,7 +2108,11 @@ static int ChargeSelectKey() {
     return 0;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Runs the shopkeeper's speech and the model's reaction to it.
+ */
+static void ShopModelMsgFunc(int);
+
 void DrawChargeShop() {
     int text_x;
     int text_y;
@@ -2144,46 +2147,51 @@ void DrawChargeShop() {
         if (ShopHaveItemPt->item_no < 0x51) {
             ChargeShopLRDraw(0x80);
         }
-        if (ShopMenu.talk_mode != 24 && ShopMenu.talk_mode != 25) {
-            switch (ShopMenu.side) {
-                case 0:
-                    cur_x = 0x22;
-                    top_row = ShopMenu.stock_top_row;
-                    break;
-                case 1:
-                    cur_x = 0x144;
-                    top_row = (u8) ShopMenu.board.top_row;
-                    break;
-            }
-            if (ShopHaveItemPt->item_no >= 0x51) {
-                state = 2;
-            } else {
+        switch (ShopMenu.talk_mode) {
+            case 25:
+            case 24:
+                break;
+            default:
                 switch (ShopMenu.side) {
-                    case 1:
-                        if (SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor) <= 0) {
-                            state = 0;
-                        } else {
-                            state = 1;
-                        }
-                        break;
                     case 0:
-                        state = ShopStockPt->SearchSpace(ShopMenu.board.cursor, ShopMenu.board.page);
-                        if (state > 0) {
-                            state = 1;
-                        }
+                        cur_x = 0x22;
+                        top_row = ShopMenu.stock_top_row;
+                        break;
+                    case 1:
+                        cur_x = 0x144;
+                        top_row = ShopMenu.board.top_row;
                         break;
                 }
-            }
-            ShopCurDraw(cur_x, 0x90, ShopMenu.board.cursor, top_row, 0, state, 0x80);
+                if (ShopHaveItemPt->item_no >= 0x51) {
+                    state = 2;
+                } else {
+                    switch (ShopMenu.side) {
+                        case 1:
+                            state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
+                            if (state <= 0) {
+                                state = 0;
+                            } else {
+                                state = 1;
+                            }
+                            break;
+                        case 0:
+                            state = ShopStockPt->SearchSpace(ShopMenu.board.cursor, ShopMenu.board.page);
+                            if (state > 0) {
+                                state = 1;
+                            }
+                            break;
+                    }
+                }
+                ShopCurDraw(cur_x, 0x90, ShopMenu.board.cursor, top_row, 0, state, 0x80);
+                break;
         }
         DrawShopIcon(0x4C, 0x2A, 1, 0x80);
         ShopDataMove.IconAutoMoveDraw();
         ShopDataMove.IconAutoMove(ChargeOrShopFlag, 0);
         if (ShopMenu.talk_mode == 17 || ShopMenu.talk_mode == 18) {
             int prompt[2] = {0x516, 0x517};
-            int mes_no = prompt[ShopMenu.talk_mode - 17];
-            if (CommonMenuMes1.mes_made != mes_no) {
-                CommonMenuMes1.MakeMesWin(mes_no);
+            if (CommonMenuMes1.mes_made != prompt[ShopMenu.talk_mode - 17]) {
+                CommonMenuMes1.MakeMesWin(prompt[ShopMenu.talk_mode - 17]);
             }
             CommonMenuMes1.text_x = 0x14A;
             CommonMenuMes1.text_y = 0xBE;
@@ -2196,8 +2204,7 @@ void DrawChargeShop() {
         } else {
             CommonMenuMes1.stay_frame = 0;
         }
-        int help_x = (int) ShopHelpWinPos[0];
-        MenuHelpWinDraw(help_x, (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
+        MenuHelpWinDraw((int) ShopHelpWinPos[0], (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
         GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
         CommonMenuMes2.text_x = (int) (ShopHelpWinPos[0] + text_x);
         CommonMenuMes2.text_y = (int) (ShopHelpWinPos[1] + text_y);
@@ -2210,9 +2217,8 @@ void DrawChargeShop() {
         CommonMenuMes2.Step();
         CommonMenuMes2.DrawMesWin();
         if (ShopHaveItemPt->item_no < 0x51) {
-            s16 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4},
-                                 {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
             int mes_no = 0x519;
+            s16 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
             AtoraNameMes.text_x = plate_x[ShopMenu.lang][0];
             if (ShopMenu.side == 1) {
                 mes_no = 0x518;
@@ -2231,9 +2237,7 @@ void DrawChargeShop() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", DrawChargeShop__Fv);
-#endif
+
 /**
  * Draws the charge shop's capacity plate: how many slots the board has and how many hold a good.
  *
