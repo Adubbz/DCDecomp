@@ -38,12 +38,12 @@ public:
     s16 unk_06;
     CTextureTexAnime first_texture;  /**< First texture endpoint used by the animation. */
     CTextureTexAnime second_texture; /**< Second texture endpoint used by the animation. */
-    s16 unk_38;
-    s16 unk_3A;
-    s16 unk_3C;
-    s16 unk_3E;
-    s16 unk_40;
-    s16 unk_42;
+    s16 source_x;        /**< Left edge of the rectangle copied from the first texture. */
+    s16 source_y;        /**< Top edge of the rectangle copied from the first texture. */
+    s16 source_width;    /**< Width of the rectangle copied from the first texture. */
+    s16 source_height;   /**< Height of the rectangle copied from the first texture. */
+    s16 dest_x;          /**< Left edge the rectangle is copied to in the second texture. */
+    s16 dest_y;          /**< Top edge the rectangle is copied to in the second texture. */
     float scroll_x_step; /**< Horizontal texture-scroll increment per frame. */
     float scroll_y_step; /**< Vertical texture-scroll increment per frame. */
     float scroll_x;      /**< Current horizontal texture-scroll offset. */
