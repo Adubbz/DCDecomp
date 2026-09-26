@@ -1159,47 +1159,59 @@ int GetAtraMsgNo(int map_no, int element) {
 }
 #ifdef NON_MATCHING
 static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
-    int mes_no;
-    EDITPARTS_INFO *info = SearchAtoraInfo(board_pos);
+    EDITPARTS_INFO *info;
+    EDIT_PARTS_ATRA *parts;
+    int msg_no;
+    EDIT_CHIP_ATTACH_DATA *attach;
+    EDIT_ELEMENT_ATRA *chip;
+    EDIT_CHIP_ATTACH_DATA *shown;
+    int link;
+    int flag;
 
+    info = SearchAtoraInfo(board_pos);
     if (info == NULL) {
         return -1;
     }
-    EDIT_PARTS_ATRA *parts = GetEditAtraPartsData(map_no, info->parts_no);
+    parts = GetEditAtraPartsData(map_no, info->parts_no);
     if (parts == NULL) {
         return -1;
     }
-    if (slot != 0) {
-        EDIT_CHIP_ATTACH_DATA *chip = &parts->elements[slot - 1];
-        EDIT_ELEMENT_ATRA *element = GetEditAtraChipData(map_no, chip->id);
-        EDIT_CHIP_ATTACH_DATA *shown =
-            &GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no)->elements[slot - 1];
-        mes_no = element->msg_no + (map_no * 200 + 40);
-        if (chip->id >= 40) {
-            mes_no += 40;
-        }
-        if (info->elements[slot - 1].enabled == 0) {
-            mes_no += 60;
-        }
-        int linked = info->elements[slot - 1].unk_04;
-        if ((linked >= 0 && info->elements[linked].enabled == 0) || AtraTipCanDisplay(shown) == 0) {
-            mes_no = -0x314;
-        }
-    } else {
-        int parts_no = info->parts_no;
-        if (parts_no < 0) {
-            mes_no = -1000;
-        } else {
-            mes_no = parts->unk_0C + map_no * 200;
-            if (map_no == 2 && parts_no == 1) {
-                int count = SaveData->GetGameIntFlag(1);
-                if (count > 0) {
-                    mes_no += count + 0x1C;
-                }
+    switch (slot) {
+        case 0:
+            if (info->parts_no < 0) {
+                msg_no = -1000;
+                break;
             }
-        }
+            msg_no = parts->unk_0C + map_no * 200;
+            switch (map_no) {
+                case 2:
+                    if (info->parts_no == 1) {
+                        flag = SaveData->GetGameIntFlag(1);
+                        if (flag > 0) {
+                            msg_no += flag + 28;
+                        }
+                    }
+                    break;
+            }
+            break;
+        default:
+            attach = &parts->elements[slot] - 1;
+            chip = GetEditAtraChipData(map_no, attach->id);
+            shown = &GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no)->elements[slot - 1];
+            msg_no = chip->msg_no + (map_no * 200 + 40);
+            if (attach->id >= 40) {
+                msg_no += 40;
+            }
+            if (info->elements[slot - 1].enabled == 0) {
+                msg_no += 60;
+            }
+            link = info->elements[slot - 1].unk_04;
+            if ((link >= 0 && info->elements[link].enabled == 0) || AtraTipCanDisplay(shown) == 0) {
+                msg_no = -788;
+            }
+            break;
     }
-    return mes_no;
+    return msg_no;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
@@ -1737,19 +1749,33 @@ void DrawMenuAtoraSelect() {
 }
 #ifdef NON_MATCHING
 static void DrawAtoraSelect(int fade) {
-    int u;
-    int v;
+    int open_mode;
+    int event;
+    int alpha;
+    EDITPARTS_INFO *info;
+    int settled;
+    int remaining;
+    int all_tips;
+    int parts;
+    float target;
+    float y;
     float cursor_x;
     float cursor_y;
+    float step;
+    int waku_size;
     int waku_x;
     int waku_y;
-    int waku_size;
+    int odd;
+    int count;
+    int board_y;
+    int u;
+    int v;
 
     AtoraTexInfoGet();
-    int alpha = 0x80;
+    alpha = 0x80;
     switch (MenuAtoraSel.step) {
-        case 2:
         case 1:
+        case 2:
             alpha = fade;
             break;
         case 6:
@@ -1759,21 +1785,23 @@ static void DrawAtoraSelect(int fade) {
     if (alpha > 0x80) {
         alpha = 0x80;
     }
-    int open_mode = MenuAtoraSel.unk_04;
+    open_mode = MenuAtoraSel.unk_04;
     MenuAtoraSel.name_alpha = alpha;
-    EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
-    int event = 0;
-    int all_tips = 0;
+    info = SearchAtoraInfo(MenuAtoraSel.board_pos);
+    event = 0;
+    all_tips = 0;
     if (info != NULL) {
         event = AtoraCompOrEvent(info);
         all_tips = AtoraAllTipGet(info->parts_no);
     }
     MenuTextureReload(AtoraTextureReadBlock);
-    float target = 146.0f - 130.0f * MenuAtoraSel.board_pos;
-    float step = (target - MenuAtoraSel.scroll_y) / 2.0f;
-    int odd = (int) step % 2;
-    MenuAtoraSel.scroll_y = (int) ((float) MenuAtoraSel.scroll_y + (step / 2.0f + odd));
-    int settled = 1;
+    target = 146.0f - 130.0f * MenuAtoraSel.board_pos;
+    step = (target - MenuAtoraSel.scroll_y) / 2.0f;
+    odd = (int) step % 2;
+    step /= 2.0f;
+    step += odd;
+    MenuAtoraSel.scroll_y += step;
+    settled = 1;
     if (!((float) abs((int) ((float) MenuAtoraSel.scroll_y - target)) <= 4.0f)) {
         settled = 0;
         event = 0;
@@ -1792,12 +1820,12 @@ static void DrawAtoraSelect(int fade) {
     } else {
         settled = 0;
     }
-    int remaining = AtraBoardMaxNum(MenuAtoraSel.map_no);
-    int parts = CommonMenuAtoraInfo->GetNextParts(-1);
-    float y = MenuAtoraSel.scroll_y;
+    remaining = AtraBoardMaxNum(MenuAtoraSel.map_no);
+    parts = CommonMenuAtoraInfo->GetNextParts(-1);
+    y = MenuAtoraSel.scroll_y;
     if (AtoraTextureEnterFlag != 0) {
         AtoraHeyCnt++;
-        while (parts >= 0) {
+        while (0 <= parts) {
             DrawAtora(0x38, (int) y, parts, alpha);
             parts = CommonMenuAtoraInfo->GetNextParts(parts);
             y += 130.0f;
@@ -1812,7 +1840,9 @@ static void DrawAtoraSelect(int fade) {
             AtoraHeyCnt = 0;
         }
         if (settled != 0 || (MenuAtoraSel.map_no == 5 && all_tips != 0)) {
-            float sign_y = 208.0f + 8.0f * sinf(3.1415927f * ((float) (CursorVibeCnt % 89) - 45.0f) / 45.0f);
+            float phase = CursorVibeCnt % 89;
+            phase -= 45.0f;
+            float sign_y = 208.0f + 8.0f * sinf(3.1415927f * phase / 45.0f);
             CRect_i_ source(0, 0, 0x50, 0x20);
             if (MenuAtoraSel.map_no == 5 && all_tips != 0) {
                 source.x += 0x50;
@@ -1838,9 +1868,9 @@ static void DrawAtoraSelect(int fade) {
         }
         AtoraBoardFadeEffect();
     }
-    int count = PersonalRetMax(MenuAtoraSel.board.page);
-    MenuAtoraSel.board.y += ((float) (0x7F - MenuAtoraSel.board.top_row * 0x28) - MenuAtoraSel.board.y) / 4.0f;
-    int board_y = (int) MenuAtoraSel.board.y;
+    count = PersonalRetMax(MenuAtoraSel.board.page);
+    board_y = 0x7F - MenuAtoraSel.board.top_row * 0x28;
+    board_y = (int) (MenuAtoraSel.board.y += (board_y - MenuAtoraSel.board.y) / 4.0f);
     MenuTextureReload(PerBoardTex->block);
     DrawPerBoardDraw(0, count, 0x168, board_y, 0x81, 0x121, PerBoardTex, 0x80);
     if (AtoraTextureEnterFlag != 0) {
@@ -1856,7 +1886,7 @@ static void DrawAtoraSelect(int fade) {
         PersonalBoardMaxDraw(count, 0x154, 0x78, PerBoardTex, 0x80);
     }
     AtoraNameDraw(0);
-    if (GetAtoraMaxVillage() - 3 > 0) {
+    if (0 < GetAtoraMaxVillage() - 3) {
         int arrow_y = (int) (66.0f + 4.0f * sinf(3.1415927f * (float) (CursorVibeCnt % 79 - 40) / 40.0f));
         DrawMenu2DSprite(PerBoardTex, CRect_i_(0x146, arrow_y, 0x1A, 0x18), CRect_i_(0x62, 0x14, 0x1A, 0x18), 0x80);
         DrawMenu2DSprite(PerBoardTex, CRect_i_(0x20C, arrow_y, 0x1A, 0x18), CRect_i_(0x7C, 0x14, 0x1A, 0x18), 0x80);
@@ -1872,8 +1902,8 @@ static void DrawAtoraSelect(int fade) {
             } else if (MenuAtoraSel.board.cursor == 0) {
                 cursor_x = 56.0f;
                 cursor_y = 176.0f;
-                waku_x = (int) 58.0f;
-                waku_y = (int) 161.0f;
+                waku_x = (int) (cursor_x + 2.0f);
+                waku_y = (int) (cursor_y - 15.0f);
                 waku_size = 0x56;
             } else {
                 waku_size = 0x24;
@@ -1893,7 +1923,7 @@ static void DrawAtoraSelect(int fade) {
             if (row < 0) {
                 row = 0;
             }
-            if (row >= 4) {
+            if (row > 3) {
                 row = 3;
             }
             cursor_y = row * 0x28 + 0x8A;
@@ -1904,7 +1934,7 @@ static void DrawAtoraSelect(int fade) {
         }
     }
     MenuAtoraSel.unk_188 = 0x40;
-    if (NowTipHavePt->tip_no >= 0) {
+    if (NowTipHavePt->tip_no > -1) {
         MenuAtoraSel.unk_188 = 0x80;
         cursor_x += 25.0f;
         cursor_y += 12.0f;
@@ -1912,7 +1942,7 @@ static void DrawAtoraSelect(int fade) {
         switch (MenuAtoraSel.mode) {
             case 0:
                 if (info != NULL) {
-                    if (MenuAtoraSel.board.cursor > 0 && info->elements[MenuAtoraSel.board.cursor - 1].enabled != 0) {
+                    if (0 < MenuAtoraSel.board.cursor && info->elements[MenuAtoraSel.board.cursor - 1].enabled != 0) {
                         cursor_x += 27.0f;
                         cursor_y += 12.0f;
                         MenuAtoraSel.unk_188 = 0x60;
@@ -1922,7 +1952,7 @@ static void DrawAtoraSelect(int fade) {
                 }
                 break;
             case 1:
-                if (MenuAtoraSel.board.cursor >= 0 && MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor] >= 0) {
+                if (MenuAtoraSel.board.cursor > -1 && MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor] > -1) {
                     cursor_x += 25.0f;
                     cursor_y += 12.0f;
                     MenuAtoraSel.unk_188 = 0x60;
@@ -1935,7 +1965,7 @@ static void DrawAtoraSelect(int fade) {
     if (MenuAtoraSel.step == 0) {
         MenuTextureReload(AtoraTextureReadBlock);
         int tip_no = NowTipHavePt->tip_no;
-        if (tip_no >= 0) {
+        if (tip_no > -1) {
             CTexture *texture = RetCTexAtora(tip_no, u, v);
             if (texture != NULL) {
                 float sway_x = 7.0f * cosf(0.0805536583f * CursorVibeCnt);
@@ -1945,20 +1975,24 @@ static void DrawAtoraSelect(int fade) {
                 CRect_i_ source(u, v, 0x24, 0x24);
                 DrawMenu2DSprite(texture, CRect_i_(tip_x + 5, tip_y + 3, 0x24, 0x24), source, 10, 10, 10, 0x50);
                 float hand_x = MenuAtoraSel.cursor_x + sway_x;
+                int hand_ix = (int) hand_x;
                 float hand_y = MenuAtoraSel.cursor_y + sway_y;
+                int hand_iy = (int) hand_y;
                 DrawMenu2DSprite(StayTex, CRect_i_((int) hand_x + 6, (int) hand_y + 3, 0x20, 0x20),
                                  CRect_i_(0x80, 0x28, 0x20, 0x20), 10, 10, 10, 0x50);
                 DrawMenu2DSprite(texture, CRect_i_(tip_x, tip_y, 0x24, 0x24), source, 0x80);
             }
         }
         int draw_waku = 1;
-        if (MenuAtoraSel.mode == 0) {
-            if (info == NULL) {
-                draw_waku = 0;
-            }
-            if (open_mode == 2 && MenuAtoraSel.board.cursor > 0 && event != 0) {
-                draw_waku = 0;
-            }
+        switch (MenuAtoraSel.mode) {
+            case 0:
+                if (info == NULL) {
+                    draw_waku = 0;
+                }
+                if (open_mode == 2 && 0 < MenuAtoraSel.board.cursor && event != 0) {
+                    draw_waku = 0;
+                }
+                break;
         }
         if (MenuAtoraSel.step == 3 ||
             (MenuAtoraSel.mode == 0 && MenuAtoraSel.board.cursor == 0 && MenuAtoraSel.map_no == 5)) {
@@ -2715,68 +2749,75 @@ void AtoraNameDraw(int) {
 }
 
 #ifdef NON_MATCHING
-static void OptionMenuDraw(int x, int y, int button_x, int button_y, int alpha) {
-    int labels[12] = {10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11};
-    int kinds[12] = {0, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 2};
-    int row_y = y;
+static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
+    int label[12] = {10, 8, 4, 5, 2, 3, 9, 11, 12, 13, 6, 7};
+    int kind[12] = {0, 0, 1, 2, 0, 1, 3, 0, 0, 0, 0, 0};
+    int row_y;
+    int v;
+    int u;
+    int j;
+    int i;
+    int row_x;
+    int cell_x;
+    int setting;
 
-    for (int i = 0; i < 12; i++) {
-        CRect_i_ dest(0, 0, 0xD2, 0x18);
-        CRect_i_ source(0, 0, 0xD2, 0x18);
-        int label = labels[i];
-        if (label < 7) {
-            source.x = 0;
-            source.y = label * 0x18;
+    row_x = x;
+    row_y = y;
+    for (i = 0; i < 12; i++) {
+        CRect_i_ dst(0, 0, 210, 24);
+        CRect_i_ src(0, 0, 210, 24);
+
+        if (label[i] < 7) {
+            src.x = 0;
+            src.y = label[i] * 24;
         } else {
-            source.x = source.width;
-            source.y = (label - 7) * 0x18;
+            src.x = src.width;
+            src.y = (label[i] - 7) * 24;
         }
-        dest.x = x;
-        dest.y = row_y + 1;
-        DrawMenu2DSprite(MenuOption, dest, source, alpha);
-        int kind = kinds[i];
-        switch (kind) {
-            case 2:
+        dst.x = row_x;
+        dst.y = row_y + 1;
+        DrawMenu2DSprite(MenuOption, dst, src, alpha);
+        switch (kind[i]) {
+            case 0:
             case 1:
-            case 0: {
-                int setting = OptionMenu.flag[i] << 6;
-                DrawMenu2DSprite(MenuOption, CRect_i_(x + 0xEE, row_y + 1, 0x40, 0x17),
-                                 CRect_i_(setting, kind * 0x30 + 0xB0 + 1, 0x40, 0x18), alpha);
-                DrawMenu2DSprite(MenuOption, CRect_i_(x + 0x136, row_y + 1, 0x40, 0x17),
-                                 CRect_i_(setting >= 0x40 ? 0 : 0x40, (kind * 2 + 1) * 0x18 + 0xB0 + 1, 0x40, 0x18),
+            case 2:
+                u = OptionMenu.flag[i] << 6;
+                v = kind[i] * 48 + 176;
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
+                                 alpha);
+                u = u < 64 ? 64 : 0;
+                v = (kind[i] * 2 + 1) * 24 + 176;
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
                                  alpha);
                 break;
-            }
-            case 3: {
-                int v = 0xB0;
-                int cell_x = x + 0xEE;
-                int setting = OptionMenu.flag[i];
-                for (int j = 0; j < 3; j++) {
-                    int u = 0xA0;
+            case 3:
+                v = 176;
+                cell_x = row_x + 238;
+                setting = OptionMenu.flag[i];
+                for (j = 0; j < 3; j++) {
+                    u = 160;
                     if (j == setting) {
-                        u = 0x80;
+                        u -= 32;
                     }
-                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 0x20, 0x17), CRect_i_(u, v + 1, 0x20, 0x18),
+                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 32, 23), CRect_i_(u, v + 1, 32, 24),
                                      alpha);
-                    v += 0x18;
-                    cell_x += 0x24;
+                    v += 24;
+                    cell_x += 36;
                 }
-                int u = 0;
+                int off_u = 0;
                 if (setting != 3) {
-                    u = 0x40;
+                    off_u += 64;
                 }
-                DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 0x40, 0x17), CRect_i_(u, 0xC7, 0x40, 0x18),
-                                 alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 64, 23), CRect_i_(off_u, 199, 64, 24), alpha);
                 break;
-            }
         }
-        row_y += 0x1E;
+        row_y += 30;
         if (i == 5) {
-            x += 0x230;
+            row_x += 560;
             row_y = y;
         }
     }
-    DrawMenu2DSprite(MenuOption, CRect_i_(button_x, button_y, 0x3C, 0x1D), CRect_i_(0x1C4, 0xE2, 0x3C, 0x1D), alpha);
+    DrawMenu2DSprite(MenuOption, CRect_i_(arrow_x, arrow_y, 60, 29), CRect_i_(452, 226, 60, 29), alpha);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
