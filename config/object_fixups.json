@@ -315,47 +315,56 @@
       ".battlemenu-c4433": [
         "@1933"
       ],
+      ".battlemenu-c5342": [
+        "@1990"
+      ],
+      ".battlemenu-c5345": [
+        "@1993"
+      ],
+      ".battlemenu-c5370": [
+        "@2016"
+      ],
       ".battlemenu-c5492": [
-        "@2020"
+        "@2125"
       ],
       ".battlemenu-c5503": [
-        "@2029"
+        "@2134"
       ],
       ".battlemenu-c5534": [
-        "@2061"
+        "@2166"
       ],
       ".battlemenu-c5742": [
-        "@2238"
+        "@2343"
       ],
       ".battlemenu-town-ref": [
-        "@2352"
+        "@2457"
       ],
       ".battlemenu-town-pos": [
-        "@2353"
+        "@2458"
       ],
       ".battlemenu-c6018": [
-        "@2480"
+        "@2585"
       ],
       ".battlemenu-c6037": [
-        "@2499"
+        "@2604"
       ],
       ".battlemenu-c6185": [
-        "@2516"
+        "@2621"
       ],
       ".battlemenu-c6188": [
-        "@2519"
+        "@2624"
       ],
       ".battlemenu-c6227": [
-        "@2545"
+        "@2650"
       ],
       ".battlemenu-c6232": [
-        "@2555"
+        "@2660"
       ],
       ".battlemenu-c6233": [
-        "@2556"
+        "@2661"
       ],
       ".battlemenu-c6235": [
-        "@2558"
+        "@2663"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -376,22 +385,22 @@
         "@1710"
       ],
       ".battlemenu-c5556": [
-        "@2083"
+        "@2188"
       ],
       ".battlemenu-c5592": [
-        "@2120"
+        "@2225"
       ],
       ".battlemenu-c5593": [
-        "@2121"
+        "@2226"
       ],
       ".battlemenu-c5711": [
-        "@2209"
+        "@2314"
       ],
       ".battlemenu-c5977": [
-        "@2467"
+        "@2572"
       ],
       ".battlemenu-c6236": [
-        "@2559"
+        "@2664"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"

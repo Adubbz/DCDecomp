@@ -6264,10 +6264,8 @@ int ItemMenuMainKey() {
 #else
 INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuMainKey__Fv);
 #endif
-#ifdef NON_MATCHING
-void ItemMenuModeDraw() {
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
 
+void ItemMenuModeDraw() {
     BtlMenuTexBlockEnter();
     CharaStatus = TexManager.GetTexture("status", -1);
     switch (ItemMenuMode.mode) {
@@ -6280,21 +6278,21 @@ void ItemMenuModeDraw() {
             ActiveItemDraw(0x3A, 0x4A, 0x80);
             DrawPersonalBoard(0x154, 0x78, ItemMenuMode.board.page, 0x80, 0);
             CommonTrushDraw(0x232, 0x10C, 0x80);
-            CommonMoneyBoardDraw(0x163, 0x120, status->money, 0x80);
+            CommonMoneyBoardDraw(0x163, 0x120, ((CUserStatus *) BtlMenuStatusPt)->money, 0x80);
             DrawTrushItem();
             IconAutoGet.IconAutoMove();
             IconAutoGet.IconAutoMoveDraw();
             ItemMenuCharaStatusDraw(0x3A, 0xB4, ItemMenuMode.chara, 0x80);
             MenuTextureReload(BtlMenuReadBlock);
             int arrow_x = -1;
-            int arrow_y = -1;
-            int arrow_w = -1;
+            int arrow_y = arrow_x;
+            int arrow_w = arrow_x;
             switch (ItemMenuMode.mode) {
                 case 0:
                 case 1:
                 case 2:
                 case 3:
-                    if (status->party_size >= 2) {
+                    if (BtlMenuStatusPt->party_size > 1) {
                         arrow_x = 0x32;
                         arrow_y = 0x9C;
                         arrow_w = 0xE8;
@@ -6307,7 +6305,7 @@ void ItemMenuModeDraw() {
                     arrow_w = 0xE6;
                     break;
             }
-            if (arrow_x > 0) {
+            if (0 < arrow_x) {
                 DrawBtlMenuLRCursor(arrow_x, arrow_y, arrow_w, 0x80);
             }
             break;
@@ -6334,17 +6332,22 @@ void ItemMenuModeDraw() {
     int x = cursor_pos[ItemMenuMode.mode][0];
     int y = cursor_pos[ItemMenuMode.mode][1];
     PERSONAL_BOARD *board = &ItemMenuMode.board;
-    if (ItemMenuMode.mode == 4) {
-        switch (board->cursor_area) {
-            case 1:
-                x = board->cursor % 5 * 0x28 + 0x148;
-                y = (board->cursor - board->top_row * 5) / 5 * 0x28 + 0x7C;
-                break;
-            case 2:
-                x = 0x216;
-                y = 0x110;
-                break;
-        }
+    switch (ItemMenuMode.mode) {
+        case 4:
+            switch (board->cursor_area) {
+                case 1: {
+                    int cursor = board->cursor;
+                    x = cursor % 5 * 0x28 + 0x148;
+                    cursor -= board->top_row * 5;
+                    y = cursor / 5 * 0x28 + 0x7C;
+                    break;
+                }
+                case 2:
+                    x = 0x216;
+                    y = 0x110;
+                    break;
+            }
+            break;
     }
     int frame_w = 0x2A;
     int frame_h = 0x22;
@@ -6352,7 +6355,7 @@ void ItemMenuModeDraw() {
     int frame_y = y - 2;
     if (ItemMenuMode.mode == 1) {
         frame_h = 0x68;
-        frame_w = 0x68;
+        frame_w = frame_h;
         frame_x = x + 0xE;
         frame_y = y - 0x26;
     }
@@ -6361,44 +6364,48 @@ void ItemMenuModeDraw() {
         vibe = 2;
     } else {
         switch (ItemMenuMode.mode) {
-            case 0:
-                if (ItemMenuMode.board.cursor >= 0 && MenuItemPackPt->quick_item_slot[ItemMenuMode.board.cursor] >= 0x84) {
+            case 0: {
+                int cursor = ItemMenuMode.board.cursor;
+                s16 *slot = &MenuItemPackPt->quick_item_slot[cursor];
+                if (0 <= cursor && *slot >= 0x84) {
                     vibe = 1;
                 }
                 break;
-            case 4:
+            }
             case 5:
-                if (SearchBoardNowPosItemExist(ItemMenuMode.board.page, ItemMenuMode.board.cursor) >= 0x51) {
+            case 4:
+                int cursor = ItemMenuMode.board.cursor;
+                if (SearchBoardNowPosItemExist(ItemMenuMode.board.page, cursor) >= 0x51) {
                     vibe = 1;
                 }
-                if (ItemMenuMode.board.cursor_area == 2 && board->held_item.item_no < 0x51) {
+                if (ItemMenuMode.board.cursor_area == 2 && board->held_item.item_no <= 0x50) {
                     vibe = 0;
                 }
                 break;
         }
     }
     s16 vibe_offset[3][2] = {{0, 0}, {0x18, 0x18}, {0x1C, 0x0D}};
-    int strength = (vibe << 5) + 0x40;
-    SysCur[0] += ((float) (x + vibe_offset[vibe][0]) - SysCur[0]) / 4.0f;
-    SysCur[1] += ((float) (y + vibe_offset[vibe][1]) - SysCur[1]) / 4.0f;
+    x += vibe_offset[vibe][0];
+    y += vibe_offset[vibe][1];
+    vibe = (vibe << 5) + 0x40;
+    SysCur[0] += ((float) x - SysCur[0]) / 4.0f;
+    SysCur[1] += ((float) y - SysCur[1]) / 4.0f;
     int big = 1;
-    if (strength >= 0x80) {
+    if (vibe >= 0x80) {
         big = 0;
     }
-    s16 held = board->held_item.item_no;
-    if (held >= 0x51 && ItemMenuMode.state != 6) {
-        ItemNaviCursor(held);
+    if (board->held_item.item_no >= 0x51 && ItemMenuMode.state != 6) {
+        ItemNaviCursor(board->held_item.item_no);
         COM_ITEM_INFO *info = GetCommonItemInfo(board->held_item.item_no);
         if (info != NULL && (info->kind == 2 || info->kind == 0)) {
             MenuTextureReload(ItemMenuWeaponIconReadBlock);
         }
-        int vibe_x = (int) SysCur[0];
-        DrawMenuVibeItem(vibe_x, (int) SysCur[1], 2, -0xC, 0x80);
+        DrawMenuVibeItem((int) SysCur[0], (int) SysCur[1], 2, -0xC, 0x80);
     }
     switch (ItemMenuMode.state) {
-        case 3:
+        case 1:
         case 2:
-        case 1: {
+        case 3: {
             int alpha = 0;
             switch (ItemMenuMode.state) {
                 case 1:
@@ -6418,7 +6425,7 @@ void ItemMenuModeDraw() {
                 alpha = 0x80;
             }
             FrameImageDraw(0x40, alpha);
-            return;
+            break;
         }
         case 6: {
             WEAPON_HAVE *weapon = ItemMenuMode.target_weapon;
@@ -6441,40 +6448,40 @@ void ItemMenuModeDraw() {
                 CommonMenuMes1.values[1] = holes;
                 CommonMenuMes1.MakeMesWin(0xBC);
             }
-            if (ItemMenuMode.use_target != 4 && ItemMenuMode.use_target != 2) {
-                return;
+            switch (ItemMenuMode.use_target) {
+                case 2:
+                case 4: {
+                    CommonMenuMes1.stay_frame = 1;
+                    MenuTextureReload(CommonMenuMes1.tex_block);
+                    CommonMenuMes1.auto_pos = 0;
+                    CommonMenuMes1.text_x = 0xE2;
+                    CommonMenuMes1.text_y = 0x92;
+                    CommonMenuMes1.Step();
+                    CommonMenuMes1.DrawMesWin();
+                    setbilinear(0);
+                    MenuTextureReload(BtlMenuReadBlock);
+                    int hole_x = 0x13C - (holes * 0x12 + 0xA);
+                    DrawWepHole(hole_x, 0x5A, weapon, 1, 0x80);
+                    MenuTextureReload(ItemMenuWeaponIconReadBlock);
+                    DrawWepAttach(hole_x + 0xE, 0x60, weapon, 1, 0x80);
+                    MenuTextureReload(BtlMenuReadBlock);
+                    DrawDngYesNoDialog(0x114, 0xE6, 0x80);
+                    int yes_y = ItemMenuMode.confirm * 0x1C + 0xE0;
+                    DrawMenuWaku(268.0f, (float) (yes_y - 2), 0x60, 0x18, 0, StayTex, 0x80);
+                    DrawMenuObjectVibe(0xF2, yes_y, 0, 0x40);
+                    break;
+                }
             }
-            CommonMenuMes1.stay_frame = 1;
-            MenuTextureReload(CommonMenuMes1.tex_block);
-            CommonMenuMes1.auto_pos = 0;
-            CommonMenuMes1.text_x = 0xE2;
-            CommonMenuMes1.text_y = 0x92;
-            CommonMenuMes1.Step();
-            CommonMenuMes1.DrawMesWin();
-            setbilinear(0);
-            MenuTextureReload(BtlMenuReadBlock);
-            int hole_x = 0x13C - (holes * 0x12 + 0xA);
-            DrawWepHole(hole_x, 0x5A, weapon, 1, 0x80);
-            MenuTextureReload(ItemMenuWeaponIconReadBlock);
-            DrawWepAttach(hole_x + 0xE, 0x60, weapon, 1, 0x80);
-            MenuTextureReload(BtlMenuReadBlock);
-            DrawDngYesNoDialog(0x114, 0xE6, 0x80);
-            int yes_y = ItemMenuMode.confirm * 0x1C + 0xE0;
-            DrawMenuWaku(268.0f, (float) (yes_y - 2), 0x60, 0x18, 0, StayTex, 0x80);
-            DrawMenuObjectVibe(0xF2, yes_y, 0, 0x40);
-            return;
+            break;
         }
-        default: {
-            DrawMenuWaku((float) frame_x, (float) frame_y, frame_w, frame_h, 0, StayTex, 0x80);
-            int vibe_x = (int) SysCur[0];
-            DrawMenuObjectVibe(vibe_x, (int) SysCur[1], big, strength);
-            return;
-        }
+        default:
+            if (ItemMenuMode.state != 5 && ItemMenuMode.state != 4) {
+                DrawMenuWaku((float) frame_x, (float) frame_y, frame_w, frame_h, 0, StayTex, 0x80);
+                DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], big, vibe);
+            }
+            break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", ItemMenuModeDraw__Fv);
-#endif
 int ItemMenuModeKey() {
     if (ItemMenuMode.mode == 5) {
         int count = TrushMoveMax[ItemMenuMode.board.page];

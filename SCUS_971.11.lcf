@@ -651,6 +651,9 @@ SECTIONS
         battlemenu.cpp.o (.battlemenu-c4433) // 0x002934b8 @4433
         . = ALIGN(16);
         main.data.shop-filenames-after-292EE0-2934D0.s.o (.data) // 0x002934d0
+        battlemenu.cpp.o (.battlemenu-c5342) // 0x00293510 @5342
+        battlemenu.cpp.o (.battlemenu-c5345) // 0x00293530 @5345
+        battlemenu.cpp.o (.battlemenu-c5370) // 0x00293550 @5370
         battlemenu.cpp.o (.battlemenu-c5492) // 0x00293560 @5492
         battlemenu.cpp.o (.battlemenu-c5503) // 0x00293570 @5503
         battlemenu.cpp.o (.battlemenu-c5534) // 0x00293580 @5534
