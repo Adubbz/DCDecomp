@@ -2691,33 +2691,26 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         DrawWepAttach(draw_x + 0xE, 0xBE, weapon, selected, alpha);
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2244);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2245);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2246__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2247);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2248);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @2249);
-#ifdef NON_MATCHING
 void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
+    int equipped_slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
+    int cursor = WepMenu.weapon_slot;
+    sceVu0FVECTOR ref = {0.0f, 0.0f, -45.0f, 1.0f};
+    sceVu0FVECTOR pos = {0.0f, 0.0f, 60.0f, 1.0f};
+    sceVu0FVECTOR ambient;
+    sceVu0FVECTOR bright;
     sceVu0FMATRIX light_dir;
     sceVu0FMATRIX light_col;
-    sceVu0FVECTOR ambient;
-    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-    int equipped_slot = status->equipped_weapon_slot[chara];
-    int cursor = WepMenu.weapon_slot;
-    sceVu0FVECTOR ref = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR pos = {0.0f, 0.0f, 0.0f, 0.0f};
 
     MenuCamera.SetRef(ref);
     MenuCamera.SetPos(pos);
     MGGetPLight(light_dir, light_col);
     MGGetAmbient(ambient);
-    sceVu0FVECTOR bright = {80.0f, 80.0f, 80.0f, 0.0f};
-    sceVu0FVECTOR direction = {0.0f, 0.0f, 1.0f, 0.0f};
+    bright[0] = bright[1] = bright[2] = 80.0f;
+    sceVu0FVECTOR direction = {0.3f, 1.0f, 0.3f, 0.0f};
     sceVu0FVECTOR normal;
     sceVu0Normalize(normal, direction);
-    sceVu0FMATRIX dir = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
-    sceVu0FMATRIX col = {{128.0f, 128.0f, 128.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
+    sceVu0FMATRIX dir = {{0.3f, 0.0f, 0.0f, 0.0f}, {0.3f, 0.0f, 0.0f, 0.0f}, {0.3f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
+    sceVu0FMATRIX col = {{96.0f, 96.0f, 96.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
     dir[0][0] = normal[0];
     dir[1][0] = normal[1];
     dir[2][0] = normal[2];
@@ -2728,7 +2721,7 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
             continue;
         }
         if (x >= 0x277) {
-            continue;
+            break;
         }
         WEAPON_HAVE *weapon = &DngWepHavePt[i];
         int is_equipped = 0;
@@ -2740,7 +2733,8 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
             is_selected = 1;
         }
         if (is_selected != 0) {
-            if (WepMenu.unk_0C == 8) {
+            switch (WepMenu.unk_0C) {
+            case 8:
                 switch (MenuWepLevelUp.effect_state) {
                     case 5:
                         draw_alpha = (int) (128.0f - 4.0f * MenuWepLevelUp.effect_timer);
@@ -2759,10 +2753,21 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
                         }
                         break;
                 }
+                break;
             }
             MenuMes.alpha = draw_alpha;
-        } else if (WepMenu.unk_02 <= 0 && WepMenu.unk_0C >= 7) {
-            continue;
+        } else {
+            if (WepMenu.unk_02 > 0) {
+                draw_alpha = 0;
+                continue;
+            }
+            if (WepMenu.unk_0C >= 7) {
+                draw_alpha = 0;
+                continue;
+            }
+            if (WepMenu.unk_0C >= 7 && WepMenu.unk_0C < 15) {
+                draw_alpha = 0;
+            }
         }
         bright[3] = draw_alpha;
         MGSetAmbient(bright);
@@ -2771,10 +2776,11 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         }
         if (weapon->item_no >= 0x101) {
             CCharacter *frame = NULL;
-            if (GetNowTestNo() == 1) {
+            switch (GetNowTestNo()) {
+            case 1:
                 if (is_equipped != 0) {
-                    char *shadows[6] = {"kgetoan", "kgesyao", "kgegoro", "kgeruby", "kgeunga", "kgeozu"};
                     MenuTextureReload(MenuShadowReadBlock);
+                    char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
                     DrawMenu2DSprite(TexManager.GetTexture(shadows[WepMenu.chara], -1), CRect_i_(x + 0x24, 0x96, 0x64, 0x63),
                                      CRect_i_(0, 0, 0x64, 0x64), draw_alpha * 9 / 40);
                     MenuTextureReload(MenuExtendReadBlock);
@@ -2784,6 +2790,7 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
                     frame = &DngWeaponFrm[frame_no];
                     MenuWeaponSpSet(frame, weapon);
                 }
+                break;
             }
             if (frame != NULL) {
                 DrawAallWeapon(x, 0xA0, depth, frame, weapon, is_equipped, is_selected, draw_alpha);
@@ -2796,10 +2803,10 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         }
         MenuMes.mode = 0;
         switch (WepMenu.unk_02) {
-            case 8:
-            case 10:
-            case 9:
             case 11:
+            case 9:
+            case 10:
+            case 8:
                 MenuTextureReload(BtlMenuReadBlock);
                 DrawBtlMenuLRCursor(x - 0x1C, 0xE6, 0xD4, draw_alpha);
                 DrawWeaponTagBoard(x - 0xC, 0xF0, weapon, 0, 0, draw_alpha);
@@ -2815,26 +2822,36 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
     MGSetAmbient(ambient);
     if (MenuExTextureReadFlag == 2) {
         int tags = 0;
-        if (WepMenu.unk_02 == 10 || WepMenu.unk_02 == 9 || WepMenu.unk_02 == 8 || WepMenu.unk_02 == 11) {
-            tags = 1;
+        switch (WepMenu.unk_02) {
+            case 11:
+            case 8:
+            case 9:
+            case 10:
+                tags = 1;
+                break;
         }
         WeaponNameDraw(0x72, tags, alpha);
     }
-    if (WepMenu.unk_02 != 8 && WepMenu.unk_02 != 10 && WepMenu.unk_02 != 9 && WepMenu.unk_02 != 11) {
-        int dim = 0;
-        if (WepMenu.unk_02 != 0) {
-            dim = 1;
+    switch (WepMenu.unk_02) {
+        case 11:
+        case 9:
+        case 10:
+        case 8:
+            break;
+        default: {
+            int dim = 0;
+            if (WepMenu.unk_02 != 0) {
+                dim = 1;
+            }
+            FadeTexX(0, 0xCC, 0x1AE, 0xD2, "frame_image", dim);
+            break;
         }
-        FadeTexX(0, 0xCC, 0x1AE, 0xD2, "frame_image", dim);
     }
     if (WepMenu.unk_0C != 8) {
         MenuMes.Step();
         MenuMes.Draw1(MenuMes.unk_08, MenuMes.unk_0C, MenuMes.alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
-#endif
 
 /**
  * Reports whether a weapon can be repaired, built up, or neither, as a set of flags.
