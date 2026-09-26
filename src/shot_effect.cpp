@@ -494,24 +494,21 @@ int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int elemen
  * @address 0x1AE750
  * @size 0x230
  */
-#ifdef NON_MATCHING
 void CSHOT_MACHINGUN::Step() {
     int slot;
     SHOT_COLLISION_RESULT result;
     float *pos;
-    int *timer;
     int elem;
     CCollisionData *col;
 
     for (slot = 0; slot < 16; slot++) {
-        timer = &unk_280[slot];
         if (unk_280[slot] <= 0) {
             continue;
         }
 
-        (*timer)++;
-        if (*timer >= 240) {
-            *timer = 0;
+        unk_280[slot]++;
+        if (unk_280[slot] >= 240) {
+            unk_280[slot] = 0;
             continue;
         }
 
@@ -519,7 +516,7 @@ void CSHOT_MACHINGUN::Step() {
         result = checkCollision(pos, pos, velocity[slot], 2, 2.0f);
         if (result == SHOT_COLLISION_MAP) {
             OzumondShotEffect.Set(pos);
-            *timer = 0;
+            unk_280[slot] = 0;
         }
         if (result == SHOT_COLLISION_MONSTER) {
             NowColData->Set(pos, unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
@@ -531,7 +528,7 @@ void CSHOT_MACHINGUN::Step() {
             CCollisionData *target = NowColData;
             target->hit[target->now_hit].owner = 5;
             target->hit[target->now_hit].unk_60 = 6;
-            *timer = 0;
+            unk_280[slot] = 0;
         }
 
         pos[0] += velocity[slot][0];
@@ -539,6 +536,3 @@ void CSHOT_MACHINGUN::Step() {
         position[slot][2] += velocity[slot][2];
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_effect", Step__15CSHOT_MACHINGUNFv);
-#endif
