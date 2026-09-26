@@ -22,7 +22,7 @@
 /**
  * Returns the texture page for the selected manual category and entry.
  */
-s8 GetNowManualPartTgaNum(void) {
+int GetNowManualPartTgaNum(void) {
     return *(ManualMenu.entry + (ManualTgaNum + (ManualMenu.category * 6)));
 }
 
@@ -129,30 +129,25 @@ s16 ManualImgEnter() {
 INCLUDE_ASM("asm/nonmatchings/menu_manual", ManualImgEnter__Fv);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/menu_manual", @505__3);
-#ifdef NON_MATCHING
 void DrawPrevNextCursor() {
-    CTexture *texture = TexManager.GetTexture((char *)"mncursor", -1);
+    CTexture *texture = TexManager.GetTexture("mncursor", -1);
     if (texture == NULL) {
         return;
     }
     CRect_i_ texel(0x40, 0, 0x20, 0x20);
+    int x[] = {0x40, 0x222};
     int image_count = GetNowManualPartTgaNum();
-    int x[] = {0x10, 0x250};
-    for (int cursor = 0; cursor < 2; cursor++) {
-        if ((cursor == 0 && ManualMenu.image_page == 0) ||
-            (cursor == 1 && ManualMenu.image_page == image_count - 1)) {
-            texel.y += 0x20;
+    for (int cursor = 0; cursor < 2; cursor++, texel.y += 0x20) {
+        if (cursor == 0 && ManualMenu.image_page == 0) {
             continue;
+        }
+        if (cursor == 1 && ManualMenu.image_page == image_count - 1) {
+            return;
         }
         CRect_i_ screen(x[cursor], 0x106, texel.width, texel.height);
         DrawMenu2DSprite(texture, screen, texel, 0x80);
-        texel.y += 0x20;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_manual", DrawPrevNextCursor__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_manual", @535);
 void DrawManualMsg() {
     if (ManualMenu.messages_ready == 0) {
         return;

@@ -201,7 +201,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.battlemenu-tail.s=2A20D8-2A2100
            main.sdata.editmenu-after.s=2A2120-2A2150
            main.sdata.memcard-a.s=2A2158-2A2190
-           main.sdata.part2g.s=2A21B8-2A21C8
+           main.sdata.part2g.s=2A21B8-2A21C0
            main.sdata.part2e.s=2A21F0-2A21F8
            main.sdata.battle_globals-a.s=2A2208-2A2218)
 carve_part(main.sdata.part3.s

@@ -830,6 +830,7 @@ SECTIONS
 		. = ALIGN(8);
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0
 		main.sdata.part2g.s.o (.sdata) // 0x002a21b8
+		menu_manual.cpp.o (.sdata)     // 0x002a21c0 DrawPrevNextCursor's positions
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
 		main.sdata.part2e.s.o (.sdata) // 0x002a21f0

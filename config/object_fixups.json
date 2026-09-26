@@ -1874,5 +1874,10 @@
     "rodata_exports": [
       "@1211"
     ]
+  },
+  "src/menu_manual.cpp": {
+    "rodata_exports": [
+      "@535"
+    ]
   }
 }
