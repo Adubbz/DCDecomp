@@ -19,7 +19,7 @@ class CFrame;
 class CSHOT_EFFECT {
 public:
     BT_SHOT_EFFECT *effect_data; /**< Description shared by the active effect slots. */
-    CCharacter unk_0010;
+    CCharacter template_chara; /**< Model read from the pack that every slot's character is copied from. */
     CCharacter chara[8];       /**< Model that each projectile-effect slot draws and animates. */
     sceVu0FVECTOR velocity[8]; /**< Movement applied to each projectile-effect slot. */
     s16 source_id[8];          /**< Source identifier supplied when each slot starts. */

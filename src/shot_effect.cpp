@@ -327,14 +327,14 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex
     unk_A154 = texture_block;
     sprintf(name, "%s.cfg", description->model_name);
 
-    unk_0010.Initialize();
-    unk_0010.LoadPackData3(pack, name, allocator, unk_A154, allocator, 1, 0x10);
+    template_chara.Initialize();
+    template_chara.LoadPackData3(pack, name, allocator, unk_A154, allocator, 1, 0x10);
 
     slot_count = slots;
     for (int slot = 0; slot < slots; slot++) {
-        chara[slot] = unk_0010;
+        chara[slot] = template_chara;
         chara[slot].motion[0] = &chara[slot].motion_type;
-        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) unk_0010.frame, allocator);
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) template_chara.frame, allocator);
     }
 
     effect_data = description;
@@ -351,14 +351,14 @@ int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int te
 
     sprintf(name, "%s.cfg", description->model_name);
     unk_A154 = texture_block;
-    unk_0010.Initialize();
-    unk_0010.LoadPackData3(pack, name, allocator, texture_block, allocator, 1, 0x10);
+    template_chara.Initialize();
+    template_chara.LoadPackData3(pack, name, allocator, texture_block, allocator, 1, 0x10);
 
     slot_count = slots;
     for (int slot = 0; slot < slots; slot++) {
-        chara[slot] = unk_0010;
+        chara[slot] = template_chara;
         chara[slot].motion[0] = &chara[slot].motion_type;
-        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) unk_0010.frame, allocator);
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) template_chara.frame, allocator);
     }
 
     effect_data = description;
@@ -367,9 +367,9 @@ int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int te
 
 int CSHOT_EFFECT::ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator) {
     for (int slot = 0; slot < slot_count; slot++) {
-        chara[slot] = unk_0010;
+        chara[slot] = template_chara;
         chara[slot].motion[0] = &chara[slot].motion_type;
-        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) unk_0010.frame, allocator);
+        chara[slot].frame = (CFrame *) CopyFrameVu1((CFrameVu1 *) template_chara.frame, allocator);
     }
 
     effect_data = description;
