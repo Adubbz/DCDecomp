@@ -188,7 +188,7 @@ carve_part(main.sdata.part2.s
 carve_part(main.sdata.part2b.s
            main.sdata.part2b.s=2A1ED0-2A1ED8
            main.sdata.snd-tail.s=2A1EF0-2A1EF8
-           main.sdata.candleeffect-tail.s=2A1F00-2A1F14
+           main.sdata.effect-tail.s=2A1F04-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F68
            main.sdata.edit_in-a.s=2A1FA0-2A1FE8
