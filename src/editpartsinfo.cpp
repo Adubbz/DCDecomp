@@ -158,17 +158,21 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
     }
 }
 
-#ifdef NON_MATCHING
 void CEditPartsInfo::Initialize(int georama_no) {
+    int plot;
+    int name;
+    char **names;
+    int element;
+    EDIT_PARTS_ATRA *source;
     EDIT_PARTS_ATRA empty_part;
+
     memset(&empty_part, 0, sizeof(empty_part));
-    for (int i = 0; i < 6; i++) {
-        empty_part.elements[i].unk_04 = -1;
+    for (element = 0; element < 6; element++) {
+        empty_part.elements[element].unk_04 = -1;
     }
 
     unk_1624 = 0;
-    for (int plot = 0; plot < 24; plot++) {
-        EDIT_PARTS_ATRA *source;
+    for (plot = 0; plot < 24; plot++) {
         if (georama_no < 0 || georama_no >= 6) {
             source = &empty_part;
         } else {
@@ -181,13 +185,13 @@ void CEditPartsInfo::Initialize(int georama_no) {
         parts[plot].placed = 0;
         parts[plot].unk_10 = source->unk_08;
         parts[plot].kind = source->kind;
-        for (int element = 0; element < 6; element++) {
+        for (element = 0; element < 6; element++) {
             parts[plot].elements[element].id = source->elements[element].id;
             parts[plot].elements[element].unk_04 = source->elements[element].unk_04;
             parts[plot].elements[element].enabled = 0;
-            char **names = parts[plot].elements[element].names;
+            names = parts[plot].elements[element].names;
             names[0] = NULL;
-            for (int name = 0; name < 4; name++) {
+            for (name = 0; name < 4; name++) {
                 names[name] = NULL;
                 if (source->elements[element].names[name] != NULL &&
                     source->elements[element].names[name][0] != '\0') {
@@ -198,9 +202,6 @@ void CEditPartsInfo::Initialize(int georama_no) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editpartsinfo", Initialize__14CEditPartsInfoFi);
-#endif
 
 void CEditPartsInfo::Initialize(int index, EPARTS_INFO_HEADER *header) {
     parts[index].parts_no = index;
