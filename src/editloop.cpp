@@ -320,7 +320,7 @@ extern int MenuMapJumpMode;
 extern int main_select_menu_no;
 extern int chg_time_cnt;
 extern int bgm_vol;
-extern u_long128 Vu_prog0f;
+extern u_int Vu_prog0f[];
 extern CEffectGroup EdEffectGroup;
 extern int binary;
 extern CFrameVu1 *SkyBackFrame;
