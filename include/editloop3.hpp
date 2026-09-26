@@ -391,24 +391,6 @@ int CheckPartsInfo(EDITPARTS_INFO *info);
 void EdDrawLensFlare(float time, CFrame **sky);
 
 /**
- * Activates and places the villager selected by an editor-event script.
- *
- * @mangled _LOAD_IN_VILLAGER__FP12RS_STACKDATAi
- * @address 0x18CD60
- * @size 0x1FC
- */
-int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count);
-
-/**
- * Removes the villager selected by an editor-event script.
- *
- * @mangled _LOAD_OUT_VILLAGER__FP12RS_STACKDATAi
- * @address 0x18CF60
- * @size 0x1C0
- */
-int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count);
-
-/**
  * Configures automatic message advancement for the active editor event.
  *
  * @mangled _SET_MES_AUTOSET__FP12RS_STACKDATAi

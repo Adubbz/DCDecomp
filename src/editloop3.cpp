@@ -3121,7 +3121,11 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     TexManager.LoadTextureBlockEX(block, textures);
     return 1;
 }
-int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
+
+/**
+ * Activates and places the villager selected by an editor-event script.
+ */
+static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
@@ -3161,7 +3165,10 @@ int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
+/**
+ * Removes the villager selected by an editor-event script.
+ */
+static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
