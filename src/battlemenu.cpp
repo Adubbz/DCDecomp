@@ -3195,7 +3195,6 @@ static void ExitWeaponMenuSelect() {
     BattleMenuFlag = 0;
 }
 
-#ifdef NON_MATCHING
 void WeaponMenuSelect() {
     int direction = -1;
 
@@ -3211,14 +3210,16 @@ void WeaponMenuSelect() {
     switch (MenuExTextureReadFlag) {
         case 0:
             if (MenuWepLevelUp.buildup_complete == 0) {
-                if (ReadBGSync() != 0) {
-                    return;
-                }
-                if (MenuExTextureReadFlag == 0) {
+                if (ReadBGSync() == 0) {
+                    if (MenuExTextureReadFlag != 0) {
+                        break;
+                    }
                     MenuExTextureReadFlag = EnterWeaponModel(WepMenu.chara, MenuExtendReadBlock, WepMenu.weapon_slot);
                     BtlMenuTexBlockEnter();
                     BtlMDSBuildCnt = 0;
                     WepMenu.unk_10 = 0;
+                } else {
+                    return;
                 }
             }
             if (MenuWepLevelUp.buildup_complete == 1) {
@@ -3230,7 +3231,7 @@ void WeaponMenuSelect() {
             break;
         case 1:
             BtlMDSBuildCnt++;
-            if (BtlMDSBuildCnt >= 4) {
+            if (BtlMDSBuildCnt > 3) {
                 MenuExTextureReadFlag = 2;
             }
             break;
@@ -3262,9 +3263,6 @@ void WeaponMenuSelect() {
                  MenuWepLevelUp.effect_state == 11)) {
                 WEAPON_HAVE *weapon = MenuWepLevelUp.weapon;
                 switch (WepMenu.unk_0C) {
-                    case 10:
-                    case 9:
-                        break;
                     case 7:
                         MenuWepLevelUp.SetLevelUpWeaponData();
                         weapon->unk_02++;
@@ -3274,14 +3272,16 @@ void WeaponMenuSelect() {
                         }
                         break;
                     case 8: {
-                        CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-                        int equipped = status->equipped_weapon_slot[WepMenu.chara];
+                        int equipped = BtlMenuStatusPt->GetEquipWeaponSlot(WepMenu.chara);
                         if (WepMenu.weapon_slot == equipped || DngWepHavePt[equipped].item_no < 0x101) {
                             EquipDefaultWeapon(WepMenu.chara);
                         }
                         MenuWepLevelUp.lost_default_weapon = 0;
                         break;
                     }
+                    case 9:
+                    case 10:
+                        break;
                 }
                 if (WepMenu.unk_0C != 10) {
                     MenuWepLevelUp.SetSnd(MenuWepLevelUp.snd_volume, MenuWepLevelUp.snd_from, 7);
@@ -3304,7 +3304,7 @@ void WeaponMenuSelect() {
         case 12:
             if (GamePad.Down(0x40) != 0) {
                 WEAPON_HAVE *weapon = GetNowSelectWeapon();
-                if (IsDefaultWeapon(weapon->item_no) >= 0) {
+                if (0 <= IsDefaultWeapon(weapon->item_no)) {
                     ComMenuSePlay(2);
                     WepMenu.unk_0C = 14;
                 } else if (weapon->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
@@ -3334,13 +3334,13 @@ void WeaponMenuSelect() {
             if (GamePad.Down(0x40) != 0) {
                 if (WepMenu.unk_09[0] == 0) {
                     WEAPON_HAVE *weapon = GetNowSelectWeapon();
-                    if (IsDefaultWeapon(weapon->item_no) >= 0) {
+                    if (0 <= IsDefaultWeapon(weapon->item_no)) {
                         ComMenuSePlay(2);
                     } else {
                         InitHaveWep(weapon);
                         ComMenuSePlay(1);
                         WepMenu.unk_0C = 0;
-                        if (WepMenu.weapon_slot == ((CUserStatus *) BtlMenuStatusPt)->equipped_weapon_slot[WepMenu.chara]) {
+                        if (WepMenu.weapon_slot == BtlMenuStatusPt->GetEquipWeaponSlot(WepMenu.chara)) {
                             EquipDefaultWeapon(WepMenu.chara);
                         }
                         ComMenuSePlay(1);
@@ -3363,15 +3363,20 @@ void WeaponMenuSelect() {
                 WepMenu.unk_0C = 0;
             }
         case 4:
-            if (WepMenu.unk_10 > 25) {
+            if (WepMenu.unk_10 >= 26) {
                 WepMenu.unk_0C = 0;
             }
         case 0: {
-            int slot = WepMenu.weapon_slot;
-            int cursor = WepMenu.board.cursor;
-            int page = WepMenu.unk_02;
-            int chara = WepMenu.chara;
-            int elem = WepMenu.unk_07;
+            int slot;
+            int cursor;
+            int chara;
+            int elem;
+            int page;
+            slot = WepMenu.weapon_slot;
+            cursor = WepMenu.board.cursor;
+            page = WepMenu.unk_02;
+            chara = WepMenu.chara;
+            elem = WepMenu.unk_07;
             switch (page) {
                 case 0:
                 case 1:
@@ -3404,9 +3409,11 @@ void WeaponMenuSelect() {
         }
     }
     int help_no = 0;
+    int mes_no;
     int name_mes = -1;
     int name_no = -0x1F3;
     int value = 0;
+    WEP_BUILDUP_INFO builds[4];
     ATTACH_LIST *attachments = (ATTACH_LIST *) ((CUserStatus *) BtlMenuStatusPt)->consumable_items;
     WEAPON_HAVE *weapon = &DngWepHavePt[WepMenu.weapon_slot];
     if (weapon != NULL) {
@@ -3421,25 +3428,29 @@ void WeaponMenuSelect() {
     page_mes[5] = name_msg;
     page_mes[6] = name_msg;
     page_mes[11] = WepMenu.unk_179 + ((WepMenu.unk_178 + 2) * 10 + 100);
-    int mes_no = page_mes[WepMenu.unk_02];
+    mes_no = page_mes[WepMenu.unk_02];
     if (WepMenu.unk_02 >= 3 && WepMenu.unk_02 < 8) {
         s16 dialog[5] = {0x74, 0x76, 0x75, 0x77, 0x75};
         help_no = dialog[WepMenu.unk_02 - 3];
         if (MenuWepLevelUp.operation_kind != -1) {
-            help_no = (s16) CommonMenuMes1.mes_made;
+            help_no = CommonMenuMes1.mes_made;
         }
     }
-    WEP_BUILDUP_INFO builds[5];
     switch (WepMenu.unk_02) {
         case 1:
-            if (WepMenu.unk_0C == 14 || WepMenu.unk_0C == 13 || WepMenu.unk_0C == 12) {
-                mes_no = 0xA4;
+            switch (WepMenu.unk_0C) {
+                case 12:
+                case 13:
+                case 14:
+                    mes_no = 0xA4;
+                    break;
             }
             break;
         case 5:
         case 7:
             EnableBuildUpModel(builds, weapon);
-            for (int i = 0; i < 5 && builds[i].weapon_no != -1; i++) {
+            int i = 0;
+            while (builds[i].weapon_no != -1) {
                 COM_ITEM_INFO *info = GetCommonItemInfo(builds[i].weapon_no);
                 if (info != NULL) {
                     builds[i].weapon_no = info->msg;
@@ -3447,13 +3458,16 @@ void WeaponMenuSelect() {
                         builds[i].weapon_no = 2;
                     }
                 }
+                i++;
+                if (i > 4) {
+                    break;
+                }
             }
             if (WepMenu.unk_02 == 5) {
-                WEP_BUILDUP_INFO *build = &builds[WepMenu.board.cursor];
-                s16 enabled = build->enabled;
-                if (enabled != 0) {
+                s16 enabled;
+                if ((enabled = builds[WepMenu.board.cursor].enabled) != 0) {
                     mes_no = 0xAE;
-                    name_mes = build->weapon_no;
+                    name_mes = builds[WepMenu.board.cursor].weapon_no;
                 }
                 if (enabled == 0) {
                     mes_no = 0xAD;
@@ -3469,18 +3483,20 @@ void WeaponMenuSelect() {
             break;
         }
         case 9: {
-            ATTACH_LIST *attach = (ATTACH_LIST *) &weapon->attach[WepMenu.board.cursor];
-            int item_no = attach->item_no;
+            int item_no = weapon->attach[WepMenu.board.cursor].item_no;
             if (item_no >= 0x51) {
                 mes_no = item_no + 500;
-                value = GetAttachVolumeForMsg(attach);
+                value = GetAttachVolumeForMsg(&weapon->attach[WepMenu.board.cursor]);
                 if (item_no == 0x5A) {
-                    name_mes = GetWeaponMsgNo2(attach->unk_02);
+                    name_mes = GetWeaponMsgNo2(weapon->attach[WepMenu.board.cursor].unk_02);
                 }
-            } else if (GetWeaponData(weapon->item_no)->hole[WepMenu.board.cursor] == 2) {
-                mes_no = 0x70;
             } else {
-                mes_no = 0x71;
+                WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+                if (data->hole[WepMenu.board.cursor] == 2) {
+                    mes_no = 0x70;
+                } else {
+                    mes_no = 0x71;
+                }
             }
             break;
         }
@@ -3551,19 +3567,17 @@ void WeaponMenuSelect() {
     if (WepMenu.unk_02 == 5 || WepMenu.unk_02 == 7) {
         s16 previous[3];
         for (int i = 0; i < 3; i++) {
-            s32 *slot = &CommonMenuMes1.mes_no[i];
-            previous[i] = *slot;
-            int wanted = builds[i].weapon_no + 100;
-            if (previous[i] != wanted && previous[i] > 100) {
+            previous[i] = CommonMenuMes1.mes_no[i];
+            if (previous[i] != builds[i].weapon_no + 100 && previous[i] > 100) {
                 changed = 1;
             }
             if (builds[i].enabled == 1) {
-                *slot = wanted;
+                CommonMenuMes1.mes_no[i] = builds[i].weapon_no + 100;
             } else if (builds[i].enabled == 0) {
-                *slot = 2;
+                CommonMenuMes1.mes_no[i] = 2;
             }
             if (builds[i].weapon_no <= 0) {
-                *slot = -1;
+                CommonMenuMes1.mes_no[i] = -1;
             }
         }
     } else if (MenuWepLevelUp.operation_kind == -1) {
@@ -3580,16 +3594,17 @@ void WeaponMenuSelect() {
         (CommonMenuMes1.mes_made != help_no && WepMenu.unk_0C == 11) ||
         (CommonMenuMes1.mes_made != help_no && WepMenu.unk_0C == 13) ||
         (CommonMenuMes1.mes_made != help_no && WepMenu.unk_0C == 14)) {
-        if (WepMenu.unk_0C == 14 || WepMenu.unk_0C == 13 || WepMenu.unk_0C == 11) {
-            CommonMenuMes1.stay_frame = 1;
+        switch (WepMenu.unk_0C) {
+            case 11:
+            case 13:
+            case 14:
+                CommonMenuMes1.stay_frame = 1;
+                break;
         }
         CommonMenuMes1.mes_made = -1;
         CommonMenuMes1.MakeMesWin(help_no);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", WeaponMenuSelect__Fv);
-#endif
 
 /**
  * Finds the preceding enabled customization row, wrapping from the top row.

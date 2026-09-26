@@ -633,6 +633,9 @@ SECTIONS
         battlemenu.cpp.o (.battlemenu-c2199) // 0x00293260 @2199
         battlemenu.cpp.o (.battlemenu-c2250) // 0x002932a0 @2250
         main.data.battlemenu-2932B8.s.o (.data) // 0x002932b8
+        battlemenu.cpp.o (.battlemenu-c2612__2) // 0x002932c0 @2612__2
+        battlemenu.cpp.o (.battlemenu-c2616) // 0x002932d8 @2616
+        battlemenu.cpp.o (.battlemenu-c2679) // 0x002932f0 @2679
         battlemenu.cpp.o (.battlemenu-c3657) // 0x00293308 @3657
         . = ALIGN(16);
         battlemenu.cpp.o (.battlemenu-c3967) // 0x00293320 @3967

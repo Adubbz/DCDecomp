@@ -251,6 +251,11 @@ public:
      */
     s32 GetActiveCharaStatus(int chara_no) { return unk_field_4468[chara_no]; }
 
+    /**
+     * Returns the weapon slot one character has equipped.
+     */
+    s8 GetEquipWeaponSlot(int chara_no) { return equipped_weapon_slot[chara_no]; }
+
 private:
     char unk_42C6[2];
     s32 unk_field_4468[6];
