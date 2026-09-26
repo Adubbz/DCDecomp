@@ -2617,7 +2617,7 @@ static void DrawWeaponTagBoard(int x, int y, WEAPON_HAVE *weapon, int value_x, i
 }
 
 void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *weapon, int equipped,
-                           int selected, int alpha) {
+                    int selected, int alpha) {
     if (weapon == NULL) {
         return;
     }
@@ -2758,26 +2758,26 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         }
         if (is_selected != 0) {
             switch (WepMenu.unk_0C) {
-            case 8:
-                switch (MenuWepLevelUp.effect_state) {
-                    case 5:
-                        draw_alpha = (int) (128.0f - 4.0f * MenuWepLevelUp.effect_timer);
-                        if (draw_alpha < 0) {
-                            draw_alpha = 0;
-                        }
-                        break;
-                    case 6:
-                        if (MenuWepLevelUp.lost_default_weapon != 0) {
-                            draw_alpha = 0;
-                        } else {
-                            draw_alpha = (int) MenuWepLevelUp.effect_timer;
-                        }
-                        if (draw_alpha > 0x80) {
-                            draw_alpha = 0x80;
-                        }
-                        break;
-                }
-                break;
+                case 8:
+                    switch (MenuWepLevelUp.effect_state) {
+                        case 5:
+                            draw_alpha = (int) (128.0f - 4.0f * MenuWepLevelUp.effect_timer);
+                            if (draw_alpha < 0) {
+                                draw_alpha = 0;
+                            }
+                            break;
+                        case 6:
+                            if (MenuWepLevelUp.lost_default_weapon != 0) {
+                                draw_alpha = 0;
+                            } else {
+                                draw_alpha = (int) MenuWepLevelUp.effect_timer;
+                            }
+                            if (draw_alpha > 0x80) {
+                                draw_alpha = 0x80;
+                            }
+                            break;
+                    }
+                    break;
             }
             MenuMes.alpha = draw_alpha;
         } else {
@@ -2801,20 +2801,20 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         if (weapon->item_no >= 0x101) {
             CCharacter *frame = NULL;
             switch (GetNowTestNo()) {
-            case 1:
-                if (is_equipped != 0) {
-                    MenuTextureReload(MenuShadowReadBlock);
-                    char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
-                    DrawMenu2DSprite(TexManager.GetTexture(shadows[WepMenu.chara], -1), CRect_i_(x + 0x24, 0x96, 0x64, 0x63),
-                                     CRect_i_(0, 0, 0x64, 0x64), draw_alpha * 9 / 40);
-                    MenuTextureReload(MenuExtendReadBlock);
-                }
-                int frame_no = GetMenuWeaponModelFrameNo(i);
-                if (frame_no >= 0) {
-                    frame = &DngWeaponFrm[frame_no];
-                    MenuWeaponSpSet(frame, weapon);
-                }
-                break;
+                case 1:
+                    if (is_equipped != 0) {
+                        MenuTextureReload(MenuShadowReadBlock);
+                        char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
+                        DrawMenu2DSprite(TexManager.GetTexture(shadows[WepMenu.chara], -1), CRect_i_(x + 0x24, 0x96, 0x64, 0x63),
+                                         CRect_i_(0, 0, 0x64, 0x64), draw_alpha * 9 / 40);
+                        MenuTextureReload(MenuExtendReadBlock);
+                    }
+                    int frame_no = GetMenuWeaponModelFrameNo(i);
+                    if (frame_no >= 0) {
+                        frame = &DngWeaponFrm[frame_no];
+                        MenuWeaponSpSet(frame, weapon);
+                    }
+                    break;
             }
             if (frame != NULL) {
                 DrawAallWeapon(x, 0xA0, depth, frame, weapon, is_equipped, is_selected, draw_alpha);
