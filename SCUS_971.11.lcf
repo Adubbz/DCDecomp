@@ -684,8 +684,6 @@ SECTIONS
         main.data.memcard-a-293F60.s.o (.data) // 0x00293f60
         memcard.cpp.o (.memcard-c2683) // 0x00293fd0 @2683
         menu_save.cpp.o (.data) // 0x00293fe0
-        main.data.menu_save-a.s.o (.data) // 0x00294044
-        menu_save.cpp.o (.menu_save-c3414) // 0x002940f0 InitEventItemSelect's texture list
         . = ALIGN(0x10);
         main.data.menu_save-b.s.o (.data) // 0x00294110
         menu_dungeon.cpp.o (.data)   // 0x00294150
@@ -888,8 +886,7 @@ SECTIONS
 		editmenu.cpp.o (.sdata)        // 0x002a2100
 		memcard.cpp.o (.memcard-c1322) // 0x002a2140 @1322
 		memcard.cpp.o (.sdata) // 0x002a2148
-		main.sdata.memcard-a.s.o (.sdata) // 0x002a2160
-		menu_save.cpp.o (.sdata) // 0x002a2168 @3260, @3261__2, @3395
+		menu_save.cpp.o (.sdata) // 0x002a2160
 		main.sdata.menu_save-a.s.o (.sdata) // 0x002a2178
 		menu_dungeon.cpp.o (.sdata) // 0x002a2190 @1730, @1732
 		. = ALIGN(8);

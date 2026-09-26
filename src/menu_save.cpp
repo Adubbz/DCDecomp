@@ -26,9 +26,9 @@
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
-#ifdef NON_MATCHING // draft includes
 #include "menu_draw.hpp"
 #include "battle_globals.hpp"
+#ifdef NON_MATCHING // draft includes
 #include <libvu0.h>
 #endif
 
@@ -770,140 +770,175 @@ static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_a
         end_alpha = 0;
     }
 }
-#ifdef NON_MATCHING
-static void DrawSaveBoardDigits(int number, int right, int y, int alpha_x, spRGBA *start, spRGBA *end,
-                                CRect_i_ &digit) {
-    int x = right;
-    for (int count = GetNumberKeta(number); count > 0; count--) {
-        int clip_y = y;
-        int clip_v = digit.y;
-        int clip_height = digit.height;
-        x -= digit.width - 1;
-        MenuTextureClip(clip_y, clip_v, clip_height, 0, 0x1C0);
-        DrawMenu2DSprite(SaveBoard, CRect_i_(x, clip_y, digit.width, clip_height - 1),
-                         CRect_i_(digit.x + digit.width * (number % 10), clip_v, digit.width, clip_height),
-                         start, start, end, end);
-        number /= 10;
-    }
-}
-
 void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha) {
-    // Row of each map's name on the board texture; a map from 14 on is in the second block.
-    s16 map_name[62] = {0,  1,  2,  3,  6,  0,  0,  0,  0,  0,  0,  1,  1,  1,  9,  9,
-                        9,  9,  9,  2,  2,  4,  10, 4,  13, 13, 13, 10, 9,  4,  4,  4,
-                        4,  1,  10, 12, 10, 5,  13, 12, 13, 4,  10, 2,  2,  2,  13, 4,
-                        13, 13, 13, 0,  0,  0,  0,  0,  0,  0,  0,  0,  14, 14};
-    spRGBA start = {0x80, 0x80, 0x80, 0};
-    spRGBA end = {0x80, 0x80, 0x80, 0};
-    int start_alpha;
-    int end_alpha;
-    int time[3];
     int i;
+    int draw_x;
+    int draw_y;
+    int time[3];
 
     if (info == NULL) {
         return;
     }
-    start.a = alpha;
-    end.a = alpha;
+    spRGBA top = {0x80, 0x80, 0x80, 0};
+    top.a = alpha;
+    spRGBA bottom = {0x80, 0x80, 0x80, 0};
+    bottom.a = alpha;
+    int start_alpha;
+    int end_alpha;
     GetSaveBoardAlphaInfo(y, 0x88, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    DrawMenu2DSprite(SaveBoard, CRect_i_(x, y, 0x180, 0x87), CRect_i_(0, 0, 0x180, 0x87), &start, &start,
-                     &end, &end);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    DrawMenu2DSprite(SaveBoard, CRect_i_(x, y, 0x180, 0x87), CRect_i_(0, 0, 0x180, 0x88), &top, &top, &bottom,
+                     &bottom);
 
-    CRect_i_ digit(0x88, 0xCA, 0xC, 0x10);
+    draw_x = x + 0x54;
+    draw_y = y + 8;
+    RECT number_rect = {0x88, 0xCA, 0xC, 0x10};
     GetSaveBoardAlphaInfo(y, 0x10, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    DrawSaveBoardDigits(info->file_no, x + 0x54, y + 8, y, &start, &end, digit);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    if (info != NULL) {
+        int digits;
+        int number = info->file_no;
+        int clip_y;
+        int src_y;
+        int height;
+        int digit;
+        int width;
+        int src_x;
 
+        for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+            clip_y = draw_y;
+            digit = number % 10;
+            width = number_rect.width;
+            draw_x -= width - 1;
+            src_x = number_rect.x + width * digit;
+            src_y = number_rect.y;
+            height = number_rect.height;
+            MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+            DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1),
+                             CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
+            number /= 10;
+        }
+    }
+
+    draw_x = x + 0x1A;
+    draw_y = y + 0x1C;
     GetSaveBoardAlphaInfo(y, 0x16, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    int name_x = draw_x + 8;
     if (info->name != NULL) {
-        DrawSaveBoardCharaName2(x + 0x22, y + 0x1C, (short *) info->name, name_texture, start, end);
+        DrawSaveBoardCharaName2(name_x, draw_y, (short *) info->name, name_texture, top, bottom);
     }
 
     // Play time, as hours, minutes and seconds.
-    CRect_i_ time_digit(0x88, 0xB8, 0xC, 0x12);
+    RECT time_rect = {0x88, 0xB8, 0xC, 0x12};
     int column = x + 0x92;
-    int time_x = column + 0xA;
-    int time_y = y + 0x36;
-    GetSaveBoardAlphaInfo(time_y, 0x12, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    int frames = (int) info->play_time;
-    if (frames >= 0x01499700) {
-        frames = 0x014996C4;
+    draw_x = column + 0xA;
+    draw_y = y + 0x36;
+    GetSaveBoardAlphaInfo(draw_y, 0x12, start_alpha, end_alpha, alpha);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    int frames = info->play_time;
+    if (frames >= 0x1499700) {
+        frames = 0x14996C4;
     }
-    int seconds = frames / 60;
-    time[0] = seconds / 3600;
-    time[1] = (seconds / 60 - time[0] * 60) % 60;
-    time[2] = seconds % 60;
-    for (i = 2; i >= 0; i--) {
-        int value = time[i];
-        DrawMenu2DSprite(SaveBoard, CRect_i_(time_x, time_y, time_digit.width, time_digit.height),
-                         CRect_i_(time_digit.x + time_digit.width * (value / 10), time_digit.y,
-                                  time_digit.width, time_digit.height),
-                         &start, &start, &end, &end);
-        DrawMenu2DSprite(SaveBoard,
-                         CRect_i_(time_x + time_digit.width, time_y, time_digit.width, time_digit.height),
-                         CRect_i_(time_digit.x + time_digit.width * (value % 10), time_digit.y,
-                                  time_digit.width, time_digit.height),
-                         &start, &start, &end, &end);
-        time_x -= 0x1E;
+    frames /= 60;
+    time[0] = frames / 3600;
+    time[1] = (frames / 60 - time[0] * 60) % 60;
+    time[2] = frames % 60;
+    for (int part = 2; part >= 0; part--) {
+        int value = time[part];
+        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, time_rect.width, time_rect.height),
+                         CRect_i_(time_rect.x + time_rect.width * (value / 10), time_rect.y, time_rect.width, time_rect.height), &top,
+                         &top, &bottom, &bottom);
+        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x + time_rect.width, draw_y, time_rect.width, time_rect.height),
+                         CRect_i_(time_rect.x + time_rect.width * (value % 10), time_rect.y, time_rect.width, time_rect.height), &top,
+                         &top, &bottom, &bottom);
+        draw_x -= 0x1E;
     }
     CRect_i_ colon(0x100, 0xB8, 0xC, 0x12);
-    GetSaveBoardAlphaInfo(time_y, 0x12, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    DrawMenu2DSprite(SaveBoard, CRect_i_(column + 2, time_y, 0xC, 0x12), colon, &start, &start, &end, &end);
-    DrawMenu2DSprite(SaveBoard, CRect_i_(column + 2 - 0x1E, time_y, 0xC, 0x12), colon, &start, &start, &end,
-                     &end);
+    GetSaveBoardAlphaInfo(draw_y, 0x12, start_alpha, end_alpha, alpha);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    draw_x = column + 2;
+    DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0xC, 0x12), colon, &top, &top, &bottom, &bottom);
+    DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x - 0x1E, draw_y, 0xC, 0x12), colon, &top, &top, &bottom, &bottom);
 
-    GetSaveBoardAlphaInfo(y + 0x52, 0x12, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    DrawSaveBoardDigits(info->quest_total, x + 0x88, y + 0x52, y, &start, &end, digit);
+    draw_x = x + 0x88;
+    draw_y = y + 0x52;
+    GetSaveBoardAlphaInfo(draw_y, 0x12, start_alpha, end_alpha, alpha);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    {
+        int digits;
+        int number = info->quest_total;
+        int clip_y;
+        int src_y;
+        int height;
+        int digit;
+        int width;
+        int src_x;
 
-    // Name of the map the save was made on.
-    int map = map_name[info->map_no];
-    int name_v;
-    if (map < 14) {
-        name_v = (map % 7) * 0x14 + 0xB8;
-    } else {
-        map -= 14;
-        name_v = (map % 7) * 0x14 + 0x144;
+        for (digits = GetNumberKeta(number); 0 < digits; digits--) {
+            clip_y = draw_y;
+            digit = number % 10;
+            width = number_rect.width;
+            draw_x -= width - 1;
+            src_x = number_rect.x + width * digit;
+            src_y = number_rect.y;
+            height = number_rect.height;
+            MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+            DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1),
+                             CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
+            number /= 10;
+        }
     }
-    int name_u = (map / 7) * 0x88;
-    GetSaveBoardAlphaInfo(y + 0x63, 0x14, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    DrawMenu2DSprite(SaveBoard, CRect_i_(x + 0x23, y + 0x63, 0x88, 0x15), CRect_i_(name_u, name_v, 0x88, 0x14),
-                     &start, &start, &end, &end);
+
+    // Row of each map's name on the board texture; a map from 14 on is in the second block.
+    int map = info->map_no;
+    s16 map_name[62] = {0, 1, 2, 3, 6, 0, 0, 0, 0, 0, 0, 1, 1, 1, 9, 9, 9, 9, 9, 2, 2,
+                        4, 10, 4, 13, 13, 13, 10, 9, 4, 4, 4, 4, 1, 10, 12, 10, 5, 13, 12, 13, 4,
+                        10, 2, 2, 2, 13, 4, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14};
+    int name_u;
+    int name_v;
+    if (map_name[map] < 0xE) {
+        name_u = (map_name[map] / 7) * 0x88;
+        name_v = (map_name[map] % 7) * 0x14 + 0xB8;
+    } else {
+        map_name[map] -= 0xE;
+        name_u = (map_name[map] / 7) * 0x88;
+        name_v = (map_name[map] % 7) * 0x14 + 0x144;
+    }
+    draw_x = x + 0x23;
+    draw_y = y + 0x63;
+    GetSaveBoardAlphaInfo(draw_y, 0x14, start_alpha, end_alpha, alpha);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0x88, 0x15), CRect_i_(name_u, name_v, 0x88, 0x14), &top,
+                     &top, &bottom, &bottom);
 
     // A face for each member of the party, three to a row.
     int face_x = x + 0xCF;
-    int face_y = y + 0x1A;
-    GetSaveBoardAlphaInfo(face_y, 0x30, start_alpha, end_alpha, alpha);
-    start.a = start_alpha;
-    end.a = end_alpha;
+    draw_x = face_x;
+    draw_y = y + 0x1A;
+    GetSaveBoardAlphaInfo(draw_y, 0x30, start_alpha, end_alpha, alpha);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
     for (i = 0; i < info->party_size; i++) {
-        DrawMenu2DSprite(SaveBoard, CRect_i_(face_x, face_y, 0x30, 0x31), CRect_i_(i * 0x30, 0x88, 0x30, 0x30),
-                         &start, &start, &end, &end);
-        face_x += 0x38;
+        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0x30, 0x31), CRect_i_(i * 0x30, 0x88, 0x30, 0x30), &top,
+                         &top, &bottom, &bottom);
+        draw_x += 0x38;
         if (i == 2) {
-            face_x = x + 0xCF;
-            face_y += 0x34;
-            GetSaveBoardAlphaInfo(face_y, 0x30, start_alpha, end_alpha, alpha);
-            start.a = start_alpha;
-            end.a = end_alpha;
+            draw_x = face_x;
+            draw_y += 0x34;
+            GetSaveBoardAlphaInfo(draw_y, 0x30, start_alpha, end_alpha, alpha);
+            top.a = start_alpha;
+            bottom.a = end_alpha;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
-#endif
 void DrawNewFileTemplete(int x, int y, int alpha) {
     int start_alpha;
     int end_alpha;
