@@ -161,7 +161,7 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha);
  * @address 0x002314E0
  * @size 0xE0
  */
-s16 SearchBoardNowPosItemExist(int board_mode, int board_pos);
+int SearchBoardNowPosItemExist(int board_mode, int board_pos);
 
 /**
  * Finds an available inventory-board slot for an item kind.

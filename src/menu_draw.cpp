@@ -2009,7 +2009,8 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha) {
     RECT digits = {0, 0xDC, 12, 12};
     DrawMenuNumber(money, x + 0x55, y + 8, PerBoardTex, digits, 0, alpha);
 }
-s16 SearchBoardNowPosItemExist(int page, int cell) {
+
+int SearchBoardNowPosItemExist(int page, int cell) {
     int item_no = -1;
 
     switch (page) {
