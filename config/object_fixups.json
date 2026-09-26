@@ -282,6 +282,9 @@
       ".battlemenu-c5503": [
         "@1602"
       ],
+      ".battlemenu-c5534": [
+        "@1634"
+      ],
       ".battlemenu-c5742": [
         "@1813"
       ],
@@ -292,22 +295,22 @@
         "@1928"
       ],
       ".battlemenu-c6185": [
-        "@1944"
+        "@2091"
       ],
       ".battlemenu-c6188": [
-        "@1947"
+        "@2094"
       ],
       ".battlemenu-c6227": [
-        "@1973"
+        "@2120"
       ],
       ".battlemenu-c6232": [
-        "@1983"
+        "@2130"
       ],
       ".battlemenu-c6233": [
-        "@1984"
+        "@2131"
       ],
       ".battlemenu-c6235": [
-        "@1986"
+        "@2133"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -327,11 +330,20 @@
       ".battlemenu-c3929": [
         "@1283"
       ],
+      ".battlemenu-c5556": [
+        "@1656"
+      ],
+      ".battlemenu-c5592": [
+        "@1693"
+      ],
+      ".battlemenu-c5593": [
+        "@1694"
+      ],
       ".battlemenu-c5711": [
         "@1784"
       ],
       ".battlemenu-c6236": [
-        "@1987"
+        "@2134"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -351,17 +363,14 @@
       ".battlemenu-init_5777": [
         "init$5777"
       ],
-      ".battlemenu-c5534": [
-        "@1634"
+      ".battlemenu-c6018": [
+        "@2055"
       ],
-      ".battlemenu-c5556": [
-        "@1656"
+      ".battlemenu-c6037": [
+        "@2074"
       ],
-      ".battlemenu-c5592": [
-        "@1693"
-      ],
-      ".battlemenu-c5593": [
-        "@1694"
+      ".battlemenu-c5977": [
+        "@2042"
       ]
     },
     "rodata_exports": [

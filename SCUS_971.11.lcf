@@ -645,7 +645,9 @@ SECTIONS
         main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s.o (.data) // 0x002935a0
         battlemenu.cpp.o (.battlemenu-town-ref) // 0x002936E0
         battlemenu.cpp.o (.battlemenu-town-pos) // 0x002936F0
-        main.data.shop-ticket-after.s.o (.data) // 0x00293700
+        battlemenu.cpp.o (.battlemenu-c6018) // 0x00293700 @6018
+        battlemenu.cpp.o (.battlemenu-c6037) // 0x00293710 @6037
+        main.data.battlemenu-293750.s.o (.data) // 0x00293750
         battlemenu.cpp.o (.battlemenu-c6185) // 0x00293790 @6185
         . = ALIGN(8);
         battlemenu.cpp.o (.battlemenu-c6188) // 0x002937b0 @6188
@@ -847,7 +849,7 @@ SECTIONS
 		battlemenu.cpp.o (.battlemenu-c5593) // 0x002a20a8 @5593
 		battlemenu.cpp.o (.battlemenu-c5711) // 0x002a20b0 @5711
 		. = ALIGN(8);
-		main.sdata.part2f-2A2050-2A20B8.s.o (.sdata) // 0x002a20b8
+		battlemenu.cpp.o (.battlemenu-c5977) // 0x002a20b8 @5977
 		battlemenu.cpp.o (.battlemenu-c6236) // 0x002a20c0 @6236
 		battlemenu.cpp.o (.sdata)      // 0x002a20c8
 		. = ALIGN(8);

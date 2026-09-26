@@ -7059,25 +7059,25 @@ void GetTownOrDngPos() {
         }
     }
 }
-#ifdef NON_MATCHING
 int MenuMoveKey() {
     int stay = 1;
     int decided = 0;
     int message = CommonMenuMes3.mes_made;
     int help = 0;
+    int done;
 
     switch (MenuMove.state) {
         case 1: {
-            int done = ToFromSelect(0);
+            done = ToFromSelect(0);
             int ready = 1;
             switch (MenuMove.mode) {
-                case 2:
-                case 10:
                 case 0:
+                case 10:
+                case 2:
                     MenuMove.ready = 1;
                     break;
-                case 5:
                 case 1:
+                case 5:
                     if (MenuMove.ready == 0) {
                         MenuMove.ready = LoadWorldMap();
                         if (MenuMove.ready != 0) {
@@ -7095,18 +7095,22 @@ int MenuMoveKey() {
                     }
                     break;
             }
-            if (done != 0 && MenuMove.counter >= 0x15 && MenuMove.ready != 0 && ready != 0) {
-                if (MenuMove.mode != 5) {
-                    BattleMenuFlag = 5;
+            if (done != 0 && MenuMove.counter > 0x14 && MenuMove.ready != 0 && ready != 0) {
+                switch (MenuMove.mode) {
+                    case 5:
+                        break;
+                    default:
+                        BattleMenuFlag = 5;
+                        break;
                 }
                 MenuMove.state = 0;
                 switch (MenuMove.mode) {
-                    case 2:
-                    case 10:
                     case 0:
+                    case 10:
+                    case 2:
                         break;
-                    case 1:
                     case 5:
+                    case 1:
                         SysCur[0] = 328.0f;
                         SysCur[1] = 164.0f;
                         break;
@@ -7115,19 +7119,22 @@ int MenuMoveKey() {
             break;
         }
         case 2: {
-            int done = ToFromSelect(1);
+            done = ToFromSelect(1);
             if (MenuMove.mode == 5) {
                 done = 1;
             }
-            if (done != 0 && MenuMove.counter >= 0x15) {
+            if (done != 0 && MenuMove.counter > 0x14) {
                 MenuMove.ready = 0;
                 ForBackMenu();
-                if (MenuMove.mode != 5) {
-                    BattleMenuFlag = 0;
-                } else {
-                    GamePad.AutoRepeatOff();
-                    GamePad.MenuModeOff();
-                    TexManager.DeleteTextureBlock(MenuMove.tex_block);
+                switch (MenuMove.mode) {
+                    case 5:
+                        GamePad.AutoRepeatOff();
+                        GamePad.MenuModeOff();
+                        TexManager.DeleteTextureBlock(MenuMove.tex_block);
+                        break;
+                    default:
+                        BattleMenuFlag = 0;
+                        break;
                 }
                 for (int i = 0; i < 10; i++) {
                     CommonMenuMes3.mes_no[i] = -1;
@@ -7139,7 +7146,7 @@ int MenuMoveKey() {
             mapo[0] += mapmovev[0];
             mapo[1] += mapmovev[1];
             mapo[2] += mapmovev[2];
-            if (MenuMove.counter >= 0x10) {
+            if (MenuMove.counter > 0xF) {
                 MenuMove.state = 4;
             }
             break;
@@ -7147,7 +7154,7 @@ int MenuMoveKey() {
             mapo[0] += mapmovev[0];
             mapo[1] += mapmovev[1];
             mapo[2] += mapmovev[2];
-            if (MenuMove.counter >= 0x10) {
+            if (MenuMove.counter > 0xF) {
                 mapo[0] = 0.0f;
                 mapo[1] = 0.0f;
                 mapo[2] = 0.0f;
@@ -7193,9 +7200,9 @@ int MenuMoveKey() {
         case 0: {
             int old_cursor = MenuMove.cursor;
             switch (MenuMove.mode) {
-                case 2:
-                case 10:
                 case 0:
+                case 10:
+                case 2:
                     if (GamePad.Down(0x5000) != 0) {
                         if (MenuMove.cursor != 0) {
                             MenuMove.cursor = 0;
@@ -7215,13 +7222,15 @@ int MenuMoveKey() {
                                             BtlMenuStatusPt->LostItem(0xAF);
                                             break;
                                         case 0: {
+                                            u16 money;
+                                            int half;
                                             CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-                                            u16 money = status->money;
-                                            int half = money >> 1;
+                                            money = status->money;
+                                            half = money >> 1;
                                             if (money - half >= 0xFFFF) {
                                                 status->money = 0xFFFF;
                                             } else {
-                                                status->money = money - half;
+                                                status->money += -half;
                                             }
                                             break;
                                         }
@@ -7248,8 +7257,9 @@ int MenuMoveKey() {
                     }
                     switch (MenuMove.mode) {
                         case 0: {
+                            int escape = EscapeDungeonMode();
                             s16 messages[3] = {0x131, 0x130, 0x12F};
-                            message = messages[EscapeDungeonMode()];
+                            message = messages[escape];
                             break;
                         }
                         case 10:
@@ -7260,8 +7270,8 @@ int MenuMoveKey() {
                             break;
                     }
                     break;
-                case 5:
                 case 1:
+                case 5:
                     WorldMapMoveKey();
                     if (MenuMove.cursor < 0) {
                         MenuMove.cursor = 4;
@@ -7291,13 +7301,13 @@ int MenuMoveKey() {
             }
             if (decided == 0 && GamePad.Down(0x20) != 0) {
                 switch (MenuMove.mode) {
-                    case 5:
-                        break;
                     case 0:
                         MenuMapJumpMode = 0;
                         break;
-                    case 10:
+                    case 5:
+                        break;
                     case 1:
+                    case 10:
                         MenuMapJumpMode = -1;
                         break;
                     case 2:
@@ -7342,9 +7352,6 @@ int MenuMoveKey() {
     }
     return stay;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", MenuMoveKey__Fv);
-#endif
 #ifdef NON_MATCHING
 void DrawMenuMove() {
     int x;
