@@ -167,7 +167,7 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *);
  * @address 0x22A840
  * @size 0x38
  */
-s16 GetWeaponMsgNo2(int);
+int GetWeaponMsgNo2(int);
 
 /**
  * Draws the attachments set in a weapon's holes.

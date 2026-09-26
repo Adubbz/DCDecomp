@@ -1542,7 +1542,7 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     return GetCommonItemInfo((s32) item_no)->msg + 0x64;
 }
 
-s16 GetWeaponMsgNo2(s32 item_no) {
+int GetWeaponMsgNo2(s32 item_no) {
     COM_ITEM_INFO *info;
 
     info = GetCommonItemInfo(item_no);
