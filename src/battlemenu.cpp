@@ -142,7 +142,7 @@ extern float SysCur[3];
 /**
  * Is nonzero while the menu's frames need rebuilding.
  */
-extern s8 BtlWakuMake2;
+extern u8 BtlWakuMake2;
 
 /**
  * Is set once the character page's extra data has been read.
@@ -157,7 +157,7 @@ extern float chara_r_long;
 /**
  * Stores the character page's turntable movement.
  */
-extern s32 MenuCharaMove;
+extern float MenuCharaMove;
 
 /**
  * Texture the weapon status panels are drawn from.
@@ -365,7 +365,7 @@ struct MENU_WEP_POLY_OFFSET {
 extern MENU_WEP_POLY_OFFSET MenuWepPolyOffset[6];
 extern "C" CCharacter DngWeaponFrm[12];
 extern CRect_i_ MenuDispRc;
-extern u_long128 Vu_prog0f;
+extern char Vu_prog0f[];
 
 static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha);
 static void BattleMenuAppear();
@@ -476,7 +476,7 @@ void SetInteriorOutFlag(int flag) {
     RoomOutFlag = flag;
 }
 
-s16 GetInteriorOutFlag() {
+int GetInteriorOutFlag() {
     return RoomOutFlag;
 }
 
@@ -1583,7 +1583,7 @@ static void InitMenuChara(u_long128 *buffer) {
     MenuChara.unk_04 = 0.0f;
     chara_r_long = 118.0f;
     BtlEffectCt = 0.0f;
-    MenuCharaMove = 0;
+    MenuCharaMove = 0.0f;
     SysCur[0] = 60.0f;
     SysCur[1] = 160.0f;
     CDngStatusData *status = BtlMenuStatusPt;

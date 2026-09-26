@@ -79,7 +79,7 @@ struct MENU_CHARA_INFO {
     s8 unk_02;
     s8 unk_03;
     float unk_04;
-    float unk_08;
+    s32 unk_08;
 };
 
 STATIC_ASSERT(sizeof(MENU_CHARA_INFO) == 0xC);
@@ -239,7 +239,7 @@ void SetInteriorOutFlag(int flag);
  * @address 0x1F3FD0
  * @size 0xC
  */
-s16 GetInteriorOutFlag(void);
+int GetInteriorOutFlag(void);
 
 /**
  * Chooses the message that explains why the party may not leave the zone.
