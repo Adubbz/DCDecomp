@@ -577,7 +577,6 @@ static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int cl
 static void ItemShopGoodInitialize(int shop_no);
 
 static void ShopCancelGoodReturn2();
-static void ItemShopSelectKey2();
 
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
@@ -4421,6 +4420,7 @@ int ItemShopKey2() {
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
 #endif
+
 void ItemShopDraw2() {
     int cur_x;
     int pos_y;
