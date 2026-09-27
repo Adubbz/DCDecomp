@@ -7400,7 +7400,6 @@ int MenuMoveKey() {
     }
     return stay;
 }
-#ifdef NON_MATCHING
 void DrawMenuMove() {
     int alpha;
     int x;
@@ -7431,9 +7430,10 @@ void DrawMenuMove() {
     switch (MenuMove.mode) {
         case 0:
         case 2:
-            ease = 4.0f;
+            (void) x;
             break;
         case 10:
+            (void) x;
             break;
     }
     switch (MenuMove.mode) {
@@ -7638,9 +7638,6 @@ void DrawMenuMove() {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawMenuMove__Fv);
-#endif
 void DrawEscapeItem(int x, int y, int alpha) {
     float widths[7] = {8.6f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f};
     int u;

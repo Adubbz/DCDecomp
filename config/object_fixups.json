@@ -421,22 +421,22 @@
         "@3028"
       ],
       ".battlemenu-c6185": [
-        "@3045"
+        "@3159"
       ],
       ".battlemenu-c6188": [
-        "@3048"
+        "@3162"
       ],
       ".battlemenu-c6227": [
-        "@3074"
+        "@3188"
       ],
       ".battlemenu-c6232": [
-        "@3084"
+        "@3198"
       ],
       ".battlemenu-c6233": [
-        "@3085"
+        "@3199"
       ],
       ".battlemenu-c6235": [
-        "@3087"
+        "@3201"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -481,7 +481,7 @@
         "@2996"
       ],
       ".battlemenu-c6236": [
-        "@3088"
+        "@3202"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"
@@ -506,6 +506,9 @@
       ],
       ".battlemenu-init_5777": [
         "init$5777"
+      ],
+      ".battlemenu-c6105": [
+        "@3079"
       ]
     },
     "rodata_exports": [

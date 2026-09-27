@@ -670,7 +670,8 @@ SECTIONS
         battlemenu.cpp.o (.battlemenu-town-pos) // 0x002936F0
         battlemenu.cpp.o (.battlemenu-c6018) // 0x00293700 @6018
         battlemenu.cpp.o (.battlemenu-c6037) // 0x00293710 @6037
-        main.data.battlemenu-293750.s.o (.data) // 0x00293750
+        battlemenu.cpp.o (.battlemenu-c6105) // 0x00293750 @6105
+        main.data.battlemenu-29378C.s.o (.data) // 0x0029378c
         battlemenu.cpp.o (.battlemenu-c6185) // 0x00293790 @6185
         . = ALIGN(8);
         battlemenu.cpp.o (.battlemenu-c6188) // 0x002937b0 @6188
