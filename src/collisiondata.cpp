@@ -3,13 +3,11 @@
 #include <cstdio>
 #include <cstring>
 
-#include "camerafollow.hpp"
 #include "debugfont.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeoneventman.hpp"
 #include "dungeonmap.hpp"
 #include "gamepad.hpp"
-#include "mglib.hpp"
 #include "snd.hpp"
 
 extern "C" int DebugStatus[21];
@@ -29,8 +27,14 @@ extern "C" char *LanguageStr[1][2];
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
 extern "C" int gateKeyStack[32];
 
-#ifdef NON_MATCHING
+#ifdef NON_MATCHING // draft declarations
+#include "camerafollow.hpp"
+#include "mglib.hpp"
+
+/** The camera the dungeon is drawn through. */
 extern CCameraFollow *NowCamera;
+
+/** Version number the debug overlay prints after the weapon list's year. */
 extern int VERSION_VOL;
 
 /**
