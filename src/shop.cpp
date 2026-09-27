@@ -4888,12 +4888,14 @@ int FishingExchangeKey() {
                 int count = 0;
                 switch (kind) {
                     case 0: {
+                        int i;
+                        int k;
                         ITEM_PACK *pack = &status->item_pack;
-                        for (int i = 0; i < 3; i++) {
+                        for (i = 0; i < 3; i++) {
                             count += pack->quick_item_qty[i];
                         }
-                        for (int i = 0; i < pack->num; i++) {
-                            if (pack->item[i] >= 0x84) {
+                        for (k = 0; k < pack->num; k++) {
+                            if (pack->item[k] >= 0x84) {
                                 count++;
                             }
                         }
@@ -4903,9 +4905,11 @@ int FishingExchangeKey() {
                         break;
                     }
                     case 1: {
+                        int i;
+                        int owner = WhoIsWeaponEquip(prize->item_no);
                         int held = 0;
-                        WEAPON_HAVE *weapons = status->chara_weapons[WhoIsWeaponEquip(prize->item_no)];
-                        for (int i = 0; i < 10; i++) {
+                        WEAPON_HAVE *weapons = status->chara_weapons[owner];
+                        for (i = 0; i < 10; i++) {
                             if (weapons[i].item_no >= 0x101) {
                                 held++;
                             }
@@ -4916,9 +4920,10 @@ int FishingExchangeKey() {
                         break;
                     }
                     case 2: {
+                        DNG_CONSUMABLE *attach = status->consumable_items;
                         int held = 0;
                         for (; count < 40; count++) {
-                            if (status->consumable_items[count].id >= 0x51) {
+                            if (attach[count].id >= 0x51) {
                                 held++;
                             }
                         }
@@ -4928,7 +4933,7 @@ int FishingExchangeKey() {
                         break;
                     }
                 }
-                if (FishMenu.point < prize->price) {
+                if (prize->price > FishMenu.point) {
                     FishMenu.fade_mode = 5;
                     FishMenu.warning = 14;
                     ComMenuSePlay(2);
@@ -4979,6 +4984,7 @@ int FishingExchangeKey() {
             }
             FISH_EXCHANGE_ITEM *prize;
             if (GamePad.Down(0x40) != 0) {
+                int enough = 1;
                 prize = GetExchangeItemList(FishMenu.cursor);
                 if (mardan == 1 && FishMenu.cursor == last) {
                     prize = GetExchangeItemList(0x20);
@@ -4988,7 +4994,6 @@ int FishingExchangeKey() {
                     break;
                 }
                 int price = prize->price;
-                int enough = 1;
                 if (FishMenu.point < price) {
                     enough = 0;
                 }
@@ -5025,11 +5030,11 @@ int FishingExchangeKey() {
             if (prize != NULL) {
                 COM_ITEM_INFO *info = GetCommonItemInfo(prize->item_no);
                 if (info != NULL) {
-                    int name = info->msg + 100;
-                    if (CommonMenuMes1.mes_made != 0xCA || CommonMenuMes1.mes_no[0] != name ||
+                    int msg = info->msg;
+                    if (CommonMenuMes1.mes_made != 0xCA || CommonMenuMes1.mes_no[0] != msg + 100 ||
                         CommonMenuMes1.values[0] != prize->price) {
                         CommonMenuMes1.mes_made = -1;
-                        CommonMenuMes1.mes_no[0] = name;
+                        CommonMenuMes1.mes_no[0] = msg + 100;
                         CommonMenuMes1.values[0] = prize->price;
                         CommonMenuMes1.MakeMesWin(0xCA);
                     }
@@ -5042,9 +5047,8 @@ int FishingExchangeKey() {
                 FishMenu.fade_mode = 3;
                 ComMenuSePlay(2);
             }
-            int mes_no = FishMenu.warning + 0xCB;
-            if (CommonMenuMes1.mes_made != mes_no) {
-                CommonMenuMes1.MakeMesWin(mes_no);
+            if (CommonMenuMes1.mes_made != FishMenu.warning + 0xCB) {
+                CommonMenuMes1.MakeMesWin(FishMenu.warning + 0xCB);
             }
             break;
         }
