@@ -509,7 +509,7 @@ SECTIONS
         editloop3.cpp.o (.eddata6)     // 0x00269bb0
         editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
         editloop3.cpp.o (.extfuncinfo) // 0x00269c50
-        main.data.part4g.s.o (.data)   // 0x0026a5e8
+        editloop3.cpp.o (.edeventdata) // 0x0026a5e8
         editloop3.cpp.o (.editloop3-vv_2757) // 0x0026a610 vv$2757
         edit_in.cpp.o (.editininit)    // 0x0026a640
         edit_in.cpp.o (.editindraw)    // 0x0026a650
@@ -988,7 +988,7 @@ SECTIONS
 		editloop3.cpp.o (.edsbss2)     // 0x002a2a04
 		editloop3.cpp.o (.eventbss)    // 0x002a2a2c
 		editloop3.cpp.o (.edsbss3)     // 0x002a2a30
-		main.sbss.part4e.s.o (.sbss)   // 0x002a2a54
+		editloop3.cpp.o (.edeventsbss) // 0x002a2a54
 		editloop3.cpp.o (.edsbss4)     // 0x002a2a64
 		main.sbss.part4f.s.o (.sbss)   // 0x002a2a80
 		edit_in.cpp.o (.editinsbss)    // 0x002a2ad0
