@@ -368,8 +368,6 @@ void ClsMes::AutoSet(int *pos) {
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/clsmes", AbsFukidashiIn__6ClsMesFv);
-
 void ClsMes::AbsFukidashiIn(void) {
     if (this->win_x < 0x10) {
         this->win_x = 0x10;
@@ -688,8 +686,6 @@ void ClsMes::GoNextPage(void) {
         this->text_from = this->page_from;
     }
 }
-
-FUZZY_MATCH("asm/nonmatchings/clsmes", MyTextureMake_sub__6ClsMesFv);
 
 int ClsMes::MyTextureMake_sub(void) {
     int at = this->text_no;
@@ -1419,8 +1415,6 @@ void NeedMesWinWH_sub(int *len, int *max_len, int *width, int *max_width, int ch
     }
 }
 
-FUZZY_MATCH("asm/nonmatchings/clsmes", NeedMesWinWH__6ClsMesFiPi);
-
 void ClsMes::NeedMesWinWH(int mes_no, int *out) {
     short *at;
     int *max_len;
@@ -1642,8 +1636,6 @@ int ClsMes::MakeMesWin(int mes_no) {
     }
     return 0;
 }
-
-FUZZY_MATCH("asm/nonmatchings/clsmes", MakeMesTexture__6ClsMesFi);
 
 void ClsMes::MakeMesTexture(int mes_no) {
     int wh[4];
@@ -2119,10 +2111,10 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
     int pos[2];
     int x0;
     int y0;
+    int sy0;
     int w0;
     int h0;
     int sx0;
-    int sy0;
     int top;
 
     area[0] = this->win_x;
@@ -2154,13 +2146,16 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
         }
     }
 
-    w0 = area[2] - area[0];
+    int left = area[0];
     top = area[1];
-    h0 = area[3] - top;
-    x0 = (int) LinerInterpolation(this->grow_x, area[0], this->fade);
+    int right = area[2];
+    int bottom = area[3];
+    w0 = right - left;
+    int height = bottom - top;
+    x0 = (int) LinerInterpolation(this->grow_x, left, this->fade);
     y0 = (int) LinerInterpolation(this->grow_y, top, this->fade);
     w0 = (int) (w0 * this->fade);
-    h0 = (int) (h0 * this->fade);
+    h0 = (int) (height * this->fade);
     sy0 = y0;
     y0 -= top;
     sx0 = x0 + dx;
@@ -2170,16 +2165,14 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
         spRGBA bright;
         spRGBA dim;
         int x1;
+        int x2;
         int y1;
         int w;
         int h;
-        int x2;
         int y2;
         int w2;
         int h2;
-        int x3;
-        int w1;
-        int w3;
+        int screen_y2;
         int sy1;
         int sy2;
         int sy3;
@@ -2188,6 +2181,9 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
         int ty3;
         int th1;
         int th3;
+        int x3;
+        int w1;
+        int w3;
 
         SetspRGBA(&bright, 0x80, 0x80, 0x80, 0x80);
         SetspRGBA(&dim, 0x60, 0x60, 0x60, 0x80);
@@ -2219,7 +2215,7 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
 
         x3 = x2 + w2;
         sy1 = y1;
-        sy2 = y2;
+        screen_y2 = y2;
         sy3 = y2 + h2;
         w1 = x2 - x1;
         w3 = x1 + w - x2 - w2;
@@ -2227,6 +2223,7 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
         h3 = y1 + h - y2 - h2;
         y1 -= top;
         y2 -= top;
+        sy2 = screen_y2;
         ty3 = y2 + h2;
         th1 = y2 - y1;
         th3 = y1 + h - y2 - h2;
