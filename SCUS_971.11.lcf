@@ -650,9 +650,7 @@ SECTIONS
         battlemenu.cpp.o (.battlemenu-c3967) // 0x00293320 @3967
         battlemenu.cpp.o (.battlemenu-c3968) // 0x00293358 @3968
         . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c4085) // 0x00293370 @4085
-        battlemenu.cpp.o (.battlemenu-c4090) // 0x002933a0 @4090
-        battlemenu.cpp.o (.battlemenu-c4149) // 0x00293460 @4149
+        battlemenu.cpp.o (.battlemenu-weaponmenu) // 0x00293370 @4085 @4090 @4149
         battlemenu.cpp.o (.battlemenu-c4290) // 0x00293470 @4290
         . = ALIGN(8);
         battlemenu.cpp.o (.battlemenu-c4291) // 0x00293480 @4291
@@ -894,8 +892,7 @@ SECTIONS
 		battlemenu.cpp.o (.battlemenu-c792__4) // 0x002a2040 @792__4
 		battlemenu.cpp.o (.battlemenu-texenter-s) // 0x002a2048 @937__3
 		battlemenu.cpp.o (.battlemenu-c1249) // 0x002a2050 @1249
-		battlemenu.cpp.o (.battlemenu-c1365__2) // 0x002a2058 @1365__2
-		battlemenu.cpp.o (.battlemenu-c1379) // 0x002a2060 @1379
+		battlemenu.cpp.o (.battlemenu-charakey) // 0x002a2058 @1365__2 @1379
 		main.sdata.battlemenu-2A2068.s.o (.sdata) // 0x002a2068
 		battlemenu.cpp.o (.battlemenu-c2169) // 0x002a2070 @2169
 		battlemenu.cpp.o (.battlemenu-c3682) // 0x002a2078 @3682

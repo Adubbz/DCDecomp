@@ -383,13 +383,9 @@
       ".battlemenu-c3968": [
         "@2283"
       ],
-      ".battlemenu-c4085": [
-        "@2390"
-      ],
-      ".battlemenu-c4090": [
-        "@2395"
-      ],
-      ".battlemenu-c4149": [
+      ".battlemenu-weaponmenu": [
+        "@2390",
+        "@2395",
         "@2453"
       ],
       ".battlemenu-c4290": [
@@ -476,10 +472,8 @@
       ".battlemenu-c1249": [
         "@638"
       ],
-      ".battlemenu-c1365__2": [
-        "@737"
-      ],
-      ".battlemenu-c1379": [
+      ".battlemenu-charakey": [
+        "@737",
         "@751"
       ],
       ".battlemenu-c2169": [
