@@ -2,19 +2,46 @@
 
 #include "common.h"
 
-#include "dngstatusdata.hpp"
+#include "itemdata.hpp"
+
+/**
+ * Stores one attachment slot in the dungeon inventory.
+ */
+struct DNG_CONSUMABLE {
+    s16 id; /**< Attachment in the slot, or an id below 81 if the slot is empty. */
+    char unk_02[30];
+};
+
+STATIC_ASSERT(sizeof(DNG_CONSUMABLE) == 0x20);
+
+/**
+ * Stores the dungeon inventory and its quick-use slots.
+ */
+struct ITEM_PACK {
+    s8 num;                 /**< Slots the pack holds. */
+    s8 item_count;          /**< Dungeon items carried, counting every copy in a quick-use slot. */
+    s16 quick_item_slot[3]; /**< Item in each quick-use slot, or -1. */
+    s16 quick_item_qty[3];  /**< How many of that item each quick-use slot holds. */
+    s16 item[103];          /**< Item in each slot, or -1. */
+    s16 item_vol[103];      /**< How much is left in each slot's copy of its item. */
+};
+
+STATIC_ASSERT(sizeof(ITEM_PACK) == 0x1AA);
 
 /**
  * Records what has become of one atla of one floor.
  */
 struct ATRA_SAVE {
-    s32 id;       /**< Atla the record is for. */
+    s32 id;       /**< Atla the record is for, or -1 once no slot asks for it. */
     s32 floor;    /**< Floor the atla lies on counted from one, or -1 or -2 for any upper or lower floor. */
     s32 refcount; /**< How many of the floor's atla slots still ask for this atla. */
 };
 
 STATIC_ASSERT(sizeof(ATRA_SAVE) == 0xC);
 
+/**
+ * Stores the party's characters, inventory, and dungeon progress.
+ */
 class CUserStatus {
 public:
     /**
@@ -76,44 +103,39 @@ public:
     void Init(void);
 
 public:
-    /* CUserStatus is a second view over the same save-slot player-status blob
-     * as CDngStatusData (include/dngstatusdata.hpp): every offset the methods
-     * above touch coincides with a CDngStatusData field at the same offset
-     * (cur_georama @0, cur_floor @0x2, party_size @0x5, max_hp @0x6, hp @0x12,
-     * the two float[6] gauges @0x42EC /0x4304, res_limit_zone_current @0x8B10).
-     * Only the fields the methods above and CDungeonMap::BuildCharaSpecialParts
-     * reach are named; the rest is filler sized to hold the named ones at their
-     * confirmed offsets. Total sizeof is NOT confirmed -- nothing decompiled so
-     * far reads past 0x8B14.
-     *
-     * The blob is public because retail reaches into it from outside the class:
-     * BuildCharaSpecialParts reads cur_floor, party_size and
-     * res_limit_zone_current straight off the global pointer. */
+    /* CDngStatusData extends this layout with its dungeon tail. The fields are
+     * public because retail reaches into them from outside both classes. */
     s8 cur_georama;                      // 0x0000
     char unk_01[1];                      // 0x0001
     s8 cur_floor;                        // 0x0002
-    s8 unk_03;                           // 0x0003
+    s8 prev_floor;                       /**< Floor occupied before the current floor. */
     s8 cur_chara;                        // 0x0004
     s8 party_size;                       // 0x0005
     s16 max_hp[6];                       // 0x0006
     s16 hp[6];                           // 0x0012
-    char unk_01E[0x205A];                // 0x001E
-    ATRA_SAVE atra_data[7][100];         // 0x2078
-    char unk_4148[0x177];                // 0x4148
-    s8 atra_list[9];                     // 0x42BF
+    char unk_01E[0x25A];                 // 0x001E
+    s32 atra_grid[6][40][8];             /**< Atla each floor slot asks for, or -1 empty, -2 any atla, -3 collected. */
+    ATRA_SAVE atra_registry[6][100];     /**< Atla each dungeon's floor slots still ask for. */
+    s16 kills[6][100];                   /**< Monsters defeated on each dungeon floor. */
+    char unk_4148[200];                  // 0x4148
+    char res_limit_zone_id[6][25];       /**< Restriction-zone identifiers by dungeon and floor. */
+    char unk_42A6[25];                   // 0x42A6
+    s8 floor_reached[7];                 /**< Deepest floor reached in each dungeon, or -1 if never entered. */
+    char unk_42C6[2];                    // 0x42C6
     s32 unk_42C8[6];                     // 0x42C8
     s16 unk_42E0[6];                     // 0x42E0
-    float water_max[6];                  // 0x42EC
-    float water_now[6];                  // 0x4304
-    s32 unk_431C;                        // 0x431C
-    char unk_4320[4];                    // 0x4320
-    s32 unk_4324;                        // 0x4324
-    char unk_4328[0xC];                  // 0x4328
-    s32 unk_4334;                        // 0x4334
-    char unk_4338[4];                    // 0x4338
-    s32 minimap_status;                  // 0x433C
+    float water_max[6];                  /**< Most water each character can hold, ten to a drop. */
+    float water_now[6];                  /**< Water each character holds now. */
+    s32 overflow_flag;                   /**< Whether the player carries more items than the pack holds. */
+    s32 special_flag_238;                /**< Set when item 238 is picked up. */
+    s32 skill_owned[6];                  /**< Whether each character has received their event skill. */
+    s32 minimap_status;                  /**< Current minimap visibility mode. */
     s8 equipped_weapon_slot[6];          /**< Specifies each character's equipped weapon slot. */
-    u16 money;                           /**< Gilda the party carries. */
+
+    union {
+        u16 money;        /**< Gilda the party carries. */
+        s16 money_signed; /**< Signed view of the Gilda the party carries. */
+    };
     s32 unk_4348[6];                     // 0x4348
 
     union {
@@ -140,3 +162,5 @@ public:
     s32 res_limit_zone_current;          // 0x8B10
     s32 active_item_vol[3];              // 0x8B14
 };
+
+STATIC_ASSERT(sizeof(CUserStatus) == 0x8B20);

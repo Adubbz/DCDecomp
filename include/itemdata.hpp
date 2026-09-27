@@ -365,7 +365,9 @@ struct COM_ITEM_INFO {
 
 STATIC_ASSERT(sizeof(COM_ITEM_INFO) == 0x8);
 
-/** An entry in ITEM_LIST. */
+/**
+ * An entry in ITEM_LIST.
+ */
 struct ITEM_DATA {
     s16 sort_key;
     s16 unk_02;
@@ -374,8 +376,7 @@ struct ITEM_DATA {
     s16 vol;        /**< The volume a fresh copy starts with. */
     s16 vol_range;  /**< The range of random variation for the item's volume. */
     s16 unk_0E;
-    s16 stack_kind; /**< How the item sits in a quick-use slot: 0 stacks, 1 alone, 2 never. */
-    s16 unk_12;
+    s32 stack_kind; /**< How the item sits in a quick-use slot: 0 stacks, 1 alone, 2 never. */
 };
 
 STATIC_ASSERT(sizeof(ITEM_DATA) == 0x14);

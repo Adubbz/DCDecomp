@@ -1054,7 +1054,7 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     PerBoardPt->trash_frame = 0;
     DeleteMenuTrushMark();
     s16 full = -1;
-    if (PerBoardStatusPt->unk_431C != 0) {
+    if (PerBoardStatusPt->overflow_flag != 0) {
         ITEM_PACK *pack = PerBoardPt->item_pack;
         if (pack->item[pack->num] >= 0x84) {
             full = 0;

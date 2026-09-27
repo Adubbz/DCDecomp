@@ -91,15 +91,15 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
 
     if (!(valid = item_id < 132) && item_id < 257) {
         for (i = 0; (valid = i < 3) != 0; i++) {
-            if (this->inventory.quick_item_slot[i] == item_id) {
+            if (this->item_pack.quick_item_slot[i] == item_id) {
                 return i;
             }
         }
     }
 
     if (!(valid = item_id <= 131) && item_id < 257) {
-        for (i = 0; (valid = i < this->inventory.item_capacity) != 0; i++) {
-            if (this->inventory.dungeon_items[i] == item_id) {
+        for (i = 0; (valid = i < this->item_pack.num) != 0; i++) {
+            if (this->item_pack.item[i] == item_id) {
                 return i;
             }
         }
@@ -158,9 +158,9 @@ int CDngStatusData::LostItem(int item_id) {
     int valid;
 
     for (i = 0; (valid = i < 103) != 0; i++) {
-        if (this->inventory.dungeon_items[i] == item_id) {
-            this->inventory.dungeon_items[i] = -1;
-            this->inventory.item_vol[i] = 0;
+        if (this->item_pack.item[i] == item_id) {
+            this->item_pack.item[i] = -1;
+            this->item_pack.item_vol[i] = 0;
             return i;
         }
     }
@@ -174,35 +174,35 @@ void CDngStatusData::LostGateKey(void) {
     int valid;
 
     for (i = 0; (valid = i < 103) != 0; i++) {
-        if (this->inventory.dungeon_items[i] == 195) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 195) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 196) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 196) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 198) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 198) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 201) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 201) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 202) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 202) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 203) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 203) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 204) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 204) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 205) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 205) {
+            this->item_pack.item[i] = -1;
         }
-        if (this->inventory.dungeon_items[i] == 206) {
-            this->inventory.dungeon_items[i] = -1;
+        if (this->item_pack.item[i] == 206) {
+            this->item_pack.item[i] = -1;
         }
-        if (!(valid = this->inventory.dungeon_items[i] < 216) && this->inventory.dungeon_items[i] < 223) {
-            this->inventory.dungeon_items[i] = -1;
+        if (!(valid = this->item_pack.item[i] < 216) && this->item_pack.item[i] < 223) {
+            this->item_pack.item[i] = -1;
         }
     }
 }
@@ -238,18 +238,18 @@ int CDngStatusData::CheckItemGet(int item_id) {
             int k;
 
             for (i = 0; (valid = i < GetMaxDungeonItems()) != 0; i++) {
-                if (!(valid = this->inventory.dungeon_items[i] < 132) && this->inventory.dungeon_items[i] < 257) {
+                if (!(valid = this->item_pack.item[i] < 132) && this->item_pack.item[i] < 257) {
                     count++;
                 }
             }
 
             for (k = 0; (valid = k < 3) != 0; k++) {
-                if (this->inventory.quick_item_slot[k] != -1) {
-                    count += this->inventory.quick_item_qty[k];
+                if (this->item_pack.quick_item_slot[k] != -1) {
+                    count += this->item_pack.quick_item_qty[k];
                 }
             }
 
-            if (count < this->inventory.item_capacity) {
+            if (count < this->item_pack.num) {
                 result = 0;
             } else {
                 return 1;
@@ -360,7 +360,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
     if (!(valid = item_id < 132) && item_id < 257) {
         int i;
         for (i = 0; (valid = i < 103) != 0; i++) {
-            if (this->inventory.dungeon_items[i] < 132) {
+            if (this->item_pack.item[i] < 132) {
                 if (item_id == 238) {
                     this->special_flag_238 = 1;
                     return 0;
@@ -369,18 +369,18 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 int count = 0;
                 int j;
                 for (j = 0; (valid = j < 103) != 0; j++) {
-                    if (!(valid = this->inventory.dungeon_items[j] < 132)) {
+                    if (!(valid = this->item_pack.item[j] < 132)) {
                         count++;
                     }
                 }
                 int k;
                 for (k = 0; (valid = k < 3) != 0; k++) {
-                    if (this->inventory.quick_item_slot[k] != -1) {
-                        count += this->inventory.quick_item_qty[k];
+                    if (this->item_pack.quick_item_slot[k] != -1) {
+                        count += this->item_pack.quick_item_qty[k];
                     }
                 }
 
-                if (count + 1 > this->inventory.item_capacity) {
+                if (count + 1 > this->item_pack.num) {
                     this->overflow_flag = 1;
                 }
 
@@ -388,15 +388,15 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 if (this->overflow_flag != 0) {
                     int m;
                     for (m = 0; (valid = m < 3) != 0; m++) {
-                        if (this->inventory.dungeon_items[this->inventory.item_capacity + m] == -1) {
-                            this->inventory.dungeon_items[this->inventory.item_capacity + m] = item_id;
-                            this->inventory.item_vol[this->inventory.item_capacity + m] = have_copy;
+                        if (this->item_pack.item[this->item_pack.num + m] == -1) {
+                            this->item_pack.item[this->item_pack.num + m] = item_id;
+                            this->item_pack.item_vol[this->item_pack.num + m] = have_copy;
                             return i;
                         }
                     }
                 } else {
-                    this->inventory.dungeon_items[i] = item_id;
-                    this->inventory.item_vol[i] = have_copy;
+                    this->item_pack.item[i] = item_id;
+                    this->item_pack.item_vol[i] = have_copy;
                 }
                 return i;
             }
@@ -459,7 +459,7 @@ int CDngStatusData::CheckActItemSlot(int item_id) {
     int valid;
 
     for (i = 0; (valid = i < 3) != 0; i++) {
-        if (this->inventory.quick_item_slot[i] == item_id) {
+        if (this->item_pack.quick_item_slot[i] == item_id) {
             return i;
         }
     }
@@ -718,11 +718,9 @@ void CUserStatus::Init(void) {
     }
 }
 
-/* Right-shifts dead_mask by 1 - a party-order bitmask being collapsed when
- * the lead character dies/is removed, rather than a specific bit cleared. */
 /* @ 0x1BEEF0 (0x20 bytes) -- SetDead__14CDngStatusDataFv */
 void CDngStatusData::SetDead(void) {
-    this->dead_mask = (u32) (u16) this->dead_mask >> 1;
+    this->money_signed = (u32) (u16) this->money_signed >> 1;
 }
 
 /* Looks up the current floor's "Res Limit Zone" id and latches it into
@@ -843,10 +841,10 @@ struct DNG_ITEM_BLOCK {
 /* @ 0x1BF340 (0x3C0 bytes) -- Initialize__14CDngStatusDataFv */
 void CDngStatusData::Initialize(void) {
     this->cur_georama = -1;
-    this->unk_01 = 0;
+    this->unk_01[0] = 0;
     this->cur_floor = -1;
     this->prev_floor = -1;
-    this->unk_04 = 0;
+    this->cur_chara = 0;
     this->party_size = 1;
 
     StatTable6 local1 = LIT_781;
@@ -864,24 +862,24 @@ void CDngStatusData::Initialize(void) {
     for (t = 0; (valid = t < 6) != 0; t++) {
         this->max_hp[t] = local2.v[t];
         this->hp[t] = local2.v[t];
-        this->unk_field_1[t] = local3.v[t];
-        this->unk_field_4468[t] = 0;
-        this->unk_field_2[t] = 0;
+        this->unk_4348[t] = local3.v[t];
+        this->unk_42C8[t] = 0;
+        this->unk_42E0[t] = 0;
         this->equipped_weapon_slot[t] = -1;
 
         for (q = 0; (valid = q < 11) != 0; q++) {
             this->chara_weapons[t][q].item_no = -1;
         }
 
-        this->max_water[t] = 30.0f;
-        this->water[t] = 30.0f;
+        this->water_max[t] = 30.0f;
+        this->water_now[t] = 30.0f;
         this->skill_owned[t] = 0;
     }
 
     this->equipped_weapon_slot[0] = 0;
     this->GetItem(258, 0);
     this->special_flag_238 = 0;
-    this->config_mirror = 1;
+    this->minimap_status = 1;
     this->overflow_flag = 0;
 
     for (k = 0; (valid = k < 7) != 0; k++) {
@@ -916,12 +914,12 @@ void CDngStatusData::Initialize(void) {
         }
     }
 
-    this->dead_mask = 0;
-    DNG_ITEM_BLOCK *item_block = (DNG_ITEM_BLOCK *) &this->inventory.item_capacity;
-    this->inventory.item_capacity = 50;
-    this->inventory.quick_item_slot[0] = -1;
-    this->inventory.quick_item_slot[1] = -1;
-    this->inventory.quick_item_slot[2] = -1;
+    this->money_signed = 0;
+    DNG_ITEM_BLOCK *item_block = (DNG_ITEM_BLOCK *) &this->item_pack.num;
+    this->item_pack.num = 50;
+    this->item_pack.quick_item_slot[0] = -1;
+    this->item_pack.quick_item_slot[1] = -1;
+    this->item_pack.quick_item_slot[2] = -1;
 
     for (t = 0; (valid = t < 103) != 0; t++) {
         item_block->dungeon_items[t] = -1;

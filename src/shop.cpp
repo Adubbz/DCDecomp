@@ -1,6 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
-#pragma name_counter 760
+#pragma name_counter 761
 
 #include "shop.hpp"
 

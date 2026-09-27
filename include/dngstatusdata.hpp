@@ -1,53 +1,16 @@
 #pragma once
 
-#include "common.h"
-
-// chara_weapons stores WEAPON_HAVE by value, so the complete type is needed;
-// it lives with the definition table it is copied from.
-#include "itemdata.hpp"
+#include "userstatus.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct STATIC_ASSER;
 
-/* Refcounted "atra" (Atlamillia) placement-grid entry. id is the required
- * atra id for a grid slot (-1 = empty, -2 = wildcard/any-atra acceptor, -3 =
- * already collected); refcount is how many un-collected atra_grid slots
- * still reference this id -- GetAtraData decrements it and frees the entry
- * (id=-1) once it reaches 0. unk4 is not yet used by any decompiled function. */
-struct DNG_ATRA_REGISTRY_ENTRY {
-    s32 id;
-    s32 floor; /**< Floor the atla lies on counted from one, or -1 or -2 for any upper or lower floor. */
-    s32 refcount;
-};
-
-STATIC_ASSERT(sizeof(DNG_ATRA_REGISTRY_ENTRY) == 0xC);
-
-/* Consumable-item inventory slot (id is a s16 at offset 0). */
-struct DNG_CONSUMABLE {
-    s16 id;
-    char unk_02[30];
-};
-
 /**
- * Stores a player's dungeon items: the slots the pack holds, the quick-use
- * slots, and the item and remaining volume in each slot.
+ * Extends the party status with dungeon-specific save data.
  */
-struct ITEM_PACK {
-    s8 num;                 /**< Slots the pack holds. */
-    s8 item_count;          /**< Dungeon items carried, counting every copy in a quick-use slot. */
-    s16 quick_item_slot[3]; /**< Item in each quick-use slot, or -1. */
-    s16 quick_item_qty[3];  /**< How many of that item each quick-use slot holds. */
-    s16 item[103];          /**< Item in each slot, or -1. */
-    s16 item_vol[103];      /**< How much is left in each slot's copy of its item. */
-};
-
-STATIC_ASSERT(sizeof(ITEM_PACK) == 0x1AA);
-
-STATIC_ASSERT(sizeof(DNG_CONSUMABLE) == 0x20);
-
-class CDngStatusData {
+class CDngStatusData : public CUserStatus {
 public:
     /** Returns the number of active party members. */
     s8 GetPartySize() const { return party_size; }
@@ -139,6 +102,8 @@ public:
     int CheckDefaultWeapon(int chara_no);
 
     /**
+     * Halves the Gilda carried by the party after a death.
+     *
      * @mangled SetDead__14CDngStatusDataFv
      * @address 0x1BEEF0
      * @size 0x14
@@ -216,85 +181,17 @@ public:
     void GetAtraData(int georama_no, int floor, int atra_id);
 
 public:
-    // CSaveData embeds this class and mirrors config_mirror into its own
-    // config[15]. That must stay a direct member access to keep retail's
-    // >0x7FFF `lui at,0x1; addu at,<this>,at; lw/sw reg,-0x68b8(at)` idiom,
-    // so CSaveData reaches the field directly rather than through an
-    // accessor, which would emit a call.
-    friend class CSaveData;
-
-    /* Field names/offsets below come directly from the project's IDA
-     * database (already reverse engineered there ahead of this decompile
-     * pass); "unk_*" fields are not yet touched by any decompiled function. */
-    s8 cur_georama;
-    char unk_01;
-    s8 cur_floor;
-    s8 prev_floor;
-    char unk_04;
-    s8 party_size;
-    s16 max_hp[6];
-    s16 hp[6];
-    char unk_01E[602];
-    s32 atra_grid[6][40][8];
-    DNG_ATRA_REGISTRY_ENTRY atra_registry[6][100];
-    s16 kills[6][100];
-    char unk_4148[200];
-    char res_limit_zone_id[6][25];
-    char unk_42A6[25];
-
-public:
-    s8 floor_reached[7]; /**< Deepest floor the player has reached in each dungeon. */
-
-public:
     /**
      * Returns one character's active battle-menu status value.
      */
-    s32 GetActiveCharaStatus(int chara_no) { return unk_field_4468[chara_no]; }
+    s32 GetActiveCharaStatus(int chara_no) { return unk_42C8[chara_no]; }
 
     /**
      * Returns the weapon slot one character has equipped.
      */
     s8 GetEquipWeaponSlot(int chara_no) { return equipped_weapon_slot[chara_no]; }
 
-private:
-    char unk_42C6[2];
-    s32 unk_field_4468[6];
-    s16 unk_field_2[6];
-
-public:
-    float max_water[6]; /**< Most water each character can hold, ten to a drop. */
-    float water[6];     /**< Water each character holds now. */
-    s32 overflow_flag;
-    s32 special_flag_238;
-    s32 skill_owned[6]; /**< Whether each playable character has received their event skill. */
-    s32 config_mirror;
-    s8 equipped_weapon_slot[6];
-    s16 dead_mask;
-    s32 unk_field_1[6];
-
-    union {
-        ITEM_PACK item_pack;
-
-        struct {
-            s8 item_capacity;
-            char unk_4361[1];
-            s16 quick_item_slot[3];
-            s16 quick_item_qty[3];
-            s16 dungeon_items[103];
-
-            /* Per-slot "vol": how much is left in that copy of the item. Seeded from
-             * ITEM_LIST +10 via ItemDataToHaveCopy, drained by CMenuItemStep::
-             * CheckItemVolume, which advances the item id a stage when it empties. */
-            s16 item_vol[103];
-        } inventory;
-    };
-    char unk_450A[2];
-    WEAPON_HAVE chara_weapons[6][11];
-    DNG_CONSUMABLE consumable_items[43];
-    char unk_8A5C[180];
-    s32 res_limit_zone_current;
-    s32 quick_item_icon_count[3]; /**< Quantities carried by icons landing in the quick-item slots. */
-    char unk_8B20[380];
+    char unk_8B20[0x17C];
 };
 
 STATIC_ASSERT(sizeof(CDngStatusData) == 0x8C9C);

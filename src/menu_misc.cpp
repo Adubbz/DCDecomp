@@ -1,3 +1,5 @@
+#pragma name_counter 2
+
 #include "menu_misc.hpp"
 
 #include <cstdio>
