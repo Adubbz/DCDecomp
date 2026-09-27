@@ -1,3 +1,6 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+
 #include "editmenu.hpp"
 
 #include <cstdio>
@@ -1167,7 +1170,7 @@ static float AnalyzeRequestPer() {
     }
     return percent;
 }
-#ifdef NON_MATCHING
+
 static int AnalyzeBarDraw() {
     float parts_total;
     float parts_complete;
@@ -1297,9 +1300,7 @@ static int AnalyzeBarDraw() {
     }
     return 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editmenu", AnalyzeBarDraw__Fv);
-#endif
+
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {

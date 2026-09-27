@@ -260,7 +260,7 @@ void CBound::InitParam() {
     position[2] = 0.0f;
     position[3] = 1.0f;
     next = 0;
-    unk_04 = 0;
+    mask_bit = 0;
     friction = 0.5f;
     frame0 = frame1 = 0;
     sceVu0CopyVector(from, position);

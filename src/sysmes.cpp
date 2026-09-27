@@ -294,32 +294,3 @@ void SetSystemMes(int no, int count, int position, int input_key, int *arg, int 
     SystemMesCount = count;
     SystemMesPosition = position;
 }
-
-void pretest(float matrix[4][4], float *translation) {
-    register float *matrix_data = &matrix[0][0];
-    register float *offset = translation;
-
-    asm {
-        lqc2 vf10, 0(matrix_data)
-        lqc2 vf11, 16(matrix_data)
-        lqc2 vf12, 32(matrix_data)
-        lqc2 vf13, 48(matrix_data)
-        lqc2 vf14, 0(offset)
-    }
-}
-
-void Trans_AddCell(float *output, float *position) {
-    register float *destination = output;
-    register float *source = position;
-
-    asm {
-        lqc2 vf16, 0(source)
-        vmulax ACC, vf10, vf16
-        vmadday ACC, vf11, vf16
-        vmaddaz ACC, vf12, vf16
-        vmaddw vf17, vf13, vf16
-        vadd.xz vf16, vf16, vf14
-        sqc2 vf17, 0(destination)
-        sqc2 vf16, 0(source)
-    }
-}

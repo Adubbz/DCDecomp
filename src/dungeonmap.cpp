@@ -47,32 +47,6 @@ extern "C" CCharacter Trap_Circle;
 /* The character that the player controls; the dungeon overlay defines it. */
 extern "C" CCharacter CharaMain;
 
-/**
- * Defines one debug free-area rectangle.
- */
-struct ITEM_FREE_RECT {
-    float left;
-    float height;
-    float top;
-    float right;
-    float unk_14;
-    float bottom;
-};
-
-/**
- * Defines the debug free areas for one map part.
- */
-struct ITEM_FREE_AREA {
-    s8 parts_no;
-    s8 rect_num;
-    s8 direction;
-    s8 unk_03;
-    ITEM_FREE_RECT rect[4];
-};
-
-STATIC_ASSERT(sizeof(ITEM_FREE_RECT) == 0x18);
-STATIC_ASSERT(sizeof(ITEM_FREE_AREA) == 0x64);
-
 extern "C" int DebugStatus[];
 extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;
@@ -507,12 +481,12 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
                         float x[4];
                         float z[4];
                         float height;
-                        float left = free_area[area_no].rect[rect_no].left;
+                        float left = free_area[area_no].rect[rect_no].x0;
                         x[0] = 10.0f * left;
-                        height = 10.0f * free_area[area_no].rect[rect_no].height;
-                        z[0] = 10.0f * free_area[area_no].rect[rect_no].top;
-                        x[3] = 10.0f * free_area[area_no].rect[rect_no].right;
-                        z[3] = 10.0f * free_area[area_no].rect[rect_no].bottom;
+                        height = 10.0f * free_area[area_no].rect[rect_no].y0;
+                        z[0] = 10.0f * free_area[area_no].rect[rect_no].z0;
+                        x[3] = 10.0f * free_area[area_no].rect[rect_no].x1;
+                        z[3] = 10.0f * free_area[area_no].rect[rect_no].z1;
                         x[1] = x[3];
                         z[1] = z[0];
                         x[2] = x[0];

@@ -1796,6 +1796,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
                          (unsigned long) ((py << 4) + 0x7900) << 16);
 }
 
+#pragma opt_propagation off
 void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
     float w;
     float h;
@@ -1866,7 +1867,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
                 x = (int) (w * shape[i][0]);
             }
 
-            if (n >= 2) {
+            if (n > 1) {
                 y = (int) (h * (1.0f - shape[i][1]));
             } else {
                 y = (int) (h * shape[i][1]);
@@ -1900,9 +1901,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             int cw = this->char_width;
 
             y = (int) (y + half - pad);
-            ww = (int) w - cw;
-
-            DrawMaru(packet, x + cw, y, ww, (int) (half + pad), top, 0x20, 0, prim);
+            DrawMaru(packet, x + cw, y, (int) w - cw, (int) (half + pad), top, 0x20, 0, prim);
         }
     } else {
         x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
@@ -2014,6 +2013,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         }
     }
 }
+#pragma opt_propagation reset
 
 void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
     sceGsTex0 frame;
@@ -2687,9 +2687,15 @@ void ClsMes::DrawMesWin(void) {
         int row = this->win_line[no].y / this->char_height;
 
         if (this->line_pos[row].x < 0 || this->line_pos[row].y < 0) {
-            int sx = ox + (this->win_line[no].x + this->text_x + dx);
-            int sy = oy + (this->win_line[no].y + this->text_y + dy) - 3;
-            CRect_i_ screen(sx, sy, gw, gh);
+            int line_x = this->win_line[no].x + this->text_x;
+            int line_y = this->win_line[no].y + this->text_y;
+            int sx = ox + (line_x + dx);
+            CRect_i_ screen;
+            screen.x = sx;
+            int sy = oy + (line_y + dy) - 3;
+            screen.y = sy;
+            screen.width = gw;
+            screen.height = gh;
             CRect_i_ texel(u, v, gw, gh);
 
             if (this->win_line[no].code >= -0x2DF) {
@@ -2712,13 +2718,14 @@ void ClsMes::DrawMesWin(void) {
                 }
             }
         } else {
-            int sx = this->win_line[no].x + this->line_pos[row].x + dx;
-            int sy = this->win_line[no].y + this->line_pos[row].y + dy;
-            CRect_i_ screen(sx, sy - row * this->char_height, gw, gh);
+            int sx = this->win_line[no].x + this->line_pos[row].x;
+            int sy = this->win_line[no].y + this->line_pos[row].y;
+            sy += dy;
+            CRect_i_ screen(sx + dx, sy - row * this->char_height, gw, gh);
             CRect_i_ texel(u, v, gw, gh);
 
             if (this->win_line[no].code >= -0x2DF) {
-                this->Myset2DSprite_Fuchi(Vif1Packet, texture, sx,
+                this->Myset2DSprite_Fuchi(Vif1Packet, texture, sx + dx,
                                           sy - row * this->char_height, gw, gh, u, v, gw, gh);
             }
 

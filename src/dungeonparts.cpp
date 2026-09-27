@@ -1,3 +1,6 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+
 #include "dungeonparts.hpp"
 
 #include "frame.hpp"
@@ -252,19 +255,18 @@ INCLUDE_ASM("asm/nonmatchings/dungeonparts", PresetSmallItemNo_Get__Fiiii);
 #endif
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @646__2);
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
-#ifdef NON_MATCHING
-/**
- * An area of one map part where an item can be put down.
- */
-struct ITEM_FREE_AREA {
-    s8 parts_no;          /**< Map part the areas lie on; -1 ends the table. */
-    s8 count;             /**< Number of boxes that follow. */
-    s8 direction;         /**< Quarter turns the boxes are given in. */
-    u8 unk_03;
-    float box[4][6];      /**< Each box as its two corners, in tenths of a unit. */
-};
 
+/**
+ * The areas where items can be put down on each map.
+ */
 extern ITEM_FREE_AREA *ItemFreeAreaAll[];
+
+/**
+ * Scales a coordinate from the item area table up to world scale.
+ */
+static inline float ToWorldScale(float coordinate) {
+    return coordinate * 10.0f;
+}
 
 int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
     float quad[196][4][3];
@@ -282,19 +284,19 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
                 if (parts_no != areas[a].parts_no) {
                     continue;
                 }
-                for (int b = 0; b < areas[a].count; b++) {
+                for (int b = 0; b < areas[a].rect_num; b++) {
                     int turn = areas[a].direction;
                     turn += direction;
                     if (turn > 3) {
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    px[0] = areas[a].box[b][0] * 10.0f;
-                    py[0] = areas[a].box[b][1] * 10.0f;
-                    pz[0] = areas[a].box[b][2] * 10.0f;
-                    px[3] = areas[a].box[b][3] * 10.0f;
-                    py[3] = areas[a].box[b][4] * 10.0f;
-                    pz[3] = areas[a].box[b][5] * 10.0f;
+                    px[0] = ToWorldScale(areas[a].rect[b].x0);
+                    py[0] = areas[a].rect[b].y0 * 10.0f;
+                    pz[0] = areas[a].rect[b].z0 * 10.0f;
+                    px[3] = areas[a].rect[b].x1 * 10.0f;
+                    py[3] = areas[a].rect[b].y1 * 10.0f;
+                    pz[3] = areas[a].rect[b].z1 * 10.0f;
                     px[1] = px[3];
                     py[1] = py[0];
                     pz[1] = pz[0];
@@ -348,9 +350,7 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
     out[3] = 1.0f;
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", SearchiDoPutArea__FP8MAPPARTSiiiiPf);
-#endif
+
 /**
  * Reports whether an Atla may be placed on one floor.
  *
@@ -377,25 +377,38 @@ int chkAtraFloor(int dungeon, int floor) {
 extern int CenterFloorTbl[6];
 
 /**
+ * One Atla a dungeon can hand out.
+ */
+struct ATRA_APPEAR {
+    int id;    /**< Atla; -1 ends the table. */
+    int floor; /**< Floor it lies on counted from one, or -1 or -2 for any upper or lower floor. */
+    int count; /**< How many floors it is put on when the floor is not fixed. */
+};
+
+/**
+ * The Atla each dungeon hands out, ended by an entry whose id is -1.
+ */
+extern ATRA_APPEAR *AtraAppearData[6];
+
+/**
+ * The number of floors in each dungeon.
+ */
+extern int MaxFloorTbl[6];
+
+/**
+ * Records that one Atla lies on one floor of a dungeon.
+ */
+static inline void RegisterAtra(int dungeon, int floor, int atra_id) {
+    ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, atra_id);
+}
+
+/**
  * Builds the list of Atla one dungeon may hand out.
  *
  * @mangled BtAtraListMake__Fi
  * @address 0x1C09C0
  * @size 0x358
  */
-#ifdef NON_MATCHING
-/**
- * One Atla a dungeon can hand out.
- */
-struct ATRA_APPEAR {
-    int id;     /**< Atla; -1 ends the table. */
-    int floor;  /**< Floor it lies on counted from one, or -1 or -2 for any upper or lower floor. */
-    int count;  /**< How many floors it is put on when the floor is not fixed. */
-};
-
-extern ATRA_APPEAR *AtraAppearData[6];
-extern int MaxFloorTbl[6];
-
 void BtAtraListMake(int dungeon) {
     if (dungeon >= 6) {
         return;
@@ -415,7 +428,7 @@ void BtAtraListMake(int dungeon) {
             lower += appear[count].count;
         }
         if (floor != -1 && floor != -2) {
-            ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, --floor, count);
+            RegisterAtra(dungeon, --floor, count);
         }
     }
     int i;
@@ -424,7 +437,7 @@ void BtAtraListMake(int dungeon) {
         while (placed == 0) {
             int floor = (int) (((float) (center - 1) * (float) rand()) / 2.1474836e9f);
             if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
+                RegisterAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
@@ -435,7 +448,7 @@ void BtAtraListMake(int dungeon) {
             int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f);
             floor += center;
             if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
-                ((CDngStatusData *) UserStatus)->SetGetAtra(dungeon, floor, -2);
+                RegisterAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
@@ -446,9 +459,7 @@ void BtAtraListMake(int dungeon) {
         UserStatus->atra_data[dungeon][j].refcount = appear[j].count;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", BtAtraListMake__Fi);
-#endif
+
 /**
  * Selects the atla identifiers that appear on a floor: keeps the fixed ones,
  * draws each open slot from the dungeon's list for its half, packs them to the
@@ -507,7 +518,6 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     memcpy(atra, packed, sizeof(packed));
     return count;
 }
-#ifdef NON_MATCHING
 /**
  * Gives a map part's collision model, or null for an empty cell.
  */
@@ -546,7 +556,11 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
         sceVu0FVECTOR part_pos;
 
         for (i = 0; map->parts[i].frame[0] != NULL; i++) {
-            collision = PartsCollision(map, i);
+            if (i == -1) {
+                collision = NULL;
+            } else {
+                collision = map->parts[i].collision;
+            }
             if (collision == NULL) {
                 continue;
             }
@@ -559,7 +573,8 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
             if (turn == 3) {
                 turn = -1;
             }
-            collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) turn)) / 180.0f, 0.0f);
+            float angle = (3.1415927f * (-90.0f * (float) turn)) / 180.0f;
+            collision->SetRotation(0.0f, angle, 0.0f);
             collision->SetPosition(part_pos);
             count += collision->PickUpNearPoly(&poly[count], box);
         }
@@ -583,13 +598,12 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
             if (x < 0 || x > 19 || z < 0 || z > 19) {
                 continue;
             }
-            int parts_no = map->cells[x + z * 20].parts_no;
-            model = PartsCollision(map, parts_no);
+            model = PartsCollision(map, map->cells[x + z * 20].parts_no);
             if (model == NULL) {
                 continue;
             }
             float angle = (float) map->cells[x + z * 20].direction;
-            angle += (float) PartsCollisionTurn(map, parts_no);
+            angle += (float) PartsCollisionTurn(map, map->cells[x + z * 20].parts_no);
             if (angle > 3.0f) {
                 angle -= 3.0f;
             }
@@ -612,9 +626,6 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", setCollisionData__FP11CDungeonMapP6CCPolyPfff);
-#endif
 CFrame *CDungeonParts::GetSearchFrame(char *name) {
     for (int i = 0; i < 6; i++) {
         if (frame[i] != NULL) {

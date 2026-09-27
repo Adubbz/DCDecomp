@@ -10,6 +10,7 @@
 #include <cstring>
 
 #include "battlemenu.hpp"
+#include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
@@ -41,22 +42,23 @@ DUN_ENTER_MENU DEnterMenu;
  * State of the character change menu and its character positions.
  */
 struct CHARA_CHANGE_MENU {
-    s8 unk_00;
-    s8 unk_01;
-    s8 unk_02;
+    s8 selected;   /**< Party member the ring has turned to. */
+    s8 cursor_row; /**< Row the cursor is on in the message window. */
+    s8 party_size; /**< Number of party members on the ring. */
     s8 unk_03;
     float unk_04;
-    float unk_08[6][2];
-    s16 unk_38[6];
+    float ring_pos[6][2]; /**< Each member's offset from the ring's centre. */
+    s16 ring_slot[6];     /**< Each member's place on the ring, counted from the front. */
     float unk_44;
-    u8 unk_48[4];
+    s16 unk_48;
+    u8 unk_4a[2];
     s32 unk_4c;
     u8 unk_50[2];
     s8 unk_52;
     u8 unk_53;
-    float unk_54;
-    float unk_58;
-    s16 unk_5c;
+    float cursor_x; /**< Screen x of the cursor. */
+    float cursor_y; /**< Screen y of the cursor. */
+    s16 mode;       /**< Mode the menu was opened with; 1 uses up an item when the leader changes. */
     u8 unk_5e[2];
 };
 
@@ -953,34 +955,102 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
     }
 }
 
-#ifdef NON_MATCHING
-/** Buffer that holds the character-change screen's asynchronously read data. */
-static u_long128 *quick_change_buffer;
-/** Optional pairs of screen coordinates for the selectable party members. */
-static int *quick_change_positions;
-/** Texture block replaced temporarily by the character-change screen. */
-static int quick_change_texture_block;
-/** Party member currently highlighted by the character-change screen. */
-static int quick_change_selected;
-/** Mode controlling how cancellation leaves the character-change screen. */
-static int quick_change_state;
+/**
+ * Status of the party the character change menu picks from.
+ */
+extern CDngStatusData *ChangeStatusDataPt;
+
+/**
+ * Screen position of the character change ring's centre.
+ */
+extern int QuickCharaPos[2];
+
+/**
+ * Radius of the character change ring, which grows while the ring turns.
+ */
+extern float changeMenu_long;
+
+/**
+ * Places the character change menu's cursor on its selected row.
+ */
+static inline void SetChangeMenuCursor(void) {
+    ChangeMenu.cursor_x = CommonMenuMes3.text_x - 0x1C;
+    ChangeMenu.cursor_y = CommonMenuMes3.text_y - 4 + ChangeMenu.cursor_row * 24;
+}
 
 void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int mode) {
-    quick_change_buffer = MenuCalcBufAlignment(buffer);
-    quick_change_positions = positions;
-    quick_change_texture_block = texture_block;
-    quick_change_selected = UserStatus != NULL ? UserStatus->cur_chara : 0;
-    quick_change_state = mode != 0 ? 2 : 0;
-    CharaChangeInitToGL(quick_change_buffer, quick_change_selected);
+    LOADTEXTURE_INFO2 table[] = {
+        {chara_change_frame_image, 0, 0},
+        {NULL, 0, 0},
+    };
+    table[0].block_no = texture_block;
+    TexManager.DeleteTextureBlock(texture_block);
+    TexManager.CleanUpTextureList();
+    TexManager.LoadTextureBlockEX(-1, table);
+    chara_change_buf = buffer;
+    chara_change_buf = MenuCalcBufAlignment(buffer);
+    StartReadBG();
+    LoadFileBGMenuData("quickchr.pac", chara_change_buf);
+    CharaChangeReadFlag = 0;
+    ReadBG();
+    QuickCharaPos[0] = positions[0];
+    QuickCharaPos[1] = positions[1];
+    ChangeStatusDataPt = (CDngStatusData *) UserStatus;
+    if (ChangeStatusDataPt == NULL) {
+        return;
+    }
+    ChangeMenu.selected = ChangeStatusDataPt->unk_04;
+    ItemVolumeStep.CheckItemVolume();
+    ChangeMenu.unk_4c = 0;
+    StayTex = TexManager.GetTexture("stayframe", -1);
+    CommonMenuMes3.text_x = 200;
+    CommonMenuMes3.text_y = 190;
+    changeMenu_long = 60.0f;
+    ChangeMenu.mode = mode;
+    ChangeMenu.cursor_row = 0;
+    ChangeMenu.unk_52 = 0;
+    CUserStatus *status = (CUserStatus *) ChangeStatusDataPt;
+    int zone = status->res_limit_zone_current;
+    if (zone < 6 && zone >= 0) {
+        ChangeMenu.unk_52 = 1;
+    } else if (status->cur_chara == CHARA_OSMOND && BtActStatus.unk_092 == 10) {
+        ChangeMenu.unk_52 = 2;
+    }
+    if (ChangeMenu.mode != 0) {
+        ChangeMenu.unk_03 = 2;
+        SetChangeMenuCursor();
+    } else {
+        ChangeMenu.unk_03 = 0;
+        if (ChangeMenu.unk_52 == 1) {
+            ChangeMenu.cursor_row = 1;
+            SetChangeMenuCursor();
+        } else if (ChangeMenu.unk_52 == 2) {
+            printf(" not change area \n");
+            ChangeMenu.cursor_row = 1;
+            SetChangeMenuCursor();
+        }
+    }
+    ChangeMenu.party_size = ChangeStatusDataPt->party_size;
+    ChangeMenu.unk_48 = 0;
+    float step = 6.2831855f / ChangeMenu.party_size;
+    int i;
+    if (ChangeMenu.unk_44 < 0.0f) {
+        i = 0;
+    }
+    for (i = 0; i < ChangeMenu.party_size; i++) {
+        ChangeMenu.ring_slot[i] = i - ChangeMenu.selected;
+        if (ChangeMenu.ring_slot[i] < 0) {
+            ChangeMenu.ring_slot[i] += ChangeMenu.party_size;
+        }
+        float angle = 3.1415927f + step * ChangeMenu.ring_slot[i];
+        ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
+        ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
+    }
     GamePad.SetAutoRepeat(0xF000, 30, 5);
     GamePad.MenuModeOn(0x78);
+    CharaChangeTexBlock = texture_block;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1349);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1350__3);
+
 int CharaChangeLoop(void) {
     if (ReadBGSync() == 0 && CharaChangeReadFlag == 0) {
         LOADTEXTURE_INFO2 table[] = {
@@ -1042,11 +1112,6 @@ int CharaChangeLoop(void) {
 }
 
 /**
- * Status of the party the character change menu picks from.
- */
-extern CDngStatusData *ChangeStatusDataPt;
-
-/**
  * Makes a character the party's leader.
  */
 static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
@@ -1089,7 +1154,7 @@ int CharaChangeKey(void) {
                 CommonMenuMes3.MakeMesWin(message);
             }
             if (GamePad.Down(0x60)) {
-                if (ChangeMenu.unk_5c != 0) {
+                if (ChangeMenu.mode != 0) {
                     ChangeMenu.unk_03 = 2;
                     CommonMenuMes3.MakeMesWin(ChangeMenu.unk_52 == 0 ? 1 : 2);
                 } else {
@@ -1104,16 +1169,16 @@ int CharaChangeKey(void) {
             if (ChangeMenu.unk_04 >= 21.0f) {
                 if (ChangeMenu.unk_44 > 0.0f) {
                     for (int i = 0; i < 6; i++) {
-                        ChangeMenu.unk_38[i]++;
-                        if (ChangeMenu.unk_38[i] == ChangeMenu.unk_02) {
-                            ChangeMenu.unk_38[i] = 0;
+                        ChangeMenu.ring_slot[i]++;
+                        if (ChangeMenu.ring_slot[i] == ChangeMenu.party_size) {
+                            ChangeMenu.ring_slot[i] = 0;
                         }
                     }
                 } else {
-                    for (int i = 0; i < ChangeMenu.unk_02; i++) {
-                        ChangeMenu.unk_38[i]--;
-                        if (ChangeMenu.unk_38[i] == -1) {
-                            ChangeMenu.unk_38[i] = ChangeMenu.unk_02 - 1;
+                    for (int i = 0; i < ChangeMenu.party_size; i++) {
+                        ChangeMenu.ring_slot[i]--;
+                        if (ChangeMenu.ring_slot[i] == -1) {
+                            ChangeMenu.ring_slot[i] = ChangeMenu.party_size - 1;
                         }
                     }
                 }
@@ -1131,17 +1196,17 @@ int CharaChangeKey(void) {
                 CommonMenuMes3.MakeMesWin(message);
             }
             if (GamePad.Down(0x5000)) {
-                if (ChangeMenu.unk_01 > 0) {
-                    ChangeMenu.unk_01 = 0;
+                if (ChangeMenu.cursor_row > 0) {
+                    ChangeMenu.cursor_row = 0;
                 } else {
-                    ChangeMenu.unk_01 = 1;
+                    ChangeMenu.cursor_row = 1;
                 }
                 ComMenuSePlay(0);
             }
             if (GamePad.Down(0x40)) {
                 ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
                 int count = GetNowItemNum(0xAE, pack);
-                if (ChangeMenu.unk_01 != 0) {
+                if (ChangeMenu.cursor_row != 0) {
                     result = 2;
                     ComMenuSePlay(1);
                 } else if (ChangeMenu.unk_52 == 1) {
@@ -1165,7 +1230,7 @@ int CharaChangeKey(void) {
         }
         case 0: {
             if (GamePad.Down(0x40)) {
-                if (ChangeMenu.unk_00 > ChangeMenu.unk_02 - 1) {
+                if (ChangeMenu.selected > ChangeMenu.party_size - 1) {
                     ComMenuSePlay(2);
                     ChangeMenu.unk_03 = 3;
                     return 0;
@@ -1183,55 +1248,55 @@ int CharaChangeKey(void) {
                     return 0;
                 }
                 CDngStatusData *status = ChangeStatusDataPt;
-                int hp = status->hp[ChangeMenu.unk_00];
-                int flags = status->GetActiveCharaStatus(ChangeMenu.unk_00);
+                int hp = status->hp[ChangeMenu.selected];
+                int flags = status->GetActiveCharaStatus(ChangeMenu.selected);
                 if (hp <= 0 || (flags & 2)) {
                     ComMenuSePlay(2);
                     return 0;
                 }
-                if (ChangeMenu.unk_00 != status->unk_04) {
+                if (ChangeMenu.selected != status->unk_04) {
                     ComMenuSePlay(1);
-                    SetStatusChara(ChangeStatusDataPt, ChangeMenu.unk_00);
-                    if (ChangeMenu.unk_5c == 1) {
+                    SetStatusChara(ChangeStatusDataPt, ChangeMenu.selected);
+                    if (ChangeMenu.mode == 1) {
                         ChangeStatusDataPt->LostItem(0xAE);
                     }
                     ChangeMenu.unk_4c = 0;
                     ChangeMenu.unk_03 = 5;
-                    ChangeMenu.unk_5c = 0;
+                    ChangeMenu.mode = 0;
                     return 0;
                 }
                 ComMenuSePlay(1);
             } else if (GamePad.Down(0x20)) {
-                if (ChangeStatusDataPt->hp[ChangeStatusDataPt->unk_04] < 0 || ChangeMenu.unk_5c != 0) {
+                if (ChangeStatusDataPt->hp[ChangeStatusDataPt->unk_04] < 0 || ChangeMenu.mode != 0) {
                     ChangeMenu.unk_03 = 2;
-                    ChangeMenu.unk_01 = 0;
-                    ChangeMenu.unk_54 = CommonMenuMes3.text_x - 0x1E;
-                    ChangeMenu.unk_58 = CommonMenuMes3.text_y + 0x10 + ChangeMenu.unk_01 * 24;
+                    ChangeMenu.cursor_row = 0;
+                    ChangeMenu.cursor_x = CommonMenuMes3.text_x - 0x1E;
+                    ChangeMenu.cursor_y = CommonMenuMes3.text_y + 0x10 + ChangeMenu.cursor_row * 24;
                 } else {
                     result = 1;
                 }
                 ComMenuSePlay(2);
             }
-            int previous = ChangeMenu.unk_00;
+            int previous = ChangeMenu.selected;
             if (GamePad.Down(0x3000)) {
                 ChangeMenu.unk_44 = 1.0f;
-                ChangeMenu.unk_00--;
-                if (ChangeMenu.unk_00 < 0) {
-                    ChangeMenu.unk_00 = ChangeMenu.unk_02 - 1;
+                ChangeMenu.selected--;
+                if (ChangeMenu.selected < 0) {
+                    ChangeMenu.selected = ChangeMenu.party_size - 1;
                 }
             }
             if (GamePad.Down(0xC000)) {
                 ChangeMenu.unk_44 = -1.0f;
-                ChangeMenu.unk_00++;
-                if (ChangeMenu.unk_02 - 1 < ChangeMenu.unk_00) {
-                    ChangeMenu.unk_00 = 0;
+                ChangeMenu.selected++;
+                if (ChangeMenu.party_size - 1 < ChangeMenu.selected) {
+                    ChangeMenu.selected = 0;
                 }
             }
-            if (previous != ChangeMenu.unk_00) {
+            if (previous != ChangeMenu.selected) {
                 ChangeMenu.unk_03 = 1;
                 BreakReadBG();
                 u_long128 *buffer = chara_change_buf;
-                CharaChangeInitToGL(buffer, ChangeMenu.unk_00);
+                CharaChangeInitToGL(buffer, ChangeMenu.selected);
                 ComMenuSePlay(0);
             }
             break;
@@ -1245,16 +1310,6 @@ int CharaChangeKey(void) {
     }
     return result;
 }
-
-/**
- * Screen position of the character change ring's centre.
- */
-extern int QuickCharaPos[2];
-
-/**
- * Radius of the character change ring, which grows while the ring turns.
- */
-extern float changeMenu_long;
 
 /**
  * Name of the frame texture drawn around the selected portrait.
@@ -1287,7 +1342,7 @@ void CharaChangeDraw(void) {
                 }
                 break;
         }
-        step = 6.2831855f / ChangeMenu.unk_02;
+        step = 6.2831855f / ChangeMenu.party_size;
         switch (ChangeMenu.unk_03) {
             case 6:
             case 5:
@@ -1296,10 +1351,10 @@ void CharaChangeDraw(void) {
                 if (ChangeMenu.unk_44 < 0.0f) {
                     turn = -turn;
                 }
-                for (i = 0; i < ChangeMenu.unk_02; i++) {
-                    angle = 3.1415927f + (step * ChangeMenu.unk_38[i] + turn * ChangeMenu.unk_4c);
-                    ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
-                    ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+                for (i = 0; i < ChangeMenu.party_size; i++) {
+                    angle = 3.1415927f + (step * ChangeMenu.ring_slot[i] + turn * ChangeMenu.unk_4c);
+                    ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
+                    ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
                 }
                 break;
             case 1:
@@ -1307,17 +1362,17 @@ void CharaChangeDraw(void) {
                 if (ChangeMenu.unk_44 < 0.0f) {
                     turn = -turn;
                 }
-                for (i = 0; i < ChangeMenu.unk_02; i++) {
-                    angle = 3.1415927f + (step * ChangeMenu.unk_38[i] + turn * ChangeMenu.unk_04);
-                    ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
-                    ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+                for (i = 0; i < ChangeMenu.party_size; i++) {
+                    angle = 3.1415927f + (step * ChangeMenu.ring_slot[i] + turn * ChangeMenu.unk_04);
+                    ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
+                    ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
                 }
                 break;
         }
         CTexture *portraits = QuickCharaTex;
-        for (int chara = 0; chara < ChangeMenu.unk_02; chara++) {
-            float x = QuickCharaPos[0] + ChangeMenu.unk_08[chara][0];
-            float y = QuickCharaPos[1] + ChangeMenu.unk_08[chara][1];
+        for (int chara = 0; chara < ChangeMenu.party_size; chara++) {
+            float x = QuickCharaPos[0] + ChangeMenu.ring_pos[chara][0];
+            float y = QuickCharaPos[1] + ChangeMenu.ring_pos[chara][1];
             int shade = 0x80;
             int u = chara * 0x30;
             int v = 0;
@@ -1344,11 +1399,11 @@ void CharaChangeDraw(void) {
             CommonMenuMes3.Step();
             CommonMenuMes3.DrawMesWin();
             cursor_x = CommonMenuMes3.text_x - 0x1E;
-            cursor_y = CommonMenuMes3.text_y + 0x10 + ChangeMenu.unk_01 * 0x18;
-            ChangeMenu.unk_54 += (cursor_x - ChangeMenu.unk_54) / 4.0f;
-            ChangeMenu.unk_58 += (cursor_y - ChangeMenu.unk_58) / 4.0f;
-            cursor_x = ChangeMenu.unk_54;
-            cursor_y = ChangeMenu.unk_58;
+            cursor_y = CommonMenuMes3.text_y + 0x10 + ChangeMenu.cursor_row * 0x18;
+            ChangeMenu.cursor_x += (cursor_x - ChangeMenu.cursor_x) / 4.0f;
+            ChangeMenu.cursor_y += (cursor_y - ChangeMenu.cursor_y) / 4.0f;
+            cursor_x = ChangeMenu.cursor_x;
+            cursor_y = ChangeMenu.cursor_y;
         } else {
             CommonMenuMes3.auto_pos = -1;
             cursor_x = QuickCharaPos[0] - changeMenu_long - 32.0f;
@@ -1362,7 +1417,7 @@ void CharaChangeDraw(void) {
         if (CursorVibeCnt > 1080000) {
             CursorVibeCnt = 0;
         }
-        if (ChangeMenu.unk_5c != 0) {
+        if (ChangeMenu.mode != 0) {
             MenuTextureReload(CharaChangeTexBlock);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x124, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);

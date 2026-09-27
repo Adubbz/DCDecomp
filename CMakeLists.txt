@@ -167,7 +167,7 @@ carve_dump(dun data.data.s
 carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30)
 carve_part(main.data.part2.s
-           main.data.part2.s=2514C0-251530
+           main.data.cloth-a.s=2514E0-251530
            main.data.part2c.s=2525D0-253DD0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
@@ -193,8 +193,9 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2d.s=2A1F50-2A1F68
            main.sdata.edit_in-a.s=2A1FA0-2A1FE8
            main.sdata.part2f-2A1FF0.s=2A1FF0-2A1FF8
-           main.sdata.shop-a.s=2A2000-2A2028
-           main.sdata.part2f-2A2050.s=2A2058-2A2070
+           main.sdata.shop-a.s=2A2000-2A2008
+           main.sdata.shop-b.s=2A200C-2A2028
+           main.sdata.battlemenu-2A2068.s=2A2068-2A2070
            main.sdata.part2f-2A2050-2A2088.s=2A2088-2A2098
            main.sdata.battlemenu-tail.s=2A20F8-2A2100
            main.sdata.menu_save-a.s=2A2178-2A2190
@@ -255,7 +256,7 @@ carve_part(main.sbss.part5.s
            main.sbss.part5.s=2A2BF8-2A2C48
            main.sbss.part5-2A2C4C.s=2A2C4C-2A2C68
            main.sbss.part5c.s=2A2C74-2A2D80
-           main.sbss.battlemenu-2A2D85.s=2A2D85-2A2DA4
+           main.sbss.battlemenu-2A2D85.s=2A2D85-2A2D9C
            main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
            main.sbss.memcard-a.s=2A2F20-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C
@@ -278,30 +279,28 @@ carve_part(main.data.part6.s
            main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292820
-           main.data.shop-filenames-after.s=2929B0-292A60
+           main.data.shop-itemdraw-after.s=2929D0-292A60
            main.data.shop-fishdraw.s=292AA0-292AC0
            main.data.shop-fishrecview-after.s=292B10-292E50
            main.data.battlemenu-292E88.s=292E88-292E90
            main.data.battlemenu-292F38.s=292F38-292F40
            main.data.battlemenu-292F58.s=292F58-292F60
-           main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293020
+           main.data.battlemenu-293014.s=293014-293020
            main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
            main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293100
            main.data.battlemenu-293124.s=293124-293130
            main.data.battlemenu-293144.s=293144-293148
            main.data.battlemenu-293154.s=293154-293160
            main.data.battlemenu-2932B8.s=2932B8-2932C0
-           main.data.shop-filenames-after-292EE0-292FA0-293358.s=293370-293470
            main.data.shop-filenames-after-292EE0-2934D0.s=2934D0-293510
            main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s=2935A0-2936E0
-           main.data.battlemenu-293750.s=293750-293790
-           main.data.battlemenu-tail.s=293960-293990
+           main.data.battlemenu-29378C.s=29378C-293790
+           main.data.battlemenu-tail.s=293960-293978
            main.data.battlemenu-tail-293B90.s=293B90-293BF0
            main.data.memcard-a.s=293EBC-293F20
            main.data.memcard-a-293F60.s=293F60-293FD0
            main.data.menu_save-b.s=294140-294150
            main.data.part6g.s=2941C0-2941E0
-           main.data.menu_dungeon-b.s=294230-294250
            main.data.part6g-2942F0.s=2942F0-294320
            main.data.menu_dungeon-d.s=2943C0-2943E0
            main.data.part6j.s=295644-295660
@@ -318,12 +317,12 @@ carve_part(main.data.part4.s
            main.data.part4c.s=266FB0-269320
            main.data.part4g.s=26A5E8-26A610
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
-           main.data.part4g-26AE40.s=26AE40-26AE60
+           main.data.part4g-26AE40.s=26AE40-26AE50
            main.data.shot_freefuncs-a.s=26AFF8-26B040
            main.data.motionmodel-a.s=26B0E0-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0
            main.data.motionmodel-b-26B250.s=26B250-26B2C0
-           main.data.part4d.s=26B310-279EB0)
+           main.data.part4d.s=26B310-279E60)
 # itemdata.cpp supplies the texture lists TEIGIImgLoad builds, between the
 # command tables and the weapon definitions the unit already owns.
 carve_part(main.data.part5.s

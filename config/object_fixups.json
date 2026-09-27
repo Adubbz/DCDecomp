@@ -24,15 +24,22 @@
         "@1056"
       ],
       ".shopdata-filenames": [
-        "@1896",
-        "@1897",
-        "@1917"
+        "@1967",
+        "@1968",
+        "@1988"
+      ],
+      ".shopdata-itemdraw": [
+        "@2264",
+        "@2273"
+      ],
+      ".shopsdata-itemdraw": [
+        "@2270"
       ],
       ".shopdata-buymoney": [
         "@1374"
       ],
       ".shopdata-fishrec": [
-        "@2137"
+        "@2449"
       ],
       ".shopdata-sellticket": [
         "@1766"
@@ -44,7 +51,7 @@
         "@1683"
       ],
       ".shopdata-fishtex": [
-        "@2029"
+        "@2341"
       ],
       ".shopdata-person": [
         "@1038",
@@ -54,13 +61,13 @@
         "@1272"
       ],
       ".shopdata-fishdraw": [
-        "@2057"
+        "@2369"
       ],
       ".shopdata-fishrecview-a": [
-        "@2201"
+        "@2513"
       ],
       ".shopdata-fishrecview-b": [
-        "@2213"
+        "@2525"
       ]
     },
     "rekey_sections": [
@@ -140,6 +147,13 @@
         ]
       ],
       [
+        ".shopdata-itemdraw",
+        [
+          12,
+          14
+        ]
+      ],
+      [
         ".shopdata-fishtex",
         [
           36
@@ -190,13 +204,18 @@
       "GeneratedTextureAnimeCtor": "__ct__13CTextureAnimeFP13CTexAnimeDatai",
       "GeneratedObjectCtor": "__ct__7CObjectFf",
       "GeneratedHitMarkVtable": "__vt__8CHitMark",
-      "GeneratedCharacterCtor": "__ct__10CCharacterFv"
+      "GeneratedMotionParamCtor": "__ct__11MotionParamFv",
+      "GeneratedFakePointLightCtor": "__ct__15CFakePointLightFv",
+      "GeneratedCharacterVtable": "__vt__10CCharacter"
     },
     "sections": {
       ".gamemodesdata": [
         "@905"
       ]
     },
+    "drop_functions": [
+      "CopyCharacter__FR10CCharacterRC10CCharacter"
+    ],
     "rodata_exports": [
       "@566",
       "@567",
@@ -234,10 +253,21 @@
       "@3190"
     ]
   },
+  "src/dungeonparts.cpp": {
+    "symbols": {
+      "MaxFloorTbl": "MaxFloorTbl__2"
+    }
+  },
   "src/battlemenu.cpp": {
     "sections": {
       ".battlemenu-c731__6": [
         "@196"
+      ],
+      ".battlemenu-c789__3": [
+        "@237"
+      ],
+      ".battlemenu-c791__2": [
+        "@239"
       ],
       ".battlemenu-c889__4": [
         "@314"
@@ -261,199 +291,229 @@
         "@384"
       ],
       ".battlemenu-c1239__2": [
-        "@500"
+        "@627"
       ],
       ".battlemenu-c1270": [
-        "@533"
+        "@660"
       ],
       ".battlemenu-c1292__2": [
-        "@543"
+        "@670"
+      ],
+      ".battlemenu-c1364__2": [
+        "@736"
       ],
       ".battlemenu-c1684__2": [
-        "@609"
+        "@859"
       ],
       ".battlemenu-c1717": [
-        "@641"
+        "@891"
       ],
       ".battlemenu-c1725": [
-        "@649"
+        "@899"
       ],
       ".battlemenu-c1728": [
-        "@652"
+        "@902"
       ],
       ".battlemenu-c1729": [
-        "@653"
+        "@903"
       ],
       ".battlemenu-c1879": [
-        "@776"
+        "@1026"
       ],
       ".battlemenu-c2002": [
-        "@807"
+        "@1057"
       ],
       ".battlemenu-c2003": [
-        "@808"
+        "@1058"
       ],
       ".battlemenu-c2004": [
-        "@809"
+        "@1059"
       ],
       ".battlemenu-c2020": [
-        "@825"
+        "@1075"
       ],
       ".battlemenu-c2056": [
-        "@860"
+        "@1110"
       ],
       ".battlemenu-c2057": [
-        "@861"
+        "@1111"
       ],
       ".battlemenu-c2058": [
-        "@862"
+        "@1112"
       ],
       ".battlemenu-c2059": [
-        "@863"
+        "@1113"
       ],
       ".battlemenu-c2127__3": [
-        "@925"
+        "@1175"
       ],
       ".battlemenu-c2195": [
-        "@983"
+        "@1233"
       ],
       ".battlemenu-c2196": [
-        "@984"
+        "@1234"
       ],
       ".battlemenu-c2197": [
-        "@985"
+        "@1235"
       ],
       ".battlemenu-c2198": [
-        "@986"
+        "@1236"
       ],
       ".battlemenu-c2199": [
-        "@987"
+        "@1237"
       ],
       ".battlemenu-c2250": [
-        "@1038"
+        "@1288"
       ],
       ".battlemenu-c2612__2": [
-        "@1316"
+        "@1566"
       ],
       ".battlemenu-c2616": [
-        "@1320"
+        "@1570"
       ],
       ".battlemenu-c2679": [
-        "@1381"
+        "@1631"
       ],
       ".battlemenu-c3657": [
-        "@1833"
+        "@2083"
       ],
       ".battlemenu-c3967": [
-        "@2032"
+        "@2282"
       ],
       ".battlemenu-c3968": [
-        "@2033"
+        "@2283"
+      ],
+      ".battlemenu-weaponmenu": [
+        "@2390",
+        "@2395",
+        "@2453"
       ],
       ".battlemenu-c4290": [
-        "@2112"
+        "@2561"
       ],
       ".battlemenu-c4291": [
-        "@2113"
+        "@2562"
       ],
       ".battlemenu-c4331": [
-        "@2150"
+        "@2599"
       ],
       ".battlemenu-c4433": [
-        "@2230"
+        "@2679"
       ],
       ".battlemenu-c5342": [
-        "@2287"
+        "@2736"
       ],
       ".battlemenu-c5345": [
-        "@2290"
+        "@2739"
       ],
       ".battlemenu-c5370": [
-        "@2313"
+        "@2762"
       ],
       ".battlemenu-c5492": [
-        "@2422"
+        "@2871"
       ],
       ".battlemenu-c5503": [
-        "@2431"
+        "@2880"
       ],
       ".battlemenu-c5534": [
-        "@2463"
+        "@2912"
       ],
       ".battlemenu-c5742": [
-        "@2640"
+        "@3089"
       ],
       ".battlemenu-town-ref": [
-        "@2754"
+        "@3203"
       ],
       ".battlemenu-town-pos": [
-        "@2755"
+        "@3204"
       ],
       ".battlemenu-c6018": [
-        "@2882"
+        "@3331"
       ],
       ".battlemenu-c6037": [
-        "@2901"
+        "@3350"
+      ],
+      ".battlemenu-c6105": [
+        "@3401"
       ],
       ".battlemenu-c6185": [
-        "@2918"
+        "@3481"
       ],
       ".battlemenu-c6188": [
-        "@2921"
+        "@3484"
       ],
       ".battlemenu-c6227": [
-        "@2947"
+        "@3510"
       ],
       ".battlemenu-c6232": [
-        "@2957"
+        "@3520"
       ],
       ".battlemenu-c6233": [
-        "@2958"
+        "@3521"
       ],
       ".battlemenu-c6235": [
-        "@2960"
+        "@3523"
       ],
       ".battlemenu-c702__2": [
         "@166"
+      ],
+      ".battlemenu-c782__2": [
+        "@230"
+      ],
+      ".battlemenu-c790__2": [
+        "@238"
+      ],
+      ".battlemenu-c792__4": [
+        "@240"
       ],
       ".battlemenu-texenter-s": [
         "@352"
       ],
       ".battlemenu-c1249": [
-        "@511"
+        "@638"
+      ],
+      ".battlemenu-charakey": [
+        "@737",
+        "@751"
       ],
       ".battlemenu-c2169": [
-        "@967"
+        "@1217"
       ],
       ".battlemenu-c3682": [
-        "@1858"
+        "@2108"
       ],
       ".battlemenu-c3929": [
-        "@2007"
+        "@2257"
       ],
       ".battlemenu-c5556": [
-        "@2485"
+        "@2934"
       ],
       ".battlemenu-c5592": [
-        "@2522"
+        "@2971"
       ],
       ".battlemenu-c5593": [
-        "@2523"
+        "@2972"
       ],
       ".battlemenu-c5711": [
-        "@2611"
+        "@3060"
       ],
       ".battlemenu-c5977": [
-        "@2869"
+        "@3318"
       ],
       ".battlemenu-c6236": [
-        "@2961"
+        "@3524"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"
       ],
       ".battlemenu-init_1677": [
         "init$1677"
+      ],
+      ".battlemenu-ct_4025": [
+        "ct$4025"
+      ],
+      ".battlemenu-init_4026": [
+        "init$4026"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
@@ -472,21 +532,6 @@
       ],
       ".battlemenu-init_5777": [
         "init$5777"
-      ],
-      ".battlemenu-c782__2": [
-        "@230"
-      ],
-      ".battlemenu-c790__2": [
-        "@238"
-      ],
-      ".battlemenu-c792__4": [
-        "@240"
-      ],
-      ".battlemenu-c789__3": [
-        "@237"
-      ],
-      ".battlemenu-c791__2": [
-        "@239"
       ]
     },
     "rodata_exports": [
@@ -1460,6 +1505,22 @@
       "defWeapon": "defWeapon__2"
     }
   },
+  "src/cloth.cpp": {
+    "sections": {
+      ".cloth-step": [
+        "@390",
+        "@446"
+      ]
+    },
+    "globalize_symbols": [
+      "StretchBind2__FPfPfPf",
+      "vuabs__FPf"
+    ],
+    "extern_functions": [
+      "StretchBind2__FPfPfPf",
+      "vuabs__FPf"
+    ]
+  },
   "src/bound.cpp": {
     "globalize_symbols": [
       "vuabs__FPf"
@@ -1912,33 +1973,36 @@
         "@1085",
         "@1086"
       ],
+      ".quickchangedata": [
+        "@1103"
+      ],
       ".charachangedata": [
-        "@1106",
-        "@1117",
-        "@1309",
-        "@1310"
+        "@1146",
+        "@1157",
+        "@1349",
+        "@1350"
       ],
       ".itemmodeldata": [
-        "@1380"
+        "@1418"
       ],
       ".menu_dungeon-c1707": [
-        "@1408"
+        "@1446"
       ],
       ".menu_dungeon-c1731": [
-        "@1427"
+        "@1465"
       ],
       ".itemviewdata": [
-        "@1526",
-        "@1531",
-        "@1532",
-        "@1533"
+        "@1564",
+        "@1569",
+        "@1570",
+        "@1571"
       ],
       ".itemgetdata": [
-        "@1625",
-        "@1626"
+        "@1663",
+        "@1664"
       ],
       ".itemdataview": [
-        "@1652"
+        "@1690"
       ]
     },
     "symbols": {
@@ -2030,31 +2094,40 @@
       "@1254"
     ],
     "sections": {
+      ".menu_misc-itemuse": [
+        "@179"
+      ],
       ".menu_misc-wepread": [
-        "@183",
-        "@190",
-        "@199",
-        "@225",
-        "@232",
-        "@237"
+        "@337",
+        "@344",
+        "@353",
+        "@379",
+        "@386",
+        "@391"
       ],
       ".menu_misc-model": [
-        "@273",
-        "@327",
-        "@363",
-        "@366",
-        "@367"
+        "@427",
+        "@481",
+        "@517",
+        "@520",
+        "@521"
       ],
       ".menu_misc-frame": [
-        "@403",
-        "@480",
-        "@483"
+        "@557",
+        "@634",
+        "@637"
       ],
       ".menu_misc-options": [
-        "@586"
+        "@740"
       ]
     },
     "rekey_sections": [
+      [
+        ".menu_misc-itemuse",
+        [
+          12
+        ]
+      ],
       [
         ".menu_misc-wepread",
         [

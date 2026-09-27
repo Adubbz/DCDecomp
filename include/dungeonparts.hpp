@@ -251,6 +251,33 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1);
 int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small);
 
 /**
+ * One box of a map part where an item can be put down, as two corners at a
+ * tenth of world scale.
+ */
+struct ITEM_FREE_RECT {
+    float x0; /**< X of the first corner. */
+    float y0; /**< Y of the first corner. */
+    float z0; /**< Z of the first corner. */
+    float x1; /**< X of the second corner. */
+    float y1; /**< Y of the second corner. */
+    float z1; /**< Z of the second corner. */
+};
+
+/**
+ * The boxes of one map part where an item can be put down.
+ */
+struct ITEM_FREE_AREA {
+    s8 parts_no;  /**< Map part the boxes lie on; -1 ends the table. */
+    s8 rect_num;  /**< Number of boxes that follow. */
+    s8 direction; /**< Quarter turns the boxes are given in. */
+    s8 unk_03;
+    ITEM_FREE_RECT rect[4]; /**< The boxes, in the part's own orientation. */
+};
+
+STATIC_ASSERT(sizeof(ITEM_FREE_RECT) == 0x18);
+STATIC_ASSERT(sizeof(ITEM_FREE_AREA) == 0x64);
+
+/**
  * Selects a random open world position in a rectangular group of cells, and
  * returns how many placement boxes the cells offered.
  *

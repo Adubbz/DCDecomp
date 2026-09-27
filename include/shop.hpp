@@ -290,15 +290,6 @@ int CheckSideKey2(void);
 void DrawSellTicket22(int, int, int, int, int);
 
 /**
- * Puts every marked good back where it came from.
- *
- * @mangled ShopCancelGoodReturn2__Fv
- * @address 0x1ECF90
- * @size 0x4E0
- */
-void ShopCancelGoodReturn2(void);
-
-/**
  * Builds the file name of a shopkeeper's model archive.
  *
  * @mangled ItemShopGetPacFileName__FiiPc
@@ -347,15 +338,6 @@ void ItemPosInfoInit(void);
 void InitItemShop2(int *, int, int);
 
 /**
- * Moves the cursor across the item shop's board.
- *
- * @mangled ItemShopSelectKey2__Fv
- * @address 0x1EE280
- * @size 0xAF0
- */
-void ItemShopSelectKey2(void);
-
-/**
  * Handles one frame of item shop input and returns the mode it leaves the shop in.
  *
  * @mangled ItemShopKey2__Fv
@@ -370,7 +352,6 @@ int ItemShopKey2(void);
  * @mangled ItemShopDraw2__Fv
  * @address 0x1F0800
  * @size 0xA4C
- * Draws one frame of the item shop.
  */
 void ItemShopDraw2(void);
 

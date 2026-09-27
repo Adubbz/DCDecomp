@@ -235,7 +235,7 @@ segments:
       - {start: 0x58e80, type: cpp, name: snd}
       - {start: 0x5f200, type: cpp, name: scriptinterpreter}
       - {start: 0x5fe30, type: cpp, name: sysmes}
-      - {start: 0x608a0, type: cpp, name: water}
+      - {start: 0x60850, type: cpp, name: water}
       - {start: 0x61750, type: cpp, name: fireomni}
       - {start: 0x62680, type: cpp, name: runeffect}
       - {start: 0x63b30, type: cpp, name: candleeffect}

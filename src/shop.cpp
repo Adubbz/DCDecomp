@@ -16,10 +16,12 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "gamepad.hpp"
+#include "itemdata.hpp"
 #include "mathutil.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
+#include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -143,9 +145,7 @@ extern s16 ChargeOrShopFlag;
 #include <cstdio>
 #include <cstring>
 
-#include "itemdata.hpp"
 #include "menu_dungeon.hpp"
-#include "menu_misc.hpp"
 #include "stockitem.hpp"
 
 static int ChargeSelectKey();
@@ -575,6 +575,8 @@ static void DrawCheckButton(int x, int y, int mode);
 static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int clip_bottom, int mode);
 
 static void ItemShopGoodInitialize(int shop_no);
+
+static void ShopCancelGoodReturn2();
 
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
@@ -3101,18 +3103,31 @@ void DrawSellTicket22(int x, int y, int top, int bottom, int alpha) {
             break;
     }
 }
-#ifdef NON_MATCHING
-void ShopCancelGoodReturn2() {
+
+/**
+ * Puts every marked good back where it came from.
+ *
+ * @mangled ShopCancelGoodReturn2__Fv
+ * @address 0x1ECF90
+ * @size 0x4E0
+ */
+static void ShopCancelGoodReturn2() {
     int count = -1;
     int page = -1;
-    DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
-    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+    s32 *info;
+    ATTACH_LIST *attach = (ATTACH_LIST *) ShopUserStatusPt->consumable_items;
+    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
+    WEAPON_HAVE *weapon;
+    int space;
+    int chara_no;
+    int slot_no;
 
+    // Gather every marked item, weapon and attachment into the work buffer.
     for (int i = 0; i < 100; i++) {
         if (ItemBoardInfo[i] == 1) {
             count++;
             ShopWorkBuf[count].item_no = pack->item[i];
-            *(int *) &ShopWorkBuf[count].data = pack->item_vol[i];
+            ShopWorkBuf[count].data.volume = pack->item_vol[i];
             pack->item[i] = 0;
             pack->item_vol[i] = 0;
             ItemBoardInfo[i] = 0;
@@ -3120,11 +3135,14 @@ void ShopCancelGoodReturn2() {
     }
     for (int i = 0; i < 60; i++) {
         if (WeaponBoardInfo[0][i] == 1) {
-            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[i / 10][i % 10];
-            int item_no = weapon->item_no;
-            if (item_no >= 0x101) {
+            chara_no = i / 10;
+            slot_no = i % 10;
+            CUserStatus *status = ShopUserStatusPt;
+            WEAPON_HAVE *row = status->chara_weapons[chara_no];
+            weapon = &row[slot_no];
+            if (weapon->item_no >= 0x101) {
                 count++;
-                ShopWorkBuf[count].item_no = item_no;
+                ShopWorkBuf[count].item_no = weapon->item_no;
                 memcpy(&ShopWorkBuf[count].data, weapon, sizeof(WEAPON_HAVE));
                 InitHaveWep(weapon);
                 WeaponBoardInfo[0][i] = 0;
@@ -3134,35 +3152,38 @@ void ShopCancelGoodReturn2() {
     for (int i = 0; i < 40; i++) {
         if (AttachBoardInfo[i] == 1 && attach != NULL) {
             count++;
-            ATTACH_LIST *list = (ATTACH_LIST *) &attach[i];
+            ATTACH_LIST *list = &attach[i];
             ShopWorkBuf[count].item_no = list->item_no;
             memcpy(&ShopWorkBuf[count].data, list, sizeof(ATTACH_LIST));
             InitHaveAttach(list);
             AttachBoardInfo[i] = 0;
         }
     }
+    // Put the goods on the shop board back on the board they came from.
     for (int i = 0; i < 30; i++) {
         if (ShopBoardInfo[i] == 2) {
             int item_no = ShopListPt[i].item_no;
             if (item_no >= 0x51) {
-                int space = GetBoardSpace(item_no, &page);
+                space = GetBoardSpace(item_no, &page);
                 if (space >= 0) {
-                    s32 *info;
                     switch (page) {
                         case 0:
                             pack->item[space] = item_no;
-                            pack->item_vol[space] = *(int *) &ShopListPt[i].data;
+                            pack->item_vol[space] = ShopListPt[i].data.param[0];
                             info = ItemBoardInfo;
                             break;
                         case 1: {
-                            WEAPON_HAVE *weapon = &ShopUserStatusPt->chara_weapons[space / 10][space % 10];
+                            chara_no = space / 10;
+                            slot_no = space % 10;
+                            WEAPON_HAVE *row = ((CUserStatus *) ShopUserStatusPt)->chara_weapons[chara_no];
+                            weapon = &row[slot_no];
                             memcpy(weapon, &ShopListPt[i].data, sizeof(WEAPON_HAVE));
                             weapon->item_no = item_no;
                             info = WeaponBoardInfo[0];
                             break;
                         }
                         case 2: {
-                            ATTACH_LIST *list = (ATTACH_LIST *) &attach[space];
+                            ATTACH_LIST *list = &attach[space];
                             memcpy(list, &ShopListPt[i].data, sizeof(ATTACH_LIST));
                             list->item_no = item_no;
                             info = AttachBoardInfo;
@@ -3176,10 +3197,11 @@ void ShopCancelGoodReturn2() {
             }
         }
     }
+    // Refill the emptied shop slots from the work buffer.
     int next = 0;
     for (int i = 0; i < 30; i++) {
         if (ShopListPt[i].item_no < 0x51) {
-            if (count < next) {
+            if (next > count) {
                 break;
             }
             ShopBoardInfo[i] = 1;
@@ -3189,9 +3211,6 @@ void ShopCancelGoodReturn2() {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ShopCancelGoodReturn2__Fv);
-#endif
 
 /**
  * Chooses the line the shopkeeper says for the shop's current state.
@@ -3534,8 +3553,14 @@ void InitItemShop2(int *state, int shop_no, int mode) {
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }
 
-#ifdef NON_MATCHING
-void ItemShopSelectKey2() {
+/**
+ * Moves the cursor across the item shop's board and swaps or buys the good under it.
+ *
+ * @mangled ItemShopSelectKey2__Fv
+ * @address 0x1EE280
+ * @size 0xAF0
+ */
+static void ItemShopSelectKey2() {
     int i;
     SHOP_ITEM_RECORD work[2];
     int no[2];
@@ -3581,6 +3606,7 @@ void ItemShopSelectKey2() {
     if (GamePad.Down(0x40) != 0) {
         ShopMenu.unk_06 = 1;
         int cursor = ShopMenu.board.cursor;
+        int shop_info = ShopBoardInfo[cursor];
         if (ShopListPt[cursor].item_no < 0x51 && ShopHaveItemPt->item_no < 0x51) {
             ComMenuSePlay(2);
             return;
@@ -3591,15 +3617,15 @@ void ItemShopSelectKey2() {
             if (item_no >= 0x84) {
                 ITEM_DATA *data = GetItemData(item_no);
                 if (data != NULL) {
-                    if (data->kind_flags & 0x10) {
+                    if (data->kind_flags & ITEMKINDF_THROWABLE) {
                         enable = 0;
                     }
-                    if (ShopHaveItemPt->item_no == 0xB9) {
+                    if (ShopHaveItemPt->item_no == ITEM_FISHING_ROD) {
                         enable = 0;
                     }
                 }
             }
-            if (ShopHaveItemPt->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+            if (ShopHaveItemPt->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
                 enable = 0;
             }
         }
@@ -3613,7 +3639,7 @@ void ItemShopSelectKey2() {
             SetItemShopTalkMode(4, 1);
             return;
         }
-        int shop_info = ShopBoardInfo[cursor];
+        shop_info = ShopBoardInfo[cursor];
         int have_info = ShopHaveItemPt->unk_00;
         memset(work, 0, sizeof(work));
         SHOP_ITEMLIST *good = &ShopListPt[cursor];
@@ -3786,9 +3812,6 @@ void ItemShopSelectKey2() {
         ComMenuSePlay(0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
-#endif
 #ifdef NON_MATCHING
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     u8 taken[0xF8];
@@ -4397,12 +4420,13 @@ int ItemShopKey2() {
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
 #endif
-#ifdef NON_MATCHING
+
 void ItemShopDraw2() {
     int cur_x;
     int pos_y;
     int count;
     int top_row;
+    int state;
     int text_x;
     int text_y;
 
@@ -4456,17 +4480,24 @@ void ItemShopDraw2() {
                 top_row = ShopMenu.board.top_row;
                 break;
         }
-        int state = 0;
+        state = 0;
         if (ShopHaveItemPt->item_no >= 0x51) {
             state = 2;
         } else {
             switch (ShopMenu.side) {
                 case 1:
-                    state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor) < 0x51 ? 0 : 1;
+                    state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
+                    if (state < 0x51) {
+                        state = 0;
+                    } else {
+                        state = 1;
+                    }
                     break;
                 case 0:
                     if (ShopListPt[ShopMenu.board.cursor].item_no > 0x51) {
                         state = 1;
+                    } else {
+                        state = 0;
                     }
                     break;
                 case 2:
@@ -4509,24 +4540,31 @@ void ItemShopDraw2() {
                     switch (ShopMenu.board.page) {
                         case 0: {
                             CUserStatus *status = ShopUserStatusPt;
-                            item_no = status->item_pack.item[ShopMenu.board.cursor];
+                            ITEM_PACK *pack = &status->item_pack;
+                            item_no = pack->item[ShopMenu.board.cursor];
                             break;
                         }
                         case 2: {
                             CUserStatus *status = ShopUserStatusPt;
-                            item_no = status->consumable_items[ShopMenu.board.cursor].id;
+                            DNG_CONSUMABLE *attach = status->consumable_items;
+                            item_no = attach[ShopMenu.board.cursor].id;
                             break;
                         }
                         case 1: {
+                            int chara_no = ShopMenu.board.cursor / 10;
                             CUserStatus *status = ShopUserStatusPt;
-                            item_no = status->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10].item_no;
+                            WEAPON_HAVE *row = status->chara_weapons[chara_no];
+                            item_no = row[ShopMenu.board.cursor % 10].item_no;
                             break;
                         }
                     }
                     int ticket_y = (int) (6.0f + ShopMenu.board.y);
                     int money = CalItemMoney(item_no, 1);
                     if (item_no >= 0x101) {
-                        money += WeaponCalMoney(&ShopUserStatusPt->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10], 1);
+                        int chara_no = ShopMenu.board.cursor / 10;
+                        CUserStatus *status = ShopUserStatusPt;
+                        WEAPON_HAVE *row = status->chara_weapons[chara_no];
+                        money += WeaponCalMoney(&row[ShopMenu.board.cursor % 10], 1);
                     }
                     if (money <= 0) {
                         money = 1;
@@ -4536,8 +4574,7 @@ void ItemShopDraw2() {
                 break;
         }
         DrawSellTicket22(0x16A, (int) (6.0f + ShopMenu.board.y), 0x81, 0x121, 0x80);
-        int help_x = (int) ShopHelpWinPos[0];
-        MenuHelpWinDraw(help_x, (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
+        MenuHelpWinDraw((int) ShopHelpWinPos[0], (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
         GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
         CommonMenuMes2.text_x = (int) (ShopHelpWinPos[0] + text_x);
         CommonMenuMes2.text_y = (int) (ShopHelpWinPos[1] + text_y);
@@ -4561,33 +4598,34 @@ void ItemShopDraw2() {
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
-        if (ShopMenu.talk_mode != 14 && ShopMenu.talk_mode != 13) {
-            CommonMenuMes1.stay_frame = 0;
-        } else {
-            s16 prompt[2] = {0x4B4, 0x4B5};
-            int mes_no = prompt[ShopMenu.talk_mode - 13];
-            if (CommonMenuMes1.mes_made != mes_no) {
-                CommonMenuMes1.MakeMesWin(mes_no);
+        switch (ShopMenu.talk_mode) {
+            case 13:
+            case 14: {
+                s16 prompt[2] = {0x4B4, 0x4B5};
+                int mes_no = prompt[ShopMenu.talk_mode - 13];
+                if (CommonMenuMes1.mes_made != mes_no) {
+                    CommonMenuMes1.MakeMesWin(mes_no);
+                }
+                s8 offset[7][2] = {{0x1E, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}};
+                CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
+                CommonMenuMes1.text_y = 0xBE;
+                if (ShopMenu.talk_mode == 14) {
+                    CommonMenuMes1.text_x = offset[ShopMenu.lang][1] + 0x64;
+                }
+                CommonMenuMes1.stay_frame = 1;
+                CommonMenuMes1.Step();
+                CommonMenuMes1.DrawMesWin();
+                break;
             }
-            u8 offset[7][2] = {{0x1E, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32},
-                               {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}};
-            CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
-            CommonMenuMes1.text_y = 0xBE;
-            if (ShopMenu.talk_mode == 14) {
-                CommonMenuMes1.text_x = offset[ShopMenu.lang][1] + 0x64;
-            }
-            CommonMenuMes1.stay_frame = 1;
-            CommonMenuMes1.Step();
-            CommonMenuMes1.DrawMesWin();
+            default:
+                CommonMenuMes1.stay_frame = 0;
+                break;
         }
     }
     ShopModelMsgFunc(1);
     ShopFadeoutDraw();
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopDraw2__Fv);
-#endif
 
 /**
  * Returns one prize the fishing exchange offers.

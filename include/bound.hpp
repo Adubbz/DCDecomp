@@ -15,7 +15,7 @@ class CFrame;
 class CBound {
 public:
     CBound *next; /**< 0x00: Next exclusion box in the cloth list. */
-    s32 unk_04;
+    s32 mask_bit; /**< 0x04: Index of the bit a cloth vertex sets in its mask to be pushed by this box. */
     u8 unk_08[8];
     sceVu0FVECTOR extent;     /**< 0x10: Half extents of the box. */
     sceVu0FVECTOR reciprocal; /**< 0x20: Reciprocals used to normalize each axis. */

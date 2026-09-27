@@ -115,10 +115,6 @@ public:
      */
     CCharacter() { Initialize(); }
 
-#ifdef NON_MATCHING
-    CCharacter &operator=(const CCharacter &);
-#endif
-
     /**
      * Selects the motion the character plays next, without advancing it.
      */
