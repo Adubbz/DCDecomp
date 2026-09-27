@@ -581,6 +581,20 @@ void CDungeonMap::DrawDummyModel(CCamera *camera) {
 }
 
 #ifdef NON_MATCHING
+/**
+ * Gives the map cell under a world position.
+ */
+static inline int MiniMapCell(float *p) {
+    return (int) ((80.0f + p[0]) / 160.0f) + (int) ((80.0f + p[2]) / 160.0f) * 20;
+}
+
+/**
+ * Scales a world coordinate down to minimap pixels.
+ */
+static inline int MiniMapCoord(float v) {
+    return (int) (v * 0.1f);
+}
+
 void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     CRect_i_ map_dst;
     CRect_i_ map_src;
@@ -646,9 +660,8 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
             if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && show == 1) {
                 direction = this->cells[cell_no].direction +
                             this->parts[this->cells[cell_no].parts_no].direction_offset;
-                direction %= 8;
-                map_src.x = direction * 16;
-                map_src.y = (direction / 8) * 16;
+                map_src.x = (direction % 8) * 16;
+                map_src.y = (direction >> 3) * 16;
                 map_src.width = 16;
                 map_src.height = 16;
                 map_dst.x = col * 16 + 380;
@@ -678,10 +691,9 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     for (i = 0; i < 3; i++) {
         if (this->trap_circle[i].state == 0)
             continue;
-        map_x = (int) (this->trap_circle[i].pos[0] * 0.1f);
-        map_y = (int) (this->trap_circle[i].pos[2] * 0.1f);
-        cell_no = (int) ((80.0f + this->trap_circle[i].pos[0]) / 160.0f) +
-                  (int) ((80.0f + this->trap_circle[i].pos[2]) / 160.0f) * 20;
+        map_x = MiniMapCoord(this->trap_circle[i].pos[0]);
+        map_y = MiniMapCoord(this->trap_circle[i].pos[2]);
+        cell_no = MiniMapCell(this->trap_circle[i].pos);
         show = this->mask[cell_no];
         if (BtEquipMasuisyou == 1)
             show = 1;
@@ -701,10 +713,9 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     for (i = 0; i < 24; i++) {
         if (this->boxes[i].used == 0 || this->boxes[i].unk_24 == 0)
             continue;
-        map_x = (int) (this->boxes[i].pos[0] * 0.1f);
-        map_y = (int) (this->boxes[i].pos[2] * 0.1f);
-        cell_no = (int) ((80.0f + this->boxes[i].pos[0]) / 160.0f) +
-                  (int) ((80.0f + this->boxes[i].pos[2]) / 160.0f) * 20;
+        map_x = MiniMapCoord(this->boxes[i].pos[0]);
+        map_y = MiniMapCoord(this->boxes[i].pos[2]);
+        cell_no = MiniMapCell(this->boxes[i].pos);
         show = this->mask[cell_no];
         if (BtEquipMasuisyou == 1)
             show = 1;
@@ -724,10 +735,9 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     for (i = 0; i < 8; i++) {
         if (this->atra[i].used == 0)
             continue;
-        map_x = (int) (this->atra[i].pos[0] * 0.1f);
-        map_y = (int) (this->atra[i].pos[2] * 0.1f);
-        cell_no = (int) ((80.0f + this->atra[i].pos[0]) / 160.0f) +
-                  (int) ((80.0f + this->atra[i].pos[2]) / 160.0f) * 20;
+        map_x = MiniMapCoord(this->atra[i].pos[0]);
+        map_y = MiniMapCoord(this->atra[i].pos[2]);
+        cell_no = MiniMapCell(this->atra[i].pos);
         show = this->mask[cell_no];
         if (BtEquipMasuisyou == 1)
             show = 1;
