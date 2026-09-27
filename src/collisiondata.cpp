@@ -27,20 +27,7 @@ extern "C" char *LanguageStr[1][2];
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
 extern "C" int gateKeyStack[32];
 
-#ifdef NON_MATCHING // draft declarations
-#include "camerafollow.hpp"
-#include "mglib.hpp"
-
-/**
- * The camera the dungeon is drawn through.
- */
-extern CCameraFollow *NowCamera;
-
-/**
- * Version number the debug overlay prints after the weapon list's year.
- */
-extern int VERSION_VOL;
-
+#ifdef NON_MATCHING
 /**
  * Draws the dungeon debug overlay and its current menu selection.
  *
@@ -49,147 +36,25 @@ extern int VERSION_VOL;
  * @size 0xF70
  */
 void DebugInfomationDraw(void) {
-    float angle;
-    float distance;
-    sceVu0FVECTOR position;
-    sceVu0FVECTOR rotation;
-    sceVu0FVECTOR camera_position;
-    sceVu0FVECTOR camera_reference;
-    float height;
-    int block_x;
-    int block_z;
-    float local_x;
-    float local_y;
-    float local_z;
-    float camera_x;
-    float camera_y;
-    float camera_z;
-    float reference_x;
-    float reference_y;
-    float reference_z;
-    int i;
-    u_short event_no;
-
-    if (DebugStatus[0] != 1) {
-        if (DebugStatus[4] != 0) {
-            DbgMsg.len = sprintf(DbgMsg.text, " ---Infomation---\n");
-            sceVu0CopyVector(position, CharaMain.pos);
-            CharaMain.GetRotation(rotation);
-            NowCamera->GetPos(camera_position);
-            NowCamera->GetRef(camera_reference);
-            angle = NowCamera->GetAngle();
-            distance = NowCamera->GetDistance();
-            height = NowCamera->GetHeight();
-            block_x = (int) ((position[0] - 80.0f) / 160.0f) * 160;
-            local_x = position[0] - block_x - 160.0f;
-            local_y = position[1];
-            block_z = (int) ((position[2] - 80.0f) / 160.0f) * 160;
-            local_z = position[2] - block_z - 160.0f;
-            camera_x = camera_position[0] - block_x - 160.0f;
-            camera_y = camera_position[1];
-            camera_z = camera_position[2] - block_z - 160.0f;
-            reference_x = camera_reference[0] - block_x - 160.0f;
-            reference_y = camera_reference[1];
-            reference_z = camera_reference[2] - block_z - 160.0f;
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "gpos %.2f/ %.2f/ %.2f\n", position[0], position[1],
-                                  position[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lpos %.2f/ %.2f/ %.2f\n", local_x, local_y, local_z);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "rot %.2f/ %.2f/ %.2f\n", rotation[0], rotation[1],
-                                  rotation[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "CAM\n");
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "cpos %.2f/ %.2f/ %.2f\n", camera_position[0],
-                                  camera_position[1], camera_position[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "cref %.2f/ %.2f/ %.2f\n", camera_reference[0],
-                                  camera_reference[1], camera_reference[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lcpos %.2f/ %.2f/ %.2f\n", camera_x, camera_y, camera_z);
-            DbgMsg.len +=
-                sprintf(&DbgMsg.text[DbgMsg.len], "lcref %.2f/ %.2f/ %.2f\n", reference_x, reference_y, reference_z);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Angle = %.3f\n", angle);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Dist = %.3f\n", distance);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Height = %.3f\n", height);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "RANDOM MAP CODE = %d\n", NowDngMap->map_seed);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "WeaponList Ver 2000/%d\n", VERSION_VOL);
-            if (NowEventMan->SearchDataSlotPos(position) != NULL) {
-                event_no = 0;
-            }
-            event_no = (u_short) NowEventMan->GetDataNum();
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "EventID = %d\n", event_no);
-            MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
-            DbgMsg.Draw();
-        }
-    } else {
-        DbgMsg.len = sprintf(DbgMsg.text, "");
-        char *switch_name[2] = {"OFF", "ON"};
-        char *chara_name[2] = {"MAIN", "SUB"};
-        char *status_name[6] = {"RESET", "STONE", "BIN2", "POISON", "CURSE", "NEBA2"};
-        char *power_name[3] = {"HUMAN   ", "SUPERMAN", "ULTRAMAN"};
-        char number[32];
-        for (i = 0; DebugInfoMsg[i] != NULL; i++) {
-            if (DebugInfoNowCursor == i) {
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], ">>");
-            } else {
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "  ");
-            }
-            switch (DebugInfoCode[i]) {
-                case 0:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i]);
-                    break;
-                case 40:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[8]);
-                    break;
-                case 41:
-                    if (DebugStatus[9] == -1) {
-                        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], "OFF");
-                    } else {
-                        sprintf(number, "%d", DebugStatus[9] + 1);
-                        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], number);
-                    }
-                    break;
-                case 70:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], switch_name[DebugStatus[10]]);
-                    break;
-                case 20:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], switch_name[DebugStatus[5]]);
-                    break;
-                case 50:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], switch_name[DebugStatus[4]]);
-                    break;
-                case 30:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], switch_name[DebugStatus[6]]);
-                    break;
-                case 10:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], switch_name[DebugStatus[3]]);
-                    break;
-                case 150:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], power_name[DebugStatus[20]]);
-                    break;
-                case 100:
-                    DbgMsg.len +=
-                        sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[14], DebugStatus[15]);
-                    break;
-                case 80:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i]);
-                    break;
-                case 110:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], chara_name[DebugStatus[16]]);
-                    break;
-                case 90:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[11]);
-                    break;
-                case 120:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], status_name[DebugStatus[17]]);
-                    break;
-                case 130:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[18]);
-                    break;
-                case 140:
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[19]);
-                    break;
-            }
-        }
-        MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
-        DbgMsg.Draw();
+    if (DebugStatus[0] == 0) {
+        return;
     }
+    DbgMsg.len = sprintf(DbgMsg.text, "DEBUG INFORMATION\n");
+    for (int i = 0; i < 15 && DebugInfoMsg[i] != NULL; i++) {
+        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], i == DebugInfoNowCursor ? ">>" : "  ");
+        int code = DebugInfoCode[i];
+        if (code == 10 || code == 20 || code == 30 || code == 50 || code == 70 || code == 110) {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i],
+                                  DebugStatus[code / 10]);
+        } else if (code == 100) {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[14],
+                                  DebugStatus[15]);
+        } else {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "%s", DebugInfoMsg[i]);
+        }
+        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "\n");
+    }
+    DbgMsg.Draw();
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationDraw__Fv);
