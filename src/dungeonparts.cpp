@@ -556,7 +556,6 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
         sceVu0FVECTOR part_pos;
 
         for (i = 0; map->parts[i].frame[0] != NULL; i++) {
-            // PartsCollision spelled out; its empty-cell test never holds for a part index.
             if (i == -1) {
                 collision = NULL;
             } else {
