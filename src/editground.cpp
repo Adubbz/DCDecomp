@@ -1,8 +1,13 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
+
 #include "editground.hpp"
 
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 
+#include "camera.hpp"
 #include "camerafollow.hpp"
 #include "dataread.hpp"
 #include "editarea.hpp"
@@ -16,10 +21,6 @@
 #include "rect.hpp"
 #include "savedata.hpp"
 #include "vector3.hpp"
-#ifdef NON_MATCHING // draft includes
-#include <cmath>
-#include "camera.hpp"
-#endif
 
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
 
@@ -490,7 +491,6 @@ static inline float Magnitude(float value) {
     return value < 0.0f ? -value : value;
 }
 
-#ifdef NON_MATCHING
 void CEditGround::EditAreaClip(CCamera *camera, float range) {
     CBoxVu0 box;
     sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -668,9 +668,6 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", EditAreaClip__11CEditGroundFP7CCameraf);
-#endif
 
 int CEditGround::GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avoid[], int avoid_count, sceVu0FVECTOR bounds) {
     int cells[2048];

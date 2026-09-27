@@ -522,7 +522,7 @@ SECTIONS
         main.data.part4g-26A6A0-26A7E0.s.o (.data) // 0x0026a7f0
         edit_in.cpp.o (.data)          // 0x0026ae10
         main.data.part4g-26AE40.s.o (.data) // 0x0026ae40
-        editground.cpp.o (.data)       // 0x0026ae60
+        editground.cpp.o (.data)       // 0x0026ae50
         fishing.cpp.o (.data)          // 0x0026ae90
         shot_utils.cpp.o (.data)       // 0x0026afe0
         main.data.shot_freefuncs-a.s.o (.data) // 0x0026aff8
