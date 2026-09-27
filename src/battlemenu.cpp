@@ -1796,8 +1796,8 @@ int BattleMenuCharaKey() {
     }
     return 1;
 }
-
 #pragma opt_propagation reset
+
 #ifdef NON_MATCHING
 void DrawCharaSelect() {
     if (BtlMenuExReadFlag == 0) {
