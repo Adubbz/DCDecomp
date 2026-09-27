@@ -1472,7 +1472,10 @@ void CMajinBeem::Initialize() {
     active = 0;
     alphas[59] = 0.0f;
 }
-/* Constructors and vtables used by the character, map slot and effect constructors. */
+/* The constructors the compiler writes for arrays of these classes, written out by hand: the
+   compiler only emits them where an array needs one, which this unit's source no longer holds.
+   The names below stand for the compiler's own symbols (see config/object_fixups.json), which
+   this unit may not also declare under C linkage. */
 extern "C" void *GeneratedTextureAnimeCtor(void *self, CTexAnimeData *data, int count);
 extern "C" void *GeneratedObjectCtor(void *self, float mass);
 extern "C" void *GeneratedHitMarkVtable[];
