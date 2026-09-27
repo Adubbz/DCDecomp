@@ -811,7 +811,6 @@ public:
      * @mangled Draw1__10MenuClsMesFiii
      * @address 0x20B9E0
      * @size 0x4DC
-     * @unknownret
      */
     void Draw1(int, int, int);
 };
