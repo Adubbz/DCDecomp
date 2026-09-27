@@ -400,59 +400,64 @@
       ".battlemenu-c4433": [
         "@2739"
       ],
+      ".battlemenu-itemmenu": [
+        "@2955",
+        "@3260",
+        "@3332"
+      ],
       ".battlemenu-c5342": [
-        "@2796"
+        "@3455"
       ],
       ".battlemenu-c5345": [
-        "@2799"
+        "@3458"
       ],
       ".battlemenu-c5370": [
-        "@2822"
+        "@3481"
       ],
       ".battlemenu-c5492": [
-        "@2931"
+        "@3590"
       ],
       ".battlemenu-c5503": [
-        "@2940"
+        "@3599"
       ],
       ".battlemenu-c5534": [
-        "@2972"
+        "@3631"
       ],
       ".battlemenu-c5742": [
-        "@3149"
+        "@3808"
       ],
       ".battlemenu-town-ref": [
-        "@3263"
+        "@3922"
       ],
       ".battlemenu-town-pos": [
-        "@3264"
+        "@3923"
       ],
       ".battlemenu-c6018": [
-        "@3391"
+        "@4050"
       ],
       ".battlemenu-c6037": [
-        "@3410"
+        "@4069"
       ],
       ".battlemenu-c6105": [
-        "@3461"
+        "@4120"
       ],
       ".battlemenu-c6185": [
-        "@3541"
+        "@4200"
       ],
       ".battlemenu-c6188": [
-        "@3544"
+        "@4203"
       ],
       ".battlemenu-c6227": [
-        "@3570"
+        "@4229"
       ],
       ".battlemenu-c6232": [
-        "@3580"
+        "@4239"
       ],
       ".battlemenu-c6233": [
-        "@3581"
+        "@4240"
       ],
       ".battlemenu-c6235": [
-        "@3583"
+        "@4242"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -485,23 +490,27 @@
       ".battlemenu-c3929": [
         "@2317"
       ],
+      ".battlemenu-itemmenu-s": [
+        "@2851",
+        "@3024"
+      ],
       ".battlemenu-c5556": [
-        "@2994"
+        "@3653"
       ],
       ".battlemenu-c5592": [
-        "@3031"
+        "@3690"
       ],
       ".battlemenu-c5593": [
-        "@3032"
+        "@3691"
       ],
       ".battlemenu-c5711": [
-        "@3120"
+        "@3779"
       ],
       ".battlemenu-c5977": [
-        "@3378"
+        "@4037"
       ],
       ".battlemenu-c6236": [
-        "@3584"
+        "@4243"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"
@@ -558,7 +567,8 @@
       "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
-      "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i"
+      "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "CureEffect__14CWeaponLevelUpFiiP14CWeaponLevelUpii": "CureEffect__14CWeaponLevelUpFiiP1ii"
     }
   },
   "src/ebattle.cpp": {
