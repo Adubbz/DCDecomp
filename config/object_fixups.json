@@ -1578,8 +1578,40 @@
       ".cloth-step": [
         "@390",
         "@446"
+      ],
+      ".cloth-createvudata": [
+        "@506",
+        "@507",
+        "@508",
+        "@509",
+        "@510"
+      ],
+      ".cloth-initdata": [
+        "@545",
+        "@572",
+        "@585"
       ]
     },
+    "rekey_sections": [
+      [
+        ".cloth-createvudata",
+        [
+          16,
+          16,
+          16,
+          16,
+          16
+        ]
+      ],
+      [
+        ".cloth-initdata",
+        [
+          16,
+          16,
+          16
+        ]
+      ]
+    ],
     "globalize_symbols": [
       "StretchBind2__FPfPfPf",
       "vuabs__FPf"
