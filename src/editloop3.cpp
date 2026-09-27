@@ -1100,7 +1100,6 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
 
 static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info,
                                  CEditGround *ground);
-#ifdef NON_MATCHING
 /**
  * Advances and positions the selected villagers on the editable town map.
  *
@@ -1115,16 +1114,20 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
     int i;
 
     for (i = 0; i < 10; i++) {
+        int offset;
+        s32 *near_camera;
         sceVu0FVECTOR position;
         sceVu0FVECTOR rotation;
-        EdVillager[i].near_camera = 0;
+        offset = i * (int) sizeof(CNPCharacter);
+        near_camera = (s32 *) ((char *) &EdVillager->near_camera + offset);
+        *near_camera = 0;
         VILLAGER_INFO *info = &villagers[i];
         if (info->placed == 0) {
             continue;
         }
         sceVu0CopyVector(position, info->position);
         sceVu0CopyVector(rotation, info->rotation);
-        if (info->character_no >= 0 && EdVillager[i].draw_enabled == 0) {
+        if (info->character_no >= 0 && (*(s32 *) ((char *) &EdVillager->draw_enabled + offset)) == 0) {
             continue;
         }
         if (info->character_no >= 0 && info->initial_motion == 0) {
@@ -1132,28 +1135,30 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             if (parts->unk_08 == 0 || parts->elements[info->model_no].enabled == 0) {
                 continue;
             }
-            EdVillager[i].near_camera = 1;
+            *near_camera = 1;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         } else {
-            EdVillager[i].near_camera = 1;
+            *near_camera = 1;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         }
         if (info->initial_motion == 0) {
-            EdVillager[i].chara.SetPosition(position);
-            EdVillager[i].chara.SetRotation(rotation[0], rotation[1], rotation[2]);
+            ((CCharacter *) ((char *) &EdVillager->chara + offset))->CCharacter::SetPosition(position);
+            ((CCharacter *) ((char *) &EdVillager->chara + offset))->CCharacter::SetRotation(rotation[0], rotation[1], rotation[2]);
         } else {
             sceVu0FVECTOR player_position;
             sceVu0FVECTOR villager_position;
             player->GetPosition(player_position);
-            CNPCharacter *npc = &EdVillager[i];
+            CNPCharacter *npc = (CNPCharacter *) ((char *) EdVillager + offset);
             sceVu0CopyVector(villager_position, npc->chara.pos);
             float distance = DistVector(player_position, villager_position);
-            EdVillager[i].sequence_enabled = 1;
+            (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 1;
             if (distance < 20.0f) {
-                EdVillager[i].sequence_enabled = 0;
-                EdVillager[i].chara.SetMotion(0, 0);
+                (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 0;
+                *(s32 *) ((char *) &EdVillager->chara.motion_no + offset) = 0;
+                *(s32 *) ((char *) &EdVillager->chara.flags + offset) = 0;
+                *(float *) ((char *) &EdVillager->chara.motion_speed + offset) = -1.0f;
             }
             EdSetVillagerNextPos(npc, info, ground);
         }
@@ -1215,9 +1220,6 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdMoveVillager__FP13VILLAGER_INFO);
-#endif
 void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
     CCharacter *player = EdExchangeInfo.player;
     CCamera *camera = EdExchangeInfo.camera;
@@ -2244,6 +2246,10 @@ struct ED_EVENT_EXTERNAL_FUNCTION {
 };
 
 /** Dispatch table built from the editor-event external-function registry. */
+extern int EdPauseFlag;
+extern s32 MenuMapJumpMode;
+void EdDrawOffAll();
+void EdDrawOnAll();
 extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
 static int SetWorkFlag(int index, int value) {
@@ -6936,21 +6942,6 @@ int EdEventFinish() {
     return 1;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2449);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2450);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2451);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2604);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2605);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2606);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2607);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2608);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2609);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2610);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2611);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2612);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2613);
-INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
-#ifdef NON_MATCHING
 /**
  * Steps the editor's event system and reports the action requested by the script.
  *
@@ -6959,51 +6950,240 @@ INCLUDE_RODATA("asm/nonmatchings/editloop3", @2614);
  * @size 0xCFC
  */
 int EdEventMode(CCameraFollow *camera, int kind) {
-    (void) kind;
-    ReadBG();
-    int result = EdEventInfo.return_code;
+    int result;
+
     if (event_stop != 0) {
+        static int mode = 0;
+        static char *mode_name[] = {"! CAMERA POS\n", "# CAMERA REF\n", "$ CHARACTER\n"};
+        static int select_chara = -1;
+        sceVu0FVECTOR position;
+        sceVu0FVECTOR reference;
+        char text[128];
+        sceVu0FVECTOR chara_position;
+        sceVu0FVECTOR chara_rotation;
+        int *collision;
+        CCharacter *chara;
+
         EdDDebug(1);
+        collision = &EdEventInfo.player_collision;
+        if (select_chara >= 0) {
+            collision = &EdEventInfo.npc_collision[select_chara];
+        }
+        camera->GetPos(position);
+        camera->GetRef(reference);
+        switch (mode) {
+        case 0:
+            camera->FollowOff();
+            EdDMoveCamera(position, reference);
+            camera->SetPos(position);
+            camera->SetRef(reference);
+            break;
+        case 1:
+            camera->FollowOff();
+            EdDMoveCameraRef(position, reference);
+            camera->SetPos(position);
+            camera->SetRef(reference);
+            break;
+        case 2:
+            if (GamePad.Down(0x2000) != 0) {
+                select_chara++;
+                if (select_chara >= EdEventInfo.npc_count) {
+                    select_chara = -1;
+                }
+            }
+            if (GamePad.Down(0x8000) != 0) {
+                select_chara--;
+                if (select_chara < -1) {
+                    select_chara = EdEventInfo.npc_count - 1;
+                }
+            }
+            if (select_chara == -1) {
+                EdDMoveChara(EdEventInfo.main_character, camera);
+            } else {
+                EdDMoveChara(&EdEventInfo.npcs[select_chara].chara, camera);
+            }
+            if (GamePad.Down(0x40) != 0) {
+                *collision = !*collision;
+            }
+            break;
+        }
+        EdDPrint(mode_name[mode]);
+        chara = EdEventInfo.main_character;
+        if (select_chara >= 0) {
+            chara = &EdEventInfo.npcs[select_chara].chara;
+        }
+        chara->GetPosition(chara_position);
+        chara->GetRotation(chara_rotation);
+        GetLocalPos(chara_position, chara_position);
+        GetLocalRot(chara_rotation, chara_rotation);
+        sprintf(text, "select chara %d\ncollision %d\n", select_chara, *collision);
+        EdDPrint(text);
+        EdDPrintVector(" pos = ", chara_position);
+        EdDPrintVector(" rot = ", chara_rotation);
+        sprintf(text, " amb %5.1f %5.1f %5.1f %5.1f\n", chara->ambient_offset[0], chara->ambient_offset[1],
+                chara->ambient_offset[2], chara->ambient_offset[3]);
+        EdDPrint(text);
+        EdDPrint("camera\n");
+        GetLocalPos(position, position);
+        GetLocalPos(reference, reference);
+        EdDPrintVector(" pos = ", position);
+        EdDPrintVector(" ref = ", reference);
+        float angle = camera->GetAngle();
+        chara_rotation[2] = 0.0f;
+        chara_rotation[0] = 0.0f;
+        chara_rotation[1] = angle;
+        GetLocalRot(chara_rotation, chara_rotation);
+        sprintf(text, " angle = %4.3f\n", chara_rotation[1]);
+        EdDPrint(text);
+        sprintf(text, " height = %6.2f\n", position[1] - reference[1]);
+        EdDPrint(text);
+        position[1] = 0.0f;
+        reference[1] = 0.0f;
+        sprintf(text, " distance = %6.2f\n", DistVector(position, reference));
+        EdDPrint(text);
+        sprintf(text, " projection = %7.1f\n", MGGetProjection());
+        EdDPrint(text);
+        EdDCheck();
         if (GamePad.Down(0x100) != 0) {
             EdOutPutFile();
         }
-        return result;
+        if (GamePad.Down(0x1000) != 0) {
+            mode--;
+        }
+        if (GamePad.Down(0x4000) != 0) {
+            mode++;
+        }
+        if (mode < 0) {
+            mode = 2;
+        }
+        if (mode > 2) {
+            mode = 0;
+        }
+        if (EdEventInfo.projection > 0.0f) {
+            MGSetProjection(EdEventInfo.projection);
+        }
+        if (EdEventInfo.suppress_background != 0 && EdEventInfo.background_color[0] >= 0.0f) {
+            MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1],
+                         EdEventInfo.background_color[2], 128.0f);
+        }
+        return 0;
     }
-    if (event_pause == 0) {
-        for (int i = 0; i < 8; i++) {
-            if (EdEventInfo.messages[i] != NULL) {
-                EdEventInfo.messages[i]->Step();
+
+    if (event_pause != 0) {
+        EdPauseFlag = 1;
+        CCharacter::MotionStopFlag = 1;
+        CTextureAnime::stop_anime = 1;
+        ObjAnimeAllStop();
+        CCamera::StopCamera = 1;
+        if (GamePad.Down2(0x40) != 0 && menu_mode == 0) {
+            SndBgmRePlay();
+            BreakReadBG();
+            EdEventSkip();
+            EdEventPause();
+        }
+        if (EdEventInfo.projection > 0.0f) {
+            MGSetProjection(EdEventInfo.projection);
+        }
+        if (EdEventInfo.suppress_background != 0 && EdEventInfo.background_color[0] >= 0.0f) {
+            MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1],
+                         EdEventInfo.background_color[2], 128.0f);
+        }
+        if (GamePad.Down(0x20) != 0) {
+            SndBgmRePlay();
+            EdEventPause();
+        }
+        return 0;
+    }
+
+    EdPauseFlag = 0;
+    if (motion_stop_flag != 0) {
+        CCharacter::MotionStopFlag = 1;
+        CTextureAnime::stop_anime = 1;
+        ObjAnimeAllStop();
+        CCamera::StopCamera = 1;
+    } else {
+        CCharacter::MotionStopFlag = 0;
+        CTextureAnime::stop_anime = 0;
+        ObjAnimeAllStart();
+        CCamera::StopCamera = 0;
+    }
+    ReadBG();
+    EdEventInfo.camera = camera;
+    if (EdEventInfo.unk_004 != 0) {
+        SetWorldCoord((float *) &EdEventInfo.unk_008[8], (float *) &EdEventInfo.unk_008[24]);
+    }
+    for (int i = 0; i < 8; i++) {
+        if (EdEventInfo.messages[i] != NULL) {
+            EdEventInfo.messages[i]->Step();
+        }
+    }
+    if (SceneData.frame != NULL) {
+        float speed = SceneData.motion_speed;
+        SceneData.SetMotion(0, 0);
+        SceneData.motion_speed = speed;
+        SceneData.Step();
+    }
+    if (menu_mode == 0) {
+        menu_mode_status = -1;
+        EdResumeEvent();
+        if (menu_mode != 0) {
+            menu_mode_status = 0;
+            if (EdInitMenu(menu_mode) == 0) {
+                menu_mode = 0;
             }
+            motion_stop_flag = 1;
         }
-        for (int i = 0; i < 10; i++) {
-            ActSeq[i].Play();
-        }
-        for (int i = 0; i < 16; i++) {
-            ObjAnimePlay(&obj_anime[i]);
+    } else {
+        switch (menu_mode_status) {
+        case 0:
+            motion_stop_flag = 1;
+            if (EdInitModeFinish(EdEventInfo.camera, TexManager.GetTexture("frame_image", -1)) != 0) {
+                menu_mode_status = 1;
+                motion_stop_flag = 0;
+                MenuMapJumpMode = -1;
+            }
+            break;
+        case 1:
+        case 2:
+            EdDrawOffAll();
+            if (EdMenuMode() != 0) {
+                switch (menu_mode) {
+                case 5:
+                case 9: {
+                    int item = EdGetUseItem();
+                    if (p_use_item != NULL) {
+                        ((RS_STACKDATA *) p_use_item)->i = item;
+                    }
+                    p_use_item = NULL;
+                    break;
+                }
+                case 6:
+                    break;
+                case 7:
+                    if (p_jump_map_no != 0) {
+                        ((RS_STACKDATA *) p_jump_map_no)->i = MenuMapJumpMode + 1;
+                    }
+                    p_jump_map_no = 0;
+                    break;
+                }
+                menu_mode = 0;
+                EdDrawOnAll();
+                EdExitMenu();
+            }
+            break;
         }
     }
-    if (camera != NULL) {
-        if (follow_chara != NULL) {
-            sceVu0FVECTOR position;
-            follow_chara->GetPosition(position);
-            camera->SetFollow(position[0], position[1] + follow_chara->body_height, position[2]);
-        }
-        if (sync_camera_ref_chara != NULL) {
-            sceVu0FVECTOR reference;
-            sync_camera_ref_chara->GetPosition(reference);
-            sceVu0AddVector(reference, reference, sync_camera_ref_offset);
-            camera->SetRef(reference);
-        } else if (sync_camera_ref_obj != NULL) {
-            sceVu0FVECTOR reference;
-            get_obj_world_pos(sync_camera_ref_obj, reference);
-            sceVu0AddVector(reference, reference, sync_camera_ref_offset);
-            camera->SetRef(reference);
-        }
-        if (sync_camera_pos_obj != NULL) {
-            sceVu0FVECTOR position;
-            get_obj_world_pos(sync_camera_pos_obj, position);
-            camera->SetPos(position);
-        }
+    for (int i = 0; i < 10; i++) {
+        ActSeq[i].Play();
+    }
+    for (int i = 0; i < 16; i++) {
+        ObjAnimePlay(&obj_anime[i]);
+    }
+    result = EdEventInfo.return_code;
+    if (result > 0) {
+        EdEventFinish();
+        GamePad.AutoRepeatOff();
+        GamePad.MenuModeOff();
     }
     if (EdEventInfo.projection > 0.0f) {
         MGSetProjection(EdEventInfo.projection);
@@ -7012,19 +7192,38 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1],
                      EdEventInfo.background_color[2], 128.0f);
     }
-    if (result > 0 || EdEventScript.IsEnd() != 0) {
+    if (camera != NULL) {
+        if (follow_chara != NULL) {
+            sceVu0FVECTOR position;
+            follow_chara->GetPosition(position);
+            camera->SetFollow(position[0], position[1] + 0.8f * follow_chara->body_height, position[2]);
+        }
+        if (sync_camera_ref_chara != NULL) {
+            sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 1.0f};
+            sync_camera_ref_chara->GetPosition(reference);
+            sceVu0AddVector(reference, reference, sync_camera_ref_offset);
+            camera->SetRef(reference[0], reference[1] + 0.8f * sync_camera_ref_chara->body_height, reference[2]);
+        }
+        if (sync_camera_ref_obj != NULL) {
+            sceVu0FVECTOR reference;
+            get_obj_world_pos(sync_camera_ref_obj, reference);
+            sceVu0AddVector(reference, reference, sync_camera_ref_offset);
+            camera->SetRef(reference[0], reference[1], reference[2]);
+        }
+        if (sync_camera_pos_obj != NULL) {
+            sceVu0FVECTOR position;
+            get_obj_world_pos(sync_camera_pos_obj, position);
+            camera->SetPos(position);
+        }
+    }
+    if (result == 0 && EdEventScript.IsEnd() != 0) {
         EdEventFinish();
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
-        if (result == 0) {
-            result = 1;
-        }
+        result = 1;
     }
     return result;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
-#endif
 
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->unk_C98;

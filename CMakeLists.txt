@@ -244,7 +244,6 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4c.s=2A27AC-2A294C
            main.sbss.part4g.s=2A29A4-2A29AC
            main.sbss.part4g-2A29B0.s=2A29D4-2A29DC
-           main.sbss.part4e.s=2A2A54-2A2A64
            main.sbss.part4f.s=2A2A80-2A2AD0
            main.sbss.edit_in-a.s=2A2AFC-2A2B20
            main.sbss.editground-tail.s=2A2B28-2A2B7C
@@ -313,7 +312,6 @@ carve_part(main.data.part4.s
            main.data.part4m.s=266B90-266E10
            main.data.part4m-266E90.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
-           main.data.part4g.s=26A5E8-26A610
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
            main.data.part4g-26AE40.s=26AE40-26AE50
            main.data.shot_freefuncs-a.s=26AFF8-26B040
