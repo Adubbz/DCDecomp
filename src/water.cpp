@@ -65,159 +65,79 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
 }
 #ifdef NON_MATCHING
 int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
-    sceGsTex0 texture;
-    sceVu0FVECTOR colour;
-    int row;
-    float row_position;
-    int flag;
-    int word = 0;
-
-    colour[0] = color[0];
-    colour[1] = color[1];
-    colour[2] = color[2];
-    colour[3] = color[3];
-    sceVu0IVECTOR flush = {0x11000000, 0, 0, 0};
-    sceVu0FVECTOR st_origin = {320.0f, 112.0f, 0.0f, 0.0f};
-    sceVu0IVECTOR mscal = {0, 0, 0, 0x14000000};
-    sceVu0IVECTOR mscnt = {0, 0, 0, 0x17000000};
-    sceVu0IVECTOR unpack = {0, 0, 0, 0x6C008000};
-    sceVu0FVECTOR row_step;
-    sceVu0FVECTOR column_step;
     sceVu0FMATRIX local_to_world;
     sceVu0FMATRIX local_to_screen;
-    sceVu0FVECTOR screen[64][64];
-    sceVu0FVECTOR st[64][64];
+    sceVu0FVECTOR row_step;
+    sceVu0FVECTOR column_step;
     sceVu0FVECTOR position;
+    sceVu0FVECTOR transformed;
+    sceVu0FVECTOR normal;
+    CTexture *texture;
+    int word = 0;
 
-    *(u_int **) &visual.unk_010[2] = output;
+    union {
+        u_int *pointer;
+        float value;
+    } packet_address;
+
+    packet_address.pointer = output;
+    visual.unk_010[2] = packet_address.value;
+
     frame.GetLWMatrix(local_to_world);
     sceVu0MulMatrix(local_to_screen, info->view_screen, local_to_world);
-    for (int i = 0; i < 3; i++) {
-        row_step[i] = (vertex[1][i] - vertex[0][i]) / (float) (rows - 1);
-        column_step[i] = (vertex[2][i] - vertex[0][i]) / (float) (columns - 1);
+    for (int axis = 0; axis < 3; axis++) {
+        row_step[axis] = (vertex[1][axis] - vertex[0][axis]) / (float) (rows - 1);
+        column_step[axis] = (vertex[2][axis] - vertex[0][axis]) / (float) (columns - 1);
     }
-    row_step[3] = column_step[3] = 0.0f;
-    row_step[1] = column_step[1] = 0.0f;
+    row_step[3] = 0.0f;
+    column_step[3] = 0.0f;
     pretest(local_to_screen, column_step);
 
-    flag = 0;
-    position[3] = 1.0f;
-    for (row = 0, row_position = 0.0f; row < rows; row++, row_position += 1.0f) {
-        position[0] = vertex[0][0] + row_position * row_step[0];
-        position[1] = vertex[0][1] + row_position * row_step[1];
-        position[2] = vertex[0][2] + row_position * row_step[2];
-        float *above;
-        float *here = &height[row * columns];
-        above = here - columns;
-        if (row == 0) {
-            above = here;
-        }
-        sceVu0FVECTOR *vertex_out = screen[row];
-        sceVu0FVECTOR *st_out = st[row];
-        for (int column = 0; column < columns; column++) {
-            Trans_AddCell(*vertex_out++, position);
-            position[1] = *here * unk_09C;
-            (*st_out)[0] = st_origin[0] + unk_0A0 * (*above - *here);
-            (*st_out)[1] = st_origin[1] + unk_0A0 * (here[0] - here[1]);
-            st_out++;
-            here++;
-            above++;
-        }
-    }
-
-    texture = *(sceGsTex0 *) &TexManager.GetTexture(TexManager.GetTextureHandle("work", -1))->tex0;
-    texture.bits.tcc = 0;
-    if (unk_0A4 != 0) {
-        word += 16;
+    texture = TexManager.GetTexture("work", -1);
+    if (unk_0A4 == 0) {
+        word = SetTEX0(output, texture->tex0 & ~(4ULL << 32), 0);
     } else {
-        word += SetTEX0(output, *(u_long *) &texture, 0);
+        word = 16;
     }
 
-    for (row = 0, row_position = 0.0f; row < rows - 1; row++, row_position += 1.0f) {
-        int remaining = columns;
-        float *here = &height[row * columns];
-        float *below = here + columns;
-        float *above = here - columns;
-        if (row == 0) {
-            above = here;
-        }
-        sceVu0FVECTOR *top = screen[row];
-        sceVu0FVECTOR *bottom = screen[row + 1];
-        sceVu0FVECTOR *top_st = st[row];
-        sceVu0FVECTOR *bottom_st = st[row + 1];
-        for (; remaining > 0; remaining -= 27) {
-            int count = 27;
-            if (remaining < 27) {
-                count = remaining;
-            }
-            int vertices = count * 2;
-            int qwc = 0;
-            if (unk_0A4 == 0) {
-                *(u_long128 *) &output[word] = *(u_long128 *) unpack;
-            }
-            int unpack_word = word + 3;
-            if (unk_0A4 != 0) {
-                word += 8;
-                qwc++;
-            } else {
-                u_int *tag = &output[word + 4];
-                tag[0] = vertices | 0x8000;
-                tag[1] = 0x309E4000;
-                tag[2] = 0x413;
-                tag[3] = 0;
-                word += 8;
-                qwc++;
-            }
-            if (unk_0A4 == 0) {
-                output[word] = vertices;
-            }
-            word += 4;
-            qwc++;
-            u_long128 *xyz = (u_long128 *) &output[word];
-            u_long128 *rgba = xyz + vertices;
-            u_long128 *uv = rgba + vertices;
-            for (int i = 0; i < count; i++) {
-                xyz[0] = *(u_long128 *) *top++;
-                xyz[1] = *(u_long128 *) *bottom++;
-                xyz += 2;
-                rgba[0] = *(u_long128 *) colour;
-                rgba[1] = *(u_long128 *) colour;
-                rgba += 2;
-                uv[0] = *(u_long128 *) *top_st++;
-                uv[1] = *(u_long128 *) *bottom_st++;
-                uv += 2;
-            }
-            here--;
-            below--;
-            above--;
-            top--;
-            bottom--;
-            top_st--;
-            bottom_st--;
-            word += count * 3 * 8;
-            qwc += count * 3 * 2;
-            if (unk_0A4 != 0) {
-                word += 4;
-            } else {
-                output[unpack_word] |= qwc << 16;
-                if (flag == 0) {
-                    *(u_long128 *) &output[word] = *(u_long128 *) mscal;
-                    flag = 1;
-                } else {
-                    *(u_long128 *) &output[word] = *(u_long128 *) mscnt;
+    // Each grid cell contributes the two vertices of a triangle strip row.
+    for (int row = 0; row < rows - 1; row++) {
+        for (int column = 0; column < columns; column++) {
+            for (int side = 0; side < 2; side++) {
+                int source_row = row + side;
+                int index = column + source_row * columns;
+                for (int axis = 0; axis < 3; axis++) {
+                    position[axis] = vertex[0][axis] + (float) source_row * row_step[axis] +
+                                     (float) column * column_step[axis];
                 }
-                word += 4;
+                position[1] += height[index] * unk_09C;
+                position[3] = 1.0f;
+                Trans_AddCell(transformed, position);
+
+                int left = column > 0 ? index - 1 : index;
+                int right = column + 1 < columns ? index + 1 : index;
+                int above = source_row > 0 ? index - columns : index;
+                int below = source_row + 1 < rows ? index + columns : index;
+                normal[0] = (height[left] - height[right]) * unk_0A0;
+                normal[1] = 1.0f;
+                normal[2] = (height[above] - height[below]) * unk_0A0;
+                normal[3] = 0.0f;
+                sceVu0Normalize(normal, normal);
+
+                float *vertex_data = (float *) &output[word];
+                sceVu0CopyVector(vertex_data, transformed);
+                vertex_data += 4;
+                vertex_data[0] = (float) color[0];
+                vertex_data[1] = (float) color[1];
+                vertex_data[2] = (float) color[2];
+                vertex_data[3] = (float) color[3];
+                sceVu0CopyVector(vertex_data + 4, normal);
+                word += 12;
             }
-        }
-        if (unk_0A4 != 0) {
-            word += 4;
-        } else {
-            *(u_long128 *) &output[word] = *(u_long128 *) flush;
-            word += 4;
         }
     }
-    *(int *) &visual.unk_010[3] = word >> 2;
-    return *(int *) &visual.unk_010[3];
+    visual.unk_0C = word >> 2;
+    return visual.unk_0C;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
