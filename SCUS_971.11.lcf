@@ -538,6 +538,7 @@ SECTIONS
         weaponelement.cpp.o (.data)  // 0x0026b2c0
         btsysscript.cpp.o (.data)    // 0x0026b2e0
         main.data.part4d.s.o (.data) // 0x0026b310
+        dungeonparts.cpp.o (.data)   // 0x00279e60 setCollisionData's neighbour offsets
         dungeonmap.cpp.o (.data)
         . = ALIGN(0x10);
         dungeoneventman.cpp.o (.data) // 0x0027a0a0

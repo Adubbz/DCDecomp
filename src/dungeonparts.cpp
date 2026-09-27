@@ -1,3 +1,5 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
 #include "dungeonparts.hpp"
 
 #include "frame.hpp"
@@ -526,7 +528,6 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     memcpy(atra, packed, sizeof(packed));
     return count;
 }
-#ifdef NON_MATCHING
 /**
  * Gives a map part's collision model, or null for an empty cell.
  */
@@ -565,7 +566,12 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
         sceVu0FVECTOR part_pos;
 
         for (i = 0; map->parts[i].frame[0] != NULL; i++) {
-            collision = PartsCollision(map, i);
+            /* PartsCollision written out: the empty-cell test is kept for the part index. */
+            if (i == -1) {
+                collision = NULL;
+            } else {
+                collision = map->parts[i].collision;
+            }
             if (collision == NULL) {
                 continue;
             }
@@ -578,7 +584,8 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
             if (turn == 3) {
                 turn = -1;
             }
-            collision->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) turn)) / 180.0f, 0.0f);
+            float angle = (3.1415927f * (-90.0f * (float) turn)) / 180.0f;
+            collision->SetRotation(0.0f, angle, 0.0f);
             collision->SetPosition(part_pos);
             count += collision->PickUpNearPoly(&poly[count], box);
         }
@@ -602,13 +609,12 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
             if (x < 0 || x > 19 || z < 0 || z > 19) {
                 continue;
             }
-            int parts_no = map->cells[x + z * 20].parts_no;
-            model = PartsCollision(map, parts_no);
+            model = PartsCollision(map, map->cells[x + z * 20].parts_no);
             if (model == NULL) {
                 continue;
             }
             float angle = (float) map->cells[x + z * 20].direction;
-            angle += (float) PartsCollisionTurn(map, parts_no);
+            angle += (float) PartsCollisionTurn(map, map->cells[x + z * 20].parts_no);
             if (angle > 3.0f) {
                 angle -= 3.0f;
             }
@@ -631,9 +637,6 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
     }
     return count;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", setCollisionData__FP11CDungeonMapP6CCPolyPfff);
-#endif
 CFrame *CDungeonParts::GetSearchFrame(char *name) {
     for (int i = 0; i < 6; i++) {
         if (frame[i] != NULL) {
