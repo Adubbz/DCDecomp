@@ -300,7 +300,7 @@ void CCloth::Step(int step) {
             hit_sum[0] = 0.0f;
             float friction = 0.0f;
             for (; box != NULL; box = box->next) {
-                if ((mask[i][j] & (1 << box->unk_04)) && box->InCheck(work[i][j], hit) != 0) {
+                if ((mask[i][j] & (1 << box->mask_bit)) && box->InCheck(work[i][j], hit) != 0) {
                     hits += 1.0f;
                     sceVu0AddVector(hit_sum, hit_sum, hit);
                     friction += box->friction;
