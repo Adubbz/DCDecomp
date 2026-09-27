@@ -440,7 +440,7 @@ void ToanKey_Play(void) {
             BtActStatus.unk_05C = 1;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
-        if (UserStatus->unk_4324 != 0 && BtActStatus.unk_01C >= 2.5f &&
+        if (UserStatus->skill_owned[0] != 0 && BtActStatus.unk_01C >= 2.5f &&
             BtActStatus.unk_05C == 1) {
             BtActStatus.unk_05C = 2;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
@@ -449,7 +449,7 @@ void ToanKey_Play(void) {
             if (BtActStatus.unk_01C >= 1.5f) {
                 int charged = 0;
 
-                if (UserStatus->unk_4324 != 0 && BtActStatus.unk_01C >= 2.5f) {
+                if (UserStatus->skill_owned[0] != 0 && BtActStatus.unk_01C >= 2.5f) {
                     charged = 1;
                 }
                 if (BtActStatus.unk_01C >= 3.0f) {
@@ -605,7 +605,7 @@ void UngagaKey_On(void) {
 
     CUserStatus *status = UserStatus;
 
-    status->unk_4334 = 1;
+    status->skill_owned[4] = 1;
 
     if (BtActStatus.action_on == 0) {
         sceVu0FVECTOR rotation;

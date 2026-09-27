@@ -1047,7 +1047,7 @@ int EditInit(void *) {
     else
         RunEvent(event_no, NULL);
     StartEventNo = -1;
-    SaveData->GetDngStatus()->unk_04 = 0;
+    SaveData->GetDngStatus()->cur_chara = 0;
     static int debug_flag_set = 0;
     if (debug_flag_set == 0) {
         EdDebugCameraFlag = 0;

@@ -1,5 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
+#pragma name_counter 2
 
 #include "battlemenu.hpp"
 
@@ -727,8 +728,8 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     if (max_whp < 1.0f) {
         max_whp = 1.0f;
     }
-    int water = (int) status->water[chara];
-    int max_water = (int) status->max_water[chara];
+    int water = (int) status->water_now[chara];
+    int max_water = (int) status->water_max[chara];
     float values[4] = {hp, max_hp, whp, max_whp};
     MGFillBox(CRect_i_((bar_x - 3) * 16, ((bar_y - 2) >> 1) * 16, 0x3A0, 0x30), 0x14, 0x14, 0x14, alpha);
     int hp_len = (int) (52.0f * hp / max_hp);
@@ -815,7 +816,7 @@ void DngComStatus(int x, int y, int chara, int alpha) {
         y += 0x10;
         row_y += 0x10;
     }
-    int drops = (int) BtlMenuStatusPt->max_water[chara] / 10;
+    int drops = (int) BtlMenuStatusPt->water_max[chara] / 10;
     int drop_x = left + 0x12;
     for (int i = 0; i < drops - 1; i++) {
         DrawMenu2DSprite(texture, CRect_i_(drop_x, y + 5, 0x12, 0x13), CRect_i_(0x22, 0x9C, 0x12, 0x14), alpha);
@@ -823,12 +824,12 @@ void DngComStatus(int x, int y, int chara, int alpha) {
     }
     DrawMenu2DSprite(texture, CRect_i_(drop_x, y + 5, 0x18, 0x14), CRect_i_(0x34, 0x9C, 0x18, 0x14), alpha);
     int water_alpha = (alpha * 0x50) >> 7;
-    int full_drops = (int) BtlMenuStatusPt->water[chara] / 10;
+    int full_drops = (int) BtlMenuStatusPt->water_now[chara] / 10;
     for (int i = 0; i < full_drops; i++) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + i * 0x12, y, 0x10, 0x14), CRect_i_(0, 0x88, 0x10, 0x14),
                          water_alpha);
     }
-    int rest = (int) BtlMenuStatusPt->water[chara] % 10;
+    int rest = (int) BtlMenuStatusPt->water_now[chara] % 10;
     if (rest != 0) {
         DrawMenu2DSprite(texture, CRect_i_(left + 0x13 + full_drops * 0x12, y, 0x10, 0x14),
                          CRect_i_((3 - (int) ((float) rest / 2.5f)) * 16, 0x88, 0x10, 0x14), water_alpha);
@@ -848,7 +849,7 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, i
 
     DrawMenu2DSprite(texture, CRect_i_(px, py - 1, 0x100, 0x88), CRect_i_(0, 0, 0x100, 0x88), alpha);
     RECT digits = {0x40, 0x88, 0xC, 0xE};
-    DrawMenuNumber((int) BtlMenuStatusPt->unk_field_1[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
+    DrawMenuNumber((int) BtlMenuStatusPt->unk_4348[chara], px + 0x5E, py + 0x72, texture, digits, 1, alpha);
 
     px = (int) (x - 132.0f);
     py = (int) (10.0f + y);
@@ -1576,7 +1577,7 @@ static void InitMenuChara(u_long128 *buffer) {
     SysCur[0] = 60.0f;
     SysCur[1] = 160.0f;
     CDngStatusData *status = BtlMenuStatusPt;
-    int chara = status->unk_04;
+    int chara = status->cur_chara;
     MenuChara.unk_00 = chara;
     for (int i = 0; i < MenuChara.unk_02; i++) {
         SysChara[i].unk_01 = i - chara;
@@ -1749,7 +1750,7 @@ int BattleMenuCharaKey() {
                         int i;
                         CDngStatusData *status = BtlMenuStatusPt;
                         s8 cur;
-                        char *active = &status->unk_04;
+                        char *active = &status->cur_chara;
                         cur = *active;
                         if (cur == CHARA_OSMOND && BtActStatus.unk_092 == 10) {
                             CommonMenuMes1.MakeMesWin(0x1A1);
@@ -3106,7 +3107,7 @@ static void InitWeaponSelect(int mode, int chara) {
  * @size 0x2CC
  */
 static void ExitWeaponMenuSelect() {
-    int chara = BtlMenuStatusPt->unk_04;
+    int chara = BtlMenuStatusPt->cur_chara;
 
     if (BtlMenuMode == 0 && chara == WepMenu.chara) {
         DngWeaponEquipModelBuild(chara, MenuExtendReadBlock, BtlMenuReadBuf);
@@ -4132,7 +4133,7 @@ static void WepAttachHaveCancel() {
         WepMenu.board.cursor = 1;
         WepMenu.unk_06 = 0;
         GetNowSelectWeapon();
-        if (BtlMenuMode == 0 && BtlMenuStatusPt->unk_04 == 3 && WepMenu.chara == 3) {
+        if (BtlMenuMode == 0 && BtlMenuStatusPt->cur_chara == 3 && WepMenu.chara == 3) {
             StartReadBG();
             DngWepEffectReadStart();
         }
@@ -5239,9 +5240,9 @@ static void InitItemTrushStart() {
     if (ReadBGSync() == 0) {
         BattleMenuTexEnter();
         if (BtlMenuMode == 1) {
-            BtlMenuStatusPt->unk_04 = 0;
+            BtlMenuStatusPt->cur_chara = 0;
         }
-        InitItemMode(0, BtlMenuStatusPt->unk_04);
+        InitItemMode(0, BtlMenuStatusPt->cur_chara);
         BattleMenuFlag = MenuSelect[0] + 8;
         BtlEffectFlag = 1;
         BtlEffectCt = 0.0f;
@@ -5362,7 +5363,7 @@ int ItemMenuMainKey() {
     }
     if (IconAutoGet.IsMoveIcon() == 0 && throwing == 0 && over == 0 && BtlHaveItemPt->item_no < 0x51) {
         ItemMenuMode.overflow = 0;
-        status->unk_431C = 0;
+        status->overflow_flag = 0;
         DeleteMenuTrushMark();
     }
     switch (ItemMenuMode.state) {
@@ -5939,7 +5940,7 @@ int ItemMenuMainKey() {
                                 }
                             }
                         }
-                        if (status->unk_431C != 0) {
+                        if (status->overflow_flag != 0) {
                             DeleteMenuTrushMark();
                             SetMenuTrushMark((ITEM_PACK *) status->active_item);
                         }
@@ -5952,7 +5953,7 @@ int ItemMenuMainKey() {
                         switch (ItemMenuMode.board.page) {
                             case 0:
                                 SeitonItemBoard(MenuItemPackPt);
-                                if (status->unk_431C != 0) {
+                                if (status->overflow_flag != 0) {
                                     SetMenuTrushMark((ITEM_PACK *) status->active_item);
                                 }
                                 ComMenuSePlay(1);
@@ -6650,7 +6651,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
     if (CharaStatus != NULL) {
         MenuTextureReload(ItemMenuWeaponIconReadBlock);
         DrawMenu2DSprite(CharaStatus, CRect_i_(x, y + 1, 0xFC, 0x85), CRect_i_(0, 0x50, 0xFC, 0x86), alpha);
-        int level = BtlMenuStatusPt->unk_field_1[chara];
+        int level = BtlMenuStatusPt->unk_4348[chara];
         RECT number_rect = {0x100, 0x60, 0xC, 0xE};
         DrawMenuNumber(level, x + 0x64, y + 0x24, CharaStatus, number_rect, 1, alpha);
         if (MenuExTextureReadFlag == 2 && chara < BtlMenuStatusPt->party_size) {
@@ -6709,7 +6710,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
         DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x22, draw_y, durability_width, 0x10), bar_src, alpha);
         DrawMenu2DSprite(CharaStatus, CRect_i_(x + 0x1A + durability_width, draw_y, 0xA, 0x10),
                          CRect_i_(0x158, 0, 0xA, 0x10), alpha);
-        float thirst_value = BtlMenuStatusPt->max_water[chara];
+        float thirst_value = BtlMenuStatusPt->water_max[chara];
         int thirst = thirst_value / 10.0f;
         draw_x = x + 0x1E;
         draw_y = y + 0x62;
@@ -6778,13 +6779,13 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
         DrawStatusNumberNowAndMax(values, draw_x, draw_y, 1, alpha);
         draw_x = x + 0x20;
         draw_y = y + 0x60;
-        int drops = (int) BtlMenuStatusPt->water[chara] / 10;
+        int drops = (int) BtlMenuStatusPt->water_now[chara] / 10;
         for (int i = 0; i < drops; i++) {
             DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y, 0x10, 0x14), CRect_i_(0x128, 0x2C, 0x10, 0x14),
                              alpha);
             draw_x += 0x12;
         }
-        drops = (int) BtlMenuStatusPt->water[chara] % 10;
+        drops = (int) BtlMenuStatusPt->water_now[chara] % 10;
         if (drops != 0) {
             DrawMenu2DSprite(CharaStatus, CRect_i_(draw_x, draw_y, 0x10, 0x14),
                              CRect_i_(0x128 + (3 - (int) (drops / 2.5f)) * 0x10, 0x2C, 0x10, 0x14), alpha);

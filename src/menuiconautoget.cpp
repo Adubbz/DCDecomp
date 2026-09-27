@@ -65,7 +65,7 @@ int CMenuIconAutoGet::IconAutoMove(void) {
                 if (pack->quick_item_slot[slot] <= 0) {
                     pack->quick_item_slot[slot] = icon[i].item;
                     pack->quick_item_qty[slot] = 1;
-                    dungeon_status->quick_item_icon_count[slot] = icon[i].count;
+                    dungeon_status->active_item_vol[slot] = icon[i].count;
                 } else {
                     pack->quick_item_qty[slot]++;
                 }

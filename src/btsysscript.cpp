@@ -349,7 +349,7 @@ int _SET_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
 }
 
 int _GET_OLD_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
-    SetStack(stack, UserStatus->unk_03);
+    SetStack(stack, UserStatus->prev_floor);
     return 1;
 }
 

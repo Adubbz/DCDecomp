@@ -1784,7 +1784,7 @@ void GameInit(void) {
     driveNoInterpolate = 0;
     int dungeon = selectMapNo;
 
-    if (UserStatus->atra_list[dungeon] == -1) {
+    if (UserStatus->floor_reached[dungeon] == -1) {
         BtAtraListMake(dungeon);
     }
     UserStatus->water_drain_disable = 0;
@@ -1844,7 +1844,7 @@ void GameInit(void) {
 
     CUserStatus *status_now = UserStatus;
 
-    status_now->unk_03 = -1;
+    status_now->prev_floor = -1;
 
     DbgMsg.name = "dbgwork";
     DbgMsg.x = 32;
@@ -1962,7 +1962,7 @@ int GameLoop(void) {
 
         CUserStatus *leaving = UserStatus;
 
-        leaving->unk_03 = -1;
+        leaving->prev_floor = -1;
         return existFlag;
     }
 
@@ -1973,7 +1973,7 @@ int GameLoop(void) {
 
         CUserStatus *leaving = UserStatus;
 
-        leaving->unk_03 = -1;
+        leaving->prev_floor = -1;
         return 1;
     }
 
@@ -2971,8 +2971,8 @@ void MoveChara(void) {
                 } else {
                     UserStatus->water_drain_disable = 0;
                 }
-                if (UserStatus->unk_431C != 0) {
-                    UserStatus->unk_431C = 0;
+                if (UserStatus->overflow_flag != 0) {
+                    UserStatus->overflow_flag = 0;
                     gameTask = 0x1E;
                     EnemyLifeGage.draw = 0;
                     driveStepHold = 1;
@@ -2993,7 +2993,7 @@ void MoveChara(void) {
                         ok = 1;
                     }
                     if (ok != 0) {
-                        UserStatus->unk_431C = 0;
+                        UserStatus->overflow_flag = 0;
                         gameTask = 0x1E;
                         EnemyLifeGage.draw = 0;
                         driveStepHold = 1;
@@ -4525,7 +4525,7 @@ void MoveChara(void) {
                         int atra_no = NowDngMap->atra[i].atra_no;
 
                         if (atra_no != -1) {
-                            int atra = UserStatus->atra_data[selectMapNo][atra_no].id;
+                            int atra = UserStatus->atra_registry[selectMapNo][atra_no].id;
 
                             getAtraToSaveData(atra, atra_no, SaveData, selectMapNo,
                                               UserStatus->cur_floor);

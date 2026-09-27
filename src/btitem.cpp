@@ -1,3 +1,5 @@
+#pragma name_counter 2
+
 #include "common.h"
 
 #include <libvu0.h>

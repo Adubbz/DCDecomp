@@ -1,6 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
-#pragma name_counter 638
+#pragma name_counter 639
 
 #include "menu_dungeon.hpp"
 
@@ -301,7 +301,7 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
         return;
     }
 
-    int chara = dng_status->unk_04;
+    int chara = dng_status->cur_chara;
     int slot = dng_status->equipped_weapon_slot[chara];
     WEAPON_HAVE *weapons = dng_status->chara_weapons[chara];
     WEAPON_HAVE *equipped = &weapons[slot];
@@ -999,7 +999,7 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     if (ChangeStatusDataPt == NULL) {
         return;
     }
-    ChangeMenu.selected = ChangeStatusDataPt->unk_04;
+    ChangeMenu.selected = ChangeStatusDataPt->cur_chara;
     ItemVolumeStep.CheckItemVolume();
     ChangeMenu.unk_4c = 0;
     StayTex = TexManager.GetTexture("stayframe", -1);
@@ -1115,7 +1115,7 @@ int CharaChangeLoop(void) {
  * Makes a character the party's leader.
  */
 static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
-    status->unk_04 = chara;
+    status->cur_chara = chara;
 }
 
 int CharaChangeKey(void) {
@@ -1254,7 +1254,7 @@ int CharaChangeKey(void) {
                     ComMenuSePlay(2);
                     return 0;
                 }
-                if (ChangeMenu.selected != status->unk_04) {
+                if (ChangeMenu.selected != status->cur_chara) {
                     ComMenuSePlay(1);
                     SetStatusChara(ChangeStatusDataPt, ChangeMenu.selected);
                     if (ChangeMenu.mode == 1) {
@@ -1267,7 +1267,7 @@ int CharaChangeKey(void) {
                 }
                 ComMenuSePlay(1);
             } else if (GamePad.Down(0x20)) {
-                if (ChangeStatusDataPt->hp[ChangeStatusDataPt->unk_04] < 0 || ChangeMenu.mode != 0) {
+                if (ChangeStatusDataPt->hp[ChangeStatusDataPt->cur_chara] < 0 || ChangeMenu.mode != 0) {
                     ChangeMenu.unk_03 = 2;
                     ChangeMenu.cursor_row = 0;
                     ChangeMenu.cursor_x = CommonMenuMes3.text_x - 0x1E;
@@ -1422,7 +1422,7 @@ void CharaChangeDraw(void) {
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x124, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x124, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
-            int value = (u16) ChangeStatusDataPt->dead_mask;
+            int value = (u16) ChangeStatusDataPt->money_signed;
             RECT value_digits = {0x70, 0x74, 0xC, 0xC};
             DrawMenuNumber(value, 0xB7, 0x12C, QuickCharaTex, value_digits, 0, alpha);
             MenuHelpWinDraw(100, 0x140, 10.6f, 0.9f, alpha);

@@ -474,7 +474,7 @@ private:
     s16 elem_data[6][128];      /**< Contains the chips of each town. */
     char special_npc[320];      /**< Contains the NPC slots that the sub-maps share. */
 
-    // ConvertConfig and InvertConfig reach dng_status.config_mirror at 0x9748
+    // ConvertConfig and InvertConfig reach dng_status.minimap_status at 0x9748
     // from `this`. Only a direct member access at a >0x7FFF offset emits
     // retail's `lui at,0x1; addu at,<this>,at; lw/sw reg,-0x68b8(at)` idiom.
     CDngStatusData dng_status;  /**< Contains the dungeon status data. */

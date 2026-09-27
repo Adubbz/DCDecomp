@@ -537,7 +537,7 @@ void CSaveData::ConvertConfig(SV_CONFIG_SYS *out) {
     p = (char *) out;
 
     this->config[16] = this->menu_cursor.reset_pos;
-    this->config[15] = this->dng_status.config_mirror;
+    this->config[15] = this->dng_status.minimap_status;
 
     src = (char *) this->config;
     memset(p, 0, sizeof(SV_CONFIG_SYS));
@@ -573,7 +573,7 @@ int CSaveData::InvertConfig(SV_CONFIG_SYS *in) {
         this->menu_cursor.InitPos();
     }
 
-    this->dng_status.config_mirror = this->config[15];
+    this->dng_status.minimap_status = this->config[15];
 
     return 1;
 }
