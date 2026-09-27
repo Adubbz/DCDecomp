@@ -362,7 +362,7 @@ SECTIONS
         snd.cpp.o                   (.text)   // 0x00158d80
         scriptinterpreter.cpp.o     (.text)   // 0x0015f100
         sysmes.cpp.o                (.text)   // 0x0015fd30
-        water.cpp.o                 (.text)   // 0x001607a0
+        water.cpp.o                 (.text)   // 0x00160750
         fireomni.cpp.o              (.text)   // 0x00161650
         runeffect.cpp.o             (.text)   // 0x00162580
         candleeffect.cpp.o          (.text)   // 0x00163a30

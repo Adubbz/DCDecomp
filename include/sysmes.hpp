@@ -117,11 +117,3 @@ void DontGetItemMes(int kind);
  */
 void SetSystemMes(int no, int count, int position, int input_key, int *args, int *numbers);
 
-/**
- * Loads the matrix and translation used by cell transforms into VU0 registers.
- */
-void pretest(float matrix[4][4], float *translation);
-/**
- * Transforms one cell and advances its source position by the loaded translation.
- */
-void Trans_AddCell(float *output, float *position);
