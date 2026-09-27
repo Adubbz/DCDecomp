@@ -2928,7 +2928,9 @@ void EventMode() {
             Chara->GetPosition(pos);
             Chara->GetRotation(ref);
             MainCamera.FollowOn();
-            MainCamera.SetAngleSoon(AngleLimit(ref[1] + EdEventInfo.reset_camera_yaw));
+            float angle = ref[1] + EdEventInfo.reset_camera_yaw;
+            angle = AngleLimit(angle);
+            MainCamera.SetAngleSoon(angle);
             MainCamera.SetFollow(pos[0], pos[1] + Chara->body_height - 3.0f, pos[2]);
             EdInitCameraParam(&MainCamera);
             MainCamera.Step(-1);
