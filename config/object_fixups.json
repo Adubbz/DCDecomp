@@ -383,71 +383,80 @@
       ".battlemenu-c3968": [
         "@2283"
       ],
+      ".battlemenu-c4085": [
+        "@2390"
+      ],
+      ".battlemenu-c4090": [
+        "@2395"
+      ],
+      ".battlemenu-c4149": [
+        "@2453"
+      ],
       ".battlemenu-c4290": [
-        "@2362"
+        "@2561"
       ],
       ".battlemenu-c4291": [
-        "@2363"
+        "@2562"
       ],
       ".battlemenu-c4331": [
-        "@2400"
+        "@2599"
       ],
       ".battlemenu-c4433": [
-        "@2480"
+        "@2679"
       ],
       ".battlemenu-c5342": [
-        "@2537"
+        "@2736"
       ],
       ".battlemenu-c5345": [
-        "@2540"
+        "@2739"
       ],
       ".battlemenu-c5370": [
-        "@2563"
+        "@2762"
       ],
       ".battlemenu-c5492": [
-        "@2672"
+        "@2871"
       ],
       ".battlemenu-c5503": [
-        "@2681"
+        "@2880"
       ],
       ".battlemenu-c5534": [
-        "@2713"
+        "@2912"
       ],
       ".battlemenu-c5742": [
-        "@2890"
+        "@3089"
       ],
       ".battlemenu-town-ref": [
-        "@3004"
+        "@3203"
       ],
       ".battlemenu-town-pos": [
-        "@3005"
+        "@3204"
       ],
       ".battlemenu-c6018": [
-        "@3132"
+        "@3331"
       ],
       ".battlemenu-c6037": [
-        "@3151"
+        "@3350"
       ],
       ".battlemenu-c6105": [
-        "@3202"
+        "@3401"
       ],
       ".battlemenu-c6185": [
-        "@3282"
+        "@3481"
       ],
       ".battlemenu-c6188": [
-        "@3285"
+        "@3484"
       ],
       ".battlemenu-c6227": [
-        "@3311"
+        "@3510"
       ],
       ".battlemenu-c6232": [
-        "@3321"
+        "@3520"
       ],
       ".battlemenu-c6233": [
-        "@3322"
+        "@3521"
       ],
       ".battlemenu-c6235": [
-        "@3324"
+        "@3523"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -483,28 +492,34 @@
         "@2257"
       ],
       ".battlemenu-c5556": [
-        "@2735"
+        "@2934"
       ],
       ".battlemenu-c5592": [
-        "@2772"
+        "@2971"
       ],
       ".battlemenu-c5593": [
-        "@2773"
+        "@2972"
       ],
       ".battlemenu-c5711": [
-        "@2861"
+        "@3060"
       ],
       ".battlemenu-c5977": [
-        "@3119"
+        "@3318"
       ],
       ".battlemenu-c6236": [
-        "@3325"
+        "@3524"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"
       ],
       ".battlemenu-init_1677": [
         "init$1677"
+      ],
+      ".battlemenu-ct_4025": [
+        "ct$4025"
+      ],
+      ".battlemenu-init_4026": [
+        "init$4026"
       ],
       ".battlemenu-ncnt_4292": [
         "ncnt$4292"
