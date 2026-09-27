@@ -199,6 +199,9 @@
         "@905"
       ]
     },
+    "drop_functions": [
+      "CopyCharacter__FR10CCharacterRC10CCharacter"
+    ],
     "rodata_exports": [
       "@566",
       "@567",

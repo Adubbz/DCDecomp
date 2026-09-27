@@ -1318,58 +1318,11 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @address 0x142DA0
  * @size 0x43C
  */
-#ifdef NON_MATCHING
-/* CCharacter's members as its copy assignment reaches them. */
-struct DraftCharacterLayout : public CObject {
-    float body_width;
-    float body_height;
-    float body_depth;
-    CFrame *frame;
-    CFrame *shadow_frame;
-    float images[4];
-    char *unk_0D4;
-    s32 unk_0D8;
-    CTextureAnime tex_anime;
-    tagFRAME_INF *unk_2cc;
-    tagFRAME_INF *unk_2d0;
-    tagMOTION_TYPE motion_type;
-    tagMOTION_TYPE shadow_motion_type;
-    s32 motion_start[CHARA_MOTION_MAX];
-    s32 motion_end[CHARA_MOTION_MAX];
-    MotionParam unk_420[CHARA_MOTION_MAX];
-    MotionParam unk_820[CHARA_MOTION_MAX];
-    tagMOTION_TYPE *motion[CHARA_MOTION_MAX];
-    tagMOTION_TYPE *shadow_motion[CHARA_MOTION_MAX];
-    float motion_speed;
-    s32 flags;
-    s32 motion_no;
-    float unk_C6C;
-    s32 motion_state;
-    CCloth **cloth;
-    CCloth *cloth_buf[8];
-    s32 unk_C98;
-    s32 unk_C9C;
-    s32 unk_CA0;
-    sceVu0FVECTOR unk_CB0[2];
-    sceVu0FVECTOR unk_CD0;
-    sceVu0FVECTOR ambient_offset;
-    float fade[4];
-    CFakePointLight point_light[CHARA_POINT_LIGHT_MAX];
-    CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];
-    s32 foot_sound_id;
-    s32 foot_sound_enable;
-    s32 unk_DE0;
-    s32 event_enable;
-    CHARA_EVENT event[CHARA_EVENT_MAX];
-    CHARA_UNK_1068 unk_1068[16];
-};
-CCharacter &CCharacter::operator=(const CCharacter &src) {
-    *(DraftCharacterLayout *) this = *(const DraftCharacterLayout *) &src;
-    return *this;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__10CCharacterFRC10CCharacter);
-#endif
+#pragma push
+#pragma dont_inline on
+static void CopyCharacter(CCharacter &dest, const CCharacter &src) { dest = src; }
+static void CopyCharacter(CCharacter &dest, const CCharacter &src);
+#pragma pop
 
 CObject &CObject::operator=(const CObject &source) {
     // The three words after the mass are alignment padding and are not carried over.
