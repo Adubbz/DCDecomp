@@ -1509,11 +1509,14 @@ extern "C" void *__ct__10CCharacterFv(void *self) {
     __ct__13CTextureAnimeFv(&chara->tex_anime);
     GeneratedMotionParamCtor(&chara->motion_type);
     GeneratedMotionParamCtor(&chara->shadow_motion_type);
-    u_char *array = (u_char *) self + 0x420;
-    __construct_array(array, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL, 0x80, 8);
-    array = (u_char *) self + 0x820;
-    __construct_array(array, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL, 0x80, 8);
-    __construct_array(chara->point_light, GeneratedFakePointLightCtor, NULL, 0x30, 2);
+    void *params = ((CCharacter *) self)->unk_420;
+    __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL,
+                      sizeof(MotionParam), CHARA_MOTION_MAX);
+    params = ((CCharacter *) self)->unk_820;
+    __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL,
+                      sizeof(MotionParam), CHARA_MOTION_MAX);
+    __construct_array(chara->point_light, GeneratedFakePointLightCtor, NULL, sizeof(CFakePointLight),
+                      CHARA_POINT_LIGHT_MAX);
     chara->Initialize();
     return self;
 }
