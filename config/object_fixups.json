@@ -1496,6 +1496,22 @@
       "defWeapon": "defWeapon__2"
     }
   },
+  "src/cloth.cpp": {
+    "sections": {
+      ".cloth-step": [
+        "@390",
+        "@446"
+      ]
+    },
+    "globalize_symbols": [
+      "StretchBind2__FPfPfPf",
+      "vuabs__FPf"
+    ],
+    "extern_functions": [
+      "StretchBind2__FPfPfPf",
+      "vuabs__FPf"
+    ]
+  },
   "src/bound.cpp": {
     "globalize_symbols": [
       "vuabs__FPf"

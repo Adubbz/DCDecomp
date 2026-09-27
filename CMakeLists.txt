@@ -167,7 +167,7 @@ carve_dump(dun data.data.s
 carve_part(main.data.part1.s
            main.data.part1.s=24FAC0-250B30)
 carve_part(main.data.part2.s
-           main.data.part2.s=2514C0-251530
+           main.data.cloth-a.s=2514E0-251530
            main.data.part2c.s=2525D0-253DD0)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut

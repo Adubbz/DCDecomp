@@ -453,7 +453,8 @@ SECTIONS
         character.cpp.o (.data)
         chararead.cpp.o (.data)
         . = . + 0x4; // Retail padding after the character command tables.
-        main.data.part2.s.o (.data)
+        cloth.cpp.o (.cloth-step)    // 0x002514c0 Step's origin and wind templates
+        main.data.cloth-a.s.o (.data) // 0x002514e0 CreateVUData's templates
         cloth.cpp.o (.data)          // 0x00251530 InitParam's and Initialize's templates
         bound.cpp.o (.data)          // 0x00251560 SetDir's origin, the constructor's forward vector
         dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
