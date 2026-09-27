@@ -1799,7 +1799,6 @@ int BattleMenuCharaKey() {
 }
 #pragma opt_propagation reset
 
-#ifdef NON_MATCHING
 void DrawCharaSelect() {
     if (BtlMenuExReadFlag == 0) {
         return;
@@ -1871,12 +1870,14 @@ void DrawCharaSelect() {
             }
             break;
     }
+    float size;
+    float draw_x;
+    float move;
+    float face_x;
+    float time;
+    float grow;
+    float face_y;
     for (int i = 0; i < MenuChara.unk_02; i++) {
-        float size;
-        float draw_x;
-        float move;
-        float face_x;
-        float face_y;
         face_x = 394.0f + SysChara[i].unk_04;
         draw_x = face_x;
         face_y = 120.0f + SysChara[i].unk_08;
@@ -1884,8 +1885,7 @@ void DrawCharaSelect() {
         face_alpha = bright;
         status_alpha = bright;
         panel_alpha = 0;
-        move = MenuCharaMove;
-        if ((!(move <= 0.0f) && MenuChara.unk_02 - 1 == SysChara[i].unk_01) || (move < 0.0f && SysChara[i].unk_01 == 1)) {
+        if ((!((move = MenuCharaMove) <= 0.0f) && MenuChara.unk_02 - 1 == SysChara[i].unk_01) || (move < 0.0f && SysChara[i].unk_01 == 1)) {
             float step = 0.6666667f * MenuChara.unk_04;
             draw_x = face_x - step;
             size += step;
@@ -1893,10 +1893,10 @@ void DrawCharaSelect() {
             status_alpha = 0x80 - panel_alpha;
         }
         if (SysChara[i].unk_01 == 0) {
-            float time = MenuChara.unk_04;
+            time = MenuChara.unk_04;
             float scale = 0.6666667f;
             draw_x = face_x + scale * (time - 20.0f - 1.0f);
-            float grow = scale * time;
+            grow = scale * time;
             size = 106.0f - grow;
             status_alpha = (int) ((float) bright * time / 21.0f);
             if (move == 0.0f) {
@@ -1945,8 +1945,9 @@ void DrawCharaSelect() {
         MenuTextureReload(BtlMenuExReadBlock);
         CTexture *face = MenuCharaFace;
         int u = 0;
+        int v;
         int width = 0x6A;
-        int v = i * 0x6A;
+        v = i * 0x6A;
         if (i > 2) {
             u = 0x6A;
             v = (i - 3) * 0x6A;
@@ -2007,7 +2008,7 @@ void DrawCharaSelect() {
         default: {
             float angle = 3.1415927f;
             float waku_x = 394.0f + chara_r_long * cosf(angle) - 184.0f;
-            float waku_y = 120.0f + chara_r_long * sinf(angle) - 26.0f;
+            face_y = 120.0f + chara_r_long * sinf(angle) - 26.0f;
             int width = 0x102;
             int cursor_x = 0x3C;
             int i;
@@ -2023,17 +2024,12 @@ void DrawCharaSelect() {
             }
             SysCur[0] += ((float) cursor_x - SysCur[0]) / 4.0f;
             int draw_x = (int) SysCur[0];
-            DrawMenuWaku(waku_x, waku_y, width, 0x82, 1, StayTex, 0x80);
+            DrawMenuWaku(waku_x, face_y, width, 0x82, 1, StayTex, 0x80);
             DrawMenuObjectVibe(draw_x, (int) SysCur[1], 1, 0x40);
             break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawCharaSelect__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1665);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1668);
 void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     int x = rect.x;
     int max_exp;
