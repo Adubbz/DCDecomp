@@ -1318,9 +1318,10 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @address 0x142DA0
  * @size 0x43C
  */
-/* Assigns one character to another so that the compiler emits the assignment operator documented
-   above, which it writes only where a character is assigned. Nothing calls it, and the link drops
-   it. */
+/**
+ * Copies one character into another with CCharacter's assignment operator.
+ * Nothing calls it: it exists so that the operator documented above is defined in this unit.
+ */
 #pragma push
 #pragma dont_inline on
 
