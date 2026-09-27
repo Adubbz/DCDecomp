@@ -2862,6 +2862,8 @@ void MoveChara(void) {
     float angle;
     float rx;
     float ry;
+    CFrame *collision;
+    int n;
 
     // An event that sets its own draw distance keeps it; anything else draws
     // the whole floor.
@@ -3390,19 +3392,18 @@ void MoveChara(void) {
                                             BtActStatus.unk_098 == 0 && BtActStatus.unk_148 == 0) {
                                             if (iventActive != -1 && BtActStatus.unk_020 == 0) {
                                                 int done = 0;
-                                                int index;
 
                                                 switch (NowDngMap->events[iventActive].kind) {
                                                     case 2:
                                                         BtActStatus.unk_00C = 0;
-                                                        index = NowDngMap->events[iventActive].index;
-                                                        if (NowDngMap->boxes[index].kind == 0) {
-                                                            if (NowDngMap->boxes[index].unk_30 == 0) {
+                                                        n = NowDngMap->events[iventActive].index;
+                                                        if (NowDngMap->boxes[n].kind == 0) {
+                                                            if (NowDngMap->boxes[n].unk_30 == 0) {
                                                                 gameTask = 0x78;
                                                                 done = 1;
                                                                 goto opened;
                                                             }
-                                                            if (NowDngMap->boxes[index].unk_30 == 5) {
+                                                            if (NowDngMap->boxes[n].unk_30 == 5) {
                                                                 sceVu0FVECTOR box_pos;
                                                                 sceVu0FVECTOR box_dir = {0.0f, 0.0f,
                                                                                          0.0f, 1.0f};
@@ -3417,7 +3418,7 @@ void MoveChara(void) {
                                                                 NowDngMap->events[iventActive].kind = -1;
                                                                 BtEventInfo.unk_2C = 0x10;
                                                                 BtEventInfo.unk_34 = 0;
-                                                                BtEventInfo.unk_AC = index;
+                                                                BtEventInfo.unk_AC = n;
                                                                 BtEventInfo.unk_24 = 1;
                                                                 gameTask = 0x190;
                                                                 ResetMovePower();
@@ -3425,7 +3426,7 @@ void MoveChara(void) {
                                                             } else {
                                                                 BtEventInfo.unk_2C = 0xF;
                                                                 BtEventInfo.unk_34 = 0;
-                                                                BtEventInfo.unk_AC = index;
+                                                                BtEventInfo.unk_AC = n;
                                                                 BtEventInfo.unk_24 = 1;
                                                                 gameTask = 0x190;
                                                                 ResetMovePower();
@@ -3440,8 +3441,8 @@ void MoveChara(void) {
                                                         break;
                                                     case 3:
                                                         BtActStatus.unk_00C = 0;
-                                                        index = NowDngMap->events[iventActive].index;
-                                                        if (NowDngMap->atra[index].used != 0) {
+                                                        n = NowDngMap->events[iventActive].index;
+                                                        if (NowDngMap->atra[n].used != 0) {
                                                             s8 chara = UserStatus->cur_chara;
 
                                                             if (UserStatus->cur_chara == 0) {
@@ -3455,15 +3456,15 @@ void MoveChara(void) {
                                                         }
                                                         break;
                                                     case 8:
-                                                        index = NowDngMap->events[iventActive].index;
+                                                        n = NowDngMap->events[iventActive].index;
 
-                                                        int item_no = NowDngMap->boxes[index].item_no;
+                                                        int item_no = NowDngMap->boxes[n].item_no;
                                                         CMonstorUnit *unit = NowMonstorUnit;
 
                                                         if (item_no >= 0 && item_no < 0x11) {
                                                             unit->monster[item_no].unk_0D4 = 1;
                                                         }
-                                                        NowDngMap->boxes[index].used = 0;
+                                                        NowDngMap->boxes[n].used = 0;
                                                         NowDngMap->events[iventActive].kind = -1;
                                                         done = 1;
                                                         break;
@@ -3836,7 +3837,6 @@ void MoveChara(void) {
                                                                 colPolyNum = 0;
                                                                 for (; NowDngMap->parts[i].frame[0] != NULL;
                                                                      i++) {
-                                                                    CFrame *collision;
                                                                     int turn;
 
                                                                     collision = i == -1
@@ -3872,15 +3872,14 @@ void MoveChara(void) {
                                                                                 bound);
                                                                     }
                                                                 }
-                                                                for (int i = 0; i < 24; i++) {
-                                                                    if (NowDngMap->boxes[i].used != 0) {
-                                                                        CFrame *box =
-                                                                            NowDngMap->box_collision_model;
+                                                                for (n = 0; n < 24; n++) {
+                                                                    if (NowDngMap->boxes[n].used != 0) {
+                                                                        collision = NowDngMap->box_collision_model;
 
-                                                                        box->SetPosition(
-                                                                            NowDngMap->boxes[i].pos);
+                                                                        collision->SetPosition(
+                                                                            NowDngMap->boxes[n].pos);
                                                                         colPolyNum +=
-                                                                            box->PickUpNearPoly(
+                                                                            collision->PickUpNearPoly(
                                                                                 &polys[colPolyNum],
                                                                                 bound);
                                                                     }
@@ -3923,14 +3922,13 @@ void MoveChara(void) {
                                                                 MoveCheckInfo info;
                                                                 CBoxVu0 bound;
                                                                 CCPoly foot;
-                                                                CCPoly *polys;
                                                                 int mode;
                                                                 int x;
                                                                 int z;
+                                                                CFrame *collision;
 
                                                                 WorkBuffer__2->used = 0;
-                                                                polys = (CCPoly *) WorkBuffer__2->Alloc(
-                                                                    0x7D0);
+                                                                CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
                                                                 bound.max[0] = 20.0f + pos[0];
                                                                 bound.max[1] = 20.0f + pos[1];
                                                                 bound.max[2] = 20.0f + pos[2];
@@ -3944,7 +3942,6 @@ void MoveChara(void) {
                                                                         int parts_no =
                                                                             cmap->cells[x + z * 20]
                                                                                 .parts_no;
-                                                                        CFrame *collision;
                                                                         MAP_CELL *cell;
                                                                         int turn;
 
@@ -3993,13 +3990,13 @@ void MoveChara(void) {
                                                                 }
                                                                 for (int i = 0; i < 24; i++) {
                                                                     if (NowDngMap->boxes[i].used != 0) {
-                                                                        CFrame *box =
+                                                                        collision =
                                                                             NowDngMap->box_collision_model;
 
-                                                                        box->SetPosition(
+                                                                        collision->SetPosition(
                                                                             NowDngMap->boxes[i].pos);
                                                                         colPolyNum +=
-                                                                            box->PickUpNearPoly(
+                                                                            collision->PickUpNearPoly(
                                                                                 &polys[colPolyNum],
                                                                                 bound);
                                                                     }
@@ -4765,19 +4762,25 @@ void MoveChara(void) {
                     bound.min[1] = pos[1] - 40.0f;
                     bound.min[2] = pos[2] - 20.0f;
                     int i = 0;
+                    int offset;
+                    unsigned int address;
 
                     colPolyNum = 0;
-                    for (; NowDngMap->parts[i].frame[0] != NULL; i++) {
+                    for (; (address = (unsigned int) NowDngMap, offset = i * (int) sizeof(CDungeonParts),
+                           ((CDungeonMap *) (offset + address))->parts[0].frame[0] != NULL);
+                         i++) {
                         CFrame *collision;
                         int turn;
 
-                        collision = i == -1 ? NULL : NowDngMap->parts[i].collision;
+                        collision = i == -1 ? NULL
+                                    : (address = (unsigned int) NowDngMap,
+                                       ((CDungeonMap *) (offset + address))->parts[0].collision);
                         if (collision != NULL) {
-                            CDungeonParts *part = &NowDngMap->parts[i];
+                            CDungeonParts *part = &((CDungeonMap *) ((char *) NowDngMap + offset))->parts[0];
 
                             sceVu0CopyVector(parts_pos, part->frame_offset[0]);
 
-                            CDungeonParts *part2 = &NowDngMap->parts[i];
+                            CDungeonParts *part2 = &((CDungeonMap *) ((char *) NowDngMap + offset))->parts[0];
 
                             turn = (int) part2->frame_turn[0];
                             turn += part2->collision_turn;
@@ -4919,7 +4922,6 @@ void MoveChara(void) {
                     }
                 } else {
                     CDungeonEventData *state;
-                    int damaged;
 
                 eye_event:
                     state = NowEventMan->SearchDataSlotPos(pos);
@@ -4996,8 +4998,8 @@ void MoveChara(void) {
                         next_task = 0xC8;
                         leaving = 1;
                     }
-                    damaged = BtCheckDamageProc();
-                    if (damaged != 0) {
+                    n = BtCheckDamageProc();
+                    if (n != 0) {
                         leaving = 1;
                     }
                     if (GamePad.Down(2) != 0 || GamePad.Down(4) != 0 ||
@@ -5023,7 +5025,7 @@ void MoveChara(void) {
                             NowMainEffect->OffEffect(ruby_effect_id);
                             ruby_effect_id = -1;
                         }
-                        if (damaged == 0) {
+                        if (n == 0) {
                             BtActStatus.unk_028 = 0;
                             BtActStatus.unk_00C = 0;
                             BtActStatus.action_on = 0;
