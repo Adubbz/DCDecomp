@@ -1170,6 +1170,7 @@ static float AnalyzeRequestPer() {
     }
     return percent;
 }
+
 static int AnalyzeBarDraw() {
     float parts_total;
     float parts_complete;
@@ -1299,6 +1300,7 @@ static int AnalyzeBarDraw() {
     }
     return 0;
 }
+
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {
