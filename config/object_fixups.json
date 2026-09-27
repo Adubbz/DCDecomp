@@ -190,7 +190,9 @@
       "GeneratedTextureAnimeCtor": "__ct__13CTextureAnimeFP13CTexAnimeDatai",
       "GeneratedObjectCtor": "__ct__7CObjectFf",
       "GeneratedHitMarkVtable": "__vt__8CHitMark",
-      "GeneratedCharacterCtor": "__ct__10CCharacterFv"
+      "GeneratedMotionParamCtor": "__ct__11MotionParamFv",
+      "GeneratedFakePointLightCtor": "__ct__15CFakePointLightFv",
+      "GeneratedCharacterVtable": "__vt__10CCharacter"
     },
     "sections": {
       ".gamemodesdata": [

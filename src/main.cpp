@@ -1519,14 +1519,15 @@ void CMajinBeem::Initialize() {
     active = 0;
     alphas[59] = 0.0f;
 }
-/* The constructors the compiler writes for arrays of these classes, written out by hand: the
-   compiler only emits them where an array needs one, which this unit's source no longer holds.
-   The names below stand for the compiler's own symbols (see config/object_fixups.json), which
-   this unit may not also declare under C linkage. */
-extern "C" void *GeneratedCharacterCtor(void *self);
+/* Constructors and vtables used by the character, map slot and effect constructors. */
 extern "C" void *GeneratedTextureAnimeCtor(void *self, CTexAnimeData *data, int count);
 extern "C" void *GeneratedObjectCtor(void *self, float mass);
 extern "C" void *GeneratedHitMarkVtable[];
+extern "C" void *GeneratedMotionParamCtor(void *self);
+extern "C" void GeneratedFakePointLightCtor(void *object, int mode);
+extern "C" void *GeneratedCharacterVtable[];
+extern "C" void *__ct__10CCharacterFv(void *self);
+extern "C" void *__ct__13CTextureAnimeFv(void *self);
 extern "C" void *__ct__7CObjectFv(void *self);
 
 /**
@@ -1537,7 +1538,7 @@ extern "C" void *__ct__7CObjectFv(void *self);
  * @size 0x30
  */
 extern "C" void *__ct__13MAP_NPC_MODELFv(void *self) {
-    GeneratedCharacterCtor(self);
+    __ct__10CCharacterFv(self);
     return self;
 }
 /**
@@ -1547,19 +1548,22 @@ extern "C" void *__ct__13MAP_NPC_MODELFv(void *self) {
  * @address 0x143530
  * @size 0xD4
  */
-#ifdef NON_MATCHING
-/* The compiler emits the inline constructor out of line for arrays of characters. */
-#pragma push
-#pragma dont_inline on
-void DraftCharacterArray() {
-    CCharacter *characters = new CCharacter[16];
-    delete[] characters;
+extern "C" void *__ct__10CCharacterFv(void *self) {
+    CCharacter *chara = (CCharacter *) self;
+
+    __ct__7CObjectFv(self);
+    *(void **) ((u_char *) self + 0xA0) = GeneratedCharacterVtable;
+    __ct__13CTextureAnimeFv(&chara->tex_anime);
+    GeneratedMotionParamCtor(&chara->motion_type);
+    GeneratedMotionParamCtor(&chara->shadow_motion_type);
+    u_char *array = (u_char *) self + 0x420;
+    __construct_array(array, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL, 0x80, 8);
+    array = (u_char *) self + 0x820;
+    __construct_array(array, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL, 0x80, 8);
+    __construct_array(chara->point_light, GeneratedFakePointLightCtor, NULL, 0x30, 2);
+    chara->Initialize();
+    return self;
 }
-void DraftCharacterArray();
-#pragma pop
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __ct__10CCharacterFv);
-#endif
 /**
  * Constructs the motion parameters.
  *
@@ -1596,9 +1600,9 @@ extern "C" void *__ct__7CObjectFv(void *self) {
  * @size 0x54
  */
 extern "C" void *__ct__12CSHOT_EFFECTFv(void *self) {
-    GeneratedCharacterCtor((u_char *) self + 0x10);
+    __ct__10CCharacterFv((u_char *) self + 0x10);
     u_char *array = (u_char *) self + 0x11C0;
-    __construct_array(array, (MWRuntimeObjectFunction) GeneratedCharacterCtor, NULL, 0x11B0, 8);
+    __construct_array(array, (MWRuntimeObjectFunction) __ct__10CCharacterFv, NULL, 0x11B0, 8);
     return self;
 }
 /**
