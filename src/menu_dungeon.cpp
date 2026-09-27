@@ -10,6 +10,7 @@
 #include <cstring>
 
 #include "battlemenu.hpp"
+#include "btactstatus.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "clsmes.hpp"
@@ -49,7 +50,8 @@ struct CHARA_CHANGE_MENU {
     float unk_08[6][2];
     s16 unk_38[6];
     float unk_44;
-    u8 unk_48[4];
+    s16 unk_48;
+    u8 unk_4a[2];
     s32 unk_4c;
     u8 unk_50[2];
     s8 unk_52;
@@ -953,34 +955,102 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
     }
 }
 
-#ifdef NON_MATCHING
-/** Buffer that holds the character-change screen's asynchronously read data. */
-static u_long128 *quick_change_buffer;
-/** Optional pairs of screen coordinates for the selectable party members. */
-static int *quick_change_positions;
-/** Texture block replaced temporarily by the character-change screen. */
-static int quick_change_texture_block;
-/** Party member currently highlighted by the character-change screen. */
-static int quick_change_selected;
-/** Mode controlling how cancellation leaves the character-change screen. */
-static int quick_change_state;
+/**
+ * Status of the party the character change menu picks from.
+ */
+extern CDngStatusData *ChangeStatusDataPt;
+
+/**
+ * Screen position of the character change ring's centre.
+ */
+extern int QuickCharaPos[2];
+
+/**
+ * Radius of the character change ring, which grows while the ring turns.
+ */
+extern float changeMenu_long;
+
+/**
+ * Places the character change menu's cursor on its selected row.
+ */
+static inline void SetChangeMenuCursor(void) {
+    ChangeMenu.unk_54 = CommonMenuMes3.text_x - 0x1C;
+    ChangeMenu.unk_58 = CommonMenuMes3.text_y - 4 + ChangeMenu.unk_01 * 24;
+}
 
 void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int mode) {
-    quick_change_buffer = MenuCalcBufAlignment(buffer);
-    quick_change_positions = positions;
-    quick_change_texture_block = texture_block;
-    quick_change_selected = UserStatus != NULL ? UserStatus->cur_chara : 0;
-    quick_change_state = mode != 0 ? 2 : 0;
-    CharaChangeInitToGL(quick_change_buffer, quick_change_selected);
+    LOADTEXTURE_INFO2 table[] = {
+        {chara_change_frame_image, 0, 0},
+        {NULL, 0, 0},
+    };
+    table[0].block_no = texture_block;
+    TexManager.DeleteTextureBlock(texture_block);
+    TexManager.CleanUpTextureList();
+    TexManager.LoadTextureBlockEX(-1, table);
+    chara_change_buf = buffer;
+    chara_change_buf = MenuCalcBufAlignment(buffer);
+    StartReadBG();
+    LoadFileBGMenuData("quickchr.pac", chara_change_buf);
+    CharaChangeReadFlag = 0;
+    ReadBG();
+    QuickCharaPos[0] = positions[0];
+    QuickCharaPos[1] = positions[1];
+    ChangeStatusDataPt = (CDngStatusData *) UserStatus;
+    if (ChangeStatusDataPt == NULL) {
+        return;
+    }
+    ChangeMenu.unk_00 = ChangeStatusDataPt->unk_04;
+    ItemVolumeStep.CheckItemVolume();
+    ChangeMenu.unk_4c = 0;
+    StayTex = TexManager.GetTexture("stayframe", -1);
+    CommonMenuMes3.text_x = 200;
+    CommonMenuMes3.text_y = 190;
+    changeMenu_long = 60.0f;
+    ChangeMenu.unk_5c = mode;
+    ChangeMenu.unk_01 = 0;
+    ChangeMenu.unk_52 = 0;
+    CUserStatus *status = (CUserStatus *) ChangeStatusDataPt;
+    int zone = status->res_limit_zone_current;
+    if (zone < 6 && zone >= 0) {
+        ChangeMenu.unk_52 = 1;
+    } else if (status->cur_chara == 5 && BtActStatus.unk_092 == 10) {
+        ChangeMenu.unk_52 = 2;
+    }
+    if (ChangeMenu.unk_5c != 0) {
+        ChangeMenu.unk_03 = 2;
+        SetChangeMenuCursor();
+    } else {
+        ChangeMenu.unk_03 = 0;
+        if (ChangeMenu.unk_52 == 1) {
+            ChangeMenu.unk_01 = 1;
+            SetChangeMenuCursor();
+        } else if (ChangeMenu.unk_52 == 2) {
+            printf(" not change area \n");
+            ChangeMenu.unk_01 = 1;
+            SetChangeMenuCursor();
+        }
+    }
+    ChangeMenu.unk_02 = ChangeStatusDataPt->party_size;
+    ChangeMenu.unk_48 = 0;
+    float step = 6.2831855f / ChangeMenu.unk_02;
+    int i;
+    if (ChangeMenu.unk_44 < 0.0f) {
+        i = 0;
+    }
+    for (i = 0; i < ChangeMenu.unk_02; i++) {
+        ChangeMenu.unk_38[i] = i - ChangeMenu.unk_00;
+        if (ChangeMenu.unk_38[i] < 0) {
+            ChangeMenu.unk_38[i] += ChangeMenu.unk_02;
+        }
+        float angle = 3.1415927f + step * ChangeMenu.unk_38[i];
+        ChangeMenu.unk_08[i][0] = changeMenu_long * cos(angle);
+        ChangeMenu.unk_08[i][1] = changeMenu_long * sin(angle);
+    }
     GamePad.SetAutoRepeat(0xF000, 30, 5);
     GamePad.MenuModeOn(0x78);
+    CharaChangeTexBlock = texture_block;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", StartQuickChange__FP1iPii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1348__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1349);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1350__3);
+
 int CharaChangeLoop(void) {
     if (ReadBGSync() == 0 && CharaChangeReadFlag == 0) {
         LOADTEXTURE_INFO2 table[] = {
@@ -1040,11 +1110,6 @@ int CharaChangeLoop(void) {
     }
     return result;
 }
-
-/**
- * Status of the party the character change menu picks from.
- */
-extern CDngStatusData *ChangeStatusDataPt;
 
 /**
  * Makes a character the party's leader.
@@ -1245,16 +1310,6 @@ int CharaChangeKey(void) {
     }
     return result;
 }
-
-/**
- * Screen position of the character change ring's centre.
- */
-extern int QuickCharaPos[2];
-
-/**
- * Radius of the character change ring, which grows while the ring turns.
- */
-extern float changeMenu_long;
 
 /**
  * Name of the frame texture drawn around the selected portrait.
