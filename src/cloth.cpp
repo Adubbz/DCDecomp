@@ -81,8 +81,7 @@ void CCloth::Clear() {
 }
 
 /**
- * Blends two bone transforms for a stretched vertex, on the vector unit. The
- * calls in this file link to chararead's copy.
+ * Blends two bone transforms for a stretched vertex, on the vector unit.
  */
 static void StretchBind2(float *first, float *second, float *parameters) {
     asm {
@@ -113,8 +112,7 @@ static void StretchBind2(float *first, float *second, float *parameters) {
 }
 
 /**
- * Gives the length of a three-component vector, on the vector unit. The calls
- * in this file link to chararead's copy.
+ * Gives the length of a three-component vector, on the vector unit.
  */
 static float vuabs(float *vector) {
     asm {
