@@ -335,7 +335,7 @@ int CheckHealZone(void) {
     row = (80.0f + position[2]) / 160.0f;
     parts_no = NowDngMap->cells[row * 20 + column].parts_no;
 
-    if (parts_no == -1) {
+    if (parts_no == MAP_PARTS_NONE) {
         return 0;
     }
 
