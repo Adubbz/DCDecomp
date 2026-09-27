@@ -239,12 +239,9 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 }
             }
         }
-        if (blur > 0) {
-            alpha = 0x80;
-        }
         for (j = 0; j < 14; j++) {
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x15C);
-            sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
+            sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, blur > 0 ? 0x80 : alpha, 0));
             for (i = 0; i < 21; i++) {
                 int x = (i << 9) + 0x6C00;
                 int v = j << 8;
