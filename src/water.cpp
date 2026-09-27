@@ -65,79 +65,160 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
 }
 #ifdef NON_MATCHING
 int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
-    sceVu0FMATRIX local_to_world;
-    sceVu0FMATRIX local_to_screen;
+    int first;
+    int word = 0;
+    sceGsTex0 tex0;
+    float rgba[4];
+
+    rgba[0] = color[0];
+    rgba[1] = color[1];
+    rgba[2] = color[2];
+    rgba[3] = color[3];
+    u_int end[4] = {0x11000000, 0, 0, 0};
+    float uv_base[4] = {320.0f, 112.0f, 0.0f, 0.0f};
+    u_int first_kick[4] = {0, 0, 0, 0x14000000};
+    u_int kick[4] = {0, 0, 0, 0x17000000};
+    u_int unpack[4] = {0, 0, 0, 0x6C008000};
     sceVu0FVECTOR row_step;
     sceVu0FVECTOR column_step;
+    sceVu0FMATRIX local_to_world;
+    sceVu0FMATRIX local_to_screen;
+    sceVu0FVECTOR vertices[64][64];
+    sceVu0FVECTOR uvs[64][64];
     sceVu0FVECTOR position;
-    sceVu0FVECTOR transformed;
-    sceVu0FVECTOR normal;
-    CTexture *texture;
-    int word = 0;
+    int i;
+    float fi;
 
-    union {
-        u_int *pointer;
-        float value;
-    } packet_address;
-
-    packet_address.pointer = output;
-    visual.unk_010[2] = packet_address.value;
-
+    visual.vu_data = output;
     frame.GetLWMatrix(local_to_world);
     sceVu0MulMatrix(local_to_screen, info->view_screen, local_to_world);
-    for (int axis = 0; axis < 3; axis++) {
-        row_step[axis] = (vertex[1][axis] - vertex[0][axis]) / (float) (rows - 1);
-        column_step[axis] = (vertex[2][axis] - vertex[0][axis]) / (float) (columns - 1);
+    for (i = 0; i < 3; i++) {
+        row_step[i] = (vertex[1][i] - vertex[0][i]) / (float) (rows - 1);
+        column_step[i] = (vertex[2][i] - vertex[0][i]) / (float) (columns - 1);
     }
-    row_step[3] = 0.0f;
-    column_step[3] = 0.0f;
+    row_step[3] = column_step[3] = 0.0f;
+    row_step[1] = column_step[1] = 0.0f;
     pretest(local_to_screen, column_step);
 
-    texture = TexManager.GetTexture("work", -1);
-    if (unk_0A4 == 0) {
-        word = SetTEX0(output, texture->tex0 & ~(4ULL << 32), 0);
-    } else {
-        word = 16;
-    }
-
-    // Each grid cell contributes the two vertices of a triangle strip row.
-    for (int row = 0; row < rows - 1; row++) {
-        for (int column = 0; column < columns; column++) {
-            for (int side = 0; side < 2; side++) {
-                int source_row = row + side;
-                int index = column + source_row * columns;
-                for (int axis = 0; axis < 3; axis++) {
-                    position[axis] = vertex[0][axis] + (float) source_row * row_step[axis] +
-                                     (float) column * column_step[axis];
-                }
-                position[1] += height[index] * unk_09C;
-                position[3] = 1.0f;
-                Trans_AddCell(transformed, position);
-
-                int left = column > 0 ? index - 1 : index;
-                int right = column + 1 < columns ? index + 1 : index;
-                int above = source_row > 0 ? index - columns : index;
-                int below = source_row + 1 < rows ? index + columns : index;
-                normal[0] = (height[left] - height[right]) * unk_0A0;
-                normal[1] = 1.0f;
-                normal[2] = (height[above] - height[below]) * unk_0A0;
-                normal[3] = 0.0f;
-                sceVu0Normalize(normal, normal);
-
-                float *vertex_data = (float *) &output[word];
-                sceVu0CopyVector(vertex_data, transformed);
-                vertex_data += 4;
-                vertex_data[0] = (float) color[0];
-                vertex_data[1] = (float) color[1];
-                vertex_data[2] = (float) color[2];
-                vertex_data[3] = (float) color[3];
-                sceVu0CopyVector(vertex_data + 4, normal);
-                word += 12;
-            }
+    first = 0;
+    position[3] = 1.0f;
+    for (i = 0, fi = 0.0f; i < rows; i++, fi += 1.0f) {
+        position[0] = vertex[0][0] + fi * row_step[0];
+        position[1] = vertex[0][1] + fi * row_step[1];
+        position[2] = vertex[0][2] + fi * row_step[2];
+        float *above;
+        float *h = &height[i * columns];
+        above = h - columns;
+        if (i == 0) {
+            above = h;
+        }
+        sceVu0FVECTOR *out = vertices[i];
+        sceVu0FVECTOR *uv = uvs[i];
+        for (int j = 0; j < columns; j++) {
+            Trans_AddCell(*out++, position);
+            position[1] = *h * unk_09C;
+            (*uv)[0] = uv_base[0] + unk_0A0 * (*above - *h);
+            (*uv)[1] = uv_base[1] + unk_0A0 * (h[0] - h[1]);
+            uv++;
+            h++;
+            above++;
         }
     }
-    visual.unk_0C = word >> 2;
-    return visual.unk_0C;
+
+    CTexture *texture = TexManager.GetTexture(TexManager.GetTextureHandle("work", -1));
+    tex0 = *(sceGsTex0 *) &texture->tex0;
+    tex0.bits.tcc = 0;
+    if (unk_0A4 != 0) {
+        word += 16;
+    } else {
+        word += SetTEX0(output, *(u_long *) &tex0, 0);
+    }
+
+    for (i = 0, fi = 0.0f; i < rows - 1; i++, fi += 1.0f) {
+        int remaining = columns;
+        float *h = &height[i * columns];
+        float *below = h + columns;
+        float *above = h - columns;
+        if (i == 0) {
+            above = h;
+        }
+        u_long128 *top = (u_long128 *) vertices[i];
+        u_long128 *bottom = (u_long128 *) vertices[i + 1];
+        u_long128 *uv_top = (u_long128 *) uvs[i];
+        u_long128 *uv_bottom = (u_long128 *) uvs[i + 1];
+        while (remaining > 0) {
+            int count = 27;
+            if (remaining < 27) {
+                count = remaining;
+            }
+            int vertex_count = count * 2;
+            int qwc = 0;
+            if (unk_0A4 == 0) {
+                *(u_long128 *) &output[word] = *(u_long128 *) unpack;
+            }
+            int unpack_word = word + 3;
+            if (unk_0A4 != 0) {
+                word += 8;
+                qwc++;
+            } else {
+                u_int nloop = vertex_count | 0x8000;
+                u_int *tag = &output[word + 4];
+                tag[0] = nloop;
+                tag[1] = 0x309E4000;
+                tag[2] = 0x413;
+                tag[3] = 0;
+                word += 8;
+                qwc++;
+            }
+            if (unk_0A4 == 0) {
+                output[word] = vertex_count;
+            }
+            word += 4;
+            qwc++;
+            u_long128 *xyz = (u_long128 *) &output[word];
+            u_long128 *rgbaq = xyz + vertex_count;
+            u_long128 *st = rgbaq + vertex_count;
+            for (int k = 0; k < count; k++) {
+                *xyz++ = *top++;
+                *xyz++ = *bottom++;
+                *rgbaq++ = *(u_long128 *) rgba;
+                *rgbaq++ = *(u_long128 *) rgba;
+                *st++ = *uv_top++;
+                *st++ = *uv_bottom++;
+            }
+            // Consecutive chunks share a column so the strip stays joined.
+            h--;
+            below--;
+            above--;
+            top--;
+            bottom--;
+            uv_top--;
+            uv_bottom--;
+            word += count * 24;
+            qwc += count * 6;
+            if (unk_0A4 != 0) {
+                word += 4;
+            } else {
+                output[unpack_word] |= qwc << 16;
+                if (first == 0) {
+                    *(u_long128 *) &output[word] = *(u_long128 *) first_kick;
+                    first = 1;
+                } else {
+                    *(u_long128 *) &output[word] = *(u_long128 *) kick;
+                }
+                word += 4;
+            }
+            remaining -= 27;
+        }
+        if (unk_0A4 != 0) {
+            word += 4;
+        } else {
+            *(u_long128 *) &output[word] = *(u_long128 *) end;
+            word += 4;
+        }
+    }
+    visual.vu_size = word >> 2;
+    return visual.vu_size;
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);

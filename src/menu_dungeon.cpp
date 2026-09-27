@@ -783,29 +783,168 @@ static void DunEnterDraw(void) {
 
 #ifdef NON_MATCHING
 static void DunEnterBoardWaku(int x, int y, int alpha) {
-    CRect_i_ source(0, 0, 160, 32);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(x, y - 1, 0x20, 0xFA), CRect_i_(0, 0, 0x20, 0xF8), alpha);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 0x20, y, 0x1CC, 0x20), CRect_i_(0x20, 0, 0x1B8, 0x20), alpha);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 0x1EC, y - 1, 0x28, 0xFA), CRect_i_(0x1D8, 0, 0x28, 0xF8), alpha);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 0x20, y + 0xD9, 0x1CC, 0x20), CRect_i_(0x20, 0xD8, 0x1B8, 0x20), alpha);
 
-    DrawMenu2DSprite(DunLogBoard, CRect_i_(x, y, 160, 32), source, alpha);
-    DrawMenu2DSprite(DunLogBoard, CRect_i_(x, y + 32, 160, 168),
-                     CRect_i_(0, 32, 160, 168), alpha);
-    DrawMenu2DSprite(DunLogBoard, CRect_i_(x, y + 200, 160, 32),
-                     CRect_i_(0, 200, 160, 32), alpha);
+    // The scroll bar eases toward the list's scroll position and shrinks with a longer list.
+    int count = DEnterMenu.floor_count;
+    if (count < 5) {
+        count = 5;
+    }
+    int draw_x = x + 0x1FC;
+    int draw_y = (int) (DEnterMenu.unk_008 += ((int) (32.0f + y + 108.0f * DEnterMenu.scroll_top / count) - DEnterMenu.unk_008) / 4.0f);
+    int height = (int) (540.0f / count);
+    while (y + 0x98 < draw_y + (height + 8)) {
+        height--;
+    }
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y, 8, 4), CRect_i_(0x60, 0x60, 8, 4), alpha);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y + 4, 8, height), CRect_i_(0x60, 0x64, 8, 4), alpha);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y + height + 4, 8, 4), CRect_i_(0x60, 0x68, 8, 4), alpha);
+
+    draw_x = x + 0x28;
+    draw_y = y - 0x14;
+    int dungeon = DEnterMenu.dungeon;
+    int icon = dungeon;
+    if (icon > 5) {
+        icon = 5;
+    }
+    int u = (icon / 3) << 8;
+    int v = (icon % 3) * 40 + 0x100;
+    if (dungeon == 6) {
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y, 0x80, 0x23), CRect_i_(0x20, 0x80, 0x80, 0x24), alpha);
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x + 0x80, draw_y, 0x80, 0x23), CRect_i_(0x20, 0xA4, 0x80, 0x24), alpha);
+    } else {
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y, 0x100, 0x28), CRect_i_(u, v, 0x100, 0x28), alpha);
+    }
 }
 
 static void DunEnterBoard(int x, int y, int alpha) {
-    int row;
-    int top = y + 26;
-    int bottom = top + 200;
+    float lane;
+    int top;
+    int row_y;
+    int bottom;
+    int dim;
+    int i;
+    int rule_x;
+    int column_x;
 
-    DunEnterBoardWaku(x, y, alpha);
-    for (row = 0; row < 5 && DEnterMenu.scroll_top + row < DEnterMenu.floor_count; row++) {
-        int floor = DEnterMenu.scroll_top + row;
-        int row_y = top + row * 40;
+    lane = x;
+    top = y + 0x19;
+    bottom = y + 0xEF;
 
-        DrawDunEnterFloorName(x + 18, row_y, floor + 1, top, bottom, alpha);
-        DrawGetAtoraNumBoard(floor, x + 70, row_y, top, bottom, alpha);
-        DrawEnemyNum(x + 146, row_y + 16, top, bottom, DEnterMenu.kills[floor], alpha);
+    // Short lists ease toward their scroll position; longer ones are placed by the scroll bar.
+    int rows = DEnterMenu.floor_count;
+    if (rows < 5) {
+        rows = 5;
     }
+    int target = y + 0x1C - DEnterMenu.scroll_top * 40;
+    int step = (int) ((float) target - DEnterMenu.unk_004);
+    DEnterMenu.unk_004 += step >> 2;
+    if (abs(step) < 2) {
+        DEnterMenu.unk_004 = target;
+    }
+    row_y = (int) DEnterMenu.unk_004;
+
+    CRect_i_ rule_source(0x20, 0x20, 0x28, 7);
+    dim = (alpha * 80) >> 7;
+    rule_x = (int) (32.0f + lane);
+    if (DEnterMenu.scroll_top == 0) {
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x - 10, 0x73, 10, 3), rule_source, dim);
+        for (int j = 0; j < 11; j++) {
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x, 0x73, 0x28, 3), rule_source, dim);
+            rule_x += 0x28;
+        }
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x, 0x73, 10, 3), rule_source, dim);
+    }
+
+    int icon = DEnterMenu.dungeon;
+    if (icon > 5) {
+        icon = 5;
+    }
+
+    column_x = x + 0x20;
+    for (i = 0; i < 100; i++) {
+        int source = 0x20;
+        int length = 0x28;
+        int position = row_y;
+        lane = column_x;
+        if (!(row_y < bottom)) {
+            break;
+        }
+        if (row_y + 0x28 <= top) {
+            row_y += 0x28;
+            continue;
+        }
+        MenuTextureClip(position, source, length, top, bottom);
+        CRect_i_ edge_source(0x20, source, 10, length);
+        DrawMenu2DSprite(DunLogBoard, CRect_i_((int) (lane - 10.0f), position, 10, length), edge_source, dim);
+        for (int j = 0; j < 12; j++) {
+            DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 0x28, length), CRect_i_(0x20, source, 0x28, length),
+                             dim);
+            lane += 40.0f;
+        }
+        DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 10, length), edge_source, dim);
+        if (DEnterMenu.floor_count - 1 < i) {
+            row_y += 0x28;
+            continue;
+        }
+
+        position = row_y + 4;
+        DrawDunEnterFloorName(column_x, position, i + 1, top, bottom, alpha);
+        int dungeon = DEnterMenu.dungeon;
+        if (i == maxFloorTbl__4[dungeon] - 1) {
+            int unused[6] = {20, 0, 30, 60, 20, 16};
+            int draw_x = column_x + 0x82;
+            position = row_y + 6;
+            length = 0x18;
+            source = dungeon * 24 + 0x20;
+            MenuTextureClip(position, source, length, top, bottom);
+            if (position < bottom) {
+                DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0xDC, length),
+                                 CRect_i_(0xFC, source, 0xDC, length), alpha);
+            }
+        } else if (dungeon < 6) {
+            int draw_x = column_x + 0x72;
+            position = row_y;
+            length = 0x20;
+            source = 0x20;
+            MenuTextureClip(position, source, length, top - 10, bottom);
+            if (position < bottom) {
+                int remaining = (u8) DEnterMenu.max_atra[i] - (u8) DEnterMenu.collected_atra[i];
+                for (int k = 0; k < remaining; k++) {
+                    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length),
+                                     CRect_i_(0x48, source, 0x20, length), alpha);
+                    draw_x += 0x1A;
+                }
+                for (int k = 0; k < (u8) DEnterMenu.collected_atra[i]; k++) {
+                    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length),
+                                     CRect_i_(0x68, source, 0x20, length), alpha);
+                    draw_x += 0x1A;
+                }
+            }
+        }
+        row_y += 0x28;
+    }
+
+    MenuTextureReload(DunLogBoard->block);
+    row_y = (int) DEnterMenu.unk_004;
+    row_y--;
+    for (int floor = 0; floor < 100; floor++) {
+        if (floor == maxFloorTbl__4[DEnterMenu.dungeon] - 1) {
+            break;
+        }
+        if (DEnterMenu.floor_count - 1 < floor) {
+            continue;
+        }
+        int board_x = x + 0x16E;
+        if (row_y < bottom) {
+            DrawGetAtoraNumBoard(floor, board_x, row_y, top, bottom, alpha);
+        }
+        row_y += 0x28;
+    }
+    DunEnterBoardWaku(x, y, alpha);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoardWaku__Fiii);
@@ -833,22 +972,47 @@ static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alph
     }
 }
 
-#ifdef NON_MATCHING
-static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, int alpha) {
-    int collected = (u8) DEnterMenu.collected_atra[floor];
-    int maximum = (u8) DEnterMenu.max_atra[floor];
+/**
+ * Returns where a floor row's kill count starts, given where its Atla count starts.
+ */
+static inline int KillCountX(int x) {
+    return x + 0x36;
+}
 
-    if (y < bottom && y + 36 > top) {
-        DrawDunNumberClip(x + 5, y + 8, top, bottom, collected / 10, alpha);
-        DrawDunNumberClip(x + 17, y + 8, top, bottom, collected % 10, alpha);
-        DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 34, y + 1, 30, 35),
-                         CRect_i_(179, 32, 30, 35), alpha);
-        DrawEnemyNum(x + 122, y + 16, top, bottom - 6, maximum, alpha);
+static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, int alpha) {
+    int position = y;
+    int source = 0x20;
+    int length = 0x24;
+
+    if (!(top < y + 0x24) || bottom <= y) {
+        return;
+    }
+    MenuTextureClip(position, source, length, top, bottom);
+    DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 0x2B, length), CRect_i_(0x88, source, 0x2B, length), alpha);
+
+    position = y + 8;
+    int collected = (u8) DEnterMenu.collected_atra[floor];
+    if (top < position) {
+        DrawDunNumberClip(x + 5, position, top, bottom, collected, alpha);
+    }
+    position = y + 0x10;
+    int maximum = (u8) DEnterMenu.max_atra[floor];
+    DrawDunNumberClip(x + 0x1B, position, top, bottom, maximum, alpha);
+
+    int kills = DEnterMenu.kills[floor];
+    x = KillCountX(x);
+    position = y + 1;
+    source = 0x20;
+    length = 0x23;
+    MenuTextureClip(position, source, length, top, bottom);
+    if (position < bottom) {
+        DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 0x1E, length), CRect_i_(0xB3, source, 0x1E, length), alpha);
+    }
+    position = y + 0x10;
+    if (position < bottom - 4) {
+        DrawEnemyNum(x + 0x44, position, top, bottom - 6, kills, alpha);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DrawGetAtoraNumBoard__Fiiiiii);
-#endif
 
 static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int alpha) {
     int position;

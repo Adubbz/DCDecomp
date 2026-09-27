@@ -238,7 +238,7 @@ carve_part(main.sbss.part5b.s
            main.sbss.part5d.s=2A33A0-2A33A4)
 carve_part(main.sbss.part4b.s
            main.sbss.part4b.s=2A25B8-2A264C
-           main.sbss.snd-tail.s=2A2654-2A2728
+           main.sbss.snd-tail.s=2A2654-2A26F8
            main.sbss.part4h.s=2A2730-2A2740
            main.sbss.part4c.s=2A27AC-2A294C
            main.sbss.part4g.s=2A29A4-2A29AC
@@ -301,7 +301,6 @@ carve_part(main.data.part6.s
            main.data.menu_dungeon-d.s=2943C0-2943E0
            main.data.part6j.s=295644-295660
            main.data.eastking-tail.s=2956D0-2956F0
-           main.data.part6d.s=295830-295840
            main.data.part6b.s=2959B0-2959C0
            main.data.battle_globals-b.s=295EF0-295FC0)
 carve_part(main.data.part4.s
@@ -309,7 +308,6 @@ carve_part(main.data.part4.s
            main.data.part4b.s=2668C0-266910
            main.data.runeffect-tail.s=266920-266B70
            main.data.part4m.s=266B90-266E10
-           main.data.part4m-266E90.s=266E90-266ED0
            main.data.part4c.s=266FB0-269320
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
            main.data.part4g-26AE40.s=26AE40-26AE50

@@ -152,6 +152,10 @@ def _collect_nodes(memory: Any, profile: dict[str, Any], head: int) -> dict[str,
     capture = collect_regalloc_list(memory, profile, head, 32767)
     for node in capture["nodes"]:
         try:
+            node["raw"] = memory.read(node["address"], 30).hex()
+        except Exception:
+            pass
+        try:
             node["interferes_with"] = _interference(memory, profile, node["address"], node["virtual_register"])
         except Exception as exc:
             node["interference_error"] = str(exc)

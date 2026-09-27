@@ -81,7 +81,6 @@ extern int func_num;
 
 /* The player's character in the interior, and the villagers who can stand in it. */
 extern CCharacter *Chara;
-extern CNPCharacter EdVillager[10];
 
 /* Frame of the interior's animated texture, and the clock that advances it. */
 extern int setTexAnimCnt;
@@ -769,8 +768,8 @@ int EditInLoop() {
     if (event_text == 1) {
         start_event_no = 150;
     }
-    if (GameMode != 4 && ((CMainChara *) Chara)->in_trigger != 0) {
-        int trigger = ((CMainChara *) Chara)->trigger_event;
+    if (GameMode != 4 && ((CMainChara *) Chara)->move_info.landed != 0) {
+        int trigger = ((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind;
         if (trigger > 0) {
             start_event_no = trigger;
         }
@@ -1065,7 +1064,7 @@ static void MoveCharacter() {
 
     EdMoveCharaInfo.time = NowTime;
     EdMoveCharaInfo.camera = &MainCamera;
-    EdMoveCharaInfo.follow = &ViewCamera;
+    EdMoveCharaInfo.view_camera = &ViewCamera;
     EdMoveCharaInfo.key_lock = 0;
     EdMoveCharaInfo.chara = Chara;
     EdMoveCharaInfo.interior = 1;
@@ -1073,7 +1072,7 @@ static void MoveCharacter() {
     EdMoveCharaInfo.parts_count = parts_num;
     EdMoveCharaInfo.points = EdInInfo->event_points;
     EdMoveCharaInfo.point_count = 32;
-    EdMoveCharaInfo.unk_a0 = 0;
+    EdMoveCharaInfo.acted = 0;
     EdMoveChara();
     if (EdDebugCameraFlag != 0 && GamePad.Down(0x20) != 0) {
         fix_camera = !fix_camera;
@@ -1095,7 +1094,7 @@ static void MoveCharacter() {
         RunEvent(EdMoveCharaInfo.event_no, &MainCamera);
         return;
     }
-    if (EdMoveCharaInfo.unk_a0 == 0 && EdPadDown(0x40, 1) != 0) {
+    if (EdMoveCharaInfo.acted == 0 && EdPadDown(0x40, 1) != 0) {
         sceVu0FVECTOR position;
         sceVu0FVECTOR start = {-40.5f, 0.0f, -12.55f, 1.0f};
         sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};

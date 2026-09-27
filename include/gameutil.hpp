@@ -407,10 +407,10 @@ void AreaAddPos(int *area, int *pos, int *out);
  * Records what a step of a character ran into.
  */
 struct MoveCheckInfo {
-    s32 unk_00; /**< 1 where the step landed on a polygon. */
+    s32 landed; /**< 1 where the step landed on a polygon. */
     u8 unk_04[0xC];
     CCPoly ground_poly; /**< Polygon found below the step. */
-    s32 unk_60;         /**< 1 where the step found ground below it. */
+    s32 ground_found;   /**< 1 where the step found ground below it. */
     u8 unk_64[0xC];
     CCPoly poly; /**< Polygon that the step landed on. */
     sceVu0FVECTOR ground_point; /**< Point where the step found ground below it. */

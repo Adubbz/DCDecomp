@@ -829,13 +829,6 @@ int FishingCheckUkiHook() {
     return 0;
 }
 
-/**
- * Advances the line, float and hook one step from the rod's position.
- *
- * @mangled FishLineStep__FPfPf
- * @address 0x1AA340
- * @size 0xDA8
- */
 void FishLineStep(float *rod_position, float *unused) {
     sceVu0FVECTOR hook_from;
     sceVu0FVECTOR hook_to;

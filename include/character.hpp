@@ -575,10 +575,7 @@ public:
     s32 unk_11C4;
     s32 unk_11C8;
     s32 unk_11CC;
-    s32 in_trigger;     /**< Non-zero while the character stands in an event trigger. */
-    u8 unk_11D4[0x4c];
-    s16 trigger_event;  /**< Event the trigger asks for; zero once it has been run. */
-    u8 unk_1222[0x7e];
+    MoveCheckInfo move_info; /**< What the character's last step ran into. */
 
     /**
      * Draws the player character.

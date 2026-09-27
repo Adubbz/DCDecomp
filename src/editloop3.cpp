@@ -7327,7 +7327,7 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
         int available = npcs[i].initialized != 0 && npcs[i].draw_enabled != 0;
         if (!available)
             continue;
-        npcs[i].unk_1468 = 0;
+        npcs[i].talk_target = 0;
         character->GetPosition(character_position);
         npcs[i].chara.GetPosition(npc_position);
         float height = character_position[1] - npc_position[1];

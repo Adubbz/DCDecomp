@@ -511,6 +511,86 @@ def install(arguments=()):
 
         Entry()
 
+    trace = os.environ.get('STATEFIX_TRACE')
+    if trace:
+        # Log each function's codegen entry and every optimizer temporary
+        # (0x0042E8A0) with its caller, in order, to the named file.
+        log = open(trace, 'w')
+
+        class TraceTemp(gdb.Breakpoint):
+            def __init__(self):
+                super().__init__('*0x0042E8A0', internal=True)
+
+            def stop(self):
+                esp = int(gdb.parse_and_eval('$esp'))
+                log.write('temp %08x keep=%d\n' % (u32(esp), u32(esp + 8) & 0xff))
+                return False
+
+        class TraceEntry(gdb.Breakpoint):
+            def __init__(self):
+                super().__init__('*' + hex(CODEGEN), internal=True)
+
+            def stop(self):
+                try:
+                    esp = int(gdb.parse_and_eval('$esp'))
+                    record = u32(u32(esp + NAME_ARGUMENT) + NAME_RECORD)
+                    log.write('codegen %s\n' % cstring(record + NAME_TEXT))
+                except gdb.MemoryError:
+                    log.write('codegen ?\n')
+                log.flush()
+                return False
+
+        class TraceWrap(gdb.Breakpoint):
+            def __init__(self, address):
+                super().__init__('*' + hex(address), internal=True)
+                self.address = address
+
+            def stop(self):
+                esp = int(gdb.parse_and_eval('$esp'))
+                log.write('wrap %08x from %08x\n' % (self.address, u32(esp)))
+                return False
+
+        TraceTemp()
+        TraceEntry()
+        for address in (0x00477A30, 0x0046ACE0):
+            TraceWrap(address)
+
+    poison = os.environ.get('STATEFIX_POISON')
+    if poison:
+        # Fill arena storage the compiler hands out without clearing, to show
+        # whether anything it compiles reads that residue. Arena_Grow's normal
+        # return leaves the new space at descriptor+12 for descriptor+16 bytes;
+        # 0x00432B30 rewinds the expression arena over its old contents.
+        fill = int(poison, 0) & 0xff
+        inferior = gdb.selected_inferior()
+
+        def paint(address, size):
+            if 0 < size < 0x1000000:
+                inferior.write_memory(address, bytes([fill]) * size)
+
+        class GrowReturn(gdb.Breakpoint):
+            def __init__(self):
+                super().__init__('*0x00432859', internal=True)
+
+            def stop(self):
+                descriptor = u32(int(gdb.parse_and_eval('$esp')) + 4)
+                paint(u32(descriptor + 12), u32(descriptor + 16))
+                return False
+
+        class RewindReturn(gdb.Breakpoint):
+            def __init__(self):
+                super().__init__('*0x00432B72', internal=True)
+
+            def stop(self):
+                block = u32(0x0052B5F4)
+                while block:
+                    paint(block + 0x10, u32(block + 8) - 0x10)
+                    block = u32(block)
+                return False
+
+        GrowReturn()
+        RewindReturn()
+
     gdb.execute('continue')
     if not quiet:
         say('statefix: %d pragmas, %d constant nodes, %d argument reads\n'
@@ -538,6 +618,19 @@ def drive(arguments, executable=None, verify=False, quiet=False):
             os.path.abspath(__file__)),
         'python import statefix; statefix.install(%r)' % (list(arguments),),
     ]
+    capture = os.environ.get('STATEFIX_CAPTURE')
+    if capture:
+        # `STATEFIX_CAPTURE=<dir>[:<function>]` also records tools/mwcc-debug's
+        # PCode and allocator state, under the compiler state statefix sets.
+        directory, _, function = capture.partition(':')
+        tool = os.path.join(REPO, 'tools', 'mwcc-debug')
+        start = 'mwcc-capture start --profile %s --output %s --executable %s' % (
+            os.path.join(tool, 'profiles', 'mwccmips-2.3.3-000921.json'),
+            os.path.abspath(directory), executable or COMPILER)
+        if function:
+            start += ' --function %s' % function
+        commands[-1:-1] = ['source %s' % os.path.join(tool, 'gdb_capture.py'), start]
+        commands.append('mwcc-capture stop')
     if quiet:
         # gdb's own chatter would otherwise reach the build log as if the
         # compiler had written it. The inferior keeps the real stdout.

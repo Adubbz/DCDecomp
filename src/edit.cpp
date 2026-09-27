@@ -1774,13 +1774,6 @@ void EdSaveFrameImageInit() {
     frame_image_flag = 0;
 }
 
-/**
- * Runs one frame of the editor's message menu and reports when it closes.
- *
- * @mangled EdMenuLoop__FP6ClsMes
- * @address 0x173F00
- * @size 0x1EC
- */
 int EdMenuLoop(ClsMes *message) {
     if (message == NULL) {
         return 1;

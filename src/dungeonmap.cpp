@@ -1528,7 +1528,6 @@ int joinRoom(int a, int b);
  */
 #ifdef NON_MATCHING
 int joinRoom(int a, int b) {
-    int cy;
     int done;
     int tx;
     int ty;
@@ -1537,6 +1536,7 @@ int joinRoom(int a, int b) {
     int step;
     int i;
     int cx;
+    int cy;
     int steps;
     register int dx;
     register int dy;

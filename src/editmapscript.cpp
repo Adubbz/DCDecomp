@@ -116,7 +116,6 @@ extern "C" CDataAlloc2<1> *WorkBuffer__2;
 extern CFrame *ECursorFrame;
 extern int EdDebugMoveFlag;
 extern CRunEffect RunEffect;
-extern VILLAGER_INFO EdVillagerInfo;
 extern CCameraFollow MainCamera;
 extern CCameraFollow EditCamera;
 extern CCameraFollow EditCamera;
@@ -191,7 +190,6 @@ extern CDataAlloc2<1> EdWorkBuffer;
 extern CDataAlloc2<1> EdMenuBuffer;
 
 /* Every villager the editor can place, one record each. */
-extern CNPCharacter EdVillager[10];
 
 /* The cursors drawn over a villager who can be talked to, one who cannot, and
    the character the event wants the player to notice. */

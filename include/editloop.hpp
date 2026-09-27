@@ -197,6 +197,9 @@ struct VILLAGER_INFO {
     sceVu0FVECTOR rotation; /**< Initial villager rotation. */
 };
 
+/** Runtime metadata for the ten villagers selected for the current period. */
+extern VILLAGER_INFO EdVillagerInfo[10];
+
 /**
  * Stores the fog parameters belonging to one lighting preset.
  */

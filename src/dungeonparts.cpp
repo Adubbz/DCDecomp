@@ -133,13 +133,13 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     int j;
     int held;
     int count;
-    int pick;
-    int tries;
     int item_no;
     float roll;
     int wanted;
     int i;
     s16 *table;
+    int tries;
+    int pick;
 
     // Retail copies from the pointer table itself rather than from the dungeon's rate list.
     memcpy(rate, &ItemSetRateTbl[dungeon], 0x17C);
@@ -187,8 +187,9 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
         }
     } while (1);
     if (small != 0) {
+        j = 0;
         count = 0;
-        for (j = 0; list[n].item[j] != -1; j++) {
+        for (; list[n].item[j] != -1; j++) {
             item_no = list[n].item[j];
             if (item_no >= 0x51 && item_no < 0x101) {
                 candidate[count++] = item_no;

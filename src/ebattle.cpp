@@ -3,13 +3,29 @@
 #include <libvu0.h>
 
 #include <cmath>
+#include <cstdlib>
 
 #include "camerafollow.hpp"
 #include "character.hpp"
+#include "clsmes.hpp"
+#include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
+#include "editground.hpp"
 #include "editloop.hpp"
+#include "editloop3.hpp"
+#include "effectgroup.hpp"
+#include "effectmacro.hpp"
+#include "fish.hpp"
+#include "fishing.hpp"
+#include "mainselect.hpp"
+#include "mapparts.hpp"
+#include "menu_save.hpp"
+#include "npcharacter.hpp"
+#include "savedata.hpp"
+#include "shop.hpp"
+#include "sysmes.hpp"
 #include "gamepad.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
@@ -154,12 +170,6 @@ void EBFinishSound(int do_fade_bgm, int do_play_fanfare) {
     play_fanfare = do_play_fanfare;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/ebattle", @1686);
-INCLUDE_RODATA("asm/nonmatchings/ebattle", @1700);
-INCLUDE_RODATA("asm/nonmatchings/ebattle", @1701);
-INCLUDE_RODATA("asm/nonmatchings/ebattle", @1702);
-INCLUDE_RODATA("asm/nonmatchings/ebattle", @1703);
-INCLUDE_RODATA("asm/nonmatchings/ebattle", @1704);
 
 extern int ok_draw_cnt;
 extern int ok_effect_button;
@@ -171,6 +181,10 @@ extern int fishing_mes;
 extern float viewAngleH;
 extern float viewAngleV;
 extern float camera_near_dist;
+extern float camera_far_dist;
+extern int EdDebugMoveFlag;
+extern int EdDebugCameraFlag;
+extern CEffectGroup EdEffectGroup;
 
 /**
  * Looks up the textures the event battle's opening needs.
@@ -1037,59 +1051,1134 @@ void EdASetViewAngle(float horizontal, float vertical) {
     viewAngleV = vertical;
 }
 
-#ifdef NON_MATCHING
+/**
+ * Reports whether a villager's model is set up and enabled for drawing.
+ */
+static inline int IsVillagerActive(CNPCharacter *villager) {
+    bool active = false;
+    if (villager->initialized != 0 && villager->draw_enabled != 0) {
+        active = true;
+    }
+    return active;
+}
+
 void EdMoveChara() {
-    CCharacter *character = EdMoveCharaInfo.chara;
-    CCamera *camera = EdMoveCharaInfo.camera;
-    if (character == NULL || camera == NULL) {
-        return;
-    }
+    int near;
+    CCamera *view_camera;
+    int key_lock;
+    CEditGround *ground;
+    float angle;
+    float time;
+    int motion;
+    float move_z;
+    float move_x;
+    float ly;
+    float lx;
+    float now_time;
+    CCPoly *polys;
+    int count;
+    int event;
+    int shallow;
+    int left_clear;
+    float *normal;
+    CCameraFollow *camera;
+    int keep_distance;
+    CMainChara *chara;
+    int interior;
+    float float_weight;
+    float hook_weight;
+    int follow_line;
+    float motion_time;
+    float speed;
+    float stick;
+    CFrame *frame;
+    float left_distance;
+    float right_distance;
+    float span;
+    int wall_count;
+    int hits;
+    int wall_hit;
+    int right_clear;
+    CCPoly *walls;
+    int last;
+    float away;
+    int below;
+    int drift;
+    float rx;
+    float ry;
+    float turn;
+    float lowest;
+    float drop;
+    float behind_angle;
+    int turn_side;
+    int acted;
+    int event_no;
+    int system_event_no;
+    ED_EVENT_POINT *points;
+    int point_count;
+    ED_EVENT_PARAM *param;
+    int item;
+    int refused;
+    int attach;
+    int status;
+    float reel_turn;
+    float pull;
+    char *file;
+    float tug;
+    BG_READ_INFO *read;
+    u_int *pack;
+    int rest;
+    int kind;
+    int *caught;
+    CFish *fish;
+    float water;
+    float fall_height;
+    float rise;
+    float walked;
+    s16 light;
+    int i;
 
-    if (EdMoveCharaInfo.key_lock == 0) {
-        chara_mode &= ~1;
-    } else {
+    static sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 0.0f};
+
+    EdMoveCharaInfo.event_no = -1;
+    EdMoveCharaInfo.system_event_no = -1;
+    time = EdMoveCharaInfo.time;
+    camera = EdMoveCharaInfo.camera;
+    view_camera = EdMoveCharaInfo.view_camera;
+    key_lock = EdMoveCharaInfo.key_lock;
+    chara = (CMainChara *) EdMoveCharaInfo.chara;
+    interior = EdMoveCharaInfo.interior;
+    ground = EdMoveCharaInfo.ground;
+
+    if (key_lock != 0) {
         chara_mode |= 1;
+    } else {
+        chara_mode &= ~1;
     }
 
-    float horizontal = GetLXf();
-    float vertical = GetLYf();
-    float camera_angle = camera->GetAngleH();
-    float forward = horizontal * cosf(camera_angle) + vertical * sinf(camera_angle);
-    float sideways = vertical * cosf(camera_angle) - horizontal * sinf(camera_angle);
-    if (viewMode == 0 && (forward != 0.0f || sideways != 0.0f)) {
-        float position[4];
-        character->GetPosition(position);
-        position[0] += forward;
-        position[2] += sideways;
-        character->SetPosition(position[0], position[1], position[2]);
-        character->SetRotation(0.0f, atan2f(forward, sideways), 0.0f);
-        character->SetMotion(1, 0);
-    } else if (viewMode == 0) {
-        character->SetMotion(0, 0);
+    sceVu0FVECTOR pos;
+    sceVu0FVECTOR rot;
+    chara->GetPosition(pos);
+    chara->GetRotation(rot);
+    sceVu0FVECTOR velocity = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR move;
+
+    angle = camera->GetAngleH();
+    lx = GetLXf();
+    ly = GetLYf();
+    if (key_lock != 0 || chara_fishing > 1) {
+        lx = ly = 0.0f;
+    }
+    if (PadOn(0x80) != 0 && EdDebugMoveFlag > 0) {
+        if (EdDebugMoveFlag > 0) {
+            lx *= 2.0f;
+            ly *= 2.0f;
+        } else {
+            lx *= 1.5f;
+            ly *= 1.5f;
+        }
     }
 
-    if (EdMoveCharaInfo.in_event == 0 && PadDown(2) != 0) {
-        viewMode = viewMode == 0;
-        InitEyeCamera(character);
+    motion = 0;
+    speed = -1.0f;
+    if (viewMode == 0) {
+        move_x = lx * cosf(angle) + ly * sinf(angle);
+        move_z = ly * cosf(angle) - lx * sinf(angle);
+        if (interior != 0) {
+            velocity[0] = move_x;
+            velocity[2] = move_z;
+        } else {
+            velocity[0] = 1.6f * move_x;
+            velocity[2] = 1.6f * move_z;
+        }
+        // A slope slows the step by how far its floor leans.
+        if (chara->move_info.landed != 0) {
+            sceVu0FVECTOR normal;
+            sceVu0Normalize(normal, chara->move_info.ground_poly.normal);
+            normal[1] = normal[1] < 0.0f ? -normal[1] : normal[1];
+            velocity[0] *= normal[1];
+            velocity[2] *= normal[1];
+        }
+        if (lx != 0.0f || ly != 0.0f) {
+            stick = sqrtf(lx * lx + ly * ly);
+            if (stick > 0.85f && EdMoveCharaInfo.fishing == 0) {
+                motion = 1;
+            } else {
+                motion = 2;
+                speed = 0.8f * (0.2f + stick);
+                if (speed > 0.85f) {
+                    speed = 0.85f;
+                }
+            }
+        } else {
+            motion = 0;
+        }
+        if (move_x != 0.0f || move_z != 0.0f) {
+            chara->SetRotation(0.0f, AngleInterpolate(rot[1], atan2f(move_x, move_z), 0.2f, 0),
+                               0.0f);
+        }
+    } else if (interior != 0) {
+        if (lx == 0.0f) {
+            lx = GetRXf();
+        }
+        sceVu0FVECTOR eye_rot;
+        chara->GetRotation(eye_rot);
+        eye_rot[1] -= 0.04f * lx;
+        if (eye_rot[1] > 3.1415927f) {
+            eye_rot[1] -= 6.2831855f;
+        }
+        if (eye_rot[1] < -3.1415927f) {
+            eye_rot[1] += 6.2831855f;
+        }
+        angle = eye_rot[1];
+        viewAngleH = angle;
+        chara->SetRotation(eye_rot);
+        move_x = ly * sinf(angle);
+        move_z = ly * cosf(angle);
+        velocity[0] = 0.6f * -move_x;
+        velocity[2] = 0.6f * -move_z;
+        if (chara->move_info.landed != 0) {
+            sceVu0FVECTOR normal;
+            sceVu0Normalize(normal, chara->move_info.ground_poly.normal);
+            normal[1] = normal[1] < 0.0f ? -normal[1] : normal[1];
+            velocity[0] *= normal[1];
+            velocity[2] *= normal[1];
+        }
+    }
+    if ((chara_mode & 6) == 0 && chara_fishing < 2) {
+        chara->SetMotion(motion, 0);
+        chara->SetMotionSpeed(speed);
+    }
+    if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < 2) {
+        CVector3_f_ jump;
+        chara->GetVelocity(&jump);
+        jump.y = 2.0f;
+        chara->SetVelocity(jump);
+    }
+
+    sceVu0FVECTOR next;
+    now_time = chara->GetNowTime();
+    WorkBuffer__2->used = 0;
+    polys = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
+    count = 0;
+    if (interior == 0) {
+        count = ground->PickUpPoly(polys, pos[0], pos[1], pos[2]);
+    } else {
+        CBoxVu0 box;
+        box.max[0] = 20.0f + pos[0];
+        box.min[0] = pos[0] - 20.0f;
+        box.max[2] = 20.0f + pos[2];
+        box.min[2] = pos[2] - 20.0f;
+        box.max[1] = 1000.0f + pos[1];
+        box.min[1] = pos[1] - 1000.0f;
+        for (i = 0; i < EdMoveCharaInfo.parts_count; i++) {
+            frame = EdMoveCharaInfo.parts[i].GetCollisionFrame();
+            if (frame != NULL) {
+                count += frame->PickUpNearPoly(&polys[count], box);
+            }
+        }
+    }
+    count += EdEventPointCpPoly(pos, EdMoveCharaInfo.points, EdMoveCharaInfo.point_count,
+                                &polys[count], time);
+    if (EdMoveCharaInfo.fishing != 0) {
+        count += FishingPickUpPoly(&polys[count]);
+    }
+    for (i = 0; i < 10; i++) {
+        if (IsVillagerActive(&EdVillager[i])) {
+            count += EdVillager[i].PickUpPoly(pos, &polys[count]);
+        }
+    }
+    if (count > 200) {
+        printf("cpoly over!!!! %d\n", count);
+    }
+
+    CVector3_f_ fall;
+    chara->GetVelocity(&fall);
+    velocity[1] = fall.y;
+    MoveCheck(pos, velocity, next, &chara->move_info, polys, count, 0);
+    if (EdDebugMoveFlag >= 2) {
+        next[0] = pos[0] + velocity[0];
+        next[2] = pos[2] + velocity[2];
+    }
+
+    CCPoly event_poly;
+    sceVu0FVECTOR ahead;
+    sceVu0FVECTOR event_hit;
+    sceVu0FVECTOR eye;
+    int event_index = -1;
+    sceVu0CopyVector(eye, pos);
+    eye[1] += 0.5f * chara->body_height;
+    ahead[0] = 7.5f * sinf(rot[1]);
+    ahead[1] = 0.0f;
+    ahead[2] = 7.5f * cosf(rot[1]);
+    event = GetEventPoly(eye, ahead, &event_poly, &event_index, event_hit, polys, count, 0);
+    sceVu0SubVector(move, next, pos);
+    if (next[1] < -1000.0f) {
+        next[1] = 1000.0f;
+    }
+    if (interior != 0 && next[1] < 0.0f) {
+        next[1] = 0.0f;
+        chara->move_info.landed = 1;
+    }
+    chara->SetPosition(next);
+    fall.y += -0.1f;
+    if (fall.y < -4.0f) {
+        fall.y = -4.0f;
+    }
+    chara->SetVelocity(fall);
+    if ((chara_mode & 2) != 0 && (chara->motion_state == 3 || viewMode != 0)) {
+        chara_mode &= ~2;
+    }
+    if (chara->move_info.landed != 0) {
+        if (fall.y < -1.0f) {
+            chara_mode |= 2;
+            chara->SetMotion(9, 6);
+        }
+        chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
+        chara_mode &= ~4;
+    } else {
+        chara_mode |= 4;
+        if (fall.y < -0.5f) {
+            chara->SetMotion(8, 0);
+        }
+    }
+
+    if (viewMode == 0 && interior == 0) {
+        camera->FollowOn();
+        sceVu0FVECTOR target;
+        sceVu0CopyVector(target, next);
+        target[0] += 7.0f * move[0];
+        target[1] += 14.0f + (2.0f * move[1] + reference[1]);
+        target[2] += 7.0f * move[2];
+        camera->SetFollow(target[0], target[1], target[2]);
+    } else {
+        EyeCamera(view_camera, chara, interior);
+    }
+    if (EdMoveCharaInfo.fishing == 0 && PadDown(2) != 0) {
+        if (viewMode == 0) {
+            sceVu0FVECTOR eye_pos;
+            sceVu0FVECTOR eye_ref;
+            camera->GetPos(eye_pos);
+            camera->GetRef(eye_ref);
+            view_camera->SetPos(eye_pos);
+            view_camera->SetRef(eye_ref);
+            viewMode = !viewMode;
+            InitEyeCamera(chara);
+        } else {
+            viewMode = !viewMode;
+        }
+    }
+
+    shallow = 0;
+    if (chara->move_info.ground_found != 0 && chara->move_info.poly.attr.unk_44 == 10) {
+        shallow = 1;
+    }
+    right_clear = left_clear = keep_distance = 1;
+    if (viewMode == 0 && interior == 0 && EdDebugMoveFlag < 2) {
+        sceVu0FVECTOR last_hit;
+        sceVu0FVECTOR eye_pos;
+        sceVu0FVECTOR hit;
+        sceVu0FVECTOR look;
+        sceVu0FVECTOR behind;
+        sceVu0FVECTOR forward;
+        sceVu0FVECTOR towards;
+        sceVu0FVECTOR left_end;
+        sceVu0FVECTOR right_end;
+        sceVu0FVECTOR left;
+        sceVu0FVECTOR right;
+        sceVu0FVECTOR reach;
+        sceVu0FVECTOR direction;
+        sceVu0FVECTOR wall;
+        CBoxVu0 box;
+        sceVu0FVECTOR to_eye;
+        sceVu0FVECTOR to_wall;
+        sceVu0FVECTOR cross;
+        int hit_poly[32];
+        float hit_point[32][4];
+        sceVu0FVECTOR origin;
+        sceVu0FVECTOR facing;
+        sceVu0FVECTOR facing_first;
+        sceVu0FVECTOR floor;
+
+        right_distance = left_distance = 1000000;
+        camera->GetPos(eye_pos);
+        camera->GetRef(look);
+        sceVu0SubVector(forward, look, eye_pos);
+        sceVu0SubVector(behind, eye_pos, forward);
+        sceVu0Normalize(direction, forward);
+        WorkBuffer__2->used = 0;
+        walls = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
+        span = DistVector(behind, look);
+        box.max[0] = eye_pos[0] + span;
+        box.min[0] = eye_pos[0] - span;
+        box.max[2] = eye_pos[2] + span;
+        box.min[2] = eye_pos[2] - span;
+        box.max[1] = 100.0f + eye_pos[1];
+        box.min[1] = eye_pos[1] - 100.0f;
+        if (EdMoveCharaInfo.fishing != 0) {
+            wall_count = ground->PickUpCameraPoly(walls, box, 1);
+        } else {
+            wall_count = ground->PickUpCameraPoly(walls, box, 0xFFFF);
+        }
+        // A wall beside the eye turns the camera along it and stops it turning into it.
+        if (CheckCameraWidth(walls, wall_count, eye_pos, 10.0f, wall, 0) != 0) {
+            sceVu0SubVector(to_eye, look, eye_pos);
+            sceVu0SubVector(to_wall, look, wall);
+            to_eye[1] = to_wall[1] = 0.0f;
+            sceVu0Normalize(to_eye, to_eye);
+            sceVu0Normalize(to_wall, to_wall);
+            sceVu0OuterProduct(cross, to_eye, to_wall);
+            camera->AddAngle(0.5f * cross[1]);
+            camera->SetAngleSoon(atan2f(-to_wall[0], -to_wall[2]));
+            if (cross[1] > 0.0f) {
+                left_clear = 0;
+            }
+            if (cross[1] < -0.0f) {
+                right_clear = 0;
+            }
+        }
+        hits = CheckHits(walls, wall_count, look, behind, 32, hit_poly, hit_point, 1, 0);
+        sceVu0CopyVector(origin, eye_pos);
+        left[0] = forward[2];
+        left[1] = 0.0f;
+        left[2] = -forward[0];
+        sceVu0Normalize(left, left);
+        sceVu0ScaleVector(reach, left, 100.0f);
+        sceVu0AddVector(left_end, origin, reach);
+        wall_hit = CheckHit(walls, wall_count, origin, left_end, hit, 1, 0);
+        if (wall_hit >= 0) {
+            normal = walls[wall_hit].normal;
+            sceVu0Normalize(normal, normal);
+            if (sceVu0InnerProduct(left, normal) > 0.001f) {
+                left_distance = DistVector(origin, hit);
+            } else if (DistVector(origin, hit) < 5.0f) {
+                left_clear = 0;
+            }
+        }
+        right[0] = -forward[2];
+        right[1] = 0.0f;
+        right[2] = forward[0];
+        sceVu0Normalize(right, right);
+        sceVu0ScaleVector(reach, right, 100.0f);
+        sceVu0AddVector(right_end, origin, reach);
+        wall_hit = CheckHit(walls, wall_count, origin, right_end, hit, 1, 0);
+        if (wall_hit >= 0) {
+            normal = walls[wall_hit].normal;
+            sceVu0Normalize(normal, normal);
+            if (sceVu0InnerProduct(right, normal) > 0.001f) {
+                right_distance = DistVector(origin, hit);
+            } else if (DistVector(origin, hit) < 5.0f) {
+                right_clear = 0;
+            }
+        }
+        if (hits > 0) {
+            camera_far_dist = 80.0f;
+            last = -1;
+            for (i = 0; i < hits; i++) {
+                sceVu0SubVector(towards, hit_point[i], eye_pos);
+                if (sceVu0InnerProduct(forward, towards) < 0.0f) {
+                    break;
+                }
+                last = i;
+            }
+            if (last >= 0) {
+                keep_distance = 0;
+                sceVu0CopyVector(facing, walls[hit_poly[last]].normal);
+                if (sceVu0InnerProduct(direction, facing) > 0.0f) {
+                    if (last + 1 < hits) {
+                        away = DistVector(eye_pos, hit_point[last + 1]);
+                        if (away - DistVector(eye_pos, hit_point[last]) < 0.0f) {
+                            CameraAutoMove(camera, &walls[hit_poly[last + 1]], hit_point[last + 1],
+                                           left_distance, right_distance);
+                        } else {
+                            CameraAutoMove(camera, &walls[hit_poly[last]], hit_point[last],
+                                           left_distance, right_distance);
+                        }
+                    } else {
+                        CameraAutoMove(camera, &walls[hit_poly[last]], hit_point[last],
+                                       left_distance, right_distance);
+                        sceVu0CopyVector(last_hit, hit_point[last]);
+                    }
+                }
+            } else {
+                sceVu0CopyVector(facing_first, walls[hit_poly[0]].normal);
+                if (sceVu0InnerProduct(forward, facing_first) < 0.0f) {
+                    CameraAutoMove(camera, &walls[hit_poly[0]], hit_point[0], left_distance,
+                                   right_distance);
+                    keep_distance = 0;
+                }
+            }
+        }
+        // The eye keeps its height above whatever floor is under it.
+        sceVu0CopyVector(behind, eye_pos);
+        behind[1] += 15.0f;
+        below = CheckHitVertical(walls, wall_count, behind, -100.0f, hit, 0);
+        if (below >= 0) {
+            sceVu0Normalize(floor, walls[below].normal);
+            if (eye_pos[1] - hit[1] < 18.0f) {
+                if ((floor[1] < 0.0f ? -floor[1] : floor[1]) > 0.5f) {
+                    eye_pos[1] = 18.0f + hit[1];
+                    camera->SetHeight(eye_pos[1] - look[1] - 0.01f);
+                }
+            }
+        }
+        float half = 0.5f;
+        if ((camera->GetDistance() < camera_near_dist * half || camera->GetHeight() > 60.0f) &&
+            shallow == 0 && hits > 0) {
+            camera->SetDistance(camera_near_dist);
+            camera->SetHeight(10.0f);
+            camera->SetAngleSoon(camera->GetAngle());
+            camera->AddAngle(3.14f);
+            if (MapNo == 35 && eye_pos[2] > 200.0f) {
+                camera->SetAngleSoon(3.14f);
+            }
+            camera->Step(-1);
+        }
+    }
+
+    if (viewMode == 0 && interior == 0) {
+        drift = 0;
+        rx = GetRXf();
+        ry = GetRYf();
+        if (EdDebugCameraFlag == 0) {
+            if (camera->GetHeight() < 30.0f) {
+                camera->AddHeight(-ry);
+            }
+        } else {
+            camera->AddHeight(-ry);
+        }
+        if (rx > 0.0f && left_clear != 0) {
+            camera->AddAngle(0.03f * -rx);
+        }
+        if (rx < 0.0f && right_clear != 0) {
+            camera->AddAngle(0.03f * -rx);
+        }
+        if (rx == 0.0f) {
+            if (left_clear != 0 && PadOn(8) != 0) {
+                camera->AddAngle(-0.017453292f);
+            } else if (right_clear != 0 && PadOn(4) != 0) {
+                camera->AddAngle(0.017453292f);
+            } else {
+                drift = 1;
+            }
+        }
+        if (camera->GetDistance() > camera_far_dist) {
+            camera->AddDistance(-(camera->GetDistance() - camera_far_dist) / 10.0f);
+        }
+        if (camera->GetDistance() < camera_near_dist) {
+            camera->AddDistance(-(camera->GetDistance() - camera_near_dist) / 10.0f);
+        }
+        // With the right stick at rest the camera swings round behind a walking character.
+        if (drift != 0) {
+            turn = lx;
+            if (ly > 0.05f) {
+                if (!(lx < 0.0f) && lx < 0.5f) {
+                    lx = 0.5f;
+                }
+                if (lx <= 0.0f && lx > -0.5f) {
+                    lx = -0.5f;
+                }
+                if (left_clear == 0) {
+                    lx = 0.5f;
+                }
+                if (right_clear == 0) {
+                    lx = -0.5f;
+                }
+            }
+            lx *= DistVector(move) / 1.6f / 2.0f;
+            if (lx > 0.1f && left_clear != 0) {
+                if (turn < 0.4f) {
+                    turn = 0.4f;
+                }
+                if (turn > 1.0f) {
+                    turn = 1.0f;
+                }
+                camera->AddAngle(2.0f * (-0.017453292f * turn));
+            }
+            if (lx < -0.1f && right_clear != 0) {
+                if (turn > -0.4f) {
+                    turn = -0.4f;
+                }
+                if (turn < -1.0f) {
+                    turn = -1.0f;
+                }
+                camera->AddAngle(2.0f * (-0.017453292f * turn));
+            }
+        }
+        if (keep_distance != 0) {
+            camera->SetDistance(camera_near_dist);
+        }
+        if (EdDebugCameraFlag == 0) {
+            if (camera->GetHeight() > 60.0f) {
+                camera->SetHeight(60.0f);
+            }
+            lowest = 5.0f;
+            if (shallow != 0) {
+                lowest = 35.0f;
+            }
+            if (camera->GetHeight() < lowest) {
+                camera->SetHeight(lowest);
+            }
+            if (camera->GetHeight() > 5.0f) {
+                drop = camera->GetHeight() - lowest;
+                drop *= 0.05f;
+                if (drop < 0.15f) {
+                    drop = 0.15f;
+                }
+                if (drop > 0.5f) {
+                    drop = 0.5f;
+                }
+                camera->AddHeight(-drop);
+            }
+        } else {
+            if (PadOn(0x1000) != 0) {
+                reference[1] += 2.0f;
+            }
+            if (PadOn(0x4000) != 0) {
+                reference[1] -= 2.0f;
+            }
+        }
+        // The button swings the camera round behind the character over thirty frames.
+        static int rot_count = 0;
+        if (PadOn(0x20) != 0 && EdDebugMoveFlag == 0) {
+            rot_count = 30;
+        }
+        if (rot_count > 0) {
+            behind_angle = chara->GetRotation()->y - 3.141592653589793;
+            turn_side = AngleCmp(behind_angle, camera->GetAngle(), 0.1f);
+            if (turn_side < 0) {
+                if (left_clear != 0) {
+                    camera->AddAngle(-0.1f);
+                } else {
+                    rot_count = 0;
+                }
+            }
+            if (turn_side > 0) {
+                if (right_clear != 0) {
+                    camera->AddAngle(0.1f);
+                } else {
+                    rot_count = 0;
+                }
+            }
+            if (turn_side == 0) {
+                rot_count = 0;
+            }
+        }
+        rot_count--;
+        if (rot_count < 0) {
+            rot_count = 0;
+        }
+    }
+
+    near = EdSearchNearNPC(chara, EdVillager, 10);
+    if (near >= 0) {
+        EdVillager[near].talk_target = 1;
+    }
+    if (EdMoveCharaInfo.fishing == 0) {
+        acted = 0;
+        sceVu0FVECTOR here;
+        sceVu0FVECTOR heading;
+        chara->GetPosition(here);
+        chara->GetRotation(heading);
+        system_event_no = event_no = -1;
+        points = EdMoveCharaInfo.points;
+        point_count = EdMoveCharaInfo.point_count;
+        EdMoveCharaInfo.event_ready = 0;
+        param = &EdMoveCharaInfo.param;
+        if (EdGetEvent(points, point_count, param, here, heading, time) != 0) {
+            if (param->kind == 2 && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0)) {
+                item = param->point->side;
+                refused = EdCheckGetItem(item);
+                if (refused == 0) {
+                    EdSetMapFlag(param->point->completion_flag, 1);
+                    attach = -1;
+                    if (GetAddAttachItem(param->point->side) != 0) {
+                        attach = rand() % 3 + 1;
+                    }
+                    EdGetItem(item, param->point->linked_value, attach);
+                    EdItemGetMes(item, param->point->linked_value, attach, 40);
+                    EdSetOpenItemBox(param->position, param->rotation);
+                    SndSePlay(0x99, -1, 0);
+                } else {
+                    DontGetItemMes(refused);
+                    SndSePlay(0x99, -1, 0);
+                }
+            }
+            if (param->kind == 3 && param->point->side > 0) {
+                event_no = param->point->side;
+            }
+            if (param->kind == 4 || param->kind == 5) {
+                EdEventInfo.draw_exclamation_mark = 1;
+                if (PadDown(0x40) != 0 && (interior != 0 || viewMode == 0)) {
+                    EdInitHashigo(&EdEventInfo, param);
+                    system_event_no = 1;
+                }
+            }
+            EdMoveCharaInfo.event_ready = acted = 1;
+        }
+        if (near >= 10) {
+            near = -1;
+        }
+        if (acted == 0 && (viewMode == 0 || interior != 0) && near >= 0) {
+            if (EdVillagerInfo[near].talk_event_no > 0 && EdVillagerInfo[near].talk_event_level != 0 &&
+                EdTalkModeInit(&EdVillager[near], -1) != 0) {
+                event_no = EdVillagerInfo[near].talk_event_no;
+                acted = 1;
+            }
+        }
+        if (acted == 0 && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0) && key_lock == 0) {
+            if (near >= 0) {
+                if (EdTalkModeInit(&EdVillager[near], -1) != 0) {
+                    event_no = 0x100;
+                    acted = 1;
+                }
+            } else if (event > 0) {
+                event_no = event;
+                acted = 1;
+            }
+        }
+        EdMoveCharaInfo.event_no = event_no;
+        EdMoveCharaInfo.system_event_no = system_event_no;
+        EdMoveCharaInfo.acted = acted;
+    }
+
+    hook_weight = float_weight = -1.0f;
+    follow_line = 0;
+    static int bgm_vol = 0;
+    static int load_file = 0;
+    if (EdMoveCharaInfo.fishing != 0) {
+        EdViewModeOff();
+        if (EdDebugMoveFlag == 0) {
+            camera->SetHeight(40.0f);
+        }
+        sceVu0FVECTOR stand;
+        sceVu0FVECTOR facing;
+        sceVu0FVECTOR float_pos;
+        chara->GetPosition(stand);
+        chara->GetRotation(facing);
+        FishLineGetUki(float_pos);
+        int fish_no;
+        status = FishingFishStatus(&fish_no);
+        static int st_cnt = 0;
+        static int wait_cnt = 0;
+        switch (chara_fishing) {
+            case 0:
+                chara_fishing = 1;
+                FishingInitFishStatus();
+                FishingAngleFish(-1);
+                wait_cnt = 0;
+                st_cnt = 0;
+                break;
+            case 1:
+                if (st_cnt > 120) {
+                    EdFishingWalkHelpMes(FishingGetEsaItemNo());
+                }
+                FishingAngleFish(-1);
+                if (EdPadDown(0x40, 0xFFFF) != 0) {
+                    chara_fishing = 2;
+                    st_cnt = 0;
+                }
+                if (EdPadDown(0x20, 0xFFFF) != 0) {
+                    EdMoveCharaInfo.event_no = 0x85;
+                    EdMoveCharaInfo.system_event_no = -1;
+                    EdMoveCharaInfo.acted = 1;
+                    chara->SetMotion(0, 0);
+                }
+                if (EdPadDown(0x80, 0xFFFF) != 0) {
+                    EdMoveCharaInfo.event_no = 0x86;
+                    EdMoveCharaInfo.system_event_no = -1;
+                    EdMoveCharaInfo.acted = 1;
+                    chara->SetMotion(0, 0);
+                }
+                float_weight = 1.0f;
+                break;
+            case 2:
+                chara->SetMotion(4, 6);
+                chara_fishing = 3;
+                st_cnt = 0;
+                break;
+            case 3:
+                chara_mode = 1;
+                if (st_cnt == 90) {
+                    SndSePlay(0x190, pos, -1.0f, -1.0f);
+                }
+                if (chara->motion_state == 3) {
+                    chara->SetMotion(5, 0);
+                    chara_fishing = 4;
+                    st_cnt = 0;
+                    wait_cnt = 0;
+                }
+                break;
+            case 4: {
+                EdFishingAngleHelpMEs(FishingGetEsaItemNo());
+                chara_mode = 1;
+                if (wait_cnt < 600) {
+                    chara->SetMotion(5, 0);
+                } else if (wait_cnt < 1200) {
+                    chara->SetMotion(14, 0);
+                } else {
+                    if (wait_cnt == 1200) {
+                        chara->SetMotion(15, 6);
+                    }
+                    if (wait_cnt > 1250 && chara->motion_state == 3) {
+                        chara->SetMotion(5, 4);
+                        wait_cnt = 0;
+                    }
+                }
+                reel_turn = -GamePad.GetLXf();
+                facing[1] = AngleInterpolate(facing[1], facing[1] + 0.1f * reel_turn, 0.01f, 0);
+                chara->SetRotation(facing);
+                if (reel_turn != 0.0f) {
+                    wait_cnt = 0;
+                    chara->SetMotion(13, 0);
+                }
+                if (EdPadDown(0x40, 0xFFFF) != 0 || (st_cnt > 30 && FishingCheckUkiHook() != 0)) {
+                    chara_fishing = 5;
+                    chara->SetMotion(7, 6);
+                    st_cnt = 0;
+                } else {
+                    if (status == 7) {
+                        chara_fishing = 6;
+                    }
+                    if (status == 8) {
+                        chara_fishing = 7;
+                    }
+                }
+                wait_cnt++;
+                follow_line = 1;
+                break;
+            }
+            case 5:
+                if (st_cnt == 40) {
+                    sceVu0FVECTOR hook;
+                    FishLineGetHook(hook);
+                    if (hook[1] < 5.0f + FishingGetWaterLevel()) {
+                        SndSePlay(0x192, float_pos, -1.0f, -1.0f);
+                    }
+                }
+                if (chara->motion_state == 3) {
+                    chara->SetMotion(0, 0);
+                    chara_fishing = 1;
+                    wait_cnt = 0;
+                }
+                if (st_cnt > 30) {
+                    float_weight = 0.02f * (float) (st_cnt - 30);
+                }
+                if (float_weight > 1.0f) {
+                    float_weight = 1.0f;
+                }
+                break;
+            case 6: {
+                EdFishingAngleHelpMEs(FishingGetEsaItemNo());
+                if (status == 8) {
+                    chara_fishing = 7;
+                } else if (status != 7) {
+                    chara_fishing = 4;
+                    st_cnt = 0;
+                    wait_cnt = 0;
+                }
+                if (EdPadDown(0x40, 0xFFFF) != 0) {
+                    chara_fishing = 9;
+                    chara->SetMotion(6, 6);
+                    st_cnt = 0;
+                    SndSePlay(0x192, float_pos, -1.0f, -1.0f);
+                    if (rand() % 100 < 20) {
+                        EdFishingLostEsaMes();
+                        FishingDeleteEsa();
+                    }
+                }
+                pull = -0.15f * (float) rand() / 2.1474836e9f;
+                if (pull < -0.1f) {
+                    sceVu0FVECTOR ripple;
+                    FishLineGetUki(ripple);
+                    ripple[1] = FishingGetWaterLevel();
+                    GamePad.SetVibration(1, 80, 2);
+                    EffectHamon(&EdEffectGroup, ripple, 10.0f);
+                }
+                FishPullHook(pull);
+                follow_line = 1;
+                break;
+            }
+            case 7:
+                EdFishingAngleHelpMEs(FishingGetEsaItemNo());
+                if (FishingFishStatus(NULL) != 8) {
+                    chara_fishing = 4;
+                    wait_cnt = 0;
+                    if (rand() % 100 < 30) {
+                        EdFishingLostEsaMes();
+                        FishingDeleteEsa();
+                    }
+                    st_cnt = 0;
+                } else {
+                    if (EdPadDown(0x40, 0xFFFF) != 0) {
+                        SndSePlay(0x190, pos, -1.0f, -1.0f);
+                        chara_fishing = 10;
+                        chara->SetMotion(12, 2);
+                        FishingBattleFish(fish_no);
+                        file = GetFishFileName(FishingFishKind(fish_no));
+                        if (file != NULL) {
+                            StartReadBG();
+                            LoadFileBG(file, (u_long128 *) read_buffer, NULL);
+                        }
+                        st_cnt = 0;
+                    }
+                    tug = -(0.1f + 0.05f * (float) rand() / 2.1474836e9f);
+                    if (tug < -0.12f) {
+                        GamePad.SetVibration(1, 100, 10);
+                    }
+                    FishPullHook(tug);
+                    follow_line = 1;
+                }
+                break;
+            case 10:
+                FishingDeleteEsa();
+                if (st_cnt > 120 && ReadBGSync() == 0) {
+                    read = GetReadBGFile(0);
+                    pack = NULL;
+                    CDataAlloc2<1> arena(-1);
+                    if (read != NULL) {
+                        pack = (u_int *) read->buffer;
+                        rest = EdVillagerBuffer.limit - EdVillagerBuffer.used;
+                        arena.base = EdVillagerBuffer.base + EdVillagerBuffer.used * 16;
+                        arena.limit = rest;
+                        arena.used = 0;
+                    }
+                    chara_fishing = 8;
+                    chara->SetMotion(6, 6);
+                    FishingBattleToAngleFish(pack, &arena);
+                    SndSePlay(0x193, -1, 0);
+                }
+                GamePad.SetVibration(1, rand() % 40 + 80, 10);
+                follow_line = 1;
+                break;
+            case 8:
+                chara_fishing = 11;
+                chara->SetMotion(10, 6);
+                fishing_mes = 0;
+                follow_line = 1;
+                bgm_vol = SndGetBgmVol();
+                SndBgmFadeOut(60, 0);
+                break;
+            case 9:
+                if (chara->motion_state == 3) {
+                    chara_fishing = 1;
+                    chara->SetMotion(0, 0);
+                    FishingAngleFish(fish_no);
+                    FishingInitFishStatus();
+                    wait_cnt = 0;
+                }
+                if (st_cnt > 40) {
+                    float_weight = 0.02f * (float) (st_cnt - 40);
+                }
+                if (float_weight > 1.0f) {
+                    float_weight = 1.0f;
+                }
+                break;
+            case 11:
+                camera->SetAngle(AngleLimit(facing[1]));
+                camera->SetHeight(10.0f);
+                camera->SetDistance(40.0f);
+                camera->Step(-1);
+                if (chara->motion_no == 10) {
+                    if (chara->motion_state == 3) {
+                        chara->SetMotion(8, 0);
+                        SndSPSePlay(0x2F, -1);
+                    }
+                } else {
+                    switch (fishing_mes) {
+                        case 0: {
+                            int size;
+                            int fish_points;
+                            kind = FishingGetAngleFishSize(&size, &fish_points);
+                            if (kind < 0) {
+                                fishing_mes = 2;
+                            } else {
+                                if (kind == 5 || kind == 17) {
+                                    caught = &SaveData->mardan_garayan_caught;
+                                    (*caught)++;
+                                    SetFishMardanGarayanNum(1);
+                                }
+                                SaveData->AddFishingPoint(fish_points);
+                                SaveData->SetFishingRank(kind, (float) size);
+                                fishing_mes++;
+                                EditMes1.mes_no[0] = GetFishMsgNo(kind);
+                                EditMes1.values[0] = size;
+                                EditMes1.values[1] = fish_points;
+                                EditMes1.values[2] = SaveData->GetFishingPoint();
+                                EditMes1.tail_on = 0;
+                                EditMes1.auto_pos = 1;
+                                EditMes1.MakeMesWin(2000);
+                                EditMes1.auto_pos = 1;
+                                int window[4];
+                                EditMes1.AutoSet(window);
+                            }
+                            break;
+                        }
+                        case 1:
+                            if (EdMenuLoop(&EditMes1) != 0) {
+                                EditMes1.auto_pos = 1;
+                                fishing_mes++;
+                            }
+                            break;
+                        case 2:
+                            SndBgmFadeIn(60, bgm_vol, 0);
+                            chara->SetMotion(0, 0);
+                            chara_fishing = 12;
+                            chara->SetMotion(9, 6);
+                            st_cnt = 0;
+                            break;
+                    }
+                }
+                hook_weight = 1.0f;
+                break;
+            case 12:
+                camera->SetAngle(AngleLimit(facing[1]));
+                camera->SetHeight(10.0f);
+                camera->SetDistance(30.0f);
+                camera->Step(-1);
+                if (st_cnt == 120) {
+                    FishingDeleteAngleFish();
+                    SndSePlay(0x194, -1, 0);
+                }
+                if (chara->motion_state == 3) {
+                    chara->SetMotion(0, 0);
+                    chara_fishing = 0;
+                    FishingDeleteAngleFish();
+                    FishingAngleFish(-1);
+                    FishingInitFishStatus();
+                }
+                hook_weight = float_weight = 1.0f;
+                break;
+        }
+        // The camera watches the point halfway between the angler and the float.
+        if (follow_line != 0) {
+            sceVu0FVECTOR centre;
+            FishLineGetUki(centre);
+            sceVu0AddVector(centre, centre, pos);
+            sceVu0ScaleVector(centre, centre, 0.5f);
+            camera->SetFollow(centre[0], centre[1], centre[2]);
+        }
+        st_cnt++;
+    } else {
+        chara_fishing = 0;
+    }
+
+    chara->Step();
+    if (viewMode == 0) {
+        chara->ShadowStep();
+    }
+    if (viewMode == 0) {
+        chara->ClothStep(0);
     }
     if (viewMode != 0) {
-        EyeCamera(camera, character, EdMoveCharaInfo.key_lock);
+        chara->SetMotion(0, 0);
     }
-
-    EdMoveCharaInfo.motion_previous = EdMoveCharaInfo.motion_current;
-    EdMoveCharaInfo.motion_current = character->GetNowTime();
+    if (EdMoveCharaInfo.fishing != 0) {
+        sceVu0FVECTOR rod;
+        chara->GetPosition(rod);
+        if (chara->frame != NULL) {
+            sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
+            sceVu0FVECTOR hook_pos;
+            sceVu0FVECTOR float_pos;
+            frame = chara->frame->SearchFrame("sao");
+            if (frame != NULL) {
+                frame->GetWorldPosition(rod, origin);
+            }
+            frame = chara->frame->SearchFrame("uki");
+            if (frame != NULL) {
+                frame->GetWorldPosition(float_pos, origin);
+            }
+            frame = chara->frame->SearchFrame("hari");
+            if (frame != NULL) {
+                frame->GetWorldPosition(hook_pos, origin);
+            }
+            frame = chara->frame->SearchFrame("maru_uki");
+            if (frame != NULL) {
+                frame->attr.draw_on = 2;
+            }
+            frame = chara->frame->SearchFrame("turibari");
+            if (frame != NULL) {
+                frame->attr.draw_on = 2;
+            }
+            FishLineSetUki(float_pos, float_weight);
+            FishLineSetHook(hook_pos, hook_weight);
+        }
+        fish = FishingGetBattleFish();
+        if (fish != NULL) {
+            sceVu0FVECTOR fish_pos;
+            fish->GetPosition(fish_pos);
+            FishLineSetHook(fish_pos, 1.0f);
+        }
+        sceVu0FVECTOR before;
+        sceVu0FVECTOR after;
+        FishLineGetUki(before);
+        FishLineStep(rod, rod);
+        FishingStepFish();
+        FishLineGetUki(after);
+        // The float throws up ripples where it crosses the surface.
+        water = FishingGetWaterLevel();
+        if (after[1] < water && !(before[1] < water)) {
+            fall_height = after[1] - before[1];
+            if ((fall_height < 0.0f ? -fall_height : fall_height) > 0.8f) {
+                SndSePlay(0x191, after, -1.0f, -1.0f);
+                after[1] = FishingGetWaterLevel();
+                EffectHamon(&EdEffectGroup, after, 15.0f);
+                EffectHamon(&EdEffectGroup, after, 20.0f);
+                EffectHamon(&EdEffectGroup, after, 25.0f);
+                EffectHamon(&EdEffectGroup, after, 30.0f);
+            }
+        }
+        if (after[1] > water && before[1] <= water) {
+            rise = after[1] - before[1];
+            if ((rise < 0.0f ? -rise : rise) > 0.1f) {
+                after[1] = FishingGetWaterLevel();
+                EffectHamon(&EdEffectGroup, after, 10.0f);
+                EffectHamon(&EdEffectGroup, after, 15.0f);
+                EffectHamon(&EdEffectGroup, after, 20.0f);
+            }
+        }
+    }
+    EdStepOpenItemBox();
+    motion_time = chara->motion_type.state.time;
+    chara->FootSoundEnable(chara->move_info.landed);
+    chara->SetFootSoundID(chara->move_info.ground_poly.attr.foot_sound);
+    // In the first-person view the feet sound by the distance walked instead of the motion.
+    if (viewMode != 0 && interior != 0 && chara->move_info.landed != 0) {
+        static float cnt = 0.0f;
+        walked = cnt;
+        velocity[1] = 0.0f;
+        cnt += DistVector(velocity);
+        if (cnt > 10.0f && walked <= 10.0f) {
+            SndPlayFootSound(chara->move_info.ground_poly.attr.foot_sound, 1, pos);
+        }
+        if (cnt > 20.0f && walked <= 20.0f) {
+            SndPlayFootSound(chara->move_info.ground_poly.attr.foot_sound, 0, pos);
+        }
+        if (cnt > 20.0f) {
+            cnt = 0.0f;
+        }
+    }
+    sceVu0CopyVector(chara->unk_CB0[0], EditMapInfo->character_ambient[0]);
+    sceVu0CopyVector(chara->unk_CB0[1], EditMapInfo->character_ambient[1]);
+    chara->unk_CA0 = -1;
+    chara->unk_C9C = 0;
+    sceVu0FVECTOR unused = {0.0f, 0.0f, 0.0f, 0.0f};
+    if (chara->move_info.ground_found != 0) {
+        light = chara->move_info.poly.attr.unk_44;
+        switch (light) {
+            case 2:
+                chara->unk_C9C = 1;
+                break;
+            case 3:
+            case 4:
+                chara->unk_CA0 = light - 3;
+                break;
+        }
+    }
+    EdMoveCharaInfo.motion_time_before = now_time;
+    EdMoveCharaInfo.motion_time_after = motion_time;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/ebattle", EdMoveChara__Fv);
-#endif
 
-/**
- * Copies ladder endpoints and event parameters into the active event.
- *
- * @mangled EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM
- * @address 0x16D720
- * @size 0xD0
- */
 void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     if (param->kind == 4) {
         sceVu0CopyVector(info->vector_arguments[1], param->position);

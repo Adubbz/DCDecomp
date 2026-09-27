@@ -3907,13 +3907,13 @@ void MoveChara(void) {
                                                                     velo__2[1] = -10.0f;
                                                                 }
                                                                 sceVu0CopyVector(pos, moved);
-                                                                if (info.unk_00 != 0) {
+                                                                if (info.landed != 0) {
                                                                     velo__2[1] = 0.0f;
                                                                     foot = info.poly;
                                                                     BtActStatus.unk_090 = foot.attr.foot_sound;
                                                                     BtActStatus.unk_092 = foot.attr.ground_kind;
                                                                 }
-                                                                if (info.unk_60 != 0) {
+                                                                if (info.ground_found != 0) {
                                                                     BtActStatus.unk_044 =
                                                                         pos[1] - info.ground_point[1];
                                                                 }
@@ -4021,13 +4021,13 @@ void MoveChara(void) {
                                                                     velo__2[1] = -10.0f;
                                                                 }
                                                                 sceVu0CopyVector(pos, moved);
-                                                                if (info.unk_00 != 0) {
+                                                                if (info.landed != 0) {
                                                                     velo__2[1] = 0.0f;
                                                                     foot = info.poly;
                                                                     BtActStatus.unk_090 = foot.attr.foot_sound;
                                                                     BtActStatus.unk_092 = foot.attr.ground_kind;
                                                                 }
-                                                                if (info.unk_60 != 0) {
+                                                                if (info.ground_found != 0) {
                                                                     BtActStatus.unk_044 =
                                                                         pos[1] - info.ground_point[1];
                                                                 }
@@ -4813,13 +4813,13 @@ void MoveChara(void) {
                         velo__2[1] = -10.0f;
                     }
                     sceVu0CopyVector(pos, moved);
-                    if (info.unk_00 != 0) {
+                    if (info.landed != 0) {
                         velo__2[1] = 0.0f;
                         foot = info.poly;
                         BtActStatus.unk_090 = foot.attr.foot_sound;
                         BtActStatus.unk_092 = foot.attr.ground_kind;
                     }
-                    if (info.unk_60 != 0) {
+                    if (info.ground_found != 0) {
                         BtActStatus.unk_044 = pos[1] - info.ground_point[1];
                     }
                     CharaMain.SetPosition(pos);

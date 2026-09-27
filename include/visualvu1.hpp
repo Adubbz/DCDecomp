@@ -115,8 +115,11 @@ public:
 class CVisualPolyVu1 : public CVisualVu1 {
 public:
     CVisualPolyVu1 &operator=(const CVisualPolyVu1 &);
-    sceVu0FVECTOR unk_010;
-};
+    s32 unk_10;
+    s32 unk_14;
+    u_int *vu_data; /**< Vector-unit packet the polygons are drawn from. */
+    u_int vu_size;  /**< Size of the vector-unit packet in quadwords. */
+} __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(CVisualPolyVu1) == 0x20);
 

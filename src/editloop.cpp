@@ -120,7 +120,6 @@ extern "C" CDataAlloc2<1> *WorkBuffer__2;
 extern CFrame *ECursorFrame;
 extern int EdDebugMoveFlag;
 extern CRunEffect RunEffect;
-extern VILLAGER_INFO EdVillagerInfo;
 extern CCameraFollow MainCamera;
 extern CCameraFollow EditCamera;
 extern CCameraFollow EditCamera;
@@ -199,7 +198,6 @@ extern CDataAlloc2<1> EdWorkBuffer;
 extern CDataAlloc2<1> EdMenuBuffer;
 
 /* Every villager the editor can place, one record each. */
-extern CNPCharacter EdVillager[10];
 
 /* The cursors drawn over a villager who can be talked to, one who cannot, and
    the character the event wants the player to notice. */
@@ -1135,9 +1133,9 @@ int EditLoop(void) {
             EdNPCBuffer.used = 0;
             EdVillagerBuffer.used = 0;
             InitWorkBuffer();
-            EdSelectVillager(&EdVillagerInfo, NowTime, EditMapInfo);
-            EdInitVilager(&EdVillagerInfo, EdExchangeInfo.ground, NULL);
-            EdInitVilagerPosition(EdVillager, &EdVillagerInfo, pEditGround, NULL);
+            EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
+            EdInitVilager(EdVillagerInfo, EdExchangeInfo.ground, NULL);
+            EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, NULL);
             MGBeginFrame();
 
             MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
@@ -1381,7 +1379,7 @@ int EditLoop(void) {
             while (ReadBGSync() != 0) {
             }
             sceGsSyncV(0);
-            EdSelectVillager(&EdVillagerInfo, NowTime, EditMapInfo);
+            EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
             EditInInit(NowTime, interior_map_name);
             MGBeginFrame();
 
@@ -1422,7 +1420,7 @@ int EditLoop(void) {
                 RunSystemEvent(2, NowCamera);
                 MenuMapJumpMode = -1;
             }
-            EdInitVillagerOnOff(EdVillager, &EdVillagerInfo, pEditGround);
+            EdInitVillagerOnOff(EdVillager, EdVillagerInfo, pEditGround);
             return 0;
         }
         break;
@@ -1440,8 +1438,8 @@ int EditLoop(void) {
         if (chg_time_cnt == 0x8C) {
             EdVillagerBuffer.used = 0;
             StartReadBG();
-            EdSelectVillager(&EdVillagerInfo, NowTime, EditMapInfo);
-            EdInitVilager(&EdVillagerInfo, pEditGround, EdNPCReadBuffer);
+            EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
+            EdInitVilager(EdVillagerInfo, pEditGround, EdNPCReadBuffer);
         }
         NowCamera = (CCamera *) &MainCamera;
         Chara->GetVelocity()->y = 0.0f;
@@ -1474,7 +1472,7 @@ int EditLoop(void) {
                                    &EdVillagerBuffer);
                 }
             }
-            EdInitVilagerPosition(EdVillager, &EdVillagerInfo, pEditGround, NULL);
+            EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, NULL);
             chg_time_cnt = 0;
             GameMode = 1;
             EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
@@ -1611,7 +1609,7 @@ int EditLoop(void) {
                     FadeOutToEvent(0xB, 0xA);
                 }
             }
-            EdInitVilagerPosition(EdVillager, &EdVillagerInfo, pEditGround, &at);
+            EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, &at);
         }
     }
     if (move_count > 0) {
@@ -1707,10 +1705,10 @@ int EditLoop(void) {
         start_event_no = 0x96;
     }
     if (GameMode != 0xE) {
-        if (((CMainChara *) Chara)->in_trigger != 0 && loop_counter > 10) {
-            if (((CMainChara *) Chara)->trigger_event > 0) {
-                RunEvent(((CMainChara *) Chara)->trigger_event, NowCamera);
-                ((CMainChara *) Chara)->trigger_event = 0;
+        if (((CMainChara *) Chara)->move_info.landed != 0 && loop_counter > 10) {
+            if (((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind > 0) {
+                RunEvent(((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind, NowCamera);
+                ((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind = 0;
             }
         }
     }
@@ -2296,7 +2294,7 @@ void EdDrawSysCursor(ED_EVENT_POINT *points, int count) {
             sceVu0CopyVector(position, EdVillager[i].chara.pos);
             position[1] += 2.0f + EdVillager[i].chara.body_height;
             if (EdInteriorFlag == 0 && EdVillager[i].CheckDraw() == 0 &&
-                EdVillager[i].unk_1468 == 0) {
+                EdVillager[i].talk_target == 0) {
                 if (MapNo != 3 || EdVillager[i].villager_id != 8) {
                     position[1] += offset;
                     CharaCursor1->SetPosition(position);
@@ -2304,7 +2302,7 @@ void EdDrawSysCursor(ED_EVENT_POINT *points, int count) {
                     CharaCursor1->SetRotation(0.0f, yaw, 0.0f);
                     MGDraw(CharaCursor1);
                 }
-            } else if (EdVillager[i].CheckDraw() != 0 && EdVillager[i].unk_1468 != 0 &&
+            } else if (EdVillager[i].CheckDraw() != 0 && EdVillager[i].talk_target != 0 &&
                        EdCheckViewMode() == 0) {
                 CharaCursor0->SetPosition(position);
                 MGDraw(CharaCursor0);
@@ -3106,7 +3104,7 @@ void MoveChara() {
     EdMoveCharaInfo.time = NowTime;
     EdMoveCharaInfo.camera = &MainCamera;
     ViewCamera.FollowOff();
-    EdMoveCharaInfo.follow = &ViewCamera;
+    EdMoveCharaInfo.view_camera = &ViewCamera;
     EdMoveCharaInfo.key_lock = key_lock;
     EdMoveCharaInfo.chara = Chara;
     EdMoveCharaInfo.interior = 0;
@@ -3114,7 +3112,7 @@ void MoveChara() {
     EDIT_MAP_INFO *info = EditMapInfo;
     EdMoveCharaInfo.points = info->work.events.points;
     EdMoveCharaInfo.point_count = info->event_count;
-    EdMoveCharaInfo.in_event = (GameMode == 16);
+    EdMoveCharaInfo.fishing = (GameMode == 16);
     EdMoveChara();
     if (EdMoveCharaInfo.system_event_no > 0) {
         RunSystemEvent(EdMoveCharaInfo.system_event_no, &MainCamera);
@@ -3173,19 +3171,19 @@ void MoveChara() {
             }
         }
     }
-    if (CheckMotionTime(EdMoveCharaInfo.motion_current, EdMoveCharaInfo.motion_previous, 74.0f) != 0) {
+    if (CheckMotionTime(EdMoveCharaInfo.motion_time_before, EdMoveCharaInfo.motion_time_after, 74.0f) != 0) {
         Chara->GetPosition(run_pos);
         RunEffect.Set(run_pos);
     }
-    if (CheckMotionTime(EdMoveCharaInfo.motion_current, EdMoveCharaInfo.motion_previous, 84.0f) != 0) {
+    if (CheckMotionTime(EdMoveCharaInfo.motion_time_before, EdMoveCharaInfo.motion_time_after, 84.0f) != 0) {
         Chara->GetPosition(splash_pos);
         RunEffect.Set(splash_pos);
     }
     if (GameMode == 1) {
         if (MapNo < 10) {
-            EdMoveVillager(&EdVillagerInfo);
+            EdMoveVillager(EdVillagerInfo);
         } else {
-            EdMoveVillagerSubMap(&EdVillagerInfo);
+            EdMoveVillagerSubMap(EdVillagerInfo);
         }
     }
 }

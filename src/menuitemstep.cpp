@@ -1,3 +1,5 @@
+#pragma helper_mask_gpr 0x30
+#pragma helper_mask_fpr 0x1000
 #include "menuitemstep.hpp"
 
 #include <cstring>
@@ -33,7 +35,6 @@ void CMenuItemStep::LoopStep(int interval) {
         }
     }
 }
-#ifdef NON_MATCHING
 void CMenuItemStep::CheckItemVolume(void) {
     int slot;
     ITEM_PACK *pack;
@@ -81,8 +82,7 @@ void CMenuItemStep::CheckItemVolume(void) {
                 if (preservation[slot] > 100) {
                     preservation[slot] = 100;
                 }
-                float kept = 100.0f - preservation[slot];
-                int loss = elapsed * kept / 100.0f;
+                int loss = elapsed * (float) (100.0f - preservation[slot]) / 100.0f;
                 pack->item_vol[slot] = pack->item_vol[slot] - loss;
                 if (pack->item_vol[slot] <= 0) {
                     pack->item[slot]++;
@@ -97,6 +97,3 @@ void CMenuItemStep::CheckItemVolume(void) {
         frame = 0;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menuitemstep", CheckItemVolume__13CMenuItemStepFv);
-#endif

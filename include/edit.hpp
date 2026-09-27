@@ -43,8 +43,8 @@ struct ED_EVENT_PARAM {
 struct ED_MOVE_CHARA_INFO {
     float time;            /**< Time of day the step happens at. */
     CCharacter *chara;     /**< Character being moved. */
-    CCamera *camera;       /**< Camera the movement is relative to. */
-    CCameraFollow *follow; /**< Camera that follows the character. */
+    CCameraFollow *camera; /**< Camera that follows the character and the movement is relative to. */
+    CCamera *view_camera;  /**< Camera that looks from the character's eyes in the first-person view. */
     int key_lock;          /**< Whether the pad is ignored this step. */
     u8 unk_14[0x4];
     int interior;        /**< Whether the character walks through an interior's parts rather than the ground. */
@@ -58,10 +58,10 @@ struct ED_MOVE_CHARA_INFO {
     int point_count;        /**< How many of them there are. */
     int event_no;           /**< Map event the step asks to run. */
     int system_event_no;    /**< System event the step asks to run. */
-    int unk_a0;
-    int in_event;          /**< Whether an event already has the character. */
-    float motion_previous; /**< Motion time at the previous step. */
-    float motion_current;  /**< Motion time at this one. */
+    int acted;                /**< Whether the step acted on the confirm button. */
+    int fishing;              /**< Whether the character stands fishing. */
+    float motion_time_after;  /**< Motion time once the step has advanced the character. */
+    float motion_time_before; /**< Motion time before the step advanced it. */
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_PARAM) == 0x60);
@@ -855,6 +855,15 @@ int EdInitEventParam(void);
 int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *funcs, int count, ED_EVENT_POINT *points, int max_points);
 
 /**
+ * Copies ladder endpoints and event parameters into the active event.
+ *
+ * @mangled EdInitHashigo__FP13ED_EVENT_INFOP14ED_EVENT_PARAM
+ * @address 0x16D720
+ * @size 0xD0
+ */
+void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param);
+
+/**
  * Prepares the event that walks the player into an interior.
  *
  * @mangled EdInitGotoInterior__FP13ED_EVENT_INFOP14ED_EVENT_PARAM
@@ -862,6 +871,16 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *funcs, 
  * @size 0x68
  */
 int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param);
+
+/**
+ * Runs one frame of the editor's message menu and reports when it closes.
+ *
+ * @mangled EdMenuLoop__FP6ClsMes
+ * @address 0x173F00
+ * @size 0x1EC
+ */
+int EdMenuLoop(ClsMes *message);
+
 
 /**
  * Copies a parts-info header into the editor parts record.

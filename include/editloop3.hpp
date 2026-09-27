@@ -40,6 +40,24 @@ STATIC_ASSERT(sizeof(ED_EXCHANGE_INFO) == 0x1C);
 extern ED_EXCHANGE_INFO EdExchangeInfo;
 
 /**
+ * Finds the villager nearest a character that stands close enough and faces it to be talked to.
+ *
+ * @mangled EdSearchNearNPC__FP10CCharacterP12CNPCharacteri
+ * @address 0x198CC0
+ * @size 0x2CC
+ */
+int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count);
+
+/**
+ * Starts a conversation with a villager, returning zero where it has nothing to say.
+ *
+ * @mangled EdTalkModeInit__FP12CNPCharacteri
+ * @address 0x198F90
+ * @size 0xDC
+ */
+int EdTalkModeInit(CNPCharacter *villager, int character_info_id);
+
+/**
  * Resets the villager slots and loads each selected villager's character, or queues its read.
  *
  * @mangled EdInitVilager__FP13VILLAGER_INFOP11CEditGroundP1

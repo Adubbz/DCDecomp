@@ -196,6 +196,16 @@ int FishingFishKind(int fish_no);
 void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc);
 
 /**
+ * Advances the line, float and hook one step from the rod's position.
+ *
+ * @mangled FishLineStep__FPfPf
+ * @address 0x1AA340
+ * @size 0xDA8
+ */
+void FishLineStep(float *rod_position, float *unused);
+
+
+/**
  * Makes a fish that has bitten the hook the one being landed.
  *
  * @mangled FishingAngleFish__Fi

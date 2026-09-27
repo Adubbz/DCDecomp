@@ -479,7 +479,6 @@ SECTIONS
         . = ALIGN(0x10);
         main.data.part4m.s.o (.data) // 0x00266b90
         ebattle.cpp.o (.data)        // 0x00266e10
-        main.data.part4m-266E90.s.o (.data) // 0x00266e90
         editarea.cpp.o (.data)       // 0x00266ed0
         edit.cpp.o (.data)
         main.data.part4c.s.o (.data)
@@ -736,7 +735,7 @@ SECTIONS
         main.data.eastking-tail.s.o (.data) // 0x002956d0
         menu_manual.cpp.o (.data)    // 0x002956f0
         weapon_buildup.cpp.o (.data) // 0x00295810
-        main.data.part6d.s.o (.data) // 0x00295830
+        menuitemstep.cpp.o (.data)   // 0x00295830 CheckItemVolume's neighbour template
         weaponlevelup.cpp.o (.data)  // 0x00295840
         . = ALIGN(16);               // the tail of the unit's last template
         menuiconautoget.cpp.o (.menuiconautoget-c1515) // 0x002959a0 @1515__3
@@ -969,6 +968,7 @@ SECTIONS
 		snd.cpp.o (.sbss)              // 0x002a264c, SndSePlay's statics
 		. = ALIGN(4);
 		main.sbss.snd-tail.s.o (.sbss) // 0x002a2654
+		ebattle.cpp.o (.sbss)          // 0x002a26f8, EdMoveChara's statics
 		editarea.cpp.o (.sbss)         // 0x002a2728
 		. = ALIGN(4);
 		main.sbss.part4h.s.o (.sbss)   // 0x002a2730

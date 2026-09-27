@@ -247,7 +247,7 @@ void CNPCharacter::Initialize() {
     unk_1488 = -1;
     chara.body_width = 7.0f;
     unk_148C = 0;
-    unk_1468 = 0;
+    talk_target = 0;
     event_status = 0;
     draw_enabled = 0;
     resource_name[0] = 0;

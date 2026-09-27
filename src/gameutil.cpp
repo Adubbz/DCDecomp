@@ -639,24 +639,56 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
 #ifdef NON_MATCHING
 int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
                   tagFRAME_INF *frame_info) {
-    int frame_count = frame->GetFrameNum();
-    int index;
+    CFrameVu1 *current;
+    Mot_List *list = motion->proc_list2;
+    u32 last = -1;
+    int i;
+    int count = frame->GetFrameNum();
 
-    for (index = 0; index < frame_count; index++) {
-        CFrame *current = frame + index;
-        frame_info[index].parent_frame = current->parent == NULL ? -1 : current->parent - frame;
-        frame_info[index].vertex_count = 0;
-        frame_info[index].base_vertices = NULL;
-        sceVu0CopyMatrix(frame_info[index].matrix, current->local);
+    for (i = 0; i < count; i++) {
+        current = &((CFrameVu1 *) frame)[i];
+        tagFRAME_INF *info = &frame_info[i];
+        sceVu0CopyMatrix(info->matrix, current->local);
+        info->parent_frame = (CFrameVu1 *) current->parent - (CFrameVu1 *) frame;
     }
-    for (Mot_List *list = motion->proc_list2; list != NULL; list = list->next) {
-        if (list->type != 200 && list->frame >= 0 && list->frame < frame_count &&
-            frame_info[list->frame].base_vertices == NULL) {
-            u32 count = list->key_count;
-            frame_info[list->frame].vertex_count = count;
-            frame_info[list->frame].base_vertices = (sceVu0FVECTOR *) arena->Alloc(count + 1);
-            memset(frame_info[list->frame].base_vertices, 0, count * sizeof(sceVu0FVECTOR));
+    for (; list != NULL; list = list->next) {
+        if (list->type == 200) {
+            continue;
         }
+        // Retail searches for each parent's index and never uses it.
+        CFrame *parent = ((CFrameVu1 *) frame)[list->target].parent;
+        for (i = 0; i < list->target; i++) {
+            if (parent == &((CFrameVu1 *) frame)[i]) {
+                break;
+            }
+        }
+        if (last == list->frame) {
+            continue;
+        }
+        current = &((CFrameVu1 *) frame)[list->frame];
+        parent = current->parent;
+        for (i = 0; i < list->frame; i++) {
+            if (parent == &((CFrameVu1 *) frame)[i]) {
+                break;
+            }
+        }
+        CVisualVu1 *visual = current->GetVisual();
+        if (visual != NULL) {
+            sceVu0FVECTOR *vertices;
+            MDT_HEADER *model = (MDT_HEADER *) visual->GetMDTDataAddress();
+            vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
+            sceVu0FMATRIX matrix;
+
+            frame_info[list->frame].base_vertices =
+                (sceVu0FVECTOR *) arena->Alloc(model->vertex_num * sizeof(sceVu0FVECTOR) / 16 + 1);
+            frame_info[list->frame].vertex_count = model->vertex_num;
+            sceVu0UnitMatrix(matrix);
+            sceVu0CopyMatrix(matrix, frame_info[list->frame].matrix);
+            for (i = 0; i < (u32) model->vertex_num; i++) {
+                sceVu0ApplyMatrix(frame_info[list->frame].base_vertices[i], matrix, vertices[i]);
+            }
+        }
+        last = list->frame;
     }
     return 1;
 }
@@ -1081,8 +1113,8 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
             to[2] = from[2];
         }
     }
-    out_info->unk_60 = 0;
-    out_info->unk_00 = 0;
+    out_info->ground_found = 0;
+    out_info->landed = 0;
     drop = 2.0f;
     if (!(velocity[1] <= 0.1f)) {
         drop = 0.0f;
@@ -1093,22 +1125,22 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
             sceVu0Normalize(poly.normal, poly.normal);
             out_info->ground_poly = poly;
             out_info->poly = poly;
-            out_info->unk_60 = 1;
+            out_info->ground_found = 1;
             *(u_long128 *) out_info->ground_point = *(u_long128 *) hit;
             if (!(hit[1] <= from[1] + velocity[1] - 4.0f - drop)) {
-                out_info->unk_00 = 1;
+                out_info->landed = 1;
                 if (poly.normal[1] < 0.5f && !(poly.normal[1] <= -0.5f)) {
                     i = 2;
                 }
             } else {
-                out_info->unk_00 = 0;
+                out_info->landed = 0;
             }
             break;
         }
         probe[0] += 0.01f;
         probe[2] += 0.001f;
     }
-    if (out_info->unk_00 != 0) {
+    if (out_info->landed != 0) {
         out_pos[0] = hit[0];
         out_pos[1] = hit[1];
         out_pos[2] = hit[2];

@@ -45,7 +45,7 @@ public:
     s32 map_parts_no;         /**< Edited-map part associated with the villager, or a negative value. */
     s32 villager_id;          /**< Villager-table identifier represented by this event NPC. */
     char resource_name[0x20]; /**< Resource name of the model loaded for the villager. */
-    s32 unk_1468;
+    s32 talk_target;  /**< Whether the player stands close enough and faces the villager to talk to it. */
     s32 initialized;  /**< Whether the villager model has been initialized for use. */
     s32 draw_enabled; /**< Whether the villager model participates in drawing and movement. */
     s32 near_camera;  /**< Whether proximity to the camera requests this villager's full update. */
@@ -204,3 +204,6 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CNPCharacter) == 0x14A0);
+
+/** Runtime character objects for the ten villagers selected for the current period. */
+extern CNPCharacter EdVillager[10];

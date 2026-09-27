@@ -1806,6 +1806,9 @@ void DrawCharaSelect() {
     }
     int bright = 0x80;
     int ring_alpha = 0x80;
+    int status_alpha;
+    int face_alpha;
+    int panel_alpha;
     switch (MenuChara.unk_03) {
         case 1:
             bright = (int) (10.0f * MenuChara.unk_04);
@@ -1878,9 +1881,9 @@ void DrawCharaSelect() {
         draw_x = face_x;
         face_y = 120.0f + SysChara[i].unk_08;
         size = 90.0f;
-        int face_alpha = bright;
-        int status_alpha = bright;
-        int panel_alpha = 0;
+        face_alpha = bright;
+        status_alpha = bright;
+        panel_alpha = 0;
         move = MenuCharaMove;
         if ((!(move <= 0.0f) && MenuChara.unk_02 - 1 == SysChara[i].unk_01) || (move < 0.0f && SysChara[i].unk_01 == 1)) {
             float step = 0.6666667f * MenuChara.unk_04;
@@ -1916,35 +1919,35 @@ void DrawCharaSelect() {
             }
         }
         if (i < BtlMenuStatusPt->party_size) {
-            float status_x = 23.0f + face_x;
-            float status_y = 86.0f + face_y;
+            float box_x = 23.0f + face_x;
+            float box_y = 86.0f + face_y;
             if (status_alpha > 0x80) {
                 status_alpha = 0x80;
             }
             if (status_alpha < 0) {
                 status_alpha = 0;
             }
-            DrawOtherCharaStatus((int) status_x, (int) status_y, i, status_alpha);
-            float panel_x = 394.0f + SysChara[i].unk_04 - 29.0f;
-            float panel_y = 120.0f + SysChara[i].unk_08 - 3.0f;
+            DrawOtherCharaStatus((int) box_x, (int) box_y, i, status_alpha);
+            box_x = 394.0f + SysChara[i].unk_04 - 29.0f;
+            box_y = 120.0f + SysChara[i].unk_08 - 3.0f;
             if (panel_alpha > 0x80) {
                 panel_alpha = 0x80;
             }
             if (panel_alpha < 0) {
                 panel_alpha = 0;
             }
-            if (panel_x < -300.0f || (float) 0x28A < panel_x || face_y < -130.0f || 448.0f < face_y) {
+            if (box_x < -300.0f || (float) 0x28A < box_x || face_y < -130.0f || 448.0f < face_y) {
                 continue;
             }
             MenuTextureReload(BtlMenuExReadBlock);
-            DrawSelCharaStatus(panel_x, panel_y, i, panel_alpha, (int) size, face_alpha, (int) draw_x, (int) face_y);
+            DrawSelCharaStatus(box_x, box_y, i, panel_alpha, (int) size, face_alpha, (int) draw_x, (int) face_y);
         }
         MenuTextureReload(BtlMenuExReadBlock);
         CTexture *face = MenuCharaFace;
         int u = 0;
         int width = 0x6A;
         int v = i * 0x6A;
-        if (i >= 3) {
+        if (i > 2) {
             u = 0x6A;
             v = (i - 3) * 0x6A;
         }
@@ -1954,7 +1957,7 @@ void DrawCharaSelect() {
         if (hp <= 0 || (condition & 2)) {
             shade = 0x50;
         }
-        if (i >= BtlMenuStatusPt->party_size) {
+        if (BtlMenuStatusPt->party_size <= i) {
             face = NonCharaFace;
             if (SysChara[i].unk_01 == 0) {
                 face = TexManager.GetTexture("nonchara2", -1);
