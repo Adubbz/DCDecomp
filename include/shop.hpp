@@ -338,15 +338,6 @@ void ItemPosInfoInit(void);
 void InitItemShop2(int *, int, int);
 
 /**
- * Moves the cursor across the item shop's board.
- *
- * @mangled ItemShopSelectKey2__Fv
- * @address 0x1EE280
- * @size 0xAF0
- */
-void ItemShopSelectKey2(void);
-
-/**
  * Handles one frame of item shop input and returns the mode it leaves the shop in.
  *
  * @mangled ItemShopKey2__Fv

@@ -16,10 +16,12 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "gamepad.hpp"
+#include "itemdata.hpp"
 #include "mathutil.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
+#include "menu_misc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -143,9 +145,7 @@ extern s16 ChargeOrShopFlag;
 #include <cstdio>
 #include <cstring>
 
-#include "itemdata.hpp"
 #include "menu_dungeon.hpp"
-#include "menu_misc.hpp"
 #include "stockitem.hpp"
 
 static int ChargeSelectKey();
@@ -577,6 +577,7 @@ static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int cl
 static void ItemShopGoodInitialize(int shop_no);
 
 static void ShopCancelGoodReturn2();
+static void ItemShopSelectKey2();
 
 s16 *GetItemShopList(int shop_no) {
     return ItemShopList2[shop_no];
@@ -3553,8 +3554,14 @@ void InitItemShop2(int *state, int shop_no, int mode) {
     GetMainMenuRightHelpWinLangOffset(ShopHelpWinPos[0], ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH);
 }
 
-#ifdef NON_MATCHING
-void ItemShopSelectKey2() {
+/**
+ * Moves the cursor across the item shop's board and swaps or buys the good under it.
+ *
+ * @mangled ItemShopSelectKey2__Fv
+ * @address 0x1EE280
+ * @size 0xAF0
+ */
+static void ItemShopSelectKey2() {
     int i;
     SHOP_ITEM_RECORD work[2];
     int no[2];
@@ -3600,6 +3607,7 @@ void ItemShopSelectKey2() {
     if (GamePad.Down(0x40) != 0) {
         ShopMenu.unk_06 = 1;
         int cursor = ShopMenu.board.cursor;
+        int shop_info = ShopBoardInfo[cursor];
         if (ShopListPt[cursor].item_no < 0x51 && ShopHaveItemPt->item_no < 0x51) {
             ComMenuSePlay(2);
             return;
@@ -3613,12 +3621,12 @@ void ItemShopSelectKey2() {
                     if (data->kind_flags & 0x10) {
                         enable = 0;
                     }
-                    if (ShopHaveItemPt->item_no == 0xB9) {
+                    if (ShopHaveItemPt->item_no == ITEM_FISHING_ROD) {
                         enable = 0;
                     }
                 }
             }
-            if (ShopHaveItemPt->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+            if (ShopHaveItemPt->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
                 enable = 0;
             }
         }
@@ -3632,7 +3640,7 @@ void ItemShopSelectKey2() {
             SetItemShopTalkMode(4, 1);
             return;
         }
-        int shop_info = ShopBoardInfo[cursor];
+        shop_info = ShopBoardInfo[cursor];
         int have_info = ShopHaveItemPt->unk_00;
         memset(work, 0, sizeof(work));
         SHOP_ITEMLIST *good = &ShopListPt[cursor];
@@ -3805,9 +3813,6 @@ void ItemShopSelectKey2() {
         ComMenuSePlay(0);
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopSelectKey2__Fv);
-#endif
 #ifdef NON_MATCHING
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     u8 taken[0xF8];
