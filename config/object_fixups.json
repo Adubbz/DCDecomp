@@ -28,11 +28,18 @@
         "@1968",
         "@1988"
       ],
+      ".shopdata-itemdraw": [
+        "@2264",
+        "@2273"
+      ],
+      ".shopsdata-itemdraw": [
+        "@2270"
+      ],
       ".shopdata-buymoney": [
         "@1374"
       ],
       ".shopdata-fishrec": [
-        "@2361"
+        "@2449"
       ],
       ".shopdata-sellticket": [
         "@1766"
@@ -44,7 +51,7 @@
         "@1683"
       ],
       ".shopdata-fishtex": [
-        "@2253"
+        "@2341"
       ],
       ".shopdata-person": [
         "@1038",
@@ -54,13 +61,13 @@
         "@1272"
       ],
       ".shopdata-fishdraw": [
-        "@2281"
+        "@2369"
       ],
       ".shopdata-fishrecview-a": [
-        "@2425"
+        "@2513"
       ],
       ".shopdata-fishrecview-b": [
-        "@2437"
+        "@2525"
       ]
     },
     "rekey_sections": [
@@ -137,6 +144,13 @@
           144,
           64,
           144
+        ]
+      ],
+      [
+        ".shopdata-itemdraw",
+        [
+          12,
+          14
         ]
       ],
       [

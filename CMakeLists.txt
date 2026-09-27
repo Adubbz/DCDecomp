@@ -193,7 +193,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2d.s=2A1F50-2A1F68
            main.sdata.edit_in-a.s=2A1FA0-2A1FE8
            main.sdata.part2f-2A1FF0.s=2A1FF0-2A1FF8
-           main.sdata.shop-a.s=2A2000-2A2028
+           main.sdata.shop-a.s=2A2000-2A2008
+           main.sdata.shop-b.s=2A200C-2A2028
            main.sdata.part2f-2A2050.s=2A2058-2A2070
            main.sdata.part2f-2A2050-2A2088.s=2A2088-2A2098
            main.sdata.battlemenu-tail.s=2A20F8-2A2100
@@ -278,7 +279,7 @@ carve_part(main.data.part6.s
            main.data.shop-buymoney.s=2927AC-2927B0
            main.data.shop-checkbuy-a.s=2927BC-2927C0
            main.data.shop-checkbuy-b.s=2927CC-292820
-           main.data.shop-filenames-after.s=2929B0-292A60
+           main.data.shop-itemdraw-after.s=2929D0-292A60
            main.data.shop-fishdraw.s=292AA0-292AC0
            main.data.shop-fishrecview-after.s=292B10-292E50
            main.data.battlemenu-292E88.s=292E88-292E90

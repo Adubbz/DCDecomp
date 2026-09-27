@@ -575,7 +575,9 @@ SECTIONS
         shop.cpp.o (.shopdata-sellticket) // 0x00292840 @1894
         . = ALIGN(16);
         shop.cpp.o (.shopdata-filenames) // 0x00292850
-        main.data.shop-filenames-after.s.o (.data) // 0x002929B0
+        shop.cpp.o (.shopdata-itemdraw) // 0x002929b0 @2264 @2273
+        . = ALIGN(16);
+        main.data.shop-itemdraw-after.s.o (.data) // 0x002929d0
         shop.cpp.o (.shopdata-fishtex) // 0x00292a60 @2949
         . = ALIGN(16);
         shop.cpp.o (.shopdata-fishdraw) // 0x00292a90 @3177
@@ -877,6 +879,8 @@ SECTIONS
 		main.sdata.part2f-2A1FF0.s.o (.sdata) // 0x002a1ff0
 		shop.cpp.o (.sdata)            // 0x002a1ff8 @1350__2
 		main.sdata.shop-a.s.o (.sdata) // 0x002a2000
+		shop.cpp.o (.shopsdata-itemdraw) // 0x002a2008 @2270
+		main.sdata.shop-b.s.o (.sdata) // 0x002a200c
 		battlemenu.cpp.o (.battlemenu-c702__2) // 0x002a2028 @702__2
 		. = ALIGN(8);
 		battlemenu.cpp.o (.battlemenu-c782__2) // 0x002a2030 @782__2

@@ -4421,12 +4421,12 @@ int ItemShopKey2() {
 #else
 INCLUDE_ASM("asm/nonmatchings/shop", ItemShopKey2__Fv);
 #endif
-#ifdef NON_MATCHING
 void ItemShopDraw2() {
     int cur_x;
     int pos_y;
     int count;
     int top_row;
+    int state;
     int text_x;
     int text_y;
 
@@ -4480,17 +4480,24 @@ void ItemShopDraw2() {
                 top_row = ShopMenu.board.top_row;
                 break;
         }
-        int state = 0;
+        state = 0;
         if (ShopHaveItemPt->item_no >= 0x51) {
             state = 2;
         } else {
             switch (ShopMenu.side) {
                 case 1:
-                    state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor) < 0x51 ? 0 : 1;
+                    state = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
+                    if (state < 0x51) {
+                        state = 0;
+                    } else {
+                        state = 1;
+                    }
                     break;
                 case 0:
                     if (ShopListPt[ShopMenu.board.cursor].item_no > 0x51) {
                         state = 1;
+                    } else {
+                        state = 0;
                     }
                     break;
                 case 2:
@@ -4533,24 +4540,31 @@ void ItemShopDraw2() {
                     switch (ShopMenu.board.page) {
                         case 0: {
                             CUserStatus *status = ShopUserStatusPt;
-                            item_no = status->item_pack.item[ShopMenu.board.cursor];
+                            ITEM_PACK *pack = &status->item_pack;
+                            item_no = pack->item[ShopMenu.board.cursor];
                             break;
                         }
                         case 2: {
                             CUserStatus *status = ShopUserStatusPt;
-                            item_no = status->consumable_items[ShopMenu.board.cursor].id;
+                            DNG_CONSUMABLE *attach = status->consumable_items;
+                            item_no = attach[ShopMenu.board.cursor].id;
                             break;
                         }
                         case 1: {
+                            int chara_no = ShopMenu.board.cursor / 10;
                             CUserStatus *status = ShopUserStatusPt;
-                            item_no = status->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10].item_no;
+                            WEAPON_HAVE *row = status->chara_weapons[chara_no];
+                            item_no = row[ShopMenu.board.cursor % 10].item_no;
                             break;
                         }
                     }
                     int ticket_y = (int) (6.0f + ShopMenu.board.y);
                     int money = CalItemMoney(item_no, 1);
                     if (item_no >= 0x101) {
-                        money += WeaponCalMoney(&ShopUserStatusPt->chara_weapons[ShopMenu.board.cursor / 10][ShopMenu.board.cursor % 10], 1);
+                        int chara_no = ShopMenu.board.cursor / 10;
+                        CUserStatus *status = ShopUserStatusPt;
+                        WEAPON_HAVE *row = status->chara_weapons[chara_no];
+                        money += WeaponCalMoney(&row[ShopMenu.board.cursor % 10], 1);
                     }
                     if (money <= 0) {
                         money = 1;
@@ -4560,8 +4574,7 @@ void ItemShopDraw2() {
                 break;
         }
         DrawSellTicket22(0x16A, (int) (6.0f + ShopMenu.board.y), 0x81, 0x121, 0x80);
-        int help_x = (int) ShopHelpWinPos[0];
-        MenuHelpWinDraw(help_x, (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
+        MenuHelpWinDraw((int) ShopHelpWinPos[0], (int) ShopHelpWinPos[1], ShopHelpWinW, ShopHelpWinH, 0x80);
         GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
         CommonMenuMes2.text_x = (int) (ShopHelpWinPos[0] + text_x);
         CommonMenuMes2.text_y = (int) (ShopHelpWinPos[1] + text_y);
@@ -4585,33 +4598,34 @@ void ItemShopDraw2() {
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
-        if (ShopMenu.talk_mode != 14 && ShopMenu.talk_mode != 13) {
-            CommonMenuMes1.stay_frame = 0;
-        } else {
-            s16 prompt[2] = {0x4B4, 0x4B5};
-            int mes_no = prompt[ShopMenu.talk_mode - 13];
-            if (CommonMenuMes1.mes_made != mes_no) {
-                CommonMenuMes1.MakeMesWin(mes_no);
+        switch (ShopMenu.talk_mode) {
+            case 13:
+            case 14: {
+                s16 prompt[2] = {0x4B4, 0x4B5};
+                int mes_no = prompt[ShopMenu.talk_mode - 13];
+                if (CommonMenuMes1.mes_made != mes_no) {
+                    CommonMenuMes1.MakeMesWin(mes_no);
+                }
+                s8 offset[7][2] = {{0x1E, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}};
+                CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
+                CommonMenuMes1.text_y = 0xBE;
+                if (ShopMenu.talk_mode == 14) {
+                    CommonMenuMes1.text_x = offset[ShopMenu.lang][1] + 0x64;
+                }
+                CommonMenuMes1.stay_frame = 1;
+                CommonMenuMes1.Step();
+                CommonMenuMes1.DrawMesWin();
+                break;
             }
-            u8 offset[7][2] = {{0x1E, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32},
-                               {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}};
-            CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
-            CommonMenuMes1.text_y = 0xBE;
-            if (ShopMenu.talk_mode == 14) {
-                CommonMenuMes1.text_x = offset[ShopMenu.lang][1] + 0x64;
-            }
-            CommonMenuMes1.stay_frame = 1;
-            CommonMenuMes1.Step();
-            CommonMenuMes1.DrawMesWin();
+            default:
+                CommonMenuMes1.stay_frame = 0;
+                break;
         }
     }
     ShopModelMsgFunc(1);
     ShopFadeoutDraw();
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shop", ItemShopDraw2__Fv);
-#endif
 
 /**
  * Returns one prize the fishing exchange offers.
