@@ -1543,7 +1543,7 @@ void GameInit(void) {
     BtActStatus.unk_070 = 0;
     BtActStatus.unk_098 = 0;
     BtActStatus.unk_09C = 0;
-    BtActStatus.in_water = 0;
+    BtActStatus.unk_094 = 0;
     BtActStatus.action_no = 0;
     BtActStatus.unk_0A4 = 0;
     BtActStatus.unk_0F8 = 10;
@@ -3164,7 +3164,7 @@ void MoveChara(void) {
                                 0.0f, unitRotation(CharaFrame, atan2f(move_x, move_z)), 0.0f);
                         }
                         if (GamePad.On(8) != 0 && lockOnTargetFlag != 0 && BtActStatus.unk_098 == 0 &&
-                            BtActStatus.in_water == 0 && BtActStatus.action_on == 0) {
+                            BtActStatus.unk_094 == 0 && BtActStatus.action_on == 0) {
                             BtActStatus.action_on = 6;
                             BtActStatus.action_no = 8;
                             driveNoInterpolate = 1;
@@ -3342,7 +3342,7 @@ void MoveChara(void) {
                                     }
                                 } else {
                                 action:
-                                    if (BtActStatus.in_water != 0) {
+                                    if (BtActStatus.unk_094 != 0) {
                                         BtActStatus.action_on = 0;
                                         BtActStatus.unk_028 = 0;
                                         BtActStatus.unk_040 = 0;
@@ -3354,7 +3354,7 @@ void MoveChara(void) {
                                         ResetMovePower();
                                     }
                                     if (GamePad.Down(PadInput_OK | 0x80) != 0 &&
-                                        BtActStatus.unk_098 == 0 && BtActStatus.in_water != 0) {
+                                        BtActStatus.unk_098 == 0 && BtActStatus.unk_094 != 0) {
                                         SetSystemMes(0x47, 0x5A, 8, 0, NULL, NULL);
                                         DngMessMan.unk_08 = 0x5A;
                                         autoCamTrial();
@@ -4825,7 +4825,7 @@ void MoveChara(void) {
                     }
                 }
                 if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.unk_098 == 0 &&
-                    BtActStatus.in_water != 0) {
+                    BtActStatus.unk_094 != 0) {
                     SetSystemMes(0x47, 0x5A, 8, 0, NULL, NULL);
                     DngMessMan.unk_08 = 0x5A;
                     hand_ok = 0;
