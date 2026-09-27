@@ -481,12 +481,12 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
                         float x[4];
                         float z[4];
                         float height;
-                        float left = free_area[area_no].rect[rect_no].left;
+                        float left = free_area[area_no].rect[rect_no].x0;
                         x[0] = 10.0f * left;
-                        height = 10.0f * free_area[area_no].rect[rect_no].height;
-                        z[0] = 10.0f * free_area[area_no].rect[rect_no].top;
-                        x[3] = 10.0f * free_area[area_no].rect[rect_no].right;
-                        z[3] = 10.0f * free_area[area_no].rect[rect_no].bottom;
+                        height = 10.0f * free_area[area_no].rect[rect_no].y0;
+                        z[0] = 10.0f * free_area[area_no].rect[rect_no].z0;
+                        x[3] = 10.0f * free_area[area_no].rect[rect_no].x1;
+                        z[3] = 10.0f * free_area[area_no].rect[rect_no].z1;
                         x[1] = x[3];
                         z[1] = z[0];
                         x[2] = x[0];

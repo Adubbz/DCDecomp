@@ -255,12 +255,12 @@ int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small);
  * tenth of world scale.
  */
 struct ITEM_FREE_RECT {
-    float left;   /**< X of the first corner. */
-    float height; /**< Y of the first corner. */
-    float top;    /**< Z of the first corner. */
-    float right;  /**< X of the second corner. */
-    float unk_14;
-    float bottom; /**< Z of the second corner. */
+    float x0; /**< X of the first corner. */
+    float y0; /**< Y of the first corner. */
+    float z0; /**< Z of the first corner. */
+    float x1; /**< X of the second corner. */
+    float y1; /**< Y of the second corner. */
+    float z1; /**< Z of the second corner. */
 };
 
 /**

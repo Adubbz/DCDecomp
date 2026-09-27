@@ -289,12 +289,12 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    px[0] = ToWorldScale(areas[a].rect[b].left);
-                    py[0] = areas[a].rect[b].height * 10.0f;
-                    pz[0] = areas[a].rect[b].top * 10.0f;
-                    px[3] = areas[a].rect[b].right * 10.0f;
-                    py[3] = areas[a].rect[b].unk_14 * 10.0f;
-                    pz[3] = areas[a].rect[b].bottom * 10.0f;
+                    px[0] = ToWorldScale(areas[a].rect[b].x0);
+                    py[0] = areas[a].rect[b].y0 * 10.0f;
+                    pz[0] = areas[a].rect[b].z0 * 10.0f;
+                    px[3] = areas[a].rect[b].x1 * 10.0f;
+                    py[3] = areas[a].rect[b].y1 * 10.0f;
+                    pz[3] = areas[a].rect[b].z1 * 10.0f;
                     px[1] = px[3];
                     py[1] = py[0];
                     pz[1] = pz[0];
