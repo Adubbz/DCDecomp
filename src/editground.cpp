@@ -3,7 +3,6 @@
 
 #include "editground.hpp"
 
-#include <cmath>
 #include <cstdlib>
 #include <cstring>
 
