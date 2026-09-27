@@ -1013,7 +1013,7 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     int zone = status->res_limit_zone_current;
     if (zone < 6 && zone >= 0) {
         ChangeMenu.unk_52 = 1;
-    } else if (status->cur_chara == 5 && BtActStatus.unk_092 == 10) {
+    } else if (status->cur_chara == CHARA_OSMOND && BtActStatus.unk_092 == 10) {
         ChangeMenu.unk_52 = 2;
     }
     if (ChangeMenu.unk_5c != 0) {

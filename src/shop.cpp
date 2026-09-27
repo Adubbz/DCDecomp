@@ -3617,7 +3617,7 @@ static void ItemShopSelectKey2() {
             if (item_no >= 0x84) {
                 ITEM_DATA *data = GetItemData(item_no);
                 if (data != NULL) {
-                    if (data->kind_flags & 0x10) {
+                    if (data->kind_flags & ITEMKINDF_THROWABLE) {
                         enable = 0;
                     }
                     if (ShopHaveItemPt->item_no == ITEM_FISHING_ROD) {

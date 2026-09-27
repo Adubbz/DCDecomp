@@ -1751,7 +1751,7 @@ int BattleMenuCharaKey() {
                         s8 cur;
                         char *active = &status->unk_04;
                         cur = *active;
-                        if (cur == 5 && BtActStatus.unk_092 == 10) {
+                        if (cur == CHARA_OSMOND && BtActStatus.unk_092 == 10) {
                             CommonMenuMes1.MakeMesWin(0x1A1);
                             ComMenuSePlay(2);
                         } else {
