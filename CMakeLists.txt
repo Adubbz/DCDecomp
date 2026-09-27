@@ -256,7 +256,7 @@ carve_part(main.sbss.part5.s
            main.sbss.part5.s=2A2BF8-2A2C48
            main.sbss.part5-2A2C4C.s=2A2C4C-2A2C68
            main.sbss.part5c.s=2A2C74-2A2D80
-           main.sbss.battlemenu-2A2D85.s=2A2D85-2A2D9C
+           main.sbss.battlemenu-2A2D98.s=2A2D98-2A2D9C
            main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
            main.sbss.memcard-a.s=2A2F20-2A2F50
            main.sbss.denter-gap.s=2A2F54-2A2F5C

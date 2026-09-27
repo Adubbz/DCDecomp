@@ -1159,12 +1159,12 @@ int GetAtraMsgNo(int map_no, int element) {
     }
     return mes_no;
 }
-#ifdef NON_MATCHING
 static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
     EDITPARTS_INFO *info;
     EDIT_PARTS_ATRA *parts;
     int msg_no;
     EDIT_CHIP_ATTACH_DATA *attach;
+    EDIT_CHIP_ATTACH_DATA *elements;
     EDIT_ELEMENT_ATRA *chip;
     EDIT_CHIP_ATTACH_DATA *shown;
     int link;
@@ -1197,7 +1197,8 @@ static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
             }
             break;
         default:
-            attach = &parts->elements[slot] - 1;
+            elements = parts->elements;
+            attach = &elements[slot] - 1;
             chip = GetEditAtraChipData(map_no, attach->id);
             shown = &GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no)->elements[slot - 1];
             msg_no = chip->msg_no + (map_no * 200 + 40);
@@ -1215,9 +1216,6 @@ static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
     }
     return msg_no;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", AtoraMsgNoGet__Fiii);
-#endif
 
 static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
     EDIT_ELEMENT_ATRA *chip;

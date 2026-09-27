@@ -1010,7 +1010,14 @@ SECTIONS
 		main.sbss.part5c.s.o (.sbss) // 0x002a2c74
 		battlemenu.cpp.o (.battlemenu-warningcnt_1676) // 0x002a2d80 warningcnt$1676
 		battlemenu.cpp.o (.battlemenu-init_1677) // 0x002a2d84 init$1677
-		main.sbss.battlemenu-2A2D85.s.o (.sbss) // 0x002a2d85
+		. = ALIGN(4);
+		battlemenu.cpp.o (.battlemenu-warmcnt_2370) // 0x002a2d88 warmcnt$2370
+		battlemenu.cpp.o (.battlemenu-init_2371) // 0x002a2d8c init$2371
+		. = ALIGN(4);
+		battlemenu.cpp.o (.battlemenu-levelbrinkcnt_2379) // 0x002a2d90 levelbrinkcnt$2379
+		battlemenu.cpp.o (.battlemenu-init_2380) // 0x002a2d94 init$2380
+		. = ALIGN(4);
+		main.sbss.battlemenu-2A2D98.s.o (.sbss) // 0x002a2d98
 		battlemenu.cpp.o (.battlemenu-ct_4025) // 0x002a2d9c ct$4025
 		battlemenu.cpp.o (.battlemenu-init_4026) // 0x002a2da0 init$4026
 		. = ALIGN(4);

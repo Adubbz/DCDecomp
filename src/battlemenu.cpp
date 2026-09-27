@@ -2954,7 +2954,6 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
     return refused;
 }
 
-#ifdef NON_MATCHING
 void DrawWeaponSelectDialog(int x, int y, int alpha) {
     s8 shift = 0;
 
@@ -2998,7 +2997,7 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     DrawMenu2DSprite(WepStatus, CRect_i_(left, top + 0x4F, 0x60, 0x1F), source, bright, bright, bright, alpha);
     source.y += 0x20;
     static int levelbrinkcnt = 0;
-    bright = 0x80;
+    int level_bright = 0x80;
     levelbrinkcnt++;
     if (levelbrinkcnt > 1000000) {
         levelbrinkcnt = 0;
@@ -3006,7 +3005,7 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
     CRect_i_ dest(left, top + 0x69, 0x60, 0x1F);
     for (int i = 1; i <= 3; i++) {
         if (options & (1 << i)) {
-            DrawMenu2DSprite(WepStatus, dest, source, bright, bright, bright, alpha);
+            DrawMenu2DSprite(WepStatus, dest, source, level_bright, level_bright, level_bright, alpha);
             dest.y += 0x1A;
         }
         source.y += 0x20;
@@ -3016,7 +3015,7 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
             WeaponStatusBuildUp(weapon, build);
             int attached = GetNowWeaponAttachNum(weapon);
             if (build > 0 && attached == 0) {
-                bright += abs((int) (40.0f * sinf((float) levelbrinkcnt / 12.0f)));
+                level_bright += abs((int) (40.0f * sinf((float) levelbrinkcnt / 12.0f)));
             }
         }
     }
@@ -3027,9 +3026,6 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
             break;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
-#endif
 
 /**
  * Opens the weapon page in one of its modes and puts the cursor where it was left.
