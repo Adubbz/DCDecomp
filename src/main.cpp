@@ -1318,9 +1318,16 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @address 0x142DA0
  * @size 0x43C
  */
+/* The compiler writes this assignment itself and emits it only where a character is assigned.
+   Nothing calls the copy below and the link removes it (see config/object_fixups.json): it is
+   here to assign one, and the compiler emits neither without the declaration that follows it. */
 #pragma push
 #pragma dont_inline on
-static void CopyCharacter(CCharacter &dest, const CCharacter &src) { dest = src; }
+
+static void CopyCharacter(CCharacter &dest, const CCharacter &src) {
+    dest = src;
+}
+
 static void CopyCharacter(CCharacter &dest, const CCharacter &src);
 #pragma pop
 
