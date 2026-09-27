@@ -1584,17 +1584,14 @@ void CommandTALK_EVENT(void **arguments) {
 /**
  * Stores a character ambient colour selected by a one-based script slot.
  */
-FUZZY_MATCH("asm/matchings/editloop", CommandCHARA_AMBIENT__FPPv);
-
 void CommandCHARA_AMBIENT(void **arguments) {
-    int index = *(int *) arguments[0] - 1;
+    int index = *(int *) arguments[0];
+    index--;
     if (index < 0 || index >= 4) {
         return;
     }
 
-    float red = *(float *) arguments[1];
-    float *ambient = edit_info->character_ambient[index];
-    ambient[0] = red;
+    edit_info->character_ambient[index][0] = *(float *) arguments[1];
     edit_info->character_ambient[index][1] = *(float *) arguments[2];
     edit_info->character_ambient[index][2] = *(float *) arguments[3];
     edit_info->character_ambient[index][3] = 0.0f;
