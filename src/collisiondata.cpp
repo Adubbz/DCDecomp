@@ -31,10 +31,14 @@ extern "C" int gateKeyStack[32];
 #include "camerafollow.hpp"
 #include "mglib.hpp"
 
-/** The camera the dungeon is drawn through. */
+/**
+ * The camera the dungeon is drawn through.
+ */
 extern CCameraFollow *NowCamera;
 
-/** Version number the debug overlay prints after the weapon list's year. */
+/**
+ * Version number the debug overlay prints after the weapon list's year.
+ */
 extern int VERSION_VOL;
 
 /**

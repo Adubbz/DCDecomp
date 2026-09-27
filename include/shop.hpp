@@ -352,7 +352,6 @@ int ItemShopKey2(void);
  * @mangled ItemShopDraw2__Fv
  * @address 0x1F0800
  * @size 0xA4C
- * Draws one frame of the item shop.
  */
 void ItemShopDraw2(void);
 
