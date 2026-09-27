@@ -4738,6 +4738,7 @@ void WeaponMenuDraw() {
             break;
     }
     RECT frame;
+    // The weapon is read with the slot as it was before the clamp below, which fixes only the stored slot.
     int slot = WepMenu.weapon_slot;
     if (slot < 0) {
         WepMenu.weapon_slot = 0;
