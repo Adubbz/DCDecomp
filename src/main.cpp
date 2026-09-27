@@ -1318,9 +1318,9 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
  * @address 0x142DA0
  * @size 0x43C
  */
-/* The compiler writes this assignment itself and emits it only where a character is assigned.
-   Nothing calls the copy below and the link removes it (see config/object_fixups.json): it is
-   here to assign one, and the compiler emits neither without the declaration that follows it. */
+/* Assigns one character to another so that the compiler emits the assignment operator documented
+   above, which it writes only where a character is assigned. Nothing calls this: the link this
+   file was built by removed it. */
 #pragma push
 #pragma dont_inline on
 
