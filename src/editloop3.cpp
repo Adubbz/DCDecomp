@@ -1100,7 +1100,6 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
 
 static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info,
                                  CEditGround *ground);
-#ifdef NON_MATCHING
 /**
  * Advances and positions the selected villagers on the editable town map.
  *
@@ -1115,16 +1114,20 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
     int i;
 
     for (i = 0; i < 10; i++) {
+        int offset;
+        s32 *near_camera;
         sceVu0FVECTOR position;
         sceVu0FVECTOR rotation;
-        EdVillager[i].near_camera = 0;
+        offset = i * (int) sizeof(CNPCharacter);
+        near_camera = (s32 *) ((char *) &EdVillager->near_camera + offset);
+        *near_camera = 0;
         VILLAGER_INFO *info = &villagers[i];
         if (info->placed == 0) {
             continue;
         }
         sceVu0CopyVector(position, info->position);
         sceVu0CopyVector(rotation, info->rotation);
-        if (info->character_no >= 0 && EdVillager[i].draw_enabled == 0) {
+        if (info->character_no >= 0 && (*(s32 *) ((char *) &EdVillager->draw_enabled + offset)) == 0) {
             continue;
         }
         if (info->character_no >= 0 && info->initial_motion == 0) {
@@ -1132,28 +1135,30 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             if (parts->unk_08 == 0 || parts->elements[info->model_no].enabled == 0) {
                 continue;
             }
-            EdVillager[i].near_camera = 1;
+            *near_camera = 1;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         } else {
-            EdVillager[i].near_camera = 1;
+            *near_camera = 1;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         }
         if (info->initial_motion == 0) {
-            EdVillager[i].chara.SetPosition(position);
-            EdVillager[i].chara.SetRotation(rotation[0], rotation[1], rotation[2]);
+            ((CCharacter *) ((char *) &EdVillager->chara + offset))->CCharacter::SetPosition(position);
+            ((CCharacter *) ((char *) &EdVillager->chara + offset))->CCharacter::SetRotation(rotation[0], rotation[1], rotation[2]);
         } else {
             sceVu0FVECTOR player_position;
             sceVu0FVECTOR villager_position;
             player->GetPosition(player_position);
-            CNPCharacter *npc = &EdVillager[i];
+            CNPCharacter *npc = (CNPCharacter *) ((char *) EdVillager + offset);
             sceVu0CopyVector(villager_position, npc->chara.pos);
             float distance = DistVector(player_position, villager_position);
-            EdVillager[i].sequence_enabled = 1;
+            (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 1;
             if (distance < 20.0f) {
-                EdVillager[i].sequence_enabled = 0;
-                EdVillager[i].chara.SetMotion(0, 0);
+                (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 0;
+                *(s32 *) ((char *) &EdVillager->chara.motion_no + offset) = 0;
+                *(s32 *) ((char *) &EdVillager->chara.flags + offset) = 0;
+                *(float *) ((char *) &EdVillager->chara.motion_speed + offset) = -1.0f;
             }
             EdSetVillagerNextPos(npc, info, ground);
         }
@@ -1215,9 +1220,6 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editloop3", EdMoveVillager__FP13VILLAGER_INFO);
-#endif
 void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
     CCharacter *player = EdExchangeInfo.player;
     CCamera *camera = EdExchangeInfo.camera;
