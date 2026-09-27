@@ -138,7 +138,6 @@ static float vuabs(float *vector) {
  * @address 0x13B8A0
  * @size 0xBCC
  */
-
 void CCloth::Step(int step) {
     float *velocity;
     int i;
