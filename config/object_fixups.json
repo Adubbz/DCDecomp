@@ -320,144 +320,160 @@
       ".battlemenu-c1879": [
         "@1026"
       ],
+      ".battlemenu-statustag": [
+        "@1055",
+        "@1073",
+        "@1074",
+        "@1075",
+        "@1079",
+        "@1093",
+        "@1094"
+      ],
       ".battlemenu-c2002": [
-        "@1057"
+        "@1148"
       ],
       ".battlemenu-c2003": [
-        "@1058"
+        "@1149"
       ],
       ".battlemenu-c2004": [
-        "@1059"
+        "@1150"
       ],
       ".battlemenu-c2020": [
-        "@1075"
+        "@1166"
       ],
       ".battlemenu-c2056": [
-        "@1110"
+        "@1201"
       ],
       ".battlemenu-c2057": [
-        "@1111"
+        "@1202"
       ],
       ".battlemenu-c2058": [
-        "@1112"
+        "@1203"
       ],
       ".battlemenu-c2059": [
-        "@1113"
+        "@1204"
       ],
       ".battlemenu-c2127__3": [
-        "@1175"
+        "@1266"
       ],
       ".battlemenu-c2195": [
-        "@1233"
+        "@1324"
       ],
       ".battlemenu-c2196": [
-        "@1234"
+        "@1325"
       ],
       ".battlemenu-c2197": [
-        "@1235"
+        "@1326"
       ],
       ".battlemenu-c2198": [
-        "@1236"
+        "@1327"
       ],
       ".battlemenu-c2199": [
-        "@1237"
+        "@1328"
       ],
       ".battlemenu-c2250": [
-        "@1288"
+        "@1379"
       ],
       ".battlemenu-c2612__2": [
-        "@1626"
+        "@1717"
       ],
       ".battlemenu-c2616": [
-        "@1630"
+        "@1721"
       ],
       ".battlemenu-c2679": [
-        "@1691"
+        "@1782"
       ],
       ".battlemenu-c3657": [
-        "@2143"
+        "@2234"
       ],
       ".battlemenu-c3967": [
-        "@2342"
+        "@2433"
       ],
       ".battlemenu-c3968": [
-        "@2343"
+        "@2434"
       ],
       ".battlemenu-weaponmenu": [
-        "@2450",
-        "@2455",
-        "@2513"
+        "@2541",
+        "@2546",
+        "@2604"
       ],
       ".battlemenu-c4290": [
-        "@2621"
+        "@2712"
       ],
       ".battlemenu-c4291": [
-        "@2622"
+        "@2713"
       ],
       ".battlemenu-c4331": [
-        "@2659"
+        "@2750"
       ],
       ".battlemenu-c4433": [
-        "@2739"
+        "@2830"
       ],
       ".battlemenu-itemmenu": [
-        "@2955",
-        "@3260",
-        "@3332"
+        "@3046",
+        "@3351",
+        "@3423"
       ],
       ".battlemenu-c5342": [
-        "@3455"
+        "@3546"
       ],
       ".battlemenu-c5345": [
-        "@3458"
+        "@3549"
       ],
       ".battlemenu-c5370": [
-        "@3481"
+        "@3572"
       ],
       ".battlemenu-c5492": [
-        "@3590"
+        "@3681"
       ],
       ".battlemenu-c5503": [
-        "@3599"
+        "@3690"
       ],
       ".battlemenu-c5534": [
-        "@3631"
+        "@3722"
       ],
       ".battlemenu-c5742": [
-        "@3808"
+        "@3899"
       ],
       ".battlemenu-town-ref": [
-        "@3922"
+        "@4013"
       ],
       ".battlemenu-town-pos": [
-        "@3923"
+        "@4014"
       ],
       ".battlemenu-c6018": [
-        "@4050"
+        "@4141"
       ],
       ".battlemenu-c6037": [
-        "@4069"
+        "@4160"
       ],
       ".battlemenu-c6105": [
-        "@4120"
+        "@4211"
       ],
       ".battlemenu-c6185": [
-        "@4200"
+        "@4291"
       ],
       ".battlemenu-c6188": [
-        "@4203"
+        "@4294"
       ],
       ".battlemenu-c6227": [
-        "@4229"
+        "@4320"
       ],
       ".battlemenu-c6232": [
-        "@4239"
+        "@4330"
       ],
       ".battlemenu-c6233": [
-        "@4240"
+        "@4331"
       ],
       ".battlemenu-c6235": [
-        "@4242"
+        "@4333"
+      ],
+      ".battlemenu-data": [
+        "@4418",
+        "@4459",
+        "@4482",
+        "@4486",
+        "@4547"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -481,36 +497,39 @@
         "@737",
         "@751"
       ],
+      ".battlemenu-statustag-s": [
+        "@1056"
+      ],
       ".battlemenu-c2169": [
-        "@1217"
+        "@1308"
       ],
       ".battlemenu-c3682": [
-        "@2168"
+        "@2259"
       ],
       ".battlemenu-c3929": [
-        "@2317"
+        "@2408"
       ],
       ".battlemenu-itemmenu-s": [
-        "@2851",
-        "@3024"
+        "@2942",
+        "@3115"
       ],
       ".battlemenu-c5556": [
-        "@3653"
+        "@3744"
       ],
       ".battlemenu-c5592": [
-        "@3690"
+        "@3781"
       ],
       ".battlemenu-c5593": [
-        "@3691"
+        "@3782"
       ],
       ".battlemenu-c5711": [
-        "@3779"
+        "@3870"
       ],
       ".battlemenu-c5977": [
-        "@4037"
+        "@4128"
       ],
       ".battlemenu-c6236": [
-        "@4243"
+        "@4334"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"
@@ -561,6 +580,304 @@
       "@927__2",
       "@5881",
       "@885__2"
+    ],
+    "rekey_sections": [
+      [
+        ".battlemenu-statustag",
+        [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c2002",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2003",
+        [
+          20
+        ]
+      ],
+      [
+        ".battlemenu-c2004",
+        [
+          20
+        ]
+      ],
+      [
+        ".battlemenu-c2020",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c2056",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2057",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c2058",
+        [
+          40
+        ]
+      ],
+      [
+        ".battlemenu-c2059",
+        [
+          40
+        ]
+      ],
+      [
+        ".battlemenu-c2127__3",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2195",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2196",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2197",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2198",
+        [
+          64
+        ]
+      ],
+      [
+        ".battlemenu-c2199",
+        [
+          64
+        ]
+      ],
+      [
+        ".battlemenu-c2250",
+        [
+          24
+        ]
+      ],
+      [
+        ".battlemenu-c2612__2",
+        [
+          24
+        ]
+      ],
+      [
+        ".battlemenu-c2616",
+        [
+          10
+        ]
+      ],
+      [
+        ".battlemenu-c2679",
+        [
+          20
+        ]
+      ],
+      [
+        ".battlemenu-c3657",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c3967",
+        [
+          56
+        ]
+      ],
+      [
+        ".battlemenu-c3968",
+        [
+          14
+        ]
+      ],
+      [
+        ".battlemenu-weaponmenu",
+        [
+          48,
+          192,
+          14
+        ]
+      ],
+      [
+        ".battlemenu-c4290",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c4291",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c4331",
+        [
+          36
+        ]
+      ],
+      [
+        ".battlemenu-c4433",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-itemmenu",
+        [
+          16,
+          28,
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c5342",
+        [
+          28
+        ]
+      ],
+      [
+        ".battlemenu-c5345",
+        [
+          28
+        ]
+      ],
+      [
+        ".battlemenu-c5370",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c5492",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c5503",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c5534",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c5742",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-town-ref",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-town-pos",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c6018",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c6037",
+        [
+          64
+        ]
+      ],
+      [
+        ".battlemenu-c6105",
+        [
+          60
+        ]
+      ],
+      [
+        ".battlemenu-c6185",
+        [
+          28
+        ]
+      ],
+      [
+        ".battlemenu-c6188",
+        [
+          14
+        ]
+      ],
+      [
+        ".battlemenu-c6227",
+        [
+          24
+        ]
+      ],
+      [
+        ".battlemenu-c6232",
+        [
+          32
+        ]
+      ],
+      [
+        ".battlemenu-c6233",
+        [
+          32
+        ]
+      ],
+      [
+        ".battlemenu-c6235",
+        [
+          60
+        ]
+      ],
+      [
+        ".battlemenu-data",
+        [
+          64,
+          80,
+          10,
+          69,
+          9
+        ]
+      ]
     ],
     "symbols": {
       "CharaStatusTextureName": "@885__2",
