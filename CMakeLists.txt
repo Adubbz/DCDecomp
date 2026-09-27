@@ -195,7 +195,7 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2f-2A1FF0.s=2A1FF0-2A1FF8
            main.sdata.shop-a.s=2A2000-2A2008
            main.sdata.shop-b.s=2A200C-2A2028
-           main.sdata.part2f-2A2050.s=2A2058-2A2070
+           main.sdata.battlemenu-2A2068.s=2A2068-2A2070
            main.sdata.part2f-2A2050-2A2088.s=2A2088-2A2098
            main.sdata.battlemenu-tail.s=2A20F8-2A2100
            main.sdata.menu_save-a.s=2A2178-2A2190
@@ -285,7 +285,7 @@ carve_part(main.data.part6.s
            main.data.battlemenu-292E88.s=292E88-292E90
            main.data.battlemenu-292F38.s=292F38-292F40
            main.data.battlemenu-292F58.s=292F58-292F60
-           main.data.shop-filenames-after-292EE0-292FA0.s=292FF0-293020
+           main.data.battlemenu-293014.s=293014-293020
            main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
            main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293100
            main.data.battlemenu-293124.s=293124-293130

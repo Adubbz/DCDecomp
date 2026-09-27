@@ -1594,12 +1594,8 @@ static void InitMenuChara(u_long128 *buffer) {
     CommonMenuMes2.mes_made = -1;
     CommonMenuMes2.MakeMesWin(message_no);
 }
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1363__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1511__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1512__3);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1513__2);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1514__2);
-#ifdef NON_MATCHING
+
+#pragma opt_propagation off
 int BattleMenuCharaKey() {
     switch (MenuChara.unk_03) {
         case 4:
@@ -1752,8 +1748,9 @@ int BattleMenuCharaKey() {
                     case 0: {
                         int i;
                         CDngStatusData *status = BtlMenuStatusPt;
+                        s8 cur;
                         char *active = &status->unk_04;
-                        char cur = *active;
+                        cur = *active;
                         if (cur == 5 && BtActStatus.unk_092 == 10) {
                             CommonMenuMes1.MakeMesWin(0x1A1);
                             ComMenuSePlay(2);
@@ -1773,7 +1770,7 @@ int BattleMenuCharaKey() {
                                     ComMenuSePlay(2);
                                     return 1;
                                 }
-                                if (chara != cur) {
+                                if (chara != (s8) cur) {
                                     *active = chara;
                                     ComMenuSePlay(1);
                                     MenuChara.unk_03 = 4;
@@ -1799,9 +1796,8 @@ int BattleMenuCharaKey() {
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", BattleMenuCharaKey__Fv);
-#endif
+
+#pragma opt_propagation reset
 #ifdef NON_MATCHING
 void DrawCharaSelect() {
     if (BtlMenuExReadFlag == 0) {
