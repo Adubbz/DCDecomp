@@ -47,32 +47,6 @@ extern "C" CCharacter Trap_Circle;
 /* The character that the player controls; the dungeon overlay defines it. */
 extern "C" CCharacter CharaMain;
 
-/**
- * Defines one debug free-area rectangle.
- */
-struct ITEM_FREE_RECT {
-    float left;
-    float height;
-    float top;
-    float right;
-    float unk_14;
-    float bottom;
-};
-
-/**
- * Defines the debug free areas for one map part.
- */
-struct ITEM_FREE_AREA {
-    s8 parts_no;
-    s8 rect_num;
-    s8 direction;
-    s8 unk_03;
-    ITEM_FREE_RECT rect[4];
-};
-
-STATIC_ASSERT(sizeof(ITEM_FREE_RECT) == 0x18);
-STATIC_ASSERT(sizeof(ITEM_FREE_AREA) == 0x64);
-
 extern "C" int DebugStatus[];
 extern "C" int BtEquipMap;
 extern "C" int BtEquipMasuisyou;

@@ -255,17 +255,6 @@ INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @646__2);
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
 
 /**
- * An area of one map part where an item can be put down.
- */
-struct ITEM_FREE_AREA {
-    s8 parts_no;  /**< Map part the areas lie on; -1 ends the table. */
-    s8 count;     /**< Number of boxes that follow. */
-    s8 direction; /**< Quarter turns the boxes are given in. */
-    u8 unk_03;
-    float box[4][6]; /**< Each box as its two corners, at a tenth of world scale. */
-};
-
-/**
  * The areas where items can be put down on each map.
  */
 extern ITEM_FREE_AREA *ItemFreeAreaAll[];
@@ -293,19 +282,19 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
                 if (parts_no != areas[a].parts_no) {
                     continue;
                 }
-                for (int b = 0; b < areas[a].count; b++) {
+                for (int b = 0; b < areas[a].rect_num; b++) {
                     int turn = areas[a].direction;
                     turn += direction;
                     if (turn > 3) {
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    px[0] = ToWorldScale(areas[a].box[b][0]);
-                    py[0] = areas[a].box[b][1] * 10.0f;
-                    pz[0] = areas[a].box[b][2] * 10.0f;
-                    px[3] = areas[a].box[b][3] * 10.0f;
-                    py[3] = areas[a].box[b][4] * 10.0f;
-                    pz[3] = areas[a].box[b][5] * 10.0f;
+                    px[0] = ToWorldScale(areas[a].rect[b].left);
+                    py[0] = areas[a].rect[b].height * 10.0f;
+                    pz[0] = areas[a].rect[b].top * 10.0f;
+                    px[3] = areas[a].rect[b].right * 10.0f;
+                    py[3] = areas[a].rect[b].unk_14 * 10.0f;
+                    pz[3] = areas[a].rect[b].bottom * 10.0f;
                     px[1] = px[3];
                     py[1] = py[0];
                     pz[1] = pz[0];
