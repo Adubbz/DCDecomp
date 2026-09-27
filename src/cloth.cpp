@@ -452,58 +452,94 @@ int SetMaterial(u_int *packet, MDT_MATERIAL *material);
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 
 int CCloth::CreateVUData(u_int *packet) {
-    u_int end_tag[4] = {0, 0, 0, 0x60000000};
-    u_int first_kick[4] = {0, 0, 0, 0x14000000};
-    u_int kick[4] = {0, 0, 0, 0x14000001};
-    u_int unpack[4] = {0, 0, 0, 0x6C008000};
-    u_int zero[4] = {0, 0, 0, 0};
-    MDT_MATERIAL cloth_material;
-    int kicked = 0;
+    int j;
+    CTexture *texture;
+    int i;
+    u_int *tag;
     int word;
+    int count;
+    int kicked;
+    int qwc;
+    int header;
+    int columns;
+    u_long128 *vertex;
+    u_long128 *normal;
+    u_int header_tag;
+    u_long128 *uv;
 
-    *(u_long128 *) cloth_material.unk_00 = *(u_long128 *) zero;
+    word = 0;
+    u_int end_tag[4] = {0x11000000, 0, 0, 0};
+    u_int first_kick[4] = {0, 0, 0, 0x14000000};
+    u_int kick[4] = {0, 0, 0, 0x17000000};
+    u_int unpack[4] = {0, 0, 0, 0x6C008000};
+    sceVu0FVECTOR one = {1.0f, 1.0f, 1.0f, 1.0f};
+    MDT_MATERIAL cloth_material;
+
     cloth_material.unk_10[0] = 0.3f;
     cloth_material.unk_10[1] = 0.3f;
     cloth_material.unk_10[2] = 0.3f;
     cloth_material.unk_10[3] = 0.0f;
-    *(u_long128 *) cloth_material.unk_20 = *(u_long128 *) zero;
-    word = SetMaterial(packet, &cloth_material);
-    CTexture *texture = TexManager.GetTexture(material.texture, -1);
+    *(u_long128 *) cloth_material.unk_00 = *(u_long128 *) one;
+    *(u_long128 *) cloth_material.unk_20 = *(u_long128 *) one;
+    kicked = 0;
+    word += SetMaterial(&packet[word], &cloth_material);
+    texture = TexManager.GetTexture(material.texture, -1);
     if (texture != NULL) {
         word += SetTEX0(&packet[word], texture->tex0, texture->tex1);
     } else {
         word += SetTEX0(&packet[word], 0, 0);
     }
-    for (int i = 0; i < num_i - 1; i++) {
-        int columns = num_j;
-        int count = columns * 2;
-        int header = word;
+    for (i = 0; i < num_i - 1; i++) {
+        columns = num_j;
+        count = columns * 2;
+        qwc = 0;
         *(u_long128 *) &packet[word] = *(u_long128 *) unpack;
-        packet[word + 4] = count | 0x8000;
-        packet[word + 5] = 0x302E4000;
-        packet[word + 6] = 0x412;
-        packet[word + 7] = 0;
-        packet[word + 8] = count;
-        packet[word + 9] = 4;
-        packet[word + 10] = 0;
-        packet[word + 11] = 0;
+        header = word + 3;
+        header_tag = count | 0x8000;
+        tag = &packet[word + 4];
+        tag[0] = header_tag;
+        tag[1] = 0x302E4000;
+        tag[2] = 0x412;
+        tag[3] = 0;
+        tag = &packet[word + 8];
+        tag[0] = count;
+        tag[1] = 4;
+        tag[2] = 0;
+        tag[3] = 0;
         word += 12;
-        u_long128 *vertex = (u_long128 *) &packet[word];
-        u_long128 *normal = vertex + count;
-        u_long128 *uv = normal + count;
+        qwc += 2;
+        vertex = (u_long128 *) &packet[word];
+        normal = vertex + columns * 2;
+        uv = normal + columns * 2;
         // A divided row is drawn from the far side, so the strip winds the other way.
-        int near_row = polygon_divide[i] != 0 ? i + 1 : i;
-        int far_row = polygon_divide[i] != 0 ? i : i + 1;
-        for (int j = 0; j < count >> 1; j++) {
-            *vertex++ = *(u_long128 *) point[near_row][j];
-            *normal++ = *(u_long128 *) normal_grid[near_row][j];
-            *uv++ = *(u_long128 *) texture_coord[near_row][j];
-            *vertex++ = *(u_long128 *) point[far_row][j];
-            *normal++ = *(u_long128 *) normal_grid[far_row][j];
-            *uv++ = *(u_long128 *) texture_coord[far_row][j];
+        if (polygon_divide[i] != 0) {
+            for (j = 0; j < count >> 1; j++) {
+                vertex[0] = *(u_long128 *) point[i + 1][j];
+                normal[0] = *(u_long128 *) normal_grid[i + 1][j];
+                uv[0] = *(u_long128 *) texture_coord[i + 1][j];
+                vertex[1] = *(u_long128 *) point[i][j];
+                vertex += 2;
+                normal[1] = *(u_long128 *) normal_grid[i][j];
+                normal += 2;
+                uv[1] = *(u_long128 *) texture_coord[i][j];
+                uv += 2;
+            }
+        } else {
+            for (j = 0; j < count >> 1; j++) {
+                vertex[0] = *(u_long128 *) point[i][j];
+                normal[0] = *(u_long128 *) normal_grid[i][j];
+                uv[0] = *(u_long128 *) texture_coord[i][j];
+                vertex[1] = *(u_long128 *) point[i + 1][j];
+                vertex += 2;
+                normal[1] = *(u_long128 *) normal_grid[i + 1][j];
+                normal += 2;
+                uv[1] = *(u_long128 *) texture_coord[i + 1][j];
+                uv += 2;
+            }
         }
-        word += columns * 6 * 4;
-        packet[header + 3] |= (columns * 6 + 2) << 16;
+        word += count * 3 * 4;
+        qwc += count * 3;
+        packet[header] |= qwc << 16;
         if (kicked == 0) {
             *(u_long128 *) &packet[word] = *(u_long128 *) first_kick;
             kicked = 1;
@@ -513,7 +549,7 @@ int CCloth::CreateVUData(u_int *packet) {
         word += 4;
     }
     *(u_long128 *) &packet[word] = *(u_long128 *) end_tag;
-    return (word + 4) / 4 + ((word + 4) % 4 != 0);
+    return ((word + 4) >> 2) + ((word + 4) % 4 != 0);
 }
 #else
 INCLUDE_ASM("asm/nonmatchings/cloth", CreateVUData__6CClothFPUi);
