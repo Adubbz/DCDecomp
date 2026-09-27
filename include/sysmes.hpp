@@ -116,4 +116,3 @@ void DontGetItemMes(int kind);
  * Configures and opens one system message.
  */
 void SetSystemMes(int no, int count, int position, int input_key, int *args, int *numbers);
-

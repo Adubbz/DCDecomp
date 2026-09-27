@@ -1,5 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
+
 #include "dungeonparts.hpp"
 
 #include "frame.hpp"
