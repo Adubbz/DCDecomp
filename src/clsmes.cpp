@@ -1796,6 +1796,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
                          (unsigned long) ((py << 4) + 0x7900) << 16);
 }
 
+#pragma opt_propagation off
 void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
     float w;
     float h;
@@ -1866,7 +1867,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
                 x = (int) (w * shape[i][0]);
             }
 
-            if (n >= 2) {
+            if (n > 1) {
                 y = (int) (h * (1.0f - shape[i][1]));
             } else {
                 y = (int) (h * shape[i][1]);
@@ -1900,9 +1901,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             int cw = this->char_width;
 
             y = (int) (y + half - pad);
-            ww = (int) w - cw;
-
-            DrawMaru(packet, x + cw, y, ww, (int) (half + pad), top, 0x20, 0, prim);
+            DrawMaru(packet, x + cw, y, (int) w - cw, (int) (half + pad), top, 0x20, 0, prim);
         }
     } else {
         x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
@@ -2014,6 +2013,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         }
     }
 }
+#pragma opt_propagation reset
 
 void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
     sceGsTex0 frame;
