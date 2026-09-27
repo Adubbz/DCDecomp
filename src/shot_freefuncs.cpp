@@ -280,7 +280,7 @@ int CheckHealingWater(void) {
         position[2] < water_z + nearest_water->vertex[3][2] && position[1] < water_y) {
         position[1] = water_y;
         sceVu0CopyVector(CheckWaterInfo.unk_10, position);
-        BtActStatus.unk_094 = 1;
+        BtActStatus.in_water = 1;
 
         if (Water_Splash_actFlag == 0 && CheckWaterInfo.unk_20 == 0 &&
             CheckWaterInfo.unk_00[1] - CheckWaterInfo.unk_10[1] > 0.5f) {
@@ -329,7 +329,7 @@ int CheckHealZone(void) {
     HEAL_ZONE *zone;
 
     sceVu0CopyVector(position, CharaMain.pos);
-    BtActStatus.unk_094 = 0;
+    BtActStatus.in_water = 0;
 
     column = (80.0f + position[0]) / 160.0f;
     row = (80.0f + position[2]) / 160.0f;
@@ -357,7 +357,7 @@ int CheckHealZone(void) {
 
     if (position[0] >= low[0] && position[0] <= high[0] && position[2] >= low[2] &&
         position[2] < high[2] && position[1] < center[1]) {
-        BtActStatus.unk_094 = 1;
+        BtActStatus.in_water = 1;
         return 1;
     }
 

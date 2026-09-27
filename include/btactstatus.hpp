@@ -42,7 +42,7 @@ struct BT_ACT_STATUS {
     sceVu0FVECTOR unk_080;
     s16 unk_090;
     s16 unk_092;
-    s16 unk_094;
+    s16 in_water; /**< 1 while the party stands in water or a healing zone. */
     s16 unk_096;
     s32 unk_098;
     s32 unk_09C;
