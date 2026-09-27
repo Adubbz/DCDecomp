@@ -298,6 +298,17 @@ int CheckHealingWater(void) {
     CheckWaterInfo.unk_20 = 0;
     return 0;
 }
+
+/**
+ * Holds the position and extent of a dungeon part's healing zone.
+ */
+struct HEAL_ZONE {
+    float pos[4]; /**< Centre of the healing zone. */
+    float width;  /**< Width of the healing zone. */
+    float depth;  /**< Depth of the healing zone. */
+    s32 on;       /**< Whether the healing zone is active. */
+};
+
 /**
  * Reports whether the party stands in a healing zone.
  *
@@ -305,27 +316,56 @@ int CheckHealingWater(void) {
  * @address 0x1AF6E0
  * @size 0x29C
  */
-#ifdef NON_MATCHING
-int CheckHealZone() {
-    sceVu0FVECTOR position;
-    CharaMain.GetPosition(position);
-    for (int part = 0; part < 72; part++) {
-        CDungeonParts &map_part = NowDngMap->parts[part];
-        if (map_part.frame[0] == NULL || map_part.heal_on == 0) {
-            continue;
-        }
-        float dx = position[0] - (map_part.pos[0] + map_part.heal_pos[0]);
-        float dz = position[2] - (map_part.pos[2] + map_part.heal_pos[2]);
-        if (dx > -80.0f && dx < 80.0f && dz > -80.0f && dz < 80.0f &&
-            position[1] > map_part.heal_pos[1]) {
-            return 1;
-        }
+int CheckHealZone(void) {
+    float position[4];
+    float center[4];
+    float low[4];
+    float high[4];
+    int column;
+    int row;
+    int parts_no;
+    int hit;
+    CDungeonParts *part;
+    HEAL_ZONE *zone;
+
+    sceVu0CopyVector(position, CharaMain.pos);
+    BtActStatus.unk_094 = 0;
+
+    column = (80.0f + position[0]) / 160.0f;
+    row = (80.0f + position[2]) / 160.0f;
+    parts_no = NowDngMap->cells[row * 20 + column].parts_no;
+
+    if (parts_no == -1) {
+        return 0;
     }
-    return 0;
+
+    part = &NowDngMap->parts[parts_no];
+    zone = (HEAL_ZONE *) part->heal_pos;
+    hit = 0;
+    if (part->heal_on == 0) {
+        return 0;
+    }
+    sceVu0CopyVector(center, zone->pos);
+    center[0] += 160.0f * column;
+    center[2] += 160.0f * row;
+    sceVu0CopyVector(low, center);
+    sceVu0CopyVector(high, center);
+    low[0] -= zone->width / 2.0f;
+    low[2] -= zone->depth / 2.0f;
+    high[0] += zone->width / 2.0f;
+    high[2] += zone->depth / 2.0f;
+
+    if (position[0] >= low[0] && position[0] <= high[0] && position[2] >= low[2] &&
+        position[2] < high[2] && position[1] < center[1]) {
+        BtActStatus.unk_094 = 1;
+        return 1;
+    }
+
+    if (zone == NULL) {
+        return 0;
+    }
+    return zone->on ? hit : 0;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/shot_freefuncs", CheckHealZone__Fv);
-#endif
 
 /**
  * Restores the party while they stand in healing water.
