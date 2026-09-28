@@ -1799,7 +1799,6 @@ int BattleMenuCharaKey() {
 }
 #pragma opt_propagation reset
 
-#ifdef NON_MATCHING
 void DrawCharaSelect() {
     if (BtlMenuExReadFlag == 0) {
         return;
@@ -1871,12 +1870,14 @@ void DrawCharaSelect() {
             }
             break;
     }
+    float size;
+    float draw_x;
+    float move;
+    float face_x;
+    float time;
+    float grow;
+    float face_y;
     for (int i = 0; i < MenuChara.unk_02; i++) {
-        float size;
-        float draw_x;
-        float move;
-        float face_x;
-        float face_y;
         face_x = 394.0f + SysChara[i].unk_04;
         draw_x = face_x;
         face_y = 120.0f + SysChara[i].unk_08;
@@ -1884,8 +1885,7 @@ void DrawCharaSelect() {
         face_alpha = bright;
         status_alpha = bright;
         panel_alpha = 0;
-        move = MenuCharaMove;
-        if ((!(move <= 0.0f) && MenuChara.unk_02 - 1 == SysChara[i].unk_01) || (move < 0.0f && SysChara[i].unk_01 == 1)) {
+        if ((!((move = MenuCharaMove) <= 0.0f) && MenuChara.unk_02 - 1 == SysChara[i].unk_01) || (move < 0.0f && SysChara[i].unk_01 == 1)) {
             float step = 0.6666667f * MenuChara.unk_04;
             draw_x = face_x - step;
             size += step;
@@ -1893,10 +1893,10 @@ void DrawCharaSelect() {
             status_alpha = 0x80 - panel_alpha;
         }
         if (SysChara[i].unk_01 == 0) {
-            float time = MenuChara.unk_04;
+            time = MenuChara.unk_04;
             float scale = 0.6666667f;
             draw_x = face_x + scale * (time - 20.0f - 1.0f);
-            float grow = scale * time;
+            grow = scale * time;
             size = 106.0f - grow;
             status_alpha = (int) ((float) bright * time / 21.0f);
             if (move == 0.0f) {
@@ -1945,8 +1945,9 @@ void DrawCharaSelect() {
         MenuTextureReload(BtlMenuExReadBlock);
         CTexture *face = MenuCharaFace;
         int u = 0;
+        int v;
         int width = 0x6A;
-        int v = i * 0x6A;
+        v = i * 0x6A;
         if (i > 2) {
             u = 0x6A;
             v = (i - 3) * 0x6A;
@@ -2007,7 +2008,7 @@ void DrawCharaSelect() {
         default: {
             float angle = 3.1415927f;
             float waku_x = 394.0f + chara_r_long * cosf(angle) - 184.0f;
-            float waku_y = 120.0f + chara_r_long * sinf(angle) - 26.0f;
+            face_y = 120.0f + chara_r_long * sinf(angle) - 26.0f;
             int width = 0x102;
             int cursor_x = 0x3C;
             int i;
@@ -2023,17 +2024,12 @@ void DrawCharaSelect() {
             }
             SysCur[0] += ((float) cursor_x - SysCur[0]) / 4.0f;
             int draw_x = (int) SysCur[0];
-            DrawMenuWaku(waku_x, waku_y, width, 0x82, 1, StayTex, 0x80);
+            DrawMenuWaku(waku_x, face_y, width, 0x82, 1, StayTex, 0x80);
             DrawMenuObjectVibe(draw_x, (int) SysCur[1], 1, 0x40);
             break;
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawCharaSelect__Fv);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1665);
-INCLUDE_RODATA("asm/nonmatchings/battlemenu", @1668);
 void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     int x = rect.x;
     int max_exp;
@@ -2317,7 +2313,6 @@ void DrawBtlMenuLRCursor(int x, int y, int width, int alpha) {
     source.x += source.width;
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x + width, draw_y, source.width, source.height), source, alpha);
 }
-#ifdef NON_MATCHING
 void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
@@ -2327,18 +2322,20 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     pos.x = x + 0x4B;
     pos.y = y + 0x30;
     s16 gauge[2] = {0, 0};
+    int number_x;
+    int bar_y;
     float now = weapon->durability_f;
     gauge[0] = (int) now;
-    int durability = weapon->durability;
-    gauge[1] = durability;
-    int number_x = pos.x;
-    int bar_y = pos.y;
+    int value = weapon->durability;
+    gauge[1] = value;
+    number_x = pos.x;
+    bar_y = pos.y;
     int shown = (int) now;
     if ((float) shown < now) {
         shown = (int) (1.0f + now);
     }
-    int full = durability * 0x7E / 99;
-    int fill = shown * full / durability;
+    int full = value * 0x7E / 99;
+    int fill = shown * full / value;
     if (fill >= 0x7E) {
         fill = 0x7E;
     }
@@ -2350,14 +2347,15 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     colours.colors[1].a = alpha;
     colours.colors[0].a = alpha;
     DrawMenuColorGradation(CRect_i_(pos.x, bar_y, fill, 8), &colours.colors[0], &colours.colors[1], &colours.colors[2], &colours.colors[3]);
-    int number_y = bar_y + pos.height;
-    for (int digits = GetNumberKeta(durability) - 1; digits > 0; digits--) {
-        number_x += pos.width;
+    bar_y += pos.height;
+    for (int digits = GetNumberKeta(value) - 1; digits > 0; digits--) {
+        int width = pos.width;
+        number_x += width;
     }
-    DrawMenuNumber(weapon->durability, number_x, number_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
-    DrawMenu2DSprite(WepStatus, CRect_i_(number_x - 0x20, number_y, 0xC, 0xB),
+    DrawMenuNumber(weapon->durability, number_x, bar_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
+    DrawMenu2DSprite(WepStatus, CRect_i_(number_x - 0x20, bar_y, 0xC, 0xB),
                      CRect_i_(WeaponVolumeNumberRect.x + 0x78, WeaponVolumeNumberRect.y, 0xC, 0xC), alpha);
-    DrawMenuNumber(shown, number_x - 0x20, number_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
+    DrawMenuNumber(shown, number_x - 0x20, bar_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
     pos.y += 0x18;
     number_x = pos.x;
     bar_y = pos.y;
@@ -2367,14 +2365,14 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         exp_len = 0x7E;
     }
     DrawMenu2DSprite(WepStatus, CRect_i_(pos.x, bar_y, exp_len, 8), CRect_i_(0x100, 0x78, 8, 8), alpha);
-    number_y = bar_y + pos.height;
+    bar_y += pos.height;
     for (int digits = GetNumberKeta(max_exp); digits >= 2; digits--) {
         number_x += WeaponVolumeNumberRect.width * 2;
     }
-    int left = DrawMenuNumber(max_exp, number_x, number_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
-    DrawMenu2DSprite(WepStatus, CRect_i_(left - 0xB, number_y, 0xC, 0xB),
+    int left = DrawMenuNumber(max_exp, number_x, bar_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
+    DrawMenu2DSprite(WepStatus, CRect_i_(left - 0xB, bar_y, 0xC, 0xB),
                      CRect_i_(WeaponVolumeNumberRect.x + 0x78, WeaponVolumeNumberRect.y, 0xC, 0xC), alpha);
-    DrawMenuNumber(weapon->experience, left - 0xB, number_y, WepStatus, WeaponVolumeNumberRect, 2, alpha);
+    DrawMenuNumber(weapon->experience, left - 0xB, bar_y, WepStatus, WeaponVolumeNumberRect, 2, alpha);
     int values[4] = {0, 0, 0, 0};
     values[0] = weapon->attack;
     values[1] = weapon->endurance;
@@ -2413,14 +2411,14 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     volume[0] = 100;
     for (int i = 0; i < 4; i++) {
         int limited = 0;
-        int base = values[i];
-        volume[1] = base + bonus[i];
+        value = values[i];
+        volume[1] = value + bonus[i];
         volume[1] = (int) ((float) volume[1] * rate);
         if (volume[1] >= limit[i]) {
             volume[1] = limit[i];
             limited = 1;
         }
-        volume[2] = base;
+        volume[2] = value;
         if (volume[2] >= limit[i]) {
             volume[2] = limit[i];
         }
@@ -2428,7 +2426,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         if (length > 0x80) {
             length = 0x80;
         }
-        int diff = target[i] - base;
+        int diff = target[i] - value;
         DrawWeaponStatusWaku(row.x, row.y, length, limited);
         WepStatusVolumeDraw(row, 0x80, volume, i + 3, alpha, build, diff);
         if (limited != 0) {
@@ -2437,9 +2435,6 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         row.y += 0x10;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/battlemenu", DrawWeaponStatusTag__FiiP11WEAPON_HAVEiii);
-#endif
 void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {

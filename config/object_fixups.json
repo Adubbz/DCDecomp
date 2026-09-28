@@ -206,7 +206,8 @@
       "GeneratedHitMarkVtable": "__vt__8CHitMark",
       "GeneratedMotionParamCtor": "__ct__11MotionParamFv",
       "GeneratedFakePointLightCtor": "__ct__15CFakePointLightFv",
-      "GeneratedCharacterVtable": "__vt__10CCharacter"
+      "GeneratedCharacterVtable": "__vt__10CCharacter",
+      "__as__17GeneratedNpcModelFRC17GeneratedNpcModel": "__as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL"
     },
     "sections": {
       ".gamemodesdata": [
@@ -214,7 +215,11 @@
       ]
     },
     "drop_functions": [
+      "CopyNpcModel__FR17GeneratedNpcModelRC17GeneratedNpcModel",
       "CopyCharacter__FR10CCharacterRC10CCharacter"
+    ],
+    "globalize_symbols": [
+      "__as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL"
     ],
     "rodata_exports": [
       "@566",
@@ -303,161 +308,177 @@
         "@736"
       ],
       ".battlemenu-c1684__2": [
-        "@859"
+        "@1000"
       ],
       ".battlemenu-c1717": [
-        "@891"
+        "@1032"
       ],
       ".battlemenu-c1725": [
-        "@899"
+        "@1040"
       ],
       ".battlemenu-c1728": [
-        "@902"
+        "@1043"
       ],
       ".battlemenu-c1729": [
-        "@903"
+        "@1044"
       ],
       ".battlemenu-c1879": [
-        "@1026"
+        "@1167"
       ],
-      ".battlemenu-c2002": [
-        "@1057"
-      ],
-      ".battlemenu-c2003": [
-        "@1058"
-      ],
-      ".battlemenu-c2004": [
-        "@1059"
-      ],
-      ".battlemenu-c2020": [
-        "@1075"
-      ],
-      ".battlemenu-c2056": [
-        "@1110"
-      ],
-      ".battlemenu-c2057": [
-        "@1111"
-      ],
-      ".battlemenu-c2058": [
-        "@1112"
-      ],
-      ".battlemenu-c2059": [
-        "@1113"
-      ],
-      ".battlemenu-c2127__3": [
-        "@1175"
-      ],
-      ".battlemenu-c2195": [
-        "@1233"
-      ],
-      ".battlemenu-c2196": [
-        "@1234"
-      ],
-      ".battlemenu-c2197": [
+      ".battlemenu-statustag": [
+        "@1196",
+        "@1214",
+        "@1215",
+        "@1216",
+        "@1220",
+        "@1234",
         "@1235"
       ],
+      ".battlemenu-c2002": [
+        "@1289"
+      ],
+      ".battlemenu-c2003": [
+        "@1290"
+      ],
+      ".battlemenu-c2004": [
+        "@1291"
+      ],
+      ".battlemenu-c2020": [
+        "@1307"
+      ],
+      ".battlemenu-c2056": [
+        "@1342"
+      ],
+      ".battlemenu-c2057": [
+        "@1343"
+      ],
+      ".battlemenu-c2058": [
+        "@1344"
+      ],
+      ".battlemenu-c2059": [
+        "@1345"
+      ],
+      ".battlemenu-c2127__3": [
+        "@1407"
+      ],
+      ".battlemenu-c2195": [
+        "@1464"
+      ],
+      ".battlemenu-c2196": [
+        "@1465"
+      ],
+      ".battlemenu-c2197": [
+        "@1466"
+      ],
       ".battlemenu-c2198": [
-        "@1236"
+        "@1467"
       ],
       ".battlemenu-c2199": [
-        "@1237"
+        "@1468"
       ],
       ".battlemenu-c2250": [
-        "@1288"
+        "@1519"
       ],
       ".battlemenu-c2612__2": [
-        "@1626"
+        "@1857"
       ],
       ".battlemenu-c2616": [
-        "@1630"
+        "@1861"
       ],
       ".battlemenu-c2679": [
-        "@1691"
+        "@1922"
       ],
       ".battlemenu-c3657": [
-        "@2143"
+        "@2374"
       ],
       ".battlemenu-c3967": [
-        "@2342"
+        "@2573"
       ],
       ".battlemenu-c3968": [
-        "@2343"
+        "@2574"
       ],
       ".battlemenu-weaponmenu": [
-        "@2450",
-        "@2455",
-        "@2513"
+        "@2681",
+        "@2686",
+        "@2744"
       ],
       ".battlemenu-c4290": [
-        "@2621"
+        "@2852"
       ],
       ".battlemenu-c4291": [
-        "@2622"
+        "@2853"
       ],
       ".battlemenu-c4331": [
-        "@2659"
+        "@2890"
       ],
       ".battlemenu-c4433": [
-        "@2739"
+        "@2970"
       ],
       ".battlemenu-itemmenu": [
-        "@2955",
-        "@3260",
-        "@3332"
+        "@3186",
+        "@3491",
+        "@3563"
       ],
       ".battlemenu-c5342": [
-        "@3455"
+        "@3686"
       ],
       ".battlemenu-c5345": [
-        "@3458"
+        "@3689"
       ],
       ".battlemenu-c5370": [
-        "@3481"
+        "@3712"
       ],
       ".battlemenu-c5492": [
-        "@3590"
+        "@3821"
       ],
       ".battlemenu-c5503": [
-        "@3599"
+        "@3830"
       ],
       ".battlemenu-c5534": [
-        "@3631"
+        "@3862"
       ],
       ".battlemenu-c5742": [
-        "@3808"
+        "@4039"
       ],
       ".battlemenu-town-ref": [
-        "@3922"
+        "@4153"
       ],
       ".battlemenu-town-pos": [
-        "@3923"
+        "@4154"
       ],
       ".battlemenu-c6018": [
-        "@4050"
+        "@4281"
       ],
       ".battlemenu-c6037": [
-        "@4069"
+        "@4300"
       ],
       ".battlemenu-c6105": [
-        "@4120"
+        "@4351"
       ],
       ".battlemenu-c6185": [
-        "@4200"
+        "@4431"
       ],
       ".battlemenu-c6188": [
-        "@4203"
+        "@4434"
       ],
       ".battlemenu-c6227": [
-        "@4229"
+        "@4460"
       ],
       ".battlemenu-c6232": [
-        "@4239"
+        "@4470"
       ],
       ".battlemenu-c6233": [
-        "@4240"
+        "@4471"
       ],
       ".battlemenu-c6235": [
-        "@4242"
+        "@4473"
+      ],
+      ".battlemenu-data": [
+        "@4558",
+        "@4599",
+        "@4622",
+        "@4626",
+        "@4687"
       ],
       ".battlemenu-c702__2": [
         "@166"
@@ -481,36 +502,39 @@
         "@737",
         "@751"
       ],
+      ".battlemenu-statustag-s": [
+        "@1197"
+      ],
       ".battlemenu-c2169": [
-        "@1217"
+        "@1449"
       ],
       ".battlemenu-c3682": [
-        "@2168"
+        "@2399"
       ],
       ".battlemenu-c3929": [
-        "@2317"
+        "@2548"
       ],
       ".battlemenu-itemmenu-s": [
-        "@2851",
-        "@3024"
+        "@3082",
+        "@3255"
       ],
       ".battlemenu-c5556": [
-        "@3653"
+        "@3884"
       ],
       ".battlemenu-c5592": [
-        "@3690"
+        "@3921"
       ],
       ".battlemenu-c5593": [
-        "@3691"
+        "@3922"
       ],
       ".battlemenu-c5711": [
-        "@3779"
+        "@4010"
       ],
       ".battlemenu-c5977": [
-        "@4037"
+        "@4268"
       ],
       ".battlemenu-c6236": [
-        "@4243"
+        "@4474"
       ],
       ".battlemenu-warningcnt_1676": [
         "warningcnt$1676"
@@ -561,6 +585,340 @@
       "@927__2",
       "@5881",
       "@885__2"
+    ],
+    "rekey_sections": [
+      [
+        ".battlemenu-c1684__2",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c1717",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c1725",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c1728",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c1729",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c1879",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-statustag",
+        [
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c2002",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2003",
+        [
+          20
+        ]
+      ],
+      [
+        ".battlemenu-c2004",
+        [
+          20
+        ]
+      ],
+      [
+        ".battlemenu-c2020",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c2056",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2057",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c2058",
+        [
+          40
+        ]
+      ],
+      [
+        ".battlemenu-c2059",
+        [
+          40
+        ]
+      ],
+      [
+        ".battlemenu-c2127__3",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2195",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2196",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2197",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c2198",
+        [
+          64
+        ]
+      ],
+      [
+        ".battlemenu-c2199",
+        [
+          64
+        ]
+      ],
+      [
+        ".battlemenu-c2250",
+        [
+          24
+        ]
+      ],
+      [
+        ".battlemenu-c2612__2",
+        [
+          24
+        ]
+      ],
+      [
+        ".battlemenu-c2616",
+        [
+          10
+        ]
+      ],
+      [
+        ".battlemenu-c2679",
+        [
+          20
+        ]
+      ],
+      [
+        ".battlemenu-c3657",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c3967",
+        [
+          56
+        ]
+      ],
+      [
+        ".battlemenu-c3968",
+        [
+          14
+        ]
+      ],
+      [
+        ".battlemenu-weaponmenu",
+        [
+          48,
+          192,
+          14
+        ]
+      ],
+      [
+        ".battlemenu-c4290",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c4291",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c4331",
+        [
+          36
+        ]
+      ],
+      [
+        ".battlemenu-c4433",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-itemmenu",
+        [
+          16,
+          28,
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c5342",
+        [
+          28
+        ]
+      ],
+      [
+        ".battlemenu-c5345",
+        [
+          28
+        ]
+      ],
+      [
+        ".battlemenu-c5370",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-c5492",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c5503",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c5534",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c5742",
+        [
+          12
+        ]
+      ],
+      [
+        ".battlemenu-town-ref",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-town-pos",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c6018",
+        [
+          16
+        ]
+      ],
+      [
+        ".battlemenu-c6037",
+        [
+          64
+        ]
+      ],
+      [
+        ".battlemenu-c6105",
+        [
+          60
+        ]
+      ],
+      [
+        ".battlemenu-c6185",
+        [
+          28
+        ]
+      ],
+      [
+        ".battlemenu-c6188",
+        [
+          14
+        ]
+      ],
+      [
+        ".battlemenu-c6227",
+        [
+          24
+        ]
+      ],
+      [
+        ".battlemenu-c6232",
+        [
+          32
+        ]
+      ],
+      [
+        ".battlemenu-c6233",
+        [
+          32
+        ]
+      ],
+      [
+        ".battlemenu-c6235",
+        [
+          60
+        ]
+      ],
+      [
+        ".battlemenu-data",
+        [
+          64,
+          80,
+          10,
+          69,
+          9
+        ]
+      ]
     ],
     "symbols": {
       "CharaStatusTextureName": "@885__2",
@@ -2070,39 +2428,39 @@
         "MenuEtcErrCnt"
       ],
       ".floornamedata": [
-        "@1121",
-        "@1122"
+        "@1173",
+        "@1174"
       ],
       ".quickchangedata": [
-        "@1139"
+        "@1191"
       ],
       ".charachangedata": [
-        "@1182",
-        "@1193",
-        "@1385",
-        "@1386"
+        "@1234",
+        "@1245",
+        "@1437",
+        "@1438"
       ],
       ".itemmodeldata": [
-        "@1454"
+        "@1506"
       ],
       ".menu_dungeon-c1707": [
-        "@1482"
+        "@1534"
       ],
       ".menu_dungeon-c1731": [
-        "@1501"
+        "@1553"
       ],
       ".itemviewdata": [
-        "@1600",
-        "@1605",
-        "@1606",
-        "@1607"
+        "@1652",
+        "@1657",
+        "@1658",
+        "@1659"
       ],
       ".itemgetdata": [
-        "@1699",
-        "@1700"
+        "@1751",
+        "@1752"
       ],
       ".itemdataview": [
-        "@1726"
+        "@1778"
       ]
     },
     "symbols": {

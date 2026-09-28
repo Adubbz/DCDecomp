@@ -194,7 +194,6 @@ carve_part(main.sdata.part2b.s
            main.sdata.part2f-2A1FF0.s=2A1FF0-2A1FF8
            main.sdata.shop-a.s=2A2000-2A2008
            main.sdata.shop-b.s=2A200C-2A2028
-           main.sdata.battlemenu-2A2068.s=2A2068-2A2070
            main.sdata.battlemenu-tail.s=2A20F8-2A2100
            main.sdata.menu_save-a.s=2A2178-2A2190
            main.sdata.part2e.s=2A21F0-2A21F8)
@@ -285,7 +284,6 @@ carve_part(main.data.part6.s
            main.data.battlemenu-292F58.s=292F58-292F60
            main.data.battlemenu-293014.s=293014-293020
            main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
-           main.data.shop-filenames-after-292EE0-292FA0-293040-293090.s=293090-293100
            main.data.battlemenu-293124.s=293124-293130
            main.data.battlemenu-293144.s=293144-293148
            main.data.battlemenu-293154.s=293154-293160
@@ -311,7 +309,6 @@ carve_part(main.data.part4.s
            main.data.part4m.s=266B90-266E10
            main.data.part4c.s=266FB0-269320
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
-           main.data.part4g-26AE40.s=26AE40-26AE50
            main.data.shot_freefuncs-a.s=26AFF8-26B040
            main.data.motionmodel-a.s=26B0E0-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0

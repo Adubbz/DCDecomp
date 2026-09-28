@@ -23,7 +23,6 @@
 
 static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, float z);
 
-#ifdef NON_MATCHING
 int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y) {
     CVector3_f_ grid;
     int area_no;
@@ -59,8 +58,11 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
     if (area_no < 0) {
         return -1;
     }
-    slot = &areas[area_no];
+    CEditArea **all = areas;
+    slot = &all[area_no];
     area = *slot;
+
+
     if (source->info == NULL) {
         return -1;
     }
@@ -162,9 +164,6 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
     }
     return parts_id;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/editground", SetMapParts__11CEditGroundFifffi);
-#endif
 
 /**
  * Gives back the frame that a map part's shadow draws from.
