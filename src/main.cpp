@@ -269,6 +269,7 @@ typedef struct {
 extern char My_dma_start0[];
 extern char Vu_progmain[];
 extern char Vu_prog0f[];
+extern void *_overlay_group_addresses[];
 
 /** Overlay file selected for each top-level game mode. */
 static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
@@ -285,7 +286,7 @@ void LoadOverlay(int mode) {
         return;
 
     strcpy(now_binfile, binfile[mode]);
-    void *address = *(void **) 0x002A17B4;
+    void *address = _overlay_group_addresses[1];
     char path[128] = "cdrom0:\\";
     strcat(path, binfile[mode]);
     strcat(path, ";1");
@@ -1290,9 +1291,8 @@ void TrialStart() {}
 
 int CheckTrialEnd() { return 0; }
 
-#ifdef NON_MATCHING
 /* MAP_NPC_MODEL's members as its copy assignment reaches them; the tail is alignment padding. */
-struct DraftNpcModelLayout {
+struct GeneratedNpcModel {
     CCharacter chara;
     float pos[4];
     float unk_11C0[4];
@@ -1304,13 +1304,6 @@ struct DraftNpcModelLayout {
     s32 draw_param[16];
     s32 draw_num;
 };
-MAP_NPC_MODEL &MAP_NPC_MODEL::operator=(const MAP_NPC_MODEL &src) {
-    *(DraftNpcModelLayout *) this = *(const DraftNpcModelLayout *) &src;
-    return *this;
-}
-#else
-INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
-#endif
 /**
  * Copies one character over another, field by field.
  *
@@ -1325,10 +1318,15 @@ INCLUDE_ASM("asm/nonmatchings/main", __as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL);
 #pragma push
 #pragma dont_inline on
 
+static void CopyNpcModel(GeneratedNpcModel &dest, const GeneratedNpcModel &src) {
+    dest = src;
+}
+
 static void CopyCharacter(CCharacter &dest, const CCharacter &src) {
     dest = src;
 }
 
+static void CopyNpcModel(GeneratedNpcModel &dest, const GeneratedNpcModel &src);
 static void CopyCharacter(CCharacter &dest, const CCharacter &src);
 #pragma pop
 

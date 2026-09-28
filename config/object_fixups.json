@@ -206,7 +206,8 @@
       "GeneratedHitMarkVtable": "__vt__8CHitMark",
       "GeneratedMotionParamCtor": "__ct__11MotionParamFv",
       "GeneratedFakePointLightCtor": "__ct__15CFakePointLightFv",
-      "GeneratedCharacterVtable": "__vt__10CCharacter"
+      "GeneratedCharacterVtable": "__vt__10CCharacter",
+      "__as__17GeneratedNpcModelFRC17GeneratedNpcModel": "__as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL"
     },
     "sections": {
       ".gamemodesdata": [
@@ -214,7 +215,11 @@
       ]
     },
     "drop_functions": [
+      "CopyNpcModel__FR17GeneratedNpcModelRC17GeneratedNpcModel",
       "CopyCharacter__FR10CCharacterRC10CCharacter"
+    ],
+    "globalize_symbols": [
+      "__as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL"
     ],
     "rodata_exports": [
       "@566",
