@@ -781,21 +781,29 @@ static void DunEnterDraw(void) {
     setbilinear(1);
 }
 
-#ifdef NON_MATCHING
 static void DunEnterBoardWaku(int x, int y, int alpha) {
+    int draw_x;
+    int draw_y;
+    int count;
+    int height;
+    int u;
+    int dungeon;
+    int icon;
+    int v;
+
     DrawMenu2DSprite(DunLogBoard, CRect_i_(x, y - 1, 0x20, 0xFA), CRect_i_(0, 0, 0x20, 0xF8), alpha);
     DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 0x20, y, 0x1CC, 0x20), CRect_i_(0x20, 0, 0x1B8, 0x20), alpha);
     DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 0x1EC, y - 1, 0x28, 0xFA), CRect_i_(0x1D8, 0, 0x28, 0xF8), alpha);
     DrawMenu2DSprite(DunLogBoard, CRect_i_(x + 0x20, y + 0xD9, 0x1CC, 0x20), CRect_i_(0x20, 0xD8, 0x1B8, 0x20), alpha);
 
     // The scroll bar eases toward the list's scroll position and shrinks with a longer list.
-    int count = DEnterMenu.floor_count;
+    count = DEnterMenu.floor_count;
     if (count < 5) {
         count = 5;
     }
-    int draw_x = x + 0x1FC;
-    int draw_y = (int) (DEnterMenu.unk_008 += ((int) (32.0f + y + 108.0f * DEnterMenu.scroll_top / count) - DEnterMenu.unk_008) / 4.0f);
-    int height = (int) (540.0f / count);
+    draw_x = x + 0x1FC;
+    draw_y = (int) (DEnterMenu.unk_008 += ((int) (32.0f + y + 108.0f * DEnterMenu.scroll_top / count) - DEnterMenu.unk_008) / 4.0f);
+    height = (int) (540.0f / count);
     while (y + 0x98 < draw_y + (height + 8)) {
         height--;
     }
@@ -805,13 +813,13 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
 
     draw_x = x + 0x28;
     draw_y = y - 0x14;
-    int dungeon = DEnterMenu.dungeon;
-    int icon = dungeon;
+    dungeon = DEnterMenu.dungeon;
+    icon = dungeon;
     if (icon > 5) {
         icon = 5;
     }
-    int u = (icon / 3) << 8;
-    int v = (icon % 3) * 40 + 0x100;
+    u = (icon / 3) << 8;
+    v = (icon % 3) * 40 + 0x100;
     if (dungeon == 6) {
         DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y, 0x80, 0x23), CRect_i_(0x20, 0x80, 0x80, 0x24), alpha);
         DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x + 0x80, draw_y, 0x80, 0x23), CRect_i_(0x20, 0xA4, 0x80, 0x24), alpha);
@@ -820,6 +828,7 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
     }
 }
 
+#ifdef NON_MATCHING
 static void DunEnterBoard(int x, int y, int alpha) {
     float lane;
     int top;
@@ -947,7 +956,6 @@ static void DunEnterBoard(int x, int y, int alpha) {
     DunEnterBoardWaku(x, y, alpha);
 }
 #else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoardWaku__Fiii);
 INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoard__Fiii);
 #endif
 
