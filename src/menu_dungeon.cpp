@@ -828,7 +828,9 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
     }
 }
 
-#ifdef NON_MATCHING
+/**
+ * Draws the clipped floor list and collection marks on the dungeon entrance board.
+ */
 static void DunEnterBoard(int x, int y, int alpha) {
     float lane;
     int top;
@@ -903,7 +905,8 @@ static void DunEnterBoard(int x, int y, int alpha) {
         position = row_y + 4;
         DrawDunEnterFloorName(column_x, position, i + 1, top, bottom, alpha);
         int dungeon = DEnterMenu.dungeon;
-        if (i == maxFloorTbl__4[dungeon] - 1) {
+        int max_floor = maxFloorTbl__4[dungeon];
+        if (i == max_floor - 1) {
             int unused[6] = {20, 0, 30, 60, 20, 16};
             int draw_x = column_x + 0x82;
             position = row_y + 6;
@@ -955,9 +958,6 @@ static void DunEnterBoard(int x, int y, int alpha) {
     }
     DunEnterBoardWaku(x, y, alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_dungeon", DunEnterBoard__Fiii);
-#endif
 
 static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alpha) {
     int digits;

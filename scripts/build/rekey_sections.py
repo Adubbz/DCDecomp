@@ -15,6 +15,9 @@ Empty every `sections` entry the config marks as re-keyable, build the object,
 and run this: it matches the object's `.data` sections against the sizes the
 config records and writes the new names in.
 
+`rekey_sections_skip` can omit an initial run that remains in ordinary `.data`.
+Its entries count symbols, including named symbols, rather than bytes.
+
     scripts/build/cmake.sh objdiff        # with the entries emptied
     scripts/build/rekey_sections.py src/editloop3.cpp
     scripts/build/cmake.sh objdiff        # with the names filled in
@@ -67,6 +70,11 @@ def main():
         raise SystemExit('rekey_sections: %s records no re-keyable runs' % source)
 
     have = data_symbols(obj)
+    # Some units keep an initial run in ordinary .data. These symbols are
+    # already placed by the linker script and must be skipped when re-keying
+    # the later named sections.
+    skip = config[source].get('rekey_sections_skip', 0)
+    have = have[skip:]
     wanted = [size for _name, sizes in groups for size in sizes]
     if [size for _n, size in have] != wanted:
         raise SystemExit(

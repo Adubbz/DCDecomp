@@ -334,7 +334,6 @@ static void CreateBBox(CBox3<float> *box, sceVu0FVECTOR *vertex, int num);
 /* A scene file turned into frames. Every object of the file gets one, in the file's own order, so
    that a parent index is an index into the array being built; an object whose name marks it as a
    locator gets a frame and nothing else. */
-FUZZY_MATCH("asm/matchings/dataset", LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc)
 CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **name0, char **name1) {
     /* Declared in this order because it is what lays them out in small data, and every reference
        to either is a displacement off $gp that the order decides. */
