@@ -269,6 +269,7 @@ typedef struct {
 extern char My_dma_start0[];
 extern char Vu_progmain[];
 extern char Vu_prog0f[];
+extern void *_overlay_group_addresses[];
 
 /** Overlay file selected for each top-level game mode. */
 static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
@@ -285,7 +286,7 @@ void LoadOverlay(int mode) {
         return;
 
     strcpy(now_binfile, binfile[mode]);
-    void *address = *(void **) 0x002A17B4;
+    void *address = _overlay_group_addresses[1];
     char path[128] = "cdrom0:\\";
     strcat(path, binfile[mode]);
     strcat(path, ";1");
