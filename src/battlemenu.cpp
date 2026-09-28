@@ -2042,7 +2042,7 @@ void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     int durability = weapon->durability;
     int now = GetDispVolumeForFloat(weapon->durability_f);
     max_exp = GetWeaponMaxExp(weapon);
-    exp = weapon->unk_14;
+    exp = weapon->experience;
 
     if (max_exp < exp) {
         exp = max_exp;
@@ -2362,7 +2362,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     number_x = pos.x;
     bar_y = pos.y;
     int max_exp = GetWeaponMaxExp(weapon);
-    int exp_len = (weapon->unk_14 << 7) / max_exp;
+    int exp_len = (weapon->experience << 7) / max_exp;
     if (exp_len > 0x7E) {
         exp_len = 0x7E;
     }
@@ -2374,7 +2374,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
     int left = DrawMenuNumber(max_exp, number_x, number_y, WepStatus, WeaponVolumeNumberRect, 1, alpha);
     DrawMenu2DSprite(WepStatus, CRect_i_(left - 0xB, number_y, 0xC, 0xB),
                      CRect_i_(WeaponVolumeNumberRect.x + 0x78, WeaponVolumeNumberRect.y, 0xC, 0xC), alpha);
-    DrawMenuNumber(weapon->unk_14, left - 0xB, number_y, WepStatus, WeaponVolumeNumberRect, 2, alpha);
+    DrawMenuNumber(weapon->experience, left - 0xB, number_y, WepStatus, WeaponVolumeNumberRect, 2, alpha);
     int values[4] = {0, 0, 0, 0};
     values[0] = weapon->attack;
     values[1] = weapon->endurance;
@@ -2869,7 +2869,7 @@ static int NowWeaponStatusValue(WEAPON_HAVE *weapon) {
         return 0;
     }
     int status = 0;
-    if (weapon->unk_14 >= GetWeaponMaxExp(weapon) || GetNowItemNum(0xB2, MenuItemPackPt) > 0) {
+    if (weapon->experience >= GetWeaponMaxExp(weapon) || GetNowItemNum(0xB2, MenuItemPackPt) > 0) {
         status |= 2;
     }
     if (WeaponStatusBreakEnable(weapon) != 0) {
@@ -3922,7 +3922,7 @@ static int WeaponSelectKey() {
             }
             if (WepMenu.board.cursor == 0 && GamePad.Down(0x40)) {
                 s8 slot = WepMenu.weapon_slot;
-                if (DngWepHavePt[slot].unk_14 < GetWeaponMaxExp(&DngWepHavePt[slot])) {
+                if (DngWepHavePt[slot].experience < GetWeaponMaxExp(&DngWepHavePt[slot])) {
                     DeleteItemAfterUseItem(ITEM_POWERUP_POWDER, MenuItemPackPt);
                 }
                 MenuWepLevelUp.SetLevelUpValue(&DngWepHavePt[slot], &DngWeaponFrm[slot],
@@ -5733,7 +5733,7 @@ int ItemMenuMainKey() {
                         int held = BtlHaveItemPt->item_no;
                         if (held == 0xB2 && is_default == 0) {
                             WEAPON_HAVE *target = ItemMenuMode.target_weapon;
-                            if (target->unk_14 >= GetWeaponMaxExp(weapon)) {
+                            if (target->experience >= GetWeaponMaxExp(weapon)) {
                                 ComMenuSePlay(2);
                             } else if (target->unk_02 >= 99) {
                                 ComMenuSePlay(2);

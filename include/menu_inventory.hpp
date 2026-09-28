@@ -273,7 +273,7 @@ int GetWeaponHoleNum(int weapon_no);
 int GetNowWeaponAttachNum(WEAPON_HAVE *weapon);
 
 /**
- * Returns the maximum experience level encoded by a held weapon.
+ * Returns the ABS required for the held weapon to gain its next level.
  *
  * @mangled GetWeaponMaxExp__FP11WEAPON_HAVE
  * @address 0x00232080

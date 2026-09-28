@@ -143,13 +143,13 @@ u8 *BtGetStatusPal(int bar, float max, float value);
 u8 *BtGetStatusPal2(int bar, float max, float value);
 
 /**
- * Draws the life, magic and stamina bars at the top of the screen.
+ * Draws the dungeon HUD gauges, quick-use items, floor indicators and weapon icon.
  *
  * @mangled topStatusInfo__Fiii
  * @address 0x1B04F0
  * @size 0x1438
  */
-void topStatusInfo(int, int, int);
+void topStatusInfo(int y, int selected_item, int floor);
 
 /**
  * Reports whether the party is suffering one status ailment.

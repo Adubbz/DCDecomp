@@ -107,7 +107,16 @@ extern s32 selectMapNo;
 /** Items lying on the floor. */
 extern CRandomItem *RandomItem;
 
-/** Nonzero while the player wears the item that reveals every monster on the minimap. */
+/** Whether the player is currently using the movement speed boost. */
+extern s32 BtBySpeedFlag;
+
+/** Whether the party is in the back area of the current dungeon floor. */
+extern s32 BtUraDongeon;
+
+/** Whether the player has the current floor map. */
+extern s32 BtEquipMap;
+
+/** Whether the player has the magical crystal that reveals monsters on the minimap. */
 extern s32 BtEquipMasuisyou;
 
 /** Map of the floor the player is on. */

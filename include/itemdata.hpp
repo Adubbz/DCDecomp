@@ -529,13 +529,6 @@ STATIC_ASSERT(sizeof(WEAPON_DATA) == 0x4C);
 
 /**
  * One weapon as the player holds it.
- *
- * Unlike ATTACH_LIST this is not the shape of the table it comes from:
- * WepDataListToHaveCopy zeroes the whole record and then copies the
- * WEAPON_DATA across a field at a time, moving each one to a new offset and
- * narrowing `elem` and `vs_monster` from s16 to u8. Only what that function
- * writes, and `flags`, is known; the run from 0x26 to 0xED is untouched by
- * everything decompiled so far, and so is the tail past `flags`.
  */
 struct WEAPON_HAVE {
     s16 item_no; /**< Identifies the weapon. */
@@ -547,7 +540,7 @@ struct WEAPON_HAVE {
     s16 durability; /**< Seeded from WEAPON_DATA::durability. */
     s16 unk_0E;
     float durability_f; /**< The durability again, converted on the way in. */
-    s16 unk_14;
+    s16 experience; /**< Accumulated ABS toward the next weapon level. */
     s8 best_elem;        /**< Indexes the largest entry of `elem`, or -1 for none. */
     s8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
     char vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */

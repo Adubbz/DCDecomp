@@ -105,14 +105,14 @@ public:
 public:
     /* CDngStatusData extends this layout with its dungeon tail. The fields are
      * public because retail reaches into them from outside both classes. */
-    s8 cur_georama;                      // 0x0000
+    s8 cur_georama;                      /**< Current town and dungeon index. */
     char unk_01[1];                      // 0x0001
     s8 cur_floor;                        // 0x0002
     s8 prev_floor;                       /**< Floor occupied before the current floor. */
-    s8 cur_chara;                        // 0x0004
+    s8 cur_chara;                        /**< Index of the currently controlled party member. */
     s8 party_size;                       // 0x0005
-    s16 max_hp[6];                       // 0x0006
-    s16 hp[6];                           // 0x0012
+    s16 max_hp[6];                       /**< Maximum life of each party member. */
+    s16 hp[6];                           /**< Current displayed life of each party member. */
     char unk_01E[0x25A];                 // 0x001E
     s32 atra_grid[6][40][8];             /**< Atla each floor slot asks for, or -1 empty, -2 any atla, -3 collected. */
     ATRA_SAVE atra_registry[6][100];     /**< Atla each dungeon's floor slots still ask for. */

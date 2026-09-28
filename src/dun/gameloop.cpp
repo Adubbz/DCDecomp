@@ -1556,8 +1556,8 @@ void GameInit(void) {
     BtActStatus.move_vector[3] = 0.0f;
     BtActStatus.move_power = 0.0f;
     BtActStatus.move_power_decay = 0.0f;
-    BtActStatus.unk_144 = 0;
-    BtActStatus.unk_146 = 0;
+    BtActStatus.hud_shake_frames = 0;
+    BtActStatus.hud_shake_y = 0;
     BtActStatus.unk_0E0 = 3600;
     BtActStatus.unk_124 = 0;
     BtActStatus.unk_128 = 0;
@@ -5794,9 +5794,9 @@ void motionDrive(void) {
         BtActStatus.unk_04C--;
     }
 
-    if (BtActStatus.unk_144 > 0) {
-        BtActStatus.unk_146 = (int) (16.0f * (float) rand() / 2147483648.0f) - 8;
-        BtActStatus.unk_144--;
+    if (BtActStatus.hud_shake_frames > 0) {
+        BtActStatus.hud_shake_y = (int) (16.0f * (float) rand() / 2147483648.0f) - 8;
+        BtActStatus.hud_shake_frames--;
     }
 
     BtActStatus.unk_0E0++;
@@ -6904,7 +6904,7 @@ int BtCheckDamageProc(void) {
                 } else {
                     SndSePlay(0x1AF, -1, 0);
                     SndSePlay(0xA1, -1, 0);
-                    BtActStatus.unk_144 = 15;
+                    BtActStatus.hud_shake_frames = 15;
                     setUnitAmbientAnime(160.0f, 1.0f, 255.0f, 0.0f, 0.0f);
                     UserStatus->AddNowLife(UserStatus->cur_chara, -damage, 10.0f);
 
@@ -6974,7 +6974,7 @@ int BtCheckDamageProc(void) {
                 } else {
                     SndSePlay(0x1AE, -1, 0);
                     SndSePlay(0xA1, -1, 0);
-                    BtActStatus.unk_144 = 25;
+                    BtActStatus.hud_shake_frames = 25;
                     setUnitAmbientAnime(80.0f, 1.0f, 255.0f, 0.0f, 0.0f);
                     UserStatus->AddNowLife(UserStatus->cur_chara, -damage, 10.0f);
                     if (NowColData->hit[no].unk_48 != 3) {
@@ -8982,8 +8982,8 @@ void ResetStatusInfo(void) {
     BtActStatus.unk_0F8 = 10;
     CMonUnitHold = 0;
     CEffectHold = 0;
-    BtActStatus.unk_144 = 0;
-    BtActStatus.unk_146 = 0;
+    BtActStatus.hud_shake_frames = 0;
+    BtActStatus.hud_shake_y = 0;
     BtActStatus.unk_148 = 0;
 }
 

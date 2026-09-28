@@ -479,7 +479,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     return 0;
                 }
                 if (weapon->item_no != default_no) {
-                    int exp = weapon->unk_14;
+                    int exp = weapon->experience;
                     if (exp < GetWeaponMaxExp(weapon)) {
                         WeaponLevelUpValueCalc(weapon, &level_up, 1, 0);
                         memcpy(weapon, &level_up, sizeof(WEAPON_HAVE));
@@ -1658,7 +1658,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             if (is_default == 1) {
                 printf("this weapon default\n");
             } else {
-                weapon->unk_14 = GetWeaponMaxExp(weapon);
+                weapon->experience = GetWeaponMaxExp(weapon);
             }
             break;
         case 1:

@@ -72,8 +72,8 @@ struct BT_ACT_STATUS {
     s32 unk_124;
     s32 unk_128;
     u8 unk_12C[0x18];
-    s16 unk_144;
-    s16 unk_146;
+    s16 hud_shake_frames; /**< Frames remaining in the status panel shake. */
+    s16 hud_shake_y; /**< Vertical pixel offset applied to the status panel shake. */
     s16 unk_148;
     s16 unk_14A;
     s16 unk_14C;

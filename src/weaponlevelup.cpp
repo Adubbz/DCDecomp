@@ -358,7 +358,7 @@ void CWeaponLevelUp::SetLevelUpWeaponData() {
     if (weapon->durability > 99) {
         weapon->durability = 99;
     }
-    weapon->unk_14 = 0;
+    weapon->experience = 0;
 }
 
 void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
@@ -751,7 +751,7 @@ void CWeaponLevelUp::Step() {
                 SetWeaponBuildValue(weapon, buildup_weapon_no);
                 weapon->item_no = buildup_weapon_no;
                 weapon->unk_02 = 0;
-                weapon->unk_14 = 0;
+                weapon->experience = 0;
                 option = DefaultWeaponOptionSet(buildup_weapon_no);
                 if (option != 1) {
                     option = CheckWeaponOptionStatus(option);

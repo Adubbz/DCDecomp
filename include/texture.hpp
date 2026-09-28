@@ -97,6 +97,13 @@ public:
     int SearchTextureName(char *name, int block);
     int GetTextureHandle(char *name, int block);
     CTexture *GetTexture(int handle);
+    /**
+     * Finds a named texture in one block, or in every block when the block is negative.
+     *
+     * @mangled GetTexture__15CTextureManagerFPci
+     * @address 0x1312D0
+     * @size 0x50
+     */
     CTexture *GetTexture(char *name, int block);
     CTexture *SearchTexture(char *name);
     void EnterTexture(int block, char *name, u_char *image, int width, int height, int bpp,

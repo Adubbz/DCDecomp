@@ -1547,22 +1547,22 @@ void CMonstorUnit::Step(int pause) {
                                 exp *= 1.2f;
                             }
                             if (UserStatus->res_limit_zone_current == 10) {
-                                weapon->unk_14 -= exp;
-                                if (weapon->unk_14 <= 0) {
-                                    weapon->unk_14 = 0;
+                                weapon->experience -= exp;
+                                if (weapon->experience <= 0) {
+                                    weapon->experience = 0;
                                 }
-                            } else if (weapon->unk_14 < max_exp) {
-                                int updated = weapon->unk_14 + exp;
+                            } else if (weapon->experience < max_exp) {
+                                int updated = weapon->experience + exp;
                                 if (updated >= max_exp) {
-                                    weapon->unk_14 = max_exp;
+                                    weapon->experience = max_exp;
                                     DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
                                     DngMessMan.unk_14 = weapon->unk_02;
                                     DngMessMan.message = 150;
                                     DngMessMan.timer = 480;
                                     DngMessMan.unk_1C = 0;
-                                    weapon->unk_14 = max_exp;
+                                    weapon->experience = max_exp;
                                 } else {
-                                    weapon->unk_14 = updated;
+                                    weapon->experience = updated;
                                 }
                             }
                         }

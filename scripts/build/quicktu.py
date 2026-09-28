@@ -52,7 +52,8 @@ def shape(text, masked):
     decides the order of, and a comparison that dropped it would call two
     different orders the same.
     """
-    text = re.sub(r'\s*<[^>]*>', '', text).strip()
+    # Objdump labels may themselves contain template brackets.
+    text = re.sub(r'\s*<.*>', '', text).strip()
     text = text.split('#')[0].strip()
     # A branch names an address too: section-relative here, absolute in the
     # image, and never a relocation, so nothing but the mnemonic survives it.

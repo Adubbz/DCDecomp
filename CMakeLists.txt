@@ -246,7 +246,8 @@ carve_part(main.sbss.part4b.s
            main.sbss.part4f.s=2A2A80-2A2AD0
            main.sbss.edit_in-a.s=2A2AFC-2A2B20
            main.sbss.editground-tail.s=2A2B28-2A2B7C
-           main.sbss.shot_firebar-tail.s=2A2B84-2A2BF0)
+           main.sbss.shot_firebar-tail.s=2A2B84-2A2BB8
+           main.sbss.topstatus-tail.s=2A2BC8-2A2BF0)
 # CheckDmg owns its local static effect index and initialization guard, and
 # runscript_opcodes.cpp owns bak_ColNo after them.
 carve_part(main.sbss.part5.s

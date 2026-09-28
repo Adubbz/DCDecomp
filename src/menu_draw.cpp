@@ -1277,7 +1277,7 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
             }
         }
         if (have->item_no == 0xB2) {
-            if (weapon->unk_14 < GetWeaponMaxExp(weapon) && weapon->unk_02 < 99) {
+            if (weapon->experience < GetWeaponMaxExp(weapon) && weapon->unk_02 < 99) {
                 int item_no = weapon->item_no;
                 if (item_no != GetDefaultWeaponNo(chara)) {
                     if (item_no == 0x10C) {

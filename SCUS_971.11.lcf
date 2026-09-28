@@ -1002,6 +1002,9 @@ SECTIONS
 		shot_firebar.cpp.o (.sbss) // 0x002a2b7c, CSHOT_FIREBAR::Step's hit counter and guard
 		. = ALIGN(4);
 		main.sbss.shot_firebar-tail.s.o (.sbss) // 0x002a2b84
+		shot_freefuncs.cpp.o (.sbss) // 0x002a2bb8, status popup phases and guards
+		. = ALIGN(4);
+		main.sbss.topstatus-tail.s.o (.sbss) // 0x002a2bc8
 		dungeonmap.cpp.o (.sbss)
 		main.sbss.part5.s.o (.sbss)
 		btitem.cpp.o (.sbss)           // 0x002a2c48
