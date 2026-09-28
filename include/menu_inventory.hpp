@@ -8,6 +8,9 @@ struct IHAVEITEM;
 struct ITEM_PACK;
 struct WEAPON_HAVE;
 
+/** Texture sheet used to draw personal inventory boards. */
+extern CTexture *PerBoardTex;
+
 /**
  * Places or exchanges a weapon selected on the personal inventory board.
  *
@@ -106,7 +109,7 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
  * @address 0x00230720
  * @size 0x294
  */
-void PersonalBoardScrlBarDraw(int x, int y, int count, float &scroll, unsigned char visible_count, CTexture *texture, int alpha);
+void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned char top_row, CTexture *texture, int alpha);
 
 /**
  * Draws the number of entries on a personal inventory board and its capacity,
