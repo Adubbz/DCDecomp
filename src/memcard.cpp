@@ -5,6 +5,7 @@
 #include "memcard.hpp"
 
 #include <cmath>
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
 
@@ -20,6 +21,7 @@
 #include "mainselect.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_draw.hpp"
+#include "menu_inventory.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -92,14 +94,6 @@ extern u8 MesWinTexBuff_12[0x100];
  * The four lettering textures that the save file boards draw with.
  */
 extern CTexture *SaveMenuMojiTextbl[4];
-
-#ifdef NON_MATCHING // draft declarations
-#include <cstdlib>
-
-#include "menu_inventory.hpp"
-
-extern CTexture *PerBoardTex;
-#endif
 
 CEditPartsInfo *CommonMenuAtoraInfo;
 short *GetAtraMsgReadBuf;
@@ -1749,7 +1743,13 @@ void DrawMenuAtoraSelect() {
         EastKingEventDraw();
     }
 }
-#ifdef NON_MATCHING
+/**
+ * Draws the Atla town board, its inventory, and the active cursor.
+ *
+ * @mangled DrawAtoraSelect__Fi
+ * @address 0x0021AE80
+ * @size 0xFEC
+ */
 static void DrawAtoraSelect(int fade) {
     int open_mode;
     int event;
@@ -1872,7 +1872,7 @@ static void DrawAtoraSelect(int fade) {
     }
     count = PersonalRetMax(MenuAtoraSel.board.page);
     board_y = 0x7F - MenuAtoraSel.board.top_row * 0x28;
-    board_y = (int) (MenuAtoraSel.board.y += (board_y - MenuAtoraSel.board.y) / 4.0f);
+    board_y = (int) ((MenuAtoraSel.board.y += (board_y - MenuAtoraSel.board.y) / 4.0f), MenuAtoraSel.board.y);
     MenuTextureReload(PerBoardTex->block);
     DrawPerBoardDraw(0, count, 0x168, board_y, 0x81, 0x121, PerBoardTex, 0x80);
     if (AtoraTextureEnterFlag != 0) {
@@ -2005,9 +2005,6 @@ static void DrawAtoraSelect(int fade) {
         }
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", DrawAtoraSelect__Fi);
-#endif
 
 static int AtoraTextureEnter() {
     LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};

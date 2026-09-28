@@ -436,8 +436,6 @@ float CCharacter::GetNowTime() {
     return 0.0f;
 }
 
-FUZZY_MATCH("asm/nonmatchings/character", Step__10CCharacterFv);
-
 void CCharacter::Step() {
     int index;
     int set_no;
@@ -951,8 +949,6 @@ void CCharacter::DeleteExtendMotion() {
         this->motion_end[i] = -1;
     }
 }
-
-FUZZY_MATCH("asm/nonmatchings/character", Initialize__10CCharacterFv);
 
 void CCharacter::Initialize() {
     CObject::Initialize(1.0f);

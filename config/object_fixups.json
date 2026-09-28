@@ -2428,42 +2428,55 @@
         "MenuEtcErrCnt"
       ],
       ".floornamedata": [
-        "@1173",
-        "@1174"
+        "@1305",
+        "@1306"
       ],
       ".quickchangedata": [
-        "@1191"
+        "@1323"
       ],
       ".charachangedata": [
-        "@1234",
-        "@1245",
-        "@1437",
-        "@1438"
+        "@1366",
+        "@1377",
+        "@1569",
+        "@1570"
       ],
       ".itemmodeldata": [
-        "@1506"
+        "@1638"
       ],
       ".menu_dungeon-c1707": [
-        "@1534"
+        "@1666"
       ],
       ".menu_dungeon-c1731": [
-        "@1553"
+        "@1685"
       ],
       ".itemviewdata": [
-        "@1652",
-        "@1657",
-        "@1658",
-        "@1659"
+        "@1784",
+        "@1789",
+        "@1790",
+        "@1791"
       ],
       ".itemgetdata": [
-        "@1751",
-        "@1752"
+        "@1883",
+        "@1884"
       ],
       ".itemdataview": [
-        "@1778"
+        "@1910"
       ]
     },
+    "rekey_sections_skip": 5,
+    "rekey_sections": [
+      [".floornamedata", [49, 16]],
+      [".quickchangedata", [24]],
+      [".charachangedata", [36, 24, 16, 16]],
+      [".itemmodeldata", [12]],
+      [".menu_dungeon-c1707", [9]],
+      [".menu_dungeon-c1731", [12]],
+      [".itemviewdata", [36, 16, 12, 12]],
+      [".itemgetdata", [20, 20]],
+      [".itemdataview", [128]]
+    ],
     "symbols": {
+      "@1106": "@1074",
       "chara_change_frame_image": "@1301",
       "stay_frame_name": "@1349",
       "item_view_frame_image": "@1841"
@@ -2647,13 +2660,13 @@
         "@762"
       ],
       ".memcard-c2252": [
-        "@1421"
+        "@1576"
       ],
       ".memcard-c2391": [
-        "@1556"
+        "@1711"
       ],
       ".memcard-c2683": [
-        "@1802"
+        "@1957"
       ]
     }
   },

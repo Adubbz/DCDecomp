@@ -267,7 +267,7 @@ carve_part(main.sbss.part5.s
 # WeaponModelBuildFunc's texture list, SetNowCharaMotionNo's motion speeds, MenuCharaMDSBuild2's
 # texture list, positions and scales, BtMenuLoad2's texture list and DngEscapeMsgInit's templates
 # inside its own run.
-# menu_dungeon.cpp supplies its compiled functions' templates inside part6g's run.
+# menu_dungeon.cpp supplies the former part6g 0x2941C0-0x2941E0 template.
 carve_part(main.data.part6.s
            main.data.part6.s=27E790-27E7D0
            main.data.btitem-a.s=27E810-27EAD0
@@ -295,7 +295,6 @@ carve_part(main.data.part6.s
            main.data.memcard-a.s=293EBC-293F20
            main.data.memcard-a-293F60.s=293F60-293FD0
            main.data.menu_save-b.s=294140-294150
-           main.data.part6g.s=2941C0-2941E0
            main.data.part6g-2942F0.s=2942F0-294320
            main.data.menu_dungeon-d.s=2943C0-2943E0
            main.data.part6j.s=295644-295660
