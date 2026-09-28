@@ -9,20 +9,19 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 struct ITEM_PACK;
-struct MENU_ITEMDATA;
 struct SV_FISH_DATA;
 
 /**
  * The record behind one shop slot, read according to the kind of item in it.
  */
-union SHOP_ITEM_RECORD {
+union MENU_ITEMDATA {
     s32 volume;         /**< A dungeon item's volume. */
     WEAPON_HAVE weapon; /**< A weapon's record. */
     ATTACH_LIST attach; /**< An attachment's record. */
     s16 param[0x7C];    /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
 };
 
-STATIC_ASSERT(sizeof(SHOP_ITEM_RECORD) == 0xF8);
+STATIC_ASSERT(sizeof(MENU_ITEMDATA) == 0xF8);
 
 /**
  * Stores one shop's item-list state.
@@ -30,7 +29,7 @@ STATIC_ASSERT(sizeof(SHOP_ITEM_RECORD) == 0xF8);
 struct SHOP_ITEMLIST {
     s16 item_no; /**< The item, weapon or attachment on offer. */
     u8 unk_02[2];
-    SHOP_ITEM_RECORD data; /**< The item's record. */
+    MENU_ITEMDATA data; /**< The item's record. */
 };
 
 STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
@@ -95,7 +94,7 @@ public:
     float pos_y; /**< Current vertical screen position of the flying icon. */
     s16 item_no; /**< The item, weapon or attachment identifier the icon is carrying. */
     u8 unk_12[2];
-    SHOP_ITEM_RECORD data; /**< A copy of the item, weapon or attachment record. */
+    MENU_ITEMDATA data; /**< A copy of the item, weapon or attachment record. */
 
     /**
      * Aims a shop icon at the slot it is to fly to.
