@@ -1,3 +1,12 @@
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 79, 99, 116, 124, 146
+#pragma argument_flag_ones 187, 188, 189, 197, 199, 202, 204, 248, 251
+#pragma argument_flag_ones 255, 256, 260, 263, 286, 297, 305, 312, 313, 314
+#pragma argument_flag_ones 317, 318, 319, 358, 368, 374, 375, 376, 382, 392
+#pragma argument_flag_ones 398, 399, 400, 406, 416, 422, 423, 424, 439
+#pragma argument_flag_ones 598
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 190, 210, 227, 235, 257, 288, 290, 295, 403, 428
 #pragma argument_flag_ones 430, 464, 465, 466, 474, 476, 479, 481, 525, 528
@@ -5,6 +14,7 @@
 #pragma argument_flag_ones 594, 595, 596, 635, 645, 651, 652, 653, 659, 669
 #pragma argument_flag_ones 675, 676, 677, 683, 693, 699, 700, 701, 716, 731
 #pragma argument_flag_ones 737, 738, 744, 752, 805, 982
+#endif
 #include "common.h"
 
 #include <libgraph.h>
@@ -346,6 +356,42 @@ void OpA_InitProcess() {
  * @size 0x3AC
  * @unknownret
  */
+#ifdef PAL
+static void LoadTexture();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", LoadTexture__Fv__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @341__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @351__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @352__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @353__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @354__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @355__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @356__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @357__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @358__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @359__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @360__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @361__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @362__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @363__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @364__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @365__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @366__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @367__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @368__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @369__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @370__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @371__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @372__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @373__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @374__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @375__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @376__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @377__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @378__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @379__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @380__6);
+#pragma name_counter 84
+#else
 static void LoadTexture() {
     LOADTEXTURE_INFO2 tex[] = {
         {"#blender#640#224#4", 0, 0},
@@ -419,6 +465,7 @@ static void LoadTexture() {
     CharaTex__2[6] = 5;
     CharaTex__2[7] = 6;
 }
+#endif
 
 /**
  * The scene's actors. The four in the table are the townspeople around the square, the two after
@@ -528,6 +575,12 @@ static void SetDanceMotion() {
  * @size 0x124
  * @unknownret
  */
+#ifdef PAL
+static void InitDancerPos();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", InitDancerPos__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @406__2);
+#pragma name_counter 119
+#else
 static void InitDancerPos() {
     float pos[35][4] = {
         {3.0f, 0.0f, 27.0f, 0.0f},
@@ -582,12 +635,33 @@ static void InitDancerPos() {
     Chara__3[6].SetPosition(0.0f, 0.0f, 250.0f);
     Chara__3[6].SetRotation(0.0f, PI, 0.0f);
 }
+#endif
 
 /* The tick's drawing, in the order the frame is built: the ground, the buildings standing on it,
    the townspeople, the couple, the crowd behind them, the fires, the sky and last the depth of
    field. The two ambients that fade are what makes the square go dark as the scene turns: one rides
    up over the buildings while the camera holds on them, the other rides the crowd down as the
    couple's motion runs out. */
+#ifdef PAL
+void OpA_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$417);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", col$450);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$451);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", am$453);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$454);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$456);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$457);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", cnt$525);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$526);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", sw$528);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$529);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", ambient$416);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @478__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @712__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", lcolor$461);
+#pragma name_counter 258
+#else
 void OpA_DrawProcess() {
     static sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 0.0f};
     static int wait;
@@ -883,6 +957,7 @@ void OpA_DrawProcess() {
         } break;
     }
 }
+#endif
 
 /**
  * The sky, which is one model turned inside out and scrolled rather than a backdrop. It grows from
@@ -1393,6 +1468,35 @@ static void DrawShadow(float x, float y, float z) {
    and the wait keeps a motion that stalls there from playing the step twice. The rest is the
    square's own ambience: the fountain from a fixed point, the wind while the sky is up, and the
    change of music the camera makes when it turns away. */
+#ifdef PAL
+void OpA_SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_SoundProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", mus$973);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$974__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$983);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$984);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$998);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$999__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$1013);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1014__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$1028);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1029);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", seflg$1046);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1047);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", secnt$1049);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1050);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", vol$1052);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1053);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", flg$1064);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1065);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", flg$1077);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1078);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1045__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1062);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1088__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1089);
+#pragma name_counter 778
+#else
 void OpA_SoundProcess() {
     /* These type-only names preserve the first footfall's argument-selection state. */
     typedef float SoundSetup0, SoundSetup1, SoundSetup2, SoundSetup3, SoundSetup4, SoundSetup5,
@@ -1542,6 +1646,7 @@ void OpA_SoundProcess() {
         }
     }
 }
+#endif
 
 /**
  * The waterfall behind the square. Its animation is a strip of frames in a texture of its own and

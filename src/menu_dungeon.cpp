@@ -420,6 +420,15 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     return volume;
 }
 
+#ifdef PAL
+int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @762__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @763__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @764__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @765__3);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
+#pragma name_counter 852
+#else
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     char path[76];
     int size;
@@ -498,6 +507,7 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     GamePad.MenuModeOn(0x78);
     return 1;
 }
+#endif
 
 static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
@@ -522,6 +532,17 @@ int DunEnterMenuLoop() {
     return result;
 }
 
+#ifdef PAL
+static int DunEnterMenuKey(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @868__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @869__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @870__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @871__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @872__2);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @777__2);
+#pragma name_counter 931
+#else
 static int DunEnterMenuKey(void) {
     int result;
     int selected;
@@ -644,6 +665,7 @@ static int DunEnterMenuKey(void) {
     }
     return result;
 }
+#endif
 
 static void DunEnterDraw(void) {
     int fade;
@@ -658,7 +680,7 @@ static void DunEnterDraw(void) {
     float wave;
 
     setbilinear(0);
-    CRect_i_ screen(0, 0, 0x2800, 0x1C00);
+    CRect_i_ screen(0, 0, 0x2800, (SCREEN_HEIGHT << 4));
     alpha = 0x80;
     fade = alpha;
     switch (DEnterMenu.state) {
@@ -720,7 +742,11 @@ static void DunEnterDraw(void) {
         MenuTextureReload(CommonMenuMes2.tex_block);
         CommonMenuMes2.stay_frame = 1;
         CommonMenuMes2.edge_alpha = alpha;
+#ifdef PAL
+        CommonMenuMes2.text_y = 0x16c;
+#else
         CommonMenuMes2.text_y = 0x158;
+#endif
         half_width = CommonMenuMes2.char_width >> 1;
         GetMenuCommonPutXY(&CommonMenuMes2, 0x148 - half_width);
         CommonMenuMes2.Step();
@@ -1009,10 +1035,17 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
     }
 }
 
+#ifdef PAL
+static void DrawDunEnterBack(int alpha);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @1280);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
+#pragma name_counter 1282
+#else
 static void DrawDunEnterBack(int alpha) {
     DrawMenu2DSprite(TexManager.GetTexture("frame", -1), MenuDispRc, MenuDispRc, 0x80);
     MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
 }
+#endif
 
 /**
  * Screen position of the character change ring's centre.
@@ -1050,6 +1083,13 @@ int polyreadflag;
 
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
 
+#ifdef PAL
+static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1305);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1306__2);
+#pragma name_counter 1323
+#else
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
     int height;
@@ -1107,6 +1147,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
         }
     }
 }
+#endif
 
 float changeMenu_long = 60.0f;
 
@@ -1258,6 +1299,11 @@ static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
     status->cur_chara = chara;
 }
 
+#ifdef PAL
+int CharaChangeKey(void);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
+#pragma name_counter 1515
+#else
 int CharaChangeKey(void) {
     int result = 0;
 
@@ -1450,7 +1496,16 @@ int CharaChangeKey(void) {
     }
     return result;
 }
+#endif
 
+#ifdef PAL
+void CharaChangeDraw(void);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1606__2);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1607__2);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1612__2);
+#pragma name_counter 1614
+#else
 void CharaChangeDraw(void) {
     int alpha;
     int i;
@@ -1584,6 +1639,7 @@ void CharaChangeDraw(void) {
         setbilinear(1);
     }
 }
+#endif
 
 int DngActItemModelReadStart(u_long128 *buffer) {
     char model_path[64];
@@ -1969,6 +2025,12 @@ void DrawItemPolygonView(void) {
     MenuTextureReload(BtlMenuExReadBlock);
     MenuPolygonDraw(0x80, LocalDrawItemPolygonView);
 }
+
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @1941__2);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDebugItemGet__Fv);
+#pragma name_counter 1835
+#endif
 
 static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;

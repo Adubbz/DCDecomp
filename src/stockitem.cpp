@@ -110,6 +110,10 @@ void CStockItem::GetAttachInfo(int slot_index, ATTACH_LIST *attachment) {
     memcpy(attachment, &this->attachments[slot_index], sizeof(ATTACH_LIST));
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/stockitem", SearchItem__10CStockItemFi);
+#pragma name_counter 522
+#else
 int CStockItem::SearchItem(int item_no) {
     if (item_no < ITEM_ATTACH_START) {
         return 0;
@@ -148,6 +152,7 @@ int CStockItem::SearchItem(int item_no) {
 
     return found;
 }
+#endif
 
 int CompChargeItem(int first_item_no, int second_item_no) {
     ITEM_DATA *first = GetItemData(first_item_no);

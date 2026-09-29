@@ -107,6 +107,13 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
     SndSPSeLoad(0x2F);
 }
 
+#ifdef PAL
+void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
+INCLUDE_RODATA("asm/pal/nonmatchings/fishing", @436);
+INCLUDE_ASM("asm/pal/nonmatchings/fishing", FishingLoadFish__FiP14CDataAlloc2_1_i);
+INCLUDE_DATA("asm/pal/nonmatchings/fishing", fish_type$369);
+#pragma name_counter 134
+#else
 void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     int interval;
     int loaded;
@@ -232,6 +239,7 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
         loaded = 1;
     }
 }
+#endif
 
 CFish::CFish() {
     Initialize();
@@ -477,6 +485,11 @@ void FishingDeleteAngleFish() {
     }
 }
 
+#ifdef PAL
+void FishingStepFish();
+INCLUDE_ASM("asm/pal/nonmatchings/fishing", FishingStepFish__Fv);
+#pragma name_counter 291
+#else
 void FishingStepFish() {
     sceVu0FVECTOR hook;
 
@@ -500,6 +513,7 @@ void FishingStepFish() {
         Fish[i].Step();
     }
 }
+#endif
 
 void FishingDrawFish() {
     if (Fish == NULL) {

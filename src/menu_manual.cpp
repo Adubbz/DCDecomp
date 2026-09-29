@@ -199,6 +199,12 @@ void DrawManualMsg() {
     CommonMenuMes3.DrawMesWin();
 }
 
+#ifdef PAL
+void InitMenuManual(int *texture_blocks, u_long128 *load_buffer);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_manual", @561);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_manual", InitMenuManual__FPiP1);
+#pragma name_counter 134
+#else
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.load_buffer = load_buffer;
     ManualMenu.load_buffer = MenuCalcBufAlignment(ManualMenu.load_buffer);
@@ -224,12 +230,13 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
     ManualMenu.char_width = CommonMenuMes3.char_width;
 }
+#endif
 
 /**
  * Empties a message window and puts its layout back to the defaults.
  */
 static inline void ResetManualMessage(ClsMes *message) {
-    message->text_columns = 0x46;
+    message->text_columns = MES_WIN_COLUMNS;
     message->text_rows = 10;
     message->text_len = 0;
     message->text_width = 0;
@@ -492,6 +499,11 @@ int MenuManualKey() {
     return closed;
 }
 
+#ifdef PAL
+void MenuManualDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/menu_manual", MenuManualDraw__Fv);
+#pragma name_counter 354
+#else
 void MenuManualDraw() {
     if (ManualMenu.mode >= 3 && ManualMenu.mode < 6 && ManualMenu.images_ready != 0) {
         MenuTextureReload(ManualMenu.image_texture_block);
@@ -544,3 +556,4 @@ void MenuManualDraw() {
         DrawManualMsg();
     }
 }
+#endif

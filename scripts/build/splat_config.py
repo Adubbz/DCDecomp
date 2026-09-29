@@ -49,7 +49,7 @@ STATIC_INIT = {"main": ("__static_init", "__static_init_end", "RO_"),
 
 SHT_REL, SHT_SYMTAB = 9, 2
 STT_NOTYPE, STT_OBJECT, STT_FUNC = 0, 1, 2
-R_MIPS_32, R_MIPS_26, R_MIPS_HI16, R_MIPS_LO16 = 2, 4, 5, 6
+R_MIPS_32, R_MIPS_26, R_MIPS_HI16, R_MIPS_LO16, R_MIPS_GPREL16 = 2, 4, 5, 6, 7
 
 
 class Retail:
@@ -585,7 +585,85 @@ def carry_lcf(carry, text, problems):
     return "\n".join(out) + "\n"
 
 
-def carry_fixups(carry, fixups, problems):
+def relocated_targets(retail, image):
+    """[(address, target)] for every relocated word of a linked image, read back
+    out of what the linker wrote: a word, or a %hi and the %lo that pairs with it."""
+    base, blob = retail.images[image]
+
+    def word(address):
+        offset = address - base
+        return struct.unpack_from("<I", blob, offset)[0] if 0 <= offset <= len(blob) - 4 else 0
+
+    rows = sorted((address, kind, name, value)
+                  for address, entries in retail.rel.get(image, {}).items()
+                  for kind, name, value in entries)
+    out = []
+    for i, (address, kind, name, value) in enumerate(rows):
+        if kind == R_MIPS_32:
+            out.append((address, word(address)))
+        elif kind == R_MIPS_HI16:
+            low = next((r for r in rows[i + 1:i + 64] if r[1] == R_MIPS_LO16 and r[2] == name), None)
+            if low is not None:
+                target = (((word(address) & 0xFFFF) << 16)
+                          + (((word(low[0]) & 0xFFFF) ^ 0x8000) - 0x8000)) & 0xFFFFFFFF
+                out += [(address, target), (low[0], target)]
+        elif kind == R_MIPS_GPREL16:
+            out.append((address, (retail.gp + (((word(address) & 0xFFFF) ^ 0x8000) - 0x8000)) & 0xFFFFFFFF))
+        elif kind not in (R_MIPS_LO16, R_MIPS_26):
+            out.append((address, value))
+    return out
+
+
+def marker_spelling(name):
+    """A symbol as an INCLUDE_ASM marker spells it."""
+    return name.replace(",", "_").replace("<", "_").replace(">", "_")
+
+
+def shared_constants(carry, yamls):
+    """{(image, unit): [name]}: the target's constants that a function it takes
+    from its own assembly shares with a compiled function emitting them first.
+
+    A constant only one function uses travels with that function's assembly;
+    one a compiled function emits first is the compiled copy, which has to be
+    bound to the retail name the assembly refers to it by.
+    """
+    target = carry.target
+    names = spelled(target)
+    out = {}
+    for image in IMAGES:
+        units = sorted((target.address(image, int(m.group(2), 16)), m.group(5))
+                       for m in map(YAML_SUB.match, yamls[image].splitlines())
+                       if m and m.group(4) in UNIT_KINDS)
+        unit_starts = [a for a, _n in units]
+        functions = sorted((f["value"], f["value"] + f["size"], names.get(f["idx"], f["name"]))
+                           for f in target.functions(image))
+        starts = [f[0] for f in functions]
+        data = [(lo, hi) for n, _k, lo, hi in target.sections[image] if n in (".rodata", ".rdata")]
+        constants = {}
+        for s in target.syms:
+            if (target.image_of(s) == image and s["type"] in (STT_NOTYPE, STT_OBJECT) and s["idx"] in names
+                    and any(lo <= s["value"] < hi for lo, hi in data)):
+                constants.setdefault(s["value"], names[s["idx"]])
+        users = defaultdict(set)
+        for address, rows in target.rel.get(image, {}).items():
+            i = bisect.bisect_right(starts, address) - 1
+            if i < 0 or address >= functions[i][1]:
+                continue
+            for _kind, _name, value in rows:
+                if value in constants:
+                    users[value].add(functions[i][:1] + functions[i][2:])
+        for value, using in users.items():
+            if len(using) < 2:
+                continue
+            owners = {units[bisect.bisect_right(unit_starts, a) - 1][1] for a, _n in using}
+            if len(owners) != 1:
+                continue
+            key = (image, owners.pop())
+            out.setdefault(key, []).append((sorted(using), constants[value]))
+    return out
+
+
+def carry_fixups(carry, fixups, problems, yamls):
     def image_of(source):
         for image in ("title", "dun"):
             if source.startswith(f"src/{image}/"):
@@ -647,6 +725,71 @@ def carry_fixups(carry, fixups, problems):
             return None
         return moved
 
+    # Who refers to what in NTSC: a function by name, or a datum ("data", name)
+    # when the reference sits in data rather than code.
+    users, unit_of = {}, {}
+    for image in IMAGES:
+        source = carry.source
+        functions = sorted((f["value"], f["value"] + f["size"], f["name"])
+                           for f in source.functions(image))
+        starts = [f[0] for f in functions]
+        data = sorted((s["value"], s["value"] + max(s["size"], 1), s["name"]) for s in source.syms
+                      if source.image_of(s) == image and s["name"]
+                      and (s["type"] == STT_OBJECT or (s["type"] == STT_NOTYPE and s["size"])))
+        data_starts = [d[0] for d in data]
+        for address, target in relocated_targets(source, image):
+            i = bisect.bisect_right(starts, address) - 1
+            if i >= 0 and address < functions[i][1]:
+                user = functions[i][2]
+            else:
+                j = bisect.bisect_right(data_starts, address) - 1
+                if j < 0 or address >= data[j][1]:
+                    continue
+                user = ("data", data[j][0])
+            users.setdefault((image, target), set()).add(user)
+        ntsc_yaml = (Path(region.REGIONS[region.NTSC]["config"]) / f"{image}.yaml").read_text(encoding="utf-8")
+        units = sorted((source.address(image, int(m.group(2), 16)), m.group(5))
+                       for m in map(YAML_SUB.match, ntsc_yaml.splitlines())
+                       if m and m.group(4) in UNIT_KINDS)
+        unit_starts = [a for a, _n in units]
+        for a, _end, name in functions:
+            k = bisect.bisect_right(unit_starts, a) - 1
+            if k >= 0:
+                unit_of[(image, name)] = units[k][1]
+
+    address_of = {}
+    for s in carry.source.syms:
+        if s["idx"] in carry.source_names:
+            owner = carry.source.image_of(s)
+            if owner:
+                address_of.setdefault((owner, carry.source_names[s["idx"]]), s["value"])
+
+    def functions_using(image, name, depth=2):
+        address = name if isinstance(name, int) else address_of.get((image, name))
+        out = set()
+        for user in users.get((image, address), ()):
+            if isinstance(user, tuple):
+                if depth:
+                    out |= functions_using(image, user[1], depth - 1)
+            else:
+                out.add(user)
+        return out
+
+    def compiled(value, image, assembled):
+        """Whether a constant still has a compiled user: one the target takes
+        from its own assembly carries its constants with it, and so does a
+        datum only such a function uses."""
+        if not users.get((image, address_of.get((image, value)))):
+            return True
+        using = functions_using(image, value)
+        return any((carry.name(image, f) or f) not in assembled for f in using)
+
+    def still_called(function, image, unit, assembled):
+        """Whether a function the unit emits for its own callers still has one
+        the target compiles."""
+        callers = {f for f in functions_using(image, function) if unit_of.get((image, f)) == unit}
+        return not callers or any((carry.name(image, f) or f) not in assembled for f in callers)
+
     # Retail's names are carried over; the compiler's are the same in both
     # releases, which compile the same source. A `sections` or
     # `globalize_symbols` entry is a compiled name unless the unit exports it.
@@ -657,28 +800,72 @@ def carry_fixups(carry, fixups, problems):
         image = image_of(source)
         exported = set(rows.get("symbols", {}).values()) | set(rows.get("rodata_exports", []))
         path = Path(source)
-        markers = set()
+        markers, assembled = set(), set()
         if path.exists():
-            text = region.active_text(path.read_text(encoding="utf-8"), rename=False)
+            raw = path.read_text(encoding="utf-8")
+            text = region.active_text(raw, rename=False)
             markers = {m.group(4) for m in region.MARKER.finditer(text)}
+            own = carry.target.info["asm"] + "/"
+            target = region.active_text(raw, pal=carry.target.name == region.PAL, rename=False)
+            assembled = {m.group(4) for m in region.MARKER.finditer(target) if m.group(2).startswith(own)}
         moved = {}
         for key, value in rows.items():
             if key == "symbols":
                 moved[key] = move(value, image)
             elif key == "rodata_exports":
-                moved[key] = [m for m in (same(v, image, markers) for v in value) if m is not None]
+                kept = []
+                for v in value:
+                    if not compiled(v, image, assembled):
+                        problems.append(f"object_fixups: {v} ({image}) is used only by functions "
+                                        f"{carry.target.name} takes from its assembly; dropped")
+                        continue
+                    m = same(v, image, markers)
+                    if m is not None:
+                        kept.append(m)
+                moved[key] = kept
             elif key in retail_keys:
                 moved[key] = move(value, image)
             elif key == "sections":
-                moved[key] = {k: [m for m in (move(v, image) if v in exported else v for v in names)
+                moved[key] = {k: [m for m in (move(v, image) if v in exported else v for v in listed)
                                   if m is not None]
-                              for k, names in value.items()}
+                              for k, listed in value.items()}
+            elif key == "extern_functions":
+                unit = source[len("src/"):].rsplit(".", 1)[0]
+                kept = []
+                for v in value:
+                    if still_called(v, image, unit, assembled):
+                        kept.append(v)
+                    else:
+                        problems.append(f"object_fixups: {source} emits {v} only for functions "
+                                        f"{carry.target.name} takes from its assembly; dropped")
+                moved[key] = kept
             elif key == "globalize_symbols":
                 moved[key] = [m for m in (move(v, image) if v in exported else v for v in value)
                               if m is not None]
             else:
                 moved[key] = value
         out[source] = moved
+    shared = shared_constants(carry, yamls)
+    own = carry.target.info["asm"] + "/"
+    for path in sorted(Path("src").rglob("*")):
+        if path.suffix not in (".c", ".cpp") or path.name.startswith("tmp"):
+            continue
+        image = next((i for i in ("title", "dun") if path.parts[1:2] == (i,)), "main")
+        unit = path.with_suffix("").relative_to("src").as_posix()
+        raw = path.read_text(encoding="utf-8")
+        text = region.active_text(raw, pal=carry.target.name == region.PAL, rename=False)
+        markers = [m for m in region.MARKER.finditer(text) if m.group(2).startswith(own)]
+        assembled = {m.group(4) for m in markers if "INCLUDE_ASM" in m.group(1)}
+        supplied = {m.group(4) for m in markers if "INCLUDE_RODATA" in m.group(1)}
+        extra = []
+        for using, name in shared.get((image, unit), []):
+            first = marker_spelling(using[0][1])
+            if (first not in assembled and name not in supplied
+                    and any(marker_spelling(n) in assembled for _a, n in using)):
+                extra.append(name)
+        if extra:
+            exports = out.setdefault(path.as_posix(), {}).setdefault("rodata_exports", [])
+            exports += [name for name in sorted(extra) if name not in exports]
     return json.dumps(out, indent=2) + "\n"
 
 
@@ -727,15 +914,17 @@ def main():
     carry = Carry(source, target)
     problems, stale = [], []
 
+    yamls = {}
     for image in IMAGES:
         write(config / f"{image}.symbols.txt", symbol_list(target, image), args.check, stale)
         yaml = (ntsc_config / f"{image}.yaml").read_text(encoding="utf-8")
-        write(config / f"{image}.yaml", carry_yaml(carry, image, yaml, problems), args.check, stale)
+        yamls[image] = carry_yaml(carry, image, yaml, problems)
+        write(config / f"{image}.yaml", yamls[image], args.check, stale)
     lcf = Path(region.REGIONS[region.NTSC]["lcf"]).read_text(encoding="utf-8")
     write(target.info["lcf"], carry_lcf(carry, lcf, problems), args.check, stale)
     if region.NAME != region.NTSC:
         fixups = json.loads((ntsc_config / "object_fixups.json").read_text(encoding="utf-8"))
-        write(config / "object_fixups.json", carry_fixups(carry, fixups, problems), args.check, stale)
+        write(config / "object_fixups.json", carry_fixups(carry, fixups, problems, yamls), args.check, stale)
         write(config / region.MARKER_NAMES, carry_marker_names(carry, problems), args.check, stale)
 
     for problem in problems:

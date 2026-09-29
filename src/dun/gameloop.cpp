@@ -1,6 +1,38 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 885
+#ifdef PAL
+#pragma argument_flag_free 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1133, 1134
+#pragma argument_flag_free 1135, 1136, 1137, 1138, 1139, 1140, 1141, 1142, 1143, 1144
+#pragma argument_flag_free 1145, 1146, 1147, 1148, 1149, 1150, 1151, 1152, 1153, 1154
+#pragma argument_flag_free 1155, 1156, 1157, 1158, 1159, 1160, 1161, 1162, 1163, 1164
+#pragma argument_flag_free 1165, 1166, 1167, 1168, 1169, 1170, 1171, 1172, 1173, 1174
+#pragma argument_flag_free 1175, 1176, 1177, 1178, 1179, 1180, 1181, 1182, 1183, 1184
+#pragma argument_flag_free 1185, 1186, 1187, 1188, 1189, 1190, 1191, 1192, 1193, 1194
+#pragma argument_flag_free 1195, 1196, 1197, 1198, 1199, 1200, 1201, 1202, 1203, 1204
+#pragma argument_flag_free 1205, 1206, 1207, 1208, 1209, 1210, 1211, 1212, 1213, 1214
+#pragma argument_flag_free 1215, 1216, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1224
+#pragma argument_flag_free 1225, 1226, 1227, 1228, 1229, 1230, 1231, 1232
+#pragma argument_flag_free 1233
+#pragma argument_flag_free 1234, 1235, 1236, 1237, 1238, 1239, 1240, 1241, 1242, 1243
+#pragma argument_flag_free 1244, 1245, 1246, 1247, 1248, 1249, 1250, 1251, 1252, 1253
+#pragma argument_flag_free 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1262, 1263
+#pragma argument_flag_free 1264, 1265, 1266, 1267, 1268, 1269, 1270, 1271, 1272, 1273
+#pragma argument_flag_free 1274, 1275, 1276, 1277, 1278, 1279, 1280, 1281, 1282, 1283
+#pragma argument_flag_free 1284, 1285, 1286, 1287, 1288, 1289, 1290, 1291, 1292, 1293
+#pragma argument_flag_free 1294, 1295, 1296, 1297, 1298, 1299, 1300, 1301, 1302, 1303
+#pragma argument_flag_free 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312, 1313
+#pragma argument_flag_free 1314, 1315, 1316, 1317, 1318, 1319, 1320, 1321, 1322, 1323
+#pragma argument_flag_free 1324
+#pragma argument_flag_ones 131, 403, 445
+#pragma argument_flag_ones 617, 715, 1000, 1028, 1209
+#pragma argument_flag_ones 1210, 1212, 1213
+#pragma argument_flag_ones 1370, 1381, 1389, 1409, 1412, 1447, 1454, 1469, 1472, 1497
+#pragma argument_flag_ones 1525, 1532, 1546, 1565, 1577, 1581, 1582, 1652, 1658, 1667
+#pragma argument_flag_ones 1679, 1705, 1727, 1734, 1741, 2013, 2014, 2015, 2058, 2061
+#pragma argument_flag_ones 2122, 2123, 2125
+#pragma argument_flag 0
+#else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
 #pragma argument_flag_free 3610, 3611, 3612, 3613, 3614, 3615, 3616, 3617, 3618, 3619
 #pragma argument_flag_free 3620, 3621, 3622, 3623, 3624, 3625, 3626, 3627, 3628, 3629
@@ -44,6 +76,7 @@
 #pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4701, 4702, 4703, 4746, 4749
 #pragma argument_flag_ones 4810, 4811, 4813
 #pragma argument_flag 0
+#endif
 
 #include "dun/gameloop.hpp"
 
@@ -1402,6 +1435,21 @@ s32 MonstorNameOff;
 
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", _dun_text_start);
 
+#ifdef PAL
+void LoadBaseTexture(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @662__4);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @663__4);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @664__6);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @665__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @666__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @667__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @668__5);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", LoadBaseTexture__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @634__6);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @653__6);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @654__6);
+#pragma name_counter 994
+#else
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
     int size;
@@ -1437,6 +1485,7 @@ void LoadBaseTexture(void) {
     info[i].name = NULL;
     TexManager.LoadTextureBlock(-1, info);
 }
+#endif
 
 int LoadTempTexture(char **files, int block, char *buffer) {
     LOADTEXTURE_INFO2 info[7] = {0};
@@ -1752,7 +1801,7 @@ void GameInit(void) {
     DngMes2.char_height = 22;
     DngMes2.unk_17B0 = MesWinTexBuff_02;
 
-    DngMesStb.text_columns = 70;
+    DngMesStb.text_columns = MES_WIN_COLUMNS;
     DngMesStb.text_rows = 10;
     DngMesStb.text_len = 0;
     DngMesStb.text_width = 0;
@@ -2010,6 +2059,11 @@ void GameInit(void) {
     gameTask = 400;
 }
 
+#ifdef PAL
+int GameLoop(void);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", GameLoop__Fv);
+#pragma name_counter 1231
+#else
 int GameLoop(void) {
     float fade[4];
     int i;
@@ -2122,6 +2176,7 @@ int GameLoop(void) {
     SndStep();
     return 0;
 }
+#endif
 
 void Draw_MainUnitShadow(void) {
     float light[4][4];
@@ -2276,6 +2331,23 @@ void Draw_MainUnit(void) {
     MGSetPLight(light, colour);
 }
 
+#ifdef PAL
+void MainDraw(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1602__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1611__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1612__3);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MainDraw__Fv__3);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1098__2);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", itemposr$1160);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1161);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", itemposr$1167);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1168);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", bic_posr$1181);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1182);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", bic_posr$1197);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1198);
+#pragma name_counter 1718
+#else
 void MainDraw(void) {
     sceVu0FMATRIX camera;
     sceVu0FVECTOR eye;
@@ -2968,6 +3040,7 @@ void MainDraw(void) {
                              0, 0);
     }
 }
+#endif
 
 float oldCameraHeight;
 float oldCameraAngle;
@@ -2992,6 +3065,32 @@ static inline void DeleteItemModel(int no) {
  * floor, and one of the other states while a menu, an event script or the
  * death sequence has the screen. Every state ends by stepping the models.
  */
+#ifdef PAL
+void MoveChara(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4193);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4203);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4204);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4208);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4212);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4213);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4214);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4215);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4216);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4217);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4218);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4219);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MoveChara__Fv__2);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1635__2);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1908);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @2449);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", cnt$1704);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1705);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", snd_cnt$2142);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$2143);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", id_cnt$2145);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$2146);
+#pragma name_counter 2883
+#else
 void MoveChara(void) {
     /* Where the camera looks relative to what it follows, before the floor's
        own offset is added. */
@@ -5580,7 +5679,22 @@ void MoveChara(void) {
     }
     motionDrive();
 }
+#endif
 
+#ifdef PAL
+void motionDrive(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4638);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4639);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4641);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", motionDrive__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", y$4252);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4253);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", warning_cnt$4305);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4306);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", heal_counter$4377);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4378);
+#pragma name_counter 3165
+#else
 void motionDrive(void) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR rotation;
@@ -6065,6 +6179,7 @@ void motionDrive(void) {
     NowShotData->step();
     HealEffect.Step();
 }
+#endif
 
 void BtCleatRandomMap(void) {
     CTexture *gold;
@@ -6302,6 +6417,12 @@ void EquipReAttach(CCharacter *equipment, int held_out) {
     equipment->frame->SetReference(hand);
 }
 
+#ifdef PAL
+void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4805);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", EquipWeaponFrame__FP10CCharacterii);
+#pragma name_counter 3365
+#else
 void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CFrame *hand;
     int i;
@@ -6339,6 +6460,7 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
     SetWeaponColor();
 }
+#endif
 
 void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
                  int chara, int reload) {
@@ -6821,6 +6943,17 @@ static void LoadData(void) {
     MasekiEffect[4].ReEntry(&MyEntryEffect_Maseki04, &MasekiModelBuffer);
 }
 
+#ifdef PAL
+int BtCheckDamageProc(void);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BtCheckDamageProc__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", dmgSnd$5056);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$5057);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", cnt$5153);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$5154);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @5137);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @5152);
+#pragma name_counter 3690
+#else
 int BtCheckDamageProc(void) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR from;
@@ -7178,6 +7311,7 @@ int BtCheckDamageProc(void) {
     }
     return taken;
 }
+#endif
 
 void BattleActionThlow(void) {
     sceVu0FVECTOR stood;
@@ -7393,6 +7527,14 @@ void BattleActionOn_Jinn(void) {
     }
 }
 
+#ifdef PAL
+void BattleActionPlay_Jinn(CCharacter *chara, int aimed);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @5543);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BattleActionPlay_Jinn__FP10CCharacteri);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @5495);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @5505);
+#pragma name_counter 3840
+#else
 void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
     float now = chara->motion_type.state.time;
     int damage = NowWeaponHave->attack;
@@ -7533,6 +7675,7 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
         }
     }
 }
+#endif
 
 void BattleActionOn_Ruby(void) {
     if (BtActStatus.action_on == 0 && (s32) BtActStatus.unk_048 == 100) {
@@ -7609,6 +7752,11 @@ void BattleActionShotRuby(CCharacter *chara, int aimed, float scale, int repeat)
     }
 }
 
+#ifdef PAL
+void BattleActionPlay_Ruby(CCharacter *chara, int aimed);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BattleActionPlay_Ruby__FP10CCharacteri);
+#pragma name_counter 3944
+#else
 void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
     float now = chara->motion_type.state.time;
     int element = NowWeaponHave->best_elem;
@@ -7747,6 +7895,7 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
         }
     }
 }
+#endif
 
 void BattleActionOn_Ozumond(void) {
     if (BtActStatus.action_on == 0 && BtActStatus.unk_0A4 == 0) {
@@ -8622,9 +8771,9 @@ void DrawtargetCursor(float *world, float width, float height, float alpha) {
         // The two corners arrive in the fixed-point screen space the sprite
         // calls take, so they come back to pixels here.
         top_left[0] -= 0x6C08;
-        top_left[1] -= 0x7908;
+        top_left[1] -= (GS_Y_OFFSET + 8);
         bottom_right[0] -= 0x6C08;
-        bottom_right[1] -= 0x7908;
+        bottom_right[1] -= (GS_Y_OFFSET + 8);
         top_left[0] >>= 4;
         top_left[1] >>= 3;
         bottom_right[0] >>= 4;
@@ -8812,9 +8961,9 @@ int SetNearLockOnTarget(int from, int nearest_only) {
 
         if (MGRotTransPers(screen, at, 0) != 0) {
             SetMonsterNameDrawFlag(1);
-            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - 0x7900) >> 4);
+            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - GS_Y_OFFSET) >> 4);
             EnemyLifeGage.x = (screen[0] - 0x6C00) >> 4;
-            EnemyLifeGage.y = ((screen[1] - 0x7900) >> 4) + 42;
+            EnemyLifeGage.y = ((screen[1] - GS_Y_OFFSET) >> 4) + 42;
         } else {
             SetMonsterNameDrawFlag(0);
             EnemyLifeGage.on = 0;
@@ -8911,9 +9060,9 @@ void setTargetCursor(int on) {
 
         if (MGRotTransPers(screen, target, 0) != 0) {
             MonsterNameMake(NowMonstorUnit->monster[lockOnTargetNo].name_no);
-            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - 0x7900) >> 4);
+            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - GS_Y_OFFSET) >> 4);
             EnemyLifeGage.x = (screen[0] - 0x6C00) >> 4;
-            EnemyLifeGage.y = ((screen[1] - 0x7900) >> 4) + 42;
+            EnemyLifeGage.y = ((screen[1] - GS_Y_OFFSET) >> 4) + 42;
             SetMonsterNameDrawFlag(1);
         } else {
             SetMonsterNameDrawFlag(0);

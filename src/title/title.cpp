@@ -416,6 +416,35 @@ void DataLoad() {
  * @size 0x82C
  * @unknownret
  */
+#ifdef PAL
+static void InitProcA();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcA__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @877__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @891__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @906__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @955__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @956__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @957__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @958__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @959__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @960__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @961__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @962__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @963__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @964__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @965__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @966__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @967__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @969__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @971__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @972__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @973__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @974);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @975);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @976__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @977__4);
+#pragma name_counter 166
+#else
 static void InitProcA() {
     wait_now_loading_vsync();
 
@@ -583,7 +612,20 @@ static void InitProcA() {
     OPAnalyz("sim:rmdat/rmdat1.cfg");
     OPMdsLoad();
 }
+#endif
 
+#ifdef PAL
+void DrawProcA();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcA__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", lightning$981);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", init$982);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", col$984);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", init$985);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @980);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1029);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1035__5);
+#pragma name_counter 232
+#else
 void DrawProcA() {
     sceVu0FMATRIX flash = {
         {100.0f, 80.0f, 60.0f, 0.0f},
@@ -727,6 +769,7 @@ void DrawProcA() {
 
     DepthOfField(dof, 3, 32, 0);
 }
+#endif
 
 CFrame *ObjectFrame3;
 class CProcess CProcess;
@@ -746,6 +789,32 @@ static float TitleCameraWork[4];
  * @size 0x7B0
  * @unknownret
  */
+#ifdef PAL
+static void InitProcB();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcB__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1055);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1068);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1082);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1088__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1089__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1090);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1091__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1106__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1107__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1108__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1109__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1110__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1111__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1112);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1113);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1114);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1115);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1116__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1117__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1118__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1120);
+#pragma name_counter 291
+#else
 static void InitProcB() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -871,7 +940,13 @@ static void InitProcB() {
     Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
     Water__2.SetColor(100, 110, 120, 128);
 }
+#endif
 
+#ifdef PAL
+void DrawProcB();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcB__Fv);
+#pragma name_counter 331
+#else
 void DrawProcB() {
     TexManager.ReloadTexture(Vif1Packet, 10);
     OP_GroundMap.Draw();
@@ -959,6 +1034,7 @@ void DrawProcB() {
 
     DepthOfField(dof, 2, 32, 0);
 }
+#endif
 
 /**
  *
@@ -1030,6 +1106,25 @@ static void AtraLight() {
  * @size 0x67C
  * @unknownret
  */
+#ifdef PAL
+static void InitProcC();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcC__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1188__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1216);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1223);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1229);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1230);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1231);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1232);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1255__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1256__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1257__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1258__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1259__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1261__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1262__2);
+#pragma name_counter 409
+#else
 static void InitProcC() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1165,7 +1260,13 @@ static void InitProcC() {
     Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
     Water__2.SetColor(128, 128, 128, 128);
 }
+#endif
 
+#ifdef PAL
+void DrawProcC();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcC__Fv);
+#pragma name_counter 442
+#else
 void DrawProcC() {
     TexManager.ReloadTexture(Vif1Packet, 10);
 
@@ -1228,6 +1329,7 @@ void DrawProcC() {
 
     DepthOfField(dof, 2, 32, 0);
 }
+#endif
 
 /**
  *
@@ -1237,6 +1339,22 @@ void DrawProcC() {
  * @size 0x614
  * @unknownret
  */
+#ifdef PAL
+static void InitProcD();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcD__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1303__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1315);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1347__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1348);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1349);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1350__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1351__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1352__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1353__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1354__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1355__3);
+#pragma name_counter 486
+#else
 static void InitProcD() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1342,6 +1460,7 @@ static void InitProcD() {
     OPAnalyz("sim:rmdat/rmdat4.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcD() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1387,6 +1506,20 @@ void DrawProcD() {
  * @size 0x538
  * @unknownret
  */
+#ifdef PAL
+static void InitProcE();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcE__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1375__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1399__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1415__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1416__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1417__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1418__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1419__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1420__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1421);
+#pragma name_counter 543
+#else
 static void InitProcE() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1481,6 +1614,7 @@ static void InitProcE() {
     OPAnalyz("sim:rmdat/rmdat5.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcE() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1524,6 +1658,24 @@ void DrawProcE() {
  * @size 0x690
  * @unknownret
  */
+#ifdef PAL
+static void InitProcF();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcF__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1443);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1458);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1471__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1491);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1492__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1493__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1494__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1495__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1496__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1497__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1498__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1499__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1500);
+#pragma name_counter 613
+#else
 static void InitProcF() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1638,6 +1790,7 @@ static void InitProcF() {
     OPAnalyz("sim:rmdat/rmdat6.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcF() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1693,6 +1846,24 @@ void DrawProcF() {
  * @size 0x5D0
  * @unknownret
  */
+#ifdef PAL
+static void InitProcG();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcG__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1526__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1538);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1547__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1567);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1568);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1569);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1570);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1571__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1572);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1573);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1574);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1575);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1576);
+#pragma name_counter 680
+#else
 static void InitProcG() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1794,6 +1965,7 @@ static void InitProcG() {
     OPAnalyz("sim:rmdat/rmdat7.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcG() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1838,6 +2010,27 @@ void DrawProcG() {
  * @size 0x9E8
  * @unknownret
  */
+#ifdef PAL
+static void InitProcH();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcH__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1595);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1642);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1643);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1644);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1645__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1646);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1647__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1648__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1649__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1650);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1651);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1652);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1653);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1654);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1655);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1656);
+#pragma name_counter 751
+#else
 static void InitProcH() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1988,6 +2181,7 @@ static void InitProcH() {
     OPAnalyz("sim:rmdat/rmdat8.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcH() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -2061,6 +2255,25 @@ void DrawProcH() {
  * @size 0x814
  * @unknownret
  */
+#ifdef PAL
+static void InitProcI();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcI__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1695__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1707);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1715);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1748);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1749);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1750__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1751);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1752);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1753);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1754);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1755__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1756);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1757__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1758__2);
+#pragma name_counter 836
+#else
 static void InitProcI() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -2181,6 +2394,7 @@ static void InitProcI() {
     OPAnalyz("sim:rmdat/rmdat9.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcI() {
     TexManager.ReloadTexture(Vif1Packet, 10);

@@ -142,6 +142,11 @@ void CScript::Step() {
 /* One command, once its arguments have been read: every case is a write into the object and
    nothing acts on it here, so a command is a request the overlay's own per-tick code picks up
    ([title-script.md](../../docs/formats/title-script.md)). */
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/title/script", CheckScript__7CScriptFPciP15CSCRIPT_COMMANDi);
+INCLUDE_DATA("asm/pal/nonmatchings/title/script", @337__3);
+#pragma name_counter 559
+#else
 int CScript::CheckScript(char *buf, int pos, CSCRIPT_COMMAND *command, int no) {
     int at;
 
@@ -327,6 +332,7 @@ int CScript::CheckScript(char *buf, int pos, CSCRIPT_COMMAND *command, int no) {
 
     return at;
 }
+#endif
 
 /* One command's arguments. Both kinds read the same three forms and differ only in what stands
    before them: a kind-1 argument must be preceded by a comma and a kind-2 one stands where it is.

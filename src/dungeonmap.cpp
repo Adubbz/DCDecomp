@@ -223,12 +223,17 @@ void CDungeonMap::NPCSetMotion(int npc_no, int motion_no) {
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/dungeonmap", NPCSetMotion__11CDungeonMapFiifi);
+#pragma name_counter 1134
+#else
 void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int unk) {
     this->npc[npc_no].chara.motion_no = motion_no;
     this->npc[npc_no].chara.flags = unk;
     this->npc[npc_no].chara.motion_speed = -1.0f;
     this->npc[npc_no].chara.motion_speed = speed;
 }
+#endif
 
 CFrame *CDungeonMap::GetFrameSearch(char *name) {
     for (int i = 0; i < 72; i++) {

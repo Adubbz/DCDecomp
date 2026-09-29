@@ -282,17 +282,19 @@ def read_units(sources, path=LCF):
 
     out, missing, ambiguous = [], [], []
     text = open(path).read()
-    entries = PLACEMENT.findall(text) + [
-        (name, ".text", address) for name, address in ORDER_ONLY.findall(text)
+    # A unit with no code shares its address with the unit whose code follows
+    # it, and comes first: it covers nothing, and the next unit covers the code.
+    entries = [(name, section, address, 1) for name, section, address in PLACEMENT.findall(text)] + [
+        (name, ".text", address, 0) for name, address in ORDER_ONLY.findall(text)
     ]
-    for name, section, address in entries:
+    for name, section, address, rank in entries:
         candidates = by_object.get(name, [])
         if not candidates:
             missing.append(name)
         elif len(candidates) > 1:
             ambiguous.append(f'{name} ({", ".join(candidates)})')
         else:
-            out.append((int(address, 16), IMAGE_OF[section], candidates[0]))
+            out.append((int(address, 16), rank, IMAGE_OF[section], candidates[0]))
 
     for name in missing:
         print(
@@ -308,7 +310,7 @@ def read_units(sources, path=LCF):
         raise SystemExit(1)
 
     out.sort()
-    return out
+    return [(address, image, source) for address, _rank, image, source in out]
 
 
 def owners(placed, section):

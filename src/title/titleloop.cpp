@@ -1,3 +1,6 @@
+#ifdef PAL
+#pragma argument_flag 0
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 14, 16, 20, 22, 31, 33, 45, 47, 109, 418
 #pragma argument_flag_ones 430, 452, 453, 463, 464, 474, 475, 485, 486, 533
@@ -6,6 +9,7 @@
 #pragma argument_flag_ones 643, 644, 647, 657, 658, 661, 671, 672, 675, 685
 #pragma argument_flag_ones 686, 689, 699, 700, 703, 713, 714, 717, 727, 728
 #pragma argument_flag_ones 731, 744, 745, 748, 762, 768, 775
+#endif
 /* The title screen's own loop. Retail compiles it apart from the rest of the
    title unit: its constants are a run of their own, which is why the three
    names it shares with the code before it are spelled twice in the image. */
@@ -318,6 +322,34 @@ u_char brink;
 int brinkcnt;
 int EffCnt;
 
+#ifdef PAL
+void TitleInit(int no);
+INCLUDE_ASM("asm/pal/nonmatchings/title/titleloop", TitleInit__Fi);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @347__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @357__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @367__8);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @385__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @386__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @387__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @388__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @389__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @390__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @391__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @392__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @393__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @394__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @395__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @396__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @397__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @398__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @399__8);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @400__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @401__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @403__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @406__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @407__5);
+#pragma name_counter 109
+#else
 void TitleInit(int no) {
     int i;
     float scale = 750.0f;
@@ -457,6 +489,7 @@ void TitleInit(int no) {
     GamePad.SetAutoRepeat(20480, 30, 9);
     GamePad.MenuModeOn(120);
 }
+#endif
 
 int TitleLoop() {
     sceVu0FVECTOR pos;
@@ -556,14 +589,29 @@ int TitleLoop() {
                 if (CCursol.select > 2)
                     CCursol.select = 0;
                 switch (CCursol.select) {
+#ifdef PAL
+                    case 0:
+                        CCursol.Set(304.0f);
+#else
                     case 0:
                         CCursol.Set(288.0f);
+#endif
                         break;
+#ifdef PAL
+                    case 1:
+                        CCursol.Set(332.0f);
+#else
                     case 1:
                         CCursol.Set(316.0f);
+#endif
                         break;
+#ifdef PAL
+                    case 2:
+                        CCursol.Set(364.0f);
+#else
                     case 2:
                         CCursol.Set(348.0f);
+#endif
                         break;
                 }
                 if (GamePad.Down(2048) || GamePad.Down(64)) {
@@ -697,6 +745,29 @@ int TitleLoop() {
     return 0;
 }
 
+#ifdef PAL
+void TitleDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/title/titleloop", TitleDraw__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", br$589);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", init$590);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @539__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @540__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @541__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @542__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @543__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @544__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @545__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @546__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @547__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", rot$557);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @604__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @773__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @774__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @775__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @776__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @777__5);
+#pragma name_counter 318
+#else
 void TitleDraw() {
     sceVu0FVECTOR light0 = {2.4578f, 9.9294f, -2.8074f, 0.0f};
     sceVu0FVECTOR light1 = {4.6086f, -10.4028f, -0.8286f, 0.0f};
@@ -925,3 +996,4 @@ void TitleDraw() {
                     128, 128, 128, 35);
     }
 }
+#endif

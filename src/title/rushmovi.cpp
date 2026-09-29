@@ -1,11 +1,19 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
+#pragma argument_flag_ones 174, 175, 176, 177
+#pragma argument_flag_ones 213, 223, 225, 233
+#pragma argument_flag_ones 239, 242, 243, 244, 282
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
 #pragma argument_flag_ones 174, 175, 176, 177, 252, 253, 254, 257, 258, 259
 #pragma argument_flag_ones 276, 277, 278, 304, 305, 306, 327, 329, 345, 347
 #pragma argument_flag_ones 401, 403, 442, 443, 454, 464, 713, 723, 725, 733
 #pragma argument_flag_ones 739, 742, 743, 744, 782
+#endif
 
 #include "common.h"
 
@@ -495,6 +503,22 @@ int RushLoop() {
  * @size 0xDD0
  * @unknownret
  */
+#ifdef PAL
+static void MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", MotionProcess__Fv__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", old$499);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$500);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", iwacnt$513);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$514);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @452__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @462__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @571__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @572__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @577__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", DispFade__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", frame_info_cam__2);
+#pragma name_counter 295
+#else
 static void MotionProcess() {
     switch (CScript.fade) {
         case 1:
@@ -774,6 +798,7 @@ static void MotionProcess() {
         iwacnt = 0;
     }
 }
+#endif
 
 /**
  *
@@ -783,6 +808,15 @@ static void MotionProcess() {
  * @size 0x344
  * @unknownret
  */
+#ifdef PAL
+static void DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", DrawProcess__Fv__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", fade$601);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$602);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @641__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @642__7);
+#pragma name_counter 330
+#else
 static void DrawProcess() {
     if (DispFade.GetRate() == 128.0) {
         return;
@@ -868,6 +902,7 @@ static void DrawProcess() {
                 CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
                 128, 128, 128, 35);
 }
+#endif
 
 /**
  *
@@ -877,6 +912,25 @@ static void DrawProcess() {
  * @size 0xCF4
  * @unknownret
  */
+#ifdef PAL
+static void SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", SoundProcess__Fv__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", mus$647);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$648);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", ambi$655);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$656);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", bat$663);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$664);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", wait$681);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$682);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", wait$705__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$706__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @445__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @451__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @453__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @817__4);
+#pragma name_counter 505
+#else
 static void SoundProcess() {
     if (CScript.bgm_fade) {
         SndBgmFadeOut(64, 0);
@@ -1210,6 +1264,7 @@ static void SoundProcess() {
         wait--;
     }
 }
+#endif
 
 void SetObjAnime(char *name, CFrameVu1 *frame, float *scale, float *position) {
     OP_AnimeSeq[OP_AnimeSeqRot].Initialize();
@@ -1233,7 +1288,7 @@ void WaterProcess() {
 
     MGGetFBuffTex(&fbuff);
 
-    CRect<int> rect(0, 0, 640, 224);
+    CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
 
     buff = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&fbuff, rect, &buff, 0, 0, 0);

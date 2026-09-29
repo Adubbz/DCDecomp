@@ -1168,7 +1168,7 @@ void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
         return;
     }
     CharaNameMes = mes;
-    mes->text_columns = 0x46;
+    mes->text_columns = MES_WIN_COLUMNS;
     mes->text_rows = 10;
     mes->text_len = 0;
     mes->text_width = 0;

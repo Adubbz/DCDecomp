@@ -106,6 +106,11 @@ int MGGetVSyncCount() {
     return vcount;
 }
 
+#ifdef PAL
+void MGInit();
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGInit__Fv);
+#pragma name_counter 303
+#else
 void MGInit() {
     DBuffID = 0;
     mgWaitVSync = 0;
@@ -202,6 +207,7 @@ void MGInit() {
     VSyncCallBack2 = 0;
     vcount = 0;
 }
+#endif
 
 /* Waiting out a handler that is already running is what keeps the pointer from changing under it. */
 void MGInitVSyncCallBack(int (*callback)(int)) {
@@ -277,7 +283,7 @@ void StoreImage() {
     sceDmaSend(DmaCH1, packet->pBase);
     sceGsSyncPath(0, 0);
 
-    sceGsSetDefStoreImage(&gs_simage, !DBuffID * 2240, 10, 0, 0, 0, 640, 224);
+    sceGsSetDefStoreImage(&gs_simage, !DBuffID * 2240, 10, 0, 0, 0, 640, SCREEN_HALF_HEIGHT);
     FlushCache(0);
     if (movie_count % 2) {
         sceGsExecStoreImage(&gs_simage, (u_long128 *) 0x02100000);
@@ -297,7 +303,7 @@ void StoreImage() {
     sceDmaSend(DmaCH1, packet->pBase);
     sceGsSyncPath(0, 0);
 
-    sceGsSetDefStoreImage(&gs_simage, !DBuffID * 2240, 10, 0, 0, 0, 640, 224);
+    sceGsSetDefStoreImage(&gs_simage, !DBuffID * 2240, 10, 0, 0, 0, 640, SCREEN_HALF_HEIGHT);
     FlushCache(0);
     if (movie_count % 2) {
         sceGsExecStoreImage(&gs_simage, (u_long128 *) 0x02200000);
@@ -308,9 +314,9 @@ void StoreImage() {
 
     if (movie_count % 2) {
         sceWrite(fd, tga_head, 18);
-        for (i = 0; i < 224; i++) {
-            field0 = (u_char *) 0x02100000 + (((223 - i) * 640 >> 2) << 4);
-            field1 = (u_char *) 0x02200000 + (((223 - i) * 640 >> 2) << 4);
+        for (i = 0; i < SCREEN_HALF_HEIGHT; i++) {
+            field0 = (u_char *) 0x02100000 + ((((SCREEN_HALF_HEIGHT - 1) - i) * 640 >> 2) << 4);
+            field1 = (u_char *) 0x02200000 + ((((SCREEN_HALF_HEIGHT - 1) - i) * 640 >> 2) << 4);
             /* Packed down in place and over the row it came from: three bytes out for every four
                in, and the two colour ends swapped, which is the order a TGA stores. */
             for (j = 0, k = 0; k < 2560; j += 3, k += 4) {
@@ -419,6 +425,26 @@ static void WaitVSync(int count) {
     }
 }
 
+#ifdef PAL
+void MGEndFrame();
+INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @414);
+INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @415);
+INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @416);
+INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @417);
+INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @418);
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGEndFrame__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", count$298);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", init$299);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", old_vcount$301);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", init$302);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", capture$334);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", init$335);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", capture_start$337);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", init$338);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", f$347);
+INCLUDE_DATA("asm/pal/nonmatchings/mglib", init$348);
+#pragma name_counter 471
+#else
 void MGEndFrame() {
     int i;
     int nearest;
@@ -518,10 +544,16 @@ void MGEndFrame() {
     sceDmaSend(DmaCH1, Vif1Packet->pBase);
     DBuffID = !DBuffID;
 }
+#endif
 
 void MGFlipWaitVSync(int wait) {
     mgWaitVSync = wait;
 }
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGAdjustScreen__Fii);
+#pragma name_counter 472
+#endif
 
 /* Everything a frame is drawn against, recomputed from the projection scale and the two clip planes.
    The depth it sets up runs from 16700000 at the near plane down to 1 at the far one, which is what
@@ -606,7 +638,7 @@ void MGSetWindowRect() {
     mgWindowRect.x = 0;
     mgWindowRect.y = 0;
     mgWindowRect.width = 640;
-    mgWindowRect.height = 224;
+    mgWindowRect.height = SCREEN_HALF_HEIGHT;
 
     scissor.SCAX0 = mgWindowRect.x >> 1;
     scissor.SCAX1 = mgWindowRect.x + mgWindowRect.width;
@@ -670,6 +702,11 @@ void MGGetAmbient(float *color) {
 
 /* The two overloads below are the only callers and both pass the same two scales, so the vertical
    squeeze is the engine's rather than any caller's. */
+#ifdef PAL
+static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale);
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGSetViewMatrix_sub__FPA4_fff);
+#pragma name_counter 499
+#else
 static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale) {
     sceVu0FMATRIX scale;
     sceVu0FMATRIX screen;
@@ -716,6 +753,7 @@ static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale
     direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
 }
+#endif
 
 void MGSetViewMatrix(sceVu0FMATRIX view) {
     MGSetViewMatrix_sub(view, 1.0f, 0.47f);
@@ -839,6 +877,11 @@ int MGRotTransPers(int *screen, float *position, int fog) {
 /* The same transform for something drawn flat against the screen: the vertical squeeze
    MGSetViewMatrix_sub bakes into the view is undone, the result is left in whole pixels rather than
    scaled into 12.4, and the pair is moved off the screen centre the offset put it at. */
+#ifdef PAL
+int MGRotTransPers2D(int *screen, float *position, int fog);
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGRotTransPers2D__FPiPfi);
+#pragma name_counter 572
+#else
 int MGRotTransPers2D(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
     int visible = 1;
@@ -882,6 +925,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
     screen[1] -= 1824;
     return visible;
 }
+#endif
 
 /* Both of a screen-facing sprite's opposite corners out of a single transform: the half-width and
    half-height are scaled by the render info once and then by the same Q the perspective divide
@@ -1093,7 +1137,7 @@ int MGClipVertex(float *position) {
     float w;
     float offset;
     float half_width = 320.0f;
-    float half_height = 112.0f;
+    float half_height = SCREEN_QUARTER_HEIGHT_F;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_screen, position);
 
@@ -1360,12 +1404,12 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
 
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(src_rect.x, src_rect.y));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dx, dst_rect.y + 30976 + dy, 0, 0));
+                     SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dx, dst_rect.y + GS_Y_OFFSET + dy, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV(src_rect.x + src_rect.width, src_rect.y + src_rect.height));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dst_rect.width + dx,
-                                      dst_rect.y + dst_rect.height + 30976 + dy, 0, 0));
+                                      dst_rect.y + dst_rect.height + GS_Y_OFFSET + dy, 0, 0));
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
@@ -1388,7 +1432,7 @@ void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
     MGGetFBuffTex(&tex[0]);
     MGGetFBuffBackTex(&tex[1]);
 
-    for (i = 0; i < 224; i++) {
+    for (i = 0; i < SCREEN_HALF_HEIGHT; i++) {
         even.x = 0;
         even.y = i;
         even.width = 640;
@@ -1430,10 +1474,10 @@ void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned 
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, *(u_int *) &q));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(rect.x + 0x6C00, rect.y + 0x7900, 0, 0));
+                     SCE_GS_SET_XYZF2(rect.x + 0x6C00, rect.y + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(rect.x + 0x6C00 + rect.width,
-                                      rect.y + 0x7900 + rect.height, 0, 0));
+                                      rect.y + GS_Y_OFFSET + rect.height, 0, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
@@ -1473,13 +1517,13 @@ void MGClearZBuffer(int mode) {
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, 30976, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET, mode, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16, 30976, mode, 0));
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16, GS_Y_OFFSET, mode, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648, 30976 + 224 * 16, mode, 0));
+                     SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, mode, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16, 30976 + 224 * 16, mode, 0));
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, mode, 0));
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
@@ -1532,9 +1576,9 @@ void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, 0));
 
     for (x = 0; x < 640 * 16; x += 16 * 16) {
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + x, 30976, 0, 0));
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + x, GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                         SCE_GS_SET_XYZF2(27648 + x + 16 * 16, 30976 + 224 * 16, 0, 0));
+                         SCE_GS_SET_XYZF2(27648 + x + 16 * 16, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, 0, 0));
     }
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
@@ -1705,9 +1749,9 @@ void MGBeginDrawShadow(sceGsTex0 tex) {
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM,
                      SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0, 0, 0, 128, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, 30976 + 224 * 16 - 1, 0, 0));
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16 - 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
 
     sceVif1PkCloseGifTag(packet);
@@ -1768,10 +1812,10 @@ void MGEndDrawShadow(u_char alpha) {
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, *(u_long *) &Shadow_WorkTex);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, 30976, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(640 * 16, 224 * 16));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(640 * 16, SCREEN_HALF_HEIGHT * 16));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, 30976 + 224 * 16 - 1, 0, 0));
+                     SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16 - 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);

@@ -127,10 +127,14 @@ void CDebugFont::Draw() {
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ,
                      SCE_GS_SET_RGBAQ(1, 1, 1, 0x80, *reinterpret_cast<u_int *>(&q)));
 
+#ifdef PAL
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, 0x78806C00);
+#else
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, 0x79006C00);
+#endif
     x1 = (draw_width << 4) + 0x6C00;
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, x1 | 0x79000000);
-    y1 = static_cast<u_long>((draw_height << 4) + 0x7900) << 16;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, x1 | (GS_Y_OFFSET << 16));
+    y1 = static_cast<u_long>((draw_height << 4) + GS_Y_OFFSET) << 16;
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, y1 | 0x6C00);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, x1 | y1);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
@@ -262,7 +266,7 @@ float CDispCtrl::FadeOut(sceVif1Packet *packet) {
     }
 
     for (s32 x = 0; x < 640; x += 64) {
-        for (s32 y = 0; y < 224; y += 32) {
+        for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
             CRect_i_ rect;
             rect.x = x * 16;
             rect.y = y * 16;
@@ -293,7 +297,7 @@ float CDispCtrl::FadeIn(sceVif1Packet *packet) {
     }
 
     for (s32 x = 0; x < 640; x += 64) {
-        for (s32 y = 0; y < 224; y += 32) {
+        for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
             CRect_i_ rect;
             rect.x = x * 16;
             rect.y = y * 16;

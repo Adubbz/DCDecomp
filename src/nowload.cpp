@@ -75,6 +75,19 @@ void now_loading_off(void) {
  * @address 0x153FC0
  * @size 0x354
  */
+#ifdef PAL
+void init_now_loading(int title_number);
+INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @285__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @286);
+INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @287);
+INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @288);
+INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @289);
+INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @290);
+INCLUDE_ASM("asm/pal/nonmatchings/nowload", init_now_loading__Fi);
+INCLUDE_DATA("asm/pal/nonmatchings/nowload", @263);
+INCLUDE_DATA("asm/pal/nonmatchings/nowload", @266);
+#pragma name_counter 86
+#else
 void init_now_loading(int title_number) {
     end_flag = 1;
     if (now_loding_off != 0) {
@@ -143,6 +156,7 @@ void init_now_loading(int title_number) {
     now_loading_vsync_end = 1;
     MGInitVSyncCallBack(VSyncCallBack_Load);
 }
+#endif
 
 /**
  * Draws the loading screen and advances its fade once per vertical sync.
@@ -151,6 +165,11 @@ void init_now_loading(int title_number) {
  * @address 0x154320
  * @size 0x450
  */
+#ifdef PAL
+int VSyncCallBack_Load(int field);
+INCLUDE_ASM("asm/pal/nonmatchings/nowload", VSyncCallBack_Load__Fi);
+#pragma name_counter 133
+#else
 int VSyncCallBack_Load(int field) {
     (void) field;
     if (end_flag) {
@@ -229,6 +248,7 @@ int VSyncCallBack_Load(int field) {
     now_loading_vsync_end = 1;
     return 0;
 }
+#endif
 
 /**
  * Uploads a named image and its palette to video memory and records where they went.

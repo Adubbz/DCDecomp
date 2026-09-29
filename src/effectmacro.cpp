@@ -153,8 +153,8 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     MGGetFBuffTex(&frame);
     image = *(sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0;
     frame.PSM = SCE_GS_PSMCT24;
-    MGStretchMoveImage(&frame, CRect_i_(0, 0, 0x2800, 0xE00), &image, CRect_i_(0, 0, 0x1400, 0xE00));
-    MGStretchMoveImage(&image, CRect_i_(0, 0, 0x1400, 0xE00), &image, CRect_i_(0x1400, 0, 0xA00, 0xE00));
+    MGStretchMoveImage(&frame, CRect_i_(0, 0, 0x2800, (SCREEN_HALF_HEIGHT << 4)), &image, CRect_i_(0, 0, 0x1400, (SCREEN_HALF_HEIGHT << 4)));
+    MGStretchMoveImage(&image, CRect_i_(0, 0, 0x1400, (SCREEN_HALF_HEIGHT << 4)), &image, CRect_i_(0x1400, 0, 0xA00, (SCREEN_HALF_HEIGHT << 4)));
 
     sceVu0FVECTOR vertex[4] = {
         {0.0f, 0.0f, focus[0], 1.0f},
@@ -198,7 +198,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
             for (j = 0; j < 41; j++) {
                 int x = (j << 8) + 0x6C00;
                 int v = k << 9;
-                int y = v + 0x7900;
+                int y = v + GS_Y_OFFSET;
                 int u = j << 7;
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
@@ -237,13 +237,17 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
         if (blur > 0) {
             alpha = 0x80;
         }
+#ifdef PAL
+        for (j = 0; j < 15; j++) {
+#else
         for (j = 0; j < 14; j++) {
+#endif
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x15C);
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
             for (i = 0; i < 21; i++) {
                 int x = (i << 9) + 0x6C00;
                 int v = j << 8;
-                int y = v + 0x7900;
+                int y = v + GS_Y_OFFSET;
                 int y2 = y + 0x100;
                 int u = (i << 7) + 0x1400;
                 int v2 = v + 0x100;

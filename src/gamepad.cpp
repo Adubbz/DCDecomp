@@ -226,6 +226,12 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
     return 0;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/gamepad", UpDate__8CGamePadFv);
+INCLUDE_DATA("asm/pal/nonmatchings/gamepad", cnt$250);
+INCLUDE_DATA("asm/pal/nonmatchings/gamepad", init$251);
+#pragma name_counter 536
+#else
 void CGamePad::UpDate() {
     static int cnt;
     static char init;
@@ -325,6 +331,7 @@ void CGamePad::UpDate() {
     }
     cnt = !((bool) cnt);
 }
+#endif
 
 #undef PAD_STATIC_COUNTER_128
 #undef PAD_STATIC_COUNTER_64
@@ -491,12 +498,17 @@ float CGamePad::GetLYf2() {
     return (float) GetLY2() / 128.0f;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/gamepad", On__8CGamePadFi);
+#pragma name_counter 627
+#else
 int CGamePad::On(int mask) {
     if (key_lock) {
         return 0;
     }
     return (pad[0].input.status.button & mask) != 0;
 }
+#endif
 
 int CGamePad::On2(int mask) {
     if (key_lock) {
@@ -505,12 +517,17 @@ int CGamePad::On2(int mask) {
     return (pad[1].input.status.button & mask) != 0;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/gamepad", Down__8CGamePadFi);
+#pragma name_counter 641
+#else
 int CGamePad::Down(int mask) {
     if (key_lock) {
         return 0;
     }
     return (mask & (pad[0].input.status.button & ~previous_pad[0].input.status.button)) != 0;
 }
+#endif
 
 int CGamePad::Down2(int mask) {
     if (key_lock) {

@@ -1840,12 +1840,12 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
     ad[1] = SCE_GS_RGBAQ;
     ad[2] = SCE_GS_SET_UV(uv.x << 4, uv.y << 4);
     ad[3] = SCE_GS_UV;
-    ad[4] = SCE_GS_SET_XYZF2((position.x << 4) + 27648, (position.y << 3) + 30976, 0, 0);
+    ad[4] = SCE_GS_SET_XYZF2((position.x << 4) + 27648, (position.y << 3) + GS_Y_OFFSET, 0, 0);
     ad[5] = SCE_GS_XYZF2;
     ad[6] = SCE_GS_SET_UV((uv.x + uv.width) << 4, (uv.y + uv.height) << 4);
     ad[7] = SCE_GS_UV;
     ad[8] = SCE_GS_SET_XYZF2(((position.x + position.width) << 4) + 27647,
-                             ((position.y + position.height) << 3) + 30976, 0, 0);
+                             ((position.y + position.height) << 3) + GS_Y_OFFSET, 0, 0);
     ad[9] = SCE_GS_XYZF2;
     pdata = (u_long128 *) (ad + 10);
 }
@@ -1961,6 +1961,12 @@ unsigned int Color2Clut(unsigned int colour) {
     return 0;
 }
 
+#ifdef PAL
+int NameRegistCodeJtoE(int code);
+INCLUDE_ASM("asm/pal/nonmatchings/gameutil", NameRegistCodeJtoE__Fi);
+INCLUDE_DATA("asm/pal/nonmatchings/gameutil", @363);
+#pragma name_counter 885
+#else
 int NameRegistCodeJtoE(int code) {
     int table[82] = {
         -683, -682, -681, -680, -679, -678, -677, -676, -675, -674,
@@ -1984,3 +1990,4 @@ int NameRegistCodeJtoE(int code) {
     }
     return -0x2A7;
 }
+#endif

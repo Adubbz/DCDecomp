@@ -184,6 +184,22 @@ static int AddStr(CDebugFont *font, char *str) {
     return len;
 }
 
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @380__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @381__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @382);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintChara__FP10CMainChara);
+#pragma name_counter 421
+#endif
+
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @391__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @392);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @393);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintCamera__FP7CCamera);
+#pragma name_counter 421
+#endif
+
 void EdDPrintVector(char *name, float *vector) {
     char work[128];
 
@@ -413,6 +429,80 @@ void EdDMoveChara(CCharacter *chara, CCamera *camera) {
         DrawBound(&frame);
     }
 }
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDebugMenu__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", mode$505);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$506);
+#pragma name_counter 521
+#endif
+
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @612);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @613);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @614__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @615__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @616__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @617__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @618);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @619__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @620__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @621__3);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Main__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", select$521);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$522);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", run_event$524);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$525);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", talk_chara$527);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$528);
+#pragma name_counter 521
+#endif
+
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @701);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @702);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @703);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @704);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @705);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Sound__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", select$623);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$624);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", bgm_no$626);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$627);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", se_no$629);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$630);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", set_no$632);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$633);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", bgm_seq$635);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$636);
+#pragma name_counter 521
+#endif
+
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @879__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @880);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @881);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @882);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @883__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @884__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @885);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @886__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @887__2);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Flag__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", select$706);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$707);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", game_no$709);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$710);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", map_no$712);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$713);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", comp_no$715);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$716);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", dun_map$718);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$719);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", chara$721);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", init$722);
+#pragma name_counter 521
+#endif
 
 /* The box drawn as twelve edges of the frame's own corner list, taken to the screen in one go and
    drawn only if every corner survived: a box with one corner behind the eye would otherwise be
@@ -1156,6 +1246,12 @@ int EdInitMenu(int mode) {
 
 /* The frame the menu is actually built on: the picture behind it is kept first, because the menus
    draw over a still of the last game frame rather than over the game. */
+#ifdef PAL
+int EdInitModeFinish(CCamera *camera, CTexture *texture);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdInitModeFinish__FP7CCameraP8CTexture);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @494__2);
+#pragma name_counter 944
+#else
 int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     init_menu_cnt++;
     if (init_menu_cnt > 3)
@@ -1202,6 +1298,7 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     }
     return 8;
 }
+#endif
 
 void EdExitMenu() {
     GamePad.AutoRepeatOff();
@@ -1391,7 +1488,11 @@ void EdSetHelpMes(int no, int count, int position, int *arg, int number) {
         x = SystemMesX + ((indent * EditSystemMes.char_width) >> 1);
         EditSystemMes.line_pos[0].x = x;
         EditSystemMes.line_pos[0].y = y;
+#ifdef PAL
+        x = SystemMesX + 220;
+#else
         x = SystemMesX + 180;
+#endif
         EditSystemMes.line_pos[1].x = x;
         EditSystemMes.line_pos[1].y = y;
     } else {
@@ -1502,9 +1603,17 @@ void EdEditBuildHelpMes(int parts) {
     int arg[4] = {-1, -1, -1, -1};
 
     arg[0] = GetAtraMsgNo(MapNo, parts);
+#ifdef PAL
+    SystemMesW = 600;
+#else
     SystemMesW = 560;
+#endif
     SystemMesH = 50;
+#ifdef PAL
+    SystemMesX = 30;
+#else
     SystemMesX = 40;
+#endif
     SystemMesY = 380;
     EdSetHelpMes(120, 2, -1, arg, -1);
 }
@@ -1519,7 +1628,11 @@ void EdEditMoveHelpMes() {
     SystemMesW = 0;
     SystemMesH = 0;
     SystemMesX = 230;
+#ifdef PAL
+    SystemMesY = 412;
+#else
     SystemMesY = 380;
+#endif
     EdSetHelpMes(130, 2, -1, 0, -1);
 }
 
@@ -1799,7 +1912,7 @@ int EdMenuLoop(ClsMes *message) {
             message->text_rate = message->text_rate_set;
             message->mes_made = -1;
             message->fade_in = 0;
-            message->text_columns = 0x46;
+            message->text_columns = MES_WIN_COLUMNS;
             message->text_rows = 0xA;
             message->text_len = 0;
             message->text_width = 0;

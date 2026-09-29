@@ -731,6 +731,13 @@ int CommonShopLoop() {
  * @address 0x1E7080
  * @size 0x150
  */
+#ifdef PAL
+static void ShopPolySetInit(int shop_no, int person_no);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPolySetInit__Fii);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @649__2);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @650__3);
+#pragma name_counter 906
+#else
 static void ShopPolySetInit(int shop_no, int person_no) {
     float place[2][18][3] = {
         {
@@ -832,6 +839,7 @@ static void ShopPolySetInit(int shop_no, int person_no) {
     MenuCharaFrame.SetScale(scale);
     MenuCharaFrame.SetRotation(rotation);
 }
+#endif
 
 /**
  * Records the line the shopkeeper is to say and how it is to be shown.
@@ -935,7 +943,11 @@ static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, in
             }
             cur_y = y + row * 0x28;
             if (ShopMenu.board.cursor_area == 2) {
+#ifdef PAL
+                cur_x = x + 0xE2;
+#else
                 cur_x = x + 0xD2;
+#endif
                 cur_y = y + 0x8C;
             }
             waku_x = (int) cur_x + 0x1E;
@@ -1178,6 +1190,12 @@ static void ShopFadeoutDraw() {
  * @address 0x1E7FA0
  * @size 0x98
  */
+#ifdef PAL
+static int ShopPersonReadStart(int shop_no, int person_no);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @817);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPersonReadStart__Fii);
+#pragma name_counter 1041
+#else
 static int ShopPersonReadStart(int shop_no, int person_no) {
     char file_name[76];
     int size;
@@ -1194,6 +1212,7 @@ static int ShopPersonReadStart(int shop_no, int person_no) {
     ShopMenu.person_state = 0;
     return 1;
 }
+#endif
 
 /**
  * Sets the shopkeeper's model direction toward the menu camera.
@@ -1414,6 +1433,14 @@ static inline WEAPON_HAVE *ShopWeaponRow(CUserStatus *status, int chara) {
     return status->chara_weapons[chara];
 }
 
+#ifdef PAL
+int ChargeShopKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @1201);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @1202__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @1203__2);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ChargeShopKey__Fv);
+#pragma name_counter 1370
+#else
 int ChargeShopKey() {
     int result = 0;
     MENU_ITEMDATA record;
@@ -1870,6 +1897,7 @@ int ChargeShopKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Moves the cursor across the recharge shop's list.
@@ -2089,6 +2117,12 @@ static int ChargeSelectKey() {
  */
 static void ShopModelMsgFunc(int);
 
+#ifdef PAL
+void DrawChargeShop();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", DrawChargeShop__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @1385__2);
+#pragma name_counter 1547
+#else
 void DrawChargeShop() {
     int text_x;
     int text_y;
@@ -2213,6 +2247,7 @@ void DrawChargeShop() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
+#endif
 
 /**
  * Draws the charge shop's capacity plate: how many slots the board has and how many hold a good.
@@ -3438,6 +3473,14 @@ void ItemShopMemoryAlloc() {
     ShopWorkBuf = (SHOP_ITEMLIST *) ShopCashBuffer.Alloc(0x1D88);
 }
 
+#ifdef PAL
+void ItemPosInfoInit();
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2220);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2221);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2222);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemPosInfoInit__Fv);
+#pragma name_counter 2292
+#else
 void ItemPosInfoInit() {
     int i;
     int j;
@@ -3471,6 +3514,7 @@ void ItemPosInfoInit() {
         }
     }
 }
+#endif
 
 /**
  * Fills the goods board from one shop's list.
@@ -3545,6 +3589,18 @@ void InitItemShop2(int *state, int shop_no, int mode) {
  * @address 0x1EE280
  * @size 0xAF0
  */
+#ifdef PAL
+static void ItemShopSelectKey2();
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2435);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2436);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2437);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2438);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2439);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2440);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2441);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopSelectKey2__Fv);
+#pragma name_counter 2472
+#else
 static void ItemShopSelectKey2() {
     int i;
     MENU_ITEMDATA work[2];
@@ -3797,6 +3853,7 @@ static void ItemShopSelectKey2() {
         ComMenuSePlay(0);
     }
 }
+#endif
 
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     MENU_ITEMDATA work[2];
@@ -3855,6 +3912,13 @@ static inline int ShopHeldInfo() {
     return ShopHaveItemPt->unk_00;
 }
 
+#ifdef PAL
+int ItemShopKey2();
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2857);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopKey2__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @2690);
+#pragma name_counter 2824
+#else
 int ItemShopKey2() {
     int result = 0;
     MENU_ITEMDATA record;
@@ -4430,7 +4494,14 @@ int ItemShopKey2() {
     }
     return result;
 }
+#endif
 
+#ifdef PAL
+void ItemShopDraw2();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopDraw2__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @2928);
+#pragma name_counter 2912
+#else
 void ItemShopDraw2() {
     int cur_x;
     int pos_y;
@@ -4636,6 +4707,7 @@ void ItemShopDraw2() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
+#endif
 
 /**
  * Returns one prize the fishing exchange offers.
@@ -4827,6 +4899,12 @@ static int FishMenuTextureLoad() {
 
 INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
 
+#ifdef PAL
+int FishingExchangeKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @3229);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", FishingExchangeKey__Fv);
+#pragma name_counter 3135
+#else
 int FishingExchangeKey() {
     int result = 0;
 
@@ -5101,6 +5179,7 @@ int FishingExchangeKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Draws one fish icon.
@@ -5171,7 +5250,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
         DrawIconParts(prize->item_no, x, pos_y, y, y + 0xCE, alpha, 0);
         DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
                          alpha);
+#ifdef PAL
+        RECT digits = {0x160, 0xEA, 0x10, 0x16};
+#else
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
+#endif
         DrawMenuNumber(prize->price, x + 0x106, pos_y + 6, FishMenuTex, digits, 1, alpha);
         if (i >= 0 && i < 10) {
             AtoraNameMes.line_pos[i].x = x + 0x24;
@@ -5211,7 +5294,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
     }
     CommonMenuMes3.edge_alpha = alpha;
     CommonMenuMes3.text_x = 0x46;
+#ifdef PAL
+    CommonMenuMes3.text_y = 0x160;
+#else
     CommonMenuMes3.text_y = 0x140;
+#endif
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
     if (FishMenu.fade_mode == 4 || FishMenu.fade_mode == 5) {
@@ -5387,6 +5474,11 @@ void FishRecordTextureEnter() {
  * @address 0x1F31E0
  * @size 0x410
  */
+#ifdef PAL
+static int FishRecordViewKey();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", FishRecordViewKey__Fv);
+#pragma name_counter 3296
+#else
 static int FishRecordViewKey() {
     ReadBG();
     int ret = 0;
@@ -5477,6 +5569,7 @@ static int FishRecordViewKey() {
     }
     return ret;
 }
+#endif
 
 /**
  * Draws the fishing record board: each rank, its fish and its size.

@@ -525,6 +525,23 @@ int EditInInit(float time, char *name) {
  * @address 0x19C2B0
  * @size 0x1014
  */
+#ifdef PAL
+int EditInLoop();
+INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @892__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @897__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @898);
+INCLUDE_ASM("asm/pal/nonmatchings/edit_in", EditInLoop__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", event_text$604);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$605);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", old_mode$633);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", end_count$644);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$645);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", fix_chara_pos__2);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", fix_chara_rot__2);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", MainCamera__2);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", EventCamera__2);
+#pragma name_counter 411
+#else
 int EditInLoop() {
     sceVu0FMATRIX view;
     sceVu0FVECTOR position;
@@ -834,6 +851,7 @@ int EditInLoop() {
     SndStep();
     return 0;
 }
+#endif
 
 /**
  * Draws the interior for one frame.
@@ -843,6 +861,19 @@ int EditInLoop() {
  * @size 0x6AC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef PAL
+static void MainDraw();
+INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @1088);
+INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MainDraw__Fv__2);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @915);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @937);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_flag$970);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$971);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_menu_mode$973);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$974);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", TexAnime__2);
+#pragma name_counter 491
+#else
 static void MainDraw() {
     sceVu0FVECTOR position;
     int i;
@@ -983,6 +1014,7 @@ static void MainDraw() {
     }
     EdFadeInOut();
 }
+#endif
 
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
@@ -1073,6 +1105,14 @@ static void StepWater() {
  * @address 0x19DCF0
  * @size 0x38C
  */
+#ifdef PAL
+static void MoveCharacter();
+INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MoveCharacter__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @1147);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @1148);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", fix_pos$1129);
+#pragma name_counter 561
+#else
 static void MoveCharacter() {
     sceVu0FVECTOR follow;
     static sceVu0FVECTOR fix_pos;
@@ -1137,6 +1177,7 @@ static void MoveCharacter() {
         }
     }
 }
+#endif
 
 /**
  * Applies the right stick to the interior camera, holding its height and distance in

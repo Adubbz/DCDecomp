@@ -85,6 +85,13 @@ BT_OBJ_HANDLE *GetObjHDL(int index) {
     return &BtObjHdl[index];
 }
 
+#ifdef PAL
+void BtSystemScriptLoad(int floor);
+INCLUDE_RODATA("asm/pal/nonmatchings/btsysscript", @586);
+INCLUDE_RODATA("asm/pal/nonmatchings/btsysscript", @587);
+INCLUDE_ASM("asm/pal/nonmatchings/btsysscript", BtSystemScriptLoad__Fi);
+#pragma name_counter 83
+#else
 void BtSystemScriptLoad(int floor) {
     char path[44];
     int read_size;
@@ -98,6 +105,7 @@ void BtSystemScriptLoad(int floor) {
     EdSetEventScript((char *) BtEventData, NULL, &BtSystemScriptFileBuffer);
     AddSystemEventScript();
 }
+#endif
 
 void BtSystemScriptInit(void) {
     sceVu0FVECTOR pos;

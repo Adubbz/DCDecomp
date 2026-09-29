@@ -985,6 +985,12 @@ static int SetGsReg3(u_int *p, u_long *test, u_long *zbuf, u_long *alpha) {
    own into the cache and invalidates its children's - which is the one place a draw moves anything.
    Its children then take the cached matrix as it stands, because the attribute that turns the
    frame is also what GetLWMatrix reads on a parent to mean exactly that. */
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/frame", DrawVu1__9CFrameVu1FPUiP10RenderInfo);
+INCLUDE_DATA("asm/pal/nonmatchings/frame", @548);
+INCLUDE_DATA("asm/pal/nonmatchings/frame", __vt__9CFrameVu1);
+#pragma name_counter 991
+#else
 int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     u_int *start = packet;
     sceVu0FMATRIX matrix;
@@ -1253,6 +1259,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
 
     return packet - start;
 }
+#endif
 
 /* The same draw against a packet the SDK is tracking rather than a bare cursor: the packet is
    closed so that its current word is a legal place to write, the draw is handed that word, and the

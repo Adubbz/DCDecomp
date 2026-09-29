@@ -501,6 +501,15 @@ void CWeaponLevelUp::InitSnd() {
     snd_step = 0;
 }
 
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1041__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1042);
+INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1043);
+INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1044);
+INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1045);
+INCLUDE_ASM("asm/pal/nonmatchings/weaponlevelup", SetSnd__14CWeaponLevelUpFiii);
+#pragma name_counter 349
+#else
 void CWeaponLevelUp::SetSnd(int from, int to, int step) {
     snd_from = from;
     snd_volume = snd_from;
@@ -512,6 +521,7 @@ void CWeaponLevelUp::SetSnd(int from, int to, int step) {
         snd_step = step;
     }
 }
+#endif
 
 void CWeaponLevelUp::StepSnd() {
     if (snd_step != 0) {
@@ -888,7 +898,7 @@ void CWeaponLevelUp::Draw() {
                 y = orbit_radius * sinf(angle);
                 x = 320.0f + x - 12.0f;
                 (int) x;
-                y = 224.0f + y - 12.0f;
+                y = SCREEN_HALF_HEIGHT_F + y - 12.0f;
                 (int) y;
                 DrawIconParts(icon[i], (int) x, (int) y, 0, 0x280, alpha, value[i]);
             }

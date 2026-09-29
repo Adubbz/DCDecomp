@@ -28,6 +28,14 @@ int GetOpenAttribute(char *name) {
     return 0;
 }
 
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @368__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @369__4);
+INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @370__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @371__4);
+INCLUDE_ASM("asm/pal/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
+#pragma name_counter 35
+#else
 void CMemoryCardAccess::Initialize() {
     switch (GetMenuLangFlag()) {
         case 0:
@@ -63,6 +71,7 @@ void CMemoryCardAccess::Initialize() {
     this->card[1].present = 1;
     printf("SaveData size = %d\n", sizeof(CSaveData));
 }
+#endif
 
 int CMemoryCardAccess::InitForMC() {
     int status = sceMcInit();

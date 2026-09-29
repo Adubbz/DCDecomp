@@ -13,3 +13,8 @@ sym func_01DC8C50 0x01DE18A0
 sym func_01DC8EB0 0x01DE1B00
 sym func_01DD1AB0 0x01DEB060
 sym func_01DD2220 0x01DEB8A0
+
+sym SmokeProcess__Fv__2 0x01DDB920
+sym TexAnimeData__3 0x01E6A5F0
+sym reference$1634 0x01DDA1F0
+sym reference$516 0x0026D780

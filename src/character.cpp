@@ -436,6 +436,11 @@ float CCharacter::GetNowTime() {
     return 0.0f;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/character", Step__10CCharacterFv);
+INCLUDE_DATA("asm/pal/nonmatchings/character", __vt__10CCharacter);
+#pragma name_counter 1076
+#else
 void CCharacter::Step() {
     int index;
     int set_no;
@@ -595,6 +600,7 @@ void CCharacter::Step() {
         this->unk_DE0 = 0;
     }
 }
+#endif
 
 void CCharacter::ShadowStep() {
     int index;

@@ -116,7 +116,11 @@ void DebugInfomationDraw(void) {
             }
             num = NowEventMan->GetDataNum();
             DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "EventID = %d\n", num);
+#ifdef PAL
+            MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
+#else
             MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+#endif
             DbgMsg.Draw();
         }
         return;
@@ -189,7 +193,11 @@ void DebugInfomationDraw(void) {
                 break;
         }
     }
+#ifdef PAL
+    MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
+#else
     MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+#endif
     DbgMsg.Draw();
 }
 
@@ -592,6 +600,17 @@ int DebugInfomationIF(void) {
     return 0;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/collisiondata", StartMessageDraw__FP8CTextureiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_us);
+INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_fr);
+INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_gr);
+INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_it);
+INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_sp);
+INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_ptr);
+#pragma name_counter 357
+#endif
+
 /**
  * Empties the list of key items waiting to be dropped.
  *
@@ -631,11 +650,17 @@ int SetGateKeyStack(int item) {
  * @address 0x1B5740
  * @size 0x60
  */
+#ifdef PAL
+char *NameExchg(char *name, int language);
+INCLUDE_ASM("asm/pal/nonmatchings/collisiondata", NameExchg__FPci);
+#pragma name_counter 382
+#else
 char *NameExchg(char *name, int language) {
     strcpy(nameblock, LanguageStr[language][1]);
     strcat(nameblock, name);
     return nameblock;
 }
+#endif
 
 int CCollisionData::Set(float *pos, int damage, int life, float radius, float unknown0, int unknown1,
                         int kind, int flags, int unknown2) {

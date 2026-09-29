@@ -1,8 +1,16 @@
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 65, 66, 68, 74
+#pragma argument_flag_ones 859, 860
+#pragma argument_flag_ones 861, 864, 865, 866, 1128, 1148, 1149, 1235, 1237, 1238
+#pragma argument_flag_ones 1240, 1254
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168, 334
 #pragma argument_flag_ones 339, 344, 349, 354, 359, 364, 428, 430, 1138, 1139
 #pragma argument_flag_ones 1140, 1143, 1144, 1145, 1407, 1427, 1428, 1514, 1516, 1517
 #pragma argument_flag_ones 1519, 1533
+#endif
 
 #include "common.h"
 
@@ -176,6 +184,12 @@ static int BgmOff;
 static int BgmVol;
 static int BgmNo;
 
+#ifdef PAL
+void OpeningInit();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", OpeningInit__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @365__4);
+#pragma name_counter 51
+#else
 void OpeningInit() {
     wait_now_loading_vsync();
     InitializeDataBuffer();
@@ -224,6 +238,7 @@ void OpeningInit() {
     DispFade.FadeInit(128.0f);
     DispFade.FadeOutStart(128.0f, 0);
 }
+#endif
 
 /**
  * Loads the opening movie's localized message resources.
@@ -691,6 +706,12 @@ static void WaitKeyProcess() {
  * @size 0x3C0
  * @unknownret
  */
+#ifdef PAL
+static void MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", MotionProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @836__3);
+#pragma name_counter 478
+#else
 static void MotionProcess() {
     switch (CScript__2.fade) {
         case 1:
@@ -785,6 +806,7 @@ static void MotionProcess() {
         }
     }
 }
+#endif
 
 /**
  * Dispatches sound processing for the active opening scene.
@@ -794,6 +816,12 @@ static void MotionProcess() {
  * @size 0x330
  * @unknownret
  */
+#ifdef PAL
+static void SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", SoundProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @866__2);
+#pragma name_counter 508
+#else
 static void SoundProcess() {
     if (CScript__2.se_stop == 0) {
         if (CScript__2.se_voice != 0) {
@@ -867,6 +895,7 @@ static void SoundProcess() {
             break;
     }
 }
+#endif
 
 /**
  * Dispatches drawing for the active opening scene.
@@ -876,6 +905,19 @@ static void SoundProcess() {
  * @size 0x35C
  * @unknownret
  */
+#ifdef PAL
+static void DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @957__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @958__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @959__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @960__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @961__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @962__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @964);
+INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @963);
+#pragma name_counter 532
+#else
 static void DrawProcess() {
     sceVu0FVECTOR position;
     sceVu0FMATRIX camera;
@@ -953,6 +995,7 @@ static void DrawProcess() {
     DispFade.FadeIn(Vif1Packet);
     DispFade.FadeOut(Vif1Packet);
 }
+#endif
 
 /**
  * Draws opening subtitles and pause messages.

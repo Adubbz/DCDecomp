@@ -194,9 +194,21 @@ static float button_scale(int button);
 void EdEyeCamera(CCamera *camera, CCharacter *character);
 
 /* @ 0x168100 (0x10 bytes) -- EBInitialize__Fv */
+#ifdef PAL
+void EBInitialize();
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBInitialize__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", CautionRect);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", EbResult0);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", EbResult2);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", EbResult1);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", OkRect);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", CoolRect);
+#pragma name_counter 518
+#else
 void EBInitialize() {
     ebattle_flag = 0;
 }
+#endif
 
 /* @ 0x168110 (0xE0 bytes) -- EBInit__Ff */
 void EBInit(float speed_mult) {
@@ -491,6 +503,11 @@ int EBLoop() {
  * @address 0x168B80
  * @size 0x560
  */
+#ifdef PAL
+void EBDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBDraw__Fv);
+#pragma name_counter 730
+#else
 void EBDraw() {
     if (ebattle_intro_flag == 0 && ebattle_flag == 0) {
         return;
@@ -569,6 +586,7 @@ void EBDraw() {
         draw_ok(x);
     }
 }
+#endif
 
 /**
  * Draws one button prompt of the event battle.
@@ -693,6 +711,12 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
+#ifdef PAL
+static void draw_ok(int x);
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", draw_ok__Fi);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", dir$640);
+#pragma name_counter 813
+#else
 static void draw_ok(int x) {
     // clang-format off
     static sceVu0FVECTOR dir[8] = {
@@ -750,6 +774,7 @@ static void draw_ok(int x) {
         }
     }
 }
+#endif
 
 /**
  * Gives the scale a button prompt draws at while it flashes.
@@ -775,6 +800,11 @@ static float button_scale(int button) {
     }
     return scale;
 }
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", __ct__8CRect_i_Fv);
+#pragma name_counter 822
+#endif
 
 static int key_mode = 0xFFFF;
 
@@ -1121,6 +1151,32 @@ static inline int IsVillagerActive(CNPCharacter *villager) {
     return active;
 }
 
+#ifdef PAL
+void EdMoveChara();
+INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1688);
+INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1702);
+INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1703);
+INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1704);
+INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1705);
+INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1706);
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EdMoveChara__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", @517);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", @986);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", @1022);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", rot_count$769);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", init$770);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", bgm_vol$845);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", init$846);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", load_file$848);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", init$849);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", st_cnt$855);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", init$856);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", wait_cnt$858);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", init$859);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", cnt$1011);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", init$1012);
+#pragma name_counter 1632
+#else
 void EdMoveChara() {
     int near;
     CCamera *view_camera;
@@ -2237,6 +2293,7 @@ void EdMoveChara() {
     EdMoveCharaInfo.motion_time_before = now_time;
     EdMoveCharaInfo.motion_time_after = motion_time;
 }
+#endif
 
 void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     if (param->kind == 4) {

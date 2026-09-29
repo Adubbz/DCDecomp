@@ -852,6 +852,21 @@ void OpD_SoundProcess() {
    script raises a step at a time; the meadow is ten, one of which is held back because the flowers
    are drawn a second time under a light of their own. Then the shadows, the actors, the spirit
    king's effect, and last the three screen fades and the caption. */
+#ifdef PAL
+void OpD_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", OpD_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fade1$766);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$767);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fade2$769);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$770__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fade3$772);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$773);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @926__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @927__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @928__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @929__4);
+#pragma name_counter 545
+#else
 void OpD_DrawProcess() {
     OP_CharaFrame__2 = Cam__2[SceneNp__2].frame;
 
@@ -1056,6 +1071,7 @@ void OpD_DrawProcess() {
             break;
     }
 }
+#endif
 
 /**
  * The prism the spirit king turns above the girl: one model drawn twice, spun opposite ways about
@@ -1305,6 +1321,57 @@ static void LensFreaProcess() {
  * @size 0x178C
  * @unknownret
  */
+#ifdef PAL
+static void Setsumei();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", Setsumei__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", cnt1$1014);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1015);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", cntA$1017);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1018);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", cnt2$1024);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1025);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", cntB$1027);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1028);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fadeA1$1034);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1035);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fadeA2$1037);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1038);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fadeB1$1047);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1048__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fadeB2$1050);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1051);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fadeB3$1053);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1054);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", x$1075);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1076);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", y$1078);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1079);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", rot$1081);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1082);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", x2$1084);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1085);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", y2$1087);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1088);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", rot2$1090);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1091__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", x3$1093);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1094__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", y3$1096);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1097);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", rot3$1099);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1100);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", x$1136);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1137);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", y$1139);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1140);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", x2$1142);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1143);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", y2$1145);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$1146);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @1283);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @1284__2);
+#pragma name_counter 912
+#else
 static void Setsumei() {
     static int cnt1 = 0;
     static int cntA = 0;
@@ -1616,6 +1683,7 @@ static void Setsumei() {
                     (u_char) fadeA1);
     }
 }
+#endif
 
 /**
  * The ripples on the hall's floor: one model drawn four times, each at its own scale and a little
@@ -1628,6 +1696,12 @@ static void Setsumei() {
  * @size 0x330
  * @unknownret
  */
+#ifdef PAL
+static void HamonProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", HamonProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", se$1301);
+#pragma name_counter 949
+#else
 static void HamonProcess() {
     sceVu0FVECTOR ambient;
 
@@ -1693,3 +1767,4 @@ static void HamonProcess() {
 
     MGSetAmbient(ambientlight);
 }
+#endif

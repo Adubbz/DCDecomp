@@ -951,6 +951,50 @@ class ActiveSource:
         return region.active_text(self.path.read_text(encoding=encoding))
 
 
+DATA_MARKER = re.compile(r'^\s*INCLUDE_DATA\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)', re.M)
+DUMP_LABEL = re.compile(r'^glabel\s+"?([^"\s]+)"?\s*$')
+
+
+def write_data_markers(src_dir=SRC):
+    """Write the file each INCLUDE_DATA marker names, from retail's section dump.
+
+    A datum a spliced function keeps -- a static of its own, a table only it
+    reads -- is no file of splat's. The marker names it; its lines are taken
+    from the whole-section dump that holds it, up to the next label.
+    """
+    wanted = {}
+    for path in sorted(Path(src_dir).rglob("*")):
+        if path.suffix in (".c", ".cpp") and not path.name.startswith("tmp"):
+            text = region.active_text(path.read_text(encoding="utf-8"))
+            for folder, name in DATA_MARKER.findall(text):
+                wanted[name] = folder
+    if not wanted:
+        return 0
+    found = {}
+    for dump in sorted(Path(ASM, "data").rglob("*.s")):
+        lines = dump.read_text(encoding="utf-8").split("\n")
+        section = next((line for line in lines if line.lstrip().startswith(".section")), None)
+        for i, line in enumerate(lines):
+            label = DUMP_LABEL.match(line)
+            if not label or label.group(1) not in wanted or label.group(1) in found:
+                continue
+            body = []
+            for rest in lines[i + 1:]:
+                if rest.startswith(("glabel", "dlabel", ".section")) or "unreferenced pad" in rest:
+                    break
+                body.append(rest)
+            found[label.group(1)] = (section, line, body)
+    for name, folder in sorted(wanted.items()):
+        if name not in found:
+            raise SystemExit(f"disassemble: no section dump holds {name}, which an INCLUDE_DATA marker names")
+        section, label, body = found[name]
+        out = Path(folder, f"{name}.s")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text('.include "macro.inc"\n\n' + section + "\n\n" + label + "\n"
+                       + "\n".join(body).rstrip() + "\n", encoding="utf-8")
+    return len(wanted)
+
+
 def configure_region_markers():
     """Read a source's markers as this release compiles it.
 
@@ -1092,6 +1136,9 @@ def main():
     removed = drop_redundant_dumps()
     changed, shared = fix_branches(ASM)
     changed += restore_invented_names_in_parts()
+    written = write_data_markers()
+    if written:
+        print(f"disassemble: wrote {written} datum file(s) for INCLUDE_DATA markers")
     if removed:
         print(f"disassemble: dropped {removed} duplicate per-unit section dump(s)")
     print(

@@ -1097,8 +1097,16 @@ static void AnalyzeBackDraw(int alpha, int brightness) {
             if (y < 0x50) {
                 top = 0x50 - y;
             }
+#ifdef PAL
+            if (y + 0x36 > 0x130) {
+#else
             if (y + 0x36 > 0x11C) {
+#endif
+#ifdef PAL
+                bottom = 0x130 - y;
+#else
                 bottom = 0x11C - y;
+#endif
             }
             DrawMenu2DSprite(AnaBar, CRect_i_(x, y + top, 0x36, bottom - top),
                              CRect_i_(0x36, top, 0x36, bottom - top), brightness, brightness,
@@ -1215,7 +1223,11 @@ static int AnalyzeBarDraw() {
         if (8.0f < edge) {
             edge = 8.0f;
         }
+#ifdef PAL
+        top = (int) (306.0f - fill);
+#else
         top = (int) (286.0f - fill);
+#endif
         CRect_i_ bar_destination;
         CRect_i_ bar_source;
         bar_source.x = 0;
@@ -1231,8 +1243,13 @@ static int AnalyzeBarDraw() {
         DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) edge), CRect_i_(0, i * 16, 0x36, 8), 0x80);
         edge = 0.1f * AnalyzeFill[i];
         if (!(AnalyzeFill[i] <= 0.0f)) {
+#ifdef PAL
+            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x130 - top) - edge)),
+                             CRect_i_(0x56, 0x36, 10, 9), 0x80);
+#else
             DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x11C - top) - edge)),
                              CRect_i_(0x56, 0x36, 10, 9), 0x80);
+#endif
         }
         number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
         if (per[i] < (float) number) {
@@ -1264,8 +1281,13 @@ static int AnalyzeBarDraw() {
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {
+#ifdef PAL
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50),
+                         0x80);
+#else
         DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50),
                          0x80);
+#endif
     }
     float left = (float) (0x280 - EdEffectCt * 16);
     int width = (int) (80.0f + left);
@@ -1298,13 +1320,21 @@ static void ToAnalyzeEditDraw() {
     if (640.0f < bar) {
         bar = 640.0f;
     }
+#ifdef PAL
+    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x130, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+#else
     DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+#endif
     for (int x = 0x75; (float) x < bar; x += 0xB5) {
         int w = (int) (bar - (float) x);
         if (w > 0x3C) {
             w = 0x3C;
         }
+#ifdef PAL
+        DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x130, w, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+#else
         DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, w, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+#endif
     }
     CalMoveFromMenuIcon();
     EdEffectCt++;
@@ -1330,11 +1360,20 @@ static void AnalyzeEditDraw() {
     AnalyzeBackDraw(0x80, 0x40);
 
     for (int i = 0; i < 3; i++) {
+#ifdef PAL
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50),
+                         CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
+#else
         DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50),
                          CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
+#endif
     }
     AnalyzeBarDraw();
+#ifdef PAL
+    DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x130, 0x280, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+#else
     DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, 0x280, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+#endif
 
     int x = 0x75;
     int i = 0;
@@ -1344,8 +1383,13 @@ static void AnalyzeEditDraw() {
             width = 0x3C;
         }
         if (AnalyzeFill[i] > 0.0f) {
+#ifdef PAL
+            DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x130, width, 0xF),
+                             CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+#else
             DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF),
                              CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+#endif
         }
         i++;
         x += 0xB5;

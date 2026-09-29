@@ -321,6 +321,18 @@ static int SndCnt;
    hundredth of a second left on the timer, and the timer running out closes the mouth and ends the
    line. The eyes are whatever the script last asked for. The cache is flushed on both sides of the
    two transfers because the plate is a texture the previous tick drew from and the next one will. */
+#ifdef PAL
+void FaceChange(int no);
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", FaceChange__Fi__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", face$830);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @831);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @832);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @833);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @834);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @835__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @836__4);
+#pragma name_counter 64
+#else
 void FaceChange(int no) {
     static FACE_INFO face[21] = {
         {0, 0, 42, 40, 87, 35, 0, 0, 256, 2, 0},
@@ -411,6 +423,7 @@ void FaceChange(int no) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+#endif
 
 /* The background loads are one wrapper per file because the script names them by index: each waits
    for the previous read to land, starts the next, and marks the load done by putting the script's
@@ -454,6 +467,56 @@ void OpC_LoadDataBG5() {
    from a configuration file rather than a table of this file's own, and its images filled into a
    manifest whose first six rows are the registry's fixed surfaces. The second manifest is the same
    array written over again, because the second pack is read only once the first block is entered. */
+#ifdef PAL
+void OpC_InitProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @399__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @408__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @409__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @410__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @421__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @422__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @423__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @424__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @486__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @487__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @488__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @489__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @490__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @491__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @492__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @493__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @494__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @495__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @496__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @497__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @498__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @499__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @500__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @501__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @502__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @503__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @504__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @505__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @506__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @507__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @508__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @509__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @510__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @512__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @513__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @514__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @515__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @516__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @519__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @521__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @523__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @529__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", Fuusya__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", TaimatsuFrame__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", Taimatsu__2);
+#pragma name_counter 220
+#else
 void OpC_InitProcess() {
     while (ReadBGSync())
         ;
@@ -717,6 +780,7 @@ void OpC_InitProcess() {
     FireStep = 1.0f;
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The dancers, which is a texture load rather than a scene: the shadow model all sixteen actors
    share, then the five villagers who join the dance, each loaded straight after the block its
@@ -726,7 +790,11 @@ void OpC_InitProcess2() {
         ;
 
     TexManager.DeleteTextureBlock(0);
+#ifdef PAL
+    TexManager.DeleteTextureBlock(15);
+#else
     TexManager.DeleteTextureBlock(14);
+#endif
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
@@ -754,11 +822,19 @@ void OpC_InitProcess2() {
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#ifdef PAL
+    tex[0].block_no = 18;
+#else
     tex[0].block_no = 17;
+#endif
     tex[0].unk_08 = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(18, tex);
+#else
     TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
 
@@ -775,16 +851,40 @@ void OpC_InitProcess2() {
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(4, tex);
+#ifdef PAL
+    Chara__3[15].LoadPackData(read_buffer, "04p05b.cfg", &CharaDataBuffer__2[6], 0);
+#else
     Chara__3[14].LoadPackData(read_buffer, "04p05b.cfg", &CharaDataBuffer__2[6], 0);
+#endif
 
     CFrameAttr attr14;
 
     attr14.unk_08 = 0;
+#ifdef PAL
+    Chara__3[15].frame->SetAttr(attr14, 1, 4);
+#else
     Chara__3[14].frame->SetAttr(attr14, 1, 4);
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.time = 1.0f;
+#else
     Chara__3[14].motion_type.state.time = 1.0f;
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.blend_step = 1.0f;
+#else
     Chara__3[14].motion_type.state.blend_step = 1.0f;
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.motion_no = 0;
+#else
     Chara__3[14].motion_type.state.motion_no = 0;
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.playing_no = 0;
+#else
     Chara__3[14].motion_type.state.playing_no = 0;
+#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p15a01.img", 0);
     tex[0].block_no = 9;
@@ -854,6 +954,21 @@ void OpC_InitProcess2() {
 /* The demon's arrival: the two halves of it the scene animates, the beam it fires, and the four
    pieces of sky and moonlight the rest of the scene is drawn against. The sky is given an attribute
    mask of its own because it is drawn behind everything rather than lit with it. */
+#ifdef PAL
+void OpC_InitProcess3();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess3__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @589__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @590__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @591__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @592__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @593__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @597__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @598__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @599__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @606__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @607__5);
+#pragma name_counter 288
+#else
 void OpC_InitProcess3() {
     while (ReadBGSync())
         ;
@@ -989,9 +1104,16 @@ void OpC_InitProcess3() {
     SndCnt = 0;
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The village once the demon has been through it, which is the first scene's manifest with the
    explosion and the dust it throws up added and everything the dance needed left out. */
+#ifdef PAL
+void OpC_InitProcess4();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess4__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @614__7);
+#pragma name_counter 296
+#else
 void OpC_InitProcess4() {
     while (ReadBGSync())
         ;
@@ -1062,6 +1184,7 @@ void OpC_InitProcess4() {
     TexManager.LoadTextureBlock(-1, tex);
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The burning village: the ruined map, the smoke pool the fires feed, and the five actors who walk
    through it. The cloth Toan carries is driven by this file's own wind rather than the scene's. */
@@ -1069,8 +1192,16 @@ void OpC_InitProcess5() {
     while (ReadBGSync())
         ;
 
+#ifdef PAL
+    TexManager.DeleteTextureBlock(14);
+#else
     TexManager.DeleteTextureBlock(13);
+#endif
+#ifdef PAL
+    TexManager.DeleteTextureBlock(18);
+#else
     TexManager.DeleteTextureBlock(17);
+#endif
     TexManager.DeleteTextureBlock(0);
     TexManager.CleanUpBuffer();
 
@@ -1099,20 +1230,40 @@ void OpC_InitProcess5() {
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "smoke.img", 0);
+#ifdef PAL
+    tex[0].block_no = 18;
+#else
     tex[0].block_no = 17;
+#endif
     tex[0].unk_08 = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
+#ifdef PAL
+    tex[1].block_no = 18;
+#else
     tex[1].block_no = 17;
+#endif
     tex[1].unk_08 = 0;
     tex[2].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
+#ifdef PAL
+    tex[2].block_no = 18;
+#else
     tex[2].block_no = 17;
+#endif
     tex[2].unk_08 = 0;
     tex[3].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
+#ifdef PAL
+    tex[3].block_no = 18;
+#else
     tex[3].block_no = 17;
+#endif
     tex[3].unk_08 = 0;
     tex[4].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(18, tex);
+#else
     TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
     MapLoad2();
@@ -1150,21 +1301,53 @@ void OpC_InitProcess5() {
     Chara__3[9].motion_type.state.playing_no = 0;
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
+#ifdef PAL
+    tex[0].block_no = 15;
+#else
     tex[0].block_no = 14;
+#endif
     tex[0].unk_08 = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(15, tex);
+#else
     TexManager.LoadTextureBlock(14, tex);
+#endif
+#ifdef PAL
+    Chara__3[14].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
+#else
     Chara__3[13].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
+#endif
 
     CFrameAttr attr13;
 
     attr13.unk_08 = 0;
+#ifdef PAL
+    Chara__3[14].frame->SetAttr(attr13, 1, 4);
+#else
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.time = 5.0f;
+#else
     Chara__3[13].motion_type.state.time = 5.0f;
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.blend_step = 1.0f;
+#else
     Chara__3[13].motion_type.state.blend_step = 1.0f;
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.motion_no = 0;
+#else
     Chara__3[13].motion_type.state.motion_no = 0;
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.playing_no = 0;
+#else
     Chara__3[13].motion_type.state.playing_no = 0;
+#endif
 
     Chara__3[18].LoadPackData(read_buffer, "04p02a.cfg", &CharaDataBuffer__2[6], 0);
 
@@ -1771,6 +1954,20 @@ static void MapLoad2() {
    The last camera of the scene is the one the fire and the windmill are timed against: while it
    runs, the motion step drops to a twentieth and the camera shakes by a random amount whose spread
    narrows as the shot goes on. */
+#ifdef PAL
+void OpC_MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_MotionProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", camera$921);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$922);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", step$959);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$960);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", d$962);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$963);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @907__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @997__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", Wind__2);
+#pragma name_counter 666
+#else
 void OpC_MotionProcess() {
     for (int i = 0; i < 23; i++) {
         if (CScript__2.obj[i].disp) {
@@ -1945,6 +2142,7 @@ void OpC_MotionProcess() {
         LoadCharaMajin();
     }
 }
+#endif
 
 /**
  * The demon's second half, which is loaded while the scene is already running: the script asks for
@@ -1988,6 +2186,29 @@ static void LoadCharaMajin() {
    with a wait behind them, so a motion that stalls inside a window plays the step once. Which of
    the two footfall samples the first actor takes is decided by which camera is running and how far
    its motion has gone, because the ground under him changes part way through the scene. */
+#ifdef PAL
+void OpC_SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_SoundProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", vol$1013);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1014__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", cnt$1016);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1017);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", se$1025);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1026);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", wait$1062);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1063);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", wait$1083);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1084);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", wait$1098);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1099);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", wait$1115);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1116);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1035__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1036__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1037__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", SndInfo$1038);
+#pragma name_counter 792
+#else
 void OpC_SoundProcess() {
     static float vol = 40.0f;
     static int cnt = 0;
@@ -2201,6 +2422,7 @@ void OpC_SoundProcess() {
         }
     }
 }
+#endif
 
 /* The tick's drawing, in the order the frame is built: the fog and the projection the camera asks
    for, the world, the light the lightning flash overrides, the depth of field, the actors' shadows
@@ -2208,6 +2430,17 @@ void OpC_SoundProcess() {
    the fires, the beam and the explosions. The light and the ambient colour are saved on the way in
    and put back on the way out, because every object in the scene is lit from its own position by
    LightSet rather than from one light for the whole frame. */
+#ifdef PAL
+void OpC_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", flg$1231);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1232__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", bright$1234);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1235);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1640__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", CFire__3);
+#pragma name_counter 1017
+#else
 void OpC_DrawProcess() {
     sceVu0FMATRIX light_save;
     sceVu0FVECTOR ambient_save;
@@ -2638,6 +2871,7 @@ void OpC_DrawProcess() {
     MGSetPLight(light, lightcolor);
     MGSetAmbient(ambientlight);
 }
+#endif
 
 /**
  * The two dancers the crowd is watching, which are drawn from the camera's own frame tree rather
@@ -2649,6 +2883,14 @@ void OpC_DrawProcess() {
  * @size 0x4D8
  * @unknownret
  */
+#ifdef PAL
+static void DrawDancer();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", DrawDancer__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1677);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1680__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1681__2);
+#pragma name_counter 1063
+#else
 static void DrawDancer() {
     sceVu0FMATRIX matrix;
     register float zero = 0.0f;
@@ -2750,6 +2992,7 @@ static void DrawDancer() {
         }
     }
 }
+#endif
 
 /**
  * Every dancer's feet, drawn as sixteen flat models placed under the frames they belong to rather
@@ -2891,7 +3134,11 @@ static void InchikiShadow() {
 static void DrawShadow(int no, float x, float y, float z) {
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 54.0f};
 
+#ifdef PAL
+    TexManager.ReloadTexture(Vif1Packet, 18);
+#else
     TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
     ambient[3] = ambient[3] - 10.0f * y;
 
     if (ambient[3] > 0.0f) {
@@ -2917,6 +3164,15 @@ static void DrawShadow(int no, float x, float y, float z) {
  * @size 0x890
  * @unknownret
  */
+#ifdef PAL
+static void MajinBeemProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", MajinBeemProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1740);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", pos$1748);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", pos2$1749);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1820);
+#pragma name_counter 1216
+#else
 static void MajinBeemProcess() {
     char *name[10] = {"yubi", "heso", "l_asi", "r_asi", "kuti", "toutyou", "yubi", "yubi", "yubi",
                       "heso"};
@@ -3073,6 +3329,7 @@ static void MajinBeemProcess() {
         }
     }
 }
+#endif
 
 /**
  * The two columns of smoke the burning village gives off, entered into the effect pool one particle
@@ -3201,7 +3458,7 @@ static void WaterProcess() {
 
     MGGetFBuffTex(&frame);
 
-    CRect<int> rect(0, 0, 640, 224);
+    CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
     sceGsTex0 surface = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
 
     MGMoveImage(&frame, rect, &surface, 0, 0, 0);

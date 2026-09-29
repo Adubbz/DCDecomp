@@ -1895,7 +1895,7 @@ void EdFadeInOut() {
         }
     }
     for (x = 0; x < 640; x += 64) {
-        for (y = 0; y < 224; y += 32) {
+        for (y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
             rect.x = x * 16;
             rect.y = y * 16;
             rect.width = 1024;
@@ -2105,6 +2105,11 @@ static void ClearObjAnime(int index) {
         anime->type = -1;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventStopPlay__Fv);
+#pragma name_counter 1814
+#endif
+
 /** Whether the current event uses the lightweight initialization path. */
 int simple_event;
 
@@ -2168,6 +2173,11 @@ static int actv_buffer;
 void EdEventPause() {
     event_pause = !event_pause;
 }
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdCheckEventPause__Fv);
+#pragma name_counter 1815
+#endif
 
 /** Directory prepended to relative event resource names. */
 static char CurrentDir[0x40];
@@ -3764,6 +3774,11 @@ static int _GET_NPC_PARTS_NO(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+#ifdef PAL
+static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _SET_NPC_MOTION__FP12RS_STACKDATAi);
+#pragma name_counter 2581
+#else
 static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CCharacter *character;
@@ -3785,6 +3800,7 @@ static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
         character->SetMotionSpeed(speed);
     return 1;
 }
+#endif
 
 static int _SET_NPC_ANIME(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
@@ -6180,10 +6196,16 @@ static int _EB_LOOP(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef PAL
+static int _EB_INTRO_START(RS_STACKDATA *, int);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _EB_INTRO_START__FP12RS_STACKDATAi);
+#pragma name_counter 3595
+#else
 static int _EB_INTRO_START(RS_STACKDATA *, int) {
     EBInitIntro();
     return 1;
 }
+#endif
 
 static int _EB_INTRO_LOOP(RS_STACKDATA *stack, int) {
     SetStack(stack, EBIntroLoop());
@@ -6301,6 +6323,16 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
     FishingLoadEsa(item, EdEventInfo.item_frame[0], 40);
     return 1;
 }
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_TV_MODE__FP12RS_STACKDATAi);
+#pragma name_counter 3628
+#endif
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_LANG_CODE__FP12RS_STACKDATAi);
+#pragma name_counter 3628
+#endif
 
 /* The internal operations assembly still supplies, so the registry below can name them. */
 int _TURN_CHARA(RS_STACKDATA *, int);
@@ -6769,7 +6801,7 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         if (message == NULL) {
             continue;
         }
-        message->text_columns = 70;
+        message->text_columns = MES_WIN_COLUMNS;
         message->text_rows = 10;
         message->text_len = 0;
         message->text_width = 0;
@@ -6933,6 +6965,31 @@ int EdEventFinish() {
  * @address 0x197AD0
  * @size 0xCFC
  */
+#ifdef PAL
+int EdEventMode(CCameraFollow *camera, int kind);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2609);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2610);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2611);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2612);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2613);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2614);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2615);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2616__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2617);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2618);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2619);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", @2575);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", mode_name$2453);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2454);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2455);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2456);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", mode$2450);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", init$2451);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", select_chara$2457);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", init$2458);
+#pragma name_counter 3963
+#else
 int EdEventMode(CCameraFollow *camera, int kind) {
     int result;
 
@@ -7208,6 +7265,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
     }
     return result;
 }
+#endif
 
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->unk_C98;
@@ -7403,7 +7461,7 @@ static inline void EdCloseTalkMes() {
     EditMes1.text_rate = EditMes1.text_rate_set;
     EditMes1.mes_made = -1;
     EditMes1.fade_in = 0;
-    EditMes1.text_columns = 0x46;
+    EditMes1.text_columns = MES_WIN_COLUMNS;
     EditMes1.text_rows = 0xA;
     EditMes1.text_len = 0;
     EditMes1.text_width = 0;

@@ -715,7 +715,7 @@ void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *t
 }
 
 int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int overlap, int flag) {
-    return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, 0x1C0, flag);
+    return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, SCREEN_HEIGHT, flag);
 }
 
 int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
@@ -741,7 +741,7 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
         src_x = rect.x + width * digit;
         src_y = rect.y;
         height = rect.height;
-        MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+        MenuTextureClip(clip_y, src_y, height, 0, SCREEN_HEIGHT);
         CRect_i_ dest;
         CRect_i_ src(src_x, src_y, width, height);
         dest_height = height - 1;
@@ -1418,6 +1418,11 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
     }
 }
 
+#ifdef PAL
+static void DrawAtoraNothing(int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawAtoraNothing__Fiii);
+#pragma name_counter 748
+#else
 static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 18, 18), CRect_i_(184, 346, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y, 220, 18), CRect_i_(200, 346, 4, 18), alpha);
@@ -1429,6 +1434,7 @@ static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x + 238, y + 102, 18, 18), CRect_i_(202, 364, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 64, y + 44, 132, 30), CRect_i_(124, 418, 132, 30), alpha);
 }
+#endif
 
 static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
     if (mes == NULL) {
@@ -1725,7 +1731,7 @@ void DrawMenuAtoraSelect() {
         if (fade > 0x80) {
             fade = 0x80;
         }
-        CRect_i_ rect(320, 0, 320, 448);
+        CRect_i_ rect(320, 0, 320, SCREEN_HEIGHT);
         DrawMenu2DSprite(&frame, rect, rect, 0x40, 0x40, 0x40, tint);
         MGSetGsTEXA(NULL);
         if (MenuAtoraSel.step == 7 || MenuAtoraSel.step == 9) {
@@ -2035,6 +2041,11 @@ int tip_sort_type = 1;
 /** The rank that the board's sort gives each chip group, by group. */
 int tip_table[3] = {3, 1, 2};
 
+#ifdef PAL
+static int GetTipKind(int tip_no);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", GetTipKind__Fi);
+#pragma name_counter 1092
+#else
 static int GetTipKind(int tip_no) {
     if (tip_no < 0 || tip_no >= 100) {
         return 0;
@@ -2046,7 +2057,13 @@ static int GetTipKind(int tip_no) {
         return 2;
     }
 }
+#endif
 
+#ifdef PAL
+static int CompTip(int tip_a, int tip_b);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", CompTip__Fii);
+#pragma name_counter 1110
+#else
 static int CompTip(int tip_a, int tip_b) {
     int rank_a;
     int rank_b;
@@ -2070,7 +2087,13 @@ static int CompTip(int tip_a, int tip_b) {
     }
     return (tip_a < tip_b) ? -1 : 0;
 }
+#endif
 
+#ifdef PAL
+static int SeitonAtoraTipBoardSub();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", SeitonAtoraTipBoardSub__Fv);
+#pragma name_counter 1132
+#else
 static int SeitonAtoraTipBoardSub() {
     int rank;
     int kind;
@@ -2100,6 +2123,7 @@ static int SeitonAtoraTipBoardSub() {
     }
     return moved;
 }
+#endif
 
 static void SeitonAtoraTipBoard() {
     int i;
@@ -2316,6 +2340,13 @@ int MenuAtoraSelectKey() {
     return result;
 }
 
+#ifdef PAL
+static int AtoraBoardKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2134__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2135__2);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", AtoraBoardKey__Fv);
+#pragma name_counter 1391
+#else
 static int AtoraBoardKey() {
     int movable[8];
     int open_mode = MenuAtoraSel.unk_04;
@@ -2546,6 +2577,7 @@ static int AtoraBoardKey() {
     ComMenuSePlay(se);
     return result;
 }
+#endif
 
 static int AtoraTipKey() {
     int result = 0;
@@ -2664,8 +2696,13 @@ static void AtoraBoardFadeEffect() {
     top.a = 0x80;
     set2DSprite(Vif1Packet, &frame, CRect_i_(0, 366, 320, 1), CRect_i_(0, 366, 320, 1), &top, &top, &bottom, &bottom,
                 1);
+#ifdef PAL
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 113), CRect_i_(0, 366, 320, 114), &top, &top, &bottom,
+                &bottom, 1);
+#else
     set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 81), CRect_i_(0, 366, 320, 82), &top, &top, &bottom,
                 &bottom, 1);
+#endif
     MGSetGsTEXA(NULL);
 }
 
@@ -2750,6 +2787,14 @@ void AtoraNameDraw(int) {
     }
 }
 
+#ifdef PAL
+static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2274);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2275);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2283__2);
+#pragma name_counter 1586
+#else
 static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     int label[12] = {10, 8, 4, 5, 2, 3, 9, 11, 12, 13, 6, 7};
     int kind[12] = {0, 0, 1, 2, 0, 1, 3, 0, 0, 0, 0, 0};
@@ -2824,7 +2869,13 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     }
     DrawMenu2DSprite(MenuOption, CRect_i_(arrow_x, arrow_y, 60, 29), CRect_i_(452, 226, 60, 29), alpha);
 }
+#endif
 
+#ifdef PAL
+static void DrawOptionLRCur(int side, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionLRCur__Fii);
+#pragma name_counter 1595
+#else
 static void DrawOptionLRCur(int side, int alpha) {
     int cursor_x[2] = {32, 520};
     int v;
@@ -2832,7 +2883,21 @@ static void DrawOptionLRCur(int side, int alpha) {
     v = side * 32 + 256;
     DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
 }
+#endif
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionScreenWaku__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2353);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2354);
+#pragma name_counter 1595
+#endif
+
+#ifdef PAL
+int InitMenuOption(int mode, int block_no, u_long128 *buffer);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2413);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitMenuOption__FiiP1);
+#pragma name_counter 1610
+#else
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
     CUserStatus *status;
@@ -2880,6 +2945,7 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     }
     return 1;
 }
+#endif
 
 /**
  * Stores whether the menus discard their saved positions in the saved menu
@@ -2893,6 +2959,11 @@ static inline void SetCursorResetPos(CMenuCursor *cursor, int reset) {
  * Closes the option screen, writing every setting the player changed back to
  * the configuration and the saved status.
  */
+#ifdef PAL
+static void ExitMenuOption();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", ExitMenuOption__Fv);
+#pragma name_counter 1620
+#else
 static void ExitMenuOption() {
     CUserStatus *status;
     CMenuCursor *cursor;
@@ -2922,7 +2993,13 @@ static void ExitMenuOption() {
     OpConfigPt[8] = OptionMenu.flag[10];
     OpConfigPt[6] = OptionMenu.flag[11];
 }
+#endif
 
+#ifdef PAL
+static void InitOptionFlag();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitOptionFlag__Fv);
+#pragma name_counter 1626
+#else
 static void InitOptionFlag() {
     int i;
 
@@ -2931,7 +3008,13 @@ static void InitOptionFlag() {
     }
     OptionMenu.flag[6] = 1;
 }
+#endif
 
+#ifdef PAL
+static void PrevOptionSetFunc();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", PrevOptionSetFunc__Fv);
+#pragma name_counter 1633
+#else
 static void PrevOptionSetFunc() {
     int i;
 
@@ -2939,7 +3022,18 @@ static void PrevOptionSetFunc() {
         OptionMenu.flag[i] = OptionMenu.prev_flag[i];
     }
 }
+#endif
 
+#ifdef PAL
+int MenuOptionKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2608);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2609__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2610__2);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuOptionKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2454__2);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2580);
+#pragma name_counter 1733
+#else
 int MenuOptionKey() {
     int result = 0;
 
@@ -3105,7 +3199,18 @@ int MenuOptionKey() {
     }
     return result;
 }
+#endif
 
+#ifdef PAL
+void DrawMenuOption();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawMenuOption__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2656);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", OpMenuWakuCnt$2650);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", init$2651);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", OptionCurCnt$2653);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", init$2654);
+#pragma name_counter 1854
+#else
 void DrawMenuOption() {
     setbilinear(0);
     if (OptionMenu.texture_ready == 0) {
@@ -3245,6 +3350,7 @@ void DrawMenuOption() {
     }
     setbilinear(1);
 }
+#endif
 
 int OptionMenuFadeOutStart() {
     int result = 0;
@@ -3395,6 +3501,12 @@ int (*SaveMenuFunc[26])() = {
     SaveMenuKeyEndSaveEnding,
 };
 
+#ifdef PAL
+int MenuSaveKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2867);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuSaveKey__Fv);
+#pragma name_counter 1940
+#else
 int MenuSaveKey() {
     int func_no;
     int result;
@@ -3533,6 +3645,7 @@ int MenuSaveKey() {
     }
     return SaveMenu.result;
 }
+#endif
 
 void DrawMenuSave(char *) {
     if (SaveMenu.texture_ready == 0) {
@@ -3716,7 +3829,11 @@ void DrawMenuSave(char *) {
     switch (SaveMenu.unk_0) {
         case 0:
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x46, 0x32, 0x3A, 0x27), CRect_i_(0x110, 0xD8, 0x3A, 0x28), alpha);
+#ifdef PAL
+            DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x50, 0x1E), CRect_i_(0x110, 0x100, 0x50, 0x1E), alpha);
+#else
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x4A, 0x1E), CRect_i_(0x110, 0x100, 0x4A, 0x1E), alpha);
+#endif
             return;
         case 2:
             DrawMainMenuIcon(0x46, 0x32, 5, 1, 0x80, alpha);

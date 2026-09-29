@@ -72,6 +72,7 @@ static BG_READ_INFO bg_read_info[32];
 static NAME_TREE *search_tree(NAME_TREE *node, char *name);
 static int CDRead(char *name, u_int *buffer, int *size);
 
+#ifndef PAL
 static void copy_data_head(DATA_HEADER *head, DATA_HEADER_READ *read) {
     head->name = read->name;
     head->offset = read->offset;
@@ -79,7 +80,15 @@ static void copy_data_head(DATA_HEADER *head, DATA_HEADER_READ *read) {
     head->sector = read->sector;
     head->sectors = read->sectors;
 }
+#else
+#pragma name_counter 283
+#endif
 
+#ifdef PAL
+static DATA_HEADER *SearchFile(char *name);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", SearchFile__FPc);
+#pragma name_counter 295
+#else
 static DATA_HEADER *SearchFile(char *name) {
     NAME_TREE *node;
     char *p;
@@ -108,6 +117,7 @@ static DATA_HEADER *SearchFile(char *name) {
         return 0;
     return node->data;
 }
+#endif
 
 void InitReadBG() {
     int i;
@@ -120,6 +130,13 @@ void InitReadBG() {
 
 /* The buffer goes to the drive rather than through the processor, so an address the drive cannot
    reach is fatal rather than slow, and one that is not on a 64-byte boundary is only reported. */
+#ifdef PAL
+int LoadFileBG(char *name, u_long128 *buffer, int *size);
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @229);
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @230__2);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", LoadFileBG__FPcP1Pi);
+#pragma name_counter 333
+#else
 int LoadFileBG(char *name, u_long128 *buffer, int *size) {
     BG_READ_INFO *info;
     DATA_HEADER *head;
@@ -160,6 +177,7 @@ int LoadFileBG(char *name, u_long128 *buffer, int *size) {
     info->sectors = head->sectors;
     return 1;
 }
+#endif
 
 BG_READ_INFO *GetReadBGFile(int no) {
     if (no < 0 || no >= 32)
@@ -239,6 +257,7 @@ void BreakReadBG() {
 
 /* A component is looked for in the whole subtree rather than among the node's own children, so a
    path whose middle components are spelled wrong still finds its entry. */
+#ifndef PAL
 static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     NAME_TREE *found;
 
@@ -253,7 +272,11 @@ static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     }
     return 0;
 }
+#else
+#pragma name_counter 404
+#endif
 
+#ifndef PAL
 static void add_tree(NAME_TREE *parent, NAME_TREE *node) {
     NAME_TREE *p;
 
@@ -270,10 +293,14 @@ static void add_tree(NAME_TREE *parent, NAME_TREE *node) {
         p = p->next;
     }
 }
+#else
+#pragma name_counter 415
+#endif
 
 /* The whole tree is built inside the one buffer it is handed: the nodes and their headers grow up
    from the bottom and the names down from the top, so nothing is ever freed and the two meeting is
    what the size report at the end is for. */
+#ifndef PAL
 static char *create_word_tree(char *head, int size, char *buff) {
     DATA_HEADER_READ *rec;
     NAME_TREE *parent;
@@ -344,9 +371,22 @@ static char *create_word_tree(char *head, int size, char *buff) {
     printf("file header size = %d\n", size - (top - alloc));
     return buff;
 }
+#else
+#pragma name_counter 444
+#endif
 
 /* The drive is asked for the data file itself only to learn where it starts; everything after this
    is read by sector from that base, which is why no path but the index's is ever opened. */
+#ifdef PAL
+void InitCDFile();
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @397);
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @398);
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @399);
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @400);
+INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @401);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", InitCDFile__Fv);
+#pragma name_counter 460
+#else
 void InitCDFile() {
     char buff[307200];
     sceCdlFILE file;
@@ -375,6 +415,7 @@ void InitCDFile() {
     sceClose(fd);
     create_word_tree(buff, sizeof header_buff, (char *) header_buff);
 }
+#endif
 
 void InitMemoryFile() {
 }
@@ -382,7 +423,11 @@ void InitMemoryFile() {
 int LoadFile(char *name, void *buffer, int *size) {
     if (!LoadFile2(name, buffer, size, 0)) {
         printf("File open error \"%s\"\n \n \n", name);
+#ifdef PAL
+        __assert("etc.cpp", 753, "FALSE");
+#else
         __assert("etc.cpp", 740, "FALSE");
+#endif
     }
     return 1;
 }
@@ -435,6 +480,11 @@ int LoadFile2(char *name, void *buffer, int *size, int mode) {
     return CDRead(path, (u_int *) buffer, size);
 }
 
+#ifdef PAL
+static int CDRead(char *name, u_int *buffer, int *size);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", CDRead__FPcPUiPi);
+#pragma name_counter 509
+#else
 static int CDRead(char *name, u_int *buffer, int *size) {
     DATA_HEADER *head;
     sceCdRMode mode;
@@ -456,6 +506,7 @@ static int CDRead(char *name, u_int *buffer, int *size) {
         *size = head->size;
     return 1;
 }
+#endif
 
 int WriteFile(char *name, void *buffer, int size) {
     int fd;

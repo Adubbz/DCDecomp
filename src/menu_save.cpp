@@ -732,6 +732,11 @@ int SaveMenuEffectFadeOut(void) {
     return 0;
 }
 
+#ifdef PAL
+static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_save", GetSaveBoardAlphaInfo__FiiRiRii);
+#pragma name_counter 3342
+#else
 static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha) {
     if (x < 0) {
         start_alpha = 0;
@@ -758,7 +763,16 @@ static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_a
         end_alpha = 0;
     }
 }
+#endif
 
+#ifdef PAL
+void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP8CTextureiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3410);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3419);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3431);
+#pragma name_counter 3461
+#else
 void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha) {
     int i;
     int draw_x;
@@ -928,7 +942,13 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
         }
     }
 }
+#endif
 
+#ifdef PAL
+void DrawNewFileTemplete(int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
+#pragma name_counter 3505
+#else
 void DrawNewFileTemplete(int x, int y, int alpha) {
     int start_alpha;
     int end_alpha;
@@ -979,6 +999,7 @@ void DrawNewFileTemplete(int x, int y, int alpha) {
     set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E),
                 CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &start, &start, &end, &end, 1);
 }
+#endif
 
 int InitExistData(void) {
     int port;
@@ -1108,6 +1129,16 @@ int MiniEventTexReadFlag;
  */
 float MiniCur[2];
 
+#ifdef PAL
+void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3699);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3700);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3701);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3702);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3686);
+#pragma name_counter 3606
+#else
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
     int i;
 
@@ -1164,6 +1195,7 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     MiniMenu.state = 2;
     MiniEventTexReadFlag = 0;
 }
+#endif
 
 static void EventItemSelectExit(void) {
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
@@ -1374,6 +1406,11 @@ s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
  */
 s8 kakudai_yoko_lang[7] = {0, 10, 10, 10, 10, 10, 10};
 
+#ifdef PAL
+static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
+#pragma name_counter 3761
+#else
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
     int height = kakudai_tate_lang[lang];
     int extra = kakudai_yoko_lang[lang];
@@ -1405,6 +1442,7 @@ static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha
     int bar_y = EventBarY;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, bar_y, 8, (int) bar_height), CRect_i_(0, 0xE4, 8, 0xC), alpha);
 }
+#endif
 
 static void EventItemSelectDraw(void) {
     s16 items[100];

@@ -394,6 +394,19 @@ void initialize_data() {
 }
 
 /* @ 0x1410B0 (0xC80 bytes) -- main */
+#ifdef PAL
+int main(int argc, const char **argv, const char **envp);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @876);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @877);
+INCLUDE_ASM("asm/pal/nonmatchings/main", main);
+INCLUDE_DATA("asm/pal/nonmatchings/main", depth$682);
+INCLUDE_DATA("asm/pal/nonmatchings/main", init$683);
+INCLUDE_DATA("asm/pal/nonmatchings/main", wt$685);
+INCLUDE_DATA("asm/pal/nonmatchings/main", init$686);
+INCLUDE_DATA("asm/pal/nonmatchings/main", init_flag$704);
+INCLUDE_DATA("asm/pal/nonmatchings/main", init$705);
+#pragma name_counter 1145
+#else
 int main(int argc, const char **argv, const char **envp) {
     /* Function-local statics: retail names ("depth$682", "init$683", ...)
      * confirmed via IDA's global list against this exact function; the
@@ -915,6 +928,7 @@ int main(int argc, const char **argv, const char **envp) {
         }
     }
 }
+#endif
 
 static int edit_map;
 static int sub_map;
@@ -928,6 +942,15 @@ void MapJump(int map_no, int event_no) {
     StartEventNo = event_no;
 }
 
+#ifdef PAL
+void MenuInit();
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @887);
+INCLUDE_ASM("asm/pal/nonmatchings/main", MenuInit__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$882);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @883);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @884);
+#pragma name_counter 1151
+#else
 void MenuInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
                                            {"img/ankfont.img"},
@@ -949,6 +972,7 @@ void MenuInit() {
     DebugFont.alpha = 64;
     GamePad.SetAutoRepeat(61440, 25, 3);
 }
+#endif
 
 /**
  * Draws and operates the developer's top-level map and mode selector.
@@ -1162,6 +1186,16 @@ static int check_cancel;
 static int taiken_cnt;
 static int taiken_start;
 
+#ifdef PAL
+void MemCheckInit();
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @1020);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @1021);
+INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckInit__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/main", @1009);
+INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$1013);
+INCLUDE_DATA("asm/pal/nonmatchings/main", init$1014);
+#pragma name_counter 1277
+#else
 void MemCheckInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
                                            {"img_1/memory.img"},
@@ -1181,7 +1215,15 @@ void MemCheckInit() {
     taiken_cnt = 0;
     taiken_start = 0;
 }
+#endif
 
+#ifdef PAL
+int MemCheckLoop();
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @1075);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @1076);
+INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckLoop__Fv);
+#pragma name_counter 1304
+#else
 int MemCheckLoop() {
     DebugFont.len = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
@@ -1240,6 +1282,7 @@ int MemCheckLoop() {
         check_cancel = 0;
     return 0;
 }
+#endif
 
 void InitSave() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#448#4", 1},

@@ -286,7 +286,7 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
  * Resets a menu message window to its empty default layout.
  */
 static inline void ResetMenuMes(ClsMes *mes) {
-    mes->text_columns = 0x46;
+    mes->text_columns = MES_WIN_COLUMNS;
     mes->text_rows = 10;
     mes->text_len = 0;
     mes->text_width = 0;
@@ -528,13 +528,19 @@ void AllFillBoxForMenu(unsigned char r, unsigned char g, unsigned char b, unsign
     if (alpha < 0 || alpha > 0xFF) {
         alpha = 0x80;
     }
-    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), r, g, b, alpha);
+    MGFillBox(CRect_i_(0, 0, 0x2800, (SCREEN_HEIGHT << 4)), r, g, b, alpha);
 }
 
 void AllFadeForMenu(int alpha) {
     AllFillBoxForMenu(0, 0, 0, (unsigned char) alpha);
 }
 
+#ifdef PAL
+void FrameImageDraw(int brightness, int alpha);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_draw", @764__4);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_draw", FrameImageDraw__Fii);
+#pragma name_counter 810
+#else
 void FrameImageDraw(int brightness, int alpha) {
     sceGsTexa texa;
     CTexture *texture = TexManager.GetTexture("frame_image", -1);
@@ -550,6 +556,7 @@ void FrameImageDraw(int brightness, int alpha) {
         MGSetGsTEXA(NULL);
     }
 }
+#endif
 
 void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
     set2DSpriteC4(GetVif1Packet(), rect, top_left, top_right, bottom_left, bottom_right);
@@ -658,7 +665,7 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     if (left_width != 0) {
         right.a = 0x80;
         left.a = 0x80;
-        set2DSprite(GetVif1Packet(), &texture, CRect_i_(0, 0, left_x, 0x1C0), CRect_i_(0, 0, left_x, 0x1BF), &left, &right,
+        set2DSprite(GetVif1Packet(), &texture, CRect_i_(0, 0, left_x, SCREEN_HEIGHT), CRect_i_(0, 0, left_x, (SCREEN_HEIGHT - 1)), &left, &right,
                     &left, &right, 1);
     }
     left.a = 0x80;
@@ -666,20 +673,20 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     if (dim == 1) {
         right.a = 0x40;
     }
-    set2DSprite(GetVif1Packet(), &texture, CRect_i_(left_x, 0, left_width, 0x1C0), CRect_i_(left_x, 0, left_width, 0x1BF),
+    set2DSprite(GetVif1Packet(), &texture, CRect_i_(left_x, 0, left_width, SCREEN_HEIGHT), CRect_i_(left_x, 0, left_width, (SCREEN_HEIGHT - 1)),
                 &left, &right, &left, &right, 1);
     left.a = 0;
     right.a = 0x80;
     if (dim == 1) {
         left.a = 0x40;
     }
-    set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x, 0, right_width, 0x1C0),
-                CRect_i_(right_x, 0, right_width, 0x1BF), &left, &right, &left, &right, 1);
+    set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x, 0, right_width, SCREEN_HEIGHT),
+                CRect_i_(right_x, 0, right_width, (SCREEN_HEIGHT - 1)), &left, &right, &left, &right, 1);
     if (right_width != 0) {
         right.a = 0x80;
         left.a = 0x80;
-        set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, 0x1C0),
-                    CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, 0x1BF), &left, &right, &left, &right, 1);
+        set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, SCREEN_HEIGHT),
+                    CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, (SCREEN_HEIGHT - 1)), &left, &right, &left, &right, 1);
     }
     MGSetGsTEXA(NULL);
 }
@@ -2541,8 +2548,14 @@ int ItemDataToHaveCopy(int item_no) {
     return vol;
 }
 
+#ifdef PAL
+void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_draw", DrawFullSizePicture__FP8CTextureiii);
+#pragma name_counter 2044
+#else
 void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha) {
     if (texture != NULL) {
         DrawMenu2DSprite(texture, CRect_i_(x, y, MenuDispRc.width, MenuDispRc.height), MenuDispRc, alpha);
     }
 }
+#endif

@@ -200,6 +200,25 @@ static CMapObject OP_ToanMapObj;
    has been on screen long enough, which is how a raised eyebrow outlasts the word that raised it.
    The mouth is driven from the script's own clock, a new frame picked at random every sixth
    hundredth of a second left on the line's timer while the actor is talking. */
+#ifdef PAL
+void FaceChange(int no);
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", FaceChange__Fi);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1150__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", face$1151);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1152__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1153__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1154__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1155__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1156__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1157__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1158__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1159__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1160__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1161__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1162__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @1163__2);
+#pragma name_counter 124
+#else
 void FaceChange(int no) {
     sceGifTag giftag = {0, 1, 0, 0, 0, 0, 1, SCE_GIF_PACKED_AD};
     static FACE_INFO face[8] = {
@@ -355,6 +374,7 @@ void FaceChange(int no) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+#endif
 
 void LoadCharaData(int kind, int no) {
     char *name[6][2] = {
@@ -488,6 +508,45 @@ void OpB_LoadDataBG2() {
    tenths of a world unit and a heading in degrees, one row per piece of scenery. The rows with no
    model of their own are further copies of the row above them, which is why the frame is only
    reloaded where a name is given. */
+#ifdef PAL
+void OpB_InitProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_InitProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @351__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @390__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @410__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @522__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @523__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @524__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @525__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @526__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @527__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @528__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @529__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @530__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @531__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @532__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @533__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @534__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @535__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @536__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @537__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @538__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @539__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @540__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @541__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @542__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @543__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @545__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @547__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @548__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @549__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @550__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @551__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @553__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @554__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @555__3);
+#pragma name_counter 452
+#else
 void OpB_InitProcess() {
     LOADTEXTURE_INFO2 tex[] = {
         {"#blender#640#224#4", 0, 0},
@@ -798,6 +857,7 @@ void OpB_InitProcess() {
     VolFade = 0;
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The second half of the scene, which starts when the camera cuts to Toan's house. Everything the
    first half loaded is thrown away and the pack the background read left in memory is unpacked
@@ -806,6 +866,30 @@ void OpB_InitProcess() {
    loaded one at a time rather than through a table because each is followed by set-up of its own —
    Toan's mother has a frame turned off, Toan himself carries the cloth the wind drives, and the
    second Toan is the one the door animation is timed against. */
+#ifdef PAL
+void OpB_InitProcess2();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_InitProcess2__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @558__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @577__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @578__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @579__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @580__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @581__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @582__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @583__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @584__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @585__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @586__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @587__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @588__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @589__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @590__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @591__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @592__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @594__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @596__5);
+#pragma name_counter 480
+#else
 void OpB_InitProcess2() {
     LOADTEXTURE_INFO2 tex[] = {
         {"#blender#640#224#4", 0, 0},
@@ -949,12 +1033,21 @@ void OpB_InitProcess2() {
     CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.1));
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The scene's per-tick motion. Four of the actors are told what the script last asked of them —
    the loop is over the four the scene animates rather than over all of them — and a motion that
    has run past its last key falls through to whatever motion was queued behind it. Then the three
    models the camera's own frame tree carries drive three more actors: each is found by name in the
    camera model, and its world transform becomes that actor's position and heading. */
+#ifdef PAL
+void OpB_MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_MotionProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", camera$619);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", init$620);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @611__4);
+#pragma name_counter 552
+#else
 void OpB_MotionProcess() {
     for (int i = 8; i < 12; i++) {
         if (CScript__2.obj[i].disp) {
@@ -1039,6 +1132,7 @@ void OpB_MotionProcess() {
         }
     }
 }
+#endif
 
 /* The scene's per-tick sound. Two of the actors' footfalls are played from their own positions
    rather than from a track, which is why each is a window on the actor's motion frame with a wait
@@ -1046,6 +1140,16 @@ void OpB_MotionProcess() {
    the wait keeps a stutter in the motion from playing the step twice. Which of the two samples a
    footfall takes is decided by how far the camera's motion has run, because the ground changes
    under the actor part way through the scene. */
+#ifdef PAL
+void OpB_SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_SoundProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", wait$674);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", init$675);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", wait$705);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", init$706);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @693__2);
+#pragma name_counter 602
+#else
 void OpB_SoundProcess() {
     if (CScript__2.scene == 1) {
         float time = Cam__2[SceneNp__2].motion_type.state.time;
@@ -1119,12 +1223,21 @@ void OpB_SoundProcess() {
         OpSetVolPanSE(position, 100.0f, 200.0f, 14, 40, 39);
     }
 }
+#endif
 
 /* The scene's per-tick drawing, in the order the frame is built: the world, then the fires that
    are lights rather than models, then the actors' shadows onto the one buffer that holds them all,
    then the actors themselves, and last the depth of field the two outdoor scenes take. The near
    plane is pulled in to half a unit because the camera passes through the scenery, and the far one
    is the largest the Z buffer holds. */
+#ifdef PAL
+void OpB_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @806__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @807__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", CFire__2);
+#pragma name_counter 680
+#else
 void OpB_DrawProcess() {
     RenderInfo *info = &mgRenderInfo;
 
@@ -1260,6 +1373,7 @@ void OpB_DrawProcess() {
         DepthOfField(dof, 2, 64, 0);
     }
 }
+#endif
 
 /**
  * The village sign's one animated texture. The animation is a strip of eight 64-pixel frames in a

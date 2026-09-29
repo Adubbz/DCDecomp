@@ -54,14 +54,14 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(first_source.x << 4, first_source.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00,
-                                      (first_destination.y << 4) + 0x7900, 0, 0));
+                                      (first_destination.y << 4) + GS_Y_OFFSET, 0, 0));
     // This pass takes the bottom texel row from x rather than y.
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((first_source.x + first_source.width) << 4,
                                    (first_source.x + first_source.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00,
-                                      ((first_destination.y + first_destination.height) << 4) + 0x7900,
+                                      ((first_destination.y + first_destination.height) << 4) + GS_Y_OFFSET,
                                       0, 0));
 
     sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x156);
@@ -70,13 +70,13 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(first_source.x << 4, first_source.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00,
-                                      (first_destination.y << 4) + 0x7900, 0, 0));
+                                      (first_destination.y << 4) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((first_source.x + first_source.width) << 4,
                                    (first_source.y + first_source.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00,
-                                      ((first_destination.y + first_destination.height) << 4) + 0x7900,
+                                      ((first_destination.y + first_destination.height) << 4) + GS_Y_OFFSET,
                                       0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
 
@@ -96,13 +96,13 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(second_source.x << 4, second_source.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2((second_destination.x << 4) + 0x6C00,
-                                      (second_destination.y << 4) + 0x7900, 0, 0));
+                                      (second_destination.y << 4) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((second_source.x + second_source.width) << 4,
                                    (second_source.y + second_source.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((second_destination.x + second_destination.width) << 4) + 0x6C00,
-                                      ((second_destination.y + second_destination.height) << 4) + 0x7900,
+                                      ((second_destination.y + second_destination.height) << 4) + GS_Y_OFFSET,
                                       0, 0));
 
     sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
@@ -189,10 +189,10 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
         sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x116);
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(left, (source.y + top) << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(0x6C00, (y << 4) + 0x7900, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(0x6C00, (y << 4) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(right, (source.y + bottom) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                         SCE_GS_SET_XYZF2((source.width << 4) + 0x6C00, ((y + 2) << 4) + 0x7900, 0, 0));
+                         SCE_GS_SET_XYZF2((source.width << 4) + 0x6C00, ((y + 2) << 4) + GS_Y_OFFSET, 0, 0));
         top = bottom;
         count++;
         if (count >= 8) {
@@ -217,13 +217,13 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texture_source.x << 4, texture_source.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2((texture_destination.x << 4) + 0x6C00,
-                                      (texture_destination.y << 4) + 0x7900, 0, 0));
+                                      (texture_destination.y << 4) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((texture_source.x + texture_source.width) << 4,
                                    (texture_source.y + texture_source.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((texture_destination.x + texture_destination.width) << 4) + 0x6C00,
-                                      ((texture_destination.y + texture_destination.height) << 4) + 0x7900,
+                                      ((texture_destination.y + texture_destination.height) << 4) + GS_Y_OFFSET,
                                       0, 0));
 
     sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,

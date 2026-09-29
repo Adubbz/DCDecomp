@@ -94,6 +94,12 @@ void GlobalNameInit(void) {
  * @address 0x2384A0
  * @size 0x190
  */
+#ifdef PAL
+void InitNameRegist(int character, int texture_block, u_long128 *buffer);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @347__3);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", InitNameRegist__FiiP1);
+#pragma name_counter 82
+#else
 void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     StartReadBG();
     if (buffer == NULL) {
@@ -130,6 +136,7 @@ void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     NameDefaultSet(NameSelect.chara_no);
     NameSelect.name_pos = 0;
 }
+#endif
 
 /**
  * Gives the name-entry screen's textures back and closes it.
@@ -153,6 +160,11 @@ void ExitNameEnterFunc() {
  * @address 0x2386A0
  * @size 0xBC
  */
+#ifdef PAL
+CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &cell_y);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", GetNameTextureInfo__FPP8CTextureiRiRi);
+#pragma name_counter 94
+#else
 CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &cell_y) {
     CTexture *texture;
 
@@ -173,6 +185,7 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
     cell_y = (code / 10) * 0x16;
     return texture;
 }
+#endif
 
 /**
  * Draws a party member's name.
@@ -181,6 +194,12 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
  * @address 0x238760
  * @size 0x118
  */
+#ifdef PAL
+void DrawCharaName(int character, int x, int y, int brightness, int blend_mode);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaName__Fiiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @367__4);
+#pragma name_counter 109
+#else
 void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
     int draw_x = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
@@ -194,6 +213,7 @@ void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) 
         draw_x += 22;
     }
 }
+#endif
 
 /**
  * Draws the four corners of the frame around the name being entered, pulling them inward as the frame counter cycles.
@@ -226,6 +246,13 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
  * @address 0x238A70
  * @size 0x628
  */
+#ifdef PAL
+void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @483__3);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @419__2);
+#pragma name_counter 202
+#else
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     int left;
     int top;
@@ -316,6 +343,20 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
             break;
     }
 }
+#endif
+
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @512__4);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawEuroSpecialFont__Fiiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_euro_codetbl);
+#pragma name_counter 202
+#endif
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", Get_NameTemp_PutX__Fii);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @513__3);
+#pragma name_counter 202
+#endif
 
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
@@ -335,6 +376,13 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
  * @address 0x2390A0
  * @size 0x930
  */
+#ifdef PAL
+static void DrawNameTemplete(int x, int y, int color, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_kigoutbl);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @516__3);
+#pragma name_counter 335
+#else
 static void DrawNameTemplete(int x, int y, int color, int alpha) {
     int mode = NameSelect.input_mode;
     int tab = NameSelect.pushed_tab;
@@ -523,6 +571,7 @@ static void DrawNameTemplete(int x, int y, int color, int alpha) {
             break;
     }
 }
+#endif
 
 /**
  * Reports whether two names are the same.
@@ -588,6 +637,18 @@ int CheckName() {
  * @address 0x239BA0
  * @size 0xC9C
  */
+#ifdef PAL
+void NameEnterDraw(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @803);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", NameEnterDraw__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @671__2);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @672__2);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @698__2);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @700__2);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", lct$730);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", init$731);
+#pragma name_counter 492
+#else
 void NameEnterDraw(void) {
     int language;
     int chara_no;
@@ -823,6 +884,7 @@ void NameEnterDraw(void) {
         setbilinear(1);
     }
 }
+#endif
 
 /**
  * Moves the cursor across the keyboard and enters the character it settles on.
@@ -831,6 +893,16 @@ void NameEnterDraw(void) {
  * @address 0x23A840
  * @size 0x1F28
  */
+#ifdef PAL
+s32 NameEnterKey(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1328);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1329);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", NameEnterKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @1012);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", up_or_down$956);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", init$957);
+#pragma name_counter 1052
+#else
 s32 NameEnterKey(void) {
     int language;
     int chara_no;
@@ -1576,6 +1648,7 @@ s32 NameEnterKey(void) {
     ComMenuSePlay(se);
     return 0;
 }
+#endif
 
 /**
  * Gives one party member their default name for the chosen language.
@@ -1652,6 +1725,11 @@ static int GetFontLRTumeW(int index, int left_code, int code) {
  * @address 0x23C900
  * @size 0x250
  */
+#ifdef PAL
+void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int sort);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", CharaSelectNameDraw2__FiiPsPP8CTexturei);
+#pragma name_counter 1112
+#else
 void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int sort) {
     if (name == NULL) {
         return;
@@ -1698,6 +1776,7 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
         put_x -= 0x14 - step;
     }
 }
+#endif
 
 /**
  * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
@@ -1812,6 +1891,14 @@ void InitOpeningBook(u_long128 *buffer, int *blocks) {
  * @address 0x23CF10
  * @size 0x664
  */
+#ifdef PAL
+int OpeningBookKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1539);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1540);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", OpeningBookKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @1493__2);
+#pragma name_counter 1217
+#else
 int OpeningBookKey() {
     int result;
 
@@ -1833,7 +1920,7 @@ int OpeningBookKey() {
                 OpeningReadBuf = MenuCalcBufAlignment(OpeningReadBuf);
                 short *mes = (short *) GetPackFile((u_int *) read->buffer, "opmes.bin", NULL);
 
-                CommonMenuMes2.text_columns = 0x46;
+                CommonMenuMes2.text_columns = MES_WIN_COLUMNS;
                 CommonMenuMes2.text_rows = 10;
                 CommonMenuMes2.text_len = 0;
                 CommonMenuMes2.text_width = 0;
@@ -1944,6 +2031,7 @@ int OpeningBookKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Draws the storybook page by page.

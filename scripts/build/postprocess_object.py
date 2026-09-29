@@ -37,9 +37,16 @@ def local_static_aliases(elf, source):
     # and pairing those again would rename one unit's static to another's.
     compiled_groups = defaultdict(list)
     spliced = set()
+    # A datum an INCLUDE_DATA marker supplies is defined under retail's name
+    # already, like the statics a spliced function refers to.
+    supplied = set(re.findall(r'^\s*INCLUDE_DATA\([^,]+,\s*([^)\s]+)\s*\)',
+                              region.active_text((ROOT / source).read_text(encoding="utf-8")), re.M))
     for symbol in elf.symtab.symbols:
         match = LOCAL_STATIC.match(symbol.name)
         if not match:
+            continue
+        if symbol.name in supplied:
+            spliced.add(symbol.name)
             continue
         if symbol.st_shndx:
             compiled_groups[match.group(1)].append(symbol.name)
@@ -225,6 +232,12 @@ def export_constants(path, names, parser, assembly_constants=(),
         matches = [symbol for symbol, body in compiled.items()
                    if symbol not in reserved and body and wanted.startswith(body)]
         if not matches and name in assembly_constants:
+            continue
+        # Another release compiles NTSC's source around the functions it takes
+        # from its own assembly; a constant only those use is not emitted.
+        if not matches and region.NAME != region.NTSC:
+            print(f"postprocess_object.py: {path}: no compiled constant for {name!r}; "
+                  f"left to the assembly", file=sys.stderr)
             continue
         # A shorter constant is a prefix of every longer one that begins with
         # the same bytes -- the empty string is a prefix of a zero vector -- so
@@ -626,6 +639,27 @@ def share_constants(elf, exported, imported, parser, source_only=False):
             symbol.st_size = 0
 
 
+def move_colliding_constants(path, names):
+    """Rename the compiler's own `@N` constants that share a name retail uses
+    for something else.
+
+    Only another release meets this: the unit's invented names follow NTSC's
+    numbering, which is also NTSC's retail naming, while this release's retail
+    constants were numbered by its own source. A compiled constant under a name
+    the unit exports or splices in would otherwise pass for that constant.
+    """
+    elf = Elf(path.read_bytes())
+    moved = False
+    for symbol in elf.symtab.symbols:
+        if (symbol.bind == 0 and symbol.name in names and symbol.name.startswith("@")
+                and 0 < symbol.st_shndx < len(elf.sections)):
+            symbol.name += "$local"
+            symbol.st_name = elf.strtab.add_symbol(symbol.name)
+            moved = True
+    if moved:
+        path.write_bytes(elf.pack())
+
+
 def coalesced_functions(elf):
     """The constructors MWCC wrote itself, which have to stay global.
 
@@ -731,6 +765,9 @@ def main():
     source_text = region.active_text((ROOT / args.source).read_text(encoding="utf-8"))
     assembly_constants = set(re.findall(
         r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
+    if region.NAME != region.NTSC:
+        move_colliding_constants(args.object, (set(fixups.get("rodata_exports", [])) | assembly_constants)
+                                 - set(fixups.get("symbols", {}).values()))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
                      assembly_constants, fixups.get("symbols", {}).values())
     if deferred_sections:

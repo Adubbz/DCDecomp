@@ -1,7 +1,10 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
+#ifdef PAL
+#else
 #pragma argument_flag_ones 0, 207, 208, 215, 626
+#endif
 
 #include "common.h"
 
@@ -697,6 +700,40 @@ void EdInitMesParam() {
 /**
  * Builds every buffer, camera, message window and map the editor loop runs on.
  */
+#ifdef PAL
+int EditInit(void *);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @714);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @715);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @716);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @717);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @718);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @719);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @720);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @721);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @722);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @723);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @724__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @725__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @726__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @727__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @730__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @731__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @732__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @733__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @734__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @735__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @736__2);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditInit__FPv);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @625);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @639__2);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @640__2);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @656);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$654);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", debug_flag_set$664);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$665);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", name_mes$653);
+#pragma name_counter 743
+#else
 int EditInit(void *) {
     char map_path[0x80];
     char save_path[0x80];
@@ -1061,6 +1098,7 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
+#endif
 
 /**
  * Returns the sum of the editor category indices from zero through nine.
@@ -1080,6 +1118,33 @@ int cat_end() {
  * @address 0x1797E0
  * @size 0x1FE8
  */
+#ifdef PAL
+int EditLoop(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1618);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1619);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1620);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1621);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1622);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1623);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditLoop__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", end_count$767);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$768);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", top$798);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$799);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", select$801);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$802);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", cur$804);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$805);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", debug_flag$1047);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$1048);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", event_next$1100);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$1101);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", old_mode$1129);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", end_code$1144);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$1145);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", menu$807);
+#pragma name_counter 1155
+#else
 int EditLoop(void) {
     goto_return_menu = 0;
     if (EdPadDown(0x800, 4) != 0) {
@@ -1806,6 +1871,7 @@ int EditLoop(void) {
     }
     return 0;
 }
+#endif
 
 /**
  * Draws the editor's world for one frame.
@@ -1814,6 +1880,19 @@ int EditLoop(void) {
  * @address 0x17B7D0
  * @size 0x11D8
  */
+#ifdef PAL
+void MainDraw();
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1850);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1851);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", MainDraw__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1640);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1645);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1648);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1737);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1767);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1768);
+#pragma name_counter 1351
+#else
 void MainDraw() {
     ED_EVENT_INFO *event;
     int shadow_on;
@@ -2219,6 +2298,7 @@ void MainDraw() {
         clear_screen = 0;
     }
 }
+#endif
 
 /**
  * Draws the editor's map cursor, and the plate that names the part under it.
@@ -2235,7 +2315,7 @@ void ParamDraw() {
     CRect_i_ cursor(screen[0] - 10, screen[1] - 32, 32, 32);
     set2DSprite(Vif1Packet, TexManager.GetTexture("syst08", -1), cursor, 0, 0);
     screen[0] = 320;
-    screen[1] = 224;
+    screen[1] = SCREEN_HALF_HEIGHT;
     if (NowFocusParts != NULL && DrawPartsNameCount == 0) {
         int names = PartsNameNum;
         if (names > 0) {
@@ -2387,6 +2467,12 @@ public:
     }
 };
 
+#ifdef PAL
+void DrawDay();
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2202);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", DrawDay__Fv);
+#pragma name_counter 1589
+#else
 void DrawDay() {
     if (draw_day_flag != 0) {
         int week;
@@ -2548,6 +2634,7 @@ void DrawDay() {
         }
     }
 }
+#endif
 
 /**
  * Draws the editor's clock, day display, event cursors, and pause overlay.
@@ -2567,7 +2654,7 @@ void DrawSysGra() {
             fade.x = 0;
             fade.y = 0;
             fade.width = 0x2800;
-            fade.height = 0xe00;
+            fade.height = (SCREEN_HALF_HEIGHT << 4);
             MGFillBox(fade, 0, 0, 0, 0x40);
             setbilinear(0);
 
@@ -2578,7 +2665,11 @@ void DrawSysGra() {
             texel.width = 0x80;
             texel.height = 0x28;
             screen.x = 0x100;
+#ifdef PAL
+            screen.y = 0xdc;
+#else
             screen.y = 0xcc;
+#endif
             screen.width = 0x80;
             screen.height = 0x28;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture(pause_texture, -1), screen, texel,
@@ -3639,6 +3730,36 @@ u_int *parts_read_buffer;
  * @address 0x180C00
  * @size 0x878
  */
+#ifdef PAL
+int LoadTexture();
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2838);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2888);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2889);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2890);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2891);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2892);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2893);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2894);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2895);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2896);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2897);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2898);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2899);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2900);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2901);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2902);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2903);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2904);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2905);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2906);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2907);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", LoadTexture__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2826);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2827);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2830);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2841);
+#pragma name_counter 2199
+#else
 int LoadTexture() {
     int entered;
     int image;
@@ -3797,11 +3918,17 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
+#endif
 
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
  */
+#ifdef PAL
+void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EdLoadMainChara__FPcPcP14CDataAlloc2_1_);
+#pragma name_counter 2207
+#else
 void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     int i;
     if (arena == NULL) {
@@ -3823,6 +3950,7 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     MainChara.SetPosition(origin, origin, origin);
     Chara = &MainChara;
 }
+#endif
 
 /**
  * Reads the editor map's ground, areas and grid.
@@ -4490,7 +4618,7 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
         float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
 
         x[i] = (int) turned_x + (screen.x << 4) + 27648;
-        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + 30976;
+        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + GS_Y_OFFSET;
     }
 
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
@@ -4631,8 +4759,16 @@ int CheckEventPoint(ED_EVENT_POINT *point, float time) {
 }
 
 /* The order the static initialiser materialises each camera's float arguments in. */
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 1722, 1730, 1738, 1746, 1763, 1769, 1877, 1907, 1909, 1910
+#pragma argument_flag_ones 1912, 1917, 1919, 1920, 1922, 1927, 1929, 1930, 1932, 1937
+#pragma argument_flag_ones 1939, 1940, 1942, 1947, 1949, 1950, 1952, 1957, 1959, 1960
+#pragma argument_flag_ones 1962
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 3504, 3512, 3520, 3528, 3545, 3551, 3659, 3689, 3691, 3692
 #pragma argument_flag_ones 3694, 3699, 3701, 3702, 3704, 3709, 3711, 3712, 3714, 3719
 #pragma argument_flag_ones 3721, 3722, 3724, 3729, 3731, 3732, 3734, 3739, 3741, 3742
 #pragma argument_flag_ones 3744
+#endif
