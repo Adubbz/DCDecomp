@@ -88,20 +88,42 @@ if NAME not in REGIONS:
     raise SystemExit(f"region: DCDECOMP_REGION={NAME} is not one of {', '.join(REGIONS)}")
 CURRENT = REGIONS[NAME]
 
-# The directory every region-specific tree names the release by.
-DIR = NAME.lower()
-# The disc image, and the directory its checksums and extracted files live in.
-ISO = f"rom/Dark Cloud ({NAME}).iso"
-ROM = f"rom/{DIR}"
-EXTRACTED = f"{ROM}/extracted"
-EXTRACTED_ISO = f"{EXTRACTED}/iso"
-# The split configuration, the linker script and the split itself.
-CONFIG = f"config/{DIR}"
-LCF = f"{CONFIG}/SCUS_971.11.lcf"
-ASM = f"asm/{DIR}"
-# The CMake binary directory, and the disc image mastered into it.
-BUILD = f"build/{DIR}"
-BUILT_ISO = f"Dark Cloud ({NAME} Build).iso"
+
+
+def paths(name):
+    """Where the named release's files live, for a script that reads both."""
+    directory = name.lower()
+    rom = f"rom/{directory}"
+    config = f"config/{directory}"
+    return {
+        # The directory every region-specific tree names the release by.
+        "dir": directory,
+        # The disc image, and the directory its checksums and extracted files live in.
+        "iso": f"rom/Dark Cloud ({name}).iso",
+        "rom": rom,
+        "extracted": f"{rom}/extracted",
+        "extracted_iso": f"{rom}/extracted/iso",
+        # The split configuration, the linker script and the split itself.
+        "config": config,
+        "lcf": f"{config}/SCUS_971.11.lcf",
+        "asm": f"asm/{directory}",
+        # The CMake binary directory, and the disc image mastered into it.
+        "build": f"build/{directory}",
+        "built_iso": f"Dark Cloud ({name} Build).iso",
+    }
+
+
+_PATHS = paths(NAME)
+DIR = _PATHS["dir"]
+ISO = _PATHS["iso"]
+ROM = _PATHS["rom"]
+EXTRACTED = _PATHS["extracted"]
+EXTRACTED_ISO = _PATHS["extracted_iso"]
+CONFIG = _PATHS["config"]
+LCF = _PATHS["lcf"]
+ASM = _PATHS["asm"]
+BUILD = _PATHS["build"]
+BUILT_ISO = _PATHS["built_iso"]
 OVERLAY_ORIGIN = CURRENT["overlay_origin"]
 SECTIONS = CURRENT["sections"]
 LITERAL_POOL = CURRENT["literal_pool"]
