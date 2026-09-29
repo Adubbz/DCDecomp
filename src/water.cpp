@@ -50,11 +50,11 @@ static void Trans_AddCell(float *output, float *position) {
     }
 }
 
-void CWater::SetParam(float speed, float loss, float param_2, float param_3) {
+void CWater::SetParam(float speed, float loss, float scale, float shift) {
     wave_speed = speed;
     damping = loss;
-    unk_09C = param_2;
-    unk_0A0 = param_3;
+    height_scale = scale;
+    distortion = shift;
 }
 
 void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha) {
@@ -63,7 +63,6 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
     color[2] = blue;
     color[3] = alpha;
 }
-#ifdef NON_MATCHING
 int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     float *above;
     int word;
@@ -74,7 +73,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     sceVu0FVECTOR *out;
     sceVu0FVECTOR *uv;
     CTexture *texture;
-    int remaining;
+    int j;
     float *below;
     float *cell_above;
     float *cell;
@@ -91,7 +90,6 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     u_int *tag;
     u_long128 *xyz;
     u_long128 *rgbaq;
-    int j;
     u_long128 *st;
     word = 0;
     sceGsTex0 tex0;
@@ -133,6 +131,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         position[2] = vertex[0][2] + fi * row_step[2];
         h = &height[i * columns];
         above = h - columns;
+        below = h + columns; // Unused here, but part of the retail source.
         if (i == 0) {
             above = h;
         }
@@ -140,9 +139,9 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         uv = uvs[i];
         for (j = 0; j < columns; j++) {
             Trans_AddCell(*out++, position);
-            position[1] = *h * unk_09C;
-            (*uv)[0] = uv_base[0] + unk_0A0 * (*above - *h);
-            (*uv)[1] = uv_base[1] + unk_0A0 * (h[0] - h[1]);
+            position[1] = *h * height_scale;
+            (*uv)[0] = uv_base[0] + distortion * (*above - *h);
+            (*uv)[1] = uv_base[1] + distortion * (h[0] - h[1]);
             uv++;
             h++;
             above++;
@@ -152,14 +151,16 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     texture = TexManager.GetTexture(TexManager.GetTextureHandle("work", -1));
     tex0 = *(sceGsTex0 *) &texture->tex0;
     tex0.bits.tcc = 0;
-    if (unk_0A4 != 0) {
+    if (tags_built != 0) {
         word += 16;
     } else {
         word += SetTEX0(output, *(u_long *) &tex0, 0);
     }
 
+    // Each row pair becomes triangle strips of at most 27 columns; j counts the
+    // columns still to be emitted.
     for (i = 0, fi = 0.0f; i < rows - 1; i++, fi += 1.0f) {
-        remaining = columns;
+        j = columns;
         cell = &height[i * columns];
         below = cell + columns;
         cell_above = cell - columns;
@@ -170,18 +171,18 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         bottom = (u_long128 *) vertices[i + 1];
         uv_top = (u_long128 *) uvs[i];
         uv_bottom = (u_long128 *) uvs[i + 1];
-        while (remaining > 0) {
+        while (j > 0) {
             count = 27;
-            if (remaining < 27) {
-                count = remaining;
+            if (j < 27) {
+                count = j;
             }
             vertex_count = count * 2;
             qwc = 0;
-            if (unk_0A4 == 0) {
+            if (tags_built == 0) {
                 *(u_long128 *) &output[word] = *(u_long128 *) unpack;
             }
             unpack_word = word + 3;
-            if (unk_0A4 != 0) {
+            if (tags_built != 0) {
                 word += 8;
                 qwc++;
             } else {
@@ -194,7 +195,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
                 word += 8;
                 qwc++;
             }
-            if (unk_0A4 == 0) {
+            if (tags_built == 0) {
                 output[word] = vertex_count;
             }
             word += 4;
@@ -220,7 +221,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
             uv_bottom--;
             word += count * 24;
             qwc += count * 6;
-            if (unk_0A4 != 0) {
+            if (tags_built != 0) {
                 word += 4;
             } else {
                 output[unpack_word] |= qwc << 16;
@@ -232,9 +233,9 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
                 }
                 word += 4;
             }
-            remaining -= 27;
+            j -= 27;
         }
-        if (unk_0A4 != 0) {
+        if (tags_built != 0) {
             word += 4;
         } else {
             *(u_long128 *) &output[word] = *(u_long128 *) end;
@@ -244,10 +245,6 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     visual.vu_size = word >> 2;
     return visual.vu_size;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/water", CreateVUData__6CWaterFPUiP10RenderInfo);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/water", @345__2);
 extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
     if (water->CheckClip() != 0) {
@@ -367,14 +364,14 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     height = height_a;
 
     RenderInfo info;
-    unk_0A4 = 0;
+    tags_built = 0;
     arena->Align64();
     packet[1] = (u_int *) (arena->base + arena->used * 16);
     int packet_quads = CreateVUData(packet[1], &info);
     arena->Alloc(packet_quads);
     packet[2] = (u_int *) arena->Alloc64(packet_quads);
     CreateVUData(packet[2], &info);
-    unk_0A4 = 1;
+    tags_built = 1;
 }
 CWater::CWater(void) {
     rows = 0;
@@ -388,6 +385,6 @@ CWater::CWater(void) {
     color[3] = 0x80;
     wave_speed = 0.1f;
     damping = 0.015f;
-    unk_09C = 0.0f;
-    unk_0A0 = 0.0f;
+    height_scale = 0.0f;
+    distortion = 0.0f;
 }

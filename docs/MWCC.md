@@ -136,6 +136,19 @@ register means a missing interference edge, never a preference.
 * Every vreg-to-vreg copy is folded, so a surviving `move` came from a call
   argument or a return value, not an assignment.
 * A pointer local live across a call goes callee-saved.
+* **A node at exactly K when simplify reaches it** colours a pass late instead
+  of in reverse number order, which pushes it *down* the registers (`&row_step[1]`
+  at `$v1` where retail has `$t2`, and every temporary around it shifted).
+  Its degree can only be cut by a neighbour numbered *below* it and removed
+  first. Optimizer temporaries number below every declared local, so the lever
+  is a second occurrence of an operand the header already scales -- a **dead
+  assignment** does it without emitting anything: `below = h + columns;` beside
+  `above = h - columns;` makes `columns * 4` a CSE temp, the store is deleted,
+  and the temp's removal takes the address node under K (`CWater::CreateVUData`).
+* **A counter reused as a later loop's countdown** is one node whose colour
+  comes from the loop with more pressure: `j` at `$t9` in a first loop that
+  holds only `$v0`..`$t3` means the same variable is the second loop's
+  remaining count (`for (j = 0; ...)` then `j = columns; while (j > 0) j -= 27`).
 * A caller-saved local that retail colours **ahead of** the loop temporaries
   around it (`$v0` where ours is `$v1`) is on the hard list: its degree was at
   least K=26 when simplify reached it. A declared local numbers below every

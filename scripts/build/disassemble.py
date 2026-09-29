@@ -329,6 +329,8 @@ def configure_vu_sections():
 
 
 HEAP_SYMBOL = "GlobalDataBuffer"
+# The quadword at the buffer's end holding its `used` cursor.
+HEAP_CURSOR_SIZE = 0x10
 
 
 def configure_heap_words():
@@ -342,13 +344,25 @@ def configure_heap_words():
     Only a reference that resolves to the buffer *itself* is refused: a word
     that reaches a named object inside main's .bss is a real pointer, and
     spimdisasm names it after that object rather than after the buffer.
+
+    Code gets the same treatment for a `%hi`/`%lo` pair. The buffer is a
+    `CDataAlloc<1, 1690000>`: its storage array, then the `used` cursor in the
+    last quadword. Code can name the array (`GlobalDataBuffer`) and the cursor
+    (`GlobalDataBuffer + 0x19C9900`), so those two stay; a pair landing
+    anywhere between is a constant that reads like an address -- the cursor's
+    own offset off `this` in `CDataAlloc<1, 1690000>::Align64`
+    (`lui $1, 0x19D; addu $1, $17, $1; lw $3, -0x6700($1)`), or libdma's
+    0xFFFFFF mask -- and it comes out as `GlobalDataBuffer + 0x171E880` with a
+    relocation the compiler never emits.
     """
     from spimdisasm.mips.symbols import MipsSymbolBase
+    from spimdisasm.mips.symbols.analysis import InstrAnalyzer
 
     entry = read_symbol_table().get("main", {}).get(HEAP_SYMBOL)
     if entry is None:
         return
-    heap = entry[0]
+    heap, _, size = entry
+    cursor = heap + size - HEAP_CURSOR_SIZE
 
     original = MipsSymbolBase.SymbolBase._allowWordSymbolReference
 
@@ -358,6 +372,16 @@ def configure_heap_words():
         return original(self, symbol_ref, word)
 
     MipsSymbolBase.SymbolBase._allowWordSymbolReference = allow_word_symbol_reference
+
+    process_original = InstrAnalyzer.processSymbol
+
+    def process_symbol(self, address, lui_offset, lower_instr, lower_offset):
+        # Unpaired, both halves print as the immediates they are.
+        if heap < address < cursor:
+            return None
+        return process_original(self, address, lui_offset, lower_instr, lower_offset)
+
+    InstrAnalyzer.processSymbol = process_symbol
 
 
 # A PC-relative branch and the label it lands on. `j`/`jal` are deliberately

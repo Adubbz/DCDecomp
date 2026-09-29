@@ -38,19 +38,20 @@ public:
     u8 color[4];             /**< Red, green, blue and alpha channels of the surface. */
     float wave_speed;        /**< Speed the ripples travel across the grid at. */
     float damping;           /**< Rate the ripples lose height at. */
-    float unk_09C;
-    float unk_0A0;
-    s32 unk_0A4;
+    float height_scale;      /**< Scale from a wave height to the vertical displacement of its vertex. */
+    float distortion;        /**< Scale from a height difference to the texture-coordinate shift it causes. */
+    s32 tags_built;          /**< Set once both packets hold their tags, so rebuilds write only vertex data. */
     CFrameVu1 frame; /**< Places and draws the water surface. */
 
     /**
-     * Stores the four parameters the ripple simulation runs on.
+     * Stores the ripple speed and damping and the two scales the surface is
+     * drawn with.
      *
      * @mangled SetParam__6CWaterFffff
      * @address 0x1607A0
      * @size 0x18
      */
-    void SetParam(float wave_speed, float damping, float unknown0, float unknown1);
+    void SetParam(float wave_speed, float damping, float height_scale, float distortion);
 
     /**
      * Sets the red, green, blue and alpha channels of the surface.
@@ -69,7 +70,7 @@ public:
      * @address 0x1607E0
      * @size 0x740
      */
-    int CreateVUData(unsigned int *packet, RenderInfo *info);
+    int CreateVUData(unsigned int *output, RenderInfo *info);
 
     /**
      * Draws the surface through the vector unit.

@@ -472,7 +472,7 @@ SECTIONS
         snd.cpp.o (.snd-c320__2) // 0x0025df90 @320__2
         main.data.part4.s.o (.data) // 0x0025dfb0
         sysmes.cpp.o (.data)
-        main.data.part4b.s.o (.data)
+        water.cpp.o (.data)          // 0x002668c0 CreateVUData's five qword templates
         runeffect.cpp.o (.data)      // 0x00266910
         main.data.runeffect-tail.s.o (.data) // 0x00266920
         effectmacro.cpp.o (.data)    // 0x00266930 DepthOfField's vertex template

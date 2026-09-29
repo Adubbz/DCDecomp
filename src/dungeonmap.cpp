@@ -556,7 +556,6 @@ void CDungeonMap::DrawDummyModel(CCamera *camera) {
     }
 }
 
-#ifdef NON_MATCHING
 void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     int status;
     unsigned char red;
@@ -569,16 +568,15 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     int direction;
     int map_x;
     int map_y;
+    int cellx;
     int visible;
     int show;
-    int i;
     float player_screen_x;
     CTexture *map_texture;
     CTexture *symbol_texture;
     unsigned char alpha;
     int masked;
     int cell_no;
-    int cell;
     CRect_i_ map_dst;
     CRect_i_ map_src;
     CRect_i_ player_dst;
@@ -626,8 +624,7 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
             if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && show == 1) {
                 direction = this->cells[cell_no].direction +
                             this->parts[this->cells[cell_no].parts_no].direction_offset;
-                direction %= 8;
-                map_src.x = direction * 16;
+                map_src.x = (direction % 8) * 16;
                 map_src.y = (direction / 8) * 16;
                 map_src.width = 16;
                 map_src.height = 16;
@@ -655,13 +652,14 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     player_dst.height = 12;
     set2DSprite(Vif1Packet, symbol_texture, player_dst, player_src, 7, 7, angle);
 
-    for (i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
+        int cell;
         if (this->trap_circle[i].state == 0)
             continue;
         map_x = (int) (this->trap_circle[i].pos[0] * 0.1f);
         map_y = (int) (this->trap_circle[i].pos[2] * 0.1f);
-        cell = (int) ((80.0f + this->trap_circle[i].pos[0]) / 160.0f) +
-                  (int) ((80.0f + this->trap_circle[i].pos[2]) / 160.0f) * 20;
+        cellx = (int) ((80.0f + this->trap_circle[i].pos[0]) / 160.0f);
+        cell = cellx + (int) ((80.0f + this->trap_circle[i].pos[2]) / 160.0f) * 20;
         show = this->mask[cell];
         if (BtEquipMasuisyou == 1)
             show = 1;
@@ -678,13 +676,14 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
         }
     }
 
-    for (i = 0; i < 24; i++) {
+    for (int i = 0; i < 24; i++) {
+        int cell;
         if (this->boxes[i].used == 0 || this->boxes[i].unk_24 == 0)
             continue;
         map_x = (int) (this->boxes[i].pos[0] * 0.1f);
         map_y = (int) (this->boxes[i].pos[2] * 0.1f);
-        cell = (int) ((80.0f + this->boxes[i].pos[0]) / 160.0f) +
-                  (int) ((80.0f + this->boxes[i].pos[2]) / 160.0f) * 20;
+        cellx = (int) ((80.0f + this->boxes[i].pos[0]) / 160.0f);
+        cell = cellx + (int) ((80.0f + this->boxes[i].pos[2]) / 160.0f) * 20;
         show = this->mask[cell];
         if (BtEquipMasuisyou == 1)
             show = 1;
@@ -701,13 +700,14 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
         }
     }
 
-    for (i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++) {
+        int cell;
         if (this->atra[i].used == 0)
             continue;
         map_x = (int) (this->atra[i].pos[0] * 0.1f);
         map_y = (int) (this->atra[i].pos[2] * 0.1f);
-        cell = (int) ((80.0f + this->atra[i].pos[0]) / 160.0f) +
-                  (int) ((80.0f + this->atra[i].pos[2]) / 160.0f) * 20;
+        cellx = (int) ((80.0f + this->atra[i].pos[0]) / 160.0f);
+        cell = cellx + (int) ((80.0f + this->atra[i].pos[2]) / 160.0f) * 20;
         show = this->mask[cell];
         if (BtEquipMasuisyou == 1)
             show = 1;
@@ -727,11 +727,6 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     BtEquipMap = saved_map;
     BtEquipMasuisyou = saved_crystal;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", DrawMiniMap__11CDungeonMapFPff);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1470);
-INCLUDE_RODATA("asm/nonmatchings/dungeonmap", @1471);
 
 void CDungeonMap::checkMask(float x, float z) {
     int cell_x;
