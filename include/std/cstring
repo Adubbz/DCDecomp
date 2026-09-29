@@ -19,5 +19,4 @@ char *strtok(char *text, const char *delimiters);
 char *strcat(char *dest, const char *src);
 size_t strlen(const char *text);
 int strcasecmp(const char *left, const char *right);
-
 }

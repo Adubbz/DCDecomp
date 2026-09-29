@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "dataalloc.hpp"
+#include "dataset.hpp"
 #include "mathutil.hpp"
 #include "mdt.hpp"
 #include "mglib.hpp"
@@ -13,7 +14,6 @@
 #include "tim2.hpp"
 #include "visual.hpp"
 
-#include "dataset.hpp"
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
     int width = head->image_width;
@@ -132,6 +132,7 @@ void CVisual::Initialize(void) {
     unk_00 = 0;
     unk_04 = 0;
 }
+
 /**
  * Constructs a visual and clears it.
  *
@@ -294,6 +295,7 @@ int SetTEX0(u_int *packet, u_long tex0, u_long tex1) {
 
     return 0xC;
 }
+
 /**
  * Clears the vector-unit visual's packet pointers and sizes.
  *
@@ -308,6 +310,7 @@ void CVisualVu1::Initialize(void) {
     unk_00 = 0;
     unk_04 = 0;
 }
+
 /**
  * Constructs a vector-unit visual and clears it.
  *
@@ -318,6 +321,7 @@ void CVisualVu1::Initialize(void) {
 CVisualVu1::CVisualVu1(void) {
     Initialize();
 }
+
 /**
  * Points the visual at the model data it draws from.
  *
@@ -328,6 +332,7 @@ CVisualVu1::CVisualVu1(void) {
 void CVisualMDTVu1::SetMDTDataAddress(u_int *data) {
     this->data = data;
 }
+
 /**
  * Gives the model data the visual draws from.
  *
@@ -338,6 +343,7 @@ void CVisualMDTVu1::SetMDTDataAddress(u_int *data) {
 u_int *CVisualMDTVu1::GetMDTDataAddress(void) {
     return data;
 }
+
 /**
  * Clears the model visual's data pointer and packet.
  *
@@ -352,6 +358,7 @@ void CVisualMDTVu1::Initialize(void) {
     vu_data_buffer[1] = NULL;
     vu_data_buffer[0] = NULL;
 }
+
 /**
  * Constructs a model visual and clears it.
  *
@@ -362,6 +369,7 @@ void CVisualMDTVu1::Initialize(void) {
 CVisualMDTVu1::CVisualMDTVu1(void) {
     CVisualMDTVu1::Initialize();
 }
+
 /**
  * Draws the visual into a packet through the vector unit.
  *
@@ -594,6 +602,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     *packet++ = 0;
     return packet - start;
 }
+
 /**
  * Writes one vector-unit upload header and gives back its length in words.
  *
@@ -769,6 +778,7 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
     vu_size = word >> 2;
     return vu_size;
 }
+
 int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0) {
     int strip;
     MDT_HEADER *header = (MDT_HEADER *) data;
@@ -846,6 +856,7 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
     vu_size = word >> 2;
     return vu_size;
 }
+
 /**
  * Draws the model, from a copy of this frame's block when the visual asks for one.
  *
@@ -867,6 +878,7 @@ int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
     vu_data = vu_data_buffer[DBuffID];
     return result;
 }
+
 /**
  * Draws the model into a VIF packet, choosing the buffer the frame is using.
  *

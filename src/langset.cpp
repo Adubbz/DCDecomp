@@ -2,18 +2,18 @@
 
 #include <libpkt.h>
 
-#include "fader.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "fader.hpp"
 #include "gamepad.hpp"
 #include "mainselect.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
-
 #include "vutext.hpp"
+
 Fader Fade;
 int Cursor;
 int Proc;
@@ -43,6 +43,7 @@ void LangsetInit(void) {
     Cursor = 0;
     Proc = 0;
 }
+
 int LangsetLoop(void) {
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);
@@ -69,6 +70,7 @@ int LangsetLoop(void) {
     LangsetDraw();
     return 0;
 }
+
 int LangsetProc(void) {
     if (GamePad.Down(0x1000) != 0) {
         Cursor--;

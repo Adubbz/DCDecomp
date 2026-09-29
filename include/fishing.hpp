@@ -2,7 +2,8 @@
 
 #include "collision.hpp"
 
-template <int T> class CDataAlloc2;
+template <int T>
+class CDataAlloc2;
 class CFish;
 class CCharacter;
 class CFrame;
@@ -410,7 +411,6 @@ void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc);
  * @size 0xDA8
  */
 void FishLineStep(float *rod_position, float *unused);
-
 
 /**
  * Makes a fish that has bitten the hook the one being landed.

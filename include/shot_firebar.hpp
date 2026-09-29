@@ -11,14 +11,14 @@ class CSHOT_FIREBAR {
 public:
     float position[64][4]; /**< World positions for the fire particles. */
     float velocity[64][4]; /**< Per-step movement vectors for the fire particles. */
-    float size[64]; /**< Display sizes for the fire particles. */
-    float opacity[63];    /**< Current opacity values for the fire particles. */
-    s32 init_damage;      /**< Collision damage given when the stream was initialized. */
-    s32 damage[63];       /**< Collision damage values for the fire particles. */
-    s32 init_element;     /**< Element given when the stream was initialized. */
-    s32 texture_cell[64]; /**< Texture cells selected for the fire particles. */
-    s32 state[64]; /**< Activity states for the fire particles. */
-    s32 start_index; /**< First particle slot populated by initialization and emission. */
+    float size[64];        /**< Display sizes for the fire particles. */
+    float opacity[63];     /**< Current opacity values for the fire particles. */
+    s32 init_damage;       /**< Collision damage given when the stream was initialized. */
+    s32 damage[63];        /**< Collision damage values for the fire particles. */
+    s32 init_element;      /**< Element given when the stream was initialized. */
+    s32 texture_cell[64];  /**< Texture cells selected for the fire particles. */
+    s32 state[64];         /**< Activity states for the fire particles. */
+    s32 start_index;       /**< First particle slot populated by initialization and emission. */
     u8 unk_D04[0xC];
 
     /**

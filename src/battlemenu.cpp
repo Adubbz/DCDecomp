@@ -8,8 +8,8 @@
 #include <cstdio>
 #include <cstring>
 
-#include "character.hpp"
 #include "camera.hpp"
+#include "character.hpp"
 #include "clsmes.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
@@ -42,14 +42,13 @@ static int GetVisitInfo(int place, int menu_mode);
 #include "battle_globals.hpp"
 #include "btactstatus.hpp"
 #include "dataalloc.hpp"
-#include "menuitemstep.hpp"
-#include "userstatus.hpp"
-#include "shot_effect.hpp"
-
 #include "menuetc.hpp"
-
-#include "vutext.hpp"
+#include "menuitemstep.hpp"
 #include "rect.hpp"
+#include "shot_effect.hpp"
+#include "userstatus.hpp"
+#include "vutext.hpp"
+
 static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha);
 static void BattleMenuAppear();
 static int BattleMenuExit();
@@ -206,10 +205,12 @@ int IsDefaultWeapon(int weapon_no) {
     }
     return owner;
 }
+
 void SetNowEquipWeaponDataForMsg(int item_no, int slot) {
     ItemMenuMode.message_item_no = item_no;
     ItemMenuMode.message_slot = slot;
 }
+
 void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
     COM_ITEM_INFO *item_info = GetCommonItemInfo(ItemMenuMode.message_item_no);
     if (item_info != NULL) {
@@ -219,6 +220,7 @@ void GetNowEquipWeaponDataForMsg(int &item_no, int &slot) {
     }
     slot = ItemMenuMode.message_slot;
 }
+
 GRADATION_COLOR_INFO2 *GetGradationColorInfo2(int index) {
     return &MenuColorInfo2[index];
 }
@@ -452,6 +454,7 @@ int GetLimmitMsg(void) {
     }
     return message;
 }
+
 void DrawBattleMain() {
     int pos[2];
     int icons[8];
@@ -513,6 +516,7 @@ void DrawBattleMain() {
     DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, waku_y, width, 0x22, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], 1, 0x40);
 }
+
 void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     int bar_x = x - 5;
     int bar_y = y + 3;
@@ -562,6 +566,7 @@ void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, 0x340, 0x20), 0x4F, 0x4F, 0x4F, alpha);
     MGFillBox(CRect_i_((bar_x + 8) * 16, ((bar_y + 12) >> 1) * 16, water_len * 16, 0x20), 0xC8, 0xEF, 0xF2, alpha);
 }
+
 void DngComStatus(int x, int y, int chara, int alpha) {
     CTexture *texture = TexManager.GetTexture("charastb", -1);
     int left = x - 6;
@@ -727,6 +732,7 @@ static void BtlMenuTexBlockEnter() {
     VillageName = TexManager.GetTexture("vilname", -1);
     VillageBar = TexManager.GetTexture("viltag", -1);
 }
+
 void BattleMenuTexEnter() {
     LOADTEXTURE_INFO2 textures[4] = {
         {"#frame_image#640#448#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
@@ -749,6 +755,7 @@ void BattleMenuTexEnter() {
     BtlMenuReadEndFlag = 1;
     MenuMes.SetBuffInfo(mes);
 }
+
 void ExitBattleMenu(int) {
     int count = 0;
     s16 *item = MenuItemPackPt->item;
@@ -794,6 +801,7 @@ void ExitBattleMenu(int) {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
+
 void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuMode = mode;
     BtlMenuReadBlock = texture_blocks[0];
@@ -908,6 +916,7 @@ static int BtlMenuDrawSpecialFlag(int flag) {
     }
     return flag;
 }
+
 void BattleMenuDraw() {
     int text_x;
     int text_y;
@@ -1040,6 +1049,7 @@ void BattleMenuDraw() {
     }
     setbilinear(1);
 }
+
 int BattleMenuCursor() {
     int result;
 
@@ -1173,6 +1183,7 @@ static int BattleMenuExit() {
     }
     return 1;
 }
+
 int BattleMenuSelect() {
     if (MenuWarningMsgFlag != 0) {
         if (GamePad.Down(0x60) != 0) {
@@ -1291,6 +1302,7 @@ int BattleMenuSelect() {
     }
     return 1;
 }
+
 int ToFromSelect(int out) {
     if (out < 0 || out > 1) {
         return -1;
@@ -1402,6 +1414,7 @@ static void InitMenuChara(u_long128 *buffer) {
 }
 
 #pragma opt_propagation off
+
 int BattleMenuCharaKey() {
     switch (MenuChara.unk_03) {
         case 4:
@@ -1602,6 +1615,7 @@ int BattleMenuCharaKey() {
     }
     return 1;
 }
+
 #pragma opt_propagation reset
 
 void DrawCharaSelect() {
@@ -1835,6 +1849,7 @@ void DrawCharaSelect() {
         }
     }
 }
+
 void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     int x = rect.x;
     int max_exp;
@@ -1892,6 +1907,7 @@ void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     DrawMenu2DSprite(WepStatus, CRect_i_(x, y, 0xC, 0xB), CRect_i_(digits.x + 0x78, digits.y, 0xC, 0xC), alpha);
     DrawMenuNumber(exp, x, y, WepStatus, digits, 1, alpha);
 }
+
 void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     int v = 0;
 
@@ -1904,6 +1920,7 @@ void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     rect.y = y + 0xF;
     DrawWepDamageDraw(rect, weapon, alpha);
 }
+
 void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
     if (data == NULL) {
@@ -2120,6 +2137,7 @@ void DrawBtlMenuLRCursor(int x, int y, int width, int alpha) {
     source.x += source.width;
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x + width, draw_y, source.width, source.height), source, alpha);
 }
+
 void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
@@ -2242,6 +2260,7 @@ void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapo
         row.y += 0x10;
     }
 }
+
 void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
@@ -2299,6 +2318,7 @@ void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_
                          (alpha * 0x6E) >> 7);
     }
 }
+
 void DrawWeaponVsMonster(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha) {
     WEAPON_DATA *built = NULL;
     if (build == 1) {
@@ -2497,6 +2517,7 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         DrawWepAttach(draw_x + 0xE, 0xBE, weapon, selected, alpha);
     }
 }
+
 void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
     int equipped_slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
     int cursor = WepMenu.weapon_slot;
@@ -3944,6 +3965,7 @@ static void WepAttachHaveCancel() {
         }
     }
 }
+
 void WeaponMenuAttachModeKey() {
     switch (WepMenu.unk_02) {
         case 11:
@@ -4014,6 +4036,7 @@ static void WeaponMenuActWepKey() {
         WepAttachHaveCancel();
     }
 }
+
 void WeaponMenuTagKey() {
     int moved = 0;
     s16 rows[3] = {5, 4, 10};
@@ -4282,6 +4305,7 @@ static void WeaponMenuAttachKey() {
         ComMenuSePlay(1);
     }
 }
+
 void RepairAndLevelUpDraw(int x, int y, int alpha) {
     int u;
     int v;
@@ -4324,6 +4348,7 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
+
 void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
     MenuTextureReload(BtlMenuReadBlock);
     float size[7][2] = {{14.2f, 0.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}};
@@ -4357,6 +4382,7 @@ void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
     CommonMenuMes1.Step();
     CommonMenuMes1.DrawMesWin();
 }
+
 void WeaponMenuDraw() {
     int alpha;
     int attach_mode;
@@ -4551,8 +4577,7 @@ void WeaponMenuDraw() {
         WepMenu.weapon_slot = 9;
     }
     int holes = GetWeaponHoleNum(DngWepHavePt[slot].item_no);
-    s16 cursor_pos[12][2] = {{0xC0, 0xA5}, {0x50, 0}, {0x16E, 0}, {0x68, 0}, {0x68, 0}, {0x4E, 0},
-                             {0x68, 0},    {0x4E, 0}, {0x58, 0xAA}, {0, 0xB8}, {0, 0},  {0, 0}};
+    s16 cursor_pos[12][2] = {{0xC0, 0xA5}, {0x50, 0}, {0x16E, 0}, {0x68, 0}, {0x68, 0}, {0x4E, 0}, {0x68, 0}, {0x4E, 0}, {0x58, 0xAA}, {0, 0xB8}, {0, 0}, {0, 0}};
     s16 row = (s16) WepMenu.board.cursor * 0x1A;
     cursor_pos[1][1] = dialog_pos + row;
     cursor_pos[2][1] = WepMenu.unk_07 * 0x18 + 0x86;
@@ -4824,6 +4849,7 @@ static int ItemTrushKey(int *, int *, int slot) {
     }
     return swapped;
 }
+
 void DrawTrushItem() {
     int items[7];
     int values[7];
@@ -4901,6 +4927,7 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
     size = LoadFileBGMenuData("wepchara.img", buffer);
     ItemMenuAlreadyReadWepIconTexFlag = 0;
 }
+
 void ReadSyncItemMenuWepIcon() {
     BG_READ_INFO *file = GetReadBGFile(0);
     LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
@@ -6347,6 +6374,7 @@ void ItemMenuModeDraw() {
             break;
     }
 }
+
 int ItemMenuModeKey() {
     if (ItemMenuMode.mode == 5) {
         int count = TrushMoveMax[ItemMenuMode.board.page];
@@ -6459,6 +6487,7 @@ int ItemMenuModeKey() {
     }
     return 0;
 }
+
 void ActiveItemDraw(int x, int y, int alpha) {
     RECT digits = {0x90, 0xDC, 0xC, 0xC};
 
@@ -6507,6 +6536,7 @@ static void MenuCharaPolyDraw() {
     MenuCharaFrame.Draw();
     SetItemMenuOldAmbient();
 }
+
 void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
     int draw_x;
     int draw_y;
@@ -6719,6 +6749,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
                        y - 0x12);
     }
 }
+
 void ItemNaviCursor(int item_no) {
     s8 shown[3] = {0, 0, 0};
     ITEM_DATA *data = GetItemData(item_no);
@@ -6778,6 +6809,7 @@ void ItemNaviCursor(int item_no) {
         ct = 0;
     }
 }
+
 void CharaStatusMsgDraw(int x, int y, int chara, int shared, int alpha) {
     static float statusCnt = -3.1415927f;
 
@@ -6972,6 +7004,7 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
     CommonMenuMes2.mes_made = -1;
     CommonMenuMes3.mes_made = -1;
 }
+
 void GetTownOrDngPos() {
     MenuWorldTrans(&MenuCamera);
     float scale = 2.2f;
@@ -7001,6 +7034,7 @@ void GetTownOrDngPos() {
         }
     }
 }
+
 int MenuMoveKey() {
     int stay = 1;
     int decided = 0;
@@ -7294,6 +7328,7 @@ int MenuMoveKey() {
     }
     return stay;
 }
+
 void DrawMenuMove() {
     int alpha;
     int x;
@@ -7381,9 +7416,7 @@ void DrawMenuMove() {
                 y = next->y;
             } else {
                 int place = MapNoTransFunc(MapNo);
-                s16 pos[15][2] = {{0x150, 0xB2}, {0, 0},       {0x12A, 0xDC}, {0, 0},       {0x104, 0xB4},
-                                  {0xC4, 0xCE},  {0x90, 0xD6},  {0xF0, 0x114}, {0x13A, 0x148}, {0x147, 0x13C},
-                                  {0x1D2, 0x90}, {0x1D6, 0xAB}, {0x1B4, 0x90}, {0x1BB, 0x126}, {0x1C3, 0x112}};
+                s16 pos[15][2] = {{0x150, 0xB2}, {0, 0}, {0x12A, 0xDC}, {0, 0}, {0x104, 0xB4}, {0xC4, 0xCE}, {0x90, 0xD6}, {0xF0, 0x114}, {0x13A, 0x148}, {0x147, 0x13C}, {0x1D2, 0x90}, {0x1D6, 0xAB}, {0x1B4, 0x90}, {0x1BB, 0x126}, {0x1C3, 0x112}};
                 x = pos[place][0];
                 y = pos[place][1];
                 SysCur[0] = (float) x;
@@ -7532,6 +7565,7 @@ void DrawMenuMove() {
             break;
     }
 }
+
 void DrawEscapeItem(int x, int y, int alpha) {
     float widths[7] = {8.6f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f};
     int u;
@@ -7570,6 +7604,7 @@ void DrawEscapeItem(int x, int y, int alpha) {
     CommonMenuMes1.stay_frame = 0;
     DrawMenuClsMes(&CommonMenuMes1, x + 0x38, row_y - 0x10);
 }
+
 /**
  * Appends the world map archive name of a region to a path.
  */
@@ -7592,50 +7627,51 @@ static void StartLoadWorldMap(int region, u_long128 *buffer) {
     StartReadBG();
     LoadFileBG(path, buffer, &size);
 }
+
 int LoadWorldMap() {
     if (ReadBGSync() == 0) {
-    BG_READ_INFO *file = GetReadBGFile(0);
-    char img_format[32] = "w_map_1%d.img";
-    char cfg_format[32] = "w_map1%d.cfg";
-    char img[32];
-    char cfg[32];
-    sprintf(img, img_format, MenuMove.load_map + 1);
-    sprintf(cfg, cfg_format, MenuMove.load_map + 1);
-    LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
-    textures[0].block_no = MenuMove.tex_block;
-    textures[1].block_no = MenuMove.tex_block;
-    textures[2].block_no = MenuMove.tex_block;
-    textures[3].block_no = MenuMove.tex_block;
-    textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "w_map_02.img", NULL);
-    textures[2].name = (char *) GetPackFile((u_int *) file->buffer, img, NULL);
-    textures[3].name = (char *) GetPackFile((u_int *) file->buffer, "menumove.img", NULL);
-    TexManager.DeleteTextureBlock(MenuMove.tex_block);
-    int blocks[2] = {0, -1};
-    blocks[0] = MenuMove.tex_block;
-    MenuTextureDelete(blocks);
-    TexManager.CleanUpTextureList();
-    BtlMenuTexBlockEnter();
-    TexManager.LoadTextureBlockEX(-1, textures);
-    MenuMoveTex = TexManager.GetTexture("menumove", -1);
-    if (MenuMove.mode == 5) {
-        InitMenuMesSet(5, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
-    }
-    u_long128 *model = file->buffer + ((((file->size >> 6) + 1) << 6) >> 4);
-    MenuCharaFrame.Initialize();
-    MenuExCashBuffer.base = (u_char *) model;
-    MenuExCashBuffer.limit = 0xCF80;
-    MenuExCashBuffer.used = 0;
-    MenuCharaFrame.LoadPackData((u_int *) file->buffer, cfg, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
-    mapo[2] = 0.0f;
-    mapo[1] = 0.0f;
-    mapo[0] = 0.0f;
-    mapo[3] = 1.0f;
-    MenuCharaFrame.SetPosition(mapo);
-    MenuCharaFrame.motion_no = 0;
-    MenuCharaFrame.flags = 2;
-    MenuCharaFrame.motion_speed = -1.0f;
-    MapMoveCursor = MenuCharaFrame.frame->SearchFrame(TownOrDngPos[MenuMove.cursor].frame);
-    return 1;
+        BG_READ_INFO *file = GetReadBGFile(0);
+        char img_format[32] = "w_map_1%d.img";
+        char cfg_format[32] = "w_map1%d.cfg";
+        char img[32];
+        char cfg[32];
+        sprintf(img, img_format, MenuMove.load_map + 1);
+        sprintf(cfg, cfg_format, MenuMove.load_map + 1);
+        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        textures[0].block_no = MenuMove.tex_block;
+        textures[1].block_no = MenuMove.tex_block;
+        textures[2].block_no = MenuMove.tex_block;
+        textures[3].block_no = MenuMove.tex_block;
+        textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "w_map_02.img", NULL);
+        textures[2].name = (char *) GetPackFile((u_int *) file->buffer, img, NULL);
+        textures[3].name = (char *) GetPackFile((u_int *) file->buffer, "menumove.img", NULL);
+        TexManager.DeleteTextureBlock(MenuMove.tex_block);
+        int blocks[2] = {0, -1};
+        blocks[0] = MenuMove.tex_block;
+        MenuTextureDelete(blocks);
+        TexManager.CleanUpTextureList();
+        BtlMenuTexBlockEnter();
+        TexManager.LoadTextureBlockEX(-1, textures);
+        MenuMoveTex = TexManager.GetTexture("menumove", -1);
+        if (MenuMove.mode == 5) {
+            InitMenuMesSet(5, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+        }
+        u_long128 *model = file->buffer + ((((file->size >> 6) + 1) << 6) >> 4);
+        MenuCharaFrame.Initialize();
+        MenuExCashBuffer.base = (u_char *) model;
+        MenuExCashBuffer.limit = 0xCF80;
+        MenuExCashBuffer.used = 0;
+        MenuCharaFrame.LoadPackData((u_int *) file->buffer, cfg, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
+        mapo[2] = 0.0f;
+        mapo[1] = 0.0f;
+        mapo[0] = 0.0f;
+        mapo[3] = 1.0f;
+        MenuCharaFrame.SetPosition(mapo);
+        MenuCharaFrame.motion_no = 0;
+        MenuCharaFrame.flags = 2;
+        MenuCharaFrame.motion_speed = -1.0f;
+        MapMoveCursor = MenuCharaFrame.frame->SearchFrame(TownOrDngPos[MenuMove.cursor].frame);
+        return 1;
     }
     return 0;
 }

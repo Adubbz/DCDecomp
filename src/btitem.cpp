@@ -51,10 +51,12 @@
 /** Weapon each party member is handed when first brought into the party. */
 static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 
+// clang-format off
 char *charaNameTbl[6] = {
     "dun/mainchara/c01d.chr", "dun/mainchara/c04b.chr", "dun/mainchara/c06b.chr",
     "dun/mainchara/c05a.chr", "dun/mainchara/c10b.chr", "dun/mainchara/c18a.chr",
 };
+// clang-format on
 
 int BtGetTreasurebox_Sled;
 int BtGetAtraBoll_Sled;
@@ -148,6 +150,7 @@ void LoadActiveItemIcon(void) {
     SetTempTexture(0x28, (char *) read_buffer);
     BtItemListCashFlag = 1;
 }
+
 /**
  * Opens the large treasure chest and starts its presentation.
  *
@@ -237,6 +240,7 @@ void BtGetTreasureboxBig_Init() {
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
+
 /**
  * Runs the large treasure chest's presentation and reports when it ends.
  *
@@ -386,6 +390,7 @@ int BtGetTreasureboxBig_Loop() {
     }
     return done;
 }
+
 /**
  * Opens the small treasure chest and starts its presentation.
  *
@@ -479,6 +484,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
+
 /**
  * Runs the small treasure chest's presentation and reports when it ends.
  *
@@ -651,6 +657,7 @@ void BtAtraGetShort_Init() {
     BtGetAtraBoll_Sled = 0;
     BtActStatus.unk_09C = one;
 }
+
 INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
 
 /**
@@ -1149,6 +1156,7 @@ int BtEscape_Loop() {
     }
     return done;
 }
+
 /**
  * Builds the models of the items in the active slots.
  *
@@ -1426,6 +1434,7 @@ void getCharacterVector(float *vector, float pitch) {
     sceVu0MulMatrix(matrix, yaw, tilt);
     sceVu0ApplyMatrix(vector, matrix, forward);
 }
+
 /**
  * Advances a thrown item along its arc.
  *

@@ -62,4 +62,3 @@ void OpD_SoundProcess(void);
  * @unknownret
  */
 void OpD_DrawProcess(void);
-

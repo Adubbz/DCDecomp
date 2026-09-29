@@ -14,7 +14,7 @@ class CDungeonMap;
  */
 class CDungeonEventMan {
 public:
-    CDungeonEvent slot[64]; /**< Event definitions loaded for the floor's map parts. */
+    CDungeonEvent slot[64];      /**< Event definitions loaded for the floor's map parts. */
     CDungeonEventData event[96]; /**< What each placed event is doing. */
 
     /**

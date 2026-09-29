@@ -1,6 +1,6 @@
 // C imports
-#include <libmc.h>
 #include <libcdvd.h>
+#include <libmc.h>
 #include <sifdev.h>
 #include <sifrpc.h>
 
@@ -15,39 +15,39 @@
 #include "dataread.hpp"
 #include "dataset.hpp"
 #include "debugfont.hpp"
+#include "dungeonmap.hpp"
 #include "editloop.hpp"
+#include "fakepointlight.hpp"
 #include "frame.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
+#include "gameutil.hpp"
+#include "hitmark.hpp"
+#include "literals.hpp"
+#include "main.hpp"
 #include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "menu_save.hpp"
 #include "mglib.hpp"
+#include "object.hpp"
 #include "rect.hpp"
 #include "runscript.hpp"
 #include "savedata.hpp"
+#include "shot_effect.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 #include "sysmes.hpp"
 #include "texture.hpp"
-#include "visualvu1.hpp"
-#include "dungeonmap.hpp"
-#include "water.hpp"
-#include "shot_effect.hpp"
-#include "hitmark.hpp"
 #include "textureanime.hpp"
-#include "object.hpp"
 #include "title/bombeffect.hpp"
 #include "title/majinbeem.hpp"
-
-#include "gameutil.hpp"
-#include "vutext.hpp"
+#include "visualvu1.hpp"
 #include "vudata.hpp"
-#include "literals.hpp"
-#include "main.hpp"
-#include "fakepointlight.hpp"
+#include "vutext.hpp"
+#include "water.hpp"
+
 /**
  * Holds the category's level-of-detail thresholds and trailing state.
  */
@@ -1290,6 +1290,7 @@ struct GeneratedNpcModel {
     s32 draw_param[16];
     s32 draw_num;
 };
+
 /**
  * Copies one character over another, field by field.
  *
@@ -1338,6 +1339,7 @@ CObject &CObject::operator=(const CObject &source) {
     *(CVector3_f_ *) scale = *(const CVector3_f_ *) source.scale;
     return *this;
 }
+
 /* CWater's members as its copy assignment reaches them. */
 struct DraftWaterLayout {
     s32 rows;
@@ -1356,10 +1358,12 @@ struct DraftWaterLayout {
     s32 unk_0A4;
     CFrameVu1 frame;
 };
+
 CWater &CWater::operator=(CWater &src) {
     *(DraftWaterLayout *) this = *(DraftWaterLayout *) &src;
     return *this;
 }
+
 /**
  * Copies one polygon visual over another, field by field.
  *
@@ -1371,6 +1375,7 @@ CVisualPolyVu1 &CVisualPolyVu1::operator=(const CVisualPolyVu1 &src) {
     CVisualVu1::operator=(src);
     return *this;
 }
+
 /**
  * Copies one vector-unit visual over another, field by field.
  *
@@ -1386,6 +1391,7 @@ struct DraftVisualVu1Layout {
     u_int *vu_data;
     u_int vu_size;
 };
+
 CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
     DraftVisualVu1Layout *dst_layout = (DraftVisualVu1Layout *) this;
     const DraftVisualVu1Layout *src_layout = (const DraftVisualVu1Layout *) &src;
@@ -1396,6 +1402,7 @@ CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
     dst_layout->vu_size = src_layout->vu_size;
     return *this;
 }
+
 /**
  * Copies one visual over another, field by field.
  *
@@ -1419,6 +1426,7 @@ CVisual &CVisual::operator=(const CVisual &other) {
 CategoryAttr::CategoryAttr() {
     Initialize();
 }
+
 /**
  * Gives the category attributes their starting values.
  *
@@ -1476,6 +1484,7 @@ extern "C" void *__ct__13MAP_NPC_MODELFv(void *self) {
     __ct__10CCharacterFv(self);
     return self;
 }
+
 /**
  * Constructs a character with no model, motion or texture animation.
  *
@@ -1502,6 +1511,7 @@ extern "C" void *__ct__10CCharacterFv(void *self) {
     chara->Initialize();
     return self;
 }
+
 /**
  * Constructs the motion parameters.
  *
@@ -1510,6 +1520,7 @@ extern "C" void *__ct__10CCharacterFv(void *self) {
  * @size 0xC
  */
 MotionParam::MotionParam() {}
+
 /**
  * Constructs a texture animation with no data attached.
  *
@@ -1520,6 +1531,7 @@ MotionParam::MotionParam() {}
 extern "C" void *__ct__13CTextureAnimeFv(void *self) {
     return GeneratedTextureAnimeCtor(self, NULL, 0);
 }
+
 /**
  * Constructs an object at the origin with an identity transform.
  *
@@ -1530,6 +1542,7 @@ extern "C" void *__ct__13CTextureAnimeFv(void *self) {
 extern "C" void *__ct__7CObjectFv(void *self) {
     return GeneratedObjectCtor(self, 1.0f);
 }
+
 /**
  * Constructs a projectile effect.
  *
@@ -1543,6 +1556,7 @@ extern "C" void *__ct__12CSHOT_EFFECTFv(void *self) {
     __construct_array(array, (MWRuntimeObjectFunction) __ct__10CCharacterFv, NULL, 0x11B0, 8);
     return self;
 }
+
 /**
  * Constructs a hit marker.
  *
@@ -1555,6 +1569,7 @@ extern "C" void *__ct__8CHitMarkFv(void *self) {
     *(void **) ((u_char *) self + 0xA0) = GeneratedHitMarkVtable;
     return self;
 }
+
 /**
  * Takes a run of quadwords out of the six-thousand-quadword arena.
  *

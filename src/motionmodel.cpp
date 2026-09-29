@@ -19,6 +19,7 @@ int GetWeaponElementAttr(int element) {
     }
     return element_tbl[element];
 }
+
 void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> *model_arena,
                             CDataAlloc2<1> *motion_arena, MOTION_INFO *motion_info,
                             int initialize_frames) {
@@ -80,6 +81,7 @@ void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> 
     motion.state.blending = 0;
     current_motion = 0;
 }
+
 void CMotionModel::Step(void) {
     motion.state.motion_no = current_motion;
     if (motion.state.motion_no != motion.state.playing_no) {
@@ -87,6 +89,7 @@ void CMotionModel::Step(void) {
     }
     SetMotionEX(frame, &motion, motion.motion_info, &motion.state, motion.frame_info);
 }
+
 void CMotionModel::Draw(void) {
     if (frame != NULL) {
         MGDraw(frame);

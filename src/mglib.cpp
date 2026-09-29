@@ -16,14 +16,13 @@
 
 #include "collision.hpp"
 #include "dataalloc.hpp"
+#include "dataset.hpp"
 #include "frame.hpp"
 #include "mathutil.hpp"
 #include "rect.hpp"
 #include "texture.hpp"
-
-#include "dataset.hpp"
-
 #include "vutext.hpp"
+
 int DBuffID;
 int mgWaitVSync;
 sceDmaChan *DmaCH1;
@@ -1781,4 +1780,3 @@ void MGEndDrawShadow(u_char alpha) {
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
-

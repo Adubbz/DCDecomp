@@ -13,6 +13,7 @@
 
 #include "btsysscript.hpp"
 #include "cloth.hpp"
+#include "clothread.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
@@ -25,7 +26,6 @@
 #include "sound.hpp"
 #include "sysmes.hpp"
 
-#include "clothread.hpp"
 /* One record of the archive's index file. The four numbers a read needs sit behind twelve bytes
    the index does not use, and the first word is where the entry's name begins in the same file. */
 struct DATA_HEADER_READ {

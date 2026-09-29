@@ -21,9 +21,9 @@
 #include "debugfont.hpp"
 #include "dngstatusdata.hpp"
 #include "edit.hpp"
-#include "effectmacro.hpp"
 #include "editground.hpp"
 #include "editloop3.hpp"
+#include "effectmacro.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
@@ -89,11 +89,11 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
 
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
-#include "editmenu.hpp"
-
 #include "dataset.hpp"
 #include "editloop.hpp"
+#include "editmenu.hpp"
 #include "main.hpp"
+
 void ClearSystemMes();
 int SystemMesCheck();
 void SystemMesStep();
@@ -517,6 +517,7 @@ void EdSetBgmVol(float time) {
         SndSetBgmVol(volume);
     }
 }
+
 void EdAmbientPlay(float volume) {
     // The ambient sets run one behind the four times of day, and roll over.
     int ambient_no = EdGetTime(volume);
@@ -813,6 +814,7 @@ void EdDoorOpenSe(int door_no, float *position) {
     }
     SndSePlay(se_open[door_no], -1, 0);
 }
+
 /**
  * Plays the sound one kind of door makes when it closes.
  *
@@ -828,6 +830,7 @@ void EdDoorCloseSe(int door_no, float *position) {
     }
     SndSePlay(se_close[door_no], -1, 0);
 }
+
 int EdGetDoorMotion(int door_no, int state) {
     static int motion[8][2] = {
         {3, 4},
@@ -845,6 +848,7 @@ int EdGetDoorMotion(int door_no, int state) {
     }
     return motion[door_no][state != 0];
 }
+
 /* The map editor's depth of field: one description at a time, taken from the map's own data or
    replaced by a default set, and handed every frame to the effect the rest of the game draws. */
 static DEPTH_OF_FIELD_INFO dof;
@@ -1328,6 +1332,7 @@ void EdDrawItem(void) {
         MGDraw((CFrame *) EdEventInfo.item_frame[0]);
     }
 }
+
 /* The map editor's own system and help messages, in front of the ones the town runs: every call
    here reaches the town's message code first and then does the same thing again to a window of the
    editor's own, so both are up at once and the editor's is the one drawn last.

@@ -4,6 +4,7 @@
 
 #include "character.hpp"
 #include "itemdata.hpp"
+
 class CMenuItemStep;
 
 /**

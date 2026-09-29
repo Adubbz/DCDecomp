@@ -5,8 +5,8 @@
 #include "memcard.hpp"
 
 #include <cmath>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "battle_globals.hpp"
@@ -18,6 +18,7 @@
 #include "editmenu.hpp"
 #include "editpartsinfo.hpp"
 #include "gamepad.hpp"
+#include "gameutil.hpp"
 #include "mainselect.hpp"
 #include "memorycardaccess.hpp"
 #include "menu_draw.hpp"
@@ -31,7 +32,6 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#include "gameutil.hpp"
 /**
  * Holds the state of the option screen.
  */
@@ -39,12 +39,12 @@ struct OPTION_MENU_STATE {
     s32 mode;    /**< How the screen was opened; 0 from the main menu. */
     s32 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
     u8 unk_08[4];
-    s32 cursor;     /**< Cell that the cursor is on, as ten times the row plus the column. */
-    s32 step;       /**< Stage that the screen is at, 2 once it has begun to close. */
-    s32 step_count; /**< Frames the screen has spent at its stage. */
-    float cursor_x; /**< Screen X of the cursor. */
-    float cursor_y; /**< Screen Y of the cursor. */
-    float page_x;   /**< Screen X of the rows, eased toward the cursor's page. */
+    s32 cursor;        /**< Cell that the cursor is on, as ten times the row plus the column. */
+    s32 step;          /**< Stage that the screen is at, 2 once it has begun to close. */
+    s32 step_count;    /**< Frames the screen has spent at its stage. */
+    float cursor_x;    /**< Screen X of the cursor. */
+    float cursor_y;    /**< Screen Y of the cursor. */
+    float page_x;      /**< Screen X of the rows, eased toward the cursor's page. */
     s32 flag[12];      /**< Setting of each option row. */
     s32 prev_flag[12]; /**< Setting of each option row when the screen opened. */
     s16 texture_ready; /**< Whether the screen's textures have been entered. */
@@ -559,12 +559,14 @@ int McCheckMCPs2(MC_CARD_INFO *card) {
     }
     return 1;
 }
+
 void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned char alpha, int flag) {
     float dest_x = (float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt);
     float dest_y = (float) y + 5.0f * sinf(0.1163552850484848f * (float) CursorVibeCnt);
     CRect_i_ dest_rect((s32) dest_x, (s32) dest_y, src_rect.width, src_rect.height);
     DrawMenu2DSprite(texture, dest_rect, src_rect, alpha, alpha, alpha, flag);
 }
+
 void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned char alpha, int flag) {
     CRect_i_ src(src_rect.x, src_rect.y, src_rect.width, src_rect.height);
     DrawObjectVibe(x, y, texture, src, alpha, flag);
@@ -807,6 +809,7 @@ int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
     }
     return length;
 }
+
 /**
  * Gives the texture and the cell within it that one georama element draws from.
  *
@@ -1148,6 +1151,7 @@ int GetAtraMsgNo(int map_no, int element) {
     }
     return mes_no;
 }
+
 static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
     EDITPARTS_INFO *info;
     EDIT_PARTS_ATRA *parts;
@@ -1220,6 +1224,7 @@ static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
     }
     return msg_no;
 }
+
 /**
  * Gives the cell within the element sheet that one georama element draws from.
  *
@@ -1239,6 +1244,7 @@ static void AtoraTipGetTexPos(int tip_no, int &x, int &y) {
         y = (tex_no / 7) * 36;
     }
 }
+
 static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha) {
     int u;
     int v;
@@ -1737,6 +1743,7 @@ void DrawMenuAtoraSelect() {
         EastKingEventDraw();
     }
 }
+
 /**
  * Draws the Atla town board, its inventory, and the active cursor.
  *

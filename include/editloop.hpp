@@ -7,6 +7,7 @@
 #include "dataalloc_fwd.hpp"
 #include "edit.hpp"
 #include "objanime.hpp"
+
 class CTexAnimeData;
 class C3DSprite;
 

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "common.h"
-#include "dataalloc_fwd.hpp"
+
 #include <libvu0.h>
+
+#include "dataalloc_fwd.hpp"
 
 class CCharacter;
 class CCamera;

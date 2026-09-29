@@ -35,16 +35,16 @@ IncludeCategories:
     Priority: 4
 
 AllowShortEnumsOnASingleLine: false
-
-# Only enums align their `=` into columns, and clang-format has no enum-only
-# scope for it -- so alignment is off everywhere and each enum body is fenced
-# with `// clang-format off` / `// clang-format on`. Keep new enumerators
-# aligned by hand inside those fences.
 AlignConsecutiveAssignments: None
-
-
 AccessModifierOffset: -4
 IndentCaseLabels: true
 PointerAlignment: Right
-SpaceAfterCStyleCast: true
+
 AlwaysBreakTemplateDeclarations: Yes
+
+MaxEmptyLinesToKeep: 1
+
+# Code spacing
+SpaceAfterCStyleCast: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements

@@ -19,7 +19,6 @@ int printf(const char *fmt, ...);
 int fprintf(FILE *stream, const char *fmt, ...);
 int sprintf(char *out, const char *fmt, ...);
 int fflush(FILE *stream);
-
 }
 
 #define stdin (_impure_ptr[0]->_stdin)

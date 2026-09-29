@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include <libgraph.h>
+
 struct TAG_PARAM;
 
 class CCamera;

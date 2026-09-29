@@ -62,7 +62,6 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
     slot = &all[area_no];
     area = *slot;
 
-
     if (source->info == NULL) {
         return -1;
     }

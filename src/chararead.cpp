@@ -38,8 +38,8 @@ u_int *GetPackFile(u_int *pack, char *name, int *size = 0);
 void *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *buffer);
 
 void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
-                     CDataAlloc2<1> *buffer, CDataAlloc2<1> *exbuffer, int visual_type,
-                     CDataAlloc2<1> *image_buffer, int texture_block, int dont_delete);
+              CDataAlloc2<1> *buffer, CDataAlloc2<1> *exbuffer, int visual_type,
+              CDataAlloc2<1> *image_buffer, int texture_block, int dont_delete);
 static void CommandVERTEX_ANIME(void **argv);
 static void CommandSHADOW_VERTEX_ANIME(void **argv);
 static void CommandMODEL(void **argv);
@@ -141,8 +141,8 @@ static void (*CommandExe[19])(void **) = {
     CommandEVENT};
 
 void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
-                     CDataAlloc2<1> *data, CDataAlloc2<1> *extra, int block,
-                     CDataAlloc2<1> *image_buffer, int visual_type, int no_delete) {
+              CDataAlloc2<1> *data, CDataAlloc2<1> *extra, int block,
+              CDataAlloc2<1> *image_buffer, int visual_type, int no_delete) {
     char arg_data[16][256];
     char *argv[18];
     int size;
@@ -688,6 +688,7 @@ void StretchBind2(float *first, float *second, float *parameters) {
         sqc2 $vf11, 0x0($5)
     }
 }
+
 /**
  * Gives the length of a three-component vector, on the vector unit.
  *

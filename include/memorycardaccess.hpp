@@ -32,15 +32,15 @@ STATIC_ASSERT(sizeof(MC_ICON_DATA) == 0x24);
  * Holds what the class found out about the card in one port.
  */
 struct MC_CARD_INFO {
-    s32 present;   /**< One while the last sceMcGetInfo found a card in the port. */
-    s32 type;      /**< Card type that sceMcGetInfo writes. */
-    s32 formatted; /**< Format flag that sceMcGetInfo writes. */
+    s32 present;       /**< One while the last sceMcGetInfo found a card in the port. */
+    s32 type;          /**< Card type that sceMcGetInfo writes. */
+    s32 formatted;     /**< Format flag that sceMcGetInfo writes. */
     s32 format_change; /**< 1 once a search finds the card newly formatted, -1 once it finds it unformatted. */
     s32 dir_exists;    /**< One once GetDir has found the save directory on the card. */
     u8 unk_14[4];
     s32 free_size;   /**< Free space that sceMcGetInfo writes. */
     s32 dir_entries; /**< Entries that sceMcGetDir found in the save directory. */
-    s32 result; /**< Result of the last sceMcGetInfo on the card. */
+    s32 result;      /**< Result of the last sceMcGetInfo on the card. */
 };
 
 STATIC_ASSERT(sizeof(MC_CARD_INFO) == 0x24);
@@ -106,6 +106,7 @@ enum MC_OPERATION {
     MC_OPERATION_SAVE_CONFIG            = 14,
     MC_OPERATION_CONVERT                = 15
 };
+
 // clang-format on
 
 /**
@@ -403,11 +404,11 @@ public:
     char current_dir[0x40]; /**< Directory that sceMcChdir writes back. */
     s32 func_no;            /**< Operation that the class is running. */
     u8 unk_C0[4];
-    s32 step;               /**< Step that the current operation has reached. */
-    s32 fd;                 /**< File that the last sceMcOpen returned, -1 until one does. */
+    s32 step;                /**< Step that the current operation has reached. */
+    s32 fd;                  /**< File that the last sceMcOpen returned, -1 until one does. */
     MC_DIR_ENTRY *dir_table; /**< Table that GetDir fills with the entries of the save directory. */
-    CSaveData *save_buffer; /**< Save data at the start of the save image. */
-    char *check_sum;        /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
+    CSaveData *save_buffer;  /**< Save data at the start of the save image. */
+    char *check_sum;         /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
     char *unk_D8;
     char *read_buffer; /**< Area behind the save image that a read fills. */
     s32 unk_E0;

@@ -6,11 +6,11 @@
 
 class CMainItemModel {
 public:
-    u_int *cash[6];        /**< Model data each cache slot holds, or zero where the slot is free. */
-    s32 cash_item[6];      /**< Item whose model each cache slot holds. */
-    s32 cash_lock[6];      /**< Model slots that draw each cache slot's model. */
-    s32 model[16];         /**< What each model slot holds; -1 where the slot is free. */
-    s32 model_cash[16];    /**< Cache slot whose model each model slot draws. */
+    u_int *cash[6];     /**< Model data each cache slot holds, or zero where the slot is free. */
+    s32 cash_item[6];   /**< Item whose model each cache slot holds. */
+    s32 cash_lock[6];   /**< Model slots that draw each cache slot's model. */
+    s32 model[16];      /**< What each model slot holds; -1 where the slot is free. */
+    s32 model_cash[16]; /**< Cache slot whose model each model slot draws. */
     u8 unk_0C8[8];
     CFrame frame[16];      /**< Frame that places each model slot's model. */
     float velocity[16][4]; /**< Distance each thrown model moves in a frame. */

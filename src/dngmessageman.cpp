@@ -43,6 +43,7 @@ void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float wa
         unk_1C = 0;
     }
 }
+
 void CDngMessageMan::SetSteevMes(int first) {
     if (timer <= 0) {
         // The ten Steev lines are shown in turn, so the index rides on.

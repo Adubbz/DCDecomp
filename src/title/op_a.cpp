@@ -15,23 +15,23 @@
 #include <cstdlib>
 
 #include "camera.hpp"
+#include "camerafollow.hpp"
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "main.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "mglib.hpp"
 #include "renderinfo.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
+#include "title/op_a.hpp"
+#include "title/opening.hpp"
 #include "title/script.hpp"
 
-#include "main.hpp"
-#include "mglib.hpp"
-#include "title/opening.hpp"
-#include "title/op_a.hpp"
-#include "camerafollow.hpp"
 typedef MOTION_INFO tagMOTION_KEY;
 
 /* Spelled here rather than reached through a header because the image holds it only as an
@@ -452,7 +452,7 @@ static void LoadData() {
 
     Chara__3[6].Initialize();
     Chara__3[6].frame = LoadMDSFile(GetPackFile(read_buffer, "01p19a.mds", 0), &CharaDataBuffer__2[4],
-                                 6, 0, 0);
+                                    6, 0, 0);
 
     CFrameAttr noroi_attr;
 
@@ -463,7 +463,7 @@ static void LoadData() {
 
     Chara__3[7].Initialize();
     Chara__3[7].frame = LoadMDSFile(GetPackFile(read_buffer, "01p17a.mds", 0), &CharaDataBuffer__2[4],
-                                 6, 0, 0);
+                                    6, 0, 0);
 
     CFrameAttr dancer_attr;
 
@@ -500,7 +500,7 @@ static void LoadData() {
 static void SetDanceMotion() {
     LoadFile("opdat/chara/01p19a1a.chr", (void *) read_buffer, 0);
     Chara__3[6].LoadPackData(read_buffer, "01p19a1a.cfg", &CharaDataBuffer__2[4],
-                          &CharaDataBuffer__2[6], 0);
+                             &CharaDataBuffer__2[6], 0);
     Chara__3[6].motion_type.state.time = 120.0f;
     Chara__3[6].motion_type.state.blend_step = 0.1f;
     Chara__3[6].motion_type.state.motion_no = 0;
@@ -510,7 +510,7 @@ static void SetDanceMotion() {
 
     LoadFile("opdat/chara/01p17a1a.chr", (void *) read_buffer, 0);
     Chara__3[7].LoadPackData(read_buffer, "01p17a1a.cfg", &CharaDataBuffer__2[4],
-                          &CharaDataBuffer__2[6], 0);
+                             &CharaDataBuffer__2[6], 0);
     Chara__3[7].motion_type.state.time = 1.0f;
     Chara__3[7].motion_type.state.blend_step = 0.1f;
     Chara__3[7].motion_type.state.motion_no = 0;
@@ -1135,7 +1135,7 @@ void OpA_MotionProcess() {
 
                 if (i == 6) {
                     Chara__3[i].SetRotation(0.0f, (float) (atan2f(matrix[2][0], matrix[2][2]) + PI),
-                                         0.0f);
+                                            0.0f);
                 } else if (i == 5) {
                     float a = atan2f(-matrix[2][1], matrix[2][2]);
 

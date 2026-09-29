@@ -12,6 +12,7 @@
 #include "dranmapfield.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeonmap.hpp"
+#include "fishing.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "monstorunit.hpp"
@@ -20,7 +21,6 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#include "fishing.hpp"
 SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float *movement,
                                      s32 target_mode, float radius) {
     sceVu0FVECTOR destination;
@@ -87,6 +87,7 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
     sceVu0CopyVector(hit_position, position);
     return SHOT_COLLISION_NONE;
 }
+
 void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width,
                     s32 height, u8 blend) {
     sceVu0IVECTOR top_left;

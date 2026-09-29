@@ -14,5 +14,4 @@ double sqrt(double x);
 double atan2(double y, double x);
 double cos(double x);
 double sin(double x);
-
 }

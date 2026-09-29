@@ -18,6 +18,8 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
+#include "gameutil.hpp"
+#include "main.hpp"
 #include "mainselect.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
@@ -25,14 +27,12 @@
 #include "sound.hpp"
 #include "texture.hpp"
 #include "title/dispfade.hpp"
-#include "title/script.hpp"
-#include "vector.hpp"
-
-#include "main.hpp"
-#include "gameutil.hpp"
-#include "vutext.hpp"
 #include "title/op_a.hpp"
 #include "title/opening.hpp"
+#include "title/script.hpp"
+#include "vector.hpp"
+#include "vutext.hpp"
+
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h for the
    reason title.cpp declares its own: the rectangles this file builds are temporaries whose four
    stores come out ascending, and the constructor rect.h states assigns them in the other order. */

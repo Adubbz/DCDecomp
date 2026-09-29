@@ -15,11 +15,11 @@
 #include "memcard.hpp"
 #include "menu_draw.hpp"
 #include "mglib.hpp"
+#include "rect.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 
-#include "rect.hpp"
 s8 ManualTgaNum[24] = {2, 6, 4, 1, 2, 0, 1, 5, 3, 3, 3, 0, 3, 4, 3, 1, 0, 0, 2, 1, 5, 0, 0, 0};
 
 MANUAL_MENU_STATE ManualMenu;
@@ -47,6 +47,7 @@ int GetGameFlagForManualMenu() {
     }
     return result;
 }
+
 /**
  * Begins loading the image resources for the current manual page.
  *
@@ -134,6 +135,7 @@ s16 ManualImgEnter() {
     }
     return ManualMenu.images_ready;
 }
+
 void DrawPrevNextCursor() {
     CTexture *texture = TexManager.GetTexture("mncursor", -1);
     if (texture == NULL) {
@@ -153,6 +155,7 @@ void DrawPrevNextCursor() {
         DrawMenu2DSprite(texture, screen, texel, 0x80);
     }
 }
+
 void DrawManualMsg() {
     if (ManualMenu.messages_ready == 0) {
         return;
@@ -195,6 +198,7 @@ void DrawManualMsg() {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
+
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.load_buffer = load_buffer;
     ManualMenu.load_buffer = MenuCalcBufAlignment(ManualMenu.load_buffer);
@@ -312,6 +316,7 @@ int SetManualMsgBuffer() {
     }
     return ManualMenu.messages_ready;
 }
+
 void ExitManualMenu() {
     int texture_blocks[] = {ManualMenu.common_texture_block, ManualMenu.image_texture_block,
                             ManualMenu.extra_texture_block, -1};
@@ -323,6 +328,7 @@ void ExitManualMenu() {
     msg->cursor_row = -1;
     ManualMsg->stay_frame = 0;
 }
+
 int GetNowManualMenuMode() {
     return ManualMenu.mode;
 }

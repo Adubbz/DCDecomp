@@ -5,23 +5,23 @@
 
 #include "camerafollow.hpp"
 #include "debugfont.hpp"
+#include "dngmessageman.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeoneventman.hpp"
 #include "dungeonmap.hpp"
 #include "gamepad.hpp"
+#include "hitmark.hpp"
+#include "itemdata.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
-
-#include "dngmessageman.hpp"
-#include "itemdata.hpp"
-#include "hitmark.hpp"
 
 /**
  * The action code of each debug overlay line, ended by -1.
  */
 int DebugInfoCode[15] = {10, 20, 41, 70, 50, 150, 100, 30, 110, 80, 90, 120, 130, 140, -1};
 
+// clang-format off
 /**
  * The format of each debug overlay line, ended by a null entry.
  */
@@ -31,6 +31,7 @@ char *DebugInfoMsg[15] = {
     DebugInfoMsgLightMode,   DebugInfoMsgFloorAtraGet, DebugInfoMsgEventTest, DebugInfoMsgSetStatus,
     DebugInfoMsgSePlay,      DebugInfoMsgSetChrKey,  NULL,
 };
+// clang-format on
 
 /**
  * The debug overlay line the cursor is on.
@@ -84,10 +85,10 @@ void DebugInfomationDraw(void) {
             angle = NowCamera__3->GetAngle();
             dist = NowCamera__3->GetDistance();
             height = NowCamera__3->GetHeight();
-            ix = (int)((pos[0] - 80.0f) / 160.0f) * 160;
+            ix = (int) ((pos[0] - 80.0f) / 160.0f) * 160;
             lx = pos[0] - ix - 160.0f;
             y = pos[1];
-            iz = (int)((pos[2] - 80.0f) / 160.0f) * 160;
+            iz = (int) ((pos[2] - 80.0f) / 160.0f) * 160;
             lz = pos[2] - iz - 160.0f;
             lcx = cpos[0] - ix - 160.0f;
             lcy = cpos[1];

@@ -25,9 +25,9 @@
 #include "mds.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
-#include "menuetc.hpp"
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
+#include "menuetc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -260,6 +260,7 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     }
     return total;
 }
+
 void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
     if (attach_source == NULL) {
         return;
@@ -1048,6 +1049,7 @@ int MDebugItemPolyViewFlag;
 int polyreadflag;
 
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
+
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
     int height;
@@ -1694,6 +1696,7 @@ int DngActiveItemTextureCopy(void) {
     }
     return 1;
 }
+
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1841);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2044);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2045);
@@ -1703,6 +1706,7 @@ INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
+
 int DngActiveWeaponTextureCopy(void) {
     int chara = UserStatus->cur_chara;
     char source[] = "wepicon";
@@ -2085,6 +2089,7 @@ CDebugFont MenuDbgMsg;
 
 ITEM_AUTO_GET ItemAutoGet;
 
+// clang-format off
 /**
  * Formats of the lines the item data view prints.
  */
@@ -2092,6 +2097,7 @@ char *ItemTemplete[8] = {
     item_templete_no,         item_templete_type,       item_templete_use,    item_templete_attribute,
     item_templete_name_index, item_templete_help_index, item_templete_volume, item_templete_gold,
 };
+// clang-format on
 
 static void DrawItemDataView(int item_no) {
     int block;

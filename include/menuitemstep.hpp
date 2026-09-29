@@ -7,11 +7,11 @@
  */
 class CMenuItemStep {
 public:
-    s32 frame;          /**< Frames accumulated toward the next inventory-volume step. */
+    s32 frame; /**< Frames accumulated toward the next inventory-volume step. */
     s32 unk_04;
     s16 unk_08;
     s16 unk_0A;
-    s16 enabled;        /**< Enables periodic inventory-volume accumulation. */
+    s16 enabled; /**< Enables periodic inventory-volume accumulation. */
     s16 unk_0E;
     s16 unk_10[4];
     s16 unk_18[4];

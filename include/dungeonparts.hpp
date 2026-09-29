@@ -129,7 +129,7 @@ struct PARTS_WATER {
     s32 red;            /**< Red part of the colour of the water. */
     s32 green;          /**< Green part of the colour of the water. */
     s32 blue;           /**< Blue part of the colour of the water. */
-    s32 has_fall; /**< 1 if the part shows a waterfall. */
+    s32 has_fall;       /**< 1 if the part shows a waterfall. */
 };
 
 /**
@@ -142,9 +142,9 @@ public:
     CFrame *unk_004;
     s16 unk_008;
     s16 unk_00A;
-    CFrame *collision; /**< Model that the collision of the part uses. */
+    CFrame *collision;  /**< Model that the collision of the part uses. */
     s16 collision_turn; /**< Quarter turns added to the collision model's own. */
-    s16 fire_num; /**< Number of points of the part that show a fire. */
+    s16 fire_num;       /**< Number of points of the part that show a fire. */
     u8 unk_014[12];
     float fire_pos[6][4]; /**< Position of each point of the part that shows a fire. */
     s8 fire_param[16];    /**< Parameter of the fire at each point. */
@@ -156,7 +156,7 @@ public:
     float frame_offset[5][4]; /**< Offset of each model from the part's position. */
     float event_direction;    /**< Additional quarter-turn applied to the part's event frames. */
     u8 unk_164[0xC];
-    float frame_turn[6];      /**< Quarter turns added to each model's own. */
+    float frame_turn[6]; /**< Quarter turns added to each model's own. */
     u8 unk_188[8];
     float heal_pos[4]; /**< Centre of the part's healing zone. */
     float heal_width;  /**< Width of the part's healing zone. */
@@ -236,7 +236,7 @@ extern PIERO_ITEM_SET *PieroItemListPtr[14];
  * The items a treasure box can hold on one floor.
  */
 struct ITEM_PUT_SET {
-    int floor;     /**< Floor the list is for, counted from one; -1 ends the table. */
+    int floor;      /**< Floor the list is for, counted from one; -1 ends the table. */
     int item_count; /**< Number of items in the list. */
     int item[128];  /**< Items a box on the floor can hold, ended by -1. */
 };

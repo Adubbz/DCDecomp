@@ -1,6 +1,7 @@
 #include "objanime.hpp"
 
 #include <libvu0.h>
+
 #include <cstdlib>
 #include <cstring>
 
@@ -33,6 +34,7 @@ void OBJ_ANIME_SEQ::Initialize(void) {
     type = -1;
     completion_flag = 0;
 }
+
 /**
  * Constructs an object-animation sequence.
  *
@@ -51,6 +53,7 @@ void ObjAnimeAllStop(void) {
 void ObjAnimeAllStart(void) {
     all_stop = 0;
 }
+
 /**
  * Attaches an object animation to one frame.
  *
@@ -79,6 +82,7 @@ int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence) {
     sceVu0CopyVector(sequence->current, sequence->range);
     return 1;
 }
+
 /**
  * Attaches an object animation to a list of frames.
  *
@@ -108,6 +112,7 @@ int InitObjAnime(CFrame **frames, OBJ_ANIME_SEQ *sequence) {
     sceVu0CopyVector(sequence->current, sequence->range);
     return 1;
 }
+
 /**
  * Attaches an object animation to a counted list of frames.
  *
@@ -145,6 +150,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
     sceVu0CopyVector(sequence->current, sequence->range);
     return 1;
 }
+
 /**
  * Attaches an object animation to the frames one function point names.
  *
@@ -177,6 +183,7 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
     sequence->completion_flag = func->completion_flag;
     return 1;
 }
+
 /**
  * Reports whether an animated value has passed its target in the direction it moves.
  *
@@ -187,6 +194,7 @@ int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_S
 static int end_check(float value, float target, float step) {
     return step > 0.0f ? (value > target ? 1 : 0) : (value < target ? 1 : 0);
 }
+
 /**
  * Advances one object animation by a frame.
  *
@@ -466,6 +474,7 @@ void EditEffectStep(void) {
     Fire.SetTexture(TexManager.GetTexture("lightling", -1),
                     TexManager.GetTexture("blender", -1));
 }
+
 /**
  * Rebuilds the editor's fire texture for the frame.
  *
@@ -476,6 +485,7 @@ void EditEffectStep(void) {
 void EditEffectStep2(void) {
     Fire.FireCreate();
 }
+
 /**
  * Draws one editor effect, choosing the kind from its record.
  *
@@ -512,15 +522,14 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             }
         case 1:
         case 2:
-        case 3:
-            {
-                float z = 0.1f * position[2];
-                float y = 0.1f * position[1];
-                float x = 0.1f * position[0];
-                Fire.pos[0] = 10.0f * x;
-                Fire.pos[1] = 10.0f * y;
-                Fire.pos[2] = 10.0f * z;
-            }
+        case 3: {
+            float z = 0.1f * position[2];
+            float y = 0.1f * position[1];
+            float x = 0.1f * position[0];
+            Fire.pos[0] = 10.0f * x;
+            Fire.pos[1] = 10.0f * y;
+            Fire.pos[2] = 10.0f * z;
+        }
             Fire.pos[3] = 1.0f;
             position[3] = 1.0f;
             if (effect->kind == 1) {

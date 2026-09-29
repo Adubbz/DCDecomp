@@ -1,28 +1,30 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma argument_flag 0
-#pragma argument_flag_ones 82,115,116,117,173,177,179,183
+#pragma argument_flag_ones 82, 115, 116, 117, 173, 177, 179, 183
 
 #include "dungeonparts.hpp"
 
-#include "frame.hpp"
+#include <libvu0.h>
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <libvu0.h>
-#include "dungeonmap.hpp"
-#include "dngstatusdata.hpp"
-#include "dun/gameloop.hpp"
-#include "dranmapfield.hpp"
-#include "collision.hpp"
+
 #include "boxvu0.hpp"
-#include "mglib.hpp"
+#include "collision.hpp"
+#include "dngstatusdata.hpp"
+#include "dranmapfield.hpp"
+#include "dun/gameloop.hpp"
+#include "dungeonmap.hpp"
 #include "editloop.hpp"
 #include "editmenu.hpp"
+#include "editpartsdata.hpp"
+#include "frame.hpp"
+#include "mglib.hpp"
 #include "userstatus.hpp"
 
-#include "editpartsdata.hpp"
 /** The areas where items can be put down on map 1. */
 ITEM_FREE_AREA ItemFreeAreaD01[27] = {
     {0, 1, 0, 1, {{-2.0f, 0.0f, -4.0f, 2.0f, 0.0f, 4.0f}}},
@@ -217,6 +219,7 @@ ITEM_FREE_AREA ItemFreeAreaD07[28] = {
     {-1, 0, 0, 0},
 };
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 0. */
 s16 ItemSetRateList0[385] = {
     50, 50, 50, 50, 95, 60, 65, 70, 60, 95, 100, 100, 100, 60, 98, 98, 98, 98, 98, 98,
@@ -240,7 +243,9 @@ s16 ItemSetRateList0[385] = {
     50, 50, 50, 50, 85, 50, 50, 50, 85, 85, 85, 95, 95, 80, 95, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 1. */
 s16 ItemSetRateList1[385] = {
     50, 60, 60, 50, 95, 60, 65, 70, 60, 95, 100, 100, 100, 60, 98, 98, 98, 98, 98, 98,
@@ -264,7 +269,9 @@ s16 ItemSetRateList1[385] = {
     50, 50, 50, 50, 85, 50, 50, 50, 85, 85, 85, 95, 95, 80, 95, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 2. */
 s16 ItemSetRateList2[385] = {
     50, 65, 65, 50, 95, 50, 65, 70, 50, 95, 100, 100, 100, 65, 98, 98, 98, 98, 98, 98,
@@ -288,7 +295,9 @@ s16 ItemSetRateList2[385] = {
     50, 50, 50, 50, 85, 50, 50, 50, 85, 85, 85, 95, 95, 80, 95, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 3. */
 s16 ItemSetRateList3[385] = {
     50, 70, 70, 50, 95, 50, 65, 70, 50, 95, 100, 100, 100, 70, 98, 98, 98, 98, 98, 98,
@@ -312,7 +321,9 @@ s16 ItemSetRateList3[385] = {
     65, 65, 50, 50, 85, 50, 50, 50, 85, 85, 90, 95, 95, 80, 90, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 4. */
 s16 ItemSetRateList4[385] = {
     50, 75, 75, 50, 95, 50, 65, 70, 50, 95, 100, 100, 100, 75, 98, 98, 98, 98, 98, 98,
@@ -336,7 +347,9 @@ s16 ItemSetRateList4[385] = {
     70, 70, 50, 50, 85, 50, 50, 50, 85, 85, 90, 95, 95, 80, 90, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 5. */
 s16 ItemSetRateList5[385] = {
     50, 80, 80, 50, 80, 50, 65, 70, 50, 95, 100, 100, 100, 80, 98, 95, 98, 98, 98, 98,
@@ -360,7 +373,9 @@ s16 ItemSetRateList5[385] = {
     75, 75, 50, 50, 85, 50, 50, 50, 85, 85, 90, 95, 95, 80, 85, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** Chance out of a hundred that each item is turned down when drawn in dungeon 6. */
 s16 ItemSetRateList6[385] = {
     50, 80, 80, 50, 80, 50, 65, 70, 50, 95, 100, 100, 100, 80, 98, 95, 98, 98, 98, 98,
@@ -384,7 +399,9 @@ s16 ItemSetRateList6[385] = {
     75, 75, 50, 50, 85, 50, 50, 50, 85, 85, 90, 95, 95, 80, 85, 50, 50, 50, 50, 50,
     50, 50, 50, 50, 0,
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 0. */
 ITEM_PUT_SET ItemPutListTbl0[4] = {
     {256, 63, {
@@ -408,7 +425,9 @@ ITEM_PUT_SET ItemPutListTbl0[4] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 1. */
 ITEM_PUT_SET ItemPutListTbl1[3] = {
     {256, 76, {
@@ -427,7 +446,9 @@ ITEM_PUT_SET ItemPutListTbl1[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 2. */
 ITEM_PUT_SET ItemPutListTbl2[3] = {
     {256, 78, {
@@ -447,7 +468,9 @@ ITEM_PUT_SET ItemPutListTbl2[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 3. */
 ITEM_PUT_SET ItemPutListTbl3[3] = {
     {256, 83, {
@@ -468,7 +491,9 @@ ITEM_PUT_SET ItemPutListTbl3[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 4. */
 ITEM_PUT_SET ItemPutListTbl4[3] = {
     {256, 91, {
@@ -489,7 +514,9 @@ ITEM_PUT_SET ItemPutListTbl4[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 5. */
 ITEM_PUT_SET ItemPutListTbl5[3] = {
     {256, 94, {
@@ -510,7 +537,9 @@ ITEM_PUT_SET ItemPutListTbl5[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 6. */
 ITEM_PUT_SET ItemPutListTbl6[3] = {
     {256, 93, {
@@ -531,7 +560,9 @@ ITEM_PUT_SET ItemPutListTbl6[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 0's back floors. */
 ITEM_PUT_SET ItemPutListTbl7[3] = {
     {256, 52, {
@@ -548,7 +579,9 @@ ITEM_PUT_SET ItemPutListTbl7[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 1's back floors. */
 ITEM_PUT_SET ItemPutListTbl8[3] = {
     {256, 52, {
@@ -565,7 +598,9 @@ ITEM_PUT_SET ItemPutListTbl8[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 2's back floors. */
 ITEM_PUT_SET ItemPutListTbl9[3] = {
     {256, 52, {
@@ -582,7 +617,9 @@ ITEM_PUT_SET ItemPutListTbl9[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 3's back floors. */
 ITEM_PUT_SET ItemPutListTbl10[3] = {
     {256, 52, {
@@ -599,7 +636,9 @@ ITEM_PUT_SET ItemPutListTbl10[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 4's back floors. */
 ITEM_PUT_SET ItemPutListTbl11[3] = {
     {256, 52, {
@@ -616,7 +655,9 @@ ITEM_PUT_SET ItemPutListTbl11[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 5's back floors. */
 ITEM_PUT_SET ItemPutListTbl12[3] = {
     {256, 97, {
@@ -639,7 +680,9 @@ ITEM_PUT_SET ItemPutListTbl12[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
+// clang-format off
 /** The treasure box item lists of dungeon 6's back floors. */
 ITEM_PUT_SET ItemPutListTbl13[3] = {
     {256, 73, {
@@ -658,6 +701,7 @@ ITEM_PUT_SET ItemPutListTbl13[3] = {
     }},
     {-1, -1},
 };
+// clang-format on
 
 /** The treasure box item lists, seven dungeons and then their back floors. */
 ITEM_PUT_SET *ItemPutListPtr[14] = {
@@ -677,6 +721,7 @@ ITEM_PUT_SET *ItemPutListPtr[14] = {
     ItemPutListTbl13,
 };
 
+// clang-format off
 /** The clown's item lists of dungeon 0. */
 PIERO_ITEM_SET PieroItemList0[2] = {
     {{19, 24}, {{
@@ -702,7 +747,9 @@ PIERO_ITEM_SET PieroItemList0[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 1. */
 PIERO_ITEM_SET PieroItemList1[2] = {
     {{19, 28}, {{
@@ -728,7 +775,9 @@ PIERO_ITEM_SET PieroItemList1[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 2. */
 PIERO_ITEM_SET PieroItemList2[2] = {
     {{27, 29}, {{
@@ -754,7 +803,9 @@ PIERO_ITEM_SET PieroItemList2[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 3. */
 PIERO_ITEM_SET PieroItemList3[2] = {
     {{28, 29}, {{
@@ -780,7 +831,9 @@ PIERO_ITEM_SET PieroItemList3[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 4. */
 PIERO_ITEM_SET PieroItemList4[2] = {
     {{33, 35}, {{
@@ -806,7 +859,9 @@ PIERO_ITEM_SET PieroItemList4[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 5. */
 PIERO_ITEM_SET PieroItemList5[2] = {
     {{33, 42}, {{
@@ -832,7 +887,9 @@ PIERO_ITEM_SET PieroItemList5[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 6. */
 PIERO_ITEM_SET PieroItemList6[2] = {
     {{33, 42}, {{
@@ -858,7 +915,9 @@ PIERO_ITEM_SET PieroItemList6[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 0's back floors. */
 PIERO_ITEM_SET PieroItemList7[2] = {
     {{19, 24}, {{
@@ -884,7 +943,9 @@ PIERO_ITEM_SET PieroItemList7[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 1's back floors. */
 PIERO_ITEM_SET PieroItemList8[2] = {
     {{20, 28}, {{
@@ -910,7 +971,9 @@ PIERO_ITEM_SET PieroItemList8[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 2's back floors. */
 PIERO_ITEM_SET PieroItemList9[2] = {
     {{27, 29}, {{
@@ -936,7 +999,9 @@ PIERO_ITEM_SET PieroItemList9[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 3's back floors. */
 PIERO_ITEM_SET PieroItemList10[2] = {
     {{31, 35}, {{
@@ -962,7 +1027,9 @@ PIERO_ITEM_SET PieroItemList10[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 4's back floors. */
 PIERO_ITEM_SET PieroItemList11[2] = {
     {{33, 35}, {{
@@ -988,7 +1055,9 @@ PIERO_ITEM_SET PieroItemList11[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 5's back floors. */
 PIERO_ITEM_SET PieroItemList12[2] = {
     {{33, 42}, {{
@@ -1014,7 +1083,9 @@ PIERO_ITEM_SET PieroItemList12[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
+// clang-format off
 /** The clown's item lists of dungeon 6's back floors. */
 PIERO_ITEM_SET PieroItemList13[2] = {
     {{33, 42}, {{
@@ -1040,6 +1111,7 @@ PIERO_ITEM_SET PieroItemList13[2] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     }}},
 };
+// clang-format on
 
 /** The clown's item lists, seven dungeons and then their back floors. */
 PIERO_ITEM_SET *PieroItemListPtr[14] = {
@@ -1181,6 +1253,7 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
     *item0 = list[1].item[0][pick0];
     *item1 = list[1].item[1][pick1];
 }
+
 int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     int candidate[144];
     s16 rate[400];
@@ -1314,6 +1387,7 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
         return item_no;
     }
 }
+
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
 
 /**
@@ -1549,6 +1623,7 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     memcpy(atra, packed, sizeof(packed));
     return count;
 }
+
 /**
  * Gives a map part's collision model, or null for an empty cell.
  */
@@ -1657,6 +1732,7 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
     }
     return count;
 }
+
 CFrame *CDungeonParts::GetSearchFrame(char *name) {
     for (int i = 0; i < 6; i++) {
         if (frame[i] != NULL) {
@@ -1681,6 +1757,7 @@ CFrame *CDungeonParts::GetSearchFrame(char *name) {
     }
     return NULL;
 }
+
 /**
  * Places a healing zone within one dungeon part.
  *
@@ -1729,6 +1806,7 @@ void CDungeonParts::Draw() {
         MGDraw(frame[i]);
     }
 }
+
 /**
  * Chooses the level of detail each of a part's frames draws at.
  *

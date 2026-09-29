@@ -21,32 +21,32 @@
 #include "character.hpp"
 #include "clsmes.hpp"
 #include "collision.hpp"
+#include "dataalloc.hpp"
+#include "dataread.hpp"
 #include "dataset.hpp"
 #include "debugfont.hpp"
-#include "edit_in.hpp"
-#include "editarea.hpp"
-#include "effectgroup.hpp"
-#include "menuitemstep.hpp"
-#include "dataread.hpp"
-#include "dataalloc.hpp"
 #include "dngstatusdata.hpp"
 #include "ebattle.hpp"
-#include "editloop.hpp"
-#include "editmapscript.hpp"
-#include "editloop3.hpp"
 #include "edit.hpp"
-#include "editpartsinfo.hpp"
+#include "edit_in.hpp"
+#include "editarea.hpp"
 #include "editground.hpp"
+#include "editloop.hpp"
+#include "editloop3.hpp"
+#include "editmapscript.hpp"
+#include "editpartsinfo.hpp"
 #include "effect.hpp"
+#include "effectgroup.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
-#include "mapparts.hpp"
 #include "mainselect.hpp"
+#include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "menu_misc.hpp"
+#include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
 #include "objanime.hpp"
@@ -62,19 +62,19 @@
 
 void BtSetMapJumpFloor(int floor);
 
-#include "editmenu.hpp"
-#include "wind.hpp"
-#include "memcard.hpp"
-#include "fishing.hpp"
-#include "effectmacro.hpp"
-#include "nowload.hpp"
-#include "menu_draw.hpp"
-
 #include "battlemenu.hpp"
+#include "editmenu.hpp"
+#include "effectmacro.hpp"
+#include "fishing.hpp"
 #include "gameutil.hpp"
+#include "memcard.hpp"
+#include "menu_draw.hpp"
 #include "menuetc.hpp"
-#include "weaponlevelup.hpp"
+#include "nowload.hpp"
 #include "vutext.hpp"
+#include "weaponlevelup.hpp"
+#include "wind.hpp"
+
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
 
@@ -316,6 +316,7 @@ void EditPartsObjectOnOff();
 void MainMode(void);
 void EditMode(void);
 void PlayAmbient(float volume);
+
 /* The ground the player has built on one map, as the save holds it. */
 struct ED_GRD_DATA {
     u8 unk_00[0x64];
@@ -384,6 +385,7 @@ void LoadScript() {
     }
     EdSystemEventData = NULL;
 }
+
 /**
  * Starts a map event and copies an optional source camera into the event camera.
  */
@@ -425,6 +427,7 @@ static void RunSystemEvent(int event_no, CCamera *camera) {
         start_system_event = event_no;
     }
 }
+
 /**
  * Begins a fade into a comparison event unless a higher-priority request is active.
  */
@@ -444,6 +447,7 @@ int FadeOutToEvent(int event_no, int level) {
     EdFadeOut(60, zero, zero, zero);
     return 1;
 }
+
 /**
  * Writes the editor's part progress and clock back to the save data.
  */
@@ -458,6 +462,7 @@ void EditSave() {
         SaveData->SetNowTime(NowTime);
     }
 }
+
 /**
  * Restores the editor's part progress and clock from the save data.
  */
@@ -470,6 +475,7 @@ void EditLoad() {
     pEditGround->MakePartsBox();
     NowTime = 0.01f * (float) ((int) (100.0f * SaveData->GetNowTime()) % 1200);
 }
+
 /**
  * Saves the map and quiets everything the editor was running before it leaves.
  */
@@ -495,6 +501,7 @@ void EditExit() {
     EdGetFadeColor(fade);
     MGSetBGColor(fade);
 }
+
 /**
  * Carves the villager, work and menu arenas out of what the NPC arena left.
  */
@@ -514,6 +521,7 @@ void InitWorkBuffer() {
     EdMenuBuffer.limit = 0x3A2E0;
     EdMenuBuffer.used = 0;
 }
+
 /**
  * Reports whether any modal editor event currently blocks normal input.
  */
@@ -524,6 +532,7 @@ int run_event_check() {
     }
     return 0;
 }
+
 /**
  * Disables editor input while an event is active or the loop is starting.
  */
@@ -535,6 +544,7 @@ void CheckKeyLock() {
         EdSetKeyMode(0);
     }
 }
+
 /**
  * Settles the editor's input lock and the overlays it allows for this frame.
  */
@@ -561,6 +571,7 @@ void EdSetFlag() {
         draw_clock = 0;
     }
 }
+
 /**
  * Returns a flag from the current town's persistent map state.
  */
@@ -580,6 +591,7 @@ int EdSetMapFlag(int flag_no, int value) {
     }
     return SaveData->SetMapFlag(MapNo, flag_no, value);
 }
+
 /**
  * Cancels editor pause while another modal event is active.
  */
@@ -626,6 +638,7 @@ void EdSetClock(float time) {
     }
     NowTime = ConvertTime(time);
 }
+
 /**
  * Applies the editor-specific layout and reveal settings to its message windows.
  */
@@ -680,6 +693,7 @@ void EdInitMesParam() {
     EditNameMes.stay_frame = 0;
     EditNameMes.style = 3;
 }
+
 /**
  * Builds every buffer, camera, message window and map the editor loop runs on.
  */
@@ -876,10 +890,12 @@ int EditInit(void *) {
             }
             for (int i = 0; i < 36; i++)
                 EditElementInfo[i].unk_04 = i % 15 + 1;
+            // clang-format off
             short element_table[40] = {
                 0, 3, 12, 0, 11, 4, 1, 0, 16, 2, 0, 5, 17, 6, 1, 10, 2, 2, 0, 15,
                 1, 1, 1, 2, 1, 2, 12, 3, 14, 7, 8, 9, 1, 2, 1, 8, 13, 0, 0, -1,
             };
+            // clang-format on
             short *elem = SaveData->GetElemData(0);
             if (loaded != 0)
                 pEditGround->Load((char *) read_buffer);
@@ -1056,6 +1072,7 @@ int cat_end() {
     }
     return total;
 }
+
 /**
  * Runs one frame of the editor and reports what it is to do next.
  *
@@ -1243,243 +1260,243 @@ int EditLoop(void) {
         return 0;
     }
     switch (mode) {
-    case 16:
-        draw_clock = 0;
-        MainMode();
-        MainEditMode();
-        if (EdCheckViewMode() == 0) {
-            NowCamera = (CCamera *) &MainCamera;
-        } else {
-            NowCamera = (CCamera *) &ViewCamera;
-        }
-        if (EdCheckViewMode() == 0) {
-            NowCamera->Step(1);
-        }
-        break;
-    case 1:
-        if (loop_counter > 0) {
+        case 16:
+            draw_clock = 0;
             MainMode();
-        }
-        MainEditMode();
-        if (EdCheckViewMode() == 0) {
-            NowCamera = (CCamera *) &MainCamera;
-        } else {
-            NowCamera = (CCamera *) &ViewCamera;
-        }
-        if (EdCheckViewMode() == 0) {
+            MainEditMode();
+            if (EdCheckViewMode() == 0) {
+                NowCamera = (CCamera *) &MainCamera;
+            } else {
+                NowCamera = (CCamera *) &ViewCamera;
+            }
+            if (EdCheckViewMode() == 0) {
+                NowCamera->Step(1);
+            }
+            break;
+        case 1:
+            if (loop_counter > 0) {
+                MainMode();
+            }
+            MainEditMode();
+            if (EdCheckViewMode() == 0) {
+                NowCamera = (CCamera *) &MainCamera;
+            } else {
+                NowCamera = (CCamera *) &ViewCamera;
+            }
+            if (EdCheckViewMode() == 0) {
+                NowCamera->Step(1);
+            }
+            if (goto_cmp_event != 0) {
+                goto_return_menu = 0;
+                if (EdFadeOutCheck() != 0) {
+                    if (goto_cmp_event < 0) {
+                        EdExitLoop();
+                    } else {
+                        RunEvent(goto_cmp_event, NULL);
+                        EdFadeIn(60, 0.0f, 0.0f, 0.0f);
+                    }
+                    goto_cmp_event = 0;
+                }
+            }
+            break;
+        case 14:
+            NowCamera = (CCamera *) &EventCamera;
+            MainEditMode();
+            EventMode();
+            VillagerCollision();
+            EdEventNPCStep();
             NowCamera->Step(1);
-        }
-        if (goto_cmp_event != 0) {
+            draw_npc_cursor = 0;
+            draw_clock = 0;
             goto_return_menu = 0;
-            if (EdFadeOutCheck() != 0) {
-                if (goto_cmp_event < 0) {
-                    EdExitLoop();
-                } else {
+            break;
+        case 2:
+            NowCamera = (CCamera *) &TalkCamera;
+            TalkMode();
+            MainEditMode();
+            NowCamera->Step(1);
+            draw_npc_cursor = 0;
+            draw_clock = 0;
+            break;
+        case 4:
+            GamePad.SetAutoRepeat(0xF000, 20, 5);
+            NowCamera = (CCamera *) &EditCamera;
+            MainEditMode();
+            EditMode();
+            NowCamera->Step(1);
+            pEditGround->EditAreaClip(NowCamera, -1.0f);
+            if (goto_cmp_event != 0) {
+                goto_return_menu = 0;
+                if (EdFadeOutCheck() != 0) {
                     RunEvent(goto_cmp_event, NULL);
                     EdFadeIn(60, 0.0f, 0.0f, 0.0f);
+                    goto_cmp_event = 0;
                 }
-                goto_cmp_event = 0;
             }
-        }
-        break;
-    case 14:
-        NowCamera = (CCamera *) &EventCamera;
-        MainEditMode();
-        EventMode();
-        VillagerCollision();
-        EdEventNPCStep();
-        NowCamera->Step(1);
-        draw_npc_cursor = 0;
-        draw_clock = 0;
-        goto_return_menu = 0;
-        break;
-    case 2:
-        NowCamera = (CCamera *) &TalkCamera;
-        TalkMode();
-        MainEditMode();
-        NowCamera->Step(1);
-        draw_npc_cursor = 0;
-        draw_clock = 0;
-        break;
-    case 4:
-        GamePad.SetAutoRepeat(0xF000, 20, 5);
-        NowCamera = (CCamera *) &EditCamera;
-        MainEditMode();
-        EditMode();
-        NowCamera->Step(1);
-        pEditGround->EditAreaClip(NowCamera, -1.0f);
-        if (goto_cmp_event != 0) {
-            goto_return_menu = 0;
-            if (EdFadeOutCheck() != 0) {
-                RunEvent(goto_cmp_event, NULL);
-                EdFadeIn(60, 0.0f, 0.0f, 0.0f);
-                goto_cmp_event = 0;
+            break;
+        case 11:
+            if (door_open_cnt == 0x9C) {
+                EdMapJump(EdGetTime(NowTime), interior_map_name);
             }
-        }
-        break;
-    case 11:
-        if (door_open_cnt == 0x9C) {
-            EdMapJump(EdGetTime(NowTime), interior_map_name);
-        }
-        if (door_open_cnt < 0x9C) {
-            ReadBG();
-        }
-        if (door_open != 0) {
-            NowCamera = (CCamera *) &MainCamera;
-        }
-        OpenDoorMode();
-        MainEditMode();
-        door_open_cnt--;
-        NowCamera->Step(1);
-        if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
-            sceVu0FVECTOR here;
+            if (door_open_cnt < 0x9C) {
+                ReadBG();
+            }
+            if (door_open != 0) {
+                NowCamera = (CCamera *) &MainCamera;
+            }
+            OpenDoorMode();
+            MainEditMode();
+            door_open_cnt--;
+            NowCamera->Step(1);
+            if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
+                sceVu0FVECTOR here;
 
-            Chara->GetPosition(here);
-            EdDoorOpenSe(EdInteriorDoorSound, here);
-        }
-        if (door_open_cnt < 0x96 && EdFadeOutCheck() != 0) {
-            door_open_cnt = -1;
-        }
-        if (door_open_cnt < 0) {
-            door_open_cnt = 0;
-            GameMode = 0xC;
-            EdStopSoundSrc();
-            EdSetAmbientVol(0.3f);
-            SndStep();
-            EdBeforeInBgmNo = SndGetBgmNo();
-            if (old_main_mode == 5) {
-                EdBeforeInBgmNo = 0;
+                Chara->GetPosition(here);
+                EdDoorOpenSe(EdInteriorDoorSound, here);
             }
-            bgm_vol >>= 1;
-            if (bgm_vol <= 0) {
-                bgm_vol = 1;
+            if (door_open_cnt < 0x96 && EdFadeOutCheck() != 0) {
+                door_open_cnt = -1;
             }
-            if (EdEventInfo.map_jump_bgm_stop != 0) {
-                SndBgmFadeOutStop();
-            }
-            SndStep();
+            if (door_open_cnt < 0) {
+                door_open_cnt = 0;
+                GameMode = 0xC;
+                EdStopSoundSrc();
+                EdSetAmbientVol(0.3f);
+                SndStep();
+                EdBeforeInBgmNo = SndGetBgmNo();
+                if (old_main_mode == 5) {
+                    EdBeforeInBgmNo = 0;
+                }
+                bgm_vol >>= 1;
+                if (bgm_vol <= 0) {
+                    bgm_vol = 1;
+                }
+                if (EdEventInfo.map_jump_bgm_stop != 0) {
+                    SndBgmFadeOutStop();
+                }
+                SndStep();
 
-            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
-            MGEndFrame();
-            for (int i = 0; i < 10; i++) {
-                TexManager.DeleteTextureBlock(i + 0x36);
-            }
-            TexManager.CleanUpBuffer();
-            while (ReadBGSync() != 0) {
-            }
-            sceGsSyncV(0);
-            EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
-            EditInInit(NowTime, interior_map_name);
-            MGBeginFrame();
+                MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+                MGEndFrame();
+                for (int i = 0; i < 10; i++) {
+                    TexManager.DeleteTextureBlock(i + 0x36);
+                }
+                TexManager.CleanUpBuffer();
+                while (ReadBGSync() != 0) {
+                }
+                sceGsSyncV(0);
+                EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
+                EditInInit(NowTime, interior_map_name);
+                MGBeginFrame();
 
-            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
-            ItemVolumeStep.CheckItemVolume();
-            return 0;
-        }
-        break;
-    case 6:
-        if (EditMenuLoop() != 0) {
-            GameMode = 4;
-            NowSelectParts = -1;
-            switch (EditMenuStatus.mode) {
-            case 0:
-                NowSelectParts = EditMenuStatus.parts;
-                break;
-            case 3:
+                MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+                ItemVolumeStep.CheckItemVolume();
+                return 0;
+            }
+            break;
+        case 6:
+            if (EditMenuLoop() != 0) {
+                GameMode = 4;
                 NowSelectParts = -1;
-                break;
-            case 5:
-                FadeOutToEvent(EditMenuStatus.event_no + 0xC8, 0);
-                break;
+                switch (EditMenuStatus.mode) {
+                    case 0:
+                        NowSelectParts = EditMenuStatus.parts;
+                        break;
+                    case 3:
+                        NowSelectParts = -1;
+                        break;
+                    case 5:
+                        FadeOutToEvent(EditMenuStatus.event_no + 0xC8, 0);
+                        break;
+                }
+                EdExitMenu();
+                return 0;
             }
-            EdExitMenu();
-            return 0;
-        }
-        break;
-    case 8:
-        TexManager.ReloadTexture(GetVif1Packet(), 0x10);
-        MenuMapJumpMode = -1;
-        EditPartsObjectOnOff();
-        if (EdMenuMode() != 0) {
-            GameMode = 1;
-            EdExitMenu();
-            if (MenuMapJumpMode >= 0) {
-                MapJump(MenuMapJumpMode, -1);
-                EdEventInfo.integer_arguments[0] = MenuMapJumpMode;
-                RunSystemEvent(2, NowCamera);
-                MenuMapJumpMode = -1;
+            break;
+        case 8:
+            TexManager.ReloadTexture(GetVif1Packet(), 0x10);
+            MenuMapJumpMode = -1;
+            EditPartsObjectOnOff();
+            if (EdMenuMode() != 0) {
+                GameMode = 1;
+                EdExitMenu();
+                if (MenuMapJumpMode >= 0) {
+                    MapJump(MenuMapJumpMode, -1);
+                    EdEventInfo.integer_arguments[0] = MenuMapJumpMode;
+                    RunSystemEvent(2, NowCamera);
+                    MenuMapJumpMode = -1;
+                }
+                EdInitVillagerOnOff(EdVillager, EdVillagerInfo, pEditGround);
+                return 0;
             }
-            EdInitVillagerOnOff(EdVillager, EdVillagerInfo, pEditGround);
-            return 0;
-        }
-        break;
-    case 3:
-        if (chg_time_cnt < 0x8C) {
-            ReadBG();
-        }
-        for (int i = 0; i < 10; i++) {
-            if (EdVillager[i].CheckDraw() != 0) {
-                EdVillager[i].Step();
-            } else {
-                EdVillager[i].initialized = 0;
+            break;
+        case 3:
+            if (chg_time_cnt < 0x8C) {
+                ReadBG();
             }
-        }
-        if (chg_time_cnt == 0x8C) {
-            EdVillagerBuffer.used = 0;
-            StartReadBG();
-            EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
-            EdInitVilager(EdVillagerInfo, pEditGround, EdNPCReadBuffer);
-        }
-        NowCamera = (CCamera *) &MainCamera;
-        Chara->GetVelocity()->y = 0.0f;
-
-        CCharacter *chara = Chara;
-
-        chara->motion_no = 0;
-        chara->flags = 0;
-        chara->motion_speed = -1.0f;
-        Chara->Step();
-        Chara->ClothStep(0);
-        Chara->ShadowStep();
-        MainEditMode();
-        chg_time_cnt--;
-        NowCamera->Step(1);
-        if (chg_time_cnt < 0) {
-            while (ReadBGSync() != 0) {
-            }
-            for (int i = 0x36; i < 0x40; i++) {
-                TexManager.DeleteTextureBlock(i);
-            }
-            TexManager.CleanUpBuffer();
             for (int i = 0; i < 10; i++) {
-                BG_READ_INFO *file = GetReadBGFile(i);
-
-                if (file != NULL) {
-                    u_int *pack = (u_int *) file->buffer;
-
-                    EdLoadVillager(pack, EdVillager[i].resource_name, &EdVillager[i],
-                                   &EdVillagerBuffer);
+                if (EdVillager[i].CheckDraw() != 0) {
+                    EdVillager[i].Step();
+                } else {
+                    EdVillager[i].initialized = 0;
                 }
             }
-            EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, NULL);
-            chg_time_cnt = 0;
-            GameMode = 1;
-            EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
-        }
-        break;
-    case 5:
-    case 7:
-        draw_clock = 0;
-        MGFlipWaitVSync(1);
-        pEditGround->EditAreaClip(NowCamera, -1.0f);
-        break;
-    case 0:
-    case 9:
-    case 10:
-    case 12:
-    case 13:
-    case 15:
-        break;
+            if (chg_time_cnt == 0x8C) {
+                EdVillagerBuffer.used = 0;
+                StartReadBG();
+                EdSelectVillager(EdVillagerInfo, NowTime, EditMapInfo);
+                EdInitVilager(EdVillagerInfo, pEditGround, EdNPCReadBuffer);
+            }
+            NowCamera = (CCamera *) &MainCamera;
+            Chara->GetVelocity()->y = 0.0f;
+
+            CCharacter *chara = Chara;
+
+            chara->motion_no = 0;
+            chara->flags = 0;
+            chara->motion_speed = -1.0f;
+            Chara->Step();
+            Chara->ClothStep(0);
+            Chara->ShadowStep();
+            MainEditMode();
+            chg_time_cnt--;
+            NowCamera->Step(1);
+            if (chg_time_cnt < 0) {
+                while (ReadBGSync() != 0) {
+                }
+                for (int i = 0x36; i < 0x40; i++) {
+                    TexManager.DeleteTextureBlock(i);
+                }
+                TexManager.CleanUpBuffer();
+                for (int i = 0; i < 10; i++) {
+                    BG_READ_INFO *file = GetReadBGFile(i);
+
+                    if (file != NULL) {
+                        u_int *pack = (u_int *) file->buffer;
+
+                        EdLoadVillager(pack, EdVillager[i].resource_name, &EdVillager[i],
+                                       &EdVillagerBuffer);
+                    }
+                }
+                EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, NULL);
+                chg_time_cnt = 0;
+                GameMode = 1;
+                EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
+            }
+            break;
+        case 5:
+        case 7:
+            draw_clock = 0;
+            MGFlipWaitVSync(1);
+            pEditGround->EditAreaClip(NowCamera, -1.0f);
+            break;
+        case 0:
+        case 9:
+        case 10:
+        case 12:
+        case 13:
+        case 15:
+            break;
     }
 
     sceVu0FMATRIX view;
@@ -1496,40 +1513,40 @@ int EditLoop(void) {
         }
     }
     switch (GameMode) {
-    case 4:
-        depth_of_field = 0;
-        edit_mode_lighting = 1;
-        draw_sky = 0;
-        edit_mode_draw = 1;
-        edit_mode_grd_draw = 1;
-        MainDraw();
-        break;
-    case 0:
-    case 1:
-    case 2:
-    case 14:
-    case 16:
-        depth_of_field = 1;
-        edit_mode_lighting = 0;
-        draw_sky = 1;
-        edit_mode_draw = 0;
-        if (move_count <= 10) {
-            edit_mode_grd_draw = 0;
-        }
-        /* fallthrough */
-    case 3:
-    case 5:
-    case 7:
-    case 9:
-    case 10:
-    case 11:
-        MainDraw();
-        break;
-    case 6:
-    case 8:
-        EditNameMes.MakeMesWin(-1);
-        EdFadeInOut();
-        break;
+        case 4:
+            depth_of_field = 0;
+            edit_mode_lighting = 1;
+            draw_sky = 0;
+            edit_mode_draw = 1;
+            edit_mode_grd_draw = 1;
+            MainDraw();
+            break;
+        case 0:
+        case 1:
+        case 2:
+        case 14:
+        case 16:
+            depth_of_field = 1;
+            edit_mode_lighting = 0;
+            draw_sky = 1;
+            edit_mode_draw = 0;
+            if (move_count <= 10) {
+                edit_mode_grd_draw = 0;
+            }
+            /* fallthrough */
+        case 3:
+        case 5:
+        case 7:
+        case 9:
+        case 10:
+        case 11:
+            MainDraw();
+            break;
+        case 6:
+        case 8:
+            EditNameMes.MakeMesWin(-1);
+            EdFadeInOut();
+            break;
     }
     CheckKeyLock();
 
@@ -1869,38 +1886,38 @@ void MainDraw() {
             pEditGround->DrawWater(0x15);
 
             switch (GameMode) {
-            case 1:
-            case 0x10:
-            case 4:
-            case 2:
-            case 0xE:
-            case 3:
-            case 0:
-            case 9:
-            case 7:
-            case 5:
-            case 0xA: {
-                sceGsTex0 frame;
-                CRect_i_ screen;
-                sceGsTex0 water;
-                float ref[4];
-                sceGsZbuf zbuf;
+                case 1:
+                case 0x10:
+                case 4:
+                case 2:
+                case 0xE:
+                case 3:
+                case 0:
+                case 9:
+                case 7:
+                case 5:
+                case 0xA: {
+                    sceGsTex0 frame;
+                    CRect_i_ screen;
+                    sceGsTex0 water;
+                    float ref[4];
+                    sceGsZbuf zbuf;
 
-                MGGetFBuffTex(&frame);
-                screen.x = 0;
-                screen.y = 0;
-                screen.width = 0x280;
-                screen.height = 0xE0;
-                water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
-                MGMoveImage(&frame, screen, &water, 0, 0, 0);
-                MainCamera.GetRef(ref);
-                zbuf = mgZBuffer;
-                zbuf.bits.zmsk = 1;
-                MGSetGsZBUF(&zbuf);
-                pEditGround->DrawWaterSurface(NowCamera);
-                MGSetGsZBUF(&mgZBuffer);
-                break;
-            }
+                    MGGetFBuffTex(&frame);
+                    screen.x = 0;
+                    screen.y = 0;
+                    screen.width = 0x280;
+                    screen.height = 0xE0;
+                    water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
+                    MGMoveImage(&frame, screen, &water, 0, 0, 0);
+                    MainCamera.GetRef(ref);
+                    zbuf = mgZBuffer;
+                    zbuf.bits.zmsk = 1;
+                    MGSetGsZBUF(&zbuf);
+                    pEditGround->DrawWaterSurface(NowCamera);
+                    MGSetGsZBUF(&mgZBuffer);
+                    break;
+                }
             }
             pEditGround->DrawRipple(0x15);
 
@@ -1926,112 +1943,112 @@ void MainDraw() {
             EdDrawItem();
         }
         switch (GameMode) {
-        case 9:
-        case 7:
-            CCharacter::MotionStopFlag = 1;
-            Chara->Step();
-            Chara->ShadowStep();
-            for (i = 0; i < 10; i++) {
-                CNPCharacter *villager = &EdVillager[i];
-                unsigned char addressable = villager->initialized != 0;
-
-                if (addressable != 0) {
-                    addressable = villager->draw_enabled != 0;
-                }
-                if (addressable != 0) {
-                    int saved = villager->sequence_enabled;
-
-                    villager->sequence_enabled = 0;
-                    villager->Step();
-                    villager->ShadowStep();
-                    villager->sequence_enabled = saved;
-                }
-            }
-            CCharacter::MotionStopFlag = 0;
-            /* fallthrough */
-        case 1:
-        case 16:
-        case 2:
-        case 14:
-        case 3:
-        case 11: {
-            event = NULL;
-            shadow_on = 1;
-            detail = 3;
-            int marks_store[10];
-            marks = marks_store;
-            float here[4];
-            CBoxVu0 box;
-            CMapParts *near_parts[0x40];
-
-            if (GameMode == 2 || EdSystemMesCheck() != 0) {
-                shadow_on = 0;
-            }
-            if (EdCheckViewMode() != 0) {
-                detail = 0;
-            }
-            if (GameMode == 0xB) {
-                marks = NULL;
-            } else {
+            case 9:
+            case 7:
+                CCharacter::MotionStopFlag = 1;
+                Chara->Step();
+                Chara->ShadowStep();
                 for (i = 0; i < 10; i++) {
-                    marks_store[i] = 3;
+                    CNPCharacter *villager = &EdVillager[i];
+                    unsigned char addressable = villager->initialized != 0;
+
+                    if (addressable != 0) {
+                        addressable = villager->draw_enabled != 0;
+                    }
+                    if (addressable != 0) {
+                        int saved = villager->sequence_enabled;
+
+                        villager->sequence_enabled = 0;
+                        villager->Step();
+                        villager->ShadowStep();
+                        villager->sequence_enabled = saved;
+                    }
                 }
-            }
-            if (GameMode == 0xE) {
-                event = &EdEventInfo;
-            }
-            Chara->GetPosition(here);
-            here[1] += 10.0f;
-            box.min[0] = here[0] - 100.0f;
-            box.min[1] = here[1] - 100.0f;
-            box.min[2] = here[2] - 100.0f;
-            box.min[3] = 1.0f;
-            box.max[0] = 100.0f + here[0];
-            box.max[1] = 100.0f + here[1];
-            box.max[2] = 100.0f + here[2];
-            box.max[3] = 1.0f;
+                CCharacter::MotionStopFlag = 0;
+                /* fallthrough */
+            case 1:
+            case 16:
+            case 2:
+            case 14:
+            case 3:
+            case 11: {
+                event = NULL;
+                shadow_on = 1;
+                detail = 3;
+                int marks_store[10];
+                marks = marks_store;
+                float here[4];
+                CBoxVu0 box;
+                CMapParts *near_parts[0x40];
 
-            int found = pEditGround->GetNearParts(near_parts, 0x40, &box, NULL);
+                if (GameMode == 2 || EdSystemMesCheck() != 0) {
+                    shadow_on = 0;
+                }
+                if (EdCheckViewMode() != 0) {
+                    detail = 0;
+                }
+                if (GameMode == 0xB) {
+                    marks = NULL;
+                } else {
+                    for (i = 0; i < 10; i++) {
+                        marks_store[i] = 3;
+                    }
+                }
+                if (GameMode == 0xE) {
+                    event = &EdEventInfo;
+                }
+                Chara->GetPosition(here);
+                here[1] += 10.0f;
+                box.min[0] = here[0] - 100.0f;
+                box.min[1] = here[1] - 100.0f;
+                box.min[2] = here[2] - 100.0f;
+                box.min[3] = 1.0f;
+                box.max[0] = 100.0f + here[0];
+                box.max[1] = 100.0f + here[1];
+                box.max[2] = 100.0f + here[2];
+                box.max[3] = 1.0f;
 
-            Chara->ClearPointLight();
-            for (i = 0; i < found; i++) {
-                CMapParts *parts = near_parts[i];
-                CFrame *frame = (CFrame *) parts->frame[0];
+                int found = pEditGround->GetNearParts(near_parts, 0x40, &box, NULL);
 
-                if (frame != NULL) {
-                    float where[4];
+                Chara->ClearPointLight();
+                for (i = 0; i < found; i++) {
+                    CMapParts *parts = near_parts[i];
+                    CFrame *frame = (CFrame *) parts->frame[0];
 
-                    parts->GetPosition(where);
-                    frame->SetPosition(where);
-                    near_parts[i]->GetRotation(where);
-                    frame->SetRotation(where[0], where[1], where[2]);
-                    for (int j = 0; j < 0x18; j++) {
-                        EDIT_EFFECT_INFO *effect = near_parts[i]->effect[j];
+                    if (frame != NULL) {
+                        float where[4];
 
-                        if (near_parts[i]->effect_on[j] != 0 && effect != NULL &&
-                            (effect->kind == 1 || effect->kind == 3 || effect->kind == 2) &&
-                            effect->frame != NULL &&
-                            CheckEditEffect(effect, NowTime) != 0) {
-                            float lit[4];
+                        parts->GetPosition(where);
+                        frame->SetPosition(where);
+                        near_parts[i]->GetRotation(where);
+                        frame->SetRotation(where[0], where[1], where[2]);
+                        for (int j = 0; j < 0x18; j++) {
+                            EDIT_EFFECT_INFO *effect = near_parts[i]->effect[j];
 
-                            effect->frame->GetWorldPosition(lit, effect->offset);
+                            if (near_parts[i]->effect_on[j] != 0 && effect != NULL &&
+                                (effect->kind == 1 || effect->kind == 3 || effect->kind == 2) &&
+                                effect->frame != NULL &&
+                                CheckEditEffect(effect, NowTime) != 0) {
+                                float lit[4];
 
-                            float away = DistVector(here, lit);
+                                effect->frame->GetWorldPosition(lit, effect->offset);
 
-                            if (away <= 40.0f) {
-                                float bright = 80.0f + (float) (rand() % 48);
+                                float away = DistVector(here, lit);
 
-                                lit[3] = away;
-                                Chara->SetPointLight(lit, 5.0f, 40.0f, bright, bright, bright,
-                                                     128.0f);
+                                if (away <= 40.0f) {
+                                    float bright = 80.0f + (float) (rand() % 48);
+
+                                    lit[3] = away;
+                                    Chara->SetPointLight(lit, 5.0f, 40.0f, bright, bright, bright,
+                                                         128.0f);
+                                }
                             }
                         }
                     }
                 }
+                EdDrawCharacter(Chara, detail, 0xA, EdVillager, marks, shadow_on, event);
+                break;
             }
-            EdDrawCharacter(Chara, detail, 0xA, EdVillager, marks, shadow_on, event);
-            break;
-        }
         }
         if (EdDrawOffMapShadow == 0 && EdDrawOffMap == 0) {
             float light[4][4];
@@ -2076,43 +2093,43 @@ void MainDraw() {
             RunEffect.Lighting(1);
             RunEffect.Draw();
             switch (GameMode) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 7:
-            case 11:
-            case 14:
-            case 16:
-                if (EdPauseFlag == 0) {
-                    float wind[4];
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 7:
+                case 11:
+                case 14:
+                case 16:
+                    if (EdPauseFlag == 0) {
+                        float wind[4];
 
-                    EditEffectStep();
-                    EdWind.GetWind(wind);
-                    EffectMacroStep(wind);
-                    RunEffect.Step();
-                    EdEffectGroup.Step(1);
-                    if (NowEditMap == 1) {
-                        sceVu0FVECTOR spray = {800.0f, -20.0f, 1300.0f, 1.0f};
-                        sceVu0FVECTOR size = {10.0f, 7.0f, 10.0f, 1.0f};
+                        EditEffectStep();
+                        EdWind.GetWind(wind);
+                        EffectMacroStep(wind);
+                        RunEffect.Step();
+                        EdEffectGroup.Step(1);
+                        if (NowEditMap == 1) {
+                            sceVu0FVECTOR spray = {800.0f, -20.0f, 1300.0f, 1.0f};
+                            sceVu0FVECTOR size = {10.0f, 7.0f, 10.0f, 1.0f};
 
-                        for (int i = 0; i < 5; i++) {
-                            EffectWaterSpray(&EdEffectGroup, spray, size, 0xA, i);
-                            spray[0] += 20.0f;
+                            for (int i = 0; i < 5; i++) {
+                                EffectWaterSpray(&EdEffectGroup, spray, size, 0xA, i);
+                                spray[0] += 20.0f;
+                            }
                         }
                     }
-                }
-                /* fallthrough */
-            case 9:
-            case 10:
-                EditEffectStep2();
-                CEditGround *ground = pEditGround;
+                    /* fallthrough */
+                case 9:
+                case 10:
+                    EditEffectStep2();
+                    CEditGround *ground = pEditGround;
 
-                ground->DrawEffect((CCameraFollow *) NowCamera, NowTime, &EdEffectGroup);
-                EdEffectGroup.Draw();
-                break;
+                    ground->DrawEffect((CCameraFollow *) NowCamera, NowTime, &EdEffectGroup);
+                    EdEffectGroup.Draw();
+                    break;
             }
             if (edit_mode_draw == 0) {
                 EdDrawLensFlare(NowTime, SunFrame);
@@ -2258,12 +2275,14 @@ void ParamDraw() {
         }
     }
 }
+
 /**
  * Enables or disables the cursor drawn over the controlled character.
  */
 void EdSetCharaCursor(int on) {
     draw_npc_cursor = on;
 }
+
 /**
  * Draws the villager cursors, the attention marker and the event points.
  */
@@ -2343,6 +2362,7 @@ void EdInitDrawDay() {
     draw_day_cnt = 0.0f;
     draw_day_flag = 0;
 }
+
 /**
  * Gives a rectangle that starts at zero.
  *
@@ -2366,6 +2386,7 @@ public:
         this->height = height;
     }
 };
+
 void DrawDay() {
     if (draw_day_flag != 0) {
         int week;
@@ -2454,24 +2475,24 @@ void DrawDay() {
 
         if (texture != NULL) {
             switch (LanguageCode) {
-            case 0:
-                set2DSprite(GetVif1Packet(), texture,
-                            CRect_i_(x, 0xD4, title.width, title.height), title, alpha);
-                x += 0x30;
-                break;
-            case 1:
-                width = week_word.width +
-                        (word_end.width + (word.width + ((count - 1) * 32)) + 0x48);
-                x = 0x140 - (int) (width >> 1);
-                set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, word.width, word.height),
-                            word, alpha);
-                x += word.width + 0xC;
-                set2DSprite(GetVif1Packet(), texture,
-                            CRect_i_(x, 0xD4, word_end.width, word_end.height), word_end, alpha);
-                x += word_end.width + 0xC;
-                break;
-            default:
-                break;
+                case 0:
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xD4, title.width, title.height), title, alpha);
+                    x += 0x30;
+                    break;
+                case 1:
+                    width = week_word.width +
+                            (word_end.width + (word.width + ((count - 1) * 32)) + 0x48);
+                    x = 0x140 - (int) (width >> 1);
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, word.width, word.height),
+                                word, alpha);
+                    x += word.width + 0xC;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xD4, word_end.width, word_end.height), word_end, alpha);
+                    x += word_end.width + 0xC;
+                    break;
+                default:
+                    break;
             }
             int n;
             for (n = count; n > 0; n--) {
@@ -2485,25 +2506,25 @@ void DrawDay() {
                 x += number.width;
             }
             switch (LanguageCode) {
-            case 0:
-                set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, dai.width, dai.height),
-                            dai, alpha);
-                x += dai.width;
-                set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, nichi.width, nichi.height),
-                            nichi, alpha);
-                x += nichi.width;
-                weekday.x += week * 0x18;
-                set2DSprite(GetVif1Packet(), texture,
-                            CRect_i_(x, 0xD4, weekday.width, weekday.height), weekday, alpha);
-                break;
-            case 1:
-                set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, nichi.width, nichi.height),
-                            nichi, alpha);
-                x += nichi.width;
-                set2DSprite(GetVif1Packet(), texture,
-                            CRect_i_(x, 0xD4, week_word.width, week_word.height), week_word,
-                            alpha);
-                break;
+                case 0:
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, dai.width, dai.height),
+                                dai, alpha);
+                    x += dai.width;
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, nichi.width, nichi.height),
+                                nichi, alpha);
+                    x += nichi.width;
+                    weekday.x += week * 0x18;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xD4, weekday.width, weekday.height), weekday, alpha);
+                    break;
+                case 1:
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xD4, nichi.width, nichi.height),
+                                nichi, alpha);
+                    x += nichi.width;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xD4, week_word.width, week_word.height), week_word,
+                                alpha);
+                    break;
             }
             drawn = 0;
             x = 0x13C - (int) (width >> 1);
@@ -2527,6 +2548,7 @@ void DrawDay() {
         }
     }
 }
+
 /**
  * Draws the editor's clock, day display, event cursors, and pause overlay.
  */
@@ -2564,6 +2586,7 @@ void DrawSysGra() {
         }
     }
 }
+
 /**
  * Draws the town-clock face and its hand at the current editor time.
  */
@@ -2603,6 +2626,7 @@ void EdDrawClock(int x, int y) {
                        hand_texel, 12, 40, angle, 128);
     }
 }
+
 /**
  * Selects the main character and advances normal character movement.
  */
@@ -2610,6 +2634,7 @@ void MainMode() {
     Chara = &MainChara;
     MoveChara();
 }
+
 /**
  * Changes whether a named child frame participates in drawing.
  */
@@ -2627,6 +2652,7 @@ int FrameOnOff(CFrame *root, char *name, int on) {
     frame->attr.draw_on = on;
     return 0;
 }
+
 /**
  * Synchronizes object visibility for every active editable map part.
  */
@@ -2638,6 +2664,7 @@ void EditPartsObjectOnOff() {
     }
     pEditGround->RequestCheck();
 }
+
 /**
  * Advances the editable ground effects, collision boxes, cursor and object visibility.
  */
@@ -2647,6 +2674,7 @@ void EditMode() {
     MoveEditCursor();
     EditPartsObjectOnOff();
 }
+
 /**
  * Runs the editing mode: the cursor, the part list and the placement rules.
  *
@@ -2820,6 +2848,7 @@ void MainEditMode() {
         }
     }
 }
+
 /**
  * Steps the player while a door plays its motion, holding them and the camera
  * at the place the door fixed.
@@ -2836,6 +2865,7 @@ void OpenDoorMode() {
         MainCamera.SetRef(fix_chara_pos[0], 14.0f + fix_chara_pos[1], fix_chara_pos[2]);
     }
 }
+
 /**
  * Steps the villager the player is talking to, and leaves the mode when the
  * conversation asks for a menu or an event.
@@ -2879,6 +2909,7 @@ void TalkMode() {
         }
     }
 }
+
 /**
  * Steps a running editor event, and follows it into whatever it asks for: a
  * building, a dungeon, the menu, or the camera it wants to look through.
@@ -2892,60 +2923,60 @@ void EventMode() {
         return;
     }
     switch (result) {
-    case 4:
-        GotoInterior(EdEventInfo.unk_2b0, EdEventInfo.unk_2ac, 0, NULL, EdEventInfo.unk_2d0);
-        break;
-    case 5:
-        GotoDungeon();
-        break;
-    case 6:
-        break;
-    case 8:
-        EdExitLoop();
-        break;
-    case 10:
-        EdExitLoop();
-        break;
-    case 9:
-        GameMode = 2;
-        break;
-    case 11:
-        GameMode = 16;
-        break;
-    default:
-        GameMode = 1;
-        if (EdEventInfo.reset_camera_angle > 0) {
-            Chara->GetPosition(pos);
-            Chara->GetRotation(ref);
-            MainCamera.FollowOn();
-            float angle = ref[1] + EdEventInfo.reset_camera_yaw;
-            angle = AngleLimit(angle);
-            MainCamera.SetAngleSoon(angle);
-            MainCamera.SetFollow(pos[0], pos[1] + Chara->body_height - 3.0f, pos[2]);
-            EdInitCameraParam(&MainCamera);
-            MainCamera.Step(-1);
-        }
-        if (EdEventInfo.reset_camera_angle < 0) {
-            EventCamera.GetPos(pos);
-            EventCamera.GetRef(ref);
-            MainCamera.FollowOff();
-            MainCamera.SetPos(pos);
-            MainCamera.SetRef(ref);
-            MainCamera.Step(-1);
-            MainCamera.Step(1);
-            MainCamera.FollowOn();
-            MainCamera.SetHeight(pos[1] - ref[1]);
-            MainCamera.SetFollow(ref[0], ref[1], ref[2]);
-            MainCamera.SetAngleSoon(atan2(pos[0] - ref[0], pos[2] - ref[2]));
-            MainCamera.Step(-1);
-            MainCamera.Step(1);
-        }
-        if (EdEventInfo.fadeout_event_no >= 0) {
-            FadeOutToEvent(EdEventInfo.fadeout_event_no, 0);
-        }
-        CEditGround *ground = pEditGround;
-        ground->clip_plane[3] = -1.0f;
-        break;
+        case 4:
+            GotoInterior(EdEventInfo.unk_2b0, EdEventInfo.unk_2ac, 0, NULL, EdEventInfo.unk_2d0);
+            break;
+        case 5:
+            GotoDungeon();
+            break;
+        case 6:
+            break;
+        case 8:
+            EdExitLoop();
+            break;
+        case 10:
+            EdExitLoop();
+            break;
+        case 9:
+            GameMode = 2;
+            break;
+        case 11:
+            GameMode = 16;
+            break;
+        default:
+            GameMode = 1;
+            if (EdEventInfo.reset_camera_angle > 0) {
+                Chara->GetPosition(pos);
+                Chara->GetRotation(ref);
+                MainCamera.FollowOn();
+                float angle = ref[1] + EdEventInfo.reset_camera_yaw;
+                angle = AngleLimit(angle);
+                MainCamera.SetAngleSoon(angle);
+                MainCamera.SetFollow(pos[0], pos[1] + Chara->body_height - 3.0f, pos[2]);
+                EdInitCameraParam(&MainCamera);
+                MainCamera.Step(-1);
+            }
+            if (EdEventInfo.reset_camera_angle < 0) {
+                EventCamera.GetPos(pos);
+                EventCamera.GetRef(ref);
+                MainCamera.FollowOff();
+                MainCamera.SetPos(pos);
+                MainCamera.SetRef(ref);
+                MainCamera.Step(-1);
+                MainCamera.Step(1);
+                MainCamera.FollowOn();
+                MainCamera.SetHeight(pos[1] - ref[1]);
+                MainCamera.SetFollow(ref[0], ref[1], ref[2]);
+                MainCamera.SetAngleSoon(atan2(pos[0] - ref[0], pos[2] - ref[2]));
+                MainCamera.Step(-1);
+                MainCamera.Step(1);
+            }
+            if (EdEventInfo.fadeout_event_no >= 0) {
+                FadeOutToEvent(EdEventInfo.fadeout_event_no, 0);
+            }
+            CEditGround *ground = pEditGround;
+            ground->clip_plane[3] = -1.0f;
+            break;
     }
 }
 
@@ -2955,6 +2986,7 @@ void EventMode() {
 int GotoDungeon() {
     return goto_dungeon = 1;
 }
+
 /**
  * Clears the parts, elements and plots of the robot's workshop map, so that
  * the story can build it again.
@@ -2981,6 +3013,7 @@ void EdDeleteE05RoboParts() {
         parts->part_id = -1;
     }
 }
+
 /**
  * Loads the interior a door leads to and places the player and camera in it.
  */
@@ -3072,6 +3105,7 @@ void MoveCamera(CCameraFollow *camera) {
         }
     }
 }
+
 /**
  * Selects collision polygons around the centre of an axis-aligned box.
  */
@@ -3081,6 +3115,7 @@ int GetCollision(CCPoly *poly, CBoxVu0 *box) {
     sceVu0ScaleVector(centre, centre, 0.5f);
     return pEditGround->PickUpPoly(poly, centre[0], centre[1], centre[2]);
 }
+
 /**
  * Steps the player: walking, the events they stand in, and the doors they open.
  */
@@ -3179,6 +3214,7 @@ void MoveChara() {
         }
     }
 }
+
 /**
  * Drops the player and every drawn villager onto the ground under them, and
  * takes the surface's foot sound and lighting from the polygon they stand on.
@@ -3242,13 +3278,13 @@ void VillagerCollision() {
                 chara->unk_CA0 = -1;
                 chara->unk_C9C = 0;
                 switch (poly.attr.unk_44) {
-                case 2:
-                    chara->unk_C9C = 1;
-                    break;
-                case 3:
-                case 4:
-                    chara->unk_CA0 = poly.attr.unk_44 - 3;
-                    break;
+                    case 2:
+                        chara->unk_C9C = 1;
+                        break;
+                    case 3:
+                    case 4:
+                        chara->unk_CA0 = poly.attr.unk_44 - 3;
+                        break;
                 }
             } else {
                 pos[1] = 0.0f;
@@ -3265,6 +3301,7 @@ void VillagerCollision() {
         }
     }
 }
+
 /**
  * Says whether the ground under the editor's cursor can be walked on, and
  * gives back the place on it the player would stand.
@@ -3340,6 +3377,7 @@ int CheckEditToWalk(float *position) {
     sceVu0CopyVector(position, pos);
     return walkable;
 }
+
 /**
  * Moves the placement cursor across the ground with the pad.
  *
@@ -3590,6 +3628,7 @@ void MoveEditCursor() {
         EdEditMoveHelpMes();
     }
 }
+
 u_int *scn_data;
 u_int *parts_read_buffer;
 
@@ -3758,6 +3797,7 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
+
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
@@ -3783,6 +3823,7 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     MainChara.SetPosition(origin, origin, origin);
     Chara = &MainChara;
 }
+
 /**
  * Reads the editor map's ground, areas and grid.
  *
@@ -4060,6 +4101,7 @@ void LoadGroundData() {
         water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
     }
 }
+
 /**
  * Builds every map part the script placed -- the objects, then the roads and
  * rivers -- and hands a part that names a model already loaded the part that
@@ -4109,19 +4151,19 @@ void LoadObjectParts(void) {
             if (i >= 30)
                 info = &EditMapInfo->parts_work.rivers.parts[river];
             switch (info->subtype) {
-            case 2:
-            case 3:
-                parts = &RiverParts[river];
-                slot = river;
-                river++;
-                break;
-            case 1:
-                parts = &RoadParts[road];
-                slot = road;
-                road++;
-                break;
-            default:
-                continue;
+                case 2:
+                case 3:
+                    parts = &RiverParts[river];
+                    slot = river;
+                    river++;
+                    break;
+                case 1:
+                    parts = &RoadParts[road];
+                    slot = road;
+                    road++;
+                    break;
+                default:
+                    continue;
             }
         } else {
             parts = &ObjParts[i];
@@ -4163,7 +4205,9 @@ void LoadObjectParts(void) {
             if (plot != NULL) {
                 header = (EPARTS_INFO_HEADER *) (EPartsInfoBuff.base + EPartsInfoBuff.used * 16);
                 EPartsInfoBuff.Alloc((EdInitToEPInfo(
-                    (INIT_PARTSINFO *) &EditMapInfo->parts_work.parts_defs.defs[i], header) >> 4) + 1);
+                                          (INIT_PARTSINFO *) &EditMapInfo->parts_work.parts_defs.defs[i], header) >>
+                                      4) +
+                                     1);
             }
             LoadPTS(parts, info, anime, effects, timers, points);
         }
@@ -4355,6 +4399,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
     parts->SetRotation(source->rotation[0], source->rotation[1], source->rotation[2]);
     return header;
 }
+
 /**
  * Builds one map part that has no part-definition file: its models are loaded
  * straight from the names the script gave, and its bound comes from them.
@@ -4400,6 +4445,7 @@ void LoadPTS(CMapParts *parts, MAP_PARTS_INFO *info, OBJ_ANIME_SEQ *anime,
         parts->bound = bound;
     }
 }
+
 /**
  * Provides the empty map-object loading hook used by this editor loop.
  */
@@ -4466,10 +4512,12 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
+
 C3DSprite::C3DSprite() {
     texel.x = texel.y = texel.width = texel.height = 0;
     Initialize();
 }
+
 /**
  * Gives one map part its own copy of every frame another one draws with.
  */
@@ -4491,6 +4539,7 @@ void CopyCMapParts(CMapParts *to, CMapParts *from, CDataAlloc2<1> *arena) {
     to->unk_0DC = CopyFrame(shadow, arena);
     to->unk_104 = (CFrame *) CopyFrameVu1((CFrameVu1 *) from->unk_104, arena);
 }
+
 /**
  * Derives an object's world position and normalized yaw from its first frame.
  */
@@ -4521,6 +4570,7 @@ int GetPosRot(CMapObject *object, float *position, float *rotation) {
     }
     return 1;
 }
+
 /**
  * Returns the first unused event-point slot after the reserved first entry.
  */
@@ -4532,33 +4582,49 @@ ED_EVENT_POINT *GetNewEventPoint(ED_EVENT_POINT *points, int count) {
     }
     return NULL;
 }
+
 /**
  * Says whether one event point is ready to fire at the given time of day.
  */
 int CheckEventPoint(ED_EVENT_POINT *point, float time) {
-    if (point == NULL) return 0;
-    if (point->enabled == 0) return 0;
-    if (point->event_type <= 0) return 0;
+    if (point == NULL)
+        return 0;
+    if (point->enabled == 0)
+        return 0;
+    if (point->event_type <= 0)
+        return 0;
     int flag = point->completion_flag;
-    if (flag > 0 && EdGetMapFlag(flag) != 0) return 0;
+    if (flag > 0 && EdGetMapFlag(flag) != 0)
+        return 0;
     CFrame *frame = point->frame;
-    if (frame != NULL && !(frame->attr.draw_on & 1)) return 0;
-    if (EdCheckTime(time, point->start_time, point->end_time) == 0) return 0;
+    if (frame != NULL && !(frame->attr.draw_on & 1))
+        return 0;
+    if (EdCheckTime(time, point->start_time, point->end_time) == 0)
+        return 0;
     if (point->event_type == 2) {
         int dungeon = MapNo;
-        if (dungeon == 11) dungeon = 1;
-        if (dungeon == 13) dungeon = 1;
-        if (dungeon == 33) dungeon = 1;
-        if (dungeon == 19) dungeon = 2;
-        if (dungeon == 42) dungeon = 3;
-        if (dungeon == 23) dungeon = 4;
-        if (dungeon == 38) dungeon = 5;
-        if (dungeon == 40) dungeon = 5;
+        if (dungeon == 11)
+            dungeon = 1;
+        if (dungeon == 13)
+            dungeon = 1;
+        if (dungeon == 33)
+            dungeon = 1;
+        if (dungeon == 19)
+            dungeon = 2;
+        if (dungeon == 42)
+            dungeon = 3;
+        if (dungeon == 23)
+            dungeon = 4;
+        if (dungeon == 38)
+            dungeon = 5;
+        if (dungeon == 40)
+            dungeon = 5;
         if (dungeon < 5) {
             CDngStatusData *status = SaveData->GetDngStatus();
             int reached = status->floor_reached[dungeon] + 1;
             int wanted = point->minimum_progress;
-            if (wanted > 0 && reached < wanted) return 0;
+            if (wanted > 0 && reached < wanted)
+                return 0;
         }
     }
     return 1;

@@ -22,6 +22,7 @@ void CMenuItemStep::Initialize(void) {
         unk_20[i] = -1;
     }
 }
+
 void CMenuItemStep::LoopStep(int interval) {
     if (enabled != 0) {
         // A negative interval asks for the default of one second.
@@ -35,6 +36,7 @@ void CMenuItemStep::LoopStep(int interval) {
         }
     }
 }
+
 void CMenuItemStep::CheckItemVolume(void) {
     int slot;
     ITEM_PACK *pack;

@@ -19,18 +19,18 @@
 #include "effectmacro.hpp"
 #include "fish.hpp"
 #include "fishing.hpp"
+#include "gamepad.hpp"
 #include "mainselect.hpp"
 #include "mapparts.hpp"
+#include "mathutil.hpp"
 #include "menu_save.hpp"
+#include "mglib.hpp"
 #include "npcharacter.hpp"
+#include "rect.hpp"
 #include "savedata.hpp"
 #include "shop.hpp"
-#include "sysmes.hpp"
-#include "gamepad.hpp"
-#include "mathutil.hpp"
-#include "mglib.hpp"
-#include "rect.hpp"
 #include "snd.hpp"
+#include "sysmes.hpp"
 #include "texture.hpp"
 
 #pragma helper_mask_gpr 0x30
@@ -252,6 +252,7 @@ void EBInitIntro(void) {
     // The wipe opens from the right edge, so it starts with no width.
     draw_rect = CRect_i_(0x280, 0, 0, 0x1C0);
 }
+
 void EBSetMotion(CCharacter *character, int *motions) {
     if (character == NULL) {
         return;
@@ -362,6 +363,7 @@ int EBIntroLoop(void) {
     }
     return 0;
 }
+
 /**
  * Runs one frame of the event battle and reports the result.
  *
@@ -567,6 +569,7 @@ void EBDraw() {
         draw_ok(x);
     }
 }
+
 /**
  * Draws one button prompt of the event battle.
  *
@@ -613,8 +616,8 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
             return;
         }
     }
-
 }
+
 /**
  * Draws one button prompt at a scale.
  *
@@ -691,12 +694,14 @@ void draw_ok_loop() {
  * @size 0x2A0
  */
 static void draw_ok(int x) {
+    // clang-format off
     static sceVu0FVECTOR dir[8] = {
         {1.0f, 0.0f, 0.0f, 0.0f},   {-1.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f, 0.0f},   {0.0f, -1.0f, 0.0f, 0.0f},
         {1.0f, 1.0f, 0.0f, 0.0f},   {1.0f, -1.0f, 0.0f, 0.0f},
         {-1.0f, 1.0f, 0.0f, 0.0f},  {-1.0f, -1.0f, 0.0f, 0.0f},
     };
+    // clang-format on
 
     if (ok_draw_cnt <= 0) {
         return;
@@ -745,6 +750,7 @@ static void draw_ok(int x) {
         }
     }
 }
+
 /**
  * Gives the scale a button prompt draws at while it flashes.
  *
@@ -769,6 +775,7 @@ static float button_scale(int button) {
     }
     return scale;
 }
+
 static int key_mode = 0xFFFF;
 
 /** Closest the editor camera comes to the character. */
@@ -889,6 +896,7 @@ static int PadOn(int keys) {
     }
     return EdPadOn(keys, 1);
 }
+
 /**
  * Reports whether a button was just pressed, unless the pad is locked.
  *
@@ -902,6 +910,7 @@ static int PadDown(int keys) {
     }
     return EdPadDown(keys, 1);
 }
+
 /**
  * Moves the camera towards a point, keeping it clear of the collision.
  *

@@ -23,6 +23,7 @@ EDITPARTS_INFO *CEditPartsInfo::GetPartsInfo(int index) {
     }
     return &parts[index];
 }
+
 int CEditPartsInfo::CheckComplete(int index) {
     EDITPARTS_INFO *info = GetPartsInfo(index);
 
@@ -63,6 +64,7 @@ int CEditPartsInfo::GetRequest(int index) {
     }
     return request[index];
 }
+
 int CEditPartsInfo::GetNextPartsNum(int index) {
     int remaining = 0;
 

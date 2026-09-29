@@ -413,6 +413,7 @@ enum TEIGI_TABLE_INDEX {
     TEIGI_INDEX_DEF_PATS = 11,
     TEIGI_INDEX_DEF_ENDS = 12,
 };
+
 // clang-format on
 
 /**

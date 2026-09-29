@@ -17,6 +17,7 @@ public:
 
     /** Sets the number of active party members. */
     void SetPartySize(s8 size) { party_size = size; }
+
     /**
      * @mangled SetNowFloor__14CDngStatusDataFi
      * @address 0x1BD900

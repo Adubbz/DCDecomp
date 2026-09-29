@@ -12,6 +12,7 @@
 #include <cstring>
 
 #include "character.hpp"
+#include "editpartsdata.hpp"
 #include "editpartsinfo.hpp"
 #include "gameutil.hpp"
 #include "mglib.hpp"
@@ -19,8 +20,6 @@
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
-
-#include "editpartsdata.hpp"
 
 /* The external-character code of every letter of each registered name. */
 s16 NameRegistTbl[8][11];
@@ -1747,6 +1746,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
 }
 
 #pragma opt_propagation off
+
 void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
     float w;
     float h;
@@ -1963,6 +1963,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         }
     }
 }
+
 #pragma opt_propagation reset
 
 void ClsMes::MakeFukidashi(sceVif1Packet *packet) {

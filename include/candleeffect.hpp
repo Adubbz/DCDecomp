@@ -13,9 +13,9 @@ public:
     float animation_frame; /**< Fractional frame within the eight-frame flame cycle. */
     CTexture *texture;     /**< Texture containing the 4-by-2 flame atlas. */
     u32 unk_0c;
-    float position[4];     /**< Homogeneous world-space centre of the flame. */
-    float half_width;      /**< Half of the sprite's world-space width. */
-    float half_height;     /**< Half of the sprite's world-space height. */
+    float position[4]; /**< Homogeneous world-space centre of the flame. */
+    float half_width;  /**< Half of the sprite's world-space width. */
+    float half_height; /**< Half of the sprite's world-space height. */
     u32 unk_28;
     u32 unk_2c;
 

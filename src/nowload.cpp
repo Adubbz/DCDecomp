@@ -13,11 +13,11 @@
 #include "mainselect.hpp"
 #include "mglib.hpp"
 #include "nowload.hpp"
+#include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "tim2.hpp"
 
-#include "rect.hpp"
 int end_flag = 1;
 
 u_int now_load[2000] __attribute__((aligned(64)));

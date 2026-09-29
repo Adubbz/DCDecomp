@@ -7,10 +7,10 @@
 #include <cstdlib>
 
 #include "mglib.hpp"
+#include "rect.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 
-#include "rect.hpp"
 float waveAnimeCnt[32];
 int sw;
 
@@ -113,6 +113,7 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
+
 /**
  * Fills the blend table with one period of a sine.
  *
@@ -234,6 +235,7 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
+
 /**
  * Sets whether the running effect takes light.
  *
@@ -244,6 +246,7 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
 void CRunEffect::Lighting(int enabled) {
     lighting = enabled;
 }
+
 /**
  * Draws the dust the player's run leaves behind.
  *
@@ -336,6 +339,7 @@ void CRunEffect::Draw(void) {
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
+
 /**
  * Starts one puff of run dust at a position.
  *
@@ -359,6 +363,7 @@ void CRunEffect::Set(float *origin) {
         life[slot] = 16;
     }
 }
+
 /**
  * Advances the run dust by a frame.
  *
@@ -375,6 +380,7 @@ void CRunEffect::Step(void) {
         }
     }
 }
+
 /**
  * Constructs the run effect with no dust standing.
  *

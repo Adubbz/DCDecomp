@@ -5,9 +5,9 @@
 
 #include <libvu0.h>
 
+#include "editatra.hpp"
 #include "object.hpp"
 
-#include "editatra.hpp"
 void CObject::SetPosition(float *position) {
     sceVu0CopyVector(this->pos, position);
 }

@@ -15,6 +15,7 @@
 #include <cstring>
 
 #include "actionseq.hpp"
+#include "battlemenu.hpp"
 #include "boxvu0.hpp"
 #include "btmisc.hpp"
 #include "btsysscript.hpp"
@@ -58,7 +59,6 @@
 #include "textureanime.hpp"
 #include "visualvu1.hpp"
 
-#include "battlemenu.hpp"
 /* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
 
 ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
@@ -1080,6 +1080,7 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
 
 static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info,
                                  CEditGround *ground);
+
 /**
  * Advances and positions the selected villagers on the editable town map.
  *
@@ -1200,6 +1201,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         }
     }
 }
+
 void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
     CCharacter *player = EdExchangeInfo.player;
     CCamera *camera = EdExchangeInfo.camera;
@@ -1584,6 +1586,7 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     }
     MGSetAmbient(old_ambient);
 }
+
 void EdDrawLensFlare(float time, CFrame **sky) {
     int sky_index = (int) (time / 3.0f);
     if (!EdCheckTime(time, (0, 10.0f), 4.0f))
@@ -1617,9 +1620,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
         next = 0;
 
     static float color[12][3] = {
-        {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 128.0f, 0.0f},
-        {255.0f, 128.0f, 0.0f},   {255.0f, 128.0f, 0.0f},   {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f},
-        {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}};
+        {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 128.0f, 0.0f}, {255.0f, 128.0f, 0.0f}, {255.0f, 128.0f, 0.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}, {255.0f, 255.0f, 255.0f}};
     unsigned char red = (unsigned char) (color[current][0] * inverse + color[next][0] * fraction);
     unsigned char green = (unsigned char) (color[current][1] * inverse + color[next][1] * fraction);
     unsigned char blue = (unsigned char) (color[current][2] * inverse + color[next][2] * fraction);
@@ -1638,6 +1639,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
             LensFlare(texture, position, red, green, blue);
     }
 }
+
 void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky) {
     int current = (int) clock;
     int next = (int) clock + 1;
@@ -6954,40 +6956,40 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         camera->GetPos(position);
         camera->GetRef(reference);
         switch (mode) {
-        case 0:
-            camera->FollowOff();
-            EdDMoveCamera(position, reference);
-            camera->SetPos(position);
-            camera->SetRef(reference);
-            break;
-        case 1:
-            camera->FollowOff();
-            EdDMoveCameraRef(position, reference);
-            camera->SetPos(position);
-            camera->SetRef(reference);
-            break;
-        case 2:
-            if (GamePad.Down(0x2000) != 0) {
-                select_chara++;
-                if (select_chara >= EdEventInfo.npc_count) {
-                    select_chara = -1;
+            case 0:
+                camera->FollowOff();
+                EdDMoveCamera(position, reference);
+                camera->SetPos(position);
+                camera->SetRef(reference);
+                break;
+            case 1:
+                camera->FollowOff();
+                EdDMoveCameraRef(position, reference);
+                camera->SetPos(position);
+                camera->SetRef(reference);
+                break;
+            case 2:
+                if (GamePad.Down(0x2000) != 0) {
+                    select_chara++;
+                    if (select_chara >= EdEventInfo.npc_count) {
+                        select_chara = -1;
+                    }
                 }
-            }
-            if (GamePad.Down(0x8000) != 0) {
-                select_chara--;
-                if (select_chara < -1) {
-                    select_chara = EdEventInfo.npc_count - 1;
+                if (GamePad.Down(0x8000) != 0) {
+                    select_chara--;
+                    if (select_chara < -1) {
+                        select_chara = EdEventInfo.npc_count - 1;
+                    }
                 }
-            }
-            if (select_chara == -1) {
-                EdDMoveChara(EdEventInfo.main_character, camera);
-            } else {
-                EdDMoveChara(&EdEventInfo.npcs[select_chara], camera);
-            }
-            if (GamePad.Down(0x40) != 0) {
-                *collision = !*collision;
-            }
-            break;
+                if (select_chara == -1) {
+                    EdDMoveChara(EdEventInfo.main_character, camera);
+                } else {
+                    EdDMoveChara(&EdEventInfo.npcs[select_chara], camera);
+                }
+                if (GamePad.Down(0x40) != 0) {
+                    *collision = !*collision;
+                }
+                break;
         }
         EdDPrint(mode_name[mode]);
         chara = EdEventInfo.main_character;
@@ -7117,42 +7119,42 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         }
     } else {
         switch (menu_mode_status) {
-        case 0:
-            motion_stop_flag = 1;
-            if (EdInitModeFinish(EdEventInfo.camera, TexManager.GetTexture("frame_image", -1)) != 0) {
-                menu_mode_status = 1;
-                motion_stop_flag = 0;
-                MenuMapJumpMode = -1;
-            }
-            break;
-        case 1:
-        case 2:
-            EdDrawOffAll();
-            if (EdMenuMode() != 0) {
-                switch (menu_mode) {
-                case 5:
-                case 9: {
-                    int item = EdGetUseItem();
-                    if (p_use_item != NULL) {
-                        ((RS_STACKDATA *) p_use_item)->i = item;
-                    }
-                    p_use_item = NULL;
-                    break;
+            case 0:
+                motion_stop_flag = 1;
+                if (EdInitModeFinish(EdEventInfo.camera, TexManager.GetTexture("frame_image", -1)) != 0) {
+                    menu_mode_status = 1;
+                    motion_stop_flag = 0;
+                    MenuMapJumpMode = -1;
                 }
-                case 6:
-                    break;
-                case 7:
-                    if (p_jump_map_no != 0) {
-                        ((RS_STACKDATA *) p_jump_map_no)->i = MenuMapJumpMode + 1;
+                break;
+            case 1:
+            case 2:
+                EdDrawOffAll();
+                if (EdMenuMode() != 0) {
+                    switch (menu_mode) {
+                        case 5:
+                        case 9: {
+                            int item = EdGetUseItem();
+                            if (p_use_item != NULL) {
+                                ((RS_STACKDATA *) p_use_item)->i = item;
+                            }
+                            p_use_item = NULL;
+                            break;
+                        }
+                        case 6:
+                            break;
+                        case 7:
+                            if (p_jump_map_no != 0) {
+                                ((RS_STACKDATA *) p_jump_map_no)->i = MenuMapJumpMode + 1;
+                            }
+                            p_jump_map_no = 0;
+                            break;
                     }
-                    p_jump_map_no = 0;
-                    break;
+                    menu_mode = 0;
+                    EdDrawOnAll();
+                    EdExitMenu();
                 }
-                menu_mode = 0;
-                EdDrawOnAll();
-                EdExitMenu();
-            }
-            break;
+                break;
         }
     }
     for (int i = 0; i < 10; i++) {

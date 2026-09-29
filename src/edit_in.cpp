@@ -2,53 +2,51 @@
 
 #include <libvu0.h>
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
+#include "battlemenu.hpp"
 #include "boxvu0.hpp"
 #include "camera.hpp"
 #include "camerafollow.hpp"
 #include "character.hpp"
+#include "clsmes.hpp"
 #include "collision.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dataset.hpp"
+#include "dispctrl.hpp"
+#include "ebattle.hpp"
+#include "edit.hpp"
 #include "edit_in.hpp"
 #include "editground.hpp"
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "editpartsinfo.hpp"
+#include "effectgroup.hpp"
+#include "effectmacro.hpp"
 #include "fireomni.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "gamemode.hpp"
+#include "gamepad.hpp"
 #include "mainselect.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "menu_misc.hpp"
 #include "mglib.hpp"
 #include "npcharacter.hpp"
-#include "rect.hpp"
-#include "scriptinterpreter.hpp"
-#include "texture.hpp"
-#include "water.hpp"
-
-#include <cmath>
-
-#include "battlemenu.hpp"
-#include "clsmes.hpp"
-#include "dispctrl.hpp"
-#include "ebattle.hpp"
-#include "edit.hpp"
-#include "effectgroup.hpp"
-#include "effectmacro.hpp"
-#include "gamemode.hpp"
-#include "gamepad.hpp"
-#include "menu_misc.hpp"
 #include "objanime.hpp"
+#include "rect.hpp"
 #include "savedata.hpp"
+#include "scriptinterpreter.hpp"
 #include "snd.hpp"
 #include "sysmes.hpp"
+#include "texture.hpp"
+#include "water.hpp"
 
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
@@ -93,6 +91,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
 struct EPARTS_FUNC_RECORD {
     int words[0x30];
 };
+
 /** Whether the camera stays at the interior's fixed camera markers. */
 static int fix_camera = 1;
 
@@ -207,6 +206,7 @@ enum EFFECT_TYPE {
     EFFECT_FLAME,    /**< A flame. */
     EFFECT_BRIGHT,   /**< A glow. */
 };
+
 // clang-format on
 
 /**
@@ -245,6 +245,7 @@ void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode
     word++;
     names[word][0] = '\0';
 }
+
 /**
  * Reads one interior object's levels of detail and hangs them off its part.
  *
@@ -292,6 +293,7 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
         parts->unk_0DC = LoadCollisionFile(data[8], alloc);
     }
 }
+
 /**
  * Reads the interior's event script into the script arena.
  *
@@ -355,6 +357,7 @@ static void LoadScript() {
     }
     EdSystemEventData = NULL;
 }
+
 /**
  * Starts an interior event, handing it the camera it is to play through.
  *
@@ -379,6 +382,7 @@ static void RunEvent(int event_no, CCamera *camera) {
         start_event_no = event_no;
     }
 }
+
 /**
  * Starts an interior system event, handing it the camera it is to play through.
  *
@@ -402,6 +406,7 @@ static void RunSystemEvent(int event_no, CCamera *camera) {
         start_system_event = event_no;
     }
 }
+
 /**
  * Divides the read buffer into the interior's work, NPC and menu arenas.
  *
@@ -426,6 +431,7 @@ static void InitWorkBuffer() {
     EdMenuBuffer.limit = 0x3A2E0;
     EdMenuBuffer.used = 0;
 }
+
 /**
  * Builds everything one interior runs on: its data, models, script and camera.
  *
@@ -511,6 +517,7 @@ int EditInInit(float time, char *name) {
     EdInitSoundSrc();
     return 0;
 }
+
 /**
  * Runs one frame of the interior and reports when it is to be left.
  *
@@ -827,6 +834,7 @@ int EditInLoop() {
     SndStep();
     return 0;
 }
+
 /**
  * Draws the interior for one frame.
  *
@@ -975,6 +983,7 @@ static void MainDraw() {
     }
     EdFadeInOut();
 }
+
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
  *
@@ -1015,6 +1024,7 @@ void DrawWaterSurface(CCamera *camera) {
         DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(water, &mgRenderInfo, GetVif1Packet(), NULL);
     }
 }
+
 /**
  * Advances the ripples of the interior's water surfaces.
  *
@@ -1055,6 +1065,7 @@ static void StepWater() {
         surface->water.Hamon();
     }
 }
+
 /**
  * Moves the player and the villagers through the interior for one frame.
  *
@@ -1126,6 +1137,7 @@ static void MoveCharacter() {
         }
     }
 }
+
 /**
  * Applies the right stick to the interior camera, holding its height and distance in
  * range.
@@ -1158,6 +1170,7 @@ static void MoveCamera(CCameraFollow *camera) {
         camera_dist_mode = 0;
     }
 }
+
 /**
  * Finds the map jump the player is standing on.
  *
@@ -1184,6 +1197,7 @@ EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
     }
     return NULL;
 }
+
 /**
  * Puts the player where the interior's map jump says they arrive.
  *
@@ -1203,6 +1217,7 @@ void GetMapJumpPos(CCharacter *chara) {
         }
     }
 }
+
 /**
  * Gives the position, heading and part of one of the interior's doors.
  *
@@ -1224,6 +1239,7 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_
     }
     return -1;
 }
+
 /**
  * Places the interior camera so that the player stays in view and the walls do not.
  *
@@ -1314,6 +1330,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         camera->SetNextRef(NULL, position[0], position[1], position[2]);
     }
 }
+
 /**
  * Collects the collision polygons of the interior parts meeting a box.
  *
@@ -1333,6 +1350,7 @@ static int GetCollision(CCPoly *poly, CBoxVu0 *box) {
     }
     return count;
 }
+
 /**
  * Pushes the player and the interior's villagers out of one another.
  *
@@ -1406,6 +1424,7 @@ static void VillagerCollision() {
         }
     }
 }
+
 /**
  * Enters the interior's textures once they have been read.
  *
@@ -1463,6 +1482,7 @@ static int LoadTexture() {
  */
 static void LoadChara() {
 }
+
 /**
  * Reads the interior's parts, objects and function points out of its archive.
  *
@@ -1600,6 +1620,7 @@ void LoadData() {
         water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
     }
 }
+
 /**
  * Builds one interior part from its archive entry.
  *
@@ -1658,6 +1679,7 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     parts->SetRotation(header->rotation[0], header->rotation[1], header->rotation[2]);
     return 0;
 }
+
 /**
  * Collects the function points one interior part defines.
  *
@@ -1678,6 +1700,7 @@ int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     }
     return header->func_count;
 }
+
 /** Frame of the interior's animated texture. */
 static int setTexAnimCnt;
 
@@ -1723,6 +1746,7 @@ static void setTexAnim() {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+
 /** Number of villagers the info script has placed. */
 static int npc_count;
 
@@ -1766,42 +1790,20 @@ static void CommandWATER_SHAKE(void **arguments);
 /** The keywords an interior's info script may use. */
 static TAG_PARAM Command[15] = {
     {"AMBIENT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"LIGHT_C", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"FOG", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER,
-            SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"LIGHT_C", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"FOG", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
     {"BG_COL", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
     {"PROJECTION", {SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"PEOPLE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"PEOPLE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
     {"CD", {SCRIPT_ARGUMENT_STRING, -1}},
-    {"OBJ_ANIME", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"FIRE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"FLAME", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BRIGHT", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"OBJ_ANIME", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"FIRE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"FLAME", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BRIGHT", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
     {"DEBUG", {-1}},
-    {"MOTION_PARTS", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"WATER_SURFACE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
-            SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
-            SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"WATER_SHAKE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
-            SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"MOTION_PARTS", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"WATER_SURFACE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"WATER_SHAKE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
 };
 
 /** Handlers of the info script's keywords, in the order of Command. */
@@ -1822,6 +1824,7 @@ static void (*CommandExe[15])(void **) = {
     CommandWATER_SURFACE,
     CommandWATER_SHAKE,
 };
+
 /**
  * Runs the interior's info script through the interpreter.
  *
@@ -1853,6 +1856,7 @@ static void LoadInfo(char *script, int size) {
     obj_anime_num = objanime_list;
     effect_num = effect_list;
 }
+
 /**
  * Sets the interior's ambient light colour.
  *
@@ -1867,6 +1871,7 @@ static void CommandAMBIENT(void **arguments) {
     EdInInfo->ambient[2] = *(float *) arguments[2];
     EdInInfo->ambient[3] = 128.0f;
 }
+
 /**
  * Sets the colour and direction of one of the interior's lights.
  *
@@ -1894,6 +1899,7 @@ static void CommandLIGHT_C(void **arguments) {
     EdInInfo->light_colour[light][2] = *(float *) arguments[5];
     EdInInfo->light_colour[light][3] = 128.0f;
 }
+
 /**
  * Sets the interior's fog distances and colour.
  *
@@ -1911,6 +1917,7 @@ static void CommandFOG(void **arguments) {
     EdInInfo->fog.intensity = *(float *) arguments[5];
     EdInInfo->fog.exponent = *(float *) arguments[6];
 }
+
 /**
  * Sets the colour the interior clears to.
  *
@@ -1925,6 +1932,7 @@ static void CommandBG_COL(void **arguments) {
     EdInInfo->background_colour[2] = *(float *) arguments[2];
     EdInInfo->background_colour[3] = 128.0f;
 }
+
 /**
  * Sets the interior's projection distance.
  *
@@ -1935,6 +1943,7 @@ static void CommandBG_COL(void **arguments) {
 static void CommandPROJECTION(void **arguments) {
     EdInInfo->projection = *(float *) arguments[0];
 }
+
 /**
  * Accepts the villager command and does nothing with it.
  *
@@ -1945,6 +1954,7 @@ static void CommandPROJECTION(void **arguments) {
  */
 static void CommandPEOPLE(void **) {
 }
+
 /**
  * Moves the script's current directory to one below the interior's own.
  *
@@ -1958,6 +1968,7 @@ static void CommandCD(void **arguments) {
     strcat(CurrentDir, "in/");
     strcat(CurrentDir, (char *) arguments[0]);
 }
+
 /**
  * Accepts the object-animation command and does nothing with it.
  *
@@ -1974,6 +1985,7 @@ static void CommandOBJ_ANIME(void **) {
  */
 static void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
 }
+
 /**
  * Places a fire effect in the interior.
  *
@@ -1996,6 +2008,7 @@ static void CommandFIRE(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_FIRE, (char *) arguments[0], position, scale, rotation);
 }
+
 /**
  * Places a flame effect in the interior.
  *
@@ -2018,6 +2031,7 @@ static void CommandFLAME(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_FLAME, (char *) arguments[0], position, scale, rotation);
 }
+
 /**
  * Places a glow effect in the interior.
  *
@@ -2040,6 +2054,7 @@ static void CommandBRIGHT(void **arguments) {
     scale[2] = *(float *) arguments[4];
     SetEffect(EFFECT_BRIGHT, (char *) arguments[0], position, scale, rotation);
 }
+
 /**
  * Turns the interior's debug drawing on.
  *
@@ -2050,6 +2065,7 @@ static void CommandBRIGHT(void **arguments) {
 static void CommandDEBUG(void **) {
     debug = 1;
 }
+
 /**
  * Names one of the interior's four moving parts.
  *
@@ -2075,6 +2091,7 @@ static void CommandMOTION_PARTS(void **arguments) {
         motion->values[8] = *(float *) arguments[9];
     }
 }
+
 /**
  * Names one of the interior's eight water surfaces.
  *
@@ -2116,6 +2133,7 @@ static void CommandWATER_SURFACE(void **arguments) {
         water_info = surface;
     }
 }
+
 /**
  * Starts a ripple on the interior's water surface.
  *

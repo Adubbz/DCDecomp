@@ -25,23 +25,22 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
+#include "main.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "mglib.hpp"
 #include "object.hpp"
 #include "snd.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
 #include "title/dispfade.hpp"
-#include "title/script.hpp"
-#include "wind.hpp"
-
-#include "main.hpp"
-#include "mglib.hpp"
-#include "vutext.hpp"
 #include "title/op_a.hpp"
-#include "title/opening.hpp"
 #include "title/op_b.hpp"
+#include "title/opening.hpp"
 #include "title/rushmovi.hpp"
+#include "title/script.hpp"
+#include "vutext.hpp"
+#include "wind.hpp"
 #define PI 3.14159265358979323846
 
 class OBJ_ANIME_SEQ {
@@ -1255,7 +1254,7 @@ void WaterProcess() {
         ref[1] = 0.0f;
         Water__2.frame.SetPosition(ref);
         Water__2.Shake((int) (rand() * 32.0f / 2147483648.0f),
-                    (int) (rand() * 32.0f / 2147483648.0f), -0.5f);
+                       (int) (rand() * 32.0f / 2147483648.0f), -0.5f);
     }
 
     Water__2.Hamon();

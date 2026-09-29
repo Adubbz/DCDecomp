@@ -125,4 +125,3 @@ int CheckHit(CCPoly *polys, int count, float *from, float *to, float *hit, int m
  * @unknownret
  */
 int GetFootPoly(float *position, float height, CCPoly *polys, float *ground, CCPoly *found, int count, int flags);
-

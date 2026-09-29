@@ -1,22 +1,25 @@
 #pragma argument_flag 0
-#pragma argument_flag_ones 33,34,39,59,225,254,266,268
+#pragma argument_flag_ones 33, 34, 39, 59, 225, 254, 266, 268
 #include "mainitemmodel.hpp"
+
 #include <cstdio>
 #pragma argument_flag_ones 58
-#include <cstring>
 #include <libvu0.h>
-#include "dataalloc.hpp"
-#include "texture.hpp"
-#include "mds.hpp"
-#include "frame.hpp"
-#include "mglib.hpp"
+
+#include <cstring>
+
 #include "character.hpp"
 #include "collisiondata.hpp"
-#include "shot_effect.hpp"
-#include "itembombeffect.hpp"
-#include "snd.hpp"
-#include "itemdata.hpp"
+#include "dataalloc.hpp"
 #include "dun/gameloop.hpp"
+#include "frame.hpp"
+#include "itembombeffect.hpp"
+#include "itemdata.hpp"
+#include "mds.hpp"
+#include "mglib.hpp"
+#include "shot_effect.hpp"
+#include "snd.hpp"
+#include "texture.hpp"
 
 int CMainItemModel::GetFreeCashNo(void) {
     for (int i = 0; i < 6; i++) {
@@ -26,6 +29,7 @@ int CMainItemModel::GetFreeCashNo(void) {
     }
     return -1;
 }
+
 int CMainItemModel::GetFreeModelNo(void) {
     for (int i = 0; i < 16; i++) {
         if (model[i] == -1) {
@@ -72,6 +76,7 @@ void CMainItemModel::DeleteModel(int index) {
     model[index] = -1;
     model_cash[index] = -1;
 }
+
 int CMainItemModel::SetHandModel(int source) {
     int index = GetFreeModelNo();
 
@@ -88,6 +93,7 @@ int CMainItemModel::SetHandModel(int source) {
     printf(MainItemHandMessage, index, cash_lock[model_cash[source]]);
     return index;
 }
+
 void CMainItemModel::AllReleasItem(void) {
     for (int i = 0; i < 16; i++) {
         switch (model[i]) {
@@ -112,6 +118,7 @@ int CMainItemModel::SetThrowModel(int model_index, float *position, float *headi
     cash_lock[model_cash[model_index]]++;
     return slot;
 }
+
 void CMainItemModel::Draw(void) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
@@ -162,6 +169,7 @@ void CMainItemModel::Draw(void) {
         }
     }
 }
+
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
 int ItemThrowStep(float *position, float *velocity);
@@ -248,6 +256,7 @@ void CMainItemModel::Step(void) {
         }
     }
 }
+
 void CMainItemModel::Initialize(void) {
     for (int i = 0; i < 6; i++) {
         cash[i] = NULL;

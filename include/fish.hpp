@@ -2,11 +2,10 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include <libvu0.h>
 
 #include "character.hpp"
+#include "dataalloc_fwd.hpp"
 
 class CCPoly;
 class CFrame;

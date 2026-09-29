@@ -38,6 +38,7 @@ void CCandleEffect::Step(void) {
         this->animation_frame = 0.0f;
     }
 }
+
 void CCandleEffect::Draw(void) {
     if (texture == NULL || enabled == 0) {
         return;

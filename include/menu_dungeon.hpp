@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "menu_draw.hpp"
+
 class CFrame;
 
 /**

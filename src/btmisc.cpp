@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "btitem.hpp"
 #include "btmisc.hpp"
 #include "camera.hpp"
 #include "dataalloc.hpp"
@@ -14,14 +15,13 @@
 #include "dun/gameloop.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "hitvalue.hpp"
 #include "itemdata.hpp"
 #include "mds.hpp"
+#include "menu_save.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
-#include "menu_save.hpp"
 
-#include "btitem.hpp"
-#include "hitvalue.hpp"
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
 /**
@@ -49,6 +49,7 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) 
     }
     return (CFrame *) LoadMDSFile(file, buffer, 0, NULL, NULL);
 }
+
 CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
     int size;
     unsigned int *file = GetPackFile(pack, name, &size);
@@ -59,6 +60,7 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
     }
     return (CFrame *) LoadCollisionFile(file, buffer);
 }
+
 /**
  * Puts the camera on the two named frames of a model's path.
  *
@@ -93,6 +95,7 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position) {
     origin[3] = 0.0f;
     found->GetWorldPosition(position, origin);
 }
+
 /**
  * Builds the resource name of one weapon.
  *
@@ -137,6 +140,7 @@ void makeWeaponName(char *name, int weapon_no) {
     }
     strcat(name, number);
 }
+
 /**
  * Builds the model and texture paths of one item.
  *
@@ -162,6 +166,7 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     printf("mds = %s\n", model_path);
     printf("img = %s\n", texture_path);
 }
+
 /**
  * Model file name BtGetWeaponNamePath2 builds.
  */
@@ -207,6 +212,7 @@ void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
         }
     }
 }
+
 /**
  * Records in the save file that an Atla has been collected.
  *
@@ -223,6 +229,7 @@ void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int 
     }
     ((CDngStatusData *) UserStatus)->GetAtraData(dungeon, floor, atra_no);
 }
+
 /**
  * Gives how much of an attachment one item yields.
  *
@@ -301,7 +308,7 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
 /**
  * The floor number shown for each floor of the deepest dungeon.
  */
-int yearFloorTbl[25] = {5,   18,  23,  38,  51,  66,  102, 109, 122, 140, 151, 162, 205,
+int yearFloorTbl[25] = {5, 18, 23, 38, 51, 66, 102, 109, 122, 140, 151, 162, 205,
                         208, 213, 225, 238, 249, 300, 310, 322, 340, 356, 382, 400};
 
 int BtGetFloorLevel(int dungeon_no) {

@@ -4,13 +4,14 @@
 
 #include "cloth.hpp"
 
+#include <cstring>
+
+#include "bound.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mglib.hpp"
-#include <cstring>
-#include "bound.hpp"
-#include "wind.hpp"
 #include "texture.hpp"
+#include "wind.hpp"
 
 /**
  * Draws the simulated cloth through a temporary world-space frame.
@@ -417,6 +418,7 @@ void CCloth::Step(int step) {
         }
     }
 }
+
 /**
  * Draws the cloth through the vector unit.
  *
@@ -430,6 +432,7 @@ int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PRO
     visual_vu_data = vu_block[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, arg2, 0);
 }
+
 /**
  * Draws the cloth into a VIF packet.
  *
@@ -443,6 +446,7 @@ int CCloth::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
     visual_vu_data = vu_block[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, arg2, 0);
 }
+
 /**
  * Builds the packet that draws the cloth and gives back its size.
  *
@@ -554,6 +558,7 @@ int CCloth::CreateVUData(u_int *packet) {
     *(u_long128 *) &packet[word] = *(u_long128 *) end_tag;
     return ((word + 4) >> 2) + ((word + 4) % 4 != 0);
 }
+
 /**
  * Gives the cloth its default grid size, stiffness and gravity.
  *
@@ -691,6 +696,7 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
         }
     }
 }
+
 /**
  * Builds the cloth's grid from a model's mesh and takes its storage out of an arena.
  *

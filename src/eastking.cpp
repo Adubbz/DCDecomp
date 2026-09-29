@@ -20,15 +20,15 @@
  * Holds the East King event's loaded resources and transition state.
  */
 struct EAST_KING_EVENT_STATE {
-    s32 texture_block;       /**< Texture block used by the event picture. */
+    s32 texture_block; /**< Texture block used by the event picture. */
     char unk_04[6];
-    s16 event_no;            /**< Selects the event picture, messages and unlock flag. */
-    s16 resources_ready;     /**< Whether the picture and message resources are installed. */
+    s16 event_no;        /**< Selects the event picture, messages and unlock flag. */
+    s16 resources_ready; /**< Whether the picture and message resources are installed. */
     char unk_0E[2];
-    u_long128 *load_buffer;  /**< Aligned buffer containing the event archive. */
-    s16 mode;                /**< Current loading, message, or closing state. */
+    u_long128 *load_buffer; /**< Aligned buffer containing the event archive. */
+    s16 mode;               /**< Current loading, message, or closing state. */
     char unk_16[2];
-    s32 transition_frame;    /**< Frames elapsed in the current transition. */
+    s32 transition_frame; /**< Frames elapsed in the current transition. */
 };
 
 STATIC_ASSERT(sizeof(EAST_KING_EVENT_STATE) == 0x1C);
@@ -37,12 +37,12 @@ STATIC_ASSERT(sizeof(EAST_KING_EVENT_STATE) == 0x1C);
  * Holds the current East King message and its fade state.
  */
 struct EAST_KING_MESSAGE_STATE {
-    s16 message_no;     /**< Message currently selected for the event. */
+    s16 message_no; /**< Message currently selected for the event. */
     s16 unk_02;
-    s16 draw_message;   /**< Whether the selected message may be laid out. */
+    s16 draw_message; /**< Whether the selected message may be laid out. */
     s16 unk_06;
     s16 unk_08;
-    s16 alpha;          /**< Opacity of the current message window. */
+    s16 alpha; /**< Opacity of the current message window. */
 };
 
 STATIC_ASSERT(sizeof(EAST_KING_MESSAGE_STATE) == 0xC);
@@ -238,6 +238,7 @@ void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer)
         SaveData->SetGameFlag(EastKing.event_no + 0xE6, 1);
     }
 }
+
 int EastKingEventKey() {
     int finished = 0;
     int size;
@@ -307,6 +308,7 @@ int EastKingEventKey() {
     SndStep();
     return finished;
 }
+
 void EastKingEventDraw() {
     AllFadeForMenu(0x80);
     if (EastKing.resources_ready != 0) {

@@ -53,6 +53,7 @@ void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
         }
     }
 }
+
 void CDungeonEventMan::SearchItemEventHold(int script_no) {
     for (int i = 0; i < 96; i++) {
         int active;
@@ -146,6 +147,7 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
     }
     return NULL;
 }
+
 CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
     int i;
     sceVu0FVECTOR event_position;
@@ -171,6 +173,7 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
     }
     return NULL;
 }
+
 void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
     sceVu0FVECTOR local_origin = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FMATRIX matrix;

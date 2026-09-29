@@ -48,11 +48,10 @@ char MenuGrobalDir[64];
 /** Marks, one per item pack slot, of the items the menu offers to throw away. */
 s8 MenuTrushMark[100];
 
-#include "sysmes.hpp"
-
 #include "editloop.hpp"
 #include "gameutil.hpp"
 #include "menuetc.hpp"
+#include "sysmes.hpp"
 
 /**
  * Draws the mark over an item that cannot be set.
@@ -152,6 +151,7 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     }
     return (u_long128 *) offset;
 }
+
 int GetAtoraMaxVillage(void) {
     int max_village = 3;
     int village;
@@ -170,13 +170,16 @@ int GetAtoraMaxVillage(void) {
     }
     return max_village;
 }
+
 int GetNowMapTransAtraMap(int mapNo) {
     int village = 0;
+    // clang-format off
     s16 mapToVillage[35] = {
         1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 3, 4, 5, 5,
         5, 3, 1, 4, 4, 4, 4, 1, 3, 2, 3, 4, 5, 2, 5,
         4, 3, 2, 2, 2,
     };
+    // clang-format on
 
     if (mapNo < 5) {
         village = mapNo;
@@ -192,6 +195,7 @@ int GetNowMapTransAtraMap(int mapNo) {
 
     return village;
 }
+
 void MenuWorldTrans(CCamera *camera) {
     sceVu0FMATRIX cameraMatrix;
     sceVu0FVECTOR eyePos;
@@ -206,6 +210,7 @@ void MenuWorldTrans(CCamera *camera) {
     sceVu0MulMatrix(viewMatrix, unitMatrix, cameraMatrix);
     MGSetViewMatrix(viewMatrix, eyePos);
 }
+
 void MenuPolygonDraw(int distance, void (*draw)(void)) {
     float refPos[4] = {0.0f, 0.0f, -45.0f, 1.0f};
     float eyePos[4] = {0.0f, 0.0f, 60.0f, 1.0f};
@@ -248,6 +253,7 @@ void MenuPolygonDraw(int distance, void (*draw)(void)) {
     MGSetPLight(savedLightDir, savedLightColour);
     MGSetAmbient(savedAmbient);
 }
+
 void Get3DPosTo2DPos(CFrame *frame, int *screen) {
     float world[4];
     float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -258,10 +264,12 @@ void Get3DPosTo2DPos(CFrame *frame, int *screen) {
     screen[0] = screenPos[0];
     screen[1] = screenPos[1];
 }
+
 int GetMenuCommonFontW(int style, int fontSize) {
     s8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
     return fontWidths[style];
 }
+
 int GetMenuCommonPutXY(ClsMes *mes, int x) {
     int size[4];
 
@@ -591,6 +599,7 @@ void DrawIconParts(int item_no, int x, int y, int top, int bottom, int alpha, in
         }
     }
 }
+
 void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, int value, int alpha, int vibe) {
     int draw_y;
     int u;
@@ -629,6 +638,7 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
         }
     }
 }
+
 void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *name, int dim) {
     CTexture texture = *TexManager.GetTexture(name, -1);
     spRGBA left;
@@ -1014,6 +1024,7 @@ void SetMenuTrushMark(ITEM_PACK *items) {
 void DeleteMenuTrushMark() {
     memset(MenuTrushMark, 0, sizeof(MenuTrushMark));
 }
+
 void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode, int page) {
     PerBoardStatusPt = status;
     PerBoardPt = board;
@@ -1096,6 +1107,7 @@ int BoardModeChangeKey() {
     }
     return 0;
 }
+
 void PersonalBoardLimmitCheck() {
     int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
@@ -1131,6 +1143,7 @@ void PersonalBoardLimmitCheck() {
         }
     }
 }
+
 int PersonalBoardKeySub() {
     int left = 0;
     int area = PerBoardPt->cursor_area;
@@ -1359,19 +1372,18 @@ int PersonalBoardItemGetorSwap(int board_pos) {
     }
     return result;
 }
+
 void PersonalBoardItemCancel() {
     IHAVEITEM *have = &PerBoardPt->held_item;
     int cell = have->unk_0C;
 
     switch (have->unk_04) {
-        case 0:
-        {
+        case 0: {
             s16 *item = &PerBoardPt->item_pack->item[cell];
             s16 *volume = &PerBoardPt->item_pack->item_vol[cell];
             MenuDataSwap(item, &have->item_no);
             MenuDataSwap(volume, &have->volume);
-        }
-            break;
+        } break;
         case 1: {
             int chara;
             int slot;
@@ -1733,6 +1745,7 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
             break;
     }
 }
+
 void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned char top_row, CTexture *texture, int alpha) {
     int bar_x = x + 0xE8;
     int rows = count / 5;
@@ -1905,29 +1918,30 @@ void CommonTrushDraw(int x, int y, int alpha) {
     CRect_i_ dest(x, y + 1, 0x30, 0x2F);
 
     switch (trash->anim) {
-    case 1: {
-        int frame = trash->frame;
-        if (frame <= 3 || frame > 12) {
-            source.x -= 0x30;
-        } else if (frame > 6 && frame <= 9) {
-            source.x += 0x30;
+        case 1: {
+            int frame = trash->frame;
+            if (frame <= 3 || frame > 12) {
+                source.x -= 0x30;
+            } else if (frame > 6 && frame <= 9) {
+                source.x += 0x30;
+            }
+            DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
+            trash->frame++;
+            if (frame > 15) {
+                trash->anim = 0;
+                trash->frame = 0;
+            }
+            break;
         }
-        DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-        trash->frame++;
-        if (frame > 15) {
-            trash->anim = 0;
-            trash->frame = 0;
-        }
-        break;
-    }
-    default:
-        if (board->cursor_area == 2) {
-            source.x = 0x130;
-        }
-        DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
-        break;
+        default:
+            if (board->cursor_area == 2) {
+                source.x = 0x130;
+            }
+            DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
+            break;
     }
 }
+
 int IsEnableTrushThrow(int item_no) {
     int enable = 0;
 
@@ -2024,6 +2038,7 @@ int SearchBoardNowPosItemExist(int page, int cell) {
     }
     return item_no;
 }
+
 int GetBoardSpace(int item_no, int *page) {
     int space = -1;
 
@@ -2075,7 +2090,6 @@ int GetBoardSpace(int item_no, int *page) {
             }
             break;
         }
-
     }
     return space;
 }
@@ -2245,6 +2259,7 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     }
     return swapped;
 }
+
 int SeitonAttachBoard(ATTACH_LIST *list) {
     if (list == NULL) {
         return 0;
@@ -2387,6 +2402,7 @@ void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
         }
     }
 }
+
 int GetNowModeMaxNum(int page, int *over) {
     CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
     int count = 0;

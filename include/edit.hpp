@@ -51,13 +51,13 @@ struct ED_MOVE_CHARA_INFO {
     CEditGround *ground; /**< Ground the character walks on. */
     CMapParts *parts;    /**< Parts of the interior the character walks through. */
     int parts_count;     /**< How many of them there are. */
-    int event_ready; /**< Set where the character stands in an event. */
+    int event_ready;     /**< Set where the character stands in an event. */
     u8 unk_2c[0x4];
-    ED_EVENT_PARAM param;   /**< The event the character stands in. */
-    ED_EVENT_POINT *points; /**< Event points of the map. */
-    int point_count;        /**< How many of them there are. */
-    int event_no;           /**< Map event the step asks to run. */
-    int system_event_no;    /**< System event the step asks to run. */
+    ED_EVENT_PARAM param;     /**< The event the character stands in. */
+    ED_EVENT_POINT *points;   /**< Event points of the map. */
+    int point_count;          /**< How many of them there are. */
+    int event_no;             /**< Map event the step asks to run. */
+    int system_event_no;      /**< System event the step asks to run. */
     int acted;                /**< Whether the step acted on the confirm button. */
     int fishing;              /**< Whether the character stands fishing. */
     float motion_time_after;  /**< Motion time once the step has advanced the character. */
@@ -892,7 +892,6 @@ int EdInitGotoInterior(ED_EVENT_INFO *info, ED_EVENT_PARAM *param);
  * @size 0x1EC
  */
 int EdMenuLoop(ClsMes *message);
-
 
 /**
  * Copies a parts-info header into the editor parts record.

@@ -17,6 +17,7 @@
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
+#include "editloop.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "mathutil.hpp"
@@ -25,6 +26,7 @@
 #include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
+#include "menuetc.hpp"
 #include "menuitemstep.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -33,19 +35,17 @@
 #include "stockitem.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
-
-#include "editloop.hpp"
-#include "menuetc.hpp"
 #include "weaponlevelup.hpp"
+
 /**
  * Shop UI bookkeeping shared by the charge shop and item shop screens: their
  * cursor, phase and animation state. Only the handful of fields read outside
  * this unit's own functions are named.
  */
 struct ShopMenuWork {
-    s16 shop_no;  /**< Shop being run. */
-    s16 side;     /**< Board the cursor is on: 0 the shop's stock, 1 the player's own board. */
-    s16 mode;     /**< How the shop was opened. */
+    s16 shop_no; /**< Shop being run. */
+    s16 side;    /**< Board the cursor is on: 0 the shop's stock, 1 the player's own board. */
+    s16 mode;    /**< How the shop was opened. */
     s16 unk_06;
     PERSONAL_BOARD board; /**< The player's side of the shop: the personal board and the records it holds. */
     s32 unk_168;
@@ -62,8 +62,8 @@ struct ShopMenuWork {
     s16 ready;      /**< Nonzero once the shop's textures are entered. */
     s16 tex_block;  /**< Texture block the shop's textures are entered into. */
     s16 unk_18C;
-    s16 alpha;      /**< Opacity the shop draws with. */
-    s16 lang;       /**< Language the shop's plates are laid out for. */
+    s16 alpha; /**< Opacity the shop draws with. */
+    s16 lang;  /**< Language the shop's plates are laid out for. */
     s16 unk_192;
     s16 person_state;     /**< Shopkeeper model: 1 while it is read, 2 once it is built, 0 when there is none. */
     s16 person_tex_block; /**< Texture block the shopkeeper's textures are entered into. */
@@ -155,8 +155,8 @@ struct FishMenuWork {
     s16 fade_mode;  /**< What the exchange is doing: 0 opening, 1 closing, 3 choosing, 4 confirming, 5 refusing. */
     s16 top;        /**< Prize the list shows first. */
     u8 unk_1A[6];
-    s32 fade_count;     /**< Frames the current fade has run for. */
-    u_long128 *buffer;  /**< Buffer the exchange's files are read into. */
+    s32 fade_count;    /**< Frames the current fade has run for. */
+    u_long128 *buffer; /**< Buffer the exchange's files are read into. */
 };
 
 STATIC_ASSERT(sizeof(FishMenuWork) == 0x28);
@@ -3206,6 +3206,7 @@ static void ShopCancelGoodReturn2() {
  * @size 0x268
  */
 static int GetNowMasterMsgNo2(int, int);
+
 static int GetNowMasterMsgNo2(int shop, int kind) {
     int mes_no;
     int base = shop * 2000;
@@ -3411,6 +3412,7 @@ void ItemShopGetPacFileName(int kind, int shop_no, char *name) {
         strcpy(name, path);
     }
 }
+
 void ItemShopGetImgFileName(int kind, int shop_no, char *name) {
     char *names[2][18] = {
         {"p13a", "p31a", "p39a", "p54a", "p74a", "c03c", "", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
@@ -3795,6 +3797,7 @@ static void ItemShopSelectKey2() {
         ComMenuSePlay(0);
     }
 }
+
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     MENU_ITEMDATA work[2];
 
@@ -4821,7 +4824,9 @@ static int FishMenuTextureLoad() {
     }
     return done;
 }
+
 INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
+
 int FishingExchangeKey() {
     int result = 0;
 

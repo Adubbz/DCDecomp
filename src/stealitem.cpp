@@ -6,12 +6,12 @@
 #include <cmath>
 
 #include "character.hpp"
+#include "dun/gameloop.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 
-#include "dun/gameloop.hpp"
 void CStealItem::Initialize(CFrameVu1 *model) {
     this->frame = model;
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {

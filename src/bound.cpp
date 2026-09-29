@@ -66,6 +66,7 @@ int CBound::InCheck(float *point, float *result) {
     }
     return 0;
 }
+
 void CBound::SetDir(CFrame *frame, float *from_position, float *to_position,
                     float *up_direction, float half_width, float half_height) {
     state = 1;
@@ -142,6 +143,7 @@ void CBound::UpDateDir(void) {
         reciprocal[2] = 1.0f / half_depth;
     }
 }
+
 void CBound::SetDir(float *direction, float *up_direction) {
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
 
@@ -186,6 +188,7 @@ void CBound::SetDir(float *new_direction) {
     inverse[2][3] = 0.0f;
     sceVu0TransposeMatrix(matrix, inverse);
 }
+
 void CBound::UpDateDirPos(void) {
     sceVu0FMATRIX frame_matrix;
     sceVu0FVECTOR world_from;
@@ -267,6 +270,7 @@ void CBound::InitParam() {
     sceVu0CopyVector(to, position);
     length0 = length1 = 1.0f;
 }
+
 CBound::CBound(float half_width, float half_height, float half_depth) {
     InitParam();
     extent[0] = half_width;

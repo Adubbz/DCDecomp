@@ -63,15 +63,15 @@ struct ITEM_MENU_MODE_INFO {
     s16 mode;  /**< Area of the item page the cursor is in. */
     s16 chara; /**< Party member index the item page is showing. */
     s16 unk_04;
-    s16 use_target; /**< Kind of target the item waiting for confirmation is used on. */
-    s16 confirm;    /**< Cursor on the use confirmation dialog, zero for yes. */
-    s16 overflow_pages;    /**< Bit per board page that holds items the pack could not take. */
-    s16 overflow;          /**< Nonzero while the pack is holding items it could not take. */
-    s16 overflow_count[3]; /**< Number of items each board page could not take. */
+    s16 use_target;             /**< Kind of target the item waiting for confirmation is used on. */
+    s16 confirm;                /**< Cursor on the use confirmation dialog, zero for yes. */
+    s16 overflow_pages;         /**< Bit per board page that holds items the pack could not take. */
+    s16 overflow;               /**< Nonzero while the pack is holding items it could not take. */
+    s16 overflow_count[3];      /**< Number of items each board page could not take. */
     WEAPON_HAVE *target_weapon; /**< Weapon an item waiting for confirmation is used on. */
-    s16 state; /**< Transition or dialog the item page is in. */
+    s16 state;                  /**< Transition or dialog the item page is in. */
     char unk_1A[2];
-    s32 counter; /**< Frames spent in the current state. */
+    s32 counter;          /**< Frames spent in the current state. */
     PERSONAL_BOARD board; /**< Personal board the item page lists the pack on. */
     char unk_180[4];
     s16 message_item_no; /**< Item number the last SetNowEquipWeaponDataForMsg call named. */
@@ -110,17 +110,17 @@ STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
  * Holds the travel page's state.
  */
 struct MENU_MOVE_INFO {
-    s32 mode;        /**< Where the travel page was opened from: 0 dungeon escape, 1 or 5 world map, 2 interior, 10 town. */
-    s32 cursor;      /**< Place or yes/no answer the cursor is on. */
-    s16 load_map;    /**< World map region whose model is loaded. */
+    s32 mode;     /**< Where the travel page was opened from: 0 dungeon escape, 1 or 5 world map, 2 interior, 10 town. */
+    s32 cursor;   /**< Place or yes/no answer the cursor is on. */
+    s16 load_map; /**< World map region whose model is loaded. */
     s16 unk_0A;
     s16 start_place; /**< Place the party stood on when the page opened. */
     s16 ready;       /**< Nonzero once the world map model has loaded. */
     char unk_10[4];
-    s32 tex_block;   /**< Texture block the world map loads into. */
-    s16 state;       /**< Transition or step the travel page is in. */
+    s32 tex_block; /**< Texture block the world map loads into. */
+    s16 state;     /**< Transition or step the travel page is in. */
     char unk_1A[2];
-    s32 counter;     /**< Frames spent in the current state. */
+    s32 counter; /**< Frames spent in the current state. */
 };
 
 STATIC_ASSERT(sizeof(MENU_MOVE_INFO) == 0x20);
@@ -131,8 +131,8 @@ STATIC_ASSERT(sizeof(MENU_MOVE_INFO) == 0x20);
 struct WORLD_MAP_POS {
     char frame[6]; /**< Name of the map frame the place's marker hangs off. */
     s16 visited;   /**< One once the party has visited the place, -1 before. */
-    s32 x; /**< Horizontal position of the place on the map. */
-    s32 y; /**< Vertical position of the place on the map. */
+    s32 x;         /**< Horizontal position of the place on the map. */
+    s32 y;         /**< Vertical position of the place on the map. */
 };
 
 STATIC_ASSERT(sizeof(WORLD_MAP_POS) == 0x10);

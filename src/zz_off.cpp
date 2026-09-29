@@ -1,5 +1,6 @@
 #ifdef NON_MATCHING
 #include "cloth.hpp"
+
 STATIC_ASSERT((int) &((CCloth *) 0)->num_i == 0x2C);
 STATIC_ASSERT((int) &((CCloth *) 0)->num_j == 0x30);
 STATIC_ASSERT((int) &((CCloth *) 0)->frame == 0x3C);

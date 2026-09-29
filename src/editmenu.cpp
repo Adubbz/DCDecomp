@@ -347,6 +347,7 @@ static int EdMenuManualKey();
  * @size 0x6C
  */
 static void EdMenuManualDraw();
+
 int GetNumHowManyItemsHave(int item) {
     COM_ITEM_INFO *info = GetCommonItemInfo(item);
     if (info == NULL) {
@@ -375,6 +376,7 @@ int GetNumHowManyItemsHave(int item) {
     }
     return count;
 }
+
 static int GetEditMenuMax() {
     int max = 6;
     if (GetGameFlagForManualMenu() == 0) {
@@ -392,6 +394,7 @@ static void DrawMenuIcon(int slot) {
     DrawMainMenuIcon((int) (MenuIconPos[slot][0] - 6.0f), (int) (MenuIconPos[slot][1] - 4.0f),
                      info->id, 1, 0x80, 0x80);
 }
+
 static void GetEditMenuIconPos(int slot, int *position) {
     u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
@@ -459,6 +462,7 @@ static void DrawMoveMenuIcon() {
                          (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
 }
+
 static int CalMoveFromMenuIcon() {
     int done = 0;
     int arrived_count = 0;
@@ -500,6 +504,7 @@ static int CalMoveFromMenuIcon() {
     }
     return done;
 }
+
 /**
  * Moves the edit menu icons back to their resting positions.
  */
@@ -537,6 +542,7 @@ static int CalMoveToMenuIcon() {
     }
     return done;
 }
+
 void EditMenuInit(int *texture_blocks, int atora) {
     StartReadBG();
     u_long128 *buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 16);
@@ -591,6 +597,7 @@ void EditMenuInit(int *texture_blocks, int atora) {
         MenuIconPos[i][1] = i * 40 + 0x4A;
     }
 }
+
 static void EditMenuExit() {
     int blocks[5] = {0, 0, 0, 0, -1};
 
@@ -659,6 +666,7 @@ int EditMenuLoop() {
     EditMenuDraw();
     return result;
 }
+
 void EditMenuDraw() {
     int text_x;
     int text_y;
@@ -749,6 +757,7 @@ void EditMenuDraw() {
     }
     setbilinear(1);
 }
+
 static int EditMenuStart() {
     u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
@@ -861,6 +870,7 @@ static void EditMenuSelectDraw() {
         CommonMenuMes2.MakeMesWin(info->unk_24);
     }
 }
+
 static int EditMenuSelect() {
     int icon_max = GetEditMenuMax();
     int previous = EdCur.selection;

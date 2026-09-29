@@ -4,10 +4,11 @@
 
 #include <libvu0.h>
 
+#include "dataalloc.hpp"
 #include "hit_machingun_effect.hpp"
 #include "runscript.hpp"
-#include "dataalloc.hpp"
 #include "textureanime.hpp"
+
 class CSHOT_EFFECT;
 class CWeaponEffect;
 class CDispCtrl;

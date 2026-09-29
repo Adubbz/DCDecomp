@@ -4,13 +4,13 @@
 
 #include "dngstatusdata.hpp"
 
-#include "itemdata.hpp"
-#include "userstatus.hpp"
-
 #include "dun/gameloop.hpp"
 #include "dungeonparts.hpp"
+#include "itemdata.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
+#include "userstatus.hpp"
+
 /* CDngStatusData's and CUserStatus's methods are interleaved in retail
  * (SetNowFloor..SearchItemIndexNo, ChkEventFlag..ClearEventFlag, LostItem..
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes

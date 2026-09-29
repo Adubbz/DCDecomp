@@ -263,8 +263,8 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
     int visible = MGRotTransPers2D(screen, position, 0);
     int screen_x = screen[0];
     int screen_y = screen[1];
-    float flare_offset[8] = { 0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f };
-    float flare_size[8] = { 0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f };
+    float flare_offset[8] = {0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f};
+    float flare_size[8] = {0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f};
 
     int size;
     int x;
@@ -313,6 +313,7 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, (unsigned char) (int) level);
     }
 }
+
 /**
  * Starts the sound manager once, and loads its effect table.
  *
@@ -327,6 +328,7 @@ void SndInit(void) {
         SndInitialize(4, 0x1E, 4, 5);
     }
 }
+
 void SndInitialize(int, int, int, int) {
     snd_read_buf = read_buffer;
     SndBgmInit();
@@ -458,6 +460,7 @@ void SndSetReadBuffer(unsigned int *buffer) {
     }
     snd_read_buf = buffer;
 }
+
 /**
  * Reports whether any of the background sound loads is still running.
  *
@@ -482,6 +485,7 @@ void SndSetCamera(CCamera *camera) {
     camera->GetPos(camera_pos);
     camera->GetDir(camera_dir);
 }
+
 /**
  * Tells the sound where the camera stands and which way it looks.
  *
@@ -493,6 +497,7 @@ void SndSetCamera(float *position, float *rotation) {
     sceVu0CopyVector(camera_pos, position);
     sceVu0CopyVector(camera_dir, rotation);
 }
+
 /**
  * Builds the archive and configuration file names of one music set.
  *
@@ -507,6 +512,7 @@ static void GetBGMFile(int set_no, char *archive_name, char *config_name) {
     sprintf(archive_name, "sound/bgm/%s.snd", name);
     sprintf(config_name, "%s.txt", name);
 }
+
 /**
  * Hands a loaded music set to the driver and reads its configuration.
  *
@@ -572,6 +578,7 @@ int SndBgmLoad(int set_no) {
     }
     return 0;
 }
+
 /**
  * Starts loading one music set in the background.
  *
@@ -675,6 +682,7 @@ void SndSetBgmVol(int volume) {
         }
     }
 }
+
 /**
  * Sets the background music's volume as a share of its default.
  *
@@ -720,6 +728,7 @@ void SndBgmFadeIn(int frames, int volume, int start_volume) {
         }
     }
 }
+
 /**
  * Fades the background music down to a volume over a number of steps.
  *
@@ -789,6 +798,7 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
 
     return &se_info[se_no];
 }
+
 static int GetPortNo(int se_no) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -797,6 +807,7 @@ static int GetPortNo(int se_no) {
     }
     return 14;
 }
+
 /**
  * Builds the archive and configuration file names of one sound-effect set.
  *
@@ -811,6 +822,7 @@ static void GetSoundFile(int set_no, char *archive_name, char *config_name) {
     sprintf(archive_name, "sound/set/%s.snd", name);
     sprintf(config_name, "%s.txt", name);
 }
+
 /**
  * Hands a loaded sound-effect set to the driver and sets its channel volumes.
  *
@@ -888,6 +900,7 @@ int SndSoundLoad(int set_no) {
     }
     return 0;
 }
+
 /**
  * Starts loading one sound-effect set in the background.
  *
@@ -943,6 +956,7 @@ void SndSePlay(int se_no, int vol, int voice) {
         }
     }
 }
+
 void SndSePlay(int se_no, float volume, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -970,6 +984,7 @@ void SndSePlay(int se_no, float *position, float near, float far) {
     SndGetVolPan(&volume, &pan, position, near, far);
     SndSePlay(se_no, volume, pan, 0);
 }
+
 /**
  * Stops a sounding effect.
  *
@@ -1035,6 +1050,7 @@ void SndSetSeVolf(int se_no, float vol, int voice) {
         SndSetSeVol(se_no, SndGetVolf(se_no, vol), voice);
     }
 }
+
 void SndSetSePanf(int se_no, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -1044,6 +1060,7 @@ void SndSetSePanf(int se_no, float pan, int voice) {
         CSnd.SE_SetPan(GetPortNo(se_no), info->bank, info->prog, hw_pan, voice);
     }
 }
+
 void SndPlayFootSound(int kind, int foot, float *position) {
     float volume;
     float pan;
@@ -1104,9 +1121,11 @@ void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
     *vol = level;
     *vol *= 1.4f;
 }
+
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }
+
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     int i;
     SND_SE_SEQ *slot = 0;
@@ -1137,6 +1156,7 @@ void SndSeSeqInit() {
         InitSeSeq(&se_seq[i]);
     }
 }
+
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
     int found;
     SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
@@ -1174,6 +1194,7 @@ static void SndSeSeqStep() {
         }
     }
 }
+
 /**
  * Stops every sound-effect sequence.
  *
@@ -1219,6 +1240,7 @@ void SndAmbientStop() {
         now_amb_play = 0;
     }
 }
+
 /**
  * Sets the ambient loop's volume.
  *
@@ -1235,6 +1257,7 @@ void SndAmbientSetVol(int volume) {
         CSnd.SetVol(1, volume);
     }
 }
+
 /**
  * Sets the ambient loop's volume as a share of its default.
  *
@@ -1256,6 +1279,7 @@ int SndGetAmbientDefaultVol() {
     }
     return 64;
 }
+
 /**
  * Builds the archive and configuration file names of one voice set.
  *
@@ -1270,6 +1294,7 @@ static void GetVoiceFile(int set_no, char *archive_name, char *config_name) {
     sprintf(archive_name, "sound/voice/%s.snd", name);
     sprintf(config_name, "%s.txt", name);
 }
+
 /**
  * Hands a loaded voice set to the driver and reads its configuration.
  *
@@ -1297,6 +1322,7 @@ int SndVoiceLoad(int set_no) {
     }
     return 0;
 }
+
 /**
  * Starts loading one voice set in the background.
  *
@@ -1334,12 +1360,14 @@ int SndVoiceSyncBG() {
     load_voice_adr = 0;
     return 0;
 }
+
 static SND_SE_INFO *GetSPInfo(int se_no) {
     if (se_no < 0 || se_no >= 64) {
         return 0;
     }
     return &special_se_info[se_no];
 }
+
 /**
  * Builds the archive and configuration file names of one special-effect set.
  *
@@ -1354,6 +1382,7 @@ static void GetSPSeFile(int set_no, char *archive_name, char *config_name) {
     sprintf(archive_name, "sound/special/%s.snd", name);
     sprintf(config_name, "%s.txt", name);
 }
+
 /**
  * Hands a loaded special-effect set to the driver and reads its configuration.
  *
@@ -1396,6 +1425,7 @@ int SndSPSeLoadBG(int set_no, u_int *buffer, int *size) {
     }
     return 0;
 }
+
 /**
  * Polls the special-effect set load and hands the file to the driver once it lands.
  *
@@ -1437,6 +1467,7 @@ void SndSPSePlay(int se_no, int vol) {
         }
     }
 }
+
 void SndSPSeStop(int se_no) {
     SND_SE_INFO *info = GetSPInfo(se_no);
 
@@ -1444,6 +1475,7 @@ void SndSPSeStop(int se_no) {
         CSnd.SE_Stop(12, info->bank, info->prog, 0);
     }
 }
+
 /**
  * Sets a special sound effect's volume as a share of its table value.
  *
@@ -1487,10 +1519,11 @@ void SndSetSPSePanf(int se_no, float pan) {
 
     SND_SE_INFO *info = GetSPInfo(se_no);
     if (info != 0) {
-        CSnd.SE_SetPan(12, info->vol_no, (int)(63.0f * pan) + 64, 0);
+        CSnd.SE_SetPan(12, info->vol_no, (int) (63.0f * pan) + 64, 0);
     }
 }
 
+// clang-format off
 SND_SE_INFO se_info[2801] = {
     {122, 24, 0, 13, 0}, {122, 25, 0, 13, 0}, {122, 26, 0, 13, 0}, {-1, -1, 0, -1, 0},
     {-1, -1, 0, -1, 0}, {122, 29, 0, 13, 0}, {122, 30, 0, 13, 0}, {-1, -1, 0, -1, 0},
@@ -2194,7 +2227,9 @@ SND_SE_INFO se_info[2801] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {-1, -1, 0, -1, 0},
 };
+// clang-format on
 
+// clang-format off
 SND_SE_INFO geo[199] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2247,7 +2282,9 @@ SND_SE_INFO geo[199] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {38, 66, 0, 14, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 SND_SE_INFO dun[199] = {
     {-1, -1, 0, -1, 0}, {30, 21, 0, 14, 0}, {30, 22, 0, 14, 0}, {30, 23, 0, 14, 0},
     {30, 24, 0, 14, 0}, {30, 25, 0, 14, 0}, {-1, -1, 0, -1, 0}, {30, 27, 0, 14, 0},
@@ -2300,7 +2337,9 @@ SND_SE_INFO dun[199] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {38, 66, 0, 14, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 0. */
 SND_SE_INFO cap0[92] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2327,7 +2366,9 @@ SND_SE_INFO cap0[92] = {
     {44, 84, 1, 10, 0}, {44, 85, 0, 10, 0}, {-1, -1, 0, -1, 0}, {44, 87, 0, 10, 0},
     {44, 88, 0, 10, 0}, {44, 89, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 1. */
 SND_SE_INFO cap1[73] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2350,7 +2391,9 @@ SND_SE_INFO cap1[73] = {
     {45, 68, 0, 10, 0}, {45, 69, 0, 10, 0}, {45, 70, 0, 10, 0}, {-1, -1, 0, -1, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 2. */
 SND_SE_INFO cap2[101] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2380,7 +2423,9 @@ SND_SE_INFO cap2[101] = {
     {45, 96, 0, 10, 0}, {45, 97, 0, 10, 0}, {45, 98, 0, 10, 0}, {45, 99, 0, 10, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 3. */
 SND_SE_INFO cap3[44] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2395,7 +2440,9 @@ SND_SE_INFO cap3[44] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {45, 39, 0, 10, 0},
     {-1, -1, 0, -1, 0}, {45, 41, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 4. */
 SND_SE_INFO cap4[36] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2408,7 +2455,9 @@ SND_SE_INFO cap4[36] = {
     {-1, -1, 0, -1, 0}, {45, 29, 0, 10, 0}, {45, 30, 1, 10, 0}, {45, 31, 0, 10, 0},
     {45, 32, 0, 10, 0}, {46, 29, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 10. */
 SND_SE_INFO cap10[85] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2434,7 +2483,9 @@ SND_SE_INFO cap10[85] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 82, 0, 10, 0}, {-1, -1, 0, -1, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 11. */
 SND_SE_INFO cap11[101] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2464,7 +2515,9 @@ SND_SE_INFO cap11[101] = {
     {45, 96, 0, 10, 0}, {45, 97, 0, 10, 0}, {45, 98, 0, 10, 0}, {45, 99, 0, 10, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 12. */
 SND_SE_INFO cap12[31] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2476,7 +2529,9 @@ SND_SE_INFO cap12[31] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {45, 26, 0, 10, 0}, {-1, -1, 0, -1, 0},
     {45, 28, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 13. */
 SND_SE_INFO cap13[28] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 110, 1, 10, 0}, {-1, -1, 0, -1, 0},
@@ -2487,7 +2542,9 @@ SND_SE_INFO cap13[28] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {45, 23, 0, 10, 0},
     {45, 24, 0, 10, 0}, {45, 25, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 14. */
 SND_SE_INFO cap14[36] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2500,7 +2557,9 @@ SND_SE_INFO cap14[36] = {
     {-1, -1, 0, -1, 0}, {45, 29, 0, 10, 0}, {45, 30, 1, 10, 0}, {45, 31, 0, 10, 0},
     {45, 32, 0, 10, 0}, {46, 29, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 15. */
 SND_SE_INFO cap15[14] = {
     {44, 108, 1, 10, 0}, {44, 109, 0, 10, 0}, {44, 110, 1, 10, 0}, {44, 111, 0, 10, 0},
@@ -2508,7 +2567,9 @@ SND_SE_INFO cap15[14] = {
     {44, 116, 0, 10, 0}, {44, 117, 0, 10, 0}, {44, 118, 0, 10, 0}, {44, 119, 0, 10, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 16. */
 SND_SE_INFO cap16[92] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2535,14 +2596,18 @@ SND_SE_INFO cap16[92] = {
     {44, 84, 1, 10, 0}, {44, 85, 0, 10, 0}, {-1, -1, 0, -1, 0}, {44, 87, 0, 10, 0},
     {44, 88, 0, 10, 0}, {44, 89, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 17. */
 SND_SE_INFO cap17[11] = {
     {44, 100, 1, 10, 0}, {44, 101, 0, 10, 0}, {44, 102, 0, 10, 0}, {44, 103, 0, 10, 0},
     {44, 104, 0, 10, 0}, {44, 105, 0, 10, 0}, {44, 106, 0, 10, 0}, {44, 107, 0, 10, 0},
     {44, 108, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 20. */
 SND_SE_INFO cap20[76] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2565,12 +2630,16 @@ SND_SE_INFO cap20[76] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {-1, -1, 0, -1, 0}, {44, 73, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 21. */
 SND_SE_INFO cap21[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 22. */
 SND_SE_INFO cap22[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2598,7 +2667,9 @@ SND_SE_INFO cap22[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 90, 0, 10, 0}, {44, 91, 0, 10, 0},
     {44, 92, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 25. */
 SND_SE_INFO cap25[29] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2610,12 +2681,16 @@ SND_SE_INFO cap25[29] = {
     {-1, -1, 0, -1, 0}, {44, 25, 0, 10, 0}, {44, 26, 0, 10, 0}, {-1, -1, 0, -1, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 26. */
 SND_SE_INFO cap26[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 27. */
 SND_SE_INFO cap27[101] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2645,12 +2720,16 @@ SND_SE_INFO cap27[101] = {
     {44, 96, 0, 10, 0}, {44, 97, 1, 10, 0}, {44, 98, 0, 10, 0}, {44, 99, 0, 10, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 30. */
 SND_SE_INFO cap30[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 31. */
 SND_SE_INFO cap31[15] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2658,7 +2737,9 @@ SND_SE_INFO cap31[15] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {45, 112, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 32. */
 SND_SE_INFO cap32[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2686,17 +2767,23 @@ SND_SE_INFO cap32[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 90, 0, 10, 0}, {44, 91, 0, 10, 0},
     {44, 92, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 35. */
 SND_SE_INFO cap35[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 36. */
 SND_SE_INFO cap36[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 37. */
 SND_SE_INFO cap37[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2724,7 +2811,9 @@ SND_SE_INFO cap37[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 90, 0, 10, 0}, {44, 91, 0, 10, 0},
     {44, 92, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 40. */
 SND_SE_INFO cap40[32] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2736,12 +2825,16 @@ SND_SE_INFO cap40[32] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {-1, -1, 0, -1, 0}, {46, 29, 1, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 41. */
 SND_SE_INFO cap41[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 42. */
 SND_SE_INFO cap42[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2769,17 +2862,23 @@ SND_SE_INFO cap42[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 90, 0, 10, 0}, {44, 91, 0, 10, 0},
     {44, 92, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 45. */
 SND_SE_INFO cap45[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 46. */
 SND_SE_INFO cap46[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 47. */
 SND_SE_INFO cap47[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2807,7 +2906,9 @@ SND_SE_INFO cap47[95] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 90, 0, 10, 0}, {44, 91, 0, 10, 0},
     {44, 92, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 50. */
 SND_SE_INFO cap50[43] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2822,7 +2923,9 @@ SND_SE_INFO cap50[43] = {
     {47, 96, 0, 10, 0}, {47, 97, 0, 10, 0}, {-1, -1, 0, -1, 0}, {47, 99, 0, 10, 0},
     {47, 100, 1, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 51. */
 SND_SE_INFO cap51[75] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2845,7 +2948,9 @@ SND_SE_INFO cap51[75] = {
     {47, 68, 0, 10, 0}, {47, 69, 0, 10, 0}, {47, 70, 1, 10, 0}, {47, 71, 0, 10, 0},
     {47, 72, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 52. */
 SND_SE_INFO cap52[79] = {
     {47, 23, 0, 10, 0}, {47, 24, 1, 10, 0}, {47, 25, 0, 10, 0}, {47, 26, 0, 10, 0},
@@ -2869,7 +2974,9 @@ SND_SE_INFO cap52[79] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 74, 0, 10, 0}, {44, 75, 0, 10, 0},
     {44, 76, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 53. */
 SND_SE_INFO cap53[22] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2879,7 +2986,9 @@ SND_SE_INFO cap53[22] = {
     {47, 106, 0, 10, 0}, {47, 107, 0, 10, 0}, {47, 108, 0, 10, 0}, {47, 109, 0, 10, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 54. */
 SND_SE_INFO cap54[35] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2892,7 +3001,9 @@ SND_SE_INFO cap54[35] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {47, 32, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 55. */
 SND_SE_INFO cap55[47] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2908,7 +3019,9 @@ SND_SE_INFO cap55[47] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {47, 42, 0, 10, 0}, {47, 43, 0, 10, 0},
     {47, 44, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 56. */
 SND_SE_INFO cap56[55] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2926,7 +3039,9 @@ SND_SE_INFO cap56[55] = {
     {47, 48, 0, 10, 0}, {47, 49, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {47, 52, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 57. */
 SND_SE_INFO cap57[79] = {
     {44, 108, 1, 10, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -2950,7 +3065,9 @@ SND_SE_INFO cap57[79] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 74, 0, 10, 0}, {44, 75, 0, 10, 0},
     {44, 76, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 58. */
 SND_SE_INFO cap58[99] = {
     {44, 108, 1, 10, 0}, {-1, -1, 0, -1, 0}, {44, 110, 1, 10, 0}, {-1, -1, 0, -1, 0},
@@ -2979,42 +3096,58 @@ SND_SE_INFO cap58[99] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {44, 95, 0, 10, 0},
     {44, 96, 0, 10, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 59. */
 SND_SE_INFO cap59[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 60. */
 SND_SE_INFO cap60[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 61. */
 SND_SE_INFO cap61[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 62. */
 SND_SE_INFO cap62[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 63. */
 SND_SE_INFO cap63[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 64. */
 SND_SE_INFO cap64[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set cap_se_info names as chapter set 65. */
 SND_SE_INFO cap65[2] = {
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 SND_SE_INFO *cap_se_info[101] = {
     cap0, cap1, cap2, cap3, cap4, 0, 0, 0,
     0, 0, cap10, cap11, cap12, cap13, cap14, cap15,
@@ -3030,7 +3163,9 @@ SND_SE_INFO *cap_se_info[101] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 0. */
 SND_SE_INFO voice0[54] = {
     {23, 20, 0, 11, 0}, {23, 21, 0, 11, 0}, {23, 22, 0, 11, 0}, {23, 23, 0, 11, 0},
@@ -3048,7 +3183,9 @@ SND_SE_INFO voice0[54] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {23, 70, 0, 11, 0}, {23, 71, 0, 11, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 1. */
 SND_SE_INFO voice1[54] = {
     {24, 20, 0, 11, 0}, {24, 21, 0, 11, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -3066,7 +3203,9 @@ SND_SE_INFO voice1[54] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {24, 70, 0, 11, 0}, {24, 71, 0, 11, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 2. */
 SND_SE_INFO voice2[54] = {
     {25, 20, 0, 11, 0}, {-1, -1, 0, -1, 0}, {25, 22, 0, 11, 0}, {25, 23, 0, 11, 0},
@@ -3084,7 +3223,9 @@ SND_SE_INFO voice2[54] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {25, 70, 0, 11, 0}, {25, 71, 0, 11, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 3. */
 SND_SE_INFO voice3[54] = {
     {26, 20, 0, 11, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {26, 23, 1, 11, 0},
@@ -3102,7 +3243,9 @@ SND_SE_INFO voice3[54] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {26, 70, 0, 11, 0}, {26, 71, 0, 11, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 4. */
 SND_SE_INFO voice4[54] = {
     {27, 20, 0, 11, 0}, {27, 21, 0, 11, 0}, {27, 22, 1, 11, 0}, {-1, -1, 0, -1, 0},
@@ -3120,7 +3263,9 @@ SND_SE_INFO voice4[54] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {27, 70, 0, 11, 0}, {27, 71, 0, 11, 0},
     {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 5. */
 SND_SE_INFO voice5[64] = {
     {28, 20, 1, 11, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
@@ -3140,18 +3285,24 @@ SND_SE_INFO voice5[64] = {
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0},
     {28, 80, 1, 11, 0}, {28, 81, 0, 11, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 /** The sound-effect set voice_info names as voice set 6. */
 SND_SE_INFO voice6[7] = {
     {29, 20, 0, 11, 0}, {29, 21, 0, 11, 0}, {29, 22, 0, 11, 0}, {29, 23, 0, 11, 0},
     {29, 24, 0, 11, 0}, {-1, -1, 0, -1, 0}, {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
+// clang-format off
 SND_SE_INFO *voice_info[11] = {
     voice0, voice1, voice2, voice3, voice4, voice5, voice6, 0,
     0, 0, 0,
 };
+// clang-format on
 
+// clang-format off
 SND_SE_INFO special_se_info[65] = {
     {-1, -1, 0, -1, 0}, {124, 20, 0, 12, 0}, {124, 21, 0, 12, 0}, {124, 22, 0, 12, 0},
     {-1, -1, 0, -1, 0}, {-1, -1, 0, -1, 0}, {124, 25, 0, 12, 0}, {-1, -1, 0, -1, 0},
@@ -3171,6 +3322,7 @@ SND_SE_INFO special_se_info[65] = {
     {124, 79, 0, 12, 0}, {124, 80, 1, 12, 0}, {124, 81, 1, 12, 0}, {-1, -1, 0, -1, 0},
     {-128, -128, -128, -128, 0},
 };
+// clang-format on
 
 TAG_PARAM Command__3[2] = {
     {"REVERBE", {1, 1, -1}},
@@ -3210,10 +3362,12 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
         CommandExe__3[tag](interpreter.arguments);
     }
 }
+
 static void CommandREVERBE(void **arguments) {
     SoundInfo->reverb_mode = *(s32 *) arguments[0];
     SoundInfo->reverb_depth = *(s32 *) arguments[1];
 }
+
 static void CommandTABLE(void **arguments) {
     SoundInfo->se_table = *(s32 *) arguments[0];
     SoundInfo->se_table_type = *(s32 *) arguments[1];
@@ -3505,6 +3659,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
     colour.a = alpha;
     set3DSprite(packet, texture, source, top_left, top_right, bottom_left, bottom_right, &colour);
 }
+
 /**
  * Draws a textured sprite in world space, with four corner positions and colours.
  *

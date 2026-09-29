@@ -11,6 +11,7 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 #include "bt_shot_effect.hpp"
+
 class CFrame;
 
 /**
@@ -19,29 +20,29 @@ class CFrame;
 class CSHOT_EFFECT {
 public:
     BT_SHOT_EFFECT *effect_data; /**< Description shared by the active effect slots. */
-    CCharacter template_chara; /**< Model read from the pack that every slot's character is copied from. */
-    CCharacter chara[8];       /**< Model that each projectile-effect slot draws and animates. */
-    sceVu0FVECTOR velocity[8]; /**< Movement applied to each projectile-effect slot. */
-    s16 source_id[8];          /**< Source identifier supplied when each slot starts. */
-    s32 phase_delay[8];        /**< Remaining delay before each slot changes phase. */
-    s16 phase[8];              /**< Current animation and collision phase of each slot. */
-    s16 active[8];        /**< Nonzero while each effect slot is active. */
-    s32 damage[8];        /**< Damage dealt by each effect slot. */
-    s32 weapon_status[8]; /**< Weapon status carried by each effect slot. */
-    s16 user_id[8]; /**< Primary user identifier of each effect slot. */
-    s16 user_id_2[8]; /**< Secondary user identifier of each effect slot. */
-    s32 user_sub_id[8]; /**< Secondary collision-owner value of each effect slot. */
-    char *vs_monster[8];  /**< Monster-effectiveness table of each effect slot. */
-    s32 loop[8];          /**< Whether each effect slot loops. */
-    float random_rate[8]; /**< Randomization rate of each effect slot. */
-    s32 life_time[8];     /**< Lifetime of each effect slot. */
-    s32 enemy_attribute[8]; /**< Enemy attribute of each effect slot. */
-    char no_sound[8];       /**< Whether sound is suppressed for each effect slot. */
-    char wait[8];           /**< Delay applied to each effect slot. */
-    char wait_state[8];     /**< Secondary delay state of each effect slot. */
-    s32 status;       /**< Shared runtime status reset whenever a shot starts. */
-    s32 slot_count;   /**< Number of effect slots initialized by the loader. */
-    s32 current_slot; /**< Currently selected effect slot, or -1. */
+    CCharacter template_chara;   /**< Model read from the pack that every slot's character is copied from. */
+    CCharacter chara[8];         /**< Model that each projectile-effect slot draws and animates. */
+    sceVu0FVECTOR velocity[8];   /**< Movement applied to each projectile-effect slot. */
+    s16 source_id[8];            /**< Source identifier supplied when each slot starts. */
+    s32 phase_delay[8];          /**< Remaining delay before each slot changes phase. */
+    s16 phase[8];                /**< Current animation and collision phase of each slot. */
+    s16 active[8];               /**< Nonzero while each effect slot is active. */
+    s32 damage[8];               /**< Damage dealt by each effect slot. */
+    s32 weapon_status[8];        /**< Weapon status carried by each effect slot. */
+    s16 user_id[8];              /**< Primary user identifier of each effect slot. */
+    s16 user_id_2[8];            /**< Secondary user identifier of each effect slot. */
+    s32 user_sub_id[8];          /**< Secondary collision-owner value of each effect slot. */
+    char *vs_monster[8];         /**< Monster-effectiveness table of each effect slot. */
+    s32 loop[8];                 /**< Whether each effect slot loops. */
+    float random_rate[8];        /**< Randomization rate of each effect slot. */
+    s32 life_time[8];            /**< Lifetime of each effect slot. */
+    s32 enemy_attribute[8];      /**< Enemy attribute of each effect slot. */
+    char no_sound[8];            /**< Whether sound is suppressed for each effect slot. */
+    char wait[8];                /**< Delay applied to each effect slot. */
+    char wait_state[8];          /**< Secondary delay state of each effect slot. */
+    s32 status;                  /**< Shared runtime status reset whenever a shot starts. */
+    s32 slot_count;              /**< Number of effect slots initialized by the loader. */
+    s32 current_slot;            /**< Currently selected effect slot, or -1. */
     s32 unk_A154;
     u8 unk_A158[8];
 

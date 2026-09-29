@@ -9,11 +9,13 @@
 #include <cstring>
 
 #include "camera.hpp"
+#include "camerafollow.hpp"
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "main.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
@@ -22,16 +24,14 @@
 #include "texture.hpp"
 #include "title/bombeffect.hpp"
 #include "title/majinbeem.hpp"
+#include "title/op_a.hpp"
+#include "title/op_b.hpp"
+#include "title/op_c.hpp"
+#include "title/opening.hpp"
 #include "title/script.hpp"
 #include "vector.hpp"
 #include "wind.hpp"
 
-#include "main.hpp"
-#include "title/opening.hpp"
-#include "title/op_a.hpp"
-#include "title/op_b.hpp"
-#include "title/op_c.hpp"
-#include "camerafollow.hpp"
 /* Spelled here rather than reached through a header because the image holds it only as an
    anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
 #define PI 3.14159265358979323846

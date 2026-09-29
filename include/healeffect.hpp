@@ -7,15 +7,15 @@
  */
 class CHealEffect {
 public:
-    float position[4];             /**< World-space centre of the effect. */
-    float particle_offset[32][4];  /**< Rotated offset of each healing particle. */
-    float angle[32];               /**< Rotation angle of each particle around the centre. */
-    float angular_velocity[32];    /**< Per-step angular advance of each particle. */
-    float radius[32];              /**< Horizontal orbit radius of each particle. */
-    float alpha[32];               /**< Current opacity of each particle. */
-    float phase[32];               /**< Lifetime phase controlling height and opacity. */
-    float size[32];                /**< Draw size of each particle. */
-    s32 active;                    /**< Indicates that the particle effect is advancing. */
+    float position[4];            /**< World-space centre of the effect. */
+    float particle_offset[32][4]; /**< Rotated offset of each healing particle. */
+    float angle[32];              /**< Rotation angle of each particle around the centre. */
+    float angular_velocity[32];   /**< Per-step angular advance of each particle. */
+    float radius[32];             /**< Horizontal orbit radius of each particle. */
+    float alpha[32];              /**< Current opacity of each particle. */
+    float phase[32];              /**< Lifetime phase controlling height and opacity. */
+    float size[32];               /**< Draw size of each particle. */
+    s32 active;                   /**< Indicates that the particle effect is advancing. */
     u8 unk_514[0xC];
 
     /**

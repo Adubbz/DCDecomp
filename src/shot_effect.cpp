@@ -18,7 +18,6 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-
 int GetWeaponElementAttr(int element);
 
 /**
@@ -52,6 +51,7 @@ void CSHOT::draw() {
         }
     }
 }
+
 /**
  * Advances the twelve projectiles of one shot.
  *

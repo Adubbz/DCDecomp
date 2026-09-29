@@ -41,7 +41,7 @@ public:
     float height_scale;      /**< Scale from a wave height to the vertical displacement of its vertex. */
     float distortion;        /**< Scale from a height difference to the texture-coordinate shift it causes. */
     s32 tags_built;          /**< Set once both packets hold their tags, so rebuilds write only vertex data. */
-    CFrameVu1 frame; /**< Places and draws the water surface. */
+    CFrameVu1 frame;         /**< Places and draws the water surface. */
 
     /**
      * Stores the ripple speed and damping and the two scales the surface is

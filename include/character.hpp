@@ -2,10 +2,9 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include <libvu0.h>
 
+#include "dataalloc_fwd.hpp"
 #include "fakepointlight.hpp"
 #include "gameutil.hpp"
 #include "object.hpp"

@@ -47,7 +47,7 @@ extern BT_OBJ_HANDLE BtObjHdl[32];
  * @address 0x1BB200
  * @size 0x60
  */
-BT_OBJ_HANDLE * GetObjHDL(int index);
+BT_OBJ_HANDLE *GetObjHDL(int index);
 
 /**
  * Reads one floor's system script off the disc and installs its opcode table.

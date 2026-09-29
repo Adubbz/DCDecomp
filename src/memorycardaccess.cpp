@@ -27,6 +27,7 @@ int GetOpenAttribute(char *name) {
     }
     return 0;
 }
+
 void CMemoryCardAccess::Initialize() {
     switch (GetMenuLangFlag()) {
         case 0:
@@ -62,6 +63,7 @@ void CMemoryCardAccess::Initialize() {
     this->card[1].present = 1;
     printf("SaveData size = %d\n", sizeof(CSaveData));
 }
+
 int CMemoryCardAccess::InitForMC() {
     int status = sceMcInit();
     this->Initialize();
@@ -88,6 +90,7 @@ int CMemoryCardAccess::InitForMC() {
     }
     return result;
 }
+
 void CMemoryCardAccess::SetBuff(char *buffer) {
     char *data;
     char *sum;

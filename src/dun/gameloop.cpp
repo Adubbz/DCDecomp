@@ -56,6 +56,7 @@
 
 #include "battlemenu.hpp"
 #include "btactstatus.hpp"
+#include "btitem.hpp"
 #include "btmisc.hpp"
 #include "btsysscript.hpp"
 #include "camera.hpp"
@@ -80,13 +81,16 @@
 #include "frameattr.hpp"
 #include "gamemode.hpp"
 #include "gamepad.hpp"
+#include "gameutil.hpp"
 #include "healeffect.hpp"
 #include "hit_machingun_effect.hpp"
 #include "hitmark.hpp"
 #include "hitvalue.hpp"
 #include "itembombeffect.hpp"
 #include "itemdata.hpp"
+#include "main.hpp"
 #include "mainitemmodel.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "menu_draw.hpp"
@@ -114,15 +118,11 @@
 #include "texture.hpp"
 #include "textureanime.hpp"
 #include "userstatus.hpp"
+#include "vutext.hpp"
 #include "weaponeffect.hpp"
 #include "weaponelement.hpp"
 #include "wind.hpp"
 
-#include "btitem.hpp"
-#include "gameutil.hpp"
-#include "main.hpp"
-#include "mainselect.hpp"
-#include "vutext.hpp"
 /**
  * Defines the life gauge that the locked-on enemy draws above itself.
  */
@@ -803,6 +803,7 @@ CDebugFont CDbgMsg;
 
 /* The overlay's initialised data, in the order retail's link lays it out. */
 
+// clang-format off
 /* The effect each playable character, and each of Ruby's and Osmond's forms, draws. */
 BT_SHOT_EFFECT MyEntryEffect_TOAN = {
     "c01_fuusya", 0, 0,
@@ -811,7 +812,9 @@ BT_SHOT_EFFECT MyEntryEffect_TOAN = {
     {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_SYAO = {
     "mgan01", 0, 0,
     {0.0f, 0.0f, 0.0f, 0.0f}, {1.5f, 0.0f, 0.0f, 0.0f},
@@ -819,7 +822,9 @@ BT_SHOT_EFFECT MyEntryEffect_SYAO = {
     {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_GORO = {
     "c06a_tameex", 0, 0,
     {0.0f, 0.0f, 0.0f, 0.0f}, {15.0f, 0.0f, 0.0f, 0.0f},
@@ -827,7 +832,9 @@ BT_SHOT_EFFECT MyEntryEffect_GORO = {
     {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_RUBY_F1 = {
     "c05_f03", 0, 1,
     {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
@@ -835,7 +842,9 @@ BT_SHOT_EFFECT MyEntryEffect_RUBY_F1 = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, 101, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_RUBY_C1 = {
     "c05_r03", 0, 1,
     {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
@@ -843,7 +852,9 @@ BT_SHOT_EFFECT MyEntryEffect_RUBY_C1 = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, 102, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_RUBY_T1 = {
     "c05_t03", 0, 1,
     {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
@@ -851,7 +862,9 @@ BT_SHOT_EFFECT MyEntryEffect_RUBY_T1 = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, 103, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_RUBY_W1 = {
     "c05_e03", 0, 1,
     {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
@@ -859,7 +872,9 @@ BT_SHOT_EFFECT MyEntryEffect_RUBY_W1 = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, 104, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_RUBY_H1 = {
     "c05_h03", 0, 1,
     {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
@@ -867,7 +882,9 @@ BT_SHOT_EFFECT MyEntryEffect_RUBY_H1 = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, 105, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_UNGAGA = {
     "c10a_ex", 0, 1,
     {0.2f, 0.9f, 0.2f, 0.2f}, {8.0f, 8.0f, 6.0f, 6.0f},
@@ -875,7 +892,9 @@ BT_SHOT_EFFECT MyEntryEffect_UNGAGA = {
     {0, 1, 2, 2}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_OZUMOND_M = {
     "mgan01", 0, 0,
     {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f},
@@ -883,7 +902,9 @@ BT_SHOT_EFFECT MyEntryEffect_OZUMOND_M = {
     {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_OZUMOND_H = {
     "rgan01", 0, 1,
     {3.5f, 3.5f, 0.2f, 0.2f}, {0.0f, 4.5f, 0.0f, 0.0f},
@@ -891,7 +912,9 @@ BT_SHOT_EFFECT MyEntryEffect_OZUMOND_H = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_OZUMOND_H2 = {
     "rgan02", 0, 1,
     {3.5f, 3.5f, 0.2f, 0.2f}, {0.0f, 4.5f, 0.0f, 0.0f},
@@ -899,7 +922,9 @@ BT_SHOT_EFFECT MyEntryEffect_OZUMOND_H2 = {
     {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_OZUMOND_V2 = {
     "mgan02", 0, 0,
     {0.0f, 0.5f, 0.2f, 0.2f}, {0.0f, 1.5f, 0.0f, 0.0f},
@@ -907,7 +932,9 @@ BT_SHOT_EFFECT MyEntryEffect_OZUMOND_V2 = {
     {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_OZUMOND_G = {
     "mgan03", 0, 0,
     {0.0f, 0.5f, 0.2f, 0.2f}, {0.0f, 1.5f, 0.0f, 0.0f},
@@ -915,7 +942,9 @@ BT_SHOT_EFFECT MyEntryEffect_OZUMOND_G = {
     {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_OZUMOND_S = {
     "mgan04", 0, 0,
     {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f},
@@ -923,6 +952,7 @@ BT_SHOT_EFFECT MyEntryEffect_OZUMOND_S = {
     {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
 /* The effect table each playable character draws its own effects from. */
 BT_SHOT_EFFECT *MyEffectEntry_Tbl[15] = {
@@ -943,6 +973,7 @@ BT_SHOT_EFFECT *MyEffectEntry_Tbl[15] = {
     &MyEntryEffect_OZUMOND_S,
 };
 
+// clang-format off
 /* The effect each of the five Atlamillia draws as it is taken. */
 BT_SHOT_EFFECT MyEntryEffect_Maseki00 = {
     "maseki_ex", 0, 1,
@@ -951,7 +982,9 @@ BT_SHOT_EFFECT MyEntryEffect_Maseki00 = {
     {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_Maseki01 = {
     "maseki_ex", 0, 1,
     {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
@@ -959,7 +992,9 @@ BT_SHOT_EFFECT MyEntryEffect_Maseki01 = {
     {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_Maseki02 = {
     "maseki_ex", 0, 1,
     {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
@@ -967,7 +1002,9 @@ BT_SHOT_EFFECT MyEntryEffect_Maseki02 = {
     {3, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_Maseki03 = {
     "maseki_ex", 0, 1,
     {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
@@ -975,7 +1012,9 @@ BT_SHOT_EFFECT MyEntryEffect_Maseki03 = {
     {2, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
+// clang-format off
 BT_SHOT_EFFECT MyEntryEffect_Maseki04 = {
     "maseki_ex", 0, 1,
     {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
@@ -983,6 +1022,7 @@ BT_SHOT_EFFECT MyEntryEffect_Maseki04 = {
     {4, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
     {-1, -1, -1, -1},
 };
+// clang-format on
 
 /* A matrix of zeros, which every light of a field starts from. */
 sceVu0FMATRIX ZeroMatrix = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
@@ -4875,8 +4915,8 @@ void MoveChara(void) {
                         int turn;
 
                         collision = i == -1 ? NULL
-                                    : (address = (unsigned int) NowDngMap,
-                                       ((CDungeonMap *) (offset + address))->parts[0].collision);
+                                            : (address = (unsigned int) NowDngMap,
+                                               ((CDungeonMap *) (offset + address))->parts[0].collision);
                         if (collision != NULL) {
                             CDungeonParts *part = &((CDungeonMap *) ((char *) NowDngMap + offset))->parts[0];
 
@@ -6427,10 +6467,12 @@ void SwordDmgCheck1(float amount, int kind) {
     }
 }
 
+// clang-format off
 /* The colour each weapon element gives the trail the weapon leaves. */
 u8 wep_rgb[5][3] = {
     {0xFF, 0x3C, 0x00}, {0x64, 0xC8, 0xFF}, {0xFF, 0xFF, 0x64}, {0x8A, 0xFF, 0xBC}, {0xE3, 0x96, 0xAD},
 };
+// clang-format on
 
 void SetWeaponColor(void) {
     u8 red, green, blue;
@@ -8398,6 +8440,7 @@ void DelActiveItem(int slot) {
 STATIC_ASSERT((int) &((CUserStatus *) 0)->chara_weapons == CHARA_WEAPONS_OFFSET);
 
 #pragma opt_propagation off
+
 int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     if (trap == NULL) {
         return;
@@ -8498,6 +8541,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
     SndSePlay(se, -1, 0);
     return kind;
 }
+
 #pragma opt_propagation reset
 
 void LockOffTargte(void) {
@@ -9035,11 +9079,13 @@ int LoadStartLogo(int map) {
     return blocks;
 }
 
+// clang-format off
 /* The map info file each dungeon loads its floors from. */
 char *MapInfoNameArea[7] = {
     "Cave of the Sacred Beast", "Forest of the Own", "Sunken Ship", "Shrine of Sun and Moon", "MoonOcean",
     "DarkHeven Castle", "Deamon Shaft",
 };
+// clang-format on
 
 void FloorTitleOn(void) {
     rogoAlphaA[2] = 0;

@@ -8,8 +8,8 @@ class CTexture;
  * State that the edit menu keeps between frames.
  */
 struct EDIT_MENU_STATUS {
-    s32 mode;     /**< What the menu is doing; -1 while it is closed. */
-    s32 parts;    /**< Plot of the part the player picked, or -1. */
+    s32 mode;  /**< What the menu is doing; -1 while it is closed. */
+    s32 parts; /**< Plot of the part the player picked, or -1. */
     u8 unk_08[8];
     s32 event_no; /**< Event the menu asks the loop to run. */
     u8 unk_14[8];

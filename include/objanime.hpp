@@ -19,19 +19,19 @@ class CMapParts;
  */
 struct EPARTS_FUNC_DATA {
     u8 unk_00[0x10];
-    int kind;                  /**< Selects how the marker is interpreted by map setup. */
-    CMapParts *parts;          /**< Map part the marker was extracted from. */
-    float start_time;          /**< Beginning of the marker's active time interval. */
-    float end_time;            /**< End of the marker's active time interval. */
-    int link_id;               /**< Associates related markers belonging to one event. */
-    int completion_flag;       /**< Map flag which suppresses the resulting event after completion. */
+    int kind;            /**< Selects how the marker is interpreted by map setup. */
+    CMapParts *parts;    /**< Map part the marker was extracted from. */
+    float start_time;    /**< Beginning of the marker's active time interval. */
+    float end_time;      /**< End of the marker's active time interval. */
+    int link_id;         /**< Associates related markers belonging to one event. */
+    int completion_flag; /**< Map flag which suppresses the resulting event after completion. */
     u8 unk_28[0x8];
-    char frame_name[0x10];     /**< Optional frame whose visibility gates the resulting event. */
-    sceVu0FVECTOR position;    /**< Primary position carried by the marker. */
-    sceVu0FVECTOR rotation;    /**< Primary rotation carried by the marker. */
-    sceVu0FVECTOR parameters;  /**< Secondary vector whose meaning depends on the marker kind. */
-    sceVu0FVECTOR values;      /**< Scalar parameters whose meaning depends on the marker kind. */
-    sceVu0FMATRIX matrix;      /**< Placement of the marker's frame relative to its owning frame. */
+    char frame_name[0x10];    /**< Optional frame whose visibility gates the resulting event. */
+    sceVu0FVECTOR position;   /**< Primary position carried by the marker. */
+    sceVu0FVECTOR rotation;   /**< Primary rotation carried by the marker. */
+    sceVu0FVECTOR parameters; /**< Secondary vector whose meaning depends on the marker kind. */
+    sceVu0FVECTOR values;     /**< Scalar parameters whose meaning depends on the marker kind. */
+    sceVu0FMATRIX matrix;     /**< Placement of the marker's frame relative to its owning frame. */
 };
 
 STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
@@ -42,16 +42,16 @@ STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
  * 0x1B00 bytes hold 48 of them at `FrameObjAnim`.
  */
 struct OBJ_ANIME_SEQ {
-    char name[0x10];        /**< Animation resource name. */
-    int type;               /**< Kind of animation the sequence plays. */
-    int number;             /**< Animation number selected within that kind. */
+    char name[0x10]; /**< Animation resource name. */
+    int type;        /**< Kind of animation the sequence plays. */
+    int number;      /**< Animation number selected within that kind. */
     u8 unk_18[0x8];
-    sceVu0FVECTOR range;    /**< Extent over which the animation moves. */
-    sceVu0FVECTOR speed;    /**< Rate at which the animation advances. */
-    sceVu0FVECTOR offset;   /**< Displacement applied to the animated frame. */
-    sceVu0FVECTOR current;     /**< Current animated value applied to the attached frames. */
-    CFrame *frames[10];        /**< Frames driven by this animation. */
-    int completion_flag;      /**< Map flag associated with the source function marker. */
+    sceVu0FVECTOR range;   /**< Extent over which the animation moves. */
+    sceVu0FVECTOR speed;   /**< Rate at which the animation advances. */
+    sceVu0FVECTOR offset;  /**< Displacement applied to the animated frame. */
+    sceVu0FVECTOR current; /**< Current animated value applied to the attached frames. */
+    CFrame *frames[10];    /**< Frames driven by this animation. */
+    int completion_flag;   /**< Map flag associated with the source function marker. */
     int unk_8C;
 
     /**
@@ -84,11 +84,11 @@ extern "C" OBJ_ANIME_SEQ FrameObjAnim[48];
  */
 struct EDIT_EFFECT_INFO {
     char frame_name[16]; /**< Names the child frame that carries the effect. */
-    s32 kind;      /**< Number that names the effect; zero or below where the slot is free. */
-    s32 map_flag;  /**< Map flag that stops the effect while it is set; zero or below where none does. */
-    float start;   /**< Time of day that the effect starts at. */
-    float end;     /**< Time of day that the effect stops at. */
-    CFrame *frame; /**< Frame that the effect stands on. */
+    s32 kind;            /**< Number that names the effect; zero or below where the slot is free. */
+    s32 map_flag;        /**< Map flag that stops the effect while it is set; zero or below where none does. */
+    float start;         /**< Time of day that the effect starts at. */
+    float end;           /**< Time of day that the effect stops at. */
+    CFrame *frame;       /**< Frame that the effect stands on. */
     s32 unk_24;
     u8 unk_28[8];
     sceVu0FVECTOR offset; /**< Distance from the frame to the effect; also the first end of a line sound source. */

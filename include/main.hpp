@@ -6,13 +6,14 @@
  */
 
 #include "common.h"
+
 #include <libvu0.h>
 
 /** Which entry the main menu has the cursor on. */
 extern s32 main_select_menu_no;
 
 /** The system messages every message window shares. */
-extern short * SystemMes;
+extern short *SystemMes;
 
 /**
  * Map the game is on or about to load.

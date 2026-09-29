@@ -3,7 +3,6 @@
 #include "common.h"
 
 #include "collision.hpp"
-
 #include "mapobject.hpp"
 
 /**
@@ -35,8 +34,8 @@ struct EDITPARTS_INFO;
 class CMapParts : public CMapObject {
 public:
     s32 parts_no; /**< Plot the part stands on, as the part catalogue numbers it. */
-    s32 area; /**< Area of the ground the part stands in, or -1. */
-    s32 rot_y; /**< Quarter turns about the vertical axis that the part faces. */
+    s32 area;     /**< Area of the ground the part stands in, or -1. */
+    s32 rot_y;    /**< Quarter turns about the vertical axis that the part faces. */
     s32 unk_0FC;
     s32 unk_100;
     CFrame *unk_104;

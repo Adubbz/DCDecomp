@@ -5,11 +5,10 @@
 
 #include "camera.hpp"
 #include "character.hpp"
+#include "main.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
 #include "texture.hpp"
-
-#include "main.hpp"
 #include "title/title.hpp"
 #include "title/titleloop.hpp"
 

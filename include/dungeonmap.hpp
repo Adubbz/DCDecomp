@@ -2,12 +2,11 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include <libvu0.h>
 
 #include "character.hpp"
 #include "collision.hpp"
+#include "dataalloc_fwd.hpp"
 #include "dungeonparts.hpp"
 #include "fireomni.hpp"
 #include "water.hpp"

@@ -93,9 +93,9 @@ struct SV_GRD_NPC {
  * Contains the Georama save data of one town.
  */
 struct SV_GEORAMA_DATA {
-    s32 request_count; /**< Number of requests defined for this town. */
-    s32 request_complete[24]; /**< Completion state of each town request. */
-    s32 request_event_flag; /**< Event request stored for this Georama town. */
+    s32 request_count;                 /**< Number of requests defined for this town. */
+    s32 request_complete[24];          /**< Completion state of each town request. */
+    s32 request_event_flag;            /**< Event request stored for this Georama town. */
     SV_EDIT_PARTS_INFO parts_info[24]; /**< Contains the state of each plot. */
     SV_GRD_PART placed_parts[130];     /**< Contains the parts that the player put on the map. */
     SV_GRD_NPC npc[20];                /**< Contains the NPC slots of the town. */
@@ -461,9 +461,9 @@ private:
     // EdMoveChara counts the Mardan Garayan the player lands.
     friend void EdMoveChara(void);
 
-    s32 config[18];         /**< Contains the configuration values. */
+    s32 config[18];        /**< Contains the configuration values. */
     s16 chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */
-    s32 map_no;             /**< Map that the game resumes on. */
+    s32 map_no;            /**< Map that the game resumes on. */
     s32 unk_1CC;
     float now_time;             /**< Contains the time of day. */
     s32 play_time;              /**< Contains the play time. */
@@ -487,8 +487,8 @@ private:
     u32 map_init_flags[80][16]; /**< Contains the map initialization flag bits of each map. */
     s16 visit_map[80];          /**< Contains the visit count of each map. */
     s16 quest_dungeon[6];       /**< Contains the quest count of each dungeon. */
-    s32 mardan_garayan_caught; /**< Number of Mardan Garayan caught. */
-    s32 quest_dungeon_total; /**< Contains the quest count of all the dungeons. */
+    s32 mardan_garayan_caught;  /**< Number of Mardan Garayan caught. */
+    s32 quest_dungeon_total;    /**< Contains the quest count of all the dungeons. */
     char unk_12F9C[548];
 };
 

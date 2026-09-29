@@ -26,6 +26,7 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 #include "btmisc.hpp"
 #include "character.hpp"
 #include "charaheight.hpp"
+#include "clothread.hpp"
 #include "clsmes.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
@@ -38,8 +39,8 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 #include "hitvalue.hpp"
 #include "itemdata.hpp"
 #include "mainselect.hpp"
-#include "menu_inventory.hpp"
 #include "mathutil.hpp"
+#include "menu_inventory.hpp"
 #include "mglib.hpp"
 #include "monstorunit.hpp"
 #include "motionmodel.hpp"
@@ -49,7 +50,6 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#include "clothread.hpp"
 s32 DebugStatus[21];
 float StatusColor[3];
 
@@ -334,6 +334,7 @@ void HealingWater(void) {
         }
     }
 }
+
 /**
  * Draws the rings spreading on the water.
  *
@@ -449,6 +450,7 @@ void StepWaterLing(void) {
         }
     }
 }
+
 /**
  * Chooses the stance the player takes from the nearest monster.
  *
@@ -505,6 +507,7 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
     }
     return nearest;
 }
+
 /**
  * Draws a three-digit value out of the number sheet.
  *
@@ -529,6 +532,7 @@ int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
     set2DSprite(Vif1Packet, texture, CRect_i_(x + 12, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
     return count + 2;
 }
+
 /**
  * Clears the pulse that warns of low life.
  *
@@ -580,6 +584,7 @@ void BtStatusAlarmInit(void) {
     statusRGBColor_15_2[2] = 0x00;
     statusRGBColor_15_2[3] = 0x80;
 }
+
 /**
  * Advances the pulse that warns of low life.
  *
@@ -597,6 +602,7 @@ void BtStatusAlarmAnime(void) {
     statusAlarmRate = 192 - (int) (2.0f * (64.0f * sinf(statusAlarmCounter)));
     statusRGBColor_15[3] = 192 - (int) (2.0f * (64.0f * sinf(statusAlarmCounter)));
 }
+
 /**
  * Chooses the colour a status bar draws in from how full it is.
  *
@@ -648,6 +654,7 @@ u8 *BtGetStatusPal2(int bar, float max, float value) {
 
     return statusRGBColor_15_2;
 }
+
 /**
  * Draws the dungeon HUD with life, weapon, water, quick-item and floor indicators.
  *
@@ -874,6 +881,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
     }
     set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x184, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
 }
+
 /**
  * Reports whether the party is suffering one status ailment.
  *
@@ -884,6 +892,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
 int StatusErrCheck(int status) {
     return (UserStatus->unk_42C8[UserStatus->cur_chara] & status) ? 1 : 0;
 }
+
 /**
  * Chooses the tint the party's status ailment gives them.
  *
@@ -967,6 +976,7 @@ void BtStatusErrStep(void) {
 
     BtStatusErrColorSet();
 }
+
 /**
  * Inflicts one status ailment on the party.
  *
@@ -1015,6 +1025,7 @@ void BtSetStatusErr(int status) {
             break;
     }
 }
+
 /**
  * Draws the icons of the party's status ailments.
  *
@@ -1034,6 +1045,7 @@ void BtStatusErrDraw(int y) {
         }
     }
 }
+
 /**
  * Draws one item into the reserved slot area.
  *
@@ -1256,6 +1268,7 @@ int BtMapJumpLoad(char *map_name) {
     BtCfgFlag = 1;
     return 1;
 }
+
 /**
  * Draws a textured cell in world space.
  *

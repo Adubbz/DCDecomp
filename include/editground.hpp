@@ -107,7 +107,7 @@ public:
     u8 unk_15f3c[4];
     CMapParts fixed_parts[64]; /**< Parts of the map that the player cannot move; the second is the ground model. */
     s32 unk_20740[1];
-    CPartsCursor cursor; /**< Cursor drawn over the cells a part would occupy. */
+    CPartsCursor cursor;           /**< Cursor drawn over the cells a part would occupy. */
     EPARTS_FUNC_DATA *people[128]; /**< Villager markers of the placed parts. */
     s32 people_count;              /**< Number of villager markers in use. */
     s32 suppress_water;            /**< Whether rendering of the editable ground's water is disabled. */
@@ -580,4 +580,3 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CEditGround) == 0x20960);
-

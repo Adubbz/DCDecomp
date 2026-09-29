@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+
 #include "menu_draw.hpp"
 #include "menuetc.hpp"
 
@@ -37,9 +38,9 @@ struct MENU_ATORA_SEL {
     s32 mode; /**< Which half of the screen holds the cursor: 0 the board, 1 the chip list. */
     s32 unk_04;
     s32 unk_08;
-    s16 map_no;    /**< Georama that the board shows. */
-    s16 board_pos; /**< Board position of the part that the cursor is on. */
-    s32 scroll_y;  /**< Where the board has scrolled to, as the pixel offset of its first row. */
+    s16 map_no;           /**< Georama that the board shows. */
+    s16 board_pos;        /**< Board position of the part that the cursor is on. */
+    s32 scroll_y;         /**< Where the board has scrolled to, as the pixel offset of its first row. */
     PERSONAL_BOARD board; /**< Board that lists the chips the player holds. */
     u8 unk_174[0xA];
     s16 unk_17E;

@@ -31,14 +31,17 @@ int CScriptInterpreter::GetNextTAG(void) {
     }
     return current_tag;
 }
+
 void CScriptInterpreter::SetTAG(TAG_PARAM *tags, int count) {
     tag_table = tags;
     tag_count = count;
 }
+
 void CScriptInterpreter::SetFunction(SPI_FUNC_PARAM *functions, int count) {
     function_table = functions;
     function_count = count;
 }
+
 void CScriptInterpreter::SetScript(char *script, int script_size) {
     data = script;
     size = script_size;
@@ -47,6 +50,7 @@ void CScriptInterpreter::SetScript(char *script, int script_size) {
     current_tag = -1;
     PreProcess__FR9input_str__2(*this);
 }
+
 CScriptInterpreter::CScriptInterpreter(void) {
     data = NULL;
     data = NULL;
@@ -57,6 +61,7 @@ CScriptInterpreter::CScriptInterpreter(void) {
     tag_table = NULL;
     function_table = NULL;
 }
+
 int CScriptInterpreter::ControlCode(void) {
     if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
@@ -91,6 +96,7 @@ int CScriptInterpreter::ControlCode(void) {
     }
     return control_type;
 }
+
 int CScriptInterpreter::CallFunction(int *result) {
     char words[512];
     void *argv[24];
@@ -168,6 +174,7 @@ int CScriptInterpreter::CallFunction(int *result) {
     *result = function->function(argv);
     return 1;
 }
+
 int CScriptInterpreter::GetArg(int *argument_types) {
     char value[256];
 
@@ -250,6 +257,7 @@ int CScriptInterpreter::GetArg(int *argument_types) {
     }
     return 1;
 }
+
 int CScriptInterpreter::SearchCommand(int *tag_index) {
     char command[256];
 

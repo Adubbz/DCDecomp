@@ -60,14 +60,14 @@ struct PERSONAL_BOARD {
     float y;         /**< Screen Y the board draws at, eased toward its top row. */
     float scroll;    /**< Scroll bar position the board draws. */
     s32 top_row;     /**< Row the board shows first. */
-    s16 trash_anim; /**< One while the trash can plays its throw animation. */
+    s16 trash_anim;  /**< One while the trash can plays its throw animation. */
     u8 unk_1E[2];
-    s32 trash_frame; /**< Frame of the trash can's throw animation. */
-    ITEM_PACK *item_pack; /**< Item pack the board lists. */
+    s32 trash_frame;             /**< Frame of the trash can's throw animation. */
+    ITEM_PACK *item_pack;        /**< Item pack the board lists. */
     DNG_CONSUMABLE *consumables; /**< Stored attachments the board lists. */
     s16 *unk_2C;
-    IHAVEITEM held_item; /**< Item the board's cursor is holding. */
-    WEAPON_HAVE weapon; /**< Weapon record the board holds. */
+    IHAVEITEM held_item;     /**< Item the board's cursor is holding. */
+    WEAPON_HAVE weapon;      /**< Weapon record the board holds. */
     ATTACH_LIST held_attach; /**< Attachment record the board holds. */
     s32 unk_15C;
 };
@@ -623,4 +623,3 @@ int GetAttachKind(int item_no);
  * Texture the menu's percentage bars are drawn from.
  */
 extern CTexture *PerBoardTex;
-

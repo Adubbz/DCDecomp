@@ -1,7 +1,9 @@
 #pragma once
 
 #include "common.h"
+
 #include <libpkt.h>
+
 #include "rect.hpp"
 
 class CCloth;

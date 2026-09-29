@@ -618,6 +618,7 @@ int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, MOTION_FILE
     }
     return 1;
 }
+
 /**
  * Builds the per-frame animation table a model's motion needs.
  *
@@ -629,6 +630,7 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
     *frame_info = (tagFRAME_INF *) arena->Alloc64((frame->GetFrameNum() + 10) * sizeof(tagFRAME_INF) / 16 + 1);
     AnimeDataInit(frame, motion, arena, *frame_info);
 }
+
 /**
  * Builds the per-frame animation table into storage already set aside.
  *
@@ -1584,6 +1586,8 @@ int CheckCameraWidth(CCPoly *polys, int count, float *position, float radius, fl
     }
     return hit;
 }
+
+// clang-format off
 u32 MesWinClut[256] = {
     0x00000000, 0x80304045, 0x80BFBFBF, 0x8040BDBD,
     0x80BDBD40, 0x8040BD40, 0xFF304045, 0x8066CEE7,
@@ -1591,6 +1595,7 @@ u32 MesWinClut[256] = {
     0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x808F8F8F,
     0x808F8F8F, 0x80BF3FBF, 0x808F8F8F, 0x808F8F8F,
 };
+// clang-format on
 
 s32 GaijiDataTbl[158][8] = {
     {-768, 0, 176, 110, 22, 0, 3, 8},
@@ -1753,12 +1758,14 @@ s32 GaijiDataTbl[158][8] = {
     {-1, 96, 96, 32, 32, 0, 0, 1},
 };
 
+// clang-format off
 u32 FontColorTbl[16] = {
     0x00000000, 0x80304045, 0x80BFBFBF, 0x8040BDBD,
     0x80BDBD40, 0x8040BD40, 0xFF304045, 0x8066CEE7,
     0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x808F8F8F,
     0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x00000000,
 };
+// clang-format on
 
 int Mes1MakeFlg = 1;
 int Mes2MakeFlg = 1;
@@ -1871,6 +1878,7 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
 float LinerInterpolation(float from, float to, float at) {
     return from + (at * (to - from));
 }
+
 void AreaAddPos(int *area, int *pos, int *out) {
     int left = area[0];
     int top = area[1];
@@ -1943,6 +1951,7 @@ void GetScrPosFromChar(CCharacter *chara, int *out_pos) {
     out_pos[0] = screen[0];
     out_pos[1] = screen[1];
 }
+
 unsigned int Color2Clut(unsigned int colour) {
     for (int i = 0; i < 16; i++) {
         if (colour == FontColorTbl[i]) {

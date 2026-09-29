@@ -23,6 +23,7 @@ CFireOmni::CFireOmni(void) {
     core = NULL;
     texture_set = 0;
 }
+
 void CFireOmni::FireStep(void) {
     cell_phase -= 0.4f;
     if (cell_phase <= 0.0f) {
@@ -34,6 +35,7 @@ void CFireOmni::FireStep(void) {
     }
     flicker_seed = (int) (60000.0f * (float) rand() / 2.1474836e9f);
 }
+
 void CFireOmni::FireCreate(void) {
     CTexture *texture = TexManager.GetTexture("d01e02", -1);
     if (texture == NULL) {
@@ -59,11 +61,13 @@ void CFireOmni::FireCreate(void) {
                      CRect_i_(0, 0, 128, 128), CRect_i_(0, (int) cell_phase * 64, 64, 64));
     }
 }
+
 void CFireOmni::SetTexture(CTexture *core_texture, CTexture *glow_texture) {
     this->core = core_texture;
     this->glow = glow_texture;
     this->texture_set = 1;
 }
+
 void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale,
                          int layers, float camera_offset) {
     sceVu0FVECTOR camera_direction;

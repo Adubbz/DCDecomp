@@ -109,24 +109,23 @@ void DrawMenuSave(char *name);
 int MenuOptionKey();
 void DrawMenuOption();
 
+#include "editloop.hpp"
+#include "gamemode.hpp"
+#include "main.hpp"
+#include "memcard.hpp"
+#include "mglib.hpp"
 #include "object.hpp"
 #include "texture.hpp"
 #include "title/dispfade.hpp"
-#include "title/script.hpp"
-#include "wind.hpp"
-
-#include "main.hpp"
-#include "mglib.hpp"
-#include "memcard.hpp"
-#include "vutext.hpp"
-#include "gamemode.hpp"
-#include "editloop.hpp"
 #include "title/op_a.hpp"
 #include "title/op_b.hpp"
-#include "title/rushmovi.hpp"
 #include "title/op_c.hpp"
+#include "title/rushmovi.hpp"
+#include "title/script.hpp"
 #include "title/title.hpp"
 #include "title/titleloop.hpp"
+#include "vutext.hpp"
+#include "wind.hpp"
 #define PI 3.14159265358979323846
 
 /* The classes this movie places in the world, declared here rather than reached through headers of

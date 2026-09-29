@@ -15,6 +15,7 @@ enum NP_SEQUENCE_OPERATION {
     NP_SEQUENCE_MOVE = 1,
     NP_SEQUENCE_WAIT = 2
 };
+
 // clang-format on
 
 /**
@@ -44,12 +45,12 @@ public:
     s32 map_parts_no;         /**< Edited-map part associated with the villager, or a negative value. */
     s32 villager_id;          /**< Villager-table identifier represented by this event NPC. */
     char resource_name[0x20]; /**< Resource name of the model loaded for the villager. */
-    s32 talk_target;  /**< Whether the player stands close enough and faces the villager to talk to it. */
-    s32 initialized;  /**< Whether the villager model has been initialized for use. */
-    s32 draw_enabled; /**< Whether the villager model participates in drawing and movement. */
-    s32 near_camera;  /**< Whether proximity to the camera requests this villager's full update. */
-    int step_hidden;  /**< Steps the character while it is not visible. */
-    s32 event_status; /**< Status value exposed to an event script for the talking NPC. */
+    s32 talk_target;          /**< Whether the player stands close enough and faces the villager to talk to it. */
+    s32 initialized;          /**< Whether the villager model has been initialized for use. */
+    s32 draw_enabled;         /**< Whether the villager model participates in drawing and movement. */
+    s32 near_camera;          /**< Whether proximity to the camera requests this villager's full update. */
+    int step_hidden;          /**< Steps the character while it is not visible. */
+    s32 event_status;         /**< Status value exposed to an event script for the talking NPC. */
     s32 unk_1480;
     int alpha_step; /**< Default alpha change per frame. */
     s32 unk_1488;

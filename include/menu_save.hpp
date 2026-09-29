@@ -37,7 +37,7 @@ extern CTexture *SaveMenuMojiTextbl[4];
  * Holds the state of the event item selection menu.
  */
 struct MINI_MENU_INFO {
-    s16 fish_mode;     /**< Nonzero when the menu offers fishing bait rather than event items. */
+    s16 fish_mode; /**< Nonzero when the menu offers fishing bait rather than event items. */
     u8 unk_02[2];
     s16 event_item_num; /**< Items of the pack that events can take. */
     s16 lang;           /**< Menu language, which picks the board's layout. */
@@ -47,10 +47,10 @@ struct MINI_MENU_INFO {
     s8 scroll_row;      /**< Row of five slots shown at the top of the board. */
     s8 usable_num;      /**< Number of items the event accepts. */
     u8 unk_46[2];
-    s32 vanish;         /**< Whether the item picked is used up. */
-    s16 state;          /**< 0 while choosing, 1 while a refusal shows, 2 fading in, 3 fading out. */
+    s32 vanish; /**< Whether the item picked is used up. */
+    s16 state;  /**< 0 while choosing, 1 while a refusal shows, 2 fading in, 3 fading out. */
     u8 unk_4E[2];
-    s32 state_time;     /**< Frames spent in the current state. */
+    s32 state_time; /**< Frames spent in the current state. */
 };
 
 STATIC_ASSERT(sizeof(MINI_MENU_INFO) == 0x54);

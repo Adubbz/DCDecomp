@@ -42,36 +42,36 @@ int checkItemUsed(int slot) {
         return 0;
     }
     switch (item) {
-    case 0x91:
-    case 0x92:
-    case 0x93:
-        if (!(0.2f + water_now < water_max)) {
-            usable = 0;
-        }
-        break;
-    case 0x97:
-        if ((condition & 0x10) == 0) {
-            usable = 0;
-        }
-        break;
-    case 0x99:
-        if ((condition & 0x40) == 0) {
-            usable = 0;
-        }
-        break;
-    case 0x9A:
-        if ((condition & 0x74) == 0) {
-            usable = 0;
-        }
-        break;
-    case 0x94:
-    case 0x95:
-    case 0x9B:
-    case 0xAA:
-        if (hp >= max_hp) {
-            usable = 0;
-        }
-        break;
+        case 0x91:
+        case 0x92:
+        case 0x93:
+            if (!(0.2f + water_now < water_max)) {
+                usable = 0;
+            }
+            break;
+        case 0x97:
+            if ((condition & 0x10) == 0) {
+                usable = 0;
+            }
+            break;
+        case 0x99:
+            if ((condition & 0x40) == 0) {
+                usable = 0;
+            }
+            break;
+        case 0x9A:
+            if ((condition & 0x74) == 0) {
+                usable = 0;
+            }
+            break;
+        case 0x94:
+        case 0x95:
+        case 0x9B:
+        case 0xAA:
+            if (hp >= max_hp) {
+                usable = 0;
+            }
+            break;
     }
     return usable;
 }
@@ -145,7 +145,7 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
         NowBombEffect[effect_no].SetBomb(position, scale);
         SndSePlay(0x6C, -1, 0);
         collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale,
-                                        0.0f, owner, 3, 0, 0);
+                                         0.0f, owner, 3, 0, 0);
         if (collision_slot != -1) {
             CCollisionData *collision = NowColData;
             collision->hit[collision->now_hit].unk_70 = 10;

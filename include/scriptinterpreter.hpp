@@ -127,15 +127,15 @@ public:
      */
     int SearchCommand(int *tag_index);
 
-    int current_tag;           /**< Index of the tag most recently read, or -1. */
-    int argument_data_used;    /**< Offset of command-call values in the work buffer. */
-    int tag_count;             /**< Number of entries in the tag table. */
+    int current_tag;                  /**< Index of the tag most recently read, or -1. */
+    int argument_data_used;           /**< Offset of command-call values in the work buffer. */
+    int tag_count;                    /**< Number of entries in the tag table. */
     u8 function_argument_data[0x400]; /**< Storage used to marshal command-call arguments. */
-    TAG_PARAM *tag_table;      /**< Tags recognised by the interpreter. */
-    SPI_FUNC_PARAM *function_table; /**< Commands callable from control codes. */
-    int function_count;        /**< Number of entries in the command table. */
-    void *arguments[24];       /**< Arguments decoded for the current command. */
-    char argument_text[0x40C]; /**< Inline storage for decoded string arguments. */
+    TAG_PARAM *tag_table;             /**< Tags recognised by the interpreter. */
+    SPI_FUNC_PARAM *function_table;   /**< Commands callable from control codes. */
+    int function_count;               /**< Number of entries in the command table. */
+    void *arguments[24];              /**< Arguments decoded for the current command. */
+    char argument_text[0x40C];        /**< Inline storage for decoded string arguments. */
 };
 
 STATIC_ASSERT(sizeof(CScriptInterpreter) == 0x890);

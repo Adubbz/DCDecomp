@@ -4,12 +4,12 @@
 
 #include "boxvu0.hpp"
 #include "collision.hpp"
-#include "mds.hpp"
 #include "dataalloc.hpp"
+#include "dungeonparts.hpp"
 #include "frame.hpp"
+#include "mds.hpp"
 #include "snd.hpp"
 
-#include "dungeonparts.hpp"
 void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
@@ -23,6 +23,7 @@ void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
         printf(" ************* over!!\n");
     }
 }
+
 int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
@@ -52,6 +53,7 @@ void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
         printf(OverMessage);
     }
 }
+
 /**
  * Draws every active drainage-field model that has finished loading.
  *
@@ -71,6 +73,7 @@ void CDranMapField::Draw(void) {
         }
     }
 }
+
 void CDranMapField::Step(void) {
     int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;

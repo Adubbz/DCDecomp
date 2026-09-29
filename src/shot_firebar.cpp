@@ -1,8 +1,9 @@
 #pragma helper_mask_gpr 0x30
 #include "shot_firebar.hpp"
 
-#include <cstdlib>
 #include <libvu0.h>
+
+#include <cstdlib>
 
 #include "collisiondata.hpp"
 #include "dun/gameloop.hpp"
@@ -70,12 +71,14 @@ int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, in
     }
     return -1;
 }
+
 void CSHOT_FIREBAR::Rset(void) {
     // A state of -1 is what stops a slot being drawn.
     for (int i = 0; i < 24; i++) {
         state[i] = -1;
     }
 }
+
 void CSHOT_FIREBAR::Step(void) {
     static int msg_cnt = 0;
 
@@ -107,6 +110,7 @@ void CSHOT_FIREBAR::Step(void) {
         }
     }
 }
+
 void CSHOT_FIREBAR::Draw(void) {
     int texture_loaded;
     int column;
@@ -125,30 +129,30 @@ void CSHOT_FIREBAR::Draw(void) {
         }
 
         switch (texture_cell[particle]) {
-        case WEAPON_ELEMENT_FIRE:
-            column = 0;
-            row = 1;
-            break;
-        case WEAPON_ELEMENT_COLD:
-            column = 1;
-            row = 1;
-            break;
-        case WEAPON_ELEMENT_THUNDER:
-            column = 1;
-            row = 0;
-            break;
-        case WEAPON_ELEMENT_WIND:
-            column = 0;
-            row = 0;
-            break;
-        case WEAPON_ELEMENT_HOLY:
-            column = 2;
-            row = 1;
-            break;
-        default:
-            column = 0;
-            row = 1;
-            break;
+            case WEAPON_ELEMENT_FIRE:
+                column = 0;
+                row = 1;
+                break;
+            case WEAPON_ELEMENT_COLD:
+                column = 1;
+                row = 1;
+                break;
+            case WEAPON_ELEMENT_THUNDER:
+                column = 1;
+                row = 0;
+                break;
+            case WEAPON_ELEMENT_WIND:
+                column = 0;
+                row = 0;
+                break;
+            case WEAPON_ELEMENT_HOLY:
+                column = 2;
+                row = 1;
+                break;
+            default:
+                column = 0;
+                row = 1;
+                break;
         }
         set3DCellModel(position[particle], "c05w_h", size[particle], column << 7,
                        row << 7, 0x80, 0x80, (u8) (int) opacity[particle]);

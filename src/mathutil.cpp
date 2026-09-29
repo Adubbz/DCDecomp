@@ -2,7 +2,6 @@
 
 #include "mathutil.hpp"
 
-#include "literals.hpp"
 #include <eekernel.h>
 #include <libvu0.h>
 #include <sifdev.h>
@@ -10,6 +9,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+
+#include "literals.hpp"
 
 /* Virtual table of std::exception: type information, this adjustment, destructor, what(). */
 extern "C" void *__vt__Q23std9exception[4] __attribute__((section(".vtables"))) = {
@@ -44,6 +45,7 @@ public:
     virtual const char *what() const throw();
 };
 } // namespace std
+
 /**
  * Destroys the constructed prefix of an array whose construction was interrupted.
  */
@@ -92,6 +94,7 @@ INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
 #pragma exceptions on
 #pragma optimize_for_size off
 #pragma alignlabel on
+
 void __construct_array(void *array, MWRuntimeObjectFunction constructor,
                        MWRuntimeObjectFunction destructor, unsigned int element_size,
                        unsigned int count) {
@@ -103,6 +106,7 @@ void __construct_array(void *array, MWRuntimeObjectFunction constructor,
         constructor(element, 1);
     }
 }
+
 #pragma alignlabel reset
 #pragma optimize_for_size reset
 #pragma exceptions reset
@@ -118,6 +122,7 @@ void __construct_array(void *array, MWRuntimeObjectFunction constructor,
 #pragma exceptions on
 #pragma optimize_for_size off
 #pragma alignlabel on
+
 void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
                             MWRuntimeObjectFunction destructor, unsigned int element_size,
                             unsigned int count) {
@@ -141,6 +146,7 @@ void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructo
     }
     return array;
 }
+
 #pragma alignlabel reset
 #pragma optimize_for_size reset
 #pragma exceptions reset
@@ -154,9 +160,11 @@ void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructo
  */
 #pragma schedule on
 #pragma exceptions on
+
 void __dl(void *storage) throw() {
     free(storage);
 }
+
 #pragma exceptions reset
 #pragma schedule reset
 /**
@@ -168,6 +176,7 @@ void __dl(void *storage) throw() {
  */
 #pragma schedule on
 #pragma exceptions on
+
 extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw() {
     if (self != NULL) {
         *self = __vt__Q23std9exception;
@@ -177,6 +186,7 @@ extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw() {
     }
     return self;
 }
+
 #pragma exceptions reset
 #pragma schedule reset
 /**
@@ -187,10 +197,12 @@ extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw() {
  * @size 0xC
  */
 #pragma schedule on
+
 extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
     (void) exception;
     return ExceptionWhat;
 }
+
 #pragma schedule reset
 /**
  * Reports whether a thrown type matches a catch clause's type.
@@ -204,6 +216,7 @@ extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
 #pragma padloop on
 #pragma alignlabel on
 #pragma schedule on
+
 extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type,
                                       long *pointer_adjustment) {
     const char *thrown;
@@ -234,35 +247,35 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
     }
 
     switch (*thrown) {
-    case '*':
-    case '!':
-        // A thrown class lists each base class name followed by its offset.
-        if (*thrown++ != *caught++) {
-            return false;
-        }
-        for (;;) {
-            if (*thrown == *caught++) {
-                if (*thrown++ == '!') {
-                    long offset;
-
-                    for (offset = 0; *thrown != '!';) {
-                        offset = offset * 10 + *thrown++ - '0';
-                    }
-                    *pointer_adjustment = offset;
-                    return true;
-                }
-            } else {
-                while (*thrown++ != '!') {
-                }
-                while (*thrown++ != '!') {
-                }
-                if (*thrown == 0) {
-                    return false;
-                }
-                caught = caught_type + 1;
+        case '*':
+        case '!':
+            // A thrown class lists each base class name followed by its offset.
+            if (*thrown++ != *caught++) {
+                return false;
             }
-        }
-        return false;
+            for (;;) {
+                if (*thrown == *caught++) {
+                    if (*thrown++ == '!') {
+                        long offset;
+
+                        for (offset = 0; *thrown != '!';) {
+                            offset = offset * 10 + *thrown++ - '0';
+                        }
+                        *pointer_adjustment = offset;
+                        return true;
+                    }
+                } else {
+                    while (*thrown++ != '!') {
+                    }
+                    while (*thrown++ != '!') {
+                    }
+                    if (*thrown == 0) {
+                        return false;
+                    }
+                    caught = caught_type + 1;
+                }
+            }
+            return false;
     }
 
     while ((*thrown == 'P' || *thrown == 'R') && *thrown == *caught) {
@@ -296,6 +309,7 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
     }
     return false;
 }
+
 #pragma schedule reset
 #pragma alignlabel reset
 #pragma padloop reset
@@ -309,9 +323,11 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
  * @size 0x24
  */
 #pragma schedule on
+
 extern "C" void unexpected__3stdFv() {
     uhandler__3std();
 }
+
 #pragma schedule reset
 /**
  * Calls the handler that ends the program after an unrecoverable exception.
@@ -321,9 +337,11 @@ extern "C" void unexpected__3stdFv() {
  * @size 0x24
  */
 #pragma schedule on
+
 extern "C" void terminate__3stdFv() {
     thandler__3std();
 }
+
 #pragma schedule reset
 /**
  * The default unexpected-exception handler, which terminates.
@@ -333,9 +351,11 @@ extern "C" void terminate__3stdFv() {
  * @size 0x24
  */
 #pragma schedule on
+
 extern "C" void duhandler__3stdFv() {
     thandler__3std();
 }
+
 #pragma schedule reset
 /**
  * The default terminate handler, which stops the program.
@@ -345,9 +365,11 @@ extern "C" void duhandler__3stdFv() {
  * @size 0x1C
  */
 #pragma schedule on
+
 extern "C" void dthandler__3stdFv() {
     abort();
 }
+
 #pragma schedule reset
 /**
  * Records one global object so that its destructor runs at exit.
@@ -357,6 +379,7 @@ extern "C" void dthandler__3stdFv() {
  * @size 0x24
  */
 #pragma schedule on
+
 void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
                                MWGlobalDestructor *record) {
     record->next = __global_destructor_chain;
@@ -365,6 +388,7 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
     __global_destructor_chain = record;
     return object;
 }
+
 #pragma schedule reset
 /**
  * Starts the C++ runtime: its handlers and its global-object list.
@@ -376,8 +400,9 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
 #pragma schedule on
 #pragma optimization_level 4
 #pragma padloop on
+
 extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start,
-                                      void *overlay_end) {
+                                     void *overlay_end) {
     void (**initializer)(void) = (void (**)(void)) first;
     if ((void (**)(void)) first < (void (**)(void)) last) {
         do {
@@ -386,6 +411,7 @@ extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_star
         } while (initializer < (void (**)(void)) last);
     }
 }
+
 #pragma padloop reset
 #pragma optimization_level reset
 #pragma schedule reset
@@ -397,6 +423,7 @@ extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_star
  * @size 0xA0
  */
 #pragma schedule on
+
 char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
     unsigned int first = (unsigned char) encoded[0];
     if ((first & 1) == 0) {
@@ -417,6 +444,7 @@ char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
     *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
+
 #pragma schedule reset
 /**
  * Reads a signed number out of a mangled type name.
@@ -426,6 +454,7 @@ char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
  * @size 0xA0
  */
 #pragma schedule on
+
 char *__DecodeSignedNumber(char *encoded, int *value) {
     signed char first = encoded[0];
     if ((first & 1) == 0) {
@@ -446,6 +475,7 @@ char *__DecodeSignedNumber(char *encoded, int *value) {
     *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
+
 #pragma schedule reset
 /**
  * Ends a catch clause and releases the exception it caught.
@@ -455,13 +485,16 @@ char *__DecodeSignedNumber(char *encoded, int *value) {
  * @size 0x38
  */
 #pragma schedule on
+
 extern "C" void __end__catch(MWCatchRecord *record) {
     if (record->object != NULL && record->destructor != NULL) {
         record->destructor(record->object, -1);
     }
 }
+
 #pragma schedule reset
 #pragma exceptions on
+
 /**
  * Reports whether a thrown type matches any type an exception specification allows.
  */
@@ -477,6 +510,7 @@ static inline char __find_exception_spec(const char *type_info, MWExceptionSpeci
     }
     return false;
 }
+
 /**
  * Raises an exception a function did not declare, through the unexpected handler.
  *
@@ -485,6 +519,7 @@ static inline char __find_exception_spec(const char *type_info, MWExceptionSpeci
  * @size 0x1C0
  */
 #pragma schedule on
+
 extern "C" void __unexpected(void *exception_record) {
     char *encoded = (char *) ((MWCatchRecord *) exception_record)->stack_top;
     MWExceptionSpecification spec;
@@ -506,6 +541,7 @@ extern "C" void __unexpected(void *exception_record) {
     }
     terminate__3stdFv();
 }
+
 #pragma schedule reset
 // MWCC generates a function at the next initialised data definition. This one emits
 // nothing, and makes __unexpected and its strings come out before the exception
@@ -527,6 +563,7 @@ INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
  */
 #pragma schedule on
 #pragma exceptions on
+
 extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw() {
     if (self != NULL) {
         *self = __vt__Q23std13bad_exception;
@@ -539,6 +576,7 @@ extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw() 
     }
     return self;
 }
+
 #pragma exceptions reset
 #pragma schedule reset
 /**
@@ -549,10 +587,12 @@ extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw() 
  * @size 0xC
  */
 #pragma schedule on
+
 extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception) {
     (void) exception;
     return BadExceptionWhat;
 }
+
 #pragma schedule reset
 
 /**
@@ -619,6 +659,7 @@ extern "C" int mwBload(char *path, void *buffer) {
     }
     return size;
 }
+
 /**
  * Reads an overlay into memory and gives back whether it succeeded.
  *

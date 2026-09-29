@@ -91,9 +91,9 @@ extern "C" void dthandler__3stdFv(void);
  * Links one object and its destructor into the runtime shutdown chain.
  */
 struct MWGlobalDestructor {
-    MWGlobalDestructor *next;              /**< Next object destroyed during shutdown. */
-    MWRuntimeObjectFunction destructor;    /**< Function that destroys the registered object. */
-    void *object;                          /**< Object passed to the destructor. */
+    MWGlobalDestructor *next;           /**< Next object destroyed during shutdown. */
+    MWRuntimeObjectFunction destructor; /**< Function that destroys the registered object. */
+    void *object;                       /**< Object passed to the destructor. */
 };
 
 /**
@@ -171,7 +171,7 @@ struct MWCatchRecord {
  * The decoded exception specification of a function that let an exception escape.
  */
 struct MWExceptionSpecification {
-    unsigned int count;   /**< Number of type names the specification allows. */
+    unsigned int count; /**< Number of type names the specification allows. */
     unsigned int unk_04;
     int unk_08;
     unsigned char *types; /**< Unaligned little-endian pointers to the allowed type names. */

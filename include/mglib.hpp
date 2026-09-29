@@ -6,7 +6,6 @@
 #include <libgraph.h>
 #include <libpkt.h>
 
-
 class CRect_i_;
 #include "renderinfo.hpp"
 

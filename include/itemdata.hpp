@@ -652,8 +652,8 @@ struct WEAPON_HAVE {
     s16 magic;      /**< Seeded from WEAPON_DATA::magic. */
     s16 durability; /**< Seeded from WEAPON_DATA::durability. */
     s16 unk_0E;
-    float durability_f; /**< The durability again, converted on the way in. */
-    s16 experience; /**< Accumulated ABS toward the next weapon level. */
+    float durability_f;  /**< The durability again, converted on the way in. */
+    s16 experience;      /**< Accumulated ABS toward the next weapon level. */
     s8 best_elem;        /**< Indexes the largest entry of `elem`, or -1 for none. */
     s8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
     char vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */

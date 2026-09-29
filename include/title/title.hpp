@@ -155,7 +155,6 @@ extern CFrame *ObjectFrame3;
  */
 extern CScFader CFade;
 
-
 /**
  * The step the title screen is on. The symbol is eight bytes; only the first word is ever
  * initialised and the second is never read or written anywhere in the overlay.

@@ -48,6 +48,7 @@ int CMenuIconAutoGet::GetSpace(void) {
     }
     return -1;
 }
+
 int CMenuIconAutoGet::IconAutoMove(void) {
     int moving = 0;
     CDngStatusData *dungeon_status = SaveData->GetDngStatus();
@@ -83,6 +84,7 @@ void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, 
     icon[index].x = x;
     icon[index].y = y;
 }
+
 void CMenuIconAutoGet::IconAutoMoveDraw(void) {
     for (int i = 0; i < 3; i++) {
         if (icon[i].item >= 0x84) {

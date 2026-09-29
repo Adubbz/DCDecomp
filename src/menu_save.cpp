@@ -758,6 +758,7 @@ static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_a
         end_alpha = 0;
     }
 }
+
 void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha) {
     int i;
     int draw_x;
@@ -927,6 +928,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
         }
     }
 }
+
 void DrawNewFileTemplete(int x, int y, int alpha) {
     int start_alpha;
     int end_alpha;
@@ -1403,6 +1405,7 @@ static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha
     int bar_y = EventBarY;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, bar_y, 8, (int) bar_height), CRect_i_(0, 0xE4, 8, 0xC), alpha);
 }
+
 static void EventItemSelectDraw(void) {
     s16 items[100];
     float left;

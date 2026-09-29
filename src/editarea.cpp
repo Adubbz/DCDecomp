@@ -20,6 +20,7 @@ enum MapConnectionAttribute {
     MAP_CONNECTION_ROAD = 1,
     MAP_CONNECTION_RIVER = 2
 };
+
 // clang-format on
 
 /**
@@ -34,6 +35,7 @@ enum MapConnectionShape {
     MAP_CONNECTION_ISOLATED = 5,
     MAP_CONNECTION_END = 6
 };
+
 // clang-format on
 
 /**
@@ -54,6 +56,7 @@ void CEditArea::SetSize(s32 width, s32 height, float unit_size, float unit_alt) 
     this->unit_size = unit_size;
     this->unit_alt = unit_alt;
 }
+
 void CEditArea::GetPos(CVector3_i_ *position, float x, float y, float z) {
     x -= offset_x;
     y -= offset_y;

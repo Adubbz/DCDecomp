@@ -60,6 +60,7 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
     color[2] = blue;
     color[3] = alpha;
 }
+
 int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     float *above;
     int word;
@@ -242,6 +243,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     visual.vu_size = word >> 2;
     return visual.vu_size;
 }
+
 extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
     if (water->CheckClip() != 0) {
@@ -273,6 +275,7 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     sceVif1PkCloseDirectCode(draw_packet);
     return size;
 }
+
 int CWater::CheckClip(void) {
     sceVu0FVECTOR box[2];
     sceVu0FVECTOR corner[4];
@@ -284,6 +287,7 @@ int CWater::CheckClip(void) {
     VectorMaxMin(box[0], box[1], corner[0], corner[1], corner[2], corner[3]);
     return MGClipBox((CBoxVu0 *) box);
 }
+
 void CWater::Hamon(void) {
     int i;
     int j;
@@ -344,6 +348,7 @@ void CWater::Shake(int row, int column, float height_change) {
     float *cell = &height[column];
     cell[row * columns] += height_change;
 }
+
 void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     if (arena == NULL) {
         arena = &WaterData;
@@ -370,6 +375,7 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     CreateVUData(packet[2], &info);
     tags_built = 1;
 }
+
 CWater::CWater(void) {
     rows = 0;
     columns = 0;

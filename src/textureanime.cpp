@@ -5,10 +5,10 @@
 #include <cstring>
 
 #include "mglib.hpp"
+#include "rect.hpp"
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
-#include "rect.hpp"
 s32 CTextureAnime::stop_anime;
 CTextureAnime *pTexAnime;
 int now_group;
@@ -18,7 +18,6 @@ static void CommandTEX_ANIME_DATA(void **arguments);
 static void CommandTEX_ANIME_DATA2(void **arguments);
 static void CommandTEX_SCROLL_DATA(void **arguments);
 static void CommandTEX_ANIME_END(void **arguments);
-
 
 void CTextureTexAnime::Copy(CTexture *texture) {
     if (texture != NULL) {
@@ -30,6 +29,7 @@ void CTextureTexAnime::Copy(CTexture *texture) {
         tex1 = texture->tex1;
     }
 }
+
 CTexAnimeData::CTexAnimeData(void) {
     Initialize();
 }
@@ -55,6 +55,7 @@ void CTexAnimeData::Initialize() {
     next = NULL;
     unk_06 = -1;
 }
+
 void CTextureAnime::TexAnime(int texture_block) {
     int x;
     int height;
@@ -225,6 +226,7 @@ void CTextureAnime::Initialize(CTexAnimeData *records, int count) {
 CTextureAnime::CTextureAnime(CTexAnimeData *records, int count) {
     Initialize(records, count);
 }
+
 CTexAnimeData *CTextureAnime::NewTexAnimeData(void) {
     if (data == NULL) {
         return NULL;
@@ -238,6 +240,7 @@ CTexAnimeData *CTextureAnime::NewTexAnimeData(void) {
     }
     return NULL;
 }
+
 CTexAnimeData *CTextureAnime::NewTexAnimeGroupData(int group) {
     if (group < 0 || group >= 24) {
         return NULL;
@@ -262,6 +265,7 @@ CTexAnimeData *CTextureAnime::NewTexAnimeGroupData(int group) {
     }
     return record;
 }
+
 int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
     CTexAnimeData *record = NewTexAnimeGroupData(source->unk_02);
     if (record == NULL) {
@@ -284,17 +288,20 @@ int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
     record->scroll_y_step = source->scroll_y_step;
     return 1;
 }
+
 void CTextureAnime::DisableAll() {
     for (int group = 0; group < 24; group++) {
         Disable(group);
     }
 }
+
 void CTextureAnime::Enable(int group) {
     if (group < 0 || group >= 24) {
         return;
     }
     enabled[group] = 1;
 }
+
 void CTextureAnime::Disable(int group) {
     if (group < 0 || group >= 24) {
         return;
@@ -303,6 +310,7 @@ void CTextureAnime::Disable(int group) {
     current[group] = first[group];
     frame[group] = 0;
 }
+
 /** The tags LoadCFGFile recognises, each with its argument kinds. */
 static TAG_PARAM Command[5] = {
     {"TEX_ANIME", {1, 1, -1}},

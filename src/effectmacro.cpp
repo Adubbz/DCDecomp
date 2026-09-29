@@ -24,6 +24,7 @@ void EffectMacroStep(float *wind) {
     sibuki_tex = TexManager.GetTexture("shibuki", -1);
     hamon_tex = TexManager.GetTexture("hamon", -1);
 }
+
 void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     CEffectParam effect;
 
@@ -75,6 +76,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     effect.height = 10.0f;
     group->EnterEffect(&effect);
 }
+
 void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int period,
                       int phase) {
     CEffectParam effect;
@@ -111,6 +113,7 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int p
     effect.height = 10.0f;
     group->EnterEffect(&effect);
 }
+
 void EffectHamon(CEffectGroup *group, float *position, float size) {
     CEffectParam effect;
 
@@ -135,6 +138,7 @@ void EffectHamon(CEffectGroup *group, float *position, float size) {
     effect.height = size;
     group->EnterEffect(&effect);
 }
+
 void DepthOfField(float *focus, int level, int alpha, int blur) {
     static float rd[21][15];
     sceGsTex0 frame;

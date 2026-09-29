@@ -7,12 +7,11 @@
 #include <cstdlib>
 
 #include "character.hpp"
+#include "dun/gameloop.hpp"
+#include "hitmark.hpp"
 #include "shot_freefuncs.hpp"
 #include "texture.hpp"
 
-#include "dun/gameloop.hpp"
-
-#include "hitmark.hpp"
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
     this->active = 1;

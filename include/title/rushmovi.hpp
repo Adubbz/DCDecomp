@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+
 #include "dataalloc_fwd.hpp"
 
 class CFireOmni;

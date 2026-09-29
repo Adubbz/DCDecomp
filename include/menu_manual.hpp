@@ -22,8 +22,8 @@ struct MANUAL_MENU_STATE {
     s32 transition_frame;     /**< Frames elapsed in the current opening or closing transition. */
     s32 image_offset;         /**< Horizontal offset of the strip of page images. */
     s32 unk_20;
-    s16 message_page;         /**< Page reached in the selected entry's explanatory message. */
-    s16 image_page;           /**< Page image currently displayed. */
+    s16 message_page;           /**< Page reached in the selected entry's explanatory message. */
+    s16 image_page;             /**< Page image currently displayed. */
     s16 *common_message_buffer; /**< Message data restored while leaving an entry. */
     s16 *menu_message_buffer;   /**< Message data used by the category menu. */
     u_long128 *load_buffer;     /**< Aligned scratch buffer used for manual archives. */

@@ -22,6 +22,7 @@ enum ACT_SEQ_OPERATION {
     ACT_SEQ_ANIMATION = 15,
     ACT_SEQ_TRIGGER_ANIMATION = 18
 };
+
 // clang-format on
 
 /**

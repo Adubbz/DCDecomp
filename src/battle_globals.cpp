@@ -71,9 +71,9 @@ s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0
 /** How many keys each keyboard has in a row. */
 s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
 
+#include "gameutil.hpp"
 #include "snd.hpp"
 
-#include "gameutil.hpp"
 /**
  * Gives every party member their default name.
  *
@@ -86,6 +86,7 @@ void GlobalNameInit(void) {
         NameDefaultSet(chara_no);
     }
 }
+
 /**
  * Opens the name-entry screen and reads its textures.
  *
@@ -144,6 +145,7 @@ void ExitNameEnterFunc() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
+
 /**
  * Gives the texture and cell one name character draws from.
  *
@@ -171,6 +173,7 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
     cell_y = (code / 10) * 0x16;
     return texture;
 }
+
 /**
  * Draws a party member's name.
  *
@@ -324,6 +327,7 @@ INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
 INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+
 /**
  * Draws the character keyboard the name is entered from.
  *
@@ -519,6 +523,7 @@ static void DrawNameTemplete(int x, int y, int color, int alpha) {
             break;
     }
 }
+
 /**
  * Reports whether two names are the same.
  *
@@ -540,6 +545,7 @@ static int NameCompare(short *first, short *second) {
     }
     return 1;
 }
+
 /**
  * Reports whether the entered name may be used.
  *
@@ -574,6 +580,7 @@ int CheckName() {
     }
     return 1;
 }
+
 /**
  * Draws the name-entry screen.
  *
@@ -1569,6 +1576,7 @@ s32 NameEnterKey(void) {
     ComMenuSePlay(se);
     return 0;
 }
+
 /**
  * Gives one party member their default name for the chosen language.
  *
@@ -1598,6 +1606,8 @@ void NameDefaultSet(int chara_no) {
         name[length] = 0;
     }
 }
+
+// clang-format off
 /** The extra spacing to the left and right of each character from code 0xA2 upwards. */
 s8 AlphabetEtcOffset[97][2] = {
     {1, 0}, {0, 1}, {1, 1}, {0, 1}, {1, 0}, {2, 2}, {0, 1}, {1, 2},
@@ -1614,6 +1624,7 @@ s8 AlphabetEtcOffset[97][2] = {
     {1, 1}, {1, 2}, {4, 6}, {2, 8}, {2, 8}, {2, 2}, {1, 3}, {1, 4},
     {1, 2},
 };
+// clang-format on
 
 /**
  * Gives the kerning between two name characters.
@@ -1633,6 +1644,7 @@ static int GetFontLRTumeW(int index, int left_code, int code) {
     }
     return tume;
 }
+
 /**
  * Draws a party member's name on the character-select page.
  *
@@ -1740,6 +1752,7 @@ void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGB
         put_x -= 0x14 - step;
     }
 }
+
 /**
  * Gives how wide a party member's name draws.
  *
@@ -1761,6 +1774,7 @@ int GetMsgLengthCharaName(int chara_no) {
     }
     return length;
 }
+
 /** State of the storybook that plays before the game begins. */
 OPENING_BOOK OpenBook;
 
@@ -1930,6 +1944,7 @@ int OpeningBookKey() {
     }
     return result;
 }
+
 /**
  * Draws the storybook page by page.
  *

@@ -7,10 +7,12 @@
 #include "sce/sifdev.h"
 #include "sce/sifrpc.h"
 
+#include <libpkt.h>
+
 #include <cassert>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
-#include <libpkt.h>
 
 #include "bound.hpp"
 #include "btsysscript.hpp"
@@ -29,9 +31,6 @@
 #include "sound.hpp"
 #include "sysmes.hpp"
 #include "visualvu1.hpp"
-#include <cstdlib>
-#include <libpkt.h>
-#include "rect.hpp"
 
 CCloth *pCloth;
 
@@ -123,7 +122,6 @@ static void (*CommandExe[9])(void **) = {
     CommandPOLYDIVE,
     CommandBOUND,
 };
-
 
 static int GetArg(input_str &input, int *args, void **argv);
 static int SearchCommand(input_str &input, int *command);
@@ -246,6 +244,7 @@ static void CommandPOLYDIVE(void **argv) {
         i++;
     }
 }
+
 /**
  * Adds one exclusion box to the cloth on the current frame.
  *
@@ -300,6 +299,7 @@ static void CommandBOUND(void **argv) {
     }
     pBound = bound;
 }
+
 /**
  * Reads one command argument out of a model script.
  *
@@ -366,6 +366,7 @@ static int GetArg(input_str &input, int *args, void **argv) {
     }
     return 1;
 }
+
 /**
  * Finds the command table entry a model script's next word names.
  *
@@ -398,6 +399,7 @@ static int SearchCommand(input_str &input, int *command) {
     *command = 10;
     return 1;
 }
+
 /**
  * Steps a model script past whitespace and comments.
  *
@@ -424,6 +426,7 @@ static int SkipSpace(input_str &input) {
         return 0;
     return 1;
 }
+
 /**
  * Reports whether a character is not whitespace.
  *

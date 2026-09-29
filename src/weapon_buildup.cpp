@@ -1,8 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 
-#include "menu_dungeon.hpp"
-#include "menu_save.hpp"
 #include "weapon_buildup.hpp"
 
 #include <cstring>
@@ -10,7 +8,9 @@
 #include "battlemenu.hpp"
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
+#include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
+#include "menu_save.hpp"
 #include "shop.hpp"
 
 static int BuildMenuCompVolume(char current, char required) {

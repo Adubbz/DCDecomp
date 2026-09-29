@@ -105,38 +105,39 @@ public:
 public:
     /* CDngStatusData extends this layout with its dungeon tail. The fields are
      * public because retail reaches into them from outside both classes. */
-    s8 cur_georama;                      /**< Current town and dungeon index. */
-    char unk_01[1];                      // 0x0001
-    s8 cur_floor;                        // 0x0002
-    s8 prev_floor;                       /**< Floor occupied before the current floor. */
-    s8 cur_chara;                        /**< Index of the currently controlled party member. */
-    s8 party_size;                       // 0x0005
-    s16 max_hp[6];                       /**< Maximum life of each party member. */
-    s16 hp[6];                           /**< Current displayed life of each party member. */
-    char unk_01E[0x25A];                 // 0x001E
-    s32 atra_grid[6][40][8];             /**< Atla each floor slot asks for, or -1 empty, -2 any atla, -3 collected. */
-    ATRA_SAVE atra_registry[6][100];     /**< Atla each dungeon's floor slots still ask for. */
-    s16 kills[6][100];                   /**< Monsters defeated on each dungeon floor. */
-    char unk_4148[200];                  // 0x4148
-    char res_limit_zone_id[6][25];       /**< Restriction-zone identifiers by dungeon and floor. */
-    char unk_42A6[25];                   // 0x42A6
-    s8 floor_reached[7];                 /**< Deepest floor reached in each dungeon, or -1 if never entered. */
-    char unk_42C6[2];                    // 0x42C6
-    s32 unk_42C8[6];                     // 0x42C8
-    s16 unk_42E0[6];                     // 0x42E0
-    float water_max[6];                  /**< Most water each character can hold, ten to a drop. */
-    float water_now[6];                  /**< Water each character holds now. */
-    s32 overflow_flag;                   /**< Whether the player carries more items than the pack holds. */
-    s32 special_flag_238;                /**< Set when item 238 is picked up. */
-    s32 skill_owned[6];                  /**< Whether each character has received their event skill. */
-    s32 minimap_status;                  /**< Current minimap visibility mode. */
-    s8 equipped_weapon_slot[6];          /**< Specifies each character's equipped weapon slot. */
+    s8 cur_georama;                  /**< Current town and dungeon index. */
+    char unk_01[1];                  // 0x0001
+    s8 cur_floor;                    // 0x0002
+    s8 prev_floor;                   /**< Floor occupied before the current floor. */
+    s8 cur_chara;                    /**< Index of the currently controlled party member. */
+    s8 party_size;                   // 0x0005
+    s16 max_hp[6];                   /**< Maximum life of each party member. */
+    s16 hp[6];                       /**< Current displayed life of each party member. */
+    char unk_01E[0x25A];             // 0x001E
+    s32 atra_grid[6][40][8];         /**< Atla each floor slot asks for, or -1 empty, -2 any atla, -3 collected. */
+    ATRA_SAVE atra_registry[6][100]; /**< Atla each dungeon's floor slots still ask for. */
+    s16 kills[6][100];               /**< Monsters defeated on each dungeon floor. */
+    char unk_4148[200];              // 0x4148
+    char res_limit_zone_id[6][25];   /**< Restriction-zone identifiers by dungeon and floor. */
+    char unk_42A6[25];               // 0x42A6
+    s8 floor_reached[7];             /**< Deepest floor reached in each dungeon, or -1 if never entered. */
+    char unk_42C6[2];                // 0x42C6
+    s32 unk_42C8[6];                 // 0x42C8
+    s16 unk_42E0[6];                 // 0x42E0
+    float water_max[6];              /**< Most water each character can hold, ten to a drop. */
+    float water_now[6];              /**< Water each character holds now. */
+    s32 overflow_flag;               /**< Whether the player carries more items than the pack holds. */
+    s32 special_flag_238;            /**< Set when item 238 is picked up. */
+    s32 skill_owned[6];              /**< Whether each character has received their event skill. */
+    s32 minimap_status;              /**< Current minimap visibility mode. */
+    s8 equipped_weapon_slot[6];      /**< Specifies each character's equipped weapon slot. */
 
     union {
         u16 money;        /**< Gilda the party carries. */
         s16 money_signed; /**< Signed view of the Gilda the party carries. */
     };
-    s32 unk_4348[6];                     // 0x4348
+
+    s32 unk_4348[6]; // 0x4348
 
     union {
         ITEM_PACK item_pack; /**< Dungeon items the player carries. */
@@ -145,6 +146,7 @@ public:
          * 1-based quick-use slot: [slot] is that slot's item and [slot + 3] its count. */
         s16 active_item[3];
     };
+
     char unk_450A[2];                    // 0x450A
     WEAPON_HAVE chara_weapons[6][11];    /**< Specifies the weapons owned by each character. */
     DNG_CONSUMABLE consumable_items[43]; /**< Specifies the stored consumable items. */

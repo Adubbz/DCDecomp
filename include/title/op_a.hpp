@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+
 #include <libvu0.h>
 
 class OBJ_ANIME_SEQ;

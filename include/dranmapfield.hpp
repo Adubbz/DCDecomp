@@ -2,9 +2,8 @@
 
 #include "common.h"
 
-#include "dataalloc_fwd.hpp"
-
 #include "character.hpp"
+#include "dataalloc_fwd.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -101,11 +100,11 @@ STATIC_ASSERT(sizeof(CDranMapField) == 0x11B0);
  * states.
  */
 struct DRAN_MAP_FIELD_SET {
-    CDranMapField field[12];  /**< Models drawn for the drainage fields. */
-    CFrame *collision[12];    /**< Collision frame each field stands on. */
-    s32 state[12];            /**< What each field is doing; counts down as it drains. */
-    s32 field_count;          /**< Fields the floor laid out. */
-    s32 collision_count;      /**< Collision frames read for them. */
+    CDranMapField field[12]; /**< Models drawn for the drainage fields. */
+    CFrame *collision[12];   /**< Collision frame each field stands on. */
+    s32 state[12];           /**< What each field is doing; counts down as it drains. */
+    s32 field_count;         /**< Fields the floor laid out. */
+    s32 collision_count;     /**< Collision frames read for them. */
     u8 unk_D4A8[8];
 };
 

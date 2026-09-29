@@ -11,6 +11,7 @@
 #include <cstring>
 
 #include "camera.hpp"
+#include "camerafollow.hpp"
 #include "character.hpp"
 #include "dataalloc.hpp"
 #include "dataread.hpp"
@@ -18,18 +19,17 @@
 #include "framevu1.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
+#include "mglib.hpp"
 #include "renderinfo.hpp"
 #include "sound.hpp"
 #include "texture.hpp"
+#include "title/op_a.hpp"
+#include "title/op_b.hpp"
+#include "title/opening.hpp"
 #include "title/script.hpp"
 #include "vector3.hpp"
 #include "wind.hpp"
 
-#include "mglib.hpp"
-#include "title/op_a.hpp"
-#include "title/opening.hpp"
-#include "title/op_b.hpp"
-#include "camerafollow.hpp"
 typedef MOTION_INFO tagMOTION_KEY;
 
 /* Spelled here rather than reached through a header because the image holds it only as an
@@ -379,7 +379,7 @@ void LoadCharaData(int kind, int no) {
             Chara__3[no].Initialize();
             CharaDataBuffer__2[kind].used = 0;
             Chara__3[no].LoadPackData(read_buffer, name[no][1],
-                                   &CharaDataBuffer__2[kind], 0);
+                                      &CharaDataBuffer__2[kind], 0);
             Chara__3[no].motion_type.state.time = 10.0f;
             Chara__3[no].motion_type.state.blend_step = 0.05f;
             Chara__3[no].motion_type.state.motion_no = 0;
@@ -422,12 +422,12 @@ void LoadMotionData() {
             if (DanceCnt != 2) {
                 CharaDataBuffer__2[6].used = 0;
                 Chara__3[6].LoadPackData((u_int *) ((char *) read_buffer + 0x10C900),
-                                      motion[DanceCnt][1],
-                                      &CharaDataBuffer__2[4],
-                                      &CharaDataBuffer__2[6], 0);
+                                         motion[DanceCnt][1],
+                                         &CharaDataBuffer__2[4],
+                                         &CharaDataBuffer__2[6], 0);
                 Chara__3[7].LoadPackData(read_buffer, motion[DanceCnt + 10][1],
-                                      &CharaDataBuffer__2[4],
-                                      &CharaDataBuffer__2[6], 0);
+                                         &CharaDataBuffer__2[4],
+                                         &CharaDataBuffer__2[6], 0);
             }
 
             Chara__3[6].motion_type.motion_info->start = noroi[DanceCnt].start;
@@ -740,7 +740,7 @@ void OpB_InitProcess() {
     LoadFile("opdat/chara/03p09a.chr", (void *) read_buffer, 0);
     CharaDataBuffer__2[6].used = 0;
     Chara__3[9].LoadPackData(read_buffer, "03p09a.cfg",
-                          &CharaDataBuffer__2[6], 0);
+                             &CharaDataBuffer__2[6], 0);
 
     CFrameAttr chara_attr;
 
@@ -876,7 +876,7 @@ void OpB_InitProcess2() {
 
     LoadFile("opdat/chara/03p10a.chr", (void *) read_buffer, 0);
     Chara__3[10].LoadPackData(read_buffer, "03p10a.cfg",
-                           &CharaDataBuffer__2[6], 0);
+                              &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr2;
 
@@ -895,7 +895,7 @@ void OpB_InitProcess2() {
 
     LoadFile("opdat/chara/03c01d.chr", (void *) read_buffer, 0);
     Chara__3[8].LoadPackData(read_buffer, "03c01d.cfg",
-                          &CharaDataBuffer__2[6], 0);
+                             &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr3;
 
@@ -919,7 +919,7 @@ void OpB_InitProcess2() {
 
     LoadFile("opdat/chara/03c01d2.chr", (void *) read_buffer, 0);
     Chara__3[11].LoadPackData(read_buffer, "03c01d2.cfg",
-                           &CharaDataBuffer__2[6], 0);
+                              &CharaDataBuffer__2[6], 0);
 
     attr3.unk_08 = 0;
     Chara__3[11].frame->SetAttr(attr3, 1, 4);

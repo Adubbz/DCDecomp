@@ -229,8 +229,8 @@ STATIC_ASSERT(sizeof(Mot_File_List) == 0x20);
  */
 struct tagMOTION_TYPE {
     sceVu0FMATRIX *base_matrices; /**< Bind-pose matrices loaded from the motion archive. */
-    Mot_List *proc_list;  /**< Frame drivers applied from the motion state. */
-    Mot_List *proc_list2; /**< Frame drivers applied from the frame table. */
+    Mot_List *proc_list;          /**< Frame drivers applied from the motion state. */
+    Mot_List *proc_list2;         /**< Frame drivers applied from the frame table. */
     u8 unk_0C[4];
     MOTION_STATE state;       /**< How far the set has played, and what it moves. */
     tagFRAME_INF *frame_info; /**< Frames that the motions drive. */
@@ -244,8 +244,6 @@ struct tagMOTION_TYPE {
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(tagMOTION_TYPE) == 0x80);
-
-
 
 /**
  * Names one optional motion-data file found in a model archive.
@@ -442,7 +440,7 @@ struct MoveCheckInfo {
     CCPoly ground_poly; /**< Polygon found below the step. */
     s32 ground_found;   /**< 1 where the step found ground below it. */
     u8 unk_64[0xC];
-    CCPoly poly; /**< Polygon that the step landed on. */
+    CCPoly poly;                /**< Polygon that the step landed on. */
     sceVu0FVECTOR ground_point; /**< Point where the step found ground below it. */
 };
 
@@ -467,7 +465,6 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
  */
 int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point,
                 CCPoly *polys, int poly_num, int mode);
-
 
 /**
  * Pushes a position out of the polygons within a radius of it.

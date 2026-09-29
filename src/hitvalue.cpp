@@ -15,12 +15,12 @@
 #include "menu_dungeon.hpp"
 #include "menu_inventory.hpp"
 #include "mglib.hpp"
+#include "rect.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-#include "rect.hpp"
 /**
  * Each character's default weapon.
  */
@@ -143,6 +143,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
     }
     return 0;
 }
+
 void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame *frame) {
     for (int i = 0; i < 32; i++) {
         if (values[i].active == 0) {
@@ -151,6 +152,7 @@ void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame
         }
     }
 }
+
 void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
     int place = 10000;
 
@@ -213,6 +215,7 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
             break;
     }
 }
+
 void CHitValue::Draw(void) {
     if (active == 0) {
         return;
@@ -263,6 +266,7 @@ void CHitValue::Draw(void) {
                     (u8) fade);
     }
 }
+
 void CHitValue::Step(void) {
     if (active != 0) {
         if (digits[0] == -2) {
