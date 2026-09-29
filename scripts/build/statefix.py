@@ -20,6 +20,7 @@ be identified structurally remains stated in source:
     #pragma argument_flag_ones 4,9    which of those reads 1 instead
     #pragma argument_flag_free 7,8    which of them to leave to the node's own byte
     #pragma order_flag_zeros 3,7      which of the ordering pass's writes to drop
+    #pragma literal_reload 0x3C23D70A which float literals every unknown store kills
     #pragma name_counter 910          where the invented-name counter starts
 
 The compiler has no such pragmas. This runs it under gdb, stands at its pragma
@@ -125,14 +126,26 @@ NAME_COUNTER = 0x0052B5D0
 CODEGEN = 0x004356B0
 NAME_ARGUMENT, NAME_RECORD = 4, 8
 
+# The test value numbering (and two later passes) put to an object when a store
+# through an unknown address is met: may that store have overwritten it? For a
+# data object it reads a VarInfo byte at [object+0x24]+0x22. A float literal's
+# +0x24 is its eight-byte value buffer instead, so the test reads whatever the
+# arena holds 0x1A bytes past the value: zero lets the literal's load be reused
+# across the store, anything else reloads it after every store. Retail's
+# literals were created once for the whole program, next to other units' data;
+# a unit compiled alone creates them next to its own, so the byte can differ.
+MAY_BE_STORED_TO = 0x00432F50
+OBJECT_NAME, OBJECT_INFO = 0x08, 0x24
+
 PRAGMAS = ('helper_mask_gpr', 'helper_mask_fpr',
            'argument_flag', 'argument_flag_ones', 'argument_flag_free',
-           'order_flag_zeros', 'name_counter')
+           'order_flag_zeros', 'name_counter', 'literal_reload')
 
 # The remaining source-controlled hooks. Expression constants are selected by
 # the external exact-identity config instead of by source pragmas.
 WANTS_ARGUMENT = re.compile(r'^\s*#\s*pragma\s+argument_flag', re.M)
 WANTS_ORDER = re.compile(r'^\s*#\s*pragma\s+order_flag', re.M)
+WANTS_LITERAL = re.compile(r'^\s*#\s*pragma\s+literal_reload', re.M)
 
 
 def load_expression_node_overrides(path=EXPRESSION_NODE_OVERRIDES):
@@ -214,6 +227,30 @@ def asks_for_order(arguments):
         return False
 
 
+def asks_for_literals(arguments):
+    """Whether the source names literals that unknown stores kill."""
+    path = source_of(arguments)
+    if not path:
+        return False
+    try:
+        with open(path, encoding='utf-8', errors='replace') as f:
+            return bool(WANTS_LITERAL.search(f.read()))
+    except OSError:
+        return False
+
+
+def literal_value(bits):
+    """The eight bytes a literal object holds for these IEEE bits.
+
+    The compiler keeps every floating constant as a double, whatever its type,
+    so a binary32 pattern is widened; a pattern wider than 32 bits is taken as
+    binary64 already.
+    """
+    if bits > 0xFFFFFFFF:
+        return struct.pack('<Q', bits)
+    return struct.pack('<d', struct.unpack('<f', struct.pack('<I', bits))[0])
+
+
 def asks_for_arguments(arguments):
     """Whether the source asks for the argument-read pragmas."""
     path = source_of(arguments)
@@ -275,7 +312,8 @@ def install(arguments=()):
     # stays the compiler's; anything worth saying goes to the real stderr.
     quiet = os.environ.get('STATEFIX_QUIET') == '1'
     say = (lambda text: sys.stderr.write(text)) if quiet else gdb.write
-    counted = {'pragmas': 0, 'nodes': 0, 'arguments': 0, 'order': 0}
+    counted = {'pragmas': 0, 'nodes': 0, 'arguments': 0, 'order': 0,
+               'literals': 0}
     cur = {'name': '?'}
     expression_overrides = load_expression_node_overrides()
     source_hint = source_of(arguments)
@@ -285,7 +323,7 @@ def install(arguments=()):
     # Argument/order pragmas remain source-controlled. Node-index settings are
     # ephemeral search instrumentation; persistent node choices use exact keys.
     said = {'argument': None, 'argument_ones': set(), 'argument_free': set(),
-            'order_zeros': set()}
+            'order_zeros': set(), 'literal_reload': set()}
     node_default_text = os.environ.get('STATEFIX_NODE_DEFAULT')
     node_default = (int(node_default_text, 0) & 0xff
                     if node_default_text is not None else None)
@@ -311,6 +349,19 @@ def install(arguments=()):
                 rest = ''
             text = rest.split('/*')[0].split('//')[0].strip()
             combine = text.startswith('+')
+            if name == 'literal_reload':
+                try:
+                    said['literal_reload'].update(
+                        literal_value(int(item, 0))
+                        for item in text.replace(',', ' ').split())
+                except (ValueError, OverflowError, struct.error):
+                    say('statefix: #pragma %s: cannot read %r\n' % (name, text))
+                    return False
+                counted['pragmas'] += 1
+                if verify:
+                    say('statefix: #pragma %s %s\n' % (name, text))
+                gdb.execute('set $eip = %s' % hex(PRAGMA_IGNORE))
+                return False
             if name in ('argument_flag_ones', 'argument_flag_free',
                         'order_flag_zeros'):
                 where = {'argument_flag_ones': 'argument_ones',
@@ -438,6 +489,7 @@ def install(arguments=()):
         class Argument(gdb.Breakpoint):
             def __init__(self, address, register):
                 self.register = register
+                self.location_address = address
                 super().__init__('*' + hex(address), internal=True)
 
             def stop(self):
@@ -463,9 +515,10 @@ def install(arguments=()):
                         kind = bytes(gdb.selected_inferior().read_memory(
                             record, 1))[0]
                         say('statefix: argument %4d %-30s kind %02x at %08x'
-                            ' %02x -> %s\n'
+                            ' %02x -> %s site %08x\n'
                             % (counted['arguments'], cur['name'], kind, record,
-                               was, '--' if want is None else '%02x' % want))
+                               was, '--' if want is None else '%02x' % want,
+                               self.location_address))
                     if want is not None:
                         gdb.selected_inferior().write_memory(
                             record + NODE_FIELD, bytes([want]))
@@ -475,6 +528,46 @@ def install(arguments=()):
 
         for address, register in ARGUMENT_READS:
             Argument(address, register)
+
+    if asks_for_literals(arguments):
+        class Literal(gdb.Breakpoint):
+            def __init__(self):
+                super().__init__('*' + hex(MAY_BE_STORED_TO), internal=True)
+
+            def stop(self):
+                if not said['literal_reload']:
+                    return False
+                try:
+                    esp = int(gdb.parse_and_eval('$rsp'))
+                    obj = u32(esp + 4)
+                    if not obj:
+                        return False
+                    value = u32(obj + OBJECT_INFO)
+                    if not value:
+                        return False
+                    held = bytes(gdb.selected_inferior().read_memory(value, 8))
+                    if held not in said['literal_reload']:
+                        return False
+                    # Only a literal carries an invented `@N` name; a variable
+                    # whose VarInfo happens to start with the same bytes does not.
+                    name = u32(obj + OBJECT_NAME)
+                    if not name or bytes(gdb.selected_inferior().read_memory(
+                            name + HASH_NAME_TEXT, 1)) != b'@':
+                        return False
+                except gdb.MemoryError:
+                    return False
+                counted['literals'] += 1
+                if verify:
+                    say('statefix: literal %s killed in %s\n'
+                        % (held.hex(), cur['name']))
+                # Answer "yes" and return to the caller: cdecl, so the caller
+                # pops the argument.
+                gdb.execute('set $eax = 1')
+                gdb.execute('set $rip = %#x' % u32(esp))
+                gdb.execute('set $rsp = %#x' % (esp + 4))
+                return False
+
+        Literal()
 
     if asks_for_order(arguments):
         class Order(gdb.Breakpoint):
