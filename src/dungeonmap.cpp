@@ -1522,7 +1522,6 @@ int joinRoom(int a, int b);
  * @address 0x1C61C0
  * @size 0x878
  */
-#ifdef NON_MATCHING
 int joinRoom(int a, int b) {
     int done;
     int tx;
@@ -1566,9 +1565,9 @@ int joinRoom(int a, int b) {
             break;
         case 8:
             cx = roomStack[a].x + (roomStack[a].width >> 1);
+            buildMapWork[cx + (roomStack[a].y + roomStack[a].height - 1) * 20].unk_48 |= 4;
+            buildMapWork[cx + (roomStack[a].y + roomStack[a].height - 1) * 20].link[a] = 1;
             cy = roomStack[a].y + roomStack[a].height;
-            buildMapWork[cx + (cy - 1) * 20].unk_48 |= 4;
-            buildMapWork[cx + (cy - 1) * 20].link[a] = 1;
             steps = roomStack[b].y - cy;
             break;
         case 2:
@@ -1576,7 +1575,7 @@ int joinRoom(int a, int b) {
             cy = roomStack[a].y + (roomStack[a].height >> 1);
             buildMapWork[cx + cy * 20 - 1].unk_48 |= 4;
             buildMapWork[cx + cy * 20 - 1].link[a] = 1;
-            steps = roomStack[b].x - cx;
+            steps = roomStack[b].x - (roomStack[a].x + roomStack[a].width);
             break;
         case 4:
             cx = roomStack[a].x - 1;
@@ -1719,9 +1718,6 @@ int joinRoom(int a, int b) {
     copyMapInfo(buildMapDat, buildMapWork);
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonmap", joinRoom__Fii);
-#endif
 
 static void setRoomObject() {
     int i;
