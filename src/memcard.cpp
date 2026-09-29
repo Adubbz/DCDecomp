@@ -2749,16 +2749,15 @@ void AtoraNameDraw(int) {
     }
 }
 
-#ifdef NON_MATCHING
 static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     int label[12] = {10, 8, 4, 5, 2, 3, 9, 11, 12, 13, 6, 7};
     int kind[12] = {0, 0, 1, 2, 0, 1, 3, 0, 0, 0, 0, 0};
-    int row_y;
-    int v;
     int u;
+    int v;
     int j;
     int i;
     int row_x;
+    int row_y;
     int cell_x;
     int setting;
 
@@ -2786,7 +2785,11 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
                 v = kind[i] * 48 + 176;
                 DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
                                  alpha);
-                u = u < 64 ? 64 : 0;
+                if (u < 64) {
+                    u = 64;
+                } else {
+                    u = 0;
+                }
                 v = (kind[i] * 2 + 1) * 24 + 176;
                 DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
                                  alpha);
@@ -2820,9 +2823,6 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     }
     DrawMenu2DSprite(MenuOption, CRect_i_(arrow_x, arrow_y, 60, 29), CRect_i_(452, 226, 60, 29), alpha);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
-#endif
 
 static void DrawOptionLRCur(int side, int alpha) {
     int cursor_x[2] = {32, 520};

@@ -2659,16 +2659,27 @@
       ".memcard-c1322": [
         "@762"
       ],
+      ".memcard-c2123": [
+        "@1522",
+        "@1523"
+      ],
       ".memcard-c2252": [
-        "@1576"
+        "@1638"
       ],
       ".memcard-c2391": [
-        "@1711"
+        "@1773"
       ],
       ".memcard-c2683": [
-        "@1957"
+        "@2019"
       ]
-    }
+    },
+    "rekey_sections_skip": 5,
+    "rekey_sections": [
+      [".memcard-c2123", [48, 48]],
+      [".memcard-c2252", [36]],
+      [".memcard-c2391", [16]],
+      [".memcard-c2683", [16]]
+    ]
   },
   "src/battle_globals.cpp": {
     "symbols": {
