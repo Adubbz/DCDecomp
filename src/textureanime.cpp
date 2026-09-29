@@ -8,6 +8,7 @@
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
+#include "rect.hpp"
 s32 CTextureAnime::stop_anime;
 CTextureAnime *pTexAnime;
 int now_group;

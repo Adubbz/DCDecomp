@@ -4,6 +4,7 @@
 
 #include "mglib.hpp"
 
+#include "rect.hpp"
 void CSpriteTable::DrawTable() {
     int packet_entries;
     sceVif1Packet *packet;

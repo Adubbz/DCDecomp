@@ -18,6 +18,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 #include "camera.hpp"
 #include "camerafollow.hpp"
@@ -36,10 +37,6 @@
 #include "title/logo.hpp"
 #include "title/scfader.hpp"
 #include "title/sprite.hpp"
-
-/* Its retail name is already mangled, so it is reached the way main.cpp
-   reaches it. */
-extern "C" void MapJump__Fii(int map_no, int event_no);
 
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h because the
    two constructors that header states are not this file's: every rectangle here is built by one
@@ -70,11 +67,6 @@ struct MAP_INFO {
     float rotation;
 };
 
-/* What this file reaches of the display layer. It is declared here rather than reached through
-   mglib.h because that header states the rectangle above, and the two spellings of it cannot both
-   be in one translation unit. */
-extern sceVif1Packet *Vif1Packet;
-
 sceVif1Packet *GetVif1Packet();
 void MGSetRenderInfo(float scale, float near_z, float far_z);
 void MGSetBGColor(float r, float g, float b, float a);
@@ -88,9 +80,6 @@ void MGGetFBuffBackTex(sceGsTex0 *tex);
 void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *dst,
                         const CRect<int> &dst_rect);
 void MGClearZBuffer(int mode);
-
-extern int CursorVibeCnt;
-extern u_int Vu_prog0f[];
 
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
@@ -115,10 +104,8 @@ void DrawObjectVibe(int id, int frame, CTexture *texture, RECT rect, u_char size
 void InitOpeningBook(u_long128 *pack, int *param);
 int OpeningBookKey();
 void OpeningBookDraw();
-void InitMenuSave(int mode, int type, u_long128 *pack);
 int MenuSaveKey();
 void DrawMenuSave(char *name);
-void InitMenuOption(int mode, int type, u_long128 *pack);
 int MenuOptionKey();
 void DrawMenuOption();
 
@@ -128,23 +115,19 @@ void DrawMenuOption();
 #include "title/script.hpp"
 #include "wind.hpp"
 
+#include "main.hpp"
+#include "mglib.hpp"
+#include "memcard.hpp"
+#include "vutext.hpp"
+#include "gamemode.hpp"
+#include "editloop.hpp"
+#include "title/op_a.hpp"
+#include "title/op_b.hpp"
+#include "title/rushmovi.hpp"
+#include "title/op_c.hpp"
+#include "title/title.hpp"
+#include "title/titleloop.hpp"
 #define PI 3.14159265358979323846
-
-class OBJ_ANIME_SEQ {
-public:
-    void Initialize();
-
-    char name[16];
-    int motion_start;
-    int motion_end;
-    char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
-    float unk_40;
-    float unk_44;
-    float step;
-    char unk_4C[60];
-};
 
 /* The classes this movie places in the world, declared here rather than reached through headers of
    their own because each is another unit's to type. Only the members this file touches are named;
@@ -256,8 +239,6 @@ void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
 void SetPacketReadBuffer(int size, int offset);
 void MGSetRenderInfo(float scale, float near_z, float far_z);
 void MGSetBGColor(float r, float g, float b, float a);
-void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
-void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
 sceVif1Packet *GetVif1Packet();
 void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
 void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
@@ -279,7 +260,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst
 void DepthOfField(float *dist, int level, int alpha, int blur);
 void OPAnalyz(char *name);
 void OPMdsLoad();
-extern "C" char *strcpy(char *dst, const char *src);
 
 void SndSetCamera(CCamera *camera);
 void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
@@ -292,55 +272,6 @@ void SndAmbientStop();
 void SndStep();
 void SndSePlay(int se, float *position, float near_dist, float far_dist);
 
-extern u_int Vu_prog0f[];
-extern sceVif1Packet *Vif1Packet;
-extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
-extern int OP_AnimeSeqRot;
-extern CCharacter Chara[23];
-extern CMapObject OP_NornMapObj[76];
-extern int OP_FireList;
-extern sceVu0FVECTOR OP_FirePosition[96];
-extern float OP_FireScale[96];
-extern CMap OP_GroundMap;
-extern CMap OP_BuildingMap;
-extern CMap OP_BuildingMap2;
-extern sceGsZbuf mgZBuffer;
-extern RenderInfo mgRenderInfo;
-extern sceVu0FMATRIX light;
-extern sceVu0FMATRIX lightcolor;
-extern sceVu0FVECTOR ambientlight;
-extern sceGsAlpha mgAlpha;
-extern CDataAlloc2<1> MapDataBuffer;
-
-extern CCameraFollow MainCamera;
-extern CDispFade DispFade;
-extern CFireOmni CFire;
-extern CWind Wind;
-extern CWater Water;
-extern char CharaTex[9];
-extern CDataAlloc2<1> CharaDataBuffer;
-extern tagFRAME_INF frame_info_cam[300];
-extern CCharacter Cam[4];
-extern MOTION_INFO MotionInfo;
-extern CDataAlloc2<1> PathDataBuffer;
-extern CDataAlloc2<1> WaterBuffer;
-extern CDataAlloc2<1> DummyDataBuffer;
-extern CTexAnimeData TexAnimeData[30];
-extern CRunEffect CRunFx;
-
-extern CFrame *OP_CharaFrame;
-extern u_char bEnd;
-extern int EndCnt;
-extern int CameraMode;
-extern int SceneNp;
-extern float TitleAngle;
-extern int StartDisp;
-extern int TitleFade;
-extern int TitleFadeCnt;
-extern int StartLightning;
-extern float atraGetStatusRate;
-
-extern void SetObjAnime(char *name, CFrameVu1 *frame, float *scale, float *position);
 void MotionProcess();
 void DrawProcess();
 void SoundProcess();
@@ -368,40 +299,14 @@ void DrawProcI();
 void InitProcTitle();
 void DrawProcTitle();
 
-/* The step the title screen is on. The symbol is eight bytes and the file's own initializer
-extern zeroes only the first of them, which nothing a plain int can be spelled as does;
-   is never read or written anywhere in the overlay. */
-class CProcess {
-public:
-    CProcess() { no = 0; }
-
-    int no;
-    int unk_04;
-};
-
 void TitleDraw();
 void TiPlayVolSE(int group, int no, int voice, float volume);
-
-extern CFrame *ObjectFrame3;
 
 /* Nothing reads this, and nothing in the image stands for it: the link this file was built by
    removed it. It is here because the compiler carries state from one definition to the next, and
    the follow camera below is constructed with its four arguments evaluated in an order no
    declaration that emits nothing reaches. Deleting it puts three of those four constants in the
    wrong registers. */
-
-extern CCamera Camera;
-extern CCameraFollow FCamera;
-extern CCharacter Cloud;
-extern CCharacter Logo;
-extern CCharacter Spark[9];
-
-extern CProcess CProcess;
-extern CScFader CFade;
-
-extern CSprite CSprite;
-extern CLogo CLogo;
-extern CCursol CCursol;
 
 int Fade1;
 int Fade2;
@@ -413,12 +318,6 @@ int keywait;
 u_char brink;
 int brinkcnt;
 int EffCnt;
-
-/* Nothing calls this and nothing reads the table it writes: the link this file was built by
-   removed both. They are here because the compiler carries state from one definition to the next,
-   and the camera calls in TitleInit below evaluate their arguments in an order that no declaration
-   emitting nothing reaches. */
-extern float TitleCameraWork[8];
 
 void TitleInit(int no) {
     int i;
@@ -495,14 +394,14 @@ void TitleInit(int no) {
     pos[2] = -28.0f;
     ObjectFrame3->SetPosition(pos);
 
-    Cloud.LoadPackData(read_buffer, "cloud.cfg", &MotionData, 0);
-    Cloud.motion_type.state.time = 100.0f;
-    Cloud.motion_type.state.blend_step = 0.1f;
-    Cloud.motion_type.state.motion_no = 0;
-    Cloud.motion_type.state.playing_no = 0;
-    Cloud.motion_type.state.blending = 0;
-    Cloud.motion_no = 0;
-    Cloud.SetPosition(0.0f, 0.0f, -5.0f);
+    Cloud__2.LoadPackData(read_buffer, "cloud.cfg", &MotionData, 0);
+    Cloud__2.motion_type.state.time = 100.0f;
+    Cloud__2.motion_type.state.blend_step = 0.1f;
+    Cloud__2.motion_type.state.motion_no = 0;
+    Cloud__2.motion_type.state.playing_no = 0;
+    Cloud__2.motion_type.state.blending = 0;
+    Cloud__2.motion_no = 0;
+    Cloud__2.SetPosition(0.0f, 0.0f, -5.0f);
 
     Logo.LoadPackData(read_buffer, "logo.cfg", &MotionData, 0);
     Logo.motion_type.state.time = 1.0f;
@@ -570,7 +469,7 @@ int TitleLoop() {
     FCamera.Step(1);
     FCamera.GetCameraMatrix(matrix);
     MGSetViewMatrix(matrix, pos);
-    Cloud.Step();
+    Cloud__2.Step();
 
     switch (CProcess.no) {
         case 0:
@@ -762,7 +661,7 @@ int TitleLoop() {
                     /* CSaveData::map_no is private and retail reaches it from another
                        translation unit, so this is the offset main.cpp uses rather than
                        a getter the class does not have. */
-                    MapJump__Fii(*(s32 *) ((char *) SaveData + 0x1C8), -1);
+                    MapJump(*(s32 *) ((char *) SaveData + 0x1C8), -1);
                     CProcess.no = 14;
                     break;
                 case 2:
@@ -853,7 +752,7 @@ void TitleDraw() {
             ambient[3] = 100.0f;
         }
         MGSetAmbient(ambient);
-        Cloud.Draw();
+        Cloud__2.Draw();
     }
 
     if (CProcess.no != 0 || CFade.Get(128) >= 4) {

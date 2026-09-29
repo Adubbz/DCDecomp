@@ -151,4 +151,4 @@ STATIC_ASSERT(sizeof(CScript) == 0xE300);
 extern CSCRIPT_COMMAND Command[26];
 
 /** Shared title script parser and pending scene requests. */
-extern CScript CScript;
+extern class CScript CScript__2;

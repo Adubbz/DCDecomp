@@ -109,7 +109,7 @@ char EdInteriorName[0x20];
 
 CEffectGroup EdEffectGroup;
 /** Pool the editor's effect group plays its effects out of. */
-static CEffect *EffectTable;
+CEffect *EffectTable__3;
 /** Unreferenced word of the editor's small data. */
 static int D_002A2844;
 /** Unreferenced word of the editor's small data. */
@@ -201,7 +201,7 @@ ClsMes EditHelpMes;
 CNPCharacter EdVillager[10];
 VILLAGER_INFO EdVillagerInfo[10];
 /** Font the editor's debug text is drawn with. */
-static CDebugFont DebugFont;
+CDebugFont DebugFont__3;
 EDIT_FOG_INFO now_fog;
 CDataAlloc2<1> EPartsInfoBuff(-1);
 CMainChara MainChara;
@@ -241,7 +241,7 @@ CTexAnimeData TexAnimeData[64];
 /** Records of the characters' texture animation. */
 CTexAnimeData CharaTexAnimeData[0x80];
 /** Arena the map's data is read into before the editor carves it up. */
-static CDataAlloc2<1> DataBuffer(-1);
+CDataAlloc2<1> DataBuffer__2(-1);
 CDataAlloc2<1> CharaBuffer(-1);
 CDataAlloc2<1> InteriorBuffer(-1);
 CDataAlloc2<1> EtcDataBuffer(-1);
@@ -729,8 +729,8 @@ int EditInit(void *) {
     SetDataBuffer(&TextureData, 10);
     SetDataBuffer(&MotionData, 7900);
     SetDataBuffer(&EdMesBuffer, 13000);
-    SetDataBuffer(&DataBuffer, 1216000);
-    EdNPCBuffer.base = DataBuffer.base + DataBuffer.used * 16 + 0xCF8500;
+    SetDataBuffer(&DataBuffer__2, 1216000);
+    EdNPCBuffer.base = DataBuffer__2.base + DataBuffer__2.used * 16 + 0xCF8500;
     EdNPCBuffer.limit = 326000;
     EdNPCBuffer.used = 0;
     SetPacketReadBuffer(30000, 140000);
@@ -854,13 +854,13 @@ int EditInit(void *) {
     NowCamera = &MainCamera;
     EditMenuStatus.mode = -1;
     EditMenuStatus.parts = -1;
-    DebugFont.texture = "font_buff";
-    DebugFont.x = 16;
-    DebugFont.y = 16;
-    DebugFont.w = 280;
-    DebugFont.h = 224;
-    DebugFont.alpha = 64;
-    EdDSetFont(&DebugFont);
+    DebugFont__3.texture = "font_buff";
+    DebugFont__3.x = 16;
+    DebugFont__3.y = 16;
+    DebugFont__3.w = 280;
+    DebugFont__3.h = 224;
+    DebugFont__3.alpha = 64;
+    EdDSetFont(&DebugFont__3);
     if (interior_test == 0) {
         if (old_main_mode != 7 || main_select_padrup != 0) {
             EditLoad();
@@ -897,8 +897,8 @@ int EditInit(void *) {
     end_counter = 0;
     door_open_cnt = 0;
     EdStepTimeFlag = 1;
-    int free_start = (int) DataBuffer.base + (int) (DataBuffer.used * 16);
-    int free_quads = DataBuffer.limit - DataBuffer.used;
+    int free_start = (int) DataBuffer__2.base + (int) (DataBuffer__2.used * 16);
+    int free_quads = DataBuffer__2.limit - DataBuffer__2.used;
     if (free_quads < 326000)
         printf("Allocation error!!\n");
     int align = free_start & 0x3F;
@@ -936,8 +936,8 @@ int EditInit(void *) {
     MainCamera.SetAngleSoon(yaw);
     MainCamera.SetFollow(start_position[0], 14.0f + start_position[1], start_position[2]);
     MainCamera.Step(-1);
-    EffectTable = (CEffect *) EtcDataBuffer.Alloc(0x800);
-    EdEffectGroup.Initialize(EffectTable, 128);
+    EffectTable__3 = (CEffect *) EtcDataBuffer.Alloc(0x800);
+    EdEffectGroup.Initialize(EffectTable__3, 128);
     EdEffectGroup.Clear();
     EdInitMesParam();
     EditMes1.tex_block = 26;
@@ -1219,13 +1219,13 @@ int EditLoop(void) {
 
         char *mark[2] = {" ", ">"};
 
-        DebugFont.len = 0;
+        DebugFont__3.len = 0;
         for (int i = top; i < top + 14; i++) {
-            DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s %s\n",
+            DebugFont__3.len += sprintf(&DebugFont__3.text[DebugFont__3.len], "%s %s\n",
                                         mark[i == select], menu[i]);
         }
         TexManager.ReloadTexture(GetVif1Packet(), 0x1F);
-        DebugFont.Draw();
+        DebugFont__3.Draw();
         if (GamePad.Down(0x20) != 0) {
             float hour = NowTime / 3.0f;
             int jump = (int) hour;
@@ -1783,7 +1783,7 @@ int EditLoop(void) {
     if (sound_off_cnt < 0) {
         sound_off_cnt = 0;
     }
-    DebugFont.len = 0;
+    DebugFont__3.len = 0;
     if (GamePad.On(0x20) != 0) {
         cat_end();
     }
@@ -3603,7 +3603,7 @@ u_int *parts_read_buffer;
 int LoadTexture() {
     int entered;
     int image;
-    u_long128 *buffer = (u_long128 *) (DataBuffer.base + DataBuffer.used * 16);
+    u_long128 *buffer = (u_long128 *) (DataBuffer__2.base + DataBuffer__2.used * 16);
 
     TexManager.Initialize(0x3FE0);
     TexManager.SetBuffer(buffer, 0x4E200);
@@ -3754,8 +3754,8 @@ int LoadTexture() {
         TexManager.LoadTextureBlock(-1, map_blocks, read_buffer);
     }
     TexManager.buffer_size = TexManager.buffer_used;
-    DataBuffer.Alloc((int) (TexManager.buffer + TexManager.buffer_size - buffer) + 16);
-    DataBuffer.Align64();
+    DataBuffer__2.Alloc((int) (TexManager.buffer + TexManager.buffer_size - buffer) + 16);
+    DataBuffer__2.Align64();
     return 0;
 }
 /**
@@ -3820,7 +3820,7 @@ void LoadGroundData() {
         if (EditMapInfo->sky_layers[i].name[0] != '\0') {
             data = (u_int *) EdLoadFile(EditMapInfo->sky_layers[i].name);
 
-            SkyFrame[i] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
+            SkyFrame[i] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
             SkyFrame[i]->SetAttr(layer_attr, 1, 0x1000);
             for (int j = 0; j < 8; j++) {
                 short no = EditMapInfo->sky_layers[i].obj_anime[j];
@@ -3834,7 +3834,7 @@ void LoadGroundData() {
         if (EditMapInfo->sun_layers[i].name[0] != '\0') {
             data = (u_int *) EdLoadFile(EditMapInfo->sun_layers[i].name);
 
-            SunFrame[i] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
+            SunFrame[i] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
             SunFrame[i]->SetAttr(layer_attr, 1, 0x1000);
         }
         if (SunFrame[i] != NULL) {
@@ -3854,7 +3854,7 @@ void LoadGroundData() {
 
         back_attr.unk_54 = 0;
         back_attr.unk_14 = 1;
-        SkyBackFrame = LoadMDSFile(data, &DataBuffer, 6, NULL, NULL);
+        SkyBackFrame = LoadMDSFile(data, &DataBuffer__2, 6, NULL, NULL);
         SkyBackFrame->SetAttr(back_attr, 1, 0x1200);
     }
     for (int i = 0; i < 4; i++) {
@@ -3867,7 +3867,7 @@ void LoadGroundData() {
             EditArea[i].SetSize(info->width, info->height, info->unk_48, info->unk_4c);
             EditArea[i].SetOffset(info->unk_50 - 0.01f * (float) info->width, info->unk_54,
                                   info->unk_58 - 0.01f * (float) info->height);
-            EditArea[i].SetGridFrame(LoadMDSFile(data, &DataBuffer, 6, NULL, NULL));
+            EditArea[i].SetGridFrame(LoadMDSFile(data, &DataBuffer__2, 6, NULL, NULL));
 
             CFrameAttr grid_attr;
 
@@ -3879,15 +3879,15 @@ void LoadGroundData() {
     if (MapNo < 6) {
         data = (u_int *) EdLoadFile("gedit/e01/mds/e01a03_0.mds");
 
-        pEditGround->cursor.pieces[0] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
+        pEditGround->cursor.pieces[0] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
 
         data = (u_int *) EdLoadFile("gedit/e01/mds/e01a04_0.mds");
 
-        pEditGround->cursor.pieces[1] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
+        pEditGround->cursor.pieces[1] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
 
         data = (u_int *) EdLoadFile("gedit/e01/mds/e01a05_0.mds");
 
-        pEditGround->cursor.pieces[2] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
+        pEditGround->cursor.pieces[2] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
         pEditGround->cursor.area = 2;
     } else {
         pEditGround->cursor.pieces[0] = NULL;
@@ -3902,8 +3902,8 @@ void LoadGroundData() {
         if (info->name[0] != '\0') {
             data = (u_int *) EdLoadFile(info->name);
             MotionParts[i].InitializeTexAnime(TexAnimeData, 64);
-            MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer, i + 0x1B,
-                                         &DataBuffer, 0);
+            MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer__2, i + 0x1B,
+                                         &DataBuffer__2, 0);
             MotionParts[i].SetPosition(info->values[0], info->values[1], info->values[2]);
             MotionParts[i].SetRotation(info->values[3], info->values[4], info->values[5]);
         }
@@ -4054,7 +4054,7 @@ void LoadGroundData() {
         }
         water->SetVertex(near_left, near_right, far_left, far_right);
         water->frame.SetPosition(info->corner_c);
-        water->SetSize(info->type, info->number, &DataBuffer);
+        water->SetSize(info->type, info->number, &DataBuffer__2);
         water->SetParam(info->texture_scroll[0], info->texture_scroll[1],
                         info->texture_scroll[2], info->texture_scroll[3]);
         water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
@@ -4236,7 +4236,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
     parts->unk_10C = header->func_count;
     parts->unk_110 = (int) header->func;
     if (shared != NULL) {
-        CopyCMapParts(parts, shared, &DataBuffer);
+        CopyCMapParts(parts, shared, &DataBuffer__2);
     } else {
         char *names[9] = {NULL};
 
@@ -4269,7 +4269,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
         if (record->size_c4 > 0) {
             names[8] = (char *) record + record->offset_c0;
         }
-        LoadMapObject(parts, (u_int **) names, &DataBuffer);
+        LoadMapObject(parts, (u_int **) names, &DataBuffer__2);
     }
 
     CFrame *frames[9];

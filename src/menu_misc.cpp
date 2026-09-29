@@ -40,6 +40,7 @@
 #include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
 
+#include "rect.hpp"
 static int defWeapon[6] = {257, 299, 314, 331, 347, 363};
 
 int MenuWeaponModelData[42];

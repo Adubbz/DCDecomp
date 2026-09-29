@@ -19,6 +19,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
+#include "rect.hpp"
 s8 ManualTgaNum[24] = {2, 6, 4, 1, 2, 0, 1, 5, 3, 3, 3, 0, 3, 4, 3, 1, 0, 0, 2, 1, 5, 0, 0, 0};
 
 MANUAL_MENU_STATE ManualMenu;

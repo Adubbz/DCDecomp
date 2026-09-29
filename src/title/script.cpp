@@ -43,7 +43,7 @@ CSCRIPT_COMMAND Command[26] = {
 
 /* The one script the overlay runs. It is 58112 bytes because the file is held whole inside it and
    re-parsed from the cursor every tick. */
-class CScript CScript;
+class CScript CScript__2;
 
 /* Read the whole script in and put every actor back to a state nothing has asked anything of yet.
    Nothing is reset when the load fails, so a missing file leaves the previous script's state

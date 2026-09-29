@@ -37,7 +37,7 @@ struct COMMAND_INFO {
 u_int *GetPackFile(u_int *pack, char *name, int *size = 0);
 void *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *buffer);
 
-static void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
+void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
                      CDataAlloc2<1> *buffer, CDataAlloc2<1> *exbuffer, int visual_type,
                      CDataAlloc2<1> *image_buffer, int texture_block, int dont_delete);
 static void CommandVERTEX_ANIME(void **argv);
@@ -140,7 +140,7 @@ static void (*CommandExe[19])(void **) = {
     CommandFOOT,
     CommandEVENT};
 
-static void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
+void ReadInfo(CCharacter *value, u_int *pack, char *name, CDataAlloc2<1> *mds,
                      CDataAlloc2<1> *data, CDataAlloc2<1> *extra, int block,
                      CDataAlloc2<1> *image_buffer, int visual_type, int no_delete) {
     char arg_data[16][256];

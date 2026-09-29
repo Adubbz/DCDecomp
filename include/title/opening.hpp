@@ -1,6 +1,13 @@
 #pragma once
 
 #include "common.h"
+#include "dataalloc_fwd.hpp"
+#include <libvu0.h>
+
+class CCharacter;
+class CCamera;
+class CCameraFollow;
+struct MOTION_INFO;
 
 /**
  *          Initializes the opening-movie controller and shared scene state.
@@ -11,26 +18,6 @@
  * @unknownret
  */
 void OpeningInit(void);
-
-/**
- *          Loads the opening movie's localized message resources.
- *
- * @mangled LoadMessage__Fv
- * @address 0x1DAF4C0
- * @size 0x1F4
- * @unknownret
- */
-void LoadMessage(void);
-
-/**
- *          Loads the assets required by the selected opening scene.
- *
- * @mangled LoadScene__Fv
- * @address 0x1DAF6C0
- * @size 0x11C
- * @unknownret
- */
-void LoadScene(void);
 
 /**
  *          Loads the active opening scene's background phase.
@@ -51,86 +38,6 @@ void LoadSceneBG(void);
  * @unknownret
  */
 int OpeningLoop(void);
-
-/**
- *          Advances to the next opening scene or loading phase.
- *
- * @mangled SceneChange__Fv
- * @address 0x1DAFAA0
- * @size 0x1B0
- * @unknownret
- */
-void SceneChange(void);
-
-/**
- *          Processes pause input and pause-screen state.
- *
- * @mangled PauseProcess__Fv
- * @address 0x1DAFC50
- * @size 0x280
- * @unknownret
- */
-void PauseProcess(void);
-
-/**
- *          Stops the opening scene's active sounds.
- *
- * @mangled SoundStop__Fv
- * @address 0x1DAFED0
- * @size 0x40
- * @unknownret
- */
-void SoundStop(void);
-
-/**
- *          Processes input while the movie is waiting for a key.
- *
- * @mangled WaitKeyProcess__Fv
- * @address 0x1DAFF10
- * @size 0x17C
- * @unknownret
- */
-void WaitKeyProcess(void);
-
-/**
- *          Dispatches motion processing for the active opening scene.
- *
- * @mangled MotionProcess__Fv
- * @address 0x1DB0090
- * @size 0x3C0
- * @unknownret
- */
-void MotionProcess(void);
-
-/**
- *          Dispatches sound processing for the active opening scene.
- *
- * @mangled SoundProcess__Fv
- * @address 0x1DB0450
- * @size 0x330
- * @unknownret
- */
-void SoundProcess(void);
-
-/**
- *          Dispatches drawing for the active opening scene.
- *
- * @mangled DrawProcess__Fv
- * @address 0x1DB0780
- * @size 0x35C
- * @unknownret
- */
-void DrawProcess(void);
-
-/**
- *          Draws opening subtitles and pause messages.
- *
- * @mangled DrawMess__Fv
- * @address 0x1DB0AE0
- * @size 0x3CC
- * @unknownret
- */
-void DrawMess(void);
 
 /**
  *          Starts the opening movie's selected background music.
@@ -213,21 +120,66 @@ void OPAnalyz(char *);
 void OPMdsLoad(void);
 
 /**
- *          Skips whitespace and comments in a scene definition.
- *
- * @mangled skipSpace__FPci
- * @address 0x1DB4830
- * @size 0x110
- * @unknownret
+ * Characters of the opening movie.
  */
-int skipSpace(char *, int);
+extern CCharacter Chara__3[];
 
 /**
- *          Parses one scene-definition command's typed arguments.
- *
- * @mangled checkArg__FPciPi
- * @address 0x1DB4940
- * @size 0x574
- * @unknownret
+ * Texture slot of each opening character.
  */
-int checkArg(char *, int, int *);
+extern char CharaTex__2[23];
+
+/**
+ * Camera-path characters of the opening.
+ */
+extern CCharacter Cam__2[];
+
+/**
+ * Scene the opening is playing.
+ */
+extern int SceneNp__2;
+
+/**
+ * Arenas the opening characters are read into.
+ */
+extern CDataAlloc2<1> CharaDataBuffer__2[];
+
+/**
+ * Arena the opening water is read into.
+ */
+extern CDataAlloc2<1> WaterBuffer__2;
+
+/**
+ * Arena the opening map is read into.
+ */
+extern CDataAlloc2<1> MapDataBuffer;
+
+/**
+ * Camera the opening is drawn through.
+ */
+extern CCameraFollow OP_MainCamera;
+
+/**
+ * Sequencer port the opening BGM plays on.
+ */
+extern int OpBgmSqPort;
+
+/**
+ * Motion the opening characters are keyed by.
+ */
+extern MOTION_INFO Op_MotionInfo;
+
+/**
+ * Whether the opening is paused.
+ */
+extern int Pause;
+
+/**
+ * Colour of the opening fog.
+ */
+extern u_char op_fogColor[3];
+
+/**
+ * Range and thickness of the opening fog.
+ */
+extern sceVu0FVECTOR op_fogRate;

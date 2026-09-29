@@ -10,6 +10,7 @@
 #include "mglib.hpp"
 #include "snd.hpp"
 
+#include "rect.hpp"
 void C3DSprite::Draw(void) {
     if (texture == NULL) {
         return;

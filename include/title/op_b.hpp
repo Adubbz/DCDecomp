@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+class CMapObject;
+
 /**
  *          Updates and transfers one actor's eye and mouth textures.
  *
@@ -102,11 +104,11 @@ void OpB_SoundProcess(void);
 void OpB_DrawProcess(void);
 
 /**
- *          Advances the village sign's texture animation.
- *
- * @mangled setTexAnime__Fv
- * @address 0x1DBB8A0
- * @size 0x1EC
- * @unknownret
+ * Map objects of Norune village.
  */
-void setTexAnime(void);
+extern CMapObject OP_NornMapObj[];
+
+/**
+ * Second set of map objects of Norune village.
+ */
+extern CMapObject OP_NornMapObj2[];

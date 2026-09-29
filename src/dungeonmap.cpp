@@ -29,6 +29,7 @@
 #include "textureanime.hpp"
 #include "userstatus.hpp"
 
+#include "rect.hpp"
 /**
  * A single grid cell while a floor is being built.
  */

@@ -28,6 +28,11 @@
 #include "title/script.hpp"
 #include "vector.hpp"
 
+#include "main.hpp"
+#include "gameutil.hpp"
+#include "vutext.hpp"
+#include "title/op_a.hpp"
+#include "title/opening.hpp"
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h for the
    reason title.cpp declares its own: the rectangles this file builds are temporaries whose four
    stores come out ascending, and the constructor rect.h states assigns them in the other order. */
@@ -99,10 +104,6 @@ void OpD_MotionProcess();
 void OpD_SoundProcess();
 void OpD_DrawProcess();
 
-extern u_int Vu_prog0f[];
-extern int Mes1MakeFlg;
-extern u8 MesWinTexBuff_01[0x100];
-
 static void LoadMessage();
 static void LoadScene();
 static void SceneChange();
@@ -117,15 +118,15 @@ static void DrawMess();
 void OpPlayVolSE(int group, int no, int voice, float volume);
 void FadeCansel();
 
-CDataAlloc2<1> CharaDataBuffer[7];
+CDataAlloc2<1> CharaDataBuffer__2[7];
 CDataAlloc2<1> DummyBuffer(-1);
 CDataAlloc2<1> PassDataBuffer[3];
 CDataAlloc2<1> MapDataBuffer(-1);
-CDataAlloc2<1> WaterBuffer(-1);
+CDataAlloc2<1> WaterBuffer__2(-1);
 CDataAlloc2<1> testBuffer(-1);
 
-CCharacter Chara[23];
-char CharaTex[23];
+CCharacter Chara__3[23];
+char CharaTex__2[23];
 
 /* Nothing calls this and nothing reads the table it fills: the link this file was built by removed
    both. They are here because the compiler carries state from one definition to the next, and the
@@ -152,7 +153,7 @@ CCameraFollow OP_MainCamera(
     60.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f,
     20.0f, 0.0f, 4.0f);
 
-CCharacter Cam[3];
+CCharacter Cam__2[3];
 MOTION_INFO Op_MotionInfo;
 static ClsMes Mes1;
 static CDispFade DispFade;
@@ -161,7 +162,7 @@ u_char *PassReadBuffer;
 u_char *MesBuffer;
 int OpBgmSqPort;
 static tagFRAME_INF *frame_info_cam;
-int SceneNp;
+int SceneNp__2;
 int Pause;
 static int CameraMode;
 static int SceneRp;
@@ -180,16 +181,16 @@ void OpeningInit() {
     InitializeDataBuffer();
     SetDataBuffer(&VisualData, 7500);
     MesBuffer = VisualData.Alloc(4312);
-    SetDataBuffer(&CharaDataBuffer[0], 253000);
-    SetDataBuffer(&CharaDataBuffer[4], 65000);
-    SetDataBuffer(&CharaDataBuffer[6], 327000);
+    SetDataBuffer(&CharaDataBuffer__2[0], 253000);
+    SetDataBuffer(&CharaDataBuffer__2[4], 65000);
+    SetDataBuffer(&CharaDataBuffer__2[6], 327000);
     SetDataBuffer(&PassDataBuffer[0], 15000);
     SetDataBuffer(&PassDataBuffer[1], 15000);
     SetDataBuffer(&PassDataBuffer[2], 15000);
     SetDataBuffer(&testBuffer, 15000);
     PassReadBuffer = testBuffer.Alloc(15000);
     SetDataBuffer(&MapDataBuffer, 159500);
-    SetDataBuffer(&WaterBuffer, 30000);
+    SetDataBuffer(&WaterBuffer__2, 30000);
     SetDataBuffer(&TextureData, 355000);
     SetPacketReadBuffer(40000, 273000);
     OP_MainCamera.SetRef(0, 0.0f, 0.0f, 0.0f);
@@ -201,7 +202,7 @@ void OpeningInit() {
     OP_MainCamera.SetSpeed(0.0f);
     MGSetRenderInfo(800.0f, 6.0f, 65535);
     wait_now_loading_vsync();
-    CScript.Load("opdat/opening.scr");
+    CScript__2.Load("opdat/opening.scr");
     wait_now_loading_vsync();
     LoadMessage();
     wait_now_loading_vsync();
@@ -209,7 +210,7 @@ void OpeningInit() {
     wait_now_loading_vsync();
     OpA_InitProcess();
     CameraMode = 0;
-    SceneNp = 0;
+    SceneNp__2 = 0;
     SceneRp = 0;
     SceneCnt = 3;
     SceneFlg = 2;
@@ -224,6 +225,14 @@ void OpeningInit() {
     DispFade.FadeOutStart(128.0f, 0);
 }
 
+/**
+ * Loads the opening movie's localized message resources.
+ *
+ * @mangled LoadMessage__Fv
+ * @address 0x1DAF4C0
+ * @size 0x1F4
+ * @unknownret
+ */
 static void LoadMessage() {
     Mes1.Preset(2);
     Mes1.text_x = 90;
@@ -269,6 +278,14 @@ static void LoadMessage() {
     Mes1.text += *(short *) (MesBuffer + 2);
 }
 
+/**
+ * Loads the assets required by the selected opening scene.
+ *
+ * @mangled LoadScene__Fv
+ * @address 0x1DAF6C0
+ * @size 0x11C
+ * @unknownret
+ */
 static void LoadScene() {
     char *name[3][2] = {
         {"opdat/scene/0101acp.sne", "0101acp.cfg"},
@@ -279,12 +296,12 @@ static void LoadScene() {
 
     for (i = 0; i < 3; i++) {
         LoadFile(name[i][0], (void *) read_buffer, 0);
-        Cam[i].LoadPackData(read_buffer, name[i][1], &PassDataBuffer[i], 0);
-        Cam[i].motion_type.state.time = 1.0f;
-        Cam[i].motion_type.state.blend_step = 1.0f;
-        Cam[i].motion_type.state.motion_no = 0;
-        Cam[i].motion_type.state.playing_no = 0;
-        Cam[i].motion_type.state.camera = &OP_MainCamera;
+        Cam__2[i].LoadPackData(read_buffer, name[i][1], &PassDataBuffer[i], 0);
+        Cam__2[i].motion_type.state.time = 1.0f;
+        Cam__2[i].motion_type.state.blend_step = 1.0f;
+        Cam__2[i].motion_type.state.motion_no = 0;
+        Cam__2[i].motion_type.state.playing_no = 0;
+        Cam__2[i].motion_type.state.camera = &OP_MainCamera;
     }
 }
 
@@ -438,7 +455,7 @@ void LoadSceneBG() {
             rp = SceneRp;
             buffer = &PassDataBuffer[rp];
             buffer->used = 0;
-            Cam[rp].LoadPackData((u_int *) PassReadBuffer, name[SceneCnt][1], buffer, 0);
+            Cam__2[rp].LoadPackData((u_int *) PassReadBuffer, name[SceneCnt][1], buffer, 0);
             SceneCnt++;
             SceneRp++;
             if (SceneRp > 2)
@@ -454,7 +471,7 @@ int OpeningLoop() {
     ReadBG();
     PauseProcess();
     if (Pause == 0) {
-        CScript.Step();
+        CScript__2.Step();
         WaitKeyProcess();
         SceneChange();
     }
@@ -474,7 +491,7 @@ int OpeningLoop() {
     }
     /* These type-only names preserve the second exit's background-colour argument state. */
     typedef float ExitState0, ExitState1;
-    if (CScript.end) {
+    if (CScript__2.end) {
         MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
         FadeCansel();
         return 1;
@@ -483,8 +500,16 @@ int OpeningLoop() {
     return 0;
 }
 
+/**
+ * Advances to the next opening scene or loading phase.
+ *
+ * @mangled SceneChange__Fv
+ * @address 0x1DAFAA0
+ * @size 0x1B0
+ * @unknownret
+ */
 static void SceneChange() {
-    switch (CScript.load_no) {
+    switch (CScript__2.load_no) {
         case 1:
             OpB_LoadDataBG();
             break;
@@ -514,7 +539,7 @@ static void SceneChange() {
             break;
     }
 
-    switch (CScript.init_no) {
+    switch (CScript__2.init_no) {
         case 1:
             SoundStop();
             OpB_InitProcess();
@@ -550,6 +575,14 @@ static void SceneChange() {
     }
 }
 
+/**
+ * Processes pause input and pause-screen state.
+ *
+ * @mangled PauseProcess__Fv
+ * @address 0x1DAFC50
+ * @size 0x280
+ * @unknownret
+ */
 static void PauseProcess() {
     static int endflg = 0;
 
@@ -563,7 +596,7 @@ static void PauseProcess() {
             if (!GamePad.Down(2048))
                 return;
             CSnd.Stop(0);
-            if (CScript.scene)
+            if (CScript__2.scene)
                 CSnd.Stop(1);
             CSnd.SetVol(15, 0);
             CSnd.SetVol(14, 0);
@@ -571,7 +604,7 @@ static void PauseProcess() {
             CSnd.SetVol(12, 0);
             Pause = 1;
             endflg = 0;
-            PauseFrame = Cam[SceneNp].motion_type.state.time;
+            PauseFrame = Cam__2[SceneNp__2].motion_type.state.time;
         } else if (Pause == 1) {
             if (GamePad.Down(32)) {
                 endflg = 1;
@@ -579,7 +612,7 @@ static void PauseProcess() {
                 CSnd.SetVol(14, 256);
                 CSnd.SetVol(13, 256);
                 CSnd.SetVol(12, 256);
-                if (CScript.scene)
+                if (CScript__2.scene)
                     CSnd.SQ_RePlay(1);
                 if (OpBgmSqPort != -1)
                     CSnd.SQ_RePlay(0);
@@ -596,19 +629,35 @@ static void PauseProcess() {
     }
 }
 
+/**
+ * Stops the opening scene's active sounds.
+ *
+ * @mangled SoundStop__Fv
+ * @address 0x1DAFED0
+ * @size 0x40
+ * @unknownret
+ */
 static void SoundStop() {
     SndStopAllSe();
     CSnd.Stop(0);
     CSnd.StopVoice(0);
 }
 
+/**
+ * Processes input while the movie is waiting for a key.
+ *
+ * @mangled WaitKeyProcess__Fv
+ * @address 0x1DAFF10
+ * @size 0x17C
+ * @unknownret
+ */
 static void WaitKeyProcess() {
     static int flg = 0;
     static int cnt = 0;
 
-    if (CScript.mes_wait) {
+    if (CScript__2.mes_wait) {
         if (!flg) {
-            PauseFrame = Cam[SceneNp].motion_type.state.time;
+            PauseFrame = Cam__2[SceneNp__2].motion_type.state.time;
             flg = 1;
         }
         if (Pause)
@@ -619,7 +668,7 @@ static void WaitKeyProcess() {
                 Mes1.text_rate_set = 1.0f;
                 Mes1.GoNextPage();
             } else if (Mes1.State() == 3) {
-                CScript.mes_wait = 0;
+                CScript__2.mes_wait = 0;
                 flg = 0;
             } else {
                 Mes1.text_rate = 0;
@@ -634,67 +683,75 @@ static void WaitKeyProcess() {
     }
 }
 
+/**
+ * Dispatches motion processing for the active opening scene.
+ *
+ * @mangled MotionProcess__Fv
+ * @address 0x1DB0090
+ * @size 0x3C0
+ * @unknownret
+ */
 static void MotionProcess() {
-    switch (CScript.fade) {
+    switch (CScript__2.fade) {
         case 1:
-            DispFade.FadeInStart(CScript.fade_speed, 0);
-            CScript.fade = 0;
+            DispFade.FadeInStart(CScript__2.fade_speed, 0);
+            CScript__2.fade = 0;
             break;
         case 2:
-            DispFade.FadeOutStart(CScript.fade_speed, 0);
-            CScript.fade = 0;
+            DispFade.FadeOutStart(CScript__2.fade_speed, 0);
+            CScript__2.fade = 0;
             break;
         case 3:
-            DispFade.FadeInStart(CScript.fade_speed, 1);
-            CScript.fade = 0;
+            DispFade.FadeInStart(CScript__2.fade_speed, 1);
+            CScript__2.fade = 0;
             break;
         case 4:
-            DispFade.FadeOutStart(CScript.fade_speed, 1);
-            CScript.fade = 0;
+            DispFade.FadeOutStart(CScript__2.fade_speed, 1);
+            CScript__2.fade = 0;
             break;
     }
 
-    if (CScript.motion_req) {
+    if (CScript__2.motion_req) {
         if (!ReadBGSync()) {
-            Op_MotionInfo.start = CScript.motion_start;
-            Op_MotionInfo.end = CScript.motion_end;
-            Op_MotionInfo.speed = CScript.motion_step;
-            CScript.motion_req = 0;
+            Op_MotionInfo.start = CScript__2.motion_start;
+            Op_MotionInfo.end = CScript__2.motion_end;
+            Op_MotionInfo.speed = CScript__2.motion_step;
+            CScript__2.motion_req = 0;
             if (SceneSw == 1) {
-                SceneNp++;
-                if (SceneNp > 2)
-                    SceneNp = 0;
+                SceneNp__2++;
+                if (SceneNp__2 > 2)
+                    SceneNp__2 = 0;
                 SceneFlg = 0;
             }
             SceneSw = 1;
-            Cam[SceneNp].motion_type.state.time = (float) CScript.motion_start;
+            Cam__2[SceneNp__2].motion_type.state.time = (float) CScript__2.motion_start;
         } else {
             while (ReadBGSync())
                 ;
         }
     }
 
-    if (Cam[SceneNp].motion_type.state.time > (float) (CScript.motion_end - 1)) {
-        Cam[SceneNp].motion_type.state.time = (float) (CScript.motion_end - 1);
+    if (Cam__2[SceneNp__2].motion_type.state.time > (float) (CScript__2.motion_end - 1)) {
+        Cam__2[SceneNp__2].motion_type.state.time = (float) (CScript__2.motion_end - 1);
     }
     if (CameraMode == 0) {
-        Cam[SceneNp].motion_type.state.camera = &OP_MainCamera;
-        if (PauseFrame > (float) (CScript.motion_end - 1)) {
-            PauseFrame = (float) (CScript.motion_end - 1);
+        Cam__2[SceneNp__2].motion_type.state.camera = &OP_MainCamera;
+        if (PauseFrame > (float) (CScript__2.motion_end - 1)) {
+            PauseFrame = (float) (CScript__2.motion_end - 1);
         }
         if (Pause) {
-            Cam[SceneNp].motion_type.state.time = PauseFrame - CScript.motion_step;
+            Cam__2[SceneNp__2].motion_type.state.time = PauseFrame - CScript__2.motion_step;
         }
-        if (CScript.mes_wait == 1) {
-            Cam[SceneNp].motion_type.state.time = PauseFrame - CScript.motion_step;
+        if (CScript__2.mes_wait == 1) {
+            Cam__2[SceneNp__2].motion_type.state.time = PauseFrame - CScript__2.motion_step;
         }
-        SetMotionEX(Cam[SceneNp].frame, &Cam[SceneNp].motion_type, &Op_MotionInfo,
-                    &Cam[SceneNp].motion_type.state, frame_info_cam);
+        SetMotionEX(Cam__2[SceneNp__2].frame, &Cam__2[SceneNp__2].motion_type, &Op_MotionInfo,
+                    &Cam__2[SceneNp__2].motion_type.state, frame_info_cam);
         LoadSceneBG();
     }
 
     if (!Pause) {
-        switch (CScript.scene) {
+        switch (CScript__2.scene) {
             case 0:
                 OpA_MotionProcess();
                 break;
@@ -729,47 +786,55 @@ static void MotionProcess() {
     }
 }
 
+/**
+ * Dispatches sound processing for the active opening scene.
+ *
+ * @mangled SoundProcess__Fv
+ * @address 0x1DB0450
+ * @size 0x330
+ * @unknownret
+ */
 static void SoundProcess() {
-    if (CScript.se_stop == 0) {
-        if (CScript.se_voice != 0) {
-            switch (CScript.se_kind) {
+    if (CScript__2.se_stop == 0) {
+        if (CScript__2.se_voice != 0) {
+            switch (CScript__2.se_kind) {
                 case 0:
-                    OpPlayVolSE(14, CScript.se_no, CScript.se_voice, 1.0f);
+                    OpPlayVolSE(14, CScript__2.se_no, CScript__2.se_voice, 1.0f);
                     break;
                 case 1:
-                    OpPlayVolSE(12, CScript.se_no, CScript.se_voice, 1.0f);
+                    OpPlayVolSE(12, CScript__2.se_no, CScript__2.se_voice, 1.0f);
                     break;
             }
-            CScript.se_voice = 0;
+            CScript__2.se_voice = 0;
         }
     } else {
-        switch (CScript.se_kind) {
+        switch (CScript__2.se_kind) {
             case 0:
-                CSnd.SE_Stop(14, CScript.se_no, CScript.se_voice, 0);
+                CSnd.SE_Stop(14, CScript__2.se_no, CScript__2.se_voice, 0);
                 break;
             case 1:
-                CSnd.SE_Stop(12, CScript.se_no, CScript.se_voice, 0);
+                CSnd.SE_Stop(12, CScript__2.se_no, CScript__2.se_voice, 0);
                 break;
         }
-        CScript.se_stop = 0;
+        CScript__2.se_stop = 0;
     }
 
-    if (CScript.bgm_fade != 0) {
-        switch (CScript.se_kind) {
+    if (CScript__2.bgm_fade != 0) {
+        switch (CScript__2.se_kind) {
             case -1:
-                CSnd.Fade(0, (float) CScript.bgm_fade / 2.0f, CScript.se_fade_time);
-                CSnd.Fade(1, (float) CScript.bgm_fade, CScript.se_fade_time);
-                CSnd.Fade(2, (float) CScript.bgm_fade, CScript.se_fade_time);
-                CSnd.Fade(15, (float) CScript.bgm_fade, CScript.se_fade_time);
-                CSnd.Fade(14, (float) CScript.bgm_fade, CScript.se_fade_time);
-                CSnd.Fade(13, (float) CScript.bgm_fade, CScript.se_fade_time);
-                CSnd.Fade(12, (float) CScript.bgm_fade, CScript.se_fade_time);
+                CSnd.Fade(0, (float) CScript__2.bgm_fade / 2.0f, CScript__2.se_fade_time);
+                CSnd.Fade(1, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(2, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(15, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(14, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(13, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
+                CSnd.Fade(12, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
                 break;
         }
-        CScript.bgm_fade = 0;
+        CScript__2.bgm_fade = 0;
     }
 
-    switch (CScript.scene) {
+    switch (CScript__2.scene) {
         case 0:
             OpA_SoundProcess();
             break;
@@ -803,6 +868,14 @@ static void SoundProcess() {
     }
 }
 
+/**
+ * Dispatches drawing for the active opening scene.
+ *
+ * @mangled DrawProcess__Fv
+ * @address 0x1DB0780
+ * @size 0x35C
+ * @unknownret
+ */
 static void DrawProcess() {
     sceVu0FVECTOR position;
     sceVu0FMATRIX camera;
@@ -813,12 +886,12 @@ static void DrawProcess() {
     OP_MainCamera.GetPos(position);
     SndSetCamera(&OP_MainCamera);
     OP_MainCamera.GetCameraMatrix(camera);
-    if (CScript.scene == 5 || CScript.scene == 8) {
+    if (CScript__2.scene == 5 || CScript__2.scene == 8) {
         OP_MainCamera.Step(1);
     }
     sceVu0UnitMatrix(unit);
     sceVu0MulMatrix(view, unit, camera);
-    if (CScript.scene != 1) {
+    if (CScript__2.scene != 1) {
         MGSetViewMatrix(view, position);
     } else {
         MGSetViewMatrix(view);
@@ -826,7 +899,7 @@ static void DrawProcess() {
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);
 
-    switch (CScript.scene) {
+    switch (CScript__2.scene) {
         case 0:
             OpA_DrawProcess();
             break;
@@ -881,33 +954,41 @@ static void DrawProcess() {
     DispFade.FadeOut(Vif1Packet);
 }
 
+/**
+ * Draws opening subtitles and pause messages.
+ *
+ * @mangled DrawMess__Fv
+ * @address 0x1DB0AE0
+ * @size 0x3CC
+ * @unknownret
+ */
 static void DrawMess() {
     int offset;
     int center;
 
-    if (CScript.scene > 6)
+    if (CScript__2.scene > 6)
         Mes1.auto_page = 0;
-    if (CScript.mes_no == 0)
+    if (CScript__2.mes_no == 0)
         return;
 
     TexManager.ReloadTexture(Vif1Packet, Mes1.tex_block);
 
     static int no = 0;
 
-    if (CScript.mes_no != no) {
-        no = CScript.mes_no;
+    if (CScript__2.mes_no != no) {
+        no = CScript__2.mes_no;
         Mes1MakeFlg = 1;
     } else {
         if (!Pause) {
-            if (CScript.mes_timer > CScript.motion_step) {
-                CScript.mes_timer -= CScript.motion_step;
+            if (CScript__2.mes_timer > CScript__2.motion_step) {
+                CScript__2.mes_timer -= CScript__2.motion_step;
             } else {
-                CScript.mes_no = 0;
+                CScript__2.mes_no = 0;
             }
         }
         Mes1.end_mark = 0;
-        if (CScript.mes_wait) {
-            CScript.mes_timer = 2.0f * CScript.motion_step;
+        if (CScript__2.mes_wait) {
+            CScript__2.mes_timer = 2.0f * CScript__2.motion_step;
             if (Mes1.State() == 3 || (Mes1.auto_page == 0 && Mes1.State() == 5)) {
                 static int cnt = 0;
 
@@ -925,25 +1006,25 @@ static void DrawMess() {
         }
     }
 
-    Mes1.auto_page_wait = CScript.mes_fuchi;
-    Mes1.text_x = CScript.mes_x;
-    Mes1.text_y = CScript.mes_y;
-    if (CScript.mes_tail_x == 0) {
+    Mes1.auto_page_wait = CScript__2.mes_fuchi;
+    Mes1.text_x = CScript__2.mes_x;
+    Mes1.text_y = CScript__2.mes_y;
+    if (CScript__2.mes_tail_x == 0) {
         Mes1.tail_length = 0;
-        Mes1.grow_x = CScript.mes_x;
-        Mes1.grow_y = CScript.mes_y;
+        Mes1.grow_x = CScript__2.mes_x;
+        Mes1.grow_y = CScript__2.mes_y;
     } else {
         Mes1.tail_length = 64;
-        Mes1.tail_to_x = CScript.mes_tail_x;
-        Mes1.tail_to_y = CScript.mes_tail_y;
-        Mes1.grow_x = CScript.mes_x;
-        Mes1.grow_y = CScript.mes_y;
+        Mes1.tail_to_x = CScript__2.mes_tail_x;
+        Mes1.tail_to_y = CScript__2.mes_tail_y;
+        Mes1.grow_x = CScript__2.mes_x;
+        Mes1.grow_y = CScript__2.mes_y;
     }
 
     center = Mes1.win_x + (Mes1.win_width >> 1);
     offset = (center - Mes1.tail_to_x) >> 2;
     Mes1.tail_x = center - offset;
-    if (CScript.mes_tail_x != 0) {
+    if (CScript__2.mes_tail_x != 0) {
         if (offset > 0) {
             Mes1.tail_length += offset / 3;
         } else {
@@ -957,7 +1038,7 @@ static void DrawMess() {
     }
     Mes1.fade_speed = 0.1f;
     if (Mes1MakeFlg) {
-        Mes1MakeFlg = Mes1.MakeMesWin(CScript.mes_no);
+        Mes1MakeFlg = Mes1.MakeMesWin(CScript__2.mes_no);
     }
     Mes1.Step();
     Mes1.AbsFukidashiIn();
@@ -1154,22 +1235,6 @@ void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float
                   float near_fog);
 void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
 void MGSetAmbient(float *color);
-
-extern CDataAlloc2<1> MapDataBuffer;
-extern sceVu0FVECTOR ambientlight;
-extern sceVu0FMATRIX light;
-extern sceVu0FMATRIX lightcolor;
-extern CMap OP_BuildingMap;
-extern CMap OP_BuildingMap2;
-extern CMap OP_GroundMap;
-extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
-extern int OP_AnimeSeqRot;
-extern int OP_FireList;
-extern sceVu0FVECTOR OP_FirePosition[96];
-extern float OP_FireScale[96];
-extern int OP_FireFlg[96];
-extern CFrameVu1 *OP_GroundCol;
-extern CFrameVu1 *OP_SkyFrame;
 
 /* How far the scene's fog reaches and what colour it is. The four rates are the near and far
    planes and the two densities the renderer takes; the editor's own pair below shadows them and is
@@ -2142,10 +2207,17 @@ void OPMdsLoad() {
     }
 }
 
-/* The run of separators standing before a token. The loader turns every line ending into a pair of
-   NULs before anything reads the text, so a NUL is a separator here and a comment is the run up to
-   the next one; the ideographic space is two bytes, which is why the skip is a loop over the file
-   rather than a walk over one kind of byte. */
+/**
+ * The run of separators standing before a token. The loader turns every line ending into a pair of
+ * NULs before anything reads the text, so a NUL is a separator here and a comment is the run up to
+ * the next one; the ideographic space is two bytes, which is why the skip is a loop over the file
+ * rather than a walk over one kind of byte.
+ *
+ * @mangled skipSpace__FPci
+ * @address 0x1DB4830
+ * @size 0x110
+ * @unknownret
+ */
 static int skipSpace(char *buf, int pos) {
     int skip;
 
@@ -2181,11 +2253,18 @@ static int skipSpace(char *buf, int pos) {
     return teigiFileSize;
 }
 
-/* One command's arguments, described by the row the caller passes: its own number, how many
-   arguments it takes, and one type per argument. A type-0 argument is a quoted string and lands in
-   the string buffer; the other two are numbers and land in the value buffer beside the command
-   number, and differ only in whether a comma has to stand in front. Anything the forms do not
-   cover hands back -1. */
+/**
+ * One command's arguments, described by the row the caller passes: its own number, how many
+ * arguments it takes, and one type per argument. A type-0 argument is a quoted string and lands in
+ * the string buffer; the other two are numbers and land in the value buffer beside the command
+ * number, and differ only in whether a comma has to stand in front. Anything the forms do not
+ * cover hands back -1.
+ *
+ * @mangled checkArg__FPciPi
+ * @address 0x1DB4940
+ * @size 0x574
+ * @unknownret
+ */
 static int checkArg(char *buf, int pos, int *command) {
     int i;
     int at;

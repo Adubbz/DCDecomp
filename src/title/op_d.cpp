@@ -26,6 +26,13 @@
 #include "visual.hpp"
 #include "wind.hpp"
 
+#include "main.hpp"
+#include "mglib.hpp"
+#include "title/opening.hpp"
+#include "title/op_a.hpp"
+#include "title/op_b.hpp"
+#include "title/op_d.hpp"
+#include "camerafollow.hpp"
 /* Spelled here rather than reached through a header because the image holds it only as an
    anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
 #define PI 3.14159265358979323846
@@ -143,25 +150,6 @@ void DepthOfField(float *dist, int level, int alpha, int blur);
 int SndSyncBG();
 void SndBgmPlay(int no);
 
-extern sceVif1Packet *Vif1Packet;
-extern sceGifTag GiftagAD;
-extern sceGsAlpha mgAlpha;
-extern CCharacter Chara[23];
-extern CCharacter Cam[3];
-extern char CharaTex[23];
-extern CDataAlloc2<1> CharaDataBuffer[7];
-extern CDataAlloc2<1> MapDataBuffer;
-extern CCamera OP_MainCamera;
-extern CFrame *OP_CharaFrame;
-extern CMapObject OP_NornMapObj[76];
-extern int OP_FireList;
-extern RenderInfo mgRenderInfo;
-extern sceVu0FVECTOR ambientlight;
-extern sceVu0FMATRIX light;
-extern sceVu0FMATRIX lightcolor;
-extern int SceneNp;
-extern int Pause;
-
 static void SkyColor(CFrameVu1 *frame);
 static void EffectAtraPrizum();
 static void RollLight(float *target);
@@ -239,7 +227,7 @@ void FaceChange(int no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face[no].eye = CScript.obj[no].eye;
+    face[no].eye = CScript__2.obj[no].eye;
 
     CRect<int> eye(0, face[no].strip_bottom - face[no].eye_height * (face[no].eye + 1), 128,
                    face[no].eye_height);
@@ -248,21 +236,21 @@ void FaceChange(int no) {
                   128 - face[no].eye_height - face[no].eye_bottom, 0);
 
     if (!Pause) {
-        if (CScript.obj[no].mouth_time >= CScript.motion_step) {
-            CScript.obj[no].mouth_time -= CScript.motion_step;
+        if (CScript__2.obj[no].mouth_time >= CScript__2.motion_step) {
+            CScript__2.obj[no].mouth_time -= CScript__2.motion_step;
 
-            if (CScript.obj[no].talk) {
-                if ((int) (100.0f * CScript.obj[no].mouth_time) % 6 == 0) {
-                    CScript.obj[no].mouth = rand() % 4;
+            if (CScript__2.obj[no].talk) {
+                if ((int) (100.0f * CScript__2.obj[no].mouth_time) % 6 == 0) {
+                    CScript__2.obj[no].mouth = rand() % 4;
                 }
             }
         } else {
-            CScript.obj[no].mouth = 0;
-            CScript.obj[no].talk = 0;
+            CScript__2.obj[no].mouth = 0;
+            CScript__2.obj[no].talk = 0;
         }
     }
 
-    face[no].mouth = CScript.obj[no].mouth;
+    face[no].mouth = CScript__2.obj[no].mouth;
 
     CRect<int> mouth(128,
                      face[no].strip_bottom - face[no].mouth_height * (face[no].mouth + 1),
@@ -287,7 +275,7 @@ void OpD_LoadDataBG() {
     while (ReadBGSync())
         ;
     LoadFileBG("opdat/norn4/seirei.pak", (u_long128 *) read_buffer, 0);
-    CScript.load_no = -1;
+    CScript__2.load_no = -1;
 }
 
 void OpD_LoadDataBG2() {
@@ -297,7 +285,7 @@ void OpD_LoadDataBG2() {
         ;
     LoadFileBG("opdat/norn4/seirei2.pak", (u_long128 *) read_buffer, &size);
     SndBgmLoadBG(0, (u_int *) ((u_long128 *) read_buffer + (size >> 4) + 1), 0);
-    CScript.load_no = -1;
+    CScript__2.load_no = -1;
 }
 
 /* The set-up for the first of the scene's two halves, the spirit king's hall. Every texture block
@@ -365,7 +353,7 @@ void OpD_InitProcess() {
     hall.SetPosition(CVector3_f_(0.0f, 0.0f, 0.0f));
     hall.SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
     Hamon[0] = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0402.mds", 0),
-                           &CharaDataBuffer[6], 2, 0, 0);
+                           &CharaDataBuffer__2[6], 2, 0, 0);
     Hamon[1] = Hamon[2] = Hamon[3] = Hamon[0];
     HScale[0] = 0.0f;
     HScale[1] = -0.8f;
@@ -375,38 +363,38 @@ void OpD_InitProcess() {
     OP_FireList = 0;
     OPAnalyz("opdat/seirei.cfg");
     OPMdsLoad();
-    CharaDataBuffer[6].used = 0;
-    Chara[8].LoadPackData(read_buffer, "05c01d.cfg", &CharaDataBuffer[6], 0);
+    CharaDataBuffer__2[6].used = 0;
+    Chara__3[8].LoadPackData(read_buffer, "05c01d.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr8;
 
     attr8.unk_08 = 0;
-    Chara[8].frame->SetAttr(attr8, 1, 4);
-    Chara[8].motion_type.state.time = 60.0f;
-    Chara[8].motion_type.state.blend_step = 0.05f;
-    Chara[8].motion_type.state.motion_no = 0;
-    Chara[8].motion_type.state.playing_no = 0;
-    CharaTex[8] = 1;
-    Chara[11].LoadPackData(read_buffer, "05c01e.cfg", &CharaDataBuffer[6], 0);
+    Chara__3[8].frame->SetAttr(attr8, 1, 4);
+    Chara__3[8].motion_type.state.time = 60.0f;
+    Chara__3[8].motion_type.state.blend_step = 0.05f;
+    Chara__3[8].motion_type.state.motion_no = 0;
+    Chara__3[8].motion_type.state.playing_no = 0;
+    CharaTex__2[8] = 1;
+    Chara__3[11].LoadPackData(read_buffer, "05c01e.cfg", &CharaDataBuffer__2[6], 0);
     attr8.unk_08 = 0;
-    Chara[11].frame->SetAttr(attr8, 1, 4);
-    Chara[11].motion_type.state.time = 75.0f;
-    Chara[11].motion_type.state.blend_step = 0.05f;
-    Chara[11].motion_type.state.motion_no = 1;
-    Chara[11].motion_type.state.playing_no = 1;
-    CharaTex[11] = 1;
-    Chara[21].LoadPackData(read_buffer, "05c03c.cfg", &CharaDataBuffer[6], 0);
+    Chara__3[11].frame->SetAttr(attr8, 1, 4);
+    Chara__3[11].motion_type.state.time = 75.0f;
+    Chara__3[11].motion_type.state.blend_step = 0.05f;
+    Chara__3[11].motion_type.state.motion_no = 1;
+    Chara__3[11].motion_type.state.playing_no = 1;
+    CharaTex__2[11] = 1;
+    Chara__3[21].LoadPackData(read_buffer, "05c03c.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr21;
 
     attr21.unk_08 = 0;
-    Chara[21].frame->SetAttr(attr21, 1, 4);
-    Chara[21].motion_type.state.time = 1.0f;
-    Chara[21].motion_type.state.blend_step = 0.05f;
-    Chara[21].motion_type.state.motion_no = 0;
-    Chara[21].motion_type.state.playing_no = 0;
-    CharaTex[21] = 2;
-    Effect.LoadPackData(read_buffer, "atrpeff1.cfg", &CharaDataBuffer[6], 0);
+    Chara__3[21].frame->SetAttr(attr21, 1, 4);
+    Chara__3[21].motion_type.state.time = 1.0f;
+    Chara__3[21].motion_type.state.blend_step = 0.05f;
+    Chara__3[21].motion_type.state.motion_no = 0;
+    Chara__3[21].motion_type.state.playing_no = 0;
+    CharaTex__2[21] = 2;
+    Effect.LoadPackData(read_buffer, "atrpeff1.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attre;
 
@@ -444,7 +432,7 @@ void OpD_InitProcess() {
     TexManager.LoadTextureBlock(-1, img, read_buffer);
     SeireiKing.Initialize();
     amb3 = 0;
-    CScript.init_no = 0;
+    CScript__2.init_no = 0;
 }
 
 /* The set-up for the second half, the meadow the girl walks out into. Ten models are placed from a
@@ -536,25 +524,25 @@ void OpD_InitProcess2() {
                                        (float) (PI * map[i - 1].rotation[2] / 180)));
     }
 
-    Chara[22].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer[6], 0);
+    Chara__3[22].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr22;
 
     attr22.unk_08 = 0;
-    Chara[22].frame->SetAttr(attr22, 1, 4);
-    Chara[22].motion_type.state.time = 1.0f;
-    Chara[22].motion_type.state.blend_step = 0.05f;
-    Chara[22].motion_type.state.motion_no = 0;
-    Chara[22].motion_type.state.playing_no = 0;
-    CharaTex[22] = 3;
-    Chara[5].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer[6], 0);
+    Chara__3[22].frame->SetAttr(attr22, 1, 4);
+    Chara__3[22].motion_type.state.time = 1.0f;
+    Chara__3[22].motion_type.state.blend_step = 0.05f;
+    Chara__3[22].motion_type.state.motion_no = 0;
+    Chara__3[22].motion_type.state.playing_no = 0;
+    CharaTex__2[22] = 3;
+    Chara__3[5].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer__2[6], 0);
     attr22.unk_08 = 0;
-    Chara[5].frame->SetAttr(attr22, 1, 4);
-    Chara[5].motion_type.state.time = 1.0f;
-    Chara[5].motion_type.state.blend_step = 0.05f;
-    Chara[5].motion_type.state.motion_no = 0;
-    Chara[5].motion_type.state.playing_no = 0;
-    CharaTex[5] = 3;
+    Chara__3[5].frame->SetAttr(attr22, 1, 4);
+    Chara__3[5].motion_type.state.time = 1.0f;
+    Chara__3[5].motion_type.state.blend_step = 0.05f;
+    Chara__3[5].motion_type.state.motion_no = 0;
+    Chara__3[5].motion_type.state.playing_no = 0;
+    CharaTex__2[5] = 3;
     CSnd.SetReverb(0, 4, 30);
     CSnd.SetReverb(1, 2, 5);
     CSnd.LoadSoundFileFromPack("o04b.txt", read_buffer);
@@ -562,12 +550,19 @@ void OpD_InitProcess2() {
     CSnd.SetVol(14, 256);
     CSnd.SetVol(13, 256);
     CSnd.SetVol(12, 256);
-    CScript.init_no = 0;
+    CScript__2.init_no = 0;
 }
 
-/* The sky's own colours, written into the model rather than lit: the dome is thirty-two vertices
-   around and the two colours alternate two at a time, which is what paints the band the sun sits
-   in. Setting the frame's own attribute afterwards is what makes the model draw with them. */
+/**
+ * The sky's own colours, written into the model rather than lit: the dome is thirty-two vertices
+ * around and the two colours alternate two at a time, which is what paints the band the sun sits
+ * in. Setting the frame's own attribute afterwards is what makes the model draw with them.
+ *
+ * @mangled SkyColor__FP9CFrameVu1
+ * @address 0x1DC4F30
+ * @size 0x194
+ * @unknownret
+ */
 static void SkyColor(CFrameVu1 *frame) {
     if (frame) {
         CVisualVu1 *visual = frame->GetVisual();
@@ -618,27 +613,27 @@ void OpD_MotionProcess() {
         register float zero = 0.0f;
 
         for (int i = 0; i < 23; i++) {
-            if (CScript.obj[i].disp) {
-                if (CScript.obj[i].motion_end != -1) {
-                    if (Chara[i].motion_type.state.time >
-                        (float) (Chara[i].motion_type.motion_info[CScript.obj[i].motion].end - 1)) {
-                        CScript.obj[i].motion = CScript.obj[i].motion_end;
-                        CScript.obj[i].motion_end = -1;
+            if (CScript__2.obj[i].disp) {
+                if (CScript__2.obj[i].motion_end != -1) {
+                    if (Chara__3[i].motion_type.state.time >
+                        (float) (Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].end - 1)) {
+                        CScript__2.obj[i].motion = CScript__2.obj[i].motion_end;
+                        CScript__2.obj[i].motion_end = -1;
                     }
                 }
 
-                Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
+                Chara__3[i].motion_type.state.blend_step = CScript__2.obj[i].step;
 
-                if (CScript.obj[i].step == 1.0f) {
-                    if (CScript.obj[i].motion != Chara[i].motion_no) {
-                        Chara[i].motion_type.state.time =
-                            (float) Chara[i].motion_type.motion_info[CScript.obj[i].motion].start;
+                if (CScript__2.obj[i].step == 1.0f) {
+                    if (CScript__2.obj[i].motion != Chara__3[i].motion_no) {
+                        Chara__3[i].motion_type.state.time =
+                            (float) Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].start;
                     }
                 }
 
-                Chara[i].motion_no = CScript.obj[i].motion;
-                Chara[i].flags = 0;
-                Chara[i].motion_speed = -1.0f;
+                Chara__3[i].motion_no = CScript__2.obj[i].motion;
+                Chara__3[i].flags = 0;
+                Chara__3[i].motion_speed = -1.0f;
             }
         }
 
@@ -647,16 +642,16 @@ void OpD_MotionProcess() {
         sceVu0FMATRIX matrix;
 
         for (int i = 0; i < 23; i++) {
-            if (CScript.obj[i].disp) {
-                CFrame *frame = Cam[SceneNp].frame->SearchFrame(name[i]);
+            if (CScript__2.obj[i].disp) {
+                CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(name[i]);
 
                 if (frame) {
                     frame->GetLWMatrix(matrix);
-                    Chara[i].SetRotation(zero, atan2f(matrix[2][0], matrix[2][2]), zero);
+                    Chara__3[i].SetRotation(zero, atan2f(matrix[2][0], matrix[2][2]), zero);
                     float x = matrix[3][0];
                     float y = matrix[3][1];
                     float z = matrix[3][2];
-                    Chara[i].SetPosition(x, y, z);
+                    Chara__3[i].SetPosition(x, y, z);
                 }
             }
         }
@@ -664,7 +659,7 @@ void OpD_MotionProcess() {
 
     sceVu0FVECTOR dir;
 
-    if (CScript.camera_start < 115) {
+    if (CScript__2.camera_start < 115) {
         dir[0] = 0.0f;
         dir[2] = 0.0f;
         dir[1] = 0.0f;
@@ -682,28 +677,28 @@ void OpD_MotionProcess() {
 
     int no;
 
-    if (CScript.camera_start > 111) {
+    if (CScript__2.camera_start > 111) {
         no = 11;
     } else {
         no = 8;
     }
 
-    Chara[no].unk_C98 = (int) &Wind;
+    Chara__3[no].unk_C98 = (int) &Wind;
     Wind.Step();
 
     static int camera = 0;
 
-    if (camera != CScript.camera_start) {
-        camera = CScript.camera_start;
+    if (camera != CScript__2.camera_start) {
+        camera = CScript__2.camera_start;
 
         switch (camera) {
             case 101:
             case 104:
             case 123:
-                Chara[no].ClothStep(-1);
+                Chara__3[no].ClothStep(-1);
 
                 for (int i = 0; i < 20; i++) {
-                    Chara[no].ClothStep(0);
+                    Chara__3[no].ClothStep(0);
                 }
                 break;
 
@@ -712,10 +707,10 @@ void OpD_MotionProcess() {
             case 112:
             case 115:
             case 125:
-                Chara[no].ClothStep(-1);
+                Chara__3[no].ClothStep(-1);
 
                 for (int i = 0; i < 10; i++) {
-                    Chara[no].ClothStep(0);
+                    Chara__3[no].ClothStep(0);
                 }
                 break;
         }
@@ -731,7 +726,7 @@ void OpD_SoundProcess() {
     {
         static int se = 0;
 
-        if (CScript.camera_start == 111) {
+        if (CScript__2.camera_start == 111) {
             if (!se) {
                 OpPlayVolSE(14, 40, 42, 1.0f);
                 OpPlayVolSE(14, 40, 44, 1.0f);
@@ -750,8 +745,8 @@ void OpD_SoundProcess() {
     {
         static int mus = 0;
 
-        if (CScript.camera_start == 101) {
-            if (CScript.mes_no == 101) {
+        if (CScript__2.camera_start == 101) {
+            if (CScript__2.mes_no == 101) {
                 if (!mus) {
                     OpBgmPlay();
                     CSnd.SQ_Play(1, 0);
@@ -766,7 +761,7 @@ void OpD_SoundProcess() {
     {
         static int se = 0;
 
-        if (CScript.camera_start == 110) {
+        if (CScript__2.camera_start == 110) {
             if (!se) {
                 CSnd.Fade(0, -1.0f, 0);
                 se = 1;
@@ -779,7 +774,7 @@ void OpD_SoundProcess() {
     {
         static int mus = 0;
 
-        if (CScript.camera_start == 115) {
+        if (CScript__2.camera_start == 115) {
             if (!mus) {
                 OpBgmPlay();
                 CSnd.SQ_Play(1, 0);
@@ -793,7 +788,7 @@ void OpD_SoundProcess() {
     {
         static int se = 0;
 
-        if (CScript.camera_start == 118) {
+        if (CScript__2.camera_start == 118) {
             if (!se) {
                 CSnd.Fade(0, -1.0f, 0);
                 se = 1;
@@ -806,7 +801,7 @@ void OpD_SoundProcess() {
     {
         static int mus = 0;
 
-        if (CScript.camera_start == 123) {
+        if (CScript__2.camera_start == 123) {
             if (!mus) {
                 SndStopAllSe();
                 CSnd.Stop(0);
@@ -831,13 +826,13 @@ void OpD_SoundProcess() {
         }
     }
 
-    if (CScript.obj[21].disp) {
+    if (CScript__2.obj[21].disp) {
         static int wait = 0;
         sceVu0FVECTOR position;
         float frame;
 
-        sceVu0CopyVector(position, Chara[21].pos);
-        frame = (int) Chara[21].motion_type.state.time;
+        sceVu0CopyVector(position, Chara__3[21].pos);
+        frame = (int) Chara__3[21].motion_type.state.time;
 
         if (wait == 0) {
             if (frame > 43.0f && frame < 45.0f) {
@@ -858,9 +853,9 @@ void OpD_SoundProcess() {
    are drawn a second time under a light of their own. Then the shadows, the actors, the spirit
    king's effect, and last the three screen fades and the caption. */
 void OpD_DrawProcess() {
-    OP_CharaFrame = Cam[SceneNp].frame;
+    OP_CharaFrame__2 = Cam__2[SceneNp__2].frame;
 
-    switch (CScript.camera_start) {
+    switch (CScript__2.camera_start) {
         case 106:
         case 107:
         case 108:
@@ -883,10 +878,10 @@ void OpD_DrawProcess() {
             break;
     }
 
-    if (CScript.camera_start < 115) {
+    if (CScript__2.camera_start < 115) {
         TexManager.ReloadTexture(Vif1Packet, 11);
 
-        if (CScript.sprite == 1 && amb3 < 127) {
+        if (CScript__2.sprite == 1 && amb3 < 127) {
             amb3 = amb3 + 1;
         }
 
@@ -920,7 +915,7 @@ void OpD_DrawProcess() {
             }
         }
 
-        if (CScript.camera_start > 119) {
+        if (CScript__2.camera_start > 119) {
             CMapObject &flower = OP_NornMapObj[7];
 
             flower.FrameObjectOnOff("flo_S", 0);
@@ -937,12 +932,12 @@ void OpD_DrawProcess() {
             MGSetAmbient(ambientlight);
         }
 
-        if (CScript.camera_start == 124) {
+        if (CScript__2.camera_start == 124) {
             LensFreaProcess();
         }
     }
 
-    if (CScript.camera_start < 106) {
+    if (CScript__2.camera_start < 106) {
         HamonProcess();
     }
 
@@ -953,52 +948,52 @@ void OpD_DrawProcess() {
     DepthOfField(dof, 2, 64, 0);
 
     for (int i = 0; i < 23; i++) {
-        if (i != 22 && i != 5 && CScript.obj[i].disp) {
+        if (i != 22 && i != 5 && CScript__2.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, 23);
             MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buff", -1)->tex0);
 
             if (!Pause) {
-                Chara[i].ShadowStep();
+                Chara__3[i].ShadowStep();
             }
 
-            Chara[i].DrawShadow();
+            Chara__3[i].DrawShadow();
             MGEndDrawShadow(52);
         }
     }
 
     for (int i = 0; i < 23; i++) {
-        if (CScript.obj[i].disp) {
-            TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
+        if (CScript__2.obj[i].disp) {
+            TexManager.ReloadTexture(Vif1Packet, CharaTex__2[i]);
 
             if (!Pause) {
-                Chara[i].Step();
-                Chara[i].ClothStep(0);
+                Chara__3[i].Step();
+                Chara__3[i].ClothStep(0);
             }
 
             if (i == 8 || i == 11) {
                 FaceChangeMovie(i);
             }
 
-            if (CScript.camera_start >= 111 && CScript.camera_start < 114) {
+            if (CScript__2.camera_start >= 111 && CScript__2.camera_start < 114) {
                 sceVu0FVECTOR position;
 
-                sceVu0CopyVector(position, Chara[i].frame->position);
+                sceVu0CopyVector(position, Chara__3[i].frame->position);
                 RollLight(position);
             }
 
-            Chara[i].Draw();
+            Chara__3[i].Draw();
             MGSetPLight(light, lightcolor);
         }
     }
 
-    switch (CScript.camera_start) {
+    switch (CScript__2.camera_start) {
         case 111:
             EffectSeireiKing(2.0f);
             break;
 
         case 118:
         case 119:
-            if (CScript.mes_wait == 0) {
+            if (CScript__2.mes_wait == 0) {
                 EffectSeireiKing(4.0f);
             }
             break;
@@ -1013,13 +1008,13 @@ void OpD_DrawProcess() {
     static int fade2 = 0;
     static int fade3 = 0;
 
-    if (CScript.sprite == 2) {
+    if (CScript__2.sprite == 2) {
         fade1 = 128;
     } else if (fade1 > 0) {
         fade1 = fade1 - 2;
     }
 
-    if (CScript.sprite == 3) {
+    if (CScript__2.sprite == 3) {
         if (fade2 < 128) {
             fade2 = fade2 + 2;
         }
@@ -1027,7 +1022,7 @@ void OpD_DrawProcess() {
         fade2 = fade2 - 2;
     }
 
-    if (CScript.sprite == 4) {
+    if (CScript__2.sprite == 4) {
         if (fade3 < 128) {
             fade3 = fade3 + 2;
         }
@@ -1053,7 +1048,7 @@ void OpD_DrawProcess() {
                     CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 448), (u_char) fade3);
     }
 
-    switch (CScript.sprite) {
+    switch (CScript__2.sprite) {
         case 5:
         case 6:
             TexManager.ReloadTexture(Vif1Packet, 7);
@@ -1062,10 +1057,17 @@ void OpD_DrawProcess() {
     }
 }
 
-/* The prism the spirit king turns above the girl: one model drawn twice, spun opposite ways about
-   the frame the actor carries it on, with the spark trail drawn over the top of it. */
+/**
+ * The prism the spirit king turns above the girl: one model drawn twice, spun opposite ways about
+ * the frame the actor carries it on, with the spark trail drawn over the top of it.
+ *
+ * @mangled EffectAtraPrizum__Fv
+ * @address 0x1DC6540
+ * @size 0x3A8
+ * @unknownret
+ */
 static void EffectAtraPrizum() {
-    if (CScript.obj[11].disp) {
+    if (CScript__2.obj[11].disp) {
         static float rot1 = 0.0f;
         static float rot2 = 0.0f;
 
@@ -1099,12 +1101,12 @@ static void EffectAtraPrizum() {
         setAlphaFlag(Vif1Packet, &alpha);
         TexManager.ReloadTexture(Vif1Packet, 4);
 
-        CFrame *frame = Chara[11].frame->SearchFrame("atrp");
+        CFrame *frame = Chara__3[11].frame->SearchFrame("atrp");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
 
-            if (CScript.camera_start == 112) {
+            if (CScript__2.camera_start == 112) {
                 sceVu0FVECTOR position;
                 sceVu0FMATRIX spin;
 
@@ -1142,25 +1144,32 @@ static void EffectAtraPrizum() {
 
         sceVu0FVECTOR eye;
 
-        sceVu0CopyVector(eye, OP_CharaFrame->position);
+        sceVu0CopyVector(eye, OP_CharaFrame__2->position);
         SeireiKing.Draw2(&OP_MainCamera, matrix[3], eye);
         setAlphaFlag(Vif1Packet, &mgAlpha);
         MGSetAmbient(ambientlight);
     }
 }
 
-/* The light the actors are drawn under while the spirit king is out: a direction aimed from the
-   effect at the actor rather than one fixed for the whole frame, which is what turns the light
-   around a character as the effect moves. The third camera puts the source on a circle of its own
-   instead, so the light sweeps while nothing else does. */
+/**
+ * The light the actors are drawn under while the spirit king is out: a direction aimed from the
+ * effect at the actor rather than one fixed for the whole frame, which is what turns the light
+ * around a character as the effect moves. The third camera puts the source on a circle of its own
+ * instead, so the light sweeps while nothing else does.
+ *
+ * @mangled RollLight__FPf
+ * @address 0x1DC68F0
+ * @size 0x378
+ * @unknownret
+ */
 static void RollLight(float *target) {
-    if (CScript.camera_start >= 111 && CScript.camera_start < 114) {
+    if (CScript__2.camera_start >= 111 && CScript__2.camera_start < 114) {
         CFrame *frame;
 
-        if (CScript.camera_start == 111) {
-            frame = Cam[SceneNp].frame->SearchFrame("hikari");
+        if (CScript__2.camera_start == 111) {
+            frame = Cam__2[SceneNp__2].frame->SearchFrame("hikari");
         } else {
-            frame = Chara[11].frame->SearchFrame("atrp");
+            frame = Chara__3[11].frame->SearchFrame("atrp");
         }
 
         sceVu0FMATRIX matrix;
@@ -1170,7 +1179,7 @@ static void RollLight(float *target) {
 
         frame->GetLWMatrix(matrix);
 
-        switch (CScript.camera_start) {
+        switch (CScript__2.camera_start) {
             case 111:
             case 112:
                 dir[0] = matrix[3][0] - target[0];
@@ -1215,11 +1224,18 @@ static void RollLight(float *target) {
     }
 }
 
-/* The spirit king itself before it has anything to carry: the trail grows from a frame of the
-   camera's own model and is stepped every other tick rather than every one, which is what makes it
-   drift rather than dart. */
+/**
+ * The spirit king itself before it has anything to carry: the trail grows from a frame of the
+ * camera's own model and is stepped every other tick rather than every one, which is what makes it
+ * drift rather than dart.
+ *
+ * @mangled EffectSeireiKing__Ff
+ * @address 0x1DC6C70
+ * @size 0x114
+ * @unknownret
+ */
 static void EffectSeireiKing(float size) {
-    CFrame *frame = Cam[SceneNp].frame->SearchFrame("hikari");
+    CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame("hikari");
 
     if (frame) {
         sceVu0FMATRIX matrix;
@@ -1251,8 +1267,15 @@ static void EffectSeireiKing(float size) {
     }
 }
 
-/* The sun's flare, aimed at a frame inside the sky model the set-up kept aside and drawn only when
-   that point projects onto the screen at all. */
+/**
+ * The sun's flare, aimed at a frame inside the sky model the set-up kept aside and drawn only when
+ * that point projects onto the screen at all.
+ *
+ * @mangled LensFreaProcess__Fv
+ * @address 0x1DC6D90
+ * @size 0xD4
+ * @unknownret
+ */
 static void LensFreaProcess() {
     sceVu0FVECTOR world;
     int screen[4];
@@ -1270,11 +1293,18 @@ static void LensFreaProcess() {
     }
 }
 
-/* The caption over the meadow: a plate the whole screen wide with the pieces of the text cut out of
-   one strip and copied over it, and two counters running underneath that cross-fade one group of
-   pieces into another. Which half of the caption is up is the sprite number the script holds; the
-   trails of stars across it are drawn from positions of their own rather than from the strip, each
-   one steering towards a point off the screen and restarting when it leaves. */
+/**
+ * The caption over the meadow: a plate the whole screen wide with the pieces of the text cut out of
+ * one strip and copied over it, and two counters running underneath that cross-fade one group of
+ * pieces into another. Which half of the caption is up is the sprite number the script holds; the
+ * trails of stars across it are drawn from positions of their own rather than from the strip, each
+ * one steering towards a point off the screen and restarting when it leaves.
+ *
+ * @mangled Setsumei__Fv
+ * @address 0x1DC6E70
+ * @size 0x178C
+ * @unknownret
+ */
 static void Setsumei() {
     static int cnt1 = 0;
     static int cntA = 0;
@@ -1386,7 +1416,7 @@ static void Setsumei() {
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
                 CRect<int>(100, 175, 117, 56), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
 
-    if (CScript.sprite == 5) {
+    if (CScript__2.sprite == 5) {
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
                     CRect<int>(6, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
@@ -1580,17 +1610,24 @@ static void Setsumei() {
                 CRect<int>((int) x2, (int) y2, 210, 206), CRect<int>(0, 0, 210, 206),
                 (u_char) alpha2);
 
-    if (CScript.sprite == 6) {
+    if (CScript__2.sprite == 6) {
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
                     CRect<int>(40, 180, 463, 206), CRect<int>(177, 206, 463, 242),
                     (u_char) fadeA1);
     }
 }
 
-/* The ripples on the hall's floor: one model drawn four times, each at its own scale and a little
-   higher than the last, fading as it grows. The five scales start staggered and then run together,
-   which is why the table has one more entry than there are frames to draw; each ripple plays a
-   sound of its own the first time it grows past nothing. */
+/**
+ * The ripples on the hall's floor: one model drawn four times, each at its own scale and a little
+ * higher than the last, fading as it grows. The five scales start staggered and then run together,
+ * which is why the table has one more entry than there are frames to draw; each ripple plays a
+ * sound of its own the first time it grows past nothing.
+ *
+ * @mangled HamonProcess__Fv
+ * @address 0x1DC8600
+ * @size 0x330
+ * @unknownret
+ */
 static void HamonProcess() {
     sceVu0FVECTOR ambient;
 

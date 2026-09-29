@@ -9,19 +9,13 @@
 #include "mglib.hpp"
 #include "texture.hpp"
 
-/* The letters and their sparks stand in title.cpp, which is where the screen
-   that shows them lives. */
-extern CCharacter Logo;
-extern int Fade4;
-extern CCharacter Spark[9];
+#include "main.hpp"
+#include "title/title.hpp"
+#include "title/titleloop.hpp"
 
 void MGDraw(CFrame *frame);
 void MGSetAmbient(float *color);
 void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-
-extern sceVu0FVECTOR ambientlight;
-extern sceVu0FMATRIX light;
-extern sceVu0FMATRIX lightcolor;
 
 CLogo::CLogo() {
     int i;

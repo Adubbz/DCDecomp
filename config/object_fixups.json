@@ -152,7 +152,13 @@
       "LoadData__Fv": "LoadData__Fv__3",
       "__ct__13CDranMapFieldFv": "__ct__10CCharacterFv"
     },
-    "extern_functions": ["__ct__10CCharacterFv", "__ct__12CSHOT_EFFECTFv", "__ct__13CDranMapFieldFv", "__ct__13MAP_NPC_MODELFv", "__ct__8CHitMarkFv"],
+    "extern_functions": [
+      "__ct__10CCharacterFv",
+      "__ct__12CSHOT_EFFECTFv",
+      "__ct__13CDranMapFieldFv",
+      "__ct__13MAP_NPC_MODELFv",
+      "__ct__8CHitMarkFv"
+    ],
     "rodata_exports": [
       "@1059__2",
       "@1797",
@@ -599,10 +605,7 @@
       "RunSystemEvent__FiP7CCamera"
     ],
     "symbols": {
-      "DebugFont": "DebugFont__3",
-      "EffectTable": "EffectTable__3",
-      "ecursorframe": "ecursorframe__2",
-      "DataBuffer": "DataBuffer__2"
+      "ecursorframe": "ecursorframe__2"
     }
   },
   "src/editloop3.cpp": {
@@ -903,13 +906,6 @@
   },
   "src/title/op_a.cpp": {
     "symbols": {
-      "Chara": "Chara__3",
-      "CharaTex": "CharaTex__2",
-      "Cam": "Cam__2",
-      "OP_CharaFrame": "OP_CharaFrame__2",
-      "SceneNp": "SceneNp__2",
-      "CScript": "CScript__2",
-      "CharaDataBuffer": "CharaDataBuffer__2",
       "LoadData__Fv": "LoadData__Fv__2",
       "LoadTexture__Fv": "LoadTexture__Fv__3"
     },
@@ -928,14 +924,7 @@
   },
   "src/title/op_b.cpp": {
     "symbols": {
-      "Chara": "Chara__3",
-      "CharaTex": "CharaTex__2",
-      "SceneNp": "SceneNp__2",
-      "CScript": "CScript__2",
-      "Cam": "Cam__2",
-      "CharaDataBuffer": "CharaDataBuffer__2",
-      "FaceChangeC__Fi": "FaceChange__Fi__2",
-      "OP_CharaFrame": "OP_CharaFrame__2"
+      "FaceChangeC__Fi": "FaceChange__Fi__2"
     },
     "import_constants_shared": [
       "opdat/chara/01p19a1a.chr",
@@ -952,14 +941,6 @@
   },
   "src/title/op_c.cpp": {
     "symbols": {
-      "Chara": "Chara__3",
-      "CharaTex": "CharaTex__2",
-      "WaterBuffer": "WaterBuffer__2",
-      "SceneNp": "SceneNp__2",
-      "CScript": "CScript__2",
-      "Cam": "Cam__2",
-      "OP_CharaFrame": "OP_CharaFrame__2",
-      "CharaDataBuffer": "CharaDataBuffer__2",
       "FaceChange__Fi": "FaceChange__Fi__2",
       "FaceChangeD__Fi": "FaceChange__Fi__3",
       "SmokeProcess__Fv": "SmokeProcess__Fv__2",
@@ -969,36 +950,23 @@
   },
   "src/title/op_d.cpp": {
     "symbols": {
-      "Chara": "Chara__3",
-      "CharaTex": "CharaTex__2",
-      "Cam": "Cam__2",
-      "SceneNp": "SceneNp__2",
-      "CScript": "CScript__2",
-      "OP_CharaFrame": "OP_CharaFrame__2",
-      "CharaDataBuffer": "CharaDataBuffer__2",
       "FaceChangeMovie__Fi": "FaceChange__Fi__4",
       "FaceChange__Fi": "FaceChange__Fi__3"
     }
   },
   "src/title/rushmovi.cpp": {
     "symbols": {
-      "Chara": "Chara__3",
-      "MainCamera": "MainCamera__3",
       "DispFade": "DispFade__2",
       "frame_info_cam": "frame_info_cam__2",
-      "Wind": "Wind__4",
-      "@84": "@364__4",
-      "@171": "@451__4",
-      "@181": "@461__3",
-      "@283": "@575__6",
       "FaceChange__Fi": "FaceChange__Fi__4",
       "MotionProcess__Fv": "MotionProcess__Fv__2",
       "DrawProcess__Fv": "DrawProcess__Fv__2",
       "SoundProcess__Fv": "SoundProcess__Fv__2",
       "WaterProcess__Fv": "WaterProcess__Fv__2",
-      "CFire": "CFire__4",
-      "Water": "Water__2",
-      "ScriptState": "CScript__2"
+      "@173": "@451__4",
+      "@183": "@461__3",
+      "@285": "@575__6",
+      "@86": "@364__4"
     },
     "extern_functions": [
       "__ct__10CCharacterFv"
@@ -1006,20 +974,11 @@
   },
   "src/title/script.cpp": {
     "symbols": {
-      "Command": "Command__7",
-      "CScript": "CScript__2"
+      "Command": "Command__7"
     }
   },
   "src/title/opening.cpp": {
-    "symbols": {
-      "Chara": "Chara__3",
-      "CharaTex": "CharaTex__2",
-      "Cam": "Cam__2",
-      "WaterBuffer": "WaterBuffer__2",
-      "SceneNp": "SceneNp__2",
-      "CScript": "CScript__2",
-      "CharaDataBuffer": "CharaDataBuffer__2"
-    },
+    "symbols": {},
     "drop_functions": [
       "OpeningWorkInit__Fv",
       "OpeningWork"
@@ -1040,12 +999,7 @@
       "TitleSetCamera__Ffffff"
     ],
     "symbols": {
-      "WaterProcess__Fv": "WaterProcess__Fv__2",
-      "Chara": "Chara__3",
-      "MainCamera": "MainCamera__3",
-      "CFire": "CFire__4",
-      "Wind": "Wind__4",
-      "Water": "Water__2"
+      "WaterProcess__Fv": "WaterProcess__Fv__2"
     },
     "extern_functions": [
       "__ct__10CCharacterFv"
@@ -1053,12 +1007,7 @@
   },
   "src/title/titleloop.cpp": {
     "symbols": {
-      "WaterBuffer": "WaterBuffer__2",
-      "WaterProcess__Fv": "WaterProcess__Fv__2",
-      "Chara": "Chara__3",
-      "MainCamera": "MainCamera__3",
-      "CFire": "CFire__4",
-      "Wind": "Wind__4"
+      "WaterProcess__Fv": "WaterProcess__Fv__2"
     }
   },
   "src/fish.cpp": {
@@ -1832,12 +1781,8 @@
   },
   "src/hitvalue.cpp": {
     "symbols": {
-      "defWeapon": "defWeapon__2",
       "@663": "@612"
-    },
-    "globalize_symbols": [
-      "defWeapon__2"
-    ]
+    }
   },
   "src/menu_save.cpp": {
     "symbols": {

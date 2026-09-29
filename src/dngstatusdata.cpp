@@ -9,6 +9,8 @@
 
 #include "dun/gameloop.hpp"
 #include "dungeonparts.hpp"
+#include "menu_dungeon.hpp"
+#include "menu_inventory.hpp"
 /* CDngStatusData's and CUserStatus's methods are interleaved in retail
  * (SetNowFloor..SearchItemIndexNo, ChkEventFlag..ClearEventFlag, LostItem..
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
@@ -17,11 +19,6 @@
 
 #include <cstdio>
 #include <cstdlib>
-
-extern "C" int ItemDataToHaveCopy__Fi(int item_id);
-struct ATTACH_LIST;
-extern "C" void SetAttachMentValue__FiisP11ATTACH_LIST(int item_id, int slot, s16 qty, ATTACH_LIST *attach);
-extern "C" void WepDataListToHaveCopy__FiP11WEAPON_HAVE(int item_id, WEAPON_HAVE *out);
 
 /** Default weapon id per character. */
 static s32 defWeapon[6] = {257, 299, 314, 331, 347, 363};
@@ -353,7 +350,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                     this->overflow_flag = 1;
                 }
 
-                int have_copy = ItemDataToHaveCopy__Fi(item_id);
+                int have_copy = ItemDataToHaveCopy(item_id);
                 if (this->overflow_flag != 0) {
                     int m;
                     for (m = 0; (valid = m < 3) != 0; m++) {
@@ -377,7 +374,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
         for (n = 0; (valid = n < 43) != 0; n++) {
             if (this->consumable_items[n].id < 81) {
                 this->consumable_items[n].id = item_id;
-                SetAttachMentValue__FiisP11ATTACH_LIST(item_id, n, qty, (ATTACH_LIST *) 0);
+                SetAttachMentValue(item_id, n, qty, (ATTACH_LIST *) 0);
 
                 int count = 0;
                 int ii;
@@ -402,7 +399,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
         int jj;
         for (jj = 0; (valid = jj < 11) != 0; jj++) {
             if (this->chara_weapons[chara_no][jj].item_no < 257) {
-                WepDataListToHaveCopy__FiP11WEAPON_HAVE(item_id, &this->chara_weapons[chara_no][jj]);
+                WepDataListToHaveCopy(item_id, &this->chara_weapons[chara_no][jj]);
 
                 int count = 0;
                 int kk;

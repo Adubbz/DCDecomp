@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 #include "camera.hpp"
 #include "camerafollow.hpp"
@@ -25,10 +26,6 @@
 #include "title/logo.hpp"
 #include "title/scfader.hpp"
 #include "title/sprite.hpp"
-
-/* Its retail name is already mangled, so it is reached the way main.cpp
-   reaches it. */
-extern "C" void MapJump__Fii(int map_no, int event_no);
 
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h because the
    two constructors that header states are not this file's: every rectangle here is built by one
@@ -59,11 +56,6 @@ struct MAP_INFO {
     float rotation;
 };
 
-/* What this file reaches of the display layer. It is declared here rather than reached through
-   mglib.h because that header states the rectangle above, and the two spellings of it cannot both
-   be in one translation unit. */
-extern sceVif1Packet *Vif1Packet;
-
 sceVif1Packet *GetVif1Packet();
 void MGSetRenderInfo(float scale, float near_z, float far_z);
 void MGSetBGColor(float r, float g, float b, float a);
@@ -77,9 +69,6 @@ void MGGetFBuffBackTex(sceGsTex0 *tex);
 void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *dst,
                         const CRect<int> &dst_rect);
 void MGClearZBuffer(int mode);
-
-extern int CursorVibeCnt;
-extern u_int Vu_prog0f[];
 
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
@@ -104,10 +93,8 @@ void DrawObjectVibe(int id, int frame, CTexture *texture, RECT rect, u_char size
 void InitOpeningBook(u_long128 *pack, int *param);
 int OpeningBookKey();
 void OpeningBookDraw();
-void InitMenuSave(int mode, int type, u_long128 *pack);
 int MenuSaveKey();
 void DrawMenuSave(char *name);
-void InitMenuOption(int mode, int type, u_long128 *pack);
 int MenuOptionKey();
 void DrawMenuOption();
 
@@ -117,6 +104,17 @@ void DrawMenuOption();
 #include "title/script.hpp"
 #include "wind.hpp"
 
+#include "main.hpp"
+#include "mglib.hpp"
+#include "memcard.hpp"
+#include "vutext.hpp"
+#include "gamemode.hpp"
+#include "title/op_a.hpp"
+#include "title/opening.hpp"
+#include "title/op_b.hpp"
+#include "title/rushmovi.hpp"
+#include "title/titleloop.hpp"
+#include "title/title.hpp"
 #define PI 3.14159265358979323846
 
 class OBJ_ANIME_SEQ {
@@ -268,7 +266,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst
 void DepthOfField(float *dist, int level, int alpha, int blur);
 void OPAnalyz(char *name);
 void OPMdsLoad();
-extern "C" char *strcpy(char *dst, const char *src);
 
 void SndSetCamera(CCamera *camera);
 void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
@@ -281,55 +278,6 @@ void SndAmbientStop();
 void SndStep();
 void SndSePlay(int se, float *position, float near_dist, float far_dist);
 
-extern u_int Vu_prog0f[];
-extern sceVif1Packet *Vif1Packet;
-extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
-extern int OP_AnimeSeqRot;
-extern CCharacter Chara[23];
-extern CMapObject OP_NornMapObj[76];
-extern int OP_FireList;
-extern sceVu0FVECTOR OP_FirePosition[96];
-extern float OP_FireScale[96];
-extern CMap OP_GroundMap;
-extern CMap OP_BuildingMap;
-extern CMap OP_BuildingMap2;
-extern sceGsZbuf mgZBuffer;
-extern RenderInfo mgRenderInfo;
-extern sceVu0FMATRIX light;
-extern sceVu0FMATRIX lightcolor;
-extern sceVu0FVECTOR ambientlight;
-extern sceGsAlpha mgAlpha;
-extern CDataAlloc2<1> MapDataBuffer;
-
-extern CCameraFollow MainCamera;
-extern CDispFade DispFade;
-extern CFireOmni CFire;
-extern CWind Wind;
-extern CWater Water;
-extern char CharaTex[9];
-extern CDataAlloc2<1> CharaDataBuffer;
-extern tagFRAME_INF frame_info_cam[300];
-extern CCharacter Cam[4];
-extern MOTION_INFO MotionInfo;
-extern CDataAlloc2<1> PathDataBuffer;
-extern CDataAlloc2<1> WaterBuffer;
-extern CDataAlloc2<1> DummyDataBuffer;
-extern CTexAnimeData TexAnimeDataMovie[30];
-extern CRunEffect CRunFx;
-
-extern CFrame *OP_CharaFrame;
-extern u_char bEnd;
-extern int EndCnt;
-extern int CameraMode;
-extern int SceneNp;
-extern float TitleAngle;
-extern int StartDisp;
-extern int TitleFade;
-extern int TitleFadeCnt;
-extern int StartLightning;
-extern float atraGetStatusRate;
-
-extern void SetObjAnime(char *name, CFrameVu1 *frame, float *scale, float *position);
 void MotionProcess();
 void DrawProcess();
 void SoundProcess();
@@ -357,17 +305,6 @@ void DrawProcI();
 static void InitProcTitle();
 void DrawProcTitle();
 
-/* The step the title screen is on. The symbol is eight bytes and the file's own initializer
-   zeroes only the first of them, which nothing a plain int can be spelled as does; the second word
-   is never read or written anywhere in the overlay. */
-class CProcess {
-public:
-    CProcess() { no = 0; }
-
-    int no;
-    int unk_04;
-};
-
 void TitleDraw();
 void TiPlayVolSE(int group, int no, int voice, float volume);
 
@@ -379,22 +316,9 @@ void TiPlayVolSE(int group, int no, int voice, float volume);
 
 CCamera Camera(4.0f);
 CCameraFollow FCamera(60.0f, 20.0f, 0.0f, 4.0f);
-CCharacter Cloud;
+CCharacter Cloud__2;
 CCharacter Logo;
 CCharacter Spark[9];
-
-extern CScFader CFade;
-
-extern int Fade1;
-extern int Fade2;
-extern int Fade3;
-extern int Fade4;
-extern int Wait;
-extern int opcnt;
-extern int keywait;
-extern u_char brink;
-extern int brinkcnt;
-extern int EffCnt;
 
 /* Nothing calls this and nothing reads the table it writes: the link this file was built by
    removed both. They are here because the compiler carries state from one definition to the next,
@@ -485,6 +409,14 @@ void DataLoad() {
     CScript.init_no = -1;
 }
 
+/**
+ * Initializes title cinematic scene A.
+ *
+ * @mangled InitProcA__Fv
+ * @address 0x1DCB560
+ * @size 0x82C
+ * @unknownret
+ */
 static void InitProcA() {
     wait_now_loading_vsync();
 
@@ -531,42 +463,42 @@ static void InitProcA() {
     CharaDataBuffer.Reset();
 
     for (int i = 0; i < 4; i++) {
-        Chara[i].LoadPackData(read_buffer, chara[i], &CharaDataBuffer, 0);
+        Chara__3[i].LoadPackData(read_buffer, chara[i], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[i].frame->SetAttr(attr, 1, 4);
-        Chara[i].motion_type.state.time = 1.0f;
-        Chara[i].motion_type.state.blend_step = 0.05f;
-        Chara[i].motion_type.state.motion_no = 0;
-        Chara[i].motion_type.state.playing_no = 0;
+        Chara__3[i].frame->SetAttr(attr, 1, 4);
+        Chara__3[i].motion_type.state.time = 1.0f;
+        Chara__3[i].motion_type.state.blend_step = 0.05f;
+        Chara__3[i].motion_type.state.motion_no = 0;
+        Chara__3[i].motion_type.state.playing_no = 0;
     }
 
-    Chara[2].motion_type.state.time = 10.0f;
-    Chara[3].motion_type.state.time = 10.0f;
-    Chara[0].unk_C98 = (int) &Wind;
-    Chara[1].FootSoundEnable(0);
+    Chara__3[2].motion_type.state.time = 10.0f;
+    Chara__3[3].motion_type.state.time = 10.0f;
+    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[1].FootSoundEnable(0);
 
     for (int j = 4; j < 9; j++) {
-        Chara[j].LoadPackData(read_buffer, chara[4], &CharaDataBuffer, 0);
+        Chara__3[j].LoadPackData(read_buffer, chara[4], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[j].frame->SetAttr(attr, 1, 4);
-        Chara[j].motion_type.state.blend_step = 0.05f;
-        Chara[j].motion_type.state.motion_no = 0;
-        Chara[j].motion_type.state.playing_no = 0;
-        Chara[j].SetScale(5.0f, (float) (j - j + 5), 5.0f);
+        Chara__3[j].frame->SetAttr(attr, 1, 4);
+        Chara__3[j].motion_type.state.blend_step = 0.05f;
+        Chara__3[j].motion_type.state.motion_no = 0;
+        Chara__3[j].motion_type.state.playing_no = 0;
+        Chara__3[j].SetScale(5.0f, (float) (j - j + 5), 5.0f);
     }
 
-    Chara[4].motion_type.state.time = 1.0f;
-    Chara[5].motion_type.state.time = 4.0f;
-    Chara[6].motion_type.state.time = 8.0f;
-    Chara[7].motion_type.state.time = 12.0f;
-    Chara[8].motion_type.state.time = 16.0f;
-    OP_CharaFrame = Chara[0].frame;
+    Chara__3[4].motion_type.state.time = 1.0f;
+    Chara__3[5].motion_type.state.time = 4.0f;
+    Chara__3[6].motion_type.state.time = 8.0f;
+    Chara__3[7].motion_type.state.time = 12.0f;
+    Chara__3[8].motion_type.state.time = 16.0f;
+    OP_CharaFrame = Chara__3[0].frame;
 
     wait_now_loading_vsync();
 
@@ -645,7 +577,7 @@ static void InitProcA() {
         Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.state.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera__3;
     }
 
     wait_now_loading_vsync();
@@ -715,17 +647,17 @@ void DrawProcA() {
     typedef float ap0, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, ap9, ap10, ap11,
         ap12, ap13, ap14, ap15;
     if (CScript.camera_start == 2) {
-        Chara[6].SetScale((float) (col - col + 2), 2.0f, 2.0f);
-        Chara[8].SetScale(2.0f, 2.0f, 2.0f);
+        Chara__3[6].SetScale((float) (col - col + 2), 2.0f, 2.0f);
+        Chara__3[8].SetScale(2.0f, 2.0f, 2.0f);
     }
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
             MGSetPLight(light, chara_color);
-            Chara[i].Draw();
+            Chara__3[i].Draw();
         }
     }
 
@@ -735,7 +667,7 @@ void DrawProcA() {
     CMapObject *object = OP_GroundMap.GetObject(0);
     sceVu0FVECTOR camera_position;
 
-    MainCamera.GetPos(camera_position);
+    MainCamera__3.GetPos(camera_position);
     object->SetPosition(camera_position);
 
     if (lightning) {
@@ -773,21 +705,21 @@ void DrawProcA() {
     OP_CharaFrame = Cam[SceneNp].frame;
     sceVu0CopyVector(eye, OP_CharaFrame->position);
 
-    CFire.FireStep();
-    CFire.FireCreate();
+    CFire__4.FireStep();
+    CFire__4.FireCreate();
 
     for (int i = 0; i < OP_FireList; i++) {
         float z = OP_FirePosition[i][2];
         float y = OP_FirePosition[i][1];
         float x = OP_FirePosition[i][0];
 
-        CFire.position[0] = 10.0f * x;
-        CFire.position[1] = 10.0f * y;
-        CFire.position[2] = 10.0f * z;
-        CFire.position[3] = 1.0f;
+        CFire__4.position[0] = 10.0f * x;
+        CFire__4.position[1] = 10.0f * y;
+        CFire__4.position[2] = 10.0f * z;
+        CFire__4.position[3] = 1.0f;
 
         float *fire_scale = &OP_FireScale[i];
-        CFire.DrawFire(1, 1, &MainCamera, eye, *fire_scale, 15, 15.0f);
+        CFire__4.DrawFire(1, 1, &MainCamera__3, eye, *fire_scale, 15, 15.0f);
     }
 
     TexManager.ReloadTexture(Vif1Packet, 22);
@@ -798,15 +730,23 @@ void DrawProcA() {
 }
 
 CFrame *ObjectFrame3;
-CProcess CProcess;
+class CProcess CProcess;
 CScFader CFade;
 
-CSprite CSprite;
-CLogo CLogo;
-CCursol CCursol;
+class CSprite CSprite;
+class CLogo CLogo;
+class CCursol CCursol;
 
 static float TitleCameraWork[4];
 
+/**
+ *
+ *
+ * @mangled InitProcB__Fv
+ * @address 0x1DCC570
+ * @size 0x7B0
+ * @unknownret
+ */
 static void InitProcB() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -851,29 +791,29 @@ static void InitProcB() {
         TexAnimeDataMovie[i].Initialize();
     }
 
-    Chara[3].InitializeTexAnime(TexAnimeDataMovie, 30);
-    Chara[3].TexAnimeOn(0);
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
-    Chara[0].LoadPackData(read_buffer, "rm04c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[3].InitializeTexAnime(TexAnimeDataMovie, 30);
+    Chara__3[3].TexAnimeOn(0);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].LoadPackData(read_buffer, "rm04c01d.cfg", &CharaDataBuffer, 0);
 
     for (int j = 0; j < 4; j++) {
-        Chara[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
+        Chara__3[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[j].frame->SetAttr(attr, 1, 4);
-        Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.blend_step = 0.05f;
-        Chara[j].motion_type.state.motion_no = 0;
-        Chara[j].motion_type.state.playing_no = 0;
+        Chara__3[j].frame->SetAttr(attr, 1, 4);
+        Chara__3[j].motion_type.state.time = 1.0f;
+        Chara__3[j].motion_type.state.blend_step = 0.05f;
+        Chara__3[j].motion_type.state.motion_no = 0;
+        Chara__3[j].motion_type.state.playing_no = 0;
     }
 
-    Chara[1].motion_type.state.time = 10.0f;
-    Chara[2].motion_type.state.time = 30.0f;
-    Chara[0].unk_C98 = (int) &Wind;
-    Chara[7].LoadPackData(read_buffer, "rm04ex.cfg", &CharaDataBuffer, 0);
-    Chara[8].LoadPackData(read_buffer, "c01w03.cfg", &CharaDataBuffer, 0);
+    Chara__3[1].motion_type.state.time = 10.0f;
+    Chara__3[2].motion_type.state.time = 30.0f;
+    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[7].LoadPackData(read_buffer, "rm04ex.cfg", &CharaDataBuffer, 0);
+    Chara__3[8].LoadPackData(read_buffer, "c01w03.cfg", &CharaDataBuffer, 0);
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -912,7 +852,7 @@ static void InitProcB() {
         Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.state.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -925,12 +865,12 @@ static void InitProcB() {
     sceVu0FVECTOR v2 = {260.0f, 0.0f, -250.0f, 1.0f};
     sceVu0FVECTOR v3 = {380.0f, 0.0f, -250.0f, 1.0f};
 
-    Water.SetVertex(v0, v1, v2, v3);
+    Water__2.SetVertex(v0, v1, v2, v3);
     typedef float bp0, bp1, bp2;
-    Water.frame.SetPosition(0.0f, -4.0f, 0.0f);
-    Water.SetSize(24, 24, &WaterBuffer);
-    Water.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
-    Water.SetColor(100, 110, 120, 128);
+    Water__2.frame.SetPosition(0.0f, -4.0f, 0.0f);
+    Water__2.SetSize(24, 24, &WaterBuffer);
+    Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
+    Water__2.SetColor(100, 110, 120, 128);
 }
 
 void DrawProcB() {
@@ -947,8 +887,8 @@ void DrawProcB() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            Chara[i].ShadowStep();
-            Chara[i].DrawShadow();
+            Chara__3[i].ShadowStep();
+            Chara__3[i].DrawShadow();
         }
     }
 
@@ -967,10 +907,10 @@ void DrawProcB() {
             }
 
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].TextureAnime(CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
-            Chara[i].Draw();
+            Chara__3[i].TextureAnime(CharaTex[i]);
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
+            Chara__3[i].Draw();
 
             sceVu0CopyMatrix(light, save_light);
             sceVu0CopyMatrix(lightcolor, save_lightcolor);
@@ -983,10 +923,10 @@ void DrawProcB() {
     if (CScript.camera_start == 4) {
         sceVu0FVECTOR position;
 
-        sceVu0CopyVector(position, Chara[0].frame->position);
+        sceVu0CopyVector(position, Chara__3[0].frame->position);
         CRunFx.Lighting(1);
 
-        int frame = (int) Chara[0].motion_type.state.time;
+        int frame = (int) Chara__3[0].motion_type.state.time;
 
         if ((frame >= 73 && frame < 74) || (frame >= 83 && frame < 84)) {
             CRunFx.Set(position);
@@ -1001,17 +941,17 @@ void DrawProcB() {
     OP_CharaFrame = Cam[SceneNp].frame;
     sceVu0CopyVector(eye, OP_CharaFrame->position);
 
-    CFire.FireStep();
-    CFire.FireCreate();
+    CFire__4.FireStep();
+    CFire__4.FireCreate();
 
     for (int i = 0; i < OP_FireList; i++) {
         float z = OP_FirePosition[i][2] / 10.0f;
         float y = OP_FirePosition[i][1] / 10.0f;
         float x = OP_FirePosition[i][0] / 10.0f;
 
-        CFire.SetPosition(x, y, z);
+        CFire__4.SetPosition(x, y, z);
 
-        CFire.DrawFire(1, 1, &MainCamera, eye, OP_FireScale[i], 3, 15.0f);
+        CFire__4.DrawFire(1, 1, &MainCamera__3, eye, OP_FireScale[i], 3, 15.0f);
     }
 
     TexManager.ReloadTexture(Vif1Packet, 22);
@@ -1021,9 +961,17 @@ void DrawProcB() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled AtraLight__Fv
+ * @address 0x1DCD1D0
+ * @size 0x28C
+ * @unknownret
+ */
 static void AtraLight() {
-    if (Chara[2].motion_type.state.time >= 40.0f) {
-        CFrame *frame = Chara[2].frame->SearchFrame("light01");
+    if (Chara__3[2].motion_type.state.time >= 40.0f) {
+        CFrame *frame = Chara__3[2].frame->SearchFrame("light01");
 
         if (frame) {
             sceVu0FVECTOR position;
@@ -1038,7 +986,7 @@ static void AtraLight() {
             position[2] = matrix[3][2];
             frame->GetWorldPosition(world, position);
 
-            OP_CharaFrame = Chara[0].frame;
+            OP_CharaFrame = Chara__3[0].frame;
             sceVu0CopyVector(eye, OP_CharaFrame->position);
 
             dir[0] = world[0] - eye[0];
@@ -1075,6 +1023,14 @@ static void AtraLight() {
     }
 }
 
+/**
+ *
+ *
+ * @mangled InitProcC__Fv
+ * @address 0x1DCD460
+ * @size 0x67C
+ * @unknownret
+ */
 static void InitProcC() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1106,26 +1062,26 @@ static void InitProcC() {
     CharaTex[8] = 9;
 
     CharaDataBuffer.Reset();
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
 
     CFrameAttr attr;
 
     attr.unk_08 = 0;
-    Chara[0].frame->SetAttr(attr, 1, 4);
-    Chara[0].motion_type.state.time = 10.0f;
-    Chara[0].motion_type.state.blend_step = 0.05f;
-    Chara[0].motion_type.state.motion_no = 0;
-    Chara[0].motion_type.state.playing_no = 0;
-    Chara[0].FootSoundEnable(0);
-    Chara[0].unk_C98 = (int) &Wind;
+    Chara__3[0].frame->SetAttr(attr, 1, 4);
+    Chara__3[0].motion_type.state.time = 10.0f;
+    Chara__3[0].motion_type.state.blend_step = 0.05f;
+    Chara__3[0].motion_type.state.motion_no = 0;
+    Chara__3[0].motion_type.state.playing_no = 0;
+    Chara__3[0].FootSoundEnable(0);
+    Chara__3[0].unk_C98 = (int) &Wind__4;
 
-    Chara[8].LoadPackData(read_buffer, "pat.cfg", &CharaDataBuffer, 0);
+    Chara__3[8].LoadPackData(read_buffer, "pat.cfg", &CharaDataBuffer, 0);
     attr.unk_08 = 0;
-    Chara[8].frame->SetAttr(attr, 1, 4);
-    Chara[8].motion_type.state.time = 1.0f;
-    Chara[8].motion_type.state.blend_step = 0.05f;
-    Chara[8].motion_type.state.motion_no = 0;
-    Chara[8].motion_type.state.playing_no = 0;
+    Chara__3[8].frame->SetAttr(attr, 1, 4);
+    Chara__3[8].motion_type.state.time = 1.0f;
+    Chara__3[8].motion_type.state.blend_step = 0.05f;
+    Chara__3[8].motion_type.state.motion_no = 0;
+    Chara__3[8].motion_type.state.playing_no = 0;
 
     MAP_INFO norn[] = {
         {"s04g01_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
@@ -1191,7 +1147,7 @@ static void InitProcC() {
         Cam[j].motion_type.state.blend_step = 1.0f;
         Cam[j].motion_type.state.motion_no = 0;
         Cam[j].motion_type.state.playing_no = 0;
-        Cam[j].motion_type.state.camera = &MainCamera;
+        Cam[j].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -1204,11 +1160,11 @@ static void InitProcC() {
     sceVu0FVECTOR v2 = {-120.0f, 0.0f, 120.0f, 1.0f};
     sceVu0FVECTOR v3 = {-120.0f, 0.0f, 120.0f, 1.0f};
 
-    Water.SetVertex(v0, v1, v2, v3);
-    Water.frame.SetPosition((float) (OP_FireList & 0), 0.0f, 0.0f);
-    Water.SetSize(32, 32, &WaterBuffer);
-    Water.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
-    Water.SetColor(128, 128, 128, 128);
+    Water__2.SetVertex(v0, v1, v2, v3);
+    Water__2.frame.SetPosition((float) (OP_FireList & 0), 0.0f, 0.0f);
+    Water__2.SetSize(32, 32, &WaterBuffer);
+    Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
+    Water__2.SetColor(128, 128, 128, 128);
 }
 
 void DrawProcC() {
@@ -1229,8 +1185,8 @@ void DrawProcC() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            Chara[i].ShadowStep();
-            Chara[i].DrawShadow();
+            Chara__3[i].ShadowStep();
+            Chara__3[i].DrawShadow();
         }
     }
 
@@ -1239,9 +1195,9 @@ void DrawProcC() {
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
-            Chara[i].Draw();
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
+            Chara__3[i].Draw();
         }
     }
 
@@ -1251,20 +1207,20 @@ void DrawProcC() {
     OP_CharaFrame = Cam[SceneNp].frame;
     sceVu0CopyVector(eye, OP_CharaFrame->position);
 
-    CFire.FireStep();
-    CFire.FireCreate();
+    CFire__4.FireStep();
+    CFire__4.FireCreate();
 
     for (int i = 0; i < OP_FireList; i++) {
         float z = OP_FirePosition[i][2] / 10.0f;
         float y = OP_FirePosition[i][1] / 10.0f;
         float x = OP_FirePosition[i][0] / 10.0f;
 
-        CFire.position[0] = 10.0f * x;
-        CFire.position[1] = 10.0f * y;
-        CFire.position[2] = 10.0f * z;
-        CFire.position[3] = 1.0f;
+        CFire__4.position[0] = 10.0f * x;
+        CFire__4.position[1] = 10.0f * y;
+        CFire__4.position[2] = 10.0f * z;
+        CFire__4.position[3] = 1.0f;
 
-        CFire.DrawFire(1, 1, &MainCamera, eye, OP_FireScale[i], 2, 15.0f);
+        CFire__4.DrawFire(1, 1, &MainCamera__3, eye, OP_FireScale[i], 2, 15.0f);
     }
 
     TexManager.ReloadTexture(Vif1Packet, 22);
@@ -1274,6 +1230,14 @@ void DrawProcC() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled InitProcD__Fv
+ * @address 0x1DCDE60
+ * @size 0x614
+ * @unknownret
+ */
 static void InitProcD() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1309,28 +1273,28 @@ static void InitProcD() {
         TexAnimeDataMovie[i].Initialize();
     }
 
-    Chara[0].InitializeTexAnime(TexAnimeDataMovie, 30);
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].InitializeTexAnime(TexAnimeDataMovie, 30);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
 
     for (int j = 0; j < 3; j++) {
-        Chara[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
+        Chara__3[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[j].frame->SetAttr(attr, 1, 4);
-        Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.blend_step = 0.05f;
-        Chara[j].motion_type.state.motion_no = 0;
-        Chara[j].motion_type.state.playing_no = 0;
+        Chara__3[j].frame->SetAttr(attr, 1, 4);
+        Chara__3[j].motion_type.state.time = 1.0f;
+        Chara__3[j].motion_type.state.blend_step = 0.05f;
+        Chara__3[j].motion_type.state.motion_no = 0;
+        Chara__3[j].motion_type.state.playing_no = 0;
     }
 
-    Chara[0].motion_type.state.time = 10.0f;
-    Chara[1].motion_type.state.time = 10.0f;
-    Chara[2].motion_type.state.time = 10.0f;
-    Chara[8].LoadPackData(read_buffer, "c01w11.cfg", &CharaDataBuffer, 0);
-    Chara[0].TexAnimeOn(2);
-    Chara[0].unk_C98 = (int) &Wind;
+    Chara__3[0].motion_type.state.time = 10.0f;
+    Chara__3[1].motion_type.state.time = 10.0f;
+    Chara__3[2].motion_type.state.time = 10.0f;
+    Chara__3[8].LoadPackData(read_buffer, "c01w11.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].TexAnimeOn(2);
+    Chara__3[0].unk_C98 = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1371,7 +1335,7 @@ static void InitProcD() {
         Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.state.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -1392,8 +1356,8 @@ void DrawProcD() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            Chara[i].ShadowStep();
-            Chara[i].DrawShadow();
+            Chara__3[i].ShadowStep();
+            Chara__3[i].DrawShadow();
         }
     }
 
@@ -1402,10 +1366,10 @@ void DrawProcD() {
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].TextureAnime(CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
-            Chara[i].Draw();
+            Chara__3[i].TextureAnime(CharaTex[i]);
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
+            Chara__3[i].Draw();
         }
     }
 
@@ -1416,6 +1380,14 @@ void DrawProcD() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled InitProcE__Fv
+ * @address 0x1DCE6A0
+ * @size 0x538
+ * @unknownret
+ */
 static void InitProcE() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1449,26 +1421,26 @@ static void InitProcE() {
         TexAnimeDataMovie[i].Initialize();
     }
 
-    Chara[0].InitializeTexAnime(TexAnimeDataMovie, 30);
-    Chara[1].InitializeTexAnime(TexAnimeDataMovie, 30);
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].InitializeTexAnime(TexAnimeDataMovie, 30);
+    Chara__3[1].InitializeTexAnime(TexAnimeDataMovie, 30);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
 
     for (int j = 0; j < 2; j++) {
-        Chara[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
+        Chara__3[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[j].frame->SetAttr(attr, 1, 4);
-        Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.blend_step = 0.05f;
-        Chara[j].motion_type.state.motion_no = 0;
-        Chara[j].motion_type.state.playing_no = 0;
+        Chara__3[j].frame->SetAttr(attr, 1, 4);
+        Chara__3[j].motion_type.state.time = 1.0f;
+        Chara__3[j].motion_type.state.blend_step = 0.05f;
+        Chara__3[j].motion_type.state.motion_no = 0;
+        Chara__3[j].motion_type.state.playing_no = 0;
     }
 
-    Chara[0].TexAnimeOn(2);
-    Chara[1].TexAnimeOn(1);
-    Chara[0].unk_C98 = (int) &Wind;
+    Chara__3[0].TexAnimeOn(2);
+    Chara__3[1].TexAnimeOn(1);
+    Chara__3[0].unk_C98 = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1502,7 +1474,7 @@ static void InitProcE() {
         Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.state.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -1517,7 +1489,7 @@ void DrawProcE() {
 
     if (CScript.camera_start == 10 &&
         Cam[SceneNp].motion_type.state.time >= 70.0f) {
-        Chara[0].TexAnimeOn(3);
+        Chara__3[0].TexAnimeOn(3);
     }
 
     TexManager.ReloadTexture(Vif1Packet, 23);
@@ -1527,8 +1499,8 @@ void DrawProcE() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            Chara[i].ShadowStep();
-            Chara[i].DrawShadow();
+            Chara__3[i].ShadowStep();
+            Chara__3[i].DrawShadow();
         }
     }
 
@@ -1537,14 +1509,22 @@ void DrawProcE() {
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].TextureAnime(CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
-            Chara[i].Draw();
+            Chara__3[i].TextureAnime(CharaTex[i]);
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
+            Chara__3[i].Draw();
         }
     }
 }
 
+/**
+ *
+ *
+ * @mangled InitProcF__Fv
+ * @address 0x1DCEE10
+ * @size 0x690
+ * @unknownret
+ */
 static void InitProcF() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1587,30 +1567,30 @@ static void InitProcF() {
         TexAnimeDataMovie[i].Initialize();
     }
 
-    Chara[0].InitializeTexAnime(TexAnimeDataMovie, 30);
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].InitializeTexAnime(TexAnimeDataMovie, 30);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
 
     for (int j = 0; j < 6; j++) {
-        Chara[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
+        Chara__3[j].LoadPackData(read_buffer, chara[j], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[j].frame->SetAttr(attr, 1, 4);
-        Chara[j].motion_type.state.time = 1.0f;
-        Chara[j].motion_type.state.blend_step = 0.05f;
-        Chara[j].motion_type.state.motion_no = 0;
-        Chara[j].motion_type.state.playing_no = 0;
+        Chara__3[j].frame->SetAttr(attr, 1, 4);
+        Chara__3[j].motion_type.state.time = 1.0f;
+        Chara__3[j].motion_type.state.blend_step = 0.05f;
+        Chara__3[j].motion_type.state.motion_no = 0;
+        Chara__3[j].motion_type.state.playing_no = 0;
     }
 
-    Chara[0].TexAnimeOn(4);
-    Chara[0].unk_C98 = (int) &Wind;
-    Chara[8].LoadPackData(read_buffer, "c01w01.cfg", &CharaDataBuffer, 0);
-    Chara[0].motion_type.state.time = 150.0f;
-    Chara[1].motion_type.state.time = 135.0f;
-    Chara[2].motion_type.state.time = 135.0f;
-    Chara[3].motion_type.state.time = 135.0f;
-    Chara[4].motion_type.state.time = 135.0f;
+    Chara__3[0].TexAnimeOn(4);
+    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[8].LoadPackData(read_buffer, "c01w01.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].motion_type.state.time = 150.0f;
+    Chara__3[1].motion_type.state.time = 135.0f;
+    Chara__3[2].motion_type.state.time = 135.0f;
+    Chara__3[3].motion_type.state.time = 135.0f;
+    Chara__3[4].motion_type.state.time = 135.0f;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1651,7 +1631,7 @@ static void InitProcF() {
         Cam[k].motion_type.state.blend_step = 1.0f;
         Cam[k].motion_type.state.motion_no = 0;
         Cam[k].motion_type.state.playing_no = 0;
-        Cam[k].motion_type.state.camera = &MainCamera;
+        Cam[k].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -1667,8 +1647,8 @@ void DrawProcF() {
 
     if (CScript.obj[5].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex[5]);
-        Chara[5].Step();
-        Chara[5].Draw();
+        Chara__3[5].Step();
+        Chara__3[5].Draw();
     }
 
     TexManager.ReloadTexture(Vif1Packet, 23);
@@ -1679,8 +1659,8 @@ void DrawProcF() {
     for (int i = 0; i < 9; i++) {
         if (i != 5) {
             if (CScript.obj[i].disp) {
-                Chara[i].ShadowStep();
-                Chara[i].DrawShadow();
+                Chara__3[i].ShadowStep();
+                Chara__3[i].DrawShadow();
             }
         }
     }
@@ -1691,10 +1671,10 @@ void DrawProcF() {
         if (CScript.obj[i].disp) {
             if (i != 5) {
                 TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-                Chara[i].TextureAnime(CharaTex[i]);
-                Chara[i].Step();
-                Chara[i].ClothStep(0);
-                Chara[i].Draw();
+                Chara__3[i].TextureAnime(CharaTex[i]);
+                Chara__3[i].Step();
+                Chara__3[i].ClothStep(0);
+                Chara__3[i].Draw();
             }
         }
     }
@@ -1706,6 +1686,14 @@ void DrawProcF() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled InitProcG__Fv
+ * @address 0x1DCF720
+ * @size 0x5D0
+ * @unknownret
+ */
 static void InitProcG() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1739,27 +1727,27 @@ static void InitProcG() {
     char *chara[3] = {"rm14ebc01d.cfg", "rm14ebc06a.cfg", "rm13c06a.cfg"};
 
     CharaDataBuffer.Reset();
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
 
     for (int i = 0; i < 3; i++) {
-        Chara[i].LoadPackData(read_buffer, chara[i], &CharaDataBuffer, 0);
+        Chara__3[i].LoadPackData(read_buffer, chara[i], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[i].frame->SetAttr(attr, 1, 4);
-        Chara[i].motion_type.state.time = 1.0f;
-        Chara[i].motion_type.state.blend_step = 0.05f;
-        Chara[i].motion_type.state.motion_no = 0;
-        Chara[i].motion_type.state.playing_no = 0;
+        Chara__3[i].frame->SetAttr(attr, 1, 4);
+        Chara__3[i].motion_type.state.time = 1.0f;
+        Chara__3[i].motion_type.state.blend_step = 0.05f;
+        Chara__3[i].motion_type.state.motion_no = 0;
+        Chara__3[i].motion_type.state.playing_no = 0;
     }
 
-    Chara[0].motion_type.state.time = 10.0f;
-    Chara[1].motion_type.state.time = 10.0f;
-    Chara[2].motion_type.state.time = 82.0f;
-    Chara[0].unk_C98 = (int) &Wind;
-    Chara[1].unk_C98 = (int) &Wind;
-    Chara[2].unk_C98 = (int) &Wind;
+    Chara__3[0].motion_type.state.time = 10.0f;
+    Chara__3[1].motion_type.state.time = 10.0f;
+    Chara__3[2].motion_type.state.time = 82.0f;
+    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[1].unk_C98 = (int) &Wind__4;
+    Chara__3[2].unk_C98 = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1799,7 +1787,7 @@ static void InitProcG() {
         Cam[j].motion_type.state.blend_step = 1.0f;
         Cam[j].motion_type.state.motion_no = 0;
         Cam[j].motion_type.state.playing_no = 0;
-        Cam[j].motion_type.state.camera = &MainCamera;
+        Cam[j].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -1820,8 +1808,8 @@ void DrawProcG() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            Chara[i].ShadowStep();
-            Chara[i].DrawShadow();
+            Chara__3[i].ShadowStep();
+            Chara__3[i].DrawShadow();
         }
     }
 
@@ -1830,9 +1818,9 @@ void DrawProcG() {
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
-            Chara[i].Draw();
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
+            Chara__3[i].Draw();
         }
     }
 
@@ -1843,6 +1831,14 @@ void DrawProcG() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled InitProcH__Fv
+ * @address 0x1DCFEF0
+ * @size 0x9E8
+ * @unknownret
+ */
 static void InitProcH() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1875,44 +1871,44 @@ static void InitProcH() {
     CharaTex[3] = 4;
     CharaTex[8] = 9;
 
-    Chara[0].LoadPackData(read_buffer, "rm15c12a.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].LoadPackData(read_buffer, "rm15c12a.cfg", &CharaDataBuffer, 0);
 
     CFrameAttr attr;
 
     attr.unk_08 = 0;
-    Chara[0].frame->SetAttr(attr, 1, 4);
-    Chara[0].motion_type.state.time = 10.0f;
-    Chara[0].motion_type.state.blend_step = 0.05f;
-    Chara[0].motion_type.state.motion_no = 0;
-    Chara[0].motion_type.state.playing_no = 0;
-    Chara[0].FootSoundEnable(0);
+    Chara__3[0].frame->SetAttr(attr, 1, 4);
+    Chara__3[0].motion_type.state.time = 10.0f;
+    Chara__3[0].motion_type.state.blend_step = 0.05f;
+    Chara__3[0].motion_type.state.motion_no = 0;
+    Chara__3[0].motion_type.state.playing_no = 0;
+    Chara__3[0].FootSoundEnable(0);
 
-    Chara[1].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[1].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
     attr.unk_08 = 0;
-    Chara[1].frame->SetAttr(attr, 1, 4);
-    Chara[1].motion_type.state.time = 70.0f;
-    Chara[1].motion_type.state.blend_step = 0.05f;
-    Chara[1].motion_type.state.motion_no = 0;
-    Chara[1].motion_type.state.playing_no = 0;
+    Chara__3[1].frame->SetAttr(attr, 1, 4);
+    Chara__3[1].motion_type.state.time = 70.0f;
+    Chara__3[1].motion_type.state.blend_step = 0.05f;
+    Chara__3[1].motion_type.state.motion_no = 0;
+    Chara__3[1].motion_type.state.playing_no = 0;
 
-    Chara[2].LoadPackData(read_buffer, "f_boll_2.cfg", &CharaDataBuffer, 0);
+    Chara__3[2].LoadPackData(read_buffer, "f_boll_2.cfg", &CharaDataBuffer, 0);
     attr.unk_08 = 0;
-    Chara[2].frame->SetAttr(attr, 1, 4);
-    Chara[2].motion_type.state.time = 20.0f;
-    Chara[2].motion_type.state.blend_step = 0.05f;
-    Chara[2].motion_type.state.motion_no = 0;
-    Chara[2].motion_type.state.playing_no = 0;
+    Chara__3[2].frame->SetAttr(attr, 1, 4);
+    Chara__3[2].motion_type.state.time = 20.0f;
+    Chara__3[2].motion_type.state.blend_step = 0.05f;
+    Chara__3[2].motion_type.state.motion_no = 0;
+    Chara__3[2].motion_type.state.playing_no = 0;
 
-    Chara[3].LoadPackData(read_buffer, "rm16yuka.cfg", &CharaDataBuffer, 0);
+    Chara__3[3].LoadPackData(read_buffer, "rm16yuka.cfg", &CharaDataBuffer, 0);
     attr.unk_08 = 0;
-    Chara[3].frame->SetAttr(attr, 1, 4);
-    Chara[3].motion_type.state.time = 2.0f;
-    Chara[3].motion_type.state.blend_step = 0.05f;
-    Chara[3].motion_type.state.motion_no = 0;
-    Chara[3].motion_type.state.playing_no = 0;
+    Chara__3[3].frame->SetAttr(attr, 1, 4);
+    Chara__3[3].motion_type.state.time = 2.0f;
+    Chara__3[3].motion_type.state.blend_step = 0.05f;
+    Chara__3[3].motion_type.state.motion_no = 0;
+    Chara__3[3].motion_type.state.playing_no = 0;
 
-    Chara[8].LoadPackData(read_buffer, "c01w01.cfg", &CharaDataBuffer, 0);
-    Chara[1].unk_C98 = (int) &Wind;
+    Chara__3[8].LoadPackData(read_buffer, "c01w01.cfg", &CharaDataBuffer, 0);
+    Chara__3[1].unk_C98 = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1985,7 +1981,7 @@ static void InitProcH() {
         Cam[i].motion_type.state.blend_step = 1.0f;
         Cam[i].motion_type.state.motion_no = 0;
         Cam[i].motion_type.state.playing_no = 0;
-        Cam[i].motion_type.state.camera = &MainCamera;
+        Cam[i].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -2001,9 +1997,9 @@ void DrawProcH() {
 
     if (CScript.obj[3].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex[3]);
-        Chara[3].Step();
-        Chara[3].ClothStep(0);
-        Chara[3].Draw();
+        Chara__3[3].Step();
+        Chara__3[3].ClothStep(0);
+        Chara__3[3].Draw();
     }
 
     TexManager.ReloadTexture(Vif1Packet, 23);
@@ -2013,8 +2009,8 @@ void DrawProcH() {
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
-            Chara[i].ShadowStep();
-            Chara[i].DrawShadow();
+            Chara__3[i].ShadowStep();
+            Chara__3[i].DrawShadow();
         }
     }
 
@@ -2023,9 +2019,9 @@ void DrawProcH() {
     for (int i = 0; i < 9; i++) {
         if (i != 3 && CScript.obj[i].disp) {
             TexManager.ReloadTexture(Vif1Packet, CharaTex[i]);
-            Chara[i].Step();
-            Chara[i].ClothStep(0);
-            Chara[i].Draw();
+            Chara__3[i].Step();
+            Chara__3[i].ClothStep(0);
+            Chara__3[i].Draw();
         }
     }
 
@@ -2035,20 +2031,20 @@ void DrawProcH() {
     OP_CharaFrame = Cam[SceneNp].frame;
     sceVu0CopyVector(eye, OP_CharaFrame->position);
 
-    CFire.FireStep();
-    CFire.FireCreate();
+    CFire__4.FireStep();
+    CFire__4.FireCreate();
 
     for (int i = 0; i < OP_FireList; i++) {
         float z = OP_FirePosition[i][2] / 10.0f;
         float y = OP_FirePosition[i][1] / 10.0f;
         float x = OP_FirePosition[i][0] / 10.0f;
 
-        CFire.position[0] = 10.0f * x;
-        CFire.position[1] = 10.0f * y;
-        CFire.position[2] = 10.0f * z;
-        CFire.position[3] = 1.0f;
+        CFire__4.position[0] = 10.0f * x;
+        CFire__4.position[1] = 10.0f * y;
+        CFire__4.position[2] = 10.0f * z;
+        CFire__4.position[3] = 1.0f;
 
-        CFire.DrawFire(1, 1, &MainCamera, eye, OP_FireScale[i], 3, 15.0f);
+        CFire__4.DrawFire(1, 1, &MainCamera__3, eye, OP_FireScale[i], 3, 15.0f);
     }
 
     TexManager.ReloadTexture(Vif1Packet, 22);
@@ -2058,6 +2054,14 @@ void DrawProcH() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled InitProcI__Fv
+ * @address 0x1DD0CA0
+ * @size 0x814
+ * @unknownret
+ */
 static void InitProcI() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -2087,24 +2091,24 @@ static void InitProcI() {
     char *chara[3] = {"rm18c01d.cfg", "rm18ashiba.cfg", "info2.cfg"};
 
     CharaDataBuffer.Reset();
-    Chara[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
+    Chara__3[0].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
 
     for (int i = 0; i < 3; i++) {
-        Chara[i].LoadPackData(read_buffer, chara[i], &CharaDataBuffer, 0);
+        Chara__3[i].LoadPackData(read_buffer, chara[i], &CharaDataBuffer, 0);
 
         CFrameAttr attr;
 
         attr.unk_08 = 0;
-        Chara[i].frame->SetAttr(attr, 1, 4);
-        Chara[i].motion_type.state.time = 1.0f;
-        Chara[i].motion_type.state.blend_step = 0.05f;
-        Chara[i].motion_type.state.motion_no = 0;
-        Chara[i].motion_type.state.playing_no = 0;
+        Chara__3[i].frame->SetAttr(attr, 1, 4);
+        Chara__3[i].motion_type.state.time = 1.0f;
+        Chara__3[i].motion_type.state.blend_step = 0.05f;
+        Chara__3[i].motion_type.state.motion_no = 0;
+        Chara__3[i].motion_type.state.playing_no = 0;
     }
 
-    Chara[1].motion_type.state.time = 23.0f;
-    Chara[0].unk_C98 = (int) &Wind;
-    Chara[2].SetScale(20.0f, 20.0f, 20.0f);
+    Chara__3[1].motion_type.state.time = 23.0f;
+    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[2].SetScale(20.0f, 20.0f, 20.0f);
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -2170,7 +2174,7 @@ static void InitProcI() {
         Cam[j].motion_type.state.blend_step = 1.0f;
         Cam[j].motion_type.state.motion_no = 0;
         Cam[j].motion_type.state.playing_no = 0;
-        Cam[j].motion_type.state.camera = &MainCamera;
+        Cam[j].motion_type.state.camera = &MainCamera__3;
     }
 
     OP_FireList = 0;
@@ -2190,14 +2194,14 @@ void DrawProcI() {
 
     if (CScript.obj[1].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex[1]);
-        Chara[1].Step();
-        Chara[1].Draw();
+        Chara__3[1].Step();
+        Chara__3[1].Draw();
     }
 
     if (CScript.obj[2].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex[2]);
-        Chara[2].Step();
-        Chara[2].Draw();
+        Chara__3[2].Step();
+        Chara__3[2].Draw();
     }
 
     if (CScript.obj[0].disp) {
@@ -2213,8 +2217,8 @@ void DrawProcI() {
         CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
 
         MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
-        Chara[0].ShadowStep();
-        Chara[0].DrawShadow();
+        Chara__3[0].ShadowStep();
+        Chara__3[0].DrawShadow();
         MGEndDrawShadow(52);
 
         sceVu0CopyMatrix(light, save_light);
@@ -2222,9 +2226,9 @@ void DrawProcI() {
         MGSetPLight(light, lightcolor);
 
         TexManager.ReloadTexture(Vif1Packet, CharaTex[0]);
-        Chara[0].Step();
-        Chara[0].ClothStep(0);
-        Chara[0].Draw();
+        Chara__3[0].Step();
+        Chara__3[0].ClothStep(0);
+        Chara__3[0].Draw();
     }
 
     TexManager.ReloadTexture(Vif1Packet, 22);
@@ -2234,6 +2238,14 @@ void DrawProcI() {
     DepthOfField(dof, 2, 32, 0);
 }
 
+/**
+ *
+ *
+ * @mangled InitProcTitle__Fv
+ * @address 0x1DD1760
+ * @size 0x9C
+ * @unknownret
+ */
 static void InitProcTitle() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},

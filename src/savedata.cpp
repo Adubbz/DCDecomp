@@ -7,6 +7,7 @@
 
 #include "object.hpp"
 
+#include "editatra.hpp"
 void CObject::SetPosition(float *position) {
     sceVu0CopyVector(this->pos, position);
 }
@@ -28,7 +29,6 @@ struct SV_ATRA_PARTS_DEF {
  * @address 0x158E00
  * @size 0x74
  */
-extern "C" SV_ATRA_PARTS_DEF *GetEditAtraPartsData__Fii(int georama_no, int plot_no);
 
 void *CSaveData::GetConfigData() {
     return this->config;
@@ -441,7 +441,7 @@ int CSaveData::AtraPartsGet(int georama_no, int plot_no) {
         return 0;
     }
 
-    def = GetEditAtraPartsData__Fii(georama_no, plot_no);
+    def = (SV_ATRA_PARTS_DEF *) GetEditAtraPartsData(georama_no, plot_no);
     if (def == NULL) {
         return 0;
     }

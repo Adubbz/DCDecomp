@@ -10,6 +10,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
+#include "rect.hpp"
 float waveAnimeCnt[32];
 int sw;
 

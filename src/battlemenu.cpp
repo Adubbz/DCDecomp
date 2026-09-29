@@ -49,6 +49,7 @@ static int GetVisitInfo(int place, int menu_mode);
 #include "menuetc.hpp"
 
 #include "vutext.hpp"
+#include "rect.hpp"
 static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha);
 static void BattleMenuAppear();
 static int BattleMenuExit();

@@ -1003,3 +1003,8 @@ extern CEffect *EffectTable__3;
  * Character the camera and events treat as the player.
  */
 extern CCharacter *Chara;
+
+/**
+ * Records of the map's texture animation.
+ */
+extern CTexAnimeData TexAnimeData[];

@@ -40,14 +40,6 @@ void OpD_InitProcess(void);
 void OpD_InitProcess2(void);
 
 /**
- * @mangled SkyColor__FP9CFrameVu1
- * @address 0x1DC4F30
- * @size 0x194
- * @unknownret
- */
-void SkyColor(CFrameVu1 *);
-
-/**
  * @mangled OpD_MotionProcess__Fv
  * @address 0x1DC50D0
  * @size 0x52C
@@ -71,50 +63,3 @@ void OpD_SoundProcess(void);
  */
 void OpD_DrawProcess(void);
 
-/**
- * @mangled EffectAtraPrizum__Fv
- * @address 0x1DC6540
- * @size 0x3A8
- * @unknownret
- */
-void EffectAtraPrizum(void);
-
-/**
- * @mangled RollLight__FPf
- * @address 0x1DC68F0
- * @size 0x378
- * @unknownret
- */
-void RollLight(float *);
-
-/**
- * @mangled EffectSeireiKing__Ff
- * @address 0x1DC6C70
- * @size 0x114
- * @unknownret
- */
-void EffectSeireiKing(float);
-
-/**
- * @mangled LensFreaProcess__Fv
- * @address 0x1DC6D90
- * @size 0xD4
- * @unknownret
- */
-void LensFreaProcess(void);
-
-/**
- * @mangled Setsumei__Fv
- * @address 0x1DC6E70
- * @size 0x178C
- * @unknownret
- */
-void Setsumei(void);
-
-/**
- * @mangled HamonProcess__Fv
- * @address 0x1DC8600
- * @size 0x330
- * @unknownret
- */
-void HamonProcess(void);

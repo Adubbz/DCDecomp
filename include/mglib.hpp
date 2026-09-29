@@ -6,7 +6,8 @@
 #include <libgraph.h>
 #include <libpkt.h>
 
-#include "rect.hpp"
+
+class CRect_i_;
 #include "renderinfo.hpp"
 
 extern sceGifTag GiftagAD;

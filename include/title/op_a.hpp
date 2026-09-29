@@ -1,6 +1,13 @@
 #pragma once
 
 #include "common.h"
+#include <libvu0.h>
+
+class OBJ_ANIME_SEQ;
+class CMap;
+class CFrame;
+class CFrameVu1;
+struct MOTION_INFO;
 
 /**
  *          Initializes the dungeon-square opening scene.
@@ -13,48 +20,6 @@
 void OpA_InitProcess(void);
 
 /**
- *          Loads the dungeon-square scene textures.
- *
- * @mangled LoadTexture__Fv__3
- * @address 0x1DB5070
- * @size 0x3AC
- * @unknownret
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void LoadTexture(void);
-
-/**
- *          Loads the dungeon-square actors and effects.
- *
- * @mangled LoadData__Fv__2
- * @address 0x1DB5420
- * @size 0x32C
- * @unknownret
- * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
- */
-void LoadData(void);
-
-/**
- *          Installs the couple's initial dance motions.
- *
- * @mangled SetDanceMotion__Fv
- * @address 0x1DB5750
- * @size 0x148
- * @unknownret
- */
-void SetDanceMotion(void);
-
-/**
- *          Initializes the crowd positions around the dancers.
- *
- * @mangled InitDancerPos__Fv
- * @address 0x1DB58A0
- * @size 0x124
- * @unknownret
- */
-void InitDancerPos(void);
-
-/**
  *          Draws one frame of the dungeon-square scene.
  *
  * @mangled OpA_DrawProcess__Fv
@@ -63,26 +28,6 @@ void InitDancerPos(void);
  * @unknownret
  */
 void OpA_DrawProcess(void);
-
-/**
- *          Draws the scrolling cloud model.
- *
- * @mangled DrawCloud__Fv
- * @address 0x1DB6710
- * @size 0x230
- * @unknownret
- */
-void DrawCloud(void);
-
-/**
- *          Emits and advances the chimney smoke particles.
- *
- * @mangled SmokeProcess__Fv
- * @address 0x1DB6940
- * @size 0x2A4
- * @unknownret
- */
-void SmokeProcess(void);
 
 /**
  *          Advances the dungeon-square scene state.
@@ -95,66 +40,6 @@ void SmokeProcess(void);
 void OpA_MotionProcess(void);
 
 /**
- *          Places the crowd on the camera model's dancer frames.
- *
- * @mangled MoveDancers__Fv
- * @address 0x1DB75D0
- * @size 0x188
- * @unknownret
- */
-void MoveDancers(void);
-
-/**
- *          Draws the reader's paired foot shadows.
- *
- * @mangled ReaderShadow__Fv
- * @address 0x1DB7760
- * @size 0xB8
- * @unknownret
- */
-void ReaderShadow(void);
-
-/**
- *          Draws the dancer's paired foot shadows.
- *
- * @mangled DancerShadow__Fv
- * @address 0x1DB7820
- * @size 0xB4
- * @unknownret
- */
-void DancerShadow(void);
-
-/**
- *          Draws the shogun's scene shadow.
- *
- * @mangled ShogunShadow__Fv
- * @address 0x1DB78E0
- * @size 0xCC
- * @unknownret
- */
-void ShogunShadow(void);
-
-/**
- *          Draws the priest's scene shadow.
- *
- * @mangled ShisaiShadow__Fv
- * @address 0x1DB79B0
- * @size 0xCC
- * @unknownret
- */
-void ShisaiShadow(void);
-
-/**
- *          Places and fades the shared ground-shadow model.
- *
- * @mangled DrawShadow__Ffff
- * @address 0x1DB7A80
- * @size 0x108
- * @unknownret
- */
-void DrawShadow(float, float, float);
-
-/**
  *          Updates sound and music for the dungeon-square scene.
  *
  * @mangled OpA_SoundProcess__Fv
@@ -165,21 +50,81 @@ void DrawShadow(float, float, float);
 void OpA_SoundProcess(void);
 
 /**
- *          Scrolls the waterfall texture plate.
- *
- * @mangled setTexScroll__Fv
- * @address 0x1DB82D0
- * @size 0x274
- * @unknownret
+ * Frames the dance has run for.
  */
-void setTexScroll(void);
+extern int DanceCnt;
 
 /**
- *          Scrolls the cloud texture plate.
- *
- * @mangled setCloudTexScroll__Fv
- * @address 0x1DB8550
- * @size 0x274
- * @unknownret
+ * Whether the dance has started.
  */
-void setCloudTexScroll(void);
+extern int DanceStart;
+
+/**
+ * Object animation sequences of the opening.
+ */
+extern OBJ_ANIME_SEQ OP_AnimeSeq[];
+
+/**
+ * Rotation step of the object animations.
+ */
+extern int OP_AnimeSeqRot;
+
+/**
+ * Map of the village buildings.
+ */
+extern CMap OP_BuildingMap;
+
+/**
+ * Second map of the village buildings.
+ */
+extern CMap OP_BuildingMap2;
+
+/**
+ * Frame of the character the opening follows.
+ */
+extern CFrame *OP_CharaFrame__2;
+
+/**
+ * Whether each fire is lit.
+ */
+extern int OP_FireFlg[96];
+
+/**
+ * Number of fires placed.
+ */
+extern int OP_FireList;
+
+/**
+ * Position of each fire.
+ */
+extern sceVu0FVECTOR OP_FirePosition[96];
+
+/**
+ * Scale of each fire.
+ */
+extern float OP_FireScale[96];
+
+/**
+ * Collision frame of the ground.
+ */
+extern CFrameVu1 *OP_GroundCol;
+
+/**
+ * Map of the ground.
+ */
+extern CMap OP_GroundMap;
+
+/**
+ * Frame of the sky dome.
+ */
+extern CFrameVu1 *OP_SkyFrame;
+
+/**
+ * Motion keys of the dancer.
+ */
+extern MOTION_INFO dancer[];
+
+/**
+ * Motion keys of the cursed villager.
+ */
+extern MOTION_INFO noroi[];

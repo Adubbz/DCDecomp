@@ -15,6 +15,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 
 #include "camera.hpp"
 #include "camerafollow.hpp"
@@ -34,6 +35,13 @@
 #include "title/script.hpp"
 #include "wind.hpp"
 
+#include "main.hpp"
+#include "mglib.hpp"
+#include "vutext.hpp"
+#include "title/op_a.hpp"
+#include "title/opening.hpp"
+#include "title/op_b.hpp"
+#include "title/rushmovi.hpp"
 #define PI 3.14159265358979323846
 
 class OBJ_ANIME_SEQ {
@@ -213,7 +221,6 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst
 void DepthOfField(float *dist, int level, int alpha, int blur);
 void OPAnalyz(char *name);
 void OPMdsLoad();
-extern "C" char *strcpy(char *dst, const char *src);
 
 void SndSetCamera(CCamera *camera);
 void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
@@ -226,39 +233,17 @@ void SndAmbientStop();
 void SndStep();
 void SndSePlay(int se, float *position, float near_dist, float far_dist);
 
-extern u_int Vu_prog0f[];
 void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect,
                    int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
 
-extern sceGifTag GiftagAD;
-extern sceVif1Packet *Vif1Packet;
-extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
-extern int OP_AnimeSeqRot;
-extern CCharacter Chara[23];
-extern CMapObject OP_NornMapObj[76];
-extern int OP_FireList;
-extern sceVu0FVECTOR OP_FirePosition[96];
-extern float OP_FireScale[96];
-extern CMap OP_GroundMap;
-extern CMap OP_BuildingMap;
-extern CMap OP_BuildingMap2;
-extern sceGsZbuf mgZBuffer;
-extern RenderInfo mgRenderInfo;
-extern sceVu0FMATRIX light;
-extern sceVu0FMATRIX lightcolor;
-extern sceVu0FVECTOR ambientlight;
-extern sceGsAlpha mgAlpha;
-extern CDataAlloc2<1> MapDataBuffer;
-
-CCameraFollow MainCamera(
+CCameraFollow MainCamera__3(
     20.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f,
     15.0f, 0.0f, 8.0f);
 static CDispFade DispFade;
-CFireOmni CFire;
+CFireOmni CFire__4;
 class CScript CScript;
-extern class CScript ScriptState;
-CWind Wind;
-CWater Water;
+CWind Wind__4;
+CWater Water__2;
 char CharaTex[9];
 CDataAlloc2<1> CharaDataBuffer(-1);
 static tagFRAME_INF frame_info_cam[300];
@@ -367,7 +352,7 @@ void FaceChange(int no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face.eye = ScriptState.obj[no].eye;
+    face.eye = CScript__2.obj[no].eye;
 
     int eye = face.eye;
     int column;
@@ -388,7 +373,7 @@ void FaceChange(int no) {
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eyes, dbp, dbw, SCE_GS_PSMT8, 0,
                   128 - face.eye_height - face.eye_bottom, 0);
 
-    face.mouth = ScriptState.obj[no].mouth;
+    face.mouth = CScript__2.obj[no].mouth;
 
     CRect<int> mouth(384, face.strip_bottom - face.mouth_height * (face.mouth + 1), 128,
                      face.mouth_height);
@@ -415,10 +400,10 @@ void RushInit() {
     SetDataBuffer(&TextureData, 250000);
     SetPacketReadBuffer(50000, 360000);
 
-    MainCamera.SetDistance(80.0f);
-    MainCamera.SetHeight(0.0f);
-    MainCamera.SetFollow(0.0f, 0.0f, 0.0f);
-    MainCamera.Step(0);
+    MainCamera__3.SetDistance(80.0f);
+    MainCamera__3.SetHeight(0.0f);
+    MainCamera__3.SetFollow(0.0f, 0.0f, 0.0f);
+    MainCamera__3.Step(0);
     MGSetRenderInfo(800.0f, 6.0f, 65535.0f);
 
     wait_now_loading_vsync();
@@ -503,6 +488,14 @@ int RushLoop() {
     return 0;
 }
 
+/**
+ *
+ *
+ * @mangled MotionProcess__Fv__2
+ * @address 0x1DC90A0
+ * @size 0xDD0
+ * @unknownret
+ */
 static void MotionProcess() {
     switch (CScript.fade) {
         case 1:
@@ -541,7 +534,7 @@ static void MotionProcess() {
         }
 
         Cam[SceneNp].motion_type.state.time = (float) CScript.motion_start;
-        Cam[SceneNp].motion_type.state.camera = &MainCamera;
+        Cam[SceneNp].motion_type.state.camera = &MainCamera__3;
         CScript.motion_req = 0;
     }
 
@@ -556,30 +549,30 @@ static void MotionProcess() {
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
             if (CScript.obj[i].motion_end != -1) {
-                if (Chara[i].motion_type.state.time > (float) (Chara[i].motion_type.motion_info[CScript.obj[i].motion].end - 1)) {
+                if (Chara__3[i].motion_type.state.time > (float) (Chara__3[i].motion_type.motion_info[CScript.obj[i].motion].end - 1)) {
                     CScript.obj[i].motion = CScript.obj[i].motion_end;
                     CScript.obj[i].motion_end = -1;
                 }
             }
 
-            Chara[i].motion_type.state.blend_step = CScript.obj[i].step;
+            Chara__3[i].motion_type.state.blend_step = CScript.obj[i].step;
 
             if (CScript.obj[i].step == 1.0f) {
-                if (CScript.obj[i].motion != Chara[i].motion_no) {
-                    Chara[i].motion_type.state.time =
-                        (float) Chara[i].motion_type.motion_info[CScript.obj[i].motion].start;
-                    Chara[i].motion_no = CScript.obj[i].motion;
-                    Chara[i].flags = 4;
-                    Chara[i].motion_speed = -1.0f;
+                if (CScript.obj[i].motion != Chara__3[i].motion_no) {
+                    Chara__3[i].motion_type.state.time =
+                        (float) Chara__3[i].motion_type.motion_info[CScript.obj[i].motion].start;
+                    Chara__3[i].motion_no = CScript.obj[i].motion;
+                    Chara__3[i].flags = 4;
+                    Chara__3[i].motion_speed = -1.0f;
                 } else {
-                    Chara[i].motion_no = CScript.obj[i].motion;
-                    Chara[i].flags = 0;
-                    Chara[i].motion_speed = -1.0f;
+                    Chara__3[i].motion_no = CScript.obj[i].motion;
+                    Chara__3[i].flags = 0;
+                    Chara__3[i].motion_speed = -1.0f;
                 }
             } else {
-                Chara[i].motion_no = CScript.obj[i].motion;
-                Chara[i].flags = 0;
-                Chara[i].motion_speed = -1.0f;
+                Chara__3[i].motion_no = CScript.obj[i].motion;
+                Chara__3[i].flags = 0;
+                Chara__3[i].motion_speed = -1.0f;
             }
         }
     }
@@ -601,48 +594,48 @@ static void MotionProcess() {
         dir[3] = 0.0f;
     }
 
-    Wind.SetDir(dir);
+    Wind__4.SetDir(dir);
 
     switch (CScript.scene) {
         case 0:
-            Wind.SetVelocity(1.3f);
+            Wind__4.SetVelocity(1.3f);
             break;
         case 1:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 2:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 3:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 4:
-            Wind.SetVelocity(0.0f);
+            Wind__4.SetVelocity(0.0f);
             break;
         case 5:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 6:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 7:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 8:
-            Wind.SetVelocity(0.4f);
+            Wind__4.SetVelocity(0.4f);
             break;
         case 9:
-            Wind.SetVelocity(0.3f);
+            Wind__4.SetVelocity(0.3f);
             break;
     }
 
     if (CScript.scene == 7) {
-        Chara[1].unk_C98 = (int) &Wind;
+        Chara__3[1].unk_C98 = (int) &Wind__4;
     } else {
-        Chara[0].unk_C98 = (int) &Wind;
+        Chara__3[0].unk_C98 = (int) &Wind__4;
     }
 
-    Wind.Step();
+    Wind__4.Step();
 
     typedef float MotionLocal0, MotionLocal1, MotionLocal2, MotionLocal3, MotionLocal4,
         MotionLocal5, MotionLocal6, MotionLocal7, MotionLocal8, MotionLocal9,
@@ -665,20 +658,20 @@ static void MotionProcess() {
 
             if (frame) {
                 if (CScript.scene == 0 || CScript.camera_start == 16 || (CScript.camera_start == 17 && i == 0)) {
-                    Chara[i].SetPosition(0.0f, 0.0f, 0.0f);
-                    Chara[i].SetRotation(0.0f, 0.0f, 0.0f);
-                    Chara[i].frame->SetReference(frame);
+                    Chara__3[i].SetPosition(0.0f, 0.0f, 0.0f);
+                    Chara__3[i].SetRotation(0.0f, 0.0f, 0.0f);
+                    Chara__3[i].frame->SetReference(frame);
                 } else {
                     frame->GetLWMatrix(matrix);
 
                     float angle = atan2f(matrix[2][0], matrix[2][2]);
                     float zero = 0.0f;
 
-                    Chara[i].SetRotation(zero, angle, zero);
+                    Chara__3[i].SetRotation(zero, angle, zero);
                     float x = matrix[3][0];
                     float y = matrix[3][1];
                     float z = matrix[3][2];
-                    Chara[i].SetPosition(x, y, z);
+                    Chara__3[i].SetPosition(x, y, z);
                 }
             }
         }
@@ -688,9 +681,9 @@ static void MotionProcess() {
 
     if (scene == 1 || scene == 3 || scene == 5 || scene == 7) {
         if (scene != 7) {
-            frame = Chara[0].frame->SearchFrame("weapon");
+            frame = Chara__3[0].frame->SearchFrame("weapon");
         } else {
-            frame = Chara[1].frame->SearchFrame("weapon");
+            frame = Chara__3[1].frame->SearchFrame("weapon");
         }
 
         if (frame) {
@@ -698,9 +691,9 @@ static void MotionProcess() {
             sceVu0Normalize(matrix[0], matrix[0]);
             sceVu0Normalize(matrix[1], matrix[1]);
             sceVu0Normalize(matrix[2], matrix[2]);
-            Chara[8].SetPosition((float) (scene & 0), 0.0f, 0.0f);
-            Chara[8].SetRotation(0.0f, 0.0f, 0.0f);
-            Chara[8].frame->SetTransMatrix(matrix);
+            Chara__3[8].SetPosition((float) (scene & 0), 0.0f, 0.0f);
+            Chara__3[8].SetRotation(0.0f, 0.0f, 0.0f);
+            Chara__3[8].frame->SetTransMatrix(matrix);
         }
     }
 
@@ -710,7 +703,7 @@ static void MotionProcess() {
         }
 
         if (CScript.obj[7].disp) {
-            frame = Chara[0].frame->SearchFrame("dcol");
+            frame = Chara__3[0].frame->SearchFrame("dcol");
 
             if (frame) {
                 frame->GetLWMatrix(matrix);
@@ -721,9 +714,9 @@ static void MotionProcess() {
                     m7p9, m7p10, m7p11, m7p12, m7p13, m7p14, m7p15, m7p16, m7p17,
                     m7p18, m7p19, m7p20, m7p21, m7p22, m7p23, m7p24, m7p25, m7p26,
                     m7p27, m7p28, m7p29, m7p30, m7p31;
-                Chara[7].SetPosition(0.0f, 0.0f, 0.0f);
-                Chara[7].SetRotation(0.0f, 0.0f, 0.0f);
-                Chara[7].frame->SetTransMatrix(matrix);
+                Chara__3[7].SetPosition(0.0f, 0.0f, 0.0f);
+                Chara__3[7].SetRotation(0.0f, 0.0f, 0.0f);
+                Chara__3[7].frame->SetTransMatrix(matrix);
             }
 
             static int old = 0;
@@ -732,20 +725,20 @@ static void MotionProcess() {
 
             if (old != step && (step == 12 || step == 17 || step == 52 || step == 111)) {
                 CScript.obj[7].motion = 0;
-                Chara[7].motion_no = 0;
-                Chara[7].flags = 4;
-                Chara[7].motion_speed = -1.0f;
+                Chara__3[7].motion_no = 0;
+                Chara__3[7].flags = 4;
+                Chara__3[7].motion_speed = -1.0f;
                 old = step;
             } else if (old != step && step == 119) {
                 CScript.obj[7].motion = 1;
-                Chara[7].motion_no = 1;
-                Chara[7].flags = 4;
-                Chara[7].motion_speed = -1.0f;
+                Chara__3[7].motion_no = 1;
+                Chara__3[7].flags = 4;
+                Chara__3[7].motion_speed = -1.0f;
                 old = step;
             } else {
-                Chara[7].motion_no = CScript.obj[7].motion;
-                Chara[7].flags = 2;
-                Chara[7].motion_speed = -1.0f;
+                Chara__3[7].motion_no = CScript.obj[7].motion;
+                Chara__3[7].flags = 2;
+                Chara__3[7].motion_speed = -1.0f;
             }
         }
     }
@@ -754,27 +747,27 @@ static void MotionProcess() {
 
     if (CScript.camera_start == 19) {
         if (iwacnt == 0) {
-            Chara[2].SetPosition(260.26f, 507.76f, 520.5f);
-            Chara[2].SetRotation(0.0f, 1.92f, 0.0f);
-            Chara[2].motion_no = 0;
-            Chara[2].flags = 0;
-            Chara[2].motion_speed = -1.0f;
-            Chara[2].motion_type.state.time = 2.0f;
+            Chara__3[2].SetPosition(260.26f, 507.76f, 520.5f);
+            Chara__3[2].SetRotation(0.0f, 1.92f, 0.0f);
+            Chara__3[2].motion_no = 0;
+            Chara__3[2].flags = 0;
+            Chara__3[2].motion_speed = -1.0f;
+            Chara__3[2].motion_type.state.time = 2.0f;
         }
 
         if (iwacnt == 330) {
-            Chara[2].SetPosition(260.26f, 507.76f, 520.5f);
-            Chara[2].SetRotation((float) (iwacnt & 0), 1.92f, 0.0f);
-            Chara[2].motion_no = 1;
-            Chara[2].flags = 4;
-            Chara[2].motion_speed = -1.0f;
-            Chara[2].motion_type.state.time = 2.0f;
+            Chara__3[2].SetPosition(260.26f, 507.76f, 520.5f);
+            Chara__3[2].SetRotation((float) (iwacnt & 0), 1.92f, 0.0f);
+            Chara__3[2].motion_no = 1;
+            Chara__3[2].flags = 4;
+            Chara__3[2].motion_speed = -1.0f;
+            Chara__3[2].motion_type.state.time = 2.0f;
         }
 
         if (iwacnt == 331) {
-            Chara[2].motion_no = 1;
-            Chara[2].flags = 0;
-            Chara[2].motion_speed = -1.0f;
+            Chara__3[2].motion_no = 1;
+            Chara__3[2].flags = 0;
+            Chara__3[2].motion_speed = -1.0f;
         }
 
         iwacnt++;
@@ -783,6 +776,14 @@ static void MotionProcess() {
     }
 }
 
+/**
+ *
+ *
+ * @mangled DrawProcess__Fv__2
+ * @address 0x1DC9E70
+ * @size 0x344
+ * @unknownret
+ */
 static void DrawProcess() {
     if (DispFade.GetRate() == 128.0) {
         return;
@@ -793,10 +794,10 @@ static void DrawProcess() {
     sceVu0FMATRIX view;
     sceVu0FMATRIX unit;
 
-    MainCamera.GetPos(position);
-    SndSetCamera(&MainCamera);
-    MainCamera.GetCameraMatrix(camera);
-    MainCamera.Step(1);
+    MainCamera__3.GetPos(position);
+    SndSetCamera(&MainCamera__3);
+    MainCamera__3.GetCameraMatrix(camera);
+    MainCamera__3.Step(1);
 
     sceVu0UnitMatrix(unit);
     sceVu0MulMatrix(view, unit, camera);
@@ -869,6 +870,14 @@ static void DrawProcess() {
                 128, 128, 128, 35);
 }
 
+/**
+ *
+ *
+ * @mangled SoundProcess__Fv__2
+ * @address 0x1DCA1C0
+ * @size 0xCF4
+ * @unknownret
+ */
 static void SoundProcess() {
     if (CScript.bgm_fade) {
         SndBgmFadeOut(64, 0);
@@ -933,7 +942,7 @@ static void SoundProcess() {
 
         if (CScript.scene == 0) {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("c12a");
-            int step = (int) Chara[1].motion_type.state.time;
+            int step = (int) Chara__3[1].motion_type.state.time;
 
             if (wait == 0) {
                 if (step == 10) {
@@ -957,7 +966,7 @@ static void SoundProcess() {
             }
         } else {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("chr_a");
-            int step = (int) Chara[0].motion_type.state.time;
+            int step = (int) Chara__3[0].motion_type.state.time;
 
             if (wait == 0) {
                 if (step == 20) {
@@ -1237,19 +1246,19 @@ void WaterProcess() {
     if (CScript.scene == 1) {
         sceVu0FVECTOR position = {0.0f, -0.4f, 0.0f, 0.0f};
 
-        Water.frame.SetPosition(position);
-        Water.Shake(12, 4, (float) rand() * 4.5 / 2147483647.0 + 0.5);
+        Water__2.frame.SetPosition(position);
+        Water__2.Shake(12, 4, (float) rand() * 4.5 / 2147483647.0 + 0.5);
     } else {
         sceVu0FVECTOR ref;
 
-        MainCamera.GetRef(ref);
+        MainCamera__3.GetRef(ref);
         ref[1] = 0.0f;
-        Water.frame.SetPosition(ref);
-        Water.Shake((int) (rand() * 32.0f / 2147483648.0f),
+        Water__2.frame.SetPosition(ref);
+        Water__2.Shake((int) (rand() * 32.0f / 2147483648.0f),
                     (int) (rand() * 32.0f / 2147483648.0f), -0.5f);
     }
 
-    Water.Hamon();
-    Water.DrawVu1(&mgRenderInfo, GetVif1Packet(), 0);
+    Water__2.Hamon();
+    Water__2.DrawVu1(&mgRenderInfo, GetVif1Packet(), 0);
     MGSetGsZBUF(&mgZBuffer);
 }

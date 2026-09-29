@@ -20,10 +20,11 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+#include "rect.hpp"
 /**
  * Each character's default weapon.
  */
-static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+int defWeapon__2[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 
 int element_tbl[6] = {1, 2, 4, 8, 0x10, 0};
 

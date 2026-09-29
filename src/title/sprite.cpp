@@ -14,6 +14,7 @@
 #include "texture.hpp"
 #include "title/scfader.hpp"
 
+#include "title/title.hpp"
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h because the
    two constructors that header states are not this file's: every rectangle here is built by one
    that assigns x, y, w and h in that order, and rect.h's assigns them in the other. */
@@ -37,8 +38,6 @@ public:
 
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
                  const CRect<int> &src, u_char alpha);
-
-extern CScFader CFade;
 
 CSprite::CSprite() {
     int i;

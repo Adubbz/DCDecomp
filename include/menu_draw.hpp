@@ -624,7 +624,3 @@ int GetAttachKind(int item_no);
  */
 extern CTexture *PerBoardTex;
 
-/**
- * Sort key the inventory's auto-sort cycles from; the unit defines it below the functions that read it.
- */
-extern int asort_top_type;
