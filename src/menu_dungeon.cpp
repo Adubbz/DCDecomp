@@ -43,19 +43,19 @@ DUN_ENTER_MENU DEnterMenu;
  * State of the character change menu and its character positions.
  */
 struct CHARA_CHANGE_MENU {
-    s8 selected;   /**< Party member the ring has turned to. */
-    s8 cursor_row; /**< Row the cursor is on in the message window. */
-    s8 party_size; /**< Number of party members on the ring. */
-    s8 unk_03;
-    float unk_04;
+    s8 selected;          /**< Party member the ring has turned to. */
+    s8 cursor_row;        /**< Row the cursor is on in the message window. */
+    s8 party_size;        /**< Number of party members on the ring. */
+    s8 unk_03;            /**< Step of the menu's state machine. */
+    float turn_frame;     /**< Frames the ring has spent turning toward the newly selected member. */
     float ring_pos[6][2]; /**< Each member's offset from the ring's centre. */
     s16 ring_slot[6];     /**< Each member's place on the ring, counted from the front. */
-    float unk_44;
-    s16 unk_48;
+    float turn_direction; /**< Direction the ring turns: 1 after selecting the previous member, -1 after the next. */
+    s16 reset_on_open;    /**< Cleared when the menu opens; nothing reads it. */
     u8 unk_4a[2];
-    s32 unk_4c;
+    s32 unk_4c; /**< Frames spent in the closing and fade steps. */
     u8 unk_50[2];
-    s8 unk_52;
+    s8 change_blocked; /**< Why the leader cannot change: 0 free, 1 in a restricted zone, 2 Osmond in a state that forbids it. */
     u8 unk_53;
     float cursor_x; /**< Screen x of the cursor. */
     float cursor_y; /**< Screen y of the cursor. */
@@ -88,7 +88,7 @@ static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
  * @address 0x225810
  * @size 0x158
  */
-static void PlusAttachmentVolume(ATTACH_LIST *, ATTACH_LIST *, float);
+static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale);
 
 /**
  * Restores the pad and textures when the dungeon entrance menu closes.
@@ -124,7 +124,7 @@ static void DunEnterDraw(void);
  * @address 0x227250
  * @size 0x4AC
  */
-static void DunEnterBoardWaku(int, int, int);
+static void DunEnterBoardWaku(int x, int y, int alpha);
 
 /**
  * Draws the dungeon entry board.
@@ -133,7 +133,7 @@ static void DunEnterBoardWaku(int, int, int);
  * @address 0x227700
  * @size 0x7C0
  */
-static void DunEnterBoard(int, int, int);
+static void DunEnterBoard(int x, int y, int alpha);
 
 /**
  * Draws a number right to left, one digit at a time, clipped to the board.
@@ -142,7 +142,7 @@ static void DunEnterBoard(int, int, int);
  * @address 0x227EC0
  * @size 0x154
  */
-static void DrawEnemyNum(int, int, int, int, int, int);
+static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alpha);
 
 /**
  * Draws the collected Atla count on the dungeon entrance board.
@@ -151,7 +151,7 @@ static void DrawEnemyNum(int, int, int, int, int, int);
  * @address 0x228020
  * @size 0x248
  */
-static void DrawGetAtoraNumBoard(int, int, int, int, int, int);
+static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, int alpha);
 
 /**
  * Draws one digit of the dungeon board's numbers, clipped to the board.
@@ -160,7 +160,7 @@ static void DrawGetAtoraNumBoard(int, int, int, int, int, int);
  * @address 0x228270
  * @size 0xDC
  */
-static void DrawDunNumberClip(int, int, int, int, int, int);
+static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int alpha);
 
 /**
  * Draws the dungeon entry screen's background and its darkening box.
@@ -169,7 +169,7 @@ static void DrawDunNumberClip(int, int, int, int, int, int);
  * @address 0x228350
  * @size 0x9C
  */
-static void DrawDunEnterBack(int);
+static void DrawDunEnterBack(int alpha);
 
 /**
  * Draws the floor's name and number on the dungeon entry board.
@@ -178,7 +178,7 @@ static void DrawDunEnterBack(int);
  * @address 0x2283F0
  * @size 0x290
  */
-static void DrawDunEnterFloorName(int, int, int, int, int, int);
+static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha);
 
 /**
  * Sets up the item preview's model and textures once they have been read.
@@ -214,7 +214,7 @@ static int ConvDebugSelectToExcelListNo(int selection);
  * @address 0x22B7C0
  * @size 0x230
  */
-static void DrawItemDataView(int);
+static void DrawItemDataView(int item_no);
 
 static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
     int i;
@@ -261,8 +261,8 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     return total;
 }
 
-void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
-    if (attach_source == NULL) {
+void SetWeaponAttachStatus(WEAPON_HAVE *result) {
+    if (result == NULL) {
         return;
     }
 
@@ -281,7 +281,7 @@ void SetWeaponAttachStatus(WEAPON_HAVE *attach_source) {
         return;
     }
 
-    WeaponAllValueSet(equipped, attach_source, 0);
+    WeaponAllValueSet(equipped, result, 0);
 }
 
 void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
@@ -316,8 +316,8 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
             scale = 2.0f;
         }
         PlusAttachmentVolume(&total, &attaches[i], scale);
-        if (attaches[i].item_no == 0x5A && attaches[i].unk_04 != 0 && attaches[i].unk_04 != 1) {
-            flags |= attaches[i].unk_04;
+        if (attaches[i].item_no == 0x5A && attaches[i].sphere_flags != 0 && attaches[i].sphere_flags != 1) {
+            flags |= attaches[i].sphere_flags;
         }
     }
     result->flags = CheckWeaponOptionStatus(flags);
@@ -415,7 +415,7 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
         volume = attach->status[attach->item_no - 0x5B];
     }
     if (attach->item_no == 0x5A) {
-        volume = attach->stat_00;
+        volume = attach->sphere_level;
     }
     return volume;
 }
@@ -441,8 +441,8 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     ReadBG();
     MenuEtcErrCnt = 0;
     DEnterMenu.texture_block = texture_block;
-    DEnterMenu.unk_00C = 0;
-    DEnterMenu.unk_00E = 1;
+    DEnterMenu.textures_ready = 0;
+    DEnterMenu.loading = 1;
     DEnterMenu.counter = 0;
     DEnterMenu.state = 1;
     DEnterMenu.requested_floor = requested_floor;
@@ -488,12 +488,12 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     }
     printf("DEnterMenu.select = %d\n", DEnterMenu.selected_floor);
     printf("DEnterMenu.topline = %d\n", DEnterMenu.scroll_top);
-    DEnterMenu.unk_004 = 118.0f - 40.0f * DEnterMenu.scroll_top;
+    DEnterMenu.list_y = 118.0f - 40.0f * DEnterMenu.scroll_top;
     lines = DEnterMenu.floor_count;
     if (lines < 5) {
         lines = 5;
     }
-    DEnterMenu.unk_008 = 122.0f + 108.0f * DEnterMenu.scroll_top / lines;
+    DEnterMenu.scroll_bar_y = 122.0f + 108.0f * DEnterMenu.scroll_top / lines;
     GamePad.SetAutoRepeat(0xF00F, 30, 5);
     GamePad.MenuModeOn(0x78);
     return 1;
@@ -533,7 +533,7 @@ static int DunEnterMenuKey(void) {
     switch (DEnterMenu.state) {
         case 1:
         case 3:
-            if (DEnterMenu.unk_00C == 0 && ReadBGSync() == 0) {
+            if (DEnterMenu.textures_ready == 0 && ReadBGSync() == 0) {
                 LOADTEXTURE_INFO2 textures[] = {
                     {(char *) "#frame_menu_enter#640#448#4", DEnterMenu.texture_block, 0},
                     {NULL, DEnterMenu.texture_block, 0},
@@ -549,16 +549,16 @@ static int DunEnterMenuKey(void) {
                 InitMenuMesSet(7, (short *) GetPackFile((u_int *) archive->buffer, (char *) "dunlog.bin", NULL));
                 CommonMenuMes2.mes_made = -1;
                 CommonMenuMes2.MakeMesWin(10);
-                DEnterMenu.unk_00C = 1;
-                DEnterMenu.unk_00E = 0;
+                DEnterMenu.textures_ready = 1;
+                DEnterMenu.loading = 0;
                 printf("tex enter end \n");
             } else {
                 MenuEtcErrCnt++;
             }
-            if (DEnterMenu.unk_00C != 0) {
+            if (DEnterMenu.textures_ready != 0) {
                 DEnterMenu.counter++;
             }
-            if (DEnterMenu.unk_00C != 0 && DEnterMenu.counter > 30) {
+            if (DEnterMenu.textures_ready != 0 && DEnterMenu.counter > 30) {
                 DEnterMenu.state = 0;
                 DEnterMenu.counter = 0;
                 if (DEnterMenu.requested_floor >= 0) {
@@ -626,8 +626,8 @@ static int DunEnterMenuKey(void) {
                 DEnterMenu.selected_floor = 0;
             }
             if (abs(DEnterMenu.scroll_top - scroll_top) > 4) {
-                DEnterMenu.unk_004 = 118.0f - 40.0f * DEnterMenu.scroll_top;
-                DEnterMenu.unk_008 = 122.0f + 108.0f * DEnterMenu.scroll_top / DEnterMenu.floor_count;
+                DEnterMenu.list_y = 118.0f - 40.0f * DEnterMenu.scroll_top;
+                DEnterMenu.scroll_bar_y = 122.0f + 108.0f * DEnterMenu.scroll_top / DEnterMenu.floor_count;
             }
             if (selected != DEnterMenu.selected_floor || scroll_top != DEnterMenu.scroll_top) {
                 ComMenuSePlay(0);
@@ -663,7 +663,7 @@ static void DunEnterDraw(void) {
     fade = alpha;
     switch (DEnterMenu.state) {
         case 1:
-            if (DEnterMenu.unk_00C != 0) {
+            if (DEnterMenu.textures_ready != 0) {
                 fade = DEnterMenu.counter * 6;
                 alpha = fade;
             }
@@ -678,7 +678,7 @@ static void DunEnterDraw(void) {
     if (alpha > 0x80) {
         alpha = 0x80;
     }
-    if (DEnterMenu.unk_00C != 0 && DEnterMenu.state != 3) {
+    if (DEnterMenu.textures_ready != 0 && DEnterMenu.state != 3) {
         MenuTextureReload(DEnterMenu.texture_block);
         DrawDunEnterBack(alpha);
         DunEnterBoard(0x46, 0x5A, alpha);
@@ -773,7 +773,7 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
         count = 5;
     }
     draw_x = x + 0x1FC;
-    draw_y = (int) (DEnterMenu.unk_008 += ((int) (32.0f + y + 108.0f * DEnterMenu.scroll_top / count) - DEnterMenu.unk_008) / 4.0f);
+    draw_y = (int) (DEnterMenu.scroll_bar_y += ((int) (32.0f + y + 108.0f * DEnterMenu.scroll_top / count) - DEnterMenu.scroll_bar_y) / 4.0f);
     height = (int) (540.0f / count);
     while (y + 0x98 < draw_y + (height + 8)) {
         height--;
@@ -822,19 +822,19 @@ static void DunEnterBoard(int x, int y, int alpha) {
         rows = 5;
     }
     int target = y + 0x1C - DEnterMenu.scroll_top * 40;
-    int step = (int) ((float) target - DEnterMenu.unk_004);
-    DEnterMenu.unk_004 += step >> 2;
+    int step = (int) ((float) target - DEnterMenu.list_y);
+    DEnterMenu.list_y += step >> 2;
     if (abs(step) < 2) {
-        DEnterMenu.unk_004 = target;
+        DEnterMenu.list_y = target;
     }
-    row_y = (int) DEnterMenu.unk_004;
+    row_y = (int) DEnterMenu.list_y;
 
     CRect_i_ rule_source(0x20, 0x20, 0x28, 7);
     dim = (alpha * 80) >> 7;
     rule_x = (int) (32.0f + lane);
     if (DEnterMenu.scroll_top == 0) {
         DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x - 10, 0x73, 10, 3), rule_source, dim);
-        for (int j = 0; j < 11; j++) {
+        for (int segment = 0; segment < 11; segment++) {
             DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x, 0x73, 0x28, 3), rule_source, dim);
             rule_x += 0x28;
         }
@@ -862,7 +862,7 @@ static void DunEnterBoard(int x, int y, int alpha) {
         MenuTextureClip(position, source, length, top, bottom);
         CRect_i_ edge_source(0x20, source, 10, length);
         DrawMenu2DSprite(DunLogBoard, CRect_i_((int) (lane - 10.0f), position, 10, length), edge_source, dim);
-        for (int j = 0; j < 12; j++) {
+        for (int segment = 0; segment < 12; segment++) {
             DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 0x28, length), CRect_i_(0x20, source, 0x28, length),
                              dim);
             lane += 40.0f;
@@ -896,12 +896,12 @@ static void DunEnterBoard(int x, int y, int alpha) {
             MenuTextureClip(position, source, length, top - 10, bottom);
             if (position < bottom) {
                 int remaining = (u8) DEnterMenu.max_atra[i] - (u8) DEnterMenu.collected_atra[i];
-                for (int k = 0; k < remaining; k++) {
+                for (int mark = 0; mark < remaining; mark++) {
                     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length),
                                      CRect_i_(0x48, source, 0x20, length), alpha);
                     draw_x += 0x1A;
                 }
-                for (int k = 0; k < (u8) DEnterMenu.collected_atra[i]; k++) {
+                for (int mark = 0; mark < (u8) DEnterMenu.collected_atra[i]; mark++) {
                     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length),
                                      CRect_i_(0x68, source, 0x20, length), alpha);
                     draw_x += 0x1A;
@@ -912,7 +912,7 @@ static void DunEnterBoard(int x, int y, int alpha) {
     }
 
     MenuTextureReload(DunLogBoard->block);
-    row_y = (int) DEnterMenu.unk_004;
+    row_y = (int) DEnterMenu.list_y;
     row_y--;
     for (int floor = 0; floor < 100; floor++) {
         if (floor == maxFloorTbl__4[DEnterMenu.dungeon] - 1) {
@@ -1148,33 +1148,33 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     changeMenu_long = 60.0f;
     ChangeMenu.mode = mode;
     ChangeMenu.cursor_row = 0;
-    ChangeMenu.unk_52 = 0;
+    ChangeMenu.change_blocked = 0;
     CUserStatus *status = (CUserStatus *) ChangeStatusDataPt;
     int zone = status->res_limit_zone_current;
     if (zone < 6 && zone >= 0) {
-        ChangeMenu.unk_52 = 1;
-    } else if (status->cur_chara == CHARA_OSMOND && BtActStatus.unk_092 == 10) {
-        ChangeMenu.unk_52 = 2;
+        ChangeMenu.change_blocked = 1;
+    } else if (status->cur_chara == CHARA_OSMOND && BtActStatus.ground_kind == 10) {
+        ChangeMenu.change_blocked = 2;
     }
     if (ChangeMenu.mode != 0) {
         ChangeMenu.unk_03 = 2;
         SetChangeMenuCursor();
     } else {
         ChangeMenu.unk_03 = 0;
-        if (ChangeMenu.unk_52 == 1) {
+        if (ChangeMenu.change_blocked == 1) {
             ChangeMenu.cursor_row = 1;
             SetChangeMenuCursor();
-        } else if (ChangeMenu.unk_52 == 2) {
+        } else if (ChangeMenu.change_blocked == 2) {
             printf(" not change area \n");
             ChangeMenu.cursor_row = 1;
             SetChangeMenuCursor();
         }
     }
     ChangeMenu.party_size = ChangeStatusDataPt->party_size;
-    ChangeMenu.unk_48 = 0;
+    ChangeMenu.reset_on_open = 0;
     float step = 6.2831855f / ChangeMenu.party_size;
     int i;
-    if (ChangeMenu.unk_44 < 0.0f) {
+    if (ChangeMenu.turn_direction < 0.0f) {
         i = 0;
     }
     for (i = 0; i < ChangeMenu.party_size; i++) {
@@ -1216,10 +1216,10 @@ int CharaChangeLoop(void) {
         CommonMenuMes3.auto_pos = -1;
         CommonMenuMes3.Preset(1);
         int message = 1;
-        if (ChangeMenu.unk_52 == 1) {
+        if (ChangeMenu.change_blocked == 1) {
             message = 4;
         }
-        if (ChangeMenu.unk_52 == 2) {
+        if (ChangeMenu.change_blocked == 2) {
             message = 5;
         }
         CommonMenuMes3.MakeMesWin(message);
@@ -1284,10 +1284,10 @@ int CharaChangeKey(void) {
         case 3:
         case 4: {
             int message = 1;
-            if (ChangeMenu.unk_52 == 1) {
+            if (ChangeMenu.change_blocked == 1) {
                 message = 4;
             }
-            if (ChangeMenu.unk_52 == 2) {
+            if (ChangeMenu.change_blocked == 2) {
                 message = 5;
             }
             if (CommonMenuMes3.mes_made != message) {
@@ -1296,7 +1296,7 @@ int CharaChangeKey(void) {
             if (GamePad.Down(0x60)) {
                 if (ChangeMenu.mode != 0) {
                     ChangeMenu.unk_03 = 2;
-                    CommonMenuMes3.MakeMesWin(ChangeMenu.unk_52 == 0 ? 1 : 2);
+                    CommonMenuMes3.MakeMesWin(ChangeMenu.change_blocked == 0 ? 1 : 2);
                 } else {
                     ChangeMenu.unk_03 = 0;
                 }
@@ -1305,9 +1305,9 @@ int CharaChangeKey(void) {
             break;
         }
         case 1:
-            ChangeMenu.unk_04 += 1.0f;
-            if (ChangeMenu.unk_04 >= 21.0f) {
-                if (ChangeMenu.unk_44 > 0.0f) {
+            ChangeMenu.turn_frame += 1.0f;
+            if (ChangeMenu.turn_frame >= 21.0f) {
+                if (ChangeMenu.turn_direction > 0.0f) {
                     for (int i = 0; i < 6; i++) {
                         ChangeMenu.ring_slot[i]++;
                         if (ChangeMenu.ring_slot[i] == ChangeMenu.party_size) {
@@ -1323,13 +1323,13 @@ int CharaChangeKey(void) {
                     }
                 }
                 ChangeMenu.unk_03 = 0;
-                ChangeMenu.unk_04 = 0.0f;
-                ChangeMenu.unk_44 = 0.0f;
+                ChangeMenu.turn_frame = 0.0f;
+                ChangeMenu.turn_direction = 0.0f;
             }
             break;
         case 2: {
             int message = 1;
-            if (ChangeMenu.unk_52 == 1 || ChangeMenu.unk_52 == 2) {
+            if (ChangeMenu.change_blocked == 1 || ChangeMenu.change_blocked == 2) {
                 message = 2;
             }
             if (CommonMenuMes3.mes_made != message) {
@@ -1349,11 +1349,11 @@ int CharaChangeKey(void) {
                 if (ChangeMenu.cursor_row != 0) {
                     result = 2;
                     ComMenuSePlay(1);
-                } else if (ChangeMenu.unk_52 == 1) {
+                } else if (ChangeMenu.change_blocked == 1) {
                     ComMenuSePlay(2);
                     ChangeMenu.unk_03 = 3;
                     return 0;
-                } else if (ChangeMenu.unk_52 == 2) {
+                } else if (ChangeMenu.change_blocked == 2) {
                     ComMenuSePlay(2);
                     ChangeMenu.unk_03 = 3;
                     return 0;
@@ -1375,13 +1375,13 @@ int CharaChangeKey(void) {
                     ChangeMenu.unk_03 = 3;
                     return 0;
                 }
-                if (ChangeMenu.unk_52 == 1) {
+                if (ChangeMenu.change_blocked == 1) {
                     ComMenuSePlay(2);
                     CommonMenuMes3.MakeMesWin(4);
                     ChangeMenu.unk_03 = 3;
                     return 0;
                 }
-                if (ChangeMenu.unk_52 == 2) {
+                if (ChangeMenu.change_blocked == 2) {
                     CommonMenuMes3.MakeMesWin(5);
                     ChangeMenu.unk_03 = 3;
                     ComMenuSePlay(2);
@@ -1419,14 +1419,14 @@ int CharaChangeKey(void) {
             }
             int previous = ChangeMenu.selected;
             if (GamePad.Down(0x3000)) {
-                ChangeMenu.unk_44 = 1.0f;
+                ChangeMenu.turn_direction = 1.0f;
                 ChangeMenu.selected--;
                 if (ChangeMenu.selected < 0) {
                     ChangeMenu.selected = ChangeMenu.party_size - 1;
                 }
             }
             if (GamePad.Down(0xC000)) {
-                ChangeMenu.unk_44 = -1.0f;
+                ChangeMenu.turn_direction = -1.0f;
                 ChangeMenu.selected++;
                 if (ChangeMenu.party_size - 1 < ChangeMenu.selected) {
                     ChangeMenu.selected = 0;
@@ -1483,7 +1483,7 @@ void CharaChangeDraw(void) {
             case 5:
                 changeMenu_long += ChangeMenu.unk_4c;
                 turn = step / 20.0f;
-                if (ChangeMenu.unk_44 < 0.0f) {
+                if (ChangeMenu.turn_direction < 0.0f) {
                     turn = -turn;
                 }
                 for (i = 0; i < ChangeMenu.party_size; i++) {
@@ -1494,11 +1494,11 @@ void CharaChangeDraw(void) {
                 break;
             case 1:
                 turn = step / 20.0f;
-                if (ChangeMenu.unk_44 < 0.0f) {
+                if (ChangeMenu.turn_direction < 0.0f) {
                     turn = -turn;
                 }
                 for (i = 0; i < ChangeMenu.party_size; i++) {
-                    angle = 3.1415927f + (step * ChangeMenu.ring_slot[i] + turn * ChangeMenu.unk_04);
+                    angle = 3.1415927f + (step * ChangeMenu.ring_slot[i] + turn * ChangeMenu.turn_frame);
                     ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
                     ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
                 }
@@ -1776,7 +1776,7 @@ void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
             DrawMenu2DSprite(texture, dest, src, alpha);
             volume = GetAttachVolumeForMsg(&weapon->attach[i]);
             if (item_no == 0x5A) {
-                volume = weapon->attach[i].unk_02;
+                volume = weapon->attach[i].sphere_weapon_no;
             }
             DrawAttachNumberOrWeapon(x, y, 0, 0x280, item_no, volume, alpha, 0);
         }
@@ -1791,7 +1791,7 @@ int GetAtraTipNowHave(int tip_no, int georama_no) {
     int have;
     int i;
     int plot;
-    int j;
+    int slot;
     int id;
     s16 *elem;
     SV_EDIT_PARTS_INFO *info;
@@ -1800,7 +1800,7 @@ int GetAtraTipNowHave(int tip_no, int georama_no) {
     have = 0;
     if (tip_no < 0x28) {
         SV_EDIT_PARTS_INFO *plot_info = SaveData->GetEditPartsInfo(georama_no, tip_no);
-        if (plot_info != NULL && plot_info->flag != 0) {
+        if (plot_info != NULL && plot_info->obtained != 0) {
             have = 1;
         }
     } else {
@@ -1815,10 +1815,10 @@ int GetAtraTipNowHave(int tip_no, int georama_no) {
             for (plot = 0; plot < 0x18; plot++) {
                 info = SaveData->GetEditPartsInfo(georama_no, plot);
                 atra = GetEditAtraPartsData(georama_no, plot);
-                for (j = 0; j < 6; j++) {
-                    EDIT_CHIP_ATTACH_DATA *element = atra->elements + j;
+                for (slot = 0; slot < 6; slot++) {
+                    EDIT_CHIP_ATTACH_DATA *element = atra->elements + slot;
                     id = element->id;
-                    if (id >= 0 && id == tip_no - 0x28 && info->npc_slot[j] != 0) {
+                    if (id >= 0 && id == tip_no - 0x28 && info->element_enabled[slot] != 0) {
                         have = 1;
                     }
                 }
@@ -2124,9 +2124,9 @@ static void DrawItemDataView(int item_no) {
         }
     }
     if (MDebugItemPolyViewFlag == 0) {
-        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], "-----ItemData View-----\n");
-        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], ItemTemplete[line++], item_no);
-        MenuDbgMsg.len += sprintf(&MenuDbgMsg.text[MenuDbgMsg.len], ItemTemplete[line], type);
+        MenuDbgMsg.length += sprintf(&MenuDbgMsg.text[MenuDbgMsg.length], "-----ItemData View-----\n");
+        MenuDbgMsg.length += sprintf(&MenuDbgMsg.text[MenuDbgMsg.length], ItemTemplete[line++], item_no);
+        MenuDbgMsg.length += sprintf(&MenuDbgMsg.text[MenuDbgMsg.length], ItemTemplete[line], type);
         type[0] = '\0';
     }
     if (GamePad.Down(0x10)) {

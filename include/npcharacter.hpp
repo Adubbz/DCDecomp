@@ -52,9 +52,9 @@ public:
     int step_hidden;          /**< Steps the character while it is not visible. */
     s32 event_status;         /**< Status value exposed to an event script for the talking NPC. */
     s32 unk_1480;
-    int alpha_step; /**< Default alpha change per frame. */
-    s32 unk_1488;
-    s32 unk_148C;             /**< Texture set that the walker's model animates with. */
+    int alpha_step;           /**< Default alpha change per frame. */
+    s32 alpha_step_override;  /**< Alpha change for the next step only, replacing alpha_step, or -1. */
+    s32 texture_block;        /**< Texture block the model's textures and texture animations live in. */
     s32 recurring_talk_event; /**< Event number used for repeated conversations with this villager. */
     u8 unk_1494[0xC];
 

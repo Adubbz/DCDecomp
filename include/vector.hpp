@@ -35,7 +35,7 @@ float DistPlanePoint(float *normal, float *on_plane, float *point);
  * The offset that mirrors a point in that plane, written through the last argument, and twice the
    distance it stood at returned.
  */
-float ReflectionPlane(float *normal, float *on_plane, float *point, float *out);
+float ReflectionPlane(float *normal, float *on_plane, float *point, float *reflection);
 
 /**
  * Whether a point in the triangle's plane is inside it, as the three edge cross products having
@@ -43,9 +43,9 @@ float ReflectionPlane(float *normal, float *on_plane, float *point, float *out);
  */
 int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *normal);
 
-void MulMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2);
-void RotMatrixY(sceVu0FMATRIX m0, float ry);
-void LookAtMatrixZ(sceVu0FMATRIX m0, float *direction);
+void MulMatrix(sceVu0FMATRIX product, sceVu0FMATRIX left_matrix, sceVu0FMATRIX right_matrix);
+void RotMatrixY(sceVu0FMATRIX matrix, float angle_y);
+void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction);
 
 /**
  * One step of a straight-line move towards a target, with the fourth argument read as a per-call

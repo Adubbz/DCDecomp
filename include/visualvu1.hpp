@@ -22,8 +22,8 @@ class CVisualPolyVu1;
 class CVisualVu1 {
 public:
     CVisualVu1 &operator=(const CVisualVu1 &);
-    s32 unk_00; /**< Unknown base-visual state preceding the virtual table pointer. */
-    s32 unk_04; /**< Unknown base-visual state preceding the virtual table pointer. */
+    s32 flags; /**< Draw flags of the base visual, cleared when it is initialised. */
+    s32 unk_04;
     /**
      * Clears the vector-unit visual's packet pointers and sizes.
      *
@@ -82,7 +82,7 @@ public:
     virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, u_long128 *,
                         int, int);
 
-    s32 unk_0C; /**< Unknown base-visual state following the virtual table pointer. */
+    s32 unk_0C;
 
     /**
      * Constructs a vector-unit visual and clears it.

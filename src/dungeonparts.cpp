@@ -1254,25 +1254,25 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
     *item1 = list[1].item[1][pick1];
 }
 
-int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
+int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small) {
     int candidate[144];
     s16 rate[400];
-    ITEM_PUT_SET *list = ItemPutListPtr[dungeon + kind * 7];
+    ITEM_PUT_SET *list = ItemPutListPtr[map_no + special * 7];
     int held;
     int count;
     int item_no;
     float roll;
-    int k;
+    int scan;
     int wanted;
     int i;
     s16 *table;
     int tries;
     int pick;
-    int n;
+    int list_no;
     int chance;
 
     // Retail copies from the pointer table itself rather than from the dungeon's rate list.
-    memcpy(rate, &ItemSetRateTbl[dungeon], 0x17C);
+    memcpy(rate, &ItemSetRateTbl[map_no], 0x17C);
     // Weapons the player already holds come up less often.
     for (i = 0x101; i < 0x17C; i++) {
         held = GetNumHowManyItemsHave(i);
@@ -1288,31 +1288,31 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             }
         }
     }
-    k = 0;
+    scan = 0;
     wanted = -1;
-    for (;; k++) {
-        item_no = list[k].floor;
+    for (;; scan++) {
+        item_no = list[scan].floor;
         if (item_no == -1) {
             break;
         }
-        if (floor + 1 == item_no) {
-            wanted = floor + 1;
+        if (floor_no + 1 == item_no) {
+            wanted = floor_no + 1;
         }
     }
     if (wanted == -1) {
-        if (floor < floorNum[dungeon]) {
+        if (floor_no < floorNum[map_no]) {
             wanted = 0x100;
         } else {
             wanted = 0xFF;
         }
     }
-    n = 0;
+    list_no = 0;
     do {
-        if (wanted == list[n].floor) {
+        if (wanted == list[list_no].floor) {
             break;
         }
-        n++;
-        if (n >= 128) {
+        list_no++;
+        if (list_no >= 128) {
             printf("err itembox list \n");
             return -1;
         }
@@ -1320,8 +1320,8 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     if (small != 0) {
         int j = 0;
         count = 0;
-        for (; list[n].item[j] != -1; j++) {
-            item_no = list[n].item[j];
+        for (; list[list_no].item[j] != -1; j++) {
+            item_no = list[list_no].item[j];
             if (item_no >= 0x51 && item_no < 0x101) {
                 candidate[count++] = item_no;
             }
@@ -1353,8 +1353,8 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     if (small == 0) {
         int j = 0;
         count = 0;
-        for (; list[n].item[j] != -1; j++) {
-            item_no = list[n].item[j];
+        for (; list[list_no].item[j] != -1; j++) {
+            item_no = list[list_no].item[j];
             if (item_no >= 0x101) {
                 candidate[count++] = item_no;
             }
@@ -1397,7 +1397,7 @@ static inline float ToWorldScale(float coordinate) {
     return coordinate * 10.0f;
 }
 
-int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *out) {
+int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *pos) {
     float quad[196][4][3];
     float px[4];
     float py[4];
@@ -1405,43 +1405,43 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
     int count = 0;
     ITEM_FREE_AREA *areas = ItemFreeAreaAll[selectMapNo];
 
-    for (int cy = y; cy < y + height; cy++) {
-        for (int cx = x; cx < x + width; cx++) {
-            int parts_no = (cells + cy * 20)[cx].parts_no;
-            int direction = (cells + cy * 20)[cx].direction;
-            for (int a = 0; areas[a].parts_no != -1 && count < 196; a++) {
-                if (parts_no != areas[a].parts_no) {
+    for (int row = y; row < y + height; row++) {
+        for (int col = x; col < x + width; col++) {
+            int parts_no = (cells + row * 20)[col].parts_no;
+            int direction = (cells + row * 20)[col].direction;
+            for (int area_no = 0; areas[area_no].parts_no != -1 && count < 196; area_no++) {
+                if (parts_no != areas[area_no].parts_no) {
                     continue;
                 }
-                for (int b = 0; b < areas[a].rect_num; b++) {
-                    int turn = areas[a].direction;
+                for (int rect_no = 0; rect_no < areas[area_no].rect_num; rect_no++) {
+                    int turn = areas[area_no].direction;
                     turn += direction;
                     if (turn > 3) {
                         turn -= 4;
                     }
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
-                    px[0] = ToWorldScale(areas[a].rect[b].x0);
-                    py[0] = areas[a].rect[b].y0 * 10.0f;
-                    pz[0] = areas[a].rect[b].z0 * 10.0f;
-                    px[3] = areas[a].rect[b].x1 * 10.0f;
-                    py[3] = areas[a].rect[b].y1 * 10.0f;
-                    pz[3] = areas[a].rect[b].z1 * 10.0f;
+                    px[0] = ToWorldScale(areas[area_no].rect[rect_no].x0);
+                    py[0] = areas[area_no].rect[rect_no].y0 * 10.0f;
+                    pz[0] = areas[area_no].rect[rect_no].z0 * 10.0f;
+                    px[3] = areas[area_no].rect[rect_no].x1 * 10.0f;
+                    py[3] = areas[area_no].rect[rect_no].y1 * 10.0f;
+                    pz[3] = areas[area_no].rect[rect_no].z1 * 10.0f;
                     px[1] = px[3];
                     py[1] = py[0];
                     pz[1] = pz[0];
                     px[2] = px[0];
                     py[2] = py[0];
                     pz[2] = pz[3];
-                    for (int k = 0; k < 4; k++) {
+                    for (int corner = 0; corner < 4; corner++) {
                         if (count < 196) {
-                            float cz;
-                            float cxv;
-                            quad[count][k][0] = -(cz = pz[k]) * sinf(angle) - (cxv = px[k]) * cosf(angle);
-                            quad[count][k][2] = -cxv * sinf(angle) + cz * cosf(angle);
-                            quad[count][k][0] *= -1.0f;
-                            quad[count][k][0] += 160.0f * (float) cx;
-                            quad[count][k][2] += 160.0f * (float) cy;
-                            quad[count][k][1] = py[k];
+                            float corner_z;
+                            float corner_x;
+                            quad[count][corner][0] = -(corner_z = pz[corner]) * sinf(angle) - (corner_x = px[corner]) * cosf(angle);
+                            quad[count][corner][2] = -corner_x * sinf(angle) + corner_z * cosf(angle);
+                            quad[count][corner][0] *= -1.0f;
+                            quad[count][corner][0] += 160.0f * (float) col;
+                            quad[count][corner][2] += 160.0f * (float) row;
+                            quad[count][corner][1] = py[corner];
                         }
                     }
                     count++;
@@ -1457,26 +1457,26 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
     float min_x = max_x;
     float max_z = quad[pick][0][2];
     float min_z = max_z;
-    for (int k = 1; k < 4; k++) {
-        if (min_x > quad[pick][k][0]) {
-            min_x = quad[pick][k][0];
+    for (int corner = 1; corner < 4; corner++) {
+        if (min_x > quad[pick][corner][0]) {
+            min_x = quad[pick][corner][0];
         }
-        if (max_x < quad[pick][k][0]) {
-            max_x = quad[pick][k][0];
+        if (max_x < quad[pick][corner][0]) {
+            max_x = quad[pick][corner][0];
         }
-        if (min_z > quad[pick][k][2]) {
-            min_z = quad[pick][k][2];
+        if (min_z > quad[pick][corner][2]) {
+            min_z = quad[pick][corner][2];
         }
-        if (max_z < quad[pick][k][2]) {
-            max_z = quad[pick][k][2];
+        if (max_z < quad[pick][corner][2]) {
+            max_z = quad[pick][corner][2];
         }
     }
     float span_x = max_x - min_x;
     float span_z = max_z - min_z;
-    out[0] = min_x + (span_x * (float) rand()) / 2.1474836e9f;
-    out[1] = quad[pick][0][1];
-    out[2] = min_z + (span_z * (float) rand()) / 2.1474836e9f;
-    out[3] = 1.0f;
+    pos[0] = min_x + (span_x * (float) rand()) / 2.1474836e9f;
+    pos[1] = quad[pick][0][1];
+    pos[2] = min_z + (span_z * (float) rand()) / 2.1474836e9f;
+    pos[3] = 1.0f;
     return count;
 }
 
@@ -1574,36 +1574,36 @@ void BtAtraListMake(int dungeon) {
  * @address 0x1C0D20
  * @size 0x2A0
  */
-int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
+int BtAtraFloorCyoice(int map_no, int floor_no, int *atra_no) {
     ATRA_SAVE registry[128];
     int packed[8];
 
-    if (dungeon >= 6) {
+    if (map_no >= 6) {
         return 0;
     }
-    ((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor);
-    int center = CenterFloorTbl[dungeon];
-    ((CDngStatusData *) UserStatus)->SetCopyAtraList(dungeon, floor, atra);
+    ((CDngStatusData *) UserStatus)->GetMaxAtraNum(map_no, floor_no);
+    int center = CenterFloorTbl[map_no];
+    ((CDngStatusData *) UserStatus)->SetCopyAtraList(map_no, floor_no, atra_no);
     for (int j = 0; j < 100; j++) {
-        registry[j].id = UserStatus->atra_registry[dungeon][j].id;
-        registry[j].floor = UserStatus->atra_registry[dungeon][j].floor;
-        registry[j].refcount = UserStatus->atra_registry[dungeon][j].refcount;
+        registry[j].id = UserStatus->atra_registry[map_no][j].id;
+        registry[j].floor = UserStatus->atra_registry[map_no][j].floor;
+        registry[j].refcount = UserStatus->atra_registry[map_no][j].refcount;
     }
     int half = -1;
-    if (floor > center - 1) {
+    if (floor_no > center - 1) {
         half = -2;
     }
     int count = 0;
     for (int i = 0; i < 8; i++) {
-        if (atra[i] >= 0) {
+        if (atra_no[i] >= 0) {
             count++;
-        } else if (atra[i] == -2) {
+        } else if (atra_no[i] == -2) {
             int placed = 0;
             while (placed == 0) {
                 int pick = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
                 if (registry[pick].id != -1 && registry[pick].refcount > 0 &&
                     half == registry[pick].floor) {
-                    atra[i] = pick;
+                    atra_no[i] = pick;
                     registry[pick].refcount--;
                     placed = 1;
                 }
@@ -1614,13 +1614,13 @@ int BtAtraFloorCyoice(int dungeon, int floor, int *atra) {
     for (int k = 0; k < 8; k++) {
         packed[k] = -1;
     }
-    int out = 0;
+    int packed_num = 0;
     for (int m = 0; m < 8; m++) {
-        if (atra[m] >= 0) {
-            packed[out++] = atra[m];
+        if (atra_no[m] >= 0) {
+            packed[packed_num++] = atra_no[m];
         }
     }
-    memcpy(atra, packed, sizeof(packed));
+    memcpy(atra_no, packed, sizeof(packed));
     return count;
 }
 
@@ -1658,7 +1658,7 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
     box.min[1] = position[1] - radius * height;
     box.min[2] = position[2] - radius;
     int around[9][2] = {{0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
-    if (map->unk_BDEC != 1) {
+    if (map->map_type != 1) {
         sceVu0FVECTOR part_pos;
 
         for (i = 0; map->parts[i].frame[0] != NULL; i++) {
@@ -1749,8 +1749,8 @@ CFrame *CDungeonParts::GetSearchFrame(char *name) {
             return found;
         }
     }
-    if (unk_004 != NULL) {
-        CFrame *found = unk_004->SearchFrame(name);
+    if (camera_collision != NULL) {
+        CFrame *found = camera_collision->SearchFrame(name);
         if (found != NULL) {
             return found;
         }
@@ -1814,7 +1814,7 @@ void CDungeonParts::Draw() {
  * @address 0x1C1850
  * @size 0x348
  */
-void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
+void CDungeonParts::DrawCalc(int x, int z, int turn, int map_type) {
     sceVu0FVECTOR position;
 
     for (int i = 0; i < 6; i++) {
@@ -1845,7 +1845,7 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int fixed) {
     if (model == NULL) {
         return;
     }
-    if (fixed == 1) {
+    if (map_type == 1) {
         int collision_turn = turn + this->collision_turn;
         if (collision_turn > 3) {
             collision_turn -= 3;
@@ -1888,8 +1888,8 @@ void CDungeonParts::initalize() {
     }
     direction_offset = 0;
     collision = NULL;
-    unk_004 = NULL;
-    unk_008 = 0;
+    camera_collision = NULL;
+    camera_collision_turn = 0;
     collision_turn = 0;
     fire_num = 0;
     water.used = 0;

@@ -58,10 +58,10 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 } __attribute__((aligned(16)));
 
 /* The three classes this scene places in the world, declared here rather than reached through
@@ -74,7 +74,7 @@ public:
     virtual void FrameObjectOnOff(char *name, int on);
     virtual void Draw();
 
-    void SetFrame(CFrameVu1 *frame, int unknown0);
+    void SetFrame(CFrameVu1 *frame, int level);
 };
 
 /* One piece of scenery. The scene builds a table of them, hands each its model, and drives them
@@ -86,14 +86,14 @@ public:
     virtual void Draw();
 
     void Initialize();
-    void DrawShadow(int unknown0);
+    void DrawShadow(int fast);
 
     char unk_00[36];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
     char unk_28[8];
-    float lod_distance;
-    int unk_34;
-    int unk_38;
+    float shadow_offset; /**< Height the shadow drops below the object. */
+    int unk_34;          /**< Category of map part the object belongs to. */
+    int handle;          /**< Handle the map gave the object. */
     char unk_3C[4];
 };
 
@@ -104,21 +104,21 @@ public:
 
     void FireStep();
     void FireCreate();
-    void DrawFire(int unknown0, int unknown1, CCamera *camera, float *eye, float scale,
-                  int unknown2, float unknown3);
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale,
+                  int layers, float camera_offset);
 
     char unk_00[32];
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
     char unk_30[16];
 };
 
-/* One piece of scenery as the scene was laid out: the model, the model its distant form is drawn
+/* One piece of scenery as the scene was laid out: the model, the model its shadow is drawn
    from, where it stands in tenths of a world unit, and its heading in degrees. */
 struct MAPOBJ_INFO {
-    char *name;
-    char *lod_name;
-    float position[3];
-    float rotation[3];
+    char *name;        /**< Model file, or zero to reuse the previous row's model. */
+    char *shadow_name; /**< Model file the shadow is drawn from, or zero for none. */
+    float position[3]; /**< Position in tenths of a world unit. */
+    float rotation[3]; /**< Rotation about each axis in degrees. */
 };
 
 /* The river the scene draws, which is a grid the file sizes and colours once and then shakes every
@@ -129,17 +129,17 @@ class CWater {
 public:
     CWater();
 
-    void SetVertex(float *a, float *b, float *c, float *d);
-    void SetSize(int width, int height, CDataAlloc2<1> *buffer);
-    void SetParam(float unknown0, float unknown1, float unknown2, float unknown3);
-    void SetColor(u_char r, u_char g, u_char b, u_char a);
-    void Shake(int x, int y, float force);
+    void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
+    void SetSize(int rows, int columns, CDataAlloc2<1> *arena);
+    void SetParam(float wave_speed, float damping, float height_scale, float distortion);
+    void SetColor(u_char red, u_char green, u_char blue, u_char alpha);
+    void Shake(int x, int y, float height_change);
     void Hamon();
     void DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *buffer);
 
     char unk_00[176];
-    CFrame frame;
-    char unread1[16];
+    CFrame frame; /**< Places and draws the water surface. */
+    char unk_320[16];
 };
 
 /* One looping object animation: a frame is found by name and then driven between two motion
@@ -150,15 +150,15 @@ public:
 
     void Initialize();
 
-    char name[16];
-    int motion_start;
-    int motion_end;
+    char name[16]; /**< Name of the frame the animation drives. */
+    int anim_type; /**< What is animated: 0 rotation, 1 position, 2 scale, 3 colour. */
+    int play_mode; /**< How the value runs between its two ends. */
     char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
-    float unk_40;
-    float unk_44;
-    float step;
+    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
+    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
+    float step_x;              /**< Amount added to the first component each tick. */
+    float step_y;              /**< Amount added to the second component each tick. */
+    float step_z;              /**< Amount added to the third component each tick. */
     char unk_4C[60];
 };
 
@@ -171,10 +171,10 @@ class CEffectGroup {
 public:
     CEffectGroup() { Initialize(0, 0); }
 
-    void Initialize(CEffect *table, int max);
+    void Initialize(CEffect *table, int count);
     void Clear();
     void EnterEffect(CEffectParam *param);
-    void Step(int unknown0);
+    void Step(int unused);
     void Draw();
 
     char unk_00[8];
@@ -188,30 +188,30 @@ public:
 
     void Initialize();
 
-    int life;
-    int kind;
-    float unk_08;
-    float unk_0C;
+    int lifetime;                   /**< Number of frames before the particle is retired. */
+    int position_oscillation_flags; /**< Bit zero enables sinusoidal position offsets. */
+    float unk_08;                   /**< Initial unscaled sprite width. */
+    float unk_0C;                   /**< Initial unscaled sprite height. */
     char unk_10[16];
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR position; /**< Initial world-space position. */
     char unk_30[4];
-    float spin;
+    float rise_speed; /**< Upward velocity added to the position every step. */
     char unk_38[24];
-    float scale;
+    float wobble_scale; /**< Amplitude of the sideways position oscillation. */
     char unk_54[12];
-    float spin_step;
+    float wobble_rate; /**< Phase rate of the sideways position oscillation. */
     char unk_64[28];
-    float alpha_step;
-    float alpha_step2;
+    float width_growth;  /**< Width scale added every step. */
+    float height_growth; /**< Height scale added every step. */
     char unk_88[40];
-    int unk_B0;
-    int unk_B4;
-    float grow;
-    CTexture *texture;
-    CRect<int> rect;
-    char unread6[4];
-    int fade;
-    char unread7[8];
+    int opacity_mode;  /**< Selects constant, increasing, or decreasing opacity. */
+    int render_flags;  /**< Selects temporary alpha and depth-buffer state. */
+    float opacity;     /**< Initial opacity. */
+    CTexture *texture; /**< Texture the particle is drawn from. */
+    CRect<int> texel;  /**< Rectangle sampled from the texture. */
+    char unk_D0[4];
+    int texture_frame_period; /**< Modulus applied before selecting a texture frame. */
+    char unk_D8[8];
 };
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
@@ -220,15 +220,15 @@ public:
    two offsets are measured from the bottom edge of the 128-pixel plate, and the two frame numbers
    are kept here rather than read from the script twice because the transfer needs them twice. */
 struct FACE_INFO {
-    char *plate;
-    char *strip;
-    int eye_bottom;
-    int eye_height;
-    int mouth_bottom;
-    int mouth_height;
-    int eye;
-    int mouth;
-    int strip_bottom;
+    char *plate;      /**< Texture the model draws the face with, or zero for an actor without one. */
+    char *strip;      /**< Texture holding the eye and mouth frames. */
+    int eye_bottom;   /**< Distance of the eyes' bottom edge above the plate's bottom edge. */
+    int eye_height;   /**< Height of one eye frame. */
+    int mouth_bottom; /**< Distance of the mouth's bottom edge above the plate's bottom edge. */
+    int mouth_height; /**< Height of one mouth frame. */
+    int eye;          /**< Eye frame currently shown. */
+    int mouth;        /**< Mouth frame currently shown. */
+    int strip_bottom; /**< Bottom edge of the frame strips within the strip texture. */
     int unk_24;
     int unk_28;
 };
@@ -237,10 +237,10 @@ struct FACE_INFO {
    a motion. Only the first four fields are read here; the two after them are the row as the table
    was written and nothing reconstructed reaches them yet. */
 struct SND_INFO {
-    int group;
-    int no;
-    int voice;
-    int count;
+    int group; /**< Sound group the sample belongs to. */
+    int no;    /**< Sound number within the group. */
+    int voice; /**< Voice the sample plays on. */
+    int count; /**< Scene tick the sample plays on. */
     int unk_10;
     int unk_14;
 };
@@ -283,16 +283,16 @@ static void MapLoad2();
 static void LoadCharaMajin();
 static void DrawDancer();
 static void InchikiShadow();
-static void DrawShadow(int no, float x, float y, float z);
+static void DrawShadow(int shadow_no, float x, float y, float z);
 static void MajinBeemProcess();
 static void SmokeProcess();
 static void WaterProcess();
-static int KageCheck(int no);
-static void LightSet(float x, float y, float z, int chara);
+static int KageCheck(int actor);
+static void LightSet(float x, float y, float z, int actor);
 static void setTexScroll();
 static void setTexAnim();
-void FaceChange(int no);
-void FaceChangeD(int no);
+void FaceChange(int actor);
+void FaceChangeD(int actor);
 
 static CFireOmni CFire;
 static OBJ_ANIME_SEQ Fuusya[2];
@@ -321,7 +321,7 @@ static int SndCnt;
    hundredth of a second left on the timer, and the timer running out closes the mouth and ends the
    line. The eyes are whatever the script last asked for. The cache is flushed on both sides of the
    two transfers because the plate is a texture the previous tick drew from and the next one will. */
-void FaceChange(int no) {
+void FaceChange(int actor) {
     static FACE_INFO face[21] = {
         {0, 0, 42, 40, 87, 35, 0, 0, 256, 2, 0},
         {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
@@ -358,12 +358,12 @@ void FaceChange(int no) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 
-    if (face[no].plate == 0) {
+    if (face[actor].plate == 0) {
         return;
     }
 
-    plate = TexManager.GetTexture(face[no].plate, -1);
-    strip = TexManager.GetTexture(face[no].strip, -1);
+    plate = TexManager.GetTexture(face[actor].plate, -1);
+    strip = TexManager.GetTexture(face[actor].strip, -1);
 
     if (plate == 0 || strip == 0) {
         return;
@@ -374,35 +374,35 @@ void FaceChange(int no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face[no].eye = CScript__2.obj[no].eye;
+    face[actor].eye = CScript__2.obj[actor].eye;
 
-    CRect<int> eye(0, face[no].strip_bottom - face[no].eye_height * (face[no].eye + 1), 128,
-                   face[no].eye_height);
+    CRect<int> eye(0, face[actor].strip_bottom - face[actor].eye_height * (face[actor].eye + 1), 128,
+                   face[actor].eye_height);
 
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eye, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[no].eye_height - face[no].eye_bottom, 0);
+                  128 - face[actor].eye_height - face[actor].eye_bottom, 0);
 
-    if (CScript__2.obj[no].mouth_time >= CScript__2.motion_step) {
-        CScript__2.obj[no].mouth_time -= CScript__2.motion_step;
+    if (CScript__2.obj[actor].mouth_time >= CScript__2.motion_step) {
+        CScript__2.obj[actor].mouth_time -= CScript__2.motion_step;
 
-        if (CScript__2.obj[no].talk) {
-            if ((int) (100.0f * CScript__2.obj[no].mouth_time) % 6 == 0) {
-                CScript__2.obj[no].mouth = rand() % 4;
+        if (CScript__2.obj[actor].talk) {
+            if ((int) (100.0f * CScript__2.obj[actor].mouth_time) % 6 == 0) {
+                CScript__2.obj[actor].mouth = rand() % 4;
             }
         }
     } else {
-        CScript__2.obj[no].mouth = 0;
-        CScript__2.obj[no].talk = 0;
+        CScript__2.obj[actor].mouth = 0;
+        CScript__2.obj[actor].talk = 0;
     }
 
-    face[no].mouth = CScript__2.obj[no].mouth;
+    face[actor].mouth = CScript__2.obj[actor].mouth;
 
     CRect<int> mouth(128,
-                     face[no].strip_bottom - face[no].mouth_height * (face[no].mouth + 1),
-                     128, face[no].mouth_height);
+                     face[actor].strip_bottom - face[actor].mouth_height * (face[actor].mouth + 1),
+                     128, face[actor].mouth_height);
 
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[no].mouth_height - face[no].mouth_bottom, 0);
+                  128 - face[actor].mouth_height - face[actor].mouth_bottom, 0);
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -509,37 +509,37 @@ void OpC_InitProcess() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "t0201.img", 0);
     tex[0].block_no = 12;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "t0206.img", 0);
     tex[1].block_no = 12;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     tex[2].block_no = 2;
-    tex[2].unk_08 = 0;
+    tex[2].mipmap = 0;
     tex[3].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
     tex[3].block_no = 2;
-    tex[3].unk_08 = 0;
+    tex[3].mipmap = 0;
     tex[4].name = (char *) GetPackFile(read_buffer, "p03a01.img", 0);
     tex[4].block_no = 13;
-    tex[4].unk_08 = 0;
+    tex[4].mipmap = 0;
     tex[5].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
     tex[5].block_no = 14;
-    tex[5].unk_08 = 0;
+    tex[5].mipmap = 0;
     tex[6].name = (char *) GetPackFile(read_buffer, "p07a01.img", 0);
     tex[6].block_no = 7;
-    tex[6].unk_08 = 0;
+    tex[6].mipmap = 0;
     tex[7].name = (char *) GetPackFile(read_buffer, "yokobue.img", 0);
     tex[7].block_no = 7;
-    tex[7].unk_08 = 0;
+    tex[7].mipmap = 0;
     tex[8].name = (char *) GetPackFile(read_buffer, "p02a01.img", 0);
     tex[8].block_no = 8;
-    tex[8].unk_08 = 0;
+    tex[8].mipmap = 0;
     tex[9].name = (char *) GetPackFile(read_buffer, "guiter.img", 0);
     tex[9].block_no = 8;
-    tex[9].unk_08 = 0;
+    tex[9].mipmap = 0;
     tex[10].name = 0;
     tex[10].block_no = 0;
-    tex[10].unk_08 = 0;
+    tex[10].mipmap = 0;
 
     TexManager.LoadTextureBlock(-1, tex);
 
@@ -591,7 +591,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr11;
 
-    attr11.unk_08 = 0;
+    attr11.clip_enable = 0;
     Chara__3[11].frame->SetAttr(attr11, 1, 4);
     Chara__3[11].motion_type.state.time = 10.0f;
     Chara__3[11].motion_type.state.blend_step = 0.05f;
@@ -602,7 +602,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr17;
 
-    attr17.unk_08 = 0;
+    attr17.clip_enable = 0;
     Chara__3[17].frame->SetAttr(attr17, 1, 4);
     Chara__3[17].motion_type.state.time = 10.0f;
     Chara__3[17].motion_type.state.blend_step = 0.05f;
@@ -613,7 +613,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr18;
 
-    attr18.unk_08 = 0;
+    attr18.clip_enable = 0;
     Chara__3[18].frame->SetAttr(attr18, 1, 4);
     Chara__3[18].motion_type.state.time = 10.0f;
     Chara__3[18].motion_type.state.blend_step = 0.05f;
@@ -624,7 +624,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr12;
 
-    attr12.unk_08 = 0;
+    attr12.clip_enable = 0;
     Chara__3[12].frame->SetAttr(attr12, 1, 4);
     Chara__3[12].motion_type.state.time = 10.0f;
     Chara__3[12].motion_type.state.blend_step = 0.05f;
@@ -636,7 +636,7 @@ void OpC_InitProcess() {
 
     CFrameAttr attr13;
 
-    attr13.unk_08 = 0;
+    attr13.clip_enable = 0;
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
     Chara__3[13].motion_type.state.time = 10.0f;
     Chara__3[13].motion_type.state.blend_step = 0.05f;
@@ -650,44 +650,44 @@ void OpC_InitProcess() {
 
     for (int i = 0; i < 2; i++) {
         Fuusya[i].Initialize();
-        Fuusya[i].motion_start = 0;
-        Fuusya[i].motion_end = 0;
-        Fuusya[i].scale[2] = 0.0f;
-        Fuusya[i].scale[1] = 0.0f;
-        Fuusya[i].scale[0] = 0.0f;
-        Fuusya[i].position[2] = 0.0f;
-        Fuusya[i].position[1] = 0.0f;
-        Fuusya[i].position[0] = 0.0f;
-        Fuusya[i].unk_44 = 0.0f;
-        Fuusya[i].unk_40 = 0.0f;
-        Fuusya[i].step = -0.5f;
+        Fuusya[i].anim_type = 0;
+        Fuusya[i].play_mode = 0;
+        Fuusya[i].start_value[2] = 0.0f;
+        Fuusya[i].start_value[1] = 0.0f;
+        Fuusya[i].start_value[0] = 0.0f;
+        Fuusya[i].end_value[2] = 0.0f;
+        Fuusya[i].end_value[1] = 0.0f;
+        Fuusya[i].end_value[0] = 0.0f;
+        Fuusya[i].step_y = 0.0f;
+        Fuusya[i].step_x = 0.0f;
+        Fuusya[i].step_z = -0.5f;
         strcpy(Fuusya[i].name, "hane");
         InitObjAnime(DoransFuusya[i], &Fuusya[i]);
     }
 
     for (int i = 0; i < 8; i++) {
         Taimatsu[i].Initialize();
-        Taimatsu[i].motion_start = 3;
-        Taimatsu[i].motion_end = 4;
-        Taimatsu[i].scale[2] = 80.0f;
-        Taimatsu[i].scale[1] = 80.0f;
-        Taimatsu[i].scale[0] = 80.0f;
-        Taimatsu[i].position[2] = 128.0f;
-        Taimatsu[i].position[1] = 128.0f;
-        Taimatsu[i].position[0] = 128.0f;
+        Taimatsu[i].anim_type = 3;
+        Taimatsu[i].play_mode = 4;
+        Taimatsu[i].start_value[2] = 80.0f;
+        Taimatsu[i].start_value[1] = 80.0f;
+        Taimatsu[i].start_value[0] = 80.0f;
+        Taimatsu[i].end_value[2] = 128.0f;
+        Taimatsu[i].end_value[1] = 128.0f;
+        Taimatsu[i].end_value[0] = 128.0f;
         strcpy(Taimatsu[i].name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
 
     Taimatsu[8].Initialize();
-    Taimatsu[8].motion_start = 3;
-    Taimatsu[8].motion_end = 4;
-    Taimatsu[8].scale[0] = 110.0f;
-    Taimatsu[8].scale[2] = 120.0f;
-    Taimatsu[8].scale[1] = 120.0f;
-    Taimatsu[8].position[0] = 128.0f;
-    Taimatsu[8].position[2] = 125.0f;
-    Taimatsu[8].position[1] = 125.0f;
+    Taimatsu[8].anim_type = 3;
+    Taimatsu[8].play_mode = 4;
+    Taimatsu[8].start_value[0] = 110.0f;
+    Taimatsu[8].start_value[2] = 120.0f;
+    Taimatsu[8].start_value[1] = 120.0f;
+    Taimatsu[8].end_value[0] = 128.0f;
+    Taimatsu[8].end_value[2] = 125.0f;
+    Taimatsu[8].end_value[1] = 125.0f;
     strcpy(Taimatsu[8].name, "hikari");
     InitObjAnime(TaimatsuFrame[8], &Taimatsu[8]);
 
@@ -748,14 +748,14 @@ void OpC_InitProcess2() {
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
     tex[0].block_no = 17;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(17, tex);
@@ -771,7 +771,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p05b01.img", 0);
     tex[0].block_no = 4;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(4, tex);
@@ -779,7 +779,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr14;
 
-    attr14.unk_08 = 0;
+    attr14.clip_enable = 0;
     Chara__3[14].frame->SetAttr(attr14, 1, 4);
     Chara__3[14].motion_type.state.time = 1.0f;
     Chara__3[14].motion_type.state.blend_step = 1.0f;
@@ -788,7 +788,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p15a01.img", 0);
     tex[0].block_no = 9;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(9, tex);
@@ -796,7 +796,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr19;
 
-    attr19.unk_08 = 0;
+    attr19.clip_enable = 0;
     Chara__3[19].frame->SetAttr(attr19, 1, 4);
     Chara__3[19].motion_type.state.time = 1.0f;
     Chara__3[19].motion_type.state.blend_step = 1.0f;
@@ -807,7 +807,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr20;
 
-    attr20.unk_08 = 0;
+    attr20.clip_enable = 0;
     Chara__3[20].frame->SetAttr(attr20, 1, 4);
     Chara__3[20].motion_type.state.time = 1.0f;
     Chara__3[20].motion_type.state.blend_step = 1.0f;
@@ -816,7 +816,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p01a01.img", 0);
     tex[0].block_no = 5;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(5, tex);
@@ -824,7 +824,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr15;
 
-    attr15.unk_08 = 0;
+    attr15.clip_enable = 0;
     Chara__3[15].frame->SetAttr(attr15, 1, 4);
     Chara__3[15].motion_type.state.time = 300.0f;
     Chara__3[15].motion_type.state.blend_step = 0.5f;
@@ -833,7 +833,7 @@ void OpC_InitProcess2() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p12a01.img", 0);
     tex[0].block_no = 6;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(6, tex);
@@ -841,7 +841,7 @@ void OpC_InitProcess2() {
 
     CFrameAttr attr16;
 
-    attr16.unk_08 = 0;
+    attr16.clip_enable = 0;
     Chara__3[16].frame->SetAttr(attr16, 1, 4);
     Chara__3[16].motion_type.state.time = 300.0f;
     Chara__3[16].motion_type.state.blend_step = 0.5f;
@@ -870,34 +870,34 @@ void OpC_InitProcess3() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "b0203.img", 0);
     tex[0].block_no = 10;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "b0204.img", 0);
     tex[1].block_no = 10;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = (char *) GetPackFile(read_buffer, "tukikage.img", 0);
     tex[2].block_no = 10;
-    tex[2].unk_08 = 0;
+    tex[2].mipmap = 0;
     tex[3].name = 0;
 
     TexManager.LoadTextureBlock(10, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c08a01.img", 0);
     tex[0].block_no = 15;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(15, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c09a01.img", 0);
     tex[0].block_no = 16;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(16, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
     tex[0].block_no = 17;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(17, tex);
@@ -907,7 +907,7 @@ void OpC_InitProcess3() {
 
     CFrameAttr attr1;
 
-    attr1.unk_08 = 0;
+    attr1.clip_enable = 0;
     Chara__3[1].frame->SetAttr(attr1, 1, 4);
     Chara__3[1].motion_type.state.time = 10.0f;
     Chara__3[1].motion_type.state.blend_step = 0.5f;
@@ -918,36 +918,36 @@ void OpC_InitProcess3() {
 
     CFrameAttr attr3;
 
-    attr3.unk_08 = 0;
+    attr3.clip_enable = 0;
     Chara__3[3].frame->SetAttr(attr3, 1, 4);
     Chara__3[3].motion_type.state.time = 10.0f;
     Chara__3[3].motion_type.state.blend_step = 0.5f;
     Chara__3[3].motion_type.state.motion_no = 0;
     Chara__3[3].motion_type.state.playing_no = 0;
 
-    CFrameAttr sky;
+    CFrameAttr sky_attr;
 
-    sky.unk_14 = 1;
-    sky.unk_54 = 0;
+    sky_attr.use_color = 1;
+    sky_attr.depth_write = 0;
 
     CFrameVu1 *frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0203.mds", 0),
                                    &MapDataBuffer, 2, 0, 0);
 
-    frame->SetAttr(sky, 1, 4608);
+    frame->SetAttr(sky_attr, 1, 4608);
     CMapObject &sky0 = OP_NornMapObj3[0];
 
     sky0.Initialize();
     sky0.SetFrame(frame, 0);
-    OP_NornMapObj3[0].unk_38 = 0;
+    OP_NornMapObj3[0].handle = 0;
     OP_NornMapObj3[0].unk_34 = 0;
     sky0.SetPosition(CVector3_f_(0.0f, 0.0f, 0.0f));
     sky0.SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
     frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0204.mds", 0), &MapDataBuffer, 2, 0, 0);
-    frame->SetAttr(sky, 1, 4608);
+    frame->SetAttr(sky_attr, 1, 4608);
     OP_NornMapObj3[1].Initialize();
     OP_NornMapObj3[1].SetFrame(frame, 0);
-    OP_NornMapObj3[1].unk_38 = 0;
+    OP_NornMapObj3[1].handle = 0;
     OP_NornMapObj3[1].unk_34 = 0;
 
     CMapObject &sky1 = OP_NornMapObj3[1];
@@ -958,7 +958,7 @@ void OpC_InitProcess3() {
     frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0302.mds", 0), &MapDataBuffer, 2, 0, 0);
     OP_NornMapObj3[2].Initialize();
     OP_NornMapObj3[2].SetFrame(frame, 0);
-    OP_NornMapObj3[2].unk_38 = 0;
+    OP_NornMapObj3[2].handle = 0;
     OP_NornMapObj3[2].unk_34 = 0;
 
     CMapObject &sky2 = OP_NornMapObj3[2];
@@ -970,7 +970,7 @@ void OpC_InitProcess3() {
                         0);
     OP_NornMapObj3[3].Initialize();
     OP_NornMapObj3[3].SetFrame(frame, 0);
-    OP_NornMapObj3[3].unk_38 = 0;
+    OP_NornMapObj3[3].handle = 0;
     OP_NornMapObj3[3].unk_34 = 0;
 
     CMapObject &sky3 = OP_NornMapObj3[3];
@@ -1020,43 +1020,43 @@ void OpC_InitProcess4() {
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = (char *) GetPackFile(read_buffer, "t0203.img", 0);
     tex[2].block_no = 10;
-    tex[2].unk_08 = 0;
+    tex[2].mipmap = 0;
     tex[3].name = (char *) GetPackFile(read_buffer, "e01b01.img", 0);
     tex[3].block_no = 10;
-    tex[3].unk_08 = 0;
+    tex[3].mipmap = 0;
     tex[4].name = (char *) GetPackFile(read_buffer, "e01b02.img", 0);
     tex[4].block_no = 10;
-    tex[4].unk_08 = 0;
+    tex[4].mipmap = 0;
     tex[5].name = (char *) GetPackFile(read_buffer, "e01b03.img", 0);
     tex[5].block_no = 10;
-    tex[5].unk_08 = 0;
+    tex[5].mipmap = 0;
     tex[6].name = (char *) GetPackFile(read_buffer, "e01t01.img", 0);
     tex[6].block_no = 10;
-    tex[6].unk_08 = 0;
+    tex[6].mipmap = 0;
     tex[7].name = (char *) GetPackFile(read_buffer, "t0205.img", 0);
     tex[7].block_no = 10;
-    tex[7].unk_08 = 0;
+    tex[7].mipmap = 0;
     tex[8].name = (char *) GetPackFile(read_buffer, "t0003.img", 0);
     tex[8].block_no = 11;
-    tex[8].unk_08 = 0;
+    tex[8].mipmap = 0;
     tex[9].name = (char *) GetPackFile(read_buffer, "e01s03.img", 0);
     tex[9].block_no = 11;
-    tex[9].unk_08 = 0;
+    tex[9].mipmap = 0;
     tex[10].name = (char *) GetPackFile(read_buffer, "e01s06.img", 0);
     tex[10].block_no = 11;
-    tex[10].unk_08 = 0;
+    tex[10].mipmap = 0;
     tex[11].name = (char *) GetPackFile(read_buffer, "t0001.img", 0);
     tex[11].block_no = 11;
-    tex[11].unk_08 = 0;
+    tex[11].mipmap = 0;
     tex[12].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
     tex[12].block_no = 17;
-    tex[12].unk_08 = 0;
+    tex[12].mipmap = 0;
     tex[13].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
     tex[13].block_no = 17;
-    tex[13].unk_08 = 0;
+    tex[13].mipmap = 0;
     tex[14].name = 0;
 
     TexManager.LoadTextureBlock(-1, tex);
@@ -1093,23 +1093,23 @@ void OpC_InitProcess5() {
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "smoke.img", 0);
     tex[0].block_no = 17;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
     tex[1].block_no = 17;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
     tex[2].block_no = 17;
-    tex[2].unk_08 = 0;
+    tex[2].mipmap = 0;
     tex[3].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
     tex[3].block_no = 17;
-    tex[3].unk_08 = 0;
+    tex[3].mipmap = 0;
     tex[4].name = 0;
 
     TexManager.LoadTextureBlock(17, tex);
@@ -1121,20 +1121,20 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr11;
 
-    attr11.unk_08 = 0;
+    attr11.clip_enable = 0;
     Chara__3[11].frame->SetAttr(attr11, 1, 4);
     Chara__3[11].motion_type.state.time = 10.0f;
     Chara__3[11].motion_type.state.blend_step = 0.05f;
     Chara__3[11].motion_type.state.motion_no = 0;
     Chara__3[11].motion_type.state.playing_no = 0;
-    Chara__3[11].unk_C98 = (int) &Wind;
+    Chara__3[11].wind = (int) &Wind;
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p09a01.img", 0);
     tex[0].block_no = 3;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
     tex[1].block_no = 3;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(3, tex);
@@ -1142,7 +1142,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr9;
 
-    attr9.unk_08 = 0;
+    attr9.clip_enable = 0;
     Chara__3[9].frame->SetAttr(attr9, 1, 4);
     Chara__3[9].motion_type.state.time = 5.0f;
     Chara__3[9].motion_type.state.blend_step = 1.0f;
@@ -1151,7 +1151,7 @@ void OpC_InitProcess5() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
     tex[0].block_no = 14;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(14, tex);
@@ -1159,7 +1159,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr13;
 
-    attr13.unk_08 = 0;
+    attr13.clip_enable = 0;
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
     Chara__3[13].motion_type.state.time = 5.0f;
     Chara__3[13].motion_type.state.blend_step = 1.0f;
@@ -1170,7 +1170,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr18;
 
-    attr18.unk_08 = 0;
+    attr18.clip_enable = 0;
     Chara__3[18].frame->SetAttr(attr18, 1, 4);
     Chara__3[18].motion_type.state.time = 10.0f;
     Chara__3[18].motion_type.state.blend_step = 0.5f;
@@ -1181,7 +1181,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr1;
 
-    attr1.unk_08 = 0;
+    attr1.clip_enable = 0;
     Chara__3[1].frame->SetAttr(attr1, 1, 4);
     Chara__3[1].motion_type.state.time = 10.0f;
     Chara__3[1].motion_type.state.blend_step = 0.5f;
@@ -1192,7 +1192,7 @@ void OpC_InitProcess5() {
 
     CFrameAttr attr3;
 
-    attr3.unk_08 = 0;
+    attr3.clip_enable = 0;
     Chara__3[3].frame->SetAttr(attr3, 1, 4);
     Chara__3[3].motion_type.state.time = 10.0f;
     Chara__3[3].motion_type.state.blend_step = 0.5f;
@@ -1200,58 +1200,58 @@ void OpC_InitProcess5() {
     Chara__3[3].motion_type.state.playing_no = 0;
 
     Fuusya[0].Initialize();
-    Fuusya[0].motion_start = 0;
-    Fuusya[0].motion_end = 0;
-    Fuusya[0].scale[2] = 0.0f;
-    Fuusya[0].scale[1] = 0.0f;
-    Fuusya[0].scale[0] = 0.0f;
-    Fuusya[0].position[2] = 0.0f;
-    Fuusya[0].position[1] = 0.0f;
-    Fuusya[0].position[0] = 0.0f;
-    Fuusya[0].unk_44 = 0.0f;
-    Fuusya[0].unk_40 = 0.0f;
-    Fuusya[0].step = -0.5f;
+    Fuusya[0].anim_type = 0;
+    Fuusya[0].play_mode = 0;
+    Fuusya[0].start_value[2] = 0.0f;
+    Fuusya[0].start_value[1] = 0.0f;
+    Fuusya[0].start_value[0] = 0.0f;
+    Fuusya[0].end_value[2] = 0.0f;
+    Fuusya[0].end_value[1] = 0.0f;
+    Fuusya[0].end_value[0] = 0.0f;
+    Fuusya[0].step_y = 0.0f;
+    Fuusya[0].step_x = 0.0f;
+    Fuusya[0].step_z = -0.5f;
     strcpy(Fuusya[0].name, "hane");
     InitObjAnime(DoransFuusya[0], &Fuusya[0]);
 
     Fuusya[1].Initialize();
-    Fuusya[1].motion_start = 0;
-    Fuusya[1].motion_end = 3;
-    Fuusya[1].scale[2] = 0.0f;
-    Fuusya[1].scale[1] = 0.0f;
-    Fuusya[1].scale[0] = 0.0f;
-    Fuusya[1].position[0] = 0.0f;
-    Fuusya[1].position[1] = 0.0f;
-    Fuusya[1].position[2] = -90.0f;
-    Fuusya[1].unk_40 = 0.0f;
-    Fuusya[1].unk_44 = 0.0f;
-    Fuusya[1].step = -0.048f;
+    Fuusya[1].anim_type = 0;
+    Fuusya[1].play_mode = 3;
+    Fuusya[1].start_value[2] = 0.0f;
+    Fuusya[1].start_value[1] = 0.0f;
+    Fuusya[1].start_value[0] = 0.0f;
+    Fuusya[1].end_value[0] = 0.0f;
+    Fuusya[1].end_value[1] = 0.0f;
+    Fuusya[1].end_value[2] = -90.0f;
+    Fuusya[1].step_x = 0.0f;
+    Fuusya[1].step_y = 0.0f;
+    Fuusya[1].step_z = -0.048f;
     strcpy(Fuusya[1].name, "obj1");
     InitObjAnime(DoransFuusya[1], &Fuusya[1]);
 
     for (int i = 0; i < 5; i++) {
         Taimatsu[i].Initialize();
-        Taimatsu[i].motion_start = 3;
-        Taimatsu[i].motion_end = 4;
-        Taimatsu[i].scale[2] = 80.0f;
-        Taimatsu[i].scale[1] = 80.0f;
-        Taimatsu[i].scale[0] = 80.0f;
-        Taimatsu[i].position[2] = 128.0f;
-        Taimatsu[i].position[1] = 128.0f;
-        Taimatsu[i].position[0] = 128.0f;
+        Taimatsu[i].anim_type = 3;
+        Taimatsu[i].play_mode = 4;
+        Taimatsu[i].start_value[2] = 80.0f;
+        Taimatsu[i].start_value[1] = 80.0f;
+        Taimatsu[i].start_value[0] = 80.0f;
+        Taimatsu[i].end_value[2] = 128.0f;
+        Taimatsu[i].end_value[1] = 128.0f;
+        Taimatsu[i].end_value[0] = 128.0f;
         strcpy(Taimatsu[i].name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
 
     Taimatsu[8].Initialize();
-    Taimatsu[8].motion_start = 3;
-    Taimatsu[8].motion_end = 4;
-    Taimatsu[8].scale[0] = 110.0f;
-    Taimatsu[8].scale[2] = 120.0f;
-    Taimatsu[8].scale[1] = 120.0f;
-    Taimatsu[8].position[0] = 128.0f;
-    Taimatsu[8].position[2] = 125.0f;
-    Taimatsu[8].position[1] = 125.0f;
+    Taimatsu[8].anim_type = 3;
+    Taimatsu[8].play_mode = 4;
+    Taimatsu[8].start_value[0] = 110.0f;
+    Taimatsu[8].start_value[2] = 120.0f;
+    Taimatsu[8].start_value[1] = 120.0f;
+    Taimatsu[8].end_value[0] = 128.0f;
+    Taimatsu[8].end_value[2] = 125.0f;
+    Taimatsu[8].end_value[1] = 125.0f;
     strcpy(Taimatsu[8].name, "hikari");
     InitObjAnime(TaimatsuFrame[8], &Taimatsu[8]);
 
@@ -1262,7 +1262,7 @@ void OpC_InitProcess5() {
 }
 
 /**
- * Where the village stands, as the scene was laid out: a model, the model its distant form is drawn
+ * Where the village stands, as the scene was laid out: a model, the model its shadow is drawn
  * from, a position in tenths of a world unit and a heading in degrees, one row per piece of scenery.
  * A row with no model of its own is another copy of the row above it, which is how a terrace of
  * identical houses costs one model load. The two windmills and the eight torches are kept aside as
@@ -1378,7 +1378,7 @@ static void MapLoad() {
 
         object.Initialize();
         object.SetFrame(frame, 0);
-        OP_NornMapObj[i].unk_38 = 0;
+        OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * norn[i].position[0],
@@ -1391,10 +1391,10 @@ static void MapLoad() {
         object.FrameObjectOnOff("win1", 0);
         object.FrameObjectOnOff("light1", 0);
 
-        if (norn[i].lod_name) {
-            LoadFile(norn[i].lod_name, (void *) read_buffer, 0);
-            object.lod_model = LoadMDSFile(read_buffer, &MapDataBuffer, 14, 0, 0);
-            object.lod_distance = -20.0f;
+        if (norn[i].shadow_name) {
+            LoadFile(norn[i].shadow_name, (void *) read_buffer, 0);
+            object.shadow_frame = LoadMDSFile(read_buffer, &MapDataBuffer, 14, 0, 0);
+            object.shadow_offset = -20.0f;
         }
     }
 
@@ -1516,7 +1516,7 @@ static void MapLoad() {
 
         object.Initialize();
         object.SetFrame(ground_frame, 0);
-        OP_NornMapObj2[j].unk_38 = 0;
+        OP_NornMapObj2[j].handle = 0;
         OP_NornMapObj2[j].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * ground[j].position[0],
@@ -1644,7 +1644,7 @@ static void MapLoad2() {
 
         object.Initialize();
         object.SetFrame(frame, 0);
-        OP_NornMapObj[i].unk_38 = 0;
+        OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * norn[i].position[0],
@@ -1657,10 +1657,10 @@ static void MapLoad2() {
         object.FrameObjectOnOff("win1", 0);
         object.FrameObjectOnOff("light1", 0);
 
-        if (norn[i].lod_name) {
-            LoadFile(norn[i].lod_name, (void *) read_buffer, 0);
-            object.lod_model = LoadMDSFile(read_buffer, &MapDataBuffer, 14, 0, 0);
-            object.lod_distance = -20.0f;
+        if (norn[i].shadow_name) {
+            LoadFile(norn[i].shadow_name, (void *) read_buffer, 0);
+            object.shadow_frame = LoadMDSFile(read_buffer, &MapDataBuffer, 14, 0, 0);
+            object.shadow_offset = -20.0f;
         }
     }
 
@@ -1746,7 +1746,7 @@ static void MapLoad2() {
 
         object.Initialize();
         object.SetFrame(ground_frame, 0);
-        OP_NornMapObj2[j].unk_38 = 0;
+        OP_NornMapObj2[j].handle = 0;
         OP_NornMapObj2[j].unk_34 = 0;
 
         object.SetPosition(CVector3_f_(10.0f * ground[j].position[0],
@@ -1784,7 +1784,7 @@ void OpC_MotionProcess() {
 
             Chara__3[i].motion_type.state.blend_step = CScript__2.obj[i].step;
             Chara__3[i].motion_no = CScript__2.obj[i].motion;
-            Chara__3[i].flags = 0;
+            Chara__3[i].motion_flags = 0;
             Chara__3[i].motion_speed = -1.0f;
         }
     }
@@ -1794,13 +1794,13 @@ void OpC_MotionProcess() {
         MotionLocal10, MotionLocal11, MotionLocal12, MotionLocal13, MotionLocal14,
         MotionLocal15, MotionLocal16, MotionLocal17, MotionLocal18, MotionLocal19,
         MotionLocal20, MotionLocal21, MotionLocal22, MotionLocal23;
-    char *name[21] = {"", "c08a", "", "", "c08a", "point", "", "", "", "p09a", "", "c01d", "p03a",
-                      "p08a", "p05b", "p01a", "p12a", "p07a", "p02a", "p15a", "p16a"};
+    char *frame_names[21] = {"", "c08a", "", "", "c08a", "point", "", "", "", "p09a", "", "c01d", "p03a",
+                             "p08a", "p05b", "p01a", "p12a", "p07a", "p02a", "p15a", "p16a"};
     sceVu0FMATRIX matrix;
 
     for (int i = 0; i < 23; i++) {
         if (CScript__2.obj[i].disp) {
-            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(name[i]);
+            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
 
             if (frame) {
                 frame->GetLWMatrix(matrix);
@@ -1817,15 +1817,15 @@ void OpC_MotionProcess() {
         CFrame *frame = Chara__3[1].frame->SearchFrame("f0");
 
         if (frame) {
-            sceVu0FMATRIX beem;
+            sceVu0FMATRIX beam_matrix;
 
-            frame->GetLWMatrix(beem);
-            sceVu0Normalize(beem[0], beem[0]);
-            sceVu0Normalize(beem[1], beem[1]);
-            sceVu0Normalize(beem[2], beem[2]);
+            frame->GetLWMatrix(beam_matrix);
+            sceVu0Normalize(beam_matrix[0], beam_matrix[0]);
+            sceVu0Normalize(beam_matrix[1], beam_matrix[1]);
+            sceVu0Normalize(beam_matrix[2], beam_matrix[2]);
             Chara__3[3].SetPosition(0.0f, 0.0f, 0.0f);
             Chara__3[3].SetRotation(0.0f, 0.0f, 0.0f);
-            Chara__3[3].frame->SetTransMatrix(beem);
+            Chara__3[3].frame->SetTransMatrix(beam_matrix);
         }
     }
 
@@ -1837,7 +1837,7 @@ void OpC_MotionProcess() {
     dir[3] = 0.0f;
     Wind.SetDir(dir);
     Wind.SetVelocity(0.2f);
-    Chara__3[11].unk_C98 = (int) &Wind;
+    Chara__3[11].wind = (int) &Wind;
     Wind.Step();
 
     static int camera = 0;
@@ -1898,18 +1898,18 @@ void OpC_MotionProcess() {
 
     switch (CScript__2.camera_start) {
         case 96:
-            Fuusya[1].step = -0.12f;
+            Fuusya[1].step_z = -0.12f;
             break;
 
         case 97:
             d = 2.0f;
-            Fuusya[1].step = -0.04f;
+            Fuusya[1].step_z = -0.04f;
             break;
 
         case 100:
             if (Cam__2[SceneNp__2].motion_type.state.time < 258.0f) {
                 step = 0.025f;
-                Fuusya[1].step = -0.0048f;
+                Fuusya[1].step_z = -0.0048f;
 
                 if (FireStep >= 1.0f) {
                     FireStep = 0.0f;
@@ -1931,7 +1931,7 @@ void OpC_MotionProcess() {
                 }
 
                 step = 0.5f;
-                Fuusya[1].step = -10.0f;
+                Fuusya[1].step_z = -10.0f;
                 FireStep = 1.0f;
             }
 
@@ -1957,15 +1957,15 @@ void OpC_MotionProcess() {
  * @unknownret
  */
 static void LoadCharaMajin() {
-    switch (CScript__2.obj[4].load_motion) {
+    switch (CScript__2.obj[4].load_step) {
         case 0:
             LoadFileBG("opdat/norn2/majinb.pak", (u_long128 *) read_buffer, 0);
-            CScript__2.obj[4].load_motion = 1;
+            CScript__2.obj[4].load_step = 1;
             break;
 
         case 1:
             if (!ReadBGSync()) {
-                CScript__2.obj[4].load_motion = 2;
+                CScript__2.obj[4].load_step = 2;
             }
             break;
 
@@ -1977,7 +1977,7 @@ static void LoadCharaMajin() {
             Chara__3[4].motion_type.state.motion_no = 0;
             Chara__3[4].motion_type.state.playing_no = 0;
             CScript__2.obj[4].load = -1;
-            CScript__2.obj[4].load_motion = -1;
+            CScript__2.obj[4].load_step = -1;
             break;
     }
 }
@@ -2023,19 +2023,19 @@ void OpC_SoundProcess() {
 
         sceVu0FVECTOR river2 = {0.0f, 0.0f, 0.0f, 0.0f};
 
-        float river2Near;
-        float river2Far;
-        river2Far = (float) (CScript__2.camera_start - CScript__2.camera_start + 500);
-        river2Near = 50.0f;
-        OpSetVolPanSE(river2, river2Near, river2Far, 15, 16, 22);
+        float river2_near;
+        float river2_far;
+        river2_far = (float) (CScript__2.camera_start - CScript__2.camera_start + 500);
+        river2_near = 50.0f;
+        OpSetVolPanSE(river2, river2_near, river2_far, 15, 16, 22);
 
         sceVu0FVECTOR river3 = {0.0f, 0.0f, 300.0f, 0.0f};
 
-        float river3Near;
-        float river3Far;
-        river3Far = (float) (cnt - cnt + 300);
-        river3Near = 100.0f;
-        OpSetVolPanSE(river3, river3Near, river3Far, 15, 16, 24);
+        float river3_near;
+        float river3_far;
+        river3_far = (float) (cnt - cnt + 300);
+        river3_near = 100.0f;
+        OpSetVolPanSE(river3, river3_near, river3_far, 15, 16, 24);
     }
 
     static SND_INFO SndInfo[43] = {
@@ -2093,42 +2093,42 @@ void OpC_SoundProcess() {
         }
     }
 
-    int ground = 40;
+    int footstep_ground = 40;
 
     if (CScript__2.camera_start == 58 && Cam__2[SceneNp__2].motion_type.state.time < 80.0f) {
-        ground = 44;
+        footstep_ground = 44;
     }
 
     if (CScript__2.camera_start == 67 && Cam__2[SceneNp__2].motion_type.state.time > 45.0f) {
-        ground = 44;
+        footstep_ground = 44;
     }
 
     if (CScript__2.camera_start == 67 && Cam__2[SceneNp__2].motion_type.state.time > 70.0f) {
-        ground = 40;
+        footstep_ground = 40;
     }
 
     if (CScript__2.obj[11].motion == 2 || CScript__2.obj[11].motion == 7) {
         static int wait = 0;
         sceVu0FVECTOR position;
-        float frame;
+        float motion_frame;
 
         sceVu0CopyVector(position, Chara__3[11].pos);
-        frame = (int) Chara__3[11].motion_type.state.time;
+        motion_frame = (int) Chara__3[11].motion_type.state.time;
 
         if (wait == 0) {
-            if (frame > 73.0f && frame < 75.0f) {
-                if (ground == 40) {
+            if (motion_frame > 73.0f && motion_frame < 75.0f) {
+                if (footstep_ground == 40) {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
                 } else {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 32);
                 }
 
                 wait = 4;
-            } else if (frame > 83.0f && frame < 85.0f) {
-                if (ground == 40) {
+            } else if (motion_frame > 83.0f && motion_frame < 85.0f) {
+                if (footstep_ground == 40) {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 21);
                 } else {
-                    OpPlayVolPanSE(position, 10.0f, (float) (ground - ground + 400), 14, 21, 33);
+                    OpPlayVolPanSE(position, 10.0f, (float) (footstep_ground - footstep_ground + 400), 14, 21, 33);
                 }
 
                 wait = 4;
@@ -2141,16 +2141,16 @@ void OpC_SoundProcess() {
     if (CScript__2.obj[11].motion == 5) {
         static int wait = 0;
         sceVu0FVECTOR position;
-        float frame;
+        float motion_frame;
 
         sceVu0CopyVector(position, Chara__3[11].pos);
-        frame = (int) Chara__3[11].motion_type.state.time;
+        motion_frame = (int) Chara__3[11].motion_type.state.time;
 
         if (wait == 0) {
-            if (frame > 258.0f && frame < 260.0f) {
+            if (motion_frame > 258.0f && motion_frame < 260.0f) {
                 OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
                 wait = 4;
-            } else if (frame > 268.0f && frame < 270.0f) {
+            } else if (motion_frame > 268.0f && motion_frame < 270.0f) {
                 OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 21);
                 wait = 4;
             }
@@ -2162,16 +2162,16 @@ void OpC_SoundProcess() {
     if (CScript__2.obj[13].disp) {
         static int wait = 0;
         sceVu0FVECTOR position;
-        float frame;
+        float motion_frame;
 
         sceVu0CopyVector(position, Chara__3[13].pos);
-        frame = (int) Chara__3[13].motion_type.state.time;
+        motion_frame = (int) Chara__3[13].motion_type.state.time;
 
         if (wait == 0) {
-            if (frame > 123.0f && frame < 125.0f) {
+            if (motion_frame > 123.0f && motion_frame < 125.0f) {
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 20);
                 wait = 4;
-            } else if (frame > 133.0f && frame < 135.0f) {
+            } else if (motion_frame > 133.0f && motion_frame < 135.0f) {
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 21);
                 wait = 4;
             }
@@ -2183,16 +2183,16 @@ void OpC_SoundProcess() {
     if (CScript__2.scene == 6 && CScript__2.obj[12].disp) {
         static int wait = 0;
         sceVu0FVECTOR position;
-        float frame;
+        float motion_frame;
 
         sceVu0CopyVector(position, Chara__3[12].pos);
-        frame = (int) Chara__3[12].motion_type.state.time;
+        motion_frame = (int) Chara__3[12].motion_type.state.time;
 
         if (wait == 0) {
-            if (frame > 33.0f && frame < 35.0f) {
+            if (motion_frame > 33.0f && motion_frame < 35.0f) {
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 20);
                 wait = 4;
-            } else if (frame > 43.0f && frame < 45.0f) {
+            } else if (motion_frame > 43.0f && motion_frame < 45.0f) {
                 OpPlayVolPanSE(position, 10.0f, 300.0f, 14, 21, 21);
                 wait = 4;
             }
@@ -2366,27 +2366,27 @@ void OpC_DrawProcess() {
 
         sceVu0CopyMatrix(color, lightcolor);
 
-        int on = 0;
+        int brightened = 0;
 
         if (color[0][0] < (float) bright) {
             color[0][0] = (float) bright;
-            on = 1;
+            brightened = 1;
         }
 
         if (color[0][1] < (float) bright) {
             color[0][1] = (float) bright;
-            on = 1;
+            brightened = 1;
         }
 
         if (color[0][2] < (float) bright) {
             color[0][2] = (float) bright;
-            on = 1;
+            brightened = 1;
         }
 
         bright = bright - 4;
         MGSetPLight(light, color);
 
-        if (!on) {
+        if (!brightened) {
             flg = 0;
         }
     } else {
@@ -2540,9 +2540,9 @@ void OpC_DrawProcess() {
                 CFire.position[2] = 10.0f * z;
                 CFire.position[3] = 1.0f;
 
-                int flg = OP_FireFlg[i];
+                int fire_flag = OP_FireFlg[i];
 
-                if (flg == 1) {
+                if (fire_flag == 1) {
                     CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 3,
                                    (float) (15.0 * OP_FireScale[i]));
                 } else {
@@ -2564,9 +2564,9 @@ void OpC_DrawProcess() {
                 CFire.position[2] = 10.0f * z;
                 CFire.position[3] = 1.0f;
 
-                int flg = OP_FireFlg[i];
+                int fire_flag = OP_FireFlg[i];
 
-                if (flg == 1) {
+                if (fire_flag == 1) {
                     CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 3, 15.0f);
                 } else {
                     CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 2, 15.0f);
@@ -2594,23 +2594,23 @@ void OpC_DrawProcess() {
 
     if (CScript__2.scene >= 6) {
         if (CScript__2.bom_req) {
-            int no = CScript__2.bom_no;
-            float size = CScript__2.bom_size[no];
+            int bomb = CScript__2.bom_no;
+            float size = CScript__2.bom_size[bomb];
 
             for (int i = 0; i < 8; i++) {
-                sceVu0CopyVector(CBomb[no].positions[i], CScript__2.bom_pos[no]);
-                CBomb[no].phases[i] = 0;
-                CBomb[no].counters[i] = -(i * 3);
-                CBomb[no].alphas[i] = 128.0f;
-                CBomb[no].sizes[i] = size;
-                CBomb[no].active[i] = 1;
+                sceVu0CopyVector(CBomb[bomb].positions[i], CScript__2.bom_pos[bomb]);
+                CBomb[bomb].phases[i] = 0;
+                CBomb[bomb].counters[i] = -(i * 3);
+                CBomb[bomb].alphas[i] = 128.0f;
+                CBomb[bomb].sizes[i] = size;
+                CBomb[bomb].active[i] = 1;
             }
 
-            CBomb[no].phases[0] = 2;
-            CBomb[no].phases[1] = 1;
-            CBomb[no].alphas[5] = 32.0f;
-            CBomb[no].alphas[6] = 32.0f;
-            CBomb[no].alphas[7] = 32.0f;
+            CBomb[bomb].phases[0] = 2;
+            CBomb[bomb].phases[1] = 1;
+            CBomb[bomb].alphas[5] = 32.0f;
+            CBomb[bomb].alphas[6] = 32.0f;
+            CBomb[bomb].alphas[7] = 32.0f;
             CScript__2.bom_req = 0;
         }
 
@@ -2687,10 +2687,10 @@ static void DrawDancer() {
         TexManager.ReloadTexture(Vif1Packet, CharaTex__2[19]);
         CharaF[1] = Chara__3[19].frame;
 
-        CFrame *frame2 = Cam__2[SceneNp__2].frame->SearchFrame("p15a2");
+        CFrame *second_frame = Cam__2[SceneNp__2].frame->SearchFrame("p15a2");
 
-        if (frame2) {
-            frame2->GetLWMatrix(matrix);
+        if (second_frame) {
+            second_frame->GetLWMatrix(matrix);
             CharaF[1]->SetRotation((float) zero, atan2f(matrix[2][0], matrix[2][2]), zero);
             float x = matrix[3][0];
             float y = matrix[3][1];
@@ -2715,7 +2715,7 @@ static void DrawDancer() {
         }
     }
 
-    float dancer_tail;
+    float unused;
     if (CScript__2.obj[20].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex__2[20]);
         CharaF[2] = Chara__3[20].frame;
@@ -2888,7 +2888,7 @@ static void InchikiShadow() {
  * @size 0x134
  * @unknownret
  */
-static void DrawShadow(int no, float x, float y, float z) {
+static void DrawShadow(int shadow_no, float x, float y, float z) {
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 54.0f};
 
     TexManager.ReloadTexture(Vif1Packet, 17);
@@ -2897,11 +2897,11 @@ static void DrawShadow(int no, float x, float y, float z) {
     if (ambient[3] > 0.0f) {
         MGSetAmbient(ambient);
 
-        float dir = atan2f(x, z - 300.0f);
+        float heading = atan2f(x, z - 300.0f);
 
-        Shadow[no]->SetPosition(x, 0.05f, z);
-        Shadow[no]->SetRotation(1.5533431f, dir, 0.0f);
-        MGDraw(Shadow[no]);
+        Shadow[shadow_no]->SetPosition(x, 0.05f, z);
+        Shadow[shadow_no]->SetRotation(1.5533431f, heading, 0.0f);
+        MGDraw(Shadow[shadow_no]);
         MGSetAmbient(ambientlight);
     }
 }
@@ -2918,8 +2918,8 @@ static void DrawShadow(int no, float x, float y, float z) {
  * @unknownret
  */
 static void MajinBeemProcess() {
-    char *name[10] = {"yubi", "heso", "l_asi", "r_asi", "kuti", "toutyou", "yubi", "yubi", "yubi",
-                      "heso"};
+    char *frame_names[10] = {"yubi", "heso", "l_asi", "r_asi", "kuti", "toutyou", "yubi", "yubi", "yubi",
+                             "heso"};
 
     if (CScript__2.beem_req) {
         float speed;
@@ -2930,14 +2930,14 @@ static void MajinBeemProcess() {
             speed = 8.0f;
         }
 
-        int no = CScript__2.beem_no;
+        int beam = CScript__2.beem_no;
 
         if (CScript__2.beem_end) {
             static sceVu0FVECTOR pos = {0.0f, 0.0f, 0.0f, 0.0f};
             static sceVu0FVECTOR pos2 = {0.0f, 0.0f, 0.0f, 0.0f};
             sceVu0FMATRIX matrix;
 
-            CFrame *frame = Chara__3[1].frame->SearchFrame(name[MBeemCnt]);
+            CFrame *frame = Chara__3[1].frame->SearchFrame(frame_names[MBeemCnt]);
 
             MBeemCnt = MBeemCnt + 1;
 
@@ -2958,78 +2958,78 @@ static void MajinBeemProcess() {
             }
 
             if (MBeemCnt - 1 == 2 || MBeemCnt - 1 == 3) {
-                sceVu0CopyVector(CBeem[no].target, pos2);
-                CBeem[no].speed = speed;
+                sceVu0CopyVector(CBeem[beam].target, pos2);
+                CBeem[beam].speed = speed;
 
                 for (int i = 0; i < 60; i++) {
-                    sceVu0CopyVector(CBeem[no].positions[i], pos);
-                    CBeem[no].state = 0;
-                    CBeem[no].counters[i] = -i;
-                    CBeem[no].alphas[i] = 128.0f - (float) (2 * i);
-                    CBeem[no].sizes[i] = 20.0f - (float) (i / 3);
+                    sceVu0CopyVector(CBeem[beam].positions[i], pos);
+                    CBeem[beam].state = 0;
+                    CBeem[beam].counters[i] = -i;
+                    CBeem[beam].alphas[i] = 128.0f - (float) (2 * i);
+                    CBeem[beam].sizes[i] = 20.0f - (float) (i / 3);
 
-                    if (CBeem[no].sizes[i] < 8.0f) {
-                        CBeem[no].sizes[i] = 8.0f;
+                    if (CBeem[beam].sizes[i] < 8.0f) {
+                        CBeem[beam].sizes[i] = 8.0f;
                     }
 
-                    CBeem[no].active = 1;
+                    CBeem[beam].active = 1;
                 }
 
                 for (int i = 0; i < 10; i++) {
-                    CBeem[no].sizes[i] = 20.0f;
+                    CBeem[beam].sizes[i] = 20.0f;
                 }
 
-                CBeem[no].alphas[59] = 128.0f;
-                CBeem[no].sizes[59] = 48.0f;
+                CBeem[beam].alphas[59] = 128.0f;
+                CBeem[beam].sizes[59] = 48.0f;
             } else {
-                sceVu0CopyVector(CBeem[no].target, pos2);
-                CBeem[no].speed = speed;
+                sceVu0CopyVector(CBeem[beam].target, pos2);
+                CBeem[beam].speed = speed;
 
                 for (int i = 0; i < 60; i++) {
-                    sceVu0CopyVector(CBeem[no].positions[i], pos);
-                    CBeem[no].state = 0;
-                    CBeem[no].counters[i] = -i;
-                    CBeem[no].alphas[i] = 128.0f - (float) (2 * i);
-                    CBeem[no].sizes[i] = 20.0f - (float) (i / 3);
+                    sceVu0CopyVector(CBeem[beam].positions[i], pos);
+                    CBeem[beam].state = 0;
+                    CBeem[beam].counters[i] = -i;
+                    CBeem[beam].alphas[i] = 128.0f - (float) (2 * i);
+                    CBeem[beam].sizes[i] = 20.0f - (float) (i / 3);
 
-                    if (CBeem[no].sizes[i] < 8.0f) {
-                        CBeem[no].sizes[i] = 8.0f;
+                    if (CBeem[beam].sizes[i] < 8.0f) {
+                        CBeem[beam].sizes[i] = 8.0f;
                     }
 
-                    CBeem[no].active = 1;
+                    CBeem[beam].active = 1;
                 }
 
                 for (int i = 0; i < 10; i++) {
-                    CBeem[no].sizes[i] = 20.0f;
+                    CBeem[beam].sizes[i] = 20.0f;
                 }
 
-                CBeem[no].alphas[59] = 128.0f;
-                CBeem[no].sizes[59] = 32.0f;
+                CBeem[beam].alphas[59] = 128.0f;
+                CBeem[beam].sizes[59] = 32.0f;
             }
         } else {
-            sceVu0CopyVector(CBeem[no].target, CScript__2.beem_to[no]);
-            CBeem[no].speed = speed;
+            sceVu0CopyVector(CBeem[beam].target, CScript__2.beem_to[beam]);
+            CBeem[beam].speed = speed;
 
             for (int i = 0; i < 60; i++) {
-                sceVu0CopyVector(CBeem[no].positions[i], CScript__2.beem_from[no]);
-                CBeem[no].state = 0;
-                CBeem[no].counters[i] = -i;
-                CBeem[no].alphas[i] = 128.0f - (float) (2 * i);
-                CBeem[no].sizes[i] = 20.0f - (float) (i / 3);
+                sceVu0CopyVector(CBeem[beam].positions[i], CScript__2.beem_from[beam]);
+                CBeem[beam].state = 0;
+                CBeem[beam].counters[i] = -i;
+                CBeem[beam].alphas[i] = 128.0f - (float) (2 * i);
+                CBeem[beam].sizes[i] = 20.0f - (float) (i / 3);
 
-                if (CBeem[no].sizes[i] < 8.0f) {
-                    CBeem[no].sizes[i] = 8.0f;
+                if (CBeem[beam].sizes[i] < 8.0f) {
+                    CBeem[beam].sizes[i] = 8.0f;
                 }
 
-                CBeem[no].active = 1;
+                CBeem[beam].active = 1;
             }
 
             for (int i = 0; i < 10; i++) {
-                CBeem[no].sizes[i] = 20.0f;
+                CBeem[beam].sizes[i] = 20.0f;
             }
 
-            CBeem[no].alphas[59] = 128.0f;
-            CBeem[no].sizes[59] = 0.0f;
+            CBeem[beam].alphas[59] = 128.0f;
+            CBeem[beam].sizes[59] = 0.0f;
         }
 
         CScript__2.beem_req = 0;
@@ -3047,15 +3047,15 @@ static void MajinBeemProcess() {
 
     if (CScript__2.obj[1].disp && CScript__2.scene == 5) {
         sceVu0FVECTOR head;
-        int at;
+        int part;
 
         if (MBeemCnt == 0) {
-            at = 0;
+            part = 0;
         } else {
-            at = MBeemCnt - 1;
+            part = MBeemCnt - 1;
         }
 
-        CFrame *frame = Chara__3[1].frame->SearchFrame(name[at]);
+        CFrame *frame = Chara__3[1].frame->SearchFrame(frame_names[part]);
 
         if (frame) {
             sceVu0FMATRIX matrix;
@@ -3100,39 +3100,39 @@ static void SmokeProcess() {
 
         param.Initialize();
         sceVu0CopyVector(param.position, position);
-        param.kind = 1;
-        param.scale = 0.5f * rand() / 2147483648.0f;
-        param.spin_step = (float) PI / (20.0f + 10 * rand() / 2147483648.0f);
-        param.unk_B0 = 2;
-        param.unk_B4 = 1;
-        param.grow = 0.15f;
-        param.spin = 1.5f + 0.2f * rand() / 2147483648.0f;
-        param.alpha_step = 0.04f;
-        param.alpha_step2 = 0.04f;
-        param.life = 120;
+        param.position_oscillation_flags = 1;
+        param.wobble_scale = 0.5f * rand() / 2147483648.0f;
+        param.wobble_rate = (float) PI / (20.0f + 10 * rand() / 2147483648.0f);
+        param.opacity_mode = 2;
+        param.render_flags = 1;
+        param.opacity = 0.15f;
+        param.rise_speed = 1.5f + 0.2f * rand() / 2147483648.0f;
+        param.width_growth = 0.04f;
+        param.height_growth = 0.04f;
+        param.lifetime = 120;
         param.texture = TexManager.GetTexture("gray smoke", -1);
 
         switch (rand() % 4) {
             case 0:
-                param.rect = CRect<int>(0, 0, 64, 64);
+                param.texel = CRect<int>(0, 0, 64, 64);
                 break;
 
             case 1:
-                param.rect = CRect<int>(64, 0, 64, 64);
+                param.texel = CRect<int>(64, 0, 64, 64);
                 break;
 
             case 2:
-                param.rect = CRect<int>(0, 64, 64, 64);
+                param.texel = CRect<int>(0, 64, 64, 64);
                 break;
 
             case 3:
-                param.rect = CRect<int>(64, 64, 64, 64);
+                param.texel = CRect<int>(64, 64, 64, 64);
                 break;
         }
 
         param.unk_08 = 20.0f;
         param.unk_0C = 20.0f;
-        param.fade = 60;
+        param.texture_frame_period = 60;
         Smoke.EnterEffect(&param);
 
         position[0] = -550;
@@ -3143,39 +3143,39 @@ static void SmokeProcess() {
 
         param2.Initialize();
         sceVu0CopyVector(param2.position, position);
-        param2.kind = 1;
-        param2.scale = 0.5f * rand() / 2147483648.0f;
-        param2.spin_step = (float) PI / (20.0f + 10 * rand() / 2147483648.0f);
-        param2.unk_B0 = 2;
-        param2.unk_B4 = 1;
-        param2.grow = 0.15f;
-        param2.spin = 1.5f + 0.2f * rand() / 2147483648.0f;
-        param2.alpha_step = 0.04f;
-        param2.alpha_step2 = 0.04f;
-        param2.life = 120;
+        param2.position_oscillation_flags = 1;
+        param2.wobble_scale = 0.5f * rand() / 2147483648.0f;
+        param2.wobble_rate = (float) PI / (20.0f + 10 * rand() / 2147483648.0f);
+        param2.opacity_mode = 2;
+        param2.render_flags = 1;
+        param2.opacity = 0.15f;
+        param2.rise_speed = 1.5f + 0.2f * rand() / 2147483648.0f;
+        param2.width_growth = 0.04f;
+        param2.height_growth = 0.04f;
+        param2.lifetime = 120;
         param2.texture = TexManager.GetTexture("gray smoke", -1);
 
         switch (rand() % 4) {
             case 0:
-                param2.rect = CRect<int>(0, 0, 64, 64);
+                param2.texel = CRect<int>(0, 0, 64, 64);
                 break;
 
             case 1:
-                param2.rect = CRect<int>(64, 0, 64, 64);
+                param2.texel = CRect<int>(64, 0, 64, 64);
                 break;
 
             case 2:
-                param2.rect = CRect<int>(0, 64, 64, 64);
+                param2.texel = CRect<int>(0, 64, 64, 64);
                 break;
 
             case 3:
-                param2.rect = CRect<int>(64, 64, 64, 64);
+                param2.texel = CRect<int>(64, 64, 64, 64);
                 break;
         }
 
         param2.unk_08 = 20.0f;
         param2.unk_0C = 20.0f;
-        param2.fade = 60;
+        param2.texture_frame_period = 60;
         Smoke.EnterEffect(&param2);
     }
 
@@ -3197,14 +3197,14 @@ static void WaterProcess() {
     setTexScroll();
     setTexAnim();
 
-    sceGsTex0 frame;
+    sceGsTex0 frame_tex;
 
-    MGGetFBuffTex(&frame);
+    MGGetFBuffTex(&frame_tex);
 
     CRect<int> rect(0, 0, 640, 224);
     sceGsTex0 surface = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
 
-    MGMoveImage(&frame, rect, &surface, 0, 0, 0);
+    MGMoveImage(&frame_tex, rect, &surface, 0, 0, 0);
 
     sceVu0FVECTOR ref;
 
@@ -3233,28 +3233,28 @@ static void WaterProcess() {
  * @size 0x128
  * @unknownret
  */
-static int KageCheck(int no) {
-    if (no == 1)
+static int KageCheck(int actor) {
+    if (actor == 1)
         return 0;
-    if (no == 3)
+    if (actor == 3)
         return 0;
-    if (no == 4)
+    if (actor == 4)
         return 0;
-    if (no == 5)
+    if (actor == 5)
         return 0;
-    if (no == 14)
+    if (actor == 14)
         return 0;
-    if (no == 15)
+    if (actor == 15)
         return 0;
-    if (no == 16)
+    if (actor == 16)
         return 0;
-    if (CScript__2.scene < 7 && no == 18)
+    if (CScript__2.scene < 7 && actor == 18)
         return 0;
-    if (no == 17)
+    if (actor == 17)
         return 0;
-    if (no == 19)
+    if (actor == 19)
         return 0;
-    if (no == 20)
+    if (actor == 20)
         return 0;
 
     return 1;
@@ -3271,12 +3271,12 @@ static int KageCheck(int no) {
  * @size 0x2C4
  * @unknownret
  */
-static void LightSet(float x, float y, float z, int chara) {
+static void LightSet(float x, float y, float z, int actor) {
     sceVu0FVECTOR dir;
 
     dir[0] = -x;
 
-    if (chara == 0) {
+    if (actor == 0) {
         dir[1] = 50.1f;
     } else {
         dir[1] = 250.1f;
@@ -3311,13 +3311,13 @@ static void LightSet(float x, float y, float z, int chara) {
     to[2] = 299.99f;
     to[3] = 0.0f;
 
-    int fall = (int) DistVector(from, to) / 20;
+    int falloff = (int) DistVector(from, to) / 20;
 
-    if (fall > 60) {
-        fall = 60;
+    if (falloff > 60) {
+        falloff = 60;
     }
 
-    color[0][0] = color[0][0] - (float) fall;
+    color[0][0] = color[0][0] - (float) falloff;
     color[0][0] = color[0][0] + (float) (rand() % 20 - 10);
     MGSetPLight(light, color);
 
@@ -3326,14 +3326,14 @@ static void LightSet(float x, float y, float z, int chara) {
     sceVu0CopyVector(ambient, ambientlight);
 
     if (CScript__2.scene != 7) {
-        fall = (int) DistVector(from, to) / 10;
+        falloff = (int) DistVector(from, to) / 10;
 
-        if (fall > 20) {
-            fall = 20;
+        if (falloff > 20) {
+            falloff = 20;
         }
 
         ambient[0] += 20.0f;
-        ambient[0] = ambient[0] - (float) fall;
+        ambient[0] = ambient[0] - (float) falloff;
     } else {
         ambient[0] += 25.0f;
         ambient[1] += 10.0f;
@@ -3376,15 +3376,15 @@ static void setTexScroll() {
     int sbp = strip->tex0 & 0x3fff;
     int dbw = (plate->tex0 >> 14) & 0x3f;
     int sbw = (strip->tex0 >> 14) & 0x3f;
-    sceGsTex0 dtex;
-    sceGsTex0 stex;
+    sceGsTex0 dst_tex;
+    sceGsTex0 src_tex;
 
-    dtex.TBP0 = dbp;
-    dtex.TBW = dbw;
-    dtex.PSM = SCE_GS_PSMT8;
-    stex.TBP0 = sbp;
-    stex.TBW = sbw;
-    stex.PSM = SCE_GS_PSMT8;
+    dst_tex.TBP0 = dbp;
+    dst_tex.TBW = dbw;
+    dst_tex.PSM = SCE_GS_PSMT8;
+    src_tex.TBP0 = sbp;
+    src_tex.TBW = sbw;
+    src_tex.PSM = SCE_GS_PSMT8;
 
     if (setTexScrollCnt != 128) {
         MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8,

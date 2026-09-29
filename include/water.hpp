@@ -51,7 +51,7 @@ public:
      * @address 0x1607A0
      * @size 0x18
      */
-    void SetParam(float wave_speed, float damping, float height_scale, float distortion);
+    void SetParam(float speed, float damping_rate, float scale, float shift);
 
     /**
      * Sets the red, green, blue and alpha channels of the surface.
@@ -127,7 +127,7 @@ public:
      * @address 0x161410
      * @size 0x1A4
      */
-    void SetSize(int rows, int columns, CDataAlloc2<1> *arena);
+    void SetSize(int row_count, int column_count, CDataAlloc2<1> *arena);
 
     /**
      * Clears the grid, gives the surface a half-bright white and sets the
@@ -146,5 +146,5 @@ STATIC_ASSERT(sizeof(CWater) == 0x320);
  * back-reference that MWCC 2.3.3 does not emit, so the member function above
  * cannot carry it. Declared here as it stands instead, for the callers that
  * have to reach it. */
-extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *render_info,
-                                                                sceVif1Packet *packet, void *unk);
+extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *info,
+                                                                sceVif1Packet *draw_packet, void *parent_info);

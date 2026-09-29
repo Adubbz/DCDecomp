@@ -106,9 +106,9 @@ int pad_button_read(PAD_STATUS *status, int port, int slot) {
 int read_pad(PAD_STATUS *status, int port, int slot) {
     volatile int *phase = &status->phase;
     int *state = &status->state;
-    int *mode_count = &status->mode_count;
-    int *read_result = &status->read_result;
-    int *previous_read_result = &status->previous_read_result;
+    int *mode_count = &status->extended_id;
+    int *read_result = &status->pad_mode;
+    int *previous_read_result = &status->previous_pad_mode;
 
     *state = scePadGetState(port, slot);
     if (*state == 0) {
@@ -119,13 +119,13 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
     switch (*phase) {
         case 0:
             if (*state == 6 || *state == 2) {
-                int mode = scePadInfoMode(port, slot, 1, 0);
-                if (mode != 0) {
+                int terminal_id = scePadInfoMode(port, slot, 1, 0);
+                if (terminal_id != 0) {
                     *mode_count = scePadInfoMode(port, slot, 2, 0);
                     if (*mode_count > 0) {
-                        mode = *mode_count;
+                        terminal_id = *mode_count;
                     }
-                    switch (mode) {
+                    switch (terminal_id) {
                         case 2:
                             *phase = 99;
                             break;
@@ -523,8 +523,8 @@ void CGamePad::AutoRepeatOff() {
     CancelAutoRepeat(-1);
 }
 
-void CGamePad::MenuModeOn(int mask) {
-    axis_threshold[0] = mask;
+void CGamePad::MenuModeOn(int threshold) {
+    axis_threshold[0] = threshold;
 }
 
 void CGamePad::MenuModeOff() {

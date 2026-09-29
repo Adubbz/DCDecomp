@@ -67,7 +67,7 @@ int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, in
             3.0f + 0.3f * (float) particle + 3.0f * (float) rand() / 2147483648.0f;
         opacity[particle + start_index] = 180.0f - 8.0f * (float) particle;
         damage[particle] = collision_damage;
-        texture_cell[particle] = element;
+        particle_element[particle] = element;
     }
     return -1;
 }
@@ -97,9 +97,9 @@ void CSHOT_FIREBAR::Step(void) {
                 NowColData->SetUserID(5, 6);
                 NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
                 NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
-                s8 elem = NowWeaponHave->best_elem;
+                s8 weapon_element = NowWeaponHave->best_elem;
                 CCollisionData *attr_col = NowColData;
-                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
+                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(weapon_element);
             }
             position[particle][0] += velocity[particle][0];
             position[particle][1] += velocity[particle][1];
@@ -128,7 +128,7 @@ void CSHOT_FIREBAR::Draw(void) {
             texture_loaded = 1;
         }
 
-        switch (texture_cell[particle]) {
+        switch (particle_element[particle]) {
             case WEAPON_ELEMENT_FIRE:
                 column = 0;
                 row = 1;

@@ -116,7 +116,7 @@ public:
      * @address 0x124B50
      * @size 0x14
      */
-    void AddAngle(float angle);
+    void AddAngle(float delta);
 
     /**
      * Sets the distance from the eye to the position that it circles.
@@ -143,7 +143,7 @@ public:
      * @address 0x124B90
      * @size 0x14
      */
-    void AddDistance(float distance);
+    void AddDistance(float delta);
 
     /**
      * Sets the height of the eye above the position that it circles.
@@ -170,7 +170,7 @@ public:
      * @address 0x124BD0
      * @size 0x14
      */
-    void AddHeight(float height);
+    void AddHeight(float delta);
 
     /**
      * Puts the eye on the circle that the given distance, height and angle

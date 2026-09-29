@@ -17,7 +17,7 @@ class CItemBombEffect {
 public:
     sceVu0FVECTOR positions[5]; /**< World positions of the blast billboards. */
     s32 phases[5];              /**< Envelope phase run by each billboard. */
-    s32 counters[5];            /**< Frames elapsed in each billboard's phase. */
+    s32 counters[5];            /**< Frames elapsed in each billboard's phase; negative while its start is delayed. */
     float sizes[5];             /**< World-space widths of the billboards. */
     float alphas[5];            /**< Alpha values used to draw the billboards. */
     s32 active[5];              /**< Nonzero while each billboard is animated. */
@@ -31,7 +31,7 @@ public:
      * @address 0x1D5B30
      * @size 0x374
      */
-    void Draw(CCamera *);
+    void Draw(CCamera *camera);
 
     /**
      * Advances the bomb effect by a frame.
@@ -49,7 +49,7 @@ public:
      * @address 0x1D60A0
      * @size 0xBC
      */
-    void SetBomb(float *, float);
+    void SetBomb(float *position, float scale);
 
     /**
      * Reports whether the bomb effect is still running.
@@ -70,16 +70,19 @@ public:
     void Initialize(void);
 };
 
+/**
+ * Expands and fades the ring of a large bomb's shock wave.
+ */
 class CShockWave {
 public:
     sceVu0FVECTOR position; /**< World position at the centre of the ring. */
-    float radius_scale;     /**< Amount added to the ring radius as it expands. */
+    float expand_radius;    /**< Radius the ring grows by at the peak of its expansion. */
     float base_radius;      /**< Ring radius before its expansion is applied. */
     float radius;           /**< Current world-space radius of the ring. */
     float expand_steps;     /**< Number of frames taken to complete expansion. */
     float phase;            /**< Sine-envelope phase of the expansion. */
     float alpha;            /**< Alpha value used to draw the ring. */
-    s32 unk_28;
+    s32 active;             /**< Nonzero while the ring expands and draws. */
     u8 unk_2C[0x4];
 
     /**
@@ -89,7 +92,7 @@ public:
      * @address 0x1D61E0
      * @size 0x2F8
      */
-    void Draw(CCamera *);
+    void Draw(CCamera *camera);
 
     /**
      * Expands and fades the shock-wave ring by a frame.

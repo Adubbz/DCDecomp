@@ -101,22 +101,22 @@ void CopyCMapParts(CMapParts *from, CMapParts *to, CDataAlloc2<1> *arena);
 EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_INFO *info,
                             OBJ_ANIME_SEQ *anime, EDIT_EFFECT_INFO *effects,
                             EDIT_OBJECT_TIMER *timers, ED_EVENT_POINT *points,
-                            CMapParts *shadow);
+                            CMapParts *shared);
 void LoadPTS(CMapParts *parts, MAP_PARTS_INFO *info, OBJ_ANIME_SEQ *anime,
              EDIT_EFFECT_INFO *effects, EDIT_OBJECT_TIMER *timers, ED_EVENT_POINT *points);
 void GenMdsName(MAP_PARTS_INFO *info, char *name);
 u_int *SearchPTS(u_int *archive, char *name);
-int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int kind);
+int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no);
 void LoadScript(void);
 void LoadObjectParts(void);
 void LoadGroundData(void);
 void LoadTexture(void);
 void InitWorkBuffer(void);
-void EdLoadMainChara(char *model, char *motion, CDataAlloc2<1> *arena);
+void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena);
 void EdDeleteE05RoboParts(void);
-int CheckEventPoint(ED_EVENT_POINT *point, float range);
+int CheckEventPoint(ED_EVENT_POINT *point, float time);
 int CheckEditToWalk(float *position);
-int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int kind);
+int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int start_event);
 void MoveEditCursor(void);
 int GetCollision(CCPoly *poly, CBoxVu0 *box);
 void VillagerCollision(void);
@@ -533,9 +533,9 @@ int test(void **argument) {
 void InitInfo() {
     memset(edit_info, 0, sizeof(EDIT_MAP_INFO));
 
-    edit_info->work.obj_anime[0].type = -1;
+    edit_info->work.obj_anime[0].property = -1;
     for (int i = 0; i < 128; i++) {
-        edit_info->work.obj_anime[i].type = -1;
+        edit_info->work.obj_anime[i].property = -1;
     }
 
     edit_info->work.effects.second[0].kind = 0;
@@ -1035,8 +1035,8 @@ void CommandWATER_SURFACE(void **arguments) {
         EDIT_WATER_INFO *surface = &edit_info->water_surfaces[water_list];
         water_list++;
         strcpy(surface->name, (char *) arguments[0]);
-        surface->type = *(int *) arguments[1];
-        surface->number = *(int *) arguments[2];
+        surface->grid_rows = *(int *) arguments[1];
+        surface->grid_columns = *(int *) arguments[2];
         surface->corner_a[0] = *(float *) arguments[3];
         surface->corner_a[1] = *(float *) arguments[4];
         surface->corner_a[2] = *(float *) arguments[5];
@@ -1049,13 +1049,13 @@ void CommandWATER_SURFACE(void **arguments) {
         surface->corner_c[1] = *(float *) arguments[10];
         surface->corner_c[2] = *(float *) arguments[11];
         surface->corner_c[3] = 1.0f;
-        surface->texture_scroll[0] = *(float *) arguments[12];
-        surface->texture_scroll[1] = *(float *) arguments[13];
-        surface->texture_scroll[2] = *(float *) arguments[14];
-        surface->texture_scroll[3] = *(float *) arguments[15];
-        surface->unk_50 = *(int *) arguments[16];
-        surface->unk_54 = *(int *) arguments[17];
-        surface->unk_58 = *(int *) arguments[18];
+        surface->ripple_params[0] = *(float *) arguments[12];
+        surface->ripple_params[1] = *(float *) arguments[13];
+        surface->ripple_params[2] = *(float *) arguments[14];
+        surface->ripple_params[3] = *(float *) arguments[15];
+        surface->red = *(int *) arguments[16];
+        surface->green = *(int *) arguments[17];
+        surface->blue = *(int *) arguments[18];
         surface->follow[0] = *(int *) arguments[19];
         surface->follow[1] = *(int *) arguments[20];
         surface->follow[2] = *(int *) arguments[21];
@@ -1075,11 +1075,11 @@ void CommandWATER_SHAKE(void **arguments) {
             u_int offset = index * sizeof(sceVu0FVECTOR);
             offset += (u_int) info;
             EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) offset;
-            if (wave->active == 0.0f && wave->z == 0.0f) {
-                wave->x = (float) *(int *) arguments[0];
-                wave->y = (float) *(int *) arguments[1];
-                wave->z = *(float *) arguments[3];
-                wave->active = *(float *) arguments[2];
+            if (wave->power == 0.0f && wave->range == 0.0f) {
+                wave->row = (float) *(int *) arguments[0];
+                wave->column = (float) *(int *) arguments[1];
+                wave->range = *(float *) arguments[3];
+                wave->power = *(float *) arguments[2];
                 break;
             }
             index++;
@@ -1100,11 +1100,11 @@ void CommandEDITAREA(void **arguments) {
     }
     area->width = *(int *) arguments[2];
     area->height = *(int *) arguments[3];
-    area->unk_48 = *(float *) arguments[4];
-    area->unk_4c = *(float *) arguments[5];
-    area->unk_50 = *(float *) arguments[6];
-    area->unk_54 = *(float *) arguments[7];
-    area->unk_58 = *(float *) arguments[8];
+    area->unit_size = *(float *) arguments[4];
+    area->unit_alt = *(float *) arguments[5];
+    area->origin_x = *(float *) arguments[6];
+    area->origin_y = *(float *) arguments[7];
+    area->origin_z = *(float *) arguments[8];
 }
 
 /**
@@ -1153,7 +1153,7 @@ void CommandBLD_PARTS(void **arguments) {
         parts->name[0][0] = '\0';
     }
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 2;
     parts->subtype = 0;
     objframe = NULL;
@@ -1180,7 +1180,7 @@ void CommandGRD_PARTS(void **arguments) {
         parts->name[0][0] = '\0';
     }
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 0;
     objframe = NULL;
@@ -1227,11 +1227,11 @@ void CommandPARTS_INFO(void **arguments) {
         }
         at++;
     }
-    def->unk_48 = *(int *) arguments[3];
+    def->kind = *(int *) arguments[3];
     int argument = 4;
     for (int i = 0; i < 6; i++) {
-        def->values[i] = *(int *) arguments[argument++];
-        strcpy(def->names[i], (char *) arguments[argument++]);
+        def->element_ids[i] = *(int *) arguments[argument++];
+        strcpy(def->element_names[i], (char *) arguments[argument++]);
     }
 }
 
@@ -1252,7 +1252,7 @@ void CommandROAD_PARTS(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 1;
     objframe = NULL;
@@ -1276,7 +1276,7 @@ void CommandROAD(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 1;
     objframe = NULL;
@@ -1301,7 +1301,7 @@ void CommandRIVER_PARTS(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 2;
     objframe = NULL;
@@ -1325,7 +1325,7 @@ void CommandRIVER(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     if (index == 7) {
         parts->kind = 0x15;
@@ -1364,7 +1364,7 @@ void CommandBRIDGE_PARTS(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 3;
     objframe = NULL;
@@ -1390,7 +1390,7 @@ void CommandLAKE_PARTS(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 4;
     objframe = NULL;
@@ -1416,7 +1416,7 @@ void CommandON_RIVER_PARTS(void **arguments) {
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
-    parts->unk_264 = *(float *) arguments[3];
+    parts->lift = *(float *) arguments[3];
     parts->kind = 1;
     parts->subtype = 5;
     objframe = NULL;
@@ -1434,21 +1434,21 @@ void CommandOBJ_ANIME(void **arguments) {
     }
     OBJ_ANIME_SEQ *anime = &edit_info->work.obj_anime[objanime_list];
     s16 *slots;
-    anime->type = *(int *) arguments[0];
-    if (anime->type < 0 || anime->type >= 4) {
+    anime->property = *(int *) arguments[0];
+    if (anime->property < 0 || anime->property >= 4) {
         return;
     }
-    anime->number = *(int *) arguments[1];
-    strcpy(anime->name, (char *) arguments[2]);
-    anime->range[0] = *(float *) arguments[3];
-    anime->range[1] = *(float *) arguments[4];
-    anime->range[2] = *(float *) arguments[5];
-    anime->offset[0] = *(float *) arguments[6];
-    anime->offset[1] = *(float *) arguments[7];
-    anime->offset[2] = *(float *) arguments[8];
-    anime->speed[0] = *(float *) arguments[9];
-    anime->speed[1] = *(float *) arguments[10];
-    anime->speed[2] = *(float *) arguments[11];
+    anime->mode = *(int *) arguments[1];
+    strcpy(anime->frame_name, (char *) arguments[2]);
+    anime->from[0] = *(float *) arguments[3];
+    anime->from[1] = *(float *) arguments[4];
+    anime->from[2] = *(float *) arguments[5];
+    anime->step[0] = *(float *) arguments[6];
+    anime->step[1] = *(float *) arguments[7];
+    anime->step[2] = *(float *) arguments[8];
+    anime->to[0] = *(float *) arguments[9];
+    anime->to[1] = *(float *) arguments[10];
+    anime->to[2] = *(float *) arguments[11];
     if (objframe != NULL) {
         slots = (s16 *) (objframe + 0x98);
     }
@@ -1524,9 +1524,9 @@ void CommandENTRANCE(void **arguments) {
     point->rotation[0] = *(float *) arguments[4];
     point->rotation[1] = *(float *) arguments[5];
     point->rotation[2] = *(float *) arguments[6];
-    point->unk_60[0] = *(float *) arguments[7];
-    point->unk_60[1] = *(float *) arguments[8];
-    point->unk_60[2] = *(float *) arguments[9];
+    point->trigger_range[0] = *(float *) arguments[7];
+    point->trigger_range[1] = *(float *) arguments[8];
+    point->trigger_range[2] = *(float *) arguments[9];
     if (objframe == NULL) {
         if (mapobj != NULL) {
             slots = ((MAP_PARTS_INFO *) mapobj)->events;
@@ -1560,9 +1560,9 @@ void CommandMAPJUMP(void **arguments) {
     strcpy(point->destination, mapjump_name);
     point->map_no = mapjump_id;
     point->side = 0;
-    point->unk_60[0] = 10.0f;
-    point->unk_60[1] = 10.0f;
-    point->unk_60[2] = 10.0f;
+    point->trigger_range[0] = 10.0f;
+    point->trigger_range[1] = 10.0f;
+    point->trigger_range[2] = 10.0f;
     if (mapobj != NULL) {
         slots = ((MAP_PARTS_INFO *) mapobj)->events;
     }

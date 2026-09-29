@@ -100,7 +100,7 @@ void DrawProcTitle(void);
  * @size 0x76C
  * @unknownret
  */
-void TitleInit(int);
+void TitleInit(int mode);
 
 /**
  * @mangled TitleLoop__Fv
@@ -163,7 +163,7 @@ class CProcess {
 public:
     CProcess() { no = 0; }
 
-    int no;
+    int no; /**< Step the title screen is on. */
     int unk_04;
 };
 

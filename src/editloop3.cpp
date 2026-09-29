@@ -124,9 +124,9 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 if (kind == 2) {
                     sceVu0CopyVector(point->position, function->position);
                     sceVu0CopyVector(point->rotation, function->rotation);
-                    point->unk_60[2] = 10.0f;
-                    point->unk_60[1] = 10.0f;
-                    point->unk_60[0] = 10.0f;
+                    point->trigger_range[2] = 10.0f;
+                    point->trigger_range[1] = 10.0f;
+                    point->trigger_range[0] = 10.0f;
                     point->minimum_progress = (int) function->values[0];
                     point->start_time = ConvertTime(function->start_time);
                     point->end_time = ConvertTime(function->end_time);
@@ -163,9 +163,9 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 point = GetNewEventPoint(parts, function, points, point_count);
                 if (point != NULL) {
                     point->event_type = 2;
-                    point->unk_60[2] = 15.0f;
-                    point->unk_60[1] = 15.0f;
-                    point->unk_60[0] = 15.0f;
+                    point->trigger_range[2] = 15.0f;
+                    point->trigger_range[1] = 15.0f;
+                    point->trigger_range[0] = 15.0f;
                     point->side = (int) function->values[0];
                     point->linked_value = (int) function->values[1];
                     point->minimum_progress = (int) function->values[2];
@@ -177,7 +177,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point = GetNewEventPoint(parts, function, points, point_count);
                     if (point != NULL) {
                         point->event_type = 3;
-                        sceVu0CopyVector(point->unk_60, function->parameters);
+                        sceVu0CopyVector(point->trigger_range, function->parameters);
                         point->side = (int) function->values[0];
                         point->linked_value = (int) function->values[1];
                     }
@@ -187,10 +187,10 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 point = GetNewEventPoint(parts, function, points, point_count);
                 if (point != NULL) {
                     point->event_type = 4;
-                    point->unk_60[2] = 6.0f;
-                    point->unk_60[1] = 6.0f;
-                    point->unk_60[0] = 6.0f;
-                    point->unk_60[3] = function->values[0];
+                    point->trigger_range[2] = 6.0f;
+                    point->trigger_range[1] = 6.0f;
+                    point->trigger_range[0] = 6.0f;
+                    point->trigger_range[3] = function->values[0];
                     point->side = (int) function->values[1];
                     for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
@@ -206,10 +206,10 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                 point = GetNewEventPoint(parts, function, points, point_count);
                 if (point != NULL) {
                     point->event_type = 5;
-                    point->unk_60[2] = 6.0f;
-                    point->unk_60[1] = 6.0f;
-                    point->unk_60[0] = 6.0f;
-                    point->unk_60[3] = function->values[0];
+                    point->trigger_range[2] = 6.0f;
+                    point->trigger_range[1] = 6.0f;
+                    point->trigger_range[0] = 6.0f;
+                    point->trigger_range[3] = function->values[0];
                     point->linked_value = (int) function->values[1];
                     for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
@@ -276,7 +276,7 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
         }
 
         int selected = 0;
-        if (distance < point->unk_60[0]) {
+        if (distance < point->trigger_range[0]) {
             selected = 1;
             switch (point->event_type) {
                 case 4:
@@ -291,10 +291,10 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
                     break;
             }
         }
-        if (selected && (nearest < 0.0f || !(nearest <= point->unk_60[0]))) {
-            nearest = point->unk_60[0];
+        if (selected && (nearest < 0.0f || !(nearest <= point->trigger_range[0]))) {
+            nearest = point->trigger_range[0];
             param->kind = point->event_type;
-            param->entrance = point->parts_no;
+            param->parts_no = point->parts_no;
             sceVu0CopyVector(param->position, event_position);
             sceVu0CopyVector(param->camera_pos, camera_position);
             sceVu0CopyVector(param->rotation, event_rotation);
@@ -313,14 +313,14 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
     return 0;
 }
 
-void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
+void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time) {
     if (EdDrawOffMap != 0)
         return;
 
     CEditGround *ground = EdExchangeInfo.ground;
     CFrame *marker = EdExchangeInfo.event_marker;
     C3DSprite *effect = EdExchangeInfo.system_effect;
-    ED_EVENT_POINT *p = point;
+    ED_EVENT_POINT *point = points;
     static float roty = 0.0f;
     roty += 0.05f;
     if (roty > 3.141592f)
@@ -338,14 +338,14 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
     }
     sys_eff_cnt--;
 
-    for (int i = 0; i < count; i++, p++) {
-        if (CheckEventPoint(p, time) == 0)
+    for (int i = 0; i < count; i++, point++) {
+        if (CheckEventPoint(point, time) == 0)
             continue;
-        switch (p->event_type) {
+        switch (point->event_type) {
             case 2:
                 break;
             case 3:
-                if (p->linked_value <= 0)
+                if (point->linked_value <= 0)
                     continue;
                 break;
             default:
@@ -353,23 +353,23 @@ void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time) {
         }
         sceVu0FVECTOR position;
         sceVu0FVECTOR rotation;
-        sceVu0CopyVector(position, p->position);
-        sceVu0CopyVector(rotation, p->rotation);
-        CMapObject *object = p->map_object;
-        if (p->parts_no >= 0) {
-            object = ground->GetPartsObject(p->parts_no);
+        sceVu0CopyVector(position, point->position);
+        sceVu0CopyVector(rotation, point->rotation);
+        CMapObject *object = point->map_object;
+        if (point->parts_no >= 0) {
+            object = ground->GetPartsObject(point->parts_no);
             if (object == NULL)
                 continue;
             GetPosRot(object, position, rotation);
         } else if (object != NULL) {
             GetPosRot(object, position, rotation);
         }
-        if (p->event_type == 2 && marker != NULL) {
+        if (point->event_type == 2 && marker != NULL) {
             marker->SetPosition(position);
             marker->SetRotation(0.0f, rotation[1], 0.0f);
             MGDraw(marker);
         }
-        if (p->event_type == 3) {
+        if (point->event_type == 3) {
             sceVu0CopyVector(effect->position, position);
             effect->half_width = 2.0f * sys_eff_sc;
             effect->half_height = sys_eff_sc;
@@ -408,13 +408,13 @@ int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPol
     return found;
 }
 
-int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int kind, float range) {
+int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int map_no, float time) {
     int i;
     CEditGround *ground = EdExchangeInfo.ground;
     ED_EVENT_POINT *point = EditMapInfo->work.events.points;
     for (i = 0; i < 256; i++, point++) {
-        if (CheckEventPoint(point, range) && strcmp(point->destination, name) == 0 &&
-            point->map_no == kind) {
+        if (CheckEventPoint(point, time) && strcmp(point->destination, name) == 0 &&
+            point->map_no == map_no) {
             sceVu0FVECTOR event_position;
             sceVu0FVECTOR event_rotation;
             sceVu0FVECTOR camera_position;
@@ -437,7 +437,7 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int kind, float range) {
                     GetPosRot(object, camera_position, camera_rotation);
             }
             param->kind = point->event_type;
-            param->entrance = point->parts_no;
+            param->parts_no = point->parts_no;
             sceVu0CopyVector(param->position, event_position);
             sceVu0CopyVector(param->camera_pos, camera_position);
             sceVu0CopyVector(param->rotation, event_rotation);
@@ -684,7 +684,7 @@ int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_i
     return i;
 }
 
-int EdCheckVillagerIn(int index, VILLAGER_INFO *villagers) {
+int EdCheckVillagerIn(int index, VILLAGER_INFO *villager) {
     if (index < 0 || index >= 16)
         return 0;
     switch (appear[index].action) {
@@ -697,13 +697,13 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villagers) {
                     return 0;
             }
         case 1: {
-            int parts_no = villagers->character_no;
+            int parts_no = villager->character_no;
             if (parts_no < 0)
                 return 1;
             EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(parts_no);
             if (parts == NULL)
                 return 0;
-            int model = villagers->model_no;
+            int model = villager->model_no;
             if (model < 0)
                 return 0;
             return parts->elements[model].enabled != 0 ? 1 : 0;
@@ -760,7 +760,7 @@ static int GetRandomMoveVillager(VILLAGER_INFO *villagers) {
     return candidates[rand() % count];
 }
 
-void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *, u_long128 *buffer) {
+void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *ground, u_long128 *buffer) {
     VILLAGER_INFO *info[10];
     char path[64];
     char directory[64];
@@ -773,7 +773,7 @@ void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *, u_long128 *buffer) {
         info[i] = &villagers[i];
         villagers[i].placed = 0;
         EdVillager[i].Initialize();
-        EdVillager[i].unk_148C = i + 54;
+        EdVillager[i].texture_block = i + 54;
         strcpy(EdVillager[i].resource_name, info[i]->name);
         GetEditDataDir(directory);
         sprintf(path, "%schara/%s.chr", directory, info[i]->name);
@@ -789,9 +789,9 @@ void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *, u_long128 *buffer) {
 int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<1> *arena) {
     char copied_name[32];
     char config_name[32];
-    int texture_set = villager->unk_148C;
+    int texture_set = villager->texture_block;
     strcpy(copied_name, name);
-    villager->unk_148C = texture_set;
+    villager->texture_block = texture_set;
     strcpy(villager->resource_name, copied_name);
     if (GetPackFile(pack, "info.cfg", NULL) != NULL)
         sprintf(config_name, "info.cfg");
@@ -800,7 +800,7 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
     villager->LoadPackData2(pack, config_name, arena, texture_set, arena, 0);
     if (villager->frame != NULL) {
         CFrameAttr attr;
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         attr.fog_enable = 1;
         villager->frame->SetAttr(attr, 1, 4);
     }
@@ -816,10 +816,10 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
         villager->SetPosition(origin);
         villager->SetRotation(no_rotation);
         villager->motion_no = 0;
-        villager->flags = 0;
+        villager->motion_flags = 0;
         villager->motion_speed = -1.0f;
     }
-    villager->unk_148C = texture_set;
+    villager->texture_block = texture_set;
     return 1;
 }
 
@@ -846,7 +846,7 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers,
                 characters[i].map_parts_no = parts_no;
                 if (ground->GetPartsObject(villager->character_no) != NULL) {
                     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(villager->character_no);
-                    if (parts->unk_08 > 0 && parts->elements[villager->model_no].enabled != 0)
+                    if (parts->obtained > 0 && parts->elements[villager->model_no].enabled != 0)
                         draw = 1;
                     if (EditPartsInfo.CheckComplete(villager->character_no) != 0 &&
                         EditPartsInfo.GetCompEvent(villager->character_no) == 0 &&
@@ -997,7 +997,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
                 villagers[i].map_parts_no = parts_no;
                 if (ground->GetPartsObject(entry->character_no) != NULL) {
                     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(entry->character_no);
-                    if (parts->unk_08 > 0 && parts->elements[entry->model_no].enabled != 0)
+                    if (parts->obtained > 0 && parts->elements[entry->model_no].enabled != 0)
                         draw = 1;
                     if (EditPartsInfo.CheckComplete(entry->character_no) != 0 &&
                         EditPartsInfo.GetCompEvent(entry->character_no) == 0 &&
@@ -1113,7 +1113,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         }
         if (info->character_no >= 0 && info->initial_motion == 0) {
             EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(info->character_no);
-            if (parts->unk_08 == 0 || parts->elements[info->model_no].enabled == 0) {
+            if (parts->obtained == 0 || parts->elements[info->model_no].enabled == 0) {
                 continue;
             }
             *near_camera = 1;
@@ -1138,7 +1138,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             if (distance < 20.0f) {
                 (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 0;
                 *(s32 *) ((char *) &EdVillager->motion_no + offset) = 0;
-                *(s32 *) ((char *) &EdVillager->flags + offset) = 0;
+                *(s32 *) ((char *) &EdVillager->motion_flags + offset) = 0;
                 *(float *) ((char *) &EdVillager->motion_speed + offset) = -1.0f;
             }
             EdSetVillagerNextPos(npc, info, ground);
@@ -1444,7 +1444,7 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     sceVu0CopyVector(cloud_position, position);
     cloud_position[1] -= 50.0f;
 
-    mgRenderInfo.unk_340 = 1;
+    mgRenderInfo.unlit = 1;
     if (clouds != NULL)
         clouds->SetPosition(cloud_position);
     if (clouds != NULL)
@@ -1455,7 +1455,7 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
     if (clouds != NULL)
         clouds->SetScale(1.0f, -1.0f, 1.0f);
     MGDraw(clouds);
-    mgRenderInfo.unk_340 = 0;
+    mgRenderInfo.unlit = 0;
 
     MGGetAmbient(old_ambient);
     sceVu0CopyVector(ambient, old_ambient);
@@ -1525,13 +1525,13 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
         }
     }
 
-    mgRenderInfo.unk_340 = 1;
+    mgRenderInfo.unlit = 1;
     if (clouds != NULL)
         clouds->SetPosition(cloud_position);
     if (clouds != NULL)
         clouds->SetScale(1.0f, -1.0f, 1.0f);
     MGDraw(clouds);
-    mgRenderInfo.unk_340 = 0;
+    mgRenderInfo.unlit = 0;
 
     *ambient_alpha = 128.0f;
     transition = 0;
@@ -1598,7 +1598,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
 
     sceVu0FVECTOR position;
     int screen[4];
-    sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 1.0f};
+    sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
     CFrame *light = NULL;
     if (sky_index == 0)
         light = (*sky_slot)->SearchFrame("sun1");
@@ -1608,7 +1608,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
         light = (*sky_slot)->SearchFrame("moon");
 
     if (light != NULL)
-        light->GetWorldPosition(position, local);
+        light->GetWorldPosition(position, origin);
     if (position[1] < -100.0f)
         return;
 
@@ -1763,7 +1763,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
                         vertices[i][3] = 1.0f;
                     }
                 }
-                sky->attr.unk_0A = 1;
+                sky->attr.remake_pending = 1;
             }
         }
     }
@@ -1824,7 +1824,7 @@ void EdFadeInit() {
 
 /* A negative frame count means no step at all: the alpha is forced to the end this call starts
    from and stays there, which is how a colour is held over the screen rather than faded through. */
-void EdFadeIn(int frames, float r, float g, float b) {
+void EdFadeIn(int frames, float red, float green, float blue) {
     if (fade_in_out == 0 || frames < 0)
         fade_col[3] = 128.0f;
     fade_in_out = 1;
@@ -1833,12 +1833,12 @@ void EdFadeIn(int frames, float r, float g, float b) {
         fade_step = 0.0f;
     else
         fade_step = 128.0f / (float) frames;
-    fade_col[0] = r;
-    fade_col[1] = g;
-    fade_col[2] = b;
+    fade_col[0] = red;
+    fade_col[1] = green;
+    fade_col[2] = blue;
 }
 
-void EdFadeOut(int frames, float r, float g, float b) {
+void EdFadeOut(int frames, float red, float green, float blue) {
     if (fade_in_out == 0 || frames < 0)
         fade_col[3] = 0.0f;
     fade_in_out = -1;
@@ -1847,39 +1847,39 @@ void EdFadeOut(int frames, float r, float g, float b) {
         fade_step = 0.0f;
     else
         fade_step = 128.0f / (float) frames;
-    fade_col[0] = r;
-    fade_col[1] = g;
-    fade_col[2] = b;
+    fade_col[0] = red;
+    fade_col[1] = green;
+    fade_col[2] = blue;
 }
 
 int EdFadeOutCheck() {
     return fade_end;
 }
 
-void EdGetFadeColor(float *col) {
-    col[0] = fade_col[0];
-    col[1] = fade_col[1];
-    col[2] = fade_col[2];
-    col[3] = fade_col[3];
+void EdGetFadeColor(float *colour) {
+    colour[0] = fade_col[0];
+    colour[1] = fade_col[1];
+    colour[2] = fade_col[2];
+    colour[3] = fade_col[3];
 }
 
 /* The rectangle is in the sixteenths of a pixel the coordinate registers count in, which is what
    the multiplications are; why the cover is 70 boxes rather than one the code does not say. */
 void EdFadeInOut() {
-    int r;
-    int g;
-    int b;
-    int a;
+    int red;
+    int green;
+    int blue;
+    int alpha;
     int x;
     int y;
     CRect_i_ rect;
 
     if (fade_in_out == 0)
         return;
-    r = (int) fade_col[0];
-    g = (int) fade_col[1];
-    b = (int) fade_col[2];
-    a = (int) fade_col[3];
+    red = (int) fade_col[0];
+    green = (int) fade_col[1];
+    blue = (int) fade_col[2];
+    alpha = (int) fade_col[3];
     if (fade_in_out > 0) {
         fade_col[3] -= fade_step;
         if (fade_col[3] <= 0.0f) {
@@ -1900,7 +1900,7 @@ void EdFadeInOut() {
             rect.y = y * 16;
             rect.width = 1024;
             rect.height = 512;
-            MGFillBox(rect, r, g, b, a);
+            MGFillBox(rect, red, green, blue, alpha);
         }
     }
 }
@@ -2097,12 +2097,12 @@ static OBJ_ANIME_SEQ *GetObjAnime(int index) {
 static void ClearObjAnime(int index) {
     if (index < 0) {
         for (int i = 0; i < 16; i++)
-            obj_anime[i].type = -1;
+            obj_anime[i].property = -1;
         return;
     }
     OBJ_ANIME_SEQ *anime = GetObjAnime(index);
     if (anime != NULL)
-        anime->type = -1;
+        anime->property = -1;
 }
 
 /** Whether the current event uses the lightweight initialization path. */
@@ -2324,15 +2324,15 @@ static int SetObjHandle(int index, CMapParts *map_parts, char *frame_name) {
     handle->frames[5] = map_parts->shadow_frame;
     handle->frames[6] = map_parts->shade_frame;
     CFrame *extra_frame;
-    if (map_parts->unk_0DC == NULL) {
+    if (map_parts->camera_frame == NULL) {
         extra_frame = NULL;
     } else {
-        map_parts->unk_0DC->SetPosition(map_parts->pos[0], map_parts->pos[1], map_parts->pos[2]);
-        map_parts->unk_0DC->SetRotation(map_parts->rotation.x, map_parts->rotation.y, map_parts->rotation.z);
-        extra_frame = map_parts->unk_0DC;
+        map_parts->camera_frame->SetPosition(map_parts->pos[0], map_parts->pos[1], map_parts->pos[2]);
+        map_parts->camera_frame->SetRotation(map_parts->rotation.x, map_parts->rotation.y, map_parts->rotation.z);
+        extra_frame = map_parts->camera_frame;
     }
     handle->frames[7] = extra_frame;
-    handle->frames[8] = map_parts->unk_104;
+    handle->frames[8] = map_parts->ripple_frame;
     i += 9;
     for (; i < 12; i++)
         handle->frames[i] = NULL;
@@ -2450,10 +2450,10 @@ static void get_obj_world_pos(OBJ_HANDLE *handle, float *out_position) {
         handle->character->GetPosition(out_position);
         return;
     }
-    sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 1.0f};
+    sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
-            handle->frames[i]->GetWorldPosition(out_position, local);
+            handle->frames[i]->GetWorldPosition(out_position, origin);
             return;
         }
     }
@@ -2535,12 +2535,12 @@ static int init_obj_anime(int anime_index, int handle_index, int type, int numbe
     if (anime == NULL || handle == NULL)
         return 0;
 
-    anime->type = type;
-    anime->number = number;
-    anime->name[0] = '\0';
-    sceVu0CopyVector(anime->offset, offset);
-    sceVu0CopyVector(anime->range, range);
-    sceVu0CopyVector(anime->speed, speed);
+    anime->property = type;
+    anime->mode = number;
+    anime->frame_name[0] = '\0';
+    sceVu0CopyVector(anime->step, offset);
+    sceVu0CopyVector(anime->from, range);
+    sceVu0CopyVector(anime->to, speed);
     InitObjAnime(handle->frames, 12, anime);
 }
 
@@ -2775,14 +2775,14 @@ static int _GET_PADUP(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-static int _GET_APAD(RS_STACKDATA *stack, int count) {
-    if (count > 0)
+static int _GET_APAD(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count > 0)
         SetStack(stack++, GamePad.GetLXf());
-    if (count > 1)
+    if (argument_count > 1)
         SetStack(stack++, GamePad.GetLYf());
-    if (count > 2)
+    if (argument_count > 2)
         SetStack(stack++, GamePad.GetRXf());
-    if (count > 3)
+    if (argument_count > 3)
         SetStack(stack, GamePad.GetRYf());
     return 1;
 }
@@ -2805,13 +2805,13 @@ static int _NEXT_EVENT(RS_STACKDATA *stack, int) {
 }
 
 static int _GOTO_INTERIOR(RS_STACKDATA *stack, int argument_count) {
-    EdEventInfo.unk_2ac = GetStackInt(stack++);
+    EdEventInfo.interior_entrance = GetStackInt(stack++);
     char *destination = GetStackString(stack++);
-    strcpy(EdEventInfo.unk_2b0, destination);
+    strcpy(EdEventInfo.interior_name, destination);
     if (argument_count > 2)
-        EdEventInfo.unk_2d0 = GetStackInt(stack);
+        EdEventInfo.interior_start_event = GetStackInt(stack);
     else
-        EdEventInfo.unk_2d0 = -1;
+        EdEventInfo.interior_start_event = -1;
     return EdEventInfo.return_code = 4;
 }
 
@@ -2933,7 +2933,7 @@ static int _MAP_JUMP_BGM_STOP(RS_STACKDATA *stack, int) {
 }
 
 static int _MAP_JUMP_BGM_PLAY(RS_STACKDATA *stack, int) {
-    EdEventInfo.fukidashi = GetStackInt(stack);
+    EdEventInfo.map_jump_bgm_play = GetStackInt(stack);
     return 1;
 }
 
@@ -3043,13 +3043,13 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int) {
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
     npc->LoadPackData2(pack, name, first, EdEventInfo.npc_texture_block + index, second, 0);
-    npc->unk_148C = EdEventInfo.npc_texture_block + index;
+    npc->texture_block = EdEventInfo.npc_texture_block + index;
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->near_camera = 1;
     npc->ambient_offset[3] = 128.0f;
     CFrameAttr attr;
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     attr.fog_enable = 1;
     EdEventInfo.npc_draw[index] = 1;
     EdEventInfo.npc_shadow_draw[index] = 1;
@@ -3080,7 +3080,7 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = block;
-            textures[i].unk_08 = 0;
+            textures[i].mipmap = 0;
             textures[i].name = (char *) copy;
         }
     }
@@ -3088,7 +3088,7 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     TexManager.DeleteTextureBlock(block);
     TexManager.CleanUpBuffer();
     TexManager.LoadTextureBlockEX(block, textures);
-    npc->unk_148C = block;
+    npc->texture_block = block;
     return 1;
 }
 
@@ -3105,7 +3105,7 @@ static int _LOAD_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = 45;
-            textures[i].unk_08 = 0;
+            textures[i].mipmap = 0;
             textures[i].name = (char *) copy;
         }
     }
@@ -3129,7 +3129,7 @@ static int _LOAD_BG_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = 46;
-            textures[i].unk_08 = 0;
+            textures[i].mipmap = 0;
             textures[i].name = (char *) copy;
         }
     }
@@ -3156,7 +3156,7 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
             textures[i].block_no = block;
-            textures[i].unk_08 = 0;
+            textures[i].mipmap = 0;
             textures[i].name = (char *) copy;
         }
     }
@@ -3183,7 +3183,7 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     char *name = GetStackString(stack++);
     if (name == NULL)
         return 0;
-    npc->unk_148C = index + 54;
+    npc->texture_block = index + 54;
     EdLoadVillager(name, npc, &EdVillagerBuffer);
     if (villager == NULL) {
         npc->map_parts_no = -1;
@@ -3230,7 +3230,7 @@ static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     char *name = GetStackString(stack++);
     if (name == NULL)
         return 0;
-    npc->unk_148C = index + 54;
+    npc->texture_block = index + 54;
     EdLoadVillager(name, npc, &EdVillagerBuffer);
     npc->map_parts_no = -1;
     npc->villager_id = -1;
@@ -3304,7 +3304,7 @@ static int _DELETE_CHARA(RS_STACKDATA *stack, int) {
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
         return 0;
-    TexManager.DeleteTextureBlock(npc->unk_148C);
+    TexManager.DeleteTextureBlock(npc->texture_block);
     npc->Initialize();
     EdEventInfo.npc_draw[index] = 0;
     EdEventInfo.npc_shadow_draw[index] = 0;
@@ -3475,7 +3475,7 @@ static int _LOAD_ITEM(RS_STACKDATA *stack, int) {
     memcpy(copy, source, size);
     LOADTEXTURE_INFO2 textures[2];
     textures[0].block_no = 40;
-    textures[0].unk_08 = 0;
+    textures[0].mipmap = 0;
     textures[0].name = (char *) copy;
     textures[1].name = NULL;
     TexManager.DeleteTextureBlock(40);
@@ -5649,45 +5649,45 @@ static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
  * @size 0x29C
  */
 static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
-    int object = GetStackInt(stack++);
-    int animation = GetStackInt(stack++);
+    int anime_index = GetStackInt(stack++);
+    int handle_index = GetStackInt(stack++);
     int angle_mode = GetStackInt(stack++);
     int playback_mode = GetStackInt(stack++);
-    sceVu0FVECTOR first = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR second;
-    sceVu0FVECTOR third;
-    sceVu0CopyVector(second, first);
-    sceVu0CopyVector(third, first);
+    sceVu0FVECTOR offset = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR range;
+    sceVu0FVECTOR speed;
+    sceVu0CopyVector(range, offset);
+    sceVu0CopyVector(speed, offset);
 
-    first[0] = GetStackFloat(stack++);
-    first[1] = GetStackFloat(stack++);
-    first[2] = GetStackFloat(stack++);
+    offset[0] = GetStackFloat(stack++);
+    offset[1] = GetStackFloat(stack++);
+    offset[2] = GetStackFloat(stack++);
     if (angle_mode == 0) {
-        first[0] = 180.0f * first[0] / 3.141592f;
-        first[1] = 180.0f * first[1] / 3.141592f;
-        first[2] = 180.0f * first[2] / 3.141592f;
+        offset[0] = 180.0f * offset[0] / 3.141592f;
+        offset[1] = 180.0f * offset[1] / 3.141592f;
+        offset[2] = 180.0f * offset[2] / 3.141592f;
     }
     if (argument_count >= 10) {
-        second[0] = GetStackFloat(stack++);
-        second[1] = GetStackFloat(stack++);
-        second[2] = GetStackFloat(stack++);
+        range[0] = GetStackFloat(stack++);
+        range[1] = GetStackFloat(stack++);
+        range[2] = GetStackFloat(stack++);
         if (angle_mode == 0) {
-            second[0] = 180.0f * second[0] / 3.141592f;
-            second[1] = 180.0f * second[1] / 3.141592f;
-            second[2] = 180.0f * second[2] / 3.141592f;
+            range[0] = 180.0f * range[0] / 3.141592f;
+            range[1] = 180.0f * range[1] / 3.141592f;
+            range[2] = 180.0f * range[2] / 3.141592f;
         }
     }
     if (argument_count >= 13) {
-        third[0] = GetStackFloat(stack++);
-        third[1] = GetStackFloat(stack++);
-        third[2] = GetStackFloat(stack);
+        speed[0] = GetStackFloat(stack++);
+        speed[1] = GetStackFloat(stack++);
+        speed[2] = GetStackFloat(stack);
         if (angle_mode == 0) {
-            third[0] = 180.0f * third[0] / 3.141592f;
-            third[1] = 180.0f * third[1] / 3.141592f;
-            third[2] = 180.0f * third[2] / 3.141592f;
+            speed[0] = 180.0f * speed[0] / 3.141592f;
+            speed[1] = 180.0f * speed[1] / 3.141592f;
+            speed[2] = 180.0f * speed[2] / 3.141592f;
         }
     }
-    init_obj_anime(object, animation, angle_mode, playback_mode, first, second, third);
+    init_obj_anime(anime_index, handle_index, angle_mode, playback_mode, offset, range, speed);
     return 1;
 }
 
@@ -5902,7 +5902,7 @@ static int _SGET_ATRA_PARTS_NUM(RS_STACKDATA *stack, int) {
     int georama = GetStackInt(stack) - 1;
     for (int i = 0; i < 24; i++) {
         SV_EDIT_PARTS_INFO *part = SaveData->GetEditPartsInfo(georama, i);
-        if (part != NULL && part->flag != 0)
+        if (part != NULL && part->obtained != 0)
             count++;
     }
     SetStack(result, count);
@@ -6265,7 +6265,7 @@ static int _GOTO_FISHING(RS_STACKDATA *, int) {
     if (character->frame != NULL) {
         /** Homogeneous origin copied into the aligned stack work vector. */
         struct FishingOrigin {
-            sceVu0FVECTOR value;
+            sceVu0FVECTOR value; /**< Homogeneous origin vector. */
         };
 
         FishingOrigin origin = *(FishingOrigin *) fishing_line_origin;
@@ -6666,7 +6666,7 @@ int EdInitEventParamSimple() {
     int i;
     EdEventInfo.next_event = -1;
     EdEventInfo.fadeout_event_no = -1;
-    EdEventInfo.unk_2ac = -1;
+    EdEventInfo.interior_entrance = -1;
     EdEventInfo.projection = -1.0f;
     EdEventInfo.return_code = 0;
     motion_stop_flag = 0;
@@ -6812,7 +6812,7 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
 
     EdEventScript.reload((RS_PROG_HEADER *) program);
     EdEventInfo.return_code = 0;
-    EdEventInfo.unk_000 = event_number;
+    EdEventInfo.event_no = event_number;
     EdEventInfo.exit_code = 0;
     EdEventInfo.draw_exclamation_mark = 0;
     EdEventInfo.reset_camera_angle = 0;
@@ -6823,7 +6823,7 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
     EdEventInfo.suppress_shadows = 0;
     EdEventInfo.return_code = 0;
     EdEventInfo.map_jump_bgm_stop = 1;
-    EdEventInfo.fukidashi = 1;
+    EdEventInfo.map_jump_bgm_play = 1;
     MGGetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
     MGGetAmbient(EdEventInfo.ambient_color);
     if (event_enable == 0) {
@@ -6894,12 +6894,12 @@ int EdEventAllClear() {
     EdEventInfo.main_character->DeleteExtendMotion();
     EdEventInfo.main_character->SetMotion(0, 0);
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
-        CNPCharacter *walker = GetNPC(i);
-        if (walker != NULL) {
-            if (walker->unk_148C >= 54)
-                TexManager.DeleteTextureBlock(walker->unk_148C);
-            walker->Initialize();
-            walker->InitializeTexAnime(NULL, 0);
+        CNPCharacter *npc = GetNPC(i);
+        if (npc != NULL) {
+            if (npc->texture_block >= 54)
+                TexManager.DeleteTextureBlock(npc->texture_block);
+            npc->Initialize();
+            npc->InitializeTexAnime(NULL, 0);
         }
     }
     EdEventInfo.main_character->SetMotionCamera(EdEventInfo.camera);
@@ -7093,8 +7093,8 @@ int EdEventMode(CCameraFollow *camera, int kind) {
     }
     ReadBG();
     EdEventInfo.camera = camera;
-    if (EdEventInfo.unk_004 != 0) {
-        SetWorldCoord((float *) &EdEventInfo.unk_008[8], (float *) &EdEventInfo.unk_008[24]);
+    if (EdEventInfo.world_coord_enable != 0) {
+        SetWorldCoord((float *) &EdEventInfo.world_coord[8], (float *) &EdEventInfo.world_coord[24]);
     }
     for (int i = 0; i < 8; i++) {
         if (EdEventInfo.messages[i] != NULL) {
@@ -7210,7 +7210,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
 }
 
 int EdEventNPCStep() {
-    int wind = EdEventInfo.main_character->unk_C98;
+    int wind = EdEventInfo.main_character->wind;
     if (EdEventInfo.player_stop == 0) {
         CVector3_f_ velocity;
         velocity.x = 0.0f;
@@ -7221,7 +7221,7 @@ int EdEventNPCStep() {
         EdEventInfo.main_character->ShadowStep();
     }
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
-        EdEventInfo.npcs[i].unk_C98 = wind;
+        EdEventInfo.npcs[i].wind = wind;
         if (EdEventInfo.npc_stop[i] == 0) {
             ((CNPCharacter *) EdEventInfo.npcs)[i].sequence_enabled = 0;
             EdEventInfo.npcs[i].Step();
@@ -7231,7 +7231,7 @@ int EdEventNPCStep() {
     if (EdEventInfo.player_stop == 0)
         EdEventInfo.main_character->ClothStep(0);
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
-        EdEventInfo.npcs[i].unk_C98 = wind;
+        EdEventInfo.npcs[i].wind = wind;
         if (EdEventInfo.npc_stop[i] == 0)
             EdEventInfo.npcs[i].ClothStep(0);
     }
@@ -7649,7 +7649,7 @@ ED_SPRITE::ED_SPRITE() {
 }
 
 int CheckPartsInfo(EDITPARTS_INFO *info) {
-    if (info->unk_08 == 0)
+    if (info->obtained == 0)
         return 0;
     if (info->stock <= 0)
         return 0;

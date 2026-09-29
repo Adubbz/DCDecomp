@@ -18,8 +18,8 @@ void CObject::SetPosition(float *position) {
  * Only the two fields that AtraPartsGet() reads are known.
  */
 struct SV_ATRA_PARTS_DEF {
-    s32 max_progress; /**< Contains the maximum build progress of the building. */
-    s32 unk4;         /**< Selects the build progress operation if the value is more than zero. */
+    s32 max_stock; /**< Most copies of the building the player can hold. */
+    s32 stackable; /**< Greater than zero where each pickup adds five copies up to max_stock. */
 };
 
 /**
@@ -120,35 +120,35 @@ void CSaveData::SetFishingPoint(int value) {
     }
 }
 
-void CSaveData::SetFishingRank(int fish_id, float rank) {
-    float lowest_rank = -1.0f;
+void CSaveData::SetFishingRank(int fish_id, float score) {
+    float lowest_score = -1.0f;
     int lowest_index = -1;
     int i;
 
     for (i = 0; i < 64; i++) {
         if (this->fish_data[i].rank <= 0.0f) {
-            this->fish_data[i].rank = rank;
+            this->fish_data[i].rank = score;
             this->fish_data[i].fish_id = fish_id;
             break;
         }
 
-        if (lowest_rank < 0.0f || lowest_rank > this->fish_data[i].rank) {
+        if (lowest_score < 0.0f || lowest_score > this->fish_data[i].rank) {
             lowest_index = i;
-            lowest_rank = this->fish_data[i].rank;
+            lowest_score = this->fish_data[i].rank;
         }
     }
 
     if (i == 64 && lowest_index >= 0) {
-        this->fish_data[lowest_index].rank = rank;
+        this->fish_data[lowest_index].rank = score;
         this->fish_data[lowest_index].fish_id = fish_id;
     }
 
     for (i = 0; i < 63; i++) {
         for (int k = i + 1; k < 64; k++) {
             if (this->fish_data[i].rank < this->fish_data[k].rank) {
-                SV_FISH_DATA tmp = this->fish_data[i];
+                SV_FISH_DATA swapped = this->fish_data[i];
                 this->fish_data[i] = this->fish_data[k];
-                this->fish_data[k] = tmp;
+                this->fish_data[k] = swapped;
             }
         }
     }
@@ -434,59 +434,59 @@ int CSaveData::SetMapInitFlag(int map_no, int flag_no, int value) {
 
 int CSaveData::AtraPartsGet(int georama_no, int plot_no) {
     SV_EDIT_PARTS_INFO *info;
-    SV_ATRA_PARTS_DEF *def;
+    SV_ATRA_PARTS_DEF *atra;
 
     info = this->GetEditPartsInfo(georama_no, plot_no);
     if (info == NULL) {
         return 0;
     }
 
-    def = (SV_ATRA_PARTS_DEF *) GetEditAtraPartsData(georama_no, plot_no);
-    if (def == NULL) {
+    atra = (SV_ATRA_PARTS_DEF *) GetEditAtraPartsData(georama_no, plot_no);
+    if (atra == NULL) {
         return 0;
     }
 
-    if (def->unk4 > 0) {
-        if (info->flag == 0) {
-            info->progress = 5;
+    if (atra->stackable > 0) {
+        if (info->obtained == 0) {
+            info->stock = 5;
         } else {
-            info->progress += 5;
-            if (info->progress > def->max_progress) {
-                info->progress = (s16) def->max_progress;
+            info->stock += 5;
+            if (info->stock > atra->max_stock) {
+                info->stock = (s16) atra->max_stock;
             }
         }
 
-        info->flag = 1;
+        info->obtained = 1;
     } else {
-        if (info->flag != 0) {
+        if (info->obtained != 0) {
             return 0;
         }
 
-        info->flag = 1;
+        info->obtained = 1;
     }
 
     return 1;
 }
 
 int CSaveData::AtraChipGet(int georama_no, int chip_id) {
-    s16 *elem;
-    s16 *p;
+    s16 *chips;
+    s16 *slot;
     int i;
 
-    elem = this->GetElemData(georama_no);
+    chips = this->GetElemData(georama_no);
 
     if (chip_id < 0) {
         return 0;
     }
 
-    if (elem == NULL) {
+    if (chips == NULL) {
         return 0;
     }
 
-    p = elem;
-    for (i = 0; i < 128; i++, p++) {
-        if (*p < 0) {
-            *p = chip_id;
+    slot = chips;
+    for (i = 0; i < 128; i++, slot++) {
+        if (*slot < 0) {
+            *slot = chip_id;
             return 1;
         }
     }
@@ -530,21 +530,21 @@ int CSaveData::QuestDungeon(int dungeon_no, int add) {
 
 void CSaveData::ConvertConfig(SV_CONFIG_SYS *out) {
     char *src;
-    char *p;
+    char *dst;
     int copy;
-    int j;
+    int value_no;
 
-    p = (char *) out;
+    dst = (char *) out;
 
     this->config[16] = this->menu_cursor.reset_pos;
     this->config[15] = this->dng_status.minimap_status;
 
     src = (char *) this->config;
-    memset(p, 0, sizeof(SV_CONFIG_SYS));
+    memset(dst, 0, sizeof(SV_CONFIG_SYS));
 
     for (copy = 0; copy < 3; copy++) {
-        for (j = 0; j < 18; j++) {
-            *(p + copy * 18 + j) = *(src + j * 4);
+        for (value_no = 0; value_no < 18; value_no++) {
+            *(dst + copy * 18 + value_no) = *(src + value_no * 4);
         }
     }
 }
@@ -567,8 +567,8 @@ int CSaveData::InvertConfig(SV_CONFIG_SYS *in) {
         this->config[i] = in->values[i];
     }
 
-    s32 config16 = this->config[16];
-    this->menu_cursor.reset_pos = (s16) config16;
+    s32 saved_reset_pos = this->config[16];
+    this->menu_cursor.reset_pos = (s16) saved_reset_pos;
     if (this->menu_cursor.reset_pos != 0) {
         this->menu_cursor.InitPos();
     }
@@ -611,21 +611,21 @@ void CSaveData::Initialize() {
         }
     }
 
-    SV_GEORAMA_DATA *g = this->georama;
+    SV_GEORAMA_DATA *town = this->georama;
 
-    for (i = 0; i < 6; i++, g++) {
-        memset(g, 0, sizeof(SV_GEORAMA_DATA));
+    for (i = 0; i < 6; i++, town++) {
+        memset(town, 0, sizeof(SV_GEORAMA_DATA));
 
         for (j = 0; j < 24; j++) {
-            SV_EDIT_PARTS_INFO *info = &g->parts_info[j];
+            SV_EDIT_PARTS_INFO *info = &town->parts_info[j];
 
             for (k = 0; k < 6; k++) {
-                info->npc_slot[k] = 0;
+                info->element_enabled[k] = 0;
             }
         }
 
         for (j = 0; j < 130; j++) {
-            g->placed_parts[j].part_id = -1;
+            town->placed_parts[j].part_id = -1;
         }
     }
 

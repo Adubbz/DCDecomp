@@ -53,18 +53,18 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 };
 
 /* One piece of scenery the third scene lays out: the model file, where it stands and how far it is
    turned about the vertical axis, in degrees. */
 struct MAP_INFO {
-    char *name;
-    float position[3];
-    float rotation;
+    char *name;        /**< Name of the model file in the scene's pack. */
+    float position[3]; /**< Where the piece stands in the world. */
+    float rotation;    /**< Turn about the vertical axis, in degrees. */
 };
 
 sceVif1Packet *GetVif1Packet();
@@ -84,10 +84,10 @@ void MGClearZBuffer(int mode);
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
 struct RECT {
-    int x;
-    int y;
-    int w;
-    int h;
+    int x; /**< Left edge. */
+    int y; /**< Top edge. */
+    int w; /**< Width. */
+    int h; /**< Height. */
 };
 
 void InitializeDataBuffer();
@@ -138,16 +138,16 @@ class CWater {
 public:
     CWater();
 
-    void SetVertex(float *v0, float *v1, float *v2, float *v3);
-    void SetSize(int x, int y, CDataAlloc2<1> *buffer);
-    void SetParam(float unknown0, float unknown1, float unknown2, float unknown3);
-    void SetColor(u_char r, u_char g, u_char b, u_char a);
-    void Shake(int x, int y, float power);
+    void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
+    void SetSize(int row_count, int column_count, CDataAlloc2<1> *arena);
+    void SetParam(float speed, float damping_rate, float scale, float shift);
+    void SetColor(u_char red, u_char green, u_char blue, u_char alpha);
+    void Shake(int x, int y, float height_change);
     void Hamon();
-    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *unknown0);
+    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
 
-    char unread[176];
-    CFrameVu1 frame;
+    char unk_00[176];
+    CFrameVu1 frame; /**< Places and draws the water surface. */
 };
 
 /* Named rather than included, because a unit's include list is a dial on the order a call's
@@ -161,7 +161,7 @@ public:
     virtual void FrameObjectOnOff(char *name, int on);
     virtual void Draw();
 
-    void SetFrame(CFrameVu1 *frame, int unknown0);
+    void SetFrame(CFrameVu1 *frame, int level);
 };
 
 /* One piece of scenery. The movie builds a table of them, hands each its model, and drives them
@@ -173,15 +173,15 @@ public:
     virtual void Draw();
 
     void Initialize();
-    void DrawShadow(int unknown0);
+    void DrawShadow(int fast);
 
     char unk_18[36];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *unk_D4;
     char unk_4C[8];
-    float lod_distance;
-    int unk_40;
-    int unk_44;
-    char unk_3C[4];
+    float unk_E0;
+    int category_no; /**< Category the map filed the object under. */
+    int handle;      /**< Handle the map gave the object. */
+    char unk_EC[4];
 };
 
 /* The dust the running feet kick up, declared here for the same reason. */
@@ -189,12 +189,12 @@ class CRunEffect {
 public:
     CRunEffect();
 
-    void Lighting(int on);
-    void Set(float *position);
+    void Lighting(int enabled);
+    void Set(float *origin);
     void Step();
     void Draw();
 
-    char unread[208];
+    char unk_00[208];
 };
 
 /* The movie's one fire, which is a light rather than a model. */
@@ -212,11 +212,11 @@ public:
         position[3] = 1.0f;
     }
 
-    void DrawFire(int unknown0, int unknown1, CCamera *camera, float *eye, float scale,
-                  int unknown2, float unknown3);
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale,
+                  int layers, float camera_offset);
 
     char unk_18[32];
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
     char unk_4C[16];
 };
 
@@ -224,12 +224,12 @@ public:
 class CMap {
 public:
     void Initialize();
-    CMapObject *SetObject(CFrameVu1 *frame, int unknown0, int unknown1);
-    CMapObject *SetObject(int no, CFrameVu1 *frame, int unknown0, int unknown1);
-    CMapObject *GetObject(int no);
+    CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
+    CMapObject *SetObject(int index, CFrameVu1 *frame, int category_no, int handle);
+    CMapObject *GetObject(int index);
     void Draw();
 
-    char unread[2800];
+    char unk_00[2800];
 };
 
 void wait_now_loading_vsync();
@@ -265,7 +265,7 @@ void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
 void SndSetReadBuffer(u_int *buffer);
 void SndAmbientPlay(int no);
 void SndBgmPlay(int no);
-void SndBgmFadeOut(int time, int unknown0);
+void SndBgmFadeOut(int frames, int volume);
 void SndBgmStop();
 void SndAmbientStop();
 void SndStep();
@@ -318,7 +318,7 @@ u_char brink;
 int brinkcnt;
 int EffCnt;
 
-void TitleInit(int no) {
+void TitleInit(int mode) {
     int i;
     float scale = 750.0f;
     float far_z = 65535.0f;
@@ -447,7 +447,7 @@ void TitleInit(int no) {
     CLogo.Init();
     CCursol.Init();
 
-    if (no == 1) {
+    if (mode == 1) {
         CCursol.select = 1;
         CCursol.Set(316.0f);
         for (i = 0; i < 10; i++)

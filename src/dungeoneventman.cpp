@@ -102,20 +102,20 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlot(void) {
 
 CDungeonEventData *CDungeonEventMan::CheckCollisionDataHit(int index) {
     int i;
-    int owner;
-    int sub_id;
+    int chara_no;
+    int key_id;
 
-    owner = event[index].event->chara_no;
-    sub_id = event[index].event->unk_30;
-    if (owner != -1) {
+    chara_no = event[index].event->chara_no;
+    key_id = event[index].event->key_id;
+    if (chara_no != -1) {
         for (i = 0; i < 96; i++) {
             if (NowColData->active[i] == 0) {
                 continue;
             }
-            if (NowColData->hit[i].owner != owner) {
+            if (NowColData->hit[i].owner != chara_no) {
                 continue;
             }
-            if (sub_id != -1 && NowColData->hit[i].unk_60 != sub_id) {
+            if (key_id != -1 && NowColData->hit[i].attack_no != key_id) {
                 continue;
             }
 

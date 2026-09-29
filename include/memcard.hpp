@@ -35,27 +35,27 @@ STATIC_ASSERT(sizeof(ATORA_TIP_HAVE) == 0x14);
  * Holds the state of the georama board screen.
  */
 struct MENU_ATORA_SEL {
-    s32 mode; /**< Which half of the screen holds the cursor: 0 the board, 1 the chip list. */
-    s32 unk_04;
-    s32 unk_08;
+    s32 mode;             /**< Which half of the screen holds the cursor: 0 the board, 1 the chip list. */
+    s32 open_mode;        /**< How the screen was opened: 2 lets a part be picked for placing, 1 answers a pick with a warning. */
+    s32 edit_map;         /**< Georama that the menu was opened for, which picks the chip list's first page. */
     s16 map_no;           /**< Georama that the board shows. */
     s16 board_pos;        /**< Board position of the part that the cursor is on. */
     s32 scroll_y;         /**< Where the board has scrolled to, as the pixel offset of its first row. */
     PERSONAL_BOARD board; /**< Board that lists the chips the player holds. */
     u8 unk_174[0xA];
-    s16 unk_17E;
-    float cursor_x; /**< Where the board's cursor icon draws, from the left of the screen. */
-    float cursor_y; /**< Where the board's cursor icon draws, from the top of the screen. */
-    s32 unk_188;
-    s32 step;       /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 10 a warning. */
-    s32 step_count; /**< Frames the screen has spent on its current step. */
-    s16 name_alpha; /**< Opacity the part names draw at while the screen is not fading. */
+    s16 last_board_pos; /**< Board position the cursor was on when the screen last handed control elsewhere. */
+    float cursor_x;     /**< Where the board's cursor icon draws, from the left of the screen. */
+    float cursor_y;     /**< Where the board's cursor icon draws, from the top of the screen. */
+    s32 cursor_icon_u;  /**< Column of the stay-frame texture that the cursor icon is cut from, which picks its pose. */
+    s32 step;           /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 3 starting an event, 4 a completion flash, 6 switching georama, 7 to 9 the completion event, 10 a warning. */
+    s32 step_count;     /**< Frames the screen has spent on its current step. */
+    s16 name_alpha;     /**< Opacity the part names draw at while the screen is not fading. */
     u8 unk_196[2];
-    s16 unk_198;
-    s16 event_flag; /**< Whether the georama menu is running an event. */
+    s16 event_board_pos; /**< Board position of the part whose completion event played, restored when the board reopens. */
+    s16 event_flag;      /**< Whether the georama menu is running an event. */
     u8 unk_19C[8];
     s16 *prev_mes_buff; /**< Message file CommonMenuMes2 held before the screen opened. */
-    s16 unk_1A8;
+    s16 load_state;     /**< Cleared whenever the georama's board files start loading. */
     u8 unk_1AA[2];
 };
 
@@ -98,7 +98,7 @@ void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned cha
  * @address 0x216F40
  * @size 0xD0
  */
-void DrawMenuObjectVibe(int, int, int, int);
+void DrawMenuObjectVibe(int x, int y, int shadow, int icon_u);
 
 /**
  * Draws a help window of the given size from its nine-patch texture.
@@ -107,7 +107,7 @@ void DrawMenuObjectVibe(int, int, int, int);
  * @address 0x217010
  * @size 0x388
  */
-void DrawMenuHelpWindow(CTexture *, int, int, int, float, float, int);
+void DrawMenuHelpWindow(CTexture *texture, int style, int x, int y, float width, float height, int alpha);
 
 /**
  * Draws a nine-piece help window from the tiles at a texture position,
@@ -117,7 +117,7 @@ void DrawMenuHelpWindow(CTexture *, int, int, int, float, float, int);
  * @address 0x2173A0
  * @size 0x368
  */
-void MenuHelpWinDraw(int, int, float, float, int, int, int, CTexture *);
+void MenuHelpWinDraw(int x, int y, float width, float height, int alpha, int u, int v, CTexture *texture);
 
 /**
  * Draws the same help window as MenuHelpWinDraw with the width and height of
@@ -127,7 +127,7 @@ void MenuHelpWinDraw(int, int, float, float, int, int, int, CTexture *);
  * @address 0x217710
  * @size 0x34C
  */
-void MenuHelpWinDraw2(int, int, float, float, int, int, int, CTexture *);
+void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u, int v, CTexture *texture);
 
 /**
  * Draws a help window from the common menu texture.
@@ -136,7 +136,7 @@ void MenuHelpWinDraw2(int, int, float, float, int, int, int, CTexture *);
  * @address 0x217A60
  * @size 0x9C
  */
-void MenuHelpWinDraw(int, int, float, float, int);
+void MenuHelpWinDraw(int x, int y, float width, float height, int alpha);
 
 /**
  * Draws the four corners of a selection frame around a rectangle, drawn in by
@@ -146,7 +146,7 @@ void MenuHelpWinDraw(int, int, float, float, int);
  * @address 0x217B00
  * @size 0x2BC
  */
-void DrawMenuWaku(float, float, int, int, int, CTexture *, int);
+void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *texture, int alpha);
 
 /**
  * Draws a number right-aligned to a position, clipped to the height of the
@@ -156,7 +156,7 @@ void DrawMenuWaku(float, float, int, int, int, CTexture *, int);
  * @address 0x217DC0
  * @size 0x58
  */
-int DrawMenuNumber(int, int, int, CTexture *, RECT, int, int);
+int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int overlap, int flag);
 
 /**
  * Draws a number right-aligned to a position in a tint colour, and returns the
@@ -166,7 +166,8 @@ int DrawMenuNumber(int, int, int, CTexture *, RECT, int, int);
  * @address 0x217E20
  * @size 0x1AC
  */
-int DrawMenuNumber(int, int, int, RECT, CTexture *, int, unsigned char, unsigned char, unsigned char, int);
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
+                   unsigned char g, unsigned char b, int flag);
 
 /**
  * Draws a number right-aligned to a position, clipped to a band of the screen,
@@ -176,7 +177,8 @@ int DrawMenuNumber(int, int, int, RECT, CTexture *, int, unsigned char, unsigned
  * @address 0x217FD0
  * @size 0x1A0
  */
-int DrawMenuNumber(int, int, int, RECT, CTexture *, int, int, int, int);
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom,
+                   int flag);
 
 /**
  * Returns how many codes the first line of a system message holds, or zero when
@@ -186,7 +188,7 @@ int DrawMenuNumber(int, int, int, RECT, CTexture *, int, int, int, int);
  * @address 0x218170
  * @size 0x64
  */
-int GetMsgLengthMenu(ClsMes *, int);
+int GetMsgLengthMenu(ClsMes *mes, int mes_no);
 
 /**
  * Draws the icon of a georama chip with a drop shadow, clipped to a band of the
@@ -196,7 +198,7 @@ int GetMsgLengthMenu(ClsMes *, int);
  * @address 0x2182C0
  * @size 0x1A8
  */
-void DrawAtoraParts(int, int, int, int, int, int);
+void DrawAtoraParts(int x, int y, int tip_no, int top, int bottom, int alpha);
 
 /**
  * Returns the message number describing a georama element.
@@ -205,7 +207,7 @@ void DrawAtoraParts(int, int, int, int, int, int);
  * @address 0x218CC0
  * @size 0xE0
  */
-int GetAtraMsgNo(int, int);
+int GetAtraMsgNo(int map_no, int element);
 
 /**
  * Draws how many of a georama part have been built, over its total.
@@ -214,7 +216,7 @@ int GetAtraMsgNo(int, int);
  * @address 0x2192F0
  * @size 0x164
  */
-void DrawAtraBuildNum(EDITPARTS_INFO *, int, int, int);
+void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha);
 
 /**
  * Draws the plate of one georama part with its picture, placement gauge and
@@ -225,7 +227,7 @@ void DrawAtraBuildNum(EDITPARTS_INFO *, int, int, int);
  * @address 0x219460
  * @size 0x85C
  */
-void DrawAtora(int, int, int, int);
+void DrawAtora(int x, int y, int parts_index, int alpha);
 
 /**
  * Returns whether the georama menu is running an event.
@@ -243,7 +245,7 @@ int GetMenuAtraEventFlag();
  * @address 0x21A130
  * @size 0x310
  */
-void InitMenuAtora1(int, int, int *, u_long128 *);
+void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 *buffer);
 
 /**
  * Opens the board for the given georama, queueing its textures when they are
@@ -253,7 +255,7 @@ void InitMenuAtora1(int, int, int *, u_long128 *);
  * @address 0x21A440
  * @size 0x44C
  */
-void InitMenuAtoraSelect(int);
+void InitMenuAtoraSelect(int map_no);
 
 /**
  * Draws one frame of the georama board screen.
@@ -293,7 +295,7 @@ void AtoraNameDraw(int);
  * @address 0x21E4D0
  * @size 0x2A8
  */
-int InitMenuOption(int, int, u_long128 *);
+int InitMenuOption(int mode, int block_no, u_long128 *buffer);
 
 /**
  * Steps the option screen and returns one on the frame it closes and stores the
@@ -331,7 +333,7 @@ int OptionMenuFadeOutStart();
  * @address 0x21FB10
  * @size 0x268
  */
-int InitMenuSave(int, int, u_long128 *);
+int InitMenuSave(int mode, int block_no, u_long128 *buffer);
 
 /**
  * Steps the save screen and returns zero while it runs, one once it has closed

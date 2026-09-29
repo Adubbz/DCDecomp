@@ -41,8 +41,8 @@ void CCloth::Draw() {
     CFrameAttr attr;
 
     attr.fog_enable = 0;
-    attr.unk_0B = 0;
-    attr.unk_08 = 0;
+    attr.program_option = 0;
+    attr.clip_enable = 0;
     float origin = 0.0f;
 
     draw_frame.SetAttr(attr, 1, 0);
@@ -84,7 +84,7 @@ void CCloth::Clear() {
 /**
  * Blends two bone transforms for a stretched vertex, on the vector unit.
  */
-static void StretchBind2(float *first, float *second, float *parameters) {
+static void StretchBind2(float *point_a, float *point_b, float *spring) {
     asm {
         lqc2 $vf10, 0x0($4)
         lqc2 $vf11, 0x0($5)
@@ -140,20 +140,20 @@ static float vuabs(float *vector) {
 void CCloth::Step(int step) {
     float *velocity;
     int i;
-    float *hit;
+    float *hit_point;
     int j;
     int pass;
     float *scratchpad;
     int reset;
     sceVu0FVECTOR(*work)[16];
     float ground;
-    float *position;
+    float *vertex;
 
     sceVu0FVECTOR root;
     sceVu0FVECTOR delta;
     sceVu0FMATRIX matrix;
     sceVu0FVECTOR scratch;
-    sceVu0FVECTOR *params;
+    sceVu0FVECTOR *stretch_params;
 
     if (step < 0) {
         Clear();
@@ -187,55 +187,55 @@ void CCloth::Step(int step) {
     }
     // Load the frame's matrix and the stiffness into VU0 for the springs below.
     {
-        register float *k;
-        register float *m;
+        register float *stiffness_ptr;
+        register float *matrix_ptr;
 
-        m = &matrix[0][0];
-        k = stiffness;
+        matrix_ptr = &matrix[0][0];
+        stiffness_ptr = stiffness;
 
         asm {
-            lqc2 $vf1, 0x0(m)
-            lqc2 $vf2, 0x10(m)
-            lqc2 $vf3, 0x20(m)
-            lqc2 $vf4, 0x30(m)
-            lqc2 $vf5, 0x0(k)
+            lqc2 $vf1, 0x0(matrix_ptr)
+            lqc2 $vf2, 0x10(matrix_ptr)
+            lqc2 $vf3, 0x20(matrix_ptr)
+            lqc2 $vf4, 0x30(matrix_ptr)
+            lqc2 $vf5, 0x0(stiffness_ptr)
         }
     }
 
     // Pull each vertex after its frame, springing towards where the frame carries its rest position.
     for (j = 0; j < num_j; j++) {
         for (i = 0; i < num_i; i++) {
-            position = work[i][j];
+            vertex = work[i][j];
             velocity = speed[i][j];
             if (reset != 0) {
-                position[0] += delta[0];
-                position[1] += delta[1];
-                position[2] += delta[2];
+                vertex[0] += delta[0];
+                vertex[1] += delta[1];
+                vertex[2] += delta[2];
             } else if (frame != NULL) {
-                register float *offset;
-                register float *source;
-                register float *target;
-                register float *vel;
-                register float *pos;
+                register float *delta_ptr;
+                register float *home_ptr;
+                register float *world_home_ptr;
+                register float *vel_ptr;
+                register float *vertex_ptr;
 
-                pos = position;
-                vel = velocity;
-                target = world_home[i][j];
-                source = home[i][j];
-                offset = delta;
+                vertex_ptr = vertex;
+                vel_ptr = velocity;
+                world_home_ptr = world_home[i][j];
+                home_ptr = home[i][j];
+                delta_ptr = delta;
 
                 asm {
-                    lqc2 $vf13, 0x0(source)
-                    lqc2 $vf10, 0x0(pos)
-                    lqc2 $vf11, 0x0(vel)
-                    lqc2 $vf12, 0x0(offset)
+                    lqc2 $vf13, 0x0(home_ptr)
+                    lqc2 $vf10, 0x0(vertex_ptr)
+                    lqc2 $vf11, 0x0(vel_ptr)
+                    lqc2 $vf12, 0x0(delta_ptr)
                     vmulax.xyzw $ACC, $vf1, $vf13x
                     vmadday.xyzw $ACC, $vf2, $vf13y
                     vmaddaz.xyzw $ACC, $vf3, $vf13z
                     vmaddw.xyzw $vf23, $vf4, $vf13w
                     vaddx.w $vf10, $vf0, $vf0x
                     vaddx.w $vf11, $vf0, $vf0x
-                    sqc2 $vf23, 0x0(target)
+                    sqc2 $vf23, 0x0(world_home_ptr)
                     vsub.xyzw $vf20, $vf23, $vf10
                     vmulaw.xyzw $ACC, $vf12, $vf0w
                     vmadd.xyzw $vf26, $vf20, $vf5
@@ -244,26 +244,26 @@ void CCloth::Step(int step) {
                     vmaddw.xyz $vf10, $vf26, $vf0w
                     vmulax.xyzw $ACC, $vf0, $vf0x
                     vmsubw.xyz $vf11, $vf26, $vf0w
-                    sqc2 $vf10, 0x0(pos)
-                    sqc2 $vf11, 0x0(vel)
+                    sqc2 $vf10, 0x0(vertex_ptr)
+                    sqc2 $vf11, 0x0(vel_ptr)
                 }
             } else {
-                position[0] += velocity[0];
-                position[1] += velocity[1];
-                position[2] += velocity[2];
+                vertex[0] += velocity[0];
+                vertex[1] += velocity[1];
+                vertex[2] += velocity[2];
             }
         }
     }
 
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
-    params = (sceVu0FVECTOR *) scratchpad;
+    stretch_params = (sceVu0FVECTOR *) scratchpad;
     scratchpad += num_j * sizeof(sceVu0FVECTOR) / sizeof(float);
-    hit = scratchpad;
+    hit_point = scratchpad;
     scratch[1] = 0.5f;
     scratch[2] = 0.5f;
     for (j = 0; j < num_j - 1; j++) {
-        params[j][1] = 0.3f + 0.2f * ((float) j / (float) num_j);
-        params[j][2] = 1.0f - params[j][1];
+        stretch_params[j][1] = 0.3f + 0.2f * ((float) j / (float) num_j);
+        stretch_params[j][2] = 1.0f - stretch_params[j][1];
     }
     for (pass = 0; pass < 4 && reset == 0; pass++) {
         for (j = 0; j < num_j - 1; j++) {
@@ -274,8 +274,8 @@ void CCloth::Step(int step) {
                 } else {
                     scratch[0] = 0.0f;
                 }
-                params[j][0] = rest[i][j][1];
-                StretchBind2(work[i][j], work[i][j + 1], params[j]);
+                stretch_params[j][0] = rest[i][j][1];
+                StretchBind2(work[i][j], work[i][j + 1], stretch_params[j]);
             }
         }
         for (j = 0; j < num_i; j++) {
@@ -295,25 +295,25 @@ void CCloth::Step(int step) {
         for (i = 0; i < num_i; i++) {
             CBound *box = bound;
             int touched = 0;
-            float hits = 0.0f;
+            float hit_count = 0.0f;
             sceVu0FVECTOR hit_sum;
             hit_sum[2] = 0.0f;
             hit_sum[1] = 0.0f;
             hit_sum[0] = 0.0f;
             float friction = 0.0f;
             for (; box != NULL; box = box->next) {
-                if ((mask[i][j] & (1 << box->mask_bit)) && box->InCheck(work[i][j], hit) != 0) {
-                    hits += 1.0f;
-                    sceVu0AddVector(hit_sum, hit_sum, hit);
+                if ((mask[i][j] & (1 << box->mask_bit)) && box->InCheck(work[i][j], hit_point) != 0) {
+                    hit_count += 1.0f;
+                    sceVu0AddVector(hit_sum, hit_sum, hit_point);
                     friction += box->friction;
                     touched = 1;
                 }
             }
             if (touched) {
-                work[i][j][0] = hit_sum[0] / hits;
-                work[i][j][1] = hit_sum[1] / hits;
-                work[i][j][2] = hit_sum[2] / hits;
-                rest[i][j][3] = friction / hits;
+                work[i][j][0] = hit_sum[0] / hit_count;
+                work[i][j][1] = hit_sum[1] / hit_count;
+                work[i][j][2] = hit_sum[2] / hit_count;
+                rest[i][j][3] = friction / hit_count;
             } else {
                 rest[i][j][3] = -1.0f;
             }
@@ -427,10 +427,10 @@ void CCloth::Step(int step) {
  * @size 0xC0
  */
 int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                    u_long128 *draw_state, int arg1, int arg2) {
+                    u_long128 *draw_state, int unknown1, int unknown2) {
     CreateVUData(vu_block[DBuffID]);
-    visual_vu_data = vu_block[DBuffID];
-    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, arg2, 0);
+    vu_data = vu_block[DBuffID];
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown2, 0);
 }
 
 /**
@@ -441,10 +441,10 @@ int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PRO
  * @size 0xC0
  */
 int CCloth::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                    VU1_PROGRAM program, u_long128 *draw_state, int arg1, int arg2) {
+                    VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     CreateVUData(vu_block[DBuffID]);
-    visual_vu_data = vu_block[DBuffID];
-    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, arg2, 0);
+    vu_data = vu_block[DBuffID];
+    return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown2, 0);
 }
 
 /**
@@ -463,11 +463,11 @@ int CCloth::CreateVUData(u_int *packet) {
     int i;
     u_int *tag;
     int word;
-    int count;
-    int kicked;
+    int vertex_count;
+    int started;
     int qwc;
-    int header;
-    int n;
+    int header_word;
+    int span;
     u_long128 *vertex;
     u_long128 *normal;
     u_int header_tag;
@@ -481,13 +481,13 @@ int CCloth::CreateVUData(u_int *packet) {
     sceVu0FVECTOR one = {1.0f, 1.0f, 1.0f, 1.0f};
     MDT_MATERIAL cloth_material;
 
-    cloth_material.unk_10[0] = 0.3f;
-    cloth_material.unk_10[1] = 0.3f;
-    cloth_material.unk_10[2] = 0.3f;
-    cloth_material.unk_10[3] = 0.0f;
-    *(u_long128 *) cloth_material.unk_00 = *(u_long128 *) one;
-    *(u_long128 *) cloth_material.unk_20 = *(u_long128 *) one;
-    kicked = 0;
+    cloth_material.ambient[0] = 0.3f;
+    cloth_material.ambient[1] = 0.3f;
+    cloth_material.ambient[2] = 0.3f;
+    cloth_material.ambient[3] = 0.0f;
+    *(u_long128 *) cloth_material.diffuse = *(u_long128 *) one;
+    *(u_long128 *) cloth_material.specular = *(u_long128 *) one;
+    started = 0;
     word += SetMaterial(&packet[word], &cloth_material);
     texture = TexManager.GetTexture(material.texture, -1);
     if (texture != NULL) {
@@ -496,31 +496,31 @@ int CCloth::CreateVUData(u_int *packet) {
         word += SetTEX0(&packet[word], 0, 0);
     }
     for (i = 0; i < num_i - 1; i++) {
-        n = num_j;
-        count = n * 2;
+        span = num_j;
+        vertex_count = span * 2;
         qwc = 0;
         *(u_long128 *) &packet[word] = *(u_long128 *) unpack;
-        header = word + 3;
-        header_tag = count | 0x8000;
+        header_word = word + 3;
+        header_tag = vertex_count | 0x8000;
         tag = &packet[word + 4];
         tag[0] = header_tag;
         tag[1] = 0x302E4000;
         tag[2] = 0x412;
         tag[3] = 0;
         tag = &packet[word + 8];
-        tag[0] = count;
+        tag[0] = vertex_count;
         tag[1] = 4;
         tag[2] = 0;
         tag[3] = 0;
         word += 12;
         qwc += 2;
         vertex = (u_long128 *) &packet[word];
-        normal = vertex + n * 2;
-        n = (int) (normal + n * 2);
-        uv = (u_long128 *) n;
+        normal = vertex + span * 2;
+        span = (int) (normal + span * 2);
+        uv = (u_long128 *) span;
         // A divided row is drawn from the far side, so the strip winds the other way.
         if (polygon_divide[i] != 0) {
-            for (j = 0; j < count >> 1; j++) {
+            for (j = 0; j < vertex_count >> 1; j++) {
                 vertex[0] = *(u_long128 *) point[i + 1][j];
                 normal[0] = *(u_long128 *) normal_grid[i + 1][j];
                 uv[0] = *(u_long128 *) texture_coord[i + 1][j];
@@ -532,7 +532,7 @@ int CCloth::CreateVUData(u_int *packet) {
                 uv += 2;
             }
         } else {
-            for (j = 0; j < count >> 1; j++) {
+            for (j = 0; j < vertex_count >> 1; j++) {
                 vertex[0] = *(u_long128 *) point[i][j];
                 normal[0] = *(u_long128 *) normal_grid[i][j];
                 uv[0] = *(u_long128 *) texture_coord[i][j];
@@ -544,12 +544,12 @@ int CCloth::CreateVUData(u_int *packet) {
                 uv += 2;
             }
         }
-        word += count * 3 * 4;
-        qwc += count * 3;
-        packet[header] |= qwc << 16;
-        if (kicked == 0) {
+        word += vertex_count * 3 * 4;
+        qwc += vertex_count * 3;
+        packet[header_word] |= qwc << 16;
+        if (started == 0) {
             *(u_long128 *) &packet[word] = *(u_long128 *) first_kick;
-            kicked = 1;
+            started = 1;
         } else {
             *(u_long128 *) &packet[word] = *(u_long128 *) kick;
         }
@@ -571,12 +571,12 @@ void CCloth::InitParam() {
     num_i = 16;
     num_j = 16;
     pitch = 1.0f;
-    unk_20 = 0;
+    init_20 = 0;
     vu_block[1] = NULL;
     vu_block[0] = NULL;
     frame = NULL;
-    unk_30 = 0;
-    unk_00 = 0;
+    init_40 = 0;
+    flags = 0;
     wind = NULL;
     wind_effect = 1.0f;
     floor_y = 0.0f;
@@ -638,10 +638,10 @@ void CCloth::Initialize(CDataAlloc2<1> *alloc) {
     }
     alloc->Align64();
     vu_block[0] = (u_int *) (alloc->base + alloc->used * 16);
-    visual_vu_size = CreateVUData(vu_block[0]);
-    alloc->Alloc(visual_vu_size);
-    vu_block[1] = (u_int *) alloc->Alloc64(visual_vu_size);
-    visual_vu_size = CreateVUData(vu_block[1]);
+    vu_size = CreateVUData(vu_block[0]);
+    alloc->Alloc(vu_size);
+    vu_block[1] = (u_int *) alloc->Alloc64(vu_size);
+    vu_size = CreateVUData(vu_block[1]);
     for (i = 0; i < num_i; i++) {
         polygon_divide[i] = 0;
         for (j = 0; j < num_j; j++) {
@@ -711,32 +711,32 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
         return;
     }
     sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) header + header->vertex_ofs);
-    sceVu0FVECTOR *uvs = (sceVu0FVECTOR *) ((u_char *) header + header->unk_2c[1]);
+    sceVu0FVECTOR *uvs = (sceVu0FVECTOR *) ((u_char *) header + header->uv[1]);
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) header + header->info_ofs);
     int *mesh = (int *) ((u_char *) header + header->mesh_ofs);
     strip = mesh + 4;
     int *strips = strip;
     int strip_count = mesh[2];
-    int found = 0;
+    int match_count = 0;
 
     for (int i = 0; i < num_i; i++) {
         for (int j = 0; j < num_j; j++) {
             int vertex_no = j + i * num_j;
             sceVu0CopyVector(point[i][j], vertices[vertex_no]);
             strip = strips;
-            for (int s = 0; s < strip_count; s++) {
-                int count = strip[1];
+            for (int strip_no = 0; strip_no < strip_count; strip_no++) {
+                int corner_count = strip[1];
                 memcpy(&material, &materials[strip[2]], sizeof(MDT_MATERIAL));
                 strip += 3;
-                int *index = strip;
-                for (int k = 0; k < count; k++) {
-                    if (index[0] == vertex_no) {
-                        found++;
-                        sceVu0CopyVector(texture_coord[i][j], uvs[index[2]]);
+                int *corner = strip;
+                for (int corner_no = 0; corner_no < corner_count; corner_no++) {
+                    if (corner[0] == vertex_no) {
+                        match_count++;
+                        sceVu0CopyVector(texture_coord[i][j], uvs[corner[2]]);
                     }
-                    index += 3;
+                    corner += 3;
                 }
-                strip += count * 3;
+                strip += corner_count * 3;
             }
         }
     }

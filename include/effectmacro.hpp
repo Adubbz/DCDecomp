@@ -8,13 +8,13 @@ class CEffectGroup;
 class CTexture;
 
 /**
- * Advances the shared effect state for one frame at a world position.
+ * Advances the shared effect state for one frame under the given wind.
  *
  * @mangled EffectMacroStep__FPf
  * @address 0x164B30
  * @size 0x98
  */
-void EffectMacroStep(float *position);
+void EffectMacroStep(float *wind);
 
 /**
  * Adds a puff of smoke to an effect group.
@@ -23,7 +23,7 @@ void EffectMacroStep(float *position);
  * @address 0x164BD0
  * @size 0x350
  */
-void EffectSmoke(CEffectGroup *group, float *position, float scale, int kind);
+void EffectSmoke(CEffectGroup *group, float *position, float size, int period);
 
 /**
  * Adds a spray of water to an effect group.
@@ -32,7 +32,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float scale, int kind);
  * @address 0x164F20
  * @size 0x29C
  */
-void EffectWaterSpray(CEffectGroup *group, float *position, float *velocity, int count, int kind);
+void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int period, int phase);
 
 /**
  * Adds a spreading ripple to an effect group.
@@ -41,7 +41,7 @@ void EffectWaterSpray(CEffectGroup *group, float *position, float *velocity, int
  * @address 0x1651C0
  * @size 0xF4
  */
-void EffectHamon(CEffectGroup *group, float *position, float scale);
+void EffectHamon(CEffectGroup *group, float *position, float size);
 
 /**
  * Blurs screen regions outside the two depth intervals surrounding the focus.

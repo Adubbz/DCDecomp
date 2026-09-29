@@ -16,7 +16,7 @@ struct WEAPON_HAVE;
  * @address 0x20BEC0
  * @size 0xB8
  */
-int NowGetGameFlagForBtlMenu(int);
+int NowGetGameFlagForBtlMenu(int game_flag);
 
 /**
  * Returns the save data's game flag 0x30, which the menus check for the Hebikiri.
@@ -34,7 +34,7 @@ int GetMenuHebikiriFlag();
  * @address 0x20BFB0
  * @size 0xB4
  */
-void EquipDefaultWeapon(int);
+void EquipDefaultWeapon(int chara_no);
 
 /**
  * Draws the menu's empty-slot picture from a named texture at a screen position.
@@ -43,7 +43,7 @@ void EquipDefaultWeapon(int);
  * @address 0x20C070
  * @size 0x360
  */
-void DrawMenuNothing(int, int, int, int, char *, int, int);
+void DrawMenuNothing(int x, int y, int width, int height, char *name, int custom, int alpha);
 
 /**
  * Returns the item use volume the menu holds.
@@ -61,7 +61,7 @@ int GetMenuItemUseVolume();
  * @address 0x20C3E0
  * @size 0x9E4
  */
-int ItemUseFunc(CUserStatus *, int, int, int, WEAPON_HAVE *);
+int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_HAVE *weapon);
 
 /**
  * Returns a weapon's damage rate: 1.5 for weapon 0x110 once its durability falls to a set fraction, otherwise 1.0.
@@ -70,7 +70,7 @@ int ItemUseFunc(CUserStatus *, int, int, int, WEAPON_HAVE *);
  * @address 0x20CDD0
  * @size 0x5C
  */
-float GetNowWeaponRate(WEAPON_HAVE *);
+float GetNowWeaponRate(WEAPON_HAVE *weapon);
 
 /**
  * Reports whether a weapon can be broken down, which needs its unk_02 value to be at least five.
@@ -79,7 +79,7 @@ float GetNowWeaponRate(WEAPON_HAVE *);
  * @address 0x20CE30
  * @size 0x34
  */
-int WeaponStatusBreakEnable(WEAPON_HAVE *);
+int WeaponStatusBreakEnable(WEAPON_HAVE *weapon);
 
 /**
  * Returns a weapon's number of build-up entries and counts the enabled ones through the reference.
@@ -88,7 +88,7 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *);
  * @address 0x20CE70
  * @size 0xC0
  */
-int WeaponStatusBuildUp(WEAPON_HAVE *, int &);
+int WeaponStatusBuildUp(WEAPON_HAVE *weapon, int &enabled_count);
 
 /**
  * Shows the intact or broken model frame of weapon 0x110 by its remaining durability.
@@ -97,7 +97,7 @@ int WeaponStatusBuildUp(WEAPON_HAVE *, int &);
  * @address 0x20CF30
  * @size 0x114
  */
-void MenuWeaponSpSet(CCharacter *, WEAPON_HAVE *);
+void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon);
 
 /**
  * Records whether the menu character's weapon effect file is being read.
@@ -106,7 +106,7 @@ void MenuWeaponSpSet(CCharacter *, WEAPON_HAVE *);
  * @address 0x20D050
  * @size 0xC
  */
-void SetMenuCharaEffectReadFlag(int);
+void SetMenuCharaEffectReadFlag(int flag);
 
 /**
  * Returns whether the menu character's weapon effect file is being read.
@@ -142,7 +142,7 @@ u_long128 *GetWepEffectMenuReadBuf();
  * @address 0x20D090
  * @size 0xC
  */
-void SetOldEffectKind(int);
+void SetOldEffectKind(int kind);
 
 /**
  * Starts reading the active character's weapon effect file and returns the effect it is for.
@@ -160,7 +160,7 @@ BT_SHOT_EFFECT *DngWepEffectReadStart();
  * @address 0x20D170
  * @size 0x44
  */
-void MenuWeaponEffectSet(int);
+void MenuWeaponEffectSet(int effect_no);
 
 /**
  * Returns the menu's current test number.
@@ -178,7 +178,7 @@ int GetNowTestNo();
  * @address 0x20D1D0
  * @size 0x1D4
  */
-int StartReadWepMDS(u_long128 *, int);
+int StartReadWepMDS(u_long128 *buffer, int chara);
 
 /**
  * Marks every weapon model reference entry unused.
@@ -196,7 +196,7 @@ void InitMenuWeaponModelReference();
  * @address 0x20D470
  * @size 0x28
  */
-void SetMenuWeaponModelReference(int, int, int);
+void SetMenuWeaponModelReference(int index, int frame_no, int value);
 
 /**
  * Returns the first value of a weapon model reference entry, the model's frame number.
@@ -205,7 +205,7 @@ void SetMenuWeaponModelReference(int, int, int);
  * @address 0x20D4A0
  * @size 0x1C
  */
-int GetMenuWeaponModelFrameNo(int);
+int GetMenuWeaponModelFrameNo(int index);
 
 /**
  * Enters a menu page's weapon models and textures from their read files and returns the outcome.
@@ -214,7 +214,7 @@ int GetMenuWeaponModelFrameNo(int);
  * @address 0x20D4C0
  * @size 0x464
  */
-int EnterWeaponModel(int, int, int);
+int EnterWeaponModel(int chara, int texture_block, int);
 
 /**
  * Builds the models of a character's weapons into the menu's model cache.
@@ -223,7 +223,7 @@ int EnterWeaponModel(int, int, int);
  * @address 0x20D930
  * @size 0x430
  */
-void WeaponModelBuildFunc(int, int);
+void WeaponModelBuildFunc(int chara, int texture_block);
 
 /**
  * Builds the model of a character's equipped weapon for the dungeon and attaches its effect.
@@ -232,7 +232,7 @@ void WeaponModelBuildFunc(int, int);
  * @address 0x20DD60
  * @size 0x114
  */
-int DngWeaponEquipModelBuild(int, int, u_long128 *);
+int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *);
 
 /**
  * Returns the status bits of one character, or zero when there is no dungeon status.
@@ -241,7 +241,7 @@ int DngWeaponEquipModelBuild(int, int, u_long128 *);
  * @address 0x20DEC0
  * @size 0x30
  */
-int GetNowActiveCharaStatus(int);
+int GetNowActiveCharaStatus(int chara_no);
 
 /**
  * Switches the menu character model to its hurt motion when its status or HP calls for it, and sets the motion's speed.
@@ -250,7 +250,7 @@ int GetNowActiveCharaStatus(int);
  * @address 0x20DEF0
  * @size 0x12C
  */
-void SetNowCharaMotionNo(int);
+void SetNowCharaMotionNo(int chara);
 
 /**
  * Saves the ambient light and tints it for the status of a character.
@@ -259,7 +259,7 @@ void SetNowCharaMotionNo(int);
  * @address 0x20E020
  * @size 0x150
  */
-void SetItemMenuColor(int);
+void SetItemMenuColor(int chara);
 
 /**
  * Restores the ambient light saved before the menu tinted it.
@@ -277,7 +277,7 @@ void SetItemMenuOldAmbient();
  * @address 0x20E1A0
  * @size 0xE0
  */
-int StartLoadCharaMDS(u_long128 *, int, int);
+int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no);
 
 /**
  * Builds the menu character model from its read file and poses it for the menu.
@@ -286,7 +286,7 @@ int StartLoadCharaMDS(u_long128 *, int, int);
  * @address 0x20E280
  * @size 0x2A8
  */
-void MenuCharaMDSBuild2(int, int);
+void MenuCharaMDSBuild2(int chara, int texture_block);
 
 /**
  * Starts the background reads of the character change screen and reports whether they were started.
@@ -295,7 +295,7 @@ void MenuCharaMDSBuild2(int, int);
  * @address 0x20E5B0
  * @size 0x2F4
  */
-int CharaChangeInitToGL(u_long128 *, int);
+int CharaChangeInitToGL(u_long128 *buffer, int chara);
 
 /**
  * Starts the background read of the character change screen's voice data.
@@ -304,7 +304,7 @@ int CharaChangeInitToGL(u_long128 *, int);
  * @address 0x20E8B0
  * @size 0xB0
  */
-void CharaChangeInitToGL2(int);
+void CharaChangeInitToGL2(int load_icon);
 
 /**
  * Loads the battle menu's character and sets up its weapon effect.
@@ -322,7 +322,7 @@ void BtMenuLoadChara();
  * @address 0x20EA00
  * @size 0xD4
  */
-void BtMenuLoad2(int);
+void BtMenuLoad2(int load_texture);
 
 /**
  * Reports whether all twelve of the East King's game flags are set.
@@ -340,7 +340,7 @@ int EastKingCheckComplete();
  * @address 0x20EB60
  * @size 0xC
  */
-void SetMonsterNameDrawFlag(int);
+void SetMonsterNameDrawFlag(int flag);
 
 /**
  * Returns whether the monster name window is drawn.
@@ -358,7 +358,7 @@ int GetMonsterNameDrawFlag();
  * @address 0x20EB80
  * @size 0x208
  */
-void MonsterNameInit(ClsMes *, short *, unsigned char *);
+void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_buffer);
 
 /**
  * Builds the monster name message window for a message.
@@ -367,7 +367,7 @@ void MonsterNameInit(ClsMes *, short *, unsigned char *);
  * @address 0x20ED90
  * @size 0x74
  */
-void MonsterNameMake(int);
+void MonsterNameMake(int mes_no);
 
 /**
  * Sets the screen position of the monster name message window.
@@ -376,7 +376,7 @@ void MonsterNameMake(int);
  * @address 0x20EE10
  * @size 0x5C
  */
-void MonsterNamePosSet(int, int);
+void MonsterNamePosSet(int x, int y);
 
 /**
  * Steps and draws the monster name message window while it is enabled.
@@ -394,7 +394,7 @@ void MonsterNameDraw();
  * @address 0x20EF90
  * @size 0x2AC
  */
-void DngEscapeMsgInit(ClsMes *, ClsMes *, int);
+void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon);
 
 /**
  * Steps the dungeon escape prompt's fade and draws it.
@@ -421,7 +421,7 @@ int DngEscapeMsgLoop();
  * @address 0x20F4D0
  * @size 0x1B0
  */
-int CheckItemThrow(int *, int *);
+int CheckItemThrow(int *items, int *values);
 
 /**
  * Stores the index of a weapon's largest element value in its best_elem.
@@ -430,7 +430,7 @@ int CheckItemThrow(int *, int *);
  * @address 0x20F680
  * @size 0x5C
  */
-void SetWeaponElementStatus(WEAPON_HAVE *);
+void SetWeaponElementStatus(WEAPON_HAVE *weapon);
 
 /**
  * Returns weapon option bits with each pair of opposed options cancelled.
@@ -439,7 +439,7 @@ void SetWeaponElementStatus(WEAPON_HAVE *);
  * @address 0x20F6E0
  * @size 0x8C
  */
-int CheckWeaponOptionStatus(int);
+int CheckWeaponOptionStatus(int options);
 
 /**
  * Returns whether a weapon option is a benefit or a drawback.
@@ -448,7 +448,7 @@ int CheckWeaponOptionStatus(int);
  * @address 0x20F770
  * @size 0x40
  */
-int IsWeaponOptionGoodOrBad(int);
+int IsWeaponOptionGoodOrBad(int option);
 
 /**
  * Returns the option flags a weapon's data gives it, or 1 when the weapon has no data.
@@ -457,7 +457,7 @@ int IsWeaponOptionGoodOrBad(int);
  * @address 0x20F7B0
  * @size 0x3C
  */
-int DefaultWeaponOptionSet(int);
+int DefaultWeaponOptionSet(int weapon_no);
 
 /**
  * Draws the icons of the options a weapon carries.
@@ -466,7 +466,7 @@ int DefaultWeaponOptionSet(int);
  * @address 0x20F7F0
  * @size 0x224
  */
-void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int);
+void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha);
 
 /**
  * Draws a weapon's star rating.
@@ -475,7 +475,7 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *, int, int, int);
  * @address 0x20FA20
  * @size 0x1C0
  */
-void WeaponStarDraw(int, int, WEAPON_HAVE *, int);
+void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha);
 
 /**
  * Applies one of the R gate's weapon effects by kind: fill its ABS, lower a random stat, raise or lower its maximum WHp, restore or quarter its WHp; returns -1 without a weapon.
@@ -484,7 +484,7 @@ void WeaponStarDraw(int, int, WEAPON_HAVE *, int);
  * @address 0x20FCE0
  * @size 0x4F0
  */
-int WeaponDataChangeByRGate(WEAPON_HAVE *, int);
+int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind);
 
 /**
  * Frame numbers of the menu's cached weapon models.

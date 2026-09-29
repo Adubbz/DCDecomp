@@ -58,134 +58,134 @@ void DebugInfomationDraw(void) {
         if (DebugStatus[4] != 0) {
             sceVu0FVECTOR pos;
             sceVu0FVECTOR rot;
-            sceVu0FVECTOR cpos;
-            sceVu0FVECTOR cref;
+            sceVu0FVECTOR cam_pos;
+            sceVu0FVECTOR cam_ref;
             float angle;
-            float dist;
+            float distance;
             float height;
-            int ix;
-            float lx;
-            int iz;
-            float lz;
-            float lcx;
-            float lcy;
-            float lcz;
-            float lrx;
-            float lry;
-            float y;
-            float lrz;
-            CDungeonEventData *data;
-            int num;
+            int tile_x;
+            float local_x;
+            int tile_z;
+            float local_z;
+            float cam_local_x;
+            float cam_local_y;
+            float cam_local_z;
+            float ref_local_x;
+            float ref_local_y;
+            float local_y;
+            float ref_local_z;
+            CDungeonEventData *event_data;
+            int event_count;
 
-            DbgMsg.len = sprintf(DbgMsg.text, " ---Infomation---\n");
+            DbgMsg.length = sprintf(DbgMsg.text, " ---Infomation---\n");
             sceVu0CopyVector(pos, CharaMain.pos);
             CharaMain.GetRotation(rot);
-            NowCamera__3->GetPos(cpos);
-            NowCamera__3->GetRef(cref);
+            NowCamera__3->GetPos(cam_pos);
+            NowCamera__3->GetRef(cam_ref);
             angle = NowCamera__3->GetAngle();
-            dist = NowCamera__3->GetDistance();
+            distance = NowCamera__3->GetDistance();
             height = NowCamera__3->GetHeight();
-            ix = (int) ((pos[0] - 80.0f) / 160.0f) * 160;
-            lx = pos[0] - ix - 160.0f;
-            y = pos[1];
-            iz = (int) ((pos[2] - 80.0f) / 160.0f) * 160;
-            lz = pos[2] - iz - 160.0f;
-            lcx = cpos[0] - ix - 160.0f;
-            lcy = cpos[1];
-            lcz = cpos[2] - iz - 160.0f;
-            lrx = cref[0] - ix - 160.0f;
-            lry = cref[1];
-            lrz = cref[2] - iz - 160.0f;
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "gpos %.2f/ %.2f/ %.2f\n", pos[0], pos[1], pos[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lpos %.2f/ %.2f/ %.2f\n", lx, y, lz);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "rot %.2f/ %.2f/ %.2f\n", rot[0], rot[1], rot[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "CAM\n");
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "cpos %.2f/ %.2f/ %.2f\n", cpos[0], cpos[1], cpos[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "cref %.2f/ %.2f/ %.2f\n", cref[0], cref[1], cref[2]);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lcpos %.2f/ %.2f/ %.2f\n", lcx, lcy, lcz);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lcref %.2f/ %.2f/ %.2f\n", lrx, lry, lrz);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Angle = %.3f\n", angle);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Dist = %.3f\n", dist);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Height = %.3f\n", height);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "RANDOM MAP CODE = %d\n", NowDngMap->map_seed);
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "WeaponList Ver 2000/%d\n", VERSION_VOL);
-            data = NowEventMan->SearchDataSlotPos(pos);
-            num = 0;
-            if (data != NULL) {
-                num = 1;
+            tile_x = (int) ((pos[0] - 80.0f) / 160.0f) * 160;
+            local_x = pos[0] - tile_x - 160.0f;
+            local_y = pos[1];
+            tile_z = (int) ((pos[2] - 80.0f) / 160.0f) * 160;
+            local_z = pos[2] - tile_z - 160.0f;
+            cam_local_x = cam_pos[0] - tile_x - 160.0f;
+            cam_local_y = cam_pos[1];
+            cam_local_z = cam_pos[2] - tile_z - 160.0f;
+            ref_local_x = cam_ref[0] - tile_x - 160.0f;
+            ref_local_y = cam_ref[1];
+            ref_local_z = cam_ref[2] - tile_z - 160.0f;
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "gpos %.2f/ %.2f/ %.2f\n", pos[0], pos[1], pos[2]);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "lpos %.2f/ %.2f/ %.2f\n", local_x, local_y, local_z);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "rot %.2f/ %.2f/ %.2f\n", rot[0], rot[1], rot[2]);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "CAM\n");
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "cpos %.2f/ %.2f/ %.2f\n", cam_pos[0], cam_pos[1], cam_pos[2]);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "cref %.2f/ %.2f/ %.2f\n", cam_ref[0], cam_ref[1], cam_ref[2]);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "lcpos %.2f/ %.2f/ %.2f\n", cam_local_x, cam_local_y, cam_local_z);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "lcref %.2f/ %.2f/ %.2f\n", ref_local_x, ref_local_y, ref_local_z);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "Angle = %.3f\n", angle);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "Dist = %.3f\n", distance);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "Height = %.3f\n", height);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "RANDOM MAP CODE = %d\n", NowDngMap->map_seed);
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "WeaponList Ver 2000/%d\n", VERSION_VOL);
+            event_data = NowEventMan->SearchDataSlotPos(pos);
+            event_count = 0;
+            if (event_data != NULL) {
+                event_count = 1;
             }
-            num = NowEventMan->GetDataNum();
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "EventID = %d\n", num);
+            event_count = NowEventMan->GetDataNum();
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "EventID = %d\n", event_count);
             MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
             DbgMsg.Draw();
         }
         return;
     }
-    DbgMsg.len = sprintf(DbgMsg.text, "");
-    char *onoff[2] = {"OFF", "ON"};
-    char *mainsub[2] = {"MAIN", "SUB"};
-    char *chars[6] = {"RESET", "STONE", "BIN2", "POISON", "CURSE", "NEBA2"};
-    char *types[3] = {"HUMAN   ", "SUPERMAN", "ULTRAMAN"};
-    char buf[32];
+    DbgMsg.length = sprintf(DbgMsg.text, "");
+    char *on_off_names[2] = {"OFF", "ON"};
+    char *main_sub_names[2] = {"MAIN", "SUB"};
+    char *condition_names[6] = {"RESET", "STONE", "BIN2", "POISON", "CURSE", "NEBA2"};
+    char *power_names[3] = {"HUMAN   ", "SUPERMAN", "ULTRAMAN"};
+    char bgm_text[32];
     for (int i = 0; DebugInfoMsg[i] != NULL; i++) {
         if (DebugInfoNowCursor == i) {
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], ">>");
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], ">>");
         } else {
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "  ");
+            DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "  ");
         }
         switch (DebugInfoCode[i]) {
             case 0:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i]);
                 break;
             case 40:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[8]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], DebugStatus[8]);
                 break;
             case 41:
                 if (DebugStatus[9] == -1) {
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], "OFF");
+                    DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], "OFF");
                 } else {
-                    sprintf(buf, "%d", DebugStatus[9] + 1);
-                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], buf);
+                    sprintf(bgm_text, "%d", DebugStatus[9] + 1);
+                    DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], bgm_text);
                 }
                 break;
             case 70:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[10]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], on_off_names[DebugStatus[10]]);
                 break;
             case 20:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[5]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], on_off_names[DebugStatus[5]]);
                 break;
             case 50:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[4]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], on_off_names[DebugStatus[4]]);
                 break;
             case 30:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[6]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], on_off_names[DebugStatus[6]]);
                 break;
             case 10:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[3]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], on_off_names[DebugStatus[3]]);
                 break;
             case 150:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], types[DebugStatus[20]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], power_names[DebugStatus[20]]);
                 break;
             case 100:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[14], DebugStatus[15]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], DebugStatus[14], DebugStatus[15]);
                 break;
             case 80:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i]);
                 break;
             case 110:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], mainsub[DebugStatus[16]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], main_sub_names[DebugStatus[16]]);
                 break;
             case 90:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[11]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], DebugStatus[11]);
                 break;
             case 120:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], chars[DebugStatus[17]]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], condition_names[DebugStatus[17]]);
                 break;
             case 130:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[18]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], DebugStatus[18]);
                 break;
             case 140:
-                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[19]);
+                DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], DebugStatus[19]);
                 break;
         }
     }
@@ -234,7 +234,7 @@ static inline void ClearEventData(CDungeonEventMan *event_man) {
         CDungeonEventData *data = &event_man->event[i];
 
         data->event = NULL;
-        data->unk_34 = 0;
+        data->switch_on = 0;
         data->enabled = 0;
         data->hold = 0;
         data->chara_done = -1;
@@ -249,12 +249,12 @@ static inline void ClearMapEvent(CDungeonMap *map) {
 
     for (i = 0; i < 48; i++) {
         map->events[i].kind = -1;
-        map->events[i].unk_2C = 0;
+        map->events[i].reset_flag = 0;
     }
     for (i = 0; i < 24; i++) {
         map->boxes[i].used = 0;
         map->boxes[i].lid_angle = 0;
-        map->boxes[i].unk_30 = 0;
+        map->boxes[i].trap_no = 0;
     }
     map->box_num = 0;
     for (i = 0; i < 8; i++) {
@@ -274,7 +274,7 @@ static inline void ClearMapEvent(CDungeonMap *map) {
  * @size 0xE78
  */
 int DebugInfomationIF(void) {
-    int i;
+    int line_count;
 
     if (GamePad.Down(0x400)) {
         DebugStatus[0] = 0;
@@ -336,19 +336,19 @@ int DebugInfomationIF(void) {
                 printf("trap num = %d\n", NowDngMap->SetCharaDoor(DebugStatus[19]));
                 ClearMapEvent(NowDngMap);
                 {
-                    int mode = NowDngMap->unk_BDEC;
+                    int mode = NowDngMap->map_type;
 
                     NowEventMan->SetupEvent(NowDngMap, mode);
                 }
                 return 140;
         }
     }
-    for (i = 0; DebugInfoCode[i] != -1; i++) {
+    for (line_count = 0; DebugInfoCode[line_count] != -1; line_count++) {
     }
     switch (DebugStatus[2]) {
         case 0:
             if (GamePad.Down(0x4000)) {
-                if (DebugInfoNowCursor == i - 1) {
+                if (DebugInfoNowCursor == line_count - 1) {
                     DebugInfoNowCursor = 0;
                 } else {
                     DebugInfoNowCursor++;
@@ -356,7 +356,7 @@ int DebugInfomationIF(void) {
             }
             if (GamePad.Down(0x1000)) {
                 if (DebugInfoNowCursor == 0) {
-                    DebugInfoNowCursor = i - 1;
+                    DebugInfoNowCursor = line_count - 1;
                 } else {
                     DebugInfoNowCursor--;
                 }
@@ -637,27 +637,27 @@ char *NameExchg(char *name, int language) {
     return nameblock;
 }
 
-int CCollisionData::Set(float *pos, int damage, int life, float radius, float unknown0, int unknown1,
-                        int kind, int flags, int unknown2) {
+int CCollisionData::Set(float *position, int damage, int life, float radius, float scale_rate, int target_mask,
+                        int kind, int flags, int attribute) {
     for (int i = 0; i < 96; i++) {
         if (active[i] == 0) {
             active[i] = 1;
-            sceVu0CopyVector(hit[i].pos, pos);
-            hit[i].unk_10[0] = hit[i].unk_10[1] = hit[i].unk_10[2] = 0.0f;
-            hit[i].unk_10[3] = 1.0f;
+            sceVu0CopyVector(hit[i].pos, position);
+            hit[i].base_point[0] = hit[i].base_point[1] = hit[i].base_point[2] = 0.0f;
+            hit[i].base_point[3] = 1.0f;
             hit[i].velocity[0] = hit[i].velocity[1] = hit[i].velocity[2] = 0.0f;
             hit[i].velocity[0] = 1.0f;
             hit[i].damage = damage;
-            hit[i].unk_38 = unknown0;
+            hit[i].scale_rate = scale_rate;
             hit[i].life = life;
             hit[i].radius = radius;
-            hit[i].unk_48 = unknown1;
+            hit[i].target_mask = target_mask;
             hit[i].kind = kind;
             hit[i].flags = flags;
-            hit[i].unk_54 = unknown2;
+            hit[i].attribute = attribute;
             hit[i].owner = -1;
             hit[i].monster_no = -1;
-            hit[i].unk_60 = -1;
+            hit[i].attack_no = -1;
             hit[i].vs_monster = NULL;
             hit[i].weapon_flags = 1;
             hit[i].target_kind = -1;
@@ -666,7 +666,7 @@ int CCollisionData::Set(float *pos, int damage, int life, float radius, float un
             hit[i].knockback_speed = 0.0f;
             hit[i].knockback_decay = 0.0f;
             hit[i].knockback_mode = 0;
-            hit[i].unk_70 = hit[i].unk_74 = 0;
+            hit[i].phase = hit[i].ready_phase = 0;
             now_hit = i;
             return i;
         }
@@ -690,7 +690,7 @@ int CCollisionData::CheckHitUser(float *position, int mask, float height) {
     float user_bottom = position[1];
     user_top = user_bottom + height;
     for (int i = 0; i < 96; i++) {
-        if (active[i] == 0 || (mask & hit[i].unk_48) == 0 || hit[i].unk_70 != hit[i].unk_74) {
+        if (active[i] == 0 || (mask & hit[i].target_mask) == 0 || hit[i].phase != hit[i].ready_phase) {
             continue;
         }
         sceVu0CopyVector(hit_position, hit[i].pos);

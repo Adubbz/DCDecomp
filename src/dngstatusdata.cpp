@@ -39,10 +39,10 @@ void CDngStatusData::SetNowFloor(int floor) {
     this->cur_floor = floor;
 
     int cur_georama = this->cur_georama;
-    s8 *base = this->floor_reached;
-    s8 *floor_reached = base + cur_georama;
-    if (floor > *floor_reached) {
-        *floor_reached = floor;
+    s8 *reached_table = this->floor_reached;
+    s8 *reached = reached_table + cur_georama;
+    if (floor > *reached) {
+        *reached = floor;
     }
 }
 
@@ -227,8 +227,8 @@ int CDngStatusData::CheckItemGet(int item_id) {
             int j;
 
             for (j = 0; (valid = j < 40) != 0; j++) {
-                s16 v = this->consumable_items[j].id;
-                if (!(valid = v < 81) && v < 132) {
+                s16 held_id = this->consumable_items[j].id;
+                if (!(valid = held_id < 81) && held_id < 132) {
                     count++;
                 }
             }
@@ -379,8 +379,8 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 int count = 0;
                 int ii;
                 for (ii = 0; (valid = ii < 43) != 0; ii++) {
-                    s16 v = this->consumable_items[ii].id;
-                    if (!(valid = v < 81) && v < 132) {
+                    s16 held_id = this->consumable_items[ii].id;
+                    if (!(valid = held_id < 81) && held_id < 132) {
                         count++;
                     }
                 }
@@ -497,8 +497,8 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
             this->hp[chara_no] = 0;
         }
         {
-            s16 cur = this->hp[chara_no];
-            if (!(valid = cur < this->max_hp[chara_no])) {
+            s16 life_value = this->hp[chara_no];
+            if (!(valid = life_value < this->max_hp[chara_no])) {
                 this->hp[chara_no] = this->max_hp[chara_no];
             }
         }
@@ -508,8 +508,8 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
             this->next_hp[chara_no] = 0;
         }
         {
-            s16 cur = this->next_hp[chara_no];
-            if (!(valid = cur < this->max_hp[chara_no])) {
+            s16 life_value = this->next_hp[chara_no];
+            if (!(valid = life_value < this->max_hp[chara_no])) {
                 this->next_hp[chara_no] = this->max_hp[chara_no];
             }
         }
@@ -611,11 +611,11 @@ void CUserStatus::Step(int mode) {
         }
 
         if (this->water_now[this->cur_chara] <= 0.0f) {
-            this->damage_accum[this->cur_chara] += 0.008333334f;
+            this->thirst_damage[this->cur_chara] += 0.008333334f;
         }
 
-        if (this->damage_accum[this->cur_chara] >= 1.0f) {
-            this->damage_accum[this->cur_chara] = 0.0f;
+        if (this->thirst_damage[this->cur_chara] >= 1.0f) {
+            this->thirst_damage[this->cur_chara] = 0.0f;
             this->AddNowLife(this->cur_chara, -1, 10.0f);
         }
     }
@@ -663,7 +663,7 @@ void CUserStatus::Init(void) {
     int valid;
 
     for (i = 0; (valid = i < 6) != 0; i++) {
-        this->damage_accum[i] = 0.0f;
+        this->thirst_damage[i] = 0.0f;
     }
 
     this->water_drain_disable = 0;
@@ -709,14 +709,14 @@ void CDngStatusData::SetResLimmitZone(void) {
  * and it forces the roll comparison into a real register rather than `at`. */
 /* @ 0x1BEF60 (0x3E0 bytes) -- InitResLimmitZone__14CDngStatusDataFv */
 void CDngStatusData::InitResLimmitZone(void) {
-    int idx;
+    int floor_index;
     int roll;
     int i;
     int valid;
 
     for (i = 0; (valid = i < 3) != 0; i++) {
         int zone;
-        idx = (int) ((15.0f * (float) rand()) / 2147483648.0f);
+        floor_index = (int) ((15.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
             zone = 10;
@@ -725,12 +725,12 @@ void CDngStatusData::InitResLimmitZone(void) {
             zone = 11;
             valid = 1;
         }
-        this->res_limit_zone_id[1][idx] = zone;
+        this->res_limit_zone_id[1][floor_index] = zone;
     }
 
     for (i = 0; (valid = i < 3) != 0; i++) {
         int zone;
-        idx = (int) ((16.0f * (float) rand()) / 2147483648.0f);
+        floor_index = (int) ((16.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
             zone = 10;
@@ -739,12 +739,12 @@ void CDngStatusData::InitResLimmitZone(void) {
             zone = 11;
             valid = 1;
         }
-        this->res_limit_zone_id[2][idx] = zone;
+        this->res_limit_zone_id[2][floor_index] = zone;
     }
 
     for (i = 0; (valid = i < 3) != 0; i++) {
         int zone;
-        idx = (int) ((16.0f * (float) rand()) / 2147483648.0f);
+        floor_index = (int) ((16.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
             zone = 10;
@@ -753,12 +753,12 @@ void CDngStatusData::InitResLimmitZone(void) {
             zone = 11;
             valid = 1;
         }
-        this->res_limit_zone_id[3][idx] = zone;
+        this->res_limit_zone_id[3][floor_index] = zone;
     }
 
     for (i = 0; (valid = i < 4) != 0; i++) {
         int zone;
-        idx = (int) ((14.0f * (float) rand()) / 2147483648.0f);
+        floor_index = (int) ((14.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
             zone = 10;
@@ -767,12 +767,12 @@ void CDngStatusData::InitResLimmitZone(void) {
             zone = 11;
             valid = 1;
         }
-        this->res_limit_zone_id[4][idx] = zone;
+        this->res_limit_zone_id[4][floor_index] = zone;
     }
 
     for (i = 0; (valid = i < 4) != 0; i++) {
         int zone;
-        idx = (int) ((23.0f * (float) rand()) / 2147483648.0f);
+        floor_index = (int) ((23.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
         if (!(valid = roll < 50)) {
             zone = 10;
@@ -781,7 +781,7 @@ void CDngStatusData::InitResLimmitZone(void) {
             zone = 11;
             valid = 1;
         }
-        this->res_limit_zone_id[5][idx] = zone;
+        this->res_limit_zone_id[5][floor_index] = zone;
     }
 }
 
@@ -793,12 +793,12 @@ void CDngStatusData::InitResLimmitZone(void) {
  * `addu index, base`, whereas the equivalent raw `s8 *` plus casts yields
  * base-first. */
 struct DNG_ITEM_BLOCK {
-    s8 item_capacity;
+    s8 item_capacity; /**< Number of inventory slots the party may fill. */
     char unk_01;
-    s16 quick_item_slot[3];
-    s16 quick_item_qty[3];
-    s16 dungeon_items[103];
-    s16 item_vol[103];
+    s16 quick_item_slot[3]; /**< Item ids held in the three quick slots. */
+    s16 quick_item_qty[3];  /**< Quantity held in each quick slot. */
+    s16 dungeon_items[103]; /**< Item id in each inventory slot, or -1 when empty. */
+    s16 item_vol[103];      /**< How much is left in each slot's copy of its item. */
 };
 
 /* Resets the whole class to a fresh-game state: party HP/weapons/atra grid/
@@ -829,9 +829,9 @@ void CDngStatusData::Initialize(void) {
     for (t = 0; (valid = t < 6) != 0; t++) {
         this->max_hp[t] = start_hp[t];
         this->hp[t] = start_hp[t];
-        this->unk_4348[t] = start_stat[t];
-        this->unk_42C8[t] = 0;
-        this->unk_42E0[t] = 0;
+        this->defense[t] = start_stat[t];
+        this->ailments[t] = 0;
+        this->ailment_frames[t] = 0;
         this->equipped_weapon_slot[t] = -1;
 
         for (q = 0; (valid = q < 11) != 0; q++) {
@@ -973,12 +973,12 @@ int CDngStatusData::SetGetAtra(int georama_no, int floor, int atra_id) {
 /* Copies atra_grid[georama_no][floor][0..8) into out8. No-op for
  * georama_no==6. */
 /* @ 0x1BF8F0 (0x60 bytes) -- SetCopyAtraList__14CDngStatusDataFiiPi */
-void CDngStatusData::SetCopyAtraList(int georama_no, int floor, int *out8) {
+void CDngStatusData::SetCopyAtraList(int georama_no, int floor, int *out_list) {
     if (georama_no != 6) {
         int i;
         int valid;
         for (i = 0; (valid = i < 8) != 0; i++) {
-            out8[i] = this->atra_grid[georama_no][floor][i];
+            out_list[i] = this->atra_grid[georama_no][floor][i];
         }
     }
 }

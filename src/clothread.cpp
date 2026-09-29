@@ -87,14 +87,14 @@ static void CommandPOLYDIVE(void **argv);
 static void CommandBOUND(void **argv);
 
 /**
- *              Names one keyword of the cloth configuration file.
+ * Names one keyword of the cloth configuration file.
  *
  * The argument list gives each argument's kind -- 0 for a word, 1 for an
  * integer, 2 for a float -- and ends at -1.
  */
 struct COMMAND_INFO {
-    char *name;   /**< Keyword the line starts with. */
-    int args[16]; /**< Kind of each argument, ended by -1. */
+    char *name;        /**< Keyword the line starts with. */
+    int arg_types[16]; /**< Kind of each argument, ended by -1. */
 };
 
 /* The keywords a cloth configuration file may use. */
@@ -123,10 +123,10 @@ static void (*CommandExe[9])(void **) = {
     CommandBOUND,
 };
 
-static int GetArg(input_str &input, int *args, void **argv);
+static int GetArg(input_str &input, int *arg_types, void **argv);
 static int SearchCommand(input_str &input, int *command);
 static int SkipSpace(input_str &input);
-static int CheckChar(char c);
+static int CheckChar(char ch);
 
 /**
  * Reads one model's cloth description and attaches the simulation.
@@ -136,7 +136,7 @@ static int CheckChar(char c);
  * @size 0x1B4
  */
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
-    char words[16][256];
+    char arg_storage[16][256];
     void *argv[16];
     int command;
 
@@ -152,18 +152,18 @@ CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     }
     SkipSpace(input);
     for (int i = 0; i < 16; i++) {
-        argv[i] = words[i];
+        argv[i] = arg_storage[i];
     }
     while (SearchCommand(input, &command) != 0) {
         if (command >= 9 || command < 0) {
             printf("unknown command!!\n");
             continue;
         }
-        int result = GetArg(input, Command[command].args, (void **) argv);
-        if (result == 0) {
+        int arg_status = GetArg(input, Command[command].arg_types, (void **) argv);
+        if (arg_status == 0) {
             break;
         }
-        if (result < 0) {
+        if (arg_status < 0) {
             printf("error!!\n");
         }
         CommandExe[command](argv);
@@ -232,16 +232,16 @@ static void CommandGRAVITY(void **argv) {
 }
 
 static void CommandPOLYDIVE(void **argv) {
-    char *s = (char *) argv[0];
-    int i = 0;
+    char *flags = (char *) argv[0];
+    int row = 0;
 
-    while (i < 16) {
-        char c = *s;
-        if (c == 0)
+    while (row < 16) {
+        char flag = *flags;
+        if (flag == 0)
             break;
-        pCloth->polygon_divide[i] = (c != '0');
-        s++;
-        i++;
+        pCloth->polygon_divide[row] = (flag != '0');
+        flags++;
+        row++;
     }
 }
 
@@ -253,45 +253,46 @@ static void CommandPOLYDIVE(void **argv) {
  * @size 0x24C
  */
 static void CommandBOUND(void **argv) {
-    sceVu0FVECTOR vectors[4];
+    sceVu0FVECTOR box_vectors[4];
     CBound *bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
 
     if (bound == NULL) {
         return;
     }
-    int arg = 0;
-    CFrame *frame = ParentFrame->SearchFrame((char *) argv[arg++]);
+    int arg_index = 0;
+    CFrame *frame = ParentFrame->SearchFrame((char *) argv[arg_index++]);
     if (frame == NULL) {
         return;
     }
     for (int i = 0; i < 4; i++) {
-        vectors[i][0] = *(float *) argv[arg];
-        vectors[i][1] = *(float *) argv[(int) (arg + 1)];
-        vectors[i][2] = *(float *) argv[(int) (arg + 2)];
-        arg += 3;
-        vectors[i][3] = 1.0f;
+        box_vectors[i][0] = *(float *) argv[arg_index];
+        box_vectors[i][1] = *(float *) argv[(int) (arg_index + 1)];
+        box_vectors[i][2] = *(float *) argv[(int) (arg_index + 2)];
+        arg_index += 3;
+        box_vectors[i][3] = 1.0f;
     }
-    vectors[0][3] = 0.0f;
-    bound->SetDir(frame, vectors[1], vectors[2], vectors[0], vectors[3][0], vectors[3][1]);
-    float x;
-    float y;
-    float z;
-    z = vectors[3][2];
-    y = vectors[3][1];
-    x = vectors[3][0];
-    bound->extent[0] = x;
-    bound->extent[1] = y;
-    bound->extent[2] = z;
+    box_vectors[0][3] = 0.0f;
+    bound->SetDir(frame, box_vectors[1], box_vectors[2], box_vectors[0], box_vectors[3][0],
+                  box_vectors[3][1]);
+    float half_x;
+    float half_y;
+    float half_z;
+    half_z = box_vectors[3][2];
+    half_y = box_vectors[3][1];
+    half_x = box_vectors[3][0];
+    bound->extent[0] = half_x;
+    bound->extent[1] = half_y;
+    bound->extent[2] = half_z;
     if (bound->extent[0] > 0.0f) {
-        bound->reciprocal[0] = 1.0f / x;
+        bound->reciprocal[0] = 1.0f / half_x;
     }
     if (bound->extent[1] > 0.0f) {
-        bound->reciprocal[1] = 1.0f / y;
+        bound->reciprocal[1] = 1.0f / half_y;
     }
     if (bound->extent[2] > 0.0f) {
-        bound->reciprocal[2] = 1.0f / z;
+        bound->reciprocal[2] = 1.0f / half_z;
     }
-    bound->friction = *(float *) argv[arg];
+    bound->friction = *(float *) argv[arg_index];
     if (pBound == NULL) {
         pCloth->bound = bound;
     } else {
@@ -308,54 +309,54 @@ static void CommandBOUND(void **argv) {
  * @size 0x320
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-static int GetArg(input_str &input, int *args, void **argv) {
+static int GetArg(input_str &input, int *arg_types, void **argv) {
     char word[256];
 
     if (!SkipSpace(input))
         return 0;
-    int argc = 0;
-    while (args[argc++] >= 0)
+    int arg_count = 0;
+    while (arg_types[arg_count++] >= 0)
         ;
-    int c;
-    for (int i = 0; i < argc - 1; i++) {
+    int ch;
+    for (int i = 0; i < arg_count - 1; i++) {
         int length = 0;
         if (!SkipSpace(input))
             return 0;
         while (1) {
-            if (input.get(&c) == 0)
+            if (input.get(&ch) == 0)
                 return 0;
-            if (c == ',' || !CheckChar(c))
+            if (ch == ',' || !CheckChar(ch))
                 break;
-            word[length++] = c;
+            word[length++] = ch;
         }
         word[length] = 0;
-        switch (args[i]) {
+        switch (arg_types[i]) {
             case 0:
                 if (word[0] != '"')
                     return -1;
                 for (length = 1;; length++) {
-                    char value = word[length];
-                    if (value == '"') {
+                    char letter = word[length];
+                    if (letter == '"') {
                         word[length] = 0;
                         break;
                     }
-                    if (value == 0)
+                    if (letter == 0)
                         return -1;
                 }
                 strcpy((char *) argv[i], word + 1);
                 break;
             case 1:
                 for (length = 0; word[length] != 0; length++) {
-                    char value = word[length];
-                    if (value < '0' || value > '9')
+                    char letter = word[length];
+                    if (letter < '0' || letter > '9')
                         return -1;
                 }
                 *(int *) argv[i] = atoi(word);
                 break;
             case 2:
                 for (length = 0; word[length] != 0; length++) {
-                    char value = word[length];
-                    if ((value < '0' || value > '9') && value != '.' && value != '-')
+                    char letter = word[length];
+                    if ((letter < '0' || letter > '9') && letter != '.' && letter != '-')
                         return -1;
                 }
                 *(float *) argv[i] = (float) atof(word);
@@ -381,13 +382,13 @@ static int SearchCommand(input_str &input, int *command) {
     if (!SkipSpace(input))
         return 0;
     int length = 0;
-    int c;
+    int ch;
     while (1) {
-        if (input.get(&c) == 0)
+        if (input.get(&ch) == 0)
             return 0;
-        if (!CheckChar(c))
+        if (!CheckChar(ch))
             break;
-        word[length++] = c;
+        word[length++] = ch;
     }
     word[length] = 0;
     for (int i = 0; i < 9; i++) {
@@ -409,20 +410,20 @@ static int SearchCommand(input_str &input, int *command) {
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
 static int SkipSpace(input_str &input) {
-    char *str;
-    int i;
+    char *text;
+    int pos;
 
-    str = input.data;
-    i = input.pos;
-    while (i < input.size) {
-        if (CheckChar(str[i])) {
+    text = input.data;
+    pos = input.pos;
+    while (pos < input.size) {
+        if (CheckChar(text[pos])) {
             break;
         }
-        i++;
+        pos++;
     }
-    input.pos = i;
+    input.pos = pos;
 
-    if (i >= input.size)
+    if (pos >= input.size)
         return 0;
     return 1;
 }
@@ -435,51 +436,51 @@ static int SkipSpace(input_str &input) {
  * @size 0x60
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-static int CheckChar(char c) {
-    int found = 0;
-    if (c == ' ')
-        found = 1;
-    if (c == '\t')
-        found = 1;
-    if (c == '\n')
-        found = 1;
-    if (c == '\r')
-        found = 1;
-    return !found;
+static int CheckChar(char ch) {
+    int is_space = 0;
+    if (ch == ' ')
+        is_space = 1;
+    if (ch == '\t')
+        is_space = 1;
+    if (ch == '\n')
+        is_space = 1;
+    if (ch == '\r')
+        is_space = 1;
+    return !is_space;
 }
 
 /**
  * Converts analog-stick displacement into a motion speed and movement state.
  */
-int keyCtrl(float x, float y, MOTION_INFO *motion) {
-    int result = 0;
+int keyCtrl(float stick_x, float stick_y, MOTION_INFO *motion) {
+    int move_state = 0;
 
-    if (y != 0.0f || x != 0.0f) {
-        float m;
+    if (stick_y != 0.0f || stick_x != 0.0f) {
+        float tilt;
         float speed;
 
-        result = 2;
+        move_state = 2;
 
-        if (x < 0.0f)
-            x *= -1.0f;
-        if (y < 0.0f)
-            y *= -1.0f;
+        if (stick_x < 0.0f)
+            stick_x *= -1.0f;
+        if (stick_y < 0.0f)
+            stick_y *= -1.0f;
 
-        if (x >= y)
-            m = x;
+        if (stick_x >= stick_y)
+            tilt = stick_x;
         else
-            m = y;
+            tilt = stick_y;
 
-        speed = 0.8f * (0.1f + m);
+        speed = 0.8f * (0.1f + tilt);
         motion[2].speed = speed;
         if (speed >= 0.7f)
             motion[2].speed = 0.7f;
 
-        if (x + y >= 0.85f)
-            result = 1;
+        if (stick_x + stick_y >= 0.85f)
+            move_state = 1;
     }
 
-    return result;
+    return move_state;
 }
 
 /**

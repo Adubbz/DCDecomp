@@ -105,64 +105,66 @@ public:
 public:
     /* CDngStatusData extends this layout with its dungeon tail. The fields are
      * public because retail reaches into them from outside both classes. */
-    s8 cur_georama;                  /**< Current town and dungeon index. */
-    char unk_01[1];                  // 0x0001
-    s8 cur_floor;                    // 0x0002
-    s8 prev_floor;                   /**< Floor occupied before the current floor. */
-    s8 cur_chara;                    /**< Index of the currently controlled party member. */
-    s8 party_size;                   // 0x0005
-    s16 max_hp[6];                   /**< Maximum life of each party member. */
-    s16 hp[6];                       /**< Current displayed life of each party member. */
-    char unk_01E[0x25A];             // 0x001E
+    s8 cur_georama; /**< Current town and dungeon index. */
+    char unk_01[1];
+    s8 cur_floor;  /**< Floor the party stands on. */
+    s8 prev_floor; /**< Floor occupied before the current floor. */
+    s8 cur_chara;  /**< Index of the currently controlled party member. */
+    s8 party_size; /**< Party members who have joined. */
+    s16 max_hp[6]; /**< Maximum life of each party member. */
+    s16 hp[6];     /**< Current displayed life of each party member. */
+    char unk_01E[0x25A];
     s32 atra_grid[6][40][8];         /**< Atla each floor slot asks for, or -1 empty, -2 any atla, -3 collected. */
     ATRA_SAVE atra_registry[6][100]; /**< Atla each dungeon's floor slots still ask for. */
     s16 kills[6][100];               /**< Monsters defeated on each dungeon floor. */
-    char unk_4148[200];              // 0x4148
-    char res_limit_zone_id[6][25];   /**< Restriction-zone identifiers by dungeon and floor. */
-    char unk_42A6[25];               // 0x42A6
-    s8 floor_reached[7];             /**< Deepest floor reached in each dungeon, or -1 if never entered. */
-    char unk_42C6[2];                // 0x42C6
-    s32 unk_42C8[6];                 // 0x42C8
-    s16 unk_42E0[6];                 // 0x42E0
-    float water_max[6];              /**< Most water each character can hold, ten to a drop. */
-    float water_now[6];              /**< Water each character holds now. */
-    s32 overflow_flag;               /**< Whether the player carries more items than the pack holds. */
-    s32 special_flag_238;            /**< Set when item 238 is picked up. */
-    s32 skill_owned[6];              /**< Whether each character has received their event skill. */
-    s32 minimap_status;              /**< Current minimap visibility mode. */
-    s8 equipped_weapon_slot[6];      /**< Specifies each character's equipped weapon slot. */
+    char unk_4148[200];
+    char res_limit_zone_id[6][25]; /**< Restriction-zone identifiers by dungeon and floor. */
+    char unk_42A6[25];
+    s8 floor_reached[7]; /**< Deepest floor reached in each dungeon, or -1 if never entered. */
+    char unk_42C6[2];
+    s32 ailments[6];            /**< Status ailments each party member suffers, as bit flags. */
+    s16 ailment_frames[6];      /**< Frames left of each party member's status ailment. */
+    float water_max[6];         /**< Most water each character can hold, ten to a drop. */
+    float water_now[6];         /**< Water each character holds now. */
+    s32 overflow_flag;          /**< Whether the player carries more items than the pack holds. */
+    s32 special_flag_238;       /**< Set when item 238 is picked up. */
+    s32 skill_owned[6];         /**< Whether each character has received their event skill. */
+    s32 minimap_status;         /**< Current minimap visibility mode. */
+    s8 equipped_weapon_slot[6]; /**< Specifies each character's equipped weapon slot. */
 
     union {
         u16 money;        /**< Gilda the party carries. */
         s16 money_signed; /**< Signed view of the Gilda the party carries. */
     };
 
-    s32 unk_4348[6]; // 0x4348
+    s32 defense[6]; /**< Defense of each party member, raised by their favourite food up to 99. */
 
     union {
         ITEM_PACK item_pack; /**< Dungeon items the player carries. */
 
-        /* The battle code walks the pack as halfwords from its start, indexing by
-         * 1-based quick-use slot: [slot] is that slot's item and [slot + 3] its count. */
+        /**
+         * The pack read as halfwords from its start, indexed by 1-based quick-use slot: [slot] is
+         * that slot's item and [slot + 3] its count.
+         */
         s16 active_item[3];
     };
 
-    char unk_450A[2];                    // 0x450A
+    char unk_450A[2];
     WEAPON_HAVE chara_weapons[6][11];    /**< Specifies the weapons owned by each character. */
     DNG_CONSUMABLE consumable_items[43]; /**< Specifies the stored consumable items. */
-    s16 next_hp[6];                      // 0x8A5C
-    s16 life_step[6];                    // 0x8A68
-    s32 unk_8A74[6];                     // 0x8A74
-    s32 unk_8A8C[6];                     // 0x8A8C
-    s8 event_flags[50];                  // 0x8AA4
-    s16 drink_next[6];                   // 0x8AD6
-    s16 drink_step[6];                   // 0x8AE2
-    char unk_8AEE[2];                    // 0x8AEE
-    float damage_accum[6];               // 0x8AF0
-    s32 water_drain_disable;             // 0x8B08
-    s32 step_disable;                    // 0x8B0C
-    s32 res_limit_zone_current;          // 0x8B10
-    s32 active_item_vol[3];              // 0x8B14
+    s16 next_hp[6];                      /**< Life each party member's gauge is moving towards. */
+    s16 life_step[6];                    /**< Life each party member's gauge moves by each step, or 0 when still. */
+    s32 unk_8A74[6];
+    s32 unk_8A8C[6];
+    s8 event_flags[50]; /**< Flags the dungeon's event scripts set and read. */
+    s16 drink_next[6];  /**< Water each party member's gauge is moving towards. */
+    s16 drink_step[6];  /**< Water each party member's gauge moves by each step, or 0 when still. */
+    char unk_8AEE[2];
+    float thirst_damage[6];     /**< Progress towards the next point of life lost to an empty water gauge. */
+    s32 water_drain_disable;    /**< 1 while the active character's water does not drain. */
+    s32 step_disable;           /**< 1 while the gauges, and the player's status ailments, stand still. */
+    s32 res_limit_zone_current; /**< Restriction zone the party is fenced into, or -1 for none. */
+    s32 active_item_vol[3];     /**< Uses left of the item in each quick-use slot. */
 };
 
 STATIC_ASSERT(sizeof(CUserStatus) == 0x8B20);

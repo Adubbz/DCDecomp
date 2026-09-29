@@ -52,14 +52,14 @@ done:;
 u_char *CDataAlloc<1, 1690000>::Alloc64(int quads) {
     Align64();
 
-    u_char *block = (u_char *) this->block + used * 16;
+    u_char *allocation = (u_char *) this->block + used * 16;
     used += quads;
     if (used >= 1690000) {
         printf("Alocation Error! %d/%d\n", used, 1690000);
         while (1)
             ;
     }
-    return block;
+    return allocation;
 }
 
 void CDataAlloc<1, 1690000>::Align64() {

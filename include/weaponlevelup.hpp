@@ -15,45 +15,45 @@ class CMenuItemStep;
  */
 class CWeaponLevelUp {
 public:
-    WEAPON_HAVE preview;         /**< Weapon values shown by the menu. */
-    s16 status_item_no;          /**< Item id of the temporary status-break item. */
-    s16 status_weapon_no;        /**< Weapon id recorded in the status-break item. */
-    s16 status_flags;            /**< Status flags collected from the weapon. */
-    s8 status_weapon_kind;       /**< Character/weapon kind recorded in the status-break item. */
-    u8 status_stat_padding;      /**< Padding between the status-break kind and its stats. */
-    s16 status_stats[4];         /**< Reduced attack, endurance, speed and magic values. */
-    s8 status_elements[5];       /**< Reduced fire, ice, thunder, wind and holy values. */
-    s8 status_monster[10];       /**< Reduced monster-effectiveness values. */
-    u8 status_padding[9];        /**< Tail bytes of the temporary attachment record. */
-    CCharacter effect;           /**< Character animation displayed by the menu. */
-    s32 unk_12d0;                /**< Unused state word retained by the menu object. */
-    WEAPON_HAVE *weapon;         /**< Weapon being enhanced by the active effect. */
-    CCharacter *chara;           /**< Character associated with the active effect. */
-    s16 effect_motion;           /**< Current motion number in the effect animation. */
-    s16 buildup_weapon_no;       /**< Weapon id selected by the build-up operation. */
-    s8 buildup_complete;         /**< Whether the build-up operation has completed. */
-    s8 lost_default_weapon;      /**< Whether the operation consumed a default weapon. */
-    s16 message_no;              /**< Message number used by the result window. */
-    s32 message_value;           /**< Value displayed in the result window. */
-    s16 synthesis_count;         /**< Number of synthesis attachments consumed. */
-    s16 unk_12ea;                /**< Unused word between synthesis and icon tables. */
-    s16 attachment_icons[5];     /**< Attachment ids shown orbiting the effect. */
-    s16 attachment_values[5];    /**< Values displayed beside the attachment icons. */
-    s16 effect_active;           /**< Nonzero while the effect animation is active. */
-    s16 operation_kind;          /**< Active operation: level-up, break, build-up or recovery. */
-    s16 texture_block;           /**< Texture block used by the active menu effect. */
-    u8 texture_padding[2];       /**< Alignment padding after the texture block id. */
-    float effect_x;              /**< X coordinate for a positioned effect. */
-    float effect_y;              /**< Y coordinate for a positioned effect. */
-    float effect_timer;          /**< Frame timer for the active effect sequence. */
-    s16 effect_state;            /**< State-machine step for the active effect sequence. */
-    s16 snd_volume;              /**< Current background-music volume during a fade. */
-    s16 snd_from;                /**< Background-music volume at the start of a fade. */
-    s16 snd_to;                  /**< Background-music volume at the end of a fade. */
-    s16 snd_step;                /**< Volume change applied on each fade step. */
-    u8 sound_padding[0xA];       /**< Unused bytes before the effect data buffer. */
-    u_long128 *effect_buffer;    /**< Aligned buffer used to load effect data. */
-    u8 effect_buffer_padding[4]; /**< Tail padding preserving the object size. */
+    WEAPON_HAVE preview;    /**< Working copy of the weapon holding the level-up or build-up result the menu shows. */
+    s16 status_item_no;     /**< Item id of the synthesis item a status break produces. */
+    s16 status_weapon_no;   /**< Item id of the weapon broken down into the synthesis item. */
+    s16 status_flags;       /**< Special-behaviour flags carried by the synthesis item. */
+    s8 status_weapon_level; /**< Level of the weapon broken down, shown in the break message. */
+    u8 unk_ff;
+    s16 status_stats[4];   /**< Attack, endurance, speed and magic carried over, at 60% of the weapon's. */
+    s8 status_elements[5]; /**< Fire, ice, thunder, wind and holy values carried over, at 60% of the weapon's. */
+    s8 status_monster[10]; /**< Monster-effectiveness values carried over, at 60% of the weapon's. */
+    u8 unk_117[9];
+    CCharacter effect;        /**< Model whose motions play the menu effect. */
+    s32 reserved_word;        /**< Cleared on initialisation and never read. */
+    WEAPON_HAVE *weapon;      /**< Weapon the active effect changes. */
+    CCharacter *chara;        /**< Character whose weapon the active effect changes. */
+    s16 effect_motion;        /**< Motion number the effect model plays. */
+    s16 buildup_weapon_no;    /**< Item id of the weapon a build-up turns the weapon into. */
+    s8 buildup_complete;      /**< Set once the build-up has rewritten the weapon. */
+    s8 lost_default_weapon;   /**< Set when a status break reset a character's default weapon instead of removing it. */
+    s16 message_no;           /**< Character named in a cure message, or a message id of 0x190 and above shown on its own. */
+    s32 message_value;        /**< Number shown in a cure message. */
+    s16 synthesis_count;      /**< Number of synthesis items the level-up absorbed. */
+    s16 reserved_half;        /**< Cleared on initialisation and never read. */
+    s16 attachment_icons[5];  /**< Item ids of the attachments orbiting the level-up effect. */
+    s16 attachment_values[5]; /**< Values drawn beside the orbiting attachment icons. */
+    s16 effect_active;        /**< Nonzero while the effect plays, which holds back the result message. */
+    s16 operation_kind;       /**< Active effect: 0 level-up, 1 status break, 2 build-up, 3 recovery, 4 and above a cure, -1 idle. */
+    s16 texture_block;        /**< Texture block the effect's textures load into. */
+    u8 unk_1306[2];
+    float effect_x;     /**< Horizontal position a cure effect plays at. */
+    float effect_y;     /**< Vertical position a cure effect plays at. */
+    float effect_timer; /**< Frames since the effect started, negative before it has. */
+    s16 effect_state;   /**< Step of the effect state machine, starting at a per-operation base. */
+    s16 snd_volume;     /**< Background-music volume the fade has reached. */
+    s16 snd_from;       /**< Background-music volume the fade started from, restored afterwards. */
+    s16 snd_to;         /**< Background-music volume the fade ends at. */
+    s16 snd_step;       /**< Signed volume change per frame, zero once the fade ends. */
+    u8 unk_131e[0xA];
+    u_long128 *effect_buffer; /**< Next free position in the buffer the effect package and sound load into. */
+    u8 unk_132c[4];
 
     /**
      * Loads the package and sound data for one menu effect.
@@ -62,7 +62,7 @@ public:
      * @address 0x00236000
      * @size 0x1E4
      */
-    void CMenuEffectDataLoad(CWeaponLevelUp *, int);
+    void CMenuEffectDataLoad(CWeaponLevelUp *load_buffer, int kind);
 
     /**
      * Clears the menu's tables and runtime state.
@@ -80,7 +80,7 @@ public:
      * @address 0x00236280
      * @size 0x4E8
      */
-    void SetLevelUpValue(WEAPON_HAVE *, CCharacter *, CWeaponLevelUp *, int);
+    void SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block);
 
     /**
      * Applies the completed level-up values to the weapon.
@@ -98,7 +98,7 @@ public:
      * @address 0x002368D0
      * @size 0x358
      */
-    void SetStatusBreak(WEAPON_HAVE *, CCharacter *, CWeaponLevelUp *, int);
+    void SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block);
 
     /**
      * Calculates and starts the weapon build-up effect.
@@ -107,7 +107,7 @@ public:
      * @address 0x00236C30
      * @size 0xCC
      */
-    void SetBuildUp(WEAPON_HAVE *, CCharacter *, CWeaponLevelUp *, int);
+    void SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block);
 
     /**
      * Starts the weapon recovery effect.
@@ -116,7 +116,7 @@ public:
      * @address 0x00236D00
      * @size 0x8C
      */
-    void WepRecover(WEAPON_HAVE *, CCharacter *, CWeaponLevelUp *, int);
+    void WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block);
 
     /**
      * Starts an effect for curing a weapon-related status.
@@ -125,7 +125,7 @@ public:
      * @address 0x00236D90
      * @size 0x100
      */
-    void CureEffect(int, int, CWeaponLevelUp *, int, int);
+    void CureEffect(int x, int y, CWeaponLevelUp *load_buffer, int tex_block, int kind);
 
     /**
      * Resets the background-music fade state.
@@ -143,7 +143,7 @@ public:
      * @address 0x00236EB0
      * @size 0x3C
      */
-    void SetSnd(int, int, int);
+    void SetSnd(int from, int to, int step);
 
     /**
      * Advances the active background-music fade by one step.
@@ -203,7 +203,7 @@ extern CWeaponLevelUp MenuWepLevelUp;
  * @address 0x00235A10
  * @size 0x1EC
  */
-void AttachMentValuePlus(ATTACH_LIST *, ATTACH_LIST *, float);
+void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale);
 
 /**
  * Calculates the weapon values produced by one or more level-ups.
@@ -212,7 +212,7 @@ void AttachMentValuePlus(ATTACH_LIST *, ATTACH_LIST *, float);
  * @address 0x00235C00
  * @size 0x3FC
  */
-void WeaponLevelUpValueCalc(WEAPON_HAVE *, WEAPON_HAVE *, int, int);
+void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int unused);
 
 /** Whether an interior is being entered, and the item-volume step to check. */
 extern CMenuItemStep ItemVolumeStep;

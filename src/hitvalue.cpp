@@ -65,7 +65,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
             weapon->durability_f = weapon->durability;
             DngMessMan.message = 0xBC;
             DngMessMan.timer = 0xF0;
-            DngMessMan.unk_1C = 0;
+            DngMessMan.steev_window = 0;
             SndSePlay(0x18, -1, 0);
         }
     }
@@ -77,11 +77,11 @@ int BattleSubWeaponDmg(float amount, int kind) {
         int now_item =
             UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no;
         if (default_weapon + 1 == now_item) {
-            DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
-            DngMessMan.unk_14 = weapon->unk_02;
+            DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
+            DngMessMan.insert_value_1 = weapon->level;
             DngMessMan.message = 0xA1;
             DngMessMan.timer = 0x1E0;
-            DngMessMan.unk_1C = 0;
+            DngMessMan.steev_window = 0;
             WepDataListToHaveCopy(default_weapon, weapon);
             SetWeaponAttachStatus(NowWeaponHave);
             NowWeaponHave->durability_f = 0.0f;
@@ -95,26 +95,26 @@ int BattleSubWeaponDmg(float amount, int kind) {
                 if (replacement->item_no == default_weapon) {
                     UserStatus->equipped_weapon_slot[chara_no] = slot;
                     SetWeaponAttachStatus(NowWeaponHave);
-                    DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
-                    DngMessMan.unk_14 = weapon->unk_02;
-                    DngMessMan.unk_10 = GetCommonItemDataSystemMsg(replacement->item_no);
-                    DngMessMan.unk_18 = replacement->unk_02;
+                    DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
+                    DngMessMan.insert_value_1 = weapon->level;
+                    DngMessMan.insert_mes_2 = GetCommonItemDataSystemMsg(replacement->item_no);
+                    DngMessMan.insert_value_2 = replacement->level;
                     DngMessMan.message = 0xA0;
                     DngMessMan.timer = 0x1E0;
-                    DngMessMan.unk_1C = 0;
+                    DngMessMan.steev_window = 0;
                     weapon->item_no = -1;
                     return 1;
                 }
                 if (replacement->item_no == default_weapon + 1) {
                     UserStatus->equipped_weapon_slot[chara_no] = slot;
                     SetWeaponAttachStatus(NowWeaponHave);
-                    DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
-                    DngMessMan.unk_14 = weapon->unk_02;
-                    DngMessMan.unk_10 = GetCommonItemDataSystemMsg(replacement->item_no);
-                    DngMessMan.unk_18 = replacement->unk_02;
+                    DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
+                    DngMessMan.insert_value_1 = weapon->level;
+                    DngMessMan.insert_mes_2 = GetCommonItemDataSystemMsg(replacement->item_no);
+                    DngMessMan.insert_value_2 = replacement->level;
                     DngMessMan.message = 0xA0;
                     DngMessMan.timer = 0x1E0;
-                    DngMessMan.unk_1C = 0;
+                    DngMessMan.steev_window = 0;
                     if (chara_no == 3) {
                         replacement->best_elem = 0;
                     }
@@ -127,19 +127,19 @@ int BattleSubWeaponDmg(float amount, int kind) {
 
     if (0.1f * weapon->durability <= old_durability &&
         0.1f * weapon->durability > weapon->durability_f) {
-        DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
-        DngMessMan.unk_14 = weapon->unk_02;
+        DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
+        DngMessMan.insert_value_1 = weapon->level;
         DngMessMan.message = 0x97;
         DngMessMan.timer = 0xF0;
-        DngMessMan.unk_1C = 0;
+        DngMessMan.steev_window = 0;
     }
     if (0.05f * weapon->durability <= old_durability &&
         0.05f * weapon->durability > weapon->durability_f) {
-        DngMessMan.unk_0C = GetCommonItemDataSystemMsg(weapon->item_no);
-        DngMessMan.unk_14 = weapon->unk_02;
+        DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
+        DngMessMan.insert_value_1 = weapon->level;
         DngMessMan.message = 0x98;
         DngMessMan.timer = 0xF0;
-        DngMessMan.unk_1C = 0;
+        DngMessMan.steev_window = 0;
     }
     return 0;
 }
@@ -154,15 +154,15 @@ void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame
 }
 
 void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
-    int place = 10000;
+    int divisor = 10000;
 
     for (int i = 0; i < 5; i++) {
         digit[i] = -1;
         phase[i] = -3.141592f;
     }
     this->kind = kind;
-    fade = 0.0f;
-    rise = 3.0f;
+    opacity = 0.0f;
+    opacity_speed = 3.0f;
     active = 1;
     this->frame = frame;
     sceVu0CopyVector(pos, world);
@@ -175,23 +175,23 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
         return;
     }
 
-    int value;
-    int leading = 0;
+    int digit_value;
+    int seen_nonzero = 0;
     for (int i = 4; i >= 0; i--) {
-        value = amount / place;
+        digit_value = amount / divisor;
 
-        if (value > 0) {
-            leading = 1;
+        if (digit_value > 0) {
+            seen_nonzero = 1;
         }
         // The units place is always drawn; the rest only past the first digit.
-        if (i == 0 || leading != 0) {
-            digit[i] = value;
-            amount -= value * place;
-            if (place < 9) {
+        if (i == 0 || seen_nonzero != 0) {
+            digit[i] = digit_value;
+            amount -= digit_value * divisor;
+            if (divisor < 9) {
                 last_digit = i;
             }
         }
-        place /= 10;
+        divisor /= 10;
     }
 
     switch (kind) {
@@ -248,7 +248,7 @@ void CHitValue::Draw(void) {
     if (digit[0] == -2) {
         int bounce = (int) (48.0f * sinf(phase[0]));
         set2DSprite(Vif1Packet, mark_texture, CRect_i_(screen[0], screen[1] - bounce - 48, 72, 24),
-                    CRect_i_(0, 128, 72, 24), (u8) fade);
+                    CRect_i_(0, 128, 72, 24), (u8) opacity);
         return;
     }
 
@@ -263,7 +263,7 @@ void CHitValue::Draw(void) {
                              texel.height),
                     CRect_i_(texel.x + digit[place] * texel.width, texel.y, texel.width,
                              texel.height),
-                    (u8) fade);
+                    (u8) opacity);
     }
 }
 

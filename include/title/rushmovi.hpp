@@ -45,7 +45,7 @@ int RushLoop(void);
  * @size 0x160
  * @unknownret
  */
-void SetObjAnime(char *, CFrameVu1 *, float *, float *);
+void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step);
 
 /**
  * @mangled WaterProcess__Fv__2

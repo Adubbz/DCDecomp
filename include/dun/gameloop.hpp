@@ -51,32 +51,32 @@ struct MAP_TRAP_CIRCLE;
  * Stores the state shared by dungeon event scripts and the dungeon loop.
  */
 struct BT_EVENT_INFO {
-    sceVu0FVECTOR position;  /**< Where the event run by the script plays. */
-    sceVu0FVECTOR direction; /**< Which way that event faces. */
-    s32 unk_20;
-    s32 unk_24;
-    s32 unk_28;
-    s32 unk_2C;
-    s32 unk_30;
-    s32 unk_34;
-    s32 unk_38;
-    s32 unk_3C[16];
-    s32 unk_7C;
-    s32 unk_80;
+    sceVu0FVECTOR position;        /**< Where the event run by the script plays. */
+    sceVu0FVECTOR direction;       /**< Which way that event faces. */
+    s32 init_flag_20;              /**< Set to 1 when the event state is initialised and never read. */
+    s32 action_mode;               /**< How the player started the event: 0 automatically, 1 with the action button, 2 with the hold button. */
+    s32 init_flag_28;              /**< Set to 1 when the event state is initialised and never read. */
+    s32 script_no;                 /**< System script the dungeon loop runs next, or -1 when none is queued. */
+    s32 running_script_no;         /**< System script currently running, or -1 when none is. */
+    s32 ext_memory;                /**< Whether the queued script runs out of the monster model arena instead of the script work buffer. */
+    s32 event_marker;              /**< Whether the event marker is drawn over the player this frame. */
+    s32 item_select_list[16];      /**< Items the script's item window offers, ended by -1. */
+    s32 item_select_filtered;      /**< Whether the script's item window is limited to item_select_list. */
+    s32 item_select_result;        /**< Address of the script stack entry the chosen item is written back to, or 0. */
     RS_STACKDATA *entrance_result; /**< Where the floor the player chose is written back. */
     RS_STACKDATA *escape_result;   /**< Where the escape answer is written back. */
-    s32 unk_8C;
-    s32 unk_90;
-    s32 unk_94;
-    s32 request; /**< Dungeon transition requested by the event script. */
-    s32 unk_9C;
-    s32 unk_A0;
-    s32 unk_A4;
-    s32 script_main_chr; /**< Character _SET_MAIN_CHR2 last asked for, or -1 when none is set. */
-    s32 unk_AC;
-    s32 unk_B0;
-    s32 unk_B4;
-    s32 no_status_recover; /**< Prevents restoring party status when entering the floor. */
+    s32 floor_title_off;           /**< Suppresses the floor title when the floor starts. */
+    s32 fade_on_start;             /**< Whether the next system script resets the editor fade when it starts. */
+    s32 bee_npc;                   /**< NPC unit the bee follows, or -1 when there is no bee. */
+    s32 request;                   /**< Dungeon transition requested by the event script. */
+    s32 chained_script_no;         /**< Script _RUN_SCRIPT_NO asks to run after the current one ends. */
+    s32 clear_script_no;           /**< Script to run once every monster on the floor is defeated, or -1. */
+    s32 clear_script_ext_memory;   /**< ext_memory setting for clear_script_no. */
+    s32 script_main_chr;           /**< Character _SET_MAIN_CHR2 last asked for, or -1 when none is set. */
+    s32 treasure_box;              /**< Treasure box the item-box event scripts act on. */
+    s32 no_reset_chara;            /**< Keeps the script's chosen character when the script ends. */
+    s32 chara_help;                /**< Whether the event was started by the character it asks for. */
+    s32 no_status_recover;         /**< Prevents restoring party status when entering the floor. */
     s32 unk_BC;
 };
 
@@ -199,7 +199,7 @@ int LoadTempTexture(char **files, int block, char *buffer);
  * @size 0x74
  * @unknownret
  */
-void SetTempTexture(int, char *);
+void SetTempTexture(int block, char *name);
 
 /**
  * @mangled MemoryMapDump__Fv
@@ -299,7 +299,7 @@ void BtArrengeMonstor(void);
  * @address 0x1DB9330
  * @size 0x25C
  */
-void BtLoadMonstor(int mode);
+void BtLoadMonstor(int ura);
 
 /**
  * @mangled EquipReAttach__FP10CCharacteri
@@ -307,7 +307,7 @@ void BtLoadMonstor(int mode);
  * @size 0xC8
  * @unknownret
  */
-void EquipReAttach(CCharacter *, int);
+void EquipReAttach(CCharacter *equipment, int held_out);
 
 /**
  * @mangled EquipWeaponFrame__FP10CCharacterii
@@ -315,7 +315,7 @@ void EquipReAttach(CCharacter *, int);
  * @size 0x1E0
  * @unknownret
  */
-void EquipWeaponFrame(CCharacter *, int, int);
+void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out);
 
 /**
  * Loads a character's crash, default and equipped weapon models, releasing the
@@ -325,7 +325,8 @@ void EquipWeaponFrame(CCharacter *, int, int);
  * @address 0x1DB9840
  * @size 0x2F0
  */
-void LoadWeapon2(unsigned int *, unsigned int *, unsigned int *, int, int);
+void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
+                 int chara, int reload);
 
 /**
  * @mangled SwordDmgCheck1__Ffi
@@ -333,7 +334,7 @@ void LoadWeapon2(unsigned int *, unsigned int *, unsigned int *, int, int);
  * @size 0x2C8
  * @unknownret
  */
-void SwordDmgCheck1(float, int);
+void SwordDmgCheck1(float amount, int kind);
 
 /**
  * Colours the trail of the player's weapon from the element that the weapon leans on.
@@ -358,7 +359,7 @@ BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form);
  * @size 0x18C
  * @unknownret
  */
-void MainChara_Effect(BT_SHOT_EFFECT *, unsigned int *, int);
+void MainChara_Effect(BT_SHOT_EFFECT *effect, unsigned int *data, int reload);
 
 /**
  * @mangled LoadChara2__FiiPUiPUiPUiPUi
@@ -366,7 +367,8 @@ void MainChara_Effect(BT_SHOT_EFFECT *, unsigned int *, int);
  * @size 0x568
  * @unknownret
  */
-void LoadChara2(int, int, unsigned int *, unsigned int *, unsigned int *, unsigned int *);
+void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned int *crash_data,
+                unsigned int *default_data, unsigned int *main_data);
 
 /**
  * @mangled BtCheckDamageProc__Fv
@@ -406,7 +408,7 @@ void BattleActionOn_Jinn(void);
  * @size 0x5CC
  * @unknownret
  */
-void BattleActionPlay_Jinn(CCharacter *, int);
+void BattleActionPlay_Jinn(CCharacter *chara, int aimed);
 
 /**
  * Starts Ruby's magic action, if the player is free and the gauge is full.
@@ -423,7 +425,7 @@ void BattleActionOn_Ruby(void);
  * @size 0x3CC
  * @unknownret
  */
-void BattleActionShotRuby(CCharacter *, int, float, int);
+void BattleActionShotRuby(CCharacter *chara, int aimed, float scale, int repeat);
 
 /**
  * @mangled BattleActionPlay_Ruby__FP10CCharacteri
@@ -431,7 +433,7 @@ void BattleActionShotRuby(CCharacter *, int, float, int);
  * @size 0x7F0
  * @unknownret
  */
-void BattleActionPlay_Ruby(CCharacter *, int);
+void BattleActionPlay_Ruby(CCharacter *chara, int aimed);
 
 /**
  * Starts Osmond's action, if the player is free and nothing blocks it.
@@ -466,7 +468,7 @@ void BattleActionOn_Ozumond_F(void);
  * @size 0x3C4
  * @unknownret
  */
-void BattleActionPlay_Ozumond(int);
+void BattleActionPlay_Ozumond(int aimed);
 
 /**
  * @mangled BattleActionPlay_Ozumond_H__Fi
@@ -474,7 +476,7 @@ void BattleActionPlay_Ozumond(int);
  * @size 0x2D8
  * @unknownret
  */
-void BattleActionPlay_Ozumond_H(int);
+void BattleActionPlay_Ozumond_H(int aimed);
 
 /**
  * @mangled BattleActionPlay_Ozumond_F__Fi
@@ -482,7 +484,7 @@ void BattleActionPlay_Ozumond_H(int);
  * @size 0x3C0
  * @unknownret
  */
-void BattleActionPlay_Ozumond_F(int);
+void BattleActionPlay_Ozumond_F(int aimed);
 
 /**
  * @mangled autoCamTrial__Fv
@@ -498,7 +500,7 @@ void autoCamTrial(void);
  * @size 0x98
  * @unknownret
  */
-void DelActiveItem(int);
+void DelActiveItem(int slot);
 
 /**
  * Applies the trap selected by a dungeon-floor trap circle.
@@ -533,7 +535,7 @@ void DrawTargetLife(void);
  * @size 0x288
  * @unknownret
  */
-void DrawtargetCursor(float *, float, float, float);
+void DrawtargetCursor(float *world, float width, float height, float alpha);
 
 /**
  * @mangled SetNearLockOnTarget__Fii
@@ -548,7 +550,7 @@ int SetNearLockOnTarget(int from, int nearest_only);
  * @size 0x6DC
  * @unknownret
  */
-void setTargetCursor(int);
+void setTargetCursor(int on);
 
 /**
  * Turns the player's model to face the way a blow throws them.
@@ -686,7 +688,7 @@ void EdFadeInOut(void);
  * @size 0x9D0
  * @unknownret
  */
-void DepthOfField(float *focus, int steps, int strength, int mode);
+void DepthOfField(float *focus, int level, int alpha, int blur);
 
 /**
  * Draws the bee that follows one of the walkers.
@@ -696,7 +698,7 @@ void DepthOfField(float *focus, int steps, int strength, int mode);
  * @size 0x270
  * @unknownret
  */
-void DrawBee(CFrame *frame, int block_no);
+void DrawBee(CFrame *frame, int count);
 
 /**
  * Draws the event battle's own overlay.

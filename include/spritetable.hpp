@@ -81,7 +81,7 @@ public:
      * @address 0x12BE90
      * @size 0x15C
      */
-    void AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags);
+    void AddTable(int x, int y, MG_SPRITE *sprite, int layer, int align_flags);
 
     /**
      * Queues a texture rectangle with neutral colour on one clamped layer.
@@ -90,7 +90,7 @@ public:
      * @address 0x12BFF0
      * @size 0x70
      */
-    void AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int list, int flags);
+    void AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int layer, int align_flags);
 
     /**
      * Assigns a command pool and initializes up to sixteen sprite layers.
@@ -99,7 +99,7 @@ public:
      * @address 0x12C060
      * @size 0x58
      */
-    void Initialize(SPRITE_TABLE *new_pool, int count, int lists);
+    void Initialize(SPRITE_TABLE *new_pool, int entry_count, int layer_count);
 
     /**
      * Returns the next unused sprite command, or null when the pool is full.

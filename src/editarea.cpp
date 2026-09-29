@@ -213,26 +213,26 @@ int CEditArea::GetPartsExtra(int x, int y) {
     return grid[x][y].parts_extra;
 }
 
-int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int) {
+int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int rot_y) {
     CVector3_i_ position;
     int i;
     int j;
     CMapParts *target = &parts[parts_id];
     target->unit_size = unit_size;
-    int width = target->GetWidth();
-    int height = target->GetHeight();
+    int parts_width = target->GetWidth();
+    int parts_height = target->GetHeight();
     GetPos(&position, x, y, z);
-    for (i = 0; i < width; i++) {
-        for (j = 0; j < height; j++) {
-            int half_width = width >> 1;
+    for (i = 0; i < parts_width; i++) {
+        for (j = 0; j < parts_height; j++) {
+            int half_width = parts_width >> 1;
             int cell_x = i + (position.x - half_width);
-            int half_height = height >> 1;
+            int half_height = parts_height >> 1;
             int cell_y = j + (position.z - half_height);
-            int info = target->GetInfoData(i, j);
-            if (info != 0) {
-                SetCode(cell_x, cell_y, info);
-                if (info < 0x80) {
-                    AddAlt(cell_x, cell_y, info);
+            int cell_code = target->GetInfoData(i, j);
+            if (cell_code != 0) {
+                SetCode(cell_x, cell_y, cell_code);
+                if (cell_code < 0x80) {
+                    AddAlt(cell_x, cell_y, cell_code);
                 } else {
                     SetPartsNo(cell_x, cell_y, target->handle);
                     SetPartsID(cell_x, cell_y, parts_id);
@@ -252,19 +252,19 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
         return 0;
     }
     CMapParts *target = &parts[parts_no];
-    int width = target->GetWidth();
-    int height = target->GetHeight();
-    for (int i = 0; i < width; i++) {
-        for (int j = 0; j < height; j++) {
-            int half_width = width >> 1;
+    int parts_width = target->GetWidth();
+    int parts_height = target->GetHeight();
+    for (int i = 0; i < parts_width; i++) {
+        for (int j = 0; j < parts_height; j++) {
+            int half_width = parts_width >> 1;
             int cell_x = i + (position.x - half_width);
-            int half_height = height >> 1;
+            int half_height = parts_height >> 1;
             int cell_y = j + (position.z - half_height);
-            s16 info = target->GetInfoData(i, j);
-            if (info != 0) {
-                if (info < 0x80) {
+            s16 cell_code = target->GetInfoData(i, j);
+            if (cell_code != 0) {
+                if (cell_code < 0x80) {
                     int occupant = GetPartsID(cell_x, cell_y);
-                    AddAlt(cell_x, cell_y, -info);
+                    AddAlt(cell_x, cell_y, -cell_code);
                     if (occupant >= 0) {
                         CMapParts *occupant_parts = &parts[occupant];
                         float occupant_position[3];
@@ -495,10 +495,10 @@ int CEditArea::SearchPartsExtra(float x, float y, float z) {
     return GetPartsExtra(position.x, position.z);
 }
 
-void CEditArea::GetGrid(CVector3_f_ *position, float x, float y, float z) {
-    CVector3_i_ grid_position;
-    GetPos(&grid_position, x, y, z);
-    GetPos(position, grid_position.x, grid_position.y, grid_position.z);
+void CEditArea::GetGrid(CVector3_f_ *snapped, float x, float y, float z) {
+    CVector3_i_ cell;
+    GetPos(&cell, x, y, z);
+    GetPos(snapped, cell.x, cell.y, cell.z);
 }
 
 void CEditArea::RemakeGrid() {
@@ -534,7 +534,7 @@ void CEditArea::RemakeGrid() {
             }
         }
     }
-    grid_frame->attr.unk_0A = 1;
+    grid_frame->attr.remake_pending = 1;
 }
 
 void CEditArea::GetPartsBox(CBoxVu0 *box) {
@@ -640,11 +640,11 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
             if (cell_y < 0 || cell_y >= this->height) {
                 return 0;
             }
-            s16 info = parts->GetInfoData(i, j);
-            if (info != 0) {
-                int neighbor_parts_no = grid[cell_x][cell_y].parts_no;
+            s16 cell_code = parts->GetInfoData(i, j);
+            if (cell_code != 0) {
+                int occupant = grid[cell_x][cell_y].parts_no;
                 int extra = GetPartsExtra(cell_x, cell_y);
-                if ((parts->subtype == 1 || extra != 1) && neighbor_parts_no >= 0) {
+                if ((parts->subtype == 1 || extra != 1) && occupant >= 0) {
                     return 0;
                 }
             }
@@ -773,12 +773,12 @@ int CEditArea::PickUpPoly(CCPoly *polygons, CBoxVu0 box) {
     return PickUpPoly(polygons, rect);
 }
 
-int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int max_parts) {
+int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity) {
     int x, y;
     int count = 0;
     for (x = rect.x; x < rect.x + rect.width; x++) {
         for (y = rect.y; y < rect.y + rect.height; y++) {
-            if (count >= max_parts)
+            if (count >= capacity)
                 break;
             int parts_id = GetPartsID(x, y);
             if (parts_id >= 0) {
@@ -845,11 +845,11 @@ void CEditArea::DrawGrid(void) {
     if (grid_redraw_count > 0) {
         RemakeGrid();
         if (grid_frame != NULL) {
-            grid_frame->attr.unk_30 = 0;
+            grid_frame->attr.cull_enable = 0;
         }
     } else {
         if (grid_frame != NULL) {
-            grid_frame->attr.unk_30 = 1;
+            grid_frame->attr.cull_enable = 1;
         }
     }
     grid_redraw = 0;
@@ -868,11 +868,11 @@ void CEditArea::Clear(void) {
         for (int y = 0; y < height; y++) {
             grid[x][y].parts_no = -1;
             grid[x][y].altitude = 0;
-            grid[x][y].unk_08 = 0;
+            grid[x][y].spare = 0;
             grid[x][y].parts_id = -1;
             grid[x][y].code = -1;
             grid[x][y].parts_extra = -1;
-            grid[x][y].unk_18 = -1;
+            grid[x][y].spare_index = -1;
         }
     }
     grid_redraw = 1;

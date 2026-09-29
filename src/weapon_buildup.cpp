@@ -13,64 +13,64 @@
 #include "menu_save.hpp"
 #include "shop.hpp"
 
-static int BuildMenuCompVolume(char current, char required) {
-    int result;
-    if (0 <= current) {
-        if (required >= current) {
-            result = 1;
+static int BuildMenuCompVolume(char requirement, char value) {
+    int passes;
+    if (0 <= requirement) {
+        if (value >= requirement) {
+            passes = 1;
         } else {
-            result = 0;
+            passes = 0;
         }
-        return result;
+        return passes;
     }
-    current = -current;
-    return current < required ? 0 : 1;
+    requirement = -requirement;
+    return requirement < value ? 0 : 1;
 }
 
-static int BuildMenuCompVolume(short current, short required) {
-    int result;
-    if (0 <= current) {
-        if (required >= current) {
-            result = 1;
+static int BuildMenuCompVolume(short requirement, short value) {
+    int passes;
+    if (0 <= requirement) {
+        if (value >= requirement) {
+            passes = 1;
         } else {
-            result = 0;
+            passes = 0;
         }
-        return result;
+        return passes;
     }
-    current = -current;
-    return current < required ? 0 : 1;
+    requirement = -requirement;
+    return requirement < value ? 0 : 1;
 }
 
-int CompareBuildUpModelData2(WEAPON_HAVE *candidate, WEAPON_HAVE *weapon) {
-    WEAPON_HAVE build_weapon;
-    WeaponAllValueSet(weapon, &build_weapon, 1);
+int CompareBuildUpModelData2(WEAPON_HAVE *destination, WEAPON_HAVE *weapon) {
+    WEAPON_HAVE held_values;
+    WeaponAllValueSet(weapon, &held_values, 1);
 
-    s16 build_status[2] = {0, 0};
-    build_status[0] = build_weapon.attack;
-    build_status[1] = build_weapon.magic;
+    s16 held_status[2] = {0, 0};
+    held_status[0] = held_values.attack;
+    held_status[1] = held_values.magic;
 
-    s16 current_status[2] = {0, 0};
-    current_status[0] = candidate->attack;
-    current_status[1] = candidate->magic;
+    s16 required_status[2] = {0, 0};
+    required_status[0] = destination->attack;
+    required_status[1] = destination->magic;
 
     for (int i = 0; i < 2; i++) {
-        if (!BuildMenuCompVolume(current_status[i], build_status[i])) {
+        if (!BuildMenuCompVolume(required_status[i], held_status[i])) {
             return 0;
         }
     }
 
     for (int i = 0; i < 5; i++) {
-        s8 have = candidate->elem[i];
+        s8 required = destination->elem[i];
 
-        if (!BuildMenuCompVolume(have, build_weapon.elem[i])) {
+        if (!BuildMenuCompVolume(required, held_values.elem[i])) {
             return 0;
         }
     }
 
     for (int i = 0; i < 10; i++) {
-        s8 have = candidate->vs_monster[i];
+        s8 required = destination->vs_monster[i];
 
-        if (!BuildMenuCompVolume(have, build_weapon.vs_monster[i])) {
+        if (!BuildMenuCompVolume(required, held_values.vs_monster[i])) {
             return 0;
         }
     }
@@ -188,17 +188,17 @@ int EnableBuildUpModel(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
     memcpy(&weapon_copy, weapon, sizeof(WEAPON_HAVE));
     s8 owner = weapon_data->owner;
     int default_weapon_no = GetDefaultWeaponNo(owner);
-    int maximum = MenuCharaWeaponMax[owner];
+    int weapon_max = MenuCharaWeaponMax[owner];
     int count = 0;
 
-    for (int position = 2; position <= maximum; position++) {
+    for (int position = 2; position <= weapon_max; position++) {
         if ((position > 20 || (weapon_data->buildup_mask0 & (1 << position))) &&
             (position <= 20 || (weapon_data->buildup_mask1 & (1 << (position - 20))))) {
             build_info[count].weapon_no = default_weapon_no + position;
 
-            WEAPON_HAVE candidate;
-            WepDataListToHaveCopy(build_info[count].weapon_no, &candidate);
-            if (CompareBuildUpModelData2(&candidate, weapon)) {
+            WEAPON_HAVE destination_have;
+            WepDataListToHaveCopy(build_info[count].weapon_no, &destination_have);
+            if (CompareBuildUpModelData2(&destination_have, weapon)) {
                 build_info[count].enabled = 1;
             } else {
                 build_info[count].enabled = 0;

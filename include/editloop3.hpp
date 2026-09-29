@@ -27,8 +27,8 @@ class CRunScript;
  * Shares the active editor map objects with event-point and villager helpers.
  */
 struct ED_EXCHANGE_INFO {
-    CCharacter *player;       /**< Player character used for villager proximity checks. */
-    u8 unk_04[0x8];           /**< Editor-loop state not consumed by this translation unit. */
+    CCharacter *player; /**< Player character used for villager proximity checks. */
+    u8 unk_04[0x8];
     CEditGround *ground;      /**< Editable ground used to resolve part-relative event points. */
     CFrame *event_marker;     /**< Frame drawn at system event points. */
     C3DSprite *system_effect; /**< Sprite drawn at special event points. */
@@ -269,7 +269,7 @@ void EdEventPause();
  * @address 0x1850A0
  * @size 0x204
  */
-void EdPartsObjectOnOff(CMapParts *, EDITPARTS_INFO *, int);
+void EdPartsObjectOnOff(CMapParts *parts, EDITPARTS_INFO *info, int mode);
 
 /**
  * Expands the object names attached to one editable-parts definition.

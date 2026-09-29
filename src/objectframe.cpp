@@ -130,7 +130,7 @@ void CObjectFrame::Initialize(CFrameVu1 *frame) {
     int i;
 
     CObject::Initialize(1.0f);
-    this->unk_0C0 = 0;
+    this->rotation_changed = 0;
     this->draw_on = 1;
     this->frame[0] = frame;
     for (i = 1; i < 4; i++) {

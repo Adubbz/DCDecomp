@@ -8,7 +8,7 @@
 void CSpriteTable::DrawTable() {
     int packet_entries;
     sceVif1Packet *packet;
-    int list;
+    int layer;
     SPRITE_TABLE *node;
     int drawn;
     sceGsAlpha alpha;
@@ -46,9 +46,9 @@ void CSpriteTable::DrawTable() {
                      SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
 
     drawn = 0;
-    for (list = list_count - 1; list >= 0; list--) {
-        node = heads[list];
-        while (node != tails[list]) {
+    for (layer = list_count - 1; layer >= 0; layer--) {
+        node = heads[layer];
+        while (node != tails[layer]) {
             q = 1.0f;
             sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                              SCE_GS_SET_RGBAQ(node->red, node->green, node->blue, node->alpha,
@@ -92,17 +92,17 @@ void CSpriteTable::DrawTable() {
     sceVif1PkCloseDirectCode(packet);
 }
 
-void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags) {
-    if (list < 0) {
-        list = 0;
+void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int align_flags) {
+    if (layer < 0) {
+        layer = 0;
     }
-    if (list >= list_count) {
-        list = list_count - 1;
+    if (layer >= list_count) {
+        layer = list_count - 1;
     }
 
     SPRITE_TABLE *node;
     SPRITE_TABLE *(&tail_entries)[16] = tails;
-    SPRITE_TABLE **tail = &tail_entries[list];
+    SPRITE_TABLE **tail = &tail_entries[layer];
     node = *tail;
     if (node == NULL) {
         return;
@@ -122,18 +122,18 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags
     node->blue = sprite->blue;
     node->alpha = sprite->alpha;
 
-    if (flags & 1) {
+    if (align_flags & 1) {
         s16 width = node->width;
         node->x -= width;
     }
-    if (flags & 2) {
+    if (align_flags & 2) {
         s16 height = node->height;
         node->y -= height;
     }
-    if (flags & 4) {
+    if (align_flags & 4) {
         node->x -= (s16) (node->width >> 1);
     }
-    if (flags & 8) {
+    if (align_flags & 8) {
         node->y -= (s16) (node->height >> 1);
     }
 
@@ -141,29 +141,29 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags
     *tail = node->next;
 }
 
-void CSpriteTable::AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int list, int flags) {
+void CSpriteTable::AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int layer, int align_flags) {
     union {
-        MG_SPRITE sprite;
-        u_long128 padding[3];
-    } local;
+        MG_SPRITE sprite;     /**< Sprite handed to the other AddTable. */
+        u_long128 padding[3]; /**< Pads the sprite's stack slot to 48 bytes. */
+    } sprite_buffer;
 
-    *(sceGsTex0 *) &local.sprite.tex0 = *tex0;
-    local.sprite.source = *source;
-    local.sprite.red = 128;
-    local.sprite.green = 128;
-    local.sprite.blue = 128;
-    local.sprite.alpha = 128;
-    AddTable(x, y, &local.sprite, list, flags);
+    *(sceGsTex0 *) &sprite_buffer.sprite.tex0 = *tex0;
+    sprite_buffer.sprite.source = *source;
+    sprite_buffer.sprite.red = 128;
+    sprite_buffer.sprite.green = 128;
+    sprite_buffer.sprite.blue = 128;
+    sprite_buffer.sprite.alpha = 128;
+    AddTable(x, y, &sprite_buffer.sprite, layer, align_flags);
 }
 
-void CSpriteTable::Initialize(SPRITE_TABLE *new_pool, int count, int lists) {
-    list_count = lists;
+void CSpriteTable::Initialize(SPRITE_TABLE *new_pool, int entry_count, int layer_count) {
+    list_count = layer_count;
     if (list_count > 16) {
         list_count = 16;
     }
     pool = new_pool;
-    pool_count = count;
-    end = new_pool + count;
+    pool_count = entry_count;
+    end = new_pool + entry_count;
     ClearPointer();
 }
 
@@ -179,9 +179,9 @@ SPRITE_TABLE *CSpriteTable::GetNext() {
 
 void CSpriteTable::ClearPointer() {
     current = pool;
-    for (int list = 0; list < list_count; list++) {
-        heads[list] = GetNext();
-        heads[list]->next = NULL;
-        tails[list] = heads[list];
+    for (int layer = 0; layer < list_count; layer++) {
+        heads[layer] = GetNext();
+        heads[layer]->next = NULL;
+        tails[layer] = heads[layer];
     }
 }

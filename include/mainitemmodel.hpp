@@ -8,7 +8,7 @@ class CMainItemModel {
 public:
     u_int *cash[6];     /**< Model data each cache slot holds, or zero where the slot is free. */
     s32 cash_item[6];   /**< Item whose model each cache slot holds. */
-    s32 cash_lock[6];   /**< Model slots that draw each cache slot's model. */
+    s32 cash_lock[6];   /**< Number of model slots that draw each cache slot's model. */
     s32 model[16];      /**< What each model slot holds; -1 where the slot is free. */
     s32 model_cash[16]; /**< Cache slot whose model each model slot draws. */
     u8 unk_0C8[8];
@@ -41,7 +41,7 @@ public:
      * @address 0x1D45E0
      * @size 0x190
      */
-    int SetCashModel(int, unsigned int *, unsigned int *, int);
+    int SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data, int texture_size);
 
     /**
      * Releases one model slot.
@@ -50,7 +50,7 @@ public:
      * @address 0x1D4770
      * @size 0xA4
      */
-    void DeleteModel(int index);
+    void DeleteModel(int model_no);
 
     /**
      * Puts one item model in the player's hand.
@@ -59,7 +59,7 @@ public:
      * @address 0x1D4820
      * @size 0x120
      */
-    int SetHandModel(int);
+    int SetHandModel(int source_no);
 
     /**
      * Releases every item model.
@@ -77,7 +77,7 @@ public:
      * @address 0x1D49C0
      * @size 0x108
      */
-    int SetThrowModel(int, float *, float *);
+    int SetThrowModel(int source_no, float *position, float *heading);
 
     /**
      * Draws every item model the player is carrying or has thrown.

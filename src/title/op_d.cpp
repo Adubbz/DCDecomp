@@ -57,10 +57,10 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 } __attribute__((aligned(16)));
 
 /* The two classes this scene places in the world, declared here rather than reached through headers
@@ -73,7 +73,7 @@ public:
     virtual void FrameObjectOnOff(char *name, int on);
     virtual void Draw();
 
-    void SetFrame(CFrameVu1 *frame, int unknown0);
+    void SetFrame(CFrameVu1 *frame, int level);
 };
 
 /* One piece of scenery. The scene builds a table of them, hands each its model, and drives them
@@ -86,25 +86,25 @@ public:
     virtual void Draw();
 
     void Initialize();
-    void DrawShadow(int unknown0);
+    void DrawShadow(int fast);
 
-    CFrameVu1 *frame;
+    CFrameVu1 *frame; /**< Model the object draws at its nearest level of detail. */
     char unk_04[32];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
     char unk_28[8];
-    float lod_distance;
-    int unk_34;
-    int unk_38;
+    float shadow_offset; /**< Height the shadow drops below the object. */
+    int unk_34;          /**< Category of map part the object belongs to. */
+    int handle;          /**< Handle the map gave the object. */
     char unk_3C[4];
 };
 
-/* One piece of scenery as the scene was laid out: the model, the model its distant form is drawn
+/* One piece of scenery as the scene was laid out: the model, the model its shadow is drawn
    from, where it stands in tenths of a world unit, and its three rotations in degrees. */
 struct MAPOBJ_INFO {
-    char *name;
-    char *lod_name;
-    float position[3];
-    float rotation[3];
+    char *name;        /**< Model file inside the scene's pack. */
+    char *shadow_name; /**< Model file the shadow is drawn from, or zero for none. */
+    float position[3]; /**< Position in tenths of a world unit. */
+    float rotation[3]; /**< Rotation about each axis in degrees. */
 };
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
@@ -112,17 +112,17 @@ struct MAPOBJ_INFO {
    right — and a tick copies the current frame of each over the model's face plate. The two offsets
    are measured from the bottom edge of the 128-pixel plate. */
 struct FACE_INFO {
-    char *plate;
-    char *strip;
-    int eye_bottom;
-    int eye_height;
-    int mouth_bottom;
-    int mouth_height;
-    int eye;
-    int mouth;
-    int strip_bottom;
-    int eye_max;
-    int blink;
+    char *plate;      /**< Texture the model draws the face with, or zero for an actor without one. */
+    char *strip;      /**< Texture holding the eye and mouth frames. */
+    int eye_bottom;   /**< Distance of the eyes' bottom edge above the plate's bottom edge. */
+    int eye_height;   /**< Height of one eye frame. */
+    int mouth_bottom; /**< Distance of the mouth's bottom edge above the plate's bottom edge. */
+    int mouth_height; /**< Height of one mouth frame. */
+    int eye;          /**< Eye frame currently shown. */
+    int mouth;        /**< Mouth frame currently shown. */
+    int strip_bottom; /**< Bottom edge of the frame strips within the strip texture. */
+    int unk_24;
+    int unk_28;
 };
 
 void OPAnalyz(char *name);
@@ -157,8 +157,8 @@ static void EffectSeireiKing(float size);
 static void LensFreaProcess();
 static void Setsumei();
 static void HamonProcess();
-void FaceChange(int no);
-void FaceChangeMovie(int no);
+void FaceChange(int actor);
+void FaceChangeMovie(int actor);
 
 static CWind Wind;
 static CFrameVu1 *Hamon[4];
@@ -174,7 +174,7 @@ static CFrameVu1 *SkyFrame;
    mouth is driven from the script's own clock rather than from a motion: while the actor is talking
    a new frame is picked at random every sixth hundredth of a second left on the timer, and the
    timer running out closes the mouth and ends the line. */
-void FaceChange(int no) {
+void FaceChange(int actor) {
     static FACE_INFO face[21] = {
         {0, 0, 42, 40, 87, 35, 0, 0, 256, 2, 0},
         {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
@@ -211,12 +211,12 @@ void FaceChange(int no) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 
-    if (face[no].plate == 0) {
+    if (face[actor].plate == 0) {
         return;
     }
 
-    plate = TexManager.GetTexture(face[no].plate, -1);
-    strip = TexManager.GetTexture(face[no].strip, -1);
+    plate = TexManager.GetTexture(face[actor].plate, -1);
+    strip = TexManager.GetTexture(face[actor].strip, -1);
 
     if (plate == 0 || strip == 0) {
         return;
@@ -227,37 +227,37 @@ void FaceChange(int no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face[no].eye = CScript__2.obj[no].eye;
+    face[actor].eye = CScript__2.obj[actor].eye;
 
-    CRect<int> eye(0, face[no].strip_bottom - face[no].eye_height * (face[no].eye + 1), 128,
-                   face[no].eye_height);
+    CRect<int> eye(0, face[actor].strip_bottom - face[actor].eye_height * (face[actor].eye + 1), 128,
+                   face[actor].eye_height);
 
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eye, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[no].eye_height - face[no].eye_bottom, 0);
+                  128 - face[actor].eye_height - face[actor].eye_bottom, 0);
 
     if (!Pause) {
-        if (CScript__2.obj[no].mouth_time >= CScript__2.motion_step) {
-            CScript__2.obj[no].mouth_time -= CScript__2.motion_step;
+        if (CScript__2.obj[actor].mouth_time >= CScript__2.motion_step) {
+            CScript__2.obj[actor].mouth_time -= CScript__2.motion_step;
 
-            if (CScript__2.obj[no].talk) {
-                if ((int) (100.0f * CScript__2.obj[no].mouth_time) % 6 == 0) {
-                    CScript__2.obj[no].mouth = rand() % 4;
+            if (CScript__2.obj[actor].talk) {
+                if ((int) (100.0f * CScript__2.obj[actor].mouth_time) % 6 == 0) {
+                    CScript__2.obj[actor].mouth = rand() % 4;
                 }
             }
         } else {
-            CScript__2.obj[no].mouth = 0;
-            CScript__2.obj[no].talk = 0;
+            CScript__2.obj[actor].mouth = 0;
+            CScript__2.obj[actor].talk = 0;
         }
     }
 
-    face[no].mouth = CScript__2.obj[no].mouth;
+    face[actor].mouth = CScript__2.obj[actor].mouth;
 
     CRect<int> mouth(128,
-                     face[no].strip_bottom - face[no].mouth_height * (face[no].mouth + 1),
-                     128, face[no].mouth_height);
+                     face[actor].strip_bottom - face[actor].mouth_height * (face[actor].mouth + 1),
+                     128, face[actor].mouth_height);
 
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[no].mouth_height - face[no].mouth_bottom, 0);
+                  128 - face[actor].mouth_height - face[actor].mouth_bottom, 0);
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -326,17 +326,17 @@ void OpD_InitProcess() {
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     tex[0].block_no = 1;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
     tex[1].block_no = 1;
-    tex[1].unk_08 = 0;
+    tex[1].mipmap = 0;
     tex[2].name = 0;
 
     TexManager.LoadTextureBlock(1, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c03c01.img", 0);
     tex[0].block_no = 2;
-    tex[0].unk_08 = 0;
+    tex[0].mipmap = 0;
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(2, tex);
@@ -348,7 +348,7 @@ void OpD_InitProcess() {
 
     hall.Initialize();
     hall.SetFrame(frame, 0);
-    OP_NornMapObj[0].unk_38 = 0;
+    OP_NornMapObj[0].handle = 0;
     OP_NornMapObj[0].unk_34 = 0;
     hall.SetPosition(CVector3_f_(0.0f, 0.0f, 0.0f));
     hall.SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
@@ -368,7 +368,7 @@ void OpD_InitProcess() {
 
     CFrameAttr attr8;
 
-    attr8.unk_08 = 0;
+    attr8.clip_enable = 0;
     Chara__3[8].frame->SetAttr(attr8, 1, 4);
     Chara__3[8].motion_type.state.time = 60.0f;
     Chara__3[8].motion_type.state.blend_step = 0.05f;
@@ -376,7 +376,7 @@ void OpD_InitProcess() {
     Chara__3[8].motion_type.state.playing_no = 0;
     CharaTex__2[8] = 1;
     Chara__3[11].LoadPackData(read_buffer, "05c01e.cfg", &CharaDataBuffer__2[6], 0);
-    attr8.unk_08 = 0;
+    attr8.clip_enable = 0;
     Chara__3[11].frame->SetAttr(attr8, 1, 4);
     Chara__3[11].motion_type.state.time = 75.0f;
     Chara__3[11].motion_type.state.blend_step = 0.05f;
@@ -387,7 +387,7 @@ void OpD_InitProcess() {
 
     CFrameAttr attr21;
 
-    attr21.unk_08 = 0;
+    attr21.clip_enable = 0;
     Chara__3[21].frame->SetAttr(attr21, 1, 4);
     Chara__3[21].motion_type.state.time = 1.0f;
     Chara__3[21].motion_type.state.blend_step = 0.05f;
@@ -396,10 +396,10 @@ void OpD_InitProcess() {
     CharaTex__2[21] = 2;
     Effect.LoadPackData(read_buffer, "atrpeff1.cfg", &CharaDataBuffer__2[6], 0);
 
-    CFrameAttr attre;
+    CFrameAttr effect_attr;
 
-    attre.unk_08 = 0;
-    Effect.frame->SetAttr(attre, 1, 4);
+    effect_attr.clip_enable = 0;
+    Effect.frame->SetAttr(effect_attr, 1, 4);
     Effect.motion_type.state.time = 1.0f;
     Effect.motion_type.state.blend_step = 1.0f;
     Effect.motion_type.state.motion_no = 0;
@@ -488,7 +488,7 @@ void OpD_InitProcess2() {
                             &MapDataBuffer, 2, 0, 0);
 
         if (i == 7) {
-            attr.unk_14 = 1;
+            attr.use_color = 1;
             frame->SetAttr(attr, 512, 0);
         }
 
@@ -509,7 +509,7 @@ void OpD_InitProcess2() {
 
         object.Initialize();
         object.SetFrame(frame, 0);
-        OP_NornMapObj[i].unk_38 = 0;
+        OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].unk_34 = 0;
 
         if (i == 7) {
@@ -528,7 +528,7 @@ void OpD_InitProcess2() {
 
     CFrameAttr attr22;
 
-    attr22.unk_08 = 0;
+    attr22.clip_enable = 0;
     Chara__3[22].frame->SetAttr(attr22, 1, 4);
     Chara__3[22].motion_type.state.time = 1.0f;
     Chara__3[22].motion_type.state.blend_step = 0.05f;
@@ -536,7 +536,7 @@ void OpD_InitProcess2() {
     Chara__3[22].motion_type.state.playing_no = 0;
     CharaTex__2[22] = 3;
     Chara__3[5].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer__2[6], 0);
-    attr22.unk_08 = 0;
+    attr22.clip_enable = 0;
     Chara__3[5].frame->SetAttr(attr22, 1, 4);
     Chara__3[5].motion_type.state.time = 1.0f;
     Chara__3[5].motion_type.state.blend_step = 0.05f;
@@ -597,7 +597,7 @@ static void SkyColor(CFrameVu1 *frame) {
                         }
                     }
 
-                    frame->attr.unk_0A = 1;
+                    frame->attr.remake_pending = 1;
                 }
             }
         }
@@ -632,18 +632,18 @@ void OpD_MotionProcess() {
                 }
 
                 Chara__3[i].motion_no = CScript__2.obj[i].motion;
-                Chara__3[i].flags = 0;
+                Chara__3[i].motion_flags = 0;
                 Chara__3[i].motion_speed = -1.0f;
             }
         }
 
-        char *name[23] = {"", "", "", "", "", "tyou2", "", "", "c01d", "", "", "c01d", "", "", "", "",
-                          "", "", "", "", "", "c03c", "tyou"};
+        char *frame_names[23] = {"", "", "", "", "", "tyou2", "", "", "c01d", "", "", "c01d", "", "", "", "",
+                                 "", "", "", "", "", "c03c", "tyou"};
         sceVu0FMATRIX matrix;
 
         for (int i = 0; i < 23; i++) {
             if (CScript__2.obj[i].disp) {
-                CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(name[i]);
+                CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
 
                 if (frame) {
                     frame->GetLWMatrix(matrix);
@@ -675,15 +675,15 @@ void OpD_MotionProcess() {
         Wind.SetVelocity(0.2f);
     }
 
-    int no;
+    int cloth_actor;
 
     if (CScript__2.camera_start > 111) {
-        no = 11;
+        cloth_actor = 11;
     } else {
-        no = 8;
+        cloth_actor = 8;
     }
 
-    Chara__3[no].unk_C98 = (int) &Wind;
+    Chara__3[cloth_actor].wind = (int) &Wind;
     Wind.Step();
 
     static int camera = 0;
@@ -695,10 +695,10 @@ void OpD_MotionProcess() {
             case 101:
             case 104:
             case 123:
-                Chara__3[no].ClothStep(-1);
+                Chara__3[cloth_actor].ClothStep(-1);
 
                 for (int i = 0; i < 20; i++) {
-                    Chara__3[no].ClothStep(0);
+                    Chara__3[cloth_actor].ClothStep(0);
                 }
                 break;
 
@@ -707,10 +707,10 @@ void OpD_MotionProcess() {
             case 112:
             case 115:
             case 125:
-                Chara__3[no].ClothStep(-1);
+                Chara__3[cloth_actor].ClothStep(-1);
 
                 for (int i = 0; i < 10; i++) {
-                    Chara__3[no].ClothStep(0);
+                    Chara__3[cloth_actor].ClothStep(0);
                 }
                 break;
         }
@@ -829,16 +829,16 @@ void OpD_SoundProcess() {
     if (CScript__2.obj[21].disp) {
         static int wait = 0;
         sceVu0FVECTOR position;
-        float frame;
+        float motion_frame;
 
         sceVu0CopyVector(position, Chara__3[21].pos);
-        frame = (int) Chara__3[21].motion_type.state.time;
+        motion_frame = (int) Chara__3[21].motion_type.state.time;
 
         if (wait == 0) {
-            if (frame > 43.0f && frame < 45.0f) {
+            if (motion_frame > 43.0f && motion_frame < 45.0f) {
                 OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 20);
                 wait = 4;
-            } else if (frame > 53.0f && frame < 55.0f) {
+            } else if (motion_frame > 53.0f && motion_frame < 55.0f) {
                 OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 21);
                 wait = 4;
             }
@@ -903,9 +903,9 @@ void OpD_DrawProcess() {
 
         for (int i = 1; i < 11; i++) {
             if (i == 8) {
-                mgRenderInfo.unk_340 = 1;
+                mgRenderInfo.unlit = 1;
             } else {
-                mgRenderInfo.unk_340 = 0;
+                mgRenderInfo.unlit = 0;
             }
 
             if (i != 7) {
@@ -1117,7 +1117,7 @@ static void EffectAtraPrizum() {
                 sceVu0CopyVector(matrix[3], position);
                 Effect.frame->SetTransMatrix(matrix);
                 Effect.motion_no = 0;
-                Effect.flags = 0;
+                Effect.motion_flags = 0;
                 Effect.motion_speed = -1.0f;
 
                 if (!Pause) {
@@ -1440,13 +1440,13 @@ static void Setsumei() {
         static float y3 = 229.0f;
         static float rot3 = 1.57f;
 
-        float a = atan2f((float) (-100.0f - x), -100.0f - y);
+        float heading = atan2f((float) (-100.0f - x), -100.0f - y);
 
-        if (a < rot) {
+        if (heading < rot) {
             rot = rot - 0.05f;
         }
 
-        if (a > rot) {
+        if (heading > rot) {
             rot += 0.05f;
         }
 
@@ -1476,13 +1476,13 @@ static void Setsumei() {
                     CRect<int>((int) x, (int) y, 178 - cut, 178 - cut),
                     CRect<int>(210, 0, 178, 178), (u_char) alpha);
 
-        float a2 = atan2f(500.0f - x2, -100.0f - y2);
+        float heading2 = atan2f(500.0f - x2, -100.0f - y2);
 
-        if (a2 < rot2) {
+        if (heading2 < rot2) {
             rot2 = rot2 - 0.05f;
         }
 
-        if (a2 > rot2) {
+        if (heading2 > rot2) {
             rot2 += 0.05f;
         }
 
@@ -1512,13 +1512,13 @@ static void Setsumei() {
                     CRect<int>((int) x2, (int) y2, 178 - cut2, 178 - cut2),
                     CRect<int>(210, 0, 178, 178), (u_char) alpha2);
 
-        float a3 = atan2f(900.0f - x3, -100.0f - y3);
+        float heading3 = atan2f(900.0f - x3, -100.0f - y3);
 
-        if (a3 < rot3) {
+        if (heading3 < rot3) {
             rot3 = rot3 - 0.05f;
         }
 
-        if (a3 > rot3) {
+        if (heading3 > rot3) {
             rot3 += 0.05f;
         }
 
@@ -1558,10 +1558,10 @@ static void Setsumei() {
 
     dy = 180.0f - y;
     dx = 40.0f - x;
-    float a = atan2f(dx, dy);
+    float heading = atan2f(dx, dy);
 
-    x = x + (float) (sin(a) * 3.0);
-    y = y + (float) (cos(a) * 3.0);
+    x = x + (float) (sin(heading) * 3.0);
+    y = y + (float) (cos(heading) * 3.0);
 
     int alpha;
 
@@ -1584,10 +1584,10 @@ static void Setsumei() {
                 CRect<int>((int) x, (int) y, 210, 206), CRect<int>(0, 0, 210, 206),
                 (u_char) alpha);
 
-    float a2 = atan2f(240.0f - x2, 180.0f - y2);
+    float heading2 = atan2f(240.0f - x2, 180.0f - y2);
 
-    x2 = x2 + (float) (sin(a2) * 3.0);
-    y2 = y2 + (float) (cos(a2) * 3.0);
+    x2 = x2 + (float) (sin(heading2) * 3.0);
+    y2 = y2 + (float) (cos(heading2) * 3.0);
 
     int alpha2;
 

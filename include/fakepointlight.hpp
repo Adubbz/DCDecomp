@@ -19,7 +19,7 @@ public:
     float inner_range; /**< Distance up to which the light gives its whole colour. */
     float outer_range; /**< Distance past which the light gives nothing. */
     s32 used;          /**< 1 while the slot lights something. */
-    float unk_2C;
+    float source_w;    /**< W component of the position the light was set from; -1 while the slot is cleared. */
 
     /**
      * Makes a light that is white, and that reaches from ten units away to

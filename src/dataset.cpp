@@ -22,9 +22,9 @@
 #include "visual.hpp"
 
 void CCollisionMDT::Initialize(void) {
-    data = 0;
+    model = 0;
     mesh = 0;
-    num = 0;
+    mesh_count = 0;
 }
 
 u_int *read_buffer;
@@ -80,13 +80,13 @@ void SetDataBuffer(CDataAlloc2<1> *arena, int quads) {
 }
 
 void SetPacketReadBuffer(int packet_quads, int read_quads) {
-    u_long128 *buffer0;
-    u_long128 *buffer1;
+    u_long128 *packet_buffer0;
+    u_long128 *packet_buffer1;
 
     read_buffer = (u_int *) GlobalDataBuffer.Alloc64(read_quads);
-    buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(packet_quads);
-    buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(packet_quads);
-    MGInitVif1Packet(buffer0, buffer1);
+    packet_buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(packet_quads);
+    packet_buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(packet_quads);
+    MGInitVif1Packet(packet_buffer0, packet_buffer1);
     workbuffer.base = GlobalDataBuffer.Alloc64(2048);
     workbuffer.limit = 2048;
     WorkBuffer = &workbuffer;
@@ -144,74 +144,74 @@ clear_test:
     WorkBuffer = &workbuffer;
     WorkBuffer->used = 0;
 
-    u_long128 *buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
-    u_long128 *buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
-    MGInitVif1Packet(buffer0, buffer1);
+    u_long128 *packet_buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
+    u_long128 *packet_buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
+    MGInitVif1Packet(packet_buffer0, packet_buffer1);
 
     WaterData.used = 0;
     ActiveData0.used = 0;
     ActiveData1.used = 0;
 }
 
-static int htoi(char *s) {
-    char *p;
+static int htoi(char *text) {
+    char *cursor;
     int len;
     int value;
     int i;
-    int mult;
-    int c;
+    int place;
+    int ch;
     int digit;
 
-    p = s;
+    cursor = text;
     len = 0;
     value = 0;
-    while (*p++ != '\0')
+    while (*cursor++ != '\0')
         len++;
-    mult = 1;
+    place = 1;
     for (i = 0; i < len; i++) {
-        c = (unsigned char) s[len - i - 1];
+        ch = (unsigned char) text[len - i - 1];
         digit = 0;
-        if (c >= '0' && c <= '9')
-            digit = c - '0';
-        if (c >= 'a' && c <= 'f')
-            digit = c - 'a' + 10;
-        if (c >= 'A' && c <= 'F')
-            digit = c - 'A' + 10;
-        value += digit * mult;
-        mult <<= 4;
+        if (ch >= '0' && ch <= '9')
+            digit = ch - '0';
+        if (ch >= 'a' && ch <= 'f')
+            digit = ch - 'a' + 10;
+        if (ch >= 'A' && ch <= 'F')
+            digit = ch - 'A' + 10;
+        value += digit * place;
+        place <<= 4;
     }
     return value;
 }
 
-void SetFrameAttr(CFrame *frame, int children) {
-    int found;
-    char *p;
-    char pair[3];
+void SetFrameAttr(CFrame *frame, int recurse) {
+    int has_codes;
+    char *cursor;
+    char blend_code[3];
     CFrame *child;
 
-    frame->attr.unk_08 = 1;
-    frame->attr.unk_04 = 150.0f;
-    found = 1;
-    p = frame->name;
-    if (*p == '\0')
-        found = 0;
-    p++;
+    frame->attr.clip_enable = 1;
+    frame->attr.clip_depth = 150.0f;
+    has_codes = 1;
+    cursor = frame->name;
+    if (*cursor == '\0')
+        has_codes = 0;
+    cursor++;
     for (;;) {
-        if (*p == '\0') {
-            found = 0;
+        if (*cursor == '\0') {
+            has_codes = 0;
             break;
         }
-        if (*p == '_' && p[-1] == '_')
+        if (*cursor == '_' && cursor[-1] == '_')
             break;
-        p++;
+        cursor++;
     }
-    while (found) {
-        if (*p == '\0')
+    while (has_codes) {
+        if (*cursor == '\0')
             break;
-        switch (*p) {
+        switch (*cursor) {
             case 'c':
             case 'C':
-                frame->attr.unk_14 = 1;
+                frame->attr.use_color = 1;
                 frame->attr.color[0] = 128.0f;
                 frame->attr.color[1] = 128.0f;
                 frame->attr.color[2] = 128.0f;
@@ -219,28 +219,28 @@ void SetFrameAttr(CFrame *frame, int children) {
                 break;
             case 'n':
             case 'N':
-                frame->attr.unk_08 = 0;
+                frame->attr.clip_enable = 0;
                 break;
             case 'a':
             case 'A':
-                pair[0] = p[1];
-                p += 2;
-                pair[1] = *p;
-                pair[2] = '\0';
-                if (pair[0] >= 'a' && pair[0] <= 'z')
-                    pair[0] -= 32;
-                if (pair[1] >= 'a' && pair[1] <= 'z')
-                    pair[1] -= 32;
-                if (pair[0] == 'P' && pair[1] == 'P')
-                    frame->attr.unk_52 = 1;
-                else if (pair[0] == 'N' && pair[1] == 'N')
-                    frame->attr.unk_52 = -1;
+                blend_code[0] = cursor[1];
+                cursor += 2;
+                blend_code[1] = *cursor;
+                blend_code[2] = '\0';
+                if (blend_code[0] >= 'a' && blend_code[0] <= 'z')
+                    blend_code[0] -= 32;
+                if (blend_code[1] >= 'a' && blend_code[1] <= 'z')
+                    blend_code[1] -= 32;
+                if (blend_code[0] == 'P' && blend_code[1] == 'P')
+                    frame->attr.blend_mode = 1;
+                else if (blend_code[0] == 'N' && blend_code[1] == 'N')
+                    frame->attr.blend_mode = -1;
                 else
-                    frame->attr.unk_50 = htoi(pair);
+                    frame->attr.alpha_ref = htoi(blend_code);
                 break;
             case 'z':
             case 'Z':
-                frame->attr.unk_54 = 0;
+                frame->attr.depth_write = 0;
                 break;
             case 'f':
             case 'F':
@@ -248,31 +248,31 @@ void SetFrameAttr(CFrame *frame, int children) {
                 break;
             case 's':
             case 'S':
-                frame->attr.unk_0B = 1;
+                frame->attr.program_option = 1;
                 break;
             case 'm':
             case 'M':
-                frame->attr.unk_56 = 1;
+                frame->attr.eye_relative = 1;
                 break;
             case 'b':
             case 'B':
-                p++;
-                if (*p == '\0') {
-                    p--;
+                cursor++;
+                if (*cursor == '\0') {
+                    cursor--;
                     break;
                 }
-                if (*p == 'Y' || *p == 'y')
-                    frame->attr.unk_58 = 2;
-                if (*p == 'A' || *p == 'a')
-                    frame->attr.unk_58 = 3;
+                if (*cursor == 'Y' || *cursor == 'y')
+                    frame->attr.billboard = 2;
+                if (*cursor == 'A' || *cursor == 'a')
+                    frame->attr.billboard = 3;
                 break;
             case 't':
             case 'T':
-                frame->attr.unk_31 = 1;
+                frame->attr.ambient_boost = 1;
                 break;
             case 'o':
             case 'O':
-                frame->attr.unk_55 = 1;
+                frame->attr.ignore_depth = 1;
                 break;
             case 'v':
             case 'V':
@@ -280,11 +280,11 @@ void SetFrameAttr(CFrame *frame, int children) {
                 frame->flags = 2;
                 break;
         }
-        p++;
+        cursor++;
     }
-    if (children) {
+    if (recurse) {
         for (child = frame->child; child != 0; child = child->brother) {
-            SetFrameAttr(child, children);
+            SetFrameAttr(child, recurse);
         }
     }
 }
@@ -296,10 +296,10 @@ int dset_mds_objnum;
    already matched is skipped rather than removed, and the pointer is where the answer is written
    back into the model itself. */
 struct SHADOW_EDGE {
-    short v0;
-    short v1;
-    short done;
-    int *edge;
+    short v0;       /**< Index of the vertex the edge starts at. */
+    short v1;       /**< Index of the vertex the edge ends at. */
+    short done;     /**< Whether the edge has already been paired. */
+    int *edge_flag; /**< Model's flag for the edge, set when the edge is interior. */
 };
 
 static void ArrangeShadowMDT(u_int *data);
@@ -308,32 +308,32 @@ static void CreateBBox(CBox3<float> *box, sceVu0FVECTOR *vertex, int num);
 /* A scene file turned into frames. Every object of the file gets one, in the file's own order, so
    that a parent index is an index into the array being built; an object whose name marks it as a
    locator gets a frame and nothing else. */
-CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **name0, char **name1) {
+CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **double_names, char **retain_names) {
     /* Declared in this order because it is what lays them out in small data, and every reference
        to either is a displacement off $gp that the order decides. */
     static int flag;
     static char init;
 
     u_int i;
-    char **name;
-    char **name2;
+    char **double_entry;
+    char **retain_entry;
     float sx;
     float sy;
     float sz;
     float rx;
     float ry;
     float rz;
-    MDS_HEADER *head;
-    MDS_OBJECT *self;
+    MDS_HEADER *header;
+    MDS_OBJECT *object;
     CFrameVu1 *node;
-    CFrameVu1 *frame;
+    CFrameVu1 *frames;
     CVisualMDTVu1 *visual;
     u_long128 *block;
-    float *box[2];
+    float *extremes[2];
     sceVu0FMATRIX matrix;
     int j;
     int k;
-    int save;
+    int saved_attr;
 
     if (!data) {
         return 0;
@@ -351,24 +351,24 @@ CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **name
         init = 1;
     }
 
-    head = (MDS_HEADER *) data;
+    header = (MDS_HEADER *) data;
     data += sizeof(MDS_HEADER) / sizeof(u_int);
 
     dset_mds_packet = 0;
-    dset_mds_objnum = head->object_num;
+    dset_mds_objnum = header->object_num;
 
-    block = (u_long128 *) alloc->Alloc(head->object_num * sizeof(CFrameVu1) / 16);
-    frame = new (block) CFrameVu1[head->object_num];
+    block = (u_long128 *) alloc->Alloc(header->object_num * sizeof(CFrameVu1) / 16);
+    frames = new (block) CFrameVu1[header->object_num];
 
-    for (i = 0; i < head->object_num; i++) {
-        self = (MDS_OBJECT *) data;
+    for (i = 0; i < header->object_num; i++) {
+        object = (MDS_OBJECT *) data;
         data += sizeof(MDS_OBJECT) / sizeof(u_int);
 
-        if (memcmp(self->name, "func_", 5) == 0) {
+        if (memcmp(object->name, "func_", 5) == 0) {
             continue;
         }
 
-        node = &frame[i];
+        node = &frames[i];
         node->Initialize();
         sz = sy = sx = 1.0f;
         node->SetScale(sx, sy, sz);
@@ -378,72 +378,72 @@ CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **name
 
         for (j = 0; j < 4; j++) {
             for (k = 0; k < 4; k++) {
-                matrix[k][j] = self->matrix[k][j];
+                matrix[k][j] = object->matrix[k][j];
             }
         }
 
-        strcpy(node->name, self->name);
+        strcpy(node->name, object->name);
         node->SetTransMatrix(matrix);
         SetFrameAttr(node, 0);
 
-        if (self->parent < 0) {
+        if (object->parent < 0) {
             node->SetParent(0);
         } else {
-            node->SetParent(&frame[self->parent]);
+            node->SetParent(&frames[object->parent]);
         }
 
-        if (self->data_ofs) {
-            MDT_HEADER *model = (MDT_HEADER *) ((char *) head + self->data_ofs);
+        if (object->data_ofs) {
+            MDT_HEADER *model = (MDT_HEADER *) ((char *) header + object->data_ofs);
 
             sceVu0FVECTOR *vertex = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
             int vertex_num = model->vertex_num;
 
             CreateBBox((CBox3<float> *) node->max, vertex, vertex_num);
 
-            box[0] = node->min;
-            box[1] = node->max;
+            extremes[0] = node->min;
+            extremes[1] = node->max;
             for (j = 0; j < 8; j++) {
                 node->corner[j][3] = 1.0f;
-                node->corner[j][0] = box[(j & 1) != 0][0];
-                node->corner[j][1] = box[(j & 2) != 0][1];
-                node->corner[j][2] = box[(j & 4) != 0][2];
+                node->corner[j][0] = extremes[(j & 1) != 0][0];
+                node->corner[j][1] = extremes[(j & 2) != 0][1];
+                node->corner[j][2] = extremes[(j & 4) != 0][2];
             }
 
-            save = attr;
-            name = name0;
-            if (name) {
-                while (*name) {
-                    if (FrameNameComp(node->name, *name)) {
+            saved_attr = attr;
+            double_entry = double_names;
+            if (double_entry) {
+                while (*double_entry) {
+                    if (FrameNameComp(node->name, *double_entry)) {
                         attr |= 2;
                         attr |= 4;
                         break;
                     }
-                    name++;
+                    double_entry++;
                 }
             }
-            name2 = name1;
-            if (name2) {
-                while (*name2) {
-                    if (FrameNameComp(node->name, *name2)) {
+            retain_entry = retain_names;
+            if (retain_entry) {
+                while (*retain_entry) {
+                    if (FrameNameComp(node->name, *retain_entry)) {
                         attr |= 2;
                         break;
                     }
-                    name2++;
+                    retain_entry++;
                 }
             }
 
-            visual = CreateVisual((u_int *) ((char *) head + self->data_ofs), alloc, attr);
+            visual = CreateVisual((u_int *) ((char *) header + object->data_ofs), alloc, attr);
             if (attr & 2) {
                 node->SetVisual(visual);
             } else {
                 node->SetVisual(visual);
             }
-            attr = save;
+            attr = saved_attr;
         }
     }
 
     flag = 1;
-    return frame;
+    return frames;
 }
 
 /* One model file turned into the object that draws it. Which of the three kinds it becomes is the
@@ -499,7 +499,7 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
         }
 
         if (attr & 0x10) {
-            visual->unk_00 = 1;
+            visual->copy_on_draw = 1;
         }
 
         if ((attr & 4) && !(attr & 0x10)) {
@@ -531,22 +531,22 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
    them, and if those two face nearly the same way the edge is interior and is switched off in the
    model itself. What is left switched on is the outline. */
 static void ArrangeShadowMDT(u_int *data) {
-    SHADOW_EDGE edge[1024];
-    sceVu0FVECTOR normal[1024];
-    sceVu0FVECTOR edge0;
-    sceVu0FVECTOR edge1;
+    SHADOW_EDGE edges[1024];
+    sceVu0FVECTOR normals[1024];
+    sceVu0FVECTOR side0;
+    sceVu0FVECTOR side1;
     sceVu0FVECTOR face;
 
     sceVu0FVECTOR *vertex;
     MDT_HEADER *model;
     MDT_SHADOW *mesh;
     MDT_SSHAPE *shape;
-    int num;
+    int edge_count;
     int i;
     int j;
     MDT_SVERTEX *corner;
     int shape_num;
-    int count;
+    int index_count;
     int k;
     int m;
 
@@ -556,40 +556,40 @@ static void ArrangeShadowMDT(u_int *data) {
 
     shape_num = mesh->shape_num;
     shape = mesh->shape;
-    num = 0;
+    edge_count = 0;
     for (i = 0; i < shape_num; i++) {
-        count = shape->index_num;
+        index_count = shape->index_num;
         corner = shape->vertex;
 
-        for (j = 0; j < count / 3; j++) {
-            sceVu0SubVector(edge0, vertex[corner[1].index], vertex[corner[0].index]);
-            sceVu0SubVector(edge1, vertex[corner[2].index], vertex[corner[0].index]);
-            sceVu0OuterProduct(face, edge0, edge1);
-            sceVu0Normalize(normal[num], face);
-            sceVu0CopyVector(normal[num + 1], normal[num]);
-            sceVu0CopyVector(normal[num + 2], normal[num]);
+        for (j = 0; j < index_count / 3; j++) {
+            sceVu0SubVector(side0, vertex[corner[1].index], vertex[corner[0].index]);
+            sceVu0SubVector(side1, vertex[corner[2].index], vertex[corner[0].index]);
+            sceVu0OuterProduct(face, side0, side1);
+            sceVu0Normalize(normals[edge_count], face);
+            sceVu0CopyVector(normals[edge_count + 1], normals[edge_count]);
+            sceVu0CopyVector(normals[edge_count + 2], normals[edge_count]);
 
-            edge[num].v0 = corner[0].index;
-            edge[num].v1 = corner[1].index;
-            edge[num].done = 0;
-            edge[num].edge = &corner[0].edge;
+            edges[edge_count].v0 = corner[0].index;
+            edges[edge_count].v1 = corner[1].index;
+            edges[edge_count].done = 0;
+            edges[edge_count].edge_flag = &corner[0].edge;
             corner[0].edge = 0;
-            num++;
+            edge_count++;
 
-            edge[num].v0 = corner[1].index;
-            edge[num].v1 = corner[2].index;
-            edge[num].done = 0;
-            edge[num].edge = &corner[1].edge;
+            edges[edge_count].v0 = corner[1].index;
+            edges[edge_count].v1 = corner[2].index;
+            edges[edge_count].done = 0;
+            edges[edge_count].edge_flag = &corner[1].edge;
             corner[1].edge = 0;
-            num++;
+            edge_count++;
 
-            edge[num].v0 = corner[2].index;
-            edge[num].v1 = corner[0].index;
-            edge[num].done = 0;
-            edge[num].edge = &corner[2].edge;
+            edges[edge_count].v0 = corner[2].index;
+            edges[edge_count].v1 = corner[0].index;
+            edges[edge_count].done = 0;
+            edges[edge_count].edge_flag = &corner[2].edge;
             corner[2].edge = 0;
-            num++;
-            if (num > 1020) {
+            edge_count++;
+            if (edge_count > 1020) {
                 printf("shadow initialize failed\n");
                 while (1)
                     ;
@@ -600,25 +600,25 @@ static void ArrangeShadowMDT(u_int *data) {
         shape = (MDT_SSHAPE *) corner;
     }
 
-    for (k = 0; k < num - 1; k++) {
-        if (edge[k].done) {
+    for (k = 0; k < edge_count - 1; k++) {
+        if (edges[k].done) {
             continue;
         }
-        for (m = k + 1; m < num; m++) {
-            if (edge[m].done) {
+        for (m = k + 1; m < edge_count; m++) {
+            if (edges[m].done) {
                 continue;
             }
-            if (edge[k].v0 != edge[m].v1) {
+            if (edges[k].v0 != edges[m].v1) {
                 continue;
             }
-            if (edge[k].v1 != edge[m].v0) {
+            if (edges[k].v1 != edges[m].v0) {
                 continue;
             }
-            if (DistVector(normal[k], normal[m]) < 0.0008f) {
-                edge[k].done = 1;
-                *edge[k].edge = 1;
-                edge[m].done = 1;
-                *edge[m].edge = 1;
+            if (DistVector(normals[k], normals[m]) < 0.0008f) {
+                edges[k].done = 1;
+                *edges[k].edge_flag = 1;
+                edges[m].done = 1;
+                *edges[m].edge_flag = 1;
                 break;
             }
         }
@@ -644,54 +644,54 @@ void LoadMDSFileLOD(CFrameVu1 **frame, u_int **data, CDataAlloc2<1> *alloc, int 
    rather than geometry to be drawn, and nothing scales or positions a frame because the transform
    the file carries is the whole of it. */
 CFrameVu1 *LoadCollisionFile(u_int *data, CDataAlloc2<1> *alloc) {
-    CFrameVu1 *frame;
+    CFrameVu1 *frames;
     u_int i;
-    u_int *body;
-    MDS_HEADER *head;
-    MDS_OBJECT *self;
+    u_int *cursor;
+    MDS_HEADER *header;
+    MDS_OBJECT *object;
     CFrameVu1 *node;
     u_long128 *block;
-    float *box[2];
+    float *extremes[2];
     sceVu0FMATRIX matrix;
     int j;
     int k;
     int corner;
 
-    body = data;
-    head = (MDS_HEADER *) data;
-    body += sizeof(MDS_HEADER) / sizeof(u_int);
+    cursor = data;
+    header = (MDS_HEADER *) data;
+    cursor += sizeof(MDS_HEADER) / sizeof(u_int);
 
     if (!((MDS_HEADER *) data)->object_num) {
         return 0;
     }
 
     block = (u_long128 *) alloc->Alloc(((MDS_HEADER *) data)->object_num * sizeof(CFrameVu1) / 16);
-    frame = new (block) CFrameVu1[head->object_num];
+    frames = new (block) CFrameVu1[header->object_num];
 
-    for (i = 0; i < head->object_num; i++) {
-        self = (MDS_OBJECT *) body;
-        body += sizeof(MDS_OBJECT) / sizeof(u_int);
+    for (i = 0; i < header->object_num; i++) {
+        object = (MDS_OBJECT *) cursor;
+        cursor += sizeof(MDS_OBJECT) / sizeof(u_int);
 
-        node = &frame[i];
+        node = &frames[i];
         node->Initialize();
 
         for (j = 0; j < 4; j++) {
             for (k = 0; k < 4; k++) {
-                matrix[k][j] = self->matrix[k][j];
+                matrix[k][j] = object->matrix[k][j];
             }
         }
 
-        strcpy(node->name, self->name);
+        strcpy(node->name, object->name);
         node->SetTransMatrix(matrix);
 
-        if (self->parent < 0) {
+        if (object->parent < 0) {
             node->SetParent(0);
         } else {
-            node->SetParent(&frame[self->parent]);
+            node->SetParent(&frames[object->parent]);
         }
 
-        if (self->data_ofs) {
-            MDT_HEADER *model = (MDT_HEADER *) ((char *) head + self->data_ofs);
+        if (object->data_ofs) {
+            MDT_HEADER *model = (MDT_HEADER *) ((char *) header + object->data_ofs);
 
             node->SetCollision(CreateCollisionMDT((u_int *) model, alloc));
             sceVu0FVECTOR *vertex = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
@@ -699,18 +699,18 @@ CFrameVu1 *LoadCollisionFile(u_int *data, CDataAlloc2<1> *alloc) {
 
             CreateBBox((CBox3<float> *) node->max, vertex, vertex_num);
 
-            box[0] = node->min;
-            box[1] = node->max;
+            extremes[0] = node->min;
+            extremes[1] = node->max;
             for (corner = 0; corner < 8; corner++) {
                 node->corner[corner][3] = 1.0f;
-                node->corner[corner][0] = box[(corner & 1) != 0][0];
-                node->corner[corner][1] = box[(corner & 2) != 0][1];
-                node->corner[corner][2] = box[(corner & 4) != 0][2];
+                node->corner[corner][0] = extremes[(corner & 1) != 0][0];
+                node->corner[corner][1] = extremes[(corner & 2) != 0][1];
+                node->corner[corner][2] = extremes[(corner & 4) != 0][2];
             }
         }
     }
 
-    return frame;
+    return frames;
 }
 
 /* One model file turned into the shape a frame answers about. The file is copied into the block
@@ -723,34 +723,34 @@ CCollisionMDT *CreateCollisionMDT(u_int *data, CDataAlloc2<1> *alloc) {
     u_long128 *vertex;
     MDT_CPOLY *poly;
     u_int i;
-    u_int num;
+    u_int poly_count;
     CCollisionMDT *collision;
-    MDT_HEADER *file;
-    MDT_CPOLY_SET *set;
+    MDT_HEADER *source;
+    MDT_CPOLY_SET *poly_set;
     CCPolyBox *built;
     int index;
 
-    file = (MDT_HEADER *) data;
+    source = (MDT_HEADER *) data;
     model = (MDT_HEADER *) alloc->Alloc64((((MDT_HEADER *) data)->size >> 4) + 1);
-    memcpy(model, file, file->size);
+    memcpy(model, source, source->size);
 
     collision = new ((u_long128 *) alloc->Alloc(4)) CCollisionMDT;
-    collision->data = model;
+    collision->model = model;
     collision->CreateBBox();
 
     vertex = (u_long128 *) ((char *) model + model->vertex_ofs);
     info = (u_long128 *) ((char *) model + model->info_ofs);
-    set = &((MDT_COLLISION *) ((char *) model + model->mesh_ofs))->set;
-    poly = set->poly;
+    poly_set = &((MDT_COLLISION *) ((char *) model + model->mesh_ofs))->set;
+    poly = poly_set->poly;
 
-    built = (CCPolyBox *) alloc->Alloc(set->num * sizeof(CCPolyBox) / 16);
+    built = (CCPolyBox *) alloc->Alloc(poly_set->num * sizeof(CCPolyBox) / 16);
 
-    for (i = 0; i < (num = set->num); i++) {
+    for (i = 0; i < (poly_count = poly_set->num); i++) {
         *(u_long128 *) built[i].poly.vertex[0] = vertex[poly->vertex[0]];
         *(u_long128 *) built[i].poly.vertex[1] = vertex[poly->vertex[1]];
         *(u_long128 *) built[i].poly.vertex[2] = vertex[poly->vertex[2]];
 
-        index = poly->unk_0c;
+        index = poly->info_index;
         if (!model->info_ofs || index < 0) {
             memset(&built[i].poly.info, 0, 16);
         } else {
@@ -765,12 +765,12 @@ CCollisionMDT *CreateCollisionMDT(u_int *data, CDataAlloc2<1> *alloc) {
     }
 
     collision->mesh = built;
-    collision->num = num;
+    collision->mesh_count = poly_count;
     return collision;
 }
 
 /* A scene loaded into the allocator every scene without one of its own goes into. */
-CFrameVu1 *LoadMDSFile(u_int *data, int attr, int unknown0) {
+CFrameVu1 *LoadMDSFile(u_int *data, int attr, int unused) {
     return LoadMDSFile(data, &VisualData, attr, 0, 0);
 }
 
@@ -821,44 +821,44 @@ static void CreateBBox(CBox3<float> *box, sceVu0FVECTOR *vertex, int num) {
    what ties it to its neighbours does not — the parenting is redone from the copies as the walk
    descends. */
 CFrameVu1 *CopyFrameVu1(CFrameVu1 *frame, CDataAlloc2<1> *alloc) {
-    CFrame *head;
+    CFrame *first_child;
     CFrame *child;
-    CFrameVu1 *node;
+    CFrameVu1 *copy;
 
     if (!frame) {
         return 0;
     }
 
-    node = new ((u_long128 *) alloc->Alloc(sizeof(CFrameVu1) / 16)) CFrameVu1;
-    node->Initialize();
-    *node = *frame;
+    copy = new ((u_long128 *) alloc->Alloc(sizeof(CFrameVu1) / 16)) CFrameVu1;
+    copy->Initialize();
+    *copy = *frame;
 
-    head = frame->child;
-    for (child = head; child; child = child->brother) {
-        CopyFrameVu1((CFrameVu1 *) child, alloc)->SetParent(node);
+    first_child = frame->child;
+    for (child = first_child; child; child = child->brother) {
+        CopyFrameVu1((CFrameVu1 *) child, alloc)->SetParent(copy);
     }
-    return node;
+    return copy;
 }
 
 /* The same over frames that draw nothing. */
 CFrame *CopyFrame(CFrame *frame, CDataAlloc2<1> *alloc) {
-    CFrame *head;
+    CFrame *first_child;
     CFrame *child;
-    CFrame *node;
+    CFrame *copy;
 
     if (!frame) {
         return 0;
     }
 
-    node = new ((u_long128 *) alloc->Alloc(sizeof(CFrame) / 16)) CFrame;
-    node->Initialize();
-    *node = *frame;
+    copy = new ((u_long128 *) alloc->Alloc(sizeof(CFrame) / 16)) CFrame;
+    copy->Initialize();
+    *copy = *frame;
 
-    head = frame->child;
-    for (child = head; child; child = child->brother) {
-        CopyFrame(child, alloc)->SetParent(node);
+    first_child = frame->child;
+    for (child = first_child; child; child = child->brother) {
+        CopyFrame(child, alloc)->SetParent(copy);
     }
-    return node;
+    return copy;
 }
 
 void LoadLODData(CFrameVu1 **frame, char **name, u_int *data, int attr) {

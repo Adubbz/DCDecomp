@@ -139,8 +139,8 @@ class CDungeonParts {
 public:
     s16 direction_offset; /**< Direction added when the part is placed on the map grid. */
     s16 unk_002;
-    CFrame *unk_004;
-    s16 unk_008;
+    CFrame *camera_collision;  /**< Model that the camera's collision uses. */
+    s16 camera_collision_turn; /**< Quarter turns added to the camera collision model's own. */
     s16 unk_00A;
     CFrame *collision;  /**< Model that the collision of the part uses. */
     s16 collision_turn; /**< Quarter turns added to the collision model's own. */
@@ -148,9 +148,9 @@ public:
     u8 unk_014[12];
     float fire_pos[6][4]; /**< Position of each point of the part that shows a fire. */
     s8 fire_param[16];    /**< Parameter of the fire at each point. */
-    PARTS_WATER water;
-    float pos[4];  /**< World position of the part. */
-    s16 direction; /**< Rotation that the part uses. */
+    PARTS_WATER water;    /**< Water surface that the part shows. */
+    float pos[4];         /**< World position of the part. */
+    s16 direction;        /**< Rotation that the part uses. */
     s16 unk_102;
     u8 unk_104[12];
     float frame_offset[5][4]; /**< Offset of each model from the part's position. */
@@ -183,7 +183,7 @@ public:
      * @address 0x1C1670
      * @size 0x58
      */
-    void SetHealZone(float *, float, float);
+    void SetHealZone(float *position, float width, float depth);
 
     /**
      * Draws one dungeon part and everything standing on it.
@@ -201,7 +201,7 @@ public:
      * @address 0x1C1850
      * @size 0x348
      */
-    void DrawCalc(int, int, int, int);
+    void DrawCalc(int x, int z, int turn, int map_type);
 
     /**
      * Clears one dungeon part.

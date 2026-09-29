@@ -98,7 +98,7 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
     HookFrame = LoadMDSFile(GetPackFile(read_buffer, "hari.mds", NULL), alloc, 0, NULL, NULL);
     UkiFrame = LoadMDSFile(GetPackFile(read_buffer, "uki.mds", NULL), alloc, 0, NULL, NULL);
     CFrameAttr attr;
-    attr.unk_14 = 1;
+    attr.use_color = 1;
     if (UkiFrame != NULL) {
         UkiFrame->SetAttr(attr, 1, 0x200);
     }
@@ -108,7 +108,7 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
 }
 
 void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
-    int interval;
+    int rare_interval;
     int loaded;
 
     draw_under_water = 1;
@@ -124,26 +124,26 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     if (spot == 4) {
         FishNum = 4;
     }
-    interval = 30;
+    rare_interval = 30;
     switch (EdGetTime(SaveData->GetNowTime())) {
         case 0:
-            interval = 50;
+            rare_interval = 50;
             break;
         case 1:
-            interval = 20;
+            rare_interval = 20;
             break;
         case 2:
-            interval = 35;
+            rare_interval = 35;
             break;
         case 3:
-            interval = 25;
+            rare_interval = 25;
             break;
     }
     loaded = 0;
     LoadFile("chara/f00s.chr", read_buffer, NULL);
     for (int i = 0; i < FishNum; i++) {
         int kind = -1;
-        int r = rand();
+        int rand_value = rand();
         switch (spot) {
             case 0:
                 switch ((int) (3.99999f * rnd())) {
@@ -175,27 +175,27 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
                 break;
             }
             case 2:
-                if (r % interval == 0) {
+                if (rand_value % rare_interval == 0) {
                     if (rand() % 5 == 0) {
                         kind = 17;
                     } else {
                         kind = 5;
                     }
                 } else {
-                    r %= 3;
-                    if (r == 0) {
+                    rand_value %= 3;
+                    if (rand_value == 0) {
                         kind = 2;
                     }
-                    if (r == 1) {
+                    if (rand_value == 1) {
                         kind = 4;
                     }
-                    if (r == 2) {
+                    if (rand_value == 2) {
                         kind = 6;
                     }
                 }
                 break;
             case 3: {
-                int roll = r % 100;
+                int roll = rand_value % 100;
                 if (roll < 20) {
                     kind = 0;
                 } else if (roll < 40) {
@@ -210,14 +210,14 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
                 break;
             }
             case 4:
-                if (r % interval == 0) {
+                if (rand_value % rare_interval == 0) {
                     if (rand() % 5 == 0) {
                         kind = 17;
                     } else {
                         kind = 5;
                     }
                 } else {
-                    int roll = r % 100;
+                    int roll = rand_value % 100;
                     if (roll < 40) {
                         kind = 14;
                     } else if (roll < 70) {
@@ -679,7 +679,7 @@ void FishLineStep(float *rod_position, float *unused) {
     float water;
     float weight;
     int i;
-    int k;
+    int iteration;
 
     if (cpoly != NULL) {
         sceVu0CopyVector(hook_from, point[23]);
@@ -735,7 +735,7 @@ void FishLineStep(float *rod_position, float *unused) {
         sceVu0AddVector(ukip[i], ukip[i], ukiv[i]);
     }
 
-    for (k = 0; k < 16; k++) {
+    for (iteration = 0; iteration < 16; iteration++) {
         sceVu0CopyVector(point[0], rod_top);
         sceVu0CopyVector(old_p[0], rod_top);
         for (i = 1; i < 24; i++) {

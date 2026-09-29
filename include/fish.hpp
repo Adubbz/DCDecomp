@@ -139,13 +139,13 @@ public:
 
 STATIC_ASSERT(sizeof(CFish) == 0x2410);
 
-/** Returns whether a random sample succeeds at the supplied per-thousand rate. */
-int rand_check(float rate);
+/** Returns whether a random sample succeeds at the supplied probability. */
+int rand_check(float probability);
 /** Returns a randomized ordinary movement duration. */
 int GetActCnt();
 /** Returns a randomized interaction duration. */
 int GetActCnt2();
 /** Loads one fish kind and its character data. */
-void LoadFish(CFish *fish, int fish_kind, int flags, CDataAlloc2<1> *alloc, int texture_block);
+void LoadFish(CFish *fish, int fish_kind, int texture_slot, CDataAlloc2<1> *alloc, int loaded_before);
 /** Returns the character archive name for one fish kind. */
 char *GetFishFileName(int fish_kind);

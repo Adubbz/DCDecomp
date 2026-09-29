@@ -48,10 +48,10 @@ void CMemoryCardAccess::Initialize() {
     memset(&this->error, 0, sizeof(this->error));
     this->SetVersion("darkcloudVer1.9");
     this->func_no = MC_OPERATION_IDLE;
-    this->unk_E0 = 0x3D;
+    this->idle_code = 0x3D;
     this->step = 0;
     this->save_buffer = NULL;
-    this->unk_D8 = NULL;
+    this->load_buffer = NULL;
     this->read_buffer = NULL;
     this->dir_table = SaveFileInfo;
     this->transferred = 0;
@@ -116,7 +116,7 @@ void CMemoryCardAccess::SetBuff(char *buffer) {
         }
     }
     this->read_buffer = (char *) ((((int) sum >> 6) + 1) << 6);
-    this->unk_D8 = this->read_buffer;
+    this->load_buffer = this->read_buffer;
 }
 
 void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
@@ -165,7 +165,7 @@ void CMemoryCardAccess::SetFuncNo(int func_no) {
     this->func_no = func_no;
     this->step = 0;
     if (func_no == MC_OPERATION_IDLE) {
-        this->unk_E0 = 0x3D;
+        this->idle_code = 0x3D;
     }
     sceMcSync(MC_NOWAIT, NULL, NULL);
 }
@@ -383,15 +383,15 @@ int CMemoryCardAccess::GetDir() {
 }
 
 int CMemoryCardAccess::LoadSysConfig() {
-    int port;
+    int port_no;
     int cmd;
     int result;
     int i;
 
-    port = this->port;
+    port_no = this->port;
     switch (this->step) {
         case 0:
-            if (sceMcOpen(port, 1, this->dir_name, 1) == 0) {
+            if (sceMcOpen(port_no, 1, this->dir_name, 1) == 0) {
                 this->step++;
             } else {
                 return -1;
@@ -449,15 +449,15 @@ int CMemoryCardAccess::LoadSysConfig() {
 }
 
 int CMemoryCardAccess::SaveSysConfig() {
-    int port;
+    int port_no;
     int i;
     int cmd;
     int result;
 
-    port = this->port;
+    port_no = this->port;
     switch (this->step) {
         case 0:
-            if (sceMcOpen(port, 1, this->dir_name, 2) == 0) {
+            if (sceMcOpen(port_no, 1, this->dir_name, 2) == 0) {
                 this->step++;
             } else {
                 return -1;
@@ -578,8 +578,8 @@ int CMemoryCardAccess::Convert() {
         }
         fd = result;
         printf("fname = %s\n", src_name);
-        memset(this->unk_D8, 0, 0x136E7);
-        sceMcRead(fd, this->unk_D8, 0x136A7);
+        memset(this->load_buffer, 0, 0x136E7);
+        sceMcRead(fd, this->load_buffer, 0x136A7);
         sceMcSync(MC_WAIT, &cmd, &result);
         sceMcClose(fd);
         sceMcSync(MC_WAIT, &cmd, &result);
@@ -593,7 +593,7 @@ int CMemoryCardAccess::Convert() {
         fd = result;
         printf("fname = %s\n", dst_name);
         memset(buffer, 0, 0x136E7);
-        sceMcWrite(fd, this->unk_D8, 0x136A7);
+        sceMcWrite(fd, this->load_buffer, 0x136A7);
         sceMcSync(MC_WAIT, &cmd, &result);
         sceMcFlush(fd);
         sceMcSync(MC_WAIT, &cmd, &result);
@@ -1171,9 +1171,9 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
             }
             this->fd = result;
             this->transfer_size = 0x136A7;
-            memset(this->unk_D8, 0, this->transfer_size + 0x40);
+            memset(this->load_buffer, 0, this->transfer_size + 0x40);
             this->transferred = 0;
-            if (sceMcRead(this->fd, this->unk_D8, this->transfer_size) == 0) {
+            if (sceMcRead(this->fd, this->load_buffer, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
@@ -1204,13 +1204,13 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
                 return -1;
             }
             ok = 1;
-            data = this->unk_D8 + sizeof(CSaveData);
+            data = this->load_buffer + sizeof(CSaveData);
             strcpy(version, this->GetVersion());
             memcpy(saved_version, data, sizeof(saved_version));
             if (saved_version[0] == version[0]) {
                 if (strcmp(version, saved_version) == 0) {
                     sum = data + 0x20;
-                    data = this->unk_D8;
+                    data = this->load_buffer;
                     total = 0;
                     for (i = 0; i < sizeof(CSaveData); i++) {
                         total += *data++;
@@ -1230,7 +1230,7 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
                 printf("not load\n");
             }
             if (ok) {
-                memcpy(SaveData, this->unk_D8, sizeof(CSaveData));
+                memcpy(SaveData, this->load_buffer, sizeof(CSaveData));
                 ((s32 *) SaveData->GetConfigData())[17] = file_no;
             } else {
                 return -1;

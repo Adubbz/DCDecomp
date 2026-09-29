@@ -282,7 +282,7 @@ static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
  * @size 0xB04
  */
 void CActionSeq::Play() {
-    int played;
+    int animation_shown;
     ACT_SEQ *sequence;
 
     if (move_head == NULL && motion_head == NULL && anime_head == NULL) {
@@ -420,10 +420,10 @@ void CActionSeq::Play() {
                 rotation_complete = 1;
             }
         } else if (direction[0] != 0.0f || direction[2] != 0.0f) {
-            float target = atan2f(direction[0], direction[2]);
+            float target_yaw = atan2f(direction[0], direction[2]);
 
-            rotation[1] = AngleInterpolate(rotation[1], target, rotation_target[3], 0);
-            if (AngleCmp(rotation[1], target, 0.001f) == 0) {
+            rotation[1] = AngleInterpolate(rotation[1], target_yaw, rotation_target[3], 0);
+            if (AngleCmp(rotation[1], target_yaw, 0.001f) == 0) {
                 rotation_complete = 1;
             }
         } else {
@@ -436,20 +436,20 @@ void CActionSeq::Play() {
     }
 
     if (character != NULL) {
-        float now = character->GetNowTime();
+        float motion_time = character->GetNowTime();
 
         if (motion_head != NULL && motion_head->arguments.animation.id == character->motion_no) {
-            MOTION_INFO *info = character->GetMotionInfo(motion_head->arguments.animation.id);
+            MOTION_INFO *motion_info = character->GetMotionInfo(motion_head->arguments.animation.id);
 
-            if (info != NULL && motion_head->arguments.animation.mode == 7) {
-                if (!(info->end <= now) && info->start < now &&
-                    info->end - info->speed - 0.01f <= now) {
-                    int index;
-                    tagMOTION_TYPE *motion =
-                        character->GetMotionParam(character->motion_no, &index, NULL, NULL, NULL);
+            if (motion_info != NULL && motion_head->arguments.animation.mode == 7) {
+                if (!(motion_info->end <= motion_time) && motion_info->start < motion_time &&
+                    motion_info->end - motion_info->speed - 0.01f <= motion_time) {
+                    int motion_index;
+                    tagMOTION_TYPE *motion_type =
+                        character->GetMotionParam(character->motion_no, &motion_index, NULL, NULL, NULL);
 
-                    if (motion != NULL) {
-                        motion->state.time = (int) (0.999f + motion->state.time);
+                    if (motion_type != NULL) {
+                        motion_type->state.time = (int) (0.999f + motion_type->state.time);
                     }
                     motion_head = DeleteSeq(motion_head);
                     if (motion_head == NULL) {
@@ -461,26 +461,26 @@ void CActionSeq::Play() {
     }
 
     if (motion_trigger != 0 && motion_delay <= 0) {
-        ACT_SEQ *motion = motion_head;
+        ACT_SEQ *queued_motion = motion_head;
 
-        if (motion != NULL && character != NULL) {
+        if (queued_motion != NULL && character != NULL) {
             int flags = 0;
 
-            switch (motion->arguments.animation.mode) {
+            switch (queued_motion->arguments.animation.mode) {
                 case 6:
                 case 7:
                     flags = 2;
             }
-            if (character->motion_no != motion->arguments.animation.id) {
-                flags |= motion->arguments.animation.flags;
+            if (character->motion_no != queued_motion->arguments.animation.id) {
+                flags |= queued_motion->arguments.animation.flags;
             }
-            character->SetMotion(motion->arguments.animation.id, flags);
-            character->SetMotionSpeed(motion->arguments.animation.playback.speed);
+            character->SetMotion(queued_motion->arguments.animation.id, flags);
+            character->SetMotionSpeed(queued_motion->arguments.animation.playback.speed);
         }
     }
 
     if (anime_trigger != 0 && anime_delay <= 0 && character != NULL) {
-        played = 0;
+        animation_shown = 0;
         while ((sequence = anime_head) != NULL) {
             switch (sequence->operation) {
                 case ACT_SEQ_ANIMATION:
@@ -513,13 +513,13 @@ void CActionSeq::Play() {
                     } else {
                         character->TexAnimeOff(sequence->arguments.animation.id);
                     }
-                    played = 1;
+                    animation_shown = 1;
                     break;
                 default:
                     anime_head = DeleteSeq(sequence);
                     break;
             }
-            if (played != 0) {
+            if (animation_shown != 0) {
                 break;
             }
         }
@@ -539,25 +539,25 @@ void CActionSeq::Play() {
         anime_delay = 0;
     }
     if (character != NULL) {
-        sceVu0FVECTOR angle;
+        sceVu0FVECTOR wrapped_rotation;
         float turns;
-        int whole;
+        int whole_turns;
 
         character->SetPosition(position);
-        angle[0] = rotation[0];
-        angle[1] = rotation[1];
-        angle[2] = rotation[2];
-        angle[3] = 0.0f;
+        wrapped_rotation[0] = rotation[0];
+        wrapped_rotation[1] = rotation[1];
+        wrapped_rotation[2] = rotation[2];
+        wrapped_rotation[3] = 0.0f;
         // Wrap the yaw into [-pi, pi]; the first truncation's result is unused.
-        turns = angle[1] / 6.2831855f;
-        whole = (int) turns;
-        angle[1] -= 3.1415927f * (2.0f * (int) turns);
-        if (angle[1] > 3.1415927f) {
-            angle[1] -= 6.2831855f;
+        turns = wrapped_rotation[1] / 6.2831855f;
+        whole_turns = (int) turns;
+        wrapped_rotation[1] -= 3.1415927f * (2.0f * (int) turns);
+        if (wrapped_rotation[1] > 3.1415927f) {
+            wrapped_rotation[1] -= 6.2831855f;
         }
-        if (angle[1] < -3.1415927f) {
-            angle[1] += 6.2831855f;
+        if (wrapped_rotation[1] < -3.1415927f) {
+            wrapped_rotation[1] += 6.2831855f;
         }
-        character->SetRotation(angle);
+        character->SetRotation(wrapped_rotation);
     }
 }

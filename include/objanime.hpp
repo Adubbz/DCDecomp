@@ -42,13 +42,13 @@ STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
  * 0x1B00 bytes hold 48 of them at `FrameObjAnim`.
  */
 struct OBJ_ANIME_SEQ {
-    char name[0x10]; /**< Animation resource name. */
-    int type;        /**< Kind of animation the sequence plays. */
-    int number;      /**< Animation number selected within that kind. */
+    char frame_name[0x10]; /**< Frame the animation drives; empty for the frame it is given. */
+    int property;          /**< What the animation drives: 0 rotation in degrees, 1 position, 2 scale, 3 colour; -1 while unused. */
+    int mode;              /**< How the value moves: 0 onward, 1 wrapping, 2 back and forth, 3 once, 4 to 7 at random. */
     u8 unk_18[0x8];
-    sceVu0FVECTOR range;   /**< Extent over which the animation moves. */
-    sceVu0FVECTOR speed;   /**< Rate at which the animation advances. */
-    sceVu0FVECTOR offset;  /**< Displacement applied to the animated frame. */
+    sceVu0FVECTOR from;    /**< Value the animation starts at, and the lower bound of a random one. */
+    sceVu0FVECTOR to;      /**< Value the animation ends at, and the upper bound of a random one. */
+    sceVu0FVECTOR step;    /**< Amount the value changes by each frame, or the spread of a random walk. */
     sceVu0FVECTOR current; /**< Current animated value applied to the attached frames. */
     CFrame *frames[10];    /**< Frames driven by this animation. */
     int completion_flag;   /**< Map flag associated with the source function marker. */
@@ -154,7 +154,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence);
  * @address 0x166010
  * @size 0x160
  */
-int InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
+int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_SEQ *sequence);
 
 /**
  * Advances one object animation by a frame.
@@ -163,7 +163,7 @@ int InitObjAnime(CFrame **, int, EPARTS_FUNC_DATA *, OBJ_ANIME_SEQ *);
  * @address 0x1661E0
  * @size 0x78C
  */
-void ObjAnimePlay(OBJ_ANIME_SEQ *);
+void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
 
 /**
  * Selects the frame that carries an edited map effect.
@@ -172,7 +172,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *);
  * @address 0x166970
  * @size 0x60
  */
-void InitEditEffect(CFrame *, EDIT_EFFECT_INFO *);
+void InitEditEffect(CFrame *frame, EDIT_EFFECT_INFO *effect);
 
 /**
  * Attaches an editor effect to the frame a function point names.
@@ -181,7 +181,7 @@ void InitEditEffect(CFrame *, EDIT_EFFECT_INFO *);
  * @address 0x1669D0
  * @size 0x1E0
  */
-int InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
+int InitEditEffect(CFrame *frame, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *effect);
 
 /**
  * Gives back 1 while an effect is one that the time of day and the map flags
@@ -191,7 +191,7 @@ int InitEditEffect(CFrame *, EPARTS_FUNC_DATA *, EDIT_EFFECT_INFO *);
  * @address 0x166BB0
  * @size 0x160
  */
-int CheckEditEffect(EDIT_EFFECT_INFO *, float);
+int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time);
 
 /**
  * Advances the editor's shared fire, candle and flame effects.
@@ -218,7 +218,7 @@ void EditEffectStep2(void);
  * @address 0x166E10
  * @size 0x24C
  */
-void DrawEditEffect(EDIT_EFFECT_INFO *, CCamera *, CEffectGroup *);
+void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *group);
 
 /**
  * Whether all object animations are stopped.

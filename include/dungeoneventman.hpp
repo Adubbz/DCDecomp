@@ -78,7 +78,7 @@ public:
      * @address 0x1CCBA0
      * @size 0x130
      */
-    CDungeonEventData *CheckCollisionDataHit(int);
+    CDungeonEventData *CheckCollisionDataHit(int index);
 
     /**
      * Finds a runnable event at a position or through its configured collision owners.
@@ -87,7 +87,7 @@ public:
      * @address 0x1CCCD0
      * @size 0x108
      */
-    CDungeonEventData *SearchDataSlotPos(float *);
+    CDungeonEventData *SearchDataSlotPos(float *position);
 
     /**
      * Finds a runnable event near a position after flattening small height differences.

@@ -29,8 +29,8 @@ public:
      */
     void Initialize();
 
-    sceVu0FVECTOR positions[8]; /**< Shared-origin positions of the eight billboards. */
-    s32 phases[8];              /**< Envelope phase currently run by each billboard. */
+    sceVu0FVECTOR positions[8]; /**< World position of each billboard. */
+    s32 phases[8];              /**< Envelope phase each billboard is in; also pushes it towards the camera. */
     s32 counters[8];            /**< Frames elapsed in each billboard's current phase. */
     float sizes[8];             /**< World-space billboard widths and heights. */
     float alphas[8];            /**< GS alpha values used to draw the billboards. */

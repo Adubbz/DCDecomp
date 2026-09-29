@@ -164,13 +164,13 @@ void ClsMes::AutoSetSub(CCharacter *first, CCharacter *second, int *out_pos) {
 }
 
 void ClsMes::AutoSet(int *pos) {
-    RECT cand[3][3];
+    RECT candidate[3][3];
     int outside[3][3];
-    float away[3][3];
-    int x;
-    int y;
-    int x2;
-    int y2;
+    float clearance[3][3];
+    int speaker_x;
+    int speaker_y;
+    int other_x;
+    int other_y;
     int width;
     int height;
     int col;
@@ -178,10 +178,10 @@ void ClsMes::AutoSet(int *pos) {
     int best_col;
     int best_row;
 
-    x = pos[0];
-    y = pos[1];
-    x2 = pos[2];
-    y2 = pos[3];
+    speaker_x = pos[0];
+    speaker_y = pos[1];
+    other_x = pos[2];
+    other_y = pos[3];
 
     width = 0xCA;
     height = 0x8A;
@@ -196,32 +196,32 @@ void ClsMes::AutoSet(int *pos) {
 
     for (row = 0; row < 3; row++) {
         for (col = 0; col < 3; col++) {
-            cand[row][col].height = height;
+            candidate[row][col].height = height;
 
             if (col == 0) {
-                cand[row][col].x = 0;
+                candidate[row][col].x = 0;
             } else {
-                cand[row][col].x = col * (0x260 - width) >> 1;
-                cand[row][col].x += 0x10;
+                candidate[row][col].x = col * (0x260 - width) >> 1;
+                candidate[row][col].x += 0x10;
             }
 
             if (row == 0) {
-                cand[row][col].y = 0;
+                candidate[row][col].y = 0;
             } else {
-                cand[row][col].y = row * (0x1A0 - height) >> 1;
-                cand[row][col].y += 0x10;
+                candidate[row][col].y = row * (0x1A0 - height) >> 1;
+                candidate[row][col].y += 0x10;
             }
 
             if (col == 0 || col == 2) {
-                cand[row][col].width = width + 0x10;
+                candidate[row][col].width = width + 0x10;
             } else {
-                cand[row][col].width = width;
+                candidate[row][col].width = width;
             }
 
             if (row == 0 || row == 2) {
-                cand[row][col].height = height + 0x10;
+                candidate[row][col].height = height + 0x10;
             } else {
-                cand[row][col].height = height;
+                candidate[row][col].height = height;
             }
         }
     }
@@ -232,12 +232,12 @@ void ClsMes::AutoSet(int *pos) {
     if (this->auto_pos == 0) {
         for (row = 0; row < 3; row++) {
             for (col = 0; col < 3; col++) {
-                RECT *rect = &cand[row][col];
+                RECT *rect = &candidate[row][col];
 
-                outside[row][col] = CheckPosInOutForRect(rect, x, y);
+                outside[row][col] = CheckPosInOutForRect(rect, speaker_x, speaker_y);
 
                 if (outside[row][col] == 0) {
-                    outside[row][col] = CheckPosInOutForRect(rect, x2, y2);
+                    outside[row][col] = CheckPosInOutForRect(rect, other_x, other_y);
                 }
             }
         }
@@ -245,29 +245,29 @@ void ClsMes::AutoSet(int *pos) {
         for (row = 0; row < 3; row++) {
             for (col = 0; col < 3; col++) {
                 if (outside[row][col] != 0) {
-                    away[row][col] = -1.0f;
+                    clearance[row][col] = -1.0f;
                 }
 
-                RECT *rect = &cand[row][col];
+                RECT *rect = &candidate[row][col];
 
-                away[row][col] = GetDisPosToRect(rect, x, y);
+                clearance[row][col] = GetDisPosToRect(rect, speaker_x, speaker_y);
 
-                float other = GetDisPosToRect(rect, x2, y2);
+                float other_clearance = GetDisPosToRect(rect, other_x, other_y);
 
-                if (other < away[row][col]) {
-                    away[row][col] = other;
+                if (other_clearance < clearance[row][col]) {
+                    clearance[row][col] = other_clearance;
                 }
             }
         }
 
-        float best = 0.0f;
+        float best_clearance = 0.0f;
 
         for (row = 0; row < 3; row++) {
             for (col = 0; col < 3; col++) {
-                if (away[row][col] >= 0.0f && best < away[row][col]) {
+                if (clearance[row][col] >= 0.0f && best_clearance < clearance[row][col]) {
                     best_col = col;
                     best_row = row;
-                    best = away[row][col];
+                    best_clearance = clearance[row][col];
                 }
             }
         }
@@ -276,8 +276,8 @@ void ClsMes::AutoSet(int *pos) {
         best_row = (this->auto_pos - 1) / 3;
     }
 
-    this->win_x = cand[best_row][best_col].x;
-    this->win_y = cand[best_row][best_col].y;
+    this->win_x = candidate[best_row][best_col].x;
+    this->win_y = candidate[best_row][best_col].y;
 
     if (this->win_width < 0xCA) {
         this->win_x += (0xCA - this->win_width) >> 1;
@@ -299,8 +299,8 @@ void ClsMes::AutoSet(int *pos) {
     this->text_y = this->win_y + (int) (1.5f * this->char_height);
 
     if (this->tail_on != 0) {
-        this->tail_to_x = x;
-        this->tail_to_y = y;
+        this->tail_to_x = speaker_x;
+        this->tail_to_y = speaker_y;
     }
 
     this->grow_x = this->win_x + (this->win_width >> 1);
@@ -355,8 +355,8 @@ ClsMes::ClsMes(void) {
     this->text_len = 0;
     this->text_width = 0;
     this->text_height = 0;
-    this->unk_02C = 0x10;
-    this->unk_030 = 0x10;
+    this->init_02C = 0x10;
+    this->init_030 = 0x10;
     this->fukidashi = 1;
     this->fukidashi_shape = 0;
     this->grow_x = 0x140;
@@ -397,7 +397,7 @@ ClsMes::ClsMes(void) {
     this->page_arrow = 1;
     this->end_mark = 0;
     this->centre_rows = 1;
-    this->unk_16D0 = 1;
+    this->page_mark_style = 1;
     this->edge_alpha = 0x80;
     this->narrow_gaiji_set = 0;
     this->narrow_gaiji = 0;
@@ -429,7 +429,7 @@ ClsMes::ClsMes(void) {
     this->buff_system = NULL;
     this->text = NULL;
     this->text_system = NULL;
-    this->unk_17B0 = NULL;
+    this->tex_buff = NULL;
     this->clut = MesWinClut;
 }
 
@@ -456,7 +456,7 @@ void ClsMes::Preset(int style) {
             this->style = 2;
             this->page_arrow = 0;
             this->centre_rows = 1;
-            this->unk_16D0 = 0;
+            this->page_mark_style = 0;
             break;
         case 0:
             this->fukidashi = 1;
@@ -465,7 +465,7 @@ void ClsMes::Preset(int style) {
             this->style = 1;
             this->page_arrow = 1;
             this->centre_rows = 1;
-            this->unk_16D0 = 1;
+            this->page_mark_style = 1;
             break;
         case 2:
             this->style = 0;
@@ -481,7 +481,7 @@ void ClsMes::Preset(int style) {
             this->clut_now = this->clut_default;
             this->style = 3;
             this->page_arrow = 0;
-            this->unk_16D0 = 0;
+            this->page_mark_style = 0;
             break;
         case 3:
             break;
@@ -499,7 +499,7 @@ void ClsMes::SetMesFukidashi(int style) {
             this->clut_now = this->clut_default;
             this->page_arrow = 1;
             this->style = 2;
-            this->unk_16D0 = 1;
+            this->page_mark_style = 1;
             break;
         case 4:
             this->char_width = 0xD;
@@ -510,7 +510,7 @@ void ClsMes::SetMesFukidashi(int style) {
             this->clut_now = this->clut_default;
             this->page_arrow = 1;
             this->style = 3;
-            this->unk_16D0 = 1;
+            this->page_mark_style = 1;
             break;
         case 3:
             this->char_width = 0xB;
@@ -521,7 +521,7 @@ void ClsMes::SetMesFukidashi(int style) {
             this->clut_now = this->clut_default;
             this->page_arrow = 0;
             this->style = 2;
-            this->unk_16D0 = 0;
+            this->page_mark_style = 0;
             break;
         case 2:
             this->char_width = 0xB;
@@ -532,7 +532,7 @@ void ClsMes::SetMesFukidashi(int style) {
             this->clut_now = this->clut_default;
             this->page_arrow = 1;
             this->style = 4;
-            this->unk_16D0 = 1;
+            this->page_mark_style = 1;
             break;
         case 1:
             this->fukidashi = 0;
@@ -547,7 +547,7 @@ void ClsMes::SetMesFukidashi(int style) {
             this->clut_now = this->clut_default;
             this->page_arrow = 1;
             this->style = 0;
-            this->unk_16D0 = 1;
+            this->page_mark_style = 1;
             break;
     }
 }
@@ -630,8 +630,8 @@ int ClsMes::State(void) {
 }
 
 void ClsMes::MyTextureMake_InitAll(void) {
-    if (this->unk_17B0 != NULL) {
-        memset(this->unk_17B0, 0, 0x100);
+    if (this->tex_buff != NULL) {
+        memset(this->tex_buff, 0, 0x100);
     }
 }
 
@@ -899,7 +899,7 @@ void ClsMes::MakeMesWinTbl_value(int which, int *x, int *y) {
 
 int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
     short *at;
-    int c;
+    int text_code;
 
     if (code >= -0x500 && code < -0x400) {
         code += 0x500;
@@ -968,11 +968,11 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
     }
 
     while (1) {
-        c = *at;
+        text_code = *at;
         at++;
 
-        if (c >= -0x506 && c < -0x500) {
-            short *name = SetAndGetNameRegistTbl(c + 0x506);
+        if (text_code >= -0x506 && text_code < -0x500) {
+            short *name = SetAndGetNameRegistTbl(text_code + 0x506);
 
             if (name != 0) {
                 int name_code = *name;
@@ -985,12 +985,12 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
                 }
             }
         } else {
-            switch (c) {
+            switch (text_code) {
                 case -0xFF:
                     return 1;
 
                 case -0xFE:
-                    this->SetMesWinTbl(c, 0, *x, *y);
+                    this->SetMesWinTbl(text_code, 0, *x, *y);
 
                     if (this->space_area >= 0 || this->space_width >= 0) {
                         *x += this->space_width;
@@ -1000,17 +1000,17 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
                     break;
 
                 case -0x100:
-                    this->SetMesWinTbl(c, 1, *x, *y);
+                    this->SetMesWinTbl(text_code, 1, *x, *y);
                     *x = 0;
                     *y += this->char_height;
                     break;
 
                 default:
-                    if (c >= -0x300 && c < -0x262) {
-                        this->SetMesWinTbl(c, 0, *x, *y);
-                        *x += this->GetGaijiW(c);
+                    if (text_code >= -0x300 && text_code < -0x262) {
+                        this->SetMesWinTbl(text_code, 0, *x, *y);
+                        *x += this->GetGaijiW(text_code);
                     } else {
-                        this->SetMesWinTbl(c, 1, *x, *y);
+                        this->SetMesWinTbl(text_code, 1, *x, *y);
                         *x += this->char_width;
                     }
                     break;
@@ -1595,7 +1595,7 @@ int ClsMes::MakeMesWin(int mes_no) {
 }
 
 void ClsMes::MakeMesTexture(int mes_no) {
-    int wh[4];
+    int needed[4];
 
     this->mes_made = mes_no;
     if (this->fukidashi != 0) {
@@ -1605,14 +1605,14 @@ void ClsMes::MakeMesTexture(int mes_no) {
     this->waiting = 0;
     this->blink = 0;
     MyTextureMake_InitAll();
-    NeedMesWinWH(mes_no, wh);
+    NeedMesWinWH(mes_no, needed);
 
-    wh[1] += 1;
-    wh[3] += this->char_height;
-    this->text_columns = wh[0];
-    this->text_rows = wh[1];
-    this->text_width = wh[2];
-    this->text_height = wh[3];
+    needed[1] += 1;
+    needed[3] += this->char_height;
+    this->text_columns = needed[0];
+    this->text_rows = needed[1];
+    this->text_width = needed[2];
+    this->text_height = needed[3];
 
     if (this->text_columns < 4) {
         this->win_width = this->char_width * 14;
@@ -1748,13 +1748,13 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
 #pragma opt_propagation off
 
 void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
-    float w;
-    float h;
+    float grown_width;
+    float grown_height;
     int x;
     int y;
     int top;
     int i;
-    int n;
+    int mirror;
 
     top = this->win_y;
 
@@ -1780,8 +1780,8 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         }
     }
 
-    w = this->win_width * this->fade;
-    h = this->win_height * this->fade;
+    grown_width = this->win_width * this->fade;
+    grown_height = this->win_height * this->fade;
 
     float shape[15][2] = {
         {0.5f, 0.5f},
@@ -1805,26 +1805,26 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         sceVif1PkAddGsAD(packet, 0, ((unsigned long) prim << 7) | 0x145);
         sceVif1PkAddGsAD(packet, 1, 0x80BFBFBF | ((unsigned long) 1 << 32));
 
-        int bx = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
-        int by = (int) LinerInterpolation(this->grow_y, this->win_y, this->fade);
+        int base_x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
+        int base_y = (int) LinerInterpolation(this->grow_y, this->win_y, this->fade);
 
-        n = (int) RandTbl[0];
+        mirror = (int) RandTbl[0];
 
         for (i = 0; i < 15; i++) {
-            if (n % 2 != 0) {
-                x = (int) (w * (1.0f - shape[i][0]));
+            if (mirror % 2 != 0) {
+                x = (int) (grown_width * (1.0f - shape[i][0]));
             } else {
-                x = (int) (w * shape[i][0]);
+                x = (int) (grown_width * shape[i][0]);
             }
 
-            if (n > 1) {
-                y = (int) (h * (1.0f - shape[i][1]));
+            if (mirror > 1) {
+                y = (int) (grown_height * (1.0f - shape[i][1]));
             } else {
-                y = (int) (h * shape[i][1]);
+                y = (int) (grown_height * shape[i][1]);
             }
 
-            x += bx;
-            y += by;
+            x += base_x;
+            y += base_y;
             y -= top;
 
             sceVif1PkAddGsAD(packet, 4,
@@ -1835,23 +1835,23 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
         y = (int) LinerInterpolation(this->grow_y, this->win_y, this->fade);
 
-        int style = this->fukidashi_shape;
+        int bubble_shape = this->fukidashi_shape;
 
-        if (style == 1) {
-            DrawMaru(packet, x, y, (int) w, (int) h, top, 0x20, style, prim);
+        if (bubble_shape == 1) {
+            DrawMaru(packet, x, y, (int) grown_width, (int) grown_height, top, 0x20, bubble_shape, prim);
         } else {
-            int ww = (int) w - this->char_width;
-            int half = (int) h >> 1;
-            float half_float = (float) half;
+            int upper_width = (int) grown_width - this->char_width;
+            int half_height = (int) grown_height >> 1;
+            float half_height_float = (float) half_height;
 
-            DrawMaru(packet, x, y, ww, (int) (half_float + 1.5f * this->char_height), top, 0x20, 0,
+            DrawMaru(packet, x, y, upper_width, (int) (half_height_float + 1.5f * this->char_height), top, 0x20, 0,
                      prim);
 
             float pad = 1.5f * this->char_height;
-            int cw = this->char_width;
+            int indent = this->char_width;
 
-            y = (int) (y + half - pad);
-            DrawMaru(packet, x + cw, y, (int) w - cw, (int) (half + pad), top, 0x20, 0, prim);
+            y = (int) (y + half_height - pad);
+            DrawMaru(packet, x + indent, y, (int) grown_width - indent, (int) (half_height + pad), top, 0x20, 0, prim);
         }
     } else {
         x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
@@ -1860,13 +1860,13 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         sceVif1PkAddGsAD(packet, 0, ((unsigned long) prim << 7) | 0x145);
         sceVif1PkAddGsAD(packet, 1, 0x80BFBFBF | ((unsigned long) 1 << 32));
 
-        int iw = (int) w;
-        int ih = (int) h;
+        int oval_width = (int) grown_width;
+        int oval_height = (int) grown_height;
         int px;
         int py;
 
-        px = x + (iw >> 1);
-        py = y + (ih >> 1) - top;
+        px = x + (oval_width >> 1);
+        py = y + (oval_height >> 1) - top;
 
         sceVif1PkAddGsAD(packet, 4,
                          (unsigned long) ((px << 4) + 0x6C00) |
@@ -1887,8 +1887,8 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             down = down * RandTbl2[step];
             across += 0.5f;
             down += 0.5f;
-            across = across * iw;
-            down = down * ih;
+            across = across * oval_width;
+            down = down * oval_height;
 
             px = (int) across;
             py = (int) down;
@@ -1911,8 +1911,8 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         down = down * RandTbl2[0];
         across += 0.5f;
         down += 0.5f;
-        across = across * iw;
-        down = down * ih;
+        across = across * oval_width;
+        down = down * oval_height;
 
         px = (int) across;
         py = (int) down;
@@ -2068,12 +2068,12 @@ void SetspRGBA(spRGBA *colour, int r, int g, int b, int a) {
 void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
     int area[4];
     int pos[2];
-    int x0;
-    int y0;
-    int sy0;
-    int w0;
-    int h0;
-    int sx0;
+    int tex_x;
+    int tex_y;
+    int screen_y;
+    int draw_width;
+    int draw_height;
+    int screen_x;
     int top;
 
     area[0] = this->win_x;
@@ -2109,106 +2109,106 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
     top = area[1];
     int right = area[2];
     int bottom = area[3];
-    w0 = right - left;
+    draw_width = right - left;
     int height = bottom - top;
-    x0 = (int) LinerInterpolation(this->grow_x, left, this->fade);
-    y0 = (int) LinerInterpolation(this->grow_y, top, this->fade);
-    w0 = (int) (w0 * this->fade);
-    h0 = (int) (height * this->fade);
-    sy0 = y0;
-    y0 -= top;
-    sx0 = x0 + dx;
-    sy0 += dy;
+    tex_x = (int) LinerInterpolation(this->grow_x, left, this->fade);
+    tex_y = (int) LinerInterpolation(this->grow_y, top, this->fade);
+    draw_width = (int) (draw_width * this->fade);
+    draw_height = (int) (height * this->fade);
+    screen_y = tex_y;
+    tex_y -= top;
+    screen_x = tex_x + dx;
+    screen_y += dy;
 
     if (frame != 0) {
         spRGBA bright;
         spRGBA dim;
-        int x1;
-        int x2;
-        int y1;
-        int w;
-        int h;
-        int y2;
-        int w2;
-        int h2;
-        int screen_y2;
-        int sy1;
-        int sy2;
-        int sy3;
-        int h1;
-        int h3;
-        int ty3;
-        int th1;
-        int th3;
-        int x3;
-        int w1;
-        int w3;
+        int outer_x;
+        int core_x;
+        int outer_y;
+        int outer_w;
+        int outer_h;
+        int core_y;
+        int core_w;
+        int core_h;
+        int core_screen_y;
+        int upper_screen_y;
+        int middle_screen_y;
+        int lower_screen_y;
+        int upper_h;
+        int lower_h;
+        int lower_tex_y;
+        int upper_tex_h;
+        int lower_tex_h;
+        int right_x;
+        int left_w;
+        int right_w;
 
         SetspRGBA(&bright, 0x80, 0x80, 0x80, 0x80);
         SetspRGBA(&dim, 0x60, 0x60, 0x60, 0x80);
 
         if (MesAbsDrawOff == 0) {
-            set2DSprite(Vif1Packet, texture, CRect_i_(sx0, sy0, w0, h0),
-                        CRect_i_(x0, y0, w0, h0), &dim, &dim, &dim, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(screen_x, screen_y, draw_width, draw_height),
+                        CRect_i_(tex_x, tex_y, draw_width, draw_height), &dim, &dim, &dim, &dim, 1);
         }
 
-        float fx = this->win_x;
-        float fy = this->win_y;
-        float fw = this->win_width;
-        float fh = this->win_height;
+        float win_left = this->win_x;
+        float win_top = this->win_y;
+        float win_w = this->win_width;
+        float win_h = this->win_height;
 
-        x1 = (int) LinerInterpolation(this->grow_x, fx, this->fade);
-        y1 = (int) LinerInterpolation(this->grow_y, fy, this->fade);
-        w = (int) (fw * this->fade);
-        h = (int) (fh * this->fade);
+        outer_x = (int) LinerInterpolation(this->grow_x, win_left, this->fade);
+        outer_y = (int) LinerInterpolation(this->grow_y, win_top, this->fade);
+        outer_w = (int) (win_w * this->fade);
+        outer_h = (int) (win_h * this->fade);
 
-        float bx = this->win_x + this->win_width / 6.0f;
-        float by = this->win_y + this->win_height / 6.0f;
-        float bw = 2.0f * this->win_width / 3.0f;
-        float bh = 2.0f * this->win_height / 3.0f;
+        float core_left = this->win_x + this->win_width / 6.0f;
+        float core_top = this->win_y + this->win_height / 6.0f;
+        float core_width = 2.0f * this->win_width / 3.0f;
+        float core_height = 2.0f * this->win_height / 3.0f;
 
-        x2 = (int) LinerInterpolation(this->grow_x, bx, this->fade);
-        y2 = (int) LinerInterpolation(this->grow_y, by, this->fade);
-        w2 = (int) (bw * this->fade);
-        h2 = (int) (bh * this->fade);
+        core_x = (int) LinerInterpolation(this->grow_x, core_left, this->fade);
+        core_y = (int) LinerInterpolation(this->grow_y, core_top, this->fade);
+        core_w = (int) (core_width * this->fade);
+        core_h = (int) (core_height * this->fade);
 
-        x3 = x2 + w2;
-        sy1 = y1;
-        screen_y2 = y2;
-        sy3 = y2 + h2;
-        w1 = x2 - x1;
-        w3 = x1 + w - x2 - w2;
-        h1 = y2 - y1;
-        h3 = y1 + h - y2 - h2;
-        y1 -= top;
-        y2 -= top;
-        sy2 = screen_y2;
-        ty3 = y2 + h2;
-        th1 = y2 - y1;
-        th3 = y1 + h - y2 - h2;
+        right_x = core_x + core_w;
+        upper_screen_y = outer_y;
+        core_screen_y = core_y;
+        lower_screen_y = core_y + core_h;
+        left_w = core_x - outer_x;
+        right_w = outer_x + outer_w - core_x - core_w;
+        upper_h = core_y - outer_y;
+        lower_h = outer_y + outer_h - core_y - core_h;
+        outer_y -= top;
+        core_y -= top;
+        middle_screen_y = core_screen_y;
+        lower_tex_y = core_y + core_h;
+        upper_tex_h = core_y - outer_y;
+        lower_tex_h = outer_y + outer_h - core_y - core_h;
 
         if (MesAbsDrawOff == 0) {
-            set2DSprite(Vif1Packet, texture, CRect_i_(x1, sy1, w1, h1),
-                        CRect_i_(x1, y1, w1, th1), &dim, &dim, &dim, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x2, sy1, w2, h1),
-                        CRect_i_(x2, y1, w2, th1), &dim, &dim, &bright, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x3, sy1, w3, h1),
-                        CRect_i_(x3, y1, w3, th1), &dim, &dim, &bright, &dim, 0);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x1, sy2, w1, h2),
-                        CRect_i_(x1, y2, w1, h2), &dim, &bright, &dim, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x2, sy2, w2, h2),
-                        CRect_i_(x2, y2, w2, h2), &bright, &bright, &bright, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x3, sy2, w3, h2),
-                        CRect_i_(x3, y2, w3, h2), &bright, &dim, &bright, &dim, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x1, sy3, w1, h3),
-                        CRect_i_(x1, ty3, w1, th3), &dim, &bright, &dim, &dim, 0);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x2, sy3, w2, h3),
-                        CRect_i_(x2, ty3, w2, th3), &bright, &bright, &dim, &dim, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(x3, sy3, w3, h3),
-                        CRect_i_(x3, ty3, w3, th3), &bright, &dim, &dim, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, upper_screen_y, left_w, upper_h),
+                        CRect_i_(outer_x, outer_y, left_w, upper_tex_h), &dim, &dim, &dim, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, upper_screen_y, core_w, upper_h),
+                        CRect_i_(core_x, outer_y, core_w, upper_tex_h), &dim, &dim, &bright, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, upper_screen_y, right_w, upper_h),
+                        CRect_i_(right_x, outer_y, right_w, upper_tex_h), &dim, &dim, &bright, &dim, 0);
+            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, middle_screen_y, left_w, core_h),
+                        CRect_i_(outer_x, core_y, left_w, core_h), &dim, &bright, &dim, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, middle_screen_y, core_w, core_h),
+                        CRect_i_(core_x, core_y, core_w, core_h), &bright, &bright, &bright, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, middle_screen_y, right_w, core_h),
+                        CRect_i_(right_x, core_y, right_w, core_h), &bright, &dim, &bright, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, lower_screen_y, left_w, lower_h),
+                        CRect_i_(outer_x, lower_tex_y, left_w, lower_tex_h), &dim, &bright, &dim, &dim, 0);
+            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, lower_screen_y, core_w, lower_h),
+                        CRect_i_(core_x, lower_tex_y, core_w, lower_tex_h), &bright, &bright, &dim, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, lower_screen_y, right_w, lower_h),
+                        CRect_i_(right_x, lower_tex_y, right_w, lower_tex_h), &bright, &dim, &dim, &dim, 1);
         }
     } else if (MesAbsDrawOff == 0) {
-        set2DSprite(Vif1Packet, texture, CRect_i_(sx0, sy0, w0, h0), CRect_i_(x0, y0, w0, h0),
+        set2DSprite(Vif1Packet, texture, CRect_i_(screen_x, screen_y, draw_width, draw_height), CRect_i_(tex_x, tex_y, draw_width, draw_height),
                     0, 0, 0, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
     }
 }
@@ -2304,7 +2304,7 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
     }
 }
 
-void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
+void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
                            const CRect_i_ &screen, int wide, int dark) {
     u8 r;
     u8 g;
@@ -2315,7 +2315,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
     int u;
     int v;
 
-    code = this->win_line[no].code;
+    code = this->win_line[index].code;
 
     if (code >= -0x300 && code < -0x2DF) {
         set2DSprite_Core(Vif1Packet, texture, screen, texel, 0x80, 0x80, 0x80,
@@ -2323,7 +2323,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
         return;
     }
 
-    clut = this->win_line[no].clut;
+    clut = this->win_line[index].clut;
 
     switch (FontColorTbl[clut]) {
         case 0x80BFBFBF:
@@ -2420,7 +2420,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
     set2DSprite_Core(Vif1Packet, texture, screen, texel, r, g, b,
                      this->edge_alpha < alpha ? this->edge_alpha : alpha);
 
-    switch (this->win_line[no].code) {
+    switch (this->win_line[index].code) {
         case -0x284:
         case -0x280:
         case -0x27F:
@@ -2493,10 +2493,10 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
 
 void ClsMes::DrawMesWin(void) {
     CTexture *texture;
-    int ox;
-    int oy;
+    int offset_x;
+    int offset_y;
     int dark;
-    int no;
+    int index;
 
     if (this->mes_made < 0) {
         return;
@@ -2504,16 +2504,16 @@ void ClsMes::DrawMesWin(void) {
 
     TexManager.ReloadTexture(Vif1Packet, this->tex_block);
 
-    ox = 0;
+    offset_x = 0;
 
     if (this->fukidashi != 0 && this->text_columns < 4) {
-        ox = (4 - this->text_columns) * this->char_width >> 1;
+        offset_x = (4 - this->text_columns) * this->char_width >> 1;
     }
 
-    oy = 0;
+    offset_y = 0;
 
     if (this->fukidashi == 0 && this->centre_rows != 0) {
-        oy = this->char_height * (this->rows - this->text_rows) >> 1;
+        offset_y = this->char_height * (this->rows - this->text_rows) >> 1;
     }
 
     if (this->fukidashi != 0) {
@@ -2547,14 +2547,14 @@ void ClsMes::DrawMesWin(void) {
                 height = this->stay_height;
             }
 
-            px = this->text_x + ox - 0x10;
-            py = this->text_y + oy - 0xE;
+            px = this->text_x + offset_x - 0x10;
+            py = this->text_y + offset_y - 0xE;
 
             if (0 < this->auto_pos) {
                 GetPos_AbsPosSet(0x10, 0x10, 0x260, 0x1A0, width, height, this->auto_pos, &px,
                                  &py);
-                this->text_x = px - ox + 0x10;
-                this->text_y = py - oy + 0xE;
+                this->text_x = px - offset_x + 0x10;
+                this->text_y = py - offset_y + 0xE;
             }
 
             if (MesAbsDrawOff == 0) {
@@ -2596,19 +2596,19 @@ void ClsMes::DrawMesWin(void) {
     setbilinear(0);
     set2DSprite_Start(Vif1Packet, texture);
 
-    for (no = this->text_from; no < this->text_no; no++) {
+    for (index = this->text_from; index < this->text_no; index++) {
         if (MesAbsDrawOff != 0) {
             continue;
         }
 
-        int code = this->win_line[no].code;
+        int code = this->win_line[index].code;
 
         if (code < -0x300 || code >= -0x263) {
             continue;
         }
 
-        int k = code + 0x300;
-        int u = GaijiDataTbl[k][GAIJI_U];
+        int gaiji_index = code + 0x300;
+        int u = GaijiDataTbl[gaiji_index][GAIJI_U];
 
         if (code >= -0x2DF && code < -0x263) {
             if (this->narrow_gaiji_set != 1) {
@@ -2620,84 +2620,84 @@ void ClsMes::DrawMesWin(void) {
             }
         }
 
-        int v = GaijiDataTbl[k][GAIJI_V];
-        int gw = GaijiDataTbl[k][GAIJI_WIDTH];
-        int gh = GaijiDataTbl[k][GAIJI_HEIGHT];
-        int dx = (this->char_width * GaijiDataTbl[k][GAIJI_CELLS] - gw) / 2;
-        int dy = (this->char_height - gh) / 2;
+        int v = GaijiDataTbl[gaiji_index][GAIJI_V];
+        int glyph_width = GaijiDataTbl[gaiji_index][GAIJI_WIDTH];
+        int glyph_height = GaijiDataTbl[gaiji_index][GAIJI_HEIGHT];
+        int dx = (this->char_width * GaijiDataTbl[gaiji_index][GAIJI_CELLS] - glyph_width) / 2;
+        int dy = (this->char_height - glyph_height) / 2;
 
-        dx += GaijiDataTbl[k][GAIJI_X_OFF];
+        dx += GaijiDataTbl[gaiji_index][GAIJI_X_OFF];
 
         if (this->narrow_gaiji != 0) {
-            if (GaijiDataTbl[k][GAIJI_CODE] == -0x2BD || GaijiDataTbl[k][GAIJI_CODE] == -0x2BA) {
+            if (GaijiDataTbl[gaiji_index][GAIJI_CODE] == -0x2BD || GaijiDataTbl[gaiji_index][GAIJI_CODE] == -0x2BA) {
                 dx -= 3;
             }
         }
 
-        dy += GaijiDataTbl[k][GAIJI_Y_OFF];
+        dy += GaijiDataTbl[gaiji_index][GAIJI_Y_OFF];
 
         if (this->char_height == 0x14) {
             dy += 1;
         }
 
-        int row = this->win_line[no].y / this->char_height;
+        int row = this->win_line[index].y / this->char_height;
 
         if (this->line_pos[row].x < 0 || this->line_pos[row].y < 0) {
-            int line_x = this->win_line[no].x + this->text_x;
-            int line_y = this->win_line[no].y + this->text_y;
-            int sx = ox + (line_x + dx);
+            int line_x = this->win_line[index].x + this->text_x;
+            int line_y = this->win_line[index].y + this->text_y;
+            int screen_x = offset_x + (line_x + dx);
             CRect_i_ screen;
-            screen.x = sx;
-            int sy = oy + (line_y + dy) - 3;
-            screen.y = sy;
-            screen.width = gw;
-            screen.height = gh;
-            CRect_i_ texel(u, v, gw, gh);
+            screen.x = screen_x;
+            int screen_y = offset_y + (line_y + dy) - 3;
+            screen.y = screen_y;
+            screen.width = glyph_width;
+            screen.height = glyph_height;
+            CRect_i_ texel(u, v, glyph_width, glyph_height);
 
-            if (this->win_line[no].code >= -0x2DF) {
-                this->Myset2DSprite_Fuchi(Vif1Packet, texture, sx, sy, gw, gh, u, v, gw, gh);
+            if (this->win_line[index].code >= -0x2DF) {
+                this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen_x, screen_y, glyph_width, glyph_height, u, v, glyph_width, glyph_height);
             }
 
             if (this->cursor_row < 0) {
-                this->DrawGaijiFont(texture, no, texel, screen, 0, dark);
+                this->DrawGaijiFont(texture, index, texel, screen, 0, dark);
             } else if (this->cursor_lit == 1) {
                 if (row == this->cursor_row) {
-                    this->DrawGaijiFont(texture, no, texel, screen, 1, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 1, dark);
                 } else {
-                    this->DrawGaijiFont(texture, no, texel, screen, 0, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 0, dark);
                 }
             } else {
                 if (row == this->cursor_row) {
-                    this->DrawGaijiFont(texture, no, texel, screen, 0, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 0, dark);
                 } else {
-                    this->DrawGaijiFont(texture, no, texel, screen, 1, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 1, dark);
                 }
             }
         } else {
-            int sx = this->win_line[no].x + this->line_pos[row].x;
-            int sy = this->win_line[no].y + this->line_pos[row].y;
-            sy += dy;
-            CRect_i_ screen(sx + dx, sy - row * this->char_height, gw, gh);
-            CRect_i_ texel(u, v, gw, gh);
+            int screen_x = this->win_line[index].x + this->line_pos[row].x;
+            int screen_y = this->win_line[index].y + this->line_pos[row].y;
+            screen_y += dy;
+            CRect_i_ screen(screen_x + dx, screen_y - row * this->char_height, glyph_width, glyph_height);
+            CRect_i_ texel(u, v, glyph_width, glyph_height);
 
-            if (this->win_line[no].code >= -0x2DF) {
-                this->Myset2DSprite_Fuchi(Vif1Packet, texture, sx + dx,
-                                          sy - row * this->char_height, gw, gh, u, v, gw, gh);
+            if (this->win_line[index].code >= -0x2DF) {
+                this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen_x + dx,
+                                          screen_y - row * this->char_height, glyph_width, glyph_height, u, v, glyph_width, glyph_height);
             }
 
             if (this->cursor_row < 0) {
-                this->DrawGaijiFont(texture, no, texel, screen, 0, dark);
+                this->DrawGaijiFont(texture, index, texel, screen, 0, dark);
             } else if (this->cursor_lit == 1) {
                 if (row == this->cursor_row) {
-                    this->DrawGaijiFont(texture, no, texel, screen, 1, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 1, dark);
                 } else {
-                    this->DrawGaijiFont(texture, no, texel, screen, 0, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 0, dark);
                 }
             } else {
                 if (row == this->cursor_row) {
-                    this->DrawGaijiFont(texture, no, texel, screen, 0, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 0, dark);
                 } else {
-                    this->DrawGaijiFont(texture, no, texel, screen, 1, dark);
+                    this->DrawGaijiFont(texture, index, texel, screen, 1, dark);
                 }
             }
         }
@@ -2710,10 +2710,10 @@ void ClsMes::DrawMesWin(void) {
             if ((this->blink >> 4) % 2 != 0) {
                 texture = TexManager.GetTexture("syst04", -1);
 
-                int sx = this->text_x + (this->char_width * this->text_columns >> 1) - 8;
-                int sy = this->text_y + this->char_height * this->text_rows;
+                int screen_x = this->text_x + (this->char_width * this->text_columns >> 1) - 8;
+                int screen_y = this->text_y + this->char_height * this->text_rows;
 
-                CRect_i_ screen(sx + ox, sy + oy, 0x10, 0x10);
+                CRect_i_ screen(screen_x + offset_x, screen_y + offset_y, 0x10, 0x10);
                 CRect_i_ texel(0, 0, 0x10, 0x10);
 
                 if (MesAbsDrawOff == 0) {
@@ -2727,10 +2727,10 @@ void ClsMes::DrawMesWin(void) {
     if (this->end_mark != 0) {
         texture = TexManager.GetTexture("syst04", -1);
 
-        int sx = this->text_x + (this->char_width * this->text_columns >> 1) - 8;
-        int sy = this->text_y + this->char_height * this->text_rows;
+        int screen_x = this->text_x + (this->char_width * this->text_columns >> 1) - 8;
+        int screen_y = this->text_y + this->char_height * this->text_rows;
 
-        CRect_i_ screen(sx + ox, sy + oy, 0x10, 0x10);
+        CRect_i_ screen(screen_x + offset_x, screen_y + offset_y, 0x10, 0x10);
         CRect_i_ texel(0, 0, 0x10, 0x10);
 
         if (MesAbsDrawOff == 0) {
@@ -2742,13 +2742,13 @@ void ClsMes::DrawMesWin(void) {
     if (this->cursor_row >= 0) {
         texture = TexManager.GetTexture("gaiji", -1);
 
-        int sx = this->text_x;
+        int screen_x = this->text_x;
 
         this->cursor_y = (this->cursor_y + this->char_height * this->cursor_row) / 2;
 
-        int sy = this->cursor_y + this->text_y;
+        int screen_y = this->cursor_y + this->text_y;
 
-        CRect_i_ screen(sx - 0xC + ox, sy - 4 + oy, 0x20, 0x20);
+        CRect_i_ screen(screen_x - 0xC + offset_x, screen_y - 4 + offset_y, 0x20, 0x20);
         CRect_i_ texel(0x60, 0x60, 0x20, 0x20);
 
         if (MesAbsDrawOff == 0) {

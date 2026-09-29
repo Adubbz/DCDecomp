@@ -95,10 +95,10 @@ static inline int vu_box_missed(float *max, float *min) {
    the one thing every shape answers. A shape with no vertices leaves the bound all zero. */
 void CCollision::CreateBBox() {
     int i;
-    int num;
+    int vertex_count;
     sceVu0FVECTOR *vertex;
 
-    vertex = GetVertexAddress(&num);
+    vertex = GetVertexAddress(&vertex_count);
     if (vertex == 0) {
         max[0] = min[0] = 0.0f;
         max[1] = min[1] = 0.0f;
@@ -113,7 +113,7 @@ void CCollision::CreateBBox() {
     min[1] = vertex[0][1];
     min[2] = vertex[0][2];
 
-    for (i = 0; i < num; i++) {
+    for (i = 0; i < vertex_count; i++) {
         if (max[0] < vertex[0][0]) {
             max[0] = vertex[0][0];
         }
@@ -143,11 +143,11 @@ sceVu0FVECTOR *CCollision::GetVertexAddress(int *count) {
 int CCollisionMDT::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2) {
     MDT_COLLISION *collision;
 
-    if (data == 0) {
+    if (model == 0) {
         return 0;
     }
 
-    collision = (MDT_COLLISION *) ((char *) data + data->mesh_ofs);
+    collision = (MDT_COLLISION *) ((char *) model + model->mesh_ofs);
     if (index >= collision->set.num) {
         return 0;
     }
@@ -166,32 +166,32 @@ int CCollisionMDT::GetMaxY(float *position) {
     sceVu0FVECTOR to;
     sceVu0FVECTOR hit;
     sceVu0FVECTOR normal;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
+    sceVu0FVECTOR tri_max;
+    sceVu0FVECTOR tri_min;
     int i;
     int found;
     sceVu0FVECTOR *vertex;
     MDT_CPOLY_SET *set;
     MDT_CPOLY *poly;
-    float y;
+    float top;
 
     found = 0;
 
-    if (data == 0) {
+    if (model == 0) {
         return 0;
     }
 
     /* An integer floor, converted rather than written as a float constant: the game spells it that
        way and the conversion is in the instruction stream. */
-    y = -100000000;
+    top = -100000000;
 
     from[0] = to[0] = position[0];
     from[2] = to[2] = position[2];
     from[1] = 0.0f;
     to[1] = 1.0f;
 
-    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
-    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
+    vertex = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) model + model->mesh_ofs))->set;
     poly = set->poly;
 
     for (i = 0; i < set->num; i++) {
@@ -200,12 +200,12 @@ int CCollisionMDT::GetMaxY(float *position) {
         *(u_long128 *) v2 = *(u_long128 *) vertex[poly->vertex[2]];
         poly++;
 
-        vu_maxmin3(max, min, v0, v1, v2);
+        vu_maxmin3(tri_max, tri_min, v0, v1, v2);
 
-        if (position[0] < min[0] || position[0] > max[0]) {
+        if (position[0] < tri_min[0] || position[0] > tri_max[0]) {
             continue;
         }
-        if (position[2] < min[2] || position[2] > max[2]) {
+        if (position[2] < tri_min[2] || position[2] > tri_max[2]) {
             continue;
         }
 
@@ -216,13 +216,13 @@ int CCollisionMDT::GetMaxY(float *position) {
         }
 
         found = 1;
-        if (y < hit[1]) {
-            y = hit[1];
+        if (top < hit[1]) {
+            top = hit[1];
         }
     }
 
     if (found != 0) {
-        position[1] = y;
+        position[1] = top;
     }
 
     return found;
@@ -238,17 +238,17 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
     sceVu0FVECTOR edge0;
     sceVu0FVECTOR edge1;
     sceVu0FVECTOR normal;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
+    sceVu0FVECTOR tri_max;
+    sceVu0FVECTOR tri_min;
     int i;
     int found;
     sceVu0FVECTOR *vertex;
     MDT_CPOLY_SET *set;
     MDT_CPOLY *poly;
-    float plane;
-    float start;
-    float end;
-    float best;
+    float plane_dist;
+    float from_dist;
+    float to_dist;
+    float best_distance;
     float distance;
     float dx;
     float dy;
@@ -256,8 +256,8 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
 
     found = 0;
 
-    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
-    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
+    vertex = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) model + model->mesh_ofs))->set;
     poly = set->poly;
 
     for (i = 0; i < set->num; i++) {
@@ -266,27 +266,27 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
         *(u_long128 *) v2 = *(u_long128 *) vertex[poly->vertex[2]];
         poly++;
 
-        vu_maxmin3(max, min, v0, v1, v2);
+        vu_maxmin3(tri_max, tri_min, v0, v1, v2);
 
-        if (from[0] < min[0] && to[0] < min[0]) {
+        if (from[0] < tri_min[0] && to[0] < tri_min[0]) {
             continue;
         }
-        if (from[0] > max[0] && to[0] > max[0]) {
+        if (from[0] > tri_max[0] && to[0] > tri_max[0]) {
             continue;
         }
         /* The far endpoint is held against the x extent in y and not the y one. That is what the
            game does and what its bytes depend on, so it is what this does; the effect is a reject
            that keeps more triangles than it needs to, and nothing below trusts it on its own. */
-        if (from[1] < min[1] && to[1] < min[0]) {
+        if (from[1] < tri_min[1] && to[1] < tri_min[0]) {
             continue;
         }
-        if (from[1] > max[1] && to[1] > max[0]) {
+        if (from[1] > tri_max[1] && to[1] > tri_max[0]) {
             continue;
         }
-        if (from[2] < min[2] && to[2] < min[2]) {
+        if (from[2] < tri_min[2] && to[2] < tri_min[2]) {
             continue;
         }
-        if (from[2] > max[2] && to[2] > max[2]) {
+        if (from[2] > tri_max[2] && to[2] > tri_max[2]) {
             continue;
         }
 
@@ -302,14 +302,14 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
         sceVu0OuterProduct(normal, edge0, edge1);
         normal[3] = 0.0f;
 
-        plane = sceVu0InnerProduct(normal, v0);
-        start = sceVu0InnerProduct(normal, from);
-        end = sceVu0InnerProduct(normal, to);
+        plane_dist = sceVu0InnerProduct(normal, v0);
+        from_dist = sceVu0InnerProduct(normal, from);
+        to_dist = sceVu0InnerProduct(normal, to);
 
-        if (plane - start > 0.0f && plane - end > 0.0f) {
+        if (plane_dist - from_dist > 0.0f && plane_dist - to_dist > 0.0f) {
             continue;
         }
-        if (plane - start < 0.0f && plane - end < 0.0f) {
+        if (plane_dist - from_dist < 0.0f && plane_dist - to_dist < 0.0f) {
             continue;
         }
 
@@ -323,12 +323,12 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
         distance = dx * dx + dy * dy + dz * dz;
 
         if (found == 0) {
-            best = distance;
+            best_distance = distance;
             sceVu0CopyVector(hit, point);
             found = 1;
         } else {
-            if (distance < best) {
-                best = distance;
+            if (distance < best_distance) {
+                best_distance = distance;
                 sceVu0CopyVector(hit, point);
             }
             found = 1;
@@ -339,27 +339,27 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
 }
 
 sceVu0FVECTOR *CCollisionMDT::GetVertexAddress(int *count) {
-    if (data == 0) {
+    if (model == 0) {
         return 0;
     }
 
-    *count = data->vertex_num;
+    *count = model->vertex_num;
     if (*count <= 0) {
         return 0;
     }
 
-    return (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
+    return (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
 }
 
 /* Every triangle of the mesh whose own bound reaches a cube around the point. */
 int CCollisionMDT::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
+    sceVu0FVECTOR tri_max;
+    sceVu0FVECTOR tri_min;
     int i;
     int num;
     sceVu0FVECTOR *vertex;
     MDT_CPOLY_SET *set;
-    MDT_CPOLY *box_poly;
+    MDT_CPOLY *cpoly;
     CCPoly *out;
     float max_x;
     float max_y;
@@ -378,22 +378,22 @@ int CCollisionMDT::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
     min_y = position[1] - radius;
     min_z = position[2] - radius;
 
-    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
-    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
-    box_poly = set->poly;
+    vertex = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) model + model->mesh_ofs))->set;
+    cpoly = set->poly;
 
     for (i = 0; i < set->num; i++) {
-        *(u_long128 *) out->vertex[0] = *(u_long128 *) vertex[box_poly->vertex[0]];
-        *(u_long128 *) out->vertex[1] = *(u_long128 *) vertex[box_poly->vertex[1]];
-        *(u_long128 *) out->vertex[2] = *(u_long128 *) vertex[box_poly->vertex[2]];
-        box_poly++;
+        *(u_long128 *) out->vertex[0] = *(u_long128 *) vertex[cpoly->vertex[0]];
+        *(u_long128 *) out->vertex[1] = *(u_long128 *) vertex[cpoly->vertex[1]];
+        *(u_long128 *) out->vertex[2] = *(u_long128 *) vertex[cpoly->vertex[2]];
+        cpoly++;
 
-        vu_maxmin3(max, min, out->vertex[0], out->vertex[1], out->vertex[2]);
+        vu_maxmin3(tri_max, tri_min, out->vertex[0], out->vertex[1], out->vertex[2]);
 
-        if (min_x > max[0] || min_y > max[1] || min_z > max[2]) {
+        if (min_x > tri_max[0] || min_y > tri_max[1] || min_z > tri_max[2]) {
             continue;
         }
-        if (max_x < min[0] || max_y < min[1] || max_z < min[2]) {
+        if (max_x < tri_min[0] || max_y < tri_min[1] || max_z < tri_min[2]) {
             continue;
         }
 
@@ -444,7 +444,7 @@ int CCollisionMDT::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
     vu_hold_box(bound.max, bound.min);
 
     box_poly = mesh;
-    for (i = 0; i < this->num; i++, box_poly++) {
+    for (i = 0; i < this->mesh_count; i++, box_poly++) {
         if (vu_box_missed(box_poly->box.max, box_poly->box.min) == 0) {
             *(u_long128 *) poly->vertex[0] = *(u_long128 *) box_poly->poly.vertex[0];
             *(u_long128 *) poly->vertex[1] = *(u_long128 *) box_poly->poly.vertex[1];
@@ -465,19 +465,19 @@ int CCollisionMDT::PickUpNearPoly(CCPoly *poly) {
     int num;
     sceVu0FVECTOR *vertex;
     MDT_CPOLY_SET *set;
-    MDT_CPOLY *box_poly;
+    MDT_CPOLY *cpoly;
 
     num = 0;
 
-    vertex = (sceVu0FVECTOR *) ((char *) data + data->vertex_ofs);
-    set = &((MDT_COLLISION *) ((char *) data + data->mesh_ofs))->set;
-    box_poly = set->poly;
+    vertex = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
+    set = &((MDT_COLLISION *) ((char *) model + model->mesh_ofs))->set;
+    cpoly = set->poly;
 
     for (i = 0; i < set->num; i++) {
-        *(u_long128 *) poly->vertex[0] = *(u_long128 *) vertex[box_poly->vertex[0]];
-        *(u_long128 *) poly->vertex[1] = *(u_long128 *) vertex[box_poly->vertex[1]];
-        *(u_long128 *) poly->vertex[2] = *(u_long128 *) vertex[box_poly->vertex[2]];
-        box_poly++;
+        *(u_long128 *) poly->vertex[0] = *(u_long128 *) vertex[cpoly->vertex[0]];
+        *(u_long128 *) poly->vertex[1] = *(u_long128 *) vertex[cpoly->vertex[1]];
+        *(u_long128 *) poly->vertex[2] = *(u_long128 *) vertex[cpoly->vertex[2]];
+        cpoly++;
 
         vu_normal(poly->normal, poly->vertex[0], poly->vertex[1], poly->vertex[2]);
         poly++;

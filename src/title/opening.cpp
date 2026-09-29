@@ -48,10 +48,10 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 } __attribute__((aligned(16)));
 
 sceVif1Packet *GetVif1Packet();
@@ -241,7 +241,7 @@ static void LoadMessage() {
     Mes1.text_rate_set = 1.0f;
     Mes1.end_mark = 0;
     Mes1.tex_block = 26;
-    Mes1.unk_17B0 = MesWinTexBuff_01;
+    Mes1.tex_buff = MesWinTexBuff_01;
     Mes1.tail_to_x = 320;
     Mes1.tail_to_y = 234;
     Mes1.tail_half_width = 8;
@@ -287,7 +287,7 @@ static void LoadMessage() {
  * @unknownret
  */
 static void LoadScene() {
-    char *name[3][2] = {
+    char *files[3][2] = {
         {"opdat/scene/0101acp.sne", "0101acp.cfg"},
         {"opdat/scene/0101bcp.sne", "0101bcp.cfg"},
         {"opdat/scene/0104cp.sne", "0104cp.cfg"},
@@ -295,8 +295,8 @@ static void LoadScene() {
     int i;
 
     for (i = 0; i < 3; i++) {
-        LoadFile(name[i][0], (void *) read_buffer, 0);
-        Cam__2[i].LoadPackData(read_buffer, name[i][1], &PassDataBuffer[i], 0);
+        LoadFile(files[i][0], (void *) read_buffer, 0);
+        Cam__2[i].LoadPackData(read_buffer, files[i][1], &PassDataBuffer[i], 0);
         Cam__2[i].motion_type.state.time = 1.0f;
         Cam__2[i].motion_type.state.blend_step = 1.0f;
         Cam__2[i].motion_type.state.motion_no = 0;
@@ -307,8 +307,8 @@ static void LoadScene() {
 
 void LoadSceneBG() {
     CDataAlloc2<1> *buffer;
-    int rp;
-    char *name[126][2] = {
+    int slot;
+    char *files[126][2] = {
         {"opdat/scene/0101acp.sne", "0101acp.cfg"},
         {"opdat/scene/0101bcp.sne", "0101bcp.cfg"},
         {"opdat/scene/0104cp.sne", "0104cp.cfg"},
@@ -437,7 +437,7 @@ void LoadSceneBG() {
         {"-1", "-1"},
     };
 
-    if (name[SceneCnt][0] == "-1")
+    if (files[SceneCnt][0] == "-1")
         return;
 
     switch (SceneFlg) {
@@ -446,16 +446,16 @@ void LoadSceneBG() {
                 ;
             if (SceneCnt % 5 == 0)
                 StartReadBG();
-            LoadFileBG(name[SceneCnt][0], (u_long128 *) PassReadBuffer, 0);
+            LoadFileBG(files[SceneCnt][0], (u_long128 *) PassReadBuffer, 0);
             SceneFlg = 1;
             break;
         case 1:
             if (ReadBGSync())
                 break;
-            rp = SceneRp;
-            buffer = &PassDataBuffer[rp];
+            slot = SceneRp;
+            buffer = &PassDataBuffer[slot];
             buffer->used = 0;
-            Cam__2[rp].LoadPackData((u_int *) PassReadBuffer, name[SceneCnt][1], buffer, 0);
+            Cam__2[slot].LoadPackData((u_int *) PassReadBuffer, files[SceneCnt][1], buffer, 0);
             SceneCnt++;
             SceneRp++;
             if (SceneRp > 2)
@@ -1006,7 +1006,7 @@ static void DrawMess() {
         }
     }
 
-    Mes1.auto_page_wait = CScript__2.mes_fuchi;
+    Mes1.auto_page_wait = CScript__2.mes_page_wait;
     Mes1.text_x = CScript__2.mes_x;
     Mes1.text_y = CScript__2.mes_y;
     if (CScript__2.mes_tail_x == 0) {
@@ -1046,24 +1046,24 @@ static void DrawMess() {
 }
 
 void OpBgmPlay() {
-    int vol[8] = {82, 106, 64, 69, 91, 92, 95, 108};
+    int volumes[8] = {82, 106, 64, 69, 91, 92, 95, 108};
 
     if (BgmOff == 0) {
         CSnd.SQ_Play(0, 0);
     } else {
         CSnd.SQ_Play(0, 0, 0);
     }
-    BgmVol = vol[BgmNo];
+    BgmVol = volumes[BgmNo];
     BgmNo++;
 }
 
 void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group, int no, int voice) {
     float volume;
     float pan;
-    short *table;
-    short base;
+    short *se_info;
+    short base_volume;
     int level;
-    int se;
+    int se_index;
     int pan_level;
 
     SndGetVolPan(&volume, &pan, position, near_dist, far_dist);
@@ -1072,10 +1072,10 @@ void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group,
     if (pan > 1.0f)
         pan = 1.0f;
     pan_level = (int) (63.0f * pan) + 64;
-    se = CSnd.GetSeNo(no, voice);
-    table = CSnd.GetSeInfTbl();
-    base = table[se * 2 + 1];
-    level = (int) ((float) base * volume);
+    se_index = CSnd.GetSeNo(no, voice);
+    se_info = CSnd.GetSeInfTbl();
+    base_volume = se_info[se_index * 2 + 1];
+    level = (int) ((float) base_volume * volume);
     if (level < 0)
         level = 0;
     if (level > 127)
@@ -1086,10 +1086,10 @@ void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group,
 void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, int no, int voice) {
     float volume;
     float pan;
-    short *table;
-    short base;
+    short *se_info;
+    short base_volume;
     int level;
-    int se;
+    int se_index;
     int pan_level;
 
     SndGetVolPan(&volume, &pan, position, near_dist, far_dist);
@@ -1099,10 +1099,10 @@ void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, 
         pan = 1.0f;
     pan_level = (int) (63.0f * pan) + 64;
     CSnd.SE_SetPan(group, no, voice, pan_level, 0);
-    se = CSnd.GetSeNo(no, voice);
-    table = CSnd.GetSeInfTbl();
-    base = table[se * 2 + 1];
-    level = (int) ((float) base * volume);
+    se_index = CSnd.GetSeNo(no, voice);
+    se_info = CSnd.GetSeInfTbl();
+    base_volume = se_info[se_index * 2 + 1];
+    level = (int) ((float) base_volume * volume);
     if (level < 0)
         level = 0;
     if (level > 127)
@@ -1111,15 +1111,15 @@ void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, 
 }
 
 void OpPlayVolSE(int group, int no, int voice, float volume) {
-    short *table;
-    short base;
-    int se;
+    short *se_info;
+    short base_volume;
+    int se_index;
     int level;
 
-    se = CSnd.GetSeNo(no, voice);
-    table = CSnd.GetSeInfTbl();
-    base = table[se * 2 + 1];
-    level = (int) ((float) base * volume);
+    se_index = CSnd.GetSeNo(no, voice);
+    se_info = CSnd.GetSeInfTbl();
+    base_volume = se_info[se_index * 2 + 1];
+    level = (int) ((float) base_volume * volume);
     if (level < 0)
         level = 0;
     if (level > 127)
@@ -1170,7 +1170,7 @@ public:
     virtual void FrameObjectOnOff(char *name, int on);
     virtual void Draw();
 
-    void SetFrame(CFrameVu1 *frame, int unknown0);
+    void SetFrame(CFrameVu1 *frame, int level);
 };
 
 /* One piece of scenery. A map holds a table of them, hands each its model, and drives them through
@@ -1180,35 +1180,35 @@ public:
     virtual void Draw();
 
     void Initialize();
-    void DrawShadow(int unknown0);
+    void DrawShadow(int fast);
 
     char unk_00[36];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *unk_D4;
     char unk_28[8];
-    float lod_distance;
-    int unk_34;
-    int unk_38;
-    char unk_3C[4];
+    float unk_E0;
+    int unk_34; /**< Category row of the map the object draws with. */
+    int handle; /**< Handle the map gave the object; below zero where the slot is free. */
+    char unk_EC[4];
 };
 
 /* One row of the table a map sorts its scenery by. The loader writes row one and no other, and
    what it writes there are the four distances a level-of-detail object changes model at. */
 class CategoryAttr {
 public:
-    float lod[4];
-    int unk_10;
-    int unk_14;
+    float lod[4]; /**< Distances at which the category changes level of detail. */
+    int lowest;   /**< Lowest level of detail that the category may draw. */
+    int highest;  /**< Highest level of detail that the category may draw. */
 };
 
 /* A run of frames the world draws as one. */
 class CMap {
 public:
-    CMapObject *SetObject(CFrameVu1 *frame, int unknown0, int unknown1);
-    CMapObject *SetObject(int no, CFrameVu1 *frame, int unknown0, int unknown1);
+    CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
+    CMapObject *SetObject(int no, CFrameVu1 *frame, int category_no, int handle);
     CMapObject *GetObject(int no);
 
-    CategoryAttr category[16];
-    char unread0[2416];
+    CategoryAttr category[16]; /**< Level-of-detail ranges for the map's object categories. */
+    char unk_180[2416];
 };
 
 /* One looping object animation a definition file registers: a frame is found by name and then
@@ -1217,15 +1217,15 @@ class OBJ_ANIME_SEQ {
 public:
     void Initialize();
 
-    char name[16];
-    int motion_start;
-    int motion_end;
+    char name[16]; /**< Name of the frame the animation drives. */
+    int type;      /**< Kind of animation the sequence plays. */
+    int number;    /**< Animation number selected within that kind. */
     char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
-    float unk_40;
-    float unk_44;
-    float step;
+    sceVu0FVECTOR start; /**< Value the animation starts from. */
+    sceVu0FVECTOR unk_30;
+    float step_x; /**< Amount the first component advances each step. */
+    float step_y; /**< Amount the second component advances each step. */
+    float step_z; /**< Amount the third component advances each step. */
     char unk_4C[60];
 };
 
@@ -1334,17 +1334,17 @@ static float levelOfDitialZ[4] = {200.0f, 400.0f, 800.0f, 1600.0f};
    asked for and everything after it is what it asked for it to be, which is why the parser clears
    only that word and the loader writes the rest. */
 struct POINT_LIGHT {
-    int used;
-    float x;
-    float y;
-    float z;
-    u_char r;
-    u_char g;
-    u_char b;
+    int used; /**< Whether the definition file placed this light. */
+    float x;  /**< Horizontal world position. */
+    float y;  /**< Vertical world position. */
+    float z;  /**< Depth world position. */
+    u_char r; /**< Red component of the light's colour. */
+    u_char g; /**< Green component of the light's colour. */
+    u_char b; /**< Blue component of the light's colour. */
     char unk_13[1];
-    u_int unk_14;
-    u_int unk_18;
-    float unk_1C;
+    u_int arg7; /**< Seventh argument of the PLIGHT command, truncated to an integer. */
+    u_int arg8; /**< Eighth argument of the PLIGHT command, truncated to an integer. */
+    float arg9; /**< Ninth argument of the PLIGHT command. */
 };
 
 static POINT_LIGHT pointLight[96];
@@ -1380,21 +1380,21 @@ static int checkArg(char *buf, int pos, int *command);
    no command at all is fatal, because a definition file the loader half-understands would place
    half a scene. */
 void OPAnalyz(char *name) {
-    char *buf;
+    char *buffer;
     int i;
-    int pos;
-    int ok;
+    int position;
+    int matched;
 
     argLevel = 0;
-    buf = teigiBuff;
+    buffer = teigiBuff;
 
     if (LoadFile(name, teigiBuff, &teigiFileSize) == 0)
         return;
 
     for (i = 0; i < teigiFileSize; i++) {
-        if (buf[i] == 13 && buf[i + 1] == 10) {
-            buf[i + 1] = 0;
-            buf[i] = 0;
+        if (buffer[i] == 13 && buffer[i + 1] == 10) {
+            buffer[i + 1] = 0;
+            buffer[i] = 0;
         }
     }
 
@@ -1402,374 +1402,374 @@ void OPAnalyz(char *name) {
         pointLight[i].used = 0;
     pointLightStack = 0;
 
-    pos = 0;
-    while (pos < teigiFileSize) {
-        ok = 0;
+    position = 0;
+    while (position < teigiFileSize) {
+        matched = 0;
 
-        pos = skipSpace(buf, pos);
+        position = skipSpace(buffer, position);
 
-        if (memcmp(&buf[pos], "GRD_IMG", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_GRD_IMG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "GRD_IMG", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_GRD_IMG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "BLD_IMG", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_BLD_IMG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "BLD_IMG", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_BLD_IMG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "SKY_IMG", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_SKY_IMG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "SKY_IMG", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_SKY_IMG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "GND", 3) == 0) {
-            pos = skipSpace(buf, pos + 3);
-            pos = checkArg(buf, pos, TEIGI_GRD);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "GND", 3) == 0) {
+            position = skipSpace(buffer, position + 3);
+            position = checkArg(buffer, position, TEIGI_GRD);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "BLD", 3) == 0 &&
-            memcmp(&buf[pos], "BLD_IMG", 7) != 0) {
-            pos = skipSpace(buf, pos + 3);
-            pos = checkArg(buf, pos, TEIGI_BLD);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "BLD", 3) == 0 &&
+            memcmp(&buffer[position], "BLD_IMG", 7) != 0) {
+            position = skipSpace(buffer, position + 3);
+            position = checkArg(buffer, position, TEIGI_BLD);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "LOD", 3) == 0) {
-            pos = skipSpace(buf, pos + 3);
-            pos = checkArg(buf, pos, TEIGI_LOD);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "LOD", 3) == 0) {
+            position = skipSpace(buffer, position + 3);
+            position = checkArg(buffer, position, TEIGI_LOD);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "SKY", 3) == 0) {
-            pos = skipSpace(buf, pos + 3);
-            pos = checkArg(buf, pos, TEIGI_SKY);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "SKY", 3) == 0) {
+            position = skipSpace(buffer, position + 3);
+            position = checkArg(buffer, position, TEIGI_SKY);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "FOG", 3) == 0) {
-            pos = skipSpace(buf, pos + 3);
-            pos = checkArg(buf, pos, TEIGI_FOG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "FOG", 3) == 0) {
+            position = skipSpace(buffer, position + 3);
+            position = checkArg(buffer, position, TEIGI_FOG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "CRD", 3) == 0) {
-            pos = skipSpace(buf, pos + 3);
-            pos = checkArg(buf, pos, TEIGI_CRD);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "CRD", 3) == 0) {
+            position = skipSpace(buffer, position + 3);
+            position = checkArg(buffer, position, TEIGI_CRD);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "AMBIENT", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_AMBIENT);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "AMBIENT", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_AMBIENT);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "LIGHT_C", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_LIGHT_COL);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "LIGHT_C", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_LIGHT_COL);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "FARCLIP", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_FARCLIP);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "FARCLIP", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_FARCLIP);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
         /* Six where the keyword is seven, which is the original's own step: the `2` is left
            standing, and a digit is not a separator, so it is the argument reader that meets it. */
-        if (memcmp(&buf[pos], "BG_COL2", 7) == 0) {
-            pos = skipSpace(buf, pos + 6);
-            pos = checkArg(buf, pos, TEIGI_BG_COL2);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "BG_COL2", 7) == 0) {
+            position = skipSpace(buffer, position + 6);
+            position = checkArg(buffer, position, TEIGI_BG_COL2);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "BG_COL", 6) == 0) {
-            pos = skipSpace(buf, pos + 6);
-            pos = checkArg(buf, pos, TEIGI_BG_COL);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "BG_COL", 6) == 0) {
+            position = skipSpace(buffer, position + 6);
+            position = checkArg(buffer, position, TEIGI_BG_COL);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "NORMALCLIP_OFF", 14) == 0) {
-            pos = skipSpace(buf, pos + 14);
-            pos = checkArg(buf, pos, TEIGI_NORMALCLIP_OFF);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "NORMALCLIP_OFF", 14) == 0) {
+            position = skipSpace(buffer, position + 14);
+            position = checkArg(buffer, position, TEIGI_NORMALCLIP_OFF);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "RUN_SPEED", 9) == 0) {
-            pos = skipSpace(buf, pos + 9);
-            pos = checkArg(buf, pos, TEIGI_RUN_SPEED);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "RUN_SPEED", 9) == 0) {
+            position = skipSpace(buffer, position + 9);
+            position = checkArg(buffer, position, TEIGI_RUN_SPEED);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "EDIT_FOG", 8) == 0) {
-            pos = skipSpace(buf, pos + 8);
-            pos = checkArg(buf, pos, TEIGI_EDIT_FOG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "EDIT_FOG", 8) == 0) {
+            position = skipSpace(buffer, position + 8);
+            position = checkArg(buffer, position, TEIGI_EDIT_FOG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "WATER_SET", 9) == 0) {
-            pos = skipSpace(buf, pos + 9);
-            pos = checkArg(buf, pos, TEIGI_WATER_SET);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "WATER_SET", 9) == 0) {
+            position = skipSpace(buffer, position + 9);
+            position = checkArg(buffer, position, TEIGI_WATER_SET);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "WATER_RGB", 9) == 0) {
-            pos = skipSpace(buf, pos + 9);
-            pos = checkArg(buf, pos, TEIGI_WATER_RGB);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "WATER_RGB", 9) == 0) {
+            position = skipSpace(buffer, position + 9);
+            position = checkArg(buffer, position, TEIGI_WATER_RGB);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "WATER_PARAM", 11) == 0) {
-            pos = skipSpace(buf, pos + 11);
-            pos = checkArg(buf, pos, TEIGI_WATER_PARAM);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "WATER_PARAM", 11) == 0) {
+            position = skipSpace(buffer, position + 11);
+            position = checkArg(buffer, position, TEIGI_WATER_PARAM);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "LEVEL_FAR", 9) == 0) {
-            pos = skipSpace(buf, pos + 9);
-            pos = checkArg(buf, pos, TEIGI_LEVEL_FAR);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "LEVEL_FAR", 9) == 0) {
+            position = skipSpace(buffer, position + 9);
+            position = checkArg(buffer, position, TEIGI_LEVEL_FAR);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "DebugFlag", 9) == 0) {
-            pos = skipSpace(buf, pos + 9);
-            pos = checkArg(buf, pos, TEIGI_DebugFlag);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "DebugFlag", 9) == 0) {
+            position = skipSpace(buffer, position + 9);
+            position = checkArg(buffer, position, TEIGI_DebugFlag);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "AnimeSpeed", 10) == 0) {
-            pos = skipSpace(buf, pos + 10);
-            pos = checkArg(buf, pos, TEIGI_AnimeSpeed);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "AnimeSpeed", 10) == 0) {
+            position = skipSpace(buffer, position + 10);
+            position = checkArg(buffer, position, TEIGI_AnimeSpeed);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "UPER", 4) == 0) {
-            pos = skipSpace(buf, pos + 4);
-            pos = checkArg(buf, pos, TEIGI_UPER);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "UPER", 4) == 0) {
+            position = skipSpace(buffer, position + 4);
+            position = checkArg(buffer, position, TEIGI_UPER);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "UPR_IMG", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_UPR_IMG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "UPR_IMG", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_UPR_IMG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "PLIGHT", 6) == 0) {
-            pos = skipSpace(buf, pos + 6);
-            pos = checkArg(buf, pos, TEIGI_PLIGHT);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "PLIGHT", 6) == 0) {
+            position = skipSpace(buffer, position + 6);
+            position = checkArg(buffer, position, TEIGI_PLIGHT);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "ADD_CRD", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_ADD_CRD);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "ADD_CRD", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_ADD_CRD);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "DEF_PATS", 8) == 0) {
-            pos = skipSpace(buf, pos + 8);
+        if (memcmp(&buffer[position], "DEF_PATS", 8) == 0) {
+            position = skipSpace(buffer, position + 8);
             argValBuff[argLevel][0] = (float) TEIGI_DEF_PATS[0];
-            ok = 1;
+            matched = 1;
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "DEF_ENDS", 8) == 0) {
-            pos = skipSpace(buf, pos + 8);
+        if (memcmp(&buffer[position], "DEF_ENDS", 8) == 0) {
+            position = skipSpace(buffer, position + 8);
             argValBuff[argLevel][0] = (float) TEIGI_DEF_ENDS[0];
-            ok = 1;
+            matched = 1;
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "PT_BASE", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_PT_BASE);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "PT_BASE", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_PT_BASE);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "MAPD", 4) == 0) {
-            pos = skipSpace(buf, pos + 4);
-            pos = checkArg(buf, pos, TEIGI_MAPD);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "MAPD", 4) == 0) {
+            position = skipSpace(buffer, position + 4);
+            position = checkArg(buffer, position, TEIGI_MAPD);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "PT_COLS", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_PT_COLS);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "PT_COLS", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_PT_COLS);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "PT_FIRE", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_PT_FIRE);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "PT_FIRE", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_PT_FIRE);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "PT_WATER", 8) == 0) {
-            pos = skipSpace(buf, pos + 8);
-            pos = checkArg(buf, pos, TEIGI_PT_WATER);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "PT_WATER", 8) == 0) {
+            position = skipSpace(buffer, position + 8);
+            position = checkArg(buffer, position, TEIGI_PT_WATER);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "S_VOLUME", 8) == 0) {
-            pos = skipSpace(buf, pos + 8);
-            pos = checkArg(buf, pos, TEIGI_S_VOLUME);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "S_VOLUME", 8) == 0) {
+            position = skipSpace(buffer, position + 8);
+            position = checkArg(buffer, position, TEIGI_S_VOLUME);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "PROJECTION", 10) == 0) {
-            pos = skipSpace(buf, pos + 10);
-            pos = checkArg(buf, pos, TEIGI_PROJECTION);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "PROJECTION", 10) == 0) {
+            position = skipSpace(buffer, position + 10);
+            position = checkArg(buffer, position, TEIGI_PROJECTION);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "OBJ_ROT", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_OBJ_ROT);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "OBJ_ROT", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_OBJ_ROT);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "MAPINFO", 7) == 0) {
-            pos = skipSpace(buf, pos + 7);
-            pos = checkArg(buf, pos, TEIGI_MAPINFO);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "MAPINFO", 7) == 0) {
+            position = skipSpace(buffer, position + 7);
+            position = checkArg(buffer, position, TEIGI_MAPINFO);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "FIRE_IMG", 8) == 0) {
-            pos = skipSpace(buf, pos + 8);
-            pos = checkArg(buf, pos, TEIGI_FIRE_IMG);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "FIRE_IMG", 8) == 0) {
+            position = skipSpace(buffer, position + 8);
+            position = checkArg(buffer, position, TEIGI_FIRE_IMG);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buf[pos], "FIRE", 4) == 0) {
-            pos = skipSpace(buf, pos + 4);
-            pos = checkArg(buf, pos, TEIGI_FIRE);
-            if (pos != -1)
-                ok = 1;
-            pos = skipSpace(buf, pos);
+        if (memcmp(&buffer[position], "FIRE", 4) == 0) {
+            position = skipSpace(buffer, position + 4);
+            position = checkArg(buffer, position, TEIGI_FIRE);
+            if (position != -1)
+                matched = 1;
+            position = skipSpace(buffer, position);
             argLevel++;
         }
-        if (!ok)
+        if (!matched)
             exit__2(-1);
 
-        pos = skipSpace(buf, pos);
+        position = skipSpace(buffer, position);
     }
 }
 
@@ -1779,28 +1779,28 @@ void OPAnalyz(char *name) {
    as it goes is what every model it places is given, which is why the two commands that place a
    whole building save it and put it back: what they set is theirs alone. */
 void OPMdsLoad() {
-    CFrameAttr attrSave;
+    CFrameAttr saved_attr;
     CFrameAttr attr;
     char path[4][128];
-    CFrameVu1 *lodFrame[4];
-    sceVu0FVECTOR lightDir;
+    CFrameVu1 *lod_frames[4];
+    sceVu0FVECTOR light_dir;
     int i;
     int j;
     int k;
-    int lightNo;
-    int slot;
+    int light_no;
+    int light_slot;
     CFrameVu1 *frame;
-    CFrameVu1 *rotFrame;
+    CFrameVu1 *rot_frame;
     CMapObject *object;
     CFrame *shadow;
     float rx;
     float ry;
     float rz;
-    float lx;
+    float light_x;
 
-    attr.unk_04 = 20.0f;
-    attr.unk_08 = 1;
-    attr.unk_0B = 0;
+    attr.clip_depth = 20.0f;
+    attr.clip_enable = 1;
+    attr.program_option = 0;
 
     nowObjCnt = 0;
     nowObjCnt2 = 0;
@@ -1833,17 +1833,17 @@ void OPMdsLoad() {
         }
 
         if (TEIGI_WATER_SET[0] == (int) argValBuff[i][0]) {
-            float w = argValBuff[i][1] / 2.0f;
-            float h = argValBuff[i][2] / 2.0f;
+            float half_width = argValBuff[i][1] / 2.0f;
+            float half_depth = argValBuff[i][2] / 2.0f;
 
-            WaterV1[0] = -w;
-            WaterV1[2] = -h;
-            WaterV2[0] = w;
-            WaterV2[2] = -h;
-            WaterV3[0] = -w;
-            WaterV3[2] = h;
-            WaterV4[0] = w;
-            WaterV4[2] = h;
+            WaterV1[0] = -half_width;
+            WaterV1[2] = -half_depth;
+            WaterV2[0] = half_width;
+            WaterV2[2] = -half_depth;
+            WaterV3[0] = -half_width;
+            WaterV3[2] = half_depth;
+            WaterV4[0] = half_width;
+            WaterV4[2] = half_depth;
             WaterPos[0] = argValBuff[i][3];
             WaterPos[1] = argValBuff[i][4];
             WaterPos[2] = argValBuff[i][5];
@@ -1862,9 +1862,9 @@ void OPMdsLoad() {
 
         if (TEIGI_NORMALCLIP_OFF[0] == (int) argValBuff[i][0]) {
             if (argValBuff[i][1] == 0.0f) {
-                attr.unk_0B = 0;
+                attr.program_option = 0;
             } else {
-                attr.unk_0B = 1;
+                attr.program_option = 1;
             }
         }
 
@@ -1879,28 +1879,28 @@ void OPMdsLoad() {
         }
 
         if (TEIGI_FARCLIP[0] == (int) argValBuff[i][0]) {
-            attr.unk_0D = 1;
-            attr.unk_10 = argValBuff[i][1];
+            attr.far_clip_enable = 1;
+            attr.far_clip = argValBuff[i][1];
         }
 
         if (TEIGI_LIGHT_COL[0] == (int) argValBuff[i][0]) {
-            lightNo = (int) argValBuff[i][7];
-            lightDir[0] = argValBuff[i][1];
-            lightDir[1] = argValBuff[i][2];
-            lightDir[2] = argValBuff[i][3];
-            sceVu0Normalize(lightDir, lightDir);
+            light_no = (int) argValBuff[i][7];
+            light_dir[0] = argValBuff[i][1];
+            light_dir[1] = argValBuff[i][2];
+            light_dir[2] = argValBuff[i][3];
+            sceVu0Normalize(light_dir, light_dir);
             /* The row's index is materialised between the first component's load and its store,
                and an assignment's right-hand side is emitted before the subscript it is stored
                through, so the component has to already be in a register when the statement that
                computes the index runs. */
-            lx = lightDir[0];
-            slot = lightNo - 1;
-            light[0][slot] = lx;
-            light[1][slot] = lightDir[1];
-            light[2][slot] = lightDir[2];
-            lightcolor[slot][0] = argValBuff[i][4];
-            lightcolor[slot][1] = argValBuff[i][5];
-            lightcolor[slot][2] = argValBuff[i][6];
+            light_x = light_dir[0];
+            light_slot = light_no - 1;
+            light[0][light_slot] = light_x;
+            light[1][light_slot] = light_dir[1];
+            light[2][light_slot] = light_dir[2];
+            lightcolor[light_slot][0] = argValBuff[i][4];
+            lightcolor[light_slot][1] = argValBuff[i][5];
+            lightcolor[light_slot][2] = argValBuff[i][6];
             MGSetPLight(light, lightcolor);
         }
 
@@ -1950,9 +1950,9 @@ void OPMdsLoad() {
             pointLight[pointLightStack].r = argValBuff[i][4];
             pointLight[pointLightStack].g = argValBuff[i][5];
             pointLight[pointLightStack].b = argValBuff[i][6];
-            pointLight[pointLightStack].unk_14 = argValBuff[i][7];
-            pointLight[pointLightStack].unk_18 = argValBuff[i][8];
-            pointLight[pointLightStack].unk_1C = argValBuff[i][9];
+            pointLight[pointLightStack].arg7 = argValBuff[i][7];
+            pointLight[pointLightStack].arg8 = argValBuff[i][8];
+            pointLight[pointLightStack].arg9 = argValBuff[i][9];
             pointLightStack++;
         }
 
@@ -1961,18 +1961,18 @@ void OPMdsLoad() {
             strcat(path[0], argStrBuff[i]);
             LoadFile(path[0], (void *) read_buffer, 0);
             frame = LoadMDSFile(read_buffer, &MapDataBuffer, 2, 0, 0);
-            rotFrame = frame;
+            rot_frame = frame;
             frame->SetAttr(attr, 1, 64);
             SetFrameAttr(frame, 1);
             object = OP_GroundMap.SetObject(frame, 0, 0);
-            CVector3_f_ pos(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3],
-                            10.0f * argValBuff[i][4]);
-            object->SetPosition(pos);
+            CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3],
+                                 10.0f * argValBuff[i][4]);
+            object->SetPosition(position);
             rx = PI * argValBuff[i][5] / 180.0f;
             ry = PI * argValBuff[i][6] / 180.0f;
             rz = PI * argValBuff[i][7] / 180.0f;
-            CVector3_f_ rot(rx, ry, rz);
-            object->SetRotation(rot);
+            CVector3_f_ rotation(rx, ry, rz);
+            object->SetRotation(rotation);
         }
 
         if (TEIGI_SKY[0] == (int) argValBuff[i][0]) {
@@ -1987,28 +1987,28 @@ void OPMdsLoad() {
         }
 
         if (TEIGI_BLD[0] == (int) argValBuff[i][0]) {
-            attrSave = attr;
+            saved_attr = attr;
 
             if (argValBuff[i][8] == 0.0f) {
                 strcpy(path[0], "sim:");
                 strcat(path[0], argStrBuff[i]);
                 LoadFile(path[0], (void *) read_buffer, 0);
                 frame = LoadMDSFile(read_buffer, &MapDataBuffer, 2, 0, 0);
-                rotFrame = frame;
+                rot_frame = frame;
                 frame->SetAttr(attr, 1, 64);
                 SetFrameAttr(frame, 1);
                 object = OP_BuildingMap.SetObject(nowObjCnt++, frame, 0, 0);
-                object->unk_38 = 1;
+                object->handle = 1;
                 object->unk_34 = 5;
-                CVector3_f_ pos(10.0f * argValBuff[i][2],
-                                10.0f * argValBuff[i][3],
-                                10.0f * argValBuff[i][4]);
-                object->SetPosition(pos);
+                CVector3_f_ position(10.0f * argValBuff[i][2],
+                                     10.0f * argValBuff[i][3],
+                                     10.0f * argValBuff[i][4]);
+                object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
                 rz = PI * argValBuff[i][7] / 180.0f;
-                CVector3_f_ rot(rx, ry, rz);
-                object->SetRotation(rot);
+                CVector3_f_ rotation(rx, ry, rz);
+                object->SetRotation(rotation);
             } else {
                 for (j = 0; j < 4; j++) {
                     if (argStrBuff[i + j][0] != 0) {
@@ -2020,10 +2020,10 @@ void OPMdsLoad() {
                     }
                 }
 
-                LoadLODData(lodFrame, LODNameBuff, read_buffer, 0);
+                LoadLODData(lod_frames, LODNameBuff, read_buffer, 0);
 
                 object = OP_BuildingMap.GetObject(nowObjCnt++);
-                object->unk_38 = 1;
+                object->handle = 1;
                 object->unk_34 = 1;
 
                 CategoryAttr *category = &OP_BuildingMap.category[1];
@@ -2032,41 +2032,41 @@ void OPMdsLoad() {
                     category->lod[k] = levelOfDitialZ[k];
                 }
 
-                category->unk_10 = 0;
-                category->unk_14 = 3;
+                category->lowest = 0;
+                category->highest = 3;
 
                 for (j = 0; j < 4; j++) {
-                    object->SetFrame(lodFrame[j], j);
+                    object->SetFrame(lod_frames[j], j);
 
-                    if (lodFrame[j] != 0) {
-                        lodFrame[j]->SetAttr(attr, 1, 64);
-                        SetFrameAttr(lodFrame[j], 1);
+                    if (lod_frames[j] != 0) {
+                        lod_frames[j]->SetAttr(attr, 1, 64);
+                        SetFrameAttr(lod_frames[j], 1);
                         shadow = frame->SearchFrame("shadow");
 
                         if (shadow != 0) {
-                            attr.unk_50 = 1;
+                            attr.alpha_ref = 1;
                             shadow->SetAttr(attr, 1, 64);
                             SetFrameAttr(shadow, 1);
                         }
                     }
                 }
 
-                CVector3_f_ pos(10.0f * argValBuff[i][2],
-                                10.0f * argValBuff[i][3],
-                                10.0f * argValBuff[i][4]);
-                object->SetPosition(pos);
+                CVector3_f_ position(10.0f * argValBuff[i][2],
+                                     10.0f * argValBuff[i][3],
+                                     10.0f * argValBuff[i][4]);
+                object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
                 rz = PI * argValBuff[i][7] / 180.0f;
-                CVector3_f_ rot(rx, ry, rz);
-                object->SetRotation(rot);
+                CVector3_f_ rotation(rx, ry, rz);
+                object->SetRotation(rotation);
             }
 
-            attr = attrSave;
+            attr = saved_attr;
         }
 
         if (TEIGI_UPER[0] == (int) argValBuff[i][0]) {
-            attrSave = attr;
+            saved_attr = attr;
 
             if (argValBuff[i][8] == 0.0f) {
                 strcpy(path[0], "sim:");
@@ -2076,17 +2076,17 @@ void OPMdsLoad() {
                 frame->SetAttr(attr, 1, 64);
                 SetFrameAttr(frame, 1);
                 object = OP_BuildingMap2.SetObject(nowObjCnt2++, frame, 0, 0);
-                object->unk_38 = 1;
+                object->handle = 1;
                 object->unk_34 = 5;
-                CVector3_f_ pos(10.0f * argValBuff[i][2],
-                                10.0f * argValBuff[i][3],
-                                10.0f * argValBuff[i][4]);
-                object->SetPosition(pos);
+                CVector3_f_ position(10.0f * argValBuff[i][2],
+                                     10.0f * argValBuff[i][3],
+                                     10.0f * argValBuff[i][4]);
+                object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
                 rz = PI * argValBuff[i][7] / 180.0f;
-                CVector3_f_ rot(rx, ry, rz);
-                object->SetRotation(rot);
+                CVector3_f_ rotation(rx, ry, rz);
+                object->SetRotation(rotation);
             } else {
                 for (j = 0; j < 4; j++) {
                     if (argStrBuff[i + j][0] != 0) {
@@ -2098,10 +2098,10 @@ void OPMdsLoad() {
                     }
                 }
 
-                LoadLODData(lodFrame, LODNameBuff, read_buffer, 0);
+                LoadLODData(lod_frames, LODNameBuff, read_buffer, 0);
 
                 object = OP_BuildingMap2.GetObject(nowObjCnt++);
-                object->unk_38 = 1;
+                object->handle = 1;
                 object->unk_34 = 1;
 
                 CategoryAttr *category = &OP_BuildingMap2.category[1];
@@ -2110,37 +2110,37 @@ void OPMdsLoad() {
                     category->lod[k] = levelOfDitialZ[k];
                 }
 
-                category->unk_10 = 0;
-                category->unk_14 = 3;
+                category->lowest = 0;
+                category->highest = 3;
 
                 for (j = 0; j < 4; j++) {
-                    object->SetFrame(lodFrame[j], j);
+                    object->SetFrame(lod_frames[j], j);
 
-                    if (lodFrame[j] != 0) {
-                        lodFrame[j]->SetAttr(attr, 1, 64);
-                        SetFrameAttr(lodFrame[j], 1);
+                    if (lod_frames[j] != 0) {
+                        lod_frames[j]->SetAttr(attr, 1, 64);
+                        SetFrameAttr(lod_frames[j], 1);
                         shadow = frame->SearchFrame("shadow");
 
                         if (shadow != 0) {
-                            attr.unk_50 = 1;
+                            attr.alpha_ref = 1;
                             shadow->SetAttr(attr, 1, 64);
                             SetFrameAttr(shadow, 1);
                         }
                     }
                 }
 
-                CVector3_f_ pos(10.0f * argValBuff[i][2],
-                                10.0f * argValBuff[i][3],
-                                10.0f * argValBuff[i][4]);
-                object->SetPosition(pos);
+                CVector3_f_ position(10.0f * argValBuff[i][2],
+                                     10.0f * argValBuff[i][3],
+                                     10.0f * argValBuff[i][4]);
+                object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
                 rz = PI * argValBuff[i][7] / 180.0f;
-                CVector3_f_ rot(rx, ry, rz);
-                object->SetRotation(rot);
+                CVector3_f_ rotation(rx, ry, rz);
+                object->SetRotation(rotation);
             }
 
-            attr = attrSave;
+            attr = saved_attr;
         }
 
         if (TEIGI_S_VOLUME[0] == (int) argValBuff[i][0]) {
@@ -2179,16 +2179,16 @@ void OPMdsLoad() {
 
         if (TEIGI_OBJ_ROT[0] == (int) argValBuff[i][0]) {
             OP_AnimeSeq[OP_AnimeSeqRot].Initialize();
-            OP_AnimeSeq[OP_AnimeSeqRot].motion_start = 0;
-            OP_AnimeSeq[OP_AnimeSeqRot].motion_end = 0;
-            OP_AnimeSeq[OP_AnimeSeqRot].scale[0] = argValBuff[i][2];
-            OP_AnimeSeq[OP_AnimeSeqRot].scale[1] = argValBuff[i][3];
-            OP_AnimeSeq[OP_AnimeSeqRot].scale[2] = argValBuff[i][4];
-            OP_AnimeSeq[OP_AnimeSeqRot].unk_40 = argValBuff[i][5];
-            OP_AnimeSeq[OP_AnimeSeqRot].unk_44 = argValBuff[i][6];
-            OP_AnimeSeq[OP_AnimeSeqRot].step = argValBuff[i][7];
+            OP_AnimeSeq[OP_AnimeSeqRot].type = 0;
+            OP_AnimeSeq[OP_AnimeSeqRot].number = 0;
+            OP_AnimeSeq[OP_AnimeSeqRot].start[0] = argValBuff[i][2];
+            OP_AnimeSeq[OP_AnimeSeqRot].start[1] = argValBuff[i][3];
+            OP_AnimeSeq[OP_AnimeSeqRot].start[2] = argValBuff[i][4];
+            OP_AnimeSeq[OP_AnimeSeqRot].step_x = argValBuff[i][5];
+            OP_AnimeSeq[OP_AnimeSeqRot].step_y = argValBuff[i][6];
+            OP_AnimeSeq[OP_AnimeSeqRot].step_z = argValBuff[i][7];
             strcpy(OP_AnimeSeq[OP_AnimeSeqRot].name, argStrBuff[i]);
-            InitObjAnime(rotFrame, &OP_AnimeSeq[OP_AnimeSeqRot]);
+            InitObjAnime(rot_frame, &OP_AnimeSeq[OP_AnimeSeqRot]);
             OP_AnimeSeqRot++;
         }
 
@@ -2218,36 +2218,36 @@ void OPMdsLoad() {
  * @size 0x110
  * @unknownret
  */
-static int skipSpace(char *buf, int pos) {
-    int skip;
+static int skipSpace(char *buffer, int position) {
+    int skipped;
 
-    while (pos < teigiFileSize) {
-        skip = 0;
+    while (position < teigiFileSize) {
+        skipped = 0;
 
-        if (memcmp(&buf[pos], "\x81\x40", 2) == 0) {
-            pos++;
-            skip = 1;
+        if (memcmp(&buffer[position], "\x81\x40", 2) == 0) {
+            position++;
+            skipped = 1;
         }
 
-        if (buf[pos] == ' ')
-            skip = 1;
-        if (buf[pos] == '\t')
-            skip = 1;
-        if (buf[pos] == '\0') {
-            pos++;
-            skip = 1;
+        if (buffer[position] == ' ')
+            skipped = 1;
+        if (buffer[position] == '\t')
+            skipped = 1;
+        if (buffer[position] == '\0') {
+            position++;
+            skipped = 1;
         }
 
-        if (memcmp(&buf[pos], "//", 2) == 0) {
-            while (buf[pos] != '\0')
-                pos++;
-            pos++;
-            skip = 1;
+        if (memcmp(&buffer[position], "//", 2) == 0) {
+            while (buffer[position] != '\0')
+                position++;
+            position++;
+            skipped = 1;
         }
 
-        if (!skip)
-            return pos;
-        pos++;
+        if (!skipped)
+            return position;
+        position++;
     }
 
     return teigiFileSize;
@@ -2265,133 +2265,133 @@ static int skipSpace(char *buf, int pos) {
  * @size 0x574
  * @unknownret
  */
-static int checkArg(char *buf, int pos, int *command) {
+static int checkArg(char *buffer, int position, int *command) {
     int i;
-    int at;
-    int n;
-    int ok;
+    int cursor;
+    int char_count;
+    int accepted;
 
-    at = pos;
+    cursor = position;
 
     if (command[1] == 0)
-        return pos;
+        return position;
 
     for (i = 0; i < command[1]; i++) {
         argValBuff[argLevel][0] = (float) command[0];
 
         switch (command[2 + i]) {
             case 0:
-                if (buf[at] != '"')
+                if (buffer[cursor] != '"')
                     return -1;
 
-                at++;
-                for (n = 0; n < 64; n++) {
-                    if (buf[at] == '"') {
-                        argStrBuff[argLevel][n] = '\0';
-                        at++;
+                cursor++;
+                for (char_count = 0; char_count < 64; char_count++) {
+                    if (buffer[cursor] == '"') {
+                        argStrBuff[argLevel][char_count] = '\0';
+                        cursor++;
                         break;
                     }
-                    argStrBuff[argLevel][n] = buf[at];
-                    at++;
+                    argStrBuff[argLevel][char_count] = buffer[cursor];
+                    cursor++;
                 }
 
-                if (n == 64)
+                if (char_count == 64)
                     return -1;
 
-                at = skipSpace(buf, at);
+                cursor = skipSpace(buffer, cursor);
                 break;
 
             case 1:
-                if (buf[at] != ',')
+                if (buffer[cursor] != ',')
                     return -1;
 
-                at = skipSpace(buf, at + 1);
-                if (memcmp(&buf[at], "ON", 2) == 0) {
+                cursor = skipSpace(buffer, cursor + 1);
+                if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     argValBuff[argLevel][1 + i] = 1.0f;
-                    at += 2;
-                } else if (memcmp(&buf[at], "OFF", 3) == 0) {
+                    cursor += 2;
+                } else if (memcmp(&buffer[cursor], "OFF", 3) == 0) {
                     argValBuff[argLevel][1 + i] = 0;
-                    at += 3;
+                    cursor += 3;
                 } else {
-                    ok = 0;
-                    if (buf[at] == '-')
-                        ok = 1;
-                    if (buf[at] >= '0' && buf[at] <= '9')
-                        ok = 1;
-                    if (!ok)
+                    accepted = 0;
+                    if (buffer[cursor] == '-')
+                        accepted = 1;
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                        accepted = 1;
+                    if (!accepted)
                         return -1;
 
-                    argValBuff[argLevel][1 + i] = (float) atof(&buf[at]);
+                    argValBuff[argLevel][1 + i] = (float) atof(&buffer[cursor]);
 
-                    for (n = 0; n < 32; n++) {
-                        ok = 0;
-                        if (buf[at] == '-') {
-                            at++;
-                            ok = 1;
+                    for (char_count = 0; char_count < 32; char_count++) {
+                        accepted = 0;
+                        if (buffer[cursor] == '-') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] >= '0' && buf[at] <= '9') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] == '.') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] == '.') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (!ok)
+                        if (!accepted)
                             break;
                     }
 
-                    if (n == 32)
+                    if (char_count == 32)
                         return -1;
                 }
 
-                at = skipSpace(buf, at);
+                cursor = skipSpace(buffer, cursor);
                 break;
 
             case 2:
-                if (memcmp(&buf[at], "ON", 2) == 0) {
+                if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     argValBuff[argLevel][1 + i] = 1.0f;
-                    at += 2;
-                } else if (memcmp(&buf[at], "OFF", 3) == 0) {
+                    cursor += 2;
+                } else if (memcmp(&buffer[cursor], "OFF", 3) == 0) {
                     argValBuff[argLevel][1 + i] = 0;
-                    at += 3;
+                    cursor += 3;
                 } else {
-                    ok = 0;
-                    if (buf[at] == '-')
-                        ok = 1;
-                    if (buf[at] >= '0' && buf[at] <= '9')
-                        ok = 1;
-                    if (!ok)
+                    accepted = 0;
+                    if (buffer[cursor] == '-')
+                        accepted = 1;
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                        accepted = 1;
+                    if (!accepted)
                         return -1;
 
-                    argValBuff[argLevel][1 + i] = (float) atof(&buf[at]);
+                    argValBuff[argLevel][1 + i] = (float) atof(&buffer[cursor]);
 
-                    for (n = 0; n < 32; n++) {
-                        ok = 0;
-                        if (buf[at] == '-') {
-                            at++;
-                            ok = 1;
+                    for (char_count = 0; char_count < 32; char_count++) {
+                        accepted = 0;
+                        if (buffer[cursor] == '-') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] >= '0' && buf[at] <= '9') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] == '.') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] == '.') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (!ok)
+                        if (!accepted)
                             break;
                     }
 
-                    if (n == 32)
+                    if (char_count == 32)
                         return -1;
                 }
 
-                at = skipSpace(buf, at);
+                cursor = skipSpace(buffer, cursor);
                 break;
         }
     }
 
-    return at;
+    return cursor;
 }

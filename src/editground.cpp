@@ -26,7 +26,7 @@ static int CheckDelete(CEditArea *area, CMapParts *parts, float x, float y, floa
 int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y) {
     CVector3_f_ grid;
     int area_no;
-    int size[2];
+    int span[2];
     int deleted_parts_no;
     int deleted_rot_y;
     int width;
@@ -58,8 +58,8 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
     if (area_no < 0) {
         return -1;
     }
-    CEditArea **all = areas;
-    slot = &all[area_no];
+    CEditArea **area_list = areas;
+    slot = &area_list[area_no];
     area = *slot;
 
     if (source->info == NULL) {
@@ -114,12 +114,12 @@ int CEditGround::SetMapParts(int parts_no, float x, float y, float z, int rot_y)
         }
     }
     if (placeable != 0 && source->subtype != 1) {
-        size[0] = source->GetWidth();
-        size[1] = source->GetHeight();
-        for (i = 0; i < size[0]; i++) {
-            for (j = 0; j < size[1]; j++) {
-                float cell_x = x - (float) ((size[0] >> 1) - i) * area->GetUnitSize();
-                float cell_z = z - (float) ((size[1] >> 1) - j) * area->GetUnitSize();
+        span[0] = source->GetWidth();
+        span[1] = source->GetHeight();
+        for (i = 0; i < span[0]; i++) {
+            for (j = 0; j < span[1]; j++) {
+                float cell_x = x - (float) ((span[0] >> 1) - i) * area->GetUnitSize();
+                float cell_z = z - (float) ((span[1] >> 1) - j) * area->GetUnitSize();
                 if (area->SearchPartsExtra(cell_x, y, cell_z) == 1) {
                     DeleteMapParts(&deleted_parts_no, &deleted_rot_y, cell_x, y, cell_z);
                 }
@@ -182,26 +182,26 @@ static inline CFrame *GetShadeFrame(CMapParts *parts) {
  * Gives back the frame that a map part's ripple draws from.
  */
 static inline CFrame *GetRippleFrame(CMapParts *parts) {
-    return parts->unk_104;
+    return parts->ripple_frame;
 }
 
 /**
  * Puts a map part's camera collision frame where the part is and gives it back.
  */
 static inline CFrame *GetCameraFrame(CMapParts *parts) {
-    if (parts->unk_0DC == NULL) {
+    if (parts->camera_frame == NULL) {
         return NULL;
     }
-    parts->unk_0DC->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
-    parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
-    return parts->unk_0DC;
+    parts->camera_frame->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+    parts->camera_frame->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
+    return parts->camera_frame;
 }
 
 int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int row_step) {
     CVector3_i_ cell;
     CVector3_f_ position;
-    int parts_no;
-    int kind;
+    int deleted_parts_no;
+    int deleted_rot_y;
 
     int area_no = GetAreaCode(x, y, z);
     if (area_no < 0) {
@@ -216,13 +216,13 @@ int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int r
         return 0;
     }
     CMapParts *object = &parts[parts_id];
-    int water = object->subtype;
-    if ((water != 2 && water != 3 && water != 5) || river_parts == NULL) {
+    int subtype = object->subtype;
+    if ((subtype != 2 && subtype != 3 && subtype != 5) || river_parts == NULL) {
         return 0;
     }
-    if (water == 3 || water == 5) {
+    if (subtype == 3 || subtype == 5) {
         area->GetPos(&position, cell.x, cell.y, cell.z);
-        DeleteMapParts(&parts_no, &kind, position.x + 1.0f, position.y, position.z + 1.0f);
+        DeleteMapParts(&deleted_parts_no, &deleted_rot_y, position.x + 1.0f, position.y, position.z + 1.0f);
     }
     int code = area->SetRiverParts(cell.x, cell.z);
     if (code < 0) {
@@ -244,8 +244,8 @@ int CEditGround::SetRiverParts(float x, float y, float z, int column_step, int r
     object->collision_frame = river_parts[(u32) (piece - 1)].GetCollisionFrame();
     object->shadow_frame = GetShadowFrame(&river_parts[(u32) (piece - 1)]);
     object->shade_frame = GetShadeFrame(&river_parts[(u32) (piece - 1)]);
-    object->unk_0DC = GetCameraFrame(&river_parts[(u32) (piece - 1)]);
-    object->unk_104 = GetRippleFrame(&river_parts[(u32) (piece - 1)]);
+    object->camera_frame = GetCameraFrame(&river_parts[(u32) (piece - 1)]);
+    object->ripple_frame = GetRippleFrame(&river_parts[(u32) (piece - 1)]);
     object->handle = river_parts[(u32) (piece - 1)].handle;
     object->subtype = river_parts[(u32) (piece - 1)].subtype;
     object->bound = river_parts[(u32) (piece - 1)].bound;
@@ -297,31 +297,31 @@ int CEditGround::SetRoadParts(float x, float y, float z, int column_step, int ro
     return 1;
 }
 
-int CEditGround::DeleteMapParts(int *out_plot, int *out_rot_y, float x, float y, float z) {
+int CEditGround::DeleteMapParts(int *out_parts_no, int *out_rot_y, float x, float y, float z) {
     int area_code = GetAreaCode(x, y, z);
     if (area_code < 0) {
         return -1;
     }
     CEditArea *area = areas[area_code];
-    int id = area->SearchPartsID(x, y, z);
-    if (id < 0) {
+    int parts_id = area->SearchPartsID(x, y, z);
+    if (parts_id < 0) {
         return -1;
     }
-    CMapParts *part = &parts[id];
-    if (CheckDelete(area, part, x, y, z) != 0) {
+    CMapParts *target = &parts[parts_id];
+    if (CheckDelete(area, target, x, y, z) != 0) {
         return -1;
     }
-    if (part->subtype == 3 || part->subtype == 5) {
+    if (target->subtype == 3 || target->subtype == 5) {
         // A bridge or a crossing leaves the plain river piece behind.
         sceVu0FVECTOR position;
-        int rot_y = part->GetRotY();
-        part->GetPosition(position);
-        int plot = part->parts_no;
-        *out_plot = plot;
-        memcpy(part, &river_parts[1], sizeof(CMapParts));
-        part->SetPosition(position);
-        part->SetRotY(rot_y);
-        area->SetMapParts(id, parts, x, y, z, rot_y);
+        int rot_y = target->GetRotY();
+        target->GetPosition(position);
+        int plot = target->parts_no;
+        *out_parts_no = plot;
+        memcpy(target, &river_parts[1], sizeof(CMapParts));
+        target->SetPosition(position);
+        target->SetRotY(rot_y);
+        area->SetMapParts(parts_id, parts, x, y, z, rot_y);
         if (parts_info != NULL) {
             EDITPARTS_INFO *info = parts_info->GetPartsInfo(plot);
             if (info != NULL) {
@@ -331,10 +331,10 @@ int CEditGround::DeleteMapParts(int *out_plot, int *out_rot_y, float x, float y,
                 }
             }
         }
-        return id;
+        return parts_id;
     }
     if (parts_info != NULL) {
-        EDITPARTS_INFO *info = parts_info->GetPartsInfo(parts[id].parts_no);
+        EDITPARTS_INFO *info = parts_info->GetPartsInfo(parts[parts_id].parts_no);
         if (info != NULL) {
             info->placed--;
             if (info->placed < 0) {
@@ -343,25 +343,25 @@ int CEditGround::DeleteMapParts(int *out_plot, int *out_rot_y, float x, float y,
         }
     }
     sceVu0FVECTOR position;
-    parts[id].GetPosition(position);
-    area->DeleteMapParts(id, parts, (float) (1.0f + position[0]), position[1], (float) (1.0f + position[2]));
-    if (parts[id].subtype == 2) {
+    parts[parts_id].GetPosition(position);
+    area->DeleteMapParts(parts_id, parts, (float) (1.0f + position[0]), position[1], (float) (1.0f + position[2]));
+    if (parts[parts_id].subtype == 2) {
         SetRiverParts(position[0], position[1], position[2], 1, 0);
         SetRiverParts(position[0], position[1], position[2], 0, 1);
         SetRiverParts(position[0], position[1], position[2], -1, 0);
         SetRiverParts(position[0], position[1], position[2], 0, -1);
     }
-    if (parts[id].subtype == 1) {
+    if (parts[parts_id].subtype == 1) {
         SetRoadParts(position[0], position[1], position[2], 1, 0);
         SetRoadParts(position[0], position[1], position[2], 0, 1);
         SetRoadParts(position[0], position[1], position[2], -1, 0);
         SetRoadParts(position[0], position[1], position[2], 0, -1);
     }
-    *out_plot = parts[id].parts_no;
-    *out_rot_y = parts[id].rot_y;
-    parts[id].Initialize();
-    parts[id].handle = -1;
-    return id;
+    *out_parts_no = parts[parts_id].parts_no;
+    *out_rot_y = parts[parts_id].rot_y;
+    parts[parts_id].Initialize();
+    parts[parts_id].handle = -1;
+    return parts_id;
 }
 
 int CEditGround::GetAreaCode(float x, float y, float z) {
@@ -377,19 +377,19 @@ int CEditGround::GetAreaCode(float x, float y, float z) {
 }
 
 float CEditGround::GetAlt(float x, float y, float z) {
-    int area = GetAreaCode(x, y, z);
-    if (area < 0) {
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         return 0.0f;
     }
-    return areas[area]->GetAlt(x, y, z);
+    return areas[area_no]->GetAlt(x, y, z);
 }
 
 int CEditGround::GetAlt_i(float x, float y, float z) {
-    int area = GetAreaCode(x, y, z);
-    if (area < 0) {
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         return 0;
     }
-    return areas[area]->GetAlt_i(x, y, z);
+    return areas[area_no]->GetAlt_i(x, y, z);
 }
 
 CMapParts *CEditGround::GetPartsObject(int parts_no) {
@@ -404,11 +404,11 @@ CMapParts *CEditGround::GetPartsObject(int parts_no) {
 }
 
 int CEditGround::GetPartsID(float x, float y, float z) {
-    int area = GetAreaCode(x, y, z);
-    if (area < 0) {
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         return -1;
     }
-    return areas[area]->SearchPartsID(x, y, z);
+    return areas[area_no]->SearchPartsID(x, y, z);
 }
 
 CMapParts *CEditGround::GetParts(float x, float y, float z) {
@@ -464,17 +464,17 @@ void CEditGround::EffectTask() {
 
 int CEditGround::SetFocusParts(float x, float y, float z) {
     focus_parts_id = -1;
-    int area = GetAreaCode(x, y, z);
-    if (area < 0) {
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         return -1;
     }
-    CEditArea *edit_area = areas[area];
-    int parts_id = edit_area->SearchPartsID(x, y, z);
+    CEditArea *area = areas[area_no];
+    int parts_id = area->SearchPartsID(x, y, z);
     if (parts_id < 0) {
         return -1;
     }
     CMapParts *focus = &parts[parts_id];
-    if (CheckDelete(edit_area, focus, x, y, z)) {
+    if (CheckDelete(area, focus, x, y, z)) {
         return -1;
     }
     focus_parts_id = GetPartsID(x, y, z);
@@ -572,27 +572,27 @@ void CEditGround::EditAreaClip(CCamera *camera, float range) {
         if (ref[2] > box.max[2]) {
             side_z = 1;
         }
-        float d;
+        float gap;
         if (side_x < 0 && side_z < 0) {
             dists[i] = DistVector(ref, corner_min);
         } else if (side_x == 0 && side_z < 0) {
-            d = ref[2] - corner_min[2];
-            dists[i] = d < 0.0f ? -d : d;
+            gap = ref[2] - corner_min[2];
+            dists[i] = gap < 0.0f ? -gap : gap;
         } else if (side_x > 0 && side_z < 0) {
             dists[i] = DistVector(ref, corner_a);
         } else if (side_x < 0 && side_z == 0) {
-            d = ref[0] - corner_min[0];
-            dists[i] = d < 0.0f ? -d : d;
+            gap = ref[0] - corner_min[0];
+            dists[i] = gap < 0.0f ? -gap : gap;
         } else if (side_x == 0 && side_z == 0) {
             dists[i] = 0.0f;
         } else if (side_x > 0 && side_z == 0) {
-            d = ref[0] - corner_max[0];
-            dists[i] = d < 0.0f ? -d : d;
+            gap = ref[0] - corner_max[0];
+            dists[i] = gap < 0.0f ? -gap : gap;
         } else if (side_x < 0 && side_z > 0) {
             dists[i] = DistVector(ref, corner_b);
         } else if (side_x == 0 && side_z > 0) {
-            d = ref[2] - corner_max[2];
-            dists[i] = d < 0.0f ? -d : d;
+            gap = ref[2] - corner_max[2];
+            dists[i] = gap < 0.0f ? -gap : gap;
         } else if (side_x > 0 && side_z > 0) {
             dists[i] = DistVector(ref, corner_max);
         }
@@ -675,7 +675,7 @@ int CEditGround::GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avo
     int area_count = 0;
     int x;
     int z;
-    int area;
+    int area_no;
 
     for (x = 0;; x++) {
         if (areas[x] == NULL) {
@@ -686,19 +686,19 @@ int CEditGround::GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avo
     if (area_count == 0) {
         return 0;
     }
-    for (area = 0; area < area_count; area++) {
-        int width = areas[area]->GetWidth();
-        int height = areas[area]->GetHeight();
+    for (area_no = 0; area_no < area_count; area_no++) {
+        int width = areas[area_no]->GetWidth();
+        int height = areas[area_no]->GetHeight();
         // The outer two cells of each edge are never chosen.
         for (x = 2; x < width - 2; x++) {
             for (z = 2; z < height - 2; z++) {
-                if (areas[area]->GetPartsID(x, z) >= 0 && areas[area]->GetPartsExtra(x, z) != 1) {
+                if (areas[area_no]->GetPartsID(x, z) >= 0 && areas[area_no]->GetPartsExtra(x, z) != 1) {
                     continue;
                 }
                 int blocked = 0;
-                areas[area]->GetPos(&grid, x, 0, z);
+                areas[area_no]->GetPos(&grid, x, 0, z);
                 position[0] = grid.x;
-                position[1] = areas[area]->GetAlt(x, z);
+                position[1] = areas[area_no]->GetAlt(x, z);
                 position[2] = grid.z;
                 if (!(bounds[3] <= 0.0f) && !(DistVector(bounds, position) <= bounds[3])) {
                     blocked = 1;
@@ -710,11 +710,11 @@ int CEditGround::GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avo
                         break;
                     }
                 }
-                if (areas[area]->GetAlt_i(x, z) > 0) {
+                if (areas[area_no]->GetAlt_i(x, z) > 0) {
                     blocked = 1;
                 }
                 if (!blocked) {
-                    cells[found++] = (area << 16) | (x | (z << 8));
+                    cells[found++] = (area_no << 16) | (x | (z << 8));
                 }
             }
         }
@@ -725,11 +725,11 @@ int CEditGround::GetRandomPlanePos(sceVu0FVECTOR out_position, sceVu0FVECTOR avo
     int cell = cells[rand() % found];
     int column = cell & 0xFF;
     int row = (cell >> 8) & 0xFF;
-    area = (cell >> 16) & 0xFF;
-    areas[area]->GetPos(&chosen, column, 0, row);
-    out_position[0] = chosen.x + 0.5f * areas[area]->GetUnitSize();
+    area_no = (cell >> 16) & 0xFF;
+    areas[area_no]->GetPos(&chosen, column, 0, row);
+    out_position[0] = chosen.x + 0.5f * areas[area_no]->GetUnitSize();
     out_position[1] = areas[0]->GetAlt(column, row);
-    out_position[2] = chosen.z + 0.5f * areas[area]->GetUnitSize();
+    out_position[2] = chosen.z + 0.5f * areas[area_no]->GetUnitSize();
     return 1;
 }
 
@@ -780,21 +780,21 @@ void CEditGround::MakePartsBox() {
 }
 
 void CEditGround::GetPartsBox(CBoxVu0 *out_box, float x, float y, float z) {
-    int area = GetAreaCode(x, y, z);
-    if (area < 0) {
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         out_box->max[0] = out_box->max[1] = out_box->max[2] = 0.0f;
         out_box->max[3] = 1.0f;
         out_box->min[0] = out_box->min[1] = out_box->min[2] = 0.0f;
         out_box->min[3] = 1.0f;
         return;
     }
-    if (areas[area] != NULL) {
-        areas[area]->GetPartsBox(out_box);
+    if (areas[area_no] != NULL) {
+        areas[area_no]->GetPartsBox(out_box);
     }
 }
 
 EPARTS_FUNC_DATA *CEditGround::GetPeoplePos(int villager, float *out_position) {
-    sceVu0FVECTOR rotation;
+    sceVu0FVECTOR transform;
     sceVu0FVECTOR frame_rotation;
 
     for (int i = 0; i < people_count; i++) {
@@ -814,10 +814,10 @@ EPARTS_FUNC_DATA *CEditGround::GetPeoplePos(int villager, float *out_position) {
         if (frame == NULL) {
             return NULL;
         }
-        owner->GetPosition(rotation);
-        frame->SetPosition(rotation);
-        owner->GetRotation(rotation);
-        frame->SetRotation(rotation[0], rotation[1], rotation[2]);
+        owner->GetPosition(transform);
+        frame->SetPosition(transform);
+        owner->GetRotation(transform);
+        frame->SetRotation(transform[0], transform[1], transform[2]);
         out_position[3] = 1.0f;
         frame->GetWorldPosition(out_position, out_position);
         frame->GetRotation(frame_rotation);
@@ -837,19 +837,19 @@ void CEditGround::DrawBaseGround() {
 }
 
 void CEditGround::Draw(float time, int pass, int lowest, int highest, int fixed_lowest, int fixed_highest) {
-    sceVu0FVECTOR distance = {50.0f, 300.0f, 500.0f, 800.0f};
+    sceVu0FVECTOR lod_distance = {50.0f, 300.0f, 500.0f, 800.0f};
     sceVu0FVECTOR position;
     sceVu0FVECTOR ambient;
     int i;
 
     for (i = 0; i < 64; i++) {
-        if (fixed_parts[i].unk_0E4 == pass) {
-            fixed_parts[i].DrawParts(time, distance, fixed_lowest, fixed_highest, NULL);
+        if (fixed_parts[i].category_no == pass) {
+            fixed_parts[i].DrawParts(time, lod_distance, fixed_lowest, fixed_highest, NULL);
         }
     }
     CMapParts *object = parts;
     for (i = 0; i < 128; i++, object++) {
-        if (object->unk_0E4 != pass) {
+        if (object->category_no != pass) {
             continue;
         }
         if (object->handle < 0) {
@@ -864,12 +864,12 @@ void CEditGround::Draw(float time, int pass, int lowest, int highest, int fixed_
                 continue;
             }
         }
-        sceVu0FVECTOR focus = {32.0f, 32.0f, 128.0f, 128.0f};
+        sceVu0FVECTOR focus_ambient = {32.0f, 32.0f, 128.0f, 128.0f};
         MGGetAmbient(ambient);
         if (focus_parts_id == i) {
-            MGSetAmbient(focus);
+            MGSetAmbient(focus_ambient);
         }
-        object->DrawParts(time, distance, lowest, highest, NULL);
+        object->DrawParts(time, lod_distance, lowest, highest, NULL);
         MGSetAmbient(ambient);
     }
 }
@@ -931,7 +931,7 @@ void CEditGround::DrawWaterSurface(CCamera *camera) {
             if (owner == NULL) {
                 continue;
             }
-            CFrame *frame = owner->unk_104;
+            CFrame *frame = owner->ripple_frame;
             if (frame != NULL && surface->name[0] != '\0') {
                 frame = frame->SearchFrame(surface->name);
                 if (frame != NULL && !(frame->attr.draw_on & 1)) {
@@ -1020,14 +1020,14 @@ void CEditGround::DrawWater(int pass) {
         }
     }
     for (int j = 0; j < 64; j++) {
-        if (fixed_parts[j].unk_0E4 == pass) {
+        if (fixed_parts[j].category_no == pass) {
             fixed_parts[j].Draw();
         }
     }
 }
 
 void CEditGround::DrawRipple(int pass) {
-    sceVu0FVECTOR vector;
+    sceVu0FVECTOR transform;
     sceVu0FVECTOR position;
     CMapParts *object = parts;
     int i;
@@ -1039,7 +1039,7 @@ void CEditGround::DrawRipple(int pass) {
         if (object->handle < 0) {
             continue;
         }
-        if (object->unk_104 == NULL) {
+        if (object->ripple_frame == NULL) {
             continue;
         }
         if (object->draw_on == 0) {
@@ -1054,38 +1054,38 @@ void CEditGround::DrawRipple(int pass) {
                 continue;
             }
         }
-        if (object->unk_104 == NULL) {
+        if (object->ripple_frame == NULL) {
             continue;
         }
-        object->GetPosition(vector);
-        object->unk_104->SetPosition(vector);
+        object->GetPosition(transform);
+        object->ripple_frame->SetPosition(transform);
         object->SetRotY(object->GetRotY());
-        object->GetRotation(vector);
-        object->unk_104->SetRotation(vector[0], vector[1], vector[2]);
-        MGDraw(object->unk_104);
+        object->GetRotation(transform);
+        object->ripple_frame->SetRotation(transform[0], transform[1], transform[2]);
+        MGDraw(object->ripple_frame);
     }
     for (int j = 0; j < 64; j++) {
-        if (fixed_parts[j].unk_0E4 != pass) {
+        if (fixed_parts[j].category_no != pass) {
             continue;
         }
-        if (fixed_parts[j].unk_104 == NULL) {
+        if (fixed_parts[j].ripple_frame == NULL) {
             continue;
         }
         if (fixed_parts[j].draw_on == 0) {
             continue;
         }
-        fixed_parts[j].GetPosition(vector);
-        fixed_parts[j].unk_104->SetPosition(vector);
-        fixed_parts[j].GetRotation(vector);
-        fixed_parts[j].unk_104->SetRotation(vector[0], vector[1], vector[2]);
-        MGDraw(fixed_parts[j].unk_104);
+        fixed_parts[j].GetPosition(transform);
+        fixed_parts[j].ripple_frame->SetPosition(transform);
+        fixed_parts[j].GetRotation(transform);
+        fixed_parts[j].ripple_frame->SetRotation(transform[0], transform[1], transform[2]);
+        MGDraw(fixed_parts[j].ripple_frame);
     }
 }
 
 void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR view;
-    sceVu0FVECTOR distance;
+    sceVu0FVECTOR clip_position;
     int i;
     CMapParts *object;
     int fast;
@@ -1095,7 +1095,7 @@ void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) 
     }
     object = parts;
     for (i = 0; i < 128; i++, object++) {
-        if (object->unk_0E4 < 0) {
+        if (object->category_no < 0) {
             continue;
         }
         if (object->handle < 0) {
@@ -1105,15 +1105,15 @@ void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) 
             continue;
         }
         if (!(clip_plane[3] <= 0.0f)) {
-            object->GetPosition(distance);
-            if (!(DistVector(distance, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
+            object->GetPosition(clip_position);
+            if (!(DistVector(clip_position, clip_plane) <= clip_plane[3]) && !object->ChangeDigData()) {
                 continue;
             }
         }
         object->GetPosition(position);
         position[3] = 1.0f;
         sceVu0ApplyMatrix(view, mgRenderInfo.view_scaled, position);
-        if (!(object->unk_120 <= 0.0f) && pass == 0 && object->unk_120 < DistVector(view)) {
+        if (!(object->draw_distance <= 0.0f) && pass == 0 && object->draw_distance < DistVector(view)) {
             continue;
         }
         if (view[2] > near_distance && view[2] < far_distance) {
@@ -1129,7 +1129,7 @@ void CEditGround::DrawShadow(int pass, float near_distance, float far_distance) 
     }
     for (int j = 0; j < 64; j++) {
         CMapParts *fixed = &fixed_parts[j];
-        if (fixed->unk_0E4 < 0) {
+        if (fixed->category_no < 0) {
             continue;
         }
         if (fixed->handle < 0) {
@@ -1165,7 +1165,7 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     int width;
     int height;
     int fits;
-    int id;
+    int occupant;
     EDITPARTS_INFO *info;
     CFrame *preview;
     CFrame *model;
@@ -1192,12 +1192,12 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     }
     area->GetPos(&grid, position[0], position[1], position[2]);
     fits = area->CheckParts(source, position[0], position[1], position[2], rot_y);
-    id = area->SearchPartsID(position[0], position[1], position[2]);
+    occupant = area->SearchPartsID(position[0], position[1], position[2]);
     if (source->subtype == 5) {
         if (CheckDelete(area, source, position[0], position[1], position[2]) != 0) {
             fits = 0;
         }
-        if (id >= 0 && parts[id].handle != 1) {
+        if (occupant >= 0 && parts[occupant].handle != 1) {
             fits = 0;
         }
     }
@@ -1212,7 +1212,7 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     position[1] = 5.0f + cell.y;
     position[2] = cell.z;
     position[3] = 0.0f;
-    preview = fits != 0 ? (CFrame *) source->unk_0FC : (CFrame *) source->unk_100;
+    preview = fits != 0 ? (CFrame *) source->preview_frame : (CFrame *) source->blocked_preview_frame;
     if (width % 2 == 1) {
         position[0] += 0.5f * area->GetUnitSize();
     }
@@ -1256,7 +1256,7 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
     } else {
         model_pos[2] += step / 8.0f;
     }
-    if (source->unk_0E4 == area_no) {
+    if (source->category_no == area_no) {
         subtype = source->subtype;
         if (preview != NULL && subtype != 2 && subtype != 3) {
             model = NULL;
@@ -1266,8 +1266,8 @@ void CEditGround::DrawPartsCursor(int plot, float *position, float *model_pos, i
                     saved_draw = model->attr.draw_on;
                     model->attr.draw_on = 2;
                 }
-                if (id >= 0) {
-                    CMapParts *target = &parts[id];
+                if (occupant >= 0) {
+                    CMapParts *target = &parts[occupant];
                     target->GetRotation(rotation);
                 }
             }
@@ -1304,7 +1304,7 @@ void CEditGround::DrawEffect(CCameraFollow *camera, float time, CEffectGroup *ef
     }
 }
 
-void CEditGround::Save(char *) {
+void CEditGround::Save(char *path) {
     char buffer[4000];
     sceVu0FVECTOR position;
     GROUND_SAVE_HEADER *header = (GROUND_SAVE_HEADER *) buffer;
@@ -1330,7 +1330,7 @@ void CEditGround::Save(char *) {
         }
         object->GetPosition(position);
         record->part_id = parts_id;
-        record->variant = object->rot_y;
+        record->rot_y = object->rot_y;
         record->pos_x = position[0];
         record->pos_y = position[1];
         record->pos_z = position[2];
@@ -1338,7 +1338,7 @@ void CEditGround::Save(char *) {
         header->count++;
     }
     record->part_id = -1;
-    record->variant = -1;
+    record->rot_y = -1;
     record->pos_x = 0.0f;
     record->pos_y = 0.0f;
     record->pos_z = 0.0f;
@@ -1376,7 +1376,7 @@ void CEditGround::Load(char *data) {
         if (plot_parts[parts_id].ChangeAltData()) {
             float x = record->pos_x + 1.0f;
             float z = record->pos_z + 1.0f;
-            SetMapParts(record->part_id, x, record->pos_y, z, record->variant);
+            SetMapParts(record->part_id, x, record->pos_y, z, record->rot_y);
         }
     }
     record = records;
@@ -1389,12 +1389,12 @@ void CEditGround::Load(char *data) {
         if (kind == 3 || kind == 5) {
             for (int j = 0; j < 24; j++) {
                 if (plot_parts[j].subtype == 2) {
-                    SetMapParts(j, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->variant);
+                    SetMapParts(j, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->rot_y);
                     break;
                 }
             }
         } else {
-            SetMapParts(parts_id, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->variant);
+            SetMapParts(parts_id, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f, record->rot_y);
         }
     }
     record = records;
@@ -1407,7 +1407,7 @@ void CEditGround::Load(char *data) {
             case 3:
             case 5:
                 SetMapParts(parts_id, record->pos_x + 1.0f, record->pos_y, record->pos_z + 1.0f,
-                            record->variant);
+                            record->rot_y);
                 break;
         }
     }
@@ -1450,14 +1450,14 @@ void CEditGround::Save(int town, CSaveData *save) {
         }
         object->GetPosition(position);
         record->part_id = parts_id;
-        record->variant = object->rot_y;
+        record->rot_y = object->rot_y;
         record->pos_x = position[0];
         record->pos_y = position[1];
         record->pos_z = position[2];
         record++;
     }
     record->part_id = -1;
-    record->variant = -1;
+    record->rot_y = -1;
     record->pos_x = 0.0f;
     record->pos_y = 0.0f;
     record->pos_z = 0.0f;
@@ -1477,13 +1477,13 @@ void CEditGround::Load(int town, CSaveData *save) {
     header->offset = sizeof(GROUND_SAVE_HEADER);
     for (int i = 0; i < count; saved++, record++, i++) {
         record->part_id = saved->part_id;
-        record->variant = saved->variant;
+        record->rot_y = saved->rot_y;
         record->pos_x = saved->pos_x;
         record->pos_y = saved->pos_y;
         record->pos_z = saved->pos_z;
     }
     record->part_id = -1;
-    record->variant = -1;
+    record->rot_y = -1;
     Load(buffer);
 }
 
@@ -1552,11 +1552,11 @@ int CEditGround::PickUpPoly(CCPoly *out_polygons, CBoxVu0 box, int flags) {
 }
 
 int CEditGround::PickUpEditAreaPoly(CCPoly *polygons, float x, float y, float z) {
-    int area = GetAreaCode(x, y, z);
-    if (area < 0) {
+    int area_no = GetAreaCode(x, y, z);
+    if (area_no < 0) {
         return 0;
     }
-    return areas[area]->PickUpPoly(polygons, x, y, z);
+    return areas[area_no]->PickUpPoly(polygons, x, y, z);
 }
 
 int CEditGround::PickUpCameraPoly(CCPoly *out_polygons, CBoxVu0 &box, int flags) {
@@ -1631,10 +1631,10 @@ void CEditGround::Clear() {
     if (map_no == 1) {
         CVector3_f_ position;
         EDITPARTS_INFO *info = parts_info->GetPartsInfo(16);
-        int saved = info->unk_08;
+        int saved = info->obtained;
 
         info->stock += 6;
-        info->unk_08 = 0;
+        info->obtained = 0;
         areas[0]->GetPos(&position, 5, 0, 0);
         SetMapParts(16, position.x, position.y, position.z, 0);
         areas[0]->GetPos(&position, 2, 0, 7);
@@ -1649,7 +1649,7 @@ void CEditGround::Clear() {
         SetMapParts(16, position.x, position.y, position.z, 0);
         info->placed = 0;
         info->stock -= 6;
-        info->unk_08 = saved;
+        info->obtained = saved;
     }
 }
 
@@ -1668,7 +1668,7 @@ void CEditGround::Initialize() {
         fixed_parts[i].Initialize();
     }
     for (i = 0; i < 1; i++) {
-        unk_20740[i] = 0;
+        spare_words[i] = 0;
     }
     for (i = 0; i < 4; i++) {
         water_surfaces[i].draw = 0;
@@ -1811,11 +1811,11 @@ void CPartsCursor::Draw(float *position, int width, int height) {
 }
 
 void CEditGround::RequestCheck() {
-    CMapParts *plot_parts[24][64];
+    CMapParts *placed[24][64];
     int plot_count[24];
     int i;
 
-    memset(plot_parts, 0, sizeof(plot_parts));
+    memset(placed, 0, sizeof(placed));
     CMapParts *object = parts;
     for (i = 0; i < 24; i++) {
         plot_count[i] = 0;
@@ -1825,25 +1825,25 @@ void CEditGround::RequestCheck() {
         if (object->handle >= 0) {
             int plot = object->parts_no;
             if (plot >= 0 && plot < 24) {
-                plot_parts[plot][plot_count[plot]++] = object;
+                placed[plot][plot_count[plot]++] = object;
             }
         }
     }
     switch (map_no) {
         case 0:
-            NornRequest(plot_parts);
+            NornRequest(placed);
             break;
         case 1:
-            MatatagiRequest(plot_parts);
+            MatatagiRequest(placed);
             break;
         case 2:
-            QueensRequest(plot_parts);
+            QueensRequest(placed);
             break;
         case 3:
-            MuskaRequest(plot_parts);
+            MuskaRequest(placed);
             break;
         case 4:
-            YellowRequest(plot_parts);
+            YellowRequest(placed);
             break;
     }
     for (i = 0; i < 24; i++) {
@@ -1853,16 +1853,16 @@ void CEditGround::RequestCheck() {
     }
 }
 
-int CEditGround::CheckPartsRect(int parts_no, int area, CRect_i_ &rect) {
+int CEditGround::CheckPartsRect(int parts_no, int area_no, CRect_i_ &rect) {
     int parts_ids[256];
 
-    if (area < 0 || area >= 4) {
+    if (area_no < 0 || area_no >= 4) {
         return 0;
     }
-    if (areas[area] == NULL) {
+    if (areas[area_no] == NULL) {
         return 0;
     }
-    int count = areas[area]->GetPartsRect(rect, parts_ids, 256);
+    int count = areas[area_no]->GetPartsRect(rect, parts_ids, 256);
     for (int i = 0; i < count; i++) {
         if (parts[parts_ids[i]].parts_no == parts_no) {
             return 1;
@@ -1880,14 +1880,14 @@ void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int margin) {
         return;
     }
     target->GetPosition(position);
-    int area = GetAreaCode(position[0], position[1], position[2]);
-    if (area < 0 || area >= 4) {
+    int area_no = GetAreaCode(position[0], position[1], position[2]);
+    if (area_no < 0 || area_no >= 4) {
         return;
     }
-    if (areas[area] == NULL) {
+    if (areas[area_no] == NULL) {
         return;
     }
-    areas[area]->GetPos(&grid, position[0], position[1], position[2]);
+    areas[area_no]->GetPos(&grid, position[0], position[1], position[2]);
     int width = target->GetWidth();
     int height = target->GetHeight();
     int half_width = width >> 1;
@@ -1912,14 +1912,14 @@ void CEditGround::GetRectParts(CRect_i_ *rect, CMapParts *target, int column, in
         return;
     }
     target->GetPosition(position);
-    int area = GetAreaCode(position[0], position[1], position[2]);
-    if (area < 0 || area >= 4) {
+    int area_no = GetAreaCode(position[0], position[1], position[2]);
+    if (area_no < 0 || area_no >= 4) {
         return;
     }
-    if (areas[area] == NULL) {
+    if (areas[area_no] == NULL) {
         return;
     }
-    areas[area]->GetPos(&grid, position[0], position[1], position[2]);
+    areas[area_no]->GetPos(&grid, position[0], position[1], position[2]);
     rot_y = target->GetRotY();
     target->SetRotY(0);
     width = target->GetWidth();
@@ -1999,14 +1999,14 @@ void CEditGround::GetRectDirParts(CRect_i_ *rect, CMapParts *target, int directi
         return;
     }
     target->GetPosition(position);
-    int area = GetAreaCode(position[0], position[1], position[2]);
-    if (area < 0 || area >= 4) {
+    int area_no = GetAreaCode(position[0], position[1], position[2]);
+    if (area_no < 0 || area_no >= 4) {
         return;
     }
-    if (areas[area] == NULL) {
+    if (areas[area_no] == NULL) {
         return;
     }
-    areas[area]->GetPos(&grid, position[0], position[1], position[2]);
+    areas[area_no]->GetPos(&grid, position[0], position[1], position[2]);
     int width = target->GetWidth();
     int height = target->GetHeight();
     direction += target->GetRotY();
@@ -2042,61 +2042,61 @@ void CEditGround::GetRectDirParts(CRect_i_ *rect, CMapParts *target, int directi
     }
 }
 
-void CEditGround::NornRequest(CMapParts *(*plot_parts)[64]) {
+void CEditGround::NornRequest(CMapParts *(*placed)[64]) {
     parts_info->parts_max = 8;
     if (areas[0] == NULL) {
         return;
     }
-    if (plot_parts[0][0] != NULL && plot_parts[0][0]->GetRotY() == 1) {
+    if (placed[0][0] != NULL && placed[0][0]->GetRotY() == 1) {
         parts_info->request[0] = 1;
     }
-    if (plot_parts[1][0] != NULL) {
+    if (placed[1][0] != NULL) {
         if (CheckPartsRect(1, 0, CRect_i_(10, 0, 4, 5))) {
             parts_info->request[1] = 1;
         }
     }
-    if (plot_parts[2][0] != NULL) {
+    if (placed[2][0] != NULL) {
         if (!CheckPartsRect(2, 0, CRect_i_(2, 8, 9, 4))) {
             parts_info->request[2] = 1;
         }
     }
-    if (plot_parts[3][0] != NULL) {
+    if (placed[3][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[12][0], 2);
+        GetRectParts(&rect, placed[12][0], 2);
         if (CheckPartsRect(3, 0, rect)) {
             parts_info->request[3] = 1;
         }
     }
-    if (plot_parts[4][0] != NULL) {
+    if (placed[4][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[6][0], 4);
+        GetRectParts(&rect, placed[6][0], 4);
         if (CheckPartsRect(4, 0, rect)) {
             parts_info->request[4] = 1;
         }
     }
-    if (plot_parts[5][0] != NULL) {
+    if (placed[5][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[8][0], 2, 4);
+        GetRectDirParts(&rect, placed[8][0], 2, 4);
         if (CheckPartsRect(5, 0, rect) && SaveData->GetGameIntFlag(0) >= 100) {
             parts_info->request[5] = 1;
         }
     }
-    if (plot_parts[6][0] != NULL) {
+    if (placed[6][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[1][0], 4);
+        GetRectParts(&rect, placed[1][0], 4);
         if (!CheckPartsRect(6, 0, rect)) {
             parts_info->request[6] = 1;
         }
     }
-    if (plot_parts[7][0] != NULL) {
+    if (placed[7][0] != NULL) {
         int parts_ids[256];
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[7][0], 4);
+        GetRectParts(&rect, placed[7][0], 4);
         int count = areas[0]->GetPartsRect(rect, parts_ids, 256);
         int houses = 0;
         for (int i = 0; i < count; i++) {
@@ -2111,7 +2111,7 @@ void CEditGround::NornRequest(CMapParts *(*plot_parts)[64]) {
     }
 }
 
-void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
+void CEditGround::MatatagiRequest(CMapParts *(*placed)[64]) {
     parts_info->parts_max = 10;
     if (areas[0] == NULL || areas[1] == NULL || areas[2] == NULL) {
         return;
@@ -2125,7 +2125,7 @@ void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
     if (chained) {
         parts_info->request[16] = 1;
     }
-    if (plot_parts[0][0] != NULL) {
+    if (placed[0][0] != NULL) {
         if (CheckPartsRect(0, 0, CRect_i_(0, 0, 4, 1))) {
             parts_info->request[0] = 1;
         }
@@ -2133,12 +2133,12 @@ void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
             parts_info->request[0] = 1;
         }
     }
-    if (plot_parts[1][0] != NULL) {
+    if (placed[1][0] != NULL) {
         int parts_ids[256];
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[1][0], 1);
-        int count = areas[plot_parts[1][0]->area]->GetPartsRect(rect, parts_ids, 256);
+        GetRectParts(&rect, placed[1][0], 1);
+        int count = areas[placed[1][0]->area]->GetPartsRect(rect, parts_ids, 256);
         int found = 0;
         for (int i = 0; i < count; i++) {
             if (parts[parts_ids[i]].parts_no == 15) {
@@ -2150,63 +2150,63 @@ void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
             }
         }
     }
-    if (plot_parts[2][0] != NULL) {
+    if (placed[2][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[2][0], 3);
-        int area = plot_parts[2][0]->area;
-        if (CheckPartsRect(11, area, rect)) {
+        GetRectParts(&rect, placed[2][0], 3);
+        int area_no = placed[2][0]->area;
+        if (CheckPartsRect(11, area_no, rect)) {
             parts_info->request[2] = 1;
         }
-        if (CheckPartsRect(12, area, rect)) {
+        if (CheckPartsRect(12, area_no, rect)) {
             parts_info->request[2] = 1;
         }
-        if (CheckPartsRect(13, area, rect)) {
+        if (CheckPartsRect(13, area_no, rect)) {
             parts_info->request[2] = 1;
         }
     }
-    if (plot_parts[3][0] != NULL) {
+    if (placed[3][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[3][0], 4);
-        int area = plot_parts[3][0]->area;
-        if (CheckPartsRect(14, area, rect)) {
+        GetRectParts(&rect, placed[3][0], 4);
+        int area_no = placed[3][0]->area;
+        if (CheckPartsRect(14, area_no, rect)) {
             parts_info->request[3] = 1;
         }
     }
-    if (plot_parts[4][0] != NULL) {
+    if (placed[4][0] != NULL) {
         if (CheckPartsRect(4, 2, CRect_i_(0, 5, 7, 3))) {
             parts_info->request[4] = 1;
         }
     }
-    if (plot_parts[5][0] != NULL) {
+    if (placed[5][0] != NULL) {
         sceVu0FVECTOR position;
-        plot_parts[5][0]->GetPosition(position);
+        placed[5][0]->GetPosition(position);
         if (GetAlt_i(position[0], position[1], position[2]) > 0) {
             parts_info->request[5] = 1;
         }
     }
-    if (plot_parts[6][0] != NULL && plot_parts[3][0] != NULL) {
+    if (placed[6][0] != NULL && placed[3][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[3][0], 3);
-        if (CheckPartsRect(6, plot_parts[3][0]->area, rect)) {
+        GetRectParts(&rect, placed[3][0], 3);
+        if (CheckPartsRect(6, placed[3][0]->area, rect)) {
             parts_info->request[6] = 1;
         }
     }
-    if (plot_parts[7][0] != NULL) {
+    if (placed[7][0] != NULL) {
         sceVu0FVECTOR position;
-        plot_parts[7][0]->GetPosition(position);
+        placed[7][0]->GetPosition(position);
         if (GetAlt_i(position[0], position[1], position[2]) > 0) {
             parts_info->request[7] = 1;
         }
     }
-    if (plot_parts[14][0] != NULL) {
+    if (placed[14][0] != NULL) {
         int parts_ids[256];
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[14][0], 1);
-        int count = areas[plot_parts[14][0]->area]->GetPartsRect(rect, parts_ids, 256);
+        GetRectParts(&rect, placed[14][0], 1);
+        int count = areas[placed[14][0]->area]->GetPartsRect(rect, parts_ids, 256);
         int found = 0;
         for (int i = 0; i < count; i++) {
             int parts_no = parts[parts_ids[i]].parts_no;
@@ -2233,12 +2233,12 @@ void CEditGround::MatatagiRequest(CMapParts *(*plot_parts)[64]) {
     }
 }
 
-void CEditGround::QueensRequest(CMapParts *(*plot_parts)[64]) {
+void CEditGround::QueensRequest(CMapParts *(*placed)[64]) {
     parts_info->parts_max = 10;
     if (areas[0] == NULL || areas[1] == NULL || areas[2] == NULL) {
         return;
     }
-    if (plot_parts[0][0] != NULL) {
+    if (placed[0][0] != NULL) {
         if (CheckPartsRect(0, 1, CRect_i_(0, 0, 1, 7))) {
             parts_info->request[0] = 1;
         }
@@ -2246,64 +2246,64 @@ void CEditGround::QueensRequest(CMapParts *(*plot_parts)[64]) {
             parts_info->request[0] = 1;
         }
     }
-    if (plot_parts[1][0] != NULL && plot_parts[10][0] != NULL) {
+    if (placed[1][0] != NULL && placed[10][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[10][0], 3);
-        if (CheckPartsRect(1, plot_parts[10][0]->area, rect)) {
+        GetRectParts(&rect, placed[10][0], 3);
+        if (CheckPartsRect(1, placed[10][0]->area, rect)) {
             parts_info->request[1] = 1;
         }
     }
-    if (plot_parts[2][0] != NULL && plot_parts[8][0] != NULL) {
+    if (placed[2][0] != NULL && placed[8][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[8][0], 2);
-        if (CheckPartsRect(2, plot_parts[8][0]->area, rect)) {
+        GetRectParts(&rect, placed[8][0], 2);
+        if (CheckPartsRect(2, placed[8][0]->area, rect)) {
             parts_info->request[2] = 1;
         }
     }
-    if (plot_parts[3][0] != NULL && plot_parts[1][0] != NULL) {
+    if (placed[3][0] != NULL && placed[1][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[1][0], 2);
-        if (CheckPartsRect(3, plot_parts[1][0]->area, rect)) {
+        GetRectParts(&rect, placed[1][0], 2);
+        if (CheckPartsRect(3, placed[1][0]->area, rect)) {
             parts_info->request[3] = 1;
         }
     }
-    if (plot_parts[4][0] != NULL) {
-        if (plot_parts[9][0] == NULL) {
+    if (placed[4][0] != NULL) {
+        if (placed[9][0] == NULL) {
             parts_info->request[4] = 1;
-        } else if (plot_parts[4][0]->area != plot_parts[9][0]->area) {
+        } else if (placed[4][0]->area != placed[9][0]->area) {
             parts_info->request[4] = 1;
         }
     }
-    if (plot_parts[5][0] != NULL && plot_parts[5][0]->GetRotY() == 0) {
+    if (placed[5][0] != NULL && placed[5][0]->GetRotY() == 0) {
         parts_info->request[5] = 1;
     }
-    if (plot_parts[6][0] != NULL && plot_parts[11][0] != NULL && plot_parts[6][0]->GetRotY() == -1) {
+    if (placed[6][0] != NULL && placed[11][0] != NULL && placed[6][0]->GetRotY() == -1) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[11][0], 3);
-        if (CheckPartsRect(6, plot_parts[11][0]->area, rect)) {
+        GetRectParts(&rect, placed[11][0], 3);
+        if (CheckPartsRect(6, placed[11][0]->area, rect)) {
             parts_info->request[6] = 1;
         }
     }
-    if (plot_parts[7][0] != NULL && plot_parts[7][0]->area == 0) {
+    if (placed[7][0] != NULL && placed[7][0]->area == 0) {
         parts_info->request[7] = 1;
     }
-    if (plot_parts[8][0] != NULL) {
+    if (placed[8][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[8][0], 0, 3);
-        if (CheckPartsRect(13, plot_parts[8][0]->area, rect)) {
+        GetRectParts(&rect, placed[8][0], 0, 3);
+        if (CheckPartsRect(13, placed[8][0]->area, rect)) {
             parts_info->request[8] = 1;
         }
     }
-    if (plot_parts[9][0] != NULL && plot_parts[8][0] != NULL) {
+    if (placed[9][0] != NULL && placed[8][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[8][0], 1);
-        if (CheckPartsRect(9, plot_parts[8][0]->area, rect)) {
+        GetRectParts(&rect, placed[8][0], 1);
+        if (CheckPartsRect(9, placed[8][0]->area, rect)) {
             parts_info->request[9] = 1;
         }
     }
@@ -2335,92 +2335,92 @@ static int CheckRot(CMapParts *parts, CMapParts *other, int rotation_offset) {
     return rotation == other_rotation;
 }
 
-void CEditGround::MuskaRequest(CMapParts *(*plot_parts)[64]) {
+void CEditGround::MuskaRequest(CMapParts *(*placed)[64]) {
     parts_info->parts_max = 9;
     if (areas[0] == NULL) {
         return;
     }
-    if (plot_parts[0][0] != NULL && plot_parts[8][0] != NULL) {
+    if (placed[0][0] != NULL && placed[8][0] != NULL) {
         if (CheckPartsRect(0, 0, CRect_i_(1, 0, 6, 3))) {
             CRect_i_ rect;
             rect.x = rect.y = rect.width = rect.height = 0;
-            GetRectDirParts(&rect, plot_parts[0][0], 2, 14);
-            if (CheckPartsRect(8, 0, rect) && CheckRot(plot_parts[0][0], plot_parts[8][0], 1) &&
+            GetRectDirParts(&rect, placed[0][0], 2, 14);
+            if (CheckPartsRect(8, 0, rect) && CheckRot(placed[0][0], placed[8][0], 1) &&
                 parts_info->GetCompEvent(0)) {
                 parts_info->request[0] = 1;
             }
         }
     }
-    if (plot_parts[1][0] != NULL && plot_parts[10][0] != NULL) {
+    if (placed[1][0] != NULL && placed[10][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[1][0], 2, 14);
-        if (CheckPartsRect(10, 0, rect) && CheckRot(plot_parts[1][0], plot_parts[10][0], 1)) {
+        GetRectDirParts(&rect, placed[1][0], 2, 14);
+        if (CheckPartsRect(10, 0, rect) && CheckRot(placed[1][0], placed[10][0], 1)) {
             parts_info->request[1] = 1;
         }
     }
-    if (plot_parts[2][0] != NULL && plot_parts[9][0] != NULL) {
+    if (placed[2][0] != NULL && placed[9][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[2][0], 2, 14);
-        if (CheckPartsRect(9, 0, rect) && CheckRot(plot_parts[2][0], plot_parts[9][0], 0)) {
+        GetRectDirParts(&rect, placed[2][0], 2, 14);
+        if (CheckPartsRect(9, 0, rect) && CheckRot(placed[2][0], placed[9][0], 0)) {
             parts_info->request[2] = 1;
         }
     }
-    if (plot_parts[3][0] != NULL && plot_parts[9][0] != NULL) {
+    if (placed[3][0] != NULL && placed[9][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[11][0], 2);
+        GetRectParts(&rect, placed[11][0], 2);
         if (CheckPartsRect(3, 0, rect)) {
             CRect_i_ dir_rect;
             dir_rect.x = dir_rect.y = dir_rect.width = dir_rect.height = 0;
-            GetRectDirParts(&dir_rect, plot_parts[3][0], 2, 14);
-            if (CheckPartsRect(9, 0, dir_rect) && CheckRot(plot_parts[3][0], plot_parts[9][0], 2)) {
+            GetRectDirParts(&dir_rect, placed[3][0], 2, 14);
+            if (CheckPartsRect(9, 0, dir_rect) && CheckRot(placed[3][0], placed[9][0], 2)) {
                 parts_info->request[3] = 1;
             }
         }
     }
-    if (plot_parts[4][0] != NULL && plot_parts[9][0] != NULL) {
+    if (placed[4][0] != NULL && placed[9][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[4][0], 2, 14);
-        if (CheckPartsRect(9, 0, rect) && CheckRot(plot_parts[4][0], plot_parts[9][0], 1)) {
+        GetRectDirParts(&rect, placed[4][0], 2, 14);
+        if (CheckPartsRect(9, 0, rect) && CheckRot(placed[4][0], placed[9][0], 1)) {
             parts_info->request[4] = 1;
         }
     }
-    if (plot_parts[5][0] != NULL && plot_parts[10][0] != NULL) {
+    if (placed[5][0] != NULL && placed[10][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[5][0], 2, 14);
-        if (CheckPartsRect(10, 0, rect) && CheckRot(plot_parts[5][0], plot_parts[10][0], 0)) {
+        GetRectDirParts(&rect, placed[5][0], 2, 14);
+        if (CheckPartsRect(10, 0, rect) && CheckRot(placed[5][0], placed[10][0], 0)) {
             parts_info->request[5] = 1;
         }
     }
-    if (plot_parts[6][0] != NULL && plot_parts[8][0] != NULL) {
+    if (placed[6][0] != NULL && placed[8][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[6][0], 2, 14);
-        if (CheckPartsRect(8, 0, rect) && CheckRot(plot_parts[6][0], plot_parts[8][0], 0) &&
-            plot_parts[6][0]->GetRotY() == 1) {
+        GetRectDirParts(&rect, placed[6][0], 2, 14);
+        if (CheckPartsRect(8, 0, rect) && CheckRot(placed[6][0], placed[8][0], 0) &&
+            placed[6][0]->GetRotY() == 1) {
             parts_info->request[6] = 1;
         }
     }
-    if (plot_parts[7][0] != NULL && plot_parts[8][0] != NULL) {
+    if (placed[7][0] != NULL && placed[8][0] != NULL) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectDirParts(&rect, plot_parts[7][0], 2, 14);
-        if (CheckPartsRect(8, 0, rect) && CheckRot(plot_parts[7][0], plot_parts[8][0], 2)) {
+        GetRectDirParts(&rect, placed[7][0], 2, 14);
+        if (CheckPartsRect(8, 0, rect) && CheckRot(placed[7][0], placed[8][0], 2)) {
             parts_info->request[7] = 1;
         }
     }
-    if (plot_parts[10][0] != NULL) {
-        if (CheckPartsRect(10, 0, CRect_i_(2, 0, 3, 14)) && plot_parts[10][0]->GetRotY() == 0) {
+    if (placed[10][0] != NULL) {
+        if (CheckPartsRect(10, 0, CRect_i_(2, 0, 3, 14)) && placed[10][0]->GetRotY() == 0) {
             parts_info->request[10] = 1;
         }
     }
 }
 
-void CEditGround::YellowRequest(CMapParts *(*plot_parts)[64]) {
+void CEditGround::YellowRequest(CMapParts *(*placed)[64]) {
     int unused[24];
     int i;
 
@@ -2431,113 +2431,113 @@ void CEditGround::YellowRequest(CMapParts *(*plot_parts)[64]) {
     for (int j = 0; j < 24; j++) {
         unused[j] = 0;
     }
-    if (CheckRot(plot_parts[0][0], plot_parts[7][0], 0)) {
+    if (CheckRot(placed[0][0], placed[7][0], 0)) {
         CRect_i_ rect;
         CRect_i_ other;
         rect.x = rect.y = rect.width = rect.height = 0;
         other.x = other.y = other.width = other.height = 0;
-        GetRectParts(&rect, plot_parts[0][0], 0, 2);
-        GetRectParts(&other, plot_parts[0][0], 1, 2);
+        GetRectParts(&rect, placed[0][0], 0, 2);
+        GetRectParts(&other, placed[0][0], 1, 2);
         if (CheckPartsRect(7, 0, rect) && CheckPartsRect(7, 0, other)) {
             parts_info->request[0] = 1;
         }
     }
-    if (CheckRot(plot_parts[1][0], plot_parts[5][0], 0)) {
+    if (CheckRot(placed[1][0], placed[5][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[1][0], 0, -1);
+        GetRectParts(&rect, placed[1][0], 0, -1);
         if (CheckPartsRect(5, 0, rect)) {
             parts_info->request[1] = 1;
         }
     }
-    if (CheckRot(plot_parts[2][0], plot_parts[6][0], 0)) {
+    if (CheckRot(placed[2][0], placed[6][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[2][0], 0, -1);
+        GetRectParts(&rect, placed[2][0], 0, -1);
         if (CheckPartsRect(6, 0, rect)) {
             parts_info->request[2] = 1;
         }
     }
-    if (CheckRot(plot_parts[3][0], plot_parts[7][0], 0)) {
+    if (CheckRot(placed[3][0], placed[7][0], 0)) {
         CRect_i_ rect;
         CRect_i_ other;
         rect.x = rect.y = rect.width = rect.height = 0;
         other.x = other.y = other.width = other.height = 0;
-        GetRectParts(&rect, plot_parts[3][0], 2, 1);
-        GetRectParts(&other, plot_parts[3][0], 2, 0);
+        GetRectParts(&rect, placed[3][0], 2, 1);
+        GetRectParts(&other, placed[3][0], 2, 0);
         if (CheckPartsRect(7, 0, rect) && !CheckPartsRect(7, 0, other)) {
             parts_info->request[3] = 1;
         }
     }
-    if (CheckRot(plot_parts[4][0], plot_parts[7][0], 0)) {
+    if (CheckRot(placed[4][0], placed[7][0], 0)) {
         CRect_i_ rect;
         CRect_i_ other;
         rect.x = rect.y = rect.width = rect.height = 0;
         other.x = other.y = other.width = other.height = 0;
-        GetRectParts(&rect, plot_parts[4][0], -1, 1);
-        GetRectParts(&other, plot_parts[4][0], -1, 0);
+        GetRectParts(&rect, placed[4][0], -1, 1);
+        GetRectParts(&other, placed[4][0], -1, 0);
         if (CheckPartsRect(7, 0, rect) && !CheckPartsRect(7, 0, other)) {
             parts_info->request[4] = 1;
         }
     }
-    if (CheckRot(plot_parts[5][0], plot_parts[3][0], 0)) {
+    if (CheckRot(placed[5][0], placed[3][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[3][0], 1, 2);
+        GetRectParts(&rect, placed[3][0], 1, 2);
         if (CheckPartsRect(5, 0, rect)) {
             parts_info->request[5] = 1;
         }
     }
-    if (CheckRot(plot_parts[6][0], plot_parts[4][0], 0)) {
+    if (CheckRot(placed[6][0], placed[4][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[4][0], 0, 2);
+        GetRectParts(&rect, placed[4][0], 0, 2);
         if (CheckPartsRect(6, 0, rect)) {
             parts_info->request[6] = 1;
         }
     }
-    if (plot_parts[7][0] != NULL) {
+    if (placed[7][0] != NULL) {
         parts_info->request[7] = 1;
     }
-    if (CheckRot(plot_parts[8][0], plot_parts[7][0], 0)) {
+    if (CheckRot(placed[8][0], placed[7][0], 0)) {
         CRect_i_ rect;
         CRect_i_ other;
         rect.x = rect.y = rect.width = rect.height = 0;
         other.x = other.y = other.width = other.height = 0;
-        GetRectParts(&rect, plot_parts[8][0], 0, -1);
-        GetRectParts(&other, plot_parts[8][0], 1, -1);
+        GetRectParts(&rect, placed[8][0], 0, -1);
+        GetRectParts(&other, placed[8][0], 1, -1);
         if (CheckPartsRect(7, 0, rect) && CheckPartsRect(7, 0, other)) {
             parts_info->request[8] = 1;
         }
     }
-    if (CheckRot(plot_parts[9][0], plot_parts[8][0], 0)) {
+    if (CheckRot(placed[9][0], placed[8][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[8][0], 0, 1);
+        GetRectParts(&rect, placed[8][0], 0, 1);
         if (CheckPartsRect(9, 0, rect)) {
             parts_info->request[9] = 1;
         }
     }
-    if (CheckRot(plot_parts[10][0], plot_parts[8][0], 0)) {
+    if (CheckRot(placed[10][0], placed[8][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[8][0], 1, 1);
+        GetRectParts(&rect, placed[8][0], 1, 1);
         if (CheckPartsRect(10, 0, rect)) {
             parts_info->request[10] = 1;
         }
     }
-    if (CheckRot(plot_parts[11][0], plot_parts[9][0], 0)) {
+    if (CheckRot(placed[11][0], placed[9][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[11][0], 0, -1);
+        GetRectParts(&rect, placed[11][0], 0, -1);
         if (CheckPartsRect(9, 0, rect)) {
             parts_info->request[11] = 1;
         }
     }
-    if (CheckRot(plot_parts[12][0], plot_parts[10][0], 0)) {
+    if (CheckRot(placed[12][0], placed[10][0], 0)) {
         CRect_i_ rect;
         rect.x = rect.y = rect.width = rect.height = 0;
-        GetRectParts(&rect, plot_parts[12][0], 0, -1);
+        GetRectParts(&rect, placed[12][0], 0, -1);
         if (CheckPartsRect(10, 0, rect)) {
             parts_info->request[12] = 1;
         }
@@ -2545,9 +2545,9 @@ void CEditGround::YellowRequest(CMapParts *(*plot_parts)[64]) {
     for (i = 0; i < 24; i++) {
         int on = 2;
         this->plot_parts[i].FrameObjectOnOff("setuzoku", on);
-        if (plot_parts[i][0] != NULL) {
+        if (placed[i][0] != NULL) {
             sceVu0FVECTOR position;
-            plot_parts[i][0]->GetPosition(position);
+            placed[i][0]->GetPosition(position);
             if (parts_info->request[i] && position[1] < 1.0f) {
                 on = 1;
             }

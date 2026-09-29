@@ -438,34 +438,34 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     return 0;
 }
 
-void CSound::SQ_Play(int port, int no) {
+void CSound::SQ_Play(int port, int seq_no) {
     int address;
     int volume;
 
     switch (port) {
         case 0:
-            if (no < midi_state.port[0].sequence_count) {
-                address = (int) midi_state.port[0].sequence_address[no];
-                volume = midi_state.port[0].sequence[no]->volume;
+            if (seq_no < midi_state.port[0].sequence_count) {
+                address = (int) midi_state.port[0].sequence_address[seq_no];
+                volume = midi_state.port[0].sequence[seq_no]->volume;
                 break;
             }
-            printf("###############NOT FOUND SEQ_NO=%d #####################\n", no);
+            printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 1:
-            if (no < midi_state.port[2].sequence_count) {
-                address = (int) midi_state.port[2].sequence_address[no];
-                volume = midi_state.port[2].sequence[no]->volume;
+            if (seq_no < midi_state.port[2].sequence_count) {
+                address = (int) midi_state.port[2].sequence_address[seq_no];
+                volume = midi_state.port[2].sequence[seq_no]->volume;
                 break;
             }
-            printf("###############NOT FOUND SEQ_NO=%d #####################\n", no);
+            printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 2:
-            if (no < midi_state.port[4].sequence_count) {
-                address = (int) midi_state.port[4].sequence_address[no];
-                volume = midi_state.port[4].sequence[no]->volume;
+            if (seq_no < midi_state.port[4].sequence_count) {
+                address = (int) midi_state.port[4].sequence_address[seq_no];
+                volume = midi_state.port[4].sequence[seq_no]->volume;
                 break;
             }
-            printf("###############NOT FOUND SEQ_NO=%d #####################\n", no);
+            printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
     }
     printf("MIDI start! port=%d \n", port);
@@ -475,30 +475,30 @@ void CSound::SQ_Play(int port, int no) {
     ezMidi(port, 0);
 }
 
-void CSound::SQ_Play(int port, int no, int volume) {
+void CSound::SQ_Play(int port, int seq_no, int volume) {
     int address;
 
     switch (port) {
         case 0:
-            if (no < midi_state.port[0].sequence_count) {
-                address = (int) midi_state.port[0].sequence_address[no];
+            if (seq_no < midi_state.port[0].sequence_count) {
+                address = (int) midi_state.port[0].sequence_address[seq_no];
                 break;
             }
-            printf("###############NOT FOUND SEQ_NO=%d #####################\n", no);
+            printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 1:
-            if (no < midi_state.port[2].sequence_count) {
-                address = (int) midi_state.port[2].sequence_address[no];
+            if (seq_no < midi_state.port[2].sequence_count) {
+                address = (int) midi_state.port[2].sequence_address[seq_no];
                 break;
             }
-            printf("###############NOT FOUND SEQ_NO=%d #####################\n", no);
+            printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 2:
-            if (no < midi_state.port[4].sequence_count) {
-                address = (int) midi_state.port[4].sequence_address[no];
+            if (seq_no < midi_state.port[4].sequence_count) {
+                address = (int) midi_state.port[4].sequence_address[seq_no];
                 break;
             }
-            printf("###############NOT FOUND SEQ_NO=%d #####################\n", no);
+            printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
     }
     ezMidi(port + 0x20, 0);
@@ -565,13 +565,13 @@ void CSound::SE_Play(int port, int bank, int program, int pan, int velocity, int
     sceMSIn_PutHsMsg(&msinCtx, channel, message);
 }
 
-void CSound::SE_Play(int port, int no, int voice) {
-    SE_Play(port, se_inf_tbl.entry[no].bank, se_inf_tbl.entry[no].program, 0x40, 0x7F,
-            se_inf_tbl.entry[no].volume, voice);
+void CSound::SE_Play(int port, int se_no, int voice) {
+    SE_Play(port, se_inf_tbl.entry[se_no].bank, se_inf_tbl.entry[se_no].program, 0x40, 0x7F,
+            se_inf_tbl.entry[se_no].volume, voice);
 }
 
-void CSound::SE_Play(int group, int bank, int program, int volume, int voice) {
-    SE_Play(group, bank, program, 0x40, 0x7F, volume, voice);
+void CSound::SE_Play(int port, int bank, int program, int volume, int voice) {
+    SE_Play(port, bank, program, 0x40, 0x7F, volume, voice);
 }
 
 void CSound::SE_Play(int port, int bank, int program, int voice) {
@@ -648,8 +648,8 @@ void CSound::SE_SetPan(int port, int bank, int program, int pan, int voice) {
     sceMSIn_PutHsMsg(&msinCtx, channel, message);
 }
 
-void CSound::SE_SetPan(int port, int no, int pan, int voice) {
-    SE_SetPan(port, se_inf_tbl.entry[no].bank, se_inf_tbl.entry[no].program, pan, voice);
+void CSound::SE_SetPan(int port, int se_no, int pan, int voice) {
+    SE_SetPan(port, se_inf_tbl.entry[se_no].bank, se_inf_tbl.entry[se_no].program, pan, voice);
 }
 
 void CSound::SE_Stop(int port, int bank, int program, int voice) {

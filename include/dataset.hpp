@@ -49,7 +49,7 @@ void BufferAllClear(void);
  * @size 0x3BC
  * @unknownret
  */
-void SetFrameAttr(CFrame *frame, int attr);
+void SetFrameAttr(CFrame *frame, int recurse);
 
 /**
  * Receives the files that synchronous game-data reads load.

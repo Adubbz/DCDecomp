@@ -98,8 +98,8 @@ int CScriptInterpreter::ControlCode(void) {
 }
 
 int CScriptInterpreter::CallFunction(int *result) {
-    char words[512];
-    void *argv[24];
+    char call_text[512];
+    void *call_arguments[24];
 
     if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
@@ -116,67 +116,67 @@ int CScriptInterpreter::CallFunction(int *result) {
             break;
         }
         if (c == '(' || c == ',') {
-            words[length++] = 0;
+            call_text[length++] = 0;
             argc++;
         } else if (CheckChar__Fc__3(c)) {
-            words[length++] = c;
+            call_text[length++] = c;
         }
     }
-    words[length] = 0;
-    words[length + 1] = 0;
+    call_text[length] = 0;
+    call_text[length + 1] = 0;
     if (function_table == NULL) {
         return -1;
     }
 
-    SPI_FUNC_PARAM *function = NULL;
+    SPI_FUNC_PARAM *command = NULL;
     for (length = 0; length < function_count; length++) {
-        if (strcmp(function_table[length].name, words) == 0) {
-            function = &function_table[length];
+        if (strcmp(function_table[length].name, call_text) == 0) {
+            command = &function_table[length];
             break;
         }
     }
-    if (function == NULL) {
+    if (command == NULL) {
         return -1;
     }
 
-    for (length = 0; function->argument_types[length] >= 0; length++) {
+    for (length = 0; command->argument_types[length] >= 0; length++) {
     }
     if (length != argc || argc >= 24) {
         return -1;
     }
 
     int used = 0;
-    u8 *out = &function_argument_data[argument_data_used];
-    char *word = words;
+    u8 *value_out = &function_argument_data[argument_data_used];
+    char *word = call_text;
     for (length = 0; length < argc; length++) {
-        int size = 0;
+        int value_size = 0;
         while (*word++ != 0) {
         }
-        argv[length] = out;
-        switch (function->argument_types[length]) {
+        call_arguments[length] = value_out;
+        switch (command->argument_types[length]) {
             case SCRIPT_ARGUMENT_STRING:
-                strcpy((char *) out, word);
-                size = strlen(word);
-                size = ((size >> 2) + 1) << 2;
+                strcpy((char *) value_out, word);
+                value_size = strlen(word);
+                value_size = ((value_size >> 2) + 1) << 2;
                 break;
             case SCRIPT_ARGUMENT_INTEGER:
-                *(int *) out = atoi(word);
-                size = 4;
+                *(int *) value_out = atoi(word);
+                value_size = 4;
                 break;
             case SCRIPT_ARGUMENT_FLOAT:
-                *(float *) out = atof(word);
-                size = 4;
+                *(float *) value_out = atof(word);
+                value_size = 4;
                 break;
         }
-        out += size;
-        used += size;
+        value_out += value_size;
+        used += value_size;
     }
-    *result = function->function(argv);
+    *result = command->function(call_arguments);
     return 1;
 }
 
 int CScriptInterpreter::GetArg(int *argument_types) {
-    char value[256];
+    char token[256];
 
     if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
@@ -199,7 +199,7 @@ int CScriptInterpreter::GetArg(int *argument_types) {
             return 0;
         }
         if (c != ',') {
-            value[length++] = c;
+            token[length++] = c;
         } else if (!SkipSpace__FR9input_str__3(*this)) {
             return 0;
         }
@@ -210,45 +210,45 @@ int CScriptInterpreter::GetArg(int *argument_types) {
             if (c == ',' || !CheckChar__Fc__3(c)) {
                 break;
             }
-            value[length++] = c;
+            token[length++] = c;
         }
-        value[length] = 0;
+        token[length] = 0;
 
         switch (argument_types[i]) {
             case SCRIPT_ARGUMENT_STRING:
-                if (value[0] != '"') {
+                if (token[0] != '"') {
                     return -1;
                 }
                 for (length = 1;; length++) {
-                    if (value[length] == '"') {
-                        value[length] = 0;
+                    if (token[length] == '"') {
+                        token[length] = 0;
                         break;
                     }
-                    if (value[length] == 0) {
+                    if (token[length] == 0) {
                         return -1;
                     }
                 }
-                strcpy((char *) arguments[i], value + 1);
+                strcpy((char *) arguments[i], token + 1);
                 used += ((((int) strlen((char *) arguments[i]) + 1) >> 2) + 1) << 2;
                 break;
             case SCRIPT_ARGUMENT_INTEGER:
-                for (length = 0; value[length] != 0; length++) {
-                    char digit = value[length];
+                for (length = 0; token[length] != 0; length++) {
+                    char digit = token[length];
                     if ((digit < '0' || digit > '9') && digit != '-') {
                         return -1;
                     }
                 }
-                *(int *) arguments[i] = atoi(value);
+                *(int *) arguments[i] = atoi(token);
                 used += 4;
                 break;
             case SCRIPT_ARGUMENT_FLOAT:
-                for (length = 0; value[length] != 0; length++) {
-                    char digit = value[length];
+                for (length = 0; token[length] != 0; length++) {
+                    char digit = token[length];
                     if ((digit < '0' || digit > '9') && digit != '.' && digit != '-') {
                         return -1;
                     }
                 }
-                *(float *) arguments[i] = atof(value);
+                *(float *) arguments[i] = atof(token);
                 used += 4;
                 break;
             default:

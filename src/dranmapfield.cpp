@@ -44,10 +44,10 @@ void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
 
     if (set->collision_count < 12) {
         set->collision[set->collision_count] = (CFrame *) LoadCollisionFile(pack, arena);
-        float zero = 0.0f;
-        set->collision[set->collision_count]->SetPosition(zero, zero, zero);
-        float zero2 = 0.0f;
-        set->collision[set->collision_count]->SetRotation(zero2, zero2, zero2);
+        float coord = 0.0f;
+        set->collision[set->collision_count]->SetPosition(coord, coord, coord);
+        float angle = 0.0f;
+        set->collision[set->collision_count]->SetRotation(angle, angle, angle);
         set->collision_count++;
     } else {
         printf(OverMessage);

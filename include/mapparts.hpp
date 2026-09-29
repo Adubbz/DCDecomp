@@ -33,19 +33,19 @@ struct EDITPARTS_INFO;
  */
 class CMapParts : public CMapObject {
 public:
-    s32 parts_no; /**< Plot the part stands on, as the part catalogue numbers it. */
-    s32 area;     /**< Area of the ground the part stands in, or -1. */
-    s32 rot_y;    /**< Quarter turns about the vertical axis that the part faces. */
-    s32 unk_0FC;
-    s32 unk_100;
-    CFrame *unk_104;
-    EDITPARTS_INFO *info; /**< Definition of the part; zero until a map gives it one. */
-    s32 unk_10C;
-    s32 unk_110;
-    s32 unk_114;
-    s32 subtype; /**< Subtype of the part: 1 for a road, 2 for a river, 3 and 5 for parts a new part may replace. */
-    float unk_11C;
-    float unk_120;
+    s32 parts_no;              /**< Plot the part stands on, as the part catalogue numbers it. */
+    s32 area;                  /**< Area of the ground the part stands in, or -1. */
+    s32 rot_y;                 /**< Quarter turns about the vertical axis that the part faces. */
+    s32 preview_frame;         /**< Frame drawn as the placement preview where the part fits: its finest level of detail. */
+    s32 blocked_preview_frame; /**< Frame drawn as the placement preview where the part does not fit. */
+    CFrame *ripple_frame;      /**< Extra model drawn with the part, such as a river's ripples; zero where the part has none. */
+    EDITPARTS_INFO *info;      /**< Definition of the part; zero until a map gives it one. */
+    s32 func_count;            /**< Number of function points the part's definition holds. */
+    s32 func_data;             /**< Function points of the part's definition. */
+    s32 def_parts_no;          /**< Part number that the part's definition gives. */
+    s32 subtype;               /**< Subtype of the part: 1 for a road, 2 for a river, 3 and 5 for parts a new part may replace. */
+    float lift;                /**< Scale of the height the part is raised by to keep it from cutting into the ground; above 1 raises it by a fixed step. */
+    float draw_distance;       /**< Distance beyond which the part is not drawn; zero or below to draw it at any distance. */
     s32 unk_124;
     s32 unk_128;
     s32 unk_12C;
@@ -100,7 +100,7 @@ public:
      * @address 0x19A850
      * @size 0x5C
      */
-    void SetRotY(int rot_y);
+    void SetRotY(int direction);
 
     /**
      * Gets the compass direction that the part faces.

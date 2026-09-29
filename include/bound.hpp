@@ -24,16 +24,16 @@ public:
     sceVu0FMATRIX matrix;    /**< 0x40: Local-to-world orientation. */
     sceVu0FMATRIX inverse;   /**< 0x80: World-to-local orientation. */
     sceVu0FVECTOR position;  /**< 0xC0: World-space center. */
-    sceVu0FVECTOR direction; /**< 0xD0: Direction used to update orientation. */
-    s32 state;               /**< 0xE0: Frame-following update mode. */
-    CFrame *frame0;          /**< 0xE4: Primary attachment frame. */
-    CFrame *frame1;          /**< 0xE8: Optional secondary attachment frame. */
+    sceVu0FVECTOR direction; /**< Unit facing direction the box's orientation was last built from. */
+    s32 follow_mode;         /**< How UpDate re-places the box: 1 follows one frame, 2 spans two frames, 0 leaves it where it is. */
+    CFrame *from_frame;      /**< Frame the box follows; in span mode, the frame its start point follows. */
+    CFrame *to_frame;        /**< Frame the end point follows in span mode. */
     u8 unk_EC[4];
-    sceVu0FVECTOR from; /**< 0xF0: Start of the attachment direction. */
-    sceVu0FVECTOR to;   /**< 0x100: End of the attachment direction. */
-    sceVu0FVECTOR up;   /**< 0x110: Up vector for the attachment orientation. */
-    float length0;      /**< 0x120: First attachment distance scale. */
-    float length1;      /**< 0x124: Second attachment distance scale. */
+    sceVu0FVECTOR from; /**< Start point of the span, in the space of the frame it follows. */
+    sceVu0FVECTOR to;   /**< End point of the span, in the space of the frame it follows. */
+    sceVu0FVECTOR up;   /**< Up vector, in the followed frame's space, that settles the box's roll. */
+    float to_stretch;   /**< Factor the span is stretched by past its end point. */
+    float from_stretch; /**< Factor the span is stretched by before its start point. */
 
     /**
      * Returns the storage required for this cloth exclusion box.
@@ -51,7 +51,7 @@ public:
      * @address 0x13D250
      * @size 0x268
      */
-    virtual int InCheck(float *position, float *result);
+    virtual int InCheck(float *point, float *result);
 
     /**
      * Attaches the box to one frame, stores the span it follows, and sets its

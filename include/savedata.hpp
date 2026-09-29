@@ -41,10 +41,10 @@ STATIC_ASSERT(sizeof(CMenuCursor) == 0x2C);
  * memory card data is damaged.
  */
 struct SV_CONFIG_SYS {
-    char values[18];       /**< Contains the configuration values. */
-    char values_copy1[18]; /**< Contains the first copy of the configuration values. */
-    char values_copy2[18]; /**< Contains the second copy of the configuration values. */
-    char reserved_36[10];  /**< Contains the game clear flag at offset two. */
+    char values[18];          /**< Contains the configuration values. */
+    char values_copy1[18];    /**< Contains the first copy of the configuration values. */
+    char values_copy2[18];    /**< Contains the second copy of the configuration values. */
+    char game_clear_area[10]; /**< Bytes past the three copies; the word at offset two holds the game clear flag. */
 };
 
 /**
@@ -61,11 +61,11 @@ struct SV_FISH_DATA {
  * Contains the state of one Georama plot.
  */
 struct SV_EDIT_PARTS_INFO {
-    s32 part_id; /**< Identifies the building on the plot. */
-    s16 flag;    /**< Set to one when the player has the building. */
-    s16 unk_6;
-    s16 progress;    /**< Contains the build progress of the building. */
-    s16 npc_slot[6]; /**< Identifies the NPCs that live in the building. */
+    s32 completion_flags;   /**< Completion flags of the plot's part, as CEditPartsInfo keeps them. */
+    s16 obtained;           /**< Set to one once the player has obtained the building. */
+    s16 placed;             /**< Copies of the part standing on the map. */
+    s16 stock;              /**< Copies of the part the player holds; a stackable part gains five per pickup. */
+    s16 element_enabled[6]; /**< Whether each of the part's six attachment elements is in place. */
     s16 unk_16;
 };
 
@@ -73,8 +73,8 @@ struct SV_EDIT_PARTS_INFO {
  * Contains one Georama part that the player put on the map.
  */
 struct SV_GRD_PART {
-    s16 part_id; /**< Identifies the part. */
-    s16 variant; /**< Selects the variant of the part. */
+    s16 part_id; /**< Plot part the record places, or -1 to end the list. */
+    s16 rot_y;   /**< Quarter turns about the vertical axis that the part faces. */
     float pos_x; /**< Contains the X position of the part. */
     float pos_y; /**< Contains the Y position of the part. */
     float pos_z; /**< Contains the Z position of the part. */

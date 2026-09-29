@@ -404,14 +404,14 @@ public:
     char current_dir[0x40]; /**< Directory that sceMcChdir writes back. */
     s32 func_no;            /**< Operation that the class is running. */
     u8 unk_C0[4];
-    s32 step;                /**< Step that the current operation has reached. */
-    s32 fd;                  /**< File that the last sceMcOpen returned, -1 until one does. */
-    MC_DIR_ENTRY *dir_table; /**< Table that GetDir fills with the entries of the save directory. */
-    CSaveData *save_buffer;  /**< Save data at the start of the save image. */
-    char *check_sum;         /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
-    char *unk_D8;
-    char *read_buffer; /**< Area behind the save image that a read fills. */
-    s32 unk_E0;
+    s32 step;                                  /**< Step that the current operation has reached. */
+    s32 fd;                                    /**< File that the last sceMcOpen returned, -1 until one does. */
+    MC_DIR_ENTRY *dir_table;                   /**< Table that GetDir fills with the entries of the save directory. */
+    CSaveData *save_buffer;                    /**< Save data at the start of the save image. */
+    char *check_sum;                           /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
+    char *load_buffer;                         /**< Area behind the save image that a load or a conversion reads a whole save file into. */
+    char *read_buffer;                         /**< Area behind the save image that a read fills. */
+    s32 idle_code;                             /**< Set to 61 whenever the class goes idle. */
     s32 transferred;                           /**< Bytes that the current read or write has moved. */
     s32 transfer_size;                         /**< Bytes that the current read or write is to move. */
     sceMcIconSys icon_sys;                     /**< icon.sys image that MakeDir writes into the save directory. */

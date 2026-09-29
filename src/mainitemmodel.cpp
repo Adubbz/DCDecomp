@@ -47,16 +47,16 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
         return -1;
     }
     BtItemCashArea[slot].Reset();
-    u_char *buffer = BtItemCashArea[slot].base + BtItemCashArea[slot].used * 16;
+    u_char *texture_copy = BtItemCashArea[slot].base + BtItemCashArea[slot].used * 16;
     CDataAlloc2<1> *area = &BtItemCashArea[slot];
     area->Alloc((texture_size >> 4) + 1);
-    memcpy(buffer, texture_data, texture_size);
+    memcpy(texture_copy, texture_data, texture_size);
     TexManager.DeleteTextureBlock(slot + 0x38);
     TexManager.CleanUpBuffer();
-    LOADTEXTURE_INFO2 texture[2] = {};
-    texture[0].name = (char *) buffer;
-    texture[0].block_no = slot + 0x38;
-    TexManager.LoadTextureBlockEX(slot + 0x38, texture);
+    LOADTEXTURE_INFO2 textures[2] = {};
+    textures[0].name = (char *) texture_copy;
+    textures[0].block_no = slot + 0x38;
+    TexManager.LoadTextureBlockEX(slot + 0x38, textures);
     cash[slot] = (u_int *) LoadMDSFile(model_data, area, 0, NULL, NULL);
     cash_lock[slot] = 1;
     cash_item[slot] = item_no;
@@ -66,32 +66,32 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
     return model_no;
 }
 
-void CMainItemModel::DeleteModel(int index) {
-    cash_lock[model_cash[index]]--;
-    if (cash_lock[model_cash[index]] <= 0) {
-        cash[model_cash[index]] = NULL;
-        cash_lock[model_cash[index]] = 0;
+void CMainItemModel::DeleteModel(int model_no) {
+    cash_lock[model_cash[model_no]]--;
+    if (cash_lock[model_cash[model_no]] <= 0) {
+        cash[model_cash[model_no]] = NULL;
+        cash_lock[model_cash[model_no]] = 0;
         printf(MainItemRemoveMessage);
     }
-    model[index] = -1;
-    model_cash[index] = -1;
+    model[model_no] = -1;
+    model_cash[model_no] = -1;
 }
 
-int CMainItemModel::SetHandModel(int source) {
-    int index = GetFreeModelNo();
+int CMainItemModel::SetHandModel(int source_no) {
+    int hand_no = GetFreeModelNo();
 
-    if (index == -1) {
+    if (hand_no == -1) {
         return -1;
     }
-    model[index] = 1;
+    model[hand_no] = 1;
     float zero = 0.0f;
-    frame[index].SetPosition(zero, zero, zero);
-    float rot = 1.5707964f;
-    frame[index].SetRotation(rot, 0.0f, 0.0f);
-    model_cash[index] = model_cash[source];
-    cash_lock[model_cash[source]]++;
-    printf(MainItemHandMessage, index, cash_lock[model_cash[source]]);
-    return index;
+    frame[hand_no].SetPosition(zero, zero, zero);
+    float angle = 1.5707964f;
+    frame[hand_no].SetRotation(angle, 0.0f, 0.0f);
+    model_cash[hand_no] = model_cash[source_no];
+    cash_lock[model_cash[source_no]]++;
+    printf(MainItemHandMessage, hand_no, cash_lock[model_cash[source_no]]);
+    return hand_no;
 }
 
 void CMainItemModel::AllReleasItem(void) {
@@ -107,15 +107,15 @@ void CMainItemModel::AllReleasItem(void) {
 /**
  * Creates a thrown model at a position with a copied heading vector.
  */
-int CMainItemModel::SetThrowModel(int model_index, float *position, float *heading) {
+int CMainItemModel::SetThrowModel(int source_no, float *position, float *heading) {
     int slot = GetFreeModelNo();
     model[slot] = 2;
     sceVu0CopyVector(velocity[slot], heading);
     frame[slot].SetPosition(position);
     frame[slot].SetRotation(1.5707964f, 0.0f, 0.0f);
     throw_time[slot] = 0;
-    model_cash[slot] = model_cash[model_index];
-    cash_lock[model_cash[model_index]]++;
+    model_cash[slot] = model_cash[source_no];
+    cash_lock[model_cash[source_no]]++;
     return slot;
 }
 
@@ -124,44 +124,44 @@ void CMainItemModel::Draw(void) {
     sceVu0FVECTOR rotation;
     CFrame *hand = CharaMain.frame->SearchFrame("item");
     int i;
-    s32 *slot;
+    s32 *cash_no;
     CFrame *placement;
 
     for (i = 0; i < 16; i++) {
         switch (model[i]) {
             case 1:
-                slot = &model_cash[i];
-                TexManager.ReloadTexture(Vif1Packet, *slot + 0x38);
+                cash_no = &model_cash[i];
+                TexManager.ReloadTexture(Vif1Packet, *cash_no + 0x38);
                 placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 placement->GetRotation(rotation);
-                ((CFrame *) cash[*slot])->SetPosition(position);
-                ((CFrame *) cash[*slot])->SetRotation(rotation[0], rotation[1], rotation[2]);
-                ((CFrame *) cash[*slot])->SetReference(hand);
-                MGDraw((CFrame *) cash[*slot]);
+                ((CFrame *) cash[*cash_no])->SetPosition(position);
+                ((CFrame *) cash[*cash_no])->SetRotation(rotation[0], rotation[1], rotation[2]);
+                ((CFrame *) cash[*cash_no])->SetReference(hand);
+                MGDraw((CFrame *) cash[*cash_no]);
                 break;
             case 2:
-                slot = &model_cash[i];
-                TexManager.ReloadTexture(Vif1Packet, *slot + 0x38);
+                cash_no = &model_cash[i];
+                TexManager.ReloadTexture(Vif1Packet, *cash_no + 0x38);
                 placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 placement->GetRotation(rotation);
                 placement->SetPosition(position);
-                ((CFrame *) cash[*slot])->SetPosition(position);
-                ((CFrame *) cash[*slot])->SetRotation(rotation[0], rotation[1], rotation[2]);
-                ((CFrame *) cash[*slot])->DeleteReference();
-                MGDraw((CFrame *) cash[*slot]);
+                ((CFrame *) cash[*cash_no])->SetPosition(position);
+                ((CFrame *) cash[*cash_no])->SetRotation(rotation[0], rotation[1], rotation[2]);
+                ((CFrame *) cash[*cash_no])->DeleteReference();
+                MGDraw((CFrame *) cash[*cash_no]);
                 break;
             case 3:
-                slot = &model_cash[i];
-                TexManager.ReloadTexture(Vif1Packet, *slot + 0x38);
-                ((CFrame *) cash[*slot])->DeleteReference();
+                cash_no = &model_cash[i];
+                TexManager.ReloadTexture(Vif1Packet, *cash_no + 0x38);
+                ((CFrame *) cash[*cash_no])->DeleteReference();
                 placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
                 placement->GetRotation(rotation);
-                ((CFrame *) cash[*slot])->SetPosition(position);
-                ((CFrame *) cash[*slot])->SetRotation(rotation[0], rotation[1], rotation[2]);
-                MGDraw((CFrame *) cash[*slot]);
+                ((CFrame *) cash[*cash_no])->SetPosition(position);
+                ((CFrame *) cash[*cash_no])->SetRotation(rotation[0], rotation[1], rotation[2]);
+                MGDraw((CFrame *) cash[*cash_no]);
                 break;
             case -1:
             case 0:
@@ -176,11 +176,11 @@ int ItemThrowStep(float *position, float *velocity);
 
 void CMainItemModel::Step(void) {
     int i;
-    int result;
+    int step_result;
     CFrame *placement;
     int item_no;
     sceVu0FVECTOR position;
-    sceVu0FVECTOR direction = {0.0f, 1.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f};
 
     for (i = 0; i < 16; i++) {
         switch (model[i]) {
@@ -189,9 +189,9 @@ void CMainItemModel::Step(void) {
             case 2: {
                 placement = &frame[i];
                 sceVu0CopyVector(position, placement->position);
-                result = ItemThrowStep(position, velocity[i]);
+                step_result = ItemThrowStep(position, velocity[i]);
                 placement->SetPosition(position);
-                if (result == 2) {
+                if (step_result == 2) {
                     throw_time[i] = 45;
                 }
                 throw_time[i]++;
@@ -225,7 +225,7 @@ void CMainItemModel::Step(void) {
                     case 0x98:
                         SndSePlay(0x69, -1, 0);
                         SndSePlay(0x6C, -1, 0);
-                        MasekiEffect[4].Set(position, direction, -1, -1, 0, NULL, -1);
+                        MasekiEffect[4].Set(position, up, -1, -1, 0, NULL, -1);
                         MasekiEffect[4].SetDmg((int) (30.0f * (float) (selectMapNo + 1)));
                         MasekiEffect[4].SetEnemyAttr(1);
                         MasekiEffect[4].SetWait(2);
@@ -239,7 +239,7 @@ void CMainItemModel::Step(void) {
                         SndSePlay(item_no - 0x3C, -1, 0);
                         SndSePlay(0x6C, -1, 0);
                         CSHOT_EFFECT *effect = &MasekiEffect[item_no - 0xA1];
-                        effect->Set(position, direction, -1, -1, 0, NULL, -1);
+                        effect->Set(position, up, -1, -1, 0, NULL, -1);
                         effect->SetDmg((int) (30.0f * (float) (selectMapNo + 1)));
                         effect->SetLifeTime(10);
                         effect->SetWait(5);

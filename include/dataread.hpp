@@ -235,7 +235,7 @@ void SetDataBuffer(CDataAlloc2<1> *arena, int quads);
  * @address 0x125AE0
  * @size 0xD8
  */
-void SetPacketReadBuffer(int address, int size);
+void SetPacketReadBuffer(int packet_quads, int read_quads);
 
 /**
  * Reports whether a background read is still running.

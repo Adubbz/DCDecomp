@@ -20,9 +20,9 @@ class CFrameVu1;
  */
 class CObjectFrame : public CObject {
 public:
-    CFrameVu1 *frame[4]; /**< Frame of each level of detail; zero where the object has none. */
-    s32 unk_0C0;
-    s32 draw_on; /**< 1 while the object draws; 0 leaves it out of the scene. */
+    CFrameVu1 *frame[4];  /**< Frame of each level of detail; zero where the object has none. */
+    s32 rotation_changed; /**< Set whenever the angle, its motion or the moment changes. */
+    s32 draw_on;          /**< 1 while the object draws; 0 leaves it out of the scene. */
 
     /**
      * Sets the moment of inertia about each axis.

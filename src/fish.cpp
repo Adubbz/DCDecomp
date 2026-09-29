@@ -39,10 +39,10 @@ FishInfo fish_info[18] = {
 int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *polys, int count);
 
 int rand_check(float probability) {
-    int value = rand();
+    int roll = rand();
     float threshold = probability * 1000.0f;
     (int) threshold;
-    return value % 1000 < (int) threshold ? 1 : 0;
+    return roll % 1000 < (int) threshold ? 1 : 0;
 }
 
 int GetActCnt() {
@@ -299,8 +299,8 @@ void CFish::Draw() {
         model.Draw();
 }
 
-void CFish::SetFoodPos(int food, float *position, float radius) {
-    food_kind = food;
+void CFish::SetFoodPos(int kind, float *position, float radius) {
+    food_kind = kind;
     sceVu0CopyVector(food_position, position);
     food_radius = radius;
 }
@@ -317,12 +317,12 @@ void CFish::SetBattleMode() {
 }
 
 void CFish::SetScale() {
-    float random = nrnd();
+    float deviation = nrnd();
     size = info.min_size;
-    if (random >= 0.0f) {
-        size += random * (info.max_size - info.min_size) / 4.0f;
+    if (deviation >= 0.0f) {
+        size += deviation * (info.max_size - info.min_size) / 4.0f;
     } else {
-        size += random * (info.max_size - info.min_size) / 8.0f;
+        size += deviation * (info.max_size - info.min_size) / 8.0f;
     }
     if (size < 0.5f * info.min_size)
         size = 0.5f * info.min_size;
@@ -344,12 +344,12 @@ int CFish::GetFP() {
     return (int) points;
 }
 
-void CFish::SetMotion(int motion, int flags) {
-    model.motion_no = motion;
-    model.flags = flags;
+void CFish::SetMotion(int motion_no, int flags) {
+    model.motion_no = motion_no;
+    model.motion_flags = flags;
     model.motion_speed = -1.0f;
-    angle_model.motion_no = motion;
-    angle_model.flags = flags;
+    angle_model.motion_no = motion_no;
+    angle_model.motion_flags = flags;
     angle_model.motion_speed = -1.0f;
 }
 
@@ -413,18 +413,18 @@ static char *fish_file_04 = "chara/f04a.chr";
 static char *fish_file_05 = "chara/f05a.chr";
 static char *fish_file_06 = "chara/f06a.chr";
 
-void LoadFish(CFish *fish, int kind, int model_kind, CDataAlloc2<1> *alloc, int alloc_kind) {
-    if (kind < 0 || kind >= 18)
+void LoadFish(CFish *fish, int fish_kind, int texture_slot, CDataAlloc2<1> *alloc, int loaded_before) {
+    if (fish_kind < 0 || fish_kind >= 18)
         return;
     LoadFile("chara/f00s.chr", read_buffer, NULL);
     fish->Initialize();
-    fish->model.LoadPackData3(read_buffer, "info.cfg", alloc, model_kind, alloc, alloc_kind, 0);
-    memcpy(&fish->info, &fish_info[kind], sizeof(FishInfo));
+    fish->model.LoadPackData3(read_buffer, "info.cfg", alloc, texture_slot, alloc, loaded_before, 0);
+    memcpy(&fish->info, &fish_info[fish_kind], sizeof(FishInfo));
     fish->SetScale();
-    fish->fish_kind = kind;
+    fish->fish_kind = fish_kind;
 }
 
-char *GetFishFileName(int kind) {
+char *GetFishFileName(int fish_kind) {
     static char *name[18] = {
         "chara/f01a.chr",
         "chara/f02a.chr",
@@ -445,7 +445,7 @@ char *GetFishFileName(int kind) {
         "chara/f17a.chr",
         "chara/f18a.chr",
     };
-    if (kind < 0 || kind >= 18)
+    if (fish_kind < 0 || fish_kind >= 18)
         return NULL;
-    return name[kind];
+    return name[fish_kind];
 }

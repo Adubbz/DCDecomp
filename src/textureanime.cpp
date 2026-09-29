@@ -35,9 +35,9 @@ CTexAnimeData::CTexAnimeData(void) {
 }
 
 void CTexAnimeData::Initialize() {
-    unk_00 = -1;
-    unk_02 = 0;
-    unk_04 = 0;
+    kind = -1;
+    group = 0;
+    duration = 0;
     memset(&first_texture, 0, sizeof(first_texture));
     first_texture.block = -1;
     memset(&second_texture, 0, sizeof(second_texture));
@@ -53,7 +53,7 @@ void CTexAnimeData::Initialize() {
     scroll_y_step = 0.0f;
     scroll_x_step = 0.0f;
     next = NULL;
-    unk_06 = -1;
+    linked_group = -1;
 }
 
 void CTextureAnime::TexAnime(int texture_block) {
@@ -75,8 +75,8 @@ void CTextureAnime::TexAnime(int texture_block) {
     sceVif1PkCloseDirectCode(Vif1Packet);
 
     for (int i = 0; i < 24; i++) {
-        if (enabled[i] != 0 && current[i] != NULL && current[i]->unk_06 >= 0) {
-            Enable(current[i]->unk_06);
+        if (enabled[i] != 0 && current[i] != NULL && current[i]->linked_group >= 0) {
+            Enable(current[i]->linked_group);
         }
     }
 
@@ -90,7 +90,7 @@ void CTextureAnime::TexAnime(int texture_block) {
         CTexAnimeData *record = current[group];
 
         for (;;) {
-            if (record->unk_00 == 0) {
+            if (record->kind == 0) {
                 MGMoveImage((sceGsTex0 *) &record->first_texture.tex0,
                             CRect_i_(record->source_x, record->source_y, record->source_width, record->source_height),
                             (sceGsTex0 *) &record->second_texture.tex0, record->dest_x,
@@ -110,7 +110,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 }
             }
 
-            if (record->unk_00 == 1) {
+            if (record->kind == 1) {
                 scroll_x = (int) record->scroll_x;
                 scroll_y = (int) record->scroll_y;
 
@@ -160,7 +160,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 }
             }
 
-            if (record->unk_00 == 1 && CTextureAnime::stop_anime == 0) {
+            if (record->kind == 1 && CTextureAnime::stop_anime == 0) {
                 if (record->scroll_x_step != 0.0f) {
                     float scroll = record->scroll_x + record->scroll_x_step;
                     record->scroll_x = scroll;
@@ -183,7 +183,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 }
             }
 
-            if (record->unk_04 != 0 || record->next == NULL) {
+            if (record->duration != 0 || record->next == NULL) {
                 break;
             }
             record = record->next;
@@ -192,9 +192,9 @@ void CTextureAnime::TexAnime(int texture_block) {
         if (CTextureAnime::stop_anime == 0) {
             frame[group]++;
         }
-        if (record->unk_04 < 0) {
+        if (record->duration < 0) {
             frame[group] = 0;
-        } else if (frame[group] > record->unk_04) {
+        } else if (frame[group] > record->duration) {
             frame[group] = 0;
             current[group] = current[group]->next;
             if (current[group] == NULL) {
@@ -234,7 +234,7 @@ CTexAnimeData *CTextureAnime::NewTexAnimeData(void) {
 
     CTexAnimeData *record = data;
     for (int i = 0; i < data_count; i++, record++) {
-        if (record->unk_00 == -1) {
+        if (record->kind == -1) {
             return record;
         }
     }
@@ -267,15 +267,15 @@ CTexAnimeData *CTextureAnime::NewTexAnimeGroupData(int group) {
 }
 
 int CTextureAnime::EnterTexAnime(CTexAnimeData *source) {
-    CTexAnimeData *record = NewTexAnimeGroupData(source->unk_02);
+    CTexAnimeData *record = NewTexAnimeGroupData(source->group);
     if (record == NULL) {
         return 0;
     }
 
-    record->unk_00 = source->unk_00;
-    record->unk_02 = source->unk_02;
-    record->unk_04 = source->unk_04;
-    record->unk_06 = source->unk_06;
+    record->kind = source->kind;
+    record->group = source->group;
+    record->duration = source->duration;
+    record->linked_group = source->linked_group;
     record->first_texture = source->first_texture;
     record->second_texture = source->second_texture;
     record->source_x = source->source_x;
@@ -372,8 +372,8 @@ static void CommandTEX_ANIME(void **arguments) {
  */
 static void CommandTEX_ANIME_DATA(void **arguments) {
     CTexAnimeData record;
-    record.unk_02 = (s16) now_group;
-    record.unk_00 = 0;
+    record.group = (s16) now_group;
+    record.kind = 0;
     char *first_name = (char *) arguments[0];
     record.source_x = *(s16 *) arguments[1];
     record.source_y = *(s16 *) arguments[2];
@@ -382,9 +382,9 @@ static void CommandTEX_ANIME_DATA(void **arguments) {
     char *second_name = (char *) arguments[5];
     record.dest_x = *(s16 *) arguments[6];
     record.dest_y = *(s16 *) arguments[7];
-    record.unk_04 = *(s16 *) arguments[8];
+    record.duration = *(s16 *) arguments[8];
     if (*(int *) arguments[9] != 0) {
-        record.unk_04 = -1;
+        record.duration = -1;
     }
 
     CTexture *first_texture = TexManager.GetTexture(first_name, -1);
@@ -409,8 +409,8 @@ static void CommandTEX_ANIME_DATA(void **arguments) {
  */
 static void CommandTEX_ANIME_DATA2(void **arguments) {
     CTexAnimeData record;
-    record.unk_02 = (s16) now_group;
-    record.unk_00 = 0;
+    record.group = (s16) now_group;
+    record.kind = 0;
     char *first_name = (char *) arguments[0];
     record.source_x = *(s16 *) arguments[1];
     record.source_y = *(s16 *) arguments[2];
@@ -419,11 +419,11 @@ static void CommandTEX_ANIME_DATA2(void **arguments) {
     char *second_name = (char *) arguments[5];
     record.dest_x = *(s16 *) arguments[6];
     record.dest_y = *(s16 *) arguments[7];
-    record.unk_04 = *(s16 *) arguments[8];
+    record.duration = *(s16 *) arguments[8];
     int hold = *(int *) arguments[9];
-    record.unk_06 = *(s16 *) arguments[10];
+    record.linked_group = *(s16 *) arguments[10];
     if (hold != 0) {
-        record.unk_04 = -1;
+        record.duration = -1;
     }
 
     CTexture *first_texture = TexManager.GetTexture(first_name, -1);
@@ -444,8 +444,8 @@ static void CommandTEX_ANIME_DATA2(void **arguments) {
  */
 static void CommandTEX_SCROLL_DATA(void **arguments) {
     CTexAnimeData record;
-    record.unk_02 = (s16) now_group;
-    record.unk_00 = 1;
+    record.group = (s16) now_group;
+    record.kind = 1;
     char *first_name = (char *) arguments[0];
     record.source_x = *(s16 *) arguments[1];
     record.source_y = *(s16 *) arguments[2];
@@ -456,9 +456,9 @@ static void CommandTEX_SCROLL_DATA(void **arguments) {
     record.dest_y = *(s16 *) arguments[7];
     record.scroll_x_step = *(float *) arguments[8];
     record.scroll_y_step = *(float *) arguments[9];
-    record.unk_04 = *(s16 *) arguments[10];
+    record.duration = *(s16 *) arguments[10];
     if (*(int *) arguments[11] != 0) {
-        record.unk_04 = -1;
+        record.duration = -1;
     }
 
     CTexture *first_texture = TexManager.GetTexture(first_name, -1);

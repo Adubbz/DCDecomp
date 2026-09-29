@@ -81,9 +81,9 @@ void getCharacterVector(float *vector, float pitch);
 int createAttachVolume(int item_no, int dungeon);
 
 void selectChrUnit(int chara_no, int reload) {
-    char name[64];
-    char name1[64];
-    char name2[64];
+    char weapon0_name[64];
+    char weapon1_name[64];
+    char weapon2_name[64];
     char path[64];
     char effect_path[64];
     int size;
@@ -97,18 +97,18 @@ void selectChrUnit(int chara_no, int reload) {
     wait_now_loading_vsync();
     size = (u_int) (((size >> 6) + 1) << 6) >> 2;
     u_int *weapon0 = &read_buffer[size];
-    int weapon_no = defWeapon[chara_no];
-    BtGetWeaponNamePath3(name, path, weapon_no);
-    BtGetWeaponNamePath3(name1, path, defWeapon[chara_no] + 1);
-    BtGetWeaponNamePath3(name2, path,
+    int default_weapon = defWeapon[chara_no];
+    BtGetWeaponNamePath3(weapon0_name, path, default_weapon);
+    BtGetWeaponNamePath3(weapon1_name, path, defWeapon[chara_no] + 1);
+    BtGetWeaponNamePath3(weapon2_name, path,
                          UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
-    sprintf(path, "commenu/weapon/%s", name);
+    sprintf(path, "commenu/weapon/%s", weapon0_name);
     LoadFile(path, weapon0, &size);
     u_int *weapon1 = &weapon0[(u_int) (((size >> 6) + 1) << 6) >> 2];
-    sprintf(path, "commenu/weapon/%s", name1);
+    sprintf(path, "commenu/weapon/%s", weapon1_name);
     LoadFile(path, weapon1, NULL);
     u_int *weapon2 = &weapon1[(u_int) (((size >> 6) + 1) << 6) >> 2];
-    sprintf(path, "commenu/weapon/%s", name2);
+    sprintf(path, "commenu/weapon/%s", weapon2_name);
     LoadFile(path, weapon2, NULL);
     wait_now_loading_vsync();
     LoadChara2(chara_no, 0, read_buffer, weapon0, weapon1, weapon2);
@@ -176,13 +176,13 @@ void BtGetTreasureboxBig_Init() {
         CMonUnitHyde = 1;
         CEffectHold = 1;
         CEffectHyde = 1;
-        DngMessMan.unk_00 = 0;
+        DngMessMan.enabled = 0;
 
         CUserStatus *user = UserStatus;
 
         user->step_disable = 1;
-        BtActStatus.unk_00C = 0;
-        BtActStatus.unk_09C = 1;
+        BtActStatus.motion_no = 0;
+        BtActStatus.in_presentation = 1;
         BtGetTreasurebox_Sled = 10;
         autoCamTrial();
         return;
@@ -230,13 +230,13 @@ void BtGetTreasureboxBig_Init() {
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenBig.frame->SetRotation(0.0f, 0.0f, 0.0f);
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
 
     CUserStatus *user = UserStatus;
 
     user->step_disable = 1;
-    BtActStatus.unk_00C = 0;
-    BtActStatus.unk_09C = 1;
+    BtActStatus.motion_no = 0;
+    BtActStatus.in_presentation = 1;
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
@@ -259,7 +259,7 @@ int BtGetTreasureboxBig_Loop() {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
                 CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
-                BtActStatus.unk_054 = 0;
+                BtActStatus.shadow_visible = 0;
                 BtGetTreasurebox_Sled++;
             }
             autoCamTrial();
@@ -274,7 +274,7 @@ int BtGetTreasureboxBig_Loop() {
             int index = NowDngMap->events[iventActive].index;
             sceVu0CopyVector(position, NowDngMap->boxes[index].pos);
             NowDngMap->boxes[index].lid_angle = -30.0f;
-            NowDngMap->boxes[index].unk_24 = 0;
+            NowDngMap->boxes[index].closed = 0;
             itemOpenBig.frame->SetPosition(position);
             itemOpenBigFx.frame->SetPosition(position);
             itemOpenBigFx.frame->SetRotation(0.0f, 0.0f, 0.0f);
@@ -310,7 +310,7 @@ int BtGetTreasureboxBig_Loop() {
             itemWeponScale = 0.1f;
             CharaMain.SetPosition(position);
             CharaMain.SetRotation(0.0f, 0.0f, 0.0f);
-            BtActStatus.unk_00C = 0x2C;
+            BtActStatus.motion_no = 0x2C;
             itemOpenBig.motion.unk_78 = 10.0f;
             itemOpenBigFx.motion.state.time = 10.0f;
             itemOpenBigFlag = 1;
@@ -324,20 +324,20 @@ int BtGetTreasureboxBig_Loop() {
         case 2: {
             CCameraFollow *camera = NowCamera__3;
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
-            float time = itemOpenBigFx.motion.state.time;
-            if (!(time <= 14.0f) && time < 15.0f) {
+            float sound_time = itemOpenBigFx.motion.state.time;
+            if (!(sound_time <= 14.0f) && sound_time < 15.0f) {
                 SndSePlay(0xCE, -1, 0);
                 SndSPSePlay(2, -1);
             }
-            float now = itemOpenBigFx.motion.state.time;
-            if (!(now <= 50.0f) && now <= 55.0f) {
-                float scale = TreasureboxBig_itemScale / 5.0f * (now - 50.0f);
+            float grow_time = itemOpenBigFx.motion.state.time;
+            if (!(grow_time <= 50.0f) && grow_time <= 55.0f) {
+                float scale = TreasureboxBig_itemScale / 5.0f * (grow_time - 50.0f);
                 itemWeponScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
             if (!(itemOpenBigFx.motion.state.time < 79.0f)) {
                 itemOpenBigFlag = 2;
-                BtActStatus.unk_00C = 0x2D;
+                BtActStatus.motion_no = 0x2D;
                 BtGetTreasurebox_Sled++;
                 ItemGetMes(TreasureboxBig_itemNo, -1, 0x28, 1);
             }
@@ -347,7 +347,7 @@ int BtGetTreasureboxBig_Loop() {
             CCameraFollow *camera = NowCamera__3;
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
             if (GamePad.Down(0x60) != 0) {
-                BtActStatus.unk_054 = 1;
+                BtActStatus.shadow_visible = 1;
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
                 ((CDngStatusData *) UserStatus)->GetItem(TreasureboxBig_itemNo, 0);
@@ -356,8 +356,8 @@ int BtGetTreasureboxBig_Loop() {
                 position[2] += 10.0f;
                 CharaMain.SetPosition(position);
                 CharaMain.SetRotation(0.0f, -3.1415927f, 0.0f);
-                BtActStatus.unk_00C = 0;
-                DngMessMan.unk_00 = 1;
+                BtActStatus.motion_no = 0;
+                DngMessMan.enabled = 1;
                 UserStatus->step_disable = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -365,7 +365,7 @@ int BtGetTreasureboxBig_Loop() {
                 CEffectHold = 0;
                 CEffectHyde = 0;
                 itemOpenBigFlag = 0;
-                BtActStatus.unk_09C = 0;
+                BtActStatus.in_presentation = 0;
                 ClearSystemMes();
                 NowCamera__3 = &MainCamera__4;
                 done = 1;
@@ -375,9 +375,9 @@ int BtGetTreasureboxBig_Loop() {
         case 10:
             if (GamePad.Down(0x60) != 0) {
                 ClearSystemMes();
-                DngMessMan.unk_00 = 1;
+                DngMessMan.enabled = 1;
                 UserStatus->step_disable = 0;
-                BtActStatus.unk_09C = 0;
+                BtActStatus.in_presentation = 0;
                 NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = 0.0f;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -398,20 +398,20 @@ int BtGetTreasureboxBig_Loop() {
  * @address 0x1D1FC0
  * @size 0x4A0
  */
-void BtGetTreasureboxSmall_Init(int chance) {
+void BtGetTreasureboxSmall_Init(int dungeon) {
     u_char *mds;
     u_char *img;
     u_char *chr;
     int item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
-    int full = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no);
-    if (full != 0) {
+    int refusal = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no);
+    if (refusal != 0) {
         SndSePlay(0xCF, -1, 0);
-        if (full == 1) {
+        if (refusal == 1) {
             SetSystemMes(0x48, -1, 5, 0, NULL, NULL);
         }
-        if (full == 2) {
+        if (refusal == 2) {
             SetSystemMes(0x51, -1, 5, 0, NULL, NULL);
         }
         int index = NowDngMap->events[iventActive].index;
@@ -422,13 +422,13 @@ void BtGetTreasureboxSmall_Init(int chance) {
         CMonUnitHyde = 1;
         CEffectHold = 1;
         CEffectHyde = 1;
-        DngMessMan.unk_00 = 0;
+        DngMessMan.enabled = 0;
 
         CUserStatus *user = UserStatus;
 
         user->step_disable = 1;
-        BtActStatus.unk_09C = 1;
-        BtActStatus.unk_00C = 0;
+        BtActStatus.in_presentation = 1;
+        BtActStatus.motion_no = 0;
         BtGetTreasurebox_Sled = 10;
         autoCamTrial();
         return;
@@ -444,7 +444,7 @@ void BtGetTreasureboxSmall_Init(int chance) {
     if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
         item_no = 0x66;
     }
-    int volume = createAttachVolume(item_no, chance);
+    int volume = createAttachVolume(item_no, dungeon);
     printf("get attach vol = %d\n", volume);
     BtGetTreasureboxSmall_itemNo = item_no;
     BtGetTreasureboxSmall_itemVolume = volume;
@@ -474,13 +474,13 @@ void BtGetTreasureboxSmall_Init(int chance) {
     SndSPSeLoadBG(2, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     itemOpenSmall.frame->SetRotation(0.0f, 0.0f, 0.0f);
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
 
     CUserStatus *user = UserStatus;
 
     user->step_disable = 1;
-    BtActStatus.unk_09C = 1;
-    BtActStatus.unk_00C = 0;
+    BtActStatus.in_presentation = 1;
+    BtActStatus.motion_no = 0;
     BtGetTreasurebox_Sled = 0;
     autoCamTrial();
 }
@@ -502,7 +502,7 @@ int BtGetTreasureboxSmall_Loop() {
                 SetTempTexture(0x1C, (char *) itemOpenItemImg);
                 itemBoxModel = LoadMDSFile((u_int *) itemOpenItemMds, &BtCashBuffer, 0, NULL, NULL);
                 CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
-                BtActStatus.unk_054 = 0;
+                BtActStatus.shadow_visible = 0;
                 BtGetTreasurebox_Sled++;
             }
             autoCamTrial();
@@ -519,7 +519,7 @@ int BtGetTreasureboxSmall_Loop() {
             int index = NowDngMap->events[iventActive].index;
             sceVu0CopyVector(position, NowDngMap->boxes[index].pos);
             NowDngMap->boxes[index].lid_angle = -30.0f;
-            NowDngMap->boxes[index].unk_24 = 0;
+            NowDngMap->boxes[index].closed = 0;
             itemOpenSmall.frame->SetPosition(position);
             itemOpenSmallFx.frame->SetPosition(position);
             itemOpenSmallFx.frame->SetRotation(0.0f, 0.0f, 0.0f);
@@ -530,7 +530,7 @@ int BtGetTreasureboxSmall_Loop() {
             itemNormalScale = 0.1f;
             CharaMain.SetPosition(position);
             CharaMain.SetRotation(0.0f, 0.0f, 0.0f);
-            BtActStatus.unk_00C = 0x2A;
+            BtActStatus.motion_no = 0x2A;
             itemOpenSmall.motion.state.time = 10.0f;
             itemOpenSmallFx.motion.state.time = 10.0f;
             itemOpenSmallFlag = 1;
@@ -543,19 +543,19 @@ int BtGetTreasureboxSmall_Loop() {
         }
         case 2: {
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
-            float time = itemOpenSmallFx.motion.state.time;
-            if (!(time <= 19.0f) && time < 20.4f) {
+            float sound_time = itemOpenSmallFx.motion.state.time;
+            if (!(sound_time <= 19.0f) && sound_time < 20.4f) {
                 SndSePlay(0xCF, -1, 0);
                 SndSPSePlay(2, -1);
             }
-            float now = itemOpenSmallFx.motion.state.time;
-            if (!(now <= 50.0f) && now <= 55.0f) {
-                float scale = 0.2f * (now - 50.0f);
+            float grow_time = itemOpenSmallFx.motion.state.time;
+            if (!(grow_time <= 50.0f) && grow_time <= 55.0f) {
+                float scale = 0.2f * (grow_time - 50.0f);
                 itemNormalScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
             if (!(itemOpenSmallFx.motion.state.time < 79.0f)) {
-                BtActStatus.unk_00C = 0x2B;
+                BtActStatus.motion_no = 0x2B;
                 itemOpenSmallFlag = 2;
                 if (BtGetTreasureboxSmall_itemVolume != 0) {
                     ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x28, 1);
@@ -569,7 +569,7 @@ int BtGetTreasureboxSmall_Loop() {
         case 3:
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
             if (GamePad.Down(0x60) != 0) {
-                BtActStatus.unk_054 = 1;
+                BtActStatus.shadow_visible = 1;
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
                 if ((unsigned int) (BtGetTreasureboxSmall_itemNo - 0xE9) < 2U) {
@@ -589,10 +589,10 @@ int BtGetTreasureboxSmall_Loop() {
                 CharaMain.SetPosition(position);
                 CharaMain.SetRotation(0.0f, -3.1415927f, 0.0f);
                 ClearSystemMes();
-                BtActStatus.unk_00C = 0;
-                DngMessMan.unk_00 = 1;
+                BtActStatus.motion_no = 0;
+                DngMessMan.enabled = 1;
                 UserStatus->step_disable = 0;
-                BtActStatus.unk_09C = 0;
+                BtActStatus.in_presentation = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
                 CMonUnitHyde = 0;
@@ -606,9 +606,9 @@ int BtGetTreasureboxSmall_Loop() {
         case 10:
             if (GamePad.Down(0x60) != 0) {
                 ClearSystemMes();
-                DngMessMan.unk_00 = 1;
+                DngMessMan.enabled = 1;
                 UserStatus->step_disable = 0;
-                BtActStatus.unk_09C = 0;
+                BtActStatus.in_presentation = 0;
                 NowDngMap->boxes[NowDngMap->events[iventActive].index].lid_angle = 0.0f;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -647,7 +647,7 @@ void BtAtraGetShort_Init() {
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(1, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
     ResetMovePower();
     CUserStatus *status = UserStatus;
     int one = 1;
@@ -655,7 +655,7 @@ void BtAtraGetShort_Init() {
     BtAtraGetNo = iventActive;
     iventActive = -1;
     BtGetAtraBoll_Sled = 0;
-    BtActStatus.unk_09C = one;
+    BtActStatus.in_presentation = one;
 }
 
 char BtAtraShortEffectFile[] __attribute__((section(".rodata"))) = "dun/effect/saget.chr";
@@ -675,7 +675,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
         case 0:
             if (SndSPSeSyncBG() == 0 && ReadBGSync() == 0) {
                 CharaMain.LoadPackData((u_int *) itemOpenItemChr, "base2.cfg", &BtCashBuffer, &BtCashBuffer);
-                BtActStatus.unk_054 = 0;
+                BtActStatus.shadow_visible = 0;
                 shortAtraEffect.LoadPackData2((u_int *) shortAtraEffectPtr, "info.cfg", &BtCashBuffer, 0x1C, &BtCashBuffer, 0);
                 SetMIniMapStatus(0);
                 iventInfo = -1;
@@ -701,7 +701,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 sceVu0CopyVector(position, NowDngMap->atra[index].pos);
                 CharaMain.SetPosition(position);
                 CharaMain.SetRotation(0.0f, 0.0f, 0.0f);
-                BtActStatus.unk_00C = 0x2E;
+                BtActStatus.motion_no = 0x2E;
                 driveNoInterpolate = 1;
                 SubCamera = MainCamera__4;
                 NowCamera__3 = &SubCamera;
@@ -715,8 +715,8 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             if (atraGetStatusRate__2 < 256.0f) {
                 atraGetStatusRate__2 += 2.0f;
             }
-            float time = shortAtraEffect.motion_type.state.time;
-            if (!(time < 53.0f) && time < 54.0f) {
+            float sound_time = shortAtraEffect.motion_type.state.time;
+            if (!(sound_time < 53.0f) && sound_time < 54.0f) {
                 SndSPSePlay(1, -1);
             }
             if (!(shortAtraEffect.motion_type.state.time < 129.5f)) {
@@ -724,7 +724,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 atraGetStatus = 2;
                 atraGetMsgBord = 1;
                 atraGetMsgBordRate = 0.0f;
-                BtActStatus.unk_00C = 0x2F;
+                BtActStatus.motion_no = 0x2F;
                 BtGetAtraBoll_Sled++;
             }
             break;
@@ -751,10 +751,10 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             }
             break;
         case 5:
-            BtActStatus.unk_054 = 1;
+            BtActStatus.shadow_visible = 1;
             ClearSystemMes();
             SetMIniMapStatus(1);
-            DngMessMan.unk_00 = 1;
+            DngMessMan.enabled = 1;
             atraGetStatus = 0;
             NowCamera__3 = &MainCamera__4;
             CharaMain.SetRotation(0.0f, -3.1415927f, 0.0f);
@@ -766,8 +766,8 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             NowCamera__3->SetSpeed(6.0f);
             NowCamera__3->FollowOn();
             UserStatus->step_disable = 0;
-            BtActStatus.unk_00C = 0;
-            BtActStatus.unk_09C = 0;
+            BtActStatus.motion_no = 0;
+            BtActStatus.in_presentation = 0;
             done = 1;
             break;
     }
@@ -783,7 +783,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
  */
 void BtMiniChrSelect_Init(int type) {
     SetMIniMapStatus(0);
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
     BtMiniChrSelecter_Sled = 0;
     BtMiniChrSel_Type = type;
 }
@@ -825,7 +825,7 @@ int BtMiniChrSelect_Loop() {
         case 3:
             SetMIniMapStatus(1);
             done = 1;
-            DngMessMan.unk_00 = 1;
+            DngMessMan.enabled = 1;
             nowUnitNow = UserStatus->cur_chara;
             ResetStatusInfo();
             autoCamTrial();
@@ -850,7 +850,7 @@ int escape_sled;
  */
 void BtMiniItemSelect(void) {
     SetMIniMapStatus(0);
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
     BtMiniItemSelect_Sled = 0;
     driveStepHold = 1;
 }
@@ -882,20 +882,20 @@ int BtMiniItemSelect_Loop(void) {
 
             ITEM_PACK *pack = &UserStatus->item_pack;
 
-            InitEventItemSelect(0x18, BtEventInfo.unk_3C, pack, 0xB4, 0xD2, BtEventInfo.unk_7C, 0);
+            InitEventItemSelect(0x18, BtEventInfo.item_select_list, pack, 0xB4, 0xD2, BtEventInfo.item_select_filtered, 0);
             BtGameModeFlag = 3;
             BtMiniItemSelect_Sled++;
             break;
         }
 
         case 3:
-            if (BtEventInfo.unk_80 != 0) {
-                ((int *) BtEventInfo.unk_80)[1] = miniItemSelNo;
+            if (BtEventInfo.item_select_result != 0) {
+                ((int *) BtEventInfo.item_select_result)[1] = miniItemSelNo;
             }
-            BtEventInfo.unk_80 = 0;
+            BtEventInfo.item_select_result = 0;
             SetMIniMapStatus(1);
             done = 1;
-            DngMessMan.unk_00 = done;
+            DngMessMan.enabled = done;
             break;
     }
 
@@ -931,13 +931,13 @@ void BtGetGateKey_Init(int item_no) {
     LoadFileBG(texture_path, (u_long128 *) texture, &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     ResetMovePower();
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
 
     CUserStatus *user = UserStatus;
 
     user->step_disable = 1;
-    BtActStatus.unk_00C = 0;
-    BtActStatus.unk_09C = 1;
+    BtActStatus.motion_no = 0;
+    BtActStatus.in_presentation = 1;
     GateKey_Sled = 0;
     autoCamTrial();
 }
@@ -976,7 +976,7 @@ int BtGetGateKey_Loop() {
             CMonUnitHyde = 1;
             CEffectHold = 1;
             CEffectHyde = 1;
-            BtActStatus.unk_00C = 0x22;
+            BtActStatus.motion_no = 0x22;
             SubCamera.FollowOff();
             sceVu0CopyVector(ref, CharaMain.pos);
             ref[1] += 12.0f;
@@ -1000,7 +1000,7 @@ int BtGetGateKey_Loop() {
             float time = CharaMain.motion_type.state.time;
             if (!(time < end - 0.5f) && time <= end) {
                 ItemGetMes(GateKey_itemNo, -1, 0x28, 1);
-                BtActStatus.unk_00C = 0x23;
+                BtActStatus.motion_no = 0x23;
                 GateKey_Sled++;
             }
             break;
@@ -1009,7 +1009,7 @@ int BtGetGateKey_Loop() {
             if (GamePad.Down(0x60) != 0) {
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
-                DngMessMan.unk_00 = 1;
+                DngMessMan.enabled = 1;
                 UserStatus->step_disable = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
@@ -1017,7 +1017,7 @@ int BtGetGateKey_Loop() {
                 CEffectHold = 0;
                 CEffectHyde = 0;
                 gateItemFlag = 0;
-                BtActStatus.unk_09C = 0;
+                BtActStatus.in_presentation = 0;
                 ClearSystemMes();
                 NowCamera__3 = &MainCamera__4;
                 done = 1;
@@ -1062,13 +1062,13 @@ int BtGetAttach_Loop(void) {
 
         case 1:
             if (GamePad.Down(0x60) != 0) {
-                DngMessMan.unk_00 = 1;
+                DngMessMan.enabled = 1;
                 UserStatus->step_disable = 0;
                 SetMIniMapStatus(1);
                 CMonUnitHold = 0;
                 CEffectHold = 0;
                 gateItemFlag = 0;
-                BtActStatus.unk_09C = 0;
+                BtActStatus.in_presentation = 0;
                 ClearSystemMes();
                 done = 1;
             }
@@ -1099,7 +1099,7 @@ void BtEscape_Init(void) {
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(8, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    DngMessMan.unk_00 = 0;
+    DngMessMan.enabled = 0;
 
     CUserStatus *user = UserStatus;
 
@@ -1111,8 +1111,8 @@ void BtEscape_Init(void) {
     SetMIniMapStatus(0);
     iventInfo = -1;
     ResetMovePower();
-    BtActStatus.unk_00C = 0;
-    BtActStatus.unk_09C = 1;
+    BtActStatus.motion_no = 0;
+    BtActStatus.in_presentation = 1;
     escape_sled = 0;
     autoCamTrial();
 }
@@ -1227,14 +1227,14 @@ void ParabolicInitialVector(float *velocity, float *from, float *to, float gravi
  */
 void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
     sceVu0FMATRIX rotation;
-    sceVu0FMATRIX unit;
+    sceVu0FMATRIX identity;
 
     velocity[0] = 0.0f;
     velocity[1] = 0.0f;
     velocity[2] = speed;
     velocity[3] = 1.0f;
-    sceVu0UnitMatrix(unit);
-    sceVu0RotMatrixX(rotation, unit, angle_x);
+    sceVu0UnitMatrix(identity);
+    sceVu0RotMatrixX(rotation, identity, angle_x);
     sceVu0RotMatrixY(rotation, rotation, angle_y);
     sceVu0ApplyMatrix(velocity, rotation, velocity);
 }
@@ -1443,32 +1443,32 @@ void getCharacterVector(float *vector, float pitch) {
  * @size 0x2D4
  */
 int ItemThrowStep(float *position, float *velocity) {
-    sceVu0FVECTOR next;
+    sceVu0FVECTOR next_position;
     sceVu0FVECTOR direction;
-    sceVu0FVECTOR hit;
+    sceVu0FVECTOR hit_point;
     sceVu0FVECTOR normal;
 
-    next[0] = position[0] + velocity[0];
-    next[1] = position[1] + velocity[1];
-    next[2] = position[2] + velocity[2];
-    next[3] = 1.0f;
+    next_position[0] = position[0] + velocity[0];
+    next_position[1] = position[1] + velocity[1];
+    next_position[2] = position[2] + velocity[2];
+    next_position[3] = 1.0f;
     velocity[1] -= 0.12f;
     sceVu0Normalize(direction, velocity);
-    for (int unit = 0; unit < 16; unit++) {
+    for (int unit_no = 0; unit_no < 16; unit_no++) {
         for (int i = 0; i < 16; i++) {
-            if (NowMonstorUnit->effect[unit].timer[i] != 0 && DistVector(NowMonstorUnit->effect[unit].position[i], position) <= 1.5f + NowMonstorUnit->effect[unit].radius[i]) {
+            if (NowMonstorUnit->effect[unit_no].timer[i] != 0 && DistVector(NowMonstorUnit->effect[unit_no].position[i], position) <= 1.5f + NowMonstorUnit->effect[unit_no].radius[i]) {
                 return 2;
             }
         }
     }
     WorkBuffer__2->used = 0;
     CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
-    int found = CheckHit(polys, setCollisionData(NowDngMap, polys, position, 20.0f, 1.5f), position, next, hit, 1, 4);
-    if (found >= 0) {
-        sceVu0CopyVector(normal, polys[found].normal);
+    int hit_poly = CheckHit(polys, setCollisionData(NowDngMap, polys, position, 20.0f, 1.5f), position, next_position, hit_point, 1, 4);
+    if (hit_poly >= 0) {
+        sceVu0CopyVector(normal, polys[hit_poly].normal);
         sceVu0Normalize(normal, normal);
-        ReflectionPlane(normal, hit, position, velocity);
-        sceVu0CopyVector(position, hit);
+        ReflectionPlane(normal, hit_point, position, velocity);
+        sceVu0CopyVector(position, hit_point);
         position[0] += 1.3f * normal[0];
         position[1] += 1.3f * normal[1];
         position[2] += 1.3f * normal[2];
@@ -1477,6 +1477,6 @@ int ItemThrowStep(float *position, float *velocity) {
         velocity[2] *= 0.4f;
         return 1;
     }
-    sceVu0CopyVector(position, next);
+    sceVu0CopyVector(position, next_position);
     return 0;
 }

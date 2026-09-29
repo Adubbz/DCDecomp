@@ -94,7 +94,7 @@ void GlobalNameInit(void) {
  * @address 0x2384A0
  * @size 0x190
  */
-void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
+void InitNameRegist(int chara_no, int texture_block, u_long128 *buffer) {
     StartReadBG();
     if (buffer == NULL) {
         buffer = (u_long128 *) read_buffer;
@@ -106,7 +106,7 @@ void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
     GamePad.MenuModeOn(0x78);
     GamePad.SetAutoRepeat(0xF000, 30, 9);
 
-    NameSelect.chara_no = character;
+    NameSelect.chara_no = chara_no;
     NameSelect.area = 4;
     NameSelect.cursor = 0;
     switch (NameSelect.language) {
@@ -153,24 +153,24 @@ void ExitNameEnterFunc() {
  * @address 0x2386A0
  * @size 0xBC
  */
-CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &cell_y) {
+CTexture *GetNameTextureInfo(CTexture **textures, int char_code, int &cell_x, int &cell_y) {
     CTexture *texture;
 
-    if (code == 0) {
-        code = 0xE6;
+    if (char_code == 0) {
+        char_code = 0xE6;
         texture = textures[0];
-    } else if (code < 0x52) {
-        code -= 1;
+    } else if (char_code < 0x52) {
+        char_code -= 1;
         texture = textures[1];
-    } else if (code < 0xA2) {
-        code -= 0x52;
+    } else if (char_code < 0xA2) {
+        char_code -= 0x52;
         texture = textures[2];
     } else {
-        code -= 0xA2;
+        char_code -= 0xA2;
         texture = textures[0];
     }
-    cell_x = (code % 10) * 0x16;
-    cell_y = (code / 10) * 0x16;
+    cell_x = (char_code % 10) * 0x16;
+    cell_y = (char_code / 10) * 0x16;
     return texture;
 }
 
@@ -181,15 +181,15 @@ CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &ce
  * @address 0x238760
  * @size 0x118
  */
-void DrawCharaName(int character, int x, int y, int brightness, int blend_mode) {
+void DrawCharaName(int chara_no, int x, int y, int brightness, int blend_mode) {
     int draw_x = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
 
-    for (int index = 0; index < 10; index++) {
-        int texture_x;
-        int texture_y;
-        CTexture *texture = GetNameTextureInfo(textures, CharaName[index], texture_x, texture_y);
-        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 22, 22), CRect_i_(texture_x, texture_y, 22, 22), brightness, brightness,
+    for (int slot = 0; slot < 10; slot++) {
+        int cell_x;
+        int cell_y;
+        CTexture *texture = GetNameTextureInfo(textures, CharaName[slot], cell_x, cell_y);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 22, 22), CRect_i_(cell_x, cell_y, 22, 22), brightness, brightness,
                          brightness, blend_mode);
         draw_x += 22;
     }
@@ -212,9 +212,9 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
     edge[3] = y + size - inset;
     s16 corner[4][2] = {{edge[0], edge[1]}, {edge[2], edge[1]}, {edge[0], edge[3]}, {edge[2], edge[3]}};
     s16 cell[4][2] = {{480, 296}, {496, 296}, {480, 312}, {496, 312}};
-    for (int index = 0; index < 4; index++) {
-        DrawMenu2DSprite(NameTemp, CRect_i_(corner[index][0], corner[index][1], 12, 12),
-                         CRect_i_(cell[index][0], cell[index][1], 16, 16), (u8) brightness, (u8) brightness,
+    for (int corner_no = 0; corner_no < 4; corner_no++) {
+        DrawMenu2DSprite(NameTemp, CRect_i_(corner[corner_no][0], corner[corner_no][1], 12, 12),
+                         CRect_i_(cell[corner_no][0], cell[corner_no][1], 16, 16), (u8) brightness, (u8) brightness,
                          (u8) brightness, blend_mode);
     }
 }
@@ -229,16 +229,16 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     int left;
     int top;
-    int character = NameSelect.chara_no;
+    int chara_no = NameSelect.chara_no;
     left = x - 2;
     top = y + 14;
     int face_x = 0;
-    int face_y = character * 106;
-    int length;
+    int face_y = chara_no * 106;
+    int name_length;
 
-    if (character > 2) {
+    if (chara_no > 2) {
         face_x = 106;
-        face_y = (character - 3) * 106;
+        face_y = (chara_no - 3) * 106;
     }
     DrawMenu2DSprite(CharaFace, CRect_i_(left, top, 88, 88), CRect_i_(face_x, face_y, 106, 106), blend_mode);
     DrawMenuHelpWindow(TexManager.GetTexture("window", -1), -1, left + 102, top + 16, 8.6f, 1.0f, blend_mode);
@@ -250,10 +250,10 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
                      (u8) brightness, (u8) brightness, blend_mode);
 
     MenuTextureReload(AtoraNameMes.tex_block);
-    int message_length = AtoraNameMes.GetMesLen_system(character - 1220);
+    int message_length = AtoraNameMes.GetMesLen_system(chara_no - 1220);
     float char_width[7] = {18.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f};
-    float width = char_width[NameSelect.language];
-    AtoraNameMes.line_pos[0].x = 290.0f - width * (message_length / 2.0f);
+    float title_char_width = char_width[NameSelect.language];
+    AtoraNameMes.line_pos[0].x = 290.0f - title_char_width * (message_length / 2.0f);
     AtoraNameMes.line_pos[0].y = 82;
     AtoraNameMes.edge_alpha = blend_mode;
     AtoraNameMes.Step();
@@ -271,32 +271,32 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
 
     left = x + 120;
     top = y + 58;
-    DrawCharaName(character, left, top, brightness, blend_mode);
+    DrawCharaName(chara_no, left, top, brightness, blend_mode);
 
     left = x + 122;
     top = y + 82;
     if (NameSelect.area == 7) {
-        for (length = 10; length > 0; length--) {
-            if (CharaName[length - 1] != 0 && CharaName[length - 1] != 0xE6) {
+        for (name_length = 10; name_length > 0; name_length--) {
+            if (CharaName[name_length - 1] != 0 && CharaName[name_length - 1] != 0xE6) {
                 break;
             }
         }
     }
-    for (int i = 0; i < 10; i++) {
-        int shade = brightness;
-        if (NameSelect.area == 7 && length <= i) {
-            shade = 0x38;
+    for (int slot = 0; slot < 10; slot++) {
+        int underline_brightness = brightness;
+        if (NameSelect.area == 7 && name_length <= slot) {
+            underline_brightness = 0x38;
         }
-        DrawMenu2DSprite(NameTemp, CRect_i_(left, top, 18, 2), CRect_i_(470, 328, 18, 2), (u8) shade, (u8) shade,
-                         (u8) shade, blend_mode);
+        DrawMenu2DSprite(NameTemp, CRect_i_(left, top, 18, 2), CRect_i_(470, 328, 18, 2), (u8) underline_brightness, (u8) underline_brightness,
+                         (u8) underline_brightness, blend_mode);
         left += 22;
     }
 
-    int position = NameSelect.name_pos;
-    if (position >= 10) {
-        position = 9;
+    int cursor_slot = NameSelect.name_pos;
+    if (cursor_slot >= 10) {
+        cursor_slot = 9;
     }
-    left = x + 110 + position * 22;
+    left = x + 110 + cursor_slot * 22;
     top = y + 48;
     switch (NameSelect.state) {
         case 1:
@@ -305,11 +305,11 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
         default:
             if (NameSelect.area < 6) {
                 DrawNameRegiWaku(left, top, 30, brightness, blend_mode);
-                int frame = NameSelect.frame - 15;
+                int bob_frame = NameSelect.frame - 15;
                 if (NameSelect.area >= 6) {
-                    frame = 0;
+                    bob_frame = 0;
                 }
-                top = (top - 20) + 4.0f * sinf(0.20943952f * (frame % 31));
+                top = (top - 20) + 4.0f * sinf(0.20943952f * (bob_frame % 31));
                 DrawMenu2DSprite(NameTemp, CRect_i_(left + 20, top, 24, 24), CRect_i_(488, 328, 24, 24), (u8) brightness,
                                  (u8) brightness, (u8) brightness, blend_mode);
             }
@@ -335,17 +335,17 @@ char NameEntryFrameTexture[] __attribute__((section(".rodata"))) = "frame_image"
  * @address 0x2390A0
  * @size 0x930
  */
-static void DrawNameTemplete(int x, int y, int color, int alpha) {
-    int mode = NameSelect.input_mode;
-    int tab = NameSelect.pushed_tab;
-    int px;
-    int py;
-    int u;
-    int v;
+static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
+    int input_mode = NameSelect.input_mode;
+    int pushed_tab = NameSelect.pushed_tab;
+    int draw_x;
+    int draw_y;
+    int tex_u;
+    int tex_v;
     int i;
     s16 key_count[4] = {89, 88, 62, 24};
 
-    DrawMenu2DSprite(NameTemp, CRect_i_(x, y, 0x200, 0x100), CRect_i_(0, 0, 0x200, 0x100), color, color, color, alpha);
+    DrawMenu2DSprite(NameTemp, CRect_i_(x, y, 0x200, 0x100), CRect_i_(0, 0, 0x200, 0x100), brightness, brightness, brightness, blend_mode);
 
     int language = NameSelect.language;
     if (language > 0) {
@@ -360,164 +360,164 @@ static void DrawNameTemplete(int x, int y, int color, int alpha) {
         {78, 78, 44, 44, 60, 52, 24, 24, 48, 48, 112},
         {0, 0, 176, 75, 74, 70, 24, 24, 48, 48, 112},
     };
-    int height = 0x18;
+    int tab_height = 0x18;
 
     if (NameSelect.state == 6) {
-        px = x + tab_x[language][tab];
-        py = y + 6 + (tab / 6) * 27;
+        draw_x = x + tab_x[language][pushed_tab];
+        draw_y = y + 6 + (pushed_tab / 6) * 27;
 
-        u = 0;
-        if (tab < 6) {
+        tex_u = 0;
+        if (pushed_tab < 6) {
             i = 0;
-            v = 0x148;
+            tex_v = 0x148;
         } else {
             i = 6;
-            v = 0x160;
+            tex_v = 0x160;
         }
-        for (; i < tab; i++) {
-            u += tab_width[language][i];
+        for (; i < pushed_tab; i++) {
+            tex_u += tab_width[language][i];
         }
-        if (tab == 5) {
-            py += 4;
-            height = 0x28;
+        if (pushed_tab == 5) {
+            draw_y += 4;
+            tab_height = 0x28;
         }
-        DrawMenu2DSprite(NameTemp, CRect_i_(px, py, tab_width[language][tab], height), CRect_i_(u, v, tab_width[language][tab], height), color, color, color, alpha);
+        DrawMenu2DSprite(NameTemp, CRect_i_(draw_x, draw_y, tab_width[language][pushed_tab], tab_height), CRect_i_(tex_u, tex_v, tab_width[language][pushed_tab], tab_height), brightness, brightness, brightness, blend_mode);
     }
 
-    px = x + tab_x[language][mode];
-    py = y + 6;
+    draw_x = x + tab_x[language][input_mode];
+    draw_y = y + 6;
 
-    for (i = 0, u = 0; i < mode; i++) {
-        u += tab_width[language][i];
+    for (i = 0, tex_u = 0; i < input_mode; i++) {
+        tex_u += tab_width[language][i];
     }
-    DrawMenu2DSprite(NameTemp, CRect_i_(px, py, tab_width[language][mode], 0x18), CRect_i_(u, 0x148, tab_width[language][mode], 0x18), color, color, color, alpha);
+    DrawMenu2DSprite(NameTemp, CRect_i_(draw_x, draw_y, tab_width[language][input_mode], 0x18), CRect_i_(tex_u, 0x148, tab_width[language][input_mode], 0x18), brightness, brightness, brightness, blend_mode);
 
     int base_x = x + 0x38;
     int base_y = y + 0x54;
     CTexture *texture;
 
-    py = base_y;
-    if (mode == 0) {
+    draw_y = base_y;
+    if (input_mode == 0) {
         texture = KataTex;
     }
-    if (mode == 1) {
+    if (input_mode == 1) {
         texture = HiraTex;
     }
 
-    switch (mode) {
+    switch (input_mode) {
         case 0:
         case 1:
-            px = base_x - 8;
-            for (int key = 0; key < key_count[mode]; key++) {
-                u = (key % 10) * 22;
-                v = (key / 10) * 22;
+            draw_x = base_x - 8;
+            for (int key = 0; key < key_count[input_mode]; key++) {
+                tex_u = (key % 10) * 22;
+                tex_v = (key / 10) * 22;
 
-                CRect_i_ texel(u, v, 22, 23);
+                CRect_i_ tex_rect(tex_u, tex_v, 22, 23);
 
-                DrawMenu2DSprite(texture, CRect_i_(px + 1, py + 1, 22, 22), texel, 0, 0, 0, (alpha * 0x50) >> 7);
-                DrawMenu2DSprite(texture, CRect_i_(px, py, 22, 22), texel, color, color, color, alpha);
+                DrawMenu2DSprite(texture, CRect_i_(draw_x + 1, draw_y + 1, 22, 22), tex_rect, 0, 0, 0, (blend_mode * 0x50) >> 7);
+                DrawMenu2DSprite(texture, CRect_i_(draw_x, draw_y, 22, 22), tex_rect, brightness, brightness, brightness, blend_mode);
                 if (key < 0x23 && key != 0x1D) {
-                    px += 0x26;
+                    draw_x += 0x26;
                     if (key % 5 == 4) {
-                        px -= 0xBE;
-                        py += 0x1A;
+                        draw_x -= 0xBE;
+                        draw_y += 0x1A;
                     }
                 } else if (key >= 0x50) {
-                    py += 0x1A;
+                    draw_y += 0x1A;
                 } else {
                     switch (key) {
                         case 0x1D:
-                            px = base_x + 0xCA;
-                            py = base_y;
+                            draw_x = base_x + 0xCA;
+                            draw_y = base_y;
                             break;
                         case 0x23:
                         case 0x24:
                         case 0x2B:
                         case 0x2C:
-                            px += 0x4C;
+                            draw_x += 0x4C;
                             break;
                         case 0x31:
-                            px -= 0x72;
-                            py += 0x1A;
+                            draw_x -= 0x72;
+                            draw_y += 0x1A;
                             break;
                         case 0x25:
                         case 0x2A:
                         case 0x2D:
-                            px -= 0x98;
-                            py += 0x1A;
+                            draw_x -= 0x98;
+                            draw_y += 0x1A;
                             break;
                         case 0x36:
-                            py = base_y;
-                            if (mode == 0) {
+                            draw_y = base_y;
+                            if (input_mode == 0) {
                                 key = 0x50;
                             }
-                            if (mode == 1) {
+                            if (input_mode == 1) {
                                 key = 0x4F;
                             }
                         default:
-                            px += 0x26;
+                            draw_x += 0x26;
                             break;
                     }
                 }
             }
             break;
         case 2:
-            px = base_x - 0xE;
+            draw_x = base_x - 0xE;
             for (int key = 0; key < key_count[2]; key++) {
-                u = (key % 10) * 22;
-                v = (key / 10) * 22;
+                tex_u = (key % 10) * 22;
+                tex_v = (key / 10) * 22;
                 if (key > 0x33) {
-                    u = (key - 0x34) * 22;
-                    v = 0xB0;
+                    tex_u = (key - 0x34) * 22;
+                    tex_v = 0xB0;
                 }
-                CRect_i_ texel(u, v, 22, 23);
+                CRect_i_ tex_rect(tex_u, tex_v, 22, 23);
 
-                DrawMenu2DSprite(AlphaTex, CRect_i_(px + 1, py + 1, 22, 22), texel, 0, 0, 0, (alpha * 0x50) >> 7);
-                DrawMenu2DSprite(AlphaTex, CRect_i_(px, py, 22, 22), texel, color, color, color, alpha);
-                px += 0x22;
+                DrawMenu2DSprite(AlphaTex, CRect_i_(draw_x + 1, draw_y + 1, 22, 22), tex_rect, 0, 0, 0, (blend_mode * 0x50) >> 7);
+                DrawMenu2DSprite(AlphaTex, CRect_i_(draw_x, draw_y, 22, 22), tex_rect, brightness, brightness, brightness, blend_mode);
+                draw_x += 0x22;
                 if (key < 0x1A) {
                     if (key % 13 == 12) {
-                        py += 0x1A;
-                        px -= 0x1BA;
+                        draw_y += 0x1A;
+                        draw_x -= 0x1BA;
                     }
                     if (key == 0x19) {
-                        px = base_x - 0xE;
+                        draw_x = base_x - 0xE;
                     }
                 } else if (key < 0x34) {
-                    int lower = key - 0x1A;
+                    int lower_key = key - 0x1A;
 
-                    if (lower % 13 == 12) {
-                        px -= 0x1BA;
-                        py += 0x1E;
+                    if (lower_key % 13 == 12) {
+                        draw_x -= 0x1BA;
+                        draw_y += 0x1E;
                     }
-                    if (lower == 0x19) {
-                        px = base_x - 0xE;
+                    if (lower_key == 0x19) {
+                        draw_x = base_x - 0xE;
                     }
                 }
             }
             break;
         case 3:
-            px = base_x;
+            draw_x = base_x;
             for (int key = 0; key < key_count[3]; key++) {
-                int cell = key + 2;
+                int cell_no = key + 2;
                 int row = key / 10;
 
                 if (key >= 0xC && key < 0xF) {
-                    cell += 1;
+                    cell_no += 1;
                 }
                 if (key >= 0xF && key < 0x14) {
-                    cell += 2;
+                    cell_no += 2;
                 }
                 if (key >= 0x14) {
-                    cell = key + 0x17;
+                    cell_no = key + 0x17;
                 }
-                u = (cell % 10) * 22;
-                v = (cell / 10) * 22 + 0x6E;
-                DrawMenu2DSprite(AlphaTex, CRect_i_(px, py, 22, 22), CRect_i_(u, v, 22, 23), color, color, color, alpha);
-                px += 0x26;
+                tex_u = (cell_no % 10) * 22;
+                tex_v = (cell_no / 10) * 22 + 0x6E;
+                DrawMenu2DSprite(AlphaTex, CRect_i_(draw_x, draw_y, 22, 22), CRect_i_(tex_u, tex_v, 22, 23), brightness, brightness, brightness, blend_mode);
+                draw_x += 0x26;
                 if (key % 10 == 9) {
-                    px -= 0x17C;
-                    py += 0x1A;
+                    draw_x -= 0x17C;
+                    draw_y += 0x1A;
                 }
             }
             break;
@@ -532,15 +532,15 @@ static void DrawNameTemplete(int x, int y, int color, int alpha) {
  * @size 0x6C
  */
 static int NameCompare(short *first, short *second) {
-    int same = 0;
+    int matching = 0;
 
     for (int i = 0; i < 10; i++) {
         if (first[i] == second[i]) {
-            same++;
+            matching++;
         }
     }
     // Every character has to agree before the names count as one.
-    if (same >= 10) {
+    if (matching >= 10) {
         return 0;
     }
     return 1;
@@ -558,23 +558,23 @@ int CheckName() {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {230, 230, 230, 230, 230, 230, 230, 230, 230, 230},
     };
-    int blank_characters = 0;
+    int blank_count = 0;
 
-    for (int index = 0; index < 10; index++) {
-        if (CharaName[index] == 0 || CharaName[index] == 230) {
-            blank_characters++;
+    for (int slot = 0; slot < 10; slot++) {
+        if (CharaName[slot] == 0 || CharaName[slot] == 230) {
+            blank_count++;
         }
     }
-    if (blank_characters >= 10) {
+    if (blank_count >= 10) {
         return 2;
     }
-    for (int blank = 0; blank < 2; blank++) {
-        if (NameCompare(CharaName, blank_names[blank]) == 0) {
+    for (int blank_no = 0; blank_no < 2; blank_no++) {
+        if (NameCompare(CharaName, blank_names[blank_no]) == 0) {
             return 0;
         }
     }
-    for (int character = NameSelect.chara_no - 1; 0 <= character; character--) {
-        if (NameCompare(CharaName, SaveData->GetCharaName(character)) == 0) {
+    for (int other_chara_no = NameSelect.chara_no - 1; 0 <= other_chara_no; other_chara_no--) {
+        if (NameCompare(CharaName, SaveData->GetCharaName(other_chara_no)) == 0) {
             return 0;
         }
     }
@@ -592,7 +592,7 @@ void NameEnterDraw(void) {
     int language;
     int chara_no;
     int fade;
-    int color;
+    int brightness;
     float cursor_x;
     float cursor_y;
 
@@ -609,8 +609,8 @@ void NameEnterDraw(void) {
             info[0].block_no = NameSelect.texture_block;
             info[1].block_no = NameSelect.texture_block;
 
-            BG_READ_INFO *read = GetReadBGFile(0);
-            info[1].name = (char *) GetPackFile((u_int *) read->buffer, NameEntryTextureFile, NULL);
+            BG_READ_INFO *read_file = GetReadBGFile(0);
+            info[1].name = (char *) GetPackFile((u_int *) read_file->buffer, NameEntryTextureFile, NULL);
             TexManager.DeleteTextureBlock(NameSelect.texture_block);
             TexManager.LoadTextureBlockEX(-1, info);
             NameTemp = TexManager.GetTexture(NameEntryTempTexture, -1);
@@ -620,10 +620,10 @@ void NameEnterDraw(void) {
             CharaFace = TexManager.GetTexture(NameEntryFaceTexture, -1);
             NameSelect.loaded = 1;
 
-            short *mes = (short *) GetPackFile((u_int *) read->buffer, NameEntryMessageFile, NULL);
-            short *mes2 = (short *) GetPackFile((u_int *) read->buffer, NameEntryMessageFile2, NULL);
-            InitMenuMesSet(3, mes);
-            CommonMenuMes2.SetBuff(mes2);
+            short *messages = (short *) GetPackFile((u_int *) read_file->buffer, NameEntryMessageFile, NULL);
+            short *messages2 = (short *) GetPackFile((u_int *) read_file->buffer, NameEntryMessageFile2, NULL);
+            InitMenuMesSet(3, messages);
+            CommonMenuMes2.SetBuff(messages2);
 
             s8 char_size[7][2] = {{18, 22}, {11, 20}, {11, 20}, {11, 20}, {11, 20}, {11, 20}, {11, 20}};
             CommonMenuMes2.char_width = char_size[NameSelect.language][0];
@@ -641,7 +641,7 @@ void NameEnterDraw(void) {
     language = NameSelect.language;
     MenuTextureReload(NameSelect.texture_block);
     chara_no = NameSelect.chara_no;
-    color = fade = 0x80;
+    brightness = fade = 0x80;
     switch (NameSelect.state) {
         case 1:
             fade = NameSelect.state_count * 5;
@@ -652,11 +652,11 @@ void NameEnterDraw(void) {
             break;
     }
     if (NameSelect.area >= 6) {
-        color = 0x38;
+        brightness = 0x38;
     }
 
-    CTexture *frame = TexManager.GetTexture(NameEntryFrameTexture, -1);
-    if ((chara_no != 0 || NameSelect.loaded == 0) && frame != NULL) {
+    CTexture *frame_texture = TexManager.GetTexture(NameEntryFrameTexture, -1);
+    if ((chara_no != 0 || NameSelect.loaded == 0) && frame_texture != NULL) {
         FrameImageDraw(0x80, 0x80);
     }
 
@@ -665,12 +665,12 @@ void NameEnterDraw(void) {
         DrawMenu2DSprite(NameTemp, CRect_i_(0x30, 0x21, 0x3C, 0x27), CRect_i_(0x1C0, 0x100, 0x3C, 0x28), fade);
         DrawMenu2DSprite(NameTemp, CRect_i_(0x6E, 0x24, 0xAE, 0x1F), CRect_i_(0xC0, 0x178, 0xAE, 0x20), fade);
 
-        int name_color = color;
+        int name_color = brightness;
         if (NameSelect.area >= 6) {
             name_color = 0x80;
         }
         DrawCharaNameUp(0x3E, 0x36, name_color, fade);
-        DrawNameTemplete(0x42, 0x9E, color, fade);
+        DrawNameTemplete(0x42, 0x9E, brightness, fade);
 
         switch (NameSelect.area) {
             case 5:
@@ -697,21 +697,21 @@ void NameEnterDraw(void) {
                 }
                 break;
             case 4: {
-                int wrap = InputModeOrikaeshi[NameSelect.input_mode];
+                int keys_per_row = InputModeOrikaeshi[NameSelect.input_mode];
                 int step_x = InputModeMovetbl[NameSelect.input_mode][0];
                 int step_y = InputModeMovetbl[NameSelect.input_mode][1];
-                int cursor = NameSelect.cursor;
-                int column = cursor % wrap;
+                int cursor_key = NameSelect.cursor;
+                int column = cursor_key % keys_per_row;
 
                 cursor_x = step_x * column + 0x62;
-                cursor_y = step_y * (cursor / wrap) + 0xEE;
+                cursor_y = step_y * (cursor_key / keys_per_row) + 0xEE;
                 if (NameSelect.input_mode < 2) {
                     cursor_x -= 8.0f;
                     if (column > 4) {
                         cursor_x += 20.0f;
                     }
                     if (NameSelect.side_row > 0) {
-                        cursor_x = step_x * wrap + 0x6E;
+                        cursor_x = step_x * keys_per_row + 0x6E;
                         cursor_y = step_y * (NameSelect.side_row - 1) + 0xEE;
                     }
                 }
@@ -737,16 +737,16 @@ void NameEnterDraw(void) {
                 break;
             default: {
                 if (NameSelect.area == 4 && 234.0f <= NameSelect.cursor_y) {
-                    DrawNameRegiWaku((int) (16.0f + cursor_x), (int) (cursor_y - 6.0f), 0x1C, color, fade);
+                    DrawNameRegiWaku((int) (16.0f + cursor_x), (int) (cursor_y - 6.0f), 0x1C, brightness, fade);
                 }
 
                 cursor_x = NameSelect.cursor_x + 5.0f * cosf(0.07853981852531433f * (float) NameSelect.frame);
                 cursor_y = NameSelect.cursor_y + 3.0f * sinf(0.13089969754219055f * (float) NameSelect.frame);
                 if (NameSelect.area < 8) {
-                    CRect_i_ hand(0x1C0, 0x128, 0x20, 0x20);
+                    CRect_i_ hand_rect(0x1C0, 0x128, 0x20, 0x20);
 
-                    DrawMenu2DSprite(NameTemp, CRect_i_((int) (2.0f + cursor_x), (int) (2.0f + cursor_y), 0x20, 0x20), hand, 0, 0, 0, (fade * 0x50) >> 7);
-                    DrawMenu2DSprite(NameTemp, CRect_i_((int) cursor_x, (int) cursor_y, 0x20, 0x20), hand, color, color, color, fade);
+                    DrawMenu2DSprite(NameTemp, CRect_i_((int) (2.0f + cursor_x), (int) (2.0f + cursor_y), 0x20, 0x20), hand_rect, 0, 0, 0, (fade * 0x50) >> 7);
+                    DrawMenu2DSprite(NameTemp, CRect_i_((int) cursor_x, (int) cursor_y, 0x20, 0x20), hand_rect, brightness, brightness, brightness, fade);
                 }
                 break;
             }
@@ -840,7 +840,7 @@ s32 NameEnterKey(void) {
     int action;
     int mes_no;
     int input_mode;
-    int se;
+    int sound;
 
     if (NameSelect.loaded == 0) {
         return 0;
@@ -898,7 +898,7 @@ s32 NameEnterKey(void) {
             }
             switch (NameSelect.side_row) {
                 case 0: {
-                    int wrap = InputModeOrikaeshi[NameSelect.input_mode];
+                    int keys_per_row = InputModeOrikaeshi[NameSelect.input_mode];
 
                     if (GamePad.Down(0x4000)) {
                         int rows = 5;
@@ -910,30 +910,30 @@ s32 NameEnterKey(void) {
                                 rows -= 1;
                                 break;
                         }
-                        if (NameSelect.cursor / wrap < rows) {
-                            NameSelect.cursor += wrap;
+                        if (NameSelect.cursor / keys_per_row < rows) {
+                            NameSelect.cursor += keys_per_row;
                         }
                     } else if (GamePad.Down(0x8000)) {
-                        if (NameSelect.cursor % wrap != 0) {
+                        if (NameSelect.cursor % keys_per_row != 0) {
                             NameSelect.cursor--;
                         } else if (NameSelect.input_mode > 1) {
-                            NameSelect.cursor += wrap - 1;
+                            NameSelect.cursor += keys_per_row - 1;
                         } else {
-                            NameSelect.side_row = NameSelect.cursor / wrap + 1;
+                            NameSelect.side_row = NameSelect.cursor / keys_per_row + 1;
                         }
                     } else if (GamePad.Down(0x2000)) {
-                        if (wrap - 1 != NameSelect.cursor % wrap) {
+                        if (keys_per_row - 1 != NameSelect.cursor % keys_per_row) {
                             NameSelect.cursor++;
                         } else if (NameSelect.input_mode > 1) {
-                            NameSelect.cursor -= wrap - 1;
+                            NameSelect.cursor -= keys_per_row - 1;
                         } else {
-                            NameSelect.side_row = NameSelect.cursor / wrap + 1;
+                            NameSelect.side_row = NameSelect.cursor / keys_per_row + 1;
                         }
                     } else if (GamePad.Down(0x1000)) {
-                        int row = NameSelect.cursor / wrap;
+                        int row = NameSelect.cursor / keys_per_row;
 
                         if (0 < row) {
-                            NameSelect.cursor -= wrap;
+                            NameSelect.cursor -= keys_per_row;
                         } else if (row <= 0) {
                             NameSelect.area = 5;
                             if (NameSelect.cursor < 4) {
@@ -981,7 +981,7 @@ s32 NameEnterKey(void) {
             }
             break;
         case 5: {
-            int first_key[3] = {0, 2, 2};
+            int tab_first_key[3] = {0, 2, 2};
 
             if (GamePad.Down(0x1000)) {
                 switch (language) {
@@ -1190,21 +1190,21 @@ s32 NameEnterKey(void) {
         case -1:
             break;
         case 100: {
-            int pos;
-            int base;
+            int slot;
+            int code_base;
             int key;
             int raw_key;
 
             key = NameSelect.cursor;
-            pos = NameSelect.name_pos;
+            slot = NameSelect.name_pos;
 
             switch (input_mode) {
                 case 1:
                 case 0:
                     if (input_mode == 1) {
-                        base = 82;
+                        code_base = 82;
                     } else {
-                        base = 1;
+                        code_base = 1;
                     }
                     if (NameSelect.side_row == 0) {
                         int column = key % 10;
@@ -1236,63 +1236,63 @@ s32 NameEnterKey(void) {
                                         key--;
                                         break;
                                     default:
-                                        key = 230 - base;
+                                        key = 230 - code_base;
                                         break;
                                 }
                             }
                         }
-                        if (pos >= 10) {
-                            pos--;
+                        if (slot >= 10) {
+                            slot--;
                         }
-                        CharaName[pos] = key + base;
+                        CharaName[slot] = key + code_base;
                         if (NameSelect.name_pos < 10) {
                             NameSelect.name_pos++;
                         }
                     } else {
                         switch (NameSelect.side_row) {
                             case 1:
-                                if (0 < pos) {
-                                    int prev = CharaName[pos - 1];
+                                if (0 < slot) {
+                                    int previous_code = CharaName[slot - 1];
 
-                                    if ((prev >= 6 && prev < 21) || (prev >= 26 && prev < 31) || (prev >= 87 && prev < 102) ||
-                                        (prev >= 107 && prev < 112)) {
-                                        CharaName[pos - 1] += 50;
-                                    } else if (prev == 3) {
-                                        CharaName[pos - 1] = 81;
+                                    if ((previous_code >= 6 && previous_code < 21) || (previous_code >= 26 && previous_code < 31) || (previous_code >= 87 && previous_code < 102) ||
+                                        (previous_code >= 107 && previous_code < 112)) {
+                                        CharaName[slot - 1] += 50;
+                                    } else if (previous_code == 3) {
+                                        CharaName[slot - 1] = 81;
                                     }
                                 }
                                 break;
                             case 2:
-                                if (0 < pos) {
-                                    int prev = CharaName[pos - 1];
+                                if (0 < slot) {
+                                    int previous_code = CharaName[slot - 1];
 
-                                    if ((prev >= 26 && prev < 31) || (prev >= 107 && prev < 112)) {
-                                        CharaName[pos - 1] += 45;
+                                    if ((previous_code >= 26 && previous_code < 31) || (previous_code >= 107 && previous_code < 112)) {
+                                        CharaName[slot - 1] += 45;
                                     }
                                 }
                                 break;
                             case 3:
-                                key = 222 - base;
-                                if (pos >= 10) {
-                                    pos--;
+                                key = 222 - code_base;
+                                if (slot >= 10) {
+                                    slot--;
                                 }
-                                CharaName[pos] = key + base;
+                                CharaName[slot] = key + code_base;
                                 if (NameSelect.name_pos < 10) {
                                     NameSelect.name_pos++;
                                 }
                                 break;
                             default:
-                                CharaName[pos] = 230;
+                                CharaName[slot] = 230;
                                 break;
                         }
                     }
                     break;
                 case 2:
                     key = (key < 52) ? key : ((key < 62) ? key + 28 : 68);
-                    if (pos >= 10) {
-                        pos--;
+                    if (slot >= 10) {
+                        slot--;
                     }
-                    CharaName[pos] = key + 162;
+                    CharaName[slot] = key + 162;
                     if (NameSelect.name_pos < 10) {
                         NameSelect.name_pos++;
                     }
@@ -1311,48 +1311,48 @@ s32 NameEnterKey(void) {
                             key = 16;
                         }
                     }
-                    if (pos >= 10) {
-                        pos--;
+                    if (slot >= 10) {
+                        slot--;
                     }
-                    CharaName[pos] = key + 214;
+                    CharaName[slot] = key + 214;
                     if (NameSelect.name_pos < 10) {
                         NameSelect.name_pos++;
                     }
-                    printf("now Input CHaraID = %d\n", CharaName[pos]);
+                    printf("now Input CHaraID = %d\n", CharaName[slot]);
                     break;
             }
             break;
         }
         case 900: {
-            int pos = NameSelect.name_pos;
-            int chara;
+            int slot = NameSelect.name_pos;
+            int old_code;
 
-            if (pos <= 0) {
-                pos = 0;
+            if (slot <= 0) {
+                slot = 0;
             }
-            chara = CharaName[pos];
-            if ((chara >= 36 && chara < 39) || (chara >= 117 && chara < 120)) {
-                CharaName[pos] += 11;
-            } else if ((chara >= 47 && chara < 50) || (chara >= 128 && chara < 131)) {
-                CharaName[pos] -= 11;
+            old_code = CharaName[slot];
+            if ((old_code >= 36 && old_code < 39) || (old_code >= 117 && old_code < 120)) {
+                CharaName[slot] += 11;
+            } else if ((old_code >= 47 && old_code < 50) || (old_code >= 128 && old_code < 131)) {
+                CharaName[slot] -= 11;
             }
-            if (chara == 18) {
-                CharaName[pos] = 50;
-            } else if (chara == 50) {
-                CharaName[pos] = 68;
-            } else if (chara == 68) {
-                CharaName[pos] = 18;
-            } else if ((chara >= 6 && chara < 21) || (chara >= 26 && chara < 31) || (chara >= 87 && chara < 102) ||
-                       (chara >= 107 && chara < 112)) {
-                CharaName[pos] += 50;
-            } else if ((chara >= 56 && chara < 71) || (chara >= 76 && chara < 81) || (chara >= 137 && chara < 152) ||
-                       (chara >= 157 && chara < 162)) {
-                CharaName[pos] -= 50;
+            if (old_code == 18) {
+                CharaName[slot] = 50;
+            } else if (old_code == 50) {
+                CharaName[slot] = 68;
+            } else if (old_code == 68) {
+                CharaName[slot] = 18;
+            } else if ((old_code >= 6 && old_code < 21) || (old_code >= 26 && old_code < 31) || (old_code >= 87 && old_code < 102) ||
+                       (old_code >= 107 && old_code < 112)) {
+                CharaName[slot] += 50;
+            } else if ((old_code >= 56 && old_code < 71) || (old_code >= 76 && old_code < 81) || (old_code >= 137 && old_code < 152) ||
+                       (old_code >= 157 && old_code < 162)) {
+                CharaName[slot] -= 50;
             }
-            if (chara >= 162 && chara < 188) {
-                CharaName[pos] += 26;
-            } else if (chara >= 188 && chara < 214) {
-                CharaName[pos] -= 26;
+            if (old_code >= 162 && old_code < 188) {
+                CharaName[slot] += 26;
+            } else if (old_code >= 188 && old_code < 214) {
+                CharaName[slot] -= 26;
             }
             break;
         }
@@ -1373,10 +1373,10 @@ s32 NameEnterKey(void) {
             }
             break;
         case 300: {
-            int pos = NameSelect.name_pos;
+            int slot = NameSelect.name_pos;
             int i;
 
-            for (i = 9; i >= pos; i--) {
+            for (i = 9; i >= slot; i--) {
                 CharaName[i + 1] = CharaName[i];
             }
             CharaName[i + 1] = 230;
@@ -1491,7 +1491,7 @@ s32 NameEnterKey(void) {
     }
 
     if (input_mode != NameSelect.input_mode && NameSelect.area != 5) {
-        int cur;
+        int old_cursor;
         int row;
         int column;
 
@@ -1499,9 +1499,9 @@ s32 NameEnterKey(void) {
             case 1:
             case 3:
                 if (input_mode == 2) {
-                    cur = NameSelect.cursor;
-                    row = cur / 13;
-                    column = cur % 13;
+                    old_cursor = NameSelect.cursor;
+                    row = old_cursor / 13;
+                    column = old_cursor % 13;
 
                     if (NameSelect.input_mode == 1 && column == 12) {
                         NameSelect.side_row = row + 1;
@@ -1524,9 +1524,9 @@ s32 NameEnterKey(void) {
                 }
                 break;
             case 2: {
-                cur = NameSelect.cursor;
-                row = cur / 10;
-                column = cur % 10;
+                old_cursor = NameSelect.cursor;
+                row = old_cursor / 10;
+                column = old_cursor % 10;
 
                 if (NameSelect.side_row > 0) {
                     NameSelect.cursor = NameSelect.side_row * 13 - 1;
@@ -1554,18 +1554,18 @@ s32 NameEnterKey(void) {
         }
     }
 
-    se = -1;
+    sound = -1;
     if (cursor != NameSelect.cursor || side_row != NameSelect.side_row) {
-        se = 0;
+        sound = 0;
     }
     if (name_pos != NameSelect.name_pos || input_mode != NameSelect.input_mode) {
-        se = 1;
+        sound = 1;
     }
     if (GamePad.Down(0x40)) {
-        se = 1;
+        sound = 1;
     }
     if (GamePad.Down(0x20) || action == 200 || action == 250) {
-        se = 2;
+        sound = 2;
     }
     if (CommonMenuMes3.mes_made != 0) {
         CommonMenuMes3.MakeMesWin(0);
@@ -1573,7 +1573,7 @@ s32 NameEnterKey(void) {
     if (CommonMenuMes2.mes_made != mes_no) {
         CommonMenuMes2.MakeMesWin(mes_no);
     }
-    ComMenuSePlay(se);
+    ComMenuSePlay(sound);
     return 0;
 }
 
@@ -1633,16 +1633,16 @@ s8 AlphabetEtcOffset[97][2] = {
  * @address 0x23C880
  * @size 0x78
  */
-static int GetFontLRTumeW(int index, int left_code, int code) {
-    int tume = 0;
+static int GetFontLRTumeW(int position, int left_code, int char_code) {
+    int kerning = 0;
 
-    if (code >= 0xA2 && code < 0x100) {
-        tume += AlphabetEtcOffset[code - 0xA2][0];
+    if (char_code >= 0xA2 && char_code < 0x100) {
+        kerning += AlphabetEtcOffset[char_code - 0xA2][0];
     }
-    if (index - 1 >= 0 && code >= 0xA2 && code < 0x100) {
-        tume += AlphabetEtcOffset[code - 0xA2][1];
+    if (position - 1 >= 0 && char_code >= 0xA2 && char_code < 0x100) {
+        kerning += AlphabetEtcOffset[char_code - 0xA2][1];
     }
-    return tume;
+    return kerning;
 }
 
 /**
@@ -1652,13 +1652,13 @@ static int GetFontLRTumeW(int index, int left_code, int code) {
  * @address 0x23C900
  * @size 0x250
  */
-void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int sort) {
+void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int blend_mode) {
     if (name == NULL) {
         return;
     }
 
-    int narrow;
-    int put_x;
+    int condensed;
+    int draw_x;
     int last;
 
     last = 9;
@@ -1666,36 +1666,36 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
         last--;
     }
 
-    narrow = 0;
+    condensed = 0;
     int width = (last + 1) * 0x16;
     if (width >= 0xB0) {
-        narrow = 1;
+        condensed = 1;
     }
 
-    int tume = 0;
-    for (int i = last; i >= 0; i--) {
-        tume += GetFontLRTumeW(i, name[i - 1], name[i]);
+    int kerning = 0;
+    for (int slot = last; slot >= 0; slot--) {
+        kerning += GetFontLRTumeW(slot, name[slot - 1], name[slot]);
     }
-    if (narrow) {
-        width -= tume;
+    if (condensed) {
+        width -= kerning;
     }
 
-    put_x = x + 0x44 + (width >> 1) - ((width / (last + 1)) >> 1);
+    draw_x = x + 0x44 + (width >> 1) - ((width / (last + 1)) >> 1);
 
     for (; last >= 0; last--) {
         int cell_x;
         int cell_y;
         CTexture *texture = GetNameTextureInfo(textures, name[last], cell_x, cell_y);
-        CRect_i_ cell(cell_x, cell_y, 0x16, 0x17);
+        CRect_i_ cell_rect(cell_x, cell_y, 0x16, 0x17);
 
-        DrawMenu2DSprite(texture, CRect_i_(put_x + 2, y + 2, 0x16, 0x15), cell, 10, 10, 10, sort);
-        DrawMenu2DSprite(texture, CRect_i_(put_x, y, 0x16, 0x15), cell, sort);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x + 2, y + 2, 0x16, 0x15), cell_rect, 10, 10, 10, blend_mode);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 0x16, 0x15), cell_rect, blend_mode);
 
-        int step = 0;
-        if (last >= 0 && narrow == 1) {
-            step = GetFontLRTumeW(last, name[last - 1], name[last]);
+        int kerning_step = 0;
+        if (last >= 0 && condensed == 1) {
+            kerning_step = GetFontLRTumeW(last, name[last - 1], name[last]);
         }
-        put_x -= 0x14 - step;
+        draw_x -= 0x14 - kerning_step;
     }
 }
 
@@ -1706,11 +1706,11 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int so
  * @address 0x23CB50
  * @size 0x284
  */
-void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGBA top, spRGBA bottom) {
-    spRGBA shadow_top = {10, 10, 10, top.a};
-    spRGBA shadow_bottom = {10, 10, 10, bottom.a};
-    int narrow;
-    int put_x;
+void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGBA top_color, spRGBA bottom_color) {
+    spRGBA shadow_top = {10, 10, 10, top_color.a};
+    spRGBA shadow_bottom = {10, 10, 10, bottom_color.a};
+    int condensed;
+    int draw_x;
     CTexture *texture;
     int last;
 
@@ -1719,37 +1719,37 @@ void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGB
         last--;
     }
 
-    narrow = 0;
+    condensed = 0;
     int width = (last + 1) * 0x16;
     if (width >= 0xB0) {
-        narrow = 1;
+        condensed = 1;
     }
 
-    int tume = 0;
-    for (int i = last; i >= 0; i--) {
-        tume += GetFontLRTumeW(i, name[i - 1], name[i]);
+    int kerning = 0;
+    for (int slot = last; slot >= 0; slot--) {
+        kerning += GetFontLRTumeW(slot, name[slot - 1], name[slot]);
     }
-    if (narrow == 1) {
-        width -= tume;
+    if (condensed == 1) {
+        width -= kerning;
     }
 
-    put_x = x + 0x36 + (width >> 1) - ((width / (last + 1)) >> 1);
+    draw_x = x + 0x36 + (width >> 1) - ((width / (last + 1)) >> 1);
 
     for (; last >= 0; last--) {
         int cell_x;
         int cell_y;
         texture = GetNameTextureInfo(textures, name[last], cell_x, cell_y);
-        CRect_i_ cell(cell_x, cell_y, 0x16, 0x17);
+        CRect_i_ cell_rect(cell_x, cell_y, 0x16, 0x17);
 
-        DrawMenu2DSprite(texture, CRect_i_(put_x + 2, y + 2, 0x16, 0x15), cell, &shadow_top, &shadow_top,
+        DrawMenu2DSprite(texture, CRect_i_(draw_x + 2, y + 2, 0x16, 0x15), cell_rect, &shadow_top, &shadow_top,
                          &shadow_bottom, &shadow_bottom);
-        DrawMenu2DSprite(texture, CRect_i_(put_x, y, 0x16, 0x15), cell, &top, &top, &bottom, &bottom);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 0x16, 0x15), cell_rect, &top_color, &top_color, &bottom_color, &bottom_color);
 
-        int step = 0;
-        if (last >= 0 && narrow == 1) {
-            step = GetFontLRTumeW(last, name[last - 1], name[last]);
+        int kerning_step = 0;
+        if (last >= 0 && condensed == 1) {
+            kerning_step = GetFontLRTumeW(last, name[last - 1], name[last]);
         }
-        put_x -= 0x14 - step;
+        draw_x -= 0x14 - kerning_step;
     }
 }
 
@@ -1788,7 +1788,7 @@ u_long128 *OpeningReadBuf;
  * @address 0x23CE60
  * @size 0xB0
  */
-void InitOpeningBook(u_long128 *buffer, int *blocks) {
+void InitOpeningBook(u_long128 *buffer, int *tex_blocks) {
     u_long128 *load_buffer = buffer;
     if (load_buffer == NULL) {
         load_buffer = (u_long128 *) read_buffer;
@@ -1796,13 +1796,13 @@ void InitOpeningBook(u_long128 *buffer, int *blocks) {
     load_buffer = MenuCalcBufAlignment(load_buffer);
     StartReadBG();
     LoadFileBGMenuData("openbook.pak", load_buffer);
-    OpenBook.tex_block = blocks[0];
-    OpenBook.unk_004 = blocks[1];
+    OpenBook.tex_block = tex_blocks[0];
+    OpenBook.name_tex_block = tex_blocks[1];
     OpenBook.open = 0;
     OpenBook.step = 0;
-    OpenBook.unk_006 = 0;
+    OpenBook.page = 0;
     OpenBook.fade = 128;
-    OpenBook.unk_00C = 0;
+    OpenBook.text_alpha = 0;
 }
 
 /**
@@ -1824,14 +1824,14 @@ int OpeningBookKey() {
 
                 info[0].block_no = OpenBook.tex_block;
                 info[1].block_no = OpenBook.tex_block;
-                BG_READ_INFO *read = GetReadBGFile(0);
-                info[1].name = (char *) GetPackFile((u_int *) read->buffer, "opentex.img", NULL);
+                BG_READ_INFO *read_file = GetReadBGFile(0);
+                info[1].name = (char *) GetPackFile((u_int *) read_file->buffer, "opentex.img", NULL);
                 TexManager.DeleteTextureBlock(OpenBook.tex_block);
                 TexManager.CleanUpTextureList();
                 TexManager.LoadTextureBlockEX(-1, info);
-                OpeningReadBuf = read->buffer + (read->size >> 4) + 1;
+                OpeningReadBuf = read_file->buffer + (read_file->size >> 4) + 1;
                 OpeningReadBuf = MenuCalcBufAlignment(OpeningReadBuf);
-                short *mes = (short *) GetPackFile((u_int *) read->buffer, "opmes.bin", NULL);
+                short *messages = (short *) GetPackFile((u_int *) read_file->buffer, "opmes.bin", NULL);
 
                 CommonMenuMes2.text_columns = 0x46;
                 CommonMenuMes2.text_rows = 10;
@@ -1884,13 +1884,13 @@ int OpeningBookKey() {
                     CommonMenuMes2.char_width--;
                 }
                 CommonMenuMes2.tex_block = 0x1A;
-                CommonMenuMes2.unk_17B0 = MesWinTexBuff_02;
-                CommonMenuMes2.SetBuff(mes);
-                CommonMenuMes2.edge_alpha = OpenBook.unk_00C;
+                CommonMenuMes2.tex_buff = MesWinTexBuff_02;
+                CommonMenuMes2.SetBuff(messages);
+                CommonMenuMes2.edge_alpha = OpenBook.text_alpha;
                 OpenBook.open = 1;
                 OpenBook.fade = 0x80;
-                s8 text_y[7] = {20, 16, 16, 16, 16, 16, 16};
-                CommonMenuMes2.text_y = text_y[language] + 300;
+                s8 page_text_y[7] = {20, 16, 16, 16, 16, 16, 16};
+                CommonMenuMes2.text_y = page_text_y[language] + 300;
                 CommonMenuMes2.mes_made = -1;
                 CommonMenuMes2.MakeMesWin(100);
             }
@@ -1902,39 +1902,39 @@ int OpeningBookKey() {
             }
             if (OpenBook.fade <= 0) {
                 OpenBook.step = 1;
-                OpenBook.unk_00C = 0;
+                OpenBook.text_alpha = 0;
             }
             break;
         case 1:
-            OpenBook.unk_00C += 2;
-            if (OpenBook.unk_00C >= 0x80) {
-                OpenBook.unk_00C = 0x80;
+            OpenBook.text_alpha += 2;
+            if (OpenBook.text_alpha >= 0x80) {
+                OpenBook.text_alpha = 0x80;
                 OpenBook.step = 2;
                 OpenBook.fade = 0;
             }
             break;
         case 3:
-            OpenBook.unk_00C -= 2;
-            if (OpenBook.unk_00C <= 0) {
-                OpenBook.unk_00C = 0;
-                OpenBook.unk_006++;
-                CommonMenuMes2.MakeMesWin(OpenBook.unk_006 + 100);
+            OpenBook.text_alpha -= 2;
+            if (OpenBook.text_alpha <= 0) {
+                OpenBook.text_alpha = 0;
+                OpenBook.page++;
+                CommonMenuMes2.MakeMesWin(OpenBook.page + 100);
                 OpenBook.step = 1;
             }
             break;
         case 2:
             if (GamePad.Down(0x40)) {
                 OpenBook.step = 3;
-                if (OpenBook.unk_006 >= 11) {
+                if (OpenBook.page >= 11) {
                     OpenBook.step = 4;
                 }
             }
             break;
         case 4:
-            OpenBook.unk_00C--;
-            if (OpenBook.unk_00C <= 0 && OpenBook.step == 4 && OpenBook.unk_00C <= 0) {
+            OpenBook.text_alpha--;
+            if (OpenBook.text_alpha <= 0 && OpenBook.step == 4 && OpenBook.text_alpha <= 0) {
                 CommonMenuMes2.page_arrow = 0;
-                InitNameRegist(0, OpenBook.unk_004, OpeningReadBuf);
+                InitNameRegist(0, OpenBook.name_tex_block, OpeningReadBuf);
                 OpenBook.step = 5;
             }
             break;
@@ -1969,7 +1969,7 @@ void OpeningBookDraw(void) {
         case 3:
         case 4:
             MenuTextureReload(CommonMenuMes2.tex_block);
-            CommonMenuMes2.edge_alpha = OpenBook.unk_00C;
+            CommonMenuMes2.edge_alpha = OpenBook.text_alpha;
             GetMenuCommonPutXY(&CommonMenuMes2, 0x14C - CommonMenuMes2.char_width);
             CommonMenuMes2.Step();
             CommonMenuMes2.DrawMesWin();

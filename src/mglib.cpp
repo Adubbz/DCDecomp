@@ -55,10 +55,10 @@ public:
         x = 0;
     }
 
-    s32 x;
-    s32 y;
-    s32 width;
-    s32 height;
+    s32 x;      /**< Left edge of the window in pixels. */
+    s32 y;      /**< Top edge of the window in pixels. */
+    s32 width;  /**< Width of the window in pixels. */
+    s32 height; /**< Height of the window in pixels. */
 } __attribute__((aligned(16)));
 
 CWindowRect mgWindowRectStore;
@@ -213,9 +213,9 @@ void MGInitVSyncCallBack(int (*callback)(int)) {
 /* Meant to lift each buffer to a quadword boundary and unable to: the remainder is taken over four
    bytes rather than sixteen, so it is zero for every address the caller can pass and the step never
    runs. */
-void MGInitVif1Packet(u_long128 *buf0, u_long128 *buf1) {
-    packetbuf[0] = (int) buf0;
-    packetbuf[1] = (int) buf1;
+void MGInitVif1Packet(u_long128 *buffer0, u_long128 *buffer1) {
+    packetbuf[0] = (int) buffer0;
+    packetbuf[1] = (int) buffer1;
 
     if (packetbuf[0] % 4)
         packetbuf[0] += (4 - packetbuf[0] % 4) * 4;
@@ -533,8 +533,8 @@ void MGSetRenderInfo(float scale, float near_z, float far_z) {
 
     float z_range = 16699999;
 
-    float nf = near_z * far_z;
-    float z_scale = nf * z_range / (far_z - near_z);
+    float near_far = near_z * far_z;
+    float z_scale = near_far * z_range / (far_z - near_z);
     float z_offset = -(16700000 * near_z - w * far_z) / (far_z - near_z);
 
     mgRenderInfo.projection = scale;
@@ -642,8 +642,8 @@ void MGSetWindowRect(CRect_i_ rect) {
     sceVif1PkCloseDirectCode(packet);
 }
 
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color) {
-    sceVu0CopyMatrix(mgRenderInfo.light_direction, light);
+void MGSetPLight(sceVu0FMATRIX direction, sceVu0FMATRIX color) {
+    sceVu0CopyMatrix(mgRenderInfo.light_direction, direction);
     sceVu0CopyMatrix(mgRenderInfo.light_color, color);
     mgRenderInfo.light_color[0][3] = 0.0f;
     mgRenderInfo.light_color[1][3] = 0.0f;
@@ -655,17 +655,17 @@ void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color) {
     mgRenderInfo.light_direction[3][3] = 0.0f;
 }
 
-void MGGetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color) {
-    sceVu0CopyMatrix(light, mgRenderInfo.light_direction);
+void MGGetPLight(sceVu0FMATRIX direction, sceVu0FMATRIX color) {
+    sceVu0CopyMatrix(direction, mgRenderInfo.light_direction);
     sceVu0CopyMatrix(color, mgRenderInfo.light_color);
 }
 
-void MGSetAmbient(float *color) {
-    sceVu0CopyVector(mgRenderInfo.ambient, color);
+void MGSetAmbient(float *ambient) {
+    sceVu0CopyVector(mgRenderInfo.ambient, ambient);
 }
 
-void MGGetAmbient(float *color) {
-    sceVu0CopyVector(color, mgRenderInfo.ambient);
+void MGGetAmbient(float *ambient) {
+    sceVu0CopyVector(ambient, mgRenderInfo.ambient);
 }
 
 /* The two overloads below are the only callers and both pass the same two scales, so the vertical
@@ -744,34 +744,34 @@ void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float
 
 /* A colour every component of which is negative is the request not to clear at all; anything else
    clears, and each component is clamped into the eight bits the clear is written through. */
-void MGSetBGColor(float r, float g, float b, float a) {
-    if (r < 0.0f && g < 0.0f && b < 0.0f && a < 0.0f) {
+void MGSetBGColor(float red, float green, float blue, float alpha) {
+    if (red < 0.0f && green < 0.0f && blue < 0.0f && alpha < 0.0f) {
         mgClearBackFlag = 0;
     } else {
         mgClearBackFlag = 1;
     }
 
-    if (r < 0.0f)
-        r = 0.0f;
-    if (g < 0.0f)
-        g = 0.0f;
-    if (b < 0.0f)
-        b = 0.0f;
-    if (a < 0.0f)
-        a = 0.0f;
-    if (r > 255.0f)
-        r = 255.0f;
-    if (g > 255.0f)
-        g = 255.0f;
-    if (b > 255.0f)
-        b = 255.0f;
-    if (a > 255.0f)
-        a = 255.0f;
+    if (red < 0.0f)
+        red = 0.0f;
+    if (green < 0.0f)
+        green = 0.0f;
+    if (blue < 0.0f)
+        blue = 0.0f;
+    if (alpha < 0.0f)
+        alpha = 0.0f;
+    if (red > 255.0f)
+        red = 255.0f;
+    if (green > 255.0f)
+        green = 255.0f;
+    if (blue > 255.0f)
+        blue = 255.0f;
+    if (alpha > 255.0f)
+        alpha = 255.0f;
 
-    mgBackColor[0] = r;
-    mgBackColor[1] = g;
-    mgBackColor[2] = b;
-    mgBackColor[3] = a;
+    mgBackColor[0] = red;
+    mgBackColor[1] = green;
+    mgBackColor[2] = blue;
+    mgBackColor[3] = alpha;
 }
 
 void MGSetBGColor(float *color) {
@@ -891,7 +891,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
    on screen is read off the Vector Unit's sticky status flags rather than compared as floats: four
    subtractions leave a bit set for any field that came out zero or negative, testing both corners
    against 0 and against 4096.0 and, through w, against the eye. */
-int MGRotTransPers3DSprite(register int *corner0, register int *corner1, register float *position,
+int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, register float *position,
                            float width, float height, int fog) {
     sceVu0FVECTOR half;
     register float *half_size;
@@ -947,8 +947,8 @@ int MGRotTransPers3DSprite(register int *corner0, register int *corner1, registe
             vftoi0.z  vf11, vf11
             vftoi4.xy vf12, vf12
             vftoi0.z  vf12, vf12
-            sqc2    vf11, 0(corner0)
-            sqc2    vf12, 0(corner1)
+            sqc2    vf11, 0(top_left)
+            sqc2    vf12, 0(bottom_right)
             sltu    visible, $0, visible
             xori    visible, visible, 0x1
             andi    visible, visible, 0xff
@@ -1016,8 +1016,8 @@ int MGRotTransPers3DSprite(register int *corner0, register int *corner1, registe
             vftoi4.xy vf12, vf12
             vftoi0.z  vf12, vf12
             vftoi0.w  vf12, vf31
-            sqc2    vf11, 0(corner0)
-            sqc2    vf12, 0(corner1)
+            sqc2    vf11, 0(top_left)
+            sqc2    vf12, 0(bottom_right)
             sltu    visible, $0, visible
             xori    visible, visible, 0x1
             andi    visible, visible, 0xff
@@ -1242,26 +1242,26 @@ void MGSetGsTEXA(sceGsTexa *texa) {
 /* The frame buffer read back as a texture, which is what every effect that samples the picture it
    is drawing over needs: a frame buffer page is 32 texture blocks, and the size is the largest the
    register can name rather than the buffer's own. */
-void MGGetFBuffTex(sceGsTex0 *tex) {
+void MGGetFBuffTex(sceGsTex0 *tex0) {
     sceGsFrame *frame = DBuffID ? &mgDBuff.draw1.frame1 : &mgDBuff.draw0.frame1;
 
-    *(u_long *) tex = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0,
-                                      0, 0);
+    *(u_long *) tex0 = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0,
+                                       0, 0);
 }
 
-void MGGetFBuffBackTex(sceGsTex0 *tex) {
+void MGGetFBuffBackTex(sceGsTex0 *tex0) {
     sceGsFrame *frame = DBuffID ? &mgDBuff.draw0.frame1 : &mgDBuff.draw1.frame1;
 
-    *(u_long *) tex = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0,
-                                      0, 0);
+    *(u_long *) tex0 = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0,
+                                       0, 0);
 }
 
 /* A rectangle moved from one place in GS local memory to another, which is the transfer the GS
    does entirely on its own side: four registers down the frame's packet and no pixels through the
    bus. The second packet is a TEXFLUSH on its own, because the destination may be a texture the
    cache still holds the old contents of. */
-void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dsax, int dsay,
-                 int dir) {
+void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y,
+                 int direction) {
     sceVif1Packet *packet;
 
     packet = Vif1Packet;
@@ -1271,7 +1271,7 @@ void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dsax,
     sceVif1PkAddGsAD(packet, SCE_GS_BITBLTBUF,
                      SCE_GS_SET_BITBLTBUF(src->TBP0, src->TBW, src->PSM, dst->TBP0, dst->TBW,
                                           dst->PSM));
-    sceVif1PkAddGsAD(packet, SCE_GS_TRXPOS, SCE_GS_SET_TRXPOS(rect.x, rect.y, dsax, dsay, dir));
+    sceVif1PkAddGsAD(packet, SCE_GS_TRXPOS, SCE_GS_SET_TRXPOS(rect.x, rect.y, dst_x, dst_y, direction));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXREG, SCE_GS_SET_TRXREG(rect.width, rect.height));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXDIR, SCE_GS_SET_TRXDIR(SCE_GS_LOCAL_LOCAL));
     sceVif1PkCloseGifTag(packet);
@@ -1379,7 +1379,7 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
 }
 
 /* Copies both interlaced fields into the destination, one 640-by-1 line at a time. */
-void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int dir) {
+void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int direction) {
     sceGsTex0 tex[2];
     CRect_i_ even;
     CRect_i_ odd;
@@ -1572,9 +1572,9 @@ void MGDrawShadowFast(CFrame *frame, float *position, float *normal) {
     MGSetGsTEST(&test);
 
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow, 0);
-    mgRenderInfo.unk_320 = 1;
+    mgRenderInfo.shadow_pass = 1;
     MGDraw(frame);
-    mgRenderInfo.unk_320 = 0;
+    mgRenderInfo.shadow_pass = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
 
@@ -1599,9 +1599,9 @@ void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
     MGSetGsTEST(&test);
 
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow3, 0);
-    mgRenderInfo.unk_320 = 1;
+    mgRenderInfo.shadow_pass = 1;
     MGDraw(frame);
-    mgRenderInfo.unk_320 = 0;
+    mgRenderInfo.shadow_pass = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
 
@@ -1628,13 +1628,13 @@ void MGDrawShadow(CFrame *frame, float *position, float *normal) {
     MGSetGsTEST(&test);
 
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_shadow2, 0);
-    mgRenderInfo.unk_320 = 2;
+    mgRenderInfo.shadow_pass = 2;
     sceVu0CopyMatrix(perspective, mgRenderInfo.perspective);
     sceVu0CopyMatrix(viewport, mgRenderInfo.viewport);
     MGDraw(frame);
     sceVu0CopyMatrix(mgRenderInfo.perspective, perspective);
     sceVu0CopyMatrix(mgRenderInfo.viewport, viewport);
-    mgRenderInfo.unk_320 = 0;
+    mgRenderInfo.shadow_pass = 0;
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
 }
 
@@ -1663,15 +1663,15 @@ void MGDrawShade(CFrame *frame) {
     alpha.bits.d = 0;
     MGSetGsALPHA(&alpha);
 
-    mgRenderInfo.unk_320 = 8;
+    mgRenderInfo.shadow_pass = 8;
     MGDraw(frame);
-    mgRenderInfo.unk_320 = 0;
+    mgRenderInfo.shadow_pass = 0;
 }
 
 static sceGsTex0 Shadow_SaveFrameBuff;
 static sceGsTex0 Shadow_WorkTex;
 
-void MGBeginDrawShadow(sceGsTex0 tex) {
+void MGBeginDrawShadow(sceGsTex0 tex0) {
     sceVif1Packet *packet;
     sceGsTest test;
     sceGsZbuf zbuf;
@@ -1686,7 +1686,7 @@ void MGBeginDrawShadow(sceGsTex0 tex) {
     zbuf = mgZBuffer;
     zbuf.bits.zmsk = 1;
 
-    tex.PSM = SCE_GS_PSMCT24;
+    tex0.PSM = SCE_GS_PSMCT24;
 
     packet = GetVif1Packet();
     MGGetFBuffTex(&Shadow_SaveFrameBuff);
@@ -1697,7 +1697,7 @@ void MGBeginDrawShadow(sceGsTex0 tex) {
 
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(tex.TBP0 >> 5, tex.TBW, tex.PSM, 0));
+                     SCE_GS_SET_FRAME(tex0.TBP0 >> 5, tex0.TBW, tex0.PSM, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
@@ -1713,7 +1713,7 @@ void MGBeginDrawShadow(sceGsTex0 tex) {
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 
-    Shadow_WorkTex = tex;
+    Shadow_WorkTex = tex0;
 }
 
 void MGEndDrawShadow(u_char alpha) {

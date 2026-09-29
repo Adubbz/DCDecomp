@@ -520,34 +520,34 @@ static void GetBGMFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x159810
  * @size 0x114
  */
-static void SetBGMFile(int set_no, unsigned int *buffer, char *filename) {
+static void SetBGMFile(int set_no, unsigned int *buffer, char *config_name) {
     char base_name[64];
     char *dst;
     char c;
-    unsigned int *packed;
+    unsigned int *cfg_script;
     int size;
     SND_INFO info;
 
     SndBgmStop();
-    CSnd.LoadSoundFileFromPack(filename, buffer);
+    CSnd.LoadSoundFileFromPack(config_name, buffer);
     now_bgm_no = set_no;
     now_bgm_play = 0;
 
     dst = base_name;
-    while ((c = *filename) != 0) {
+    while ((c = *config_name) != 0) {
         if (c == '.') {
             break;
         }
         *dst = c;
-        filename++;
+        config_name++;
         dst++;
     }
     *dst = 0;
 
     strcat(base_name, ".cfg");
-    packed = GetPackFile(buffer, base_name, &size);
-    if (packed != 0) {
-        LoadSoundInfo(&info, (char *) packed, size);
+    cfg_script = GetPackFile(buffer, base_name, &size);
+    if (cfg_script != 0) {
+        LoadSoundInfo(&info, (char *) cfg_script, size);
         CSnd.SetReverb(0, info.reverb_mode, info.reverb_depth);
         printf("core 0 rev = %d %d\n", info.reverb_mode, info.reverb_depth);
     }
@@ -830,15 +830,15 @@ static void GetSoundFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x15A2C0
  * @size 0x174
  */
-static void SetSoundFile(int set_no, unsigned int *buffer, char *filename) {
+static void SetSoundFile(int set_no, unsigned int *buffer, char *config_name) {
     char base_name[64];
     char *dst;
     char c;
     SND_INFO info;
-    unsigned int *packed;
+    unsigned int *cfg_script;
     int size;
 
-    CSnd.LoadSoundFileFromPack(filename, buffer);
+    CSnd.LoadSoundFileFromPack(config_name, buffer);
     CSnd.SetVol(15, 0x100);
     CSnd.SetVol(14, 0x100);
     CSnd.SetVol(10, 0x100);
@@ -850,20 +850,20 @@ static void SetSoundFile(int set_no, unsigned int *buffer, char *filename) {
     SndStopAllSe();
 
     dst = base_name;
-    while ((c = *filename) != 0) {
+    while ((c = *config_name) != 0) {
         if (c == '.') {
             break;
         }
         *dst = c;
-        filename++;
+        config_name++;
         dst++;
     }
     *dst = 0;
 
     strcat(base_name, ".cfg");
-    packed = GetPackFile(buffer, base_name, &size);
-    if (packed != 0) {
-        LoadSoundInfo(&info, (char *) packed, size);
+    cfg_script = GetPackFile(buffer, base_name, &size);
+    if (cfg_script != 0) {
+        LoadSoundInfo(&info, (char *) cfg_script, size);
         CSnd.SetReverb(1, info.reverb_mode, info.reverb_depth);
         basic_se_table_no = info.se_table;
         se_table_no = info.se_table_type;
@@ -1302,10 +1302,10 @@ static void GetVoiceFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x15B390
  * @size 0x54
  */
-static void SetVoiceFile(int voice_set, u_int *pack, char *file_name) {
-    CSnd.LoadSoundFileFromPack(file_name, pack);
+static void SetVoiceFile(int set_no, u_int *buffer, char *config_name) {
+    CSnd.LoadSoundFileFromPack(config_name, buffer);
     CSnd.SetVol(11, 0x100);
-    now_voice_set = voice_set;
+    now_voice_set = set_no;
 }
 
 int SndVoiceLoad(int set_no) {
@@ -1390,8 +1390,8 @@ static void GetSPSeFile(int set_no, char *archive_name, char *config_name) {
  * @address 0x15B670
  * @size 0x54
  */
-static void SetSPSeFile(int set_no, u_int *pack, char *file_name) {
-    CSnd.LoadSoundFileFromPack(file_name, pack);
+static void SetSPSeFile(int set_no, u_int *buffer, char *config_name) {
+    CSnd.LoadSoundFileFromPack(config_name, buffer);
     CSnd.SetVol(12, 0x100);
     now_sp_no = set_no;
 }
@@ -3436,7 +3436,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
 }
 
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &clip) {
+                 const CRect_i_ &texel) {
     sceGsTest test;
     sceGsZbuf zbuf;
     float q;
@@ -3463,11 +3463,11 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
-    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(clip.x << 4, clip.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((clip.x + clip.width) << 4, (clip.y + clip.height) << 4));
+                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
                                       ((screen.y + screen.height) << 3) + 30976, 0, 0));

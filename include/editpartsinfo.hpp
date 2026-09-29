@@ -39,29 +39,29 @@ struct EPARTS_ARCHIVE {
     s32 unk_00;
     s32 info_offset; /**< Offset of the part definition from the archive. */
     u8 unk_08[0x40];
-    s32 offset_48; /**< Offset of the level-of-detail 0 model from the archive. */
-    s32 offset_4c; /**< Offset of the level-of-detail 1 model from the archive. */
-    s32 offset_50; /**< Offset of the level-of-detail 2 model from the archive. */
-    s32 offset_54; /**< Offset of the level-of-detail 3 model from the archive. */
-    s32 size_58;   /**< Length of the level-of-detail 0 model, or zero where there is none. */
-    s32 size_5c;   /**< Length of the level-of-detail 1 model, or zero where there is none. */
-    s32 size_60;   /**< Length of the level-of-detail 2 model, or zero where there is none. */
-    s32 size_64;   /**< Length of the level-of-detail 3 model, or zero where there is none. */
+    s32 lod0_offset; /**< Offset of the level-of-detail 0 model from the archive. */
+    s32 lod1_offset; /**< Offset of the level-of-detail 1 model from the archive. */
+    s32 lod2_offset; /**< Offset of the level-of-detail 2 model from the archive. */
+    s32 lod3_offset; /**< Offset of the level-of-detail 3 model from the archive. */
+    s32 lod0_size;   /**< Length of the level-of-detail 0 model, or zero where there is none. */
+    s32 lod1_size;   /**< Length of the level-of-detail 1 model, or zero where there is none. */
+    s32 lod2_size;   /**< Length of the level-of-detail 2 model, or zero where there is none. */
+    s32 lod3_size;   /**< Length of the level-of-detail 3 model, or zero where there is none. */
     u8 unk_68[0x10];
-    s32 offset_78; /**< Offset of the collision model from the archive. */
-    s32 size_7c;   /**< Length of the collision model, or zero where there is none. */
+    s32 collision_offset; /**< Offset of the collision model from the archive. */
+    s32 collision_size;   /**< Length of the collision model, or zero where there is none. */
     u8 unk_80[0x10];
-    s32 offset_90; /**< Offset of the shadow model from the archive. */
-    s32 size_94;   /**< Length of the shadow model, or zero where there is none. */
+    s32 shadow_offset; /**< Offset of the shadow model from the archive. */
+    s32 shadow_size;   /**< Length of the shadow model, or zero where there is none. */
     u8 unk_98[0x10];
-    s32 offset_a8; /**< Offset of the shade model from the archive. */
-    s32 size_ac;   /**< Length of the shade model, or zero where there is none. */
+    s32 shade_offset; /**< Offset of the shade model from the archive. */
+    s32 shade_size;   /**< Length of the shade model, or zero where there is none. */
     u8 unk_b0[0x10];
-    s32 offset_c0; /**< Offset of the second collision model from the archive. */
-    s32 size_c4;   /**< Length of the second collision model, or zero where there is none. */
+    s32 camera_offset; /**< Offset of the camera-collision model from the archive. */
+    s32 camera_size;   /**< Length of the camera-collision model, or zero where there is none. */
     u8 unk_c8[0x10];
-    s32 offset_d8; /**< Offset of the extra model from the archive. */
-    s32 size_dc;   /**< Length of the extra model, or zero where there is none. */
+    s32 extra_offset; /**< Offset of the extra model from the archive. */
+    s32 extra_size;   /**< Length of the extra model, or zero where there is none. */
 };
 
 STATIC_ASSERT(sizeof(EPARTS_ARCHIVE) == 0xE0);
@@ -70,11 +70,11 @@ STATIC_ASSERT(sizeof(EPARTS_ARCHIVE) == 0xE0);
  * Describes one optional visual element attached to an editable part.
  */
 struct EDITPARTS_ELEMENT {
-    s32 id; /**< Element identifier, or a negative value when the slot is unused. */
-    s32 unk_04;
-    s32 enabled;    /**< Whether the element's ordinary object names are visible. */
-    char *names[4]; /**< Optional object names controlled by this element. */
-    s32 unk_1C;
+    s32 id;               /**< Element identifier, or a negative value when the slot is unused. */
+    s32 required_element; /**< Element slot of the same part that must be enabled first, or -1 for none. */
+    s32 enabled;          /**< Whether the element's ordinary object names are visible. */
+    char *names[4];       /**< Optional object names controlled by this element. */
+    s32 npc_no;           /**< Villager the element belongs to, or -1 for none. */
 };
 
 STATIC_ASSERT(sizeof(EDITPARTS_ELEMENT) == 0x20);
@@ -95,11 +95,11 @@ struct INIT_PARTSINFO {
  * Records what one editable map part is and how far the player has taken it.
  */
 struct EDITPARTS_INFO {
-    s32 parts_no;         /**< Number that names the part. */
-    s32 completion_flags; /**< Bit zero records whether the completion event has run. */
-    s32 unk_08;
-    s32 placed; /**< Copies of the part standing on the map. */
-    s32 unk_10;
+    s32 parts_no;                  /**< Number that names the part. */
+    s32 completion_flags;          /**< Bit zero records whether the completion event has run. */
+    s32 obtained;                  /**< Nonzero once the player has picked up the part. */
+    s32 placed;                    /**< Copies of the part standing on the map. */
+    s32 tex_no;                    /**< Cell of the part-picture sheet that the part's picture draws from. */
     s32 kind;                      /**< What the plot holds: 2 where a story building stands on it. */
     s32 stock;                     /**< Copies of the part the player may place. */
     s32 width;                     /**< Cells that the part covers from west to east. */
@@ -124,7 +124,7 @@ public:
      * @address 0x199FD0
      * @size 0x44
      */
-    EDITPARTS_INFO *GetPartsInfo(int);
+    EDITPARTS_INFO *GetPartsInfo(int index);
 
     /**
      * Reports whether one georama part has every element it wants.
@@ -196,7 +196,7 @@ public:
      * @address 0x19A2C0
      * @size 0x128
      */
-    void Save(int, CSaveData *);
+    void Save(int georama_no, CSaveData *save_data);
 
     /**
      * Reads the georama part definitions back out of the save file.
@@ -205,7 +205,7 @@ public:
      * @address 0x19A3F0
      * @size 0x178
      */
-    void Load(int, CSaveData *, int);
+    void Load(int georama_no, CSaveData *save_data, int load_requests);
 
     /**
      * Clears the georama part definitions of one map.
@@ -214,7 +214,7 @@ public:
      * @address 0x19A570
      * @size 0x1C8
      */
-    void Initialize(int);
+    void Initialize(int georama_no);
 
     /**
      * Fills one georama part definition from its packed header.
@@ -223,7 +223,7 @@ public:
      * @address 0x19A740
      * @size 0x64
      */
-    void Initialize(int, EPARTS_INFO_HEADER *);
+    void Initialize(int index, EPARTS_INFO_HEADER *header);
 
 private:
 };

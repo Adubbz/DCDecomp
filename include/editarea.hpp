@@ -19,13 +19,13 @@ class CVector3_i_;
  */
 class CEditAreaCell {
 public:
-    int parts_no; /**< Selects the map-part instance occupying the cell. */
-    int altitude; /**< Stores the cell height in vertical grid units. */
-    int unk_08;
+    int parts_no;    /**< Selects the map-part instance occupying the cell. */
+    int altitude;    /**< Stores the cell height in vertical grid units. */
+    int spare;       /**< Word Clear resets to zero; nothing reads it. */
     int parts_id;    /**< Identifies the map-part definition occupying the cell. */
     int code;        /**< Stores the map-part geometry code for the cell. */
     int parts_extra; /**< Stores the area-specific map-part attribute. */
-    int unk_18;
+    int spare_index; /**< Index Clear resets to -1; nothing reads it. */
 };
 
 STATIC_ASSERT(sizeof(CEditAreaCell) == 0x1C);
@@ -195,7 +195,7 @@ public:
      * @address 0x16E010
      * @size 0x1FC
      */
-    int SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int parts_extra);
+    int SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int rot_y);
 
     /**
      * Removes one map part from the editable grid.
@@ -249,7 +249,7 @@ public:
      * @address 0x16EC90
      * @size 0x58
      */
-    void GetGrid(CVector3_f_ *grid_position, float x, float y, float z);
+    void GetGrid(CVector3_f_ *snapped, float x, float y, float z);
 
     /**
      * Rebuilds the frame geometry used to draw the grid.

@@ -37,7 +37,7 @@ public:
      * Places a frame in a numbered object slot and returns that object, or
      * null when the slot number is invalid.
      */
-    CMapObject *SetObject(int, CFrameVu1 *, int, int);
+    CMapObject *SetObject(int index, CFrameVu1 *frame, int category_no, int handle);
 
     /**
      * @mangled SetObject__4CMapFP9CFrameVu1ii
@@ -46,7 +46,7 @@ public:
      * Places a frame in the first free object slot and returns that object,
      * or null when every slot is occupied.
      */
-    CMapObject *SetObject(CFrameVu1 *, int, int);
+    CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
 
     /**
      * Returns the map object in a numbered slot, or null for an invalid slot.
@@ -55,7 +55,7 @@ public:
      * @address 0x143980
      * @size 0x3C
      */
-    CMapObject *GetObject(int);
+    CMapObject *GetObject(int index);
 
     /**
      * @mangled Draw__4CMapFv

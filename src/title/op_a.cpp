@@ -53,17 +53,17 @@ public:
         x = 0;
     }
 
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
+    CRect(T new_x, T new_y, T new_width, T new_height) {
+        x = new_x;
+        y = new_y;
+        w = new_width;
+        h = new_height;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge in pixels. */
+    T y; /**< Top edge in pixels. */
+    T w; /**< Width in pixels. */
+    T h; /**< Height in pixels. */
 } __attribute__((aligned(16)));
 
 /* One row of the table a map sorts its scenery by, and one piece of scenery. Both are another
@@ -93,9 +93,9 @@ public:
     void Initialize();
     void Draw();
 
-    CategoryAttr category[16];
-    CMapObject object[10];
-    char unread0[16];
+    CategoryAttr category[16]; /**< Category rows the scenery is sorted by. */
+    CMapObject object[10];     /**< Scenery pieces the map holds. */
+    char unk_AE0[16];
 };
 
 /* The scene's one fire, which is a light rather than a model. */
@@ -109,7 +109,7 @@ public:
                   int unknown2, float unknown3);
 
     char unk_00[32];
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR pos; /**< World position DrawFire draws the next fire at. */
     char unk_30[16];
 };
 
@@ -139,30 +139,30 @@ public:
 
     void Initialize();
 
-    int life;
-    int kind;
-    float unk_08;
-    float draw_on2;
+    int lifetime;                   /**< Frames before the particle is retired. */
+    int position_oscillation_flags; /**< Bit zero sways the particle's position. */
+    float unk_08;                   /**< Unscaled sprite width. */
+    float height;                   /**< Unscaled sprite height. */
     char unk_10[16];
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR position; /**< World position the particle starts at. */
     char unk_30[4];
-    float spin;
+    float velocity_y; /**< Height the particle rises each step. */
     char unk_38[24];
-    float scale;
+    float position_oscillation_x; /**< Horizontal sway amplitude. */
     char unk_54[12];
-    float spin_step;
+    float position_oscillation_rate_x; /**< Phase advance of the horizontal sway each step. */
     char unk_64[28];
-    float alpha_step;
-    float alpha_step2;
+    float scale_velocity_x; /**< Width scale added each step. */
+    float scale_velocity_y; /**< Height scale added each step. */
     char unk_88[40];
-    int draw_on76;
-    int draw_on80;
-    float grow;
-    CTexture *texture;
-    CRect<int> rect;
-    char unread6[4];
-    int fade;
-    char unread7[8];
+    int opacity_mode;  /**< How the opacity changes over the particle's life. */
+    int render_flags;  /**< Alpha and depth-buffer state the particle draws with. */
+    float opacity;     /**< Starting opacity from zero to one. */
+    CTexture *texture; /**< Texture the particle draws. */
+    CRect<int> texel;  /**< Rectangle sampled from the texture. */
+    char unk_D0[4];
+    int texture_frame_period; /**< Modulus applied before a texture frame is chosen. */
+    char unk_D8[8];
 };
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
@@ -171,37 +171,37 @@ public:
    offsets are measured from the bottom edge of the plate; the blink state is kept here because this
    scene blinks the cast on a clock of its own rather than from the script. */
 struct FACE_INFO {
-    char *plate;
-    char *strip;
-    int eye_bottom;
-    int eye_height;
-    int mouth_bottom;
-    int mouth_height;
-    int eye;
-    int mouth;
-    int strip_bottom;
-    int eye_max;
-    int blink;
+    char *plate;      /**< Texture the model's face is drawn from. */
+    char *strip;      /**< Texture holding the eye and mouth frames. */
+    int eye_bottom;   /**< Height of the eye region above the plate's bottom edge. */
+    int eye_height;   /**< Height of one eye frame. */
+    int mouth_bottom; /**< Height of the mouth region above the plate's bottom edge. */
+    int mouth_height; /**< Height of one mouth frame. */
+    int eye;          /**< Eye frame currently shown. */
+    int mouth;        /**< Mouth frame currently shown. */
+    int strip_bottom; /**< Row the frame strips count up from. */
+    int eye_max;      /**< Last eye frame of a blink. */
+    int blink;        /**< Blink phase: zero idle, one closing, two opening. */
 };
 
 /* One looping object animation the scene's configuration file registers: a frame is found by name
-   and then driven between two motion numbers at a rate, with a scale and a position offset of its
-   own. Only the extent is read here — this file plays the table and never builds a row of it. */
+   and one of its properties is driven from a start value towards an end value by a step each
+   tick. Only the extent is read here — this file plays the table and never builds a row of it. */
 class OBJ_ANIME_SEQ {
 public:
     OBJ_ANIME_SEQ();
 
     void Initialize();
 
-    char name[16];
-    int motion_start;
-    int motion_end;
+    char name[16]; /**< Name of the frame the animation drives. */
+    int property;  /**< Property animated: rotation, position, scale or colour. */
+    int mode;      /**< How the value moves between its two ends. */
     char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR pos;
-    float unk_40;
-    float draw_on;
-    float step;
+    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
+    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
+    float step_x;              /**< Amount added to the first component each tick. */
+    float step_y;              /**< Amount added to the second component each tick. */
+    float step_z;              /**< Amount added to the third component each tick. */
     char unk_4C[60];
 };
 
@@ -242,8 +242,8 @@ static void DrawShadow(float x, float y, float z);
 static void setTexScroll();
 static void setCloudTexScroll();
 /* op_b.cpp owns these three; retail has this unit call across to them. */
-void FaceChange(int no);
-void LoadCharaData(int kind, int no);
+void FaceChange(int actor_no);
+void LoadCharaData(int buffer_no, int actor_no);
 void LoadMotionData();
 
 /* Each of the couple's motion files is one key range — the frame it starts at and the frame it ends
@@ -347,7 +347,7 @@ void OpA_InitProcess() {
  * @unknownret
  */
 static void LoadTexture() {
-    LOADTEXTURE_INFO2 tex[] = {
+    LOADTEXTURE_INFO2 texture_list[] = {
         {"#blender#640#224#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
         {"#fukidashibase#640#224#4", 26, 0},
@@ -382,33 +382,33 @@ static void LoadTexture() {
     TexManager.Initialize(16352);
     LoadFile("opdat/dungeon/dungeon.pim", (void *) read_buffer, 0);
 
-    tex[4].name = (char *) GetPackFile(read_buffer, "gaiji.img", 0);
-    tex[5].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
-    tex[6].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
-    tex[7].name = (char *) GetPackFile(read_buffer, "c07a01.img", 0);
-    tex[8].name = (char *) GetPackFile(read_buffer, "c07a01an.img", 0);
-    tex[9].name = (char *) GetPackFile(read_buffer, "p17a01.img", 0);
-    tex[10].name = (char *) GetPackFile(read_buffer, "c08a01.img", 0);
-    tex[11].name = (char *) GetPackFile(read_buffer, "c09a01.img", 0);
-    tex[12].name = (char *) GetPackFile(read_buffer, "c09a01an.img", 0);
-    tex[13].name = (char *) GetPackFile(read_buffer, "c11a01.img", 0);
-    tex[14].name = (char *) GetPackFile(read_buffer, "c11a01an.img", 0);
-    tex[15].name = (char *) GetPackFile(read_buffer, "p19a01.img", 0);
-    tex[16].name = (char *) GetPackFile(read_buffer, "p19a01an.img", 0);
-    tex[17].name = (char *) GetPackFile(read_buffer, "ex.img", 0);
-    tex[18].name = (char *) GetPackFile(read_buffer, "cloud.img", 0);
-    tex[19].name = (char *) GetPackFile(read_buffer, "cloudan.img", 0);
-    tex[20].name = (char *) GetPackFile(read_buffer, "cloud2.img", 0);
-    tex[21].name = (char *) GetPackFile(read_buffer, "i01t01.img", 0);
-    tex[22].name = (char *) GetPackFile(read_buffer, "i01t02.img", 0);
-    tex[23].name = (char *) GetPackFile(read_buffer, "e01s01.img", 0);
-    tex[24].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
-    tex[25].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
-    tex[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
-    tex[27].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
-    tex[28].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+    texture_list[4].name = (char *) GetPackFile(read_buffer, "gaiji.img", 0);
+    texture_list[5].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
+    texture_list[6].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
+    texture_list[7].name = (char *) GetPackFile(read_buffer, "c07a01.img", 0);
+    texture_list[8].name = (char *) GetPackFile(read_buffer, "c07a01an.img", 0);
+    texture_list[9].name = (char *) GetPackFile(read_buffer, "p17a01.img", 0);
+    texture_list[10].name = (char *) GetPackFile(read_buffer, "c08a01.img", 0);
+    texture_list[11].name = (char *) GetPackFile(read_buffer, "c09a01.img", 0);
+    texture_list[12].name = (char *) GetPackFile(read_buffer, "c09a01an.img", 0);
+    texture_list[13].name = (char *) GetPackFile(read_buffer, "c11a01.img", 0);
+    texture_list[14].name = (char *) GetPackFile(read_buffer, "c11a01an.img", 0);
+    texture_list[15].name = (char *) GetPackFile(read_buffer, "p19a01.img", 0);
+    texture_list[16].name = (char *) GetPackFile(read_buffer, "p19a01an.img", 0);
+    texture_list[17].name = (char *) GetPackFile(read_buffer, "ex.img", 0);
+    texture_list[18].name = (char *) GetPackFile(read_buffer, "cloud.img", 0);
+    texture_list[19].name = (char *) GetPackFile(read_buffer, "cloudan.img", 0);
+    texture_list[20].name = (char *) GetPackFile(read_buffer, "cloud2.img", 0);
+    texture_list[21].name = (char *) GetPackFile(read_buffer, "i01t01.img", 0);
+    texture_list[22].name = (char *) GetPackFile(read_buffer, "i01t02.img", 0);
+    texture_list[23].name = (char *) GetPackFile(read_buffer, "e01s01.img", 0);
+    texture_list[24].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
+    texture_list[25].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+    texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    texture_list[27].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+    texture_list[28].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
 
-    TexManager.LoadTextureBlock(-1, tex);
+    TexManager.LoadTextureBlock(-1, texture_list);
 
     CharaTex__2[0] = 1;
     CharaTex__2[1] = 2;
@@ -431,14 +431,14 @@ static void LoadTexture() {
  * @unknownret
  */
 static void LoadData() {
-    char *name[4] = {"01c07a.cfg", "01c08a.cfg", "01c11a.cfg", "01c09a.cfg"};
+    char *config_names[4] = {"01c07a.cfg", "01c08a.cfg", "01c11a.cfg", "01c09a.cfg"};
 
     for (int i = 0; i < 4; i++) {
-        Chara__3[i].LoadPackData(read_buffer, name[i], CharaDataBuffer__2, 0);
+        Chara__3[i].LoadPackData(read_buffer, config_names[i], CharaDataBuffer__2, 0);
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 10.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -456,7 +456,7 @@ static void LoadData() {
 
     CFrameAttr noroi_attr;
 
-    noroi_attr.unk_08 = 0;
+    noroi_attr.clip_enable = 0;
     Chara__3[6].frame->SetAttr(noroi_attr, 1, 4);
 
     wait_now_loading_vsync();
@@ -467,7 +467,7 @@ static void LoadData() {
 
     CFrameAttr dancer_attr;
 
-    dancer_attr.unk_08 = 0;
+    dancer_attr.clip_enable = 0;
     Chara__3[7].frame->SetAttr(dancer_attr, 1, 4);
 
     float scale[4] = {4.5f, 1.0f, 4.5f, 0.0f};
@@ -529,7 +529,7 @@ static void SetDanceMotion() {
  * @unknownret
  */
 static void InitDancerPos() {
-    float pos[35][4] = {
+    float layout[35][4] = {
         {3.0f, 0.0f, 27.0f, 0.0f},
         {0.0f, 0.0f, 27.0f, 0.0f},
         {-3.0f, 0.0f, 27.0f, 0.0f},
@@ -567,9 +567,9 @@ static void InitDancerPos() {
         {-4.5f, 0.0f, 45.0f, 0.0f}};
 
     for (int i = 0; i < 35; i++) {
-        DancerPos[i][0] = 10.0f * pos[i][0];
-        DancerPos[i][1] = 10.0f * pos[i][1];
-        DancerPos[i][2] = 10.0f + 10.0f * pos[i][2];
+        DancerPos[i][0] = 10.0f * layout[i][0];
+        DancerPos[i][1] = 10.0f * layout[i][1];
+        DancerPos[i][2] = 10.0f + 10.0f * layout[i][2];
         DancerRot[i][0] = 0.0f;
         DancerRot[i][1] = PI;
         /* The third store repeats the first rather than clearing the roll, which is deliberate here
@@ -591,7 +591,7 @@ static void InitDancerPos() {
 void OpA_DrawProcess() {
     static sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 0.0f};
     static int wait;
-    sceVu0FVECTOR amb;
+    sceVu0FVECTOR saved_ambient;
 
     TexManager.ReloadTexture(Vif1Packet, 10);
     OP_GroundMap.Draw();
@@ -609,7 +609,7 @@ void OpA_DrawProcess() {
         ambient[3] = 0.0f;
         wait = 0;
     } else {
-        MGGetAmbient(amb);
+        MGGetAmbient(saved_ambient);
 
         if (wait > 700) {
             if (ambient[3] < 128.0f) {
@@ -621,7 +621,7 @@ void OpA_DrawProcess() {
 
         MGSetAmbient(ambient);
         OP_BuildingMap.Draw();
-        MGSetAmbient(amb);
+        MGSetAmbient(saved_ambient);
     }
 
     for (int i = 0; i < 6; i++) {
@@ -680,15 +680,15 @@ void OpA_DrawProcess() {
 
             MGSetPLight(light, lcolor);
 
-            sceVu0FVECTOR amb2 = {22.0f, 22.0f, 12.0f, 0.0f};
+            sceVu0FVECTOR lead_ambient = {22.0f, 22.0f, 12.0f, 0.0f};
 
-            amb2[3] = am;
+            lead_ambient[3] = am;
 
             if (am < 128.0f) {
                 am += 0.5f;
             }
 
-            MGSetAmbient(amb2);
+            MGSetAmbient(lead_ambient);
         } else {
             am = 0.0f;
             col = 0.0f;
@@ -701,9 +701,9 @@ void OpA_DrawProcess() {
     MGSetAmbient(ambientlight);
     MGSetPLight(light, lightcolor);
 
-    sceVu0FVECTOR scene_amb;
+    sceVu0FVECTOR crowd_ambient;
 
-    sceVu0CopyVector(scene_amb, ambientlight);
+    sceVu0CopyVector(crowd_ambient, ambientlight);
 
     if (CScript__2.camera_start == 44) {
         if (Cam__2[SceneNp__2].motion_type.state.time > 249.0f) {
@@ -713,7 +713,7 @@ void OpA_DrawProcess() {
                 DancerAmb = 0.0f;
             }
 
-            scene_amb[3] = DancerAmb;
+            crowd_ambient[3] = DancerAmb;
         }
     } else {
         DancerAmb = 127.0f;
@@ -735,7 +735,7 @@ void OpA_DrawProcess() {
     if (CScript__2.obj[6].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex__2[6]);
         FaceChange(6);
-        MGSetAmbient(scene_amb);
+        MGSetAmbient(crowd_ambient);
         Chara__3[6].Draw();
         ReaderShadow();
     }
@@ -744,51 +744,51 @@ void OpA_DrawProcess() {
         TexManager.ReloadTexture(Vif1Packet, 6);
         Chara__3[7].SetPosition(DancerPos[0][0], DancerPos[0][1], DancerPos[0][2]);
         Chara__3[7].SetRotation(DancerRot[0][0], DancerRot[0][1], DancerRot[0][2]);
-        MGSetAmbient(scene_amb);
+        MGSetAmbient(crowd_ambient);
         Chara__3[7].Draw();
         DancerShadow();
 
-        int max;
+        int crowd_count;
 
         switch (CScript__2.camera_start) {
             case 0:
-                max = 28;
+                crowd_count = 28;
                 break;
             case 3:
-                max = 30;
+                crowd_count = 30;
                 break;
             case 7:
-                max = 30;
+                crowd_count = 30;
                 break;
             case 8:
-                max = 30;
+                crowd_count = 30;
                 break;
             case 9:
-                max = 25;
+                crowd_count = 25;
                 break;
             case 10:
-                max = 15;
+                crowd_count = 15;
                 break;
             case 39:
-                max = 30;
+                crowd_count = 30;
                 break;
             case 43:
-                max = 30;
+                crowd_count = 30;
                 break;
             case 45:
-                max = 14;
+                crowd_count = 14;
                 break;
             default:
-                max = 35;
+                crowd_count = 35;
                 break;
         }
 
-        for (int i = 1; i < max; i++) {
+        for (int i = 1; i < crowd_count; i++) {
             CFrame *frame = Chara__3[7].frame;
 
             frame->SetPosition(DancerPos[i][0], DancerPos[i][1], DancerPos[i][2]);
             frame->SetRotation(DancerRot[i][0], DancerRot[i][1], DancerRot[i][2]);
-            MGSetAmbient(scene_amb);
+            MGSetAmbient(crowd_ambient);
             MGDraw(frame);
             DancerShadow();
         }
@@ -877,8 +877,8 @@ void OpA_DrawProcess() {
             float dof[2] = {200.0f, 400.0f};
 
             /* These dead values preserve the following sky pass's argument-selection state. */
-            float drawPhase0 = 0.0f, drawPhase1 = 0.0f, drawPhase2 = 0.0f, drawPhase3 = 0.0f,
-                  drawPhase4 = 0.0f, drawPhase5 = 0.0f, drawPhase6 = 0.0f, drawPhase7 = 0.0f;
+            float draw_phase0 = 0.0f, draw_phase1 = 0.0f, draw_phase2 = 0.0f, draw_phase3 = 0.0f,
+                  draw_phase4 = 0.0f, draw_phase5 = 0.0f, draw_phase6 = 0.0f, draw_phase7 = 0.0f;
             DepthOfField(dof, 2, 40, 0);
         } break;
     }
@@ -919,13 +919,13 @@ static void DrawCloud() {
             Cloud.SetRotation(0.0f, 0.0f, 0.0f);
         }
 
-        sceVu0FVECTOR amb;
+        sceVu0FVECTOR saved_ambient;
 
-        MGGetAmbient(amb);
+        MGGetAmbient(saved_ambient);
         MGSetAmbient(ambient);
         Cloud.Draw();
         SmokeProcess();
-        MGSetAmbient(amb);
+        MGSetAmbient(saved_ambient);
 
         if (!Pause) {
             if (sc < 1.0) {
@@ -966,30 +966,30 @@ static void SmokeProcess() {
     param.Initialize();
 
     if (cnt == 0) {
-        sceVu0FVECTOR from = {0.0f, 80.0f, 22.0f, 1.0f};
-        sceVu0FVECTOR from2 = {-30.0f, 100.0f, 30.0f, 1.0f};
+        sceVu0FVECTOR chimney_position = {0.0f, 80.0f, 22.0f, 1.0f};
+        sceVu0FVECTOR alternate_position = {-30.0f, 100.0f, 30.0f, 1.0f};
 
         if (CScript__2.camera_start != 19) {
-            sceVu0CopyVector(param.pos, from);
+            sceVu0CopyVector(param.position, chimney_position);
         } else {
-            sceVu0CopyVector(param.pos, from2);
+            sceVu0CopyVector(param.position, alternate_position);
         }
 
-        param.kind = 1;
-        param.scale = 0.5f * (float) rand() / 2147483648.0f;
-        param.spin_step = (float) PI / (20.0f + (float) (rand() * 10) / 2147483648.0f);
-        param.draw_on76 = 2;
-        param.draw_on80 = 2;
-        param.grow = 0.07f;
-        param.spin = 1.5f + 0.2f * (float) rand() / 2147483648.0f;
-        param.alpha_step = 0.04f;
-        param.alpha_step2 = 0.04f;
-        param.life = 120;
+        param.position_oscillation_flags = 1;
+        param.position_oscillation_x = 0.5f * (float) rand() / 2147483648.0f;
+        param.position_oscillation_rate_x = (float) PI / (20.0f + (float) (rand() * 10) / 2147483648.0f);
+        param.opacity_mode = 2;
+        param.render_flags = 2;
+        param.opacity = 0.07f;
+        param.velocity_y = 1.5f + 0.2f * (float) rand() / 2147483648.0f;
+        param.scale_velocity_x = 0.04f;
+        param.scale_velocity_y = 0.04f;
+        param.lifetime = 120;
         param.texture = TexManager.GetTexture("cloud2", -1);
-        param.rect = CRect<int>(0, 0, 128, 128);
+        param.texel = CRect<int>(0, 0, 128, 128);
         param.unk_08 = 30.0f;
-        param.draw_on2 = 13.0f;
-        param.fade = 60;
+        param.height = 13.0f;
+        param.texture_frame_period = 60;
         Smoke.EnterEffect(&param);
     }
 
@@ -997,16 +997,16 @@ static void SmokeProcess() {
     Smoke.Draw();
 
     if (cnt == 0) {
-        sceVu0FVECTOR from3 = {0.0f, 50.0f, -17.0f, 1.0f};
+        sceVu0FVECTOR second_position = {0.0f, 50.0f, -17.0f, 1.0f};
 
-        sceVu0CopyVector(param.pos, from3);
+        sceVu0CopyVector(param.position, second_position);
         Smoke.EnterEffect(&param);
     }
 
     /* These dead values preserve the following motion pass's argument-selection state. */
-    float motionPhase0 = 0.0f, motionPhase1 = 0.0f, motionPhase2 = 0.0f, motionPhase3 = 0.0f,
-          motionPhase4 = 0.0f, motionPhase5 = 0.0f, motionPhase6 = 0.0f, motionPhase7 = 0.0f,
-          motionPhase8 = 0.0f, motionPhase9 = 0.0f, motionPhase10 = 0.0f;
+    float motion_phase0 = 0.0f, motion_phase1 = 0.0f, motion_phase2 = 0.0f, motion_phase3 = 0.0f,
+          motion_phase4 = 0.0f, motion_phase5 = 0.0f, motion_phase6 = 0.0f, motion_phase7 = 0.0f,
+          motion_phase8 = 0.0f, motion_phase9 = 0.0f, motion_phase10 = 0.0f;
     Smoke.Draw();
 }
 
@@ -1073,13 +1073,13 @@ void OpA_MotionProcess() {
     }
 
     if (shake) {
-        sceVu0FVECTOR ref;
+        sceVu0FVECTOR reference;
 
-        OP_MainCamera.GetRef(ref);
-        ref[0] += (float) (rand() % d) / 10.0f;
-        ref[1] += (float) (rand() % d) / 10.0f;
-        ref[2] += (float) (rand() % d) / 10.0f;
-        OP_MainCamera.SetRef(ref);
+        OP_MainCamera.GetRef(reference);
+        reference[0] += (float) (rand() % d) / 10.0f;
+        reference[1] += (float) (rand() % d) / 10.0f;
+        reference[2] += (float) (rand() % d) / 10.0f;
+        OP_MainCamera.SetRef(reference);
     }
 
     for (int i = 0; i < OP_AnimeSeqRot; i++) {
@@ -1103,16 +1103,16 @@ void OpA_MotionProcess() {
                     Chara__3[i].motion_type.state.time =
                         (float) Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].start;
                     Chara__3[i].motion_no = CScript__2.obj[i].motion;
-                    Chara__3[i].flags = 4;
+                    Chara__3[i].motion_flags = 4;
                     Chara__3[i].motion_speed = -1.0f;
                 } else {
                     Chara__3[i].motion_no = CScript__2.obj[i].motion;
-                    Chara__3[i].flags = 0;
+                    Chara__3[i].motion_flags = 0;
                     Chara__3[i].motion_speed = -1.0f;
                 }
             } else {
                 Chara__3[i].motion_no = CScript__2.obj[i].motion;
-                Chara__3[i].flags = 0;
+                Chara__3[i].motion_flags = 0;
                 Chara__3[i].motion_speed = -1.0f;
             }
         }
@@ -1122,13 +1122,13 @@ void OpA_MotionProcess() {
         LoadMotionData();
     }
 
-    char *name[23] = {"c07a", "c08a", "c11a", "c09a", "c08a", "c08c", "p19a", "p17a", 0, 0, 0, 0,
-                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char *frame_names[23] = {"c07a", "c08a", "c11a", "c09a", "c08a", "c08c", "p19a", "p17a", 0, 0, 0, 0,
+                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     sceVu0FMATRIX matrix;
 
     for (int i = 0; i < 8; i++) {
         if (CScript__2.obj[i].disp && CScript__2.obj[i].move_req) {
-            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(name[i]);
+            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
 
             if (frame) {
                 frame->GetLWMatrix(matrix);
@@ -1137,16 +1137,16 @@ void OpA_MotionProcess() {
                     Chara__3[i].SetRotation(0.0f, (float) (atan2f(matrix[2][0], matrix[2][2]) + PI),
                                             0.0f);
                 } else if (i == 5) {
-                    float a = atan2f(-matrix[2][1], matrix[2][2]);
+                    float tilt = atan2f(-matrix[2][1], matrix[2][2]);
 
-                    if (a > 3.14f) {
-                        a -= 6.28f;
+                    if (tilt > 3.14f) {
+                        tilt -= 6.28f;
                     }
-                    if (a < -3.14f) {
-                        a += 6.28f;
+                    if (tilt < -3.14f) {
+                        tilt += 6.28f;
                     }
 
-                    Chara__3[i].SetRotation(a, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
+                    Chara__3[i].SetRotation(tilt, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
                 } else {
                     Chara__3[i].SetRotation(0.0f, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
                 }
@@ -1202,16 +1202,16 @@ void OpA_MotionProcess() {
  * @unknownret
  */
 static void MoveDancers() {
-    char *name[35] = {"p17a1", "p17a2", "p17a3", "p17a4", "p17a5", "p17a6", "p17a7", "p17a8",
-                      "p17a9", "p17a10", "p17a11", "p17a12", "p17a13", "p17a14", "p17a15",
-                      "p17a16", "p17a17", "p17a18", "p17a19", "p17a20", "p17a21", "p17a22",
-                      "p17a23", "p17a24", "p17a25", "p17a26", "p17a27", "p17a28", "p17a29",
-                      "p17a30", "p17a31", "p17a32", "p17a33", "p17a34", "p17a35"};
+    char *frame_names[35] = {"p17a1", "p17a2", "p17a3", "p17a4", "p17a5", "p17a6", "p17a7", "p17a8",
+                             "p17a9", "p17a10", "p17a11", "p17a12", "p17a13", "p17a14", "p17a15",
+                             "p17a16", "p17a17", "p17a18", "p17a19", "p17a20", "p17a21", "p17a22",
+                             "p17a23", "p17a24", "p17a25", "p17a26", "p17a27", "p17a28", "p17a29",
+                             "p17a30", "p17a31", "p17a32", "p17a33", "p17a34", "p17a35"};
     sceVu0FMATRIX matrix;
 
     if (CScript__2.obj[7].move_req) {
         for (int i = 0; i < 35; i++) {
-            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(name[i]);
+            CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
 
             if (frame) {
                 frame->GetLWMatrix(matrix);
@@ -1265,28 +1265,28 @@ static void ReaderShadow() {
  */
 static void DancerShadow() {
     sceVu0FMATRIX matrix;
-    float *z;
-    float *y;
-    float *x;
-    float xv;
-    float yv;
-    float zv;
+    float *z_address;
+    float *y_address;
+    float *x_address;
+    float x;
+    float y;
+    float z;
 
     // The addresses stay valid when the second lookup replaces the matrix, so only the values
     // need to be loaded again.
     Chara__3[7].frame->SearchFrame("r_foot")->GetLWMatrix(matrix);
-    x = &matrix[3][0];
-    xv = *x;
-    y = &matrix[3][1];
-    yv = *y;
-    z = &matrix[3][2];
-    zv = *z;
-    DrawShadow(xv, yv, zv);
+    x_address = &matrix[3][0];
+    x = *x_address;
+    y_address = &matrix[3][1];
+    y = *y_address;
+    z_address = &matrix[3][2];
+    z = *z_address;
+    DrawShadow(x, y, z);
     Chara__3[7].frame->SearchFrame("l_foot")->GetLWMatrix(matrix);
-    xv = *x;
-    yv = *y;
-    zv = *z;
-    DrawShadow(xv, yv, zv);
+    x = *x_address;
+    y = *y_address;
+    z = *z_address;
+    DrawShadow(x, y, z);
 }
 
 /**
@@ -1299,28 +1299,28 @@ static void DancerShadow() {
  */
 static void ShogunShadow() {
     sceVu0FMATRIX matrix;
-    float *z;
-    float *y;
-    float *x;
-    float xv;
-    float yv;
-    float zv;
+    float *z_address;
+    float *y_address;
+    float *x_address;
+    float x;
+    float y;
+    float z;
 
     // Both effect frames write the same matrix storage, so the coordinate addresses are shared.
     TexManager.ReloadTexture(Vif1Packet, 6);
     Chara__3[3].frame->SearchFrame("eff66")->GetLWMatrix(matrix);
-    x = &matrix[3][0];
-    xv = *x;
-    y = &matrix[3][1];
-    yv = *y;
-    z = &matrix[3][2];
-    zv = *z;
-    DrawShadow(xv, yv, zv);
+    x_address = &matrix[3][0];
+    x = *x_address;
+    y_address = &matrix[3][1];
+    y = *y_address;
+    z_address = &matrix[3][2];
+    z = *z_address;
+    DrawShadow(x, y, z);
     Chara__3[3].frame->SearchFrame("eff62")->GetLWMatrix(matrix);
-    xv = *x;
-    yv = *y;
-    zv = *z;
-    DrawShadow(xv, yv, zv);
+    x = *x_address;
+    y = *y_address;
+    z = *z_address;
+    DrawShadow(x, y, z);
 }
 
 /**
@@ -1333,28 +1333,28 @@ static void ShogunShadow() {
  */
 static void ShisaiShadow() {
     sceVu0FMATRIX matrix;
-    float *z;
-    float *y;
-    float *x;
-    float xv;
-    float yv;
-    float zv;
+    float *z_address;
+    float *y_address;
+    float *x_address;
+    float x;
+    float y;
+    float z;
 
     // Both effect frames write the same matrix storage, so the coordinate addresses are shared.
     TexManager.ReloadTexture(Vif1Packet, 6);
     Chara__3[2].frame->SearchFrame("eff93")->GetLWMatrix(matrix);
-    x = &matrix[3][0];
-    xv = *x;
-    y = &matrix[3][1];
-    yv = *y;
-    z = &matrix[3][2];
-    zv = *z;
-    DrawShadow(xv, yv, zv);
+    x_address = &matrix[3][0];
+    x = *x_address;
+    y_address = &matrix[3][1];
+    y = *y_address;
+    z_address = &matrix[3][2];
+    z = *z_address;
+    DrawShadow(x, y, z);
     Chara__3[2].frame->SearchFrame("eff99")->GetLWMatrix(matrix);
-    xv = *x;
-    yv = *y;
-    zv = *z;
-    DrawShadow(xv, yv, zv);
+    x = *x_address;
+    y = *y_address;
+    z = *z_address;
+    DrawShadow(x, y, z);
 }
 
 /**
@@ -1379,10 +1379,10 @@ static void DrawShadow(float x, float y, float z) {
 
         MGSetAmbient(ambient);
 
-        float rot = atan2f(x, z);
+        float heading = atan2f(x, z);
 
         Shadow->SetPosition(x, 0.05f, z);
-        Shadow->SetRotation(89.0f * PI / 180.0f, rot, 0.0f);
+        Shadow->SetRotation(89.0f * PI / 180.0f, heading, 0.0f);
         MGDraw(Shadow);
         MGSetAmbient(ambientlight);
     }
@@ -1410,22 +1410,22 @@ void OpA_SoundProcess() {
         mus = 0;
     }
 
-    sceVu0FVECTOR campos;
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR camera_position;
+    sceVu0FVECTOR shogun_position;
 
-    sceVu0CopyVector(pos, Chara__3[3].pos);
-    OP_MainCamera.GetPos(campos);
+    sceVu0CopyVector(shogun_position, Chara__3[3].pos);
+    OP_MainCamera.GetPos(camera_position);
 
     if (CScript__2.obj[3].motion == 1) {
-        int frame = (int) Chara__3[3].motion_type.state.time;
+        int motion_frame = (int) Chara__3[3].motion_type.state.time;
         static int wait = 0;
 
         if (wait == 0) {
-            if (frame > 38 && frame < 40) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 28);
+            if (motion_frame > 38 && motion_frame < 40) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
                 wait = 10;
-            } else if (frame > 48 && frame < 50) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 29);
+            } else if (motion_frame > 48 && motion_frame < 50) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
                 wait = 10;
             }
         } else {
@@ -1434,15 +1434,15 @@ void OpA_SoundProcess() {
     }
 
     if (CScript__2.obj[3].motion == 4) {
-        int frame = (int) Chara__3[3].motion_type.state.time;
+        int motion_frame = (int) Chara__3[3].motion_type.state.time;
         static int wait = 0;
 
         if (wait == 0) {
-            if (frame > 98 && frame < 100) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 28);
+            if (motion_frame > 98 && motion_frame < 100) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
                 wait = 10;
-            } else if (frame > 108 && frame < 110) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 29);
+            } else if (motion_frame > 108 && motion_frame < 110) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
                 wait = 10;
             }
         } else {
@@ -1451,15 +1451,15 @@ void OpA_SoundProcess() {
     }
 
     if (CScript__2.obj[3].motion == 10) {
-        int frame = (int) Chara__3[3].motion_type.state.time;
+        int motion_frame = (int) Chara__3[3].motion_type.state.time;
         static int wait = 0;
 
         if (wait == 0) {
-            if (frame > 228 && frame < 230) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 28);
+            if (motion_frame > 228 && motion_frame < 230) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
                 wait = 10;
-            } else if (frame > 238 && frame < 240) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 29);
+            } else if (motion_frame > 238 && motion_frame < 240) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
                 wait = 10;
             }
         } else {
@@ -1468,18 +1468,18 @@ void OpA_SoundProcess() {
     }
 
     if (CScript__2.obj[2].motion == 14) {
-        int frame = (int) Chara__3[2].motion_type.state.time;
+        int motion_frame = (int) Chara__3[2].motion_type.state.time;
         static int wait = 0;
 
         if (wait == 0) {
-            if (frame > 295 && frame < 297) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 28);
+            if (motion_frame > 295 && motion_frame < 297) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
                 wait = 5;
-            } else if (frame > 298 && frame < 300) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 29);
+            } else if (motion_frame > 298 && motion_frame < 300) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 29);
                 wait = 5;
-            } else if (frame > 301 && frame < 303) {
-                OpPlayVolPanSE(pos, 100.0f, 500.0f, 14, 21, 28);
+            } else if (motion_frame > 301 && motion_frame < 303) {
+                OpPlayVolPanSE(shogun_position, 100.0f, 500.0f, 14, 21, 28);
                 wait = 5;
             }
         } else {

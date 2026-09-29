@@ -41,6 +41,9 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
                       const CRect_i_ &texture_destination, const CRect_i_ &texture_source,
                       float depth, float phase);
 
+/**
+ * Raises the puffs of dust the player's run leaves behind.
+ */
 class CRunEffect {
 public:
     int lighting; /**< Whether the dust takes light. */
@@ -74,7 +77,7 @@ public:
      * @address 0x1638F0
      * @size 0x8C
      */
-    void Set(float *);
+    void Set(float *origin);
 
     /**
      * Advances the run dust by a frame.

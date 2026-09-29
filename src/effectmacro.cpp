@@ -156,7 +156,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     MGStretchMoveImage(&frame, CRect_i_(0, 0, 0x2800, 0xE00), &image, CRect_i_(0, 0, 0x1400, 0xE00));
     MGStretchMoveImage(&image, CRect_i_(0, 0, 0x1400, 0xE00), &image, CRect_i_(0x1400, 0, 0xA00, 0xE00));
 
-    sceVu0FVECTOR vertex[4] = {
+    sceVu0FVECTOR depth_point[4] = {
         {0.0f, 0.0f, focus[0], 1.0f},
         {0.0f, 0.0f, focus[0] + 30.0f, 1.0f},
         {0.0f, 0.0f, focus[1], 1.0f},
@@ -164,9 +164,9 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     };
     int screen[4][4];
     for (i = 0; i < 4; i++) {
-        sceVu0ApplyMatrix(vertex[i], mgRenderInfo.screen, vertex[i]);
-        vertex[i][2] /= vertex[i][3];
-        screen[i][2] = (int) vertex[i][2];
+        sceVu0ApplyMatrix(depth_point[i], mgRenderInfo.screen, depth_point[i]);
+        depth_point[i][2] /= depth_point[i][3];
+        screen[i][2] = (int) depth_point[i][2];
     }
 
     sceVif1PkCnt(Vif1Packet, 0);
@@ -244,23 +244,23 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 int x = (i << 9) + 0x6C00;
                 int v = j << 8;
                 int y = v + 0x7900;
-                int y2 = y + 0x100;
+                int y_bottom = y + 0x100;
                 int u = (i << 7) + 0x1400;
-                int v2 = v + 0x100;
+                int v_bottom = v + 0x100;
                 if (blur > 0) {
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
                                      SCE_GS_SET_XYZF2(x - (int) rd[i][j], y, screen[2 + i % 2][2], 0));
-                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v2));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v_bottom));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                     SCE_GS_SET_XYZF2(x - (int) rd[i][j + 1], y2, screen[2 + i % 2][2], 0));
+                                     SCE_GS_SET_XYZF2(x - (int) rd[i][j + 1], y_bottom, screen[2 + i % 2][2], 0));
                 } else {
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
                                      SCE_GS_SET_XYZF2(x, y, screen[2 + i % 2][2], 0));
-                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v2));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v_bottom));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                     SCE_GS_SET_XYZF2(x, y2, screen[2 + i % 2][2], 0));
+                                     SCE_GS_SET_XYZF2(x, y_bottom, screen[2 + i % 2][2], 0));
                 }
             }
         }

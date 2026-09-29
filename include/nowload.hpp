@@ -68,7 +68,7 @@ void now_loading_off(void);
  * @address 0x153FC0
  * @size 0x354
  */
-void init_now_loading(int map_title_no);
+void init_now_loading(int title_number);
 
 /**
  * Draws the loading screen and advances its fade once per vertical sync.

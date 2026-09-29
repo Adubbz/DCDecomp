@@ -12,9 +12,9 @@ struct spRGBA;
  * Records the party's position relative to the nearest water surface.
  */
 struct CHECK_WATER_INFO {
-    float unk_00[4];
-    float unk_10[4];
-    s32 unk_20;
+    float dry_position[4];     /**< Where the party last stood out of the water. */
+    float surface_position[4]; /**< Point on the water surface where the party stands. */
+    s32 in_water;              /**< Whether the party stood in the water at the last check. */
     char unk_24[0xC];
 };
 
@@ -24,9 +24,9 @@ STATIC_ASSERT(sizeof(CHECK_WATER_INFO) == 0x30);
  * Records one ring spreading across the water.
  */
 struct WATER_WAVE_LING {
-    float unk_00[4];
-    float unk_10;
-    s32 unk_14;
+    float center[4]; /**< Point on the water the ring spreads from. */
+    float radius;    /**< Current radius of the ring. */
+    s32 life;        /**< Frames left before the ring fades out; 0 while the slot is free. */
     char unk_18[8];
 };
 
@@ -101,7 +101,7 @@ void StepWaterLing(void);
  * @address 0x1AFE90
  * @size 0x1D0
  */
-float SetBattleStyle(int, int);
+float SetBattleStyle(int map_no, int preserve_bgm);
 
 /**
  * Draws a three-digit value out of the number sheet.
@@ -110,7 +110,7 @@ float SetBattleStyle(int, int);
  * @address 0x1B0060
  * @size 0x1F8
  */
-int ValuePrint(int, int, int, int, unsigned char);
+int ValuePrint(int x, int y, int value, int palette, unsigned char alpha);
 
 /**
  * Clears the pulse that warns of low life.
@@ -192,7 +192,7 @@ void BtStatusErrStep(void);
  * @address 0x1B1BB0
  * @size 0x1CC
  */
-void BtSetStatusErr(int);
+void BtSetStatusErr(int status);
 
 /**
  * Draws the icons of the party's status ailments.
@@ -201,7 +201,7 @@ void BtSetStatusErr(int);
  * @address 0x1B1D80
  * @size 0x16C
  */
-void BtStatusErrDraw(int);
+void BtStatusErrDraw(int y);
 
 /**
  * Draws one item into the reserved slot area.
@@ -210,7 +210,7 @@ void BtStatusErrDraw(int);
  * @address 0x1B1EF0
  * @size 0x1CC
  */
-void setItemToReserved(char *, int, int, char *, int, int);
+void setItemToReserved(char *page_name, int x, int y, char *item_name, int dsax, int dsay);
 
 /**
  * Clears the cached map-jump data.
@@ -230,7 +230,7 @@ void BtMapJumpCashClear(void);
  * @address 0x1B20E0
  * @size 0x70C
  */
-int BtMapJumpLoad(char *);
+int BtMapJumpLoad(char *map_name);
 
 /**
  * Draws a textured cell in world space.
@@ -250,7 +250,7 @@ void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y,
  * @size 0x98
  * @unknownret
  */
-void setShotVector(float *vector, float speed, float heading, float pitch);
+void setShotVector(float *velocity, float speed, float angle_y, float angle_x);
 
 /**
  * Gives the way the player's character faces, at one pitch.
@@ -270,5 +270,4 @@ void getCharacterVector(float *vector, float pitch);
  * @size 0x7C
  * @unknownret
  */
-void ParabolicInitialVector(float *vector, float *from, float *to, float gravity,
-                            float height);
+void ParabolicInitialVector(float *velocity, float *from, float *to, float gravity, float time);

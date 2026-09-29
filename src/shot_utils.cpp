@@ -54,7 +54,7 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
                 continue;
             }
             if (monster_no >= 0 && monster_no < 17) {
-                active = NowMonstorUnit->monster[monster_no].unk_0D4;
+                active = NowMonstorUnit->monster[monster_no].revealed;
             }
             if (active == 0) {
                 continue;

@@ -13,9 +13,9 @@ struct PAD_STATUS {
     int right_x;                /**< Specifies the right stick horizontal position. */
     int phase;                  /**< Specifies the controller setup phase. */
     int state;                  /**< Specifies the controller connection state. */
-    int mode_count;             /**< Specifies the available controller mode count. */
-    int read_result;            /**< Specifies the current controller read mode. */
-    int previous_read_result;   /**< Specifies the previous controller read mode. */
+    int extended_id;            /**< Specifies the extended terminal ID the controller reports. */
+    int pad_mode;               /**< Specifies the terminal mode of the latest read. */
+    int previous_pad_mode;      /**< Specifies the terminal mode of the previous successful read. */
     unsigned char vibration[6]; /**< Specifies the actuator strengths. */
     unsigned char actuator[6];  /**< Specifies the actuator alignment. */
     int vibration_timer[2];     /**< Specifies the remaining actuator times. */
@@ -353,7 +353,7 @@ public:
      * @address 0x12B920
      * @size 0xC
      */
-    void MenuModeOn(int mask);
+    void MenuModeOn(int threshold);
 
     /**
      * Configures automatic repeat for selected buttons.

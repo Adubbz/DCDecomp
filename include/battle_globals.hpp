@@ -14,13 +14,13 @@ struct spRGBA;
  * State of the storybook that plays before the game begins.
  */
 struct OPENING_BOOK {
-    s16 open;      /**< Whether the storybook draws at all. */
-    s16 tex_block; /**< Texture block the storybook's pages are loaded into. */
-    s16 unk_004;
-    s16 unk_006;
-    s16 step; /**< Which part of the opening the storybook is showing. */
-    s16 fade; /**< How brightly the screen fades the storybook in. */
-    s16 unk_00C;
+    s16 open;           /**< Whether the storybook's pages have been read and it draws. */
+    s16 tex_block;      /**< Texture block the storybook's pages are loaded into. */
+    s16 name_tex_block; /**< Texture block handed to the name-entry screen that follows the storybook. */
+    s16 page;           /**< Index of the page being shown; its message is page plus 100. */
+    s16 step;           /**< Which part of the opening the storybook is showing. */
+    s16 fade;           /**< Strength of the full-screen fade drawn over the storybook. */
+    s16 text_alpha;     /**< Alpha the page text fades in and out through. */
 };
 
 STATIC_ASSERT(sizeof(OPENING_BOOK) == 0xE);
@@ -41,7 +41,7 @@ void GlobalNameInit(void);
  * @address 0x2384A0
  * @size 0x190
  */
-void InitNameRegist(int, int, u_long128 *);
+void InitNameRegist(int chara_no, int texture_block, u_long128 *buffer);
 
 /**
  * Gives the name-entry screen's textures back and closes it.
@@ -59,7 +59,7 @@ void ExitNameEnterFunc(void);
  * @address 0x2386A0
  * @size 0xBC
  */
-CTexture *GetNameTextureInfo(CTexture **, int, int &, int &);
+CTexture *GetNameTextureInfo(CTexture **textures, int char_code, int &cell_x, int &cell_y);
 
 /**
  * Draws the name being entered; the character argument goes unused.
@@ -68,7 +68,7 @@ CTexture *GetNameTextureInfo(CTexture **, int, int &, int &);
  * @address 0x238760
  * @size 0x118
  */
-void DrawCharaName(int, int, int, int, int);
+void DrawCharaName(int chara_no, int x, int y, int brightness, int blend_mode);
 
 /**
  * Draws the frame around the name being entered, bobbing it with a sine.
@@ -77,7 +77,7 @@ void DrawCharaName(int, int, int, int, int);
  * @address 0x238880
  * @size 0x1F0
  */
-void DrawNameRegiWaku(int, int, int, int, int);
+void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode);
 
 /**
  * Draws the name being entered above the keyboard.
@@ -86,7 +86,7 @@ void DrawNameRegiWaku(int, int, int, int, int);
  * @address 0x238A70
  * @size 0x628
  */
-void DrawCharaNameUp(int, int, int, int);
+void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
 
 /**
  * Reports whether the entered name may be used.
@@ -131,7 +131,7 @@ void NameDefaultSet(int chara_no);
  * @address 0x23C900
  * @size 0x250
  */
-void CharaSelectNameDraw2(int, int, short *, CTexture **, int);
+void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int blend_mode);
 
 /**
  * Draws a party member's name on the save board, in a gradient.
@@ -140,7 +140,7 @@ void CharaSelectNameDraw2(int, int, short *, CTexture **, int);
  * @address 0x23CB50
  * @size 0x284
  */
-void DrawSaveBoardCharaName2(int, int, short *, CTexture **, spRGBA, spRGBA);
+void DrawSaveBoardCharaName2(int x, int y, short *name, CTexture **textures, spRGBA top_color, spRGBA bottom_color);
 
 /**
  * Gives how wide a party member's name draws.
@@ -160,7 +160,7 @@ int GetMsgLengthCharaName(int chara_no);
  * @address 0x23CE60
  * @size 0xB0
  */
-void InitOpeningBook(void /* CW back-ref target unresolved */ *, int *);
+void InitOpeningBook(void /* CW back-ref target unresolved */ *buffer, int *tex_blocks);
 
 /**
  * Turns the storybook's pages with the pad.

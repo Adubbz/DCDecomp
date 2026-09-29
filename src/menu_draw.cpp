@@ -60,7 +60,7 @@ s8 MenuTrushMark[100];
  * @address 0x22D4C0
  * @size 0xDC
  */
-static void DrawDontSetItemMark(int, int, int, int, int);
+static void DrawDontSetItemMark(int x, int y, int top, int bottom, int alpha);
 
 /**
  * Draws the equipped-weapon marker on a personal-board entry.
@@ -171,22 +171,22 @@ int GetAtoraMaxVillage(void) {
     return max_village;
 }
 
-int GetNowMapTransAtraMap(int mapNo) {
+int GetNowMapTransAtraMap(int map_no) {
     int village = 0;
     // clang-format off
-    s16 mapToVillage[35] = {
+    s16 map_to_village[35] = {
         1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 4, 3, 4, 5, 5,
         5, 3, 1, 4, 4, 4, 4, 1, 3, 2, 3, 4, 5, 2, 5,
         4, 3, 2, 2, 2,
     };
     // clang-format on
 
-    if (mapNo < 5) {
-        village = mapNo;
-    } else if (mapNo >= 0xB && mapNo < 0x29) {
-        village = mapToVillage[mapNo - 0xB];
-    } else if (mapNo >= 0xC8) {
-        village = mapNo - 0xC8;
+    if (map_no < 5) {
+        village = map_no;
+    } else if (map_no >= 0xB && map_no < 0x29) {
+        village = map_to_village[map_no - 0xB];
+    } else if (map_no >= 0xC8) {
+        village = map_no - 0xC8;
     }
 
     if (GetAtoraMaxVillage() - 3 < village) {
@@ -197,77 +197,77 @@ int GetNowMapTransAtraMap(int mapNo) {
 }
 
 void MenuWorldTrans(CCamera *camera) {
-    sceVu0FMATRIX cameraMatrix;
-    sceVu0FVECTOR eyePos;
-    sceVu0FMATRIX viewMatrix;
-    sceVu0FMATRIX unitMatrix;
+    sceVu0FMATRIX camera_matrix;
+    sceVu0FVECTOR eye_pos;
+    sceVu0FMATRIX view_matrix;
+    sceVu0FMATRIX unit_matrix;
 
     MGSetProjection(800.0f);
-    camera->GetCameraMatrix(cameraMatrix);
+    camera->GetCameraMatrix(camera_matrix);
     camera->Step(1);
-    camera->GetPos(eyePos);
-    sceVu0UnitMatrix(unitMatrix);
-    sceVu0MulMatrix(viewMatrix, unitMatrix, cameraMatrix);
-    MGSetViewMatrix(viewMatrix, eyePos);
+    camera->GetPos(eye_pos);
+    sceVu0UnitMatrix(unit_matrix);
+    sceVu0MulMatrix(view_matrix, unit_matrix, camera_matrix);
+    MGSetViewMatrix(view_matrix, eye_pos);
 }
 
-void MenuPolygonDraw(int distance, void (*draw)(void)) {
-    float refPos[4] = {0.0f, 0.0f, -45.0f, 1.0f};
-    float eyePos[4] = {0.0f, 0.0f, 60.0f, 1.0f};
+void MenuPolygonDraw(int ambient_alpha, void (*draw)(void)) {
+    float ref_pos[4] = {0.0f, 0.0f, -45.0f, 1.0f};
+    float eye_pos[4] = {0.0f, 0.0f, 60.0f, 1.0f};
 
-    MenuCamera.SetRef(refPos);
-    MenuCamera.SetPos(eyePos);
+    MenuCamera.SetRef(ref_pos);
+    MenuCamera.SetPos(eye_pos);
 
-    float lightDir[4][4] = {
+    float light_dir[4][4] = {
         {0.3f, 0.0f, 0.0f, 0.0f},
         {0.3f, 0.0f, 0.0f, 0.0f},
         {0.3f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
     };
-    float lightColour[4][4] = {
+    float light_colour[4][4] = {
         {96.0f, 96.0f, 96.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
         {0.0f, 0.0f, 0.0f, 0.0f},
     };
-    float savedAmbient[4];
+    float saved_ambient[4];
     float ambient[4];
-    float savedLightDir[4][4];
-    float savedLightColour[4][4];
+    float saved_light_dir[4][4];
+    float saved_light_colour[4][4];
 
-    MGGetPLight(savedLightDir, savedLightColour);
-    MGGetAmbient(savedAmbient);
+    MGGetPLight(saved_light_dir, saved_light_colour);
+    MGGetAmbient(saved_ambient);
     ambient[0] = ambient[1] = ambient[2] = 80.0f;
-    ambient[3] = (float) distance;
+    ambient[3] = (float) ambient_alpha;
 
-    float lightVector[4] = {0.3f, 1.0f, 0.3f, 0.0f};
-    float lightNormal[4];
+    float light_vector[4] = {0.3f, 1.0f, 0.3f, 0.0f};
+    float light_normal[4];
 
-    sceVu0Normalize(lightNormal, lightVector);
-    lightDir[0][0] = lightNormal[0];
-    lightDir[1][0] = lightNormal[1];
-    lightDir[2][0] = lightNormal[2];
-    MGSetPLight(lightDir, lightColour);
+    sceVu0Normalize(light_normal, light_vector);
+    light_dir[0][0] = light_normal[0];
+    light_dir[1][0] = light_normal[1];
+    light_dir[2][0] = light_normal[2];
+    MGSetPLight(light_dir, light_colour);
     MGSetAmbient(ambient);
     draw();
-    MGSetPLight(savedLightDir, savedLightColour);
-    MGSetAmbient(savedAmbient);
+    MGSetPLight(saved_light_dir, saved_light_colour);
+    MGSetAmbient(saved_ambient);
 }
 
 void Get3DPosTo2DPos(CFrame *frame, int *screen) {
     float world[4];
     float origin[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-    int screenPos[4];
+    int screen_pos[4];
 
     frame->GetWorldPosition(world, origin);
-    MGRotTransPers2D(screenPos, world, 0);
-    screen[0] = screenPos[0];
-    screen[1] = screenPos[1];
+    MGRotTransPers2D(screen_pos, world, 0);
+    screen[0] = screen_pos[0];
+    screen[1] = screen_pos[1];
 }
 
-int GetMenuCommonFontW(int style, int fontSize) {
-    s8 fontWidths[7] = {16, 11, 11, 11, 11, 11, 11};
-    return fontWidths[style];
+int GetMenuCommonFontW(int language, int style) {
+    s8 font_widths[7] = {16, 11, 11, 11, 11, 11, 11};
+    return font_widths[language];
 }
 
 int GetMenuCommonPutXY(ClsMes *mes, int x) {
@@ -327,11 +327,11 @@ static inline void ResetMenuMes(ClsMes *mes) {
     }
 }
 
-void InitMenuMesSet(int mode, short *buff) {
-    CommonMenuMes1.unk_17B0 = MesWinTexBuff_01;
-    CommonMenuMes2.unk_17B0 = MesWinTexBuff_02;
-    CommonMenuMes3.unk_17B0 = MesWinTexBuff_11;
-    AtoraNameMes.unk_17B0 = MesWinTexBuff_12;
+void InitMenuMesSet(int mode, short *messages) {
+    CommonMenuMes1.tex_buff = MesWinTexBuff_01;
+    CommonMenuMes2.tex_buff = MesWinTexBuff_02;
+    CommonMenuMes3.tex_buff = MesWinTexBuff_11;
+    AtoraNameMes.tex_buff = MesWinTexBuff_12;
     ResetMenuMes(&CommonMenuMes1);
     ResetMenuMes(&CommonMenuMes2);
     ResetMenuMes(&CommonMenuMes3);
@@ -340,10 +340,10 @@ void InitMenuMesSet(int mode, short *buff) {
     CommonMenuMes2.tex_block = 0x1A;
     CommonMenuMes3.tex_block = 0x1A;
     AtoraNameMes.tex_block = 0x1A;
-    CommonMenuMes1.SetBuff(buff);
-    CommonMenuMes2.SetBuff(buff);
-    CommonMenuMes3.SetBuff(buff);
-    AtoraNameMes.SetBuff(buff);
+    CommonMenuMes1.SetBuff(messages);
+    CommonMenuMes2.SetBuff(messages);
+    CommonMenuMes3.SetBuff(messages);
+    AtoraNameMes.SetBuff(messages);
     CommonMenuMes1.SetBuff_system(SystemMes);
     CommonMenuMes2.SetBuff_system(SystemMes);
     CommonMenuMes3.SetBuff_system(SystemMes);
@@ -859,15 +859,15 @@ void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alph
     if (info == NULL) {
         return;
     }
-    int u = info->unk_0C;
-    int v = info->unk_10;
+    int u = info->u;
+    int v = info->v;
     s16 frame_size[2][2] = {{0x30, 0x20}, {0x3A, 0x28}};
     int width = frame_size[selected][0];
     int height = frame_size[selected][1];
 
     if (selected) {
-        u = info->unk_04;
-        v = info->unk_08;
+        u = info->selected_u;
+        v = info->selected_v;
         if (icon == info->id) {
             width = 0x38;
         }
@@ -880,8 +880,8 @@ void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alph
         x += 0x40;
         y -= 1;
     }
-    set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, info->unk_1C, info->unk_20 - 1),
-                CRect_i_(info->unk_14, info->unk_18, info->unk_1C, info->unk_20), bright, bright, bright, alpha);
+    set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, info->label_width, info->label_height - 1),
+                CRect_i_(info->label_u, info->label_v, info->label_width, info->label_height), bright, bright, bright, alpha);
 }
 
 void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
@@ -900,7 +900,7 @@ void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int) {
         DrawObjectVibe(item_x, item_y, texture, source, 0x80, 0x80);
         int number = GetAttachVolumeForMsg(&PerBoardPt->held_attach);
         if (item_no == 0x5A) {
-            number = PerBoardPt->held_attach.unk_02;
+            number = PerBoardPt->held_attach.sphere_weapon_no;
         }
         DrawAttachNumberOrWeapon(item_x, item_y, 0, 0x280, item_no, number, 0x80, 1);
     }
@@ -956,51 +956,51 @@ void InitHaveAttach(ATTACH_LIST *attachment) {
 }
 
 void MenuDataSwap(s16 *first, s16 *second) {
-    s16 temp;
+    s16 saved;
 
     if ((first == NULL) || (second == NULL)) {
         return;
     }
 
-    temp = *first;
+    saved = *first;
     *first = *second;
-    *second = temp;
+    *second = saved;
 }
 
 void MenuDataSwap(int *first, int *second) {
-    int temp;
+    int saved;
 
     if ((first == NULL) || (second == NULL)) {
         return;
     }
 
-    temp = *first;
+    saved = *first;
     *first = *second;
-    *second = temp;
+    *second = saved;
 }
 
 void MenuDataSwap(WEAPON_HAVE *first, WEAPON_HAVE *second) {
-    WEAPON_HAVE temp;
+    WEAPON_HAVE saved;
 
     if ((first == NULL) || (second == NULL)) {
         return;
     }
 
-    memcpy(&temp, first, sizeof(WEAPON_HAVE));
+    memcpy(&saved, first, sizeof(WEAPON_HAVE));
     memcpy(first, second, sizeof(WEAPON_HAVE));
-    memcpy(second, &temp, sizeof(WEAPON_HAVE));
+    memcpy(second, &saved, sizeof(WEAPON_HAVE));
 }
 
 void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second) {
-    ATTACH_LIST temp;
+    ATTACH_LIST saved;
 
     if ((first == NULL) || (second == NULL)) {
         return;
     }
 
-    memcpy(&temp, first, sizeof(ATTACH_LIST));
+    memcpy(&saved, first, sizeof(ATTACH_LIST));
     memcpy(first, second, sizeof(ATTACH_LIST));
-    memcpy(second, &temp, sizeof(ATTACH_LIST));
+    memcpy(second, &saved, sizeof(ATTACH_LIST));
 }
 
 void SetMenuTrushMark(ITEM_PACK *items) {
@@ -1031,7 +1031,7 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     if (PerBoardTex == NULL) {
         PerBoardTex = TexManager.GetTexture("perbrd", -1);
     }
-    PerBoardPt->unk_00 = mode;
+    PerBoardPt->menu_kind = mode;
     PerBoardPt->page = page;
     PerBoardPt->cursor = 0;
     PerBoardPt->top_row = 0;
@@ -1046,7 +1046,7 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     PerBoardPt->cursor_area = 1;
     InitHaveData(&PerBoardPt->held_item);
     InitHaveWep(&PerBoardPt->weapon);
-    PerBoardPt->unk_15C = -1;
+    PerBoardPt->held_equipped_slot = -1;
     PerBoardPt->trash_anim = 0;
     PerBoardPt->trash_frame = 0;
     DeleteMenuTrushMark();
@@ -1077,7 +1077,7 @@ int BoardModeChangeKey() {
     int board_mode = PerBoardPt->page;
 
     if (GamePad.Down(5)) {
-        switch (PerBoardPt->unk_00) {
+        switch (PerBoardPt->menu_kind) {
             case 0:
                 PerBoardPt->page--;
                 if (PerBoardPt->page < 0) {
@@ -1090,7 +1090,7 @@ int BoardModeChangeKey() {
         }
     }
     if (GamePad.Down(10)) {
-        switch (PerBoardPt->unk_00) {
+        switch (PerBoardPt->menu_kind) {
             case 0:
                 PerBoardPt->page++;
                 if (PerBoardPt->page > 2) {
@@ -1145,7 +1145,7 @@ void PersonalBoardLimmitCheck() {
 }
 
 int PersonalBoardKeySub() {
-    int left = 0;
+    int exit_left = 0;
     int area = PerBoardPt->cursor_area;
     int page = PerBoardPt->page;
     int *cursor = &PerBoardPt->cursor;
@@ -1187,7 +1187,7 @@ int PersonalBoardKeySub() {
                 int column = *cursor % 5;
                 if (column < 4) {
                     (*cursor)++;
-                } else if (column == 4 && PerBoardPt->unk_00 != 2) {
+                } else if (column == 4 && PerBoardPt->menu_kind != 2) {
                     PerBoardPt->cursor_area = 2;
                 }
                 break;
@@ -1201,7 +1201,7 @@ int PersonalBoardKeySub() {
                 break;
             case 1:
                 if (*cursor % 5 == 0) {
-                    left = 1;
+                    exit_left = 1;
                 } else {
                     (*cursor)--;
                 }
@@ -1211,7 +1211,7 @@ int PersonalBoardKeySub() {
     if (area != PerBoardPt->cursor_area) {
         ComMenuSePlay(0);
     }
-    return left;
+    return exit_left;
 }
 
 int PersonalBoardKey() {
@@ -1236,8 +1236,8 @@ int PersonalBoardItemPush(IHAVEITEM *item, int board_pos) {
             MenuDataSwap(board_item, &item->item_no);
             MenuDataSwap(board_volume, &item->volume);
             if (item->item_no >= 0x51) {
-                item->unk_04 = 0;
-                item->unk_0C = PerBoardPt->cursor;
+                item->from_page = 0;
+                item->from_slot = PerBoardPt->cursor;
             }
             if (item->item_no >= 0x84 || *board_item >= 0x84) {
                 enabled = 1;
@@ -1247,11 +1247,11 @@ int PersonalBoardItemPush(IHAVEITEM *item, int board_pos) {
     return enabled;
 }
 
-int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
+int PersonalBoardWeaponPush(IHAVEITEM *item, int board_pos) {
     int result = 0;
-    int kind = WhatIsKindofItem(have->item_no);
-    int chara = cell / 10;
-    int slot = cell % 10;
+    int kind = WhatIsKindofItem(item->item_no);
+    int chara = board_pos / 10;
+    int slot = board_pos % 10;
     CUserStatus *status = PerBoardStatusPt;
     WEAPON_HAVE *weapons = status->chara_weapons[chara];
     WEAPON_HAVE *weapon = &weapons[slot];
@@ -1261,19 +1261,19 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
         if (weapon_no < 0x101) {
             return 0;
         }
-        if (have->item_no == 0xB1) {
+        if (item->item_no == 0xB1) {
             if (weapon->durability_f < weapon->durability) {
                 weapon->durability_f = weapon->durability;
                 if (weapon->item_no == GetDefaultWeaponNo(chara)) {
                     weapon->item_no++;
                     WepDataListToHaveCopy(weapon->item_no, weapon);
                 }
-                InitHaveData(have);
+                InitHaveData(item);
                 result = 2;
             }
         }
-        if (have->item_no == 0xB2) {
-            if (weapon->experience < GetWeaponMaxExp(weapon) && weapon->unk_02 < 99) {
+        if (item->item_no == 0xB2) {
+            if (weapon->experience < GetWeaponMaxExp(weapon) && weapon->level < 99) {
                 int item_no = weapon->item_no;
                 if (item_no != GetDefaultWeaponNo(chara)) {
                     if (item_no == 0x10C) {
@@ -1289,39 +1289,39 @@ int PersonalBoardWeaponPush(IHAVEITEM *have, int cell) {
     }
     if (kind == 1 || kind < 0) {
         if (kind == 1) {
-            int owner = WhoIsWeaponEquip(have->item_no);
+            int owner = WhoIsWeaponEquip(item->item_no);
             if (owner != chara) {
                 result = 0;
             } else {
-                int held = have->item_no;
+                int held = item->item_no;
                 int placed = weapon->item_no;
                 MenuDataSwap(&PerBoardPt->weapon, weapon);
-                have->item_no = placed;
+                item->item_no = placed;
                 weapon->item_no = held;
                 if (slot == PerBoardStatusPt->equipped_weapon_slot[owner]) {
-                    PerBoardPt->unk_15C = slot;
+                    PerBoardPt->held_equipped_slot = slot;
                     PerBoardStatusPt->equipped_weapon_slot[owner] = -1;
-                } else if (PerBoardPt->unk_15C >= 0) {
+                } else if (PerBoardPt->held_equipped_slot >= 0) {
                     PerBoardStatusPt->equipped_weapon_slot[owner] = slot;
-                    PerBoardPt->unk_15C = -1;
+                    PerBoardPt->held_equipped_slot = -1;
                 }
                 result = 1;
-                have->unk_04 = 1;
-                have->unk_0C = cell;
+                item->from_page = 1;
+                item->from_slot = board_pos;
             }
         } else {
-            PerBoardPt->unk_15C = -1;
+            PerBoardPt->held_equipped_slot = -1;
             if (slot == PerBoardStatusPt->equipped_weapon_slot[chara]) {
-                PerBoardPt->unk_15C = slot;
+                PerBoardPt->held_equipped_slot = slot;
                 PerBoardStatusPt->equipped_weapon_slot[chara] = -1;
             }
-            have->unk_04 = 1;
-            have->unk_0C = cell;
-            have->item_no = weapon->item_no;
+            item->from_page = 1;
+            item->from_slot = board_pos;
+            item->item_no = weapon->item_no;
             memcpy(&PerBoardPt->weapon, weapon, sizeof(WEAPON_HAVE));
             InitHaveWep(weapon);
             weapon->item_no = 0;
-            if (weapon->item_no >= 0x101 || have->item_no >= 0x101) {
+            if (weapon->item_no >= 0x101 || item->item_no >= 0x101) {
                 result = 1;
             }
         }
@@ -1337,8 +1337,8 @@ int PersonalBoardAttachPush(IHAVEITEM *item, int board_pos) {
     int kind = WhatIsKindofItem(item->item_no);
 
     if (kind == 2 || kind < 0) {
-        item->unk_04 = 2;
-        item->unk_0C = board_pos;
+        item->from_page = 2;
+        item->from_slot = board_pos;
         CUserStatus *status = PerBoardStatusPt;
         DNG_CONSUMABLE *consumables = status->consumable_items;
         ATTACH_LIST *slot = (ATTACH_LIST *) &consumables[board_pos];
@@ -1375,9 +1375,9 @@ int PersonalBoardItemGetorSwap(int board_pos) {
 
 void PersonalBoardItemCancel() {
     IHAVEITEM *have = &PerBoardPt->held_item;
-    int cell = have->unk_0C;
+    int cell = have->from_slot;
 
-    switch (have->unk_04) {
+    switch (have->from_page) {
         case 0: {
             s16 *item = &PerBoardPt->item_pack->item[cell];
             s16 *volume = &PerBoardPt->item_pack->item_vol[cell];
@@ -1399,11 +1399,11 @@ void PersonalBoardItemCancel() {
                 MenuDataSwap(&PerBoardPt->weapon, weapon);
                 have->item_no = placed;
                 weapon->item_no = held;
-                if (PerBoardPt->unk_15C >= 0) {
-                    PerBoardStatusPt->equipped_weapon_slot[chara] = PerBoardPt->unk_15C;
-                    PerBoardPt->unk_15C = -1;
+                if (PerBoardPt->held_equipped_slot >= 0) {
+                    PerBoardStatusPt->equipped_weapon_slot[chara] = PerBoardPt->held_equipped_slot;
+                    PerBoardPt->held_equipped_slot = -1;
                 } else if (slot == PerBoardStatusPt->equipped_weapon_slot[chara]) {
-                    PerBoardPt->unk_15C = slot;
+                    PerBoardPt->held_equipped_slot = slot;
                     PerBoardStatusPt->equipped_weapon_slot[chara] = -1;
                 }
             }
@@ -1423,7 +1423,7 @@ void PersonalBoardItemCancel() {
     if (have->item_no <= 0x50) {
         InitHaveData(have);
         InitHaveWep(&PerBoardPt->weapon);
-        PerBoardPt->unk_15C = -1;
+        PerBoardPt->held_equipped_slot = -1;
     }
 }
 
@@ -1458,25 +1458,25 @@ void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int) {
     int bottom = top + 0xA0;
     int left = x + 0x13;
     int row_y = y - 0x11;
-    int kind;
+    int mark;
 
     row_y = row_y + 0x17 - PerBoardPt->top_row * 40;
     PerBoardPt->y += (row_y - PerBoardPt->y) / 4.0f;
     row_y = PerBoardPt->y;
-    switch (PerBoardPt->unk_00) {
+    switch (PerBoardPt->menu_kind) {
         case 2:
         case 0:
             MenuTextureReload(PerBoardTex->block);
             break;
     }
-    kind = 0;
+    mark = 0;
     switch (board_mode) {
         case 1:
-            kind = 2;
+            mark = 2;
             break;
     }
-    DrawPerBoardDraw(kind, max, left, row_y, top, bottom, PerBoardTex, alpha);
-    switch (PerBoardPt->unk_00) {
+    DrawPerBoardDraw(mark, max, left, row_y, top, bottom, PerBoardTex, alpha);
+    switch (PerBoardPt->menu_kind) {
         case 2:
             MenuTextureReload(PerBoardTex->block);
             break;
@@ -1511,7 +1511,7 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
 
     switch (page) {
         case 2: {
-            if (PerBoardPt->unk_00 == 1) {
+            if (PerBoardPt->menu_kind == 1) {
                 MenuTextureReload(MenuShadowReadBlock);
             } else {
                 icon = TexManager.GetTexture("wepicon", -1);
@@ -1528,7 +1528,7 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
                     value = attach[i].status[id - 0x5B];
                 }
                 if (id == 0x5A) {
-                    value = attach[i].unk_02;
+                    value = attach[i].sphere_weapon_no;
                 }
                 DrawIconParts(id, draw_x, draw_y, top, bottom, alpha, value);
                 draw_x += 0x28;
@@ -1608,7 +1608,7 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
             int left = weapon_x - 2;
             draw_x = left;
             for (int i = 0; i < 120; i++) {
-                DrawAtoraParts(draw_x, draw_y, PerBoardPt->unk_2C[i], top, bottom - 4, alpha);
+                DrawAtoraParts(draw_x, draw_y, PerBoardPt->atla_elements[i], top, bottom - 4, alpha);
                 draw_x += 0x28;
                 if (i % 5 == 4) {
                     draw_x = left;
@@ -1639,7 +1639,7 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
     int top;
     int row;
 
-    switch (PerBoardPt->unk_00) {
+    switch (PerBoardPt->menu_kind) {
         case 1:
             bright = 0x40;
         case 0:
@@ -1776,7 +1776,7 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
     RECT digits = {0x90, 0xDC, 12, 12};
     left = x + 0xF7;
     top = y - 0xE;
-    if (PerBoardPt->unk_00 == 2) {
+    if (PerBoardPt->menu_kind == 2) {
         left += 2;
     }
     DrawMenuNumber(num, left, top, texture, digits, 1, alpha);
@@ -1810,7 +1810,7 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
         case 7:
         case 8:
             for (int i = 0; i < num; i++) {
-                if (PerBoardPt->unk_2C[i] >= 0) {
+                if (PerBoardPt->atla_elements[i] >= 0) {
                     max++;
                 }
             }
@@ -1906,9 +1906,9 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
 
 /* The trash can's animation fields, which CommonTrushDraw reaches as one record. */
 struct PERSONAL_BOARD_TRASH {
-    s16 anim;
+    s16 anim; /**< One while the trash can plays its throw animation. */
     u8 unk_02[2];
-    s32 frame;
+    s32 frame; /**< Frame of the trash can's throw animation. */
 };
 
 void CommonTrushDraw(int x, int y, int alpha) {
@@ -1966,7 +1966,7 @@ int IsEnableTrushThrow(int item_no) {
                 enable = flag;
             }
         }
-        if (PerBoardPt->unk_15C >= 0) {
+        if (PerBoardPt->held_equipped_slot >= 0) {
             enable = 0;
         }
     }
@@ -2260,12 +2260,12 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     return swapped;
 }
 
-int SeitonAttachBoard(ATTACH_LIST *list) {
-    if (list == NULL) {
+int SeitonAttachBoard(ATTACH_LIST *attachments) {
+    if (attachments == NULL) {
         return 0;
     }
     for (int i = 0; i < 5; i++) {
-        if (SeitonAttachBoardSub(list) != 0) {
+        if (SeitonAttachBoardSub(attachments) != 0) {
             break;
         }
         asort_top_type++;
@@ -2303,15 +2303,15 @@ int WhoIsWeaponEquip(int weapon_no) {
     return -1;
 }
 
-int GetWeaponHoleNum(int item) {
-    COM_ITEM_INFO *info = GetCommonItemInfo(item);
+int GetWeaponHoleNum(int weapon_no) {
+    COM_ITEM_INFO *info = GetCommonItemInfo(weapon_no);
     if (info == NULL) {
         return 0;
     }
     if (info->kind != 2) {
         return 0;
     }
-    WEAPON_DATA *data = GetWeaponData(item);
+    WEAPON_DATA *data = GetWeaponData(weapon_no);
     if (data == NULL) {
         return 0;
     }
@@ -2349,7 +2349,7 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
         return 1;
     }
     int experience = *(s8 *) &data->exp_base;
-    for (int i = 0; i < weapon->unk_02; i++) {
+    for (int i = 0; i < weapon->level; i++) {
         experience += data->exp_per_level;
     }
     if (experience > 999) {
@@ -2403,7 +2403,7 @@ void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
     }
 }
 
-int GetNowModeMaxNum(int page, int *over) {
+int GetNowModeMaxNum(int page, int *overflow) {
     CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
     int count = 0;
 
@@ -2423,8 +2423,8 @@ int GetNowModeMaxNum(int page, int *over) {
                     count += pack->quick_item_qty[j];
                 }
             }
-            if (over != NULL && num < count) {
-                *over = 1;
+            if (overflow != NULL && num < count) {
+                *overflow = 1;
             }
             break;
         }
@@ -2435,8 +2435,8 @@ int GetNowModeMaxNum(int page, int *over) {
                 for (i = 0; i < 11; i++) {
                     if (weapons[i].item_no >= 0x101) {
                         count++;
-                        if (i == 10 && over != NULL) {
-                            *over = chara + 1;
+                        if (i == 10 && overflow != NULL) {
+                            *overflow = chara + 1;
                         }
                     }
                 }
@@ -2450,9 +2450,9 @@ int GetNowModeMaxNum(int page, int *over) {
                     count++;
                 }
             }
-            if (over != NULL && count > 40) {
+            if (overflow != NULL && count > 40) {
 
-                *over = 1;
+                *overflow = 1;
             }
             break;
     }

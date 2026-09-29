@@ -13,33 +13,33 @@
  * @address 0x1B5740
  * @size 0x60
  */
-char *NameExchg(char *name, int block);
+char *NameExchg(char *name, int language);
 
 /**
  * Records one hit that the collision test found.
  */
 struct COLLISION_HIT {
-    sceVu0FVECTOR pos; /**< Where the hit landed. */
-    sceVu0FVECTOR unk_10;
-    sceVu0FVECTOR velocity; /**< The way the hit throws what it hit. */
+    sceVu0FVECTOR pos;        /**< Where the hit landed. */
+    sceVu0FVECTOR base_point; /**< Homogeneous point reset to the origin when the hit is recorded. */
+    sceVu0FVECTOR velocity;   /**< The way the hit throws what it hit. */
     u8 unk_30[4];
-    s32 damage; /**< What the hit takes off. */
-    float unk_38;
-    float radius; /**< How far from its position the hit reaches. */
+    s32 damage;       /**< What the hit takes off. */
+    float scale_rate; /**< Scale factor the hit was recorded with. */
+    float radius;     /**< How far from its position the hit reaches. */
     float unk_40;
-    s32 life; /**< Steps the hit still tests for. */
-    s32 unk_48;
-    s32 kind;  /**< 2 for a small hit, 3 for a blow, 4 for a heavy blow. */
-    s32 flags; /**< What the hit does besides damage. */
-    s32 unk_54;
-    s32 owner;      /**< Identifies what dealt the hit, or -1. */
-    s32 monster_no; /**< Monster that dealt the hit, or -1. */
-    s32 unk_60;
+    s32 life;         /**< Steps the hit still tests for. */
+    s32 target_mask;  /**< Sides the hit can strike: 1 the player, 2 monsters. */
+    s32 kind;         /**< 2 for a small hit, 3 for a blow, 4 for a heavy blow. */
+    s32 flags;        /**< What the hit does besides damage. */
+    s32 attribute;    /**< Attribute value the hit was recorded with. */
+    s32 owner;        /**< Identifies what dealt the hit, or -1. */
+    s32 monster_no;   /**< Monster that dealt the hit, or -1. */
+    s32 attack_no;    /**< Which of its owner's attacks dealt the hit, or -1. */
     char *vs_monster; /**< The attacker's monster-effectiveness table. */
     s32 target_kind;  /**< Attachment family the hit only harms, or -1. */
     s32 weapon_flags; /**< Flags of the weapon that dealt the hit. */
-    s32 unk_70;
-    s32 unk_74;
+    s32 phase;        /**< The hit tests only while this equals ready_phase. */
+    s32 ready_phase;  /**< Value phase has to reach before the hit tests. */
     u8 unk_78[8];
     sceVu0FVECTOR knockback_origin; /**< Point the hit pushes what it hit away from. */
     float knockback_speed;          /**< Distance the push moves each step at first. */
@@ -73,9 +73,9 @@ public:
     /**
      * Names what deals the hit being filled in.
      */
-    void SetUserID(int id, int sub_id) {
+    void SetUserID(int id, int attack) {
         hit[now_hit].owner = id;
-        hit[now_hit].unk_60 = sub_id;
+        hit[now_hit].attack_no = attack;
     }
 
     /**
@@ -97,7 +97,7 @@ public:
      */
     int FindMonsterHit(float *position, float radius) {
         for (int i = 0; i < 96; i++) {
-            if (active[i] != 0 && (hit[i].unk_48 & 2) && hit[i].unk_70 == hit[i].unk_74 &&
+            if (active[i] != 0 && (hit[i].target_mask & 2) && hit[i].phase == hit[i].ready_phase &&
                 DistVector(position, hit[i].pos) <= radius + hit[i].radius) {
                 return i;
             }
@@ -117,7 +117,7 @@ public:
      * @address 0x1B57A0
      * @size 0x180
      */
-    int Set(float *position, int damage, int life, float radius, float hit_value, int mask,
+    int Set(float *position, int damage, int life, float radius, float scale_rate, int target_mask,
             int kind, int flags, int attribute);
 
     /**

@@ -24,10 +24,10 @@ public:
     CFrame *collision_frame; /**< Frame that collision reads; zero where the object has none. */
     CFrame *shadow_frame;    /**< Frame that the shadow draws from; zero where the object casts none. */
     CFrame *shade_frame;     /**< Frame that the shade draws from; zero where the object takes none. */
-    CFrame *unk_0DC;
-    float shadow_offset; /**< Height that the shadow drops below the object. */
-    s32 unk_0E4;
-    s32 handle; /**< Handle the map gave the object; below zero where the slot is free. */
+    CFrame *camera_frame;    /**< Collision frame the camera reads; zero where the object has none. */
+    float shadow_offset;     /**< Height that the shadow drops below the object. */
+    s32 category_no;         /**< Category whose level-of-detail range and draw pass the object uses; below zero for a free slot. */
+    s32 handle;              /**< Handle the map gave the object; below zero where the slot is free. */
     s32 unk_0EC;
 
     /**

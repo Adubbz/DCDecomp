@@ -32,39 +32,39 @@ CWeaponLevelUp MenuWepLevelUp;
 CMenuItemStep ItemVolumeStep;
 
 void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale) {
-    WEAPON_DATA *data;
+    WEAPON_DATA *weapon_data;
     int i;
-    int value;
+    int sum;
 
-    data = GetWeaponData(total->unk_02);
+    weapon_data = GetWeaponData(total->sphere_weapon_no);
 
     int limit[4] = {999, 99, 99, 999};
-    if (data != NULL) {
-        limit[0] = data->attack_max;
-        limit[3] = data->magic_max;
+    if (weapon_data != NULL) {
+        limit[0] = weapon_data->attack_max;
+        limit[3] = weapon_data->magic_max;
     }
     for (i = 0; i < 4; i++) {
-        value = total->status[i] + (s16) (int) ((float) attach->status[i] * scale);
-        if (value >= limit[i]) {
+        sum = total->status[i] + (s16) (int) ((float) attach->status[i] * scale);
+        if (sum >= limit[i]) {
             total->status[i] = limit[i];
         } else {
-            total->status[i] = value;
+            total->status[i] = sum;
         }
     }
     for (i = 0; i < 5; i++) {
-        value = total->elem[i] + (int) ((float) attach->elem[i] * scale);
-        if (value >= 99) {
+        sum = total->elem[i] + (int) ((float) attach->elem[i] * scale);
+        if (sum >= 99) {
             total->elem[i] = 99;
         } else {
-            total->elem[i] = value;
+            total->elem[i] = sum;
         }
     }
     for (i = 0; i < 10; i++) {
-        value = total->vs_monster[i] + (int) ((float) attach->vs_monster[i] * scale);
-        if (value >= 99) {
+        sum = total->vs_monster[i] + (int) ((float) attach->vs_monster[i] * scale);
+        if (sum >= 99) {
             total->vs_monster[i] = 99;
         } else {
-            total->vs_monster[i] = value;
+            total->vs_monster[i] = sum;
         }
     }
 }
@@ -74,11 +74,11 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
     int i;
     int synth_count;
     int flags;
-    WEAPON_DATA *data;
-    ATTACH_LIST *att;
+    WEAPON_DATA *weapon_data;
+    ATTACH_LIST *attach;
     int hole;
-    int doubled;
-    int value;
+    int has_double;
+    int sum;
     float scale;
 
     if (src == NULL) {
@@ -89,21 +89,21 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
     synth_count = 0;
     flags = 1;
     flags |= src->flags;
-    data = GetWeaponData(src->item_no);
+    weapon_data = GetWeaponData(src->item_no);
     for (i = 0; i < levels; i++) {
         for (i = 0; i < 6; i++) {
-            if (data->hole[i] > 0) {
-                att = &src->attach[i];
-                if (att->item_no >= 0x51) {
+            if (weapon_data->hole[i] > 0) {
+                attach = &src->attach[i];
+                if (attach->item_no >= 0x51) {
                     scale = 1.0f;
                     if (src->attach_kind[i] == 3) {
                         scale = 2.0f;
                     }
-                    AttachMentValuePlus(&total, att, scale);
-                    if (att->item_no == 0x5A) {
+                    AttachMentValuePlus(&total, attach, scale);
+                    if (attach->item_no == 0x5A) {
                         synth_count++;
-                        if (att->unk_04 != 0 && att->unk_04 != 1) {
-                            flags |= att->unk_04;
+                        if (attach->sphere_flags != 0 && attach->sphere_flags != 1) {
+                            flags |= attach->sphere_flags;
                         }
                     }
                 }
@@ -112,8 +112,8 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
         memset(dst->attach, 0, 0xC0);
         memcpy(dst, src, 0xF8);
         dst->attack += total.status[0] + 1;
-        if (dst->attack > data->attack_max) {
-            dst->attack = data->attack_max;
+        if (dst->attack > weapon_data->attack_max) {
+            dst->attack = weapon_data->attack_max;
         }
         dst->endurance += total.status[1] + 1;
         if (dst->endurance >= 99) {
@@ -124,37 +124,37 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
             dst->speed = 99;
         }
         dst->magic += total.status[3] + 1;
-        if (dst->magic >= data->magic_max) {
-            dst->magic = data->magic_max;
+        if (dst->magic >= weapon_data->magic_max) {
+            dst->magic = weapon_data->magic_max;
         }
         for (i = 0; i < 5; i++) {
-            value = (s8) dst->elem[i] + total.elem[i];
-            if (value >= 99) {
+            sum = (s8) dst->elem[i] + total.elem[i];
+            if (sum >= 99) {
                 dst->elem[i] = 99;
             } else {
-                dst->elem[i] = value;
+                dst->elem[i] = sum;
             }
         }
         for (i = 0; i < 10; i++) {
-            value = dst->vs_monster[i] + total.vs_monster[i];
-            if (value >= 99) {
+            sum = dst->vs_monster[i] + total.vs_monster[i];
+            if (sum >= 99) {
                 dst->vs_monster[i] = 99;
             } else {
-                dst->vs_monster[i] = value;
+                dst->vs_monster[i] = sum;
             }
         }
         dst->durability = src->durability + 1 + rand() % 3;
         if (dst->durability > 99) {
             dst->durability = 99;
         }
-        doubled = 0;
+        has_double = 0;
         for (hole = 0; hole < 6; hole++) {
-            if (data->hole[hole] > 0 && data->hole[hole] != 2) {
-                if (doubled != 0) {
+            if (weapon_data->hole[hole] > 0 && weapon_data->hole[hole] != 2) {
+                if (has_double != 0) {
                     dst->attach_kind[hole] = 0;
                 } else if (rand() % 50 == 5) {
                     dst->attach_kind[hole] = 3;
-                    doubled = 1;
+                    has_double = 1;
                 } else {
                     dst->attach_kind[hole] = 0;
                 }
@@ -162,36 +162,36 @@ void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int 
         }
     }
     dst->flags |= flags;
-    dst->unk_F0 += synth_count;
+    dst->synthesis_count += synth_count;
 }
 
-void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *buffer, int kind) {
+void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *load_buffer, int kind) {
     int size;
-    int index;
-    int se;
+    int file_no;
+    int se_no;
 
-    effect_buffer = (u_long128 *) buffer;
+    effect_buffer = (u_long128 *) load_buffer;
     effect_buffer = MenuCalcBufAlignment(effect_buffer);
     {
-        char *dir[5] = {"wlevelup.pak", "s_break.pak", "buildup.chr", "menu_ex.chr", "w_recover.chr"};
-        char name[0x40] = "commenu/effect/";
-        char sel[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-        s16 snd[14] = {25, 26, 28, -1, -1, -1, -1, 20, 20, -1, 20, 20, 20, 20};
+        char *file_names[5] = {"wlevelup.pak", "s_break.pak", "buildup.chr", "menu_ex.chr", "w_recover.chr"};
+        char path[0x40] = "commenu/effect/";
+        char file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+        s16 se_table[14] = {25, 26, 28, -1, -1, -1, -1, 20, 20, -1, 20, 20, 20, 20};
 
-        index = sel[kind];
-        se = snd[kind];
+        file_no = file_table[kind];
+        se_no = se_table[kind];
         if (kind == 2 && IsLastWeapon(buildup_weapon_no) != 0) {
-            se = 21;
+            se_no = 21;
             printf("last weapon\n");
         }
-        strcat(name, dir[index]);
+        strcat(path, file_names[file_no]);
         StartReadBG();
-        LoadFileBG(name, effect_buffer, &size);
+        LoadFileBG(path, effect_buffer, &size);
     }
-    if (0 <= se) {
+    if (0 <= se_no) {
         effect_buffer += (size >> 4) + 1;
         effect_buffer = MenuCalcBufAlignment(effect_buffer);
-        SndSPSeLoadBG(se, (u_int *) effect_buffer, &size);
+        SndSPSeLoadBG(se_no, (u_int *) effect_buffer, &size);
         printf("effect snd size = %d\n", size);
         effect_buffer += (size >> 4) + 1;
     }
@@ -204,7 +204,7 @@ void CWeaponLevelUp::Initialize() {
     effect.frame = NULL;
     effect_buffer = NULL;
     weapon = NULL;
-    unk_12d0 = 0;
+    reserved_word = 0;
     effect_active = 0;
     effect_timer = -1.0f;
     effect_state = 0;
@@ -214,23 +214,23 @@ void CWeaponLevelUp::Initialize() {
     message_no = 0;
     message_value = 0;
     synthesis_count = 0;
-    unk_12ea = 0;
+    reserved_half = 0;
     buildup_complete = 0;
     lost_default_weapon = 0;
 }
 
-void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
+void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
     ATTACH_LIST total;
     int i;
-    WEAPON_DATA *data;
+    WEAPON_DATA *weapon_data;
     int flags;
-    ATTACH_LIST *att;
+    ATTACH_LIST *attach;
     int j;
-    int n;
-    int k;
-    int value;
-    int doubled;
-    int m;
+    int icon_count;
+    int slot;
+    int sum;
+    int has_double;
+    int hole;
     int option;
     float scale;
 
@@ -238,31 +238,31 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
         printf("src is NULL\n");
         return;
     }
-    texture_block = no;
+    texture_block = tex_block;
     operation_kind = 0;
     effect_motion = 0;
-    CMenuEffectDataLoad(effect, 0);
+    CMenuEffectDataLoad(load_buffer, 0);
     synthesis_count = 0;
     chara = character;
     weapon = have;
     memcpy(&preview, weapon, 0xF8);
-    data = GetWeaponData(preview.item_no);
+    weapon_data = GetWeaponData(preview.item_no);
     memset(&total, 0, 0x20);
     flags = 1;
     flags |= preview.flags;
     for (i = 0; i < 6; i++) {
-        if (data->hole[i] > 0) {
-            att = &preview.attach[i];
+        if (weapon_data->hole[i] > 0) {
+            attach = &preview.attach[i];
             if (preview.attach[i].item_no >= 0x51) {
                 scale = 1.0f;
                 if (preview.attach_kind[i] == 3) {
                     scale = 2.0f;
                 }
-                AttachMentValuePlus(&total, att, scale);
-                if (att->item_no == 0x5A) {
+                AttachMentValuePlus(&total, attach, scale);
+                if (attach->item_no == 0x5A) {
                     synthesis_count++;
-                    if (att->unk_04 != 0 && att->unk_04 != 1) {
-                        flags |= att->unk_04;
+                    if (attach->sphere_flags != 0 && attach->sphere_flags != 1) {
+                        flags |= attach->sphere_flags;
                     }
                 }
             }
@@ -271,8 +271,8 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     flags = CheckWeaponOptionStatus(flags);
     preview.flags |= flags;
     preview.attack += total.status[0];
-    if (preview.attack > data->attack_max) {
-        preview.attack = data->attack_max;
+    if (preview.attack > weapon_data->attack_max) {
+        preview.attack = weapon_data->attack_max;
     }
     preview.endurance += total.status[1];
     if (preview.endurance > 99) {
@@ -283,23 +283,23 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
         preview.speed = 99;
     }
     preview.magic += total.status[3];
-    if (preview.magic > data->magic_max) {
-        preview.magic = data->magic_max;
+    if (preview.magic > weapon_data->magic_max) {
+        preview.magic = weapon_data->magic_max;
     }
     for (j = 0; j < 5; j++) {
-        value = preview.elem[j] + total.elem[j];
-        if (value >= 99) {
+        sum = preview.elem[j] + total.elem[j];
+        if (sum >= 99) {
             preview.elem[j] = 99;
         } else {
-            preview.elem[j] = value;
+            preview.elem[j] = sum;
         }
     }
     for (j = 0; j < 10; j++) {
-        value = preview.vs_monster[j] + total.vs_monster[j];
-        if (value >= 99) {
+        sum = preview.vs_monster[j] + total.vs_monster[j];
+        if (sum >= 99) {
             preview.vs_monster[j] = 99;
         } else {
-            preview.vs_monster[j] = value;
+            preview.vs_monster[j] = sum;
         }
     }
     if (preview.durability >= 99) {
@@ -307,18 +307,18 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     }
     memset(attachment_icons, 0, 0xA);
     memset(attachment_values, 0, 0xA);
-    n = 0;
-    for (k = 0; k < 5; k++) {
-        if (preview.attach[k].item_no >= 0x51) {
-            attachment_icons[n] = preview.attach[k].item_no;
-            attachment_values[n] = 0;
-            if (attachment_icons[n] >= 0x5B && attachment_icons[n] < 0x5F) {
-                attachment_values[n] = preview.attach[k].status[preview.attach[k].item_no - 0x5B];
+    icon_count = 0;
+    for (slot = 0; slot < 5; slot++) {
+        if (preview.attach[slot].item_no >= 0x51) {
+            attachment_icons[icon_count] = preview.attach[slot].item_no;
+            attachment_values[icon_count] = 0;
+            if (attachment_icons[icon_count] >= 0x5B && attachment_icons[icon_count] < 0x5F) {
+                attachment_values[icon_count] = preview.attach[slot].status[preview.attach[slot].item_no - 0x5B];
             }
-            if (attachment_icons[n] == 0x5A) {
-                attachment_values[n] = preview.attach[k].unk_02;
+            if (attachment_icons[icon_count] == 0x5A) {
+                attachment_values[icon_count] = preview.attach[slot].sphere_weapon_no;
             }
-            n++;
+            icon_count++;
         }
     }
     memset(weapon->attach, 0, 0xC0);
@@ -326,16 +326,16 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
     for (j = 0; j < 6; j++) {
         weapon->attach[j].item_no = -1;
     }
-    doubled = 0;
-    for (m = 0; m < 5; m++) {
-        if (data->hole[m] > 0 && data->hole[m] != 2) {
-            if (doubled != 0) {
-                preview.attach_kind[m] = 0;
+    has_double = 0;
+    for (hole = 0; hole < 5; hole++) {
+        if (weapon_data->hole[hole] > 0 && weapon_data->hole[hole] != 2) {
+            if (has_double != 0) {
+                preview.attach_kind[hole] = 0;
             } else if (rand() % 50 == 5) {
-                preview.attach_kind[m] = 3;
-                doubled = 1;
+                preview.attach_kind[hole] = 3;
+                has_double = 1;
             } else {
-                preview.attach_kind[m] = 0;
+                preview.attach_kind[hole] = 0;
             }
         }
     }
@@ -344,11 +344,11 @@ void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, C
 }
 
 void CWeaponLevelUp::SetLevelUpWeaponData() {
-    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+    WEAPON_DATA *weapon_data = GetWeaponData(weapon->item_no);
 
     weapon->attack = weapon->attack + 1;
-    if (weapon->attack > data->attack_max) {
-        weapon->attack = data->attack_max;
+    if (weapon->attack > weapon_data->attack_max) {
+        weapon->attack = weapon_data->attack_max;
     }
     weapon->endurance = weapon->endurance + 1;
     if (weapon->endurance > 99) {
@@ -359,8 +359,8 @@ void CWeaponLevelUp::SetLevelUpWeaponData() {
         weapon->speed = 99;
     }
     weapon->magic = weapon->magic + 1;
-    if (weapon->magic > data->magic_max) {
-        weapon->magic = data->magic_max;
+    if (weapon->magic > weapon_data->magic_max) {
+        weapon->magic = weapon_data->magic_max;
     }
     weapon->durability = weapon->durability + 1 + rand() % 3;
     if (weapon->durability > 99) {
@@ -369,40 +369,40 @@ void CWeaponLevelUp::SetLevelUpWeaponData() {
     weapon->experience = 0;
 }
 
-void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
+void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
     ATTACH_LIST total;
-    int space;
+    int page;
     int i;
-    int n;
-    ATTACH_LIST *board;
+    int slot_no;
+    ATTACH_LIST *items;
     s16 flags;
     ATTACH_LIST *slot;
     float scale;
-    CDngStatusData *status;
+    CDngStatusData *dng_status;
 
     if (have == NULL) {
         printf("src is NULL\n");
         return;
     }
-    texture_block = no;
+    texture_block = tex_block;
     operation_kind = 1;
     effect_state = 4;
     effect_motion = 0;
-    CMenuEffectDataLoad(effect, 1);
+    CMenuEffectDataLoad(load_buffer, 1);
     chara = character;
     weapon = have;
     memset(&status_item_no, 0, 0x20);
     status_item_no = 0x5A;
     status_weapon_no = weapon->item_no;
-    status_weapon_kind = weapon->unk_02;
+    status_weapon_level = weapon->level;
 
-    s16 stat[4] = {0, 0, 0, 0};
-    stat[0] = weapon->attack;
-    stat[1] = weapon->endurance;
-    stat[2] = weapon->speed;
-    stat[3] = weapon->magic;
+    s16 base_stats[4] = {0, 0, 0, 0};
+    base_stats[0] = weapon->attack;
+    base_stats[1] = weapon->endurance;
+    base_stats[2] = weapon->speed;
+    base_stats[3] = weapon->magic;
     for (i = 0; i < 4; i++) {
-        status_stats[i] = 0.6f * (float) stat[i];
+        status_stats[i] = 0.6f * (float) base_stats[i];
     }
     scale = 0.6f;
     for (i = 0; i < 5; i++) {
@@ -414,7 +414,7 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
     flags = 0;
     flags |= weapon->flags;
     memset(&total, 0, 0x20);
-    total.unk_02 = status_weapon_no;
+    total.sphere_weapon_no = status_weapon_no;
     for (i = 0; i < 6; i++) {
         if (weapon->attach[i].item_no >= 0x51) {
             scale = 1.0f;
@@ -423,34 +423,34 @@ void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CW
             }
             AttachMentValuePlus(&total, &have->attach[i], scale);
             if (weapon->attach[i].item_no == 0x5A) {
-                if (weapon->attach[i].unk_04 != 0 && weapon->attach[i].unk_04 != 1) {
-                    flags |= weapon->attach[i].unk_04;
+                if (weapon->attach[i].sphere_flags != 0 && weapon->attach[i].sphere_flags != 1) {
+                    flags |= weapon->attach[i].sphere_flags;
                 }
             }
         }
     }
     AttachMentValuePlus((ATTACH_LIST *) &status_item_no, &total, 0.6f);
     flags = CheckWeaponOptionStatus(flags);
-    status = SaveData->GetDngStatus();
-    n = GetBoardSpace(0x5A, &space);
-    board = (ATTACH_LIST *) status->consumable_items;
-    slot = &board[n];
+    dng_status = SaveData->GetDngStatus();
+    slot_no = GetBoardSpace(0x5A, &page);
+    items = (ATTACH_LIST *) dng_status->consumable_items;
+    slot = &items[slot_no];
     memcpy(slot, &status_item_no, 0x20);
     slot->item_no = 0x5A;
-    board[n].stat_00 = weapon->unk_02;
-    board[n].unk_02 = weapon->item_no;
-    board[n].unk_04 = flags;
+    items[slot_no].sphere_level = weapon->level;
+    items[slot_no].sphere_weapon_no = weapon->item_no;
+    items[slot_no].sphere_flags = flags;
 }
 
-void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
+void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
     if (have == NULL) {
         return;
     }
-    texture_block = no;
+    texture_block = tex_block;
     operation_kind = 2;
     effect_state = 7;
     effect_motion = 0;
-    CMenuEffectDataLoad(effect, operation_kind);
+    CMenuEffectDataLoad(load_buffer, operation_kind);
     chara = character;
     weapon = have;
     memcpy(&preview, weapon, 0xF8);
@@ -461,22 +461,22 @@ void CWeaponLevelUp::SetBuildUp(WEAPON_HAVE *have, CCharacter *character, CWeapo
     }
 }
 
-void CWeaponLevelUp::WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *effect, int no) {
-    if (have == NULL || character == NULL || effect == NULL) {
+void CWeaponLevelUp::WepRecover(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
+    if (have == NULL || character == NULL || load_buffer == NULL) {
         return;
     }
-    texture_block = no;
+    texture_block = tex_block;
     operation_kind = 3;
     effect_state = 10;
     effect_motion = 0;
-    CMenuEffectDataLoad(effect, operation_kind);
+    CMenuEffectDataLoad(load_buffer, operation_kind);
     chara = character;
     weapon = have;
 }
 
-void CWeaponLevelUp::CureEffect(int x, int y, CWeaponLevelUp *effect, int no, int kind) {
-    CMenuEffectDataLoad(effect, kind);
-    texture_block = no;
+void CWeaponLevelUp::CureEffect(int x, int y, CWeaponLevelUp *load_buffer, int tex_block, int kind) {
+    CMenuEffectDataLoad(load_buffer, kind);
+    texture_block = tex_block;
     operation_kind = kind;
     effect_state = (operation_kind - 4) * 2 + 12;
     effect_motion = operation_kind - 4;
@@ -547,24 +547,24 @@ void CWeaponLevelUp::CheckSnd() {
 
 void CWeaponLevelUp::Step() {
     int size;
-    int state;
-    int ready;
-    int se;
+    int motion_state;
+    int ready_count;
+    int se_no;
     int volume;
-    int index;
-    BG_READ_INFO *read;
-    u_int *buffer;
-    u_long128 *aligned;
-    int lost;
+    int file_no;
+    BG_READ_INFO *read_info;
+    u_int *pack_data;
+    u_long128 *cache_base;
+    int discard;
     int option;
-    float now;
+    float motion_time;
 
     if (operation_kind == -1) {
         return;
     }
-    state = 0;
+    motion_state = 0;
     if (effect.frame != NULL) {
-        state = effect.motion_state;
+        motion_state = effect.motion_state;
     }
     switch (effect_state) {
         default:
@@ -586,47 +586,47 @@ void CWeaponLevelUp::Step() {
         case 28:
         case 30:
             ReadBG();
-            ready = 0;
+            ready_count = 0;
             if (ReadBGSync() == 0) {
-                ready++;
+                ready_count++;
             }
             if (SndSPSeSyncBG() == 0) {
-                ready++;
+                ready_count++;
                 if (operation_kind != 6 && operation_kind != 3 && operation_kind != 9 && operation_kind != 4 &&
                     operation_kind != 5) {
                     volume = BtlMenuBGMvol;
                     SetSnd(volume, volume >> 2, 7);
                 }
             }
-            if (ready >= 2) {
-                LOADTEXTURE_INFO2 tex[3] = {{"#frame_menu_level#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
-                tex[0].block_no = texture_block;
-                tex[1].block_no = texture_block;
-                char sel[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-                char *dir[5] = {"wlevelup", "s_break", "buildup", "menu_ex", "w_recover"};
-                char *file[14] = {"wlevelup", "info", "buildup", "info", "w_recover",
-                                  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-                char pack[0x20];
-                char name[0x20];
+            if (ready_count >= 2) {
+                LOADTEXTURE_INFO2 textures[3] = {{"#frame_menu_level#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                textures[0].block_no = texture_block;
+                textures[1].block_no = texture_block;
+                char file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+                char *image_names[5] = {"wlevelup", "s_break", "buildup", "menu_ex", "w_recover"};
+                char *config_names[14] = {"wlevelup", "info", "buildup", "info", "w_recover",
+                                          NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+                char config_name[0x20];
+                char image_name[0x20];
 
-                index = sel[operation_kind];
-                strcpy(pack, file[index]);
-                strcpy(name, dir[index]);
-                strcat(name, ".img");
-                strcat(pack, ".cfg");
-                read = GetReadBGFile(0);
-                tex[1].name = (char *) GetPackFile((u_int *) read->buffer, name, &size);
+                file_no = file_table[operation_kind];
+                strcpy(config_name, config_names[file_no]);
+                strcpy(image_name, image_names[file_no]);
+                strcat(image_name, ".img");
+                strcat(config_name, ".cfg");
+                read_info = GetReadBGFile(0);
+                textures[1].name = (char *) GetPackFile((u_int *) read_info->buffer, image_name, &size);
                 TexManager.DeleteTextureBlock(texture_block);
                 TexManager.CleanUpTextureList();
-                TexManager.LoadTextureBlockEX(-1, tex);
-                buffer = (u_int *) read->buffer;
-                aligned = read->buffer + (read->size >> 4) + 1;
-                aligned = MenuCalcBufAlignment(aligned);
+                TexManager.LoadTextureBlockEX(-1, textures);
+                pack_data = (u_int *) read_info->buffer;
+                cache_base = read_info->buffer + (read_info->size >> 4) + 1;
+                cache_base = MenuCalcBufAlignment(cache_base);
                 effect.Initialize();
-                MenuEffectCashBuffer.base = (u8 *) aligned;
+                MenuEffectCashBuffer.base = (u8 *) cache_base;
                 MenuEffectCashBuffer.limit = 0x9100;
                 MenuEffectCashBuffer.used = 0;
-                effect.LoadPackData(buffer, pack, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
+                effect.LoadPackData(pack_data, config_name, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
                 effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) +
                                                MenuEffectCashBuffer.base);
                 effect_state++;
@@ -667,21 +667,21 @@ void CWeaponLevelUp::Step() {
                 }
                 effect.SetScale(scale);
                 effect.motion_no = effect_motion;
-                effect.flags = 6;
+                effect.motion_flags = 6;
                 effect.motion_speed = -1.0f;
                 effect.Step();
-                se = -1;
+                se_no = -1;
                 switch (operation_kind) {
                     case 1:
-                        se = 0x1A;
+                        se_no = 0x1A;
                         break;
                     case 0:
-                        se = 0x19;
+                        se_no = 0x19;
                         break;
                     case 2:
-                        se = 0x1C;
+                        se_no = 0x1C;
                         if (IsLastWeapon(buildup_weapon_no) != 0) {
-                            se = 0x15;
+                            se_no = 0x15;
                         }
                         break;
                     case 11:
@@ -690,11 +690,11 @@ void CWeaponLevelUp::Step() {
                     case 8:
                     case 7:
                     case 10:
-                        se = 0x14;
+                        se_no = 0x14;
                         break;
                 }
-                if (se >= 0) {
-                    SndSPSePlay(se, -1);
+                if (se_no >= 0) {
+                    SndSPSePlay(se_no, -1);
                 }
                 for (int i = 0; i < 4; i++) {
                     CommonMenuMes1.mes_no[i] = -1;
@@ -715,7 +715,7 @@ void CWeaponLevelUp::Step() {
             break;
         case 3:
             effect_timer += 1.0f;
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_timer = 200.0f;
                 effect_active = 0;
                 return;
@@ -723,20 +723,20 @@ void CWeaponLevelUp::Step() {
             break;
         case 5:
             effect_timer += 1.0f;
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_motion++;
                 effect.motion_no = effect_motion;
-                effect.flags = 6;
+                effect.motion_flags = 6;
                 effect.motion_speed = -1.0f;
                 effect_state++;
                 effect_timer = 0.0f;
-                lost = 1;
+                discard = 1;
                 if (IsDefaultWeapon(weapon->item_no) >= 0) {
-                    lost = 0;
-                    weapon->unk_02 = 0;
+                    discard = 0;
+                    weapon->level = 0;
                     lost_default_weapon = 1;
                 }
-                if (lost != 0) {
+                if (discard != 0) {
                     memset(weapon, 0, 0xF8);
                     weapon->item_no = -1;
                     return;
@@ -747,18 +747,18 @@ void CWeaponLevelUp::Step() {
             break;
         case 6:
             effect_timer += 1.0f;
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_timer = 12.0f;
                 effect_active = 0;
                 return;
             }
             break;
         case 8:
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_motion++;
                 SetWeaponBuildValue(weapon, buildup_weapon_no);
                 weapon->item_no = buildup_weapon_no;
-                weapon->unk_02 = 0;
+                weapon->level = 0;
                 weapon->experience = 0;
                 option = DefaultWeaponOptionSet(buildup_weapon_no);
                 if (option != 1) {
@@ -768,7 +768,7 @@ void CWeaponLevelUp::Step() {
                 MenuExTextureReadFlag = 0;
                 buildup_complete = 1;
                 effect.motion_no = effect_motion;
-                effect.flags = 6;
+                effect.motion_flags = 6;
                 effect.motion_speed = -1.0f;
                 printf("effect setmotion tuuka \n");
                 effect_state++;
@@ -776,20 +776,20 @@ void CWeaponLevelUp::Step() {
             }
             break;
         case 9:
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_active = 0;
                 return;
             }
             break;
         case 11:
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_active = 0;
                 return;
             }
             break;
         case 15:
-            now = effect.motion_type.state.time;
-            if (now > 52.0 && now < 52.3) {
+            motion_time = effect.motion_type.state.time;
+            if (motion_time > 52.0 && motion_time < 52.3) {
                 ComMenuSePlay(0x13);
             }
             /* fallthrough */
@@ -797,7 +797,7 @@ void CWeaponLevelUp::Step() {
         case 17:
         case 19:
         case 23:
-            if (state == 3) {
+            if (motion_state == 3) {
                 if (message_no >= 0x190) {
                     effect_active = 0;
                     return;
@@ -812,7 +812,7 @@ void CWeaponLevelUp::Step() {
         case 27:
         case 29:
         case 31:
-            if (state == 3) {
+            if (motion_state == 3) {
                 effect_active = 0;
             }
             break;
@@ -820,12 +820,12 @@ void CWeaponLevelUp::Step() {
 }
 
 void CWeaponLevelUp::Draw() {
-    s16 icon[5];
-    s16 value[5];
+    s16 icons[5];
+    s16 values[5];
     int i;
     int alpha;
     int count;
-    float step;
+    float angle_step;
     float orbit_radius;
     float angular_rate;
     float angle;
@@ -865,15 +865,15 @@ void CWeaponLevelUp::Draw() {
                 if (attachment_icons[i] < 0x51) {
                     break;
                 }
-                icon[i] = attachment_icons[i];
-                value[i] = attachment_values[i];
+                icons[i] = attachment_icons[i];
+                values[i] = attachment_values[i];
                 count++;
             }
             if (count <= 0) {
                 return;
             }
-            step = 6.2831855f / (float) count;
-            angular_rate = step / 140.0f;
+            angle_step = 6.2831855f / (float) count;
+            angular_rate = angle_step / 140.0f;
             orbit_radius = 128.0f - 128.0f * (effect_timer / 140.0f);
             if (!(effect_timer < 100.0f)) {
                 alpha = 128 - (int) (effect_timer - 100.0f) * 4;
@@ -883,14 +883,14 @@ void CWeaponLevelUp::Draw() {
             }
             MenuTextureReload(MenuShadowReadBlock);
             for (i = 0; i < count; i++) {
-                angle = angular_rate * effect_timer + step * (float) i;
+                angle = angular_rate * effect_timer + angle_step * (float) i;
                 x = orbit_radius * cosf(angle);
                 y = orbit_radius * sinf(angle);
                 x = 320.0f + x - 12.0f;
                 (int) x;
                 y = 224.0f + y - 12.0f;
                 (int) y;
-                DrawIconParts(icon[i], (int) x, (int) y, 0, 0x280, alpha, value[i]);
+                DrawIconParts(icons[i], (int) x, (int) y, 0, 0x280, alpha, values[i]);
             }
             break;
         case 3:
@@ -918,57 +918,57 @@ void CWeaponLevelUp::DrawMes() {
                 return;
         }
 
-        int mes = 0;
+        int mes_id = 0;
         int mes_no[2] = {-1, -1};
         int values[2] = {-1, -1};
 
         switch (effect_state) {
             case 3:
-                mes = 0x190;
+                mes_id = 0x190;
                 mes_no[0] = GetCommonItemInfo(preview.item_no)->msg + 100;
-                values[0] = preview.unk_02 + 1;
+                values[0] = preview.level + 1;
                 break;
             case 6:
-                mes = 0x191;
+                mes_id = 0x191;
                 mes_no[0] = GetCommonItemInfo(status_weapon_no)->msg + 100;
-                values[0] = status_weapon_kind;
+                values[0] = status_weapon_level;
                 break;
             case 9:
-                mes = 0x192;
+                mes_id = 0x192;
                 mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
                 values[0] = 0;
                 break;
             case 11:
-                mes = 0x193;
+                mes_id = 0x193;
                 mes_no[0] = GetCommonItemInfo(weapon->item_no)->msg + 100;
-                values[0] = weapon->unk_02;
+                values[0] = weapon->level;
                 break;
             case 21:
-                mes = 0x194;
+                mes_id = 0x194;
                 mes_no[0] = message_no + 50;
                 values[0] = message_value;
                 break;
             case 23:
-                mes = message_no;
+                mes_id = message_no;
                 break;
             case 29:
-                mes = 0x195;
+                mes_id = 0x195;
                 mes_no[0] = message_no + 50;
                 break;
             case 27:
-                mes = 0x196;
+                mes_id = 0x196;
                 mes_no[0] = message_no + 50;
                 break;
             case 31:
-                mes = 0x197;
+                mes_id = 0x197;
                 values[0] = message_value;
                 break;
             case 25:
-                mes = 0x198;
+                mes_id = 0x198;
                 mes_no[0] = message_no + 50;
                 break;
         }
-        if (CommonMenuMes1.mes_made != mes || CommonMenuMes1.mes_no[0] != mes_no[0] ||
+        if (CommonMenuMes1.mes_made != mes_id || CommonMenuMes1.mes_no[0] != mes_no[0] ||
             CommonMenuMes1.values[0] != values[0]) {
             CommonMenuMes1.value_signed = 1;
             CommonMenuMes1.value_show = 0;
@@ -983,7 +983,7 @@ void CWeaponLevelUp::DrawMes() {
             CommonMenuMes1.mes_no[0] = mes_no[0];
             CommonMenuMes1.values[0] = values[0];
             CommonMenuMes1.mes_made = -1;
-            CommonMenuMes1.MakeMesWin(mes);
+            CommonMenuMes1.MakeMesWin(mes_id);
         }
         CommonMenuMes1.stay_frame = 1;
         MenuTextureReload(CommonMenuMes1.tex_block);

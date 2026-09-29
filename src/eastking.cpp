@@ -37,8 +37,8 @@ STATIC_ASSERT(sizeof(EAST_KING_EVENT_STATE) == 0x1C);
  * Holds the current East King message and its fade state.
  */
 struct EAST_KING_MESSAGE_STATE {
-    s16 message_no; /**< Message currently selected for the event. */
-    s16 unk_02;
+    s16 message_no;   /**< Message currently selected for the event. */
+    s16 unk_02;       /**< Cleared when the event starts; nothing reads it. */
     s16 draw_message; /**< Whether the selected message may be laid out. */
     s16 unk_06;
     s16 unk_08;
@@ -104,8 +104,8 @@ static inline void ResetEastKingMessage() {
     for (int slot = 0; slot < 10; slot++) {
         EastKingMsgCls.mes_no[slot] = -1;
     }
-    for (int value = 0; value < 8; value++) {
-        EastKingMsgCls.values[value] = 0;
+    for (int value_no = 0; value_no < 8; value_no++) {
+        EastKingMsgCls.values[value_no] = 0;
     }
     EastKingMsgCls.value = 0;
     EastKingMsgCls.value_signed = 0;
@@ -149,11 +149,11 @@ void EastKingTextureEnter() {
         EastKingMsgCls.text_rate_set = 0.0f;
         EastKingMsgCls.centre_rows = 1;
         EastKingMsgCls.tex_block = 0x1A;
-        EastKingMsgCls.unk_17B0 = buffer_end;
+        EastKingMsgCls.tex_buff = buffer_end;
         EastKingMsgCls.SetBuff(messages);
         EastKingMsgCls.mes_made = -1;
-        EastKingMsgCls.unk_02C = 0x10;
-        EastKingMsgCls.unk_030 = 0x10;
+        EastKingMsgCls.init_02C = 0x10;
+        EastKingMsgCls.init_030 = 0x10;
         EastKingMsgCls.page_arrow = 1;
         EastKing.resources_ready = 1;
         EastKingMsg.draw_message = 1;

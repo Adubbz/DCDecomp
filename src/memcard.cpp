@@ -573,13 +573,13 @@ void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned cha
 }
 
 /**
- * Draws the pulsing highlight over an object on the georama board.
+ * Draws a swaying 32-pixel icon from the stay-frame texture, with a shadow beneath it when asked.
  */
-void DrawMenuObjectVibe(int x, int y, int highlight, int alpha) {
+void DrawMenuObjectVibe(int x, int y, int shadow, int icon_u) {
     CTexture *texture = TexManager.GetTexture(AtoraVibeTextureName, -1);
-    CRect_i_ src(alpha, 0x28, 0x20, 0x20);
+    CRect_i_ src(icon_u, 0x28, 0x20, 0x20);
 
-    if (highlight != 0) {
+    if (shadow != 0) {
         DrawObjectVibe(x + 5, y + 3, texture, src, 0, 100);
     }
     DrawObjectVibe(x, y, texture, src, 0x80, 0x80);
@@ -943,7 +943,7 @@ static int AtoraCompOrEvent(EDITPARTS_INFO *info) {
         for (i = 0; i < 6; i++) {
             element = &info->elements[i];
             if (element->id >= 40) {
-                if (element->unk_1C >= 0) {
+                if (element->npc_no >= 0) {
                     if (AlreadyPeopleTalk(MenuAtoraSel.map_no, element->id) == 0) {
                         talked = 0;
                     }
@@ -989,7 +989,7 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
     if (info->elements[slot].id < 0) {
         return -1;
     }
-    link = info->elements[slot].unk_04;
+    link = info->elements[slot].required_element;
     if (link < 0 || info->elements[slot].enabled != 0) {
         return 0;
     }
@@ -1001,7 +1001,7 @@ static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
     if (info->elements[link].enabled == 0) {
         code += 10;
     }
-    next = info->elements[link].unk_04;
+    next = info->elements[link].required_element;
     if (next >= 0 && info->elements[next].enabled == 0) {
         code += 10;
     }
@@ -1016,8 +1016,8 @@ static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *attach) {
     int display;
 
     display = 1;
-    if (attach != NULL && attach->id < 40 && attach->unk_18 >= 0 &&
-        (SaveData->GetGrdNPCData(MenuAtoraSel.map_no, attach->unk_18)->flags & 2) == 0) {
+    if (attach != NULL && attach->id < 40 && attach->npc_no >= 0 &&
+        (SaveData->GetGrdNPCData(MenuAtoraSel.map_no, attach->npc_no)->flags & 2) == 0) {
         display = 0;
     }
     return display;
@@ -1097,11 +1097,11 @@ static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
         if (info->elements[i].id < 0) {
             enable[i] = 0;
         } else {
-            link = info->elements[i].unk_04;
+            link = info->elements[i].required_element;
             if (link < 0) {
                 enable[i] = 1;
             } else {
-                link = info->elements[link].unk_04;
+                link = info->elements[link].required_element;
                 if (link < 0) {
                     enable[i] = 1;
                 } else if (info->elements[link].enabled != 0) {
@@ -1177,7 +1177,7 @@ static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
                 msg_no = -1000;
                 break;
             }
-            msg_no = parts->unk_0C + map_no * 200;
+            msg_no = parts->msg_no + map_no * 200;
             switch (map_no) {
                 case 2:
                     if (info->parts_no == 1) {
@@ -1201,7 +1201,7 @@ static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
             if (info->elements[slot - 1].enabled == 0) {
                 msg_no += 60;
             }
-            link = info->elements[slot - 1].unk_04;
+            link = info->elements[slot - 1].required_element;
             if ((link >= 0 && info->elements[link].enabled == 0) || AtraTipCanDisplay(shown) == 0) {
                 msg_no = -788;
             }
@@ -1324,7 +1324,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
     int event = AtoraCompOrEvent(info);
     u = 0;
     v = 0;
-    if (all_tips != 0 || (info->unk_08 != 0 && info->elements[0].id < 0)) {
+    if (all_tips != 0 || (info->obtained != 0 && info->elements[0].id < 0)) {
         v = 0x78;
     }
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 0x100, 0x78), CRect_i_(0, v, 0x100, 0x79), alpha);
@@ -1334,7 +1334,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
     int picture_x = x + 0x20;
     int picture_y = y + 8;
     int draw_picture = 1;
-    int tex_no = parts->unk_08;
+    int tex_no = parts->tex_no;
     u = (tex_no / 6) * 0x54 + 0x104;
     v = (tex_no + 6) % 6 * 0x54;
     if (MenuAtoraSel.map_no == 5) {
@@ -1367,7 +1367,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
                 int tip_x = x + slot_x;
                 int tip_y = y + slot_y;
                 AtoraTipRelationDraw(tip_x, tip_y, info, i, status, alpha);
-                if ((chip->unk_04 < 0 || status < 3) && status != 50) {
+                if ((chip->required_element < 0 || status < 3) && status != 50) {
                     AtoraTipGetTexPos(chip->id, u, v);
                     CTexture *hole = AtoraTipHoleTexInfoGet(all_tips, colour);
                     DrawMenu2DSprite(hole, CRect_i_(tip_x, tip_y, 0x24, 0x24), CRect_i_(u, v, 0x24, 0x25), colour[0],
@@ -1375,7 +1375,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
                 }
                 if (info->elements[i].enabled != 0) {
                     AtoraTipObjectOrPerson(tip_x, tip_y, info->elements[i].id, all_tips, alpha);
-                    if (complete == 0 && chip->unk_18 >= 0 && AlreadyPeopleTalk(MenuAtoraSel.map_no, chip->id) == 0 &&
+                    if (complete == 0 && chip->npc_no >= 0 && AlreadyPeopleTalk(MenuAtoraSel.map_no, chip->id) == 0 &&
                         AtoraHeyCnt % (chip->id + 0x4B) < 0x46) {
                         DrawMenu2DSprite(CompleteTex, CRect_i_(tip_x - 9, tip_y - 7, 0x20, 0x15),
                                          CRect_i_(0xE2, 0, 0x20, 0x16), alpha);
@@ -1471,7 +1471,7 @@ static void MenuAtoraAfterFadeIn() {
 }
 
 void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 *buffer) {
-    MenuAtoraSel.unk_04 = open_mode;
+    MenuAtoraSel.open_mode = open_mode;
     InitPersonalBoardMode((CUserStatus *) SaveData->GetDngStatus(), &MenuAtoraSel.board, 2, edit_map + 3);
     MenuAtoraSel.prev_mes_buff = CommonMenuMes2.buff;
     AtoraTextureBaseBlock = texture_blocks[0];
@@ -1479,15 +1479,15 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     AtoraOffsetBuf = buffer;
     AtoraOffsetBuf = MenuCalcBufAlignment(buffer);
     AtoraTextureEnterFlag = 0;
-    MenuAtoraSel.unk_08 = edit_map;
+    MenuAtoraSel.edit_map = edit_map;
     CommonMenuMes3.Preset(4);
     CommonMenuMes3.style = 0;
     CommonMenuMes3.end_mark = 0;
     CommonMenuMes3.auto_pos = -1;
     CommonMenuMes3.mes_made = -1;
     AtoraNameMes.Preset(4);
-    AtoraNameMes.unk_17B0 = MesWinTexBuff_12;
-    memset(AtoraNameMes.unk_17B0, 0, 0x100);
+    AtoraNameMes.tex_buff = MesWinTexBuff_12;
+    memset(AtoraNameMes.tex_buff, 0, 0x100);
     AtoraNameMes.rows = 4;
     s8 widths[7] = {0x10, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C};
     AtoraNameMes.char_width = widths[GetMenuLangFlag()];
@@ -1499,7 +1499,7 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
     AtoraNameMes.mes_made = -1;
     AtoraNameMes.narrow_gaiji = 1;
     NowTipHavePt = (ATORA_TIP_HAVE *) &MenuAtoraSel.board.held_item;
-    MenuAtoraSel.unk_17E = 0;
+    MenuAtoraSel.last_board_pos = 0;
     MenuAtoraSel.board.cursor = 0;
     MenuAtoraSel.step = 1;
     MenuAtoraSel.step_count = 0;
@@ -1529,7 +1529,7 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
         MenuAtoraSel.board.cursor = 0;
     }
     if (GetMenuAtraEventFlag() != 0) {
-        MenuAtoraSel.board_pos = MenuAtoraSel.unk_198;
+        MenuAtoraSel.board_pos = MenuAtoraSel.event_board_pos;
     }
 }
 
@@ -1555,15 +1555,15 @@ void InitMenuAtoraSelect(int map_no) {
         }
         StartReadBG();
         LoadFileBG(path, AtoraOffsetBuf, NULL);
-        MenuAtoraSel.unk_1A8 = 0;
-        if ((MenuAtoraSel.unk_04 == 2 || MenuAtoraSel.unk_04 == 1) && MenuAtoraSel.map_no == MapNo) {
+        MenuAtoraSel.load_state = 0;
+        if ((MenuAtoraSel.open_mode == 2 || MenuAtoraSel.open_mode == 1) && MenuAtoraSel.map_no == MapNo) {
             CommonMenuAtoraInfo = &EditPartsInfo;
         } else {
             CommonMenuAtoraInfo = &BtEditPartsInfo;
             CommonMenuAtoraInfo->Load(MenuAtoraSel.map_no, SaveData, 1);
         }
     }
-    MenuAtoraSel.board.unk_2C = SaveData->GetElemData(map);
+    MenuAtoraSel.board.atla_elements = SaveData->GetElemData(map);
     next = CommonMenuAtoraInfo->GetNextPartsNum(-1);
     AtoraTipInfoInit();
     count = AtraBoardMaxNum(MenuAtoraSel.map_no);
@@ -1684,7 +1684,7 @@ void DrawMenuAtoraSelect() {
     if (MenuAtoraSel.step != 8) {
         DrawAtoraSelect(alpha);
         if (MenuAtoraSel.step == 0) {
-            DrawMenuObjectVibe(MenuAtoraSel.cursor_x, MenuAtoraSel.cursor_y, 1, MenuAtoraSel.unk_188);
+            DrawMenuObjectVibe(MenuAtoraSel.cursor_x, MenuAtoraSel.cursor_y, 1, MenuAtoraSel.cursor_icon_u);
         }
         if (MenuAtoraSel.step != 0 && AtoraTextureEnterFlag != 0) {
             MenuAtoraSel.step_count++;
@@ -1788,7 +1788,7 @@ static void DrawAtoraSelect(int fade) {
     if (alpha > 0x80) {
         alpha = 0x80;
     }
-    open_mode = MenuAtoraSel.unk_04;
+    open_mode = MenuAtoraSel.open_mode;
     MenuAtoraSel.name_alpha = alpha;
     info = SearchAtoraInfo(MenuAtoraSel.board_pos);
     event = 0;
@@ -1936,9 +1936,9 @@ static void DrawAtoraSelect(int fade) {
             break;
         }
     }
-    MenuAtoraSel.unk_188 = 0x40;
+    MenuAtoraSel.cursor_icon_u = 0x40;
     if (NowTipHavePt->tip_no > -1) {
-        MenuAtoraSel.unk_188 = 0x80;
+        MenuAtoraSel.cursor_icon_u = 0x80;
         cursor_x += 25.0f;
         cursor_y += 12.0f;
     } else {
@@ -1948,17 +1948,17 @@ static void DrawAtoraSelect(int fade) {
                     if (0 < MenuAtoraSel.board.cursor && info->elements[MenuAtoraSel.board.cursor - 1].enabled != 0) {
                         cursor_x += 27.0f;
                         cursor_y += 12.0f;
-                        MenuAtoraSel.unk_188 = 0x60;
+                        MenuAtoraSel.cursor_icon_u = 0x60;
                     } else {
-                        MenuAtoraSel.unk_188 = 0x40;
+                        MenuAtoraSel.cursor_icon_u = 0x40;
                     }
                 }
                 break;
             case 1:
-                if (MenuAtoraSel.board.cursor > -1 && MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor] > -1) {
+                if (MenuAtoraSel.board.cursor > -1 && MenuAtoraSel.board.atla_elements[MenuAtoraSel.board.cursor] > -1) {
                     cursor_x += 25.0f;
                     cursor_y += 12.0f;
-                    MenuAtoraSel.unk_188 = 0x60;
+                    MenuAtoraSel.cursor_icon_u = 0x60;
                 }
                 break;
         }
@@ -2089,7 +2089,7 @@ static int SeitonAtoraTipBoardSub() {
     }
     tip_table[0] = 3;
     moved = 0;
-    list = MenuAtoraSel.board.unk_2C;
+    list = MenuAtoraSel.board.atla_elements;
     for (i = 0; i < 119; i++) {
         for (j = i + 1; j < 120; j++) {
             if (CompTip(list[i], list[j]) > 0) {
@@ -2146,12 +2146,12 @@ int MenuAtoraSelectKey() {
             break;
         case 3:
             if (MenuAtoraSel.map_no != 5) {
-                switch (MenuAtoraSel.unk_04) {
+                switch (MenuAtoraSel.open_mode) {
                     case 2:
                         CommonMenuAtoraInfo->GetPartsInfo(MenuAtoraSel.board_pos);
                         MenuAtoraSel.step = 0;
                         EditMenuStatus.mode = 5;
-                        MenuAtoraSel.unk_17E = EditMenuStatus.event_no = MenuAtoraSel.board_pos;
+                        MenuAtoraSel.last_board_pos = EditMenuStatus.event_no = MenuAtoraSel.board_pos;
                         ExitAtoraSelect();
                         GamePad.AutoRepeatOff();
                         GamePad.MenuModeOff();
@@ -2177,8 +2177,8 @@ int MenuAtoraSelectKey() {
                 int block[1] = {0};
                 block[0] = AtoraTextureReadBlock;
                 event_no = SearchAtoraInfo(MenuAtoraSel.board_pos)->parts_no;
-                MenuAtoraSel.unk_198 = MenuAtoraSel.board_pos;
-                MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
+                MenuAtoraSel.event_board_pos = MenuAtoraSel.board_pos;
+                MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                 InitEastKingEvent(event_no, block, AtoraOffsetBuf);
             }
             break;
@@ -2250,7 +2250,7 @@ int MenuAtoraSelectKey() {
                     info = SearchAtoraInfo(MenuAtoraSel.board_pos);
                     EditMenuStatus.mode = 0;
                     EditMenuStatus.parts = info->parts_no;
-                    MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
+                    MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                     ExitAtoraSelect();
                     ComMenuSePlay(1);
                     break;
@@ -2266,7 +2266,7 @@ int MenuAtoraSelectKey() {
                     if (max_pos <= MenuAtoraSel.board_pos) {
                         MenuAtoraSel.board_pos = max_pos;
                     }
-                    MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
+                    MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                     InitMenuAtoraSelect(MenuAtoraSel.map_no);
                     MenuAtoraSel.step = 6;
                     MenuAtoraSel.step_count = 0;
@@ -2295,7 +2295,7 @@ int MenuAtoraSelectKey() {
             }
             break;
         case 1:
-            held = MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor];
+            held = MenuAtoraSel.board.atla_elements[MenuAtoraSel.board.cursor];
             msg_base = MenuAtoraSel.map_no * 200 + 1000;
             if (held > -1) {
                 msg_no = msg_base + AtoraTipOnlyMsgNoGet(MenuAtoraSel.map_no, held);
@@ -2318,7 +2318,7 @@ int MenuAtoraSelectKey() {
 
 static int AtoraBoardKey() {
     int movable[8];
-    int open_mode = MenuAtoraSel.unk_04;
+    int open_mode = MenuAtoraSel.open_mode;
     int max = AtraBoardMaxNum(MenuAtoraSel.map_no);
     int old_cursor = MenuAtoraSel.board.cursor;
     int old_pos = MenuAtoraSel.board_pos;
@@ -2447,7 +2447,7 @@ static int AtoraBoardKey() {
                 }
                 AtoraCompOrEvent(info);
                 int all_tips = AtoraAllTipGet(info->parts_no);
-                if (MenuAtoraSel.unk_04 == 1) {
+                if (MenuAtoraSel.open_mode == 1) {
                     MenuAtoraSel.step = 10;
                     se = 2;
                 } else if (MenuAtoraSel.board.cursor == 0) {
@@ -2455,13 +2455,13 @@ static int AtoraBoardKey() {
                     if (0 <= held) {
                         se = 2;
                     } else if (full == 0 && held < 0 && open_mode == 2 && NowEditMap == MenuAtoraSel.map_no) {
-                        MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
+                        MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                         ComMenuSePlay(1);
                         return 10;
                     } else if (all_tips != 0 && MenuAtoraSel.map_no == 5) {
                         MenuAtoraSel.step = 3;
                         MenuAtoraSel.step_count = 0;
-                        MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
+                        MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                     } else {
                         se = 2;
                     }
@@ -2477,7 +2477,7 @@ static int AtoraBoardKey() {
                         } else {
                             int free = 1;
                             for (int i = slot; i < 6; i++) {
-                                if (slot == info->elements[i].unk_04 && info->elements[i].enabled != 0) {
+                                if (slot == info->elements[i].required_element && info->elements[i].enabled != 0) {
                                     free = 0;
                                 }
                             }
@@ -2503,7 +2503,7 @@ static int AtoraBoardKey() {
                         if (element->enabled != 0) {
                             fits = 0;
                         }
-                        int linked = element->unk_04;
+                        int linked = element->required_element;
                         if (linked >= 0 && info->elements[linked].enabled == 0) {
                             fits = 0;
                         }
@@ -2533,7 +2533,7 @@ static int AtoraBoardKey() {
         } else if (GamePad.Down(0x20) != 0) {
             se = 2;
             if (NowTipHavePt->tip_no < 0) {
-                MenuAtoraSel.unk_17E = MenuAtoraSel.board_pos;
+                MenuAtoraSel.last_board_pos = MenuAtoraSel.board_pos;
                 result = 100;
             } else {
                 AtoraMenuTipCancel();
@@ -2582,7 +2582,7 @@ static int AtoraTipKey() {
             ComMenuSePlay(0);
         }
         if (GamePad.Down(0x40)) {
-            s16 *tip = &MenuAtoraSel.board.unk_2C[MenuAtoraSel.board.cursor];
+            s16 *tip = &MenuAtoraSel.board.atla_elements[MenuAtoraSel.board.cursor];
             if (NowTipHavePt->tip_no == *tip) {
                 ComMenuSePlay(2);
             } else {
@@ -2617,8 +2617,8 @@ static void AtoraMenuTipCancel() {
 
     switch (NowTipHavePt->mode) {
         case 1:
-            tip_no = MenuAtoraSel.board.unk_2C[NowTipHavePt->slot];
-            MenuAtoraSel.board.unk_2C[NowTipHavePt->slot] = NowTipHavePt->tip_no;
+            tip_no = MenuAtoraSel.board.atla_elements[NowTipHavePt->slot];
+            MenuAtoraSel.board.atla_elements[NowTipHavePt->slot] = NowTipHavePt->tip_no;
             NowTipHavePt->tip_no = tip_no;
             break;
         case 0:
@@ -2978,7 +2978,7 @@ int MenuOptionKey() {
             break;
         default: {
             int old_cursor = OptionMenu.cursor;
-            int old_mode = OptionMenu.buttons;
+            int old_buttons = OptionMenu.buttons;
             if (GamePad.Down(0xF) != 0) {
                 if (OptionMenu.cursor / 10 - 1 < 6) {
                     OptionMenu.cursor += 60;
@@ -3085,7 +3085,7 @@ int MenuOptionKey() {
                     }
                     break;
             }
-            if (old_cursor != OptionMenu.cursor || old_mode != OptionMenu.buttons) {
+            if (old_cursor != OptionMenu.cursor || old_buttons != OptionMenu.buttons) {
                 ComMenuSePlay(0);
             }
             if (GamePad.Down(0x20) != 0) {
@@ -3264,10 +3264,10 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
         data = (u_long128 *) read_buffer;
     }
     data = MenuCalcBufAlignment(data);
-    SaveMenu.unk_0 = mode;
+    SaveMenu.mode = mode;
     SaveMenu.block_no = block_no;
     SaveMenu.result = 0;
-    SaveMenu.unk_28 = 0;
+    SaveMenu.step_time = 0;
     SaveMenu.texture_ready = 0;
     SaveMenu.file_no = 0;
     SaveMenu.loaded = 0;
@@ -3276,30 +3276,30 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
     if (McAccess.InitForMC()) {
         return 0;
     }
-    switch (SaveMenu.unk_0) {
+    switch (SaveMenu.mode) {
         case 0:
             GamePad.SetAutoRepeat(0xA000, 30, 5);
             GamePad.MenuModeOn(120);
             SaveMenu.key_no = 3;
-            SaveMenu.unk_1C = 1;
+            SaveMenu.access_kind = 1;
             break;
         case 1:
             SaveMenu.key_no = 3;
-            SaveMenu.unk_1C = 2;
+            SaveMenu.access_kind = 2;
             EditSave();
             break;
         case 2:
         case 3:
-            clear = SaveMenu.unk_0 == 2;
-            *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] = clear;
+            clear = SaveMenu.mode == 2;
+            *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] = clear;
             printf("SaveData clear flag = %d\n",
-                   *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2]);
-            GameClearFlag = SaveMenu.unk_0 == 2;
-            SaveMenu.unk_0 = 2;
+                   *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2]);
+            GameClearFlag = SaveMenu.mode == 2;
+            SaveMenu.mode = 2;
             GamePad.SetAutoRepeat(0xA000, 30, 5);
             GamePad.MenuModeOn(120);
             SaveMenu.key_no = 22;
-            SaveMenu.unk_1C = 2;
+            SaveMenu.access_kind = 2;
             break;
     }
     SaveMenu.return_key_no = -1;
@@ -3318,7 +3318,7 @@ static void ExitSaveSelect() {
     CommonMenuMes2.value_show = 0;
     CommonMenuMes2.value_signed = 1;
     CommonMenuMes2.auto_pos = -1;
-    switch (SaveMenu.unk_0) {
+    switch (SaveMenu.mode) {
         case 0:
             GamePad.AutoRepeatOff();
             GamePad.MenuModeOff();
@@ -3396,27 +3396,27 @@ int (*SaveMenuFunc[26])() = {
 };
 
 int MenuSaveKey() {
-    int func_no;
+    int prev_func_no;
     int result;
     int now_func_no;
     int msg_no;
-    int value;
+    int mes_value;
     MC_ERROR_INFO *error;
     MC_ERROR_INFO *last_error;
 
     if (!SaveMenu.texture_ready) {
         SaveMenu.texture_ready = SaveMenuTextureEnter();
     }
-    func_no = McAccess.GetFuncNo();
+    prev_func_no = McAccess.GetFuncNo();
     result = McAccess.Step();
     now_func_no = McAccess.GetFuncNo();
-    if (func_no == now_func_no) {
+    if (prev_func_no == now_func_no) {
         last_error = &McAccess.error;
         switch (now_func_no) {
             case 9:
                 if (result < 0) {
                     SaveMenu.key_no = 14;
-                    SaveMenu.unk_20 = 7;
+                    SaveMenu.alert_no = 7;
                     McAccess.SetFuncNo(1);
                 }
                 break;
@@ -3424,14 +3424,14 @@ int MenuSaveKey() {
             case 5:
                 if (result < 0) {
                     SaveMenu.key_no = 14;
-                    SaveMenu.unk_20 = 8;
+                    SaveMenu.alert_no = 8;
                     McAccess.SetFuncNo(1);
                 }
                 break;
             case 6:
                 if (result < 0) {
                     SaveMenu.key_no = 14;
-                    SaveMenu.unk_20 = 9;
+                    SaveMenu.alert_no = 9;
                     McAccess.SetFuncNo(1);
                 }
                 break;
@@ -3440,7 +3440,7 @@ int MenuSaveKey() {
             case 4:
                 if (result < 0) {
                     SaveMenu.key_no = 14;
-                    SaveMenu.unk_20 = 6;
+                    SaveMenu.alert_no = 6;
                     McAccess.SetFuncNo(1);
                     break;
                 }
@@ -3457,17 +3457,17 @@ int MenuSaveKey() {
                         break;
                     case 4:
                         SaveMenu.key_no = 14;
-                        SaveMenu.unk_20 = 2;
+                        SaveMenu.alert_no = 2;
                         break;
                 }
                 break;
         }
     } else {
-        switch (func_no) {
+        switch (prev_func_no) {
             case 4:
                 break;
             case 6:
-                switch (SaveMenu.unk_0) {
+                switch (SaveMenu.mode) {
                     case 0:
                         SaveMenu.key_no = 1;
                         SaveMenu.loaded = 1;
@@ -3513,7 +3513,7 @@ int MenuSaveKey() {
     }
     msg_no = GetSaveMenuMsgNo();
     if (CommonMenuMes2.mes_made != msg_no) {
-        value = SaveMenu.file_no + 1;
+        mes_value = SaveMenu.file_no + 1;
         switch (msg_no - 250) {
             case 3:
             case 6:
@@ -3521,10 +3521,10 @@ int MenuSaveKey() {
             case 17:
             case 29:
             case 30:
-                value = McAccess.port + 1;
+                mes_value = McAccess.port + 1;
                 break;
         }
-        CommonMenuMes2.value = value;
+        CommonMenuMes2.value = mes_value;
         if (msg_no == 299) {
             CommonMenuMes2.value = McAccess.error.file_no;
         }
@@ -3539,7 +3539,7 @@ void DrawMenuSave(char *) {
         return;
     }
     setbilinear(0);
-    switch (SaveMenu.unk_0) {
+    switch (SaveMenu.mode) {
         case 0:
         case 1:
             break;
@@ -3550,13 +3550,13 @@ void DrawMenuSave(char *) {
     int alpha = 0x80;
     switch (SaveMenu.key_no) {
         case 0:
-            alpha = SaveMenu.unk_28 * 6;
+            alpha = SaveMenu.step_time * 6;
             if (alpha > 0x80) {
                 alpha = 0x80;
             }
             break;
         case 1:
-            alpha = 0x80 - SaveMenu.unk_28 * 4;
+            alpha = 0x80 - SaveMenu.step_time * 4;
             if (alpha < 0) {
                 alpha = 0;
             }
@@ -3564,8 +3564,8 @@ void DrawMenuSave(char *) {
     }
     MenuTextureReload(SaveMenu.block_no);
     float y = 150.0f - 150.0f * SaveMenu.file_no;
-    SaveMenu.unk_10 += (y - SaveMenu.unk_10) / 4.0f;
-    y = SaveMenu.unk_10;
+    SaveMenu.board_y += (y - SaveMenu.board_y) / 4.0f;
+    y = SaveMenu.board_y;
     float board_x = 140.0f;
     int bright = 0x80;
     switch (SaveMenu.key_no) {
@@ -3588,12 +3588,12 @@ void DrawMenuSave(char *) {
             show = 1;
             break;
     }
-    if (SaveMenu.key_no == 1 && SaveMenu.unk_0 == 0 && SaveMenu.loaded != 0) {
+    if (SaveMenu.key_no == 1 && SaveMenu.mode == 0 && SaveMenu.loaded != 0) {
         show = 1;
     }
     if (show != 0 && (unsigned int) (McAccess.GetFuncNo() - 4) > 1U) {
-        MC_CARD_INFO *mcinfo = McAccess.card;
-        if (mcinfo != NULL) {
+        MC_CARD_INFO *cards = McAccess.card;
+        if (cards != NULL) {
             for (int i = 0; i < 12; i++) {
                 SAVEDATA_INFO *file = &McAccess.file_info[i];
                 if (file != NULL) {
@@ -3707,13 +3707,13 @@ void DrawMenuSave(char *) {
         case 1:
         case 3:
         case 0:
-            SaveMenu.unk_28++;
+            SaveMenu.step_time++;
             break;
         default:
-            SaveMenu.unk_28 = 0;
+            SaveMenu.step_time = 0;
             break;
     }
-    switch (SaveMenu.unk_0) {
+    switch (SaveMenu.mode) {
         case 0:
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x46, 0x32, 0x3A, 0x27), CRect_i_(0x110, 0xD8, 0x3A, 0x28), alpha);
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x4A, 0x1E), CRect_i_(0x110, 0x100, 0x4A, 0x1E), alpha);
@@ -3725,15 +3725,15 @@ void DrawMenuSave(char *) {
 }
 
 static int SaveMenuKeyFadeIn() {
-    if (SaveMenu.unk_28 > 14) {
+    if (SaveMenu.step_time > 14) {
         SaveMenu.key_no = 7;
-        SaveMenu.unk_28 = 0;
+        SaveMenu.step_time = 0;
     }
     return 1;
 }
 
 static int SaveMenuKeyFadeOut() {
-    if (SaveMenu.unk_28 > 32) {
+    if (SaveMenu.step_time > 32) {
         ExitSaveSelect();
         if (SaveMenu.loaded) {
             SaveMenu.result = 1;
@@ -3754,9 +3754,9 @@ static int SaveMenuKeyModeSelect() {
     }
     if (GamePad.Down(0x40)) {
         if (SaveMenu.file_no) {
-            SaveMenu.unk_1C = 1;
+            SaveMenu.access_kind = 1;
         } else {
-            SaveMenu.unk_1C = 2;
+            SaveMenu.access_kind = 2;
         }
         SaveMenu.key_no = 3;
         SaveMenu.file_no = 0;
@@ -3766,7 +3766,7 @@ static int SaveMenuKeyModeSelect() {
     if (GamePad.Down(0x20)) {
         SaveMenu.key_no = 1;
         ExitSaveSelect();
-        SaveMenu.unk_28 = 0;
+        SaveMenu.step_time = 0;
         ComMenuSePlay(2);
         return 1;
     }
@@ -3788,7 +3788,7 @@ static int SaveMenuKeyMcSelect() {
         ComMenuSePlay(0);
     }
     if (GamePad.Down(0x20)) {
-        switch (SaveMenu.unk_0) {
+        switch (SaveMenu.mode) {
             case 0:
                 SaveMenu.key_no = 1;
                 ExitSaveSelect();
@@ -3802,7 +3802,7 @@ static int SaveMenuKeyMcSelect() {
                 ExitSaveSelect();
                 break;
         }
-        SaveMenu.unk_28 = 0;
+        SaveMenu.step_time = 0;
         ComMenuSePlay(2);
         return 1;
     }
@@ -3834,12 +3834,12 @@ static int SaveMenuKeyCheckMcType() {
                 break;
             default:
                 SaveMenu.key_no = 14;
-                SaveMenu.unk_20 = 1;
+                SaveMenu.alert_no = 1;
                 break;
         }
     } else {
         SaveMenu.key_no = 14;
-        SaveMenu.unk_20 = 1;
+        SaveMenu.alert_no = 1;
     }
     return 1;
 }
@@ -3849,34 +3849,34 @@ static int SaveMenuKeyCheckMc() {
 
     printf("check end !!\n");
     card = &McAccess.card[McAccess.port];
-    SaveMenu.unk_20 = 0;
+    SaveMenu.alert_no = 0;
     if (card->present == 0) {
         printf("not \n");
-        SaveMenu.unk_20 = 14;
+        SaveMenu.alert_no = 14;
         SaveMenu.key_no = 3;
         SaveMenu.file_no = McAccess.port;
         return 0;
     }
     if (card->type != 2) {
         printf("type is not PS2\n");
-        SaveMenu.unk_20 = 14;
+        SaveMenu.alert_no = 14;
         SaveMenu.key_no = 3;
         SaveMenu.file_no = McAccess.port;
         return 0;
     }
-    if ((SaveMenu.unk_1C == 1 || SaveMenu.unk_0 == 2) && (card->dir_exists == 0 || card->formatted == 0)) {
-        SaveMenu.unk_20 = 12;
+    if ((SaveMenu.access_kind == 1 || SaveMenu.mode == 2) && (card->dir_exists == 0 || card->formatted == 0)) {
+        SaveMenu.alert_no = 12;
         SaveMenu.key_no = 14;
         return 1;
     }
-    if (SaveMenu.unk_1C == 2 && card->dir_exists == 0 && card->free_size < 400 && card->formatted != 0) {
-        SaveMenu.unk_20 = 10;
+    if (SaveMenu.access_kind == 2 && card->dir_exists == 0 && card->free_size < 400 && card->formatted != 0) {
+        SaveMenu.alert_no = 10;
         SaveMenu.key_no = 14;
         return 1;
     }
-    if (SaveMenu.unk_0 == 2) {
+    if (SaveMenu.mode == 2) {
         SaveMenu.key_no = 23;
-    } else if (SaveMenu.unk_1C == 1) {
+    } else if (SaveMenu.access_kind == 1) {
         SaveMenu.key_no = 6;
         McAccess.SetFuncNo(13);
     } else {
@@ -3890,7 +3890,7 @@ static int SaveMenuKeyCheckMc() {
 static int SaveMenuKeyLoadConfig() {
     McAccess.SetFuncNo(4);
     SaveMenu.key_no = 7;
-    if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] != 0) {
+    if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] != 0) {
         GameClearFlag = 1;
     }
     SaveMenu.file_no = ((s32 *) SaveData->GetConfigData())[17];
@@ -3917,12 +3917,12 @@ static int SaveMenuKeyFileSelect() {
     if (GamePad.Down(0x20)) {
         SaveMenu.key_no = 3;
         SaveMenu.file_no = McAccess.port;
-        SaveMenu.unk_28 = 0;
+        SaveMenu.step_time = 0;
         ComMenuSePlay(2);
         return 1;
     }
     if (GamePad.Down(0x40)) {
-        switch (SaveMenu.unk_1C) {
+        switch (SaveMenu.access_kind) {
             case 2:
                 SaveMenu.key_no = 8;
                 McAccess.SetFuncNo(0);

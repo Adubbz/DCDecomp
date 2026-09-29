@@ -10,16 +10,16 @@
 
 void CMenuItemStep::Initialize(void) {
     frame = 0;
-    unk_08 = -1;
-    unk_04 = -1;
+    last_item = -1;
+    last_slot = -1;
     enabled = 1;
     pending_volume = 0;
     for (int i = 0; i < 4; i++) {
-        unk_10[i] = 0;
+        held_item[i] = 0;
     }
     for (int i = 0; i < 4; i++) {
-        unk_18[i] = -1;
-        unk_20[i] = -1;
+        chara_slot[i] = -1;
+        chara_item[i] = -1;
     }
 }
 
@@ -46,7 +46,7 @@ void CMenuItemStep::CheckItemVolume(void) {
         int preservation[100];
         memset(preservation, 0, sizeof(preservation));
         pack = &SaveData->GetDngStatus()->item_pack;
-        unk_0E = 0;
+        chara_no = 0;
 
         for (slot = 0; slot < pack->num; slot++) {
             if (pack->item[slot] == ITEM_ICE_BLOCK || pack->item[slot] == ITEM_SMALL_ICE ||
@@ -92,8 +92,8 @@ void CMenuItemStep::CheckItemVolume(void) {
             }
         }
 
-        if (unk_10[unk_0E] >= ITEM_DUNGEON_START) {
-            unk_0A = 1;
+        if (held_item[chara_no] >= ITEM_DUNGEON_START) {
+            dungeon_item_held = 1;
         }
         pending_volume = 0;
         frame = 0;

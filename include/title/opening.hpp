@@ -59,7 +59,7 @@ void OpBgmPlay(void);
  * @size 0x158
  * @unknownret
  */
-void OpPlayVolPanSE(float *, float, float, int, int, int);
+void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group, int no, int voice);
 
 /**
  *          Updates a positional opening sound effect's volume and pan.
@@ -69,7 +69,7 @@ void OpPlayVolPanSE(float *, float, float, int, int, int);
  * @size 0x164
  * @unknownret
  */
-void OpSetVolPanSE(float *, float, float, int, int, int);
+void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, int no, int voice);
 
 /**
  *          Plays an opening sound effect at an explicit volume.
@@ -79,7 +79,7 @@ void OpSetVolPanSE(float *, float, float, int, int, int);
  * @size 0xD4
  * @unknownret
  */
-void OpPlayVolSE(int, int, int, float);
+void OpPlayVolSE(int group, int no, int voice, float volume);
 
 /**
  *          Returns the current volume of an opening sequence channel.
@@ -89,7 +89,7 @@ void OpPlayVolSE(int, int, int, float);
  * @size 0x6C
  * @unknownret
  */
-int OpGetVolSQ(int);
+int OpGetVolSQ(int no);
 
 /**
  *          Cancels active opening sound fades.
@@ -109,7 +109,7 @@ void FadeCansel(void);
  * @size 0x152C
  * @unknownret
  */
-void OPAnalyz(char *);
+void OPAnalyz(char *name);
 
 /**
  *          Constructs scene objects from the parsed definition tree.

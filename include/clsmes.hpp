@@ -51,19 +51,19 @@ struct MES_LINE_POS {
 
 class ClsMes {
 public:
-    s32 text_x;       /**< Distance of the text from the left of the screen. */
-    s32 text_y;       /**< Distance of the text from the top of the screen. */
-    s32 char_width;   /**< How wide one character of the font draws. */
-    s32 char_height;  /**< How tall one character of the font draws. */
-    s32 columns;      /**< Characters one line of the window holds. */
-    s32 rows;         /**< Lines the window holds. */
-    s32 text_columns; /**< Characters the widest line of the text takes. */
-    s32 text_rows;    /**< Lines the text takes. */
-    s32 text_len;     /**< Characters the window has laid out to draw. */
-    s32 text_width;   /**< How wide the laid-out text is, in pixels. */
-    s32 text_height;  /**< How tall the laid-out text is, in pixels. */
-    s32 unk_02C;
-    s32 unk_030;
+    s32 text_x;                              /**< Distance of the text from the left of the screen. */
+    s32 text_y;                              /**< Distance of the text from the top of the screen. */
+    s32 char_width;                          /**< How wide one character of the font draws. */
+    s32 char_height;                         /**< How tall one character of the font draws. */
+    s32 columns;                             /**< Characters one line of the window holds. */
+    s32 rows;                                /**< Lines the window holds. */
+    s32 text_columns;                        /**< Characters the widest line of the text takes. */
+    s32 text_rows;                           /**< Lines the text takes. */
+    s32 text_len;                            /**< Characters the window has laid out to draw. */
+    s32 text_width;                          /**< How wide the laid-out text is, in pixels. */
+    s32 text_height;                         /**< How tall the laid-out text is, in pixels. */
+    s32 init_02C;                            /**< Set to 16 by the constructor and never read. */
+    s32 init_030;                            /**< Set to 16 by the constructor and never read. */
     s32 fukidashi;                           /**< Whether the window draws as a speech bubble, not a frame. */
     s32 fukidashi_shape;                     /**< Which shape the bubble takes, as the text asks for. */
     s32 grow_x;                              /**< Point the window grows out of and shrinks back into, from the left. */
@@ -112,29 +112,29 @@ public:
     s32 page_arrow;                          /**< Whether the window draws the mark that says more text follows. */
     s32 end_mark;                            /**< Whether the window always draws that mark, wherever the text is. */
     s32 centre_rows;                         /**< Whether the text sits in the middle of the window's rows. */
-    s32 unk_16D0;
-    s32 edge_alpha;            /**< How solid the outline behind the text draws. */
-    s32 narrow_gaiji_set;      /**< Forces the narrow gaiji page on (2) or off (1); 0 by width. */
-    s32 narrow_gaiji;          /**< Whether the editor's external characters draw narrowed. */
-    s32 mes_no[10];            /**< The message each of the window's slots names. */
-    s32 values[8];             /**< The number each of the window's value slots prints. */
-    s32 value;                 /**< The number the window prints for a bare value code. */
-    s32 value_signed;          /**< Whether a positive value prints with a leading plus. */
-    s32 value_show;            /**< Whether a value prints even when it is zero. */
-    s32 value_narrow;          /**< Whether a value's digits draw at three quarters width. */
-    s32 space_width;           /**< Width one space takes on a justified line; -1 where it is not. */
-    s32 space_area;            /**< Width a justified line spreads across; -1 where it is not. */
-    s32 cursor_row;            /**< Line the choice cursor stands on; negative where there is none. */
-    s32 cursor_y;              /**< Where the cursor has eased to, from the top of the text. */
-    s32 cursor_lit;            /**< Whether the line the cursor stands on is the one drawn wide. */
-    s32 tex_block;             /**< Texture block the window's font is loaded into. */
-    MES_LINE_POS line_pos[10]; /**< Where each line draws, where the window says so. */
-    short *buff;               /**< The message file the window reads its text out of. */
-    short *buff_system;        /**< The same, for the system messages. */
-    char *text;                /**< Where the text of that file starts. */
-    char *text_system;         /**< The same, for the system messages. */
-    void *unk_17B0;
-    u32 *clut; /**< The palette the window's font draws out of. */
+    s32 page_mark_style;                     /**< Whether the window's style asks for the more-text mark; set with the style and never read. */
+    s32 edge_alpha;                          /**< How solid the outline behind the text draws. */
+    s32 narrow_gaiji_set;                    /**< Forces the narrow gaiji page on (2) or off (1); 0 by width. */
+    s32 narrow_gaiji;                        /**< Whether the editor's external characters draw narrowed. */
+    s32 mes_no[10];                          /**< The message each of the window's slots names. */
+    s32 values[8];                           /**< The number each of the window's value slots prints. */
+    s32 value;                               /**< The number the window prints for a bare value code. */
+    s32 value_signed;                        /**< Whether a positive value prints with a leading plus. */
+    s32 value_show;                          /**< Whether a value prints even when it is zero. */
+    s32 value_narrow;                        /**< Whether a value's digits draw at three quarters width. */
+    s32 space_width;                         /**< Width one space takes on a justified line; -1 where it is not. */
+    s32 space_area;                          /**< Width a justified line spreads across; -1 where it is not. */
+    s32 cursor_row;                          /**< Line the choice cursor stands on; negative where there is none. */
+    s32 cursor_y;                            /**< Where the cursor has eased to, from the top of the text. */
+    s32 cursor_lit;                          /**< Whether the line the cursor stands on is the one drawn wide. */
+    s32 tex_block;                           /**< Texture block the window's font is loaded into. */
+    MES_LINE_POS line_pos[10];               /**< Where each line draws, where the window says so. */
+    short *buff;                             /**< The message file the window reads its text out of. */
+    short *buff_system;                      /**< The same, for the system messages. */
+    char *text;                              /**< Where the text of that file starts. */
+    char *text_system;                       /**< The same, for the system messages. */
+    void *tex_buff;                          /**< Buffer the window builds its text texture in, cleared to start over; null where there is none. */
+    u32 *clut;                               /**< The palette the window's font draws out of. */
     /**
      * Gives back how wide one external character of the font draws, in pixels.
      *
@@ -480,7 +480,7 @@ public:
      * @address 0x152EE0
      * @size 0x430
      */
-    void DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
+    void DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
                        const CRect_i_ &screen, int wide, int dark);
 
     /**

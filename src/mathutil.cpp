@@ -51,13 +51,13 @@ public:
  */
 class MWPartialArrayDestructor {
 private:
-    void *array;
-    unsigned int element_size;
-    unsigned int count;
-    MWRuntimeObjectFunction destructor;
+    void *array;                        /**< First element of the array being built. */
+    unsigned int element_size;          /**< Bytes each element occupies. */
+    unsigned int count;                 /**< Number of elements in the array. */
+    MWRuntimeObjectFunction destructor; /**< Routine that destroys one element, or null. */
 
 public:
-    unsigned int constructed;
+    unsigned int constructed; /**< Number of leading elements already constructed. */
 
     MWPartialArrayDestructor(void *array, unsigned int element_size, unsigned int count,
                              MWRuntimeObjectFunction destructor) {
@@ -529,7 +529,7 @@ extern "C" void __unexpected(void *exception_record) {
         unexpected__3stdFv();
     } catch (...) {
         spec.types = (unsigned char *) __DecodeSignedNumber(
-            __DecodeUnsignedNumber(__DecodeUnsignedNumber(encoded + 1, &spec.count), &spec.unk_04), &spec.unk_08);
+            __DecodeUnsignedNumber(__DecodeUnsignedNumber(encoded + 1, &spec.count), &spec.unused_unsigned), &spec.unused_signed);
         // A new exception the specification allows propagates; otherwise it becomes a
         // std::bad_exception if that is allowed.
         if (__find_exception_spec(((MWCatchRecord *) &__exception_magic)->type_info, &spec)) {
@@ -854,14 +854,14 @@ float DistPlanePoint(float *normal, float *on_plane, float *point) {
     return sceVu0InnerProduct(normal, offset);
 }
 
-float ReflectionPlane(float *normal, float *on_plane, float *point, float *out) {
+float ReflectionPlane(float *normal, float *on_plane, float *point, float *reflection) {
     sceVu0FVECTOR step;
     float distance;
 
     distance = 2.0f * DistPlanePoint(normal, on_plane, point);
     sceVu0ScaleVector(step, normal, -distance);
-    sceVu0SubVector(out, on_plane, point);
-    sceVu0SubVector(out, out, step);
+    sceVu0SubVector(reflection, on_plane, point);
+    sceVu0SubVector(reflection, reflection, step);
     return distance;
 }
 
@@ -924,13 +924,13 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
    so the block hands the bits over in an integer and reinterprets them where a float return value
    has to be. Both variables are the compiler's to place; the initializer is what stops it warning
    about the one nothing in C ever writes. */
-float DistVector(float *v0) {
-    register float *p0 = v0;
+float DistVector(float *vector) {
+    register float *pointer = vector;
     register int root;
     register float length = 0.0f;
 
     asm {
-        lqc2     vf4, 0(p0)
+        lqc2     vf4, 0(pointer)
         vmul.xyz vf4, vf4, vf4
         vmr32.xy vf5, vf4
         vmr32.x  vf6, vf5
@@ -945,9 +945,9 @@ float DistVector(float *v0) {
     return length;
 }
 
-float DistVector(float *v0, float *v1) {
-    register float *p0 = v0;
-    register float *p1 = v1;
+float DistVector(float *a, float *b) {
+    register float *p0 = a;
+    register float *p1 = b;
     register int root;
     register float length = 0.0f;
 
@@ -969,10 +969,10 @@ float DistVector(float *v0, float *v1) {
     return length;
 }
 
-void MulMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2) {
-    register float *out = (float *) m0;
-    register float *left = (float *) m1;
-    register float *right = (float *) m2;
+void MulMatrix(sceVu0FMATRIX product, sceVu0FMATRIX left_matrix, sceVu0FMATRIX right_matrix) {
+    register float *out = (float *) product;
+    register float *left = (float *) left_matrix;
+    register float *right = (float *) right_matrix;
 
     asm {
         lqc2      vf1, 0(left)
@@ -1006,9 +1006,9 @@ void MulMatrix(sceVu0FMATRIX m0, sceVu0FMATRIX m1, sceVu0FMATRIX m2) {
     }
 }
 
-void RotMatrixY(sceVu0FMATRIX m0, float ry) {
-    register float *out = (float *) m0;
-    float angle = ry;
+void RotMatrixY(sceVu0FMATRIX matrix, float angle_y) {
+    register float *out = (float *) matrix;
+    float angle = angle_y;
 
     /* vf0 is the constant (0, 0, 0, 1), so three rotations of it are the other three rows and the
        identity costs four stores instead of sixteen. */
@@ -1022,13 +1022,13 @@ void RotMatrixY(sceVu0FMATRIX m0, float ry) {
         sqc2    vf3, 0(out)
     }
 
-    m0[2][2] = Cosf(angle);
-    m0[0][0] = m0[2][2];
-    m0[2][0] = Sinf(angle);
-    m0[0][2] = -m0[2][0];
+    matrix[2][2] = Cosf(angle);
+    matrix[0][0] = matrix[2][2];
+    matrix[2][0] = Sinf(angle);
+    matrix[0][2] = -matrix[2][0];
 }
 
-void LookAtMatrixZ(sceVu0FMATRIX m0, float *direction) {
+void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     sceVu0FMATRIX pitch;
     sceVu0FMATRIX yaw;
     sceVu0FVECTOR unit;
@@ -1061,18 +1061,18 @@ void LookAtMatrixZ(sceVu0FMATRIX m0, float *direction) {
     yaw[0][2] = -cosine;
     yaw[2][0] = cosine;
     yaw[2][2] = sine;
-    MulMatrix(m0, yaw, pitch);
+    MulMatrix(matrix, yaw, pitch);
 }
 
 void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, int count) {
     register float *dst = (float *) out;
     register float *m = (float *) matrix;
     register float *src = (float *) in;
-    register int left = count;
+    register int remaining = count;
 
     // clang-format off
     asm {
-        addi     left, left, -1
+        addi     remaining, remaining, -1
         lqc2     vf10, 0(m)
         lqc2     vf11, 16(m)
         lqc2     vf12, 32(m)
@@ -1088,13 +1088,13 @@ row:
         vmadday  ACC, vf11, vf16
         vmaddaz  ACC, vf12, vf16
         vmaddw   vf17, vf13, vf16
-        addi     left, left, -1
+        addi     remaining, remaining, -1
         addi     dst, dst, 16
         addi     src, src, 16
         sqc2     vf17, -16(dst)
         lqc2     vf16, 0(src)
         vnop
-        bgez     left, row
+        bgez     remaining, row
         nop
     }
     // clang-format on
@@ -1103,8 +1103,8 @@ row:
 void VectorInterpolate(float *out, float *from, float *to, float step, int mode) {
     sceVu0FVECTOR gap;
     int i;
-    float size;
-    float d;
+    float magnitude;
+    float delta;
 
     sceVu0SubVector(gap, to, from);
     switch (mode) {
@@ -1113,16 +1113,16 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
                 /* The signed difference and its magnitude are carried as two variables, and each
                    arm writes back the one the other arm would have changed - so the second assignment
                    stores nothing on a value that already agrees. */
-                d = gap[i];
-                size = d;
-                if (d < 0.0f)
-                    size = -d;
+                delta = gap[i];
+                magnitude = delta;
+                if (delta < 0.0f)
+                    magnitude = -delta;
                 else
-                    d = size;
+                    delta = magnitude;
 
-                if (size < step) {
+                if (magnitude < step) {
                     out[i] = to[i];
-                } else if (d < 0.0f) {
+                } else if (delta < 0.0f) {
                     out[i] = from[i] - step;
                 } else {
                     out[i] = from[i] + step;
@@ -1141,56 +1141,56 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
    already in range, so a difference cannot leave it by more than a turn. */
 
 float AngleInterpolate(float from, float to, float step, int mode) {
-    float d;
-    float s;
-    float r;
+    float delta;
+    float offset;
+    float result;
 
-    d = to - from;
-    if (d > PI)
-        d -= PI * 2.0f;
-    if (d <= -PI)
-        d += PI * 2.0f;
-    s = 0.0f;
-    if (mode == 0 && (d < 0.0f ? -d : d) < step)
+    delta = to - from;
+    if (delta > PI)
+        delta -= PI * 2.0f;
+    if (delta <= -PI)
+        delta += PI * 2.0f;
+    offset = 0.0f;
+    if (mode == 0 && (delta < 0.0f ? -delta : delta) < step)
         return to;
     switch (mode) {
         case 0:
-            if (d < 0.0f) {
-                if (step < d)
+            if (delta < 0.0f) {
+                if (step < delta)
                     return to;
-                s -= step;
+                offset -= step;
             }
-            if (d >= 0.0f) {
-                if (step > d)
+            if (delta >= 0.0f) {
+                if (step > delta)
                     return to;
-                s += step;
+                offset += step;
             }
             break;
         case 1:
-            s = d / step;
+            offset = delta / step;
             break;
     }
-    r = from + s;
-    if (r > PI)
-        r -= PI * 2.0f;
-    if (r <= -PI)
-        r += PI * 2.0f;
-    return r;
+    result = from + offset;
+    if (result > PI)
+        result -= PI * 2.0f;
+    if (result <= -PI)
+        result += PI * 2.0f;
+    return result;
 }
 
-int AngleCmp(float left, float right, float slack) {
-    float d;
+int AngleCmp(float a, float b, float tolerance) {
+    float delta;
 
-    d = left - right;
-    if (d == 0.0f)
+    delta = a - b;
+    if (delta == 0.0f)
         return 0;
-    if (d > PI)
-        d -= PI * 2.0f;
-    if (d < -PI)
-        d += PI * 2.0f;
-    if (d > slack)
+    if (delta > PI)
+        delta -= PI * 2.0f;
+    if (delta < -PI)
+        delta += PI * 2.0f;
+    if (delta > tolerance)
         return 1;
-    if (d < -slack)
+    if (delta < -tolerance)
         return -1;
     return 0;
 }

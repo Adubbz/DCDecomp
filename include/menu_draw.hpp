@@ -26,15 +26,15 @@ struct spRGBA;
  * State of the dungeon entrance menu, and what it shows of each floor.
  */
 struct DUN_ENTER_MENU {
-    s8 dungeon;         /**< Dungeon the menu is for. */
-    s8 scroll_top;      /**< First floor the list shows. */
-    s8 selected_floor;  /**< Floor the cursor stands on. */
-    s8 requested_floor; /**< Floor the player asked to enter. */
-    float unk_004;
-    float unk_008;
-    s8 unk_00C;
-    s8 texture_block; /**< Texture block the menu loads into. */
-    s8 unk_00E;
+    s8 dungeon;             /**< Dungeon the menu is for. */
+    s8 scroll_top;          /**< First floor the list shows. */
+    s8 selected_floor;      /**< Floor the cursor stands on. */
+    s8 requested_floor;     /**< Floor the player asked to enter. */
+    float list_y;           /**< Screen Y of the floor list's first row, eased toward the scroll position. */
+    float scroll_bar_y;     /**< Screen Y of the scroll bar, eased toward the scroll position. */
+    s8 textures_ready;      /**< Set once the menu's textures and messages have been installed. */
+    s8 texture_block;       /**< Texture block the menu loads into. */
+    s8 loading;             /**< Set while the menu's archive is still being read. */
     s8 floor_count;         /**< Floors the list holds. */
     s8 result;              /**< Floor chosen, or a negative value while the menu runs. */
     s8 max_atra[100];       /**< Atla each floor holds. */
@@ -53,7 +53,7 @@ STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
  * State of a personal inventory board, the item list that the item, shop and Atla menus share.
  */
 struct PERSONAL_BOARD {
-    s32 unk_00;
+    s32 menu_kind;   /**< Menu the board belongs to: 0 the item and shop menus, 1 the weapon menu's attachment list, 2 the Atla selection. */
     s32 page;        /**< Page of the board that is showing. */
     s32 cursor_area; /**< Part of the board the cursor is on: 1 the cells, 2 the trash. */
     s32 cursor;      /**< Cell that the cursor is on. */
@@ -65,11 +65,11 @@ struct PERSONAL_BOARD {
     s32 trash_frame;             /**< Frame of the trash can's throw animation. */
     ITEM_PACK *item_pack;        /**< Item pack the board lists. */
     DNG_CONSUMABLE *consumables; /**< Stored attachments the board lists. */
-    s16 *unk_2C;
-    IHAVEITEM held_item;     /**< Item the board's cursor is holding. */
-    WEAPON_HAVE weapon;      /**< Weapon record the board holds. */
-    ATTACH_LIST held_attach; /**< Attachment record the board holds. */
-    s32 unk_15C;
+    s16 *atla_elements;          /**< Atla piece in each cell of a village page, or -1 for an empty cell. */
+    IHAVEITEM held_item;         /**< Item the board's cursor is holding. */
+    WEAPON_HAVE weapon;          /**< Weapon record of the weapon the cursor is holding. */
+    ATTACH_LIST held_attach;     /**< Attachment record of the attachment the cursor is holding. */
+    s32 held_equipped_slot;      /**< Slot the held weapon was equipped in, or -1 when it was not equipped. */
 };
 
 STATIC_ASSERT(sizeof(PERSONAL_BOARD) == 0x160);
@@ -80,15 +80,15 @@ STATIC_ASSERT(sizeof(PERSONAL_BOARD) == 0x160);
 struct MENU_ICON_INFO {
     s16 id; /**< Icon the entry describes. */
     s16 unk_02;
-    s32 unk_04;
-    s32 unk_08;
-    s32 unk_0C;
-    s32 unk_10;
-    s32 unk_14;
-    s32 unk_18;
-    s32 unk_1C;
-    s32 unk_20;
-    s16 unk_24;
+    s32 selected_u;   /**< Texel X of the icon drawn while it is selected. */
+    s32 selected_v;   /**< Texel Y of the icon drawn while it is selected. */
+    s32 u;            /**< Texel X of the icon drawn while it is not selected. */
+    s32 v;            /**< Texel Y of the icon drawn while it is not selected. */
+    s32 label_u;      /**< Texel X of the icon's label. */
+    s32 label_v;      /**< Texel Y of the icon's label. */
+    s32 label_width;  /**< Width of the icon's label. */
+    s32 label_height; /**< Height of the icon's label. */
+    s16 help_mes_no;  /**< Message the help window shows for the icon. */
     s16 unk_26;
 };
 
@@ -158,7 +158,7 @@ char *GetNowSelectLanguage(int language);
  * @address 0x22BA50
  * @size 0x60
  */
-void GetPathReadDifferntLang(char *);
+void GetPathReadDifferntLang(char *path);
 
 /**
  * Loads a menu file from the selected language's directory, and returns its size or -1.
@@ -212,7 +212,7 @@ int GetAtoraMaxVillage(void);
  * @address 0x22BD10
  * @size 0xDC
  */
-int GetNowMapTransAtraMap(int mapNo);
+int GetNowMapTransAtraMap(int map_no);
 
 /**
  * Sets the menu's projection and view matrices from a camera.
@@ -221,7 +221,7 @@ int GetNowMapTransAtraMap(int mapNo);
  * @address 0x22BDF0
  * @size 0x9C
  */
-void MenuWorldTrans(CCamera *);
+void MenuWorldTrans(CCamera *camera);
 
 /**
  * Draws a menu model through a callback under the menu's camera and lights.
@@ -230,7 +230,7 @@ void MenuWorldTrans(CCamera *);
  * @address 0x22BE90
  * @size 0x188
  */
-void MenuPolygonDraw(int, void (*)(void));
+void MenuPolygonDraw(int ambient_alpha, void (*draw)(void));
 
 /**
  * Projects a frame's world position to screen coordinates.
@@ -239,7 +239,7 @@ void MenuPolygonDraw(int, void (*)(void));
  * @address 0x22C020
  * @size 0x68
  */
-void Get3DPosTo2DPos(CFrame *, int *);
+void Get3DPosTo2DPos(CFrame *frame, int *screen);
 
 /**
  * Returns the common menu font width of a style.
@@ -248,7 +248,7 @@ void Get3DPosTo2DPos(CFrame *, int *);
  * @address 0x22C090
  * @size 0x34
  */
-int GetMenuCommonFontW(int, int);
+int GetMenuCommonFontW(int language, int style);
 
 /**
  * Centres a message window on a horizontal position.
@@ -257,7 +257,7 @@ int GetMenuCommonFontW(int, int);
  * @address 0x22C0D0
  * @size 0x64
  */
-int GetMenuCommonPutXY(ClsMes *, int);
+int GetMenuCommonPutXY(ClsMes *mes, int x);
 
 /**
  * Sets up the common menu message windows.
@@ -266,7 +266,7 @@ int GetMenuCommonPutXY(ClsMes *, int);
  * @address 0x22C140
  * @size 0xD58
  */
-void InitMenuMesSet(int, short *);
+void InitMenuMesSet(int mode, short *messages);
 
 /**
  * Steps and draws a message window at a position.
@@ -275,7 +275,7 @@ void InitMenuMesSet(int, short *);
  * @address 0x22CEA0
  * @size 0x48
  */
-void DrawMenuClsMes(ClsMes *, int, int);
+void DrawMenuClsMes(ClsMes *message, int x, int y);
 
 /**
  * Plays a menu sound effect, unless the identifier is negative.
@@ -284,7 +284,7 @@ void DrawMenuClsMes(ClsMes *, int, int);
  * @address 0x22CEF0
  * @size 0x30
  */
-void ComMenuSePlay(int);
+void ComMenuSePlay(int sound);
 
 /**
  * Draws a part of a menu texture with an alpha.
@@ -293,7 +293,7 @@ void ComMenuSePlay(int);
  * @address 0x22CF20
  * @size 0x6C
  */
-void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, int);
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, int alpha);
 
 /**
  * Draws a part of a menu texture tinted by a colour.
@@ -302,7 +302,7 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, int);
  * @address 0x22CF90
  * @size 0x9C
  */
-void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, unsigned char, unsigned char, unsigned char, int);
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, unsigned char r, unsigned char g, unsigned char b, int alpha);
 
 /**
  * Draws a part of a menu texture with a colour at each corner.
@@ -311,7 +311,7 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, unsigned char, unsigned ch
  * @address 0x22D030
  * @size 0xA4
  */
-void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
+void DrawMenu2DSprite(CTexture *texture, CRect_i_ screen, CRect_i_ texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right);
 
 /**
  * Reloads one menu texture block through the texture manager.
@@ -320,7 +320,7 @@ void DrawMenu2DSprite(CTexture *, CRect_i_, CRect_i_, spRGBA *, spRGBA *, spRGBA
  * @address 0x22D0E0
  * @size 0x44
  */
-void MenuTextureReload(int);
+void MenuTextureReload(int block);
 
 /**
  * Deletes the texture block a menu holds.
@@ -329,7 +329,7 @@ void MenuTextureReload(int);
  * @address 0x22D130
  * @size 0x80
  */
-void MenuTextureDelete(int *);
+void MenuTextureDelete(int *blocks);
 
 /**
  * Fills the whole screen with a colour.
@@ -338,7 +338,7 @@ void MenuTextureDelete(int *);
  * @address 0x22D1B0
  * @size 0xC8
  */
-void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned char);
+void AllFillBoxForMenu(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha);
 
 /**
  * Darkens the whole screen behind a menu.
@@ -347,7 +347,7 @@ void AllFillBoxForMenu(unsigned char, unsigned char, unsigned char, unsigned cha
  * @address 0x22D280
  * @size 0x30
  */
-void AllFadeForMenu(int);
+void AllFadeForMenu(int alpha);
 
 /**
  * Draws the menu frame image over the whole screen at the given tint and alpha.
@@ -356,7 +356,7 @@ void AllFadeForMenu(int);
  * @address 0x22D2B0
  * @size 0x114
  */
-void FrameImageDraw(int, int);
+void FrameImageDraw(int brightness, int alpha);
 
 /**
  * Draws a rectangle shaded between a colour at each corner.
@@ -365,7 +365,7 @@ void FrameImageDraw(int, int);
  * @address 0x22D3D0
  * @size 0x7C
  */
-void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
+void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right);
 
 /**
  * Draws a rectangle shaded between two colours from side to side.
@@ -374,7 +374,7 @@ void DrawMenuColorGradation(CRect_i_ &, spRGBA *, spRGBA *, spRGBA *, spRGBA *);
  * @address 0x22D450
  * @size 0x64
  */
-void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
+void DrawMenuSideGradation(CRect_i_ &rect, spRGBA *left, spRGBA *right);
 
 /**
  * Draws an item's icon with its attachment count or weapon mark.
@@ -383,7 +383,7 @@ void DrawMenuSideGradation(CRect_i_ &, spRGBA *, spRGBA *);
  * @address 0x22D5A0
  * @size 0x1DC
  */
-void DrawIconParts(int, int, int, int, int, int, int);
+void DrawIconParts(int item_no, int x, int y, int top, int bottom, int alpha, int number);
 
 /**
  * Draws the attachment count or the weapon mark over one menu item slot.
@@ -392,7 +392,7 @@ void DrawIconParts(int, int, int, int, int, int, int);
  * @address 0x22D780
  * @size 0x26C
  */
-void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
+void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, int value, int alpha, int vibe);
 
 /**
  * Draws a named texture with its alpha fading from one side to the other.
@@ -401,7 +401,7 @@ void DrawAttachNumberOrWeapon(int, int, int, int, int, int, int, int);
  * @address 0x22D9F0
  * @size 0x398
  */
-void FadeTexX(int, int, int, int, char *, int);
+void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *name, int dim);
 
 /**
  * Looks up the icon sheet for an item and the icon's offset within it.
@@ -410,7 +410,7 @@ void FadeTexX(int, int, int, int, char *, int);
  * @address 0x22DD90
  * @size 0xE8
  */
-CTexture *RetCTex(short, int &, int &);
+CTexture *RetCTex(short item_no, int &u, int &v);
 
 /**
  * Clips a texture strip to a range of screen positions.
@@ -419,7 +419,7 @@ CTexture *RetCTex(short, int &, int &);
  * @address 0x22DE80
  * @size 0x78
  */
-void MenuTextureClip(int &, int &, int &, int, int);
+void MenuTextureClip(int &position, int &source, int &length, int minimum, int maximum);
 
 /**
  * Counts the decimal digits of a number.
@@ -428,7 +428,7 @@ void MenuTextureClip(int &, int &, int &, int, int);
  * @address 0x22DF00
  * @size 0x3C
  */
-int GetNumberKeta(int);
+int GetNumberKeta(int value);
 
 /**
  * Returns the description of one menu icon in the language the menus display in.
@@ -446,7 +446,7 @@ MENU_ICON_INFO *GetMenuIconInfo(int icon);
  * @address 0x22DFA0
  * @size 0x1DC
  */
-void DrawMainMenuIcon(int, int, int, int, int, int);
+void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alpha);
 
 /**
  * Draws a shaking item icon with its attachment count or weapon mark.
@@ -455,7 +455,7 @@ void DrawMainMenuIcon(int, int, int, int, int, int);
  * @address 0x22E180
  * @size 0x188
  */
-void DrawMenuVibeItem(int, int, int, int, int);
+void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int);
 
 /**
  * Reads the selected language's offsets for the main menu's help window.
@@ -464,7 +464,7 @@ void DrawMenuVibeItem(int, int, int, int, int);
  * @address 0x22E310
  * @size 0xA8
  */
-int GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
+int GetMainMenuRightHelpWinLangOffset(float &x, float &y, float &width, float &height);
 
 /**
  * Reads the selected language's offsets for the main menu's help message.
@@ -473,7 +473,7 @@ int GetMainMenuRightHelpWinLangOffset(float &, float &, float &, float &);
  * @address 0x22E3C0
  * @size 0x78
  */
-int GetMainMenuRightHelpMsgLangOffset(int &, int &);
+int GetMainMenuRightHelpMsgLangOffset(int &x, int &y);
 
 /**
  * Empties an inventory record.
@@ -482,7 +482,7 @@ int GetMainMenuRightHelpMsgLangOffset(int &, int &);
  * @address 0x22E440
  * @size 0x28
  */
-void InitHaveData(IHAVEITEM *);
+void InitHaveData(IHAVEITEM *item);
 
 /**
  * Empties a held-weapon record.
@@ -491,7 +491,7 @@ void InitHaveData(IHAVEITEM *);
  * @address 0x22E470
  * @size 0x3C
  */
-void InitHaveWep(WEAPON_HAVE *);
+void InitHaveWep(WEAPON_HAVE *weapon);
 
 /**
  * Empties a held-attachment record.
@@ -500,7 +500,7 @@ void InitHaveWep(WEAPON_HAVE *);
  * @address 0x22E4B0
  * @size 0x28
  */
-void InitHaveAttach(ATTACH_LIST *);
+void InitHaveAttach(ATTACH_LIST *attachment);
 
 /**
  * Exchanges two menu values, doing nothing if either pointer is null.
@@ -545,7 +545,7 @@ void MenuDataSwap(ATTACH_LIST *first, ATTACH_LIST *second);
  * @address 0x22E660
  * @size 0xA4
  */
-void SetMenuTrushMark(ITEM_PACK *);
+void SetMenuTrushMark(ITEM_PACK *items);
 
 /**
  * Clears the menu's disposable-item marks.
@@ -563,7 +563,7 @@ void DeleteMenuTrushMark(void);
  * @address 0x22E740
  * @size 0x268
  */
-void InitPersonalBoardMode(CUserStatus *, PERSONAL_BOARD *, int, int);
+void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode, int page);
 
 /**
  * Handles the key input that changes the personal board's mode.
@@ -608,7 +608,7 @@ int PersonalBoardKey(void);
  * @address 0x22EF90
  * @size 0x110
  */
-int PersonalBoardItemPush(IHAVEITEM *, int);
+int PersonalBoardItemPush(IHAVEITEM *item, int board_pos);
 
 /**
  * Returns the sort category containing an attachment identifier.

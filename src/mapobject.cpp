@@ -55,8 +55,8 @@ void CMapObject::FrameObjectOnOff(char *name, int on) {
             found->flags = on;
         }
     }
-    if (this->unk_0DC != NULL) {
-        found = this->unk_0DC->SearchFrame(name);
+    if (this->camera_frame != NULL) {
+        found = this->camera_frame->SearchFrame(name);
         if (found != NULL) {
             found->flags = on;
         }
@@ -135,11 +135,11 @@ void CMapObject::DrawShade() {
 
 void CMapObject::Initialize() {
     CObjectFrame::Initialize(NULL);
-    this->unk_0E4 = this->handle = -1;
+    this->category_no = this->handle = -1;
     this->shadow_frame = NULL;
     this->shade_frame = NULL;
     this->collision_frame = NULL;
-    this->unk_0DC = NULL;
+    this->camera_frame = NULL;
     this->shadow_offset = -8.0f;
 }
 

@@ -44,17 +44,17 @@ class CRect {
 public:
     CRect() {}
 
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
+    CRect(T new_x, T new_y, T new_width, T new_height) {
+        x = new_x;
+        y = new_y;
+        w = new_width;
+        h = new_height;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge in pixels. */
+    T y; /**< Top edge in pixels. */
+    T w; /**< Width in pixels. */
+    T h; /**< Height in pixels. */
 } __attribute__((aligned(16)));
 
 /* The three classes this scene places in the world, declared here rather than reached through
@@ -82,12 +82,12 @@ public:
     void DrawShadow(int unknown0);
 
     char unk_00[36];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from. */
     char unk_28[8];
-    float lod_distance;
-    int unk_34;
-    int draw_on;
-    char unk_3C[4];
+    float shadow_offset; /**< Height the shadow drops below the object. */
+    int unk_34;          /**< Map category the object is sorted under. */
+    int handle;          /**< Map handle; below zero leaves the object undrawn. */
+    char unk_EC[4];
 };
 
 /* The scene's one fire, which is a light rather than a model. */
@@ -101,27 +101,27 @@ public:
                   int unknown2, float unknown3);
 
     char unk_00[32];
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR pos; /**< World position DrawFire draws the next fire at. */
     char unk_30[16];
 };
 
-/* One looping object animation: a frame is found by name and then driven between two motion
-   numbers at a rate, with a scale and a position offset of its own. */
+/* One looping object animation: a frame is found by name and one of its properties is driven from
+   a start value towards an end value by a step each tick. */
 class OBJ_ANIME_SEQ {
 public:
     OBJ_ANIME_SEQ();
 
     void Initialize();
 
-    char name[16];
-    int motion_start;
-    int motion_end;
+    char name[16]; /**< Name of the frame the animation drives. */
+    int property;  /**< Property animated: rotation, position, scale or colour. */
+    int mode;      /**< How the value moves between its two ends. */
     char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR pos;
-    float unk_40;
-    float draw_on;
-    float step;
+    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
+    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
+    float step_x;              /**< Amount added to the first component each tick. */
+    float step_y;              /**< Amount added to the second component each tick. */
+    float step_z;              /**< Amount added to the third component each tick. */
     char unk_4C[60];
 };
 
@@ -131,26 +131,26 @@ public:
    offsets are measured from the bottom edge of the plate; the blink state is kept here because this
    scene blinks the cast on a clock of its own rather than from the script. */
 struct FACE_INFO {
-    char *plate;
-    char *strip;
-    int eye_bottom;
-    int eye_height;
-    int mouth_bottom;
-    int mouth_height;
-    int eye;
-    int mouth;
-    int strip_bottom;
-    int eye_max;
-    int blink;
+    char *plate;      /**< Texture the model's face is drawn from. */
+    char *strip;      /**< Texture holding the eye and mouth frames. */
+    int eye_bottom;   /**< Height of the eye region above the plate's bottom edge. */
+    int eye_height;   /**< Height of one eye frame. */
+    int mouth_bottom; /**< Height of the mouth region above the plate's bottom edge. */
+    int mouth_height; /**< Height of one mouth frame. */
+    int eye;          /**< Eye frame currently shown. */
+    int mouth;        /**< Mouth frame currently shown. */
+    int strip_bottom; /**< Row the frame strips count up from. */
+    int eye_max;      /**< Last eye frame of a blink. */
+    int blink;        /**< Blink phase: zero idle, one closing, two opening. */
 };
 
-/* One piece of scenery as the scene was laid out: the model, the model its distant form is drawn
+/* One piece of scenery as the scene was laid out: the model, the model its shadow is drawn
    from, where it stands in tenths of a world unit, and its heading in degrees. */
 struct MAPOBJ_INFO {
-    char *name;
-    char *lod_name;
-    float pos[3];
-    float rotation[3];
+    char *name;        /**< Model file, or null to reuse the previous row's model. */
+    char *shadow_name; /**< Shadow model file, or null for none. */
+    float position[3]; /**< Position in tenths of a world unit. */
+    float rotation[3]; /**< Heading about each axis in degrees. */
 };
 
 void wait_now_loading_vsync();
@@ -200,7 +200,7 @@ static CMapObject OP_ToanMapObj;
    has been on screen long enough, which is how a raised eyebrow outlasts the word that raised it.
    The mouth is driven from the script's own clock, a new frame picked at random every sixth
    hundredth of a second left on the line's timer while the actor is talking. */
-void FaceChange(int no) {
+void FaceChange(int actor_no) {
     sceGifTag giftag = {0, 1, 0, 0, 0, 0, 1, SCE_GIF_PACKED_AD};
     static FACE_INFO face[8] = {
         {"c07a01", "c07a01an", 42, 40, 87, 35, 0, 0, 256, 2, 0},
@@ -226,8 +226,8 @@ void FaceChange(int no) {
     sceVif1PkCloseDirectCode(Vif1Packet);
     sceVif1PkTerminate(Vif1Packet);
 
-    plate = TexManager.GetTexture(face[no].plate, -1);
-    strip = TexManager.GetTexture(face[no].strip, -1);
+    plate = TexManager.GetTexture(face[actor_no].plate, -1);
+    strip = TexManager.GetTexture(face[actor_no].strip, -1);
 
     if (plate == 0 || strip == 0) {
         return;
@@ -238,69 +238,69 @@ void FaceChange(int no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    if (no == 1) {
+    if (actor_no == 1) {
         return;
     }
-    if (no == 4) {
+    if (actor_no == 4) {
         return;
     }
-    if (no == 5) {
+    if (actor_no == 5) {
         return;
     }
-    if (no == 7) {
+    if (actor_no == 7) {
         return;
     }
 
     if (!Pause) {
-        if (CScript__2.obj[no].eye > face[no].eye_max) {
-            face[no].blink = 0;
+        if (CScript__2.obj[actor_no].eye > face[actor_no].eye_max) {
+            face[actor_no].blink = 0;
         }
 
-        if (CScript__2.obj[no].eye_time >= CScript__2.motion_step) {
-            CScript__2.obj[no].eye_time -= CScript__2.motion_step;
+        if (CScript__2.obj[actor_no].eye_time >= CScript__2.motion_step) {
+            CScript__2.obj[actor_no].eye_time -= CScript__2.motion_step;
 
-            switch (face[no].blink) {
+            switch (face[actor_no].blink) {
                 case 1:
-                    if (CScript__2.obj[no].eye < face[no].eye_max) {
-                        CScript__2.obj[no].eye++;
+                    if (CScript__2.obj[actor_no].eye < face[actor_no].eye_max) {
+                        CScript__2.obj[actor_no].eye++;
 
-                        if (CScript__2.obj[no].eye == face[no].eye_max) {
-                            face[no].blink = 2;
+                        if (CScript__2.obj[actor_no].eye == face[actor_no].eye_max) {
+                            face[actor_no].blink = 2;
                         }
                     }
                     break;
                 case 2:
-                    if (CScript__2.obj[no].eye > 0) {
-                        CScript__2.obj[no].eye--;
+                    if (CScript__2.obj[actor_no].eye > 0) {
+                        CScript__2.obj[actor_no].eye--;
                     }
                     break;
             }
         } else if (rand() % 200 == 0) {
-            if (CScript__2.obj[no].eye == 0) {
-                face[no].blink = 1;
-                CScript__2.obj[no].eye = 1;
-                CScript__2.obj[no].eye_time = 15.0f * CScript__2.motion_step;
+            if (CScript__2.obj[actor_no].eye == 0) {
+                face[actor_no].blink = 1;
+                CScript__2.obj[actor_no].eye = 1;
+                CScript__2.obj[actor_no].eye_time = 15.0f * CScript__2.motion_step;
             }
-        } else if (no == 2) {
+        } else if (actor_no == 2) {
             if (CScript__2.obj[2].eye == 5) {
                 CScript__2.obj[2].eye = 4;
                 CScript__2.obj[2].eye_time = CScript__2.motion_step;
             } else {
-                CScript__2.obj[no].eye = 0;
-                face[no].blink = 0;
+                CScript__2.obj[actor_no].eye = 0;
+                face[actor_no].blink = 0;
             }
         } else {
-            CScript__2.obj[no].eye = 0;
-            face[no].blink = 0;
+            CScript__2.obj[actor_no].eye = 0;
+            face[actor_no].blink = 0;
         }
     }
 
-    face[no].eye = CScript__2.obj[no].eye;
+    face[actor_no].eye = CScript__2.obj[actor_no].eye;
 
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8,
-                  CRect<int>(0, face[no].strip_bottom - face[no].eye_height * (face[no].eye + 1),
-                             128, face[no].eye_height),
-                  dbp, dbw, SCE_GS_PSMT8, 0, 88 - face[no].eye_bottom, 0);
+                  CRect<int>(0, face[actor_no].strip_bottom - face[actor_no].eye_height * (face[actor_no].eye + 1),
+                             128, face[actor_no].eye_height),
+                  dbp, dbw, SCE_GS_PSMT8, 0, 88 - face[actor_no].eye_bottom, 0);
 
     if (!Pause) {
         if (CScript__2.obj[2].eye_time > 1.0f) {
@@ -320,27 +320,27 @@ void FaceChange(int no) {
     }
 
     if (!Pause) {
-        if (CScript__2.obj[no].mouth_time >= CScript__2.motion_step) {
-            CScript__2.obj[no].mouth_time -= CScript__2.motion_step;
+        if (CScript__2.obj[actor_no].mouth_time >= CScript__2.motion_step) {
+            CScript__2.obj[actor_no].mouth_time -= CScript__2.motion_step;
 
-            if (CScript__2.obj[no].talk) {
-                if ((int) (100.0f * CScript__2.obj[no].mouth_time) % 6 == 0) {
-                    CScript__2.obj[no].mouth = rand() % 4;
+            if (CScript__2.obj[actor_no].talk) {
+                if ((int) (100.0f * CScript__2.obj[actor_no].mouth_time) % 6 == 0) {
+                    CScript__2.obj[actor_no].mouth = rand() % 4;
                 }
             }
         } else {
-            CScript__2.obj[no].mouth = 0;
-            CScript__2.obj[no].talk = 0;
+            CScript__2.obj[actor_no].mouth = 0;
+            CScript__2.obj[actor_no].talk = 0;
         }
     }
 
-    face[no].mouth = CScript__2.obj[no].mouth;
+    face[actor_no].mouth = CScript__2.obj[actor_no].mouth;
 
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8,
                   CRect<int>(128,
-                             face[no].strip_bottom - face[no].mouth_height * (face[no].mouth + 1),
-                             128, face[no].mouth_height),
-                  dbp, dbw, SCE_GS_PSMT8, 0, 88 - face[no].mouth_bottom, 0);
+                             face[actor_no].strip_bottom - face[actor_no].mouth_height * (face[actor_no].mouth + 1),
+                             128, face[actor_no].mouth_height),
+                  dbp, dbw, SCE_GS_PSMT8, 0, 88 - face[actor_no].mouth_bottom, 0);
 
     if (!Pause) {
         if (CScript__2.obj[2].mouth == 4) {
@@ -356,7 +356,7 @@ void FaceChange(int no) {
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
 
-void LoadCharaData(int kind, int no) {
+void LoadCharaData(int buffer_no, int actor_no) {
     char *name[6][2] = {
         {"opdat/chara/01c07a.chr", "01c07a.cfg"},
         {"opdat/chara/01c08a.chr", "01c08a.cfg"},
@@ -365,27 +365,27 @@ void LoadCharaData(int kind, int no) {
         {"opdat/chara/01c08b.chr", "01c08b.cfg"},
         {"opdat/chara/01c08c.chr", "01c08c.cfg"}};
 
-    switch (CScript__2.obj[no].load_motion) {
+    switch (CScript__2.obj[actor_no].load_step) {
         case 0:
-            LoadFileBG(name[no][0], (u_long128 *) read_buffer, 0);
-            CScript__2.obj[no].load_motion = 1;
+            LoadFileBG(name[actor_no][0], (u_long128 *) read_buffer, 0);
+            CScript__2.obj[actor_no].load_step = 1;
             break;
         case 1:
             if (!ReadBGSync()) {
-                CScript__2.obj[no].load_motion = 2;
+                CScript__2.obj[actor_no].load_step = 2;
             }
             break;
         case 2:
-            Chara__3[no].Initialize();
-            CharaDataBuffer__2[kind].used = 0;
-            Chara__3[no].LoadPackData(read_buffer, name[no][1],
-                                      &CharaDataBuffer__2[kind], 0);
-            Chara__3[no].motion_type.state.time = 10.0f;
-            Chara__3[no].motion_type.state.blend_step = 0.05f;
-            Chara__3[no].motion_type.state.motion_no = 0;
-            Chara__3[no].motion_type.state.playing_no = 0;
-            CScript__2.obj[no].load = -1;
-            CScript__2.obj[no].load_motion = -1;
+            Chara__3[actor_no].Initialize();
+            CharaDataBuffer__2[buffer_no].used = 0;
+            Chara__3[actor_no].LoadPackData(read_buffer, name[actor_no][1],
+                                            &CharaDataBuffer__2[buffer_no], 0);
+            Chara__3[actor_no].motion_type.state.time = 10.0f;
+            Chara__3[actor_no].motion_type.state.blend_step = 0.05f;
+            Chara__3[actor_no].motion_type.state.motion_no = 0;
+            Chara__3[actor_no].motion_type.state.playing_no = 0;
+            CScript__2.obj[actor_no].load = -1;
+            CScript__2.obj[actor_no].load_step = -1;
             break;
     }
 }
@@ -394,7 +394,7 @@ void LoadCharaData(int kind, int no) {
    one running reaches its last key and the next pair is started in the background straight after,
    so the dance runs continuously off a buffer that only ever holds two steps. */
 void LoadMotionData() {
-    char *motion[20][2] = {
+    char *motion_files[20][2] = {
         {"opdat/chara/01p19a1a.chr", "01p19a1a.cfg"},
         {"opdat/chara/01p19a1b.chr", "01p19a1b.cfg"},
         {"opdat/chara/01p19a2a.chr", "01p19a2a.cfg"},
@@ -422,10 +422,10 @@ void LoadMotionData() {
             if (DanceCnt != 2) {
                 CharaDataBuffer__2[6].used = 0;
                 Chara__3[6].LoadPackData((u_int *) ((char *) read_buffer + 0x10C900),
-                                         motion[DanceCnt][1],
+                                         motion_files[DanceCnt][1],
                                          &CharaDataBuffer__2[4],
                                          &CharaDataBuffer__2[6], 0);
-                Chara__3[7].LoadPackData(read_buffer, motion[DanceCnt + 10][1],
+                Chara__3[7].LoadPackData(read_buffer, motion_files[DanceCnt + 10][1],
                                          &CharaDataBuffer__2[4],
                                          &CharaDataBuffer__2[6], 0);
             }
@@ -441,14 +441,14 @@ void LoadMotionData() {
             DanceCnt++;
 
             if (DanceCnt != 3 && DanceCnt < 10) {
-                LoadFileBG(motion[DanceCnt][0],
+                LoadFileBG(motion_files[DanceCnt][0],
                            (u_long128 *) ((char *) read_buffer + 0x10C900), 0);
-                LoadFileBG(motion[DanceCnt + 10][0], (u_long128 *) read_buffer, 0);
+                LoadFileBG(motion_files[DanceCnt + 10][0], (u_long128 *) read_buffer, 0);
             }
         }
 
         Chara__3[6].motion_no = 0;
-        Chara__3[6].flags = 0;
+        Chara__3[6].motion_flags = 0;
         Chara__3[6].motion_speed = -1.0f;
 
         if (Chara__3[6].motion_type.state.time > 225.0f) {
@@ -457,11 +457,11 @@ void LoadMotionData() {
 
         if (DanceStart == 1) {
             Chara__3[7].motion_no = 0;
-            Chara__3[7].flags = 0;
+            Chara__3[7].motion_flags = 0;
             Chara__3[7].motion_speed = -1.0f;
         } else {
             Chara__3[7].motion_no = 1;
-            Chara__3[7].flags = 0;
+            Chara__3[7].motion_flags = 0;
             Chara__3[7].motion_speed = -1.0f;
         }
     }
@@ -484,12 +484,12 @@ void OpB_LoadDataBG2() {
 /* The village scene's set-up, and the shape every scene file's is a variation of. The textures come
    out of the pack the background load left in memory, so the manifest is built with its five fixed
    surfaces named and its eighteen scene images filled in by name afterwards. The two tables below
-   are the scene as it was laid out: a model, the model its distant form is drawn from, a position in
+   are the scene as it was laid out: a model, the model its shadow is drawn from, a position in
    tenths of a world unit and a heading in degrees, one row per piece of scenery. The rows with no
    model of their own are further copies of the row above them, which is why the frame is only
    reloaded where a name is given. */
 void OpB_InitProcess() {
-    LOADTEXTURE_INFO2 tex[] = {
+    LOADTEXTURE_INFO2 texture_list[] = {
         {"#blender#640#224#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
         {"#fukidashibase#640#224#4", 26, 0},
@@ -518,27 +518,27 @@ void OpB_InitProcess() {
     while (ReadBGSync())
         ;
 
-    tex[5].name = (char *) GetPackFile(read_buffer, "p09a01.img", 0);
-    tex[6].name = (char *) GetPackFile(read_buffer, "e01b01.img", 0);
-    tex[7].name = (char *) GetPackFile(read_buffer, "e01b02.img", 0);
-    tex[8].name = (char *) GetPackFile(read_buffer, "e01b03.img", 0);
-    tex[9].name = (char *) GetPackFile(read_buffer, "e01t01.img", 0);
-    tex[10].name = (char *) GetPackFile(read_buffer, "t0003.img", 0);
-    tex[11].name = (char *) GetPackFile(read_buffer, "e01s03.img", 0);
-    tex[12].name = (char *) GetPackFile(read_buffer, "e01s06.img", 0);
-    tex[13].name = (char *) GetPackFile(read_buffer, "t0001.img", 0);
-    tex[14].name = (char *) GetPackFile(read_buffer, "t0002.img", 0);
-    tex[15].name = (char *) GetPackFile(read_buffer, "gaiji.img", 0);
-    tex[16].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
-    tex[17].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
-    tex[18].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
-    tex[19].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
-    tex[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
-    tex[21].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
-    tex[22].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+    texture_list[5].name = (char *) GetPackFile(read_buffer, "p09a01.img", 0);
+    texture_list[6].name = (char *) GetPackFile(read_buffer, "e01b01.img", 0);
+    texture_list[7].name = (char *) GetPackFile(read_buffer, "e01b02.img", 0);
+    texture_list[8].name = (char *) GetPackFile(read_buffer, "e01b03.img", 0);
+    texture_list[9].name = (char *) GetPackFile(read_buffer, "e01t01.img", 0);
+    texture_list[10].name = (char *) GetPackFile(read_buffer, "t0003.img", 0);
+    texture_list[11].name = (char *) GetPackFile(read_buffer, "e01s03.img", 0);
+    texture_list[12].name = (char *) GetPackFile(read_buffer, "e01s06.img", 0);
+    texture_list[13].name = (char *) GetPackFile(read_buffer, "t0001.img", 0);
+    texture_list[14].name = (char *) GetPackFile(read_buffer, "t0002.img", 0);
+    texture_list[15].name = (char *) GetPackFile(read_buffer, "gaiji.img", 0);
+    texture_list[16].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
+    texture_list[17].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
+    texture_list[18].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
+    texture_list[19].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+    texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    texture_list[21].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+    texture_list[22].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
 
     TexManager.Initialize(16352);
-    TexManager.LoadTextureBlock(-1, tex);
+    TexManager.LoadTextureBlock(-1, texture_list);
 
     CharaTex__2[9] = 2;
     CharaTex__2[11] = 22;
@@ -658,12 +658,12 @@ void OpB_InitProcess() {
 
         object->Initialize();
         object->SetFrame(frame, 0);
-        OP_NornMapObj[i].draw_on = 0;
+        OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].unk_34 = 0;
 
-        object->SetPosition(CVector3_f_(10.0f * norn[i].pos[0],
-                                        10.0f * norn[i].pos[1],
-                                        10.0f * norn[i].pos[2]));
+        object->SetPosition(CVector3_f_(10.0f * norn[i].position[0],
+                                        10.0f * norn[i].position[1],
+                                        10.0f * norn[i].position[2]));
         object->SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180),
                                         (float) (PI * norn[i].rotation[1] / 180),
                                         (float) (PI * norn[i].rotation[2] / 180)));
@@ -671,10 +671,10 @@ void OpB_InitProcess() {
         object->FrameObjectOnOff("win1", 0);
         object->FrameObjectOnOff("light1", 0);
 
-        if (norn[i].lod_name) {
-            LoadFile(norn[i].lod_name, (void *) read_buffer, 0);
-            object->lod_model = LoadMDSFile(read_buffer, &MapDataBuffer, 14, 0, 0);
-            object->lod_distance = -20.0f;
+        if (norn[i].shadow_name) {
+            LoadFile(norn[i].shadow_name, (void *) read_buffer, 0);
+            object->shadow_frame = LoadMDSFile(read_buffer, &MapDataBuffer, 14, 0, 0);
+            object->shadow_offset = -20.0f;
         }
     }
 
@@ -728,12 +728,12 @@ void OpB_InitProcess() {
 
         object->Initialize();
         object->SetFrame(frame, 0);
-        OP_NornMapObj2[i].draw_on = 0;
+        OP_NornMapObj2[i].handle = 0;
         OP_NornMapObj2[i].unk_34 = 0;
 
-        object->SetPosition(CVector3_f_(10.0f * ground[i].pos[0],
-                                        10.0f * ground[i].pos[1],
-                                        10.0f * ground[i].pos[2]));
+        object->SetPosition(CVector3_f_(10.0f * ground[i].position[0],
+                                        10.0f * ground[i].position[1],
+                                        10.0f * ground[i].position[2]));
         ((CMapObject &) OP_NornMapObj2[i]).SetRotation(CVector3_f_((float) (PI * ground[i].rotation[0] / 180), (float) (PI * ground[i].rotation[1] / 180), (float) (PI * ground[i].rotation[2] / 180)));
     }
 
@@ -744,7 +744,7 @@ void OpB_InitProcess() {
 
     CFrameAttr chara_attr;
 
-    chara_attr.unk_08 = 0;
+    chara_attr.clip_enable = 0;
     Chara__3[9].frame->SetAttr(chara_attr, 1, 4);
     Chara__3[9].motion_type.state.time = 10.0f;
     Chara__3[9].motion_type.state.blend_step = 0.05f;
@@ -752,45 +752,45 @@ void OpB_InitProcess() {
     Chara__3[9].motion_type.state.playing_no = 0;
 
     Fuusya[0].Initialize();
-    Fuusya[0].motion_start = 0;
-    Fuusya[0].motion_end = 0;
-    Fuusya[0].scale[2] = 0.0f;
-    Fuusya[0].scale[1] = 0.0f;
-    Fuusya[0].scale[0] = 0.0f;
-    Fuusya[0].pos[2] = 0.0f;
-    Fuusya[0].pos[1] = 0.0f;
-    Fuusya[0].pos[0] = 0.0f;
-    Fuusya[0].draw_on = 0.0f;
-    Fuusya[0].unk_40 = 0.0f;
-    Fuusya[0].step = -0.5f;
+    Fuusya[0].property = 0;
+    Fuusya[0].mode = 0;
+    Fuusya[0].start_value[2] = 0.0f;
+    Fuusya[0].start_value[1] = 0.0f;
+    Fuusya[0].start_value[0] = 0.0f;
+    Fuusya[0].end_value[2] = 0.0f;
+    Fuusya[0].end_value[1] = 0.0f;
+    Fuusya[0].end_value[0] = 0.0f;
+    Fuusya[0].step_y = 0.0f;
+    Fuusya[0].step_x = 0.0f;
+    Fuusya[0].step_z = -0.5f;
     strcpy(Fuusya[0].name, "hane");
     InitObjAnime(DoransFuusya[0], &Fuusya[0]);
 
     Fuusya[1].Initialize();
-    Fuusya[1].motion_start = 0;
-    Fuusya[1].motion_end = 0;
-    Fuusya[1].scale[2] = 0.0f;
-    Fuusya[1].scale[1] = 0.0f;
-    Fuusya[1].scale[0] = 0.0f;
-    Fuusya[1].pos[2] = 0.0f;
-    Fuusya[1].pos[1] = 0.0f;
-    Fuusya[1].pos[0] = 0.0f;
-    Fuusya[1].draw_on = 0.0f;
-    Fuusya[1].unk_40 = 0.0f;
-    Fuusya[1].step = -0.5f;
+    Fuusya[1].property = 0;
+    Fuusya[1].mode = 0;
+    Fuusya[1].start_value[2] = 0.0f;
+    Fuusya[1].start_value[1] = 0.0f;
+    Fuusya[1].start_value[0] = 0.0f;
+    Fuusya[1].end_value[2] = 0.0f;
+    Fuusya[1].end_value[1] = 0.0f;
+    Fuusya[1].end_value[0] = 0.0f;
+    Fuusya[1].step_y = 0.0f;
+    Fuusya[1].step_x = 0.0f;
+    Fuusya[1].step_z = -0.5f;
     strcpy(Fuusya[1].name, "hane");
     InitObjAnime(DoransFuusya[1], &Fuusya[1]);
 
     for (int i = 0; i < 12; i++) {
         Taimatsu[i].Initialize();
-        Taimatsu[i].motion_start = 3;
-        Taimatsu[i].motion_end = 4;
-        Taimatsu[i].scale[2] = 80.0f;
-        Taimatsu[i].scale[1] = 80.0f;
-        Taimatsu[i].scale[0] = 80.0f;
-        Taimatsu[i].pos[2] = 128.0f;
-        Taimatsu[i].pos[1] = 128.0f;
-        Taimatsu[i].pos[0] = 128.0f;
+        Taimatsu[i].property = 3;
+        Taimatsu[i].mode = 4;
+        Taimatsu[i].start_value[2] = 80.0f;
+        Taimatsu[i].start_value[1] = 80.0f;
+        Taimatsu[i].start_value[0] = 80.0f;
+        Taimatsu[i].end_value[2] = 128.0f;
+        Taimatsu[i].end_value[1] = 128.0f;
+        Taimatsu[i].end_value[0] = 128.0f;
         strcpy(Taimatsu[i].name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
@@ -807,7 +807,7 @@ void OpB_InitProcess() {
    Toan's mother has a frame turned off, Toan himself carries the cloth the wind drives, and the
    second Toan is the one the door animation is timed against. */
 void OpB_InitProcess2() {
-    LOADTEXTURE_INFO2 tex[] = {
+    LOADTEXTURE_INFO2 texture_list[] = {
         {"#blender#640#224#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
         {"#fukidashibase#640#224#4", 26, 0},
@@ -832,23 +832,23 @@ void OpB_InitProcess2() {
     while (ReadBGSync())
         ;
 
-    tex[5].name = (char *) GetPackFile(read_buffer, "gaiji.img", 0);
-    tex[6].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
-    tex[7].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
-    tex[8].name = (char *) GetPackFile(read_buffer, "i01h01n.img", 0);
-    tex[9].name = (char *) GetPackFile(read_buffer, "p09a01.img", 0);
-    tex[10].name = (char *) GetPackFile(read_buffer, "p10a01.img", 0);
-    tex[11].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
-    tex[12].name = (char *) GetPackFile(read_buffer, "03c01d.img", 0);
-    tex[13].name = (char *) GetPackFile(read_buffer, "03komono.img", 0);
-    tex[14].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
-    tex[15].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
-    tex[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
-    tex[17].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
-    tex[18].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+    texture_list[5].name = (char *) GetPackFile(read_buffer, "gaiji.img", 0);
+    texture_list[6].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
+    texture_list[7].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
+    texture_list[8].name = (char *) GetPackFile(read_buffer, "i01h01n.img", 0);
+    texture_list[9].name = (char *) GetPackFile(read_buffer, "p09a01.img", 0);
+    texture_list[10].name = (char *) GetPackFile(read_buffer, "p10a01.img", 0);
+    texture_list[11].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
+    texture_list[12].name = (char *) GetPackFile(read_buffer, "03c01d.img", 0);
+    texture_list[13].name = (char *) GetPackFile(read_buffer, "03komono.img", 0);
+    texture_list[14].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
+    texture_list[15].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+    texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    texture_list[17].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+    texture_list[18].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
 
     TexManager.Initialize(16352);
-    TexManager.LoadTextureBlock(-1, tex);
+    TexManager.LoadTextureBlock(-1, texture_list);
 
     OP_FireList = 0;
     OPAnalyz("opdat/toan.cfg");
@@ -859,16 +859,16 @@ void OpB_InitProcess2() {
     ToansHouse = LoadMDSFile(read_buffer, &MapDataBuffer, 2, 0, 0);
     OP_ToanMapObj.Initialize();
     OP_ToanMapObj.SetFrame(ToansHouse, 0);
-    OP_ToanMapObj.draw_on = 0;
+    OP_ToanMapObj.handle = 0;
     OP_ToanMapObj.unk_34 = 0;
 
     LoadFile("opdat/toan/03komono.chr", (void *) read_buffer, 0);
     Komono.LoadPackData(read_buffer, "03komono.cfg", &MapDataBuffer, 0);
 
-    CFrameAttr attr;
+    CFrameAttr komono_attr;
 
-    attr.unk_08 = 0;
-    Komono.frame->SetAttr(attr, 1, 4);
+    komono_attr.clip_enable = 0;
+    Komono.frame->SetAttr(komono_attr, 1, 4);
     Komono.motion_type.state.time = 10.0f;
     Komono.motion_type.state.blend_step = 0.05f;
     Komono.motion_type.state.motion_no = 0;
@@ -878,10 +878,10 @@ void OpB_InitProcess2() {
     Chara__3[10].LoadPackData(read_buffer, "03p10a.cfg",
                               &CharaDataBuffer__2[6], 0);
 
-    CFrameAttr attr2;
+    CFrameAttr mother_attr;
 
-    attr2.unk_08 = 0;
-    Chara__3[10].frame->SetAttr(attr2, 1, 4);
+    mother_attr.clip_enable = 0;
+    Chara__3[10].frame->SetAttr(mother_attr, 1, 4);
     Chara__3[10].motion_type.state.time = 10.0f;
     Chara__3[10].motion_type.state.blend_step = 0.05f;
     Chara__3[10].motion_type.state.motion_no = 0;
@@ -897,49 +897,49 @@ void OpB_InitProcess2() {
     Chara__3[8].LoadPackData(read_buffer, "03c01d.cfg",
                              &CharaDataBuffer__2[6], 0);
 
-    CFrameAttr attr3;
+    CFrameAttr toan_attr;
 
-    attr3.unk_08 = 0;
-    Chara__3[8].frame->SetAttr(attr3, 1, 4);
+    toan_attr.clip_enable = 0;
+    Chara__3[8].frame->SetAttr(toan_attr, 1, 4);
     Chara__3[8].motion_type.state.time = 10.0f;
     Chara__3[8].motion_type.state.blend_step = 0.05f;
     Chara__3[8].motion_type.state.motion_no = 0;
     Chara__3[8].motion_type.state.playing_no = 0;
 
-    sceVu0FVECTOR dir;
+    sceVu0FVECTOR wind_dir;
 
-    dir[3] = 0.0f;
-    dir[1] = 0.0f;
-    dir[2] = 0.0f;
-    dir[0] = 0.0f;
-    Wind.SetDir(dir);
+    wind_dir[3] = 0.0f;
+    wind_dir[1] = 0.0f;
+    wind_dir[2] = 0.0f;
+    wind_dir[0] = 0.0f;
+    Wind.SetDir(wind_dir);
     Wind.SetVelocity(0.0f);
-    Chara__3[8].unk_C98 = (int) &Wind;
+    Chara__3[8].wind = (int) &Wind;
     Chara__3[8].ClothStep(-1);
 
     LoadFile("opdat/chara/03c01d2.chr", (void *) read_buffer, 0);
     Chara__3[11].LoadPackData(read_buffer, "03c01d2.cfg",
                               &CharaDataBuffer__2[6], 0);
 
-    attr3.unk_08 = 0;
-    Chara__3[11].frame->SetAttr(attr3, 1, 4);
+    toan_attr.clip_enable = 0;
+    Chara__3[11].frame->SetAttr(toan_attr, 1, 4);
     Chara__3[11].motion_type.state.time = 160.0f;
     Chara__3[11].motion_type.state.blend_step = 0.1f;
     Chara__3[11].motion_type.state.motion_no = 0;
     Chara__3[11].motion_type.state.playing_no = 0;
 
     Door.Initialize();
-    Door.motion_start = 0;
-    Door.motion_end = 3;
-    Door.scale[0] = 0.0f;
-    Door.scale[1] = 0.0f;
-    Door.scale[2] = 0.0f;
-    Door.pos[0] = 0.0f;
-    Door.pos[1] = 0.0f;
-    Door.pos[2] = 0.0f;
-    Door.unk_40 = 0.0f;
-    Door.draw_on = 0.0f;
-    Door.step = 0.0f;
+    Door.property = 0;
+    Door.mode = 3;
+    Door.start_value[0] = 0.0f;
+    Door.start_value[1] = 0.0f;
+    Door.start_value[2] = 0.0f;
+    Door.end_value[0] = 0.0f;
+    Door.end_value[1] = 0.0f;
+    Door.end_value[2] = 0.0f;
+    Door.step_x = 0.0f;
+    Door.step_y = 0.0f;
+    Door.step_z = 0.0f;
     strcpy(Door.name, "door_1");
     InitObjAnime(ToansHouse, &Door);
 
@@ -968,18 +968,18 @@ void OpB_MotionProcess() {
 
             Chara__3[i].motion_type.state.blend_step = CScript__2.obj[i].step;
             Chara__3[i].motion_no = CScript__2.obj[i].motion;
-            Chara__3[i].flags = 0;
+            Chara__3[i].motion_flags = 0;
             Chara__3[i].motion_speed = -1.0f;
         }
     }
 
-    char *name[4] = {"c01d", "p09a", "p10a", "c01d"};
+    char *frame_names[4] = {"c01d", "p09a", "p10a", "c01d"};
     sceVu0FMATRIX matrix;
     float zero = 0.0f;
-    sceVu0FVECTOR dir;
+    sceVu0FVECTOR wind_dir;
 
     for (int i = 0; i < 4; i++) {
-        CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(name[i]);
+        CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
         if (frame) {
             frame->GetLWMatrix(matrix);
             Chara__3[i + 8].SetRotation(zero, atan2f(matrix[2][0], matrix[2][2]), zero);
@@ -991,11 +991,11 @@ void OpB_MotionProcess() {
         }
     }
 
-    dir[0] = 0.0f;
-    dir[2] = 0.0f;
-    dir[1] = 0.0f;
-    dir[3] = 0.0f;
-    Wind.SetDir(dir);
+    wind_dir[0] = 0.0f;
+    wind_dir[2] = 0.0f;
+    wind_dir[1] = 0.0f;
+    wind_dir[3] = 0.0f;
+    Wind.SetDir(wind_dir);
     Wind.SetVelocity(0.0f);
 
     static int camera = 0;
@@ -1027,12 +1027,12 @@ void OpB_MotionProcess() {
 
     if (CScript__2.scene == 2) {
         if (CScript__2.sprite == 1) {
-            Door.pos[1] = -85.0f;
-            Door.draw_on = -2.8f;
+            Door.end_value[1] = -85.0f;
+            Door.step_y = -2.8f;
         }
         if (CScript__2.sprite == 2) {
-            Door.pos[1] = 0.0f;
-            Door.draw_on = 1.2f;
+            Door.end_value[1] = 0.0f;
+            Door.step_y = 1.2f;
         }
         if (!Pause) {
             ObjAnimePlay(&Door);
@@ -1048,27 +1048,27 @@ void OpB_MotionProcess() {
    under the actor part way through the scene. */
 void OpB_SoundProcess() {
     if (CScript__2.scene == 1) {
-        float time = Cam__2[SceneNp__2].motion_type.state.time;
+        float camera_time = Cam__2[SceneNp__2].motion_type.state.time;
 
         if (CScript__2.obj[9].motion == 0) {
             static int wait = 0;
             sceVu0FVECTOR position;
-            int frame;
+            int motion_frame;
 
             sceVu0CopyVector(position, Chara__3[9].pos);
-            frame = (int) Chara__3[9].motion_type.state.time;
+            motion_frame = (int) Chara__3[9].motion_type.state.time;
 
             if (wait == 0) {
-                if (frame > 28 && frame < 30) {
-                    if (time < 387.0f) {
+                if (motion_frame > 28 && motion_frame < 30) {
+                    if (camera_time < 387.0f) {
                         OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
                     } else {
                         OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 32);
                     }
                     wait = 4;
-                } else if (frame > 38 && frame < 40) {
-                    if (time < 387.0f) {
-                        OpPlayVolPanSE(&position[0], (float) (10 + (frame & 0)),
+                } else if (motion_frame > 38 && motion_frame < 40) {
+                    if (camera_time < 387.0f) {
+                        OpPlayVolPanSE(&position[0], (float) (10 + (motion_frame & 0)),
                                        (float) (wait - wait + 400), 14, 21, 21);
                     } else {
                         OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 33);
@@ -1095,16 +1095,16 @@ void OpB_SoundProcess() {
         if (CScript__2.camera_start == 55 && CScript__2.obj[10].motion == 6) {
             static int wait = 0;
             sceVu0FVECTOR position;
-            int frame;
+            int motion_frame;
 
             sceVu0CopyVector(position, Chara__3[9].pos);
-            frame = (int) Chara__3[10].motion_type.state.time;
+            motion_frame = (int) Chara__3[10].motion_type.state.time;
 
             if (wait == 0) {
-                if (frame > 134 && frame < 136) {
+                if (motion_frame > 134 && motion_frame < 136) {
                     OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 32);
                     wait = 5;
-                } else if (frame > 144 && frame < 146) {
+                } else if (motion_frame > 144 && motion_frame < 146) {
                     OpPlayVolPanSE(position, 50.0f, 300.0f, 14, 21, 33);
                     wait = 5;
                 }
@@ -1177,9 +1177,9 @@ void OpB_DrawProcess() {
             CFire.pos[2] = 10.0f * z;
             CFire.pos[3] = 1.0f;
 
-            int flg = OP_FireFlg[i];
+            int fire_flag = OP_FireFlg[i];
 
-            if (flg == 1) {
+            if (fire_flag == 1) {
                 CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 3, 15.0f);
             } else {
                 CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 2, 15.0f);

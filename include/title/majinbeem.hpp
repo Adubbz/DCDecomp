@@ -36,7 +36,7 @@ public:
      * @address 0x1DADD50
      * @size 0x250
      */
-    void Draw(CCamera *);
+    void Draw(CCamera *camera);
 
     /**
      * Draws and contracts the beam's leading sprite.
@@ -45,7 +45,7 @@ public:
      * @address 0x1DADFA0
      * @size 0x394
      */
-    void Draw2(CCamera *, float *, float *);
+    void Draw2(CCamera *camera, float *head, float *source);
 
     /**
      * Advances the beam and records its trail positions.
@@ -56,9 +56,9 @@ public:
      */
     void Step(void);
 
-    sceVu0FVECTOR positions[60]; /**< Recorded positions forming the beam trail. */
-    sceVu0FVECTOR target;        /**< Destination used to establish the beam direction. */
-    int state;                   /**< Current movement state. */
+    sceVu0FVECTOR positions[60]; /**< Trail element positions, the head first. */
+    sceVu0FVECTOR target;        /**< Point the beam is aimed at on its first step. */
+    int state;                   /**< Zero aims the beam at the target; one moves it. */
     int counters[60];            /**< Ages of the recorded trail elements. */
     float sizes[60];             /**< Draw sizes of the trail elements. */
     float alphas[60];            /**< Alpha values of the trail elements. */

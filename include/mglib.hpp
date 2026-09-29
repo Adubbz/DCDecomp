@@ -48,7 +48,7 @@ extern "C" RenderInfo mgRenderInfo;
  * @size 0x30
  * @unknownret
  */
-void MGSetBGColor(float *colour);
+void MGSetBGColor(float *color);
 
 /**
  * Starts drawing the shadows, which go through a texture of their own.
@@ -159,7 +159,7 @@ void MGSetAmbient(float *ambient);
  * @size 0x90
  * @unknownret
  */
-void MGSetPLight(float (*direction)[4], float (*colour)[4]);
+void MGSetPLight(float (*direction)[4], float (*color)[4]);
 
 /**
  * Reads the lighting direction and colour matrices.
@@ -168,7 +168,7 @@ void MGSetPLight(float (*direction)[4], float (*colour)[4]);
  * @address 0x12DCB0
  * @size 0x48
  */
-void MGGetPLight(float (*direction)[4], float (*colour)[4]);
+void MGGetPLight(float (*direction)[4], float (*color)[4]);
 
 /**
  * Turns one world position into a screen position.
@@ -177,7 +177,7 @@ void MGGetPLight(float (*direction)[4], float (*colour)[4]);
  * @address 0x12E290
  * @size 0x250
  */
-int MGRotTransPers(int *screen, float *world, int mode);
+int MGRotTransPers(int *screen, float *position, int fog);
 
 /**
  * Turns one world position into the two screen corners of a sprite that faces
@@ -187,8 +187,8 @@ int MGRotTransPers(int *screen, float *world, int mode);
  * @address 0x12E740
  * @size 0x250
  */
-int MGRotTransPers3DSprite(int *top_left, int *bottom_right, float *world, float width,
-                           float height, int mode);
+int MGRotTransPers3DSprite(int *top_left, int *bottom_right, float *position, float width,
+                           float height, int fog);
 
 /**
  * Draws one model.
@@ -209,7 +209,7 @@ void MGDraw(CFrame *frame);
  * @size 0x120
  * @unknownret
  */
-void MGDrawShadowFast(CFrame *frame, float *position, float *light);
+void MGDrawShadowFast(CFrame *frame, float *position, float *normal);
 
 /**
  * Drops the shadow of one model onto the ground, with fewer faces than
@@ -220,7 +220,7 @@ void MGDrawShadowFast(CFrame *frame, float *position, float *light);
  * @size 0x120
  * @unknownret
  */
-void MGDrawShadowFast2(CFrame *frame, float *position, float *light);
+void MGDrawShadowFast2(CFrame *frame, float *position, float *normal);
 
 /**
  * Drops the shadow of one model onto the ground.
@@ -230,7 +230,7 @@ void MGDrawShadowFast2(CFrame *frame, float *position, float *light);
  * @size 0x170
  * @unknownret
  */
-void MGDrawShadow(CFrame *frame, float *position, float *light);
+void MGDrawShadow(CFrame *frame, float *position, float *normal);
 
 /**
  * Draws the shade that lies on one model.
@@ -289,8 +289,8 @@ void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned 
  * @size 0x7C
  * @unknownret
  */
-void MGSetFogParm(float near, float far, unsigned char r, unsigned char g, unsigned char b,
-                  float scale, float bias);
+void MGSetFogParm(float near_z, float far_z, unsigned char r, unsigned char g, unsigned char b,
+                  float far_fog, float near_fog);
 
 /**
  * Sets the register that names how a primitive blends with the frame.
@@ -310,7 +310,8 @@ void MGSetGsALPHA(sceGsAlpha *alpha);
  * @size 0x21C
  * @unknownret
  */
-void MGMoveImage(sceGsTex0 *from, const CRect_i_ &rect, sceGsTex0 *to, int x, int y, int mode);
+void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y,
+                 int direction);
 
 /**
  * Copies the frame being drawn into a texture.
@@ -320,7 +321,7 @@ void MGMoveImage(sceGsTex0 *from, const CRect_i_ &rect, sceGsTex0 *to, int x, in
  * @size 0x100
  * @unknownret
  */
-void MGMoveFrameBuffImage(sceGsTex0 *to, int x, int y, int mode);
+void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int direction);
 
 /**
  * Sets the matrix that puts the world in front of the eye, and where the eye
@@ -331,7 +332,7 @@ void MGMoveFrameBuffImage(sceGsTex0 *to, int x, int y, int mode);
  * @size 0x6C
  * @unknownret
  */
-void MGSetViewMatrix(float (*view)[4], float *eye);
+void MGSetViewMatrix(float (*view)[4], float *position);
 
 /**
  * Initializes the renderer, its GS state, and its shared vectors and matrices.
@@ -439,7 +440,7 @@ void MGSetWindowRect(CRect_i_ rect);
  * @address 0x12E240
  * @size 0x28
  */
-void MGGetBGColor(float *colour);
+void MGGetBGColor(float *color);
 
 /**
  * Forces or releases render-info scissoring.
@@ -457,7 +458,7 @@ void MGScisioringForce(int force);
  * @address 0x12E4E0
  * @size 0x260
  */
-int MGRotTransPers2D(int *screen, float *world, int fog);
+int MGRotTransPers2D(int *screen, float *position, int fog);
 
 /**
  * Draws the screen-space flare produced by a visible world-space light source.
@@ -476,7 +477,7 @@ void LensFlare(CTexture *texture, float *position, unsigned char red,
  * @address 0x12E990
  * @size 0xA8
  */
-void MGCalcColor(float *colour, float *normal);
+void MGCalcColor(float *color, float *normal);
 
 /**
  * Returns the clip-plane mask for a world-space vertex.
@@ -521,5 +522,5 @@ void MGGetFBuffBackTex(sceGsTex0 *tex0);
  * @address 0x12F430
  * @size 0x538
  */
-void MGStretchMoveImage(sceGsTex0 *from, const CRect_i_ &source, sceGsTex0 *to,
-                        const CRect_i_ &destination);
+void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst,
+                        const CRect_i_ &dst_rect);

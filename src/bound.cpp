@@ -69,9 +69,9 @@ int CBound::InCheck(float *point, float *result) {
 
 void CBound::SetDir(CFrame *frame, float *from_position, float *to_position,
                     float *up_direction, float half_width, float half_height) {
-    state = 1;
-    frame0 = frame;
-    frame1 = NULL;
+    follow_mode = 1;
+    from_frame = frame;
+    to_frame = NULL;
     ChangeDir(from_position, to_position, up_direction);
 
     // The depth is whatever the box already had; only the two across the
@@ -104,8 +104,8 @@ void CBound::UpDateDir(void) {
     sceVu0FVECTOR world_up;
     sceVu0FMATRIX frame_matrix;
 
-    if (frame0 != NULL) {
-        frame0->GetLWMatrix(frame_matrix);
+    if (from_frame != NULL) {
+        from_frame->GetLWMatrix(frame_matrix);
         sceVu0ApplyMatrix(world_from, frame_matrix, from);
         sceVu0ApplyMatrix(world_to, frame_matrix, to);
         up[3] = 0.0f;
@@ -197,16 +197,16 @@ void CBound::UpDateDirPos(void) {
     sceVu0FVECTOR end_extension;
     sceVu0FVECTOR start_extension;
 
-    if (frame0 != NULL) {
+    if (from_frame != NULL) {
         from[3] = 1.0f;
-        frame0->GetLWMatrix(frame_matrix);
+        from_frame->GetLWMatrix(frame_matrix);
         sceVu0ApplyMatrix(world_from, frame_matrix, from);
     } else {
         sceVu0CopyVector(world_from, from);
     }
-    if (frame1 != NULL) {
+    if (to_frame != NULL) {
         to[3] = 1.0f;
-        frame1->GetLWMatrix(frame_matrix);
+        to_frame->GetLWMatrix(frame_matrix);
         sceVu0ApplyMatrix(world_to, frame_matrix, to);
     } else {
         sceVu0CopyVector(world_to, to);
@@ -216,8 +216,8 @@ void CBound::UpDateDirPos(void) {
     position[1] = (world_from[1] + world_to[1]) * 0.5f;
     position[2] = (world_from[2] + world_to[2]) * 0.5f;
     sceVu0SubVector(span, world_to, world_from);
-    sceVu0ScaleVector(end_extension, span, (length0 - 1.0f) * 0.5f);
-    sceVu0ScaleVector(start_extension, span, (length1 - 1.0f) * 0.5f);
+    sceVu0ScaleVector(end_extension, span, (to_stretch - 1.0f) * 0.5f);
+    sceVu0ScaleVector(start_extension, span, (from_stretch - 1.0f) * 0.5f);
     sceVu0AddVector(world_to, world_to, end_extension);
     sceVu0SubVector(world_from, world_from, start_extension);
     sceVu0SubVector(span, world_to, world_from);
@@ -245,7 +245,7 @@ void CBound::UpDateDirPos(void) {
 }
 
 void CBound::UpDate() {
-    switch (state) {
+    switch (follow_mode) {
         case 1:
             UpDateDir();
             break;
@@ -265,10 +265,10 @@ void CBound::InitParam() {
     next = 0;
     mask_bit = 0;
     friction = 0.5f;
-    frame0 = frame1 = 0;
+    from_frame = to_frame = 0;
     sceVu0CopyVector(from, position);
     sceVu0CopyVector(to, position);
-    length0 = length1 = 1.0f;
+    to_stretch = from_stretch = 1.0f;
 }
 
 CBound::CBound(float half_width, float half_height, float half_depth) {

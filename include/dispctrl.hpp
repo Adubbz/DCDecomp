@@ -47,7 +47,7 @@ public:
      * @address 0x13E610
      * @size 0x18
      */
-    void FadeOutStart(float speed);
+    void FadeOutStart(float fade_speed);
 
     /**
      * Starts decreasing the curtain alpha at the requested speed.
@@ -56,7 +56,7 @@ public:
      * @address 0x13E630
      * @size 0x1C
      */
-    void FadeInStart(float speed);
+    void FadeInStart(float fade_speed);
 
     /**
      * Sets a fixed curtain alpha without selecting either fade direction.
@@ -65,7 +65,7 @@ public:
      * @address 0x13E650
      * @size 0x14
      */
-    void FadeInit(float rate);
+    void FadeInit(float start_rate);
 
     /**
      * Returns the current curtain alpha.

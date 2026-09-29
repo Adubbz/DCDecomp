@@ -114,12 +114,12 @@ void CEditPartsInfo::Save(int georama_no, CSaveData *save_data) {
         if (saved_part == NULL) {
             continue;
         }
-        saved_part->flag = parts[plot].unk_08;
-        saved_part->part_id = parts[plot].completion_flags;
-        saved_part->unk_6 = parts[plot].placed;
-        saved_part->progress = parts[plot].stock;
+        saved_part->obtained = parts[plot].obtained;
+        saved_part->completion_flags = parts[plot].completion_flags;
+        saved_part->placed = parts[plot].placed;
+        saved_part->stock = parts[plot].stock;
         for (int element = 0; element < 6; element++) {
-            saved_part->npc_slot[element] = parts[plot].elements[element].enabled;
+            saved_part->element_enabled[element] = parts[plot].elements[element].enabled;
         }
     }
 }
@@ -143,24 +143,24 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
         if (saved_part == NULL) {
             continue;
         }
-        parts[plot].unk_08 = saved_part->flag;
-        parts[plot].completion_flags = saved_part->part_id;
+        parts[plot].obtained = saved_part->obtained;
+        parts[plot].completion_flags = saved_part->completion_flags;
         if (load_requests != 0) {
-            parts[plot].placed = saved_part->unk_6;
+            parts[plot].placed = saved_part->placed;
             request[plot] = georama->request_complete[plot];
         }
-        if (saved_part->progress > 0) {
-            parts[plot].stock = saved_part->progress;
+        if (saved_part->stock > 0) {
+            parts[plot].stock = saved_part->stock;
         }
         for (int element = 0; element < 6; element++) {
-            parts[plot].elements[element].enabled = saved_part->npc_slot[element];
+            parts[plot].elements[element].enabled = saved_part->element_enabled[element];
         }
     }
 }
 
 void CEditPartsInfo::Initialize(int georama_no) {
     int plot;
-    int name;
+    int name_no;
     char **names;
     int element;
     EDIT_PARTS_ATRA *source;
@@ -168,7 +168,7 @@ void CEditPartsInfo::Initialize(int georama_no) {
 
     memset(&empty_part, 0, sizeof(empty_part));
     for (element = 0; element < 6; element++) {
-        empty_part.elements[element].unk_04 = -1;
+        empty_part.elements[element].required_element = -1;
     }
 
     unk_1624 = 0;
@@ -179,33 +179,33 @@ void CEditPartsInfo::Initialize(int georama_no) {
             source = GetEditAtraPartsData(georama_no, plot);
         }
         parts[plot].parts_no = plot;
-        parts[plot].unk_08 = 0;
+        parts[plot].obtained = 0;
         parts[plot].completion_flags = 0;
         parts[plot].stock = source->max;
         parts[plot].placed = 0;
-        parts[plot].unk_10 = source->unk_08;
+        parts[plot].tex_no = source->tex_no;
         parts[plot].kind = source->kind;
         for (element = 0; element < 6; element++) {
             parts[plot].elements[element].id = source->elements[element].id;
-            parts[plot].elements[element].unk_04 = source->elements[element].unk_04;
+            parts[plot].elements[element].required_element = source->elements[element].required_element;
             parts[plot].elements[element].enabled = 0;
             names = parts[plot].elements[element].names;
             names[0] = NULL;
-            for (name = 0; name < 4; name++) {
-                names[name] = NULL;
-                if (source->elements[element].names[name] != NULL &&
-                    source->elements[element].names[name][0] != '\0') {
-                    names[name] = source->elements[element].names[name];
+            for (name_no = 0; name_no < 4; name_no++) {
+                names[name_no] = NULL;
+                if (source->elements[element].names[name_no] != NULL &&
+                    source->elements[element].names[name_no][0] != '\0') {
+                    names[name_no] = source->elements[element].names[name_no];
                 }
             }
-            parts[plot].elements[element].unk_1C = source->elements[element].unk_18;
+            parts[plot].elements[element].npc_no = source->elements[element].npc_no;
         }
     }
 }
 
 void CEditPartsInfo::Initialize(int index, EPARTS_INFO_HEADER *header) {
     parts[index].parts_no = index;
-    parts[index].unk_08 = 0;
+    parts[index].obtained = 0;
     parts[index].completion_flags = 0;
     parts[index].placed = 0;
     for (int element = 0; element < 6; element++) {

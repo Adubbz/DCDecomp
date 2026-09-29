@@ -31,16 +31,16 @@ public:
  */
 class CCPoly {
 public:
-    sceVu0FVECTOR vertex[3];
-    sceVu0FVECTOR normal;
+    sceVu0FVECTOR vertex[3]; /**< Corners of the triangle. */
+    sceVu0FVECTOR normal;    /**< Normal of the triangle's plane. */
 
     union {
-        CCPolyInfo info;
+        CCPolyInfo info; /**< Surface metadata as the collision data stores it, copied whole. */
 
         struct {
             s16 ground_kind; /**< What the surface is made of. */
             s16 foot_sound;  /**< Sound the character's feet play on it. */
-            s16 unk_44;      /**< Light or ambience the surface puts the character in. */
+            s16 area_kind;   /**< Kind of area the surface marks; 10 holds the battle camera higher above it. */
             s16 ignore_mask; /**< Collision query modes that pass through the surface. */
             u8 unk_48[8];
         } attr;
@@ -52,8 +52,8 @@ public:
  */
 class CCPolyBox {
 public:
-    CCPoly poly;
-    CBoxVu0 box;
+    CCPoly poly; /**< Collision triangle. */
+    CBoxVu0 box; /**< Axis-aligned bounds of the triangle. */
 };
 
 /**
@@ -61,8 +61,8 @@ public:
  */
 class CCollision {
 public:
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
+    sceVu0FVECTOR max; /**< Greater corner of the geometry's bounds. */
+    sceVu0FVECTOR min; /**< Lesser corner of the geometry's bounds. */
 
     virtual int GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
     virtual int GetMaxY(float *position);
@@ -84,9 +84,9 @@ public:
     /* The same three fields Initialize clears, cleared again here because construction cannot
        reach a virtual of its own class. */
     CCollisionMDT() {
-        data = 0;
+        model = 0;
         mesh = 0;
-        num = 0;
+        mesh_count = 0;
     }
 
     virtual int GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
@@ -98,9 +98,9 @@ public:
     virtual int PickUpNearPoly(CCPoly *poly);
     virtual void Initialize();
 
-    MDT_HEADER *data;
-    CCPolyBox *mesh; /**< Bounded polygons the collision tests against. */
-    int num;
+    MDT_HEADER *model; /**< MDT resource the collision geometry is read from. */
+    CCPolyBox *mesh;   /**< Bounded polygons the collision tests against. */
+    int mesh_count;    /**< Number of bounded polygons in mesh. */
 };
 
 STATIC_ASSERT(sizeof(CCPoly) == 0x50);
@@ -114,7 +114,7 @@ STATIC_ASSERT(sizeof(CBoxVu0) == 0x20);
  * @size 0x324
  * @unknownret
  */
-int CheckHit(CCPoly *polys, int count, float *from, float *to, float *hit, int mask, int flags);
+int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, int nearest, int mode);
 
 /**
  * Finds the collision polygon under a point, and the one above it.
@@ -124,4 +124,4 @@ int CheckHit(CCPoly *polys, int count, float *from, float *to, float *hit, int m
  * @size 0x1DC
  * @unknownret
  */
-int GetFootPoly(float *position, float height, CCPoly *polys, float *ground, CCPoly *found, int count, int flags);
+int GetFootPoly(float *position, float depth, CCPoly *found, float *ground, CCPoly *polys, int count, int mode);

@@ -43,7 +43,7 @@ public:
     s32 status;                  /**< Shared runtime status reset whenever a shot starts. */
     s32 slot_count;              /**< Number of effect slots initialized by the loader. */
     s32 current_slot;            /**< Currently selected effect slot, or -1. */
-    s32 unk_A154;
+    s32 texture_block;           /**< Texture block the effect's model was loaded into and is reloaded from before drawing. */
     u8 unk_A158[8];
 
     /**
@@ -91,7 +91,8 @@ public:
      * @address 0x1ACC70
      * @size 0x5E4
      */
-    int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
+    int Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex_block,
+              CDataAlloc2<1> *allocator, int slots);
 
     /**
      * Reads the effect's model from a pack that is already loaded and gives every slot a copy;
@@ -101,7 +102,8 @@ public:
      * @address 0x1AD260
      * @size 0x5A8
      */
-    int Entry2(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
+    int Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int tex_block,
+               CDataAlloc2<1> *allocator, int slots);
 
     /**
      * Gives every slot a fresh copy of the template character and switches to a replacement
@@ -111,7 +113,7 @@ public:
      * @address 0x1AD810
      * @size 0x508
      */
-    int ReEntry(BT_SHOT_EFFECT *, CDataAlloc2<1> *);
+    int ReEntry(BT_SHOT_EFFECT *description, CDataAlloc2<1> *allocator);
 
     /**
      * Selects whether the current projectile effect loops.
@@ -130,7 +132,8 @@ public:
      * @address 0x1ADD60
      * @size 0x458
      */
-    int Set(float *, float *, int, int, int, CFrame *, int);
+    int Set(float *position, float *target, int owner, int sub_id, int source, CFrame *parent,
+            int initial_phase);
 
     /**
      * Delays the current projectile effect and clears its secondary wait state.
@@ -240,14 +243,14 @@ public:
     sceVu0FVECTOR pos[12]; /**< Where each shot is. */
     sceVu0FVECTOR unk_100[12];
     sceVu0FVECTOR vector[12]; /**< The way each shot flies, and how fast. */
-    s32 unk_280[12];
-    s32 life[12];   /**< How long each shot has left, in frames. */
-    s32 damage[12]; /**< What each shot takes off what it hits. */
-    float unk_09[12];
-    s32 unk_30[12];
+    s32 halted[12];           /**< Nonzero while each shot is held in place and skips collision and movement. */
+    s32 life[12];             /**< How long each shot has left, in frames. */
+    s32 damage[12];           /**< What each shot takes off what it hits. */
+    float size[12];           /**< Sprite size each shot is drawn at. */
+    s32 unk_340[12];
     s32 unk_370[12];
-    s32 unk_3A0[12];
-    s32 used[12]; /**< 1 while the slot holds a shot. */
+    s32 start_flag[12]; /**< Flag cleared whenever a slot takes a new shot. */
+    s32 used[12];       /**< 1 while the slot holds a shot. */
 
     /**
      * Draws the twelve projectiles of one shot.
@@ -274,9 +277,9 @@ class CSHOT_MACHINGUN {
 public:
     float position[16][4]; /**< Positions of the sixteen rapid-fire projectiles. */
     float velocity[16][4]; /**< Movement vectors of the sixteen rapid-fire projectiles. */
-    s32 unk_200[16];
-    s32 unk_240[16];
-    s32 unk_280[16];
+    s32 damage[16];        /**< Damage each rapid-fire projectile deals on a monster hit. */
+    s32 element[16];       /**< Element each rapid-fire projectile was fired with. */
+    s32 age[16];           /**< Frames each rapid-fire projectile has flown; 0 while the slot is free. */
 
     /**
      * Starts one rapid-fire projectile and returns its slot, or -1 if full.
@@ -285,7 +288,7 @@ public:
      * @address 0x1AE660
      * @size 0xEC
      */
-    int Set(float *, float *, int, int);
+    int Set(float *origin, float *direction, int damage, int element);
 
     /**
      * Advances the sixteen rapid-fire projectiles.

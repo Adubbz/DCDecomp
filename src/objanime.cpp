@@ -31,7 +31,7 @@ int all_stop;
  * @size 0x14
  */
 void OBJ_ANIME_SEQ::Initialize(void) {
-    type = -1;
+    property = -1;
     completion_flag = 0;
 }
 
@@ -67,19 +67,19 @@ int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence) {
     for (i = 0; i < 10; i++) {
         sequence->frames[i] = NULL;
     }
-    if (sequence->type <= -1) {
+    if (sequence->property <= -1) {
         return 0;
     }
     // An empty name means the animation drives the frame it was given.
-    if (sequence->name[0] != 0) {
-        sequence->frames[0] = frame->SearchFrame(sequence->name);
+    if (sequence->frame_name[0] != 0) {
+        sequence->frames[0] = frame->SearchFrame(sequence->frame_name);
     } else {
         sequence->frames[i] = frame;
     }
     if (sequence->frames[0] == NULL) {
         return 0;
     }
-    sceVu0CopyVector(sequence->current, sequence->range);
+    sceVu0CopyVector(sequence->current, sequence->from);
     return 1;
 }
 
@@ -93,7 +93,7 @@ int InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence) {
 int InitObjAnime(CFrame **frames, OBJ_ANIME_SEQ *sequence) {
     int i;
 
-    if (sequence->type <= -1) {
+    if (sequence->property <= -1) {
         return 0;
     }
     for (i = 0; i < 10; i++) {
@@ -102,14 +102,14 @@ int InitObjAnime(CFrame **frames, OBJ_ANIME_SEQ *sequence) {
     for (i = 0; i < 4; i++) {
         sequence->frames[i] = NULL;
         if (frames[i] != NULL) {
-            if (sequence->name[0] != 0) {
-                sequence->frames[i] = frames[i]->SearchFrame(sequence->name);
+            if (sequence->frame_name[0] != 0) {
+                sequence->frames[i] = frames[i]->SearchFrame(sequence->frame_name);
             } else {
                 sequence->frames[i] = frames[i];
             }
         }
     }
-    sceVu0CopyVector(sequence->current, sequence->range);
+    sceVu0CopyVector(sequence->current, sequence->from);
     return 1;
 }
 
@@ -124,7 +124,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
     int i;
     int found = 0;
 
-    if (sequence->type <= -1) {
+    if (sequence->property <= -1) {
         return 0;
     }
     if (count > 10) {
@@ -137,8 +137,8 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
     // the front of the sequence.
     for (i = 0; i < count; i++) {
         if (frames[i] != NULL) {
-            if (sequence->name[0] != 0) {
-                sequence->frames[found] = frames[i]->SearchFrame(sequence->name);
+            if (sequence->frame_name[0] != 0) {
+                sequence->frames[found] = frames[i]->SearchFrame(sequence->frame_name);
             } else {
                 sequence->frames[found] = frames[i];
             }
@@ -147,7 +147,7 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
             }
         }
     }
-    sceVu0CopyVector(sequence->current, sequence->range);
+    sceVu0CopyVector(sequence->current, sequence->from);
     return 1;
 }
 
@@ -159,23 +159,23 @@ int InitObjAnime(CFrame **frames, int count, OBJ_ANIME_SEQ *sequence) {
  * @size 0x160
  */
 int InitObjAnime(CFrame **frames, int count, EPARTS_FUNC_DATA *func, OBJ_ANIME_SEQ *sequence) {
-    sceVu0FVECTOR distance;
+    sceVu0FVECTOR span;
 
     if (func->kind != 6) {
         return 0;
     }
-    sequence->type = (int) func->position[0];
-    sequence->number = (int) func->position[1];
-    strcpy(sequence->name, (char *) func->frame_name);
-    sceVu0CopyVector(sequence->range, func->rotation);
+    sequence->property = (int) func->position[0];
+    sequence->mode = (int) func->position[1];
+    strcpy(sequence->frame_name, (char *) func->frame_name);
+    sceVu0CopyVector(sequence->from, func->rotation);
     int steps = (int) func->position[2];
     if (steps > 0) {
-        sceVu0SubVector(distance, func->values, func->rotation);
-        sceVu0ScaleVector(sequence->offset, distance, 1.0f / (float) steps);
+        sceVu0SubVector(span, func->values, func->rotation);
+        sceVu0ScaleVector(sequence->step, span, 1.0f / (float) steps);
     } else {
-        sceVu0CopyVector(sequence->offset, func->parameters);
+        sceVu0CopyVector(sequence->step, func->parameters);
     }
-    sceVu0CopyVector(sequence->speed, func->values);
+    sceVu0CopyVector(sequence->to, func->values);
     InitObjAnime(frames, count, sequence);
     if (steps > 0) {
         sceVu0CopyVector(sequence->current, func->parameters);
@@ -212,10 +212,10 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
     if (all_stop != 0) {
         return;
     }
-    if (sequence->type <= -1) {
+    if (sequence->property <= -1) {
         return;
     }
-    switch (sequence->type) {
+    switch (sequence->property) {
         case 0:
             if (sequence->frames[0] != NULL) {
                 float x = (3.1415927f * sequence->current[0]) / 180.0f;
@@ -239,7 +239,7 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
             if (sequence->frames[0] != NULL) {
                 CFrameAttr *attr = &sequence->frames[0]->attr;
                 sceVu0CopyVector(attr->color, sequence->current);
-                attr->unk_14 = 1;
+                attr->use_color = 1;
             }
             break;
     }
@@ -256,92 +256,92 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
                 sequence->frames[i]->SetRotation(rotation[0], rotation[1], rotation[2]);
                 sequence->frames[i]->SetPosition(position);
                 sequence->frames[i]->SetScale(scale);
-                if (sequence->type == 3) {
+                if (sequence->property == 3) {
                     CFrameAttr *attr = &sequence->frames[i]->attr;
                     sceVu0CopyVector(attr->color, sequence->current);
-                    attr->unk_14 = 1;
+                    attr->use_color = 1;
                 }
             }
         }
     }
-    switch (sequence->number) {
+    switch (sequence->mode) {
         case 0:
-            sceVu0AddVector(sequence->current, sequence->current, sequence->offset);
+            sceVu0AddVector(sequence->current, sequence->current, sequence->step);
             break;
         case 1:
-            sceVu0AddVector(sequence->current, sequence->current, sequence->offset);
-            if (end_check(sequence->current[0], sequence->speed[0], sequence->offset[0]) != 0) {
-                sequence->current[0] = sequence->range[0];
+            sceVu0AddVector(sequence->current, sequence->current, sequence->step);
+            if (end_check(sequence->current[0], sequence->to[0], sequence->step[0]) != 0) {
+                sequence->current[0] = sequence->from[0];
             }
-            if (end_check(sequence->current[1], sequence->speed[1], sequence->offset[1]) != 0) {
-                sequence->current[1] = sequence->range[1];
+            if (end_check(sequence->current[1], sequence->to[1], sequence->step[1]) != 0) {
+                sequence->current[1] = sequence->from[1];
             }
-            if (end_check(sequence->current[2], sequence->speed[2], sequence->offset[2]) != 0) {
-                sequence->current[2] = sequence->range[2];
+            if (end_check(sequence->current[2], sequence->to[2], sequence->step[2]) != 0) {
+                sequence->current[2] = sequence->from[2];
             }
             break;
         case 2:
             // Reverse at either end, swapping the two ends round.
-            sceVu0AddVector(sequence->current, sequence->current, sequence->offset);
+            sceVu0AddVector(sequence->current, sequence->current, sequence->step);
             for (int i = 0; i < 3; i++) {
-                if (end_check(sequence->current[i], sequence->speed[i], sequence->offset[i]) != 0) {
-                    sequence->offset[i] *= -1.0f;
-                    sequence->current[i] = sequence->speed[i];
-                    value = sequence->range[i];
-                    sequence->range[i] = sequence->speed[i];
-                    sequence->speed[i] = value;
+                if (end_check(sequence->current[i], sequence->to[i], sequence->step[i]) != 0) {
+                    sequence->step[i] *= -1.0f;
+                    sequence->current[i] = sequence->to[i];
+                    value = sequence->from[i];
+                    sequence->from[i] = sequence->to[i];
+                    sequence->to[i] = value;
                 }
             }
             break;
         case 3:
             // Stop at the far end.
-            sceVu0AddVector(sequence->current, sequence->current, sequence->offset);
+            sceVu0AddVector(sequence->current, sequence->current, sequence->step);
             for (int i = 0; i < 3; i++) {
-                if (end_check(sequence->current[i], sequence->speed[i], sequence->offset[i]) != 0) {
-                    sequence->current[i] = sequence->speed[i];
-                    sequence->offset[i] = 0.0f;
+                if (end_check(sequence->current[i], sequence->to[i], sequence->step[i]) != 0) {
+                    sequence->current[i] = sequence->to[i];
+                    sequence->step[i] = 0.0f;
                 }
             }
             break;
         case 4:
             for (i = 0; i < 3; i++) {
-                value = sequence->speed[i] - sequence->range[i];
+                value = sequence->to[i] - sequence->from[i];
                 value *= (float) rand() / 2.1474836e9f;
-                sequence->current[i] = sequence->range[i] + value;
+                sequence->current[i] = sequence->from[i] + value;
             }
             break;
         case 6:
-            value = sequence->speed[0] - sequence->range[0];
+            value = sequence->to[0] - sequence->from[0];
             value *= (float) rand() / 2.1474836e9f;
-            sequence->current[1] = sequence->current[0] = sequence->range[0] + value;
+            sequence->current[1] = sequence->current[0] = sequence->from[0] + value;
             sequence->current[2] = sequence->current[0];
             break;
         case 5:
             for (i = 0; i < 3; i++) {
-                value = sequence->offset[i] * (((float) rand() / 2.1474836e9f) - 0.5f);
+                value = sequence->step[i] * (((float) rand() / 2.1474836e9f) - 0.5f);
                 sequence->current[i] += value;
-                if (sequence->current[i] < sequence->range[i]) {
-                    sequence->current[i] = sequence->range[i];
+                if (sequence->current[i] < sequence->from[i]) {
+                    sequence->current[i] = sequence->from[i];
                 }
-                if (sequence->current[i] > sequence->speed[i]) {
-                    sequence->current[i] = sequence->speed[i];
+                if (sequence->current[i] > sequence->to[i]) {
+                    sequence->current[i] = sequence->to[i];
                 }
             }
             break;
         case 7:
-            value = sequence->offset[0] * (((float) rand() / 2.1474836e9f) - 0.5f);
+            value = sequence->step[0] * (((float) rand() / 2.1474836e9f) - 0.5f);
             sequence->current[0] += value;
-            if (sequence->current[0] < sequence->range[0]) {
-                sequence->current[0] = sequence->range[0];
+            if (sequence->current[0] < sequence->from[0]) {
+                sequence->current[0] = sequence->from[0];
             }
-            if (sequence->current[0] > sequence->speed[0]) {
-                sequence->current[0] = sequence->speed[0];
+            if (sequence->current[0] > sequence->to[0]) {
+                sequence->current[0] = sequence->to[0];
             }
             sequence->current[1] = sequence->current[0];
             sequence->current[2] = sequence->current[0];
             break;
     }
-    if (sequence->type == 0) {
+    if (sequence->property == 0) {
         if (sequence->current[0] > 180.0f) {
             sequence->current[0] -= 360.0f;
         }
@@ -496,7 +496,7 @@ void EditEffectStep2(void) {
 void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *group) {
     sceVu0FVECTOR position;
     float scale;
-    int kind;
+    int fire_kind;
 
     if (effect == NULL) {
         return;
@@ -533,19 +533,19 @@ void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *gro
             Fire.pos[3] = 1.0f;
             position[3] = 1.0f;
             if (effect->kind == 1) {
-                kind = 3;
+                fire_kind = 3;
             }
             if (effect->kind == 2) {
-                kind = 1;
+                fire_kind = 1;
             }
             if (effect->kind == 3) {
-                kind = 2;
+                fire_kind = 2;
             }
             if (effect->kind == 6) {
-                kind = 2;
+                fire_kind = 2;
             }
             setbilinear(1);
-            Fire.DrawFire(1, 1, camera, position, scale, kind, 15.0f);
+            Fire.DrawFire(1, 1, camera, position, scale, fire_kind, 15.0f);
             break;
         case 4:
             if (group != NULL) {

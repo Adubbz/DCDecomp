@@ -18,22 +18,22 @@ public:
 
     union {
         float digit_angle[5]; /**< Hop angle of each place, rising to pi. */
-        float phase[5];       /**< Alternate retail-facing name used by the entry routine. */
+        float phase[5];       /**< The hop angles, as the entry and draw routines name them. */
     };
 
     union {
         s32 digits[5]; /**< Value of each place; -1 skips its hop and -2 draws the special mark. */
-        s32 digit[5];  /**< Alternate retail-facing name used by the entry routine. */
+        s32 digit[5];  /**< The place values, as the entry and draw routines name them. */
     };
 
     union {
-        float alpha; /**< Opacity of the number, from zero to 128. */
-        float fade;  /**< Alternate name used while initializing the opacity. */
+        float alpha;   /**< Opacity of the number, from zero to 128. */
+        float opacity; /**< The opacity, as the entry and draw routines name it. */
     };
 
     union {
-        float alpha_speed; /**< Amount the opacity changes by each step. */
-        float rise;        /**< Alternate name used by the entry routine. */
+        float alpha_speed;   /**< Amount the opacity changes by each step. */
+        float opacity_speed; /**< The opacity change per step, as the entry routine names it. */
     };
 
     union {
@@ -81,7 +81,7 @@ public:
  * @size 0x64
  * @unknownret
  */
-void HitValueEntry(CHitValue *values, float *position, int amount, int kind, CFrame *frame);
+void HitValueEntry(CHitValue *values, float *world, int amount, int kind, CFrame *frame);
 
 STATIC_ASSERT(sizeof(CHitValue) == 0x60);
 

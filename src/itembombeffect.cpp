@@ -33,7 +33,7 @@ int checkItemUsed(int slot) {
     water_max = UserStatus->water_max[character];
     hp = UserStatus->hp[character];
     max_hp = UserStatus->max_hp[character];
-    condition = UserStatus->unk_42C8[character];
+    condition = UserStatus->ailments[character];
     int usable = 1;
     ITEM_PACK *pack = &UserStatus->item_pack;
     s16 item = pack->quick_item_slot[slot];
@@ -84,7 +84,7 @@ int checkItemUsed(int slot) {
  * @size 0x248
  */
 void usedActiveItem(CUserStatus *status, int item) {
-    int volume;
+    int vol_index;
     int character = status->cur_chara;
 
     if (item == 0xAA) {
@@ -95,14 +95,14 @@ void usedActiveItem(CUserStatus *status, int item) {
 
     item -= 0x51;
     if ((ITEM_LIST[item].kind_flags & ITEMKINDF_CONSUMABLE) != 0) {
-        volume = 0;
+        vol_index = 0;
         if ((ITEM_LIST[item].use_flags & ITEMUSE_HEAL_HP) != 0) {
             s16 life = ITEM_LIST[item].vol;
             status->AddNowLife(character, life, 100.0f);
-            volume++;
+            vol_index++;
         }
         if ((ITEM_LIST[item].use_flags & ITEMUSE_DRINK) != 0) {
-            s16 drink = (&ITEM_LIST[item].vol)[volume];
+            s16 drink = (&ITEM_LIST[item].vol)[vol_index];
             status->AddDrink(status->cur_chara, drink, 5.0f);
         }
     }
@@ -113,16 +113,16 @@ void usedActiveItem(CUserStatus *status, int item) {
             SndSePlay(0x6F, -1, 0);
         }
         if ((ITEM_LIST[item].use_flags & 0x20000) != 0 &&
-            (UserStatus->unk_42C8[character] & 0x40) != 0) {
-            UserStatus->unk_42C8[character] = 0;
+            (UserStatus->ailments[character] & 0x40) != 0) {
+            UserStatus->ailments[character] = 0;
         }
         if ((ITEM_LIST[item].use_flags & 0x8000) != 0 &&
-            (UserStatus->unk_42C8[character] & 0x10) != 0) {
-            UserStatus->unk_42C8[character] = 0;
+            (UserStatus->ailments[character] & 0x10) != 0) {
+            UserStatus->ailments[character] = 0;
         }
         if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 &&
-            (UserStatus->unk_42C8[character] != 0 || UserStatus->unk_42C8[character] != 8)) {
-            UserStatus->unk_42C8[character] = 0;
+            (UserStatus->ailments[character] != 0 || UserStatus->ailments[character] != 8)) {
+            UserStatus->ailments[character] = 0;
         }
     }
 }
@@ -137,31 +137,31 @@ void usedActiveItem(CUserStatus *status, int item) {
 int SetBombEffect(float *position, int owner, int damage, float scale) {
     int collision_slot = -1;
 
-    for (int effect_no = 0; effect_no < 3; effect_no++) {
-        if (NowBombEffect[effect_no].CheckBomb() != 0) {
+    for (int bomb = 0; bomb < 3; bomb++) {
+        if (NowBombEffect[bomb].CheckBomb() != 0) {
             continue;
         }
 
-        NowBombEffect[effect_no].SetBomb(position, scale);
+        NowBombEffect[bomb].SetBomb(position, scale);
         SndSePlay(0x6C, -1, 0);
         collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale,
                                          0.0f, owner, 3, 0, 0);
         if (collision_slot != -1) {
             CCollisionData *collision = NowColData;
-            collision->hit[collision->now_hit].unk_70 = 10;
-            collision->hit[collision->now_hit].unk_74 = 10;
+            collision->hit[collision->now_hit].phase = 10;
+            collision->hit[collision->now_hit].ready_phase = 10;
         }
 
         if (scale > 1.0f) {
             CShockWave *wave = NowShockWave;
             sceVu0CopyVector(wave->position, position);
             wave->position[3] = 1.0f;
-            wave->base_radius = wave->radius_scale = 30.0f * scale;
+            wave->base_radius = wave->expand_radius = 30.0f * scale;
             wave->radius = 0.0f;
             wave->expand_steps = 15.0f * scale;
             wave->phase = 0.0f;
             wave->alpha = 0.0f;
-            wave->unk_28 = 1;
+            wave->active = 1;
         }
         break;
     }
@@ -248,45 +248,45 @@ void CItemBombEffect::Draw(CCamera *camera) {
  * @size 0x1F0
  */
 void CItemBombEffect::Step(void) {
-    for (int effect_no = 0; effect_no < 5; effect_no++) {
-        if (active[effect_no] != 1) {
+    for (int puff = 0; puff < 5; puff++) {
+        if (active[puff] != 1) {
             continue;
         }
 
-        switch (phases[effect_no]) {
+        switch (phases[puff]) {
             case 0:
-                counters[effect_no]++;
-                sizes[effect_no] += 2.0f;
-                alphas[effect_no] += 8.0f;
-                if (counters[effect_no] >= 3) {
-                    counters[effect_no] = 0;
-                    phases[effect_no]++;
+                counters[puff]++;
+                sizes[puff] += 2.0f;
+                alphas[puff] += 8.0f;
+                if (counters[puff] >= 3) {
+                    counters[puff] = 0;
+                    phases[puff]++;
                 }
                 break;
             case 1:
-                counters[effect_no]++;
-                sizes[effect_no] += 1.0f;
-                alphas[effect_no] += 8.0f;
-                if (counters[effect_no] >= 4) {
-                    counters[effect_no] = 0;
-                    phases[effect_no]++;
+                counters[puff]++;
+                sizes[puff] += 1.0f;
+                alphas[puff] += 8.0f;
+                if (counters[puff] >= 4) {
+                    counters[puff] = 0;
+                    phases[puff]++;
                 }
                 break;
             case 2:
-                counters[effect_no]++;
-                sizes[effect_no] += 0.3f;
-                alphas[effect_no] -= 3.0f;
-                if (counters[effect_no] >= 20) {
-                    counters[effect_no] = 0;
-                    phases[effect_no]++;
+                counters[puff]++;
+                sizes[puff] += 0.3f;
+                alphas[puff] -= 3.0f;
+                if (counters[puff] >= 20) {
+                    counters[puff] = 0;
+                    phases[puff]++;
                 }
                 break;
             case 3:
-                counters[effect_no]++;
-                sizes[effect_no] += 0.1f;
-                alphas[effect_no] -= 2.0f;
-                if (counters[effect_no] >= 40) {
-                    active[effect_no] = 0;
+                counters[puff]++;
+                sizes[puff] += 0.1f;
+                alphas[puff] -= 2.0f;
+                if (counters[puff] >= 40) {
+                    active[puff] = 0;
                 }
                 break;
         }
@@ -301,13 +301,13 @@ void CItemBombEffect::Step(void) {
  * @size 0xBC
  */
 void CItemBombEffect::SetBomb(float *position, float scale) {
-    for (int effect_no = 0; effect_no < 5; effect_no++) {
-        sceVu0CopyVector(positions[effect_no], position);
-        phases[effect_no] = 0;
-        counters[effect_no] = -(effect_no * 3);
-        alphas[effect_no] = 128.0f;
-        sizes[effect_no] = 20.0f;
-        active[effect_no] = 1;
+    for (int puff = 0; puff < 5; puff++) {
+        sceVu0CopyVector(positions[puff], position);
+        phases[puff] = 0;
+        counters[puff] = -(puff * 3);
+        alphas[puff] = 128.0f;
+        sizes[puff] = 20.0f;
+        active[puff] = 1;
     }
     this->scale = scale;
     phases[0] = 2;
@@ -322,8 +322,8 @@ void CItemBombEffect::SetBomb(float *position, float scale) {
  * @size 0x48
  */
 int CItemBombEffect::CheckBomb(void) {
-    for (int effect_no = 0; effect_no < 5; effect_no++) {
-        if (active[effect_no] != 0) {
+    for (int puff = 0; puff < 5; puff++) {
+        if (active[puff] != 0) {
             return 1;
         }
     }
@@ -338,8 +338,8 @@ int CItemBombEffect::CheckBomb(void) {
  * @size 0x30
  */
 void CItemBombEffect::Initialize(void) {
-    for (int effect_no = 0; effect_no < 5; effect_no++) {
-        active[effect_no] = 0;
+    for (int puff = 0; puff < 5; puff++) {
+        active[puff] = 0;
     }
 }
 
@@ -362,7 +362,7 @@ void CShockWave::Draw(CCamera *camera) {
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR direction;
 
-    if (unk_28 == 0) {
+    if (active == 0) {
         return;
     }
 
@@ -425,7 +425,7 @@ void CShockWave::Draw(CCamera *camera) {
  * @size 0xD8
  */
 void CShockWave::Step(void) {
-    if (unk_28 == 0) {
+    if (active == 0) {
         return;
     }
 
@@ -434,13 +434,13 @@ void CShockWave::Step(void) {
         phase += half_pi / expand_steps;
         float envelope = sinf(phase);
         alpha = 160.0f * envelope;
-        radius = base_radius + radius_scale * envelope;
+        radius = base_radius + expand_radius * envelope;
     }
     if (phase >= half_pi) {
         alpha -= 5.0f;
         if (alpha <= 0.0f) {
             alpha = 0.0f;
-            unk_28 = 0;
+            active = 0;
         }
     }
 }

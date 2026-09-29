@@ -18,7 +18,7 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
     u_int saved_size;
 
     result = 0;
-    if (info->unk_320 == 2) {
+    if (info->shadow_pass == 2) {
         saved_primary = vu_data_buffer[0];
         saved_secondary = vu_data_buffer[1];
         saved_size = vu_size;
@@ -46,7 +46,7 @@ int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
     u_int saved_size;
 
     result = 0;
-    if (info->unk_320 == 2) {
+    if (info->shadow_pass == 2) {
         saved_primary = vu_data_buffer[0];
         saved_secondary = vu_data_buffer[1];
         saved_size = vu_size;
@@ -166,7 +166,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                                           float (*matrix)[4]) {
     int word;
     int qwc;
-    int a;
+    int index_a;
     MDT_HEADER *model;
     int first;
     int shape_index;
@@ -180,7 +180,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
     int shape_num;
     float ny;
     MDT_SVERTEX *corner;
-    float t;
+    float plane_scale;
     float nz;
     sceVu0FVECTOR *projected;
     int index_num;
@@ -191,10 +191,10 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
     int count;
     int tag;
     int clip_num;
-    int c;
+    int index_c;
     int offset_a;
     int offset_b;
-    int b;
+    int index_b;
     u_int i;
     int offset_c;
     sceVu0FMATRIX clip;
@@ -231,17 +231,17 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
     direction[1] = info->light_direction[1][0];
     direction[2] = info->light_direction[2][0];
     direction[3] = 0.0f;
-    t = sceVu0InnerProduct(normal, point);
-    if (t == 0.0f) {
+    plane_scale = sceVu0InnerProduct(normal, point);
+    if (plane_scale == 0.0f) {
         point[0] -= 0.1f * normal[0];
         point[1] -= 0.1f * normal[1];
         point[2] -= 0.1f * normal[2];
-        t = 1.0f;
+        plane_scale = 1.0f;
     }
-    t = 1.0f / t;
-    nx = normal[0] * t;
-    ny = normal[1] * t;
-    nz = normal[2] * t;
+    plane_scale = 1.0f / plane_scale;
+    nx = normal[0] * plane_scale;
+    ny = normal[1] * plane_scale;
+    nz = normal[2] * plane_scale;
     sceVu0Normalize(direction, direction);
     sceVu0DropShadowMatrix(shadow_matrix, direction, nx, ny, nz, 0);
     MulMatrix(shadow_matrix, shadow_matrix, matrix);
@@ -331,24 +331,24 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                     sceVu0FVECTOR side0;
                     sceVu0FVECTOR side1;
 
-                    a = corner[0].index;
-                    b = corner[1].index;
-                    c = corner[2].index;
+                    index_a = corner[0].index;
+                    index_b = corner[1].index;
+                    index_c = corner[2].index;
                     edges[0] = corner[0].edge;
                     edges[1] = corner[1].edge;
                     edges[2] = corner[2].edge;
                     // Each corner's byte offset is shared by the vertex, eye and projected arrays.
-                    offset_a = a * sizeof(sceVu0FVECTOR);
+                    offset_a = index_a * sizeof(sceVu0FVECTOR);
                     out[1] = *(u_long128 *) ((u_char *) vertices + offset_a);
-                    offset_b = b * sizeof(sceVu0FVECTOR);
+                    offset_b = index_b * sizeof(sceVu0FVECTOR);
                     out[2] = *(u_long128 *) ((u_char *) vertices + offset_b);
-                    offset_c = c * sizeof(sceVu0FVECTOR);
+                    offset_c = index_c * sizeof(sceVu0FVECTOR);
                     out[3] = *(u_long128 *) ((u_char *) vertices + offset_c);
                     sceVu0SubVector(edge0, (float *) &out[2], (float *) &out[1]);
                     sceVu0SubVector(edge1, (float *) &out[3], (float *) &out[1]);
                     sceVu0OuterProduct(face, edge0, edge1);
                     if (sceVu0InnerProduct(face, local_light) <= 0.0f) {
-                        out[4] = *(u_long128 *) vertices[c];
+                        out[4] = *(u_long128 *) vertices[index_c];
                         triangle++;
                         out[0] = *(u_long128 *) edges;
                         *(u_long128 *) near_side[0] = *(u_long128 *) ((u_char *) eye + offset_a);

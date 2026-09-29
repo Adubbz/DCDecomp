@@ -87,13 +87,13 @@ void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
  * @size 0x50
  */
 void getFramePos(CFrameVu1 *frame, char *name, float *position) {
-    CFrame *found = frame->SearchFrame(name);
+    CFrame *named_frame = frame->SearchFrame(name);
     sceVu0FVECTOR origin;
 
     // The position wanted is the frame's own origin.
     origin[0] = origin[1] = origin[2] = 0.0f;
     origin[3] = 0.0f;
-    found->GetWorldPosition(position, origin);
+    named_frame->GetWorldPosition(position, origin);
 }
 
 /**
@@ -105,7 +105,7 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position) {
  */
 void makeWeaponName(char *name, int weapon_no) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
-    int first[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+    int first_weapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
     char number[16];
     int chara_no = 0;
 
@@ -132,7 +132,7 @@ void makeWeaponName(char *name, int weapon_no) {
     }
     strcpy(name, "dun/item/main_wep/");
     strcat(name, prefix[chara_no]);
-    int offset = weapon_no - first[chara_no];
+    int offset = weapon_no - first_weapon[chara_no];
     if (offset < 10) {
         sprintf(number, "0%d", offset);
     } else {
@@ -177,38 +177,38 @@ char nameWepBuff_mds[64];
  */
 char nameWepBuff_img[64];
 
-void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
+void BtGetWeaponNamePath2(char *chr_name, char *cfg_name, int chara, int weapon_index) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
     char number[32];
     char *base = prefix[chara];
 
     strcpy(nameWepBuff_mds, base);
     strcpy(nameWepBuff_img, base);
-    if (weapon < 10) {
-        sprintf(number, "0%d", weapon);
+    if (weapon_index < 10) {
+        sprintf(number, "0%d", weapon_index);
     } else {
-        sprintf(number, "%2d", weapon);
+        sprintf(number, "%2d", weapon_index);
     }
     strcat(nameWepBuff_mds, number);
     strcat(nameWepBuff_mds, ".chr");
     strcat(nameWepBuff_img, number);
     strcat(nameWepBuff_img, ".cfg");
-    strcpy(name, nameWepBuff_mds);
-    strcpy(path, nameWepBuff_img);
+    strcpy(chr_name, nameWepBuff_mds);
+    strcpy(cfg_name, nameWepBuff_img);
 }
 
-void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
-    WEAPON_DATA *weapon;
+void BtGetWeaponNamePath3(char *chr_name, char *cfg_name, int weapon_no) {
+    WEAPON_DATA *weapon_data;
     int chara_no;
     if (weapon_no <= 0x100) {
-        weapon = NULL;
+        weapon_data = NULL;
     } else {
-        weapon = GetWeaponData(weapon_no);
-        if (weapon != NULL) {
-            chara_no = (s8) weapon->owner;
+        weapon_data = GetWeaponData(weapon_no);
+        if (weapon_data != NULL) {
+            chara_no = (s8) weapon_data->owner;
             weapon_no -= defWeapon__2[chara_no];
             printf("offset %d\n", weapon_no);
-            BtGetWeaponNamePath2(name, effect_name, chara_no, weapon_no);
+            BtGetWeaponNamePath2(chr_name, cfg_name, chara_no, weapon_no);
         }
     }
 }
@@ -237,19 +237,19 @@ void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int 
  * @address 0x1B7530
  * @size 0xE8
  */
-int createAttachVolume(int item_no, int unused) {
+int createAttachVolume(int item_no, int dungeon) {
     int volume;
 
     if (item_no < 0x5B || item_no > 0x5E) {
         return 0;
     }
-    int total = (int) ((50.0f * (float) rand()) / 2.1474836e9f);
-    total += (int) ((50.0f * (float) rand()) / 2.1474836e9f);
+    int roll = (int) ((50.0f * (float) rand()) / 2.1474836e9f);
+    roll += (int) ((50.0f * (float) rand()) / 2.1474836e9f);
     volume = 1;
-    if (total < 31) {
+    if (roll < 31) {
         volume = 2;
     }
-    if (total < 16) {
+    if (roll < 16) {
         volume = 3;
     }
     return volume;
@@ -311,9 +311,9 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
 int yearFloorTbl[25] = {5, 18, 23, 38, 51, 66, 102, 109, 122, 140, 151, 162, 205,
                         208, 213, 225, 238, 249, 300, 310, 322, 340, 356, 382, 400};
 
-int BtGetFloorLevel(int dungeon_no) {
-    if (dungeon_no >= 0 && dungeon_no < 25) {
-        return yearFloorTbl[dungeon_no];
+int BtGetFloorLevel(int floor) {
+    if (floor >= 0 && floor < 25) {
+        return yearFloorTbl[floor];
     }
     return 0;
 }

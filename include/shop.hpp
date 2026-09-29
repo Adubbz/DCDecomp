@@ -38,12 +38,12 @@ STATIC_ASSERT(sizeof(SHOP_ITEMLIST) == 0xFC);
  * Stores one item held temporarily by a menu.
  */
 struct IHAVEITEM {
-    s32 unk_00;
-    s32 unk_04;
-    s32 unk_08;
-    s32 unk_0C;
-    s16 item_no; /**< The item held. */
-    s16 volume;  /**< The held item's volume. */
+    s32 slot_state; /**< State of the board slot the held item was taken from, handed back to the slot it is put down in. */
+    s32 from_page;  /**< Board the held item was taken from: 0 items, 1 weapons, 2 attachments, or a battle-menu board. */
+    s32 last_slot;  /**< Slot the item shop last picked the held item up from. */
+    s32 from_slot;  /**< Slot on that board the held item was taken from, where a cancel returns it. */
+    s16 item_no;    /**< The item held. */
+    s16 volume;     /**< The held item's volume. */
 };
 
 STATIC_ASSERT(sizeof(IHAVEITEM) == 0x14);
@@ -79,7 +79,7 @@ s16 *GetItemShopList(int shop_no);
  * @address 0x1E68F0
  * @size 0x38
  */
-void InitShopItemListData(SHOP_ITEMLIST *);
+void InitShopItemListData(SHOP_ITEMLIST *item_list);
 
 /**
  * Tracks one shop icon flying from its shelf to the slot it was bought or sold into.
@@ -87,12 +87,12 @@ void InitShopItemListData(SHOP_ITEMLIST *);
 class ShopIconMove {
 public:
     s16 to_stock; /**< Nonzero routes the icon into the shop's stock; zero writes it straight into the player's status. */
-    s16 unk_02;
-    s16 slot_no; /**< Indexes the board slot, and the matching CStockItem/CUserStatus entry, the icon is bound for. */
-    s16 icon_no; /**< Indexes the icon's position on the board; divided and taken modulo five gives its row and column. */
-    float pos_x; /**< Current horizontal screen position of the flying icon. */
-    float pos_y; /**< Current vertical screen position of the flying icon. */
-    s16 item_no; /**< The item, weapon or attachment identifier the icon is carrying. */
+    s16 spare;    /**< Reset to -1 whenever the flight is cleared. */
+    s16 slot_no;  /**< Indexes the board slot, and the matching CStockItem/CUserStatus entry, the icon is bound for. */
+    s16 icon_no;  /**< Indexes the icon's position on the board; divided and taken modulo five gives its row and column. */
+    float pos_x;  /**< Current horizontal screen position of the flying icon. */
+    float pos_y;  /**< Current vertical screen position of the flying icon. */
+    s16 item_no;  /**< The item, weapon or attachment identifier the icon is carrying. */
     u8 unk_12[2];
     MENU_ITEMDATA data; /**< A copy of the item, weapon or attachment record. */
 
@@ -112,7 +112,7 @@ public:
      * @address 0x1E69A0
      * @size 0x460
      */
-    int IconAutoMove(int is_buy, int force_arrive);
+    int IconAutoMove(int item_shop, int force_arrive);
 
     /**
      * Draws a shop icon part-way through its flight.
@@ -133,7 +133,7 @@ STATIC_ASSERT(sizeof(ShopIconMove) == 0x10C);
  * @address 0x1E6F40
  * @size 0x88
  */
-int ShopNoInput(int *, int, int);
+int ShopNoInput(int *tex_block, int shop_no, int mode);
 
 /**
  * Clears the shop's held item, weapon and attachment lists.
@@ -169,7 +169,7 @@ void ShopTextureLoadFix(void);
  * @address 0x1E8490
  * @size 0x188
  */
-void InitChargeShop(int *, int, int);
+void InitChargeShop(int *tex_block, int shop_no, int mode);
 
 /**
  * Keeps the charge shop's scrolled view on the row the cursor is on.
@@ -214,7 +214,7 @@ void DrawChargeShop(void);
  * @address 0x1EAF40
  * @size 0x384
  */
-void ChargeShopBoardDraw(int, int, int);
+void ChargeShopBoardDraw(int x, int y, int alpha);
 
 /**
  * Totals the prices of goods currently marked for purchase.
@@ -232,7 +232,7 @@ static int BuyMoneyCheck2(void);
  * @address 0x1EBB50
  * @size 0x11C
  */
-int CompItem1(int, int);
+int CompItem1(int first_item_no, int second_item_no);
 
 /**
  * Sorts one shop item board into order and returns one when any entry moved.
@@ -241,7 +241,7 @@ int CompItem1(int, int);
  * @address 0x1EBC70
  * @size 0x138
  */
-int SeitonShopItemBoardSub(ITEM_PACK *);
+int SeitonShopItemBoardSub(ITEM_PACK *pack);
 
 /**
  * Orders two attachments for the shop's sort.
@@ -250,7 +250,7 @@ int SeitonShopItemBoardSub(ITEM_PACK *);
  * @address 0x1EBE40
  * @size 0xFC
  */
-int CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
+int CompAttach1(ATTACH_LIST *first, ATTACH_LIST *second);
 
 /**
  * Sorts one attachment board into order and returns one when any entry moved.
@@ -259,7 +259,7 @@ int CompAttach1(ATTACH_LIST *, ATTACH_LIST *);
  * @address 0x1EBF40
  * @size 0x138
  */
-int SeitonShopAttachBoardSub(ATTACH_LIST *);
+int SeitonShopAttachBoardSub(ATTACH_LIST *attachments);
 
 /**
  * Runs one frame of the item shop and returns the mode its input handler left.
@@ -286,7 +286,7 @@ int CheckSideKey2(void);
  * @address 0x1ECD10
  * @size 0x274
  */
-void DrawSellTicket22(int, int, int, int, int);
+void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha);
 
 /**
  * Builds the file name of a shopkeeper's model archive.
@@ -296,7 +296,7 @@ void DrawSellTicket22(int, int, int, int, int);
  * @size 0xD8
  * Builds the archive file name of one shop's goods into the buffer it is given.
  */
-void ItemShopGetPacFileName(int, int, char *);
+void ItemShopGetPacFileName(int shop_kind, int shop_no, char *file_name);
 
 /**
  * Builds the file name of a shopkeeper's texture archive.
@@ -305,7 +305,7 @@ void ItemShopGetPacFileName(int, int, char *);
  * @address 0x1EDB60
  * @size 0x8C
  */
-void ItemShopGetImgFileName(int, int, char *);
+void ItemShopGetImgFileName(int shop_kind, int shop_no, char *file_name);
 
 /**
  * Takes the shop's four board tables out of its arena.
@@ -334,7 +334,7 @@ void ItemPosInfoInit(void);
  * @address 0x1EE0F0
  * @size 0x190
  */
-void InitItemShop2(int *, int, int);
+void InitItemShop2(int *tex_block, int shop_no, int mode);
 
 /**
  * Handles one frame of item shop input and returns the mode it leaves the shop in.
@@ -370,7 +370,7 @@ int GetMardanGareyanFlag(void);
  * @address 0x1F1290
  * @size 0x2C
  */
-void SetAlreadyGetMardanWeapon(int);
+void SetAlreadyGetMardanWeapon(int taken);
 
 /**
  * Adds to the count of Mardan Garayan caught, holding it between zero and ten thousand.
@@ -379,7 +379,7 @@ void SetAlreadyGetMardanWeapon(int);
  * @address 0x1F12C0
  * @size 0x78
  */
-void SetFishMardanGarayanNum(int);
+void SetFishMardanGarayanNum(int count);
 
 /**
  * Returns the number of fish counted toward the Mardan weapon requirement.
@@ -406,7 +406,7 @@ void ClearFishMardanGarayanNum(void);
  * @address 0x1F1410
  * @size 0x1C0
  */
-void InitFishingExchange(u_long128 *, int *, int);
+void InitFishingExchange(u_long128 *buffer, int *tex_block, int mode);
 
 /**
  * Handles one frame of fishing exchange input and returns the mode it leaves the exchange in.
@@ -445,13 +445,13 @@ void ExitFishingExchange(void);
 int FishingExchangeLoop(void);
 
 /**
- * Gives the message describing one fishing prize.
+ * Gives the name message of one kind of fish.
  *
  * @mangled GetFishMsgNo__Fi
  * @address 0x1F2E10
  * @size 0x3C
  */
-int GetFishMsgNo(int);
+int GetFishMsgNo(int fish_no);
 
 /**
  * Returns one entry of the fishing leaderboard, or NULL when that rank is empty.
@@ -460,7 +460,7 @@ int GetFishMsgNo(int);
  * @address 0x1F2E50
  * @size 0x28
  */
-SV_FISH_DATA *GetFishingRankData(int);
+SV_FISH_DATA *GetFishingRankData(int rank_index);
 
 /**
  * Opens the page listing the fish that have been caught.
@@ -469,7 +469,7 @@ SV_FISH_DATA *GetFishingRankData(int);
  * @address 0x1F2E80
  * @size 0x120
  */
-void InitFishRecordView(u_long128 *, int *, int);
+void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode);
 
 /**
  * Loads the fishing record view's textures and message buffers.
@@ -489,7 +489,7 @@ void FishRecordTextureEnter(void);
  */
 int FishRecordViewLoop(void);
 
-/** Message number, less thirty, describing each fishing prize. */
+/** Message number, less thirty, naming each kind of fish. */
 extern s8 FishMsg[18];
 
 /**

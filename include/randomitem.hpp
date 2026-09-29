@@ -4,6 +4,9 @@
 
 class CTexture;
 
+/**
+ * Keeps the gold and items that defeated monsters leave lying on the floor.
+ */
 class CRandomItem {
 public:
     CTexture *gold_texture; /**< Texture that a dropped pile of gold draws with. */
@@ -72,7 +75,7 @@ public:
      * @address 0x1D71F0
      * @size 0xD8
      */
-    void Set(float *, int, int, int);
+    void Set(float *drop_position, int slot_id, int gold, int item);
 
     /**
      * Finds a free slot among the thirty-two lying items.
@@ -89,9 +92,8 @@ public:
      * @mangled CheckItemNo__11CRandomItemFi
      * @address 0x1D7320
      * @size 0x58
-     * Tells whether an item already lies on the floor.
      */
-    int CheckItemNo(int);
+    int CheckItemNo(int item);
 
     /**
      * Advances the lying items' bob and sparkle by a frame.

@@ -19,8 +19,8 @@ void CHitMark::Set(float *position, float *direction, int kind, float spread, fl
 
     SetPosition(position);
     this->kind = kind;
-    this->unk_5C4 = spread;
-    this->unk_5C0 = shrink;
+    this->spread = spread;
+    this->shrink = shrink;
     this->gravity = gravity;
     this->speed = speed;
     this->floor_y = floor_y;
@@ -39,11 +39,11 @@ void CHitMark::Set(float *position, float *direction, int kind, float spread, fl
         this->offset[i][2] = rand() / 2147483648.0f - 0.5f;
         this->offset[i][3] = 1.0f;
         this->velocity[i][0] =
-            direction[0] + this->unk_5C4 * rand() / 2147483648.0f - this->unk_5C4 / 2.0f;
+            direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
         this->velocity[i][1] =
-            direction[0] + this->unk_5C4 * rand() / 2147483648.0f - this->unk_5C4 / 2.0f;
+            direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
         this->velocity[i][2] =
-            direction[0] + this->unk_5C4 * rand() / 2147483648.0f - this->unk_5C4 / 2.0f;
+            direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
         this->size[i] = 0.1f + 1.2f * rand() / 2147483648.0f;
         this->used[i] = 1;
     }
@@ -56,7 +56,7 @@ void CHitMark::Draw() {
     int bottom_left[4];
     int bottom_right[4];
     sceVu0FVECTOR base;
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR mark_pos;
     CTexture *texture;
     int i;
 
@@ -71,11 +71,11 @@ void CHitMark::Draw() {
         if (this->used[i] == 0) {
             continue;
         }
-        pos[0] = base[0] + this->offset[i][0];
-        pos[1] = base[1] + this->offset[i][1];
-        pos[2] = base[2] + this->offset[i][2];
-        pos[3] = 1.0f;
-        if (MGRotTransPers3DSprite(top_left, bottom_right, pos, this->size[i],
+        mark_pos[0] = base[0] + this->offset[i][0];
+        mark_pos[1] = base[1] + this->offset[i][1];
+        mark_pos[2] = base[2] + this->offset[i][2];
+        mark_pos[3] = 1.0f;
+        if (MGRotTransPers3DSprite(top_left, bottom_right, mark_pos, this->size[i],
                                    this->size[i] / 2.0f, 0) != 1) {
             continue;
         }
@@ -168,13 +168,13 @@ void CHitMark::Step() {
             this->velocity[i][1] *= -0.7f;
         }
 
-        this->size[i] -= this->unk_5C0;
+        this->size[i] -= this->shrink;
         if (this->size[i] <= 0.1f) {
             this->used[i] = 0;
             this->count--;
         }
     }
-    this->unk_5C4 -= 0.05f;
+    this->spread -= 0.05f;
 }
 
 void CHitMark::Initialize() {
@@ -183,7 +183,7 @@ void CHitMark::Initialize() {
     for (i = 0; i < HIT_MARK_MAX; i++) {
         this->used[i] = 0;
     }
-    this->unk_5D0 = HIT_MARK_MAX;
+    this->capacity = HIT_MARK_MAX;
     this->count = 0;
 }
 

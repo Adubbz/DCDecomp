@@ -41,22 +41,22 @@ int BtMapJumpFloor;
 s32 BtLoadMapType;
 
 void BtSystemScriptEventInfoInit(void) {
-    BtEventInfo.unk_2C = -1;
-    BtEventInfo.unk_30 = -1;
-    BtEventInfo.unk_28 = 1;
-    BtEventInfo.unk_34 = 0;
-    BtEventInfo.unk_20 = 1;
-    BtEventInfo.unk_80 = 0;
+    BtEventInfo.script_no = -1;
+    BtEventInfo.running_script_no = -1;
+    BtEventInfo.init_flag_28 = 1;
+    BtEventInfo.ext_memory = 0;
+    BtEventInfo.init_flag_20 = 1;
+    BtEventInfo.item_select_result = 0;
     BtEventInfo.entrance_result = NULL;
     BtEventInfo.escape_result = NULL;
     BtEventInfo.request = 0;
-    BtEventInfo.unk_9C = -1;
-    BtEventInfo.unk_A0 = -1;
-    BtEventInfo.unk_A4 = 0;
+    BtEventInfo.chained_script_no = -1;
+    BtEventInfo.clear_script_no = -1;
+    BtEventInfo.clear_script_ext_memory = 0;
     BtEventInfo.script_main_chr = -1;
-    BtEventInfo.unk_8C = 0;
-    BtEventInfo.unk_94 = -1;
-    BtEventInfo.unk_90 = 1;
+    BtEventInfo.floor_title_off = 0;
+    BtEventInfo.bee_npc = -1;
+    BtEventInfo.fade_on_start = 1;
     BtEventInfo.no_status_recover = 0;
     EdEventInfo.projection = -1.0f;
     EdEventInfo.main_character = &CharaMain;
@@ -142,20 +142,20 @@ void BtSystemScriptInit(void) {
     EdEventInfo.messages[2]->text_rate = text_rate;
     EdEventInfo.messages[1]->text_rate_set = text_rate;
     EdEventInfo.messages[2]->text_rate_set = text_rate;
-    if (BtEventInfo.unk_90 != 0) {
+    if (BtEventInfo.fade_on_start != 0) {
         EdFadeInit();
     }
-    BtEventInfo.unk_90 = 1;
+    BtEventInfo.fade_on_start = 1;
     for (int i = 0; i < 32; i++) {
         BtObjHdl[i].frame = NULL;
         BtObjHdl[i].character = NULL;
     }
-    BtEventInfo.unk_38 = 0;
-    BtEventInfo.unk_8C = 0;
-    BtEventInfo.unk_B0 = 0;
-    BtActStatus.unk_00C = 0;
-    BtActStatus.unk_004 = -1;
-    BtActStatus.unk_008 = -1;
+    BtEventInfo.event_marker = 0;
+    BtEventInfo.floor_title_off = 0;
+    BtEventInfo.no_reset_chara = 0;
+    BtActStatus.motion_no = 0;
+    BtActStatus.main_motion = -1;
+    BtActStatus.hand_motion = -1;
     BtActStatus.action_no = 0;
     BtActStatus.action_on = 0;
     BtActStatus.unk_028 = 0;
@@ -167,15 +167,15 @@ void BtSystemScriptAfter(void) {
 
     BtEventMode = 0;
     BtAllClear = 0;
-    BtEventInfo.unk_30 = -1;
+    BtEventInfo.running_script_no = -1;
     SetMIniMapStatus(1);
     CharaMain.SetMotion(0, 0);
-    BtActStatus.unk_00C = 0;
-    BtActStatus.unk_004 = -1;
-    BtActStatus.unk_008 = -1;
-    BtActStatus.unk_000 = 1;
-    BtActStatus.unk_058 = 1;
-    BtActStatus.unk_054 = 1;
+    BtActStatus.motion_no = 0;
+    BtActStatus.main_motion = -1;
+    BtActStatus.hand_motion = -1;
+    BtActStatus.player_visible = 1;
+    BtActStatus.weapon_visible = 1;
+    BtActStatus.shadow_visible = 1;
     EdEventInfo.player_shadow_draw = 1;
     EdEventInfo.player_draw = 1;
     EdEventAllClear();
@@ -288,54 +288,54 @@ static void SetStack(RS_STACKDATA *argument, float value) {
     }
 }
 
-int _GET_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
+int _GET_FLOOR_LEVEL(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack, UserStatus->cur_floor);
     return 1;
 }
 
-int _SET_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
+int _SET_FLOOR_LEVEL(RS_STACKDATA *stack, int argument_count) {
     ((CDngStatusData *) UserStatus)->SetNowFloor(GetStackInt(stack));
     return 1;
 }
 
-int _GET_OLD_FLOOR_LEVEL(RS_STACKDATA *stack, int count) {
+int _GET_OLD_FLOOR_LEVEL(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack, UserStatus->prev_floor);
     return 1;
 }
 
-int _GET_ACTION_MODE(RS_STACKDATA *stack, int count) {
-    SetStack(stack, BtEventInfo.unk_24);
+int _GET_ACTION_MODE(RS_STACKDATA *stack, int argument_count) {
+    SetStack(stack, BtEventInfo.action_mode);
     return 1;
 }
 
-int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int count) {
+int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int argument_count) {
     if (stack->type != RS_PTR) {
         return 0;
     }
 
-    BtEventInfo.unk_80 = (s32) stack->p;
+    BtEventInfo.item_select_result = (s32) stack->p;
     stack++;
     int i;
-    for (i = 0; i < count - 1; i++) {
-        BtEventInfo.unk_3C[i] = GetStackInt(stack++);
+    for (i = 0; i < argument_count - 1; i++) {
+        BtEventInfo.item_select_list[i] = GetStackInt(stack++);
     }
-    BtEventInfo.unk_7C = 0;
-    if (count > 1) {
-        BtEventInfo.unk_7C = 1;
+    BtEventInfo.item_select_filtered = 0;
+    if (argument_count > 1) {
+        BtEventInfo.item_select_filtered = 1;
     }
-    BtEventInfo.unk_3C[i] = -1;
+    BtEventInfo.item_select_list[i] = -1;
     BtEventInfo.request = 1;
     return 1;
 }
 
-int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int count) {
+int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int argument_count) {
     int flag_no = GetStackInt(stack++);
     int flag = UserStatus->ChkEventFlag(flag_no);
     SetStack(stack, flag);
     return 1;
 }
 
-int _SET_EVENT_FLG(RS_STACKDATA *stack, int count) {
+int _SET_EVENT_FLG(RS_STACKDATA *stack, int argument_count) {
     int flag_no = GetStackInt(stack++);
     int value = GetStackInt(stack);
     CUserStatus *status = UserStatus;
@@ -346,7 +346,7 @@ int _SET_EVENT_FLG(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _GET_OBJHDL(RS_STACKDATA *stack, int count) {
+int _GET_OBJHDL(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     int parts_no = GetStackInt(stack++);
     char *name = GetStackString(stack);
@@ -377,7 +377,7 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
+int _SET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     float x = GetStackFloat(stack++);
     float y = GetStackFloat(stack++);
@@ -393,7 +393,7 @@ int _SET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
+int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     float x = GetStackFloat(stack++);
     float y = GetStackFloat(stack++);
@@ -416,7 +416,7 @@ int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
+int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     int draw = GetStackInt(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
@@ -448,7 +448,7 @@ int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _GET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
+int _GET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR pos;
     BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt(stack++));
@@ -471,7 +471,7 @@ int _GET_OBJHDL_POS(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int count) {
+int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rot = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FMATRIX matrix;
     BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt(stack++));
@@ -503,14 +503,14 @@ int _SET_URA_DUNGEON(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _GET_EVENT_POS(RS_STACKDATA *stack, int count) {
+int _GET_EVENT_POS(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack++, BtEventInfo.position[0]);
     SetStack(stack++, BtEventInfo.position[1]);
     SetStack(stack, BtEventInfo.position[2]);
     return 1;
 }
 
-int _GET_EVENT_ROT(RS_STACKDATA *stack, int count) {
+int _GET_EVENT_ROT(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack++, BtEventInfo.direction[0]);
     SetStack(stack++, BtEventInfo.direction[1]);
     SetStack(stack, BtEventInfo.direction[2]);
@@ -543,11 +543,11 @@ int _GO_DUNGEON(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _SET_DUNGEON_MAP(RS_STACKDATA *stack, int count) {
+int _SET_DUNGEON_MAP(RS_STACKDATA *stack, int argument_count) {
     char *map_file = GetStackString(stack++);
     BtLoadMapType = GetStackInt(stack);
     strcpy(BtLoadMapFileName, map_file);
-    MainDungeonMap.unk_BDEC = BtLoadMapType;
+    MainDungeonMap.map_type = BtLoadMapType;
     return 1;
 }
 
@@ -565,7 +565,7 @@ int _LOAD_MONSTOR(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_RANDOM_MAP(RS_STACKDATA *stack, int argument_count) {
-    if (NowDngMap->unk_BDEC == 1) {
+    if (NowDngMap->map_type == 1) {
         BtCleatRandomMap();
     } else {
         BtCleatFreeMap();
@@ -573,24 +573,24 @@ int _SET_RANDOM_MAP(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _SET_EVENT_SW(RS_STACKDATA *stack, int count) {
+int _SET_EVENT_SW(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack++);
     NowEventMan->SearchDataSwitch(script_no, GetStackInt(stack));
     return 1;
 }
 
-int _SET_MONSTOR_ID(RS_STACKDATA *stack, int count) {
+int _SET_MONSTOR_ID(RS_STACKDATA *stack, int argument_count) {
     int model_no = GetStackInt(stack++);
     int event_flag = -1;
     float pos[3];
 
-    if (count == 2) {
+    if (argument_count == 2) {
         if (GetStackInt(stack++)) {
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
-    if (count == 5) {
+    if (argument_count == 5) {
         int clean = GetStackInt(stack++);
         pos[0] = GetStackFloat(stack++);
         pos[1] = GetStackFloat(stack++);
@@ -600,7 +600,7 @@ int _SET_MONSTOR_ID(RS_STACKDATA *stack, int count) {
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
-    if (count == 6) {
+    if (argument_count == 6) {
         int clean = GetStackInt(stack++);
         pos[0] = GetStackFloat(stack++);
         pos[1] = GetStackFloat(stack++);
@@ -615,7 +615,7 @@ int _SET_MONSTOR_ID(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int count) {
+int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int argument_count) {
     int atra_no = GetStackInt(stack++);
     int have = GetAtraTipNowHave(atra_no, UserStatus->cur_georama);
 
@@ -624,7 +624,7 @@ int _CHK_ATRA_HAVE(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_ATRA(RS_STACKDATA *stack, int count) {
+int _SET_ATRA(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR pos;
 
     pos[0] = GetStackFloat(stack++);
@@ -635,7 +635,7 @@ int _SET_ATRA(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_IBOX(RS_STACKDATA *stack, int count) {
+int _SET_IBOX(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR pos;
 
     pos[0] = GetStackFloat(stack++);
@@ -646,41 +646,41 @@ int _SET_IBOX(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _GET_NOW_USER_ID(RS_STACKDATA *stack, int count) {
+int _GET_NOW_USER_ID(RS_STACKDATA *stack, int argument_count) {
     int cur_chara = UserStatus->cur_chara;
     printf("get id = %d\n", cur_chara);
     SetStack(stack, cur_chara);
     return 1;
 }
 
-int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int count) {
+int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack++);
 
-    BtEventInfo.unk_34 = 0;
-    if (count == 2) {
-        BtEventInfo.unk_34 = GetStackInt(stack++);
+    BtEventInfo.ext_memory = 0;
+    if (argument_count == 2) {
+        BtEventInfo.ext_memory = GetStackInt(stack++);
     }
-    if (count == 3) {
-        BtEventInfo.unk_34 = GetStackInt(stack++);
-        BtEventInfo.unk_90 = GetStackInt(stack);
+    if (argument_count == 3) {
+        BtEventInfo.ext_memory = GetStackInt(stack++);
+        BtEventInfo.fade_on_start = GetStackInt(stack);
     }
     BtEventInfo.request = 5;
-    BtEventInfo.unk_9C = script_no;
+    BtEventInfo.chained_script_no = script_no;
     return 1;
 }
 
-int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int count) {
+int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack++);
 
-    BtEventInfo.unk_A4 = 0;
-    if (count > 1) {
-        BtEventInfo.unk_A4 = GetStackInt(stack);
+    BtEventInfo.clear_script_ext_memory = 0;
+    if (argument_count > 1) {
+        BtEventInfo.clear_script_ext_memory = GetStackInt(stack);
     }
-    BtEventInfo.unk_A0 = script_no;
+    BtEventInfo.clear_script_no = script_no;
     return 1;
 }
 
-int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int count) {
+int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     int npc_no = GetStackInt(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
@@ -701,22 +701,22 @@ int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int count) {
+int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int argument_count) {
     int npc_no = GetStackInt(stack++);
     int motion_no = GetStackInt(stack++);
     int speed = -1;
     int mode = 0;
 
-    if (count > 2) {
+    if (argument_count > 2) {
         speed = GetStackFloat(stack++);
     }
-    if (count > 3) {
+    if (argument_count > 3) {
         mode = GetStackInt(stack);
     }
     if (NowDngMap->npc[npc_no].chara.frame == NULL) {
         return 1;
     }
-    if (count < 3) {
+    if (argument_count < 3) {
         NowDngMap->NPCSetMotion(npc_no, motion_no);
     } else {
         NowDngMap->NPCSetMotion(npc_no, motion_no, speed, mode);
@@ -724,41 +724,41 @@ int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int count) {
+int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int argument_count) {
     int npc_no = GetStackInt(stack++);
     int enable = GetStackInt(stack);
 
     if (NowDngMap->npc[npc_no].chara.frame == NULL) {
         return 1;
     }
-    NowDngMap->npc[npc_no].unk_11D8 = enable;
+    NowDngMap->npc[npc_no].visible = enable;
     return 1;
 }
 
-int _GET_GATEKEY_NO(RS_STACKDATA *stack, int count) {
-    SetStack(stack, NowDngMap->unk_0464);
+int _GET_GATEKEY_NO(RS_STACKDATA *stack, int argument_count) {
+    SetStack(stack, NowDngMap->gate_key_no);
     return 1;
 }
 
-int _USER_WEAPON_DRAW(RS_STACKDATA *stack, int count) {
-    if (count != 1) {
+int _USER_WEAPON_DRAW(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count != 1) {
         return 1;
     }
-    BtActStatus.unk_058 = GetStackInt(stack);
+    BtActStatus.weapon_visible = GetStackInt(stack);
     return 1;
 }
 
-int _SET_MAIN_CHR2(RS_STACKDATA *stack, int count) {
+int _SET_MAIN_CHR2(RS_STACKDATA *stack, int argument_count) {
     int chara = GetStackInt(stack++);
-    int mode = 0;
+    int reload = 0;
 
-    if (count == 2) {
-        mode = GetStackInt(stack);
+    if (argument_count == 2) {
+        reload = GetStackInt(stack);
     }
     if (chara < 0 || chara > 5) {
         return 1;
     }
-    selectChrUnit(chara, mode);
+    selectChrUnit(chara, reload);
     BtEventInfo.script_main_chr = chara;
     return 1;
 }
@@ -772,7 +772,7 @@ int _RESET_MAIN_CHR(RS_STACKDATA *stack, int argument_count) {
     // Past the early exit the result is whatever selectChrUnit left behind.
 }
 
-int _SET_LIMMIT_ZONE(RS_STACKDATA *stack, int count) {
+int _SET_LIMMIT_ZONE(RS_STACKDATA *stack, int argument_count) {
     UserStatus->res_limit_zone_current = GetStackInt(stack);
     SndSPSeLoad(0x1B);
     return 1;
@@ -783,8 +783,8 @@ int _SET_DEAD_FLAG(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _ALL_DRAW_FLAG(RS_STACKDATA *stack, int count) {
-    if (count == 1) {
+int _ALL_DRAW_FLAG(RS_STACKDATA *stack, int argument_count) {
+    if (argument_count == 1) {
         BtAllDrawFlag = GetStackInt(stack);
     }
     return 1;
@@ -795,18 +795,18 @@ int _SET_FLOOR_TITLE(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _GET_RUBY_ELEMENT(RS_STACKDATA *stack, int count) {
+int _GET_RUBY_ELEMENT(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack, BtRubyDoorKey);
     return 1;
 }
 
-int _SET_RUBY_ELEMENT(RS_STACKDATA *stack, int count) {
+int _SET_RUBY_ELEMENT(RS_STACKDATA *stack, int argument_count) {
     GetStackInt(stack);
     return 1;
 }
 
 int _SET_FLOOR_TITLE_OFF(RS_STACKDATA *stack, int argument_count) {
-    BtEventInfo.unk_8C = 1;
+    BtEventInfo.floor_title_off = 1;
     return 1;
 }
 
@@ -823,36 +823,36 @@ int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _INIT_BEE(RS_STACKDATA *stack, int count) {
-    BtEventInfo.unk_94 = GetStackInt(stack);
-    InitBee(NPCUnit[BtEventInfo.unk_94].frame, 15);
+int _INIT_BEE(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.bee_npc = GetStackInt(stack);
+    InitBee(NPCUnit[BtEventInfo.bee_npc].frame, 15);
     return 1;
 }
 
 int _END_BEE(RS_STACKDATA *stack, int argument_count) {
-    BtEventInfo.unk_94 = -1;
+    BtEventInfo.bee_npc = -1;
     return 1;
 }
 
-int _EASTKING_COMPLETE(RS_STACKDATA *stack, int count) {
+int _EASTKING_COMPLETE(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack, EastKingCheckComplete());
     return 1;
 }
 
-int _GET_ITEM_TRAPID(RS_STACKDATA *stack, int count) {
-    int box = BtEventInfo.unk_AC;
-    SetStack(stack, NowDngMap->boxes[box].unk_30);
+int _GET_ITEM_TRAPID(RS_STACKDATA *stack, int argument_count) {
+    int box = BtEventInfo.treasure_box;
+    SetStack(stack, NowDngMap->boxes[box].trap_no);
     return 1;
 }
 
-int _RESET_ITEM_TRAP(RS_STACKDATA *stack, int count) {
-    int box = BtEventInfo.unk_AC;
-    NowDngMap->boxes[box].unk_30 = 0;
-    BtEventInfo.unk_AC = 0;
+int _RESET_ITEM_TRAP(RS_STACKDATA *stack, int argument_count) {
+    int box = BtEventInfo.treasure_box;
+    NowDngMap->boxes[box].trap_no = 0;
+    BtEventInfo.treasure_box = 0;
     return 1;
 }
 
-int _BOM_SET(RS_STACKDATA *stack, int count) {
+int _BOM_SET(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR push = {0.0f, 0.0f, 1.0f, 1.0f};
     sceVu0FVECTOR direction;
@@ -866,11 +866,11 @@ int _BOM_SET(RS_STACKDATA *stack, int count) {
         sceVu0Normalize(direction, push);
         sceVu0ScaleVectorXYZ(collision->hit[bomb].velocity, direction, 0.8f);
     }
-    BtActStatus.unk_148 = 30;
+    BtActStatus.event_block_frames = 30;
     return 1;
 }
 
-int _SET_STATUS_ERR(RS_STACKDATA *stack, int count) {
+int _SET_STATUS_ERR(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR pos;
 
     BtSetStatusErr(GetStackInt(stack));
@@ -880,22 +880,22 @@ int _SET_STATUS_ERR(RS_STACKDATA *stack, int count) {
     return 1;
 }
 
-int _CHECK_MARDAN(RS_STACKDATA *stack, int count) {
+int _CHECK_MARDAN(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack, SaveData->GetMardanGareyanFlag());
     return 1;
 }
 
-int _NO_RESET_CHARA_NO(RS_STACKDATA *stack, int count) {
-    BtEventInfo.unk_B0 = 1;
+int _NO_RESET_CHARA_NO(RS_STACKDATA *stack, int argument_count) {
+    BtEventInfo.no_reset_chara = 1;
     return 1;
 }
 
-int _CHECK_CHR_HELP(RS_STACKDATA *stack, int count) {
-    SetStack(stack, BtEventInfo.unk_B4);
+int _CHECK_CHR_HELP(RS_STACKDATA *stack, int argument_count) {
+    SetStack(stack, BtEventInfo.chara_help);
     return 1;
 }
 
-int _HOLD_ITEM_EVENT(RS_STACKDATA *stack, int count) {
+int _HOLD_ITEM_EVENT(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack);
     DngEventMan.SearchItemEventHold(script_no);
     UraEventMan.SearchItemEventHold(script_no);
@@ -907,18 +907,18 @@ int _STOP_BATTLE_BGM(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _NO_STATUS_RECOVER(RS_STACKDATA *stack, int count) {
+int _NO_STATUS_RECOVER(RS_STACKDATA *stack, int argument_count) {
     BtEventInfo.no_status_recover = 1;
     return 1;
 }
 
-int _SET_QUEST_DUNGEON(RS_STACKDATA *stack, int count) {
+int _SET_QUEST_DUNGEON(RS_STACKDATA *stack, int argument_count) {
     int dungeon_no = GetStackInt(stack++);
     SaveData->QuestDungeon(dungeon_no, GetStackInt(stack));
     return 1;
 }
 
-int _GET_MAP_CODE(RS_STACKDATA *stack, int count) {
+int _GET_MAP_CODE(RS_STACKDATA *stack, int argument_count) {
     SetStack(stack, UserStatus->cur_georama + 1);
     return 1;
 }
@@ -928,47 +928,47 @@ int _SET_ACTIVE_ITEM_ICON(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int count) {
+int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int argument_count) {
     int item_no = GetStackInt(stack++);
-    int unit = -1;
-    int below = item_no < 0x101;
+    int owner = -1;
+    int not_weapon = item_no < 0x101;
 
-    if (!below) {
-        if (!below && item_no < 0x12B) {
-            unit = 0;
+    if (!not_weapon) {
+        if (!not_weapon && item_no < 0x12B) {
+            owner = 0;
         }
         if (item_no >= 0x12B && item_no < 0x13A) {
-            unit = 1;
+            owner = 1;
         }
         if (item_no >= 0x13A && item_no < 0x14B) {
-            unit = 2;
+            owner = 2;
         }
         if (item_no >= 0x14B && item_no < 0x15B) {
-            unit = 3;
+            owner = 3;
         }
         if (item_no >= 0x15B && item_no < 0x16B) {
-            unit = 4;
+            owner = 4;
         }
         if (item_no >= 0x16B) {
-            unit = 5;
+            owner = 5;
         }
     }
-    SetStack(stack, unit);
+    SetStack(stack, owner);
     return 1;
 }
 
-int _SET_IBOX_ANGLE(RS_STACKDATA *stack, int count) {
-    NowDngMap->boxes[BtEventInfo.unk_AC].lid_angle = GetStackFloat(stack);
+int _SET_IBOX_ANGLE(RS_STACKDATA *stack, int argument_count) {
+    NowDngMap->boxes[BtEventInfo.treasure_box].lid_angle = GetStackFloat(stack);
     return 1;
 }
 
-int _SET_IBOX_FINISH(RS_STACKDATA *stack, int count) {
-    NowDngMap->boxes[BtEventInfo.unk_AC].lid_angle = -30.0f;
-    NowDngMap->boxes[BtEventInfo.unk_AC].unk_24 = 0;
+int _SET_IBOX_FINISH(RS_STACKDATA *stack, int argument_count) {
+    NowDngMap->boxes[BtEventInfo.treasure_box].lid_angle = -30.0f;
+    NowDngMap->boxes[BtEventInfo.treasure_box].closed = 0;
     return 1;
 }
 
-int _GET_PIERO_ITEM(RS_STACKDATA *stack, int count) {
+int _GET_PIERO_ITEM(RS_STACKDATA *stack, int argument_count) {
     int item0, item1;
 
     GetPieroItem(selectMapNo, BtUraDongeon, &item0, &item1);

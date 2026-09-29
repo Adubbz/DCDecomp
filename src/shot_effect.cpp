@@ -32,7 +32,7 @@ int GetWeaponElementAttr(int element);
 /* Draft declarations for this file. CSHOT_EFFECT's unnamed block holds the eight effect models 0x11C0 bytes into the object. */
 struct CSHOT_EFFECT_MODELS {
     u8 unk_0000[0x11C0];
-    CCharacter chara[8];
+    CCharacter chara[8]; /**< Model that each projectile-effect slot draws and animates. */
 };
 
 void CSHOT::draw() {
@@ -45,7 +45,7 @@ void CSHOT::draw() {
             }
             int x = (texture_cell % 4) << 5;
             int y = (texture_cell / 4) << 5;
-            set3DCellModel(pos[shot], "basefx01", unk_09[shot],
+            set3DCellModel(pos[shot], "basefx01", size[shot],
                            x, y,
                            32, 32, 128);
         }
@@ -67,7 +67,7 @@ void CSHOT::step() {
             continue;
         }
 
-        if (unk_280[shot] == 0) {
+        if (halted[shot] == 0) {
             SHOT_COLLISION_RESULT result =
                 checkCollision(hit_position, pos[shot], vector[shot], 2, 2.0f);
             if (result == SHOT_COLLISION_NONE) {
@@ -77,9 +77,9 @@ void CSHOT::step() {
             } else {
                 NowColData->Set(pos[shot], damage[shot], 1, 3.0f, 0.0f, 2, 2, 0, 0);
                 NowColData->SetUserID(1, 0);
-                s8 elem = NowWeaponHave->best_elem;
+                s8 weapon_element = NowWeaponHave->best_elem;
                 CCollisionData *attr_col = NowColData;
-                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
+                attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(weapon_element);
                 NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
                 NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
                 used[shot] = 0;
@@ -98,7 +98,7 @@ void CSHOT_EFFECT::Draw() {
         return;
     }
 
-    TexManager.ReloadTexture(Vif1Packet, unk_A154);
+    TexManager.ReloadTexture(Vif1Packet, texture_block);
     for (int slot = 0; slot < 8; slot++) {
         if (active[slot] != 0) {
             CCharacter *chara = &((CSHOT_EFFECT_MODELS *) this)->chara[slot];
@@ -109,12 +109,12 @@ void CSHOT_EFFECT::Draw() {
             if (!(random_rate[slot] < 0.0f)) {
                 // Drawing temporarily offsets the model by a random amount on each axis.
                 chara->GetPosition(position);
-                float r = random_rate[slot];
-                jittered[0] = position[0] + 2.0f * (r * (float) rand()) / 2147483648.0f - r;
-                r = random_rate[slot];
-                jittered[1] = position[1] + 2.0f * (r * (float) rand()) / 2147483648.0f - r;
-                r = random_rate[slot];
-                jittered[2] = position[2] + 2.0f * (r * (float) rand()) / 2147483648.0f - r;
+                float spread = random_rate[slot];
+                jittered[0] = position[0] + 2.0f * (spread * (float) rand()) / 2147483648.0f - spread;
+                spread = random_rate[slot];
+                jittered[1] = position[1] + 2.0f * (spread * (float) rand()) / 2147483648.0f - spread;
+                spread = random_rate[slot];
+                jittered[2] = position[2] + 2.0f * (spread * (float) rand()) / 2147483648.0f - spread;
                 jittered[3] = 1.0f;
                 chara->SetPosition(jittered);
             }
@@ -166,7 +166,7 @@ void CSHOT_EFFECT::Step() {
 
         SHOT_COLLISION_RESULT result = SHOT_COLLISION_NONE;
         if (phase[slot] < 2) {
-            result = checkCollision(hit_position, position, velocity[slot], effect_data->unk_048,
+            result = checkCollision(hit_position, position, velocity[slot], effect_data->target,
                                     effect_data->radius[phase[slot]]);
         }
 
@@ -179,8 +179,8 @@ void CSHOT_EFFECT::Step() {
             if (wait_state[slot] <= 0) {
                 int hit = NowColData->Set(hit_position, damage[slot], 2,
                                           effect_data->radius[phase[slot]], 1.0f,
-                                          effect_data->unk_048, effect_data->unk_044,
-                                          effect_data->unk_040, 0);
+                                          effect_data->target, effect_data->hit_kind,
+                                          effect_data->hit_flags, 0);
                 if (hit != -1) {
                     NowColData->SetUserID(user_id[slot], user_sub_id[slot]);
                     NowColData->hit[NowColData->now_hit].weapon_flags = weapon_status[slot];
@@ -188,7 +188,7 @@ void CSHOT_EFFECT::Step() {
                     NowColData->hit[NowColData->now_hit].monster_no = user_id_2[slot];
                     NowColData->hit[NowColData->now_hit].target_kind = enemy_attribute[slot];
                     // Hits of kind 3 throw along the flight, or at the player once it stops.
-                    if (effect_data->unk_044 == 3) {
+                    if (effect_data->hit_kind == 3) {
                         velocity[slot][3] = 1.0f;
                         if (effect_data->speed[phase[slot]] <= 0.0f) {
                             sceVu0FVECTOR player;
@@ -224,10 +224,10 @@ void CSHOT_EFFECT::Step() {
                     motion = effect_data->motion[phase[slot]];
                     if (motion == -1) {
                         active[slot] = 0;
-                        switch (effect_data->unk_054) {
+                        switch (effect_data->end_effect) {
                             case 100:
-                                SetBombEffect(hit_position, effect_data->unk_048,
-                                              effect_data->unk_05C, effect_data->unk_058);
+                                SetBombEffect(hit_position, effect_data->target,
+                                              effect_data->bomb_damage, effect_data->bomb_scale);
                                 break;
                         }
                         continue;
@@ -251,10 +251,10 @@ void CSHOT_EFFECT::Step() {
             motion = effect_data->motion[phase[slot]];
             if (motion == -1) {
                 active[slot] = 0;
-                switch (effect_data->unk_054) {
+                switch (effect_data->end_effect) {
                     case 100:
-                        SetBombEffect(hit_position, effect_data->unk_048, effect_data->unk_05C,
-                                      effect_data->unk_058);
+                        SetBombEffect(hit_position, effect_data->target, effect_data->bomb_damage,
+                                      effect_data->bomb_scale);
                         break;
                 }
                 continue;
@@ -277,10 +277,10 @@ void CSHOT_EFFECT::Step() {
             chara[slot].motion_type.state.time >= end - 1.0f &&
             chara[slot].motion_type.state.time < end) {
             active[slot] = 0;
-            switch (effect_data->unk_054) {
+            switch (effect_data->end_effect) {
                 case 100:
-                    SetBombEffect(hit_position, effect_data->unk_048, effect_data->unk_05C,
-                                  effect_data->unk_058);
+                    SetBombEffect(hit_position, effect_data->target, effect_data->bomb_damage,
+                                  effect_data->bomb_scale);
                     break;
             }
         }
@@ -313,7 +313,7 @@ void CSHOT_EFFECT::OffEffect(s32 slot) {
     }
 }
 
-int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
+int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex_block,
                         CDataAlloc2<1> *allocator, int slots) {
     char name[64];
 
@@ -324,11 +324,11 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex
     sprintf(name, "dun/effect/%s.chr", description->model_name);
     LoadFile(name, pack, NULL);
     wait_now_loading_vsync();
-    unk_A154 = texture_block;
+    texture_block = tex_block;
     sprintf(name, "%s.cfg", description->model_name);
 
     template_chara.Initialize();
-    template_chara.LoadPackData3(pack, name, allocator, unk_A154, allocator, 1, 0x10);
+    template_chara.LoadPackData3(pack, name, allocator, texture_block, allocator, 1, 0x10);
 
     slot_count = slots;
     for (int slot = 0; slot < slots; slot++) {
@@ -341,7 +341,7 @@ int CSHOT_EFFECT::Entry(BT_SHOT_EFFECT *description, unsigned int *pack, int tex
     return effect_data == NULL ? 0 : 1;
 }
 
-int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int texture_block,
+int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int tex_block,
                          CDataAlloc2<1> *allocator, int slots) {
     char name[64];
 
@@ -350,9 +350,9 @@ int CSHOT_EFFECT::Entry2(BT_SHOT_EFFECT *description, unsigned int *pack, int te
     }
 
     sprintf(name, "%s.cfg", description->model_name);
-    unk_A154 = texture_block;
+    texture_block = tex_block;
     template_chara.Initialize();
-    template_chara.LoadPackData3(pack, name, allocator, texture_block, allocator, 1, 0x10);
+    template_chara.LoadPackData3(pack, name, allocator, tex_block, allocator, 1, 0x10);
 
     slot_count = slots;
     for (int slot = 0; slot < slots; slot++) {
@@ -415,13 +415,13 @@ int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id, int
         phase[slot] = initial_phase;
     }
 
-    if (effect_data->unk_010 == 0) {
+    if (effect_data->stationary == 0) {
         position[3] = 1.0f;
         target[3] = 1.0f;
         sceVu0SubVector(velocity[slot], target, position);
         sceVu0Normalize(velocity[slot], velocity[slot]);
         if (parent == NULL) {
-            if (effect_data->unk_014 != 0) {
+            if (effect_data->face_flight != 0) {
                 sceVu0FMATRIX rotation;
                 LookAtMatrixZ(rotation, velocity[slot]);
                 chara[slot].frame->SetTransMatrix(rotation);
@@ -448,7 +448,7 @@ int CSHOT_EFFECT::Set(float *position, float *target, int owner, int sub_id, int
         chara[slot].SetPosition(position);
     }
 
-    damage[slot] = effect_data->unk_03C;
+    damage[slot] = effect_data->damage;
     phase_delay[slot] = effect_data->life_time;
     active[slot] = 1;
     user_id[slot] = owner;
@@ -525,7 +525,7 @@ void CSHOT_EFFECT::SetDmg(s32 damage) {
 
 void CSHOT_EFFECT::SetAttribute(s32 attribute) {
     if (this->current_slot != -1) {
-        this->effect_data->unk_040 = attribute;
+        this->effect_data->hit_flags = attribute;
     }
 }
 
@@ -605,7 +605,7 @@ void CSHOT_EFFECT_PACK::SetDmg(s32 damage) {
 int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int element) {
     int slot = -1;
     for (int i = 0; i < 16; i++) {
-        if (this->unk_280[i] == 0) {
+        if (this->age[i] == 0) {
             slot = i;
             break;
         }
@@ -617,9 +617,9 @@ int CSHOT_MACHINGUN::Set(float *origin, float *direction, int damage, int elemen
 
     sceVu0CopyVector(this->position[slot], origin);
     sceVu0CopyVector(this->velocity[slot], direction);
-    this->unk_200[slot] = damage;
-    this->unk_240[slot] = element;
-    this->unk_280[slot] = 1;
+    this->damage[slot] = damage;
+    this->element[slot] = element;
+    this->age[slot] = 1;
     return slot;
 }
 
@@ -634,17 +634,17 @@ void CSHOT_MACHINGUN::Step() {
     int slot;
     SHOT_COLLISION_RESULT result;
     float *pos;
-    int elem;
+    int weapon_element;
     CCollisionData *col;
 
     for (slot = 0; slot < 16; slot++) {
-        if (unk_280[slot] <= 0) {
+        if (age[slot] <= 0) {
             continue;
         }
 
-        unk_280[slot]++;
-        if (unk_280[slot] >= 240) {
-            unk_280[slot] = 0;
+        age[slot]++;
+        if (age[slot] >= 240) {
+            age[slot] = 0;
             continue;
         }
 
@@ -652,19 +652,19 @@ void CSHOT_MACHINGUN::Step() {
         result = checkCollision(pos, pos, velocity[slot], 2, 2.0f);
         if (result == SHOT_COLLISION_MAP) {
             OzumondShotEffect.Set(pos);
-            unk_280[slot] = 0;
+            age[slot] = 0;
         }
         if (result == SHOT_COLLISION_MONSTER) {
-            NowColData->Set(pos, unk_200[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
-            elem = NowWeaponHave->best_elem;
+            NowColData->Set(pos, damage[slot], 2, 4.0f, 1.0f, 2, 2, 0, 0);
+            weapon_element = NowWeaponHave->best_elem;
             col = NowColData;
-            col->hit[col->now_hit].flags = GetWeaponElementAttr(elem);
+            col->hit[col->now_hit].flags = GetWeaponElementAttr(weapon_element);
             NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
             NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
             CCollisionData *target = NowColData;
             target->hit[target->now_hit].owner = 5;
-            target->hit[target->now_hit].unk_60 = 6;
-            unk_280[slot] = 0;
+            target->hit[target->now_hit].attack_no = 6;
+            age[slot] = 0;
         }
 
         pos[0] += velocity[slot][0];

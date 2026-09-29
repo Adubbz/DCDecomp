@@ -171,7 +171,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
    depth of the second projection is kept, the second being the same point moved twenty-five units
    towards the camera, so the whole sprite takes a depth the thing carrying it cannot be in front
    of. */
-void CSeireiKing::Draw2(CCamera *camera, float *head, float *from) {
+void CSeireiKing::Draw2(CCamera *camera, float *head, float *source) {
     sceVu0FVECTOR direction;
     sceVu0FVECTOR point;
     int corner0[4];
@@ -184,9 +184,9 @@ void CSeireiKing::Draw2(CCamera *camera, float *head, float *from) {
     sceGsZbuf zbuf;
 
     camera->GetPos(direction);
-    direction[0] -= from[0];
-    direction[1] -= from[1];
-    direction[2] -= from[2];
+    direction[0] -= source[0];
+    direction[1] -= source[1];
+    direction[2] -= source[2];
     sceVu0Normalize(direction, direction);
     direction[0] *= 25.0f;
     direction[1] *= 25.0f;

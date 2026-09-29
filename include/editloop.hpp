@@ -57,9 +57,9 @@ struct EDIT_IMAGE_INFO {
  */
 struct EDIT_SCENE_LAYER_INFO {
     char name[0x40]; /**< Resource path relative to the active script directory. */
-    int unk_40;      /**< Runtime state reset when the layer is selected. */
-    int unk_44;      /**< Runtime state reset when the layer is selected. */
-    int unk_48;      /**< Runtime state reset when the layer is selected. */
+    int unk_40;
+    int unk_44;
+    int unk_48;
     u8 unk_4c[0x4c];
     s16 obj_anime[8]; /**< Object animations the layer plays; zero or below where a slot holds none. */
     u8 unk_a8[0x50];
@@ -72,11 +72,11 @@ struct EDIT_AREA_INFO {
     char name[0x40]; /**< Resource path relative to the active script directory. */
     int width;       /**< Width of the editable area. */
     int height;      /**< Height of the editable area. */
-    float unk_48;    /**< First area-placement parameter. */
-    float unk_4c;    /**< Second area-placement parameter. */
-    float unk_50;    /**< Third area-placement parameter. */
-    float unk_54;    /**< Fourth area-placement parameter. */
-    float unk_58;    /**< Fifth area-placement parameter. */
+    float unit_size; /**< World-space width of one grid cell. */
+    float unit_alt;  /**< World-space height of one elevation step. */
+    float origin_x;  /**< World-space X of the area's grid origin, before centring on the cells. */
+    float origin_y;  /**< World-space height of the area's grid origin. */
+    float origin_z;  /**< World-space Z of the area's grid origin, before centring on the cells. */
 };
 
 /**
@@ -97,7 +97,7 @@ struct MAP_PARTS_INFO {
     int kind;           /**< Broad ground, building, or terrain classification. */
     float position[3];  /**< World-space placement of the part. */
     float rotation[3];  /**< Orientation of the part, in radians. */
-    float unk_264;      /**< Scalar parameter supplied by the script. */
+    float lift;         /**< How far the part draws above the ground so it does not cut into it; zero for none. */
     s16 anime[8];       /**< Object animations attached to this part. */
     u8 unk_278[0x50];
     s16 events[8]; /**< Event points attached to this part. */
@@ -107,12 +107,12 @@ struct MAP_PARTS_INFO {
  * Stores the cell grid and attached resources of one script-defined map part.
  */
 struct EDIT_PARTS_DEF {
-    int width;           /**< Cells the part covers from west to east. */
-    int height;          /**< Cells the part covers from north to south. */
-    s16 cells[32];       /**< One entry per grid cell, row by row. */
-    int unk_48;          /**< Classification supplied by the script. */
-    int values[6];       /**< Numeric parameter for each attached resource. */
-    char names[6][0x20]; /**< Name of each attached resource. */
+    int width;                   /**< Cells the part covers from west to east. */
+    int height;                  /**< Cells the part covers from north to south. */
+    s16 cells[32];               /**< One entry per grid cell, row by row. */
+    int kind;                    /**< Parts classification copied into the packed part header. */
+    int element_ids[6];          /**< Identifier of each optional visual element. */
+    char element_names[6][0x20]; /**< Name of each optional visual element. */
 };
 
 /**
@@ -156,30 +156,30 @@ struct EDIT_AREA_RECT_INFO {
  * Stores the four scalar parameters for one editor water wave.
  */
 struct EDIT_WATER_WAVE_INFO {
-    float x;      /**< First wave parameter. */
-    float y;      /**< Second wave parameter. */
-    float z;      /**< Third wave parameter. */
-    float active; /**< Fourth wave parameter and slot-usage marker. */
+    float row;    /**< Grid row the ripple starts at; below zero picks one at random. */
+    float column; /**< Grid column the ripple starts at; below zero picks one at random. */
+    float range;  /**< Largest random height added to each push. */
+    float power;  /**< Height of each push; an entry with no power and no range ends the list. */
 };
 
 /**
  * Stores transient wave offsets for editor water surfaces.
  */
 struct EDIT_WATER_INFO {
-    char name[0x10]; /**< Water-surface resource name. */
-    int type;        /**< Image slot the surface draws from. */
-    int number;      /**< Image number selected within that slot. */
-    int parts_no;    /**< Map part the surface belongs to. */
+    char name[0x10];  /**< Frame of the owning part that must be drawn for the surface to draw, or empty. */
+    int grid_rows;    /**< Rows in the surface's ripple grid; zero or below ends the list. */
+    int grid_columns; /**< Columns in the surface's ripple grid. */
+    int parts_no;     /**< Map part the surface belongs to. */
     u8 unk_1c[0x4];
-    sceVu0FVECTOR corner_a; /**< First corner of the surface. */
-    sceVu0FVECTOR corner_b; /**< Second corner of the surface. */
-    sceVu0FVECTOR corner_c; /**< Third corner of the surface. */
-    int unk_50;
-    int unk_54;
-    int unk_58;
+    sceVu0FVECTOR corner_a; /**< Near-left corner of the surface, which also gives its height. */
+    sceVu0FVECTOR corner_b; /**< Far-right corner of the surface; only X and Z are read. */
+    sceVu0FVECTOR corner_c; /**< Where the surface's frame stands, relative to its part or in the world. */
+    int red;                /**< Red component of the surface colour. */
+    int green;              /**< Green component of the surface colour. */
+    int blue;               /**< Blue component of the surface colour. */
     u8 unk_5c[0x4];
-    sceVu0FVECTOR texture_scroll; /**< Texture offset and scroll rates. */
-    int follow[3];                /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
+    sceVu0FVECTOR ripple_params; /**< Ripple speed, damping, height scale and distortion. */
+    int follow[3];               /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
     u8 unk_7c[0x4];
     EDIT_WATER_WAVE_INFO wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
 };
@@ -189,10 +189,10 @@ struct EDIT_WATER_INFO {
  */
 struct EDIT_WATER_WAVE_VIEW {
     u8 unk_00[0x80];
-    float x;      /**< First wave parameter. */
-    float y;      /**< Second wave parameter. */
-    float z;      /**< Third wave parameter. */
-    float active; /**< Fourth wave parameter and slot-usage marker. */
+    float row;    /**< Grid row the ripple starts at; below zero picks one at random. */
+    float column; /**< Grid column the ripple starts at; below zero picks one at random. */
+    float range;  /**< Largest random height added to each push. */
+    float power;  /**< Height of each push; an entry with no power and no range ends the list. */
 };
 
 /**
@@ -253,10 +253,10 @@ struct ED_EVENT_POINT {
     float start_time;       /**< Beginning of the event's active time interval. */
     float end_time;         /**< End of the event's active time interval. */
     u8 unk_48[0x8];
-    sceVu0FVECTOR position; /**< Primary world-space event position. */
-    sceVu0FVECTOR unk_60;
-    sceVu0FVECTOR rotation; /**< World-space orientation associated with the event. */
-    sceVu0FVECTOR extent;   /**< Secondary point or spatial extent of the event. */
+    sceVu0FVECTOR position;      /**< Primary world-space event position. */
+    sceVu0FVECTOR trigger_range; /**< Distance within which the player triggers the event; the fourth component is a flag passed to the event. */
+    sceVu0FVECTOR rotation;      /**< World-space orientation associated with the event. */
+    sceVu0FVECTOR extent;        /**< Secondary point or spatial extent of the event. */
 };
 
 /**
@@ -297,7 +297,7 @@ struct EDIT_CONFIG_VIEW {
  */
 struct EDIT_ELEMENT_INFO {
     int unk_00;
-    int unk_04;
+    int element_no; /**< Element the slot holds. */
 };
 
 /**
@@ -725,7 +725,7 @@ void EdSetCharaCursor(int on);
  * @address 0x181480
  * @size 0x154
  */
-void EdLoadMainChara(char *model, char *motion, CDataAlloc2<1> *arena);
+void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena);
 
 /**
  * Copies the current editor resource directory into a caller buffer.

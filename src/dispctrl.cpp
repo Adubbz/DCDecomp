@@ -68,18 +68,18 @@ void CDebugFont::Draw() {
     unsigned int font_tbw;
     unsigned int dest_tbp;
     unsigned int dest_tbw;
-    sceGsTex0 font;
-    sceGsTex0 dest;
+    sceGsTex0 font_tex0;
+    sceGsTex0 dest_tex0;
     sceGsTest test;
     sceGsZbuf zbuf;
-    sceGsTex0 frame;
+    sceGsTex0 frame_tex0;
     float q;
     int pen_x;
     int pen_y;
     CRect_i_ dst;
     CRect_i_ src;
-    u_long y1;
-    u_long x1;
+    u_long bottom_y;
+    u_long right_x;
     int character;
     int index;
     int column;
@@ -87,26 +87,26 @@ void CDebugFont::Draw() {
 
     draw_x = this->x;
     draw_y = this->y;
-    draw_width = this->w;
-    draw_height = this->h;
+    draw_width = this->width;
+    draw_height = this->height;
     text_pos = this->text;
 
     tex = TexManager.GetTexture("ankfnt24", -1);
-    font = *reinterpret_cast<sceGsTex0 *>(&tex->tex0);
-    font_tbp = font.TBP0;
-    font_tbw = font.TBW;
+    font_tex0 = *reinterpret_cast<sceGsTex0 *>(&tex->tex0);
+    font_tbp = font_tex0.TBP0;
+    font_tbw = font_tex0.TBW;
 
-    tex = TexManager.GetTexture(this->texture, -1);
-    dest = *reinterpret_cast<sceGsTex0 *>(&tex->tex0);
-    dest_tbp = dest.TBP0;
-    dest_tbw = dest.TBW;
+    tex = TexManager.GetTexture(this->texture_name, -1);
+    dest_tex0 = *reinterpret_cast<sceGsTex0 *>(&tex->tex0);
+    dest_tbp = dest_tex0.TBP0;
+    dest_tbw = dest_tex0.TBW;
 
     openGiftag(Vif1Packet);
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX0_1, *reinterpret_cast<u_long *>(&dest));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX0_1, *reinterpret_cast<u_long *>(&dest_tex0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(dest_tbp >> 5, dest_tbw, dest.PSM, 0));
+                     SCE_GS_SET_FRAME(dest_tbp >> 5, dest_tbw, dest_tex0.PSM, 0));
 
     mgTexa.AEM = 1;
     mgTexa.TA0 = static_cast<u_char>(this->alpha);
@@ -128,16 +128,16 @@ void CDebugFont::Draw() {
                      SCE_GS_SET_RGBAQ(1, 1, 1, 0x80, *reinterpret_cast<u_int *>(&q)));
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, 0x79006C00);
-    x1 = (draw_width << 4) + 0x6C00;
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, x1 | 0x79000000);
-    y1 = static_cast<u_long>((draw_height << 4) + 0x7900) << 16;
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, y1 | 0x6C00);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, x1 | y1);
+    right_x = (draw_width << 4) + 0x6C00;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, right_x | 0x79000000);
+    bottom_y = static_cast<u_long>((draw_height << 4) + 0x7900) << 16;
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, bottom_y | 0x6C00);
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, right_x | bottom_y);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
 
-    MGGetFBuffTex(&frame);
+    MGGetFBuffTex(&frame_tex0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(frame.TBP0 >> 5, frame.TBW, frame.PSM, 0));
+                     SCE_GS_SET_FRAME(frame_tex0.TBP0 >> 5, frame_tex0.TBW, frame_tex0.PSM, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *reinterpret_cast<u_long *>(&mgPixelTest));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *reinterpret_cast<u_long *>(&mgZBuffer));
 
@@ -172,7 +172,7 @@ void CDebugFont::Draw() {
         text_pos++;
     }
 
-    this->len = 0;
+    this->length = 0;
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     closeGiftag(Vif1Packet);
 
@@ -184,7 +184,7 @@ void CDebugFont::Draw() {
     dst.y = draw_y;
     dst.width = draw_width - 1;
     dst.height = draw_height - 1;
-    tex = TexManager.GetTexture(this->texture, -1);
+    tex = TexManager.GetTexture(this->texture_name, -1);
     set2DSprite(Vif1Packet, tex, dst, src, 0x40);
 }
 
@@ -192,23 +192,23 @@ u_int *SearchPTS(u_int *archive, char *name) {
     int i;
     PTS_HEADER *header;
     PTS_ENTRY *entry;
-    char *base;
-    char c;
+    char *base_name;
+    char ch;
 
     header = reinterpret_cast<PTS_HEADER *>(archive);
     if (header == 0) {
         return 0;
     }
     entry = reinterpret_cast<PTS_ENTRY *>(header + 1);
-    base = name;
-    while ((c = *name) != 0) {
-        if (c == '/') {
-            base = name + 1;
+    base_name = name;
+    while ((ch = *name) != 0) {
+        if (ch == '/') {
+            base_name = name + 1;
         }
         name++;
     }
     for (i = 0; i < header->count; i++, entry++) {
-        if (strcmp(base, entry->name) == 0) {
+        if (strcmp(base_name, entry->name) == 0) {
             return reinterpret_cast<u_int *>(reinterpret_cast<char *>(header) + entry->offset);
         }
     }
@@ -227,20 +227,20 @@ u_int *SearchPTS(u_int *archive, int index) {
     return reinterpret_cast<u_int *>(reinterpret_cast<char *>(archive) + offset);
 }
 
-void CDispCtrl::FadeOutStart(float speed) {
-    this->speed = speed;
+void CDispCtrl::FadeOutStart(float fade_speed) {
+    this->speed = fade_speed;
     rate = 0.0f;
     mode = 1;
 }
 
-void CDispCtrl::FadeInStart(float speed) {
-    this->speed = speed;
+void CDispCtrl::FadeInStart(float fade_speed) {
+    this->speed = fade_speed;
     rate = 128.0f;
     mode = 2;
 }
 
-void CDispCtrl::FadeInit(float rate) {
-    this->rate = rate;
+void CDispCtrl::FadeInit(float start_rate) {
+    this->rate = start_rate;
     mode = -1;
 }
 

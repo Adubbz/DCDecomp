@@ -29,28 +29,28 @@ public:
 
     void Initialize();
 
-    short draw_on;
-    float unk_04;
-    char unk_08;
+    short draw_on;    /**< Visibility bits: 1 draws the frame, 2 skips its children (and, without 1, the whole subtree), 4 is skipped by its parent. */
+    float clip_depth; /**< Depth handed to the render info that the next frame's near-clip test compares against. */
+    char clip_enable; /**< Whether a frame crossing the clip depth is drawn with clipping; cleared by the 'n' name flag. */
     char unk_09;
-    char unk_0A;
-    char unk_0B;
-    char fog_enable; /**< Whether fog affects the frame during rendering. */
-    char unk_0D;
-    char colour_dirty; /**< Whether modified model colours must be uploaded before drawing. */
+    char remake_pending;  /**< Nonzero when the visual's vertex or material data changed and must be rebuilt before the next draw. */
+    char program_option;  /**< Sets bit 4 of the microprogram's draw flags; set by the 's' name flag. */
+    char fog_enable;      /**< Whether fog applies to the frame; cleared by the 'f' name flag. */
+    char far_clip_enable; /**< Whether far_clip holds a far clipping distance from the opening script. */
+    char unk_0E;
     char unk_0F;
-    float unk_10;
-    char unk_14;
-    sceVu0FVECTOR color;
-    char unk_30;
-    char unk_31;
+    float far_clip;      /**< Far clipping distance the opening script sets. */
+    char use_color;      /**< Whether the frame is lit by color as ambient light instead of the scene's lights; set by the 'c' name flag. */
+    sceVu0FVECTOR color; /**< Ambient colour the frame is lit by while use_color is set. */
+    char cull_enable;    /**< Whether the frame's bound is tested against the screen before drawing. */
+    char ambient_boost;  /**< Whether the frame drops the directional lights and adds 30% of the first light's colour to the ambient; set by the 't' name flag. */
     sceVu0FVECTOR unk_40;
-    short unk_50;
-    short unk_52;
-    char unk_54;
-    char unk_55;
-    short unk_56;
-    short unk_58;
+    short alpha_ref;    /**< Alpha test reference, or -1 to keep the default; set by the 'a' name flag. */
+    short blend_mode;   /**< Positive for additive blending, negative for subtractive, zero for the default. */
+    char depth_write;   /**< Whether the frame writes depth; cleared by the 'z' name flag. */
+    char ignore_depth;  /**< Whether the frame passes the depth test regardless of depth; set by the 'o' name flag. */
+    short eye_relative; /**< Whether the microprogram receives the eye position in model space; set by the 'm' name flag. */
+    short billboard;    /**< Billboard mode: 2 turns the frame about Y towards the camera, 3 turns it fully; zero leaves the hierarchy's transform. */
 };
 
 /* A node of the scene hierarchy: a transform with a name, linked to its neighbours rather than
@@ -78,7 +78,7 @@ public:
     void GetBoundBox(CBoxVu0 *box, int children);
     void ScaleBoundBox(float *scale);
     void SetAttr(CFrameAttr &attr, int children, int mask);
-    void GetWorldPosition(float *world, float *local);
+    void GetWorldPosition(float *world_point, float *local_point);
     void SetRotation(float x, float y, float z);
     void GetRotation(float *rotation);
     void SetRotType(int type);
@@ -86,28 +86,28 @@ public:
     void SetCollision(CCollision *collision);
     int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
 
-    int flags;
-    CCollision *collision;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
-    sceVu0FVECTOR corner[8];
-    CFrameAttr attr;
-    CFrame *parent;
-    int reference;
-    char name[32];
-    CFrame *child;
-    CFrame *brother;
-    CFrame *elder;
-    sceVu0FMATRIX world;
-    sceVu0FMATRIX inverse;
-    sceVu0FMATRIX local;
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
-    sceVu0FVECTOR rotation;
-    int world_valid;
-    int no_rotation;
-    int rot_type;
-    int srt;
+    int flags;               /**< Collision search bits: 1 searches this frame's collision, 2 skips its children, 4 alone excludes the frame. */
+    CCollision *collision;   /**< Collision polygons attached to the frame, or null. */
+    sceVu0FVECTOR max;       /**< Maximum corner of the frame's bound in local space. */
+    sceVu0FVECTOR min;       /**< Minimum corner of the frame's bound in local space. */
+    sceVu0FVECTOR corner[8]; /**< Eight corners of the bound, kept for transforming it. */
+    CFrameAttr attr;         /**< Drawing attributes of the frame. */
+    CFrame *parent;          /**< Parent frame, or the referenced frame while reference is set. */
+    int reference;           /**< Whether parent is a followed frame rather than a true parent. */
+    char name[32];           /**< Frame name, whose part after "__" carries attribute flags. */
+    CFrame *child;           /**< First child frame, or null. */
+    CFrame *brother;         /**< Next sibling frame, or null. */
+    CFrame *elder;           /**< Previous sibling frame, or null. */
+    sceVu0FMATRIX world;     /**< Cached local-to-world matrix. */
+    sceVu0FMATRIX inverse;   /**< Inverse of the world matrix, as GetInverseMatrix last built it. */
+    sceVu0FMATRIX local;     /**< Local transform relative to the parent. */
+    sceVu0FVECTOR scale;     /**< Scale applied when the local matrix is built from its parts. */
+    sceVu0FVECTOR position;  /**< Translation applied when the local matrix is built from its parts. */
+    sceVu0FVECTOR rotation;  /**< Euler rotation in radians applied when rot_type bit 0 is set. */
+    int world_valid;         /**< Whether the cached world matrix is current. */
+    int no_rotation;         /**< Whether no rotation has been set, so GetRotation reports zero. */
+    int rot_type;            /**< Rotation bits: 1 applies rotation, 2 rotates about the frame's own origin. */
+    int srt;                 /**< Whether the local matrix is rebuilt from scale, rotation and position instead of taken as set. */
 
     virtual int DrawVu1(unsigned int *packet, RenderInfo *info);
     virtual int DrawVu1(sceVif1Packet *packet, RenderInfo *info);
@@ -124,6 +124,6 @@ enum _FRAMECONSTRAINT {
 };
 
 int FrameNameComp(char *left, char *right);
-void SetFrameAttr(CFrame *frame, int children);
+void SetFrameAttr(CFrame *frame, int recurse);
 int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint);
 int LookAt(CFrameVu1 *frame, CFrameVu1 *target, _FRAMECONSTRAINT constraint);

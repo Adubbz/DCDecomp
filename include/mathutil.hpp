@@ -171,10 +171,10 @@ struct MWCatchRecord {
  * The decoded exception specification of a function that let an exception escape.
  */
 struct MWExceptionSpecification {
-    unsigned int count; /**< Number of type names the specification allows. */
-    unsigned int unk_04;
-    int unk_08;
-    unsigned char *types; /**< Unaligned little-endian pointers to the allowed type names. */
+    unsigned int count;           /**< Number of type names the specification allows. */
+    unsigned int unused_unsigned; /**< Unsigned number encoded after the count; decoded past and not read. */
+    int unused_signed;            /**< Signed number encoded after it; decoded past and not read. */
+    unsigned char *types;         /**< Unaligned little-endian pointers to the allowed type names. */
 };
 
 extern "C" void __end__catch(MWCatchRecord *record);
@@ -252,7 +252,7 @@ extern "C" int mwLoadOverlay(char *path, void *address);
  * @size 0x18
  * @unknownret
  */
-void VectorMax(float *, float *, float *);
+void VectorMax(float *max, float *a, float *b);
 
 /**
  * @mangled VectorMax__FPfPfPfPf
@@ -260,7 +260,7 @@ void VectorMax(float *, float *, float *);
  * @size 0x20
  * @unknownret
  */
-void VectorMax(float *, float *, float *, float *);
+void VectorMax(float *max, float *a, float *b, float *c);
 
 /**
  * @mangled VectorMax__FPfPfPfPfPf
@@ -268,7 +268,7 @@ void VectorMax(float *, float *, float *, float *);
  * @size 0x28
  * @unknownret
  */
-void VectorMax(float *, float *, float *, float *, float *);
+void VectorMax(float *max, float *a, float *b, float *c, float *d);
 
 /**
  * @mangled VectorMin__FPfPfPf
@@ -276,7 +276,7 @@ void VectorMax(float *, float *, float *, float *, float *);
  * @size 0x18
  * @unknownret
  */
-void VectorMin(float *, float *, float *);
+void VectorMin(float *min, float *a, float *b);
 
 /**
  * @mangled VectorMin__FPfPfPfPfPf
@@ -284,7 +284,7 @@ void VectorMin(float *, float *, float *);
  * @size 0x28
  * @unknownret
  */
-void VectorMin(float *, float *, float *, float *, float *);
+void VectorMin(float *min, float *a, float *b, float *c, float *d);
 
 /**
  * @mangled VectorMaxMin__FPfPfPfPf
@@ -292,7 +292,7 @@ void VectorMin(float *, float *, float *, float *, float *);
  * @size 0x20
  * @unknownret
  */
-void VectorMaxMin(float *, float *, float *, float *);
+void VectorMaxMin(float *max, float *min, float *a, float *b);
 
 /**
  * @mangled VectorMaxMin__FPfPfPfPfPf
@@ -300,7 +300,7 @@ void VectorMaxMin(float *, float *, float *, float *);
  * @size 0x2C
  * @unknownret
  */
-void VectorMaxMin(float *, float *, float *, float *, float *);
+void VectorMaxMin(float *max, float *min, float *a, float *b, float *c);
 
 /**
  * @mangled VectorMaxMin__FPfPfPfPfPfPf
@@ -308,7 +308,7 @@ void VectorMaxMin(float *, float *, float *, float *, float *);
  * @size 0x38
  * @unknownret
  */
-void VectorMaxMin(float *, float *, float *, float *, float *, float *);
+void VectorMaxMin(float *max, float *min, float *a, float *b, float *c, float *d);
 
 /**
  * @mangled PlaneNormal__FPfPfPfPf
@@ -316,7 +316,7 @@ void VectorMaxMin(float *, float *, float *, float *, float *, float *);
  * @size 0x28
  * @unknownret
  */
-void PlaneNormal(float *, float *, float *, float *);
+void PlaneNormal(float *normal, float *v0, float *v1, float *v2);
 
 /**
  * @mangled DistPlanePoint__FPfPfPf
@@ -369,7 +369,7 @@ float DistVector(float *a, float *b);
  * @size 0x78
  * @unknownret
  */
-void MulMatrix(float (*)[4], float (*)[4], float (*)[4]);
+void MulMatrix(float (*product)[4], float (*left_matrix)[4], float (*right_matrix)[4]);
 
 /**
  * @mangled RotMatrixY__FPA4_ff
@@ -377,7 +377,7 @@ void MulMatrix(float (*)[4], float (*)[4], float (*)[4]);
  * @size 0x74
  * @unknownret
  */
-void RotMatrixY(float (*)[4], float);
+void RotMatrixY(float (*matrix)[4], float angle_y);
 
 /**
  * @mangled LookAtMatrixZ__FPA4_fPf
@@ -385,7 +385,7 @@ void RotMatrixY(float (*)[4], float);
  * @size 0x10C
  * @unknownret
  */
-void LookAtMatrixZ(float (*)[4], float *);
+void LookAtMatrixZ(float (*matrix)[4], float *direction);
 
 /**
  * @mangled ApplyMatrixN__FPA4_fPA4_fPA4_fi
@@ -393,7 +393,7 @@ void LookAtMatrixZ(float (*)[4], float *);
  * @size 0x60
  * @unknownret
  */
-void ApplyMatrixN(float (*)[4], float (*)[4], float (*)[4], int);
+void ApplyMatrixN(float (*out)[4], float (*matrix)[4], float (*in)[4], int count);
 
 /**
  * @mangled VectorInterpolate__FPfPfPffi
@@ -401,14 +401,14 @@ void ApplyMatrixN(float (*)[4], float (*)[4], float (*)[4], int);
  * @size 0x18C
  * @unknownret
  */
-void VectorInterpolate(float *, float *, float *, float, int);
+void VectorInterpolate(float *out, float *from, float *to, float step, int mode);
 
 /**
  * @mangled AngleInterpolate__Ffffi
  * @address 0x1239D0
  * @size 0x160
  */
-float AngleInterpolate(float, float, float, int);
+float AngleInterpolate(float from, float to, float step, int mode);
 
 /**
  * @mangled AngleCmp__Ffff
@@ -416,7 +416,7 @@ float AngleInterpolate(float, float, float, int);
  * @size 0xA8
  * @unknownret
  */
-int AngleCmp(float a, float b, float range);
+int AngleCmp(float a, float b, float tolerance);
 
 /**
  * Wraps one angle into the half turn either side of zero.

@@ -106,8 +106,8 @@ int CCursol::Move() {
     return 0;
 }
 
-void CCursol::Set(float y) {
-    target_y = y;
+void CCursol::Set(float new_target_y) {
+    target_y = new_target_y;
 }
 
 int CCursol::GetSelect() {

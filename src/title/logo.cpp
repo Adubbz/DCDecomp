@@ -22,7 +22,7 @@ CLogo::CLogo() {
     for (i = 0; i < 9; i++)
         alpha[i] = 0;
     count = 0;
-    unk_4C = 0;
+    unused_count = 0;
 }
 
 void CLogo::Init() {
@@ -33,7 +33,7 @@ void CLogo::Init() {
         light[i] = 40;
     }
     count = 0;
-    unk_4C = 0;
+    unused_count = 0;
     position[0] = 0.0f;
     position[1] = 13.599f;
     position[2] = -19.099f;

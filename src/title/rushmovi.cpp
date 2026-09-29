@@ -47,15 +47,15 @@ class OBJ_ANIME_SEQ {
 public:
     void Initialize();
 
-    char name[16];
-    int motion_start;
-    int motion_end;
+    char name[16]; /**< Name of the frame the animation drives. */
+    int type;      /**< Kind of animation the sequence plays. */
+    int number;    /**< Animation number selected within that kind. */
     char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
-    float unk_40;
-    float unk_44;
-    float step;
+    sceVu0FVECTOR start; /**< Value the animation starts from. */
+    sceVu0FVECTOR unk_30;
+    float step_x; /**< Amount the first component advances each step. */
+    float step_y; /**< Amount the second component advances each step. */
+    float step_z; /**< Amount the third component advances each step. */
     char unk_4C[60];
 };
 
@@ -71,14 +71,14 @@ public:
 
     void SetVertex(float *v0, float *v1, float *v2, float *v3);
     void SetSize(int x, int y, CDataAlloc2<1> *buffer);
-    void SetParam(float unknown0, float unknown1, float unknown2, float unknown3);
+    void SetParam(float wave_speed, float damping, float height_scale, float distortion);
     void SetColor(u_char r, u_char g, u_char b, u_char a);
     void Shake(int x, int y, float power);
     void Hamon();
-    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *unknown0);
+    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
 
-    char unread[176];
-    CFrameVu1 frame;
+    char unk_00[176];
+    CFrameVu1 frame; /**< Frame that places the plane in the world. */
 };
 
 /* Named rather than included, because a unit's include list is a dial on the order a call's
@@ -92,7 +92,7 @@ public:
     virtual void FrameObjectOnOff(char *name, int on);
     virtual void Draw();
 
-    void SetFrame(CFrameVu1 *frame, int unknown0);
+    void SetFrame(CFrameVu1 *frame, int level);
 };
 
 /* One piece of scenery. The movie builds a table of them, hands each its model, and drives them
@@ -104,15 +104,15 @@ public:
     virtual void Draw();
 
     void Initialize();
-    void DrawShadow(int unknown0);
+    void DrawShadow(int fast);
 
     char unk_18[36];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *unk_D4;
     char unk_4C[8];
-    float lod_distance;
-    int unk_40;
-    int unk_44;
-    char unk_3C[4];
+    float unk_E0;
+    int unk_E4;
+    int unk_E8;
+    char unk_EC[4];
 };
 
 /* The dust the running feet kick up, declared here for the same reason. */
@@ -125,7 +125,7 @@ public:
     void Step();
     void Draw();
 
-    char unread[208];
+    char unk_00[208];
 };
 
 /* The movie's one fire, which is a light rather than a model. */
@@ -143,11 +143,11 @@ public:
         position[3] = 1.0f;
     }
 
-    void DrawFire(int unknown0, int unknown1, CCamera *camera, float *eye, float scale,
-                  int unknown2, float unknown3);
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale,
+                  int layers, float camera_offset);
 
     char unk_18[32];
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
     char unk_4C[16];
 };
 
@@ -155,12 +155,12 @@ public:
 class CMap {
 public:
     void Initialize();
-    CMapObject *SetObject(CFrameVu1 *frame, int unknown0, int unknown1);
-    CMapObject *SetObject(int no, CFrameVu1 *frame, int unknown0, int unknown1);
+    CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
+    CMapObject *SetObject(int no, CFrameVu1 *frame, int category_no, int handle);
     CMapObject *GetObject(int no);
     void Draw();
 
-    char unread[2800];
+    char unk_00[2800];
 };
 
 /* The overlay's own rectangle. Its constructor assigns x, y, w, h in that order, where
@@ -177,18 +177,18 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 };
 
 /* One piece of scenery the third scene lays out: the model file, where it stands and how far it is
    turned about the vertical axis, in degrees. */
 struct MAP_INFO {
-    char *name;
-    float position[3];
-    float rotation;
+    char *name;        /**< Model file of the piece. */
+    float position[3]; /**< Where the piece stands. */
+    float rotation;    /**< Turn about the vertical axis, in degrees. */
 };
 
 void wait_now_loading_vsync();
@@ -226,7 +226,7 @@ void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
 void SndSetReadBuffer(u_int *buffer);
 void SndAmbientPlay(int no);
 void SndBgmPlay(int no);
-void SndBgmFadeOut(int time, int unknown0);
+void SndBgmFadeOut(int frames, int volume);
 void SndBgmStop();
 void SndAmbientStop();
 void SndStep();
@@ -273,20 +273,20 @@ float atraGetStatusRate;
    face plate. This scene's eye strip is three columns of ten rather than one column, which is what
    the eye number is folded into two coordinates for below. */
 struct FACE_INFO {
-    char *plate;
-    char *strip;
-    int eye_bottom;
-    int eye_height;
-    int mouth_bottom;
-    int mouth_height;
-    int eye;
-    int mouth;
-    int strip_bottom;
-    int eye_max;
-    int blink;
+    char *plate;      /**< Texture of the face plate the frames are copied over. */
+    char *strip;      /**< Texture holding the eye and mouth frame strips. */
+    int eye_bottom;   /**< Distance of the eye area above the plate's bottom edge. */
+    int eye_height;   /**< Height of one eye frame. */
+    int mouth_bottom; /**< Distance of the mouth area above the plate's bottom edge. */
+    int mouth_height; /**< Height of one mouth frame. */
+    int eye;          /**< Eye frame currently shown. */
+    int mouth;        /**< Mouth frame currently shown. */
+    int strip_bottom; /**< Bottom row of the frame strips in the strip texture. */
+    int unk_24;
+    int unk_28;
 };
 
-void SetObjAnime(char *name, CFrameVu1 *frame, float *scale, float *position);
+void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step);
 void FaceChange(int no);
 static void MotionProcess();
 static void DrawProcess();
@@ -319,7 +319,7 @@ static void DrawProcTitle();
    texture, and a tick copies the current frame of each over the actor's face plate. This scene's
    eye strip is three columns of ten frames rather than one column, so the eye number the script
    holds picks the column as well as the row. */
-void FaceChange(int no) {
+void FaceChange(int obj_no) {
     static FACE_INFO face = {"c01d01", "c01d01an_4", 27, 48, 78, 44, 0, 0, 512, 3, 0};
     CTexture *plate;
     CTexture *strip;
@@ -351,7 +351,7 @@ void FaceChange(int no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face.eye = CScript__2.obj[no].eye;
+    face.eye = CScript__2.obj[obj_no].eye;
 
     int eye = face.eye;
     int column;
@@ -372,7 +372,7 @@ void FaceChange(int no) {
     MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eyes, dbp, dbw, SCE_GS_PSMT8, 0,
                   128 - face.eye_height - face.eye_bottom, 0);
 
-    face.mouth = CScript__2.obj[no].mouth;
+    face.mouth = CScript__2.obj[obj_no].mouth;
 
     CRect<int> mouth(384, face.strip_bottom - face.mouth_height * (face.mouth + 1), 128,
                      face.mouth_height);
@@ -561,16 +561,16 @@ static void MotionProcess() {
                     Chara__3[i].motion_type.state.time =
                         (float) Chara__3[i].motion_type.motion_info[CScript.obj[i].motion].start;
                     Chara__3[i].motion_no = CScript.obj[i].motion;
-                    Chara__3[i].flags = 4;
+                    Chara__3[i].motion_flags = 4;
                     Chara__3[i].motion_speed = -1.0f;
                 } else {
                     Chara__3[i].motion_no = CScript.obj[i].motion;
-                    Chara__3[i].flags = 0;
+                    Chara__3[i].motion_flags = 0;
                     Chara__3[i].motion_speed = -1.0f;
                 }
             } else {
                 Chara__3[i].motion_no = CScript.obj[i].motion;
-                Chara__3[i].flags = 0;
+                Chara__3[i].motion_flags = 0;
                 Chara__3[i].motion_speed = -1.0f;
             }
         }
@@ -579,21 +579,21 @@ static void MotionProcess() {
     SetMotionEX(Cam[SceneNp].frame, &Cam[SceneNp].motion_type, &MotionInfo,
                 &Cam[SceneNp].motion_type.state, frame_info_cam);
 
-    sceVu0FVECTOR dir;
+    sceVu0FVECTOR wind_dir;
 
     if (CScript.scene == 0) {
-        dir[0] = 0.2f;
-        dir[2] = -0.2f;
-        dir[1] = 0.0f;
-        dir[3] = 0.0f;
+        wind_dir[0] = 0.2f;
+        wind_dir[2] = -0.2f;
+        wind_dir[1] = 0.0f;
+        wind_dir[3] = 0.0f;
     } else {
-        dir[0] = -0.2f;
-        dir[2] = 0.2f;
-        dir[1] = 0.0f;
-        dir[3] = 0.0f;
+        wind_dir[0] = -0.2f;
+        wind_dir[2] = 0.2f;
+        wind_dir[1] = 0.0f;
+        wind_dir[3] = 0.0f;
     }
 
-    Wind__4.SetDir(dir);
+    Wind__4.SetDir(wind_dir);
 
     switch (CScript.scene) {
         case 0:
@@ -629,9 +629,9 @@ static void MotionProcess() {
     }
 
     if (CScript.scene == 7) {
-        Chara__3[1].unk_C98 = (int) &Wind__4;
+        Chara__3[1].wind = (int) &Wind__4;
     } else {
-        Chara__3[0].unk_C98 = (int) &Wind__4;
+        Chara__3[0].wind = (int) &Wind__4;
     }
 
     Wind__4.Step();
@@ -720,23 +720,23 @@ static void MotionProcess() {
 
             static int old = 0;
 
-            int step = (int) Cam[SceneNp].motion_type.state.time;
+            int cam_frame = (int) Cam[SceneNp].motion_type.state.time;
 
-            if (old != step && (step == 12 || step == 17 || step == 52 || step == 111)) {
+            if (old != cam_frame && (cam_frame == 12 || cam_frame == 17 || cam_frame == 52 || cam_frame == 111)) {
                 CScript.obj[7].motion = 0;
                 Chara__3[7].motion_no = 0;
-                Chara__3[7].flags = 4;
+                Chara__3[7].motion_flags = 4;
                 Chara__3[7].motion_speed = -1.0f;
-                old = step;
-            } else if (old != step && step == 119) {
+                old = cam_frame;
+            } else if (old != cam_frame && cam_frame == 119) {
                 CScript.obj[7].motion = 1;
                 Chara__3[7].motion_no = 1;
-                Chara__3[7].flags = 4;
+                Chara__3[7].motion_flags = 4;
                 Chara__3[7].motion_speed = -1.0f;
-                old = step;
+                old = cam_frame;
             } else {
                 Chara__3[7].motion_no = CScript.obj[7].motion;
-                Chara__3[7].flags = 2;
+                Chara__3[7].motion_flags = 2;
                 Chara__3[7].motion_speed = -1.0f;
             }
         }
@@ -749,7 +749,7 @@ static void MotionProcess() {
             Chara__3[2].SetPosition(260.26f, 507.76f, 520.5f);
             Chara__3[2].SetRotation(0.0f, 1.92f, 0.0f);
             Chara__3[2].motion_no = 0;
-            Chara__3[2].flags = 0;
+            Chara__3[2].motion_flags = 0;
             Chara__3[2].motion_speed = -1.0f;
             Chara__3[2].motion_type.state.time = 2.0f;
         }
@@ -758,14 +758,14 @@ static void MotionProcess() {
             Chara__3[2].SetPosition(260.26f, 507.76f, 520.5f);
             Chara__3[2].SetRotation((float) (iwacnt & 0), 1.92f, 0.0f);
             Chara__3[2].motion_no = 1;
-            Chara__3[2].flags = 4;
+            Chara__3[2].motion_flags = 4;
             Chara__3[2].motion_speed = -1.0f;
             Chara__3[2].motion_type.state.time = 2.0f;
         }
 
         if (iwacnt == 331) {
             Chara__3[2].motion_no = 1;
-            Chara__3[2].flags = 0;
+            Chara__3[2].motion_flags = 0;
             Chara__3[2].motion_speed = -1.0f;
         }
 
@@ -857,13 +857,13 @@ static void DrawProcess() {
         }
     }
 
-    sceGsTex0 back;
+    sceGsTex0 back_tex;
 
-    MGGetFBuffBackTex(&back);
+    MGGetFBuffBackTex(&back_tex);
 
     CTexture texture;
 
-    texture.tex0 = *(u_long *) &back;
+    texture.tex0 = *(u_long *) &back_tex;
     set2DSprite(Vif1Packet, &texture,
                 CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
                 128, 128, 128, 35);
@@ -941,10 +941,10 @@ static void SoundProcess() {
 
         if (CScript.scene == 0) {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("c12a");
-            int step = (int) Chara__3[1].motion_type.state.time;
+            int chara_frame = (int) Chara__3[1].motion_type.state.time;
 
             if (wait == 0) {
-                if (step == 10) {
+                if (chara_frame == 10) {
                     if (frame) {
                         sceVu0FMATRIX matrix;
 
@@ -965,10 +965,10 @@ static void SoundProcess() {
             }
         } else {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("chr_a");
-            int step = (int) Chara__3[0].motion_type.state.time;
+            int chara_frame = (int) Chara__3[0].motion_type.state.time;
 
             if (wait == 0) {
-                if (step == 20) {
+                if (chara_frame == 20) {
                     if (frame) {
                         sceVu0FMATRIX matrix;
 
@@ -993,213 +993,213 @@ static void SoundProcess() {
     static int wait = 0;
 
     if (wait == 0) {
-        int step = (int) Cam[SceneNp].motion_type.state.time;
+        int cam_frame = (int) Cam[SceneNp].motion_type.state.time;
 
         switch (CScript.camera_start) {
             case 4:
-                if (step == 30) {
+                if (cam_frame == 30) {
                     SndSePlay(54, -1, 0);
                     SndSetSeVolf(54, 0.75f, 0);
                     wait = 5;
                 }
                 break;
             case 5:
-                if (step == 10) {
+                if (cam_frame == 10) {
                     SndSetSeVolf(54, 0.65f, 0);
                     SndSePlay(616, -1, 0);
                     wait = 5;
                 }
-                if (step == 17) {
+                if (cam_frame == 17) {
                     SndSePlay(617, -1, 0);
                     wait = 5;
                 }
-                if (step == 23) {
+                if (cam_frame == 23) {
                     SndSePlay(606, -1, 0);
                     wait = 5;
                 }
-                if (step == 31) {
+                if (cam_frame == 31) {
                     SndSePlay(607, -1, 0);
                     wait = 5;
                 }
-                if (step == 46) {
+                if (cam_frame == 46) {
                     SndSePlay(155, -1, 0);
                     wait = 5;
                 }
-                if (step == 50) {
+                if (cam_frame == 50) {
                     SndSePlay(422, -1, 0);
                     SndSePlay(403, -1, 0);
                     wait = 5;
                 }
-                if (step == 53) {
+                if (cam_frame == 53) {
                     SndSePlay(610, -1, 0);
                     wait = 5;
                 }
-                if (step == 62) {
+                if (cam_frame == 62) {
                     SndSePlay(607, -1, 0);
                     wait = 5;
                 }
-                if (step == 65) {
+                if (cam_frame == 65) {
                     SndSePlay(153, -1, 0);
                     wait = 5;
                 }
-                if (step == 97) {
+                if (cam_frame == 97) {
                     SndSePlay(606, -1, 0);
                     wait = 5;
                 }
-                if (step == 113) {
+                if (cam_frame == 113) {
                     SndSePlay(400, -1, 0);
                     SndSePlay(617, -1, 0);
                     wait = 5;
                 }
-                if (step == 119) {
+                if (cam_frame == 119) {
                     SndSePlay(401, -1, 0);
                     SndSePlay(420, -1, 0);
                     SndSePlay(160, -1, 0);
                     wait = 5;
                 }
-                if (step == 124) {
+                if (cam_frame == 124) {
                     SndSePlay(612, -1, 0);
                     wait = 5;
                 }
-                if (step == 130) {
+                if (cam_frame == 130) {
                     SndSePlay(618, -1, 0);
                     wait = 5;
                 }
                 break;
             case 6:
-                if (step == 47) {
+                if (cam_frame == 47) {
                     SndSePlay(345, -1, 0);
                     wait = 10;
                 }
-                if (step == 124) {
+                if (cam_frame == 124) {
                     SndSeStop(54, 0);
                     wait = 5;
                 }
                 break;
             case 8:
-                if (step == 20) {
+                if (cam_frame == 20) {
                     SndSePlay(395, -1, 0);
                     wait = 5;
                 }
-                if (step == 37) {
+                if (cam_frame == 37) {
                     SndSePlay(155, -1, 0);
                     wait = 5;
                 }
-                if (step == 57) {
+                if (cam_frame == 57) {
                     SndSePlay(400, -1, 0);
                     wait = 4;
                 }
-                if (step == 60) {
+                if (cam_frame == 60) {
                     SndSePlay(160, -1, 0);
                     wait = 5;
                 }
-                if (step == 71) {
+                if (cam_frame == 71) {
                     SndSePlay(155, -1, 0);
                     wait = 5;
                 }
-                if (step == 86) {
+                if (cam_frame == 86) {
                     SndSePlay(396, -1, 0);
                     wait = 5;
                 }
                 break;
             case 11:
-                if (step == 140) {
+                if (cam_frame == 140) {
                     SndSePlay(1746, -1, 0);
                     wait = 10;
                 }
-                if (step == 145) {
+                if (cam_frame == 145) {
                     SndSePlay(1746, -1, 0);
                     wait = 10;
                 }
-                if (step == 158) {
+                if (cam_frame == 158) {
                     SndSePlay(1755, -1, 0);
                     wait = 10;
                 }
                 break;
             case 12:
-                if (step == 117) {
+                if (cam_frame == 117) {
                     SndSePlay(1747, -1, 0);
                     wait = 10;
                 }
-                if (step == 160) {
+                if (cam_frame == 160) {
                     SndSePlay(1749, -1, 0);
                     wait = 10;
                 }
                 break;
             case 14:
-                if (step == 87) {
+                if (cam_frame == 87) {
                     SndSePlay(360, -1, 0);
                     wait = 3;
                 }
                 break;
             case 15:
-                if (step == 10) {
+                if (cam_frame == 10) {
                     SndSePlay(362, -1, 0);
                     SndSePlay(366, -1, 0);
                     wait = 5;
                 }
-                if (step == 18) {
+                if (cam_frame == 18) {
                     SndSePlay(364, -1, 0);
                     wait = 5;
                 }
-                if (step == 40) {
+                if (cam_frame == 40) {
                     SndSePlay(363, -1, 0);
                     wait = 5;
                 }
-                if (step == 52) {
+                if (cam_frame == 52) {
                     SndSePlay(364, -1, 0);
                     wait = 5;
                 }
-                if (step == 72) {
+                if (cam_frame == 72) {
                     SndSePlay(369, -1, 0);
                     wait = 5;
                 }
-                if (step == 88) {
+                if (cam_frame == 88) {
                     SndSePlay(365, -1, 0);
                     SndSePlay(370, -1, 0);
                     wait = 5;
                 }
-                if (step == 94) {
+                if (cam_frame == 94) {
                     SndSePlay(368, -1, 0);
                     wait = 5;
                 }
                 break;
             case 17:
-                if (step == 2) {
+                if (cam_frame == 2) {
                     SndSePlay(1737, -1, 0);
                     wait = 3;
                 }
-                if (step == 40) {
+                if (cam_frame == 40) {
                     SndSePlay(1727, -1, 0);
                     wait = 3;
                 }
-                if (step == 70) {
+                if (cam_frame == 70) {
                     SndSePlay(1737, -1, 0);
                     SndSePlay(1729, -1, 0);
                     wait = 3;
                 }
                 break;
             case 18:
-                if (step == 2) {
+                if (cam_frame == 2) {
                     SndSePlay(300, -1, 0);
                     SndSePlay(302, -1, 0);
                     wait = 5;
                 }
                 break;
             case 19:
-                if (step == 26) {
+                if (cam_frame == 26) {
                     SndSePlay(305, -1, 0);
                     wait = 5;
                 }
-                if (step == 56) {
+                if (cam_frame == 56) {
                     SndSePlay(305, -1, 0);
                     wait = 5;
                 }
-                if (step == 86) {
+                if (cam_frame == 86) {
                     SndSePlay(305, -1, 0);
                     wait = 5;
                 }
-                if (step == 120) {
+                if (cam_frame == 120) {
                     SndSeStop(300, 0);
                     SndSeStop(302, 0);
                     wait = 5;
@@ -1211,32 +1211,32 @@ static void SoundProcess() {
     }
 }
 
-void SetObjAnime(char *name, CFrameVu1 *frame, float *scale, float *position) {
+void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step) {
     OP_AnimeSeq[OP_AnimeSeqRot].Initialize();
-    OP_AnimeSeq[OP_AnimeSeqRot].motion_start = 0;
-    OP_AnimeSeq[OP_AnimeSeqRot].motion_end = 0;
-    OP_AnimeSeq[OP_AnimeSeqRot].scale[0] = scale[0];
-    OP_AnimeSeq[OP_AnimeSeqRot].scale[1] = scale[1];
-    OP_AnimeSeq[OP_AnimeSeqRot].scale[2] = scale[2];
-    OP_AnimeSeq[OP_AnimeSeqRot].unk_40 = position[0];
-    OP_AnimeSeq[OP_AnimeSeqRot].unk_44 = position[1];
-    OP_AnimeSeq[OP_AnimeSeqRot].step = position[2];
+    OP_AnimeSeq[OP_AnimeSeqRot].type = 0;
+    OP_AnimeSeq[OP_AnimeSeqRot].number = 0;
+    OP_AnimeSeq[OP_AnimeSeqRot].start[0] = start[0];
+    OP_AnimeSeq[OP_AnimeSeqRot].start[1] = start[1];
+    OP_AnimeSeq[OP_AnimeSeqRot].start[2] = start[2];
+    OP_AnimeSeq[OP_AnimeSeqRot].step_x = step[0];
+    OP_AnimeSeq[OP_AnimeSeqRot].step_y = step[1];
+    OP_AnimeSeq[OP_AnimeSeqRot].step_z = step[2];
     strcpy(OP_AnimeSeq[OP_AnimeSeqRot].name, name);
     InitObjAnime(frame, &OP_AnimeSeq[OP_AnimeSeqRot]);
     OP_AnimeSeqRot++;
 }
 
 void WaterProcess() {
-    sceGsTex0 fbuff;
-    sceGsTex0 buff;
+    sceGsTex0 frame_tex;
+    sceGsTex0 water_tex;
     sceGsZbuf zbuf;
 
-    MGGetFBuffTex(&fbuff);
+    MGGetFBuffTex(&frame_tex);
 
     CRect<int> rect(0, 0, 640, 224);
 
-    buff = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
-    MGMoveImage(&fbuff, rect, &buff, 0, 0, 0);
+    water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
+    MGMoveImage(&frame_tex, rect, &water_tex, 0, 0, 0);
 
     zbuf = mgZBuffer;
     zbuf.bits.zmsk = 1;

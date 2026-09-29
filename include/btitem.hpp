@@ -69,7 +69,7 @@ extern int escape_sled;
  * @address 0x1D1030
  * @size 0x368
  */
-void selectChrUnit(int chara, int mode);
+void selectChrUnit(int chara_no, int reload);
 
 /**
  * Loads the icons for the active item slots.

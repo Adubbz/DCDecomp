@@ -98,9 +98,9 @@ STATIC_ASSERT(sizeof(SE_INF_TABLE) == 0x2EE4);
  *          copied across to the IOP once a frame.
  */
 struct MSIN_BUFFER {
-    s32 size;   /**< Size of the buffer in bytes. */
-    s32 length; /**< Bytes of messages waiting to be sent. */
-    u8 unk_08[0x1F8];
+    s32 size;           /**< Size of the buffer in bytes. */
+    s32 length;         /**< Bytes of messages waiting to be sent. */
+    u8 messages[0x1F8]; /**< MIDI messages the stream input library queues for the IOP. */
 };
 
 STATIC_ASSERT(sizeof(MSIN_BUFFER) == 0x200);
@@ -132,7 +132,7 @@ public:
      * @address 0x143B70
      * @size 0x78
      */
-    int GetSeNo(int, int);
+    int GetSeNo(int bank, int program);
 
     /**
      * Silences one hardware voice.
@@ -141,7 +141,7 @@ public:
      * @address 0x143BF0
      * @size 0x54
      */
-    void StopVoice(int);
+    void StopVoice(int core);
 
     /**
      * Sets the reverberation mode and depth of one channel.
@@ -150,7 +150,7 @@ public:
      * @address 0x143C50
      * @size 0x120
      */
-    void SetReverb(int, int, int);
+    void SetReverb(int core, int mode, int depth);
 
     /**
      * Reads one sound file out of an archive.
@@ -159,7 +159,7 @@ public:
      * @address 0x1440D0
      * @size 0x9B8
      */
-    int LoadSoundFileFromPack(char *, unsigned int *);
+    int LoadSoundFileFromPack(char *name, unsigned int *pack);
 
     /**
      * Reads the sequence description table.
@@ -168,7 +168,7 @@ public:
      * @address 0x144A90
      * @size 0x12C
      */
-    int LoadSqInf(char *, unsigned int *);
+    int LoadSqInf(char *name, unsigned int *buffer);
 
     /**
      * Reads the sound-effect description table.
@@ -177,7 +177,7 @@ public:
      * @address 0x144BC0
      * @size 0x198
      */
-    int LoadSeInf(char *, unsigned int *);
+    int LoadSeInf(char *name, unsigned int *buffer);
 
     /**
      * Starts the sound system and its sequencer.
@@ -186,7 +186,7 @@ public:
      * @address 0x144D60
      * @size 0x4C0
      */
-    int Init(int, int, int, int);
+    int Init(int mode0, int mode1, int depth0, int depth1);
 
     /**
      * Starts a sequence playing.
@@ -195,7 +195,7 @@ public:
      * @address 0x145220
      * @size 0x1D0
      */
-    void SQ_Play(int, int);
+    void SQ_Play(int port, int seq_no);
 
     /**
      * Starts a sequence playing at a given volume.
@@ -204,7 +204,7 @@ public:
      * @address 0x1453F0
      * @size 0x1A8
      */
-    void SQ_Play(int, int, int);
+    void SQ_Play(int port, int seq_no, int volume);
 
     /**
      * Starts a sequence again from its beginning.
@@ -213,7 +213,7 @@ public:
      * @address 0x1455A0
      * @size 0x44
      */
-    void SQ_RePlay(int);
+    void SQ_RePlay(int port);
 
     /**
      * Plays one sound effect with every parameter given.
@@ -222,7 +222,8 @@ public:
      * @address 0x1455F0
      * @size 0x1C8
      */
-    void SE_Play(int, int, int, int, int, int, int);
+    void SE_Play(int port, int bank, int program, int pan, int velocity, int volume,
+                 int voice);
 
     /**
      * Plays one sound effect, taking its parameters from the description table.
@@ -231,7 +232,7 @@ public:
      * @address 0x1457C0
      * @size 0x60
      */
-    void SE_Play(int, int, int);
+    void SE_Play(int port, int se_no, int voice);
 
     /**
      * Plays a sound effect with the default pan and priority settings.
@@ -240,7 +241,7 @@ public:
      * @address 0x145820
      * @size 0x30
      */
-    void SE_Play(int, int, int, int, int);
+    void SE_Play(int port, int bank, int program, int volume, int voice);
 
     /**
      * Plays one sound effect at the middle pan and full volume.
@@ -249,7 +250,7 @@ public:
      * @address 0x145850
      * @size 0x30
      */
-    void SE_Play(int, int, int, int);
+    void SE_Play(int port, int bank, int program, int voice);
 
     /**
      * Sets the volume of a sounding effect.
@@ -258,7 +259,7 @@ public:
      * @address 0x145880
      * @size 0x108
      */
-    void SE_SetVol(int, int, int, int, int);
+    void SE_SetVol(int port, int bank, int program, int volume, int voice);
 
     /**
      * Sets the stereo position of a sounding effect.
@@ -267,7 +268,7 @@ public:
      * @address 0x145990
      * @size 0x10C
      */
-    void SE_SetPan(int, int, int, int, int);
+    void SE_SetPan(int port, int bank, int program, int pan, int voice);
 
     /**
      * Sets the stereo position of a sounding effect, naming it through the description
@@ -277,7 +278,7 @@ public:
      * @address 0x145AA0
      * @size 0x50
      */
-    void SE_SetPan(int, int, int, int);
+    void SE_SetPan(int port, int se_no, int pan, int voice);
 
     /**
      * Stops a sounding effect.
@@ -286,7 +287,7 @@ public:
      * @address 0x145AF0
      * @size 0x100
      */
-    void SE_Stop(int, int, int, int);
+    void SE_Stop(int port, int bank, int program, int voice);
 
     /**
      * Fades a channel towards a volume over a number of steps.
@@ -295,7 +296,7 @@ public:
      * @address 0x145BF0
      * @size 0x324
      */
-    void Fade(int, float, int);
+    void Fade(int port, float step, int volume);
 
     /**
      * Advances the fades and the sequencer by one frame.
@@ -313,7 +314,7 @@ public:
      * @address 0x146910
      * @size 0x48
      */
-    void Stop(int);
+    void Stop(int port);
 
     /**
      * Sets a sequence's volume.
@@ -322,7 +323,7 @@ public:
      * @address 0x146960
      * @size 0x28
      */
-    void SetVol(int, int);
+    void SetVol(int port, int volume);
 
     /**
      * Chooses between stereo and monaural output.
@@ -331,7 +332,7 @@ public:
      * @address 0x146990
      * @size 0x24
      */
-    void SetStereoMode(int);
+    void SetStereoMode(int mode);
 
     /**
      * Loads the ambient bank into the sound processor.
@@ -340,7 +341,7 @@ public:
      * @address 0x1469C0
      * @size 0x17C
      */
-    int LoadHdBd_A(int, int, int, int);
+    int LoadHdBd_A(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the common bank into the sound processor.
@@ -349,7 +350,7 @@ public:
      * @address 0x146B40
      * @size 0x228
      */
-    int LoadHdBd_C(int, int, int, int);
+    int LoadHdBd_C(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the effect bank into the sound processor.
@@ -358,7 +359,7 @@ public:
      * @address 0x146D70
      * @size 0x17C
      */
-    int LoadHdBd_E(int, int, int, int);
+    int LoadHdBd_E(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the georama bank into the sound processor.
@@ -367,7 +368,7 @@ public:
      * @address 0x146EF0
      * @size 0x17C
      */
-    int LoadHdBd_G(int, int, int, int);
+    int LoadHdBd_G(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the interior bank into the sound processor.
@@ -376,7 +377,7 @@ public:
      * @address 0x147070
      * @size 0x26C
      */
-    int LoadHdBd_I(int, int, int, int);
+    int LoadHdBd_I(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the music bank into the sound processor.
@@ -385,7 +386,7 @@ public:
      * @address 0x1472E0
      * @size 0x164
      */
-    int LoadHdBd_M(int, int, int, int);
+    int LoadHdBd_M(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the quest bank into the sound processor.
@@ -394,7 +395,7 @@ public:
      * @address 0x147450
      * @size 0x164
      */
-    int LoadHdBd_Q(int, int, int, int);
+    int LoadHdBd_Q(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the system bank into the sound processor.
@@ -403,7 +404,7 @@ public:
      * @address 0x1475C0
      * @size 0x164
      */
-    int LoadHdBd_S(int, int, int, int);
+    int LoadHdBd_S(int hd, int hd_size, int bd, int bd_size);
 
     /**
      * Loads the ambient sequence set through the sound processor's heap.
@@ -412,7 +413,7 @@ public:
      * @address 0x147730
      * @size 0xBC
      */
-    int LoadSeq_A(int, int);
+    int LoadSeq_A(int address, int size);
 
     /**
      * Loads the effect sequence set through the sound processor's heap.
@@ -421,7 +422,7 @@ public:
      * @address 0x1477F0
      * @size 0xBC
      */
-    int LoadSeq_E(int, int);
+    int LoadSeq_E(int address, int size);
 
     /**
      * Loads the interior sequence set through the sound processor's heap.
@@ -430,7 +431,7 @@ public:
      * @address 0x1478B0
      * @size 0xBC
      */
-    int LoadSeq_I(int, int);
+    int LoadSeq_I(int address, int size);
 };
 
 STATIC_ASSERT(sizeof(CSound) == 1);

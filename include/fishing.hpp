@@ -230,7 +230,7 @@ void FishingInit();
  * @address 0x1A9190
  * @size 0x2C
  */
-void FishingSetWaterLevel(float near_height, float far_height);
+void FishingSetWaterLevel(float water_level, float ground_level);
 
 /**
  * Sets the ground heights under the float and under the hook.

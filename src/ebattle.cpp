@@ -164,24 +164,24 @@ ED_MOVE_CHARA_INFO EdMoveCharaInfo;
  * Stores one motion segment used to convert animation time into battle frames.
  */
 struct EB_MOTION_ENTRY {
-    int motion_no;
-    float start;
-    float end;
-    float speed;
-    int duration;
+    int motion_no; /**< Motion requested from the character. */
+    float start;   /**< First frame of the motion. */
+    float end;     /**< Frame after the motion ends. */
+    float speed;   /**< Frames advanced on each update. */
+    int frames;    /**< Number of updates in the motion. */
 };
 
 /**
  * Stores one timed controller prompt in an event battle.
  */
 struct EB_KEY_ENTRY {
-    int frame;
-    int buttons;
-    int mode;
-    int pressed;
-    int complete;
-    int early;
-    int reserved;
+    int frame;     /**< Battle frame the prompt reaches the hit mark on. */
+    int buttons;   /**< Buttons the prompt asks for. */
+    int mode;      /**< How early the prompt lights before the hit mark; 0 never. */
+    int pressed;   /**< Buttons pressed so far while the prompt is live. */
+    int hit;       /**< Whether the prompt has been answered. */
+    int passed;    /**< Whether the prompt has gone past the hit mark. */
+    int highlight; /**< Whether the prompt is drawn lit this frame. */
 };
 
 static void init_draw_ok();
@@ -317,9 +317,9 @@ void EBSetKey(float time, int buttons, int mode) {
             mode = 5;
         }
         key->mode = mode;
-        key->early = 0;
-        key->complete = 0;
-        key->reserved = 0;
+        key->passed = 0;
+        key->hit = 0;
+        key->highlight = 0;
     }
 }
 
@@ -384,20 +384,20 @@ int EBLoop() {
         return 0;
     }
     if (eb_count == 0 && play_fanfare != 0) {
-        int size;
+        int loaded_size;
         StartReadBG();
-        SndSPSeLoadBG(0x2F, read_buffer, &size);
+        SndSPSeLoadBG(0x2F, read_buffer, &loaded_size);
     }
     ReadBG();
 
     int i;
-    float scale = speed;
+    float frame_speed = speed;
     EB_KEY *active = NULL;
     int cool = 0;
     for (i = 0; i < eb_key_num; i++) {
         EB_KEY *key = &eb_key[i];
         float distance = eb_count - key->frame;
-        distance *= scale;
+        distance *= frame_speed;
         int early = 0;
         if (key->mode > 0) {
             early = (6 - key->mode) << 6;
@@ -551,11 +551,11 @@ void EBDraw() {
     MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
     eb_chara->GetMotionInfo(eb_chara->motion_no);
 
-    float scale = speed;
+    float frame_speed = speed;
     for (int i = eb_key_count; i < eb_key_num; i++) {
         EB_KEY *key = &eb_key[i];
         float delta = eb_count - key->frame;
-        delta *= scale;
+        delta *= frame_speed;
         float position = 200.0f - delta;
         int x = position;
         DrawButton(key->buttons, x, 0x140, button_scale(i), key->highlight);
@@ -563,7 +563,7 @@ void EBDraw() {
     if (eb_key_count > 0) {
         EB_KEY *key = &eb_key[eb_key_count - 1];
         float delta = eb_count - key->frame;
-        delta *= scale;
+        delta *= frame_speed;
         float position = 200.0f - delta;
         int x = position;
         draw_ok(x);
@@ -625,7 +625,7 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
  * @address 0x169340
  * @size 0xE0
  */
-static void DrawButtonSub(int x, int y, int u, int v, float scale) {
+static void DrawButtonSub(int x, int y, int texture_x, int texture_y, float scale) {
     int width = 32.0f * scale;
     int height = 32.0f * scale;
     CRect_i_ screen;
@@ -634,8 +634,8 @@ static void DrawButtonSub(int x, int y, int u, int v, float scale) {
     // The prompt grows about its own centre.
     x -= (width - 32) >> 1;
     y -= (height - 32) >> 1;
-    texel.x = u;
-    texel.y = v;
+    texel.x = texture_x;
+    texel.y = texture_y;
     texel.width = 32;
     texel.height = 32;
     screen.x = x;
@@ -726,7 +726,7 @@ static void draw_ok(int x) {
     }
 
     texel = &spark_texel;
-    int base = x + 0x18;
+    int spark_x = x + 0x18;
     for (int i = 0; i < 8; ++i) {
         sceVu0Normalize(dir[i], dir[i]);
         sceVu0ScaleVector(offset, dir[i], 2.0f * (float) (30 - ok_draw_cnt));
@@ -739,7 +739,7 @@ static void draw_ok(int x) {
         int bottom;
         width = texel->width;
         half = width >> 1;
-        left = base + (int) offset[0] - half;
+        left = spark_x + (int) offset[0] - half;
         bottom = (int) offset[1] + 0x160;
         height = texel->height;
         top = bottom - height - 2;
@@ -918,8 +918,8 @@ static int PadDown(int keys) {
  * @address 0x169B70
  * @size 0x20C
  */
-static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position, float from,
-                           float to) {
+static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position, float left_distance,
+                           float right_distance) {
     float reference[4];
     float offset[4];
     float step;
@@ -931,12 +931,12 @@ static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position,
     camera->SetDistance(0.1f + DistVector(offset));
 
     step = 0.0f;
-    float over = camera->GetDistance() - camera_near_dist;
-    if (over < step) {
-        step = -over / 10.0f;
+    float excess = camera->GetDistance() - camera_near_dist;
+    if (excess < step) {
+        step = -excess / 10.0f;
     }
-    if (over > 0.0f) {
-        step = over / 15.0f;
+    if (excess > 0.0f) {
+        step = excess / 15.0f;
     }
     if (step > 2.0f) {
         step = 2.0f;
@@ -944,12 +944,12 @@ static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position,
     if (step < 0.05f) {
         step = 0.05f;
     }
-    if (over < 0.0f) {
+    if (excess < 0.0f) {
         step *= 2.0f;
     }
 
     camera->SetAngle(atan2f(offset[0], offset[2]));
-    if (from < to) {
+    if (left_distance < right_distance) {
         camera->AddAngle(0.2f * -step);
     } else {
         camera->AddAngle(0.2f * step);
@@ -977,9 +977,9 @@ void EdViewModeOff() {
  * @address 0x169D90
  * @size 0x34
  */
-static void InitEyeCamera(CCharacter *chara) {
+static void InitEyeCamera(CCharacter *character) {
     // The camera looks the way the character faces.
-    viewAngleH = chara->GetRotation()->y;
+    viewAngleH = character->GetRotation()->y;
     viewAngleV = 0.0f;
 }
 
@@ -1047,7 +1047,7 @@ void EdMoveCharaInit() {
  * @address 0x169FF0
  * @size 0x128
  */
-void EdEyeCamera(CCamera *camera, CCharacter *chara) {
+void EdEyeCamera(CCamera *camera, CCharacter *character) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR reference;
     sceVu0FMATRIX rotation;
@@ -1063,7 +1063,7 @@ void EdEyeCamera(CCamera *camera, CCharacter *chara) {
     sceVu0RotMatrixX(rotation, unit, viewAngleV);
     sceVu0RotMatrixY(rotation, rotation, viewAngleH);
     sceVu0ApplyMatrix(reference, rotation, reference);
-    chara->GetPosition(position);
+    character->GetPosition(position);
     position[1] += 14.0f;
     reference[0] += position[0];
     reference[1] += position[1];
@@ -1122,7 +1122,7 @@ static inline int IsVillagerActive(CNPCharacter *villager) {
 }
 
 void EdMoveChara() {
-    int near;
+    int near_villager;
     CCamera *view_camera;
     int key_lock;
     CEditGround *ground;
@@ -1133,10 +1133,10 @@ void EdMoveChara() {
     float move_x;
     float ly;
     float lx;
-    float now_time;
+    float time_before;
     CCPoly *polys;
-    int count;
-    int event;
+    int poly_count;
+    int poly_event;
     int shallow;
     int left_clear;
     float *normal;
@@ -1147,8 +1147,8 @@ void EdMoveChara() {
     float float_weight;
     float hook_weight;
     int follow_line;
-    float motion_time;
-    float speed;
+    float time_after;
+    float motion_speed;
     float stick;
     CFrame *frame;
     float left_distance;
@@ -1161,7 +1161,7 @@ void EdMoveChara() {
     CCPoly *walls;
     int last;
     float away;
-    int below;
+    int floor_poly;
     int drift;
     float rx;
     float ry;
@@ -1179,22 +1179,22 @@ void EdMoveChara() {
     int item;
     int refused;
     int attach;
-    int status;
+    int fish_status;
     float reel_turn;
     float pull;
-    char *file;
+    char *fish_file;
     float tug;
-    BG_READ_INFO *read;
-    u_int *pack;
-    int rest;
-    int kind;
+    BG_READ_INFO *read_info;
+    u_int *fish_data;
+    int free_blocks;
+    int fish_kind;
     int *caught;
     CFish *fish;
-    float water;
+    float water_level;
     float fall_height;
     float rise;
     float walked;
-    s16 light;
+    s16 floor_kind;
     int i;
 
     static sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -1239,7 +1239,7 @@ void EdMoveChara() {
     }
 
     motion = 0;
-    speed = -1.0f;
+    motion_speed = -1.0f;
     if (viewMode == 0) {
         move_x = lx * cosf(angle) + ly * sinf(angle);
         move_z = ly * cosf(angle) - lx * sinf(angle);
@@ -1264,9 +1264,9 @@ void EdMoveChara() {
                 motion = 1;
             } else {
                 motion = 2;
-                speed = 0.8f * (0.2f + stick);
-                if (speed > 0.85f) {
-                    speed = 0.85f;
+                motion_speed = 0.8f * (0.2f + stick);
+                if (motion_speed > 0.85f) {
+                    motion_speed = 0.85f;
                 }
             }
         } else {
@@ -1306,7 +1306,7 @@ void EdMoveChara() {
     }
     if ((chara_mode & 6) == 0 && chara_fishing < 2) {
         chara->SetMotion(motion, 0);
-        chara->SetMotionSpeed(speed);
+        chara->SetMotionSpeed(motion_speed);
     }
     if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < 2) {
         CVector3_f_ jump;
@@ -1316,12 +1316,12 @@ void EdMoveChara() {
     }
 
     sceVu0FVECTOR next;
-    now_time = chara->GetNowTime();
+    time_before = chara->GetNowTime();
     WorkBuffer__2->used = 0;
     polys = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
-    count = 0;
+    poly_count = 0;
     if (interior == 0) {
-        count = ground->PickUpPoly(polys, pos[0], pos[1], pos[2]);
+        poly_count = ground->PickUpPoly(polys, pos[0], pos[1], pos[2]);
     } else {
         CBoxVu0 box;
         box.max[0] = 20.0f + pos[0];
@@ -1333,28 +1333,28 @@ void EdMoveChara() {
         for (i = 0; i < EdMoveCharaInfo.parts_count; i++) {
             frame = EdMoveCharaInfo.parts[i].GetCollisionFrame();
             if (frame != NULL) {
-                count += frame->PickUpNearPoly(&polys[count], box);
+                poly_count += frame->PickUpNearPoly(&polys[poly_count], box);
             }
         }
     }
-    count += EdEventPointCpPoly(pos, EdMoveCharaInfo.points, EdMoveCharaInfo.point_count,
-                                &polys[count], time);
+    poly_count += EdEventPointCpPoly(pos, EdMoveCharaInfo.points, EdMoveCharaInfo.point_count,
+                                     &polys[poly_count], time);
     if (EdMoveCharaInfo.fishing != 0) {
-        count += FishingPickUpPoly(&polys[count]);
+        poly_count += FishingPickUpPoly(&polys[poly_count]);
     }
     for (i = 0; i < 10; i++) {
         if (IsVillagerActive(&EdVillager[i])) {
-            count += EdVillager[i].PickUpPoly(pos, &polys[count]);
+            poly_count += EdVillager[i].PickUpPoly(pos, &polys[poly_count]);
         }
     }
-    if (count > 200) {
-        printf("cpoly over!!!! %d\n", count);
+    if (poly_count > 200) {
+        printf("cpoly over!!!! %d\n", poly_count);
     }
 
     CVector3_f_ fall;
     chara->GetVelocity(&fall);
     velocity[1] = fall.y;
-    MoveCheck(pos, velocity, next, &chara->move_info, polys, count, 0);
+    MoveCheck(pos, velocity, next, &chara->move_info, polys, poly_count, 0);
     if (EdDebugMoveFlag >= 2) {
         next[0] = pos[0] + velocity[0];
         next[2] = pos[2] + velocity[2];
@@ -1370,7 +1370,7 @@ void EdMoveChara() {
     ahead[0] = 7.5f * sinf(rot[1]);
     ahead[1] = 0.0f;
     ahead[2] = 7.5f * cosf(rot[1]);
-    event = GetEventPoly(eye, ahead, &event_poly, &event_index, event_hit, polys, count, 0);
+    poly_event = GetEventPoly(eye, ahead, &event_poly, &event_index, event_hit, polys, poly_count, 0);
     sceVu0SubVector(move, next, pos);
     if (next[1] < -1000.0f) {
         next[1] = 1000.0f;
@@ -1429,7 +1429,7 @@ void EdMoveChara() {
     }
 
     shallow = 0;
-    if (chara->move_info.ground_found != 0 && chara->move_info.poly.attr.unk_44 == 10) {
+    if (chara->move_info.ground_found != 0 && chara->move_info.poly.attr.area_kind == 10) {
         shallow = 1;
     }
     right_clear = left_clear = keep_distance = 1;
@@ -1457,7 +1457,7 @@ void EdMoveChara() {
         sceVu0FVECTOR origin;
         sceVu0FVECTOR facing;
         sceVu0FVECTOR facing_first;
-        sceVu0FVECTOR floor;
+        sceVu0FVECTOR floor_normal;
 
         right_distance = left_distance = 1000000;
         camera->GetPos(eye_pos);
@@ -1571,11 +1571,11 @@ void EdMoveChara() {
         // The eye keeps its height above whatever floor is under it.
         sceVu0CopyVector(behind, eye_pos);
         behind[1] += 15.0f;
-        below = CheckHitVertical(walls, wall_count, behind, -100.0f, hit, 0);
-        if (below >= 0) {
-            sceVu0Normalize(floor, walls[below].normal);
+        floor_poly = CheckHitVertical(walls, wall_count, behind, -100.0f, hit, 0);
+        if (floor_poly >= 0) {
+            sceVu0Normalize(floor_normal, walls[floor_poly].normal);
             if (eye_pos[1] - hit[1] < 18.0f) {
-                if ((floor[1] < 0.0f ? -floor[1] : floor[1]) > 0.5f) {
+                if ((floor_normal[1] < 0.0f ? -floor_normal[1] : floor_normal[1]) > 0.5f) {
                     eye_pos[1] = 18.0f + hit[1];
                     camera->SetHeight(eye_pos[1] - look[1] - 0.01f);
                 }
@@ -1729,9 +1729,9 @@ void EdMoveChara() {
         }
     }
 
-    near = EdSearchNearNPC(chara, EdVillager, 10);
-    if (near >= 0) {
-        EdVillager[near].talk_target = 1;
+    near_villager = EdSearchNearNPC(chara, EdVillager, 10);
+    if (near_villager >= 0) {
+        EdVillager[near_villager].talk_target = 1;
     }
     if (EdMoveCharaInfo.fishing == 0) {
         acted = 0;
@@ -1775,24 +1775,24 @@ void EdMoveChara() {
             }
             EdMoveCharaInfo.event_ready = acted = 1;
         }
-        if (near >= 10) {
-            near = -1;
+        if (near_villager >= 10) {
+            near_villager = -1;
         }
-        if (acted == 0 && (viewMode == 0 || interior != 0) && near >= 0) {
-            if (EdVillagerInfo[near].talk_event_no > 0 && EdVillagerInfo[near].talk_event_level != 0 &&
-                EdTalkModeInit(&EdVillager[near], -1) != 0) {
-                event_no = EdVillagerInfo[near].talk_event_no;
+        if (acted == 0 && (viewMode == 0 || interior != 0) && near_villager >= 0) {
+            if (EdVillagerInfo[near_villager].talk_event_no > 0 && EdVillagerInfo[near_villager].talk_event_level != 0 &&
+                EdTalkModeInit(&EdVillager[near_villager], -1) != 0) {
+                event_no = EdVillagerInfo[near_villager].talk_event_no;
                 acted = 1;
             }
         }
         if (acted == 0 && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0) && key_lock == 0) {
-            if (near >= 0) {
-                if (EdTalkModeInit(&EdVillager[near], -1) != 0) {
+            if (near_villager >= 0) {
+                if (EdTalkModeInit(&EdVillager[near_villager], -1) != 0) {
                     event_no = 0x100;
                     acted = 1;
                 }
-            } else if (event > 0) {
-                event_no = event;
+            } else if (poly_event > 0) {
+                event_no = poly_event;
                 acted = 1;
             }
         }
@@ -1817,7 +1817,7 @@ void EdMoveChara() {
         chara->GetRotation(facing);
         FishLineGetUki(float_pos);
         int fish_no;
-        status = FishingFishStatus(&fish_no);
+        fish_status = FishingFishStatus(&fish_no);
         static int st_cnt = 0;
         static int wait_cnt = 0;
         switch (chara_fishing) {
@@ -1896,10 +1896,10 @@ void EdMoveChara() {
                     chara->SetMotion(7, 6);
                     st_cnt = 0;
                 } else {
-                    if (status == 7) {
+                    if (fish_status == 7) {
                         chara_fishing = 6;
                     }
-                    if (status == 8) {
+                    if (fish_status == 8) {
                         chara_fishing = 7;
                     }
                 }
@@ -1929,9 +1929,9 @@ void EdMoveChara() {
                 break;
             case 6: {
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
-                if (status == 8) {
+                if (fish_status == 8) {
                     chara_fishing = 7;
-                } else if (status != 7) {
+                } else if (fish_status != 7) {
                     chara_fishing = 4;
                     st_cnt = 0;
                     wait_cnt = 0;
@@ -1974,10 +1974,10 @@ void EdMoveChara() {
                         chara_fishing = 10;
                         chara->SetMotion(12, 2);
                         FishingBattleFish(fish_no);
-                        file = GetFishFileName(FishingFishKind(fish_no));
-                        if (file != NULL) {
+                        fish_file = GetFishFileName(FishingFishKind(fish_no));
+                        if (fish_file != NULL) {
                             StartReadBG();
-                            LoadFileBG(file, (u_long128 *) read_buffer, NULL);
+                            LoadFileBG(fish_file, (u_long128 *) read_buffer, NULL);
                         }
                         st_cnt = 0;
                     }
@@ -1992,19 +1992,19 @@ void EdMoveChara() {
             case 10:
                 FishingDeleteEsa();
                 if (st_cnt > 120 && ReadBGSync() == 0) {
-                    read = GetReadBGFile(0);
-                    pack = NULL;
+                    read_info = GetReadBGFile(0);
+                    fish_data = NULL;
                     CDataAlloc2<1> arena(-1);
-                    if (read != NULL) {
-                        pack = (u_int *) read->buffer;
-                        rest = EdVillagerBuffer.limit - EdVillagerBuffer.used;
+                    if (read_info != NULL) {
+                        fish_data = (u_int *) read_info->buffer;
+                        free_blocks = EdVillagerBuffer.limit - EdVillagerBuffer.used;
                         arena.base = EdVillagerBuffer.base + EdVillagerBuffer.used * 16;
-                        arena.limit = rest;
+                        arena.limit = free_blocks;
                         arena.used = 0;
                     }
                     chara_fishing = 8;
                     chara->SetMotion(6, 6);
-                    FishingBattleToAngleFish(pack, &arena);
+                    FishingBattleToAngleFish(fish_data, &arena);
                     SndSePlay(0x193, -1, 0);
                 }
                 GamePad.SetVibration(1, rand() % 40 + 80, 10);
@@ -2048,19 +2048,19 @@ void EdMoveChara() {
                         case 0: {
                             int size;
                             int fish_points;
-                            kind = FishingGetAngleFishSize(&size, &fish_points);
-                            if (kind < 0) {
+                            fish_kind = FishingGetAngleFishSize(&size, &fish_points);
+                            if (fish_kind < 0) {
                                 fishing_mes = 2;
                             } else {
-                                if (kind == 5 || kind == 17) {
+                                if (fish_kind == 5 || fish_kind == 17) {
                                     caught = &SaveData->mardan_garayan_caught;
                                     (*caught)++;
                                     SetFishMardanGarayanNum(1);
                                 }
                                 SaveData->AddFishingPoint(fish_points);
-                                SaveData->SetFishingRank(kind, (float) size);
+                                SaveData->SetFishingRank(fish_kind, (float) size);
                                 fishing_mes++;
-                                EditMes1.mes_no[0] = GetFishMsgNo(kind);
+                                EditMes1.mes_no[0] = GetFishMsgNo(fish_kind);
                                 EditMes1.values[0] = size;
                                 EditMes1.values[1] = fish_points;
                                 EditMes1.values[2] = SaveData->GetFishingPoint();
@@ -2175,8 +2175,8 @@ void EdMoveChara() {
         FishingStepFish();
         FishLineGetUki(after);
         // The float throws up ripples where it crosses the surface.
-        water = FishingGetWaterLevel();
-        if (after[1] < water && !(before[1] < water)) {
+        water_level = FishingGetWaterLevel();
+        if (after[1] < water_level && !(before[1] < water_level)) {
             fall_height = after[1] - before[1];
             if ((fall_height < 0.0f ? -fall_height : fall_height) > 0.8f) {
                 SndSePlay(0x191, after, -1.0f, -1.0f);
@@ -2187,7 +2187,7 @@ void EdMoveChara() {
                 EffectHamon(&EdEffectGroup, after, 30.0f);
             }
         }
-        if (after[1] > water && before[1] <= water) {
+        if (after[1] > water_level && before[1] <= water_level) {
             rise = after[1] - before[1];
             if ((rise < 0.0f ? -rise : rise) > 0.1f) {
                 after[1] = FishingGetWaterLevel();
@@ -2198,7 +2198,7 @@ void EdMoveChara() {
         }
     }
     EdStepOpenItemBox();
-    motion_time = chara->motion_type.state.time;
+    time_after = chara->motion_type.state.time;
     chara->FootSoundEnable(chara->move_info.landed);
     chara->SetFootSoundID(chara->move_info.ground_poly.attr.foot_sound);
     // In the first-person view the feet sound by the distance walked instead of the motion.
@@ -2217,25 +2217,25 @@ void EdMoveChara() {
             cnt = 0.0f;
         }
     }
-    sceVu0CopyVector(chara->unk_CB0[0], EditMapInfo->character_ambient[0]);
-    sceVu0CopyVector(chara->unk_CB0[1], EditMapInfo->character_ambient[1]);
-    chara->unk_CA0 = -1;
-    chara->unk_C9C = 0;
+    sceVu0CopyVector(chara->ground_ambient[0], EditMapInfo->character_ambient[0]);
+    sceVu0CopyVector(chara->ground_ambient[1], EditMapInfo->character_ambient[1]);
+    chara->ground_ambient_no = -1;
+    chara->fade_out = 0;
     sceVu0FVECTOR unused = {0.0f, 0.0f, 0.0f, 0.0f};
     if (chara->move_info.ground_found != 0) {
-        light = chara->move_info.poly.attr.unk_44;
-        switch (light) {
+        floor_kind = chara->move_info.poly.attr.area_kind;
+        switch (floor_kind) {
             case 2:
-                chara->unk_C9C = 1;
+                chara->fade_out = 1;
                 break;
             case 3:
             case 4:
-                chara->unk_CA0 = light - 3;
+                chara->ground_ambient_no = floor_kind - 3;
                 break;
         }
     }
-    EdMoveCharaInfo.motion_time_before = now_time;
-    EdMoveCharaInfo.motion_time_after = motion_time;
+    EdMoveCharaInfo.motion_time_before = time_before;
+    EdMoveCharaInfo.motion_time_after = time_after;
 }
 
 void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
@@ -2249,7 +2249,7 @@ void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
         info->integer_arguments[0] = 1;
     }
     sceVu0CopyVector(info->vector_arguments[2], param->rotation);
-    info->flag_arguments[0] = (int) param->point->unk_60[3];
+    info->flag_arguments[0] = (int) param->point->trigger_range[3];
     info->integer_arguments[1] = param->point->side;
     info->integer_arguments[2] = param->point->linked_value;
 }

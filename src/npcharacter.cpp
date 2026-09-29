@@ -14,11 +14,11 @@ void CNPCharacter::Step() {
         CCharacter::Step();
     }
     int fade_step = alpha_step;
-    int override_step = unk_1488;
+    int override_step = alpha_step_override;
     if (!(float(override_step) <= 0.0f)) {
         fade_step = override_step;
     }
-    unk_1488 = -1;
+    alpha_step_override = -1;
     if (near_camera) {
         ambient_offset[3] += float(fade_step);
     } else {
@@ -244,9 +244,9 @@ void CNPCharacter::Initialize() {
     ambient_offset[2] = 0;
     ambient_offset[3] = 0;
     alpha_step = 0;
-    unk_1488 = -1;
+    alpha_step_override = -1;
     body_width = 7.0f;
-    unk_148C = 0;
+    texture_block = 0;
     talk_target = 0;
     event_status = 0;
     draw_enabled = 0;

@@ -78,7 +78,7 @@ public:
      * @address 0x1B7840
      * @size 0xF4
      */
-    void Set(sceVu0FVECTOR *origin, float *direction, float power, int kind, float spread);
+    void Set(sceVu0FVECTOR *origin, float *position, float power, int kind, float spread);
 
     /**
      * Moves the cloud one step, by the way the charged element calls for.
@@ -105,7 +105,7 @@ public:
      * @address 0x1B7AA0
      * @size 0x340
      */
-    void Init_Holy(float *direction);
+    void Init_Holy(float *position);
 
     /**
      * Raises every holy spark, and starts free slots again while the budget lasts.
@@ -132,7 +132,7 @@ public:
      * @address 0x1B8480
      * @size 0x340
      */
-    void Init_Cold(float *direction);
+    void Init_Cold(float *position);
 
     /**
      * Drops every cold spark, and starts free slots again while the budget lasts.
@@ -159,7 +159,7 @@ public:
      * @address 0x1B8E90
      * @size 0x434
      */
-    void Init_Wind(float *direction);
+    void Init_Wind(float *position);
 
     /**
      * Blows every wind spark along, turning it, and starts free slots again.
@@ -186,7 +186,7 @@ public:
      * @address 0x1B9AC0
      * @size 0x354
      */
-    void Init_Fire(float *direction);
+    void Init_Fire(float *position);
 
     /**
      * Raises every fire spark, and starts free slots again while the budget lasts.
@@ -213,7 +213,7 @@ public:
      * @address 0x1BA4F0
      * @size 0x528
      */
-    void Init_Thunder(float *direction);
+    void Init_Thunder(float *position);
 
     /**
      * Carries every thunder spark along its own line, and gives the bolts new ends.

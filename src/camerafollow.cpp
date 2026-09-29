@@ -107,8 +107,8 @@ float CCameraFollow::GetAngle(void) {
     return this->angle;
 }
 
-void CCameraFollow::AddAngle(float angle) {
-    this->next_angle += angle;
+void CCameraFollow::AddAngle(float delta) {
+    this->next_angle += delta;
 }
 
 void CCameraFollow::SetDistance(float distance) {
@@ -119,8 +119,8 @@ float CCameraFollow::GetDistance(void) {
     return this->distance;
 }
 
-void CCameraFollow::AddDistance(float distance) {
-    this->distance += distance;
+void CCameraFollow::AddDistance(float delta) {
+    this->distance += delta;
 }
 
 void CCameraFollow::SetHeight(float height) {
@@ -131,8 +131,8 @@ float CCameraFollow::GetHeight(void) {
     return this->height;
 }
 
-void CCameraFollow::AddHeight(float height) {
-    this->height += height;
+void CCameraFollow::AddHeight(float delta) {
+    this->height += delta;
 }
 
 CCameraFollow::CCameraFollow(float distance, float height, float angle, float speed)

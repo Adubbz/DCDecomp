@@ -16,7 +16,7 @@ void CStealItem::Initialize(CFrameVu1 *model) {
     this->frame = model;
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
         this->state[i] = -1;
-        this->unk_0F0[i] = -1;
+        this->aux_state[i] = -1;
     }
 }
 
@@ -45,7 +45,7 @@ void CStealItem::Set(float *position, int item_no) {
 
 void CStealItem::Step(void) {
     sceVu0FVECTOR target;
-    sceVu0FVECTOR vector;
+    sceVu0FVECTOR direction;
 
     sceVu0CopyVector(target, CharaMain.pos);
     target[1] = 15.0f;
@@ -64,15 +64,15 @@ void CStealItem::Step(void) {
                 this->pos[i][1] = this->base_height[i] + 12.0f * sinf(this->phase[i]);
                 this->phase[i] += 0.034906585f;
 
-                vector[0] = target[0] - this->pos[i][0];
-                vector[1] = target[1] - this->pos[i][1];
-                vector[2] = target[2] - this->pos[i][2];
-                vector[3] = 1.0f;
-                sceVu0Normalize(vector, vector);
-                sceVu0ScaleVectorXYZ(vector, vector, this->speed[i]);
-                this->pos[i][0] += vector[0];
-                this->pos[i][1] += vector[1];
-                this->pos[i][2] += vector[2];
+                direction[0] = target[0] - this->pos[i][0];
+                direction[1] = target[1] - this->pos[i][1];
+                direction[2] = target[2] - this->pos[i][2];
+                direction[3] = 1.0f;
+                sceVu0Normalize(direction, direction);
+                sceVu0ScaleVectorXYZ(direction, direction, this->speed[i]);
+                this->pos[i][0] += direction[0];
+                this->pos[i][1] += direction[1];
+                this->pos[i][2] += direction[2];
 
                 if (this->phase[i] >= 1.5707964f) {
                     this->state[i] = 1;
@@ -86,15 +86,15 @@ void CStealItem::Step(void) {
                 }
 
                 this->speed[i] += 0.02f;
-                vector[0] = target[0] - this->pos[i][0];
-                vector[1] = target[1] - this->pos[i][1];
-                vector[2] = target[2] - this->pos[i][2];
-                vector[3] = 1.0f;
-                sceVu0Normalize(vector, vector);
-                sceVu0ScaleVectorXYZ(vector, vector, this->speed[i]);
-                this->pos[i][0] += vector[0];
-                this->pos[i][1] += vector[1];
-                this->pos[i][2] += vector[2];
+                direction[0] = target[0] - this->pos[i][0];
+                direction[1] = target[1] - this->pos[i][1];
+                direction[2] = target[2] - this->pos[i][2];
+                direction[3] = 1.0f;
+                sceVu0Normalize(direction, direction);
+                sceVu0ScaleVectorXYZ(direction, direction, this->speed[i]);
+                this->pos[i][0] += direction[0];
+                this->pos[i][1] += direction[1];
+                this->pos[i][2] += direction[2];
                 break;
 
             case 2:

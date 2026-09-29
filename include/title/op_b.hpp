@@ -21,7 +21,7 @@ void FaceChange(int actor_no);
  * @size 0x1D4
  * @unknownret
  */
-void LoadCharaData(int, int);
+void LoadCharaData(int buffer_no, int actor_no);
 
 /**
  *          Streams the next motion segment for the dancing couple.

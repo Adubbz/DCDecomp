@@ -21,7 +21,7 @@ public:
      * @address 0x1DAE590
      * @size 0x814
      */
-    void Draw(float *position, float size, int spread);
+    void Draw(float *origin, float size, int spread);
 
     /**
      *          Draws the spirit carried at the head of the effect.

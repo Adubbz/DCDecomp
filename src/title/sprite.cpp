@@ -30,10 +30,10 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 };
 
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
@@ -64,7 +64,7 @@ void CSprite::Init() {
 void CSprite::Move() {
     float target_x;
     float target_y;
-    float angle;
+    float target_angle;
     int i;
 
     if (started == 0)
@@ -101,10 +101,10 @@ void CSprite::Move() {
             target_y = 154.0f;
         }
 
-        angle = (float) atan2(target_x - x[0], target_y - y[0]);
-        if (this->angle > angle)
+        target_angle = (float) atan2(target_x - x[0], target_y - y[0]);
+        if (this->angle > target_angle)
             this->angle = this->angle - 0.08f;
-        if (this->angle < angle)
+        if (this->angle < target_angle)
             this->angle += 0.08f;
         x[0] = x[0] + (float) (sin(this->angle) * 7.5);
         y[0] = y[0] + (float) (cos(this->angle) * 7.5);

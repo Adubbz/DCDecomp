@@ -51,10 +51,10 @@
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
     u8 unk_000[0x60];
-    CFrame frame;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
-    int link_id;
+    CFrame frame;      /**< Placement of the camera marker in the world. */
+    sceVu0FVECTOR max; /**< Greater corner of the box, in the marker's space. */
+    sceVu0FVECTOR min; /**< Lesser corner of the box, in the marker's space. */
+    int link_id;       /**< Marker number; zero marks the fallback camera. */
     u8 unk_2e4[0xC];
 };
 
@@ -68,7 +68,7 @@ static void StepWater();
 static void MainDraw();
 static void MoveCharacter();
 static void MoveCamera(CCameraFollow *camera);
-static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion);
+static int GetDoorPos(int door_no, float *position, float *rotation, int *door_sound, int *motion);
 static void VillagerCollision();
 static int LoadTexture();
 static void LoadChara();
@@ -89,7 +89,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
 
 /* Word-aligned image of one function marker as stored in a part resource. */
 struct EPARTS_FUNC_RECORD {
-    int words[0x30];
+    int words[0x30]; /**< The record, one word at a time. */
 };
 
 /** Whether the camera stays at the interior's fixed camera markers. */
@@ -260,16 +260,16 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
     LoadMDSFileLOD(frames, data, alloc, 1);
     CFrameAttr attr;
     attr.fog_enable = 1;
-    attr.unk_08 = 0;
-    attr.unk_50 = 0x40;
+    attr.clip_enable = 0;
+    attr.alpha_ref = 0x40;
     for (i = 1; i < 4; i++) {
         if (frames[i] != NULL) {
             frames[i]->SetAttr(attr, 1, 0x44);
             SetFrameAttr(frames[i], 1);
         }
     }
-    attr.unk_04 = 100.0f;
-    attr.unk_08 = 1;
+    attr.clip_depth = 100.0f;
+    attr.clip_enable = 1;
     frames[0]->SetAttr(attr, 1, 0);
     SetFrameAttr(frames[0], 1);
     for (i = 0; i < 4; i++) {
@@ -287,10 +287,10 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
         parts->shade_frame = LoadMDSFile(data[6], alloc, 0, NULL, NULL);
     }
     if (data[7] != NULL) {
-        parts->unk_104 = LoadMDSFile(data[7], alloc, 0, NULL, NULL);
+        parts->ripple_frame = LoadMDSFile(data[7], alloc, 0, NULL, NULL);
     }
     if (data[8] != NULL) {
-        parts->unk_0DC = LoadCollisionFile(data[8], alloc);
+        parts->camera_frame = LoadCollisionFile(data[8], alloc);
     }
 }
 
@@ -308,7 +308,7 @@ static void LoadScript() {
     char message_path[0x40];
     char language[0x1c];
     int size;
-    char *map_script;
+    char *message_data;
 
     EdScriptBuffer.used = 0;
     EdEventData = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
@@ -324,26 +324,26 @@ static void LoadScript() {
     strcat(message_path, language);
     printf("mes = %s\n", message_path);
     strcpy(directory, EdInInfo->name);
-    char *p = directory;
-    char *slash = p;
+    char *cursor = directory;
+    char *slash = cursor;
     char c;
-    while ((c = *p) != '\0') {
+    while ((c = *cursor) != '\0') {
         if (c == '/') {
-            slash = p;
+            slash = cursor;
         }
-        p++;
+        cursor++;
     }
     *slash = '\0';
     sprintf(event_path, "%s/event.stb", directory);
     if (LoadFile2(event_path, EdEventData, &size, 0) != 0) {
         EdScriptBuffer.Alloc((size >> 4) + 1);
-        map_script = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
-        if (LoadFile2(message_path, map_script, &size, 0) != 0) {
+        message_data = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
+        if (LoadFile2(message_path, message_data, &size, 0) != 0) {
             EdScriptBuffer.Alloc((size >> 4) + 1);
         } else {
-            map_script = NULL;
+            message_data = NULL;
         }
-        EdSetEventScript(EdEventData, map_script, &EdScriptBuffer);
+        EdSetEventScript(EdEventData, message_data, &EdScriptBuffer);
     } else {
         EdEventData = NULL;
         EdSetEventScript(NULL, NULL, &EdScriptBuffer);
@@ -452,14 +452,14 @@ int EditInInit(float time, char *name) {
     EdNPCBuffer.used = 0;
     for (int i = 0; i < 10; i++) {
         EdVillager[i].Initialize();
-        EdVillager[i].unk_148C = 0x36;
+        EdVillager[i].texture_block = 0x36;
     }
     LoadTexture();
-    BG_READ_INFO *info = GetReadBGFile(1);
-    if (info != NULL) {
-        char *text = (char *) EdNPCBuffer.Alloc((info->size >> 4) + 1);
-        memcpy(text, info->buffer, info->size);
-        LoadInfo(text, info->size);
+    BG_READ_INFO *bg_file = GetReadBGFile(1);
+    if (bg_file != NULL) {
+        char *script_text = (char *) EdNPCBuffer.Alloc((bg_file->size >> 4) + 1);
+        memcpy(script_text, bg_file->buffer, bg_file->size);
+        LoadInfo(script_text, bg_file->size);
     }
     LoadData();
     int used = EdNPCBuffer.used;
@@ -482,7 +482,7 @@ int EditInInit(float time, char *name) {
     EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
     door_open_cnt = 0;
     GameMode = 0;
-    Chara->unk_C98 = 0;
+    Chara->wind = 0;
     Chara->SetPosition(0.0f, 0.0f, 0.0f);
     Chara->SetRotation(0.0f, 0.0f, 0.0f);
     GetMapJumpPos(Chara);
@@ -555,8 +555,8 @@ int EditInLoop() {
             int i;
             OBJ_ANIME_SEQ *anime = EdInInfo->obj_anime;
             for (i = 0; i < obj_anime_num; i++, anime++) {
-                int flag = anime->completion_flag;
-                if (flag <= 0 || EdGetMapFlag(flag) == 0) {
+                int completion_flag = anime->completion_flag;
+                if (completion_flag <= 0 || EdGetMapFlag(completion_flag) == 0) {
                     ObjAnimePlay(anime);
                 }
             }
@@ -604,12 +604,12 @@ int EditInLoop() {
                     GameMode = 3;
                 }
                 if (EdEventInfo.reset_camera_angle < 0) {
-                    sceVu0FVECTOR pos;
-                    sceVu0FVECTOR ref;
-                    EventCamera.GetPos(pos);
-                    EventCamera.GetRef(ref);
-                    MainCamera.SetPos(pos);
-                    MainCamera.SetRef(ref);
+                    sceVu0FVECTOR event_pos;
+                    sceVu0FVECTOR event_ref;
+                    EventCamera.GetPos(event_pos);
+                    EventCamera.GetRef(event_ref);
+                    MainCamera.SetPos(event_pos);
+                    MainCamera.SetRef(event_ref);
                 }
                 camera_change_count = 0;
             }
@@ -634,9 +634,9 @@ int EditInLoop() {
             }
             door_open_cnt--;
             if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
-                sceVu0FVECTOR pos;
-                Chara->GetPosition(pos);
-                EdDoorOpenSe(EdInteriorDoorSound, pos);
+                sceVu0FVECTOR chara_pos;
+                Chara->GetPosition(chara_pos);
+                EdDoorOpenSe(EdInteriorDoorSound, chara_pos);
             }
             if (door_open_cnt < 0) {
                 door_open_cnt = 0;
@@ -674,13 +674,13 @@ int EditInLoop() {
             Chara->GetDir(*talker, direction);
             float pitch = -atan2f(-Chara->body_height + (1.3f + talker->body_height + direction[1]), distance);
             float yaw = atan2f(direction[0], direction[2]);
-            float h = EdAGetViewAngleH();
-            float v = EdAGetViewAngleV();
-            h = AngleInterpolate(h, yaw, 0.05f, 0);
-            v = AngleInterpolate(v, pitch, 0.03f, 0);
-            EdASetViewAngle(h, v);
+            float view_h = EdAGetViewAngleH();
+            float view_v = EdAGetViewAngleV();
+            view_h = AngleInterpolate(view_h, yaw, 0.05f, 0);
+            view_v = AngleInterpolate(view_v, pitch, 0.03f, 0);
+            EdASetViewAngle(view_h, view_v);
             EdEyeCamera(&ViewCamera__2, Chara);
-            if (EdCheckViewMode() == 0 || ((h - yaw < 0.0f ? -(h - yaw) : h - yaw) < 0.001f && (v - pitch < 0.0f ? -(v - pitch) : v - pitch) < 0.001f)) {
+            if (EdCheckViewMode() == 0 || ((view_h - yaw < 0.0f ? -(view_h - yaw) : view_h - yaw) < 0.001f && (view_v - pitch < 0.0f ? -(view_v - pitch) : view_v - pitch) < 0.001f)) {
                 int event_no;
                 EdASetViewAngle(yaw, pitch);
                 event_no = 0;
@@ -780,9 +780,9 @@ int EditInLoop() {
         start_event_no = 150;
     }
     if (GameMode != 4 && ((CMainChara *) Chara)->move_info.landed != 0) {
-        int trigger = ((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind;
-        if (trigger > 0) {
-            start_event_no = trigger;
+        int ground_event = ((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind;
+        if (ground_event > 0) {
+            start_event_no = ground_event;
         }
     }
     if (EdDebugEventEnable != 0 && (start_event_no > 0 || start_system_event > 0)) {
@@ -863,21 +863,21 @@ static void MainDraw() {
         TexManager.ReloadTexture(GetVif1Packet(), 15);
         TexAnime.TexAnime(15);
         setTexAnim();
-        sceVu0FVECTOR distance = {0.0f, 1000.0f, 10000.0f, 1000000.0f};
+        sceVu0FVECTOR lod_distance = {0.0f, 1000.0f, 10000.0f, 1000000.0f};
         for (i = 0; i < parts_num; i++) {
-            InteriorParts[i].DrawParts(NowTime, distance, 0, 0, NULL);
+            InteriorParts[i].DrawParts(NowTime, lod_distance, 0, 0, NULL);
         }
     }
-    sceGsTex0 frame;
+    sceGsTex0 frame_tex;
     CRect_i_ screen;
-    sceGsTex0 water;
-    MGGetFBuffTex(&frame);
+    sceGsTex0 water_tex;
+    MGGetFBuffTex(&frame_tex);
     screen.x = 0;
     screen.y = 0;
     screen.width = 0x280;
     screen.height = 0xE0;
-    water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
-    MGMoveImage(&frame, screen, &water, 0, 0, 0);
+    water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
+    MGMoveImage(&frame_tex, screen, &water_tex, 0, 0, 0);
     sceVu0FVECTOR ref;
     MainCamera.GetRef(ref);
     sceGsZbuf zbuf = mgZBuffer;
@@ -1225,15 +1225,15 @@ void GetMapJumpPos(CCharacter *chara) {
  * @address 0x19E420
  * @size 0xF8
  */
-static int GetDoorPos(int door_no, float *position, float *rotation, int *parts_no, int *motion) {
+static int GetDoorPos(int door_no, float *position, float *rotation, int *door_sound, int *motion) {
     EPARTS_FUNC_DATA *point = func_point;
 
     for (int i = 0; i < func_num; i++, point++) {
         if ((point->kind == 10 || point->kind == 11) && point->link_id == door_no) {
             sceVu0CopyVector(position, point->position);
             sceVu0CopyVector(rotation, point->rotation);
-            *parts_no = point->values[0];
-            *motion = EdGetDoorMotion(*parts_no, point->kind == 10);
+            *door_sound = point->values[0];
+            *motion = EdGetDoorMotion(*door_sound, point->kind == 10);
             return point->kind == 11;
         }
     }
@@ -1360,35 +1360,35 @@ static int GetCollision(CCPoly *poly, CBoxVu0 *box) {
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
 static void VillagerCollision() {
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR position;
     CBoxVu0 box;
     sceVu0FVECTOR ground;
     CCPoly poly;
 
     for (int i = -1; i < 10; i++) {
-        int move;
+        int snap;
         CCharacter *chara;
         CNPCharacter *villager = NULL;
-        int sound;
+        int foot_sound;
         if (i >= 0) {
             villager = &EdVillager[i];
-            move = EdEventInfo.npc_collision[i];
+            snap = EdEventInfo.npc_collision[i];
             if (villager->CheckDraw() == 0) {
                 continue;
             }
-            villager->GetPosition(pos);
-            sound = EdEventInfo.npc_foot_sound[i];
+            villager->GetPosition(position);
+            foot_sound = EdEventInfo.npc_foot_sound[i];
         } else {
-            move = EdEventInfo.player_collision;
-            Chara->GetPosition(pos);
-            sound = EdEventInfo.player_foot_sound;
+            snap = EdEventInfo.player_collision;
+            Chara->GetPosition(position);
+            foot_sound = EdEventInfo.player_foot_sound;
         }
         WorkBuffer__2->used = 0;
         CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
-        box.max[0] = 1.0f + pos[0];
-        box.min[0] = pos[0] - 1.0f;
-        box.max[2] = 1.0f + pos[2];
-        box.min[2] = pos[2] - 1.0f;
+        box.max[0] = 1.0f + position[0];
+        box.min[0] = position[0] - 1.0f;
+        box.max[2] = 1.0f + position[2];
+        box.min[2] = position[2] - 1.0f;
         box.max[1] = 1000.0f;
         box.min[1] = -1000.0f;
         if (i >= 0) {
@@ -1402,24 +1402,24 @@ static void VillagerCollision() {
             printf("cpoly over!!!! %d\n", count);
         }
         if (count > 0) {
-            pos[1] += 20.0f;
-            if (GetFootPoly(pos, 1000.0f, &poly, ground, polys, count, 0) != 0) {
-                sceVu0CopyVector(pos, ground);
-                chara->FootSoundEnable(sound);
-                if (sound == 1) {
+            position[1] += 20.0f;
+            if (GetFootPoly(position, 1000.0f, &poly, ground, polys, count, 0) != 0) {
+                sceVu0CopyVector(position, ground);
+                chara->FootSoundEnable(foot_sound);
+                if (foot_sound == 1) {
                     chara->SetFootSoundID(poly.attr.foot_sound);
                 }
             } else {
-                pos[1] = 0.0f;
+                position[1] = 0.0f;
             }
         } else {
-            pos[1] = 0.0f;
+            position[1] = 0.0f;
         }
-        if (move != 0) {
+        if (snap != 0) {
             if (i >= 0) {
-                villager->SetPosition(pos);
+                villager->SetPosition(position);
             } else {
-                Chara->SetPosition(pos);
+                Chara->SetPosition(position);
             }
         }
     }
@@ -1449,7 +1449,7 @@ static int LoadTexture() {
         }
         ext++;
     }
-    u_int *data = NULL;
+    u_int *cfg_data = NULL;
     int size;
     TexAnime.Initialize(NULL, 0);
     if (strcmp(ext, "img") == 0) {
@@ -1462,7 +1462,7 @@ static int LoadTexture() {
         }
         if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
             TexAnime.Initialize(TexAnimeData, 64);
-            data = found;
+            cfg_data = found;
             size = cfg_size;
             for (int i = 0; i < 64; i++) {
                 TexAnimeData[i].Initialize();
@@ -1470,8 +1470,8 @@ static int LoadTexture() {
         }
     }
     TexManager.LoadTextureBlockEX(15, texdata);
-    if (data != NULL) {
-        TexAnime.LoadCFGFile((char *) data, size);
+    if (cfg_data != NULL) {
+        TexAnime.LoadCFGFile((char *) cfg_data, size);
     }
     EdNPCBuffer.Alloc((file->size >> 4) + 1);
     return 0;
@@ -1504,20 +1504,20 @@ void LoadData() {
     }
     int count;
     for (count = 0;; count++) {
-        u_int *pts = SearchPTS(archive, count);
-        if (pts == NULL) {
+        u_int *part_archive = SearchPTS(archive, count);
+        if (part_archive == NULL) {
             break;
         }
         CMapParts *parts = &InteriorParts[count];
-        LoadPTS(parts, pts);
+        LoadPTS(parts, part_archive);
         parts->handle = count;
-        parts->unk_0E4 = 15;
-        int first = func_num;
-        func_num += GetFuncPoint(count, pts, &func_point[first]);
+        parts->category_no = 15;
+        int first_point = func_num;
+        func_num += GetFuncPoint(count, part_archive, &func_point[first_point]);
         if (EdInteriorPartsNo >= 0) {
             EDITPARTS_INFO *info = EditPartsInfo.GetPartsInfo(EdInteriorPartsNo);
             if (info != NULL) {
-                EDITPARTS_INFO copy = *info;
+                EDITPARTS_INFO info_copy = *info;
                 EdPartsObjectOnOff(parts, info, EdInteriorJumpID + 1);
             }
         }
@@ -1532,23 +1532,23 @@ void LoadData() {
         frames[4] = parts->shadow_frame;
         frames[5] = parts->GetCollisionFrame();
         frames[6] = parts->shade_frame;
-        frames[7] = parts->unk_104;
-        CFrame *extra;
-        if (parts->unk_0DC == NULL) {
-            extra = NULL;
+        frames[7] = parts->ripple_frame;
+        CFrame *extra_collision;
+        if (parts->camera_frame == NULL) {
+            extra_collision = NULL;
         } else {
-            parts->unk_0DC->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
-            parts->unk_0DC->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
-            extra = parts->unk_0DC;
+            parts->camera_frame->SetPosition(parts->pos[0], parts->pos[1], parts->pos[2]);
+            parts->camera_frame->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
+            extra_collision = parts->camera_frame;
         }
-        frames[8] = extra;
-        EPARTS_FUNC_DATA *point = &func_point[first];
+        frames[8] = extra_collision;
+        EPARTS_FUNC_DATA *point = &func_point[first_point];
         effect_num = 32;
         for (int i = 0; i < 24; i++) {
             parts->effect_on[i] = 0;
             parts->effect[i] = NULL;
         }
-        for (; first < func_num; first++, point++) {
+        for (; first_point < func_num; first_point++, point++) {
             EnterPartsEffect(parts, point, EdInInfo->effects, 32);
             if (obj_anime_num < 32) {
                 OBJ_ANIME_SEQ *seq = &EdInInfo->obj_anime[obj_anime_num];
@@ -1590,7 +1590,7 @@ void LoadData() {
     }
     for (int i = 0; i < 1; i++) {
         EDIT_WATER_INFO *info = &EdInInfo->water_surfaces[i];
-        if (info->type <= 0) {
+        if (info->grid_rows <= 0) {
             break;
         }
         CWater *water;
@@ -1610,14 +1610,14 @@ void LoadData() {
             surface->follow[j] = info->follow[j];
         }
         for (j = 0; j < 4; j++) {
-            sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].x);
+            sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].row);
         }
         water->SetVertex(near_left, near_right, far_left, far_right);
         water->frame.SetPosition(info->corner_c);
-        water->SetSize(info->type, info->number, &EdNPCBuffer);
-        water->SetParam(info->texture_scroll[0], info->texture_scroll[1], info->texture_scroll[2],
-                        info->texture_scroll[3]);
-        water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
+        water->SetSize(info->grid_rows, info->grid_columns, &EdNPCBuffer);
+        water->SetParam(info->ripple_params[0], info->ripple_params[1], info->ripple_params[2],
+                        info->ripple_params[3]);
+        water->SetColor(info->red, info->green, info->blue, 0x80);
     }
 }
 
@@ -1630,46 +1630,46 @@ void LoadData() {
  */
 int LoadPTS(CMapParts *parts, u_int *archive) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    u_int *names[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    u_int *files[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
     EPARTS_ARCHIVE *pack = (EPARTS_ARCHIVE *) archive;
 
-    if (pack->size_58 > 0) {
-        names[0] = (u_int *) ((char *) archive + pack->offset_48);
+    if (pack->lod0_size > 0) {
+        files[0] = (u_int *) ((char *) archive + pack->lod0_offset);
     } else {
         return 0;
     }
-    if (pack->size_5c > 0) {
-        names[1] = (u_int *) ((char *) archive + pack->offset_4c);
+    if (pack->lod1_size > 0) {
+        files[1] = (u_int *) ((char *) archive + pack->lod1_offset);
     }
-    if (pack->size_60 > 0) {
-        names[2] = (u_int *) ((char *) archive + pack->offset_50);
+    if (pack->lod2_size > 0) {
+        files[2] = (u_int *) ((char *) archive + pack->lod2_offset);
     }
-    if (pack->size_64 > 0) {
-        names[3] = (u_int *) ((char *) archive + pack->offset_54);
+    if (pack->lod3_size > 0) {
+        files[3] = (u_int *) ((char *) archive + pack->lod3_offset);
     }
-    if (pack->size_94 > 0) {
-        names[4] = (u_int *) ((char *) archive + pack->offset_90);
+    if (pack->shadow_size > 0) {
+        files[4] = (u_int *) ((char *) archive + pack->shadow_offset);
     }
-    if (pack->size_7c > 0) {
-        names[5] = (u_int *) ((char *) archive + pack->offset_78);
+    if (pack->collision_size > 0) {
+        files[5] = (u_int *) ((char *) archive + pack->collision_offset);
     }
-    if (pack->size_ac > 0) {
-        names[6] = (u_int *) ((char *) archive + pack->offset_a8);
+    if (pack->shade_size > 0) {
+        files[6] = (u_int *) ((char *) archive + pack->shade_offset);
     }
-    if (pack->size_dc > 0) {
-        names[7] = (u_int *) ((char *) archive + pack->offset_d8);
+    if (pack->extra_size > 0) {
+        files[7] = (u_int *) ((char *) archive + pack->extra_offset);
     }
-    if (pack->size_c4 > 0) {
-        names[8] = (u_int *) ((char *) archive + pack->offset_c0);
+    if (pack->camera_size > 0) {
+        files[8] = (u_int *) ((char *) archive + pack->camera_offset);
     }
-    parts->SetFrame(LoadMDSFile(names[0], &EdNPCBuffer, 0, NULL, NULL), 0);
-    if (names[5] != NULL) {
-        parts->collision_frame = LoadCollisionFile(names[5], &EdNPCBuffer);
+    parts->SetFrame(LoadMDSFile(files[0], &EdNPCBuffer, 0, NULL, NULL), 0);
+    if (files[5] != NULL) {
+        parts->collision_frame = LoadCollisionFile(files[5], &EdNPCBuffer);
     }
-    if (names[8] != NULL) {
-        parts->unk_0DC = LoadCollisionFile(names[8], &EdNPCBuffer);
+    if (files[8] != NULL) {
+        parts->camera_frame = LoadCollisionFile(files[8], &EdNPCBuffer);
     } else {
-        parts->unk_0DC = NULL;
+        parts->camera_frame = NULL;
     }
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     position[0] = header->position[0];
@@ -2105,8 +2105,8 @@ static void CommandWATER_SURFACE(void **arguments) {
         EDIT_WATER_INFO *surface = &EdInInfo->water_surfaces[water_list];
         water_list++;
         strcpy(surface->name, (char *) arguments[0]);
-        surface->type = *(int *) arguments[1];
-        surface->number = *(int *) arguments[2];
+        surface->grid_rows = *(int *) arguments[1];
+        surface->grid_columns = *(int *) arguments[2];
         surface->corner_a[0] = *(float *) arguments[3];
         surface->corner_a[1] = *(float *) arguments[4];
         surface->corner_a[2] = *(float *) arguments[5];
@@ -2119,13 +2119,13 @@ static void CommandWATER_SURFACE(void **arguments) {
         surface->corner_c[1] = *(float *) arguments[10];
         surface->corner_c[2] = *(float *) arguments[11];
         surface->corner_c[3] = 1.0f;
-        surface->texture_scroll[0] = *(float *) arguments[12];
-        surface->texture_scroll[1] = *(float *) arguments[13];
-        surface->texture_scroll[2] = *(float *) arguments[14];
-        surface->texture_scroll[3] = *(float *) arguments[15];
-        surface->unk_50 = *(int *) arguments[16];
-        surface->unk_54 = *(int *) arguments[17];
-        surface->unk_58 = *(int *) arguments[18];
+        surface->ripple_params[0] = *(float *) arguments[12];
+        surface->ripple_params[1] = *(float *) arguments[13];
+        surface->ripple_params[2] = *(float *) arguments[14];
+        surface->ripple_params[3] = *(float *) arguments[15];
+        surface->red = *(int *) arguments[16];
+        surface->green = *(int *) arguments[17];
+        surface->blue = *(int *) arguments[18];
         surface->follow[0] = *(int *) arguments[19];
         surface->follow[1] = *(int *) arguments[20];
         surface->follow[2] = *(int *) arguments[21];
@@ -2148,12 +2148,12 @@ static void CommandWATER_SHAKE(void **arguments) {
     if (info != NULL) {
         int i = 0;
         while (1) {
-            if (info->wave[i].active == 0.0f && info->wave[i].z == 0.0f) {
+            if (info->wave[i].power == 0.0f && info->wave[i].range == 0.0f) {
                 EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) &((EDIT_WATER_WAVE_INFO *) info)[i];
-                wave->x = (float) *(int *) arguments[0];
-                wave->y = (float) *(int *) arguments[1];
-                wave->z = *(float *) arguments[3];
-                wave->active = *(float *) arguments[2];
+                wave->row = (float) *(int *) arguments[0];
+                wave->column = (float) *(int *) arguments[1];
+                wave->range = *(float *) arguments[3];
+                wave->power = *(float *) arguments[2];
                 break;
             }
             i++;

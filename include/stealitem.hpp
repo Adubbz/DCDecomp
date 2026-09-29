@@ -25,10 +25,10 @@ public:
     float base_height[STEAL_ITEM_MAX]; /**< Height each slot bobs about. */
     float speed[STEAL_ITEM_MAX];       /**< How far each slot travels a step. */
     s32 state[STEAL_ITEM_MAX];         /**< -1 free, 0 rising, 1 closing, 2 arrived. */
-    s32 unk_0F0[STEAL_ITEM_MAX];
-    float angle;                 /**< Angle every slot spins at. */
-    float phase[STEAL_ITEM_MAX]; /**< How far through its bob each slot is. */
-    s32 item[STEAL_ITEM_MAX];    /**< Item each slot carries. */
+    s32 aux_state[STEAL_ITEM_MAX];     /**< Second per-slot state, reset to -1 with state and otherwise unused. */
+    float angle;                       /**< Angle every slot spins at. */
+    float phase[STEAL_ITEM_MAX];       /**< How far through its bob each slot is. */
+    s32 item[STEAL_ITEM_MAX];          /**< Item each slot carries. */
     u8 unk_154[0xC];
 
     /**

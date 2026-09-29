@@ -15,7 +15,7 @@
 #include "visual.hpp"
 
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
-    TM2_picture *pic = (TM2_picture *) ((u_char *) head + 16);
+    TM2_picture *picture = (TM2_picture *) ((u_char *) head + 16);
     int width = head->image_width;
     int height = head->image_height;
     int bpp;
@@ -24,7 +24,7 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     u_char *image;
     int tw;
     int th;
-    int t;
+    int pow2;
     int k;
     int tbw;
 
@@ -51,17 +51,17 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     }
 
     clut = 0;
-    image = (u_char *) pic + pic->header_size;
+    image = (u_char *) picture + picture->header_size;
     if (bpp < 2)
-        clut = image + pic->image_size;
+        clut = image + picture->image_size;
 
     u_char *mip[4] = {0, 0, 0, 0};
 
-    if (pic->mipmap_count > 1) {
-        u_char *next = image + pic->mipmap_size[0];
-        for (int m = 1; m < pic->mipmap_count; m++) {
+    if (picture->mipmap_count > 1) {
+        u_char *next = image + picture->mipmap_size[0];
+        for (int m = 1; m < picture->mipmap_count; m++) {
             mip[m] = next;
-            next += pic->mipmap_size[m];
+            next += picture->mipmap_size[m];
         }
     }
 
@@ -77,23 +77,23 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
 
     tw = 0;
     th = 0;
-    t = width;
-    while (t >= 2) {
-        t >>= 1;
+    pow2 = width;
+    while (pow2 >= 2) {
+        pow2 >>= 1;
         tw++;
     }
-    for (t = 1, k = 0; k < tw; k++)
-        t <<= 1;
-    if (width != t)
+    for (pow2 = 1, k = 0; k < tw; k++)
+        pow2 <<= 1;
+    if (width != pow2)
         tw++;
-    t = height;
-    while (t >= 2) {
-        t >>= 1;
+    pow2 = height;
+    while (pow2 >= 2) {
+        pow2 >>= 1;
         th++;
     }
-    for (t = 1, k = 0; k < th; k++)
-        t <<= 1;
-    if (height != t)
+    for (pow2 = 1, k = 0; k < th; k++)
+        pow2 <<= 1;
+    if (height != pow2)
         th++;
 
     tbw = width >> 6;
@@ -152,12 +152,12 @@ int CVisualVu1::RemakeData(unsigned int *data) {
  * One over the length of the first three components of a vector, from the vector unit.
  */
 static inline float InverseLength(float *vector) {
-    register float *p0 = vector;
+    register float *source = vector;
     register int root;
     register float length = 0.0f;
 
     asm {
-        lqc2       vf4, 0(p0)
+        lqc2       vf4, 0(source)
         vmul.xyz   vf4, vf4, vf4
         vnop
         vnop
@@ -248,9 +248,9 @@ int SetMaterial(u_int *packet, MDT_MATERIAL *material) {
     packet[2] = 0;
     packet[3] = 0x6C040025;
     u_int last_row[4] = {3, 0, 0, 0};
-    ((u_long128 *) packet)[1] = *(u_long128 *) material->unk_00;
-    ((u_long128 *) packet)[2] = *(u_long128 *) material->unk_10;
-    ((u_long128 *) packet)[3] = *(u_long128 *) material->unk_20;
+    ((u_long128 *) packet)[1] = *(u_long128 *) material->diffuse;
+    ((u_long128 *) packet)[2] = *(u_long128 *) material->ambient;
+    ((u_long128 *) packet)[3] = *(u_long128 *) material->specular;
     ((u_long128 *) packet)[4] = *(u_long128 *) last_row;
     return 0x14;
 }
@@ -353,7 +353,7 @@ u_int *CVisualMDTVu1::GetMDTDataAddress(void) {
  */
 void CVisualMDTVu1::Initialize(void) {
     CVisualVu1::Initialize();
-    unk_00 = 0;
+    copy_on_draw = 0;
     data = NULL;
     vu_data_buffer[1] = NULL;
     vu_data_buffer[0] = NULL;
@@ -391,12 +391,12 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     sceVu0FMATRIX clip_matrix;
     u_int *tag;
     u_int *unpack;
-    u_int *data;
+    u_int *unpack_data;
     bool lighting;
-    u_int color;
-    float x;
-    float y;
-    float z;
+    u_int fog_color;
+    float inv_len_x;
+    float inv_len_y;
+    float inv_len_z;
 
     if (vu_data == NULL || vu_size == 0) {
         return 0;
@@ -428,19 +428,19 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     *packet++ = 0x1A;
     *packet++ = 0;
     lighting = false;
-    if (IsOff(info->unk_320) && IsOff(info->unk_340)) {
+    if (IsOff(info->shadow_pass) && IsOff(info->unlit)) {
         lighting = true;
     }
     *packet++ = ((program == 15) << 8) |
-                ((!info->unk_320 << 3) |
-                 (((((info->unk_324 != 0 && !info->unk_320)) << 5) | 0x40) | (lighting * 16)));
+                ((!info->shadow_pass << 3) |
+                 (((((info->fog_enabled != 0 && !info->shadow_pass)) << 5) | 0x40) | (lighting * 16)));
     *packet++ = 0;
     *packet++ = 0x1B;
     *packet++ = 0;
-    color = info->fog_red;
-    color |= info->fog_green << 8;
-    color |= info->fog_blue << 16;
-    *packet++ = color;
+    fog_color = info->fog_red;
+    fog_color |= info->fog_green << 8;
+    fog_color |= info->fog_blue << 16;
+    *packet++ = fog_color;
     *packet++ = 0;
     *packet++ = 0x3D;
     *packet++ = 0;
@@ -449,10 +449,10 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     *packet++ = 0x020000AA;
     unpack = packet;
     packet++;
-    data = packet;
+    unpack_data = packet;
     *packet++ = program * 2;
-    *packet++ = info->unk_33C;
-    *packet++ = info->unk_310;
+    *packet++ = info->eye_in_model;
+    *packet++ = info->clip_flags;
     *packet++ = 0;
     *(u_long128 *) packet = *(u_long128 *) screen_matrix[0];
     packet += 4;
@@ -464,17 +464,17 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     packet += 4;
 
     // The normal matrix is the model matrix with its axes rescaled to unit length.
-    x = InverseLength(matrix[0]);
-    y = InverseLength(matrix[1]);
-    z = InverseLength(matrix[2]);
-    if (info->unk_320 != 0) {
-        sceVu0ScaleVector(normal_matrix[0], matrix[0], x * x);
-        sceVu0ScaleVector(normal_matrix[1], matrix[1], y * y);
-        sceVu0ScaleVector(normal_matrix[2], matrix[2], z * z);
+    inv_len_x = InverseLength(matrix[0]);
+    inv_len_y = InverseLength(matrix[1]);
+    inv_len_z = InverseLength(matrix[2]);
+    if (info->shadow_pass != 0) {
+        sceVu0ScaleVector(normal_matrix[0], matrix[0], inv_len_x * inv_len_x);
+        sceVu0ScaleVector(normal_matrix[1], matrix[1], inv_len_y * inv_len_y);
+        sceVu0ScaleVector(normal_matrix[2], matrix[2], inv_len_z * inv_len_z);
     } else {
-        sceVu0ScaleVector(normal_matrix[0], matrix[0], x);
-        sceVu0ScaleVector(normal_matrix[1], matrix[1], y);
-        sceVu0ScaleVector(normal_matrix[2], matrix[2], z);
+        sceVu0ScaleVector(normal_matrix[0], matrix[0], inv_len_x);
+        sceVu0ScaleVector(normal_matrix[1], matrix[1], inv_len_y);
+        sceVu0ScaleVector(normal_matrix[2], matrix[2], inv_len_z);
     }
     normal_matrix[0][3] = 0.0f;
     normal_matrix[1][3] = 0.0f;
@@ -519,7 +519,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         *packet++ = *(u_int *) &info->fog_near;
         *packet++ = *(u_int *) &info->fog_far;
         *packet++ = *(u_int *) &info->fog_b;
-        if (info->unk_33C != 0) {
+        if (info->eye_in_model != 0) {
             eye[0] = info->position[0];
             eye[1] = info->position[1];
             eye[2] = info->position[2];
@@ -550,12 +550,12 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         packet += 4;
         *(u_long128 *) packet = *(u_long128 *) info->viewport[3];
         packet += 4;
-        if (info->unk_320 != 0) {
+        if (info->shadow_pass != 0) {
             MulMatrix(shadow_matrix, info->shadow, matrix);
             MulMatrix(shadow_matrix, info->view_scaled, shadow_matrix);
             MulMatrix(shadow_matrix, info->perspective, shadow_matrix);
         }
-        if (info->unk_320 == 0) {
+        if (info->shadow_pass == 0) {
             *packet++ = 0x8000;
             *packet++ = 0x302EC000;
             *packet++ = 0x412;
@@ -575,8 +575,8 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         *packet++ = 0x3F;
         *packet++ = 0;
     }
-    *unpack = (((packet - data) >> 2) << 16) | 0x6C000000;
-    if (info->unk_320 != 0) {
+    *unpack = (((packet - unpack_data) >> 2) << 16) | 0x6C000000;
+    if (info->shadow_pass != 0) {
         packet += SetShadowData(packet, shadow_matrix);
     }
     *tag |= (packet - header) >> 2;
@@ -672,7 +672,7 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
     u_long128 *colour;
     int remaining;
     u_int *index;
-    MDT_MATERIAL *info;
+    MDT_MATERIAL *material_entry;
     MDT_HEADER *header;
     u_int *mesh;
     u_long128 *vertex;
@@ -698,9 +698,9 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
     vu_data = block;
     mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
     vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
-    normal = (u_long128 *) ((u_char *) data + header->unk_14[1]);
-    uv = (u_long128 *) ((u_char *) data + header->unk_2c[1]);
-    if (header->unk_2c[1] <= 0) {
+    normal = (u_long128 *) ((u_char *) data + header->normal[1]);
+    uv = (u_long128 *) ((u_char *) data + header->uv[1]);
+    if (header->uv[1] <= 0) {
         uv = vertex;
     }
     colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
@@ -717,13 +717,13 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
         remaining = index[1];
         prim = index[0];
         material = index[2];
-        info = &materials[material];
+        material_entry = &materials[material];
         index += 3;
         if (material != -1) {
-            handle = TexManager.GetTextureHandle(info->texture, -1);
+            handle = TexManager.GetTextureHandle(material_entry->texture, -1);
             word += SetTEX0(&block[word], TexManager.GetTexture(handle)->tex0,
                             TexManager.GetTexture(handle)->tex1);
-            word += SetMaterial(&block[word], info);
+            word += SetMaterial(&block[word], material_entry);
         }
         limit = 0x36;
         if (colour != NULL) {
@@ -803,11 +803,11 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
         int remaining = index[1];
         int prim = index[0];
         int material = index[2];
-        MDT_MATERIAL *info = &materials[material];
+        MDT_MATERIAL *material_entry = &materials[material];
         index += 3;
         if (material != -1) {
             word += 16;
-            word += SetMaterial(&block[word], info);
+            word += SetMaterial(&block[word], material_entry);
         }
         int count;
         int limit = 0x36;
@@ -870,7 +870,7 @@ int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
 
     result = 0;
     vu_data = vu_data_buffer[DBuffID];
-    if (unk_00 != 0) {
+    if (copy_on_draw != 0) {
         vu_data = (u_int *) ActiveData->Alloc64(vu_size);
         memcpy(vu_data, vu_data_buffer[DBuffID], vu_size * 16);
     }

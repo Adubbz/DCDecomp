@@ -17,48 +17,48 @@ class CFrame;
  * Records what one monster of the floor is doing.
  */
 struct MONSTOR {
-    s32 state;         /**< 2 while the monster stands on the floor and takes part. */
-    s32 last_attacker; /**< Character credited with the kill, or -1. */
-    s32 unk_008;
-    s32 unk_00C;
-    s32 unk_010;
-    s32 unk_014;
+    s32 state;                /**< 2 while the monster stands on the floor and takes part. */
+    s32 last_attacker;        /**< Character credited with the kill, or -1. */
+    s32 stop_timer;           /**< Steps left before the stop status wears off; the monster cannot move or act meanwhile. */
+    s32 poison_timer;         /**< Steps left until poison next takes a tenth of the monster's life. */
+    s32 anger_timer;          /**< Steps left of anger, which doubles the damage the monster deals and halves the damage it takes. */
+    s32 slow_timer;           /**< Steps left of the slowing status, which halves the monster's motion and movement speed. */
     float player_distance;    /**< Distance from the player, measured by CheckViewLevel. */
     s32 base_model;           /**< Index of the loaded model the monster was set up from. */
     s32 max_hp;               /**< Life the monster has at full health. */
     s32 hp;                   /**< Life the monster has left. */
     s16 attachment_kind;      /**< Attachment family the monster drops from. */
     s16 attachment_weight[5]; /**< Weight of each attachment kind in the drop choice and in elemental damage. */
-    s32 unk_034;
-    s32 unk_038;
-    s32 unk_03C;
-    s16 kind;    /**< 2 for a monster the lock-on cursor leaves alone. */
-    s16 name_no; /**< Identifies the name the lock-on cursor shows. */
-    float unk_044;
-    float collision_radius; /**< Radius the monster keeps from other monsters. */
-    CCPoly *collision_poly; /**< Polygons the monster tests its movement against this step. */
-    s32 unk_050;
+    s32 money;                /**< Least amount of money the monster drops. */
+    s32 money_chance;         /**< Percentage chance that the monster drops money. */
+    s32 stolen_money;         /**< Money the monster has drained from the player and drops when defeated. */
+    s16 kind;                 /**< 2 for a monster the lock-on cursor leaves alone. */
+    s16 name_no;              /**< Identifies the name the lock-on cursor shows. */
+    float body_radius;        /**< Radius the player and the walls keep from the monster. */
+    float collision_radius;   /**< Radius the monster keeps from other monsters. */
+    CCPoly *collision_poly;   /**< Polygons the monster tests its movement against this step. */
+    s32 collision_poly_count; /**< Polygons in collision_poly. */
     u8 unk_054[0x0C];
-    sceVu0FVECTOR movement; /**< Direction the monster moves in. */
-    sceVu0FVECTOR unk_070;
-    float movement_speed; /**< Distance the monster moves each step. */
-    float turn_speed;     /**< Angle the monster turns each step; zero once the turn is done. */
-    s32 unk_088;
+    sceVu0FVECTOR movement;    /**< Direction the monster moves in. */
+    sceVu0FVECTOR turn_target; /**< Point the monster turns to face. */
+    float movement_speed;      /**< Distance the monster moves each step. */
+    float turn_speed;          /**< Angle the monster turns each step; zero once the turn is done. */
+    s32 falls;                 /**< Nonzero while the monster keeps to the ground beneath it and bounces off it. */
     u8 unk_08C[4];
-    s16 unk_090;
-    s16 unk_092;
+    s16 defense;  /**< Amount taken off the damage of each hit. */
+    s16 hardness; /**< Wear the monster puts on the weapon that hits it. */
     s16 unk_094;
     u8 unk_096[2];
-    s32 unk_098;
+    s32 invincible_timer; /**< Steps left in which the monster takes no hits. */
     u8 unk_09C[4];
-    s16 unk_0A0;
+    s16 drop_item; /**< Key or attachment the monster drops when defeated, or -1. */
     u8 unk_0A2[2];
-    float clip_distance; /**< Distance past which the monster stops taking part and being drawn. */
-    s32 unk_0A8;
-    s16 unk_0AC;
-    s16 unk_0AE;
-    s32 unk_0B0;
-    s16 unk_0B4;
+    float clip_distance;     /**< Distance past which the monster stops taking part and being drawn. */
+    s32 collision_off_timer; /**< Steps left in which the monster moves through the player, other monsters and walls. */
+    s16 shot_effect;         /**< Effect the first projectile fires, or -1. */
+    s16 shot_effect2;        /**< Effect the second projectile fires, or -1. */
+    s32 exp;                 /**< Experience the weapon that defeats the monster gains. */
+    s16 attachment_count;    /**< Attachment characters the monster draws with. */
     u8 unk_0B6[2];
     float ground_distance; /**< Height of the monster above the ground beneath it. */
     float ground_y;        /**< Height of the ground beneath the monster. */
@@ -66,45 +66,45 @@ struct MONSTOR {
     s32 last_hit_id;       /**< Identifies the attack that last hit the monster, or -1. */
     s32 hit_element;       /**< Element of the attack that last hit the monster; 5 for none. */
     float shadow_length;   /**< Distance the monster's shadow is cast below it. */
-    s16 unk_0D0;
-    s16 unk_0D2;
-    s16 unk_0D4;
-    s16 unk_0D6;
-    s16 unk_0D8;
-    s16 unk_0DA;
-    s16 unk_0DC;
-    s16 unk_0DE;
-    s16 unk_0E0;
+    s16 shadow_visible;    /**< Nonzero while the monster's shadow draws. */
+    s16 shadow_enabled;    /**< Nonzero when the script lets the monster's shadow draw. */
+    s16 revealed;          /**< 0 while the monster hides in a treasure chest, 1 once opened until its appearance script runs, -1 while in play. */
+    s16 free_fall;         /**< Nonzero lets a falling monster stay above the ground; zero keeps it on the ground. */
+    s16 steal_item;        /**< Item the player can steal from the monster, or -1. */
+    s16 drops_items;       /**< Nonzero when the monster can drop a key, an attachment or money. */
+    s16 item_damage_rate;  /**< Percentage of damage taken from hits no character owns. */
+    s16 status_chance;     /**< Percentage chance that a status hit takes hold. */
+    s16 rare_item;         /**< Item the monster sometimes drops in place of a key, or -1. */
     u8 unk_0E2[2];
-    s32 unk_0E4;
-    s32 unk_0E8;
+    s32 invincible_blocked;       /**< Nonzero to refuse invincibility to a living monster; cleared at each damage check. */
+    s32 view_held;                /**< Nonzero while the view limit holds the monster out of play. */
     s16 requested_motion;         /**< Motion the script asked the monster to play. */
     s16 requested_motion_flags;   /**< Flags of the requested motion. */
     float requested_motion_speed; /**< Speed of the requested motion; below zero for the motion's own. */
-    s16 unk_0F4;
-    s16 event_flag2;         /**< Value returned when CheckEventFlag2 consumes the event. */
-    s16 event_flag2_pending; /**< Nonzero until CheckEventFlag2 consumes the event. */
+    s16 motion_reset_pending;     /**< Nonzero while the requested motion waits to be restarted after a status ends. */
+    s16 event_flag2;              /**< Value returned when CheckEventFlag2 consumes the event. */
+    s16 event_flag2_pending;      /**< Nonzero until CheckEventFlag2 consumes the event. */
     u8 unk_0FA[2];
-    CFrame *unk_0FC;
-    sceVu0FVECTOR unk_100;
-    float unk_110;
-    float unk_114;
-    float lock_range; /**< Distance up to which the monster can be locked on to. */
-    s16 unk_11C;
+    CFrame *lockon_frame;          /**< Frame the lock-on cursor stands on, or zero for the monster's position. */
+    sceVu0FVECTOR lockon_position; /**< World position of lockon_frame. */
+    float lockon_scale_x;          /**< Width scale of the lock-on cursor. */
+    float lockon_scale_y;          /**< Height scale of the lock-on cursor. */
+    float lock_range;              /**< Distance up to which the monster can be locked on to. */
+    s16 lockon_enabled;            /**< Nonzero while the monster can be locked on to. */
     u8 unk_11E[2];
     float palette_alpha;      /**< Alpha of the monster's ambient light. */
     float palette_alpha_step; /**< Amount the alpha falls by each step. */
     s32 palette_delay;        /**< Steps to wait before the alpha starts falling. */
     u8 unk_12C[0x04];
-    sceVu0FVECTOR palette_target;   /**< Colour the palette cycle blends towards. */
-    sceVu0FVECTOR palette_color;    /**< Ambient colour the monster draws with. */
-    sceVu0FVECTOR palette_override; /**< Colour that replaces the ambient for one draw. */
-    s32 palette_override_pending;   /**< Nonzero while the override colour waits to be applied. */
-    s32 palette_cycles;             /**< Blend cycles left towards the target colour. */
-    float palette_step;             /**< Amount the blend moves by each step; negated at each end. */
-    float palette_blend;            /**< Fraction of the way from the ambient to the target colour. */
-    sceVu0FVECTOR unk_170;
-    sceVu0FVECTOR unk_180;
+    sceVu0FVECTOR palette_target;      /**< Colour the palette cycle blends towards. */
+    sceVu0FVECTOR palette_color;       /**< Ambient colour the monster draws with. */
+    sceVu0FVECTOR palette_override;    /**< Colour that replaces the ambient for one draw. */
+    s32 palette_override_pending;      /**< Nonzero while the override colour waits to be applied. */
+    s32 palette_cycles;                /**< Blend cycles left towards the target colour. */
+    float palette_step;                /**< Amount the blend moves by each step; negated at each end. */
+    float palette_blend;               /**< Fraction of the way from the ambient to the target colour. */
+    sceVu0FVECTOR knockback_direction; /**< Direction a hit throws the monster in. */
+    sceVu0FVECTOR knockback;           /**< Knockback speed, the amount it falls by each step, and the scale hits apply to it. */
 };
 
 STATIC_ASSERT(sizeof(MONSTOR) == 0x190);
@@ -142,25 +142,25 @@ struct MONSTOR_MODEL {
     s16 attachment_kind;      /**< Attachment family the monster drops from. */
     s16 attachment_weight[5]; /**< Weight of each attachment kind in the drop choice and in elemental damage. */
     float collision_radius;   /**< Radius the monster keeps from other monsters. */
-    s16 unk_064;
-    s16 unk_066;
-    s16 shot_effect[2]; /**< Entry effects the monster fires, or -1. */
-    s16 unk_06C;
+    s16 defense;              /**< Amount taken off the damage of each hit. */
+    s16 hardness;             /**< Wear the monster puts on the weapon that hits it. */
+    s16 shot_effect[2];       /**< Entry effects the monster fires, or -1. */
+    s16 exp;                  /**< Experience the weapon that defeats the monster gains. */
     u8 unk_06E[2];
-    s32 unk_070;
-    s32 unk_074;
-    s16 kind; /**< 2 for a monster the lock-on cursor leaves alone. */
+    s32 money;        /**< Least amount of money the monster drops. */
+    s32 money_chance; /**< Percentage chance that the monster drops money. */
+    s16 kind;         /**< 2 for a monster the lock-on cursor leaves alone. */
     u8 unk_07A[2];
     s16 name_no; /**< Identifies the name the lock-on cursor shows. */
     u8 unk_07E[2];
-    s16 unk_080;
-    s16 unk_082;
-    s16 unk_084;
-    s16 unk_086;
-    s16 unk_088;
+    s16 steal_item;          /**< Item the player can steal from the monster, or -1. */
+    s16 drops_items;         /**< Nonzero when the monster can drop a key, an attachment or money. */
+    s16 item_damage_rate;    /**< Percentage of damage taken from hits no character owns. */
+    s16 status_chance;       /**< Percentage chance that a status hit takes hold. */
+    s16 rare_item;           /**< Item the monster sometimes drops in place of a key, or -1. */
     s16 effect_parameter[6]; /**< Percentage of damage taken from each attacker. */
     u8 unk_096[2];
-    float unk_098;
+    float knockback_scale; /**< Scale applied to the knockback of each hit. */
 };
 
 STATIC_ASSERT(sizeof(MONSTOR_MODEL) == 0x9C);
@@ -175,10 +175,10 @@ struct MONSTOR_EFFECT_STATE {
     float motion_start[16];     /**< Motion frame each sphere starts taking hits on; 0 for always. */
     float motion_end[16];       /**< Motion frame each sphere stops taking hits on. */
     s32 timer[16];              /**< Nonzero while each sphere is in use. */
-    s32 unk_240[16][5];
-    s32 parameter[16][6]; /**< Percentage of damage each sphere takes from each attacker. */
-    s32 hit_slot;         /**< Sphere the last hit landed on. */
-    s32 hit_attributes;   /**< Weapon flags of the last hit. */
+    s32 body_parameter[16][5];  /**< Values the script sets on each sphere, 100 by default. */
+    s32 parameter[16][6];       /**< Percentage of damage each sphere takes from each attacker. */
+    s32 hit_slot;               /**< Sphere the last hit landed on. */
+    s32 hit_attributes;         /**< Weapon flags of the last hit. */
     u8 unk_508[8];
 };
 
@@ -198,7 +198,7 @@ struct MONSTOR_EFFECT_STATE2 {
     float motion_start[16];     /**< Motion frame each sphere starts hitting on. */
     float motion_end[16];       /**< Motion frame each sphere stops hitting on. */
     s32 active[16];             /**< Nonzero while each sphere is in use. */
-    s32 unk_340;
+    s32 last_slot;              /**< Sphere the script set up last, or -1 when none was found. */
     u8 unk_344[0xC];
 };
 
@@ -252,17 +252,17 @@ public:
     /**
      * Index of the monster whose behaviour is being evaluated.
      */
-    int GetCurrentMonsterIndex() { return unk_090; }
+    int GetCurrentMonsterIndex() { return current_monster; }
 
     CDataAlloc2<1> *script[16]; /**< Script working memory for each monster on the floor. */
     CFrame *collision;          /**< Collision model that every monster on the floor shares. */
-    s32 unk_044;
-    s32 unk_048;
-    s32 unk_04C;
-    s32 script_state[16]; /**< 1 while each monster's script is running. */
-    s32 unk_090;
-    s32 unk_094;
-    s32 unk_098;
+    s32 back_dungeon;           /**< Nonzero on the back dungeon, where monsters stay angry, give double experience and carry no key. */
+    s32 model_count;            /**< Kinds of monster loaded for the floor. */
+    s32 alive_count;            /**< Monsters alive on the floor. */
+    s32 script_state[16];       /**< 1 while each monster's script is running. */
+    s32 current_monster;        /**< Index of the monster being stepped or drawn. */
+    s32 requested_event;        /**< Event a monster's script asked to run, or -1. */
+    s32 paused;                 /**< Nonzero while the monsters are paused; their motions restart when play resumes. */
     s32 unk_09C;
     CMonstorChara base_chara[9];       /**< Characters loaded for each kind of monster on the floor. */
     MONSTOR_MODEL model[9];            /**< Parameters of each kind of monster on the floor. */
@@ -299,7 +299,7 @@ public:
      * @size 0x1D8
      * @unknownret
      */
-    void DrawMapSymbol(float *);
+    void DrawMapSymbol(float *offset);
 
     /**
      * Gives the floor's key to one monster.
@@ -327,7 +327,7 @@ public:
      * @address 0x1D7FC0
      * @size 0x398
      */
-    void ArrangementPos(CDungeonMap *, int, int, int);
+    void ArrangementPos(CDungeonMap *map, int count, int model_no, int unused);
 
     /**
      * Starts a timed status on every monster of the floor.
@@ -430,7 +430,7 @@ public:
      * @size 0x5A8
      * @unknownret
      */
-    void MoveCheck(float *, float *, int);
+    void MoveCheck(float *position, float *movement, int flat);
 
     /**
      * Stops the monster's movement where it would run into the player.
@@ -457,7 +457,7 @@ public:
      * @address 0x1DD540
      * @size 0x24A4
      */
-    void Step(int);
+    void Step(int pause);
 
     /**
      * Clears every monster and effect on the floor.
@@ -466,7 +466,7 @@ public:
      * @address 0x1DF9F0
      * @size 0x4A0
      */
-    void CleanViewMonstor(int);
+    void CleanViewMonstor(int back_floor);
 
     /**
      * Loads the models one monster needs, and says how many it took.
@@ -476,7 +476,7 @@ public:
      * @size 0x414
      * @unknownret
      */
-    int SetupBaseModel(int, int, int, CDataAlloc2<1> *);
+    int SetupBaseModel(int slot, int model_no, int texture_block, CDataAlloc2<1> *alloc);
 
     /**
      * Puts a loaded monster model on the floor at a position.
@@ -485,7 +485,7 @@ public:
      * @address 0x1E02B0
      * @size 0x138C
      */
-    int SetupViewMonstor(int, float *, int);
+    int SetupViewMonstor(int model_no, float *position, int event_flag);
 };
 
 STATIC_ASSERT(sizeof(CMonstorUnit) == 0x60750);

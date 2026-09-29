@@ -20,20 +20,20 @@ struct EDIT_ELEMENT_ATRA {
  * Describes one optional model element in a part attribute record.
  */
 struct EDIT_CHIP_ATTACH_DATA {
-    s32 id; /**< Element identifier copied into the runtime part record. */
-    s32 unk_04;
-    char *names[4]; /**< Optional model names controlled by the element. */
-    s32 unk_18;
+    s32 id;               /**< Element identifier copied into the runtime part record. */
+    s32 required_element; /**< Element slot of the same part that must be enabled first, or -1 for none. */
+    char *names[4];       /**< Optional model names controlled by the element. */
+    s32 npc_no;           /**< Villager the element belongs to, or -1 for none. */
 };
 
 /**
  * Stores the acquisition limits for one editable part.
  */
 struct EDIT_PARTS_ATRA {
-    s32 max;      /**< Maximum quantity that can be acquired. */
-    s32 acquired; /**< Whether this part supplies an acquisition. */
-    s32 unk_08;
-    s32 unk_0C;
+    s32 max;                           /**< Most copies of the part the player can hold. */
+    s32 stackable;                     /**< Greater than zero where each pickup adds five copies up to max. */
+    s32 tex_no;                        /**< Cell of the part-picture sheet that the part's picture draws from. */
+    s32 msg_no;                        /**< Message of the part's name, counted from its georama's first part message. */
     s32 kind;                          /**< Parts classification copied into the runtime record. */
     EDIT_CHIP_ATTACH_DATA elements[6]; /**< Optional model-element definitions. */
 };

@@ -56,7 +56,7 @@ void CScript::Load(const char *name) {
     if (LoadFile((char *) name, p, &size)) {
         wait = 0;
         mes_no = 0;
-        mes_fuchi = 40;
+        mes_page_wait = 40;
         pos = 0;
         camera_start = -1;
         camera_no = -1;
@@ -68,7 +68,7 @@ void CScript::Load(const char *name) {
         mes_wait = 0;
         bom_no = 0;
         beem_no = 0;
-        unk_2C = 0;
+        reset_flag = 0;
         se_no = 0;
         se_voice = 0;
         se_stop = 0;
@@ -89,7 +89,7 @@ void CScript::Load(const char *name) {
             obj[i].mouth_time = 0;
             obj[i].talk = 0;
             obj[i].load = -1;
-            obj[i].load_motion = -1;
+            obj[i].load_step = -1;
             obj[i].step = 0.05f;
         }
     }
@@ -100,7 +100,7 @@ void CScript::Load(const char *name) {
    tick. A line matching no row is fatal - there is no way to skip it, because nothing in the format
    says where a line ends. */
 void CScript::Step() {
-    bool unknown;
+    bool unmatched;
     bool done;
     int i;
 
@@ -115,11 +115,11 @@ void CScript::Step() {
         pos = SkipSpace(p, pos);
 
         do {
-            unknown = true;
+            unmatched = true;
 
             for (i = 0; i < 26; i++) {
                 if (memcmp(&p[pos], Command[i].name, Command[i].length) == 0) {
-                    unknown = false;
+                    unmatched = false;
                     pos = SkipSpace(p, pos + Command[i].length);
                     pos = CheckScript(p, pos, &Command[i], i);
 
@@ -131,7 +131,7 @@ void CScript::Step() {
                 }
             }
 
-            if (unknown)
+            if (unmatched)
                 exit__2(-1);
         } while (!done);
     } else {
@@ -142,15 +142,15 @@ void CScript::Step() {
 /* One command, once its arguments have been read: every case is a write into the object and
    nothing acts on it here, so a command is a request the overlay's own per-tick code picks up
    ([title-script.md](../../docs/formats/title-script.md)). */
-int CScript::CheckScript(char *buf, int pos, CSCRIPT_COMMAND *command, int no) {
-    int at;
+int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, int command_no) {
+    int cursor;
 
-    at = pos;
+    cursor = position;
 
     if (command->arg_count)
-        at = CheckArg(buf, at, command);
+        cursor = CheckArg(buffer, cursor, command);
 
-    switch (no) {
+    switch (command_no) {
         case 0:
             obj[(int) arg[0]].motion = (int) arg[1];
             obj[(int) arg[0]].motion_end = (int) arg[2];
@@ -258,7 +258,7 @@ int CScript::CheckScript(char *buf, int pos, CSCRIPT_COMMAND *command, int no) {
             break;
 
         case 15:
-            mes_fuchi = (int) arg[0];
+            mes_page_wait = (int) arg[0];
             break;
 
         case 16:
@@ -267,7 +267,7 @@ int CScript::CheckScript(char *buf, int pos, CSCRIPT_COMMAND *command, int no) {
 
         case 17:
             obj[(int) arg[1]].load = (int) arg[0];
-            obj[(int) arg[1]].load_motion = 0;
+            obj[(int) arg[1]].load_step = 0;
             break;
 
         case 18:
@@ -325,156 +325,156 @@ int CScript::CheckScript(char *buf, int pos, CSCRIPT_COMMAND *command, int no) {
             break;
     }
 
-    return at;
+    return cursor;
 }
 
 /* One command's arguments. Both kinds read the same three forms and differ only in what stands
    before them: a kind-1 argument must be preceded by a comma and a kind-2 one stands where it is.
    Anything the three forms do not cover hands back -1, which the caller stores and then parses
    from ([title-script.md](../../docs/formats/title-script.md)). */
-int CScript::CheckArg(char *buf, int pos, CSCRIPT_COMMAND *command) {
-    int at;
+int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
+    int cursor;
     int i;
-    int n;
-    int ok;
+    int digit_count;
+    int accepted;
 
-    at = pos;
+    cursor = position;
 
     for (i = 0; i < command->arg_count; i++) {
         switch (command->arg_type[i]) {
             case 1:
-                if (buf[at] != ',')
+                if (buffer[cursor] != ',')
                     return -1;
 
-                at = SkipSpace(buf, at + 1);
-                if (memcmp(&buf[at], "ON", 2) == 0) {
+                cursor = SkipSpace(buffer, cursor + 1);
+                if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     arg[i] = 1.0f;
-                    at += 2;
-                } else if (memcmp(&buf[at], "OFF", 3) == 0) {
+                    cursor += 2;
+                } else if (memcmp(&buffer[cursor], "OFF", 3) == 0) {
                     arg[i] = 0;
-                    at += 3;
+                    cursor += 3;
                 } else {
-                    ok = 0;
-                    if (buf[at] == '-')
-                        ok = 1;
-                    if (buf[at] >= '0' && buf[at] <= '9')
-                        ok = 1;
-                    if (!ok)
+                    accepted = 0;
+                    if (buffer[cursor] == '-')
+                        accepted = 1;
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                        accepted = 1;
+                    if (!accepted)
                         return -1;
 
-                    arg[i] = (float) atof(&buf[at]);
+                    arg[i] = (float) atof(&buffer[cursor]);
 
-                    for (n = 0; n < 32; n++) {
-                        ok = 0;
-                        if (buf[at] == '-') {
-                            at++;
-                            ok = 1;
+                    for (digit_count = 0; digit_count < 32; digit_count++) {
+                        accepted = 0;
+                        if (buffer[cursor] == '-') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] >= '0' && buf[at] <= '9') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] == '.') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] == '.') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (!ok)
+                        if (!accepted)
                             break;
                     }
 
-                    if (n == 32)
+                    if (digit_count == 32)
                         return -1;
                 }
 
-                at = SkipSpace(buf, at);
+                cursor = SkipSpace(buffer, cursor);
                 break;
 
             case 2:
-                if (memcmp(&buf[at], "ON", 2) == 0) {
+                if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     arg[i] = 1.0f;
-                    at += 2;
-                } else if (memcmp(&buf[at], "OFF", 3) == 0) {
+                    cursor += 2;
+                } else if (memcmp(&buffer[cursor], "OFF", 3) == 0) {
                     arg[i] = 0;
-                    at += 3;
+                    cursor += 3;
                 } else {
-                    ok = 0;
-                    if (buf[at] == '-')
-                        ok = 1;
-                    if (buf[at] >= '0' && buf[at] <= '9')
-                        ok = 1;
-                    if (!ok)
+                    accepted = 0;
+                    if (buffer[cursor] == '-')
+                        accepted = 1;
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                        accepted = 1;
+                    if (!accepted)
                         return -1;
 
-                    arg[i] = (float) atof(&buf[at]);
+                    arg[i] = (float) atof(&buffer[cursor]);
 
-                    for (n = 0; n < 32; n++) {
-                        ok = 0;
-                        if (buf[at] == '-') {
-                            at++;
-                            ok = 1;
+                    for (digit_count = 0; digit_count < 32; digit_count++) {
+                        accepted = 0;
+                        if (buffer[cursor] == '-') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] >= '0' && buf[at] <= '9') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (buf[at] == '.') {
-                            at++;
-                            ok = 1;
+                        if (buffer[cursor] == '.') {
+                            cursor++;
+                            accepted = 1;
                         }
-                        if (!ok)
+                        if (!accepted)
                             break;
                     }
 
-                    if (n == 32)
+                    if (digit_count == 32)
                         return -1;
                 }
 
-                at = SkipSpace(buf, at);
+                cursor = SkipSpace(buffer, cursor);
                 break;
         }
     }
 
-    return at;
+    return cursor;
 }
 
 /* The run of separators standing before a token. Two of the five consume more than the byte they
-   are found at - a comment runs to its line ending inclusive and the ideographic space is two bytes -
+   are found cursor - a comment runs to its line ending inclusive and the ideographic space is two bytes -
    which is why the skip is a loop over the whole file rather than a walk over one kind of byte
    ([title-script.md](../../docs/formats/title-script.md)). */
-int CScript::SkipSpace(char *buf, int pos) {
+int CScript::SkipSpace(char *buffer, int position) {
     bool stop;
 
-    while (pos < size) {
+    while (position < size) {
         stop = true;
 
-        if (memcmp(&buf[pos], "\x81\x40", 2) == 0) {
-            pos++;
+        if (memcmp(&buffer[position], "\x81\x40", 2) == 0) {
+            position++;
             stop = false;
         }
 
-        if (buf[pos] == ' ')
+        if (buffer[position] == ' ')
             stop = false;
-        if (buf[pos] == '\t')
+        if (buffer[position] == '\t')
             stop = false;
-        if (buf[pos] == '\n') {
-            pos++;
+        if (buffer[position] == '\n') {
+            position++;
             stop = false;
         }
-        if (buf[pos] == '\r') {
-            pos++;
+        if (buffer[position] == '\r') {
+            position++;
             stop = false;
         }
 
-        if (memcmp(&buf[pos], "//", 2) == 0) {
-            while (buf[pos] != '\n' && buf[pos] != '\r')
-                pos++;
-            pos++;
+        if (memcmp(&buffer[position], "//", 2) == 0) {
+            while (buffer[position] != '\n' && buffer[position] != '\r')
+                position++;
+            position++;
             stop = false;
         }
 
         if (stop)
-            return pos;
-        pos++;
+            return position;
+        position++;
     }
 
     return size;

@@ -24,7 +24,7 @@ STATIC_ASSERT(sizeof(ITEM_AUTO_GET) == 0xC);
  * @address 0x225970
  * @size 0x124
  */
-int GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
+int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat);
 
 /**
  * Recomputes a held weapon's values from its attachments.
@@ -33,7 +33,7 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *, int);
  * @address 0x225AA0
  * @size 0xB4
  */
-void SetWeaponAttachStatus(WEAPON_HAVE *);
+void SetWeaponAttachStatus(WEAPON_HAVE *result);
 
 /**
  * Applies a weapon's attachments to its stats and writes the result into a
@@ -43,7 +43,7 @@ void SetWeaponAttachStatus(WEAPON_HAVE *);
  * @address 0x225B60
  * @size 0x3E8
  */
-void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
+void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full);
 
 /**
  * Refills the attachment in a dungeon inventory slot from the attachment data
@@ -54,7 +54,7 @@ void WeaponAllValueSet(WEAPON_HAVE *, WEAPON_HAVE *, int);
  * @address 0x225F50
  * @size 0x154
  */
-int SetAttachMentValue(int, int, short, ATTACH_LIST *);
+int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *);
 
 /**
  * Returns the stat value an attachment adds, for its message line.
@@ -63,7 +63,7 @@ int SetAttachMentValue(int, int, short, ATTACH_LIST *);
  * @address 0x2260B0
  * @size 0x60
  */
-int GetAttachVolumeForMsg(ATTACH_LIST *);
+int GetAttachVolumeForMsg(ATTACH_LIST *attach);
 
 /**
  * Opens the dungeon entrance menu for a dungeon and floor.
@@ -90,7 +90,7 @@ int DunEnterMenuLoop(void);
  * @address 0x228680
  * @size 0x524
  */
-void StartQuickChange(u_long128 *, int, int *, int);
+void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int mode);
 
 /**
  * Runs one frame of the character change menu, and returns its result.
@@ -135,7 +135,7 @@ int DngActItemModelReadStart(u_long128 *buffer);
  * @address 0x22A390
  * @size 0x20C
  */
-int DngActItemModelBuild(int);
+int DngActItemModelBuild(int wait);
 
 /**
  * @mangled DngActiveItemTextureCopy__Fv
@@ -160,7 +160,7 @@ int DngActiveWeaponTextureCopy(void);
  * @address 0x22A7E0
  * @size 0x58
  */
-s32 GetWeaponMsgNo(WEAPON_HAVE *);
+s32 GetWeaponMsgNo(WEAPON_HAVE *weapon);
 
 /**
  * Returns the message number of an item's name.
@@ -169,7 +169,7 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *);
  * @address 0x22A840
  * @size 0x38
  */
-int GetWeaponMsgNo2(int);
+int GetWeaponMsgNo2(int item_no);
 
 /**
  * Draws the attachments set in a weapon's holes.
@@ -178,7 +178,7 @@ int GetWeaponMsgNo2(int);
  * @address 0x22A880
  * @size 0x1B4
  */
-void DrawWepAttach(int, int, WEAPON_HAVE *, int, int);
+void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha);
 
 /**
  * Tells whether the player has an Atla piece, held or placed.
@@ -187,7 +187,7 @@ void DrawWepAttach(int, int, WEAPON_HAVE *, int, int);
  * @address 0x22AA40
  * @size 0x17C
  */
-int GetAtraTipNowHave(int, int);
+int GetAtraTipNowHave(int tip_no, int georama_no);
 
 /**
  * Converts a value into the whole number the menus display for it.
@@ -196,7 +196,7 @@ int GetAtraTipNowHave(int, int);
  * @address 0x22ABC0
  * @size 0x70
  */
-int GetDispVolumeForFloat(float);
+int GetDispVolumeForFloat(float volume);
 
 /**
  * Starts reading the model the item preview shows.

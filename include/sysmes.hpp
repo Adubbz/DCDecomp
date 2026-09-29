@@ -83,31 +83,31 @@ void SystemMesDraw(void);
 /**
  * Shows the message for an acquired item.
  */
-void ItemGetMes(int item, int value, int count, int input_key);
+void ItemGetMes(int item_no, int value, int frames, int input_key);
 /**
  * Shows the message for an acquired Atlamillia component.
  */
-void AtraGetMes(int map, int no, int count);
+void AtraGetMes(int map_no, int element, int frames);
 /**
  * Shows the message for an acquired technique.
  */
-void TecGetMes(int technique, int count);
+void TecGetMes(int technique, int frames);
 /**
  * Shows a maximum-stat increase message.
  */
-void MaxUpMes(int value, int count);
+void MaxUpMes(int value, int frames);
 /**
  * Shows the message for one defeated party member.
  */
-void DeadMes(int member, int count);
+void DeadMes(int member, int frames);
 /**
  * Shows the message for the defeated party.
  */
-void AllDeadMes(int count);
+void AllDeadMes(int frames);
 /**
  * Shows why a party member cannot collect an Atlamillia component.
  */
-void NotGetAtraMes(int member, int count);
+void NotGetAtraMes(int member, int frames);
 /**
  * Shows why an item cannot be collected.
  */
@@ -115,7 +115,7 @@ void DontGetItemMes(int kind);
 /**
  * Configures and opens one system message.
  */
-void SetSystemMes(int no, int count, int position, int input_key, int *args, int *numbers);
+void SetSystemMes(int message_no, int frames, int position, int input_key, int *args, int *numbers);
 
 /**
  * Skips the blanks in front of the next token; the system message copy of the script reader's SkipSpace.

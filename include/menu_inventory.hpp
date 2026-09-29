@@ -63,7 +63,7 @@ int PersonalRetMax(int board_mode);
  * @address 0x0022F7D0
  * @size 0x1FC
  */
-void DrawPersonalBoard(int x, int y, int board_mode, int cursor_pos, int alpha);
+void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int);
 
 /**
  * Draws the icons of one personal board page, five to a row, clipped to the board's top and bottom.
@@ -90,7 +90,7 @@ void PersonalBoardDrawWaku(int x, int y, CTexture *texture, int alpha);
  * @address 0x00230140
  * @size 0xC8
  */
-void PersonalBoardOptionDraw(int x, int y, int board_mode, int cursor_pos, CTexture *texture, int alpha);
+void PersonalBoardOptionDraw(int board_mode, int count, int x, int y, CTexture *texture, int alpha);
 
 /**
  * Draws the tabs above a personal inventory board, the selected one lit, and in
@@ -165,7 +165,7 @@ void CommonMoneyBoardDraw(int x, int y, int money, int alpha);
  * @address 0x002314E0
  * @size 0xE0
  */
-int SearchBoardNowPosItemExist(int board_mode, int board_pos);
+int SearchBoardNowPosItemExist(int page, int cell);
 
 /**
  * Finds an available inventory-board slot for an item kind.
@@ -174,7 +174,7 @@ int SearchBoardNowPosItemExist(int board_mode, int board_pos);
  * @address 0x002315C0
  * @size 0x200
  */
-int GetBoardSpace(int item_no, int *board_pos);
+int GetBoardSpace(int item_no, int *page);
 
 /**
  * Exchanges two entries in an item pack.
@@ -309,7 +309,7 @@ void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items);
  * @address 0x00232290
  * @size 0x1FC
  */
-int GetNowModeMaxNum(int board_mode, int *overflow);
+int GetNowModeMaxNum(int page, int *overflow);
 
 /**
  * Initializes a held-weapon record from its weapon definition.
@@ -345,4 +345,4 @@ int ItemDataToHaveCopy(int item_no);
  * @address 0x002327D0
  * @size 0x54
  */
-void DrawFullSizePicture(CTexture *texture, int picture_no, int alpha, int blend_mode);
+void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha);

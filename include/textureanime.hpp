@@ -32,10 +32,10 @@ STATIC_ASSERT(sizeof(CTextureTexAnime) == 0x18);
  */
 class CTexAnimeData {
 public:
-    s16 unk_00;
-    s16 unk_02;
-    s16 unk_04;
-    s16 unk_06;
+    s16 kind;                        /**< Record kind: -1 free, 0 rectangle copy, 1 scrolling copy. */
+    s16 group;                       /**< Animation group the record belongs to. */
+    s16 duration;                    /**< Frames the record plays for; zero also plays the next record, -1 holds forever. */
+    s16 linked_group;                /**< Group enabled while the record plays, or -1 for none. */
     CTextureTexAnime first_texture;  /**< First texture endpoint used by the animation. */
     CTextureTexAnime second_texture; /**< Second texture endpoint used by the animation. */
     s16 source_x;                    /**< Left edge of the rectangle copied from the first texture. */
@@ -99,7 +99,7 @@ public:
      * @address 0x167170
      * @size 0x6B0
      */
-    void TexAnime(int);
+    void TexAnime(int texture_block);
 
     /**
      * Assigns the record pool and clears every animation group.
@@ -147,7 +147,7 @@ public:
      * @size 0xF8
      * @unknownret
      */
-    int EnterTexAnime(CTexAnimeData *record);
+    int EnterTexAnime(CTexAnimeData *source);
 
     /**
      * Stops and resets every animation group.

@@ -87,7 +87,7 @@ s16 DngEscapeSelect = 1;
  * @address 0x20D0A0
  * @size 0xC
  */
-static void SetWepEffectMenuReadBuf(u_long128 *);
+static void SetWepEffectMenuReadBuf(u_long128 *buffer);
 
 /**
  * Returns one entry of the menu's weapon model table.
@@ -96,7 +96,7 @@ static void SetWepEffectMenuReadBuf(u_long128 *);
  * @address 0x20D3B0
  * @size 0x18
  */
-static int *GetMenuWeaponModelData(int);
+static int *GetMenuWeaponModelData(int index);
 
 /**
  * Clears the menu's weapon model table.
@@ -114,7 +114,7 @@ static void InitMenuWeaponModelData();
  * @address 0x20D400
  * @size 0x18
  */
-static int *GetMenuWeaponModelInfo(int);
+static int *GetMenuWeaponModelInfo(int index);
 
 /**
  * Returns the motion step a character's status bits select.
@@ -132,7 +132,7 @@ static int GetNowMotionStepCnt(int status);
  * @address 0x20E530
  * @size 0x74
  */
-static void GetCharaChangeReadCharaFilePath(char *, int);
+static void GetCharaChangeReadCharaFilePath(char *path, int chara_no);
 
 /**
  * Randomly adjusts one value of a weapon being changed into another.
@@ -141,7 +141,7 @@ static void GetCharaChangeReadCharaFilePath(char *, int);
  * @address 0x20FBE0
  * @size 0xF8
  */
-static void LocalWeaponDataChange(char *, int, int, int);
+static void LocalWeaponDataChange(char *values, int count, int base, int range);
 
 /**
  * Selects the battle-menu game flag for the current dungeon state.
@@ -237,10 +237,10 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
 
     MenuItemUseVolume = 0;
     int now_hp = status->hp[chara];
-    int max = status->max_hp[chara];
+    int max_hp = status->max_hp[chara];
     int now_water = (int) status->water_now[chara];
     float max_water = status->water_max[chara];
-    int old_condition = status->unk_42C8[chara];
+    int old_condition = status->ailments[chara];
     printf("trueNo = %d\n", item_no);
     int value_no = 0;
     ITEM_DATA *data = GetItemData(item_no);
@@ -249,7 +249,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
     }
     if ((data->kind_flags & ITEMKINDF_CONSUMABLE) && target == 1) {
         if (item_no != ITEM_MELLOW_BANANA) {
-            if ((data->use_flags & ITEMUSE_HEAL_HP) && 0 < now_hp && now_hp < max) {
+            if ((data->use_flags & ITEMUSE_HEAL_HP) && 0 < now_hp && now_hp < max_hp) {
                 int add = (&data->vol)[value_no];
                 value_no++;
                 status->SetNextLife(chara, now_hp + add, 5.0f);
@@ -268,7 +268,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 status->water_now[chara] = next;
                 used = 1;
             }
-        } else if (now_hp > 0 && now_hp < max) {
+        } else if (now_hp > 0 && now_hp < max_hp) {
             value_no++;
             status->SetNextLife(chara, now_hp + 200, 5.0f);
             status->AddDrink(chara, -20, 1.0f);
@@ -278,7 +278,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
     if ((data->kind_flags & ITEMKINDF_RANDOM) && (data->use_flags & ITEMUSE_STATUS) && item_no >= ITEM_FLUFFY_DOUGHNUT &&
         item_no < ITEM_DUMMY) {
         if (chara == item_no - ITEM_FLUFFY_DOUGHNUT) {
-            int old = status->unk_4348[chara];
+            int old = status->defense[chara];
             int range = data->vol_range;
             if (range <= 0) {
                 printf("value=0\n");
@@ -290,7 +290,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             if (old >= 99) {
                 old = 99;
             }
-            status->unk_4348[chara] = old;
+            status->defense[chara] = old;
             used = 1;
         } else {
             used = 0;
@@ -322,10 +322,10 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     }
                     case ITEM_FRUIT_OF_EDEN: {
                         s16 limit[6] = {0xAA, 0x8C, 0xAA, 0x8C, 0xB4, 0xA0};
-                        if ((old_condition & 2) || now_hp <= 0 || !((s16) max < limit[chara])) {
+                        if ((old_condition & 2) || now_hp <= 0 || !((s16) max_hp < limit[chara])) {
                             used = 0;
                         } else {
-                            status->max_hp[chara] = max + (&data->vol)[value_no];
+                            status->max_hp[chara] = max_hp + (&data->vol)[value_no];
                             s16 next = status->max_hp[chara];
                             if (next >= limit[chara]) {
                                 next = limit[chara];
@@ -350,41 +350,41 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             u32 flags = data->use_flags;
             if ((old_condition & 2) || now_hp <= 0) {
                 if (item_no == ITEM_REVIVAL_POWDER) {
-                    status->unk_42C8[chara] = 0;
-                    status->hp[chara] = max >> 1;
+                    status->ailments[chara] = 0;
+                    status->hp[chara] = max_hp >> 1;
                     used = 1;
                 }
             } else {
                 if ((flags & 0x4000) && (old_condition & 4)) {
-                    status->unk_42C8[chara] ^= 4;
+                    status->ailments[chara] ^= 4;
                     used = 1;
                 }
                 if ((data->use_flags & 0x8000) && (old_condition & 0x10)) {
-                    status->unk_42C8[chara] ^= 0x10;
+                    status->ailments[chara] ^= 0x10;
                     used = 1;
                 }
                 if ((data->use_flags & 0x10000) && (old_condition & 0x20)) {
-                    status->unk_42C8[chara] ^= 0x20;
+                    status->ailments[chara] ^= 0x20;
                     used = 1;
                 }
                 if ((data->use_flags & 0x20000) && (old_condition & 0x40)) {
-                    status->unk_42C8[chara] ^= 0x40;
+                    status->ailments[chara] ^= 0x40;
                     used = 1;
                 }
                 if (item_no == ITEM_MIGHTY_HEALING && (old_condition & 0x74)) {
-                    if (status->unk_42C8[chara] & 8) {
-                        status->unk_42C8[chara] = 0;
-                        status->unk_42C8[chara] |= 8;
+                    if (status->ailments[chara] & 8) {
+                        status->ailments[chara] = 0;
+                        status->ailments[chara] |= 8;
                     } else {
-                        status->unk_42C8[chara] = 0;
+                        status->ailments[chara] = 0;
                     }
                     used = 1;
                 }
                 if (BtlMenuMode == 0 && (data->use_flags & 0x1000)) {
-                    int now = status->unk_42C8[chara];
+                    int now = status->ailments[chara];
                     if (!(now & 4)) {
-                        status->unk_42C8[chara] = now | 8;
-                        status->unk_42E0[chara] = 0x708;
+                        status->ailments[chara] = now | 8;
+                        status->ailment_frames[chara] = 0x708;
                         used = 1;
                     }
                 }
@@ -410,7 +410,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 if (weapon->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
                     return 0;
                 }
-                if (weapon->unk_02 >= 99) {
+                if (weapon->level >= 99) {
                     return 0;
                 }
                 if (weapon->item_no != default_no) {
@@ -418,7 +418,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     if (exp < GetWeaponMaxExp(weapon)) {
                         WeaponLevelUpValueCalc(weapon, &level_up, 1, 0);
                         memcpy(weapon, &level_up, sizeof(WEAPON_HAVE));
-                        weapon->unk_02++;
+                        weapon->level++;
                         memset(weapon->attach, 0, sizeof(weapon->attach));
                         used = 1;
                     }
@@ -427,37 +427,37 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
         }
     }
     if (BtlMenuMode == 0 && !(old_condition & 2) && now_hp > 0 && (data->kind_flags & 2) && target == 1) {
-        int before = status->unk_42C8[chara];
+        int before = status->ailments[chara];
         if (data->use_flags & 0x100) {
             if (old_condition & 4) {
-                status->unk_42C8[chara] = before ^ 4;
+                status->ailments[chara] = before ^ 4;
             } else {
-                status->unk_42C8[chara] = before | 4;
-                status->unk_42C8[chara] &= ~0x58;
-                status->unk_42E0[chara] = 300;
+                status->ailments[chara] = before | 4;
+                status->ailments[chara] &= ~0x58;
+                status->ailment_frames[chara] = 300;
             }
             ComMenuSePlay(0x6B);
         }
         if (data->use_flags & 0x200) {
-            int now = status->unk_42C8[chara];
+            int now = status->ailments[chara];
             if (!(now & 0xC)) {
-                status->unk_42C8[chara] = now | 0x10;
-                status->unk_42C8[chara] &= ~0x40;
+                status->ailments[chara] = now | 0x10;
+                status->ailments[chara] &= ~0x40;
                 ComMenuSePlay(0x6B);
             }
         }
         if (data->use_flags & 0x400) {
-            status->unk_42C8[chara] |= 0x20;
+            status->ailments[chara] |= 0x20;
             ComMenuSePlay(0x6B);
         }
         if (data->use_flags & 0x800) {
-            int now = status->unk_42C8[chara];
+            int now = status->ailments[chara];
             if (!(now & 0x1C)) {
-                status->unk_42C8[chara] = now | 0x40;
+                status->ailments[chara] = now | 0x40;
                 ComMenuSePlay(0x6B);
             }
         }
-        if (before != status->unk_42C8[chara]) {
+        if (before != status->ailments[chara]) {
             used = 1;
         }
     }
@@ -487,7 +487,7 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *weapon) {
         return 0;
     }
     enable = 0;
-    if (weapon->unk_02 >= 5) {
+    if (weapon->level >= 5) {
         enable = 1;
     }
     return enable;
@@ -565,8 +565,8 @@ void SetOldEffectKind(int kind) {
     MenuCharaOldEffect = kind;
 }
 
-static void SetWepEffectMenuReadBuf(u_long128 *buf) {
-    WepEffectMenuReadBuf = buf;
+static void SetWepEffectMenuReadBuf(u_long128 *buffer) {
+    WepEffectMenuReadBuf = buffer;
 }
 
 BT_SHOT_EFFECT *DngWepEffectReadStart() {
@@ -674,7 +674,7 @@ int EnterWeaponModel(int chara, int texture_block, int) {
     // Built and indexed but never read.
     char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
     char *shadow_name = shadows[chara];
-    s16 max = MenuCharaWeaponMax[chara];
+    s16 weapon_max = MenuCharaWeaponMax[chara];
     char *names[6] = {"c01", "c04", "c06", "c05", "c10", "c18"};
     char order[42];
     char image[32];
@@ -697,30 +697,30 @@ int EnterWeaponModel(int chara, int texture_block, int) {
             TexManager.CleanUpTextureList();
             TexManager.LoadTextureBlockEX(-1, texture);
             WepIcon = TexManager.GetTexture("wepicon", MenuShadowReadBlock);
-            for (int i = 0; i < max; i++) {
+            for (int i = 0; i < weapon_max; i++) {
                 order[i] = i;
             }
             InitMenuWeaponModelData();
-            for (int i = 0; i < max; i++) {
+            for (int i = 0; i < weapon_max; i++) {
                 char *name = names[chara];
                 strcpy(image, name);
                 strcpy(model, name);
                 strcpy(chr, name);
-                int no = order[i];
-                if (0 <= no && no <= 9) {
+                int weapon_no = order[i];
+                if (0 <= weapon_no && weapon_no <= 9) {
                     strcat(chr, "w0%d");
-                    sprintf(chr, chr, no);
+                    sprintf(chr, chr, weapon_no);
                     strcat(image, "w0%d");
-                    sprintf(image, image, no);
+                    sprintf(image, image, weapon_no);
                     strcat(model, "w0%d");
-                    sprintf(model, model, no);
-                } else if (no >= 10) {
+                    sprintf(model, model, weapon_no);
+                } else if (weapon_no >= 10) {
                     strcat(chr, "w%d");
-                    sprintf(chr, chr, no);
+                    sprintf(chr, chr, weapon_no);
                     strcat(image, "w%d");
-                    sprintf(image, image, no);
+                    sprintf(image, image, weapon_no);
                     strcat(model, "w%d");
-                    sprintf(model, model, no);
+                    sprintf(model, model, weapon_no);
                 } else {
                     strcat(chr, "w01");
                     strcat(image, "w01");
@@ -868,9 +868,9 @@ int GetNowActiveCharaStatus(int chara_no) {
 
 void SetNowCharaMotionNo(int chara) {
     int status = GetNowActiveCharaStatus(chara);
-    CUserStatus *st = (CUserStatus *) BtlMenuStatusPt;
-    float max_hp = st->max_hp[chara];
-    float hp = st->hp[chara];
+    CUserStatus *user_status = (CUserStatus *) BtlMenuStatusPt;
+    float max_hp = user_status->max_hp[chara];
+    float hp = user_status->hp[chara];
     int motion = MenuCharaFrame.motion_no;
     float speed[3] = {0.1f, 0.05f, 0.0f};
     int next = motion;
@@ -997,8 +997,8 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     MenuCharaFrame.LoadPackData(pack, name, &MenuExCashBuffer, &MenuExCashBuffer, NULL);
     CFrameAttr attr;
     attr.fog_enable = 1;
-    attr.unk_08 = 0;
-    attr.unk_0B = 0;
+    attr.clip_enable = 0;
+    attr.program_option = 0;
     if (MenuCharaFrame.frame != NULL) {
         MenuCharaFrame.frame->SetAttr(attr, 1, 4);
     }
@@ -1077,8 +1077,8 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
         return -1;
     }
     int slot = UserStatus->equipped_weapon_slot[charachangeid];
-    WEAPON_HAVE *row = UserStatus->chara_weapons[charachangeid];
-    WEAPON_HAVE *weapon = &row[slot];
+    WEAPON_HAVE *weapons = UserStatus->chara_weapons[charachangeid];
+    WEAPON_HAVE *weapon = &weapons[slot];
     WepEffectMenuPt = Get_Main_EffectPtr(charachangeid, weapon->best_elem);
     sprintf(effect, "dun/mainchara/wep_eff/%s.chr", WepEffectMenuPt);
     LoadFileBG(effect, (u_long128 *) WepEffectMenuReadBuf, &size);
@@ -1127,8 +1127,8 @@ void BtMenuLoad2(int load_texture) {
         DngActiveWeaponTextureCopy();
     }
     SndVoiceSyncBG();
-    BtActStatus.unk_000 = 1;
-    BtActStatus.unk_00C = 0;
+    BtActStatus.player_visible = 1;
+    BtActStatus.motion_no = 0;
     BtActStatus.action_on = 0;
 }
 
@@ -1161,7 +1161,7 @@ int GetMonsterNameDrawFlag() {
     return CharaNameDrawFlag;
 }
 
-void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
+void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_buffer) {
     CharaNameMes = NULL;
     if (mes == NULL) {
         printf("cls init failed\n");
@@ -1209,9 +1209,9 @@ void MonsterNameInit(ClsMes *mes, short *buff, unsigned char *texture_buffer) {
     }
     CharaNameMes->Preset(4);
     CharaNameMes->tex_block = 0x1A;
-    CharaNameMes->unk_17B0 = texture_buffer;
+    CharaNameMes->tex_buff = texture_buffer;
     CharaNameMes->rows = 1;
-    CharaNameMes->SetBuff(buff);
+    CharaNameMes->SetBuff(message_buffer);
     CharaNameMes->SetBuff_system(SystemMes);
     CharaNameDrawFlag = 1;
     int *config = (int *) SaveData->GetConfigData();
@@ -1286,10 +1286,10 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     if (UserStatus == NULL) {
         return;
     }
-    int no = UserStatus->cur_georama + 1;
+    int georama_no = UserStatus->cur_georama + 1;
     strcpy(path, GetMenuTextureDir());
     strcat(path, "d0%do.img");
-    sprintf(path, path, no);
+    sprintf(path, path, georama_no);
     LoadFile(path, read_buffer, &file_size);
     int block = 0x17;
     char *image = (char *) read_buffer;
@@ -1305,7 +1305,7 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     GamePad.MenuModeOn(0x78);
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     char name[8] = "d0%do";
-    sprintf(name, name, no);
+    sprintf(name, name, georama_no);
     DngEscapeTex = TexManager.GetTexture(name, -1);
     CharaNameMes = title;
     DngMenuMes = choice;
@@ -1402,7 +1402,7 @@ int CheckItemThrow(int *items, int *values) {
     ITEM_PACK *pack;
     WEAPON_HAVE *weapons;
     int item_no;
-    ATTACH_LIST *extra;
+    ATTACH_LIST *attachments;
 
     pack = &((CUserStatus *) BtlMenuStatusPt)->item_pack;
 
@@ -1427,24 +1427,24 @@ int CheckItemThrow(int *items, int *values) {
                 items[3] = item_no;
             }
             if (values != NULL) {
-                values[3] = weapons[10].unk_02;
+                values[3] = weapons[10].level;
             }
             break;
         }
     }
-    extra = (ATTACH_LIST *) ((CUserStatus *) BtlMenuStatusPt)->consumable_items;
+    attachments = (ATTACH_LIST *) ((CUserStatus *) BtlMenuStatusPt)->consumable_items;
     for (i = 0; i < 3; i++) {
-        item_no = extra[i + 40].item_no;
+        item_no = attachments[i + 40].item_no;
         if (item_no >= 0x51) {
             found++;
             if (items != NULL) {
                 items[i + 4] = item_no;
             }
             if (values != NULL && item_no >= 0x5B && item_no < 0x5F) {
-                values[i + 4] = (&extra[i + 40].item_no)[item_no - 0x57];
+                values[i + 4] = (&attachments[i + 40].item_no)[item_no - 0x57];
             }
             if (values != NULL && item_no == 0x5A) {
-                values[i + 4] = extra[i + 40].unk_02;
+                values[i + 4] = attachments[i + 40].sphere_weapon_no;
             }
         }
     }
@@ -1505,7 +1505,7 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
     int flags = weapon->flags;
 
     for (int i = 0; i < 6; i++) {
-        int option = ((ATTACH_LIST *) &weapon->attach[i])->unk_04;
+        int option = ((ATTACH_LIST *) &weapon->attach[i])->sphere_flags;
         if (option != 0 && option != 1) {
             flags |= option;
         }
@@ -1549,14 +1549,14 @@ void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
         return;
     }
     CTexture *texture = TexManager.GetTexture("wepstatus", -1);
-    int stars = weapon->unk_F0;
+    int stars = weapon->synthesis_count;
     if (stars > 49) {
         stars = 49;
     }
     int draw_x = x + 0x4C;
-    CRect_i_ big(0x108, 0x176, 0x18, 0x18);
-    for (int i = 0; i < stars / 10; i++, draw_x += big.width) {
-        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, big.width, big.height), big, alpha);
+    CRect_i_ big_star(0x108, 0x176, 0x18, 0x18);
+    for (int i = 0; i < stars / 10; i++, draw_x += big_star.width) {
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, big_star.width, big_star.height), big_star, alpha);
     }
     x -= 6;
     for (int i = 0; i < stars % 10; i++, x += 0x14) {
@@ -1688,11 +1688,11 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
                     EquipWeaponFrame(&DefaultWeapon, chara, CharaMainHandViewFlag);
                     if (chara == 5) {
                         NowMainEffect = &CharaMainEffectCrash;
-                        BtActStatus.unk_0A0 = 0;
+                        BtActStatus.gun_type = 0;
                     }
                     int slot = UserStatus->equipped_weapon_slot[chara];
-                    WEAPON_HAVE *row = UserStatus->chara_weapons[chara];
-                    MenuWeaponSpSet(&MainWeapon, &row[slot]);
+                    WEAPON_HAVE *weapons = UserStatus->chara_weapons[chara];
+                    MenuWeaponSpSet(&MainWeapon, &weapons[slot]);
                     printf("equip default Weapon\n");
                 }
             } else {

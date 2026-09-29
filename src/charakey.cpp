@@ -48,50 +48,50 @@ void basic_damage(int kind, int owner) {
     CCollisionData *owner_col = NowColData;
 
     owner_col->hit[owner_col->now_hit].owner = owner;
-    owner_col->hit[owner_col->now_hit].unk_60 = kind;
+    owner_col->hit[owner_col->now_hit].attack_no = kind;
 }
 
 void ToanKey_On(void) {
-    if (BtActStatus.unk_14C > 0) {
+    if (BtActStatus.special_cooldown > 0) {
         return;
     }
 
     if (BtActStatus.action_on == 0) {
         sceVu0FVECTOR rotation;
 
-        BtActStatus.unk_0F8 = 0;
+        BtActStatus.refill_frames = 0;
         BtActStatus.action_no = 0x24;
         BtActStatus.action_on = 1;
         BtActStatus.action_step = 0;
-        BtActStatus.unk_01C = 1.0f;
-        BtActStatus.unk_05C = 0;
+        BtActStatus.charge_time = 1.0f;
+        BtActStatus.charge_level = 0;
         driveNoInterpolate = 1;
         CharaMain.motion_type.state.time = 136.0f;
-        BtActStatus.unk_0E8 = 0;
-        BtActStatus.unk_0F0 = 0;
-        BtActStatus.unk_0E0 = 0;
+        BtActStatus.combo_window = 0;
+        BtActStatus.combo_queued = 0;
+        BtActStatus.frames_since_attack = 0;
         CharaMain.GetRotation(rotation);
-        BtActStatus.unk_0F4 = rotation[1];
+        BtActStatus.swing_heading = rotation[1];
     } else {
-        if (BtActStatus.action_no == 0x24 && BtActStatus.unk_0E8 != 0 &&
-            BtActStatus.unk_048 >= 20.0f) {
-            BtActStatus.unk_0F0 = 1;
-            BtActStatus.unk_0F8 = 0;
+        if (BtActStatus.action_no == 0x24 && BtActStatus.combo_window != 0 &&
+            BtActStatus.action_gauge >= 20.0f) {
+            BtActStatus.combo_queued = 1;
+            BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x25 && BtActStatus.unk_0E8 != 0 &&
-            BtActStatus.unk_048 >= 20.0f) {
-            BtActStatus.unk_0F0 = 1;
-            BtActStatus.unk_0F8 = 0;
+        if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 &&
+            BtActStatus.action_gauge >= 20.0f) {
+            BtActStatus.combo_queued = 1;
+            BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x26 && BtActStatus.unk_0E8 != 0 &&
-            BtActStatus.unk_048 >= 20.0f) {
-            BtActStatus.unk_0F0 = 1;
-            BtActStatus.unk_0F8 = 0;
+        if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 &&
+            BtActStatus.action_gauge >= 20.0f) {
+            BtActStatus.combo_queued = 1;
+            BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x27 && BtActStatus.unk_0E8 != 0 &&
-            BtActStatus.unk_048 >= 20.0f) {
-            BtActStatus.unk_0F0 = 1;
-            BtActStatus.unk_0F8 = 0;
+        if (BtActStatus.action_no == 0x27 && BtActStatus.combo_window != 0 &&
+            BtActStatus.action_gauge >= 20.0f) {
+            BtActStatus.combo_queued = 1;
+            BtActStatus.refill_frames = 0;
         }
     }
 }
@@ -104,13 +104,13 @@ void ToanKey_Play(void) {
         damage *= 2;
     }
 
-    int se = -1;
+    int element_se = -1;
 
     if (NowWeaponHave->best_elem < 5) {
-        se = NowWeaponHave->best_elem + 0x65;
+        element_se = NowWeaponHave->best_elem + 0x65;
     }
-    if (se == 0x66) {
-        se = 0x66;
+    if (element_se == 0x66) {
+        element_se = 0x66;
     }
 
     sceVu0FVECTOR hit_pos;
@@ -171,7 +171,7 @@ void ToanKey_Play(void) {
         float swing_end = CharaMain.motion_type.motion_info[swing_motions[i]].end;
 
         if (swing_start < time && swing_end > time) {
-            BtActStatus.unk_14A = 1;
+            BtActStatus.swinging = 1;
         }
     }
 
@@ -203,7 +203,7 @@ void ToanKey_Play(void) {
             BtActStatus.move_power_decay = 0.0f;
         }
 
-        BtActStatus.unk_00C = 0x24;
+        BtActStatus.motion_no = 0x24;
         if (GamePad.On(PadInput_OK) == 0) {
             BtActStatus.action_step = 1;
         }
@@ -216,47 +216,47 @@ void ToanKey_Play(void) {
             CWeaponFx.Set(8, 32.0f, tip);
         }
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 1.0f && time <= end) {
             if (BtActStatus.action_step == 0) {
                 BtActStatus.action_no = 14;
-                BtActStatus.unk_00C = 14;
-                BtActStatus.unk_048 = 0.0f;
+                BtActStatus.motion_no = 14;
+                BtActStatus.action_gauge = 0.0f;
                 BtActStatus.move_power = 0.0f;
-            } else if (BtActStatus.unk_0F0 == 1) {
-                BtActStatus.unk_048 -= 25.0f;
-                if (BtActStatus.unk_048 <= 0.0f) {
-                    BtActStatus.unk_048 = 0.0f;
+            } else if (BtActStatus.combo_queued == 1) {
+                BtActStatus.action_gauge -= 25.0f;
+                if (BtActStatus.action_gauge <= 0.0f) {
+                    BtActStatus.action_gauge = 0.0f;
                 }
                 BtActStatus.action_no = 0x25;
-                BtActStatus.unk_00C = 0x25;
+                BtActStatus.motion_no = 0x25;
                 driveNoInterpolate = 1;
                 CharaMain.frame->SearchFrame("dcol1");
-                BtActStatus.unk_0E0 = 0;
-                BtActStatus.unk_0F4 = atan2f(BtActStatus.unk_0B4, BtActStatus.unk_0B8);
+                BtActStatus.frames_since_attack = 0;
+                BtActStatus.swing_heading = atan2f(BtActStatus.move_x, BtActStatus.move_z);
             } else {
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
-                BtActStatus.unk_14C = 15;
+                BtActStatus.special_cooldown = 15;
             }
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
         }
     }
 
     if (BtActStatus.action_no == 0x25) {
-        if (BtActStatus.unk_0BC > 0.0f) {
+        if (BtActStatus.stick_strength > 0.0f) {
             CharaMain.frame->SetRotation(
-                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.unk_0F4), 0.0f);
+                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
         }
 
-        BtActStatus.unk_00C = 0x25;
+        BtActStatus.motion_no = 0x25;
 
         float end = CharaMain.motion_type.motion_info[0x25].end;
 
@@ -264,41 +264,41 @@ void ToanKey_Play(void) {
             CWeaponFx.Set(0xA, 32.0f, 32.0f);
         }
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 1.0f && time <= end) {
-            if (BtActStatus.unk_0F0 == 1) {
-                BtActStatus.unk_048 -= 25.0f;
-                if (BtActStatus.unk_048 <= 0.0f) {
-                    BtActStatus.unk_048 = 0.0f;
+            if (BtActStatus.combo_queued == 1) {
+                BtActStatus.action_gauge -= 25.0f;
+                if (BtActStatus.action_gauge <= 0.0f) {
+                    BtActStatus.action_gauge = 0.0f;
                 }
                 BtActStatus.action_no = 0x26;
-                BtActStatus.unk_00C = 0x26;
+                BtActStatus.motion_no = 0x26;
                 driveNoInterpolate = 1;
                 CharaMain.frame->SearchFrame("dcol1");
-                BtActStatus.unk_0E0 = 0;
-                BtActStatus.unk_0F4 = atan2f(BtActStatus.unk_0B4, BtActStatus.unk_0B8);
+                BtActStatus.frames_since_attack = 0;
+                BtActStatus.swing_heading = atan2f(BtActStatus.move_x, BtActStatus.move_z);
             } else {
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
             }
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
         }
     }
 
     if (BtActStatus.action_no == 0x26) {
-        if (BtActStatus.unk_0BC > 0.0f) {
+        if (BtActStatus.stick_strength > 0.0f) {
             CharaMain.frame->SetRotation(
-                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.unk_0F4), 0.0f);
+                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
         }
 
-        BtActStatus.unk_00C = 0x26;
+        BtActStatus.motion_no = 0x26;
 
         float end = CharaMain.motion_type.motion_info[0x26].end;
 
@@ -306,41 +306,41 @@ void ToanKey_Play(void) {
             CWeaponFx.Set(8, 32.0f, 64.0f);
         }
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 1.0f && time <= end) {
-            if (BtActStatus.unk_0F0 == 1) {
-                BtActStatus.unk_048 -= 25.0f;
-                if (BtActStatus.unk_048 <= 0.0f) {
-                    BtActStatus.unk_048 = 0.0f;
+            if (BtActStatus.combo_queued == 1) {
+                BtActStatus.action_gauge -= 25.0f;
+                if (BtActStatus.action_gauge <= 0.0f) {
+                    BtActStatus.action_gauge = 0.0f;
                 }
                 BtActStatus.action_no = 0x27;
-                BtActStatus.unk_00C = 0x27;
+                BtActStatus.motion_no = 0x27;
                 driveNoInterpolate = 1;
                 CharaMain.frame->SearchFrame("dcol1");
-                BtActStatus.unk_0E0 = 0;
-                BtActStatus.unk_0F4 = atan2f(BtActStatus.unk_0B4, BtActStatus.unk_0B8);
+                BtActStatus.frames_since_attack = 0;
+                BtActStatus.swing_heading = atan2f(BtActStatus.move_x, BtActStatus.move_z);
             } else {
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
             }
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
         }
     }
 
     if (BtActStatus.action_no == 0x27) {
-        if (BtActStatus.unk_0BC > 0.0f) {
+        if (BtActStatus.stick_strength > 0.0f) {
             CharaMain.frame->SetRotation(
-                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.unk_0F4), 0.0f);
+                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
         }
 
-        BtActStatus.unk_00C = 0x27;
+        BtActStatus.motion_no = 0x27;
 
         float end = CharaMain.motion_type.motion_info[0x27].end;
 
@@ -348,30 +348,30 @@ void ToanKey_Play(void) {
             CWeaponFx.Set(0xA, 32.0f, 32.0f);
         }
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 1.0f && time <= end) {
-            if (BtActStatus.unk_0F0 == 1) {
-                BtActStatus.unk_048 -= 25.0f;
-                if (BtActStatus.unk_048 <= 0.0f) {
-                    BtActStatus.unk_048 = 0.0f;
+            if (BtActStatus.combo_queued == 1) {
+                BtActStatus.action_gauge -= 25.0f;
+                if (BtActStatus.action_gauge <= 0.0f) {
+                    BtActStatus.action_gauge = 0.0f;
                 }
                 BtActStatus.action_no = 0x28;
-                BtActStatus.unk_00C = 0x28;
+                BtActStatus.motion_no = 0x28;
                 driveNoInterpolate = 1;
                 CharaMain.frame->SearchFrame("dcol1");
-                BtActStatus.unk_0E0 = 0;
+                BtActStatus.frames_since_attack = 0;
             } else {
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
             }
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
         }
     }
 
@@ -381,7 +381,7 @@ void ToanKey_Play(void) {
             BtActStatus.move_power_decay = 0.0f;
         }
 
-        BtActStatus.unk_00C = 0x28;
+        BtActStatus.motion_no = 0x28;
         if (time >= 861 && time <= 861.5f) {
             CWeaponFx.Set(0xE, 24.0f, 32.0f);
         }
@@ -390,15 +390,15 @@ void ToanKey_Play(void) {
 
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
             BtActStatus.move_power = 0.0f;
             BtActStatus.move_power_decay = 0.0f;
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
         }
     }
 
@@ -407,30 +407,30 @@ void ToanKey_Play(void) {
             BtActStatus.action_step = 1;
         }
 
-        BtActStatus.unk_00C = 14;
-        BtActStatus.unk_01C += 0.016666667f;
-        if (BtActStatus.unk_01C >= 1.5f && BtActStatus.unk_05C == 0) {
-            BtActStatus.unk_05C = 1;
+        BtActStatus.motion_no = 14;
+        BtActStatus.charge_time += 0.016666667f;
+        if (BtActStatus.charge_time >= 1.5f && BtActStatus.charge_level == 0) {
+            BtActStatus.charge_level = 1;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
-        if (UserStatus->skill_owned[0] != 0 && BtActStatus.unk_01C >= 2.5f &&
-            BtActStatus.unk_05C == 1) {
-            BtActStatus.unk_05C = 2;
+        if (UserStatus->skill_owned[0] != 0 && BtActStatus.charge_time >= 2.5f &&
+            BtActStatus.charge_level == 1) {
+            BtActStatus.charge_level = 2;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
         if (BtActStatus.action_step == 1) {
-            if (BtActStatus.unk_01C >= 1.5f) {
+            if (BtActStatus.charge_time >= 1.5f) {
                 int charged = 0;
 
-                if (UserStatus->skill_owned[0] != 0 && BtActStatus.unk_01C >= 2.5f) {
+                if (UserStatus->skill_owned[0] != 0 && BtActStatus.charge_time >= 2.5f) {
                     charged = 1;
                 }
-                if (BtActStatus.unk_01C >= 3.0f) {
-                    BtActStatus.unk_01C = 3.0f;
+                if (BtActStatus.charge_time >= 3.0f) {
+                    BtActStatus.charge_time = 3.0f;
                 }
                 if (charged == 0) {
                     BtActStatus.action_no = 0xF;
-                    BtActStatus.unk_00C = 0xF;
+                    BtActStatus.motion_no = 0xF;
                     driveNoInterpolate = 1;
                     SwordDmgCheck1(2.0f, 0);
                 }
@@ -447,16 +447,16 @@ void ToanKey_Play(void) {
                     NowMainEffect->SetAttribute(GetWeaponElementAttr(NowWeaponHave->best_elem));
                     SwordDmgCheck1(3.0f, 0);
                     BtActStatus.action_no = 0x18;
-                    BtActStatus.unk_00C = 0x18;
+                    BtActStatus.motion_no = 0x18;
                     driveNoInterpolate = 1;
                     SndSePlay(0x1A7, -1, 0);
                 }
             } else {
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
             }
         }
@@ -467,31 +467,31 @@ void ToanKey_Play(void) {
             CWeaponFx.Set(0x1E, 28.0f, 16.0f);
         }
 
-        BtActStatus.unk_024 = 0x1770;
-        BtActStatus.unk_070 = 1;
-        BtActStatus.unk_064 = 0;
-        BtActStatus.unk_00C = 0x18;
+        BtActStatus.invincible_frames = 0x1770;
+        BtActStatus.action_busy = 1;
+        BtActStatus.can_act = 0;
+        BtActStatus.motion_no = 0x18;
 
         float end = CharaMain.motion_type.motion_info[0x18].end;
 
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
-            BtActStatus.unk_024 = 0;
-            BtActStatus.unk_070 = 0;
-            BtActStatus.unk_064 = 1;
+            BtActStatus.invincible_frames = 0;
+            BtActStatus.action_busy = 0;
+            BtActStatus.can_act = 1;
         }
     }
 
     if (BtActStatus.action_no == 0xF) {
-        BtActStatus.unk_00C = 0xF;
-        BtActStatus.unk_024 = 0x1770;
-        BtActStatus.unk_070 = 1;
-        BtActStatus.unk_064 = 0;
+        BtActStatus.motion_no = 0xF;
+        BtActStatus.invincible_frames = 0x1770;
+        BtActStatus.action_busy = 1;
+        BtActStatus.can_act = 0;
 
         if (time >= 187.0f && time < 188.0f) {
             sceVu0FVECTOR shot_from;
@@ -503,25 +503,25 @@ void ToanKey_Play(void) {
             shot_to[0] += shot_from[0];
             shot_to[1] = shot_from[1];
             shot_to[2] += shot_from[2];
-            BtActStatus.unk_040 = 1;
-            ParabolicInitialVector(&BtActStatus.unk_030, shot_from, shot_to, 0.1f, 40.0f);
-            BtActStatus.unk_038 = 0.0f;
-            BtActStatus.unk_030 = 0.0f;
+            BtActStatus.jumping = 1;
+            ParabolicInitialVector(&BtActStatus.jump_velocity_x, shot_from, shot_to, 0.1f, 40.0f);
+            BtActStatus.jump_velocity_z = 0.0f;
+            BtActStatus.jump_velocity_x = 0.0f;
         }
 
         float end = CharaMain.motion_type.motion_info[15].end;
 
         if (time >= end - 1.0f && time <= end) {
             BtActStatus.action_no = 0x10;
-            BtActStatus.unk_00C = 0x10;
+            BtActStatus.motion_no = 0x10;
             driveNoInterpolate = 1;
             CharaMain.motion_type.state.time = CharaMain.motion_type.motion_info[16].start;
         }
     }
 
     if (BtActStatus.action_no == 0x10) {
-        BtActStatus.unk_00C = 0x10;
-        if (BtActStatus.unk_034 <= -0.4f) {
+        BtActStatus.motion_no = 0x10;
+        if (BtActStatus.jump_velocity_y <= -0.4f) {
             BtActStatus.action_no = 3;
             driveNoInterpolate = 1;
             CWeaponFx.Set(0x14, 16.0f, 64.0f);
@@ -531,7 +531,7 @@ void ToanKey_Play(void) {
     }
 
     if (BtActStatus.action_no == 3) {
-        BtActStatus.unk_00C = 3;
+        BtActStatus.motion_no = 3;
 
         float end = CharaMain.motion_type.motion_info[3].end;
 
@@ -543,36 +543,36 @@ void ToanKey_Play(void) {
     }
 
     if (BtActStatus.action_no == 0x19) {
-        BtActStatus.unk_00C = 0x19;
-        if (BtActStatus.unk_044 < 2.0f) {
+        BtActStatus.motion_no = 0x19;
+        if (BtActStatus.ground_height < 2.0f) {
             BtActStatus.action_no = 0x11;
-            BtActStatus.unk_040 = 0;
+            BtActStatus.jumping = 0;
             driveNoInterpolate = 1;
             CharaMain.motion_type.state.time = CharaMain.motion_type.motion_info[0x11].start;
         }
     }
 
     if (BtActStatus.action_no == 0x11) {
-        BtActStatus.unk_00C = 0x11;
+        BtActStatus.motion_no = 0x11;
 
         float end = CharaMain.motion_type.motion_info[0x11].end;
 
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
-            BtActStatus.unk_024 = 0;
-            BtActStatus.unk_070 = 0;
-            BtActStatus.unk_064 = 1;
+            BtActStatus.invincible_frames = 0;
+            BtActStatus.action_busy = 0;
+            BtActStatus.can_act = 1;
         }
     }
 }
 
 void UngagaKey_On(void) {
-    if (BtActStatus.unk_14C > 0) {
+    if (BtActStatus.special_cooldown > 0) {
         return;
     }
 
@@ -583,29 +583,29 @@ void UngagaKey_On(void) {
     if (BtActStatus.action_on == 0) {
         sceVu0FVECTOR rotation;
 
-        BtActStatus.unk_0F8 = 0;
+        BtActStatus.refill_frames = 0;
         BtActStatus.action_no = 0x25;
         BtActStatus.action_on = 1;
         BtActStatus.action_step = 0;
-        BtActStatus.unk_01C = 1.0f;
-        BtActStatus.unk_05C = 0;
+        BtActStatus.charge_time = 1.0f;
+        BtActStatus.charge_level = 0;
         driveNoInterpolate = 1;
         CharaMain.motion_type.state.time = 136.0f;
-        BtActStatus.unk_0E8 = 0;
-        BtActStatus.unk_0F0 = 0;
-        BtActStatus.unk_0E0 = 0;
+        BtActStatus.combo_window = 0;
+        BtActStatus.combo_queued = 0;
+        BtActStatus.frames_since_attack = 0;
         CharaMain.GetRotation(rotation);
-        BtActStatus.unk_0F4 = rotation[1];
+        BtActStatus.swing_heading = rotation[1];
     } else {
-        if (BtActStatus.action_no == 0x25 && BtActStatus.unk_0E8 != 0 &&
-            BtActStatus.unk_048 >= 40.0f) {
-            BtActStatus.unk_0F0 = 1;
-            BtActStatus.unk_0F8 = 0;
+        if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 &&
+            BtActStatus.action_gauge >= 40.0f) {
+            BtActStatus.combo_queued = 1;
+            BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x26 && BtActStatus.unk_0E8 != 0 &&
-            BtActStatus.unk_048 >= 40.0f) {
-            BtActStatus.unk_0F0 = 1;
-            BtActStatus.unk_0F8 = 0;
+        if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 &&
+            BtActStatus.action_gauge >= 40.0f) {
+            BtActStatus.combo_queued = 1;
+            BtActStatus.refill_frames = 0;
         }
     }
 }
@@ -620,10 +620,10 @@ void UngagaKey_Play(void) {
     getFramePos((CFrameVu1 *) NowWeapon->frame, "dcol1", hit_right);
     sceVu0CopyVector(chara_pos, CharaMain.pos);
 
-    int se;
+    int element_se;
 
     if (NowWeaponHave->best_elem < 5) {
-        se = NowWeaponHave->best_elem + 0x65;
+        element_se = NowWeaponHave->best_elem + 0x65;
     }
 
     int damage = NowWeaponHave->attack;
@@ -662,11 +662,11 @@ void UngagaKey_Play(void) {
     int swing_motions[3] = {0x25, 0x26, 0x27};
 
     for (int i = 0; i < 3; i++) {
-        float start = CharaMain.motion_type.motion_info[swing_motions[i]].start;
-        float end = CharaMain.motion_type.motion_info[swing_motions[i]].end;
+        float swing_start = CharaMain.motion_type.motion_info[swing_motions[i]].start;
+        float swing_end = CharaMain.motion_type.motion_info[swing_motions[i]].end;
 
-        if (start < time && end > time) {
-            BtActStatus.unk_14A = 1;
+        if (swing_start < time && swing_end > time) {
+            BtActStatus.swinging = 1;
         }
     }
 
@@ -698,40 +698,40 @@ void UngagaKey_Play(void) {
             BtActStatus.action_step = 1;
         }
 
-        BtActStatus.unk_00C = 0x25;
+        BtActStatus.motion_no = 0x25;
 
         float end = CharaMain.motion_type.motion_info[0x25].end;
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 1.0f && time <= end) {
-            if (BtActStatus.unk_0F0 == 1) {
-                BtActStatus.unk_048 -= 20.0f;
-                if (BtActStatus.unk_048 <= 0.0f) {
-                    BtActStatus.unk_048 = 0.0f;
+            if (BtActStatus.combo_queued == 1) {
+                BtActStatus.action_gauge -= 20.0f;
+                if (BtActStatus.action_gauge <= 0.0f) {
+                    BtActStatus.action_gauge = 0.0f;
                 }
                 BtActStatus.action_no = 0x26;
-                BtActStatus.unk_00C = 0x26;
+                BtActStatus.motion_no = 0x26;
                 driveNoInterpolate = 1;
-                BtActStatus.unk_0E0 = 0;
-                BtActStatus.unk_0E8 = 0;
-                BtActStatus.unk_0F0 = 0;
-                BtActStatus.unk_0F4 = atan2f(BtActStatus.unk_0B4, BtActStatus.unk_0B8);
+                BtActStatus.frames_since_attack = 0;
+                BtActStatus.combo_window = 0;
+                BtActStatus.combo_queued = 0;
+                BtActStatus.swing_heading = atan2f(BtActStatus.move_x, BtActStatus.move_z);
             } else {
                 if (BtActStatus.action_step == 0) {
-                    BtActStatus.unk_00C = 13;
+                    BtActStatus.motion_no = 13;
                     BtActStatus.action_no = 13;
                     driveNoInterpolate = 1;
                     return;
                 }
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
-                BtActStatus.unk_14C = 20;
+                BtActStatus.special_cooldown = 20;
             }
         }
     }
@@ -745,29 +745,29 @@ void UngagaKey_Play(void) {
             BtActStatus.action_step = 1;
         }
 
-        BtActStatus.unk_00C = 0x26;
+        BtActStatus.motion_no = 0x26;
 
         float end = CharaMain.motion_type.motion_info[0x26].end;
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 0.5f && time <= end) {
-            if (BtActStatus.unk_0F0 == 1) {
-                BtActStatus.unk_048 -= 20.0f;
-                if (BtActStatus.unk_048 <= 0.0f) {
-                    BtActStatus.unk_048 = 0.0f;
+            if (BtActStatus.combo_queued == 1) {
+                BtActStatus.action_gauge -= 20.0f;
+                if (BtActStatus.action_gauge <= 0.0f) {
+                    BtActStatus.action_gauge = 0.0f;
                 }
                 BtActStatus.action_no = 0x27;
-                BtActStatus.unk_00C = 0x27;
+                BtActStatus.motion_no = 0x27;
                 driveNoInterpolate = 1;
-                BtActStatus.unk_0E0 = 0;
-                BtActStatus.unk_0E8 = 0;
-                BtActStatus.unk_0F0 = 0;
+                BtActStatus.frames_since_attack = 0;
+                BtActStatus.combo_window = 0;
+                BtActStatus.combo_queued = 0;
             } else {
                 if (lockOnTargetFlag != 0) {
-                    BtActStatus.unk_00C = 0x12;
+                    BtActStatus.motion_no = 0x12;
                 }
                 BtActStatus.unk_028 = 0;
-                BtActStatus.unk_00C = 0;
+                BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
@@ -784,17 +784,17 @@ void UngagaKey_Play(void) {
             BtActStatus.action_step = 1;
         }
 
-        BtActStatus.unk_00C = 0x27;
+        BtActStatus.motion_no = 0x27;
 
         float end = CharaMain.motion_type.motion_info[0x27].end;
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
             BtActStatus.move_power = 0.0f;
             BtActStatus.move_power_decay = 0.0f;
@@ -806,20 +806,20 @@ void UngagaKey_Play(void) {
             BtActStatus.action_step = 1;
         }
 
-        BtActStatus.unk_00C = 13;
+        BtActStatus.motion_no = 13;
         if (BtActStatus.action_step != 0) {
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
         }
 
         float end = CharaMain.motion_type.motion_info[13].end;
 
         if (time >= end - 2.0f && time <= end) {
-            BtActStatus.unk_00C = 14;
+            BtActStatus.motion_no = 14;
             BtActStatus.action_no = 14;
             SndSePlay(0x1A6, -1, 0);
         }
@@ -830,7 +830,7 @@ void UngagaKey_Play(void) {
             BtActStatus.action_step = 1;
         }
 
-        BtActStatus.unk_00C = 14;
+        BtActStatus.motion_no = 14;
 
         static int wait;
         static s8 init;
@@ -862,22 +862,22 @@ void UngagaKey_Play(void) {
         }
 
         if (BtActStatus.action_step != 0) {
-            BtActStatus.unk_00C = 0xF;
+            BtActStatus.motion_no = 0xF;
             BtActStatus.action_no = 0xF;
         }
     }
 
     if (BtActStatus.action_no == 0xF) {
-        BtActStatus.unk_00C = 0xF;
+        BtActStatus.motion_no = 0xF;
 
         float end = CharaMain.motion_type.motion_info[15].end;
 
         if (time >= end - 2.0f && time <= end) {
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
             NowMainEffect->EndEffect();
         }
@@ -886,22 +886,22 @@ void UngagaKey_Play(void) {
 
 void GoroKey_On(void) {
     if (BtActStatus.action_on == 0) {
-        if (BtActStatus.unk_048 >= 100.0f) {
+        if (BtActStatus.action_gauge >= 100.0f) {
             sceVu0FVECTOR rotation;
 
             BtActStatus.action_no = 0x24;
             BtActStatus.action_on = 1;
             BtActStatus.action_step = 0;
-            BtActStatus.unk_01C = 1.0f;
-            BtActStatus.unk_048 = 0.0f;
-            BtActStatus.unk_05C = 0;
+            BtActStatus.charge_time = 1.0f;
+            BtActStatus.action_gauge = 0.0f;
+            BtActStatus.charge_level = 0;
             driveNoInterpolate = 1;
             CharaMain.motion_type.state.time = 136.0f;
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
-            BtActStatus.unk_0E0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
+            BtActStatus.frames_since_attack = 0;
             CharaMain.GetRotation(rotation);
-            BtActStatus.unk_0F4 = rotation[1];
+            BtActStatus.swing_heading = rotation[1];
         }
         return;
     }
@@ -915,16 +915,16 @@ void GoroKey_Play(void) {
         damage *= 2;
     }
 
-    int se = -1;
+    int element_se = -1;
 
     if (NowWeaponHave->best_elem < 5) {
-        se = NowWeaponHave->best_elem + 0x65;
+        element_se = NowWeaponHave->best_elem + 0x65;
     }
-    if (se == 0x66) {
-        se = 0x66;
+    if (element_se == 0x66) {
+        element_se = 0x66;
     }
 
-    sceVu0FVECTOR vector = {0.001f, 1.0f, 0.001f, 1.0f};
+    sceVu0FVECTOR shot_vector = {0.001f, 1.0f, 0.001f, 1.0f};
     sceVu0FVECTOR hit_pos;
     sceVu0FVECTOR chara_pos;
 
@@ -952,26 +952,26 @@ void GoroKey_Play(void) {
         CCollisionData *owner_col = NowColData;
 
         owner_col->hit[owner_col->now_hit].owner = 2;
-        owner_col->hit[owner_col->now_hit].unk_60 = 1;
+        owner_col->hit[owner_col->now_hit].attack_no = 1;
     }
 
     if (time >= 482.0f && time < 482.4f) {
-        NowMainEffect->Set(hit_pos, vector, 2, -1, 0, NULL, -1);
+        NowMainEffect->Set(hit_pos, shot_vector, 2, -1, 0, NULL, -1);
         NowMainEffect->SetWepStatus(NowWeaponHave->flags);
         NowMainEffect->SetVsMonster(NowWeaponHave->vs_monster);
         NowMainEffect->SetDmg((int) (1.2f * (float) damage));
         NowMainEffect->SetWait(45);
         NowMainEffect->SetAttribute(GetWeaponElementAttr(NowWeaponHave->best_elem));
         NowColData->SetKickBack(chara_pos, 2.5f, 0.1f, 2);
-        BtActStatus.unk_118 = 8.0f;
-        BtActStatus.unk_11C = 0.1f;
-        BtActStatus.unk_124 = 30;
+        BtActStatus.camera_shake = 8.0f;
+        BtActStatus.camera_shake_decay = 0.1f;
+        BtActStatus.camera_shake_frames = 30;
     }
 
     if (time >= 103.0f && time < 103.4f) {
-        BtActStatus.unk_118 = 2.0f;
-        BtActStatus.unk_11C = 0.01f;
-        BtActStatus.unk_124 = 20;
+        BtActStatus.camera_shake = 2.0f;
+        BtActStatus.camera_shake_decay = 0.01f;
+        BtActStatus.camera_shake_frames = 20;
     }
 
     if (time >= 98.0f && time < 98.3f) {
@@ -1004,17 +1004,17 @@ void GoroKey_Play(void) {
             BtActStatus.move_power = 0.25f;
             BtActStatus.move_power_decay = 0.01f;
         }
-        BtActStatus.unk_00C = 0x24;
+        BtActStatus.motion_no = 0x24;
         if (GamePad.On(PadInput_OK) == 0) {
             BtActStatus.action_step = 1;
         }
 
         float end = CharaMain.motion_type.motion_info[36].end;
 
-        BtActStatus.unk_0E8 = 1;
+        BtActStatus.combo_window = 1;
         if (time >= 95.0f && time <= 95.5f && BtActStatus.action_step == 0) {
             BtActStatus.action_step = 0;
-            BtActStatus.unk_00C = 13;
+            BtActStatus.motion_no = 13;
             BtActStatus.action_no = 13;
             BtActStatus.move_power = 0.0f;
             BtActStatus.move_power_decay = 0.0f;
@@ -1022,15 +1022,15 @@ void GoroKey_Play(void) {
         }
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
             BtActStatus.move_power = 0.0f;
             BtActStatus.move_power_decay = 0.0f;
-            BtActStatus.unk_0E8 = 0;
-            BtActStatus.unk_0F0 = 0;
+            BtActStatus.combo_window = 0;
+            BtActStatus.combo_queued = 0;
         }
     }
 
@@ -1042,29 +1042,29 @@ void GoroKey_Play(void) {
             }
             BtActStatus.action_step = 46;
         }
-        BtActStatus.unk_00C = 13;
+        BtActStatus.motion_no = 13;
         if (GamePad.On(PadInput_OK) == 0) {
             if (BtActStatus.action_step < 45) {
-                sceVu0FVECTOR again;
+                sceVu0FVECTOR restart_rotation;
 
                 BtActStatus.action_on = 1;
                 BtActStatus.action_step = 0;
-                BtActStatus.unk_01C = 1.0f;
-                BtActStatus.unk_048 -= 15.0f;
-                BtActStatus.unk_05C = 0;
-                BtActStatus.unk_0E8 = 0;
-                BtActStatus.unk_0F0 = 0;
-                BtActStatus.unk_0E0 = 0;
-                CharaMain.GetRotation(again);
-                BtActStatus.unk_0F4 = again[1];
+                BtActStatus.charge_time = 1.0f;
+                BtActStatus.action_gauge -= 15.0f;
+                BtActStatus.charge_level = 0;
+                BtActStatus.combo_window = 0;
+                BtActStatus.combo_queued = 0;
+                BtActStatus.frames_since_attack = 0;
+                CharaMain.GetRotation(restart_rotation);
+                BtActStatus.swing_heading = restart_rotation[1];
                 BtActStatus.action_no = 0x24;
             } else {
                 BtActStatus.action_no = 14;
-                BtActStatus.unk_048 = 0.0f;
-                BtActStatus.unk_024 = 1;
-                BtActStatus.unk_070 = 1;
-                BtActStatus.unk_064 = 0;
-                BtActStatus.unk_024 = 0x3E7;
+                BtActStatus.action_gauge = 0.0f;
+                BtActStatus.invincible_frames = 1;
+                BtActStatus.action_busy = 1;
+                BtActStatus.can_act = 0;
+                BtActStatus.invincible_frames = 0x3E7;
                 SwordDmgCheck1(2.0f, 0);
                 SndSePlay(0x108, -1, 0);
             }
@@ -1072,20 +1072,20 @@ void GoroKey_Play(void) {
     }
 
     if (BtActStatus.action_no == 14) {
-        BtActStatus.unk_00C = 14;
+        BtActStatus.motion_no = 14;
 
         float end = CharaMain.motion_type.motion_info[14].end;
 
         if (time >= end - 1.0f && time <= end) {
             BtActStatus.unk_028 = 0;
-            BtActStatus.unk_00C = 0;
+            BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
-            BtActStatus.unk_024 = 0;
-            BtActStatus.unk_070 = 0;
-            BtActStatus.unk_024 = 0;
-            BtActStatus.unk_064 = 1;
+            BtActStatus.invincible_frames = 0;
+            BtActStatus.action_busy = 0;
+            BtActStatus.invincible_frames = 0;
+            BtActStatus.can_act = 1;
             if (lockOnTargetFlag != 0) {
-                BtActStatus.unk_00C = 0x12;
+                BtActStatus.motion_no = 0x12;
             }
         }
     }

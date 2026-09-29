@@ -47,9 +47,9 @@ static void Trans_AddCell(float *output, float *position) {
     }
 }
 
-void CWater::SetParam(float speed, float loss, float scale, float shift) {
+void CWater::SetParam(float speed, float damping_rate, float scale, float shift) {
     wave_speed = speed;
-    damping = loss;
+    damping = damping_rate;
     height_scale = scale;
     distortion = shift;
 }
@@ -66,8 +66,8 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     int word;
     int i;
     int k;
-    float fi;
-    float *h;
+    float row_f;
+    float *here;
     sceVu0FVECTOR *out;
     sceVu0FVECTOR *uv;
     CTexture *texture;
@@ -123,25 +123,25 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
 
     first = 0;
     position[3] = 1.0f;
-    for (i = 0, fi = 0.0f; i < rows; i++, fi += 1.0f) {
-        position[0] = vertex[0][0] + fi * row_step[0];
-        position[1] = vertex[0][1] + fi * row_step[1];
-        position[2] = vertex[0][2] + fi * row_step[2];
-        h = &height[i * columns];
-        above = h - columns;
-        below = h + columns; // Unused here, but part of the retail source.
+    for (i = 0, row_f = 0.0f; i < rows; i++, row_f += 1.0f) {
+        position[0] = vertex[0][0] + row_f * row_step[0];
+        position[1] = vertex[0][1] + row_f * row_step[1];
+        position[2] = vertex[0][2] + row_f * row_step[2];
+        here = &height[i * columns];
+        above = here - columns;
+        below = here + columns; // Unused here, but part of the retail source.
         if (i == 0) {
-            above = h;
+            above = here;
         }
         out = vertices[i];
         uv = uvs[i];
         for (j = 0; j < columns; j++) {
             Trans_AddCell(*out++, position);
-            position[1] = *h * height_scale;
-            (*uv)[0] = uv_base[0] + distortion * (*above - *h);
-            (*uv)[1] = uv_base[1] + distortion * (h[0] - h[1]);
+            position[1] = *here * height_scale;
+            (*uv)[0] = uv_base[0] + distortion * (*above - *here);
+            (*uv)[1] = uv_base[1] + distortion * (here[0] - here[1]);
             uv++;
-            h++;
+            here++;
             above++;
         }
     }
@@ -157,7 +157,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
 
     // Each row pair becomes triangle strips of at most 27 columns; j counts the
     // columns still to be emitted.
-    for (i = 0, fi = 0.0f; i < rows - 1; i++, fi += 1.0f) {
+    for (i = 0, row_f = 0.0f; i < rows - 1; i++, row_f += 1.0f) {
         j = columns;
         cell = &height[i * columns];
         below = cell + columns;
@@ -264,7 +264,7 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     water->frame.GetLWMatrix(local_to_world);
     u_int *vu_packet = water->packet[!DBuffID + 1];
     water->CreateVUData(vu_packet, &mgRenderInfo);
-    info->unk_324 = 0;
+    info->fog_enabled = 0;
     int size = water->visual.DrawVu1(draw_packet, local_to_world, info, (VU1_PROGRAM) 15, NULL, 0, 0);
 
     sceVif1PkCnt(draw_packet, 0);
@@ -314,18 +314,18 @@ void CWater::Hamon(void) {
             float *out = &target[j + i * columns];
             float around = *(cell - columns) + (cell[-1] + cell[1] + *(cell + columns));
             around *= speed;
-            float d = centre * *cell;
-            float o = *out;
-            *out = around + (d - o) - loss * (*cell - o);
+            float centre_term = centre * *cell;
+            float previous = *out;
+            *out = around + (centre_term - previous) - loss * (*cell - previous);
         }
     }
 }
 
-void CWater::SetVertex(float *v0, float *v1, float *v2, float *v3) {
-    sceVu0CopyVector(vertex[0], v0);
-    sceVu0CopyVector(vertex[1], v1);
-    sceVu0CopyVector(vertex[2], v2);
-    sceVu0CopyVector(vertex[3], v3);
+void CWater::SetVertex(float *corner0, float *corner1, float *corner2, float *corner3) {
+    sceVu0CopyVector(vertex[0], corner0);
+    sceVu0CopyVector(vertex[1], corner1);
+    sceVu0CopyVector(vertex[2], corner2);
+    sceVu0CopyVector(vertex[3], corner3);
 }
 
 void CWater::Shake(int row, int column, float height_change) {

@@ -189,7 +189,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
         t = state->blend;
     }
     if (!(t < 0.0f) && t <= 1.0f && key < list->key_count && next < list->key_count) {
-        float s;
+        float one_minus_t;
         sceVu0FVECTOR value;
         sceVu0FVECTOR rotation;
         sceVu0FVECTOR from;
@@ -249,7 +249,7 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
                 u_int frame_no;
 
-                target->attr.unk_0A = 1;
+                target->attr.remake_pending = 1;
                 frame_no = list->frame;
                 if (!(t <= 0.0001f) && t < 0.9999f) {
                     while (frame_no == list->frame) {
@@ -306,35 +306,35 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 MDT_HEADER *model;
                 MDT_MATERIAL *material;
 
-                s = 1.0f - t;
+                one_minus_t = 1.0f - t;
                 model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
-                material[list->target].unk_00[3] =
-                    1.0f - (s * list->keys[key].value[0] + t * list->keys[next].value[0]);
-                target->attr.unk_0A = 2;
+                material[list->target].diffuse[3] =
+                    1.0f - (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]);
+                target->attr.remake_pending = 2;
                 break;
             }
             case 41: {
                 MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 MDT_MATERIAL *material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
 
-                sceVu0InterVectorXYZ(material[list->target].unk_00, list->keys[next].value,
+                sceVu0InterVectorXYZ(material[list->target].diffuse, list->keys[next].value,
                                      list->keys[key].value, t);
-                target->attr.unk_0A = 2;
+                target->attr.remake_pending = 2;
                 break;
             }
             case 32:
                 if (state->camera != NULL) {
-                    s = 1.0f - t;
+                    one_minus_t = 1.0f - t;
                     state->camera->SetRoll(
-                        -(3.1415927f * ((s * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
+                        -(3.1415927f * ((one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
                 }
                 break;
             case 33:
                 if (state->camera != NULL) {
-                    s = 1.0f - t;
+                    one_minus_t = 1.0f - t;
                     MGSetProjection(
-                        0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (s * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
+                        0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
                 }
                 break;
             case 50:
@@ -387,7 +387,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
         sceVu0UnitMatrix(Bone_Matrix);
         sceVu0UnitMatrix(Bone_Matrix_Base);
         sceVu0InversMatrix(Bone_Matrix_inv, frame_info[list->frame].matrix);
-        owner->attr.unk_0A = 1;
+        owner->attr.remake_pending = 1;
         sceVu0UnitMatrix(frame_info[list->target].bone_base_matrix);
         sceVu0UnitMatrix(frame_info[list->target].bone_matrix);
     } else {
@@ -1167,7 +1167,7 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
 struct CCPolyAttr {
     s16 ground_kind; /**< What the surface is made of. */
     s16 foot_sound;  /**< Sound the character's feet play on it. */
-    s16 unk_44;      /**< Light or ambience the surface puts the character in. */
+    s16 light;       /**< Light or ambience the surface puts the character in. */
     s16 ignore_mask; /**< Collision query modes that pass through the surface. */
     u8 unk_48[8];
 };
@@ -1180,7 +1180,7 @@ struct CCPolyAttr {
  * @address 0x14ABB0
  * @size 0x1DC
  */
-int GetFootPoly(float *position, float height, CCPoly *found, float *ground, CCPoly *polys,
+int GetFootPoly(float *position, float depth, CCPoly *found, float *ground, CCPoly *polys,
                 int count, int mode) {
     int hits;
     int i;
@@ -1193,11 +1193,11 @@ int GetFootPoly(float *position, float height, CCPoly *found, float *ground, CCP
 
     sceVu0CopyVector(from, position);
     sceVu0CopyVector(to, position);
-    to[1] -= height;
+    to[1] -= depth;
     hits = CheckHits(polys, count, from, to, 32, hit_no, hit_point, 1, mode);
     attr.ground_kind = 0;
     attr.foot_sound = 0;
-    attr.unk_44 = 0;
+    attr.light = 0;
     saved = attr;
     if (hits > 0) {
         *found = polys[hit_no[0]];
@@ -1212,8 +1212,8 @@ int GetFootPoly(float *position, float height, CCPoly *found, float *ground, CCP
         if (attr.foot_sound == 0) {
             attr.foot_sound = hit_attr->foot_sound;
         }
-        if (attr.unk_44 == 0) {
-            attr.unk_44 = hit_attr->unk_44;
+        if (attr.light == 0) {
+            attr.light = hit_attr->light;
         }
     }
     found->info = *(CCPolyInfo *) &attr;
@@ -1235,7 +1235,7 @@ int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no,
     hits = CheckHits(polys, count, from, to, 32, hit_no, hit_point, 1, mode);
     attr.ground_kind = 0;
     attr.foot_sound = 0;
-    attr.unk_44 = 0;
+    attr.light = 0;
     *found_no = -1;
     if (hits > 0) {
         *found = polys[hit_no[0]];
@@ -1251,8 +1251,8 @@ int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no,
         if (attr.foot_sound == 0) {
             attr.foot_sound = hit_attr->foot_sound;
         }
-        if (attr.unk_44 == 0) {
-            attr.unk_44 = hit_attr->unk_44;
+        if (attr.light == 0) {
+            attr.light = hit_attr->light;
         }
     }
     found->info = *(CCPolyInfo *) &attr;
@@ -1829,8 +1829,8 @@ void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     pdata = (u_long128 *) (ad + 12);
 }
 
-void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &position,
-                      const CRect_i_ &uv, u8 red, u8 green, u8 blue, u8 alpha) {
+void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
+                      const CRect_i_ &texel, u8 red, u8 green, u8 blue, u8 alpha) {
     u_long *ad;
 
     if (texture == 0)
@@ -1838,14 +1838,14 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
     ad = (u_long *) pdata;
     ad[0] = SCE_GS_SET_RGBAQ(red, green, blue, alpha, 0);
     ad[1] = SCE_GS_RGBAQ;
-    ad[2] = SCE_GS_SET_UV(uv.x << 4, uv.y << 4);
+    ad[2] = SCE_GS_SET_UV(texel.x << 4, texel.y << 4);
     ad[3] = SCE_GS_UV;
-    ad[4] = SCE_GS_SET_XYZF2((position.x << 4) + 27648, (position.y << 3) + 30976, 0, 0);
+    ad[4] = SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0);
     ad[5] = SCE_GS_XYZF2;
-    ad[6] = SCE_GS_SET_UV((uv.x + uv.width) << 4, (uv.y + uv.height) << 4);
+    ad[6] = SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4);
     ad[7] = SCE_GS_UV;
-    ad[8] = SCE_GS_SET_XYZF2(((position.x + position.width) << 4) + 27647,
-                             ((position.y + position.height) << 3) + 30976, 0, 0);
+    ad[8] = SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
+                             ((screen.y + screen.height) << 3) + 30976, 0, 0);
     ad[9] = SCE_GS_XYZF2;
     pdata = (u_long128 *) (ad + 10);
 }

@@ -15,13 +15,13 @@ struct WEP_BUILDUP_INFO {
 STATIC_ASSERT(sizeof(WEP_BUILDUP_INFO) == 4);
 
 /**
- * Tests whether a weapon satisfies another weapon's build-up requirements.
+ * Tests whether a held weapon meets the build-up requirements of a destination weapon.
  *
  * @mangled CompareBuildUpModelData2__FP11WEAPON_HAVEP11WEAPON_HAVE
  * @address 0x002350C0
  * @size 0x14C
  */
-int CompareBuildUpModelData2(WEAPON_HAVE *current, WEAPON_HAVE *required);
+int CompareBuildUpModelData2(WEAPON_HAVE *destination, WEAPON_HAVE *weapon);
 
 /**
  * Tests whether a weapon has no further build-up destination.

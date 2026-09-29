@@ -44,11 +44,14 @@ static int AddStr(CDebugFont *font, char *str);
 static void DrawBound(CFrame *frame);
 static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a);
 
+/**
+ * Stores one positional sound effect and every place it is heard from this frame.
+ */
 struct SOUND_SRC {
-    int se;
-    int num;
-    float vol[16];
-    float pan[16];
+    int se;           /**< Sound effect the slot plays; negative when the slot is free. */
+    int num;          /**< Number of places entered this frame. */
+    float volume[16]; /**< Volume the sound arrives at from each place. */
+    float pan[16];    /**< Pan the sound arrives at from each place. */
 };
 
 struct EPARTS_FUNC_DATA;
@@ -98,7 +101,7 @@ void ClearSystemMes();
 int SystemMesCheck();
 void SystemMesStep();
 void SystemMesDraw();
-void ItemGetMes(int item, int count, int attach, int mode);
+void ItemGetMes(int item, int value, int duration, int input_key);
 int GetAtraMsgNo(int map, int no);
 void setbilinear(int on);
 
@@ -140,7 +143,7 @@ void EdDDrawFont() {
     EdDPrint(work);
 
     if (Debug == 0) {
-        DebugFont->len = 0;
+        DebugFont->length = 0;
         return;
     }
 
@@ -153,8 +156,8 @@ void EdDDrawFont() {
 void EdDCheck() {
     if (DebugFont == 0)
         return;
-    if (DebugFont->len > 500)
-        DebugFont->len = 0;
+    if (DebugFont->length > 500)
+        DebugFont->length = 0;
 }
 
 void EdOutPutFile() {
@@ -169,7 +172,7 @@ void EdOutPutFile() {
     if (fd < 0)
         return;
 
-    sceWrite(fd, DebugFont->text, DebugFont->len);
+    sceWrite(fd, DebugFont->text, DebugFont->length);
     sceClose(fd);
 }
 
@@ -179,8 +182,8 @@ static int AddStr(CDebugFont *font, char *str) {
     int len;
 
     len = strlen(str);
-    strcpy(&font->text[font->len], str);
-    DebugFont->len += len;
+    strcpy(&font->text[font->length], str);
+    DebugFont->length += len;
     return len;
 }
 
@@ -196,13 +199,13 @@ void EdDPrintVector(char *name, float *vector) {
     AddStr(DebugFont, work);
 }
 
-void EdDPrint(char *str) {
+void EdDPrint(char *text) {
     if (Debug == 0)
         return;
     if (DebugFont == 0)
         return;
 
-    AddStr(DebugFont, str);
+    AddStr(DebugFont, text);
 }
 
 /* The free camera: the sticks move the eye in the plane the eye already looks along, so pushing
@@ -211,10 +214,10 @@ void EdDPrint(char *str) {
    R1 drags the reference point along with the eye, which is what turns a swing into a pan, and
    the D-pad works the field of view. The box is drawn where the reference point is, so the point
    being orbited is visible. */
-void EdDMoveCamera(float *pos, float *ref) {
-    sceVu0FVECTOR dir;
+void EdDMoveCamera(float *position, float *reference) {
+    sceVu0FVECTOR offset;
     sceVu0FVECTOR move;
-    float dist;
+    float distance;
     float angle;
     float x;
     float y;
@@ -225,15 +228,15 @@ void EdDMoveCamera(float *pos, float *ref) {
     if (Debug == 0)
         return;
 
-    sceVu0SubVector(dir, ref, pos);
-    dist = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
-    angle = atan2f(dir[0], dir[2]);
+    sceVu0SubVector(offset, reference, position);
+    distance = sqrtf(offset[0] * offset[0] + offset[2] * offset[2]);
+    angle = atan2f(offset[0], offset[2]);
 
     x = -GamePad.GetLXf();
     if (GamePad.On(8))
-        x = 0.02f * dist;
+        x = 0.02f * distance;
     if (GamePad.On(4))
-        x = 0.02f * -dist;
+        x = 0.02f * -distance;
     y = -GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
@@ -243,9 +246,9 @@ void EdDMoveCamera(float *pos, float *ref) {
     if (GamePad.On(64))
         sceVu0ScaleVector(move, move, 3.0f);
 
-    sceVu0AddVector(pos, pos, move);
+    sceVu0AddVector(position, position, move);
     if (GamePad.On(128) && !GamePad.On(12))
-        sceVu0AddVector(ref, ref, move);
+        sceVu0AddVector(reference, reference, move);
 
     projection = MGGetProjection();
     if (GamePad.On(8192))
@@ -268,17 +271,17 @@ void EdDMoveCamera(float *pos, float *ref) {
             frame.corner[i][2] = unit[(i & 4) != 0];
             frame.corner[i][3] = 1.0f;
         }
-        frame.SetPosition(ref);
+        frame.SetPosition(reference);
         DrawBound(&frame);
     }
 }
 
 /* The same camera driven from the other end: the sticks move the reference point and R1 drags the
    eye after it, which is what lets the point being orbited be placed before it is orbited. */
-void EdDMoveCameraRef(float *pos, float *ref) {
-    sceVu0FVECTOR dir;
+void EdDMoveCameraRef(float *position, float *reference) {
+    sceVu0FVECTOR offset;
     sceVu0FVECTOR move;
-    float dist;
+    float distance;
     float angle;
     float x;
     float y;
@@ -288,15 +291,15 @@ void EdDMoveCameraRef(float *pos, float *ref) {
     if (Debug == 0)
         return;
 
-    sceVu0SubVector(dir, ref, pos);
-    dist = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
-    angle = atan2f(dir[0], dir[2]);
+    sceVu0SubVector(offset, reference, position);
+    distance = sqrtf(offset[0] * offset[0] + offset[2] * offset[2]);
+    angle = atan2f(offset[0], offset[2]);
 
     x = -GamePad.GetLXf();
     if (GamePad.On(8))
-        x = 0.02f * -dist;
+        x = 0.02f * -distance;
     if (GamePad.On(4))
-        x = 0.02f * dist;
+        x = 0.02f * distance;
     y = GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
@@ -304,9 +307,9 @@ void EdDMoveCameraRef(float *pos, float *ref) {
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
 
-    sceVu0AddVector(ref, ref, move);
+    sceVu0AddVector(reference, reference, move);
     if (GamePad.On(128) && !GamePad.On(12))
-        sceVu0AddVector(pos, pos, move);
+        sceVu0AddVector(position, position, move);
 
     {
         CFrame frame;
@@ -318,42 +321,42 @@ void EdDMoveCameraRef(float *pos, float *ref) {
             frame.corner[i][2] = unit[(i & 4) != 0];
             frame.corner[i][3] = 1.0f;
         }
-        frame.SetPosition(ref);
+        frame.SetPosition(reference);
         DrawBound(&frame);
     }
 }
 
 /* The free character: the same plane-relative stick mapping as the camera, plus a facing the
-   shoulder buttons turn and keep inside one revolution, and a uniform scale the face buttons
+   shoulder buttons turn and keep inside one revolution, and an ambient offset the face buttons
    work. Triangle re-aims the camera at the body rather than at the feet, which is why the height
    of the body is what the reference point is lifted by.
    The box is ten across and twenty tall - a stand-in for the body rather than the body's own
    size - and it is drawn with the character's own rotation so the facing can be seen. */
-void EdDMoveChara(CCharacter *chara, CCamera *camera) {
+void EdDMoveChara(CCharacter *character, CCamera *camera) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR camera_pos;
     sceVu0FVECTOR camera_ref;
     sceVu0FVECTOR rot;
-    sceVu0FVECTOR dir;
+    sceVu0FVECTOR view;
     sceVu0FVECTOR move;
     float angle;
     float speed;
     float x;
     float y;
     float z;
-    float scale;
+    float ambient;
     int i;
 
-    if (chara == 0)
+    if (character == 0)
         return;
 
-    chara->GetPosition(pos);
-    chara->GetRotation(rot);
+    character->GetPosition(pos);
+    character->GetRotation(rot);
     camera->GetPos(camera_pos);
     camera->GetRef(camera_ref);
 
-    sceVu0SubVector(dir, camera_ref, camera_pos);
-    angle = atan2f(dir[0], dir[2]);
+    sceVu0SubVector(view, camera_ref, camera_pos);
+    angle = atan2f(view[0], view[2]);
     speed = 0.5f;
 
     x = -GamePad.GetLXf();
@@ -377,24 +380,24 @@ void EdDMoveChara(CCharacter *chara, CCamera *camera) {
 
     sceVu0ScaleVector(move, move, speed);
     sceVu0AddVector(pos, pos, move);
-    chara->SetPosition(pos);
-    chara->SetRotation(rot);
+    character->SetPosition(pos);
+    character->SetRotation(rot);
 
     if (GamePad.Down(16)) {
         sceVu0CopyVector(camera_ref, pos);
-        camera_ref[1] += 0.7f * chara->body_height;
+        camera_ref[1] += 0.7f * character->body_height;
         camera->SetRef(camera_ref);
     }
 
-    scale = chara->ambient_offset[0];
+    ambient = character->ambient_offset[0];
     if (GamePad.On(2))
-        scale += 0.1f;
+        ambient += 0.1f;
     if (GamePad.On(1))
-        scale -= 0.1f;
-    if (scale != chara->ambient_offset[0]) {
-        chara->ambient_offset[0] = scale;
-        chara->ambient_offset[1] = scale;
-        chara->ambient_offset[2] = scale;
+        ambient -= 0.1f;
+    if (ambient != character->ambient_offset[0]) {
+        character->ambient_offset[0] = ambient;
+        character->ambient_offset[1] = ambient;
+        character->ambient_offset[2] = ambient;
     }
 
     {
@@ -491,20 +494,20 @@ static void DrawLine(int *from, int *to, u_char r, u_char g, u_char b, u_char a)
 }
 
 void EdSetBgmVol(float time) {
-    float scale = 1.0f;
+    float level = 1.0f;
 
     // The town music plays at night and is silent through the day, fading out
     // over the hour before four.
     if (EdCheckTime(time, 4.0f, 11.0f) != 0) {
-        scale = 0.0f;
+        level = 0.0f;
     }
     if (!(time < 3.0f) && time < 4.0f) {
-        scale = 4.0f - time;
+        level = 4.0f - time;
     }
 
-    int volume = (int) (scale * (float) SndGetDefaultBgmVol());
+    int volume = (int) (level * (float) SndGetDefaultBgmVol());
     if (volume < 2) {
-        scale = 0.0f;
+        level = 0.0f;
     }
     if (SndBgmCheck() == 1) {
         if (volume > 0) {
@@ -512,15 +515,15 @@ void EdSetBgmVol(float time) {
         } else {
             SndBgmStop();
         }
-    } else if (scale > 0.0) {
+    } else if (level > 0.0) {
         SndBgmPlay(0);
         SndSetBgmVol(volume);
     }
 }
 
-void EdAmbientPlay(float volume) {
+void EdAmbientPlay(float time) {
     // The ambient sets run one behind the four times of day, and roll over.
-    int ambient_no = EdGetTime(volume);
+    int ambient_no = EdGetTime(time);
 
     if (++ambient_no >= 4) {
         ambient_no = 0;
@@ -628,11 +631,11 @@ void EdPlaySoundSrc() {
             SndSePlay(se, 0, 0);
         volume = 0.0f;
         for (j = 0; j < sound_src[i].num; j++) {
-            volume += sound_src[i].vol[j];
+            volume += sound_src[i].volume[j];
         }
         pan = 0.0f;
         for (j = 0; j < sound_src[i].num; j++) {
-            pan += sound_src[i].pan[j] * sound_src[i].vol[j] / volume;
+            pan += sound_src[i].pan[j] * sound_src[i].volume[j] / volume;
         }
         if (volume > 1.0f)
             volume = 1.0f;
@@ -677,15 +680,15 @@ static float GetDistLine(float *point, float *from, float *to, float *near_point
     float length;
     float from_dist;
     float to_dist;
-    float t;
+    float fraction;
 
     sceVu0SubVector(offset, from, point);
     sceVu0SubVector(to_offset, to, point);
     sceVu0SubVector(line, to_offset, offset);
     length = DistVector(line);
     length = length * length;
-    t = -sceVu0InnerProduct(offset, line) / length;
-    if (t < 0.0f || t > 1.0f) {
+    fraction = -sceVu0InnerProduct(offset, line) / length;
+    if (fraction < 0.0f || fraction > 1.0f) {
         from_dist = DistVector(point, from);
         to_dist = DistVector(point, to);
         if (from_dist < to_dist) {
@@ -695,7 +698,7 @@ static float GetDistLine(float *point, float *from, float *to, float *near_point
         sceVu0CopyVector(near_point, to);
         return to_dist;
     }
-    sceVu0ScaleVector(projection, line, t);
+    sceVu0ScaleVector(projection, line, fraction);
     sceVu0AddVector(projection, offset, projection);
     sceVu0AddVector(near_point, projection, point);
     return DistVector(projection);
@@ -706,15 +709,15 @@ static float GetDistLine(float *point, float *from, float *to, float *near_point
    part's own frame is moved first because the effects hang off it, and a door is the one source
    the part itself carries rather than one of its effects. */
 void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_pos,
-                      float *camera_rot) {
+                      float *camera_dir) {
     int i;
     int j;
     CFrame *frame;
-    EDIT_EFFECT_INFO *info;
+    EDIT_EFFECT_INFO *effect;
     int se;
-    SOUND_SRC *src;
-    SOUND_SRC *door_src;
-    float dist;
+    SOUND_SRC *source;
+    SOUND_SRC *door_source;
+    float distance;
     float far_dist;
     float near_dist;
     sceVu0FVECTOR position;
@@ -727,7 +730,7 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
     float door_volume;
     float door_pan;
 
-    SndSetCamera(camera_pos, camera_rot);
+    SndSetCamera(camera_pos, camera_dir);
     init_sound_src();
     for (i = 0; i < count; i++) {
         if (parts[i] == 0)
@@ -740,60 +743,60 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
         parts[i]->GetRotation(rotation);
         frame->SetRotation(rotation[0], rotation[1], rotation[2]);
         for (j = 0; j < 24; j++) {
-            info = parts[i]->effect[j];
+            effect = parts[i]->effect[j];
             if (parts[i]->effect_on[j] == 0)
                 continue;
-            if (info == 0)
+            if (effect == 0)
                 continue;
-            if (info->kind != 7 && info->kind != 1 && info->kind != 2)
+            if (effect->kind != 7 && effect->kind != 1 && effect->kind != 2)
                 continue;
-            if (info->frame == 0)
+            if (effect->frame == 0)
                 continue;
-            if (CheckEditEffect(info, time) == 0)
+            if (CheckEditEffect(effect, time) == 0)
                 continue;
-            info->frame->GetWorldPosition(from, info->offset);
-            if (info->colour[3] == 1.0f) {
-                info->frame->GetWorldPosition(to, info->colour);
+            effect->frame->GetWorldPosition(from, effect->offset);
+            if (effect->colour[3] == 1.0f) {
+                effect->frame->GetWorldPosition(to, effect->colour);
                 sceVu0CopyVector(line, from);
-                dist = GetDistLine(camera_pos, line, to, from);
+                distance = GetDistLine(camera_pos, line, to, from);
             } else {
-                dist = DistVector(camera_pos, from);
+                distance = DistVector(camera_pos, from);
             }
-            far_dist = info->far_distance;
-            near_dist = info->near_distance;
-            se = (int) info->sound_no;
+            far_dist = effect->far_distance;
+            near_dist = effect->near_distance;
+            se = (int) effect->sound_no;
             /* A torch and a fire are one sound at one range whatever the description says. */
-            if (info->kind == 1 || info->kind == 2) {
+            if (effect->kind == 1 || effect->kind == 2) {
                 se = 54;
                 near_dist = 20.0f;
                 far_dist = 150.0f;
             }
-            if (dist > far_dist)
+            if (distance > far_dist)
                 continue;
-            src = get_sound_src(se);
-            if (src == 0)
+            source = get_sound_src(se);
+            if (source == 0)
                 continue;
             SndGetVolPan(&volume, &pan, from, near_dist, far_dist);
-            src->se = se;
-            if (src->num < 16) {
-                src->vol[src->num] = volume;
-                src->pan[src->num] = pan;
-                src->num++;
+            source->se = se;
+            if (source->num < 16) {
+                source->volume[source->num] = volume;
+                source->pan[source->num] = pan;
+                source->num++;
             }
         }
         if (parts[i]->subtype != 2)
             continue;
         if (DistVector(camera_pos, position) >= 300.0f)
             continue;
-        door_src = get_sound_src(52);
-        if (door_src == 0)
+        door_source = get_sound_src(52);
+        if (door_source == 0)
             continue;
         SndGetVolPan(&door_volume, &door_pan, position, 100.0f, 300.0f);
-        door_src->se = 52;
-        if (door_src->num < 16) {
-            door_src->vol[door_src->num] = door_volume;
-            door_src->pan[door_src->num] = door_pan;
-            door_src->num++;
+        door_source->se = 52;
+        if (door_source->num < 16) {
+            door_source->volume[door_source->num] = door_volume;
+            door_source->pan[door_source->num] = door_pan;
+            door_source->num++;
         }
     }
     EdPlaySoundSrc();
@@ -874,14 +877,14 @@ void EdSetDOF(DEPTH_OF_FIELD_INFO *info) {
 /* The argument is a cap rather than the level to draw at, so a configuration that asks for less
    than the map does gets less and one that asks for more does not get more. */
 void EdDrawDOF(int level) {
-    int lv;
+    int drawn_level;
 
-    lv = dof.level;
-    if (lv < 0)
+    drawn_level = dof.level;
+    if (drawn_level < 0)
         return;
-    if (level < lv)
-        lv = level;
-    DepthOfField(dof.distance, lv, dof.alpha, dof.blur);
+    if (level < drawn_level)
+        drawn_level = level;
+    DepthOfField(dof.distance, drawn_level, dof.alpha, dof.blur);
 }
 
 /* The lightning three of the game's towns get, which is a model node shown for a few frames and a
@@ -1013,8 +1016,8 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
             if (npc->CheckDraw() != 0 && event->npc_draw_before[i] != 0 && (npc_draw_masks[i] & 1) != 0) {
                 if (IsVisible(&npcs[i])) {
                     npc_draw_masks[i] = 0;
-                    TexManager.ReloadTexture(Vif1Packet, npcs[i].unk_148C);
-                    npc->TextureAnime(npcs[i].unk_148C);
+                    TexManager.ReloadTexture(Vif1Packet, npcs[i].texture_block);
+                    npc->TextureAnime(npcs[i].texture_block);
                     CCharacter *chara = npc;
                     chara->Draw();
                 }
@@ -1056,8 +1059,8 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
     for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
         if (npcs[i].CheckDraw() != 0 && (npc_draw_masks[i] & 1) != 0) {
             if (IsVisible(&npcs[i])) {
-                TexManager.ReloadTexture(Vif1Packet, npcs[i].unk_148C);
-                npcs[i].TextureAnime(npcs[i].unk_148C);
+                TexManager.ReloadTexture(Vif1Packet, npcs[i].texture_block);
+                npcs[i].TextureAnime(npcs[i].texture_block);
                 CCharacter *chara = &npcs[i];
                 chara->Draw();
             }
@@ -1069,23 +1072,23 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
    nothing has claimed, the effect is built on the part's own frame, and the part is told which
    entry it now owns. The part's slot table is what the sound and the drawing walk later, so an
    effect that is built and not registered here is an effect nothing ever reaches. */
-void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func, EDIT_EFFECT_INFO *info, int count) {
+void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func_data, EDIT_EFFECT_INFO *effects, int count) {
     int i;
     int j;
 
     /* The last entry is never handed out, so a full table refuses rather than overruns. */
-    for (i = 1; i <= count; i++, info++) {
+    for (i = 1; i <= count; i++, effects++) {
         if (i == count)
             return;
-        if (info->kind <= 0)
+        if (effects->kind <= 0)
             break;
     }
-    if (InitEditEffect(parts->frame[0], func, info) == 0)
+    if (InitEditEffect(parts->frame[0], func_data, effects) == 0)
         return;
     for (j = 0; j < 24; j++) {
         if (parts->effect_on[j] == 0) {
             parts->effect_on[j] = 1;
-            parts->effect[j] = info;
+            parts->effect[j] = effects;
             return;
         }
     }
@@ -1120,11 +1123,11 @@ void EdUseItemInit() {
     use_item = -1;
 }
 
-void EdSetUseItem(int *list) {
+void EdSetUseItem(int *items) {
     int i;
 
     for (i = 0; i < 32; i++) {
-        use_item_list[i] = ConvertItemNo(list[i]);
+        use_item_list[i] = ConvertItemNo(items[i]);
         if (use_item_list[i] < 0)
             break;
     }
@@ -1134,8 +1137,8 @@ int EdGetUseItem() {
     return InvertItemNo(use_item);
 }
 
-void EdSetNameRegChara(int chara) {
-    name_reg_chara = chara;
+void EdSetNameRegChara(int character) {
+    name_reg_chara = character;
 }
 
 void EdSetShopNo(int shop) {
@@ -1210,79 +1213,79 @@ void EdExitMenu() {
 }
 
 int EdMenuMode() {
-    int end;
+    int finished;
 
-    end = 0;
+    finished = 0;
     switch (menu_mode) {
         case 2:
-            end = !BattleMenuCursor();
+            finished = !BattleMenuCursor();
             BattleMenuDraw();
-            if (end)
+            if (finished)
                 EdClearItemOverFlag();
             break;
         case 3:
         case 4:
-            end = CommonShopLoop();
+            finished = CommonShopLoop();
             break;
         case 5:
         case 9:
-            end = EventItemSelectLoop(&use_item);
+            finished = EventItemSelectLoop(&use_item);
             break;
         case 6:
-            end = NameEnterKey();
+            finished = NameEnterKey();
             NameEnterDraw();
             break;
         case 7:
-            end = !MenuMoveKey();
+            finished = !MenuMoveKey();
             DrawMenuMove();
             break;
         case 8:
-            end = FishingExchangeLoop();
+            finished = FishingExchangeLoop();
             break;
         case 10:
-            end = FishRecordViewLoop();
+            finished = FishRecordViewLoop();
             break;
     }
-    return end;
+    return finished;
 }
 
 /* A count below zero means one, so a caller that has nothing to say about how many gets one. */
-void EdGetItem(int item, int count, int attach) {
+void EdGetItem(int item, int count, int attachment) {
     CDngStatusData *status;
-    int no;
+    int item_no;
     int i;
 
     if (count < 0)
         count = 1;
     status = SaveData->GetDngStatus();
-    no = ConvertItemNo(item);
-    if (no < 0)
+    item_no = ConvertItemNo(item);
+    if (item_no < 0)
         return;
     for (i = 0; i < count; i++) {
-        if (attach > 0)
-            status->GetItem(no, attach);
+        if (attachment > 0)
+            status->GetItem(item_no, attachment);
         else
-            status->GetItem(no, 0);
+            status->GetItem(item_no, 0);
     }
 }
 
 /* Growing the pack clears the slots it opens rather than leaving what was in them, because a slot
    is read up to the count and an old number inside the new range would be an item again. */
-int EdAddMaxItem(int add) {
+int EdAddMaxItem(int amount) {
     ITEM_PACK *pack;
-    int num;
+    int new_count;
     int i;
 
     pack = &SaveData->GetDngStatus()->item_pack;
-    num = pack->num + add;
-    if (num < 0)
-        num = 0;
-    if (num > 100)
-        num = 100;
-    for (i = pack->num; i < num; i++)
+    new_count = pack->num + amount;
+    if (new_count < 0)
+        new_count = 0;
+    if (new_count > 100)
+        new_count = 100;
+    for (i = pack->num; i < new_count; i++)
         pack->item[i] = -1;
-    pack->num = (char) num;
-    return num;
+    pack->num = (char) new_count;
+    return new_count;
 }
 
 int EdCheckItemOver() {
@@ -1295,23 +1298,23 @@ void EdClearItemOverFlag() {
 
 int EdCheckItem(int item) {
     CDngStatusData *status;
-    int no;
+    int item_no;
 
     status = SaveData->GetDngStatus();
-    no = ConvertItemNo(item);
-    if (no >= 0)
-        return status->SearchItemIndexNo(no);
+    item_no = ConvertItemNo(item);
+    if (item_no >= 0)
+        return status->SearchItemIndexNo(item_no);
     return -1;
 }
 
 int EdCheckGetItem(int item) {
     CDngStatusData *status;
-    int no;
+    int item_no;
 
     status = SaveData->GetDngStatus();
-    no = ConvertItemNo(item);
-    if (no >= 0)
-        return status->CheckItemGet(no);
+    item_no = ConvertItemNo(item);
+    if (item_no >= 0)
+        return status->CheckItemGet(item_no);
     return 0;
 }
 
@@ -1353,23 +1356,23 @@ static int HelpMesCount;
 static int cnt1;
 static int cnt2;
 
-void EdSetSystemMes(int no, int count, int position, int input_key, int *arg, int number) {
+void EdSetSystemMes(int mes_no, int count, int position, int input_key, int *args, int value) {
     int i;
 
     SystemMesInputKey = input_key;
     SystemMesPosition = position;
-    if (arg) {
+    if (args) {
         for (i = 0; i < 4; i++) {
             EditSystemMes.mes_no[i] = -1;
-            if (*arg >= 0)
-                EditSystemMes.mes_no[i] = *arg;
-            arg++;
+            if (*args >= 0)
+                EditSystemMes.mes_no[i] = *args;
+            args++;
         }
     }
-    if (number >= 0)
-        EditSystemMes.value = number;
-    EditSystemMes.MakeMesWin(no);
-    SystemMesNo = no;
+    if (value >= 0)
+        EditSystemMes.value = value;
+    EditSystemMes.MakeMesWin(mes_no);
+    SystemMesNo = mes_no;
     SystemMesCount = count;
 }
 
@@ -1377,12 +1380,12 @@ void EdSetSystemMes(int no, int count, int position, int input_key, int *arg, in
    authored: the first is indented by however much narrower than the window the laid-out text came
    out, and the second a fixed distance to the right of it. Every other message says there is no
    choice by putting both off screen. */
-void EdSetHelpMes(int no, int count, int position, int *arg, int number) {
+void EdSetHelpMes(int mes_no, int count, int position, int *args, int value) {
     int x;
     int y;
     int indent;
 
-    if (no == 120) {
+    if (mes_no == 120) {
         indent = EditSystemMes.text_columns - 30;
         indent = 16 - indent;
         if (indent < 0)
@@ -1406,7 +1409,7 @@ void EdSetHelpMes(int no, int count, int position, int *arg, int number) {
     EditSystemMes.stay_width = SystemMesW;
     EditSystemMes.stay_height = SystemMesH;
     EditSystemMes.auto_pos = SystemMesPosition;
-    EdSetSystemMes(no, count, position, 0, arg, number);
+    EdSetSystemMes(mes_no, count, position, 0, args, value);
     EditSystemMes.auto_pos = SystemMesPosition;
     HelpMesNo = SystemMesNo;
     HelpMesCount = SystemMesCount;
@@ -1489,8 +1492,8 @@ void EdWalkToEditMes(int wait) {
 
 /* The build and move prompts take turns: each counts down the other's delay before showing itself
    and then arms the other, so the two alternate rather than both being up. */
-void EdEditBuildHelpMes(int parts) {
-    if (parts < 0)
+void EdEditBuildHelpMes(int part_no) {
+    if (part_no < 0)
         return;
     if (cnt1 > 0) {
         cnt1--;
@@ -1499,14 +1502,14 @@ void EdEditBuildHelpMes(int parts) {
     cnt1 = 0;
     cnt2 = 1;
 
-    int arg[4] = {-1, -1, -1, -1};
+    int args[4] = {-1, -1, -1, -1};
 
-    arg[0] = GetAtraMsgNo(MapNo, parts);
+    args[0] = GetAtraMsgNo(MapNo, part_no);
     SystemMesW = 560;
     SystemMesH = 50;
     SystemMesX = 40;
     SystemMesY = 380;
-    EdSetHelpMes(120, 2, -1, arg, -1);
+    EdSetHelpMes(120, 2, -1, args, -1);
 }
 
 void EdEditMoveHelpMes() {
@@ -1525,22 +1528,22 @@ void EdEditMoveHelpMes() {
 
 /* Two messages a hundred apart for the same two states, since the argument names the fish and the
    message number says whether there is one. */
-void EdFishingWalkHelpMes(int fish) {
-    int no;
+void EdFishingWalkHelpMes(int bait) {
+    int mes_no;
 
     SystemMesW = 0;
     SystemMesH = 0;
 
-    int arg[4] = {-1, -1, -1, -1};
+    int args[4] = {-1, -1, -1, -1};
 
-    arg[0] = fish + 100;
-    no = 200;
-    if (fish >= 0)
-        no++;
-    EdSetHelpMes(no, 2, 9, arg, -1);
+    args[0] = bait + 100;
+    mes_no = 200;
+    if (bait >= 0)
+        mes_no++;
+    EdSetHelpMes(mes_no, 2, 9, args, -1);
 }
 
-void EdFishingAngleHelpMEs(int angle) {
+void EdFishingAngleHelpMEs(int bait) {
 }
 
 void EdFishingLostEsaMes() {
@@ -1551,8 +1554,8 @@ void EdFishingLostEsaMes() {
 
 /* The second argument is dropped rather than forwarded, so a caller that passes one is passing it
    to nothing. */
-void EdItemGetMes(int item, int kind, int count, int attach) {
-    ItemGetMes(item, count, attach, 1);
+void EdItemGetMes(int item, int kind, int attachment, int duration) {
+    ItemGetMes(item, attachment, duration, 1);
 }
 
 /* The treasure box the map editor opens in front of the player: one box at a time, placed where the
@@ -1742,7 +1745,7 @@ const char EditFuncNameTest[] = "test";
 
 void EdDrawOpenItemBox() {
     sceVu0FVECTOR ambient;
-    sceVu0FVECTOR save;
+    sceVu0FVECTOR saved_ambient;
 
     if (ibox_open_flag == 0 && ibox_open_close_flag == 0)
         return;
@@ -1751,13 +1754,13 @@ void EdDrawOpenItemBox() {
         ibox_frame->SetRotation(ibox_rot[0], ibox_rot[1], ibox_rot[2]);
     }
     MGGetAmbient(ambient);
-    sceVu0CopyVector(save, ambient);
+    sceVu0CopyVector(saved_ambient, ambient);
     if (ibox_open_cnt < 20)
         ambient[3] = 128.0f * (float) ibox_open_cnt / 20.0f;
     if (ibox_open_flag)
         MGSetAmbient(ambient);
     MGDraw(ibox_frame);
-    MGSetAmbient(save);
+    MGSetAmbient(saved_ambient);
 }
 
 int frame_image_flag;

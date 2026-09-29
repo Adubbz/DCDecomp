@@ -72,8 +72,8 @@ public:
     void Initialize();
 
     float lod[4]; /**< Distances at which the category changes level of detail. */
-    int unk_10;
-    int unk_14;
+    int lowest;   /**< Lowest level of detail that the category may draw. */
+    int highest;  /**< Highest level of detail that the category may draw. */
 };
 
 STATIC_ASSERT(sizeof(CategoryAttr) == 0x18);
@@ -413,26 +413,26 @@ int main(int argc, const char **argv, const char **envp) {
 
     /* Locals in retail's callee-saved order; MWCC assigns s0,s1,... to
      * top-level locals in declaration order:
-     *   v4     -> s0  per-iteration loop-exit result
-     *   v5     -> s1  "skip the title demo" flag, set in the first switch's
-     *                 case 1 and consumed in the second's
-     *   i      -> s2  warmup counter, reused as the case-0 once-flag
-     *                 ($18 in retail for both)
-     *   inited -> s3  InitExistData() result
-     *   j      -> s4  chara-name copy counter, sharing its register with the
-     *                 other short-lived temporaries as retail does with $20
-     *   v3     -> s5  never written; retail reads an uninitialised
-     *                 callee-saved register in the second switch's case 12,
-     *                 so this is declared last to take the last slot
+     *   loop_result -> s0  per-iteration loop-exit result
+     *   skip_title  -> s1  "skip the title demo" flag, set in the first switch's
+     *                      case 1 and consumed in the second's
+     *   i           -> s2  warmup counter, reused as the case-0 once-flag
+     *                      ($18 in retail for both)
+     *   exist_data  -> s3  InitExistData() result
+     *   j           -> s4  chara-name copy counter, sharing its register with the
+     *                      other short-lived temporaries as retail does with $20
+     *   idle_result -> s5  never written; retail reads an uninitialised
+     *                      callee-saved register in the second switch's case 12,
+     *                      so this is declared last to take the last slot
      */
-    int v4;
-    int v5;
+    int loop_result;
+    int skip_title;
     int i;
-    int inited;
+    int exist_data;
     int j;
-    int v3;
+    int idle_result;
     char chara_names[6][64];
-    int valid;
+    int in_range;
 
     mwInit(argc, argv, envp);
 
@@ -450,8 +450,8 @@ int main(int argc, const char **argv, const char **envp) {
      * s0/s1 here, *after* the two static-init blocks above (an
      * initializer at declaration gets scheduled before the mwInit call
      * instead). */
-    v4 = 0;
-    v5 = 0;
+    loop_result = 0;
+    skip_title = 0;
 
     mode = 7;
     main_select_menu_no = 0;
@@ -475,11 +475,11 @@ int main(int argc, const char **argv, const char **envp) {
     save_data.Initialize();
     GlobalNameInit__Fv();
 
-    /* `(valid = ...) != 0` rather than a bare `i < 60`: the anonymous
+    /* `(in_range = ...) != 0` rather than a bare `i < 60`: the anonymous
      * form routes the slti result through $at, the named form through a
      * real register ($v0, as retail has) -- see CLAUDE.md's named-
      * variable register trick, applied throughout src/savedata.cpp. */
-    for (i = 0; (valid = i < 60) != 0; i++) {
+    for (i = 0; (in_range = i < 60) != 0; i++) {
         sceGsSyncV(0);
         GamePad.UpDate();
         if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0) {
@@ -492,7 +492,7 @@ int main(int argc, const char **argv, const char **envp) {
     GamePad.KeyLock2(1);
 
     i = 0;
-    inited = 0;
+    exist_data = 0;
 
     if (!init3) {
         init_flag = 0;
@@ -574,23 +574,23 @@ int main(int argc, const char **argv, const char **envp) {
                  * propagation. */
                 if (i == 0) {
                     i = 1;
-                    inited = InitExistData__Fv();
-                    if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] != 0) {
+                    exist_data = InitExistData__Fv();
+                    if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] != 0) {
                         GameClearFlag = 1;
                     }
                 }
-                func_01DD1AB0(inited);
+                func_01DD1AB0(exist_data);
                 break;
             case 1:
                 SndInitialize__Fiiii(4, 30, 4, 5);
                 func_01DC8C50();
-                /* Sets v5 (the "skip title demo" flag consumed by the
-                 * second switch's case 1 below), not v4 -- retail writes
+                /* Sets skip_title (the "skip title demo" flag consumed by the
+                 * second switch's case 1 below), not loop_result -- retail writes
                  * $17/s1 here, the same register case 1 below tests and
                  * clears. */
                 if (GamePad.On(2048) != 0) {
                     MapJump__Fii(800, -1);
-                    v5 = 1;
+                    skip_title = 1;
                 }
                 break;
             case 2:
@@ -648,13 +648,13 @@ int main(int argc, const char **argv, const char **envp) {
          * sw v0,0x1c8(v1)`). See re/ai/main.md. */
         {
             s32 map_no = MapNo;
-            char *sd = (char *) SaveData;
-            *(s32 *) (sd + 0x1C8) = map_no;
+            char *save_bytes = (char *) SaveData;
+            *(s32 *) (save_bytes + 0x1C8) = map_no;
         }
 
         do {
             int game_clear = GameClearFlag;
-            *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] = game_clear;
+            *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] = game_clear;
 
             *(volatile s32 *) 0x10000000 = 0;
             MGBeginFrame__Fv();
@@ -695,35 +695,35 @@ int main(int argc, const char **argv, const char **envp) {
              * `default`'s slot in retail, so they are not written. */
             switch (mode) {
                 case 14:
-                    v4 = LangsetLoop__Fv();
-                    if (v4 != 0) {
+                    loop_result = LangsetLoop__Fv();
+                    if (loop_result != 0) {
                         MapNo = 801;
                         mode = 1;
                     }
                     break;
                 case 0:
-                    v4 = func_01DD2220();
-                    if (v4 == 1) {
+                    loop_result = func_01DD2220();
+                    if (loop_result == 1) {
                         main_select_menu_no = 0;
                         strcpy(main_select_param, "e01");
                         mode = 2;
                     }
-                    if (v4 == 2) {
+                    if (loop_result == 2) {
                         main_select_menu_no = 1;
                         strcpy(main_select_param, "e01");
                         mode = 2;
                     }
-                    if (v4 == 3) {
+                    if (loop_result == 3) {
                         mode = 3;
                         main_select_menu_no = 0;
                     }
-                    if (v4 == 5) {
+                    if (loop_result == 5) {
                         mode = 5;
                     }
-                    if (v4 == 1) {
+                    if (loop_result == 1) {
                         MapJump__Fii(400, -1);
 
-                        for (j = 0; (valid = j < 6) != 0; j++) {
+                        for (j = 0; (in_range = j < 6) != 0; j++) {
                             memcpy(chara_names[j], save_data.GetCharaName(j), 64);
                         }
 
@@ -732,71 +732,71 @@ int main(int argc, const char **argv, const char **envp) {
                         save_data.Initialize();
                         save_data.InvertConfig(&config_data);
 
-                        for (j = 0; (valid = j < 6) != 0; j++) {
+                        for (j = 0; (in_range = j < 6) != 0; j++) {
                             memcpy(save_data.GetCharaName(j), chara_names[j], 64);
                         }
 
                         TrialStart__Fv();
                     }
-                    if (v4 == 4) {
+                    if (loop_result == 4) {
                         MapJump__Fii(801, -1);
                     }
-                    if (v4 == 2) {
+                    if (loop_result == 2) {
                         SndInitialize__Fiiii(4, 30, 4, 5);
                     }
                     break;
                 case 1:
-                    if (v5 != 0) {
-                        v4 = 1;
+                    if (skip_title != 0) {
+                        loop_result = 1;
                         MapJump__Fii(800, -1);
-                        v5 = 0;
+                        skip_title = 0;
                     } else {
-                        v4 = func_01DC8EB0();
-                        if (v4 != 0) {
+                        loop_result = func_01DC8EB0();
+                        if (loop_result != 0) {
                             MapJump__Fii(800, -1);
                         }
                     }
                     break;
                 case 2:
-                    v4 = EditLoop__Fv();
-                    if (v4 == 1) {
+                    loop_result = EditLoop__Fv();
+                    if (loop_result == 1) {
                         mode = 0;
                     }
-                    if (v4 == 2) {
+                    if (loop_result == 2) {
                         mode = 2;
                     }
-                    if (v4 != 0) {
+                    if (loop_result != 0) {
                         mode = 7;
                     }
-                    if (v4 == 3) {
+                    if (loop_result == 3) {
                         mode = 3;
                     }
                     break;
                 case 7:
-                    v4 = MenuLoop__Fv();
+                    loop_result = MenuLoop__Fv();
                     break;
                 case 13:
-                    v4 = LoopSave__Fv();
-                    if (v4 != 0) {
+                    loop_result = LoopSave__Fv();
+                    if (loop_result != 0) {
                         mode = 7;
                     }
                     break;
                 case 12:
-                    v4 = v3;
-                    if (v3 != 0) {
+                    loop_result = idle_result;
+                    if (idle_result != 0) {
                         mode = 7;
                     }
                     break;
                 case 10:
-                    v4 = MemCheckLoop__Fv();
-                    if (v4 != 0) {
+                    loop_result = MemCheckLoop__Fv();
+                    if (loop_result != 0) {
                         MapNo = 801;
                         mode = 1;
                     }
                     break;
                 case 11:
-                    v4 = TrialEndLoop__Fv();
-                    if (v4 != 0) {
+                    loop_result = TrialEndLoop__Fv();
+                    if (loop_result != 0) {
                         MapNo = 800;
                         mode = 0;
                     }
@@ -806,17 +806,17 @@ int main(int argc, const char **argv, const char **envp) {
                      * back-to-back `beqz $16` tests (0x141A8C skipping only
                      * the `mode = 0` store, 0x141A98 skipping the MapJump),
                      * which a single merged if does not produce. */
-                    v4 = func_01DAF970();
-                    if (v4 != 0) {
+                    loop_result = func_01DAF970();
+                    if (loop_result != 0) {
                         mode = 0;
                     }
-                    if (v4 != 0) {
+                    if (loop_result != 0) {
                         MapJump__Fii(0, -1);
                     }
                     break;
                 case 9:
-                    v4 = func_01DC1510();
-                    if (v4 != 0) {
+                    loop_result = func_01DC1510();
+                    if (loop_result != 0) {
                         mode = 3;
                     }
                     break;
@@ -824,8 +824,8 @@ int main(int argc, const char **argv, const char **envp) {
                 case 8:
                     break;
                 default:
-                    v4 = func_01DAD980(mode);
-                    if (v4 != 0) {
+                    loop_result = func_01DAD980(mode);
+                    if (loop_result != 0) {
                         mode = 7;
                     }
                     break;
@@ -844,7 +844,7 @@ int main(int argc, const char **argv, const char **envp) {
             if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0) {
                 GamePad.On2(1);
             }
-        } while (v4 == 0);
+        } while (loop_result == 0);
 
         MGBeginFrame__Fv();
         MGEndFrame__Fv();
@@ -875,11 +875,11 @@ int main(int argc, const char **argv, const char **envp) {
                 MapNo = NextMapNo;
                 LocalMapNo = 0;
                 main_select_menu_no = 0;
-            } else if ((valid = NextMapNo < 800) == 0) {
+            } else if ((in_range = NextMapNo < 800) == 0) {
                 /* Named-variable trick (see CLAUDE.md): retail's `>= 800`
                  * check is `slti $2,$3,0x320; bnez $2` -- a *real* register
                  * ($v0) where the two range checks above it use $at; only
-                 * the named-assignment form (`valid = NextMapNo < 800`,
+                 * the named-assignment form (`in_range = NextMapNo < 800`,
                  * tested `== 0` so no bool materialization is needed)
                  * reproduces that without adding an xori. */
                 main_select_menu_no = 0;
@@ -941,11 +941,11 @@ void MenuInit() {
     result = TexManager.EnterTextureFile(texdata);
     result = TexManager.LoadTextureBlock(-1, read_buffer);
     MGSetBGColor(0.0f, 0.0f, background = 128.0f, background);
-    DebugFont.texture = "frame_buff";
+    DebugFont.texture_name = "frame_buff";
     DebugFont.x = 16;
     DebugFont.y = 16;
-    DebugFont.w = 256;
-    DebugFont.h = 224;
+    DebugFont.width = 256;
+    DebugFont.height = 224;
     DebugFont.alpha = 64;
     GamePad.SetAutoRepeat(61440, 25, 3);
 }
@@ -967,7 +967,7 @@ int MenuLoop() {
         gamemode_empty_string};
     static int map_no[10] = {800, 0, 11, 99, 200, 400, 0, 0, 0, -1};
 
-    DebugFont.len = 0;
+    DebugFont.length = 0;
 
     int i = 0;
     static int select = 0;
@@ -1078,28 +1078,28 @@ int MenuLoop() {
         }
     }
 
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len],
-                             "Dark Cloud Ver2.17 2001/05/11\n");
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s%s\n", cursor[select == 0],
-                             menu[0]);
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[1], cursor[select == 1],
-                             edit_map + 1);
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[2], cursor[select == 2],
-                             sub_map + 1);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
+                                "Dark Cloud Ver2.17 2001/05/11\n");
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n", cursor[select == 0],
+                                menu[0]);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[1], cursor[select == 1],
+                                edit_map + 1);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[2], cursor[select == 2],
+                                sub_map + 1);
 
     for (i = 3; i < 6; i++) {
-        DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s%s\n",
-                                 cursor[i == select], menu[i]);
+        DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n",
+                                    cursor[i == select], menu[i]);
     }
 
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[i], cursor[i == select],
-                             event_no);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select],
+                                event_no);
     i++;
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[i], cursor[i == select],
-                             mc_mode);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select],
+                                mc_mode);
     i++;
-    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[i], cursor[i == select],
-                             LanguageCode);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select],
+                                LanguageCode);
 
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     DebugFont.Draw();
@@ -1183,7 +1183,7 @@ void MemCheckInit() {
 }
 
 int MemCheckLoop() {
-    DebugFont.len = 0;
+    DebugFont.length = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     switch (mem_chk_mode) {
         case 0:
@@ -1259,7 +1259,7 @@ void InitSave() {
     TexManager.EnterFixTextureZ((u_char *) read_buffer);
     StayTexture = TexManager.GetTexture("stayframe", -1);
     CommonMenuMes2.SetBuff_system(SystemMes);
-    EditSystemMes.unk_17B0 = MesWinTexBuff_01;
+    EditSystemMes.tex_buff = MesWinTexBuff_01;
     InitMenuSave(mc_mode, 1, (u_long128 *) read_buffer);
 }
 
@@ -1279,16 +1279,16 @@ int CheckTrialEnd() { return 0; }
 
 /* MAP_NPC_MODEL's members as its copy assignment reaches them; the tail is alignment padding. */
 struct GeneratedNpcModel {
-    CCharacter chara;
-    float pos[4];
-    float unk_11C0[4];
-    s32 parts_no;
-    s32 used;
-    s32 unk_11D8;
-    s32 unk_11DC;
-    float draw_pos[16][4];
-    s32 draw_param[16];
-    s32 draw_num;
+    CCharacter chara;      /**< Draws and moves the character. */
+    float pos[4];          /**< World position of the character. */
+    float rotation[4];     /**< Angle of the character about each axis. */
+    s32 parts_no;          /**< Index of the map part that the character stands on. */
+    s32 used;              /**< 1 if the slot is in use. */
+    s32 unk_11D8;          /**< 0 to hide the character. */
+    s32 unk_11DC;          /**< Motion the character plays; -1 to keep it still. */
+    float draw_pos[16][4]; /**< Position of each copy of the character to draw. */
+    s32 draw_param[16];    /**< Parameter of each copy of the character to draw. */
+    s32 draw_num;          /**< Number of copies of the character to draw. */
 };
 
 /**
@@ -1342,21 +1342,21 @@ CObject &CObject::operator=(const CObject &source) {
 
 /* CWater's members as its copy assignment reaches them. */
 struct DraftWaterLayout {
-    s32 rows;
-    s32 columns;
-    float *height;
-    float height_ab[2];
-    sceVu0FVECTOR vertex[4];
-    u_int *packet;
-    float unk_064[2];
-    CVisualPolyVu1 visual;
-    float unk_090;
-    float wave_speed;
-    float damping;
-    float unk_09C;
-    float unk_0A0;
-    s32 unk_0A4;
-    CFrameVu1 frame;
+    s32 rows;                /**< Grid rows the surface is divided into. */
+    s32 columns;             /**< Grid columns the surface is divided into. */
+    float *height;           /**< Wave heights the surface currently draws from. */
+    float height_buffers[2]; /**< The two wave-height buffers. */
+    sceVu0FVECTOR vertex[4]; /**< The four corners of the surface. */
+    u_int *packet;           /**< First VU packet of the surface. */
+    float buffer_packets[2]; /**< VU packets for each display buffer. */
+    CVisualPolyVu1 visual;   /**< Draws the polygons of the surface. */
+    float color;             /**< Red, green, blue and alpha channels of the surface. */
+    float wave_speed;        /**< Speed the ripples travel across the grid at. */
+    float damping;           /**< Rate the ripples lose height at. */
+    float height_scale;      /**< Scale from a wave height to the vertical displacement of its vertex. */
+    float distortion;        /**< Scale from a height difference to the texture-coordinate shift it causes. */
+    s32 tags_built;          /**< Set once both packets hold their tags. */
+    CFrameVu1 frame;         /**< Frame that places the surface. */
 };
 
 CWater &CWater::operator=(CWater &src) {
@@ -1385,19 +1385,19 @@ CVisualPolyVu1 &CVisualPolyVu1::operator=(const CVisualPolyVu1 &src) {
  */
 /* The full layout: CVisual's words, then the vector-unit block and its size. */
 struct DraftVisualVu1Layout {
-    CVisual base;
-    s32 unk_10;
-    s32 unk_14;
-    u_int *vu_data;
-    u_int vu_size;
+    CVisual base;   /**< The base visual's words. */
+    s32 vu_state_0; /**< First word of the vector-unit visual's own state. */
+    s32 vu_state_1; /**< Second word of the vector-unit visual's own state. */
+    u_int *vu_data; /**< Vector-unit packet the visual is drawn from. */
+    u_int vu_size;  /**< Size of the vector-unit packet in quadwords. */
 };
 
 CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
     DraftVisualVu1Layout *dst_layout = (DraftVisualVu1Layout *) this;
     const DraftVisualVu1Layout *src_layout = (const DraftVisualVu1Layout *) &src;
     dst_layout->base = src_layout->base;
-    dst_layout->unk_10 = src_layout->unk_10;
-    dst_layout->unk_14 = src_layout->unk_14;
+    dst_layout->vu_state_0 = src_layout->vu_state_0;
+    dst_layout->vu_state_1 = src_layout->vu_state_1;
     dst_layout->vu_data = src_layout->vu_data;
     dst_layout->vu_size = src_layout->vu_size;
     return *this;
@@ -1436,8 +1436,8 @@ CategoryAttr::CategoryAttr() {
  */
 void CategoryAttr::Initialize() {
     lod[0] = -1.0f;
-    unk_10 = 0;
-    unk_14 = 3;
+    lowest = 0;
+    highest = 3;
 }
 
 CBombEffect::CBombEffect() {
@@ -1500,10 +1500,10 @@ extern "C" void *__ct__10CCharacterFv(void *self) {
     __ct__13CTextureAnimeFv(&chara->tex_anime);
     GeneratedMotionParamCtor(&chara->motion_type);
     GeneratedMotionParamCtor(&chara->shadow_motion_type);
-    void *params = ((CCharacter *) self)->unk_420;
+    void *params = ((CCharacter *) self)->motion_storage;
     __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL,
                       sizeof(MotionParam), CHARA_MOTION_MAX);
-    params = ((CCharacter *) self)->unk_820;
+    params = ((CCharacter *) self)->shadow_motion_storage;
     __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL,
                       sizeof(MotionParam), CHARA_MOTION_MAX);
     __construct_array(chara->point_light, GeneratedFakePointLightCtor, NULL, sizeof(CFakePointLight),

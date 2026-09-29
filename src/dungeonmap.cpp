@@ -34,10 +34,10 @@
  * A single grid cell while a floor is being built.
  */
 struct BUILD_MAP_INFO {
-    s32 kind; /**< MapPartsNo that the cell builds into. */
-    s32 unk_04;
-    s32 link[16];
-    s32 unk_48;
+    s32 kind;      /**< MapPartsNo that the cell builds into, or while a corridor is laid, the room it leaves from. */
+    s32 direction; /**< Rotation that the cell's map part uses. */
+    s32 link[16];  /**< 1 for each room whose area or corridor the cell belongs to. */
+    s32 unk_48;    /**< What the cell holds: room, corridor, door, object, dividing wall and door, pillar, stairs, back-floor entrance or linked-room gate. */
 };
 
 STATIC_ASSERT(sizeof(BUILD_MAP_INFO) == 0x4C);
@@ -134,13 +134,13 @@ void CDungeonMap::SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVE
     SetFrameAttr(this->npc[npc_no].chara.frame, 1);
 
     sceVu0CopyVector(this->npc[npc_no].pos, pos);
-    sceVu0CopyVector(this->npc[npc_no].unk_11C0, rot);
+    sceVu0CopyVector(this->npc[npc_no].rot, rot);
     this->npc[npc_no].parts_no = parts_no;
-    this->npc[npc_no].unk_11D8 = visible;
+    this->npc[npc_no].visible = visible;
     this->npc[npc_no].used = 1;
-    this->npc[npc_no].unk_11DC = motion_no;
+    this->npc[npc_no].motion_no = motion_no;
     this->npc[npc_no].chara.motion_no = motion_no;
-    this->npc[npc_no].chara.flags = 0;
+    this->npc[npc_no].chara.motion_flags = 0;
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
 
@@ -150,12 +150,12 @@ void CDungeonMap::ClearNPC_Cash() {
     }
 }
 
-void CDungeonMap::ReservNPC_Draw(int npc_no, float x, float y, float z, int param) {
-    if (this->npc[npc_no].used != 0 && this->npc[npc_no].unk_11D8 != 0 && this->npc[npc_no].chara.frame != NULL) {
+void CDungeonMap::ReservNPC_Draw(int npc_no, float x, float y, float z, int direction) {
+    if (this->npc[npc_no].used != 0 && this->npc[npc_no].visible != 0 && this->npc[npc_no].chara.frame != NULL) {
         this->npc[npc_no].draw_pos[this->npc[npc_no].draw_num][0] = x;
         this->npc[npc_no].draw_pos[this->npc[npc_no].draw_num][1] = y;
         this->npc[npc_no].draw_pos[this->npc[npc_no].draw_num][2] = z;
-        this->npc[npc_no].draw_param[this->npc[npc_no].draw_num] = param;
+        this->npc[npc_no].draw_param[this->npc[npc_no].draw_num] = direction;
         this->npc[npc_no].draw_num++;
     }
 }
@@ -168,7 +168,7 @@ void CDungeonMap::DrawNPCDraw() {
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < this->npc[i].draw_num; j++) {
-            int param;
+            int direction;
             float angle;
             float deg;
             float turn;
@@ -184,16 +184,16 @@ void CDungeonMap::DrawNPCDraw() {
             pos[3] = 1.0f;
             this->npc[i].chara.SetPosition(pos);
 
-            param = this->npc[i].draw_param[j];
-            if (param > 3) {
-                param -= 3;
+            direction = this->npc[i].draw_param[j];
+            if (direction > 3) {
+                direction -= 3;
             }
-            if (param == 3) {
-                param = -1;
+            if (direction == 3) {
+                direction = -1;
             }
-            deg = -90.0f * param;
+            deg = -90.0f * direction;
             angle = (3.1415927f * deg) / 180.0f;
-            angle += this->npc[i].unk_11C0[1];
+            angle += this->npc[i].rot[1];
             if (!(angle <= 3.1415927f)) {
                 angle -= 6.2831855f;
             }
@@ -210,8 +210,8 @@ void CDungeonMap::DrawNPCDraw() {
 
 void CDungeonMap::StepNPC() {
     for (int i = 0; i < 4; i++) {
-        if (this->npc[i].used != 0 && this->npc[i].unk_11D8 != 0 &&
-            this->npc[i].chara.frame != NULL && this->npc[i].unk_11DC != -1) {
+        if (this->npc[i].used != 0 && this->npc[i].visible != 0 &&
+            this->npc[i].chara.frame != NULL && this->npc[i].motion_no != -1) {
             this->npc[i].chara.Step();
         }
     }
@@ -219,13 +219,13 @@ void CDungeonMap::StepNPC() {
 
 void CDungeonMap::NPCSetMotion(int npc_no, int motion_no) {
     this->npc[npc_no].chara.motion_no = motion_no;
-    this->npc[npc_no].chara.flags = 0;
+    this->npc[npc_no].chara.motion_flags = 0;
     this->npc[npc_no].chara.motion_speed = -1.0f;
 }
 
-void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int unk) {
+void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int motion_flags) {
     this->npc[npc_no].chara.motion_no = motion_no;
-    this->npc[npc_no].chara.flags = unk;
+    this->npc[npc_no].chara.motion_flags = motion_flags;
     this->npc[npc_no].chara.motion_speed = -1.0f;
     this->npc[npc_no].chara.motion_speed = speed;
 }
@@ -270,20 +270,20 @@ void CDungeonMap::DrawMapCalc(int mode) {
 
         for (row = 0; row < 20; row++) {
             for (col = 0; col < 20; col++) {
-                int no = col + row * 20;
+                int cell_no = col + row * 20;
 
-                if (this->cells[no].parts_no != MAP_PARTS_NONE) {
+                if (this->cells[cell_no].parts_no != MAP_PARTS_NONE) {
                     CDungeonParts *part;
-                    int dir = this->cells[no].direction;
+                    int dir = this->cells[cell_no].direction;
 
-                    part = &this->parts[this->cells[no].parts_no];
+                    part = &this->parts[this->cells[cell_no].parts_no];
                     part->direction = dir;
-                    part = &this->parts[this->cells[no].parts_no];
+                    part = &this->parts[this->cells[cell_no].parts_no];
                     part->pos[0] = 160.0f * col;
                     part->pos[1] = 0.0f;
                     part->pos[2] = 160.0f * row;
                     part->pos[3] = 1.0f;
-                    this->parts[this->cells[no].parts_no].DrawCalc(col, row, this->cells[no].direction, mode);
+                    this->parts[this->cells[cell_no].parts_no].DrawCalc(col, row, this->cells[cell_no].direction, mode);
                 }
             }
         }
@@ -351,10 +351,10 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
             cell_delta[3] = 0.0f;
             dist = DistVector(cell_delta);
             cell_no = col + row * 20;
-            this->cells[cell_no].unk_08 = dist;
+            this->cells[cell_no].camera_dist = dist;
 
             if (this->cells[cell_no].parts_no == MAP_PARTS_NONE) {
-                this->cells[cell_no].unk_0C = 0;
+                this->cells[cell_no].visible = 0;
                 continue;
             }
 
@@ -399,7 +399,7 @@ void CDungeonMap::DrawMap(CCameraFollow *camera, CFrameVu1 *player) {
                     this->cells[cell_no].parts_no <= MAP_PARTS_URA_ENTRANCE_WEST && georama == 5)
                     draw = 1;
             }
-            this->cells[cell_no].unk_0C = draw;
+            this->cells[cell_no].visible = draw;
             if (this->cells[cell_no].parts_no == MAP_PARTS_NONE)
                 continue;
             if (draw != 1)
@@ -654,7 +654,7 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
 
     for (int i = 0; i < 24; i++) {
         int cell;
-        if (this->boxes[i].used == 0 || this->boxes[i].unk_24 == 0)
+        if (this->boxes[i].used == 0 || this->boxes[i].closed == 0)
             continue;
         map_x = (int) (this->boxes[i].pos[0] * 0.1f);
         map_y = (int) (this->boxes[i].pos[2] * 0.1f);
@@ -886,13 +886,13 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
     for (row = cam_row - 5; row < cam_row + 5; row++) {
         for (col = cam_col - 5; col < cam_col + 5; col++) {
             if (row >= 0 && row < 20 && col >= 0 && col < 20) {
-                int no = col + row * 20;
+                int cell_no = col + row * 20;
 
-                if (this->cells[no].parts_no != MAP_PARTS_NONE &&
-                    this->cells[no].unk_08 <= 160.0f * (3.0f + this->draw_dist_scale)) {
+                if (this->cells[cell_no].parts_no != MAP_PARTS_NONE &&
+                    this->cells[cell_no].camera_dist <= 160.0f * (3.0f + this->draw_dist_scale)) {
                     CDungeonParts *part;
 
-                    for (j = 0; j < (part = &this->parts[this->cells[no].parts_no])->fire_num; j++) {
+                    for (j = 0; j < (part = &this->parts[this->cells[cell_no].parts_no])->fire_num; j++) {
                         float turn;
                         float rot_x;
                         float rot_z;
@@ -908,9 +908,9 @@ void CDungeonMap::DrawFire(CFrameVu1 *frame, CCameraFollow *camera) {
 
                         // The point turns with the part that holds it.
                         angle = (3.1415927f *
-                                 (float) ((4 - this->cells[no].direction) * 90)) /
+                                 (float) ((4 - this->cells[cell_no].direction) * 90)) /
                                 180.0f;
-                        if (this->cells[no].direction != 0) {
+                        if (this->cells[cell_no].direction != 0) {
                             turn = -fire_pos[2] * sinf(angle);
                             rot_x = turn - fire_pos[0] * cosf(angle);
                             turn = -fire_pos[0] * sinf(angle);
@@ -976,12 +976,12 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
     for (row = cell_z - 4; row < cell_z + 4; row++) {
         for (col = cell_x - 4; col < cell_x + 4; col++) {
             if (row >= 0 && row < 20 && col >= 0 && col < 20) {
-                int no = col + row * 20;
+                int cell_no = col + row * 20;
 
-                if (this->cells[no].parts_no != MAP_PARTS_NONE && this->cells[no].unk_08 <= 240.0f &&
-                    this->cells[no].unk_0C == 1) {
+                if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && this->cells[cell_no].camera_dist <= 240.0f &&
+                    this->cells[cell_no].visible == 1) {
                     CDungeonParts *part;
-                    for (i = 0; i < (part = &this->parts[this->cells[no].parts_no])->fire_num; i++) {
+                    for (i = 0; i < (part = &this->parts[this->cells[cell_no].parts_no])->fire_num; i++) {
                         float x;
                         float y;
                         float z;
@@ -994,7 +994,7 @@ void CDungeonMap::DrawRaster(CFrameVu1 *frame) {
                         y = part->fire_pos[i][1];
                         z = part->fire_pos[i][2];
                         // The point turns with the part that holds it.
-                        dir = this->cells[no].direction;
+                        dir = this->cells[cell_no].direction;
                         angle = (3.1415927f * (float) ((4 - dir) * 90)) / 180.0f;
                         if (dir != 0) {
                             rot_x = -z * sinf(angle) - x * cosf(angle);
@@ -1058,15 +1058,15 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
     // One surface draws for the whole floor: the one nearest to the player.
     for (row = 0; row < 16; row++) {
         for (col = 0; col < 16; col++) {
-            int no = col + row * 20;
+            int cell_no = col + row * 20;
             float dist;
 
-            if (this->cells[no].parts_no == MAP_PARTS_NONE) {
+            if (this->cells[cell_no].parts_no == MAP_PARTS_NONE) {
                 continue;
             }
-            part = &this->parts[this->cells[no].parts_no];
+            part = &this->parts[this->cells[cell_no].parts_no];
             water = &part->water;
-            if (this->parts[this->cells[no].parts_no].water.used == 0) {
+            if (this->parts[this->cells[cell_no].parts_no].water.used == 0) {
                 continue;
             }
             vec[0] = 160.0f * (float) col;
@@ -1314,22 +1314,22 @@ void mapPartsFilter(void) {
                 int allow_north = 1;
                 if ((north & 5) == 1)
                     allow_north = 0;
-                if ((north & 0x180) != 0 && buildMapDat[col + (row - 1) * 20].unk_04 != 0)
+                if ((north & 0x180) != 0 && buildMapDat[col + (row - 1) * 20].direction != 0)
                     allow_north = 0;
                 int allow_south = 1;
                 if ((south & 5) == 1)
                     allow_south = 0;
-                if ((south & 0x180) != 0 && buildMapDat[col + (row + 1) * 20].unk_04 != 2)
+                if ((south & 0x180) != 0 && buildMapDat[col + (row + 1) * 20].direction != 2)
                     allow_south = 0;
                 int allow_east = 1;
                 if ((east & 5) == 1)
                     allow_east = 0;
-                if ((east & 0x180) != 0 && buildMapDat[col + row * 20 + 1].unk_04 != 1)
+                if ((east & 0x180) != 0 && buildMapDat[col + row * 20 + 1].direction != 1)
                     allow_east = 0;
                 int allow_west = 1;
                 if ((west & 5) == 1)
                     allow_west = 0;
-                if ((west & 0x180) != 0 && buildMapDat[col + row * 20 - 1].unk_04 != 3)
+                if ((west & 0x180) != 0 && buildMapDat[col + row * 20 - 1].direction != 3)
                     allow_west = 0;
 
                 for (room_no = 0; room_no < 16; room_no++) {
@@ -1347,7 +1347,7 @@ void mapPartsFilter(void) {
                 for (table_no = 0; table_no < 15; table_no++) {
                     if (mask == chainTableRoad[table_no][0]) {
                         buildMapDat[col + row * 20].kind = chainTableRoad[table_no][1];
-                        buildMapDat[col + row * 20].unk_04 = chainTableRoad[table_no][2];
+                        buildMapDat[col + row * 20].direction = chainTableRoad[table_no][2];
                     }
                 }
             }
@@ -1370,7 +1370,7 @@ void mapPartsFilter(void) {
                 for (table_no = 0; table_no < 8; table_no++) {
                     if (mask == chainTableRoom[table_no][0]) {
                         buildMapDat[col + row * 20].kind = chainTableRoom[table_no][1];
-                        buildMapDat[col + row * 20].unk_04 = chainTableRoom[table_no][2];
+                        buildMapDat[col + row * 20].direction = chainTableRoom[table_no][2];
                     }
                 }
             }
@@ -1394,7 +1394,7 @@ void mapPartsFilter(void) {
             }
             if ((buildMapDat[col + row * 20].unk_48 & 8) == 8) {
                 buildMapDat[col + row * 20].kind = MAP_PARTS_HEAL_SPRING_NORTH;
-                buildMapDat[col + row * 20].unk_04 = 0;
+                buildMapDat[col + row * 20].direction = 0;
             }
             if ((buildMapDat[col + row * 20].unk_48 & 0x40) == 0x40) {
                 if ((100.0f * (float) rand()) / 2147483648.0f <= 50.0f) {
@@ -1402,7 +1402,7 @@ void mapPartsFilter(void) {
                 } else {
                     buildMapDat[col + row * 20].kind = MAP_PARTS_PILLAR_2;
                 }
-                buildMapDat[col + row * 20].unk_04 = 0;
+                buildMapDat[col + row * 20].direction = 0;
             }
 
             // A dividing wall joins the walls and rooms around it.
@@ -1489,7 +1489,7 @@ static void copyMapInfo(BUILD_MAP_INFO *dst, BUILD_MAP_INFO *src) {
 // Declared here because the assembly below supplies it and the two callers are
 // further down the file. Not static: the symbol has to be one the transplanted
 // definition can satisfy.
-int joinRoom(int a, int b);
+int joinRoom(int from_room, int to_room);
 
 /**
  * Joins two rooms with a corridor.
@@ -1498,12 +1498,12 @@ int joinRoom(int a, int b);
  * @address 0x1C61C0
  * @size 0x878
  */
-int joinRoom(int a, int b) {
+int joinRoom(int from_room, int to_room) {
     int done;
-    int tx;
-    int ty;
+    int target_x;
+    int target_y;
     int dir;
-    int n;
+    int distance;
     int step;
     int i;
     int cx;
@@ -1515,8 +1515,8 @@ int joinRoom(int a, int b) {
     copyMapInfo(buildMapWork, buildMapDat);
 
     // The corridor leaves the room by whichever side faces the other room.
-    dx = roomStack[a].x - roomStack[b].x;
-    dy = roomStack[a].y - roomStack[b].y;
+    dx = roomStack[from_room].x - roomStack[to_room].x;
+    dy = roomStack[from_room].y - roomStack[to_room].y;
     if (dx * dx > dy * dy) {
         if (dx < 0) {
             dir = 2;
@@ -1533,48 +1533,48 @@ int joinRoom(int a, int b) {
 
     switch (dir) {
         case 1:
-            cx = roomStack[a].x + (roomStack[a].width >> 1);
-            cy = roomStack[a].y - 1;
+            cx = roomStack[from_room].x + (roomStack[from_room].width >> 1);
+            cy = roomStack[from_room].y - 1;
             buildMapWork[cx + (cy + 1) * 20].unk_48 |= 4;
-            buildMapWork[cx + (cy + 1) * 20].link[a] = 1;
-            steps = roomStack[a].y - (roomStack[b].y + roomStack[b].height);
+            buildMapWork[cx + (cy + 1) * 20].link[from_room] = 1;
+            steps = roomStack[from_room].y - (roomStack[to_room].y + roomStack[to_room].height);
             break;
         case 8:
-            cx = roomStack[a].x + (roomStack[a].width >> 1);
-            buildMapWork[cx + (roomStack[a].y + roomStack[a].height - 1) * 20].unk_48 |= 4;
-            buildMapWork[cx + (roomStack[a].y + roomStack[a].height - 1) * 20].link[a] = 1;
-            cy = roomStack[a].y + roomStack[a].height;
-            steps = roomStack[b].y - cy;
+            cx = roomStack[from_room].x + (roomStack[from_room].width >> 1);
+            buildMapWork[cx + (roomStack[from_room].y + roomStack[from_room].height - 1) * 20].unk_48 |= 4;
+            buildMapWork[cx + (roomStack[from_room].y + roomStack[from_room].height - 1) * 20].link[from_room] = 1;
+            cy = roomStack[from_room].y + roomStack[from_room].height;
+            steps = roomStack[to_room].y - cy;
             break;
         case 2:
-            cx = roomStack[a].x + roomStack[a].width;
-            cy = roomStack[a].y + (roomStack[a].height >> 1);
+            cx = roomStack[from_room].x + roomStack[from_room].width;
+            cy = roomStack[from_room].y + (roomStack[from_room].height >> 1);
             buildMapWork[cx + cy * 20 - 1].unk_48 |= 4;
-            buildMapWork[cx + cy * 20 - 1].link[a] = 1;
-            steps = roomStack[b].x - (roomStack[a].x + roomStack[a].width);
+            buildMapWork[cx + cy * 20 - 1].link[from_room] = 1;
+            steps = roomStack[to_room].x - (roomStack[from_room].x + roomStack[from_room].width);
             break;
         case 4:
-            cx = roomStack[a].x - 1;
-            cy = roomStack[a].y + (roomStack[a].height >> 1);
+            cx = roomStack[from_room].x - 1;
+            cy = roomStack[from_room].y + (roomStack[from_room].height >> 1);
             buildMapWork[cx + cy * 20 + 1].unk_48 |= 4;
-            buildMapWork[cx + cy * 20 + 1].link[a] = 1;
-            steps = roomStack[a].x - (roomStack[b].x + roomStack[b].width);
+            buildMapWork[cx + cy * 20 + 1].link[from_room] = 1;
+            steps = roomStack[from_room].x - (roomStack[to_room].x + roomStack[to_room].width);
             break;
     }
 
-    tx = roomStack[b].x + (roomStack[b].width >> 1);
-    ty = roomStack[b].y + (roomStack[b].height >> 1);
+    target_x = roomStack[to_room].x + (roomStack[to_room].width >> 1);
+    target_y = roomStack[to_room].y + (roomStack[to_room].height >> 1);
     steps = (steps >> 1) + 1;
 
     // Two rooms that share a wall still need a cell between them.
-    if (roomStack[a].y == roomStack[b].y + roomStack[b].height) {
+    if (roomStack[from_room].y == roomStack[to_room].y + roomStack[to_room].height) {
         if (dir == 1 || dir == 8) {
             if (steps < 2) {
                 steps = 2;
             }
         }
     }
-    if (roomStack[b].y == roomStack[a].y + roomStack[a].height) {
+    if (roomStack[to_room].y == roomStack[from_room].y + roomStack[from_room].height) {
         if (dir == 1 || dir == 8) {
             if (steps < 2) {
                 steps = 2;
@@ -1586,8 +1586,8 @@ int joinRoom(int a, int b) {
     while (done == 0) {
         if (steps != 0) {
             if (buildMapWork[cx + cy * 20].kind == MAP_PARTS_NONE) {
-                buildMapWork[cx + cy * 20].kind = a;
-                buildMapWork[cx + cy * 20].link[a] = 1;
+                buildMapWork[cx + cy * 20].kind = from_room;
+                buildMapWork[cx + cy * 20].link[from_room] = 1;
                 buildMapWork[cx + cy * 20].unk_48 |= 2;
                 steps--;
                 if (steps != 0) {
@@ -1609,9 +1609,9 @@ int joinRoom(int a, int b) {
             } else {
                 if ((buildMapWork[cx + cy * 20].unk_48 & 1) == 1) {
                     buildMapWork[cx + cy * 20].unk_48 |= 4;
-                    buildMapWork[cx + cy * 20].link[a] = 1;
+                    buildMapWork[cx + cy * 20].link[from_room] = 1;
                 } else {
-                    buildMapWork[cx + cy * 20].link[a] = 1;
+                    buildMapWork[cx + cy * 20].link[from_room] = 1;
                 }
                 done = 1;
             }
@@ -1621,25 +1621,25 @@ int joinRoom(int a, int b) {
             switch (dir) {
                 case 1:
                 case 8:
-                    n = tx - cx;
-                    if (n < 0) {
-                        n = -n;
+                    distance = target_x - cx;
+                    if (distance < 0) {
+                        distance = -distance;
                         step = -1;
                     } else {
                         step = 1;
                     }
-                    for (i = 0; i < n; i++) {
+                    for (i = 0; i < distance; i++) {
                         cx += step;
                         if (buildMapWork[cx + cy * 20].kind == MAP_PARTS_NONE) {
-                            buildMapWork[cx + cy * 20].kind = a;
-                            buildMapWork[cx + cy * 20].link[a] = 1;
+                            buildMapWork[cx + cy * 20].kind = from_room;
+                            buildMapWork[cx + cy * 20].link[from_room] = 1;
                             buildMapWork[cx + cy * 20].unk_48 |= 2;
                         } else {
                             if ((buildMapWork[cx + cy * 20].unk_48 & 1) == 1) {
                                 buildMapWork[cx + cy * 20].unk_48 |= 4;
-                                buildMapWork[cx + cy * 20].link[a] = 1;
+                                buildMapWork[cx + cy * 20].link[from_room] = 1;
                             } else {
-                                buildMapWork[cx + cy * 20].link[a] = 1;
+                                buildMapWork[cx + cy * 20].link[from_room] = 1;
                             }
                             done = 1;
                         }
@@ -1647,25 +1647,25 @@ int joinRoom(int a, int b) {
                     break;
                 case 2:
                 case 4:
-                    n = ty - cy;
-                    if (n < 0) {
-                        n = -n;
+                    distance = target_y - cy;
+                    if (distance < 0) {
+                        distance = -distance;
                         step = -1;
                     } else {
                         step = 1;
                     }
-                    for (i = 0; i < n; i++) {
+                    for (i = 0; i < distance; i++) {
                         cy += step;
                         if (buildMapWork[cx + cy * 20].kind == MAP_PARTS_NONE) {
-                            buildMapWork[cx + cy * 20].kind = a;
-                            buildMapWork[cx + cy * 20].link[a] = 1;
+                            buildMapWork[cx + cy * 20].kind = from_room;
+                            buildMapWork[cx + cy * 20].link[from_room] = 1;
                             buildMapWork[cx + cy * 20].unk_48 |= 2;
                         } else {
                             if ((buildMapWork[cx + cy * 20].unk_48 & 1) == 1) {
                                 buildMapWork[cx + cy * 20].unk_48 |= 4;
-                                buildMapWork[cx + cy * 20].link[a] = 1;
+                                buildMapWork[cx + cy * 20].link[from_room] = 1;
                             } else {
-                                buildMapWork[cx + cy * 20].link[a] = 1;
+                                buildMapWork[cx + cy * 20].link[from_room] = 1;
                             }
                             done = 1;
                         }
@@ -1750,14 +1750,14 @@ static void setRoomDivid() {
     int line_len[64];
     int line_dir[64];
     int i;
-    int num;
+    int line_num;
     int ok;
     int x;
     int y;
-    int no;
+    int line_no;
 
     for (i = 0; i < roomStackCnt; i++) {
-        num = 0;
+        line_num = 0;
 
         // A room can be divided along any row that is free from end to end.
         for (y = 1; y < roomStack[i].height - 1; y++) {
@@ -1768,11 +1768,11 @@ static void setRoomDivid() {
                 }
             }
             if (ok == 1) {
-                line_x[num] = roomStack[i].x;
-                line_y[num] = y + roomStack[i].y;
-                line_len[num] = roomStack[i].width;
-                line_dir[num] = 0;
-                num++;
+                line_x[line_num] = roomStack[i].x;
+                line_y[line_num] = y + roomStack[i].y;
+                line_len[line_num] = roomStack[i].width;
+                line_dir[line_num] = 0;
+                line_num++;
             }
         }
 
@@ -1785,15 +1785,15 @@ static void setRoomDivid() {
                 }
             }
             if (ok == 1) {
-                line_x[num] = x + roomStack[i].x;
-                line_y[num] = roomStack[i].y;
-                line_len[num] = roomStack[i].height;
-                line_dir[num] = 1;
-                num++;
+                line_x[line_num] = x + roomStack[i].x;
+                line_y[line_num] = roomStack[i].y;
+                line_len[line_num] = roomStack[i].height;
+                line_dir[line_num] = 1;
+                line_num++;
             }
         }
 
-        if (num == 0) {
+        if (line_num == 0) {
             continue;
         }
         if (!((100.0f * (float) rand()) / 2147483648.0f <= 40.0f)) {
@@ -1801,20 +1801,20 @@ static void setRoomDivid() {
         }
 
         // The wall runs the whole length of the line, with one gap in it.
-        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-        if (line_dir[no] == 0) {
-            for (x = line_x[no]; x < line_x[no] + line_len[no]; x++) {
-                buildMapDat[x + line_y[no] * 20].unk_48 |= 0x10;
+        line_no = (int) (((float) line_num * (float) rand()) / 2147483648.0f);
+        if (line_dir[line_no] == 0) {
+            for (x = line_x[line_no]; x < line_x[line_no] + line_len[line_no]; x++) {
+                buildMapDat[x + line_y[line_no] * 20].unk_48 |= 0x10;
             }
-            buildMapDat[line_x[no] + line_y[no] * 20 +
-                        (int) (((float) (line_len[no] - 2) * (float) rand()) / 2147483648.0f) + 1]
+            buildMapDat[line_x[line_no] + line_y[line_no] * 20 +
+                        (int) (((float) (line_len[line_no] - 2) * (float) rand()) / 2147483648.0f) + 1]
                 .unk_48 |= 0x20;
         } else {
-            for (y = line_y[no]; y < line_y[no] + line_len[no]; y++) {
-                buildMapDat[y * 20 + line_x[no]].unk_48 |= 0x10;
+            for (y = line_y[line_no]; y < line_y[line_no] + line_len[line_no]; y++) {
+                buildMapDat[y * 20 + line_x[line_no]].unk_48 |= 0x10;
             }
-            buildMapDat[line_x[no] +
-                        (line_y[no] + (int) (((float) (line_len[no] - 2) * (float) rand()) / 2147483648.0f) + 1) * 20]
+            buildMapDat[line_x[line_no] +
+                        (line_y[line_no] + (int) (((float) (line_len[line_no] - 2) * (float) rand()) / 2147483648.0f) + 1) * 20]
                 .unk_48 |= 0x20;
         }
     }
@@ -1826,9 +1826,9 @@ static void setUnderDungeonStart() {
     int i;
     int x;
     int y;
-    int flg;
-    int cnt;
-    int no;
+    int searching;
+    int tries;
+    int pick;
 
     safe_num = 0;
     for (i = 0; i < 120; i++) {
@@ -1848,30 +1848,30 @@ static void setUnderDungeonStart() {
 
     // Keep picking cells until one comes out with a free cell above it and a
     // corridor on both sides.
-    flg = 1;
-    cnt = 0;
-    while (flg) {
-        no = (int) (((float) safe_num * (float) rand()) / 2147483648.0f);
-        printf("[s]%d\n", no);
-        x = safe[no * 2];
-        y = safe[no * 2 + 1];
+    searching = 1;
+    tries = 0;
+    while (searching) {
+        pick = (int) (((float) safe_num * (float) rand()) / 2147483648.0f);
+        printf("[s]%d\n", pick);
+        x = safe[pick * 2];
+        y = safe[pick * 2 + 1];
         if (buildMapDat[x + (y - 1) * 20].unk_48 == 0) {
             if ((buildMapDat[x + y * 20 + 1].unk_48 & 0x5) == 1) {
                 if ((buildMapDat[x + y * 20 - 1].unk_48 & 0x5) == 1) {
                     buildMapDat[x + y * 20].unk_48 = 0x201;
                     buildMapDat[x + y * 20].kind = MAP_PARTS_ROOM_GATE_NORTH;
-                    buildMapDat[x + y * 20].unk_04 = 0;
-                    flg = 0;
+                    buildMapDat[x + y * 20].direction = 0;
+                    searching = 0;
                 }
             }
         }
-        cnt++;
-        if (cnt >= 5000) {
-            flg = 0;
+        tries++;
+        if (tries >= 5000) {
+            searching = 0;
         }
     }
-    if (flg == 0) {
-        printf("safeNum = %d, escapeCnt = %d\n", safe_num, cnt);
+    if (searching == 0) {
+        printf("safeNum = %d, escapeCnt = %d\n", safe_num, tries);
     }
 }
 
@@ -1881,7 +1881,7 @@ static void setStair() {
     int i;
     int x;
     int y;
-    int no;
+    int pick;
 
     // The stair down stands above a corridor that has a free cell over it.
     safe_num = 0;
@@ -1899,19 +1899,19 @@ static void setStair() {
             }
         }
     }
-    no = (int) (((float) safe_num * (float) rand()) / 2147483648.0f);
+    pick = (int) (((float) safe_num * (float) rand()) / 2147483648.0f);
     if (safe_num <= 0) {
         printf("ERR: DownStair!!\n");
         y = 1;
         x = 1;
     } else {
-        x = safe[no * 2];
-        y = safe[no * 2 + 1];
+        x = safe[pick * 2];
+        y = safe[pick * 2 + 1];
     }
     buildMapDat[x + (y - 1) * 20].unk_48 = 0x80;
     buildMapDat[x + (y - 1) * 20].kind = buildMapDat[x + y * 20].kind;
     buildMapDat[x + (y - 1) * 20].link[buildMapDat[x + y * 20].kind] = 1;
-    buildMapDat[x + (y - 1) * 20].unk_04 = 0;
+    buildMapDat[x + (y - 1) * 20].direction = 0;
 
     // The stair up stands below one that has a free cell under it.
     safe_num = 0;
@@ -1929,19 +1929,19 @@ static void setStair() {
             }
         }
     }
-    no = (int) (((float) safe_num * (float) rand()) / 2147483648.0f);
+    pick = (int) (((float) safe_num * (float) rand()) / 2147483648.0f);
     if (safe_num <= 0) {
         printf("ERR: UpStair!!\n");
         y = 1;
         x = 1;
     } else {
-        x = safe[no * 2];
-        y = safe[no * 2 + 1];
+        x = safe[pick * 2];
+        y = safe[pick * 2 + 1];
     }
     buildMapDat[x + (y + 1) * 20].unk_48 = 0x100;
     buildMapDat[x + (y + 1) * 20].kind = buildMapDat[x + y * 20].kind;
     buildMapDat[x + (y + 1) * 20].link[buildMapDat[x + y * 20].kind] = 1;
-    buildMapDat[x + (y + 1) * 20].unk_04 = 2;
+    buildMapDat[x + (y + 1) * 20].direction = 2;
 }
 
 void CDungeonMap::initTrapCircle() {
@@ -2076,7 +2076,7 @@ void CDungeonMap::SetAtraBoll(float *pos, int atra_no) {
 
 found:
     this->events[event_no].kind = 3;
-    this->events[event_no].unk_0C = 0;
+    this->events[event_no].placed_flag = 0;
     this->events[event_no].index = this->atra_num;
     sceVu0CopyVector(this->events[event_no].pos, pos);
     this->events[event_no].radius = 13.0f;
@@ -2087,7 +2087,7 @@ found:
  * Adds a treasure box to an open slot and creates its matching map event.
  * The event stores the box coordinates and interaction radius.
  */
-int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int param) {
+int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int trap_no) {
     int box_no;
     int event_no;
     int i;
@@ -2109,8 +2109,8 @@ int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int param) {
     this->boxes[box_no].lid_angle = 0;
     this->boxes[box_no].kind = kind;
     this->boxes[box_no].item_no = item_no;
-    this->boxes[box_no].unk_24 = 1;
-    this->boxes[box_no].unk_30 = param;
+    this->boxes[box_no].closed = 1;
+    this->boxes[box_no].trap_no = trap_no;
 
     for (j = 0; j < 48; j++) {
         if (this->events[j].kind == -1) {
@@ -2123,9 +2123,9 @@ int CDungeonMap::SetTreasureBox(float *pos, int item_no, int kind, int param) {
 
 found:
     this->events[event_no].kind = 2;
-    this->events[event_no].unk_0C = 0;
-    this->events[event_no].unk_00 = (int) pos[0];
-    this->events[event_no].unk_04 = (int) pos[2];
+    this->events[event_no].placed_flag = 0;
+    this->events[event_no].origin_x = (int) pos[0];
+    this->events[event_no].origin_z = (int) pos[2];
     this->events[event_no].index = this->box_num;
 
     // The event sits in front of the box, and a small box stands nearer to it.
@@ -2184,10 +2184,10 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
             if ((100.0f * (float) rand()) / 2147483648.0f >= 88.0f && object_count >= 2) {
                 int item_no = PresetSmallItemNo_Get(selectMapNo, floor_no, special, 0);
                 if (item_no != -1) {
-                    int box_value = (int) ((6.0f * (float) rand()) / 2147483648.0f);
-                    if (box_value < 0 || box_value >= 6)
-                        box_value = 1;
-                    this->SetTreasureBox(box_pos, item_no, 0, box_value);
+                    int trap_no = (int) ((6.0f * (float) rand()) / 2147483648.0f);
+                    if (trap_no < 0 || trap_no >= 6)
+                        trap_no = 1;
+                    this->SetTreasureBox(box_pos, item_no, 0, trap_no);
                     object_count++;
                 }
             } else {
@@ -2250,9 +2250,9 @@ void CDungeonMap::buildEventData(int floor_no, int enabled, int place_atla) {
 
             found_atla_event:
                 this->events[event_no].kind = 3;
-                this->events[event_no].unk_0C = 0;
-                this->events[event_no].unk_00 = event_x;
-                this->events[event_no].unk_04 = event_y;
+                this->events[event_no].placed_flag = 0;
+                this->events[event_no].origin_x = event_x;
+                this->events[event_no].origin_z = event_y;
                 this->events[event_no].index = this->atra_num;
                 sceVu0CopyVector(this->events[event_no].pos, object_pos);
                 this->events[event_no].radius = 13.0f;
@@ -2301,7 +2301,7 @@ found:
 
     // The mimic looks like a treasure box, so it takes a box slot as well.
     this->events[event_no].kind = 8;
-    this->events[event_no].unk_0C = 0;
+    this->events[event_no].placed_flag = 0;
     this->events[event_no].index = box_no;
 
     sceVu0CopyVector(this->boxes[box_no].pos, pos);
@@ -2309,7 +2309,7 @@ found:
     this->boxes[box_no].lid_angle = 0;
     this->boxes[box_no].kind = kind;
     this->boxes[box_no].item_no = item_no;
-    this->boxes[box_no].unk_24 = 1;
+    this->boxes[box_no].closed = 1;
 
     switch (kind) {
         case 0:
@@ -2362,23 +2362,23 @@ void CDungeonMap::buildDummyModel() {
     int j;
     int kind;
     int num;
-    int cnt;
+    int tries;
     int x;
     int z;
-    int r;
+    int shape;
 
     num = 0;
-    cnt = 0;
+    tries = 0;
     this->dummy_num = 0;
     while (num < 8) {
         x = (int) ((21.0f * (float) rand()) / 2147483648.0f) - 1;
         z = (int) ((21.0f * (float) rand()) / 2147483648.0f) - 1;
-        r = (int) ((3.0f * (float) rand()) / 2147483648.0f);
+        shape = (int) ((3.0f * (float) rand()) / 2147483648.0f);
         kind = -1;
 
         // Each kind covers a different footprint, and only goes down where
         // every cell it would cover is empty.
-        switch (r) {
+        switch (shape) {
             case 0:
                 kind = 0;
                 for (j = 0; j < 2; j++) {
@@ -2465,10 +2465,10 @@ void CDungeonMap::buildDummyModel() {
             }
         }
 
-        if (cnt > 10000) {
+        if (tries > 10000) {
             break;
         }
-        cnt++;
+        tries++;
     }
 }
 
@@ -2702,21 +2702,21 @@ void CDungeonMap::SetUnderLoad() {
     }
 }
 
-int CDungeonMap::CreatPartsList(int *list, int max, int lo, int hi) {
+int CDungeonMap::CreatPartsList(int *list, int max, int first_part, int last_part) {
     int num = 0;
     PARTS_ADJACENT adjacent = {{{0, -1}, {0, 1}, {-1, 0}, {1, 0}}};
     int row;
     int col;
-    int ok;
+    int free;
     int i;
 
     for (row = 1; row < 15; row++) {
         for (col = 1; col < 15; col++) {
-            if (hi != -1) {
+            if (last_part != -1) {
 
                 // Any cell that holds a part of a kind in the range will do.
-                if (this->cells[col + row * 20].parts_no >= lo &&
-                    this->cells[col + row * 20].parts_no <= hi) {
+                if (this->cells[col + row * 20].parts_no >= first_part &&
+                    this->cells[col + row * 20].parts_no <= last_part) {
                     list[num * 2] = col;
                     list[num * 2 + 1] = row;
                     num++;
@@ -2726,19 +2726,19 @@ int CDungeonMap::CreatPartsList(int *list, int max, int lo, int hi) {
                     }
                 }
             } else {
-                ok = 1;
+                free = 1;
 
                 // A cell that touches one that is already spoken for will not.
                 for (i = 0; i < 4; i++) {
                     int dx = adjacent.offset[i][0];
                     int dy = adjacent.offset[i][1];
-                    int no = dx + (col + (row + dy) * 20);
+                    int cell_no = dx + (col + (row + dy) * 20);
 
-                    if (this->cells[no].parts_no != MAP_PARTS_NONE && (buildMapDat[no].unk_48 & 0x400) == 0x400) {
-                        ok = 0;
+                    if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && (buildMapDat[cell_no].unk_48 & 0x400) == 0x400) {
+                        free = 0;
                     }
                 }
-                if (this->cells[col + row * 20].parts_no == lo && ok != 0) {
+                if (this->cells[col + row * 20].parts_no == first_part && free != 0) {
                     list[num * 2] = col;
                     list[num * 2 + 1] = row;
                     num++;
@@ -2763,7 +2763,7 @@ void CDungeonMap::BuildCharaSpecialParts() {
     int roll;
     int num;
     int floor;
-    int no;
+    int pick;
     MAP_CELL *cell;
     unsigned int address;
 
@@ -2793,8 +2793,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
         if (UserStatus->party_size >= 2 && roll > 0x32) {
             num = this->CreatPartsList(list, 0x40, 0, -1);
             if (num > 0) {
-                no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_XIAO;
+                pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_XIAO;
             }
         }
 
@@ -2807,8 +2807,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 3 && roll > 0xA && floor >= 9) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_GORO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2820,8 +2820,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 3 && roll < 0x28) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_GORO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2831,8 +2831,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 4 && roll >= 0x28 && floor >= 9) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_RUBY_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2844,8 +2844,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 3 && roll < 0x14) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_GORO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2855,8 +2855,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 4 && roll < 0x28) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_RUBY_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2866,8 +2866,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 5 && roll >= 0x28 && floor >= 9) {
                     num = this->CreatPartsList(list, 0x40, 0, -1);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
                         return;
                     }
                 }
@@ -2876,8 +2876,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 3 && roll < 0xA) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_GORO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2887,8 +2887,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 4 && roll < 0x14) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_RUBY_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2898,16 +2898,16 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 5 && roll < 0x1E) {
                     num = this->CreatPartsList(list, 0x40, 0, -1);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
                         return;
                     }
                 }
                 if (UserStatus->party_size >= 6 && roll > 0x28 && floor >= 8) {
                     num = this->CreatPartsList(list, 0x40, 0, -1);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_OSMOND;
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_OSMOND;
                         return;
                     }
                 }
@@ -2916,8 +2916,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 3 && roll < 0xA) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_GORO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2927,8 +2927,8 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 4 && roll < 0x14) {
                     num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                         address += (unsigned int) this;
                         cell = &((CDungeonMap *) address)->cells[0];
                         cell->parts_no += MAP_PARTS_KEY_DOOR_RUBY_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2938,16 +2938,16 @@ void CDungeonMap::BuildCharaSpecialParts() {
                 if (UserStatus->party_size >= 5 && roll < 0x1E) {
                     num = this->CreatPartsList(list, 0x40, 0, -1);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
                         return;
                     }
                 }
                 if (UserStatus->party_size >= 6 && roll > 0x28) {
                     num = this->CreatPartsList(list, 0x40, 0, -1);
                     if (num > 0) {
-                        no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                        this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_OSMOND;
+                        pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                        this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_OSMOND;
                     }
                 }
                 break;
@@ -2965,7 +2965,7 @@ void CDungeonMap::BuildCharaSpecialParts() {
 int CDungeonMap::SetCharaDoor(int chara_no) {
     int list[128];
     int num;
-    int no;
+    int pick;
     MAP_CELL *cell;
     unsigned int address;
 
@@ -2977,16 +2977,16 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
             if (UserStatus->party_size >= 2) {
                 num = this->CreatPartsList(list, 0x40, 0, -1);
                 if (num > 0) {
-                    no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                    this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_XIAO;
+                    pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                    this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_XIAO;
                 }
             }
             break;
         case 1:
             num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
             if (num > 0) {
-                no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                 address += (unsigned int) this;
                 cell = &((CDungeonMap *) address)->cells[0];
                 cell->parts_no += MAP_PARTS_KEY_DOOR_XIAO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -2995,8 +2995,8 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
         case 2:
             num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
             if (num > 0) {
-                no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                 address += (unsigned int) this;
                 cell = &((CDungeonMap *) address)->cells[0];
                 cell->parts_no += MAP_PARTS_KEY_DOOR_GORO_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -3005,8 +3005,8 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
         case 3:
             num = this->CreatPartsList(list, 0x40, MAP_PARTS_ROOM_DOOR_NORTH, MAP_PARTS_ROOM_DOOR_WEST);
             if (num > 0) {
-                no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                address = (list[no * 2] + list[no * 2 + 1] * 20) * sizeof(MAP_CELL);
+                pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                address = (list[pick * 2] + list[pick * 2 + 1] * 20) * sizeof(MAP_CELL);
                 address += (unsigned int) this;
                 cell = &((CDungeonMap *) address)->cells[0];
                 cell->parts_no += MAP_PARTS_KEY_DOOR_RUBY_NORTH - MAP_PARTS_ROOM_DOOR_NORTH;
@@ -3015,15 +3015,15 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
         case 4:
             num = this->CreatPartsList(list, 0x40, 0, -1);
             if (num > 0) {
-                no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
+                pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_UNGAGA;
             }
             break;
         case 5:
             num = this->CreatPartsList(list, 0x40, 0, -1);
             if (num > 0) {
-                no = (int) (((float) num * (float) rand()) / 2147483648.0f);
-                this->cells[list[no * 2] + list[no * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_OSMOND;
+                pick = (int) (((float) num * (float) rand()) / 2147483648.0f);
+                this->cells[list[pick * 2] + list[pick * 2 + 1] * 20].parts_no = MAP_PARTS_KEY_OSMOND;
             }
             break;
     }
@@ -3032,9 +3032,9 @@ int CDungeonMap::SetCharaDoor(int chara_no) {
 }
 
 /* MWCC emits its own jump table for the switch, which lands where retail keeps
- * @3191, and a .data template for `map_no`, which is retail's @3162 at the end
+ * @3191, and a .data template for `gate_keys`, which is retail's @3162 at the end
  * of this unit's data run. */
-void CDungeonMap::buildRandomMap(int room_max, int full) {
+void CDungeonMap::buildRandomMap(int room_max, int first_build) {
     int w;
     int h;
     int j;
@@ -3050,19 +3050,19 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     int near_dist;
 
     // A floor that is built for the first time picks the seed it is built from.
-    if (full != 0) {
+    if (first_build != 0) {
         this->map_seed = (int) ((float) rand() / (float) 100000);
         srand(this->map_seed);
     }
 
     for (i = 0; i < 48; i++) {
         this->events[i].kind = -1;
-        this->events[i].unk_2C = 0;
+        this->events[i].reset_flag = 0;
     }
     for (i = 0; i < 24; i++) {
         this->boxes[i].used = 0;
         this->boxes[i].lid_angle = 0;
-        this->boxes[i].unk_30 = 0;
+        this->boxes[i].trap_no = 0;
     }
     this->box_num = 0;
     for (i = 0; i < 8; i++) {
@@ -3076,7 +3076,7 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
             buildMapDat[col + row * 20].kind = MAP_PARTS_NONE;
-            buildMapDat[col + row * 20].unk_04 = 0;
+            buildMapDat[col + row * 20].direction = 0;
             for (j = 0; j < 16; j++) {
                 buildMapDat[col + row * 20].link[j] = 0;
             }
@@ -3154,15 +3154,15 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     }
 
     setRoomObject();
-    if (full != 0) {
+    if (first_build != 0) {
         setRoomDivid();
     }
-    if (full != 0) {
+    if (first_build != 0) {
         setUnderDungeonStart();
     } else {
         setUnderDungeonStart();
     }
-    if (full != 0) {
+    if (first_build != 0) {
         setStair();
     }
     mapPartsFilter();
@@ -3173,49 +3173,49 @@ void CDungeonMap::buildRandomMap(int room_max, int full) {
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
             this->cells[col + row * 20].parts_no = buildMapDat[col + row * 20].kind;
-            this->cells[col + row * 20].direction = buildMapDat[col + row * 20].unk_04;
+            this->cells[col + row * 20].direction = buildMapDat[col + row * 20].direction;
         }
     }
 
     if (selectMapNo == 4) {
         this->buildDummyModel();
     }
-    if ((int) ((100.0f * (float) rand()) / 2147483648.0f) < 0x33 && full != 0) {
+    if ((int) ((100.0f * (float) rand()) / 2147483648.0f) < 0x33 && first_build != 0) {
         this->GetRoomLinkInfo();
     }
-    if (full != 0) {
+    if (first_build != 0) {
         this->BuildCharaSpecialParts();
     }
 
-    // Which set of map parts the floor draws with.
+    // Which key opens the floor's gate.
     switch (selectMapNo) {
         case 0:
-            this->unk_0464 = 0xC3;
+            this->gate_key_no = 0xC3;
             break;
         case 2:
-            this->unk_0464 = 0xC9;
+            this->gate_key_no = 0xC9;
             break;
         case 3:
-            this->unk_0464 = 0xCA;
+            this->gate_key_no = 0xCA;
             break;
         case 4:
-            this->unk_0464 = 0xCB;
+            this->gate_key_no = 0xCB;
             break;
         case 5:
-            this->unk_0464 = 0xCC;
+            this->gate_key_no = 0xCC;
             break;
         case 6:
-            this->unk_0464 = 0xCE;
+            this->gate_key_no = 0xCE;
             break;
     }
     if (selectMapNo == 1) {
-        int no = (int) ((3.0f * (float) rand()) / 2147483648.0f);
-        int map_no[3] = {0xC4, 0xC6, 0xCD};
+        int pick = (int) ((3.0f * (float) rand()) / 2147483648.0f);
+        int gate_keys[3] = {0xC4, 0xC6, 0xCD};
 
-        if (no < 0 || no > 2) {
-            no = 0;
+        if (pick < 0 || pick > 2) {
+            pick = 0;
         }
-        this->unk_0464 = map_no[no];
+        this->gate_key_no = gate_keys[pick];
     }
 
     this->SetUnderLoad();
@@ -3237,7 +3237,7 @@ void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     this->box_collision_model = NULL;
     this->chest_lid_model = NULL;
     this->chest_body_model = NULL;
-    this->unk_BC78 = NULL;
+    this->chest_collision_model = NULL;
     this->fall_model = NULL;
     for (i = 0; i < 24; i++) {
         this->boxes[i].used = 0;
@@ -3245,8 +3245,8 @@ void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     for (i = 0; i < this->atra_num; i++) {
         this->atra[i].used = 0;
     }
-    this->unk_03B4 = 0;
-    this->unk_03B8 = 0;
+    this->bg_model_num = 0;
+    this->dummy_frame_num = 0;
     this->dummy_num = 0;
     this->water.SetSize(32, 32, alloc);
     for (i = 0; i < 72; i++) {
@@ -3254,9 +3254,9 @@ void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     }
     for (i = 0; i < 400; i++) {
         this->cells[i].parts_no = MAP_PARTS_NONE;
-        this->cells[i].unk_08 = -1.0f;
+        this->cells[i].camera_dist = -1.0f;
         this->mask[i] = 0;
-        this->cells[i].unk_0C = 0;
+        this->cells[i].visible = 0;
     }
     for (i = 0; i < 16; i++) {
         this->room_seen[i] = 0;
@@ -3268,12 +3268,12 @@ void CDungeonMap::initSubmap(CDataAlloc2<1> *alloc) {
     }
     for (j = 0; j < 48; j++) {
         this->events[j].kind = -1;
-        this->events[j].unk_2C = 0;
+        this->events[j].reset_flag = 0;
     }
     for (j = 0; j < 24; j++) {
         this->boxes[j].used = 0;
         this->boxes[j].lid_angle = 0;
-        this->boxes[j].unk_30 = 0;
+        this->boxes[j].trap_no = 0;
     }
     this->box_num = 0;
     for (j = 0; j < 8; j++) {
@@ -3300,7 +3300,7 @@ void CDungeonMap::initalize() {
     this->box_collision_model = NULL;
     this->chest_lid_model = NULL;
     this->chest_body_model = NULL;
-    this->unk_BC78 = NULL;
+    this->chest_collision_model = NULL;
     this->fall_model = NULL;
     for (i = 0; i < 24; i++) {
         this->boxes[i].used = 0;
@@ -3308,17 +3308,17 @@ void CDungeonMap::initalize() {
     for (i = 0; i < this->atra_num; i++) {
         this->atra[i].used = 0;
     }
-    this->unk_03B4 = 0;
-    this->unk_03B8 = 0;
+    this->bg_model_num = 0;
+    this->dummy_frame_num = 0;
     this->dummy_num = 0;
     for (i = 0; i < 72; i++) {
         this->parts[i].initalize();
     }
     for (i = 0; i < 400; i++) {
         this->cells[i].parts_no = MAP_PARTS_NONE;
-        this->cells[i].unk_08 = -1.0f;
+        this->cells[i].camera_dist = -1.0f;
         this->mask[i] = 0;
-        this->cells[i].unk_0C = 0;
+        this->cells[i].visible = 0;
     }
     for (i = 0; i < 16; i++) {
         this->room_seen[i] = 0;
@@ -3330,12 +3330,12 @@ void CDungeonMap::initalize() {
     }
     for (j = 0; j < 48; j++) {
         this->events[j].kind = -1;
-        this->events[j].unk_2C = 0;
+        this->events[j].reset_flag = 0;
     }
     for (j = 0; j < 24; j++) {
         this->boxes[j].used = 0;
         this->boxes[j].lid_angle = 0;
-        this->boxes[j].unk_30 = 0;
+        this->boxes[j].trap_no = 0;
     }
     this->box_num = 0;
     for (j = 0; j < 8; j++) {

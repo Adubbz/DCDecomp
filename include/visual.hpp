@@ -119,7 +119,7 @@ public:
      * @address 0x134BB0
      * @size 0xC
      */
-    virtual int RemakeData(u_int *data);
+    virtual int RemakeData(u_int *block);
     virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
                         u_long128 *draw_state, int unknown1, int unknown2);
     /**
@@ -194,8 +194,8 @@ public:
     virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
                         VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
-    u_int *data; /**< Retained source MDT image used to rebuild the visual. */
-    int unk_00;
+    u_int *data;              /**< Retained source MDT image used to rebuild the visual. */
+    int copy_on_draw;         /**< Whether each draw works from a copy of the built block in the frame's data arena. */
     u_int *vu_data_buffer[2]; /**< Built block each display buffer draws from. */
 };
 
@@ -243,7 +243,7 @@ public:
      * @address 0x136530
      * @size 0x304
      */
-    int CreateVUdataShadow(u_int *block, u_int *data);
+    int CreateVUdataShadow(u_int *block, u_int *model_data);
 
     /**
      * Writes visible shadow geometry and returns its size in quadwords.
@@ -252,8 +252,7 @@ public:
      * @address 0x136890
      * @size 0xB48
      */
-    int CreateVUdataShadowCLIP(u_int *block, u_int *data, RenderInfo *info,
-                               float (*matrix)[4]);
+    int CreateVUdataShadowCLIP(u_int *block, u_int *model_data, RenderInfo *info, float (*matrix)[4]);
 };
 
 /**

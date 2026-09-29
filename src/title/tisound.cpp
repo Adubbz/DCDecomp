@@ -4,15 +4,15 @@
 #include "sound.hpp"
 
 void TiPlayVolSE(int group, int no, int voice, float volume) {
-    short *table;
-    short base;
-    int se;
+    short *se_info;
+    short base_volume;
+    int se_index;
     int level;
 
-    se = CSnd.GetSeNo(no, voice);
-    table = CSnd.GetSeInfTbl();
-    base = table[se * 2 + 1];
-    level = (int) ((float) base * volume);
+    se_index = CSnd.GetSeNo(no, voice);
+    se_info = CSnd.GetSeInfTbl();
+    base_volume = se_info[se_index * 2 + 1];
+    level = (int) ((float) base_volume * volume);
     if (level < 0)
         level = 0;
     if (level > 127)

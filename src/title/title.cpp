@@ -42,18 +42,18 @@ public:
         h = h_;
     }
 
-    T x;
-    T y;
-    T w;
-    T h;
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
 };
 
 /* One piece of scenery the third scene lays out: the model file, where it stands and how far it is
    turned about the vertical axis, in degrees. */
 struct MAP_INFO {
-    char *name;
-    float position[3];
-    float rotation;
+    char *name;        /**< Name of the model file in the scene's pack. */
+    float position[3]; /**< Where the piece stands in the world. */
+    float rotation;    /**< Turn about the vertical axis, in degrees. */
 };
 
 sceVif1Packet *GetVif1Packet();
@@ -73,10 +73,10 @@ void MGClearZBuffer(int mode);
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
 struct RECT {
-    int x;
-    int y;
-    int w;
-    int h;
+    int x; /**< Left edge. */
+    int y; /**< Top edge. */
+    int w; /**< Width. */
+    int h; /**< Height. */
 };
 
 void InitializeDataBuffer();
@@ -120,15 +120,15 @@ class OBJ_ANIME_SEQ {
 public:
     void Initialize();
 
-    char name[16];
-    int motion_start;
-    int motion_end;
+    char name[16]; /**< Name of the frame the animation drives. */
+    int anim_type; /**< What is animated: rotation, position, scale or colour. */
+    int play_mode; /**< How the value runs between its two ends. */
     char unk_18[8];
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
-    float unk_40;
-    float unk_44;
-    float step;
+    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
+    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
+    float step_x;              /**< Amount added to the first component each step. */
+    float step_y;              /**< Amount added to the second component each step. */
+    float step_z;              /**< Amount added to the third component each step. */
     char unk_4C[60];
 };
 
@@ -142,16 +142,16 @@ class CWater {
 public:
     CWater();
 
-    void SetVertex(float *v0, float *v1, float *v2, float *v3);
-    void SetSize(int x, int y, CDataAlloc2<1> *buffer);
-    void SetParam(float unknown0, float unknown1, float unknown2, float unknown3);
-    void SetColor(u_char r, u_char g, u_char b, u_char a);
-    void Shake(int x, int y, float power);
+    void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
+    void SetSize(int row_count, int column_count, CDataAlloc2<1> *arena);
+    void SetParam(float speed, float damping_rate, float scale, float shift);
+    void SetColor(u_char red, u_char green, u_char blue, u_char alpha);
+    void Shake(int x, int y, float height_change);
     void Hamon();
-    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *unknown0);
+    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
 
-    char unread[176];
-    CFrameVu1 frame;
+    char unk_00[176];
+    CFrameVu1 frame; /**< Places and draws the water surface. */
 };
 
 /* Named rather than included, because a unit's include list is a dial on the order a call's
@@ -165,7 +165,7 @@ public:
     virtual void FrameObjectOnOff(char *name, int on);
     virtual void Draw();
 
-    void SetFrame(CFrameVu1 *frame, int unknown0);
+    void SetFrame(CFrameVu1 *frame, int level);
 };
 
 /* One piece of scenery. The movie builds a table of them, hands each its model, and drives them
@@ -177,15 +177,15 @@ public:
     virtual void Draw();
 
     void Initialize();
-    void DrawShadow(int unknown0);
+    void DrawShadow(int fast);
 
     char unk_18[36];
-    CFrameVu1 *lod_model;
+    CFrameVu1 *unk_D4;
     char unk_4C[8];
-    float lod_distance;
-    int unk_40;
-    int unk_44;
-    char unk_3C[4];
+    float unk_E0;
+    int category_no; /**< Category the map filed the object under. */
+    int handle;      /**< Handle the map gave the object. */
+    char unk_EC[4];
 };
 
 /* The dust the running feet kick up, declared here for the same reason. */
@@ -193,12 +193,12 @@ class CRunEffect {
 public:
     CRunEffect();
 
-    void Lighting(int on);
-    void Set(float *position);
+    void Lighting(int enabled);
+    void Set(float *origin);
     void Step();
     void Draw();
 
-    char unread[208];
+    char unk_00[208];
 };
 
 /* The movie's one fire, which is a light rather than a model. */
@@ -216,11 +216,11 @@ public:
         position[3] = 1.0f;
     }
 
-    void DrawFire(int unknown0, int unknown1, CCamera *camera, float *eye, float scale,
-                  int unknown2, float unknown3);
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale,
+                  int layers, float camera_offset);
 
     char unk_18[32];
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
     char unk_4C[16];
 };
 
@@ -228,12 +228,12 @@ public:
 class CMap {
 public:
     void Initialize();
-    CMapObject *SetObject(CFrameVu1 *frame, int unknown0, int unknown1);
-    CMapObject *SetObject(int no, CFrameVu1 *frame, int unknown0, int unknown1);
-    CMapObject *GetObject(int no);
+    CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
+    CMapObject *SetObject(int index, CFrameVu1 *frame, int category_no, int handle);
+    CMapObject *GetObject(int index);
     void Draw();
 
-    char unread[2800];
+    char unk_00[2800];
 };
 
 void wait_now_loading_vsync();
@@ -271,7 +271,7 @@ void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
 void SndSetReadBuffer(u_int *buffer);
 void SndAmbientPlay(int no);
 void SndBgmPlay(int no);
-void SndBgmFadeOut(int time, int unknown0);
+void SndBgmFadeOut(int frames, int volume);
 void SndBgmStop();
 void SndAmbientStop();
 void SndStep();
@@ -466,7 +466,7 @@ static void InitProcA() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 1.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -476,7 +476,7 @@ static void InitProcA() {
 
     Chara__3[2].motion_type.state.time = 10.0f;
     Chara__3[3].motion_type.state.time = 10.0f;
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
     Chara__3[1].FootSoundEnable(0);
 
     for (int j = 4; j < 9; j++) {
@@ -484,7 +484,7 @@ static void InitProcA() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.blend_step = 0.05f;
         Chara__3[j].motion_type.state.motion_no = 0;
@@ -521,40 +521,40 @@ static void InitProcA() {
     object->SetPosition(CVector3_f_(0.0f, 0.0f, 0.0f));
     object->SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
 
-    sceVu0FVECTOR scale;
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR anime_start;
+    sceVu0FVECTOR anime_step;
 
-    scale[0] = 0.0f;
-    scale[1] = 0.0f;
-    scale[2] = 0.0f;
-    position[0] = 0.0f;
-    position[1] = 0.015f;
-    position[2] = 0.0f;
-    SetObjAnime("tenkyu", map, scale, position);
+    anime_start[0] = 0.0f;
+    anime_start[1] = 0.0f;
+    anime_start[2] = 0.0f;
+    anime_step[0] = 0.0f;
+    anime_step[1] = 0.015f;
+    anime_step[2] = 0.0f;
+    SetObjAnime("tenkyu", map, anime_start, anime_step);
 
-    scale[0] = 0.0f;
-    scale[1] = 0.0f;
-    scale[2] = 0.0f;
-    position[0] = 0.015f;
-    position[1] = 0.0f;
-    position[2] = 0.0f;
-    SetObjAnime("tenkyu2", map, scale, position);
+    anime_start[0] = 0.0f;
+    anime_start[1] = 0.0f;
+    anime_start[2] = 0.0f;
+    anime_step[0] = 0.015f;
+    anime_step[1] = 0.0f;
+    anime_step[2] = 0.0f;
+    SetObjAnime("tenkyu2", map, anime_start, anime_step);
 
-    scale[0] = 0.0f;
-    scale[1] = 0.0f;
-    scale[2] = 0.0f;
-    position[0] = 0.05f;
-    position[1] = 0.0f;
-    position[2] = 0.0f;
-    SetObjAnime("tenkyu3", map, scale, position);
+    anime_start[0] = 0.0f;
+    anime_start[1] = 0.0f;
+    anime_start[2] = 0.0f;
+    anime_step[0] = 0.05f;
+    anime_step[1] = 0.0f;
+    anime_step[2] = 0.0f;
+    SetObjAnime("tenkyu3", map, anime_start, anime_step);
 
-    scale[0] = 0.0f;
-    scale[1] = 0.0f;
-    scale[2] = 0.0f;
-    position[0] = 1.0f;
-    position[1] = 0.015f;
-    position[2] = 0.0f;
-    SetObjAnime("inazuma", map, scale, position);
+    anime_start[0] = 0.0f;
+    anime_start[1] = 0.0f;
+    anime_start[2] = 0.0f;
+    anime_step[0] = 1.0f;
+    anime_step[1] = 0.015f;
+    anime_step[2] = 0.0f;
+    SetObjAnime("inazuma", map, anime_start, anime_step);
 
     map = LoadMDSFile(GetPackFile(read_buffer, "s1401.mds", 0), &MapDataBuffer, 2, 0, 0);
     map->SetAttr(map_attr, 1, 64);
@@ -673,7 +673,7 @@ void DrawProcA() {
         object->FrameObjectOnOff("inazuma", 1);
     } else {
         object->FrameObjectOnOff("inazuma", 0);
-        OP_AnimeSeq[OP_AnimeSeqRot - 1].unk_40 = (float) (rand() % 10) / 10.0f;
+        OP_AnimeSeq[OP_AnimeSeqRot - 1].step_x = (float) (rand() % 10) / 10.0f;
         ObjAnimePlay(&OP_AnimeSeq[OP_AnimeSeqRot - 1]);
     }
 
@@ -800,7 +800,7 @@ static void InitProcB() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -810,7 +810,7 @@ static void InitProcB() {
 
     Chara__3[1].motion_type.state.time = 10.0f;
     Chara__3[2].motion_type.state.time = 30.0f;
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
     Chara__3[7].LoadPackData(read_buffer, "rm04ex.cfg", &CharaDataBuffer, 0);
     Chara__3[8].LoadPackData(read_buffer, "c01w03.cfg", &CharaDataBuffer, 0);
 
@@ -859,12 +859,12 @@ static void InitProcB() {
     OPAnalyz("sim:rmdat/rmdat2.cfg");
     OPMdsLoad();
 
-    sceVu0FVECTOR v0 = {260.0f, 0.0f, -400.0f, 1.0f};
-    sceVu0FVECTOR v1 = {380.0f, 0.0f, -400.0f, 1.0f};
-    sceVu0FVECTOR v2 = {260.0f, 0.0f, -250.0f, 1.0f};
-    sceVu0FVECTOR v3 = {380.0f, 0.0f, -250.0f, 1.0f};
+    sceVu0FVECTOR corner0 = {260.0f, 0.0f, -400.0f, 1.0f};
+    sceVu0FVECTOR corner1 = {380.0f, 0.0f, -400.0f, 1.0f};
+    sceVu0FVECTOR corner2 = {260.0f, 0.0f, -250.0f, 1.0f};
+    sceVu0FVECTOR corner3 = {380.0f, 0.0f, -250.0f, 1.0f};
 
-    Water__2.SetVertex(v0, v1, v2, v3);
+    Water__2.SetVertex(corner0, corner1, corner2, corner3);
     typedef float bp0, bp1, bp2;
     Water__2.frame.SetPosition(0.0f, -4.0f, 0.0f);
     Water__2.SetSize(24, 24, &WaterBuffer);
@@ -1065,17 +1065,17 @@ static void InitProcC() {
 
     CFrameAttr attr;
 
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     Chara__3[0].frame->SetAttr(attr, 1, 4);
     Chara__3[0].motion_type.state.time = 10.0f;
     Chara__3[0].motion_type.state.blend_step = 0.05f;
     Chara__3[0].motion_type.state.motion_no = 0;
     Chara__3[0].motion_type.state.playing_no = 0;
     Chara__3[0].FootSoundEnable(0);
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
 
     Chara__3[8].LoadPackData(read_buffer, "pat.cfg", &CharaDataBuffer, 0);
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     Chara__3[8].frame->SetAttr(attr, 1, 4);
     Chara__3[8].motion_type.state.time = 1.0f;
     Chara__3[8].motion_type.state.blend_step = 0.05f;
@@ -1128,8 +1128,8 @@ static void InitProcC() {
 
         object.Initialize();
         object.SetFrame(map, 0);
-        OP_NornMapObj[i].unk_44 = 0;
-        OP_NornMapObj[i].unk_40 = 0;
+        OP_NornMapObj[i].handle = 0;
+        OP_NornMapObj[i].category_no = 0;
         object.SetPosition(CVector3_f_(norn[i].position[0], norn[i].position[1],
                                        norn[i].position[2]));
         object.SetRotation(CVector3_f_(0.0f, (float) (PI * norn[i].rotation / 180), 0.0f));
@@ -1154,12 +1154,12 @@ static void InitProcC() {
     OPAnalyz("sim:rmdat/rmdat3.cfg");
     OPMdsLoad();
 
-    sceVu0FVECTOR v0 = {-120.0f, 0.0f, -120.0f, 1.0f};
-    sceVu0FVECTOR v1 = {120.0f, 0.0f, -120.0f, 1.0f};
-    sceVu0FVECTOR v2 = {-120.0f, 0.0f, 120.0f, 1.0f};
-    sceVu0FVECTOR v3 = {-120.0f, 0.0f, 120.0f, 1.0f};
+    sceVu0FVECTOR corner0 = {-120.0f, 0.0f, -120.0f, 1.0f};
+    sceVu0FVECTOR corner1 = {120.0f, 0.0f, -120.0f, 1.0f};
+    sceVu0FVECTOR corner2 = {-120.0f, 0.0f, 120.0f, 1.0f};
+    sceVu0FVECTOR corner3 = {-120.0f, 0.0f, 120.0f, 1.0f};
 
-    Water__2.SetVertex(v0, v1, v2, v3);
+    Water__2.SetVertex(corner0, corner1, corner2, corner3);
     Water__2.frame.SetPosition((float) (OP_FireList & 0), 0.0f, 0.0f);
     Water__2.SetSize(32, 32, &WaterBuffer);
     Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
@@ -1280,7 +1280,7 @@ static void InitProcD() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -1293,7 +1293,7 @@ static void InitProcD() {
     Chara__3[2].motion_type.state.time = 10.0f;
     Chara__3[8].LoadPackData(read_buffer, "c01w11.cfg", &CharaDataBuffer, 0);
     Chara__3[0].TexAnimeOn(2);
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1429,7 +1429,7 @@ static void InitProcE() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -1439,7 +1439,7 @@ static void InitProcE() {
 
     Chara__3[0].TexAnimeOn(2);
     Chara__3[1].TexAnimeOn(1);
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1574,7 +1574,7 @@ static void InitProcF() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[j].frame->SetAttr(attr, 1, 4);
         Chara__3[j].motion_type.state.time = 1.0f;
         Chara__3[j].motion_type.state.blend_step = 0.05f;
@@ -1583,7 +1583,7 @@ static void InitProcF() {
     }
 
     Chara__3[0].TexAnimeOn(4);
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
     Chara__3[8].LoadPackData(read_buffer, "c01w01.cfg", &CharaDataBuffer, 0);
     Chara__3[0].motion_type.state.time = 150.0f;
     Chara__3[1].motion_type.state.time = 135.0f;
@@ -1733,7 +1733,7 @@ static void InitProcG() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 1.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -1744,9 +1744,9 @@ static void InitProcG() {
     Chara__3[0].motion_type.state.time = 10.0f;
     Chara__3[1].motion_type.state.time = 10.0f;
     Chara__3[2].motion_type.state.time = 82.0f;
-    Chara__3[0].unk_C98 = (int) &Wind__4;
-    Chara__3[1].unk_C98 = (int) &Wind__4;
-    Chara__3[2].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
+    Chara__3[1].wind = (int) &Wind__4;
+    Chara__3[2].wind = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1874,7 +1874,7 @@ static void InitProcH() {
 
     CFrameAttr attr;
 
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     Chara__3[0].frame->SetAttr(attr, 1, 4);
     Chara__3[0].motion_type.state.time = 10.0f;
     Chara__3[0].motion_type.state.blend_step = 0.05f;
@@ -1883,7 +1883,7 @@ static void InitProcH() {
     Chara__3[0].FootSoundEnable(0);
 
     Chara__3[1].LoadPackData(read_buffer, "c01d.cfg", &CharaDataBuffer, 0);
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     Chara__3[1].frame->SetAttr(attr, 1, 4);
     Chara__3[1].motion_type.state.time = 70.0f;
     Chara__3[1].motion_type.state.blend_step = 0.05f;
@@ -1891,7 +1891,7 @@ static void InitProcH() {
     Chara__3[1].motion_type.state.playing_no = 0;
 
     Chara__3[2].LoadPackData(read_buffer, "f_boll_2.cfg", &CharaDataBuffer, 0);
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     Chara__3[2].frame->SetAttr(attr, 1, 4);
     Chara__3[2].motion_type.state.time = 20.0f;
     Chara__3[2].motion_type.state.blend_step = 0.05f;
@@ -1899,7 +1899,7 @@ static void InitProcH() {
     Chara__3[2].motion_type.state.playing_no = 0;
 
     Chara__3[3].LoadPackData(read_buffer, "rm16yuka.cfg", &CharaDataBuffer, 0);
-    attr.unk_08 = 0;
+    attr.clip_enable = 0;
     Chara__3[3].frame->SetAttr(attr, 1, 4);
     Chara__3[3].motion_type.state.time = 2.0f;
     Chara__3[3].motion_type.state.blend_step = 0.05f;
@@ -1907,7 +1907,7 @@ static void InitProcH() {
     Chara__3[3].motion_type.state.playing_no = 0;
 
     Chara__3[8].LoadPackData(read_buffer, "c01w01.cfg", &CharaDataBuffer, 0);
-    Chara__3[1].unk_C98 = (int) &Wind__4;
+    Chara__3[1].wind = (int) &Wind__4;
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -2097,7 +2097,7 @@ static void InitProcI() {
 
         CFrameAttr attr;
 
-        attr.unk_08 = 0;
+        attr.clip_enable = 0;
         Chara__3[i].frame->SetAttr(attr, 1, 4);
         Chara__3[i].motion_type.state.time = 1.0f;
         Chara__3[i].motion_type.state.blend_step = 0.05f;
@@ -2106,7 +2106,7 @@ static void InitProcI() {
     }
 
     Chara__3[1].motion_type.state.time = 23.0f;
-    Chara__3[0].unk_C98 = (int) &Wind__4;
+    Chara__3[0].wind = (int) &Wind__4;
     Chara__3[2].SetScale(20.0f, 20.0f, 20.0f);
 
     OP_FireList = 0;

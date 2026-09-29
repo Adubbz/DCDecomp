@@ -31,7 +31,7 @@ public:
     void Reset() { used = 0; }
 
     u_char *base;   /**< Start of the allocator-owned storage. */
-    u_char *buffer; /**< Current allocation cursor. */
+    u_char *buffer; /**< Storage the constructor starts the arena's base at. */
     int used;       /**< Number of occupied quadwords. */
     int limit;      /**< Maximum number of available quadwords. */
 };
@@ -66,7 +66,7 @@ public:
     void Reset() { used = 0; }
 
     u_char *base;   /**< Start of the allocator-owned storage. */
-    u_char *buffer; /**< Current allocation cursor. */
+    u_char *buffer; /**< Storage the constructor starts the arena's base at. */
     int used;       /**< Number of occupied quadwords. */
     int limit;      /**< Maximum number of available quadwords. */
 };
@@ -101,30 +101,30 @@ public:
 
 template <int Kind, int Size>
 u_char *CDataAlloc<Kind, Size>::Alloc(int quads) {
-    u_char *block;
+    u_char *allocation;
 
     if (used + quads > Size) {
         printf("Alocation Error! %d/%d\n", used, Size);
         while (1)
             ;
     }
-    block = (u_char *) block + used * 16;
+    allocation = (u_char *) block + used * 16;
     used += quads;
-    return block;
+    return allocation;
 }
 
 template <int Kind, int Size>
 u_char *CDataAlloc<Kind, Size>::Alloc64(int quads) {
     Align64();
 
-    u_char *block = (u_char *) block + used * 16;
+    u_char *allocation = (u_char *) block + used * 16;
     used += quads;
     if (used >= Size) {
         printf("Alocation Error! %d/%d\n", used, Size);
         while (1)
             ;
     }
-    return block;
+    return allocation;
 }
 
 template <int Kind, int Size>

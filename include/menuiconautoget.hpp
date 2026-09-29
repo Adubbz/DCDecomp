@@ -7,11 +7,11 @@
  * inventory slot it lands in.
  */
 struct MENU_AUTO_GET_ICON {
-    float x;   /**< Screen x the icon draws at, eased toward the slot. */
-    float y;   /**< Screen y the icon draws at, eased toward the slot. */
-    s16 item;  /**< Item the icon stands for; not positive while the slot is free. */
-    s16 slot;  /**< Inventory slot the icon is flying to. */
-    s16 count; /**< How many of the item the icon carries. */
+    float x;    /**< Screen x the icon draws at, eased toward the slot. */
+    float y;    /**< Screen y the icon draws at, eased toward the slot. */
+    s16 item;   /**< Item the icon stands for; not positive while the slot is free. */
+    s16 slot;   /**< Quick item slot the icon is flying to. */
+    s16 volume; /**< Item volume the slot takes when the icon lands. */
     u8 unk_0E[2];
 };
 

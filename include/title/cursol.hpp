@@ -44,7 +44,7 @@ public:
      * @size 0xC
      * @unknownret
      */
-    void Set(float);
+    void Set(float new_target_y);
 
     /**
      *          Returns the currently selected menu row.

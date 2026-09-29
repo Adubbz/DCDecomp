@@ -47,7 +47,7 @@ public:
      * @size 0x38
      * @unknownret
      */
-    int Get(int);
+    int Get(int limit);
 
     /**
      *          Forces the fade to its skipped terminal state.

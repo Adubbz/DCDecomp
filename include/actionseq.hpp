@@ -67,7 +67,7 @@ public:
     float queued_position[4]; /**< Destination of the last queued movement. */
     int move_frame;           /**< Elapsed movement frames. */
     int anime_frame;          /**< Elapsed texture animation frames. */
-    int rotation_mode;        /**< Selects the active rotation behavior. */
+    int rotation_mode;        /**< Active automatic rotation: 0 none, 1 face the reference, 2 face the movement, 3 turn to an angle. */
     int rotation_complete;    /**< Indicates that the rotation reached its target. */
     int rotation_delay;       /**< Frames remaining before rotation advances. */
     int motion_trigger;       /**< Enables queued motion playback. */
@@ -75,7 +75,7 @@ public:
     int anime_trigger;        /**< Enables queued texture animation playback. */
     int anime_delay;          /**< Frames remaining before texture animation playback. */
     u8 unk_64[12];
-    float rotation_target[4]; /**< Reference position or angles for rotation. */
+    float rotation_target[4]; /**< Reference position or target angles for rotation; the last element holds the turn speed. */
     ACT_SEQ *rotation_head;   /**< First rotation interpolation action. */
     ACT_SEQ *rotation_tail;   /**< Last rotation interpolation action. */
     u8 unk_88[8];

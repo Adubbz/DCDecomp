@@ -144,10 +144,10 @@ void WaterSplash_Init(void) {
     int i;
 
     Water_Splash_actFlag = 0;
-    CheckWaterInfo.unk_20 = 0;
+    CheckWaterInfo.in_water = 0;
 
     for (i = 0; i < 6; i++) {
-        WaterWaveLing[i].unk_14 = 0;
+        WaterWaveLing[i].life = 0;
     }
 
     WaterWaveLingWait = 0;
@@ -207,23 +207,23 @@ int CheckHealingWater(void) {
         position[2] >= water_z + nearest_water->vertex[0][2] &&
         position[2] < water_z + nearest_water->vertex[3][2] && position[1] < water_y) {
         position[1] = water_y;
-        sceVu0CopyVector(CheckWaterInfo.unk_10, position);
-        BtActStatus.unk_094 = 1;
+        sceVu0CopyVector(CheckWaterInfo.surface_position, position);
+        BtActStatus.in_water = 1;
 
-        if (Water_Splash_actFlag == 0 && CheckWaterInfo.unk_20 == 0 &&
-            CheckWaterInfo.unk_00[1] - CheckWaterInfo.unk_10[1] > 0.5f) {
-            Water_Splash.SetPosition(CheckWaterInfo.unk_10);
+        if (Water_Splash_actFlag == 0 && CheckWaterInfo.in_water == 0 &&
+            CheckWaterInfo.dry_position[1] - CheckWaterInfo.surface_position[1] > 0.5f) {
+            Water_Splash.SetPosition(CheckWaterInfo.surface_position);
             Water_Splash.SetMotion(0, 6);
             SndSePlay(0x223, -1, 0);
             Water_Splash_actFlag = 1;
         }
 
-        CheckWaterInfo.unk_20 = 1;
+        CheckWaterInfo.in_water = 1;
         return 1;
     }
 
-    sceVu0CopyVector(CheckWaterInfo.unk_00, position);
-    CheckWaterInfo.unk_20 = 0;
+    sceVu0CopyVector(CheckWaterInfo.dry_position, position);
+    CheckWaterInfo.in_water = 0;
     return 0;
 }
 
@@ -257,7 +257,7 @@ int CheckHealZone(void) {
     HEAL_ZONE *zone;
 
     sceVu0CopyVector(position, CharaMain.pos);
-    BtActStatus.unk_094 = 0;
+    BtActStatus.in_water = 0;
 
     column = (80.0f + position[0]) / 160.0f;
     row = (80.0f + position[2]) / 160.0f;
@@ -285,7 +285,7 @@ int CheckHealZone(void) {
 
     if (position[0] >= low[0] && position[0] <= high[0] && position[2] >= low[2] &&
         position[2] < high[2] && position[1] < center[1]) {
-        BtActStatus.unk_094 = 1;
+        BtActStatus.in_water = 1;
         return 1;
     }
 
@@ -374,14 +374,14 @@ void DrawWaterLing(void) {
     MGSetGsZBUF(&zbuf);
 
     for (i = 0; i < 6; i++) {
-        if (WaterWaveLing[i].unk_14 > 0) {
-            radius = WaterWaveLing[i].unk_10;
-            x = WaterWaveLing[i].unk_00[0];
+        if (WaterWaveLing[i].life > 0) {
+            radius = WaterWaveLing[i].radius;
+            x = WaterWaveLing[i].center[0];
             left = x - radius;
             corner[0][0] = left;
-            y = WaterWaveLing[i].unk_00[1];
+            y = WaterWaveLing[i].center[1];
             corner[0][1] = y;
-            z = WaterWaveLing[i].unk_00[2];
+            z = WaterWaveLing[i].center[2];
             near = z - radius;
             corner[0][2] = near;
             right = radius + x;
@@ -405,7 +405,7 @@ void DrawWaterLing(void) {
             }
 
             if (visible) {
-                float fade = 2.8444445f * WaterWaveLing[i].unk_14;
+                float fade = 2.8444445f * WaterWaveLing[i].life;
                 set3DSprite(Vif1Packet, ripple, CRect_i_(0, 64, 64, 64), screen[0], screen[1],
                             screen[2], screen[3], fade);
             }
@@ -426,17 +426,17 @@ void DrawWaterLing(void) {
 void StepWaterLing(void) {
     int i;
 
-    if (CheckWaterInfo.unk_20 != 0) {
+    if (CheckWaterInfo.in_water != 0) {
         WaterWaveLingWait++;
 
         if (WaterWaveLingWait >= 20) {
             WaterWaveLingWait = 0;
 
             for (i = 0; i < 6; i++) {
-                if (WaterWaveLing[i].unk_14 == 0) {
-                    sceVu0CopyVector(WaterWaveLing[i].unk_00, CheckWaterInfo.unk_10);
-                    WaterWaveLing[i].unk_10 = 2.0f;
-                    WaterWaveLing[i].unk_14 = 45;
+                if (WaterWaveLing[i].life == 0) {
+                    sceVu0CopyVector(WaterWaveLing[i].center, CheckWaterInfo.surface_position);
+                    WaterWaveLing[i].radius = 2.0f;
+                    WaterWaveLing[i].life = 45;
                     break;
                 }
             }
@@ -444,15 +444,16 @@ void StepWaterLing(void) {
     }
 
     for (i = 0; i < 6; i++) {
-        if (WaterWaveLing[i].unk_14 > 0) {
-            WaterWaveLing[i].unk_10 += 0.2f;
-            WaterWaveLing[i].unk_14--;
+        if (WaterWaveLing[i].life > 0) {
+            WaterWaveLing[i].radius += 0.2f;
+            WaterWaveLing[i].life--;
         }
     }
 }
 
 /**
- * Chooses the stance the player takes from the nearest monster.
+ * Mixes the battle music against the ambience by the distance to the nearest active monster
+ * and returns that distance.
  *
  * @mangled SetBattleStyle__Fii
  * @address 0x1AFE90
@@ -462,7 +463,7 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
 
 static inline int MonstorAliveCheck(int no, int alive) {
     if (no >= 0 && no < 17) {
-        alive = NowMonstorUnit->monster[no].unk_0D4;
+        alive = NowMonstorUnit->monster[no].revealed;
     }
     return alive;
 }
@@ -518,19 +519,19 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
 int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
     CTexture *texture = TexManager.GetTexture("stayframe", -1);
     int source_y = palette * 12 + 0xB0;
-    int count = 0;
+    int hundreds_shown = 0;
     int digit = value / 100;
     if (digit > 0) {
         set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
         value -= digit * 100;
         x += 12;
-        count++;
+        hundreds_shown++;
     }
     digit = value / 10;
     set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
     digit = value % 10;
     set2DSprite(Vif1Packet, texture, CRect_i_(x + 12, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
-    return count + 2;
+    return hundreds_shown + 2;
 }
 
 /**
@@ -710,10 +711,10 @@ void topStatusInfo(int y, int selected_item, int floor) {
 
     // Weapon durability and progress toward the next weapon level.
     CUserStatus *user = UserStatus;
-    s8 owner = user->cur_chara;
+    s8 wielder = user->cur_chara;
     s8 *slots = user->equipped_weapon_slot;
-    float durability_max = ((CUserStatus *) user)->chara_weapons[user->cur_chara][slots[owner]].durability;
-    float durability = ((CUserStatus *) user)->chara_weapons[owner][(s8) slots[owner]].durability_f;
+    float durability_max = ((CUserStatus *) user)->chara_weapons[user->cur_chara][slots[wielder]].durability;
+    float durability = ((CUserStatus *) user)->chara_weapons[wielder][(s8) slots[wielder]].durability_f;
     float bar = 1.4949495f * durability_max;
     length = (int) bar;
     if (length < 2) {
@@ -784,10 +785,10 @@ void topStatusInfo(int y, int selected_item, int floor) {
         set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x33, y + 0x22, 0x10, 0x14),
                     CRect_i_(0, 0x48, 0x10, 0x14), 0x50);
     }
-    int part = (int) water % 10;
-    if (part != 0) {
+    int leftover = (int) water % 10;
+    if (leftover != 0) {
         set2DSprite(Vif1Packet, icons, CRect_i_(full_drops * 0x12 + 0x33, y + 0x22, 0x10, 0x14),
-                    CRect_i_((3 - (int) ((float) part / 2.5f)) * 16, 0x48, 0x10, 0x14), 0x50);
+                    CRect_i_((3 - (int) ((float) leftover / 2.5f)) * 16, 0x48, 0x10, 0x14), 0x50);
     }
 
     // Quick-use items; a speed-up item pulses while it is in force.
@@ -890,7 +891,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
  * @size 0x28
  */
 int StatusErrCheck(int status) {
-    return (UserStatus->unk_42C8[UserStatus->cur_chara] & status) ? 1 : 0;
+    return (UserStatus->ailments[UserStatus->cur_chara] & status) ? 1 : 0;
 }
 
 /**
@@ -905,7 +906,7 @@ int BtStatusErrColorSet(void) {
     int ailing;
 
     ailing = 0;
-    status = UserStatus->unk_42C8[UserStatus->cur_chara];
+    status = UserStatus->ailments[UserStatus->cur_chara];
 
     if (status & 4) {
         StatusColor[0] = 127.5f;
@@ -955,7 +956,7 @@ void BtStatusErrStep(void) {
     CUserStatus *status = UserStatus;
     s8 *cur_chara = &status->cur_chara;
 
-    flags = status->unk_42C8[*cur_chara];
+    flags = status->ailments[*cur_chara];
     poison_counter++;
 
     // Poison takes 4% of the character's max HP every 180 steps and shows the loss over them.
@@ -991,35 +992,35 @@ void BtSetStatusErr(int status) {
 
     switch (status) {
         case 4:
-            UserStatus->unk_42C8[chara] |= status;
-            UserStatus->unk_42C8[chara] &= ~0x58;
-            UserStatus->unk_42E0[chara] = 300;
+            UserStatus->ailments[chara] |= status;
+            UserStatus->ailments[chara] &= ~0x58;
+            UserStatus->ailment_frames[chara] = 300;
             SndSePlay(0x6B, -1, 0);
             break;
 
         case 8:
-            if (!(UserStatus->unk_42C8[chara] & 4)) {
-                UserStatus->unk_42C8[chara] |= status;
-                UserStatus->unk_42E0[chara] = 1800;
+            if (!(UserStatus->ailments[chara] & 4)) {
+                UserStatus->ailments[chara] |= status;
+                UserStatus->ailment_frames[chara] = 1800;
             }
             break;
 
         case 0x10:
-            if (!(UserStatus->unk_42C8[chara] & 0xC)) {
-                UserStatus->unk_42C8[chara] |= status;
-                UserStatus->unk_42C8[chara] &= ~0x40;
+            if (!(UserStatus->ailments[chara] & 0xC)) {
+                UserStatus->ailments[chara] |= status;
+                UserStatus->ailments[chara] &= ~0x40;
                 SndSePlay(0x6B, -1, 0);
             }
             break;
 
         case 0x20:
-            UserStatus->unk_42C8[chara] |= status;
+            UserStatus->ailments[chara] |= status;
             SndSePlay(0x6B, -1, 0);
             break;
 
         case 0x40:
-            if (!(UserStatus->unk_42C8[chara] & 0x1C)) {
-                UserStatus->unk_42C8[chara] |= status;
+            if (!(UserStatus->ailments[chara] & 0x1C)) {
+                UserStatus->ailments[chara] |= status;
                 SndSePlay(0x6B, -1, 0);
             }
             break;
@@ -1037,7 +1038,7 @@ void BtStatusErrDraw(int y) {
     CTexture *texture = TexManager.GetTexture("itempack", -1);
     int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
     int icon_cells[5][2] = {{1, 0}, {0, 1}, {1, 1}, {1, 2}, {0, 2}};
-    int status = UserStatus->unk_42C8[UserStatus->cur_chara];
+    int status = UserStatus->ailments[UserStatus->cur_chara];
     for (int icon = 4; icon >= 0; icon--) {
         if (status & status_flags[icon]) {
             set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35),
@@ -1183,14 +1184,14 @@ int BtMapJumpLoad(char *map_name) {
     read_buffer = old_read_buffer;
 
     int i;
-    DRAN_MAP_FIELD_SET *dran = (DRAN_MAP_FIELD_SET *) NowDranMapField;
+    DRAN_MAP_FIELD_SET *field_set = (DRAN_MAP_FIELD_SET *) NowDranMapField;
     for (i = 0; i < 12; i++) {
-        dran->field[i].Initialize();
-        dran->collision[i] = NULL;
-        dran->state[i] = 3;
+        field_set->field[i].Initialize();
+        field_set->collision[i] = NULL;
+        field_set->state[i] = 3;
     }
-    dran->field_count = 0;
-    dran->collision_count = 0;
+    field_set->field_count = 0;
+    field_set->collision_count = 0;
 
     MainDungeonMap.initSubmap(&MapModelBuffer);
     for (int slot = 0; slot < 64; slot++) {
@@ -1198,13 +1199,13 @@ int BtMapJumpLoad(char *map_name) {
         event->name[0] = '\0';
         event->script_no = -1;
         event->parts_id = -1;
-        event->unk_34 = 0;
+        event->switch_on = 0;
         event->enabled = 0;
     }
     for (int record = 0; record < 96; record++) {
         CDungeonEventData *data = &DngEventMan.event[record];
         data->event = NULL;
-        data->unk_34 = 0;
+        data->switch_on = 0;
         data->enabled = 0;
         data->hold = 0;
         data->chara_done = -1;
@@ -1231,9 +1232,9 @@ int BtMapJumpLoad(char *map_name) {
 
     CFrameAttr attr;
     attr.fog_enable = 1;
-    attr.unk_04 = 100.0f;
-    attr.unk_08 = 0;
-    attr.unk_0B = 0;
+    attr.clip_depth = 100.0f;
+    attr.clip_enable = 0;
+    attr.program_option = 0;
     NowDngMap->box_body_model = LoadMDSFilePack(read_buffer, "ibox_0.mds", &MapModelBuffer);
     NowDngMap->box_lid_model = LoadMDSFilePack(read_buffer, "ibox_t.mds", &MapModelBuffer);
     NowDngMap->box_collision_model =
@@ -1242,7 +1243,7 @@ int BtMapJumpLoad(char *map_name) {
     NowDngMap->box_lid_model->SetAttr(attr, 1, 0);
     NowDngMap->chest_body_model = LoadMDSFilePack(read_buffer, "iboxs_0.mds", &MapModelBuffer);
     NowDngMap->chest_lid_model = LoadMDSFilePack(read_buffer, "iboxs_t.mds", &MapModelBuffer);
-    NowDngMap->unk_BC78 = LoadCollisionFilePack(read_buffer, "iboxs_a.mds", &MapModelBuffer);
+    NowDngMap->chest_collision_model = LoadCollisionFilePack(read_buffer, "iboxs_a.mds", &MapModelBuffer);
     NowDngMap->chest_body_model->SetAttr(attr, 1, 0);
     NowDngMap->chest_lid_model->SetAttr(attr, 1, 0);
 

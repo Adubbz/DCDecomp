@@ -36,21 +36,21 @@ STATIC_ASSERT(sizeof(GRADATION_COLOR_INFO2) == 0x10);
  * Tracks which character and weapon the weapon menu's cursor is on.
  */
 struct WEP_MENU_INFO {
-    s16 unk_00;
-    s16 unk_02;
-    s8 weapon_slot; /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
-    s8 chara;       /**< Party member index the weapon menu is showing. */
-    s8 unk_06;
-    char unk_07;
-    s8 unk_08;
-    char unk_09[3];
-    s16 unk_0C;
+    s16 open_mode;      /**< Mode the weapon page was opened in, zero from the menu bar. */
+    s16 mode;           /**< Area of the weapon page the cursor is in: the list, a dialog or an attachment page. */
+    s8 weapon_slot;     /**< Weapon slot the cursor is on, within the selected character's chara_weapons row. */
+    s8 chara;           /**< Party member index the weapon menu is showing. */
+    s8 sockets_enabled; /**< Nonzero while moving up from the tags or the pack leads to the weapon's sockets. */
+    char element;       /**< Element the cursor is on in the element dialog. */
+    s8 warning_no;      /**< Warning message the weapon page shows in its warning state, or -1 for none. */
+    char confirm[3];    /**< Cursor on the scrap confirmation dialog in its first byte, zero for yes. */
+    s16 state;          /**< Transition, effect or dialog the weapon page is in. */
     char unk_0E[2];
-    s32 unk_10;
+    s32 counter;          /**< Frames spent in the current state. */
     PERSONAL_BOARD board; /**< Personal board the weapon menu lists the party member's weapons on. */
     char unk_174[4];
-    s8 unk_178;
-    s8 unk_179;
+    s8 tag_page; /**< Tag page shown: zero status, one elements, two anti-monster. */
+    s8 tag_row;  /**< Row the cursor is on within the tag page. */
     char unk_17A[2];
 };
 
@@ -84,11 +84,11 @@ STATIC_ASSERT(sizeof(ITEM_MENU_MODE_INFO) == 0x188);
  * Holds the battle menu's character page state.
  */
 struct MENU_CHARA_INFO {
-    s16 unk_00;
-    s8 unk_02;
-    s8 unk_03;
-    float unk_04;
-    s32 unk_08;
+    s16 chara;          /**< Party member at the front of the turntable. */
+    s8 slot_count;      /**< Number of places on the turntable. */
+    s8 state;           /**< Transition, turn or party change the character page is in. */
+    float timer;        /**< Frames spent in the current transition or turn. */
+    s32 change_counter; /**< Frames since the change to another party member began. */
 };
 
 STATIC_ASSERT(sizeof(MENU_CHARA_INFO) == 0xC);
@@ -97,11 +97,11 @@ STATIC_ASSERT(sizeof(MENU_CHARA_INFO) == 0xC);
  * Holds one party member's place on the character page's turntable.
  */
 struct SYS_CHARA_INFO {
-    s8 unk_00;
-    s8 unk_01;
+    s8 chara; /**< Party member this place shows. */
+    s8 place; /**< Place on the turntable counted from the front, zero at the front. */
     char unk_02[2];
-    float unk_04;
-    float unk_08;
+    float x; /**< Horizontal position of the party member's face. */
+    float y; /**< Vertical position of the party member's face. */
 };
 
 STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
@@ -110,10 +110,10 @@ STATIC_ASSERT(sizeof(SYS_CHARA_INFO) == 0xC);
  * Holds the travel page's state.
  */
 struct MENU_MOVE_INFO {
-    s32 mode;     /**< Where the travel page was opened from: 0 dungeon escape, 1 or 5 world map, 2 interior, 10 town. */
-    s32 cursor;   /**< Place or yes/no answer the cursor is on. */
-    s16 load_map; /**< World map region whose model is loaded. */
-    s16 unk_0A;
+    s32 mode;        /**< Where the travel page was opened from: 0 dungeon escape, 1 or 5 world map, 2 interior, 10 town. */
+    s32 cursor;      /**< Place or yes/no answer the cursor is on. */
+    s16 load_map;    /**< World map region whose model is loaded. */
+    s16 last_place;  /**< Highest world-map place number the travel page offers. */
     s16 start_place; /**< Place the party stood on when the page opened. */
     s16 ready;       /**< Nonzero once the world map model has loaded. */
     char unk_10[4];
@@ -138,21 +138,16 @@ struct WORLD_MAP_POS {
 STATIC_ASSERT(sizeof(WORLD_MAP_POS) == 0x10);
 
 /**
- * Ranks one world-map destination by how near it is.
- *
- * Every field below is taken from GetNearWorldPos, the only function that
- * fills these in: it builds sixteen of them on the stack, sorts them on
- * `distance`, and reads nothing else back out. The offsets and widths are
- * what that code uses; the names are what its arithmetic implies.
+ * Ranks one world-map destination by how well it lines up with a pushed direction.
  */
 struct MAP_JUMP_COMPARE {
-    s8 index;        /**< Identifies the destination this entry stands for. */
-    s8 reachable;    /**< Is one when the destination can be jumped to, zero when it cannot. */
-    char unk_02[2];  /**< Contains the padding before `distance`. */
-    float distance;  /**< Orders the entries; GetNearWorldPos sorts on this ascending. */
-    s32 dx;          /**< Contains one axis of the offset to the destination. */
-    s32 dy;          /**< Contains the other axis of the offset to the destination. */
-    s32 distance_sq; /**< Contains dx squared plus dy squared. */
+    s8 index;     /**< World-map place this entry ranks. */
+    s8 reachable; /**< One when the place has been visited and is not the current one. */
+    char unk_02[2];
+    float alignment; /**< Cosine between the pushed direction and the direction to the place; entries sort on it, largest first. */
+    s32 dx;          /**< Horizontal offset from the current place to this one. */
+    s32 dy;          /**< Vertical offset from the current place to this one. */
+    s32 distance_sq; /**< Squared distance from the current place to this one. */
 };
 
 STATIC_ASSERT(sizeof(MAP_JUMP_COMPARE) == 0x14);
@@ -287,7 +282,7 @@ void DrawBattleMain(void);
  * @address 0x1F4870
  * @size 0x484
  */
-void DrawOtherCharaStatus(int, int, int, int);
+void DrawOtherCharaStatus(int x, int y, int chara, int alpha);
 
 /**
  * Draws one party member's dungeon status panel with their weapon and condition.
@@ -296,7 +291,7 @@ void DrawOtherCharaStatus(int, int, int, int);
  * @address 0x1F4D00
  * @size 0x720
  */
-void DngComStatus(int, int, int, int);
+void DngComStatus(int x, int y, int chara, int alpha);
 
 /**
  * Draws the selected party member's full status panel.
@@ -305,7 +300,7 @@ void DngComStatus(int, int, int, int);
  * @address 0x1F5420
  * @size 0x3EC
  */
-void DrawSelCharaStatus(float, float, int, int, int, int, int, int);
+void DrawSelCharaStatus(float x, float y, int chara, int alpha, int face_size, int face_alpha, int face_x, int face_y);
 
 /**
  * Loads the battle menu's texture blocks and message buffers.
@@ -334,7 +329,7 @@ void ExitBattleMenu(int);
  * @address 0x1F5CF0
  * @size 0x45C
  */
-void BattleMenuInit(int *, int);
+void BattleMenuInit(int *texture_blocks, int mode);
 
 /**
  * Draws the whole menu for one frame, choosing the page from the menu state.
@@ -371,7 +366,7 @@ int BattleMenuSelect(void);
  * @size 0x29C
  * Steps the battle menu ring towards the icon it is given and returns the icon it settles on.
  */
-int ToFromSelect(int);
+int ToFromSelect(int out);
 
 /**
  * Handles input on the character page, including the turntable and the equipment list.
@@ -398,7 +393,7 @@ void DrawCharaSelect(void);
  * @address 0x1F8D30
  * @size 0x4B4
  */
-void DrawWepDamageDraw(RECT, WEAPON_HAVE *, int);
+void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha);
 
 /**
  * Draws one weapon's status panel.
@@ -407,7 +402,7 @@ void DrawWepDamageDraw(RECT, WEAPON_HAVE *, int);
  * @address 0x1F91F0
  * @size 0xD8
  */
-void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
+void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha);
 
 /**
  * Draws the bars comparing a weapon's current values against its built-up ones.
@@ -416,7 +411,7 @@ void DrawWepStatus(int, int, WEAPON_HAVE *, int, int);
  * @address 0x1F92D0
  * @size 0x2A8
  */
-void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
+void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha);
 
 /**
  * Returns the x position that centers a weapon name of a width.
@@ -425,7 +420,7 @@ void DrawWepVolumeDisplay(int, int, WEAPON_HAVE *, int);
  * @address 0x1F96C0
  * @size 0x10
  */
-s32 GetWeaponNamePutX(int, int);
+s32 GetWeaponNamePutX(int center_x, int width);
 
 /**
  * Draws the gradient frame a weapon-status row sits in.
@@ -434,7 +429,7 @@ s32 GetWeaponNamePutX(int, int);
  * @address 0x1F9E40
  * @size 0x68
  */
-void DrawWeaponStatusWaku(int, int, int, int);
+void DrawWeaponStatusWaku(int x, int y, int width, int limit);
 
 /**
  * Draws the left and right cursor arrows, bobbing them with a sine.
@@ -443,7 +438,7 @@ void DrawWeaponStatusWaku(int, int, int, int);
  * @address 0x1F9F10
  * @size 0x194
  */
-void DrawBtlMenuLRCursor(int, int, int, int);
+void DrawBtlMenuLRCursor(int x, int y, int width, int alpha);
 
 /**
  * Draws a weapon's status tags with their volume bars.
@@ -453,7 +448,7 @@ void DrawBtlMenuLRCursor(int, int, int, int);
  * @size 0x7B8
  * Draws one weapon's status tags: their values, their gradation bars and their experience numbers.
  */
-void DrawWeaponStatusTag(int, int, WEAPON_HAVE *, int, int, int);
+void DrawWeaponStatusTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha);
 
 /**
  * Draws a weapon's elemental tags with their volume bars.
@@ -463,7 +458,7 @@ void DrawWeaponStatusTag(int, int, WEAPON_HAVE *, int, int, int);
  * @size 0x42C
  * Draws one weapon's elemental tags with their volume bars.
  */
-void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
+void DrawWeaponElemTag(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha);
 
 /**
  * Draws one weapon's anti-monster tags with their volume bars.
@@ -472,7 +467,7 @@ void DrawWeaponElemTag(int, int, WEAPON_HAVE *, int, int, int);
  * @address 0x1FACA0
  * @size 0x350
  */
-void DrawWeaponVsMonster(int, int, WEAPON_HAVE *, int, int, int);
+void DrawWeaponVsMonster(int x, int y, WEAPON_HAVE *weapon, int build, int weapon_no, int alpha);
 
 /**
  * Draws one weapon's model, name and every panel that describes it.
@@ -481,7 +476,8 @@ void DrawWeaponVsMonster(int, int, WEAPON_HAVE *, int, int, int);
  * @address 0x1FB200
  * @size 0x55C
  */
-void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int);
+void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *weapon, int equipped, int selected,
+                    int alpha);
 
 /**
  * Draws the weapon page for one party member, sliding between their weapons.
@@ -490,7 +486,7 @@ void DrawAallWeapon(int, int, float, CCharacter *, WEAPON_HAVE *, int, int, int)
  * @address 0x1FB760
  * @size 0x748
  */
-void BtlWeaponDraw(int, float, int, int);
+void BtlWeaponDraw(int x, float depth, int chara, int alpha);
 
 /**
  * Draws the dialog that offers to repair, build up or scrap the selected weapon.
@@ -499,7 +495,7 @@ void BtlWeaponDraw(int, float, int, int);
  * @address 0x1FC220
  * @size 0x530
  */
-void DrawWeaponSelectDialog(int, int, int);
+void DrawWeaponSelectDialog(int x, int y, int alpha);
 
 /**
  * Runs one frame of the weapon page, dispatching on which of its modes is open.
@@ -536,7 +532,7 @@ void WeaponMenuTagKey(void);
  * @address 0x2007B0
  * @size 0x290
  */
-void RepairAndLevelUpDraw(int, int, int);
+void RepairAndLevelUpDraw(int x, int y, int alpha);
 
 /**
  * Draws the list of weapons the selected one may be built up into.
@@ -545,7 +541,7 @@ void RepairAndLevelUpDraw(int, int, int);
  * @address 0x200A40
  * @size 0x238
  */
-void DrawBuildUpWeaponSelect(int, int, int);
+void DrawBuildUpWeaponSelect(int x, int y, int cursor);
 
 /**
  * Draws the weapon page and whichever dialog is open over it.
@@ -617,7 +613,7 @@ int ItemMenuModeKey(void);
  * @address 0x2068C0
  * @size 0x1EC
  */
-void ActiveItemDraw(int, int, int);
+void ActiveItemDraw(int x, int y, int alpha);
 
 /**
  * Draws the item page's status panel for one party member.
@@ -626,7 +622,7 @@ void ActiveItemDraw(int, int, int);
  * @address 0x206B40
  * @size 0xDA0
  */
-void ItemMenuCharaStatusDraw(int, int, int, int);
+void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha);
 
 /**
  * Chooses which of the use, equip and throw prompts an item offers.
@@ -635,7 +631,7 @@ void ItemMenuCharaStatusDraw(int, int, int, int);
  * @address 0x2078E0
  * @size 0x2D8
  */
-void ItemNaviCursor(int);
+void ItemNaviCursor(int item_no);
 
 /**
  * Draws the party member's status ailments, bobbing the icons with a sine.
@@ -644,7 +640,7 @@ void ItemNaviCursor(int);
  * @address 0x207BC0
  * @size 0x22C
  */
-void CharaStatusMsgDraw(int, int, int, int, int);
+void CharaStatusMsgDraw(int x, int y, int chara, int per_member, int alpha);
 
 /**
  * Opens the travel page, either on the world map or on the local one.
@@ -689,7 +685,7 @@ void DrawMenuMove(void);
  * @address 0x209CC0
  * @size 0x2C0
  */
-void DrawEscapeItem(int, int, int);
+void DrawEscapeItem(int x, int y, int alpha);
 
 /**
  * Waits for the world map and enters its textures and model.
@@ -729,7 +725,7 @@ int GetNearWorldPos(int direction, int *position);
  * @address 0x20A9B0
  * @size 0x150
  */
-void DrawMapCheck(int);
+void DrawMapCheck(int alpha);
 
 /**
  * Initializes the battle manual menu from its placement data and load buffer.
@@ -756,7 +752,7 @@ int BattleManualKey(void);
  * @address 0x20B2E0
  * @size 0x294
  */
-void DrawWepHole(int, int, WEAPON_HAVE *, int, int);
+void DrawWepHole(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha);
 
 /**
  * Displays the selected weapon's option messages in the battle menu.
@@ -765,15 +761,15 @@ class MenuClsMes {
 public:
     s8 mode; /**< Selects the weapon option display mode. */
     char unk_01;
-    s16 alpha;        /**< Opacity used for the option icons and message window. */
-    s16 option_count; /**< Number of option messages selected for the weapon. */
-    s16 unk_06;
-    s32 unk_08;
-    s32 unk_0C;
+    s16 alpha;           /**< Opacity used for the option icons and message window. */
+    s16 option_count;    /**< Number of option messages selected for the weapon. */
+    s16 option_start;    /**< First option line the window starts from, reset with the option list. */
+    s32 draw_x;          /**< Horizontal screen position the option messages are drawn at. */
+    s32 draw_y;          /**< Vertical screen position the option messages are drawn at. */
     s32 option_flags;    /**< Combined option bits of the weapon and its attachments. */
     WEAPON_HAVE *weapon; /**< Weapon whose option messages are displayed. */
-    void *unk_18;
-    ClsMes *message; /**< Message window that holds the option text. */
+    void *work_area;     /**< Work area the message window builds its text in. */
+    ClsMes *message;     /**< Message window that holds the option text. */
     /**
      * Selects the shared East King message window for weapon option text.
      *
@@ -800,7 +796,7 @@ public:
      * @size 0x21C
      * @unknownret
      */
-    void SetBuffInfo(short *);
+    void SetBuffInfo(short *buffer);
 
     /**
      * Updates option messages from the weapon and its attachments.
@@ -809,7 +805,7 @@ public:
      * @address 0x20B7F0
      * @size 0x164
      */
-    void NowWeaponStatus(WEAPON_HAVE *);
+    void NowWeaponStatus(WEAPON_HAVE *selected_weapon);
 
     /**
      * Updates the active weapon option messages and advances their window.
@@ -827,7 +823,7 @@ public:
      * @address 0x20B9E0
      * @size 0x4DC
      */
-    void Draw1(int, int, int);
+    void Draw1(int x, int y, int draw_alpha);
 };
 
 STATIC_ASSERT(sizeof(MenuClsMes) == 0x20);

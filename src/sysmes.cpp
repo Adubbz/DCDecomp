@@ -130,7 +130,7 @@ void InitSystemMes() {
     SystemMessage.rows = 1;
     SystemMessage.centre_rows = 0;
     SystemMessage.style = 2;
-    SystemMessage.unk_17B0 = mes_buff;
+    SystemMessage.tex_buff = mes_buff;
     SystemMessage.tex_block = 26;
     SystemMessage.SetBuff(data);
     SystemMessage.SetBuff_system(SystemMes);
@@ -171,16 +171,16 @@ void SystemMesStep() {
    the text actually laid out to, which is not known until the window has been made. */
 void SystemMesDraw() {
     int x;
-    int cols;
+    int columns;
 
     if (SystemMesWait > 0)
         return;
     if (SystemMesNo <= 0)
         return;
     TexManager.ReloadTexture(Vif1Packet, SystemMessage.tex_block);
-    cols = SystemMessage.text_columns;
+    columns = SystemMessage.text_columns;
     x = 320;
-    x -= cols * 14 / 2;
+    x -= columns * 14 / 2;
     setbilinear(0);
     SystemMessage.text_x = x;
     SystemMessage.text_y = 345;
@@ -190,120 +190,120 @@ void SystemMesDraw() {
 
 /* Which message an item announces is decided by the band its number falls in, and the fourth band
    is the common items, whose message the item's own record names. */
-void ItemGetMes(int item, int value, int count, int input_key) {
-    int *number;
-    int no;
+void ItemGetMes(int item_no, int value, int frames, int input_key) {
+    int *number_ptr;
+    int message_no;
     COM_ITEM_INFO *info;
 
-    int arg[4] = {-1, -1, -1, -1};
-    int num[4] = {0, 0, 0, 0};
+    int mes_args[4] = {-1, -1, -1, -1};
+    int numbers[4] = {0, 0, 0, 0};
 
-    number = num;
-    num[0] = value;
+    number_ptr = numbers;
+    numbers[0] = value;
     SystemMessage.value_show = 0;
     SystemMessage.value_signed = 1;
     if (value < 0) {
-        num[0] = 0;
+        numbers[0] = 0;
         SystemMessage.value_signed = 0;
     }
-    arg[0] = item + 100;
-    no = 10;
-    if (item >= 81)
-        no += 10;
-    if (item >= 145)
-        no += 10;
-    if (item >= 257) {
-        no = 10;
-        info = GetCommonItemInfo(item);
+    mes_args[0] = item_no + 100;
+    message_no = 10;
+    if (item_no >= 81)
+        message_no += 10;
+    if (item_no >= 145)
+        message_no += 10;
+    if (item_no >= 257) {
+        message_no = 10;
+        info = GetCommonItemInfo(item_no);
         if (!info) {
-            printf("item_no: %d  is NULL\n", item);
+            printf("item_no: %d  is NULL\n", item_no);
         } else {
-            arg[0] = info->msg + 100;
+            mes_args[0] = info->msg + 100;
         }
     }
-    SetSystemMes(no, count, 8, input_key, arg, number);
+    SetSystemMes(message_no, frames, 8, input_key, mes_args, number_ptr);
 }
 
-void AtraGetMes(int map, int no, int count) {
-    int arg[4] = {-1, -1, -1, -1};
+void AtraGetMes(int map_no, int element, int frames) {
+    int mes_args[4] = {-1, -1, -1, -1};
 
-    arg[0] = GetAtraMsgNo(map, no);
-    SetSystemMes(40, count, 8, 1, arg, 0);
+    mes_args[0] = GetAtraMsgNo(map_no, element);
+    SetSystemMes(40, frames, 8, 1, mes_args, 0);
 }
 
-void TecGetMes(int tec, int count) {
-    int arg[4] = {-1, -1, -1, -1};
+void TecGetMes(int technique, int frames) {
+    int mes_args[4] = {-1, -1, -1, -1};
 
-    arg[0] = tec + 500;
-    SetSystemMes(50, count, 8, 1, arg, 0);
+    mes_args[0] = technique + 500;
+    SetSystemMes(50, frames, 8, 1, mes_args, 0);
 }
 
-void MaxUpMes(int value, int count) {
-    int number[4] = {0, -1, -1, -1};
+void MaxUpMes(int value, int frames) {
+    int numbers[4] = {0, -1, -1, -1};
 
-    number[0] = value;
-    SetSystemMes(51, count, 8, 1, 0, number);
+    numbers[0] = value;
+    SetSystemMes(51, frames, 8, 1, 0, numbers);
 }
 
 /* A party member out of range names the first one rather than saying nothing, which is the clamp
    the message further down makes one member along. */
-void DeadMes(int member, int count) {
+void DeadMes(int member, int frames) {
     if (member < 0 || member > 5)
         member = 0;
 
-    int arg[4] = {0, -1, -1, -1};
+    int mes_args[4] = {0, -1, -1, -1};
 
-    arg[0] = member + 50;
-    SetSystemMes(60, count, 8, 1, arg, 0);
+    mes_args[0] = member + 50;
+    SetSystemMes(60, frames, 8, 1, mes_args, 0);
 }
 
-void AllDeadMes(int count) {
-    SetSystemMes(61, count, 8, 1, 0, 0);
+void AllDeadMes(int frames) {
+    SetSystemMes(61, frames, 8, 1, 0, 0);
 }
 
-void NotGetAtraMes(int member, int count) {
+void NotGetAtraMes(int member, int frames) {
     if (member < 0 || member > 5)
         member = 1;
 
-    int arg[4] = {0, -1, -1, -1};
+    int mes_args[4] = {0, -1, -1, -1};
 
-    arg[0] = member + 50;
-    SetSystemMes(70, count, 8, 0, arg, 0);
+    mes_args[0] = member + 50;
+    SetSystemMes(70, frames, 8, 0, mes_args, 0);
 }
 
 void DontGetItemMes(int kind) {
-    int no;
+    int message_no;
 
-    no = 72;
+    message_no = 72;
     if (kind == 2)
-        no = 81;
-    SetSystemMes(no, 40, 8, 1, 0, 0);
+        message_no = 81;
+    SetSystemMes(message_no, 40, 8, 1, 0, 0);
 }
 
 /* A negative entry in either list means *leave the slot empty* rather than substitute a negative
    number, so every slot is cleared before it is written and only four of each are ever filled. */
-void SetSystemMes(int no, int count, int position, int input_key, int *arg, int *number) {
+void SetSystemMes(int message_no, int frames, int position, int input_key, int *args, int *numbers) {
     int i;
 
     SystemMesInputKey = input_key;
-    if (arg) {
+    if (args) {
         for (i = 0; i < 4; i++) {
             SystemMessage.mes_no[i] = -1;
-            if (*arg >= 0)
-                SystemMessage.mes_no[i] = *arg;
-            arg++;
+            if (*args >= 0)
+                SystemMessage.mes_no[i] = *args;
+            args++;
         }
     }
-    if (number) {
+    if (numbers) {
         for (i = 0; i < 4; i++) {
             SystemMessage.values[i] = -1;
-            if (*number >= 0)
-                SystemMessage.values[i] = *number;
-            number++;
+            if (*numbers >= 0)
+                SystemMessage.values[i] = *numbers;
+            numbers++;
         }
     }
-    SystemMessage.MakeMesWin(no);
-    SystemMesNo = no;
-    SystemMesCount = count;
+    SystemMessage.MakeMesWin(message_no);
+    SystemMesNo = message_no;
+    SystemMesCount = frames;
     SystemMesPosition = position;
 }

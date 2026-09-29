@@ -40,7 +40,7 @@ extern EDIT_MENU_STATUS EditMenuStatus;
  * @address 0x2101D0
  * @size 0x104
  */
-int GetNumHowManyItemsHave(int);
+int GetNumHowManyItemsHave(int item);
 
 /**
  * Loads the edit menu's data and textures and sets up its windows, pad and cursor.
@@ -49,7 +49,7 @@ int GetNumHowManyItemsHave(int);
  * @address 0x210AB0
  * @size 0x2E4
  */
-void EditMenuInit(int *, int);
+void EditMenuInit(int *texture_blocks, int start_at_atora);
 
 /**
  * Runs one frame of the edit menu for its current state and returns the result.

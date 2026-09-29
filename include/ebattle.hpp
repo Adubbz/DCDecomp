@@ -35,7 +35,7 @@ void EBDebug(int mode);
 int EBIntroLoop();
 /** Advances the active enemy-battle sequence and returns its state. */
 int EBLoop();
-void EBFinishSound(int fade_bgm, int play_fanfare);
+void EBFinishSound(int do_fade_bgm, int do_play_fanfare);
 
 /**
  * Disables the editor camera-view mode.
@@ -98,7 +98,7 @@ void EBSetMotion(CCharacter *character, int *motions);
  * @address 0x168430
  * @size 0x12C
  */
-void EBSetKey(float time, int key, int mode);
+void EBSetKey(float time, int buttons, int mode);
 
 /**
  * Selects the editor input modes that currently own controller input.

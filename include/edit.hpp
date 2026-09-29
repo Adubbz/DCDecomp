@@ -26,8 +26,8 @@ class CCameraFollow;
  * Describes the event the player is standing in, and where it puts them.
  */
 struct ED_EVENT_PARAM {
-    int kind;     /**< What kind of event the point is; 1 for a door. */
-    int entrance; /**< Entrance of the map the door leads to. */
+    int kind;     /**< What kind of event the point is: 1 a door, 2 an item box, 3 a map event, 4 and 5 the two ends of a ladder. */
+    int parts_no; /**< Map part the event point hangs off, or negative for none; a door enters the interior through it. */
     u8 unk_08[0x8];
     sceVu0FVECTOR position;   /**< Where the player stands while the door plays. */
     sceVu0FVECTOR camera_pos; /**< Where the camera stands while the door plays. */
@@ -51,7 +51,7 @@ struct ED_MOVE_CHARA_INFO {
     CEditGround *ground; /**< Ground the character walks on. */
     CMapParts *parts;    /**< Parts of the interior the character walks through. */
     int parts_count;     /**< How many of them there are. */
-    int event_ready;     /**< Set where the character stands in an event. */
+    int event_ready;     /**< Whether the character stands within reach of an event point this step. */
     u8 unk_2c[0x4];
     ED_EVENT_PARAM param;     /**< The event the character stands in. */
     ED_EVENT_POINT *points;   /**< Event points of the map. */
@@ -107,11 +107,11 @@ class CTexAnimeData;
  * fields on the way in and out.
  */
 struct ED_EVENT_INFO {
-    s32 unk_000;
-    s32 unk_004;
-    u8 unk_008[0x28];
-    s32 map_jump_bgm_stop; /**< Whether a map jump stops the current background music. */
-    s32 fukidashi;
+    s32 event_no;                          /**< Number of the event script being run. */
+    s32 world_coord_enable;                /**< Whether the event's stored world coordinate is applied each step. */
+    u8 world_coord[0x28];                  /**< Stored world coordinate: position at byte 8, rotation at byte 24. */
+    s32 map_jump_bgm_stop;                 /**< Whether a map jump stops the current background music. */
+    s32 map_jump_bgm_play;                 /**< Whether a map jump starts the destination's background music. */
     s32 sound_off_count;                   /**< Number of sound channels suppressed by the event. */
     float projection;                      /**< Projection distance used while rendering an event. */
     CCameraFollow *camera;                 /**< Camera controller used by the active event. */
@@ -152,9 +152,9 @@ struct ED_EVENT_INFO {
     s32 talk_messages[16];     /**< Message identifiers assigned to the current conversation sequence. */
     s32 talk_select_message;   /**< Message selected after a conversation choice. */
     s32 talk_select_prompt;    /**< Message containing the current conversation choices. */
-    s32 unk_2ac;
-    char unk_2b0[0x20];
-    s32 unk_2d0;
+    s32 interior_entrance;     /**< Entrance of the interior a GOTO_INTERIOR event walks into. */
+    char interior_name[0x20];  /**< Name of the interior a GOTO_INTERIOR event walks into. */
+    s32 interior_start_event;  /**< Event run on arrival in that interior, or -1 for none. */
     s32 outside_map_no;        /**< Map requested when an event exits to the outside. */
     s32 draw_exclamation_mark; /**< Whether the event requests the attention marker. */
     s32 suppress_background;   /**< Whether event rendering suppresses the scene background. */
@@ -208,7 +208,7 @@ extern int EdDebugMoveFlag;
  * @address 0x197AD0
  * @size 0xCFC
  */
-int EdEventMode(CCameraFollow *camera, int event_kind);
+int EdEventMode(CCameraFollow *camera, int kind);
 
 /**
  * Puts the camera back on the parameters the editor uses outside events.
@@ -220,13 +220,13 @@ int EdEventMode(CCameraFollow *camera, int event_kind);
 void EdInitCameraParam(CCameraFollow *camera);
 
 /**
- * Starts the editor's ambient sound at the requested volume.
+ * Starts the editor's ambient sound set for the time of day.
  *
  * @mangled EdAmbientPlay__Ff
  * @address 0x1715D0
  * @size 0x40
  */
-void EdAmbientPlay(float volume);
+void EdAmbientPlay(float time);
 
 /**
  * Sets the volume of the active editor ambient sound.
@@ -244,7 +244,7 @@ void EdSetAmbientVol(float volume);
  * @address 0x1777D0
  * @size 0x28
  */
-void GetEditDataDir(char *directory);
+void GetEditDataDir(char *name);
 
 /**
  * Describes the time range and rendering parameters of depth of field.
@@ -382,8 +382,8 @@ void EdStopSoundSrc();
  * @address 0x171D20
  * @size 0x3E0
  */
-void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_position,
-                      float *camera_reference);
+void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_pos,
+                      float *camera_dir);
 
 /**
  * Plays the sound one kind of door makes when it opens.
@@ -465,7 +465,7 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
  * @address 0x172AC0
  * @size 0xC4
  */
-void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *functions, EDIT_EFFECT_INFO *effects,
+void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func_data, EDIT_EFFECT_INFO *effects,
                       int count);
 
 /**
@@ -637,8 +637,8 @@ int EdCheckGetItem(int item);
  * @address 0x1733E0
  * @size 0xB4
  */
-void EdSetSystemMes(int number, int count, int position, int input_key, int *arguments,
-                    int argument_count);
+void EdSetSystemMes(int mes_no, int count, int position, int input_key, int *args,
+                    int value);
 
 /**
  * Configures the editor's contextual help message.
@@ -647,7 +647,7 @@ void EdSetSystemMes(int number, int count, int position, int input_key, int *arg
  * @address 0x1734A0
  * @size 0x134
  */
-void EdSetHelpMes(int number, int count, int position, int *arguments, int argument_count);
+void EdSetHelpMes(int mes_no, int count, int position, int *args, int value);
 
 /**
  * Clears the active editor system message.
@@ -710,7 +710,7 @@ void EdWalkToEditMes(int wait);
  * @address 0x173880
  * @size 0xAC
  */
-void EdEditBuildHelpMes(int part);
+void EdEditBuildHelpMes(int part_no);
 
 /**
  * Displays the contextual help for moving an editor part.
@@ -728,7 +728,7 @@ void EdEditMoveHelpMes();
  * @address 0x1739B0
  * @size 0x68
  */
-void EdFishingWalkHelpMes(int fish);
+void EdFishingWalkHelpMes(int bait);
 
 /**
  * Displays the fishing-angle help message.
@@ -737,7 +737,7 @@ void EdFishingWalkHelpMes(int fish);
  * @address 0x173A20
  * @size 0x8
  */
-void EdFishingAngleHelpMEs(int angle);
+void EdFishingAngleHelpMEs(int bait);
 
 /**
  * Displays the message for losing fishing bait.
@@ -755,7 +755,7 @@ void EdFishingLostEsaMes();
  * @address 0x173A70
  * @size 0x2C
  */
-void EdItemGetMes(int item, int kind, int count, int attachment);
+void EdItemGetMes(int item, int kind, int attachment, int duration);
 
 /**
  * Initializes the editor's animated item box frames.
@@ -836,7 +836,7 @@ void EdCreateVillagerTable(EDIT_MAP_INFO *info);
  * @address 0x184750
  * @size 0x300
  */
-void EdEventPointDraw(ED_EVENT_POINT *point, int count, float time);
+void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time);
 
 /**
  * Gives back the motion a door plays for one state.
@@ -864,7 +864,7 @@ int EdInitEventParam(void);
  * @address 0x183D50
  * @size 0x600
  */
-int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *funcs, int count, ED_EVENT_POINT *points, int max_points);
+int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functions, int function_count, ED_EVENT_POINT *points, int point_count);
 
 /**
  * Copies ladder endpoints and event parameters into the active event.
@@ -946,7 +946,7 @@ void EdMoveCharaInit(void);
  * @address 0x186EF0
  * @size 0x5B4
  */
-void EdMoveVillager(VILLAGER_INFO *villager);
+void EdMoveVillager(VILLAGER_INFO *villagers);
 
 /**
  * Runs one villager for a frame on the interior map.
@@ -955,7 +955,7 @@ void EdMoveVillager(VILLAGER_INFO *villager);
  * @address 0x1874B0
  * @size 0x258
  */
-void EdMoveVillagerSubMap(VILLAGER_INFO *villager);
+void EdMoveVillagerSubMap(VILLAGER_INFO *villagers);
 
 /**
  * Texture used to hold a captured editor frame.
@@ -1002,16 +1002,16 @@ void EdSePlay(ED_SOUND_ID sound, int pan);
  * @size 0x200
  * @unknownret
  */
-int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int kind, float range);
+int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int map_no, float time);
 
 /**
- * Sets the editor background music volume.
+ * Sets the editor background music volume for the time of day.
  *
  * @mangled EdSetBgmVol__Ff
  * @address 0x171480
  * @size 0x14C
  */
-void EdSetBgmVol(float volume);
+void EdSetBgmVol(float time);
 
 /**
  * Applies a map description lighting preset to a frame.
@@ -1020,7 +1020,7 @@ void EdSetBgmVol(float volume);
  * @address 0x188D50
  * @size 0x818
  */
-void EdSetLightParam(float clock, int preset, EDIT_MAP_INFO *info, CFrameVu1 *frame);
+void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky);
 
 /**
  * Draws the editor sky dome, celestial layers, and their time-of-day transitions.
@@ -1048,7 +1048,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
  * @address 0x189B80
  * @size 0x588
  */
-void LimitEditCursorPos(float *position, float *limit);
+void LimitEditCursorPos(float *position, float *movement);
 
 /**
  * File name of the p47a villager model.

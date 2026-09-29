@@ -30,13 +30,13 @@ int CScFader::Out() {
     return 1;
 }
 
-int CScFader::Get(int max) {
-    if (value < max) {
+int CScFader::Get(int limit) {
+    if (value < limit) {
         if (value < 0)
             return 0;
         return value;
     }
-    return max;
+    return limit;
 }
 
 void CScFader::Skip() {

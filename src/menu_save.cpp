@@ -211,7 +211,7 @@ static void EventItemSelectExit(void);
  * @address 0x224910
  * @size 0x148
  */
-static void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, int);
+static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int src_u, int src_width, int unused, int alpha);
 
 /**
  * Draws a section of the event item board, clipped to a range.
@@ -220,7 +220,7 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *, CRect_i_, int, int, int, i
  * @address 0x225420
  * @size 0x10C
  */
-static void DrawEventItemBoard(int, int, int, int, int, CTexture *);
+static void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture);
 
 /**
  * Handles the save menu's prompt to confirm a load.
@@ -247,7 +247,7 @@ static int SaveMenuKeyUnFormat(void);
  * @address 0x224260
  * @size 0x6A4
  */
-static int EventItemSelectKey(int *);
+static int EventItemSelectKey(int *result);
 
 /**
  * Draws the event item selection menu.
@@ -265,19 +265,19 @@ static void EventItemSelectDraw(void);
  * @address 0x224A60
  * @size 0x2E8
  */
-static void DrawEventAndFishMenuBoard(CTexture *, int, int, int, int);
+static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang);
 
 static int SaveMenuKeySaveCheck(void) {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 1;
+        SaveMenu.alert_no = 1;
         return 1;
     }
     if ((card->result < 0) || (card->format_change != 0)) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 6;
+        SaveMenu.alert_no = 6;
         return 1;
     }
     if (card->formatted == 0) {
@@ -311,7 +311,7 @@ static int SaveMenuKeySaveDecide(void) {
     if (GamePad.Down(0x20) != 0) {
         SaveMenu.key_no = 7;
         ComMenuSePlay(2);
-        SaveMenu.unk_28 = 0;
+        SaveMenu.step_time = 0;
         return 1;
     }
     return 1;
@@ -322,17 +322,17 @@ static int SaveMenuKeySave(void) {
 
     if (McCheckMCPs2(card) == 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 1;
+        SaveMenu.alert_no = 1;
         return 1;
     }
     if (card->result < 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 6;
+        SaveMenu.alert_no = 6;
         return 1;
     }
     if ((card->free_size < 0x50) && (McAccess.CheckFileNo(SaveMenu.file_no) == 0)) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 0xB;
+        SaveMenu.alert_no = 0xB;
         return 1;
     }
     McAccess.SetFuncNo(5);
@@ -385,12 +385,12 @@ static int SaveMenuKeyLoad(void) {
 
     if (McCheckMCPs2(card) == 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 1;
+        SaveMenu.alert_no = 1;
         return 1;
     }
     if (card->result < 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 6;
+        SaveMenu.alert_no = 6;
         return 1;
     }
     McAccess.SetFuncNo(6);
@@ -400,7 +400,7 @@ static int SaveMenuKeyLoad(void) {
 }
 
 static int SaveMenuKeyArart(void) {
-    switch (SaveMenu.unk_20) {
+    switch (SaveMenu.alert_no) {
         case 0:
             break;
         case 1:
@@ -438,7 +438,7 @@ static int SaveMenuKeyNewDirSelect(void) {
     if (GamePad.Down(0x20) != 0) {
         SaveMenu.key_no = 3;
         SaveMenu.file_no = McAccess.port;
-        SaveMenu.unk_28 = 0;
+        SaveMenu.step_time = 0;
         ComMenuSePlay(2);
         return 1;
     }
@@ -450,17 +450,17 @@ static int SaveMenuKeyNewDir(void) {
 
     if (McCheckMCPs2(card) == 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 1;
+        SaveMenu.alert_no = 1;
         return 1;
     }
     if ((card->result < 0) || (card->formatted == 0)) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 6;
+        SaveMenu.alert_no = 6;
         return 1;
     }
     if (card->free_size < 0x190) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 0xA;
+        SaveMenu.alert_no = 0xA;
         return 1;
     }
     McAccess.SetFuncNo(3);
@@ -472,12 +472,12 @@ static int SaveMenuKeyFormat(void) {
 
     if (McCheckMCPs2(card) == 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 1;
+        SaveMenu.alert_no = 1;
         return 1;
     }
     if (card->result < 0) {
         SaveMenu.key_no = 0xE;
-        SaveMenu.unk_20 = 6;
+        SaveMenu.alert_no = 6;
         return 1;
     }
     if (GamePad.Down(0x40) != 0) {
@@ -598,7 +598,7 @@ int GetSaveMenuMsgNo(void) {
                     msg_no = 0x10E;
                     break;
                 case 14:
-                    switch (SaveMenu.unk_20) {
+                    switch (SaveMenu.alert_no) {
                         case 1:
                             msg_no = 0xFD;
                             break;
@@ -701,7 +701,7 @@ int SaveMenuTextureEnter(void) {
         for (i = 0; i < 4; i++) {
             SaveMenuMojiTextbl[i] = TexManager.GetTexture(moji_names[i], -1);
         }
-        switch (SaveMenu.unk_0) {
+        switch (SaveMenu.mode) {
             case 2:
             case 0:
                 InitMenuMesSet(0, (short *) GetPackFile((u_int *) bg->buffer, allmenu_mes, NULL));
@@ -936,48 +936,48 @@ void DrawNewFileTemplete(int x, int y, int alpha) {
     if (y % 2 != 0) {
         y++;
     }
-    spRGBA start = {0x80, 0x80, 0x80, 0};
-    start.a = alpha;
-    spRGBA end = {0x80, 0x80, 0x80, 0};
-    end.a = alpha;
+    spRGBA top = {0x80, 0x80, 0x80, 0};
+    top.a = alpha;
+    spRGBA bottom = {0x80, 0x80, 0x80, 0};
+    bottom.a = alpha;
 
     // Top edge: two corners and the run between them.
     GetSaveBoardAlphaInfo(y, 0x10, start_alpha, end_alpha, 0x80);
-    start.a = start_alpha;
-    end.a = end_alpha;
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y, 0x10, 0xF), CRect_i_(0x120, 0x88, 0x10, 0x10), &start,
-                &start, &end, &end, 1);
+    top.a = start_alpha;
+    bottom.a = end_alpha;
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y, 0x10, 0xF), CRect_i_(0x120, 0x88, 0x10, 0x10), &top,
+                &top, &bottom, &bottom, 1);
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y, 0x10, 0xF), CRect_i_(0x140, 0x88, 0x10, 0x10),
-                &start, &start, &end, &end, 1);
+                &top, &top, &bottom, &bottom, 1);
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y, 0x160, 0xF), CRect_i_(0x130, 0x88, 0x10, 0x10),
-                &start, &start, &end, &end, 1);
+                &top, &top, &bottom, &bottom, 1);
 
     // Bottom edge.
     GetSaveBoardAlphaInfo(y + 0x78, 0x10, start_alpha, end_alpha, 0x80);
-    start.a = start_alpha;
-    end.a = end_alpha;
+    top.a = start_alpha;
+    bottom.a = end_alpha;
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0x78, 0x10, 0xF), CRect_i_(0x120, 0xA8, 0x10, 0x10),
-                &start, &start, &end, &end, 1);
+                &top, &top, &bottom, &bottom, 1);
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0x78, 0x10, 0xF),
-                CRect_i_(0x140, 0xA8, 0x10, 0x10), &start, &start, &end, &end, 1);
+                CRect_i_(0x140, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y + 0x78, 0x160, 0xF),
-                CRect_i_(0x130, 0xA8, 0x10, 0x10), &start, &start, &end, &end, 1);
+                CRect_i_(0x130, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
 
     // Sides.
     GetSaveBoardAlphaInfo(y + 0x10, 0x68, start_alpha, end_alpha, 0x80);
-    start.a = start_alpha;
-    end.a = end_alpha;
+    top.a = start_alpha;
+    bottom.a = end_alpha;
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0xF, 0x10, 0x69), CRect_i_(0x120, 0x98, 0x10, 0x10),
-                &start, &start, &end, &end, 1);
+                &top, &top, &bottom, &bottom, 1);
     set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0xF, 0x10, 0x69),
-                CRect_i_(0x140, 0x98, 0x10, 0x10), &start, &start, &end, &end, 1);
+                CRect_i_(0x140, 0x98, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
 
     // "New file".
     GetSaveBoardAlphaInfo(y + 0x35, 0x1E, start_alpha, end_alpha, 0x80);
-    start.a = start_alpha;
-    end.a = end_alpha;
+    top.a = start_alpha;
+    bottom.a = end_alpha;
     set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E),
-                CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &start, &start, &end, &end, 1);
+                CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
 }
 
 int InitExistData(void) {
@@ -1173,7 +1173,7 @@ static void EventItemSelectExit(void) {
 }
 
 int EventItemSelectLoop(int *result) {
-    int ret;
+    int done;
     int alpha;
 
     ReadBG();
@@ -1198,20 +1198,20 @@ int EventItemSelectLoop(int *result) {
     setbilinear(0);
     FrameImageDraw(alpha, 0x80);
     MenuTextureReload(MiniEventTextureBlock);
-    ret = EventItemSelectKey(result);
+    done = EventItemSelectKey(result);
     EventItemSelectDraw();
     setbilinear(1);
-    if (ret != 0) {
+    if (done != 0) {
         EventItemSelectExit();
     }
-    return ret;
+    return done;
 }
 
 static int EventItemSelectKey(int *result) {
     int done;
-    int last;
-    int num;
-    int index;
+    int old_cursor;
+    int slot_num;
+    int pack_index;
     int accepted;
     int i;
     s16 *slot;
@@ -1239,8 +1239,8 @@ static int EventItemSelectKey(int *result) {
         }
     }
     done = 0;
-    last = MiniMenu.cursor;
-    num = EventItemPackPt->num;
+    old_cursor = MiniMenu.cursor;
+    slot_num = EventItemPackPt->num;
     switch (MiniMenu.state) {
         case 1:
             if (GamePad.Down(0x60) != 0) {
@@ -1251,13 +1251,13 @@ static int EventItemSelectKey(int *result) {
             if (GamePad.Down(0x1000) != 0 && MiniMenu.cursor > 4) {
                 MiniMenu.cursor -= 5;
             }
-            if (GamePad.Down(0x4000) != 0 && MiniMenu.cursor < num - 5) {
+            if (GamePad.Down(0x4000) != 0 && MiniMenu.cursor < slot_num - 5) {
                 MiniMenu.cursor += 5;
             }
             if (GamePad.Down(0x8000) != 0 && 0 < MiniMenu.cursor) {
                 MiniMenu.cursor--;
             }
-            if (GamePad.Down(0x2000) != 0 && MiniMenu.cursor < num - 1) {
+            if (GamePad.Down(0x2000) != 0 && MiniMenu.cursor < slot_num - 1) {
                 MiniMenu.cursor++;
             }
             if (MiniMenu.cursor < MiniMenu.scroll_row * 5) {
@@ -1266,7 +1266,7 @@ static int EventItemSelectKey(int *result) {
             if ((MiniMenu.scroll_row + 2) * 5 - 1 < MiniMenu.cursor) {
                 MiniMenu.scroll_row++;
             }
-            if (last != MiniMenu.cursor) {
+            if (old_cursor != MiniMenu.cursor) {
                 ComMenuSePlay(0);
             }
             if (GamePad.Down(0x80) != 0) {
@@ -1275,21 +1275,21 @@ static int EventItemSelectKey(int *result) {
                 break;
             }
             if (GamePad.Down(0x40) != 0) {
-                index = -1;
+                pack_index = -1;
                 if (MiniMenu.cursor < MiniMenu.event_item_num) {
-                    int n = 0;
+                    int event_no = 0;
                     slot = EventItemPackPt->item;
-                    for (index = 0; index < EventItemPackPt->num; index++) {
+                    for (pack_index = 0; pack_index < EventItemPackPt->num; pack_index++) {
                         if (*slot >= ITEM_DUNGEON_START) {
-                            if (MiniMenu.cursor == n) {
+                            if (MiniMenu.cursor == event_no) {
                                 *result = *slot;
                                 break;
                             }
-                            n++;
+                            event_no++;
                         }
                         slot++;
-                        if (index == EventItemPackPt->num - 1) {
-                            index = EventItemPackPt->num;
+                        if (pack_index == EventItemPackPt->num - 1) {
+                            pack_index = EventItemPackPt->num;
                         }
                     }
                 }
@@ -1297,8 +1297,8 @@ static int EventItemSelectKey(int *result) {
                 for (i = 0; slot != NULL && MiniMenu.usable[i] >= ITEM_DUNGEON_START && i < 13; i++) {
                     if (MiniMenu.usable[i] == *result) {
                         accepted = 1;
-                        if (MiniMenu.vanish != 0 && 0 <= index && index < EventItemPackPt->num) {
-                            EventItemPackPt->item[index] = 0;
+                        if (MiniMenu.vanish != 0 && 0 <= pack_index && pack_index < EventItemPackPt->num) {
+                            EventItemPackPt->item[pack_index] = 0;
                         }
                         break;
                     }
@@ -1326,14 +1326,14 @@ static int EventItemSelectKey(int *result) {
     }
     s16 *item = NULL;
     if (MiniMenu.cursor < MiniMenu.event_item_num) {
-        int n = 0;
+        int event_no = 0;
         item = EventItemPackPt->item;
         for (int j = 0; j < EventItemPackPt->num; j++) {
             if (*item >= ITEM_DUNGEON_START) {
-                if (MiniMenu.cursor == n) {
+                if (MiniMenu.cursor == event_no) {
                     break;
                 }
-                n++;
+                event_no++;
             }
             item++;
         }
@@ -1354,14 +1354,14 @@ static int EventItemSelectKey(int *result) {
     return done;
 }
 
-static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int u, int width, int unused, int alpha) {
+static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int src_u, int src_width, int unused, int alpha) {
     int y = rect.y;
 
-    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x94), CRect_i_(u, 0, width, 0x94), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x94), CRect_i_(src_u, 0, src_width, 0x94), alpha);
     y += 0x94;
-    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, rect.height + 0x32), CRect_i_(u, 0x94, width, 0x14), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, rect.height + 0x32), CRect_i_(src_u, 0x94, src_width, 0x14), alpha);
     y += rect.height + 0x32;
-    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(u, 0xC6, width, 0x1E), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(src_u, 0xC6, src_width, 0x1E), alpha);
 }
 
 /**
@@ -1375,20 +1375,20 @@ s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
 s8 kakudai_yoko_lang[7] = {0, 10, 10, 10, 10, 10, 10};
 
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
-    int height = kakudai_tate_lang[lang];
-    int extra = kakudai_yoko_lang[lang];
+    int extra_height = kakudai_tate_lang[lang];
+    int extra_width = kakudai_yoko_lang[lang];
     int rows;
     float bar_height;
 
-    CRect_i_ center(x + 0x1C, y, 0xD2, height);
+    CRect_i_ center(x + 0x1C, y, 0xD2, extra_height);
     DrawEventAndFishMenuBoard_Ver(texture, center, 0x1C, 0xD2, lang, alpha);
-    int edge = extra + 6;
-    CRect_i_ left_inner(x + 0x1C - edge, y, edge, height);
-    CRect_i_ left_outer(x + 8 - edge, y, 0x14, height);
+    int edge = extra_width + 6;
+    CRect_i_ left_inner(x + 0x1C - edge, y, edge, extra_height);
+    CRect_i_ left_outer(x + 8 - edge, y, 0x14, extra_height);
     DrawEventAndFishMenuBoard_Ver(texture, left_inner, 0x14, 6, lang, alpha);
     DrawEventAndFishMenuBoard_Ver(texture, left_outer, 0, 0x14, lang, alpha);
-    CRect_i_ right_inner(x + 0xEE, y, edge, height);
-    CRect_i_ right_outer(x + 0xEE + edge, y, 0x20, height);
+    CRect_i_ right_inner(x + 0xEE, y, edge, extra_height);
+    CRect_i_ right_outer(x + 0xEE + edge, y, 0x20, extra_height);
     DrawEventAndFishMenuBoard_Ver(texture, right_inner, 0xEC, 6, lang, alpha);
     DrawEventAndFishMenuBoard_Ver(texture, right_outer, 0xF4, 0x20, lang, alpha);
 

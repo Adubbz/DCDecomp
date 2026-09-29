@@ -76,23 +76,23 @@ void makeWeaponName(char *name, int weapon_no);
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
 
 /**
- * Builds the model and texture file names of one of a character's weapons into
- * the two given buffers.
+ * Builds the character and configuration file names of one of a character's
+ * weapons into the two given buffers.
  *
  * @mangled BtGetWeaponNamePath2__FPcPcii
  * @address 0x1B7250
  * @size 0x158
  */
-void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon);
+void BtGetWeaponNamePath2(char *chr_name, char *cfg_name, int chara, int weapon_index);
 
 /**
- * Builds the model and effect names for an absolute weapon item identifier.
+ * Builds the character and configuration file names for an absolute weapon item identifier.
  *
  * @mangled BtGetWeaponNamePath3__FPcPci
  * @address 0x1B73B0
  * @size 0xB4
  */
-void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no);
+void BtGetWeaponNamePath3(char *chr_name, char *cfg_name, int weapon_no);
 
 /**
  * Records in the save file that an Atla has been collected.

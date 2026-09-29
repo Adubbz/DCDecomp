@@ -9,18 +9,18 @@
  * each other.
  */
 struct SAVE_MENU_STATE {
-    s32 unk_0;
+    s32 mode;          /**< Screen that opened the menu: 0 load from the title, 1 save, 2 save after the ending. */
     s32 key_no;        /**< Index of the step run next, into SaveMenuFunc. */
     s32 return_key_no; /**< Step to go back to once a card operation finishes, or -1. */
     s32 file_no;       /**< Save slot the current step works on. */
-    s32 unk_10;
-    s8 result; /**< How the screen ended: 0 while it runs, 1 after a load, 2 otherwise. */
+    s32 board_y;       /**< Scroll position of the save boards, eased toward the selected slot. */
+    s8 result;         /**< How the screen ended: 0 while it runs, 1 after a load, 2 otherwise. */
     u8 unk_15[3];
-    s32 loaded; /**< Whether a save file has been loaded. */
-    s32 unk_1C;
-    s32 unk_20;
+    s32 loaded;      /**< Whether a save file has been loaded. */
+    s32 access_kind; /**< Card operation the menu performs: 1 load, 2 save. */
+    s32 alert_no;    /**< Alert the alert step shows, which picks its message. */
     u8 unk_24[4];
-    s32 unk_28;
+    s32 step_time;     /**< Frames spent in the current fade step. */
     s32 block_no;      /**< Texture block the save board's textures load into. */
     s32 texture_ready; /**< Whether the save board's textures have been entered. */
 };
@@ -89,7 +89,7 @@ int SaveMenuEffectFadeOut(void);
  * @address 0x222AA0
  * @size 0x9B8
  */
-void DrawSaveBoard(SAVEDATA_INFO *, CTexture **, int, int, int, int);
+void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha);
 
 /**
  * Draws the board of a save slot that holds no save data.
@@ -98,7 +98,7 @@ void DrawSaveBoard(SAVEDATA_INFO *, CTexture **, int, int, int, int);
  * @address 0x223460
  * @size 0x4DC
  */
-void DrawNewFileTemplete(int, int, int);
+void DrawNewFileTemplete(int x, int y, int alpha);
 
 /**
  * Starts memory card access and checks the card for existing save data.
@@ -125,7 +125,7 @@ int SaveEnableCheck(void);
  * @address 0x223C60
  * @size 0x478
  */
-void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
+void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode);
 
 /**
  * Runs one frame of the event item selection menu, and returns its result.
@@ -134,7 +134,7 @@ void InitEventItemSelect(int, int *, ITEM_PACK *, int, int, int, int);
  * @address 0x224140
  * @size 0x11C
  */
-int EventItemSelectLoop(int *);
+int EventItemSelectLoop(int *result);
 
 /**
  * Tells whether the player holds an item, in the dungeon inventory or in storage.
@@ -152,7 +152,7 @@ int PlayerAllItemCheck(int item);
  * @address 0x2255D0
  * @size 0x28
  */
-s32 GetAddAttachItem(int);
+s32 GetAddAttachItem(int item_no);
 
 /**
  * Converts a weapon item identifier into its position in the owner's weapon chain.

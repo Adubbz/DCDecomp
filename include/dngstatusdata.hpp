@@ -172,7 +172,7 @@ public:
      * @address 0x1BF8F0
      * @size 0x5C
      */
-    void SetCopyAtraList(int georama_no, int floor, int *out8);
+    void SetCopyAtraList(int georama_no, int floor, int *out_list);
 
     /**
      * @mangled GetAtraData__14CDngStatusDataFiii
@@ -185,7 +185,7 @@ public:
     /**
      * Returns one character's active battle-menu status value.
      */
-    s32 GetActiveCharaStatus(int chara_no) { return unk_42C8[chara_no]; }
+    s32 GetActiveCharaStatus(int chara_no) { return ailments[chara_no]; }
 
     /**
      * Returns the weapon slot one character has equipped.

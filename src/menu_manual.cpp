@@ -81,7 +81,7 @@ static s16 ManualImgLoad() {
     }
     ReadBG();
     ManualMenu.image_offset = 0;
-    ManualMenu.unk_20 = 0;
+    ManualMenu.image_reset = 0;
     ManualMenu.images_ready = 0;
     return ManualMenu.images_ready;
 }
@@ -218,8 +218,8 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.transition_frame = 0;
     ManualMsg = &EastKingMsgCls;
     ManualMsg->edge_alpha = 0;
-    ManualMsg->unk_02C = 0x10;
-    ManualMsg->unk_030 = 0x10;
+    ManualMsg->init_02C = 0x10;
+    ManualMsg->init_030 = 0x10;
     ManualMenu.common_message_buffer = CommonMenuMes3.buff;
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
     ManualMenu.char_width = CommonMenuMes3.char_width;
@@ -292,7 +292,7 @@ int SetManualMsgBuffer() {
         ManualMsg->char_width = GetMenuCommonFontW(GetMenuLangFlag(), -1);
         ManualMsg->char_height = 0x16;
         ManualMsg->tex_block = 0x1A;
-        ManualMsg->unk_17B0 = CommonMenuMes1.unk_17B0;
+        ManualMsg->tex_buff = CommonMenuMes1.tex_buff;
         for (int slot = 0; slot < 10; slot++) {
             ClsMes *window = ManualMsg;
             window->mes_no[slot] = -1;

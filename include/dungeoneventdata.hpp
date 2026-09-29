@@ -19,12 +19,12 @@ public:
     s32 parts_id;            /**< Map-part identifier that owns this event definition. */
     s32 script_no;           /**< Script that the event runs, or -1 where it runs none. */
     s32 fade;                /**< 1 where the event fades the picture out before it runs. */
-    s32 unk_28;
-    s32 chara_no; /**< Character that has to start the event, or -1 for any. */
-    s32 unk_30;
-    s32 unk_34;
-    s32 unk_38;  /**< Passed on as the memory the script runs out of. */
-    s32 enabled; /**< Whether this definition slot is in use. */
+    s32 hold;                /**< Value that the runtime event's hold flag starts from. */
+    s32 chara_no;            /**< Character that has to start the event, or -1 for any. */
+    s32 key_id;              /**< Identifier that the character's collision hit has to carry, such as a door key, or -1 for any. */
+    s32 switch_on;           /**< Whether the event starts switched on. */
+    s32 ext_mem;             /**< 1 where the script runs out of the memory freed from the monster models, 0 for the system memory. */
+    s32 enabled;             /**< Whether this definition slot is in use. */
 };
 
 STATIC_ASSERT(sizeof(CDungeonEvent) == 0x40);
@@ -39,9 +39,9 @@ public:
     sceVu0FVECTOR pos; /**< World position that the event plays at. */
     sceVu0FVECTOR dir; /**< Way that the event faces. */
     s32 hold;          /**< Holds the event back from running until it is cleared. */
-    s32 unk_34;
-    s32 enabled;    /**< Whether the slot holds an event that can run. */
-    s32 chara_done; /**< Character that has already run the event, or -1 for none. */
+    s32 switch_on;     /**< Whether a script has the event switched on. */
+    s32 enabled;       /**< Whether the slot holds an event that can run. */
+    s32 chara_done;    /**< Character that has already run the event, or -1 for none. */
 
     /**
      * Initializes this runtime slot from a dungeon event definition.
@@ -50,7 +50,7 @@ public:
      * @address 0x1CC820
      * @size 0x5C
      */
-    void Set(CDungeonEvent *);
+    void Set(CDungeonEvent *source);
 
     /**
      * Reports whether this event slot is enabled and ready to run.

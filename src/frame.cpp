@@ -259,20 +259,20 @@ static void QuatToMat(float *quaternion, sceVu0FMATRIX matrix) {
 }
 
 void CFrameAttr::Initialize() {
-    unk_04 = 0.0f;
-    unk_0D = unk_0B = unk_08 = unk_0A = unk_09 = fog_enable = 0;
-    unk_10 = 0.0f;
-    unk_14 = 0;
+    clip_depth = 0.0f;
+    far_clip_enable = program_option = clip_enable = remake_pending = unk_09 = fog_enable = 0;
+    far_clip = 0.0f;
+    use_color = 0;
     color[0] = color[1] = color[2] = color[3] = 128.0f;
-    unk_50 = -1;
+    alpha_ref = -1;
     draw_on = 1;
-    unk_54 = 1;
-    unk_55 = 0;
-    unk_56 = 0;
-    unk_58 = 0;
-    unk_52 = 0;
-    unk_30 = 1;
-    unk_31 = 0;
+    depth_write = 1;
+    ignore_depth = 0;
+    eye_relative = 0;
+    billboard = 0;
+    blend_mode = 0;
+    cull_enable = 1;
+    ambient_boost = 0;
     unk_40[0] = unk_40[2] = unk_40[3] = 0.0f;
     unk_40[1] = 1.0f;
 }
@@ -440,10 +440,10 @@ void CFrame::DeleteReference() {
    world matrices were composed with the matrix that just changed. */
 void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     sceVu0FMATRIX parent_world;
-    sceVu0FMATRIX local;
+    sceVu0FMATRIX local_matrix;
     sceVu0FVECTOR translation;
     CFrame *frame;
-    CFrame *child;
+    CFrame *sibling;
 
     /* A referenced frame follows a frame that is not its parent, so nothing on that frame's side
        clears this cache when it moves and it can never be trusted. */
@@ -471,67 +471,67 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
 
     if (this->child) {
         this->child->world_valid = 0;
-        child = this->child;
-        if (child->brother) {
-            while (child->brother) {
-                child->brother->world_valid = 0;
-                child = child->brother;
+        sibling = this->child;
+        if (sibling->brother) {
+            while (sibling->brother) {
+                sibling->brother->world_valid = 0;
+                sibling = sibling->brother;
             }
         }
     }
 
     if (srt) {
-        ScaleMatrix(local, this->local, scale);
+        ScaleMatrix(local_matrix, this->local, scale);
 
         /* Rotation type 2 turns about the frame's own origin rather than the parent's, so the
            translation is taken out before the rotation and added back after it. */
         if (rot_type & 2) {
-            sceVu0CopyVector(translation, local[3]);
-            local[3][0] = local[3][1] = local[3][2] = 0.0f;
+            sceVu0CopyVector(translation, local_matrix[3]);
+            local_matrix[3][0] = local_matrix[3][1] = local_matrix[3][2] = 0.0f;
         }
         if (rot_type & 1) {
             if (rotation[0] != 0.0f) {
-                sceVu0RotMatrixX(local, local, rotation[0]);
+                sceVu0RotMatrixX(local_matrix, local_matrix, rotation[0]);
             }
             if (rotation[1] != 0.0f) {
-                sceVu0RotMatrixY(local, local, rotation[1]);
+                sceVu0RotMatrixY(local_matrix, local_matrix, rotation[1]);
             }
             if (rotation[2] != 0.0f) {
-                sceVu0RotMatrixZ(local, local, rotation[2]);
+                sceVu0RotMatrixZ(local_matrix, local_matrix, rotation[2]);
             }
         }
         if (rot_type & 2) {
-            sceVu0AddVector(local[3], translation, position);
+            sceVu0AddVector(local_matrix[3], translation, position);
         } else {
-            sceVu0AddVector(local[3], local[3], position);
+            sceVu0AddVector(local_matrix[3], local_matrix[3], position);
         }
     } else {
-        sceVu0CopyMatrix(local, this->local);
+        sceVu0CopyMatrix(local_matrix, this->local);
     }
 
     frame = parent;
     if (!frame) {
-        sceVu0CopyMatrix(world, local);
+        sceVu0CopyMatrix(world, local_matrix);
         sceVu0CopyMatrix(matrix, world);
         world_valid = 1;
         return;
     }
 
-    if (frame->attr.unk_58) {
+    if (frame->attr.billboard) {
         sceVu0CopyMatrix(parent_world, frame->world);
     } else {
         frame->GetLWMatrix(parent_world);
     }
-    MulFrameMatrix(world, parent_world, local);
+    MulFrameMatrix(world, parent_world, local_matrix);
     sceVu0CopyMatrix(matrix, world);
     world_valid = 1;
 }
 
 float (*CFrame::GetInverseMatrix())[4] {
-    sceVu0FMATRIX world;
+    sceVu0FMATRIX world_matrix;
 
-    GetLWMatrix(world);
-    sceVu0InversMatrix(inverse, world);
+    GetLWMatrix(world_matrix);
+    sceVu0InversMatrix(inverse, world_matrix);
 
     return inverse;
 }
@@ -555,39 +555,39 @@ void CFrame::SetTransMatrix(float *quaternion) {
 /* Only the stem before a "__" identifies a frame, so both sides are measured to it first and a
    difference in stem length settles the answer without comparing a character. */
 static int StrCmp(char *left, char *right) {
-    char *l;
-    char *r;
-    char c;
-    int nl;
-    int nr;
+    char *left_cursor;
+    char *right_cursor;
+    char ch;
+    int left_length;
+    int right_length;
     int i;
 
-    l = left;
-    r = right;
-    nl = 0;
-    nr = 0;
+    left_cursor = left;
+    right_cursor = right;
+    left_length = 0;
+    right_length = 0;
 
-    while ((c = *l) != '\0') {
-        if (c == '_' && l[1] == '_') {
+    while ((ch = *left_cursor) != '\0') {
+        if (ch == '_' && left_cursor[1] == '_') {
             break;
         }
-        nl++;
-        l++;
+        left_length++;
+        left_cursor++;
     }
 
-    while ((c = *r) != '\0') {
-        if (c == '_' && r[1] == '_') {
+    while ((ch = *right_cursor) != '\0') {
+        if (ch == '_' && right_cursor[1] == '_') {
             break;
         }
-        nr++;
-        r++;
+        right_length++;
+        right_cursor++;
     }
 
-    if (nl != nr) {
+    if (left_length != right_length) {
         return 0;
     }
 
-    for (i = 0; i < nl; i++) {
+    for (i = 0; i < left_length; i++) {
         if (*left != *right) {
             return 0;
         }
@@ -668,23 +668,23 @@ void CFrame::ScaleBoundBox(float *scale) {
     sceVu0FVECTOR center;
     sceVu0FVECTOR dmax;
     sceVu0FVECTOR dmin;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
-    float *corner[2];
+    sceVu0FVECTOR new_max;
+    sceVu0FVECTOR new_min;
+    float *bound[2];
     int i;
 
-    max[0] = this->max[0];
-    max[1] = this->max[1];
-    max[2] = this->max[2];
+    new_max[0] = this->max[0];
+    new_max[1] = this->max[1];
+    new_max[2] = this->max[2];
 
-    min[0] = this->min[0];
-    min[1] = this->min[1];
-    min[2] = this->min[2];
+    new_min[0] = this->min[0];
+    new_min[1] = this->min[1];
+    new_min[2] = this->min[2];
 
-    sceVu0AddVector(center, max, min);
+    sceVu0AddVector(center, new_max, new_min);
     sceVu0ScaleVector(center, center, 0.5f);
-    sceVu0SubVector(dmax, max, center);
-    sceVu0SubVector(dmin, min, center);
+    sceVu0SubVector(dmax, new_max, center);
+    sceVu0SubVector(dmin, new_min, center);
 
     dmax[0] *= scale[0];
     dmax[1] *= scale[1];
@@ -694,25 +694,25 @@ void CFrame::ScaleBoundBox(float *scale) {
     dmin[1] *= scale[1];
     dmin[2] *= scale[2];
 
-    sceVu0AddVector(max, dmax, center);
-    sceVu0AddVector(min, dmin, center);
+    sceVu0AddVector(new_max, dmax, center);
+    sceVu0AddVector(new_min, dmin, center);
 
-    this->max[0] = max[0];
-    this->max[1] = max[1];
-    this->max[2] = max[2];
+    this->max[0] = new_max[0];
+    this->max[1] = new_max[1];
+    this->max[2] = new_max[2];
 
-    this->min[0] = min[0];
-    this->min[1] = min[1];
-    this->min[2] = min[2];
+    this->min[0] = new_min[0];
+    this->min[1] = new_min[1];
+    this->min[2] = new_min[2];
 
-    corner[0] = this->min;
-    corner[1] = this->max;
+    bound[0] = this->min;
+    bound[1] = this->max;
 
     for (i = 0; i < 8; i++) {
         this->corner[i][3] = 1.0f;
-        this->corner[i][0] = corner[(i & 1) != 0][0];
-        this->corner[i][1] = corner[(i & 2) != 0][1];
-        this->corner[i][2] = corner[(i & 4) != 0][2];
+        this->corner[i][0] = bound[(i & 1) != 0][0];
+        this->corner[i][1] = bound[(i & 2) != 0][1];
+        this->corner[i][2] = bound[(i & 4) != 0][2];
     }
 }
 
@@ -726,52 +726,52 @@ void CFrame::SetAttr(CFrameAttr &attr, int children, int mask) {
             this->attr.draw_on = attr.draw_on;
         }
         if (mask & 0x2) {
-            this->attr.unk_04 = attr.unk_04;
+            this->attr.clip_depth = attr.clip_depth;
         }
         if (mask & 0x4) {
-            this->attr.unk_08 = attr.unk_08;
+            this->attr.clip_enable = attr.clip_enable;
         }
         if (mask & 0x8) {
             this->attr.unk_09 = attr.unk_09;
         }
         if (mask & 0x10) {
-            this->attr.unk_0A = attr.unk_0A;
+            this->attr.remake_pending = attr.remake_pending;
         }
         if (mask & 0x20) {
-            this->attr.unk_0B = attr.unk_0B;
+            this->attr.program_option = attr.program_option;
         }
         if (mask & 0x40) {
             this->attr.fog_enable = attr.fog_enable;
         }
         if (mask & 0x80) {
-            this->attr.unk_0D = attr.unk_0D;
+            this->attr.far_clip_enable = attr.far_clip_enable;
         }
         if (mask & 0x100) {
-            this->attr.unk_10 = attr.unk_10;
+            this->attr.far_clip = attr.far_clip;
         }
         if (mask & 0x200) {
-            this->attr.unk_14 = attr.unk_14;
+            this->attr.use_color = attr.use_color;
         }
         if (mask & 0x400) {
             *(u_long128 *) this->attr.color = *(u_long128 *) attr.color;
         }
         if (mask & 0x800) {
-            this->attr.unk_50 = attr.unk_50;
+            this->attr.alpha_ref = attr.alpha_ref;
         }
         if (mask & 0x1000) {
-            this->attr.unk_54 = attr.unk_54;
+            this->attr.depth_write = attr.depth_write;
         }
         if (mask & 0x2000) {
-            this->attr.unk_56 = attr.unk_56;
+            this->attr.eye_relative = attr.eye_relative;
         }
         if (mask & 0x4000) {
-            this->attr.unk_58 = attr.unk_58;
+            this->attr.billboard = attr.billboard;
         }
         if (mask & 0x8000) {
-            this->attr.unk_52 = attr.unk_52;
+            this->attr.blend_mode = attr.blend_mode;
         }
         if (mask & 0x10000) {
-            this->attr.unk_55 = attr.unk_55;
+            this->attr.ignore_depth = attr.ignore_depth;
         }
     }
 
@@ -784,12 +784,12 @@ void CFrame::SetAttr(CFrameAttr &attr, int children, int mask) {
     }
 }
 
-void CFrame::GetWorldPosition(float *world, float *local) {
+void CFrame::GetWorldPosition(float *world_point, float *local_point) {
     sceVu0FMATRIX matrix;
 
-    local[3] = 1.0f;
+    local_point[3] = 1.0f;
     GetLWMatrix(matrix);
-    sceVu0ApplyMatrix(world, matrix, local);
+    sceVu0ApplyMatrix(world_point, matrix, local_point);
 }
 
 void CFrame::SetRotation(float x, float y, float z) {
@@ -993,12 +993,12 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     sceVu0FMATRIX light;
     sceVu0FVECTOR ambient;
     sceVu0FVECTOR direction;
-    sceVu0FVECTOR position;
+    sceVu0FVECTOR world_position;
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
-    sceVu0FVECTOR corner[8];
-    sceVu0FMATRIX world;
-    sceVu0FVECTOR max;
-    sceVu0FVECTOR min;
+    sceVu0FVECTOR screen_corner[8];
+    sceVu0FMATRIX world_matrix;
+    sceVu0FVECTOR screen_max;
+    sceVu0FVECTOR screen_min;
     sceVu0FVECTOR color;
     int near_clip = 0;
     int far_clip = 0;
@@ -1006,13 +1006,13 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     sceGsTest test = mgPixelTest;
     sceGsZbuf zbuf = mgZBuffer;
     sceGsAlpha alpha;
-    CFrame *child;
+    CFrame *sibling;
     CFrame *frame;
     float height;
-    float x;
-    float y;
-    float z;
-    float scale;
+    float axis_x;
+    float axis_y;
+    float axis_z;
+    float inv_scale;
     float flat;
     float half_width;
     float half_height;
@@ -1021,17 +1021,17 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     float depth;
     int done;
 
-    if (attr.unk_58) {
+    if (attr.billboard) {
         world_valid = 0;
-        GetWorldPosition(position, origin);
-        GetLWMatrix(world);
-        x = DistVector(world[0]);
-        y = DistVector(world[1]);
-        z = DistVector(world[2]);
+        GetWorldPosition(world_position, origin);
+        GetLWMatrix(world_matrix);
+        axis_x = DistVector(world_matrix[0]);
+        axis_y = DistVector(world_matrix[1]);
+        axis_z = DistVector(world_matrix[2]);
 
-        if ((attr.unk_58 & 2) && !(attr.unk_58 & 1)) {
+        if ((attr.billboard & 2) && !(attr.billboard & 1)) {
             sceVu0CopyMatrix(matrix, mgUnitMatrix);
-            sceVu0SubVector(matrix[2], info->view_position, position);
+            sceVu0SubVector(matrix[2], info->view_position, world_position);
             matrix[2][1] = 0.0f;
             matrix[2][3] = 0.0f;
             sceVu0Normalize(matrix[2], matrix[2]);
@@ -1039,9 +1039,9 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             matrix[0][2] = -matrix[2][0];
         }
 
-        if ((attr.unk_58 & 2) && (attr.unk_58 & 1)) {
+        if ((attr.billboard & 2) && (attr.billboard & 1)) {
             sceVu0UnitMatrix(turn);
-            sceVu0SubVector(direction, info->view_position, position);
+            sceVu0SubVector(direction, info->view_position, world_position);
             sceVu0Normalize(direction, direction);
             height = direction[1];
             direction[1] = 0.0f;
@@ -1053,7 +1053,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             turn[2][2] = flat;
 
             sceVu0CopyMatrix(matrix, mgUnitMatrix);
-            sceVu0SubVector(matrix[2], info->view_position, position);
+            sceVu0SubVector(matrix[2], info->view_position, world_position);
             matrix[2][1] = 0.0f;
             matrix[2][3] = 0.0f;
             sceVu0Normalize(matrix[2], matrix[2]);
@@ -1063,21 +1063,21 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             MulFrameMatrix(matrix, matrix, turn);
         }
 
-        sceVu0ScaleVector(matrix[0], matrix[0], x);
-        sceVu0ScaleVector(matrix[1], matrix[1], y);
-        sceVu0ScaleVector(matrix[2], matrix[2], z);
-        matrix[3][0] = position[0];
-        matrix[3][1] = position[1];
-        matrix[3][2] = position[2];
+        sceVu0ScaleVector(matrix[0], matrix[0], axis_x);
+        sceVu0ScaleVector(matrix[1], matrix[1], axis_y);
+        sceVu0ScaleVector(matrix[2], matrix[2], axis_z);
+        matrix[3][0] = world_position[0];
+        matrix[3][1] = world_position[1];
+        matrix[3][2] = world_position[2];
         CopyMatrix(this->world, matrix);
 
         if (this->child) {
             this->child->world_valid = 0;
-            child = this->child;
-            if (child->brother) {
-                while (child->brother) {
-                    child->brother->world_valid = 0;
-                    child = child->brother;
+            sibling = this->child;
+            if (sibling->brother) {
+                while (sibling->brother) {
+                    sibling->brother->world_valid = 0;
+                    sibling = sibling->brother;
                 }
             }
         }
@@ -1090,60 +1090,60 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         return 0;
     }
 
-    if (info->unk_320) {
+    if (info->shadow_pass) {
         ShadowMatrix(info->shadow, info->light_direction, info->shadow_point,
                      info->shadow_normal);
     }
 
-    if (visual && attr.draw_on && attr.unk_30) {
+    if (visual && attr.draw_on && attr.cull_enable) {
         MulFrameMatrix(screen_matrix, info->view_scaled, matrix);
-        scale = 1.0f / info->scale[0];
+        inv_scale = 1.0f / info->scale[0];
         done = 0;
 
-        if (info->unk_320) {
-            ShadowClipBox(corner, this->corner, matrix, info);
-            ScreenBound(corner, max, min);
+        if (info->shadow_pass) {
+            ShadowClipBox(screen_corner, this->corner, matrix, info);
+            ScreenBound(screen_corner, screen_max, screen_min);
         } else {
-            ApplyMatrixN(corner, screen_matrix, this->corner, 8);
-            ScreenBound(corner, max, min);
+            ApplyMatrixN(screen_corner, screen_matrix, this->corner, 8);
+            ScreenBound(screen_corner, screen_max, screen_min);
         }
 
         near_z = info->near[2];
-        far_z = info->unk_31C;
+        far_z = info->frame_far_z;
 
         while (done == 0) {
             visible = 0;
 
-            if (attr.unk_0A) {
-                half_width = 2.0f * (320.0f * scale);
-                half_height = 2.0f * (112.0f * scale);
+            if (attr.remake_pending) {
+                half_width = 2.0f * (320.0f * inv_scale);
+                half_height = 2.0f * (112.0f * inv_scale);
             } else {
-                half_width = 320.0f * scale;
-                half_height = 112.0f * scale;
+                half_width = 320.0f * inv_scale;
+                half_height = 112.0f * inv_scale;
             }
 
-            if (min[0] > half_width) {
+            if (screen_min[0] > half_width) {
                 break;
             }
-            if (max[0] < -half_width) {
+            if (screen_max[0] < -half_width) {
                 break;
             }
-            if (min[1] > half_height) {
+            if (screen_min[1] > half_height) {
                 break;
             }
-            if (max[1] < -half_height) {
+            if (screen_max[1] < -half_height) {
                 break;
             }
-            if (max[2] < near_z) {
+            if (screen_max[2] < near_z) {
                 break;
             }
-            if (min[2] < far_z) {
+            if (screen_min[2] < far_z) {
                 near_clip = 8;
             }
 
-            depth = 0.96f * (2048.0f * scale);
+            depth = 0.96f * (2048.0f * inv_scale);
 
-            if (min[2] > near_z && max[0] < depth && min[0] > -depth && max[1] < depth && min[1] > -depth) {
+            if (screen_min[2] > near_z && screen_max[0] < depth && screen_min[0] > -depth && screen_max[1] < depth && screen_min[1] > -depth) {
                 far_clip = 8;
             }
 
@@ -1152,47 +1152,47 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         }
     }
 
-    info->unk_31C = attr.unk_04;
-    info->unk_314 = (near_clip && far_clip < 8) && (attr.unk_08 || info->scissoring);
-    info->unk_324 = attr.fog_enable;
-    info->unk_33C = attr.unk_56;
-    info->unk_310 = 0;
+    info->frame_far_z = attr.clip_depth;
+    info->scissor = (near_clip && far_clip < 8) && (attr.clip_enable || info->scissoring);
+    info->fog_enabled = attr.fog_enable;
+    info->eye_in_model = attr.eye_relative;
+    info->clip_flags = 0;
 
-    if (far_clip < 8 || attr.unk_0A) {
-        info->unk_310 |= 1;
+    if (far_clip < 8 || attr.remake_pending) {
+        info->clip_flags |= 1;
     }
-    if (attr.unk_0A) {
+    if (attr.remake_pending) {
         visible = 1;
     }
-    if (info->unk_314) {
-        info->unk_310 |= 2;
+    if (info->scissor) {
+        info->clip_flags |= 2;
     }
-    if (attr.unk_0B) {
-        info->unk_310 |= 4;
+    if (attr.program_option) {
+        info->clip_flags |= 4;
     }
 
     if (visual && visible && attr.draw_on) {
-        if (!info->unk_320) {
-            if (attr.unk_50 >= 0) {
-                test.bits.aref = attr.unk_50;
+        if (!info->shadow_pass) {
+            if (attr.alpha_ref >= 0) {
+                test.bits.aref = attr.alpha_ref;
             }
-            if (attr.unk_55) {
+            if (attr.ignore_depth) {
                 test.bits.zte = 1;
                 test.bits.ztst = 1;
             }
 
-            zbuf.bits.zmsk = !attr.unk_54;
+            zbuf.bits.zmsk = !attr.depth_write;
 
             alpha = mgAlpha;
 
-            if (attr.unk_52 != 0) {
-                if (attr.unk_52 > 0) {
+            if (attr.blend_mode != 0) {
+                if (attr.blend_mode > 0) {
                     alpha.bits.a = 0;
                     alpha.bits.b = 2;
                     alpha.bits.c = 0;
                     alpha.bits.d = 1;
                 }
-                if (attr.unk_52 < 0) {
+                if (attr.blend_mode < 0) {
                     alpha.bits.a = 2;
                     alpha.bits.b = 0;
                     alpha.bits.c = 0;
@@ -1203,8 +1203,8 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             packet += SetGsReg3(packet, (u_long *) &test, (u_long *) &zbuf, (u_long *) &alpha);
         }
 
-        if (attr.unk_14 || attr.unk_31) {
-            if (attr.unk_31) {
+        if (attr.use_color || attr.ambient_boost) {
+            if (attr.ambient_boost) {
                 color[0] = info->light_color[0][0];
                 color[1] = info->light_color[0][1];
                 color[2] = info->light_color[0][2];
@@ -1224,19 +1224,19 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             }
         }
 
-        if (attr.unk_0A) {
+        if (attr.remake_pending) {
             visual->RemakeData(0);
         }
-        attr.unk_0A = 0;
+        attr.remake_pending = 0;
 
         packet += visual->DrawVu1(packet, matrix, info, VU1_PROGRAM_UNKNOWN6, 0, 0, 0);
 
-        if (attr.unk_14 || attr.unk_31) {
+        if (attr.use_color || attr.ambient_boost) {
             sceVu0CopyMatrix(info->light_direction, light);
             *(u_long128 *) info->ambient = *(u_long128 *) ambient;
         }
 
-        if (!info->unk_320) {
+        if (!info->shadow_pass) {
             packet += SetGsReg3(packet, (u_long *) &mgPixelTest, (u_long *) &mgZBuffer,
                                 (u_long *) &mgAlpha);
         }
@@ -1370,17 +1370,17 @@ static void trance_normal(float *p0, float *p1, float *p2, float *plane) {
    eight corners through the inverse of this frame's transform and then their extent, so the
    collision is searched in its own space and only what comes back is transformed. */
 int CFrame::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
-    sceVu0FVECTOR corner[8];
-    sceVu0FVECTOR local[8];
+    sceVu0FVECTOR box_corner[8];
+    sceVu0FVECTOR local_corner[8];
     sceVu0FVECTOR max0;
     sceVu0FVECTOR min0;
     sceVu0FVECTOR max1;
     sceVu0FVECTOR min1;
     sceVu0FVECTOR extent[2];
-    sceVu0FMATRIX world;
+    sceVu0FMATRIX world_matrix;
     CBoxVu0 bound;
     CCPoly *found;
-    float (*inverse)[4];
+    float (*inverse_matrix)[4];
     int num;
     CFrame *frame;
     int i;
@@ -1393,28 +1393,28 @@ int CFrame::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
     }
 
     if (collision != 0 && (flags & 1)) {
-        GetLWMatrix(world);
-        inverse = GetInverseMatrix();
+        GetLWMatrix(world_matrix);
+        inverse_matrix = GetInverseMatrix();
 
         *(u_long128 *) extent[0] = *(u_long128 *) box.min;
         *(u_long128 *) extent[1] = *(u_long128 *) box.max;
 
         for (i = 0; i < 8; i++) {
-            corner[i][3] = 1.0f;
-            corner[i][0] = extent[(i & 1) != 0][0];
-            corner[i][1] = extent[(i & 2) != 0][1];
-            corner[i][2] = extent[(i & 4) != 0][2];
+            box_corner[i][3] = 1.0f;
+            box_corner[i][0] = extent[(i & 1) != 0][0];
+            box_corner[i][1] = extent[(i & 2) != 0][1];
+            box_corner[i][2] = extent[(i & 4) != 0][2];
         }
 
-        ApplyMatrixN(local, inverse, corner, 8);
-        VectorMaxMin(max0, min0, local[0], local[1], local[2], local[3]);
-        VectorMaxMin(max1, min1, local[4], local[5], local[6], local[7]);
+        ApplyMatrixN(local_corner, inverse_matrix, box_corner, 8);
+        VectorMaxMin(max0, min0, local_corner[0], local_corner[1], local_corner[2], local_corner[3]);
+        VectorMaxMin(max1, min1, local_corner[4], local_corner[5], local_corner[6], local_corner[7]);
         VectorMaxMin(bound.max, bound.min, max0, max1, min0, min1);
 
         num = collision->PickUpNearPoly(poly, bound);
 
         found = poly;
-        pre_trance_normal(world);
+        pre_trance_normal(world_matrix);
 
         for (i = 0; i < num; i++, found++) {
             trance_normal(found->vertex[0], found->vertex[1], found->vertex[2],

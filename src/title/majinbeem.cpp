@@ -16,10 +16,10 @@
 void CMajinBeem::Draw(CCamera *camera) {
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR position;
-    int corner0[4];
-    int corner1[4];
-    int corner2[4];
-    int corner3[4];
+    int top_left[4];
+    int bottom_right[4];
+    int top_right[4];
+    int bottom_left[4];
     sceGsAlpha alpha;
     sceGsZbuf zbuf;
     int i;
@@ -48,18 +48,18 @@ void CMajinBeem::Draw(CCamera *camera) {
         position[2] = positions[i][2];
         position[3] = 1.0f;
 
-        if (MGRotTransPers3DSprite(corner0, corner1, position, sizes[i], sizes[i] / 2.0f, 0) != 1) {
+        if (MGRotTransPers3DSprite(top_left, bottom_right, position, sizes[i], sizes[i] / 2.0f, 0) != 1) {
             continue;
         }
 
-        corner2[0] = corner1[0];
-        corner2[1] = corner0[1];
-        corner2[2] = corner0[2];
-        corner2[3] = corner0[3];
-        corner3[0] = corner0[0];
-        corner3[1] = corner1[1];
-        corner3[2] = corner1[2];
-        corner3[3] = corner1[3];
+        top_right[0] = bottom_right[0];
+        top_right[1] = top_left[1];
+        top_right[2] = top_left[2];
+        top_right[3] = top_left[3];
+        bottom_left[0] = top_left[0];
+        bottom_left[1] = bottom_right[1];
+        bottom_left[2] = bottom_right[2];
+        bottom_left[3] = bottom_right[3];
 
         {
             CRect_i_ rect;
@@ -68,8 +68,8 @@ void CMajinBeem::Draw(CCamera *camera) {
             rect.y = 0;
             rect.width = 128;
             rect.height = 128;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, corner0, corner2,
-                        corner3, corner1, (u_char) alphas[i]);
+            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, top_left, top_right,
+                        bottom_left, bottom_right, (u_char) alphas[i]);
         }
     }
 
@@ -82,22 +82,22 @@ void CMajinBeem::Draw(CCamera *camera) {
    The head is projected twice and only the depth of the second projection is kept. The second is
    the same point moved fifteen units towards the camera, so all four corners take a depth the
    thing that fired the beam cannot be in front of. */
-void CMajinBeem::Draw2(CCamera *camera, float *head, float *from) {
+void CMajinBeem::Draw2(CCamera *camera, float *head, float *source) {
     sceVu0FVECTOR direction;
     sceVu0FVECTOR position;
-    int corner0[4];
-    int corner1[4];
-    int near0[4];
-    int near1[4];
-    int corner2[4];
-    int corner3[4];
+    int top_left[4];
+    int bottom_right[4];
+    int near_top_left[4];
+    int near_bottom_right[4];
+    int top_right[4];
+    int bottom_left[4];
     sceGsAlpha alpha;
     sceGsZbuf zbuf;
 
     camera->GetPos(direction);
-    direction[0] -= from[0];
-    direction[1] -= from[1];
-    direction[2] -= from[2];
+    direction[0] -= source[0];
+    direction[1] -= source[1];
+    direction[2] -= source[2];
     sceVu0Normalize(direction, direction);
     direction[0] *= 15.0f;
     direction[1] *= 15.0f;
@@ -124,35 +124,35 @@ void CMajinBeem::Draw2(CCamera *camera, float *head, float *from) {
         position[2] = positions[59][2];
         position[3] = 1.0f;
 
-        if (MGRotTransPers3DSprite(corner0, corner1, position, sizes[59], sizes[59] / 2.0f, 0) == 1) {
+        if (MGRotTransPers3DSprite(top_left, bottom_right, position, sizes[59], sizes[59] / 2.0f, 0) == 1) {
             CRect_i_ rect;
 
-            corner2[0] = corner1[0];
-            corner2[1] = corner0[1];
-            corner2[2] = corner0[2];
-            corner2[3] = corner0[3];
-            corner3[0] = corner0[0];
-            corner3[1] = corner1[1];
-            corner3[2] = corner1[2];
-            corner3[3] = corner1[3];
+            top_right[0] = bottom_right[0];
+            top_right[1] = top_left[1];
+            top_right[2] = top_left[2];
+            top_right[3] = top_left[3];
+            bottom_left[0] = top_left[0];
+            bottom_left[1] = bottom_right[1];
+            bottom_left[2] = bottom_right[2];
+            bottom_left[3] = bottom_right[3];
 
             position[0] += direction[0];
             position[1] += direction[1];
             position[2] += direction[2];
 
-            if (MGRotTransPers3DSprite(near0, near1, position, sizes[59], sizes[59] / 2.0f, 0) == 1) {
-                corner1[2] = near0[2];
-                corner3[2] = near0[2];
-                corner0[2] = near0[2];
-                corner2[2] = near0[2];
+            if (MGRotTransPers3DSprite(near_top_left, near_bottom_right, position, sizes[59], sizes[59] / 2.0f, 0) == 1) {
+                bottom_right[2] = near_top_left[2];
+                bottom_left[2] = near_top_left[2];
+                top_left[2] = near_top_left[2];
+                top_right[2] = near_top_left[2];
             }
 
             rect.x = 0;
             rect.y = 0;
             rect.width = 128;
             rect.height = 128;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, corner0, corner2,
-                        corner3, corner1, (u_char) alphas[59]);
+            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, top_left, top_right,
+                        bottom_left, bottom_right, (u_char) alphas[59]);
         }
     }
 
@@ -160,11 +160,11 @@ void CMajinBeem::Draw2(CCamera *camera, float *head, float *from) {
     MGSetGsZBUF(0);
 }
 
-/* The whole path is fixed on the first tick: the two angles from the head's starting point to the
+/* The whole path is fixed on the first tick: the two angles source the head's starting point to the
    target are taken once and nothing steers afterwards, so the beam is straight. */
 void CMajinBeem::Step() {
-    int i;
-    int j;
+    int substep;
+    int element;
 
     switch (state) {
         case 0:
@@ -174,10 +174,10 @@ void CMajinBeem::Step() {
             break;
 
         case 1:
-            for (i = 0; i < 3; i++) {
-                for (j = 0; j < 58; j++) {
-                    sceVu0CopyVector(positions[58 - j], positions[57 - j]);
-                    counters[j]++;
+            for (substep = 0; substep < 3; substep++) {
+                for (element = 0; element < 58; element++) {
+                    sceVu0CopyVector(positions[58 - element], positions[57 - element]);
+                    counters[element]++;
                 }
 
                 positions[0][1] += speed / 3.0f * cos(pitch);

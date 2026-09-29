@@ -24,11 +24,11 @@ public:
     sceVu0FVECTOR velocity[HIT_MARK_MAX]; /**< Distance that each mark moves each step. */
     float size[HIT_MARK_MAX];             /**< Width of each mark on the screen. */
     u8 unk_530[144];
-    float unk_5C0;
-    float unk_5C4;
-    float gravity; /**< Downward speed that a mark gains each step. */
-    float speed;   /**< Speed that the burst throws its marks at. */
-    s32 unk_5D0;
+    float shrink;           /**< Size each mark loses each step. */
+    float spread;           /**< Scatter added to each mark's launch direction; narrows each step. */
+    float gravity;          /**< Downward speed that a mark gains each step. */
+    float speed;            /**< Speed that the burst throws its marks at. */
+    s32 capacity;           /**< Number of mark slots, set when the burst is emptied. */
     s32 used[HIT_MARK_MAX]; /**< 1 while the mark of the slot still draws. */
     s32 count;              /**< Number of marks that still draw. */
     s32 kind;               /**< Part of the texture that every mark draws. */

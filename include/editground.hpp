@@ -105,8 +105,8 @@ public:
     CMapParts *river_parts;   /**< Template river pieces, indexed by how the river joins its neighbours. */
     CMapParts *road_parts;    /**< Template road pieces, indexed by how the road joins its neighbours. */
     u8 unk_15f3c[4];
-    CMapParts fixed_parts[64]; /**< Parts of the map that the player cannot move; the second is the ground model. */
-    s32 unk_20740[1];
+    CMapParts fixed_parts[64];     /**< Parts of the map that the player cannot move; the second is the ground model. */
+    s32 spare_words[1];            /**< Words Initialize clears; nothing reads them. */
     CPartsCursor cursor;           /**< Cursor drawn over the cells a part would occupy. */
     EPARTS_FUNC_DATA *people[128]; /**< Villager markers of the placed parts. */
     s32 people_count;              /**< Number of villager markers in use. */
@@ -147,7 +147,7 @@ public:
      * @address 0x1A1290
      * @size 0x418
      */
-    int DeleteMapParts(int *out_parts_no, int *out_kind, float x, float y, float z);
+    int DeleteMapParts(int *out_parts_no, int *out_rot_y, float x, float y, float z);
 
     /**
      * Gives the editable area a position falls in, or -1 where none does.
@@ -366,7 +366,7 @@ public:
      * @address 0x1A3F30
      * @size 0x6D8
      */
-    void DrawPartsCursor(int, float *, float *, int, float *, int);
+    void DrawPartsCursor(int plot, float *position, float *model_pos, int rot_y, float *rotation, int area_no);
 
     /**
      * Draws the effects standing on the placed parts.
@@ -393,7 +393,7 @@ public:
      * @address 0x1A4910
      * @size 0x374
      */
-    void Load(char *buffer);
+    void Load(char *data);
 
     /**
      * Writes every placed part into the save file.
@@ -420,7 +420,7 @@ public:
      * @address 0x1A4EE0
      * @size 0x70
      */
-    int PickUpPoly(CCPoly *, float, float, float);
+    int PickUpPoly(CCPoly *polygons, float x, float y, float z);
 
     /**
      * Collects the collision polygons meeting a box.
@@ -429,7 +429,7 @@ public:
      * @address 0x1A4F50
      * @size 0x214
      */
-    int PickUpPoly(CCPoly *, CBoxVu0, int);
+    int PickUpPoly(CCPoly *out_polygons, CBoxVu0 box, int flags);
 
     /**
      * Collects the ground polygons of the area a position falls in.
@@ -502,7 +502,7 @@ public:
      * @address 0x1A61E0
      * @size 0xE0
      */
-    int CheckPartsRect(int parts_no, int area, CRect_i_ &rect);
+    int CheckPartsRect(int parts_no, int area_no, CRect_i_ &rect);
 
     /**
      * Gives the grid rectangle a part covers, widened by a margin on every side.
@@ -539,7 +539,7 @@ public:
      * @address 0x1A69C0
      * @size 0x3C4
      */
-    void NornRequest(CMapParts *(*plot_parts)[64]);
+    void NornRequest(CMapParts *(*placed)[64]);
 
     /**
      * Checks the ground against Matataki's request, which wants the rivers chained up.
@@ -548,7 +548,7 @@ public:
      * @address 0x1A6D90
      * @size 0x65C
      */
-    void MatatagiRequest(CMapParts *(*plot_parts)[64]);
+    void MatatagiRequest(CMapParts *(*placed)[64]);
 
     /**
      * Checks the ground against the Queen's request.
@@ -557,7 +557,7 @@ public:
      * @address 0x1A73F0
      * @size 0x49C
      */
-    void QueensRequest(CMapParts *(*plot_parts)[64]);
+    void QueensRequest(CMapParts *(*placed)[64]);
 
     /**
      * Checks the ground against Muska Racka's request.
@@ -566,7 +566,7 @@ public:
      * @address 0x1A7920
      * @size 0x614
      */
-    void MuskaRequest(CMapParts *(*plot_parts)[64]);
+    void MuskaRequest(CMapParts *(*placed)[64]);
 
     /**
      * Checks the ground against the yellow request, which wants parts facing one
@@ -576,7 +576,7 @@ public:
      * @address 0x1A7F40
      * @size 0x8A0
      */
-    void YellowRequest(CMapParts *(*plot_parts)[64]);
+    void YellowRequest(CMapParts *(*placed)[64]);
 };
 
 STATIC_ASSERT(sizeof(CEditGround) == 0x20960);

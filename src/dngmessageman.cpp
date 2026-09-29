@@ -11,7 +11,7 @@ void CDngMessageMan::LimmitZone(void) {
 
     if (zone >= 0 && zone < 6) {
         message = 0xB;
-        unk_0C = UserStatus->cur_chara + 0x32;
+        insert_mes_1 = UserStatus->cur_chara + 0x32;
     }
     if (UserStatus->res_limit_zone_current == 0xA) {
         message = 0xD;
@@ -20,7 +20,7 @@ void CDngMessageMan::LimmitZone(void) {
         message = 0xE;
     }
     timer = 0xF0;
-    unk_1C = 0;
+    steev_window = 0;
 }
 
 void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float water_now) {
@@ -35,24 +35,24 @@ void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float wa
     if (threshold <= water_before + 0.5f && !(threshold <= water_now - 0.5f) && message == -1) {
         message = 0xAA;
         timer = 0xF0;
-        unk_1C = 0;
+        steev_window = 0;
     }
     if (water_now <= 0.0f && (message == -1 || message == 0xAB)) {
         message = 0xAB;
         timer = 0x9FFF6;
-        unk_1C = 0;
+        steev_window = 0;
     }
 }
 
 void CDngMessageMan::SetSteevMes(int first) {
     if (timer <= 0) {
         // The ten Steev lines are shown in turn, so the index rides on.
-        message = first + unk_20;
+        message = first + steev_index;
         timer = 0xF0;
-        unk_1C = 1;
-        unk_20++;
-        if (unk_20 > 9) {
-            unk_20 = 0;
+        steev_window = 1;
+        steev_index++;
+        if (steev_index > 9) {
+            steev_index = 0;
         }
     }
 }

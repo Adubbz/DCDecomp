@@ -7,7 +7,7 @@ CMapObject *CMap::SetObject(int index, CFrameVu1 *frame, int category_no, int ha
         return NULL;
     }
     object[index].handle = handle;
-    object[index].unk_0E4 = category_no;
+    object[index].category_no = category_no;
     map_object = &object[index];
     map_object->SetFrame(frame, 0);
     return map_object;
@@ -43,7 +43,7 @@ void CMap::Draw(void) {
         CMapCategoryAttr *attr;
 
         map_object = &object[index];
-        category_no = map_object->unk_0E4;
+        category_no = map_object->category_no;
         if (category_no < 0) {
             continue;
         }

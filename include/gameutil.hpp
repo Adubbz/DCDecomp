@@ -199,7 +199,7 @@ STATIC_ASSERT(sizeof(Mot_Key) == 0x20);
 struct Mot_List {
     u32 frame;      /**< Frame of the model that the keys drive. */
     u32 target;     /**< Part of the frame that the keys drive: a vertex, a material or a bone. */
-    s32 type;       /**< What the keys set. */
+    s32 type;       /**< What the keys set: 0 rotation, 1 scale, 2 translation, 12 vertices, 30-33 camera, 40-41 material, 50-51 visibility; 200 is skipped. */
     u32 key_count;  /**< Number of keys. */
     Mot_Key *keys;  /**< The keys, in frame order. */
     Mot_List *next; /**< The next driver, or NULL after the last. */
@@ -214,7 +214,7 @@ STATIC_ASSERT(sizeof(Mot_List) == 0x20);
 struct Mot_File_List {
     u32 frame;  /**< Frame of the model that the keys drive. */
     u32 target; /**< Part of the frame that the keys drive. */
-    s32 type;   /**< What the keys set. */
+    s32 type;   /**< What the keys set, as Mot_List::type. */
     u8 unk_0C[4];
     u32 key_count; /**< Number of keys after the header. */
     u32 more;      /**< Nonzero when another driver follows this one's keys. */
@@ -391,8 +391,8 @@ void RollPos(float *centre, float *point, float angle, float *out);
  * @size 0x128
  */
 void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                      const CRect_i_ &texel, unsigned char r, unsigned char g,
-                      unsigned char b, unsigned char a);
+                      const CRect_i_ &texel, unsigned char red, unsigned char green,
+                      unsigned char blue, unsigned char alpha);
 
 /**
  * Tells whether a point lies inside a rectangle.
@@ -463,8 +463,8 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
  * @address 0x14ABB0
  * @size 0x1DC
  */
-int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point,
-                CCPoly *polys, int poly_num, int mode);
+int GetFootPoly(float *position, float depth, CCPoly *found, float *ground,
+                CCPoly *polys, int count, int mode);
 
 /**
  * Pushes a position out of the polygons within a radius of it.
@@ -473,7 +473,7 @@ int GetFootPoly(float *position, float depth, CCPoly *out_poly, float *hit_point
  * @address 0x14AF70
  * @size 0x8B8
  */
-int CheckWidth(CCPoly *poly, int count, float *position, float radius, float *hit, int mode);
+int CheckWidth(CCPoly *polys, int count, float *position, float radius, float *out, int flags);
 
 /**
  * Finds the event polygon that a step crosses, and gives back the kind of
@@ -494,8 +494,7 @@ int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no,
  * @address 0x14B830
  * @size 0x9EC
  */
-int CheckCameraWidth(CCPoly *poly, int count, float *position, float radius, float *hit,
-                     int mode);
+int CheckCameraWidth(CCPoly *polys, int count, float *position, float radius, float *out, int flags);
 
 /**
  * The message window font's texture work area.
