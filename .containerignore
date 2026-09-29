@@ -22,9 +22,6 @@ asm/
 # the build.
 re/
 
-# decomp-permuter, a development tool the build never invokes.
-permuting/
-
 # Generated. Copying build/ in is not just wasteful but wrong: its
 # CMakeCache.txt records whichever source path last configured it (a host
 # path, or /workspaces/dcdecomp from the devcontainer), which makes the

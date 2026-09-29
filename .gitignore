@@ -45,9 +45,6 @@ AGENTS.md
 .claude
 .codex/
 
-# Permuting
-permuting/
-
 # IDA databases (derived from binaries already in-tree)
 *.i64
 *.idb

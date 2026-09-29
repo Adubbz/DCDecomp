@@ -101,12 +101,6 @@ RUN wget -O /usr/local/bin/objdiff-cli \
         https://github.com/encounter/objdiff/releases/download/${OBJDIFF_VERSION}/objdiff-cli-linux-x86_64 \
     && chmod +x /usr/local/bin/objdiff-cli
 
-# Dependencies for decomp-permuter (permuting/decomp-permuter). `toml` is
-# required and `levenshtein` is its optional faster diff algorithm. `pynacl` is
-# deliberately omitted -- it is only needed for the permuter@home
-# distributed-computing feature, which this project does not use.
-RUN python -m pip install toml levenshtein
-
 #
 # Build stage
 #
