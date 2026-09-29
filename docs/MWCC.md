@@ -48,6 +48,15 @@ Call lowering reads the byte at `0x0049E925`, `0x0049E94F`, `0x0049E97B`,
 two walks when it is non-zero. This decides float argument materialisation
 order — the `mtc1` order — and nothing else.
 
+`#pragma argument_flag` / `argument_flag_ones` pin those reads one by one (in
+the order the compiler reaches them; `quicktu.py --argnodes` lists them). A
+call whose first argument is an expression goes into one walk whole: the read
+at `0x0049E925` is of the argument's root node, so a leaf inside it cannot be
+ordered against the other arguments. When retail loads such a leaf, then the
+zero arguments, then the rest of the arithmetic, the leaf was a local assigned
+on the statement above the call, with the root's read pinned `0` and the
+zeros' `1` (`DrawItemBox`).
+
 Binary control-flow analysis and a 125-unit census of all five consumers show
 that kind `0x33` is the only kind whose own `+5` can be read without a defining
 write. Parents can explicitly derive their byte from a stale `0x33` child; that
