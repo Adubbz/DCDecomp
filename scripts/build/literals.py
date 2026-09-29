@@ -94,17 +94,18 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import disassemble  # noqa: E402
+import region  # noqa: E402
 import retail as retail_image  # noqa: E402
 
 # Where MWLD's LITERAL directive put the pool in retail, taken from the image:
 # the 8-byte entries run from the end of .data to the first 4-byte one, and the
 # 4-byte entries run from there to the start of .sdata. Splitting the two
 # matters when the pool is searched by value -- half of an 8-byte entry can
-# read as a plausible 4-byte one.
-POOL = {8: (0x002A17B8, 0x002A1868), 4: (0x002A1868, 0x002A1E80)}
+# read as a plausible 4-byte one. The release decides where; region.py says.
+POOL = region.LITERAL_POOL
 
 # The linker script that fixes _gp.
-LCF = 'SCUS_971.11.lcf'
+LCF = region.LCF
 GP_RE = re.compile(r'^\s*_gp\s*=\s*(0x[0-9A-Fa-f]+)\s*;', re.M)
 
 # A translation unit's placement in the linker script, which is what says
@@ -415,7 +416,7 @@ class Retail:
         if self._functions is None:
             by_name, by_address = {}, []
             for image in disassemble.IMAGES:
-                path = Path(self._path('config', f'{image}.symbols.txt'))
+                path = Path(self._path(region.CONFIG, f'{image}.symbols.txt'))
                 if not path.exists():
                     continue
                 for line in path.read_text(encoding='utf-8').splitlines():
@@ -731,7 +732,7 @@ def resolve_names(path, addresses):
         obj.write()
 
 
-def retail_addresses(image, config='config'):
+def retail_addresses(image, config=region.CONFIG):
     """Return the numbered datum addresses recorded for one retail image."""
     try:
         rows = disassemble.read_symbol_table(config)[image]

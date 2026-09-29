@@ -12,8 +12,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+# The Ghidra programs are the NTSC release's, so the annotations are made from
+# its split and its configuration whatever region is being built.
+CONFIG = ROOT / "config" / "ntsc"
+ASM = ROOT / "asm" / "ntsc"
 INCLUDE_ASM_RE = re.compile(
-    r'(?m)^\s*INCLUDE_ASM\(\s*"asm/nonmatchings/([^"]+)"\s*,\s*([^\s,)]+)\s*\)\s*;'
+    r'(?m)^\s*INCLUDE_ASM\(\s*"asm/(?:ntsc/)?nonmatchings/([^"]+)"\s*,\s*([^\s,)]+)\s*\)\s*;'
 )
 WORD_RE = re.compile(r'/\*\s+[0-9A-F]{6}\s+([0-9A-F]{8})\s+([0-9A-F]{8})\s+\*/')
 GLABEL_RE = re.compile(r'(?m)^glabel\s+(?:"([^"]+)"|([^\s]+))')
@@ -293,7 +297,7 @@ NON_FUNCTION_MARKERS = {"_dun_text_start", "_title_text_start"}
 def unit_images() -> dict[str, str]:
     result: dict[str, str] = {}
     for image in ("main", "title", "dun"):
-        text = (ROOT / "config" / f"{image}.yaml").read_text()
+        text = (CONFIG / f"{image}.yaml").read_text()
         for match in UNIT_RE.finditer(text):
             result[match.group(1)] = image
     return result
@@ -417,7 +421,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "config" / "ghidra_annotations.json",
+        default=CONFIG / "ghidra_annotations.json",
     )
     args = parser.parse_args()
 
@@ -436,7 +440,7 @@ def main() -> None:
             unit, name = match.groups()
             if name in NON_FUNCTION_MARKERS:
                 continue
-            asm_path = ROOT / "asm" / "nonmatchings" / unit / f"{name}.s"
+            asm_path = ASM / "nonmatchings" / unit / f"{name}.s"
             if not asm_path.is_file():
                 missing_assembly += 1
                 continue
@@ -508,7 +512,7 @@ def main() -> None:
     print(f"wrote {len(functions)} functions to {args.output}")
     print(f"images: {by_image}; documented comments: {documented}")
     print(f"documented types: {len(KNOWN_TYPES)}; signatures: {signatures}")
-    print(f"markers without asm/nonmatchings files: {missing_assembly}")
+    print(f"markers without asm/ntsc/nonmatchings files: {missing_assembly}")
 
 
 if __name__ == "__main__":

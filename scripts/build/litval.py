@@ -16,9 +16,13 @@ from __future__ import annotations
 import argparse
 import re
 import struct
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 RETAIL = Path("/home/adubbz/development/re/Dark Cloud/SCUS_971.11")
 
 
@@ -42,7 +46,7 @@ def image() -> tuple[bytes, int]:
 
 
 def gp() -> int:
-    for line in (ROOT / "config" / "main.symbols.txt").read_text().splitlines():
+    for line in (ROOT / region.CONFIG / "main.symbols.txt").read_text().splitlines():
         match = re.match(r"^_gp = 0x([0-9a-fA-F]+);", line.strip())
         if match:
             return int(match.group(1), 16)

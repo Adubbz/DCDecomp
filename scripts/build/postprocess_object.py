@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "tools" / "mwccgap"))
 
 from mwccgap.elf import Elf  # noqa: E402
 from scripts.build import disassemble  # noqa: E402
+from scripts.build import region  # noqa: E402
 from scripts.build import retail  # noqa: E402
 
 
@@ -30,7 +31,7 @@ def retail_symbols(image):
     absolute addresses; those are left out.
     """
     own = {}
-    path = ROOT / "config" / f"{image}.symbols.txt"
+    path = ROOT / region.CONFIG / f"{image}.symbols.txt"
     for line in path.read_text(encoding="utf-8").splitlines():
         match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);(.*)$", line.strip())
         if match and "absolute:True" not in match.group(3):
@@ -223,7 +224,7 @@ RODATA_ALIGNMENTS = (16, 8, 4)
 def retail_addresses():
     """Every symbol the configuration gives an address, by name."""
     out = {}
-    for path in sorted(ROOT.glob("config/*.symbols.txt")):
+    for path in sorted((ROOT / region.CONFIG).glob("*.symbols.txt")):
         for line in path.read_text(encoding="utf-8").splitlines():
             match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);", line.strip())
             if match:
@@ -514,7 +515,7 @@ def main():
     parser.add_argument("object", type=Path)
     parser.add_argument("source")
     parser.add_argument("--config", type=Path,
-                        default=ROOT / "config" / "object_fixups.json")
+                        default=ROOT / region.CONFIG / "object_fixups.json")
     # objdiff's base object is a plain compile of the source alone, with no
     # spliced assembly beside it. The fixups that reach a constant or a static
     # the splice supplies have nothing to act on there, and saying so is not an

@@ -169,7 +169,7 @@ def variant_edges(rule, pcode):
 
 def matching_functions():
     """Compiler-visible names the build compiles and does not mark fuzzy."""
-    provenance = ROOT / "build" / "symbol_provenance.txt"
+    provenance = ROOT / "build" / "ntsc" / "symbol_provenance.txt"
     if not provenance.is_file():
         return None
     compiled = set()

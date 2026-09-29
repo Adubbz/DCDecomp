@@ -83,7 +83,7 @@ function(add_unit_asm_object obj src)
         DEPENDS ${CMAKE_SOURCE_DIR}/${src}
                 ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc ${REF_STAMP}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
-                ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "AS ${src}"
         VERBATIM)
@@ -105,7 +105,7 @@ function(add_diff_base_object obj src)
         # source-only object ignores the compiler-state model and objdiff
         # reports register/order differences that are absent from the build.
         COMMAND ${CMAKE_COMMAND} -E env "MWCIncludes=${LIB_INCLUDE_DIRS}"
-                "STATEFIX_SOURCE=${src}"
+                "STATEFIX_SOURCE=${src}" DCDECOMP_REGION=${REGION}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                 ${MW}mwccmips.exe ${CC_MW_FLAGS} -o ${obj} ${src}
         COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/literals.py --bind ${obj}
@@ -119,9 +119,9 @@ function(add_diff_base_object obj src)
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
-                ${CMAKE_SOURCE_DIR}/config/expression_node_overrides.json
-                ${CMAKE_SOURCE_DIR}/config/object_fixups.json
-                ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/expression_node_overrides.json
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/object_fixups.json
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "CC (diff base) ${src}"
         VERBATIM)
@@ -169,7 +169,7 @@ function(add_object obj)
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc
                     ${ASM_OBJECT_EXTRA_DEPENDS} ${REF_STAMP}
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
-                    ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "AS ${src}"
             VERBATIM)
@@ -178,6 +178,7 @@ function(add_object obj)
         add_custom_command(
             OUTPUT ${CMAKE_SOURCE_DIR}/${obj}
             COMMAND ${CMAKE_COMMAND} -E env
+                    DCDECOMP_REGION=${REGION}
                     MW_DIR=${MW} MIPS_TOOL_PREFIX=${MIPS_TOOL_PREFIX}
                     LIB_INCLUDE_DIRS=${LIB_INCLUDE_DIRS}
                     ASM_DIR=.
@@ -193,9 +194,9 @@ function(add_object obj)
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/postprocess_object.py
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
-                    ${CMAKE_SOURCE_DIR}/config/expression_node_overrides.json
-                    ${CMAKE_SOURCE_DIR}/config/object_fixups.json
-                    ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/expression_node_overrides.json
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/object_fixups.json
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/mwccgap.py
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/elf.py
             DEPFILE ${CMAKE_SOURCE_DIR}/${obj}.d

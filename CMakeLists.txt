@@ -7,6 +7,17 @@ set(BASENAME SCUS_971.11)
 
 set(SECTIONS main title dun)
 
+# The release the build is for: NTSC 1.02 or the July 12, 2001 PAL prototype.
+# Its disc, split configuration, linker script and split each live in a
+# directory named for it; scripts/build/region.py is the one place that says
+# where, and every script run here is told the region through DCDECOMP_REGION.
+set(REGION NTSC CACHE STRING "Release to build: NTSC or PAL")
+set_property(CACHE REGION PROPERTY STRINGS NTSC PAL)
+if(NOT REGION MATCHES "^(NTSC|PAL)$")
+    message(FATAL_ERROR "REGION must be NTSC or PAL, not ${REGION}")
+endif()
+string(TOLOWER ${REGION} REGION_DIR)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(ObjectLists)
 include(Overlays)
@@ -16,16 +27,22 @@ set(INCLUDE_DIR include)
 set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
-set(ASM_DIR asm)
+set(ROM_REGION_DIR ${ROM_DIR}/${REGION_DIR})
+set(ASM_DIR asm/${REGION_DIR})
 set(ASM_DATA_DIR ${ASM_DIR}/data)
-if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/Dark Cloud (USA).iso"
-   AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted/iso/${BASENAME}")
+set(CONFIG_DIR config/${REGION_DIR})
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/Dark Cloud (${REGION}).iso"
+   AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_REGION_DIR}/extracted/iso/${BASENAME}")
     message(FATAL_ERROR
-        "Nothing to split asm/ from. Place the NTSC 1.02 disc image at "
-        "rom/Dark Cloud (USA).iso, or copy the extracted binaries in from the "
-        "private repository with scripts/host/overlay_private.sh.")
+        "Nothing to split ${ASM_DIR}/ from. Place the ${REGION} disc image at "
+        "rom/Dark Cloud (${REGION}).iso, or copy the extracted binaries in from "
+        "the private repository with scripts/host/overlay_private.sh.")
 endif()
-set(CONFIG_DIR config)
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/main.yaml")
+    message(FATAL_ERROR
+        "Nothing to split ${ASM_DIR}/ with: ${CONFIG_DIR}/ holds no split "
+        "configuration for ${REGION}.")
+endif()
 set(REF_INDEX ${CONFIG_DIR}/main.symbols.txt)
 if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
     set(REF_STAMP ${CMAKE_SOURCE_DIR}/${REF_INDEX})
@@ -35,6 +52,7 @@ endif()
 
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
+    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/region.py
     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/main.yaml
     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/title.yaml
     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/dun.yaml)
@@ -56,18 +74,32 @@ set(OBJCOPY ${MIPS_TOOL_PREFIX}objcopy)
 set(OBJDUMP ${MIPS_TOOL_PREFIX}objdump)
 find_program(PYTHON NAMES python3 python REQUIRED HINTS $ENV{VIRTUAL_ENV}/bin)
 
-set(PYTHON_CMD ${PYTHON} -u)
+set(PYTHON_CMD ${CMAKE_COMMAND} -E env DCDECOMP_REGION=${REGION} ${PYTHON} -u)
 
-set(LD_TEMPLATE ${BASENAME}.lcf)
+execute_process(
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/region.py overlay_origin
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE OVERLAY_ORIGIN
+    RESULT_VARIABLE region_rc
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(NOT region_rc EQUAL 0)
+    message(FATAL_ERROR "scripts/build/region.py overlay_origin failed (${region_rc})")
+endif()
+
+set(LD_TEMPLATE ${CONFIG_DIR}/${BASENAME}.lcf)
 set(OUTPUT ${BUILD_DIR}/${BASENAME})
-set(RETAIL_ISO "${ROM_DIR}/Dark Cloud (USA).iso")
-set(BUILT_ISO "${BUILD_DIR}/Dark Cloud (Build).iso")
+set(RETAIL_ISO "${ROM_DIR}/Dark Cloud (${REGION}).iso")
+set(BUILT_ISO "${BUILD_DIR}/Dark Cloud (${REGION} Build).iso")
 set(CTX ${BUILD_DIR}/ctx.c)
 set(CTX_CPP ${BUILD_DIR}/ctx.cpp)
 
 set(AS_FLAGS -EL -march=r5900 -mabi=eabi -g -mno-pdr -non_shared -G0 -I include)
 set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -RTTI off -strings readonly
     -pragma "divbyzerocheck on" -i include)
+if(REGION STREQUAL "PAL")
+    list(APPEND AS_FLAGS --defsym PAL=1)
+    list(APPEND CC_MW_FLAGS -DPAL)
+endif()
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
@@ -241,7 +273,7 @@ add_custom_target(ctx DEPENDS ${CMAKE_SOURCE_DIR}/${CTX} ${CMAKE_SOURCE_DIR}/${C
 
 # Build reference and source objects for objdiff.
 execute_process(
-    COMMAND ${PYTHON} ${SCRIPTS_DIR}/build/layout.py --list-extra-objects
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py --list-extra-objects
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE objdiff_extra_raw
     RESULT_VARIABLE objdiff_rc
@@ -291,7 +323,13 @@ add_custom_command(
     COMMENT "Collecting templated symbol names for objdiff"
     VERBATIM)
 
-set(OBJDIFF_CONFIG objdiff.json)
+# objdiff's GUI reads the configuration at the root of the tree, which is the
+# NTSC build's; a PAL one stays in its own build directory.
+if(REGION STREQUAL "NTSC")
+    set(OBJDIFF_CONFIG objdiff.json)
+else()
+    set(OBJDIFF_CONFIG ${BUILD_DIR}/objdiff.json)
+endif()
 
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG}
@@ -344,7 +382,7 @@ add_custom_command(
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/${BUILT_ISO}"
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/make_iso.py
-            --source "${RETAIL_ISO}" --tree ${ROM_DIR}/extracted/iso
+            --source "${RETAIL_ISO}" --tree ${ROM_REGION_DIR}/extracted/iso
             --out "${BUILT_ISO}"
             ${ISO_ELF} ${BUILD_DIR}/TITLE.BIN ${BUILD_DIR}/DUN.BIN
     DEPENDS ${CMAKE_SOURCE_DIR}/${ISO_ELF} ${OVERLAY_BINS}
@@ -366,24 +404,25 @@ add_dependencies(run iso)
 set(STAMP_DIR ${BUILD_DIR}/stamps)
 set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
 set(DISASSEMBLE_STAMP ${STAMP_DIR}/disassembled)
-set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
+set(EXTRACTED_ELF ${ROM_REGION_DIR}/extracted/iso/${BASENAME})
 
 set(SPLIT_COMMANDS
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR})
 
 # asm/ is never committed; it is split from the three binaries under
-# rom/extracted/iso. They come from extracting the disc image, which `iso` and
-# `run` need in full, or, without one, from the private repository. Either way
-# they are checked against rom/extracted.sha256 before the split.
+# rom/<region>/extracted/iso. They come from extracting the disc image, which
+# `iso` and `run` need in full, or, without one, from the private repository.
+# Either way they are checked against rom/<region>/extracted.sha256 before the
+# split.
 if(EXISTS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}")
 
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${ROM_VERIFIED}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c checksum.sha256
+    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c ${REGION_DIR}/checksum.sha256
     COMMAND ${CMAKE_COMMAND} -E touch ${ROM_VERIFIED}
     DEPENDS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}"
-            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/checksum.sha256
+            ${CMAKE_SOURCE_DIR}/${ROM_REGION_DIR}/checksum.sha256
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Checking the retail disc image"
     USES_TERMINAL
@@ -404,13 +443,13 @@ endif()
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${DISASSEMBLE_STAMP}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c extracted.sha256
+    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c ${REGION_DIR}/extracted.sha256
     ${SPLIT_COMMANDS}
     COMMAND ${CMAKE_COMMAND} -E touch ${DISASSEMBLE_STAMP}
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
             ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
-            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted.sha256
+            ${CMAKE_SOURCE_DIR}/${ROM_REGION_DIR}/extracted.sha256
             ${REF_CONFIGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Splitting the disc with splat"

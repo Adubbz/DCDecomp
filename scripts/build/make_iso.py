@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Master a fresh ISO from the extracted disc, with the built files swapped in.
 
-Every file comes from rom/extracted, except the ones named on the command
-line, which are taken from the build instead. Because the image is mastered
+Every file comes from the extracted tree (rom/ntsc/extracted), except the
+ones named on the command line, which are taken from the build instead. Because the image is mastered
 rather than patched, a built file is under no obligation to be the same size
 as the one it replaces -- it is simply laid down and the directory records
 describe wherever it lands.

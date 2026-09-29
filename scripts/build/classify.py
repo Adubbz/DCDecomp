@@ -1,9 +1,12 @@
 """Every unmatched function, sorted by how it differs from retail's."""
 import re, struct, sys, os, collections
 
-IMAGES = {'main': ('build/SCUS_971.11', 'rom/extracted/iso/SCUS_971.11', 'config/main.symbols.txt', None),
-          'title': ('build/TITLE.BIN', 'rom/extracted/iso/TITLE.BIN', 'config/title.symbols.txt', 0x01DABD00),
-          'dun': ('build/DUN.BIN', 'rom/extracted/iso/DUN.BIN', 'config/dun.symbols.txt', 0x01DABD00)}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
+_ISO, _CFG, _ORIGIN = region.EXTRACTED_ISO, region.CONFIG, region.OVERLAY_ORIGIN
+IMAGES = {'main': (f'{region.BUILD}/SCUS_971.11', f'{_ISO}/SCUS_971.11', f'{_CFG}/main.symbols.txt', None),
+          'title': (f'{region.BUILD}/TITLE.BIN', f'{_ISO}/TITLE.BIN', f'{_CFG}/title.symbols.txt', _ORIGIN),
+          'dun': (f'{region.BUILD}/DUN.BIN', f'{_ISO}/DUN.BIN', f'{_CFG}/dun.symbols.txt', _ORIGIN)}
 
 def elf_text(path):
     d = open(path, 'rb').read()

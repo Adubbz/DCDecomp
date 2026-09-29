@@ -5,7 +5,7 @@
 
 MWCC numbers an invented name from a counter the whole translation unit shares,
 so an edit that allocates one more front-end node renames every constant after
-it. `config/object_fixups.json` names the constants that start each run the
+it. `config/<region>/object_fixups.json` names the constants that start each run the
 linker script places, and those names go stale; the build then stops with
 "a numbered constant in `sections` is not exported".
 
@@ -33,8 +33,10 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
 PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
-CONFIG = os.path.join(ROOT, 'config', 'object_fixups.json')
+CONFIG = os.path.join(ROOT, region.CONFIG, 'object_fixups.json')
 
 
 def data_symbols(obj):
@@ -63,7 +65,7 @@ def data_symbols(obj):
 def main():
     source = sys.argv[1]
     obj = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
-        ROOT, 'build', source + '.o')
+        ROOT, region.BUILD, source + '.o')
     config = json.loads(open(CONFIG, encoding='utf-8').read())
     groups = config.get(source, {}).get('rekey_sections')
     if not groups:

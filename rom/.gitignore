@@ -1,6 +1,10 @@
 *
 !.gitignore
-!checksum.sha256
-!extracted.sha256
-!checksum_pal.sha256
-!extracted_pal.sha256
+!/ntsc/
+!/pal/
+/ntsc/*
+/pal/*
+!/ntsc/checksum.sha256
+!/ntsc/extracted.sha256
+!/pal/checksum.sha256
+!/pal/extracted.sha256

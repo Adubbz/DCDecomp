@@ -14,7 +14,7 @@ unlinked object has none, and what is left -- the opcodes and the registers --
 is exactly what the flag decides.
 
 `--ones` is passed to statefix as an ephemeral node-index override. Persistent
-decisions live in `config/expression_node_overrides.json` and are keyed by the
+decisions live in `config/<region>/expression_node_overrides.json` and are keyed by the
 exact live MWCC identity rather than by a translation-unit-wide index.
 """
 
@@ -27,13 +27,17 @@ import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
 PREFIX = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
 FLAGS = ['-O2', '-c', '-Cpp_exceptions', 'off', '-RTTI', 'off',
          '-strings', 'readonly', '-pragma', 'divbyzerocheck on', '-i', 'include']
-OVERLAY_BASE = 0x01DABD00
-IMAGES = {'title': ('rom/extracted/iso/TITLE.BIN', 'config/title.symbols.txt', 0x01DABD00),
-          'dun': ('rom/extracted/iso/DUN.BIN', 'config/dun.symbols.txt', 0x01DABD00),
-          'main': ('rom/extracted/iso/SCUS_971.11', 'config/main.symbols.txt', None)}
+if region.NAME == region.PAL:
+    FLAGS.append('-DPAL')
+OVERLAY_BASE = region.OVERLAY_ORIGIN
+IMAGES = {'title': (f'{region.EXTRACTED_ISO}/TITLE.BIN', f'{region.CONFIG}/title.symbols.txt', OVERLAY_BASE),
+          'dun': (f'{region.EXTRACTED_ISO}/DUN.BIN', f'{region.CONFIG}/dun.symbols.txt', OVERLAY_BASE),
+          'main': (f'{region.EXTRACTED_ISO}/SCUS_971.11', f'{region.CONFIG}/main.symbols.txt', None)}
 
 # An operand that says nothing until the image is linked.
 NUMBER = re.compile(r'(?<![$a-z])-?(?:0x)?[0-9a-f]+\b')
@@ -218,7 +222,7 @@ def retail_names(source, names):
     """
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import literals
-    fixups = json.load(open(os.path.join(REPO, 'config/object_fixups.json')))
+    fixups = json.load(open(os.path.join(REPO, region.CONFIG, 'object_fixups.json')))
     renames = fixups.get(source, {}).get('symbols', {})
     retail = literals.Retail(REPO)
     unit = os.path.basename(source) + '.o'
@@ -292,7 +296,7 @@ def main():
         theirs = retail_function(args.image, args.function)
         # A unit whose retail name our compiler cannot spell is renamed on the
         # way out; score it under the name the object actually carries.
-        fixups = json.load(open(os.path.join(REPO, 'config/object_fixups.json')))
+        fixups = json.load(open(os.path.join(REPO, region.CONFIG, 'object_fixups.json')))
         renames = fixups.get(args.source, {}).get('symbols', {})
         compiled = next((ours_name for ours_name, retail in renames.items()
                          if retail == args.function), args.function)

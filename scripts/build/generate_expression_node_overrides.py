@@ -29,9 +29,10 @@ sys.path.insert(0, HERE)
 
 import disassemble  # noqa: E402
 import literals  # noqa: E402
+import region  # noqa: E402
 import quicktu  # noqa: E402
 
-DEFAULT_OUTPUT = os.path.join(REPO, 'config', 'expression_node_overrides.json')
+DEFAULT_OUTPUT = os.path.join(REPO, region.CONFIG, 'expression_node_overrides.json')
 LEGACY_FLAG = re.compile(r'^\s*#\s*pragma\s+constant_flag\s+([01])\b', re.M)
 LEGACY_ONES = re.compile(
     r'^\s*#\s*pragma\s+constant_flag_ones\s+([^\r\n/]*)', re.M)
@@ -212,10 +213,10 @@ def retail_rows(root):
     spans = placements(root)
     units = {}
     for _kind, _image, source, _reference in disassemble.read_units(
-            os.path.join(root, 'config'), os.path.join(root, 'src')):
+            os.path.join(root, region.CONFIG), os.path.join(root, 'src')):
         source = os.path.relpath(source, root)
         units[os.path.basename(source)] = source
-    with open(os.path.join(root, 'config', 'object_fixups.json'),
+    with open(os.path.join(root, region.CONFIG, 'object_fixups.json'),
               encoding='utf-8') as f:
         fixups = json.load(f)
 
@@ -266,7 +267,7 @@ def live_rows(root, legacy_ref=None):
     """Compile every game C++ unit and read identities from MWCC memory."""
     found = {}
     for kind, _image, source, _reference in disassemble.read_units(
-            os.path.join(root, 'config'), os.path.join(root, 'src')):
+            os.path.join(root, region.CONFIG), os.path.join(root, 'src')):
         source = os.path.relpath(source, root)
         if kind != 'mixed' or not source.endswith('.cpp') or source.startswith('src/lib/'):
             continue

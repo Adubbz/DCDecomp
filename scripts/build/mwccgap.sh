@@ -32,7 +32,7 @@
 # and resets none of it, and it reads memory nothing ever wrote; retail compiled
 # a whole program at once and this build compiles one unit at a time, so that
 # state is empty here where retail's was not. Expression constants are keyed by
-# their live MWCC identity in `config/expression_node_overrides.json`; the few
+# their live MWCC identity in `config/<region>/expression_node_overrides.json`; the few
 # remaining non-expression globals use source pragmas. The shim applies both;
 # see re/ai/compiler/leaked_state.md.
 set -e

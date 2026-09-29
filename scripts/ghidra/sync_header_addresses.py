@@ -8,7 +8,7 @@ not safe to apply. Header blocks written from a disassembler's rounded-up
 function view carry the padding to the next sixteen-byte boundary, so most of
 them disagree by four, eight or twelve bytes and their prose never arrives.
 
-The symbol tables under `config/` are generated from the retail ELF and are
+The symbol tables under `config/ntsc/` are generated from the retail ELF and are
 what the build itself uses, so they decide. Run this after writing new
 documentation, or after a re-split moves a function.
 """
@@ -32,7 +32,7 @@ def retail_functions() -> dict[str, tuple[int, int]]:
     functions: dict[str, tuple[int, int]] = {}
     ambiguous: set[str] = set()
     for image in ("main", "title", "dun"):
-        path = ROOT / "config" / f"{image}.symbols.txt"
+        path = ROOT / "config" / "ntsc" / f"{image}.symbols.txt"
         if not path.is_file():
             continue
         for line in path.read_text().splitlines():

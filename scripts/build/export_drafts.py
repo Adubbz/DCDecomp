@@ -24,7 +24,7 @@ Ghidra's half comes from `re/ai/<unit>/ghidra-decompilation.md`, which
 `scripts/ghidra/export_decompilation.sh` when a unit is new or its boundaries
 have moved. m2c reads a copy of the dump prepared by `scripts/diff/m2c_prep.py`
 -- jump tables named the way it recognises them, `$gp` displacements resolved
-to their symbols -- and needs `build/ctx.c`, which is generated if missing. Its
+to their symbols -- and needs `build/ntsc/ctx.c`, which is generated if missing. Its
 output then goes through `scripts/diff/m2c_calls.py`, which writes each call
 the way the source had it rather than by its mangled name.
 """
@@ -41,13 +41,16 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 sys.path.insert(0, str(ROOT / "scripts" / "diff"))
 import m2c_calls  # noqa: E402
 import m2c_prep  # noqa: E402
 
-MANIFEST = ROOT / "config" / "ghidra_annotations.json"
+MANIFEST = ROOT / region.CONFIG / "ghidra_annotations.json"
 DRAFTS = ROOT / "re" / "drafts"
-CONTEXT = ROOT / "build" / "ctx.c"
+CONTEXT = ROOT / region.BUILD / "ctx.c"
 M2C = ROOT / "tools" / "m2c" / "m2c.py"
 HEADING = re.compile(r"^## `([^`]+)`\s*$")
 

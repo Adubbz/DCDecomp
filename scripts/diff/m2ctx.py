@@ -2,7 +2,7 @@
 """Generate the declaration context m2c decompiles against.
 
     m2ctx.py                     whole project -> ctx.c at the repo root
-    m2ctx.py -o build/ctx.c      ...somewhere else; this is what the build runs
+    m2ctx.py -o build/ntsc/ctx.c ...somewhere else; this is what the build runs
     m2ctx.py src/savedata.cpp    one translation unit instead of the project
 
 Whole-project mode writes ctx.cpp, every header folded into one C++ file, and

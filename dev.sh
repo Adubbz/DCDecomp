@@ -5,4 +5,5 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if in_container; then exec "$@"; fi
 require_builder
 ensure_image dcdecomp_dev dev
-exec "$BUILDER" run --rm -v "$PWD:$CONTAINER_WORKDIR:Z" -w "$CONTAINER_WORKDIR" -e HOME=/tmp dcdecomp_dev "$@"
+exec "$BUILDER" run --rm -v "$PWD:$CONTAINER_WORKDIR:Z" -w "$CONTAINER_WORKDIR" -e HOME=/tmp \
+    -e "REGION=${REGION:-NTSC}" -e "DCDECOMP_REGION=${REGION:-NTSC}" dcdecomp_dev "$@"

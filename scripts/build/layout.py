@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Work out what the link takes, in what order, and what objdiff compares.
 
-    layout.py --link-order <dir> [--build-dir build] [--main-tail obj...]
+    layout.py --link-order <dir> [--build-dir build/ntsc] [--main-tail obj...]
               [--tail <image>=<obj>...]
     layout.py --objdiff objdiff.json
     layout.py --provenance <file>
@@ -34,14 +34,15 @@ import verify  # noqa: E402
 # disassemble.py owns the section layout, the unit classification and retail's
 # symbol table.
 import disassemble  # noqa: E402
+import region  # noqa: E402
 
 SECTIONS = ("main", "title", "dun")
 
 SRC_DIR = "src"
 # Where splat files a function's own assembly: still supplied by a marker
 # under the first, decompiled under the second.
-ASM_DIRS = ("asm/nonmatchings", "asm/matchings")
-LCF = "SCUS_971.11.lcf"
+ASM_DIRS = (f"{region.ASM}/nonmatchings", f"{region.ASM}/matchings")
+LCF = region.LCF
 
 # A marker names the directory its reference assembly is in and the symbol it
 # stands for. Only the symbol is read: retail's names are unique across the
@@ -75,7 +76,7 @@ OBJDIFF = {
         "src/**/*.{c,cpp,h,hpp,s,inc,lcf}",
         "include/**/*.{h,hpp,s,inc,lcf}",
         "asm/**/*.s",
-        "config/*.{yaml,txt}",
+        "config/*/*.{yaml,txt}",
     ],
     # What each function is expected to be, so objdiff can show the three
     # apart. A perfect function's bytes are retail's; a fuzzy one is the same
@@ -126,8 +127,8 @@ def included_in_objdiff(source):
 # Which image an address belongs to. The overlays share a range with each
 # other but not with main, and only one of them is ever loaded at a time.
 IMAGE_RANGES = (
-    ("main", 0x00100000, 0x01DABD00),
-    ("title", 0x01DABD00, 0x01E5DF80),
+    ("main",) + disassemble.image_range("main"),
+    ("title",) + disassemble.image_range("title"),
 )
 
 ADDRESS_COMMENT = re.compile(r"^\s*/\* [0-9A-F]+ ([0-9A-F]{8}) ")
@@ -281,17 +282,20 @@ def read_units(sources, path=LCF):
 
     out, missing, ambiguous = [], [], []
     text = open(path).read()
-    entries = PLACEMENT.findall(text) + [
-        (name, ".text", address) for name, address in ORDER_ONLY.findall(text)
-    ]
-    for name, section, address in entries:
+    # A unit with no code shares its address with the unit whose code follows
+    # it, and comes first: it covers nothing, and the next unit covers the code.
+    entries = [
+        (name, section, address, 1)
+        for name, section, address in PLACEMENT.findall(text)
+    ] + [(name, ".text", address, 0) for name, address in ORDER_ONLY.findall(text)]
+    for name, section, address, rank in entries:
         candidates = by_object.get(name, [])
         if not candidates:
             missing.append(name)
         elif len(candidates) > 1:
             ambiguous.append(f'{name} ({", ".join(candidates)})')
         else:
-            out.append((int(address, 16), IMAGE_OF[section], candidates[0]))
+            out.append((int(address, 16), rank, IMAGE_OF[section], candidates[0]))
 
     for name in missing:
         print(
@@ -307,7 +311,7 @@ def read_units(sources, path=LCF):
         raise SystemExit(1)
 
     out.sort()
-    return out
+    return [(address, image, source) for address, _rank, image, source in out]
 
 
 def owners(placed, section):
@@ -514,7 +518,7 @@ def main():
     ap.add_argument("--link-order", help="write <image>_o_files here")
     ap.add_argument("--objdiff", help="write the objdiff unit list here")
     ap.add_argument("--provenance", help="write the symbol provenance here")
-    ap.add_argument("--build-dir", default="build")
+    ap.add_argument("--build-dir", default=region.BUILD)
     ap.add_argument(
         "--lcf",
         default=LCF,

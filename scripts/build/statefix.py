@@ -10,7 +10,7 @@ Retail compiled every unit of a program in one invocation; this build compiles
 one unit per invocation, so that state is empty where retail's was not.
 
 Expression constants are selected from
-`config/expression_node_overrides.json`. Other compiler state that cannot yet
+`config/<region>/expression_node_overrides.json`. Other compiler state that cannot yet
 be identified structurally remains stated in source:
 
     #pragma helper_mask_gpr 0x30      set the integer helper-argument mask
@@ -47,10 +47,12 @@ import json
 import struct
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
 COMPILER = os.path.join(REPO, 'tools', 'compilers', 'mw', '2.3.3', 'mwccmips.exe')
 EXPRESSION_NODE_OVERRIDES = os.environ.get(
     'EXPRESSION_NODE_OVERRIDES',
-    os.path.join(REPO, 'config', 'expression_node_overrides.json'))
+    os.path.join(REPO, region.CONFIG, 'expression_node_overrides.json'))
 # The build image has wibo on PATH; a host checkout usually has it under
 # ~/.local/bin. WIBO overrides both.
 WIBO = (os.environ.get('WIBO')

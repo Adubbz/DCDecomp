@@ -5,7 +5,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/build/generated/asm"
+                "${workspaceFolder}/build/ntsc/generated/asm"
             ],
             "defines": [],
             "cStandard": "c99",
@@ -16,7 +16,7 @@
                 "path": [
                     "${workspaceFolder}/include",
                     "${workspaceFolder}/src",
-                    "${workspaceFolder}/build/generated/asm"
+                    "${workspaceFolder}/build/ntsc/generated/asm"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }

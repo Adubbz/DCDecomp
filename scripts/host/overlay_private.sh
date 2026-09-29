@@ -6,13 +6,15 @@
 # The private repository mirrors this tree's layout and holds only files that
 # are gitignored here: retail-derived data this repository must not carry.
 #
-#   rom/extracted/iso/{SCUS_971.11,TITLE.BIN,DUN.BIN}
+#   rom/ntsc/extracted/iso/{SCUS_971.11,TITLE.BIN,DUN.BIN}
 #                          what splat splits asm/ from, so no disc image is
 #                          needed to build, diff or report progress
 #
 # Every file it tracks, bar its README, is copied to the same path here, and
 # the build finds them exactly where extracting the disc would have put them.
-# Nothing else is touched.
+# A file the private repository still keeps under rom/extracted/, the layout
+# from before the regions had directories of their own, is the NTSC disc's and
+# lands under rom/ntsc/extracted/. Nothing else is touched.
 set -eu
 
 cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
@@ -30,8 +32,12 @@ for path in $(git -C "$src" ls-files); do
     case $path in
         README.md|.gitignore) continue ;;
     esac
-    mkdir -p "$(dirname "$path")"
-    cp -p "$src/$path" "$path"
+    dest=$path
+    case $path in
+        rom/extracted/*) dest=rom/ntsc/${path#rom/} ;;
+    esac
+    mkdir -p "$(dirname "$dest")"
+    cp -p "$src/$path" "$dest"
     count=$((count + 1))
 done
 

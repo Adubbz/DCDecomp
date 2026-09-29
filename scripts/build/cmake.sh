@@ -3,14 +3,17 @@
 # Dockerfile's CMD all come through here, so the configure rules cannot drift.
 #
 #   scripts/build/cmake.sh <target>...       build these targets
+#   REGION=PAL scripts/build/cmake.sh elf    build the PAL prototype (default NTSC)
 #   BUILD_DIR=other scripts/build/cmake.sh elf
 #   JOBS=8 scripts/build/cmake.sh elf        run 8 jobs rather than one per CPU
+#
+# Each release builds in a directory of its own, build/ntsc or build/pal.
 #
 # It brings the build files up to date, builds `setup`, then builds what was
 # asked for.
 #
 # CMakeCache.txt records the absolute source directory it was generated for,
-# and build/ is shared between contexts that see the tree at different paths
+# and the build tree is shared between contexts that see the tree at different paths
 # (the build image, the devcontainer, a host bind mount), so a cache from one
 # makes cmake refuse to run under another -- `cmake --build` included, since it
 # re-runs configure through build.ninja. That is why nothing else calls cmake.
@@ -26,7 +29,9 @@ cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 # compiled against a half-written split links into an image that is wrong
 # throughout. Everything that builds takes this lock, so such a build waits
 # for the split to finish instead. It lives outside build/ so that CLEAN
-# cannot delete it from under a build holding it.
+# cannot delete it from under a build holding it. The two releases share it:
+# they compile the same sources, and tools/mwccgap writes its temporaries
+# beside them.
 BUILD_LOCK=.build.lock
 if [ -z "${DCDECOMP_BUILD_LOCKED:-}" ]; then
     export DCDECOMP_BUILD_LOCKED=1
@@ -36,7 +41,9 @@ if [ -z "${DCDECOMP_BUILD_LOCKED:-}" ]; then
     exec flock "$BUILD_LOCK" "$(pwd)/scripts/build/cmake.sh" "$@"
 fi
 
-BUILD_DIR=${BUILD_DIR:-build}
+REGION=${REGION:-NTSC}
+export DCDECOMP_REGION=$REGION
+BUILD_DIR=${BUILD_DIR:-build/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')}
 
 # Whether the existing cache was generated for this source directory. A cache
 # that is absent or unreadable is not stale -- there is simply nothing to
@@ -53,16 +60,16 @@ cache_is_stale() {
 configure() {
     if cache_is_stale; then
         echo "cmake.sh: build cache was generated elsewhere; reconfiguring from scratch." >&2
-        cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+        cmake --fresh -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
         return
     fi
 
     # The retry covers what the path check cannot: a cache left by a different
     # generator or an incompatible cmake, and anything else that only shows up
     # when configure actually runs.
-    cmake -G Ninja -S . -B "$BUILD_DIR" && return
+    cmake -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION" && return
     echo "cmake.sh: configure failed; retrying from scratch." >&2
-    cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+    cmake --fresh -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
 }
 
 # Configuring takes about as long as compiling a dozen objects, and every
@@ -86,7 +93,7 @@ regenerate() {
     fi
     printf '%s\n' "$regen" >&2
     echo "cmake.sh: regenerating the build files failed; reconfiguring from scratch." >&2
-    cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+    cmake --fresh -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
 }
 
 # Every CPU this process may run on, unless JOBS says otherwise. Exported so
@@ -105,14 +112,15 @@ build() {
 regenerate
 
 had_asm=1
-[ -d asm/nonmatchings ] || had_asm=0
+[ -d "asm/$(printf %s "$REGION" | tr '[:upper:]' '[:lower:]')/nonmatchings" ] || had_asm=0
 
-# asm/ is split rather than committed, from the binaries under rom/extracted:
-# the disc's once it has been extracted, or the private repository's copies.
+# asm/<region> is split rather than committed, from the binaries under
+# rom/<region>/extracted: the disc's once it has been extracted, or the private
+# repository's copies.
 build setup
 
 if [ "$had_asm" = 0 ]; then
-    cmake -G Ninja -S . -B "$BUILD_DIR"
+    cmake -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
 fi
 
 [ $# -gt 0 ] || set -- build

@@ -81,7 +81,7 @@ jobs:
       - name: Split, build and generate the report
         if: env.HAS_PRIVATE == 'true'
         # There is no disc image, so `setup` checks the binaries copied into
-        # rom/extracted against rom/extracted.sha256 and splits them.
+        # rom/ntsc/extracted against rom/ntsc/extracted.sha256 and splits them.
         run: |
           docker run --rm \
             -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \

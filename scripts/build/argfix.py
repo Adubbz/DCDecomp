@@ -35,8 +35,8 @@ sys.stdout.reconfigure(line_buffering=True)
 
 def object_symbol(source, function):
     """What the object calls a function retail's image knows by another name."""
-    fixups = json.load(open(os.path.join(quicktu.REPO,
-                                         'config/object_fixups.json')))
+    fixups = json.load(open(os.path.join(quicktu.REPO, quicktu.region.CONFIG,
+                                         'object_fixups.json')))
     renames = fixups.get(source, {}).get('symbols', {})
     for spelt, retail in renames.items():
         if retail == function:
