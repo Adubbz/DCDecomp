@@ -249,6 +249,13 @@
     "symbols": {
       "info_cfg_literal": "@1007__2"
     },
+    "sections": {
+      ".dungeonmap-c1292": [
+        "@1314",
+        "@1315",
+        "@1316"
+      ]
+    },
     "rodata_exports": [
       "@2283",
       "@2284",

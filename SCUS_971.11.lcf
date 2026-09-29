@@ -879,6 +879,8 @@ SECTIONS
 		edit_in.cpp.o (.editinpause)   // 0x002a1f98
 		. = ALIGN(4);
 		main.sdata.edit_in-a.s.o (.sdata) // 0x002a1fa0
+		dungeonmap.cpp.o (.dungeonmap-c1292) // 0x002a1fc0 @1292
+		main.sdata.edit_in-a-2A1FCC.s.o (.sdata) // 0x002a1fcc
 		btitem.cpp.o (.sdata)          // 0x002a1fe8
 		main.sdata.part2f-2A1FF0.s.o (.sdata) // 0x002a1ff0
 		shop.cpp.o (.sdata)            // 0x002a1ff8 @1350__2
