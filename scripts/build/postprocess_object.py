@@ -2,6 +2,7 @@
 """Apply symbol-derived and configured fixes to a compiled object."""
 
 import argparse
+import bisect
 import functools
 import json
 import os
@@ -18,120 +19,35 @@ sys.path.insert(0, str(ROOT / "tools" / "mwccgap"))
 
 from mwccgap.elf import Elf  # noqa: E402
 from scripts.build import disassemble  # noqa: E402
-
-
-LOCAL_STATIC = re.compile(r"^(.+)\$(\d+)(?:__\d+)?$")
-STATIC_RELOCATION = re.compile(r"%(?:gp_rel|hi|lo)\(([^)]+\$\d+(?:__\d+)?)\)")
-
-
-def local_static_aliases(elf, source):
-    """Pair MWCC local statics with the retail names used by their unit."""
-    # What the object holds decides whether there is anything to pair, and it
-    # is already in hand -- reading the unit's reference assembly and retail's
-    # symbol table costs more than compiling most objects does.
-    # Only what the object defines is a candidate. A spliced function's own
-    # statics arrive as undefined references already carrying retail's names,
-    # and pairing those again would rename one unit's static to another's.
-    compiled_groups = defaultdict(list)
-    spliced = set()
-    for symbol in elf.symtab.symbols:
-        match = LOCAL_STATIC.match(symbol.name)
-        if not match:
-            continue
-        if symbol.st_shndx:
-            compiled_groups[match.group(1)].append(symbol.name)
-        else:
-            spliced.add(symbol.name)
-    if not compiled_groups:
-        return {}
-
-    unit = next(
-        (row for row in disassemble.read_units() if row[2] == source), None
-    )
-    if unit is None or not Path(unit[3]).exists():
-        return {}
-
-    _kind, _image, _source, reference = unit
-    text = Path(reference).read_text(encoding="utf-8")
-    text = disassemble.restore_gp_relative_relocations(
-        Path(reference), text, disassemble.read_symbol_table(),
-        disassemble.image_of_file())
-    # The names the splice still supplies are spoken for, so what is left is
-    # exactly the set belonging to the functions this object compiles. That is
-    # what lets a unit's statics be paired one function at a time.
-    retail = set(STATIC_RELOCATION.findall(text)) - spliced
-    retail_groups = defaultdict(list)
-    for name in retail:
-        match = LOCAL_STATIC.match(name)
-        if match:
-            retail_groups[match.group(1)].append(name)
-
-    # Two run-once guards in one scope cannot both be spelled `init`, so the
-    # source calls the second `init2`; retail's compiler had no such trouble
-    # and named both `init`. Fold a trailing digit into the retail base name so
-    # the two are matched as one family.
-    def family(base):
-        if base in retail_groups:
-            return base
-        stripped = base.rstrip("0123456789")
-        return stripped if stripped in retail_groups else None
-
-    families = defaultdict(list)
-    for base, compiled in compiled_groups.items():
-        name = family(base)
-        if name is not None:
-            families[name] += compiled
-
-    aliases = {}
-    for key, compiled in families.items():
-        expected = retail_groups[key]
-        if len(compiled) != len(expected):
-            continue
-        compiled.sort(key=lambda name: int(LOCAL_STATIC.match(name).group(2)))
-        expected.sort(key=lambda name: int(LOCAL_STATIC.match(name).group(2)))
-        aliases.update(
-            (old, new) for old, new in zip(compiled, expected) if old != new
-        )
-    return aliases
-
-
-# A constant's bytes as the reference dump writes them: the third field of
-# spimdisasm's address comment, in the order the file stores them.
-DUMP_BYTES = re.compile(
-    r"^\s*/\*\s*[0-9A-Fa-f]+\s+[0-9A-Fa-f]+\s+([0-9A-Fa-f]{8})\s*\*/")
+from scripts.build import retail  # noqa: E402
 
 
 @functools.lru_cache(maxsize=None)
-def unit_dumps():
-    """The reference dumps that hold a whole unit rather than one symbol each.
+def retail_symbols(image):
+    """{name: address} of one image's own symbols, and their addresses sorted.
 
-    An overlay is disassembled as one file, so a constant of its only unit has
-    no dump of its own to be found by name.
+    Each image's list also names the symbols of the others it refers to, as
+    absolute addresses; those are left out.
     """
-    return sorted(p for p in ROOT.glob("asm/*/*.s")
-                  if not p.parent.name.startswith(("nonmatchings", "matchings", "data")))
+    own = {}
+    path = ROOT / "config" / f"{image}.symbols.txt"
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);(.*)$", line.strip())
+        if match and "absolute:True" not in match.group(3):
+            own.setdefault(match.group(1), int(match.group(2), 16))
+    return own, sorted(set(own.values()))
 
 
-def retail_constant(name):
-    """The bytes retail's dump holds for one named constant."""
-    paths = (list(sorted(ROOT.glob("asm/**/%s.s" % name)))
-             + list(sorted(ROOT.glob("asm/data/*/*.data.s")))
-             + unit_dumps())
-    for path in paths:
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        match = re.search(glabel_pattern(name), text, re.M)
-        if not match:
-            continue
-        out = bytearray()
-        for line in text[match.end():].split("\n")[1:]:
-            if line.startswith("glabel") or line.lstrip().startswith(".section"):
-                break
-            word = DUMP_BYTES.match(line)
-            if word:
-                out += bytes.fromhex(word.group(1))
-        if out:
-            return bytes(out)
-    return None
+def retail_constant(name, image):
+    """The bytes retail holds for one named constant, up to the next symbol."""
+    own, addresses = retail_symbols(image)
+    address = own.get(name)
+    if address is None:
+        return None
+    index = bisect.bisect_right(addresses, address)
+    if index == len(addresses):
+        return None
+    return retail.read(image, address, addresses[index] - address)
 
 
 def compiled_constants(path):
@@ -167,7 +83,7 @@ def compiled_constants(path):
     return out
 
 
-def export_constants(path, names, parser, reserved_constants=()):
+def export_constants(path, names, parser, image, reserved_constants=()):
     """Rename the object's own constants to the names retail's other units use.
 
     A translation unit that is only half decompiled has its string constants
@@ -212,9 +128,9 @@ def export_constants(path, names, parser, reserved_constants=()):
     for name in sorted(names, key=lambda n: (addresses.get(n, 0), order[n])):
         if name in defined:
             continue
-        wanted = retail_constant(name)
+        wanted = retail_constant(name, image)
         if wanted is None:
-            parser.error(f"no reference assembly defines {name!r}")
+            parser.error(f"retail's {image} defines no {name!r}")
         matches = [symbol for symbol, body in compiled.items()
                    if symbol not in reserved and body and wanted.startswith(body)]
         # A shorter constant is a prefix of every longer one that begins with
@@ -351,7 +267,7 @@ def align_small_data(elf, retail_names=None):
         if (section.name in SMALL_DATA_SECTIONS
                 and section.sh_addralign < SMALL_DATA_ALIGNMENT):
             section.sh_addralign = SMALL_DATA_ALIGNMENT
-        elif section.name == ".rodata":
+        elif section.name in (".rodata", ".rdata", ".vutext", ".vudata"):
             wanted = rodata_alignment(defined.get(index, ()), retail_names)
             if wanted is not None:
                 section.sh_addralign = wanted
@@ -397,59 +313,6 @@ def rename_sections(elf, mappings, parser):
 # A datum the compiler invented a name for: `@N`, or a function-local static
 # named `name$N`.
 NUMBERED_DATUM = re.compile(r"^(?:@\d+|[A-Za-z_]\w*\$\d+)(?:__\d+)?$")
-
-
-def glabel_pattern(name):
-    """Match an assembly global label with an optional pair of quotes."""
-    return r'^glabel "?%s"?$' % re.escape(name)
-
-
-def dump_data_symbols(name):
-    """The symbols of the `.data` dump that defines `name`, in address order."""
-    for path in sorted(ROOT.glob("asm/data/*/*.data.s")):
-        text = path.read_text(encoding="utf-8", errors="ignore")
-        if not re.search(glabel_pattern(name), text, re.M):
-            continue
-        out, pending = [], None
-        for line in text.splitlines():
-            label = re.match(r'glabel "?([^"\s]+)"?\s*$', line)
-            if label:
-                pending = label.group(1)
-            elif pending and DUMP_BYTES.match(line):
-                out.append(pending)
-                pending = None
-        return out
-    return []
-
-
-def data_runs(elf, runs, parser):
-    """Give a unit's later runs of generated data a section name of their own.
-
-    MWLD hands every same-named section of an object to the first linker script
-    line that names it, so a unit whose generated data is interleaved with the
-    dump's own globals needs one name per run. A run is keyed by the retail name
-    of the constant it starts with: the object's data sections and the dump's
-    compiler-numbered symbols are both in emission order, so their positions
-    correspond, and a length that disagrees is a template the source has gained
-    or lost.
-    """
-    if not runs:
-        return
-    sections = [index for index, section in enumerate(elf.sections)
-                if section.name == ".data" and section.sh_size]
-    retail = [name for name in dump_data_symbols(next(iter(runs.values())))
-              if NUMBERED_DATUM.match(name)]
-    if len(sections) != len(retail):
-        parser.error("the object has %d generated data sections and the dump "
-                     "%d; the source has gained or lost a template"
-                     % (len(sections), len(retail)))
-    for section_name, start in runs.items():
-        if start not in retail:
-            parser.error(f"the dump defines no {start!r}")
-        name_index = elf.add_sh_symbol(section_name)
-        for index in sections[retail.index(start):]:
-            elf.sections[index].sh_name = name_index
-            elf.sections[index].name = section_name
 
 
 DISCARD_SECTION = ".discard"
@@ -660,15 +523,16 @@ def main():
     args = parser.parse_args()
 
     elf = Elf(args.object.read_bytes())
-    aliases = local_static_aliases(elf, args.source)
+    config = json.loads(args.config.read_text(encoding="utf-8"))
+    fixups = config.get(args.source, {})
+    # A function-local static is `name$N` in the object and `name$M` in retail,
+    # both numbered off the compiler's counter; `statics` pairs the two.
+    aliases = fixups.get("statics", {})
     for symbol in elf.symtab.symbols:
         replacement = aliases.get(symbol.name)
         if replacement:
             symbol.name = replacement
             symbol.st_name = elf.strtab.add_symbol(replacement)
-
-    config = json.loads(args.config.read_text(encoding="utf-8"))
-    fixups = config.get(args.source, {})
     # The retail name each of the unit's own names stands for: a `symbols`
     # entry renames the source's name to retail's, or retail's `@N` to the name
     # the other units reach it by.
@@ -697,7 +561,6 @@ def main():
                  for entry in fixups.get("export_constants_shared", [])]),
         encoding="utf-8")
     deferred_sections = rename_sections(elf, fixups.get("sections", {}), parser)
-    data_runs(elf, fixups.get("data_runs", {}), parser)
     args.object.write_bytes(elf.pack())
 
     # After the rewrite: objcopy reads the file, so these have to be last.
@@ -739,6 +602,7 @@ def main():
     rename_symbols(args.object, template_aliases)
     globalize_symbols(args.object, fixups.get("globalize_symbols", []))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
+                     disassemble.image_of_unit(args.source[len("src/"):]),
                      fixups.get("symbols", {}).values())
     if deferred_sections:
         elf = Elf(args.object.read_bytes())

@@ -254,9 +254,8 @@ int NowSelectParts = -1;
 CFrame *ECursorFrame = &ecursorframe;
 int PartsNameNum = -1;
 
-/* editloop's own functions, in the order the unit defines them. Each is still
- * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
- * ahead of their definitions. */
+/* editloop's own functions, in the order the unit defines them; the prototypes
+ * let each call ahead of its definition. */
 /**
  * Starts a map event and optionally adopts a camera viewpoint.
  */

@@ -74,6 +74,7 @@ set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
 # Decompiled globals replace these retail section dumps.
 set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata
+                      main.vutext main.vudata
                       title.data title.bss dun.data dun.sinit dun.bss)
 
 set(ASM_SOURCES "")
@@ -116,10 +117,6 @@ foreach(row IN LISTS unit_rows)
     endif()
 endforeach()
 
-# Hand-written assembly: crt0, the literal pool and the linker-script symbols.
-file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/handwritten/*.s)
-
 set(CPP_OBJS "")
 foreach(src IN LISTS CPP_SOURCES)
     list(APPEND CPP_OBJS ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${src}.o)
@@ -133,7 +130,7 @@ foreach(section IN LISTS SECTIONS)
 endforeach()
 
 set(ALL_OBJS "")
-foreach(src IN LISTS ASM_SOURCES CPP_SOURCES EXTRA_ASM_SOURCES)
+foreach(src IN LISTS ASM_SOURCES CPP_SOURCES)
     list(APPEND ALL_OBJS ${BUILD_DIR}/${src}.o)
 endforeach()
 list(APPEND ALL_OBJS ${WHOLE_UNIT_OBJS})
@@ -141,12 +138,6 @@ list(APPEND ALL_OBJS ${WHOLE_UNIT_OBJS})
 set(LINK_ORDER "")
 foreach(section IN LISTS SECTIONS)
     list(APPEND LINK_ORDER ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${section}_o_files)
-endforeach()
-
-# Data fragments and handwritten definitions follow address-ordered objects.
-set(MAIN_TAIL "")
-foreach(src IN LISTS EXTRA_ASM_SOURCES)
-    list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
 
 make_object_dirs("${ALL_OBJS}")
@@ -215,7 +206,7 @@ add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${PROVENANCE} ${LINK_ORDER}
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
             --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
-            --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
+            --build-dir ${BUILD_DIR}
             --carved ${REPLACED_SECTIONS} --lcf ${LD_TEMPLATE}
     DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py

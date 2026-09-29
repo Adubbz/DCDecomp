@@ -1400,8 +1400,6 @@ s32 defCameraWait;
 /* Whether the monster names are hidden. */
 s32 MonstorNameOff;
 
-INCLUDE_ASM("asm/nonmatchings/dun/gameloop", _dun_text_start);
-
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
     int size;

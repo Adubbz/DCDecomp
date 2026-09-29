@@ -40,12 +40,11 @@ times over, which says the same thing about the linker that built it.
 
 ## Why that is not enough, and what is done instead
 
-Retail's pool is in the image already -- the reference dump of `.rdata`
-supplies it -- and it cannot be rebuilt from the objects until every
-contributing unit is decompiled. So an object that brings its own copy of a
-constant has that copy appended rather than merged, and the small data after
-the pool moves. Writing `0.1f` in a source used to be enough to shift the
-image.
+Retail's pool is data of its own -- src/literals.cpp defines it -- and it
+cannot be rebuilt from the objects' constants. So an object that brings its own
+copy of a constant has that copy appended rather than merged, and the small
+data after the pool moves. Writing `0.1f` in a source used to be enough to
+shift the image.
 
 Nor can retail's pool be predicted from the rules above. Retail's copy of the
 pool holds one value at several addresses *within a single function* --
@@ -54,11 +53,11 @@ and this MWCC cannot emit that, since it deduplicates per unit. Retail was
 built by a toolchain that differs here.
 
 What is left is retail's own instruction stream, which says exactly which entry
-each load wants. `--bind` reads it, in four steps, stopping at the first that
-answers:
+each load wants. `--bind` reads it out of the retail image (scripts/build/
+retail.py), in four steps, stopping at the first that answers:
 
-1. **The same instruction.** The reference dump of the function the relocation
-   sits in is opened and the instruction at that offset taken. If it is a
+1. **The same instruction.** The function the relocation sits in is found in
+   retail's symbol table and the instruction at that offset taken. If it is a
    gp-relative float load of the same value, that is the address. This is what
    a matching function resolves by.
 2. **The same function, in order.** Otherwise the function's literal loads are
@@ -95,6 +94,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import disassemble  # noqa: E402
+import retail as retail_image  # noqa: E402
 
 # Where MWLD's LITERAL directive put the pool in retail, taken from the image:
 # the 8-byte entries run from the end of .data to the first 4-byte one, and the
@@ -103,21 +103,8 @@ import disassemble  # noqa: E402
 # read as a plausible 4-byte one.
 POOL = {8: (0x002A17B8, 0x002A1868), 4: (0x002A1868, 0x002A1E80)}
 
-# The dump that holds the pool, and the linker script that fixes _gp.
-POOL_DUMP = disassemble.dump_path('main.rdata')
+# The linker script that fixes _gp.
 LCF = 'SCUS_971.11.lcf'
-# Where splat files a function's own assembly. A function still supplied by a
-# marker is under the first, one that is decompiled under the second; both are
-# retail's instructions either way, which is all this reads them for.
-# `config/reference_asm` holds the ones splat files under no name of their own;
-# see scripts/build/reference_asm.py.
-ASM_DIRS = ('asm/nonmatchings', 'asm/matchings', 'config/reference_asm')
-
-# The address comment spimdisasm puts on each line of a dump: `/* fileoffset
-# vaddr bytes */`. The bytes are in the order the file stores them, so a word
-# is that field read little-endian.
-DUMP_RE = re.compile(
-    r'^\s*/\*\s*[0-9A-Fa-f]+\s+([0-9A-Fa-f]+)\s+([0-9A-Fa-f]{8})\s*\*/')
 GP_RE = re.compile(r'^\s*_gp\s*=\s*(0x[0-9A-Fa-f]+)\s*;', re.M)
 
 # A translation unit's placement in the linker script, which is what says
@@ -408,18 +395,11 @@ class Retail:
 
     def _read_pool(self):
         """{address: entry bytes} for every 4- and 8-byte slot in the pool."""
-        words = {}
-        with open(self._path(POOL_DUMP)) as f:
-            for line in f:
-                m = DUMP_RE.match(line)
-                if m:
-                    words[int(m.group(1), 16)] = bytes.fromhex(m.group(2))
         pool = {}
         for size, (lo, hi) in POOL.items():
             for address in range(lo, hi, size):
-                entry = b''.join(words.get(address + i, b'')
-                                 for i in range(0, size, 4))
-                if len(entry) == size:
+                entry = retail_image.read('main', address, size)
+                if entry is not None:
                     pool[address] = entry
         return pool
 
@@ -427,28 +407,32 @@ class Retail:
 
     @property
     def functions(self):
-        """{symbol: (dump, vram, size)}, and the same sorted by address.
+        """{symbol: (image, vram, size)}, and the same sorted by address.
 
         The address and the size come from retail's own symbol table, as splat
-        records it; the dump is found by name, because splat files each
-        function under the translation unit it belongs to and names the file
-        for the function.
+        records it; the instructions are read from the image that holds it.
         """
         if self._functions is None:
-            paths = {}
-            for directory in ASM_DIRS:
-                root = Path(self._path(directory))
-                for path in root.rglob('*.s'):
-                    paths.setdefault(path.stem,
-                                     os.path.relpath(path, self.root))
-
             by_name, by_address = {}, []
-            table = disassemble.read_symbol_table(self._path('config'))
-            for rows in table.values():
-                for name, (vram, sym_type, size) in rows.items():
-                    if sym_type != 'func' or name not in paths:
+            for image in disassemble.IMAGES:
+                path = Path(self._path('config', f'{image}.symbols.txt'))
+                if not path.exists():
+                    continue
+                for line in path.read_text(encoding='utf-8').splitlines():
+                    m = disassemble.SYMBOL_ROW.match(line.strip())
+                    if not m:
                         continue
-                    by_name[name] = (paths[name], vram, size)
+                    name, attrs = m.group(1), m.group(3) or ''
+                    # Each image's list also names the other images' symbols
+                    # it refers to, as absolute addresses; those are not its own.
+                    if 'type:func' not in attrs or 'absolute:True' in attrs:
+                        continue
+                    size = next((int(a.split(':', 1)[1], 0) for a in attrs.split()
+                                 if a.startswith('size:')), 0)
+                    if not size or name in by_name:
+                        continue
+                    vram = int(m.group(2), 16)
+                    by_name[name] = (image, vram, size)
                     by_address.append((vram, name))
             by_address.sort()
             self._functions = (by_name, by_address)
@@ -500,19 +484,11 @@ class Retail:
         loads = []
         entry = self.functions[0].get(name)
         if entry is not None:
-            path, vram, size = entry
-            words = {}
-            try:
-                with open(self._path(path)) as f:
-                    for line in f:
-                        m = DUMP_RE.match(line)
-                        if m:
-                            words[int(m.group(1), 16)] = int.from_bytes(
-                                bytes.fromhex(m.group(2)), 'little')
-            except OSError:
-                words = {}
-            for offset in range(0, size, 4):
-                address = self.loaded_address(words.get(vram + offset))
+            image, vram, size = entry
+            code = retail_image.read(image, vram, size) or b''
+            for offset in range(0, len(code) - 3, 4):
+                address = self.loaded_address(
+                    int.from_bytes(code[offset:offset + 4], 'little'))
                 if address in self.pool:
                     loads.append((offset, address, self.pool[address]))
         self._loads[name] = loads

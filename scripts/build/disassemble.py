@@ -170,9 +170,8 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
             unit = path.with_suffix("").relative_to(src_dir).as_posix()
             sources[unit] = path.as_posix()
 
-    # A hand-written assembly source stands in for the split assembly of the
-    # unit it is named after. Only units the yaml splits qualify, so the
-    # loose assembly under src/handwritten stays out of the unit list.
+    # A hand-written assembly source (crt0) stands in for the split assembly
+    # of the unit it is named after. Only units the yaml splits qualify.
     handwritten = {
         path.with_suffix("").relative_to(src_dir).as_posix(): path.as_posix()
         for path in sorted(Path(src_dir).rglob("*.s"))

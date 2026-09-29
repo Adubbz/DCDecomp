@@ -83,9 +83,8 @@ STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
 
-/* editloop's own functions, in the order the unit defines them. Each is still
- * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
- * ahead of their definitions. */
+/* editloop's own functions, in the order the unit defines them; the prototypes
+ * let each call ahead of its definition. */
 void CommandGROUND(void **arguments);
 void CommandBUILD(void **arguments);
 void CommandWATER(void **arguments);

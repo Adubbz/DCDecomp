@@ -138,7 +138,12 @@ SECTIONS
     .dun:
     {
         // @OVERLAY dun
-        gameloop.cpp.o  (.dtext)   // 0x01dabd40
+        // As in the title overlay, the first function stands on a 128-byte
+        // boundary, sixty-four bytes of nothing after the header; retail names
+        // their start.
+        _dun_text_start = .;
+        . = ALIGN(128);
+        gameloop.cpp.o  (.dtext)   // 0x01dabd80
         *(.dtext)
 
         // Retail leaves 128 bytes of nops between the overlay's last function
@@ -433,7 +438,8 @@ SECTIONS
         *(.text)
         ALIGNALL(1); // Perform no additional alignment
         . = ALIGN(0x80);
-        *(.vutext)                            // 0x00245300
+        // @ORDER vutext.cpp.o 0x00245300   data only: the VU1 microprograms
+        vutext.cpp.o (.vutext)                // 0x00245300
 
         # data
         //
@@ -553,7 +559,8 @@ SECTIONS
         langset.cpp.o (.data)        // 0x00296630 @360__2
         . = ALIGN(0x80);             // 0x00296680
         *(.data)
-        *(.vudata)
+        // @ORDER vudata.cpp.o 0x00296680   data only: the frame's DMA chain
+        vudata.cpp.o (.vudata)       // 0x00296680
 
         # rodata
         //
@@ -652,7 +659,8 @@ SECTIONS
         water.cpp.o (.vt-visualpolyvu1)  // 0x002a1660
         mapparts.cpp.o (.vtables)
         hitmark.cpp.o (.vtables)
-        literals.s.o (.rdata)            // 0x002a17b0 the overlay table and retail's literal pool
+        // @ORDER literals.cpp.o 0x002a17b0   data only: the overlay table and retail's literal pool
+        literals.cpp.o (.rdata)          // 0x002a17b0
         *(.rdata)
 
 		# C++ related sections
@@ -675,6 +683,20 @@ SECTIONS
 		# parts data. Retail reaches it by its own name, not as an offset into
 		# EditPartsData, so the code carries a relocation against this address.
 		EditGaijiTbl = 0x002589ec;
+
+		# The overlays' entry points, which main calls by address: main is
+		# linked apart from the overlay that defines each. Retail's name for
+		# each is noted.
+		func_01DAC1C0 = 0x01DAC1C0;  // GameInit__Fv
+		func_01DAD980 = 0x01DAD980;  // GameLoop__Fv
+		func_01DAF1C0 = 0x01DAF1C0;  // OpeningInit__Fv
+		func_01DAF970 = 0x01DAF970;  // OpeningLoop__Fv
+		func_01DC1420 = 0x01DC1420;  // LoaderInit__Fv
+		func_01DC1510 = 0x01DC1510;  // LoaderLoop__Fv
+		func_01DC8C50 = 0x01DC8C50;  // RushInit__Fv
+		func_01DC8EB0 = 0x01DC8EB0;  // RushLoop__Fv
+		func_01DD1AB0 = 0x01DD1AB0;  // TitleInit__Fi
+		func_01DD2220 = 0x01DD2220;  // TitleLoop__Fv
 
 		# Entries of retail's literal pool that a compiled unit loads from.
 		# scripts/build/literals.py binds each float constant an object holds
