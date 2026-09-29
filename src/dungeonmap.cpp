@@ -2,8 +2,8 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 1008
 #pragma argument_flag 0
-#pragma argument_flag_ones 69,109,189,190,235,264,265,310,366,381
-#pragma argument_flag_ones 383,437,438,454,455,456,916
+#pragma argument_flag_ones 69,109,232,233,278,307,308,353,409,424
+#pragma argument_flag_ones 426,480,481,497,498,499,959
 
 #include "dungeonmap.hpp"
 
