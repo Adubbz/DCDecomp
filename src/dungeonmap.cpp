@@ -1,7 +1,9 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 1008
-#pragma argument_flag_ones
+#pragma argument_flag 0
+#pragma argument_flag_ones 69,109,189,190,235,264,265,310,366,381
+#pragma argument_flag_ones 383,437,438,454,455,456,916
 
 #include "dungeonmap.hpp"
 
@@ -1176,15 +1178,10 @@ void CDungeonMap::DrawWater(float *pos, int mute) {
     }
 }
 
-/* 193 of 201 instructions. The small box's case is retail's. The large box's
- * differs only in where the two zero arguments to SetRotation are set up:
- * retail puts them in the load delay slot after the lid angle, ahead of the
- * multiply, and mwcc puts them after the division. Retail schedules its two
- * cases differently from one another though their source is the same shape,
- * and no spelling of the call reproduces that here. */
 void CDungeonMap::DrawItemBox(float *pos) {
     float lid[4];
     int i;
+    float angle;
 
     if (this->box_lid_model == NULL || this->box_body_model == NULL) {
         return;
@@ -1209,8 +1206,8 @@ void CDungeonMap::DrawItemBox(float *pos) {
                 lid[1] += 8.0f;
                 lid[2] -= 5.0f;
                 this->box_lid_model->SetPosition(lid);
-                this->box_lid_model->SetRotation(
-                    (3.1415927f * (float) this->boxes[i].lid_angle) / 180.0f, 0.0f, 0.0f);
+                angle = this->boxes[i].lid_angle;
+                this->box_lid_model->SetRotation((3.1415927f * angle) / 180.0f, 0.0f, 0.0f);
                 MGDraw(this->box_body_model);
                 MGDraw(this->box_lid_model);
                 break;
@@ -1220,8 +1217,8 @@ void CDungeonMap::DrawItemBox(float *pos) {
                 lid[1] += 3.0f;
                 lid[2] -= 3.0f;
                 this->chest_lid_model->SetPosition(lid);
-                this->chest_lid_model->SetRotation(
-                    (3.1415927f * (float) this->boxes[i].lid_angle) / 180.0f, 0.0f, 0.0f);
+                angle = this->boxes[i].lid_angle;
+                this->chest_lid_model->SetRotation((3.1415927f * angle) / 180.0f, 0.0f, 0.0f);
                 MGDraw(this->chest_body_model);
                 MGDraw(this->chest_lid_model);
                 break;
