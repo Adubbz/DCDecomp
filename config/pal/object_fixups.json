@@ -1,0 +1,2055 @@
+{
+  "src/shop.cpp": {
+    "symbols": {
+      "FishFrameImage": "@3016",
+      "FishMessageFile": "@3032"
+    }
+  },
+  "src/gamepad.cpp": {
+    "sections": {
+      ".padbss": [
+        "pad_dma_buf",
+        "pad_dma_buf2"
+      ]
+    }
+  },
+  "src/main.cpp": {
+    "symbols": {
+      "gamemode_empty_string": "@567",
+      "@1171": "@908",
+      "GeneratedTextureAnimeCtor": "__ct__13CTextureAnimeFP13CTexAnimeDatai",
+      "GeneratedObjectCtor": "__ct__7CObjectFf",
+      "GeneratedHitMarkVtable": "__vt__8CHitMark",
+      "GeneratedMotionParamCtor": "__ct__11MotionParamFv",
+      "GeneratedFakePointLightCtor": "__ct__15CFakePointLightFv",
+      "GeneratedCharacterVtable": "__vt__10CCharacter",
+      "__as__17GeneratedNpcModelFRC17GeneratedNpcModel": "__as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL"
+    },
+    "sections": {
+      ".gamemodesdata": [
+        "@908"
+      ]
+    },
+    "drop_functions": [
+      "CopyNpcModel__FR17GeneratedNpcModelRC17GeneratedNpcModel",
+      "CopyCharacter__FR10CCharacterRC10CCharacter"
+    ],
+    "globalize_symbols": [
+      "__as__13MAP_NPC_MODELFRC13MAP_NPC_MODEL"
+    ],
+    "rodata_exports": [
+      "@566",
+      "@567",
+      "@568",
+      "@578",
+      "@626",
+      "@627",
+      "@628",
+      "@629",
+      "@630",
+      "@631",
+      "@632",
+      "@633",
+      "@634",
+      "@635",
+      "@657",
+      "@658__2",
+      "@678",
+      "@679",
+      "@680",
+      "@876",
+      "@877"
+    ]
+  },
+  "src/dungeonmap.cpp": {
+    "symbols": {
+      "info_cfg_literal": "@1007__2"
+    },
+    "sections": {
+      ".dungeonmap-c1292": [
+        "@1314",
+        "@1315",
+        "@1316"
+      ]
+    },
+    "rodata_exports": [
+      "@2283",
+      "@2284",
+      "@2338",
+      "@2339",
+      "@2448__2",
+      "@3190"
+    ]
+  },
+  "src/dungeonparts.cpp": {
+    "symbols": {
+      "MaxFloorTbl": "MaxFloorTbl__2",
+      "@370": "@826__2"
+    }
+  },
+  "src/battlemenu.cpp": {
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ],
+    "rodata_exports": [
+      "@924__2",
+      "@926__2",
+      "@927__2",
+      "@5932",
+      "@885__3"
+    ],
+    "symbols": {
+      "CharaStatusTextureName": "@885__3",
+      "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "CureEffect__14CWeaponLevelUpFiiP14CWeaponLevelUpii": "CureEffect__14CWeaponLevelUpFiiP1ii"
+    }
+  },
+  "src/ebattle.cpp": {
+    "symbols": {
+      "draw_rect_store": "draw_rect"
+    },
+    "rodata_exports": [
+      "@366",
+      "@367"
+    ]
+  },
+  "src/hitmark.cpp": {
+    "rodata_exports": [
+      "@1430",
+      "@1522",
+      "@1523",
+      "@1524",
+      "@1525",
+      "@1526",
+      "@1527",
+      "@1528",
+      "@1529",
+      "@1530",
+      "@1531",
+      "@1532",
+      "@1533",
+      "@1534",
+      "@1535"
+    ]
+  },
+  "src/clsmes.cpp": {
+    "rodata_exports": [
+      "@821",
+      "@822",
+      "@1556",
+      "@1557"
+    ]
+  },
+  "src/dun/gameloop.cpp": {
+    "symbols": {
+      "run_speed": "run_speed__2",
+      "MainDraw__Fv": "MainDraw__Fv__3",
+      "MoveChara__Fv": "MoveChara__Fv__2",
+      "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff": "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2",
+      "LoadData__Fv": "LoadData__Fv__3",
+      "__ct__13CDranMapFieldFv": "__ct__10CCharacterFv"
+    },
+    "extern_functions": [
+      "__ct__10CCharacterFv",
+      "__ct__12CSHOT_EFFECTFv",
+      "__ct__13CDranMapFieldFv",
+      "__ct__13MAP_NPC_MODELFv",
+      "__ct__8CHitMarkFv"
+    ],
+    "rodata_exports": [
+      "@1073__2",
+      "@1602__2",
+      "@1611__2",
+      "@1612__3",
+      "@4193",
+      "@4203",
+      "@4204",
+      "@4208",
+      "@4212",
+      "@4213",
+      "@4214",
+      "@4215",
+      "@4216",
+      "@4217",
+      "@4218",
+      "@4219",
+      "@4638",
+      "@4639",
+      "@4641",
+      "@4782",
+      "@4787",
+      "@4788",
+      "@4805",
+      "@4967",
+      "@4968",
+      "@5005",
+      "@5006",
+      "@5007",
+      "@5008",
+      "@5009",
+      "@5034",
+      "@5035",
+      "@5036",
+      "@5037",
+      "@5038",
+      "@5039",
+      "@5040",
+      "@5041",
+      "@5042",
+      "@5043",
+      "@5044",
+      "@5045",
+      "@5047",
+      "@5048",
+      "@5049",
+      "@5050",
+      "@5051",
+      "@5052",
+      "@5053",
+      "@5054",
+      "@5055",
+      "@5435",
+      "@5543",
+      "@6173",
+      "@662__4",
+      "@664__6",
+      "@683__2",
+      "@684__2",
+      "@685__2",
+      "@686__2",
+      "@6551",
+      "@6552",
+      "@6553",
+      "@6554",
+      "@6555",
+      "@687__4",
+      "@6556",
+      "@6557",
+      "@6559",
+      "@6560",
+      "@6561",
+      "@6562",
+      "@6563",
+      "@6564",
+      "@6565",
+      "@688__5",
+      "@689__4",
+      "@690__6",
+      "@691__7",
+      "@692__5",
+      "@6613",
+      "@6614",
+      "@6615",
+      "@923__4",
+      "@924__4",
+      "@927__4",
+      "@928__4",
+      "@929__5",
+      "@930__4",
+      "@931__4",
+      "@932__6",
+      "@933__3",
+      "@934__2",
+      "@935__4"
+    ]
+  },
+  "src/collisiondata.cpp": {
+    "symbols": {
+      "DebugInfoMsgMiniMapView": "@1522",
+      "DebugInfoMsgCollision": "@1523",
+      "DebugInfoMsgBgmPlay": "@1524",
+      "DebugInfoMsgParameter": "@1525",
+      "DebugInfoMsgViewInfo": "@1526",
+      "DebugInfoMsgUltraMan": "@1527",
+      "DebugInfoMsgReloadEnemy": "@1528",
+      "DebugInfoMsgItemPutZone": "@1529",
+      "DebugInfoMsgLightMode": "@1530",
+      "DebugInfoMsgFloorAtraGet": "@1531",
+      "DebugInfoMsgEventTest": "@1532",
+      "DebugInfoMsgSetStatus": "@1533",
+      "DebugInfoMsgSePlay": "@1534",
+      "DebugInfoMsgSetChrKey": "@1535"
+    },
+    "rodata_exports": [
+      "@1548",
+      "@1549",
+      "@1550",
+      "@1551",
+      "@1552",
+      "@1553",
+      "@1555",
+      "@1556__2",
+      "@1557__2"
+    ]
+  },
+  "src/edit_in.cpp": {
+    "symbols": {
+      "InitWorkBuffer__Fv": "InitWorkBuffer__Fv__2",
+      "CommandAMBIENT__FPPv": "CommandAMBIENT__FPPv__2",
+      "CommandFOG__FPPv": "CommandFOG__FPPv__2",
+      "CommandBG_COL__FPPv": "CommandBG_COL__FPPv__2",
+      "CommandPEOPLE__FPPv": "CommandPEOPLE__FPPv__2",
+      "CommandCD__FPPv": "CommandCD__FPPv__2",
+      "CommandOBJ_ANIME__FPPv": "CommandOBJ_ANIME__FPPv__2",
+      "CommandMOTION_PARTS__FPPv": "CommandMOTION_PARTS__FPPv__2",
+      "CommandWATER_SURFACE__FPPv": "CommandWATER_SURFACE__FPPv__2",
+      "Command": "Command__6",
+      "CommandExe": "CommandExe__6",
+      "CurrentDir": "CurrentDir__5",
+      "objanime_list": "objanime_list__2",
+      "debug": "debug__2",
+      "motion_parts_list": "motion_parts_list__2",
+      "water_list": "water_list__2",
+      "water_info": "water_info__2",
+      "GetCollision__FP6CCPolyP7CBoxVu0": "GetCollision__FP6CCPolyP7CBoxVu0__2",
+      "func_num": "func_num__2",
+      "Water": "Water__3",
+      "VillagerCollision__Fv": "VillagerCollision__Fv__2",
+      "Chara": "Chara__2",
+      "LoadScript__Fv": "LoadScript__Fv__2",
+      "RunEvent__FiP7CCamera": "RunEvent__FiP7CCamera__2",
+      "RunSystemEvent__FiP7CCamera": "RunSystemEvent__FiP7CCamera__2",
+      "start_event_no": "start_event_no__2",
+      "start_system_event": "start_system_event__2",
+      "EventCamera": "EventCamera__2",
+      "CommandLIGHT_C__FPPv": "CommandLIGHT_C__FPPv__2",
+      "CommandWATER_SHAKE__FPPv": "CommandWATER_SHAKE__FPPv__2",
+      "CommandFIRE__FPPv": "CommandFIRE__FPPv__2",
+      "CommandFLAME__FPPv": "CommandFLAME__FPPv__2",
+      "CommandBRIGHT__FPPv": "CommandBRIGHT__FPPv__2",
+      "MoveCamera__FP13CCameraFollow": "MoveCamera__FP13CCameraFollow__2",
+      "camera_dist_mode": "camera_dist_mode__2",
+      "LoadTexture__Fv": "LoadTexture__Fv__2",
+      "TexAnime": "TexAnime__2",
+      "TexAnimeData": "TexAnimeData__2",
+      "GameMode": "GameMode__2",
+      "NowTime": "NowTime__2",
+      "MainCamera": "MainCamera__2",
+      "door_open_cnt": "door_open_cnt__2",
+      "fix_chara_pos": "fix_chara_pos__2",
+      "fix_chara_rot": "fix_chara_rot__2",
+      "NowCamera": "NowCamera__2",
+      "loop_counter": "loop_counter__2",
+      "key_counter": "key_counter__2",
+      "goto_menu": "goto_menu__2",
+      "goto_return_menu": "goto_return_menu__2",
+      "MainDraw__Fv": "MainDraw__Fv__2",
+      "Fire": "Fire__2",
+      "TalkCamera": "TalkCamera__2",
+      "@480": "@992",
+      "@58": "@347__2",
+      "@59": "@348__3",
+      "@60": "@349__3",
+      "@61": "@350__3",
+      "@62": "@351__2",
+      "@166": "@458",
+      "@418": "@915",
+      "@440": "@937",
+      "@547": "@1147",
+      "@548": "@1148",
+      "@655": "@1268",
+      "@864": "@1496",
+      "@865": "@1497",
+      "@866": "@1498",
+      "@867": "@1499",
+      "@898": "@1546",
+      "@923": "@1571",
+      "@986": "@1645__2",
+      "@988": "@1647__2",
+      "@990": "@1649"
+    },
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ],
+    "globalize_symbols": [
+      "InitWorkBuffer__Fv__2",
+      "CommandAMBIENT__FPPv__2",
+      "CommandFOG__FPPv__2",
+      "CommandBG_COL__FPPv__2",
+      "CommandPEOPLE__FPPv__2",
+      "CommandCD__FPPv__2",
+      "CommandOBJ_ANIME__FPPv__2",
+      "CommandMOTION_PARTS__FPPv__2",
+      "CommandWATER_SURFACE__FPPv__2",
+      "LoadInfo__FPci",
+      "CommandPROJECTION__FPPv",
+      "CommandDEBUG__FPPv",
+      "GetCollision__FP6CCPolyP7CBoxVu0__2",
+      "GetDoorPos__FiPfPfPiPi",
+      "StepWater__Fv",
+      "VillagerCollision__Fv__2",
+      "LoadScript__Fv__2",
+      "RunEvent__FiP7CCamera__2",
+      "RunSystemEvent__FiP7CCamera__2",
+      "setTexAnim__Fv",
+      "CommandBRIGHT__FPPv__2",
+      "CommandLIGHT_C__FPPv__2",
+      "CommandWATER_SHAKE__FPPv__2",
+      "CommandFIRE__FPPv__2",
+      "CommandFLAME__FPPv__2",
+      "MoveCamera__FP13CCameraFollow__2",
+      "LoadTexture__Fv__2",
+      "MainDraw__Fv__2"
+    ],
+    "rodata_exports": [
+      "@1600",
+      "@1601",
+      "@1602",
+      "@1603",
+      "@1604",
+      "@1605",
+      "@1606",
+      "@1607",
+      "@1608",
+      "@1609",
+      "@1610",
+      "@1611",
+      "@1612",
+      "@1613",
+      "@1614",
+      "@1407",
+      "@1408",
+      "@469__4"
+    ]
+  },
+  "src/editground.cpp": {
+    "symbols": {
+      "@114": "@335__4",
+      "@315": "@575__2",
+      "@586": "@886__3",
+      "@610": "@912",
+      "@828": "@1159"
+    }
+  },
+  "src/edit.cpp": {
+    "export_constants_shared": [
+      [
+        "",
+        "@272__2"
+      ]
+    ],
+    "rodata_exports": [
+      "@257__3",
+      "@258__3",
+      "@259__3",
+      "@260__3",
+      "@261__3",
+      "@262__2",
+      "@263__3",
+      "@264__3",
+      "@265__2",
+      "@266__3",
+      "@267__3",
+      "@268__3",
+      "@269__3",
+      "@270__5",
+      "@271__3",
+      "@272__2",
+      "@273__2",
+      "@274__2",
+      "@275__2",
+      "@276__2",
+      "@277__2",
+      "@278__2",
+      "@279__3",
+      "@280__2",
+      "@281__2",
+      "@282__2",
+      "@283__2",
+      "@284__2",
+      "@285__4",
+      "@286__3",
+      "@287__3",
+      "@288__3",
+      "@289__3",
+      "@290__3",
+      "@291__2",
+      "@292__2",
+      "@293__2",
+      "@294__2",
+      "@295__2",
+      "@296__2",
+      "@297__2",
+      "@298__4",
+      "@299__4",
+      "@300__3",
+      "@301__2",
+      "@302__2",
+      "@303__2",
+      "@304__2",
+      "@305__2",
+      "@306__2",
+      "@307__2",
+      "@308__3",
+      "@309__2",
+      "@310__2",
+      "@311__2",
+      "@312__2",
+      "@314__2",
+      "@315__2",
+      "@316__2",
+      "@317__2",
+      "@318__2",
+      "@319__3",
+      "@320__3",
+      "@321__2",
+      "@322__2",
+      "@323__2",
+      "@324__2",
+      "@325__3",
+      "@326__2",
+      "@327__2",
+      "@328__3",
+      "@329__2",
+      "@330__3",
+      "@331__3",
+      "@332__4",
+      "@333__4",
+      "@334__4",
+      "@335__3",
+      "@336__2",
+      "@337__2",
+      "@338",
+      "@339__2",
+      "@340",
+      "@341",
+      "@342",
+      "@343",
+      "@344",
+      "@345__3",
+      "@346",
+      "@347",
+      "@348__2",
+      "@349__2",
+      "@350__2",
+      "@351",
+      "@352",
+      "@353__2",
+      "@353__3",
+      "@354",
+      "@355",
+      "@356",
+      "@357",
+      "@358__2",
+      "@359",
+      "@360",
+      "@361__2",
+      "@362__3",
+      "@363__4",
+      "@364",
+      "@365",
+      "@366__2",
+      "@367__2",
+      "@368",
+      "@369__2",
+      "@369__3",
+      "@370__2",
+      "@371__3",
+      "@372",
+      "@373",
+      "@374",
+      "@377",
+      "@399__2",
+      "@582",
+      "@690"
+    ],
+    "symbols": {
+      "SystemMesNo": "SystemMesNo__2",
+      "DebugFont": "DebugFont__2",
+      "SystemMesCount": "SystemMesCount__2",
+      "SystemMesPosition": "SystemMesPosition__2",
+      "SystemMesWait": "SystemMesWait__2",
+      "SystemMesInputKey": "SystemMesInputKey__2"
+    },
+    "sections": {}
+  },
+  "src/editloop.cpp": {
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ],
+    "rodata_exports": [
+      "@414__5",
+      "@717",
+      "@2234",
+      "@2445",
+      "@2446",
+      "@2447",
+      "@2821",
+      "@2822",
+      "@2823",
+      "@2824",
+      "@2825",
+      "@2837",
+      "@2839",
+      "@2935",
+      "@2936",
+      "@2937",
+      "@2938",
+      "@2202"
+    ],
+    "globalize_symbols": [
+      "RunEvent__FiP7CCamera",
+      "RunSystemEvent__FiP7CCamera"
+    ],
+    "symbols": {
+      "ecursorframe": "ecursorframe__2"
+    }
+  },
+  "src/editloop3.cpp": {
+    "symbols": {
+      "fishing_line_origin": "@2242",
+      "CurrentDir": "CurrentDir__4",
+      "menu_mode": "menu_mode__2"
+    },
+    "rodata_exports": [
+      "@2454",
+      "@2455",
+      "@2456",
+      "@687",
+      "@688__2",
+      "@689",
+      "@690__2",
+      "@727__3",
+      "@729__3",
+      "@730__3",
+      "@731__3",
+      "@475__2",
+      "@2242",
+      "@554",
+      "@853",
+      "@728__3",
+      "@1026",
+      "@1038",
+      "@1424",
+      "@2236",
+      "@2237",
+      "@2290",
+      "@2291"
+    ]
+  },
+  "src/nowload.cpp": {
+    "symbols": {
+      "count": "count__2"
+    }
+  },
+  "src/textureanime.cpp": {
+    "rodata_exports": [
+      "@447__3",
+      "@448",
+      "@449__2",
+      "@450",
+      "@451"
+    ],
+    "symbols": {
+      "Command": "Command__4",
+      "CommandExe": "CommandExe__4"
+    }
+  },
+  "src/snd.cpp": {
+    "rodata_exports": [
+      "@799",
+      "@800"
+    ]
+  },
+  "src/btmisc.cpp": {
+    "rodata_exports": [
+      "@888__3",
+      "@889__2",
+      "@890__2",
+      "@891__2",
+      "@892__3",
+      "@893__3",
+      "@920__2",
+      "@921__2",
+      "@922__2",
+      "@947",
+      "@948"
+    ],
+    "symbols": {
+      "MdsExtension": "@864"
+    }
+  },
+  "src/cloth.cpp": {
+    "sections": {
+      ".cloth-step": [
+        "@390",
+        "@446"
+      ],
+      ".cloth-createvudata": [
+        "@506",
+        "@507",
+        "@508",
+        "@509",
+        "@510"
+      ],
+      ".cloth-initdata": [
+        "@545",
+        "@572",
+        "@585"
+      ]
+    },
+    "rekey_sections": [
+      [
+        ".cloth-createvudata",
+        [
+          16,
+          16,
+          16,
+          16,
+          16
+        ]
+      ],
+      [
+        ".cloth-initdata",
+        [
+          16,
+          16,
+          16
+        ]
+      ]
+    ],
+    "globalize_symbols": [
+      "StretchBind2__FPfPfPf",
+      "vuabs__FPf"
+    ],
+    "extern_functions": [
+      "StretchBind2__FPfPfPf",
+      "vuabs__FPf"
+    ]
+  },
+  "src/bound.cpp": {
+    "globalize_symbols": [
+      "vuabs__FPf"
+    ],
+    "extern_functions": [
+      "vuabs__FPf"
+    ]
+  },
+  "src/chararead.cpp": {
+    "symbols": {
+      "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2<1>P14CDataAlloc2<1>P14CDataAlloc2<1>iP14CDataAlloc2<1>ii": "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
+      "buffer": "buffer__2"
+    },
+    "globalize_symbols": [
+      "Command",
+      "ReadInfo__FP10CCharacterPUiPcP14CDataAlloc2_1_P14CDataAlloc2_1_P14CDataAlloc2_1_iP14CDataAlloc2_1_ii",
+      "CommandVERTEX_ANIME__FPPv",
+      "CommandSHADOW_VERTEX_ANIME__FPPv",
+      "CommandMODEL__FPPv",
+      "CommandSHADOW_MODEL__FPPv",
+      "CommandMOTION__FPPv",
+      "CommandSHADOW_MOTION__FPPv",
+      "CommandKEY__FPPv",
+      "CommandKEY_START__FPPv",
+      "CommandMOTION_END__FPPv",
+      "CommandCLOTH__FPPv",
+      "CommandBODY_SIZE__FPPv",
+      "CommandALLOC_MDT__FPPv",
+      "CommandALLOC_DBUFF__FPPv",
+      "CommandALLOC_SHADOW_MDT__FPPv",
+      "CommandALLOC_SHADOW_DBUFF__FPPv",
+      "CommandIMG__FPPv",
+      "CommandIMG_END__FPPv",
+      "CommandFOOT__FPPv",
+      "CommandEVENT__FPPv"
+    ]
+  },
+  "src/collisionmdt.cpp": {
+    "globalize_symbols": [
+      "GetVertexAddress__10CCollisionFPi"
+    ]
+  },
+  "src/dataset.cpp": {
+    "symbols": {
+      "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2<1>": "CopyFrameVu1__FP9CFrameVu1P14CDataAlloc2_1_",
+      "CopyFrame__FP6CFrameP14CDataAlloc2<1>": "CopyFrame__FP6CFrameP14CDataAlloc2_1_",
+      "CreateCollisionMDT__FPUiP14CDataAlloc2<1>": "CreateCollisionMDT__FPUiP14CDataAlloc2_1_",
+      "CreateVisual__FPUiP14CDataAlloc2<1>i": "CreateVisual__FPUiP14CDataAlloc2_1_i",
+      "LoadCollisionFile__FPUiP14CDataAlloc2<1>": "LoadCollisionFile__FPUiP14CDataAlloc2_1_",
+      "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2<1>i": "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2_1_i",
+      "LoadMDSFile__FPUiP14CDataAlloc2<1>iPPcPPc": "LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc",
+      "WorkBuffer": "WorkBuffer__2",
+      "__ct__14CDataAlloc2<1>Fi": "__ct__14CDataAlloc2_1_Fi"
+    },
+    "globalize_symbols": [
+      "@199"
+    ],
+    "rodata_exports": [
+      "@394",
+      "@395",
+      "@541"
+    ]
+  },
+  "src/dataalloc2_1.cpp": {
+    "symbols": {
+      "__ct__14CDataAlloc2<1>Fi": "__ct__14CDataAlloc2_1_Fi",
+      "Alloc__14CDataAlloc2<1>Fi": "Alloc__14CDataAlloc2_1_Fi",
+      "Alloc64__14CDataAlloc2<1>Fi": "Alloc64__14CDataAlloc2_1_Fi",
+      "Align64__14CDataAlloc2<1>Fv": "Align64__14CDataAlloc2_1_Fv",
+      "Alloc64__21CDataAlloc<1,1690000>Fi": "Alloc64__21CDataAlloc_1_1690000_Fi"
+    }
+  },
+  "src/dataread.cpp": {
+    "symbols": {
+      "CurrentDir": "CurrentDir__2"
+    },
+    "rodata_exports": [
+      "@229",
+      "@230__2",
+      "@279",
+      "@397",
+      "@398",
+      "@399",
+      "@400",
+      "@401",
+      "@449",
+      "@477",
+      "@478"
+    ]
+  },
+  "src/dispctrl.cpp": {
+    "sections": {
+      ".vtables": [
+        "__vt__6CBound"
+      ]
+    },
+    "rodata_exports": [
+      "@230"
+    ]
+  },
+  "src/gameutil.cpp": {
+    "rodata_exports": [
+      "@25"
+    ],
+    "symbols": {
+      "sbuff": "sbuff__2"
+    }
+  },
+  "src/mathutil.cpp": {
+    "rodata_exports": [
+      "@245",
+      "@424",
+      "@425",
+      "@1035",
+      "@1036",
+      "@1037",
+      "@1039"
+    ],
+    "drop_functions": [
+      "__dt__24MWPartialArrayDestructorFv"
+    ],
+    "sections": {
+      ".discard": [
+        "@EX@__construct_array",
+        "@ET@__construct_array",
+        "@EX@__dt__24MWPartialArrayDestructorFv",
+        "@EX@__construct_new_array",
+        "@ET@__construct_new_array"
+      ]
+    },
+    "remove_sections": [
+      ".exception",
+      ".exceptix",
+      ".rel.exceptix"
+    ],
+    "symbols": {
+      "ExceptionWhat": "@245",
+      "BadExceptionWhat": "@1039"
+    }
+  },
+  "src/mglib.cpp": {
+    "symbols": {
+      "WorkBuffer": "WorkBuffer__2",
+      "mgWindowRectStore": "mgWindowRect"
+    },
+    "rodata_exports": [
+      "@250",
+      "@251",
+      "@252",
+      "@414",
+      "@415",
+      "@416",
+      "@417",
+      "@418"
+    ],
+    "globalize_symbols": [
+      "__sinit_mglib.cpp"
+    ]
+  },
+  "src/dngstatusdata.cpp": {
+    "symbols": {
+      "defWeapon": "defWeapon__3",
+      "ItemPutListTbl12_bytes": "ItemPutListTbl12",
+      "@1289": "@781",
+      "@1290": "@782",
+      "@1291": "@783__2"
+    },
+    "rodata_exports": [
+      "@281__3",
+      "@540__2",
+      "@541__2"
+    ]
+  },
+  "src/title/op_a.cpp": {
+    "symbols": {
+      "LoadData__Fv": "LoadData__Fv__2",
+      "LoadTexture__Fv": "LoadTexture__Fv__3"
+    },
+    "export_constants_shared": [
+      "opdat/chara/01p19a1a.chr",
+      "opdat/chara/01p19a1b.chr",
+      "opdat/chara/01p17a1a.chr",
+      "opdat/chara/01p17a1b.chr",
+      "01p19a1a.cfg",
+      "01p17a1a.cfg",
+      "01c07a.cfg",
+      "01c08a.cfg",
+      "01c09a.cfg",
+      "01c11a.cfg"
+    ]
+  },
+  "src/title/op_b.cpp": {
+    "symbols": {
+      "FaceChangeC__Fi": "FaceChange__Fi__2"
+    },
+    "import_constants_shared": [
+      "opdat/chara/01p19a1a.chr",
+      "opdat/chara/01p19a1b.chr",
+      "opdat/chara/01p17a1a.chr",
+      "opdat/chara/01p17a1b.chr",
+      "01p19a1a.cfg",
+      "01p17a1a.cfg",
+      "01c07a.cfg",
+      "01c08a.cfg",
+      "01c09a.cfg",
+      "01c11a.cfg"
+    ]
+  },
+  "src/title/op_c.cpp": {
+    "symbols": {
+      "FaceChange__Fi": "FaceChange__Fi__2",
+      "FaceChangeD__Fi": "FaceChange__Fi__3",
+      "SmokeProcess__Fv": "SmokeProcess__Fv__2",
+      "setTexAnim__Fv": "setTexAnim__Fv__2",
+      "setTexScroll__Fv": "setTexScroll__Fv__2"
+    }
+  },
+  "src/title/op_d.cpp": {
+    "symbols": {
+      "FaceChangeMovie__Fi": "FaceChange__Fi__4",
+      "FaceChange__Fi": "FaceChange__Fi__3"
+    }
+  },
+  "src/title/rushmovi.cpp": {
+    "symbols": {
+      "DispFade": "DispFade__2",
+      "frame_info_cam": "frame_info_cam__2",
+      "FaceChange__Fi": "FaceChange__Fi__4",
+      "MotionProcess__Fv": "MotionProcess__Fv__2",
+      "DrawProcess__Fv": "DrawProcess__Fv__2",
+      "SoundProcess__Fv": "SoundProcess__Fv__2",
+      "WaterProcess__Fv": "WaterProcess__Fv__2",
+      "@173": "@452__4",
+      "@183": "@462__3",
+      "@285": "@577__4",
+      "@86": "@365__9"
+    },
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ]
+  },
+  "src/title/script.cpp": {
+    "symbols": {
+      "Command": "Command__7"
+    }
+  },
+  "src/title/opening.cpp": {
+    "symbols": {},
+    "drop_functions": [
+      "OpeningWorkInit__Fv",
+      "OpeningWork"
+    ],
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ]
+  },
+  "src/title/title.cpp": {
+    "rodata_exports": [
+      "@1326__2",
+      "@1384__2",
+      "@1385__4",
+      "@1604__3",
+      "@1605__3"
+    ],
+    "drop_functions": [
+      "TitleSetCamera__Ffffff"
+    ],
+    "symbols": {
+      "WaterProcess__Fv": "WaterProcess__Fv__2"
+    },
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ]
+  },
+  "src/title/titleloop.cpp": {
+    "symbols": {
+      "WaterProcess__Fv": "WaterProcess__Fv__2"
+    }
+  },
+  "src/fish.cpp": {
+    "drop_functions": [
+      "fish_file_01",
+      "fish_file_02",
+      "fish_file_03",
+      "fish_file_04",
+      "fish_file_05",
+      "fish_file_06"
+    ]
+  },
+  "src/stockitem.cpp": {
+    "symbols": {
+      "LIT_459": "@454"
+    }
+  },
+  "src/weaponlevelup.cpp": {
+    "symbols": {
+      "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "CMenuEffectDataLoad__14CWeaponLevelUpFP14CWeaponLevelUpi": "CMenuEffectDataLoad__14CWeaponLevelUpFP1i",
+      "CureEffect__14CWeaponLevelUpFiiP14CWeaponLevelUpii": "CureEffect__14CWeaponLevelUpFiiP1ii",
+      "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
+      "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetLevelUpValue__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i"
+    }
+  },
+  "src/monstorunit.cpp": {
+    "symbols": {
+      "__sinit_monstorunit.cpp": "__sinit_monstor.cpp",
+      ".p__sinit_monstorunit.cpp": ".p__sinit_monstor.cpp"
+    },
+    "globalize_symbols": [
+      "__sinit_monstorunit.cpp"
+    ],
+    "rodata_exports": [
+      "@345__6",
+      "@937__3",
+      "@606__3",
+      "@798__2",
+      "@1076__2"
+    ]
+  },
+  "src/runscript.cpp": {
+    "rodata_exports": [
+      "@15",
+      "@17",
+      "@24",
+      "@32",
+      "@34",
+      "@50",
+      "@51",
+      "@52"
+    ]
+  },
+  "src/runscript_opcodes.cpp": {
+    "symbols": {
+      "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__3",
+      "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__3",
+      "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__3",
+      "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__3",
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__3",
+      "_GET_OBJ_POS__FP12RS_STACKDATAi": "_GET_OBJ_POS__FP12RS_STACKDATAi__2",
+      "ext_func_info": "ext_func_info__3"
+    },
+    "globalize_symbols": [
+      "GetStackInt__FP12RS_STACKDATA__3",
+      "GetStackFloat__FP12RS_STACKDATA__3",
+      "GetStackString__FP12RS_STACKDATA__3",
+      "SetStack__FP12RS_STACKDATAi__3",
+      "SetStack__FP12RS_STACKDATAf__3",
+      "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
+    ],
+    "rodata_exports": [
+      "@867__2",
+      "@1306",
+      "@1307",
+      "@957",
+      "@1447",
+      "@1448",
+      "@976",
+      "@1066",
+      "@1083",
+      "@1007__3",
+      "@1037__2"
+    ]
+  },
+  "src/btsysscript.cpp": {
+    "symbols": {
+      "GetStackInt__FP12RS_STACKDATA": "GetStackInt__FP12RS_STACKDATA__2",
+      "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__2",
+      "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__2",
+      "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__2",
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__2",
+      "ext_func_info": "ext_func_info__2",
+      "@212": "@741__3",
+      "@222": "@752__2",
+      "@336": "@899__3"
+    },
+    "globalize_symbols": [
+      "GetStackInt__FP12RS_STACKDATA__2",
+      "GetStackFloat__FP12RS_STACKDATA__2",
+      "GetStackString__FP12RS_STACKDATA__2",
+      "SetStack__FP12RS_STACKDATAi__2",
+      "SetStack__FP12RS_STACKDATAf__2"
+    ]
+  },
+  "src/menu_dungeon.cpp": {
+    "symbols": {
+      "@1106": "@1099",
+      "chara_change_frame_image": "@1326",
+      "stay_frame_name": "@1374",
+      "item_view_frame_image": "@1870",
+      "item_templete_no": "@2073",
+      "item_templete_type": "@2074",
+      "item_templete_use": "@2075",
+      "item_templete_attribute": "@2076",
+      "item_templete_name_index": "@2077",
+      "item_templete_help_index": "@2078",
+      "item_templete_volume": "@2079",
+      "item_templete_gold": "@2080"
+    },
+    "rodata_exports": [
+      "@1757"
+    ]
+  },
+  "src/clothread.cpp": {
+    "symbols": {
+      "Command": "Command__2",
+      "CommandExe": "CommandExe__2",
+      "GetArg__FR9input_strPiPPv": "GetArg__FR9input_strPiPPv__2",
+      "SearchCommand__FR9input_strPi": "SearchCommand__FR9input_strPi__2",
+      "SkipSpace__FR9input_str": "SkipSpace__FR9input_str__2",
+      "CheckChar__Fc": "CheckChar__Fc__2"
+    },
+    "rodata_exports": [
+      "@187",
+      "@188",
+      "@189",
+      "@190",
+      "@191",
+      "@192",
+      "@193",
+      "@194",
+      "@195",
+      "@254",
+      "@255"
+    ],
+    "globalize_symbols": [
+      "Command__2",
+      "CommandExe__2",
+      "GetArg__FR9input_strPiPPv__2",
+      "SearchCommand__FR9input_strPi__2",
+      "SkipSpace__FR9input_str__2",
+      "CheckChar__Fc__2"
+    ]
+  },
+  "src/editmapscript.cpp": {
+    "import_constants_shared": [
+      [
+        "p47a",
+        "@257__3"
+      ],
+      [
+        "p12a",
+        "@258__3"
+      ],
+      [
+        "p07a",
+        "@259__3"
+      ],
+      [
+        "p01a",
+        "@260__3"
+      ],
+      [
+        "p13a",
+        "@261__3"
+      ],
+      [
+        "p06a",
+        "@262__2"
+      ],
+      [
+        "p09a",
+        "@263__3"
+      ],
+      [
+        "p08a",
+        "@264__3"
+      ],
+      [
+        "p05a",
+        "@265__2"
+      ],
+      [
+        "p03a",
+        "@266__3"
+      ],
+      [
+        "p04a",
+        "@267__3"
+      ],
+      [
+        "p02a",
+        "@268__3"
+      ],
+      [
+        "p10a",
+        "@269__3"
+      ],
+      [
+        "p14a",
+        "@270__5"
+      ],
+      [
+        "c04cat",
+        "@271__3"
+      ],
+      [
+        "",
+        "@272__2"
+      ],
+      [
+        "p27a",
+        "@273__2"
+      ],
+      [
+        "p30a",
+        "@274__2"
+      ],
+      [
+        "p29a",
+        "@275__2"
+      ],
+      [
+        "p28a",
+        "@276__2"
+      ],
+      [
+        "p31a",
+        "@277__2"
+      ],
+      [
+        "p25a",
+        "@278__2"
+      ],
+      [
+        "p59a",
+        "@279__3"
+      ],
+      [
+        "p24a",
+        "@280__2"
+      ],
+      [
+        "p26a",
+        "@281__2"
+      ],
+      [
+        "p23a",
+        "@282__2"
+      ],
+      [
+        "p21a",
+        "@283__2"
+      ],
+      [
+        "p22a",
+        "@284__2"
+      ],
+      [
+        "p49a",
+        "@285__4"
+      ],
+      [
+        "p35a",
+        "@286__3"
+      ],
+      [
+        "p37a",
+        "@287__3"
+      ],
+      [
+        "p36a",
+        "@288__3"
+      ],
+      [
+        "p41a",
+        "@289__3"
+      ],
+      [
+        "p39a",
+        "@290__3"
+      ],
+      [
+        "p33a",
+        "@291__2"
+      ],
+      [
+        "p40a",
+        "@292__2"
+      ],
+      [
+        "p43a",
+        "@293__2"
+      ],
+      [
+        "p45a",
+        "@294__2"
+      ],
+      [
+        "p44a",
+        "@295__2"
+      ],
+      [
+        "p34a",
+        "@296__2"
+      ],
+      [
+        "p42a",
+        "@297__2"
+      ],
+      [
+        "p48a",
+        "@298__4"
+      ],
+      [
+        "p46a",
+        "@299__4"
+      ],
+      [
+        "p50a",
+        "@300__3"
+      ],
+      [
+        "p51a",
+        "@301__2"
+      ],
+      [
+        "p52a",
+        "@302__2"
+      ],
+      [
+        "p53a",
+        "@303__2"
+      ],
+      [
+        "p54a",
+        "@304__2"
+      ],
+      [
+        "p55a",
+        "@305__2"
+      ],
+      [
+        "p56a",
+        "@306__2"
+      ],
+      [
+        "p57a",
+        "@307__2"
+      ],
+      [
+        "p58a",
+        "@308__3"
+      ],
+      [
+        "p64a",
+        "@309__2"
+      ],
+      [
+        "p62a",
+        "@310__2"
+      ],
+      [
+        "p63a",
+        "@311__2"
+      ],
+      [
+        "p61a",
+        "@312__2"
+      ],
+      [
+        "SCN",
+        "@314__2"
+      ],
+      [
+        "LIGHT_NO",
+        "@315__2"
+      ],
+      [
+        "AMBIENT",
+        "@316__2"
+      ],
+      [
+        "LIGHT_C",
+        "@317__2"
+      ],
+      [
+        "FOG",
+        "@318__2"
+      ],
+      [
+        "BG_COL",
+        "@319__3"
+      ],
+      [
+        "BG_COL2",
+        "@320__3"
+      ],
+      [
+        "DOF",
+        "@321__2"
+      ],
+      [
+        "CD",
+        "@322__2"
+      ],
+      [
+        "GRD_IMG",
+        "@323__2"
+      ],
+      [
+        "BLD_IMG",
+        "@324__2"
+      ],
+      [
+        "SKY_IMG",
+        "@325__3"
+      ],
+      [
+        "SUN_IMG",
+        "@326__2"
+      ],
+      [
+        "WATER_IMG",
+        "@327__2"
+      ],
+      [
+        "FIRE_IMG",
+        "@328__3"
+      ],
+      [
+        "FLER_IMG",
+        "@329__2"
+      ],
+      [
+        "IMG",
+        "@330__3"
+      ],
+      [
+        "SKY",
+        "@331__3"
+      ],
+      [
+        "SUN",
+        "@332__4"
+      ],
+      [
+        "GROUND",
+        "@333__4"
+      ],
+      [
+        "BUILD",
+        "@334__4"
+      ],
+      [
+        "WATER",
+        "@335__3"
+      ],
+      [
+        "WATER_SURFACE",
+        "@336__2"
+      ],
+      [
+        "WATER_SHAKE",
+        "@337__2"
+      ],
+      [
+        "EDITAREA",
+        "@338"
+      ],
+      [
+        "BLD_PARTS",
+        "@339__2"
+      ],
+      [
+        "GRD_PARTS",
+        "@340"
+      ],
+      [
+        "PARTS_INFO",
+        "@341"
+      ],
+      [
+        "ROAD_PARTS",
+        "@342"
+      ],
+      [
+        "ROAD",
+        "@343"
+      ],
+      [
+        "RIVER_PARTS",
+        "@344"
+      ],
+      [
+        "RIVER",
+        "@345__3"
+      ],
+      [
+        "BRIDGE_PARTS",
+        "@346"
+      ],
+      [
+        "LAKE_PARTS",
+        "@347"
+      ],
+      [
+        "ON_RIVER_PARTS",
+        "@348__2"
+      ],
+      [
+        "OBJ_ANIME",
+        "@349__2"
+      ],
+      [
+        "FIRE",
+        "@350__2"
+      ],
+      [
+        "FLAME",
+        "@351"
+      ],
+      [
+        "BRIGHT",
+        "@352"
+      ],
+      [
+        "OBJECT_TIMER",
+        "@353__3"
+      ],
+      [
+        "ENTRANCE",
+        "@354"
+      ],
+      [
+        "MAPJUMP",
+        "@355"
+      ],
+      [
+        "PEOPLE",
+        "@356"
+      ],
+      [
+        "TIME_TABLE_NO",
+        "@357"
+      ],
+      [
+        "TIME_TABLE",
+        "@358__2"
+      ],
+      [
+        "TIME_STOP",
+        "@359"
+      ],
+      [
+        "SKY_FOLLOW",
+        "@360"
+      ],
+      [
+        "SHADOW_LEVEL",
+        "@361__2"
+      ],
+      [
+        "EDITAREA_RECT",
+        "@362__3"
+      ],
+      [
+        "BGM_NO",
+        "@363__4"
+      ],
+      [
+        "SOUND_SET",
+        "@364"
+      ],
+      [
+        "REVERBE",
+        "@365"
+      ],
+      [
+        "MOTION_PARTS",
+        "@366__2"
+      ],
+      [
+        "PEOPLE2",
+        "@367__2"
+      ],
+      [
+        "SE_AMBIENT_OFF",
+        "@368"
+      ],
+      [
+        "WIND",
+        "@369__3"
+      ],
+      [
+        "TALK_EVENT",
+        "@370__2"
+      ],
+      [
+        "CHARA_AMBIENT",
+        "@371__3"
+      ],
+      [
+        "TALK_ROT",
+        "@372"
+      ],
+      [
+        "TALK_DIR",
+        "@373"
+      ],
+      [
+        "PEOPLE_LIST",
+        "@374"
+      ],
+      [
+        "test",
+        "@377"
+      ]
+    ],
+    "symbols": {
+      "CommandIMG__FPPv": "CommandIMG__FPPv__2",
+      "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2",
+      "Command": "Command__5",
+      "CommandExe": "CommandExe__5",
+      "CurrentDir": "CurrentDir__3"
+    },
+    "rodata_exports": [
+      "@875",
+      "@876__2",
+      "@877__2",
+      "@878__2",
+      "@879__3",
+      "@880__2",
+      "@881__2",
+      "@882__2",
+      "@883__3",
+      "@884__3",
+      "@885__2"
+    ]
+  },
+  "src/menu_draw.cpp": {
+    "symbols": {
+      "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2",
+      "sort_table": "sort_table__2",
+      "asort_table": "asort_table__2",
+      "sort_top_type": "sort_top_type__2",
+      "asort_top_type": "asort_top_type__2"
+    }
+  },
+  "src/menu_misc.cpp": {
+    "symbols": {
+      "FrameImageTexture": "@1254",
+      "CharaFileExtension": "@1037__3",
+      "defWeapon": "defWeapon__5"
+    },
+    "rodata_exports": [
+      "@1037__3"
+    ]
+  },
+  "src/itemdata.cpp": {
+    "symbols": {
+      "skipSpace__FPci": "skipSpace__FPci__2",
+      "checkArg__FPciPi": "checkArg__FPciPi__2",
+      "teigiFileSize": "teigiFileSize__2",
+      "argStrBuff": "argStrBuff__2",
+      "argValBuff": "argValBuff__2",
+      "argLevel": "argLevel__2",
+      "nowPartsCnt": "nowPartsCnt__2",
+      "debugModeFlag": "debugModeFlag__2",
+      "run_speed": "run_speed__2",
+      "TEIGI_DEF_PATS": "TEIGI_DEF_PATS__2",
+      "TEIGI_DEF_ENDS": "TEIGI_DEF_ENDS__2",
+      "TEIGI_GRD_IMG": "TEIGI_GRD_IMG__2",
+      "TEIGI_FIRE_IMG": "TEIGI_FIRE_IMG__2",
+      "TEIGI_GRD": "TEIGI_GRD__2",
+      "TEIGI_FOG": "TEIGI_FOG__2",
+      "TEIGI_AMBIENT": "TEIGI_AMBIENT__2",
+      "TEIGI_BG_COL": "TEIGI_BG_COL__2",
+      "TEIGI_RUN_SPEED": "TEIGI_RUN_SPEED__2",
+      "TEIGI_DebugFlag": "TEIGI_DebugFlag__2",
+      "TEIGI_PT_BASE": "TEIGI_PT_BASE__2",
+      "TEIGI_PT_COLS": "TEIGI_PT_COLS__2",
+      "TEIGI_PT_FIRE": "TEIGI_PT_FIRE__2",
+      "TEIGI_PT_WATER": "TEIGI_PT_WATER__2",
+      "@595": "@488__2",
+      "@596": "@489__2",
+      "@597": "@490",
+      "@598": "@491__2",
+      "@599": "@492",
+      "@600": "@493",
+      "@601": "@494__3",
+      "@602": "@495__2",
+      "@603": "@496__3",
+      "@604": "@497__4",
+      "@605": "@498__4",
+      "@606": "@499__3",
+      "@607": "@500__2",
+      "@608": "@501__3",
+      "@609": "@502__2",
+      "@610": "@503__2",
+      "@611": "@504",
+      "@612": "@505",
+      "@613": "@506__2",
+      "@614": "@507__3",
+      "@615": "@508__2",
+      "@616": "@509__2",
+      "@617": "@510__2",
+      "@618": "@511__3",
+      "@619": "@512__2",
+      "@620": "@513__2",
+      "@621": "@514__3",
+      "@622": "@515__3",
+      "@623": "@516__2",
+      "@624": "@517__3",
+      "@625": "@518",
+      "@626": "@519",
+      "@627": "@520",
+      "@628": "@521__2",
+      "@629": "@522__2",
+      "@630": "@523",
+      "@631": "@524",
+      "@632": "@525",
+      "@827": "@766__2",
+      "@829": "@768"
+    }
+  },
+  "src/memcard.cpp": {
+    "globalize_symbols": [
+      "ExitSaveSelect__Fv"
+    ]
+  },
+  "src/battle_globals.cpp": {
+    "symbols": {
+      "NameEntryTextureFile": "@798__3",
+      "NameEntryMessageFile": "@805__2",
+      "NameEntryTempTexture": "@799__3",
+      "NameEntryHiraganaTexture": "@800__3",
+      "NameEntryKatakanaTexture": "@801",
+      "NameEntryAlphabetTexture": "@802__2",
+      "NameEntryFaceTexture": "@804",
+      "NameEntryMessageFile2": "@806__2",
+      "NameEntryFrameTexture": "@807",
+      "NameEntryImageDescriptor": "@670__3"
+    },
+    "rodata_exports": [
+      "@798__3",
+      "@799__3",
+      "@800__3",
+      "@801",
+      "@802__2",
+      "@804",
+      "@805__2",
+      "@806__2",
+      "@807",
+      "@670__3"
+    ]
+  },
+  "src/hitvalue.cpp": {
+    "symbols": {
+      "@663": "@613__2"
+    }
+  },
+  "src/menu_save.cpp": {
+    "symbols": {
+      "allmenu_mes": "@2610__2"
+    },
+    "globalize_symbols": [
+      "SaveMenuKeySaveCheck__Fv",
+      "SaveMenuKeySaveDecide__Fv",
+      "SaveMenuKeySave__Fv",
+      "SaveMenuKeyEndSave__Fv",
+      "SaveMenuKeyLoad__Fv",
+      "SaveMenuKeyArart__Fv",
+      "SaveMenuKeyNewDirSelect__Fv",
+      "SaveMenuKeyNewDir__Fv",
+      "SaveMenuKeyFormat__Fv",
+      "SaveMenuKeyDifVersion__Fv",
+      "SaveMenuKeyDelete__Fv",
+      "SaveMenuKeyCopy__Fv",
+      "SaveMenuKeyAfterEnding__Fv",
+      "SaveMenuKeySaveDecideEnding__Fv",
+      "SaveMenuKeySaveEnding__Fv",
+      "SaveMenuKeyEndSaveEnding__Fv",
+      "SaveMenuKeyUnFormat__Fv",
+      "SaveMenuKeyLoadDecide__Fv"
+    ]
+  },
+  "src/memorycardaccess.cpp": {
+    "symbols": {
+      "@594__2": "AtoraVibeTextureName"
+    },
+    "globalize_symbols": [
+      "AtoraVibeTextureName"
+    ]
+  },
+  "src/btitem.cpp": {
+    "symbols": {
+      "BtEffectInfoFile": "@911",
+      "BtAtraShortCharaFile": "@656__2",
+      "BtAtraShortEffectFile": "@872",
+      "defWeapon": "defWeapon__4",
+      "no_item_name": "@549__3",
+      "@53": "@585",
+      "@54": "@586__2",
+      "@55": "@587__2",
+      "@56": "@588",
+      "@57": "@589__2",
+      "@58": "@590__2",
+      "@333": "@595__2",
+      "@334": "@596__3",
+      "@335": "@597__2",
+      "@336": "@598",
+      "@337": "@599",
+      "@338": "@600__2",
+      "@339": "@601",
+      "@340": "@602",
+      "@341": "@603",
+      "@342": "@604__2",
+      "@343": "@605",
+      "@344": "@606__2",
+      "@345": "@607__3",
+      "@346": "@608__2",
+      "@347": "@609",
+      "@348": "@610",
+      "@349": "@611",
+      "@350": "@612__2",
+      "@351": "@613__4",
+      "@352": "@614__4",
+      "@353": "@615__3",
+      "@354": "@616__3",
+      "@355": "@617__3",
+      "@356": "@618__2",
+      "@357": "@619__3",
+      "@358": "@620__4",
+      "@359": "@621__4",
+      "@360": "@622__3",
+      "@361": "@623__2",
+      "@362": "@624",
+      "@363": "@625__3",
+      "@364": "@626__3",
+      "@365": "@627__3",
+      "@366": "@628__4",
+      "@367": "@629__3",
+      "@368": "@630__3",
+      "@369": "@631__2",
+      "@370": "@632__2",
+      "@371": "@633__3",
+      "@372": "@634__3",
+      "@373": "@635__3",
+      "@374": "@636__2",
+      "@375": "@637__2",
+      "@376": "@638__2",
+      "@377": "@639__4",
+      "@378": "@640__4",
+      "@379": "@641__2",
+      "@380": "@642__4",
+      "@381": "@643__2",
+      "@382": "@644",
+      "@383": "@645__2",
+      "@384": "@646__3",
+      "@385": "@647__2",
+      "@386": "@648__2",
+      "@387": "@649",
+      "@388": "@650__2",
+      "@389": "@651",
+      "@390": "@652__2",
+      "@391": "@653__2",
+      "@392": "@654__2",
+      "@393": "@655__3",
+      "@394": "@656__3",
+      "@395": "@657__3",
+      "@396": "@658__4",
+      "@397": "@659__3",
+      "@398": "@660__2",
+      "@399": "@661__2",
+      "@400": "@662__2",
+      "@401": "@663",
+      "@402": "@664__3",
+      "@403": "@665__2",
+      "@404": "@666__2",
+      "@405": "@667__2",
+      "@406": "@668",
+      "@407": "@669",
+      "@408": "@670",
+      "@409": "@671",
+      "@410": "@672",
+      "@411": "@673",
+      "@412": "@674",
+      "@413": "@675",
+      "@414": "@676",
+      "@415": "@677",
+      "@416": "@678__3",
+      "@417": "@679__2",
+      "@418": "@680__2",
+      "@419": "@681__2",
+      "@420": "@682__2",
+      "@421": "@683",
+      "@422": "@684",
+      "@423": "@685",
+      "@424": "@686",
+      "@425": "@687__2",
+      "@426": "@688__3",
+      "@427": "@689__2",
+      "@428": "@690__4",
+      "@429": "@691__4",
+      "@430": "@692__2",
+      "@431": "@693",
+      "@432": "@694",
+      "@433": "@695",
+      "@434": "@696",
+      "@435": "@697",
+      "@436": "@698",
+      "@437": "@699",
+      "@438": "@700",
+      "@439": "@701__2",
+      "@440": "@702__2",
+      "@441": "@703__4",
+      "@442": "@704__4",
+      "@443": "@705__2",
+      "@444": "@706",
+      "@445": "@707__2",
+      "@446": "@708__3",
+      "@447": "@709__2",
+      "@448": "@710",
+      "@449": "@711",
+      "@450": "@712",
+      "@451": "@713",
+      "@452": "@714__3",
+      "@453": "@715__3",
+      "@454": "@716__3",
+      "@455": "@717__3",
+      "@456": "@718__2",
+      "@457": "@719__3",
+      "@458": "@720__2",
+      "@459": "@721__2",
+      "@460": "@722__2",
+      "@461": "@723__2",
+      "@462": "@724__3",
+      "@463": "@725__3",
+      "@464": "@726__4",
+      "@465": "@727__4",
+      "@466": "@728__5",
+      "@467": "@729__4",
+      "@468": "@730__5",
+      "@469": "@731__5",
+      "@470": "@732__5",
+      "@471": "@733__4",
+      "@472": "@734__4",
+      "@473": "@735__3"
+    },
+    "rodata_exports": [
+      "@656__2",
+      "@911"
+    ]
+  },
+  "src/shot_utils.cpp": {
+    "symbols": {
+      "fishing_err_format": "@604"
+    }
+  },
+  "src/shot_freefuncs.cpp": {
+    "symbols": {
+      "StatusTextureName": "@1150",
+      "StayFrameTextureName": "@778__2"
+    }
+  },
+  "src/visualvu1.cpp": {
+    "sections": {
+      ".vt-visual": [
+        "__vt__7CVisual"
+      ],
+      ".vt-visualmdtvu1": [
+        "__vt__13CVisualMDTVu1"
+      ],
+      ".vt-visualvu1": [
+        "__vt__10CVisualVu1"
+      ]
+    }
+  },
+  "src/healeffect.cpp": {
+    "symbols": {
+      "HealEffectTextureName": "@1430"
+    }
+  },
+  "src/mainitemmodel.cpp": {
+    "symbols": {
+      "MainItemRemoveMessage": "@880__4",
+      "MainItemHandMessage": "@892__4"
+    },
+    "rodata_exports": [
+      "@880__4",
+      "@892__4"
+    ],
+    "sections": {
+      ".mainitemmodel-c862": [
+        "@75"
+      ],
+      ".mainitemmodel-c937": [
+        "@122"
+      ]
+    }
+  },
+  "src/water.cpp": {
+    "sections": {
+      ".vt-visualpolyvu1": [
+        "__vt__14CVisualPolyVu1"
+      ]
+    }
+  },
+  "src/dranmapfield.cpp": {
+    "symbols": {
+      "OverMessage": "@3606",
+      "info_cfg_literal": "@1007__2"
+    }
+  },
+  "src/shot_firebar.cpp": {
+    "rodata_exports": [
+      "@1211"
+    ]
+  },
+  "src/menu_manual.cpp": {
+    "symbols": {
+      "manual_frame_image": "@356__2"
+    }
+  },
+  "src/randomitem.cpp": {
+    "rodata_exports": [
+      "@1383"
+    ]
+  },
+  "src/menuiconautoget.cpp": {
+    "sections": {
+      ".menuiconautoget-c1515": [
+        "@37"
+      ]
+    }
+  },
+  "src/menuetc.cpp": {
+    "symbols": {
+      "@567": "@567__2"
+    }
+  }
+}

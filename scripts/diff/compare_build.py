@@ -44,15 +44,16 @@ from collections import namedtuple
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ref_index  # noqa: E402  (needs the script's own directory on the path)
+import region  # noqa: E402
 
 NM = "mips-ps2-decompals-nm"
 READELF = "mips-ps2-decompals-readelf"
 OBJDUMP = "mips-ps2-decompals-objdump"
 
 REPO = ref_index.REPO
-RETAIL_ELF = os.path.join(REPO, "rom/extracted/iso/SCUS_971.11")
-BUILD_ELF = os.path.join(REPO, "build/SCUS_971.11")
-PROVENANCE = os.path.join(REPO, "build/symbol_provenance.txt")
+RETAIL_ELF = os.path.join(REPO, region.EXTRACTED_ISO, "SCUS_971.11")
+BUILD_ELF = os.path.join(REPO, region.BUILD, "SCUS_971.11")
+PROVENANCE = os.path.join(REPO, region.BUILD, "symbol_provenance.txt")
 
 # Where each image's bytes come from. main is a section of the executable;
 # the overlays are whole files, headers and all.
@@ -255,8 +256,8 @@ def load_image(section, retail_elf, build_elf):
         return Image(section, addr, retail, build)
 
     name = OVERLAY_IMAGE[section]
-    retail_path = os.path.join(REPO, "rom/extracted/iso", name)
-    build_path = os.path.join(REPO, "build", name)
+    retail_path = os.path.join(REPO, region.EXTRACTED_ISO, name)
+    build_path = os.path.join(REPO, region.BUILD, name)
     for path in (retail_path, build_path):
         if not os.path.exists(path):
             raise SystemExit("compare_build: %s is missing; build the elf "

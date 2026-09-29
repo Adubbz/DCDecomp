@@ -20,14 +20,15 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
 
 # The overlays are raw binaries loaded at one address; a file offset is the
 # address less this. Both share it -- they are alternatives, never resident
 # together.
-OVERLAY_BASE = 0x01DABD00
-IMAGES = {'title': 'rom/extracted/iso/TITLE.BIN',
-          'dun': 'rom/extracted/iso/DUN.BIN'}
-OUT = 'config/reference_asm'
+OVERLAY_BASE = region.OVERLAY_ORIGIN
+IMAGES = {'title': region.EXTRACTED_ISO + '/TITLE.BIN',
+          'dun': region.EXTRACTED_ISO + '/DUN.BIN'}
+OUT = region.CONFIG + '/reference_asm'
 ENTRY = re.compile(
     r'^(__sinit_\S+) = 0x([0-9a-fA-F]+); // type:func size:0x([0-9a-fA-F]+)')
 
@@ -35,7 +36,7 @@ ENTRY = re.compile(
 def main():
     for image, path in IMAGES.items():
         blob = open(path, 'rb').read()
-        with open('config/%s.symbols.txt' % image) as f:
+        with open('%s/%s.symbols.txt' % (region.CONFIG, image)) as f:
             for line in f:
                 m = ENTRY.match(line)
                 if not m:

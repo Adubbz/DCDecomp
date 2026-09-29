@@ -83,7 +83,7 @@ function(add_unit_asm_object obj src)
         DEPENDS ${CMAKE_SOURCE_DIR}/${src}
                 ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc ${REF_STAMP}
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
-                ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "AS ${src}"
         VERBATIM)
@@ -120,8 +120,8 @@ function(add_diff_base_object obj src)
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                 ${CMAKE_SOURCE_DIR}/config/expression_node_overrides.json
-                ${CMAKE_SOURCE_DIR}/config/object_fixups.json
-                ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/object_fixups.json
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "CC (diff base) ${src}"
         VERBATIM)
@@ -169,7 +169,7 @@ function(add_object obj)
             DEPENDS ${CMAKE_SOURCE_DIR}/${src} ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/macro.inc
                     ${ASM_OBJECT_EXTRA_DEPENDS} ${REF_STAMP}
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/literals.py
-                    ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "AS ${src}"
             VERBATIM)
@@ -194,8 +194,8 @@ function(add_object obj)
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                     ${CMAKE_SOURCE_DIR}/config/expression_node_overrides.json
-                    ${CMAKE_SOURCE_DIR}/config/object_fixups.json
-                    ${CMAKE_SOURCE_DIR}/config/${image}.symbols.txt
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/object_fixups.json
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/mwccgap.py
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/elf.py
             DEPFILE ${CMAKE_SOURCE_DIR}/${obj}.d

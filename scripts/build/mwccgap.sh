@@ -71,7 +71,8 @@ fi
 MWCIncludes=$LIB_INCLUDE_DIRS \
 PYTHONPATH=$MWCCGAP_DIR \
 STATEFIX_SOURCE=$src \
-python3 "$MWCCGAP_DIR/mwccgap.py" "$src" "$obj" \
+MWCCGAP_DIR=$MWCCGAP_DIR \
+python3 scripts/build/mwccgap_region.py "$src" "$obj" \
     --mwcc-path "$MW_DIR/mwccmips.exe" \
     --use-wibo \
     --wibo-path "$STATEFIX_WIBO" \

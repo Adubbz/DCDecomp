@@ -5,6 +5,33 @@ project(dcdecomp NONE)
 
 set(BASENAME SCUS_971.11)
 
+set(REGION NTSC CACHE STRING
+    "Which release to build: NTSC (1.02) or PAL (the July 12, 2001 prototype)")
+set_property(CACHE REGION PROPERTY STRINGS NTSC PAL)
+if(REGION STREQUAL "PAL")
+    set(REGION_ISO "Dark Cloud (July 12, 2001 prototype).iso")
+    set(REGION_CHECKSUM checksum_pal.sha256)
+    set(REGION_EXTRACTED extracted_pal)
+    set(REGION_EXTRACTED_CHECKSUM extracted_pal.sha256)
+    set(REGION_CONFIG config/pal)
+    set(REGION_ASM asm/pal)
+    set(REGION_LCF config/pal/SCUS_971.11.lcf)
+    set(REGION_BUILT_ISO "Dark Cloud (PAL Build).iso")
+    set(REGION_OVERLAY_ORIGIN 0x01DC4000)
+elseif(REGION STREQUAL "NTSC")
+    set(REGION_ISO "Dark Cloud (USA).iso")
+    set(REGION_CHECKSUM checksum.sha256)
+    set(REGION_EXTRACTED extracted)
+    set(REGION_EXTRACTED_CHECKSUM extracted.sha256)
+    set(REGION_CONFIG config)
+    set(REGION_ASM asm)
+    set(REGION_LCF ${BASENAME}.lcf)
+    set(REGION_BUILT_ISO "Dark Cloud (Build).iso")
+    set(REGION_OVERLAY_ORIGIN 0x01DABD00)
+else()
+    message(FATAL_ERROR "REGION is ${REGION}; it has to be NTSC or PAL.")
+endif()
+
 set(SECTIONS main title dun)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -16,16 +43,16 @@ set(INCLUDE_DIR include)
 set(TOOLS_DIR tools)
 set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
-set(ASM_DIR asm)
+set(ASM_DIR ${REGION_ASM})
 set(ASM_DATA_DIR ${ASM_DIR}/data)
-if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/Dark Cloud (USA).iso"
-   AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted/iso/${BASENAME}")
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/${REGION_ISO}"
+   AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/${REGION_EXTRACTED}/iso/${BASENAME}")
     message(FATAL_ERROR
-        "Nothing to split asm/ from. Place the NTSC 1.02 disc image at "
-        "rom/Dark Cloud (USA).iso, or copy the extracted binaries in from the "
+        "Nothing to split ${ASM_DIR}/ from. Place the ${REGION} disc image at "
+        "rom/${REGION_ISO}, or copy the extracted binaries in from the "
         "private repository with scripts/host/overlay_private.sh.")
 endif()
-set(CONFIG_DIR config)
+set(CONFIG_DIR ${REGION_CONFIG})
 set(REF_INDEX ${CONFIG_DIR}/main.symbols.txt)
 if(EXISTS ${CMAKE_SOURCE_DIR}/${REF_INDEX})
     set(REF_STAMP ${CMAKE_SOURCE_DIR}/${REF_INDEX})
@@ -57,17 +84,23 @@ set(OBJDUMP ${MIPS_TOOL_PREFIX}objdump)
 find_program(PYTHON NAMES python3 python REQUIRED HINTS $ENV{VIRTUAL_ENV}/bin)
 
 set(PYTHON_CMD ${PYTHON} -u)
+if(REGION STREQUAL "PAL")
+    set(PYTHON_CMD ${CMAKE_COMMAND} -E env DCDECOMP_REGION=${REGION} ${PYTHON} -u)
+endif()
 
-set(LD_TEMPLATE ${BASENAME}.lcf)
+set(LD_TEMPLATE ${REGION_LCF})
 set(OUTPUT ${BUILD_DIR}/${BASENAME})
-set(RETAIL_ISO "${ROM_DIR}/Dark Cloud (USA).iso")
-set(BUILT_ISO "${BUILD_DIR}/Dark Cloud (Build).iso")
+set(RETAIL_ISO "${ROM_DIR}/${REGION_ISO}")
+set(BUILT_ISO "${BUILD_DIR}/${REGION_BUILT_ISO}")
 set(CTX ${BUILD_DIR}/ctx.c)
 set(CTX_CPP ${BUILD_DIR}/ctx.cpp)
 
 set(AS_FLAGS -EL -march=r5900 -mabi=eabi -g -mno-pdr -non_shared -G0 -I include)
 set(CC_MW_FLAGS -O2 -c -Cpp_exceptions off -RTTI off -strings readonly
     -pragma "divbyzerocheck on" -i include)
+if(REGION STREQUAL "PAL")
+    list(APPEND CC_MW_FLAGS -DPAL)
+endif()
 set(LD_MW_FLAGS -map -nostdlib -m _start -nodead -g)
 set(LD_MW_ISO_FLAGS -nostdlib -m _start -nodead -sym on,noelf)
 set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
@@ -301,6 +334,9 @@ add_custom_command(
     VERBATIM)
 
 set(OBJDIFF_CONFIG objdiff.json)
+if(REGION STREQUAL "PAL")
+    set(OBJDIFF_CONFIG ${BUILD_DIR}/objdiff.json)
+endif()
 
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${OBJDIFF_CONFIG}
@@ -353,7 +389,7 @@ add_custom_command(
 add_custom_command(
     OUTPUT "${CMAKE_SOURCE_DIR}/${BUILT_ISO}"
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/make_iso.py
-            --source "${RETAIL_ISO}" --tree ${ROM_DIR}/extracted/iso
+            --source "${RETAIL_ISO}" --tree ${ROM_DIR}/${REGION_EXTRACTED}/iso
             --out "${BUILT_ISO}"
             ${ISO_ELF} ${BUILD_DIR}/TITLE.BIN ${BUILD_DIR}/DUN.BIN
     DEPENDS ${CMAKE_SOURCE_DIR}/${ISO_ELF} ${OVERLAY_BINS}
@@ -375,7 +411,7 @@ add_dependencies(run iso)
 set(STAMP_DIR ${BUILD_DIR}/stamps)
 set(ROM_VERIFIED ${STAMP_DIR}/rom.verified)
 set(DISASSEMBLE_STAMP ${STAMP_DIR}/disassembled)
-set(EXTRACTED_ELF ${ROM_DIR}/extracted/iso/${BASENAME})
+set(EXTRACTED_ELF ${ROM_DIR}/${REGION_EXTRACTED}/iso/${BASENAME})
 
 set(SPLIT_COMMANDS
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR})
@@ -389,10 +425,10 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}")
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${ROM_VERIFIED}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c checksum.sha256
+    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c ${REGION_CHECKSUM}
     COMMAND ${CMAKE_COMMAND} -E touch ${ROM_VERIFIED}
     DEPENDS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}"
-            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/checksum.sha256
+            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/${REGION_CHECKSUM}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Checking the retail disc image"
     USES_TERMINAL
@@ -413,13 +449,13 @@ endif()
 add_custom_command(
     OUTPUT ${CMAKE_SOURCE_DIR}/${DISASSEMBLE_STAMP}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${STAMP_DIR}
-    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c extracted.sha256
+    COMMAND ${CMAKE_COMMAND} -E chdir ${ROM_DIR} sha256sum -c ${REGION_EXTRACTED_CHECKSUM}
     ${SPLIT_COMMANDS}
     COMMAND ${CMAKE_COMMAND} -E touch ${DISASSEMBLE_STAMP}
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
             ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
-            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted.sha256
+            ${CMAKE_SOURCE_DIR}/${ROM_DIR}/${REGION_EXTRACTED_CHECKSUM}
             ${REF_CONFIGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Splitting the disc with splat"

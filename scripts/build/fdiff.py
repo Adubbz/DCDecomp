@@ -1,13 +1,17 @@
 """One function, retail's beside ours, in any image."""
 import subprocess, sys, re, os, struct
 prefix = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
-IMAGES = {'main': ('build/SCUS_971.11', 'rom/extracted/iso/SCUS_971.11', 'config/main.symbols.txt', None),
-          'title': ('build/TITLE.BIN', 'rom/extracted/iso/TITLE.BIN', 'config/title.symbols.txt', 0x01DABD00),
-          'dun': ('build/DUN.BIN', 'rom/extracted/iso/DUN.BIN', 'config/dun.symbols.txt', 0x01DABD00)}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
+IMAGES = {image: (f'{region.BUILD}/{file}', f'{region.EXTRACTED_ISO}/{file}',
+                  f'{region.CONFIG}/{image}.symbols.txt', base)
+          for image, file, base in (('main', 'SCUS_971.11', None),
+                                    ('title', 'TITLE.BIN', region.OVERLAY_ORIGIN),
+                                    ('dun', 'DUN.BIN', region.OVERLAY_ORIGIN))}
 image, want = sys.argv[1], sys.argv[2]
 ours, theirs, cfg, base = IMAGES[image]
 names = {}
-for f in ('config/title.symbols.txt', 'config/main.symbols.txt', 'config/dun.symbols.txt'):
+for f in (IMAGES['title'][2], IMAGES['main'][2], IMAGES['dun'][2]):
     if os.path.exists(f):
         for line in open(f):
             m = re.match(r'(\S+) = 0x([0-9a-fA-F]+);', line)

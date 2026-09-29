@@ -1,5 +1,6 @@
 # Build files
 /build/
+/build_pal/
 
 # Reference assembly, split from the disc by splat and never committed --
 # except the main executable's residual data parts, which are carved and
@@ -10,6 +11,9 @@
 !/asm/data/main/
 /asm/data/main/*
 !/asm/data/main/parts/
+
+# The PAL build's split of the overlay headers.
+/assets/pal/
 
 # A checkout of the private repository; see scripts/host/overlay_private.sh.
 /.private/

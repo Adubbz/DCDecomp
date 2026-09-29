@@ -20,7 +20,10 @@ require_iso
 ensure_image dcdecomp_dev dev
 report_parallelism
 
-ISO="build/Dark Cloud (Build).iso"
+case "${REGION:-NTSC}" in
+    PAL) ISO="build_pal/Dark Cloud (PAL Build).iso" ;;
+    *)   ISO="build/Dark Cloud (Build).iso" ;;
+esac
 
 # -t keeps the colours and progress line, skipped when this script's own output
 # is redirected.
@@ -30,8 +33,8 @@ TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
 
 # JOBS, when it is set, is for scripts/build/cmake.sh inside the container.
-ENV_ARGS=()
-if [ -n "${JOBS:-}" ]; then ENV_ARGS=(-e "JOBS=$JOBS"); fi
+ENV_ARGS=(-e "REGION=${REGION:-NTSC}")
+if [ -n "${JOBS:-}" ]; then ENV_ARGS+=(-e "JOBS=$JOBS"); fi
 
 # Building comes first and on its own: neither target is tied to the hash
 # check, so code that does not match retail still boots, which is the whole

@@ -26,9 +26,10 @@ require_rom
 # still leaves its output.
 BUILD='
     set -e
+    export DCDECOMP_REGION="${REGION:-NTSC}"
     if [ "${CLEAN:-0}" = 1 ]; then
         echo "CLEAN=1: discarding build/; everything in it is built again."
-        flock .build.lock rm -rf build
+        flock .build.lock rm -rf "$(python3 scripts/build/region.py build)"
     fi
     scripts/build/cmake.sh elf ctx
     scripts/build/verify_built.sh
@@ -52,7 +53,7 @@ TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
 
 # CLEAN and JOBS are for the build inside the container.
-ENV_ARGS=(-e "CLEAN=${CLEAN:-0}")
+ENV_ARGS=(-e "CLEAN=${CLEAN:-0}" -e "REGION=${REGION:-NTSC}")
 if [ -n "${JOBS:-}" ]; then ENV_ARGS+=(-e "JOBS=$JOBS"); fi
 
 "$BUILDER" run --rm ${TTY[@]+"${TTY[@]}"} "${ENV_ARGS[@]}" \

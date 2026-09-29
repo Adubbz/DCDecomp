@@ -34,14 +34,15 @@ import verify  # noqa: E402
 # disassemble.py owns the section layout, the unit classification and retail's
 # symbol table.
 import disassemble  # noqa: E402
+import region  # noqa: E402
 
 SECTIONS = ("main", "title", "dun")
 
 SRC_DIR = "src"
 # Where splat files a function's own assembly: still supplied by a marker
 # under the first, decompiled under the second.
-ASM_DIRS = ("asm/nonmatchings", "asm/matchings")
-LCF = "SCUS_971.11.lcf"
+ASM_DIRS = (f"{region.ASM}/nonmatchings", f"{region.ASM}/matchings")
+LCF = region.LCF
 
 # A marker names the directory its reference assembly is in and the symbol it
 # stands for. Only the symbol is read: retail's names are unique across the
@@ -126,8 +127,8 @@ def included_in_objdiff(source):
 # Which image an address belongs to. The overlays share a range with each
 # other but not with main, and only one of them is ever loaded at a time.
 IMAGE_RANGES = (
-    ("main", 0x00100000, 0x01DABD00),
-    ("title", 0x01DABD00, 0x01E5DF80),
+    ("main",) + disassemble.image_range("main"),
+    ("title",) + disassemble.image_range("title"),
 )
 
 ADDRESS_COMMENT = re.compile(r"^\s*/\* [0-9A-F]+ ([0-9A-F]{8}) ")
@@ -260,7 +261,7 @@ def read_sources(src_dir=SRC_DIR):
                 text = open(path, encoding="utf-8", errors="replace").read()
             except OSError:
                 continue
-            out[path] = MARKER.findall(text)
+            out[path] = MARKER.findall(region.active_text(text))
     # Whole-assembly library units have no placeholder source. Keep their
     # synthetic source identities so linker-script object names still map to
     # the units derived from the split configuration.
@@ -514,7 +515,7 @@ def main():
     ap.add_argument("--link-order", help="write <image>_o_files here")
     ap.add_argument("--objdiff", help="write the objdiff unit list here")
     ap.add_argument("--provenance", help="write the symbol provenance here")
-    ap.add_argument("--build-dir", default="build")
+    ap.add_argument("--build-dir", default=region.BUILD)
     ap.add_argument(
         "--lcf",
         default=LCF,

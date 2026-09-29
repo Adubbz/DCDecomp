@@ -95,23 +95,25 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import disassemble  # noqa: E402
+import region  # noqa: E402
 
 # Where MWLD's LITERAL directive put the pool in retail, taken from the image:
 # the 8-byte entries run from the end of .data to the first 4-byte one, and the
 # 4-byte entries run from there to the start of .sdata. Splitting the two
 # matters when the pool is searched by value -- half of an 8-byte entry can
 # read as a plausible 4-byte one.
-POOL = {8: (0x002A17B8, 0x002A1868), 4: (0x002A1868, 0x002A1E80)}
+POOL = region.LITERAL_POOL
 
 # The dump that holds the pool, and the linker script that fixes _gp.
 POOL_DUMP = disassemble.dump_path('main.rdata')
-LCF = 'SCUS_971.11.lcf'
+LCF = region.LCF
 # Where splat files a function's own assembly. A function still supplied by a
 # marker is under the first, one that is decompiled under the second; both are
 # retail's instructions either way, which is all this reads them for.
 # `config/reference_asm` holds the ones splat files under no name of their own;
 # see scripts/build/reference_asm.py.
-ASM_DIRS = ('asm/nonmatchings', 'asm/matchings', 'config/reference_asm')
+ASM_DIRS = (f'{region.ASM}/nonmatchings', f'{region.ASM}/matchings',
+            f'{region.CONFIG}/reference_asm')
 
 # The address comment spimdisasm puts on each line of a dump: `/* fileoffset
 # vaddr bytes */`. The bytes are in the order the file stores them, so a word
@@ -443,7 +445,7 @@ class Retail:
                                      os.path.relpath(path, self.root))
 
             by_name, by_address = {}, []
-            table = disassemble.read_symbol_table(self._path('config'))
+            table = disassemble.read_symbol_table(self._path(region.CONFIG))
             for rows in table.values():
                 for name, (vram, sym_type, size) in rows.items():
                     if sym_type != 'func' or name not in paths:
@@ -755,7 +757,7 @@ def resolve_names(path, addresses):
         obj.write()
 
 
-def retail_addresses(image, config='config'):
+def retail_addresses(image, config=region.CONFIG):
     """Return the numbered datum addresses recorded for one retail image."""
     try:
         rows = disassemble.read_symbol_table(config)[image]

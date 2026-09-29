@@ -9,6 +9,8 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))), 'diff'))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
 
 # ---------------------------------------------------------------- match kinds
 #
@@ -101,7 +103,7 @@ def _scan(pattern, src_dir):
                 continue
             path = os.path.join(root, name)
             text = open(path, encoding='utf-8', errors='replace').read()
-            for symbol in pattern.findall(text):
+            for symbol in pattern.findall(region.active_text(text)):
                 out[symbol] = path
     return out
 
@@ -173,6 +175,35 @@ HASHES = {
     'DATA.DAT': [FileHash('4f581c66d83d9270da6cb9adce7ec10b6b9ade5cf74cf44718bcdd8e70401fb5')]
 }
 
+if region.NAME == region.PAL:
+    HASHES = {
+        'DATA.DAT': [FileHash('55e1b687b180a49cf6f40a8582fa53ccb099a60af9b25defdf883360b8ae08a5')],
+        'DATA.HD2': [FileHash('8e0d8e1f84f7a2ce2b3fed0b44d1ec4f94f7033f21c3e3e215ddfca224e70bbc')],
+        'DUN.BIN': [FileHash('d6d07bbb82c2a78a72da54d5b9fa005a703009f6a7ec073856f9b316067aeeea')],
+        'AN986.IRX': [FileHash('01cc63a4e90985c6057c2a7076696c35a4b854e33f3b50e2172abf7f0c389897')],
+        'CDVDMAN.IRX': [FileHash('1d5bd4024149cf4685e5d4e97952cf9a1e5f6e7834045a1b3780689f46c651c7')],
+        'EZMIDI.IRX': [FileHash('8b6f8a8199197b0c9ebb403aeea6987d4106fb807ecc98bcc99b60251e648315')],
+        'INET.IRX': [FileHash('b12b384e6220b243c68c3526f44c1f6060da9b0814efff5732e4fdbb21c69f36')],
+        'IOPRP211.IMG': [FileHash('58e4dab3fbfd1b564a1bff1d9d62a10063d8c26a342af2198edb0b5623645943')],
+        'IOPRP21.IMG': [FileHash('5c82d57a3e81a53e16c665d8d4a99152005060fa6ea327066fe2bd3788a02549')],
+        'LIBNET.IRX': [FileHash('0bb3ae21e961f9be997e1dcddc504ddeadd954d21d7599d2d38e0a61e652768e')],
+        'LIBSD.IRX': [FileHash('71596ef4029f672205e1523dedbd8dacfe5dfa50132c8a747b81289cd24f1db6')],
+        'MCMAN.IRX': [FileHash('4f01c1ee5afc457b3a030b7910431f92ba623e3ecc234d5bc5be64f48e38cd3a')],
+        'MCSERV.IRX': [FileHash('c55abb687fd08e0df292c3636cfd9a34d06a3261a62a1916d06c463fa30cbae0')],
+        'MODHSYN.IRX': [FileHash('f4eb3549f7f2f3b6533444c33ec45fbb57102ad239853c3185dba973467b3ff9')],
+        'MODMIDI.IRX': [FileHash('2eed3e9598025d162a2424522a0dbd0ded343468a6d9dc7e50f55b6885d01851')],
+        'MSIFRPC.IRX': [FileHash('e91a27ad702873ae11764e1ba44516eeb3138e97fe5a43c713eb197b30ee7387')],
+        'NETCNF.IRX': [FileHash('a5df47e49c430573cde4d3dafd09edd19f650581b95a9af7549ce4dda903800a')],
+        'PADMAN.IRX': [FileHash('c2200e7f7071b7e747e122bd036f70133efa6b631415f500a806b75d55fcb88b')],
+        'SDRDRV.IRX': [FileHash('b75f0020a1e28ece42c8e790c2c48f7daf0773fd4dc4cca7ec72e044049198a3')],
+        'SIO2MAN.IRX': [FileHash('f41e341efe08ac407fce467639d10bb2a4532b70a8a5829dbe350edef58516d7')],
+        'USBD.IRX': [FileHash('d695af5f72cb766e597abe3b67cd88b4b2579445084488bea1aca6b48a594a22')],
+        'SCUS_971.11': [FileHash('7ac6fe3e77e2592c6669dafd5ad66d48cfb10103a7ffff0ec488ee25b4be9129'), FileHash('929694ca9c0cde15a2813f9d3babdc2ff828214e6350044d8fcddefa91fab484', 0x100, 0x1A9A80)],
+        'SYSTEM.CNF': [FileHash('dadb5dca5f8d3edffb4c1a1e739fbf68a83342df06cce104121d3749eed80d67')],
+        'TITLE.BIN': [FileHash('fbb0219183a763783cfaa1edf6f7781e8df38ed79aea0c06456b22f487ee57da')],
+        'DMMY': [FileHash('32000a674a8e37c5345b6bce47c19e4894f8d01f59332aab614e1130a8ba5867')],
+    }
+
 def calculate_sha256(path, offset=0, size=-1):
     with open(path, 'rb') as f:
         f.seek(offset)
@@ -189,6 +220,8 @@ COMPLETE = (0, -1)
 BUILT_SPANS = {
     'SCUS_971.11': (0x100, 0x1A2380),
 }
+if region.NAME == region.PAL:
+    BUILT_SPANS = {'SCUS_971.11': (0x100, 0x1A9A80)}
 
 def validate(path, offset=0, size=-1, log=True):
     partial = (offset, size) != COMPLETE
@@ -336,7 +369,7 @@ def ensure_ok(path):
 
 def verify_extracted():
     print('Verifying extracted files')
-    for path in Path('rom/extracted/').rglob('*.*'):
+    for path in Path(region.EXTRACTED + '/').rglob('*.*'):
         ensure_ok(path)
 
 def verify_built(files):

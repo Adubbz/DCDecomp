@@ -117,11 +117,20 @@ report_parallelism() {
     echo "  podman machine start"
 }
 
+case "${REGION:-NTSC}" in
+    PAL) REGION_ISO="rom/Dark Cloud (July 12, 2001 prototype).iso"
+         REGION_ELF=rom/extracted_pal/iso/SCUS_971.11
+         REGION_DISC="PAL July 12, 2001 prototype" ;;
+    *)   REGION_ISO="rom/Dark Cloud (USA).iso"
+         REGION_ELF=rom/extracted/iso/SCUS_971.11
+         REGION_DISC="NTSC 1.02" ;;
+esac
+
 # The disc image itself, for what masters or boots a disc (run.sh).
 require_iso() {
-    if [ ! -f "rom/Dark Cloud (USA).iso" ]; then
-        echo "rom/Dark Cloud (USA).iso is missing." >&2
-        echo "Place the NTSC 1.02 disc image there and try again." >&2
+    if [ ! -f "$REGION_ISO" ]; then
+        echo "$REGION_ISO is missing." >&2
+        echo "Place the $REGION_DISC disc image there and try again." >&2
         exit 1
     fi
 }
@@ -130,10 +139,10 @@ require_iso() {
 # binaries splat reads stand in for the disc for everything short of
 # mastering one.
 require_rom() {
-    if [ ! -f "rom/Dark Cloud (USA).iso" ] \
-       && [ ! -f rom/extracted/iso/SCUS_971.11 ]; then
-        echo "rom/Dark Cloud (USA).iso is missing." >&2
-        echo "Place the NTSC 1.02 disc image there, or copy the extracted" >&2
+    if [ ! -f "$REGION_ISO" ] \
+       && [ ! -f "$REGION_ELF" ]; then
+        echo "$REGION_ISO is missing." >&2
+        echo "Place the $REGION_DISC disc image there, or copy the extracted" >&2
         echo "binaries in from the private repository, and try again." >&2
         exit 1
     fi

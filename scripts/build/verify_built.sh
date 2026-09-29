@@ -11,5 +11,5 @@ set -eu
 
 cd "$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 
-python3 scripts/build/verify.py -c \
+DCDECOMP_REGION=${REGION:-NTSC} python3 scripts/build/verify.py -c \
     || echo "Verification found unmatched build output (informational only)." >&2

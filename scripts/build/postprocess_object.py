@@ -18,6 +18,9 @@ sys.path.insert(0, str(ROOT / "tools" / "mwccgap"))
 
 from mwccgap.elf import Elf  # noqa: E402
 from scripts.build import disassemble  # noqa: E402
+from scripts.build import region  # noqa: E402
+
+ASM = region.ASM
 
 
 LOCAL_STATIC = re.compile(r"^(.+)\$(\d+)(?:__\d+)?$")
@@ -108,14 +111,16 @@ def unit_dumps():
     An overlay is disassembled as one file, so a constant of its only unit has
     no dump of its own to be found by name.
     """
-    return sorted(p for p in ROOT.glob("asm/*/*.s")
+    return sorted(p for p in ROOT.glob(f"{ASM}/*/*.s")
+                  if not region.is_foreign_asm(p.relative_to(ROOT))
                   if not p.parent.name.startswith(("nonmatchings", "matchings", "data")))
 
 
 def retail_constant(name):
     """The bytes retail's dump holds for one named constant."""
-    paths = (list(sorted(ROOT.glob("asm/**/%s.s" % name)))
-             + list(sorted(ROOT.glob("asm/data/*/*.data.s")))
+    paths = (list(sorted(p for p in ROOT.glob(f"{ASM}/**/%s.s" % name)
+                         if not region.is_foreign_asm(p.relative_to(ROOT))))
+             + list(sorted(ROOT.glob(f"{ASM}/data/*/*.data.s")))
              + unit_dumps())
     for path in paths:
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -311,7 +316,7 @@ RODATA_ALIGNMENTS = (16, 8, 4)
 def retail_addresses():
     """Every symbol the configuration gives an address, by name."""
     out = {}
-    for path in sorted(ROOT.glob("config/*.symbols.txt")):
+    for path in sorted(ROOT.glob(f"{region.CONFIG}/*.symbols.txt")):
         for line in path.read_text(encoding="utf-8").splitlines():
             match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);", line.strip())
             if match:
@@ -400,7 +405,7 @@ def glabel_pattern(name):
 
 def dump_data_symbols(name):
     """The symbols of the `.data` dump that defines `name`, in address order."""
-    for path in sorted(ROOT.glob("asm/data/*/*.data.s")):
+    for path in sorted(ROOT.glob(f"{ASM}/data/*/*.data.s")):
         text = path.read_text(encoding="utf-8", errors="ignore")
         if not re.search(glabel_pattern(name), text, re.M):
             continue
@@ -644,7 +649,7 @@ def main():
     parser.add_argument("object", type=Path)
     parser.add_argument("source")
     parser.add_argument("--config", type=Path,
-                        default=ROOT / "config" / "object_fixups.json")
+                        default=ROOT / region.CONFIG / "object_fixups.json")
     # objdiff's base object is a plain compile of the source alone, with no
     # spliced assembly beside it. The fixups that reach a constant or a static
     # the splice supplies have nothing to act on there, and saying so is not an
@@ -723,7 +728,7 @@ def main():
     }
     rename_symbols(args.object, template_aliases)
     globalize_symbols(args.object, fixups.get("globalize_symbols", []))
-    source_text = (ROOT / args.source).read_text(encoding="utf-8")
+    source_text = region.active_text((ROOT / args.source).read_text(encoding="utf-8"))
     assembly_constants = set(re.findall(
         r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,

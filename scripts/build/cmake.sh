@@ -36,7 +36,9 @@ if [ -z "${DCDECOMP_BUILD_LOCKED:-}" ]; then
     exec flock "$BUILD_LOCK" "$(pwd)/scripts/build/cmake.sh" "$@"
 fi
 
-BUILD_DIR=${BUILD_DIR:-build}
+REGION=${REGION:-NTSC}
+export DCDECOMP_REGION=$REGION
+BUILD_DIR=${BUILD_DIR:-$(python3 scripts/build/region.py build)}
 
 # Whether the existing cache was generated for this source directory. A cache
 # that is absent or unreadable is not stale -- there is simply nothing to
@@ -53,16 +55,16 @@ cache_is_stale() {
 configure() {
     if cache_is_stale; then
         echo "cmake.sh: build cache was generated elsewhere; reconfiguring from scratch." >&2
-        cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+        cmake --fresh -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
         return
     fi
 
     # The retry covers what the path check cannot: a cache left by a different
     # generator or an incompatible cmake, and anything else that only shows up
     # when configure actually runs.
-    cmake -G Ninja -S . -B "$BUILD_DIR" && return
+    cmake -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION" && return
     echo "cmake.sh: configure failed; retrying from scratch." >&2
-    cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+    cmake --fresh -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
 }
 
 # Configuring takes about as long as compiling a dozen objects, and every
@@ -86,7 +88,7 @@ regenerate() {
     fi
     printf '%s\n' "$regen" >&2
     echo "cmake.sh: regenerating the build files failed; reconfiguring from scratch." >&2
-    cmake --fresh -G Ninja -S . -B "$BUILD_DIR"
+    cmake --fresh -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
 }
 
 # Every CPU this process may run on, unless JOBS says otherwise. Exported so
@@ -105,14 +107,14 @@ build() {
 regenerate
 
 had_asm=1
-[ -d asm/nonmatchings ] || had_asm=0
+[ -d "$(python3 scripts/build/region.py asm)/nonmatchings" ] || had_asm=0
 
 # asm/ is split rather than committed, from the binaries under rom/extracted:
 # the disc's once it has been extracted, or the private repository's copies.
 build setup
 
 if [ "$had_asm" = 0 ]; then
-    cmake -G Ninja -S . -B "$BUILD_DIR"
+    cmake -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"
 fi
 
 [ $# -gt 0 ] || set -- build
