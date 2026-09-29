@@ -7,11 +7,11 @@
 #include "mglib.hpp"
 
 void CNPCharacter::Step() {
-    if (!initialized || chara.frame == NULL) {
+    if (!initialized || frame == NULL) {
         return;
     }
     if (near_camera || step_hidden) {
-        chara.CCharacter::Step();
+        CCharacter::Step();
     }
     int fade_step = alpha_step;
     int override_step = unk_1488;
@@ -20,25 +20,25 @@ void CNPCharacter::Step() {
     }
     unk_1488 = -1;
     if (near_camera) {
-        chara.ambient_offset[3] += float(fade_step);
+        ambient_offset[3] += float(fade_step);
     } else {
-        chara.ambient_offset[3] -= float(fade_step);
+        ambient_offset[3] -= float(fade_step);
     }
-    if (chara.ambient_offset[3] < 0.0f) {
-        chara.ambient_offset[3] = 0;
+    if (ambient_offset[3] < 0.0f) {
+        ambient_offset[3] = 0;
     }
-    if (!(chara.ambient_offset[3] <= 128.0f)) {
-        chara.ambient_offset[3] = 128.0f;
+    if (!(ambient_offset[3] <= 128.0f)) {
+        ambient_offset[3] = 128.0f;
     }
     PlaySeq();
 }
 
 void CNPCharacter::ShadowStep() {
-    if (!initialized || chara.frame == NULL) {
+    if (!initialized || frame == NULL) {
         return;
     }
     if (near_camera) {
-        chara.CCharacter::ShadowStep();
+        CCharacter::ShadowStep();
     }
 }
 
@@ -51,7 +51,7 @@ void CNPCharacter::PlaySeq() {
         return;
     }
     NP_SEQUENCE *sequence = GetNowSeq();
-    chara.GetPosition(position);
+    GetPosition(position);
     switch (sequence->operation) {
         case NP_SEQUENCE_MOVE: {
             sceVu0SubVector(movement, sequence->destination, position);
@@ -63,14 +63,14 @@ void CNPCharacter::PlaySeq() {
             if (DistVector(sequence->destination, flat_position) <= sequence->speed[0]) {
                 sceVu0CopyVector(destination, sequence->destination);
                 NextSeq();
-                chara.SetMotion(0, 0);
+                SetMotion(0, 0);
             } else {
                 sceVu0AddVector(destination, position, movement);
             }
-            float angle = AngleInterpolate(chara.rotation.y, atan2f(movement[0], movement[2]), 0.1f, 0);
-            chara.SetRotation(0, angle, 0);
-            chara.SetPosition(destination);
-            chara.SetMotion(1, 0);
+            float angle = AngleInterpolate(rotation.y, atan2f(movement[0], movement[2]), 0.1f, 0);
+            SetRotation(0, angle, 0);
+            SetPosition(destination);
+            SetMotion(1, 0);
             return;
         }
         case NP_SEQUENCE_WAIT:
@@ -78,7 +78,7 @@ void CNPCharacter::PlaySeq() {
             if (sequence->wait_frames < 0) {
                 NextSeq();
             }
-            chara.SetMotion(0, 0);
+            SetMotion(0, 0);
             break;
     }
 }
@@ -139,36 +139,36 @@ void CNPCharacter::NextSeq() {
 void CNPCharacter::Draw() {
     sceVu0FVECTOR saved_ambient;
     sceVu0FVECTOR ambient;
-    if (!initialized || chara.frame == NULL) {
+    if (!initialized || frame == NULL) {
         return;
     }
-    if (!(chara.ambient_offset[3] <= 0.0f)) {
+    if (!(ambient_offset[3] <= 0.0f)) {
         MGGetAmbient(saved_ambient);
         sceVu0CopyVector(ambient, saved_ambient);
-        ambient[0] += chara.ambient_offset[0];
-        ambient[1] += chara.ambient_offset[1];
-        ambient[2] += chara.ambient_offset[2];
-        ambient[3] = chara.ambient_offset[3];
+        ambient[0] += ambient_offset[0];
+        ambient[1] += ambient_offset[1];
+        ambient[2] += ambient_offset[2];
+        ambient[3] = ambient_offset[3];
         MGSetAmbient(ambient);
-        chara.CCharacter::Draw();
+        CCharacter::Draw();
         MGSetAmbient(saved_ambient);
     }
 }
 
 void CNPCharacter::DrawShadow() {
-    if (!initialized || chara.frame == NULL) {
+    if (!initialized || frame == NULL) {
         return;
     }
     if (near_camera) {
-        chara.CCharacter::DrawShadow();
+        CCharacter::DrawShadow();
     }
 }
 
 int CNPCharacter::CheckDraw() {
-    if (!initialized || chara.frame == NULL) {
+    if (!initialized || frame == NULL) {
         return 0;
     }
-    if (chara.ambient_offset[3] <= 0.0f) {
+    if (ambient_offset[3] <= 0.0f) {
         return 0;
     }
     return 1;
@@ -176,7 +176,7 @@ int CNPCharacter::CheckDraw() {
 
 int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
     if (initialized) {
-        return chara.CCharacter::PickUpPoly(position, polygons);
+        return CCharacter::PickUpPoly(position, polygons);
     }
     return 0;
 }
@@ -236,16 +236,16 @@ int CCharacter::PickUpPoly(float *position, CCPoly *polygons) {
 }
 
 void CNPCharacter::Initialize() {
-    chara.CCharacter::Initialize();
+    CCharacter::Initialize();
     initialized = 0;
     near_camera = 0;
-    chara.ambient_offset[0] = 0;
-    chara.ambient_offset[1] = 0;
-    chara.ambient_offset[2] = 0;
-    chara.ambient_offset[3] = 0;
+    ambient_offset[0] = 0;
+    ambient_offset[1] = 0;
+    ambient_offset[2] = 0;
+    ambient_offset[3] = 0;
     alpha_step = 0;
     unk_1488 = -1;
-    chara.body_width = 7.0f;
+    body_width = 7.0f;
     unk_148C = 0;
     talk_target = 0;
     event_status = 0;
@@ -258,14 +258,6 @@ void CNPCharacter::Initialize() {
     recurring_talk_event = -1;
 }
 
-extern "C" void *__vt__12CNPCharacter[];
-
-/* Retail's walker derives from CCharacter, which this tree models as the
- * `chara` member at offset 0. Once the character is built -- which calls its
- * Initialize through the table -- the walker's own table replaces it and
- * Initialize is dispatched through the table again. */
 CNPCharacter::CNPCharacter(void) {
-    *(void ***) ((char *) &chara + 0xA0) = __vt__12CNPCharacter;
-    CCharacter *self = &chara;
-    self->Initialize();
+    Initialize();
 }

@@ -438,10 +438,8 @@ SECTIONS
         # data
         //
         // Retail's .data is one run per translation unit, in the order the
-        // units link. A unit that is decompiled supplies its own run and the
-        // residual dump is carved around it.
-        // The library objects' data, in link order; crt0 carries the 0x40 bytes in
-        // front of the first datum.
+        // units link; every unit supplies its own. The library objects come
+        // first; crt0 carries the 0x40 bytes in front of the first datum.
         crt0.s.o                     (.data)   // 0x0024fac0
         impure.c.o                   (.data)   // 0x0024fb00
         locale.c.o                   (.data)   // 0x0024fdf0
@@ -561,9 +559,9 @@ SECTIONS
         //
         // The wildcard first: every constant in .rodata proper belongs to a
         // translation unit and is supplied there, so the objects carry it and
-        // link order puts it back where retail has it. What the dump still
-        // holds is what comes after -- the static initialisers, the vtables
-        // and the literal pool -- so its placement follows.
+        // link order puts it back where retail has it. What comes after -- the
+        // static initialisers, the vtables and the literal pool -- is placed
+        // block by block.
         *(.rodata)
         . = ALIGN(0x80);                 // 0x0029fe80, the end of retail's .rodata
         dataset.cpp.o (.init)            // 0x0029fe80
@@ -625,7 +623,9 @@ SECTIONS
         menu_dungeon.cpp.o (.ctor)       // 0x002a1058
         eastking.cpp.o (.ctor)           // 0x002a105c
         weaponlevelup.cpp.o (.ctor)      // 0x002a1060
-        main.rdata.part3b-2A1064.s.o (.rdata) // 0x002a1064
+        __static_init_end = .;           // 0x002a1064
+        . = ALIGN(16);
+        mathutil.cpp.o (.vtables)        // 0x002a1070
         camerafollow.cpp.o (.vtables)
         camera.cpp.o (.vtables)
         . = . + 0xC;
@@ -644,7 +644,7 @@ SECTIONS
         dispctrl.cpp.o (.vtables)        // 0x002a1380
         cloth.cpp.o (.vtables)           // 0x002a1390
         . = ALIGN(16);
-        main.rdata.part5.s.o (.rdata)    // 0x002a13c0
+        npcharacter.cpp.o (.vtables)     // 0x002a13c0
         mapobject.cpp.o (.vtables)
         objectframe2.cpp.o (.vtables)
         savedata.cpp.o (.vtables)
@@ -659,9 +659,7 @@ SECTIONS
 
 		# static initializers
 		*(.init)
-		// TODO: __static_init = .;
 		*(.ctor)
-		// TODO: __static_init_end = .;
 		# vtable
 		*(.vtables)
 		# exception
@@ -826,8 +824,7 @@ SECTIONS
 		langset.cpp.o (.sbss)          // 0x002a2fd8
 
 		// The title overlay's small data. Its units keep it in main's image
-		// because it is reached through $gp, one contiguous run per object,
-		// so the dump is cut into the runs the units leave between them.
+		// because it is reached through $gp, one contiguous run per object.
 		opening.cpp.o (.sbss)          // 0x002a2ff0
 		op_a.cpp.o (.sbss)             // 0x002a30a4
 		op_b.cpp.o (.sbss)             // 0x002a3194

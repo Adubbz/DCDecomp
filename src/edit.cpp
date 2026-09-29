@@ -1011,8 +1011,8 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
                 if (IsVisible(&npcs[i])) {
                     npc_draw_masks[i] = 0;
                     TexManager.ReloadTexture(Vif1Packet, npcs[i].unk_148C);
-                    npc->chara.TextureAnime(npcs[i].unk_148C);
-                    CCharacter *chara = &npc->chara;
+                    npc->TextureAnime(npcs[i].unk_148C);
+                    CCharacter *chara = npc;
                     chara->Draw();
                 }
             }
@@ -1037,7 +1037,7 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
         for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
             if (npc_draw_masks[i] & 2) {
                 if (IsShadowVisible(&npcs[i])) {
-                    CCharacter *chara = &npcs[i].chara;
+                    CCharacter *chara = &npcs[i];
                     chara->DrawShadow();
                 }
             }
@@ -1054,8 +1054,8 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
         if (npcs[i].CheckDraw() != 0 && (npc_draw_masks[i] & 1) != 0) {
             if (IsVisible(&npcs[i])) {
                 TexManager.ReloadTexture(Vif1Packet, npcs[i].unk_148C);
-                npcs[i].chara.TextureAnime(npcs[i].unk_148C);
-                CCharacter *chara = &npcs[i].chara;
+                npcs[i].TextureAnime(npcs[i].unk_148C);
+                CCharacter *chara = &npcs[i];
                 chara->Draw();
             }
         }

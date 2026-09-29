@@ -76,7 +76,6 @@ STATIC_ASSERT(sizeof(CategoryAttr) == 0x18);
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 873
 
-extern CTexture *StayTexture;
 extern char MesWinTexBuff_01[256];
 extern char gamemode_empty_string[];
 

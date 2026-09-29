@@ -23,8 +23,6 @@
 
 extern CDataAlloc2<1> *WorkBuffer;
 extern CDataAlloc2<1> *ActiveData;
-extern CDataAlloc2<1> ActiveData0;
-extern CDataAlloc2<1> ActiveData1;
 
 int DBuffID;
 int mgWaitVSync;

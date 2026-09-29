@@ -25,8 +25,6 @@
 #include "vector.hpp"
 #include "wind.hpp"
 
-extern CSound CSnd;
-
 /* Spelled here rather than reached through a header because the image holds it only as an
    anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
 #define PI 3.14159265358979323846
@@ -275,10 +273,6 @@ void DepthOfField(float *dist, int level, int alpha, int blur);
 
 extern "C" char *strcpy(char *dst, const char *src);
 
-extern sceVif1Packet *Vif1Packet;
-extern sceGifTag GiftagAD;
-extern sceGsZbuf mgZBuffer;
-extern u_int *read_buffer;
 extern CCharacter Chara[23];
 extern CCharacter Cam[4];
 extern char CharaTex[23];
@@ -297,7 +291,6 @@ extern CMapObject OP_NornMapObj[76];
 extern CMapObject OP_NornMapObj2[87];
 extern sceVu0FVECTOR op_fogRate;
 extern u_char op_fogColor[3];
-extern RenderInfo mgRenderInfo;
 extern sceVu0FVECTOR ambientlight;
 extern sceVu0FMATRIX light;
 extern sceVu0FMATRIX lightcolor;

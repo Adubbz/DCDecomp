@@ -13,7 +13,6 @@
 #include "rect.hpp"
 #include "snd.hpp"
 
-extern "C" int DebugStatus[21];
 extern "C" CDebugFont DbgMsg;
 
 /* The debug overlay's line formats. Retail keeps the strings with the hit-mark code. */
@@ -219,7 +218,6 @@ void DebugInfomationDraw(void) {
     MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
     DbgMsg.Draw();
 }
-
 
 /**
  * Clears the debug overlay's state.
@@ -619,7 +617,6 @@ int DebugInfomationIF(void) {
     }
     return 0;
 }
-
 
 /**
  * Empties the list of key items waiting to be dropped.

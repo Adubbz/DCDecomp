@@ -10,7 +10,6 @@
 #include "mglib.hpp"
 #include "texture.hpp"
 
-extern int DBuffID;
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 
 /**

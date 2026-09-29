@@ -3,8 +3,6 @@
 #include "snd.hpp"
 #include "sound.hpp"
 
-extern CSound CSnd;
-
 void TiPlayVolSE(int group, int no, int voice, float volume) {
     short *table;
     short base;

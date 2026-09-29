@@ -38,9 +38,7 @@ public:
 void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
                  const CRect<int> &src, u_char alpha);
 
-extern CTextureManager TexManager;
 extern CScFader CFade;
-extern sceVif1Packet *Vif1Packet;
 
 CSprite::CSprite() {
     int i;

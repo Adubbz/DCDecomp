@@ -24,8 +24,6 @@
 #include "vector3.hpp"
 #include "wind.hpp"
 
-extern CSound CSnd;
-
 typedef MOTION_INFO tagMOTION_KEY;
 
 extern tagMOTION_KEY noroi[10];
@@ -179,7 +177,6 @@ extern "C" char *strcpy(char *dst, const char *src);
 
 extern sceVif1Packet *Vif1Packet;
 extern sceGifTag GiftagAD;
-extern u_int *read_buffer;
 extern CCharacter Chara[23];
 extern CCharacter Cam[4];
 extern char CharaTex[23];

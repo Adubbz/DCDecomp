@@ -40,7 +40,6 @@
 #include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
 
-extern s32 BtlMenuMode;
 /** The directory the weapon models are read from. */
 extern const char MenuWepDir[];
 extern "C" CCharacter DefaultWeapon;
@@ -83,9 +82,6 @@ s16 DngEscapeEndFlag;
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
 int MenuWeaponTestCase = 1;
-
-/** The dungeon status data the battle menu is showing, or NULL outside the dungeon. */
-extern CDngStatusData *BtlMenuStatusPt;
 
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
 s16 DngEscapeAlpha = 0x80;

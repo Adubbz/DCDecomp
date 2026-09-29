@@ -184,7 +184,6 @@ struct EB_KEY_ENTRY {
     int reserved;
 };
 
-
 /** The part of the screen the event battle's opening wipe has reached. */
 extern CRect_i_ draw_rect;
 
@@ -234,11 +233,6 @@ void EBFinishSound(int do_fade_bgm, int do_play_fanfare) {
     fade_bgm = do_fade_bgm;
     play_fanfare = do_play_fanfare;
 }
-
-
-extern int EdDebugMoveFlag;
-extern int EdDebugCameraFlag;
-extern CEffectGroup EdEffectGroup;
 
 /**
  * Looks up the textures the event battle's opening needs.

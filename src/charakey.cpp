@@ -30,9 +30,6 @@
 #include "userstatus.hpp"
 #include "weaponeffect.hpp"
 
-/* The character that the player controls. */
-extern "C" CCharacter CharaMain;
-
 /* Whether the player's model skips interpolation on its next drive step. */
 extern "C" s32 driveNoInterpolate;
 
@@ -47,12 +44,6 @@ extern "C" s32 lockOnTargetFlag;
 
 /* Which button fires an action. */
 extern "C" s32 PadInput_OK;
-
-/* The collisions the dungeon tests against. */
-extern "C" CCollisionData *NowColData;
-
-/* The weapon that the player has equipped. */
-extern "C" WEAPON_HAVE *NowWeaponHave;
 
 /* The trail that the player's weapon draws as it swings. */
 extern "C" CWeaponEffect CWeaponFx;

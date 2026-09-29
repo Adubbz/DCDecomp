@@ -29,9 +29,6 @@
 #include "textureanime.hpp"
 #include "userstatus.hpp"
 
-/* The floor that the player selected; only the first six hold atla. */
-extern "C" s32 selectMapNo;
-
 /* One texture animation for every part of every character in the dungeon. */
 extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
 
@@ -40,19 +37,8 @@ extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
  */
 extern const char info_cfg_literal[];
 
-/* The texture manager that the dungeon draws its textures out of. */
-extern "C" CTextureManager TexManager;
-
 /* The model a trap circle draws with. */
 extern "C" CCharacter Trap_Circle;
-
-/* The character that the player controls; the dungeon overlay defines it. */
-extern "C" CCharacter CharaMain;
-
-extern "C" int DebugStatus[];
-extern "C" int BtEquipMap;
-extern "C" int BtEquipMasuisyou;
-extern "C" ITEM_FREE_AREA *ItemFreeAreaAll[];
 
 /**
  * A single grid cell while a floor is being built.

@@ -52,9 +52,6 @@ extern "C" CDungeonEventMan UraEventMan;
 /** The characters that walk the dungeon alongside the player. */
 extern "C" CNPCharacter NPCUnit[6];
 
-/** Whether the player is in the back dungeon rather than the main one. */
-extern s32 BtUraDongeon;
-
 /** Nonzero while a system event script holds the dungeon. */
 extern s32 BtEventMode;
 
@@ -103,7 +100,7 @@ void BtSystemScriptEventInfoInit(void) {
     EdEventInfo.projection = -1.0f;
     EdEventInfo.main_character = &CharaMain;
     for (int i = 0; i < 6; i++) {
-        NPCUnit[i].chara.frame = NULL;
+        NPCUnit[i].frame = NULL;
     }
     EdEventInfo.npcs = NPCUnit;
     EdEventInfo.npc_texture_block = 32;
@@ -168,7 +165,7 @@ void BtSystemScriptInit(void) {
     EdEventInfo.camera = NowCamera__3;
     EdEventInfo.main_character = &CharaMain;
     for (int i = 0; i < 6; i++) {
-        NPCUnit[i].chara.frame = NULL;
+        NPCUnit[i].frame = NULL;
     }
     EdEventInfo.npcs = NPCUnit;
     EdEventInfo.npc_texture_block = 32;
@@ -873,7 +870,7 @@ int _CLEAR_DEAMON_SHAFT(RS_STACKDATA *stack, int argument_count) {
 
 int _INIT_BEE(RS_STACKDATA *stack, int count) {
     BtEventInfo.unk_94 = GetStackInt(stack);
-    InitBee(NPCUnit[BtEventInfo.unk_94].chara.frame, 15);
+    InitBee(NPCUnit[BtEventInfo.unk_94].frame, 15);
     return 1;
 }
 

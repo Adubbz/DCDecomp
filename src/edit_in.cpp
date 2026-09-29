@@ -50,13 +50,6 @@
 #include "snd.hpp"
 #include "sysmes.hpp"
 
-/* The arenas the interior carves the read buffer into. */
-extern CDataAlloc2<1> EdWorkBuffer;
-extern CDataAlloc2<1> EdMenuBuffer;
-
-/* Map jump the player arrives through when entering an interior. */
-extern int EdInteriorJumpID;
-
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
     u8 unk_000[0x60];
@@ -66,20 +59,6 @@ struct INTERIOR_CAMERA {
     int link_id;
     u8 unk_2e4[0xC];
 };
-
-extern int EdInteriorDoorSound;
-extern int EdInteriorStartEvent;
-extern int EdInteriorPartsNo;
-extern char EdInteriorName[];
-extern int EdDebugCameraFlag;
-extern int EdDebugEventEnable;
-extern int EdDrawOffFlag;
-extern int EdDrawOffMapShadow;
-extern int EdPauseFlag;
-extern int MenuMapJumpMode;
-extern CEffectGroup EdEffectGroup;
-extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
-
 
 static void LoadScript();
 static void LoadInfo(char *script, int size);
@@ -593,7 +572,7 @@ int EditInLoop() {
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
-                EdVillager[i].chara.ClothStep(0);
+                EdVillager[i].ClothStep(0);
             }
             NowCamera = &MainCamera;
             if (EdCheckViewMode() != 0) {
@@ -647,7 +626,7 @@ int EditInLoop() {
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
-                EdVillager[i].chara.ClothStep(0);
+                EdVillager[i].ClothStep(0);
             }
             door_open_cnt--;
             if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
@@ -684,12 +663,12 @@ int EditInLoop() {
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
-                EdVillager[i].chara.ClothStep(0);
+                EdVillager[i].ClothStep(0);
             }
             CNPCharacter *talker = EdNowTalkChara();
-            float distance = Chara->GetDistance(talker->chara);
-            Chara->GetDir(talker->chara, direction);
-            float pitch = -atan2f(-Chara->body_height + (1.3f + talker->chara.body_height + direction[1]), distance);
+            float distance = Chara->GetDistance(*talker);
+            Chara->GetDir(*talker, direction);
+            float pitch = -atan2f(-Chara->body_height + (1.3f + talker->body_height + direction[1]), distance);
             float yaw = atan2f(direction[0], direction[2]);
             float h = EdAGetViewAngleH();
             float v = EdAGetViewAngleV();
@@ -722,7 +701,7 @@ int EditInLoop() {
             Chara->Step();
             Chara->ShadowStep();
             for (int i = 0; i < 10; i++) {
-                EdVillager[i].chara.SetMotion(EdVillager[i].chara.motion_no, 1);
+                EdVillager[i].SetMotion(EdVillager[i].motion_no, 1);
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
             }
@@ -737,7 +716,7 @@ int EditInLoop() {
                     return 1;
                 }
                 for (int i = 0; i < 10; i++) {
-                    EdVillager[i].chara.SetMotion(EdVillager[i].chara.motion_no, 0);
+                    EdVillager[i].SetMotion(EdVillager[i].motion_no, 0);
                     EdVillager[i].Step();
                     EdVillager[i].ShadowStep();
                 }
@@ -1382,7 +1361,7 @@ static void VillagerCollision() {
             if (villager->CheckDraw() == 0) {
                 continue;
             }
-            villager->chara.GetPosition(pos);
+            villager->GetPosition(pos);
             sound = EdEventInfo.npc_foot_sound[i];
         } else {
             move = EdEventInfo.player_collision;
@@ -1398,7 +1377,7 @@ static void VillagerCollision() {
         box.max[1] = 1000.0f;
         box.min[1] = -1000.0f;
         if (i >= 0) {
-            chara = &villager->chara;
+            chara = villager;
         } else {
             chara = Chara;
         }
@@ -1423,7 +1402,7 @@ static void VillagerCollision() {
         }
         if (move != 0) {
             if (i >= 0) {
-                villager->chara.SetPosition(pos);
+                villager->SetPosition(pos);
             } else {
                 Chara->SetPosition(pos);
             }

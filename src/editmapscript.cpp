@@ -57,91 +57,25 @@
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
-extern int LanguageCode;
-extern int oldGameMode;
-extern int sound_off_cnt;
 extern float NowTime;
-extern int EdDrawOffFlag;
-extern int EdPauseFlag;
-extern int exit_loop;
-extern int goto_cmp_event;
-extern int goto_cmp_event_level;
-extern int goto_dungeon;
 extern int goto_menu;
 extern int goto_return_menu;
-extern int debug_menu_mode;
 extern int simple_event;
-extern int change_time_event;
-extern int draw_npc_cursor;
-extern float draw_day_cnt;
-extern int draw_day_flag;
-extern int key_lock;
 extern int loop_counter;
-extern int EdDebugEventEnable;
-extern int EdDebugCameraFlag;
-extern CMapParts *ObjParts;
-extern int door_open;
 extern int camera_dist_mode;
-extern int EdDrawOffMapShadow;
 void BtSetMapJumpFloor(int floor);
 extern int key_counter;
-extern int clear_screen;
-extern int edit_mode_draw;
-extern int edit_mode_grd_draw;
-extern int depth_of_field;
-extern int edit_mode_lighting;
-extern int draw_sky;
-extern int move_count;
-extern CFrameVu1 *TreasureCursor;
-extern CFrameVu1 *TreasureCursorOpen;
-extern int end_counter;
-extern int EdStepTimeFlag;
-extern int talk_villager;
 extern CCameraFollow TalkCamera;
 extern CCamera *NowCamera;
 extern CCameraFollow ViewCamera;
-extern "C" CDataAlloc2<1> *WorkBuffer__2;
-extern CFrame *ECursorFrame;
-extern int EdDebugMoveFlag;
-extern CRunEffect RunEffect;
 extern CCameraFollow MainCamera;
-extern CCameraFollow EditCamera;
-extern CCameraFollow EditCamera;
-extern CDataAlloc2<1> CharaBuffer;
-extern int NowEditMap;
-extern int MapNo;
-extern char EditDataDir[0x100];
 
-/* Whether the editor is running the interior test map, and the map names it reads. */
-extern int interior_test;
-extern char **interior_name;
-
-/* The background music the map started, and whether it has been asked for. */
-extern int bgm_play_flag;
-extern int bgm_play_start;
-
-/* The arenas the map's own data is carved out of. */
-extern CDataAlloc2<1> EtcDataBuffer;
-extern CDataAlloc2<1> EPartsInfoBuff;
-extern CDataAlloc2<1> MotionData;
-extern CDataAlloc2<1> EdMesBuffer;
 extern CDataAlloc2<1> DataBuffer__2;
 
-/** Scene archive the map's models are read out of. */
-extern u_int *scn_data;
-
-/* The map the editor builds into, one array per kind of part. */
-extern CEditArea *EditArea;
 extern CCharacter *MotionParts;
-extern CMapParts *RiverParts;
-extern CMapParts *RoadParts;
 
-/* The fog the map starts with, and the debug font the editor draws with. */
-extern EDIT_FOG_INFO now_fog;
 extern CDebugFont DebugFont__3;
 
-/* The effects the editor plays, and the storage they come out of. */
-extern CEffectGroup EdEffectGroup;
 extern CEffect *EffectTable__3;
 
 /* The message-window texture the monster-name window is drawn into. */
@@ -151,24 +85,8 @@ extern u8 MesWinTexBuff_11[0x100];
 extern u_char *EdInInfo;
 extern CMenuItemStep ItemVolumeStep;
 
-/* The interior the player is walking into, and the map file it is built from. */
-extern char EdInteriorName[0x20];
-extern char interior_map_name[0x40];
-extern int EdInteriorPartsNo;
-extern int EdInteriorJumpID;
-extern int EdInteriorDoorSound;
-extern int EdInteriorStartEvent;
 extern int door_open_cnt;
-extern int fix_pos_enble;
-extern CEditGround *pEditGround;
 extern CCharacter *Chara;
-extern CMainChara MainChara;
-
-/* The arenas the editor carves its own working memory out of. */
-extern CDataAlloc2<1> EdNPCBuffer;
-extern CDataAlloc2<1> EdVillagerBuffer;
-extern CDataAlloc2<1> EdWorkBuffer;
-extern CDataAlloc2<1> EdMenuBuffer;
 
 /* Every villager the editor can place, one record each. */
 
@@ -176,18 +94,13 @@ extern CDataAlloc2<1> EdMenuBuffer;
    the character the event wants the player to notice. */
 extern ClsMes CommonMenuMes2;
 extern ClsMes CommonMenuMes3;
-extern CFrame *CharaCursor0;
-extern CFrame *CharaCursor1;
-extern CFrame *CharaCursor2;
 
 /* Where the player stands and faces while a door plays its motion. */
 extern sceVu0FVECTOR fix_chara_pos;
 extern sceVu0FVECTOR fix_chara_rot;
-extern sceVu0FVECTOR fix_camera_pos;
 
 /* Data whose shape the unit does not need yet. */
 extern CTexAnimeData CharaTexAnimeData[0x80];
-extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 /** One default villager entry stored for each map and list position. */
 struct EDIT_CHARA_DATA_ENTRY {
@@ -205,8 +118,6 @@ STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 #include "editmenu.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
-extern CFrameVu1 *SkyFrame[4];
-extern CFrame *SunFrame[4];
 extern C3DSprite SystemEffect[8];
 
 void CommandIMGSub(int image_type, int image_number, char *name);
@@ -713,7 +624,6 @@ int now_parts_no;
 int binary;
 int edit_rect_list;
 int motion_parts_list;
-
 
 /**
  * Sets the directory prefix used while parsing the current map script.

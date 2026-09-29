@@ -229,7 +229,6 @@ extern "C" u8 main_fogColor[];
 extern "C" u8 sub_fogColor[];
 extern u8 main_bgColor[];
 extern u8 sub_bgColor[];
-extern u_int *read_buffer;
 
 /**
  * Steps the item definition file past whitespace and comments.

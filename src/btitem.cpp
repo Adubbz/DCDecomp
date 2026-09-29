@@ -137,8 +137,6 @@ extern s32 iventActive;
 extern "C" CCameraFollow SubCamera;
 extern "C" CCameraFollow MainCamera__4;
 extern CCameraFollow *NowCamera__3;
-extern "C" int BtEquipMap;
-extern "C" int BtEquipMasuisyou;
 extern s32 atraShortGetType;
 extern s32 atraGetStatus;
 extern s32 atraGetMsgBord;

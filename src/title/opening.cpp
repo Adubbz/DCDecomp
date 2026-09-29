@@ -28,8 +28,6 @@
 #include "title/script.hpp"
 #include "vector.hpp"
 
-extern CSound CSnd;
-
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h for the
    reason title.cpp declares its own: the rectangles this file builds are temporaries whose four
    stores come out ascending, and the constructor rect.h states assigns them in the other order. */
@@ -50,10 +48,6 @@ public:
     T w;
     T h;
 } __attribute__((aligned(16)));
-
-/* What this file reaches of the display layer, declared here rather than reached through mglib.h
-   because that header states the rectangle above. */
-extern sceVif1Packet *Vif1Packet;
 
 sceVif1Packet *GetVif1Packet();
 void MGSetRenderInfo(float scale, float near_z, float far_z);
@@ -105,12 +99,9 @@ void OpD_MotionProcess();
 void OpD_SoundProcess();
 void OpD_DrawProcess();
 
-extern u_int *read_buffer;
 extern u_int Vu_prog0f[];
 extern int Mes1MakeFlg;
 extern char MesWinTexBuff_01[256];
-extern CDataAlloc2<1> VisualData;
-extern CDataAlloc2<1> TextureData;
 
 static void LoadMessage();
 static void LoadScene();
@@ -1164,7 +1155,6 @@ void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float
 void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
 void MGSetAmbient(float *color);
 
-extern u_int *read_buffer;
 extern CDataAlloc2<1> MapDataBuffer;
 extern sceVu0FVECTOR ambientlight;
 extern sceVu0FMATRIX light;

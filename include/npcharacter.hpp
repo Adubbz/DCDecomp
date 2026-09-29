@@ -34,9 +34,8 @@ STATIC_ASSERT(sizeof(NP_SEQUENCE) == 0x50);
 /**
  * Controls a non-player character and its queued movement actions.
  */
-class CNPCharacter {
+class CNPCharacter : public CCharacter {
 public:
-    CCharacter chara;     /**< The character that the walker draws and moves with. */
     int sequence_enabled; /**< Enables advancement of queued actions. */
     int read_index;       /**< Index of the current action. */
     int write_index;      /**< Index of the next record to fill. */
@@ -65,7 +64,7 @@ public:
      * @address 0x155FB0
      * @size 0x134
      */
-    void Step(void);
+    virtual void Step(void);
 
     /**
      * Advances the shadow while the NPC is visible.
@@ -74,7 +73,7 @@ public:
      * @address 0x1560F0
      * @size 0x4C
      */
-    void ShadowStep(void);
+    virtual void ShadowStep(void);
 
     /**
      * Advances the current movement or wait action.
@@ -155,7 +154,7 @@ public:
      * @address 0x156540
      * @size 0xD8
      */
-    void Draw(void);
+    virtual void Draw(void);
 
     /**
      * Draws the shadow while the NPC is visible.
@@ -164,7 +163,7 @@ public:
      * @address 0x156620
      * @size 0x4C
      */
-    void DrawShadow(void);
+    virtual void DrawShadow(void);
 
     /**
      * Reports whether the enabled NPC has a model and positive alpha.
@@ -182,7 +181,7 @@ public:
      * @address 0x1566D0
      * @size 0x38
      */
-    int PickUpPoly(float *position, CCPoly *polygons);
+    virtual int PickUpPoly(float *position, CCPoly *polygons);
 
     /**
      * Initializes the NPC state and clears queued actions.
@@ -191,7 +190,7 @@ public:
      * @address 0x1569E0
      * @size 0x8C
      */
-    void Initialize(void);
+    virtual void Initialize(void);
 
     /**
      * Constructs a non-player character.

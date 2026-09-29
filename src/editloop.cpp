@@ -60,34 +60,9 @@
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
-extern int GameMode;
-extern int LanguageCode;
 extern int simple_event;
-extern int light_no;
-extern int week_no;
-extern int texture_list;
-extern int EdDebugEventEnable;
-extern int EdDebugCameraFlag;
-extern char *objframe;
-extern CMapObject *mapobj;
-extern CMapParts *mapparts;
-extern EDIT_WATER_INFO *water_info;
-extern int edit_rect_list;
-extern int motion_parts_list;
-extern int people_list;
-extern int now_parts_no;
 void BtSetMapJumpFloor(int floor);
-extern "C" CDataAlloc2<1> *WorkBuffer__2;
-extern int EdDebugMoveFlag;
-extern int MapNo;
-extern int mapobj_list;
-extern int water_list;
-extern int objanime_list;
-extern int event_list;
-extern int mapjump_id;
 extern char mapjump_name[0x20];
-
-extern CDataAlloc2<1> MotionData;
 
 /* The message-window texture the monster-name window is drawn into. */
 extern u8 MesWinTexBuff_11[0x100];
@@ -102,7 +77,6 @@ extern "C" char CurrentDir__3[0x40];
 extern ClsMes CommonMenuMes2;
 extern ClsMes CommonMenuMes3;
 
-extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 #include "editmenu.hpp"
 #include "wind.hpp"
 #include "memcard.hpp"
@@ -356,14 +330,8 @@ void MainMode(void);
 void EditMode(void);
 void PlayAmbient(float volume);
 extern int MenuMapJumpMode;
-extern int main_select_menu_no;
 extern u_int Vu_prog0f[];
-extern int binary;
 extern char EditEmptyText[];
-extern int fobject_list;
-extern int partseffect_list;
-extern int objeffect_list;
-extern int objtimer_list;
 /* The ground the player has built on one map, as the save holds it. */
 struct ED_GRD_DATA {
     u8 unk_00[0x64];
@@ -386,7 +354,6 @@ void GetLanguageName(char *name) {
         *name = '\0';
     }
 }
-
 
 /**
  * Copies the current editor resource directory into a caller buffer.
@@ -1094,7 +1061,6 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
-
 
 /**
  * Returns the sum of the editor category indices from zero through nine.
@@ -1992,8 +1958,8 @@ void MainDraw() {
                     int saved = villager->sequence_enabled;
 
                     villager->sequence_enabled = 0;
-                    villager->chara.Step();
-                    villager->chara.ShadowStep();
+                    villager->Step();
+                    villager->ShadowStep();
                     villager->sequence_enabled = saved;
                 }
             }
@@ -2330,8 +2296,8 @@ void EdDrawSysCursor(ED_EVENT_POINT *points, int count) {
         int shown = EdVillager[i].initialized != 0 && EdVillager[i].draw_enabled != 0;
         if (shown) {
             sceVu0FVECTOR position;
-            sceVu0CopyVector(position, EdVillager[i].chara.pos);
-            position[1] += 2.0f + EdVillager[i].chara.body_height;
+            sceVu0CopyVector(position, EdVillager[i].pos);
+            position[1] += 2.0f + EdVillager[i].body_height;
             if (EdInteriorFlag == 0 && EdVillager[i].CheckDraw() == 0 &&
                 EdVillager[i].talk_target == 0) {
                 if (MapNo != 3 || EdVillager[i].villager_id != 8) {
@@ -2925,7 +2891,7 @@ void TalkMode() {
     } else {
         for (i = 0; i < 10; i++) {
             EdVillager[i].Step();
-            EdVillager[i].chara.ClothStep(0);
+            EdVillager[i].ClothStep(0);
         }
     }
 }
@@ -3250,7 +3216,7 @@ void VillagerCollision() {
             if (villager->CheckDraw() == 0) {
                 continue;
             }
-            villager->chara.GetPosition(pos);
+            villager->GetPosition(pos);
             sound = EdEventInfo.npc_foot_sound[i];
         } else {
             move = EdEventInfo.player_collision;
@@ -3268,7 +3234,7 @@ void VillagerCollision() {
         box.max[1] = 10.0f + top;
         box.min[1] = 10.0f + (height - 1000.0f);
         if (i >= 0) {
-            chara = &villager->chara;
+            chara = villager;
         } else {
             chara = Chara;
         }
@@ -3308,7 +3274,7 @@ void VillagerCollision() {
         }
         if (move != 0) {
             if (i >= 0) {
-                villager->chara.SetPosition(pos);
+                villager->SetPosition(pos);
             } else {
                 Chara->SetPosition(pos);
             }

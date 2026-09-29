@@ -30,8 +30,6 @@
    reaches it. */
 extern "C" void MapJump__Fii(int map_no, int event_no);
 
-extern CSound CSnd;
-
 /* The rectangle every 2D draw takes, declared here rather than reached through rect.h because the
    two constructors that header states are not this file's: every rectangle here is built by one
    that assigns x, y, w and h in that order, and rect.h's assigns them in the other. */
@@ -80,13 +78,8 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *d
                         const CRect<int> &dst_rect);
 void MGClearZBuffer(int mode);
 
-extern u_int *read_buffer;
 extern int CursorVibeCnt;
 extern u_int Vu_prog0f[];
-
-extern CDataAlloc2<1> VisualData;
-extern CDataAlloc2<1> MotionData;
-extern CDataAlloc2<1> TextureData;
 
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
@@ -288,13 +281,10 @@ void SndAmbientStop();
 void SndStep();
 void SndSePlay(int se, float *position, float near_dist, float far_dist);
 
-extern u_int *read_buffer;
 extern u_int Vu_prog0f[];
 extern sceVif1Packet *Vif1Packet;
-extern CGamePad GamePad;
 extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
 extern int OP_AnimeSeqRot;
-extern CTextureManager TexManager;
 extern CCharacter Chara[23];
 extern CMapObject OP_NornMapObj[76];
 extern int OP_FireList;
@@ -310,7 +300,6 @@ extern sceVu0FMATRIX lightcolor;
 extern sceVu0FVECTOR ambientlight;
 extern sceGsAlpha mgAlpha;
 extern CDataAlloc2<1> MapDataBuffer;
-extern CDataAlloc2<1> TextureData;
 
 extern CCameraFollow MainCamera;
 extern CDispFade DispFade;

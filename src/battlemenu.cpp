@@ -36,16 +36,6 @@
 #include "weaponlevelup.hpp"
 
 /**
- * Texture the personal boards are drawn from.
- */
-extern CTexture *PerBoardTex;
-
-/**
- * Runs the weapon menu's repair, level-up and build-up effects.
- */
-extern CWeaponLevelUp MenuWepLevelUp;
-
-/**
  * Camera used to project menu models and world-map markers.
  */
 extern CCamera MenuCamera;

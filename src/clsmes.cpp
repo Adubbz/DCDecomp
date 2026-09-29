@@ -57,15 +57,6 @@ MES_FUCHI FuchiTbl_E[] = {
     {0, 0, 0, 0, 0, -1},
 };
 
-/* The register that names where the message window's depth buffer lives. */
-extern "C" sceGsZbuf mgZBuffer;
-
-/* The register that names which pixels the renderer is allowed to write. */
-extern "C" sceGsTest mgPixelTest;
-
-/* The register that names how the renderer blends what it draws. */
-extern "C" sceGsAlpha mgAlpha;
-
 /** What each of the eight words of a GaijiDataTbl entry says. */
 enum {
     GAIJI_CODE,   /**< The external-character code the entry draws. */
@@ -87,10 +78,6 @@ struct GIFTAG {
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(GIFTAG) == 0x10);
-
-/* The packet every draw call of the game writes into. */
-extern "C" sceVif1Packet *Vif1Packet;
-
 
 s16 ClsMes::GetGaijiW(int code) {
     if (code >= -0x300 && code < -0x263) {

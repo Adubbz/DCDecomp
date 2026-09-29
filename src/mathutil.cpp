@@ -27,8 +27,21 @@ extern u8 _overlay_group_addresses[];
 
 extern "C" void abort(void);
 extern "C" void free(void *storage);
-extern "C" void *__vt__Q23std9exception[];
-extern "C" void *__vt__Q23std13bad_exception[];
+extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw();
+extern "C" const char *what__Q23std9exceptionCFv(const void *exception);
+extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw();
+extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception);
+/* Run-time type information records for std::exception and std::bad_exception. */
+extern const unsigned char __RTTI__Q23std9exception[];
+extern const unsigned char __RTTI__Q23std13bad_exception[];
+/* Virtual table of std::exception: type information, this adjustment, destructor, what(). */
+extern "C" void *__vt__Q23std9exception[4] __attribute__((section(".vtables"))) = {
+    (void *) __RTTI__Q23std9exception, 0, (void *) __dt__Q23std9exceptionFv,
+    (void *) what__Q23std9exceptionCFv};
+/* Virtual table of std::bad_exception: type information, this adjustment, destructor, what(). */
+extern "C" void *__vt__Q23std13bad_exception[4] __attribute__((section(".vtables"))) = {
+    (void *) __RTTI__Q23std13bad_exception, 0, (void *) __dt__Q23std13bad_exceptionFv,
+    (void *) what__Q23std13bad_exceptionCFv};
 /* What std::exception::what and std::bad_exception::what return. */
 extern const char ExceptionWhat[];
 extern const char BadExceptionWhat[];

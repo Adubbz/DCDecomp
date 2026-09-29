@@ -127,9 +127,6 @@ extern SND_SE_INFO *voice_info[11];
 /** The menu sound-effect table, addressed by menu sound number. */
 extern SND_SE_INFO special_se_info[65];
 
-/** The buffer background sound loads read into. */
-extern unsigned int *read_buffer;
-
 /** The buffer the sound loader is pointed at. */
 unsigned int *snd_read_buf;
 

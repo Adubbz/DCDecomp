@@ -143,11 +143,9 @@ void DepthOfField(float *dist, int level, int alpha, int blur);
 int SndSyncBG();
 void SndBgmPlay(int no);
 
-extern CSound CSnd;
 extern sceVif1Packet *Vif1Packet;
 extern sceGifTag GiftagAD;
 extern sceGsAlpha mgAlpha;
-extern u_int *read_buffer;
 extern CCharacter Chara[23];
 extern CCharacter Cam[3];
 extern char CharaTex[23];

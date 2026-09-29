@@ -18,9 +18,6 @@ set(SCRIPTS_DIR scripts)
 set(ROM_DIR rom)
 set(ASM_DIR asm)
 set(ASM_DATA_DIR ${ASM_DIR}/data)
-# The main executable's residual data dumps: carved and hand-edited rather
-# than split, so unlike the rest of asm/ they are committed.
-set(PARTS_DIR ${ASM_DATA_DIR}/main/parts)
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/Dark Cloud (USA).iso"
    AND NOT EXISTS "${CMAKE_SOURCE_DIR}/${ROM_DIR}/extracted/iso/${BASENAME}")
     message(FATAL_ERROR
@@ -84,178 +81,6 @@ foreach(section IN LISTS SECTIONS)
     read_index_sources(${section} section_srcs "${REPLACED_SECTIONS}")
     list(APPEND ASM_SOURCES ${section_srcs})
 endforeach()
-file(GLOB STATIC_SECTION_SOURCES CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR}
-     ${CMAKE_SOURCE_DIR}/${PARTS_DIR}/*.s)
-# A residual dump that a decompiled unit now owns part of is carved into the
-# runs the unit leaves behind. The cuts are addresses rather than symbol names
-# because a compiler-generated constant has no name to key on.
-set(CARVED_PART_SOURCES "")
-set(CARVED_PART_OUTPUTS "")
-function(carve_part part)
-    set(input ${PARTS_DIR}/${part})
-    set(outputs "")
-    set(specs "")
-    set(relatives "")
-    foreach(spec IN LISTS ARGN)
-        string(REPLACE "=" ";" fields "${spec}")
-        list(GET fields 0 name)
-        list(GET fields 1 span)
-        string(REPLACE "-" ";" bounds "${span}")
-        list(GET bounds 0 low)
-        list(GET bounds 1 high)
-        set(relative generated/${ASM_DATA_DIR}/main/parts/${name})
-        list(APPEND relatives ${relative})
-        list(APPEND outputs ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${relative})
-        list(APPEND specs ${BUILD_DIR}/${relative}:${low}-${high})
-    endforeach()
-    add_custom_command(
-        OUTPUT ${outputs}
-        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/carve_part.py ${input} ${specs}
-        DEPENDS ${CMAKE_SOURCE_DIR}/${input}
-                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/carve_part.py
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMENT "Carving ${part} around its decompiled units"
-        VERBATIM)
-    list(REMOVE_ITEM STATIC_SECTION_SOURCES ${input})
-    set(STATIC_SECTION_SOURCES ${STATIC_SECTION_SOURCES} PARENT_SCOPE)
-    set(CARVED_PART_SOURCES ${CARVED_PART_SOURCES} ${relatives} PARENT_SCOPE)
-endfunction()
-
-# The overlays' dumps are carved the same way, but their parts are named in
-# the overlay's own linker section rather than appended to main.
-set(OVERLAY_TAIL "")
-function(carve_dump image dump)
-    set(input ${ASM_DATA_DIR}/${image}/${dump})
-    set(outputs "")
-    set(specs "")
-    foreach(spec IN LISTS ARGN)
-        string(REPLACE "=" ";" fields "${spec}")
-        list(GET fields 0 name)
-        list(GET fields 1 span)
-        string(REPLACE "-" ";" bounds "${span}")
-        list(GET bounds 0 low)
-        list(GET bounds 1 high)
-        set(relative generated/${ASM_DATA_DIR}/${image}/${name})
-        list(APPEND outputs ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${relative})
-        list(APPEND specs ${BUILD_DIR}/${relative}:${low}-${high})
-        list(APPEND CARVED_DUMP_SOURCES ${relative})
-        list(APPEND OVERLAY_TAIL ${image}=${BUILD_DIR}/${relative}.o)
-    endforeach()
-    add_custom_command(
-        OUTPUT ${outputs}
-        COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/carve_part.py ${input} ${specs}
-        DEPENDS ${CMAKE_SOURCE_DIR}/${input}
-                ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/carve_part.py
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMENT "Carving ${image}/${dump} around its decompiled units"
-        VERBATIM)
-    set(CARVED_DUMP_SOURCES ${CARVED_DUMP_SOURCES} PARENT_SCOPE)
-    set(OVERLAY_TAIL ${OVERLAY_TAIL} PARENT_SCOPE)
-endfunction()
-
-set(CARVED_DUMP_SOURCES "")
-# The dun overlay is one unit, and the templates its local array initialisers
-# emit stand between the globals the dump still supplies, so the dump is cut
-# into the four runs the unit leaves behind.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part1.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part2.s)
-# Retail's vtables come out in one run that alternates between the units that
-# now own theirs and the dump that still holds the rest, so the dump is cut
-# around each owned block rather than having the block removed from it.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.rdata.part1.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.rdata.part2.s)
-carve_part(main.rdata.part3.s
-           main.rdata.part3b-2A1064.s=2A1064-2A1090)
-# .sdata: the same interleaving, one datum at a time.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part1.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part2.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part2b.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part3.s)
-# .sbss: the same again, one unit's run at a time.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part1.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part3.s)
-# gameutil.cpp's own run stands in the middle of this one.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part4.s)
-# edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
-# EdExchangeInfo inside the second.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part4b.s)
-# monstorunit owns the bee animation table; retain its BSS neighbours.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part6.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part5.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part3.s)
-# The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
-# and the unit supplies all of it, so the dump stops in front of it.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part5b.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part4b.s)
-# CheckDmg owns its local static effect index and initialization guard, and
-# runscript_opcodes.cpp owns bak_ColNo after them.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part5.s)
-# The weapon build-up and level-up local templates stand in this residual run,
-# and runscript_opcodes.cpp supplies its vector initializers ahead of part6f.
-# shop.cpp supplies the start of its own run between part6f and part6k, and
-# battlemenu.cpp supplies the travel page's and DrawWepHole's templates at the end of its run,
-# and menu_misc.cpp supplies StartReadWepMDS's file names, EnterWeaponModel's name and texture lists,
-# WeaponModelBuildFunc's texture list, SetNowCharaMotionNo's motion speeds, MenuCharaMDSBuild2's
-# texture list, positions and scales, BtMenuLoad2's texture list and DngEscapeMsgInit's templates
-# inside its own run.
-# menu_dungeon.cpp supplies the former part6g 0x2941C0-0x2941E0 template.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part6.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part4.s)
-# itemdata.cpp supplies the texture lists TEIGIImgLoad builds, between the
-# command tables and the weapon definitions the unit already owns.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part5.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part3.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part2.s)
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.rdata.part7.s)
-carve_part(main.rdata.part5.s
-           main.rdata.part5.s=2A13C0-2A1490)
-
-# These residual ranges are now fully owned by their decompiled translation
-# units. Keep the retail dumps intact as toolchain inputs, but do not assemble
-# them into the reconstructed executable.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${ASM_DATA_DIR}/title/data.data.s
-     ${ASM_DATA_DIR}/title/bss.bss.s
-     ${PARTS_DIR}/main.bss.part2b.s
-     ${PARTS_DIR}/main.sbss.part1.s
-     ${PARTS_DIR}/main.sbss.part1b.s
-     ${PARTS_DIR}/main.sbss.part2.s
-     ${PARTS_DIR}/main.sbss.part6.s
-     ${PARTS_DIR}/main.sbss.part7.s
-     ${PARTS_DIR}/main.sbss.part8.s
-     ${PARTS_DIR}/main.sbss.part9.s)
-
-# visualvu1.cpp and visualshadow.cpp now emit the four Visual vtables at
-# 0x2A1168-0x2A11E0, the last of main.rdata.part4.s.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.rdata.part4.s)
-
-# water.cpp now emits CVisualPolyVu1's vtable, all of main.rdata.part6.s.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.rdata.part6.s)
-
-# fish.cpp now owns the complete fish data run at 0x296050-0x2965C0.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.data.part7.s)
-
-# actionseq.cpp now owns the complete data run at 0x2540B0-0x2540C0.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.data.part2b.s)
-
-# gameutil.cpp now owns the complete small-data run at 0x2A25A0-0x2A25A4.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.sbss.part4.s)
-
-# langset.cpp now emits LangsetInit's texture table, all of main.data.part7b.s.
-list(REMOVE_ITEM STATIC_SECTION_SOURCES
-     ${PARTS_DIR}/main.data.part7b.s)
-
-list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part1.s)
-
-list(APPEND ASM_SOURCES ${CARVED_PART_SOURCES})
-list(APPEND ASM_SOURCES ${CARVED_DUMP_SOURCES})
-list(APPEND ASM_SOURCES ${STATIC_SECTION_SOURCES})
 
 file(GLOB_RECURSE ALL_CPP_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR}
@@ -291,7 +116,7 @@ foreach(row IN LISTS unit_rows)
     endif()
 endforeach()
 
-# Typed data carved from residual section dumps.
+# Hand-written assembly: crt0, the literal pool and the linker-script symbols.
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/handwritten/*.s)
 
@@ -320,12 +145,6 @@ endforeach()
 
 # Data fragments and handwritten definitions follow address-ordered objects.
 set(MAIN_TAIL "")
-foreach(src IN LISTS STATIC_SECTION_SOURCES)
-    list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
-endforeach()
-foreach(src IN LISTS CARVED_PART_SOURCES)
-    list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
-endforeach()
 foreach(src IN LISTS EXTRA_ASM_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
@@ -397,7 +216,6 @@ add_custom_command(
     COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/layout.py
             --link-order ${BUILD_DIR} --provenance ${PROVENANCE}
             --build-dir ${BUILD_DIR} --main-tail ${MAIN_TAIL}
-            --tail ${OVERLAY_TAIL}
             --carved ${REPLACED_SECTIONS} --lcf ${LD_TEMPLATE}
     DEPENDS ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE} ${CPP_SOURCES}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/layout.py

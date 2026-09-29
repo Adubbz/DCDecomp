@@ -29,8 +29,6 @@
 
 typedef MOTION_INFO tagMOTION_KEY;
 
-extern CSound CSnd;
-
 /* Spelled here rather than reached through a header because the image holds it only as an
    anonymous pooled constant, which is what a macro gives and a file-scope object does not. */
 #define PI 3.14159265358979323846
@@ -226,7 +224,6 @@ void DepthOfField(float *dist, int level, int alpha, int blur);
 
 extern sceVif1Packet *Vif1Packet;
 extern sceGifTag GiftagAD;
-extern u_int *read_buffer;
 extern CCharacter Chara[23];
 extern CCharacter Cam[3];
 extern char CharaTex[23];

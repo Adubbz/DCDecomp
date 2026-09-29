@@ -796,12 +796,12 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
         sprintf(config_name, "info.cfg");
     else
         sprintf(config_name, "%s.cfg", name);
-    villager->chara.LoadPackData2(pack, config_name, arena, texture_set, arena, 0);
-    if (villager->chara.frame != NULL) {
+    villager->LoadPackData2(pack, config_name, arena, texture_set, arena, 0);
+    if (villager->frame != NULL) {
         CFrameAttr attr;
         attr.unk_08 = 0;
         attr.fog_enable = 1;
-        villager->chara.frame->SetAttr(attr, 1, 4);
+        villager->frame->SetAttr(attr, 1, 4);
     }
     villager->initialized = 1;
     villager->alpha_step = 8;
@@ -809,14 +809,14 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
         villager->initialized = 1;
         villager->draw_enabled = 1;
         villager->event_status = 0;
-        villager->chara.ambient_offset[3] = 128.0f;
+        villager->ambient_offset[3] = 128.0f;
         sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};
         sceVu0FVECTOR no_rotation = {0.0f, 0.0f, 0.0f, 0.0f};
-        villager->chara.SetPosition(origin);
-        villager->chara.SetRotation(no_rotation);
-        villager->chara.motion_no = 0;
-        villager->chara.flags = 0;
-        villager->chara.motion_speed = -1.0f;
+        villager->SetPosition(origin);
+        villager->SetRotation(no_rotation);
+        villager->motion_no = 0;
+        villager->flags = 0;
+        villager->motion_speed = -1.0f;
     }
     villager->unk_148C = texture_set;
     return 1;
@@ -890,8 +890,8 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
                 villagers[i].ClearSeq();
                 villagers[i].event_status = 0;
                 villagers[i].villager_id = entry->index;
-                villagers[i].chara.SetPosition(position);
-                villagers[i].chara.SetRotation(rotation[0], rotation[1], rotation[2]);
+                villagers[i].SetPosition(position);
+                villagers[i].SetRotation(rotation[0], rotation[1], rotation[2]);
                 villagers[i].draw_enabled = draw;
             }
         }
@@ -1025,10 +1025,10 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
             character->ClearSeq();
             villagers[i].event_status = entry->initial_motion;
             villagers[i].villager_id = entry->index;
-            character->chara.SetPosition(position);
-            character->chara.SetRotation(rotation[0], rotation[1], rotation[2]);
+            character->SetPosition(position);
+            character->SetRotation(rotation[0], rotation[1], rotation[2]);
             villagers[i].draw_enabled = draw;
-            villagers[i].chara.SetMotion(0, 0);
+            villagers[i].SetMotion(0, 0);
         }
     }
     srand(random_state);
@@ -1051,7 +1051,7 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
         distances[i] = -1.0f;
         if (villagers[i].near_camera != 0) {
             villagers[i].near_camera = 0;
-            villagers[i].chara.GetPosition(villager_position);
+            villagers[i].GetPosition(villager_position);
             sceVu0SubVector(camera_offset, villager_position, camera_position);
             if (sceVu0InnerProduct(camera_offset, camera_direction) > 0.0f)
                 distances[i] = DistVector(player_position, villager_position);
@@ -1123,21 +1123,21 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             sceVu0CopyVector(rotation, info->rotation);
         }
         if (info->initial_motion == 0) {
-            ((CCharacter *) ((char *) &EdVillager->chara + offset))->CCharacter::SetPosition(position);
-            ((CCharacter *) ((char *) &EdVillager->chara + offset))->CCharacter::SetRotation(rotation[0], rotation[1], rotation[2]);
+            ((CCharacter *) ((char *) EdVillager + offset))->CCharacter::SetPosition(position);
+            ((CCharacter *) ((char *) EdVillager + offset))->CCharacter::SetRotation(rotation[0], rotation[1], rotation[2]);
         } else {
             sceVu0FVECTOR player_position;
             sceVu0FVECTOR villager_position;
             player->GetPosition(player_position);
             CNPCharacter *npc = (CNPCharacter *) ((char *) EdVillager + offset);
-            sceVu0CopyVector(villager_position, npc->chara.pos);
+            sceVu0CopyVector(villager_position, npc->pos);
             float distance = DistVector(player_position, villager_position);
             (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 1;
             if (distance < 20.0f) {
                 (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 0;
-                *(s32 *) ((char *) &EdVillager->chara.motion_no + offset) = 0;
-                *(s32 *) ((char *) &EdVillager->chara.flags + offset) = 0;
-                *(float *) ((char *) &EdVillager->chara.motion_speed + offset) = -1.0f;
+                *(s32 *) ((char *) &EdVillager->motion_no + offset) = 0;
+                *(s32 *) ((char *) &EdVillager->flags + offset) = 0;
+                *(float *) ((char *) &EdVillager->motion_speed + offset) = -1.0f;
             }
             EdSetVillagerNextPos(npc, info, ground);
         }
@@ -1158,16 +1158,16 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
     for (i = 0; i < 10; i++) {
         EdVillager[i].Step();
         EdVillager[i].ShadowStep();
-        EdVillager[i].chara.ClothStep(0);
+        EdVillager[i].ClothStep(0);
         if (EdVillager[i].event_status != 0) {
             sceVu0FVECTOR position;
             sceVu0FVECTOR hit;
-            sceVu0CopyVector(position, EdVillager[i].chara.pos);
+            sceVu0CopyVector(position, EdVillager[i].pos);
             float altitude = ground->GetAlt(position[0], position[1], position[2]);
-            EdVillager[i].chara.SetPosition(position[0], altitude, position[2]);
-            EdVillager[i].chara.FootSoundEnable(0);
+            EdVillager[i].SetPosition(position[0], altitude, position[2]);
+            EdVillager[i].FootSoundEnable(0);
             if (EdVillager[i].CheckDraw()) {
-                EdVillager[i].chara.FootSoundEnable(1);
+                EdVillager[i].FootSoundEnable(1);
                 WorkBuffer__2->used = 0;
                 CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
                 int count = ground->PickUpEditAreaPoly(polys, position[0], position[1], position[2]);
@@ -1190,11 +1190,11 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
                     position[1] += 30.0f;
                     if (GetFootPoly(position, 1000.0f, &poly, hit, polys, count, 0)) {
                         altitude = hit[1];
-                        EdVillager[i].chara.SetFootSoundID(poly.attr.foot_sound);
+                        EdVillager[i].SetFootSoundID(poly.attr.foot_sound);
                     }
                 }
                 position[1] = altitude;
-                EdVillager[i].chara.SetPosition(position);
+                EdVillager[i].SetPosition(position);
             }
         }
     }
@@ -1206,9 +1206,9 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
     for (i = 0; i < 10; i++) {
         if (EdVillager[i].villager_id >= 0) {
             EdVillager[i].near_camera = 0;
-            EdVillager[i].chara.SetPosition(villagers[i].position);
-            EdVillager[i].chara.SetRotation(villagers[i].rotation);
-            if (EdVillager[i].chara.frame != NULL)
+            EdVillager[i].SetPosition(villagers[i].position);
+            EdVillager[i].SetRotation(villagers[i].rotation);
+            if (EdVillager[i].frame != NULL)
                 EdVillager[i].near_camera = 1;
         }
     }
@@ -1228,7 +1228,7 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
             EdVillager[i].near_camera = 1;
         EdVillager[i].Step();
         EdVillager[i].ShadowStep();
-        EdVillager[i].chara.ClothStep(0);
+        EdVillager[i].ClothStep(0);
     }
 }
 
@@ -1250,8 +1250,8 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info,
     };
     int weights[5];
     int i;
-    villager->chara.GetPosition(position);
-    villager->chara.GetRotation(rotation);
+    villager->GetPosition(position);
+    villager->GetRotation(rotation);
 
     int nearby_count = 0;
     for (i = 0; i < 10; i++) {
@@ -1259,7 +1259,7 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info,
         if (villager != other) {
             int active = other->initialized != 0 && other->draw_enabled != 0;
             if (active && other->event_status != 0) {
-                other->chara.GetPosition(nearby_positions[nearby_count]);
+                other->GetPosition(nearby_positions[nearby_count]);
                 sceVu0SubVector(nearby_offsets[nearby_count],
                                 nearby_positions[nearby_count], position);
                 float distance = DistVector(nearby_offsets[nearby_count]);
@@ -2236,7 +2236,6 @@ struct ED_EVENT_EXTERNAL_FUNCTION {
     int operation;                        /**< Bytecode operation number assigned to the function. */
 };
 
-extern int EdPauseFlag;
 extern s32 MenuMapJumpMode;
 void EdDrawOffAll();
 void EdDrawOnAll();
@@ -2613,7 +2612,7 @@ static CCharacter *GetChara(int index) {
         return EdEventInfo.main_character;
     if (index < 0 || index >= EdEventInfo.npc_count)
         return NULL;
-    return &EdEventInfo.npcs[index].chara;
+    return &EdEventInfo.npcs[index];
 }
 
 static CFrame *GetItemFrame(int index) {
@@ -3041,20 +3040,20 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int) {
         return 0;
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
-    npc->chara.LoadPackData2(pack, name, first, EdEventInfo.npc_texture_block + index, second, 0);
+    npc->LoadPackData2(pack, name, first, EdEventInfo.npc_texture_block + index, second, 0);
     npc->unk_148C = EdEventInfo.npc_texture_block + index;
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->near_camera = 1;
-    npc->chara.ambient_offset[3] = 128.0f;
+    npc->ambient_offset[3] = 128.0f;
     CFrameAttr attr;
     attr.unk_08 = 0;
     attr.fog_enable = 1;
     EdEventInfo.npc_draw[index] = 1;
     EdEventInfo.npc_shadow_draw[index] = 1;
-    npc->chara.SetMotionCamera(EdEventInfo.camera);
-    if (npc->chara.frame != NULL)
-        npc->chara.frame->SetAttr(attr, 1, 4);
+    npc->SetMotionCamera(EdEventInfo.camera);
+    if (npc->frame != NULL)
+        npc->frame->SetAttr(attr, 1, 4);
     PrintMemory();
     return 1;
 }
@@ -3066,7 +3065,7 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     CNPCharacter *npc = GetNPC(index);
     if (npc == NULL)
         return 0;
-    if (npc->chara.images[0] != NULL)
+    if (npc->images[0] != NULL)
         return 1;
     int block = EdEventInfo.npc_texture_block + index;
     int i;
@@ -3196,7 +3195,7 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->event_status = 1;
-    npc->chara.ambient_offset[3] = 128.0f;
+    npc->ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
     if (argument_count > 3) {
@@ -3207,9 +3206,9 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
-    npc->chara.SetPosition(position);
-    npc->chara.SetRotation(rotation);
-    npc->chara.SetMotion(0, 0);
+    npc->SetPosition(position);
+    npc->SetRotation(rotation);
+    npc->SetMotion(0, 0);
     return 1;
 }
 
@@ -3239,7 +3238,7 @@ static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->initialized = 1;
     npc->draw_enabled = 1;
     npc->event_status = 0;
-    npc->chara.ambient_offset[3] = 128.0f;
+    npc->ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
     if (argument_count > 3) {
@@ -3250,9 +3249,9 @@ static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
-    npc->chara.SetPosition(position);
-    npc->chara.SetRotation(rotation);
-    npc->chara.SetMotion(0, 0);
+    npc->SetPosition(position);
+    npc->SetRotation(rotation);
+    npc->SetMotion(0, 0);
     return 1;
 }
 
@@ -3304,7 +3303,7 @@ static int _DELETE_CHARA(RS_STACKDATA *stack, int) {
     if (npc == NULL)
         return 0;
     TexManager.DeleteTextureBlock(npc->unk_148C);
-    npc->chara.Initialize();
+    npc->Initialize();
     EdEventInfo.npc_draw[index] = 0;
     EdEventInfo.npc_shadow_draw[index] = 0;
     return 1;
@@ -3314,7 +3313,7 @@ static int _INIT_CHARA(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < argument_count; i++) {
         CNPCharacter *npc = GetNPC(GetStackInt(stack++));
         if (npc != NULL)
-            npc->chara.Initialize();
+            npc->Initialize();
     }
     return 1;
 }
@@ -3377,7 +3376,7 @@ static int _SYNC_SCENE_CHARA(RS_STACKDATA *stack, int) {
     int index = GetStackInt(stack);
     CCharacter *character = EdEventInfo.main_character;
     if (index >= 0)
-        character = &GetNPC(index)->chara;
+        character = GetNPC(index);
     if (character == NULL)
         return 0;
     if (scene->frame == NULL)
@@ -3408,7 +3407,7 @@ static int _RELEASE_SCENE_CHARA(RS_STACKDATA *stack, int) {
     int index = GetStackInt(stack);
     CCharacter *character = EdEventInfo.main_character;
     if (index >= 0)
-        character = &GetNPC(index)->chara;
+        character = GetNPC(index);
     if (character == NULL)
         return 0;
     if (character->frame != NULL)
@@ -3621,7 +3620,7 @@ static int _GET_NPC_TALK_POS(RS_STACKDATA *stack, int argument_count) {
         return _GET_CHARA_TALK_POS(result, argument_count - 1);
     if (index < 0 || index >= EdEventInfo.npc_count)
         return 0;
-    GetScrPosFromChar(&EdEventInfo.npcs[index].chara, position);
+    GetScrPosFromChar(&EdEventInfo.npcs[index], position);
     SetStack(result++, position[0]);
     SetStack(result, position[1]);
     return 1;
@@ -3769,7 +3768,7 @@ static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
     if (index == -1)
         character = EdEventInfo.main_character;
     else
-        character = &GetNPC(index)->chara;
+        character = GetNPC(index);
     if (character == NULL)
         return 0;
     int motion = GetStackInt(stack++);
@@ -3791,7 +3790,7 @@ static int _SET_NPC_ANIME(RS_STACKDATA *stack, int argument_count) {
     if (index == -1)
         character = EdEventInfo.main_character;
     else
-        character = &GetNPC(index)->chara;
+        character = GetNPC(index);
     if (character == NULL)
         return 0;
     int animation = GetStackInt(stack++);
@@ -3812,7 +3811,7 @@ static int _TURN_NPC(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     if (index == -1)
         return _TURN_CHARA(stack, argument_count - 1);
-    CCharacter *character = &GetNPC(index)->chara;
+    CCharacter *character = GetNPC(index);
     if (character == NULL)
         return 0;
     GetPosition(stack, position);
@@ -3927,7 +3926,7 @@ static int _INIT_NPC_CLOTH(RS_STACKDATA *stack, int) {
     if (index == -1)
         character = EdEventInfo.main_character;
     else
-        character = &GetNPC(index)->chara;
+        character = GetNPC(index);
     if (character == NULL)
         return 0;
     character->ClothStep(-1);
@@ -4127,8 +4126,8 @@ int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
     if (argument_count == 3) {
         int first_index = GetStackInt(stack++);
         int second_index = GetStackInt(stack);
-        CCharacter *speaker = first_index == -1 ? EdEventInfo.main_character : &GetNPC(first_index)->chara;
-        CCharacter *listener = second_index == -1 ? EdEventInfo.main_character : &GetNPC(second_index)->chara;
+        CCharacter *speaker = first_index == -1 ? EdEventInfo.main_character : GetNPC(first_index);
+        CCharacter *listener = second_index == -1 ? EdEventInfo.main_character : GetNPC(second_index);
         message->AutoSetSub(speaker, listener, talk_position);
         message->AutoSet(talk_position);
         return 1;
@@ -4597,7 +4596,7 @@ static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int) {
     sceVu0FVECTOR npc_position;
     sceVu0FVECTOR direction;
     EdEventInfo.main_character->GetPosition(player_position);
-    EdEventInfo.npcs[EdEventInfo.talk_npc_id].chara.GetPosition(npc_position);
+    EdEventInfo.npcs[EdEventInfo.talk_npc_id].GetPosition(npc_position);
     if (EdEventInfo.npcs[EdEventInfo.talk_npc_id].event_status == 0)
         view = 0;
     sceVu0SubVector(direction, npc_position, player_position);
@@ -4761,7 +4760,7 @@ static int _SET_FOLLOW_CAMERA(RS_STACKDATA *stack, int) {
         if (index == -1)
             follow_chara = EdEventInfo.main_character;
         else
-            follow_chara = &GetNPC(index)->chara;
+            follow_chara = GetNPC(index);
         if (follow_chara != NULL)
             follow_chara->GetPosition(position[1]);
     } else {
@@ -5426,7 +5425,7 @@ int _ASQ_SYNC_CHARA(RS_STACKDATA *stack, int) {
     CActionSeq *sequence = GetActSeq(sequence_index);
     if (sequence == NULL)
         return 0;
-    CCharacter *character = &GetNPC(character_index)->chara;
+    CCharacter *character = GetNPC(character_index);
     if (character_index == -1)
         character = EdEventInfo.main_character;
     if (character == NULL)
@@ -6740,8 +6739,8 @@ int EdInitEventParam() {
     if (EdEventInfo.main_texture_animation == NULL)
         EdEventInfo.main_character->InitializeTexAnime(anime_data, 320);
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
-        EdEventInfo.npcs[i].chara.Initialize();
-        EdEventInfo.npcs[i].chara.InitializeTexAnime(anime_data, 320);
+        EdEventInfo.npcs[i].Initialize();
+        EdEventInfo.npcs[i].InitializeTexAnime(anime_data, 320);
         TexManager.DeleteTextureBlock(EdEventInfo.npc_texture_block + i);
     }
     if (EdEventInfo.main_character != NULL)
@@ -6897,8 +6896,8 @@ int EdEventAllClear() {
         if (walker != NULL) {
             if (walker->unk_148C >= 54)
                 TexManager.DeleteTextureBlock(walker->unk_148C);
-            walker->chara.Initialize();
-            walker->chara.InitializeTexAnime(NULL, 0);
+            walker->Initialize();
+            walker->InitializeTexAnime(NULL, 0);
         }
     }
     EdEventInfo.main_character->SetMotionCamera(EdEventInfo.camera);
@@ -6983,7 +6982,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
             if (select_chara == -1) {
                 EdDMoveChara(EdEventInfo.main_character, camera);
             } else {
-                EdDMoveChara(&EdEventInfo.npcs[select_chara].chara, camera);
+                EdDMoveChara(&EdEventInfo.npcs[select_chara], camera);
             }
             if (GamePad.Down(0x40) != 0) {
                 *collision = !*collision;
@@ -6993,7 +6992,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         EdDPrint(mode_name[mode]);
         chara = EdEventInfo.main_character;
         if (select_chara >= 0) {
-            chara = &EdEventInfo.npcs[select_chara].chara;
+            chara = &EdEventInfo.npcs[select_chara];
         }
         chara->GetPosition(chara_position);
         chara->GetRotation(chara_rotation);
@@ -7220,19 +7219,19 @@ int EdEventNPCStep() {
         EdEventInfo.main_character->ShadowStep();
     }
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
-        EdEventInfo.npcs[i].chara.unk_C98 = wind;
+        EdEventInfo.npcs[i].unk_C98 = wind;
         if (EdEventInfo.npc_stop[i] == 0) {
             ((CNPCharacter *) EdEventInfo.npcs)[i].sequence_enabled = 0;
-            EdEventInfo.npcs[i].chara.Step();
-            EdEventInfo.npcs[i].chara.ShadowStep();
+            EdEventInfo.npcs[i].Step();
+            EdEventInfo.npcs[i].ShadowStep();
         }
     }
     if (EdEventInfo.player_stop == 0)
         EdEventInfo.main_character->ClothStep(0);
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
-        EdEventInfo.npcs[i].chara.unk_C98 = wind;
+        EdEventInfo.npcs[i].unk_C98 = wind;
         if (EdEventInfo.npc_stop[i] == 0)
-            EdEventInfo.npcs[i].chara.ClothStep(0);
+            EdEventInfo.npcs[i].ClothStep(0);
     }
     return 1;
 }
@@ -7312,7 +7311,7 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
             continue;
         npcs[i].talk_target = 0;
         character->GetPosition(character_position);
-        npcs[i].chara.GetPosition(npc_position);
+        npcs[i].GetPosition(npc_position);
         float height = character_position[1] - npc_position[1];
         if (height < 0.0f)
             height = -height;
@@ -7323,13 +7322,13 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
         npc_position[1] = 0.0f;
         character_position[1] = 0.0f;
         float distance = DistVector(character_position, npc_position);
-        if (distance > 5.0f + 1.2f * npcs[i].chara.body_width)
+        if (distance > 5.0f + 1.2f * npcs[i].body_width)
             continue;
-        character->GetDir(npcs[i].chara, direction);
+        character->GetDir(npcs[i], direction);
         float character_angle = atan2f(direction[0], direction[2]);
-        npcs[i].chara.GetDir(*character, direction);
+        npcs[i].GetDir(*character, direction);
         float npc_angle = atan2f(direction[0], direction[2]);
-        npcs[i].chara.GetRotation(npc_rotation);
+        npcs[i].GetRotation(npc_rotation);
         int talk_direction = EdEventInfo.villagers[npcs[i].villager_id].talk_direction;
         if (AngleCmp(npc_angle, npc_rotation[1], 1.570796f) != 0 && talk_direction == 0 &&
             npcs[i].event_status == 0) {
@@ -7473,8 +7472,8 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     sceVu0FVECTOR direction;
     player->GetPosition(player_position);
     player->GetRotation(player_rotation);
-    villager->chara.GetPosition(villager_position);
-    villager->chara.GetRotation(villager_rotation);
+    villager->GetPosition(villager_position);
+    villager->GetRotation(villager_rotation);
     sceVu0SubVector(direction, villager_position, player_position);
     float player_yaw = atan2f(direction[0], direction[2]);
     float villager_yaw = atan2f(-direction[0], -direction[2]);
@@ -7482,7 +7481,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     player->SetRotation(player_rotation);
     villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.1f, 0);
     if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0)
-        villager->chara.SetRotation(villager_rotation);
+        villager->SetRotation(villager_rotation);
 
     sceVu0FVECTOR reference;
     sceVu0AddVector(reference, player_position, villager_position);
@@ -7530,7 +7529,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                     EdCloseTalkMes();
                     if (camera != NULL)
                         camera->FollowOn();
-                    villager->chara.SetMotion(0, 0);
+                    villager->SetMotion(0, 0);
                     GamePad.AutoRepeatOff();
                     GamePad.MenuModeOff();
                     return 1;
@@ -7541,7 +7540,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                     EditMes1.text_rate = 0.0f;
             }
             EditMes1.cursor_row = -1;
-            villager->chara.SetMotion(3, 0);
+            villager->SetMotion(3, 0);
             break;
         case 0:
             if (GamePad.Down(0x1000) != 0) {
@@ -7570,7 +7569,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                         EdCloseTalkMes();
                         if (camera != NULL)
                             camera->FollowOn();
-                        villager->chara.SetMotion(0, 0);
+                        villager->SetMotion(0, 0);
                         GamePad.AutoRepeatOff();
                         GamePad.MenuModeOff();
                         if (EdEventInfo.talk_select_prompt == 4) {
@@ -7606,11 +7605,11 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                 EdCloseTalkMes();
                 if (camera != NULL)
                     camera->FollowOn();
-                villager->chara.SetMotion(0, 0);
+                villager->SetMotion(0, 0);
                 return 1;
             }
             EditMes1.cursor_row = talk_select;
-            villager->chara.SetMotion(0, 0);
+            villager->SetMotion(0, 0);
             break;
     }
 
@@ -7620,12 +7619,12 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
             EditMes1.tail_on = 0;
             EditMes1.auto_pos = 8;
         }
-        EditMes1.AutoSetSub(player, &villager->chara, talk_position);
+        EditMes1.AutoSetSub(player, villager, talk_position);
         EditMes1.AutoSet(talk_position);
     } else {
         EditMes1.tail_on = 1;
         EditMes1.auto_pos = 0;
-        EditMes1.AutoSetSub(&villager->chara, player, talk_position);
+        EditMes1.AutoSetSub(villager, player, talk_position);
         EditMes1.AutoSet(talk_position);
     }
 

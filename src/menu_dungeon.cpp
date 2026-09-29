@@ -81,15 +81,6 @@ CDngStatusData *DEnterStatusPt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
-/** Texture block the battle menu's extra textures load into. */
-extern int BtlMenuExReadBlock;
-
-/** Dungeon progress the battle menus show. */
-extern CDngStatusData *BtlMenuStatusPt;
-
-/** Buffer the battle menus read their files into. */
-extern u_long128 *BtlMenuReadBuf;
-
 /** State of the debug item menu. */
 extern ITEM_AUTO_GET ItemAutoGet;
 
@@ -2118,11 +2109,6 @@ void DebugItemGetDraw(void) {
         }
     }
 }
-
-/**
- * Submode the battle menu runs in.
- */
-extern s32 BtlMenuMode;
 
 /**
  * Debug text the dungeon menus print their item data into.

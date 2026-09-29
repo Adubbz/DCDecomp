@@ -51,9 +51,6 @@ s8 MenuTrushMark[100];
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
 
-/** Texture block the item menu's weapon icons load into. */
-extern int ItemMenuWeaponIconReadBlock;
-
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
 
@@ -63,7 +60,6 @@ extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern u8 MesWinTexBuff_11[0x100];
 extern u8 MesWinTexBuff_12[0x100];
-extern int MenuShadowReadBlock;
 extern int asort_top_type;
 
 /**
@@ -1153,9 +1149,6 @@ int PersonalBoardKeySub() {
     int *cursor = &PerBoardPt->cursor;
     int max = PersonalRetMax(page);
 
-
-
-
     if (GamePad.Down(0x1000) != 0) {
         switch (PerBoardPt->cursor_area) {
             case 1:
@@ -2085,7 +2078,6 @@ int GetBoardSpace(int item_no, int *page) {
             int i;
             DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
             for (i = 0; i < max; i++) {
-
 
                 if (items[i].id < 0x51) {
                     space = i;

@@ -77,12 +77,6 @@ STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
 
-/** Model the menus draw a character with; the shopkeeper while a shop is open. */
-extern CCharacter MenuCharaFrame;
-
-/** Texture the personal board's frame, tags and arrows are drawn from. */
-extern CTexture *PerBoardTex;
-
 /** Arena the editor's menus are read into. */
 extern CDataAlloc2<1> EdMenuBuffer;
 

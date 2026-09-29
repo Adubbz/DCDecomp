@@ -7,8 +7,6 @@
 #include "dataread.hpp"
 #include "mathutil.hpp"
 
-extern u_int *read_buffer;
-
 FishInfo fish_info[18] = {
     {17.0f, 10.0f, 20.0f, 20, 50, {1.0f, 0.0f, 0.0f, 0.2f, 0.2f, 0.2f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}},
     {19.5f, 8.0f, 16.0f, 10, 30, {0.0f, 0.5f, 0.5f, 0.2f, 0.2f, 0.2f, 0.0f, 0.2f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f}},

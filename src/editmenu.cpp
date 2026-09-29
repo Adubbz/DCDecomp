@@ -27,8 +27,6 @@
 
 extern "C" int abs(int);
 
-extern CDataAlloc2<1> EdMenuBuffer;
-
 float MenuIconPos[6][2];
 EDIT_MENU_CURSOR EdCur;
 float AnalyzeFill[3];

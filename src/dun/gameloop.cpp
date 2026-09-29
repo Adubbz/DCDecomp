@@ -176,18 +176,6 @@ extern "C" BT_ENEMY_FLOOR *BtEnemyLayoutList[7];
 /* The same for the back dungeon. */
 extern "C" BT_ENEMY_FLOOR *BtUraEnemyLayoutList[7];
 
-/* One texture animation for every monster the game knows. */
-extern "C" CTexAnimeData MonsterTexAnim[320];
-
-/* The buffer the game keeps every loaded motion in; main owns it. */
-extern "C" CDataAlloc2<1> MotionData;
-
-/* The texture manager the dungeon loads its textures through. */
-extern "C" CTextureManager TexManager;
-
-/* The buffer a pack file is read into. */
-extern "C" unsigned int *read_buffer;
-
 /* The weapon each character starts with. */
 s32 defWeapon__6[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 
@@ -212,22 +200,6 @@ static inline float CharaHeight(CUserStatus *status) {
 /* Which character the mini character menu has the cursor on. */
 extern "C" s32 BtMiniChrSelectNo;
 
-/* The colour that a status ailment tints the player's model with. */
-extern "C" float StatusColor[3];
-
-/* What the debug menu is doing to the player. */
-extern "C" s32 DebugStatus[21];
-
-/* The countdown that drains a running item. */
-extern "C" CMenuItemStep ItemVolumeStep;
-
-/* The object animations the floor plays, and how many it has. */
-extern "C" OBJ_ANIME_SEQ FrameObjAnim[48];
-extern "C" s32 FrameObjAnimCnt;
-
-/* The buffer the camera test builds its polygon list in. */
-extern "C" CDataAlloc2<1> *WorkBuffer__2;
-
 /* The VU1 program that the loading screen draws through. */
 extern "C" char Vu_prog0f[];
 
@@ -247,9 +219,6 @@ extern CCamera *NowCameraBase;
 
 /* How much faster a boost makes the player run. */
 extern "C" float run_speed__2;
-
-/* Whether the menu asked to leave the floor. */
-extern "C" s32 MenuMapJumpMode;
 
 /* Whether the message board draws over the picture. */
 extern "C" s32 MesAbsDrawOff;
@@ -485,9 +454,6 @@ int checkItemUsed(int slot);
  */
 int EdEventMode(CCameraFollow *camera, int unk);
 
-/* More buffers the dungeon loads its data into. */
-extern "C" CDataAlloc2<1> TextureData;
-
 /* The texture each message window builds itself in. */
 extern "C" u8 MesWinTexBuff_01[0x100];
 extern "C" u8 MesWinTexBuff_02[0x100];
@@ -505,12 +471,6 @@ extern "C" s32 gateItemFlag;
 /* Whether the dungeon message window has to be laid out again. */
 extern "C" s32 Mes1MakeFlg;
 extern "C" s32 Mes2MakeFlg;
-
-/* The register that names where the depth buffer lives. */
-extern "C" sceGsZbuf mgZBuffer;
-
-/* The register that names how the renderer blends what it draws. */
-extern "C" sceGsAlpha mgAlpha;
 
 /**
  * @mangled LoadData__Fv__3
@@ -1438,7 +1398,6 @@ s32 defCameraWait;
 s32 MonstorNameOff;
 
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", _dun_text_start);
-
 
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
@@ -2435,11 +2394,11 @@ void MainDraw(void) {
         for (i = 0; i < 6; i++) {
             if (EdEventInfo.npc_draw[i] != 0) {
                 TexManager.ReloadTexture(Vif1Packet, i + 0x20);
-                NPCUnit[i].chara.TextureAnime(NPCUnit[i].unk_148C);
+                NPCUnit[i].TextureAnime(NPCUnit[i].unk_148C);
                 NPCUnit[i].Draw();
 
                 if (i == BtEventInfo.unk_94) {
-                    DrawBee(NPCUnit[BtEventInfo.unk_94].chara.frame, 0xF);
+                    DrawBee(NPCUnit[BtEventInfo.unk_94].frame, 0xF);
                 }
             }
         }

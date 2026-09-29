@@ -226,17 +226,14 @@ void SndAmbientStop();
 void SndStep();
 void SndSePlay(int se, float *position, float near_dist, float far_dist);
 
-extern u_int *read_buffer;
 extern u_int Vu_prog0f[];
 void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect,
                    int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
 
 extern sceGifTag GiftagAD;
 extern sceVif1Packet *Vif1Packet;
-extern CGamePad GamePad;
 extern OBJ_ANIME_SEQ OP_AnimeSeq[32];
 extern int OP_AnimeSeqRot;
-extern CTextureManager TexManager;
 extern CCharacter Chara[23];
 extern CMapObject OP_NornMapObj[76];
 extern int OP_FireList;
@@ -252,7 +249,6 @@ extern sceVu0FMATRIX lightcolor;
 extern sceVu0FVECTOR ambientlight;
 extern sceGsAlpha mgAlpha;
 extern CDataAlloc2<1> MapDataBuffer;
-extern CDataAlloc2<1> TextureData;
 
 CCameraFollow MainCamera(
     20.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f,
