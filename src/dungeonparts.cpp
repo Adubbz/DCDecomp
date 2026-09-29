@@ -112,7 +112,6 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
     *item0 = list[1].item[0][pick0];
     *item1 = list[1].item[1][pick1];
 }
-#ifdef NON_MATCHING
 /**
  * The items a treasure box can hold on one floor.
  */
@@ -130,16 +129,18 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     int candidate[144];
     s16 rate[400];
     ITEM_PUT_SET *list = ItemPutListPtr[dungeon + kind * 7];
-    int j;
     int held;
     int count;
     int item_no;
     float roll;
+    int k;
     int wanted;
     int i;
     s16 *table;
     int tries;
     int pick;
+    int n;
+    int chance;
 
     // Retail copies from the pointer table itself rather than from the dungeon's rate list.
     memcpy(rate, &ItemSetRateTbl[dungeon], 0x17C);
@@ -158,13 +159,14 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             }
         }
     }
-    int k = 0;
+    k = 0;
     wanted = -1;
     for (;; k++) {
-        if (list[k].floor == -1) {
+        item_no = list[k].floor;
+        if (item_no == -1) {
             break;
         }
-        if (floor + 1 == list[k].floor) {
+        if (floor + 1 == item_no) {
             wanted = floor + 1;
         }
     }
@@ -175,7 +177,7 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             wanted = 0xFF;
         }
     }
-    int n = 0;
+    n = 0;
     do {
         if (wanted == list[n].floor) {
             break;
@@ -187,7 +189,7 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
         }
     } while (1);
     if (small != 0) {
-        j = 0;
+        int j = 0;
         count = 0;
         for (; list[n].item[j] != -1; j++) {
             item_no = list[n].item[j];
@@ -206,20 +208,23 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             if (pick < 0 || pick >= count) {
                 pick = 0;
             }
-            int chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
             item_no = candidate[pick];
             if (table[item_no - 1] < chance) {
-                goto picked;
+                break;
             }
             tries++;
-        } while (tries < 0xFFFF);
-        item_no = -1;
-    picked:
+            if (tries >= 0xFFFF) {
+                item_no = -1;
+                break;
+            }
+        } while (1);
         return item_no;
     }
     if (small == 0) {
+        int j = 0;
         count = 0;
-        for (j = 0; list[n].item[j] != -1; j++) {
+        for (; list[n].item[j] != -1; j++) {
             item_no = list[n].item[j];
             if (item_no >= 0x101) {
                 candidate[count++] = item_no;
@@ -239,21 +244,20 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
             if (pick < 0 || pick >= count) {
                 pick = 0;
             }
-            int chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+            chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
             item_no = candidate[pick];
             if (table[item_no - 1] < chance) {
-                goto chosen;
+                break;
             }
             tries++;
-        } while (tries < 0xFFFF);
-        item_no = -1;
-    chosen:
+            if (tries >= 0xFFFF) {
+                item_no = -1;
+                break;
+            }
+        } while (1);
         return item_no;
     }
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/dungeonparts", PresetSmallItemNo_Get__Fiiii);
-#endif
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @646__2);
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
 

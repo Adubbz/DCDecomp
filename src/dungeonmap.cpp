@@ -556,6 +556,27 @@ void CDungeonMap::DrawDummyModel(CCamera *camera) {
 
 #ifdef NON_MATCHING
 void CDungeonMap::DrawMiniMap(float *pos, float angle) {
+    int status;
+    unsigned char red;
+    int saved_map;
+    int saved_crystal;
+    unsigned char green;
+    unsigned char blue;
+    int row;
+    int col;
+    int direction;
+    int map_x;
+    int map_y;
+    int visible;
+    int show;
+    int i;
+    float player_screen_x;
+    CTexture *map_texture;
+    CTexture *symbol_texture;
+    unsigned char alpha;
+    int masked;
+    int cell_no;
+    int cell;
     CRect_i_ map_dst;
     CRect_i_ map_src;
     CRect_i_ player_dst;
@@ -566,22 +587,6 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     CRect_i_ box_src;
     CRect_i_ atra_dst;
     CRect_i_ atra_src;
-    int status;
-    unsigned char red;
-    int saved_map;
-    int saved_crystal;
-    unsigned char green;
-    unsigned char blue;
-    int row;
-    int col;
-    int cell_no;
-    int direction;
-    int map_x;
-    int map_y;
-    int visible;
-    int show;
-    int i;
-    float player_screen_x;
     status = UserStatus->minimap_status;
     if (status == 3) {
         return;
@@ -602,14 +607,13 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     }
 
     visible = BtEquipMap ? 0 : 1;
-    CTexture *map_texture = TexManager.GetTexture("minimap1", -1);
-    CTexture *symbol_texture = TexManager.GetTexture("itempack", -1);
+    map_texture = TexManager.GetTexture("minimap1", -1);
+    symbol_texture = TexManager.GetTexture("itempack", -1);
 
     for (row = 0; row < 20; row++) {
         for (col = 0; col < 20; col++) {
             cell_no = col + row * 20;
-            unsigned char alpha;
-            int masked = this->mask[cell_no];
+            masked = this->mask[cell_no];
             show = masked;
             if (visible == 0 && masked == 0) {
                 show = 1;
@@ -640,11 +644,11 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
     player_src.y = 96;
     player_src.width = 12;
     player_src.height = 12;
-    map_y = (int) (pos[2] + 64.0f + 8.0f);
+    map_x = (int) (pos[2] + 64.0f + 8.0f);
     player_screen_x = pos[0] + 380.0f + 8.0f;
-    map_x = (int) player_screen_x;
+    map_y = (int) player_screen_x;
     player_dst.x = (int) player_screen_x;
-    player_dst.y = map_y;
+    player_dst.y = map_x;
     player_dst.width = 12;
     player_dst.height = 12;
     set2DSprite(Vif1Packet, symbol_texture, player_dst, player_src, 7, 7, angle);
@@ -654,12 +658,12 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
             continue;
         map_x = (int) (this->trap_circle[i].pos[0] * 0.1f);
         map_y = (int) (this->trap_circle[i].pos[2] * 0.1f);
-        cell_no = (int) ((80.0f + this->trap_circle[i].pos[0]) / 160.0f) +
+        cell = (int) ((80.0f + this->trap_circle[i].pos[0]) / 160.0f) +
                   (int) ((80.0f + this->trap_circle[i].pos[2]) / 160.0f) * 20;
-        show = this->mask[cell_no];
+        show = this->mask[cell];
         if (BtEquipMasuisyou == 1)
             show = 1;
-        if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && show == 1) {
+        if (this->cells[cell].parts_no != MAP_PARTS_NONE && show == 1) {
             trap_src.x = 88;
             trap_src.y = 112;
             trap_src.width = 8;
@@ -677,12 +681,12 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
             continue;
         map_x = (int) (this->boxes[i].pos[0] * 0.1f);
         map_y = (int) (this->boxes[i].pos[2] * 0.1f);
-        cell_no = (int) ((80.0f + this->boxes[i].pos[0]) / 160.0f) +
+        cell = (int) ((80.0f + this->boxes[i].pos[0]) / 160.0f) +
                   (int) ((80.0f + this->boxes[i].pos[2]) / 160.0f) * 20;
-        show = this->mask[cell_no];
+        show = this->mask[cell];
         if (BtEquipMasuisyou == 1)
             show = 1;
-        if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && show == 1) {
+        if (this->cells[cell].parts_no != MAP_PARTS_NONE && show == 1) {
             box_src.x = 80;
             box_src.y = 96;
             box_src.width = 8;
@@ -700,12 +704,12 @@ void CDungeonMap::DrawMiniMap(float *pos, float angle) {
             continue;
         map_x = (int) (this->atra[i].pos[0] * 0.1f);
         map_y = (int) (this->atra[i].pos[2] * 0.1f);
-        cell_no = (int) ((80.0f + this->atra[i].pos[0]) / 160.0f) +
+        cell = (int) ((80.0f + this->atra[i].pos[0]) / 160.0f) +
                   (int) ((80.0f + this->atra[i].pos[2]) / 160.0f) * 20;
-        show = this->mask[cell_no];
+        show = this->mask[cell];
         if (BtEquipMasuisyou == 1)
             show = 1;
-        if (this->cells[cell_no].parts_no != MAP_PARTS_NONE && show == 1) {
+        if (this->cells[cell].parts_no != MAP_PARTS_NONE && show == 1) {
             atra_src.x = 72;
             atra_src.y = 104;
             atra_src.width = 8;

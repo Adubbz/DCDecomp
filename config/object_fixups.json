@@ -2098,6 +2098,18 @@
       "@1037",
       "@1039"
     ],
+    "drop_functions": [
+      "__dt__24MWPartialArrayDestructorFv"
+    ],
+    "sections": {
+      ".discard": [
+        "@EX@__construct_array",
+        "@ET@__construct_array",
+        "@EX@__dt__24MWPartialArrayDestructorFv",
+        "@EX@__construct_new_array",
+        "@ET@__construct_new_array"
+      ]
+    },
     "remove_sections": [
       ".exception",
       ".exceptix",

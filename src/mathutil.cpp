@@ -36,8 +36,6 @@ extern "C" __declspec(data) void (*thandler__3std)(void);
 extern "C" __declspec(data) void (*uhandler__3std)(void);
 extern "C" __declspec(data) MWGlobalDestructor *__global_destructor_chain;
 
-#ifdef NON_MATCHING // draft declarations
-#pragma exceptions on
 namespace std {
 /**
  * Base class of every exception the standard library throws.
@@ -91,17 +89,8 @@ public:
         }
     }
 };
-#endif
 
 INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @424);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @425);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
 
 /**
  * Runs a constructor over every element of an array.
@@ -110,10 +99,10 @@ INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
  * @address 0x1222D0
  * @size 0x12C
  */
-#ifdef NON_MATCHING
 #pragma schedule on
-#pragma optimization_level 4
-#pragma padloop on
+#pragma exceptions on
+#pragma optimize_for_size off
+#pragma alignlabel on
 void __construct_array(void *array, MWRuntimeObjectFunction constructor,
                        MWRuntimeObjectFunction destructor, unsigned int element_size,
                        unsigned int count) {
@@ -125,12 +114,10 @@ void __construct_array(void *array, MWRuntimeObjectFunction constructor,
         constructor(element, 1);
     }
 }
-#pragma padloop reset
-#pragma optimization_level reset
+#pragma alignlabel reset
+#pragma optimize_for_size reset
+#pragma exceptions reset
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
-#endif
 /**
  * Runs a constructor over every element of a newly allocated array.
  *
@@ -138,43 +125,37 @@ INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_array);
  * @address 0x122400
  * @size 0x14C
  */
-#ifdef NON_MATCHING
 #pragma schedule on
+#pragma exceptions on
+#pragma optimize_for_size off
+#pragma alignlabel on
 void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
                             MWRuntimeObjectFunction destructor, unsigned int element_size,
                             unsigned int count) {
-    if (allocation == NULL) {
-        return NULL;
-    }
+    char *array;
 
-    unsigned int *header = (unsigned int *) allocation;
-    header[0] = element_size;
-    header[1] = count;
-    unsigned char *array = (unsigned char *) allocation + 16;
-    if (constructor == NULL) {
-        return array;
-    }
+    if ((array = (char *) allocation) != NULL) {
+        unsigned int *header = (unsigned int *) array;
+        header[0] = element_size;
+        header[1] = count;
+        array += 16;
 
-    unsigned char *element = array;
-    unsigned int constructed = 0;
-    for (; constructed < count; ++constructed, element += element_size) {
-        constructor(element, 1);
-    }
+        if (constructor != NULL) {
+            MWPartialArrayDestructor partial(array, element_size, count, destructor);
+            char *element;
 
-    // The runtime reaches this cleanup path when construction is unwound.
-    if (constructed < count && destructor != NULL) {
-        element = array + constructed * element_size;
-        while (constructed-- != 0) {
-            element -= element_size;
-            destructor(element, -1);
+            for (partial.constructed = 0, element = array; partial.constructed < count;
+                 partial.constructed++, element += element_size) {
+                constructor(element, 1);
+            }
         }
     }
     return array;
 }
+#pragma alignlabel reset
+#pragma optimize_for_size reset
+#pragma exceptions reset
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __construct_new_array);
-#endif
 /**
  * Frees storage that `operator new` handed out.
  *
@@ -229,7 +210,10 @@ extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
  * @address 0x122610
  * @size 0x26C
  */
-#ifdef NON_MATCHING
+#pragma optimization_level 4
+#pragma optimize_for_size off
+#pragma padloop on
+#pragma alignlabel on
 #pragma schedule on
 extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type,
                                       long *pointer_adjustment) {
@@ -324,9 +308,10 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
     return false;
 }
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __throw_catch_compare);
-#endif
+#pragma alignlabel reset
+#pragma padloop reset
+#pragma optimize_for_size reset
+#pragma optimization_level reset
 /**
  * Calls the handler for an exception a function did not declare.
  *
@@ -487,6 +472,22 @@ extern "C" void __end__catch(MWCatchRecord *record) {
     }
 }
 #pragma schedule reset
+#pragma exceptions on
+/**
+ * Reports whether a thrown type matches any type an exception specification allows.
+ */
+static inline char __find_exception_spec(const char *type_info, MWExceptionSpecification *spec) {
+    long adjustment;
+    unsigned char *types = spec->types;
+    for (unsigned int i = 0; i < spec->count; i++) {
+        if (__throw_catch_compare(type_info, (const char *) (types[0] | (types[1] << 8) | (types[2] << 16) | (types[3] << 24)),
+                                  &adjustment)) {
+            return true;
+        }
+        types += 4;
+    }
+    return false;
+}
 /**
  * Raises an exception a function did not declare, through the unexpected handler.
  *
@@ -494,19 +495,40 @@ extern "C" void __end__catch(MWCatchRecord *record) {
  * @address 0x122B40
  * @size 0x1C0
  */
-#ifdef NON_MATCHING
 #pragma schedule on
 extern "C" void __unexpected(void *exception_record) {
-    // The retail unwinder first offers the exception to the unexpected handler,
-    // then terminates if that handler returns instead of throwing an allowed type.
-    unexpected__3stdFv();
+    char *encoded = (char *) ((MWCatchRecord *) exception_record)->stack_top;
+    MWExceptionSpecification spec;
+
+#pragma exception_magic
+    try {
+        unexpected__3stdFv();
+    } catch (...) {
+        spec.types = (unsigned char *) __DecodeSignedNumber(
+            __DecodeUnsignedNumber(__DecodeUnsignedNumber(encoded + 1, &spec.count), &spec.unk_04), &spec.unk_08);
+        // A new exception the specification allows propagates; otherwise it becomes a
+        // std::bad_exception if that is allowed.
+        if (__find_exception_spec(((MWCatchRecord *) &__exception_magic)->type_info, &spec)) {
+            throw;
+        }
+        if (__find_exception_spec("!std::bad_exception!!", &spec)) {
+            throw std::bad_exception();
+        }
+    }
     terminate__3stdFv();
-    (void) exception_record;
 }
 #pragma schedule reset
-#else
-INCLUDE_ASM("asm/nonmatchings/mathutil", __unexpected);
-#endif
+// MWCC generates a function at the next initialised data definition. This one emits
+// nothing, and makes __unexpected and its strings come out before the exception
+// setting changes and before the type information run below.
+static const int __unexpected_generated = 0;
+#pragma exceptions reset
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
+INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
 /**
  * Destroys a `std::bad_exception`.
  *

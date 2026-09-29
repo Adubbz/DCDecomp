@@ -28,6 +28,13 @@ extern "C" char *LanguageStr[1][2];
 extern "C" int gateKeyStack[32];
 
 #ifdef NON_MATCHING
+#include "camerafollow.hpp"
+#include "mglib.hpp"
+#include "rect.hpp"
+
+extern CCameraFollow *NowCamera__3;
+extern int VERSION_VOL;
+
 /**
  * Draws the dungeon debug overlay and its current menu selection.
  *
@@ -36,24 +43,141 @@ extern "C" int gateKeyStack[32];
  * @size 0xF70
  */
 void DebugInfomationDraw(void) {
-    if (DebugStatus[0] == 0) {
+    if (DebugStatus[0] != 1) {
+        if (DebugStatus[4] != 0) {
+            sceVu0FVECTOR pos;
+            sceVu0FVECTOR rot;
+            sceVu0FVECTOR cpos;
+            sceVu0FVECTOR cref;
+            float angle;
+            float dist;
+            float height;
+            int ix;
+            float lx;
+            int iz;
+            float lz;
+            float lcx;
+            float lcy;
+            float lcz;
+            float lrx;
+            float lry;
+            float y;
+            float lrz;
+            CDungeonEventData *data;
+            int num;
+
+            DbgMsg.len = sprintf(DbgMsg.text, " ---Infomation---\n");
+            sceVu0CopyVector(pos, CharaMain.pos);
+            CharaMain.GetRotation(rot);
+            NowCamera__3->GetPos(cpos);
+            NowCamera__3->GetRef(cref);
+            angle = NowCamera__3->GetAngle();
+            dist = NowCamera__3->GetDistance();
+            height = NowCamera__3->GetHeight();
+            ix = (int)((pos[0] - 80.0f) / 160.0f) * 160;
+            lx = pos[0] - ix - 160.0f;
+            y = pos[1];
+            iz = (int)((pos[2] - 80.0f) / 160.0f) * 160;
+            lz = pos[2] - iz - 160.0f;
+            lcx = cpos[0] - ix - 160.0f;
+            lcy = cpos[1];
+            lcz = cpos[2] - iz - 160.0f;
+            lrx = cref[0] - ix - 160.0f;
+            lry = cref[1];
+            lrz = cref[2] - iz - 160.0f;
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "gpos %.2f/ %.2f/ %.2f\n", pos[0], pos[1], pos[2]);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lpos %.2f/ %.2f/ %.2f\n", lx, y, lz);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "rot %.2f/ %.2f/ %.2f\n", rot[0], rot[1], rot[2]);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "CAM\n");
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "cpos %.2f/ %.2f/ %.2f\n", cpos[0], cpos[1], cpos[2]);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "cref %.2f/ %.2f/ %.2f\n", cref[0], cref[1], cref[2]);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lcpos %.2f/ %.2f/ %.2f\n", lcx, lcy, lcz);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "lcref %.2f/ %.2f/ %.2f\n", lrx, lry, lrz);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Angle = %.3f\n", angle);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Dist = %.3f\n", dist);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "Height = %.3f\n", height);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "RANDOM MAP CODE = %d\n", NowDngMap->map_seed);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "WeaponList Ver 2000/%d\n", VERSION_VOL);
+            data = NowEventMan->SearchDataSlotPos(pos);
+            if (data != NULL) {
+                data = (CDungeonEventData *)data;
+            }
+            num = NowEventMan->GetDataNum();
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "EventID = %d\n", num);
+            MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+            DbgMsg.Draw();
+        }
         return;
     }
-    DbgMsg.len = sprintf(DbgMsg.text, "DEBUG INFORMATION\n");
-    for (int i = 0; i < 15 && DebugInfoMsg[i] != NULL; i++) {
-        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], i == DebugInfoNowCursor ? ">>" : "  ");
-        int code = DebugInfoCode[i];
-        if (code == 10 || code == 20 || code == 30 || code == 50 || code == 70 || code == 110) {
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i],
-                                  DebugStatus[code / 10]);
-        } else if (code == 100) {
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[14],
-                                  DebugStatus[15]);
+    DbgMsg.len = sprintf(DbgMsg.text, "");
+    char *onoff[2] = {"OFF", "ON"};
+    char *mainsub[2] = {"MAIN", "SUB"};
+    char *chars[6] = {"RESET", "STONE", "BIN2", "POISON", "CURSE", "NEBA2"};
+    char *types[3] = {"HUMAN   ", "SUPERMAN", "ULTRAMAN"};
+    char buf[32];
+    for (int i = 0; DebugInfoMsg[i] != NULL; i++) {
+        if (DebugInfoNowCursor == i) {
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], ">>");
         } else {
-            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "%s", DebugInfoMsg[i]);
+            DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "  ");
         }
-        DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "\n");
+        switch (DebugInfoCode[i]) {
+            case 0:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i]);
+                break;
+            case 40:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[8]);
+                break;
+            case 41:
+                if (DebugStatus[9] == -1) {
+                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], "OFF");
+                } else {
+                    sprintf(buf, "%d", DebugStatus[9] + 1);
+                    DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], buf);
+                }
+                break;
+            case 70:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[10]]);
+                break;
+            case 20:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[5]]);
+                break;
+            case 50:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[4]]);
+                break;
+            case 30:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[6]]);
+                break;
+            case 10:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], onoff[DebugStatus[3]]);
+                break;
+            case 150:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], types[DebugStatus[20]]);
+                break;
+            case 100:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[14], DebugStatus[15]);
+                break;
+            case 80:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i]);
+                break;
+            case 110:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], mainsub[DebugStatus[16]]);
+                break;
+            case 90:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[11]);
+                break;
+            case 120:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], chars[DebugStatus[17]]);
+                break;
+            case 130:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[18]);
+                break;
+            case 140:
+                DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], DebugInfoMsg[i], DebugStatus[19]);
+                break;
+        }
     }
+    MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
     DbgMsg.Draw();
 }
 #else

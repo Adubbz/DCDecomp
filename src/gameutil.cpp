@@ -636,10 +636,11 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @address 0x1493A0
  * @size 0x318
  */
-#ifdef NON_MATCHING
 int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
                   tagFRAME_INF *frame_info) {
     CFrameVu1 *current;
+    u32 target;
+    CFrame *parent;
     Mot_List *list = motion->proc_list2;
     u32 last = -1;
     int i;
@@ -649,15 +650,17 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
         current = &((CFrameVu1 *) frame)[i];
         tagFRAME_INF *info = &frame_info[i];
         sceVu0CopyMatrix(info->matrix, current->local);
-        info->parent_frame = (CFrameVu1 *) current->parent - (CFrameVu1 *) frame;
+        parent = current->parent;
+        info->parent_frame = (CFrameVu1 *) parent - (CFrameVu1 *) frame;
     }
     for (; list != NULL; list = list->next) {
         if (list->type == 200) {
             continue;
         }
         // Retail searches for each parent's index and never uses it.
-        CFrame *parent = ((CFrameVu1 *) frame)[list->target].parent;
-        for (i = 0; i < list->target; i++) {
+        target = list->target;
+        parent = ((CFrameVu1 *) frame)[target].parent;
+        for (i = 0; i < target; i++) {
             if (parent == &((CFrameVu1 *) frame)[i]) {
                 break;
             }
@@ -692,9 +695,6 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
     }
     return 1;
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/gameutil", AnimeDataInit__FP6CFrameP14tagMOTION_TYPEP14CDataAlloc2_1_P12tagFRAME_INF);
-#endif
 
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
     int playing_start = info[state->playing_no].start;

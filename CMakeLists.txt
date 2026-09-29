@@ -211,7 +211,8 @@ carve_part(main.bss.part4.s
 # edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
 # EdExchangeInfo inside the second.
 carve_part(main.bss.part4b.s
-           main.bss.part4b.s=1CF91F0-1D19720
+           main.bss.part4b.s=1CF91F0-1D18A00
+           main.bss.part4b-1D18EF0.s=1D18EF0-1D19720
            main.bss.part4c.s=1D19AA0-1D19BB0
            main.bss.part4e.s=1D19BCC-1D19BF0)
 # monstorunit owns the bee animation table; retain its BSS neighbours.
@@ -293,7 +294,6 @@ carve_part(main.data.part6.s
            main.data.battlemenu-tail.s=293960-293978
            main.data.battlemenu-tail-293B90.s=293B90-293BF0
            main.data.memcard-a-293F60.s=293F60-293FD0
-           main.data.menu_save-b.s=294140-294150
            main.data.part6g-2942F0.s=2942F0-294320
            main.data.menu_dungeon-d.s=2943C0-2943E0
            main.data.part6j.s=295644-295660
@@ -303,7 +303,8 @@ carve_part(main.data.part6.s
 carve_part(main.data.part4.s
            main.data.part4.s=25DFB0-266810
            main.data.part4b.s=2668C0-266910
-           main.data.runeffect-tail.s=266920-266B70
+           main.data.runeffect-tail.s=266920-266930
+           main.data.runeffect-tail-266970.s=266970-266B70
            main.data.part4m.s=266B90-266E10
            main.data.part4c.s=266FB0-269320
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10

@@ -144,13 +144,13 @@ void EffectHamon(CEffectGroup *group, float *position, float size) {
     effect.height = size;
     group->EnterEffect(&effect);
 }
-#ifdef NON_MATCHING
 void DepthOfField(float *focus, int level, int alpha, int blur) {
     static float rd[21][15];
     sceGsTex0 frame;
     sceGsTex0 image;
     sceGsTest test;
     sceGsZbuf zbuffer;
+    int phase;
     int i;
     int j;
     int k;
@@ -194,7 +194,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 
-    for (i = 0; i < 1; i++) {
+    for (phase = 0; phase < 1; phase++) {
         sceVif1PkCnt(Vif1Packet, 0);
         sceVif1PkOpenDirectCode(Vif1Packet, 0);
         sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
@@ -208,10 +208,10 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 SCE_GS_SET_XYZF2(x, y, screen[(j + i) % 2][2], 0));
+                                 SCE_GS_SET_XYZF2(x, y, screen[(j + phase) % 2][2], 0));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v + 0x200));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 SCE_GS_SET_XYZF2(x, y + 0x200, screen[(j + i) % 2][2], 0));
+                                 SCE_GS_SET_XYZF2(x, y + 0x200, screen[(j + phase) % 2][2], 0));
             }
         }
         sceVif1PkCloseGifTag(Vif1Packet);
@@ -276,7 +276,3 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/effectmacro", DepthOfField__FPfiii);
-#endif
-INCLUDE_RODATA("asm/nonmatchings/effectmacro", @766);

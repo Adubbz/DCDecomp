@@ -145,8 +145,21 @@ char *__DecodeSignedNumber(char *encoded, int *value);
  */
 struct MWCatchRecord {
     void *object;                       /**< Exception object owned by the catch clause. */
-    int unk_04;                          /**< Runtime state retained while the catch is active. */
+    const char *type_info;              /**< Encoded type name of the exception object. */
     MWRuntimeObjectFunction destructor; /**< Routine that destroys the exception object. */
+    void *sub_object;                   /**< Base-class subobject the catch clause receives. */
+    int pointer_copy;                   /**< Copy of a thrown pointer value. */
+    void *stack_top;                    /**< Stack pointer, or the throwing function's exception specification. */
+};
+
+/**
+ * The decoded exception specification of a function that let an exception escape.
+ */
+struct MWExceptionSpecification {
+    unsigned int count;   /**< Number of type names the specification allows. */
+    unsigned int unk_04;
+    int unk_08;
+    unsigned char *types; /**< Unaligned little-endian pointers to the allowed type names. */
 };
 
 extern "C" void __end__catch(MWCatchRecord *record);

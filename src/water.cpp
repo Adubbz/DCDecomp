@@ -65,8 +65,35 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
 }
 #ifdef NON_MATCHING
 int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
+    float *above;
+    int word;
+    int i;
+    int k;
+    float fi;
+    float *h;
+    sceVu0FVECTOR *out;
+    sceVu0FVECTOR *uv;
+    CTexture *texture;
+    int remaining;
+    float *below;
+    float *cell_above;
+    float *cell;
+    int count;
+    u_long128 *top;
     int first;
-    int word = 0;
+    u_long128 *bottom;
+    u_long128 *uv_top;
+    u_long128 *uv_bottom;
+    int vertex_count;
+    int qwc;
+    int unpack_word;
+    u_int nloop;
+    u_int *tag;
+    u_long128 *xyz;
+    u_long128 *rgbaq;
+    int j;
+    u_long128 *st;
+    word = 0;
     sceGsTex0 tex0;
     float rgba[4];
 
@@ -86,8 +113,6 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     sceVu0FVECTOR vertices[64][64];
     sceVu0FVECTOR uvs[64][64];
     sceVu0FVECTOR position;
-    int i;
-    float fi;
 
     visual.vu_data = output;
     frame.GetLWMatrix(local_to_world);
@@ -106,15 +131,14 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         position[0] = vertex[0][0] + fi * row_step[0];
         position[1] = vertex[0][1] + fi * row_step[1];
         position[2] = vertex[0][2] + fi * row_step[2];
-        float *above;
-        float *h = &height[i * columns];
+        h = &height[i * columns];
         above = h - columns;
         if (i == 0) {
             above = h;
         }
-        sceVu0FVECTOR *out = vertices[i];
-        sceVu0FVECTOR *uv = uvs[i];
-        for (int j = 0; j < columns; j++) {
+        out = vertices[i];
+        uv = uvs[i];
+        for (j = 0; j < columns; j++) {
             Trans_AddCell(*out++, position);
             position[1] = *h * unk_09C;
             (*uv)[0] = uv_base[0] + unk_0A0 * (*above - *h);
@@ -125,7 +149,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         }
     }
 
-    CTexture *texture = TexManager.GetTexture(TexManager.GetTextureHandle("work", -1));
+    texture = TexManager.GetTexture(TexManager.GetTextureHandle("work", -1));
     tex0 = *(sceGsTex0 *) &texture->tex0;
     tex0.bits.tcc = 0;
     if (unk_0A4 != 0) {
@@ -135,34 +159,34 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     }
 
     for (i = 0, fi = 0.0f; i < rows - 1; i++, fi += 1.0f) {
-        int remaining = columns;
-        float *h = &height[i * columns];
-        float *below = h + columns;
-        float *above = h - columns;
+        remaining = columns;
+        cell = &height[i * columns];
+        below = cell + columns;
+        cell_above = cell - columns;
         if (i == 0) {
-            above = h;
+            cell_above = cell;
         }
-        u_long128 *top = (u_long128 *) vertices[i];
-        u_long128 *bottom = (u_long128 *) vertices[i + 1];
-        u_long128 *uv_top = (u_long128 *) uvs[i];
-        u_long128 *uv_bottom = (u_long128 *) uvs[i + 1];
+        top = (u_long128 *) vertices[i];
+        bottom = (u_long128 *) vertices[i + 1];
+        uv_top = (u_long128 *) uvs[i];
+        uv_bottom = (u_long128 *) uvs[i + 1];
         while (remaining > 0) {
-            int count = 27;
+            count = 27;
             if (remaining < 27) {
                 count = remaining;
             }
-            int vertex_count = count * 2;
-            int qwc = 0;
+            vertex_count = count * 2;
+            qwc = 0;
             if (unk_0A4 == 0) {
                 *(u_long128 *) &output[word] = *(u_long128 *) unpack;
             }
-            int unpack_word = word + 3;
+            unpack_word = word + 3;
             if (unk_0A4 != 0) {
                 word += 8;
                 qwc++;
             } else {
-                u_int nloop = vertex_count | 0x8000;
-                u_int *tag = &output[word + 4];
+                nloop = vertex_count | 0x8000;
+                tag = &output[word + 4];
                 tag[0] = nloop;
                 tag[1] = 0x309E4000;
                 tag[2] = 0x413;
@@ -175,10 +199,10 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
             }
             word += 4;
             qwc++;
-            u_long128 *xyz = (u_long128 *) &output[word];
-            u_long128 *rgbaq = xyz + vertex_count;
-            u_long128 *st = rgbaq + vertex_count;
-            for (int k = 0; k < count; k++) {
+            xyz = (u_long128 *) &output[word];
+            rgbaq = xyz + vertex_count;
+            st = rgbaq + vertex_count;
+            for (k = 0; k < count; k++) {
                 *xyz++ = *top++;
                 *xyz++ = *bottom++;
                 *rgbaq++ = *(u_long128 *) rgba;
@@ -187,9 +211,9 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
                 *st++ = *uv_bottom++;
             }
             // Consecutive chunks share a column so the strip stays joined.
-            h--;
+            cell--;
             below--;
-            above--;
+            cell_above--;
             top--;
             bottom--;
             uv_top--;

@@ -475,6 +475,8 @@ SECTIONS
         main.data.part4b.s.o (.data)
         runeffect.cpp.o (.data)      // 0x00266910
         main.data.runeffect-tail.s.o (.data) // 0x00266920
+        effectmacro.cpp.o (.data)    // 0x00266930 DepthOfField's vertex template
+        main.data.runeffect-tail-266970.s.o (.data) // 0x00266970
         textureanime.cpp.o (.data)   // 0x00266b70
         . = ALIGN(0x10);
         main.data.part4m.s.o (.data) // 0x00266b90
@@ -707,7 +709,6 @@ SECTIONS
         memcard.cpp.o (.memcard-c2683) // 0x00293fd0 @2683
         menu_save.cpp.o (.data) // 0x00293fe0
         . = ALIGN(0x10);
-        main.data.menu_save-b.s.o (.data) // 0x00294140
         menu_dungeon.cpp.o (.data)   // 0x00294150
         . = ALIGN(0x10);
         menu_dungeon.cpp.o (.floornamedata) // 0x002941e0
@@ -1101,6 +1102,9 @@ SECTIONS
 		main.bss.part4d.s.o (.bss)     // 0x01cecf00
 		clsmes.cpp.o (.bss)
 		main.bss.part4b.s.o (.bss)     // 0x01cf91f0
+		effectmacro.cpp.o (.bss)       // 0x01d18a00 DepthOfField's rd
+		. = ALIGN(0x10);
+		main.bss.part4b-1D18EF0.s.o (.bss) // 0x01d18ef0
 		edit.cpp.o (.bss)              // 0x01d19720
 		main.bss.part4c.s.o (.bss)     // 0x01d19aa0
 		editloop3.cpp.o (.edexchangebss) // 0x01d19bb0

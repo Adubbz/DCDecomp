@@ -28,9 +28,6 @@
 #include "snd.hpp"
 #include "texture.hpp"
 #include "userstatus.hpp"
-#ifdef NON_MATCHING // draft includes
-#include <libvu0.h>
-#endif
 
 /** Texture block the event item selection menu's textures load into. */
 extern s32 MiniEventTextureBlock;
@@ -1413,7 +1410,6 @@ static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha
     int bar_y = EventBarY;
     DrawMenu2DSprite(texture, CRect_i_(bar_x, bar_y, 8, (int) bar_height), CRect_i_(0, 0xE4, 8, 0xC), alpha);
 }
-#ifdef NON_MATCHING
 static void EventItemSelectDraw(void) {
     s16 items[100];
     float left;
@@ -1423,11 +1419,11 @@ static void EventItemSelectDraw(void) {
     int alpha;
     int x;
     int y;
+    CTexture *board;
     int clip_bottom;
+    int row_y;
     int i;
     int clip_top;
-    int row_y;
-    CTexture *board;
     int count;
     int board_x;
 
@@ -1454,7 +1450,11 @@ static void EventItemSelectDraw(void) {
     top = EventBoardPos[1];
     x = left;
     y = top;
-    board = MiniMenu.fish_mode != 0 ? FishFoodBoard : MiniEventBoard;
+    if (MiniMenu.fish_mode != 0) {
+        board = FishFoodBoard;
+    } else {
+        board = MiniEventBoard;
+    }
     row_top = 56.0f + top;
     clip_top = row_top;
     clip_bottom = 136.0f + top;
@@ -1524,9 +1524,6 @@ static void EventItemSelectDraw(void) {
     }
     setbilinear(1);
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/menu_save", EventItemSelectDraw__Fv);
-#endif
 
 static void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture) {
     int clip_y;
