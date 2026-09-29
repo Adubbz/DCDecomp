@@ -2,9 +2,12 @@
 """Lay a unit's data out the way MWLD will and compare it with retail's addresses.
 
     datacheck.py <unit>            e.g. datacheck.py shop      (src/shop.cpp)
-    datacheck.py <unit> --build    rebuild build/src/<unit>.cpp.o first (takes .build.lock)
+    datacheck.py <unit> --build    rebuild <build>/src/<unit>.cpp.o first (takes .build.lock)
     datacheck.py <unit> --init     also disassemble the object's .init beside retail's __sinit
     datacheck.py <unit> --bytes    also compare .data/.sdata contents word by word with the dump
+
+The release is the one DCDECOMP_REGION names (scripts/build/region.py): its symbol
+lists, its split and its build directory.
 
 For every data section kind the object emits (.data, .sdata, .sbss, .bss, .init,
 .ctor and any renamed run such as .shopdata-*) the object's sections are laid
@@ -31,6 +34,9 @@ import tempfile
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 READELF = "mips-ps2-decompals-readelf"
 OBJDUMP = "mips-ps2-decompals-objdump"
@@ -44,7 +50,7 @@ SKIP = (".text", ".rodata", ".rodata.gap", ".mwcats", ".comment", ".exception",
 def retail_symbols():
     """{name: (address, size)} and {address: name}, from every image's list."""
     by_name, by_addr = {}, {}
-    for path in sorted(ROOT.glob("config/*.symbols.txt")):
+    for path in sorted(ROOT.glob(f"{region.CONFIG}/*.symbols.txt")):
         for line in path.read_text(encoding="utf-8").splitlines():
             m = SYMBOL.match(line.strip())
             if not m:
@@ -59,7 +65,7 @@ def retail_symbols():
 def dump_words():
     """{address: (word, text)} and {address: label} from the whole-section dumps."""
     words, labels = {}, {}
-    for path in list(ROOT.glob("asm/data/*/parts/*.s")) + list(ROOT.glob("asm/data/*/*.s")):
+    for path in list(ROOT.glob(f"{region.ASM}/data/*/parts/*.s")) + list(ROOT.glob(f"{region.ASM}/data/*/*.s")):
         cur = None
         for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
             m = re.match(r'^(?:glabel|dlabel)\s+"?([^"\n]+?)"?\s*$', line)
@@ -115,9 +121,9 @@ def main():
     ap.add_argument("--init", action="store_true")
     ap.add_argument("--bytes", action="store_true")
     args = ap.parse_args()
-    obj = ROOT / "build" / "src" / f"{args.unit}.cpp.o"
+    obj = ROOT / region.BUILD / "src" / f"{args.unit}.cpp.o"
     if args.build:
-        subprocess.run(["flock", ".build.lock", "ninja", "-C", "build", f"src/{args.unit}.cpp.o"],
+        subprocess.run(["flock", ".build.lock", "ninja", "-C", region.BUILD, f"src/{args.unit}.cpp.o"],
                        cwd=ROOT, check=True)
     if not obj.exists():
         sys.exit(f"{obj} does not exist; pass --build")

@@ -150,8 +150,12 @@ foreach(row IN LISTS unit_rows)
 endforeach()
 
 # Hand-written assembly: crt0, the literal pool and the linker-script symbols.
+set(HANDWRITTEN_DIR ${SRC_DIR}/handwritten)
+if(REGION STREQUAL "PAL")
+    set(HANDWRITTEN_DIR ${SRC_DIR}/handwritten/pal)
+endif()
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
-     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/handwritten/*.s)
+     RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${HANDWRITTEN_DIR}/*.s)
 
 set(CPP_OBJS "")
 foreach(src IN LISTS CPP_SOURCES)
