@@ -170,8 +170,8 @@ void CMainItemModel::Draw(void) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
-INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mainitemmodel", @880__3);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mainitemmodel", @892__4);
 int ItemThrowStep(float *position, float *velocity);
 
 void CMainItemModel::Step(void) {

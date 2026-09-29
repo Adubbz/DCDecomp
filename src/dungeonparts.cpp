@@ -1388,7 +1388,7 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/dungeonparts", @1007__2);
 
 /**
  * Scales a coordinate from the item area table up to world scale.

@@ -19,6 +19,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts" / "build"))
+import region  # noqa: E402
+
+ASM = ROOT / region.ASM
 SYMBOL = re.compile(r"^(\S+) = 0x([0-9a-fA-F]+); // size:0x([0-9a-fA-F]+)")
 INVENTED = re.compile(r"^@(\d+)(?:__\d+)?$")
 SEGMENT = re.compile(
@@ -76,7 +80,7 @@ def runs(entries: list[tuple[int, int, str]]) -> list[list[tuple[int, int, str]]
 
 def readers(unit: str, addresses: dict[str, tuple[int, int]]):
     """Each function of a unit dump, with the constant addresses it reaches."""
-    path = ROOT / "asm" / f"{unit}.s"
+    path = ASM / f"{unit}.s"
     if not path.is_file():
         return
     text = path.read_text(errors="replace")

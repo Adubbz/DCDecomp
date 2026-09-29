@@ -119,14 +119,12 @@ def unit_dumps():
     no dump of its own to be found by name.
     """
     return sorted(p for p in ROOT.glob(f"{ASM}/*/*.s")
-                  if not region.is_foreign_asm(p.relative_to(ROOT))
-                  if not p.parent.name.startswith(("nonmatchings", "matchings", "data")))
+                  if not p.parent.name.startswith(("nonmatchings", "matchings", "data", "reference")))
 
 
 def retail_constant(name):
     """The bytes retail's dump holds for one named constant."""
-    paths = (list(sorted(p for p in ROOT.glob(f"{ASM}/**/%s.s" % name)
-                         if not region.is_foreign_asm(p.relative_to(ROOT))))
+    paths = (list(sorted(ROOT.glob(f"{ASM}/**/%s.s" % name)))
              + list(sorted(ROOT.glob(f"{ASM}/data/*/*.data.s")))
              + unit_dumps())
     for path in paths:

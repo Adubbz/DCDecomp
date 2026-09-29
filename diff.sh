@@ -83,9 +83,9 @@ case $mode in
             read -r _ reference _ <<<"$located"
             # objdiff names a unit after its source, e.g. camera or
             # dun/gameloop; the reference path spells the same thing out as
-            # asm/{non,}matchings/<unit>/<symbol>.s.
-            unit=${reference#asm/nonmatchings/}
-            unit=${unit#asm/matchings/}
+            # asm/<release>/{non,}matchings/<unit>/<symbol>.s.
+            unit=${reference#asm/*/nonmatchings/}
+            unit=${unit#asm/*/matchings/}
             unit=${unit%/*}
         elif [[ ${#section[@]} -ne 0 ]]; then
             echo "$0: $symbol is not in the ${section[0]} reference index" >&2

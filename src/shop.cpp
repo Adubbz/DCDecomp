@@ -4838,7 +4838,7 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/shop", @2948);
 
 /**
  * Enters the fishing menu's textures once they have been read.
@@ -4897,7 +4897,7 @@ static int FishMenuTextureLoad() {
     return done;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/shop", @2964);
 
 #ifdef PAL
 int FishingExchangeKey();

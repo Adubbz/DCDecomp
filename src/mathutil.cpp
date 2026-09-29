@@ -81,7 +81,7 @@ public:
     }
 };
 
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", @245);
 
 /**
  * Runs a constructor over every element of an array.
@@ -548,12 +548,12 @@ extern "C" void __unexpected(void *exception_record) {
 // setting changes and before the type information run below.
 static const int __unexpected_generated = 0;
 #pragma exceptions reset
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", @1035);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", @1037);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", @1036);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/mathutil", @1039);
 /**
  * Destroys a `std::bad_exception`.
  *

@@ -8,12 +8,17 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts" / "build"))
+import region  # noqa: E402
+
+ASM = ROOT / region.ASM
 INCLUDE_ASM_RE = re.compile(
-    r'(?m)^\s*INCLUDE_ASM\(\s*"asm/nonmatchings/([^"]+)"\s*,\s*([^\s,)]+)\s*\)\s*;'
+    r'(?m)^\s*INCLUDE_ASM\(\s*"asm/ntsc/nonmatchings/([^"]+)"\s*,\s*([^\s,)]+)\s*\)\s*;'
 )
 WORD_RE = re.compile(r'/\*\s+[0-9A-F]{6}\s+([0-9A-F]{8})\s+([0-9A-F]{8})\s+\*/')
 GLABEL_RE = re.compile(r'(?m)^glabel\s+(?:"([^"]+)"|([^\s]+))')
@@ -436,7 +441,7 @@ def main() -> None:
             unit, name = match.groups()
             if name in NON_FUNCTION_MARKERS:
                 continue
-            asm_path = ROOT / "asm" / "nonmatchings" / unit / f"{name}.s"
+            asm_path = ASM / "nonmatchings" / unit / f"{name}.s"
             if not asm_path.is_file():
                 missing_assembly += 1
                 continue
@@ -508,7 +513,7 @@ def main() -> None:
     print(f"wrote {len(functions)} functions to {args.output}")
     print(f"images: {by_image}; documented comments: {documented}")
     print(f"documented types: {len(KNOWN_TYPES)}; signatures: {signatures}")
-    print(f"markers without asm/nonmatchings files: {missing_assembly}")
+    print(f"markers without asm/ntsc/nonmatchings files: {missing_assembly}")
 
 
 if __name__ == "__main__":

@@ -24,7 +24,7 @@ REGIONS = {
         "extracted": "rom/extracted",
         "extracted_checksum": "extracted.sha256",
         "config": "config",
-        "asm": "asm",
+        "asm": "asm/ntsc",
         "assets": "assets",
         "lcf": "SCUS_971.11.lcf",
         "build": "build",
@@ -114,6 +114,8 @@ EXTRACTED_ISO = EXTRACTED + "/iso"
 EXTRACTED_CHECKSUM = CURRENT["extracted_checksum"]
 CONFIG = CURRENT["config"]
 ASM = CURRENT["asm"]
+# The functions splat files under no name of their own; see reference_asm.py.
+REFERENCE = ASM + "/reference"
 LCF = CURRENT["lcf"]
 BUILD = CURRENT["build"]
 OVERLAY_ORIGIN = CURRENT["overlay_origin"]
@@ -188,25 +190,6 @@ def marker_folder(folder):
     if NAME == NTSC or folder.startswith(ASM + "/") or not folder.startswith(ntsc + "/"):
         return folder
     return ASM + folder[len(ntsc):]
-
-
-def foreign_asm():
-    """The other releases' split trees that sit inside this one's.
-
-    The PAL split lives under asm/pal, inside the NTSC tree, so a walk of the
-    NTSC tree has to step around it.
-    """
-    mine = ASM.rstrip("/") + "/"
-    return tuple(
-        r["asm"] for n, r in REGIONS.items()
-        if n != NAME and r["asm"].startswith(mine)
-    )
-
-
-def is_foreign_asm(path):
-    """Whether a path under this release's asm/ belongs to another release."""
-    posix = str(path).replace(os.sep, "/")
-    return any(posix == root or posix.startswith(root + "/") for root in foreign_asm())
 
 
 if __name__ == "__main__":

@@ -61,8 +61,8 @@ class Entry:
     def is_function(self):
         """Whether this row is one function or a whole data section.
 
-        splat files text a function at a time under asm/nonmatchings and
-        asm/matchings, and dumps every other section whole under asm/data --
+        splat files text a function at a time under asm/<release>/nonmatchings
+        and asm/<release>/matchings, and dumps every other section whole under asm/<release>/data --
         so the path says which of the two a row is, and nothing else has to
         guess.
         """

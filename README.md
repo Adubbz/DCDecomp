@@ -89,18 +89,16 @@ against.
 Each translation unit becomes one segment, so its functions and its constants
 are written to a single file per unit.
 
-The result, `asm/`, is not checked in. The build splits it on first use and
-again whenever the configuration changes. To force a fresh split:
+The result, `asm/ntsc/` (`asm/pal/` for the PAL build), is not checked in. The
+build splits it on first use and again whenever the configuration changes, and
+writes the static initialisers splat files under no name of their own beside it,
+under `asm/<release>/reference/`. To force a fresh split:
 
 ```
 cmake --build build --target disassemble
 ```
 
-The exception is `asm/data/main/parts/`: the main executable's residual data
-dumps, carved and hand-edited from an earlier split. They cannot be
-regenerated from the disc, so they are checked in.
-
-Without the disc image, `asm/` can instead be split from a copy of
+Without the disc image, `asm/ntsc/` can instead be split from a copy of
 `rom/extracted/iso/SCUS_971.11`, `TITLE.BIN` and `DUN.BIN` kept in a private
 repository whose layout mirrors this one; `scripts/host/overlay_private.sh`
 copies them into place. This is how CI builds. Either way they are checked

@@ -1459,4 +1459,4 @@ int CMemoryCardAccess::McUnFormatForDebug() {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @594__2);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/memorycardaccess", @594__2);

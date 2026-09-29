@@ -22,6 +22,10 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts" / "build"))
+import region  # noqa: E402
+
+ASM = ROOT / region.ASM
 GLABEL = re.compile(r'^glabel\s+(?:"([^"]+)"|(\S+))', re.M)
 WORD = re.compile(r"/\*\s+[0-9A-Fa-f]+\s+([0-9A-Fa-f]{8})\s+[0-9A-Fa-f]{8}\s+\*/")
 REFERENCE = re.compile(r'%(?:hi|lo|gp_rel)\(\s*"?((?:@|[A-Za-z_]\w*\$)[\w$]*)"?\s*\)')
@@ -77,10 +81,10 @@ def main() -> None:
     addresses = symbol_addresses()
     rodata = subsegments(".rodata")
     verbose = len(sys.argv) > 1
-    units = sys.argv[1:] or sorted(path.stem for path in (ROOT / "asm").glob("*.s"))
+    units = sys.argv[1:] or sorted(path.stem for path in ASM.glob("*.s"))
 
     for unit in units:
-        path = ROOT / "asm" / f"{unit}.s"
+        path = ASM / f"{unit}.s"
         if not path.is_file():
             continue
         text = path.read_text(errors="replace")

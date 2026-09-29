@@ -439,7 +439,7 @@ void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/fishing", @604);
 
 CFish *FishingGetBattleFish() {
     return BattleFish;

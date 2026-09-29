@@ -8,7 +8,7 @@ options:
   basename: dun
   base_path: ..
   target_path: rom/extracted/iso/DUN.BIN
-  asm_path: asm
+  asm_path: asm/ntsc
   src_path: src
   build_path: build/splat/dun
   ld_script_path: build/splat/dun.ld
@@ -52,7 +52,7 @@ options:
   do_c_func_detection: True
   # A function still supplied by a marker gets a file of its own, for
   # tools/mwccgap to splice; a decompiled one gets a file under
-  # asm/matchings, which is the only thing objdiff can compare it
+  # asm/<release>/matchings, which is the only thing objdiff can compare it
   # against on its own. Neither applies to a whole-file asm unit --
   # those are one file and nothing else.
   disassemble_all: True

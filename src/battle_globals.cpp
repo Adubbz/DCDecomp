@@ -358,16 +358,16 @@ INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @513__3);
 #pragma name_counter 202
 #endif
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @663__2);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @781__3);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @782__3);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @783__5);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @784__3);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @785);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @786);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @787__2);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @788__2);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @789__4);
 
 /**
  * Draws the character keyboard the name is entered from.

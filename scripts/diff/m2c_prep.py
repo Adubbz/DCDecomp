@@ -26,6 +26,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts" / "build"))
+import region  # noqa: E402
+
+ASM = ROOT / region.ASM
 SYMBOL = re.compile(r"^(\S+) = 0x([0-9a-fA-F]+);(.*)$")
 SIZE = re.compile(r"size:0x([0-9a-fA-F]+)")
 INSTRUCTION = re.compile(r"^\s*/\*[^*]*\*/\s+(\S+)\s+(.*?)\s*$")
@@ -73,7 +77,7 @@ def rename(name: str) -> str:
 
 def table_words(image: str, name: str) -> str:
     """The table's own `.word` lines, which m2c reads the case targets from."""
-    for unit in (ROOT / "asm" / "nonmatchings").iterdir():
+    for unit in (ASM / "nonmatchings").iterdir():
         path = unit / f"{name}.s"
         if path.is_file():
             body = path.read_text(errors="replace")

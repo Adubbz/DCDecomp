@@ -172,7 +172,7 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
                 data_only.setdefault(match.group(2), (match.group(1), image))
     # A library object with data and no code -- newlib's impure.c -- is a
     # `.data` subsegment with no code sibling. splat writes it on its own under
-    # asm/data, and it links as a whole-unit object like any other asm unit.
+    # asm/<release>/data, and it links as a whole-unit object like any other asm unit.
     standalone = {}
     for unit, (kind, image) in data_only.items():
         if unit not in classified and unit.startswith("lib/"):
@@ -665,7 +665,7 @@ def restore_invented_names_in_parts(root=ASM):
     """Restore invented names in residual dumps excluded from label passes."""
     changed = 0
     for path in sorted(Path(root).rglob("*.s")):
-        if "parts" not in path.parts or region.is_foreign_asm(path):
+        if "parts" not in path.parts:
             continue
         text = path.read_text(encoding="utf-8")
         restored = restore_invented_names(text)
@@ -730,7 +730,7 @@ def fix_branches(root):
     """
     paths = sorted(
         path for path in Path(root).rglob("*.s")
-        if "parts" not in path.parts and not region.is_foreign_asm(path)
+        if "parts" not in path.parts
     )
     original = {path: path.read_text(encoding="utf-8") for path in paths}
 
@@ -770,14 +770,10 @@ def clear_generated():
     for path in sorted(root.rglob("*.s"), reverse=True):
         if "handwritten" in path.parts or "parts" in path.parts:
             continue
-        if region.is_foreign_asm(path):
-            continue
         path.unlink()
         removed += 1
     for path in sorted((p for p in root.rglob("*") if p.is_dir()), reverse=True):
         if "handwritten" in path.parts or "parts" in path.parts:
-            continue
-        if region.is_foreign_asm(path):
             continue
         if not any(path.iterdir()):
             path.rmdir()
@@ -797,7 +793,7 @@ def drop_rodata_alignment(root):
     """
     changed = 0
     for path in sorted(Path(root).rglob("*.s")):
-        if "parts" in path.parts or region.is_foreign_asm(path):
+        if "parts" in path.parts:
             continue
         lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
         out, in_rodata, dropped = [], False, False
@@ -831,7 +827,7 @@ def align_rodata(root=ASM):
 
     marked = 0
     for path in sorted(Path(root).rglob("*.s")):
-        if "parts" in path.parts or region.is_foreign_asm(path):
+        if "parts" in path.parts:
             continue
         lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
 

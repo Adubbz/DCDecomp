@@ -11,8 +11,9 @@ come from the sources there is no segment at all. Without retail's words the
 literal a `__sinit` loads binds to the first pool entry of that value rather
 than the one retail used.
 
-These dumps are written under `config/`, not `asm/`, because splat rewrites
-`asm/` from the disc on every configure and removes what it did not put there.
+The build writes them right after the split, into the release's own split
+tree (`asm/<release>/reference`), which is never committed: splat clears that
+tree before it splits, and this puts them back from the same binaries.
 """
 
 import os
@@ -28,12 +29,13 @@ import region  # noqa: E402
 OVERLAY_BASE = region.OVERLAY_ORIGIN
 IMAGES = {'title': region.EXTRACTED_ISO + '/TITLE.BIN',
           'dun': region.EXTRACTED_ISO + '/DUN.BIN'}
-OUT = region.CONFIG + '/reference_asm'
+OUT = region.REFERENCE
 ENTRY = re.compile(
     r'^(__sinit_\S+) = 0x([0-9a-fA-F]+); // type:func size:0x([0-9a-fA-F]+)')
 
 
 def main():
+    written = 0
     for image, path in IMAGES.items():
         blob = open(path, 'rb').read()
         with open('%s/%s.symbols.txt' % (region.CONFIG, image)) as f:
@@ -57,7 +59,8 @@ def main():
                                   int.from_bytes(word, 'little')))
                 with open(os.path.join(directory, name + '.s'), 'w') as f2:
                     f2.write(''.join(out))
-                print(name, hex(vram), size)
+                written += 1
+    print(f'reference_asm: wrote {written} static initialiser(s) under {OUT}')
 
 
 if __name__ == '__main__':

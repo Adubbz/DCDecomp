@@ -24,6 +24,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts" / "build"))
+import region  # noqa: E402
+
+ASM = ROOT / region.ASM
 GLABEL = re.compile(r'^glabel\s+(?:"([^"]+)"|(\S+))', re.M)
 WORD = re.compile(r"/\*\s+[0-9A-Fa-f]+\s+([0-9A-Fa-f]{8})\s+[0-9A-Fa-f]{8}\s+\*/")
 # An invented name of *this* unit. Splat gives a name that several units invent
@@ -87,7 +91,7 @@ def functions(path: Path, span=None, known=None):
 
 def scan(unit: str, verbose: bool) -> list[tuple[str, int, int, int]]:
     """Report each function that introduces a number below everything before it."""
-    path = ROOT / "asm" / f"{unit}.s"
+    path = ASM / f"{unit}.s"
     span = rodata_span(unit)
     if not path.is_file() or span is None:
         # with no `.rodata` of its own a unit invented no constant this test
@@ -116,7 +120,7 @@ def scan(unit: str, verbose: bool) -> list[tuple[str, int, int, int]]:
 def main() -> None:
     verbose = len(sys.argv) > 1
     units = sys.argv[1:] or sorted(
-        path.stem for path in (ROOT / "asm").glob("*.s")
+        path.stem for path in ASM.glob("*.s")
     )
     for unit in units:
         if verbose:

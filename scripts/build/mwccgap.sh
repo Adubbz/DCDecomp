@@ -12,7 +12,7 @@
 # unit link at retail's addresses -- mwcc emits a unit's functions as one
 # contiguous .text, so a hole in the middle cannot be filled from an outside .s.
 #
-# A marker names its file's directory outright -- `asm/nonmatchings/<unit>` --
+# A marker names its file's directory outright -- `asm/ntsc/nonmatchings/<unit>` --
 # so the prefix below is the source root and nothing has to be looked up.
 #
 # A unit's markers are assembled several at a time; MWCCGAP_AS_JOBS says how

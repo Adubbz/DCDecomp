@@ -24,7 +24,7 @@ elseif(REGION STREQUAL "NTSC")
     set(REGION_EXTRACTED extracted)
     set(REGION_EXTRACTED_CHECKSUM extracted.sha256)
     set(REGION_CONFIG config)
-    set(REGION_ASM asm)
+    set(REGION_ASM asm/ntsc)
     set(REGION_LCF ${BASENAME}.lcf)
     set(REGION_BUILT_ISO "Dark Cloud (Build).iso")
     set(REGION_OVERLAY_ORIGIN 0x01DABD00)
@@ -418,10 +418,12 @@ set(DISASSEMBLE_STAMP ${STAMP_DIR}/disassembled)
 set(EXTRACTED_ELF ${ROM_DIR}/${REGION_EXTRACTED}/iso/${BASENAME})
 
 set(SPLIT_COMMANDS
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR})
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/disassemble.py --config ${CONFIG_DIR}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/reference_asm.py)
 
-# asm/ is never committed; it is split from the three binaries under
-# rom/extracted/iso. They come from extracting the disc image, which `iso` and
+# asm/ntsc (asm/pal for PAL) is never committed; it is split from the three
+# binaries under rom/extracted/iso (rom/extracted_pal/iso), and the static
+# initialisers splat files under no name of their own are written beside it. They come from extracting the disc image, which `iso` and
 # `run` need in full, or, without one, from the private repository. Either way
 # they are checked against rom/extracted.sha256 before the split.
 if(EXISTS "${CMAKE_SOURCE_DIR}/${RETAIL_ISO}")
@@ -458,6 +460,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E touch ${DISASSEMBLE_STAMP}
     DEPENDS ${CMAKE_SOURCE_DIR}/${EXTRACTED_ELF}
             ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/disassemble.py
+            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/reference_asm.py
             ${CMAKE_SOURCE_DIR}/${LD_TEMPLATE}
             ${CMAKE_SOURCE_DIR}/${ROM_DIR}/${REGION_EXTRACTED_CHECKSUM}
             ${REF_CONFIGS}

@@ -2,15 +2,10 @@
 /build/
 /build_pal/
 
-# Reference assembly, split from the disc by splat and never committed --
-# except the main executable's residual data parts, which are carved and
-# hand-edited rather than split, and so are kept here.
-/asm/*
-!/asm/data/
-/asm/data/*
-!/asm/data/main/
-/asm/data/main/*
-!/asm/data/main/parts/
+# Reference assembly, split from the disc by splat and never committed: one
+# tree per release, asm/ntsc and asm/pal, each with the static initialisers
+# the build writes beside the split under reference/.
+/asm/
 
 # The PAL build's split of the overlay headers.
 /assets/pal/

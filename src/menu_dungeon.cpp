@@ -1081,7 +1081,7 @@ CFrame *ItemPolyView;
 int MDebugItemPolyViewFlag;
 int polyreadflag;
 
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @1301);
 
 #ifdef PAL
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha);
@@ -1753,15 +1753,15 @@ int DngActiveItemTextureCopy(void) {
     return 1;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1841);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2044);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2045);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2046);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2047);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @1841);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2044);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2045);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2046);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2047);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2048);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2049);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2050);
+INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2051);
 
 int DngActiveWeaponTextureCopy(void) {
     int chara = UserStatus->cur_chara;
