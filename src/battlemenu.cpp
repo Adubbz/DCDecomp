@@ -756,11 +756,13 @@ INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @945__2);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuTexEnter__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @937__4);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @938);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @935__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @936__2);
 #pragma name_counter 358
 #else
 void BattleMenuTexEnter() {
     LOADTEXTURE_INFO2 textures[4] = {
-        {"#frame_image#640#448#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        {"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
     textures[0].block_no = BtlMenuReadBlock;
     textures[1].block_no = BtlMenuReadBlock;
@@ -787,6 +789,7 @@ void ExitBattleMenu(int);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ExitBattleMenu__Fi);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @962);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @966);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @965);
 #pragma name_counter 381
 #else
 void ExitBattleMenu(int) {
@@ -823,7 +826,7 @@ void ExitBattleMenu(int) {
     MenuWepLevelUp.CheckSnd();
     switch (BtlMenuMode) {
         case 0: {
-            LOADTEXTURE_INFO2 textures[2] = {{"#frame_image0#640#448#4", 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 textures[2] = {{"#frame_image0#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}};
             textures[0].block_no = BtlMenuReadBlock;
             TexManager.LoadTextureBlock(-1, textures);
             break;
@@ -860,7 +863,7 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     GamePad.MenuModeOn(0x78);
     switch (BtlMenuMode) {
         case 0: {
-            LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}};
             texture[0].block_no = BtlMenuReadBlock;
             int blocks[6] = {0, 0, 0, 0, 0, -1};
             blocks[0] = BtlMenuReadBlock;
@@ -1477,6 +1480,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1526__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1527__2);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuCharaKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @1370__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1369__2);
 #pragma name_counter 844
 #else
 int BattleMenuCharaKey() {
@@ -1503,7 +1507,7 @@ int BattleMenuCharaKey() {
         case 1: {
             if (BtlMenuExReadFlag == 0) {
                 if (ReadBGSync() == 0) {
-                    LOADTEXTURE_INFO2 texture[3] = {{"#frame_image_charamenu#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    LOADTEXTURE_INFO2 texture[3] = {{"#frame_image_charamenu#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
                     texture[0].block_no = BtlMenuExReadBlock;
                     texture[1].block_no = BtlMenuExReadBlock;
                     BG_READ_INFO *file = GetReadBGFile(0);
@@ -2609,6 +2613,12 @@ INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @2209);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @2210__2);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @2211);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @2262);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @2256);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @2257);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @2258);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @2259);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @2260);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @2261);
 #pragma name_counter 1561
 #else
 void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
@@ -5092,7 +5102,7 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
 
 void ReadSyncItemMenuWepIcon() {
     BG_READ_INFO *file = GetReadBGFile(0);
-    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
     textures[0].block_no = ItemMenuWeaponIconReadBlock;
     textures[1].name = (char *) file->buffer;
@@ -7857,7 +7867,7 @@ int LoadWorldMap() {
         char cfg[32];
         sprintf(img, img_format, MenuMove.load_map + 1);
         sprintf(cfg, cfg_format, MenuMove.load_map + 1);
-        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
         textures[0].block_no = MenuMove.tex_block;
         textures[1].block_no = MenuMove.tex_block;
         textures[2].block_no = MenuMove.tex_block;

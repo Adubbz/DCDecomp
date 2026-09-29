@@ -86,7 +86,17 @@ public:
 /** Storage of draw_rect, the part of the screen the opening wipe has reached. */
 CEbRect draw_rect_store;
 
+#ifdef PAL
+static CRect_i_ Caution(256, 0, 56, 56);
+static CRect_i_ CautionRect[7];
+static CRect_i_ EbResult0[7];
+static CRect_i_ EbResult2[7];
+static CRect_i_ EbResult1[7];
+static CRect_i_ OkRect[7];
+static CRect_i_ CoolRect[7];
+#else
 const CRect_i_ Caution(256, 0, 56, 56);
+#endif
 
 /** Stores the key state for each event-battle prompt. */
 EB_KEY eb_key[64];
@@ -197,12 +207,6 @@ void EdEyeCamera(CCamera *camera, CCharacter *character);
 #ifdef PAL
 void EBInitialize();
 INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBInitialize__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/ebattle", CautionRect);
-INCLUDE_DATA("asm/pal/nonmatchings/ebattle", EbResult0);
-INCLUDE_DATA("asm/pal/nonmatchings/ebattle", EbResult2);
-INCLUDE_DATA("asm/pal/nonmatchings/ebattle", EbResult1);
-INCLUDE_DATA("asm/pal/nonmatchings/ebattle", OkRect);
-INCLUDE_DATA("asm/pal/nonmatchings/ebattle", CoolRect);
 #pragma name_counter 518
 #else
 void EBInitialize() {
@@ -1160,6 +1164,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1704);
 INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1705);
 INCLUDE_RODATA("asm/pal/nonmatchings/ebattle", @1706);
 INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EdMoveChara__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/ebattle", reference$516);
 INCLUDE_DATA("asm/pal/nonmatchings/ebattle", @517);
 INCLUDE_DATA("asm/pal/nonmatchings/ebattle", @986);
 INCLUDE_DATA("asm/pal/nonmatchings/ebattle", @1022);

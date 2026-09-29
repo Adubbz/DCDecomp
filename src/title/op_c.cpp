@@ -478,6 +478,11 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @421__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @422__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @423__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @424__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @393__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @395__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @396__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @397__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @398__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @486__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @487__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @488__5);
@@ -512,9 +517,6 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @519__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @521__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @523__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @529__3);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", Fuusya__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", TaimatsuFrame__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", Taimatsu__2);
 #pragma name_counter 220
 #else
 void OpC_InitProcess() {
@@ -522,12 +524,12 @@ void OpC_InitProcess() {
         ;
 
     LOADTEXTURE_INFO2 tex[] = {
-        {"#water_buff#640#224#4", 22, 0},
-        {"#blender#640#224#4", 0, 0},
+        {"#water_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#frame_image#640#224#4", 22, 0},
+        {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
         {0, 0, 0},
         {0, 10, 0},
         {0, 10, 0},
@@ -798,7 +800,7 @@ void OpC_InitProcess2() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -1124,7 +1126,7 @@ void OpC_InitProcess4() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -1206,7 +1208,7 @@ void OpC_InitProcess5() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -1964,8 +1966,21 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$960);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", d$962);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$963);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @907__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @893__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @894__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @895__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @896__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @897__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @898__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @899__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @900__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @901__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @902__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @903__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @904__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @905__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @906__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @997__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", Wind__2);
 #pragma name_counter 666
 #else
 void OpC_MotionProcess() {
@@ -2438,7 +2453,6 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1232__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", bright$1234);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1235);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1640__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", CFire__3);
 #pragma name_counter 1017
 #else
 void OpC_DrawProcess() {
@@ -3170,6 +3184,12 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", MajinBeemProcess__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1740);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", pos$1748);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", pos2$1749);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1734);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1735);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1736__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1737__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1738__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1739);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1820);
 #pragma name_counter 1216
 #else

@@ -2014,7 +2014,7 @@ static void DrawAtoraSelect(int fade) {
 }
 
 static int AtoraTextureEnter() {
-    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
     BG_READ_INFO *bg;
 
     tex[1].block_no = tex[0].block_no = AtoraTextureReadBlock;
@@ -3032,6 +3032,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2610__2);
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuOptionKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2454__2);
 INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2580);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2453);
 #pragma name_counter 1733
 #else
 int MenuOptionKey() {
@@ -3042,7 +3043,7 @@ int MenuOptionKey() {
             if (OptionMenu.texture_ready == 0) {
                 ReadBG();
                 if (ReadBGSync() == 0) {
-                    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image_option#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image_option#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
                     textures[0].block_no = OptionMenu.block_no;
                     textures[1].block_no = OptionMenu.block_no;
                     BG_READ_INFO *file = GetReadBGFile(0);

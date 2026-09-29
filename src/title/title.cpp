@@ -422,6 +422,15 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcA__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @877__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @891__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @906__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @886__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @887__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @888__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @889__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @890__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @902__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @903__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @904__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @905__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @955__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @956__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @957__5);
@@ -449,8 +458,8 @@ static void InitProcA() {
     wait_now_loading_vsync();
 
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 1, 0},
@@ -799,6 +808,13 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1088__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1089__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1090);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1091__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1064);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1065);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1066__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1067__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1079);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1080);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1081);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1106__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1107__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1108__3);
@@ -817,10 +833,10 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1120);
 #else
 static void InitProcB() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#water_buff#640#224#4", 21, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
+        {"#water_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 21, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 10, 0},
@@ -1116,6 +1132,26 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1229);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1230);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1231);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1232);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1197);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1198__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1199__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1200__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1201__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1202__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1203__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1204);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1205__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1206__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1207__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1208__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1209__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1210__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1211__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1212);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1213);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1214);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1215__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1222);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1255__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1256__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1257__2);
@@ -1127,10 +1163,10 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1262__2);
 #else
 static void InitProcC() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#water_buff#640#224#4", 21, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
+        {"#water_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 21, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 10, 0},
@@ -1344,6 +1380,9 @@ static void InitProcD();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcD__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1303__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1315);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1312__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1313__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1314__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1347__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1348);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1349);
@@ -1357,9 +1396,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1355__3);
 #else
 static void InitProcD() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 1, 0},
@@ -1511,6 +1550,8 @@ static void InitProcE();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcE__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1375__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1399__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1397);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1398__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1415__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1416__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1417__2);
@@ -1522,9 +1563,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1421);
 #else
 static void InitProcE() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 1, 0},
@@ -1664,6 +1705,14 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcF__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1443);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1458);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1471__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1452);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1453);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1454);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1455);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1456);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1457);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1469);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1470__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1491);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1492__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1493__3);
@@ -1678,9 +1727,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1500);
 #else
 static void InitProcF() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 1, 0},
@@ -1852,6 +1901,12 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcG__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1526__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1538);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1547__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1535__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1536__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1537);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1544__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1545__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1546__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1567);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1568);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1569);
@@ -1866,9 +1921,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1576);
 #else
 static void InitProcG() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 10, 0},
@@ -2033,9 +2088,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1656);
 #else
 static void InitProcH() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 10, 0},
@@ -2261,6 +2316,11 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcI__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1695__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1707);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1715);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1704__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1705__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1706__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1713);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1714);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1748);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1749);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1750__2);
@@ -2276,9 +2336,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1758__2);
 #else
 static void InitProcI() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 20, 0},
         {0, 3, 0},
         {0, 10, 0},
@@ -2461,9 +2521,9 @@ void DrawProcI() {
  */
 static void InitProcTitle() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
         {0, 1, 0},
         {"", 0, 0}};
 

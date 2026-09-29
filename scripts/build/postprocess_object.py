@@ -658,6 +658,73 @@ def move_colliding_constants(path, names):
         path.write_bytes(elf.pack())
 
 
+def bind_spliced_references(path):
+    """Let the spliced assembly reach the unit's own data under retail's name.
+
+    Only another release meets this. The assembly refers to a datum by the
+    name retail's symbol table gives it, as a global; the unit defines the same
+    datum as a local, under that name or, where retail told two units' copies
+    apart with a suffix NTSC did not need, under the bare name. A local never
+    satisfies a global reference, so the definition is given the name and made
+    global.
+    """
+    elf = Elf(path.read_bytes())
+    undefined = {s.name for s in elf.symtab.symbols if s.name and s.st_shndx == 0}
+    local = {s.name for s in elf.symtab.symbols
+             if s.name and s.bind == 0 and 0 < s.st_shndx < len(elf.sections)}
+    arguments = []
+    for name in sorted(undefined):
+        base = re.match(r"^([A-Za-z_]\w*?)__\d+$", name)
+        if name in local:
+            arguments += ["--globalize-symbol", name]
+        elif base and base.group(1) in local and base.group(1) not in undefined:
+            arguments += ["--redefine-sym", f"{base.group(1)}={name}", "--globalize-symbol", name]
+    if arguments:
+        objcopy = os.environ.get("MIPS_TOOL_PREFIX", "mips-ps2-decompals-") + "objcopy"
+        subprocess.run([objcopy] + arguments + [str(path), str(path)], check=True)
+
+
+def drop_duplicate_constants(path, spliced):
+    """Keep retail's one copy of a constant a spliced function and a compiled
+    one both use.
+
+    Only another release meets this: its compiler's own names sit at
+    region.INVENTED_NAME_OFFSET and above, which is what tells a copy the
+    compiler made from the one a marker spliced in. The compiler's copy is
+    dropped and whatever referred to it refers to the spliced one instead.
+    """
+    elf = Elf(path.read_bytes())
+    symbols = elf.symtab.symbols
+    held = {}
+    for index, symbol in enumerate(symbols):
+        if symbol.name in spliced and 0 < symbol.st_shndx < len(elf.sections):
+            held.setdefault(bytes(elf.sections[symbol.st_shndx].data).rstrip(b"\0"), index)
+    moved = {}
+    for index, symbol in enumerate(symbols):
+        number = re.match(r"^@(\d+)$", symbol.name)
+        if (not number or int(number.group(1)) < region.INVENTED_NAME_OFFSET
+                or not 0 < symbol.st_shndx < len(elf.sections)):
+            continue
+        section = elf.sections[symbol.st_shndx]
+        if not section.name.startswith(".rodata") or not section.data:
+            continue
+        twin = held.get(bytes(section.data).rstrip(b"\0"))
+        if twin is not None:
+            moved[index] = twin
+            section.sh_name = elf.add_sh_symbol(DISCARD_SECTION)
+            section.name = DISCARD_SECTION
+            symbol.st_shndx = symbols[twin].st_shndx
+            symbol.st_value = symbols[twin].st_value
+    if not moved:
+        return
+    for record in elf.get_relocations():
+        for relocation in record.relocations:
+            if relocation.symbol_index in moved:
+                relocation.symbol_index = moved[relocation.symbol_index]
+                relocation.r_info = (relocation.symbol_index << 8) | relocation.reloc_type
+    path.write_bytes(elf.pack())
+
+
 def coalesced_functions(elf):
     """The constructors MWCC wrote itself, which have to stay global.
 
@@ -760,6 +827,8 @@ def main():
     }
     rename_symbols(args.object, template_aliases)
     globalize_symbols(args.object, fixups.get("globalize_symbols", []))
+    if region.NAME != region.NTSC:
+        bind_spliced_references(args.object)
     source_text = region.active_text((ROOT / args.source).read_text(encoding="utf-8"))
     assembly_constants = set(re.findall(
         r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
@@ -768,6 +837,8 @@ def main():
                                  - set(fixups.get("symbols", {}).values()))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
                      assembly_constants, fixups.get("symbols", {}).values())
+    if region.NAME != region.NTSC:
+        drop_duplicate_constants(args.object, assembly_constants)
     if deferred_sections:
         elf = Elf(args.object.read_bytes())
         if rename_sections(elf, deferred_sections, parser) and not args.source_only:

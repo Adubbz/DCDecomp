@@ -541,6 +541,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @871__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @872__2);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @777__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @776);
 #pragma name_counter 931
 #else
 static int DunEnterMenuKey(void) {
@@ -556,7 +557,7 @@ static int DunEnterMenuKey(void) {
         case 3:
             if (DEnterMenu.unk_00C == 0 && ReadBGSync() == 0) {
                 LOADTEXTURE_INFO2 textures[] = {
-                    {(char *) "#frame_menu_enter#640#448#4", DEnterMenu.texture_block, 0},
+                    {(char *) "#frame_menu_enter#640#" FRAME_HEIGHT_TEXT "#4", DEnterMenu.texture_block, 0},
                     {NULL, DEnterMenu.texture_block, 0},
                     {NULL, 0, 0},
                 };

@@ -1122,7 +1122,7 @@ static void ShopMenuExit() {
 
 void ShopTextureLoadFix() {
     LOADTEXTURE_INFO2 info[3] = {
-        {"#frame_imageshop#640#448#4", 0, 0},
+        {"#frame_imageshop#640#" FRAME_HEIGHT_TEXT "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };
@@ -1245,7 +1245,7 @@ static int ShopPersonBuild(int kind, int shop_no) {
     u_int *pack = (u_int *) file->buffer;
     u_char *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
     LOADTEXTURE_INFO2 texture[3] = {
-        {"#frame_menushop_model#640#448#4", 0, 0},
+        {"#frame_menushop_model#640#" FRAME_HEIGHT_TEXT "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };

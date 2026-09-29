@@ -514,6 +514,35 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_InitProcess__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @351__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @390__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @410__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @364__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @365__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @366__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @367__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @368__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @369__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @370__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @371__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @372__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @373__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @374__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @375__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @376__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @377__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @378__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @379__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @380__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @381__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @382__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @383__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @384__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @385__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @386__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @387__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @388__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @389__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @407__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @408__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @409__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @522__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @523__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @524__3);
@@ -549,11 +578,11 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @555__3);
 #else
 void OpB_InitProcess() {
     LOADTEXTURE_INFO2 tex[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#frame_image#640#224#4", 21, 0},
+        {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 21, 0},
         {0, 2, 0},
         {0, 10, 0},
         {0, 10, 0},
@@ -892,11 +921,11 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @596__5);
 #else
 void OpB_InitProcess2() {
     LOADTEXTURE_INFO2 tex[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#frame_image#640#224#4", 21, 0},
+        {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26, 0},
+        {"#shadow_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4", 23, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 21, 0},
         {0, 26, 0},
         {0, 26, 0},
         {0, 26, 0},
@@ -1046,6 +1075,9 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_MotionProcess__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", camera$619);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", init$620);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @611__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @608__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @609__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @610__3);
 #pragma name_counter 552
 #else
 void OpB_MotionProcess() {
@@ -1235,7 +1267,6 @@ void OpB_DrawProcess();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_DrawProcess__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @806__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @807__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", CFire__2);
 #pragma name_counter 680
 #else
 void OpB_DrawProcess() {

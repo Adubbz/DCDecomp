@@ -118,6 +118,16 @@ ORDER_SET, ORDER_NEXT, ORDER_REGISTER = 0x004C78ED, 0x004C78F1, 'eax'
 # retail's ran for the whole program. The compiler initialises it at startup,
 # which is before any pragma of the source is read, so writing it here holds.
 NAME_COUNTER = 0x0052B5D0
+# The `ret` of the one function that stores the counter, `mov [counter], eax`.
+NAME_COUNTER_SET_RETURN = 0x0042E5C9
+# The release being built starts its invented names this much higher
+# (scripts/build/region.py); NTSC's is zero.
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import region as _region
+    NAME_OFFSET = _region.INVENTED_NAME_OFFSET
+except (ImportError, SystemExit):
+    NAME_OFFSET = 0
 
 # Where the code generator is entered, and how the function it is about to
 # compile is named: the argument at esp+4 holds a record pointer at +8 whose
@@ -392,6 +402,7 @@ def install(arguments=()):
                 gdb.selected_inferior().write_memory(
                     address, value.to_bytes(4, 'little'))
             elif name == 'name_counter':
+                value += NAME_OFFSET
                 if verify:
                     say('statefix: name counter %d -> %d\n'
                         % (u32(NAME_COUNTER), value))
@@ -408,6 +419,26 @@ def install(arguments=()):
             return False
 
     Pragma()
+    if NAME_OFFSET:
+        class NameCounterSet(gdb.Breakpoint):
+            """The compiler's own setter resets the counter for each unit; the
+            release's offset is put back on top of whatever it set."""
+
+            def __init__(self):
+                super().__init__('*' + hex(NAME_COUNTER_SET_RETURN), internal=True)
+
+            def stop(self):
+                value = u32(NAME_COUNTER)
+                if value < NAME_OFFSET:
+                    gdb.selected_inferior().write_memory(
+                        NAME_COUNTER, (value + NAME_OFFSET).to_bytes(4, 'little'))
+                return False
+
+        NameCounterSet()
+        value = u32(NAME_COUNTER)
+        if value < NAME_OFFSET:
+            gdb.selected_inferior().write_memory(
+                NAME_COUNTER, (value + NAME_OFFSET).to_bytes(4, 'little'))
 
     if node_audit or node_default is not None or node_ones or source_hint in override_units:
         class Node(gdb.Breakpoint):

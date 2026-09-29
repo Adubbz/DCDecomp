@@ -106,7 +106,7 @@ s16 ManualImgEnter() {
         BG_READ_INFO *extra = GetReadBGFile(1);
         if (extra != NULL) {
             LOADTEXTURE_INFO2 extra_table[] = {
-                {"#frame_image1#640#448#4", 0, 0},
+                {"#frame_image1#640#" FRAME_HEIGHT_TEXT "#4", 0, 0},
                 {NULL, 0, 0},
                 {NULL, 0, 0},
             };

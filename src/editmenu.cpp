@@ -804,7 +804,7 @@ static int EditMenuStart() {
         DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
     if (ReadBGSync() == 0 && EdMenuTextureReadEndFlag == 0) {
-        LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#448#4"}};
+        LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#" FRAME_HEIGHT_TEXT "#4"}};
         textures[1].block_no = textures[0].block_no = EdMenuTextureBlock;
         BG_READ_INFO *file = GetReadBGFile(0);
         textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);

@@ -512,11 +512,25 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", iwacnt$513);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$514);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @452__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @462__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @445__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @446__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @447__8);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @448__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @449__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @450__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @451__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @453__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @454__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @455__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @456__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @457__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @458__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @459__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @460__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @461__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @571__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @572__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @577__4);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", DispFade__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", frame_info_cam__2);
 #pragma name_counter 295
 #else
 static void MotionProcess() {
@@ -925,9 +939,6 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", wait$681);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$682);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", wait$705__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$706__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @445__3);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @451__4);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @453__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @817__4);
 #pragma name_counter 505
 #else

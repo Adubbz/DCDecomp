@@ -519,7 +519,7 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
 
     strcpy(pathName, "");
     LOADTEXTURE_INFO2 ground_images[5] = {{"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}, {"", 0, 0}};
-    LOADTEXTURE_INFO2 fire_images[3] = {{"#blender#640#224#4", 14, 0}, {"", 14, 0}, {"", 0, 0}};
+    LOADTEXTURE_INFO2 fire_images[3] = {{"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 14, 0}, {"", 14, 0}, {"", 0, 0}};
     LOADTEXTURE_INFO2 minimap_images[2] = {{"", 31, 0}, {"", 0, 0}};
     int size;
 

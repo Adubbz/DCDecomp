@@ -952,7 +952,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/main", @884);
 #pragma name_counter 1151
 #else
 void MenuInit() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
+    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4"},
                                            {"img/ankfont.img"},
                                            {gamemode_empty_string}};
     float background;
@@ -1197,7 +1197,7 @@ INCLUDE_DATA("asm/pal/nonmatchings/main", init$1014);
 #pragma name_counter 1277
 #else
 void MemCheckInit() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
+    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4"},
                                            {"img_1/memory.img"},
                                            {gamemode_empty_string}};
     int result;
@@ -1285,9 +1285,9 @@ int MemCheckLoop() {
 #endif
 
 void InitSave() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#448#4", 1},
-                                           {"#mes_frame_buff#640#448#4", 26},
-                                           {"#fukidashibase#640#224#4", 26},
+    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" FRAME_HEIGHT_TEXT "#4", 1},
+                                           {"#mes_frame_buff#640#" FRAME_HEIGHT_TEXT "#4", 26},
+                                           {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26},
                                            {"#fontbase#512#256#1", 26},
                                            {"#fuki256#128#128#1", 26},
                                            {"meswin/gaiji.img", 26}};

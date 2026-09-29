@@ -25,7 +25,11 @@ extern u32 MesWinClut[256];
 /**
  * Where each external character of the message window's font sits, one row of eight words each.
  */
+#ifdef PAL
+extern s32 GaijiDataTbl[176][8];
+#else
 extern s32 GaijiDataTbl[158][8];
+#endif
 
 /**
  * Colour each palette entry of the message window's font draws with.

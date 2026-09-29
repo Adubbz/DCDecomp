@@ -951,6 +951,22 @@ DATA_MARKER = re.compile(r'^\s*INCLUDE_DATA\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)',
 DUMP_LABEL = re.compile(r'^glabel\s+"?([^"\s]+)"?\s*$')
 
 
+DATUM_WIDTH = {".word": 4, ".long": 4, ".float": 4, ".short": 2, ".half": 2, ".byte": 1, ".double": 8}
+
+
+def datum_width(line):
+    """How many bytes one line of a section dump holds."""
+    m = re.match(r"^\s*(?:/\*.*?\*/\s*)?(\.\w+)\s*(.*)$", line)
+    if not m:
+        return 0
+    directive, operand = m.groups()
+    if directive == ".space":
+        return int(operand.split(",")[0], 0)
+    if directive in (".ascii", ".asciz"):
+        return len(eval(operand)) + (directive == ".asciz")
+    return DATUM_WIDTH.get(directive, 0) * (operand.count(",") + 1)
+
+
 def write_data_markers(src_dir=SRC):
     """Write the file each INCLUDE_DATA marker names, from retail's section dump.
 
@@ -966,6 +982,11 @@ def write_data_markers(src_dir=SRC):
                 wanted[name] = folder
     if not wanted:
         return 0
+    sizes = {}
+    for rows in read_symbol_table().values():
+        for name, (_address, _type, size) in rows.items():
+            if size:
+                sizes.setdefault(name, size)
     found = {}
     for dump in sorted(Path(ASM, "data").rglob("*.s")):
         lines = dump.read_text(encoding="utf-8").split("\n")
@@ -974,10 +995,26 @@ def write_data_markers(src_dir=SRC):
             label = DUMP_LABEL.match(line)
             if not label or label.group(1) not in wanted or label.group(1) in found:
                 continue
-            body = []
+            body, held = [], 0
+            size = sizes.get(label.group(1))
             for rest in lines[i + 1:]:
                 if rest.startswith(("glabel", "dlabel", ".section")) or "unreferenced pad" in rest:
                     break
+                if size is not None and held >= size:
+                    break
+                width = datum_width(rest)
+                if size is not None and width and held + width > size:
+                    space = re.match(r"^(.*\.space\s+)(0x[0-9A-Fa-f]+|\d+)(.*)$", rest)
+                    word = re.match(r"^(\s*(?:/\*.*?\*/\s*)?)\.word\s+(0x[0-9A-Fa-f]+|\d+)\s*$", rest)
+                    if space:
+                        rest = space.group(1) + hex(size - held) + space.group(3)
+                    elif word:
+                        value = int(word.group(2), 0).to_bytes(4, "little")[:size - held]
+                        rest = word.group(1) + ".byte " + ", ".join(f"0x{b:02X}" for b in value)
+                    else:
+                        raise SystemExit(f"disassemble: {label.group(1)} ends inside {rest.strip()!r}")
+                    width = size - held
+                held += width
                 body.append(rest)
             found[label.group(1)] = (section, line, body)
     for name, folder in sorted(wanted.items()):

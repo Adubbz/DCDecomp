@@ -536,10 +536,6 @@ INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$605);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", old_mode$633);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", end_count$644);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$645);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", fix_chara_pos__2);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", fix_chara_rot__2);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", MainCamera__2);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", EventCamera__2);
 #pragma name_counter 411
 #else
 int EditInLoop() {
@@ -871,7 +867,6 @@ INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_flag$970);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$971);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_menu_mode$973);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$974);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", TexAnime__2);
 #pragma name_counter 491
 #else
 static void MainDraw() {

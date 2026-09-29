@@ -61,7 +61,9 @@ static char CurrentDir[256] = "y:/ps2/dc_data/";
 
 static int header_num;
 static u_int *packfile_buff;
+#ifndef PAL
 static NAME_TREE *tree;
+#endif
 static int data_sector;
 static int old_vsync;
 static int start_vsync;

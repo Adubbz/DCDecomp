@@ -26,6 +26,7 @@ REGIONS = {
         "config": "config",
         "asm": "asm/ntsc",
         "assets": "assets",
+        "invented_name_offset": 0,
         "lcf": "SCUS_971.11.lcf",
         "build": "build",
         "built_iso": "Dark Cloud (Build).iso",
@@ -67,6 +68,7 @@ REGIONS = {
         "config": "config/pal",
         "asm": "asm/pal",
         "assets": "assets/pal",
+        "invented_name_offset": 100000,
         "lcf": "config/pal/SCUS_971.11.lcf",
         "build": "build_pal",
         "built_iso": "Dark Cloud (PAL Build).iso",
@@ -121,6 +123,10 @@ BUILD = CURRENT["build"]
 OVERLAY_ORIGIN = CURRENT["overlay_origin"]
 SECTIONS = CURRENT["sections"]
 LITERAL_POOL = CURRENT["literal_pool"]
+# Where the compiler's invented names (`@N`, `name$N`) start counting. Another
+# release compiles NTSC's numbering, whose names are NTSC's retail names; its
+# own retail names are numbered by its own source, and the two must not meet.
+INVENTED_NAME_OFFSET = CURRENT["invented_name_offset"]
 
 
 GUARD = re.compile(r"^\s*#\s*(ifdef|ifndef|if|else|elif|endif)\b\s*(\w*)")

@@ -4,7 +4,9 @@
 #include "userstatus.hpp"
 
 /** The Japanese and American dungeon image path prefixes, indexed by language. */
+#ifndef PAL
 char *LanguageStr[1][2] = {{"dun/img/jp/", "dun/img/us/"}};
+#endif
 
 void CDngMessageMan::LimmitZone(void) {
     int zone = UserStatus->res_limit_zone_current;

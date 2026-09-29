@@ -360,6 +360,11 @@ void OpA_InitProcess() {
 static void LoadTexture();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", LoadTexture__Fv__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @341__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @336__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @337__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @338__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @339__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @340__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @351__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @352__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @353__5);
@@ -394,10 +399,10 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @380__6);
 #else
 static void LoadTexture() {
     LOADTEXTURE_INFO2 tex[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#frame_image#640#224#4", 22, 0},
+        {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26, 0},
+        {"#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 22, 0},
         {0, 26, 0},
         {0, 26, 0},
         {0, 26, 0},

@@ -128,12 +128,13 @@ INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @373__3);
 INCLUDE_ASM("asm/pal/nonmatchings/eastking", EastKingTextureEnter__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/eastking", @357__2);
 INCLUDE_DATA("asm/pal/nonmatchings/eastking", @358__3);
+INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @356__2);
 #pragma name_counter 82
 #else
 void EastKingTextureEnter() {
     if (EastKing.resources_ready == 0 && ReadBGSync() == 0 && SndBgmSyncBG() == 0) {
         LOADTEXTURE_INFO2 textures[] = {
-            {"#frame_image#640#448#4", EastKing.texture_block, 0},
+            {"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", EastKing.texture_block, 0},
             {NULL, EastKing.texture_block, 0},
             {NULL, 0, 0},
         };

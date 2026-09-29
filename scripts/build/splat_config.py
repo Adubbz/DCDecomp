@@ -545,7 +545,7 @@ def carry_lcf(carry, text, problems):
         if image and "//" in line and LCF_TEXT.search(line.split("//", 1)[0]):
             starts[image] += [int(t, 16) for t in HEX.findall(line.split("//", 1)[1])]
     image = None
-    out = []
+    out, placed = [], []
     for line in text.splitlines():
         block = LCF_BLOCK.match(line)
         if block:
@@ -582,7 +582,97 @@ def carry_lcf(carry, text, problems):
             return hex_like(token.group(0), moved)
 
         out.append(code + "//" + HEX.sub(move, comment))
+        placed.append((len(out) - 1, image, code, comment))
+    if target is not source:
+        out = migrate_placements(carry, out, placed)
     return "\n".join(out) + "\n"
+
+
+LCF_PLACEMENT = re.compile(r"^(\s*\S+\.o\s*\(\s*)(\.\w+)(\s*\)\s*//\s*)(0x[0-9a-fA-F]{8})(.*)$")
+DATA_SECTIONS = (".data", ".sdata", ".sbss", ".bss")
+
+
+def migrate_placements(carry, out, placed):
+    """Move a data placement whose datum the target keeps in another section.
+
+    A placement names the datum it starts with by address. When the target
+    holds that datum under the same name but in another data section -- NTSC's
+    small datum grew past the small-data limit, say -- the line goes to that
+    section's run, in address order, naming the section it is in there.
+    """
+    source, target = carry.source, carry.target
+    source_names = {}
+    for s in source.syms:
+        if s["idx"] in carry.source_names and not carry.source_names[s["idx"]].startswith("@"):
+            source_names.setdefault((source.image_of(s), s["value"]), carry.source_names[s["idx"]])
+    target_at = {}
+    for s in target.syms:
+        if s["idx"] in carry.target_names:
+            target_at.setdefault((target.image_of(s), carry.target_names[s["idx"]]), s["value"])
+
+    def section_of(image, address):
+        return next((n for n, _k, lo, hi in target.sections[image] if lo <= address < hi), None)
+
+    sizes = {}
+    for s in source.syms:
+        if s["size"]:
+            sizes.setdefault((source.image_of(s), s["value"]), s["size"])
+    runs = defaultdict(list)
+    for _index, image, code, comment in placed:
+        m = LCF_PLACEMENT.match(code + "//" + comment)
+        if m:
+            runs[(image, m.group(2))].append(int(HEX.search(comment).group(0), 16))
+    for key in runs:
+        runs[key].sort()
+    moves = []
+    for index, image, code, comment in placed:
+        m = LCF_PLACEMENT.match(code + "//" + comment)
+        if not m or m.group(2) not in DATA_SECTIONS or image is None:
+            continue
+        ntsc_address = int(HEX.search(comment).group(0), 16)
+        name = source_names.get((image, ntsc_address))
+        if name is None:
+            continue
+        # only a placement that holds this datum and nothing else can follow it
+        later = [a for a in runs[(image, m.group(2))] if a > ntsc_address]
+        named = re.match(r"^\s*0x[0-9a-fA-F]{8}\s+" + re.escape(name) + r"\s*$", comment)
+        if not named and later and sizes.get((image, ntsc_address), 0) < later[0] - ntsc_address - 8:
+            continue
+        spelled = carry.name(image, name) or name
+        address = target_at.get((image, spelled))
+        section = section_of(image, address) if address is not None else None
+        if section is None or section == m.group(2) or section not in DATA_SECTIONS:
+            continue
+        size = next((s["size"] for s in target.syms if s["value"] == address and s["size"]
+                     and target.image_of(s) == image), 0)
+        moves.append((index, image, section, address, size,
+                      m.group(1) + section + m.group(3) + hex_like(m.group(4), address) + m.group(5)))
+    if not moves:
+        return out
+    moved_away = {index for index, *_ in moves}
+    rows = [(i, line) for i, line in enumerate(out) if i not in moved_away]
+    held = sorted(s["value"] for s in target.syms if s["size"])
+    for _index, image, section, address, size, line in sorted(moves, key=lambda m: m[3]):
+        following = [int(m.group(4), 16) for m in map(LCF_PLACEMENT.match, (r[1] for r in rows))
+                     if m and m.group(2) == section and int(m.group(4), 16) > address]
+        end = min(following) if following else None
+        # data after it, before the next placement: it sits inside the unit before it
+        if end is not None and any(address + size <= a < end for a in held):
+            continue
+        at = None
+        for position, (_i, existing) in enumerate(rows):
+            m = LCF_PLACEMENT.match(existing)
+            if m and m.group(2) == section and int(m.group(4), 16) <= address:
+                at = position
+            elif m and m.group(2) == section and at is not None and int(m.group(4), 16) > address:
+                break
+        if at is None:
+            continue
+        nxt = at + 1
+        while nxt < len(rows) and not LCF_PLACEMENT.match(rows[nxt][1]) and rows[nxt][1].strip().endswith(")"):
+            nxt += 1
+        rows.insert(nxt, (None, line))
+    return [line for _i, line in rows]
 
 
 def relocated_targets(retail, image):
@@ -790,6 +880,13 @@ def carry_fixups(carry, fixups, problems, yamls):
         callers = {f for f in functions_using(image, function) if unit_of.get((image, f)) == unit}
         return not callers or any((carry.name(image, f) or f) not in assembled for f in callers)
 
+    offset = carry.target.info.get("invented_name_offset", 0)
+
+    def invented(name):
+        """A name the compiler invented, as the target's compile spells it."""
+        m = re.match(r"^(@|.+\$)(\d+)((?:__\d+)?)$", name)
+        return f"{m.group(1)}{int(m.group(2)) + offset}{m.group(3)}" if m and offset else name
+
     # Retail's names are carried over; the compiler's are the same in both
     # releases, which compile the same source. A `sections` or
     # `globalize_symbols` entry is a compiled name unless the unit exports it.
@@ -811,7 +908,8 @@ def carry_fixups(carry, fixups, problems, yamls):
         moved = {}
         for key, value in rows.items():
             if key == "symbols":
-                moved[key] = move(value, image)
+                moved[key] = {(move(k, image) or k) if k in markers else invented(k): v
+                              for k, v in move(value, image).items()}
             elif key == "rodata_exports":
                 kept = []
                 for v in value:
@@ -826,7 +924,7 @@ def carry_fixups(carry, fixups, problems, yamls):
             elif key in retail_keys:
                 moved[key] = move(value, image)
             elif key == "sections":
-                moved[key] = {k: [m for m in (move(v, image) if v in exported else v for v in listed)
+                moved[key] = {k: [m for m in (move(v, image) if v in exported else invented(v) for v in listed)
                                   if m is not None]
                               for k, listed in value.items()}
             elif key == "extern_functions":
@@ -840,7 +938,7 @@ def carry_fixups(carry, fixups, problems, yamls):
                                         f"{carry.target.name} takes from its assembly; dropped")
                 moved[key] = kept
             elif key == "globalize_symbols":
-                moved[key] = [m for m in (move(v, image) if v in exported else v for v in value)
+                moved[key] = [m for m in (move(v, image) if v in exported else invented(v) for v in value)
                               if m is not None]
             else:
                 moved[key] = value

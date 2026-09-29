@@ -964,7 +964,6 @@ int poison_counter;
 #ifdef PAL
 void BtStatusErrStep(void);
 INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/shot_freefuncs", @345__5);
 INCLUDE_DATA("asm/pal/nonmatchings/shot_freefuncs", @1188__2);
 #pragma name_counter 562
 #else

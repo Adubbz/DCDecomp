@@ -1087,23 +1087,23 @@ sceVu0FVECTOR blowVelo = {0.0f, 0.0f, 0.0f, 0.0f};
 
 /* Every texture the dungeon loads on its way in, and the block each goes to. */
 LOADTEXTURE_INFO2 texdata__2[23] = {
-    {"#frame_image#640#448#4", 1, 0},
+    {"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 1, 0},
     {"dun/etc/cursor.img", 1, 0},
     {"gatekey00.img", 1, 0},
-    {"#water#640#224#4", 13, 0},
+    {"#water#640#" HALF_FRAME_HEIGHT_TEXT "#4", 13, 0},
     {"dun/etc/atrtx.img", 22, 0},
     {"wepready.img", 2, 0},
-    {"#shadow_buf#640#224#3", 15, 0},
+    {"#shadow_buf#640#" HALF_FRAME_HEIGHT_TEXT "#3", 15, 0},
     {"dun/effect/basefx00.img", 18, 0},
     {"basefx01.img", 18, 0},
     {"dun/d01/effect/fx_foot.img", 18, 0},
     {"dun/effect/bombfx00.img", 19, 0},
     {"pause.img", 7, 0},
-    {"#dbgwork#640#448#3", 12, 0},
+    {"#dbgwork#640#" FRAME_HEIGHT_TEXT "#3", 12, 0},
     {"check/ankfont.img", 12, 0},
-    {"#mes_frame_buff#640#448#4", 26, 0},
+    {"#mes_frame_buff#640#" FRAME_HEIGHT_TEXT "#4", 26, 0},
     {"#fontbase#512#256#1", 26, 0},
-    {"#fukidashibase#640#224#4", 26, 0},
+    {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26, 0},
     {"meswin/syst04.img", 26, 0},
     {"meswin/gaiji.img", 26, 0},
     {"meswin/fuki256.img", 26, 0},
@@ -1114,7 +1114,7 @@ LOADTEXTURE_INFO2 texdata__2[23] = {
 
 /* The textures the loading screen itself draws with. */
 LOADTEXTURE_INFO texdata2[3] = {
-    {"#dbgwork#640#448#3", 12, 0},
+    {"#dbgwork#640#" FRAME_HEIGHT_TEXT "#3", 12, 0},
     {"check/ankfont.img", 12, 0},
     {"", 0, 0},
 };
@@ -1448,6 +1448,12 @@ INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", LoadBaseTexture__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @634__6);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @653__6);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @654__6);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @647__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @648__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @649__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @650__7);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @651__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @652__5);
 #pragma name_counter 994
 #else
 void LoadBaseTexture(void) {
@@ -2337,7 +2343,6 @@ INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1602__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1611__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1612__3);
 INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MainDraw__Fv__3);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1098__2);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", itemposr$1160);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1161);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", itemposr$1167);
@@ -2346,6 +2351,7 @@ INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", bic_posr$1181);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1182);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", bic_posr$1197);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1198);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1098__2);
 #pragma name_counter 1718
 #else
 void MainDraw(void) {
@@ -3080,15 +3086,16 @@ INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4217);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4218);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4219);
 INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MoveChara__Fv__2);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1635__2);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1908);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @2449);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", cnt$1704);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1705);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", snd_cnt$2142);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$2143);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", id_cnt$2145);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$2146);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", reference$1634);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1635__2);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @1908);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @2449);
 #pragma name_counter 2883
 #else
 void MoveChara(void) {

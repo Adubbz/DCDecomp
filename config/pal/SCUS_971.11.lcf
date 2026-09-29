@@ -717,7 +717,6 @@ SECTIONS
 		. = ALIGN(4);
 		fishing.cpp.o (.sdata)         // 0x002a9658
 		collisiondata.cpp.o (.sdata)   // 0x002a9660 @1544, @1547
-		dngmessageman.cpp.o (.sdata)   // 0x002a9670 LanguageStr
 		dungeonmap.cpp.o (.dungeonmap-c1292) // 0x002a9670 @1292
 		itemdata.cpp.o (.sdata)        // 0x002a967c
 		btitem.cpp.o (.sdata)          // 0x002a9698

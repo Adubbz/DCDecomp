@@ -328,6 +328,22 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/titleloop", TitleInit__Fi);
 INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @347__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @357__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @367__8);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @341__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @342__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @343__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @344__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @345__9);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @346__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @356__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @358__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @359__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @360__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @361__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @362__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @363__8);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @364__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @365__10);
+INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @366__8);
 INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @385__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @386__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/titleloop", @387__4);
@@ -376,8 +392,8 @@ void TitleInit(int no) {
     setbilinear(1);
 
     LOADTEXTURE_INFO tex[] = {
-        {"#frame_image_mes#640#448#4", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
+        {"#frame_image_mes#640#" FRAME_HEIGHT_TEXT "#4", 26, 0},
+        {"#fukidashibase#640#" HALF_FRAME_HEIGHT_TEXT "#4", 26, 0},
         {"#fontbase#512#256#1", 26, 0},
         {"meswin/gaiji.img", 26, 0},
         {"meswin/fuki256.img", 26, 0},
@@ -391,10 +407,10 @@ void TitleInit(int no) {
     LoadFile("titledat/title.pak", (void *) read_buffer, 0);
 
     LOADTEXTURE_INFO2 tex2[] = {
-        {(char *) "#frame_image#640#224#4", 0, 0},
-        {(char *) "#frame_image#640#224#4", 1, 0},
-        {(char *) "#frame_image#640#224#4", 2, 0},
-        {(char *) "#frame_image#640#224#4", 3, 0},
+        {(char *) "#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
+        {(char *) "#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 1, 0},
+        {(char *) "#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 2, 0},
+        {(char *) "#frame_image#640#" HALF_FRAME_HEIGHT_TEXT "#4", 3, 0},
         {0, 0, 0},
         {0, 1, 0},
         {0, 1, 0},

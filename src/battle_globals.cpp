@@ -66,7 +66,11 @@ CTexture *KataTex;
 CTexture *AlphaTex;
 
 /** How far the cursor moves across and down each keyboard, per key. */
+#ifdef PAL
+s8 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1A}, {0x26, 0x1A}};
+#else
 s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0x1A}};
+#endif
 
 /** How many keys each keyboard has in a row. */
 s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
@@ -348,6 +352,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
 #ifdef PAL
 INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @512__4);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawEuroSpecialFont__Fiiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_kigoutbl);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_euro_codetbl);
 #pragma name_counter 202
 #endif
@@ -379,7 +384,6 @@ INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @789__4);
 #ifdef PAL
 static void DrawNameTemplete(int x, int y, int color, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
-INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_kigoutbl);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @516__3);
 #pragma name_counter 335
 #else
@@ -1682,6 +1686,31 @@ void NameDefaultSet(int chara_no) {
 
 // clang-format off
 /** The extra spacing to the left and right of each character from code 0xA2 upwards. */
+#ifdef PAL
+s8 AlphabetEtcOffset[163][2] = {
+    {1, 0}, {0, 1}, {1, 1}, {0, 1}, {1, 0}, {2, 2}, {0, 1}, {1, 2},
+    {2, 4}, {4, 4}, {2, 2}, {0, 2}, {0, 1}, {0, 2}, {2, 2}, {1, 1},
+    {0, 0}, {1, 1}, {1, 1}, {0, 0}, {2, 1}, {0, 2}, {0, 0}, {0, 2},
+    {2, 2}, {1, 2}, {2, 1}, {1, 2}, {1, 1}, {2, 1}, {2, 2}, {2, 2},
+    {1, 1}, {1, 3}, {3, 3}, {4, 2}, {1, 3}, {2, 4}, {0, 0}, {1, 1},
+    {2, 1}, {1, 2}, {2, 1}, {1, 3}, {1, 2}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 2}, {1, 2}, {1, 1}, {0, 8}, {1, 1}, {-1, 4}, {3, 4},
+    {2, 2}, {1, 0}, {0, 1}, {1, 0}, {1, 1}, {1, 2}, {0, 1}, {0, 0},
+    {0, 1}, {6, 0}, {-4, 7}, {0, 0}, {0, 0}, {1, 1}, {1, 0}, {0, 1},
+    {3, 2}, {2, 3}, {4, 3}, {3, 3}, {3, 3}, {3, 3}, {4, 3}, {3, 4},
+    {1, 2}, {4, 6}, {1, 2}, {2, 2}, {1, 2}, {2, 1}, {2, 2}, {3, 1},
+    {1, 1}, {1, 2}, {4, 6}, {2, 8}, {2, 8}, {2, 2}, {1, 3}, {1, 4},
+    {1, 2}, {0, 0}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {2, 2}, {2, 2}, {2, 2}, {2, 2},
+    {2, 2}, {2, 2}, {2, 2}, {2, 2}, {2, 2}, {2, 2}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {2, 2},
+    {1, 1}, {1, 1}, {1, 1},
+};
+#else
 s8 AlphabetEtcOffset[97][2] = {
     {1, 0}, {0, 1}, {1, 1}, {0, 1}, {1, 0}, {2, 2}, {0, 1}, {1, 2},
     {2, 4}, {4, 4}, {2, 2}, {0, 2}, {0, 1}, {0, 2}, {2, 2}, {1, 1},
@@ -1697,6 +1726,7 @@ s8 AlphabetEtcOffset[97][2] = {
     {1, 1}, {1, 2}, {4, 6}, {2, 8}, {2, 8}, {2, 2}, {1, 3}, {1, 4},
     {1, 2},
 };
+#endif
 // clang-format on
 
 /**
@@ -1897,6 +1927,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1539);
 INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1540);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", OpeningBookKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @1493__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1492);
 #pragma name_counter 1217
 #else
 int OpeningBookKey() {
@@ -1907,7 +1938,7 @@ int OpeningBookKey() {
     switch (OpenBook.step) {
         case 0:
             if (OpenBook.open == 0 && ReadBGSync() == 0) {
-                LOADTEXTURE_INFO2 info[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                LOADTEXTURE_INFO2 info[3] = {{"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
                 info[0].block_no = OpenBook.tex_block;
                 info[1].block_no = OpenBook.tex_block;

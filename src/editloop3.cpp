@@ -6325,11 +6325,13 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
 }
 
 #ifdef PAL
+int _GET_TV_MODE(RS_STACKDATA *, int);
 INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_TV_MODE__FP12RS_STACKDATAi);
 #pragma name_counter 3628
 #endif
 
 #ifdef PAL
+int _GET_LANG_CODE(RS_STACKDATA *, int);
 INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_LANG_CODE__FP12RS_STACKDATAi);
 #pragma name_counter 3628
 #endif
@@ -6652,6 +6654,10 @@ static ED_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
     {_INIT_FISH, 996},
     {_EXIT_FISHING, 995},
     {_SET_FISHING_ESA, 994},
+#ifdef PAL
+    {_GET_TV_MODE, 1001},
+    {_GET_LANG_CODE, 1002},
+#endif
     {NULL, -1},
 };
 
@@ -6979,8 +6985,8 @@ INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2617);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2618);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2619);
 INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop3", @2575);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop3", mode_name$2453);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", @2575);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2454);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2455);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2456);

@@ -27,6 +27,9 @@
 int defWeapon__2[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 
 int element_tbl[6] = {1, 2, 4, 8, 0x10, 0};
+#ifdef PAL
+char *LanguageStr[7] = {"dun/img/jp/", "dun/img/us/", "dun/img/us_e/", "dun/img/fr/", "dun/img/gr/", "dun/img/it/", "dun/img/sp/"};
+#endif
 
 int BattleSubWeaponDmg(float amount, int kind) {
     int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};

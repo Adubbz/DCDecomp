@@ -682,7 +682,7 @@ int GetSaveMenuMsgNo(void) {
 int SaveMenuTextureEnter(void) {
     ReadBG();
     if (ReadBGSync() == 0) {
-        LOADTEXTURE_INFO2 tex[3] = {{"#frame_image_save#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        LOADTEXTURE_INFO2 tex[3] = {{"#frame_image_save#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
         BG_READ_INFO *bg;
         u_int *pack;
         int i;
@@ -1137,6 +1137,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3701);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3702);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3686);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3685);
 #pragma name_counter 3606
 #else
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
@@ -1172,7 +1173,7 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     } else {
         printf("exist after use \n");
     }
-    LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}};
     texture[0].block_no = MiniEventTextureBlock;
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
     TexManager.CleanUpTextureList();
@@ -1250,7 +1251,7 @@ static int EventItemSelectKey(int *result) {
 
     if (MiniEventTexReadFlag == 0) {
         if (ReadBGSync() == 0) {
-            LOADTEXTURE_INFO2 texture[4] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 texture[4] = {{"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
             texture[0].block_no = MiniEventTextureBlock;
             texture[1].block_no = MiniEventTextureBlock;
             texture[2].block_no = MiniEventTextureBlock;

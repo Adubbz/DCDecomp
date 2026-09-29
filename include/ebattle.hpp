@@ -6,7 +6,9 @@ class CRect_i_;
 struct ED_MOVE_CHARA_INFO;
 
 /** Where the caution mark is taken from in the event-battle texture. */
+#ifndef PAL
 extern const CRect_i_ Caution;
+#endif
 
 /** Character-movement state the editor shares with EdMoveChara. */
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;

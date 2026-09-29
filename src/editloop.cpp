@@ -3758,6 +3758,19 @@ INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2826);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2827);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2830);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2841);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2820);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2821);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2822);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2823);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2824);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2825);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2833);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2834);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2835);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2836);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2837);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2839);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2840);
 #pragma name_counter 2199
 #else
 int LoadTexture() {

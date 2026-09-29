@@ -304,7 +304,7 @@ void OpD_InitProcess() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_FRAME_HEIGHT_TEXT "#4", 0, 0},
         {0, 11, 0},
         {0, 11, 0},
         {0, 4, 0},

@@ -609,7 +609,7 @@ void CWeaponLevelUp::Step() {
                 }
             }
             if (ready >= 2) {
-                LOADTEXTURE_INFO2 tex[3] = {{"#frame_menu_level#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                LOADTEXTURE_INFO2 tex[3] = {{"#frame_menu_level#640#" FRAME_HEIGHT_TEXT "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
                 tex[0].block_no = texture_block;
                 tex[1].block_no = texture_block;
                 char sel[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
