@@ -530,6 +530,9 @@ SECTIONS
         shot_freefuncs.cpp.o (.data)   // 0x0026b040
         healeffect.cpp.o (.data)       // 0x0026b0c0
         main.data.motionmodel-a.s.o (.data) // 0x0026b0e0
+        collisiondata.cpp.o (.data)  // 0x0026b160 @1554, @1558
+        . = ALIGN(0x10);
+        main.data.motionmodel-a-26B190.s.o (.data) // 0x0026b190
         motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0
         main.data.motionmodel-gap.s.o (.data) // 0x0026b1c8
         hitvalue.cpp.o (.data)       // 0x0026b1d0
@@ -879,6 +882,8 @@ SECTIONS
 		edit_in.cpp.o (.editinpause)   // 0x002a1f98
 		. = ALIGN(4);
 		main.sdata.edit_in-a.s.o (.sdata) // 0x002a1fa0
+		collisiondata.cpp.o (.sdata)   // 0x002a1fa8 @1544, @1547
+		main.sdata.edit_in-a-2A1FB8.s.o (.sdata) // 0x002a1fb8
 		dungeonmap.cpp.o (.dungeonmap-c1292) // 0x002a1fc0 @1292
 		main.sdata.edit_in-a-2A1FCC.s.o (.sdata) // 0x002a1fcc
 		btitem.cpp.o (.sdata)          // 0x002a1fe8

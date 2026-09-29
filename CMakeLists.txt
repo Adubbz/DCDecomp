@@ -190,7 +190,8 @@ carve_part(main.sdata.part2b.s
            main.sdata.effect-tail.s=2A1F04-2A1F14
            main.sdata.part2c.s=2A1F18-2A1F24
            main.sdata.part2d.s=2A1F50-2A1F68
-           main.sdata.edit_in-a.s=2A1FA0-2A1FC0
+           main.sdata.edit_in-a.s=2A1FA0-2A1FA8
+           main.sdata.edit_in-a-2A1FB8.s=2A1FB8-2A1FC0
            main.sdata.edit_in-a-2A1FCC.s=2A1FCC-2A1FE8
            main.sdata.part2f-2A1FF0.s=2A1FF0-2A1FF8
            main.sdata.shop-a.s=2A2000-2A2008
@@ -309,7 +310,8 @@ carve_part(main.data.part4.s
            main.data.part4c.s=266FB0-269320
            main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
            main.data.shot_freefuncs-a.s=26AFF8-26B040
-           main.data.motionmodel-a.s=26B0E0-26B1B0
+           main.data.motionmodel-a.s=26B0E0-26B160
+           main.data.motionmodel-a-26B190.s=26B190-26B1B0
            main.data.motionmodel-gap.s=26B1C8-26B1D0
            main.data.motionmodel-b-26B250.s=26B250-26B2C0
            main.data.part4d.s=26B310-279E60)

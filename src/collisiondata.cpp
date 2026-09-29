@@ -3,11 +3,14 @@
 #include <cstdio>
 #include <cstring>
 
+#include "camerafollow.hpp"
 #include "debugfont.hpp"
 #include "dun/gameloop.hpp"
 #include "dungeoneventman.hpp"
 #include "dungeonmap.hpp"
 #include "gamepad.hpp"
+#include "mglib.hpp"
+#include "rect.hpp"
 #include "snd.hpp"
 
 extern "C" int DebugStatus[21];
@@ -27,12 +30,10 @@ extern "C" char *LanguageStr[1][2];
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
 extern "C" int gateKeyStack[32];
 
-#ifdef NON_MATCHING
-#include "camerafollow.hpp"
-#include "mglib.hpp"
-#include "rect.hpp"
-
+/** The camera the dungeon is being viewed through. */
 extern CCameraFollow *NowCamera__3;
+
+/** Revision of the weapon list the debug overlay reports. */
 extern int VERSION_VOL;
 
 /**
@@ -99,8 +100,9 @@ void DebugInfomationDraw(void) {
             DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "RANDOM MAP CODE = %d\n", NowDngMap->map_seed);
             DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "WeaponList Ver 2000/%d\n", VERSION_VOL);
             data = NowEventMan->SearchDataSlotPos(pos);
+            num = 0;
             if (data != NULL) {
-                data = (CDungeonEventData *)data;
+                num = 1;
             }
             num = NowEventMan->GetDataNum();
             DbgMsg.len += sprintf(&DbgMsg.text[DbgMsg.len], "EventID = %d\n", num);
@@ -180,42 +182,7 @@ void DebugInfomationDraw(void) {
     MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
     DbgMsg.Draw();
 }
-#else
-INCLUDE_ASM("asm/nonmatchings/collisiondata", DebugInfomationDraw__Fv);
-#endif
 
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1542);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1543);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1545);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1546);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1548);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1549);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1550);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1551);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1552);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1553);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1555);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1556__2);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1557__2);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1615);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1616);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1617);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1618);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1619);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1620);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1621);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1622);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1623);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1624);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1625);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1626);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1627__3);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1628);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1629);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1630);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1631);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1632__2);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @1633);
 
 /**
  * Clears the debug overlay's state.

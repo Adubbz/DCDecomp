@@ -289,6 +289,13 @@ the same question decides whether an address is recomputed or kept.
 * A **branch to the next instruction** needs a body that assigns a *local* the
   value it already holds. An empty body deletes the test; assigning a global to
   itself keeps the test but emits the store.
+  The dead store may also be to a *different* local, and then it changes the
+  register allocation: `num = 0; if (data != NULL) { num = 1; } num = Call();
+  sprintf(.., num)` emits nothing for the two assignments, but `num` is
+  multi-def, so the front end does not fold the call into the argument and the
+  result is copied to `$a2` straight after the `jal` instead of staying in
+  `$v0`. A call result that behaves like an unfolded local is this shape
+  (`DebugInfomationDraw`).
 * A **`b`-only join block** survives only when the then-block ends in an
   explicit `return` and the else-code is moved out from under the `if`. A plain
   `if`/`else` forwards every branch to the epilogue and deletes the join.
