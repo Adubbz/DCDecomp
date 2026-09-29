@@ -475,6 +475,9 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
         # nobody has written the other half of yet.
         if kinds.get(source) != "asm":
             unit["base_path"] = f"{build_dir}/diff/{source}.o"
+        elif source.endswith(".s"):
+            # Hand-written assembly links as assembled, with nothing spliced.
+            unit["base_path"] = f"{build_dir}/{source}.o"
 
         here = owned[image].get(source, [])
         # Absence of assembly markers means implemented, not object-exact.
@@ -484,7 +487,7 @@ def objdiff(path, placed, functions, marked, build_dir, declared):
             "progress_categories": [category_of(source)],
             "source_path": source,
         }
-        if kinds.get(source) != "asm":
+        if kinds.get(source) != "asm" or source.endswith(".s"):
             decompiled += 1
             if any(symbol in declared for symbol in here):
                 fuzzy_units += 1

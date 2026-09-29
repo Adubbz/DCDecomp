@@ -1,5 +1,7 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
+#pragma argument_flag 0
+#pragma argument_flag_ones 82,115,116,117,173,177,179,183
 
 #include "dungeonparts.hpp"
 
@@ -17,6 +19,7 @@
 #include "boxvu0.hpp"
 #include "mglib.hpp"
 #include "editloop.hpp"
+#include "editmenu.hpp"
 #include "userstatus.hpp"
 
 #ifdef NON_MATCHING
@@ -112,19 +115,6 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
     *item0 = list[1].item[0][pick0];
     *item1 = list[1].item[1][pick1];
 }
-/**
- * The items a treasure box can hold on one floor.
- */
-struct ITEM_PUT_SET {
-    int floor;      /**< Floor the list is for, counted from one; -1 ends the table. */
-    int unk_04;
-    int item[128];  /**< Items a box on the floor can hold, ended by -1. */
-};
-
-extern ITEM_PUT_SET *ItemPutListPtr[14];
-
-int GetNumHowManyItemsHave(int item_no);
-
 int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     int candidate[144];
     s16 rate[400];
@@ -258,7 +248,6 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
         return item_no;
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @646__2);
 INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
 
 /**

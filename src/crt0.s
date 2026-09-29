@@ -29,6 +29,9 @@
 
 .section .text, "ax"
 
+# Start of .text; the overlay address table names it.
+.global func_00100000
+func_00100000:
     nop
     nop
 

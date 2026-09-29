@@ -170,6 +170,14 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
             unit = path.with_suffix("").relative_to(src_dir).as_posix()
             sources[unit] = path.as_posix()
 
+    # A hand-written assembly source stands in for the split assembly of the
+    # unit it is named after. Only units the yaml splits qualify, so the
+    # loose assembly under src/handwritten stays out of the unit list.
+    handwritten = {
+        path.with_suffix("").relative_to(src_dir).as_posix(): path.as_posix()
+        for path in sorted(Path(src_dir).rglob("*.s"))
+    }
+
     classified, order = {}, []
     for image in IMAGES:
         path = Path(config_dir) / f"{image}.yaml"
@@ -181,6 +189,10 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
                 unit = match.group(2)
                 classified[unit] = (UNIT_TYPES[match.group(1)], image)
                 order.append(unit)
+
+    for unit, kind in classified.items():
+        if kind[0] == "asm" and unit in handwritten:
+            sources[unit] = handwritten[unit]
 
     # Library units are always linked from their split assembly until they
     # have real source. They therefore do not need marker-only source files

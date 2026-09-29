@@ -193,7 +193,7 @@ SECTIONS
         // and each starts on an 8-byte boundary, so one alignment covers them
         // all. The wildcard takes anything not named here.
         ALIGNALL(8);
-        crt0.c.o                    (.text)   // 0x00100000
+        crt0.s.o                    (.text)   // 0x00100000
         abort.c.o                   (.text)   // 0x001001a8
         abs.c.o                     (.text)   // 0x001001c8
         assert.c.o                  (.text)   // 0x001001e0

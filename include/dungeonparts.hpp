@@ -233,6 +233,23 @@ STATIC_ASSERT(sizeof(PIERO_ITEM_SET) == 0x208);
 extern PIERO_ITEM_SET *PieroItemListPtr[14];
 
 /**
+ * The items a treasure box can hold on one floor.
+ */
+struct ITEM_PUT_SET {
+    int floor;     /**< Floor the list is for, counted from one; -1 ends the table. */
+    int unk_04;
+    int item[128]; /**< Items a box on the floor can hold, ended by -1. */
+};
+
+STATIC_ASSERT(sizeof(ITEM_PUT_SET) == 0x208);
+
+/**
+ * The treasure box item lists, seven dungeons and then their back floors, for
+ * ordinary and special boxes.
+ */
+extern ITEM_PUT_SET *ItemPutListPtr[14];
+
+/**
  * Gives the two items the clown offers on one floor.
  *
  * @mangled GetPieroItem__FiiPiPi
