@@ -1,189 +1,5 @@
 {
   "src/shop.cpp": {
-    "sections": {
-      ".shopdata-prefix": [
-        "PriceList",
-        "ItemShopList2",
-        "@888",
-        "@889",
-        "@1007"
-      ],
-      ".shopdata-ticket": [
-        "@1984"
-      ],
-      ".shopdata-checkbuy-a": [
-        "@1731"
-      ],
-      ".shopdata-checkbuy-b": [
-        "@1732"
-      ],
-      ".shopdata-local-a": [
-        "@1055"
-      ],
-      ".shopdata-local-b": [
-        "@1056"
-      ],
-      ".shopdata-filenames": [
-        "@2225",
-        "@2226",
-        "@2246"
-      ],
-      ".shopdata-itemdraw": [
-        "@2874",
-        "@2883"
-      ],
-      ".shopsdata-itemdraw": [
-        "@2880"
-      ],
-      ".shopdata-buymoney": [
-        "@1632"
-      ],
-      ".shopdata-fishrec": [
-        "@3225"
-      ],
-      ".shopdata-sellticket": [
-        "@2024"
-      ],
-      ".shopdata-chargemax": [
-        "@1540"
-      ],
-      ".shopdata-moneycheck": [
-        "@1941"
-      ],
-      ".shopdata-fishtex": [
-        "@2951"
-      ],
-      ".shopdata-person": [
-        "@1038",
-        "@1039"
-      ],
-      ".shopdata-plate": [
-        "@1530"
-      ],
-      ".shopdata-fishdraw": [
-        "@3145"
-      ],
-      ".shopdata-fishrecview-a": [
-        "@3289"
-      ],
-      ".shopdata-fishrecview-b": [
-        "@3301"
-      ]
-    },
-    "rekey_sections": [
-      [
-        ".shopdata-person",
-        [
-          36,
-          16
-        ]
-      ],
-      [
-        ".shopdata-local-a",
-        [
-          16
-        ]
-      ],
-      [
-        ".shopdata-local-b",
-        [
-          16
-        ]
-      ],
-      [
-        ".shopdata-plate",
-        [
-          28
-        ]
-      ],
-      [
-        ".shopdata-chargemax",
-        [
-          16
-        ]
-      ],
-      [
-        ".shopdata-buymoney",
-        [
-          12
-        ]
-      ],
-      [
-        ".shopdata-checkbuy-a",
-        [
-          12
-        ]
-      ],
-      [
-        ".shopdata-checkbuy-b",
-        [
-          12
-        ]
-      ],
-      [
-        ".shopdata-moneycheck",
-        [
-          16
-        ]
-      ],
-      [
-        ".shopdata-ticket",
-        [
-          16
-        ]
-      ],
-      [
-        ".shopdata-sellticket",
-        [
-          12
-        ]
-      ],
-      [
-        ".shopdata-filenames",
-        [
-          144,
-          64,
-          144
-        ]
-      ],
-      [
-        ".shopdata-itemdraw",
-        [
-          12,
-          14
-        ]
-      ],
-      [
-        ".shopdata-fishtex",
-        [
-          36
-        ]
-      ],
-      [
-        ".shopdata-fishdraw",
-        [
-          16
-        ]
-      ],
-      [
-        ".shopdata-fishrec",
-        [
-          36
-        ]
-      ],
-      [
-        ".shopdata-fishrecview-a",
-        [
-          12
-        ]
-      ],
-      [
-        ".shopdata-fishrecview-b",
-        [
-          16
-        ]
-      ]
-    ],
     "symbols": {
       "FishFrameImage": "@2948",
       "FishMessageFile": "@2964"
@@ -267,665 +83,20 @@
   },
   "src/dungeonparts.cpp": {
     "symbols": {
-      "MaxFloorTbl": "MaxFloorTbl__2"
+      "MaxFloorTbl": "MaxFloorTbl__2",
+      "@370": "@826__2"
     }
   },
   "src/battlemenu.cpp": {
-    "sections": {
-      ".battlemenu-c731__6": [
-        "@196"
-      ],
-      ".battlemenu-c789__3": [
-        "@237"
-      ],
-      ".battlemenu-c791__2": [
-        "@239"
-      ],
-      ".battlemenu-c889__4": [
-        "@314"
-      ],
-      ".battlemenu-c890__4": [
-        "@315"
-      ],
-      ".battlemenu-texenter": [
-        "@351"
-      ],
-      ".battlemenu-c959": [
-        "@374"
-      ],
-      ".battlemenu-c963": [
-        "@378"
-      ],
-      ".battlemenu-c969__2": [
-        "@383"
-      ],
-      ".battlemenu-c970": [
-        "@384"
-      ],
-      ".battlemenu-c1239__2": [
-        "@627"
-      ],
-      ".battlemenu-c1270": [
-        "@660"
-      ],
-      ".battlemenu-c1292__2": [
-        "@670"
-      ],
-      ".battlemenu-c1364__2": [
-        "@736"
-      ],
-      ".battlemenu-c1684__2": [
-        "@1000"
-      ],
-      ".battlemenu-c1717": [
-        "@1032"
-      ],
-      ".battlemenu-c1725": [
-        "@1040"
-      ],
-      ".battlemenu-c1728": [
-        "@1043"
-      ],
-      ".battlemenu-c1729": [
-        "@1044"
-      ],
-      ".battlemenu-c1879": [
-        "@1167"
-      ],
-      ".battlemenu-statustag": [
-        "@1196",
-        "@1214",
-        "@1215",
-        "@1216",
-        "@1220",
-        "@1234",
-        "@1235"
-      ],
-      ".battlemenu-c2002": [
-        "@1289"
-      ],
-      ".battlemenu-c2003": [
-        "@1290"
-      ],
-      ".battlemenu-c2004": [
-        "@1291"
-      ],
-      ".battlemenu-c2020": [
-        "@1307"
-      ],
-      ".battlemenu-c2056": [
-        "@1342"
-      ],
-      ".battlemenu-c2057": [
-        "@1343"
-      ],
-      ".battlemenu-c2058": [
-        "@1344"
-      ],
-      ".battlemenu-c2059": [
-        "@1345"
-      ],
-      ".battlemenu-c2127__3": [
-        "@1407"
-      ],
-      ".battlemenu-c2195": [
-        "@1464"
-      ],
-      ".battlemenu-c2196": [
-        "@1465"
-      ],
-      ".battlemenu-c2197": [
-        "@1466"
-      ],
-      ".battlemenu-c2198": [
-        "@1467"
-      ],
-      ".battlemenu-c2199": [
-        "@1468"
-      ],
-      ".battlemenu-c2250": [
-        "@1519"
-      ],
-      ".battlemenu-c2612__2": [
-        "@1857"
-      ],
-      ".battlemenu-c2616": [
-        "@1861"
-      ],
-      ".battlemenu-c2679": [
-        "@1922"
-      ],
-      ".battlemenu-c3657": [
-        "@2374"
-      ],
-      ".battlemenu-c3967": [
-        "@2573"
-      ],
-      ".battlemenu-c3968": [
-        "@2574"
-      ],
-      ".battlemenu-weaponmenu": [
-        "@2681",
-        "@2686",
-        "@2744"
-      ],
-      ".battlemenu-c4290": [
-        "@2852"
-      ],
-      ".battlemenu-c4291": [
-        "@2853"
-      ],
-      ".battlemenu-c4331": [
-        "@2890"
-      ],
-      ".battlemenu-c4433": [
-        "@2970"
-      ],
-      ".battlemenu-itemmenu": [
-        "@3186",
-        "@3491",
-        "@3563"
-      ],
-      ".battlemenu-c5342": [
-        "@3686"
-      ],
-      ".battlemenu-c5345": [
-        "@3689"
-      ],
-      ".battlemenu-c5370": [
-        "@3712"
-      ],
-      ".battlemenu-c5492": [
-        "@3821"
-      ],
-      ".battlemenu-c5503": [
-        "@3830"
-      ],
-      ".battlemenu-c5534": [
-        "@3862"
-      ],
-      ".battlemenu-c5742": [
-        "@4039"
-      ],
-      ".battlemenu-town-ref": [
-        "@4153"
-      ],
-      ".battlemenu-town-pos": [
-        "@4154"
-      ],
-      ".battlemenu-c6018": [
-        "@4281"
-      ],
-      ".battlemenu-c6037": [
-        "@4300"
-      ],
-      ".battlemenu-c6105": [
-        "@4351"
-      ],
-      ".battlemenu-c6185": [
-        "@4431"
-      ],
-      ".battlemenu-c6188": [
-        "@4434"
-      ],
-      ".battlemenu-c6227": [
-        "@4460"
-      ],
-      ".battlemenu-c6232": [
-        "@4470"
-      ],
-      ".battlemenu-c6233": [
-        "@4471"
-      ],
-      ".battlemenu-c6235": [
-        "@4473"
-      ],
-      ".battlemenu-data": [
-        "@4558",
-        "@4599",
-        "@4622",
-        "@4626",
-        "@4687"
-      ],
-      ".battlemenu-c702__2": [
-        "@166"
-      ],
-      ".battlemenu-c782__2": [
-        "@230"
-      ],
-      ".battlemenu-c790__2": [
-        "@238"
-      ],
-      ".battlemenu-c792__4": [
-        "@240"
-      ],
-      ".battlemenu-texenter-s": [
-        "@352"
-      ],
-      ".battlemenu-c1249": [
-        "@638"
-      ],
-      ".battlemenu-charakey": [
-        "@737",
-        "@751"
-      ],
-      ".battlemenu-statustag-s": [
-        "@1197"
-      ],
-      ".battlemenu-c2169": [
-        "@1449"
-      ],
-      ".battlemenu-c3682": [
-        "@2399"
-      ],
-      ".battlemenu-c3929": [
-        "@2548"
-      ],
-      ".battlemenu-itemmenu-s": [
-        "@3082",
-        "@3255"
-      ],
-      ".battlemenu-c5556": [
-        "@3884"
-      ],
-      ".battlemenu-c5592": [
-        "@3921"
-      ],
-      ".battlemenu-c5593": [
-        "@3922"
-      ],
-      ".battlemenu-c5711": [
-        "@4010"
-      ],
-      ".battlemenu-c5977": [
-        "@4268"
-      ],
-      ".battlemenu-c6236": [
-        "@4474"
-      ],
-      ".battlemenu-warningcnt_1676": [
-        "warningcnt$1676"
-      ],
-      ".battlemenu-init_1677": [
-        "init$1677"
-      ],
-      ".battlemenu-ct_4025": [
-        "ct$4025"
-      ],
-      ".battlemenu-init_4026": [
-        "init$4026"
-      ],
-      ".battlemenu-ncnt_4292": [
-        "ncnt$4292"
-      ],
-      ".battlemenu-init_4293": [
-        "init$4293"
-      ],
-      ".battlemenu-ct_5739": [
-        "ct$5739"
-      ],
-      ".battlemenu-init_5740": [
-        "init$5740"
-      ],
-      ".battlemenu-statusCnt_5776": [
-        "statusCnt$5776"
-      ],
-      ".battlemenu-init_5777": [
-        "init$5777"
-      ],
-      ".battlemenu-warmcnt_2370": [
-        "warmcnt$2370"
-      ],
-      ".battlemenu-init_2371": [
-        "init$2371"
-      ],
-      ".battlemenu-levelbrinkcnt_2379": [
-        "levelbrinkcnt$2379"
-      ],
-      ".battlemenu-init_2380": [
-        "init$2380"
-      ]
-    },
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ],
     "rodata_exports": [
       "@924__2",
       "@926__2",
       "@927__2",
       "@5881",
       "@885__2"
-    ],
-    "rekey_sections": [
-      [
-        ".battlemenu-c1684__2",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c1717",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c1725",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c1728",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c1729",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c1879",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-statustag",
-        [
-          16,
-          16,
-          16,
-          16,
-          16,
-          16,
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c2002",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c2003",
-        [
-          20
-        ]
-      ],
-      [
-        ".battlemenu-c2004",
-        [
-          20
-        ]
-      ],
-      [
-        ".battlemenu-c2020",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c2056",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c2057",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c2058",
-        [
-          40
-        ]
-      ],
-      [
-        ".battlemenu-c2059",
-        [
-          40
-        ]
-      ],
-      [
-        ".battlemenu-c2127__3",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c2195",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c2196",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c2197",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c2198",
-        [
-          64
-        ]
-      ],
-      [
-        ".battlemenu-c2199",
-        [
-          64
-        ]
-      ],
-      [
-        ".battlemenu-c2250",
-        [
-          24
-        ]
-      ],
-      [
-        ".battlemenu-c2612__2",
-        [
-          24
-        ]
-      ],
-      [
-        ".battlemenu-c2616",
-        [
-          10
-        ]
-      ],
-      [
-        ".battlemenu-c2679",
-        [
-          20
-        ]
-      ],
-      [
-        ".battlemenu-c3657",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c3967",
-        [
-          56
-        ]
-      ],
-      [
-        ".battlemenu-c3968",
-        [
-          14
-        ]
-      ],
-      [
-        ".battlemenu-weaponmenu",
-        [
-          48,
-          192,
-          14
-        ]
-      ],
-      [
-        ".battlemenu-c4290",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c4291",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c4331",
-        [
-          36
-        ]
-      ],
-      [
-        ".battlemenu-c4433",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-itemmenu",
-        [
-          16,
-          28,
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c5342",
-        [
-          28
-        ]
-      ],
-      [
-        ".battlemenu-c5345",
-        [
-          28
-        ]
-      ],
-      [
-        ".battlemenu-c5370",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-c5492",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c5503",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c5534",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c5742",
-        [
-          12
-        ]
-      ],
-      [
-        ".battlemenu-town-ref",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-town-pos",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c6018",
-        [
-          16
-        ]
-      ],
-      [
-        ".battlemenu-c6037",
-        [
-          64
-        ]
-      ],
-      [
-        ".battlemenu-c6105",
-        [
-          60
-        ]
-      ],
-      [
-        ".battlemenu-c6185",
-        [
-          28
-        ]
-      ],
-      [
-        ".battlemenu-c6188",
-        [
-          14
-        ]
-      ],
-      [
-        ".battlemenu-c6227",
-        [
-          24
-        ]
-      ],
-      [
-        ".battlemenu-c6232",
-        [
-          32
-        ]
-      ],
-      [
-        ".battlemenu-c6233",
-        [
-          32
-        ]
-      ],
-      [
-        ".battlemenu-c6235",
-        [
-          60
-        ]
-      ],
-      [
-        ".battlemenu-data",
-        [
-          64,
-          80,
-          10,
-          69,
-          9
-        ]
-      ]
     ],
     "symbols": {
       "CharaStatusTextureName": "@885__2",
@@ -937,6 +108,9 @@
     }
   },
   "src/ebattle.cpp": {
+    "symbols": {
+      "draw_rect_store": "draw_rect"
+    },
     "rodata_exports": [
       "@314__2",
       "@315__2"
@@ -974,12 +148,10 @@
       "MainDraw__Fv": "MainDraw__Fv__3",
       "MoveChara__Fv": "MoveChara__Fv__2",
       "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff": "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2",
-      "LoadData__Fv": "LoadData__Fv__3"
+      "LoadData__Fv": "LoadData__Fv__3",
+      "__ct__13CDranMapFieldFv": "__ct__10CCharacterFv"
     },
-    "data_runs": {
-      ".ddata2": "@656__7",
-      ".ddata3": "@5176"
-    },
+    "extern_functions": ["__ct__10CCharacterFv", "__ct__12CSHOT_EFFECTFv", "__ct__13CDranMapFieldFv", "__ct__13MAP_NPC_MODELFv", "__ct__8CHitMarkFv"],
     "rodata_exports": [
       "@1059__2",
       "@1797",
@@ -1079,6 +251,22 @@
     ]
   },
   "src/collisiondata.cpp": {
+    "symbols": {
+      "DebugInfoMsgMiniMapView": "@1522",
+      "DebugInfoMsgCollision": "@1523",
+      "DebugInfoMsgBgmPlay": "@1524",
+      "DebugInfoMsgParameter": "@1525",
+      "DebugInfoMsgViewInfo": "@1526",
+      "DebugInfoMsgUltraMan": "@1527",
+      "DebugInfoMsgReloadEnemy": "@1528",
+      "DebugInfoMsgItemPutZone": "@1529",
+      "DebugInfoMsgLightMode": "@1530",
+      "DebugInfoMsgFloorAtraGet": "@1531",
+      "DebugInfoMsgEventTest": "@1532",
+      "DebugInfoMsgSetStatus": "@1533",
+      "DebugInfoMsgSePlay": "@1534",
+      "DebugInfoMsgSetChrKey": "@1535"
+    },
     "rodata_exports": [
       "@1548",
       "@1549",
@@ -1144,8 +332,34 @@
       "goto_menu": "goto_menu__2",
       "goto_return_menu": "goto_return_menu__2",
       "MainDraw__Fv": "MainDraw__Fv__2",
-      "MotionParts": "MotionParts__2"
+      "MotionParts": "MotionParts__2",
+      "Fire": "Fire__2",
+      "TalkCamera": "TalkCamera__2",
+      "@480": "@986",
+      "@58": "@347__2",
+      "@59": "@348__3",
+      "@60": "@349__3",
+      "@61": "@350__3",
+      "@62": "@351__2",
+      "@166": "@458",
+      "@418": "@909",
+      "@440": "@931",
+      "@547": "@1141",
+      "@548": "@1142",
+      "@655": "@1260",
+      "@864": "@1488",
+      "@865": "@1489",
+      "@866": "@1490",
+      "@867": "@1491",
+      "@898": "@1538",
+      "@923": "@1563",
+      "@986": "@1637__2",
+      "@988": "@1639__2",
+      "@990": "@1641"
     },
+    "extern_functions": [
+      "__ct__10CCharacterFv"
+    ],
     "globalize_symbols": [
       "InitWorkBuffer__Fv__2",
       "CommandAMBIENT__FPPv__2",
@@ -1195,57 +409,15 @@
       "@1399",
       "@1400",
       "@469__4"
-    ],
-    "sections": {
-      ".editininit": [
-        "@161"
-      ],
-      ".editindraw": [
-        "@413",
-        "@435"
-      ],
-      ".editinpause": [
-        "@475"
-      ],
-      ".editinmove": [
-        "@542",
-        "@543"
-      ],
-      ".editincamdist": [
-        "camera_distance$1155"
-      ],
-      ".editincampos": [
-        "@650"
-      ],
-      ".editintex": [
-        "texdata$1374"
-      ],
-      ".editinload": [
-        "@859",
-        "@860",
-        "@861",
-        "@862"
-      ],
-      ".editinpts": [
-        "@893",
-        "@918"
-      ],
-      ".editinfixpos": [
-        "fix_pos$1123"
-      ],
-      ".editinsbss": [
-        "event_text$604",
-        "init$605",
-        "old_mode$633",
-        "end_count$644",
-        "init$645",
-        "debug_flag$964",
-        "init$965",
-        "debug_menu_mode$967",
-        "init$968",
-        "cnt$1223",
-        "init$1224"
-      ]
+    ]
+  },
+  "src/editground.cpp": {
+    "symbols": {
+      "@114": "@335__4",
+      "@315": "@575__2",
+      "@586": "@886__3",
+      "@610": "@912",
+      "@828": "@1159"
     }
   },
   "src/edit.cpp": {
@@ -1427,181 +599,18 @@
       "RunEvent__FiP7CCamera",
       "RunSystemEvent__FiP7CCamera"
     ],
-    "sections": {
-      ".editinitdata": [
-        "@660",
-        "@680",
-        "@681",
-        "@690"
-      ],
-      ".editinitflags": [
-        "init$654",
-        "debug_flag_set$664",
-        "init$665"
-      ],
-      ".edloopflags": [
-        "end_count$767",
-        "init$768",
-        "top$798",
-        "init$799",
-        "select$801",
-        "init$802",
-        "cur$804",
-        "init$805",
-        "debug_flag$1047",
-        "init$1048",
-        "event_next$1100",
-        "init$1101",
-        "old_mode$1129",
-        "end_code$1144",
-        "init$1145"
-      ],
-      ".edmenulist": [
-        "menu$807"
-      ],
-      ".edmarkdata": [
-        "@821",
-        "@1190"
-      ],
-      ".editnamemes": [
-        "name_mes$653"
-      ],
-      ".edcursorflags": [
-        "offset$1876",
-        "init$1877",
-        "a$1906",
-        "init$1907"
-      ],
-      ".edmodeflags": [
-        "time_flag$2188",
-        "init$2189",
-        "parts$2227",
-        "init$2228",
-        "now_obj$2241",
-        "init$2242"
-      ],
-      ".edmoveflags": [
-        "camera_dist_mode$2599",
-        "init$2600",
-        "parts_no$2646",
-        "init$2647"
-      ],
-      ".eddrawdata": [
-        "@1167",
-        "@1172",
-        "@1175",
-        "@1259",
-        "@1289",
-        "@1290"
-      ],
-      ".edmodedata": [
-        "@1690",
-        "@1691"
-      ],
-      ".edsuffix": [
-        "@1813"
-      ],
-      ".edcursordata": [
-        "@2005",
-        "@2006",
-        "@2010",
-        "@2032"
-      ],
-      ".edtexdata": [
-        "@2128",
-        "@2129",
-        "@2142"
-      ],
-      ".edgrounddata": [
-        "@2211",
-        "@2295",
-        "@2299",
-        "@2307",
-        "@2308",
-        "@2309",
-        "@2310"
-      ],
-      ".edptsdata": [
-        "@2438",
-        "@2498"
-      ]
-    },
-    "rekey_sections": [
-      [
-        ".editinitdata",
-        [
-          80,
-          16,
-          16,
-          64
-        ]
-      ],
-      [
-        ".eddrawdata",
-        [
-          16,
-          16,
-          16,
-          16,
-          16,
-          16
-        ]
-      ],
-      [
-        ".edmodedata",
-        [
-          10,
-          10
-        ]
-      ],
-      [
-        ".edsuffix",
-        [
-          20
-        ]
-      ],
-      [
-        ".edcursordata",
-        [
-          12,
-          12,
-          12,
-          16
-        ]
-      ],
-      [
-        ".edtexdata",
-        [
-          96,
-          64,
-          768
-        ]
-      ],
-      [
-        ".edgrounddata",
-        [
-          16,
-          16,
-          16,
-          16,
-          16,
-          16,
-          16
-        ]
-      ],
-      [
-        ".edptsdata",
-        [
-          36,
-          16
-        ]
-      ]
-    ]
+    "symbols": {
+      "DebugFont": "DebugFont__3",
+      "EffectTable": "EffectTable__3",
+      "ecursorframe": "ecursorframe__2",
+      "DataBuffer": "DataBuffer__2"
+    }
   },
   "src/editloop3.cpp": {
     "symbols": {
       "fishing_line_origin": "@2242",
-      "CurrentDir": "CurrentDir__4"
+      "CurrentDir": "CurrentDir__4",
+      "menu_mode": "menu_mode__2"
     },
     "rodata_exports": [
       "@2449",
@@ -1627,274 +636,12 @@
       "@2237",
       "@2288",
       "@2289"
-    ],
-    "sections": {
-      ".edbss1": [
-        "chara$631",
-        "appear_table",
-        "select_table",
-        "appear",
-        "restore_info"
-      ],
-      ".edbss2": [
-        "CurrentDir",
-        "world_pos",
-        "world_rot",
-        "world_local",
-        "local_world",
-        "sync_camera_ref_offset"
-      ],
-      ".edbss3": [
-        "asq_table",
-        "ActSeq",
-        "anime_data",
-        "sprite_table",
-        "SpriteTable",
-        "SpriteTableBack"
-      ],
-      ".edbss4": [
-        "EdEventScript"
-      ],
-      ".edbss5": [
-        "chr_file",
-        "save_l",
-        "save_c",
-        "save_a"
-      ],
-      ".edsbss1": [
-        "roty$585",
-        "init$586",
-        "sys_eff_sc$590",
-        "init$591",
-        "sys_eff_cnt$593",
-        "init$594",
-        "init$632"
-      ],
-      ".edsbss2": [
-        "simple_event",
-        "event_enable",
-        "run_system_event",
-        "not_wait_load",
-        "motion_stop_flag",
-        "menu_mode",
-        "menu_mode_status",
-        "p_use_item",
-        "p_jump_map_no",
-        "event_stop"
-      ],
-      ".edsbss3": [
-        "skip_enable",
-        "set_wl_matrix",
-        "follow_chara",
-        "sync_camera_ref_chara",
-        "sync_camera_ref_obj",
-        "sync_camera_pos_obj",
-        "BaseBuffer",
-        "actv_file",
-        "actv_buffer"
-      ],
-      ".edsbss4": [
-        "talk_villager__2",
-        "talk_chara_info_id",
-        "talk_camera",
-        "talk_mode",
-        "talk_select",
-        "TalkMesMake",
-        "TalkMesNo"
-      ],
-      ".fadebss": [
-        "fade_in_out",
-        "fade_end",
-        "fade_step"
-      ],
-      ".fadecolbss": [
-        "fade_col"
-      ],
-      ".spritebss": [
-        "Sprite"
-      ],
-      ".workbss": [
-        "work_flag"
-      ],
-      ".eventbss": [
-        "event_pause"
-      ],
-      ".objanimebss": [
-        "obj_anime"
-      ],
-      ".eventoffset": [
-        "@475__2"
-      ],
-      ".objworldorigin": [
-        "@1955"
-      ],
-      ".fishinglineorigin": [
-        "fishing_line_origin"
-      ],
-      ".extfuncinfo": [
-        "ext_func_info"
-      ],
-      ".eddata1": [
-        "@526",
-        "@642"
-      ],
-      ".eddata2": [
-        "@887",
-        "@904",
-        "@946",
-        "@947"
-      ],
-      ".eddata3": [
-        "@1231"
-      ],
-      ".eddata4": [
-        "@2201"
-      ],
-      ".eddata5": [
-        "@2548"
-      ],
-      ".eddata6": [
-        "@2702",
-        "vv$1647",
-        "@3123",
-        "@3124",
-        "@3132",
-        "@3146",
-        "@3398"
-      ],
-      ".edeventdata": [
-        "mode_name$2448",
-        "@3919"
-      ],
-      ".edeventsbss": [
-        "mode$2445",
-        "init$2446",
-        "select_chara$2452",
-        "init$2453"
-      ],
-      ".edbuffers": [
-        "EdVillagerBuffer",
-        "EdEventBuffer",
-        "EdEventExBuffer"
-      ],
-      ".edexchangebss": [
-        "EdExchangeInfo"
-      ],
-      ".edvillagerbss": [
-        "EdVillager",
-        "EdVillagerInfo"
-      ],
-      ".editloop3-color_1648": [
-        "color$1648"
-      ],
-      ".editloop3-c1647": [
-        "@554"
-      ],
-      ".editloop3-c933": [
-        "@2313"
-      ],
-      ".editloop3-c932": [
-        "@2312"
-      ],
-      ".editloop3-c944": [
-        "@2324"
-      ],
-      ".editloop3-c945": [
-        "@2325"
-      ],
-      ".editloop3-vv_2757": [
-        "vv$2757"
-      ]
-    },
-    "rekey_sections": [
-      [
-        ".eddata1",
-        [
-          16,
-          20
-        ]
-      ],
-      [
-        ".eddata2",
-        [
-          40,
-          40,
-          16,
-          16
-        ]
-      ],
-      [
-        ".eddata3",
-        [
-          64
-        ]
-      ],
-      [
-        ".objworldorigin",
-        [
-          16
-        ]
-      ],
-      [
-        ".eddata4",
-        [
-          128
-        ]
-      ],
-      [
-        ".editloop3-c932",
-        [
-          16
-        ]
-      ],
-      [
-        ".editloop3-c933",
-        [
-          16
-        ]
-      ],
-      [
-        ".editloop3-c944",
-        [
-          16
-        ]
-      ],
-      [
-        ".editloop3-c945",
-        [
-          16
-        ]
-      ],
-      [
-        ".eddata5",
-        [
-          16
-        ]
-      ],
-      [
-        ".eddata6",
-        [
-          16,
-          48,
-          16,
-          16,
-          16,
-          16,
-          16
-        ]
-      ],
-      [
-        ".edeventdata",
-        [
-          12,
-          16
-        ]
-      ]
-    ],
-    "drop_functions": [
-      "__sinit_editloop3.cpp",
-      ".p__sinit_editloop3.cpp"
     ]
+  },
+  "src/nowload.cpp": {
+    "symbols": {
+      "count": "count__2"
+    }
   },
   "src/textureanime.cpp": {
     "rodata_exports": [
@@ -1903,21 +650,17 @@
       "@449",
       "@450",
       "@451"
-    ]
+    ],
+    "symbols": {
+      "Command": "Command__4",
+      "CommandExe": "CommandExe__4"
+    }
   },
   "src/snd.cpp": {
     "rodata_exports": [
       "@799",
       "@800"
-    ],
-    "sections": {
-      ".snd-c319__2": [
-        "@409"
-      ],
-      ".snd-c320__2": [
-        "@410"
-      ]
-    }
+    ]
   },
   "src/btmisc.cpp": {
     "rodata_exports": [
@@ -2036,7 +779,9 @@
       "CreateVisual__FPUiP14CDataAlloc2<1>i": "CreateVisual__FPUiP14CDataAlloc2_1_i",
       "LoadCollisionFile__FPUiP14CDataAlloc2<1>": "LoadCollisionFile__FPUiP14CDataAlloc2_1_",
       "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2<1>i": "LoadMDSFileLOD__FPP9CFrameVu1PPUiP14CDataAlloc2_1_i",
-      "LoadMDSFile__FPUiP14CDataAlloc2<1>iPPcPPc": "LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc"
+      "LoadMDSFile__FPUiP14CDataAlloc2<1>iPPcPPc": "LoadMDSFile__FPUiP14CDataAlloc2_1_iPPcPPc",
+      "WorkBuffer": "WorkBuffer__2",
+      "__ct__14CDataAlloc2<1>Fi": "__ct__14CDataAlloc2_1_Fi"
     },
     "globalize_symbols": [
       "@199"
@@ -2086,14 +831,12 @@
     ]
   },
   "src/gameutil.cpp": {
-    "sections": {
-      ".gameutilsbss": [
-        "vert$388"
-      ]
-    },
     "rodata_exports": [
       "@25"
-    ]
+    ],
+    "symbols": {
+      "sbuff": "sbuff__2"
+    }
   },
   "src/mathutil.cpp": {
     "rodata_exports": [
@@ -2144,38 +887,19 @@
     ],
     "globalize_symbols": [
       "__sinit_mglib.cpp"
-    ],
-    "sections": {
-      ".mgbss2": [
-        "mgZeroVector",
-        "mgUnitVector",
-        "mgUnitVector2",
-        "mgZeroVector2",
-        "mgUnitMatrix",
-        "mgZeroMatrix",
-        "vifpacket",
-        "gs_simage"
-      ]
-    }
+    ]
   },
   "src/dngstatusdata.cpp": {
     "symbols": {
-      "LIT_781": "@781",
-      "LIT_782": "@782",
-      "LIT_783__2": "@783__2"
+      "defWeapon": "defWeapon__3",
+      "@1287": "@781",
+      "@1288": "@782",
+      "@1289": "@783__2"
     },
     "rodata_exports": [
       "@281__3",
       "@540__2",
       "@541__2"
-    ]
-  },
-  "src/texture_data.cpp": {
-    "symbols": {
-      "TextureDataStore": "TextureData"
-    },
-    "globalize_symbols": [
-      "TextureData"
     ]
   },
   "src/title/op_a.cpp": {
@@ -2398,7 +1122,8 @@
       "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__3",
       "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__3",
       "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__3",
-      "_GET_OBJ_POS__FP12RS_STACKDATAi": "_GET_OBJ_POS__FP12RS_STACKDATAi__2"
+      "_GET_OBJ_POS__FP12RS_STACKDATAi": "_GET_OBJ_POS__FP12RS_STACKDATAi__2",
+      "ext_func_info": "ext_func_info__3"
     },
     "globalize_symbols": [
       "GetStackInt__FP12RS_STACKDATA__3",
@@ -2428,7 +1153,11 @@
       "GetStackFloat__FP12RS_STACKDATA": "GetStackFloat__FP12RS_STACKDATA__2",
       "GetStackString__FP12RS_STACKDATA": "GetStackString__FP12RS_STACKDATA__2",
       "SetStack__FP12RS_STACKDATAi": "SetStack__FP12RS_STACKDATAi__2",
-      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__2"
+      "SetStack__FP12RS_STACKDATAf": "SetStack__FP12RS_STACKDATAf__2",
+      "ext_func_info": "ext_func_info__2",
+      "@212": "@738__2",
+      "@222": "@749",
+      "@336": "@896"
     },
     "globalize_symbols": [
       "GetStackInt__FP12RS_STACKDATA__2",
@@ -2439,66 +1168,19 @@
     ]
   },
   "src/menu_dungeon.cpp": {
-    "sections": {
-      ".denterstatus": [
-        "DEnterStatusPt"
-      ],
-      ".menuerrorcnt": [
-        "MenuEtcErrCnt"
-      ],
-      ".floornamedata": [
-        "@1305",
-        "@1306"
-      ],
-      ".quickchangedata": [
-        "@1323"
-      ],
-      ".charachangedata": [
-        "@1366",
-        "@1377",
-        "@1569",
-        "@1570"
-      ],
-      ".itemmodeldata": [
-        "@1638"
-      ],
-      ".menu_dungeon-c1707": [
-        "@1666"
-      ],
-      ".menu_dungeon-c1731": [
-        "@1685"
-      ],
-      ".itemviewdata": [
-        "@1784",
-        "@1789",
-        "@1790",
-        "@1791"
-      ],
-      ".itemgetdata": [
-        "@1883",
-        "@1884"
-      ],
-      ".itemdataview": [
-        "@1910"
-      ]
-    },
-    "rekey_sections_skip": 5,
-    "rekey_sections": [
-      [".floornamedata", [49, 16]],
-      [".quickchangedata", [24]],
-      [".charachangedata", [36, 24, 16, 16]],
-      [".itemmodeldata", [12]],
-      [".menu_dungeon-c1707", [9]],
-      [".menu_dungeon-c1731", [12]],
-      [".itemviewdata", [36, 16, 12, 12]],
-      [".itemgetdata", [20, 20]],
-      [".itemdataview", [128]]
-    ],
     "symbols": {
       "@1106": "@1074",
       "chara_change_frame_image": "@1301",
       "stay_frame_name": "@1349",
-      "item_view_frame_image": "@1841"
+      "item_view_frame_image": "@1841",
+      "item_templete_no": "@2044",
+      "item_templete_type": "@2045",
+      "item_templete_use": "@2046",
+      "item_templete_attribute": "@2047",
+      "item_templete_name_index": "@2048",
+      "item_templete_help_index": "@2049",
+      "item_templete_volume": "@2050",
+      "item_templete_gold": "@2051"
     },
     "rodata_exports": [
       "@1728__2"
@@ -2538,18 +1220,484 @@
   "src/editmapscript.cpp": {
     "import_constants_shared": [
       [
+        "p47a",
+        "@257__3"
+      ],
+      [
+        "p12a",
+        "@258__3"
+      ],
+      [
+        "p07a",
+        "@259__3"
+      ],
+      [
+        "p01a",
+        "@260__3"
+      ],
+      [
+        "p13a",
+        "@261__3"
+      ],
+      [
+        "p06a",
+        "@262__2"
+      ],
+      [
+        "p09a",
+        "@263__3"
+      ],
+      [
+        "p08a",
+        "@264__3"
+      ],
+      [
+        "p05a",
+        "@265__2"
+      ],
+      [
+        "p03a",
+        "@266__3"
+      ],
+      [
+        "p04a",
+        "@267__3"
+      ],
+      [
+        "p02a",
+        "@268__3"
+      ],
+      [
+        "p10a",
+        "@269__3"
+      ],
+      [
+        "p14a",
+        "@270__5"
+      ],
+      [
+        "c04cat",
+        "@271__3"
+      ],
+      [
         "",
         "@272__2"
+      ],
+      [
+        "p27a",
+        "@273__2"
+      ],
+      [
+        "p30a",
+        "@274__2"
+      ],
+      [
+        "p29a",
+        "@275__2"
+      ],
+      [
+        "p28a",
+        "@276__2"
+      ],
+      [
+        "p31a",
+        "@277__2"
+      ],
+      [
+        "p25a",
+        "@278__2"
+      ],
+      [
+        "p59a",
+        "@279__2"
+      ],
+      [
+        "p24a",
+        "@280__2"
+      ],
+      [
+        "p26a",
+        "@281__2"
+      ],
+      [
+        "p23a",
+        "@282__2"
+      ],
+      [
+        "p21a",
+        "@283__2"
+      ],
+      [
+        "p22a",
+        "@284__3"
+      ],
+      [
+        "p49a",
+        "@285__4"
+      ],
+      [
+        "p35a",
+        "@286__3"
+      ],
+      [
+        "p37a",
+        "@287__3"
+      ],
+      [
+        "p36a",
+        "@288__3"
+      ],
+      [
+        "p41a",
+        "@289__3"
+      ],
+      [
+        "p39a",
+        "@290__3"
+      ],
+      [
+        "p33a",
+        "@291__2"
+      ],
+      [
+        "p40a",
+        "@292__2"
+      ],
+      [
+        "p43a",
+        "@293__2"
+      ],
+      [
+        "p45a",
+        "@294__2"
+      ],
+      [
+        "p44a",
+        "@295__2"
+      ],
+      [
+        "p34a",
+        "@296__2"
+      ],
+      [
+        "p42a",
+        "@297__2"
+      ],
+      [
+        "p48a",
+        "@298__4"
+      ],
+      [
+        "p46a",
+        "@299__4"
+      ],
+      [
+        "p50a",
+        "@300__3"
+      ],
+      [
+        "p51a",
+        "@301__2"
+      ],
+      [
+        "p52a",
+        "@302__2"
+      ],
+      [
+        "p53a",
+        "@303__2"
+      ],
+      [
+        "p54a",
+        "@304__2"
+      ],
+      [
+        "p55a",
+        "@305__2"
+      ],
+      [
+        "p56a",
+        "@306__2"
+      ],
+      [
+        "p57a",
+        "@307__2"
+      ],
+      [
+        "p58a",
+        "@308__3"
+      ],
+      [
+        "p64a",
+        "@309__2"
+      ],
+      [
+        "p62a",
+        "@310__2"
+      ],
+      [
+        "p63a",
+        "@311__2"
+      ],
+      [
+        "p61a",
+        "@312__2"
+      ],
+      [
+        "SCN",
+        "@314__3"
+      ],
+      [
+        "LIGHT_NO",
+        "@315__3"
+      ],
+      [
+        "AMBIENT",
+        "@316__2"
+      ],
+      [
+        "LIGHT_C",
+        "@317__2"
+      ],
+      [
+        "FOG",
+        "@318__2"
+      ],
+      [
+        "BG_COL",
+        "@319__3"
+      ],
+      [
+        "BG_COL2",
+        "@320__3"
+      ],
+      [
+        "DOF",
+        "@321__2"
+      ],
+      [
+        "CD",
+        "@322__2"
+      ],
+      [
+        "GRD_IMG",
+        "@323__2"
+      ],
+      [
+        "BLD_IMG",
+        "@324__2"
+      ],
+      [
+        "SKY_IMG",
+        "@325__3"
+      ],
+      [
+        "SUN_IMG",
+        "@326__2"
+      ],
+      [
+        "WATER_IMG",
+        "@327__2"
+      ],
+      [
+        "FIRE_IMG",
+        "@328__3"
+      ],
+      [
+        "FLER_IMG",
+        "@329__2"
+      ],
+      [
+        "IMG",
+        "@330__3"
+      ],
+      [
+        "SKY",
+        "@331__3"
+      ],
+      [
+        "SUN",
+        "@332__4"
+      ],
+      [
+        "GROUND",
+        "@333__4"
+      ],
+      [
+        "BUILD",
+        "@334__4"
+      ],
+      [
+        "WATER",
+        "@335__3"
+      ],
+      [
+        "WATER_SURFACE",
+        "@336__2"
+      ],
+      [
+        "WATER_SHAKE",
+        "@337__2"
+      ],
+      [
+        "EDITAREA",
+        "@338"
+      ],
+      [
+        "BLD_PARTS",
+        "@339__2"
+      ],
+      [
+        "GRD_PARTS",
+        "@340"
+      ],
+      [
+        "PARTS_INFO",
+        "@341"
+      ],
+      [
+        "ROAD_PARTS",
+        "@342"
+      ],
+      [
+        "ROAD",
+        "@343"
+      ],
+      [
+        "RIVER_PARTS",
+        "@344"
+      ],
+      [
+        "RIVER",
+        "@345__3"
+      ],
+      [
+        "BRIDGE_PARTS",
+        "@346"
+      ],
+      [
+        "LAKE_PARTS",
+        "@347"
+      ],
+      [
+        "ON_RIVER_PARTS",
+        "@348__2"
+      ],
+      [
+        "OBJ_ANIME",
+        "@349__2"
+      ],
+      [
+        "FIRE",
+        "@350__2"
+      ],
+      [
+        "FLAME",
+        "@351"
+      ],
+      [
+        "BRIGHT",
+        "@352"
+      ],
+      [
+        "OBJECT_TIMER",
+        "@353__3"
+      ],
+      [
+        "ENTRANCE",
+        "@354"
+      ],
+      [
+        "MAPJUMP",
+        "@355"
+      ],
+      [
+        "PEOPLE",
+        "@356"
+      ],
+      [
+        "TIME_TABLE_NO",
+        "@357"
+      ],
+      [
+        "TIME_TABLE",
+        "@358__2"
+      ],
+      [
+        "TIME_STOP",
+        "@359"
+      ],
+      [
+        "SKY_FOLLOW",
+        "@360"
+      ],
+      [
+        "SHADOW_LEVEL",
+        "@361__2"
+      ],
+      [
+        "EDITAREA_RECT",
+        "@362__3"
+      ],
+      [
+        "BGM_NO",
+        "@363__4"
+      ],
+      [
+        "SOUND_SET",
+        "@364"
+      ],
+      [
+        "REVERBE",
+        "@365"
+      ],
+      [
+        "MOTION_PARTS",
+        "@366"
+      ],
+      [
+        "PEOPLE2",
+        "@367"
+      ],
+      [
+        "SE_AMBIENT_OFF",
+        "@368"
+      ],
+      [
+        "WIND",
+        "@369__3"
+      ],
+      [
+        "TALK_EVENT",
+        "@370__2"
+      ],
+      [
+        "CHARA_AMBIENT",
+        "@371__3"
+      ],
+      [
+        "TALK_ROT",
+        "@372"
+      ],
+      [
+        "TALK_DIR",
+        "@373__2"
+      ],
+      [
+        "PEOPLE_LIST",
+        "@374"
+      ],
+      [
+        "test",
+        "@377"
       ]
     ],
     "symbols": {
       "CommandIMG__FPPv": "CommandIMG__FPPv__2",
-      "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2"
-    },
-    "sections": {
-      ".mapscriptdata": [
-        "rev$874"
-      ]
+      "CommandREVERBE__FPPv": "CommandREVERBE__FPPv__2",
+      "Command": "Command__5",
+      "CommandExe": "CommandExe__5",
+      "CurrentDir": "CurrentDir__3"
     },
     "rodata_exports": [
       "@875__2",
@@ -2567,137 +1715,94 @@
   },
   "src/menu_draw.cpp": {
     "symbols": {
-      "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2"
+      "SeitonAttachBoardSub__FP11ATTACH_LIST": "SeitonAttachBoardSub__FP11ATTACH_LIST__2",
+      "sort_table": "sort_table__2",
+      "asort_table": "asort_table__2",
+      "sort_top_type": "sort_top_type__2",
+      "asort_top_type": "asort_top_type__2"
     }
   },
   "src/menu_misc.cpp": {
     "symbols": {
       "FrameImageTexture": "@1254",
-      "CharaFileExtension": "@1037__2"
+      "CharaFileExtension": "@1037__2",
+      "defWeapon": "defWeapon__5"
     },
-    "globalize_symbols": [
-      "readFilePath",
-      "charaFile"
-    ],
     "rodata_exports": [
       "@1037__2",
       "@1254"
-    ],
-    "sections": {
-      ".menu_misc-itemuse": [
-        "@179"
-      ],
-      ".menu_misc-wepread": [
-        "@337",
-        "@344",
-        "@353",
-        "@379",
-        "@386",
-        "@391"
-      ],
-      ".menu_misc-model": [
-        "@427",
-        "@481",
-        "@517",
-        "@520",
-        "@521"
-      ],
-      ".menu_misc-frame": [
-        "@557",
-        "@634",
-        "@637"
-      ],
-      ".menu_misc-options": [
-        "@740"
-      ]
-    },
-    "rekey_sections": [
-      [
-        ".menu_misc-itemuse",
-        [
-          12
-        ]
-      ],
-      [
-        ".menu_misc-wepread",
-        [
-          64,
-          24,
-          24,
-          24,
-          24,
-          36
-        ]
-      ],
-      [
-        ".menu_misc-model",
-        [
-          24,
-          12,
-          36,
-          96,
-          72
-        ]
-      ],
-      [
-        ".menu_misc-frame",
-        [
-          36,
-          36,
-          14
-        ]
-      ],
-      [
-        ".menu_misc-options",
-        [
-          28
-        ]
-      ]
     ]
   },
   "src/itemdata.cpp": {
     "symbols": {
       "skipSpace__FPci": "skipSpace__FPci__2",
       "checkArg__FPciPi": "checkArg__FPciPi__2",
-      "teigiFileSize": "teigiFileSize__2"
+      "teigiFileSize": "teigiFileSize__2",
+      "argStrBuff": "argStrBuff__2",
+      "argValBuff": "argValBuff__2",
+      "argLevel": "argLevel__2",
+      "nowPartsCnt": "nowPartsCnt__2",
+      "debugModeFlag": "debugModeFlag__2",
+      "run_speed": "run_speed__2",
+      "TEIGI_DEF_PATS": "TEIGI_DEF_PATS__2",
+      "TEIGI_DEF_ENDS": "TEIGI_DEF_ENDS__2",
+      "TEIGI_GRD_IMG": "TEIGI_GRD_IMG__2",
+      "TEIGI_FIRE_IMG": "TEIGI_FIRE_IMG__2",
+      "TEIGI_GRD": "TEIGI_GRD__2",
+      "TEIGI_FOG": "TEIGI_FOG__2",
+      "TEIGI_AMBIENT": "TEIGI_AMBIENT__2",
+      "TEIGI_BG_COL": "TEIGI_BG_COL__2",
+      "TEIGI_RUN_SPEED": "TEIGI_RUN_SPEED__2",
+      "TEIGI_DebugFlag": "TEIGI_DebugFlag__2",
+      "TEIGI_PT_BASE": "TEIGI_PT_BASE__2",
+      "TEIGI_PT_COLS": "TEIGI_PT_COLS__2",
+      "TEIGI_PT_FIRE": "TEIGI_PT_FIRE__2",
+      "TEIGI_PT_WATER": "TEIGI_PT_WATER__2",
+      "@595": "@488",
+      "@596": "@489",
+      "@597": "@490",
+      "@598": "@491__2",
+      "@599": "@492",
+      "@600": "@493",
+      "@601": "@494__3",
+      "@602": "@495__2",
+      "@603": "@496__3",
+      "@604": "@497__4",
+      "@605": "@498__4",
+      "@606": "@499__3",
+      "@607": "@500__2",
+      "@608": "@501__3",
+      "@609": "@502__2",
+      "@610": "@503__2",
+      "@611": "@504",
+      "@612": "@505__2",
+      "@613": "@506__2",
+      "@614": "@507__3",
+      "@615": "@508__2",
+      "@616": "@509__2",
+      "@617": "@510__2",
+      "@618": "@511__2",
+      "@619": "@512__2",
+      "@620": "@513",
+      "@621": "@514__2",
+      "@622": "@515__2",
+      "@623": "@516",
+      "@624": "@517__2",
+      "@625": "@518",
+      "@626": "@519",
+      "@627": "@520",
+      "@628": "@521__2",
+      "@629": "@522__2",
+      "@630": "@523",
+      "@631": "@524",
+      "@632": "@525",
+      "@827": "@766__2",
+      "@829": "@768"
     }
   },
   "src/memcard.cpp": {
     "globalize_symbols": [
-      "ExitSaveSelect__Fv",
-      "SaveMenuKeyFadeIn__Fv",
-      "SaveMenuKeyFadeOut__Fv",
-      "SaveMenuKeyModeSelect__Fv",
-      "SaveMenuKeyMcSelect__Fv",
-      "SaveMenuKeyCheckMcType__Fv",
-      "SaveMenuKeyCheckMc__Fv",
-      "SaveMenuKeyLoadConfig__Fv",
-      "SaveMenuKeyFileSelect__Fv"
-    ],
-    "sections": {
-      ".memcard-c1322": [
-        "@762"
-      ],
-      ".memcard-c2123": [
-        "@1522",
-        "@1523"
-      ],
-      ".memcard-c2252": [
-        "@1638"
-      ],
-      ".memcard-c2391": [
-        "@1773"
-      ],
-      ".memcard-c2683": [
-        "@2019"
-      ]
-    },
-    "rekey_sections_skip": 5,
-    "rekey_sections": [
-      [".memcard-c2123", [48, 48]],
-      [".memcard-c2252", [36]],
-      [".memcard-c2391", [16]],
-      [".memcard-c2683", [16]]
+      "ExitSaveSelect__Fv"
     ]
   },
   "src/battle_globals.cpp": {
@@ -2724,96 +1829,16 @@
       "@788__2",
       "@789__4",
       "@663__2"
-    ],
-    "sections": {
-      ".nameenterdata0": [
-        "@92",
-        "@107",
-        "@108",
-        "@137"
-      ],
-      ".nameenterdata1": [
-        "@203",
-        "@204",
-        "@348"
-      ],
-      ".nameentersdata1": [
-        "@80",
-        "@200",
-        "@1110",
-        "@1111",
-        "@1184"
-      ],
-      ".nameenterdata2": [
-        "@381",
-        "@382",
-        "@403",
-        "@406",
-        "@585",
-        "@696"
-      ],
-      ".nameenterdata3": [
-        "@1050"
-      ],
-      ".nameenterdata4": [
-        "@1166"
-      ],
-      ".nameenterkey-up_or_down_942": [
-        "up_or_down$942"
-      ],
-      ".nameenterkey-init_943": [
-        "init$943"
-      ]
-    },
-    "rekey_sections": [
-      [
-        ".nameenterdata0",
-        [
-          12,
-          16,
-          16,
-          28
-        ]
-      ],
-      [
-        ".nameenterdata1",
-        [
-          44,
-          44,
-          40
-        ]
-      ],
-      [
-        ".nameenterdata2",
-        [
-          36,
-          14,
-          22,
-          22,
-          12,
-          28
-        ]
-      ],
-      [
-        ".nameenterdata3",
-        [
-          924
-        ]
-      ],
-      [
-        ".nameenterdata4",
-        [
-          36
-        ]
-      ]
     ]
   },
-  "src/motionmodel.cpp": {
-    "sections": {
-      ".motionmodeldata": [
-        "element_tbl"
-      ]
-    }
+  "src/hitvalue.cpp": {
+    "symbols": {
+      "defWeapon": "defWeapon__2",
+      "@663": "@612"
+    },
+    "globalize_symbols": [
+      "defWeapon__2"
+    ]
   },
   "src/menu_save.cpp": {
     "symbols": {
@@ -2852,35 +1877,160 @@
     "symbols": {
       "BtEffectInfoFile": "@902",
       "BtAtraShortCharaFile": "@656__4",
-      "BtAtraShortEffectFile": "@866__2"
+      "BtAtraShortEffectFile": "@866__2",
+      "defWeapon": "defWeapon__4",
+      "no_item_name": "@549__4",
+      "@53": "@585",
+      "@54": "@586",
+      "@55": "@587",
+      "@56": "@588",
+      "@57": "@589__2",
+      "@58": "@590__2",
+      "@333": "@595__2",
+      "@334": "@596__3",
+      "@335": "@597__2",
+      "@336": "@598",
+      "@337": "@599__2",
+      "@338": "@600",
+      "@339": "@601",
+      "@340": "@602",
+      "@341": "@603",
+      "@342": "@604__2",
+      "@343": "@605",
+      "@344": "@606__3",
+      "@345": "@607__2",
+      "@346": "@608__2",
+      "@347": "@609",
+      "@348": "@610__2",
+      "@349": "@611__2",
+      "@350": "@612__2",
+      "@351": "@613",
+      "@352": "@614__2",
+      "@353": "@615__2",
+      "@354": "@616__2",
+      "@355": "@617__2",
+      "@356": "@618",
+      "@357": "@619__3",
+      "@358": "@620__2",
+      "@359": "@621__3",
+      "@360": "@622__2",
+      "@361": "@623__2",
+      "@362": "@624__2",
+      "@363": "@625__3",
+      "@364": "@626__3",
+      "@365": "@627__3",
+      "@366": "@628__4",
+      "@367": "@629__3",
+      "@368": "@630__4",
+      "@369": "@631__3",
+      "@370": "@632__2",
+      "@371": "@633__2",
+      "@372": "@634__2",
+      "@373": "@635__3",
+      "@374": "@636__2",
+      "@375": "@637__2",
+      "@376": "@638__2",
+      "@377": "@639__3",
+      "@378": "@640__3",
+      "@379": "@641__2",
+      "@380": "@642__3",
+      "@381": "@643__2",
+      "@382": "@644__2",
+      "@383": "@645__2",
+      "@384": "@646__3",
+      "@385": "@647__2",
+      "@386": "@648__2",
+      "@387": "@649",
+      "@388": "@650__3",
+      "@389": "@651",
+      "@390": "@652",
+      "@391": "@653__2",
+      "@392": "@654__2",
+      "@393": "@655__2",
+      "@394": "@656__5",
+      "@395": "@657__3",
+      "@396": "@658__3",
+      "@397": "@659__3",
+      "@398": "@660__2",
+      "@399": "@661__2",
+      "@400": "@662__2",
+      "@401": "@663",
+      "@402": "@664__3",
+      "@403": "@665__2",
+      "@404": "@666__2",
+      "@405": "@667__2",
+      "@406": "@668",
+      "@407": "@669",
+      "@408": "@670",
+      "@409": "@671",
+      "@410": "@672",
+      "@411": "@673",
+      "@412": "@674",
+      "@413": "@675",
+      "@414": "@676",
+      "@415": "@677",
+      "@416": "@678__2",
+      "@417": "@679__2",
+      "@418": "@680__2",
+      "@419": "@681__2",
+      "@420": "@682__2",
+      "@421": "@683",
+      "@422": "@684",
+      "@423": "@685",
+      "@424": "@686__2",
+      "@425": "@687__2",
+      "@426": "@688__2",
+      "@427": "@689__3",
+      "@428": "@690__4",
+      "@429": "@691__3",
+      "@430": "@692__2",
+      "@431": "@693",
+      "@432": "@694",
+      "@433": "@695",
+      "@434": "@696",
+      "@435": "@697",
+      "@436": "@698",
+      "@437": "@699",
+      "@438": "@700__2",
+      "@439": "@701__2",
+      "@440": "@702",
+      "@441": "@703__2",
+      "@442": "@704__2",
+      "@443": "@705",
+      "@444": "@706",
+      "@445": "@707__2",
+      "@446": "@708__3",
+      "@447": "@709__2",
+      "@448": "@710",
+      "@449": "@711",
+      "@450": "@712",
+      "@451": "@713",
+      "@452": "@714__3",
+      "@453": "@715__3",
+      "@454": "@716__3",
+      "@455": "@717__3",
+      "@456": "@718__2",
+      "@457": "@719__3",
+      "@458": "@720__2",
+      "@459": "@721__2",
+      "@460": "@722__2",
+      "@461": "@723__3",
+      "@462": "@724__2",
+      "@463": "@725__5",
+      "@464": "@726__4",
+      "@465": "@727__4",
+      "@466": "@728__5",
+      "@467": "@729__4",
+      "@468": "@730__5",
+      "@469": "@731__5",
+      "@470": "@732__5",
+      "@471": "@733__4",
+      "@472": "@734__4",
+      "@473": "@735__3"
     },
     "rodata_exports": [
       "@656__4",
       "@902"
-    ],
-    "sections": {
-      ".btitemdata1": [
-        "@95",
-        "@150"
-      ],
-      ".btitemdata2": [
-        "@327"
-      ]
-    },
-    "rekey_sections": [
-      [
-        ".btitemdata1",
-        [
-          24,
-          24
-        ]
-      ],
-      [
-        ".btitemdata2",
-        [
-          16
-        ]
-      ]
     ]
   },
   "src/shot_utils.cpp": {
@@ -2963,6 +2113,11 @@
       ".menuiconautoget-c1515": [
         "@37"
       ]
+    }
+  },
+  "src/menuetc.cpp": {
+    "symbols": {
+      "@567": "@567__2"
     }
   }
 }

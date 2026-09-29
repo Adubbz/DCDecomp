@@ -5,7 +5,10 @@
 
 #include <libvu0.h>
 
+#include "frame.hpp"
 #include "mathutil.hpp"
+
+CFrameAttr FrameAttr;
 
 void CObject::Step() {
 }

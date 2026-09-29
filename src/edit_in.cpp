@@ -19,6 +19,7 @@
 #include "editloop.hpp"
 #include "editloop3.hpp"
 #include "editpartsinfo.hpp"
+#include "fireomni.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "mainselect.hpp"
@@ -52,39 +53,6 @@
 /* The arenas the interior carves the read buffer into. */
 extern CDataAlloc2<1> EdWorkBuffer;
 extern CDataAlloc2<1> EdMenuBuffer;
-
-/* The keywords an interior's info script may use, and what each one does. */
-extern TAG_PARAM Command[15];
-extern void (*CommandExe[15])(void **);
-
-/* Directory that names in the info script are relative to. */
-extern char CurrentDir[0x80];
-
-/* Records the info script has filled in so far, and whether it asked for debug drawing. */
-extern int npc_count;
-extern int objanime_list;
-extern int effect_list;
-extern int debug;
-extern int motion_parts_list;
-extern int water_list;
-extern EDIT_WATER_INFO *water_info;
-
-/* Numbers of object animations and effects the interior uses. */
-extern int obj_anime_num;
-extern int effect_num;
-
-/* The interior's parts, how many it has, and the function points they define. */
-extern CMapParts InteriorParts[10];
-extern int parts_num;
-extern EPARTS_FUNC_DATA *func_point;
-extern int func_num;
-
-/* The player's character in the interior, and the villagers who can stand in it. */
-extern CCharacter *Chara;
-
-/* Frame of the interior's animated texture, and the clock that advances it. */
-extern int setTexAnimCnt;
-extern float setTexAnimCntf;
 
 /* Map jump the player arrives through when entering an interior. */
 extern int EdInteriorJumpID;
@@ -152,47 +120,107 @@ static int fix_camera = 1;
 /** Which of the three follow distances the camera is at. */
 static int camera_dist_mode = 1;
 
-#if defined(NON_MATCHING)
+/** Settings of the interior being run. */
+EDIT_IN_INFO *EdInInfo;
+
+/** Phase the interior loop is in. */
 static int GameMode;
-static CCameraFollow MainCamera(0.0f, 0.0f, 0.0f, 0.0f);
-static CCameraFollow ViewCamera(0.0f, 0.0f, 0.0f, 0.0f);
-static float NowTime;
-static CCamera *NowCamera;
-static int loop_counter;
-static int key_counter;
-static int goto_menu;
-static int goto_return_menu;
-static int door_open_cnt;
-static sceVu0FVECTOR fix_chara_pos;
-static sceVu0FVECTOR fix_chara_rot;
-static int camera_num;
+
+/** Camera marker whose box the player last stood in. */
 static INTERIOR_CAMERA *active_camera;
+
+/** Frames the player may stand outside the active camera marker before the camera switches. */
 static int camera_change_count;
-static int simple_event;
-static CCharacter MotionParts[4];
+
+/** Number of camera markers the interior's parts define. */
+static int camera_num;
+
+/** Frames left of the door-opening sequence. */
+static int door_open_cnt;
+
+/** Camera the interior is drawn through this frame. */
+static CCamera *NowCamera;
+
+/** The player's character in the interior. */
+static CCharacter *Chara;
+
+/** Time of day the interior is lit for. */
+static float NowTime;
+
+/** Number of object animations the interior uses. */
+static int obj_anime_num;
+
+/** Number of effects the interior uses. */
+static int effect_num;
+
+/** Number of parts the interior is built from. */
+static int parts_num;
+
+/** Function points the interior's parts define. */
+static EPARTS_FUNC_DATA *func_point;
+
+/** Number of function points the interior's parts define. */
+static int func_num;
+
+/** Event to run when the interior starts, or below zero for none. */
+static int start_event_no;
+
+/** Whether the start event is a system event. */
+static int start_system_event;
+
+/** Menu the interior leaves for. */
+static int goto_menu;
+
+/** Whether the pause key was pressed this frame. */
+static int goto_return_menu;
+
+/** Frames since any button was last held. */
+static int key_counter;
+
+/** Frames the interior loop has run. */
+static int loop_counter;
+
+/** Animated texture the interior's parts share. */
 static CTextureAnime TexAnime;
+
+/** Animation records of the interior's animated textures. */
 static CTexAnimeData TexAnimeData[64];
-#else
-extern int GameMode;
-extern CCameraFollow MainCamera;
-extern CCameraFollow ViewCamera;
-extern float NowTime;
-extern CCamera *NowCamera;
-extern int loop_counter;
-extern int key_counter;
-extern int goto_menu;
-extern int goto_return_menu;
-extern int door_open_cnt;
-extern sceVu0FVECTOR fix_chara_pos;
-extern sceVu0FVECTOR fix_chara_rot;
-extern int camera_num;
-extern INTERIOR_CAMERA *active_camera;
-extern int camera_change_count;
+
+/** Light that flickers with the interior's fires. */
+static CFireOmni Fire;
+
+/** Position the player is held at while the camera is fixed. */
+static sceVu0FVECTOR fix_chara_pos;
+
+/** Rotation the player is held at while the camera is fixed. */
+static sceVu0FVECTOR fix_chara_rot;
+
+/** The parts the interior is built from. */
+static CMapParts InteriorParts[10];
+
+/** Named parts that move under the interior's script. */
+static CCharacter MotionParts[4];
+
+/** Water surfaces the interior draws. */
+static CGroundWater Water[1];
+
+/** Camera that follows the player. */
+static CCameraFollow MainCamera(60.0f, 20.0f, 0.0f, 4.0f);
+
+/** Camera that frames a conversation. */
+static CCameraFollow TalkCamera(60.0f, 20.0f, 0.0f, 4.0f);
+
+/** Camera the interior's events drive. */
+static CCameraFollow EventCamera(60.0f, 20.0f, 0.0f, 4.0f);
+
+/** Camera that looks from the player's eyes. */
+static CCamera ViewCamera(4.0f);
+
+/** Camera used while leaving the interior. */
+static CCamera ExitCamera(4.0f);
+
+/** Whether the running event is a simple one. */
 extern int simple_event;
-extern CCharacter MotionParts[4];
-extern CTextureAnime TexAnime;
-extern CTexAnimeData TexAnimeData[64];
-#endif
 
 /**
  * Identifies the kind of editor effect requested.
@@ -1674,6 +1702,12 @@ int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     }
     return header->func_count;
 }
+/** Frame of the interior's animated texture. */
+static int setTexAnimCnt;
+
+/** Clock that advances the interior's animated texture. */
+static float setTexAnimCntf;
+
 /**
  * Uploads the interior's texture-animation state to the graphics synthesizer.
  *
@@ -1713,21 +1747,105 @@ static void setTexAnim() {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1592);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1593);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1594);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1595);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1596);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1597);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1598);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1599);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1600);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1601);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1602);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1603);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1604);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1605);
-INCLUDE_RODATA("asm/nonmatchings/edit_in", @1606);
+/** Number of villagers the info script has placed. */
+static int npc_count;
+
+/** Number of object animations the info script has defined. */
+static int objanime_list;
+
+/** Number of effects the info script has defined. */
+static int effect_list;
+
+/** Whether the info script asked for debug drawing. */
+static int debug;
+
+/** Number of motion parts the info script has defined. */
+static int motion_parts_list;
+
+/** Number of water surfaces the info script has defined. */
+static int water_list;
+
+/** Water surface record the info script is filling in. */
+static EDIT_WATER_INFO *water_info;
+
+/** Directory that names in the info script are relative to. */
+static char CurrentDir[0x80];
+
+static void CommandAMBIENT(void **arguments);
+static void CommandLIGHT_C(void **arguments);
+static void CommandFOG(void **arguments);
+static void CommandBG_COL(void **arguments);
+static void CommandPROJECTION(void **arguments);
+static void CommandPEOPLE(void **arguments);
+static void CommandCD(void **arguments);
+static void CommandOBJ_ANIME(void **arguments);
+static void CommandFIRE(void **arguments);
+static void CommandFLAME(void **arguments);
+static void CommandBRIGHT(void **arguments);
+static void CommandDEBUG(void **arguments);
+static void CommandMOTION_PARTS(void **arguments);
+static void CommandWATER_SURFACE(void **arguments);
+static void CommandWATER_SHAKE(void **arguments);
+
+/** The keywords an interior's info script may use. */
+static TAG_PARAM Command[15] = {
+    {"AMBIENT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"LIGHT_C", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"FOG", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER,
+            SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BG_COL", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"PROJECTION", {SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"PEOPLE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"CD", {SCRIPT_ARGUMENT_STRING, -1}},
+    {"OBJ_ANIME", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"FIRE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"FLAME", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BRIGHT", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"DEBUG", {-1}},
+    {"MOTION_PARTS", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"WATER_SURFACE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+            SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+            SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"WATER_SHAKE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
+            SCRIPT_ARGUMENT_FLOAT, -1}},
+};
+
+/** Handlers of the info script's keywords, in the order of Command. */
+static void (*CommandExe[15])(void **) = {
+    CommandAMBIENT,
+    CommandLIGHT_C,
+    CommandFOG,
+    CommandBG_COL,
+    CommandPROJECTION,
+    CommandPEOPLE,
+    CommandCD,
+    CommandOBJ_ANIME,
+    CommandFIRE,
+    CommandFLAME,
+    CommandBRIGHT,
+    CommandDEBUG,
+    CommandMOTION_PARTS,
+    CommandWATER_SURFACE,
+    CommandWATER_SHAKE,
+};
 /**
  * Runs the interior's info script through the interpreter.
  *

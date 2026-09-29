@@ -25,6 +25,7 @@
 #include "mds.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
+#include "menuetc.hpp"
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
 #include "menuitemstep.hpp"
@@ -66,23 +67,22 @@ STATIC_ASSERT(sizeof(CHARA_CHANGE_MENU) == 0x60);
 
 /** State of the character change menu. */
 static CHARA_CHANGE_MENU ChangeMenu;
-CDngStatusData *DEnterStatusPt;
+
 int MenuEtcErrCnt;
+
+/** Texture of the dungeon entrance board. */
+CTexture *DunLogBoard;
+
+/** Texture of the floor list on the dungeon entrance board. */
+CTexture *DunLogBoard2;
+
+CDngStatusData *DEnterStatusPt;
 
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
-/** Screen rectangle the menus draw full-screen pictures into. */
-extern CRect_i_ MenuDispRc;
-
 /** Texture block the battle menu's extra textures load into. */
 extern int BtlMenuExReadBlock;
-
-/** Texture of the dungeon entrance board. */
-extern CTexture *DunLogBoard;
-
-/** Texture of the floor list on the dungeon entrance board. */
-extern CTexture *DunLogBoard2;
 
 /** Dungeon progress the battle menus show. */
 extern CDngStatusData *BtlMenuStatusPt;
@@ -101,15 +101,6 @@ extern int MDebugItemPolyViewFlag;
 
 /** Set once the item preview's files have been read. */
 extern int polyreadflag;
-
-/** Position the debug item preview draws its model at. */
-extern float menudebugpos[4];
-
-/** Rotation the debug item preview turns its model to. */
-extern float menudebugrot[3];
-
-/** Scale the debug item preview draws its model at. */
-extern float menudebugrscale[3];
 
 /**
  * Adds one attachment's values into another, scaled by a factor.
@@ -1044,24 +1035,38 @@ static void DrawDunEnterBack(int alpha) {
 }
 
 /**
+ * Screen position of the character change ring's centre.
+ */
+int QuickCharaPos[2];
+
+/**
  * Texture block the character change menu loads its pictures into.
  */
-extern s16 CharaChangeTexBlock;
+s16 CharaChangeTexBlock;
 
 /**
  * Set once the character change menu's files have been read.
  */
-extern s16 CharaChangeReadFlag;
+s16 CharaChangeReadFlag;
 
 /**
  * Buffer past the character change menu's pictures, where its models are read.
  */
-extern u_long128 *chara_change_buf;
+u_long128 *chara_change_buf;
 
 /**
  * Texture of the character change menu's portraits.
  */
-extern CTexture *QuickCharaTex;
+CTexture *QuickCharaTex;
+
+/**
+ * Status of the party the character change menu picks from.
+ */
+CDngStatusData *ChangeStatusDataPt;
+
+CFrame *ItemPolyView;
+int MDebugItemPolyViewFlag;
+int polyreadflag;
 
 /**
  * Name of the frame-buffer texture the character change menu's pictures are drawn into.
@@ -1127,20 +1132,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
     }
 }
 
-/**
- * Status of the party the character change menu picks from.
- */
-extern CDngStatusData *ChangeStatusDataPt;
-
-/**
- * Screen position of the character change ring's centre.
- */
-extern int QuickCharaPos[2];
-
-/**
- * Radius of the character change ring, which grows while the ring turns.
- */
-extern float changeMenu_long;
+float changeMenu_long = 60.0f;
 
 /**
  * Places the character change menu's cursor on its selected row.
@@ -1908,10 +1900,19 @@ int InitItemPolygonView(int item_no, u_long128 *buffer) {
     return 0;
 }
 
+/** Position the debug item preview draws its model at. */
+float menudebugpos[4] = {4.0f, 0.0f, 0.0f, 1.0f};
+
+/** Rotation the debug item preview turns its model to. */
+float menudebugrot[3] = {0.0f, 0.0f, 0.0f};
+
+/** Scale the debug item preview draws its model at. */
+float menudebugrscale[3] = {3.0f, 3.0f, 3.0f};
+
 /**
  * Buffer the item preview's model is read into.
  */
-extern CDataAlloc2<1> MenuItemCashBuffer;
+CDataAlloc2<1> MenuItemCashBuffer(-1);
 
 /**
  * Name of the frame-buffer texture the item preview's pictures are drawn into.
@@ -2126,12 +2127,27 @@ extern s32 BtlMenuMode;
 /**
  * Debug text the dungeon menus print their item data into.
  */
-extern CDebugFont MenuDbgMsg;
+CDebugFont MenuDbgMsg;
+
+ITEM_AUTO_GET ItemAutoGet;
+
+// The item data view's line formats, which the table below points at.
+extern char item_templete_no[];
+extern char item_templete_type[];
+extern char item_templete_use[];
+extern char item_templete_attribute[];
+extern char item_templete_name_index[];
+extern char item_templete_help_index[];
+extern char item_templete_volume[];
+extern char item_templete_gold[];
 
 /**
  * Formats of the lines the item data view prints.
  */
-extern char *ItemTemplete[];
+char *ItemTemplete[8] = {
+    item_templete_no,         item_templete_type,       item_templete_use,    item_templete_attribute,
+    item_templete_name_index, item_templete_help_index, item_templete_volume, item_templete_gold,
+};
 
 static void DrawItemDataView(int item_no) {
     int block;

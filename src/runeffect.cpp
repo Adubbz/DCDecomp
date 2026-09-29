@@ -10,8 +10,8 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-extern float waveAnimeCnt[32];
-extern int sw;
+float waveAnimeCnt[32];
+int sw;
 
 /**
  * Draws two textures blended over one another.

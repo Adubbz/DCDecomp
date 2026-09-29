@@ -57,9 +57,6 @@ MES_FUCHI FuchiTbl_E[] = {
     {0, 0, 0, 0, 0, -1},
 };
 
-/* The palette the message window's font draws out of. */
-extern "C" u32 MesWinClut[256];
-
 /* The register that names where the message window's depth buffer lives. */
 extern "C" sceGsZbuf mgZBuffer;
 
@@ -91,17 +88,9 @@ struct GIFTAG {
 
 STATIC_ASSERT(sizeof(GIFTAG) == 0x10);
 
-/* Where every external character of the message window's font sits. */
-extern "C" s32 GaijiDataTbl[][8];
-
-/* The colour each palette entry of the message window's font draws with. */
-extern "C" u32 FontColorTbl[16];
-
 /* The packet every draw call of the game writes into. */
 extern "C" sceVif1Packet *Vif1Packet;
 
-/* Whether the message windows skip drawing themselves entirely. */
-int MesAbsDrawOff;
 
 s16 ClsMes::GetGaijiW(int code) {
     if (code >= -0x300 && code < -0x263) {

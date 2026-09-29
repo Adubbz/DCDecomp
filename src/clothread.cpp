@@ -33,10 +33,7 @@
 #include <libpkt.h>
 #include "rect.hpp"
 
-/**
- * Cloth instance currently receiving configuration commands.
- */
-extern CCloth *pCloth;
+CCloth *pCloth;
 
 /**
  * Last exclusion bound attached while reading one cloth configuration.

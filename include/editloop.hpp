@@ -16,10 +16,23 @@ class CCameraFollow;
 class ClsMes;
 class CTexture;
 class CRect_i_;
+class CEffectGroup;
+class CEditGround;
+class CEditArea;
+class CFrameVu1;
+class CWind;
+class CMainChara;
+class CRunEffect;
 struct sceVif1Packet;
 
 /** Working arena used to load event villagers and the event player model. */
 extern CDataAlloc2<1> EdVillagerBuffer;
+
+/** Working arena beginning at the free end of the villager arena for event resources. */
+extern CDataAlloc2<1> EdEventBuffer;
+
+/** Working arena beginning at the free end of the event arena for additional resources. */
+extern CDataAlloc2<1> EdEventExBuffer;
 
 /** Working arena used to load map NPC resources. */
 extern CDataAlloc2<1> EdNPCBuffer;
@@ -350,6 +363,18 @@ extern CDataAlloc2<1> EdScriptBuffer;
 /** Name of the editor map whose resources are active. */
 extern char EditMapName[0x20];
 
+/** Directory the editor map's data files are read from. */
+extern char EditDataDir[0x100];
+
+/** Name of the interior the player is entering. */
+extern char EdInteriorName[0x20];
+
+/** Scene archive the map's models are read out of. */
+extern u_int *scn_data;
+
+/** Buffer the map's part archive is read into. */
+extern u_int *parts_read_buffer;
+
 /** Optional map-specific event script loaded into the script arena. */
 extern char *EdEventData;
 
@@ -358,15 +383,6 @@ extern char *EdSystemEventData;
 
 /** Whether map geometry drawing is suppressed while an editor event is active. */
 extern int EdDrawOffMap;
-
-/** Camera used while an editor event controls the viewpoint. */
-extern CCameraFollow EventCamera;
-
-/** Number of the currently running map event. */
-extern int start_event_no;
-
-/** Number of the currently running system event. */
-extern int start_system_event;
 
 /** Whether the editor clock overlay is drawn. */
 extern int draw_clock;
@@ -400,6 +416,249 @@ extern ClsMes EditNameMes;
 
 /** Message window used for editor system notifications. */
 extern ClsMes EditSystemMes;
+
+/** Texture shown while the editor waits on a load. */
+extern CTexture *StayTexture;
+
+/** Buffer the map's villagers are read into, at the free end of the NPC arena. */
+extern u_long128 *EdNPCReadBuffer;
+
+/** Whether the editor clock advances each frame. */
+extern int EdStepTimeFlag;
+
+/** Map part number of the interior the player is walking into. */
+extern int EdInteriorPartsNo;
+
+/** Map jump the interior's door leads to. */
+extern int EdInteriorJumpID;
+
+/** Sound the interior's door plays as it opens. */
+extern int EdInteriorDoorSound;
+
+/** Event started once the player is inside the interior. */
+extern int EdInteriorStartEvent;
+
+/** Effect group every editor effect is played through. */
+extern CEffectGroup EdEffectGroup;
+
+/** Whether everything the editor draws is switched off. */
+extern int EdDrawOffFlag;
+
+/** Whether the map's shadows are left undrawn. */
+extern int EdDrawOffMapShadow;
+
+/** Whether the editor is paused. */
+extern int EdPauseFlag;
+
+/** Whether the next frame starts from a cleared screen. */
+extern int clear_screen;
+
+/** Whether the pad is ignored until every button has been released. */
+extern int key_lock;
+
+/** Whether the loop is leaving for the dungeon. */
+extern int goto_dungeon;
+
+/** Whether the editor loop has been asked to end. */
+extern int exit_loop;
+
+/** Frames left before the editor's sound is switched off. */
+extern int sound_off_cnt;
+
+/** Page the debug menu is showing. */
+extern int debug_menu_mode;
+
+/** Event a fade-out is leading into. */
+extern int goto_cmp_event;
+
+/** Priority of the event a fade-out is leading into. */
+extern int goto_cmp_event_level;
+
+/** Whether an event has asked for the time of day to change. */
+extern int change_time_event;
+
+/** Whether the cursor over a villager who can be talked to is drawn. */
+extern int draw_npc_cursor;
+
+/** Whether the map is drawn in edit mode. */
+extern int edit_mode_draw;
+
+/** Whether the ground grid is drawn in edit mode. */
+extern int edit_mode_grd_draw;
+
+/** Whether depth of field is applied to the map. */
+extern int depth_of_field;
+
+/** Lighting preset edit mode draws with. */
+extern int edit_mode_lighting;
+
+/** Whether the sky is drawn. */
+extern int draw_sky;
+
+/** Frames the player has been walking. */
+extern int move_count;
+
+/** Whether the editor is running the interior test map. */
+extern int interior_test;
+
+/** Names of the interiors the debug menu offers. */
+extern char **interior_name;
+
+/** Game mode the editor returns to once the debug menu closes. */
+extern int oldGameMode;
+
+/** Ground the player builds the town on. */
+extern CEditGround *pEditGround;
+
+/** Areas the map is divided into. */
+extern CEditArea *EditArea;
+
+/** Map object parts. */
+extern CMapParts *ObjParts;
+
+/** River parts. */
+extern CMapParts *RiverParts;
+
+/** Road parts. */
+extern CMapParts *RoadParts;
+
+/** Sky backdrop model. */
+extern CFrameVu1 *SkyBackFrame;
+
+/** Cursor drawn over a villager who can be talked to. */
+extern CFrame *CharaCursor0;
+
+/** Cursor drawn over a villager who cannot be talked to. */
+extern CFrame *CharaCursor1;
+
+/** Cursor drawn over the character an event wants noticed. */
+extern CFrame *CharaCursor2;
+
+/** Closed treasure-box marker model. */
+extern CFrameVu1 *TreasureCursor;
+
+/** Open treasure-box marker model. */
+extern CFrameVu1 *TreasureCursorOpen;
+
+/** Frames the loop has been ending for. */
+extern int end_counter;
+
+/** Background music volume while it fades. */
+extern int bgm_vol;
+
+/** Whether the map's background music has been asked for. */
+extern int bgm_play_flag;
+
+/** Whether the map's background music has started. */
+extern int bgm_play_start;
+
+/** Whether a door is playing its opening motion. */
+extern int door_open;
+
+/** Whether the player is held at a fixed position while a door opens. */
+extern int fix_pos_enble;
+
+/** Villager the player is talking to. */
+extern int talk_villager;
+
+/** Frames left in the time-of-day change. */
+extern int chg_time_cnt;
+
+/** Rotation the selected part is placed at. */
+extern int NowSelectAngle;
+
+/** Rotation the selected part was placed at before the last change. */
+extern int OldSelectAngle;
+
+/** Rotation of the part cursor about the vertical axis. */
+extern float NowCursorRotY;
+
+/** Map part that was under the cursor on the previous frame. */
+extern CMapParts *OldFocusParts;
+
+/** Time left on the day-transition overlay. */
+extern float draw_day_cnt;
+
+/** Whether the day-transition overlay is drawn. */
+extern int draw_day_flag;
+
+/** Part selected in the edit menu. */
+extern int NowSelectParts;
+
+/** Model of the edit-mode cursor. */
+extern CFrame *ECursorFrame;
+
+/** Element each of the map's part slots holds. */
+extern EDIT_ELEMENT_INFO EditElementInfo[36];
+
+/** Arena interior data is read into. */
+extern CDataAlloc2<1> EdInteriorBuffer;
+
+/** Arena the map's messages are read into. */
+extern CDataAlloc2<1> EdMesBuffer;
+
+/** Arena the map's extra messages are read into. */
+extern CDataAlloc2<1> EdExtMessBuffer;
+
+/** Working arena carved out of what the villager arena leaves. */
+extern CDataAlloc2<1> EdWorkBuffer;
+
+/** Arena the editor's menus are built in. */
+extern CDataAlloc2<1> EdMenuBuffer;
+
+/** Wind the editor's cloth is blown by. */
+extern CWind EdWind;
+
+/** Secondary message window used by ordinary editor conversations. */
+extern ClsMes EditMes2;
+
+/** Secondary message window used while an editor event is running. */
+extern ClsMes EditEventMes2;
+
+/** Message window used for editor help text. */
+extern ClsMes EditHelpMes;
+
+/** Fog the map is drawn with. */
+extern EDIT_FOG_INFO now_fog;
+
+/** Arena the map's part information is read into. */
+extern CDataAlloc2<1> EPartsInfoBuff;
+
+/** Character the player leads through the town. */
+extern CMainChara MainChara;
+
+/** Dust the player's run leaves behind. */
+extern CRunEffect RunEffect;
+
+/** Camera used in edit mode. */
+extern CCameraFollow EditCamera;
+
+/** Camera used as the map is entered. */
+extern CCameraFollow IntroCamera;
+
+/** Sky models, one per time of day. */
+extern CFrameVu1 *SkyFrame[4];
+
+/** Sun models, one per time of day. */
+extern CFrame *SunFrame[4];
+
+/** Where the camera is held while a door plays its motion. */
+extern sceVu0FVECTOR fix_camera_pos;
+
+/** Map file of the interior being entered. */
+extern char interior_map_name[0x40];
+
+/** Position the part cursor is drawn at. */
+extern float NowPartsCursorPos[4];
+
+/** Arena the player character is read into. */
+extern CDataAlloc2<1> CharaBuffer;
+
+/** Arena interior parts are read into. */
+extern CDataAlloc2<1> InteriorBuffer;
+
+/** Arena the editor's miscellaneous data is carved out of. */
+extern CDataAlloc2<1> EtcDataBuffer;
 
 STATIC_ASSERT(sizeof(EDIT_IMAGE_INFO) == 0x48);
 STATIC_ASSERT(sizeof(EDIT_SCENE_LAYER_INFO) == 0xf8);

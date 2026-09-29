@@ -96,3 +96,12 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CRunEffect) == 0xD0);
+
+/**
+ * One period of a sine the blend effects scale their offsets by, filled by initBlendCnt.
+ */
+extern float waveAnimeCnt[32];
+/**
+ * Toggled each draw of the running effect to alternate between its two footprint textures.
+ */
+extern int sw;

@@ -11,20 +11,11 @@
 #include "rect.hpp"
 #include "texture.hpp"
 
-/** Direction the wind blows the effects in. */
-extern sceVu0FVECTOR wind_dir;
-
-/** Frames the effects have been running, which thins how often they spawn. */
-extern int effect_count;
-
-/** Texture the smoke effect draws with, looked up once a frame. */
-extern CTexture *smoke_tex;
-
-/** Texture the water-spray effect draws with, looked up once a frame. */
-extern CTexture *sibuki_tex;
-
-/** Texture the ripple effect draws with, looked up once a frame. */
-extern CTexture *hamon_tex;
+sceVu0FVECTOR wind_dir = {0.0f, 0.0f, 0.0f, 0.0f};
+int effect_count;
+CTexture *smoke_tex;
+CTexture *sibuki_tex;
+CTexture *hamon_tex;
 
 void EffectMacroStep(float *wind) {
     sceVu0CopyVector(wind_dir, wind);

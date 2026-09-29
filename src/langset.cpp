@@ -13,20 +13,15 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-/** Language the cursor stands on, counted from zero. */
-extern int Cursor;
-
 /** The vector-unit program the language screen draws its plate with. */
 extern char Vu_prog0f[];
 
-/** Fade the language screen opens and closes with. */
-extern Fader Fade;
-
-/** What the screen is doing: fading in, taking the choice, or fading out. */
-extern int Proc;
+Fader Fade;
+int Cursor;
+int Proc;
 
 /** Opacity of each language entry. */
-extern int Alpha[5];
+int Alpha[5];
 
 void LangsetInit(void) {
     InitializeDataBuffer();

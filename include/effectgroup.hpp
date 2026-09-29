@@ -13,6 +13,9 @@ public:
     CEffect *effect_table; /**< First effect in the caller-supplied pool. */
     int capacity;          /**< Number of effects in the pool. */
 
+    /** Starts the group with no pool. */
+    CEffectGroup() { Initialize(0, 0); }
+
     /**
      * Starts an effect in the first inactive pool slot.
      *

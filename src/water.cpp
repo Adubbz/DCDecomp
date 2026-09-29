@@ -13,8 +13,6 @@
 extern int DBuffID;
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 
-char WaterData[0x10];
-
 /**
  * Loads the matrix and translation used by cell transforms into VU0 registers.
  */
@@ -349,7 +347,7 @@ void CWater::Shake(int row, int column, float height_change) {
 }
 void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     if (arena == NULL) {
-        arena = (CDataAlloc2<1> *) WaterData;
+        arena = &WaterData;
     }
 
     int quads = ((row_count * column_count) >> 2) + 1;

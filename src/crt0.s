@@ -205,3 +205,16 @@ _dpfge:
 
 # Pad to the 8-byte boundary the next unit starts on.
     nop
+
+# The first data of the image: the 0x40 bytes retail's .data starts with.
+.section .data, "wa"
+.global __data_start
+__data_start:
+    .space 0x40
+
+# The argument block the kernel fills for SetupThread, on a 128-byte boundary.
+.section .bss, "wa"
+    .balign 128
+.global _args
+_args:
+    .space 0x180

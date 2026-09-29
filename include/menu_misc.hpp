@@ -3,6 +3,7 @@
 #include "common.h"
 
 class CCharacter;
+class CTexture;
 class CUserStatus;
 class ClsMes;
 struct BT_SHOT_EFFECT;
@@ -484,3 +485,148 @@ void WeaponStarDraw(int, int, WEAPON_HAVE *, int);
  * @size 0x4F0
  */
 int WeaponDataChangeByRGate(WEAPON_HAVE *, int);
+
+/**
+ * Frame numbers of the menu's cached weapon models.
+ */
+extern int MenuWeaponModelData[42];
+
+/**
+ * Each weapon model slot's frame number and read state.
+ */
+extern int MenuWeaponModelInfo[10][2];
+
+/**
+ * The ambient light saved before the item menu tinted it.
+ */
+extern float MenuCharaOldAmbient[4];
+
+/**
+ * Path buffer a weapon model's file name is built in.
+ */
+extern char MenureadFile[64];
+
+/**
+ * Base path used to assemble character model file names.
+ */
+extern char readFilePath[0x40];
+
+/**
+ * Model file name for each playable character.
+ */
+extern const char *charaFile[6];
+
+/**
+ * The amount the last item use gave, a base value plus a random part.
+ */
+extern int MenuItemUseVolume;
+
+/**
+ * Buffer the weapon page's model files are read into.
+ */
+extern u_long128 *WeaponRead_Buf;
+
+/**
+ * The menu's weapon-effect read flag.
+ */
+extern s16 MenuCharaEffectReadFlag;
+
+/**
+ * The weapon effect kind SetOldEffectKind records.
+ */
+extern s16 MenuCharaOldEffect;
+
+/**
+ * The weapon effect the menu's character plays.
+ */
+extern BT_SHOT_EFFECT *WepEffectMenuPt;
+
+/**
+ * The buffer the menu's weapon effect and model are read into.
+ */
+extern u_long128 *WepEffectMenuReadBuf;
+
+/**
+ * Buffer the menu's weapon models are built in.
+ */
+extern u_long128 *MenuWeaponModelBuildBuffer;
+
+/**
+ * Read number of the character model loading in the background.
+ */
+extern int CharaFileBGReadNo;
+
+/**
+ * Party member the character change is loading.
+ */
+extern s16 charachangeid;
+
+/**
+ * Start of the buffer a character change reads its files into.
+ */
+extern u_long128 *CharaChangeBaseBuf;
+
+/**
+ * Buffer a character change reads the party member's model into.
+ */
+extern u_long128 *menucharReadbuf;
+
+/**
+ * Buffer a character change reads the first weapon model into.
+ */
+extern u_long128 *menud0wepReadBuf;
+
+/**
+ * Buffer a character change reads the second weapon model into.
+ */
+extern u_long128 *menud1wepReadBuf;
+
+/**
+ * Buffer a character change reads the third weapon model into.
+ */
+extern u_long128 *menud2wepReadBuf;
+
+/**
+ * Buffer a character change reads the weapon icons into.
+ */
+extern u_long128 *MenuWepIconCharaChangePtr;
+
+/**
+ * Buffer a character change reads the party member's voices into.
+ */
+extern u_long128 *MenuVoiceLoadPtr;
+
+/**
+ * The message window that shows a monster's name.
+ */
+extern ClsMes *CharaNameMes;
+
+/**
+ * The dungeon escape prompt's second message window.
+ */
+extern ClsMes *DngMenuMes;
+
+/**
+ * Whether the monster's name is drawn.
+ */
+extern s16 CharaNameDrawFlag;
+
+/**
+ * How the monster's name is drawn.
+ */
+extern s16 CharaNameDrawCase;
+
+/**
+ * The picture drawn behind the dungeon escape prompt.
+ */
+extern CTexture *DngEscapeTex;
+
+/**
+ * The texture block the dungeon escape prompt's picture is loaded into.
+ */
+extern s16 DngEscapeBlock;
+
+/**
+ * Whether the dungeon escape prompt is closing and fades to black.
+ */
+extern s16 DngEscapeEndFlag;

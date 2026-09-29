@@ -27,45 +27,19 @@ void CCollisionMDT::Initialize(void) {
     num = 0;
 }
 
-/**
- * Embedded arena that supplies storage to the scene allocators.
- */
-extern CDataAlloc<1, 1690000> GlobalDataBuffer;
+u_int *read_buffer;
+CDataAlloc2<1> *WorkBuffer;
+CDataAlloc2<1> *ActiveData;
 
-/**
- * Allocator used for model motion data.
- */
-extern CDataAlloc2<1> MotionData;
-
-/**
- * Allocator used for water geometry.
- */
-extern CDataAlloc2<1> WaterData;
-
-/**
- * First bank used for active scene data.
- */
-extern CDataAlloc2<1> ActiveData0;
-
-/**
- * Second bank used for active scene data.
- */
-extern CDataAlloc2<1> ActiveData1;
-
-/**
- * Buffer filled by synchronous game-data reads.
- */
-extern u_int *read_buffer;
-
-/**
- * Scratch allocator used while loading and transforming data.
- */
-extern "C" CDataAlloc2<1> *WorkBuffer__2;
-
-/**
- * Backing object for the shared scratch allocator.
- */
-extern CDataAlloc2<1> workbuffer;
+CDataAlloc2<1> VisualData(-1);
+CDataAlloc2<1> MotionData(-1);
+CDataAlloc2<1> TextureData(-1);
+CDataAlloc2<1> WaterData(-1);
+CDataAlloc2<1> VariousData(-1);
+CDataAlloc2<1> ActiveData0(-1);
+CDataAlloc2<1> ActiveData1(-1);
+CDataAlloc<1, 1690000> GlobalDataBuffer;
+CDataAlloc2<1> workbuffer(-1);
 
 void InitializeDataBuffer(void) {
     GlobalDataBuffer.used = 0;
@@ -115,8 +89,8 @@ void SetPacketReadBuffer(int packet_quads, int read_quads) {
     MGInitVif1Packet(buffer0, buffer1);
     workbuffer.base = GlobalDataBuffer.Alloc64(2048);
     workbuffer.limit = 2048;
-    WorkBuffer__2 = &workbuffer;
-    WorkBuffer__2->used = 0;
+    WorkBuffer = &workbuffer;
+    WorkBuffer->used = 0;
     printf("%d/%d\n", GlobalDataBuffer.used, 1690000);
 }
 
@@ -167,8 +141,8 @@ clear_test:
     read_buffer = (u_int *) GlobalDataBuffer.Alloc64(100000);
     workbuffer.base = GlobalDataBuffer.Alloc64(4096);
     workbuffer.limit = 4096;
-    WorkBuffer__2 = &workbuffer;
-    WorkBuffer__2->used = 0;
+    WorkBuffer = &workbuffer;
+    WorkBuffer->used = 0;
 
     u_long128 *buffer0 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);
     u_long128 *buffer1 = (u_long128 *) GlobalDataBuffer.Alloc64(50000);

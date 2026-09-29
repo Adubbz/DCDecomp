@@ -52,8 +52,14 @@ struct OPTION_MENU_STATE {
 
 STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
 
+/** Holds the georama parts of a town the player is not standing in. */
+CEditPartsInfo BtEditPartsInfo;
+
+MENU_ATORA_SEL MenuAtoraSel;
+CMemoryCardAccess McAccess;
+
 /** The state of the option screen. */
-extern OPTION_MENU_STATE OptionMenu;
+OPTION_MENU_STATE OptionMenu;
 
 /** The StayTex menu texture. */
 CTexture *StayTex;
@@ -85,15 +91,7 @@ CTexture *SaveBoard;
 /** The texture that the option screen draws from. */
 CTexture *MenuOption;
 
-/** Holds the georama parts of a town the player is not standing in. */
-extern CEditPartsInfo BtEditPartsInfo;
-
 extern u8 MesWinTexBuff_12[0x100];
-
-/**
- * The four lettering textures that the save file boards draw with.
- */
-extern CTexture *SaveMenuMojiTextbl[4];
 
 CEditPartsInfo *CommonMenuAtoraInfo;
 short *GetAtraMsgReadBuf;
@@ -114,9 +112,6 @@ int AtoraTextureReadBlock;
 u_long128 *AtoraOffsetBuf;
 
 s32 CursorVibeCnt;
-
-/** The save menu's steps, by SAVE_MENU_STATE::key_no. */
-extern int (*SaveMenuFunc[26])();
 
 /**
  * Returns the record of the n-th valid part in the georama's part list, or NULL
@@ -3343,6 +3338,56 @@ static void ExitSaveSelect() {
     }
     CommonMenuMes2.cursor_lit = 0;
 }
+
+// The save menu's steps that menu_save.cpp defines.
+int SaveMenuKeySaveCheck();
+int SaveMenuKeySaveDecide();
+int SaveMenuKeySave();
+int SaveMenuKeyEndSave();
+int SaveMenuKeyLoadDecide();
+int SaveMenuKeyLoad();
+int SaveMenuKeyArart();
+int SaveMenuKeyNewDir();
+int SaveMenuKeyNewDirSelect();
+int SaveMenuKeyFormat();
+int SaveMenuKeyUnFormat();
+int SaveMenuKeyDifVersion();
+int SaveMenuKeyDelete();
+int SaveMenuKeyCopy();
+int SaveMenuKeyAfterEnding();
+int SaveMenuKeySaveEnding();
+int SaveMenuKeySaveDecideEnding();
+int SaveMenuKeyEndSaveEnding();
+
+/** The save menu's steps, by SAVE_MENU_STATE::key_no. */
+int (*SaveMenuFunc[26])() = {
+    SaveMenuKeyFadeIn,
+    SaveMenuKeyFadeOut,
+    SaveMenuKeyModeSelect,
+    SaveMenuKeyMcSelect,
+    SaveMenuKeyCheckMcType,
+    SaveMenuKeyCheckMc,
+    SaveMenuKeyLoadConfig,
+    SaveMenuKeyFileSelect,
+    SaveMenuKeySaveCheck,
+    SaveMenuKeySaveDecide,
+    SaveMenuKeySave,
+    SaveMenuKeyEndSave,
+    SaveMenuKeyLoadDecide,
+    SaveMenuKeyLoad,
+    SaveMenuKeyArart,
+    SaveMenuKeyNewDir,
+    SaveMenuKeyNewDirSelect,
+    SaveMenuKeyFormat,
+    SaveMenuKeyUnFormat,
+    SaveMenuKeyDifVersion,
+    SaveMenuKeyDelete,
+    SaveMenuKeyCopy,
+    SaveMenuKeyAfterEnding,
+    SaveMenuKeySaveEnding,
+    SaveMenuKeySaveDecideEnding,
+    SaveMenuKeyEndSaveEnding,
+};
 
 int MenuSaveKey() {
     int func_no;

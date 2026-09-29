@@ -307,7 +307,28 @@ segments:
       - {start: 0x144c30, type: cpp, name: langset}
       - {start: 0x1452f0, type: cpp, name: fader}
       - {start: 0x145400, type: data, name: vutext, dir: main, linker_section: .vutext}
-      - {start: 0x14fbc0, type: data, name: data, dir: main}
+      - {start: 0x14fbc0, type: .data, name: crt0}
+      - {start: 0x14fc00, type: .data, name: lib/libc/reent/impure}
+      - {start: 0x14fef0, type: .data, name: lib/libc/locale/locale}
+      - {start: 0x14ff08, type: .data, name: lib/libc/stdlib/mallocr}
+      - {start: 0x150360, type: .data, name: lib/sce/eecdvd}
+      - {start: 0x1503d0, type: .data, name: lib/sce/libdma}
+      - {start: 0x150480, type: .data, name: lib/libgcc/_eh}
+      - {start: 0x150a80, type: .data, name: lib/sce/libgraph}
+      - {start: 0x150ad0, type: .data, name: lib/sce/kernl/klib}
+      - {start: 0x150ae0, type: .data, name: lib/sce/kernl/glue}
+      - {start: 0x150ae8, type: .data, name: lib/sce/kernl/thread}
+      - {start: 0x150af0, type: .data, name: lib/sce/kernl/kprintf}
+      - {start: 0x150af8, type: .data, name: lib/sce/kernl/sifcmd}
+      - {start: 0x150b00, type: .data, name: lib/sce/kernl/sifrpc}
+      - {start: 0x150b08, type: .data, name: lib/sce/kernl/filestub}
+      - {start: 0x150b18, type: .data, name: lib/sce/kernl/iopheap}
+      - {start: 0x150b20, type: .data, name: lib/sce/kernl/eeloadfile}
+      - {start: 0x150b28, type: .data, name: lib/sce/libmc}
+      - {start: 0x150b40, type: .data, name: lib/sce/libpad}
+      - {start: 0x150b88, type: .data, name: lib/sce/sdr_main}
+      - {start: 0x150bf0, type: .data, name: lib/sce/libvu0}
+      - {start: 0x150c20, type: data, name: data, dir: main}
       - {start: 0x196780, type: data, name: vudata, dir: main, linker_section: .vudata}
       - {start: 0x196880, type: .rodata, name: lib/libc/stdlib/assert}
       - {start: 0x1969c0, type: .rodata, name: lib/libc/stdlib/dtoa}
@@ -430,5 +451,25 @@ segments:
       - {start: 0x19ff80, type: rdata, name: rdata, dir: main}
       - {start: 0x1a1f80, type: sdata, name: sdata, dir: main}
       - {start: 0x1a2480, type: sbss, name: sbss, vram: 0x2a2380, dir: main}
-      - {start: 0x1a2480, type: bss, name: bss, vram: 0x2a3709, dir: main}
+      - {start: 0x1a2480, type: .bss, name: crt0, vram: 0x2a3709}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/eecdvd, vram: 0x2a3900}
+      - {start: 0x1a2480, type: .bss, name: lib/libgcc/_eh, vram: 0x2a4f48}
+      - {start: 0x1a2480, type: .bss, name: lib/libgcc/dp-bit, vram: 0x2a4f68}
+      - {start: 0x1a2480, type: .bss, name: lib/libgcc/fp-bit, vram: 0x2a4f80}
+      - {start: 0x1a2480, type: .bss, name: lib/libgcc/frame, vram: 0x2a4f90}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/thread, vram: 0x2a4fa0}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/deci2, vram: 0x2a53b0}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/tty, vram: 0x2a5400}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/kprintf, vram: 0x2a57c0}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/sifcmd, vram: 0x2a5840}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/sifrpc, vram: 0x2a5ac0}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/filestub, vram: 0x2a7300}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/iopheap, vram: 0x2a8180}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/eeloadfile, vram: 0x2a8380}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/kernl/iopreset, vram: 0x2a85c0}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/libmc, vram: 0x2a8640}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/libpad, vram: 0x2a9c40}
+      - {start: 0x1a2480, type: .bss, name: lib/sce/sdr_main, vram: 0x2a9e80}
+      - {start: 0x1a2480, type: bss, name: bss, vram: 0x2aa000, dir: main}
+      - {start: 0x1a2480, type: .bss, name: lib/libc/errno/errno, vram: 0x1dabc94}
   - [0x1a2480]

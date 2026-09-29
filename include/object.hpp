@@ -6,6 +6,8 @@
 
 #include "vector3.hpp"
 
+class CFrameAttr;
+
 /**
  * Places one object in the world.
  */
@@ -378,3 +380,8 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CObject) == 0xB0);
+
+/**
+ * Shared frame attribute block, constructed at start-up.
+ */
+extern CFrameAttr FrameAttr;

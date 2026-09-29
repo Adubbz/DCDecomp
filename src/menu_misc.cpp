@@ -41,22 +41,8 @@
 #include "weaponlevelup.hpp"
 
 extern s32 BtlMenuMode;
-extern u_long128 *WeaponRead_Buf;
-extern u_long128 *MenuWeaponModelBuildBuffer;
-extern int CharaFileBGReadNo;
-extern u_long128 *CharaChangeBaseBuf;
-extern s16 charachangeid;
-extern u_long128 *menucharReadbuf;
-extern u_long128 *menud0wepReadBuf;
-extern u_long128 *menud1wepReadBuf;
-extern u_long128 *menud2wepReadBuf;
-extern char MenureadFile[64];
 /** The directory the weapon models are read from. */
 extern const char MenuWepDir[];
-extern int defWeapon__5[6];
-extern u_long128 *MenuWepIconCharaChangePtr;
-extern u_long128 *MenuVoiceLoadPtr;
-extern s16 CharaNameDrawCase;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
 extern "C" CSHOT_EFFECT *NowMainEffect;
@@ -64,47 +50,42 @@ extern "C" CSHOT_EFFECT CharaMainEffectCrash;
 extern s32 CharaMainHandViewFlag;
 extern "C" CCharacter *NowWeapon;
 
+static int defWeapon[6] = {257, 299, 314, 331, 347, 363};
+
+int MenuWeaponModelData[42];
+int MenuWeaponModelInfo[10][2];
+float MenuCharaOldAmbient[4];
+char MenureadFile[64];
+
+int MenuItemUseVolume;
+u_long128 *WeaponRead_Buf;
+s16 MenuCharaEffectReadFlag;
+s16 MenuCharaOldEffect;
+BT_SHOT_EFFECT *WepEffectMenuPt;
+u_long128 *WepEffectMenuReadBuf;
+u_long128 *MenuWeaponModelBuildBuffer;
+int CharaFileBGReadNo;
+s16 charachangeid;
+u_long128 *CharaChangeBaseBuf;
+u_long128 *menucharReadbuf;
+u_long128 *menud0wepReadBuf;
+u_long128 *menud1wepReadBuf;
+u_long128 *menud2wepReadBuf;
+u_long128 *MenuWepIconCharaChangePtr;
+u_long128 *MenuVoiceLoadPtr;
+ClsMes *CharaNameMes;
+ClsMes *DngMenuMes;
+s16 CharaNameDrawFlag;
+s16 CharaNameDrawCase;
+CTexture *DngEscapeTex;
+s16 DngEscapeBlock;
+s16 DngEscapeEndFlag;
+
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
 int MenuWeaponTestCase = 1;
 
-/** The amount the last item use gave, a base value plus a random part. */
-extern int MenuItemUseVolume;
-
-/** The menu's weapon-effect read flag. */
-extern s16 MenuCharaEffectReadFlag;
-
-/** The weapon effect kind SetOldEffectKind records. */
-extern s16 MenuCharaOldEffect;
-
-/** The weapon effect the menu's character plays. */
-extern BT_SHOT_EFFECT *WepEffectMenuPt;
-
-/** The buffer the menu's weapon effect and model are read into. */
-extern u_long128 *WepEffectMenuReadBuf;
-
-/** The message window that shows a monster's name. */
-extern ClsMes *CharaNameMes;
-
-/** Whether the monster's name is drawn. */
-extern s16 CharaNameDrawFlag;
-
 /** The dungeon status data the battle menu is showing, or NULL outside the dungeon. */
 extern CDngStatusData *BtlMenuStatusPt;
-
-/** The ambient light saved before the item menu tinted it. */
-extern float MenuCharaOldAmbient[4];
-
-/** The dungeon escape prompt's second message window. */
-extern ClsMes *DngMenuMes;
-
-/** The picture drawn behind the dungeon escape prompt. */
-extern CTexture *DngEscapeTex;
-
-/** The texture block the dungeon escape prompt's picture is loaded into. */
-extern s16 DngEscapeBlock;
-
-/** Whether the dungeon escape prompt is closing and fades to black. */
-extern s16 DngEscapeEndFlag;
 
 /** The darkness drawn over the dungeon escape prompt, from 0 (none) to 0x80 (black). */
 s16 DngEscapeAlpha = 0x80;
@@ -114,20 +95,8 @@ s16 DngEscapeAlpha = 0x80;
  */
 s16 DngEscapeSelect = 1;
 
-extern CDataAlloc2<1> MenuExCashBuffer;
-extern CCharacter MenuCharaFrame;
 extern CCharacter DngWeaponFrm[12];
 extern "C" CWeaponEffect CWeaponFx;
-
-/**
- * Provides the base path used to assemble character model file names.
- */
-extern "C" const char readFilePath[0x40];
-
-/**
- * Provides the model file name for each playable character.
- */
-extern "C" const char *charaFile[6];
 
 /**
  * Provides the file extension appended to character model file names.
@@ -138,12 +107,6 @@ extern "C" const char CharaFileExtension[5];
  * Names the synthetic texture a menu builds from the current frame image.
  */
 extern "C" const char FrameImageTexture[];
-
-/** Frame numbers of the menu's cached weapon models. */
-extern int MenuWeaponModelData[42];
-
-/** Each weapon model slot's frame number and read state. */
-extern int MenuWeaponModelInfo[12][2];
 
 /**
  * Sets the buffer the menu reads weapon effect files into.
@@ -1082,12 +1045,11 @@ static void GetCharaChangeReadCharaFilePath(char *path, int chara_no) {
     strcat(path, CharaFileExtension);
 }
 const char MenuWepDir[64] = "commenu/weapon/";
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1205);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1206);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1207__2);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1208);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1209);
-INCLUDE_RODATA("asm/nonmatchings/menu_misc", @1210);
+
+char readFilePath[0x40] = "dun/mainchara/c";
+
+const char *charaFile[6] = {"01d", "04b", "06b", "05a", "10b", "18a"};
+
 int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     char path[64];
     char name[64];
@@ -1117,7 +1079,7 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     menud2wepReadBuf = menud1wepReadBuf + (size >> 4) + 1;
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
     WEAPON_HAVE *equipped = &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]];
-    int kind = equipped->item_no - (int) defWeapon__5[chara];
+    int kind = equipped->item_no - (int) defWeapon[chara];
     if (kind < 0) {
         kind = 0;
     }
@@ -1648,7 +1610,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     int is_default = 0;
     int i;
     for (i = 0; i < 6; i++) {
-        if (weapon->item_no == defWeapon__5[i]) {
+        if (weapon->item_no == defWeapon[i]) {
             is_default = 1;
         }
     }

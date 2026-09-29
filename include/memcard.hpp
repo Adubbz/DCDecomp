@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "menu_draw.hpp"
+#include "menuetc.hpp"
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -351,19 +352,9 @@ int MenuSaveKey();
 void DrawMenuSave(char *);
 
 /**
- * The second message window the menus share.
+ * Holds the georama parts of a town the player is not standing in.
  */
-extern ClsMes CommonMenuMes2;
-
-/**
- * The third message window the menus share.
- */
-extern ClsMes CommonMenuMes3;
-
-/**
- * The message window that names the selected georama element.
- */
-extern ClsMes AtoraNameMes;
+extern CEditPartsInfo BtEditPartsInfo;
 
 /**
  * The memory card state the save, load and option screens work through.

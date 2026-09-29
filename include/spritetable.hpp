@@ -58,6 +58,14 @@ public:
     SPRITE_TABLE *end;       /**< Address just past the command pool. */
 
     /**
+     * Starts with no command pool and no active layers.
+     */
+    CSpriteTable() {
+        pool = NULL;
+        list_count = 0;
+    }
+
+    /**
      * Draws every queued sprite layer and restores the graphics register state.
      *
      * @mangled DrawTable__12CSpriteTableFv

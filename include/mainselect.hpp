@@ -9,6 +9,9 @@ extern s32 OldMapNo;
 extern s32 LocalMapNo;
 extern s32 StartEventNo;
 extern short *SystemMes;
+/**
+ * Language the game's text and voice are shown in.
+ */
 extern s32 LanguageCode;
 extern s32 main_select_padrup;
 extern s32 PolyCount;

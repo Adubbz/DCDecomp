@@ -17,6 +17,36 @@ class CBoxVu0;
  * Declares the motion data that a character plays, and the calls that step it.
  */
 
+/**
+ * Palette the message window's font draws out of.
+ */
+extern u32 MesWinClut[256];
+
+/**
+ * Where each external character of the message window's font sits, one row of eight words each.
+ */
+extern s32 GaijiDataTbl[158][8];
+
+/**
+ * Colour each palette entry of the message window's font draws with.
+ */
+extern u32 FontColorTbl[16];
+
+/**
+ * Whether the first message window is still being built, one step per frame.
+ */
+extern int Mes1MakeFlg;
+
+/**
+ * Whether the second message window is still being built, one step per frame.
+ */
+extern int Mes2MakeFlg;
+
+/**
+ * Whether the message windows skip drawing themselves entirely.
+ */
+extern int MesAbsDrawOff;
+
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.

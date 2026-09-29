@@ -98,6 +98,12 @@ void BtSetMapJumpFloor(int floor);
 /** Floor requested for the next battle-map jump. */
 extern int BtMapJumpFloor;
 
+/** Name of the map file the next battle-map jump loads. */
+extern char BtLoadMapFileName[32];
+
+/** Layout of the map the next battle-map jump loads. */
+extern s32 BtLoadMapType;
+
 /**
  * Gives the floor the party stands on.
  *

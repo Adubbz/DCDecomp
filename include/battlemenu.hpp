@@ -2,6 +2,7 @@
 
 #include "common.h"
 
+#include "dataalloc_fwd.hpp"
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
 #include "rect.hpp"
@@ -10,8 +11,15 @@
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCharacter;
+class CDngStatusData;
+class CFrame;
+class CMenuIconAutoGet;
+class CSaveData;
 class ClsMes;
+class CTexture;
 class CWeaponLevelUp;
+struct IHAVEITEM;
+struct ITEM_PACK;
 struct RECT;
 struct WEAPON_HAVE;
 
@@ -160,9 +168,16 @@ struct MENU_ICON_POS {
 STATIC_ASSERT(sizeof(MENU_ICON_POS) == 0x8);
 
 /**
- * Buffer the weapon menu's level-up, build-up and repair effects are read into.
+ * Places one party member's weapon model on the weapon page.
  */
-extern CWeaponLevelUp *WepMenuEffectReadBuf;
+struct MENU_WEP_POLY_OFFSET {
+    float position[3]; /**< Offset of the model from the page's model origin. */
+    float scale;       /**< Scale the model is drawn at. */
+    float rotation[3]; /**< Rotation the model is drawn with. */
+    float unk_1C[3];
+};
+
+STATIC_ASSERT(sizeof(MENU_WEP_POLY_OFFSET) == 0x28);
 
 /**
  * Gives the weapon a party member starts with.
@@ -816,3 +831,388 @@ public:
 };
 
 STATIC_ASSERT(sizeof(MenuClsMes) == 0x20);
+
+/**
+ * Draws the selected weapon's option messages.
+ */
+extern MenuClsMes MenuMes;
+
+/**
+ * Cache the weapon menu's level-up, build-up and repair effects are built in.
+ */
+extern CDataAlloc2<1> MenuExCashBuffer;
+
+/**
+ * Stores the screen positions of the battle menu ring's eight icons.
+ */
+extern MENU_ICON_POS NorMenuIcon[8];
+
+/**
+ * Holds the menu cursor's screen position.
+ */
+extern float SysCur[3];
+
+/**
+ * Holds the character page's state.
+ */
+extern MENU_CHARA_INFO MenuChara;
+
+/**
+ * Character the menus draw a party member or map marker with.
+ */
+extern CCharacter MenuCharaFrame;
+
+/**
+ * Tracks the weapon menu's selected character and weapon slot.
+ */
+extern WEP_MENU_INFO WepMenu;
+
+/**
+ * Tracks what the item menu's message is currently about.
+ */
+extern ITEM_MENU_MODE_INFO ItemMenuMode;
+
+/**
+ * Icons flying from the field into the item pack.
+ */
+extern CMenuIconAutoGet IconAutoGet;
+
+/**
+ * Holds the travel page's state.
+ */
+extern MENU_MOVE_INFO MenuMove;
+
+/**
+ * Holds the source rectangle of the menu's digit sprites.
+ */
+extern RECT NumberSprite[2];
+
+/**
+ * Icon numbers the menu bar shows for each menu mode.
+ */
+extern s16 BtlDrawTbl[2][8];
+
+/**
+ * Holds each party member's place on the character page's turntable.
+ */
+extern SYS_CHARA_INFO SysChara[6];
+
+/**
+ * Holds each party member's starting weapon.
+ */
+extern s16 MenuDefaultWeaponNo[7];
+
+/**
+ * Highest weapon-chain position available to each playable character.
+ */
+extern s16 MenuCharaWeaponMax[6];
+
+/**
+ * Places each party member's weapon model on the weapon page.
+ */
+extern MENU_WEP_POLY_OFFSET MenuWepPolyOffset[6];
+
+/**
+ * Holds the menu's gradient colour pairs.
+ */
+extern GRADATION_COLOR_INFO2 MenuColorInfo2[26];
+
+/**
+ * Source rectangle of the digits a weapon-status bar prints its value with.
+ */
+extern RECT WeaponVolumeNumberRect;
+
+/**
+ * Map number of each world-map place; dungeons are numbered from 200.
+ */
+extern s16 MenuGrobalMapNoTbl[16];
+
+/**
+ * Holds each world-map place's frame name and position.
+ */
+extern WORLD_MAP_POS TownOrDngPos[16];
+
+/**
+ * Holds the world-map marker's position.
+ */
+extern float mapo[4];
+
+/**
+ * Holds the step the world-map marker moves by each frame.
+ */
+extern float mapmovev[4];
+
+/**
+ * Language the battle menu's text is drawn in.
+ */
+extern s32 BtlMenuNowLang;
+
+/**
+ * Stores the active battle-menu state.
+ */
+extern s32 BattleMenuFlag;
+
+/**
+ * Stores the character page's turntable radius.
+ */
+extern float chara_r_long;
+
+/**
+ * Number of rows each item-board page scrolls through when items are thrown away.
+ */
+extern s16 TrushMoveMax[3];
+
+/**
+ * Stores the battle-menu transition phase.
+ */
+extern s32 BtlEffectFlag;
+
+/**
+ * Whether the travel page may jump to another map, or -1 while it cannot.
+ */
+extern s32 MenuMapJumpMode;
+
+/**
+ * Save data the travel page reads visits and dungeon progress from.
+ */
+extern CSaveData *BtlMenuSaveDataPt;
+
+/**
+ * Stores the dungeon status used by the battle menu.
+ */
+extern CDngStatusData *BtlMenuStatusPt;
+
+/**
+ * Stores the active battle-menu submode.
+ */
+extern s32 BtlMenuMode;
+
+/**
+ * Volume the battle menu drops the background music to.
+ */
+extern s32 BtlMenuBGMvol;
+
+/**
+ * Texture block the battle menu loads into.
+ */
+extern s32 BtlMenuReadBlock;
+
+/**
+ * Buffer the battle menu reads its files into.
+ */
+extern u_long128 *BtlMenuReadBuf;
+
+/**
+ * Is nonzero once the battle menu's textures have finished loading.
+ */
+extern s32 BtlMenuReadEndFlag;
+
+/**
+ * Texture block holding the item menu's weapon icons.
+ */
+extern s32 ItemMenuWeaponIconReadBlock;
+
+/**
+ * Is set once the item page's weapon icons have been entered.
+ */
+extern s32 ItemMenuAlreadyReadWepIconTexFlag;
+
+/**
+ * Texture block the shadow and icon sheets load into.
+ */
+extern s32 MenuShadowReadBlock;
+
+/**
+ * Texture block the character page's fonts and faces load into.
+ */
+extern s32 BtlMenuExReadBlock;
+
+/**
+ * Is set once the character page's extra data has been read.
+ */
+extern s32 BtlMenuExReadFlag;
+
+/**
+ * Texture block the menu's pages read their extra textures into.
+ */
+extern s32 MenuExtendReadBlock;
+
+/**
+ * Set while the extra-menu texture has been read.
+ */
+extern s32 MenuExTextureReadFlag;
+
+/**
+ * Buffer the item page reads the party member's model into.
+ */
+extern u_long128 *ItemMenuCharaReadBuf;
+
+/**
+ * Counts the frames the weapon page spends building a weapon model.
+ */
+extern s32 BtlMDSBuildCnt;
+
+/**
+ * Texture block the battle manual loads into.
+ */
+extern s32 BtlMenuManualReadBlock;
+
+/**
+ * Points to the weapons of the party member the weapon menu shows.
+ */
+extern WEAPON_HAVE *DngWepHavePt;
+
+/**
+ * Buffer the weapon menu's level-up, build-up and repair effects are read into.
+ */
+extern CWeaponLevelUp *WepMenuEffectReadBuf;
+
+/**
+ * Texture the character page's status plate is drawn from.
+ */
+extern CTexture *CharaStatus;
+
+/**
+ * Texture the party members' faces are drawn from.
+ */
+extern CTexture *MenuCharaFace;
+
+/**
+ * Texture drawn in place of the face of a party member not yet met.
+ */
+extern CTexture *NonCharaFace;
+
+/**
+ * Texture the dungeon status plates are drawn from.
+ */
+extern CTexture *BtStatus;
+
+/**
+ * Texture the weapon status panels are drawn from.
+ */
+extern CTexture *WepStatus;
+
+/**
+ * Texture holding the alphabet font the character page writes with.
+ */
+extern CTexture *BtlAlpha;
+
+/**
+ * Texture holding the hiragana font the character page writes with.
+ */
+extern CTexture *BtlHira;
+
+/**
+ * Texture holding the katakana font the character page writes with.
+ */
+extern CTexture *BtlKata;
+
+/**
+ * Screen position of the battle menu's help window.
+ */
+extern float HelpWinHead[2];
+
+/**
+ * Is nonzero while the menu's frames need rebuilding.
+ */
+extern u8 BtlWakuMake2;
+
+/**
+ * Opacity of the battle menu's help window.
+ */
+extern s32 BtlHelpWinAlpha;
+
+/**
+ * Width of the battle menu's help window.
+ */
+extern float BtlHelpWinW;
+
+/**
+ * Height of the battle menu's help window.
+ */
+extern float BtlHelpWinH;
+
+/**
+ * Stores the selected battle-menu entry, then the icon highlighted on the menu ring.
+ */
+extern s32 MenuSelect[2];
+
+/**
+ * Points to the item pack the battle menu shows.
+ */
+extern ITEM_PACK *MenuItemPackPt;
+
+/**
+ * Stores whether the party is escaping the dungeon.
+ */
+extern s16 EscapeDngFlg;
+
+/**
+ * Stores whether the party is leaving an interior area.
+ */
+extern s16 RoomOutFlag;
+
+/**
+ * Stores the character page's turntable movement.
+ */
+extern float MenuCharaMove;
+
+/**
+ * Angle between two neighbouring party members on the character page's turntable.
+ */
+extern float PosAngle;
+
+/**
+ * Points to the item the weapon menu is holding.
+ */
+extern IHAVEITEM *BtlHaveItemPt;
+
+/**
+ * Frame rate the weapon models turn at.
+ */
+extern float WepFrameRate;
+
+/**
+ * Horizontal position of the weapon list's model row.
+ */
+extern float WeaponPos;
+
+/**
+ * Horizontal position of the weapon list's polygons.
+ */
+extern float WepPolyPos;
+
+/**
+ * Stores the battle-menu transition timer.
+ */
+extern float BtlEffectCt;
+
+/**
+ * Is nonzero while the battle menu shows a warning message, which dims its icons.
+ */
+extern s32 MenuWarningMsgFlag;
+
+/**
+ * Buffer the character page reads the next party member's model into.
+ */
+extern u_long128 *BtlMenuCharaChangeBuf;
+
+/**
+ * Is nonzero while the weapon page ignores its selection keys.
+ */
+extern s32 WeaponMenuSelectKeyLockFlag;
+
+/**
+ * Points to the frame name of the world-map place the cursor moves to.
+ */
+extern char *NextWorldPos;
+
+/**
+ * Frame of the world-map place the cursor stands on.
+ */
+extern CFrame *MapMoveCursor;
+
+/**
+ * Texture the travel page draws its map with.
+ */
+extern CTexture *MenuMoveTex;

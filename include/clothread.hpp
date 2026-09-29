@@ -2,7 +2,13 @@
 
 #include "common.h"
 
+class CCloth;
 class CFrameVu1;
+
+/**
+ * Cloth instance currently receiving configuration commands.
+ */
+extern CCloth *pCloth;
 
 /**
  * Turns a model towards one heading, a step at a time, and gives back the

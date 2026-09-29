@@ -65,29 +65,100 @@ struct EB_MOTION {
 
 STATIC_ASSERT(sizeof(EB_MOTION) == 0x14);
 
-/* The four values EBDraw reads to place its caution mark; all of them zero. */
-extern "C" const s32 Caution[4] = {0, 0, 0, 0};
+/**
+ * Stores the opening wipe's rectangle, zeroing its members from last to first.
+ */
+class CEbRect {
+public:
+    CEbRect() {
+        height = 0;
+        width = 0;
+        y = 0;
+        x = 0;
+    }
 
-/** Stores the key state for each event-battle motion. */
-extern EB_KEY eb_key[64];
-extern EB_MOTION eb_motion[32];
-extern float old_time;
-extern float speed;
-extern int now_eb_key;
-extern int ebattle_flag;
-extern int ebattle_intro_flag;
-extern int eb_count;
-extern int eb_intro_cnt;
-extern int eb_finish_cnt;
-extern int eb_end_count;
-extern int eb_key_count;
-extern int now_button_no;
-extern int fade_bgm;
-extern int play_fanfare;
-extern int sound_cnt;
-extern int debug_mode;
-extern CTexture *tex;
-extern CTexture *tex2;
+    s32 x;      /**< Distance of the left edge from the left of the screen. */
+    s32 y;      /**< Distance of the top edge from the top of the screen. */
+    s32 width;  /**< Distance from the left edge to the right edge. */
+    s32 height; /**< Distance from the top edge to the bottom edge. */
+} __attribute__((aligned(16)));
+
+/** Storage of draw_rect, the part of the screen the opening wipe has reached. */
+CEbRect draw_rect_store;
+
+const CRect_i_ Caution(256, 0, 56, 56);
+
+/** Stores the key state for each event-battle prompt. */
+EB_KEY eb_key[64];
+
+/** Stores the motion sequence of the event battle; the first entry ends it. */
+EB_MOTION eb_motion[32] = {{-1}};
+
+/** Whether the prompts light up early. */
+int eb_cool_flag = 1;
+/** Battle time of the previous update. */
+float old_time = -1.0f;
+/** Battle frames advanced on each update. */
+float speed = 1.0f;
+/** Index of the prompt currently being answered. */
+int now_eb_key = -1;
+
+/** Whether an event battle is running. */
+int ebattle_flag;
+/** Whether the event battle's opening is running. */
+int ebattle_intro_flag;
+/** Frames since the event battle started. */
+int eb_count;
+/** Frames since the opening started. */
+int eb_intro_cnt;
+/** Frames since the last prompt finished. */
+int eb_finish_cnt;
+/** Frames since the event battle ended. */
+int eb_end_count;
+/** How the event battle ended. */
+int eb_result;
+/** Number of prompts answered. */
+int eb_key_count;
+/** Index of the button prompt being drawn. */
+int now_button_no;
+/** Character the event battle is played by. */
+CCharacter *eb_chara;
+/** Whether the background music fades when the battle ends. */
+int fade_bgm;
+/** Whether the fanfare plays when the battle ends. */
+int play_fanfare;
+/** Current battle time. */
+float now_time;
+/** Frames since the last sound was played. */
+int sound_cnt;
+/** Diagnostic display mode. */
+int debug_mode;
+/** Event-battle texture. */
+CTexture *tex;
+/** Second event-battle texture. */
+CTexture *tex2;
+/** Number of prompts in the sequence. */
+int eb_key_num;
+/** Frames the answer mark has been drawn. */
+int ok_draw_cnt;
+/** Kind of answer mark drawn. */
+int ok_type;
+/** Button the answer mark is drawn over. */
+int ok_effect_button;
+/** Whether the editor camera looks from the character's eyes. */
+int viewMode;
+/** Movement mode of the editor character. */
+int chara_mode;
+/** Whether the editor character is fishing. */
+int chara_fishing;
+/** Message shown while fishing. */
+int fishing_mes;
+/** Horizontal angle of the first-person view. */
+float viewAngleH;
+/** Vertical angle of the first-person view. */
+float viewAngleV;
+
+ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 /**
  * Stores one motion segment used to convert animation time into battle frames.
@@ -113,15 +184,9 @@ struct EB_KEY_ENTRY {
     int reserved;
 };
 
-extern CCharacter *eb_chara;
-extern int eb_cool_flag;
-extern int eb_result;
-extern float now_time;
-extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 /** The part of the screen the event battle's opening wipe has reached. */
 extern CRect_i_ draw_rect;
-extern int eb_key_num;
 
 static void init_draw_ok();
 static void set_draw_ok(int type, int button);
@@ -171,17 +236,6 @@ void EBFinishSound(int do_fade_bgm, int do_play_fanfare) {
 }
 
 
-extern int ok_draw_cnt;
-extern int ok_effect_button;
-extern int ok_type;
-extern int chara_mode;
-extern int viewMode;
-extern int chara_fishing;
-extern int fishing_mes;
-extern float viewAngleH;
-extern float viewAngleV;
-extern float camera_near_dist;
-extern float camera_far_dist;
 extern int EdDebugMoveFlag;
 extern int EdDebugCameraFlag;
 extern CEffectGroup EdEffectGroup;
@@ -486,9 +540,9 @@ void EBDraw() {
         MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
         MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
         if ((eb_intro_cnt >> 2) % 2 != 0) {
-            int left = 0x140 - (Caution[2] >> 1);
-            int top = 0xE0 - (Caution[3] >> 1);
-            set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, Caution[2], Caution[3]), Caution[0], Caution[1]);
+            int left = 0x140 - (Caution.width >> 1);
+            int top = 0xE0 - (Caution.height >> 1);
+            set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, Caution.width, Caution.height), Caution.x, Caution.y);
         }
         if (eb_intro_cnt % 8 == 0) {
             SndSePlay(8, -1, 0);
@@ -725,6 +779,11 @@ static float button_scale(int button) {
     return scale;
 }
 static int key_mode = 0xFFFF;
+
+/** Closest the editor camera comes to the character. */
+float camera_near_dist = 70.0f;
+/** Farthest the editor camera goes from the character. */
+float camera_far_dist = 80.0f;
 
 /**
  * Tests whether an editor input mode currently owns the controller.

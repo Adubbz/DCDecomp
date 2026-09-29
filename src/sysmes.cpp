@@ -85,9 +85,24 @@ extern "C" void PreProcess__FR9input_str__2(input_str &input) {
    It is set up once and asks for none of what the class can do — no speech bubble, no typing
    animation, no page marker — so a system message is one line of at most 26 characters that
    appears whole, sits under the picture for as many frames as its caller asked for, and goes. */
+ClsMes SystemMessage;
 
 /* The message file is read straight into this one off the disc, and the drive transfers by DMA
    into whole cache lines. */
+short mes_data[24000] __attribute__((aligned(64)));
+
+char mes_buff[65536];
+
+int SystemMesNo = -1;
+
+int SystemMesPosition = 8;
+
+int SystemMesCount;
+
+int SystemMesWait;
+
+int SystemMesInputKey;
+
 /* The language is spelled into the file name rather than chosen between names, and the read that
    fails falls back to one fixed file rather than to no text at all. */
 void InitSystemMes() {

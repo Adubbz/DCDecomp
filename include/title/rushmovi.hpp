@@ -5,7 +5,13 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
+class CFrame;
 class CFrameVu1;
+
+/**
+ * The frame the opening movies point their camera at.
+ */
+extern CFrame *OP_CharaFrame;
 
 /**
  * @mangled RushInit__Fv

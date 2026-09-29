@@ -66,6 +66,9 @@ public:
 
 CWindowRect mgWindowRectStore;
 RenderInfo mgRenderInfo;
+/* The one texture manager the game has. It is built here rather than beside the textures because
+   this is the unit that brings up the graphics. */
+CTextureManager TexManager;
 
 sceVu0FVECTOR mgZeroVector;
 sceVu0FVECTOR mgUnitVector;
@@ -1798,7 +1801,3 @@ void MGEndDrawShadow(u_char alpha) {
     sceVif1PkCloseDirectCode(packet);
 }
 
-/* The one texture manager the game has. It is built here rather than beside the textures because
-   this is the unit that brings up the graphics, and its own storage is the last of what this unit
-   reserves. */
-CTextureManager TexManager;

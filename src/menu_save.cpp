@@ -32,11 +32,11 @@
 /** Texture block the event item selection menu's textures load into. */
 extern s32 MiniEventTextureBlock;
 
-/** State of the event item selection menu. */
-extern MINI_MENU_INFO MiniMenu;
+SAVE_MENU_STATE SaveMenu;
+CTexture *SaveMenuMojiTextbl[4];
 
-/** Textures of the save menu's three character sets, indexed by input mode. */
-extern CTexture *SaveMenuMojiTextbl[4];
+/** State of the event item selection menu. */
+MINI_MENU_INFO MiniMenu;
 
 /** The texture that the save screen's file boards draw from. */
 extern CTexture *SaveBoard;
@@ -1074,44 +1074,46 @@ int SaveEnableCheck(void) {
 }
 
 /**
- * Screen y of the event item board's scroll bar, eased toward its target.
- */
-extern float EventBarY;
-
-/**
- * The item pack the event item selection menu lists.
- */
-extern ITEM_PACK *EventItemPackPt;
-
-/**
  * Screen position of the event item selection board's top left corner.
  */
-extern float EventBoardPos[2];
-
-/**
- * Screen position of the event item cursor's highlight, eased toward the cursor.
- */
-extern float MiniCur[2];
+float EventBoardPos[2];
 
 /**
  * Screen y of the event item board's first row, eased toward the scroll row.
  */
-extern int EventItemMoveY;
+int EventItemMoveY;
 
 /**
- * Nonzero once the event item selection menu's textures have loaded.
+ * Screen y of the event item board's scroll bar, eased toward its target.
  */
-extern int MiniEventTexReadFlag;
+float EventBarY;
 
 /**
  * Board texture of the event item selection menu.
  */
-extern CTexture *MiniEventBoard;
+CTexture *MiniEventBoard;
 
 /**
  * Board texture of the fish food selection menu.
  */
-extern CTexture *FishFoodBoard;
+CTexture *FishFoodBoard;
+
+/**
+ * The item pack the event item selection menu lists.
+ */
+ITEM_PACK *EventItemPackPt;
+
+s32 MiniEventTextureBlock;
+
+/**
+ * Nonzero once the event item selection menu's textures have loaded.
+ */
+int MiniEventTexReadFlag;
+
+/**
+ * Screen position of the event item cursor's highlight, eased toward the cursor.
+ */
+float MiniCur[2];
 
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
     int i;
@@ -1372,12 +1374,12 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
 /**
  * Extra height of the event item board in each menu language.
  */
-extern s8 kakudai_tate_lang[7];
+s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
 
 /**
  * Extra width of the event item board's side pieces in each menu language.
  */
-extern s8 kakudai_yoko_lang[7];
+s8 kakudai_yoko_lang[7] = {0, 10, 10, 10, 10, 10, 10};
 
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
     int height = kakudai_tate_lang[lang];

@@ -1,6 +1,6 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
-#pragma name_counter 910
+#pragma name_counter 885
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
 #pragma argument_flag_free 3610, 3611, 3612, 3613, 3614, 3615, 3616, 3617, 3618, 3619
 #pragma argument_flag_free 3620, 3621, 3622, 3623, 3624, 3625, 3626, 3627, 3628, 3629
@@ -42,6 +42,7 @@
 #pragma argument_flag_ones 4058, 4069, 4077, 4097, 4100, 4135, 4142, 4157, 4160, 4185
 #pragma argument_flag_ones 4213, 4220, 4234, 4253, 4265, 4269, 4270, 4340, 4346, 4355
 #pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4701, 4702, 4703, 4746, 4749
+#pragma argument_flag_ones 4810, 4811, 4813
 #pragma argument_flag 0
 
 #include "dun/gameloop.hpp"
@@ -115,6 +116,7 @@
 #include "userstatus.hpp"
 #include "weaponeffect.hpp"
 #include "weaponelement.hpp"
+#include "wind.hpp"
 
 /**
  * Defines the life gauge that the locked-on enemy draws above itself.
@@ -129,15 +131,6 @@ struct ENEMY_LIFE_GAGE {
 };
 
 STATIC_ASSERT(sizeof(ENEMY_LIFE_GAGE) == 0x18);
-
-/* The life gauge of the enemy the player has locked on to. */
-extern "C" ENEMY_LIFE_GAGE EnemyLifeGage;
-
-/* The character that the player controls. */
-extern "C" CCharacter CharaMain;
-
-/* The hand that the player's character holds an item out with. */
-extern "C" CCharacter CharaHand;
 
 /**
  * Names where the item the player is about to throw will land.
@@ -177,96 +170,17 @@ public:
 
 STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
 
-/* The debug message overlay. */
-extern "C" CDebugFont CDbgMsg;
-
-/* What the Georama editor is doing. */
-
-/* The models of the items the player is running. */
-extern "C" CActiveItemPack activeItem;
-
-/* The effect table each playable character draws its own effects from. */
-extern "C" BT_SHOT_EFFECT *MyEffectEntry_Tbl[16];
-
 /* The monsters each floor of each dungeon lays out. */
 extern "C" BT_ENEMY_FLOOR *BtEnemyLayoutList[7];
 
 /* The same for the back dungeon. */
 extern "C" BT_ENEMY_FLOOR *BtUraEnemyLayoutList[7];
 
-/* Script working memory, one block per monster on the floor. */
-extern "C" CDataAlloc2<1> MonstorScriptBuffer[16];
-
-/* One texture animation for every texture the player's model draws. */
-extern "C" CTexAnimeData CharaMainTexAnim[64];
-
 /* One texture animation for every monster the game knows. */
 extern "C" CTexAnimeData MonsterTexAnim[320];
 
-/* The effect the player's own character shoots. */
-extern "C" CSHOT_EFFECT CharaMainEffect;
-
-/* The effect the player's own character breaks things with. */
-extern "C" CSHOT_EFFECT CharaMainEffectCrash;
-
-/* The machine gun that Osmond's rapid-fire action shoots. */
-extern "C" CSHOT_MACHINGUN OzumondShot;
-
-/* The flame that Osmond's flamethrower action shoots. */
-extern "C" CSHOT_FIREBAR OzumondFire;
-
-/* The buffer the player's own effect models load into. */
-extern "C" CDataAlloc2<1> WEffectModelBuffer;
-
-/* The buffer the weapon models load into. */
-extern "C" CDataAlloc2<1> WeaponModelBuffer;
-
-/* The weapon models the player's character can hold. */
-extern "C" CCharacter CrashWeapon;
-extern "C" CCharacter DefaultWeapon;
-extern "C" CCharacter MainWeapon;
-
-/* The buffers the dungeon loads its data into. */
-extern "C" CDataAlloc2<1> MainModelBuffer;
-extern "C" CDataAlloc2<1> MapModelBuffer;
-extern "C" CDataAlloc2<1> CharaModelBuffer;
-extern "C" CDataAlloc2<1> MasekiModelBuffer;
-extern "C" CDataAlloc2<1> MonstorModelBuffer;
-extern "C" CDataAlloc2<1> BtMesBuffer;
-extern "C" CDataAlloc2<1> BtSteebMesBuffer;
-extern "C" CDataAlloc2<1> BtStartLogoBuffer;
-extern "C" CDataAlloc2<1> BtSystemScriptFileBuffer;
-
-/** Provide the dungeon cursor models. */
-
-/** Provide reusable dungeon character effects. */
-extern "C" CCharacter NewChangeFx;
-extern "C" CCharacter Water_Splash;
-extern "C" CCharacter Trap_Circle;
-extern "C" CTexAnimeData Trap_Circle_TexAnim[16];
-
-/** Provide the item-opening motion effects. */
-extern "C" CMotionModel itemOpenSmallFx;
-extern "C" CMotionModel itemOpenBigFx;
-extern "C" MOTION_INFO itemOpenSmallFx_info;
-extern "C" MOTION_INFO itemOpenBigFx_info;
-
-/** Provide the five Atlamillia effects. */
-extern "C" CSHOT_EFFECT MasekiEffect[5];
-extern "C" BT_SHOT_EFFECT MyEntryEffect_Maseki00;
-extern "C" BT_SHOT_EFFECT MyEntryEffect_Maseki01;
-extern "C" BT_SHOT_EFFECT MyEntryEffect_Maseki02;
-extern "C" BT_SHOT_EFFECT MyEntryEffect_Maseki03;
-extern "C" BT_SHOT_EFFECT MyEntryEffect_Maseki04;
-
 /* The buffer the game keeps every loaded motion in; main owns it. */
 extern "C" CDataAlloc2<1> MotionData;
-
-/* The textures the loading screen itself draws with. */
-extern "C" LOADTEXTURE_INFO texdata2[];
-
-/* Every texture the dungeon loads on its way in, and the block each goes to. */
-extern "C" LOADTEXTURE_INFO2 texdata__2[];
 
 /* The texture manager the dungeon loads its textures through. */
 extern "C" CTextureManager TexManager;
@@ -274,29 +188,8 @@ extern "C" CTextureManager TexManager;
 /* The buffer a pack file is read into. */
 extern "C" unsigned int *read_buffer;
 
-/* The colours the enemy life gauge draws its border with. */
-extern "C" spRGBA ELifeB1;
-extern "C" spRGBA ELifeB2;
-
-/* The colour the enemy life gauge draws the life it has lost with. */
-extern "C" spRGBA ELifeN1;
-
-/* The colours the enemy life gauge draws the life it has left with. */
-extern "C" spRGBA ELife1;
-extern "C" spRGBA ELife2;
-
-/* Where Ruby's shot starts, and the way it flies. */
-extern "C" sceVu0FVECTOR ruby_effect_pos;
-extern "C" sceVu0FVECTOR ruby_effect_vec;
-
-/* The marks that a weapon throws off as it breaks. */
-extern "C" CHitMark WeaponCrashEffect;
-
-/* The trail that the player's weapon leaves as it swings. */
-extern "C" CWeaponEffect CWeaponFx;
-
 /* The weapon each character starts with. */
-extern "C" s32 defWeapon__6[];
+s32 defWeapon__6[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 
 /**
  * How far one character reaches when the game picks what to lock on to.
@@ -316,132 +209,24 @@ static inline float CharaHeight(CUserStatus *status) {
     return chara_height[status->cur_chara];
 }
 
-/* The colour each weapon element gives that trail. */
-extern "C" u8 wep_rgb[][3];
-
-/* How near the camera is allowed to come to what it follows. */
-extern "C" float camera_near_dist__2;
-
-/* The dungeon floor that the player is on. */
-extern "C" CDungeonMap MainDungeonMap;
-
-/* The events of the floor that the player is on. */
-extern "C" CDungeonEventMan DngEventMan;
-
-/* The items lying on the floor that the player is on. */
-extern "C" CRandomItem MainRandomItem;
-
-/* The items lying on the matching floor of the back dungeon. */
-extern "C" CRandomItem SubRandomItem;
-
-/* The back dungeon's floor. */
-extern "C" CDungeonMap UraDungeonMap;
-
-/* The events of the back dungeon's floor. */
-extern "C" CDungeonEventMan UraEventMan;
-
-/* The floor the dungeon is drawing. */
-
-/* The messages the dungeon shows over the picture. */
-extern "C" CDngMessageMan DngMessMan;
-
-/* The alpha of each of the three floor-title logos. */
-extern "C" s32 rogoAlphaA[3];
-
-/* How long the floor title has been on screen, in frames. */
-extern "C" s32 startCnt2;
-
 /* Which character the mini character menu has the cursor on. */
 extern "C" s32 BtMiniChrSelectNo;
-
-/* The characters that walk the dungeon alongside the player. */
-extern "C" CNPCharacter NPCUnit[6];
-
-/* The effect that a short Atlamillia use lights the player with. */
-extern "C" CCharacter shortAtraEffect;
-
-/* Whether that effect is running, and how bright it is. */
 
 /* The colour that a status ailment tints the player's model with. */
 extern "C" float StatusColor[3];
 
-/* The marks that the hits the player took have left. */
-extern "C" CHitPointMark MyHitPointMark[16];
-
-/* The way the last blow throws the player. */
-extern "C" sceVu0FVECTOR blowVelo;
-
-/* How fast the player is being thrown. */
-extern "C" sceVu0FVECTOR velo__2;
-
 /* What the debug menu is doing to the player. */
 extern "C" s32 DebugStatus[21];
 
-/* The effect that plays as the player escapes the dungeon. */
-extern "C" CCharacter EscapeEffect;
-
 /* The countdown that drains a running item. */
 extern "C" CMenuItemStep ItemVolumeStep;
-
-/* The message window the dungeon draws over the picture. */
-extern "C" ClsMes DngMesStb;
 
 /* The object animations the floor plays, and how many it has. */
 extern "C" OBJ_ANIME_SEQ FrameObjAnim[48];
 extern "C" s32 FrameObjAnimCnt;
 
-/* The element trails the player's weapon leaves. */
-extern "C" CWeaponElement CWeaponElFx[4];
-
-/* The damage numbers the dungeon draws. */
-extern "C" CHitValue HitValue[32];
-
-/* The models of the items lying on the floor. */
-extern "C" CMainItemModel mainItemModel;
-
-/* The marks the dungeon throws off a hit. */
-extern "C" CHitMark HitMark[16];
-extern "C" CHitPointMark HitPointMark[16];
-
-/* The models an opened treasure box shows. */
-extern "C" CMotionModel itemOpenSmall;
-extern "C" CMotionModel itemOpenBig;
-
-/* The item that a monster stole. */
-extern "C" CStealItem StealItem;
-
-/* The bombs the player has thrown. */
-extern "C" CItemBombEffect CBomb__2[3];
-
-/* The effect that heals the player. */
-extern "C" CHealEffect HealEffect;
-
-/* Whether each treasure-box opening effect is playing. */
-
 /* The buffer the camera test builds its polygon list in. */
 extern "C" CDataAlloc2<1> *WorkBuffer__2;
-
-/* Where the camera looks, relative to what it follows. */
-extern "C" sceVu0FVECTOR ref_off;
-
-/* Distances the camera keeps from what it follows. */
-extern "C" float camera_up_near_dist;
-extern "C" float camera_far_dist__2;
-
-/* Where the item the player is about to throw will land. */
-extern "C" BOMB_INFO BombInfo;
-
-/* How square on to the player each monster of the floor stands. */
-extern "C" float MonstorPicupInner[36];
-
-/* The colour the ambient-colour animation drives the player's model to. */
-extern "C" float unitAmbientAnime_rgb[3];
-
-/* The name of the texture that the floor number draws with. */
-extern "C" char floor_name[32];
-
-/* The map info file each dungeon loads its floors from. */
-extern "C" char *MapInfoNameArea[7];
 
 /* The VU1 program that the loading screen draws through. */
 extern "C" char Vu_prog0f[];
@@ -460,30 +245,11 @@ struct GAME_ENV {
 /* The camera that every field draws through. */
 extern CCamera *NowCameraBase;
 
-/* Where the right stick is pushing the camera. */
-extern "C" sceVu0FVECTOR velo2;
-
-/* How fast the player fell the frame before. */
-extern "C" sceVu0FVECTOR veloOld;
-
 /* How much faster a boost makes the player run. */
 extern "C" float run_speed__2;
 
-/* Where the camera stood before the player looked through their own eyes. */
-
-/* How long the dead screen stays up, and how long it waits first, in frames. */
-
-/* Which character the menu had the cursor on when it opened. */
-extern "C" s32 oldUnitNow;
-
 /* Whether the menu asked to leave the floor. */
 extern "C" s32 MenuMapJumpMode;
-
-/* How long each of the three floor-title logos stays at full brightness. */
-extern "C" s32 rogoAlphaW[3];
-
-/* The buffer a dungeon event script runs out of. */
-extern "C" CDataAlloc2<1> BtCashBuffer;
 
 /* Whether the message board draws over the picture. */
 extern "C" s32 MesAbsDrawOff;
@@ -719,58 +485,8 @@ int checkItemUsed(int slot);
  */
 int EdEventMode(CCameraFollow *camera, int unk);
 
-/* The lighting the dungeon draws the field and the models under. */
-extern "C" sceVu0FMATRIX main_light;
-extern "C" sceVu0FMATRIX main_lightcolor;
-extern "C" sceVu0FVECTOR main_ambientlight;
-extern "C" sceVu0FMATRIX sub_light;
-extern "C" sceVu0FMATRIX sub_lightcolor;
-extern "C" sceVu0FVECTOR sub_ambientlight;
-
-/* The lighting every field starts from. */
-extern "C" sceVu0FMATRIX ZeroMatrix;
-extern "C" sceVu0FMATRIX def_lightcolor;
-extern "C" sceVu0FVECTOR def_ambientlight;
-
 /* More buffers the dungeon loads its data into. */
 extern "C" CDataAlloc2<1> TextureData;
-extern "C" CDataAlloc2<1> BtScriptWorkBuffer;
-extern "C" CDataAlloc2<1> BtItemCashArea[6];
-
-/* The cameras the dungeon draws through. */
-extern "C" CCameraFollow MainCamera__4;
-extern "C" CCameraFollow SubCamera;
-
-/* The texture animations every dungeon texture runs. */
-extern "C" CTextureAnime BtTexAnime;
-extern "C" CTexAnimeData BtTexAnimeData[96];
-
-/* The collisions of the floor the player is on. */
-extern "C" CCollisionData CColData;
-
-/* The shots the player's character has in the air. */
-extern "C" CSHOT ShotData;
-
-/* The shot effects the dungeon can run. */
-extern "C" CSHOT_EFFECT_PACK ShotEffect;
-
-/* The shock wave the dungeon can run. */
-extern "C" CShockWave ShockWave;
-
-/* The monsters of the floor that the player is on. */
-extern "C" CMonstorUnit MainMonstorUnit;
-
-/* The weapon that the player has equipped. */
-extern "C" WEAPON_HAVE WeaponHave;
-
-/* The fade the dungeon draws over the picture. */
-extern "C" CDispCtrl DispFade__3;
-
-/* The message windows the dungeon draws over the picture. */
-extern "C" ClsMes DngMes1;
-extern "C" ClsMes DngMes2;
-extern "C" ClsMes BtEventMes0;
-extern "C" ClsMes BtEventMes1;
 
 /* The texture each message window builds itself in. */
 extern "C" u8 MesWinTexBuff_01[0x100];
@@ -780,32 +496,8 @@ extern "C" u8 MesWinTexBuff_11[0x100];
 /* The system messages every message window shares. */
 extern short *SystemMes;
 
-/* The debug text window the dungeon draws. */
-extern "C" CDebugFont DbgMsg;
-
-/* The textures the dungeon draws its own furniture with. */
-
 /* Which language the disc was pressed for. */
 extern "C" s32 LanguageCode;
-
-/* The colour the frame is cleared to, on the front and the back floors. */
-
-/* The colour the fog draws, on the front and the back floors. */
-extern "C" u8 main_fogColor[3];
-extern "C" u8 sub_fogColor[3];
-
-/* How far the fog reaches and how it thickens, on each of those floors. */
-extern "C" float main_fogRate[4];
-extern "C" float sub_fogRate[4];
-
-/* The message the dungeon drew last, so a repeat does not show twice. */
-
-/* How far the camera is allowed to pull back. */
-extern "C" s32 camera_dist_mode__3;
-
-/* Whether the camera is moving itself, and how long it has been. */
-
-/* Which event the dungeon is showing a marker for. */
 
 /* Whether the player picked up a gate key this floor. */
 extern "C" s32 gateItemFlag;
@@ -813,12 +505,6 @@ extern "C" s32 gateItemFlag;
 /* Whether the dungeon message window has to be laid out again. */
 extern "C" s32 Mes1MakeFlg;
 extern "C" s32 Mes2MakeFlg;
-
-/* Where the marker over an event stands. */
-extern "C" sceVu0FVECTOR iventPos;
-
-/* The dust the player kicks up as they run. */
-extern "C" CRunEffect CRunFx__2;
 
 /* The register that names where the depth buffer lives. */
 extern "C" sceGsZbuf mgZBuffer;
@@ -950,6 +636,523 @@ void EdDSetFont(CDebugFont *font);
 static void LoadData(void);
 
 static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position, float from, float to);
+
+/* The overlay's large data, in the order retail's link lays it out. */
+
+/* The battle status of every character in the party. */
+BT_ACT_STATUS BtActStatus;
+
+/* The cameras the dungeon draws through. */
+CCameraFollow MainCamera__4(20.0f, 15.0f, 0.0f, 8.0f);
+CCameraFollow SubCamera(60.0f, 20.0f, 0.0f, 4.0f);
+
+/* The fade the dungeon draws over the picture. */
+CDispCtrl DispFade__3;
+
+/* The dungeon floor that the player is on. */
+CDungeonMap MainDungeonMap;
+
+/* The back dungeon's floor. */
+CDungeonMap UraDungeonMap;
+
+/* The drainage fields of the floor that the player is on. */
+DRAN_MAP_FIELD_SET DranMapField;
+
+/* The events of the floor that the player is on. */
+CDungeonEventMan DngEventMan;
+
+/* The events of the back dungeon's floor. */
+CDungeonEventMan UraEventMan;
+
+/* The lighting the dungeon draws the field and the models under. */
+sceVu0FMATRIX main_light;
+sceVu0FMATRIX main_lightcolor;
+sceVu0FVECTOR main_ambientlight;
+sceVu0FMATRIX sub_light;
+sceVu0FMATRIX sub_lightcolor;
+sceVu0FVECTOR sub_ambientlight;
+
+/* The monsters of the floor that the player is on. */
+CMonstorUnit MainMonstorUnit;
+
+/* The life gauge of the enemy the player has locked on to. */
+ENEMY_LIFE_GAGE EnemyLifeGage;
+
+/* The trail that the player's weapon leaves as it swings. */
+CWeaponEffect CWeaponFx;
+
+/* The element trails the player's weapon leaves. */
+CWeaponElement CWeaponElFx[4];
+
+/* The five Atlamillia effects. */
+CSHOT_EFFECT MasekiEffect[5];
+
+/* The effect the player's own character shoots. */
+CSHOT_EFFECT CharaMainEffect;
+
+/* The effect the player's own character breaks things with. */
+CSHOT_EFFECT CharaMainEffectCrash;
+
+/* The character that the player controls. */
+CCharacter CharaMain;
+
+/* The hand that the player's character holds an item out with. */
+CCharacter CharaHand;
+
+/* The weapon models the player's character can hold. */
+CCharacter MainWeapon;
+CCharacter DefaultWeapon;
+CCharacter CrashWeapon;
+
+/* The weapon that the player has equipped. */
+WEAPON_HAVE WeaponHave;
+
+/* The messages the dungeon shows over the picture. */
+CDngMessageMan DngMessMan;
+
+/* The items lying on the floor that the player is on. */
+CRandomItem MainRandomItem;
+
+/* The items lying on the matching floor of the back dungeon. */
+CRandomItem SubRandomItem;
+
+/* The item that a monster stole. */
+CStealItem StealItem;
+
+/* The characters that walk the dungeon alongside the player. */
+CNPCharacter NPCUnit[6];
+
+/* The splash the player's feet throw up in water. */
+CCharacter Water_Splash;
+
+/* The circle a trap draws on the floor, and its texture animations. */
+CCharacter Trap_Circle;
+CTexAnimeData Trap_Circle_TexAnim[16];
+
+/* The effect that plays as the player escapes the dungeon. */
+CCharacter EscapeEffect;
+
+/* The alpha of each of the three floor-title logos. */
+s32 rogoAlphaA[3];
+
+/* How long each of the three floor-title logos stays at full brightness. */
+s32 rogoAlphaW[3];
+
+/* The effect that plays as the player changes character. */
+CCharacter NewChangeFx;
+
+/* Where the player took the Atlamillia they last picked up. */
+sceVu0FVECTOR atraGetPos;
+
+/* Which way the player faced as they took it. */
+sceVu0FVECTOR atraGetRot;
+
+/* The effect that a short Atlamillia use lights the player with. */
+CCharacter shortAtraEffect;
+
+/* The models an opened treasure box shows, and the effects that play over them. */
+CMotionModel itemOpenSmall;
+CMotionModel itemOpenSmallFx;
+CMotionModel itemOpenBig;
+CMotionModel itemOpenBigFx;
+
+/* The debug text window the dungeon draws. */
+CDebugFont DbgMsg;
+
+/* Where the item the player is about to throw will land. */
+BOMB_INFO BombInfo;
+
+/* The dust the player kicks up as they run. */
+CRunEffect CRunFx__2;
+
+/* The wind that blows across the dungeon. */
+CWind kaze;
+
+/* Where the marker over an event stands. */
+sceVu0FVECTOR iventPos;
+
+/* The message windows the dungeon draws over the picture. */
+ClsMes DngMes1;
+ClsMes DngMes2;
+ClsMes DngMesStb;
+ClsMes BtEventMes0;
+ClsMes BtEventMes1;
+
+/* The marks that a weapon throws off as it breaks. */
+CHitMark WeaponCrashEffect;
+
+/* The marks the dungeon throws off a hit. */
+CHitMark HitMark[16];
+CHitPointMark HitPointMark[16];
+
+/* The marks that the hits the player took have left. */
+CHitPointMark MyHitPointMark[16];
+
+/* The effect that heals the player. */
+CHealEffect HealEffect;
+
+/* The models of the items lying on the floor. */
+CMainItemModel mainItemModel;
+
+/* The models of the items the player is running. */
+CActiveItemPack activeItem;
+
+/* How square on to the player each monster of the floor stands. */
+float MonstorPicupInner[36];
+
+/* The damage numbers the dungeon draws. */
+CHitValue HitValue[32];
+
+/* The shots the player's character has in the air. */
+CSHOT ShotData;
+
+/* The shot effects the dungeon can run. */
+CSHOT_EFFECT_PACK ShotEffect;
+
+/* The machine gun that Osmond's rapid-fire action shoots. */
+CSHOT_MACHINGUN OzumondShot;
+
+/* The flame that Osmond's flamethrower action shoots. */
+CSHOT_FIREBAR OzumondFire;
+
+/* The bullets that Osmond's machine gun shoots. */
+CHIT_MACHINGUN_EFFECT OzumondShotEffect;
+
+/* The collisions of the floor the player is on. */
+CCollisionData CColData;
+
+/* The bombs the player has thrown. */
+CItemBombEffect CBomb__2[3];
+
+/* The shock wave the dungeon can run. */
+CShockWave ShockWave;
+
+/* How fast the player fell the frame before. */
+sceVu0FVECTOR veloOld;
+
+/* The texture animations every dungeon texture runs. */
+CTextureAnime BtTexAnime;
+CTexAnimeData BtTexAnimeData[96];
+
+/* The texture animations of each character that walks the dungeon. */
+CTexAnimeData BtNPCTexAnimeData[4][32];
+
+/* One texture animation for every texture the player's model draws. */
+CTexAnimeData CharaMainTexAnim[64];
+
+/* The buffers the dungeon loads its models, messages and scripts into. */
+CDataAlloc2<1> MainModelBuffer(-1);
+CDataAlloc2<1> MapModelBuffer(-1);
+CDataAlloc2<1> CharaModelBuffer(-1);
+CDataAlloc2<1> WeaponModelBuffer(-1);
+CDataAlloc2<1> WEffectModelBuffer(-1);
+CDataAlloc2<1> MasekiModelBuffer(-1);
+CDataAlloc2<1> BtMesBuffer(-1);
+CDataAlloc2<1> BtSteebMesBuffer(-1);
+CDataAlloc2<1> BtStartLogoBuffer(-1);
+CDataAlloc2<1> MonstorModelBuffer(-1);
+
+/* Script working memory, one block per monster on the floor. */
+CDataAlloc2<1> MonstorScriptBuffer[16];
+
+/* The buffers the dungeon's item cache and battle scripts run out of. */
+CDataAlloc2<1> BtItemCashArea[6];
+CDataAlloc2<1> BtScriptWorkBuffer(-1);
+CDataAlloc2<1> BtCashBuffer(-1);
+CDataAlloc2<1> BtScriptBuffer(-1);
+CDataAlloc2<1> BtSystemScriptFileBuffer(-1);
+
+/* The name of the texture that the floor number draws with. */
+char floor_name[32];
+
+/* Where the camera looks, relative to what it follows. */
+sceVu0FVECTOR ref_off;
+
+/* Where Ruby's shot starts, and the way it flies. */
+sceVu0FVECTOR ruby_effect_pos;
+sceVu0FVECTOR ruby_effect_vec;
+
+/* The colour the ambient-colour animation drives the player's model to. */
+float unitAmbientAnime_rgb[3];
+
+/* The debug message overlay. */
+CDebugFont CDbgMsg;
+
+/* The overlay's initialised data, in the order retail's link lays it out. */
+
+/* The effect each playable character, and each of Ruby's and Osmond's forms, draws. */
+BT_SHOT_EFFECT MyEntryEffect_TOAN = {
+    "c01_fuusya", 0, 0,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {20.0f, 0.0f, 0.0f, 0.0f},
+    160, 8, 8, 2, 2,
+    {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_SYAO = {
+    "mgan01", 0, 0,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {1.5f, 0.0f, 0.0f, 0.0f},
+    160, 8, 0, 2, 2,
+    {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_GORO = {
+    "c06a_tameex", 0, 0,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {15.0f, 0.0f, 0.0f, 0.0f},
+    160, 8, 0, 2, 2,
+    {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_RUBY_F1 = {
+    "c05_f03", 0, 1,
+    {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
+    180, 8, 1, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, 101, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_RUBY_C1 = {
+    "c05_r03", 0, 1,
+    {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
+    180, 8, 2, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, 102, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_RUBY_T1 = {
+    "c05_t03", 0, 1,
+    {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
+    180, 8, 4, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, 103, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_RUBY_W1 = {
+    "c05_e03", 0, 1,
+    {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
+    180, 8, 8, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, 104, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_RUBY_H1 = {
+    "c05_h03", 0, 1,
+    {2.5f, 2.5f, 0.0f, 0.0f}, {5.0f, 5.0f, 0.0f, 0.0f},
+    180, 8, 16, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, 105, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_UNGAGA = {
+    "c10a_ex", 0, 1,
+    {0.2f, 0.9f, 0.2f, 0.2f}, {8.0f, 8.0f, 6.0f, 6.0f},
+    90, 20, 8, 3, 2,
+    {0, 1, 2, 2}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_OZUMOND_M = {
+    "mgan01", 0, 0,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f},
+    10, 8, 0, 3, 2,
+    {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_OZUMOND_H = {
+    "rgan01", 0, 1,
+    {3.5f, 3.5f, 0.2f, 0.2f}, {0.0f, 4.5f, 0.0f, 0.0f},
+    180, 8, 0, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_OZUMOND_H2 = {
+    "rgan02", 0, 1,
+    {3.5f, 3.5f, 0.2f, 0.2f}, {0.0f, 4.5f, 0.0f, 0.0f},
+    180, 8, 0, 3, 2,
+    {0, 1, 2, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_OZUMOND_V2 = {
+    "mgan02", 0, 0,
+    {0.0f, 0.5f, 0.2f, 0.2f}, {0.0f, 1.5f, 0.0f, 0.0f},
+    10, 8, 0, 3, 2,
+    {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_OZUMOND_G = {
+    "mgan03", 0, 0,
+    {0.0f, 0.5f, 0.2f, 0.2f}, {0.0f, 1.5f, 0.0f, 0.0f},
+    10, 8, 0, 3, 2,
+    {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_OZUMOND_S = {
+    "mgan04", 0, 0,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f},
+    10, 8, 0, 3, 2,
+    {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+/* The effect table each playable character draws its own effects from. */
+BT_SHOT_EFFECT *MyEffectEntry_Tbl[15] = {
+    &MyEntryEffect_TOAN,
+    &MyEntryEffect_SYAO,
+    &MyEntryEffect_GORO,
+    &MyEntryEffect_RUBY_F1,
+    &MyEntryEffect_RUBY_C1,
+    &MyEntryEffect_RUBY_T1,
+    &MyEntryEffect_RUBY_W1,
+    &MyEntryEffect_RUBY_H1,
+    &MyEntryEffect_UNGAGA,
+    &MyEntryEffect_OZUMOND_M,
+    &MyEntryEffect_OZUMOND_H,
+    &MyEntryEffect_OZUMOND_H2,
+    &MyEntryEffect_OZUMOND_V2,
+    &MyEntryEffect_OZUMOND_G,
+    &MyEntryEffect_OZUMOND_S,
+};
+
+/* The effect each of the five Atlamillia draws as it is taken. */
+BT_SHOT_EFFECT MyEntryEffect_Maseki00 = {
+    "maseki_ex", 0, 1,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
+    3, 35, 1, 3, 2,
+    {0, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_Maseki01 = {
+    "maseki_ex", 0, 1,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
+    3, 35, 2, 3, 2,
+    {1, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_Maseki02 = {
+    "maseki_ex", 0, 1,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
+    3, 35, 4, 3, 2,
+    {3, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_Maseki03 = {
+    "maseki_ex", 0, 1,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
+    3, 35, 8, 3, 2,
+    {2, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+BT_SHOT_EFFECT MyEntryEffect_Maseki04 = {
+    "maseki_ex", 0, 1,
+    {0.0f, 0.0f, 0.0f, 0.0f}, {10.0f, 0.0f, 0.0f, 0.0f},
+    3, 35, 16, 3, 2,
+    {4, -1, -1, -1}, -1, {0, 0}, 0.0f, 0,
+    {-1, -1, -1, -1},
+};
+
+/* A matrix of zeros, which every light of a field starts from. */
+sceVu0FMATRIX ZeroMatrix = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
+
+/* How far the fog reaches and how it thickens, on the front and the back floors. */
+float main_fogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
+float sub_fogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
+
+/* The ambient light every field starts from. */
+sceVu0FVECTOR def_ambientlight = {64.0f, 64.0f, 64.0f, 128.0f};
+
+/* The light colours every field starts from. */
+sceVu0FMATRIX def_lightcolor = {{120.0f, 120.0f, 120.0f, 128.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
+
+/* How the treasure-box models, and the effects over them, play their opening motions. */
+MOTION_INFO itemOpenSmall_info = {10, 80, 0.5f, 0};
+MOTION_INFO itemOpenSmallFx_info = {10, 80, 0.5f, 0};
+MOTION_INFO itemOpenBig_info = {10, 80, 0.5f, 0};
+MOTION_INFO itemOpenBigFx_info = {10, 80, 0.5f, 0};
+
+/* How fast the player is being thrown. */
+sceVu0FVECTOR velo__2 = {0.0f, 0.0f, 0.0f, 0.0f};
+
+/* Where the right stick is pushing the camera. */
+sceVu0FVECTOR velo2 = {0.0f, 0.0f, 0.0f, 0.0f};
+
+/* The way the last blow throws the player. */
+sceVu0FVECTOR blowVelo = {0.0f, 0.0f, 0.0f, 0.0f};
+
+/* Every texture the dungeon loads on its way in, and the block each goes to. */
+LOADTEXTURE_INFO2 texdata__2[23] = {
+    {"#frame_image#640#448#4", 1, 0},
+    {"dun/etc/cursor.img", 1, 0},
+    {"gatekey00.img", 1, 0},
+    {"#water#640#224#4", 13, 0},
+    {"dun/etc/atrtx.img", 22, 0},
+    {"wepready.img", 2, 0},
+    {"#shadow_buf#640#224#3", 15, 0},
+    {"dun/effect/basefx00.img", 18, 0},
+    {"basefx01.img", 18, 0},
+    {"dun/d01/effect/fx_foot.img", 18, 0},
+    {"dun/effect/bombfx00.img", 19, 0},
+    {"pause.img", 7, 0},
+    {"#dbgwork#640#448#3", 12, 0},
+    {"check/ankfont.img", 12, 0},
+    {"#mes_frame_buff#640#448#4", 26, 0},
+    {"#fontbase#512#256#1", 26, 0},
+    {"#fukidashibase#640#224#4", 26, 0},
+    {"meswin/syst04.img", 26, 0},
+    {"meswin/gaiji.img", 26, 0},
+    {"meswin/fuki256.img", 26, 0},
+    {"element.img", 18, 0},
+    {"igetfx.img", 22, 0},
+    {0, 0, 0},
+};
+
+/* The textures the loading screen itself draws with. */
+LOADTEXTURE_INFO texdata2[3] = {
+    {"#dbgwork#640#448#3", 12, 0},
+    {"check/ankfont.img", 12, 0},
+    {"", 0, 0},
+};
+
+/* The overlay's initialised small data, in the order retail's link lays it out. */
+
+/* How far the camera is allowed to pull back. */
+s32 camera_dist_mode__3 = 1;
+
+/* The colour the fog draws, on the front and the back floors. */
+u8 main_fogColor[3] = {0x60, 0xA0, 0xEF};
+u8 sub_fogColor[3] = {0x60, 0xA0, 0xEF};
+
+/* How long the floor title has been on screen, in frames. */
+s32 startCnt2 = -1;
+
+/* Which character the menu had the cursor on when it opened. */
+s32 oldUnitNow = -1;
+
+/* Distances the camera keeps from what it follows. */
+float camera_up_near_dist = 60.0f;
+float camera_near_dist__2 = 10.0f;
+float camera_far_dist__2 = 80.0f;
+
+/* The colours the enemy life gauge draws the life it has left with. */
+spRGBA ELife1 = {0xFF, 0x00, 0x00, 0x80};
+spRGBA ELife2 = {0xFF, 0xB4, 0x00, 0x80};
+
+/* The colours the enemy life gauge draws its border with. */
+spRGBA ELifeB1 = {0x80, 0x9B, 0xFF, 0x80};
+spRGBA ELifeB2 = {0x80, 0x9B, 0xFF, 0x80};
+
+/* The colour the enemy life gauge draws the life it has lost with. */
+spRGBA ELifeN1 = {0x00, 0x00, 0x20, 0x80};
 
 /* The overlay's own small data, in the order retail's link lays it out. */
 
@@ -1236,29 +1439,6 @@ s32 MonstorNameOff;
 
 INCLUDE_ASM("asm/nonmatchings/dun/gameloop", _dun_text_start);
 
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @617__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @618__4);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @619__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @620__5);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @621__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @622__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @623__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @624__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @625__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @626__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @627__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @628__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @629__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @630__9);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @631__8);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @632__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @633__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @634__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @635__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @636__6);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @637__5);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @638__7);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @639__9);
 
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
@@ -6325,6 +6505,11 @@ void SwordDmgCheck1(float amount, int kind) {
     }
 }
 
+/* The colour each weapon element gives the trail the weapon leaves. */
+u8 wep_rgb[5][3] = {
+    {0xFF, 0x3C, 0x00}, {0x64, 0xC8, 0xFF}, {0xFF, 0xFF, 0x64}, {0x8A, 0xFF, 0xBC}, {0xE3, 0x96, 0xAD},
+};
+
 void SetWeaponColor(void) {
     u8 red, green, blue;
     s8 element = NowWeaponHave->best_elem;
@@ -8928,13 +9113,11 @@ int LoadStartLogo(int map) {
     return blocks;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6774);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6775);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6776);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6777);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6778);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6779);
-INCLUDE_RODATA("asm/nonmatchings/dun/gameloop", @6780);
+/* The map info file each dungeon loads its floors from. */
+char *MapInfoNameArea[7] = {
+    "Cave of the Sacred Beast", "Forest of the Own", "Sunken Ship", "Shrine of Sun and Moon", "MoonOcean",
+    "DarkHeven Castle", "Deamon Shaft",
+};
 
 void FloorTitleOn(void) {
     rogoAlphaA[2] = 0;

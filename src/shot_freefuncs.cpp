@@ -2,6 +2,19 @@
 #pragma helper_mask_fpr 0x1000
 #include "shot_freefuncs.hpp"
 
+// These tables precede the template of CharaHeight's inline table in .data, so they stand
+// above the header that defines it.
+
+/**
+ * Number of floors in each dungeon.
+ */
+static int maxFloorTbl[7] = {15, 17, 18, 18, 15, 25, 100};
+
+/**
+ * Each character's default weapon.
+ */
+static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+
 #include <libvu0.h>
 
 #include <cmath>
@@ -36,27 +49,10 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-extern "C" s32 poison_counter;
-
 /**
  * Copies a rectangular texture region into another texture.
  */
 extern void MoveImageTest(sceVif1Packet *, int, int, int, const CRect_i_ &, int, int, int, int, int, int);
-
-/**
- * The name of the map held in the jump cache.
- */
-extern char BtCfgCash[64];
-
-/**
- * Whether the jump cache holds a map.
- */
-extern int BtCfgFlag;
-
-/**
- * The message shown for the cached map jump.
- */
-extern int BtSteebMsgNo;
 
 /**
  * Arena the steeb message file is read into.
@@ -113,90 +109,93 @@ extern "C" MOTION_INFO itemOpenSmall_info;
  */
 extern "C" MOTION_INFO itemOpenBig_info;
 
-/**
- * The colour of a full life bar.
- */
-extern u8 statusRGBColor_life[4];
+s32 DebugStatus[21];
+float StatusColor[3];
 
 /**
- * The colour of a full weapon bar.
+ * The water the party is standing in and the nearest water surface.
  */
-extern u8 statusRGBColor_weapon[4];
+CHECK_WATER_INFO CheckWaterInfo;
 
 /**
- * The colour of a bar below three tenths.
+ * The rings spreading across the water.
  */
-extern u8 statusRGBColor_30[4];
+WATER_WAVE_LING WaterWaveLing[6];
 
 /**
- * The warning colour of a bar below a seventh.
+ * The name of the map held in the jump cache.
  */
-extern u8 statusRGBColor_15[4];
+char BtCfgCash[64];
 
 /**
- * The second colour of a full life bar.
+ * The frames remaining before the next ring appears.
  */
-extern u8 statusRGBColor_life_2[4];
+int WaterWaveLingWait;
 
 /**
- * The second colour of a full weapon bar.
+ * Frames remaining before healing water restores the party again.
  */
-extern u8 statusRGBColor_weapon_2[4];
+int healingSpeed;
 
 /**
- * The second colour of a bar below three tenths.
+ * Whether the healing effect still owes the scene its ambient colour back.
  */
-extern u8 statusRGBColor_30_2[4];
-
-/**
- * The second warning colour of a bar below a seventh.
- */
-extern u8 statusRGBColor_15_2[4];
+int healingSpeed_flg;
 
 /**
  * The period of the low-life warning pulse.
  */
-extern int statusAlarmRate;
+int statusAlarmRate;
 
 /**
  * The phase of the low-life warning pulse.
  */
-extern float statusAlarmCounter;
+float statusAlarmCounter;
 
 /**
- * The tint applied to the party by status ailments.
+ * The colour of a full life bar.
  */
-extern "C" float StatusColor[3];
+u8 statusRGBColor_life[4];
+
+/**
+ * The colour of a full weapon bar.
+ */
+u8 statusRGBColor_weapon[4];
+
+/**
+ * The colour of a bar below three tenths.
+ */
+u8 statusRGBColor_30[4];
+
+/**
+ * The warning colour of a bar below a seventh.
+ */
+u8 statusRGBColor_15[4];
+
+/**
+ * The second colour of a full life bar.
+ */
+u8 statusRGBColor_life_2[4];
+
+/**
+ * The second colour of a full weapon bar.
+ */
+u8 statusRGBColor_weapon_2[4];
+
+/**
+ * The second colour of a bar below three tenths.
+ */
+u8 statusRGBColor_30_2[4];
+
+/**
+ * The second warning colour of a bar below a seventh.
+ */
+u8 statusRGBColor_15_2[4];
 
 /**
  * The healing particles that play in water.
  */
 extern "C" CHealEffect HealEffect;
-
-/**
- * Frames remaining before healing water restores the party again.
- */
-extern int healingSpeed;
-
-/**
- * Whether the healing effect still owes the scene its ambient colour back.
- */
-extern int healingSpeed_flg;
-
-/**
- * The water the party is standing in and the nearest water surface.
- */
-extern CHECK_WATER_INFO CheckWaterInfo;
-
-/**
- * The rings spreading across the water.
- */
-extern WATER_WAVE_LING WaterWaveLing[6];
-
-/**
- * The frames remaining before the next ring appears.
- */
-extern int WaterWaveLingWait;
 
 /**
  * Whether the water splash is active.
@@ -207,9 +206,6 @@ extern int Water_Splash_actFlag;
  * The splash shown where the party enters the water.
  */
 extern CCharacter Water_Splash;
-
-/** Each character's default weapon. */
-extern int defWeapon[6];
 
 /**
  * Clears the water-splash effects.
@@ -534,9 +530,6 @@ void StepWaterLing(void) {
  * @address 0x1AFE90
  * @size 0x1D0
  */
-/** Number of floors in each dungeon. */
-extern "C" int maxFloorTbl[7];
-
 void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volume);
 
 static inline int MonstorAliveCheck(int no, int alive) {
@@ -1011,6 +1004,11 @@ int BtStatusErrColorSet(void) {
 }
 
 /**
+ * Steps since poison last took its toll.
+ */
+int poison_counter;
+
+/**
  * Advances the party's status ailments and applies what they cost.
  *
  * @mangled BtStatusErrStep__Fv
@@ -1149,6 +1147,16 @@ void setItemToReserved(char *page_name, int x, int y, char *item_name, int dsax,
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+
+/**
+ * Whether the jump cache holds a map.
+ */
+int BtCfgFlag;
+
+/**
+ * The message shown for the cached map jump.
+ */
+int BtSteebMsgNo;
 
 /**
  * Clears the cached map-jump data.

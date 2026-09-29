@@ -27,36 +27,6 @@
 /* Battle item handling: treasure boxes, pickups and thrown items. */
 
 /**
- * Item identifier shown by the small-treasure and attachment pickup flows.
- */
-extern int BtGetTreasureboxSmall_itemNo;
-
-/**
- * Item quantity shown by the small-treasure and attachment pickup flows.
- */
-extern int BtGetTreasureboxSmall_itemVolume;
-
-/**
- * Step the gate-key and attachment pickup presentations are on.
- */
-extern int GateKey_Sled;
-
-/**
- * Step the small character-select window is on.
- */
-extern int BtMiniChrSelecter_Sled;
-
-/**
- * Selection mode the small character-select window was opened with.
- */
-extern int BtMiniChrSel_Type;
-
-/**
- * Step the small item-select window is on.
- */
-extern int BtMiniItemSelect_Sled;
-
-/**
  * Holds the party where it stands instead of running its movement step.
  */
 extern int driveStepHold;
@@ -92,16 +62,6 @@ extern int CMonUnitHold;
 extern int CEffectHold;
 
 /**
- * Marks that the party is holding a gate key.
- */
-extern int gateItemFlag;
-
-/**
- * Item the gate-key presentation is showing.
- */
-extern int GateKey_itemNo;
-
-/**
  * Model of the item a pickup presentation is showing.
  */
 extern int itemOpenItemMds;
@@ -120,16 +80,6 @@ extern int CMonUnitHyde;
  * Hides the effects instead of drawing them.
  */
 extern int CEffectHyde;
-
-/**
- * Model the escape presentation draws.
- */
-extern int escape_chr;
-
-/**
- * Step the escape presentation is on.
- */
-extern int escape_sled;
 
 extern "C" CDataAlloc2<1> BtCashBuffer;
 
@@ -154,19 +104,30 @@ extern "C" CDataAlloc2<1> BtCashBuffer;
 #include "vector.hpp"
 #include "weaponeffect.hpp"
 
-extern char *charaNameTbl[6];
-extern int defWeapon__4[6];
-extern char *ITEM_NAME_TBL_NEW[];
+/** Weapon each party member is handed when first brought into the party. */
+static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+
+char *charaNameTbl[6] = {
+    "dun/mainchara/c01d.chr", "dun/mainchara/c04b.chr", "dun/mainchara/c06b.chr",
+    "dun/mainchara/c05a.chr", "dun/mainchara/c10b.chr", "dun/mainchara/c18a.chr",
+};
+
+int BtGetTreasurebox_Sled;
+int BtGetAtraBoll_Sled;
+int TreasureboxBig_itemNo;
+int TreasureboxBig_itemType;
+float TreasureboxBig_itemScale;
+int BtGetTreasureboxSmall_itemNo;
+int BtGetTreasureboxSmall_itemVolume;
+int BtAtraGetID;
+int BtAtraGetNo;
+int BtMiniChrSelecter_Sled;
+int BtMiniChrSel_Type;
+int BtMiniChrSelectNo;
+
 extern "C" CWeaponEffect CWeaponFx;
 extern "C" CCharacter *NowWeapon;
 extern s32 BtItemListCashFlag;
-extern int BtGetTreasurebox_Sled;
-extern int BtGetAtraBoll_Sled;
-extern int TreasureboxBig_itemNo;
-extern int TreasureboxBig_itemType;
-extern float TreasureboxBig_itemScale;
-extern int BtAtraGetID;
-extern int BtAtraGetNo;
 extern CFrame *itemBoxModel;
 extern s32 itemOpenBigFlag;
 extern s32 itemOpenSmallFlag;
@@ -223,9 +184,9 @@ void selectChrUnit(int chara_no, int reload) {
     wait_now_loading_vsync();
     size = (u_int) (((size >> 6) + 1) << 6) >> 2;
     u_int *weapon0 = &read_buffer[size];
-    int weapon_no = defWeapon__4[chara_no];
+    int weapon_no = defWeapon[chara_no];
     BtGetWeaponNamePath3(name, path, weapon_no);
-    BtGetWeaponNamePath3(name1, path, defWeapon__4[chara_no] + 1);
+    BtGetWeaponNamePath3(name1, path, defWeapon[chara_no] + 1);
     BtGetWeaponNamePath3(name2, path,
                          UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
     sprintf(path, "commenu/weapon/%s", name);
@@ -964,6 +925,14 @@ int BtMiniChrSelect_Loop() {
     }
     return done;
 }
+
+int BtMiniItemSelect_Sled;
+int GateKey_itemNo;
+int GateKey_Sled;
+int gateItemFlag;
+int escape_chr;
+int escape_sled;
+
 /**
  * Opens the small item-select window.
  *
@@ -1240,148 +1209,6 @@ void BtEscape_Init(void) {
     autoCamTrial();
 }
 
-INCLUDE_RODATA("asm/nonmatchings/btitem", @549__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @595__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @596__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @597__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @598);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @599__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @600);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @601);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @602);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @603);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @604__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @605);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @606__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @607__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @608__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @609);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @610__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @611__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @612__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @613);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @614__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @615__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @616__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @617__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @618);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @619__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @620__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @621__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @622__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @623__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @624__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @625__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @626__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @627__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @628__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @629__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @630__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @631__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @632__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @633__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @634__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @635__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @636__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @637__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @638__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @639__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @640__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @641__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @642__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @643__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @644__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @645__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @646__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @647__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @648__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @649);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @650__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @651);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @652);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @653__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @654__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @655__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @656__5);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @657__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @658__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @659__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @660__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @661__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @662__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @663);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @664__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @665__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @666__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @667__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @668);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @669);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @670);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @671);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @672);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @673);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @674);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @675);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @676);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @677);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @678__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @679__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @680__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @681__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @682__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @683);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @684);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @685);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @686__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @687__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @688__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @689__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @690__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @691__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @692__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @693);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @694);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @695);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @696);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @697);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @698);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @699);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @700__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @701__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @702);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @703__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @704__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @705);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @706);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @707__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @708__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @709__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @710);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @711);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @712);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @713);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @714__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @715__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @716__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @717__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @718__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @719__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @720__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @721__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @722__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @723__3);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @724__2);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @725__5);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @726__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @727__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @728__5);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @729__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @730__5);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @731__5);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @732__5);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @733__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @734__4);
-INCLUDE_RODATA("asm/nonmatchings/btitem", @735__3);
 /**
  * Runs the escape presentation and reports when it ends.
  *
@@ -1502,6 +1329,189 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
     sceVu0RotMatrixY(rotation, rotation, angle_y);
     sceVu0ApplyMatrix(velocity, rotation, velocity);
 }
+
+INCLUDE_RODATA("asm/nonmatchings/btitem", @549__4);
+
+/* The empty name the table gives the items that have no model of their own. */
+extern char no_item_name[];
+
+char *ITEM_NAME_TBL_NEW[] = {
+    "atfire",
+    "atice",
+    "atthunde",
+    "atwind",
+    "atholy",
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    "atpower",
+    "atdamage",
+    "atspeed",
+    "atmagic",
+    "juelgnet",
+    "juelamst",
+    "juelaqua",
+    "jueldaia",
+    "juelemrd",
+    "juelparl",
+    "juelruby",
+    "juelprdt",
+    "juelsphr",
+    "juelopal",
+    "jueltpaz",
+    "jueltrqu",
+    "taiyou",
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    "zatdino",
+    "zatunded",
+    "zatsea",
+    "zatstorn",
+    "zatplant",
+    "zatbeast",
+    "zatsky",
+    "zatmetal",
+    "zatmimic",
+    "zatmaji",
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    "mayokest",
+    "mayokenr",
+    "mayokenb",
+    "mayokedk",
+    "dounut",
+    "skanacnd",
+    "kusamoti",
+    "majopafe",
+    "sasorijk",
+    "ninjncki",
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    "mizufutu",
+    "mizuoisi",
+    "mizugoku",
+    "pan",
+    "chicken",
+    "bin2drnk",
+    "dokukesi",
+    "seisui",
+    "sekken",
+    "mityheal",
+    "cheese",
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    "bakudan",
+    "ishi",
+    "masekifi",
+    "masekiic",
+    "masekitd",
+    "masekiwd",
+    "masekiho",
+    "isiranbo",
+    "nebapeac",
+    "bomnuts",
+    "dokuring",
+    "banana",
+    "konamedu",
+    "konakata",
+    "konawarp",
+    "konakawa",
+    "konaexit",
+    "konafuka",
+    "konarepe",
+    "konalvup",
+    "pocket",
+    "edenfurt",
+    "takaraky",
+    "hyoutan",
+    "konarepe_at",
+    no_item_name,
+    "turisao",
+    "ninzin",
+    "imodango",
+    "minon",
+    "battan",
+    "puti",
+    "savesyo",
+    no_item_name,
+    "ebi",
+    no_item_name,
+    "gkeydran",
+    "hikaruis",
+    "gkeymimi",
+    "akaikimi",
+    "togecchi",
+    "candy",
+    "hook",
+    "oukenost",
+    "kayaku",
+    "tokeisin",
+    "tongrmrn",
+    "gkey_ds",
+    "keytuno",
+    "mikazuki",
+    "orgelnej",
+    "taiysirs",
+    "tukisirs",
+    "ticket",
+    no_item_name,
+    no_item_name,
+    no_item_name,
+    "keyhone",
+    "keyhige",
+    "keysenst",
+    "keyishi",
+    "handol",
+    "keysikok",
+    "fkey_ds",
+    no_item_name,
+    "torokoil",
+    "taiysizk",
+    "pitisakn",
+    "kusasakn",
+    "keyhitug",
+    "yuukiita",
+    "patapata",
+    "key_eye",
+    no_item_name,
+    "map",
+    "masuisyo",
+    "dorahane",
+    "keydokut",
+    "hengemiz",
+    "worldmap",
+    "honepend",
+    "tukifue",
+    "mahoranp",
+    "tukinoob",
+    "kairing",
+    "sosareij",
+    "icebig",
+    "icemid",
+    "icesml",
+    "keyhonoo",
+    "hantmimi",
+    "kouyaku",
+    "fundtion",
+    "haniwa",
+    "manual",
+    "pezutama",
+    no_item_name,
+};
 
 void getCharacterVector(float *vector, float pitch) {
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};

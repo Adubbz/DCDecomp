@@ -110,6 +110,12 @@ void setbilinear(int on);
    it is handed is not read - so a build reaches the overlay only until the first call. DebugFont
    is null until somebody hands one over, and every entry point checks it, because the overlay
    writes into that object's buffer rather than one of its own. */
+int EdDebugEventEnable = 1;
+int EdDebugCameraFlag;
+int EdDebugParamDrawOff;
+int EdDebugCharaDrawOff;
+int EdDebugMoveFlag;
+
 static int Debug = 1;
 static CDebugFont *DebugFont;
 
@@ -1748,6 +1754,9 @@ void EdDrawOpenItemBox() {
     MGDraw(ibox_frame);
     MGSetAmbient(save);
 }
+
+int frame_image_flag;
+CTexture frame_image_tex;
 
 /**
  * Copies the drawn frame into a texture, for the menu to show behind itself.

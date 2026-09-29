@@ -147,33 +147,26 @@ SECTIONS
         _dun_data = .;
         ALIGNALL(1);
 
-        // The unit's local array initialisers put their templates between the
-        // globals the dump still supplies, so the dump is cut into the runs
-        // either side of each of them.
-        dun.data.part1.s.o (.ddata)     // 0x01dc1b00
-        gameloop.cpp.o     (.ddata)     // 0x01dc1b20
-        . = ALIGN(16);
-        dun.data.part2.s.o (.ddata)     // 0x01dc1b60
-        gameloop.cpp.o     (.ddata2)    // 0x01dc26d0
-        . = ALIGN(16);
-        dun.data.part3.s.o (.ddata)     // 0x01dc2810
-        gameloop.cpp.o     (.ddata3)    // 0x01dc2820
-        . = ALIGN(16);
-        dun.data.part4.s.o (.ddata)     // 0x01dc2940
+        gameloop.cpp.o     (.ddata)     // 0x01dc1b00
+        . = ALIGN(128);
         gameloop.cpp.o     (.drodata)   // 0x01dc2980
-
         // Retail's last constant ends twenty bytes short of the static
         // initialiser, which stands on a 32-byte boundary.
         . = ALIGN(32);
-        sinit.data.s.o     (.ddata)     // 0x01dc3580
+        gameloop.cpp.o     (.dinit)     // 0x01dc3580 __sinit_gameloop.cpp
+        . = ALIGN(16);
+        _dun_static_init = .;           // 0x01dc4410
+        gameloop.cpp.o     (.dctor)
+        _dun_static_init_end = .;
         *(.ddata)
-        *(.ddata2)
-        *(.ddata3)
         *(.drodata)
 
         ALIGNALL(1);
         _dun_bss = .;
+        . = ALIGN(128);
+        gameloop.cpp.o     (.dbss)      // 0x01dc4480
         *(.dbss)
+        . = ALIGN(16);
         _dun_end = .;
     } > dun
 
@@ -194,6 +187,7 @@ SECTIONS
         // all. The wildcard takes anything not named here.
         ALIGNALL(8);
         crt0.s.o                    (.text)   // 0x00100000
+        // @ORDER impure.c.o 0x001001a8   newlib's impure.c: data only
         abort.c.o                   (.text)   // 0x001001a8
         abs.c.o                     (.text)   // 0x001001c8
         assert.c.o                  (.text)   // 0x001001e0
@@ -357,6 +351,7 @@ SECTIONS
         object.cpp.o                (.text)   // 0x00156ba0
         objectframe.cpp.o           (.text)   // 0x001570c0
         mapobject.cpp.o             (.text)   // 0x001574f0
+        // @ORDER editpartsdata.cpp.o 0x001579e0   no code of its own: its tables and strings follow mapobject's
         objectframe2.cpp.o          (.text)   // 0x001579e0
         savedata.cpp.o              (.text)   // 0x00157b00
         snd.cpp.o                   (.text)   // 0x00158d80
@@ -416,6 +411,7 @@ SECTIONS
         menu_misc.cpp.o             (.text)   // 0x0020bec0
         editmenu.cpp.o              (.text)   // 0x002101d0
         memorycardaccess.cpp.o      (.text)   // 0x002134c0
+        // @ORDER menuetc.cpp.o 0x00216d50   retail menuetc.cpp: data only
         memcard.cpp.o               (.text)   // 0x00216d50
         menu_save.cpp.o             (.text)   // 0x00221730
         menu_dungeon.cpp.o          (.text)   // 0x00225810
@@ -444,7 +440,30 @@ SECTIONS
         // Retail's .data is one run per translation unit, in the order the
         // units link. A unit that is decompiled supplies its own run and the
         // residual dump is carved around it.
-        main.data.part1.s.o (.data)
+        // The library objects' data, in link order; crt0 carries the 0x40 bytes in
+        // front of the first datum.
+        crt0.s.o                     (.data)   // 0x0024fac0
+        impure.c.o                   (.data)   // 0x0024fb00
+        locale.c.o                   (.data)   // 0x0024fdf0
+        mallocr.c.o                  (.data)   // 0x0024fe08
+        eecdvd.c.o                   (.data)   // 0x00250260
+        libdma.c.o                   (.data)   // 0x002502d0
+        _eh.c.o                      (.data)   // 0x00250380
+        libgraph.c.o                 (.data)   // 0x00250980
+        klib.c.o                     (.data)   // 0x002509d0
+        glue.c.o                     (.data)   // 0x002509e0
+        thread.c.o                   (.data)   // 0x002509e8
+        kprintf.c.o                  (.data)   // 0x002509f0
+        sifcmd.c.o                   (.data)   // 0x002509f8
+        sifrpc.c.o                   (.data)   // 0x00250a00
+        filestub.c.o                 (.data)   // 0x00250a08
+        iopheap.c.o                  (.data)   // 0x00250a18
+        eeloadfile.c.o               (.data)   // 0x00250a20
+        libmc.c.o                    (.data)   // 0x00250a28
+        libpad.c.o                   (.data)   // 0x00250a40
+        sdr_main.c.o                 (.data)   // 0x00250a88
+        libvu0.c.o                   (.data)   // 0x00250af0
+        mathutil.cpp.o (.data)       // 0x00250b20 the runtime's terminate and unexpected handlers
         frame.cpp.o (.data)
         mglib.cpp.o (.data)
         texture.cpp.o (.data)
@@ -460,99 +479,46 @@ SECTIONS
         dataread.cpp.o (.data)       // 0x00251580 CurrentDir, then LoadFile2's templates
         clothread.cpp.o (.data)      // 0x002517a0 the cloth command tables
         main.cpp.o (.data)
-        main.data.part2c.s.o (.data)
-        gameutil.cpp.o (.data)       // 0x00253dd0 NameRegistCodeJtoE's table
+        gameutil.cpp.o (.data)       // 0x002525d0
         clsmes.cpp.o (.data)
         nowload.cpp.o (.data)        // 0x00254030 init_now_loading's two local array templates
         actionseq.cpp.o (.data)      // 0x002540b0 Play's zero direction template
         mapobject.cpp.o (.data)
-        main.data.part3.s.o (.data)
+        editpartsdata.cpp.o (.data)  // 0x002540d0 the georama parts tables; retail had them in a unit of their own
         savedata.cpp.o (.data)
-        snd.cpp.o (.snd-c319__2) // 0x0025df70 @319__2
-        snd.cpp.o (.snd-c320__2) // 0x0025df90 @320__2
-        main.data.part4.s.o (.data) // 0x0025dfb0
+        snd.cpp.o (.data)            // 0x0025df70
         sysmes.cpp.o (.data)
         water.cpp.o (.data)          // 0x002668c0 CreateVUData's five qword templates
         runeffect.cpp.o (.data)      // 0x00266910
-        main.data.runeffect-tail.s.o (.data) // 0x00266920
-        effectmacro.cpp.o (.data)    // 0x00266930 DepthOfField's vertex template
-        main.data.runeffect-tail-266970.s.o (.data) // 0x00266970
-        textureanime.cpp.o (.data)   // 0x00266b70
+        effectmacro.cpp.o (.data)    // 0x00266920
+        textureanime.cpp.o (.data)   // 0x00266970
         . = ALIGN(0x10);
-        main.data.part4m.s.o (.data) // 0x00266b90
-        ebattle.cpp.o (.data)        // 0x00266e10
+        ebattle.cpp.o (.data)        // 0x00266b90
         editarea.cpp.o (.data)       // 0x00266ed0
         edit.cpp.o (.data)
-        main.data.part4c.s.o (.data)
-        editmapscript.cpp.o (.mapscriptdata) // 0x00269320
-        editloop.cpp.o (.editinitdata) // 0x00269350
-        editloop.cpp.o (.eddrawdata)    // 0x00269400
-        editloop.cpp.o (.edmodedata)    // 0x00269460
-        editloop.cpp.o (.edsuffix)      // 0x00269480
-        . = ALIGN(4);
-        editloop.cpp.o (.edcursordata)  // 0x00269498
-        editloop.cpp.o (.edtexdata)     // 0x002694e0
-        editloop.cpp.o (.edgrounddata)  // 0x00269880
-        editloop.cpp.o (.edptsdata)     // 0x002698f0
-        editloop3.cpp.o (.eventoffset) // 0x00269930
-        editloop3.cpp.o (.eddata1)     // 0x00269940
-        editloop3.cpp.o (.eddata2)     // 0x00269970
-        editloop3.cpp.o (.eddata3)     // 0x002699f0
-        editloop3.cpp.o (.editloop3-c1647) // 0x00269a30 @1647
-        editloop3.cpp.o (.editloop3-color_1648) // 0x00269a40 color$1648
-        editloop3.cpp.o (.objworldorigin) // 0x00269ad0
-        editloop3.cpp.o (.eddata4)     // 0x00269ae0
-        editloop3.cpp.o (.editloop3-c932) // 0x00269b60 @932
-        editloop3.cpp.o (.editloop3-c933) // 0x00269b70 @933
-        editloop3.cpp.o (.editloop3-c944) // 0x00269b80 @944
-        editloop3.cpp.o (.editloop3-c945) // 0x00269b90 @945
-        editloop3.cpp.o (.eddata5)     // 0x00269ba0
-        editloop3.cpp.o (.eddata6)     // 0x00269bb0
-        editloop3.cpp.o (.fishinglineorigin) // 0x00269c40
-        editloop3.cpp.o (.extfuncinfo) // 0x00269c50
-        editloop3.cpp.o (.edeventdata) // 0x0026a5e8
-        editloop3.cpp.o (.editloop3-vv_2757) // 0x0026a610 vv$2757
-        edit_in.cpp.o (.editininit)    // 0x0026a640
-        edit_in.cpp.o (.editindraw)    // 0x0026a650
-        edit_in.cpp.o (.editinmove)    // 0x0026a670
-        edit_in.cpp.o (.editincamdist) // 0x0026a690
-        . = ALIGN(0x10);
-        edit_in.cpp.o (.editincampos)  // 0x0026a6a0
-        edit_in.cpp.o (.editintex)     // 0x0026a6b0
-        edit_in.cpp.o (.editinload)    // 0x0026a770
-        edit_in.cpp.o (.editinpts)     // 0x0026a7b0
-        main.data.part4g-26A6A0-26A7E0.s.o (.data) // 0x0026a7f0
-        edit_in.cpp.o (.data)          // 0x0026ae10
+        editmapscript.cpp.o (.data)  // 0x00266fb0
+        editloop.cpp.o (.data)         // 0x00269350
+        editloop3.cpp.o (.data)        // 0x00269930
+        edit_in.cpp.o (.data)          // 0x0026a640
         editground.cpp.o (.data)       // 0x0026ae40
         fishing.cpp.o (.data)          // 0x0026ae90
         shot_utils.cpp.o (.data)       // 0x0026afe0
-        main.data.shot_freefuncs-a.s.o (.data) // 0x0026aff8
-        shot_freefuncs.cpp.o (.data)   // 0x0026b040
+        shot_freefuncs.cpp.o (.data) // 0x0026b000
         healeffect.cpp.o (.data)       // 0x0026b0c0
-        main.data.motionmodel-a.s.o (.data) // 0x0026b0e0
-        collisiondata.cpp.o (.data)  // 0x0026b160 @1554, @1558
+        collisiondata.cpp.o (.data) // 0x0026b0e0
         . = ALIGN(0x10);
-        main.data.motionmodel-a-26B190.s.o (.data) // 0x0026b190
-        motionmodel.cpp.o (.motionmodeldata) // 0x0026b1b0
-        main.data.motionmodel-gap.s.o (.data) // 0x0026b1c8
-        hitvalue.cpp.o (.data)       // 0x0026b1d0
+        hitvalue.cpp.o (.data) // 0x0026b190
         btmisc.cpp.o (.data)         // 0x0026b1f0 makeWeaponName's and BtGetWeaponNamePath2's tables
         . = ALIGN(0x10);
-        main.data.motionmodel-b-26B250.s.o (.data) // 0x0026b250
         weaponelement.cpp.o (.data)  // 0x0026b2c0
         btsysscript.cpp.o (.data)    // 0x0026b2e0
-        main.data.part4d.s.o (.data) // 0x0026b310
-        dungeonparts.cpp.o (.data)   // 0x00279e60 setCollisionData's neighbour offsets
+        dngstatusdata.cpp.o (.data) // 0x0026b530
+        dungeonparts.cpp.o (.data)   // 0x0026b5b0
         dungeonmap.cpp.o (.data)
         . = ALIGN(0x10);
         dungeoneventman.cpp.o (.data) // 0x0027a0a0
-        main.data.itemdata-a.s.o (.data) // 0x0027a0b0
-        itemdata.cpp.o (.data)          // 0x0027a610
-        main.data.part6.s.o (.data)
-        btitem.cpp.o (.btitemdata1)  // 0x0027e7d0
-        . = ALIGN(0x10);
-        main.data.btitem-a.s.o (.data) // 0x0027e810
-        btitem.cpp.o (.btitemdata2)  // 0x0027ead0
+        itemdata.cpp.o (.data)          // 0x0027a0b0
+        btitem.cpp.o (.data)         // 0x0027e790
         mainitemmodel.cpp.o (.mainitemmodel-c862) // 0x0027eae0 @862
         . = ALIGN(16);
         mainitemmodel.cpp.o (.mainitemmodel-c937) // 0x0027eb00 @937
@@ -560,199 +526,28 @@ SECTIONS
         weaponeffect.cpp.o (.data)   // 0x0027eb30
         monstorunit.cpp.o (.data)    // 0x0027eb50
         runscript_opcodes.cpp.o (.data) // 0x00291830
-        main.data.part6f.s.o (.data) // 0x00291850
-        shop.cpp.o (.shopdata-prefix) // 0x00291b80
-        main.data.part6k.s.o (.data) // 0x00292704
-        shop.cpp.o (.shopdata-person) // 0x00292710 @820__2
-        shop.cpp.o (.shopdata-local-a) // 0x00292750
-        shop.cpp.o (.shopdata-local-b) // 0x00292760
-        shop.cpp.o (.shopdata-plate) // 0x00292770 @1363__2
-        . = ALIGN(16);
-        shop.cpp.o (.shopdata-chargemax) // 0x00292790 @1377
-        shop.cpp.o (.shopdata-buymoney) // 0x002927A0
-        main.data.shop-buymoney.s.o (.data) // 0x002927AC
-        shop.cpp.o (.shopdata-checkbuy-a) // 0x002927B0
-        main.data.shop-checkbuy-a.s.o (.data) // 0x002927BC
-        shop.cpp.o (.shopdata-checkbuy-b) // 0x002927C0
-        main.data.shop-checkbuy-b.s.o (.data) // 0x002927CC
-        shop.cpp.o (.shopdata-moneycheck) // 0x00292820 @1809
-        shop.cpp.o (.shopdata-ticket) // 0x00292830
-        shop.cpp.o (.shopdata-sellticket) // 0x00292840 @1894
-        . = ALIGN(16);
-        shop.cpp.o (.shopdata-filenames) // 0x00292850
-        shop.cpp.o (.shopdata-itemdraw) // 0x002929b0 @2264 @2273
-        . = ALIGN(16);
-        main.data.shop-itemdraw-after.s.o (.data) // 0x002929d0
-        shop.cpp.o (.shopdata-fishtex) // 0x00292a60 @2949
-        . = ALIGN(16);
-        shop.cpp.o (.shopdata-fishdraw) // 0x00292a90 @3177
-        main.data.shop-fishdraw.s.o (.data) // 0x00292aa0
-        shop.cpp.o (.shopdata-fishrec) // 0x00292ac0 @3261
-        . = ALIGN(8);
-        shop.cpp.o (.shopdata-fishrecview-a) // 0x00292ae8 @3333
-        . = ALIGN(16);
-        shop.cpp.o (.shopdata-fishrecview-b) // 0x00292b00 @3345
-        main.data.shop-fishrecview-after.s.o (.data) // 0x00292b10
-        battlemenu.cpp.o (.battlemenu-c731__6) // 0x00292e50 @731__6
-        battlemenu.cpp.o (.battlemenu-c789__3) // 0x00292e60 @789__3
-        battlemenu.cpp.o (.battlemenu-c791__2) // 0x00292e70 @791__2
-        main.data.battlemenu-292E88.s.o (.data) // 0x00292e88
-        battlemenu.cpp.o (.battlemenu-c889__4) // 0x00292e90 @889__4
-        battlemenu.cpp.o (.battlemenu-c890__4) // 0x00292ea0 @890__4
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-texenter) // 0x00292eb0 @936__2
-        battlemenu.cpp.o (.battlemenu-c959) // 0x00292ee0 @959
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c963) // 0x00292f00 @963
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c969__2) // 0x00292f20 @969__2
-        main.data.battlemenu-292F38.s.o (.data) // 0x00292f38
-        battlemenu.cpp.o (.battlemenu-c970) // 0x00292f40 @970
-        main.data.battlemenu-292F58.s.o (.data) // 0x00292f58
-        battlemenu.cpp.o (.battlemenu-c1239__2) // 0x00292f60 @1239__2
-        battlemenu.cpp.o (.battlemenu-c1270) // 0x00292fa0 @1270
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c1292__2) // 0x00292fb0 @1292__2
-        battlemenu.cpp.o (.battlemenu-c1364__2) // 0x00292ff0 @1364__2
-        main.data.battlemenu-293014.s.o (.data) // 0x00293014
-        battlemenu.cpp.o (.battlemenu-c1684__2) // 0x00293020 @1684__2
-        battlemenu.cpp.o (.battlemenu-c1717) // 0x00293030 @1717
-        battlemenu.cpp.o (.battlemenu-c1725) // 0x00293040 @1725
-        battlemenu.cpp.o (.battlemenu-c1728) // 0x00293050 @1728
-        battlemenu.cpp.o (.battlemenu-c1729) // 0x00293060 @1729
-        main.data.shop-filenames-after-292EE0-292FA0-293040.s.o (.data) // 0x00293070
-        battlemenu.cpp.o (.battlemenu-c1879) // 0x00293080 @1879
-        battlemenu.cpp.o (.battlemenu-statustag) // 0x00293090
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c2002) // 0x00293100 @2002
-        battlemenu.cpp.o (.battlemenu-c2003) // 0x00293110 @2003
-        main.data.battlemenu-293124.s.o (.data) // 0x00293124
-        battlemenu.cpp.o (.battlemenu-c2004) // 0x00293130 @2004
-        main.data.battlemenu-293144.s.o (.data) // 0x00293144
-        battlemenu.cpp.o (.battlemenu-c2020) // 0x00293148 @2020
-        main.data.battlemenu-293154.s.o (.data) // 0x00293154
-        battlemenu.cpp.o (.battlemenu-c2056) // 0x00293160 @2056
-        battlemenu.cpp.o (.battlemenu-c2057) // 0x00293170 @2057
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c2058) // 0x00293180 @2058
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c2059) // 0x002931b0 @2059
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c2127__3) // 0x002931e0 @2127__3
-        battlemenu.cpp.o (.battlemenu-c2195) // 0x002931f0 @2195
-        battlemenu.cpp.o (.battlemenu-c2196) // 0x00293200 @2196
-        battlemenu.cpp.o (.battlemenu-c2197) // 0x00293210 @2197
-        battlemenu.cpp.o (.battlemenu-c2198) // 0x00293220 @2198
-        battlemenu.cpp.o (.battlemenu-c2199) // 0x00293260 @2199
-        battlemenu.cpp.o (.battlemenu-c2250) // 0x002932a0 @2250
-        main.data.battlemenu-2932B8.s.o (.data) // 0x002932b8
-        battlemenu.cpp.o (.battlemenu-c2612__2) // 0x002932c0 @2612__2
-        battlemenu.cpp.o (.battlemenu-c2616) // 0x002932d8 @2616
-        battlemenu.cpp.o (.battlemenu-c2679) // 0x002932f0 @2679
-        battlemenu.cpp.o (.battlemenu-c3657) // 0x00293308 @3657
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c3967) // 0x00293320 @3967
-        battlemenu.cpp.o (.battlemenu-c3968) // 0x00293358 @3968
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-weaponmenu) // 0x00293370 @4085 @4090 @4149
-        battlemenu.cpp.o (.battlemenu-c4290) // 0x00293470 @4290
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c4291) // 0x00293480 @4291
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c4331) // 0x00293490 @4331
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c4433) // 0x002934b8 @4433
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-itemmenu) // 0x002934d0
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c5342) // 0x00293510 @5342
-        battlemenu.cpp.o (.battlemenu-c5345) // 0x00293530 @5345
-        battlemenu.cpp.o (.battlemenu-c5370) // 0x00293550 @5370
-        battlemenu.cpp.o (.battlemenu-c5492) // 0x00293560 @5492
-        battlemenu.cpp.o (.battlemenu-c5503) // 0x00293570 @5503
-        battlemenu.cpp.o (.battlemenu-c5534) // 0x00293580 @5534
-        battlemenu.cpp.o (.battlemenu-c5742) // 0x00293590 @5742
-        . = ALIGN(8);
-        main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s.o (.data) // 0x002935a0
-        battlemenu.cpp.o (.battlemenu-town-ref) // 0x002936E0
-        battlemenu.cpp.o (.battlemenu-town-pos) // 0x002936F0
-        battlemenu.cpp.o (.battlemenu-c6018) // 0x00293700 @6018
-        battlemenu.cpp.o (.battlemenu-c6037) // 0x00293710 @6037
-        battlemenu.cpp.o (.battlemenu-c6105) // 0x00293750 @6105
-        main.data.battlemenu-29378C.s.o (.data) // 0x0029378c
-        battlemenu.cpp.o (.battlemenu-c6185) // 0x00293790 @6185
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-c6188) // 0x002937b0 @6188
-        . = ALIGN(4);
-        battlemenu.cpp.o (.battlemenu-c6227) // 0x002937c0 @6227
-        . = ALIGN(16);
-        battlemenu.cpp.o (.battlemenu-c6232) // 0x002937e0 @6232
-        battlemenu.cpp.o (.battlemenu-c6233) // 0x00293800 @6233
-        battlemenu.cpp.o (.battlemenu-c6235) // 0x00293820 @6235
-        . = ALIGN(8);
-        battlemenu.cpp.o (.battlemenu-data) // 0x00293860
+        shop.cpp.o (.data)           // 0x00291b80
+        battlemenu.cpp.o (.data)     // 0x00292b10
         . = ALIGN(0x10);
-        main.data.battlemenu-tail.s.o (.data) // 0x00293960
-        menu_misc.cpp.o (.menu_misc-itemuse) // 0x00293978
-        menu_misc.cpp.o (.menu_misc-wepread) // 0x00293990
-        menu_misc.cpp.o (.menu_misc-model) // 0x00293a80
-        . = ALIGN(16);
-        main.data.battlemenu-tail-293B90.s.o (.data) // 0x00293b90
-        menu_misc.cpp.o (.menu_misc-frame) // 0x00293bf0
-        menu_misc.cpp.o (.menu_misc-options) // 0x00293c60
+        menu_misc.cpp.o (.data)      // 0x00293960
         . = ALIGN(0x10);
         editmenu.cpp.o (.data)       // 0x00293c80
         . = ALIGN(0x10);
         memorycardaccess.cpp.o (.data) // 0x00293d50
-        memcard.cpp.o (.data) // 0x00293e40
-        memcard.cpp.o (.memcard-c2123) // 0x00293ec0 @2123
-        memcard.cpp.o (.memcard-c2252) // 0x00293f20 @2252
-        memcard.cpp.o (.memcard-c2391) // 0x00293f50 @2391
-        main.data.memcard-a-293F60.s.o (.data) // 0x00293f60
-        memcard.cpp.o (.memcard-c2683) // 0x00293fd0 @2683
+        memcard.cpp.o (.data)        // 0x00293e40
         menu_save.cpp.o (.data) // 0x00293fe0
         . = ALIGN(0x10);
         menu_dungeon.cpp.o (.data)   // 0x00294150
-        . = ALIGN(0x10);
-        menu_dungeon.cpp.o (.floornamedata) // 0x002941e0
-        menu_dungeon.cpp.o (.quickchangedata) // 0x00294230
-        . = ALIGN(0x10);
-        menu_dungeon.cpp.o (.charachangedata) // 0x00294250
-        . = ALIGN(0x10);
-        menu_dungeon.cpp.o (.itemmodeldata) // 0x002942c0
-        . = ALIGN(0x10);
-        menu_dungeon.cpp.o (.menu_dungeon-c1707) // 0x002942d0 @1707
-        . = ALIGN(0x10);
-        menu_dungeon.cpp.o (.menu_dungeon-c1731) // 0x002942e0 @1731
-        . = ALIGN(0x10);
-        main.data.part6g-2942F0.s.o (.data) // 0x002942f0
-        menu_dungeon.cpp.o (.itemviewdata) // 0x00294320
-        . = ALIGN(0x10);
-        menu_dungeon.cpp.o (.itemgetdata) // 0x00294380
-        . = ALIGN(0x10);
-        main.data.menu_dungeon-d.s.o (.data) // 0x002943c0
-        menu_dungeon.cpp.o (.itemdataview) // 0x002943e0
         menu_draw.cpp.o (.data)      // 0x00294460
-        main.data.part6j.s.o (.data) // 0x00295644
-        eastking.cpp.o (.data)       // 0x00295660 EastKingTextureEnter's two local array templates
-        main.data.eastking-tail.s.o (.data) // 0x002956d0
-        menu_manual.cpp.o (.data)    // 0x002956f0
+        eastking.cpp.o (.data)       // 0x00295648
+        menu_manual.cpp.o (.data)    // 0x002956d0
         weapon_buildup.cpp.o (.data) // 0x00295810
         menuitemstep.cpp.o (.data)   // 0x00295830 CheckItemVolume's neighbour template
         weaponlevelup.cpp.o (.data)  // 0x00295840
         . = ALIGN(16);               // the tail of the unit's last template
         menuiconautoget.cpp.o (.menuiconautoget-c1515) // 0x002959a0 @1515__3
         . = ALIGN(16);
-        main.data.part6b.s.o (.data) // 0x002959b0
-        battle_globals.cpp.o (.nameenterdata0) // 0x002959c0 DrawCharaName's, DrawNameRegiWaku's and DrawCharaNameUp's tables
-        . = ALIGN(0x10);
-        battle_globals.cpp.o (.nameenterdata1) // 0x00295a10 DrawNameTemplete's tab tables, CheckName's reserved names
-        . = ALIGN(0x10);
-        battle_globals.cpp.o (.nameenterdata2) // 0x00295aa0 NameEnterDraw's and NameEnterKey's local tables
-        battle_globals.cpp.o (.nameenterdata3) // 0x00295b50 NameDefaultSet's default names
-        . = ALIGN(0x10);
-        main.data.battle_globals-b.s.o (.data) // 0x00295ef0
-        battle_globals.cpp.o (.nameenterdata4) // 0x00295fc0 OpeningBookKey's texture list
+        battle_globals.cpp.o (.data) // 0x002959b0
         stockitem.cpp.o (.data)
         . = . + 0xC;
         fish.cpp.o (.data)
@@ -771,20 +566,66 @@ SECTIONS
         // and the literal pool -- so its placement follows.
         *(.rodata)
         . = ALIGN(0x80);                 // 0x0029fe80, the end of retail's .rodata
-        main.rdata.part1.s.o (.rdata)    // 0x0029fe80  __sinit_dataset.cpp
+        dataset.cpp.o (.init)            // 0x0029fe80
         mglib.cpp.o (.init)              // 0x0029ff40
         . = . + 0x4;                     // the four bytes this unit's own initialiser is short
         main.cpp.o (.init)               // 0x002a0050
         . = . + 0x8;
-        main.rdata.part2.s.o (.rdata)    // 0x002a00b0
+        nowload.cpp.o (.init)            // 0x002a00b0
+        . = ALIGN(16);
+        object.cpp.o (.init)             // 0x002a00f0
+        . = ALIGN(16);
+        sysmes.cpp.o (.init)             // 0x002a0120
+        . = ALIGN(16);
+        objanime.cpp.o (.init)           // 0x002a0150
+        . = ALIGN(16);
+        ebattle.cpp.o (.init)            // 0x002a0190
+        edit.cpp.o (.init)               // 0x002a01e0, retail editetc.cpp
+        . = ALIGN(16);
+        editloop.cpp.o (.init)           // 0x002a0210
+        . = ALIGN(16);
+        editloop3.cpp.o (.init)          // 0x002a0750
+        edit_in.cpp.o (.init)            // 0x002a0930
+        . = ALIGN(16);
+        fishing.cpp.o (.init)            // 0x002a0b30
+        . = ALIGN(16);
+        itemdata.cpp.o (.init)           // 0x002a0c20, retail dbgimp.cpp
+        . = ALIGN(16);
         monstorunit.cpp.o (.init)        // 0x002a0c60, retail monstor.cpp
         . = . + 0x4;                    // initializer payload is 0x3c, retail slot 0x40
-        main.rdata.part2b.s.o (.rdata)   // 0x002a0ca0
+        shop.cpp.o (.init)               // 0x002a0ca0, retail chargeshop.cpp
+        battlemenu.cpp.o (.init)         // 0x002a0ce0, retail dngmenu.cpp
+        . = ALIGN(16);
+        menuetc.cpp.o (.init)            // 0x002a0e00
+        . = ALIGN(16);
+        menu_dungeon.cpp.o (.init)       // 0x002a0ec0, retail menuetc2.cpp
+        . = ALIGN(16);
+        eastking.cpp.o (.init)           // 0x002a0ef0, retail menuetc4.cpp
+        . = ALIGN(16);
+        weaponlevelup.cpp.o (.init)      // 0x002a0f20, retail m_effect.cpp
+        __static_init = .;
+        dataset.cpp.o (.ctor)            // 0x002a1010
         mglib.cpp.o (.ctor)              // 0x002a1014
         main.cpp.o (.ctor)               // 0x002a1018
-        main.rdata.part3.s.o (.rdata)
+        nowload.cpp.o (.ctor)            // 0x002a101c
+        object.cpp.o (.ctor)             // 0x002a1020
+        sysmes.cpp.o (.ctor) // 0x002a1024
+        objanime.cpp.o (.ctor)           // 0x002a1028
+        ebattle.cpp.o (.ctor)            // 0x002a102c
+        edit.cpp.o (.ctor)               // 0x002a1030, retail editetc.cpp
+        editloop.cpp.o (.ctor)           // 0x002a1034
+        editloop3.cpp.o (.ctor)          // 0x002a1038
+        edit_in.cpp.o (.ctor)            // 0x002a103c
+        fishing.cpp.o (.ctor)            // 0x002a1040
+        itemdata.cpp.o (.ctor)           // 0x002a1044, retail dbgimp.cpp
         monstorunit.cpp.o (.ctor)        // 0x002a1048
-        main.rdata.part3b.s.o (.rdata)
+        shop.cpp.o (.ctor)               // 0x002a104c
+        battlemenu.cpp.o (.ctor)         // 0x002a1050
+        menuetc.cpp.o (.ctor)            // 0x002a1054
+        menu_dungeon.cpp.o (.ctor)       // 0x002a1058
+        eastking.cpp.o (.ctor)           // 0x002a105c
+        weaponlevelup.cpp.o (.ctor)      // 0x002a1060
+        main.rdata.part3b-2A1064.s.o (.rdata) // 0x002a1064
         camerafollow.cpp.o (.vtables)
         camera.cpp.o (.vtables)
         . = . + 0xC;
@@ -811,7 +652,7 @@ SECTIONS
         water.cpp.o (.vt-visualpolyvu1)  // 0x002a1660
         mapparts.cpp.o (.vtables)
         hitmark.cpp.o (.vtables)
-        main.rdata.part7.s.o (.rdata)
+        literals.s.o (.rdata)            // 0x002a17b0 the overlay table and retail's literal pool
         *(.rdata)
 
 		# C++ related sections
@@ -857,82 +698,46 @@ SECTIONS
 
 		# sdata
 		mathutil.cpp.o (.sdata)        // 0x002a1e80
-		main.sdata.part1.s.o (.sdata)  // 0x002a1e88
-		mainselect.cpp.o (.sdata)      // 0x002a1e8c
+		mainselect.cpp.o (.sdata)      // 0x002a1e88
 		main.cpp.o (.sdata)            // 0x002a1e90
 		main.cpp.o (.gamemodesdata)    // 0x002a1e98
 		sound.cpp.o (.sdata)           // 0x002a1ea0
-		main.sdata.sound-tail.s.o (.sdata) // 0x002a1eb8
+		gameutil.cpp.o (.sdata)        // 0x002a1eb8
 		clsmes.cpp.o (.sdata)          // 0x002a1ec0
-		main.sdata.part2b.s.o (.sdata) // 0x002a1ed0
+		nowload.cpp.o (.sdata)         // 0x002a1ed0
 		snd.cpp.o (.sdata)             // 0x002a1ed8
-		main.sdata.snd-tail.s.o (.sdata) // 0x002a1ef0
+		sysmes.cpp.o (.sdata) // 0x002a1ef0
 		fireomni.cpp.o (.sdata)        // 0x002a1ef8
 		candleeffect.cpp.o (.sdata)    // 0x002a1efc
 		effect.cpp.o (.sdata)          // 0x002a1f00
-		main.sdata.effect-tail.s.o (.sdata) // 0x002a1f04
-		ebattle.cpp.o (.sdata)         // 0x002a1f14
-		main.sdata.part2c.s.o (.sdata) // 0x002a1f18
-		edit.cpp.o (.sdata)            // 0x002a1f24
-		main.sdata.part2d.s.o (.sdata) // 0x002a1f50
-		editloop.cpp.o (.edmarkdata)   // 0x002a1f68
-		editloop.cpp.o (.sdata)        // 0x002a1f78
+		ebattle.cpp.o (.sdata)         // 0x002a1f04
+		edit.cpp.o (.sdata)            // 0x002a1f20
+		editmapscript.cpp.o (.sdata)   // 0x002a1f50
+		editloop.cpp.o (.sdata)        // 0x002a1f54
 		editloop3.cpp.o (.sdata)       // 0x002a1f80
-		edit_in.cpp.o (.sdata)         // 0x002a1f90 fix_camera, camera_dist_mode
-		edit_in.cpp.o (.editinpause)   // 0x002a1f98
+		edit_in.cpp.o (.sdata)         // 0x002a1f90
 		. = ALIGN(4);
-		main.sdata.edit_in-a.s.o (.sdata) // 0x002a1fa0
+		fishing.cpp.o (.sdata)         // 0x002a1fa0
 		collisiondata.cpp.o (.sdata)   // 0x002a1fa8 @1544, @1547
-		main.sdata.edit_in-a-2A1FB8.s.o (.sdata) // 0x002a1fb8
+		dngmessageman.cpp.o (.sdata)   // 0x002a1fb8 LanguageStr
 		dungeonmap.cpp.o (.dungeonmap-c1292) // 0x002a1fc0 @1292
-		main.sdata.edit_in-a-2A1FCC.s.o (.sdata) // 0x002a1fcc
+		itemdata.cpp.o (.sdata)        // 0x002a1fcc
 		btitem.cpp.o (.sdata)          // 0x002a1fe8
-		main.sdata.part2f-2A1FF0.s.o (.sdata) // 0x002a1ff0
-		shop.cpp.o (.sdata)            // 0x002a1ff8 @1350__2
-		main.sdata.shop-a.s.o (.sdata) // 0x002a2000
-		shop.cpp.o (.shopsdata-itemdraw) // 0x002a2008 @2270
-		main.sdata.shop-b.s.o (.sdata) // 0x002a200c
-		battlemenu.cpp.o (.battlemenu-c702__2) // 0x002a2028 @702__2
-		. = ALIGN(8);
-		battlemenu.cpp.o (.battlemenu-c782__2) // 0x002a2030 @782__2
-		battlemenu.cpp.o (.battlemenu-c790__2) // 0x002a2038 @790__2
-		battlemenu.cpp.o (.battlemenu-c792__4) // 0x002a2040 @792__4
-		battlemenu.cpp.o (.battlemenu-texenter-s) // 0x002a2048 @937__3
-		battlemenu.cpp.o (.battlemenu-c1249) // 0x002a2050 @1249
-		battlemenu.cpp.o (.battlemenu-charakey) // 0x002a2058 @1365__2 @1379
-		battlemenu.cpp.o (.battlemenu-statustag-s) // 0x002a2068
-		. = ALIGN(8);
-		battlemenu.cpp.o (.battlemenu-c2169) // 0x002a2070 @2169
-		battlemenu.cpp.o (.battlemenu-c3682) // 0x002a2078 @3682
-		. = ALIGN(8);
-		battlemenu.cpp.o (.battlemenu-c3929) // 0x002a2080 @3929
-		battlemenu.cpp.o (.battlemenu-itemmenu-s) // 0x002a2088
-		. = ALIGN(8);
-		battlemenu.cpp.o (.battlemenu-c5556) // 0x002a2098 @5556
-		battlemenu.cpp.o (.battlemenu-c5592) // 0x002a20a0 @5592
-		battlemenu.cpp.o (.battlemenu-c5593) // 0x002a20a8 @5593
-		battlemenu.cpp.o (.battlemenu-c5711) // 0x002a20b0 @5711
-		. = ALIGN(8);
-		battlemenu.cpp.o (.battlemenu-c5977) // 0x002a20b8 @5977
-		battlemenu.cpp.o (.battlemenu-c6236) // 0x002a20c0 @6236
-		battlemenu.cpp.o (.sdata)      // 0x002a20c8
+		shop.cpp.o (.sdata)            // 0x002a1ff0
+		battlemenu.cpp.o (.sdata)      // 0x002a200c
 		. = ALIGN(8);
 		menu_misc.cpp.o (.sdata)       // 0x002a20d8
-		main.sdata.battlemenu-tail.s.o (.sdata) // 0x002a20f8
-		editmenu.cpp.o (.sdata)        // 0x002a2100
-		memcard.cpp.o (.memcard-c1322) // 0x002a2140 @1322
-		memcard.cpp.o (.sdata) // 0x002a2148
-		menu_save.cpp.o (.sdata) // 0x002a2160
-		main.sdata.menu_save-a.s.o (.sdata) // 0x002a2178
-		menu_dungeon.cpp.o (.sdata) // 0x002a2190 @1730, @1732
+		editmenu.cpp.o (.sdata)        // 0x002a20f8
+		memcard.cpp.o (.sdata)         // 0x002a2140
+		menu_save.cpp.o (.sdata)       // 0x002a2160
+		menu_dungeon.cpp.o (.sdata)    // 0x002a2188
 		. = ALIGN(8);
 		menu_draw.cpp.o (.sdata)       // 0x002a21a0
 		eastking.cpp.o (.sdata)        // 0x002a21b8 EastKingTextureEnter's font width template
 		menu_manual.cpp.o (.sdata)     // 0x002a21c0 DrawPrevNextCursor's positions
 		weapon_buildup.cpp.o (.sdata)  // 0x002a21c8
 		weaponlevelup.cpp.o (.sdata)   // 0x002a21d8
-		main.sdata.part2e.s.o (.sdata) // 0x002a21f0
-		battle_globals.cpp.o (.nameentersdata1) // 0x002a21f8 ExitNameEnterFunc texture blocks, DrawNameTemplete key counts, DrawSaveBoardCharaName2 shadow colours and OpeningBookKey text heights
+		battle_globals.cpp.o (.sdata)  // 0x002a21f0
 		stockitem.cpp.o (.sdata)
 
 		// The title overlay's small data, reached through $gp like its small
@@ -945,14 +750,14 @@ SECTIONS
 		title.cpp.o (.sdata)           // 0x002a2280
 		titleloop.cpp.o (.sdata)
 		sprite.cpp.o (.sdata)          // 0x002a22d8
-		main.sdata.part3.s.o (.sdata)  // 0x002a22e0
+		gameloop.cpp.o (.sdata)        // 0x002a22e0 the dun overlay's small data
 		*(.sdata)
 
 		# sbss
+		. = ALIGN(128);
 		_fbss = .;
 		camera.cpp.o (.sbss)
-		main.sbss.part1.s.o (.sbss)    // 0x002a2384
-		dataset.cpp.o (.sbss)          // 0x002a2390
+		dataset.cpp.o (.sbss)          // 0x002a2384
 		. = ALIGN(4);
 		gamepad.cpp.o (.sbss)          // 0x002a23a0
 		// Retail rounds the end of a unit's small-bss run up to four bytes,
@@ -964,105 +769,61 @@ SECTIONS
 		character.cpp.o (.sbss)        // 0x002a2478
 		chararead.cpp.o (.sbss)        // 0x002a247c
 		dataread.cpp.o (.sbss)         // 0x002a24e4
-		main.sbss.part3.s.o (.sbss)    // 0x002a24fc
-		clothread.cpp.o (.sbss)        // 0x002a2500 pBound, ParentFrame, DataBuffer
+		clothread.cpp.o (.sbss)        // 0x002a24fc
 		main.cpp.o (.sbss)
 		sound.cpp.o (.sbss)            // 0x002a2588
 		. = ALIGN(16);
-		gameutil.cpp.o (.gameutilsbss)  // 0x002a25a0 MotionProc2's vertex pointer
-		clsmes.cpp.o (.sbss)
-		gameutil.cpp.o (.sbss)         // 0x002a25a8
-		main.sbss.part4b.s.o (.sbss)   // 0x002a25b8
-		snd.cpp.o (.sbss)              // 0x002a264c, SndSePlay's statics
+		gameutil.cpp.o (.sbss)         // 0x002a25a0
+		nowload.cpp.o (.sbss)          // 0x002a25b8
+		snd.cpp.o (.sbss) // 0x002a25e0
 		. = ALIGN(4);
-		main.sbss.snd-tail.s.o (.sbss) // 0x002a2654
-		ebattle.cpp.o (.sbss)          // 0x002a26f8, EdMoveChara's statics
+		sysmes.cpp.o (.sbss) // 0x002a265c
+		runeffect.cpp.o (.sbss)        // 0x002a2668
+		effectmacro.cpp.o (.sbss)      // 0x002a266c
+		objanime.cpp.o (.sbss)         // 0x002a267c
+		textureanime.cpp.o (.sbss)     // 0x002a2680
+		ebattle.cpp.o (.sbss)          // 0x002a268c
 		editarea.cpp.o (.sbss)         // 0x002a2728
 		. = ALIGN(4);
-		main.sbss.part4h.s.o (.sbss)   // 0x002a2730
-		edit.cpp.o (.sbss)             // 0x002a2740
-		main.sbss.part4c.s.o (.sbss)   // 0x002a27ac
-		editloop.cpp.o (.editinitflags) // 0x002a294c
-		. = ALIGN(4);
-		editloop.cpp.o (.edloopflags) // 0x002a2958
-		editloop.cpp.o (.edcursorflags) // 0x002a2994
-		. = ALIGN(4);
-		main.sbss.part4g.s.o (.sbss)   // 0x002a29a4
-		editloop.cpp.o (.edmodeflags) // 0x002a29ac
-		. = ALIGN(4);
-		editloop.cpp.o (.edmoveflags)  // 0x002a29c4
-		. = ALIGN(4);
-		main.sbss.part4g-2A29B0.s.o (.sbss) // 0x002a29d4
-		editloop3.cpp.o (.edsbss1)     // 0x002a29dc
-		editloop3.cpp.o (.fadebss)     // 0x002a29f8
-		editloop3.cpp.o (.edsbss2)     // 0x002a2a04
-		editloop3.cpp.o (.eventbss)    // 0x002a2a2c
-		editloop3.cpp.o (.edsbss3)     // 0x002a2a30
-		editloop3.cpp.o (.edeventsbss) // 0x002a2a54
-		editloop3.cpp.o (.edsbss4)     // 0x002a2a64
-		main.sbss.part4f.s.o (.sbss)   // 0x002a2a80
-		edit_in.cpp.o (.editinsbss)    // 0x002a2ad0
-		. = ALIGN(4);
-		main.sbss.edit_in-a.s.o (.sbss) // 0x002a2afc
+		edit.cpp.o (.sbss)             // 0x002a2730
+		editmapscript.cpp.o (.sbss)    // 0x002a27b0
+		editloop.cpp.o (.sbss)         // 0x002a280c
+		editloop3.cpp.o (.sbss)        // 0x002a29dc
+		edit_in.cpp.o (.sbss)          // 0x002a2a80
 		editground.cpp.o (.sbss) // 0x002a2b20, DrawPartsCursor's last part and guard
 		. = ALIGN(4);
-		main.sbss.editground-tail.s.o (.sbss) // 0x002a2b28
+		fishing.cpp.o (.sbss)          // 0x002a2b28
 		shot_firebar.cpp.o (.sbss) // 0x002a2b7c, CSHOT_FIREBAR::Step's hit counter and guard
 		. = ALIGN(4);
-		main.sbss.shot_firebar-tail.s.o (.sbss) // 0x002a2b84
-		shot_freefuncs.cpp.o (.sbss) // 0x002a2bb8, status popup phases and guards
+		shot_freefuncs.cpp.o (.sbss) // 0x002a2b84
 		. = ALIGN(4);
-		main.sbss.topstatus-tail.s.o (.sbss) // 0x002a2bc8
+		collisiondata.cpp.o (.sbss) // 0x002a2bd4
+		btmisc.cpp.o (.sbss) // 0x002a2bd8
+		btsysscript.cpp.o (.sbss) // 0x002a2be4
 		dungeonmap.cpp.o (.sbss)
-		main.sbss.part5.s.o (.sbss)
-		btitem.cpp.o (.sbss)           // 0x002a2c48
-		main.sbss.part5-2A2C4C.s.o (.sbss) // 0x002a2c4c
-		monstorunit.cpp.o (.sbss) // 0x002a2c68, counter and guard
+		itemdata.cpp.o (.sbss)         // 0x002a2bf8
+		btitem.cpp.o (.sbss)           // 0x002a2c18
+		monstorunit.cpp.o (.sbss)      // 0x002a2c64
 		. = ALIGN(4);
 		runscript_opcodes.cpp.o (.sbss) // 0x002a2c70
-		main.sbss.part5c.s.o (.sbss) // 0x002a2c74
-		battlemenu.cpp.o (.battlemenu-warningcnt_1676) // 0x002a2d80 warningcnt$1676
-		battlemenu.cpp.o (.battlemenu-init_1677) // 0x002a2d84 init$1677
+		shop.cpp.o (.sbss)             // 0x002a2c74
+		battlemenu.cpp.o (.sbss)       // 0x002a2cbc
+		menu_misc.cpp.o (.sbss)        // 0x002a2dc8
 		. = ALIGN(4);
-		battlemenu.cpp.o (.battlemenu-warmcnt_2370) // 0x002a2d88 warmcnt$2370
-		battlemenu.cpp.o (.battlemenu-init_2371) // 0x002a2d8c init$2371
+		editmenu.cpp.o (.sbss)         // 0x002a2e24
 		. = ALIGN(4);
-		battlemenu.cpp.o (.battlemenu-levelbrinkcnt_2379) // 0x002a2d90 levelbrinkcnt$2379
-		battlemenu.cpp.o (.battlemenu-init_2380) // 0x002a2d94 init$2380
-		. = ALIGN(4);
-		main.sbss.battlemenu-2A2D98.s.o (.sbss) // 0x002a2d98
-		battlemenu.cpp.o (.battlemenu-ct_4025) // 0x002a2d9c ct$4025
-		battlemenu.cpp.o (.battlemenu-init_4026) // 0x002a2da0 init$4026
-		. = ALIGN(4);
-		battlemenu.cpp.o (.battlemenu-ncnt_4292) // 0x002a2da4 ncnt$4292
-		battlemenu.cpp.o (.battlemenu-init_4293) // 0x002a2da8 init$4293
-		. = ALIGN(4);
-		battlemenu.cpp.o (.battlemenu-ct_5739) // 0x002a2dac ct$5739
-		battlemenu.cpp.o (.battlemenu-init_5740) // 0x002a2db0 init$5740
-		. = ALIGN(4);
-		battlemenu.cpp.o (.battlemenu-statusCnt_5776) // 0x002a2db4 statusCnt$5776
-		battlemenu.cpp.o (.battlemenu-init_5777) // 0x002a2db8 init$5777
-		. = ALIGN(4);
-		main.sbss.part5c-2A2DA8.s.o (.sbss) // 0x002a2dbc
 		memorycardaccess.cpp.o (.sbss) // 0x002a2e84
 		. = ALIGN(4);
 		memcard.cpp.o (.sbss) // 0x002a2e90
 		. = ALIGN(4);
-		main.sbss.memcard-a.s.o (.sbss) // 0x002a2f20
-		menu_dungeon.cpp.o (.menuerrorcnt) // 0x002a2f50
-		main.sbss.denter-gap.s.o (.sbss) // 0x002a2f54
-		menu_dungeon.cpp.o (.denterstatus) // 0x002a2f5c
-		menu_dungeon.cpp.o (.sbss) // 0x002a2f60, DunEnterDraw's counter and guard
-		. = ALIGN(4);
-		main.sbss.denter-tail.s.o (.sbss) // 0x002a2f68
-		battle_globals.cpp.o (.nameenterkey-up_or_down_942) // 0x002a2fc4 up_or_down$942
-		. = ALIGN(4);
-		battle_globals.cpp.o (.nameenterkey-init_943) // 0x002a2fc8 init$943
-		. = ALIGN(4);
-		main.sbss.battle_globals-tail.s.o (.sbss) // 0x002a2fcc
+		menu_save.cpp.o (.sbss)        // 0x002a2f20
+		menu_dungeon.cpp.o (.sbss)     // 0x002a2f50
+		menu_draw.cpp.o (.sbss)        // 0x002a2f90
+		eastking.cpp.o (.sbss)         // 0x002a2f9c
+		battle_globals.cpp.o (.sbss)   // 0x002a2fac
 		charakey.cpp.o (.sbss)
 		. = ALIGN(4);
-		main.sbss.part5b.s.o (.sbss)   // 0x002a2fd8
+		langset.cpp.o (.sbss)          // 0x002a2fd8
 
 		// The title overlay's small data. Its units keep it in main's image
 		// because it is reached through $gp, one contiguous run per object,
@@ -1075,8 +836,7 @@ SECTIONS
 		// Retail rounds the end of the run up; op_d's last static is a
 		// one-byte guard.
 		. = ALIGN(4);
-		main.sbss.part5d.s.o (.sbss)   // 0x002a33a0
-		rushmovi.cpp.o (.sbss)         // 0x002a33a4
+		rushmovi.cpp.o (.sbss)         // 0x002a33a0
 		title.cpp.o (.sbss)            // 0x002a340c
 		titleloop.cpp.o (.sbss)
 
@@ -1088,16 +848,30 @@ SECTIONS
 		*(SCOMMON)
 
         # bss
-		main.bss.part1.s.o (.bss)      // 0x002a3709
-		mathutil.cpp.o (.bss)          // 0x002aa010  SinTable
-		main.bss.part1b.s.o (.bss)     // 0x002ab010
-		texture_data.cpp.o (.bss)      // 0x002ab030  TextureData
-		water.cpp.o (.bss)             // 0x002ab040
-		main.bss.part2.s.o (.bss)      // 0x002ab050
+		// The library objects' bss, in link order. crt0's _args starts on 128.
+		crt0.s.o                     (.bss)    // 0x002a3709
+		eecdvd.c.o                   (.bss)    // 0x002a3900
+		_eh.c.o                      (.bss)    // 0x002a4f48
+		dp-bit.c.o                   (.bss)    // 0x002a4f68
+		fp-bit.c.o                   (.bss)    // 0x002a4f80
+		frame.c.o                    (.bss)    // 0x002a4f90
+		thread.c.o                   (.bss)    // 0x002a4fa0
+		deci2.c.o                    (.bss)    // 0x002a53b0
+		tty.c.o                      (.bss)    // 0x002a5400
+		kprintf.c.o                  (.bss)    // 0x002a57c0
+		sifcmd.c.o                   (.bss)    // 0x002a5840
+		sifrpc.c.o                   (.bss)    // 0x002a5ac0
+		filestub.c.o                 (.bss)    // 0x002a7300
+		iopheap.c.o                  (.bss)    // 0x002a8180
+		eeloadfile.c.o               (.bss)    // 0x002a8380
+		iopreset.c.o                 (.bss)    // 0x002a85c0
+		libmc.c.o                    (.bss)    // 0x002a8640
+		libpad.c.o                   (.bss)    // 0x002a9c40
+		sdr_main.c.o                 (.bss)    // 0x002a9e80
+		mathutil.cpp.o (.bss)          // 0x002aa000 __global_destructor_chain, then SinTable
+		dataset.cpp.o (.bss)           // 0x002ab010 the eight allocators and their arena
 		gamepad.cpp.o (.padbss)
 		mglib.cpp.o (.bss)             // 0x01c751c0, with TexManager at 0x01c75870
-		main.bss.part3.s.o (.bss)      // 0x01c7a6b8
-		mglib.cpp.o (.mgbss2)          // 0x01c7a6c0
 		texture.cpp.o (.bss)           // 0x01c7a830  texData
 		chararead.cpp.o (.bss)         // 0x01c7ae70
 		dataread.cpp.o (.bss)          // 0x01c7b0c0  header_buff, bg_read_info
@@ -1106,51 +880,56 @@ SECTIONS
 		main.cpp.o (.bss)
 		sound.cpp.o (.bss)             // 0x01ce7570
 		gameutil.cpp.o (.bss)          // 0x01cece80
-		main.bss.part4d.s.o (.bss)     // 0x01cecf00
 		clsmes.cpp.o (.bss)
-		main.bss.part4b.s.o (.bss)     // 0x01cf91f0
+		nowload.cpp.o (.bss)           // 0x01cf9200
+		object.cpp.o (.bss)            // 0x01cfb430
+		snd.cpp.o (.bss) // 0x01cfb490
+		sysmes.cpp.o (.bss) // 0x01cfb630
+		runeffect.cpp.o (.bss)         // 0x01d18980
 		effectmacro.cpp.o (.bss)       // 0x01d18a00 DepthOfField's rd
 		. = ALIGN(0x10);
-		main.bss.part4b-1D18EF0.s.o (.bss) // 0x01d18ef0
+		objanime.cpp.o (.bss)          // 0x01d18ef0
+		ebattle.cpp.o (.bss)           // 0x01d18f60
 		edit.cpp.o (.bss)              // 0x01d19720
-		main.bss.part4c.s.o (.bss)     // 0x01d19aa0
-		editloop3.cpp.o (.edexchangebss) // 0x01d19bb0
-		main.bss.part4e.s.o (.bss)     // 0x01d19bcc
-		editpartsinfo.cpp.o (.bss)
-		main.bss.part5.s.o (.bss)      // 0x01d1b218
-		editloop3.cpp.o (.edbuffers)    // 0x01d1b360
-		main.bss.part5e.s.o (.bss)     // 0x01d1b390
-		editloop3.cpp.o (.edvillagerbss) // 0x01d25b90
-		main.bss.part5f.s.o (.bss)     // 0x01d32f70
-		editloop.cpp.o (.editnamemes)  // 0x01d3a090
-		. = ALIGN(0x10);
-		editloop.cpp.o (.edmenulist)  // 0x01d3b850
-		editloop3.cpp.o (.edbss1)      // 0x01d3b950
-		editloop3.cpp.o (.fadecolbss)  // 0x01d3d1c0
-		main.bss.part5b.s.o (.bss)     // 0x01d3d1d0
-		editloop3.cpp.o (.spritebss)  // 0x01d3dd20
-		editloop3.cpp.o (.objanimebss) // 0x01d3e5a0
-		editloop3.cpp.o (.edbss2)      // 0x01d3eea0
-		editloop3.cpp.o (.workbss)    // 0x01d3ef90
-		editloop3.cpp.o (.edbss3)      // 0x01d3f010
-		// Retail rounds the end of a unit's .bss run up to sixteen, which
-		// the 148-byte sprite tables leave short.
-		. = ALIGN(0x10);
-		main.bss.part5d.s.o (.bss)     // 0x01d48fb0
-		editloop3.cpp.o (.edbss4)      // 0x01d4a430
-		. = ALIGN(0x10);
-		main.bss.part5g.s.o (.bss)     // 0x01d4a480
-		editloop3.cpp.o (.edbss5)      // 0x01d4a4d0
-		main.bss.part5h.s.o (.bss)     // 0x01d4a630
-		edit_in.cpp.o (.editinfixpos) // 0x01d54940
-		main.bss.part5h-1D54950.s.o (.bss)  // 0x01d54950
+		editmapscript.cpp.o (.bss)     // 0x01d19af0
+		editloop.cpp.o (.bss)          // 0x01d19bb0
+		editloop3.cpp.o (.bss)         // 0x01d3b950
+		edit_in.cpp.o (.bss)           // 0x01d4bda0
+		fishing.cpp.o (.bss)           // 0x01d549d0
+		shot_freefuncs.cpp.o (.bss) // 0x01d56460
+		collisiondata.cpp.o (.bss) // 0x01d56600
+		btmisc.cpp.o (.bss) // 0x01d566c0
+		btsysscript.cpp.o (.bss) // 0x01d56740
 		dungeonmap.cpp.o (.bss)
-		main.bss.part6.s.o (.bss)
+		itemdata.cpp.o (.bss)          // 0x01d65c20
 		monstorunit.cpp.o (.bss)       // 0x01d87380 BeeTbl, then MonsterTexAnim
-		main.bss.part6b.s.o (.bss)
-		menu_dungeon.cpp.o (.bss)     // 0x01da8b80 DEnterMenu
+		runscript_opcodes.cpp.o (.bss) // 0x01d8fa80
+		shop.cpp.o (.bss)              // 0x01d900b0
 		. = ALIGN(0x10);
-		main.bss.part6c.s.o (.bss)     // 0x01da8d90 Storage after ChangeMenu
+		battlemenu.cpp.o (.bss)        // 0x01d903f0
+		menu_misc.cpp.o (.bss)         // 0x01d9edd0
+		editmenu.cpp.o (.bss)          // 0x01d9ef20
+		. = ALIGN(0x40);
+		memorycardaccess.cpp.o (.bss)  // 0x01d9ef80
+		menuetc.cpp.o (.bss)           // 0x01da08c0, retail menuetc.cpp: no code, only these objects
+		memcard.cpp.o (.bss)           // 0x01da6aa0
+		. = ALIGN(0x10);
+		menu_save.cpp.o (.bss)         // 0x01da8ad0
+		. = ALIGN(0x10);
+		menu_dungeon.cpp.o (.bss)      // 0x01da8b80
+		. = ALIGN(0x10);
+		menu_draw.cpp.o (.bss)         // 0x01da8fd0
+		. = ALIGN(0x10);
+		eastking.cpp.o (.bss)          // 0x01da9080
+		. = ALIGN(0x10);
+		menu_manual.cpp.o (.bss)       // 0x01daa870
+		. = ALIGN(0x10);
+		weaponlevelup.cpp.o (.bss)     // 0x01daa8d0
+		. = ALIGN(0x10);
+		battle_globals.cpp.o (.bss)    // 0x01dabc40
+		. = ALIGN(0x10);
+		langset.cpp.o (.bss)           // 0x01dabc80
+		errno.c.o (.bss)               // 0x01dabc94 errno, allocated last as COMMON
 		*(.bss)
 		*(.common)
 		*(COMMON)

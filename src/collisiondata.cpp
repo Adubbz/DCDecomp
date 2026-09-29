@@ -14,11 +14,43 @@
 #include "snd.hpp"
 
 extern "C" int DebugStatus[21];
-extern "C" int DebugInfoCode[15];
-extern "C" char *DebugInfoMsg[15];
-extern "C" int DebugInfoNowCursor;
 extern "C" CDebugFont DbgMsg;
-extern "C" char nameblock[64];
+
+/* The debug overlay's line formats. Retail keeps the strings with the hit-mark code. */
+extern char DebugInfoMsgMiniMapView[];
+extern char DebugInfoMsgCollision[];
+extern char DebugInfoMsgBgmPlay[];
+extern char DebugInfoMsgParameter[];
+extern char DebugInfoMsgViewInfo[];
+extern char DebugInfoMsgUltraMan[];
+extern char DebugInfoMsgReloadEnemy[];
+extern char DebugInfoMsgItemPutZone[];
+extern char DebugInfoMsgLightMode[];
+extern char DebugInfoMsgFloorAtraGet[];
+extern char DebugInfoMsgEventTest[];
+extern char DebugInfoMsgSetStatus[];
+extern char DebugInfoMsgSePlay[];
+extern char DebugInfoMsgSetChrKey[];
+
+/**
+ * The action code of each debug overlay line, ended by -1.
+ */
+int DebugInfoCode[15] = {10, 20, 41, 70, 50, 150, 100, 30, 110, 80, 90, 120, 130, 140, -1};
+
+/**
+ * The format of each debug overlay line, ended by a null entry.
+ */
+char *DebugInfoMsg[15] = {
+    DebugInfoMsgMiniMapView, DebugInfoMsgCollision,  DebugInfoMsgBgmPlay,     DebugInfoMsgParameter,
+    DebugInfoMsgViewInfo,    DebugInfoMsgUltraMan,   DebugInfoMsgReloadEnemy, DebugInfoMsgItemPutZone,
+    DebugInfoMsgLightMode,   DebugInfoMsgFloorAtraGet, DebugInfoMsgEventTest, DebugInfoMsgSetStatus,
+    DebugInfoMsgSePlay,      DebugInfoMsgSetChrKey,  NULL,
+};
+
+/**
+ * The debug overlay line the cursor is on.
+ */
+int DebugInfoNowCursor;
 
 /**
  * The Japanese and American image path prefixes. NameExchg reads it as rows
@@ -28,7 +60,12 @@ extern "C" char nameblock[64];
 extern "C" char *LanguageStr[1][2];
 
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
-extern "C" int gateKeyStack[32];
+int gateKeyStack[32];
+
+/**
+ * The path NameExchg builds.
+ */
+char nameblock[64];
 
 /** The camera the dungeon is being viewed through. */
 extern CCameraFollow *NowCamera__3;
@@ -583,8 +620,6 @@ int DebugInfomationIF(void) {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @511);
-INCLUDE_RODATA("asm/nonmatchings/collisiondata", @512);
 
 /**
  * Empties the list of key items waiting to be dropped.

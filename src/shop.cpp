@@ -74,18 +74,6 @@ struct ShopMenuWork {
 
 STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
 
-/** Shared UI state for the charge shop and item shop screens. */
-extern ShopMenuWork ShopMenu;
-
-/** The icon being carried between the shop's board and the player's. */
-extern ShopIconMove ShopDataMove;
-
-/** Player status the shop currently open is reading and writing. */
-extern CUserStatus *ShopUserStatusPt;
-
-/** Stock inventory the shop currently open is reading and writing. */
-extern CStockItem *ShopStockPt;
-
 /** Camera the menu draws 3D models under. */
 extern CCamera MenuCamera;
 
@@ -101,49 +89,65 @@ extern CDataAlloc2<1> EdMenuBuffer;
 /** Steps item volumes for the menus. */
 extern CMenuItemStep ItemVolumeStep;
 
+/** Number of goods on each charge shop's board. */
+s16 ChargeShopMax[3] = {60, 30, 30};
+
 /** Arena the shopkeeper's model and the item shop's board tables are read into. */
-extern CDataAlloc2<1> ShopCashBuffer;
+CDataAlloc2<1> ShopCashBuffer(-1);
 
 /**
  * Arena the shopkeeper's model data is built in, carved from the menu buffer past ShopCashBuffer.
  */
-extern CDataAlloc2<1> ShopCashBuffer2;
+CDataAlloc2<1> ShopCashBuffer2(-1);
+
+/** Shared UI state for the charge shop and item shop screens. */
+ShopMenuWork ShopMenu;
+
+/** The icon being carried between the shop's board and the player's. */
+ShopIconMove ShopDataMove;
+
+/** Player status the shop currently open is reading and writing. */
+CUserStatus *ShopUserStatusPt;
 
 /** Texture the shop board frame, tags and tickets are drawn from. */
-extern CTexture *ShopBoard;
+CTexture *ShopBoard;
 
-/** Per-slot state (0 = empty, 1 = held, 2 = just moved) of the personal item board. */
-extern s32 *ItemBoardInfo;
-
-/** Per-slot state of the personal weapon board, indexed by character then slot. */
-extern s32 (*WeaponBoardInfo)[10];
-
-/** Per-slot state of the personal attachment board. */
-extern s32 *AttachBoardInfo;
+/** Stock inventory the shop currently open is reading and writing. */
+CStockItem *ShopStockPt;
 
 /** Per-slot state of the charge shop's personal board. */
-extern s32 *ShopBoardInfo;
+s32 *ShopBoardInfo;
+
+/** Per-slot state (0 = empty, 1 = held, 2 = just moved) of the personal item board. */
+s32 *ItemBoardInfo;
+
+/** Per-slot state of the personal weapon board, indexed by character then slot. */
+s32 (*WeaponBoardInfo)[10];
+
+/** Per-slot state of the personal attachment board. */
+s32 *AttachBoardInfo;
 
 /** The charge shop's goods list, one entry per personal board slot. */
-extern SHOP_ITEMLIST *ShopListPt;
+SHOP_ITEMLIST *ShopListPt;
 
 /** Working copy of the item shop's board, allocated out of the shop's arena. */
-extern SHOP_ITEMLIST *ShopWorkBuf;
+SHOP_ITEMLIST *ShopWorkBuf;
 
 /** Screen position of the shop's help window. */
-extern float ShopHelpWinPos[2];
+float ShopHelpWinPos[2];
 
 /** Height of the shop's help window. */
-extern float ShopHelpWinH;
+float ShopHelpWinH;
 
 /** Width of the shop's help window. */
-extern float ShopHelpWinW;
+float ShopHelpWinW;
 
-/** Number of goods on each charge shop's board. */
-extern s16 ChargeShopMax[3];
+IHAVEITEM *ShopHaveItemPt;
+WEAPON_HAVE *ShopHaveWepPt;
+ATTACH_LIST *ShopHaveAttachPt;
 
 /** Nonzero while the item shop is open, zero while the charge shop is open. */
-extern s16 ChargeOrShopFlag;
+s16 ChargeOrShopFlag;
 
 static int ChargeSelectKey();
 
@@ -170,7 +174,7 @@ struct FishMenuWork {
 STATIC_ASSERT(sizeof(FishMenuWork) == 0x28);
 
 /** State of the fishing prize exchange screen. */
-extern FishMenuWork FishMenu;
+FishMenuWork FishMenu;
 
 /**
  * State of the fishing record screen.
@@ -190,10 +194,10 @@ struct FishRecordMenuWork {
 STATIC_ASSERT(sizeof(FishRecordMenuWork) == 0x24);
 
 /** State of the fishing record screen. */
-extern FishRecordMenuWork FishRecordMenu;
+FishRecordMenuWork FishRecordMenu;
 
 /** Texture the fishing exchange's fish icons are drawn from. */
-extern CTexture *FishMenuTex;
+CTexture *FishMenuTex;
 
 /** Message number, less thirty, describing each fishing prize. */
 extern s8 FishMsg[18];
@@ -2621,6 +2625,11 @@ static void ShopSpecialFunc() {
     }
 }
 
+s32 sort_table[9] = {9, 0, 1, 2, 3, 4, 5, 6, 7};
+s32 asort_table[5] = {5, 1, 2, 3, 4};
+s32 sort_top_type = 1;
+s32 asort_top_type = 1;
+
 int CompItem1(int first_item_no, int second_item_no) {
     ITEM_DATA *first = GetItemData(first_item_no);
     ITEM_DATA *second = GetItemData(second_item_no);
@@ -4672,6 +4681,44 @@ void ItemShopDraw2() {
  * @address 0x1F1250
  * @size 0x18
  */
+FISH_EXCHANGE_ITEM exitemlst[35] = {
+    {151, 5},
+    {152, 5},
+    {153, 5},
+    {154, 15},
+    {111, 50},
+    {112, 50},
+    {113, 50},
+    {114, 50},
+    {115, 50},
+    {116, 50},
+    {117, 50},
+    {118, 50},
+    {119, 50},
+    {120, 50},
+    {95, 100},
+    {96, 100},
+    {97, 100},
+    {98, 100},
+    {99, 100},
+    {100, 100},
+    {101, 100},
+    {102, 100},
+    {103, 100},
+    {104, 100},
+    {105, 100},
+    {106, 100},
+    {266, 1100},
+    {311, 1400},
+    {317, 1800},
+    {337, 1300},
+    {352, 1400},
+    {368, 1500},
+    {278, 2500},
+    {168, 2},
+    {169, 2},
+};
+
 static FISH_EXCHANGE_ITEM *GetExchangeItemList(int index) {
     return &exitemlst[index];
 }
@@ -5297,6 +5344,8 @@ int FishingExchangeLoop() {
     }
     return 0;
 }
+
+s8 FishMsg[18] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0, 1, 2, 3, 4, 5, 6, 7};
 
 int GetFishMsgNo(int prize_no) {
     if (prize_no < 0 || prize_no >= 18) {

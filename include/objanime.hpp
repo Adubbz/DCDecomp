@@ -75,6 +75,9 @@ struct OBJ_ANIME_SEQ {
 
 STATIC_ASSERT(sizeof(OBJ_ANIME_SEQ) == 0x90);
 
+/** Frame animations the map parts declare, defined with the item-definition parser. */
+extern "C" OBJ_ANIME_SEQ FrameObjAnim[48];
+
 /**
  * Describes one effect that an edited map places on a part, and the frame
  * that carries it.
@@ -216,3 +219,8 @@ void EditEffectStep2(void);
  * @size 0x24C
  */
 void DrawEditEffect(EDIT_EFFECT_INFO *, CCamera *, CEffectGroup *);
+
+/**
+ * Whether all object animations are stopped.
+ */
+extern int all_stop;

@@ -17,8 +17,6 @@
  */
 int CheckPartsInfo(EDITPARTS_INFO *info);
 
-CEditPartsInfo EditPartsInfo;
-
 EDITPARTS_INFO *CEditPartsInfo::GetPartsInfo(int index) {
     if ((index < 0) || (index >= 0x18)) {
         return NULL;

@@ -30,6 +30,9 @@ STATIC_ASSERT(sizeof(SAVE_MENU_STATE) == 0x34);
 /** Current step of the save menu and the arguments it carries between steps. */
 extern SAVE_MENU_STATE SaveMenu;
 
+/** Textures of the save menu's three character sets, indexed by input mode. */
+extern CTexture *SaveMenuMojiTextbl[4];
+
 /**
  * Holds the state of the event item selection menu.
  */

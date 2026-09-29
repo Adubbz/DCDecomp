@@ -25,17 +25,17 @@
 /**
  * Whether the battle-music transition is active.
  */
-extern int BtBattleMusic_Flag;
+int BtBattleMusic_Flag;
 
 /**
  * The delay before the next battle-music transition.
  */
-extern int BtBattleMusic_Wait;
+int BtBattleMusic_Wait;
 
 /**
  * The current battle-music volume.
  */
-extern float BtBattleMusic_Vol;
+float BtBattleMusic_Vol;
 
 CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
     int size;
@@ -165,8 +165,15 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     printf("mds = %s\n", model_path);
     printf("img = %s\n", texture_path);
 }
-extern char nameWepBuff_mds[];
-extern char nameWepBuff_img[];
+/**
+ * Model file name BtGetWeaponNamePath2 builds.
+ */
+char nameWepBuff_mds[64];
+
+/**
+ * Configuration file name BtGetWeaponNamePath2 builds.
+ */
+char nameWepBuff_img[64];
 
 void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
@@ -295,7 +302,11 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
     *battle_volume = BtBattleMusic_Vol;
 }
 
-extern int yearFloorTbl[25];
+/**
+ * The floor number shown for each floor of the deepest dungeon.
+ */
+int yearFloorTbl[25] = {5,   18,  23,  38,  51,  66,  102, 109, 122, 140, 151, 162, 205,
+                        208, 213, 225, 238, 249, 300, 310, 322, 340, 356, 382, 400};
 
 int BtGetFloorLevel(int dungeon_no) {
     if (dungeon_no >= 0 && dungeon_no < 25) {

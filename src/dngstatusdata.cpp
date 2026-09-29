@@ -30,8 +30,8 @@ extern "C" void WepDataListToHaveCopy__FiP11WEAPON_HAVE(int item_id, WEAPON_HAVE
  * two water-drain modifiers CUserStatus::Step applies. */
 extern "C" WEAPON_HAVE *NowWeaponHave;
 
-/* Default weapon id per character (weapon ids are >= 257; see CheckWeaponUser). */
-extern "C" s32 defWeapon__3[];
+/** Default weapon id per character. */
+static s32 defWeapon[6] = {257, 299, 314, 331, 347, 363};
 
 /* Per-item-id character-ownership table used by GetItem to auto-route weapon
  * pickups to the owning character's weapon slots. Accessed with a 19-word
@@ -42,20 +42,6 @@ extern "C" s32 defWeapon__3[];
  * at 0x275998 itself, so the extra offset is folded into the index
  * expression. */
 extern "C" s8 ItemPutListTbl12[];
-
-/* Three 24-byte (6 x s32) per-character tables read by Initialize, labelled in
- * ref/asm/sections/main/main.data.s. @781 holds the six weapon-id range
- * boundaries CheckWeaponUser uses; retail copies it to the stack and never
- * reads it (a dead copy that must be reproduced). @782 holds per-character
- * starting HP, read as the low 16 bits of each slot. @783__2 holds a second
- * per-character s32 stat of unconfirmed meaning. */
-struct StatTable6 {
-    s32 v[6];
-};
-
-extern "C" StatTable6 LIT_781;
-extern "C" StatTable6 LIT_782;
-extern "C" StatTable6 LIT_783__2;
 
 static inline int GetMaxDungeonItems() {
     return 100;
@@ -468,10 +454,10 @@ int CDngStatusData::CheckActItemSlot(int item_id) {
 }
 
 /* True if the character's currently-equipped weapon slot doesn't hold their
- * canonical default weapon (defWeapon__3[chara_no]). */
+ * canonical default weapon (defWeapon[chara_no]). */
 /* @ 0x1BE4B0 (0x60 bytes) -- CheckDefaultWeapon__14CDngStatusDataFi */
 int CDngStatusData::CheckDefaultWeapon(int chara_no) {
-    s32 def_weapon = defWeapon__3[chara_no];
+    s32 def_weapon = defWeapon[chara_no];
     if (def_weapon == this->chara_weapons[chara_no][this->equipped_weapon_slot[chara_no]].item_no) {
         return 0;
     }
@@ -847,9 +833,10 @@ void CDngStatusData::Initialize(void) {
     this->cur_chara = 0;
     this->party_size = 1;
 
-    StatTable6 local1 = LIT_781;
-    StatTable6 local2 = LIT_782;
-    StatTable6 local3 = LIT_783__2;
+    // The first weapon id of each character's range; copied but never read.
+    s32 weapon_base[6] = {257, 299, 314, 331, 347, 363};
+    s32 start_hp[6] = {70, 60, 100, 90, 110, 100};
+    s32 start_stat[6] = {3, 1, 12, 23, 38, 46};
 
     int t;
     int q;
@@ -860,9 +847,9 @@ void CDngStatusData::Initialize(void) {
     int valid;
 
     for (t = 0; (valid = t < 6) != 0; t++) {
-        this->max_hp[t] = local2.v[t];
-        this->hp[t] = local2.v[t];
-        this->unk_4348[t] = local3.v[t];
+        this->max_hp[t] = start_hp[t];
+        this->hp[t] = start_hp[t];
+        this->unk_4348[t] = start_stat[t];
         this->unk_42C8[t] = 0;
         this->unk_42E0[t] = 0;
         this->equipped_weapon_slot[t] = -1;

@@ -30,16 +30,16 @@
 /* Shared helpers: the IOP midi bridge, motion interpolation, collision and
  * ground queries, and 2D sprite setup. */
 
-static s32 midi_buffer[16];          // RPC argument and response storage shared by MIDI calls.
-static sceSifClientData midi_client; // Client state bound to the EZMIDI IOP server.
-static sceSifDmaData iop_transfer;   // Descriptor reused for synchronous EE-to-IOP transfers.
+static s32 sbuff[16];           // RPC argument and response storage shared by MIDI calls.
+static sceSifClientData gCd;    // Client state bound to the EZMIDI IOP server.
+static sceSifDmaData transData; // Descriptor reused for synchronous EE-to-IOP transfers.
 
 int ezMidiInit(void) {
     s32 wait;
 
     sceSifInitRpc(0);
     while (1) {
-        if (sceSifBindRpc(&midi_client, 0x12346, 0) < 0) {
+        if (sceSifBindRpc(&gCd, 0x12346, 0) < 0) {
             printf("error: sceSifBindRpc \n");
             for (;;) {
             }
@@ -47,7 +47,7 @@ int ezMidiInit(void) {
         wait = 10000;
         while (wait--) {
         }
-        if (midi_client.server != 0) {
+        if (gCd.server != 0) {
             break;
         }
     }
@@ -65,26 +65,26 @@ int ezMidi(int command, int argument) {
         receive_size = 64;
     }
     if ((command & 0x1000) != 0) {
-        sceSifCallRpc(&midi_client, command, 0, (void *) argument, 64, (void *) midi_buffer,
+        sceSifCallRpc(&gCd, command, 0, (void *) argument, 64, (void *) sbuff,
                       receive_size, 0, 0);
     } else {
-        midi_buffer[0] = argument;
-        sceSifCallRpc(&midi_client, command, 0, (void *) midi_buffer, 16, (void *) midi_buffer,
+        sbuff[0] = argument;
+        sceSifCallRpc(&gCd, command, 0, (void *) sbuff, 16, (void *) sbuff,
                       receive_size, 0, 0);
     }
-    return midi_buffer[0];
+    return sbuff[0];
 }
 
 int ezTransToIOP(void *iop_address, void *ee_address, int size) {
     s32 id;
 
-    iop_transfer.data = ee_address;
-    iop_transfer.addr = iop_address;
-    iop_transfer.size = size;
-    iop_transfer.mode = 0;
+    transData.data = ee_address;
+    transData.addr = iop_address;
+    transData.size = size;
+    transData.mode = 0;
 
     FlushCache(0);
-    id = sceSifSetDma(&iop_transfer, 1);
+    id = sceSifSetDma(&transData, 1);
     if (id == 0) {
         return -1;
     }
@@ -1584,10 +1584,199 @@ int CheckCameraWidth(CCPoly *polys, int count, float *position, float radius, fl
     }
     return hit;
 }
-static s32 linear_filter;          // Nonzero selects linear filtering for sprite batches.
-static u_long128 *sprite_data_top; // First quadword of the open sprite batch.
-static u_long128 *sprite_data;     // Current write cursor of the open sprite batch.
-static u_int *sprite_dma_count;    // DMA and VIF tag words patched when the batch closes.
+u32 MesWinClut[256] = {
+    0x00000000, 0x80304045, 0x80BFBFBF, 0x8040BDBD,
+    0x80BDBD40, 0x8040BD40, 0xFF304045, 0x8066CEE7,
+    0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x808F8F8F,
+    0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x808F8F8F,
+    0x808F8F8F, 0x80BF3FBF, 0x808F8F8F, 0x808F8F8F,
+};
+
+s32 GaijiDataTbl[158][8] = {
+    {-768, 0, 176, 110, 22, 0, 3, 8},
+    {-767, 0, 154, 110, 22, 0, 3, 8},
+    {-766, 32, 132, 32, 22, 0, 3, 2},
+    {-765, 64, 132, 32, 22, 0, 3, 2},
+    {-764, 0, 132, 32, 22, 0, 3, 2},
+    {-763, 96, 132, 32, 22, 0, 3, 2},
+    {-762, 0, 22, 22, 22, 0, 3, 2},
+    {-761, 22, 22, 22, 22, 0, 3, 2},
+    {-760, 66, 22, 22, 22, 0, 3, 2},
+    {-759, 44, 22, 22, 22, 0, 3, 2},
+    {-758, 0, 66, 22, 22, 0, 3, 2},
+    {-757, 44, 66, 22, 22, 0, 3, 2},
+    {-756, 22, 66, 22, 22, 0, 3, 2},
+    {-755, 0, 88, 22, 22, 0, 2, 2},
+    {-754, 22, 88, 22, 22, 0, 2, 2},
+    {-753, 44, 88, 22, 22, 0, 2, 2},
+    {-752, 66, 66, 22, 22, 0, 2, 2},
+    {-751, 66, 88, 22, 22, 0, 2, 2},
+    {-750, 0, 204, 26, 26, 0, 2, 2},
+    {-749, 26, 204, 26, 26, 0, 2, 2},
+    {-748, 0, 230, 26, 26, 0, 2, 2},
+    {-747, 26, 230, 26, 26, 0, 2, 2},
+    {-746, 0, 110, 22, 22, 0, 2, 2},
+    {-745, 22, 110, 66, 22, 8, 2, 5},
+    {-744, 0, 44, 56, 22, 0, 2, 5},
+    {-743, 88, 224, 40, 32, 0, 2, 4},
+    {-742, 88, 22, 22, 22, 0, 2, 2},
+    {-741, 100, 44, 22, 22, 0, 0, 2},
+    {-740, 56, 44, 22, 22, 0, 0, 2},
+    {-739, 100, 66, 22, 22, 0, 0, 2},
+    {-738, 78, 44, 22, 22, 0, 0, 2},
+    {-737, 52, 204, 25, 26, 0, 0, 3},
+    {-736, 52, 230, 33, 18, 0, 0, 3},
+    {-735, 128, 0, 14, 20, 0, 3, 1},
+    {-734, 142, 0, 14, 20, 0, 3, 1},
+    {-733, 156, 0, 14, 20, 0, 3, 1},
+    {-732, 170, 0, 14, 20, 0, 3, 1},
+    {-731, 184, 0, 14, 20, 0, 3, 1},
+    {-730, 198, 0, 14, 20, 0, 3, 1},
+    {-729, 212, 0, 14, 20, 0, 3, 1},
+    {-728, 226, 0, 14, 20, 0, 3, 1},
+    {-727, 240, 0, 14, 20, 0, 3, 1},
+    {-726, 128, 20, 14, 20, 0, 3, 1},
+    {-725, 142, 20, 14, 20, 0, 3, 1},
+    {-724, 156, 20, 14, 20, 0, 3, 1},
+    {-723, 170, 20, 14, 20, 0, 3, 1},
+    {-722, 184, 20, 14, 20, 0, 3, 1},
+    {-721, 198, 20, 14, 20, 0, 3, 1},
+    {-720, 212, 20, 14, 20, 0, 3, 1},
+    {-719, 226, 20, 14, 20, 0, 3, 1},
+    {-718, 240, 20, 14, 20, 0, 3, 1},
+    {-717, 128, 40, 14, 20, 0, 3, 1},
+    {-716, 142, 40, 14, 20, 0, 3, 1},
+    {-715, 156, 40, 14, 20, 0, 3, 1},
+    {-714, 170, 40, 14, 20, 0, 3, 1},
+    {-713, 184, 40, 14, 20, 0, 3, 1},
+    {-712, 198, 40, 14, 20, 0, 3, 1},
+    {-711, 212, 40, 14, 20, 0, 3, 1},
+    {-710, 226, 40, 14, 20, 0, 3, 1},
+    {-709, 240, 40, 14, 20, 0, 3, 1},
+    {-708, 128, 60, 14, 20, 0, 3, 1},
+    {-707, 142, 60, 14, 20, 0, 3, 1},
+    {-706, 156, 60, 14, 20, 0, 3, 1},
+    {-705, 170, 60, 14, 20, 0, 3, 1},
+    {-704, 184, 60, 14, 20, 0, 3, 1},
+    {-703, 198, 60, 14, 20, 0, 3, 1},
+    {-702, 212, 60, 14, 20, 0, 3, 1},
+    {-701, 226, 60, 14, 20, 0, 3, 1},
+    {-700, 240, 60, 14, 20, 0, 3, 1},
+    {-699, 128, 80, 14, 20, 0, 3, 1},
+    {-698, 142, 80, 14, 20, 0, 3, 1},
+    {-697, 156, 80, 14, 20, 0, 3, 1},
+    {-696, 170, 80, 14, 20, 0, 3, 1},
+    {-695, 184, 80, 14, 20, 0, 3, 1},
+    {-694, 198, 80, 14, 20, 0, 3, 1},
+    {-693, 212, 80, 14, 20, 0, 3, 1},
+    {-692, 226, 80, 14, 20, 0, 3, 1},
+    {-691, 240, 80, 14, 20, 0, 3, 1},
+    {-690, 128, 100, 14, 20, 0, 3, 1},
+    {-689, 142, 100, 14, 20, 0, 3, 1},
+    {-688, 156, 100, 14, 20, 0, 3, 1},
+    {-687, 170, 100, 14, 20, 0, 3, 1},
+    {-686, 184, 100, 14, 20, 0, 3, 1},
+    {-685, 198, 100, 14, 20, 0, 3, 1},
+    {-684, 212, 100, 14, 20, 0, 3, 1},
+    {-683, 226, 100, 14, 20, 0, 3, 1},
+    {-682, 240, 100, 14, 20, 0, 3, 1},
+    {-681, 128, 120, 14, 20, 0, 3, 1},
+    {-680, 142, 120, 14, 20, 0, 3, 1},
+    {-679, 156, 120, 14, 20, 0, 3, 1},
+    {-678, 170, 120, 14, 20, 0, 3, 1},
+    {-677, 184, 120, 14, 20, 0, 3, 1},
+    {-676, 198, 120, 14, 20, 0, 3, 1},
+    {-675, 212, 120, 14, 20, 0, 3, 1},
+    {-674, 226, 120, 14, 20, 0, 3, 1},
+    {-673, 240, 120, 14, 20, 0, 3, 1},
+    {-672, 128, 140, 14, 20, 0, 3, 1},
+    {-671, 142, 140, 14, 20, 0, 3, 1},
+    {-670, 156, 140, 14, 20, 0, 3, 1},
+    {-669, 170, 140, 14, 20, 0, 3, 1},
+    {-668, 184, 140, 14, 20, 0, 3, 1},
+    {-667, 198, 140, 14, 20, 0, 3, 1},
+    {-666, 212, 140, 14, 20, 0, 3, 1},
+    {-665, 226, 140, 14, 20, 0, 3, 1},
+    {-664, 240, 140, 14, 20, 0, 3, 1},
+    {-663, 128, 160, 14, 20, 0, 3, 1},
+    {-662, 142, 160, 14, 20, 0, 3, 1},
+    {-661, 156, 160, 14, 20, 0, 3, 1},
+    {-660, 170, 160, 14, 20, 0, 3, 1},
+    {-659, 184, 160, 14, 20, 0, 3, 1},
+    {-658, 198, 160, 14, 20, 0, 3, 1},
+    {-657, 212, 160, 14, 20, 0, 3, 1},
+    {-656, 226, 160, 14, 20, 0, 3, 1},
+    {-655, 240, 160, 14, 20, 0, 3, 1},
+    {-654, 128, 180, 14, 20, 0, 3, 1},
+    {-653, 142, 180, 14, 20, 0, 3, 1},
+    {-652, 156, 180, 14, 20, 0, 3, 1},
+    {-651, 170, 180, 14, 20, 0, 3, 1},
+    {-650, 184, 180, 14, 20, 0, 3, 1},
+    {-649, 198, 180, 14, 20, 0, 3, 1},
+    {-648, 212, 180, 14, 20, 0, 3, 1},
+    {-647, 226, 200, 14, 20, 0, 3, 1},
+    {-646, 198, 200, 14, 20, 0, 3, 1},
+    {-645, 184, 200, 14, 20, 0, 3, 1},
+    {-644, 128, 0, 14, 20, 0, 3, 1},
+    {-643, 156, 0, 14, 20, 0, 3, 1},
+    {-642, 184, 0, 14, 20, 0, 3, 1},
+    {-641, 184, 0, 14, 20, 0, 3, 1},
+    {-640, 198, 20, 14, 20, 0, 3, 1},
+    {-639, 156, 40, 14, 20, 0, 3, 1},
+    {-638, 212, 200, 14, 20, 0, 3, 1},
+    {-637, 240, 40, 14, 20, 0, 3, 1},
+    {-636, 240, 40, 14, 20, 0, 3, 1},
+    {-635, 240, 40, 14, 20, 0, 3, 1},
+    {-634, 240, 40, 14, 20, 0, 3, 1},
+    {-633, 142, 60, 14, 20, 0, 3, 1},
+    {-632, 170, 60, 14, 20, 0, 3, 1},
+    {-631, 170, 60, 14, 20, 0, 3, 1},
+    {-630, 170, 60, 14, 20, 0, 3, 1},
+    {-629, 170, 60, 14, 20, 0, 3, 1},
+    {-628, 226, 60, 14, 20, 0, 3, 1},
+    {-627, 226, 60, 14, 20, 0, 3, 1},
+    {-626, 226, 60, 14, 20, 0, 3, 1},
+    {-625, 226, 60, 14, 20, 0, 3, 1},
+    {-624, 170, 80, 14, 20, 0, 3, 1},
+    {-623, 184, 80, 14, 20, 0, 3, 1},
+    {-622, 184, 80, 14, 20, 0, 3, 1},
+    {-621, 184, 80, 14, 20, 0, 3, 1},
+    {-620, 184, 80, 14, 20, 0, 3, 1},
+    {-619, 142, 100, 14, 20, 0, 3, 1},
+    {-618, 142, 100, 14, 20, 0, 3, 1},
+    {-617, 142, 100, 14, 20, 0, 3, 1},
+    {-616, 142, 100, 14, 20, 0, 3, 1},
+    {-615, 156, 40, 14, 20, 0, 3, 1},
+    {-614, 128, 0, 14, 20, 0, 3, 1},
+    {-613, 240, 200, 14, 20, 0, 3, 1},
+    {-612, 198, 20, 14, 20, 0, 3, 1},
+    {-1, 96, 96, 32, 32, 0, 0, 1},
+};
+
+u32 FontColorTbl[16] = {
+    0x00000000, 0x80304045, 0x80BFBFBF, 0x8040BDBD,
+    0x80BDBD40, 0x8040BD40, 0xFF304045, 0x8066CEE7,
+    0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x808F8F8F,
+    0x808F8F8F, 0x808F8F8F, 0x808F8F8F, 0x00000000,
+};
+
+int Mes1MakeFlg = 1;
+int Mes2MakeFlg = 1;
+int MesAbsDrawOff;
+
+/** Texture buffer the first common menu message window draws its glyphs from. */
+u8 MesWinTexBuff_01[0x100];
+/** Texture buffer the second common menu message window draws its glyphs from. */
+u8 MesWinTexBuff_02[0x100];
+/** Texture buffer the third common menu message window draws its glyphs from. */
+u8 MesWinTexBuff_11[0x100];
+/** Texture buffer the name message window draws its glyphs from. */
+u8 MesWinTexBuff_12[0x100];
+
+static s32 linear;          // Nonzero selects linear filtering for sprite batches.
+static u_long128 *data_top; // First quadword of the open sprite batch.
+static u_long128 *pdata;    // Current write cursor of the open sprite batch.
+static u_int *dma_cnt;      // DMA and VIF tag words patched when the batch closes.
 
 void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     u_int *p;
@@ -1598,9 +1787,9 @@ void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     if (texture == 0)
         return;
     sceVif1PkTerminate(packet);
-    sprite_data_top = (u_long128 *) packet->pCurrent;
-    sprite_data = sprite_data_top;
-    sprite_dma_count = p = (u_int *) sprite_data;
+    data_top = (u_long128 *) packet->pCurrent;
+    pdata = data_top;
+    dma_cnt = p = (u_int *) pdata;
     p[0] = 0x10000000 | 5;
     p[1] = 0;
     p[2] = 0;
@@ -1612,7 +1801,7 @@ void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     ad = (u_long *) (p + 8);
     ad[0] = 0;
     ad[1] = SCE_GS_TEXFLUSH;
-    ad[2] = ((u_long) linear_filter << 5) | 0x41;
+    ad[2] = ((u_long) linear << 5) | 0x41;
     ad[3] = SCE_GS_TEX1_1;
     ad[4] = texture->tex0;
     ad[5] = SCE_GS_TEX0_1;
@@ -1630,7 +1819,7 @@ void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     zbuf.bits.zmsk = 1;
     ad[10] = *(u_long *) &zbuf;
     ad[11] = SCE_GS_ZBUF_1;
-    sprite_data = (u_long128 *) (ad + 12);
+    pdata = (u_long128 *) (ad + 12);
 }
 
 void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &position,
@@ -1639,7 +1828,7 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
 
     if (texture == 0)
         return;
-    ad = (u_long *) sprite_data;
+    ad = (u_long *) pdata;
     ad[0] = SCE_GS_SET_RGBAQ(red, green, blue, alpha, 0);
     ad[1] = SCE_GS_RGBAQ;
     ad[2] = SCE_GS_SET_UV(uv.x << 4, uv.y << 4);
@@ -1651,7 +1840,7 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
     ad[8] = SCE_GS_SET_XYZF2(((position.x + position.width) << 4) + 27647,
                              ((position.y + position.height) << 3) + 30976, 0, 0);
     ad[9] = SCE_GS_XYZF2;
-    sprite_data = (u_long128 *) (ad + 10);
+    pdata = (u_long128 *) (ad + 10);
 }
 
 void set2DSprite_End(sceVif1Packet *packet, CTexture *texture) {
@@ -1659,18 +1848,18 @@ void set2DSprite_End(sceVif1Packet *packet, CTexture *texture) {
     u_int *dma_count;
     s32 qwc;
 
-    ad = (u_long *) sprite_data;
+    ad = (u_long *) pdata;
     ad[0] = *(u_long *) &mgPixelTest;
     ad[1] = SCE_GS_TEST_1;
     ad[2] = *(u_long *) &mgZBuffer;
     ad[3] = SCE_GS_ZBUF_1;
-    sprite_data = (u_long128 *) (ad + 4);
-    dma_count = sprite_dma_count;
-    qwc = sprite_data - sprite_data_top - 1;
+    pdata = (u_long128 *) (ad + 4);
+    dma_count = dma_cnt;
+    qwc = pdata - data_top - 1;
     dma_count[0] = 0x10000000 | qwc;
     dma_count[3] = 0x50000000 | qwc;
     dma_count[4] = (qwc - 1) | 0x8000;
-    sceVif1PkReserve(packet, (sprite_data - sprite_data_top) * 4);
+    sceVif1PkReserve(packet, (pdata - data_top) * 4);
 }
 
 void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
@@ -1754,9 +1943,6 @@ void GetScrPosFromChar(CCharacter *chara, int *out_pos) {
     out_pos[0] = screen[0];
     out_pos[1] = screen[1];
 }
-/** The sixteen colours the font palette can hold. */
-extern "C" u32 FontColorTbl[16];
-
 unsigned int Color2Clut(unsigned int colour) {
     for (int i = 0; i < 16; i++) {
         if (colour == FontColorTbl[i]) {

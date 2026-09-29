@@ -186,8 +186,20 @@ STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
  */
 extern "C" ED_EVENT_INFO EdEventInfo;
 
+/** Whether a map's start events run when the editor enters it. */
+extern int EdDebugEventEnable;
+
+/** Whether the editor camera is left to the debug controls. */
+extern int EdDebugCameraFlag;
+
+/** Disables the editor's parameter overlay. */
+extern int EdDebugParamDrawOff;
+
 /** Disables character drawing in the editor debug view. */
 extern int EdDebugCharaDrawOff;
+
+/** Whether the editor character is left to the debug controls. */
+extern int EdDebugMoveFlag;
 
 /**
  * Steps the editor's event system, and says what the event asks the loop to do.

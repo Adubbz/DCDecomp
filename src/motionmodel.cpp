@@ -7,12 +7,8 @@
 #include "btmisc.hpp"
 #include "dataread.hpp"
 #include "frame.hpp"
+#include "hitvalue.hpp"
 #include "mglib.hpp"
-
-/**
- * Holds the hit attribute for each weapon element.
- */
-static int element_tbl[6] = {1, 2, 4, 8, 0x10, 0};
 
 /**
  * Returns the attribute bit for a weapon element, or zero for an invalid element.

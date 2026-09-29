@@ -25,44 +25,6 @@ void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
         printf(" ************* over!!\n");
     }
 }
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @488);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @489);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @490);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @491__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @492);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @493);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @494__3);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @495__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @496__3);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @497__4);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @498__4);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @499__3);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @500__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @501__3);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @502__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @503__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @504);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @505__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @506__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @507__3);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @508__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @509__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @510__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @511__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @512__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @513);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @514__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @515__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @516);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @517__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @518);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @519);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @520);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @521__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @522__2);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @523);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @524);
-INCLUDE_RODATA("asm/nonmatchings/dranmapfield", @525);
 int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     int i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;

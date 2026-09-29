@@ -78,3 +78,7 @@ public:
 void HitValueEntry(CHitValue *values, float *position, int amount, int kind, CFrame *frame);
 
 STATIC_ASSERT(sizeof(CHitValue) == 0x60);
+
+/** Hit attribute bit of each weapon element. */
+extern int element_tbl[6];
+

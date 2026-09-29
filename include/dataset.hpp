@@ -7,6 +7,8 @@
 // names but not where they live.
 class CFrame;
 
+#include "dataalloc_fwd.hpp"
+
 /**
  * @file
  * Declares the calls that build a model out of the data that was read.
@@ -48,3 +50,18 @@ void BufferAllClear(void);
  * @unknownret
  */
 void SetFrameAttr(CFrame *frame, int attr);
+
+/**
+ * Receives the files that synchronous game-data reads load.
+ */
+extern u_int *read_buffer;
+
+/**
+ * Points at the shared scratch allocator used while loading and transforming data.
+ */
+extern CDataAlloc2<1> *WorkBuffer;
+
+/**
+ * Points at whichever per-frame VU data arena the current frame builds into.
+ */
+extern CDataAlloc2<1> *ActiveData;

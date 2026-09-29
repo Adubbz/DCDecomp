@@ -191,6 +191,9 @@ public:
 
 STATIC_ASSERT(sizeof(CWeaponLevelUp) == 0x1330);
 
+/** State of the weapon menu's repair, level-up and build-up effects. */
+extern CWeaponLevelUp MenuWepLevelUp;
+
 /**
  * Adds scaled attachment values to an accumulated attachment record.
  *

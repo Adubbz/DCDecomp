@@ -35,20 +35,21 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-/** The personal inventory board the menu is working on. */
-extern PERSONAL_BOARD *PerBoardPt;
-
 /** Player data used by personal-board item operations. */
-extern CUserStatus *PerBoardStatusPt;
+CUserStatus *PerBoardStatusPt;
+
+CTexture *PerBoardTex;
+
+/** The personal inventory board the menu is working on. */
+PERSONAL_BOARD *PerBoardPt;
+
+char MenuGrobalDir[64];
 
 /** Marks, one per item pack slot, of the items the menu offers to throw away. */
-extern s8 MenuTrushMark[100];
+s8 MenuTrushMark[100];
 
 /** Screen rectangle the menus draw full-screen pictures into. */
 extern CRect_i_ MenuDispRc;
-
-/** Texture of the personal inventory board. */
-extern CTexture *PerBoardTex;
 
 /** Texture block the item menu's weapon icons load into. */
 extern int ItemMenuWeaponIconReadBlock;

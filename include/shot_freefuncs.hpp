@@ -32,6 +32,12 @@ struct WATER_WAVE_LING {
 
 STATIC_ASSERT(sizeof(WATER_WAVE_LING) == 0x20);
 
+/** Debug switches the debug overlay sets and dungeon rendering reads. */
+extern "C" s32 DebugStatus[21];
+
+/** The tint applied to the party by status ailments. */
+extern "C" float StatusColor[3];
+
 /**
  * Clears the water-splash effects.
  *

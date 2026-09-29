@@ -33,9 +33,6 @@ STATIC_ASSERT(sizeof(EDIT_IN_INFO) == 0x44C0);
 /** Settings of the interior being run. */
 extern EDIT_IN_INFO *EdInInfo;
 
-/** Water surface the interior draws. */
-extern CGroundWater Water[1];
-
 /**
  * Builds everything one interior runs on: its data, models, script and camera.
  *

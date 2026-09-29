@@ -179,6 +179,7 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
     }
 
     classified, order = {}, []
+    data_only = {}
     for image in IMAGES:
         path = Path(config_dir) / f"{image}.yaml"
         if not path.exists():
@@ -189,6 +190,17 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
                 unit = match.group(2)
                 classified[unit] = (UNIT_TYPES[match.group(1)], image)
                 order.append(unit)
+            elif match and match.group(1) in DATA_ONLY_TYPES:
+                data_only.setdefault(match.group(2), (match.group(1), image))
+    # A library object with data and no code -- newlib's impure.c -- is a
+    # `.data` subsegment with no code sibling. splat writes it on its own under
+    # asm/data, and it links as a whole-unit object like any other asm unit.
+    standalone = {}
+    for unit, (kind, image) in data_only.items():
+        if unit not in classified and unit.startswith("lib/"):
+            classified[unit] = ("asm", image)
+            order.append(unit)
+            standalone[unit] = kind
 
     for unit, kind in classified.items():
         if kind[0] == "asm" and unit in handwritten:
@@ -208,8 +220,25 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
         if source is None:
             continue
         kind, image = classified.get(unit, ("mixed", image_of_unit(unit)))
-        rows.append((kind, image, source, f"asm/{unit}.s"))
+        reference = f"asm/{unit}.s"
+        if unit in standalone:
+            reference = data_only_dump(unit, standalone[unit])
+        rows.append((kind, image, source, reference))
     return rows
+
+
+# The subsegment types a unit without code can consist of.
+DATA_ONLY_TYPES = (".data", ".bss", ".sdata", ".sbss")
+
+
+def data_only_dump(unit, kind):
+    """Where splat writes a unit that is one data subsegment and nothing else."""
+    return f"asm/data/{unit}.{kind.lstrip('.')}.s"
+
+
+def data_only_dumps():
+    """The files of the data-only units, which drop_redundant_dumps must keep."""
+    return {Path(row[3]).name for row in read_units() if row[0] == "asm" and row[3].startswith("asm/data/")}
 
 
 SYMBOL_ROW = re.compile(r"^(\S+)\s*=\s*(0x[0-9A-Fa-f]+)\s*;(?:\s*//\s*(.*))?$")
@@ -684,9 +713,20 @@ def _per_file_passes(item):
     text = restore_gp_relative_relocations(
         path, text, _PER_FILE_STATE["symbols"], _PER_FILE_STATE["image_of"]
     )
-    return path, restore_invented_names(
+    return path, drop_linker_symbol_labels(restore_invented_names(
         twin_branched_labels(localize_alt_labels(globalize_addressed_labels(text)))
-    )
+    ))
+
+
+# Symbols the linker script defines. splat labels the address they fall on
+# inside a unit's data -- `_gp` sits in libmc's currentDir -- and the object
+# would define them a second time.
+LINKER_SYMBOLS = ("_gp", "__bss_start", "__data_start", "__data_end")
+
+
+def drop_linker_symbol_labels(text):
+    """Remove a data label that only restates a symbol the linker script defines."""
+    return re.sub(r"^glabel (?:%s)\n" % "|".join(map(re.escape, LINKER_SYMBOLS)), "", text, flags=re.M)
 
 
 def job_count():
@@ -854,7 +894,7 @@ def drop_redundant_dumps():
     look like another object to globalize_shared_labels, which would then count
     a unit's own jump table targets as reached from outside.
     """
-    keep = {Path(dump_path(name)).name for name in dump_names()}
+    keep = {Path(dump_path(name)).name for name in dump_names()} | data_only_dumps()
     removed = 0
     data = Path("asm/data")
     if data.is_dir():

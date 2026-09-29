@@ -32,6 +32,119 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena);
  */
 void TEIGIMdsLoad(u_int *pack, int reuse_only);
 
+class CFrame;
+
+/** Directory prefix applied to resource names in the item definition file. */
+extern char pathName[256];
+
+/** Resource paths of the dungeon-part models already loaded. */
+extern char filePathList[72][64];
+
+/** Frames of the dungeon-part models already loaded, parallel to filePathList. */
+extern CFrame *frameList[72];
+
+/** Resource paths of the dungeon-part collision models already loaded. */
+extern char filePathColList[144][64];
+
+/** Frames of the dungeon-part collision models already loaded, parallel to filePathColList. */
+extern CFrame *frameListCol[144];
+
+/** Parser integrity marker changed by malformed definition data. */
+extern int errFlag2;
+
+/** Number of entries of FrameObjAnim in use. */
+extern "C" int FrameObjAnimCnt;
+
+/** Number of entries of filePathList in use. */
+extern int filePathNum;
+
+/** Number of entries of filePathColList in use. */
+extern int filePathColNum;
+
+/** Revision of the weapon list reported by the debug display. */
+extern int VERSION_VOL;
+
+/** Movement speed multiplier set by the RUN_SPEED directive. */
+extern float run_speed;
+
+/** Command number and argument kinds of the LIGHT_C directive. */
+extern int TEIGI_LIGHT_C[];
+
+/** Command number and argument kinds of the SET_PATH directive. */
+extern int TEIGI_SET_PATH[];
+
+/** Command number and argument kinds of the VIEWLEVEL directive. */
+extern int TEIGI_VIEWLEVEL[];
+
+/** Command number and argument kinds of the DRANS_PARTS directive. */
+extern int TEIGI_DRANS_PARTS[];
+
+/** Command number and argument kinds of the DRANS_COLS directive. */
+extern int TEIGI_DRANS_COLS[];
+
+/** Command number and argument kinds of the URA_AMBIENT directive. */
+extern int TEIGI_URA_AMBIENT[];
+
+/** Command number and argument kinds of the URA_LIGHT_C directive. */
+extern int TEIGI_URA_LIGHT_C[];
+
+/** Command number and argument kinds of the URA_FOG directive. */
+extern int TEIGI_URA_FOG[];
+
+/** Command number and argument kinds of the URA_BG_COL directive. */
+extern int TEIGI_URA_BG_COL[];
+
+/** Command number and argument kinds of the MINIMAP_IMG directive. */
+extern int TEIGI_MINIMAP_IMG[];
+
+/** Command number and argument kinds of the PT_CAM directive. */
+extern int TEIGI_PT_CAM[];
+
+/** Command number and argument kinds of the PT_LIGHT directive. */
+extern int TEIGI_PT_LIGHT[];
+
+/** Command number and argument kinds of the PT_GLIGHT directive. */
+extern int TEIGI_PT_GLIGHT[];
+
+/** Command number and argument kinds of the BG_MODEL directive. */
+extern int TEIGI_BG_MODEL[];
+
+/** Command number and argument kinds of the DUMMY_MODEL directive. */
+extern int TEIGI_DUMMY_MODEL[];
+
+/** Command number and argument kinds of the PT_TAKI00 directive. */
+extern int TEIGI_PT_TAKI00[];
+
+/** Command number and argument kinds of the PT_DRAW_FLAG directive. */
+extern int TEIGI_PT_DRAW_FLAG[];
+
+/** Command number and argument kinds of the DRAW_FLAG directive. */
+extern int TEIGI_DRAW_FLAG[];
+
+/** Command number and argument kinds of the PT_MARKER directive. */
+extern int TEIGI_PT_MARKER[];
+
+/** Command number and argument kinds of the PT_NPC directive. */
+extern int TEIGI_PT_NPC[];
+
+/** Command number and argument kinds of the PT_ROT directive. */
+extern int TEIGI_PT_ROT[];
+
+/** Command number and argument kinds of the PT_HEAL_ZONE directive. */
+extern int TEIGI_PT_HEAL_ZONE[];
+
+/** Command number and argument kinds of the PT_HIT_MARKER directive. */
+extern int TEIGI_PT_HIT_MARKER[];
+
+/** Command number and argument kinds of the PT_SCALE directive. */
+extern int TEIGI_PT_SCALE[];
+
+/** Item-definition command names, terminated by a null entry. */
+extern char *TEIGI_TABLE[];
+
+/** Argument format of each item-definition command, parallel to TEIGI_TABLE. */
+extern int *TEIGI_ARG_TABLE[];
+
 /**
  * @file
  * Item, weapon and attachment definitions, and their accessors.

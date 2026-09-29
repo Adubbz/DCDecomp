@@ -39,6 +39,7 @@
 #include "userstatus.hpp"
 #include "weaponelement.hpp"
 
+int hitCnt;
 BEE_STATE BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
 

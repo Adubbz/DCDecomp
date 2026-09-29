@@ -26,6 +26,21 @@ struct RS_STACKDATA;
 extern int PUSH_INT_DATA[16][8];
 
 /**
+ * Integers the monster scripts share, set and read by index.
+ */
+extern int GL_INT[10];
+
+/**
+ * Opcode table the monster scripts dispatch through, indexed by operation number.
+ */
+extern int (*ext_func[256])(RS_STACKDATA *, int);
+
+/**
+ * Palette colour each element tints a hit monster with, as red, green and blue.
+ */
+extern int elmColor[6][3];
+
+/**
  * Starts a motion on the monster and every part linked to it, optionally at a given speed and repeat count.
  *
  * @mangled _SET_MOTION__FP12RS_STACKDATAi

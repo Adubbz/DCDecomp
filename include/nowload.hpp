@@ -2,8 +2,12 @@
 
 #include "common.h"
 
+#include <libgraph.h>
+#include <libpkt.h>
+
+#include "texture.hpp"
+
 // Forward declarations for the types these declarations name.
-class CTexture;
 struct TM2_head;
 
 /**
@@ -95,3 +99,60 @@ void LoadTexture(char *name, unsigned char *archive, CTexture *texture, int imag
  * @size 0x1D4
  */
 void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int palette_address);
+
+/**
+ * Whether the loading screen has finished, set on arming and again when its fade ends.
+ */
+extern int end_flag;
+/**
+ * VIF1 packet buffer the loading screen builds each frame's sprites in.
+ */
+extern u_int now_load[2000];
+/**
+ * Double-buffered GS environment the loading screen draws with.
+ */
+extern sceGsDBuff nowloadDB;
+/**
+ * Packet builder writing into now_load.
+ */
+extern sceVif1Packet nlPacket;
+/**
+ * Loading-screen image, or the first logo on the boot logo screen.
+ */
+extern CTexture nl_tex;
+/**
+ * Second logo on the boot logo screen.
+ */
+extern CTexture nl_tex2;
+/**
+ * Whether the loading screen is being shown.
+ */
+extern int now_loding_flag;
+/**
+ * Vertical syncs left before the loading screen starts drawing.
+ */
+extern int nl_start_cnt;
+/**
+ * Current brightness of the loading screen's fade, 0 to 128.
+ */
+extern float col_cnt;
+/**
+ * Brightness step of the loading screen's fade, negated when it turns.
+ */
+extern float col_add;
+/**
+ * Index of the boot logo being shown.
+ */
+extern int logo_count;
+/**
+ * Map title number the loading screen was armed with.
+ */
+extern int map_title_no;
+/**
+ * Requests that the loading display be disabled.
+ */
+extern int now_loding_off;
+/**
+ * Whether the loading display has completed a field.
+ */
+extern int now_loading_vsync_end;

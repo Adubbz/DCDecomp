@@ -88,13 +88,6 @@ extern "C" void duhandler__3stdFv(void);
 extern "C" void dthandler__3stdFv(void);
 
 /**
- * Records one global object so that its destructor runs at exit.
- *
- * @mangled __register_global_object
- * @address 0x122930
- * @size 0x24
- */
-/**
  * Links one object and its destructor into the runtime shutdown chain.
  */
 struct MWGlobalDestructor {
@@ -103,6 +96,28 @@ struct MWGlobalDestructor {
     void *object;                          /**< Object passed to the destructor. */
 };
 
+/**
+ * Handler that std::terminate calls to end the program.
+ */
+extern "C" void (*thandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8)));
+
+/**
+ * Handler that std::unexpected calls for an exception a function did not declare.
+ */
+extern "C" void (*uhandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8)));
+
+/**
+ * Most recently registered global object, heading the list destroyed at exit.
+ */
+extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(".bss")));
+
+/**
+ * Records one global object so that its destructor runs at exit.
+ *
+ * @mangled __register_global_object
+ * @address 0x122930
+ * @size 0x24
+ */
 extern "C" void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
                                           MWGlobalDestructor *record);
 

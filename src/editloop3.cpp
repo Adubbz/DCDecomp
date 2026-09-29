@@ -60,27 +60,6 @@
 
 /* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
 
-/** Working arena used to load event villagers and the event player model. */
-CDataAlloc2<1> EdVillagerBuffer;
-
-/** Working arena beginning at the free end of the villager arena for event resources. */
-CDataAlloc2<1> EdEventBuffer;
-
-/** Working arena beginning at the free end of the event arena for additional resources. */
-CDataAlloc2<1> EdEventExBuffer;
-
-/** Homogeneous origin used to resolve the fishing rod's world position. */
-static sceVu0FVECTOR fishing_line_origin = {0.0f, 0.0f, 0.0f, 1.0f};
-
-/** Shared editor objects used by event-point and villager processing. */
-ED_EXCHANGE_INFO EdExchangeInfo;
-
-/** Runtime character objects for the ten villagers selected for the current period. */
-CNPCharacter EdVillager[10];
-
-/** Runtime metadata for the ten villagers selected for the current period. */
-VILLAGER_INFO EdVillagerInfo[10];
-
 ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
                                  ED_EVENT_POINT *points, int count) {
     ED_EVENT_POINT *point = GetNewEventPoint(points, count);
@@ -1826,6 +1805,10 @@ static int fade_end;
 /** GS alpha added on each frame of the active editor fade. */
 static float fade_step;
 
+ED_EVENT_INFO EdEventInfo;
+
+OBJ_HANDLE ObjHandle[32];
+
 void EdFadeInit() {
     fade_col[3] = 0.0f;
     fade_col[2] = 0.0f;
@@ -2224,8 +2207,14 @@ static CSpriteTable SpriteTable;
 /** Background sprite command table for the active event. */
 static CSpriteTable SpriteTableBack;
 
+CCharacter SceneData;
+
+CCamera DmmyCamera(4.0f);
+
 /** Bytecode interpreter used by editor events. */
 static CRunScript EdEventScript;
+
+CRunScript SystemEventScript;
 
 /** Archive slots populated by event character-file loads. */
 static u_int *chr_file[16];
@@ -2239,18 +2228,18 @@ static sceVu0FMATRIX save_c[2];
 /** Saved ambient-light colour presets available to event scripts. */
 static sceVu0FVECTOR save_a[2];
 
+int (*ext_func__2[1500])(RS_STACKDATA *, int);
+
 /** Describes one editor-event external function and its bytecode operation number. */
 struct ED_EVENT_EXTERNAL_FUNCTION {
     int (*function)(RS_STACKDATA *, int); /**< Native function invoked by the bytecode operation. */
     int operation;                        /**< Bytecode operation number assigned to the function. */
 };
 
-/** Dispatch table built from the editor-event external-function registry. */
 extern int EdPauseFlag;
 extern s32 MenuMapJumpMode;
 void EdDrawOffAll();
 void EdDrawOnAll();
-extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
 static int SetWorkFlag(int index, int value) {
     if (index < 0 || index >= 32)
@@ -2308,9 +2297,6 @@ static void SetStack(RS_STACKDATA *stack, float value) {
 
 static void PrintMemory() {
 }
-
-/** Object handles exposed to editor event scripts. */
-extern OBJ_HANDLE ObjHandle[32];
 
 static OBJ_HANDLE *GetObjHandle(int index) {
     if (index < 0 || index >= 32)
@@ -2611,12 +2597,6 @@ void turn_chara(CCharacter *character, float *position, float speed) {
     *yaw = AngleInterpolate(*yaw, angle, speed, 0);
     character->SetRotation(rotation);
 }
-
-/** Character container used for script-loaded scene animation data. */
-extern CCharacter SceneData;
-
-/** Camera used when no scene motion camera remains attached. */
-extern CCamera DmmyCamera;
 
 static CCharacter *GetScene(int) {
     return &SceneData;
@@ -6272,6 +6252,9 @@ static int _LOAD_FISHING_DATA(RS_STACKDATA *stack, int) {
 /**
  * Initializes the fishing line at the player's rod and requests fishing mode.
  */
+/** Homogeneous origin used to resolve the fishing rod's world position. */
+static sceVu0FVECTOR fishing_line_origin = {0.0f, 0.0f, 0.0f, 1.0f};
+
 static int _GOTO_FISHING(RS_STACKDATA *, int) {
     CCharacter *character = GetChara(-1);
     if (character == NULL)

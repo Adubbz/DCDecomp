@@ -27,86 +27,42 @@
 
 extern "C" int abs(int);
 
-/** The state the edit menu is in. */
-extern int EditSwitch;
-
-/** The frame count of the edit menu's current transition. */
-extern int EdEffectCt;
-
-/** The selection on the edit menu's analyze page. */
-extern s16 AnalyzeSelect;
-
-/** The speed-up the analyze bar draws with, set to 2 while any input is held. */
-extern s16 ButtonAdd;
-
-/** The edit menu icon's movement: 1 while CalMoveFromMenuIcon runs, 2 while CalMoveToMenuIcon runs, 0 for none. */
-extern s16 EdMenuEffectFlag;
-
-/** The frame count of the edit menu icon's movement. */
-extern float EdMenuEffectCt;
-
-/** Whether the edit menu's second window is to be made. */
-extern s16 MakeWin2Flag;
-
 extern CDataAlloc2<1> EdMenuBuffer;
 
-/** The edit menu's eased cursor position and current icon selection. */
-struct EDIT_MENU_CURSOR {
-    float x;      /**< Cursor's current screen x, eased toward its target. */
-    float y;      /**< Cursor's current screen y, eased toward its target. */
-    s8 selection; /**< Index of the selected icon. */
-};
+float MenuIconPos[6][2];
+EDIT_MENU_CURSOR EdCur;
+float AnalyzeFill[3];
 
-/** The edit menu's cursor. */
-extern EDIT_MENU_CURSOR EdCur;
+s8 EditMenuIconID[6] = {13, 10, 11, 5, 4, 6};
 
-/** Resting screen position of each edit menu icon, one x/y pair per icon. */
-extern float MenuIconPos[6][2];
-
-/** The icon shown at each edit menu slot. */
-extern s8 EditMenuIconID[6];
-
-/** Whether the edit menu's page textures have finished reading. */
-extern int EdMenuTextureReadEndFlag;
-
-/** How bright the edit menu's message windows draw while it closes. */
-extern s16 EdMenuRGB;
-
-/** The texture the analysis page's headings come from. */
-extern CTexture *Analyze;
-
-/** The texture the analysis page's panels, bars and digits come from. */
-extern CTexture *AnaBar;
-
-/** How far the analysis page's scrolling background has moved. */
-extern s16 AnalyzeBackBlockCnt;
-
-/** How far each of the analysis page's three bars has filled, in screen columns. */
-extern float AnalyzeFill[3];
-
-/** Texture block containing the edit menu's main page textures. */
-extern int EdMenuTextureBlock;
-
-/** Texture block containing the edit menu's first extra texture set. */
-extern int EdMenuExTextureBlock;
-
-/** Texture block containing the edit menu's second extra texture set. */
-extern int EdMenuExTextureBlock1;
-
-/** Texture block containing the edit menu's third extra texture set. */
-extern int EdMenuExTextureBlock2;
+CTexture *Analyze;
+CTexture *AnaBar;
+int EdMenuTextureReadEndFlag;
+int EdMenuTextureBlock;
+u_long128 *EdMenuWorkBuf;
+int EdMenuExTextureBlock;
+int EdMenuExTextureBlock1;
+int EdMenuExTextureBlock2;
+int EditSwitch;
+s16 EdMenuRGB;
+int EdEffectCt;
+s16 EdMenuHelpWinAlpha;
+s16 AnalyzeSelect;
+int EdMenuMesNo2;
+int EdMenuMesMake2;
+s16 ButtonAdd;
+s16 AnalyzeBackBlockCnt;
+s16 EdMenuEffectFlag;
+float EdMenuEffectCt;
+float WindowPos[2];
+float EditMenuWinW;
+float EditMenuWinH;
+s16 MakeWin2Flag;
 
 #include "editloop.hpp"
 #include "mainselect.hpp"
 #include "menuitemstep.hpp"
 
-extern u_long128 *EdMenuWorkBuf;
-extern s16 EdMenuHelpWinAlpha;
-extern int EdMenuMesNo2;
-extern int EdMenuMesMake2;
-extern float WindowPos[2];
-extern float EditMenuWinW;
-extern float EditMenuWinH;
 extern CTexture *PerBoardTex;
 
 /**

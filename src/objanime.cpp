@@ -12,14 +12,15 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-/** The one fire and the one candle the editor lends to every map part. */
-extern CFireOmni Fire;
-extern CCandleEffect Candle;
-
 /**
- * Controls whether all object animations are stopped.
+ * The one fire effect the editor lends to every map part that burns.
  */
-extern int all_stop;
+CFireOmni Fire;
+/**
+ * The one candle effect the editor lends to every map part with a candle.
+ */
+CCandleEffect Candle;
+int all_stop;
 
 /**
  * Clears one object-animation sequence.

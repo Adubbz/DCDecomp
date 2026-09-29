@@ -577,6 +577,9 @@ public:
     s32 unk_11CC;
     MoveCheckInfo move_info; /**< What the character's last step ran into. */
 
+    /** Puts a new player character at rest. */
+    CMainChara() { Initialize(); }
+
     /**
      * Draws the player character.
      *

@@ -2,6 +2,14 @@
 
 class CCharacter;
 class CCamera;
+class CRect_i_;
+struct ED_MOVE_CHARA_INFO;
+
+/** Where the caution mark is taken from in the event-battle texture. */
+extern const CRect_i_ Caution;
+
+/** Character-movement state the editor shares with EdMoveChara. */
+extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
 
 void EBInitialize();
 void EBInit(float speed_mult);

@@ -17,11 +17,19 @@
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
+#include "menuitemstep.hpp"
 #include "savedata.hpp"
 #include "shop.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
 #include "weapon_buildup.hpp"
+
+CDataAlloc2<1> MenuEffectCashBuffer(-1);
+
+CWeaponLevelUp MenuWepLevelUp;
+
+/** Timer that ages time-sensitive inventory items while the menus run. */
+CMenuItemStep ItemVolumeStep;
 
 void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale) {
     WEAPON_DATA *data;

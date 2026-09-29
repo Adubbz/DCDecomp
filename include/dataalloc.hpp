@@ -159,6 +159,30 @@ extern CDataAlloc2<1> VisualData;
  * Supplies the main motion-data allocation arena.
  */
 extern CDataAlloc2<1> MotionData;
+/**
+ * Supplies the water-surface allocation arena.
+ */
+extern CDataAlloc2<1> WaterData;
+/**
+ * Supplies the miscellaneous-data allocation arena.
+ */
+extern CDataAlloc2<1> VariousData;
+/**
+ * Supplies the first of the two alternating per-frame VU data arenas.
+ */
+extern CDataAlloc2<1> ActiveData0;
+/**
+ * Supplies the second of the two alternating per-frame VU data arenas.
+ */
+extern CDataAlloc2<1> ActiveData1;
+/**
+ * Holds the storage that every scene arena is carved out of.
+ */
+extern CDataAlloc<1, 1690000> GlobalDataBuffer;
+/**
+ * Backs the shared scratch allocator that WorkBuffer points to.
+ */
+extern CDataAlloc2<1> workbuffer;
 
 /** Buffer the common-menu effect models are read into. */
 extern CDataAlloc2<1> MenuEffectCashBuffer;

@@ -77,7 +77,7 @@ set(BIN_FLAGS -B mips:5900 -I binary -O elf32-littlemips)
 
 # Decompiled globals replace these retail section dumps.
 set(REPLACED_SECTIONS main.bss main.data main.rdata main.sbss main.sdata
-                      title.data title.bss dun.data)
+                      title.data title.bss dun.data dun.sinit dun.bss)
 
 set(ASM_SOURCES "")
 foreach(section IN LISTS SECTIONS)
@@ -158,110 +158,39 @@ set(CARVED_DUMP_SOURCES "")
 # The dun overlay is one unit, and the templates its local array initialisers
 # emit stand between the globals the dump still supplies, so the dump is cut
 # into the four runs the unit leaves behind.
-carve_dump(dun data.data.s
-           dun.data.part1.s=1DC1B00-1DC1B20
-           dun.data.part2.s=1DC1B60-1DC26D0
-           dun.data.part3.s=1DC2810-1DC2820
-           dun.data.part4.s=1DC2940-1DC2980)
-
-carve_part(main.data.part1.s
-           main.data.part1.s=24FAC0-250B30)
-carve_part(main.data.part2.s
-           main.data.part2c.s=2525D0-253DD0)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part1.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part2.s)
 # Retail's vtables come out in one run that alternates between the units that
 # now own theirs and the dump that still holds the rest, so the dump is cut
 # around each owned block rather than having the block removed from it.
-carve_part(main.rdata.part1.s
-           main.rdata.part1.s=29FE80-29FF40)
-carve_part(main.rdata.part2.s
-           main.rdata.part2.s=2A00B0-2A0C60
-           main.rdata.part2b.s=2A0CA0-2A1014)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.rdata.part1.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.rdata.part2.s)
 carve_part(main.rdata.part3.s
-           main.rdata.part3.s=2A101C-2A1048
-           main.rdata.part3b.s=2A104C-2A1090)
+           main.rdata.part3b-2A1064.s=2A1064-2A1090)
 # .sdata: the same interleaving, one datum at a time.
-carve_part(main.sdata.part1.s
-           main.sdata.part1.s=2A1E88-2A1E8C)
-carve_part(main.sdata.part2.s
-           main.sdata.sound-tail.s=2A1EB8-2A1EC0)
-carve_part(main.sdata.part2b.s
-           main.sdata.part2b.s=2A1ED0-2A1ED8
-           main.sdata.snd-tail.s=2A1EF0-2A1EF8
-           main.sdata.effect-tail.s=2A1F04-2A1F14
-           main.sdata.part2c.s=2A1F18-2A1F24
-           main.sdata.part2d.s=2A1F50-2A1F68
-           main.sdata.edit_in-a.s=2A1FA0-2A1FA8
-           main.sdata.edit_in-a-2A1FB8.s=2A1FB8-2A1FC0
-           main.sdata.edit_in-a-2A1FCC.s=2A1FCC-2A1FE8
-           main.sdata.part2f-2A1FF0.s=2A1FF0-2A1FF8
-           main.sdata.shop-a.s=2A2000-2A2008
-           main.sdata.shop-b.s=2A200C-2A2028
-           main.sdata.battlemenu-tail.s=2A20F8-2A2100
-           main.sdata.menu_save-a.s=2A2178-2A2190
-           main.sdata.part2e.s=2A21F0-2A21F8)
-carve_part(main.sdata.part3.s
-           main.sdata.part3.s=2A22E0-2A2380)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part1.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part2.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part2b.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sdata.part3.s)
 # .sbss: the same again, one unit's run at a time.
-carve_part(main.bss.part1.s
-           main.bss.part1.s=2A3709-2AA010
-           main.bss.part1b.s=2AB010-2AB030)
-carve_part(main.bss.part3.s
-           main.bss.part3.s=1C7A6B8-1C7A6C0)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part1.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part3.s)
 # gameutil.cpp's own run stands in the middle of this one.
-carve_part(main.bss.part4.s
-           main.bss.part4d.s=1CF8B40-1CF8F40)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part4.s)
 # edit.cpp's own runs stand in the middle of these two, and editloop3.cpp owns
 # EdExchangeInfo inside the second.
-carve_part(main.bss.part4b.s
-           main.bss.part4b.s=1CF91F0-1D18A00
-           main.bss.part4b-1D18EF0.s=1D18EF0-1D19720
-           main.bss.part4c.s=1D19AA0-1D19BB0
-           main.bss.part4e.s=1D19BCC-1D19BF0)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part4b.s)
 # monstorunit owns the bee animation table; retain its BSS neighbours.
-carve_part(main.bss.part6.s
-           main.bss.part6.s=1D65C20-1D87380
-           main.bss.part6b.s=1D8FA80-1DA8B80
-           main.bss.part6c.s=1DA8D90-1DABD00)
-carve_part(main.bss.part5.s
-           main.bss.part5.s=1D1B218-1D1B360
-           main.bss.part5e.s=1D1B390-1D25B90
-           main.bss.part5f.s=1D32F70-1D3A090
-           main.bss.part5b.s=1D3D1D0-1D3DD20
-           main.bss.part5d.s=1D48FB0-1D4A430
-           main.bss.part5g.s=1D4A480-1D4A4D0
-           main.bss.part5h.s=1D4A630-1D54940
-           main.bss.part5h-1D54950.s=1D54950-1D569A0)
-carve_part(main.sbss.part3.s
-           main.sbss.part3.s=2A24FC-2A2500)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part6.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part5.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part3.s)
 # The dun overlay's small data runs from GameEnv to the end of retail's .sbss,
 # and the unit supplies all of it, so the dump stops in front of it.
-carve_part(main.sbss.part5b.s
-           main.sbss.part5b.s=2A2FD8-2A2FE4
-           main.sbss.part5d.s=2A33A0-2A33A4)
-carve_part(main.sbss.part4b.s
-           main.sbss.part4b.s=2A25B8-2A264C
-           main.sbss.snd-tail.s=2A2654-2A26F8
-           main.sbss.part4h.s=2A2730-2A2740
-           main.sbss.part4c.s=2A27AC-2A294C
-           main.sbss.part4g.s=2A29A4-2A29AC
-           main.sbss.part4g-2A29B0.s=2A29D4-2A29DC
-           main.sbss.part4f.s=2A2A80-2A2AD0
-           main.sbss.edit_in-a.s=2A2AFC-2A2B20
-           main.sbss.editground-tail.s=2A2B28-2A2B7C
-           main.sbss.shot_firebar-tail.s=2A2B84-2A2BB8
-           main.sbss.topstatus-tail.s=2A2BC8-2A2BF0)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part5b.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part4b.s)
 # CheckDmg owns its local static effect index and initialization guard, and
 # runscript_opcodes.cpp owns bak_ColNo after them.
-carve_part(main.sbss.part5.s
-           main.sbss.part5.s=2A2BF8-2A2C48
-           main.sbss.part5-2A2C4C.s=2A2C4C-2A2C68
-           main.sbss.part5c.s=2A2C74-2A2D80
-           main.sbss.battlemenu-2A2D98.s=2A2D98-2A2D9C
-           main.sbss.part5c-2A2DA8.s=2A2DBC-2A2E84
-           main.sbss.memcard-a.s=2A2F20-2A2F50
-           main.sbss.denter-gap.s=2A2F54-2A2F5C
-           main.sbss.denter-tail.s=2A2F68-2A2FC4
-           main.sbss.battle_globals-tail.s=2A2FCC-2A2FD0)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part5.s)
 # The weapon build-up and level-up local templates stand in this residual run,
 # and runscript_opcodes.cpp supplies its vector initializers ahead of part6f.
 # shop.cpp supplies the start of its own run between part6f and part6k, and
@@ -271,54 +200,14 @@ carve_part(main.sbss.part5.s
 # texture list, positions and scales, BtMenuLoad2's texture list and DngEscapeMsgInit's templates
 # inside its own run.
 # menu_dungeon.cpp supplies the former part6g 0x2941C0-0x2941E0 template.
-carve_part(main.data.part6.s
-           main.data.part6.s=27E790-27E7D0
-           main.data.btitem-a.s=27E810-27EAD0
-           main.data.part6f.s=291850-291B80
-           main.data.part6k.s=292704-292710
-           main.data.shop-buymoney.s=2927AC-2927B0
-           main.data.shop-checkbuy-a.s=2927BC-2927C0
-           main.data.shop-checkbuy-b.s=2927CC-292820
-           main.data.shop-itemdraw-after.s=2929D0-292A60
-           main.data.shop-fishdraw.s=292AA0-292AC0
-           main.data.shop-fishrecview-after.s=292B10-292E50
-           main.data.battlemenu-292E88.s=292E88-292E90
-           main.data.battlemenu-292F38.s=292F38-292F40
-           main.data.battlemenu-292F58.s=292F58-292F60
-           main.data.battlemenu-293014.s=293014-293020
-           main.data.shop-filenames-after-292EE0-292FA0-293040.s=293070-293080
-           main.data.battlemenu-293124.s=293124-293130
-           main.data.battlemenu-293144.s=293144-293148
-           main.data.battlemenu-293154.s=293154-293160
-           main.data.battlemenu-2932B8.s=2932B8-2932C0
-           main.data.shop-filenames-after-292EE0-2934D0-293570-2935A0.s=2935A0-2936E0
-           main.data.battlemenu-29378C.s=29378C-293790
-           main.data.battlemenu-tail.s=293960-293978
-           main.data.battlemenu-tail-293B90.s=293B90-293BF0
-           main.data.memcard-a-293F60.s=293F60-293FD0
-           main.data.part6g-2942F0.s=2942F0-294320
-           main.data.menu_dungeon-d.s=2943C0-2943E0
-           main.data.part6j.s=295644-295660
-           main.data.eastking-tail.s=2956D0-2956F0
-           main.data.part6b.s=2959B0-2959C0
-           main.data.battle_globals-b.s=295EF0-295FC0)
-carve_part(main.data.part4.s
-           main.data.part4.s=25DFB0-266810
-           main.data.runeffect-tail.s=266920-266930
-           main.data.runeffect-tail-266970.s=266970-266B70
-           main.data.part4m.s=266B90-266E10
-           main.data.part4c.s=266FB0-269320
-           main.data.part4g-26A6A0-26A7E0.s=26A7F0-26AE10
-           main.data.shot_freefuncs-a.s=26AFF8-26B040
-           main.data.motionmodel-a.s=26B0E0-26B160
-           main.data.motionmodel-a-26B190.s=26B190-26B1B0
-           main.data.motionmodel-gap.s=26B1C8-26B1D0
-           main.data.motionmodel-b-26B250.s=26B250-26B2C0
-           main.data.part4d.s=26B310-279E60)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part6.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part4.s)
 # itemdata.cpp supplies the texture lists TEIGIImgLoad builds, between the
 # command tables and the weapon definitions the unit already owns.
-carve_part(main.data.part5.s
-           main.data.itemdata-a.s=27A0B0-27A610)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part5.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.data.part3.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.bss.part2.s)
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.rdata.part7.s)
 carve_part(main.rdata.part5.s
            main.rdata.part5.s=2A13C0-2A1490)
 
@@ -362,19 +251,7 @@ list(REMOVE_ITEM STATIC_SECTION_SOURCES
 list(REMOVE_ITEM STATIC_SECTION_SOURCES
      ${PARTS_DIR}/main.data.part7b.s)
 
-set(FILTERED_SBSS_PART1 generated/asm/data/main/parts/main.sbss.part1.s)
-add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/${BUILD_DIR}/${FILTERED_SBSS_PART1}
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/build/filter_asm_symbols.py
-            ${PARTS_DIR}/main.sbss.part1.s
-            ${BUILD_DIR}/${FILTERED_SBSS_PART1}
-            dset_mds_packet dset_mds_objnum flag$332 init$333 D_002A239D
-    DEPENDS ${CMAKE_SOURCE_DIR}/${PARTS_DIR}/main.sbss.part1.s
-            ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/filter_asm_symbols.py
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Filtering source-owned globals from main.sbss.part1"
-    VERBATIM)
-list(APPEND ASM_SOURCES ${FILTERED_SBSS_PART1})
+list(REMOVE_ITEM STATIC_SECTION_SOURCES ${PARTS_DIR}/main.sbss.part1.s)
 
 list(APPEND ASM_SOURCES ${CARVED_PART_SOURCES})
 list(APPEND ASM_SOURCES ${CARVED_DUMP_SOURCES})
@@ -415,7 +292,6 @@ foreach(row IN LISTS unit_rows)
 endforeach()
 
 # Typed data carved from residual section dumps.
-list(APPEND CPP_SOURCES src/texture_data.cpp)
 file(GLOB EXTRA_ASM_SOURCES CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/${SRC_DIR}/handwritten/*.s)
 
@@ -447,12 +323,9 @@ set(MAIN_TAIL "")
 foreach(src IN LISTS STATIC_SECTION_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
-list(APPEND MAIN_TAIL ${BUILD_DIR}/${FILTERED_SBSS_PART1}.o)
 foreach(src IN LISTS CARVED_PART_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()
-list(APPEND MAIN_TAIL
-     ${BUILD_DIR}/src/texture_data.cpp.o)
 foreach(src IN LISTS EXTRA_ASM_SOURCES)
     list(APPEND MAIN_TAIL ${BUILD_DIR}/${src}.o)
 endforeach()

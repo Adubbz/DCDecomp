@@ -17,32 +17,30 @@
 #include "texture.hpp"
 #include "tim2.hpp"
 
+int end_flag = 1;
+
+u_int now_load[2000] __attribute__((aligned(64)));
+sceGsDBuff nowloadDB;
+sceVif1Packet nlPacket;
+CTexture nl_tex;
+CTexture nl_tex2;
+
+int now_loding_flag;
+int nl_start_cnt;
+float col_cnt;
+float col_add;
+int logo_count;
 /**
- * Whether the loading-screen operation has ended.
+ * Frames the fade holds at full or zero brightness before it moves again.
  */
-extern int end_flag;
+static int count;
+int map_title_no;
+int now_loding_off;
+int now_loading_vsync_end;
 /**
- * Requests that the loading display be disabled.
+ * Field parity the loading screen's vertical-sync callback last read from the GS.
  */
-extern int now_loding_off;
-/**
- * Whether the loading display has completed a field.
- */
-extern int now_loading_vsync_end;
-extern int now_loding_flag;
-extern int nl_start_cnt;
-extern float col_cnt;
-extern float col_add;
-extern int logo_count;
-extern int count__2;
-extern int map_title_no;
-extern int VSyncField;
-extern int DBuffID;
-extern u_int now_load[2000];
-extern sceGsDBuff nowloadDB;
-extern sceVif1Packet nlPacket;
-extern CTexture nl_tex;
-extern CTexture nl_tex2;
+static int VSyncField;
 
 int check_now_loading(void) {
     return end_flag;
@@ -138,7 +136,7 @@ void init_now_loading(int title_number) {
     sceVif1PkInit(&nlPacket, now_load);
     col_cnt = 0.0f;
     col_add = 1.0f;
-    count__2 = 0;
+    count = 0;
     logo_count = 0;
     end_flag = 0;
     now_loading_vsync_end = 1;
@@ -171,16 +169,16 @@ int VSyncCallBack_Load(int field) {
                 set2DSprite(&nlPacket, &nl_tex2, CRect_i_(0x100, 0xA0, 0x80, 0x80),
                             CRect_i_(0, 0, 0x80, 0x80), (u_char) (int) col_cnt);
             }
-            if (count__2 == 0) {
+            if (count == 0) {
                 col_cnt += col_add * 2.0f;
             }
             if (col_cnt > 128.0f) {
-                count__2 = 220;
+                count = 220;
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }
             if (col_cnt < 0.0f) {
-                count__2 = 100;
+                count = 100;
                 col_cnt = 0.0f;
                 col_add *= -1.0f;
                 if (logo_count == 1) {
@@ -188,18 +186,18 @@ int VSyncCallBack_Load(int field) {
                 }
                 logo_count++;
             }
-            count__2--;
-            if (count__2 < 0) {
-                count__2 = 0;
+            count--;
+            if (count < 0) {
+                count = 0;
             }
         } else {
             set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x80, 0xA0, 0x180, 0x80),
                         CRect_i_(0, 0, 0x180, 0x80), (u_char) (int) col_cnt);
-            if (count__2 == 0) {
+            if (count == 0) {
                 col_cnt += col_add;
             }
             if (col_cnt > 128.0f) {
-                count__2 = 120;
+                count = 120;
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }
@@ -207,9 +205,9 @@ int VSyncCallBack_Load(int field) {
                 end_flag = 1;
                 col_cnt = 0.0f;
             }
-            count__2--;
-            if (count__2 < 0) {
-                count__2 = 0;
+            count--;
+            if (count < 0) {
+                count = 0;
             }
         }
         sceVif1PkEnd(&nlPacket, 0);
@@ -291,92 +289,3 @@ void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int pale
     tex0->bits.tcc = 1;
     tex0->CBP = palette_address;
 }
-INCLUDE_RODATA("asm/nonmatchings/nowload", @249__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @250__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @251__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @252__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @253);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @254__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @255__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @256__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @257__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @258__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @259);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @260);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @261);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @262);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @263__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @264__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @265);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @266__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @267);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @268);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @269);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @270__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @271);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @272);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @273);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @274);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @275);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @276);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @277);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @278);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @279);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @280);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @281);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @282);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @283);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @284__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @285__3);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @286__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @287__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @288__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @289__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @290__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @291);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @292);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @293);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @294);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @295);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @296);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @297);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @298__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @299__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @300);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @301);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @302);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @303);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @304);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @305);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @306);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @307);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @308__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @309);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @310);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @311);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @312);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @313);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @314);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @315);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @316);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @317);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @318);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @319);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @320);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @321);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @322);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @323);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @324);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @325);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @326);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @327);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @328);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @329);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @330__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @331__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @332__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @333__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @334__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @335__2);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @336);
-INCLUDE_RODATA("asm/nonmatchings/nowload", @337);

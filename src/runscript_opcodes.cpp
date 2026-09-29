@@ -19,16 +19,6 @@
 #include "userstatus.hpp"
 
 /**
- * Integers the monster scripts share, set and read by index.
- */
-extern int GL_INT[10];
-
-/**
- * Palette colour each element tints a hit monster with, as red, green and blue.
- */
-extern int elmColor[6][3];
-
-/**
  * Describes one opcode a monster script can call and the number that calls it.
  */
 struct BT_EVENT_EXTERNAL_FUNCTION {
@@ -36,15 +26,9 @@ struct BT_EVENT_EXTERNAL_FUNCTION {
     int operation;                        /**< Number the script calls the opcode by. */
 };
 
-/**
- * Opcodes of the monster scripts, ended by an entry with no function.
- */
-extern BT_EVENT_EXTERNAL_FUNCTION ext_func_info__3[];
-
-/**
- * Opcode table the monster scripts dispatch through, indexed by operation number.
- */
-extern int (*ext_func[256])(RS_STACKDATA *, int);
+int PUSH_INT_DATA[16][8];
+int GL_INT[10];
+int (*ext_func[256])(RS_STACKDATA *, int);
 
 /**
  * Body collision sphere the last _SET_BODY_COL created, or -1 when it found no frame.
@@ -579,6 +563,10 @@ int _COS_DEG(RS_STACKDATA *stack, int argc) {
     SetStack(stack, cosf(angle));
     return 1;
 }
+
+int elmColor[6][3] = {
+    {230, 90, 0}, {0, 200, 255}, {255, 255, 0}, {0, 255, 0}, {255, 200, 255}, {255, 0, 0},
+};
 
 int _STATUS_SET_PALLET(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->unk_090;
@@ -1431,6 +1419,104 @@ int BtSetEventScript(CRunScript *script, char *program, CDataAlloc2<1> *arena) {
     return 1;
 }
 
+/**
+ * Opcodes of the monster scripts, ended by an entry with no function.
+ */
+static BT_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
+    {_GET_DISTANCE, 10},
+    {_GET_POSITION, 11},
+    {_SET_ROTATION, 12},
+    {_CHK_ROTATION, 13},
+    {_CHK_MOVE, 14},
+    {_CHK_USER_INNER_PRODUCT, 15},
+    {_GET_VECTOR, 30},
+    {_GET_DIRECTION, 31},
+    {_SET_MOVE, 32},
+    {_CHK_MOVE_INFO, 33},
+    {_SET_MOVE_CANSEL, 34},
+    {_SET_ROT_CANSEL, 35},
+    {_SET_POSITION, 36},
+    {_STATUS_SET_FALL, 100},
+    {_STATUS_SET_MUTEKI, 101},
+    {_STATUS_SET_ALPHA, 102},
+    {_STATUS_CHK_ALPHA, 103},
+    {_STATUS_SET_DEAD, 104},
+    {_STATUS_SET_PALLET, 105},
+    {_GET_RAND, 180},
+    {_GET_RANDF, 181},
+    {_SIN_DEG, 182},
+    {_COS_DEG, 183},
+    {_STATUS_SET_CLIPLEVEL, 106},
+    {_STATUS_SET_EVENT, 107},
+    {_STATUS_SET_COL_OFF, 108},
+    {_STATUS_GET_LIFE_RATE, 109},
+    {_STATUS_GET_HEIGHT, 112},
+    {_STATUS_GET_HITDMG_VOL, 113},
+    {_STATUS_GET_MOTION_ID, 114},
+    {_STATUS_GET_DMG_ID, 115},
+    {_STATUS_SET_LOCKON_DIST, 116},
+    {_STATUS_SET_SHADOW_LEN, 117},
+    {_STATUS_SET_LOCKON_TRG, 118},
+    {_STATUS_GET_USER_VECTOR, 110},
+    {_SET_MOV_COL, 136},
+    {_SET_BODY_COL, 130},
+    {_SET_BODY_COL_PARA, 134},
+    {_SET_DMG_COL, 131},
+    {_SET_DMG_PARA, 132},
+    {_SET_SHOT, 133},
+    {_SET_SHOT2, 229},
+    {_SET_SND_FRM, 140},
+    {_SET_LOOP_SND, 230},
+    {_STOP_LOOP_SND, 231},
+    {_DEL_LOOP_SND, 232},
+    {_SET_SND_NOW, 141},
+    {_SET_MOTION, 200},
+    {_CHK_MOTION_FRM, 201},
+    {_GET_MOTION_FRM, 202},
+    {_SET_MOTION_FRM, 203},
+    {_GET_CHR_ID, 210},
+    {_GET_COL_HIT_ID, 211},
+    {_GET_SCRIPT_ID, 212},
+    {_GET_MONSTOR_POS, 213},
+    {_RUN_SCRIPT, 111},
+    {_GET_MONSTOR_FRM, 214},
+    {_SET_MONSTOR_POS, 215},
+    {_SET_MONSTOR_MOVE, 216},
+    {_SET_MONSTOR_LINK_MOVE, 217},
+    {_SET_MONSTOR_MOVE_CANSEL, 218},
+    {_SET_MONSTOR_MOTION, 219},
+    {_SET_GLOBAL_INT, 220},
+    {_GET_GLOBAL_INT, 221},
+    {_GET_OBJ_POS, 222},
+    {_SET_ROTATION_X, 223},
+    {_SET_MOTION_CHANGE_STEP, 224},
+    {_GET_MONSTOR_VECTOR, 225},
+    {_SET_LOCKON_DIST, 226},
+    {_SET_LOCKON_SW, 227},
+    {_STOP_SND_NOW, 142},
+    {_STATUS_SET_LIFE, 228},
+    {_SET_BIN2, 209},
+    {_SET_STATUS_CHANGE, 204},
+    {_SET_TEX_ANIME_SW, 205},
+    {_GET_STATUS_BIN2, 208},
+    {_SET_COLLISION_WIDTH, 206},
+    {_GET_NEAR_MONSTER, 207},
+    {_BOSS_FADE_OUT, 240},
+    {_CHEKC_FADE_OUT, 241},
+    {_SET_GRAVITY, 242},
+    {_SET_GUARD_FRAME, 244},
+    {_GUARD_SEARCH, 245},
+    {_GET_MOVE_VEC, 246},
+    {_PUSH_IGLOBAL, 247},
+    {_POP_IGLOBAL, 248},
+    {_GET_USER_STATUS, 249},
+    {_SET_REFERENCE, 250},
+    {_DEL_REFERENCE, 251},
+    {_LOOKAT, 252},
+    {_SET_SHADOW_FLAG, 253},
+    {NULL, -1},
+};
+
 void BtSetEventExtendTable() {
     int i;
 
@@ -1438,22 +1524,22 @@ void BtSetEventExtendTable() {
         ext_func[i] = NULL;
     }
     for (i = 0;; i++) {
-        if (ext_func_info__3[i].function == NULL) {
+        if (ext_func_info[i].function == NULL) {
             break;
         }
         int j;
         for (j = 0; j < i; j++) {
-            if (ext_func_info__3[i].operation == ext_func_info__3[j].operation) {
+            if (ext_func_info[i].operation == ext_func_info[j].operation) {
                 printf("same ext_func_no!!!\n");
                 while (1) {
                 }
             }
         }
-        int operation = ext_func_info__3[i].operation;
+        int operation = ext_func_info[i].operation;
         if (operation < 0 || operation >= 256) {
             printf("ext func over!!");
         } else {
-            ext_func[operation] = ext_func_info__3[i].function;
+            ext_func[operation] = ext_func_info[i].function;
         }
     }
 }

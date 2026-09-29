@@ -237,8 +237,8 @@ extern PIERO_ITEM_SET *PieroItemListPtr[14];
  */
 struct ITEM_PUT_SET {
     int floor;     /**< Floor the list is for, counted from one; -1 ends the table. */
-    int unk_04;
-    int item[128]; /**< Items a box on the floor can hold, ended by -1. */
+    int item_count; /**< Number of items in the list. */
+    int item[128];  /**< Items a box on the floor can hold, ended by -1. */
 };
 
 STATIC_ASSERT(sizeof(ITEM_PUT_SET) == 0x208);
@@ -293,6 +293,9 @@ struct ITEM_FREE_AREA {
 
 STATIC_ASSERT(sizeof(ITEM_FREE_RECT) == 0x18);
 STATIC_ASSERT(sizeof(ITEM_FREE_AREA) == 0x64);
+
+/** The areas where items can be put down on each map. */
+extern "C" ITEM_FREE_AREA *ItemFreeAreaAll[7];
 
 /**
  * Selects a random open world position in a rectangular group of cells, and

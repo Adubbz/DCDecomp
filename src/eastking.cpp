@@ -11,6 +11,7 @@
 #include "gamepad.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
+#include "menu_manual.hpp"
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -55,20 +56,26 @@ enum EAST_KING_EVENT_MODE {
     EAST_KING_MESSAGE_FADE_IN,
 };
 
-/** State of the active East King event. */
-extern EAST_KING_EVENT_STATE EastKing;
-
-/** Message selection and opacity state of the active East King event. */
-extern EAST_KING_MESSAGE_STATE EastKingMsg;
-
-/** Number of additional messages in each East King event. */
-extern s8 EastKingMsgMax[12];
+ClsMes *ManualMsg;
 
 /** Background music number saved before the event. */
-extern s16 PrevEastKingSndNo;
+s16 PrevEastKingSndNo;
+
+s16 PrevEastKingSndVol;
 
 /** Buffer used to reload the background music that preceded the event. */
-extern u_int *EastKingSndReadBuf;
+u_int *EastKingSndReadBuf;
+
+ClsMes EastKingMsgCls;
+
+/** State of the active East King event. */
+EAST_KING_EVENT_STATE EastKing;
+
+/** Message selection and opacity state of the active East King event. */
+EAST_KING_MESSAGE_STATE EastKingMsg;
+
+/** Number of additional messages in each East King event. */
+s8 EastKingMsgMax[12] = {2, 2, 3, 3, 2, 3, 2, 2, 2, 2, 6, 1};
 
 /**
  * Restores the East King message window to its initial empty state.

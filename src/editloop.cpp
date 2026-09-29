@@ -62,26 +62,8 @@
 
 extern int GameMode;
 extern int LanguageCode;
-extern int oldGameMode;
-extern int sound_off_cnt;
-extern float NowTime;
-extern int EdDrawOffFlag;
-extern int EdPauseFlag;
-extern int exit_loop;
-extern int goto_cmp_event;
-extern int goto_cmp_event_level;
-extern int goto_dungeon;
-extern int goto_menu;
-extern int goto_return_menu;
-extern int debug_menu_mode;
 extern int simple_event;
-extern int change_time_event;
-extern int draw_npc_cursor;
-extern float draw_day_cnt;
-extern int draw_day_flag;
-extern int key_lock;
 extern int light_no;
-extern int loop_counter;
 extern int week_no;
 extern int texture_list;
 extern int EdDebugEventEnable;
@@ -89,42 +71,14 @@ extern int EdDebugCameraFlag;
 extern char *objframe;
 extern CMapObject *mapobj;
 extern CMapParts *mapparts;
-extern CMapParts *ObjParts;
 extern EDIT_WATER_INFO *water_info;
 extern int edit_rect_list;
 extern int motion_parts_list;
 extern int people_list;
 extern int now_parts_no;
-extern int door_open;
-extern int camera_dist_mode;
-extern int EdDrawOffMapShadow;
 void BtSetMapJumpFloor(int floor);
-extern int key_counter;
-extern int clear_screen;
-extern int edit_mode_draw;
-extern int edit_mode_grd_draw;
-extern int depth_of_field;
-extern int edit_mode_lighting;
-extern int draw_sky;
-extern int move_count;
-extern u_long128 *EdNPCReadBuffer;
-extern CFrameVu1 *TreasureCursor;
-extern CFrameVu1 *TreasureCursorOpen;
-extern int end_counter;
-extern int EdStepTimeFlag;
-extern int talk_villager;
-extern CCameraFollow TalkCamera;
-extern CCamera *NowCamera;
-extern CCameraFollow ViewCamera;
 extern "C" CDataAlloc2<1> *WorkBuffer__2;
-extern CFrame *ECursorFrame;
 extern int EdDebugMoveFlag;
-extern CRunEffect RunEffect;
-extern CCameraFollow MainCamera;
-extern CCameraFollow EditCamera;
-extern CCameraFollow EditCamera;
-extern CDataAlloc2<1> CharaBuffer;
-extern int NowEditMap;
 extern int MapNo;
 extern int mapobj_list;
 extern int water_list;
@@ -132,44 +86,8 @@ extern int objanime_list;
 extern int event_list;
 extern int mapjump_id;
 extern char mapjump_name[0x20];
-extern char EditDataDir[0x100];
 
-/* Whether the editor is running the interior test map, and the map names it reads. */
-extern int interior_test;
-extern char **interior_name;
-
-/* The background music the map started, and whether it has been asked for. */
-extern int bgm_play_flag;
-extern int bgm_play_start;
-
-/**
- * Buffer the map's part archive is read into.
- */
-extern u_int *parts_read_buffer;
-
-/* The arenas the map's own data is carved out of. */
-extern CDataAlloc2<1> EtcDataBuffer;
-extern CDataAlloc2<1> EPartsInfoBuff;
 extern CDataAlloc2<1> MotionData;
-extern CDataAlloc2<1> EdMesBuffer;
-extern CDataAlloc2<1> DataBuffer__2;
-
-/** Scene archive the map's models are read out of. */
-extern u_int *scn_data;
-
-/* The map the editor builds into, one array per kind of part. */
-extern CEditArea *EditArea;
-extern CCharacter *MotionParts;
-extern CMapParts *RiverParts;
-extern CMapParts *RoadParts;
-
-/* The fog the map starts with, and the debug font the editor draws with. */
-extern EDIT_FOG_INFO now_fog;
-extern CDebugFont DebugFont__3;
-
-/* The effects the editor plays, and the storage they come out of. */
-extern CEffectGroup EdEffectGroup;
-extern CEffect *EffectTable__3;
 
 /* The message-window texture the monster-name window is drawn into. */
 extern u8 MesWinTexBuff_11[0x100];
@@ -177,45 +95,14 @@ extern u8 MesWinTexBuff_11[0x100];
 /* Whether an interior is being entered, and the item-volume step to check. */
 extern CMenuItemStep ItemVolumeStep;
 
-/* The interior the player is walking into, and the map file it is built from. */
-extern char EdInteriorName[0x20];
-extern char interior_map_name[0x40];
-extern int EdInteriorPartsNo;
-extern int EdInteriorJumpID;
-extern int EdInteriorDoorSound;
-extern int EdInteriorStartEvent;
-extern int door_open_cnt;
-extern int fix_pos_enble;
 extern "C" char CurrentDir__3[0x40];
-extern CEditGround *pEditGround;
-extern CCharacter *Chara;
-extern CMainChara MainChara;
-
-/* The arenas the editor carves its own working memory out of. */
-extern CDataAlloc2<1> EdNPCBuffer;
-extern CDataAlloc2<1> EdVillagerBuffer;
-extern CDataAlloc2<1> EdWorkBuffer;
-extern CDataAlloc2<1> EdMenuBuffer;
-
-/* Every villager the editor can place, one record each. */
 
 /* The cursors drawn over a villager who can be talked to, one who cannot, and
    the character the event wants the player to notice. */
 extern ClsMes CommonMenuMes2;
 extern ClsMes CommonMenuMes3;
-extern CFrame *CharaCursor0;
-extern CFrame *CharaCursor1;
-extern CFrame *CharaCursor2;
 
-/* Where the player stands and faces while a door plays its motion. */
-extern sceVu0FVECTOR fix_chara_pos;
-extern sceVu0FVECTOR fix_chara_rot;
-extern sceVu0FVECTOR fix_camera_pos;
-
-/* Data whose shape the unit does not need yet. */
-extern CTexAnimeData CharaTexAnimeData[0x80];
 extern ED_MOVE_CHARA_INFO EdMoveCharaInfo;
-extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "editmenu.hpp"
 #include "wind.hpp"
 #include "memcard.hpp"
@@ -225,13 +112,186 @@ extern EDIT_ELEMENT_INFO EditElementInfo[36];
 #include "menu_draw.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
-extern CFrameVu1 *SkyFrame[4];
-extern CFrame *SunFrame[4];
-extern C3DSprite SystemEffect[8];
 extern u8 def_light[0xC0];
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
+
+CTexture *StayTexture;
+int NowEditMap;
+u_long128 *EdNPCReadBuffer;
+int EdStepTimeFlag;
+int EdInteriorFlag;
+int EdInteriorPartsNo;
+int EdInteriorJumpID;
+int EdInteriorDoorSound;
+int EdInteriorStartEvent;
+int EdBeforeInBgmNo;
+
+ED_EXCHANGE_INFO EdExchangeInfo;
+EDIT_MENU_STATUS EditMenuStatus;
+CEditPartsInfo EditPartsInfo;
+EDIT_ELEMENT_INFO EditElementInfo[36];
+CDataAlloc2<1> EdInteriorBuffer(-1);
+CDataAlloc2<1> EdNPCBuffer(-1);
+CDataAlloc2<1> EdVillagerBuffer(-1);
+CDataAlloc2<1> EdEventBuffer(-1);
+CDataAlloc2<1> EdEventExBuffer(-1);
+CDataAlloc2<1> EdMesBuffer(-1);
+CDataAlloc2<1> EdScriptBuffer(-1);
+CDataAlloc2<1> EdExtMessBuffer(-1);
+CDataAlloc2<1> EdWorkBuffer(-1);
+CDataAlloc2<1> EdMenuBuffer(-1);
+char EditDataDir[0x100];
+char EditMapName[0x20];
+char EdInteriorName[0x20];
+
+CEffectGroup EdEffectGroup;
+/** Pool the editor's effect group plays its effects out of. */
+static CEffect *EffectTable;
+/** Unreferenced word of the editor's small data. */
+static int D_002A2844;
+/** Unreferenced word of the editor's small data. */
+static int D_002A2848;
+/** Unreferenced word of the editor's small data. */
+static int D_002A284C;
+EDIT_MAP_INFO *EditMapInfo;
+char *EdEventData;
+char *EdSystemEventData;
+int EdDrawOffFlag;
+int EdDrawOffMap;
+int EdDrawOffMapShadow;
+int EdThunderEffectFlag;
+int EdPauseFlag;
+int clear_screen;
+int key_lock;
+int goto_dungeon;
+int exit_loop;
+/** Frames the editor loop has run since the map was entered. */
+int loop_counter;
+/** Frames the pad has been held for. */
+int key_counter;
+/** Whether the loop is leaving for the main menu. */
+int goto_menu;
+/** Whether the loop is returning from the main menu. */
+int goto_return_menu;
+int sound_off_cnt;
+int debug_menu_mode;
+int goto_cmp_event;
+int goto_cmp_event_level;
+int change_time_event;
+int draw_npc_cursor;
+int draw_clock;
+int edit_mode_draw;
+int edit_mode_grd_draw;
+int depth_of_field;
+int edit_mode_lighting;
+int draw_sky;
+/** Number of the map event about to run. */
+int start_event_no;
+/** Number of the system event about to run. */
+int start_system_event;
+int move_count;
+int interior_test;
+char **interior_name;
+int oldGameMode;
+CEditGround *pEditGround;
+CEditArea *EditArea;
+CMapParts *ObjParts;
+CMapParts *RiverParts;
+CMapParts *RoadParts;
+/** Animated map parts. */
+CCharacter *MotionParts;
+/** Camera the map is drawn through. */
+CCamera *NowCamera;
+/** Time of day on the editor clock. */
+float NowTime;
+CFrameVu1 *SkyBackFrame;
+CFrame *CharaCursor0;
+CFrame *CharaCursor1;
+CFrame *CharaCursor2;
+CFrameVu1 *TreasureCursor;
+CFrameVu1 *TreasureCursorOpen;
+int end_counter;
+int bgm_vol;
+int bgm_play_flag;
+int bgm_play_start;
+/** Frames the opening door has been playing for. */
+int door_open_cnt;
+int door_open;
+int fix_pos_enble;
+int talk_villager;
+int chg_time_cnt;
+int NowSelectAngle;
+int OldSelectAngle;
+float NowCursorRotY;
+CMapParts *NowFocusParts;
+CMapParts *OldFocusParts;
+int DrawPartsNameCount;
+
+CWind EdWind;
+ClsMes EditMes1;
+ClsMes EditMes2;
+ClsMes EditEventMes1;
+ClsMes EditEventMes2;
+ClsMes EditNameMes;
+ClsMes EditSystemMes;
+ClsMes EditHelpMes;
+CNPCharacter EdVillager[10];
+VILLAGER_INFO EdVillagerInfo[10];
+/** Font the editor's debug text is drawn with. */
+static CDebugFont DebugFont;
+EDIT_FOG_INFO now_fog;
+CDataAlloc2<1> EPartsInfoBuff(-1);
+CMainChara MainChara;
+CRunEffect RunEffect;
+/* The six cameras' destructor records carry retail's names, @372 to @377. */
+#pragma name_counter 372
+/** Camera that follows the player. */
+CCameraFollow MainCamera(60.0f, 20.0f, 0.0f, 4.0f);
+CCameraFollow EditCamera(60.0f, 20.0f, 0.0f, 4.0f);
+CCameraFollow IntroCamera(60.0f, 20.0f, 0.0f, 4.0f);
+/** Camera used while the player talks to a villager. */
+CCameraFollow TalkCamera(60.0f, 20.0f, 0.0f, 4.0f);
+/** Camera used while an editor event controls the viewpoint. */
+CCameraFollow EventCamera(60.0f, 20.0f, 0.0f, 4.0f);
+/** Camera used by the free-look view. */
+CCameraFollow ViewCamera(60.0f, 20.0f, 0.0f, 4.0f);
+#pragma name_counter 471
+CFrameVu1 *SkyFrame[4];
+CFrame *SunFrame[4];
+/** Sprites the system events draw with. */
+C3DSprite SystemEffect[8];
+/** Where the player is held while a door plays its motion. */
+sceVu0FVECTOR fix_chara_pos;
+/** Which way the player faces while a door plays its motion. */
+sceVu0FVECTOR fix_chara_rot;
+sceVu0FVECTOR fix_camera_pos;
+char interior_map_name[0x40];
+float NowPartsCursorPos[4];
+/** Model of the cursor the editor places parts with. */
+static CFrameVu1 ecursorframe;
+sceVu0FVECTOR NowCursorPos;
+sceVu0FVECTOR NextCursorPos;
+/** Texture animation the map plays. */
+CTextureAnime TexAnime;
+/** Records of the map's texture animation. */
+CTexAnimeData TexAnimeData[64];
+/** Records of the characters' texture animation. */
+CTexAnimeData CharaTexAnimeData[0x80];
+/** Arena the map's data is read into before the editor carves it up. */
+static CDataAlloc2<1> DataBuffer(-1);
+CDataAlloc2<1> CharaBuffer(-1);
+CDataAlloc2<1> InteriorBuffer(-1);
+CDataAlloc2<1> EtcDataBuffer(-1);
+
+/** Character the camera and events treat as the player. */
+CCharacter *Chara = &MainChara;
+/** How far the following camera sits from the player. */
+int camera_dist_mode = 1;
+int NowSelectParts = -1;
+CFrame *ECursorFrame = &ecursorframe;
+int PartsNameNum = -1;
 
 /* editloop's own functions, in the order the unit defines them. Each is still
  * INCLUDE_ASM below; the prototypes are what lets the decompiled ones call
@@ -295,28 +355,10 @@ void EditPartsObjectOnOff();
 void MainMode(void);
 void EditMode(void);
 void PlayAmbient(float volume);
-extern CCameraFollow TalkCamera;
-extern CCameraFollow ViewCamera;
 extern int MenuMapJumpMode;
 extern int main_select_menu_no;
-extern int chg_time_cnt;
-extern int bgm_vol;
 extern u_int Vu_prog0f[];
-extern CEffectGroup EdEffectGroup;
 extern int binary;
-extern CFrameVu1 *SkyBackFrame;
-extern int NowSelectParts;
-extern int NowSelectAngle;
-extern float NowCursorRotY;
-extern CTextureAnime TexAnime;
-extern CTexAnimeData TexAnimeData;
-extern CTexture *StayTexture;
-extern CWind EdWind;
-extern float NowPartsCursorPos[4];
-extern int EdBeforeInBgmNo;
-extern int EdDrawOffMap;
-extern int EdThunderEffectFlag;
-extern int EdInteriorFlag;
 extern char EditEmptyText[];
 extern int fobject_list;
 extern int partseffect_list;
@@ -329,9 +371,6 @@ struct ED_GRD_DATA {
 };
 
 /* The names of the interiors the debug menu offers. */
-extern CMapParts *OldFocusParts;
-extern int OldSelectAngle;
-extern CCameraFollow EditCamera;
 void EBDraw(void);
 /* Mode the loop returns to once the debug menu closes. */
 /* Buffer the parts archive is read into. */
@@ -739,8 +778,8 @@ int EditInit(void *) {
     SetDataBuffer(&TextureData, 10);
     SetDataBuffer(&MotionData, 7900);
     SetDataBuffer(&EdMesBuffer, 13000);
-    SetDataBuffer(&DataBuffer__2, 1216000);
-    EdNPCBuffer.base = DataBuffer__2.base + DataBuffer__2.used * 16 + 0xCF8500;
+    SetDataBuffer(&DataBuffer, 1216000);
+    EdNPCBuffer.base = DataBuffer.base + DataBuffer.used * 16 + 0xCF8500;
     EdNPCBuffer.limit = 326000;
     EdNPCBuffer.used = 0;
     SetPacketReadBuffer(30000, 140000);
@@ -864,13 +903,13 @@ int EditInit(void *) {
     NowCamera = &MainCamera;
     EditMenuStatus.mode = -1;
     EditMenuStatus.parts = -1;
-    DebugFont__3.texture = "font_buff";
-    DebugFont__3.x = 16;
-    DebugFont__3.y = 16;
-    DebugFont__3.w = 280;
-    DebugFont__3.h = 224;
-    DebugFont__3.alpha = 64;
-    EdDSetFont(&DebugFont__3);
+    DebugFont.texture = "font_buff";
+    DebugFont.x = 16;
+    DebugFont.y = 16;
+    DebugFont.w = 280;
+    DebugFont.h = 224;
+    DebugFont.alpha = 64;
+    EdDSetFont(&DebugFont);
     if (interior_test == 0) {
         if (old_main_mode != 7 || main_select_padrup != 0) {
             EditLoad();
@@ -907,8 +946,8 @@ int EditInit(void *) {
     end_counter = 0;
     door_open_cnt = 0;
     EdStepTimeFlag = 1;
-    int free_start = (int) DataBuffer__2.base + (int) (DataBuffer__2.used * 16);
-    int free_quads = DataBuffer__2.limit - DataBuffer__2.used;
+    int free_start = (int) DataBuffer.base + (int) (DataBuffer.used * 16);
+    int free_quads = DataBuffer.limit - DataBuffer.used;
     if (free_quads < 326000)
         printf("Allocation error!!\n");
     int align = free_start & 0x3F;
@@ -946,8 +985,8 @@ int EditInit(void *) {
     MainCamera.SetAngleSoon(yaw);
     MainCamera.SetFollow(start_position[0], 14.0f + start_position[1], start_position[2]);
     MainCamera.Step(-1);
-    EffectTable__3 = (CEffect *) EtcDataBuffer.Alloc(0x800);
-    EdEffectGroup.Initialize(EffectTable__3, 128);
+    EffectTable = (CEffect *) EtcDataBuffer.Alloc(0x800);
+    EdEffectGroup.Initialize(EffectTable, 128);
     EdEffectGroup.Clear();
     EdInitMesParam();
     EditMes1.tex_block = 26;
@@ -1230,13 +1269,13 @@ int EditLoop(void) {
 
         char *mark[2] = {" ", ">"};
 
-        DebugFont__3.len = 0;
+        DebugFont.len = 0;
         for (int i = top; i < top + 14; i++) {
-            DebugFont__3.len += sprintf(&DebugFont__3.text[DebugFont__3.len], "%s %s\n",
+            DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s %s\n",
                                         mark[i == select], menu[i]);
         }
         TexManager.ReloadTexture(GetVif1Packet(), 0x1F);
-        DebugFont__3.Draw();
+        DebugFont.Draw();
         if (GamePad.Down(0x20) != 0) {
             float hour = NowTime / 3.0f;
             int jump = (int) hour;
@@ -1794,7 +1833,7 @@ int EditLoop(void) {
     if (sound_off_cnt < 0) {
         sound_off_cnt = 0;
     }
-    DebugFont__3.len = 0;
+    DebugFont.len = 0;
     if (GamePad.On(0x20) != 0) {
         cat_end();
     }
@@ -2335,6 +2374,9 @@ void EdDrawSysCursor(ED_EVENT_POINT *points, int count) {
     EdEventPointDraw(points, count, NowTime);
     EdDrawOpenItemBox();
 }
+
+float draw_day_cnt;
+int draw_day_flag;
 
 /**
  * Starts the day-transition overlay at its initial counter value.
@@ -3598,6 +3640,9 @@ void MoveEditCursor() {
         EdEditMoveHelpMes();
     }
 }
+u_int *scn_data;
+u_int *parts_read_buffer;
+
 /**
  * Enters the editor map's textures once they have been read.
  *
@@ -3608,7 +3653,7 @@ void MoveEditCursor() {
 int LoadTexture() {
     int entered;
     int image;
-    u_long128 *buffer = (u_long128 *) (DataBuffer__2.base + DataBuffer__2.used * 16);
+    u_long128 *buffer = (u_long128 *) (DataBuffer.base + DataBuffer.used * 16);
 
     TexManager.Initialize(0x3FE0);
     TexManager.SetBuffer(buffer, 0x4E200);
@@ -3730,14 +3775,14 @@ int LoadTexture() {
         blocks[entered].block_no = 0;
         blocks[entered].unk_08 = 0;
         TexManager.LoadTextureBlock(-1, blocks);
-        TexAnime.Initialize(&TexAnimeData, 0x40);
+        TexAnime.Initialize(TexAnimeData, 0x40);
 
         int anime_size;
         char *anime = (char *) GetPackFile(menu_data, "texanime.cfg", &anime_size);
 
         if (anime != NULL) {
             for (int i = 0; i < 64; i++) {
-                (&TexAnimeData)[i].Initialize();
+                TexAnimeData[i].Initialize();
             }
             TexAnime.LoadCFGFile(anime, anime_size);
         }
@@ -3759,8 +3804,8 @@ int LoadTexture() {
         TexManager.LoadTextureBlock(-1, map_blocks, read_buffer);
     }
     TexManager.buffer_size = TexManager.buffer_used;
-    DataBuffer__2.Alloc((int) (TexManager.buffer + TexManager.buffer_size - buffer) + 16);
-    DataBuffer__2.Align64();
+    DataBuffer.Alloc((int) (TexManager.buffer + TexManager.buffer_size - buffer) + 16);
+    DataBuffer.Align64();
     return 0;
 }
 /**
@@ -3825,7 +3870,7 @@ void LoadGroundData() {
         if (EditMapInfo->sky_layers[i].name[0] != '\0') {
             data = (u_int *) EdLoadFile(EditMapInfo->sky_layers[i].name);
 
-            SkyFrame[i] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
+            SkyFrame[i] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
             SkyFrame[i]->SetAttr(layer_attr, 1, 0x1000);
             for (int j = 0; j < 8; j++) {
                 short no = EditMapInfo->sky_layers[i].obj_anime[j];
@@ -3839,7 +3884,7 @@ void LoadGroundData() {
         if (EditMapInfo->sun_layers[i].name[0] != '\0') {
             data = (u_int *) EdLoadFile(EditMapInfo->sun_layers[i].name);
 
-            SunFrame[i] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
+            SunFrame[i] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
             SunFrame[i]->SetAttr(layer_attr, 1, 0x1000);
         }
         if (SunFrame[i] != NULL) {
@@ -3859,7 +3904,7 @@ void LoadGroundData() {
 
         back_attr.unk_54 = 0;
         back_attr.unk_14 = 1;
-        SkyBackFrame = LoadMDSFile(data, &DataBuffer__2, 6, NULL, NULL);
+        SkyBackFrame = LoadMDSFile(data, &DataBuffer, 6, NULL, NULL);
         SkyBackFrame->SetAttr(back_attr, 1, 0x1200);
     }
     for (int i = 0; i < 4; i++) {
@@ -3872,7 +3917,7 @@ void LoadGroundData() {
             EditArea[i].SetSize(info->width, info->height, info->unk_48, info->unk_4c);
             EditArea[i].SetOffset(info->unk_50 - 0.01f * (float) info->width, info->unk_54,
                                   info->unk_58 - 0.01f * (float) info->height);
-            EditArea[i].SetGridFrame(LoadMDSFile(data, &DataBuffer__2, 6, NULL, NULL));
+            EditArea[i].SetGridFrame(LoadMDSFile(data, &DataBuffer, 6, NULL, NULL));
 
             CFrameAttr grid_attr;
 
@@ -3884,15 +3929,15 @@ void LoadGroundData() {
     if (MapNo < 6) {
         data = (u_int *) EdLoadFile("gedit/e01/mds/e01a03_0.mds");
 
-        pEditGround->cursor.pieces[0] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
+        pEditGround->cursor.pieces[0] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
 
         data = (u_int *) EdLoadFile("gedit/e01/mds/e01a04_0.mds");
 
-        pEditGround->cursor.pieces[1] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
+        pEditGround->cursor.pieces[1] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
 
         data = (u_int *) EdLoadFile("gedit/e01/mds/e01a05_0.mds");
 
-        pEditGround->cursor.pieces[2] = LoadMDSFile(data, &DataBuffer__2, 0, NULL, NULL);
+        pEditGround->cursor.pieces[2] = LoadMDSFile(data, &DataBuffer, 0, NULL, NULL);
         pEditGround->cursor.area = 2;
     } else {
         pEditGround->cursor.pieces[0] = NULL;
@@ -3906,9 +3951,9 @@ void LoadGroundData() {
         MotionParts[i].Initialize();
         if (info->name[0] != '\0') {
             data = (u_int *) EdLoadFile(info->name);
-            MotionParts[i].InitializeTexAnime(&TexAnimeData, 64);
-            MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer__2, i + 0x1B,
-                                         &DataBuffer__2, 0);
+            MotionParts[i].InitializeTexAnime(TexAnimeData, 64);
+            MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer, i + 0x1B,
+                                         &DataBuffer, 0);
             MotionParts[i].SetPosition(info->values[0], info->values[1], info->values[2]);
             MotionParts[i].SetRotation(info->values[3], info->values[4], info->values[5]);
         }
@@ -4059,7 +4104,7 @@ void LoadGroundData() {
         }
         water->SetVertex(near_left, near_right, far_left, far_right);
         water->frame.SetPosition(info->corner_c);
-        water->SetSize(info->type, info->number, &DataBuffer__2);
+        water->SetSize(info->type, info->number, &DataBuffer);
         water->SetParam(info->texture_scroll[0], info->texture_scroll[1],
                         info->texture_scroll[2], info->texture_scroll[3]);
         water->SetColor(info->unk_50, info->unk_54, info->unk_58, 0x80);
@@ -4241,7 +4286,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
     parts->unk_10C = header->func_count;
     parts->unk_110 = (int) header->func;
     if (shared != NULL) {
-        CopyCMapParts(parts, shared, &DataBuffer__2);
+        CopyCMapParts(parts, shared, &DataBuffer);
     } else {
         char *names[9] = {NULL};
 
@@ -4274,7 +4319,7 @@ EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_I
         if (record->size_c4 > 0) {
             names[8] = (char *) record + record->offset_c0;
         }
-        LoadMapObject(parts, (u_int **) names, &DataBuffer__2);
+        LoadMapObject(parts, (u_int **) names, &DataBuffer);
     }
 
     CFrame *frames[9];
@@ -4568,3 +4613,10 @@ int CheckEventPoint(ED_EVENT_POINT *point, float time) {
     }
     return 1;
 }
+
+/* The order the static initialiser materialises each camera's float arguments in. */
+#pragma argument_flag 0
+#pragma argument_flag_ones 3504, 3512, 3520, 3528, 3545, 3551, 3659, 3689, 3691, 3692
+#pragma argument_flag_ones 3694, 3699, 3701, 3702, 3704, 3709, 3711, 3712, 3714, 3719
+#pragma argument_flag_ones 3721, 3722, 3724, 3729, 3731, 3732, 3734, 3739, 3741, 3742
+#pragma argument_flag_ones 3744

@@ -57,7 +57,6 @@
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
-extern int GameMode;
 extern int LanguageCode;
 extern int oldGameMode;
 extern int sound_off_cnt;
@@ -77,21 +76,10 @@ extern int draw_npc_cursor;
 extern float draw_day_cnt;
 extern int draw_day_flag;
 extern int key_lock;
-extern int light_no;
 extern int loop_counter;
-extern int week_no;
-extern int texture_list;
 extern int EdDebugEventEnable;
 extern int EdDebugCameraFlag;
-extern char *objframe;
-extern CMapObject *mapobj;
-extern CMapParts *mapparts;
 extern CMapParts *ObjParts;
-extern EDIT_WATER_INFO *water_info;
-extern int edit_rect_list;
-extern int motion_parts_list;
-extern int people_list;
-extern int now_parts_no;
 extern int door_open;
 extern int camera_dist_mode;
 extern int EdDrawOffMapShadow;
@@ -122,12 +110,6 @@ extern CCameraFollow EditCamera;
 extern CDataAlloc2<1> CharaBuffer;
 extern int NowEditMap;
 extern int MapNo;
-extern int mapobj_list;
-extern int water_list;
-extern int objanime_list;
-extern int event_list;
-extern int mapjump_id;
-extern char mapjump_name[0x20];
 extern char EditDataDir[0x100];
 
 /* Whether the editor is running the interior test map, and the map names it reads. */
@@ -178,7 +160,6 @@ extern int EdInteriorDoorSound;
 extern int EdInteriorStartEvent;
 extern int door_open_cnt;
 extern int fix_pos_enble;
-extern "C" char CurrentDir__3[0x40];
 extern CEditGround *pEditGround;
 extern CCharacter *Chara;
 extern CMainChara MainChara;
@@ -213,21 +194,20 @@ struct EDIT_CHARA_DATA_ENTRY {
     char *name;       /**< Villager resource name. */
     s16 character_no; /**< Character definition selected for the villager. */
     s16 model_no;     /**< Model variant selected for the villager. */
-    u8 unk_08[8];
+    int unk_08;
+    float unk_0c;
     s16 hide_when_complete; /**< Whether completed town progress hides the villager. */
     u8 unk_12[2];
 };
 
 STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 
-extern EDIT_CHARA_DATA_ENTRY EditCharaData[6][20];
 #include "editmenu.hpp"
 extern u8 MesWinTexBuff_01[0x100];
 extern u8 MesWinTexBuff_02[0x100];
 extern CFrameVu1 *SkyFrame[4];
 extern CFrame *SunFrame[4];
 extern C3DSprite SystemEffect[8];
-extern float def_light[12][4];
 
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
@@ -286,20 +266,460 @@ void EditPartsObjectOnOff();
 
 typedef void (*EDIT_SCRIPT_COMMAND)(void **arguments);
 
-extern "C" TAG_PARAM Command__5[61];
-extern "C" EDIT_SCRIPT_COMMAND CommandExe__5[61];
-extern "C" SPI_FUNC_PARAM func_table;
-extern int binary;
-extern int fobject_list;
-extern int partseffect_list;
-extern int objeffect_list;
-extern int objtimer_list;
+void CommandSCN(void **arguments);
+void CommandLIGHT_NO(void **arguments);
+void CommandAMBIENT(void **arguments);
+void CommandLIGHT_C(void **arguments);
+void CommandFOG(void **arguments);
+void CommandBG_COL(void **arguments);
+void CommandBG_COL2(void **arguments);
+void CommandDOF(void **arguments);
+void CommandCD(void **arguments);
+void CommandGRD_IMG(void **arguments);
+void CommandBLD_IMG(void **arguments);
+void CommandSKY_IMG(void **arguments);
+void CommandSUN_IMG(void **arguments);
+void CommandWATER_IMG(void **arguments);
+void CommandFIRE_IMG(void **arguments);
+void CommandFLER_IMG(void **arguments);
+void CommandIMG(void **arguments);
+void CommandSKY(void **arguments);
+void CommandSUN(void **arguments);
+void CommandGROUND(void **arguments);
+void CommandBUILD(void **arguments);
+void CommandWATER(void **arguments);
+void CommandWATER_SURFACE(void **arguments);
+void CommandWATER_SHAKE(void **arguments);
+void CommandEDITAREA(void **arguments);
+void CommandBLD_PARTS(void **arguments);
+void CommandGRD_PARTS(void **arguments);
+void CommandPARTS_INFO(void **arguments);
+void CommandROAD_PARTS(void **arguments);
+void CommandROAD(void **arguments);
+void CommandRIVER_PARTS(void **arguments);
+void CommandRIVER(void **arguments);
+void CommandBRIDGE_PARTS(void **arguments);
+void CommandLAKE_PARTS(void **arguments);
+void CommandON_RIVER_PARTS(void **arguments);
+void CommandOBJ_ANIME(void **arguments);
+void CommandFIRE(void **arguments);
+void CommandFLAME(void **arguments);
+void CommandBRIGHT(void **arguments);
+void CommandOBJECT_TIMER(void **arguments);
+void CommandENTRANCE(void **arguments);
+void CommandMAPJUMP(void **arguments);
+void CommandPEOPLE(void **arguments);
+void CommandTIME_TABLE_NO(void **arguments);
+void CommandTIME_TABLE(void **arguments);
+void CommandTIME_STOP(void **arguments);
+void CommandSKY_FOLLOW(void **arguments);
+void CommandSHADOW_LEVEL(void **arguments);
+void CommandEDITAREA_RECT(void **arguments);
+void CommandBGM_NO(void **arguments);
+void CommandSOUND_SET(void **arguments);
+void CommandREVERBE(void **arguments);
+void CommandMOTION_PARTS(void **arguments);
+void CommandPEOPLE2(void **arguments);
+void CommandSE_AMBIENT_OFF(void **arguments);
+void CommandWIND(void **arguments);
+void CommandTALK_EVENT(void **arguments);
+void CommandCHARA_AMBIENT(void **arguments);
+void CommandTALK_ROT(void **arguments);
+void CommandTALK_DIR(void **arguments);
+void CommandPEOPLE_LIST(void **arguments);
+
+/** Default direction of each of the twelve map lights. */
+float def_light[12][4] = {
+    {0.47f, 0.79f, 0.46f, 0.0f},
+    {0.0f, 0.89f, 0.46f, 0.0f},
+    {-0.47f, 0.79f, 0.41f, 0.0f},
+    {-0.83f, 0.5f, 0.25f, 0.0f},
+    {-0.996f, 0.5f, 0.02f, 0.0f},
+    {-0.9f, 0.5f, 0.02f, 0.0f},
+    {0.55f, 0.5f, 0.38f, 0.0f},
+    {0.0f, 0.5f, 0.46f, 0.0f},
+    {-0.55f, 0.5f, 0.38f, 0.0f},
+    {0.9f, 0.5f, 0.02f, 0.0f},
+    {0.996f, 0.5f, 0.02f, 0.0f},
+    {0.83f, 0.5f, 0.25f, 0.0f},
+};
+
+/** Default villagers of each town, twenty per map. */
+EDIT_CHARA_DATA_ENTRY EditCharaData[6][20] = {
+    {
+        {"p47a", 0, 4, 0, 0.3f, 0},
+        {"p12a", 4, 5, 1, 0.3f, 1},
+        {"p07a", 1, 5, 1, 0.3f, 1},
+        {"p01a", 1, 4, 1, 0.3f, 1},
+        {"p13a", 5, 5, 1, 0.3f, 1},
+        {"p06a", 3, 4, 1, 0.3f, 1},
+        {"p09a", 3, 5, 1, 0.3f, 1},
+        {"p08a", 6, 4, 1, 0.3f, 1},
+        {"p05a", 6, 3, 1, 0.17f, 1},
+        {"p03a", 2, 5, 1, 0.5f, 1},
+        {"p04a", 2, 4, 1, 0.3f, 1},
+        {"p02a", 7, 3, 0, 0.3f, 0},
+        {"p10a", 0, 3, 1, 0.2f, 1},
+        {"p14a", -1, -1, 1, 0.3f, 0},
+        {"c04cat", 0, 5, 1, 0.3f, 0},
+        {"p47a", 6, 5, 0, 0.3f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+    },
+    {
+        {"p27a", 4, 4, 1, 0.3f, 1},
+        {"p30a", 2, 4, 1, 0.3f, 1},
+        {"p29a", 2, 5, 1, 0.3f, 1},
+        {"p28a", 1, 5, 1, 0.3f, 1},
+        {"p31a", 5, 3, 0, 0.3f, 1},
+        {"p25a", 6, 4, 1, 0.3f, 1},
+        {"p59a", 14, 4, 1, 0.3f, 1},
+        {"p24a", 0, 4, 1, 0.3f, 1},
+        {"p26a", 3, 4, 1, 0.3f, 0},
+        {"p23a", 3, 5, 1, 0.3f, 0},
+        {"p21a", 7, 4, 1, 0.3f, 0},
+        {"p22a", 7, 5, 1, 0.3f, 0},
+        {"", -1, -1, 1, 0.3f, 0},
+        {"", -1, -1, 1, 0.3f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+    },
+    {
+        {"p49a", 3, 5, 0, 0.3f, 1},
+        {"p35a", 0, 3, 0, 0.3f, 0},
+        {"p37a", 2, 3, 0, 0.3f, 0},
+        {"p36a", 1, 4, 0, 0.3f, 0},
+        {"p41a", 4, 4, 0, 0.3f, 1},
+        {"p39a", 7, 5, 0, 0.3f, 1},
+        {"p33a", 8, 5, 0, 0.3f, 1},
+        {"p40a", 8, 4, 1, 0.3f, 1},
+        {"p43a", 8, 3, 1, 0.3f, 1},
+        {"p45a", 5, 2, 0, 0.3f, 1},
+        {"p44a", 9, 5, 1, 0.3f, 1},
+        {"p34a", 9, 4, 1, 0.3f, 1},
+        {"p42a", 6, 3, 1, 0.3f, 1},
+        {"", -1, -1, 0, 0.3f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+    },
+    {
+        {"p48a", 0, 3, 1, 0.3f, 1},
+        {"p46a", 1, 4, 1, 0.3f, 0},
+        {"p50a", 2, 4, 1, 0.3f, 0},
+        {"p51a", 3, 5, 1, 0.3f, 1},
+        {"p52a", 3, 3, 1, 0.3f, 1},
+        {"p53a", 3, 4, 1, 0.3f, 1},
+        {"p54a", 5, 5, 1, 0.3f, 1},
+        {"p55a", 4, 3, 1, 0.3f, 1},
+        {"p56a", 6, 3, 0, 0.3f, 0},
+        {"p57a", 7, 3, 1, 0.3f, 1},
+        {"p58a", 7, 4, 1, 0.3f, 1},
+        {"", -1, -1, 1, 0.3f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+    },
+    {
+        {"p64a", 3, 3, 1, 0.3f, 0},
+        {"p62a", 4, 3, 1, 0.3f, 0},
+        {"p63a", 9, 1, 1, 0.3f, 0},
+        {"p61a", 10, 1, 1, 0.3f, 0},
+        {"", -1, -1, 1, 0.3f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+    },
+    {
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+        {"", -1, -1, 0, 0.0f, 0},
+    },
+};
+
+/** Tags the map script recognises and the arguments each one takes. */
+static TAG_PARAM Command[61] = {
+    {"SCN", {SCRIPT_ARGUMENT_STRING, -1}},
+    {"LIGHT_NO", {SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"AMBIENT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"LIGHT_C", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                 SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                 SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"FOG", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER,
+             SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
+             SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BG_COL", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BG_COL2", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"DOF", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER,
+             SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER,
+             SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"CD", {SCRIPT_ARGUMENT_STRING, -1}},
+    {"GRD_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"BLD_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SKY_IMG", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SUN_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"WATER_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"FIRE_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"FLER_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"IMG", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SKY", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SUN", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"GROUND", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING,
+                SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING,
+                SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT,
+                SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BUILD", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING,
+               SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING,
+               SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT,
+               SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+               SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"WATER", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING,
+               SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING,
+               SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT,
+               SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+               SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"WATER_SURFACE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                       SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                       SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                       SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                       SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                       SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                       SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                       SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"WATER_SHAKE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
+                     SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"EDITAREA", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                  SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                  SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BLD_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                   SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"GRD_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                   SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"PARTS_INFO", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
+                    SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
+                    SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                    SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
+                    SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                    SCRIPT_ARGUMENT_STRING, -1}},
+    {"ROAD_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                    SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"ROAD", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+              SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"RIVER_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                     SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"RIVER", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+               SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}},
+    {"BRIDGE_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                      SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"LAKE_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                    SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}},
+    {"ON_RIVER_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER,
+                        SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}},
+    {"OBJ_ANIME", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
+                   SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                   SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                   SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"FIRE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+              SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+              SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"FLAME", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+               SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+               SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BRIGHT", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"OBJECT_TIMER", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"ENTRANCE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                  SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                  SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                  SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"MAPJUMP", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, -1}},
+    {"PEOPLE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT,
+                SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"TIME_TABLE_NO", {SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"TIME_TABLE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                    SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                    SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"TIME_STOP", {-1}},
+    {"SKY_FOLLOW", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SHADOW_LEVEL", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                      SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"EDITAREA_RECT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                       SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"BGM_NO", {SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SOUND_SET", {SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"REVERBE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING,
+                 SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"MOTION_PARTS", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                      SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                      SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"PEOPLE2", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                 SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"SE_AMBIENT_OFF", {-1}},
+    {"WIND", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+              SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"TALK_EVENT", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"CHARA_AMBIENT", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT,
+                       SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"TALK_ROT", {SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"TALK_DIR", {SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"PEOPLE_LIST", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                     SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                     SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                     SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER,
+                     SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+};
+
+/** Handler of each map-script tag, in the order of Command. */
+static EDIT_SCRIPT_COMMAND CommandExe[61] = {
+    CommandSCN,
+    CommandLIGHT_NO,
+    CommandAMBIENT,
+    CommandLIGHT_C,
+    CommandFOG,
+    CommandBG_COL,
+    CommandBG_COL2,
+    CommandDOF,
+    CommandCD,
+    CommandGRD_IMG,
+    CommandBLD_IMG,
+    CommandSKY_IMG,
+    CommandSUN_IMG,
+    CommandWATER_IMG,
+    CommandFIRE_IMG,
+    CommandFLER_IMG,
+    CommandIMG,
+    CommandSKY,
+    CommandSUN,
+    CommandGROUND,
+    CommandBUILD,
+    CommandWATER,
+    CommandWATER_SURFACE,
+    CommandWATER_SHAKE,
+    CommandEDITAREA,
+    CommandBLD_PARTS,
+    CommandGRD_PARTS,
+    CommandPARTS_INFO,
+    CommandROAD_PARTS,
+    CommandROAD,
+    CommandRIVER_PARTS,
+    CommandRIVER,
+    CommandBRIDGE_PARTS,
+    CommandLAKE_PARTS,
+    CommandON_RIVER_PARTS,
+    CommandOBJ_ANIME,
+    CommandFIRE,
+    CommandFLAME,
+    CommandBRIGHT,
+    CommandOBJECT_TIMER,
+    CommandENTRANCE,
+    CommandMAPJUMP,
+    CommandPEOPLE,
+    CommandTIME_TABLE_NO,
+    CommandTIME_TABLE,
+    CommandTIME_STOP,
+    CommandSKY_FOLLOW,
+    CommandSHADOW_LEVEL,
+    CommandEDITAREA_RECT,
+    CommandBGM_NO,
+    CommandSOUND_SET,
+    CommandREVERBE,
+    CommandMOTION_PARTS,
+    CommandPEOPLE2,
+    CommandSE_AMBIENT_OFF,
+    CommandWIND,
+    CommandTALK_EVENT,
+    CommandCHARA_AMBIENT,
+    CommandTALK_ROT,
+    CommandTALK_DIR,
+    CommandPEOPLE_LIST,
+};
+
+SPI_FUNC_PARAM func_table = {"test", {SCRIPT_ARGUMENT_INTEGER, -1}, test};
+
+int GameMode = 1;
+
+/** Directory prefixed to every file the map script names. */
+static char CurrentDir[0x40];
+/** Destination named by the last MAPJUMP tag. */
+char mapjump_name[0x80];
+
+EDIT_MAP_INFO *edit_info;
+int texture_list;
+int fobject_list;
+int mapobj_list;
+int objanime_list;
+int light_no;
+int partseffect_list;
+int objeffect_list;
+int objtimer_list;
+int event_list;
+int water_list;
+int mapjump_id;
+int people_list;
+int week_no;
+char *objframe;
+CMapObject *mapobj;
+CMapParts *mapparts;
+EDIT_WATER_INFO *water_info;
+VILLAGER_INFO *now_villinfo;
+int now_parts_no;
+int binary;
+int edit_rect_list;
+int motion_parts_list;
+
 
 /**
  * Sets the directory prefix used while parsing the current map script.
  */
 void CommandCD(void **arguments) {
-    strcpy(CurrentDir__3, (char *) arguments[0]);
+    strcpy(CurrentDir, (char *) arguments[0]);
 }
 
 /**
@@ -374,7 +794,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     script = (char *) read_buffer;
     cache = cache_buffer;
     light_no = 0;
-    CurrentDir__3[0] = '\0';
+    CurrentDir[0] = '\0';
     binary = 0;
     InitInfo();
     texture_list = 0;
@@ -448,14 +868,14 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
                     cursor += sizeof(int);
                 }
             }
-            CommandExe__5[command](arguments);
+            CommandExe[command](arguments);
         }
     } else {
         // A text script: run it, keeping a compiled copy of each command as it goes.
         CScriptInterpreter interpreter;
 
         interpreter.SetScript(script, file_size);
-        interpreter.SetTAG((TAG_PARAM *) Command__5, 61);
+        interpreter.SetTAG((TAG_PARAM *) Command, 61);
         interpreter.SetFunction(&func_table, 1);
         for (;;) {
             command = interpreter.GetNextTAG();
@@ -463,9 +883,9 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
                 break;
             }
             void **arguments = interpreter.arguments;
-            CommandExe__5[command](arguments);
+            CommandExe[command](arguments);
             *cache++ = command;
-            int *type = Command__5[command].argument_types;
+            int *type = Command[command].argument_types;
             int argument = 0;
             for (;;) {
                 int kind = *type++;
@@ -630,7 +1050,7 @@ void CommandDOF(void **arguments) {
 void CommandIMGSub(int image_type, int image_number, char *name) {
     edit_info->images[texture_list].type = image_type;
     edit_info->images[texture_list].number = image_number;
-    sprintf(edit_info->images[texture_list].name, "%s%s", CurrentDir__3, name);
+    sprintf(edit_info->images[texture_list].name, "%s%s", CurrentDir, name);
     texture_list++;
 }
 
@@ -706,7 +1126,7 @@ void CommandSKY(void **arguments) {
         return;
     }
 
-    sprintf(edit_info->sky_layers[index].name, "%s%s", CurrentDir__3, (char *) arguments[1]);
+    sprintf(edit_info->sky_layers[index].name, "%s%s", CurrentDir, (char *) arguments[1]);
     objframe = edit_info->sky_layers[index].name;
     mapobj = NULL;
     mapparts = NULL;
@@ -721,7 +1141,7 @@ void CommandSUN(void **arguments) {
         return;
     }
 
-    sprintf(edit_info->sun_layers[index].name, "%s%s", CurrentDir__3, (char *) arguments[1]);
+    sprintf(edit_info->sun_layers[index].name, "%s%s", CurrentDir, (char *) arguments[1]);
     objframe = edit_info->sun_layers[index].name;
     mapobj = NULL;
     mapparts = NULL;
@@ -737,7 +1157,7 @@ void CommandGROUND(void **arguments) {
     for (i = 0; i < 9; i++) {
         char *name = (char *) arguments[i];
         if (*name != '\0') {
-            sprintf(object->name[i], "%s%s", CurrentDir__3, name);
+            sprintf(object->name[i], "%s%s", CurrentDir, name);
         } else {
             object->name[i][0] = '\0';
         }
@@ -764,7 +1184,7 @@ void CommandBUILD(void **arguments) {
     for (i = 0; i < 9; i++) {
         char *name = (char *) arguments[i];
         if (*name != '\0') {
-            sprintf(object->name[i], "%s%s", CurrentDir__3, name);
+            sprintf(object->name[i], "%s%s", CurrentDir, name);
         } else {
             object->name[i][0] = '\0';
         }
@@ -791,7 +1211,7 @@ void CommandWATER(void **arguments) {
     for (i = 0; i < 9; i++) {
         char *name = (char *) arguments[i];
         if (*name != '\0') {
-            sprintf(object->name[i], "%s%s", CurrentDir__3, name);
+            sprintf(object->name[i], "%s%s", CurrentDir, name);
         } else {
             object->name[i][0] = '\0';
         }
@@ -875,7 +1295,7 @@ void CommandEDITAREA(void **arguments) {
     EDIT_AREA_INFO *area = &edit_info->parts_work.edit_areas[*(int *) arguments[0]];
     char *name = (char *) arguments[1];
     if (*name != '\0') {
-        sprintf(area->name, "%s%s", CurrentDir__3, name);
+        sprintf(area->name, "%s%s", CurrentDir, name);
     } else {
         area->name[0] = '\0';
     }
@@ -928,7 +1348,7 @@ void CommandBLD_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else {
         parts->name[0][0] = '\0';
@@ -955,7 +1375,7 @@ void CommandGRD_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else {
         parts->name[0][0] = '\0';
@@ -1028,7 +1448,7 @@ void CommandROAD_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else
         parts->name[0][0] = '\0';
@@ -1052,7 +1472,7 @@ void CommandROAD(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else
         parts->name[0][0] = '\0';
@@ -1077,7 +1497,7 @@ void CommandRIVER_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else
         parts->name[0][0] = '\0';
@@ -1101,7 +1521,7 @@ void CommandRIVER(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else
         parts->name[0][0] = '\0';
@@ -1118,7 +1538,7 @@ void CommandRIVER(void **arguments) {
     if (index + 8 < 16) {
         char *second_name = (char *) arguments[4];
         if (*second_name != '\0') {
-            sprintf(parts->name[7], "%s%s", CurrentDir__3, second_name);
+            sprintf(parts->name[7], "%s%s", CurrentDir, second_name);
         } else {
             parts->name[7][0] = '\0';
         }
@@ -1140,7 +1560,7 @@ void CommandBRIDGE_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
     } else
         parts->name[0][0] = '\0';
@@ -1165,9 +1585,9 @@ void CommandLAKE_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-        sprintf(parts->name[7], "%s%s", CurrentDir__3, (char *) arguments[4]);
+        sprintf(parts->name[7], "%s%s", CurrentDir, (char *) arguments[4]);
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];
@@ -1191,9 +1611,9 @@ void CommandON_RIVER_PARTS(void **arguments) {
     char *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
-        sprintf(name, "%s%s", CurrentDir__3, source_name);
+        sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-        sprintf(parts->name[7], "%s%s", CurrentDir__3, (char *) arguments[4]);
+        sprintf(parts->name[7], "%s%s", CurrentDir, (char *) arguments[4]);
     } else
         parts->name[0][0] = '\0';
     parts->parts_no = *(int *) arguments[2];

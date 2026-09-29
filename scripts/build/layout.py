@@ -56,6 +56,10 @@ MARKER = re.compile(
 PLACEMENT = re.compile(
     r"^\s*(\S+)\.o\s*\(\s*(\.[td]?text)\s*\)\s*//\s*(0x[0-9a-fA-F]+)\s*$", re.M
 )
+# A unit with data but no code has no `.text` line for mwld to place, so its
+# position in the link order is given as a comment mwld skips:
+#     // @ORDER editpartsdata.cpp.o 0x001579e0
+ORDER_ONLY = re.compile(r"^\s*//\s*@ORDER\s+(\S+)\.o\s+(0x[0-9a-fA-F]+)", re.M)
 IMAGE_OF = {".text": "main", ".ttext": "title", ".dtext": "dun"}
 
 # objdiff runs `<custom_make> <custom_args...> <object path>` to rebuild. The
@@ -276,7 +280,11 @@ def read_units(sources, path=LCF):
         by_object.setdefault(os.path.basename(source), []).append(source)
 
     out, missing, ambiguous = [], [], []
-    for name, section, address in PLACEMENT.findall(open(path).read()):
+    text = open(path).read()
+    entries = PLACEMENT.findall(text) + [
+        (name, ".text", address) for name, address in ORDER_ONLY.findall(text)
+    ]
+    for name, section, address in entries:
         candidates = by_object.get(name, [])
         if not candidates:
             missing.append(name)

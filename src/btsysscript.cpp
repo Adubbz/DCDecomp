@@ -34,19 +34,11 @@
 #include "snd.hpp"
 #include "userstatus.hpp"
 
-/**
- * Name of the map file the next battle-map jump loads.
- */
-extern char BtLoadMapFileName[32];
-
 /** Randomized element the current floor's sealed door wants. */
 extern int BtRubyDoorKey;
 
 /** Nonzero while the dungeon floor is drawn at all. */
 extern s32 BtAllDrawFlag;
-
-/** Layout of the map the next battle-map jump loads. */
-extern s32 BtLoadMapType;
 
 /** The dungeon floor that the player is on. */
 extern "C" CDungeonMap MainDungeonMap;
@@ -83,6 +75,12 @@ extern "C" ClsMes BtEventMes0;
 
 /** Message window the system script talks through second. */
 extern "C" ClsMes BtEventMes1;
+
+BT_EVENT_INFO BtEventInfo;
+BT_OBJ_HANDLE BtObjHdl[32];
+char BtLoadMapFileName[32];
+int BtMapJumpFloor;
+s32 BtLoadMapType;
 
 void BtSystemScriptEventInfoInit(void) {
     BtEventInfo.unk_2C = -1;
@@ -1034,29 +1032,98 @@ struct BT_EVENT_EXTERNAL_FUNCTION {
 };
 
 /** Opcode functions of the system script, ended by an entry without a function. */
-extern "C" BT_EVENT_EXTERNAL_FUNCTION ext_func_info__2[];
+static BT_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
+    {_GET_FLOOR_LEVEL, 1010},
+    {_SET_FLOOR_LEVEL, 1011},
+    {_GET_OLD_FLOOR_LEVEL, 1012},
+    {_GET_ACTION_MODE, 1020},
+    {_ITEM_USE_WINDOW, 1021},
+    {_CHECK_EVENT_FLG, 1023},
+    {_SET_EVENT_FLG, 1024},
+    {_GET_OBJHDL, 1030},
+    {_SET_OBJHDL_POS, 1031},
+    {_SET_OBJHDL_ROT, 1032},
+    {_SET_OBJHDL_DRAW_FLAG, 1033},
+    {_GET_OBJHDL_POS, 1034},
+    {_GET_OBJHDL_ROT, 1035},
+    {_SET_URA_DUNGEON, 1036},
+    {_GET_EVENT_POS, 1040},
+    {_GET_EVENT_ROT, 1041},
+    {_OPEN_ENTRANCE_WINDOW, 1022},
+    {_OPEN_ESCAPE_WINDOW, 1070},
+    {_GO_DUNGEON, 1050},
+    {_SET_DUNGEON_MAP, 1051},
+    {_LOAD_DUNGEON_MAP2, 1052},
+    {_LOAD_MONSTOR, 1053},
+    {_SET_RANDOM_MAP, 1054},
+    {_SET_EVENT_SW, 1055},
+    {_SET_MONSTOR_ID, 1056},
+    {_CHK_ATRA_HAVE, 1057},
+    {_SET_ATRA, 1058},
+    {_SET_IBOX, 1059},
+    {_GET_NOW_USER_ID, 1060},
+    {_RUN_SCRIPT_NO, 1061},
+    {_CLEAN_MONSTOR_SCRIPT_NO, 1066},
+    {_GET_NPC_OBJHDL, 1062},
+    {_SET_MOTION_OBJHDL, 1063},
+    {_SET_NPC_ON_OFF, 1094},
+    {_GET_GATEKEY_NO, 1064},
+    {_USER_WEAPON_DRAW, 1065},
+    {_SET_MAIN_CHR2, 1067},
+    {_RESET_MAIN_CHR, 1071},
+    {_SET_LIMMIT_ZONE, 1068},
+    {_SET_DEAD_FLAG, 1069},
+    {_ALL_DRAW_FLAG, 1072},
+    {_SET_FLOOR_TITLE, 1073},
+    {_GET_RUBY_ELEMENT, 1074},
+    {_SET_RUBY_ELEMENT, 1088},
+    {_SET_FLOOR_TITLE_OFF, 1076},
+    {_INIT_BEE, 1077},
+    {_END_BEE, 1078},
+    {_EASTKING_COMPLETE, 1079},
+    {_SET_RES_LIMMIT_ZONE, 1080},
+    {_GET_ITEM_TRAPID, 1081},
+    {_RESET_ITEM_TRAP, 1082},
+    {_BOM_SET, 1083},
+    {_SET_STATUS_ERR, 1084},
+    {_CHECK_MARDAN, 1086},
+    {_NO_RESET_CHARA_NO, 1087},
+    {_CHECK_CHR_HELP, 1089},
+    {_HOLD_ITEM_EVENT, 1090},
+    {_STOP_BATTLE_BGM, 1091},
+    {_NO_STATUS_RECOVER, 1092},
+    {_SET_QUEST_DUNGEON, 1093},
+    {_GET_MAP_CODE, 1095},
+    {_SET_ACTIVE_ITEM_ICON, 1096},
+    {_GET_ITEM_UNIT_NO, 1097},
+    {_SET_IBOX_ANGLE, 1098},
+    {_SET_IBOX_FINISH, 1099},
+    {_GET_PIERO_ITEM, 1100},
+    {_CLEAR_DEAMON_SHAFT, 1101},
+    {NULL, -1},
+};
 
 /** Dispatch table the event script calls opcodes through. */
 extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
 void AddSystemEventScript(void) {
     for (int i = 0;; i++) {
-        if (ext_func_info__2[i].function == NULL) {
+        if (ext_func_info[i].function == NULL) {
             break;
         }
         int j;
         for (j = 0; j < i; j++) {
-            if (ext_func_info__2[i].operation == ext_func_info__2[j].operation) {
+            if (ext_func_info[i].operation == ext_func_info[j].operation) {
                 printf("same ext_func_no!!!\n");
                 while (1) {
                 }
             }
         }
-        int operation = ext_func_info__2[i].operation;
+        int operation = ext_func_info[i].operation;
         if (operation < 0 || operation >= 1500) {
             printf("ext func over!!");
         } else {
-            ext_func__2[operation] = ext_func_info__2[i].function;
+            ext_func__2[operation] = ext_func_info[i].function;
         }
     }
 }

@@ -43,19 +43,27 @@ struct NAME_SELECT {
 STATIC_ASSERT(sizeof(NAME_SELECT) == 0x2C);
 
 /** The state of the name-entry screen. */
-extern NAME_SELECT NameSelect;
+NAME_SELECT NameSelect;
+
+/** The name currently being edited. */
+extern "C" {
+s16 *CharaName;
+}
+
+/** The face of the party member being named. */
+CTexture *CharaFace;
 
 /** The name-entry screen's frame, tabs and cursor. */
-extern CTexture *NameTemp;
+CTexture *NameTemp;
 
 /** The hiragana keyboard's characters. */
-extern CTexture *HiraTex;
+CTexture *HiraTex;
 
 /** The katakana keyboard's characters. */
-extern CTexture *KataTex;
+CTexture *KataTex;
 
 /** The alphabet and symbol keyboards' characters. */
-extern CTexture *AlphaTex;
+CTexture *AlphaTex;
 
 /** The packed texture files used by the name-entry screen. */
 extern char NameEntryTextureFile[];
@@ -87,27 +95,14 @@ extern char NameEntryMessageFile[];
 /** The second name-entry message file. */
 extern char NameEntryMessageFile2[];
 
-/** The face of the party member being named. */
-extern CTexture *CharaFace;
-
 /** How far the cursor moves across and down each keyboard, per key. */
-extern s16 InputModeMovetbl[4][2];
+s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0x1A}};
 
 /** How many keys each keyboard has in a row. */
-extern s16 InputModeOrikaeshi[4];
+s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
 
 #include "snd.hpp"
 
-/** State of the storybook that plays before the game begins. */
-extern OPENING_BOOK OpenBook;
-
-/** The name currently being edited. */
-extern "C" s16 *CharaName;
-
-/**
- * The work area the storybook hands to the name-entry screen once its pages are read.
- */
-extern u_long128 *OpeningReadBuf;
 
 /**
  * The message window font's texture work area.
@@ -1638,6 +1633,23 @@ void NameDefaultSet(int chara_no) {
         name[length] = 0;
     }
 }
+/** The extra spacing to the left and right of each character from code 0xA2 upwards. */
+s8 AlphabetEtcOffset[97][2] = {
+    {1, 0}, {0, 1}, {1, 1}, {0, 1}, {1, 0}, {2, 2}, {0, 1}, {1, 2},
+    {2, 4}, {4, 4}, {2, 2}, {0, 2}, {0, 1}, {0, 2}, {2, 2}, {1, 1},
+    {0, 0}, {1, 1}, {1, 1}, {0, 0}, {2, 1}, {0, 2}, {0, 0}, {0, 2},
+    {2, 2}, {1, 2}, {2, 1}, {1, 2}, {1, 1}, {2, 1}, {2, 2}, {2, 2},
+    {1, 1}, {1, 3}, {3, 3}, {4, 2}, {1, 3}, {2, 4}, {0, 0}, {1, 1},
+    {2, 1}, {1, 2}, {2, 1}, {1, 3}, {1, 2}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 2}, {1, 2}, {1, 1}, {0, 8}, {1, 1}, {-1, 4}, {3, 4},
+    {2, 2}, {1, 0}, {0, 1}, {1, 0}, {1, 1}, {1, 2}, {0, 1}, {0, 0},
+    {0, 1}, {6, 0}, {-4, 7}, {0, 0}, {0, 0}, {1, 1}, {1, 0}, {0, 1},
+    {3, 2}, {2, 3}, {4, 3}, {3, 3}, {3, 3}, {3, 3}, {4, 3}, {3, 4},
+    {1, 2}, {4, 6}, {1, 2}, {2, 2}, {1, 2}, {2, 1}, {2, 2}, {3, 1},
+    {1, 1}, {1, 2}, {4, 6}, {2, 8}, {2, 8}, {2, 2}, {1, 3}, {1, 4},
+    {1, 2},
+};
+
 /**
  * Gives the kerning between two name characters.
  *
@@ -1646,8 +1658,6 @@ void NameDefaultSet(int chara_no) {
  * @size 0x78
  */
 static int GetFontLRTumeW(int index, int left_code, int code) {
-    extern s8 AlphabetEtcOffset[][2];
-
     int tume = 0;
 
     if (code >= 0xA2 && code < 0x100) {
@@ -1786,6 +1796,12 @@ int GetMsgLengthCharaName(int chara_no) {
     }
     return length;
 }
+/** State of the storybook that plays before the game begins. */
+OPENING_BOOK OpenBook;
+
+/** The work area the storybook hands to the name-entry screen once its pages are read. */
+u_long128 *OpeningReadBuf;
+
 /**
  * Opens the storybook that begins the game.
  *

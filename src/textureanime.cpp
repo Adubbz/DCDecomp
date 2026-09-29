@@ -8,25 +8,16 @@
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
-extern CTextureAnime *pTexAnime;
-extern int now_group;
-extern TAG_PARAM Command__4[];
+s32 CTextureAnime::stop_anime;
+CTextureAnime *pTexAnime;
+int now_group;
+
 static void CommandTEX_ANIME(void **arguments);
 static void CommandTEX_ANIME_DATA(void **arguments);
 static void CommandTEX_ANIME_DATA2(void **arguments);
 static void CommandTEX_SCROLL_DATA(void **arguments);
 static void CommandTEX_ANIME_END(void **arguments);
 
-/** The handler LoadCFGFile calls for each of Command__4's tags. */
-static void (*CommandExe__4[5])(void **arguments) = {
-    CommandTEX_ANIME,
-    CommandTEX_ANIME_DATA,
-    CommandTEX_ANIME_DATA2,
-    CommandTEX_SCROLL_DATA,
-    CommandTEX_ANIME_END,
-};
-
-extern int stop_anime__13CTextureAnime;
 
 void CTextureTexAnime::Copy(CTexture *texture) {
     if (texture != NULL) {
@@ -167,7 +158,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 }
             }
 
-            if (record->unk_00 == 1 && stop_anime__13CTextureAnime == 0) {
+            if (record->unk_00 == 1 && CTextureAnime::stop_anime == 0) {
                 if (record->scroll_x_step != 0.0f) {
                     float scroll = record->scroll_x + record->scroll_x_step;
                     record->scroll_x = scroll;
@@ -196,7 +187,7 @@ void CTextureAnime::TexAnime(int texture_block) {
             record = record->next;
         }
 
-        if (stop_anime__13CTextureAnime == 0) {
+        if (CTextureAnime::stop_anime == 0) {
             frame[group]++;
         }
         if (record->unk_04 < 0) {
@@ -311,6 +302,24 @@ void CTextureAnime::Disable(int group) {
     current[group] = first[group];
     frame[group] = 0;
 }
+/** The tags LoadCFGFile recognises, each with its argument kinds. */
+static TAG_PARAM Command[5] = {
+    {"TEX_ANIME", {1, 1, -1}},
+    {"TEX_ANIME_DATA", {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, -1}},
+    {"TEX_ANIME_DATA2", {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, -1}},
+    {"TEX_SCROLL_DATA", {0, 1, 1, 1, 1, 0, 1, 1, 2, 2, 1, 1, -1}},
+    {"TEX_ANIME_END", {-1}},
+};
+
+/** The handler LoadCFGFile calls for each of Command's tags. */
+static void (*CommandExe[5])(void **arguments) = {
+    CommandTEX_ANIME,
+    CommandTEX_ANIME_DATA,
+    CommandTEX_ANIME_DATA2,
+    CommandTEX_SCROLL_DATA,
+    CommandTEX_ANIME_END,
+};
+
 void CTextureAnime::LoadCFGFile(char *script, int script_size) {
     pTexAnime = this;
     now_group = 0;
@@ -318,22 +327,16 @@ void CTextureAnime::LoadCFGFile(char *script, int script_size) {
 
     CScriptInterpreter interpreter;
     interpreter.SetScript(script, script_size);
-    interpreter.SetTAG((TAG_PARAM *) Command__4, 5);
+    interpreter.SetTAG((TAG_PARAM *) Command, 5);
     int command;
     for (;;) {
         command = interpreter.GetNextTAG();
         if (command < 0) {
             break;
         }
-        CommandExe__4[command](interpreter.arguments);
+        CommandExe[command](interpreter.arguments);
     }
 }
-
-INCLUDE_RODATA("asm/nonmatchings/textureanime", @447__2);
-INCLUDE_RODATA("asm/nonmatchings/textureanime", @448);
-INCLUDE_RODATA("asm/nonmatchings/textureanime", @449);
-INCLUDE_RODATA("asm/nonmatchings/textureanime", @450);
-INCLUDE_RODATA("asm/nonmatchings/textureanime", @451);
 
 /**
  * Enables or disables the texture-animation group selected by configuration parsing.

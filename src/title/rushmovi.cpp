@@ -274,7 +274,9 @@ static CDataAlloc2<1> DummyDataBuffer(-1);
 CTexAnimeData TexAnimeDataMovie[30];
 CRunEffect CRunFx;
 
-extern CFrame *OP_CharaFrame;
+/* The frame the opening movies point their camera at, which the dungeon also reads. */
+CFrame *OP_CharaFrame;
+
 static u_char bEnd;
 static int EndCnt;
 static int CameraMode;

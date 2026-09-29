@@ -7,6 +7,23 @@
  * Declares the language-selection screen the game shows before the title.
  */
 
+class Fader;
+
+/**
+ * Fade the language screen opens and closes with.
+ */
+extern Fader Fade;
+
+/**
+ * Language the cursor stands on, counted from zero.
+ */
+extern int Cursor;
+
+/**
+ * What the screen is doing: fading in, taking the choice, or fading out.
+ */
+extern int Proc;
+
 /**
  * Builds the arenas, textures and pad settings the language screen runs on.
  *

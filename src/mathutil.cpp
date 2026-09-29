@@ -32,9 +32,11 @@ extern "C" void *__vt__Q23std13bad_exception[];
 /* What std::exception::what and std::bad_exception::what return. */
 extern const char ExceptionWhat[];
 extern const char BadExceptionWhat[];
-extern "C" __declspec(data) void (*thandler__3std)(void);
-extern "C" __declspec(data) void (*uhandler__3std)(void);
-extern "C" __declspec(data) MWGlobalDestructor *__global_destructor_chain;
+void (*thandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8))) =
+    dthandler__3stdFv;
+void (*uhandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8))) =
+    duhandler__3stdFv;
+MWGlobalDestructor *__global_destructor_chain __attribute__((section(".bss")));
 
 namespace std {
 /**

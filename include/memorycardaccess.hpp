@@ -447,6 +447,11 @@ int GetOpenAttribute(char *name);
 extern MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];
 
 /**
+ * The dummy file that MakeDir writes into a new save directory.
+ */
+extern char mcdmybuf[0x40];
+
+/**
  * Configuration image that LoadSysConfig reads from the card and SetBuff and
  * SaveSysConfig fill for writing.
  */

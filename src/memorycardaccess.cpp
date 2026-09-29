@@ -6,6 +6,10 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
+MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];
+char mcdmybuf[0x40];
+SV_CONFIG_SYS sys_config;
+
 void InitSaveFileInfoTbl() {
     for (int i = 0; i < MC_DIR_ENTRY_MAX; i++) {
         memset(&SaveFileInfo[i], 0, sizeof(SaveFileInfo[i]));
@@ -596,9 +600,6 @@ int CMemoryCardAccess::Convert() {
     }
     return 1;
 }
-
-/** The dummy file that MakeDir writes into a new save directory. */
-extern char mcdmybuf[0x40];
 
 int CMemoryCardAccess::MakeDir() {
     int status = 0;

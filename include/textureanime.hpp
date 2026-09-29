@@ -189,3 +189,11 @@ public:
 
 STATIC_ASSERT(sizeof(CTextureAnime) == 0x1F0);
 
+/**
+ * Texture animation the configuration script being loaded fills.
+ */
+extern CTextureAnime *pTexAnime;
+/**
+ * Animation group the configuration script's records are entered into.
+ */
+extern int now_group;

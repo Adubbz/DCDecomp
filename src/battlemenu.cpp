@@ -36,274 +36,14 @@
 #include "weaponlevelup.hpp"
 
 /**
- * Stores whether the party is escaping the dungeon.
- */
-extern s16 EscapeDngFlg;
-
-/**
- * Stores whether the party is leaving an interior area.
- */
-extern s16 RoomOutFlag;
-
-/**
- * Stores the active battle-menu state.
- */
-extern s32 BattleMenuFlag;
-
-/**
- * Stores the battle-menu transition phase.
- */
-extern s32 BtlEffectFlag;
-
-/**
- * Stores the selected battle-menu entry, then the icon highlighted on the menu ring.
- */
-extern s32 MenuSelect[2];
-
-/**
- * Stores the screen positions of the battle menu ring's eight icons.
- */
-extern MENU_ICON_POS NorMenuIcon[8];
-
-/**
- * Is nonzero while the battle menu shows a warning message, which dims its icons.
- */
-extern s32 MenuWarningMsgFlag;
-
-/**
- * Stores the battle-menu transition timer.
- */
-extern float BtlEffectCt;
-
-/**
- * Is nonzero once the battle menu's textures have finished loading.
- */
-extern s32 BtlMenuReadEndFlag;
-
-/**
- * Stores the dungeon status used by the battle menu.
- */
-extern CDngStatusData *BtlMenuStatusPt;
-
-/**
- * Stores the active battle-menu submode.
- */
-extern s32 BtlMenuMode;
-
-/**
- * Tracks the weapon menu's selected character and weapon slot.
- */
-extern WEP_MENU_INFO WepMenu;
-
-/**
- * Tracks what the item menu's message is currently about.
- */
-extern ITEM_MENU_MODE_INFO ItemMenuMode;
-
-/**
- * Holds the menu's gradient colour pairs.
- */
-extern GRADATION_COLOR_INFO2 MenuColorInfo2[26];
-
-/**
- * Texture the dungeon status plates are drawn from.
- */
-extern CTexture *BtStatus;
-
-/**
- * Icon numbers the menu bar shows for each menu mode.
- */
-extern s16 BtlDrawTbl[2][8];
-
-/**
- * Holds the source rectangle of the menu's digit sprites.
- */
-extern RECT NumberSprite[2];
-
-/**
- * Holds each party member's starting weapon.
- */
-extern s16 MenuDefaultWeaponNo[7];
-
-/**
- * Holds the character page's state.
- */
-extern MENU_CHARA_INFO MenuChara;
-
-/**
- * Holds each party member's place on the character page's turntable.
- */
-extern SYS_CHARA_INFO SysChara[6];
-
-/**
- * Holds the menu cursor's screen position.
- */
-extern float SysCur[3];
-
-/**
- * Is nonzero while the menu's frames need rebuilding.
- */
-extern u8 BtlWakuMake2;
-
-/**
- * Is set once the character page's extra data has been read.
- */
-extern s32 BtlMenuExReadFlag;
-
-/**
- * Stores the character page's turntable radius.
- */
-extern float chara_r_long;
-
-/**
- * Stores the character page's turntable movement.
- */
-extern float MenuCharaMove;
-
-/**
- * Texture the weapon status panels are drawn from.
- */
-extern CTexture *WepStatus;
-
-/**
- * Texture the party members' faces are drawn from.
- */
-extern CTexture *MenuCharaFace;
-
-/**
  * Texture the personal boards are drawn from.
  */
 extern CTexture *PerBoardTex;
 
 /**
- * Points to the item pack the battle menu shows.
- */
-extern ITEM_PACK *MenuItemPackPt;
-
-/**
- * Is set once the item page's weapon icons have been entered.
- */
-extern s32 ItemMenuAlreadyReadWepIconTexFlag;
-
-/**
- * Buffer the item page reads the party member's model into.
- */
-extern u_long128 *ItemMenuCharaReadBuf;
-
-/**
- * Character the menus draw a party member or map marker with.
- */
-extern CCharacter MenuCharaFrame;
-
-/**
- * Holds the world-map marker's position.
- */
-extern float mapo[4];
-
-/**
- * Holds the travel page's state.
- */
-extern MENU_MOVE_INFO MenuMove;
-
-/**
- * Holds each world-map place's frame name and position.
- */
-extern WORLD_MAP_POS TownOrDngPos[16];
-
-/**
- * Points to the frame name of the world-map place the cursor moves to.
- */
-extern char *NextWorldPos;
-
-/**
- * Frame of the world-map place the cursor stands on.
- */
-extern CFrame *MapMoveCursor;
-
-/**
  * Runs the weapon menu's repair, level-up and build-up effects.
  */
 extern CWeaponLevelUp MenuWepLevelUp;
-
-/**
- * Points to the item the weapon menu is holding.
- */
-extern IHAVEITEM *BtlHaveItemPt;
-
-/**
- * Points to the weapons of the party member the weapon menu shows.
- */
-extern WEAPON_HAVE *DngWepHavePt;
-
-/**
- * Buffer the battle menu reads its files into.
- */
-extern u_long128 *BtlMenuReadBuf;
-
-/**
- * Texture block the menu's pages read their extra textures into.
- */
-extern s32 MenuExtendReadBlock;
-
-/**
- * Texture block holding the item menu's weapon icons.
- */
-extern s32 ItemMenuWeaponIconReadBlock;
-
-/**
- * Language the battle menu's text is drawn in.
- */
-extern s32 BtlMenuNowLang;
-
-/**
- * Draws the selected weapon's option messages.
- */
-extern MenuClsMes MenuMes;
-
-/**
- * Horizontal position of the weapon list's model row.
- */
-extern float WeaponPos;
-
-/**
- * Horizontal position of the weapon list's polygons.
- */
-extern float WepPolyPos;
-
-/**
- * Frame rate the weapon models turn at.
- */
-extern float WepFrameRate;
-
-/**
- * Source rectangle of the digits a weapon-status bar prints its value with.
- */
-extern RECT WeaponVolumeNumberRect;
-
-/**
- * Icons flying from the field into the item pack.
- */
-extern CMenuIconAutoGet IconAutoGet;
-
-/**
- * Map number of each world-map place; dungeons are numbered from 200.
- */
-extern s16 MenuGrobalMapNoTbl[16];
-
-/**
- * Save data the travel page reads visits and dungeon progress from.
- */
-extern CSaveData *BtlMenuSaveDataPt;
-
-/**
- * Whether the travel page may jump to another map, or -1 while it cannot.
- */
-extern s32 MenuMapJumpMode;
-
-/**
- * Texture the travel page draws its map with.
- */
-extern CTexture *MenuMoveTex;
 
 /**
  * Camera used to project menu models and world-map markers.
@@ -321,35 +61,13 @@ static int GetVisitInfo(int place, int menu_mode);
 #include "userstatus.hpp"
 #include "shot_effect.hpp"
 
-extern CTexture *BtlAlpha;
-extern CTexture *BtlHira;
-extern CTexture *BtlKata;
-extern s32 BtlMenuExReadBlock;
-extern s32 BtlMenuManualReadBlock;
-extern s32 MenuExTextureReadFlag;
-extern float PosAngle;
-extern s32 BtlHelpWinAlpha;
-extern float HelpWinHead[2];
-extern float BtlHelpWinW;
-extern float BtlHelpWinH;
-extern s32 BtlMenuBGMvol;
+/**
+ * Characters the weapon page draws each listed weapon's model with.
+ */
+extern CCharacter DngWeaponFrm[12];
+
 extern CTexture *ItemIcon2;
 extern CTexture *AttachIcon;
-extern CTexture *CharaStatus;
-extern CTexture *NonCharaFace;
-extern s32 BtlMDSBuildCnt;
-extern u_long128 *BtlMenuCharaChangeBuf;
-
-/* Where one party member's weapon model stands on the weapon page. */
-struct MENU_WEP_POLY_OFFSET {
-    float position[3];
-    float scale;
-    float rotation[3];
-    float unk_1C[3];
-};
-
-extern MENU_WEP_POLY_OFFSET MenuWepPolyOffset[6];
-extern "C" CCharacter DngWeaponFrm[12];
 extern CRect_i_ MenuDispRc;
 extern char Vu_prog0f[];
 
@@ -368,8 +86,6 @@ static int WeaponSelectKey(void);
 static void WeaponMenuActWepKey();
 static void WeaponMenuAttachWepKey();
 static void WeaponMenuAttachKey();
-extern s32 WeaponMenuSelectKeyLockFlag;
-extern CDataAlloc2<1> MenuExCashBuffer;
 extern "C" CCharacter DefaultWeapon;
 extern "C" CCharacter MainWeapon;
 extern "C" CSHOT_EFFECT *NowMainEffect;
@@ -378,8 +94,126 @@ extern s32 CharaMainHandViewFlag;
 static void MenuCharaPolyDraw();
 static int WorldMapMoveKey();
 static void DrawWorldMap(int alpha);
-extern float mapmovev[4];
-extern s16 TrushMoveMax[3];
+
+MenuClsMes MenuMes;
+CDataAlloc2<1> MenuExCashBuffer(-1);
+MENU_ICON_POS NorMenuIcon[8];
+float SysCur[3];
+MENU_CHARA_INFO MenuChara;
+CCharacter MenuCharaFrame;
+CCharacter DngWeaponFrm[12];
+WEP_MENU_INFO WepMenu;
+ITEM_MENU_MODE_INFO ItemMenuMode;
+CMenuIconAutoGet IconAutoGet;
+MENU_MOVE_INFO MenuMove;
+
+RECT NumberSprite[2] = {{0, 176, 12, 12}, {0, 158, 12, 18}};
+
+s16 BtlDrawTbl[2][8] = {{0, 1, 2, 3, 7, 4, 6, 0}, {0, 1, 2, 3, 8, 5, 4, 6}};
+
+SYS_CHARA_INFO SysChara[6] = {
+    {0, 0, {0, 0}, 0.0f, 0.0f},
+    {1, 0, {0, 0}, 0.0f, 0.0f},
+    {2, 0, {0, 0}, 0.0f, 0.0f},
+    {3, 0, {0, 0}, 0.0f, 0.0f},
+    {4, 0, {0, 0}, 0.0f, 0.0f},
+    {5, 0, {0, 0}, 0.0f, 0.0f},
+};
+
+s16 MenuDefaultWeaponNo[7] = {257, 299, 314, 331, 347, 363, 81};
+
+s16 MenuCharaWeaponMax[6] = {42, 15, 17, 16, 16, 14};
+
+MENU_WEP_POLY_OFFSET MenuWepPolyOffset[6] = {
+    {{0.0f, 0.0f, 0.0f}, 1.0f, {-1.5707964f, 0.0f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+    {{-0.3f, 0.5f, 0.0f}, 1.4f, {-1.5707964f, 0.0f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+    {{0.0f, 0.0f, 0.0f}, 0.8f, {-1.5707964f, 0.0f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+    {{-1.4f, 2.1f, 0.0f}, 4.2f, {-1.5707964f, -0.16453463f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+    {{-0.8f, 0.7f, 0.0f}, 0.7f, {-1.5707964f, -0.8005375f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+    {{-0.4f, 0.5f, 0.0f}, 1.0f, {-1.5707964f, 0.0f, 0.62831855f}, {0.0f, 0.028559932f, 0.0f}},
+};
+
+GRADATION_COLOR_INFO2 MenuColorInfo2[26] = {
+    {{{0xF5, 0xAB, 0x48, 0x80}, {0x8C, 0x8E, 0x64, 0x80}, {0x57, 0x59, 0x20, 0x80}, {0x1F, 0x2E, 0x2A, 0x80}}},
+    {{{0x7D, 0xB2, 0xFF, 0x80}, {0x73, 0xA1, 0xC6, 0x80}, {0x2E, 0x5B, 0x78, 0x80}, {0x2D, 0x4C, 0x57, 0x80}}},
+    {{{0x69, 0x9E, 0xF7, 0x80}, {0x5F, 0x8D, 0xB2, 0x80}, {0x24, 0x51, 0x6E, 0x80}, {0x0F, 0x2E, 0x39, 0x80}}},
+    {{{0x1D, 0xF7, 0xA1, 0x80}, {0x61, 0xBA, 0x9D, 0x80}, {0x0A, 0x7B, 0x0A, 0x80}, {0x10, 0x44, 0x2F, 0x80}}},
+    {{{0xFE, 0xC4, 0x00, 0x80}, {0x99, 0xA9, 0x63, 0x80}, {0x55, 0x62, 0x00, 0x80}, {0x22, 0x3C, 0x16, 0x80}}},
+    {{{0x21, 0xBF, 0xFD, 0x80}, {0x40, 0xBA, 0xB4, 0x80}, {0x0B, 0x5F, 0x6E, 0x80}, {0x05, 0x44, 0x38, 0x80}}},
+    {{{0xDD, 0x96, 0xFD, 0x80}, {0x91, 0x95, 0xB1, 0x80}, {0x46, 0x4B, 0x6E, 0x80}, {0x1F, 0x32, 0x37, 0x80}}},
+    {{{0xED, 0x00, 0x00, 0x80}, {0x98, 0x6F, 0x64, 0x80}, {0x65, 0x00, 0x00, 0x80}, {0x37, 0x2C, 0x24, 0x80}}},
+    {{{0x1F, 0x2E, 0xF1, 0x80}, {0x54, 0x94, 0xC9, 0x80}, {0x0D, 0x1B, 0x7D, 0x80}, {0x1A, 0x42, 0x58, 0x80}}},
+    {{{0xEE, 0xBE, 0x00, 0x80}, {0xB3, 0xD7, 0x62, 0x80}, {0x65, 0x6E, 0x00, 0x80}, {0x42, 0x69, 0x23, 0x80}}},
+    {{{0x0F, 0x95, 0x00, 0x80}, {0x4D, 0xD7, 0x65, 0x80}, {0x06, 0x57, 0x00, 0x80}, {0x17, 0x69, 0x24, 0x80}}},
+    {{{0xEE, 0x15, 0xF1, 0x80}, {0xAB, 0x91, 0xB9, 0x80}, {0x65, 0x0C, 0x7D, 0x80}, {0x3E, 0x40, 0x50, 0x80}}},
+    {{{0x38, 0xC3, 0x0B, 0x80}, {0x59, 0xC4, 0x6D, 0x80}, {0x15, 0x66, 0x00, 0x80}, {0x1B, 0x55, 0x2A, 0x80}}},
+    {{{0x77, 0x56, 0xE5, 0x80}, {0x6F, 0x94, 0xA1, 0x80}, {0x2C, 0x2B, 0x6E, 0x80}, {0x22, 0x3D, 0x3E, 0x80}}},
+    {{{0x52, 0xC2, 0xED, 0x80}, {0x62, 0xC3, 0xA7, 0x80}, {0x1F, 0x66, 0x71, 0x80}, {0x1E, 0x55, 0x40, 0x80}}},
+    {{{0xB0, 0x7D, 0x0C, 0x80}, {0x82, 0x97, 0x6A, 0x80}, {0x41, 0x41, 0x02, 0x80}, {0x29, 0x3E, 0x24, 0x80}}},
+    {{{0x8C, 0xEE, 0x08, 0x80}, {0x76, 0xA8, 0x69, 0x80}, {0x34, 0x85, 0x00, 0x80}, {0x25, 0x47, 0x24, 0x80}}},
+    {{{0xCC, 0x80, 0x07, 0x80}, {0x8C, 0xA2, 0x63, 0x80}, {0x4C, 0x42, 0x00, 0x80}, {0x2D, 0x43, 0x21, 0x80}}},
+    {{{0x24, 0xD4, 0xF3, 0x80}, {0x52, 0x9C, 0xB3, 0x80}, {0x0D, 0x76, 0x73, 0x80}, {0x18, 0x40, 0x45, 0x80}}},
+    {{{0xC0, 0xBC, 0xBC, 0x80}, {0x87, 0xC3, 0xA1, 0x80}, {0x47, 0x62, 0x59, 0x80}, {0x2B, 0x55, 0x1A, 0x80}}},
+    {{{0xCC, 0xB1, 0x04, 0x80}, {0x8C, 0xC3, 0x54, 0x80}, {0x4C, 0x5C, 0x00, 0x80}, {0x2C, 0x55, 0x1A, 0x80}}},
+    {{{0xD4, 0x38, 0xCC, 0x80}, {0x8E, 0x86, 0xA2, 0x80}, {0x4F, 0x1A, 0x61, 0x80}, {0x2D, 0x36, 0x3E, 0x80}}},
+    {{{0x40, 0xC1, 0x82, 0x80}, {0x00, 0x81, 0xFF, 0x80}, {0x40, 0xC1, 0x82, 0x80}, {0x00, 0x81, 0xFF, 0x80}}},
+    {{{0xFF, 0x00, 0xC6, 0x80}, {0x3F, 0x00, 0x31, 0x80}, {0xFF, 0x00, 0xC6, 0x80}, {0x3F, 0x00, 0x31, 0x80}}},
+    {{{0xFF, 0x00, 0x00, 0x80}, {0x3F, 0x00, 0x00, 0x80}, {0xFF, 0x00, 0x00, 0x80}, {0x3F, 0x00, 0x00, 0x80}}},
+    {{{0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}, {0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}}},
+};
+
+s32 BtlMenuNowLang = 1;
+s32 BattleMenuFlag = -1;
+float chara_r_long = 118.0f;
+s16 TrushMoveMax[3] = {3, 1, 3};
+s32 BtlEffectFlag = -1;
+
+s32 MenuMapJumpMode;
+CSaveData *BtlMenuSaveDataPt;
+CDngStatusData *BtlMenuStatusPt;
+s32 BtlMenuMode;
+s32 BtlMenuBGMvol;
+s32 BtlMenuReadBlock;
+u_long128 *BtlMenuReadBuf;
+s32 BtlMenuReadEndFlag;
+s32 ItemMenuWeaponIconReadBlock;
+s32 ItemMenuAlreadyReadWepIconTexFlag;
+s32 MenuShadowReadBlock;
+s32 BtlMenuExReadBlock;
+s32 BtlMenuExReadFlag;
+s32 MenuExtendReadBlock;
+s32 MenuExTextureReadFlag;
+u_long128 *ItemMenuCharaReadBuf;
+s32 BtlMDSBuildCnt;
+s32 BtlMenuManualReadBlock;
+WEAPON_HAVE *DngWepHavePt;
+CWeaponLevelUp *WepMenuEffectReadBuf;
+CTexture *CharaStatus;
+CTexture *MenuCharaFace;
+CTexture *NonCharaFace;
+CTexture *BtStatus;
+CTexture *WepStatus;
+CTexture *BtlAlpha;
+CTexture *BtlHira;
+CTexture *BtlKata;
+float HelpWinHead[2];
+u8 BtlWakuMake2;
+s32 BtlHelpWinAlpha;
+float BtlHelpWinW;
+float BtlHelpWinH;
+s32 MenuSelect[2];
+ITEM_PACK *MenuItemPackPt;
+s16 EscapeDngFlg;
+s16 RoomOutFlag;
+float MenuCharaMove;
+float PosAngle;
+IHAVEITEM *BtlHaveItemPt;
+float WepFrameRate;
+float WeaponPos;
+float WepPolyPos;
+float BtlEffectCt;
+s32 MenuWarningMsgFlag;
+u_long128 *BtlMenuCharaChangeBuf;
 
 int GetDefaultWeaponNo(int character_no) {
     return MenuDefaultWeaponNo[character_no];
@@ -2250,6 +2084,8 @@ static void WeaponNameDraw(int y, int selected_only, int alpha) {
         }
     }
 }
+
+RECT WeaponVolumeNumberRect = {212, 500, 12, 13};
 
 /**
  * Draws one weapon-status bar, filled to the value's share of its maximum.
@@ -4418,6 +4254,8 @@ static void WeaponMenuAttachWepKey() {
         WepMenu.unk_179 = 0;
     }
 }
+
+s32 WeaponMenuSelectKeyLockFlag;
 
 /**
  * Handles input while an attachment is being moved on the weapon menu.
@@ -7057,6 +6895,32 @@ static int BattleMenuAtoraKey() {
 static int IsLoadMapNo();
 
 static int MapNoTransFunc(int map_no);
+
+s16 MenuGrobalMapNoTbl[16] = {0, 200, 1, 201, 14, 2, 202, 3, 42, 203, 23, 4, 204, 40, 205, 60};
+WORLD_MAP_POS TownOrDngPos[16] = {
+    {"e01", 0, 0, 0},
+    {"d01", 0, 0, 0},
+    {"e02", 0, 0, 0},
+    {"d02", 0, 0, 0},
+    {"s04", 0, 0, 0},
+    {"e03", 0, 0, 0},
+    {"d03", 0, 0, 0},
+    {"e04", 0, 0, 0},
+    {"s32", 0, 0, 0},
+    {"d04", 0, 0, 0},
+    {"s13", 0, 0, 0},
+    {"e05", 0, 0, 0},
+    {"d05", 0, 0, 0},
+    {"s30", 0, 0, 0},
+    {"d06", 0, 0, 0},
+    {"xx", 0, 0, 0},
+};
+float mapo[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+float mapmovev[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+
+char *NextWorldPos;
+CFrame *MapMoveCursor;
+CTexture *MenuMoveTex;
 
 /**
  * Starts reading one region's world map in the background.

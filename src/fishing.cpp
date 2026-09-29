@@ -48,210 +48,47 @@ static EsaInfo esa_info[13] = {
     {0xBE, 40.0f},
 };
 
-/**
- * The water surface height used by the fishing simulation.
- */
-extern float WaterLevel;
-
-/**
- * The terrain height used by the fishing simulation.
- */
-extern float GroundLevel;
-
-/**
- * The ground height under the float.
- */
-extern float UkiGroundLevel;
-
-/**
- * The ground height under the hook.
- */
-extern float HookGroundLevel;
-
-/**
- * The ground height the whole line rests on, the lower of the float and hook heights.
- */
-extern float LineGroundLevel;
-
-/**
- * The fish fighting the line, or null when none is.
- */
-extern CFish *BattleFish;
-
-/**
- * The fish displayed after an angling battle, or null when none is displayed.
- */
-extern CFish *AngleFish;
-
-/**
- * The current tension applied to the fishing hook.
- */
-extern float pull_hook;
-
-/**
- * The model of the bait on the hook, or null when the hook is bare.
- */
-extern CFrameVu1 *EsaFrame;
-
-/**
- * The kind of bait on the hook, or -1 when the hook is bare.
- */
-extern int esa_type;
-
-/**
- * The line's hook model.
- */
-extern CFrame *HookFrame;
-
-/**
- * The line's float model.
- */
-extern CFrame *UkiFrame;
-
-/**
- * The texture slot of the rod, float and hook, or -99 before they are read.
- */
-extern int fishing_texb;
-
-/**
- * The texture slot of the fish, or -99 before they are read.
- */
-extern int fish_texb;
-
-/**
- * The texture slot of the bait, or -99 before it is read.
- */
-extern int esa_texb;
-
-/**
- * The fish of the fishing spot.
- */
-extern CFish *Fish;
-
-/**
- * The number of fish read for the fishing spot.
- */
-extern int FishNum;
-
-/**
- * The collision polygons the fish move against.
- */
-extern CCPoly *cpoly;
-
-/**
- * The number of collision polygons in cpoly.
- */
-extern int cpoly_num;
-
-/**
- * The frame the float's model hangs from.
- */
-extern CFrameVu1 UkiFrameTop;
-
-/**
- * The fishing rod.
- */
-extern CCharacter Rod;
-
-/**
- * The box the float and hook must stay within.
- */
-extern CBoxVu0 fishing_rect;
-
-/**
- * The box the fish swim within.
- */
-extern CBoxVu0 fish_rect;
-
-/**
- * The points of the line from the rod tip to the hook.
- */
-extern sceVu0FVECTOR point[24];
-
-/**
- * The points of the float's body.
- */
-extern sceVu0FVECTOR ukip[4];
-
-/**
- * The points of the hook's body.
- */
-extern sceVu0FVECTOR hookp[3];
-
-/**
- * The position the float is being pulled to.
- */
-extern sceVu0FVECTOR uki;
-
-/**
- * The position the hook is being pulled to.
- */
-extern sceVu0FVECTOR fishhook;
-
-/**
- * Whether the float is being pulled towards uki.
- */
-extern int set_uki_pos;
-
-/**
- * Whether the hook is being pulled towards fishhook.
- */
-extern int set_hook_pos;
-
-/**
- * The world position of the rod tip.
- */
-extern sceVu0FVECTOR rod_top;
-
-/**
- * The previous positions of the line's points.
- */
-extern sceVu0FVECTOR old_p[24];
-
-/**
- * The velocities of the line's points.
- */
-extern sceVu0FVECTOR velo[24];
-
-/**
- * The previous positions of the hook's points.
- */
-extern sceVu0FVECTOR hookop[3];
-
-/**
- * The velocities of the hook's points.
- */
-extern sceVu0FVECTOR hookv[3];
-
-/**
- * The previous positions of the float's points.
- */
-extern sceVu0FVECTOR ukiop[4];
-
-/**
- * The velocities of the float's points.
- */
-extern sceVu0FVECTOR ukiv[4];
-
-/**
- * The rest lengths of the hook's links.
- */
-extern float hook_dist[3];
-
-/**
- * The rest lengths of the float's links.
- */
-extern float uki_dist[6];
-
-/**
- * The spacing between neighbouring points of the line.
- */
-extern float distp;
-
-/**
- * Whether the fish are drawn while none is being landed.
- */
-extern int draw_under_water;
+int draw_under_water = 1;
+float distp = 1.6666666f;
+float WaterLevel;
+float GroundLevel;
+float UkiGroundLevel;
+float HookGroundLevel;
+float LineGroundLevel;
+CFrameVu1 *EsaFrame;
+int esa_type;
+CFrame *HookFrame;
+CFrame *UkiFrame;
+int fishing_texb;
+int fish_texb;
+int esa_texb;
+CFish *Fish;
+CFish *AngleFish;
+CFish *BattleFish;
+int FishNum;
+CCPoly *cpoly;
+int cpoly_num;
+int set_hook_pos;
+int set_uki_pos;
+float pull_hook;
+CBoxVu0 fishing_rect;
+CBoxVu0 fish_rect;
+CFrameVu1 UkiFrameTop;
+CCharacter Rod;
+sceVu0FVECTOR point[24];
+sceVu0FVECTOR old_p[24];
+sceVu0FVECTOR velo[24];
+sceVu0FVECTOR hookp[3];
+sceVu0FVECTOR hookop[3];
+sceVu0FVECTOR hookv[3];
+float hook_dist[3];
+sceVu0FVECTOR ukip[4];
+sceVu0FVECTOR ukiop[4];
+sceVu0FVECTOR ukiv[4];
+float uki_dist[6];
+sceVu0FVECTOR rod_top;
+sceVu0FVECTOR fishhook;
+sceVu0FVECTOR uki;
 
 static void GetHookPos(float *position);
 

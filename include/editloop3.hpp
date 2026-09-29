@@ -21,6 +21,7 @@ struct OBJ_ANIME_SEQ;
 struct VILLAGER_INFO;
 struct EDIT_MAP_INFO;
 class CEditGround;
+class CRunScript;
 
 /**
  * Shares the active editor map objects with event-point and villager helpers.
@@ -178,6 +179,21 @@ struct OBJ_HANDLE {
 };
 
 STATIC_ASSERT(sizeof(OBJ_HANDLE) == 0x38);
+
+/** Object handles exposed to editor event scripts. */
+extern OBJ_HANDLE ObjHandle[32];
+
+/** Character container used for script-loaded scene animation data. */
+extern CCharacter SceneData;
+
+/** Camera used when no scene motion camera remains attached. */
+extern CCamera DmmyCamera;
+
+/** Script interpreter reserved for system events; no code runs it. */
+extern CRunScript SystemEventScript;
+
+/** Dispatch table built from the editor-event and system-script external-function registries. */
+extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
 
 /**
  * Identifies the abstract confirm and cancel bits exposed to editor scripts.

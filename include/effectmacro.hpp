@@ -2,7 +2,10 @@
 
 #include "common.h"
 
+#include <libvu0.h>
+
 class CEffectGroup;
+class CTexture;
 
 /**
  * Advances the shared effect state for one frame at a world position.
@@ -48,3 +51,24 @@ void EffectHamon(CEffectGroup *group, float *position, float scale);
  * @size 0x9D0
  */
 void DepthOfField(float *focus, int level, int alpha, int blur);
+
+/**
+ * Direction the wind blows the effects in.
+ */
+extern sceVu0FVECTOR wind_dir;
+/**
+ * Frames the effects have been running, which thins how often they spawn.
+ */
+extern int effect_count;
+/**
+ * Texture the smoke effect draws with, looked up once a frame.
+ */
+extern CTexture *smoke_tex;
+/**
+ * Texture the water-spray effect draws with, looked up once a frame.
+ */
+extern CTexture *sibuki_tex;
+/**
+ * Texture the ripple effect draws with, looked up once a frame.
+ */
+extern CTexture *hamon_tex;
