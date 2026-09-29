@@ -81,7 +81,7 @@ s8 EastKingMsgMax[12] = {2, 2, 3, 3, 2, 3, 2, 2, 2, 2, 6, 1};
  * Restores the East King message window to its initial empty state.
  */
 static inline void ResetEastKingMessage() {
-    EastKingMsgCls.text_columns = 0x46;
+    EastKingMsgCls.text_columns = MES_WIN_COLUMNS;
     EastKingMsgCls.text_rows = 10;
     EastKingMsgCls.text_len = 0;
     EastKingMsgCls.text_width = 0;
@@ -198,7 +198,11 @@ static void EastKingMsgDraw() {
     if (EastKing.resources_ready != 0) {
         int half_width = EastKingMsgCls.char_width >> 1;
         GetMenuCommonPutXY(&EastKingMsgCls, 0x14C - half_width);
+#ifdef PAL
+        EastKingMsgCls.text_y = 0x156;
+#else
         EastKingMsgCls.text_y = 0x132;
+#endif
         EastKingMsgCls.edge_alpha = EastKingMsg.alpha;
         EastKingMsgCls.Step();
         EastKingMsgCls.DrawMesWin();

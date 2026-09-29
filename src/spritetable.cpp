@@ -56,9 +56,9 @@ void CSpriteTable::DrawTable() {
             sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, node->tex0);
 
             x0 = (node->x << 4) + 27648;
-            y0 = ((node->y << 4) >> 1) + 30976;
+            y0 = ((node->y << 4) >> 1) + GS_Y_OFFSET;
             x1 = ((node->x + node->width) << 4) + 27647;
-            y1 = (((node->y + node->height) << 4) >> 1) + 30975;
+            y1 = (((node->y + node->height) << 4) >> 1) + (GS_Y_OFFSET - 1);
 
             sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(node->u << 4, node->v << 4));
             sceVif1PkAddGsAD(packet, SCE_GS_XYZF3, SCE_GS_SET_XYZF2(x0, y0, 0, 0));

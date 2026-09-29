@@ -1,11 +1,19 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
+#pragma argument_flag_ones 174, 175, 176, 177
+#pragma argument_flag_ones 213, 223, 225, 233
+#pragma argument_flag_ones 239, 242, 243, 244, 282
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
 #pragma argument_flag_ones 174, 175, 176, 177, 252, 253, 254, 257, 258, 259
 #pragma argument_flag_ones 276, 277, 278, 304, 305, 306, 327, 329, 345, 347
 #pragma argument_flag_ones 401, 403, 442, 443, 454, 464, 713, 723, 725, 733
 #pragma argument_flag_ones 739, 742, 743, 744, 782
+#endif
 
 #include "common.h"
 
@@ -1233,7 +1241,7 @@ void WaterProcess() {
 
     MGGetFBuffTex(&frame_tex);
 
-    CRect<int> rect(0, 0, 640, 224);
+    CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
 
     water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&frame_tex, rect, &water_tex, 0, 0, 0);

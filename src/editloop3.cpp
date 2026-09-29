@@ -1895,7 +1895,7 @@ void EdFadeInOut() {
         }
     }
     for (x = 0; x < 640; x += 64) {
-        for (y = 0; y < 224; y += 32) {
+        for (y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
             rect.x = x * 16;
             rect.y = y * 16;
             rect.width = 1024;
@@ -2105,6 +2105,10 @@ static void ClearObjAnime(int index) {
         anime->property = -1;
 }
 
+#ifdef PAL
+void EdEventStopPlay() {}
+#endif
+
 /** Whether the current event uses the lightweight initialization path. */
 int simple_event;
 
@@ -2168,6 +2172,12 @@ static int actv_buffer;
 void EdEventPause() {
     event_pause = !event_pause;
 }
+
+#ifdef PAL
+int EdCheckEventPause() {
+    return 0;
+}
+#endif
 
 /** Directory prepended to relative event resource names. */
 static char CurrentDir[0x40];
@@ -6302,6 +6312,18 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef PAL
+static int _GET_TV_MODE(RS_STACKDATA *stack, int argument_count) {
+    return 0;
+}
+#endif
+
+#ifdef PAL
+static int _GET_LANG_CODE(RS_STACKDATA *stack, int argument_count) {
+    return 0;
+}
+#endif
+
 /* The internal operations assembly still supplies, so the registry below can name them. */
 int _TURN_CHARA(RS_STACKDATA *, int);
 int _NPC_DRAW(RS_STACKDATA *, int);
@@ -6769,7 +6791,7 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         if (message == NULL) {
             continue;
         }
-        message->text_columns = 70;
+        message->text_columns = MES_WIN_COLUMNS;
         message->text_rows = 10;
         message->text_len = 0;
         message->text_width = 0;
@@ -7403,7 +7425,7 @@ static inline void EdCloseTalkMes() {
     EditMes1.text_rate = EditMes1.text_rate_set;
     EditMes1.mes_made = -1;
     EditMes1.fade_in = 0;
-    EditMes1.text_columns = 0x46;
+    EditMes1.text_columns = MES_WIN_COLUMNS;
     EditMes1.text_rows = 0xA;
     EditMes1.text_len = 0;
     EditMes1.text_width = 0;

@@ -2942,7 +2942,7 @@ static void ExitWeaponMenuSelect() {
     TexManager.CleanUpTextureList();
     BtlMenuTexBlockEnter();
     BattleMenuFlag = 18;
-    CommonMenuMes3.text_columns = 70;
+    CommonMenuMes3.text_columns = MES_WIN_COLUMNS;
     CommonMenuMes3.text_rows = 10;
     CommonMenuMes3.text_len = 0;
     CommonMenuMes3.text_width = 0;
@@ -8282,7 +8282,7 @@ void MenuClsMes::InitData() {
 void MenuClsMes::SetBuffInfo(short *buffer) {
     ClsMes *mes = message;
 
-    mes->text_columns = 0x46;
+    mes->text_columns = MES_WIN_COLUMNS;
     mes->text_rows = 10;
     mes->text_len = 0;
     mes->text_width = 0;

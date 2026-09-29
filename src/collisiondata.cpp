@@ -116,7 +116,11 @@ void DebugInfomationDraw(void) {
             }
             event_count = NowEventMan->GetDataNum();
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "EventID = %d\n", event_count);
+#ifdef PAL
+            MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
+#else
             MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+#endif
             DbgMsg.Draw();
         }
         return;
@@ -189,7 +193,11 @@ void DebugInfomationDraw(void) {
                 break;
         }
     }
+#ifdef PAL
+    MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
+#else
     MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+#endif
     DbgMsg.Draw();
 }
 
@@ -591,6 +599,10 @@ int DebugInfomationIF(void) {
     }
     return 0;
 }
+
+#ifdef PAL
+void StartMessageDraw(CTexture *, int, int, int, int) {}
+#endif
 
 /**
  * Empties the list of key items waiting to be dropped.

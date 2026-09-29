@@ -38,7 +38,13 @@ struct MES_WIN_LINE {
 STATIC_ASSERT(sizeof(MES_WIN_LINE) == 0x8);
 
 /** Lines one message window can lay out. */
+#ifdef PAL
+#define MES_WIN_LINE_MAX 720
+#define MES_WIN_COLUMNS 72
+#else
 #define MES_WIN_LINE_MAX 700
+#define MES_WIN_COLUMNS 70
+#endif
 
 /**
  * Where one line of a message window draws, for the windows that place their
@@ -494,7 +500,11 @@ public:
     void DrawMesWin(void);
 };
 
+#ifdef PAL
+STATIC_ASSERT(sizeof(ClsMes) == 0x1858);
+#else
 STATIC_ASSERT(sizeof(ClsMes) == 0x17B8);
+#endif
 
 /** The message window the menus share. */
 extern ClsMes CommonMenuMes1;

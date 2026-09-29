@@ -935,7 +935,11 @@ static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, in
             }
             cur_y = y + row * 0x28;
             if (ShopMenu.board.cursor_area == 2) {
+#ifdef PAL
+                cur_x = x + 0xE2;
+#else
                 cur_x = x + 0xD2;
+#endif
                 cur_y = y + 0x8C;
             }
             frame_x = (int) cur_x + 0x1E;
@@ -5171,7 +5175,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
         DrawIconParts(prize->item_no, x, pos_y, y, y + 0xCE, alpha, 0);
         DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
                          alpha);
+#ifdef PAL
+        RECT digits = {0x160, 0xEA, 0x10, 0x16};
+#else
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
+#endif
         DrawMenuNumber(prize->price, x + 0x106, pos_y + 6, FishMenuTex, digits, 1, alpha);
         if (i >= 0 && i < 10) {
             AtoraNameMes.line_pos[i].x = x + 0x24;
@@ -5211,7 +5219,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
     }
     CommonMenuMes3.edge_alpha = alpha;
     CommonMenuMes3.text_x = 0x46;
+#ifdef PAL
+    CommonMenuMes3.text_y = 0x160;
+#else
     CommonMenuMes3.text_y = 0x140;
+#endif
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
     if (FishMenu.fade_mode == 4 || FishMenu.fade_mode == 5) {

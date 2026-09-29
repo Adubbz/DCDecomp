@@ -229,7 +229,7 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
  * Empties a message window and puts its layout back to the defaults.
  */
 static inline void ResetManualMessage(ClsMes *message) {
-    message->text_columns = 0x46;
+    message->text_columns = MES_WIN_COLUMNS;
     message->text_rows = 10;
     message->text_len = 0;
     message->text_width = 0;

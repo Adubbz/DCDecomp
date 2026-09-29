@@ -658,7 +658,7 @@ static void DunEnterDraw(void) {
     float wave;
 
     setbilinear(0);
-    CRect_i_ screen(0, 0, 0x2800, 0x1C00);
+    CRect_i_ screen(0, 0, 0x2800, (SCREEN_HEIGHT << 4));
     alpha = 0x80;
     fade = alpha;
     switch (DEnterMenu.state) {
@@ -720,7 +720,11 @@ static void DunEnterDraw(void) {
         MenuTextureReload(CommonMenuMes2.tex_block);
         CommonMenuMes2.stay_frame = 1;
         CommonMenuMes2.edge_alpha = alpha;
+#ifdef PAL
+        CommonMenuMes2.text_y = 0x16c;
+#else
         CommonMenuMes2.text_y = 0x158;
+#endif
         half_width = CommonMenuMes2.char_width >> 1;
         GetMenuCommonPutXY(&CommonMenuMes2, 0x148 - half_width);
         CommonMenuMes2.Step();
@@ -1969,6 +1973,10 @@ void DrawItemPolygonView(void) {
     MenuTextureReload(BtlMenuExReadBlock);
     MenuPolygonDraw(0x80, LocalDrawItemPolygonView);
 }
+
+#ifdef PAL
+void InitDebugItemGet() {}
+#endif
 
 static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;

@@ -1,8 +1,16 @@
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 65, 66, 68, 74
+#pragma argument_flag_ones 859, 860
+#pragma argument_flag_ones 861, 864, 865, 866, 1128, 1148, 1149, 1235, 1237, 1238
+#pragma argument_flag_ones 1240, 1254
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168, 334
 #pragma argument_flag_ones 339, 344, 349, 354, 359, 364, 428, 430, 1138, 1139
 #pragma argument_flag_ones 1140, 1143, 1144, 1145, 1407, 1427, 1428, 1514, 1516, 1517
 #pragma argument_flag_ones 1519, 1533
+#endif
 
 #include "common.h"
 

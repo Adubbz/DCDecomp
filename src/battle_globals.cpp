@@ -317,6 +317,16 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     }
 }
 
+#ifdef PAL
+void DrawEuroSpecialFont(int, int, int, int, int) {}
+#endif
+
+#ifdef PAL
+int Get_NameTemp_PutX(int, int) {
+    return 0;
+}
+#endif
+
 char NameEntryImageDescriptor[] __attribute__((section(".rodata"))) = "#frame_image_name#640#448#4";
 char NameEntryTextureFile[] __attribute__((section(".rodata"))) = "nameregi.img";
 char NameEntryTempTexture[] __attribute__((section(".rodata"))) = "nametemp";
@@ -1833,7 +1843,7 @@ int OpeningBookKey() {
                 OpeningReadBuf = MenuCalcBufAlignment(OpeningReadBuf);
                 short *messages = (short *) GetPackFile((u_int *) read_file->buffer, "opmes.bin", NULL);
 
-                CommonMenuMes2.text_columns = 0x46;
+                CommonMenuMes2.text_columns = MES_WIN_COLUMNS;
                 CommonMenuMes2.text_rows = 10;
                 CommonMenuMes2.text_len = 0;
                 CommonMenuMes2.text_width = 0;

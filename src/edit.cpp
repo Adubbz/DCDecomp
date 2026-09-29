@@ -187,6 +187,14 @@ static int AddStr(CDebugFont *font, char *str) {
     return len;
 }
 
+#ifdef PAL
+void EdDPrintChara(CMainChara *) {}
+#endif
+
+#ifdef PAL
+void EdDPrintCamera(CCamera *) {}
+#endif
+
 void EdDPrintVector(char *name, float *vector) {
     char work[128];
 
@@ -416,6 +424,22 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
         DrawBound(&frame);
     }
 }
+
+#ifdef PAL
+void EdDebugMenu() {}
+#endif
+
+#ifdef PAL
+void DM_Main() {}
+#endif
+
+#ifdef PAL
+void DM_Sound() {}
+#endif
+
+#ifdef PAL
+void DM_Flag() {}
+#endif
 
 /* The box drawn as twelve edges of the frame's own corner list, taken to the screen in one go and
    drawn only if every corner survived: a box with one corner behind the eye would otherwise be
@@ -1394,7 +1418,11 @@ void EdSetHelpMes(int mes_no, int count, int position, int *args, int value) {
         x = SystemMesX + ((indent * EditSystemMes.char_width) >> 1);
         EditSystemMes.line_pos[0].x = x;
         EditSystemMes.line_pos[0].y = y;
+#ifdef PAL
+        x = SystemMesX + 220;
+#else
         x = SystemMesX + 180;
+#endif
         EditSystemMes.line_pos[1].x = x;
         EditSystemMes.line_pos[1].y = y;
     } else {
@@ -1505,9 +1533,17 @@ void EdEditBuildHelpMes(int part_no) {
     int args[4] = {-1, -1, -1, -1};
 
     args[0] = GetAtraMsgNo(MapNo, part_no);
+#ifdef PAL
+    SystemMesW = 600;
+#else
     SystemMesW = 560;
+#endif
     SystemMesH = 50;
+#ifdef PAL
+    SystemMesX = 30;
+#else
     SystemMesX = 40;
+#endif
     SystemMesY = 380;
     EdSetHelpMes(120, 2, -1, args, -1);
 }
@@ -1522,7 +1558,11 @@ void EdEditMoveHelpMes() {
     SystemMesW = 0;
     SystemMesH = 0;
     SystemMesX = 230;
+#ifdef PAL
+    SystemMesY = 412;
+#else
     SystemMesY = 380;
+#endif
     EdSetHelpMes(130, 2, -1, 0, -1);
 }
 
@@ -1803,7 +1843,7 @@ int EdMenuLoop(ClsMes *message) {
             message->text_rate = message->text_rate_set;
             message->mes_made = -1;
             message->fade_in = 0;
-            message->text_columns = 0x46;
+            message->text_columns = MES_WIN_COLUMNS;
             message->text_rows = 0xA;
             message->text_len = 0;
             message->text_width = 0;

@@ -1,3 +1,6 @@
+#ifdef PAL
+#pragma argument_flag 0
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 14, 16, 20, 22, 31, 33, 45, 47, 109, 418
 #pragma argument_flag_ones 430, 452, 453, 463, 464, 474, 475, 485, 486, 533
@@ -6,6 +9,7 @@
 #pragma argument_flag_ones 643, 644, 647, 657, 658, 661, 671, 672, 675, 685
 #pragma argument_flag_ones 686, 689, 699, 700, 703, 713, 714, 717, 727, 728
 #pragma argument_flag_ones 731, 744, 745, 748, 762, 768, 775
+#endif
 /* The title screen's own loop. Retail compiles it apart from the rest of the
    title unit: its constants are a run of their own, which is why the three
    names it shares with the code before it are spelled twice in the image. */
@@ -556,14 +560,29 @@ int TitleLoop() {
                 if (CCursol.select > 2)
                     CCursol.select = 0;
                 switch (CCursol.select) {
+#ifdef PAL
+                    case 0:
+                        CCursol.Set(304.0f);
+#else
                     case 0:
                         CCursol.Set(288.0f);
+#endif
                         break;
+#ifdef PAL
+                    case 1:
+                        CCursol.Set(332.0f);
+#else
                     case 1:
                         CCursol.Set(316.0f);
+#endif
                         break;
+#ifdef PAL
+                    case 2:
+                        CCursol.Set(364.0f);
+#else
                     case 2:
                         CCursol.Set(348.0f);
+#endif
                         break;
                 }
                 if (GamePad.Down(2048) || GamePad.Down(64)) {

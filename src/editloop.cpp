@@ -1,7 +1,10 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
+#ifdef PAL
+#else
 #pragma argument_flag_ones 0, 207, 208, 215, 626
+#endif
 
 #include "common.h"
 
@@ -2234,7 +2237,7 @@ void ParamDraw() {
     CRect_i_ cursor(screen[0] - 10, screen[1] - 32, 32, 32);
     set2DSprite(Vif1Packet, TexManager.GetTexture("syst08", -1), cursor, 0, 0);
     screen[0] = 320;
-    screen[1] = 224;
+    screen[1] = SCREEN_HALF_HEIGHT;
     if (NowFocusParts != NULL && DrawPartsNameCount == 0) {
         int name_count = PartsNameNum;
         if (name_count > 0) {
@@ -2566,7 +2569,7 @@ void DrawSysGra() {
             fade.x = 0;
             fade.y = 0;
             fade.width = 0x2800;
-            fade.height = 0xe00;
+            fade.height = (SCREEN_HALF_HEIGHT << 4);
             MGFillBox(fade, 0, 0, 0, 0x40);
             setbilinear(0);
 
@@ -2577,7 +2580,11 @@ void DrawSysGra() {
             texel.width = 0x80;
             texel.height = 0x28;
             screen.x = 0x100;
+#ifdef PAL
+            screen.y = 0xdc;
+#else
             screen.y = 0xcc;
+#endif
             screen.width = 0x80;
             screen.height = 0x28;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture(pause_texture, -1), screen, texel,
@@ -4489,7 +4496,7 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
         float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
 
         x[i] = (int) turned_x + (screen.x << 4) + 27648;
-        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + 30976;
+        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + GS_Y_OFFSET;
     }
 
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
@@ -4630,8 +4637,16 @@ int CheckEventPoint(ED_EVENT_POINT *point, float time) {
 }
 
 /* The order the static initialiser materialises each camera's float arguments in. */
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 1722, 1730, 1738, 1746, 1763, 1769, 1877, 1907, 1909, 1910
+#pragma argument_flag_ones 1912, 1917, 1919, 1920, 1922, 1927, 1929, 1930, 1932, 1937
+#pragma argument_flag_ones 1939, 1940, 1942, 1947, 1949, 1950, 1952, 1957, 1959, 1960
+#pragma argument_flag_ones 1962
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 3504, 3512, 3520, 3528, 3545, 3551, 3659, 3689, 3691, 3692
 #pragma argument_flag_ones 3694, 3699, 3701, 3702, 3704, 3709, 3711, 3712, 3714, 3719
 #pragma argument_flag_ones 3721, 3722, 3724, 3729, 3731, 3732, 3734, 3739, 3741, 3742
 #pragma argument_flag_ones 3744
+#endif

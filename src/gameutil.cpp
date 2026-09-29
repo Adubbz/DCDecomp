@@ -1840,12 +1840,12 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
     ad[1] = SCE_GS_RGBAQ;
     ad[2] = SCE_GS_SET_UV(texel.x << 4, texel.y << 4);
     ad[3] = SCE_GS_UV;
-    ad[4] = SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0);
+    ad[4] = SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0);
     ad[5] = SCE_GS_XYZF2;
     ad[6] = SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4);
     ad[7] = SCE_GS_UV;
     ad[8] = SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                             ((screen.y + screen.height) << 3) + 30976, 0, 0);
+                             ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0);
     ad[9] = SCE_GS_XYZF2;
     pdata = (u_long128 *) (ad + 10);
 }

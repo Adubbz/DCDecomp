@@ -888,7 +888,7 @@ void CWeaponLevelUp::Draw() {
                 y = orbit_radius * sinf(angle);
                 x = 320.0f + x - 12.0f;
                 (int) x;
-                y = 224.0f + y - 12.0f;
+                y = SCREEN_HALF_HEIGHT_F + y - 12.0f;
                 (int) y;
                 DrawIconParts(icons[i], (int) x, (int) y, 0, 0x280, alpha, values[i]);
             }

@@ -1,6 +1,38 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 885
+#ifdef PAL
+#pragma argument_flag_free 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1133, 1134
+#pragma argument_flag_free 1135, 1136, 1137, 1138, 1139, 1140, 1141, 1142, 1143, 1144
+#pragma argument_flag_free 1145, 1146, 1147, 1148, 1149, 1150, 1151, 1152, 1153, 1154
+#pragma argument_flag_free 1155, 1156, 1157, 1158, 1159, 1160, 1161, 1162, 1163, 1164
+#pragma argument_flag_free 1165, 1166, 1167, 1168, 1169, 1170, 1171, 1172, 1173, 1174
+#pragma argument_flag_free 1175, 1176, 1177, 1178, 1179, 1180, 1181, 1182, 1183, 1184
+#pragma argument_flag_free 1185, 1186, 1187, 1188, 1189, 1190, 1191, 1192, 1193, 1194
+#pragma argument_flag_free 1195, 1196, 1197, 1198, 1199, 1200, 1201, 1202, 1203, 1204
+#pragma argument_flag_free 1205, 1206, 1207, 1208, 1209, 1210, 1211, 1212, 1213, 1214
+#pragma argument_flag_free 1215, 1216, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1224
+#pragma argument_flag_free 1225, 1226, 1227, 1228, 1229, 1230, 1231, 1232
+#pragma argument_flag_free 1233
+#pragma argument_flag_free 1234, 1235, 1236, 1237, 1238, 1239, 1240, 1241, 1242, 1243
+#pragma argument_flag_free 1244, 1245, 1246, 1247, 1248, 1249, 1250, 1251, 1252, 1253
+#pragma argument_flag_free 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1262, 1263
+#pragma argument_flag_free 1264, 1265, 1266, 1267, 1268, 1269, 1270, 1271, 1272, 1273
+#pragma argument_flag_free 1274, 1275, 1276, 1277, 1278, 1279, 1280, 1281, 1282, 1283
+#pragma argument_flag_free 1284, 1285, 1286, 1287, 1288, 1289, 1290, 1291, 1292, 1293
+#pragma argument_flag_free 1294, 1295, 1296, 1297, 1298, 1299, 1300, 1301, 1302, 1303
+#pragma argument_flag_free 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312, 1313
+#pragma argument_flag_free 1314, 1315, 1316, 1317, 1318, 1319, 1320, 1321, 1322, 1323
+#pragma argument_flag_free 1324
+#pragma argument_flag_ones 131, 403, 445
+#pragma argument_flag_ones 617, 715, 1000, 1028, 1209
+#pragma argument_flag_ones 1210, 1212, 1213
+#pragma argument_flag_ones 1370, 1381, 1389, 1409, 1412, 1447, 1454, 1469, 1472, 1497
+#pragma argument_flag_ones 1525, 1532, 1546, 1565, 1577, 1581, 1582, 1652, 1658, 1667
+#pragma argument_flag_ones 1679, 1705, 1727, 1734, 1741, 2013, 2014, 2015, 2058, 2061
+#pragma argument_flag_ones 2122, 2123, 2125
+#pragma argument_flag 0
+#else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
 #pragma argument_flag_free 3610, 3611, 3612, 3613, 3614, 3615, 3616, 3617, 3618, 3619
 #pragma argument_flag_free 3620, 3621, 3622, 3623, 3624, 3625, 3626, 3627, 3628, 3629
@@ -44,6 +76,7 @@
 #pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4701, 4702, 4703, 4746, 4749
 #pragma argument_flag_ones 4810, 4811, 4813
 #pragma argument_flag 0
+#endif
 
 #include "dun/gameloop.hpp"
 
@@ -1750,7 +1783,7 @@ void GameInit(void) {
     DngMes2.char_height = 22;
     DngMes2.tex_buff = MesWinTexBuff_02;
 
-    DngMesStb.text_columns = 70;
+    DngMesStb.text_columns = MES_WIN_COLUMNS;
     DngMesStb.text_rows = 10;
     DngMesStb.text_len = 0;
     DngMesStb.text_width = 0;
@@ -8620,9 +8653,9 @@ void DrawtargetCursor(float *world, float width, float height, float alpha) {
         // The two corners arrive in the fixed-point screen space the sprite
         // calls take, so they come back to pixels here.
         top_left[0] -= 0x6C08;
-        top_left[1] -= 0x7908;
+        top_left[1] -= (GS_Y_OFFSET + 8);
         bottom_right[0] -= 0x6C08;
-        bottom_right[1] -= 0x7908;
+        bottom_right[1] -= (GS_Y_OFFSET + 8);
         top_left[0] >>= 4;
         top_left[1] >>= 3;
         bottom_right[0] >>= 4;
@@ -8810,9 +8843,9 @@ int SetNearLockOnTarget(int from, int nearest_only) {
 
         if (MGRotTransPers(screen, at, 0) != 0) {
             SetMonsterNameDrawFlag(1);
-            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - 0x7900) >> 4);
+            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - GS_Y_OFFSET) >> 4);
             EnemyLifeGage.x = (screen[0] - 0x6C00) >> 4;
-            EnemyLifeGage.y = ((screen[1] - 0x7900) >> 4) + 42;
+            EnemyLifeGage.y = ((screen[1] - GS_Y_OFFSET) >> 4) + 42;
         } else {
             SetMonsterNameDrawFlag(0);
             EnemyLifeGage.on = 0;
@@ -8909,9 +8942,9 @@ void setTargetCursor(int on) {
 
         if (MGRotTransPers(screen, target, 0) != 0) {
             MonsterNameMake(NowMonstorUnit->monster[lockOnTargetNo].name_no);
-            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - 0x7900) >> 4);
+            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - GS_Y_OFFSET) >> 4);
             EnemyLifeGage.x = (screen[0] - 0x6C00) >> 4;
-            EnemyLifeGage.y = ((screen[1] - 0x7900) >> 4) + 42;
+            EnemyLifeGage.y = ((screen[1] - GS_Y_OFFSET) >> 4) + 42;
             SetMonsterNameDrawFlag(1);
         } else {
             SetMonsterNameDrawFlag(0);

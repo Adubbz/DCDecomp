@@ -13,8 +13,16 @@ CCursol::CCursol() {
 
 void CCursol::Init() {
     select = 0;
+#ifdef PAL
+    y = 304.0f;
+#else
     y = 288.0f;
+#endif
+#ifdef PAL
+    target_y = 304.0f;
+#else
     target_y = 288.0f;
+#endif
     alpha[0] = alpha[1] = alpha[2] = alpha[3] = alpha[4] = 0;
 }
 

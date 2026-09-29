@@ -726,7 +726,11 @@ void OpC_InitProcess2() {
         ;
 
     TexManager.DeleteTextureBlock(0);
+#ifdef PAL
+    TexManager.DeleteTextureBlock(15);
+#else
     TexManager.DeleteTextureBlock(14);
+#endif
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
@@ -754,11 +758,19 @@ void OpC_InitProcess2() {
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#ifdef PAL
+    tex[0].block_no = 18;
+#else
     tex[0].block_no = 17;
+#endif
     tex[0].mipmap = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(18, tex);
+#else
     TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
 
@@ -775,16 +787,40 @@ void OpC_InitProcess2() {
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(4, tex);
+#ifdef PAL
+    Chara__3[15].LoadPackData(read_buffer, "04p05b.cfg", &CharaDataBuffer__2[6], 0);
+#else
     Chara__3[14].LoadPackData(read_buffer, "04p05b.cfg", &CharaDataBuffer__2[6], 0);
+#endif
 
     CFrameAttr attr14;
 
     attr14.clip_enable = 0;
+#ifdef PAL
+    Chara__3[15].frame->SetAttr(attr14, 1, 4);
+#else
     Chara__3[14].frame->SetAttr(attr14, 1, 4);
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.time = 1.0f;
+#else
     Chara__3[14].motion_type.state.time = 1.0f;
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.blend_step = 1.0f;
+#else
     Chara__3[14].motion_type.state.blend_step = 1.0f;
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.motion_no = 0;
+#else
     Chara__3[14].motion_type.state.motion_no = 0;
+#endif
+#ifdef PAL
+    Chara__3[15].motion_type.state.playing_no = 0;
+#else
     Chara__3[14].motion_type.state.playing_no = 0;
+#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p15a01.img", 0);
     tex[0].block_no = 9;
@@ -1069,8 +1105,16 @@ void OpC_InitProcess5() {
     while (ReadBGSync())
         ;
 
+#ifdef PAL
+    TexManager.DeleteTextureBlock(14);
+#else
     TexManager.DeleteTextureBlock(13);
+#endif
+#ifdef PAL
+    TexManager.DeleteTextureBlock(18);
+#else
     TexManager.DeleteTextureBlock(17);
+#endif
     TexManager.DeleteTextureBlock(0);
     TexManager.CleanUpBuffer();
 
@@ -1099,20 +1143,40 @@ void OpC_InitProcess5() {
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "smoke.img", 0);
+#ifdef PAL
+    tex[0].block_no = 18;
+#else
     tex[0].block_no = 17;
+#endif
     tex[0].mipmap = 0;
     tex[1].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
+#ifdef PAL
+    tex[1].block_no = 18;
+#else
     tex[1].block_no = 17;
+#endif
     tex[1].mipmap = 0;
     tex[2].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
+#ifdef PAL
+    tex[2].block_no = 18;
+#else
     tex[2].block_no = 17;
+#endif
     tex[2].mipmap = 0;
     tex[3].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
+#ifdef PAL
+    tex[3].block_no = 18;
+#else
     tex[3].block_no = 17;
+#endif
     tex[3].mipmap = 0;
     tex[4].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(18, tex);
+#else
     TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
     MapLoad2();
@@ -1150,21 +1214,53 @@ void OpC_InitProcess5() {
     Chara__3[9].motion_type.state.playing_no = 0;
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
+#ifdef PAL
+    tex[0].block_no = 15;
+#else
     tex[0].block_no = 14;
+#endif
     tex[0].mipmap = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(15, tex);
+#else
     TexManager.LoadTextureBlock(14, tex);
+#endif
+#ifdef PAL
+    Chara__3[14].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
+#else
     Chara__3[13].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
+#endif
 
     CFrameAttr attr13;
 
     attr13.clip_enable = 0;
+#ifdef PAL
+    Chara__3[14].frame->SetAttr(attr13, 1, 4);
+#else
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.time = 5.0f;
+#else
     Chara__3[13].motion_type.state.time = 5.0f;
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.blend_step = 1.0f;
+#else
     Chara__3[13].motion_type.state.blend_step = 1.0f;
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.motion_no = 0;
+#else
     Chara__3[13].motion_type.state.motion_no = 0;
+#endif
+#ifdef PAL
+    Chara__3[14].motion_type.state.playing_no = 0;
+#else
     Chara__3[13].motion_type.state.playing_no = 0;
+#endif
 
     Chara__3[18].LoadPackData(read_buffer, "04p02a.cfg", &CharaDataBuffer__2[6], 0);
 
@@ -2891,7 +2987,11 @@ static void InchikiShadow() {
 static void DrawShadow(int shadow_no, float x, float y, float z) {
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 54.0f};
 
+#ifdef PAL
+    TexManager.ReloadTexture(Vif1Packet, 18);
+#else
     TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
     ambient[3] = ambient[3] - 10.0f * y;
 
     if (ambient[3] > 0.0f) {
@@ -3201,7 +3301,7 @@ static void WaterProcess() {
 
     MGGetFBuffTex(&frame_tex);
 
-    CRect<int> rect(0, 0, 640, 224);
+    CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
     sceGsTex0 surface = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
 
     MGMoveImage(&frame_tex, rect, &surface, 0, 0, 0);

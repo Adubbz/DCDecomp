@@ -715,7 +715,7 @@ void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *t
 }
 
 int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int overlap, int flag) {
-    return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, 0x1C0, flag);
+    return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, SCREEN_HEIGHT, flag);
 }
 
 int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
@@ -741,7 +741,7 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
         src_x = rect.x + width * digit;
         src_y = rect.y;
         height = rect.height;
-        MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+        MenuTextureClip(clip_y, src_y, height, 0, SCREEN_HEIGHT);
         CRect_i_ dest;
         CRect_i_ src(src_x, src_y, width, height);
         dest_height = height - 1;
@@ -1725,7 +1725,7 @@ void DrawMenuAtoraSelect() {
         if (fade > 0x80) {
             fade = 0x80;
         }
-        CRect_i_ rect(320, 0, 320, 448);
+        CRect_i_ rect(320, 0, 320, SCREEN_HEIGHT);
         DrawMenu2DSprite(&frame, rect, rect, 0x40, 0x40, 0x40, tint);
         MGSetGsTEXA(NULL);
         if (MenuAtoraSel.step == 7 || MenuAtoraSel.step == 9) {
@@ -2664,8 +2664,13 @@ static void AtoraBoardFadeEffect() {
     top.a = 0x80;
     set2DSprite(Vif1Packet, &frame, CRect_i_(0, 366, 320, 1), CRect_i_(0, 366, 320, 1), &top, &top, &bottom, &bottom,
                 1);
+#ifdef PAL
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 113), CRect_i_(0, 366, 320, 114), &top, &top, &bottom,
+                &bottom, 1);
+#else
     set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 81), CRect_i_(0, 366, 320, 82), &top, &top, &bottom,
                 &bottom, 1);
+#endif
     MGSetGsTEXA(NULL);
 }
 
@@ -2832,6 +2837,10 @@ static void DrawOptionLRCur(int side, int alpha) {
     v = side * 32 + 256;
     DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
 }
+
+#ifdef PAL
+void DrawOptionScreenWaku() {}
+#endif
 
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
@@ -3716,7 +3725,11 @@ void DrawMenuSave(char *) {
     switch (SaveMenu.mode) {
         case 0:
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x46, 0x32, 0x3A, 0x27), CRect_i_(0x110, 0xD8, 0x3A, 0x28), alpha);
+#ifdef PAL
+            DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x50, 0x1E), CRect_i_(0x110, 0x100, 0x50, 0x1E), alpha);
+#else
             DrawMenu2DSprite(SaveBoard, CRect_i_(0x86, 0x37, 0x4A, 0x1E), CRect_i_(0x110, 0x100, 0x4A, 0x1E), alpha);
+#endif
             return;
         case 2:
             DrawMainMenuIcon(0x46, 0x32, 5, 1, 0x80, alpha);

@@ -71,7 +71,11 @@ static BG_READ_INFO bg_read_info[32];
 
 static NAME_TREE *search_tree(NAME_TREE *node, char *name);
 static int CDRead(char *path, u_int *buffer, int *out_size);
+#ifdef PAL
+static char *create_word_tree(char *index_image, int size, char *tree_buffer);
+#endif
 
+#ifndef PAL
 static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
     dest->name = record->name;
     dest->offset = record->offset;
@@ -79,6 +83,7 @@ static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
     dest->sector = record->sector;
     dest->sectors = record->sectors;
 }
+#endif
 
 static DATA_HEADER *SearchFile(char *path) {
     NAME_TREE *node;
@@ -239,6 +244,7 @@ void BreakReadBG() {
 
 /* A component is looked for in the whole subtree rather than among the node's own children, so a
    path whose middle components are spelled wrong still finds its entry. */
+#ifndef PAL
 static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     NAME_TREE *found;
 
@@ -253,7 +259,9 @@ static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     }
     return 0;
 }
+#endif
 
+#ifndef PAL
 static void add_tree(NAME_TREE *parent, NAME_TREE *child_node) {
     NAME_TREE *sibling;
 
@@ -270,10 +278,12 @@ static void add_tree(NAME_TREE *parent, NAME_TREE *child_node) {
         sibling = sibling->next;
     }
 }
+#endif
 
 /* The whole tree is built inside the one buffer it is handed: the nodes and their headers grow up
    from the bottom and the names down from the top, so nothing is ever freed and the two meeting is
    what the size report at the end is for. */
+#ifndef PAL
 static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
     DATA_HEADER_READ *record;
     NAME_TREE *parent;
@@ -344,6 +354,7 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
     printf("file header size = %d\n", size - (top - bottom));
     return tree_buffer;
 }
+#endif
 
 /* The drive is asked for the data file itself only to learn where it starts; everything after this
    is read by sector from that base, which is why no path but the index's is ever opened. */
@@ -382,7 +393,11 @@ void InitMemoryFile() {
 int LoadFile(char *path, void *buffer, int *out_size) {
     if (!LoadFile2(path, buffer, out_size, 0)) {
         printf("File open error \"%s\"\n \n \n", path);
+#ifdef PAL
+        __assert("etc.cpp", 753, "FALSE");
+#else
         __assert("etc.cpp", 740, "FALSE");
+#endif
     }
     return 1;
 }

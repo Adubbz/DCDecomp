@@ -1,3 +1,12 @@
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 79, 99, 116, 124, 146
+#pragma argument_flag_ones 187, 188, 189, 197, 199, 202, 204, 248, 251
+#pragma argument_flag_ones 255, 256, 260, 263, 286, 297, 305, 312, 313, 314
+#pragma argument_flag_ones 317, 318, 319, 358, 368, 374, 375, 376, 382, 392
+#pragma argument_flag_ones 398, 399, 400, 406, 416, 422, 423, 424, 439
+#pragma argument_flag_ones 598
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 190, 210, 227, 235, 257, 288, 290, 295, 403, 428
 #pragma argument_flag_ones 430, 464, 465, 466, 474, 476, 479, 481, 525, 528
@@ -5,6 +14,7 @@
 #pragma argument_flag_ones 594, 595, 596, 635, 645, 651, 652, 653, 659, 669
 #pragma argument_flag_ones 675, 676, 677, 683, 693, 699, 700, 701, 716, 731
 #pragma argument_flag_ones 737, 738, 744, 752, 805, 982
+#endif
 #include "common.h"
 
 #include <libgraph.h>
