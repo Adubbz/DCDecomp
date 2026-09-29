@@ -700,7 +700,7 @@ SECTIONS
         . = ALIGN(0x10);
         memorycardaccess.cpp.o (.data) // 0x00293d50
         memcard.cpp.o (.data) // 0x00293e40
-        main.data.memcard-a.s.o (.data) // 0x00293ebc
+        memcard.cpp.o (.memcard-c2123) // 0x00293ec0 @2123
         memcard.cpp.o (.memcard-c2252) // 0x00293f20 @2252
         memcard.cpp.o (.memcard-c2391) // 0x00293f50 @2391
         main.data.memcard-a-293F60.s.o (.data) // 0x00293f60
