@@ -519,3 +519,8 @@ int FishingCheckUkiHook();
  * @size 0x64C
  */
 void FishLineDraw(int above_water);
+
+/**
+ * Format of the fishing error message.
+ */
+extern char fishing_err_format[];

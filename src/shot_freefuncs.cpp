@@ -49,16 +49,7 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-/**
- * Copies a rectangular texture region into another texture.
- */
-extern void MoveImageTest(sceVif1Packet *, int, int, int, const CRect_i_ &, int, int, int, int, int, int);
-
-/**
- * Monsters of the current floor.
- */
-extern "C" CMonstorUnit MainMonstorUnit;
-
+#include "clothread.hpp"
 s32 DebugStatus[21];
 float StatusColor[3];
 

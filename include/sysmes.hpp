@@ -116,3 +116,30 @@ void DontGetItemMes(int kind);
  * Configures and opens one system message.
  */
 void SetSystemMes(int no, int count, int position, int input_key, int *args, int *numbers);
+
+/**
+ * Skips the blanks in front of the next token; the system message copy of the script reader's SkipSpace.
+ *
+ * @mangled SkipSpace__FR9input_str__3
+ * @address 0x15FD30
+ * @size 0x94
+ */
+extern "C" int SkipSpace__FR9input_str__3(input_str &input);
+
+/**
+ * Whether a character can start a token; the system message copy of the script reader's CheckChar.
+ *
+ * @mangled CheckChar__Fc__3
+ * @address 0x15FDD0
+ * @size 0x60
+ */
+extern "C" int CheckChar__Fc__3(char value);
+
+/**
+ * Strips comments and line ends from a script; the system message copy of the script reader's PreProcess.
+ *
+ * @mangled PreProcess__FR9input_str__2
+ * @address 0x15FE30
+ * @size 0x11c
+ */
+extern "C" void PreProcess__FR9input_str__2(input_str &input);

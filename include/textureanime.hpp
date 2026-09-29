@@ -197,3 +197,12 @@ extern CTextureAnime *pTexAnime;
  * Animation group the configuration script's records are entered into.
  */
 extern int now_group;
+
+/**
+ * Constructor of CTextureAnime under the name main's array constructors call it by.
+ *
+ * @mangled __ct__13CTextureAnimeFP13CTexAnimeDatai
+ * @address 0x167870
+ * @size 0x30
+ */
+extern "C" void *GeneratedTextureAnimeCtor(void *self, CTexAnimeData *data, int count);

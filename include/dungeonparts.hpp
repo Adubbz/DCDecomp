@@ -336,3 +336,8 @@ extern ITEM_PUT_SET ItemPutListTbl12[3];
  * the character a weapon is routed to.
  */
 extern s8 ItemPutListTbl12_bytes[];
+
+/**
+ * Configuration entry name every model pack is opened with.
+ */
+extern char info_cfg_literal[];

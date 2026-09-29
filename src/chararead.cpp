@@ -29,9 +29,6 @@
 
 typedef MOTION_INFO tagMOTION_KEY;
 
-extern "C" double atof(const char *string);
-extern "C" int atoi(const char *string);
-
 struct COMMAND_INFO {
     char *name;
     int args[16];

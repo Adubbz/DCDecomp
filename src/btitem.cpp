@@ -615,9 +615,6 @@ int BtGetTreasureboxSmall_Loop() {
     }
     return done;
 }
-/** The pickup model shared with the treasure chests, and the short presentation's effect pack. */
-extern char BtAtraShortCharaFile[];
-extern char BtAtraShortEffectFile[];
 
 /**
  * Starts the short presentation for picking up an Atla.
@@ -655,9 +652,6 @@ void BtAtraGetShort_Init() {
     BtActStatus.unk_09C = one;
 }
 INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
-
-/** The effect configuration file inside an effect pack, shared by the pickup and escape presentations. */
-extern char BtEffectInfoFile[];
 
 /**
  * Runs the Atla pickup presentation and reports when it ends.
@@ -1238,9 +1232,6 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
 }
 
 INCLUDE_RODATA("asm/nonmatchings/btitem", @549__4);
-
-/* The empty name the table gives the items that have no model of their own. */
-extern char no_item_name[];
 
 char *ITEM_NAME_TBL_NEW[] = {
     "atfire",

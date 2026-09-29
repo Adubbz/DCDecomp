@@ -15,21 +15,7 @@
 
 #include "dngmessageman.hpp"
 #include "itemdata.hpp"
-/* The debug overlay's line formats. Retail keeps the strings with the hit-mark code. */
-extern char DebugInfoMsgMiniMapView[];
-extern char DebugInfoMsgCollision[];
-extern char DebugInfoMsgBgmPlay[];
-extern char DebugInfoMsgParameter[];
-extern char DebugInfoMsgViewInfo[];
-extern char DebugInfoMsgUltraMan[];
-extern char DebugInfoMsgReloadEnemy[];
-extern char DebugInfoMsgItemPutZone[];
-extern char DebugInfoMsgLightMode[];
-extern char DebugInfoMsgFloorAtraGet[];
-extern char DebugInfoMsgEventTest[];
-extern char DebugInfoMsgSetStatus[];
-extern char DebugInfoMsgSePlay[];
-extern char DebugInfoMsgSetChrKey[];
+#include "hitmark.hpp"
 
 /**
  * The action code of each debug overlay line, ended by -1.

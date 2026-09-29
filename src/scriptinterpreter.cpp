@@ -4,21 +4,6 @@
 #include <cstdlib>
 #include <cstring>
 
-/**
- * Advances a parser to its next character that is not whitespace.
- */
-extern "C" int SkipSpace__FR9input_str__3(input_str &input);
-
-/**
- * Reports whether a character is not parser whitespace.
- */
-extern "C" int CheckChar__Fc__3(char value);
-
-/**
- * Replaces the comments in a script with whitespace before it is parsed.
- */
-extern "C" void PreProcess__FR9input_str__2(input_str &input);
-
 int CScriptInterpreter::GetNextTAG(void) {
     if (tag_table == NULL) {
         return -1;

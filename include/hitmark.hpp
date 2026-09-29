@@ -124,3 +124,83 @@ extern "C" CHitPointMark HitPointMark[16];
 
 /** Mark that the next hit takes. */
 extern "C" int hitCnt;
+
+/**
+ * Debug overlay line format of the mini-map view entry.
+ */
+extern char DebugInfoMsgMiniMapView[];
+
+/**
+ * Debug overlay line format of the collision display entry.
+ */
+extern char DebugInfoMsgCollision[];
+
+/**
+ * Debug overlay line format of the BGM play entry.
+ */
+extern char DebugInfoMsgBgmPlay[];
+
+/**
+ * Debug overlay line format of the parameter entry.
+ */
+extern char DebugInfoMsgParameter[];
+
+/**
+ * Debug overlay line format of the view info entry.
+ */
+extern char DebugInfoMsgViewInfo[];
+
+/**
+ * Debug overlay line format of the invincibility entry.
+ */
+extern char DebugInfoMsgUltraMan[];
+
+/**
+ * Debug overlay line format of the enemy reload entry.
+ */
+extern char DebugInfoMsgReloadEnemy[];
+
+/**
+ * Debug overlay line format of the item put zone entry.
+ */
+extern char DebugInfoMsgItemPutZone[];
+
+/**
+ * Debug overlay line format of the light mode entry.
+ */
+extern char DebugInfoMsgLightMode[];
+
+/**
+ * Debug overlay line format of the floor Atlamillia get entry.
+ */
+extern char DebugInfoMsgFloorAtraGet[];
+
+/**
+ * Debug overlay line format of the event test entry.
+ */
+extern char DebugInfoMsgEventTest[];
+
+/**
+ * Debug overlay line format of the set status entry.
+ */
+extern char DebugInfoMsgSetStatus[];
+
+/**
+ * Debug overlay line format of the SE play entry.
+ */
+extern char DebugInfoMsgSePlay[];
+
+/**
+ * Debug overlay line format of the set character key entry.
+ */
+extern char DebugInfoMsgSetChrKey[];
+
+/**
+ * Name of the heal effect's texture.
+ */
+extern char HealEffectTextureName[];
+
+/**
+ * Virtual table of CHitMark under the name main's array constructors install it by.
+ */
+extern "C" void *GeneratedHitMarkVtable[];

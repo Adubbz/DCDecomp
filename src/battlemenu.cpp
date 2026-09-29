@@ -47,8 +47,8 @@ static int GetVisitInfo(int place, int menu_mode);
 #include "shot_effect.hpp"
 
 #include "menuetc.hpp"
-extern char Vu_prog0f[];
 
+#include "vutext.hpp"
 static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha);
 static void BattleMenuAppear();
 static int BattleMenuExit();
@@ -642,9 +642,6 @@ void DngComStatus(int x, int y, int chara, int alpha) {
                          CRect_i_((3 - (int) ((float) rest / 2.5f)) * 16, 0x88, 0x10, 0x14), water_alpha);
     }
 }
-
-/* The status board texture's name. Retail keeps one copy of the string, emitted with DngComStatus. */
-extern char CharaStatusTextureName[];
 
 void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, int) {
     int u;

@@ -775,19 +775,21 @@ int DngActiveItemTextureCopy(void);
  */
 int DngActiveWeaponTextureCopy(void);
 
-/** TODO: brief for DefaultWeapon. */
+/** The weapon models the player's character can hold. */
 extern CCharacter DefaultWeapon;
 
-/** TODO: brief for MainWeapon. */
+/** The weapon models the player's character can hold. */
 extern CCharacter MainWeapon;
 
-/** TODO: brief for *NowMainEffect. */
+/**
+ * Effect the player's weapon is running.
+ */
 extern CSHOT_EFFECT *NowMainEffect;
 
-/** TODO: brief for CharaMainEffectCrash. */
+/** The effect the player's own character breaks things with. */
 extern CSHOT_EFFECT CharaMainEffectCrash;
 
-/** TODO: brief for CharaMainHandViewFlag. */
+/** Whether the player's character holds an item out. */
 extern s32 CharaMainHandViewFlag;
 
 /**
@@ -845,97 +847,113 @@ extern int CMonUnitHyde;
  */
 extern int CEffectHyde;
 
-/** TODO: brief for BtCashBuffer. */
+/**
+ * Arena the battle item cache is carved out of.
+ */
 extern CDataAlloc2<1> BtCashBuffer;
 
-/** TODO: brief for CWeaponFx. */
+/** The trail that the player's weapon leaves as it swings. */
 extern CWeaponEffect CWeaponFx;
 
-/** TODO: brief for *NowWeapon. */
+/**
+ * Weapon model the player currently holds.
+ */
 extern CCharacter *NowWeapon;
 
-/** TODO: brief for BtItemListCashFlag. */
+/** Whether the item list the menu caches is still good. */
 extern s32 BtItemListCashFlag;
 
-/** TODO: brief for *itemBoxModel. */
+/**
+ * Model a treasure box's contents are drawn with.
+ */
 extern CFrame *itemBoxModel;
 
-/** TODO: brief for itemOpenBigFlag. */
+/** The model the item a gate holds draws with. */
 extern s32 itemOpenBigFlag;
 
-/** TODO: brief for itemOpenSmallFlag. */
+/** Whether the Atlamillia message board is up. */
 extern s32 itemOpenSmallFlag;
 
-/** TODO: brief for itemWeponScale. */
+/** The model the item a gate holds draws with. */
 extern float itemWeponScale;
 
-/** TODO: brief for itemNormalScale. */
+/** Whether the Atlamillia message board is up. */
 extern float itemNormalScale;
 
-/** TODO: brief for iventActive. */
+/** Which event the player is standing on, or -1 for none. */
 extern s32 iventActive;
 
-/** TODO: brief for SubCamera. */
+/**
+ * Camera the dungeon cuts to for events.
+ */
 extern CCameraFollow SubCamera;
 
-/** TODO: brief for MainCamera__4. */
+/**
+ * Camera that follows the player through the dungeon.
+ */
 extern CCameraFollow MainCamera__4;
 
-/** TODO: brief for *NowCamera__3. */
+/**
+ * Camera the dungeon is drawn through.
+ */
 extern CCameraFollow *NowCamera__3;
 
-/** TODO: brief for atraShortGetType. */
+/** Which short Atlamillia use is running. */
 extern s32 atraShortGetType;
 
-/** TODO: brief for atraGetStatus. */
+/** Which short Atlamillia use is running. */
 extern s32 atraGetStatus;
 
-/** TODO: brief for atraGetMsgBord. */
+/** Whether the Atlamillia message board is up. */
 extern s32 atraGetMsgBord;
 
-/** TODO: brief for atraGetMsgBordRate. */
+/** Whether the Atlamillia message board is up. */
 extern float atraGetMsgBordRate;
 
-/** TODO: brief for atraGetPos. */
+/** Where the player took the Atlamillia they last picked up. */
 extern sceVu0FVECTOR atraGetPos;
 
-/** TODO: brief for atraGetRot. */
+/** Which way the player faced as they took it. */
 extern sceVu0FVECTOR atraGetRot;
 
-/** TODO: brief for DispFade__3. */
+/** The fade the dungeon draws over the picture. */
 extern CDispCtrl DispFade__3;
 
-/** TODO: brief for driveNoInterpolate. */
+/** Whether the player's model skips interpolation on its next drive step. */
 extern s32 driveNoInterpolate;
 
-/** TODO: brief for EscapeFlag. */
+/** Whether the player is escaping the dungeon. */
 extern s32 EscapeFlag;
 
-/** TODO: brief for *itemOpenItemChr. */
+/**
+ * Model data of the item a pickup presentation is showing.
+ */
 extern u_int *itemOpenItemChr;
 
-/** TODO: brief for *shortAtraEffectPtr. */
+/**
+ * Model data of the short Atlamillia effect.
+ */
 extern u_int *shortAtraEffectPtr;
 
-/** TODO: brief for activeItem. */
+/** The models of the items the player is running. */
 extern CActiveItemPack activeItem;
 
-/** TODO: brief for itemOpenBig. */
+/** The models an opened treasure box shows, and the effects that play over them. */
 extern CMotionModel itemOpenBig;
 
-/** TODO: brief for itemOpenBigFx. */
+/** The models an opened treasure box shows, and the effects that play over them. */
 extern CMotionModel itemOpenBigFx;
 
-/** TODO: brief for itemOpenSmall. */
+/** The models an opened treasure box shows, and the effects that play over them. */
 extern CMotionModel itemOpenSmall;
 
-/** TODO: brief for itemOpenSmallFx. */
+/** The models an opened treasure box shows, and the effects that play over them. */
 extern CMotionModel itemOpenSmallFx;
 
-/** TODO: brief for shortAtraEffect. */
+/** The effect that a short Atlamillia use lights the player with. */
 extern CCharacter shortAtraEffect;
 
-/** TODO: brief for EscapeEffect. */
+/** The effect that plays as the player escapes the dungeon. */
 extern CCharacter EscapeEffect;
 
 /** Randomized element the current floor's sealed door wants. */
@@ -962,9 +980,6 @@ extern s32 BtEventMode;
 /** Nonzero while a system event script clears the dungeon's usual work. */
 extern s32 BtAllClear;
 
-/** Camera the dungeon currently draws through. */
-extern CCameraFollow *NowCamera__3;
-
 /** Message window the system script talks through first. */
 extern ClsMes BtEventMes0;
 
@@ -977,23 +992,14 @@ extern CDataAlloc2<1> BtSystemScriptFileBuffer;
 /** Base address of the system script data currently loaded. */
 extern s32 BtEventData;
 
-/** The model of the weapon that the player has equipped. */
-extern CCharacter *NowWeapon;
-
-/** The effect the player's character is shooting now. */
-extern CSHOT_EFFECT *NowMainEffect;
-
 /** Whether an enemy is locked on. */
 extern s32 lockOnTargetFlag;
 
 /** Which button fires an action. */
 extern s32 PadInput_OK;
 
-/** TODO: brief for DbgMsg. */
+/** The debug text window the dungeon draws. */
 extern CDebugFont DbgMsg;
-
-/** The camera the dungeon is being viewed through. */
-extern CCameraFollow *NowCamera__3;
 
 /** One texture animation for every part of every character in the dungeon. */
 extern CTexAnimeData BtNPCTexAnimeData[][32];
@@ -1001,10 +1007,14 @@ extern CTexAnimeData BtNPCTexAnimeData[][32];
 /** The model a trap circle draws with. */
 extern CCharacter Trap_Circle;
 
-/** TODO: brief for *NowBombEffect. */
+/**
+ * Bomb effect the thrown item is playing.
+ */
 extern CItemBombEffect *NowBombEffect;
 
-/** TODO: brief for *NowShockWave. */
+/**
+ * Shock wave the current attack is playing.
+ */
 extern CShockWave *NowShockWave;
 
 /** Scratch arena used while loading the current map. */
@@ -1013,53 +1023,47 @@ extern CDataAlloc2<1> MapModelBuffer;
 /** Texture animation state initialized after the ground texture archive loads. */
 extern CTextureAnime BtTexAnime;
 
-/** TODO: brief for BtTexAnimeData. */
+/** The texture animations every dungeon texture runs. */
 extern CTexAnimeData BtTexAnimeData[];
 
 /** Scene-wide values filled from model-definition directives. */
 extern sceVu0FMATRIX main_light;
 
-/** TODO: brief for main_lightcolor. */
+/** The lighting the dungeon draws the field and the models under. */
 extern sceVu0FMATRIX main_lightcolor;
 
-/** TODO: brief for sub_light. */
+/** The lighting the dungeon draws the field and the models under. */
 extern sceVu0FMATRIX sub_light;
 
-/** TODO: brief for sub_lightcolor. */
+/** The lighting the dungeon draws the field and the models under. */
 extern sceVu0FMATRIX sub_lightcolor;
 
-/** TODO: brief for main_ambientlight. */
+/** The lighting the dungeon draws the field and the models under. */
 extern sceVu0FVECTOR main_ambientlight;
 
-/** TODO: brief for sub_ambientlight. */
+/** The lighting the dungeon draws the field and the models under. */
 extern sceVu0FVECTOR sub_ambientlight;
 
-/** TODO: brief for main_fogRate. */
+/** How far the fog reaches and how it thickens, on the front and the back floors. */
 extern float main_fogRate[4];
 
-/** TODO: brief for sub_fogRate. */
+/** How far the fog reaches and how it thickens, on the front and the back floors. */
 extern float sub_fogRate[4];
 
-/** TODO: brief for main_fogColor. */
+/** The colour the fog draws, on the front and the back floors. */
 extern u8 main_fogColor[];
 
-/** TODO: brief for sub_fogColor. */
+/** The colour the fog draws, on the front and the back floors. */
 extern u8 sub_fogColor[];
 
-/** TODO: brief for main_bgColor. */
+/** The events of the floor the dungeon is drawing. */
 extern u8 main_bgColor[];
 
-/** TODO: brief for sub_bgColor. */
+/** The events of the floor the dungeon is drawing. */
 extern u8 sub_bgColor[];
 
-/** TODO: brief for BtItemCashArea. */
+/** The buffers the dungeon's item cache and battle scripts run out of. */
 extern CDataAlloc2<1> BtItemCashArea[6];
-
-/** TODO: brief for *NowMainEffect. */
-extern CSHOT_EFFECT *NowMainEffect;
-
-/** TODO: brief for *NowWeapon. */
-extern CCharacter *NowWeapon;
 
 /**
  * Arena the steeb message file is read into.
@@ -1100,3 +1104,13 @@ extern int Water_Splash_actFlag;
  * The splash shown where the party enters the water.
  */
 extern CCharacter Water_Splash;
+
+/**
+ * The dungeon's monster units.
+ */
+extern CMonstorUnit MainMonstorUnit;
+
+/**
+ * Effects of the five elemental gems.
+ */
+extern CSHOT_EFFECT MasekiEffect[];

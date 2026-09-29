@@ -464,3 +464,69 @@ float Sinf(float angle);
 float Cosf(float angle);
 
 /** + 4 more not-yet-named function(s) in this range (IDA/disassembler could not name them) */
+
+/**
+ * First entry of the table of static initialisers the runtime calls at startup; the linker script places it.
+ */
+extern void (*__static_init[])(void);
+
+/**
+ * End of the table of static initialisers the runtime calls at startup; the linker script places it.
+ */
+extern void (*__static_init_end[])(void);
+
+/**
+ * Destructor of std::exception.
+ *
+ * @mangled __dt__Q23std9exceptionFv
+ * @address 0x122590
+ * @size 0x6c
+ */
+extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw();
+
+/**
+ * std::exception::what.
+ *
+ * @mangled what__Q23std9exceptionCFv
+ * @address 0x122600
+ * @size 0xc
+ */
+extern "C" const char *what__Q23std9exceptionCFv(const void *exception);
+
+/**
+ * Destructor of std::bad_exception.
+ *
+ * @mangled __dt__Q23std13bad_exceptionFv
+ * @address 0x122D00
+ * @size 0x84
+ */
+extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw();
+
+/**
+ * std::bad_exception::what.
+ *
+ * @mangled what__Q23std13bad_exceptionCFv
+ * @address 0x122D90
+ * @size 0xc
+ */
+extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception);
+
+/**
+ * Run-time type information record of std::exception.
+ */
+extern const unsigned char __RTTI__Q23std9exception[];
+
+/**
+ * Run-time type information record of std::bad_exception.
+ */
+extern const unsigned char __RTTI__Q23std13bad_exception[];
+
+/**
+ * What std::exception::what returns.
+ */
+extern const char ExceptionWhat[];
+
+/**
+ * What std::bad_exception::what returns.
+ */
+extern const char BadExceptionWhat[];

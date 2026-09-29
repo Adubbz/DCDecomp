@@ -30,11 +30,6 @@
 #include "userstatus.hpp"
 
 /**
- * Configuration file name used when loading an NPC's model pack.
- */
-extern const char info_cfg_literal[];
-
-/**
  * A single grid cell while a floor is being built.
  */
 struct BUILD_MAP_INFO {

@@ -1047,11 +1047,6 @@ CFrame *ItemPolyView;
 int MDebugItemPolyViewFlag;
 int polyreadflag;
 
-/**
- * Name of the frame-buffer texture the character change menu's pictures are drawn into.
- */
-extern char chara_change_frame_image[];
-
 INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
@@ -1453,11 +1448,6 @@ int CharaChangeKey(void) {
     }
     return result;
 }
-
-/**
- * Name of the frame texture drawn around the selected portrait.
- */
-extern char stay_frame_name[];
 
 void CharaChangeDraw(void) {
     int alpha;
@@ -1888,11 +1878,6 @@ float menudebugrscale[3] = {3.0f, 3.0f, 3.0f};
  */
 CDataAlloc2<1> MenuItemCashBuffer(-1);
 
-/**
- * Name of the frame-buffer texture the item preview's pictures are drawn into.
- */
-extern char item_view_frame_image[];
-
 static int EnterItemPolygonView(void) {
     BG_READ_INFO *model;
     BG_READ_INFO *texture;
@@ -2099,16 +2084,6 @@ void DebugItemGetDraw(void) {
 CDebugFont MenuDbgMsg;
 
 ITEM_AUTO_GET ItemAutoGet;
-
-// The item data view's line formats, which the table below points at.
-extern char item_templete_no[];
-extern char item_templete_type[];
-extern char item_templete_use[];
-extern char item_templete_attribute[];
-extern char item_templete_name_index[];
-extern char item_templete_help_index[];
-extern char item_templete_volume[];
-extern char item_templete_gold[];
 
 /**
  * Formats of the lines the item data view prints.

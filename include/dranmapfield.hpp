@@ -115,3 +115,8 @@ STATIC_ASSERT(sizeof(DRAN_MAP_FIELD_SET) == 0xD4B0);
  * Drainage-field models and runtime state for the current dungeon.
  */
 extern "C" DRAN_MAP_FIELD_SET DranMapField;
+
+/**
+ * Message LoadModel prints when a field's model table overflows.
+ */
+extern char OverMessage[];

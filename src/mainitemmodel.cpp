@@ -61,11 +61,6 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
     model_cash[model_no] = slot;
     return model_no;
 }
-/** The message logged when a cached model's last user lets it go. */
-extern char MainItemRemoveMessage[];
-
-/** The message logged when a model is put in a hand. */
-extern char MainItemHandMessage[];
 
 void CMainItemModel::DeleteModel(int index) {
     cash_lock[model_cash[index]]--;
@@ -170,7 +165,6 @@ void CMainItemModel::Draw(void) {
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
 INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
 int ItemThrowStep(float *position, float *velocity);
-extern "C" CSHOT_EFFECT MasekiEffect[5];
 
 void CMainItemModel::Step(void) {
     int i;

@@ -187,18 +187,6 @@ FishRecordMenuWork FishRecordMenu;
 /** Texture the fishing exchange's fish icons are drawn from. */
 CTexture *FishMenuTex;
 
-/** Sort priority of each dungeon-item sort key for the item board sort. */
-extern s32 sort_table[9];
-
-/** Sort priority of each attachment kind for the attachment board sort. */
-extern s32 asort_table[5];
-
-/** Ordering the next item board sort tries, from one to eight. */
-extern s32 sort_top_type;
-
-/** Ordering the next attachment board sort tries, from zero to four. */
-extern s32 asort_top_type;
-
 /**
  * Gives the dungeon item pack a player status carries.
  */
@@ -4774,18 +4762,6 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
 }
-
-/**
- * Name of the fishing screens' frame-buffer backdrop, loaded by
- * FishMenuTextureLoad and FishRecordTextureEnter.
- */
-extern char FishFrameImage[];
-
-/**
- * Name of the fishing screens' message file inside their pack, read by FishMenuTextureLoad
- * and FishRecordTextureEnter.
- */
-extern char FishMessageFile[];
 
 INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
 

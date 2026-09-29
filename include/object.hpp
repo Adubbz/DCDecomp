@@ -385,3 +385,12 @@ STATIC_ASSERT(sizeof(CObject) == 0xB0);
  * Shared frame attribute block, constructed at start-up.
  */
 extern CFrameAttr FrameAttr;
+
+/**
+ * Constructor of CObject under the name main's array constructors call it by.
+ *
+ * @mangled __ct__7CObjectFf
+ * @address 0x157010
+ * @size 0x3c
+ */
+extern "C" void *GeneratedObjectCtor(void *self, float mass);

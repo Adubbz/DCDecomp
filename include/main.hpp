@@ -14,77 +14,57 @@ extern s32 main_select_menu_no;
 /** The system messages every message window shares. */
 extern short * SystemMes;
 
-/** TODO: brief for MapNo. */
+/**
+ * Map the game is on or about to load.
+ */
 extern int MapNo;
 
-/** TODO: brief for ambientlight. */
+/** Initial ambient-light colour used by the renderer. */
 extern sceVu0FVECTOR ambientlight;
 
-/** TODO: brief for light. */
+/** Initial parallel-light direction matrix used by the renderer. */
 extern sceVu0FMATRIX light;
 
-/** TODO: brief for lightcolor. */
+/** Initial parallel-light colour matrix used by the renderer. */
 extern sceVu0FMATRIX lightcolor;
 
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
+/**
+ * Empty string the game-mode table names modes without a file by.
+ */
+extern char gamemode_empty_string[];
 
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
+/**
+ * Default constructor of CCharacter, written out by hand for the arrays main builds.
+ *
+ * @mangled __ct__10CCharacterFv
+ * @address 0x143530
+ * @size 0xd4
+ */
+extern "C" void *__ct__10CCharacterFv(void *self);
 
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
+/**
+ * Default constructor of CTextureAnime, written out by hand for the arrays main builds.
+ *
+ * @mangled __ct__13CTextureAnimeFv
+ * @address 0x143620
+ * @size 0x28
+ */
+extern "C" void *__ct__13CTextureAnimeFv(void *self);
 
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
+/**
+ * Default constructor of CObject, written out by hand for the arrays main builds.
+ *
+ * @mangled __ct__7CObjectFv
+ * @address 0x143650
+ * @size 0x28
+ */
+extern "C" void *__ct__7CObjectFv(void *self);
 
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
-
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
-
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
-
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
-
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
-
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
-
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
-
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
-
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
-
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
-
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
-
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
-
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
-
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
-
-/** TODO: brief for light. */
-extern sceVu0FMATRIX light;
-
-/** TODO: brief for lightcolor. */
-extern sceVu0FMATRIX lightcolor;
-
-/** TODO: brief for ambientlight. */
-extern sceVu0FVECTOR ambientlight;
+/**
+ * Default constructor of MotionParam under the name main's array constructors call it by.
+ *
+ * @mangled __ct__11MotionParamFv
+ * @address 0x143610
+ * @size 0xc
+ */
+extern "C" void *GeneratedMotionParamCtor(void *self);

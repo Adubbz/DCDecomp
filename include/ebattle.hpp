@@ -144,3 +144,8 @@ int EdPadOn(int keys, int mode);
  * @mangled EdPadDown__Fii @address 0x169990 @size 0x50
  */
 int EdPadDown(int keys, int mode);
+
+/**
+ * The part of the screen the event battle's opening wipe has reached.
+ */
+extern CRect_i_ draw_rect;

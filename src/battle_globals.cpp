@@ -65,36 +65,6 @@ CTexture *KataTex;
 /** The alphabet and symbol keyboards' characters. */
 CTexture *AlphaTex;
 
-/** The packed texture files used by the name-entry screen. */
-extern char NameEntryTextureFile[];
-
-/** The frame image descriptor used by the name-entry background. */
-extern char NameEntryImageDescriptor[];
-
-/** The frame texture shown around the keyboard. */
-extern char NameEntryFrameTexture[];
-
-/** The texture name for the name-entry frame. */
-extern char NameEntryTempTexture[];
-
-/** The hiragana keyboard texture name. */
-extern char NameEntryHiraganaTexture[];
-
-/** The katakana keyboard texture name. */
-extern char NameEntryKatakanaTexture[];
-
-/** The alphabet keyboard texture name. */
-extern char NameEntryAlphabetTexture[];
-
-/** The party member face texture name. */
-extern char NameEntryFaceTexture[];
-
-/** The first name-entry message file. */
-extern char NameEntryMessageFile[];
-
-/** The second name-entry message file. */
-extern char NameEntryMessageFile2[];
-
 /** How far the cursor moves across and down each keyboard, per key. */
 s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0x1A}};
 

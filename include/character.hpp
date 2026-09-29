@@ -600,3 +600,8 @@ public:
 };
 
 STATIC_ASSERT(sizeof(CMainChara) == 0x12A0);
+
+/**
+ * Virtual table of CCharacter under the name main's array constructors install it by.
+ */
+extern "C" void *GeneratedCharacterVtable[];

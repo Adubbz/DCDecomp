@@ -1221,3 +1221,8 @@ extern CTexture *MenuMoveTex;
  * Characters the weapon page draws each listed weapon's model with.
  */
 extern CCharacter DngWeaponFrm[];
+
+/**
+ * Name of the status board texture.
+ */
+extern char CharaStatusTextureName[];

@@ -178,7 +178,7 @@ static sceVu0FVECTOR fix_chara_rot;
 static CMapParts InteriorParts[10];
 
 /** Named parts that move under the interior's script. */
-static CCharacter MotionParts[4];
+static CCharacter MotionParts__2[4];
 
 /** Water surfaces the interior draws. */
 static CGroundWater Water[1];
@@ -193,7 +193,7 @@ static CCameraFollow TalkCamera(60.0f, 20.0f, 0.0f, 4.0f);
 static CCameraFollow EventCamera(60.0f, 20.0f, 0.0f, 4.0f);
 
 /** Camera that looks from the player's eyes. */
-static CCamera ViewCamera(4.0f);
+static CCamera ViewCamera__2(4.0f);
 
 /** Camera used while leaving the interior. */
 static CCamera ExitCamera(4.0f);
@@ -573,7 +573,7 @@ int EditInLoop() {
             }
             NowCamera = &MainCamera;
             if (EdCheckViewMode() != 0) {
-                NowCamera = &ViewCamera;
+                NowCamera = &ViewCamera__2;
             }
             break;
         case 4: {
@@ -650,7 +650,7 @@ int EditInLoop() {
             sceVu0FVECTOR direction;
             NowCamera = &MainCamera;
             if (EdCheckViewMode() != 0) {
-                NowCamera = &ViewCamera;
+                NowCamera = &ViewCamera__2;
             }
             Chara->SetMotion(0, 0);
             Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
@@ -672,7 +672,7 @@ int EditInLoop() {
             h = AngleInterpolate(h, yaw, 0.05f, 0);
             v = AngleInterpolate(v, pitch, 0.03f, 0);
             EdASetViewAngle(h, v);
-            EdEyeCamera(&ViewCamera, Chara);
+            EdEyeCamera(&ViewCamera__2, Chara);
             if (EdCheckViewMode() == 0 || ((h - yaw < 0.0f ? -(h - yaw) : h - yaw) < 0.001f && (v - pitch < 0.0f ? -(v - pitch) : v - pitch) < 0.001f)) {
                 int event_no;
                 EdASetViewAngle(yaw, pitch);
@@ -909,7 +909,7 @@ static void MainDraw() {
         EffectMacroStep(wind);
         EdEffectGroup.Step(1);
         for (i = 0; i < 4; i++) {
-            MotionParts[i].Step();
+            MotionParts__2[i].Step();
         }
     }
     EditEffectStep2();
@@ -924,7 +924,7 @@ static void MainDraw() {
     EdEffectGroup.Draw();
     for (i = 0; i < 4; i++) {
         TexManager.ReloadTexture(GetVif1Packet(), i + 0x32);
-        MotionParts[i].Draw();
+        MotionParts__2[i].Draw();
     }
     TexManager.ReloadTexture(Vif1Packet, 0x14);
     EdDrawSysCursor(EdInInfo->event_points, 32);
@@ -1068,7 +1068,7 @@ static void MoveCharacter() {
 
     EdMoveCharaInfo.time = NowTime;
     EdMoveCharaInfo.camera = &MainCamera;
-    EdMoveCharaInfo.view_camera = &ViewCamera;
+    EdMoveCharaInfo.view_camera = &ViewCamera__2;
     EdMoveCharaInfo.key_lock = 0;
     EdMoveCharaInfo.chara = Chara;
     EdMoveCharaInfo.interior = 1;
@@ -1556,13 +1556,13 @@ void LoadData() {
     }
     for (int i = 0; i < 4; i++) {
         EDIT_MOTION_PARTS_INFO *motion = &EdInInfo->motion_parts[i];
-        MotionParts[i].Initialize();
+        MotionParts__2[i].Initialize();
         if (motion->name[0] != '\0') {
             LoadFile(motion->name, read_buffer, NULL);
-            MotionParts[i].LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
-            MotionParts[i].SetPosition(motion->values[0], motion->values[1], motion->values[2]);
-            MotionParts[i].SetRotation(motion->values[3], motion->values[4], motion->values[5]);
-            MotionParts[i].SetScale(motion->values[6], motion->values[7], motion->values[8]);
+            MotionParts__2[i].LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
+            MotionParts__2[i].SetPosition(motion->values[0], motion->values[1], motion->values[2]);
+            MotionParts__2[i].SetRotation(motion->values[3], motion->values[4], motion->values[5]);
+            MotionParts__2[i].SetScale(motion->values[6], motion->values[7], motion->values[8]);
         }
     }
     for (int i = 0; i < 1; i++) {

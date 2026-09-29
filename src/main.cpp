@@ -43,6 +43,11 @@
 #include "title/majinbeem.hpp"
 
 #include "gameutil.hpp"
+#include "vutext.hpp"
+#include "vudata.hpp"
+#include "literals.hpp"
+#include "main.hpp"
+#include "fakepointlight.hpp"
 /**
  * Holds the category's level-of-detail thresholds and trailing state.
  */
@@ -76,8 +81,6 @@ STATIC_ASSERT(sizeof(CategoryAttr) == 0x18);
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 873
-
-extern char gamemode_empty_string[];
 
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond
  * being constructed here is unanalyzed -- out of scope for this pass. */
@@ -253,22 +256,6 @@ typedef struct {
     u8 str : 1;      /* channel start/busy */
     u8 chcr_top : 1;
 } DMA_CHCR_BYTE;
-
-/* Vif1Packet itself is declared in include/mglib.hpp (included above)
- * now that it lives in its own translation unit (src/mglib.cpp) --
- * see that header's comment for why. */
-/* Labels (DMA tag chain / VU microprogram addresses), not pointer
- * variables: retail computes their address directly via lui+addiu at each
- * use site (e.g. `lui $v0,0x29; addiu $a1,$v0,0x6680` for My_dma_start0),
- * not by loading a stored pointer value -- confirmed by a GP-offset-
- * overflow linker error when these were first declared as `void *`
- * (which asked the compiler to treat them as small-data pointer
- * *variables* to be loaded, not address constants). Declaring them as
- * arrays makes every use below decay to the address directly, matching. */
-extern char My_dma_start0[];
-extern char Vu_progmain[];
-extern char Vu_prog0f[];
-extern void *_overlay_group_addresses[];
 
 /** Overlay file selected for each top-level game mode. */
 static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
@@ -1477,19 +1464,6 @@ void CMajinBeem::Initialize() {
     active = 0;
     alphas[59] = 0.0f;
 }
-/* The constructors the compiler writes for arrays of these classes, written out by hand: the
-   compiler only emits them where an array needs one, which this unit's source no longer holds.
-   The names below stand for the compiler's own symbols (see config/object_fixups.json), which
-   this unit may not also declare under C linkage. */
-extern "C" void *GeneratedTextureAnimeCtor(void *self, CTexAnimeData *data, int count);
-extern "C" void *GeneratedObjectCtor(void *self, float mass);
-extern "C" void *GeneratedHitMarkVtable[];
-extern "C" void *GeneratedMotionParamCtor(void *self);
-extern "C" void GeneratedFakePointLightCtor(void *object, int mode);
-extern "C" void *GeneratedCharacterVtable[];
-extern "C" void *__ct__10CCharacterFv(void *self);
-extern "C" void *__ct__13CTextureAnimeFv(void *self);
-extern "C" void *__ct__7CObjectFv(void *self);
 
 /**
  * Constructs one map character slot.

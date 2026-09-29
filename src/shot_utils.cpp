@@ -20,12 +20,7 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-/**
- * The "err %d\n" format held in fishing.cpp's constants, which the polygon check prints its
- * overflow count with.
- */
-extern char fishing_err_format[];
-
+#include "fishing.hpp"
 SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float *movement,
                                      s32 target_mode, float radius) {
     sceVu0FVECTOR destination;

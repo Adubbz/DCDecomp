@@ -84,11 +84,6 @@ static s16 ManualImgLoad() {
     return ManualMenu.images_ready;
 }
 
-/**
- * Name of the frame-buffer texture the page images are drawn into.
- */
-extern char manual_frame_image[];
-
 s16 ManualImgEnter() {
     if (ManualMenu.images_ready == 0 && ReadBGSync() == 0) {
         LOADTEXTURE_INFO2 image_table[] = {

@@ -21,21 +21,6 @@
 #include "texture.hpp"
 
 #include "editpartsdata.hpp"
-/**
- * One external character, in the table the Georama editor's parts data ends
- * with. The window indexes it with the character's negative code, so the
- * entries sit before the address the code names.
- */
-struct EDIT_GAIJI {
-    s16 width; /**< How wide the character draws, in font cells. */
-    u8 unk_02[0x1E];
-};
-
-STATIC_ASSERT(sizeof(EDIT_GAIJI) == 0x20);
-
-/* That table of external characters, at EditPartsData + 0x491C. The linker
- * script binds the name; retail's code carries a relocation against it. */
-extern "C" EDIT_GAIJI EditGaijiTbl[];
 
 /* The external-character code of every letter of each registered name. */
 s16 NameRegistTbl[8][11];

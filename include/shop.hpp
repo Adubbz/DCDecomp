@@ -504,3 +504,13 @@ STATIC_ASSERT(sizeof(FISH_EXCHANGE_ITEM) == 4);
 
 /** The prizes the fishing exchange offers. */
 extern FISH_EXCHANGE_ITEM exitemlst[35];
+
+/**
+ * Frame image of the fish exchange window.
+ */
+extern char FishFrameImage[];
+
+/**
+ * Message file of the fish exchange.
+ */
+extern char FishMessageFile[];

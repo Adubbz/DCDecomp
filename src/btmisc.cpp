@@ -21,6 +21,7 @@
 #include "menu_save.hpp"
 
 #include "btitem.hpp"
+#include "hitvalue.hpp"
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
 /**
@@ -143,8 +144,6 @@ void makeWeaponName(char *name, int weapon_no) {
  * @address 0x1B7120
  * @size 0x124
  */
-/** The model file extension, shared with the hit-value unit. */
-extern char MdsExtension[];
 
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);
@@ -192,7 +191,6 @@ void BtGetWeaponNamePath2(char *name, char *path, int chara, int weapon) {
     strcpy(name, nameWepBuff_mds);
     strcpy(path, nameWepBuff_img);
 }
-extern int defWeapon[6];
 
 void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
     WEAPON_DATA *weapon;
@@ -203,7 +201,7 @@ void BtGetWeaponNamePath3(char *name, char *effect_name, int weapon_no) {
         weapon = GetWeaponData(weapon_no);
         if (weapon != NULL) {
             chara_no = (s8) weapon->owner;
-            weapon_no -= defWeapon[chara_no];
+            weapon_no -= defWeapon__2[chara_no];
             printf("offset %d\n", weapon_no);
             BtGetWeaponNamePath2(name, effect_name, chara_no, weapon_no);
         }

@@ -111,3 +111,8 @@ void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int 
  * @size 0x48
  */
 void BtBattleMusic_Stop(void);
+
+/**
+ * The model file extension.
+ */
+extern char MdsExtension[];

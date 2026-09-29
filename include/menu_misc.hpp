@@ -633,3 +633,13 @@ extern s16 DngEscapeEndFlag;
 
 /** The directory the weapon models are read from. */
 extern const char MenuWepDir[];
+
+/**
+ * The character file extension.
+ */
+extern const char CharaFileExtension[5];
+
+/**
+ * Name of the frame image texture.
+ */
+extern const char FrameImageTexture[];

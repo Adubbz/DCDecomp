@@ -160,3 +160,23 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x);
  * @size 0xC0
  */
 void getCharacterVector(float *vector, float pitch);
+
+/**
+ * Model file of the pickup, shared with the treasure chests.
+ */
+extern char BtAtraShortCharaFile[];
+
+/**
+ * Effect file of the short Atlamillia presentation.
+ */
+extern char BtAtraShortEffectFile[];
+
+/**
+ * Effect configuration entry inside an effect pack, shared by the pickup and escape presentations.
+ */
+extern char BtEffectInfoFile[];
+
+/**
+ * Empty name the model table gives the items that have no model of their own.
+ */
+extern char no_item_name[];

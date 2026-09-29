@@ -619,5 +619,12 @@ int PersonalBoardItemPush(IHAVEITEM *, int);
  */
 int GetAttachKind(int item_no);
 
-/** TODO: brief for *PerBoardTex. */
+/**
+ * Texture the menu's percentage bars are drawn from.
+ */
 extern CTexture *PerBoardTex;
+
+/**
+ * Sort key the inventory's auto-sort cycles from; the unit defines it below the functions that read it.
+ */
+extern int asort_top_type;

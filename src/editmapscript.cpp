@@ -57,34 +57,9 @@
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
-extern float NowTime;
-extern int goto_menu;
-extern int goto_return_menu;
-extern int loop_counter;
-extern int camera_dist_mode;
 void BtSetMapJumpFloor(int floor);
-extern int key_counter;
-extern CCameraFollow TalkCamera;
-extern CCamera *NowCamera;
-extern CCameraFollow ViewCamera;
-extern CCameraFollow MainCamera;
-
-extern CDataAlloc2<1> DataBuffer__2;
-
-extern CCharacter *MotionParts;
-
-extern CDebugFont DebugFont__3;
-
-extern CEffect *EffectTable__3;
-
-extern int door_open_cnt;
-extern CCharacter *Chara;
 
 /* Every villager the editor can place, one record each. */
-
-/* Where the player stands and faces while a door plays its motion. */
-extern sceVu0FVECTOR fix_chara_pos;
-extern sceVu0FVECTOR fix_chara_rot;
 
 /** One default villager entry stored for each map and list position. */
 struct EDIT_CHARA_DATA_ENTRY {

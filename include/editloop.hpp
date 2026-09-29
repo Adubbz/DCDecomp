@@ -15,6 +15,9 @@ class CMapParts;
 class CMapObject;
 class CCamera;
 class CCameraFollow;
+class CCharacter;
+class CDebugFont;
+class CEffect;
 class ClsMes;
 class CTexture;
 class CRect_i_;
@@ -908,5 +911,95 @@ void EdDeleteE05RoboParts();
 /** Data whose shape the unit does not need yet. */
 extern CTexAnimeData CharaTexAnimeData[];
 
-/** TODO: brief for SystemEffect. */
+/** Sprites the system events draw with. */
 extern C3DSprite SystemEffect[];
+
+/**
+ * Frames the editor loop has run since the map was entered.
+ */
+extern int loop_counter;
+
+/**
+ * Frames the pad has been held for.
+ */
+extern int key_counter;
+
+/**
+ * Whether the loop is leaving for the main menu.
+ */
+extern int goto_menu;
+
+/**
+ * Whether the loop is returning from the main menu.
+ */
+extern int goto_return_menu;
+
+/**
+ * How far the following camera sits from the player.
+ */
+extern int camera_dist_mode;
+
+/**
+ * Animated map parts.
+ */
+extern CCharacter *MotionParts;
+
+/**
+ * Camera the map is drawn through.
+ */
+extern CCamera *NowCamera;
+
+/**
+ * Time of day on the editor clock.
+ */
+extern float NowTime;
+
+/**
+ * Frames the opening door has been playing for.
+ */
+extern int door_open_cnt;
+
+/**
+ * Font the editor's debug text is drawn with.
+ */
+extern CDebugFont DebugFont__3;
+
+/**
+ * Camera that follows the player.
+ */
+extern CCameraFollow MainCamera;
+
+/**
+ * Camera used while the player talks to a villager.
+ */
+extern CCameraFollow TalkCamera;
+
+/**
+ * Camera used by the free-look view.
+ */
+extern CCameraFollow ViewCamera;
+
+/**
+ * Where the player is held while a door plays its motion.
+ */
+extern sceVu0FVECTOR fix_chara_pos;
+
+/**
+ * Which way the player faces while a door plays its motion.
+ */
+extern sceVu0FVECTOR fix_chara_rot;
+
+/**
+ * Arena the map's data is read into before the editor carves it up.
+ */
+extern CDataAlloc2<1> DataBuffer__2;
+
+/**
+ * Pool the editor's effect group plays its effects out of.
+ */
+extern CEffect *EffectTable__3;
+
+/**
+ * Character the camera and events treat as the player.
+ */
+extern CCharacter *Chara;

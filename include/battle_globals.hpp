@@ -235,3 +235,53 @@ void modby0error(void);
  * @unknownret
  */
 void print(RS_STACKDATA *, int);
+
+/**
+ * Packed texture file of the name-entry screen.
+ */
+extern char NameEntryTextureFile[];
+
+/**
+ * Frame image descriptor of the name-entry background.
+ */
+extern char NameEntryImageDescriptor[];
+
+/**
+ * Frame texture shown around the keyboard.
+ */
+extern char NameEntryFrameTexture[];
+
+/**
+ * Texture name of the name-entry frame.
+ */
+extern char NameEntryTempTexture[];
+
+/**
+ * Texture name of the hiragana keyboard.
+ */
+extern char NameEntryHiraganaTexture[];
+
+/**
+ * Texture name of the katakana keyboard.
+ */
+extern char NameEntryKatakanaTexture[];
+
+/**
+ * Texture name of the alphabet keyboard.
+ */
+extern char NameEntryAlphabetTexture[];
+
+/**
+ * Texture name of the party member faces.
+ */
+extern char NameEntryFaceTexture[];
+
+/**
+ * First message file of the name-entry screen.
+ */
+extern char NameEntryMessageFile[];
+
+/**
+ * Second message file of the name-entry screen.
+ */
+extern char NameEntryMessageFile2[];

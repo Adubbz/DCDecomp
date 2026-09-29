@@ -13,9 +13,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-/** The vector-unit program the language screen draws its plate with. */
-extern char Vu_prog0f[];
-
+#include "vutext.hpp"
 Fader Fade;
 int Cursor;
 int Proc;

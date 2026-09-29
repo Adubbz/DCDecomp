@@ -86,3 +86,20 @@ extern ATRA_APPEAR AtraAppearData5[63];
 
 /** The Atla table of each dungeon. */
 extern ATRA_APPEAR *AtraAppearData[6];
+
+/**
+ * One external character, in the table the Georama editor's parts data ends
+ * with. The window indexes it with the character's negative code, so the
+ * entries sit before the address the code names.
+ */
+struct EDIT_GAIJI {
+    s16 width; /**< How wide the character draws, in font cells. */
+    u8 unk_02[0x1E];
+};
+
+STATIC_ASSERT(sizeof(EDIT_GAIJI) == 0x20);
+
+/**
+ * Table of external characters inside EditPartsData, which the linker script names.
+ */
+extern EDIT_GAIJI EditGaijiTbl[];

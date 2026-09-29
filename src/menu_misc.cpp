@@ -83,16 +83,6 @@ s16 DngEscapeAlpha = 0x80;
 s16 DngEscapeSelect = 1;
 
 /**
- * Provides the file extension appended to character model file names.
- */
-extern "C" const char CharaFileExtension[5];
-
-/**
- * Names the synthetic texture a menu builds from the current frame image.
- */
-extern "C" const char FrameImageTexture[];
-
-/**
  * Sets the buffer the menu reads weapon effect files into.
  *
  * @mangled SetWepEffectMenuReadBuf__FP1

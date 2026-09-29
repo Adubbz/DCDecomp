@@ -95,7 +95,6 @@ extern s32 VSyncField__2;
 extern sceGsTex1 mgTEX1Env;
 extern s32 mgClearBackFlag;
 extern MG_PICKZ mgPickZBuff[16];
-extern sceGifTag GiftagAD;
 extern sceGsDBuff mgDBuff;
 extern sceVu0FVECTOR mgBackColor;
 

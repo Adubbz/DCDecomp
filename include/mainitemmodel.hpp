@@ -133,3 +133,13 @@ STATIC_ASSERT(sizeof(CMainItemModel) == 0x2810);
 
 /** Pool that owns the active item models used during dungeon play. */
 extern "C" CMainItemModel mainItemModel;
+
+/**
+ * Message logged when a cached model's last user lets it go.
+ */
+extern char MainItemRemoveMessage[];
+
+/**
+ * Message logged when a model is put in a hand.
+ */
+extern char MainItemHandMessage[];

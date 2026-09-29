@@ -82,3 +82,7 @@ STATIC_ASSERT(sizeof(CHitValue) == 0x60);
 /** Hit attribute bit of each weapon element. */
 extern int element_tbl[6];
 
+/**
+ * Default weapon of each character, as the hit-value unit holds it.
+ */
+extern int defWeapon__2[6];

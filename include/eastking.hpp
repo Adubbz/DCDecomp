@@ -58,3 +58,8 @@ int EastKingEventKey();
  * @size 0x1E0
  */
 void EastKingEventDraw();
+
+/**
+ * Frame image of the manual window.
+ */
+extern char manual_frame_image[];

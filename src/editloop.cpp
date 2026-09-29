@@ -62,8 +62,6 @@
 
 void BtSetMapJumpFloor(int floor);
 
-extern "C" char CurrentDir__3[0x40];
-
 #include "editmenu.hpp"
 #include "wind.hpp"
 #include "memcard.hpp"
@@ -76,6 +74,7 @@ extern "C" char CurrentDir__3[0x40];
 #include "gameutil.hpp"
 #include "menuetc.hpp"
 #include "weaponlevelup.hpp"
+#include "vutext.hpp"
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
 
@@ -317,8 +316,6 @@ void EditPartsObjectOnOff();
 void MainMode(void);
 void EditMode(void);
 void PlayAmbient(float volume);
-extern u_int Vu_prog0f[];
-extern char EditEmptyText[];
 /* The ground the player has built on one map, as the save holds it. */
 struct ED_GRD_DATA {
     u8 unk_00[0x64];

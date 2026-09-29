@@ -244,3 +244,58 @@ extern int MDebugItemPolyViewFlag;
 
 /** Set once the item preview's files have been read. */
 extern int polyreadflag;
+
+/**
+ * Frame image of the character-change window.
+ */
+extern char chara_change_frame_image[];
+
+/**
+ * Frame image of the stay window.
+ */
+extern char stay_frame_name[];
+
+/**
+ * Frame image of the item view window.
+ */
+extern char item_view_frame_image[];
+
+/**
+ * Item data view's line format for the item number.
+ */
+extern char item_templete_no[];
+
+/**
+ * Item data view's line format for the item type.
+ */
+extern char item_templete_type[];
+
+/**
+ * Item data view's line format for the use kind.
+ */
+extern char item_templete_use[];
+
+/**
+ * Item data view's line format for the attribute.
+ */
+extern char item_templete_attribute[];
+
+/**
+ * Item data view's line format for the name index.
+ */
+extern char item_templete_name_index[];
+
+/**
+ * Item data view's line format for the help index.
+ */
+extern char item_templete_help_index[];
+
+/**
+ * Item data view's line format for the volume.
+ */
+extern char item_templete_volume[];
+
+/**
+ * Item data view's line format for the price.
+ */
+extern char item_templete_gold[];

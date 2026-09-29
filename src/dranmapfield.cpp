@@ -9,9 +9,7 @@
 #include "frame.hpp"
 #include "snd.hpp"
 
-/* The model pack's configuration name. Retail keeps one copy of the string, in the dungeon parts code. */
-extern char info_cfg_literal[];
-
+#include "dungeonparts.hpp"
 void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
@@ -39,8 +37,6 @@ int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     }
     return count;
 }
-/* LoadModel's message, which retail's unit holds once. */
-extern "C" char OverMessage[];
 
 void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;

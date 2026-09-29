@@ -184,9 +184,6 @@ struct EB_KEY_ENTRY {
     int reserved;
 };
 
-/** The part of the screen the event battle's opening wipe has reached. */
-extern CRect_i_ draw_rect;
-
 static void init_draw_ok();
 static void set_draw_ok(int type, int button);
 void draw_ok_loop();

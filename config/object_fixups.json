@@ -145,6 +145,7 @@
   },
   "src/dun/gameloop.cpp": {
     "symbols": {
+      "run_speed": "run_speed__2",
       "MainDraw__Fv": "MainDraw__Fv__3",
       "MoveChara__Fv": "MoveChara__Fv__2",
       "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff": "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff__2",
@@ -322,7 +323,6 @@
       "GameMode": "GameMode__2",
       "NowTime": "NowTime__2",
       "MainCamera": "MainCamera__2",
-      "ViewCamera": "ViewCamera__2",
       "door_open_cnt": "door_open_cnt__2",
       "fix_chara_pos": "fix_chara_pos__2",
       "fix_chara_rot": "fix_chara_rot__2",
@@ -332,7 +332,6 @@
       "goto_menu": "goto_menu__2",
       "goto_return_menu": "goto_return_menu__2",
       "MainDraw__Fv": "MainDraw__Fv__2",
-      "MotionParts": "MotionParts__2",
       "Fire": "Fire__2",
       "TalkCamera": "TalkCamera__2",
       "@480": "@986",
@@ -677,8 +676,7 @@
       "@947"
     ],
     "symbols": {
-      "MdsExtension": "@863",
-      "defWeapon": "defWeapon__2"
+      "MdsExtension": "@863"
     }
   },
   "src/cloth.cpp": {

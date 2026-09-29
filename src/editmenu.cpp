@@ -25,8 +25,6 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-extern "C" int abs(int);
-
 float MenuIconPos[6][2];
 EDIT_MENU_CURSOR EdCur;
 float AnalyzeFill[3];

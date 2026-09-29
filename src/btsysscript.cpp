@@ -1055,9 +1055,6 @@ static BT_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
     {NULL, -1},
 };
 
-/** Dispatch table the event script calls opcodes through. */
-extern int (*ext_func__2[1500])(RS_STACKDATA *, int);
-
 void AddSystemEventScript(void) {
     for (int i = 0;; i++) {
         if (ext_func_info[i].function == NULL) {

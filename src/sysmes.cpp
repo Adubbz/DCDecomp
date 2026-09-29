@@ -17,8 +17,6 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-extern "C" int CheckChar__Fc__3(char value);
-
 extern "C" int SkipSpace__FR9input_str__3(input_str &input) {
     char *text;
     int position;

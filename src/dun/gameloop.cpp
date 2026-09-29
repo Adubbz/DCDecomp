@@ -122,6 +122,7 @@
 #include "gameutil.hpp"
 #include "main.hpp"
 #include "mainselect.hpp"
+#include "vutext.hpp"
 /**
  * Defines the life gauge that the locked-on enemy draws above itself.
  */
@@ -195,9 +196,6 @@ static inline float CharaHeight(CUserStatus *status) {
     return chara_height[status->cur_chara];
 }
 
-/* The VU1 program that the loading screen draws through. */
-extern "C" char Vu_prog0f[];
-
 /**
  * Names what the dungeon hands the Georama editor to follow.
  */
@@ -205,12 +203,6 @@ struct GAME_ENV {
     CFrame *frame;   /**< Frame that the editor follows. */
     CCamera *camera; /**< Camera that the editor draws through. */
 };
-
-/* The camera that every field draws through. */
-extern CCamera *NowCameraBase;
-
-/* How much faster a boost makes the player run. */
-extern "C" float run_speed__2;
 
 /**
  * Tells how far the renderer draws, and how it fogs what it draws.
@@ -3067,12 +3059,12 @@ void MoveChara(void) {
                     NowCamera__3->SetSpeed(8.0f);
                     defCameraWait = 0;
                     if (BtBySpeedFlag != 0) {
-                        run_speed__2 = 3.0f;
+                        run_speed = 3.0f;
                     } else {
-                        run_speed__2 = 1.45f;
+                        run_speed = 1.45f;
                     }
-                    velo__2[0] = move_x * run_speed__2;
-                    velo__2[2] = move_z * run_speed__2;
+                    velo__2[0] = move_x * run_speed;
+                    velo__2[2] = move_z * run_speed;
                 }
                 if (stickVector <= 0.01f) {
                     CUserStatus *drain = UserStatus;

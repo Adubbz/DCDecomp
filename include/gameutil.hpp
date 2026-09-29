@@ -508,8 +508,8 @@ extern u8 MesWinTexBuff_02[0x100];
 /** The texture each message window builds itself in. */
 extern u8 MesWinTexBuff_01[0x100];
 
-/** TODO: brief for MesWinTexBuff_11. */
+/** Texture buffer the third common menu message window draws its glyphs from. */
 extern u8 MesWinTexBuff_11[0x100];
 
-/** TODO: brief for MesWinTexBuff_12. */
+/** Texture buffer the name message window draws its glyphs from. */
 extern u8 MesWinTexBuff_12[0x100];

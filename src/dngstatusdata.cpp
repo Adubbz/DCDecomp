@@ -18,11 +18,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-/* Named only so the `asm` bodies at the bottom of this file can branch to it.
- * `fptosi` is MWCC's float-to-int helper, which the compiler calls by itself
- * from ordinary C++. It goes when the remaining unmatched functions do. */
-extern "C" void fptosi(void);
-
 extern "C" int ItemDataToHaveCopy__Fi(int item_id);
 struct ATTACH_LIST;
 extern "C" void SetAttachMentValue__FiisP11ATTACH_LIST(int item_id, int slot, s16 qty, ATTACH_LIST *attach);

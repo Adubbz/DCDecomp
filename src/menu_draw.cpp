@@ -53,7 +53,6 @@ s8 MenuTrushMark[100];
 #include "editloop.hpp"
 #include "gameutil.hpp"
 #include "menuetc.hpp"
-extern int asort_top_type;
 
 /**
  * Draws the mark over an item that cannot be set.

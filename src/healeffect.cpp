@@ -11,9 +11,8 @@
 #include "texture.hpp"
 
 #include "dun/gameloop.hpp"
-/* The effect texture's name. Retail keeps one copy of the string, in the hit-mark code. */
-extern char HealEffectTextureName[];
 
+#include "hitmark.hpp"
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
     this->active = 1;

@@ -35,9 +35,6 @@ CTexture *SaveMenuMojiTextbl[4];
 /** State of the event item selection menu. */
 MINI_MENU_INFO MiniMenu;
 
-/** Name of the pack entry that holds the menu messages. */
-extern char allmenu_mes[];
-
 /**
  * Closes the save screen's message window and restores the pad, and after a
  * load sets the stereo mode from the loaded configuration.

@@ -436,11 +436,20 @@ extern MENU_ATORA_SEL MenuAtoraSel;
  */
 extern short *GetAtraMsgReadBuf;
 
-/** TODO: brief for *ItemIcon2. */
+/**
+ * Texture of the second item icon sheet.
+ */
 extern CTexture *ItemIcon2;
 
-/** TODO: brief for *AttachIcon. */
+/**
+ * Texture of the attachment icons.
+ */
 extern CTexture *AttachIcon;
 
 /** The texture that the save screen's file boards draw from. */
 extern CTexture *SaveBoard;
+
+/**
+ * Name of the pack entry that holds the menu messages.
+ */
+extern char allmenu_mes[];
