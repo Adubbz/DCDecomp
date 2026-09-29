@@ -234,19 +234,18 @@ void CHitPointMark::Step() {
     this->timer--;
 }
 
-/* The debug strings the rest of the unit prints; the functions that name
- * them are still assembly, and a table in `.data` points at them. */
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1522);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1523);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1524);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1525);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1526);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1527);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1528);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1529);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1530);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1531);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1532);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1533);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1534);
-INCLUDE_RODATA("asm/nonmatchings/hitmark", @1535);
+// The debug overlay's line formats, which DebugInfoMsg points at.
+char DebugInfoMsgMiniMapView[] __attribute__((section(".rodata"))) = "MINI MAP VIEW  = %s\n";
+char DebugInfoMsgCollision[] __attribute__((section(".rodata"))) = "COLLISION      = %s\n";
+char DebugInfoMsgBgmPlay[] __attribute__((section(".rodata"))) = "BGM PLAY       = %s\n";
+char DebugInfoMsgParameter[] __attribute__((section(".rodata"))) = "PARAMETER      = %s\n";
+char DebugInfoMsgViewInfo[] __attribute__((section(".rodata"))) = "VIEW INFO      = %s\n";
+char DebugInfoMsgUltraMan[] __attribute__((section(".rodata"))) = "UlutraMan      = %s\n";
+char DebugInfoMsgReloadEnemy[] __attribute__((section(".rodata"))) = "ReLoadEnemy ID = %d /NUM = %d\n";
+char DebugInfoMsgItemPutZone[] __attribute__((section(".rodata"))) = "Item Put Zone  = %s\n";
+char DebugInfoMsgLightMode[] __attribute__((section(".rodata"))) = "Light Mode     = %s\n";
+char DebugInfoMsgFloorAtraGet[] __attribute__((section(".rodata"))) = "FLOOR ATRA GET!    \n";
+char DebugInfoMsgEventTest[] __attribute__((section(".rodata"))) = "EVENT TEST     = %d\n";
+char DebugInfoMsgSetStatus[] __attribute__((section(".rodata"))) = "SET STATUS     = %s\n";
+char DebugInfoMsgSePlay[] __attribute__((section(".rodata"))) = "SE PLAY        = %d\n";
+char DebugInfoMsgSetChrKey[] __attribute__((section(".rodata"))) = "SET CHRKEY     = %d\n";

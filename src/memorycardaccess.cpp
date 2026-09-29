@@ -1450,4 +1450,4 @@ int CMemoryCardAccess::McUnFormatForDebug() {
     return 0;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/memorycardaccess", @594__2);
+char AtoraVibeTextureName[] __attribute__((section(".rodata"))) = "stayframe";

@@ -431,7 +431,7 @@ void FishingBattleToAngleFish(u_int *pack, CDataAlloc2<1> *alloc) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/fishing", @604);
+char fishing_err_format[] __attribute__((section(".rodata"))) = "err %d\n";
 
 CFish *FishingGetBattleFish() {
     return BattleFish;

@@ -323,8 +323,7 @@ the same question decides whether an address is recomputed or kept.
   Locals declared above the `try` get the stack slots below the catch record.
 * **Deferred generation**: a function with a try block (and its string
   constants) is generated at the next *initialised data definition*, not at its
-  closing brace, using the pragma state in force there. An `INCLUDE_RODATA`
-  marker counts, so its datum lands before the function's strings. An unused
+  closing brace, using the pragma state in force there. An unused
   `static const int x = 0;` right after the function forces generation and emits
   nothing. A catch clause whose only guarded call is to a function defined with
   exceptions off is deleted, so `exceptions` must still be on at that point.

@@ -170,8 +170,8 @@ void CMainItemModel::Draw(void) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @880__3);
-INCLUDE_RODATA("asm/nonmatchings/mainitemmodel", @892__4);
+char MainItemRemoveMessage[] __attribute__((section(".rodata"))) = "remove !!\n";
+char MainItemHandMessage[] __attribute__((section(".rodata"))) = "code = %d, lock = %d\n";
 int ItemThrowStep(float *position, float *velocity);
 
 void CMainItemModel::Step(void) {

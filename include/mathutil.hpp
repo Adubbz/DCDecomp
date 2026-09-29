@@ -516,10 +516,48 @@ extern "C" const char *what__Q23std13bad_exceptionCFv(const void *exception);
  */
 extern const unsigned char __RTTI__Q23std9exception[];
 
+struct MWBaseClass;
+
+/**
+ * The run-time type information record of a class: its name and its bases.
+ */
+struct MWTypeInfo {
+    const char *name;         /**< The class's qualified name. */
+    const MWBaseClass *bases; /**< Its base classes, ended by a null entry, or null. */
+};
+
+/**
+ * One base class in a class's run-time type information.
+ */
+struct MWBaseClass {
+    const MWTypeInfo *type; /**< The base class's record, or null to end the list. */
+    int offset;             /**< Where the base sits inside the derived object. */
+};
+
+/**
+ * Qualified name of std::bad_exception.
+ */
+extern const char BadExceptionTypeName[];
+
+/**
+ * Qualified name of std::exception.
+ */
+extern const char ExceptionTypeName[];
+
+/**
+ * The runtime's own run-time type information record of std::exception.
+ */
+extern const MWTypeInfo ExceptionTypeInfo;
+
+/**
+ * The base classes of std::bad_exception: std::exception alone.
+ */
+extern const MWBaseClass BadExceptionBaseClasses[2];
+
 /**
  * Run-time type information record of std::bad_exception.
  */
-extern const unsigned char __RTTI__Q23std13bad_exception[];
+extern const MWTypeInfo __RTTI__Q23std13bad_exception;
 
 /**
  * What std::exception::what returns.

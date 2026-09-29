@@ -658,7 +658,7 @@ void BtAtraGetShort_Init() {
     BtActStatus.unk_09C = one;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/btitem", @866__2);
+char BtAtraShortEffectFile[] __attribute__((section(".rodata"))) = "dun/effect/saget.chr";
 
 /**
  * Runs the Atla pickup presentation and reports when it ends.
@@ -1239,7 +1239,7 @@ void setShotVector(float *velocity, float speed, float angle_y, float angle_x) {
     sceVu0ApplyMatrix(velocity, rotation, velocity);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/btitem", @549__4);
+char no_item_name[] __attribute__((section(".rodata"))) = "";
 
 char *ITEM_NAME_TBL_NEW[] = {
     "atfire",

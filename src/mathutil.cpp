@@ -18,7 +18,7 @@ extern "C" void *__vt__Q23std9exception[4] __attribute__((section(".vtables"))) 
     (void *) what__Q23std9exceptionCFv};
 /* Virtual table of std::bad_exception: type information, this adjustment, destructor, what(). */
 extern "C" void *__vt__Q23std13bad_exception[4] __attribute__((section(".vtables"))) = {
-    (void *) __RTTI__Q23std13bad_exception, 0, (void *) __dt__Q23std13bad_exceptionFv,
+    (void *) &__RTTI__Q23std13bad_exception, 0, (void *) __dt__Q23std13bad_exceptionFv,
     (void *) what__Q23std13bad_exceptionCFv};
 void (*thandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8))) =
     dthandler__3stdFv;
@@ -81,7 +81,7 @@ public:
     }
 };
 
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @245);
+const char ExceptionWhat[] = "exception";
 
 /**
  * Runs a constructor over every element of an array.
@@ -548,12 +548,13 @@ extern "C" void __unexpected(void *exception_record) {
 // setting changes and before the type information run below.
 static const int __unexpected_generated = 0;
 #pragma exceptions reset
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1035);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1037);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std9exception__2);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1036);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", __RTTI__Q23std13bad_exception);
-INCLUDE_RODATA("asm/nonmatchings/mathutil", @1039);
+// The runtime's type information for std::exception and std::bad_exception.
+const char BadExceptionTypeName[] = "std::bad_exception";
+const char ExceptionTypeName[] = "std::exception";
+const MWTypeInfo ExceptionTypeInfo = {ExceptionTypeName, 0};
+const MWBaseClass BadExceptionBaseClasses[2] = {{&ExceptionTypeInfo, 0}, {0, 0}};
+const MWTypeInfo __RTTI__Q23std13bad_exception = {BadExceptionTypeName, BadExceptionBaseClasses};
+const char BadExceptionWhat[] = "bad_exception";
 /**
  * Destroys a `std::bad_exception`.
  *

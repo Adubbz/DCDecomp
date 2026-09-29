@@ -14,13 +14,9 @@
  * translation unit it belongs to -- so `src/menu/window.cpp` names
  * `asm/nonmatchings/menu/window`. tools/mwccgap reads the marker, finds
  * `<directory>/<mangled name>.s`, and puts the assembled bytes where the
- * marker stands. The compiler itself sees nothing, which is why both markers
- * are empty here.
- *
- * A constant that only one function loads travels inside that function's file,
- * so it needs no marker of its own. `INCLUDE_RODATA` is for the rest: a
- * constant no single function claims, which splat writes to a file of its own
- * beside the functions.
+ * marker stands. The compiler itself sees nothing, which is why the marker is
+ * empty here. A constant that only the function loads travels inside the
+ * function's file.
  *
  * A function that a marker supplies is not decompiled. objdiff is told so:
  * scripts/build/layout.py gives it no base, so it counts as zero.
@@ -53,5 +49,4 @@
  */
 
 #define INCLUDE_ASM(FOLDER, NAME)
-#define INCLUDE_RODATA(FOLDER, NAME)
 #define FUZZY_MATCH(FOLDER, NAME)

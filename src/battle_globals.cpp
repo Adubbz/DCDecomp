@@ -317,16 +317,16 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @663__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @781__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @782__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @783__5);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @784__3);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @785);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @786);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @787__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @788__2);
-INCLUDE_RODATA("asm/nonmatchings/battle_globals", @789__4);
+char NameEntryImageDescriptor[] __attribute__((section(".rodata"))) = "#frame_image_name#640#448#4";
+char NameEntryTextureFile[] __attribute__((section(".rodata"))) = "nameregi.img";
+char NameEntryTempTexture[] __attribute__((section(".rodata"))) = "nametemp";
+char NameEntryHiraganaTexture[] __attribute__((section(".rodata"))) = "hira";
+char NameEntryKatakanaTexture[] __attribute__((section(".rodata"))) = "kata";
+char NameEntryAlphabetTexture[] __attribute__((section(".rodata"))) = "alphabet";
+char NameEntryFaceTexture[] __attribute__((section(".rodata"))) = "charaface";
+char NameEntryMessageFile[] __attribute__((section(".rodata"))) = "nameregi.bin";
+char NameEntryMessageFile2[] __attribute__((section(".rodata"))) = "nameregi2.bin";
+char NameEntryFrameTexture[] __attribute__((section(".rodata"))) = "frame_image";
 
 /**
  * Draws the character keyboard the name is entered from.

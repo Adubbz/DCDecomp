@@ -167,8 +167,7 @@ def compiled_constants(path):
     return out
 
 
-def export_constants(path, names, parser, assembly_constants=(),
-                     reserved_constants=()):
+def export_constants(path, names, parser, reserved_constants=()):
     """Rename the object's own constants to the names retail's other units use.
 
     A translation unit that is only half decompiled has its string constants
@@ -179,9 +178,8 @@ def export_constants(path, names, parser, assembly_constants=(),
     """
     if not names:
         return
-    # INCLUDE_RODATA may already have spliced an undecompiled constant into
-    # the object. In that case it has its retail name and needs no compiler
-    # constant alias.
+    # A constant the source defines under a name of its own already carries
+    # its retail name once the `symbols` fixup has run, and needs no alias.
     elf = Elf(path.read_bytes())
     defined = {
         symbol.name
@@ -198,10 +196,10 @@ def export_constants(path, names, parser, assembly_constants=(),
         name: elf.sections[symbol.st_shndx].data
         for name, symbol in compiled_symbols.items()
     }
-    # A configured symbol rename or INCLUDE_RODATA may already have assigned a
-    # constant its retail name. Reserve such constants so an identical byte
-    # sequence cannot also satisfy a later content-based export.
-    reserved = (set(reserved_constants) | set(assembly_constants)) & defined
+    # A configured symbol rename may already have assigned a constant its
+    # retail name. Reserve such constants so an identical byte sequence cannot
+    # also satisfy a later content-based export.
+    reserved = set(reserved_constants) & defined
     arguments = []
     padded = False
     # Both halves of the unit emit their constants in source order, so taking
@@ -219,8 +217,6 @@ def export_constants(path, names, parser, assembly_constants=(),
             parser.error(f"no reference assembly defines {name!r}")
         matches = [symbol for symbol, body in compiled.items()
                    if symbol not in reserved and body and wanted.startswith(body)]
-        if not matches and name in assembly_constants:
-            continue
         # A shorter constant is a prefix of every longer one that begins with
         # the same bytes -- the empty string is a prefix of a zero vector -- so
         # a constant of exactly retail's length is the one meant, and every
@@ -319,9 +315,19 @@ def retail_addresses():
     return out
 
 
-def rodata_alignment(names):
-    """The slot retail gave a constant, or none where it names no address."""
+def rodata_alignment(names, retail_names=None):
+    """The slot retail gave a constant, or none where it names no address.
+
+    A constant the source defines under a name of its own and the unit's
+    `symbols` fixup renames to retail's `@N` is looked up by that retail name.
+    """
+    retail_names = retail_names or {}
     for name in names:
+        known = retail_names.get(name)
+        if known:
+            address = retail_addresses().get(known)
+            if address:
+                return next(a for a in RODATA_ALIGNMENTS if address % a == 0)
         # MWCC assigns @N independently in every translation unit. A compiled
         # @N can share a spelling with an unrelated retail constant, so its
         # number cannot be used as an address-stable identity. Transplanted
@@ -335,7 +341,7 @@ def rodata_alignment(names):
     return None
 
 
-def align_small_data(elf):
+def align_small_data(elf, retail_names=None):
     """Give each small-data section retail's four-byte slot."""
     defined = defaultdict(list)
     for symbol in elf.symtab.symbols:
@@ -346,7 +352,7 @@ def align_small_data(elf):
                 and section.sh_addralign < SMALL_DATA_ALIGNMENT):
             section.sh_addralign = SMALL_DATA_ALIGNMENT
         elif section.name == ".rodata":
-            wanted = rodata_alignment(defined.get(index, ()))
+            wanted = rodata_alignment(defined.get(index, ()), retail_names)
             if wanted is not None:
                 section.sh_addralign = wanted
             elif section.sh_addralign < RODATA_ALIGNMENT:
@@ -580,7 +586,8 @@ def share_constants(elf, exported, imported, parser, source_only=False):
         return
     # An entry is the constant's text, or `[text, name]` where the name is what
     # both units reach it by -- which is how a constant retail's dump already
-    # names, such as one an INCLUDE_RODATA marker supplies, keeps that name.
+    # names, such as one the source defines under a `symbols` rename, keeps
+    # that name.
     exported = [(e, None) if isinstance(e, str) else tuple(e) for e in exported]
     imported = [(e, None) if isinstance(e, str) else tuple(e) for e in imported]
     entries = exported + imported
@@ -660,10 +667,18 @@ def main():
             symbol.name = replacement
             symbol.st_name = elf.strtab.add_symbol(replacement)
 
-    align_small_data(elf)
-
     config = json.loads(args.config.read_text(encoding="utf-8"))
     fixups = config.get(args.source, {})
+    # The retail name each of the unit's own names stands for: a `symbols`
+    # entry renames the source's name to retail's, or retail's `@N` to the name
+    # the other units reach it by.
+    retail_names = {}
+    for old_name, new_name in fixups.get("symbols", {}).items():
+        if old_name.startswith("@"):
+            retail_names[new_name] = old_name
+        else:
+            retail_names[old_name] = new_name
+    align_small_data(elf, retail_names)
     restore_transplanted_rodata(elf)
     drop_functions(elf, fixups.get("drop_functions", []), parser)
     extern_functions(elf, fixups.get("extern_functions", []), parser)
@@ -723,11 +738,8 @@ def main():
     }
     rename_symbols(args.object, template_aliases)
     globalize_symbols(args.object, fixups.get("globalize_symbols", []))
-    source_text = (ROOT / args.source).read_text(encoding="utf-8")
-    assembly_constants = set(re.findall(
-        r"INCLUDE_RODATA\([^,]+,\s*([^)\s]+)\s*\)", source_text))
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
-                     assembly_constants, fixups.get("symbols", {}).values())
+                     fixups.get("symbols", {}).values())
     if deferred_sections:
         elf = Elf(args.object.read_bytes())
         if rename_sections(elf, deferred_sections, parser) and not args.source_only:

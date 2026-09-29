@@ -1048,7 +1048,7 @@ CFrame *ItemPolyView;
 int MDebugItemPolyViewFlag;
 int polyreadflag;
 
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1301);
+char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#448#4";
 
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
@@ -1697,15 +1697,15 @@ int DngActiveItemTextureCopy(void) {
     return 1;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @1841);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2044);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2045);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2046);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2047);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2048);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2049);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2050);
-INCLUDE_RODATA("asm/nonmatchings/menu_dungeon", @2051);
+char item_view_frame_image[] __attribute__((section(".rodata"))) = "#frame_menuwep#640#448#4";
+char item_templete_no[] __attribute__((section(".rodata"))) = "ItemNo   :%d\n";
+char item_templete_type[] __attribute__((section(".rodata"))) = "type:    :%s\n";
+char item_templete_use[] __attribute__((section(".rodata"))) = "use      :%s\n";
+char item_templete_attribute[] __attribute__((section(".rodata"))) = "attribute:%s\n";
+char item_templete_name_index[] __attribute__((section(".rodata"))) = "nameIndex:%d\n";
+char item_templete_help_index[] __attribute__((section(".rodata"))) = "helpIndex:%d\n";
+char item_templete_volume[] __attribute__((section(".rodata"))) = "volume[3]:%3d, %3d, %3d\n";
+char item_templete_gold[] __attribute__((section(".rodata"))) = "gold     :%d\n";
 
 int DngActiveWeaponTextureCopy(void) {
     int chara = UserStatus->cur_chara;

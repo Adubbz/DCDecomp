@@ -4766,7 +4766,7 @@ void InitFishingExchange(u_long128 *buffer, int *texture_blocks, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/shop", @2948);
+char FishFrameImage[] __attribute__((section(".rodata"))) = "#frame_image#640#448#4";
 
 /**
  * Enters the fishing menu's textures once they have been read.
@@ -4825,7 +4825,7 @@ static int FishMenuTextureLoad() {
     return done;
 }
 
-INCLUDE_RODATA("asm/nonmatchings/shop", @2964);
+char FishMessageFile[] __attribute__((section(".rodata"))) = "fishmes.bin";
 
 int FishingExchangeKey() {
     int result = 0;

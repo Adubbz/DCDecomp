@@ -1388,7 +1388,7 @@ int PresetSmallItemNo_Get(int dungeon, int floor, int kind, int small) {
     }
 }
 
-INCLUDE_RODATA("asm/nonmatchings/dungeonparts", @1007__2);
+char info_cfg_literal[] __attribute__((section(".rodata"))) = "info.cfg";
 
 /**
  * Scales a coordinate from the item area table up to world scale.
