@@ -2,3 +2,5 @@
 !.gitignore
 !checksum.sha256
 !extracted.sha256
+!checksum_pal.sha256
+!extracted_pal.sha256
