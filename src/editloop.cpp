@@ -60,22 +60,9 @@
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
-extern int simple_event;
 void BtSetMapJumpFloor(int floor);
-extern char mapjump_name[0x20];
-
-/* The message-window texture the monster-name window is drawn into. */
-extern u8 MesWinTexBuff_11[0x100];
-
-/* Whether an interior is being entered, and the item-volume step to check. */
-extern CMenuItemStep ItemVolumeStep;
 
 extern "C" char CurrentDir__3[0x40];
-
-/* The cursors drawn over a villager who can be talked to, one who cannot, and
-   the character the event wants the player to notice. */
-extern ClsMes CommonMenuMes2;
-extern ClsMes CommonMenuMes3;
 
 #include "editmenu.hpp"
 #include "wind.hpp"
@@ -84,10 +71,11 @@ extern ClsMes CommonMenuMes3;
 #include "effectmacro.hpp"
 #include "nowload.hpp"
 #include "menu_draw.hpp"
-extern u8 MesWinTexBuff_01[0x100];
-extern u8 MesWinTexBuff_02[0x100];
-extern u8 def_light[0xC0];
 
+#include "battlemenu.hpp"
+#include "gameutil.hpp"
+#include "menuetc.hpp"
+#include "weaponlevelup.hpp"
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
 
@@ -329,7 +317,6 @@ void EditPartsObjectOnOff();
 void MainMode(void);
 void EditMode(void);
 void PlayAmbient(float volume);
-extern int MenuMapJumpMode;
 extern u_int Vu_prog0f[];
 extern char EditEmptyText[];
 /* The ground the player has built on one map, as the save holds it. */

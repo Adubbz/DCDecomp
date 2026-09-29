@@ -487,3 +487,6 @@ void EdDrawLensFlare(float time, CFrame **sky);
  * @size 0x1BC
  */
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count);
+
+/** Whether the running event is a simple one. */
+extern int simple_event;

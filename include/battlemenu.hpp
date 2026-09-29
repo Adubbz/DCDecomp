@@ -1216,3 +1216,8 @@ extern CFrame *MapMoveCursor;
  * Texture the travel page draws its map with.
  */
 extern CTexture *MenuMoveTex;
+
+/**
+ * Characters the weapon page draws each listed weapon's model with.
+ */
+extern CCharacter DngWeaponFrm[];

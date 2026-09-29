@@ -198,9 +198,6 @@ static CCamera ViewCamera(4.0f);
 /** Camera used while leaving the interior. */
 static CCamera ExitCamera(4.0f);
 
-/** Whether the running event is a simple one. */
-extern int simple_event;
-
 /**
  * Identifies the kind of editor effect requested.
  */

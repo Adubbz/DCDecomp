@@ -29,16 +29,10 @@
 #include "textureanime.hpp"
 #include "userstatus.hpp"
 
-/* One texture animation for every part of every character in the dungeon. */
-extern "C" CTexAnimeData BtNPCTexAnimeData[4][32];
-
 /**
  * Configuration file name used when loading an NPC's model pack.
  */
 extern const char info_cfg_literal[];
-
-/* The model a trap circle draws with. */
-extern "C" CCharacter Trap_Circle;
 
 /**
  * A single grid cell while a floor is being built.

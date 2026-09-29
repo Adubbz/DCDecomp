@@ -744,3 +744,8 @@ inline int GetDungeonItemStart() { return ITEM_DUNGEON_START; }
 
 /** One past the last dungeon-item id. */
 inline int GetDungeonItemEnd() { return ITEM_WEAPON_SLOT_EMPTY; }
+
+/**
+ * The item data table, one entry per item from 0x51 on.
+ */
+extern ITEM_DATA ITEM_LIST[];

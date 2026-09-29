@@ -4,6 +4,7 @@
 
 #include "character.hpp"
 #include "itemdata.hpp"
+class CMenuItemStep;
 
 /**
  * Stores the state used by the weapon enhancement effect menu.
@@ -211,3 +212,6 @@ void AttachMentValuePlus(ATTACH_LIST *, ATTACH_LIST *, float);
  * @size 0x3FC
  */
 void WeaponLevelUpValueCalc(WEAPON_HAVE *, WEAPON_HAVE *, int, int);
+
+/** Whether an interior is being entered, and the item-volume step to check. */
+extern CMenuItemStep ItemVolumeStep;

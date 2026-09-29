@@ -488,3 +488,19 @@ void FishRecordTextureEnter(void);
  * @size 0x38
  */
 int FishRecordViewLoop(void);
+
+/** Message number, less thirty, describing each fishing prize. */
+extern s8 FishMsg[18];
+
+/**
+ * One prize the fishing exchange offers.
+ */
+struct FISH_EXCHANGE_ITEM {
+    s16 item_no; /**< Prize the exchange offers. */
+    s16 price;   /**< Fishing points the prize costs. */
+};
+
+STATIC_ASSERT(sizeof(FISH_EXCHANGE_ITEM) == 4);
+
+/** The prizes the fishing exchange offers. */
+extern FISH_EXCHANGE_ITEM exitemlst[35];

@@ -35,11 +35,6 @@
 #include "weapon_buildup.hpp"
 #include "weaponlevelup.hpp"
 
-/**
- * Camera used to project menu models and world-map markers.
- */
-extern CCamera MenuCamera;
-
 static int GetVisitInfo(int place, int menu_mode);
 
 #include <cstdlib>
@@ -51,14 +46,7 @@ static int GetVisitInfo(int place, int menu_mode);
 #include "userstatus.hpp"
 #include "shot_effect.hpp"
 
-/**
- * Characters the weapon page draws each listed weapon's model with.
- */
-extern CCharacter DngWeaponFrm[12];
-
-extern CTexture *ItemIcon2;
-extern CTexture *AttachIcon;
-extern CRect_i_ MenuDispRc;
+#include "menuetc.hpp"
 extern char Vu_prog0f[];
 
 static void DrawStatusNumberNowAndMax(int *values, int x, int y, int color, int alpha);
@@ -76,11 +64,6 @@ static int WeaponSelectKey(void);
 static void WeaponMenuActWepKey();
 static void WeaponMenuAttachWepKey();
 static void WeaponMenuAttachKey();
-extern "C" CCharacter DefaultWeapon;
-extern "C" CCharacter MainWeapon;
-extern "C" CSHOT_EFFECT *NowMainEffect;
-extern "C" CSHOT_EFFECT CharaMainEffectCrash;
-extern s32 CharaMainHandViewFlag;
 static void MenuCharaPolyDraw();
 static int WorldMapMoveKey();
 static void DrawWorldMap(int alpha);

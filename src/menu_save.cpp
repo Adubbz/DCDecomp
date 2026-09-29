@@ -29,17 +29,11 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-/** Texture block the event item selection menu's textures load into. */
-extern s32 MiniEventTextureBlock;
-
 SAVE_MENU_STATE SaveMenu;
 CTexture *SaveMenuMojiTextbl[4];
 
 /** State of the event item selection menu. */
 MINI_MENU_INFO MiniMenu;
-
-/** The texture that the save screen's file boards draw from. */
-extern CTexture *SaveBoard;
 
 /** Name of the pack entry that holds the menu messages. */
 extern char allmenu_mes[];

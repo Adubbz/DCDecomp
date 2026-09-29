@@ -6,6 +6,22 @@
 
 #include "hit_machingun_effect.hpp"
 #include "runscript.hpp"
+#include "dataalloc.hpp"
+#include "textureanime.hpp"
+class CSHOT_EFFECT;
+class CWeaponEffect;
+class CDispCtrl;
+class CActiveItemPack;
+class CMotionModel;
+class CNPCharacter;
+class ClsMes;
+class CDebugFont;
+class CTexAnimeData;
+class CItemBombEffect;
+class CShockWave;
+class CTextureAnime;
+struct MOTION_INFO;
+class CHealEffect;
 
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
@@ -758,3 +774,329 @@ int DngActiveItemTextureCopy(void);
  * @unknownret
  */
 int DngActiveWeaponTextureCopy(void);
+
+/** TODO: brief for DefaultWeapon. */
+extern CCharacter DefaultWeapon;
+
+/** TODO: brief for MainWeapon. */
+extern CCharacter MainWeapon;
+
+/** TODO: brief for *NowMainEffect. */
+extern CSHOT_EFFECT *NowMainEffect;
+
+/** TODO: brief for CharaMainEffectCrash. */
+extern CSHOT_EFFECT CharaMainEffectCrash;
+
+/** TODO: brief for CharaMainHandViewFlag. */
+extern s32 CharaMainHandViewFlag;
+
+/**
+ * Holds the party where it stands instead of running its movement step.
+ */
+extern int driveStepHold;
+
+/**
+ * Freezes the drawn frame so a menu can open over it.
+ */
+extern int frameCaputer;
+
+/**
+ * Item the small item-select window returned, or -1.
+ */
+extern int miniItemSelNo;
+
+/**
+ * Mode the battle loop runs its menus in.
+ */
+extern int BtGameModeFlag;
+
+/**
+ * Event the dungeon loop is running, or -1 when none is.
+ */
+extern int iventInfo;
+
+/**
+ * Stops the monster units stepping.
+ */
+extern int CMonUnitHold;
+
+/**
+ * Stops the effects stepping.
+ */
+extern int CEffectHold;
+
+/**
+ * Model of the item a pickup presentation is showing.
+ */
+extern int itemOpenItemMds;
+
+/**
+ * Texture of the item a pickup presentation is showing.
+ */
+extern int itemOpenItemImg;
+
+/**
+ * Hides the monster units instead of drawing them.
+ */
+extern int CMonUnitHyde;
+
+/**
+ * Hides the effects instead of drawing them.
+ */
+extern int CEffectHyde;
+
+/** TODO: brief for BtCashBuffer. */
+extern CDataAlloc2<1> BtCashBuffer;
+
+/** TODO: brief for CWeaponFx. */
+extern CWeaponEffect CWeaponFx;
+
+/** TODO: brief for *NowWeapon. */
+extern CCharacter *NowWeapon;
+
+/** TODO: brief for BtItemListCashFlag. */
+extern s32 BtItemListCashFlag;
+
+/** TODO: brief for *itemBoxModel. */
+extern CFrame *itemBoxModel;
+
+/** TODO: brief for itemOpenBigFlag. */
+extern s32 itemOpenBigFlag;
+
+/** TODO: brief for itemOpenSmallFlag. */
+extern s32 itemOpenSmallFlag;
+
+/** TODO: brief for itemWeponScale. */
+extern float itemWeponScale;
+
+/** TODO: brief for itemNormalScale. */
+extern float itemNormalScale;
+
+/** TODO: brief for iventActive. */
+extern s32 iventActive;
+
+/** TODO: brief for SubCamera. */
+extern CCameraFollow SubCamera;
+
+/** TODO: brief for MainCamera__4. */
+extern CCameraFollow MainCamera__4;
+
+/** TODO: brief for *NowCamera__3. */
+extern CCameraFollow *NowCamera__3;
+
+/** TODO: brief for atraShortGetType. */
+extern s32 atraShortGetType;
+
+/** TODO: brief for atraGetStatus. */
+extern s32 atraGetStatus;
+
+/** TODO: brief for atraGetMsgBord. */
+extern s32 atraGetMsgBord;
+
+/** TODO: brief for atraGetMsgBordRate. */
+extern float atraGetMsgBordRate;
+
+/** TODO: brief for atraGetPos. */
+extern sceVu0FVECTOR atraGetPos;
+
+/** TODO: brief for atraGetRot. */
+extern sceVu0FVECTOR atraGetRot;
+
+/** TODO: brief for DispFade__3. */
+extern CDispCtrl DispFade__3;
+
+/** TODO: brief for driveNoInterpolate. */
+extern s32 driveNoInterpolate;
+
+/** TODO: brief for EscapeFlag. */
+extern s32 EscapeFlag;
+
+/** TODO: brief for *itemOpenItemChr. */
+extern u_int *itemOpenItemChr;
+
+/** TODO: brief for *shortAtraEffectPtr. */
+extern u_int *shortAtraEffectPtr;
+
+/** TODO: brief for activeItem. */
+extern CActiveItemPack activeItem;
+
+/** TODO: brief for itemOpenBig. */
+extern CMotionModel itemOpenBig;
+
+/** TODO: brief for itemOpenBigFx. */
+extern CMotionModel itemOpenBigFx;
+
+/** TODO: brief for itemOpenSmall. */
+extern CMotionModel itemOpenSmall;
+
+/** TODO: brief for itemOpenSmallFx. */
+extern CMotionModel itemOpenSmallFx;
+
+/** TODO: brief for shortAtraEffect. */
+extern CCharacter shortAtraEffect;
+
+/** TODO: brief for EscapeEffect. */
+extern CCharacter EscapeEffect;
+
+/** Randomized element the current floor's sealed door wants. */
+extern int BtRubyDoorKey;
+
+/** Nonzero while the dungeon floor is drawn at all. */
+extern s32 BtAllDrawFlag;
+
+/** The dungeon floor that the player is on. */
+extern CDungeonMap MainDungeonMap;
+
+/** The events of the floor that the player is on. */
+extern CDungeonEventMan DngEventMan;
+
+/** The events of the back dungeon's floor. */
+extern CDungeonEventMan UraEventMan;
+
+/** The characters that walk the dungeon alongside the player. */
+extern CNPCharacter NPCUnit[];
+
+/** Nonzero while a system event script holds the dungeon. */
+extern s32 BtEventMode;
+
+/** Nonzero while a system event script clears the dungeon's usual work. */
+extern s32 BtAllClear;
+
+/** Camera the dungeon currently draws through. */
+extern CCameraFollow *NowCamera__3;
+
+/** Message window the system script talks through first. */
+extern ClsMes BtEventMes0;
+
+/** Message window the system script talks through second. */
+extern ClsMes BtEventMes1;
+
+/** File buffer the current floor's system script is read into. */
+extern CDataAlloc2<1> BtSystemScriptFileBuffer;
+
+/** Base address of the system script data currently loaded. */
+extern s32 BtEventData;
+
+/** The model of the weapon that the player has equipped. */
+extern CCharacter *NowWeapon;
+
+/** The effect the player's character is shooting now. */
+extern CSHOT_EFFECT *NowMainEffect;
+
+/** Whether an enemy is locked on. */
+extern s32 lockOnTargetFlag;
+
+/** Which button fires an action. */
+extern s32 PadInput_OK;
+
+/** TODO: brief for DbgMsg. */
+extern CDebugFont DbgMsg;
+
+/** The camera the dungeon is being viewed through. */
+extern CCameraFollow *NowCamera__3;
+
+/** One texture animation for every part of every character in the dungeon. */
+extern CTexAnimeData BtNPCTexAnimeData[][32];
+
+/** The model a trap circle draws with. */
+extern CCharacter Trap_Circle;
+
+/** TODO: brief for *NowBombEffect. */
+extern CItemBombEffect *NowBombEffect;
+
+/** TODO: brief for *NowShockWave. */
+extern CShockWave *NowShockWave;
+
+/** Scratch arena used while loading the current map. */
+extern CDataAlloc2<1> MapModelBuffer;
+
+/** Texture animation state initialized after the ground texture archive loads. */
+extern CTextureAnime BtTexAnime;
+
+/** TODO: brief for BtTexAnimeData. */
+extern CTexAnimeData BtTexAnimeData[];
+
+/** Scene-wide values filled from model-definition directives. */
+extern sceVu0FMATRIX main_light;
+
+/** TODO: brief for main_lightcolor. */
+extern sceVu0FMATRIX main_lightcolor;
+
+/** TODO: brief for sub_light. */
+extern sceVu0FMATRIX sub_light;
+
+/** TODO: brief for sub_lightcolor. */
+extern sceVu0FMATRIX sub_lightcolor;
+
+/** TODO: brief for main_ambientlight. */
+extern sceVu0FVECTOR main_ambientlight;
+
+/** TODO: brief for sub_ambientlight. */
+extern sceVu0FVECTOR sub_ambientlight;
+
+/** TODO: brief for main_fogRate. */
+extern float main_fogRate[4];
+
+/** TODO: brief for sub_fogRate. */
+extern float sub_fogRate[4];
+
+/** TODO: brief for main_fogColor. */
+extern u8 main_fogColor[];
+
+/** TODO: brief for sub_fogColor. */
+extern u8 sub_fogColor[];
+
+/** TODO: brief for main_bgColor. */
+extern u8 main_bgColor[];
+
+/** TODO: brief for sub_bgColor. */
+extern u8 sub_bgColor[];
+
+/** TODO: brief for BtItemCashArea. */
+extern CDataAlloc2<1> BtItemCashArea[6];
+
+/** TODO: brief for *NowMainEffect. */
+extern CSHOT_EFFECT *NowMainEffect;
+
+/** TODO: brief for *NowWeapon. */
+extern CCharacter *NowWeapon;
+
+/**
+ * Arena the steeb message file is read into.
+ */
+extern CDataAlloc2<1> BtSteebMesBuffer;
+
+/**
+ * Arena the monsters load into, after whatever the map used.
+ */
+extern CDataAlloc2<1> MonstorModelBuffer;
+
+/**
+ * Messages the dungeon's steeb shows.
+ */
+extern ClsMes DngMesStb;
+
+/**
+ * Motion information LoadPack fills for the small item-get box.
+ */
+extern MOTION_INFO itemOpenSmall_info;
+
+/**
+ * Motion information LoadPack fills for the big item-get box.
+ */
+extern MOTION_INFO itemOpenBig_info;
+
+/**
+ * The healing particles that play in water.
+ */
+extern CHealEffect HealEffect;
+
+/**
+ * Whether the water splash is active.
+ */
+extern int Water_Splash_actFlag;
+
+/**
+ * The splash shown where the party enters the water.
+ */
+extern CCharacter Water_Splash;

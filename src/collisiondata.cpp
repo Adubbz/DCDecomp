@@ -13,8 +13,8 @@
 #include "rect.hpp"
 #include "snd.hpp"
 
-extern "C" CDebugFont DbgMsg;
-
+#include "dngmessageman.hpp"
+#include "itemdata.hpp"
 /* The debug overlay's line formats. Retail keeps the strings with the hit-mark code. */
 extern char DebugInfoMsgMiniMapView[];
 extern char DebugInfoMsgCollision[];
@@ -51,13 +51,6 @@ char *DebugInfoMsg[15] = {
  */
 int DebugInfoNowCursor;
 
-/**
- * The Japanese and American image path prefixes. NameExchg reads it as rows
- * of two indexed by language and takes the second of the row, so language 0
- * gives the American prefix; retail sizes the table for the one row.
- */
-extern "C" char *LanguageStr[1][2];
-
 /** Key items waiting to be dropped, one entry each, -1 where a slot is free. */
 int gateKeyStack[32];
 
@@ -65,12 +58,6 @@ int gateKeyStack[32];
  * The path NameExchg builds.
  */
 char nameblock[64];
-
-/** The camera the dungeon is being viewed through. */
-extern CCameraFollow *NowCamera__3;
-
-/** Revision of the weapon list the debug overlay reports. */
-extern int VERSION_VOL;
 
 /**
  * Draws the dungeon debug overlay and its current menu selection.

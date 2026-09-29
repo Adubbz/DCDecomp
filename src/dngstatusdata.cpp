@@ -7,6 +7,8 @@
 #include "itemdata.hpp"
 #include "userstatus.hpp"
 
+#include "dun/gameloop.hpp"
+#include "dungeonparts.hpp"
 /* CDngStatusData's and CUserStatus's methods are interleaved in retail
  * (SetNowFloor..SearchItemIndexNo, ChkEventFlag..ClearEventFlag, LostItem..
  * CheckDefaultWeapon, AddDrink..Init, SetDead..GetAtraData), so both classes
@@ -26,22 +28,8 @@ struct ATTACH_LIST;
 extern "C" void SetAttachMentValue__FiisP11ATTACH_LIST(int item_id, int slot, s16 qty, ATTACH_LIST *attach);
 extern "C" void WepDataListToHaveCopy__FiP11WEAPON_HAVE(int item_id, WEAPON_HAVE *out);
 
-/* The weapon the player currently has equipped; its `flags` field carries the
- * two water-drain modifiers CUserStatus::Step applies. */
-extern "C" WEAPON_HAVE *NowWeaponHave;
-
 /** Default weapon id per character. */
 static s32 defWeapon[6] = {257, 299, 314, 331, 347, 363};
-
-/* Per-item-id character-ownership table used by GetItem to auto-route weapon
- * pickups to the owning character's weapon slots. Accessed with a 19-word
- * (76-byte) stride per item id; byte 2 of word index 57 within that stride
- * holds the owning character index. The table starts at retail address
- * 0x275998, which falls +0x208 into the labelled symbol ItemPutListTbl12 @
- * 0x275790 in ref/asm/sections/main/main.data.s -- no standalone label exists
- * at 0x275998 itself, so the extra offset is folded into the index
- * expression. */
-extern "C" s8 ItemPutListTbl12[];
 
 static inline int GetMaxDungeonItems() {
     return 100;
@@ -414,7 +402,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
     if (!(valid = item_id < 257)) {
         printf("get weapon!! %d\n", item_id);
-        int chara_no = ItemPutListTbl12[750 + item_id * 76];
+        int chara_no = ItemPutListTbl12_bytes[750 + item_id * 76];
 
         int jj;
         for (jj = 0; (valid = jj < 11) != 0; jj++) {

@@ -9,8 +9,7 @@
 #include "mglib.hpp"
 #include "renderinfo.hpp"
 
-extern CDataAlloc2<1> *ActiveData;
-
+#include "dataset.hpp"
 int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
                            VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     int result;

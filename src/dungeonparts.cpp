@@ -22,6 +22,7 @@
 #include "editmenu.hpp"
 #include "userstatus.hpp"
 
+#include "editpartsdata.hpp"
 /** The areas where items can be put down on map 1. */
 ITEM_FREE_AREA ItemFreeAreaD01[27] = {
     {0, 1, 0, 1, {{-2.0f, 0.0f, -4.0f, 2.0f, 0.0f, 4.0f}}},
@@ -1424,20 +1425,6 @@ int chkAtraFloor(int dungeon, int floor) {
     }
     return 1;
 }
-
-/**
- * One Atla a dungeon can hand out.
- */
-struct ATRA_APPEAR {
-    int id;    /**< Atla; -1 ends the table. */
-    int floor; /**< Floor it lies on counted from one, or -1 or -2 for any upper or lower floor. */
-    int count; /**< How many floors it is put on when the floor is not fixed. */
-};
-
-/**
- * The Atla each dungeon hands out, ended by an entry whose id is -1.
- */
-extern ATRA_APPEAR *AtraAppearData[6];
 
 /**
  * Records that one Atla lies on one floor of a dungeon.

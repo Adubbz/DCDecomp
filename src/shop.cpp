@@ -34,6 +34,9 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+#include "editloop.hpp"
+#include "menuetc.hpp"
+#include "weaponlevelup.hpp"
 /**
  * Shop UI bookkeeping shared by the charge shop and item shop screens: their
  * cursor, phase and animation state. Only the handful of fields read outside
@@ -73,15 +76,6 @@ struct ShopMenuWork {
 };
 
 STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
-
-/** Camera the menu draws 3D models under. */
-extern CCamera MenuCamera;
-
-/** Arena the editor's menus are read into. */
-extern CDataAlloc2<1> EdMenuBuffer;
-
-/** Steps item volumes for the menus. */
-extern CMenuItemStep ItemVolumeStep;
 
 /** Number of goods on each charge shop's board. */
 s16 ChargeShopMax[3] = {60, 30, 30};
@@ -192,22 +186,6 @@ FishRecordMenuWork FishRecordMenu;
 
 /** Texture the fishing exchange's fish icons are drawn from. */
 CTexture *FishMenuTex;
-
-/** Message number, less thirty, describing each fishing prize. */
-extern s8 FishMsg[18];
-
-/**
- * One prize the fishing exchange offers.
- */
-struct FISH_EXCHANGE_ITEM {
-    s16 item_no; /**< Prize the exchange offers. */
-    s16 price;   /**< Fishing points the prize costs. */
-};
-
-STATIC_ASSERT(sizeof(FISH_EXCHANGE_ITEM) == 4);
-
-/** The prizes the fishing exchange offers. */
-extern FISH_EXCHANGE_ITEM exitemlst[35];
 
 /** Sort priority of each dungeon-item sort key for the item board sort. */
 extern s32 sort_table[9];

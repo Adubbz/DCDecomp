@@ -327,3 +327,12 @@ class CCPoly;
  * @size 0x5D0
  */
 int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radius, float height);
+
+/** The treasure box item lists of the twelfth dungeon table; dngstatusdata reads the owning character out of it by byte offset. */
+extern ITEM_PUT_SET ItemPutListTbl12[3];
+
+/**
+ * The same table seen as bytes; GetItem indexes it far past its end to pick
+ * the character a weapon is routed to.
+ */
+extern s8 ItemPutListTbl12_bytes[];

@@ -7,6 +7,8 @@
 #include "dataalloc_fwd.hpp"
 #include "edit.hpp"
 #include "objanime.hpp"
+class CTexAnimeData;
+class C3DSprite;
 
 class CFrame;
 class CMapParts;
@@ -902,3 +904,9 @@ void EdInitDrawDay();
  * @size 0xE8
  */
 void EdDeleteE05RoboParts();
+
+/** Data whose shape the unit does not need yet. */
+extern CTexAnimeData CharaTexAnimeData[];
+
+/** TODO: brief for SystemEffect. */
+extern C3DSprite SystemEffect[];

@@ -499,3 +499,17 @@ int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no,
  */
 int CheckCameraWidth(CCPoly *poly, int count, float *position, float radius, float *hit,
                      int mode);
+
+/**
+ * The message window font's texture work area.
+ */
+extern u8 MesWinTexBuff_02[0x100];
+
+/** The texture each message window builds itself in. */
+extern u8 MesWinTexBuff_01[0x100];
+
+/** TODO: brief for MesWinTexBuff_11. */
+extern u8 MesWinTexBuff_11[0x100];
+
+/** TODO: brief for MesWinTexBuff_12. */
+extern u8 MesWinTexBuff_12[0x100];

@@ -892,9 +892,10 @@
   "src/dngstatusdata.cpp": {
     "symbols": {
       "defWeapon": "defWeapon__3",
-      "@1287": "@781",
-      "@1288": "@782",
-      "@1289": "@783__2"
+      "ItemPutListTbl12_bytes": "ItemPutListTbl12",
+      "@1289": "@781",
+      "@1290": "@782",
+      "@1291": "@783__2"
     },
     "rodata_exports": [
       "@281__3",

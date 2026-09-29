@@ -11,9 +11,7 @@
 #include "mathutil.hpp"
 #include "mglib.hpp"
 
-/* The character that the player controls. */
-extern "C" CCharacter CharaMain;
-
+#include "dun/gameloop.hpp"
 void CStealItem::Initialize(CFrameVu1 *model) {
     this->frame = model;
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {

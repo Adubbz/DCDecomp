@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "menu_draw.hpp"
+class CFrame;
 
 /**
  * State of the debug item menu, which hands out any item on request.
@@ -231,3 +232,15 @@ int DebugItemGetKey(void);
  * @size 0x204
  */
 void DebugItemGetDraw(void);
+
+/** State of the debug item menu. */
+extern ITEM_AUTO_GET ItemAutoGet;
+
+/** Model the item preview shows. */
+extern CFrame *ItemPolyView;
+
+/** Set while the debug item preview is shown. */
+extern int MDebugItemPolyViewFlag;
+
+/** Set once the item preview's files have been read. */
+extern int polyreadflag;

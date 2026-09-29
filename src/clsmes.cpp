@@ -20,6 +20,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
+#include "editpartsdata.hpp"
 /**
  * One external character, in the table the Georama editor's parts data ends
  * with. The window indexes it with the character's negative code, so the
@@ -31,10 +32,6 @@ struct EDIT_GAIJI {
 };
 
 STATIC_ASSERT(sizeof(EDIT_GAIJI) == 0x20);
-
-/* The Georama editor's parts data; the message window reads the table of
- * external characters that follows it. */
-extern "C" u8 EditPartsData[0x6E28];
 
 /* That table of external characters, at EditPartsData + 0x491C. The linker
  * script binds the name; retail's code carries a relocation against it. */

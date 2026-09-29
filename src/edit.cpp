@@ -90,11 +90,10 @@ void BtGetItemNamePath(char *model_path, char *texture_path, int item_no);
 /* 28 bytes nothing reads other than a word at a time, so it is spelled as words rather than as a
    layout nothing supports. */
 #include "editmenu.hpp"
-extern u_int *read_buffer;
 
-extern ClsMes EditSystemMes;
-extern int MapNo;
-
+#include "dataset.hpp"
+#include "editloop.hpp"
+#include "main.hpp"
 void ClearSystemMes();
 int SystemMesCheck();
 void SystemMesStep();

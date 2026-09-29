@@ -19,10 +19,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-extern "C" CCharacter CharaMain;
-extern CDngStatusData *UserStatus;
-extern CHitValue *NowHitValue;
-
+#include "dun/gameloop.hpp"
 void CRandomItem::Draw(void) {
     for (int i = 0; i < 32; i++) {
         if (id[i] == -1 || distance[i] > 200.0f) {
@@ -125,7 +122,7 @@ int CRandomItem::CheckPosition(void) {
         }
 
         if (amount[i] == -1 && item_no[i] != -1) {
-            int blocked = UserStatus->CheckItemGet(item_no[i]);
+            int blocked = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no[i]);
             if (blocked == 0) {
                 pickup_event[i] = item_no[i];
                 id[i] = -1;

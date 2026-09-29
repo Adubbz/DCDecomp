@@ -20,6 +20,7 @@
 #include "snd.hpp"
 #include "menu_save.hpp"
 
+#include "btitem.hpp"
 /* Battle support: pack loading, item name paths, battle music, floor queries. */
 
 /**
@@ -144,9 +145,6 @@ void makeWeaponName(char *name, int weapon_no) {
  */
 /** The model file extension, shared with the hit-value unit. */
 extern char MdsExtension[];
-
-/** Base name of each item's model and texture files, beginning with attachments. */
-extern char *ITEM_NAME_TBL_NEW[];
 
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);

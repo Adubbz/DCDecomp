@@ -88,3 +88,9 @@ void StopAllSound();
  * @mangled EdLoadFile__FPc
  */
 void *EdLoadFile(char *name);
+
+/** Name of the map the editor jumps to next. */
+extern char mapjump_name[0x80];
+
+/** The default light directions of the editor's twelve lights. */
+extern float def_light[12][4];

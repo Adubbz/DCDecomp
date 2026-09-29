@@ -21,8 +21,8 @@
 #include "rect.hpp"
 #include "texture.hpp"
 
+#include "dataset.hpp"
 extern CDataAlloc2<1> *WorkBuffer;
-extern CDataAlloc2<1> *ActiveData;
 
 int DBuffID;
 int mgWaitVSync;

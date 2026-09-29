@@ -58,6 +58,7 @@
 #include "textureanime.hpp"
 #include "visualvu1.hpp"
 
+#include "battlemenu.hpp"
 /* Retail editloop3.cpp: editor event points, villagers, script opcodes and talk handling. */
 
 ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
@@ -2236,7 +2237,6 @@ struct ED_EVENT_EXTERNAL_FUNCTION {
     int operation;                        /**< Bytecode operation number assigned to the function. */
 };
 
-extern s32 MenuMapJumpMode;
 void EdDrawOffAll();
 void EdDrawOnAll();
 

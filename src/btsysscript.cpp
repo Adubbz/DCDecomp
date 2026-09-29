@@ -34,45 +34,6 @@
 #include "snd.hpp"
 #include "userstatus.hpp"
 
-/** Randomized element the current floor's sealed door wants. */
-extern int BtRubyDoorKey;
-
-/** Nonzero while the dungeon floor is drawn at all. */
-extern s32 BtAllDrawFlag;
-
-/** The dungeon floor that the player is on. */
-extern "C" CDungeonMap MainDungeonMap;
-
-/** The events of the floor that the player is on. */
-extern "C" CDungeonEventMan DngEventMan;
-
-/** The events of the back dungeon's floor. */
-extern "C" CDungeonEventMan UraEventMan;
-
-/** The characters that walk the dungeon alongside the player. */
-extern "C" CNPCharacter NPCUnit[6];
-
-/** Nonzero while a system event script holds the dungeon. */
-extern s32 BtEventMode;
-
-/** Nonzero while a system event script clears the dungeon's usual work. */
-extern s32 BtAllClear;
-
-/** Camera the dungeon currently draws through. */
-extern CCameraFollow *NowCamera__3;
-
-/** Camera that follows the player. */
-extern "C" CCameraFollow MainCamera__4;
-
-/** Camera that stands in for the player's while an event runs. */
-extern "C" CCameraFollow SubCamera;
-
-/** Message window the system script talks through first. */
-extern "C" ClsMes BtEventMes0;
-
-/** Message window the system script talks through second. */
-extern "C" ClsMes BtEventMes1;
-
 BT_EVENT_INFO BtEventInfo;
 BT_OBJ_HANDLE BtObjHdl[32];
 char BtLoadMapFileName[32];
@@ -123,12 +84,6 @@ BT_OBJ_HANDLE *GetObjHDL(int index) {
 
     return &BtObjHdl[index];
 }
-
-/** File buffer the current floor's system script is read into. */
-extern "C" CDataAlloc2<1> BtSystemScriptFileBuffer;
-
-/** Base address of the system script data currently loaded. */
-extern s32 BtEventData;
 
 void BtSystemScriptLoad(int floor) {
     char path[44];

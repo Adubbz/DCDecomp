@@ -543,3 +543,9 @@ extern "C" MONSTOR_MODEL MonstorTable[167];
 
 /** Projectile effects the monsters fire, indexed by MONSTOR_MODEL::shot_effect. */
 extern "C" BT_SHOT_EFFECT *BtEntryEffectTbl[34];
+
+/** The monsters each floor of each dungeon lays out. */
+extern BT_ENEMY_FLOOR *BtEnemyLayoutList[];
+
+/** The same for the back dungeon. */
+extern BT_ENEMY_FLOOR *BtUraEnemyLayoutList[];

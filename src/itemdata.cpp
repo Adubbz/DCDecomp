@@ -206,30 +206,6 @@ int *TEIGI_ARG_TABLE[] = {
     TEIGI_PT_HIT_MARKER,
 };
 
-/** Scratch arena used while loading the current map. */
-extern "C" CDataAlloc2<1> MapModelBuffer;
-
-/** Randomized dungeon key selected while parsing definitions. */
-extern int BtRubyDoorKey;
-
-/** Texture animation state initialized after the ground texture archive loads. */
-extern "C" CTextureAnime BtTexAnime;
-extern "C" CTexAnimeData BtTexAnimeData[96];
-
-/** Scene-wide values filled from model-definition directives. */
-extern "C" sceVu0FMATRIX main_light;
-extern "C" sceVu0FMATRIX main_lightcolor;
-extern "C" sceVu0FMATRIX sub_light;
-extern "C" sceVu0FMATRIX sub_lightcolor;
-extern "C" sceVu0FVECTOR main_ambientlight;
-extern "C" sceVu0FVECTOR sub_ambientlight;
-extern "C" float main_fogRate[4];
-extern "C" float sub_fogRate[4];
-extern "C" u8 main_fogColor[];
-extern "C" u8 sub_fogColor[];
-extern u8 main_bgColor[];
-extern u8 sub_bgColor[];
-
 /**
  * Steps the item definition file past whitespace and comments.
  *

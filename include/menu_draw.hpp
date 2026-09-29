@@ -618,3 +618,6 @@ int PersonalBoardItemPush(IHAVEITEM *, int);
  * @size 0x9C
  */
 int GetAttachKind(int item_no);
+
+/** TODO: brief for *PerBoardTex. */
+extern CTexture *PerBoardTex;

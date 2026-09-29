@@ -61,8 +61,6 @@ s16 MakeWin2Flag;
 #include "mainselect.hpp"
 #include "menuitemstep.hpp"
 
-extern CTexture *PerBoardTex;
-
 /**
  * Returns the number of edit menu icons, one fewer until the manual is available.
  *

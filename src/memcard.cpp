@@ -31,6 +31,7 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
+#include "gameutil.hpp"
 /**
  * Holds the state of the option screen.
  */
@@ -90,8 +91,6 @@ CTexture *SaveBoard;
 
 /** The texture that the option screen draws from. */
 CTexture *MenuOption;
-
-extern u8 MesWinTexBuff_12[0x100];
 
 CEditPartsInfo *CommonMenuAtoraInfo;
 short *GetAtraMsgReadBuf;

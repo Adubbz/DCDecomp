@@ -435,3 +435,12 @@ extern MENU_ATORA_SEL MenuAtoraSel;
  * The message file that the georama board's messages are read into.
  */
 extern short *GetAtraMsgReadBuf;
+
+/** TODO: brief for *ItemIcon2. */
+extern CTexture *ItemIcon2;
+
+/** TODO: brief for *AttachIcon. */
+extern CTexture *AttachIcon;
+
+/** The texture that the save screen's file boards draw from. */
+extern CTexture *SaveBoard;

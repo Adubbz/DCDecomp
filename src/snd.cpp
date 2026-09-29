@@ -26,45 +26,6 @@
  * CSound itself is in src/sound.cpp. */
 
 /**
- * One row of a sound-effect table: what the sound driver is asked to play,
- * which port it plays on, and where its level comes from. A row the game does
- * not use holds -1 in its bank, program and port.
- */
-struct SND_SE_INFO {
-    s8 bank; /**< Bank the sound driver loads the effect from. */
-    s8 prog; /**< Program within that bank. */
-    s8 unk_2;
-    s8 port;    /**< Port to play on; negative asks for the default port. */
-    s16 vol_no; /**< Row of the sound object's effect table to take the level
-                     from, or negative to play at full volume. */
-};
-
-STATIC_ASSERT(sizeof(SND_SE_INFO) == 6);
-
-/**
- * One sound-effect sequence slot: a sound the game starts once and stops again
- * a fixed number of steps later. A slot whose sound number is negative is free.
- */
-struct SND_SE_SEQ {
-    s16 se_no;  /**< Sound effect the slot plays, or -1 while the slot is free. */
-    s16 length; /**< Steps the sound is left playing for. */
-    s16 step;   /**< Steps taken so far; the sound starts on step zero. */
-    s16 voice;  /**< Voice the sound plays on. */
-};
-
-STATIC_ASSERT(sizeof(SND_SE_SEQ) == 8);
-
-/** One sound configuration read out of a sound script file. */
-struct SND_INFO {
-    s32 reverb_mode;   /**< Reverberation mode the REVERBE tag sets. */
-    s32 reverb_depth;  /**< Reverberation depth the REVERBE tag sets. */
-    s32 se_table;      /**< Sound-effect table number the TABLE tag names. */
-    s32 se_table_type; /**< Sound-effect table kind the TABLE tag names. */
-};
-
-STATIC_ASSERT(sizeof(SND_INFO) == 0x10);
-
-/**
  * Reads one sound configuration file through the script interpreter.
  *
  * @mangled LoadSoundInfo__FP8SND_INFOPci
@@ -72,15 +33,6 @@ STATIC_ASSERT(sizeof(SND_INFO) == 0x10);
  * @size 0xF4
  */
 static void LoadSoundInfo(SND_INFO *info, char *script, int script_size);
-
-/** The two script tags LoadSoundInfo recognises. */
-extern TAG_PARAM Command__3[2];
-
-/** The sound configuration the command handlers fill in. */
-extern SND_INFO *SoundInfo;
-
-/** Count of entries the TABLE command has read this file. */
-extern int se_list;
 
 /**
  * Sets the reverberation the sound configuration asks for.
@@ -100,12 +52,6 @@ static void CommandREVERBE(void **arguments);
  */
 static void CommandTABLE(void **arguments);
 
-/** The basic sound-effect set the town maps use. */
-extern SND_SE_INFO geo[199];
-
-/** The basic sound-effect set the dungeon maps use. */
-extern SND_SE_INFO dun[199];
-
 /** The two basic sound-effect sets, one of which is loaded at a time. */
 static SND_SE_INFO *basic_se_info[2] = {geo, dun};
 
@@ -114,18 +60,6 @@ static void (*CommandExe__3[2])(void **arguments) = {CommandREVERBE, CommandTABL
 
 /** Whether the sprites that follow draw with the bilinear filter. */
 static int linear__2 = 1;
-
-/** The fixed sound-effect table, addressed by sound number. */
-extern SND_SE_INFO se_info[2801];
-
-/** The chapter sound-effect sets; entries the game never loads are zero. */
-extern SND_SE_INFO *cap_se_info[101];
-
-/** The character voice sets; entries the game never loads are zero. */
-extern SND_SE_INFO *voice_info[11];
-
-/** The menu sound-effect table, addressed by menu sound number. */
-extern SND_SE_INFO special_se_info[65];
 
 /** The buffer the sound loader is pointed at. */
 unsigned int *snd_read_buf;

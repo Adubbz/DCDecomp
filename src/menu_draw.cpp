@@ -48,18 +48,11 @@ char MenuGrobalDir[64];
 /** Marks, one per item pack slot, of the items the menu offers to throw away. */
 s8 MenuTrushMark[100];
 
-/** Screen rectangle the menus draw full-screen pictures into. */
-extern CRect_i_ MenuDispRc;
-
-/** Camera the menu draws 3D models under. */
-extern CCamera MenuCamera;
-
 #include "sysmes.hpp"
 
-extern u8 MesWinTexBuff_01[0x100];
-extern u8 MesWinTexBuff_02[0x100];
-extern u8 MesWinTexBuff_11[0x100];
-extern u8 MesWinTexBuff_12[0x100];
+#include "editloop.hpp"
+#include "gameutil.hpp"
+#include "menuetc.hpp"
 extern int asort_top_type;
 
 /**
@@ -135,9 +128,6 @@ int LoadFileMenuData(char *name, unsigned int *buffer) {
     LoadFile(MenuGrobalDir, buffer, &size);
     return size;
 }
-
-/** Allocator of the edit menu's work memory, which the battle menus also load into. */
-extern CDataAlloc2<1> EdMenuBuffer;
 
 u_long128 *BtlMenuBufferSet(int mode) {
     u_long128 *buffer;

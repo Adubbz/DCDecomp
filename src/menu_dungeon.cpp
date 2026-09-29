@@ -81,18 +81,6 @@ CDngStatusData *DEnterStatusPt;
 /** Number of floors available in each dungeon. */
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
-/** State of the debug item menu. */
-extern ITEM_AUTO_GET ItemAutoGet;
-
-/** Model the item preview shows. */
-extern CFrame *ItemPolyView;
-
-/** Set while the debug item preview is shown. */
-extern int MDebugItemPolyViewFlag;
-
-/** Set once the item preview's files have been read. */
-extern int polyreadflag;
-
 /**
  * Adds one attachment's values into another, scaled by a factor.
  *
@@ -1639,11 +1627,6 @@ int DngActItemModelReadStart(u_long128 *buffer) {
     }
     return 0;
 }
-
-/**
- * Quick-use item slots and the models they draw with.
- */
-extern "C" CActiveItemPack activeItem;
 
 int DngActItemModelBuild(int wait) {
     BG_READ_INFO *model;

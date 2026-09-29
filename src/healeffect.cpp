@@ -10,8 +10,7 @@
 #include "shot_freefuncs.hpp"
 #include "texture.hpp"
 
-extern "C" CCharacter CharaMain;
-
+#include "dun/gameloop.hpp"
 /* The effect texture's name. Retail keeps one copy of the string, in the hit-mark code. */
 extern char HealEffectTextureName[];
 

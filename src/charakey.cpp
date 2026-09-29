@@ -30,24 +30,6 @@
 #include "userstatus.hpp"
 #include "weaponeffect.hpp"
 
-/* Whether the player's model skips interpolation on its next drive step. */
-extern "C" s32 driveNoInterpolate;
-
-/* The model of the weapon that the player has equipped. */
-extern "C" CCharacter *NowWeapon;
-
-/* The effect the player's character is shooting now. */
-extern "C" CSHOT_EFFECT *NowMainEffect;
-
-/* Whether an enemy is locked on. */
-extern "C" s32 lockOnTargetFlag;
-
-/* Which button fires an action. */
-extern "C" s32 PadInput_OK;
-
-/* The trail that the player's weapon draws as it swings. */
-extern "C" CWeaponEffect CWeaponFx;
-
 void sound_play(float from, float to, float now, int se_no) {
     if (now >= from && now <= to) {
         SndSePlay(se_no, -1, 0);

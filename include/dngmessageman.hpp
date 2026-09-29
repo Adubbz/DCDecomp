@@ -46,3 +46,10 @@ public:
 
 /** Dungeon message state shared by battle and the dungeon loop. */
 extern "C" CDngMessageMan DngMessMan;
+
+/**
+ * The Japanese and American image path prefixes. NameExchg reads it as rows
+ * of two indexed by language and takes the second of the row, so language 0
+ * gives the American prefix; retail sizes the table for the one row.
+ */
+extern char *LanguageStr[1][2];

@@ -42,6 +42,7 @@
 #include "title/bombeffect.hpp"
 #include "title/majinbeem.hpp"
 
+#include "gameutil.hpp"
 /**
  * Holds the category's level-of-detail thresholds and trailing state.
  */
@@ -76,7 +77,6 @@ STATIC_ASSERT(sizeof(CategoryAttr) == 0x18);
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 873
 
-extern char MesWinTexBuff_01[256];
 extern char gamemode_empty_string[];
 
 /* Global, GLOBAL-linkage per retail `nm` (0x1cbc9b0, `T`). Purpose beyond

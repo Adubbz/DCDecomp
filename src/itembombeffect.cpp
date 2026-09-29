@@ -14,13 +14,6 @@
 #include "userstatus.hpp"
 
 /**
- * The item data table, one entry per item from 0x51 on.
- */
-extern ITEM_DATA ITEM_LIST[];
-extern CItemBombEffect *NowBombEffect;
-extern CShockWave *NowShockWave;
-
-/**
  * Reports whether one running item is still in use.
  *
  * @mangled checkItemUsed__Fi

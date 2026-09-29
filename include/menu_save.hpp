@@ -181,3 +181,6 @@ int TransWepNoNewToOld(int weapon_no);
  * @size 0x570
  */
 int BattleSubWeaponDmg(float amount, int kind);
+
+/** Texture block the event item selection menu's textures load into. */
+extern s32 MiniEventTextureBlock;

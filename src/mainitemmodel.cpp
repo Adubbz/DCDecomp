@@ -34,7 +34,6 @@ int CMainItemModel::GetFreeModelNo(void) {
     }
     return -1;
 }
-extern CDataAlloc2<1> BtItemCashArea[6];
 
 int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data,
                                  int texture_size) {
@@ -267,7 +266,6 @@ void CMainItemModel::Initialize(void) {
         frame[i].SetRotation(3.1415927f, 0.0f, 0.0f);
     }
 }
-extern ITEM_DATA ITEM_LIST[175];
 
 int CActiveItemPack::CheckStatusType(void) {
     int type;

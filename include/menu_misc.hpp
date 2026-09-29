@@ -630,3 +630,6 @@ extern s16 DngEscapeBlock;
  * Whether the dungeon escape prompt is closing and fades to black.
  */
 extern s16 DngEscapeEndFlag;
+
+/** The directory the weapon models are read from. */
+extern const char MenuWepDir[];

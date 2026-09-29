@@ -103,12 +103,7 @@ s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
 
 #include "snd.hpp"
 
-
-/**
- * The message window font's texture work area.
- */
-extern u8 MesWinTexBuff_02[0x100];
-
+#include "gameutil.hpp"
 /**
  * Gives every party member their default name.
  *

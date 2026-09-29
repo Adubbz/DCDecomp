@@ -60,7 +60,6 @@
 extern float NowTime;
 extern int goto_menu;
 extern int goto_return_menu;
-extern int simple_event;
 extern int loop_counter;
 extern int camera_dist_mode;
 void BtSetMapJumpFloor(int floor);
@@ -78,29 +77,14 @@ extern CDebugFont DebugFont__3;
 
 extern CEffect *EffectTable__3;
 
-/* The message-window texture the monster-name window is drawn into. */
-extern u8 MesWinTexBuff_11[0x100];
-
-/* Whether an interior is being entered, and the item-volume step to check. */
-extern u_char *EdInInfo;
-extern CMenuItemStep ItemVolumeStep;
-
 extern int door_open_cnt;
 extern CCharacter *Chara;
 
 /* Every villager the editor can place, one record each. */
 
-/* The cursors drawn over a villager who can be talked to, one who cannot, and
-   the character the event wants the player to notice. */
-extern ClsMes CommonMenuMes2;
-extern ClsMes CommonMenuMes3;
-
 /* Where the player stands and faces while a door plays its motion. */
 extern sceVu0FVECTOR fix_chara_pos;
 extern sceVu0FVECTOR fix_chara_rot;
-
-/* Data whose shape the unit does not need yet. */
-extern CTexAnimeData CharaTexAnimeData[0x80];
 
 /** One default villager entry stored for each map and list position. */
 struct EDIT_CHARA_DATA_ENTRY {
@@ -116,10 +100,11 @@ struct EDIT_CHARA_DATA_ENTRY {
 STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 
 #include "editmenu.hpp"
-extern u8 MesWinTexBuff_01[0x100];
-extern u8 MesWinTexBuff_02[0x100];
-extern C3DSprite SystemEffect[8];
 
+#include "edit_in.hpp"
+#include "gameutil.hpp"
+#include "menuetc.hpp"
+#include "weaponlevelup.hpp"
 void CommandIMGSub(int image_type, int image_number, char *name);
 void EditSave();
 

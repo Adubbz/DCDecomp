@@ -1,4 +1,5 @@
 #pragma name_counter 2
+#pragma literal_reload 0x3ECCCCCD, 0x3FA66666
 
 #include "common.h"
 
@@ -25,63 +26,6 @@
 #include "userstatus.hpp"
 
 /* Battle item handling: treasure boxes, pickups and thrown items. */
-
-/**
- * Holds the party where it stands instead of running its movement step.
- */
-extern int driveStepHold;
-
-/**
- * Freezes the drawn frame so a menu can open over it.
- */
-extern int frameCaputer;
-
-/**
- * Item the small item-select window returned, or -1.
- */
-extern int miniItemSelNo;
-
-/**
- * Mode the battle loop runs its menus in.
- */
-extern int BtGameModeFlag;
-
-/**
- * Event the dungeon loop is running, or -1 when none is.
- */
-extern int iventInfo;
-
-/**
- * Stops the monster units stepping.
- */
-extern int CMonUnitHold;
-
-/**
- * Stops the effects stepping.
- */
-extern int CEffectHold;
-
-/**
- * Model of the item a pickup presentation is showing.
- */
-extern int itemOpenItemMds;
-
-/**
- * Texture of the item a pickup presentation is showing.
- */
-extern int itemOpenItemImg;
-
-/**
- * Hides the monster units instead of drawing them.
- */
-extern int CMonUnitHyde;
-
-/**
- * Hides the effects instead of drawing them.
- */
-extern int CEffectHyde;
-
-extern "C" CDataAlloc2<1> BtCashBuffer;
 
 #include <cstdio>
 #include <cstring>
@@ -124,37 +68,6 @@ int BtAtraGetNo;
 int BtMiniChrSelecter_Sled;
 int BtMiniChrSel_Type;
 int BtMiniChrSelectNo;
-
-extern "C" CWeaponEffect CWeaponFx;
-extern "C" CCharacter *NowWeapon;
-extern s32 BtItemListCashFlag;
-extern CFrame *itemBoxModel;
-extern s32 itemOpenBigFlag;
-extern s32 itemOpenSmallFlag;
-extern float itemWeponScale;
-extern float itemNormalScale;
-extern s32 iventActive;
-extern "C" CCameraFollow SubCamera;
-extern "C" CCameraFollow MainCamera__4;
-extern CCameraFollow *NowCamera__3;
-extern s32 atraShortGetType;
-extern s32 atraGetStatus;
-extern s32 atraGetMsgBord;
-extern float atraGetMsgBordRate;
-extern sceVu0FVECTOR atraGetPos;
-extern sceVu0FVECTOR atraGetRot;
-extern "C" CDispCtrl DispFade__3;
-extern "C" s32 driveNoInterpolate;
-extern s32 EscapeFlag;
-extern u_int *itemOpenItemChr;
-extern u_int *shortAtraEffectPtr;
-extern "C" CActiveItemPack activeItem;
-extern "C" CMotionModel itemOpenBig;
-extern "C" CMotionModel itemOpenBigFx;
-extern "C" CMotionModel itemOpenSmall;
-extern "C" CMotionModel itemOpenSmallFx;
-extern "C" CCharacter shortAtraEffect;
-extern "C" CCharacter EscapeEffect;
 
 void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name);
 void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
@@ -220,10 +133,6 @@ void selectChrUnit(int chara_no, int reload) {
         user->hp[cur_chara] = 1;
     }
 }
-/**
- * Marks the active item icons as loaded by the battle item-list flow.
- */
-extern s32 BtItemListCashFlag;
 
 /**
  * Loads the image used by the active item icons.

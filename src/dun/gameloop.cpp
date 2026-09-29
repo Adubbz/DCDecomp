@@ -118,6 +118,10 @@
 #include "weaponelement.hpp"
 #include "wind.hpp"
 
+#include "btitem.hpp"
+#include "gameutil.hpp"
+#include "main.hpp"
+#include "mainselect.hpp"
 /**
  * Defines the life gauge that the locked-on enemy draws above itself.
  */
@@ -170,12 +174,6 @@ public:
 
 STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
 
-/* The monsters each floor of each dungeon lays out. */
-extern "C" BT_ENEMY_FLOOR *BtEnemyLayoutList[7];
-
-/* The same for the back dungeon. */
-extern "C" BT_ENEMY_FLOOR *BtUraEnemyLayoutList[7];
-
 /* The weapon each character starts with. */
 s32 defWeapon__6[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 
@@ -197,14 +195,8 @@ static inline float CharaHeight(CUserStatus *status) {
     return chara_height[status->cur_chara];
 }
 
-/* Which character the mini character menu has the cursor on. */
-extern "C" s32 BtMiniChrSelectNo;
-
 /* The VU1 program that the loading screen draws through. */
 extern "C" char Vu_prog0f[];
-
-/* Which entry the main menu has the cursor on. */
-extern "C" s32 main_select_menu_no;
 
 /**
  * Names what the dungeon hands the Georama editor to follow.
@@ -219,9 +211,6 @@ extern CCamera *NowCameraBase;
 
 /* How much faster a boost makes the player run. */
 extern "C" float run_speed__2;
-
-/* Whether the message board draws over the picture. */
-extern "C" s32 MesAbsDrawOff;
 
 /**
  * Tells how far the renderer draws, and how it fogs what it draws.
@@ -453,24 +442,6 @@ int checkItemUsed(int slot);
  * @mangled EdEventMode__FP13CCameraFollowi
  */
 int EdEventMode(CCameraFollow *camera, int unk);
-
-/* The texture each message window builds itself in. */
-extern "C" u8 MesWinTexBuff_01[0x100];
-extern "C" u8 MesWinTexBuff_02[0x100];
-extern "C" u8 MesWinTexBuff_11[0x100];
-
-/* The system messages every message window shares. */
-extern short *SystemMes;
-
-/* Which language the disc was pressed for. */
-extern "C" s32 LanguageCode;
-
-/* Whether the player picked up a gate key this floor. */
-extern "C" s32 gateItemFlag;
-
-/* Whether the dungeon message window has to be laid out again. */
-extern "C" s32 Mes1MakeFlg;
-extern "C" s32 Mes2MakeFlg;
 
 /**
  * @mangled LoadData__Fv__3

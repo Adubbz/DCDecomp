@@ -55,59 +55,9 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 extern void MoveImageTest(sceVif1Packet *, int, int, int, const CRect_i_ &, int, int, int, int, int, int);
 
 /**
- * Arena the steeb message file is read into.
- */
-extern "C" CDataAlloc2<1> BtSteebMesBuffer;
-
-/**
- * Arena the map, its textures and its models are read into.
- */
-extern "C" CDataAlloc2<1> MapModelBuffer;
-
-/**
- * Arena the monsters load into, after whatever the map used.
- */
-extern "C" CDataAlloc2<1> MonstorModelBuffer;
-
-/**
- * Messages the dungeon's steeb shows.
- */
-extern "C" ClsMes DngMesStb;
-
-/**
  * Monsters of the current floor.
  */
 extern "C" CMonstorUnit MainMonstorUnit;
-
-/**
- * Map of the current floor.
- */
-extern "C" CDungeonMap MainDungeonMap;
-
-/**
- * Events of the current floor.
- */
-extern "C" CDungeonEventMan DngEventMan;
-
-/**
- * Opening motion of the small item-get box.
- */
-extern "C" CMotionModel itemOpenSmall;
-
-/**
- * Opening motion of the big item-get box.
- */
-extern "C" CMotionModel itemOpenBig;
-
-/**
- * Motion information LoadPack fills for the small item-get box.
- */
-extern "C" MOTION_INFO itemOpenSmall_info;
-
-/**
- * Motion information LoadPack fills for the big item-get box.
- */
-extern "C" MOTION_INFO itemOpenBig_info;
 
 s32 DebugStatus[21];
 float StatusColor[3];
@@ -191,21 +141,6 @@ u8 statusRGBColor_30_2[4];
  * The second warning colour of a bar below a seventh.
  */
 u8 statusRGBColor_15_2[4];
-
-/**
- * The healing particles that play in water.
- */
-extern "C" CHealEffect HealEffect;
-
-/**
- * Whether the water splash is active.
- */
-extern int Water_Splash_actFlag;
-
-/**
- * The splash shown where the party enters the water.
- */
-extern CCharacter Water_Splash;
 
 /**
  * Clears the water-splash effects.

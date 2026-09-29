@@ -101,7 +101,7 @@ void OpD_DrawProcess();
 
 extern u_int Vu_prog0f[];
 extern int Mes1MakeFlg;
-extern char MesWinTexBuff_01[256];
+extern u8 MesWinTexBuff_01[0x100];
 
 static void LoadMessage();
 static void LoadScene();

@@ -116,7 +116,7 @@ public:
 
 class CFrameVu1;
 
-/* Which of a frame's own axes `LookAt` holds perpendicular to the direction of its target. */
+/** Which of a frame's own axes `LookAt` holds perpendicular to the direction of its target. */
 enum _FRAMECONSTRAINT {
     FRAME_CONSTRAINT_Z,
     FRAME_CONSTRAINT_Y,

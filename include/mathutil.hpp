@@ -463,4 +463,4 @@ float Sinf(float angle);
  */
 float Cosf(float angle);
 
-/* + 4 more not-yet-named function(s) in this range (IDA/disassembler could not name them) */
+/** + 4 more not-yet-named function(s) in this range (IDA/disassembler could not name them) */

@@ -40,15 +40,6 @@
 #include "shot_effect.hpp"
 #include "weaponlevelup.hpp"
 
-/** The directory the weapon models are read from. */
-extern const char MenuWepDir[];
-extern "C" CCharacter DefaultWeapon;
-extern "C" CCharacter MainWeapon;
-extern "C" CSHOT_EFFECT *NowMainEffect;
-extern "C" CSHOT_EFFECT CharaMainEffectCrash;
-extern s32 CharaMainHandViewFlag;
-extern "C" CCharacter *NowWeapon;
-
 static int defWeapon[6] = {257, 299, 314, 331, 347, 363};
 
 int MenuWeaponModelData[42];
@@ -90,9 +81,6 @@ s16 DngEscapeAlpha = 0x80;
  * The dungeon escape prompt's chosen answer, 1 or 2.
  */
 s16 DngEscapeSelect = 1;
-
-extern CCharacter DngWeaponFrm[12];
-extern "C" CWeaponEffect CWeaponFx;
 
 /**
  * Provides the file extension appended to character model file names.
