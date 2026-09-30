@@ -38,12 +38,12 @@
 #pragma argument_flag_ones 1766, 1773, 1784, 1790, 1813, 1814, 1815, 1816, 1817, 1861
 #pragma argument_flag_ones 1918, 1921, 1922, 1954, 1957, 1964, 2040, 2237, 2259, 2364
 #pragma argument_flag_ones 2500, 2503, 2510, 2586, 2783, 2805, 2910, 3195, 3223, 3398
-#pragma argument_flag_ones 3409, 3417, 3440, 3475, 3482, 3497, 3500, 3525, 3553, 3560
-#pragma argument_flag_ones 3570, 3571, 3573, 3574, 3605, 3609, 3610, 3762, 3769, 3829
-#pragma argument_flag_ones 3832, 3833, 3944, 3955, 3963, 3983, 3986, 4021, 4028, 4043
-#pragma argument_flag_ones 4046, 4071, 4099, 4106, 4120, 4139, 4151, 4155, 4156, 4226
-#pragma argument_flag_ones 4232, 4241, 4253, 4279, 4301, 4308, 4315, 4587, 4588, 4589
-#pragma argument_flag_ones 4632, 4635, 4696, 4697, 4699
+#pragma argument_flag_ones 3399, 3409, 3417, 3440, 3453, 3454, 3456, 3470, 3475, 3482
+#pragma argument_flag_ones 3497, 3500, 3525, 3553, 3560, 3570, 3571, 3573, 3574, 3605
+#pragma argument_flag_ones 3609, 3610, 3762, 3769, 3829, 3832, 3833, 3944, 3955, 3963
+#pragma argument_flag_ones 3983, 3986, 4021, 4028, 4043, 4046, 4071, 4099, 4106, 4120
+#pragma argument_flag_ones 4139, 4151, 4155, 4156, 4226, 4232, 4241, 4253, 4279, 4301
+#pragma argument_flag_ones 4308, 4315, 4587, 4588, 4589, 4632, 4635, 4696, 4697, 4699
 #pragma argument_flag 0
 #else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
