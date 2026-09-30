@@ -12,6 +12,9 @@
 #include "gamepad.hpp"
 #include "hitmark.hpp"
 #include "itemdata.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
@@ -650,17 +653,15 @@ int SetGateKeyStack(int item) {
  * @address 0x1B5740
  * @size 0x60
  */
-#ifdef PAL
-char *NameExchg(char *name, int language);
-INCLUDE_ASM("asm/pal/nonmatchings/collisiondata", NameExchg__FPci);
-#pragma name_counter 382
-#else
 char *NameExchg(char *name, int language) {
+#ifdef PAL
+    strcpy(nameblock, LanguageStr[LanguageCode]);
+#else
     strcpy(nameblock, LanguageStr[language][1]);
+#endif
     strcat(nameblock, name);
     return nameblock;
 }
-#endif
 
 int CCollisionData::Set(float *pos, int damage, int life, float radius, float unknown0, int unknown1,
                         int kind, int flags, int unknown2) {

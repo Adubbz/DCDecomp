@@ -122,16 +122,6 @@ static inline void ResetEastKingMessage() {
     }
 }
 
-#ifdef PAL
-void EastKingTextureEnter();
-INCLUDE_ASM("asm/pal/nonmatchings/eastking", EastKingTextureEnter__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/eastking", @357__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @356__2);
-INCLUDE_DATA("asm/pal/nonmatchings/eastking", @358__3);
-INCLUDE_DATA("asm/pal/nonmatchings/eastking", @359__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @373__3);
-#pragma name_counter 82
-#else
 void EastKingTextureEnter() {
     if (EastKing.resources_ready == 0 && ReadBGSync() == 0 && SndBgmSyncBG() == 0) {
         LOADTEXTURE_INFO2 textures[] = {
@@ -151,9 +141,17 @@ void EastKingTextureEnter() {
         s16 *messages = (s16 *) GetPackFile((u_int *) archive->buffer, "eastking.bin", NULL);
         ResetEastKingMessage();
         EastKingMsgCls.SetMesFukidashi(4);
+#ifdef PAL
+        s8 font_width[8] = {16, 14, 14, 15, 15, 15, 15};
+#else
         s8 font_width[] = {16, 14, 14, 14, 14, 14, 14};
+#endif
         EastKingMsgCls.char_width = font_width[GetMenuLangFlag()];
+#ifdef PAL
+        EastKingMsgCls.char_height = 0x1A;
+#else
         EastKingMsgCls.char_height = 0x16;
+#endif
         EastKingMsgCls.columns = 0x1E;
         EastKingMsgCls.text_rate = 0.0f;
         EastKingMsgCls.text_rate_set = 0.0f;
@@ -170,7 +168,6 @@ void EastKingTextureEnter() {
         SndBgmPlay(0);
     }
 }
-#endif
 
 /**
  * Draws the current East King event message.
@@ -225,12 +222,10 @@ void GetPrevEastKingSndVol() {
 }
 
 #ifdef PAL
-void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer);
-INCLUDE_ASM("asm/pal/nonmatchings/eastking", InitEastKingEvent__FiPiP1);
-INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @400__3);
-#pragma name_counter 109
+int InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {
 #else
 void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {
+#endif
     char path[76];
     int size;
 
@@ -258,8 +253,10 @@ void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer)
     if (SaveData->GetGameFlag(EastKing.event_no + 0xE6) == 0) {
         SaveData->SetGameFlag(EastKing.event_no + 0xE6, 1);
     }
-}
+#ifdef PAL
+    return 1;
 #endif
+}
 
 int EastKingEventKey() {
     int finished = 0;
