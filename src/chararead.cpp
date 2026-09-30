@@ -344,11 +344,6 @@ static void CommandKEY_START(void **argv) {
     character->motion_start[now_motion_data] = key_start;
 }
 
-#ifdef PAL
-static void CommandKEY(void **argv);
-INCLUDE_ASM("asm/pal/nonmatchings/chararead", CommandKEY__FPPv);
-#pragma name_counter 970
-#else
 static void CommandKEY(void **argv) {
     if (motion_info == 0) {
         motion_info = (tagMOTION_KEY *) (buffer->base + buffer->used * 16);
@@ -357,10 +352,12 @@ static void CommandKEY(void **argv) {
     key->start = *(int *) argv[0];
     key->end = *(int *) argv[1];
     key->speed = *(float *) argv[2];
+#ifdef PAL
+    key->speed = 6.0f * key->speed / 5.0f;
+#endif
     key_no++;
     motion_info_num = key_no;
 }
-#endif
 
 static void CommandMOTION_END(void **) {
     if (now_motion_data < 0 || now_motion_data >= 8 || motion_info == 0)

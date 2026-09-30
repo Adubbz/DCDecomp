@@ -259,15 +259,6 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
  * @address 0x238A70
  * @size 0x628
  */
-#ifdef PAL
-void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
-/* Retail's data for the function the marker below supplies. */
-char pal_at483__3[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "window";
-INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at419__2[8] __attribute__((aligned(16))) = {0x41900000, 0x41400000, 0x41400000, 0x41400000, 0x41400000, 0x41400000, 0x41400000};
-#pragma name_counter 202
-#else
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     int left;
     int top;
@@ -358,7 +349,6 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
             break;
     }
 }
-#endif
 
 #ifdef PAL
 /** Keyboard key of each symbol, indexing the symbol keyboard's characters. */

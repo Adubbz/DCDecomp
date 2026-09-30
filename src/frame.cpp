@@ -985,12 +985,6 @@ static int SetGsReg3(u_int *p, u_long *test, u_long *zbuf, u_long *alpha) {
    own into the cache and invalidates its children's - which is the one place a draw moves anything.
    Its children then take the cached matrix as it stands, because the attribute that turns the
    frame is also what GetLWMatrix reads on a parent to mean exactly that. */
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/frame", DrawVu1__9CFrameVu1FPUiP10RenderInfo);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at548[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-#pragma name_counter 991
-#else
 int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     u_int *start = packet;
     sceVu0FMATRIX matrix;
@@ -1122,10 +1116,10 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
 
             if (attr.remake_pending) {
                 half_width = 2.0f * (320.0f * inv_scale);
-                half_height = 2.0f * (112.0f * inv_scale);
+                half_height = 2.0f * (SCREEN_QUARTER_HEIGHT_F * inv_scale);
             } else {
                 half_width = 320.0f * inv_scale;
-                half_height = 112.0f * inv_scale;
+                half_height = SCREEN_QUARTER_HEIGHT_F * inv_scale;
             }
 
             if (screen_min[0] > half_width) {
@@ -1259,7 +1253,6 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
 
     return packet - start;
 }
-#endif
 
 /* The same draw against a packet the SDK is tracking rather than a bare cursor: the packet is
    closed so that its current word is a legal place to write, the draw is handed that word, and the
@@ -1441,9 +1434,3 @@ int CFrame::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
 
     return num;
 }
-
-#ifdef PAL
-/* The virtual table the compiler would emit with the function a PAL marker supplies; it
-   emits a unit's virtual tables after its functions. */
-unsigned int __vt__9CFrameVu1[5] __attribute__((section(".vtables"))) = {0x00000000, 0x00000000, 0x00129400, 0x0012A110, 0x0012A230};
-#endif

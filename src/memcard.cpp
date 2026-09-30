@@ -2903,21 +2903,17 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
 }
 #endif
 
-#ifdef PAL
-static void DrawOptionLRCur(int side, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionLRCur__Fii);
-/* Retail's data for the function the marker above supplies. */
-s16 pal_at2344[4] = {0x20, 0x208};
-#pragma name_counter 1595
-#else
 static void DrawOptionLRCur(int side, int alpha) {
+#ifdef PAL
+    s16 cursor_x[2] = {32, 520};
+#else
     int cursor_x[2] = {32, 520};
+#endif
     int v;
 
     v = side * 32 + 256;
     DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
 }
-#endif
 
 #ifdef PAL
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionScreenWaku__Fv);
@@ -2996,11 +2992,6 @@ static inline void SetCursorResetPos(CMenuCursor *cursor, int reset) {
  * Closes the option screen, writing every setting the player changed back to
  * the configuration and the saved status.
  */
-#ifdef PAL
-static void ExitMenuOption();
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", ExitMenuOption__Fv);
-#pragma name_counter 1620
-#else
 static void ExitMenuOption() {
     CUserStatus *status;
     CMenuCursor *cursor;
@@ -3023,14 +3014,22 @@ static void ExitMenuOption() {
     CSnd.SetStereoMode(OpConfigPt[5] ? 0 : 1);
     OpConfigPt[2] = OptionMenu.flag[4];
     OpConfigPt[3] = OptionMenu.flag[5];
+#ifdef PAL
+    status->minimap_status = OptionMenu.flag[7];
+    OpConfigPt[10] = OptionMenu.flag[8];
+    OpConfigPt[9] = OptionMenu.flag[9];
+    OpConfigPt[11] = OptionMenu.flag[10];
+    OpConfigPt[8] = OptionMenu.flag[11];
+    OpConfigPt[6] = OptionMenu.flag[12];
+#else
     status->minimap_status = OptionMenu.flag[6];
     OpConfigPt[10] = OptionMenu.flag[7];
     OpConfigPt[9] = OptionMenu.flag[8];
     OpConfigPt[11] = OptionMenu.flag[9];
     OpConfigPt[8] = OptionMenu.flag[10];
     OpConfigPt[6] = OptionMenu.flag[11];
-}
 #endif
+}
 
 #ifdef PAL
 static void InitOptionFlag();

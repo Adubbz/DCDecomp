@@ -79,12 +79,6 @@ void CTextureBlock::Initialize() {
     extend = 0;
 }
 
-#ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char pal_at221[0x8] __attribute__((section(".rodata"))) = "work";
-INCLUDE_ASM("asm/pal/nonmatchings/texture", Initialize__15CTextureManagerFi);
-#pragma name_counter 286
-#else
 void CTextureManager::Initialize(int size) {
     int i;
     int limit;
@@ -102,20 +96,30 @@ void CTextureManager::Initialize(int size) {
 
     texture_max = 1;
     vram_work = 8960;
+#ifdef PAL
+    for (i = 0; i < 72; i++) {
+        blocks[i].vram_top = mgTopVRAM;
+        blocks[i].vram_end = mgTopVRAM;
+    }
+#else
     for (i = 0; i < 72; i++) {
         blocks[i].vram_top = 6720;
         blocks[i].vram_end = 6720;
     }
+#endif
     vram_size = size;
     vram_max = vram_size;
     vram_fix = size;
 
     strcpy(textures[0].name, "work");
+#ifdef PAL
+    textures[0].tex0 = SCE_GS_SET_TEX0(mgTopVRAM, 10, 0, 10, 8, 1, 0, 0, 0, 0, 0, 0);
+#else
     textures[0].tex0 = SCE_GS_SET_TEX0(6720, 10, 0, 10, 8, 1, 0, 0, 0, 0, 0, 0);
+#endif
     textures[0].block = -1;
     last_block = -1;
 }
-#endif
 
 /* The buffer is taken as it comes and walked forward to the next 128-byte boundary, because every
    transfer out of it is a DMA read; the quadword count has to lose what the alignment ate. */
@@ -735,10 +739,6 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
 
 /* The Z-buffer scratch texture, which is the one fixed texture whose size and format the loader
    insists on rather than reads. */
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/texture", EnterFixTextureZ__15CTextureManagerFPUc);
-#pragma name_counter 598
-#else
 void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     char *name;
     int width;
@@ -751,6 +751,9 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     sceDmaChan *channel;
     TM2_head *head;
     TM2_picture *picture;
+#ifdef PAL
+    int zbuffer;
+#endif
 
     name = (char *) (buffer + 16);
     head = (TM2_head *) (buffer + *(int *) (buffer + 48));
@@ -759,8 +762,13 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     height = head->image_height;
     if (width != 640)
         return;
+#ifdef PAL
+    if (height > 240)
+        return;
+#else
     if (height != 224)
         return;
+#endif
     bpp = 1;
     if (picture->image_type != 5)
         return;
@@ -774,14 +782,24 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     tex->height = height;
     tex->bpp = bpp;
     tex->block = 73;
+#ifdef PAL
+    zbuffer = mgZBufferAdr;
+    tex->tex0 = SCE_GS_SET_TEX0(zbuffer, 10, 27, 10, 8, 1, 0, 16352, 0, 0, 0, 1);
+#else
     tex->tex0 = SCE_GS_SET_TEX0(4480, 10, 27, 10, 8, 1, 0, 16352, 0, 0, 0, 1);
+#endif
 
     sceGifPkInit(&packet, texData);
     channel = sceDmaGetChan(2);
     channel->chcr.TTE = 1;
     sceGifPkReset(&packet);
+#ifdef PAL
+    sceGifPkRefLoadImage(&packet, zbuffer, 27, 10, (u_long128 *) image, (width * height) >> 4, 0, 0,
+                         width, height);
+#else
     sceGifPkRefLoadImage(&packet, 4480, 27, 10, (u_long128 *) image, (width * height) >> 4, 0, 0,
                          width, height);
+#endif
     sceGifPkRefLoadImage(&packet, 16352, 0, bpp, (u_long128 *) clut, 64, 0, 0, 16, 16);
     sceGifPkCnt(&packet, 0, 0, 0);
     sceGifPkOpenGifTag(&packet, *(u_long128 *) &GiftagAD);
@@ -795,7 +813,6 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
         sceDmaSend(channel, (void *) packet.pBase);
     sceGsSyncPath(0, 0);
 }
-#endif
 
 void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int extend) {
     u_int i;
@@ -1047,23 +1064,25 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
     sceVif1PkCloseDirectCode(packet);
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/texture", BeginEnterTextureBlock__15CTextureManagerFi);
-#pragma name_counter 718
-#else
 void CTextureManager::BeginEnterTextureBlock(int block) {
     if (block < 0 || block >= 72)
         return;
 
+#ifdef PAL
+    if (blocks[block].vram_top == 0)
+        blocks[block].vram_top = mgTopVRAM;
+    if (blocks[block].vram_end == 0)
+        blocks[block].vram_end = mgTopVRAM;
+#else
     if (blocks[block].vram_top == 0)
         blocks[block].vram_top = 6720;
     if (blocks[block].vram_end == 0)
         blocks[block].vram_end = 6720;
+#endif
     blocks[block].buffer = buffer + buffer_used;
     blocks[block].buffer_end = buffer + buffer_used;
     blocks[block].loaded = 0;
 }
-#endif
 
 void CTextureManager::EndEnterTextureBlock(int block) {
     if (block < 0 || block >= 72)

@@ -137,17 +137,13 @@ void InitReadBG() {
 
 /* The buffer goes to the drive rather than through the processor, so an address the drive cannot
    reach is fatal rather than slow, and one that is not on a 64-byte boundary is only reported. */
-#ifdef PAL
-int LoadFileBG(char *name, u_long128 *buffer, int *size);
-/* Retail's data for the function the marker below supplies. */
-char pal_at229[0x18] __attribute__((section(".rodata"))) = "address error\n";
-char pal_at230__2[0x28] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "/*/*/*/*/not 64byte align at %x %s\n";
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", LoadFileBG__FPcP1Pi);
-#pragma name_counter 333
-#else
 int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     BG_READ_INFO *info;
+#ifdef PAL
+    DATA_HEADER_READ *header;
+#else
     DATA_HEADER *header;
+#endif
     int i;
 
     if (out_size)
@@ -170,7 +166,11 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     }
     if ((int) buffer % 64)
         printf("/*/*/*/*/not 64byte align at %x %s\n", buffer, name);
+#ifdef PAL
+    header = (DATA_HEADER_READ *) SearchFile(name);
+#else
     header = SearchFile(name);
+#endif
     if (!header)
         return 0;
     strcpy(info->name, name);
@@ -185,7 +185,6 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     info->sectors = header->sectors;
     return 1;
 }
-#endif
 
 BG_READ_INFO *GetReadBGFile(int index) {
     if (index < 0 || index >= 32)
@@ -472,11 +471,7 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
         host_file = 1;
     }
     if ((int) buffer > 0x2000000) {
-#ifdef PAL
-        printf(pal_at229);
-#else
         printf("address error\n");
-#endif
         for (;;)
             ;
     }
@@ -487,16 +482,19 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
     return CDRead(full_path, (u_int *) buffer, out_size);
 }
 
-#ifdef PAL
-static int CDRead(char *name, u_int *buffer, int *size);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", CDRead__FPcPUiPi);
-#pragma name_counter 509
-#else
 static int CDRead(char *path, u_int *buffer, int *out_size) {
+#ifdef PAL
+    DATA_HEADER_READ *header;
+#else
     DATA_HEADER *header;
+#endif
     sceCdRMode mode;
 
+#ifdef PAL
+    header = (DATA_HEADER_READ *) SearchFile(path);
+#else
     header = SearchFile(path);
+#endif
     if (!header)
         return 0;
     mode.trycount = 0;
@@ -513,7 +511,6 @@ static int CDRead(char *path, u_int *buffer, int *out_size) {
         *out_size = header->size;
     return 1;
 }
-#endif
 
 int WriteFile(char *path, void *buffer, int size) {
     int fd;

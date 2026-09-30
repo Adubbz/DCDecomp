@@ -420,18 +420,12 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     return volume;
 }
 
-#ifdef PAL
-int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
-/* Retail's data for the function the marker below supplies. */
-char pal_at762__3[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dunenter/dunenter%d.pak";
-char pal_at763__2[0x18] __attribute__((section(".rodata"))) = "maxfloor = %d\n";
-char pal_at764__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "DEnterMenu.select = %d\n";
-char pal_at765__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "DEnterMenu.topline = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
-#pragma name_counter 852
-#else
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
+#ifdef PAL
+    char path[108];
+#else
     char path[76];
+#endif
     int size;
     u_long128 *buffer;
     int first_open;
@@ -508,7 +502,6 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     GamePad.MenuModeOn(0x78);
     return 1;
 }
-#endif
 
 static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
