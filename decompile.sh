@@ -68,7 +68,10 @@ run() {
 
     if [ ! -f "$CTX" ]; then
         echo "$0: $CTX is missing; generating it." >&2
-        python3 scripts/diff/m2ctx.py -o "$CTX" >&2
+        # m2ctx needs libclang's Python bindings, which the container keeps in its venv.
+        ctx_python=python3
+        [ -x /opt/venv/bin/python3 ] && ctx_python=/opt/venv/bin/python3
+        "$ctx_python" scripts/diff/m2ctx.py -o "$CTX" >&2
     fi
 
     if [ "$raw" = 0 ]; then
