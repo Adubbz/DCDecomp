@@ -1,96 +1,103 @@
-# The PAL build
+# PAL prototype changelog
 
-The tree builds two releases from one set of sources: NTSC 1.02 (the default)
-and the July 12, 2001 PAL prototype.
+Changes in the European prototype of Dark Cloud (July 12, 2001), compared with
+the North American release (NTSC 1.02). Everything here comes from the
+decompiled code.
 
-## Selecting a release
+## Languages
 
-    REGION=PAL ./build.sh
-    REGION=PAL ./dev.sh scripts/build/cmake.sh all
+### Added
+- Five European languages: British English, French, German, Italian and Spanish.
+  British English is the default.
+- A language select screen when the game starts.
+- Translated versions of the title screen, opening scenes, pause image, dungeon
+  images, loading screens, menus, event text and town text. The game loads the
+  file for the chosen language.
+- An accented-letter keyboard on the name entry screen, with its own set of
+  letters for each language.
+- Extra special characters in the message font.
 
-`REGION` becomes `DCDECOMP_REGION` inside the container, and
-`scripts/build/region.py` turns it into every path the build uses. Each
-release keeps its own disc image, extraction, split configuration, linker
-script, split and build tree:
+### Changed
+- Menus, windows and help boxes change their widths and text positions to fit
+  each language.
+- The floor name shown when you enter a dungeon is centred for each language.
 
-| | NTSC | PAL |
-|---|---|---|
-| disc | `rom/Dark Cloud (NTSC).iso` | `rom/Dark Cloud (PAL).iso` |
-| extracted files | `rom/ntsc/extracted/` | `rom/pal/extracted/` |
-| configuration | `config/ntsc/` | `config/pal/` |
-| reference assembly | `asm/ntsc/` | `asm/pal/` |
-| build tree | `build/ntsc/` | `build/pal/` |
+## Display
 
-The two builds share `.build.lock` and must not run at once: both compile the
-same sources, and the compile driver writes temporaries beside them.
+### Changed
+- The game runs at 50 Hz with a 640×480 picture, up from 640×448. Menus,
+  fades, backgrounds and screen effects are resized to fill the taller screen.
+- The options menu has a new row for moving the picture. It moves up to 32
+  pixels in each direction.
 
-`build.sh` builds the selected release's objdiff objects after linking, prints
-its coloured objdiff summary, and writes `progress/ntsc/report.json` or
-`progress/pal/report.json`. The progress workflow builds each release in a
-job of its own and uploads its report as `ntsc_report` or `pal_report`, which
-decomp.dev shows as the versions `ntsc` and `pal`; the Discord message shows
-a separate embed for each release.
+## Timing
 
-## Differences in the sources
+The game runs 50 frames a second instead of 60, so timings are adjusted to take
+the same real time.
 
-The PAL build compiles with `-DPAL` and assembles with `--defsym PAL=1`.
+### Changed
+- Character animations play one fifth faster.
+- Cutscenes in the opening and title sequence speed up fades, dances, moving
+  scenery and effects. Their sound cues come earlier to match.
+- Loading screen logos stay up for fewer frames.
+- Some attack timing windows for Ruby and Jinn are slightly wider.
+- Opening scene characters move their mouths at random instead of following a
+  timer.
 
-- A small difference inside a shared function is an `#ifdef PAL` / `#else`
-  branch around the statement or expression that differs.
-- A function that changed throughout has a whole PAL body:
-  `#ifdef PAL <PAL body> #else <NTSC body> #endif`.
-- A function only one release has sits under `#ifdef PAL` or `#ifndef PAL` at
-  its retail position.
-- Data follows the same rules. Screen geometry uses the `SCREEN_*`,
-  `GS_Y_OFFSET` and `*_STR` macros from `include/common.h`.
-- A compiler-state pragma block that needs other values under PAL is written
-  as `#ifdef PAL #pragma ... #else #pragma ... #endif`.
+## Debug features
 
-Retail-derived tables that differ are per release: `src/literals.cpp` holds
-both literal pools, `src/vutext.cpp` the one VU word that differs, and
-`src/crt0.s` both ends of `.bss`.
+The prototype still has the developers' debug mode. On the second controller,
+hold L1, L2, R1 and R2 while the game starts to turn it on. To switch it on or
+off later, hold the same four buttons and press R3.
 
-## Configuration
+### Added
+- **Start-up:** with debug mode on, the game skips the language select and
+  starts at the developer menu.
+- **Town editor:** L3 shows positions and camera data. R3 opens a debug menu
+  that can:
+  - move the camera
+  - change parameters and characters
+  - test messages and movement
+  - run events
+  - change the language
+  - edit game flags
+  - play music and sound effects
+- **Leaving an area:** Select and Start together leave the town editor or the
+  dungeon.
+- **Doors:** Select opens any door in town.
+- **Dungeons:** R3 opens a debug menu. When the party falls, it gets back up
+  at full health instead of losing.
+- **Floor select:** you can open every floor of a dungeon and change a floor's
+  kill count.
+- **Menus and shops:** second-controller shortcuts change health, water,
+  defense, money, weapon level and stats, and party members. They also open an
+  item list.
+- **Georama board:** shortcuts fill, empty or complete a building's parts.
+- **Fishing:** every fish notices the bait, and a hooked fish lands on its
+  own. Shortcuts change fishing points and record catches.
+- **Event scenes:** you can pause the scene and its music.
+- **Save screen:** shortcuts jump between memory card steps.
+- More messages are printed to the developer console.
 
-`config/pal/*.symbols.txt` are the PAL executable's symbol tables. The yaml,
-linker script, `object_fixups.json` and `expression_node_overrides.json` were
-carried over from NTSC's by `scripts/build/splat_config.py` and are maintained
-by hand. A fixup names the release's own symbols: a unit's `statics` and
-`rodata_exports` differ between the two files wherever the compiler's
-numbering or retail's constants do.
+### Changed
+- The second controller stays active; the North American release turns it off.
+  Holding Select on it makes the game act as if every button is held on the
+  first controller, and holding Start on it counts as holding Start.
 
-## Functions not yet decompiled for PAL
+## Other changes
 
-A function whose PAL instructions the C does not yet reproduce is supplied by
-an INCLUDE_ASM marker under `#ifdef PAL`, the way NTSC's undecompiled functions
-were:
+### Added
+- A music on/off switch and a music pause. The debug menu uses them.
 
-    #ifdef PAL
-    INCLUDE_ASM("asm/pal/nonmatchings/shop", ChargeShopKey__Fv);
-    #pragma name_counter 1370
-    #else
-    int ChargeShopKey() {
-        ...
-    }
-    #endif
+### Changed
+- Saves go in a folder named for the European product code, SCES-50295.
+- The game finds files on the disc with a simple list that ignores capital
+  letters, instead of a name tree.
+- The battle menu keeps its textures in six groups instead of five, and
+  reloads them before drawing.
+- Shop models are moved half a unit vertically.
+- Treasure chest and Atla pickup scenes set the player's pose at a fixed
+  moment.
 
-A function only PAL has is `#ifdef PAL` + the marker. tools/mwccgap assembles
-`asm/pal/nonmatchings/<unit>/<symbol>.s` from the PAL split and puts it where
-the marker stands; the constants only that function uses travel inside the
-file. scripts/build/mwccgap_region.py and the split (scripts/build/disassemble.py)
-read each source as the release being built compiles it (region.active_text),
-so a marker under `#ifdef PAL` is the PAL build's alone and the NTSC compile is
-unchanged. `#pragma name_counter` after a marker sets MWCC's invented-name
-counter to PAL retail's value after that function, so the constants and
-statics of the functions below keep retail's numbering.
-
-Any other datum a marker's function uses -- a constant it shares, an
-initialiser template, a function-local static, a virtual table the compiler
-would have emitted with it -- is defined in C under the marker with retail's
-bytes, at the place retail's compiler put it. The marker's references to
-retail's `@N` and `name$N` are resolved to retail's addresses by
-`scripts/build/literals.py --resolve-names`, so such a datum needs retail's
-place and bytes, not its name; named data keeps retail's name.
-
-`scripts/build/verify.py` counts a marker's function as `asm`. A marker goes
-when its C reproduces PAL's bytes, together with the data defined for it.
+### Removed
+- The title screen no longer loads the trial version image.

@@ -3931,17 +3931,12 @@ static inline int ShopHeldInfo() {
     return ShopHaveItemPt->slot_state;
 }
 
-// PAL draft: 40 register differences remain (callee-saved permutation in the personal-board case).
-#if defined(PAL) && !defined(NON_MATCHING)
-int ItemShopKey2();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2857[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " %d \tis \t\t%d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopKey2__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at2690[4] __attribute__((aligned(16))) = {0x00000064, 0x0000003C, 0x00000028};
-#pragma name_counter 2824
-#else
 int ItemShopKey2() {
+#ifdef PAL
+    // Declared ahead of result so the personal-board cancel path keeps retail's callee-saved registers.
+    int held_info;
+    s32 *slot;
+#endif
     int result = 0;
     MENU_ITEMDATA record;
 
@@ -4352,7 +4347,11 @@ int ItemShopKey2() {
                             ShopMenu.side = 2;
                         }
                     } else {
+#ifdef PAL
+                        held_info = ShopHaveItemPt->slot_state;
+#else
                         int held_info = ShopHaveItemPt->slot_state;
+#endif
                         s32 *info;
                         switch (held_info) {
                             case 1: {
@@ -4386,7 +4385,9 @@ int ItemShopKey2() {
                                         info = AttachBoardInfo;
                                         break;
                                 }
+#ifndef PAL
                                 s32 *slot;
+#endif
                                 int space = GetBoardSpace(held, &page);
                                 int max = PersonalRetMax(page);
                                 if (space < 0 || max <= space) {
@@ -4557,7 +4558,6 @@ int ItemShopKey2() {
     }
     return result;
 }
-#endif
 
 void ItemShopDraw2() {
     int cur_x;
