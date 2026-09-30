@@ -107,6 +107,7 @@ extern sceGsTexa mgTexa;
 #ifdef PAL
 extern int mgTopVRAM;
 extern int mgZBufferAdr;
+void MGAdjustScreen(int x, int y);
 #endif
 
 /**

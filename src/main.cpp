@@ -395,18 +395,8 @@ void initialize_data() {
 
 /* @ 0x1410B0 (0xC80 bytes) -- main */
 #ifdef PAL
-int main(int argc, const char **argv, const char **envp);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @876);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @877);
-INCLUDE_ASM("asm/pal/nonmatchings/main", main);
-INCLUDE_DATA("asm/pal/nonmatchings/main", depth$682);
-INCLUDE_DATA("asm/pal/nonmatchings/main", init$683);
-INCLUDE_DATA("asm/pal/nonmatchings/main", wt$685);
-INCLUDE_DATA("asm/pal/nonmatchings/main", init$686);
-INCLUDE_DATA("asm/pal/nonmatchings/main", init_flag$704);
-INCLUDE_DATA("asm/pal/nonmatchings/main", init$705);
-#pragma name_counter 1145
-#else
+#pragma name_counter 5000
+#endif
 int main(int argc, const char **argv, const char **envp) {
     /* Function-local statics: retail names ("depth$682", "init$683", ...)
      * confirmed via IDA's global list against this exact function; the
@@ -448,6 +438,9 @@ int main(int argc, const char **argv, const char **envp) {
     int valid;
 
     mwInit(argc, argv, envp);
+#ifdef PAL
+    DebugMode = 0;
+#endif
 
     if (!init) {
         depth = 0;
@@ -495,14 +488,28 @@ int main(int argc, const char **argv, const char **envp) {
     for (i = 0; (valid = i < 60) != 0; i++) {
         sceGsSyncV(0);
         GamePad.UpDate();
+#ifdef PAL
+        if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0) {
+            DebugMode = 1;
+        }
+#else
         if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0) {
             GamePad.On2(1);
         }
+#endif
     }
 
+#ifdef PAL
+    if (!DebugMode) {
+        MapNo = -1;
+        mode = 14;
+        GamePad.KeyLock2(1);
+    }
+#else
     MapNo = -1;
     mode = 10;
     GamePad.KeyLock2(1);
+#endif
 
     i = 0;
     inited = 0;
@@ -521,7 +528,11 @@ int main(int argc, const char **argv, const char **envp) {
         InitReadBG__Fv();
         SndInit__Fv();
 
+#ifdef PAL
+        if (!DebugMode && mode == 7) {
+#else
         if (mode == 7) {
+#endif
             MapNo = 801;
             mode = 1;
         }
@@ -562,6 +573,11 @@ int main(int argc, const char **argv, const char **envp) {
         }
 
         GamePad.StopVibration();
+#ifdef PAL
+        if (DebugMode) {
+            LoadSystemMessage__Fv();
+        }
+#endif
 
         /* Case bodies are in retail's physical body order rather than
          * case-value order, taken from the @875 table in
@@ -666,6 +682,10 @@ int main(int argc, const char **argv, const char **envp) {
         }
 
         do {
+#ifdef PAL
+            SV_CONFIG_SYS *screen = (SV_CONFIG_SYS *) SaveData->GetConfigData();
+            MGAdjustScreen(*(s32 *) &screen->values_copy2[12], *(s32 *) &screen->values_copy2[16]);
+#endif
             int game_clear = GameClearFlag;
             *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->reserved_36[2] = game_clear;
 
@@ -710,8 +730,13 @@ int main(int argc, const char **argv, const char **envp) {
                 case 14:
                     v4 = LangsetLoop__Fv();
                     if (v4 != 0) {
+#ifdef PAL
+                        MapNo = -1;
+                        mode = 10;
+#else
                         MapNo = 801;
                         mode = 1;
+#endif
                     }
                     break;
                 case 0:
@@ -854,9 +879,16 @@ int main(int argc, const char **argv, const char **envp) {
             GamePad.Step();
             MGEndFrame__Fv();
 
+#ifdef PAL
+            if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0 &&
+                GamePad.Down2(0x400) != 0) {
+                DebugMode = !DebugMode;
+            }
+#else
             if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0) {
                 GamePad.On2(1);
             }
+#endif
         } while (v4 == 0);
 
         MGBeginFrame__Fv();
@@ -928,11 +960,14 @@ int main(int argc, const char **argv, const char **envp) {
         }
     }
 }
-#endif
 
 static int edit_map;
 static int sub_map;
 static int event_no;
+
+#ifdef PAL
+#pragma name_counter 1145
+#endif
 
 /* The game's top-level modes and the transitions between them: map jumps, the
  * menu, the save and memory-card screens, the trial ending. */
@@ -942,20 +977,14 @@ void MapJump(int map_no, int event_no) {
     StartEventNo = event_no;
 }
 
-#ifdef PAL
-void MenuInit();
-INCLUDE_ASM("asm/pal/nonmatchings/main", MenuInit__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @883);
-INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$882);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @884);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @887);
-#pragma name_counter 1151
-#else
 void MenuInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4"},
                                            {"img/ankfont.img"},
                                            {gamemode_empty_string}};
     float background;
+#ifdef PAL
+    float zero;
+#endif
     int result;
     InitializeDataBuffer();
     SetDataBuffer(&TextureData, 100000);
@@ -963,16 +992,21 @@ void MenuInit() {
     TexManager.Initialize(16352);
     result = TexManager.EnterTextureFile(texdata);
     result = TexManager.LoadTextureBlock(-1, read_buffer);
+#ifdef PAL
+    zero = 0.0f;
+    background = 128.0f;
+    MGSetBGColor(zero, zero, background, background);
+#else
     MGSetBGColor(0.0f, 0.0f, background = 128.0f, background);
+#endif
     DebugFont.texture = "frame_buff";
     DebugFont.x = 16;
     DebugFont.y = 16;
     DebugFont.w = 256;
-    DebugFont.h = 224;
+    DebugFont.h = SCREEN_HALF_HEIGHT;
     DebugFont.alpha = 64;
     GamePad.SetAutoRepeat(61440, 25, 3);
 }
-#endif
 
 /**
  * Draws and operates the developer's top-level map and mode selector.
@@ -1191,25 +1225,26 @@ static int check_cancel;
 static int taiken_cnt;
 static int taiken_start;
 
-#ifdef PAL
-void MemCheckInit();
-INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckInit__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @1020);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @1021);
-INCLUDE_DATA("asm/pal/nonmatchings/main", @1009);
-INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$1013);
-INCLUDE_DATA("asm/pal/nonmatchings/main", init$1014);
-#pragma name_counter 1277
-#else
 void MemCheckInit() {
+#ifndef PAL
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" HALF_FRAME_HEIGHT_TEXT "#4"},
                                            {"img_1/memory.img"},
                                            {gamemode_empty_string}};
+#endif
     int result;
     InitializeDataBuffer();
     SetDataBuffer(&TextureData, 100000);
     SetPacketReadBuffer(10000, 100000);
+#ifdef PAL
+    char name[64] = "img/memory.img";
+    if (LanguageCode > 0 && LanguageCode < 7) {
+        sprintf(name, "img_%d/memory.img", LanguageCode);
+    }
+#endif
     TexManager.Initialize(16352);
+#ifdef PAL
+    static LOADTEXTURE_INFO texdata[64] = {{name}, {gamemode_empty_string}};
+#endif
     result = TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -1220,15 +1255,7 @@ void MemCheckInit() {
     taiken_cnt = 0;
     taiken_start = 0;
 }
-#endif
 
-#ifdef PAL
-int MemCheckLoop();
-INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckLoop__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @1075);
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @1076);
-#pragma name_counter 1304
-#else
 int MemCheckLoop() {
     DebugFont.len = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
@@ -1250,12 +1277,23 @@ int MemCheckLoop() {
         case 1:
             break;
         case 2: {
+#ifdef PAL
+            CRect_i_ screen;
+#endif
             CRect_i_ rect;
             rect.x = 0;
             rect.y = 0;
             rect.width = 640;
             rect.height = 448;
+#ifdef PAL
+            screen.x = 0;
+            screen.y = 0;
+            screen.width = 640;
+            screen.height = 480;
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory01", -1), screen, rect);
+#else
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory01", -1), rect, 0, 0);
+#endif
             if (GamePad.Down(32)) {
                 mem_chk_mode = 0;
                 check_cancel = 3;
@@ -1265,12 +1303,23 @@ int MemCheckLoop() {
             break;
         }
         case 3: {
+#ifdef PAL
+            CRect_i_ screen;
+#endif
             CRect_i_ rect;
             rect.x = 0;
             rect.y = 0;
             rect.width = 640;
             rect.height = 448;
+#ifdef PAL
+            screen.x = 0;
+            screen.y = 0;
+            screen.width = 640;
+            screen.height = 480;
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory02", -1), screen, rect);
+#else
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory02", -1), rect, 0, 0);
+#endif
             if (GamePad.Down(32)) {
                 mem_chk_mode = 0;
                 check_cancel = 3;
@@ -1287,7 +1336,6 @@ int MemCheckLoop() {
         check_cancel = 0;
     return 0;
 }
-#endif
 
 void InitSave() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" FRAME_HEIGHT_TEXT "#4", 1},

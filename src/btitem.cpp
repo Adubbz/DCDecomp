@@ -248,14 +248,6 @@ void BtGetTreasureboxBig_Init() {
  * @address 0x1D1810
  * @size 0x7A8
  */
-#ifdef PAL
-int BtGetTreasureboxBig_Loop();
-INCLUDE_ASM("asm/pal/nonmatchings/btitem", BtGetTreasureboxBig_Loop__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @750);
-INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @757);
-INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @758);
-#pragma name_counter 150
-#else
 int BtGetTreasureboxBig_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR item_position;
@@ -332,6 +324,12 @@ int BtGetTreasureboxBig_Loop() {
         case 2: {
             CCameraFollow *camera = NowCamera__3;
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
+#ifdef PAL
+            float chara_time = CharaMain.GetNowTime();
+            if (chara_time >= 79.0f && chara_time <= 80.0f) {
+                BtActStatus.unk_00C = 0x2D;
+            }
+#endif
             float time = itemOpenBigFx.motion.state.time;
             if (!(time <= 14.0f) && time < 15.0f) {
                 SndSePlay(0xCE, -1, 0);
@@ -398,7 +396,6 @@ int BtGetTreasureboxBig_Loop() {
     }
     return done;
 }
-#endif
 
 /**
  * Opens the small treasure chest and starts its presentation.
@@ -501,11 +498,6 @@ void BtGetTreasureboxSmall_Init(int chance) {
  * @address 0x1D2460
  * @size 0x690
  */
-#ifdef PAL
-int BtGetTreasureboxSmall_Loop();
-INCLUDE_ASM("asm/pal/nonmatchings/btitem", BtGetTreasureboxSmall_Loop__Fv);
-#pragma name_counter 209
-#else
 int BtGetTreasureboxSmall_Loop() {
     int done = 0;
 
@@ -557,6 +549,12 @@ int BtGetTreasureboxSmall_Loop() {
         }
         case 2: {
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
+#ifdef PAL
+            float chara_time = CharaMain.GetNowTime();
+            if (chara_time >= 79.0f && chara_time <= 80.0f) {
+                BtActStatus.unk_00C = 0x2B;
+            }
+#endif
             float time = itemOpenSmallFx.motion.state.time;
             if (!(time <= 19.0f) && time < 20.4f) {
                 SndSePlay(0xCF, -1, 0);
@@ -635,7 +633,6 @@ int BtGetTreasureboxSmall_Loop() {
     }
     return done;
 }
-#endif
 
 /**
  * Starts the short presentation for picking up an Atla.
@@ -682,12 +679,6 @@ INCLUDE_RODATA("asm/ntsc/nonmatchings/btitem", @866__2);
  * @address 0x1D2C70
  * @size 0x61C
  */
-#ifdef PAL
-int BtAtraGetShort_Loop(int map_no, int floor);
-INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @911);
-INCLUDE_ASM("asm/pal/nonmatchings/btitem", BtAtraGetShort_Loop__Fii);
-#pragma name_counter 244
-#else
 int BtAtraGetShort_Loop(int map_no, int floor) {
     sceVu0FVECTOR position;
     int done = -1;
@@ -733,6 +724,12 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             autoCamTrial();
             break;
         case 1: {
+#ifdef PAL
+            float chara_time = CharaMain.GetNowTime();
+            if (chara_time >= 129.0f && chara_time <= 130.0f) {
+                BtActStatus.unk_00C = 0x2F;
+            }
+#endif
             if (atraGetStatusRate__2 < 256.0f) {
                 atraGetStatusRate__2 += 2.0f;
             }
@@ -794,7 +791,6 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
     }
     return done;
 }
-#endif
 
 /**
  * Opens the small character-select window in the given selection mode.

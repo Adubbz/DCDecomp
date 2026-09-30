@@ -91,8 +91,17 @@ static void copy_data_head(DATA_HEADER *head, DATA_HEADER_READ *read) {
 #endif
 
 #ifdef PAL
-static DATA_HEADER *SearchFile(char *name);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", SearchFile__FPc);
+static DATA_HEADER *SearchFile(char *name) {
+    DATA_HEADER_READ *rec = (DATA_HEADER_READ *) header_buff;
+
+    for (int i = 0; i < header_num; i++, rec++) {
+        if (strcasecmp((char *) rec->name, name) == 0) {
+            return (DATA_HEADER *) rec;
+        }
+    }
+    return NULL;
+}
+
 #pragma name_counter 295
 #else
 static DATA_HEADER *SearchFile(char *name) {
@@ -383,18 +392,14 @@ static char *create_word_tree(char *head, int size, char *buff) {
 
 /* The drive is asked for the data file itself only to learn where it starts; everything after this
    is read by sector from that base, which is why no path but the index's is ever opened. */
-#ifdef PAL
-void InitCDFile();
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", InitCDFile__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @397);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @398);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @399);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @400);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @401);
-#pragma name_counter 460
-#else
 void InitCDFile() {
+#ifdef PAL
+    DATA_HEADER_READ *rec;
+    int i;
+    char *p;
+#else
     char buff[307200];
+#endif
     sceCdlFILE file;
     int fd;
     int size;
@@ -413,15 +418,35 @@ void InitCDFile() {
         printf("File open error \"\"\n \n \n");
         /* The file and line the original's assertion carries are spelled out: a reconstruction
            whose lines fall elsewhere cannot reach them through __FILE__ and __LINE__. */
+#ifdef PAL
+        __assert("etc.cpp", 565, "FALSE");
+#else
         __assert("etc.cpp", 556, "FALSE");
+#endif
     }
     size = sceLseek(fd, 0, SCE_SEEK_END);
     sceLseek(fd, 0, SCE_SEEK_SET);
+#ifdef PAL
+    sceRead(fd, header_buff, size);
+    sceClose(fd);
+    rec = (DATA_HEADER_READ *) header_buff;
+    header_num = (u_int) rec->name >> 5;
+    for (i = 0; i < header_num; i++) {
+        rec[i].name += (int) header_buff;
+        p = (char *) rec[i].name;
+        while (*p) {
+            if (*p == '\\') {
+                *p = '/';
+            }
+            p++;
+        }
+    }
+#else
     sceRead(fd, buff, size);
     sceClose(fd);
     create_word_tree(buff, sizeof header_buff, (char *) header_buff);
-}
 #endif
+}
 
 void InitMemoryFile() {
 }

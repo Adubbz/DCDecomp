@@ -284,6 +284,13 @@ void EdDSetFont(CDebugFont *font);
  * @size 0xB0
  */
 void EdDDrawFont();
+#ifdef PAL
+class CMainChara;
+extern int EdDebugRunEventNo;
+void EdDPrintChara(CMainChara *chara);
+void EdDPrintCamera(CCamera *camera);
+void EdDebugMenu();
+#endif
 
 /**
  * Updates the editor debug overlay and free-movement controls.

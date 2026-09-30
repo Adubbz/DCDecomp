@@ -2358,10 +2358,6 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
     }
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/clsmes", DrawGaijiFont__6ClsMesFP8CTextureiRC8CRect_i_RC8CRect_i_ii);
-#pragma name_counter 2233
-#else
 void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
                            const CRect_i_ &screen, int wide, int dark) {
     u8 r;
@@ -2478,6 +2474,74 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
     set2DSprite_Core(Vif1Packet, texture, screen, texel, r, g, b,
                      this->edge_alpha < alpha ? this->edge_alpha : alpha);
 
+#ifdef PAL
+    switch (this->win_line[no].code) {
+        case -0x284:
+        case -0x280:
+        case -0x27F:
+        case -0x27A:
+        case -0x275:
+        case -0x271:
+        case -0x26C:
+        case -0x268:
+        case -0x25E:
+        case -0x258:
+            u = 0xE2;
+            v = 0xB4;
+            break;
+
+        case -0x282:
+        case -0x27D:
+        case -0x278:
+        case -0x274:
+        case -0x26F:
+        case -0x26B:
+        case -0x260:
+        case -0x25C:
+        case -0x25A:
+        case -0x256:
+            u = 0xF0;
+            v = 0xB4;
+            break;
+
+        case -0x281:
+        case -0x27C:
+        case -0x277:
+        case -0x273:
+        case -0x26E:
+        case -0x26A:
+        case -0x267:
+        case -0x266:
+        case -0x264:
+        case -0x25D:
+            u = 0x80;
+            v = 0xC8;
+            break;
+
+        case -0x27B:
+        case -0x276:
+        case -0x272:
+        case -0x26D:
+        case -0x269:
+        case -0x25F:
+        case -0x25B:
+        case -0x259:
+        case -0x257:
+        case -0x255:
+            u = 0x9C;
+            v = 0xC8;
+            break;
+
+        case -0x270:
+        case -0x254:
+            u = 0x8E;
+            v = 0xC8;
+            break;
+
+        default:
+            return;
+    }
+#else
     switch (this->win_line[no].code) {
         case -0x284:
         case -0x280:
@@ -2536,6 +2600,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
         default:
             return;
     }
+#endif
 
     if (this->narrow_gaiji_set != 1) {
         if (this->narrow_gaiji_set == 2) {
@@ -2545,20 +2610,14 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
         }
     }
 
+#ifdef PAL
+    this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen.x, screen.y, screen.width, screen.height, u, v, 14,
+                              20);
+#endif
     set2DSprite_Core(Vif1Packet, texture, screen, CRect_i_(u, v, 14, 20), r, g, b,
                      this->edge_alpha < alpha ? this->edge_alpha : alpha);
 }
-#endif
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/clsmes", DrawMesWin__6ClsMesFv);
-INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2106);
-INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2107);
-INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2108);
-INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2109);
-INCLUDE_DATA("asm/pal/nonmatchings/clsmes", @1971);
-#pragma name_counter 2405
-#else
 void ClsMes::DrawMesWin(void) {
     CTexture *texture;
     int ox;
@@ -2671,14 +2730,22 @@ void ClsMes::DrawMesWin(void) {
 
         int code = this->win_line[no].code;
 
+#ifdef PAL
+        if (code < -0x300 || code >= -0x251) {
+#else
         if (code < -0x300 || code >= -0x263) {
+#endif
             continue;
         }
 
         int k = code + 0x300;
         int u = GaijiDataTbl[k][GAIJI_U];
 
+#ifdef PAL
+        if (code >= -0x2DF && code < -0x251) {
+#else
         if (code >= -0x2DF && code < -0x263) {
+#endif
             if (this->narrow_gaiji_set != 1) {
                 if (this->narrow_gaiji_set == 2) {
                     u += 0x80;
@@ -2811,12 +2878,20 @@ void ClsMes::DrawMesWin(void) {
         texture = TexManager.GetTexture("gaiji", -1);
 
         int sx = this->text_x;
+#ifdef PAL
+        sx -= 0xC;
+        sx -= this->char_width * 2;
+#endif
 
         this->cursor_y = (this->cursor_y + this->char_height * this->cursor_row) / 2;
 
         int sy = this->cursor_y + this->text_y;
 
+#ifdef PAL
+        CRect_i_ screen(sx + ox, sy - 4 + oy, 0x20, 0x20);
+#else
         CRect_i_ screen(sx - 0xC + ox, sy - 4 + oy, 0x20, 0x20);
+#endif
         CRect_i_ texel(0x60, 0x60, 0x20, 0x20);
 
         if (MesAbsDrawOff == 0) {
@@ -2827,4 +2902,3 @@ void ClsMes::DrawMesWin(void) {
         this->cursor_y = 0;
     }
 }
-#endif

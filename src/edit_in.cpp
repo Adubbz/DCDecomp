@@ -525,19 +525,6 @@ int EditInInit(float time, char *name) {
  * @address 0x19C2B0
  * @size 0x1014
  */
-#ifdef PAL
-int EditInLoop();
-INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @892__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @897__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @898);
-INCLUDE_ASM("asm/pal/nonmatchings/edit_in", EditInLoop__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", event_text$604);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$605);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", old_mode$633);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", end_count$644);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$645);
-#pragma name_counter 411
-#else
 int EditInLoop() {
     sceVu0FMATRIX view;
     sceVu0FVECTOR position;
@@ -830,9 +817,19 @@ int EditInLoop() {
     }
     goto_return_menu = 0;
     static int end_count = 0;
+#ifdef PAL
+    if (GamePad.AllOn() != 0 || DebugMode) {
+        key_counter = 0;
+    }
+    if (DebugMode && GamePad.On(0x100) && GamePad.On(0x800) && end_count == 0) {
+        end_count = 100;
+        EdFadeOut(64, 0.0f, 0.0f, 0.0f);
+    }
+#else
     if (GamePad.AllOn() != 0) {
         key_counter = 0;
     }
+#endif
     if (end_count == 1) {
         end_count = 0;
         MapJump(800, -1);
@@ -847,7 +844,6 @@ int EditInLoop() {
     SndStep();
     return 0;
 }
-#endif
 
 /**
  * Draws the interior for one frame.
@@ -857,19 +853,6 @@ int EditInLoop() {
  * @size 0x6AC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-#ifdef PAL
-static void MainDraw();
-INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MainDraw__Fv__2);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @915);
-INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @1088);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @937);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @992);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_flag$970);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$971);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_menu_mode$973);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$974);
-#pragma name_counter 491
-#else
 static void MainDraw() {
     sceVu0FVECTOR position;
     int i;
@@ -902,7 +885,7 @@ static void MainDraw() {
     screen.x = 0;
     screen.y = 0;
     screen.width = 0x280;
-    screen.height = 0xE0;
+    screen.height = SCREEN_HALF_HEIGHT;
     water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&frame, screen, &water, 0, 0, 0);
     sceVu0FVECTOR ref;
@@ -983,6 +966,35 @@ static void MainDraw() {
     EdSystemMesDraw();
     static int debug_flag = 0;
     static int debug_menu_mode = 0;
+#ifdef PAL
+    if (DebugMode) {
+        if (GamePad.Down(0x200)) {
+            debug_flag = !debug_flag;
+        }
+        if (debug_menu_mode) {
+            GamePad.KeyLock(0);
+            EdDebugMenu();
+            if (GamePad.Down(0x400) || EdDebugRunEventNo > 0) {
+                debug_menu_mode = 0;
+                GamePad.AutoRepeatOff();
+                RunEvent(EdDebugRunEventNo, NowCamera);
+            } else {
+                GamePad.KeyLock(1);
+            }
+        } else {
+            if (GameMode != 4 && GamePad.Down(0x400)) {
+                GamePad.SetAutoRepeat(0xF000, 25, 3);
+                GamePad.SetAutoRepeat(12, 25, 3);
+                debug_menu_mode = 1;
+                debug_flag = 0;
+            }
+            EdDDebug(debug_flag);
+            EdDPrintChara((CMainChara *) Chara);
+            EdDPrintCamera(NowCamera);
+            EdDDrawFont();
+        }
+    }
+#endif
     if (EdDebugParamDrawOff == 0) {
         char pause_texture[] = "pause";
         if (GameMode == 5 || EdPauseFlag != 0) {
@@ -991,7 +1003,11 @@ static void MainDraw() {
             fade.x = 0;
             fade.y = 0;
             fade.width = 0x2800;
+#ifdef PAL
+            fade.height = 0xF00;
+#else
             fade.height = 0xE00;
+#endif
             MGFillBox(fade, 0, 0, 0, 0x40);
             setbilinear(0);
             CRect_i_ place;
@@ -1001,7 +1017,11 @@ static void MainDraw() {
             texel.width = 0x80;
             texel.height = 0x28;
             place.x = 0x100;
+#ifdef PAL
+            place.y = 0xDC;
+#else
             place.y = 0xCC;
+#endif
             place.width = 0x80;
             place.height = 0x28;
             sceVif1Packet *packet = GetVif1Packet();
@@ -1010,7 +1030,6 @@ static void MainDraw() {
     }
     EdFadeInOut();
 }
-#endif
 
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
@@ -1101,14 +1120,6 @@ static void StepWater() {
  * @address 0x19DCF0
  * @size 0x38C
  */
-#ifdef PAL
-static void MoveCharacter();
-INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MoveCharacter__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @1147);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @1148);
-INCLUDE_DATA("asm/pal/nonmatchings/edit_in", fix_pos$1129);
-#pragma name_counter 561
-#else
 static void MoveCharacter() {
     sceVu0FVECTOR follow;
     static sceVu0FVECTOR fix_pos;
@@ -1151,8 +1162,13 @@ static void MoveCharacter() {
         sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
         Chara->GetPosition(position);
         Chara->GetRotation(rotation);
+#ifdef PAL
+        EPARTS_FUNC_DATA *jump = NULL;
+        if ((DebugMode && GamePad.Down(0x100)) || (jump = SearchMapJump(position, rotation))) {
+#else
         EPARTS_FUNC_DATA *jump;
         if (jump = SearchMapJump(position, rotation)) {
+#endif
             int motion;
 
             EdMoveCharaInit();
@@ -1173,7 +1189,6 @@ static void MoveCharacter() {
         }
     }
 }
-#endif
 
 /**
  * Applies the right stick to the interior camera, holding its height and distance in

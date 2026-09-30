@@ -14,6 +14,7 @@
 #include "itemdata.hpp"
 #ifdef PAL
 #include "mainselect.hpp"
+#include "userstatus.hpp"
 #endif
 #include "mglib.hpp"
 #include "rect.hpp"
@@ -604,13 +605,57 @@ int DebugInfomationIF(void) {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/collisiondata", StartMessageDraw__FP8CTextureiiii);
-INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_us);
-INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_fr);
-INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_gr);
-INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_it);
-INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_sp);
-INCLUDE_DATA("asm/pal/nonmatchings/collisiondata", center_ptr);
+int center_us[7] = {0xCE, 0x125, 0x101, 0x100, 0x87, 0x57, 0x101};
+int center_fr[7] = {0xCD, 0x113, 0xF8, 0xF8, 0xB2, 0x59, 0xFF};
+int center_gr[7] = {0xFE, 0x103, 0x13D, 0xFD, 0x78, 0x38, 0xFF};
+int center_it[7] = {0xCC, 0x129, 0xF3, 0xFF, 0xFA, 0x75, 0xF9};
+int center_sp[7] = {0xCE, 0x12C, 0xF2, 0xFA, 0x7C, 0xBA, 0xFA};
+int *center_ptr[7] = {center_sp, center_us, center_us, center_fr, center_gr, center_it, center_sp};
+
+void StartMessageDraw(CTexture *texture, int map, int floor, int ura, int alpha) {
+    int *centers = center_ptr[LanguageCode];
+    int x = centers[map] + 0x82;
+    int digit_x;
+
+    set2DSprite(Vif1Packet, texture, CRect_i_(0x82, 0xAA, 0x17C, 0x32), CRect_i_(0, 0, 0x17C, 0x32), alpha);
+    floor++;
+    if (map == 5) {
+        floor = BtGetFloorLevel(floor - 1);
+    }
+    if (floor < 10) {
+        x -= 0x13;
+        digit_x = floor % 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+    }
+    if (floor >= 10 && floor < 100) {
+        x -= 0x26;
+        digit_x = floor / 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        digit_x = floor % 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x26, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
+                    alpha);
+    }
+    if (floor >= 100) {
+        int digit = floor / 100;
+
+        digit_x = digit * 0x26;
+        floor -= digit * 100;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x39, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
+                    alpha);
+        digit_x = floor / 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x13, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
+                    alpha);
+        digit_x = floor % 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x13, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
+                    alpha);
+    }
+    if (ura) {
+        set2DSprite(Vif1Packet, texture, CRect_i_(0x10E, 0xE6, 0x64, 0x32), CRect_i_(0x114, 0x7C, 0x64, 0x32), alpha);
+    } else if (UserStatus->res_limit_zone_current >= 0) {
+        set2DSprite(Vif1Packet, texture, CRect_i_(0xC8, 0xE6, 0xF0, 0x32), CRect_i_(0, 0x7C, 0xF0, 0x32), alpha);
+    }
+}
+
 #pragma name_counter 357
 #endif
 

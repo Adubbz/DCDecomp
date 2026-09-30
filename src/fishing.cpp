@@ -17,6 +17,9 @@
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #include "savedata.hpp"
 #include "snd.hpp"
 #include "texture.hpp"
@@ -107,16 +110,18 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
     SndSPSeLoad(0x2F);
 }
 
-#ifdef PAL
-void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
-INCLUDE_ASM("asm/pal/nonmatchings/fishing", FishingLoadFish__FiP14CDataAlloc2_1_i);
-INCLUDE_RODATA("asm/pal/nonmatchings/fishing", @436);
-INCLUDE_DATA("asm/pal/nonmatchings/fishing", fish_type$369);
-#pragma name_counter 134
-#else
 void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     int interval;
     int loaded;
+#ifdef PAL
+    static int fish_type[5][8] = {
+        {1, 2, 6, 7, 1, 2, 6, 7},
+        {1, 4, 9, 10, 1, 4, 9, 10},
+        {2, 4, 6, 5, 17, 2, 4, 6},
+        {0, 3, 11, 12, 13, 0, 3, 11},
+        {14, 15, 16, 5, 17, 0, 0, 0},
+    };
+#endif
 
     draw_under_water = 1;
     if (spot == 3) {
@@ -131,6 +136,11 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     if (spot == 4) {
         FishNum = 4;
     }
+#ifdef PAL
+    if (DebugMode) {
+        FishNum = 5;
+    }
+#endif
     interval = 30;
     switch (EdGetTime(SaveData->GetNowTime())) {
         case 0:
@@ -235,11 +245,15 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
                 }
                 break;
         }
+#ifdef PAL
+        if (DebugMode) {
+            kind = fish_type[spot][i % 5];
+        }
+#endif
         LoadFish(&Fish[i], kind, slot, alloc, loaded);
         loaded = 1;
     }
 }
-#endif
 
 CFish::CFish() {
     Initialize();
@@ -485,11 +499,6 @@ void FishingDeleteAngleFish() {
     }
 }
 
-#ifdef PAL
-void FishingStepFish();
-INCLUDE_ASM("asm/pal/nonmatchings/fishing", FishingStepFish__Fv);
-#pragma name_counter 291
-#else
 void FishingStepFish() {
     sceVu0FVECTOR hook;
 
@@ -508,12 +517,16 @@ void FishingStepFish() {
             Fish[i].SetFoodPos(-1, hook, radius);
         } else {
             float radius = esa_info[esa_type].radius;
+#ifdef PAL
+            if (DebugMode) {
+                radius = 100000000;
+            }
+#endif
             Fish[i].SetFoodPos(esa_type, hook, radius);
         }
         Fish[i].Step();
     }
 }
-#endif
 
 void FishingDrawFish() {
     if (Fish == NULL) {
