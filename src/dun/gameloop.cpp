@@ -2,35 +2,33 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 885
 #ifdef PAL
-#pragma argument_flag_free 1125, 1126, 1127, 1128, 1129, 1130, 1131, 1132, 1133, 1134
-#pragma argument_flag_free 1135, 1136, 1137, 1138, 1139, 1140, 1141, 1142, 1143, 1144
-#pragma argument_flag_free 1145, 1146, 1147, 1148, 1149, 1150, 1151, 1152, 1153, 1154
-#pragma argument_flag_free 1155, 1156, 1157, 1158, 1159, 1160, 1161, 1162, 1163, 1164
-#pragma argument_flag_free 1165, 1166, 1167, 1168, 1169, 1170, 1171, 1172, 1173, 1174
-#pragma argument_flag_free 1175, 1176, 1177, 1178, 1179, 1180, 1181, 1182, 1183, 1184
-#pragma argument_flag_free 1185, 1186, 1187, 1188, 1189, 1190, 1191, 1192, 1193, 1194
-#pragma argument_flag_free 1195, 1196, 1197, 1198, 1199, 1200, 1201, 1202, 1203, 1204
-#pragma argument_flag_free 1205, 1206, 1207, 1208, 1209, 1210, 1211, 1212, 1213, 1214
-#pragma argument_flag_free 1215, 1216, 1217, 1218, 1219, 1220, 1221, 1222, 1223, 1224
-#pragma argument_flag_free 1225, 1226, 1227, 1228, 1229, 1230, 1231, 1232
-#pragma argument_flag_free 1233
-#pragma argument_flag_free 1234, 1235, 1236, 1237, 1238, 1239, 1240, 1241, 1242, 1243
-#pragma argument_flag_free 1244, 1245, 1246, 1247, 1248, 1249, 1250, 1251, 1252, 1253
-#pragma argument_flag_free 1254, 1255, 1256, 1257, 1258, 1259, 1260, 1261, 1262, 1263
-#pragma argument_flag_free 1264, 1265, 1266, 1267, 1268, 1269, 1270, 1271, 1272, 1273
-#pragma argument_flag_free 1274, 1275, 1276, 1277, 1278, 1279, 1280, 1281, 1282, 1283
-#pragma argument_flag_free 1284, 1285, 1286, 1287, 1288, 1289, 1290, 1291, 1292, 1293
-#pragma argument_flag_free 1294, 1295, 1296, 1297, 1298, 1299, 1300, 1301, 1302, 1303
-#pragma argument_flag_free 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312, 1313
-#pragma argument_flag_free 1314, 1315, 1316, 1317, 1318, 1319, 1320, 1321, 1322, 1323
-#pragma argument_flag_free 1324
-#pragma argument_flag_ones 131, 403, 445
-#pragma argument_flag_ones 617, 715, 1000, 1028, 1209
-#pragma argument_flag_ones 1210, 1212, 1213
-#pragma argument_flag_ones 1370, 1381, 1389, 1409, 1412, 1447, 1454, 1469, 1472, 1497
-#pragma argument_flag_ones 1525, 1532, 1546, 1565, 1577, 1581, 1582, 1652, 1658, 1667
-#pragma argument_flag_ones 1679, 1705, 1727, 1734, 1741, 2013, 2014, 2015, 2058, 2061
-#pragma argument_flag_ones 2122, 2123, 2125
+#pragma argument_flag_free 1340, 1341, 1342, 1343, 1344, 1345, 1346, 1347, 1348, 1349
+#pragma argument_flag_free 1350, 1351, 1352, 1353, 1354, 1355, 1356, 1357, 1358, 1359
+#pragma argument_flag_free 1360, 1361, 1362, 1363, 1364, 1365, 1366, 1367, 1368, 1369
+#pragma argument_flag_free 1370, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379
+#pragma argument_flag_free 1380, 1381, 1382, 1383, 1384, 1385, 1386, 1387, 1388, 1389
+#pragma argument_flag_free 1390, 1391, 1392, 1393, 1394, 1395, 1396, 1397, 1398, 1399
+#pragma argument_flag_free 1400, 1401, 1402, 1403, 1404, 1405, 1406, 1407, 1408, 1409
+#pragma argument_flag_free 1410, 1411, 1412, 1413, 1414, 1415, 1416, 1417, 1418, 1419
+#pragma argument_flag_free 1420, 1421, 1422, 1423, 1424, 1425, 1426, 1427, 1428, 1429
+#pragma argument_flag_free 1430, 1431, 1432, 1433, 1434, 1435, 1436, 1437, 1438, 1439
+#pragma argument_flag_free 1440, 1441, 1442, 1443, 1444, 1445, 1446, 1447
+#pragma argument_flag_free 1448
+#pragma argument_flag_free 1449, 1450, 1451, 1452, 1453, 1454, 1455, 1456, 1457, 1458
+#pragma argument_flag_free 1459, 1460, 1461, 1462, 1463, 1464, 1465, 1466, 1467, 1468
+#pragma argument_flag_free 1469, 1470, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478
+#pragma argument_flag_free 1479, 1480, 1481, 1482, 1483, 1484, 1485, 1486, 1487, 1488
+#pragma argument_flag_free 1489, 1490, 1491, 1492, 1493, 1494, 1495, 1496, 1497, 1498
+#pragma argument_flag_free 1499, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508
+#pragma argument_flag_free 1509, 1510, 1511, 1512, 1513, 1514, 1515, 1516, 1517, 1518
+#pragma argument_flag_free 1519, 1520, 1521, 1522, 1523, 1524, 1525, 1526, 1527, 1528
+#pragma argument_flag_free 1529, 1530, 1531, 1532, 1533, 1534, 1535, 1536, 1537, 1538
+#pragma argument_flag_free 1539
+#pragma argument_flag_ones 131, 403, 445, 520, 523, 530, 606, 803, 825, 930
+#pragma argument_flag_ones 1215, 1243, 1424, 1425, 1427, 1428, 1585, 1596, 1604, 1624
+#pragma argument_flag_ones 1627, 1662, 1669, 1684, 1687, 1712, 1740, 1747, 1761, 1780
+#pragma argument_flag_ones 1792, 1796, 1797, 1867, 1873, 1882, 1894, 1920, 1942, 1949
+#pragma argument_flag_ones 1956, 2228, 2229, 2230, 2273, 2276, 2337, 2338, 2340
 #pragma argument_flag 0
 #else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
@@ -5710,20 +5708,6 @@ void MoveChara(void) {
 }
 #endif
 
-#ifdef PAL
-void motionDrive(void);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", motionDrive__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4638);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4639);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4641);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", y$4252);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4253);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", warning_cnt$4305);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4306);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", heal_counter$4377);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4378);
-#pragma name_counter 3165
-#else
 void motionDrive(void) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR rotation;
@@ -6208,7 +6192,6 @@ void motionDrive(void) {
     NowShotData->step();
     HealEffect.Step();
 }
-#endif
 
 void BtCleatRandomMap(void) {
     CTexture *gold;
@@ -6446,12 +6429,6 @@ void EquipReAttach(CCharacter *equipment, int held_out) {
     equipment->frame->SetReference(hand);
 }
 
-#ifdef PAL
-void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", EquipWeaponFrame__FP10CCharacterii);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4805);
-#pragma name_counter 3365
-#else
 void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CFrame *hand;
     int i;
@@ -6489,7 +6466,6 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
     SetWeaponColor();
 }
-#endif
 
 void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
                  int chara, int reload) {
