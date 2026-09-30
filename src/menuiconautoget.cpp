@@ -15,6 +15,7 @@ int CMenuIconAutoGet::IsMoveIcon() {
             moving = 1;
         }
     }
+
     return moving;
 }
 
@@ -26,6 +27,7 @@ int CMenuIconAutoGet::IsSameItem(int item) {
             found++;
         }
     }
+
     return found;
 }
 
@@ -37,6 +39,7 @@ int CMenuIconAutoGet::GetMoveIconGole(int slot, int item) {
             found++;
         }
     }
+
     return found;
 }
 
@@ -46,6 +49,7 @@ int CMenuIconAutoGet::GetSpace() {
             return i;
         }
     }
+
     return -1;
 }
 
@@ -61,8 +65,10 @@ int CMenuIconAutoGet::IconAutoMove() {
             moving = 1;
             icon[i].x += (destination_x[icon[i].slot] - icon[i].x) / 4.0f;
             icon[i].y += (105.0f - icon[i].y) / 4.0f;
+
             if (icon[i].x - destination_x[icon[i].slot] < 4.0f) {
                 int slot = icon[i].slot;
+
                 if (pack->quick_item_slot[slot] <= 0) {
                     pack->quick_item_slot[slot] = icon[i].item;
                     pack->quick_item_qty[slot] = 1;
@@ -70,10 +76,12 @@ int CMenuIconAutoGet::IconAutoMove() {
                 } else {
                     pack->quick_item_qty[slot]++;
                 }
+
                 memset(&icon[i], -1, sizeof(icon[i]));
             }
         }
     }
+
     return moving;
 }
 

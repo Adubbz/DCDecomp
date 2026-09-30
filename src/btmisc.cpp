@@ -47,6 +47,7 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) 
         printf("Model NotFound!!%s\n", name);
         exit__2(-1);
     }
+
     return (CFrame *) LoadMDSFile(file, buffer, 0, NULL, NULL);
 }
 
@@ -58,6 +59,7 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
         printf("Model NotFound!!%s\n", name);
         exit__2(-1);
     }
+
     return (CFrame *) LoadCollisionFile(file, buffer);
 }
 
@@ -116,27 +118,34 @@ void makeWeaponName(char *name, int weapon_no) {
         if (weapon_no >= 0x12B && weapon_no < 0x13A) {
             chara_no = 1;
         }
+
         if (weapon_no >= 0x13A && weapon_no < 0x14B) {
             chara_no = 2;
         }
+
         if (weapon_no >= 0x14B && weapon_no < 0x15B) {
             chara_no = 3;
         }
+
         if (weapon_no >= 0x15B && weapon_no < 0x16B) {
             chara_no = 4;
         }
+
         if (weapon_no >= 0x16B) {
             chara_no = 5;
         }
     }
+
     strcpy(name, "dun/item/main_wep/");
     strcat(name, prefix[chara_no]);
     int offset = weapon_no - first_weapon[chara_no];
+
     if (offset < 10) {
         sprintf(number, "0%d", offset);
     } else {
         sprintf(number, "%2d", offset);
     }
+
     strcat(name, number);
 }
 
@@ -150,15 +159,18 @@ void makeWeaponName(char *name, int weapon_no) {
 
 void BtGetItemNamePath(char *model_path, char *texture_path, int item_no) {
     item_no = TransWepNo(item_no);
+
     if (item_no >= 0x101) {
         makeWeaponName(model_path, item_no);
     } else {
         if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
             item_no = 0x91;
         }
+
         strcpy(model_path, "dun/item/main_data/");
         strcat(model_path, ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START]);
     }
+
     strcpy(texture_path, model_path);
     strcat(model_path, MdsExtension);
     strcat(texture_path, ".img");
@@ -183,11 +195,13 @@ void BtGetWeaponNamePath2(char *chr_name, char *cfg_name, int chara, int weapon_
 
     strcpy(nameWepBuff_mds, base);
     strcpy(nameWepBuff_img, base);
+
     if (weapon_index < 10) {
         sprintf(number, "0%d", weapon_index);
     } else {
         sprintf(number, "%2d", weapon_index);
     }
+
     strcat(nameWepBuff_mds, number);
     strcat(nameWepBuff_mds, ".chr");
     strcat(nameWepBuff_img, number);
@@ -199,10 +213,12 @@ void BtGetWeaponNamePath2(char *chr_name, char *cfg_name, int chara, int weapon_
 void BtGetWeaponNamePath3(char *chr_name, char *cfg_name, int weapon_no) {
     WEAPON_DATA *weapon_data;
     int          chara_no;
+
     if (weapon_no <= 0x100) {
         weapon_data = NULL;
     } else {
         weapon_data = GetWeaponData(weapon_no);
+
         if (weapon_data != NULL) {
             chara_no = (s8) weapon_data->owner;
             weapon_no -= defWeapon__2[chara_no];
@@ -221,11 +237,13 @@ void BtGetWeaponNamePath3(char *chr_name, char *cfg_name, int weapon_no) {
  */
 void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor) {
     printf("GET ATRA [%d] !!\n", atra);
+
     if (atra < 0x28) {
         save->AtraPartsGet(dungeon, atra);
     } else {
         save->AtraChipGet(dungeon, atra - 0x28);
     }
+
     ((CDngStatusData *) UserStatus)->GetAtraData(dungeon, floor, atra_no);
 }
 
@@ -242,15 +260,19 @@ int createAttachVolume(int item_no, int dungeon) {
     if (item_no < 0x5B || item_no > 0x5E) {
         return 0;
     }
+
     int roll = (int) ((50.0f * (float) rand()) / 2.1474836e9f);
     roll += (int) ((50.0f * (float) rand()) / 2.1474836e9f);
     volume = 1;
+
     if (roll < 31) {
         volume = 2;
     }
+
     if (roll < 16) {
         volume = 3;
     }
+
     return volume;
 }
 
@@ -280,6 +302,7 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
         if (distance >= 110.0f) {
             if (BtBattleMusic_Wait == 0) {
                 BtBattleMusic_Vol -= 1.0f / 30.0f;
+
                 if (BtBattleMusic_Vol < 0.1f) {
                     BtBattleMusic_Flag = 0;
                     BtBattleMusic_Vol = 0.0f;
@@ -291,15 +314,19 @@ void BtBattleMusic_Excg(float distance, float *field_volume, float *battle_volum
             BtBattleMusic_Vol += 1.0f / 30.0f;
         }
     }
+
     if (BtBattleMusic_Flag == 0 && distance <= 100.0f) {
         BtBattleMusic_Flag = 1;
     }
+
     if (BtBattleMusic_Vol >= 0.9f) {
         BtBattleMusic_Vol = 0.9f;
     }
+
     if (BtBattleMusic_Vol <= 0.0f) {
         BtBattleMusic_Vol = 0.0f;
     }
+
     *field_volume = 1.0f - BtBattleMusic_Vol;
     *battle_volume = BtBattleMusic_Vol;
 }
@@ -314,5 +341,6 @@ int BtGetFloorLevel(int floor) {
     if (floor >= 0 && floor < 25) {
         return yearFloorTbl[floor];
     }
+
     return 0;
 }

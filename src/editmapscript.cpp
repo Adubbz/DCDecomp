@@ -484,26 +484,31 @@ void InitInfo() {
     memset(edit_info, 0, sizeof(EDIT_MAP_INFO));
 
     edit_info->work.obj_anime[0].property = -1;
+
     for (int i = 0; i < 128; i++) {
         edit_info->work.obj_anime[i].property = -1;
     }
 
     edit_info->work.effects.second[0].kind = 0;
+
     for (int i = 0; i < 64; i++) {
         edit_info->work.effects.second[i].kind = 0;
     }
 
     edit_info->work.effects.first[0].kind = 0;
+
     for (int i = 0; i < 64; i++) {
         edit_info->work.effects.first[i].kind = 0;
     }
 
     edit_info->work.object_timers.timers[0].name[0] = 0;
+
     for (int i = 0; i < 128; i++) {
         edit_info->work.object_timers.timers[i].name[0] = 0;
     }
 
     edit_info->work.events.points[0].event_type = 0;
+
     for (int i = 0; i < 256; i++) {
         edit_info->work.events.points[i].event_type = 0;
     }
@@ -527,18 +532,22 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
 
     edit_info = info;
     extension = name;
+
     while ((c = *extension) != '\0') {
         if (c == '.') {
             extension++;
             break;
         }
+
         extension++;
     }
+
     if (!LoadFile2(name, (void *) read_buffer, &file_size, 0)) {
         // No compiled script: read the text one beside it.
         extension[2] = 'g';
         LoadFile(name, (void *) read_buffer, &file_size);
     }
+
     script = (char *) read_buffer;
     cache = cache_buffer;
     light_no = 0;
@@ -586,6 +595,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
     edit_info->wind[1] = 0.0f;
     edit_info->wind[2] = 0.1f;
     edit_info->wind[3] = 0.4f;
+
     for (int i = 0; i < 16; i++) {
         edit_info->people_list[i] = -1;
     }
@@ -596,26 +606,34 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
         char *cursor;
 
         binary = 1;
+
         for (cursor = script; cursor - script < file_size;) {
             command = *(int *) cursor;
             cursor += sizeof(int);
+
             if (command < 0) {
                 break;
             }
+
             int count = 0;
+
             for (;;) {
                 int type = *(int *) cursor;
                 cursor += sizeof(int);
+
                 if (type < 0) {
                     break;
                 }
+
                 arguments[count++] = cursor;
+
                 if (type == 0) {
                     cursor += ((strlen(cursor) + 4) / 4) * 4;
                 } else {
                     cursor += sizeof(int);
                 }
             }
+
             CommandExe[command](arguments);
         }
     } else {
@@ -625,22 +643,29 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
         interpreter.SetScript(script, file_size);
         interpreter.SetTAG((TAG_PARAM *) Command, 61);
         interpreter.SetFunction(&func_table, 1);
+
         for (;;) {
             command = interpreter.GetNextTAG();
+
             if (command < 0) {
                 break;
             }
+
             void **arguments = interpreter.arguments;
             CommandExe[command](arguments);
             *cache++ = command;
             int *type = Command[command].argument_types;
             int  argument = 0;
+
             for (;;) {
                 int kind = *type++;
+
                 if (kind < 0) {
                     break;
                 }
+
                 *cache++ = kind;
+
                 if (kind == 0) {
                     void **text = &arguments[argument];
                     int    words = (int) (strlen((char *) *text) + 4) >> 2;
@@ -650,10 +675,13 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
                 } else {
                     *cache++ = *(int *) arguments[argument];
                 }
+
                 argument++;
             }
+
             *cache++ = -1;
         }
+
         *cache = -1;
     }
 
@@ -688,9 +716,11 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
             edit_info->light_direction[i][2][0] = def_light[i][2];
         }
     }
+
     if (edit_info->sound_set_no < 0) {
         edit_info->ambient_sound_off = 1;
     }
+
     return 1;
 }
 
@@ -707,9 +737,11 @@ void CommandSCN(void **arguments) {
 void CommandLIGHT_NO(void **arguments) {
     light_no = *(int *) arguments[0];
     light_no--;
+
     if (light_no < 0) {
         light_no = 0;
     }
+
     if (light_no >= 12) {
         light_no = 11;
     }
@@ -822,6 +854,7 @@ void CommandBLD_IMG(void **arguments) {
  */
 void CommandSKY_IMG(void **arguments) {
     int index = *(int *) arguments[0] - 1;
+
     if (index < 0 || index > 3) {
         return;
     }
@@ -871,6 +904,7 @@ void CommandIMG(void **arguments) {
 void CommandSKY(void **arguments) {
     int index = **(int **) arguments;
     index--;
+
     if (index < 0 || index > 4) {
         return;
     }
@@ -886,6 +920,7 @@ void CommandSKY(void **arguments) {
  */
 void CommandSUN(void **arguments) {
     int index = *(int *) arguments[0] - 1;
+
     if (index < 0 || index > 3) {
         return;
     }
@@ -903,14 +938,17 @@ void CommandGROUND(void **arguments) {
     int             i;
     MAP_PARTS_INFO *object = &edit_info->map_objects[mapobj_list];
     object->kind = 1;
+
     for (i = 0; i < 9; i++) {
         char *name = (char *) arguments[i];
+
         if (*name != '\0') {
             sprintf(object->name[i], "%s%s", CurrentDir, name);
         } else {
             object->name[i][0] = '\0';
         }
     }
+
     object->position[0] = *(float *) arguments[8];
     object->position[1] = *(float *) arguments[9];
     object->position[2] = *(float *) arguments[10];
@@ -930,14 +968,17 @@ void CommandBUILD(void **arguments) {
     int             i;
     MAP_PARTS_INFO *object = &edit_info->map_objects[mapobj_list];
     object->kind = 2;
+
     for (i = 0; i < 9; i++) {
         char *name = (char *) arguments[i];
+
         if (*name != '\0') {
             sprintf(object->name[i], "%s%s", CurrentDir, name);
         } else {
             object->name[i][0] = '\0';
         }
     }
+
     object->position[0] = *(float *) arguments[8];
     object->position[1] = *(float *) arguments[9];
     object->position[2] = *(float *) arguments[10];
@@ -957,14 +998,17 @@ void CommandWATER(void **arguments) {
     int             i;
     MAP_PARTS_INFO *object = &edit_info->map_objects[mapobj_list];
     object->kind = 0x15;
+
     for (i = 0; i < 9; i++) {
         char *name = (char *) arguments[i];
+
         if (*name != '\0') {
             sprintf(object->name[i], "%s%s", CurrentDir, name);
         } else {
             object->name[i][0] = '\0';
         }
     }
+
     object->position[0] = *(float *) arguments[8];
     object->position[1] = *(float *) arguments[9];
     object->position[2] = *(float *) arguments[10];
@@ -1019,12 +1063,15 @@ void CommandWATER_SURFACE(void **arguments) {
  */
 void CommandWATER_SHAKE(void **arguments) {
     EDIT_WATER_INFO *info = water_info;
+
     if (info != NULL) {
         int index = 0;
+
         while (1) {
             u_int offset = index * sizeof(sceVu0FVECTOR);
             offset += (u_int) info;
             EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) offset;
+
             if (wave->power == 0.0f && wave->range == 0.0f) {
                 wave->row = (float) *(int *) arguments[0];
                 wave->column = (float) *(int *) arguments[1];
@@ -1032,6 +1079,7 @@ void CommandWATER_SHAKE(void **arguments) {
                 wave->power = *(float *) arguments[2];
                 break;
             }
+
             index++;
         }
     }
@@ -1043,11 +1091,13 @@ void CommandWATER_SHAKE(void **arguments) {
 void CommandEDITAREA(void **arguments) {
     EDIT_AREA_INFO *area = &edit_info->parts_work.edit_areas[*(int *) arguments[0]];
     char           *name = (char *) arguments[1];
+
     if (*name != '\0') {
         sprintf(area->name, "%s%s", CurrentDir, name);
     } else {
         area->name[0] = '\0';
     }
+
     area->width = *(int *) arguments[2];
     area->height = *(int *) arguments[3];
     area->unit_size = *(float *) arguments[4];
@@ -1064,16 +1114,20 @@ void CommandEDITAREA(void **arguments) {
 void GenMdsName(MAP_PARTS_INFO *info, char *name) {
     char *c = name;
     c += strlen(name) - 3;
+
     if (c[0] == 'p' && c[1] == 't' && c[2] == 's') {
         char letter;
+
         for (c = name; (letter = *c) != '\0'; c++) {
             if (letter == '.') {
                 *c = '\0';
             }
         }
+
         sprintf(info->name[0], "%s", name);
         return;
     }
+
     sprintf(info->name[0], "%s0.mds", name);
     sprintf(info->name[1], "%s1.mds", name);
     sprintf(info->name[2], "%s2.mds", name);
@@ -1089,12 +1143,15 @@ void GenMdsName(MAP_PARTS_INFO *info, char *name) {
  */
 void CommandBLD_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1102,6 +1159,7 @@ void CommandBLD_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 2;
@@ -1116,12 +1174,15 @@ void CommandBLD_PARTS(void **arguments) {
  */
 void CommandGRD_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1129,6 +1190,7 @@ void CommandGRD_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1143,19 +1205,24 @@ void CommandGRD_PARTS(void **arguments) {
  */
 void CommandPARTS_INFO(void **arguments) {
     int index = now_parts_no;
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     EDIT_PARTS_DEF *def = &edit_info->parts_work.parts_defs.defs[index];
     def->width = *(int *) arguments[0];
     def->height = *(int *) arguments[1];
     int   at = 0;
     int   count = 0;
     char *shape = (char *) arguments[2];
+
     for (int i = 0; i < 32; i++) {
         def->cells[i] = 0;
     }
+
     char c;
+
     while ((c = shape[at]) != '\0') {
         if (c >= '0' && c <= '9') {
             def->cells[count] = c - '0';
@@ -1172,13 +1239,17 @@ void CommandPARTS_INFO(void **arguments) {
                     break;
             }
         }
+
         if (count >= def->width * def->height) {
             break;
         }
+
         at++;
     }
+
     def->kind = *(int *) arguments[3];
     int argument = 4;
+
     for (int i = 0; i < 6; i++) {
         def->element_ids[i] = *(int *) arguments[argument++];
         strcpy(def->element_names[i], (char *) arguments[argument++]);
@@ -1190,12 +1261,15 @@ void CommandPARTS_INFO(void **arguments) {
  */
 void CommandROAD_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1203,6 +1277,7 @@ void CommandROAD_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1217,11 +1292,14 @@ void CommandROAD_PARTS(void **arguments) {
  */
 void CommandROAD(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 6) {
         return;
     }
+
     MAP_PARTS_INFO *parts = &edit_info->parts_work.roads.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1229,6 +1307,7 @@ void CommandROAD(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1243,12 +1322,15 @@ void CommandROAD(void **arguments) {
  */
 void CommandRIVER_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1256,6 +1338,7 @@ void CommandRIVER_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1270,11 +1353,14 @@ void CommandRIVER_PARTS(void **arguments) {
  */
 void CommandRIVER(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 16) {
         return;
     }
+
     MAP_PARTS_INFO *parts = &edit_info->parts_work.rivers.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1282,23 +1368,30 @@ void CommandRIVER(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
+
     if (index == 7) {
         parts->kind = 0x15;
     }
+
     parts->subtype = 2;
+
     if (index == 6) {
         parts->subtype = 3;
     }
+
     if (index + 8 < 16) {
         char *second_name = (char *) arguments[4];
+
         if (*second_name != '\0') {
             sprintf(parts->name[7], "%s%s", CurrentDir, second_name);
         } else {
             parts->name[7][0] = '\0';
         }
+
         objframe = NULL;
         mapobj = NULL;
         mapparts = (CMapParts *) parts;
@@ -1310,12 +1403,15 @@ void CommandRIVER(void **arguments) {
  */
 void CommandBRIDGE_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1323,6 +1419,7 @@ void CommandBRIDGE_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1337,12 +1434,15 @@ void CommandBRIDGE_PARTS(void **arguments) {
  */
 void CommandLAKE_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1351,6 +1451,7 @@ void CommandLAKE_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1365,12 +1466,15 @@ void CommandLAKE_PARTS(void **arguments) {
  */
 void CommandON_RIVER_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
+
     if (index < 0 || index >= 24) {
         return;
     }
+
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
     char           *source_name = (char *) arguments[1];
+
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1379,6 +1483,7 @@ void CommandON_RIVER_PARTS(void **arguments) {
     } else {
         parts->name[0][0] = '\0';
     }
+
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1396,12 +1501,15 @@ void CommandOBJ_ANIME(void **arguments) {
         printf("obj_anime over!!!\n");
         return;
     }
+
     OBJ_ANIME_SEQ *anime = &edit_info->work.obj_anime[objanime_list];
     s16           *slots;
     anime->property = *(int *) arguments[0];
+
     if (anime->property < 0 || anime->property >= 4) {
         return;
     }
+
     anime->mode = *(int *) arguments[1];
     strcpy(anime->frame_name, (char *) arguments[2]);
     anime->from[0] = *(float *) arguments[3];
@@ -1413,21 +1521,26 @@ void CommandOBJ_ANIME(void **arguments) {
     anime->to[0] = *(float *) arguments[9];
     anime->to[1] = *(float *) arguments[10];
     anime->to[2] = *(float *) arguments[11];
+
     if (objframe != NULL) {
         slots = (s16 *) (objframe + 0x98);
     }
+
     if (mapobj != NULL) {
         slots = ((MAP_PARTS_INFO *) mapobj)->anime;
     }
+
     if (mapparts != NULL) {
         slots = ((MAP_PARTS_INFO *) mapparts)->anime;
     }
+
     for (int i = 0; i < 8; i++) {
         if (slots[i] <= 0) {
             slots[i] = objanime_list;
             break;
         }
     }
+
     objanime_list++;
 }
 
@@ -1464,6 +1577,7 @@ void CommandENTRANCE(void **arguments) {
         printf("event over!!!\n");
         return;
     }
+
     event_list--;
     ED_EVENT_POINT *point = &edit_info->work.events.points[event_list];
     s16            *slots;
@@ -1472,6 +1586,7 @@ void CommandENTRANCE(void **arguments) {
     strcpy(point->destination, mapjump_name);
     point->map_no = mapjump_id;
     point->side = 0;
+
     switch (*side) {
         case 'r':
         case 'R':
@@ -1482,6 +1597,7 @@ void CommandENTRANCE(void **arguments) {
             point->side = -1;
             break;
     }
+
     point->position[0] = *(float *) arguments[1];
     point->position[1] = *(float *) arguments[2];
     point->position[2] = *(float *) arguments[3];
@@ -1491,19 +1607,23 @@ void CommandENTRANCE(void **arguments) {
     point->trigger_range[0] = *(float *) arguments[7];
     point->trigger_range[1] = *(float *) arguments[8];
     point->trigger_range[2] = *(float *) arguments[9];
+
     if (objframe == NULL) {
         if (mapobj != NULL) {
             slots = ((MAP_PARTS_INFO *) mapobj)->events;
         }
+
         if (mapparts != NULL) {
             slots = ((MAP_PARTS_INFO *) mapparts)->events;
         }
+
         for (int i = 0; i < 8; i++) {
             if (slots[i] <= 0) {
                 slots[i] = event_list;
                 break;
             }
         }
+
         event_list++;
     }
 }
@@ -1514,10 +1634,12 @@ void CommandENTRANCE(void **arguments) {
 void CommandMAPJUMP(void **arguments) {
     mapjump_id = *(int *) arguments[0];
     strcpy(mapjump_name, (char *) arguments[1]);
+
     if (event_list >= 256) {
         printf("event over!!!\n");
         return;
     }
+
     ED_EVENT_POINT *point = &edit_info->work.events.points[event_list];
     s16            *slots;
     point->event_type = 1;
@@ -1527,18 +1649,22 @@ void CommandMAPJUMP(void **arguments) {
     point->trigger_range[0] = 10.0f;
     point->trigger_range[1] = 10.0f;
     point->trigger_range[2] = 10.0f;
+
     if (mapobj != NULL) {
         slots = ((MAP_PARTS_INFO *) mapobj)->events;
     }
+
     if (mapparts != NULL) {
         slots = ((MAP_PARTS_INFO *) mapparts)->events;
     }
+
     for (int i = 0; i < 8; i++) {
         if (slots[i] <= 0) {
             slots[i] = event_list;
             break;
         }
     }
+
     event_list++;
 }
 
@@ -1571,9 +1697,11 @@ void CommandPEOPLE(void **arguments) {
  */
 void CommandTIME_TABLE_NO(void **arguments) {
     int table_no = *(int *) arguments[0];
+
     if (table_no < 0 || table_no >= 7) {
         table_no = 0;
     }
+
     week_no = table_no;
 }
 
@@ -1582,11 +1710,14 @@ void CommandTIME_TABLE_NO(void **arguments) {
  */
 void CommandTIME_TABLE(void **arguments) {
     int table = **(int **) arguments;
+
     if (table >= 0) {
         int *entries = edit_info->time_tables[week_no][table];
+
         for (int i = 0; i < 16; i++) {
             entries[i] = -1;
         }
+
         for (int i = 0; i < 6; i++) {
             entries[i] = *(int *) arguments[i + 1];
         }
@@ -1665,29 +1796,37 @@ void CommandREVERBE(void **arguments) {
 
     int   mode = 0;
     char *name = (char *) arguments[0];
+
     while (*rev[mode] != '\0') {
         if (strcasecmp(rev[mode], name) == 0) {
             break;
         }
+
         mode++;
     }
+
     if (10 < mode) {
         mode = 0;
     }
+
     edit_info->reverb_mode[0] = mode;
     edit_info->reverb_depth[0] = *(int *) arguments[1];
 
     mode = 0;
     name = (char *) arguments[2];
+
     while (*rev[mode] != '\0') {
         if (strcasecmp(rev[mode], name) == 0) {
             break;
         }
+
         mode++;
     }
+
     if (10 < mode) {
         mode = 0;
     }
+
     edit_info->reverb_mode[1] = mode;
     edit_info->reverb_depth[1] = *(int *) arguments[3];
 
@@ -1772,6 +1911,7 @@ void CommandTALK_EVENT(void **arguments) {
 void CommandCHARA_AMBIENT(void **arguments) {
     int index = *(int *) arguments[0];
     index--;
+
     if (index < 0 || index >= 4) {
         return;
     }
@@ -1816,9 +1956,11 @@ int FishingDrawCheck() {
     if (GameMode == 16) {
         return 1;
     }
+
     if (GameMode == 9 && oldGameMode == 16) {
         return 1;
     }
+
     return 0;
 }
 
@@ -1827,12 +1969,15 @@ int FishingDrawCheck() {
  */
 void *EdLoadFile(char *name) {
     void *file = GetPackFile(name, NULL);
+
     if (file != NULL) {
         return file;
     }
+
     if (LoadFile2(name, read_buffer, NULL, 0) == 0) {
         return NULL;
     }
+
     return read_buffer;
 }
 
@@ -1842,6 +1987,7 @@ void *EdLoadFile(char *name) {
 int CheckMotionTime(float target, float previous, float current) {
     float difference = target - previous;
     difference = difference < 0.0f ? -difference : difference;
+
     if (difference > 1.5f) {
         return 0;
     }
@@ -1871,8 +2017,10 @@ void EdSetSoundOffCount(int count) {
     if (count > 10) {
         count = 10;
     }
+
     if (count < 0) {
         count = 0;
     }
+
     sound_off_cnt = count;
 }

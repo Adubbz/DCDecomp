@@ -456,12 +456,16 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
             sceVu0CopyMatrix(matrix, world);
             return;
         }
+
         frame = parent;
+
         while (frame) {
             if (!frame->world_valid) {
                 break;
             }
+
             frame = frame->parent;
+
             if (!frame) {
                 sceVu0CopyMatrix(matrix, world);
                 return;
@@ -472,6 +476,7 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     if (this->child) {
         this->child->world_valid = 0;
         sibling = this->child;
+
         if (sibling->brother) {
             while (sibling->brother) {
                 sibling->brother->world_valid = 0;
@@ -489,17 +494,21 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
             sceVu0CopyVector(translation, local_matrix[3]);
             local_matrix[3][0] = local_matrix[3][1] = local_matrix[3][2] = 0.0f;
         }
+
         if (rot_type & 1) {
             if (rotation[0] != 0.0f) {
                 sceVu0RotMatrixX(local_matrix, local_matrix, rotation[0]);
             }
+
             if (rotation[1] != 0.0f) {
                 sceVu0RotMatrixY(local_matrix, local_matrix, rotation[1]);
             }
+
             if (rotation[2] != 0.0f) {
                 sceVu0RotMatrixZ(local_matrix, local_matrix, rotation[2]);
             }
         }
+
         if (rot_type & 2) {
             sceVu0AddVector(local_matrix[3], translation, position);
         } else {
@@ -510,6 +519,7 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     }
 
     frame = parent;
+
     if (!frame) {
         sceVu0CopyMatrix(world, local_matrix);
         sceVu0CopyMatrix(matrix, world);
@@ -522,6 +532,7 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     } else {
         frame->GetLWMatrix(parent_world);
     }
+
     MulFrameMatrix(world, parent_world, local_matrix);
     sceVu0CopyMatrix(matrix, world);
     world_valid = 1;
@@ -571,6 +582,7 @@ static int StrCmp(char *left, char *right) {
         if (ch == '_' && left_cursor[1] == '_') {
             break;
         }
+
         left_length++;
         left_cursor++;
     }
@@ -579,6 +591,7 @@ static int StrCmp(char *left, char *right) {
         if (ch == '_' && right_cursor[1] == '_') {
             break;
         }
+
         right_length++;
         right_cursor++;
     }
@@ -591,6 +604,7 @@ static int StrCmp(char *left, char *right) {
         if (*left != *right) {
             return 0;
         }
+
         left++;
         right++;
     }
@@ -612,6 +626,7 @@ CFrame *CFrame::SearchFrame(char *name) {
 
     for (frame = child; frame != 0; frame = frame->brother) {
         found = frame->SearchFrame(name);
+
         if (found != 0) {
             return found;
         }
@@ -725,51 +740,67 @@ void CFrame::SetAttr(CFrameAttr &attr, int children, int mask) {
         if (mask & 0x1) {
             this->attr.draw_on = attr.draw_on;
         }
+
         if (mask & 0x2) {
             this->attr.clip_depth = attr.clip_depth;
         }
+
         if (mask & 0x4) {
             this->attr.clip_enable = attr.clip_enable;
         }
+
         if (mask & 0x8) {
             this->attr.unk_09 = attr.unk_09;
         }
+
         if (mask & 0x10) {
             this->attr.remake_pending = attr.remake_pending;
         }
+
         if (mask & 0x20) {
             this->attr.program_option = attr.program_option;
         }
+
         if (mask & 0x40) {
             this->attr.fog_enable = attr.fog_enable;
         }
+
         if (mask & 0x80) {
             this->attr.far_clip_enable = attr.far_clip_enable;
         }
+
         if (mask & 0x100) {
             this->attr.far_clip = attr.far_clip;
         }
+
         if (mask & 0x200) {
             this->attr.use_color = attr.use_color;
         }
+
         if (mask & 0x400) {
             *(u_long128 *) this->attr.color = *(u_long128 *) attr.color;
         }
+
         if (mask & 0x800) {
             this->attr.alpha_ref = attr.alpha_ref;
         }
+
         if (mask & 0x1000) {
             this->attr.depth_write = attr.depth_write;
         }
+
         if (mask & 0x2000) {
             this->attr.eye_relative = attr.eye_relative;
         }
+
         if (mask & 0x4000) {
             this->attr.billboard = attr.billboard;
         }
+
         if (mask & 0x8000) {
             this->attr.blend_mode = attr.blend_mode;
         }
+
         if (mask & 0x10000) {
             this->attr.ignore_depth = attr.ignore_depth;
         }
@@ -1073,6 +1104,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         if (this->child) {
             this->child->world_valid = 0;
             sibling = this->child;
+
             if (sibling->brother) {
                 while (sibling->brother) {
                     sibling->brother->world_valid = 0;
@@ -1080,6 +1112,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
                 }
             }
         }
+
         world_valid = 1;
     } else {
         GetLWMatrix(matrix);
@@ -1123,18 +1156,23 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             if (screen_min[0] > half_width) {
                 break;
             }
+
             if (screen_max[0] < -half_width) {
                 break;
             }
+
             if (screen_min[1] > half_height) {
                 break;
             }
+
             if (screen_max[1] < -half_height) {
                 break;
             }
+
             if (screen_max[2] < near_z) {
                 break;
             }
+
             if (screen_min[2] < far_z) {
                 near_clip = 8;
             }
@@ -1159,12 +1197,15 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     if (far_clip < 8 || attr.remake_pending) {
         info->clip_flags |= 1;
     }
+
     if (attr.remake_pending) {
         visible = 1;
     }
+
     if (info->scissor) {
         info->clip_flags |= 2;
     }
+
     if (attr.program_option) {
         info->clip_flags |= 4;
     }
@@ -1174,6 +1215,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             if (attr.alpha_ref >= 0) {
                 test.bits.aref = attr.alpha_ref;
             }
+
             if (attr.ignore_depth) {
                 test.bits.zte = 1;
                 test.bits.ztst = 1;
@@ -1190,6 +1232,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
                     alpha.bits.c = 0;
                     alpha.bits.d = 1;
                 }
+
                 if (attr.blend_mode < 0) {
                     alpha.bits.a = 2;
                     alpha.bits.b = 0;
@@ -1225,6 +1268,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         if (attr.remake_pending) {
             visual->RemakeData(0);
         }
+
         attr.remake_pending = 0;
 
         packet += visual->DrawVu1(packet, matrix, info, VU1_PROGRAM_UNKNOWN6, 0, 0, 0);
@@ -1244,6 +1288,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
             if (frame->attr.draw_on & 4) {
                 continue;
             }
+
             packet += frame->DrawVu1(packet, info);
         }
     }
@@ -1423,6 +1468,7 @@ int CFrame::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
             if (flags & 4) {
                 continue;
             }
+
             num += frame->PickUpNearPoly(found, box);
             found = poly + num;
         }

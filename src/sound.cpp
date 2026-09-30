@@ -58,9 +58,11 @@ int CSound::GetSeNo(int bank, int program) {
             break;
         }
     }
+
     if (i < se_inf_tbl.count) {
         return i;
     }
+
     return -1;
 }
 
@@ -105,6 +107,7 @@ void set_spu(int mode0, int mode1, int depth0, int depth1) {
     sceSdRemoteInit();
     sceSdRemote(1, rSdInit, 0);
     sceSdRemote(1, rSdSetCoreAttr, SD_C_SPDIF_MODE, SD_SPDIF_COPY_PROHIBIT);
+
     for (core = 0; core < 2; core++) {
         sceSdRemote(1, rSdSetAddr, core | SD_A_EEA, 0x1FFFFF - (core << 17));
         attr.depth_L = 0;
@@ -136,21 +139,26 @@ int TransHdBd(int hd, int hd_size, int bd, int bd_size) {
         gBank.hd_address = 0;
         return -1;
     }
+
     if (hd_size == 0) {
         printf("HD LOAD Err!!!!!!!!!!!!!!!!!!!!!\n");
         gBank.bd_size = 0;
         gBank.hd_address = 0;
         return -1;
     }
+
     sceSifInitIopHeap();
     bd_address = sceSifAllocIopHeap(bd_size + 0x10);
+
     if (bd_address == 0) {
         printf("AllocIopHeap Err\n");
         return -1;
     }
+
     if (ezTransToIOP(bd_address, (void *) bd, bd_size) != 0) {
         printf("ezTransToIOP Err\n");
     }
+
     gBank.bd_address = bd_address;
     gBank.bd_size = bd_size;
     FlushCache(0);
@@ -159,14 +167,18 @@ int TransHdBd(int hd, int hd_size, int bd, int bd_size) {
     sceSifFreeIopHeap(bd_address);
     sceSifInitIopHeap();
     hd_address = sceSifAllocIopHeap(hd_size + 0x10);
+
     if (hd_address == 0) {
         printf("AllocIopHeap Err\n");
         return -1;
     }
+
     printf("AllocIopHeap %d \n", hd_address);
+
     if (ezTransToIOP(hd_address, (void *) hd, hd_size) != 0) {
         printf("ezTransToIOP Err\n");
     }
+
     gBank.hd_address = hd_address;
     return 0;
 }
@@ -183,18 +195,22 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
 
     printf("SND_INF= %s \n", name);
     token = strtok((char *) GetPackFile(pack, name, &size), delimiter);
+
     while (token != NULL) {
         strncpy(wk_name, "                                  ", 9);
         strncpy(wk_name2, "                                  ", 9);
         strncpy(wk_name, token, 9);
+
         if (strncmp(&wk_name[6], ".sq", 3) == 0) {
             if (strncmp(&wk_name[5], "a", 1) == 0) {
                 LoadSeq_A((int) GetPackFile(pack, wk_name, &size), size);
+
                 for (i = 0; i < sq_inf_tbl.count; i++) {
                     if (strncmp(wk_name, sq_inf_tbl.sequence[i].name, 9) == 0) {
                         break;
                     }
                 }
+
                 if (i < sq_inf_tbl.count) {
                     midi_state.port[0].sequence[midi_state.port[0].sequence_count] = &sq_inf_tbl.sequence[i];
                     midi_state.port[0].sequence_count++;
@@ -202,13 +218,16 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                     printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
                 }
             }
+
             if (strncmp(&wk_name[5], "e", 1) == 0) {
                 LoadSeq_E((int) GetPackFile(pack, wk_name, &size), size);
+
                 for (i = 0; i < sq_inf_tbl.count; i++) {
                     if (strncmp(wk_name, sq_inf_tbl.sequence[i].name, 9) == 0) {
                         break;
                     }
                 }
+
                 if (i < sq_inf_tbl.count) {
                     midi_state.port[2].sequence[midi_state.port[2].sequence_count] = &sq_inf_tbl.sequence[i];
                     midi_state.port[2].sequence_count++;
@@ -216,13 +235,16 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                     printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
                 }
             }
+
             if (strncmp(&wk_name[5], "i", 1) == 0) {
                 LoadSeq_I((int) GetPackFile(pack, wk_name, &size), size);
+
                 for (i = 0; i < sq_inf_tbl.count; i++) {
                     if (strncmp(wk_name, sq_inf_tbl.sequence[i].name, 9) == 0) {
                         break;
                     }
                 }
+
                 if (i < sq_inf_tbl.count) {
                     midi_state.port[4].sequence[midi_state.port[4].sequence_count] = &sq_inf_tbl.sequence[i];
                     midi_state.port[4].sequence_count++;
@@ -231,6 +253,7 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                 }
             }
         }
+
         if (strncmp(&wk_name[6], ".hd", 3) == 0) {
             if (strncmp(&wk_name[5], "a", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
@@ -238,42 +261,49 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_A(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "c", 1) == 0) {
                 strcpy(wk_name2, wk_name);
                 strcpy(&wk_name2[7], "bd");
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_C(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "e", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
                 strcpy(&wk_name2[7], "bd");
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_E(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "i", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
                 strcpy(&wk_name2[7], "bd");
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_I(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "g", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
                 strcpy(&wk_name2[7], "bd");
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_G(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "m", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
                 strcpy(&wk_name2[7], "bd");
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_M(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "q", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
                 strcpy(&wk_name2[7], "bd");
                 hd = (int) GetPackFile(pack, wk_name, &size);
                 LoadHdBd_Q(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
+
             if (strncmp(&wk_name[5], "s", 1) == 0) {
                 strncpy(wk_name2, wk_name, 9);
                 strcpy(&wk_name2[7], "bd");
@@ -281,8 +311,10 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                 LoadHdBd_S(hd, size, (int) GetPackFile(pack, wk_name2, &bd_size), bd_size);
             }
         }
+
         token = strtok(NULL, delimiter);
     }
+
     return 0;
 }
 
@@ -296,6 +328,7 @@ int CSound::LoadSqInf(char *name, unsigned int *buffer) {
     char delimiter[] = " ;,\t\n\r";
     strtok((char *) buffer, "\n\r");
     token = strtok(NULL, delimiter);
+
     while (token != NULL) {
         strncpy(sq_inf_tbl.sequence[sq_inf_tbl.count].name, token, 9);
         token = strtok(NULL, delimiter);
@@ -304,6 +337,7 @@ int CSound::LoadSqInf(char *name, unsigned int *buffer) {
         sq_inf_tbl.count++;
         token = strtok(NULL, delimiter);
     }
+
     return size;
 }
 
@@ -318,6 +352,7 @@ int CSound::LoadSeInf(char *name, unsigned int *buffer) {
     se_inf_tbl.count = 0;
     strtok((char *) buffer, "\n\r");
     token = strtok(NULL, delimiter);
+
     while (token != NULL) {
         strncpy(number, token, 4);
         se_inf_tbl.entry[se_inf_tbl.count].bank = atoi(number);
@@ -330,6 +365,7 @@ int CSound::LoadSeInf(char *name, unsigned int *buffer) {
         token = strtok(NULL, delimiter);
         se_inf_tbl.count++;
     }
+
     return size;
 }
 
@@ -340,11 +376,13 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     printf("EzMIDI initialize...\n");
     ezMidiInit();
     set_spu(mode0, mode1, depth0, depth1);
+
     if (iopMSINBuffAddr == 0) {
         iopMSINBuffAddr = ezMidi(0x8010, 0x4000);
         sceSifInitIopHeap();
         printf("iopMSINBuffAddr %d\n", iopMSINBuffAddr);
     }
+
     msinCtx.extmod = 0;
     msinCtx.callBack = 0;
     msinCtx.conf = 0;
@@ -354,6 +392,7 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     msinBfGrp[0].buffCtx = 0;
     msinBfGrp[1].buffNum = 6;
     msinBfGrp[1].buffCtx = msinBfCtx;
+
     for (i = 0; i < 6; i++) {
         MSIN_BUFFER *buffer;
 
@@ -363,72 +402,90 @@ int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
         buffer->size = sizeof(MSIN_BUFFER);
         buffer->length = 0;
     }
+
     if (sceMSIn_Init(&msinCtx) != 0) {
         printf("sceMSIn_Init Error\n");
         return 1;
     }
+
     bd_size_total = 0;
     midi_state.port[0].bank = 0;
     midi_state.port[0].spu_address = 0x5010;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[0].sequence_address[i] = 0;
     }
+
     midi_state.port[0].sequence_count = 0;
     midi_state.port[0].fade[0].active = 0;
     midi_state.port[0].fade[1].active = 0;
     midi_state.port[1].bank = 0;
     midi_state.port[1].spu_address = 0x7D010;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[1].sequence_address[i] = 0;
     }
+
     midi_state.port[1].sequence_count = 0;
     midi_state.port[1].fade[0].active = 0;
     midi_state.port[1].fade[1].active = 0;
     midi_state.port[2].bank = 0;
     midi_state.port[2].spu_address = 0x7D010;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[2].sequence_address[i] = 0;
     }
+
     midi_state.port[2].sequence_count = 0;
     midi_state.port[2].fade[0].active = 0;
     midi_state.port[2].fade[1].active = 0;
     midi_state.port[4].bank = 0;
     midi_state.port[4].spu_address = 0x16E900;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[4].sequence_address[i] = 0;
     }
+
     midi_state.port[4].sequence_count = 0;
     midi_state.port[4].fade[0].active = 0;
     midi_state.port[4].fade[1].active = 0;
     midi_state.port[3].bank = 0;
     midi_state.port[3].spu_address = 0x16E900;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[3].sequence_address[i] = 0;
     }
+
     midi_state.port[3].sequence_count = 0;
     midi_state.port[3].fade[0].active = 0;
     midi_state.port[3].fade[1].active = 0;
     midi_state.port[5].bank = 0;
     midi_state.port[5].spu_address = 0x16E900;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[5].sequence_address[i] = 0;
     }
+
     midi_state.port[5].sequence_count = 0;
     midi_state.port[5].fade[0].active = 0;
     midi_state.port[5].fade[1].active = 0;
     midi_state.port[6].bank = 0;
     midi_state.port[6].spu_address = 0x18AE20;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[6].sequence_address[i] = 0;
     }
+
     midi_state.port[6].sequence_count = 0;
     midi_state.port[6].fade[0].active = 0;
     midi_state.port[6].fade[1].active = 0;
     midi_state.port[7].bank = 0;
     midi_state.port[7].spu_address = 0x1B6D40;
+
     for (i = 0; i < 10; i++) {
         midi_state.port[7].sequence_address[i] = 0;
     }
+
     midi_state.port[7].sequence_count = 0;
     midi_state.port[7].fade[0].active = 0;
     midi_state.port[7].fade[1].active = 0;
@@ -446,6 +503,7 @@ void CSound::SQ_Play(int port, int seq_no) {
                 volume = midi_state.port[0].sequence[seq_no]->volume;
                 break;
             }
+
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 1:
@@ -454,6 +512,7 @@ void CSound::SQ_Play(int port, int seq_no) {
                 volume = midi_state.port[2].sequence[seq_no]->volume;
                 break;
             }
+
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 2:
@@ -462,9 +521,11 @@ void CSound::SQ_Play(int port, int seq_no) {
                 volume = midi_state.port[4].sequence[seq_no]->volume;
                 break;
             }
+
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
     }
+
     printf("MIDI start! port=%d \n", port);
     ezMidi(port + 0x40, address);
     ezMidi(port + 0xB0, volume);
@@ -481,6 +542,7 @@ void CSound::SQ_Play(int port, int seq_no, int volume) {
                 address = (int) midi_state.port[0].sequence_address[seq_no];
                 break;
             }
+
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 1:
@@ -488,6 +550,7 @@ void CSound::SQ_Play(int port, int seq_no, int volume) {
                 address = (int) midi_state.port[2].sequence_address[seq_no];
                 break;
             }
+
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
         case 2:
@@ -495,9 +558,11 @@ void CSound::SQ_Play(int port, int seq_no, int volume) {
                 address = (int) midi_state.port[4].sequence_address[seq_no];
                 break;
             }
+
             printf("###############NOT FOUND SEQ_NO=%d #####################\n", seq_no);
             return;
     }
+
     ezMidi(port + 0x20, 0);
     printf("MIDI start! port=%d \n", port);
     ezMidi(port + 0x40, address);
@@ -535,6 +600,7 @@ void CSound::SE_Play(int port, int bank, int program, int pan, int velocity, int
             channel = 0;
             break;
     }
+
     sceMSIn_PutMsg(&msinCtx, channel, ((bank & 0x7F) << 8) | 0xC0);
     message[0] = 0xF9;
     message[1] = 0;
@@ -598,6 +664,7 @@ void CSound::SE_SetVol(int port, int bank, int program, int volume, int voice) {
             channel = 0;
             break;
     }
+
     sceMSIn_PutMsg(&msinCtx, channel, ((bank & 0x7F) << 8) | 0xC0);
     message[0] = 0xFD;
     message[1] = 0;
@@ -633,6 +700,7 @@ void CSound::SE_SetPan(int port, int bank, int program, int pan, int voice) {
             channel = 0;
             break;
     }
+
     sceMSIn_PutMsg(&msinCtx, channel, ((bank & 0x7F) << 8) | 0xC0);
     message[0] = 0xFD;
     message[1] = 1;
@@ -672,6 +740,7 @@ void CSound::SE_Stop(int port, int bank, int program, int voice) {
             channel = 0;
             break;
     }
+
     sceMSIn_PutMsg(&msinCtx, channel, ((bank & 0x7F) << 8) | 0xC0);
     message[0] = 0xFD;
     message[1] = 0x10;
@@ -747,110 +816,145 @@ void CSound::Step() {
 
     if (midi_state.port[0].fade[0].active) {
         midi_state.port[0].fade[0].volume += midi_state.port[0].fade[0].step;
+
         if (midi_state.port[0].fade[0].step > 0.0f && midi_state.port[0].fade[0].volume > midi_state.port[0].fade[0].target_volume) {
             midi_state.port[0].fade[0].volume = midi_state.port[0].fade[0].target_volume;
             midi_state.port[0].fade[0].active = 0;
         }
+
         if (midi_state.port[0].fade[0].step < 0.0f && midi_state.port[0].fade[0].volume < midi_state.port[0].fade[0].target_volume) {
             midi_state.port[0].fade[0].volume = midi_state.port[0].fade[0].target_volume;
             midi_state.port[0].fade[0].active = 0;
         }
+
         SetVol(0, (int) midi_state.port[0].fade[0].volume);
     }
+
     if (midi_state.port[2].fade[0].active) {
         midi_state.port[2].fade[0].volume += midi_state.port[2].fade[0].step;
+
         if (midi_state.port[2].fade[0].step > 0.0f && midi_state.port[2].fade[0].volume > midi_state.port[2].fade[0].target_volume) {
             midi_state.port[2].fade[0].volume = midi_state.port[2].fade[0].target_volume;
             midi_state.port[2].fade[0].active = 0;
         }
+
         if (midi_state.port[2].fade[0].step < 0.0f && midi_state.port[2].fade[0].volume < midi_state.port[2].fade[0].target_volume) {
             midi_state.port[2].fade[0].volume = midi_state.port[2].fade[0].target_volume;
             midi_state.port[2].fade[0].active = 0;
         }
+
         SetVol(1, (int) midi_state.port[2].fade[0].volume);
     }
+
     if (midi_state.port[4].fade[0].active) {
         midi_state.port[4].fade[0].volume += midi_state.port[4].fade[0].step;
+
         if (midi_state.port[4].fade[0].step > 0.0f && midi_state.port[4].fade[0].volume > midi_state.port[4].fade[0].target_volume) {
             midi_state.port[4].fade[0].volume = midi_state.port[4].fade[0].target_volume;
             midi_state.port[4].fade[0].active = 0;
         }
+
         if (midi_state.port[4].fade[0].step < 0.0f && midi_state.port[4].fade[0].volume < midi_state.port[4].fade[0].target_volume) {
             midi_state.port[4].fade[0].volume = midi_state.port[4].fade[0].target_volume;
             midi_state.port[4].fade[0].active = 0;
         }
+
         SetVol(2, (int) midi_state.port[4].fade[0].volume);
     }
+
     if (midi_state.port[1].fade[1].active) {
         midi_state.port[1].fade[1].volume += midi_state.port[1].fade[1].step;
+
         if (midi_state.port[1].fade[1].step > 0.0f && midi_state.port[1].fade[1].volume > midi_state.port[1].fade[1].target_volume) {
             midi_state.port[1].fade[1].volume = midi_state.port[1].fade[1].target_volume;
             midi_state.port[1].fade[1].active = 0;
         }
+
         if (midi_state.port[1].fade[1].step < 0.0f && midi_state.port[1].fade[1].volume < midi_state.port[1].fade[1].target_volume) {
             midi_state.port[1].fade[1].volume = midi_state.port[1].fade[1].target_volume;
             midi_state.port[1].fade[1].active = 0;
         }
+
         SetVol(15, (int) midi_state.port[1].fade[1].volume);
     }
+
     if (midi_state.port[4].fade[1].active) {
         midi_state.port[4].fade[1].volume += midi_state.port[4].fade[1].step;
+
         if (midi_state.port[4].fade[1].step > 0.0f && midi_state.port[4].fade[1].volume > midi_state.port[4].fade[1].target_volume) {
             midi_state.port[4].fade[1].volume = midi_state.port[4].fade[1].target_volume;
             midi_state.port[4].fade[1].active = 0;
         }
+
         if (midi_state.port[4].fade[1].step < 0.0f && midi_state.port[4].fade[1].volume < midi_state.port[4].fade[1].target_volume) {
             midi_state.port[4].fade[1].volume = midi_state.port[4].fade[1].target_volume;
             midi_state.port[4].fade[1].active = 0;
         }
+
         SetVol(14, (int) midi_state.port[4].fade[1].volume);
     }
+
     if (midi_state.port[3].fade[1].active) {
         midi_state.port[3].fade[1].volume += midi_state.port[3].fade[1].step;
+
         if (midi_state.port[3].fade[1].step > 0.0f && midi_state.port[3].fade[1].volume > midi_state.port[3].fade[1].target_volume) {
             midi_state.port[3].fade[1].volume = midi_state.port[3].fade[1].target_volume;
             midi_state.port[3].fade[1].active = 0;
         }
+
         if (midi_state.port[3].fade[1].step < 0.0f && midi_state.port[3].fade[1].volume < midi_state.port[3].fade[1].target_volume) {
             midi_state.port[3].fade[1].volume = midi_state.port[3].fade[1].target_volume;
             midi_state.port[3].fade[1].active = 0;
         }
+
         SetVol(10, (int) midi_state.port[3].fade[1].volume);
     }
+
     if (midi_state.port[5].fade[1].active) {
         midi_state.port[5].fade[1].volume += midi_state.port[5].fade[1].step;
+
         if (midi_state.port[5].fade[1].step > 0.0f && midi_state.port[5].fade[1].volume > midi_state.port[5].fade[1].target_volume) {
             midi_state.port[5].fade[1].volume = midi_state.port[5].fade[1].target_volume;
             midi_state.port[5].fade[1].active = 0;
         }
+
         if (midi_state.port[5].fade[1].step < 0.0f && midi_state.port[5].fade[1].volume < midi_state.port[5].fade[1].target_volume) {
             midi_state.port[5].fade[1].volume = midi_state.port[5].fade[1].target_volume;
             midi_state.port[5].fade[1].active = 0;
         }
+
         SetVol(13, (int) midi_state.port[5].fade[1].volume);
     }
+
     if (midi_state.port[6].fade[1].active) {
         midi_state.port[6].fade[1].volume += midi_state.port[6].fade[1].step;
+
         if (midi_state.port[6].fade[1].step > 0.0f && midi_state.port[6].fade[1].volume > midi_state.port[6].fade[1].target_volume) {
             midi_state.port[6].fade[1].volume = midi_state.port[6].fade[1].target_volume;
             midi_state.port[6].fade[1].active = 0;
         }
+
         if (midi_state.port[6].fade[1].step < 0.0f && midi_state.port[6].fade[1].volume < midi_state.port[6].fade[1].target_volume) {
             midi_state.port[6].fade[1].volume = midi_state.port[6].fade[1].target_volume;
             midi_state.port[6].fade[1].active = 0;
         }
+
         SetVol(12, (int) midi_state.port[6].fade[1].volume);
     }
+
     if (midi_state.port[7].fade[1].active) {
         midi_state.port[7].fade[1].volume += midi_state.port[7].fade[1].step;
+
         if (midi_state.port[7].fade[1].step > 0.0f && midi_state.port[7].fade[1].volume > midi_state.port[7].fade[1].target_volume) {
             midi_state.port[7].fade[1].volume = midi_state.port[7].fade[1].target_volume;
             midi_state.port[7].fade[1].active = 0;
         }
+
         if (midi_state.port[7].fade[1].step < 0.0f && midi_state.port[7].fade[1].volume < midi_state.port[7].fade[1].target_volume) {
             midi_state.port[7].fade[1].volume = midi_state.port[7].fade[1].target_volume;
             midi_state.port[7].fade[1].active = 0;
         }
+
         SetVol(11, (int) midi_state.port[7].fade[1].volume);
     }
 
@@ -863,6 +967,7 @@ void CSound::Step() {
             if (ezTransToIOP((void *) (iopMSINBuffAddr + i * sizeof(MSIN_BUFFER)), buffer, sizeof(MSIN_BUFFER)) != 0) {
                 printf("EX MIDI SEND ERR!! SIZE= %d\n", *length);
             }
+
             *length = 0;
         } else {
             *length = 0;
@@ -890,17 +995,21 @@ int CSound::LoadHdBd_A(int hd, int hd_size, int bd, int bd_size) {
         if (ezMidi(0x8090 + 0, 0) != 0) {
             ezMidi(0x20 + 0, 0);
         }
+
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[0].bank);
         midi_state.port[0].bank = 0;
+
         for (i = 0; i < midi_state.port[0].sequence_count; i++) {
             if (midi_state.port[0].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[0].sequence_address[i]);
             }
         }
+
         midi_state.port[0].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[0].spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[0].bank = gBank.hd_address;
@@ -923,21 +1032,26 @@ int CSound::LoadHdBd_C(int hd, int hd_size, int bd, int bd_size) {
         sceSifFreeIopHeap(midi_state.port[2].bank);
         midi_state.port[2].bank = 0;
         midi_state.port[2].spu_address = midi_state.port[1].spu_address = 0x7D010;
+
         for (i = 0; i < midi_state.port[1].sequence_count; i++) {
             if (midi_state.port[1].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[1].sequence_address[i]);
             }
         }
+
         midi_state.port[1].sequence_count = 0;
+
         for (i = 0; i < midi_state.port[2].sequence_count; i++) {
             if (midi_state.port[2].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[2].sequence_address[i]);
             }
         }
+
         midi_state.port[2].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[1].spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[1].bank = gBank.hd_address;
@@ -955,17 +1069,21 @@ int CSound::LoadHdBd_E(int hd, int hd_size, int bd, int bd_size) {
         if (ezMidi(0x8090 + 1, 0) != 0) {
             ezMidi(0x20 + 1, 0);
         }
+
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[2].bank);
         midi_state.port[2].bank = 0;
+
         for (i = 0; i < midi_state.port[2].sequence_count; i++) {
             if (midi_state.port[2].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[2].sequence_address[i]);
             }
         }
+
         midi_state.port[2].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[2].spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[2].bank = gBank.hd_address;
@@ -983,14 +1101,17 @@ int CSound::LoadHdBd_G(int hd, int hd_size, int bd, int bd_size) {
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[3].bank);
         midi_state.port[3].bank = 0;
+
         for (i = 0; i < midi_state.port[3].sequence_count; i++) {
             if (midi_state.port[3].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[3].sequence_address[i]);
             }
         }
+
         midi_state.port[3].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[4].spu_address - (bd_size + 0x10);
     midi_state.port[3].spu_address = gBank.spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
@@ -1008,6 +1129,7 @@ int CSound::LoadHdBd_I(int hd, int hd_size, int bd, int bd_size) {
         if (ezMidi(0x8090 + 2, 0) != 0) {
             ezMidi(0x20 + 2, 0);
         }
+
         ezMidi(0x20 + 14, 0);
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[4].bank);
@@ -1016,21 +1138,26 @@ int CSound::LoadHdBd_I(int hd, int hd_size, int bd, int bd_size) {
         sceSifFreeIopHeap(midi_state.port[3].bank);
         midi_state.port[3].bank = 0;
         midi_state.port[3].spu_address = midi_state.port[4].spu_address = 0x16E900;
+
         for (i = 0; i < midi_state.port[4].sequence_count; i++) {
             if (midi_state.port[4].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[4].sequence_address[i]);
             }
         }
+
         midi_state.port[4].sequence_count = 0;
+
         for (i = 0; i < midi_state.port[3].sequence_count; i++) {
             if (midi_state.port[3].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[3].sequence_address[i]);
             }
         }
+
         midi_state.port[3].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[4].spu_address - (bd_size + 0x10);
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[4].spu_address = gBank.spu_address;
@@ -1052,14 +1179,17 @@ int CSound::LoadHdBd_M(int hd, int hd_size, int bd, int bd_size) {
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[5].bank);
         midi_state.port[5].bank = 0;
+
         for (i = 0; i < midi_state.port[5].sequence_count; i++) {
             if (midi_state.port[5].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[5].sequence_address[i]);
             }
         }
+
         midi_state.port[5].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[5].spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[5].bank = gBank.hd_address;
@@ -1077,14 +1207,17 @@ int CSound::LoadHdBd_Q(int hd, int hd_size, int bd, int bd_size) {
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[6].bank);
         midi_state.port[6].bank = 0;
+
         for (i = 0; i < midi_state.port[6].sequence_count; i++) {
             if (midi_state.port[6].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[6].sequence_address[i]);
             }
         }
+
         midi_state.port[6].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[6].spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[6].bank = gBank.hd_address;
@@ -1102,14 +1235,17 @@ int CSound::LoadHdBd_S(int hd, int hd_size, int bd, int bd_size) {
         sceSifInitIopHeap();
         sceSifFreeIopHeap(midi_state.port[7].bank);
         midi_state.port[7].bank = 0;
+
         for (i = 0; i < midi_state.port[7].sequence_count; i++) {
             if (midi_state.port[7].sequence_address[i] != 0) {
                 sceSifInitIopHeap();
                 sceSifFreeIopHeap(midi_state.port[7].sequence_address[i]);
             }
         }
+
         midi_state.port[7].sequence_count = 0;
     }
+
     gBank.spu_address = midi_state.port[7].spu_address;
     TransHdBd(hd, hd_size, bd, bd_size);
     midi_state.port[7].bank = gBank.hd_address;
@@ -1124,10 +1260,12 @@ int CSound::LoadSeq_A(int address, int size) {
 
     sceSifInitIopHeap();
     sequence = sceSifAllocIopHeap(0xFA00);
+
     if (sequence == 0) {
         printf("AllocIopHeap Err\n");
         return -1;
     }
+
     printf("AllocIopHeap %d \n", sequence);
     ezTransToIOP(sequence, (void *) address, size);
     midi_state.port[0].sequence_address[midi_state.port[0].sequence_count] = sequence;
@@ -1139,10 +1277,12 @@ int CSound::LoadSeq_E(int address, int size) {
 
     sceSifInitIopHeap();
     sequence = sceSifAllocIopHeap(0xFA00);
+
     if (sequence == 0) {
         printf("AllocIopHeap Err\n");
         return -1;
     }
+
     printf("AllocIopHeap %d \n", sequence);
     ezTransToIOP(sequence, (void *) address, size);
     midi_state.port[2].sequence_address[midi_state.port[2].sequence_count] = sequence;
@@ -1154,10 +1294,12 @@ int CSound::LoadSeq_I(int address, int size) {
 
     sceSifInitIopHeap();
     sequence = sceSifAllocIopHeap(0xFA00);
+
     if (sequence == 0) {
         printf("AllocIopHeap Err\n");
         return -1;
     }
+
     printf("AllocIopHeap %d \n", sequence);
     ezTransToIOP(sequence, (void *) address, size);
     midi_state.port[4].sequence_address[midi_state.port[4].sequence_count] = sequence;

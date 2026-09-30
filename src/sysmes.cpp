@@ -23,17 +23,21 @@ extern "C" int SkipSpace__FR9input_str__3(input_str &input) {
 
     text = input.data;
     position = input.pos;
+
     while (position < input.size) {
         if (CheckChar__Fc__3(text[position])) {
             break;
         }
+
         position++;
     }
+
     input.pos = position;
 
     if (position >= input.size) {
         return 0;
     }
+
     return 1;
 }
 
@@ -43,15 +47,19 @@ extern "C" int CheckChar__Fc__3(char value) {
     if (value == ' ') {
         whitespace = 1;
     }
+
     if (value == '\t') {
         whitespace = 1;
     }
+
     if (value == '\n') {
         whitespace = 1;
     }
+
     if (value == '\r') {
         whitespace = 1;
     }
+
     return !whitespace;
 }
 
@@ -65,10 +73,12 @@ extern "C" void PreProcess__FR9input_str__2(input_str &input) {
                 if (text[position] == '\n' || text[position] == '\r') {
                     break;
                 }
+
                 text[position] = ' ';
                 position++;
             }
         }
+
         if (text[position] == '/' && text[position + 1] == '*') {
             while (position < input.size) {
                 if (text[position] == '*' && text[position + 1] == '/') {
@@ -76,11 +86,14 @@ extern "C" void PreProcess__FR9input_str__2(input_str &input) {
                     text[position + 1] = ' ';
                     break;
                 }
+
                 text[position] = ' ';
                 position++;
             }
+
             continue;
         }
+
         position++;
     }
 }
@@ -119,6 +132,7 @@ void InitSystemMes() {
     if (LanguageCode > 0) {
         sprintf(name, "meswin/system_a_%d", LanguageCode);
     }
+
     strcat(name, ".mes");
 
     if (!LoadFile2(name, data, &size, 0)) {
@@ -163,12 +177,15 @@ void SystemMesStep() {
         SystemMesWait--;
         return;
     }
+
     if (SystemMesCount == 1) {
         ClearSystemMes();
     }
+
     if (SystemMesNo > 0) {
         SystemMessage.Step();
     }
+
     if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(64)) {
         if (SystemMesCount > 0) {
             SystemMesCount--;
@@ -186,9 +203,11 @@ void SystemMesDraw() {
     if (SystemMesWait > 0) {
         return;
     }
+
     if (SystemMesNo <= 0) {
         return;
     }
+
     TexManager.ReloadTexture(Vif1Packet, SystemMessage.tex_block);
     columns = SystemMessage.text_columns;
     x = 320;
@@ -214,27 +233,34 @@ void ItemGetMes(int item_no, int value, int frames, int input_key) {
     numbers[0] = value;
     SystemMessage.value_show = 0;
     SystemMessage.value_signed = 1;
+
     if (value < 0) {
         numbers[0] = 0;
         SystemMessage.value_signed = 0;
     }
+
     mes_args[0] = item_no + 100;
     message_no = 10;
+
     if (item_no >= 81) {
         message_no += 10;
     }
+
     if (item_no >= 145) {
         message_no += 10;
     }
+
     if (item_no >= 257) {
         message_no = 10;
         info = GetCommonItemInfo(item_no);
+
         if (!info) {
             printf("item_no: %d  is NULL\n", item_no);
         } else {
             mes_args[0] = info->msg + 100;
         }
     }
+
     SetSystemMes(message_no, frames, 8, input_key, mes_args, number_ptr);
 }
 
@@ -291,9 +317,11 @@ void DontGetItemMes(int kind) {
     int message_no;
 
     message_no = 72;
+
     if (kind == 2) {
         message_no = 81;
     }
+
     SetSystemMes(message_no, 40, 8, 1, 0, 0);
 }
 
@@ -303,24 +331,31 @@ void SetSystemMes(int message_no, int frames, int position, int input_key, int *
     int i;
 
     SystemMesInputKey = input_key;
+
     if (args) {
         for (i = 0; i < 4; i++) {
             SystemMessage.mes_no[i] = -1;
+
             if (*args >= 0) {
                 SystemMessage.mes_no[i] = *args;
             }
+
             args++;
         }
     }
+
     if (numbers) {
         for (i = 0; i < 4; i++) {
             SystemMessage.values[i] = -1;
+
             if (*numbers >= 0) {
                 SystemMessage.values[i] = *numbers;
             }
+
             numbers++;
         }
     }
+
     SystemMessage.MakeMesWin(message_no);
     SystemMesNo = message_no;
     SystemMesCount = frames;

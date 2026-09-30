@@ -268,6 +268,7 @@ void LoadOverlay(int mode) {
     if (binfile[mode][0] == '\0') {
         return;
     }
+
     if (strcmp(binfile[mode], now_binfile) == 0) {
         return;
     }
@@ -284,32 +285,45 @@ void init_all() {
     sceSifInitRpc(0);
     sceCdInit(0);
     sceCdMmode(2);
+
     while (!sceSifRebootIop("cdrom0:\\MODULES\\IOPRP211.IMG;1")) {
     }
+
     while (!sceSifSyncIop()) {
     }
+
     sceSifInitRpc(0);
     sceCdInit(0);
     sceCdMmode(2);
     sceFsReset();
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\SIO2MAN.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\PADMAN.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\MCMAN.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\MCSERV.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\LIBSD.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\SDRDRV.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\MODMIDI.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\MODHSYN.IRX;1", 0, 0) < 0) {
     }
+
     while (sceSifLoadModule("cdrom0:\\MODULES\\EZMIDI.IRX;1", 0, 0) < 0) {
     }
+
     InitCDFile();
     DevInit();
     d1 = sceDmaGetChan(1);
@@ -357,9 +371,11 @@ void LoadSndTxt() {
     u_char  work[48000];
     u_char *buffer = work;
     int     offset = (int) buffer % 64;
+
     if (offset) {
         buffer += 64 - offset;
     }
+
     CSnd.LoadSeInf("sound/tbl/setbl.txt", (u_int *) buffer);
     CSnd.LoadSqInf("sound/tbl/sqtbl.txt", (u_int *) buffer);
     SndInitSeTable();
@@ -381,13 +397,17 @@ void LoadSystemMessage() {
     SystemMesBuffer.Align64();
     SystemMes = (short *) &SystemMesBuffer.block[SystemMesBuffer.used];
     char name[64] = "meswin/system";
+
     if (LanguageCode > 0) {
         sprintf(name, "meswin/system_%d", LanguageCode);
     }
+
     strcat(name, ".mes");
+
     if (!LoadFile2(name, SystemMes, &size, 0)) {
         LoadFile("meswin/systeme.bin", SystemMes, &size);
     }
+
     SystemMesBuffer.Alloc((size >> 4) + 1);
     InitSystemMes();
 }
@@ -490,6 +510,7 @@ int main(int argc, const char **argv, const char **envp) {
     for (i = 0; (in_range = i < 60) != 0; i++) {
         sceGsSyncV(0);
         GamePad.UpDate();
+
 #ifdef PAL
         /* Holding four buttons through the first second turns on debug mode. */
         if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0) {
@@ -577,6 +598,7 @@ int main(int argc, const char **argv, const char **envp) {
         }
 
         GamePad.StopVibration();
+
 #ifdef PAL
         if (DebugMode) {
             LoadSystemMessage__Fv();
@@ -599,6 +621,7 @@ int main(int argc, const char **argv, const char **envp) {
                 LoadSystemMessage__Fv();
                 GlobalNameInit__Fv();
                 SndInitialize__Fiiii(4, 30, 4, 5);
+
                 /* `i` is the warmup counter reused as a "ran once" flag,
                  * $18 in retail for both. Retail stores GameClearFlag = 1
                  * here (gp-0x72E0), not main_select_menu_no (gp-0x72DC),
@@ -608,15 +631,18 @@ int main(int argc, const char **argv, const char **envp) {
                 if (i == 0) {
                     i = 1;
                     exist_data = InitExistData__Fv();
+
                     if (*(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] != 0) {
                         GameClearFlag = 1;
                     }
                 }
+
                 func_01DD1AB0(exist_data);
                 break;
             case 1:
                 SndInitialize__Fiiii(4, 30, 4, 5);
                 func_01DC8C50();
+
                 /* Sets skip_title (the "skip title demo" flag consumed by the
                  * second switch's case 1 below), not loop_result -- retail writes
                  * $17/s1 here, the same register case 1 below tests and
@@ -625,6 +651,7 @@ int main(int argc, const char **argv, const char **envp) {
                     MapJump__Fii(800, -1);
                     skip_title = 1;
                 }
+
                 break;
             case 2:
                 EditInit__FPv(0);
@@ -655,6 +682,7 @@ int main(int argc, const char **argv, const char **envp) {
         }
 
         NextMapNo = -1;
+
         while (check_now_loading__Fv() == 0) {
         }
 
@@ -735,6 +763,7 @@ int main(int argc, const char **argv, const char **envp) {
             switch (mode) {
                 case 14:
                     loop_result = LangsetLoop__Fv();
+
                     if (loop_result != 0) {
 #ifdef PAL
                         MapNo = -1;
@@ -744,26 +773,32 @@ int main(int argc, const char **argv, const char **envp) {
                         mode = 1;
 #endif
                     }
+
                     break;
                 case 0:
                     loop_result = func_01DD2220();
+
                     if (loop_result == 1) {
                         main_select_menu_no = 0;
                         strcpy(main_select_param, "e01");
                         mode = 2;
                     }
+
                     if (loop_result == 2) {
                         main_select_menu_no = 1;
                         strcpy(main_select_param, "e01");
                         mode = 2;
                     }
+
                     if (loop_result == 3) {
                         mode = 3;
                         main_select_menu_no = 0;
                     }
+
                     if (loop_result == 5) {
                         mode = 5;
                     }
+
                     if (loop_result == 1) {
                         MapJump__Fii(400, -1);
 
@@ -782,12 +817,15 @@ int main(int argc, const char **argv, const char **envp) {
 
                         TrialStart__Fv();
                     }
+
                     if (loop_result == 4) {
                         MapJump__Fii(801, -1);
                     }
+
                     if (loop_result == 2) {
                         SndInitialize__Fiiii(4, 30, 4, 5);
                     }
+
                     break;
                 case 1:
                     if (skip_title != 0) {
@@ -796,54 +834,69 @@ int main(int argc, const char **argv, const char **envp) {
                         skip_title = 0;
                     } else {
                         loop_result = func_01DC8EB0();
+
                         if (loop_result != 0) {
                             MapJump__Fii(800, -1);
                         }
                     }
+
                     break;
                 case 2:
                     loop_result = EditLoop__Fv();
+
                     if (loop_result == 1) {
                         mode = 0;
                     }
+
                     if (loop_result == 2) {
                         mode = 2;
                     }
+
                     if (loop_result != 0) {
                         mode = 7;
                     }
+
                     if (loop_result == 3) {
                         mode = 3;
                     }
+
                     break;
                 case 7:
                     loop_result = MenuLoop__Fv();
                     break;
                 case 13:
                     loop_result = LoopSave__Fv();
+
                     if (loop_result != 0) {
                         mode = 7;
                     }
+
                     break;
                 case 12:
                     loop_result = idle_result;
+
                     if (idle_result != 0) {
                         mode = 7;
                     }
+
                     break;
                 case 10:
                     loop_result = MemCheckLoop__Fv();
+
                     if (loop_result != 0) {
                         MapNo = 801;
                         mode = 1;
                     }
+
                     break;
                 case 11:
                     loop_result = TrialEndLoop__Fv();
+
                     if (loop_result != 0) {
                         MapNo = 800;
                         mode = 0;
                     }
+
                     break;
                 case 5:
                     /* Two separate ifs, not one -- retail emits two
@@ -851,27 +904,34 @@ int main(int argc, const char **argv, const char **envp) {
                      * the `mode = 0` store, 0x141A98 skipping the MapJump),
                      * which a single merged if does not produce. */
                     loop_result = func_01DAF970();
+
                     if (loop_result != 0) {
                         mode = 0;
                     }
+
                     if (loop_result != 0) {
                         MapJump__Fii(0, -1);
                     }
+
                     break;
                 case 9:
                     loop_result = func_01DC1510();
+
                     if (loop_result != 0) {
                         mode = 3;
                     }
+
                     break;
                 case 6:
                 case 8:
                     break;
                 default:
                     loop_result = func_01DAD980(mode);
+
                     if (loop_result != 0) {
                         mode = 7;
                     }
+
                     break;
             }
 
@@ -934,12 +994,15 @@ int main(int argc, const char **argv, const char **envp) {
                  * reproduces that without adding an xori. */
                 main_select_menu_no = 0;
                 strcpy(main_select_param, "title");
+
                 if (NextMapNo == 800) {
                     mode = 0;
                 }
+
                 if (NextMapNo == 801) {
                     mode = 1;
                 }
+
                 MapNo = NextMapNo;
                 LocalMapNo = 0;
             }
@@ -1035,12 +1098,15 @@ int MenuLoop() {
     if (GamePad.Down(16384)) {
         select++;
     }
+
     if (GamePad.Down(4096)) {
         select--;
     }
+
     if (select < 0) {
         select = 0;
     }
+
     if (select >= i) {
         select = i - 1;
     }
@@ -1049,12 +1115,15 @@ int MenuLoop() {
         if (GamePad.Down(8192)) {
             edit_map++;
         }
+
         if (GamePad.Down(32768)) {
             edit_map--;
         }
+
         if (edit_map < 0) {
             edit_map = 0;
         }
+
         if (edit_map > 4) {
             edit_map = 4;
         }
@@ -1064,18 +1133,23 @@ int MenuLoop() {
         if (GamePad.Down(8192)) {
             sub_map++;
         }
+
         if (GamePad.Down(32768)) {
             sub_map--;
         }
+
         if (GamePad.Down(8)) {
             sub_map += 10;
         }
+
         if (GamePad.Down(4)) {
             sub_map -= 10;
         }
+
         if (sub_map < 0) {
             sub_map = 98;
         }
+
         if (sub_map > 98) {
             sub_map = 0;
         }
@@ -1085,18 +1159,23 @@ int MenuLoop() {
         if (GamePad.Down(8192)) {
             event_no++;
         }
+
         if (GamePad.Down(32768)) {
             event_no--;
         }
+
         if (GamePad.Down(8)) {
             event_no += 10;
         }
+
         if (GamePad.Down(4)) {
             event_no -= 10;
         }
+
         if (event_no < 0) {
             event_no = 2;
         }
+
         if (event_no > 2) {
             event_no = 0;
         }
@@ -1106,12 +1185,15 @@ int MenuLoop() {
         if (GamePad.Down(8192)) {
             mc_mode++;
         }
+
         if (GamePad.Down(32768)) {
             mc_mode--;
         }
+
         if (mc_mode < 0) {
             mc_mode = 3;
         }
+
         if (mc_mode > 3) {
             mc_mode = 0;
         }
@@ -1121,12 +1203,15 @@ int MenuLoop() {
         if (GamePad.Down(8192)) {
             LanguageCode++;
         }
+
         if (GamePad.Down(32768)) {
             LanguageCode--;
         }
+
         if (LanguageCode < 0) {
             LanguageCode = 0;
         }
+
         if (LanguageCode > 6) {
             LanguageCode = 6;
         }
@@ -1159,9 +1244,11 @@ int MenuLoop() {
         static int event[3] = {310, 150, 305};
 
         main_select_padrup = 0;
+
         if (GamePad.Down(16)) {
             main_select_padrup = 1;
         }
+
         OldMapNo = -1;
         NextMapNo = -1;
         GamePad.AutoRepeatOff();
@@ -1173,34 +1260,41 @@ int MenuLoop() {
             main_select_menu_no = edit_map;
             LocalMapNo = edit_map;
         }
+
         if (select == 2) {
             main_select_menu_no = sub_map + 11;
             LocalMapNo = main_select_menu_no;
         }
+
         if (select == 6) {
             MapJump(map[event_no], event[event_no]);
             return 1;
         }
+
         if (select == 7) {
             mode = 13;
             return 1;
         }
 
         MapNo = main_select_menu_no;
+
         if (main_select_menu_no == 200) {
             main_select_menu_no = 0;
             mode = 9;
         }
+
         if (main_select_menu_no == 800) {
             MapNo++;
             main_select_menu_no = 0;
             strcpy(main_select_param, "title");
             mode = 1;
         }
+
         if (main_select_menu_no == 400) {
             main_select_menu_no = 0;
             mode = 5;
         }
+
         return 1;
     }
 
@@ -1218,17 +1312,21 @@ void MemCheckInit() {
     SetDataBuffer(&TextureData, 100000);
     SetPacketReadBuffer(10000, 100000);
     char filename[64] = "img/memory.img";
+
     if (LanguageCode > 0 && LanguageCode < 7) {
         sprintf(filename, "img_%d/memory.img", LanguageCode);
     }
+
     TexManager.Initialize(16352);
     static LOADTEXTURE_INFO texdata[64] = {{filename}, {gamemode_empty_string}};
     TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
+
     if (sceMcInit()) {
         printf("libmc initialize faild\n");
     }
+
     mem_chk_mode = 0;
     check_cancel = 2;
     taiken_cnt = 0;
@@ -1247,9 +1345,11 @@ void MemCheckInit() {
     result = TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
+
     if (sceMcInit()) {
         printf("libmc initialize faild\n");
     }
+
     mem_chk_mode = 0;
     check_cancel = 2;
     taiken_cnt = 0;
@@ -1261,11 +1361,13 @@ void MemCheckInit() {
 int MemCheckLoop() {
     DebugFont.length = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
+
     switch (mem_chk_mode) {
         case 0:
             if (check_cancel > 0) {
                 break;
             }
+
             switch (SaveEnableCheck()) {
                 case 1:
                     return 1;
@@ -1276,6 +1378,7 @@ int MemCheckLoop() {
                     mem_chk_mode = 3;
                     break;
             }
+
             break;
         case 1:
             break;
@@ -1292,13 +1395,16 @@ int MemCheckLoop() {
             rect.width = 640;
             rect.height = SCREEN_HEIGHT;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory01", -1), rect, texel);
+
             if (GamePad.Down(32)) {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
+
             if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
             }
+
             break;
         }
         case 3: {
@@ -1313,33 +1419,41 @@ int MemCheckLoop() {
             rect.width = 640;
             rect.height = SCREEN_HEIGHT;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory02", -1), rect, texel);
+
             if (GamePad.Down(32)) {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
+
             if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
             }
+
             break;
         }
         case 4:
             return 1;
     }
+
     check_cancel--;
+
     if (check_cancel < 0) {
         check_cancel = 0;
     }
+
     return 0;
 }
 #else
 int MemCheckLoop() {
     DebugFont.length = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
+
     switch (mem_chk_mode) {
         case 0:
             if (check_cancel > 0) {
                 break;
             }
+
             switch (SaveEnableCheck()) {
                 case 1:
                     return 1;
@@ -1350,6 +1464,7 @@ int MemCheckLoop() {
                     mem_chk_mode = 3;
                     break;
             }
+
             break;
         case 1:
             break;
@@ -1360,13 +1475,16 @@ int MemCheckLoop() {
             rect.width = 640;
             rect.height = 448;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory01", -1), rect, 0, 0);
+
             if (GamePad.Down(32)) {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
+
             if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
             }
+
             break;
         }
         case 3: {
@@ -1376,22 +1494,28 @@ int MemCheckLoop() {
             rect.width = 640;
             rect.height = 448;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory02", -1), rect, 0, 0);
+
             if (GamePad.Down(32)) {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
+
             if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
             }
+
             break;
         }
         case 4:
             return 1;
     }
+
     check_cancel--;
+
     if (check_cancel < 0) {
         check_cancel = 0;
     }
+
     return 0;
 }
 #endif
@@ -1734,6 +1858,7 @@ u_char *CDataAlloc<1, 6000>::Alloc(int quads) {
 
     if (filled > 6000) {
         printf("Alocation Error! %d/%d\n", used, 6000);
+
         while (1)
             ;
     }
@@ -1760,10 +1885,13 @@ void CDataAlloc<1, 6000>::Align64() {
     if (slack) {
         used += (64 - slack) >> 4;
     }
+
     if (used >= 6000) {
         printf("Alocation Error! %d/%d\n", used, 6000);
+
         while (1)
             ;
     }
+
 done:;
 }

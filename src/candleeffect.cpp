@@ -34,6 +34,7 @@ void CCandleEffect::SetPosition(float *world) {
 
 void CCandleEffect::Step() {
     this->animation_frame += 0.3f;
+
     if (this->animation_frame > 8.0f) {
         this->animation_frame = 0.0f;
     }
@@ -52,6 +53,7 @@ void CCandleEffect::Draw() {
     world[1] = position[1];
     world[2] = position[2];
     world[3] = 1.0f;
+
     if (MGRotTransPers3DSprite(top_left, bottom_right, world, half_width, half_height, 0) == 0) {
         return;
     }

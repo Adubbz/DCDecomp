@@ -30,28 +30,36 @@ int CBound::InCheck(float *point, float *result) {
     result[2] = point[2] - position[2];
     result[3] = 0.0f;
     sceVu0ApplyMatrix(result, inverse, result);
+
     if (result[0] > extent[0]) {
         return 0;
     }
+
     if (result[1] > extent[1]) {
         return 0;
     }
+
     if (result[2] > extent[2]) {
         return 0;
     }
+
     if (result[0] < -extent[0]) {
         return 0;
     }
+
     if (result[1] < -extent[1]) {
         return 0;
     }
+
     if (result[2] < -extent[2]) {
         return 0;
     }
+
     result[0] = result[0] * reciprocal[0];
     result[1] = result[1] * reciprocal[1];
     result[2] = result[2] * reciprocal[2];
     length = vuabs(result);
+
     if (length < 1.0f) {
         if (length == 0.0f) {
             result[0] = extent[0];
@@ -62,6 +70,7 @@ int CBound::InCheck(float *point, float *result) {
             result[1] = result[1] * extent[1] / length;
             result[2] = result[2] * extent[2] / length;
         }
+
         result[3] = 0.0f;
         sceVu0ApplyMatrix(result, matrix, result);
         result[0] += position[0];
@@ -70,6 +79,7 @@ int CBound::InCheck(float *point, float *result) {
         result[3] = 1.0f;
         return 1;
     }
+
     return 0;
 }
 
@@ -85,12 +95,15 @@ void CBound::SetDir(CFrame *frame, float *from_position, float *to_position, flo
     extent[0] = half_width;
     extent[1] = half_height;
     extent[2] = half_depth;
+
     if (!(extent[0] <= 0.0f)) {
         reciprocal[0] = 1.0f / half_width;
     }
+
     if (!(extent[1] <= 0.0f)) {
         reciprocal[1] = 1.0f / half_height;
     }
+
     if (!(extent[2] <= 0.0f)) {
         reciprocal[2] = 1.0f / half_depth;
     }
@@ -138,12 +151,15 @@ void CBound::UpDateDir() {
     extent[0] = half_width;
     extent[1] = half_height;
     extent[2] = half_depth;
+
     if (!(extent[0] <= 0.0f)) {
         reciprocal[0] = 1.0f / half_width;
     }
+
     if (!(extent[1] <= 0.0f)) {
         reciprocal[1] = 1.0f / half_height;
     }
+
     if (!(extent[2] <= 0.0f)) {
         reciprocal[2] = 1.0f / half_depth;
     }
@@ -166,15 +182,18 @@ void CBound::SetDir(float *new_direction) {
 
     float horizontal_sine = 0.0f;
     float horizontal_cosine;
+
     if (horizontal_length == 0.0f) {
         horizontal_cosine = 1.0f;
     } else {
         horizontal_cosine = direction[2] / horizontal_length;
         horizontal_sine = -direction[0] / horizontal_length;
     }
+
     if (length == 0.0f) {
         length = 1.0f;
     }
+
     float horizontal_ratio = horizontal_length / length;
     float vertical_ratio = direction[1] / length;
 
@@ -209,6 +228,7 @@ void CBound::UpDateDirPos() {
     } else {
         sceVu0CopyVector(world_from, from);
     }
+
     if (to_frame != NULL) {
         to[3] = 1.0f;
         to_frame->GetLWMatrix(frame_matrix);
@@ -237,15 +257,19 @@ void CBound::UpDateDirPos() {
     extent[0] = half_width;
     extent[1] = half_height;
     extent[2] = half_depth;
+
     if (!(extent[0] <= 0.0f)) {
         reciprocal[0] = 1.0f / half_width;
     }
+
     if (!(extent[1] <= 0.0f)) {
         reciprocal[1] = 1.0f / half_height;
     }
+
     if (!(extent[2] <= 0.0f)) {
         reciprocal[2] = 1.0f / half_depth;
     }
+
     SetDir(span);
 }
 
@@ -258,6 +282,7 @@ void CBound::UpDate() {
             UpDateDirPos();
             break;
     }
+
     if (next) {
         next->UpDate();
     }
@@ -282,15 +307,19 @@ CBound::CBound(float half_width, float half_height, float half_depth) {
     extent[0] = half_width;
     extent[1] = half_height;
     extent[2] = half_depth;
+
     if (!(extent[0] <= 0.0f)) {
         reciprocal[0] = 1.0f / half_width;
     }
+
     if (!(extent[1] <= 0.0f)) {
         reciprocal[1] = 1.0f / half_height;
     }
+
     if (!(extent[2] <= 0.0f)) {
         reciprocal[2] = 1.0f / half_depth;
     }
+
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 0.0f};
     SetDir(forward);
 }

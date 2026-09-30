@@ -21,9 +21,11 @@ void CWind::GetWindNoise(float *out) {
 void CWind::Step() {
     // A random walk of at most a tenth of the range per step, held inside it.
     gust = gust + 0.2f * ((float) rand() / 2147483648.0f - 0.5f);
+
     if (gust < 0.0f) {
         gust = 0.0f;
     }
+
     if (!(gust <= 1.0f)) {
         gust = 1.0f;
     }

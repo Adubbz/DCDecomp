@@ -31,11 +31,13 @@ int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
     if (set->collision_count == 0) {
         return count;
     }
+
     for (i = 0; i < set->collision_count; i++) {
         if (set->collision[i] != NULL && ((DRAN_MAP_FIELD_SET *) this)->state[i] > 1) {
             count += set->collision[i]->PickUpNearPoly(&poly[count], box);
         }
     }
+
     return count;
 }
 
@@ -83,16 +85,20 @@ void CDranMapField::Step() {
             if (this[i].character.frame == NULL) {
                 continue;
             }
+
             if (set->state[i] <= 0) {
                 continue;
             }
+
             // Two starts the drain, and the motion runs while it stands at one.
             if (set->state[i] == 2) {
                 SndSePlay(0x6C9, -1, 0);
                 set->state[i]--;
             }
+
             if (set->state[i] == 1) {
                 this[i].character.Step();
+
                 if (!(this[i].character.GetNowTime() < 59.0f)) {
                     set->state[i]--;
                 }

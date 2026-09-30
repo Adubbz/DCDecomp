@@ -52,6 +52,7 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
 
     clut = 0;
     image = (u_char *) picture + picture->header_size;
+
     if (bpp < 2) {
         clut = image + picture->image_size;
     }
@@ -60,6 +61,7 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
 
     if (picture->mipmap_count > 1) {
         u_char *next = image + picture->mipmap_size[0];
+
         for (int m = 1; m < picture->mipmap_count; m++) {
             mip[m] = next;
             next += picture->mipmap_size[m];
@@ -71,37 +73,47 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     tex->height = height;
     tex->bpp = bpp;
     tex->image[0] = (u_int *) image;
+
     for (int m = 1; m < 4; m++) {
         tex->image[m] = (u_int *) mip[m];
     }
+
     tex->clut = (u_int *) clut;
 
     tw = 0;
     th = 0;
     pow2 = width;
+
     while (pow2 >= 2) {
         pow2 >>= 1;
         tw++;
     }
+
     for (pow2 = 1, k = 0; k < tw; k++) {
         pow2 <<= 1;
     }
+
     if (width != pow2) {
         tw++;
     }
+
     pow2 = height;
+
     while (pow2 >= 2) {
         pow2 >>= 1;
         th++;
     }
+
     for (pow2 = 1, k = 0; k < th; k++) {
         pow2 <<= 1;
     }
+
     if (height != pow2) {
         th++;
     }
 
     tbw = width >> 6;
+
     if (tbw <= 0) {
         tbw = 1;
     }
@@ -124,6 +136,7 @@ void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
                 continue;
             }
         }
+
         SetTextureInfo(tex, entry->name, (TM2_head *) ((u_char *) head + entry->offset));
     }
 }
@@ -405,13 +418,16 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     if (vu_data == NULL || vu_size == 0) {
         return 0;
     }
+
     sceVu0CopyVector(shadow_point, info->shadow_point);
     sceVu0CopyVector(shadow_normal, info->shadow_normal);
+
     if (program == 6 || program == 4 || program == 0) {
         MulMatrix(screen_matrix, info->view_screen, matrix);
     } else {
         MulMatrix(screen_matrix, info->view_scaled, matrix);
     }
+
     start = packet;
     tag = packet;
     *packet++ = 0x10000000;
@@ -432,9 +448,11 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     *packet++ = 0x1A;
     *packet++ = 0;
     lighting = false;
+
     if (IsOff(info->shadow_pass) && IsOff(info->unlit)) {
         lighting = true;
     }
+
     *packet++ = ((program == 15) << 8) | ((!info->shadow_pass << 3) | (((((info->fog_enabled != 0 && !info->shadow_pass)) << 5) | 0x40) | (lighting * 16)));
     *packet++ = 0;
     *packet++ = 0x1B;
@@ -469,6 +487,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     inv_len_x = InverseLength(matrix[0]);
     inv_len_y = InverseLength(matrix[1]);
     inv_len_z = InverseLength(matrix[2]);
+
     if (info->shadow_pass != 0) {
         sceVu0ScaleVector(normal_matrix[0], matrix[0], inv_len_x * inv_len_x);
         sceVu0ScaleVector(normal_matrix[1], matrix[1], inv_len_y * inv_len_y);
@@ -478,6 +497,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         sceVu0ScaleVector(normal_matrix[1], matrix[1], inv_len_y);
         sceVu0ScaleVector(normal_matrix[2], matrix[2], inv_len_z);
     }
+
     normal_matrix[0][3] = 0.0f;
     normal_matrix[1][3] = 0.0f;
     normal_matrix[2][3] = 0.0f;
@@ -521,6 +541,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         *packet++ = *(u_int *) &info->fog_near;
         *packet++ = *(u_int *) &info->fog_far;
         *packet++ = *(u_int *) &info->fog_b;
+
         if (info->eye_in_model != 0) {
             eye[0] = info->position[0];
             eye[1] = info->position[1];
@@ -534,6 +555,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         } else {
             packet += 4;
         }
+
         MulMatrix(clip_matrix, info->perspective, info->view_scaled);
         MulMatrix(clip_matrix, clip_matrix, matrix);
         *(u_long128 *) packet = *(u_long128 *) clip_matrix[0];
@@ -552,11 +574,13 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         packet += 4;
         *(u_long128 *) packet = *(u_long128 *) info->viewport[3];
         packet += 4;
+
         if (info->shadow_pass != 0) {
             MulMatrix(shadow_matrix, info->shadow, matrix);
             MulMatrix(shadow_matrix, info->view_scaled, shadow_matrix);
             MulMatrix(shadow_matrix, info->perspective, shadow_matrix);
         }
+
         if (info->shadow_pass == 0) {
             *packet++ = 0x8000;
             *packet++ = 0x302EC000;
@@ -568,6 +592,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
             *packet++ = 0x412;
             *packet++ = 0;
         }
+
         *packet++ = 0x8001;
         *packet++ = 0x102E8000;
         *packet++ = 0xE;
@@ -577,10 +602,13 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
         *packet++ = 0x3F;
         *packet++ = 0;
     }
+
     *unpack = (((packet - unpack_data) >> 2) << 16) | 0x6C000000;
+
     if (info->shadow_pass != 0) {
         packet += SetShadowData(packet, shadow_matrix);
     }
+
     *tag |= (packet - header) >> 2;
     *packet++ = vu_size | 0x30000000;
     *packet++ = (u_int) vu_data;
@@ -621,6 +649,7 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
     u_long128 *colour_out;
 
     header[0] = count | 0x8000;
+
     if (prim != 4) {
         cursor[1] = 0x302DC000;
         cursor += 2;
@@ -628,33 +657,41 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
         cursor[1] = 0x302E4000;
         cursor += 2;
     }
+
     cursor[0] = 0x412;
     cursor[1] = 0;
     cursor[2] = count;
     cursor[3] = prim;
+
     if (colour != NULL) {
         cursor[4] = 0x100;
     } else {
         cursor[4] = 0;
     }
+
     vertex_out = &block[2];
     normal_out = &vertex_out[count];
     uv_out = &normal_out[count];
     colour_out = &uv_out[count];
+
     for (int i = count; i > 0; i--) {
         *vertex_out++ = vertex[index[0]];
         *normal_out++ = normal[index[1]];
         *uv_out++ = uv[index[2]];
         index += 3;
+
         if (colour != NULL) {
             *colour_out++ = colour[*index];
             index++;
         }
     }
+
     int size = count * 3 + 2;
+
     if (colour != NULL) {
         size = count * 4 + 2;
     }
+
     return size;
 }
 
@@ -701,40 +738,52 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
     vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
     normal = (u_long128 *) ((u_char *) data + header->normal[1]);
     uv = (u_long128 *) ((u_char *) data + header->uv[1]);
+
     if (header->uv[1] <= 0) {
         uv = vertex;
     }
+
     colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
+
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
     }
+
     materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
     index = mesh + 4;
     strips = mesh[2];
+
     for (strip = 0; strip < strips; strip++) {
         remaining = index[1];
         prim = index[0];
         material = index[2];
         material_entry = &materials[material];
         index += 3;
+
         if (material != -1) {
             handle = TexManager.GetTextureHandle(material_entry->texture, -1);
             word += SetTEX0(&block[word], TexManager.GetTexture(handle)->tex0, TexManager.GetTexture(handle)->tex1);
             word += SetMaterial(&block[word], material_entry);
         }
+
         limit = 0x36;
+
         if (colour != NULL) {
             limit = 0x21;
         }
+
         continued = 0;
+
         while (remaining > 0) {
             count = limit;
+
             if (remaining < limit) {
                 count = remaining;
             }
+
             qwc = 0;
             block[word] = 0;
             block[(u_int) (word + 1)] = 0;
@@ -743,11 +792,13 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
             block[unpack] = 0x6C008000;
             word += 4;
             size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv, colour, prim);
+
             // A strip that carries on in the next chunk repeats its last two vertices.
             if (prim == 4 && limit < remaining) {
                 index -= stride * 2;
                 remaining += 2;
             }
+
             index += count * stride;
             qwc += size;
             word += size * 4;
@@ -755,6 +806,7 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
             block[word] = 0;
             block[(u_int) (word + 1)] = 0;
             block[(u_int) (word + 2)] = 0;
+
             if (!continued) {
                 if (first) {
                     block[(u_int) (word + 3)] = 0x14000000;
@@ -764,16 +816,20 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
                     block[(u_int) (word + 3)] = 0x14000001;
                     word += 4;
                 }
+
                 continued = 1;
             } else {
                 block[(u_int) (word + 3)] = 0x17000000;
                 word += 4;
             }
+
             remaining -= limit;
         }
+
         *(u_long128 *) &block[word] = *(u_long128 *) end;
         word += 4;
     }
+
     vu_size = word >> 2;
     return vu_size;
 }
@@ -789,36 +845,46 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
     int        stride;
     u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
     u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
+
     if (header->colour_ofs <= 0) {
         stride = 3;
         colour = NULL;
     } else {
         stride = 4;
     }
+
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
     u_int        *index = mesh + 4;
     int           strips = mesh[2];
+
     for (strip = 0; strip < strips; strip++) {
         int           remaining = index[1];
         int           prim = index[0];
         int           material = index[2];
         MDT_MATERIAL *material_entry = &materials[material];
         index += 3;
+
         if (material != -1) {
             word += 16;
             word += SetMaterial(&block[word], material_entry);
         }
+
         int count;
         int limit = 0x36;
+
         if (colour != NULL) {
             limit = 0x21;
         }
+
         count = 0;
+
         while (remaining > 0) {
             count = limit;
+
             if (remaining < limit) {
                 count = remaining;
             }
+
             word += 4;
             int        i;
             u_long128 *out;
@@ -827,11 +893,13 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
             out = (u_long128 *) &block[word] + 2;
             u_long128 *colour_out = out + count * 3;
             int        size;
+
             if (colour == NULL) {
                 for (i = count; i > 0; i--) {
                     *out++ = vertex[source[0]];
                     source += 3;
                 }
+
                 size = count * 3 + 2;
             } else {
                 for (i = count; i > 0; i--) {
@@ -839,19 +907,24 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
                     *colour_out++ = colour[source[3]];
                     source += 4;
                 }
+
                 size = count * 4 + 2;
             }
+
             if (prim == 4 && limit < remaining) {
                 index -= stride * 2;
                 remaining += 2;
             }
+
             quads += size;
             word += size * 4;
             word += 4;
             remaining -= limit;
         }
+
         word += 4;
     }
+
     vu_size = word >> 2;
     return vu_size;
 }
@@ -868,10 +941,12 @@ int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, 
 
     result = 0;
     vu_data = vu_data_buffer[DBuffID];
+
     if (copy_on_draw != 0) {
         vu_data = (u_int *) ActiveData->Alloc64(vu_size);
         memcpy(vu_data, vu_data_buffer[DBuffID], vu_size * 16);
     }
+
     result += CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
     vu_data = vu_data_buffer[DBuffID];
     return result;
@@ -893,5 +968,6 @@ int CVisualMDTVu1::RemakeData(u_int *data) {
     if (this->data == NULL) {
         return 0;
     }
+
     return CreateVUdataFromMDTRemake(vu_data_buffer[DBuffID], this->data, 1);
 }

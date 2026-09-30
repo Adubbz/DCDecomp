@@ -63,17 +63,21 @@ void BtSystemScriptEventInfoInit() {
     BtEventInfo.no_status_recover = 0;
     EdEventInfo.projection = -1.0f;
     EdEventInfo.main_character = &CharaMain;
+
     for (int i = 0; i < 6; i++) {
         NPCUnit[i].frame = NULL;
     }
+
     EdEventInfo.npcs = NPCUnit;
     EdEventInfo.npc_texture_block = 32;
     EdEventInfo.player_texture_block = 17;
     EdEventInfo.npc_count = 6;
     EdEventInfo.villagers = NULL;
+
     for (int i = 0; i < 8; i++) {
         EdEventInfo.messages[i] = NULL;
     }
+
     EdEventInfo.messages[1] = &BtEventMes0;
     EdEventInfo.messages[2] = &BtEventMes1;
     EdEventAllClear();
@@ -144,37 +148,47 @@ void BtSystemScriptInit() {
     EdEventInfo.projection = -1.0f;
     EdEventInfo.camera = NowCamera__3;
     EdEventInfo.main_character = &CharaMain;
+
     for (int i = 0; i < 6; i++) {
         NPCUnit[i].frame = NULL;
     }
+
     EdEventInfo.npcs = NPCUnit;
     EdEventInfo.npc_texture_block = 32;
     EdEventInfo.player_texture_block = 17;
     EdEventInfo.npc_count = 6;
     EdEventInfo.villagers = NULL;
+
     for (int i = 0; i < 8; i++) {
         EdEventInfo.messages[i] = NULL;
     }
+
     EdEventInfo.messages[1] = &BtEventMes0;
     EdEventInfo.messages[2] = &BtEventMes1;
     EDIT_CONFIG_VIEW *config = (EDIT_CONFIG_VIEW *) SaveData->GetConfigData();
+
     if (config->message_speed != 0) {
         text_rate = 0.6f;
     } else {
         text_rate = 0.3f;
     }
+
     EdEventInfo.messages[1]->text_rate = text_rate;
     EdEventInfo.messages[2]->text_rate = text_rate;
     EdEventInfo.messages[1]->text_rate_set = text_rate;
     EdEventInfo.messages[2]->text_rate_set = text_rate;
+
     if (BtEventInfo.fade_on_start != 0) {
         EdFadeInit();
     }
+
     BtEventInfo.fade_on_start = 1;
+
     for (int i = 0; i < 32; i++) {
         BtObjHdl[i].frame = NULL;
         BtObjHdl[i].character = NULL;
     }
+
     BtEventInfo.event_marker = 0;
     BtEventInfo.floor_title_off = 0;
     BtEventInfo.no_reset_chara = 0;
@@ -206,17 +220,21 @@ void BtSystemScriptAfter() {
     EdEventAllClear();
     UserStatus->step_disable = 0;
     BtMapJumpFloor = -1;
+
     if (EdEventInfo.reset_camera_angle > 0) {
         sceVu0CopyVector(pos, CharaMain.pos);
         CharaMain.GetRotation(ref);
         float angle = ref[1] + EdEventInfo.reset_camera_yaw;
+
         if (!(angle <= 3.141592f)) {
             angle -= 6.2831855f;
         }
+
         MainCamera__4.SetAngleSoon(angle);
         MainCamera__4.SetFollow(pos[0], pos[1] + 16.0f - 3.0f, pos[2]);
         MainCamera__4.Step(-1);
     }
+
     if (EdEventInfo.reset_camera_angle < 0) {
         SubCamera.GetPos(pos);
         SubCamera.GetRef(ref);
@@ -232,6 +250,7 @@ void BtSystemScriptAfter() {
         MainCamera__4.Step(-1);
         MainCamera__4.Step(1);
     }
+
     NowCamera__3 = &MainCamera__4;
 }
 
@@ -255,6 +274,7 @@ static int GetStackInt(RS_STACKDATA *argument) {
     if (argument->type == RS_FLOAT) {
         return (int) argument->f;
     }
+
     return argument->i;
 }
 
@@ -270,6 +290,7 @@ static float GetStackFloat(RS_STACKDATA *argument) {
     if (argument->type == RS_INT) {
         return (float) argument->i;
     }
+
     return argument->f;
 }
 
@@ -341,13 +362,17 @@ int _ITEM_USE_WINDOW(RS_STACKDATA *stack, int argument_count) {
     BtEventInfo.item_select_result = (s32) stack->p;
     stack++;
     int i;
+
     for (i = 0; i < argument_count - 1; i++) {
         BtEventInfo.item_select_list[i] = GetStackInt(stack++);
     }
+
     BtEventInfo.item_select_filtered = 0;
+
     if (argument_count > 1) {
         BtEventInfo.item_select_filtered = 1;
     }
+
     BtEventInfo.item_select_list[i] = -1;
     BtEventInfo.request = 1;
     return 1;
@@ -368,6 +393,7 @@ int _SET_EVENT_FLG(RS_STACKDATA *stack, int argument_count) {
     if (flag_no >= 0 && flag_no < 50) {
         status->event_flags[flag_no] = value;
     }
+
     return 1;
 }
 
@@ -380,6 +406,7 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int argument_count) {
     if (parts_no != -1) {
         CDungeonMap *map = NowDngMap;
         CFrame      *frame = map->parts[parts_no].GetSearchFrame(name);
+
         if (frame != NULL) {
             handle->frame = frame;
             handle->type = 0;
@@ -390,6 +417,7 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int argument_count) {
         }
     } else {
         CFrame *frame = NowDngMap->GetFrameSearch(name);
+
         if (frame != NULL) {
             handle->frame = frame;
             handle->type = 0;
@@ -399,6 +427,7 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int argument_count) {
             handle->type = 0;
         }
     }
+
     return 1;
 }
 
@@ -412,9 +441,11 @@ int _SET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
     if (handle->type == 0 && handle->frame != NULL) {
         handle->frame->SetPosition(x, y, z);
     }
+
     if (handle->type == 1 && handle->character != NULL) {
         handle->character->SetPosition(x, y, z);
     }
+
     return 1;
 }
 
@@ -427,17 +458,21 @@ int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
 
     if (handle->type == 0) {
         CFrame *frame = handle->frame;
+
         if (frame != NULL) {
             frame->SetRotType(2);
             frame->SetRotation(AngleLimit(x), AngleLimit(y), AngleLimit(z));
         }
     }
+
     if (handle->type == 1) {
         CCharacter *chara = handle->character;
+
         if (chara != NULL) {
             chara->SetRotation(AngleLimit(x), AngleLimit(y), AngleLimit(z));
         }
     }
+
     return 1;
 }
 
@@ -448,28 +483,37 @@ int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int argument_count) {
 
     if (handle->type == 0) {
         CFrame *frame = handle->frame;
+
         if (frame != NULL) {
             int draw_on = 2;
+
             if (draw) {
                 draw_on = 1;
             }
+
             frame->attr.draw_on = draw_on;
             frame->flags = draw_on;
         }
     }
+
     if (handle->type == 1) {
         CCharacter *chara = handle->character;
+
         if (chara != NULL) {
             CFrame *frame = chara->frame;
+
             if (frame != NULL) {
                 int draw_on = 2;
+
                 if (draw) {
                     draw_on = 1;
                 }
+
                 frame->attr.draw_on = draw_on;
             }
         }
     }
+
     return 1;
 }
 
@@ -480,16 +524,20 @@ int _GET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
 
     if (handle->type == 0) {
         CFrame *frame = handle->frame;
+
         if (frame != NULL) {
             frame->GetWorldPosition(pos, local);
         }
     }
+
     if (handle->type == 1) {
         CCharacter *chara = handle->character;
+
         if (chara != NULL) {
             chara->GetPosition(pos);
         }
     }
+
     SetStack(stack++, pos[0]);
     SetStack(stack++, pos[1]);
     SetStack(stack, pos[2]);
@@ -503,6 +551,7 @@ int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
 
     if (handle->type == 0) {
         CFrame *frame = handle->frame;
+
         if (frame != NULL) {
             frame->GetLWMatrix(matrix);
             rot[0] = 0.0f;
@@ -511,12 +560,15 @@ int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
             rot[3] = 1.0f;
         }
     }
+
     if (handle->type == 1) {
         CCharacter *chara = handle->character;
+
         if (chara != NULL) {
             chara->GetRotation(rot);
         }
     }
+
     SetStack(stack++, rot[0]);
     SetStack(stack++, rot[1]);
     SetStack(stack, rot[2]);
@@ -595,6 +647,7 @@ int _SET_RANDOM_MAP(RS_STACKDATA *stack, int argument_count) {
     } else {
         BtCleatFreeMap();
     }
+
     return 1;
 }
 
@@ -615,27 +668,32 @@ int _SET_MONSTOR_ID(RS_STACKDATA *stack, int argument_count) {
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
+
     if (argument_count == 5) {
         int clean = GetStackInt(stack++);
         pos[0] = GetStackFloat(stack++);
         pos[1] = GetStackFloat(stack++);
         pos[2] = GetStackFloat(stack++);
+
         if (clean) {
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
+
     if (argument_count == 6) {
         int clean = GetStackInt(stack++);
         pos[0] = GetStackFloat(stack++);
         pos[1] = GetStackFloat(stack++);
         pos[2] = GetStackFloat(stack++);
         event_flag = GetStackInt(stack);
+
         if (clean) {
             BtLoadMonstor(0);
             NowMonstorUnit->CleanViewMonstor(0);
         }
     }
+
     NowMonstorUnit->SetupViewMonstor(model_no, pos, event_flag);
     return 1;
 }
@@ -682,13 +740,16 @@ int _RUN_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack++);
 
     BtEventInfo.ext_memory = 0;
+
     if (argument_count == 2) {
         BtEventInfo.ext_memory = GetStackInt(stack++);
     }
+
     if (argument_count == 3) {
         BtEventInfo.ext_memory = GetStackInt(stack++);
         BtEventInfo.fade_on_start = GetStackInt(stack);
     }
+
     BtEventInfo.request = 5;
     BtEventInfo.chained_script_no = script_no;
     return 1;
@@ -698,9 +759,11 @@ int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
     int script_no = GetStackInt(stack++);
 
     BtEventInfo.clear_script_ext_memory = 0;
+
     if (argument_count > 1) {
         BtEventInfo.clear_script_ext_memory = GetStackInt(stack);
     }
+
     BtEventInfo.clear_script_no = script_no;
     return 1;
 }
@@ -716,6 +779,7 @@ int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int argument_count) {
     }
 
     CCharacter *chara = &NowDngMap->npc[npc_no].chara;
+
     if (chara->frame != NULL) {
         handle->character = chara;
         handle->type = 1;
@@ -723,6 +787,7 @@ int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int argument_count) {
         handle->character = NULL;
         handle->type = 1;
     }
+
     return 1;
 }
 
@@ -735,17 +800,21 @@ int _SET_MOTION_OBJHDL(RS_STACKDATA *stack, int argument_count) {
     if (argument_count > 2) {
         speed = GetStackFloat(stack++);
     }
+
     if (argument_count > 3) {
         mode = GetStackInt(stack);
     }
+
     if (NowDngMap->npc[npc_no].chara.frame == NULL) {
         return 1;
     }
+
     if (argument_count < 3) {
         NowDngMap->NPCSetMotion(npc_no, motion_no);
     } else {
         NowDngMap->NPCSetMotion(npc_no, motion_no, speed, mode);
     }
+
     return 1;
 }
 
@@ -756,6 +825,7 @@ int _SET_NPC_ON_OFF(RS_STACKDATA *stack, int argument_count) {
     if (NowDngMap->npc[npc_no].chara.frame == NULL) {
         return 1;
     }
+
     NowDngMap->npc[npc_no].visible = enable;
     return 1;
 }
@@ -769,6 +839,7 @@ int _USER_WEAPON_DRAW(RS_STACKDATA *stack, int argument_count) {
     if (argument_count != 1) {
         return 1;
     }
+
     BtActStatus.weapon_visible = GetStackInt(stack);
     return 1;
 }
@@ -780,9 +851,11 @@ int _SET_MAIN_CHR2(RS_STACKDATA *stack, int argument_count) {
     if (argument_count == 2) {
         reload = GetStackInt(stack);
     }
+
     if (chara < 0 || chara > 5) {
         return 1;
     }
+
     selectChrUnit(chara, reload);
     BtEventInfo.script_main_chr = chara;
     return 1;
@@ -792,6 +865,7 @@ int _RESET_MAIN_CHR(RS_STACKDATA *stack, int argument_count) {
     if (BtEventInfo.script_main_chr == -1) {
         return 1;
     }
+
     selectChrUnit(BtEventInfo.script_main_chr, 0);
     BtEventInfo.script_main_chr = -1;
     // Past the early exit the result is whatever selectChrUnit left behind.
@@ -812,6 +886,7 @@ int _ALL_DRAW_FLAG(RS_STACKDATA *stack, int argument_count) {
     if (argument_count == 1) {
         BtAllDrawFlag = GetStackInt(stack);
     }
+
     return 1;
 }
 
@@ -837,9 +912,11 @@ int _SET_FLOOR_TITLE_OFF(RS_STACKDATA *stack, int argument_count) {
 
 int _SET_RES_LIMMIT_ZONE(RS_STACKDATA *stack, int argument_count) {
     ((CDngStatusData *) UserStatus)->SetResLimmitZone();
+
     if (UserStatus->res_limit_zone_current != -1) {
         SndSPSeLoad(0x1B);
     }
+
     return 1;
 }
 
@@ -886,11 +963,13 @@ int _BOM_SET(RS_STACKDATA *stack, int argument_count) {
     pos[1] += 16.0f;
     pos[2] -= 3.0f;
     int bomb = SetBombEffect(pos, 1, selectMapNo * 20 + 20, 0.8f);
+
     if (bomb != -1) {
         CCollisionData *collision = NowColData;
         sceVu0Normalize(direction, push);
         sceVu0ScaleVectorXYZ(collision->hit[bomb].velocity, direction, 0.8f);
     }
+
     BtActStatus.event_block_frames = 30;
     return 1;
 }
@@ -962,22 +1041,28 @@ int _GET_ITEM_UNIT_NO(RS_STACKDATA *stack, int argument_count) {
         if (!not_weapon && item_no < 0x12B) {
             owner = 0;
         }
+
         if (item_no >= 0x12B && item_no < 0x13A) {
             owner = 1;
         }
+
         if (item_no >= 0x13A && item_no < 0x14B) {
             owner = 2;
         }
+
         if (item_no >= 0x14B && item_no < 0x15B) {
             owner = 3;
         }
+
         if (item_no >= 0x15B && item_no < 0x16B) {
             owner = 4;
         }
+
         if (item_no >= 0x16B) {
             owner = 5;
         }
     }
+
     SetStack(stack, owner);
     return 1;
 }
@@ -1085,15 +1170,20 @@ void AddSystemEventScript() {
         if (ext_func_info[i].function == NULL) {
             break;
         }
+
         int j;
+
         for (j = 0; j < i; j++) {
             if (ext_func_info[i].operation == ext_func_info[j].operation) {
                 printf("same ext_func_no!!!\n");
+
                 while (1) {
                 }
             }
         }
+
         int operation = ext_func_info[i].operation;
+
         if (operation < 0 || operation >= 1500) {
             printf("ext func over!!");
         } else {

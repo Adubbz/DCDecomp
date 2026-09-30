@@ -85,9 +85,11 @@ void selectChrUnit(int chara_no, int reload) {
     int  size;
 
     printf("%d -> %d\n", UserStatus->cur_chara, chara_no);
+
     if (chara_no == UserStatus->cur_chara && reload == 0) {
         return;
     }
+
     UserStatus->cur_chara = chara_no;
     LoadFile(charaNameTbl[chara_no], read_buffer, &size);
     wait_now_loading_vsync();
@@ -124,6 +126,7 @@ void selectChrUnit(int chara_no, int reload) {
     SetTempTexture(0x28, (char *) read_buffer);
     BtItemListCashFlag = 1;
     nowUnitNow = UserStatus->cur_chara;
+
     if (UserStatus->CheckLife() == 0) {
         CUserStatus *user = UserStatus;
         int          cur_chara = user->cur_chara;
@@ -160,6 +163,7 @@ void BtGetTreasureboxBig_Init() {
     int     item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
+
     if (((CDngStatusData *) UserStatus)->CheckWeaponRot(item_no) >= 10) {
         SndSePlay(0xCE, -1, 0);
         SetSystemMes(((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) + 0x49, -1, 5, 0, NULL, NULL);
@@ -182,16 +186,21 @@ void BtGetTreasureboxBig_Init() {
         autoCamTrial();
         return;
     }
+
     if (item_no == 0x12F && PlayerAllItemCheck(0x12F) != 0) {
         item_no = 0x130;
     }
+
     TreasureboxBig_itemType = 0;
+
     if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 1) {
         TreasureboxBig_itemType = 1;
     }
+
     if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 5) {
         TreasureboxBig_itemType = 2;
     }
+
     if (((CDngStatusData *) UserStatus)->CheckWeaponUser(item_no) == 3) {
         TreasureboxBig_itemType = 3;
     }
@@ -257,6 +266,7 @@ int BtGetTreasureboxBig_Loop() {
                 BtActStatus.shadow_visible = 0;
                 BtGetTreasurebox_Sled++;
             }
+
             autoCamTrial();
             break;
         case 1: {
@@ -276,6 +286,7 @@ int BtGetTreasureboxBig_Loop() {
             sceVu0CopyVector(item_position, position);
             item_position[0] -= 5.0f;
             item_position[1] += 13.0f;
+
             switch (TreasureboxBig_itemType) {
                 case 0:
                     itemBoxModel->SetRotation(1.5707964f, 0.0f, 1.5707964f);
@@ -301,6 +312,7 @@ int BtGetTreasureboxBig_Loop() {
                     TreasureboxBig_itemScale = 2.0f;
                     break;
             }
+
             itemBoxModel->SetScale(0.01f, 0.01f, 0.01f);
             itemWeponScale = 0.1f;
             CharaMain.SetPosition(position);
@@ -321,32 +333,40 @@ int BtGetTreasureboxBig_Loop() {
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
 #ifdef PAL
             float pose_time = CharaMain.GetNowTime();
+
             if (!(pose_time < 79.0f) && pose_time <= 80.0f) {
                 BtActStatus.motion_no = 0x2D;
             }
+
 #endif
             float sound_time = itemOpenBigFx.motion.state.time;
+
             if (!(sound_time <= 14.0f) && sound_time < 15.0f) {
                 SndSePlay(0xCE, -1, 0);
                 SndSPSePlay(2, -1);
             }
+
             float grow_time = itemOpenBigFx.motion.state.time;
+
             if (!(grow_time <= 50.0f) && grow_time <= 55.0f) {
                 float scale = TreasureboxBig_itemScale / 5.0f * (grow_time - 50.0f);
                 itemWeponScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
+
             if (!(itemOpenBigFx.motion.state.time < 79.0f)) {
                 itemOpenBigFlag = 2;
                 BtActStatus.motion_no = 0x2D;
                 BtGetTreasurebox_Sled++;
                 ItemGetMes(TreasureboxBig_itemNo, -1, 0x28, 1);
             }
+
             break;
         }
         case 3: {
             CCameraFollow *camera = NowCamera__3;
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
+
             if (GamePad.Down(0x60) != 0) {
                 BtActStatus.shadow_visible = 1;
                 TexManager.DeleteTextureBlock(0x1C);
@@ -371,6 +391,7 @@ int BtGetTreasureboxBig_Loop() {
                 NowCamera__3 = &MainCamera__4;
                 done = 1;
             }
+
             break;
         }
         case 10:
@@ -387,8 +408,10 @@ int BtGetTreasureboxBig_Loop() {
                 CEffectHyde = 0;
                 done = 1;
             }
+
             break;
     }
+
     return done;
 }
 
@@ -407,14 +430,18 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
 
     ResetMovePower();
     int refusal = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no);
+
     if (refusal != 0) {
         SndSePlay(0xCF, -1, 0);
+
         if (refusal == 1) {
             SetSystemMes(0x48, -1, 5, 0, NULL, NULL);
         }
+
         if (refusal == 2) {
             SetSystemMes(0x51, -1, 5, 0, NULL, NULL);
         }
+
         int index = NowDngMap->events[iventActive].index;
         NowDngMap->boxes[index].lid_angle = -20.0f;
         SetMIniMapStatus(0);
@@ -434,6 +461,7 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
         autoCamTrial();
         return;
     }
+
     char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
                             "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
                             "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
@@ -442,9 +470,11 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
     int   size;
 
     NowDngMap->events[iventActive].kind = -1;
+
     if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
         item_no = 0x66;
     }
+
     int volume = createAttachVolume(item_no, dungeon);
     printf("get attach vol = %d\n", volume);
     BtGetTreasureboxSmall_itemNo = item_no;
@@ -506,6 +536,7 @@ int BtGetTreasureboxSmall_Loop() {
                 BtActStatus.shadow_visible = 0;
                 BtGetTreasurebox_Sled++;
             }
+
             autoCamTrial();
             break;
         case 1: {
@@ -546,49 +577,62 @@ int BtGetTreasureboxSmall_Loop() {
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
 #ifdef PAL
             float pose_time = CharaMain.GetNowTime();
+
             if (!(pose_time < 79.0f) && pose_time <= 80.0f) {
                 BtActStatus.motion_no = 0x2B;
             }
+
 #endif
             float sound_time = itemOpenSmallFx.motion.state.time;
+
             if (!(sound_time <= 19.0f) && sound_time < 20.4f) {
                 SndSePlay(0xCF, -1, 0);
                 SndSPSePlay(2, -1);
             }
+
             float grow_time = itemOpenSmallFx.motion.state.time;
+
             if (!(grow_time <= 50.0f) && grow_time <= 55.0f) {
                 float scale = 0.2f * (grow_time - 50.0f);
                 itemNormalScale = scale;
                 itemBoxModel->SetScale(scale, scale, scale);
             }
+
             if (!(itemOpenSmallFx.motion.state.time < 79.0f)) {
                 BtActStatus.motion_no = 0x2B;
                 itemOpenSmallFlag = 2;
+
                 if (BtGetTreasureboxSmall_itemVolume != 0) {
                     ItemGetMes(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume, 0x28, 1);
                 } else {
                     ItemGetMes(BtGetTreasureboxSmall_itemNo, -1, 0x28, 1);
                 }
+
                 BtGetTreasurebox_Sled++;
             }
+
             break;
         }
         case 3:
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
+
             if (GamePad.Down(0x60) != 0) {
                 BtActStatus.shadow_visible = 1;
                 TexManager.DeleteTextureBlock(0x1C);
                 TexManager.CleanUpTextureList();
+
                 if ((unsigned int) (BtGetTreasureboxSmall_itemNo - 0xE9) < 2U) {
                     if (BtGetTreasureboxSmall_itemNo == 0xE9) {
                         BtEquipMap = 1;
                     }
+
                     if (BtGetTreasureboxSmall_itemNo == 0xEA) {
                         BtEquipMasuisyou = 1;
                     }
                 } else {
                     ((CDngStatusData *) UserStatus)->GetItem(BtGetTreasureboxSmall_itemNo, BtGetTreasureboxSmall_itemVolume);
                 }
+
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, CharaMain.pos);
@@ -609,6 +653,7 @@ int BtGetTreasureboxSmall_Loop() {
                 NowCamera__3 = &MainCamera__4;
                 done = 1;
             }
+
             break;
         case 10:
             if (GamePad.Down(0x60) != 0) {
@@ -624,8 +669,10 @@ int BtGetTreasureboxSmall_Loop() {
                 CEffectHyde = 0;
                 done = 1;
             }
+
             break;
     }
+
     return done;
 }
 
@@ -712,22 +759,28 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 shortAtraEffect.SetMotionCamera(NowCamera__3);
                 BtGetAtraBoll_Sled++;
             }
+
             autoCamTrial();
             break;
         case 1: {
 #ifdef PAL
             float pose_time = CharaMain.GetNowTime();
+
             if (!(pose_time < 129.0f) && pose_time <= 130.0f) {
                 BtActStatus.motion_no = 0x2F;
             }
+
 #endif
             if (atraGetStatusRate__2 < 256.0f) {
                 atraGetStatusRate__2 += 2.0f;
             }
+
             float sound_time = shortAtraEffect.motion_type.state.time;
+
             if (!(sound_time < 53.0f) && sound_time < 54.0f) {
                 SndSPSePlay(1, -1);
             }
+
             if (!(shortAtraEffect.motion_type.state.time < 129.5f)) {
                 AtraGetMes(map_no, BtAtraGetID, 0x28);
                 atraGetStatus = 2;
@@ -736,6 +789,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 BtActStatus.motion_no = 0x2F;
                 BtGetAtraBoll_Sled++;
             }
+
             break;
         }
         case 2:
@@ -744,6 +798,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             } else {
                 BtGetAtraBoll_Sled++;
             }
+
             break;
         case 3:
             if (GamePad.Down(0x60) != 0) {
@@ -751,6 +806,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 DispFade__3.FadeOutStart(8.0f);
                 BtGetAtraBoll_Sled++;
             }
+
             break;
         case 4:
             if (DispFade__3.GetRate() == 128.0f) {
@@ -758,6 +814,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 autoCamTrial();
                 BtGetAtraBoll_Sled++;
             }
+
             break;
         case 5:
             BtActStatus.shadow_visible = 1;
@@ -780,6 +837,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             done = 1;
             break;
     }
+
     return done;
 }
 
@@ -817,9 +875,11 @@ int BtMiniChrSelect_Loop() {
             break;
         case 1:
             frameWait++;
+
             if (frameWait >= 2) {
                 BtMiniChrSelecter_Sled++;
             }
+
             break;
         case 2: {
             frameCaputer = 0;
@@ -840,6 +900,7 @@ int BtMiniChrSelect_Loop() {
             autoCamTrial();
             break;
     }
+
     return done;
 }
 
@@ -901,6 +962,7 @@ int BtMiniItemSelect_Loop() {
             if (BtEventInfo.item_select_result != 0) {
                 ((int *) BtEventInfo.item_select_result)[1] = miniItemSelNo;
             }
+
             BtEventInfo.item_select_result = 0;
             SetMIniMapStatus(1);
             done = 1;
@@ -976,6 +1038,7 @@ int BtGetGateKey_Loop() {
                 gateItemFlag = 1;
                 GateKey_Sled++;
             }
+
             autoCamTrial();
             break;
         case 1:
@@ -1007,11 +1070,13 @@ int BtGetGateKey_Loop() {
         case 2: {
             float end = CharaMain.motion_type.motion_info[34].end;
             float time = CharaMain.motion_type.state.time;
+
             if (!(time < end - 0.5f) && time <= end) {
                 ItemGetMes(GateKey_itemNo, -1, 0x28, 1);
                 BtActStatus.motion_no = 0x23;
                 GateKey_Sled++;
             }
+
             break;
         }
         case 3:
@@ -1031,8 +1096,10 @@ int BtGetGateKey_Loop() {
                 NowCamera__3 = &MainCamera__4;
                 done = 1;
             }
+
             break;
     }
+
     return done;
 }
 
@@ -1042,6 +1109,7 @@ void BtGetAttach_Init(int dungeon, int item_no) {
     if (item_no >= 0x51 && item_no < 0x79) {
         volume = createAttachVolume(item_no, dungeon);
     }
+
     BtGetTreasureboxSmall_itemNo = item_no;
     BtGetTreasureboxSmall_itemVolume = volume;
     ((CDngStatusData *) UserStatus)->GetItem(item_no, volume);
@@ -1081,6 +1149,7 @@ int BtGetAttach_Loop() {
                 ClearSystemMes();
                 done = 1;
             }
+
             break;
     }
 
@@ -1154,15 +1223,18 @@ int BtEscape_Loop() {
                 SndSPSePlay(8, -1);
                 escape_sled++;
             }
+
             autoCamTrial();
             break;
         case 1:
             if (EdFadeOutCheck() != 0) {
                 done = 1;
             }
+
             autoCamTrial();
             break;
     }
+
     return done;
 }
 
@@ -1187,24 +1259,30 @@ void BtSetActiveItemModel(u_int *buffer) {
 
     for (i = 0; i < 3; i++) {
         item_no = pack->quick_item_slot[i];
+
         if (item_no == -1) {
             continue;
         }
+
         BtGetItemNamePath(model_path, texture_path, item_no);
         LoadFile(model_path, buffer, &model_size);
         wait_now_loading_vsync();
         model_size = (u_int) (((model_size >> 6) + 1) << 6) >> 2;
         LoadFile(texture_path, &buffer[model_size], &texture_size);
         wait_now_loading_vsync();
+
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
             activeItem.model[i + 1] = -1;
         }
+
         size = texture_size;
         texture = &buffer[model_size];
+
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
         }
+
         activeItem.model[i + 1] = activeItem.models->SetCashModel(item_no, buffer, texture, size);
         activeItem.model[i + 5] = 0;
         activeItem.item[i + 1] = item_no;
@@ -1463,6 +1541,7 @@ int ItemThrowStep(float *position, float *velocity) {
     next_position[3] = 1.0f;
     velocity[1] -= 0.12f;
     sceVu0Normalize(direction, velocity);
+
     for (int unit_no = 0; unit_no < 16; unit_no++) {
         for (int i = 0; i < 16; i++) {
             if (NowMonstorUnit->effect[unit_no].timer[i] != 0 && DistVector(NowMonstorUnit->effect[unit_no].position[i], position) <= 1.5f + NowMonstorUnit->effect[unit_no].radius[i]) {
@@ -1470,9 +1549,11 @@ int ItemThrowStep(float *position, float *velocity) {
             }
         }
     }
+
     WorkBuffer__2->used = 0;
     CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
     int     hit_poly = CheckHit(polys, setCollisionData(NowDngMap, polys, position, 20.0f, 1.5f), position, next_position, hit_point, 1, 4);
+
     if (hit_poly >= 0) {
         sceVu0CopyVector(normal, polys[hit_poly].normal);
         sceVu0Normalize(normal, normal);
@@ -1486,6 +1567,7 @@ int ItemThrowStep(float *position, float *velocity) {
         velocity[2] *= 0.4f;
         return 1;
     }
+
     sceVu0CopyVector(position, next_position);
     return 0;
 }

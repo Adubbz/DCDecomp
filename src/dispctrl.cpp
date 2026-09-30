@@ -144,12 +144,14 @@ void CDebugFont::Draw() {
 
     pen_x = 0;
     pen_y = 0;
+
     while ((character = *text_pos) != 0) {
         if (character == 0x20) {
             pen_x += 8;
             text_pos++;
             continue;
         }
+
         if (character == 0x0A) {
             pen_y += 16;
             pen_x = 0;
@@ -194,33 +196,42 @@ u_int *SearchPTS(u_int *archive, char *name) {
     char        ch;
 
     header = reinterpret_cast<PTS_HEADER *>(archive);
+
     if (header == 0) {
         return 0;
     }
+
     entry = reinterpret_cast<PTS_ENTRY *>(header + 1);
     base_name = name;
+
     while ((ch = *name) != 0) {
         if (ch == '/') {
             base_name = name + 1;
         }
+
         name++;
     }
+
     for (i = 0; i < header->count; i++, entry++) {
         if (strcmp(base_name, entry->name) == 0) {
             return reinterpret_cast<u_int *>(reinterpret_cast<char *>(header) + entry->offset);
         }
     }
+
     return 0;
 }
 
 u_int *SearchPTS(u_int *archive, int index) {
     PTS_HEADER *header = reinterpret_cast<PTS_HEADER *>(archive);
+
     if (header == 0) {
         return 0;
     }
+
     if (index >= header->count) {
         return 0;
     }
+
     int offset = *reinterpret_cast<int *>(reinterpret_cast<char *>(archive) + index * 0x30 + 0x20);
     return reinterpret_cast<u_int *>(reinterpret_cast<char *>(archive) + offset);
 }
@@ -250,11 +261,13 @@ float CDispCtrl::FadeOut(sceVif1Packet *packet) {
     if (mode != 1) {
         return rate;
     }
+
     if (rate == 0.0f && speed == 0.0f) {
         return rate;
     }
 
     rate += speed;
+
     if (rate > 128.0f) {
         rate = 128.0f;
     }
@@ -274,6 +287,7 @@ float CDispCtrl::FadeOut(sceVif1Packet *packet) {
         rate = 128.0f;
         speed = 0.0f;
     }
+
     return rate;
 }
 
@@ -281,11 +295,13 @@ float CDispCtrl::FadeIn(sceVif1Packet *packet) {
     if (mode != 2) {
         return rate;
     }
+
     if (rate == 0.0f && speed == 0.0f) {
         return rate;
     }
 
     rate -= speed;
+
     if (rate < 0.0f) {
         rate = 0.0f;
     }
@@ -305,5 +321,6 @@ float CDispCtrl::FadeIn(sceVif1Packet *packet) {
         rate = 0.0f;
         speed = 0.0f;
     }
+
     return rate;
 }

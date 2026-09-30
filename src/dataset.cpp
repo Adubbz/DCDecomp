@@ -165,25 +165,33 @@ static int htoi(char *text) {
     cursor = text;
     len = 0;
     value = 0;
+
     while (*cursor++ != '\0') {
         len++;
     }
+
     place = 1;
+
     for (i = 0; i < len; i++) {
         ch = (unsigned char) text[len - i - 1];
         digit = 0;
+
         if (ch >= '0' && ch <= '9') {
             digit = ch - '0';
         }
+
         if (ch >= 'a' && ch <= 'f') {
             digit = ch - 'a' + 10;
         }
+
         if (ch >= 'A' && ch <= 'F') {
             digit = ch - 'A' + 10;
         }
+
         value += digit * place;
         place <<= 4;
     }
+
     return value;
 }
 
@@ -197,24 +205,31 @@ void SetFrameAttr(CFrame *frame, int recurse) {
     frame->attr.clip_depth = 150.0f;
     has_codes = 1;
     cursor = frame->name;
+
     if (*cursor == '\0') {
         has_codes = 0;
     }
+
     cursor++;
+
     for (;;) {
         if (*cursor == '\0') {
             has_codes = 0;
             break;
         }
+
         if (*cursor == '_' && cursor[-1] == '_') {
             break;
         }
+
         cursor++;
     }
+
     while (has_codes) {
         if (*cursor == '\0') {
             break;
         }
+
         switch (*cursor) {
             case 'c':
             case 'C':
@@ -234,12 +249,15 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 cursor += 2;
                 blend_code[1] = *cursor;
                 blend_code[2] = '\0';
+
                 if (blend_code[0] >= 'a' && blend_code[0] <= 'z') {
                     blend_code[0] -= 32;
                 }
+
                 if (blend_code[1] >= 'a' && blend_code[1] <= 'z') {
                     blend_code[1] -= 32;
                 }
+
                 if (blend_code[0] == 'P' && blend_code[1] == 'P') {
                     frame->attr.blend_mode = 1;
                 } else if (blend_code[0] == 'N' && blend_code[1] == 'N') {
@@ -247,6 +265,7 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 } else {
                     frame->attr.alpha_ref = htoi(blend_code);
                 }
+
                 break;
             case 'z':
             case 'Z':
@@ -267,16 +286,20 @@ void SetFrameAttr(CFrame *frame, int recurse) {
             case 'b':
             case 'B':
                 cursor++;
+
                 if (*cursor == '\0') {
                     cursor--;
                     break;
                 }
+
                 if (*cursor == 'Y' || *cursor == 'y') {
                     frame->attr.billboard = 2;
                 }
+
                 if (*cursor == 'A' || *cursor == 'a') {
                     frame->attr.billboard = 3;
                 }
+
                 break;
             case 't':
             case 'T':
@@ -292,8 +315,10 @@ void SetFrameAttr(CFrame *frame, int recurse) {
                 frame->flags = 2;
                 break;
         }
+
         cursor++;
     }
+
     if (recurse) {
         for (child = frame->child; child != 0; child = child->brother) {
             SetFrameAttr(child, recurse);
@@ -356,6 +381,7 @@ CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **doub
     if ((int) data % 16) {
         printf("address error!! %d \n", data);
     }
+
     FlushCache(0);
 
     if (!init) {
@@ -414,6 +440,7 @@ CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **doub
 
             extremes[0] = node->min;
             extremes[1] = node->max;
+
             for (j = 0; j < 8; j++) {
                 node->corner[j][3] = 1.0f;
                 node->corner[j][0] = extremes[(j & 1) != 0][0];
@@ -423,6 +450,7 @@ CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **doub
 
             saved_attr = attr;
             double_entry = double_names;
+
             if (double_entry) {
                 while (*double_entry) {
                     if (FrameNameComp(node->name, *double_entry)) {
@@ -430,26 +458,32 @@ CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **doub
                         attr |= 4;
                         break;
                     }
+
                     double_entry++;
                 }
             }
+
             retain_entry = retain_names;
+
             if (retain_entry) {
                 while (*retain_entry) {
                     if (FrameNameComp(node->name, *retain_entry)) {
                         attr |= 2;
                         break;
                     }
+
                     retain_entry++;
                 }
             }
 
             visual = CreateVisual((u_int *) ((char *) header + object->data_ofs), alloc, attr);
+
             if (attr & 2) {
                 node->SetVisual(visual);
             } else {
                 node->SetVisual(visual);
             }
+
             attr = saved_attr;
         }
     }
@@ -506,6 +540,7 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
         alloc->Align64();
         copy = (u_int *) alloc->Alloc((((MDT_HEADER *) data)->size >> 4) + 1);
         memcpy(copy, data, ((MDT_HEADER *) data)->size);
+
         if (attr & 2) {
             visual->SetMDTDataAddress(copy);
         }
@@ -516,6 +551,7 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
 
         if ((attr & 4) && !(attr & 0x10)) {
             alloc->Align64();
+
             if (attr & 8) {
                 visual->vu_data_buffer[0] = visual->vu_data;
                 ((CVisualShadow *) visual)
@@ -524,6 +560,7 @@ CVisualMDTVu1 *CreateVisual(u_int *data, CDataAlloc2<1> *alloc, int attr) {
                 visual->vu_data_buffer[0] = visual->vu_data;
                 visual->CreateVUdataFromMDT((u_int *) (alloc->base + alloc->used * 16), data, 0, 0);
             }
+
             alloc->Alloc(visual->vu_size);
             visual->vu_data_buffer[1] = visual->vu_data;
         } else {
@@ -568,6 +605,7 @@ static void ArrangeShadowMDT(u_int *data) {
     shape_num = mesh->shape_num;
     shape = mesh->shape;
     edge_count = 0;
+
     for (i = 0; i < shape_num; i++) {
         index_count = shape->index_num;
         corner = shape->vertex;
@@ -600,11 +638,14 @@ static void ArrangeShadowMDT(u_int *data) {
             edges[edge_count].edge_flag = &corner[2].edge;
             corner[2].edge = 0;
             edge_count++;
+
             if (edge_count > 1020) {
                 printf("shadow initialize failed\n");
+
                 while (1)
                     ;
             }
+
             corner += 3;
         }
 
@@ -615,16 +656,20 @@ static void ArrangeShadowMDT(u_int *data) {
         if (edges[k].done) {
             continue;
         }
+
         for (m = k + 1; m < edge_count; m++) {
             if (edges[m].done) {
                 continue;
             }
+
             if (edges[k].v0 != edges[m].v1) {
                 continue;
             }
+
             if (edges[k].v1 != edges[m].v0) {
                 continue;
             }
+
             if (DistVector(normals[k], normals[m]) < 0.0008f) {
                 edges[k].done = 1;
                 *edges[k].edge_flag = 1;
@@ -712,6 +757,7 @@ CFrameVu1 *LoadCollisionFile(u_int *data, CDataAlloc2<1> *alloc) {
 
             extremes[0] = node->min;
             extremes[1] = node->max;
+
             for (corner = 0; corner < 8; corner++) {
                 node->corner[corner][3] = 1.0f;
                 node->corner[corner][0] = extremes[(corner & 1) != 0][0];
@@ -762,11 +808,13 @@ CCollisionMDT *CreateCollisionMDT(u_int *data, CDataAlloc2<1> *alloc) {
         *(u_long128 *) built[i].poly.vertex[2] = vertex[poly->vertex[2]];
 
         index = poly->info_index;
+
         if (!model->info_ofs || index < 0) {
             memset(&built[i].poly.info, 0, 16);
         } else {
             *(u_long128 *) &built[i].poly.info = info[index];
         }
+
         poly++;
 
         VectorMaxMin(built[i].box.max, built[i].box.min, built[i].poly.vertex[0], built[i].poly.vertex[1], built[i].poly.vertex[2]);
@@ -806,21 +854,27 @@ static void CreateBBox(CBox3<float> *box, sceVu0FVECTOR *vertex, int num) {
         if (box->max[0] < vertex[0][0]) {
             box->max[0] = vertex[0][0];
         }
+
         if (box->max[1] < vertex[0][1]) {
             box->max[1] = vertex[0][1];
         }
+
         if (box->max[2] < vertex[0][2]) {
             box->max[2] = vertex[0][2];
         }
+
         if (box->min[0] > vertex[0][0]) {
             box->min[0] = vertex[0][0];
         }
+
         if (box->min[1] > vertex[0][1]) {
             box->min[1] = vertex[0][1];
         }
+
         if (box->min[2] > vertex[0][2]) {
             box->min[2] = vertex[0][2];
         }
+
         vertex++;
     }
 }
@@ -843,9 +897,11 @@ CFrameVu1 *CopyFrameVu1(CFrameVu1 *frame, CDataAlloc2<1> *alloc) {
     *copy = *frame;
 
     first_child = frame->child;
+
     for (child = first_child; child; child = child->brother) {
         CopyFrameVu1((CFrameVu1 *) child, alloc)->SetParent(copy);
     }
+
     return copy;
 }
 
@@ -864,9 +920,11 @@ CFrame *CopyFrame(CFrame *frame, CDataAlloc2<1> *alloc) {
     *copy = *frame;
 
     first_child = frame->child;
+
     for (child = first_child; child; child = child->brother) {
         CopyFrame(child, alloc)->SetParent(copy);
     }
+
     return copy;
 }
 

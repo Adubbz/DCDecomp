@@ -48,6 +48,7 @@ int CStockItem::SearchSpace(int slot_index, int search_space) {
     switch (search_space) {
         case SEARCHSPACE_DUNGEON_ITEMS:
             item_no = this->dungeon_items[slot_index];
+
             if ((item_no >= ITEM_DUNGEON_START) && (item_no <= ITEM_DUNGEON_END)) {
                 return item_no;
             }
@@ -58,13 +59,16 @@ int CStockItem::SearchSpace(int slot_index, int search_space) {
             if (this->weapons[slot_index].item_no >= ITEM_WEAPON_START) {
                 item_no = this->weapons[slot_index].item_no;
             }
+
             break;
         case SEARCHSPACE_ATTACH:
             item_no = this->attachments[slot_index].item_no;
+
             if (item_no < ITEM_ATTACH_START) {
                 item_no = 0;
                 return item_no;
             }
+
             break;
     }
 
@@ -204,6 +208,7 @@ int CStockItem::SeitonChargeItemBoardSub() {
     for (first_slot = 0; first_slot < 9; first_slot++) {
         sort_table__3[sort_type] = first_slot;
         sort_type++;
+
         if (sort_type >= 9) {
             sort_type = 0;
         }
@@ -233,6 +238,7 @@ void CStockItem::SeitonItem() {
         }
 
         sort_top_type__3++;
+
         if (sort_top_type__3 >= 9) {
             sort_top_type__3 = 1;
         }
@@ -291,6 +297,7 @@ static int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     for (first_slot = 0; first_slot < 5; first_slot++) {
         asort_table__3[sort_type] = first_slot;
         sort_type++;
+
         if (sort_type >= 5) {
             sort_type = 0;
         }
@@ -318,6 +325,7 @@ void CStockItem::SeitonAttach() {
         }
 
         asort_top_type__3++;
+
         if (asort_top_type__3 >= 5) {
             asort_top_type__3 = 0;
         }

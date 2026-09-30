@@ -15,6 +15,7 @@
 void CHealEffect::Set(float *world) {
     sceVu0CopyVector(this->position, world);
     this->active = 1;
+
     for (int i = 0; i < 32; i++) {
         this->radius[i] = 3.0f + 6.0f * (float) rand() / 2.1474836e9f;
         this->angle[i] = 6.2831855f * (float) rand() / 2.1474836e9f - 3.1415927f;
@@ -42,16 +43,21 @@ void CHealEffect::Step() {
 
                 this->phase[i] += 0.052359879f;
                 this->alpha[i] = 128.0f * rise - 32.0f;
+
                 if (this->alpha[i] <= 0.0f) {
                     this->alpha[i] = 0.0f;
                 }
+
                 this->angle[i] += this->angular_velocity[i];
+
                 if (this->angle[i] > 3.1415927f) {
                     this->angle[i] -= 6.2831855f;
                 }
+
                 if (this->angle[i] < -3.1415927f) {
                     this->angle[i] += 6.2831855f;
                 }
+
                 offset[0] = 0.0f;
                 offset[1] = this->particle_offset[i][1] + 0.3f * (float) rand() / 2.1474836e9f;
                 offset[2] = rise * this->radius[i];
@@ -61,6 +67,7 @@ void CHealEffect::Step() {
                 sceVu0CopyVector(this->particle_offset[i], offset);
             } else {
                 expired++;
+
                 if (expired == 32) {
                     this->active = 0;
                     printf("emd!!\n");
@@ -78,6 +85,7 @@ void CHealEffect::Draw() {
         CTexture *texture = TexManager.GetTexture(HealEffectTextureName, -1);
 
         sceVu0CopyVector(this->position, CharaMain.pos);
+
         for (int i = 0; i < 32; i++) {
             if (this->phase[i] < 3.1415927f) {
                 world[0] = this->position[0] + this->particle_offset[i][0];

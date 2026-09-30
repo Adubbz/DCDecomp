@@ -78,9 +78,11 @@ void CEditArea::SetPartsNo(int x, int y, int parts_no) {
     if (x < 0 || x >= width) {
         return;
     }
+
     if (y < 0 || y >= height) {
         return;
     }
+
     grid[x][y].parts_no = parts_no;
 }
 
@@ -88,9 +90,11 @@ void CEditArea::SetPartsID(int x, int y, int parts_id) {
     if (x < 0 || x >= width) {
         return;
     }
+
     if (y < 0 || y >= height) {
         return;
     }
+
     grid[x][y].parts_id = parts_id;
 }
 
@@ -98,9 +102,11 @@ void CEditArea::SetPartsExtra(int x, int y, int parts_extra) {
     if (x < 0 || x >= width) {
         return;
     }
+
     if (y < 0 || y >= height) {
         return;
     }
+
     grid[x][y].parts_extra = parts_extra;
 }
 
@@ -108,9 +114,11 @@ void CEditArea::SetCode(int x, int y, int code) {
     if (x < 0 || x >= width) {
         return;
     }
+
     if (y < 0 || y >= height) {
         return;
     }
+
     grid[x][y].code = code;
 }
 
@@ -118,9 +126,11 @@ int CEditArea::GetPartsID(int x, int y) {
     if (x < 0 || x >= width) {
         return -1;
     }
+
     if (y < 0 || y >= height) {
         return -1;
     }
+
     return grid[x][y].parts_id;
 }
 
@@ -128,9 +138,11 @@ int CEditArea::GetCode(int x, int y) {
     if (x < 0 || x >= width) {
         return -1;
     }
+
     if (y < 0 || y >= height) {
         return -1;
     }
+
     return grid[x][y].code;
 }
 
@@ -138,15 +150,19 @@ void CEditArea::SetAlt(int x, int y, int altitude) {
     if (x < 0 || x >= width) {
         return;
     }
+
     if (y < 0 || y >= height) {
         return;
     }
+
     if (altitude < 0) {
         altitude = 0;
     }
+
     if (altitude >= 128) {
         altitude = 127;
     }
+
     grid[x][y].altitude = altitude;
 }
 
@@ -154,9 +170,11 @@ int CEditArea::GetAlt_i(int x, int y) {
     if (x < 0 || x >= width) {
         return 0;
     }
+
     if (y < 0 || y >= height) {
         return 0;
     }
+
     return grid[x][y].altitude;
 }
 
@@ -164,9 +182,11 @@ float CEditArea::GetAlt(int x, int y) {
     if (x < 0 || x >= width) {
         return 0.0f;
     }
+
     if (y < 0 || y >= height) {
         return 0.0f;
     }
+
     return offset_y + static_cast<float>(grid[x][y].altitude) * unit_alt;
 }
 
@@ -190,34 +210,43 @@ int CEditArea::GetPartsExtra(int x, int y) {
                     if (x == 5 && y == -1) {
                         return MAP_CONNECTION_RIVER;
                     }
+
                     if (x == 2 && y == 8) {
                         return MAP_CONNECTION_RIVER;
                     }
+
                     break;
                 case 1:
                     if (x == 3 && y == 6) {
                         return MAP_CONNECTION_RIVER;
                     }
+
                     if (x == 12 && y == 3) {
                         return MAP_CONNECTION_RIVER;
                     }
+
                     break;
                 case 2:
                     if (x == 4 && y == -1) {
                         return MAP_CONNECTION_RIVER;
                     }
+
                     if (x == 3 && y == 8) {
                         return MAP_CONNECTION_RIVER;
                     }
+
                     break;
             }
     }
+
     if (x < 0 || x >= width) {
         return -1;
     }
+
     if (y < 0 || y >= height) {
         return -1;
     }
+
     return grid[x][y].parts_extra;
 }
 
@@ -230,6 +259,7 @@ int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, flo
     int parts_width = target->GetWidth();
     int parts_height = target->GetHeight();
     GetPos(&position, x, y, z);
+
     for (i = 0; i < parts_width; i++) {
         for (j = 0; j < parts_height; j++) {
             int half_width = parts_width >> 1;
@@ -237,8 +267,10 @@ int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, flo
             int half_height = parts_height >> 1;
             int cell_y = j + (position.z - half_height);
             int cell_code = target->GetInfoData(i, j);
+
             if (cell_code != 0) {
                 SetCode(cell_x, cell_y, cell_code);
+
                 if (cell_code < 0x80) {
                     AddAlt(cell_x, cell_y, cell_code);
                 } else {
@@ -249,6 +281,7 @@ int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, flo
             }
         }
     }
+
     grid_redraw = 1;
     return 1;
 }
@@ -256,12 +289,15 @@ int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, flo
 int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, float z) {
     CVector3_i_ position;
     GetPos(&position, x, y, z);
+
     if (parts_no < 0) {
         return 0;
     }
+
     CMapParts *target = &parts[parts_no];
     int        parts_width = target->GetWidth();
     int        parts_height = target->GetHeight();
+
     for (int i = 0; i < parts_width; i++) {
         for (int j = 0; j < parts_height; j++) {
             int half_width = parts_width >> 1;
@@ -269,10 +305,12 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
             int half_height = parts_height >> 1;
             int cell_y = j + (position.z - half_height);
             s16 cell_code = target->GetInfoData(i, j);
+
             if (cell_code != 0) {
                 if (cell_code < 0x80) {
                     int occupant = GetPartsID(cell_x, cell_y);
                     AddAlt(cell_x, cell_y, -cell_code);
+
                     if (occupant >= 0) {
                         CMapParts *occupant_parts = &parts[occupant];
                         float      occupant_position[3];
@@ -289,6 +327,7 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
             }
         }
     }
+
     grid_redraw = 1;
     return 1;
 }
@@ -301,12 +340,15 @@ int CEditArea::SetRiverParts(int x, int y) {
     if ((x < 0) || (x >= this->width)) {
         return -1;
     }
+
     if ((y < 0) || (y >= this->height)) {
         return -1;
     }
+
     if (GetPartsExtra(x, y) != MAP_CONNECTION_RIVER) {
         return -1;
     }
+
     negative_z = GetPartsExtra(x, y - 1);
     positive_x = GetPartsExtra(x + 1, y);
     positive_z = GetPartsExtra(x, y + 1);
@@ -324,75 +366,98 @@ int CEditArea::SetRiverParts(int x, int y) {
     neighbors[2] = neighbors[2] || positive_z == 5;
     neighbors[3] = neighbors[3] || negative_x == 5;
     count = 0;
+
     for (i = 0; i < 4; i++) {
         count += neighbors[i];
     }
+
     shape = -1;
     direction = 0;
+
     if (count == 4) {
         shape = MAP_CONNECTION_FOUR_WAY;
     }
+
     if (count == 3) {
         shape = MAP_CONNECTION_THREE_WAY;
+
         if (neighbors[0] == 0) {
             direction = 3;
         }
+
         if (neighbors[1] == 0) {
             direction = 2;
         }
+
         if (neighbors[2] == 0) {
             direction = 1;
         }
+
         if (neighbors[3] == 0) {
             direction = 0;
         }
     }
+
     if (count == 2) {
         if (((neighbors[0] != 0) && (neighbors[2] != 0)) || ((neighbors[1] != 0) && (neighbors[3] != 0))) {
             shape = MAP_CONNECTION_STRAIGHT;
+
             if (neighbors[0] != 0) {
                 direction = 0;
             }
+
             if (neighbors[1] != 0) {
                 direction = 1;
             }
         } else {
             shape = MAP_CONNECTION_CORNER;
+
             if ((neighbors[1] != 0) && (neighbors[2] != 0)) {
                 direction = 3;
             }
+
             if ((neighbors[2] != 0) && (neighbors[3] != 0)) {
                 direction = 2;
             }
+
             if ((neighbors[3] != 0) && (neighbors[0] != 0)) {
                 direction = 1;
             }
+
             if ((neighbors[0] != 0) && (neighbors[1] != 0)) {
                 direction = 0;
             }
         }
     }
+
     if (count == 1) {
         shape = MAP_CONNECTION_END;
+
         if (neighbors[0] != 0) {
             direction = 2;
         }
+
         if (neighbors[1] != 0) {
             direction = 1;
         }
+
         if (neighbors[2] != 0) {
             direction = 0;
         }
+
         if (neighbors[3] != 0) {
             direction = 3;
         }
     }
+
     if (count == 0) {
         shape = MAP_CONNECTION_ISOLATED;
     }
+
     if (shape < 0) {
         return -1;
     }
+
     shape = (shape << 4) & 0xFF0;
     return shape | (direction & 0xF);
 }
@@ -407,86 +472,112 @@ int CEditArea::SetRoadParts(int x, int y) {
     if ((x < 0) || (x >= this->width)) {
         return -1;
     }
+
     if ((y < 0) || (y >= this->height)) {
         return -1;
     }
+
     if (GetPartsExtra(x, y) != MAP_CONNECTION_ROAD) {
         return -1;
     }
+
     neighbors[0] = GetPartsExtra(x, y - 1) == MAP_CONNECTION_ROAD;
     neighbors[1] = GetPartsExtra(x + 1, y) == MAP_CONNECTION_ROAD;
     neighbors[2] = GetPartsExtra(x, y + 1) == MAP_CONNECTION_ROAD;
     neighbors[3] = GetPartsExtra(x - 1, y) == MAP_CONNECTION_ROAD;
     count = 0;
+
     for (i = 0; i < 4; i++) {
         count += neighbors[i];
     }
+
     shape = -1;
     direction = 0;
+
     if (count == 4) {
         shape = MAP_CONNECTION_FOUR_WAY;
     }
+
     if (count == 3) {
         shape = MAP_CONNECTION_THREE_WAY;
+
         if (neighbors[0] == 0) {
             direction = 0;
         }
+
         if (neighbors[1] == 0) {
             direction = 3;
         }
+
         if (neighbors[2] == 0) {
             direction = 2;
         }
+
         if (neighbors[3] == 0) {
             direction = 1;
         }
     }
+
     if (count == 2) {
         if (((neighbors[0] != 0) && (neighbors[2] != 0)) || ((neighbors[1] != 0) && (neighbors[3] != 0))) {
             shape = MAP_CONNECTION_STRAIGHT;
+
             if (neighbors[0] != 0) {
                 direction = 0;
             }
+
             if (neighbors[1] != 0) {
                 direction = 1;
             }
         } else {
             shape = MAP_CONNECTION_CORNER;
+
             if ((neighbors[1] != 0) && (neighbors[2] != 0)) {
                 direction = 0;
             }
+
             if ((neighbors[2] != 0) && (neighbors[3] != 0)) {
                 direction = 3;
             }
+
             if ((neighbors[3] != 0) && (neighbors[0] != 0)) {
                 direction = 2;
             }
+
             if ((neighbors[0] != 0) && (neighbors[1] != 0)) {
                 direction = 1;
             }
         }
     }
+
     if (count == 1) {
         shape = MAP_CONNECTION_END;
+
         if (neighbors[0] != 0) {
             direction = 2;
         }
+
         if (neighbors[1] != 0) {
             direction = 1;
         }
+
         if (neighbors[2] != 0) {
             direction = 0;
         }
+
         if (neighbors[3] != 0) {
             direction = 3;
         }
     }
+
     if (count == 0) {
         shape = MAP_CONNECTION_ISOLATED;
     }
+
     if (shape < 0) {
         return -1;
     }
+
     shape = (shape << 4) & 0xFF0;
     return shape | (direction & 0xF);
 }
@@ -513,21 +604,28 @@ void CEditArea::RemakeGrid() {
     if (grid_frame == NULL) {
         return;
     }
+
     CVisualVu1 *visual = grid_frame->GetVisual();
+
     if (visual == NULL) {
         return;
     }
+
     MDT_HEADER *model = (MDT_HEADER *) visual->GetMDTDataAddress();
+
     if (model == NULL) {
         return;
     }
+
     sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
     int            y;
     int            x;
+
     for (x = 0; x < width; x++) {
         for (y = 0; y < height; y++) {
             int index = x + y * width;
             index *= 4;
+
             if (GetCode(x, y) == 0x81) {
                 sceVu0CopyVector(vertices[index + 1], vertices[index]);
                 sceVu0CopyVector(vertices[index + 2], vertices[index]);
@@ -542,6 +640,7 @@ void CEditArea::RemakeGrid() {
             }
         }
     }
+
     grid_frame->attr.remake_pending = 1;
 }
 
@@ -555,24 +654,29 @@ void CEditArea::MakePartsBox() {
     int         max_x = 0;
     int         max_z = 0;
     int         min_z = 0;
+
     for (int x = 0; x < width; x++) {
         for (int z = 0; z < height; z++) {
             if (grid[x][z].parts_no >= 0 && grid[x][z].parts_id >= 0) {
                 if (max_x < x) {
                     max_x = x;
                 }
+
                 if (max_z < z) {
                     max_z = z;
                 }
+
                 if (min_x > x) {
                     max_x = x;
                 }
+
                 if (z < min_z) {
                     min_z = z;
                 }
             }
         }
     }
+
     GetPos(&position, max_x, 0, max_z);
     parts_box.max[0] = position.x + unit_size;
     parts_box.max[1] = position.y;
@@ -589,15 +693,19 @@ int CEditArea::CheckArea(float x, float y, float z) {
     if (x < offset_x) {
         return 0;
     }
+
     if (z < offset_z) {
         return 0;
     }
+
     if (x > offset_x + unit_size * static_cast<float>(width)) {
         return 0;
     }
+
     if (z > offset_z + unit_size * static_cast<float>(height)) {
         return 0;
     }
+
     return 1;
 }
 
@@ -614,12 +722,15 @@ int CEditArea::CheckAreaRect(float x, float y, float z, int rect_width, int rect
     int half_height = rect_height >> 1;
     top = position.z - half_height;
     bottom = rect_height + top - 1;
+
     if (left < 0 || top < 0) {
         return 0;
     }
+
     if (right >= this->width || bottom >= this->height) {
         return 0;
     }
+
     return 1;
 }
 
@@ -627,95 +738,120 @@ int CEditArea::CheckParts(CMapParts *parts, float x, float y, float z, int rotat
     if (parts->info == NULL) {
         return 0;
     }
+
     CVector3_i_ position;
     GetPos(&position, x, y, z);
+
     if (parts->subtype == 5) {
         if (GetPartsExtra(position.x, position.z) != 2) {
             return 0;
         }
+
         return 1;
     }
+
     parts->SetRotY(rotation);
     int i;
     int j;
     int part_width = parts->GetWidth();
     int part_height = parts->GetHeight();
+
     for (i = 0; i < part_width; i++) {
         for (j = 0; j < part_height; j++) {
             int half_width = part_width >> 1;
             int cell_x = i + (position.x - half_width);
             int half_height = part_height >> 1;
             int cell_y = j + (position.z - half_height);
+
             if (cell_x < 0 || cell_x >= this->width) {
                 return 0;
             }
+
             if (cell_y < 0 || cell_y >= this->height) {
                 return 0;
             }
+
             s16 cell_code = parts->GetInfoData(i, j);
+
             if (cell_code != 0) {
                 int occupant = grid[cell_x][cell_y].parts_no;
                 int extra = GetPartsExtra(cell_x, cell_y);
+
                 if ((parts->subtype == 1 || extra != 1) && occupant >= 0) {
                     return 0;
                 }
             }
         }
     }
+
     if (parts->subtype == 2) {
         if (GetAlt_i(position.x, position.z) > 0) {
             return 0;
         }
+
         int neighbors[4];
         neighbors[0] = GetPartsExtra(position.x + 1, position.z);
         neighbors[1] = GetPartsExtra(position.x - 1, position.z);
         neighbors[2] = GetPartsExtra(position.x, position.z - 1);
         neighbors[3] = GetPartsExtra(position.x, position.z + 1);
+
         for (int i = 0; i < 4; i++) {
             int extra = neighbors[i];
+
             if (extra == 3) {
                 return 0;
             }
+
             if (extra == 4) {
                 return 0;
             }
+
             if (extra == 5) {
                 return 0;
             }
+
             if (extra == 5) {
                 return 0;
             }
         }
     }
+
     if (parts->subtype == 4) {
         if (GetAlt_i(position.x, position.z) > 0) {
             return 0;
         }
+
         for (int i = -1; i < part_width + 1; i++) {
             for (int j = -1; j < part_height + 1; j++) {
                 int half_width = part_width >> 1;
                 int cell_x = i + (position.x - half_width);
                 int extra = GetPartsExtra(cell_x, j + (position.z - (part_height >> 1)));
+
                 if (extra == 3) {
                     return 0;
                 }
+
                 if (extra == 2) {
                     return 0;
                 }
+
                 if (extra == 5) {
                     return 0;
                 }
             }
         }
     }
+
     return 1;
 }
 
 int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
     CVector3_i_ position;
+
     if (CheckArea(x, y, z) == 0) {
         return 0;
     }
+
     GetPos(&position, x, y, z);
     CRect_i_ rect(position.x - 1, position.z - 1, 2, 2);
     return PickUpPoly(polygons, rect);
@@ -724,6 +860,7 @@ int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
 int CEditArea::PickUpPoly(CCPoly *polygons, CRect_i_ rect) {
     static int sound[] = {0, 1, 0, 14, 2};
     int        count = 0;
+
     for (int x = rect.x; x < rect.x + rect.width; x++) {
         for (int y = rect.y; y < rect.y + rect.height; y++) {
             if (x >= 0 && x < width && y >= 0 && y < height && GetCode(x, y) != 0x81) {
@@ -765,6 +902,7 @@ int CEditArea::PickUpPoly(CCPoly *polygons, CRect_i_ rect) {
             }
         }
     }
+
     return count;
 }
 
@@ -788,22 +926,27 @@ int CEditArea::PickUpPoly(CCPoly *polygons, CBoxVu0 box) {
 int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity) {
     int x, y;
     int count = 0;
+
     for (x = rect.x; x < rect.x + rect.width; x++) {
         for (y = rect.y; y < rect.y + rect.height; y++) {
             if (count >= capacity) {
                 break;
             }
+
             int parts_id = GetPartsID(x, y);
+
             if (parts_id >= 0) {
                 if (count == 0) {
                     parts_ids[count++] = parts_id;
                 } else {
                     int found = 0;
+
                     for (int i = 0; i < count; i++) {
                         if (parts_id == parts_ids[i]) {
                             found = 1;
                         }
                     }
+
                     if (!found) {
                         parts_ids[count++] = parts_id;
                     }
@@ -811,6 +954,7 @@ int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity) {
             }
         }
     }
+
     return count;
 }
 
@@ -826,27 +970,35 @@ int CEditArea::CheckRiverChain(int x, int y, int target_x, int target_y) {
     if (x < 0 || y < 0 || x >= 16 || y >= 16) {
         return 0;
     }
+
     if (chain_work[x][y] != 0) {
         return 0;
     }
+
     chain_work[x][y] = 1;
     static int ext = 0;
     ext = GetPartsExtra(x, y);
+
     if (ext != MAP_CONNECTION_RIVER && ext != 3 && ext != 5) {
         return 0;
     }
+
     if (x == target_x && y == target_y) {
         return 1;
     }
+
     if (CheckRiverChain(x - 1, y, target_x, target_y)) {
         return 1;
     }
+
     if (CheckRiverChain(x + 1, y, target_x, target_y)) {
         return 1;
     }
+
     if (CheckRiverChain(x, y - 1, target_x, target_y)) {
         return 1;
     }
+
     return CheckRiverChain(x, y + 1, target_x, target_y) ? 1 : 0;
 }
 
@@ -854,11 +1006,14 @@ void CEditArea::DrawGrid() {
     sceVu0FVECTOR position;
 
     grid_redraw_count--;
+
     if (grid_redraw != 0) {
         grid_redraw_count = 2;
     }
+
     if (grid_redraw_count > 0) {
         RemakeGrid();
+
         if (grid_frame != NULL) {
             grid_frame->attr.cull_enable = 0;
         }
@@ -867,10 +1022,13 @@ void CEditArea::DrawGrid() {
             grid_frame->attr.cull_enable = 1;
         }
     }
+
     grid_redraw = 0;
+
     if (grid_redraw_count < 0) {
         grid_redraw_count = 0;
     }
+
     position[0] = offset_x;
     position[1] = offset_y;
     position[2] = offset_z;
@@ -890,6 +1048,7 @@ void CEditArea::Clear() {
             grid[x][y].spare_index = -1;
         }
     }
+
     grid_redraw = 1;
     grid_redraw_count = 4;
 }

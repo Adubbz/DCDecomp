@@ -77,14 +77,17 @@ void ToanKey_On() {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
+
         if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
+
         if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
+
         if (BtActStatus.action_no == 0x27 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
@@ -105,6 +108,7 @@ void ToanKey_Play() {
     if (NowWeaponHave->best_elem < 5) {
         element_se = NowWeaponHave->best_elem + 0x65;
     }
+
     if (element_se == 0x66) {
         element_se = 0x66;
     }
@@ -200,6 +204,7 @@ void ToanKey_Play() {
         }
 
         BtActStatus.motion_no = 0x24;
+
         if (GamePad.On(PadInput_OK) == 0) {
             BtActStatus.action_step = 1;
         }
@@ -213,6 +218,7 @@ void ToanKey_Play() {
         }
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 1.0f && time <= end) {
             if (BtActStatus.action_step == 0) {
                 BtActStatus.action_no = 14;
@@ -221,9 +227,11 @@ void ToanKey_Play() {
                 BtActStatus.move_power = 0.0f;
             } else if (BtActStatus.combo_queued == 1) {
                 BtActStatus.action_gauge -= 25.0f;
+
                 if (BtActStatus.action_gauge <= 0.0f) {
                     BtActStatus.action_gauge = 0.0f;
                 }
+
                 BtActStatus.action_no = 0x25;
                 BtActStatus.motion_no = 0x25;
                 driveNoInterpolate = 1;
@@ -234,6 +242,7 @@ void ToanKey_Play() {
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
@@ -241,6 +250,7 @@ void ToanKey_Play() {
                 BtActStatus.move_power_decay = 0.0f;
                 BtActStatus.special_cooldown = 15;
             }
+
             BtActStatus.combo_window = 0;
             BtActStatus.combo_queued = 0;
         }
@@ -260,12 +270,15 @@ void ToanKey_Play() {
         }
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 1.0f && time <= end) {
             if (BtActStatus.combo_queued == 1) {
                 BtActStatus.action_gauge -= 25.0f;
+
                 if (BtActStatus.action_gauge <= 0.0f) {
                     BtActStatus.action_gauge = 0.0f;
                 }
+
                 BtActStatus.action_no = 0x26;
                 BtActStatus.motion_no = 0x26;
                 driveNoInterpolate = 1;
@@ -276,12 +289,14 @@ void ToanKey_Play() {
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
             }
+
             BtActStatus.combo_window = 0;
             BtActStatus.combo_queued = 0;
         }
@@ -301,12 +316,15 @@ void ToanKey_Play() {
         }
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 1.0f && time <= end) {
             if (BtActStatus.combo_queued == 1) {
                 BtActStatus.action_gauge -= 25.0f;
+
                 if (BtActStatus.action_gauge <= 0.0f) {
                     BtActStatus.action_gauge = 0.0f;
                 }
+
                 BtActStatus.action_no = 0x27;
                 BtActStatus.motion_no = 0x27;
                 driveNoInterpolate = 1;
@@ -317,12 +335,14 @@ void ToanKey_Play() {
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
             }
+
             BtActStatus.combo_window = 0;
             BtActStatus.combo_queued = 0;
         }
@@ -342,12 +362,15 @@ void ToanKey_Play() {
         }
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 1.0f && time <= end) {
             if (BtActStatus.combo_queued == 1) {
                 BtActStatus.action_gauge -= 25.0f;
+
                 if (BtActStatus.action_gauge <= 0.0f) {
                     BtActStatus.action_gauge = 0.0f;
                 }
+
                 BtActStatus.action_no = 0x28;
                 BtActStatus.motion_no = 0x28;
                 driveNoInterpolate = 1;
@@ -357,12 +380,14 @@ void ToanKey_Play() {
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
                 BtActStatus.move_power = 0.0f;
                 BtActStatus.move_power_decay = 0.0f;
             }
+
             BtActStatus.combo_window = 0;
             BtActStatus.combo_queued = 0;
         }
@@ -375,6 +400,7 @@ void ToanKey_Play() {
         }
 
         BtActStatus.motion_no = 0x28;
+
         if (time >= 861 && time <= 861.5f) {
             CWeaponFx.Set(0xE, 24.0f, 32.0f);
         }
@@ -385,6 +411,7 @@ void ToanKey_Play() {
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
+
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
@@ -402,14 +429,17 @@ void ToanKey_Play() {
 
         BtActStatus.motion_no = 14;
         BtActStatus.charge_time += 0.016666667f;
+
         if (BtActStatus.charge_time >= 1.5f && BtActStatus.charge_level == 0) {
             BtActStatus.charge_level = 1;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
+
         if (UserStatus->skill_owned[0] != 0 && BtActStatus.charge_time >= 2.5f && BtActStatus.charge_level == 1) {
             BtActStatus.charge_level = 2;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
+
         if (BtActStatus.action_step == 1) {
             if (BtActStatus.charge_time >= 1.5f) {
                 int charged = 0;
@@ -417,15 +447,18 @@ void ToanKey_Play() {
                 if (UserStatus->skill_owned[0] != 0 && BtActStatus.charge_time >= 2.5f) {
                     charged = 1;
                 }
+
                 if (BtActStatus.charge_time >= 3.0f) {
                     BtActStatus.charge_time = 3.0f;
                 }
+
                 if (charged == 0) {
                     BtActStatus.action_no = 0xF;
                     BtActStatus.motion_no = 0xF;
                     driveNoInterpolate = 1;
                     SwordDmgCheck1(2.0f, 0);
                 }
+
                 if (charged != 0) {
                     sceVu0FVECTOR shot_pos;
                     sceVu0FVECTOR shot_vector = {0.0001f, 0.9998f, 0.0001f, 1.0f};
@@ -447,6 +480,7 @@ void ToanKey_Play() {
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
@@ -470,6 +504,7 @@ void ToanKey_Play() {
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
+
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
@@ -513,6 +548,7 @@ void ToanKey_Play() {
 
     if (BtActStatus.action_no == 0x10) {
         BtActStatus.motion_no = 0x10;
+
         if (BtActStatus.jump_velocity_y <= -0.4f) {
             BtActStatus.action_no = 3;
             driveNoInterpolate = 1;
@@ -536,6 +572,7 @@ void ToanKey_Play() {
 
     if (BtActStatus.action_no == 0x19) {
         BtActStatus.motion_no = 0x19;
+
         if (BtActStatus.ground_height < 2.0f) {
             BtActStatus.action_no = 0x11;
             BtActStatus.jumping = 0;
@@ -553,6 +590,7 @@ void ToanKey_Play() {
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
+
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
@@ -593,6 +631,7 @@ void UngagaKey_On() {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
+
         if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 40.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
@@ -663,9 +702,11 @@ void UngagaKey_Play() {
     if (time >= 674 && time <= 674.5f) {
         CWeaponFx.Set(0x10, 16.0f, 64.0f);
     }
+
     if (time >= 686 && time <= 686.5f) {
         CWeaponFx.Set(0x10, 16.0f, 64.0f);
     }
+
     if (time >= 699 && time <= 699.5f) {
         CWeaponFx.Set(0x10, 16.0f, 64.0f);
     }
@@ -693,12 +734,15 @@ void UngagaKey_Play() {
         float end = CharaMain.motion_type.motion_info[0x25].end;
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 1.0f && time <= end) {
             if (BtActStatus.combo_queued == 1) {
                 BtActStatus.action_gauge -= 20.0f;
+
                 if (BtActStatus.action_gauge <= 0.0f) {
                     BtActStatus.action_gauge = 0.0f;
                 }
+
                 BtActStatus.action_no = 0x26;
                 BtActStatus.motion_no = 0x26;
                 driveNoInterpolate = 1;
@@ -713,9 +757,11 @@ void UngagaKey_Play() {
                     driveNoInterpolate = 1;
                     return;
                 }
+
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
@@ -731,6 +777,7 @@ void UngagaKey_Play() {
             BtActStatus.move_power = 0.25f;
             BtActStatus.move_power_decay = 0.0f;
         }
+
         if (GamePad.On(PadInput_OK) == 0) {
             BtActStatus.action_step = 1;
         }
@@ -740,12 +787,15 @@ void UngagaKey_Play() {
         float end = CharaMain.motion_type.motion_info[0x26].end;
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 0.5f && time <= end) {
             if (BtActStatus.combo_queued == 1) {
                 BtActStatus.action_gauge -= 20.0f;
+
                 if (BtActStatus.action_gauge <= 0.0f) {
                     BtActStatus.action_gauge = 0.0f;
                 }
+
                 BtActStatus.action_no = 0x27;
                 BtActStatus.motion_no = 0x27;
                 driveNoInterpolate = 1;
@@ -756,6 +806,7 @@ void UngagaKey_Play() {
                 if (lockOnTargetFlag != 0) {
                     BtActStatus.motion_no = 0x12;
                 }
+
                 BtActStatus.unk_028 = 0;
                 BtActStatus.motion_no = 0;
                 BtActStatus.action_on = 0;
@@ -770,6 +821,7 @@ void UngagaKey_Play() {
             BtActStatus.move_power = 0.0f;
             BtActStatus.move_power_decay = 0.0f;
         }
+
         if (GamePad.On(PadInput_OK) == 0) {
             BtActStatus.action_step = 1;
         }
@@ -779,10 +831,12 @@ void UngagaKey_Play() {
         float end = CharaMain.motion_type.motion_info[0x27].end;
 
         BtActStatus.combo_window = 1;
+
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
+
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
@@ -797,10 +851,12 @@ void UngagaKey_Play() {
         }
 
         BtActStatus.motion_no = 13;
+
         if (BtActStatus.action_step != 0) {
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
+
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
@@ -831,6 +887,7 @@ void UngagaKey_Play() {
         }
 
         wait++;
+
         if (wait >= 30) {
             sceVu0FVECTOR effect_pos;
             sceVu0FVECTOR effect_vector;
@@ -866,9 +923,11 @@ void UngagaKey_Play() {
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
+
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
+
             NowMainEffect->EndEffect();
         }
     }
@@ -893,6 +952,7 @@ void GoroKey_On() {
             CharaMain.GetRotation(rotation);
             BtActStatus.swing_heading = rotation[1];
         }
+
         return;
     }
 }
@@ -910,6 +970,7 @@ void GoroKey_Play() {
     if (NowWeaponHave->best_elem < 5) {
         element_se = NowWeaponHave->best_elem + 0x65;
     }
+
     if (element_se == 0x66) {
         element_se = 0x66;
     }
@@ -967,15 +1028,19 @@ void GoroKey_Play() {
     if (time >= 98.0f && time < 98.3f) {
         SndSePlay(0x1A4, -1, 0);
     }
+
     if (time >= 471 && time < 471.4f) {
         SndSePlay(0x1A5, -1, 0);
     }
+
     if (time >= 471 && time < 471.4f) {
         SndSePlay(0x192, -1, 0);
     }
+
     if (time >= 478.0f && time < 478.4f) {
         SndSePlay(0x192, -1, 0);
     }
+
     if (time >= 481 && time < 481.4f) {
         SndSePlay(0x193, -1, 0);
     }
@@ -994,7 +1059,9 @@ void GoroKey_Play() {
             BtActStatus.move_power = 0.25f;
             BtActStatus.move_power_decay = 0.01f;
         }
+
         BtActStatus.motion_no = 0x24;
+
         if (GamePad.On(PadInput_OK) == 0) {
             BtActStatus.action_step = 1;
         }
@@ -1002,6 +1069,7 @@ void GoroKey_Play() {
         float end = CharaMain.motion_type.motion_info[36].end;
 
         BtActStatus.combo_window = 1;
+
         if (time >= 95.0f && time <= 95.5f && BtActStatus.action_step == 0) {
             BtActStatus.action_step = 0;
             BtActStatus.motion_no = 13;
@@ -1010,10 +1078,12 @@ void GoroKey_Play() {
             BtActStatus.move_power_decay = 0.0f;
             return;
         }
+
         if (time >= end - 1.0f && time <= end) {
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }
+
             BtActStatus.unk_028 = 0;
             BtActStatus.motion_no = 0;
             BtActStatus.action_on = 0;
@@ -1026,13 +1096,17 @@ void GoroKey_Play() {
 
     if (BtActStatus.action_no == 13) {
         BtActStatus.action_step++;
+
         if (BtActStatus.action_step >= 45) {
             if (BtActStatus.action_step == 45) {
                 setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
             }
+
             BtActStatus.action_step = 46;
         }
+
         BtActStatus.motion_no = 13;
+
         if (GamePad.On(PadInput_OK) == 0) {
             if (BtActStatus.action_step < 45) {
                 sceVu0FVECTOR restart_rotation;
@@ -1074,6 +1148,7 @@ void GoroKey_Play() {
             BtActStatus.action_busy = 0;
             BtActStatus.invincible_frames = 0;
             BtActStatus.can_act = 1;
+
             if (lockOnTargetFlag != 0) {
                 BtActStatus.motion_no = 0x12;
             }

@@ -45,6 +45,7 @@ CSprite::CSprite() {
         x[i] = 0.0f;
         y[i] = 150.0f;
     }
+
     angle = 2.57f;
     started = 0;
 }
@@ -56,6 +57,7 @@ void CSprite::Init() {
         x[i] = 0.0f;
         y[i] = 150.0f;
     }
+
     angle = 2.57f;
     started = 0;
 }
@@ -80,34 +82,42 @@ void CSprite::Move() {
             target_x = 700.0f;
             target_y = 94.0f;
         }
+
         if (x[0] < 510.0f) {
             target_x = 510.0f;
             target_y = 154.0f;
         }
+
         if (x[0] < 400.0f) {
             target_x = 400.0f;
             target_y = 194.0f;
         }
+
         if (x[0] < 320.0f) {
             target_x = 320.0f;
             target_y = 154.0f;
         }
+
         if (x[0] < 230.0f) {
             target_x = 250.0f;
             target_y = 94.0f;
         }
+
         if (x[0] < 150.0f) {
             target_x = 150.0f;
             target_y = 154.0f;
         }
 
         target_angle = (float) atan2(target_x - x[0], target_y - y[0]);
+
         if (this->angle > target_angle) {
             this->angle = this->angle - 0.08f;
         }
+
         if (this->angle < target_angle) {
             this->angle += 0.08f;
         }
+
         x[0] = x[0] + (float) (sin(this->angle) * 7.5);
         y[0] = y[0] + (float) (cos(this->angle) * 7.5);
     }

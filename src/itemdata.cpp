@@ -217,33 +217,42 @@ int *TEIGI_ARG_TABLE[] = {
 int skipSpace(char *text, int pos) {
     for (; pos < teigiFileSize; pos++) {
         int skipped = 0;
+
         // The file is Shift-JIS, so a space can be the full-width one.
         if (memcmp(&text[pos], "\x81\x40", 2) == 0) {
             pos++;
             skipped = 1;
         }
+
         char c = text[pos];
+
         if (c == ' ') {
             skipped = 1;
         }
+
         if (c == '\t') {
             skipped = 1;
         }
+
         if (c == '\0') {
             pos++;
             skipped = 1;
         }
+
         if (memcmp(&text[pos], "//", 2) == 0) {
             while (text[pos] != '\0') {
                 pos++;
             }
+
             pos++;
             skipped = 1;
         }
+
         if (skipped == 0) {
             return pos;
         }
     }
+
     return teigiFileSize;
 }
 
@@ -268,140 +277,183 @@ int checkArg(char *text, int pos, int *format) {
     int numeric;
 
     cursor = pos;
+
     if (format[1] == 0) {
         return pos;
     }
+
     for (argument = 0; argument < format[1]; argument++) {
         argValBuff[argLevel][0] = (float) format[0];
+
         switch (format[argument + 2]) {
             case ARGUMENT_STRING:
                 if (text[cursor] != '"') {
                     return -1;
                 }
+
                 cursor++;
+
                 for (length = 0; length < 32; length++) {
                     if (text[cursor] == '"') {
                         argStrBuff[argLevel][length] = '\0';
                         cursor++;
                         break;
                     }
+
                     argStrBuff[argLevel][length] = text[cursor++];
                 }
+
                 if (length == 32) {
                     return -1;
                 }
+
                 cursor = skipSpace(text, cursor);
                 break;
             case ARGUMENT_COMMA_NUMBER:
                 if (text[cursor] != ',') {
                     return -1;
                 }
+
                 cursor = skipSpace(text, cursor + 1);
+
                 if (memcmp(&text[cursor], "ON", 2) == 0) {
                     argValBuff[argLevel][argument + 1] = 1.0f;
+
                     if (argument >= 32) {
                         printf("************TAG OVER!!\n");
                     }
+
                     cursor += 2;
                 } else if (memcmp(&text[cursor], "OFF", 3) == 0) {
                     argValBuff[argLevel][argument + 1] = 0.0f;
+
                     if (argument >= 32) {
                         printf("************TAG OVER!!\n");
                     }
+
                     cursor += 3;
                 } else {
                     numeric = 0;
+
                     if (text[cursor] == '-') {
                         numeric = 1;
                     }
+
                     if (text[cursor] >= '0' && text[cursor] <= '9') {
                         numeric = 1;
                     }
+
                     if (numeric == 0) {
                         return -1;
                     }
+
                     argValBuff[argLevel][argument + 1] = (float) atof(&text[cursor]);
+
                     if (argument >= 32) {
                         printf("************TAG OVER!!\n");
                     }
+
                     for (length = 0; length < 32; length++) {
                         numeric = 0;
+
                         if (text[cursor] == '-') {
                             cursor++;
                             numeric = 1;
                         }
+
                         if (text[cursor] >= '0' && text[cursor] <= '9') {
                             cursor++;
                             numeric = 1;
                         }
+
                         if (text[cursor] == '.') {
                             cursor++;
                             numeric = 1;
                         }
+
                         if (numeric == 0) {
                             break;
                         }
                     }
+
                     if (length == 32) {
                         return -1;
                     }
                 }
+
                 cursor = skipSpace(text, cursor);
                 break;
             case ARGUMENT_NUMBER:
                 if (memcmp(&text[cursor], "ON", 2) == 0) {
                     argValBuff[argLevel][argument + 1] = 1.0f;
+
                     if (argument >= 32) {
                         printf("************TAG OVER!!\n");
                     }
+
                     cursor += 2;
                 } else if (memcmp(&text[cursor], "OFF", 3) == 0) {
                     argValBuff[argLevel][argument + 1] = 0.0f;
+
                     if (argument >= 32) {
                         printf("************TAG OVER!!\n");
                     }
+
                     cursor += 3;
                 } else {
                     numeric = 0;
+
                     if (text[cursor] == '-') {
                         numeric = 1;
                     }
+
                     if (text[cursor] >= '0' && text[cursor] <= '9') {
                         numeric = 1;
                     }
+
                     if (numeric == 0) {
                         return -1;
                     }
+
                     argValBuff[argLevel][argument + 1] = (float) atof(&text[cursor]);
+
                     if (argument >= 32) {
                         printf("************TAG OVER!!\n");
                     }
+
                     for (length = 0; length < 32; length++) {
                         numeric = 0;
+
                         if (text[cursor] == '-') {
                             cursor++;
                             numeric = 1;
                         }
+
                         if (text[cursor] >= '0' && text[cursor] <= '9') {
                             cursor++;
                             numeric = 1;
                         }
+
                         if (text[cursor] == '.') {
                             cursor++;
                             numeric = 1;
                         }
+
                         if (numeric == 0) {
                             break;
                         }
                     }
+
                     if (length == 32) {
                         return -1;
                     }
                 }
+
                 cursor = skipSpace(text, cursor);
                 break;
         }
     }
+
     return cursor;
 }
 
@@ -434,19 +486,23 @@ int TEIGIAnalyz(char *path) {
     argLevel = 0;
     errFlag2 = 0x7E;
     BtRubyDoorKey = (int) ((float) rand() * 5.0f / 2.1474836e9f);
+
     if (BtRubyDoorKey < 0 || BtRubyDoorKey >= 5) {
         BtRubyDoorKey = 0;
     }
+
     if (selectMapNo == 2 && UserStatus->cur_floor == 8) {
         BtRubyDoorKey = 0;
     }
 
     MapModelBuffer.Align64();
     text = (char *) (MapModelBuffer.used * 16 + MapModelBuffer.base);
+
     if (LoadFile(path, text, &teigiFileSize) == 0) {
         // The failure path leaves the result unset.
         return;
     }
+
     wait_now_loading_vsync();
     MapModelBuffer.Alloc((teigiFileSize >> 4) + 1);
     MapModelBuffer.Align64();
@@ -460,12 +516,15 @@ int TEIGIAnalyz(char *path) {
     }
 
     pos = 0;
+
     while (pos < teigiFileSize) {
         pos = skipSpace(text, pos);
         command = 0;
         found = 0;
+
         while (TEIGI_TABLE[command] != NULL) {
             name_length = strlen(TEIGI_TABLE[command]);
+
             if (memcmp(&text[pos], TEIGI_TABLE[command], name_length) == 0) {
                 if (command == TEIGI_INDEX_DEF_PATS || command == TEIGI_INDEX_DEF_ENDS) {
                     pos = skipSpace(text, pos + name_length);
@@ -473,35 +532,46 @@ int TEIGIAnalyz(char *path) {
                 } else {
                     pos = skipSpace(text, pos + name_length);
                     pos = checkArg(text, pos, TEIGI_ARG_TABLE[command]);
+
                     if (pos == -1) {
                         printf("def Error:%s\n", TEIGI_TABLE[command]);
                         exit__2(-1);
                     }
+
                     pos = skipSpace(text, pos);
                 }
+
                 argLevel++;
+
                 if (argLevel >= 640) {
                     printf("arg line level err!!\n");
+
                     for (;;) {
                     }
                 }
+
                 found = 1;
                 break;
             }
+
             command++;
         }
+
         if (found == 0) {
             printf("TAG SyntaxError!! >>%s\n", &text[pos]);
             exit__2(-1);
         }
+
         pos = skipSpace(text, pos);
     }
 
     if (errFlag2 != 0x7E) {
         printf("TAG MEM ERR2 !!\n");
+
         for (;;) {
         }
     }
+
     return teigiFileSize;
 }
 
@@ -539,6 +609,7 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
     for (i = 0; i < 4; i++) {
         TexManager.DeleteTextureBlock(i + 64);
     }
+
     TexManager.CleanUpTextureList();
     TexManager.CleanUpBuffer();
 
@@ -569,10 +640,12 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
 
             BtTexAnime.Initialize(BtTexAnimeData, 96);
             char *config = (char *) GetPackFile(pack, "texanime.cfg", &size);
+
             if (config != NULL) {
                 for (int j = 0; j < 96; j++) {
                     BtTexAnimeData[j].Initialize();
                 }
+
                 BtTexAnime.LoadCFGFile(config, size);
             }
         }
@@ -582,9 +655,11 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
             strcat(full_path, argStrBuff[i]);
             printf("%s\n", argStrBuff[i]);
             fire_images[1].name = (char *) GetPackFile(pack, "fire.img", &size);
+
             if (fire_images[1].name == NULL) {
                 exit__2(-1);
             }
+
             TexManager.DeleteTextureBlock(14);
             TexManager.CleanUpTextureList();
             TexManager.CleanUpBuffer();
@@ -595,9 +670,11 @@ void TEIGIImgLoad(u_int *pack, CDataAlloc2<1> *arena) {
             strcpy(full_path, pathName);
             strcat(full_path, argStrBuff[i]);
             minimap_images[0].name = (char *) GetPackFile(pack, full_path, &size);
+
             if (minimap_images[0].name == NULL) {
                 exit__2(-1);
             }
+
             TexManager.DeleteTextureBlock(31);
             TexManager.CleanUpTextureList();
             TexManager.CleanUpBuffer();
@@ -629,14 +706,18 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
     attr.clip_enable = 1;
     attr.program_option = 0;
     FrameObjAnimCnt = 0;
+
     for (int i = 0; i < 48; i++) {
         FrameObjAnim[i].property = -1;
     }
+
     nowPartsCnt = 0;
+
     if (reuse_only == 0) {
         filePathNum = 0;
         filePathColNum = 0;
     }
+
     strcpy(pathName, "");
 
     for (line = 0; line < argLevel; line++) {
@@ -644,9 +725,11 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             debugModeFlag = (int) argValBuff[line][1];
             printf("debug = %d\n", debugModeFlag);
         }
+
         if (TEIGI_RUN_SPEED[0] == (int) argValBuff[line][0]) {
             run_speed = argValBuff[line][1];
         }
+
         if (TEIGI_LIGHT_C[0] == (int) argValBuff[line][0]) {
             int   light_no;
             float direction[4];
@@ -662,11 +745,13 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             main_lightcolor[(int) (light_no - 1)][1] = argValBuff[line][5];
             main_lightcolor[(int) (light_no - 1)][2] = argValBuff[line][6];
         }
+
         if (TEIGI_AMBIENT[0] == (int) argValBuff[line][0]) {
             main_ambientlight[0] = argValBuff[line][1];
             main_ambientlight[1] = argValBuff[line][2];
             main_ambientlight[2] = argValBuff[line][3];
         }
+
         if (TEIGI_URA_LIGHT_C[0] == (int) argValBuff[line][0]) {
             int   light_no;
             float direction[4];
@@ -682,11 +767,13 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             sub_lightcolor[(int) (light_no - 1)][1] = argValBuff[line][5];
             sub_lightcolor[(int) (light_no - 1)][2] = argValBuff[line][6];
         }
+
         if (TEIGI_URA_AMBIENT[0] == (int) argValBuff[line][0]) {
             sub_ambientlight[0] = argValBuff[line][1];
             sub_ambientlight[1] = argValBuff[line][2];
             sub_ambientlight[2] = argValBuff[line][3];
         }
+
         if (TEIGI_FOG[0] == (int) argValBuff[line][0]) {
             main_fogRate[0] = argValBuff[line][1];
             main_fogRate[1] = argValBuff[line][2];
@@ -697,17 +784,20 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             main_fogColor[2] = (u8) argValBuff[line][5];
             attr.fog_enable = 1;
         }
+
         if (TEIGI_BG_COL[0] == (int) argValBuff[line][0]) {
             main_bgColor[0] = (u8) argValBuff[line][1];
             main_bgColor[1] = (u8) argValBuff[line][2];
             main_bgColor[2] = (u8) argValBuff[line][3];
             MGSetBGColor((float) main_bgColor[0], (float) main_bgColor[1], (float) main_bgColor[2], 128.0f);
         }
+
         if (TEIGI_URA_BG_COL[0] == (int) argValBuff[line][0]) {
             sub_bgColor[0] = (u8) argValBuff[line][1];
             sub_bgColor[1] = (u8) argValBuff[line][2];
             sub_bgColor[2] = (u8) argValBuff[line][3];
         }
+
         if (TEIGI_URA_FOG[0] == (int) argValBuff[line][0]) {
             sub_fogRate[0] = argValBuff[line][1];
             sub_fogRate[1] = argValBuff[line][2];
@@ -718,83 +808,110 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             sub_fogColor[2] = (u8) argValBuff[line][5];
             attr.fog_enable = 1;
         }
+
         if (TEIGI_SET_PATH[0] == (int) argValBuff[line][0]) {
             strcpy(pathName, argStrBuff[line]);
         }
+
         if (TEIGI_VIEWLEVEL[0] == (int) argValBuff[line][0]) {
             NowDngMap->draw_dist_scale = argValBuff[line][1];
         }
+
         if (TEIGI_BG_MODEL[0] == (int) argValBuff[line][0]) {
             CDungeonMap *map;
             data = GetPackFile(pack, argStrBuff[line], &size);
+
             if (data == NULL) {
                 printf("ERR = %s\n", full_path);
             }
+
             frame = LoadMDSFile(data, &MapModelBuffer, 0, NULL, NULL);
             map = NowDngMap;
+
             if (map->bg_model_num < 6) {
                 map->bg_model[map->bg_model_num] = frame;
                 map->bg_model_num++;
             }
         }
+
         if (TEIGI_DRAW_FLAG[0] == (int) argValBuff[line][0]) {
             char   *name = argStrBuff[line];
             CFrame *target = NowDngMap->GetFrameSearch(name);
             int     draw_on;
+
             if (target == NULL) {
                 printf("**** DFLAG:%s NotFound ****\n", name);
+
                 while (1) {
                 }
             }
+
             draw_on = (int) argValBuff[line][2];
             draw_on = 2;
+
             if ((int) argValBuff[line][2] != 0) {
                 draw_on = 1;
             }
+
             target->attr.draw_on = draw_on;
             target->flags = draw_on;
         }
+
         if (TEIGI_DUMMY_MODEL[0] == (int) argValBuff[line][0]) {
             CDungeonMap *map;
             data = GetPackFile(pack, argStrBuff[line], &size);
+
             if (data == NULL) {
                 printf("ERR = %s\n", full_path);
             }
+
             frame = LoadMDSFile(data, &MapModelBuffer, 0, NULL, NULL);
             frame->SetAttr(attr, 1, 0x40);
             SetFrameAttr(frame, 1);
             map = NowDngMap;
+
             if (map->dummy_frame_num < 3) {
                 map->dummy_frame[map->dummy_frame_num] = frame;
                 map->dummy_frame_num++;
             }
         }
+
         if (TEIGI_DRANS_PARTS[0] == (int) argValBuff[line][0]) {
             data = GetPackFile(pack, argStrBuff[line], &size);
+
             if (data == NULL) {
                 printf("ERR = %s\n", full_path);
             }
+
             printf("load dran %s\n", argStrBuff[line]);
             NowDranMapField->LoadModel(data, &MapModelBuffer);
         }
+
         if (TEIGI_DRANS_COLS[0] == (int) argValBuff[line][0]) {
             data = GetPackFile(pack, argStrBuff[line], &size);
+
             if (data == NULL) {
                 printf("ERR = %s\n", full_path);
             }
+
             NowDranMapField->LoadCollision(data, &MapModelBuffer);
         }
+
         if (TEIGI_DEF_PATS[0] == (int) argValBuff[line][0]) {
             part_frame = 0;
         }
+
         if (TEIGI_DEF_ENDS[0] == (int) argValBuff[line][0]) {
             nowPartsCnt++;
+
             if (nowPartsCnt >= 72) {
                 printf("parts cnt over\n");
+
                 while (1) {
                 }
             }
         }
+
         if (TEIGI_PT_BASE[0] == (int) argValBuff[line][0]) {
             int          found;
             int          turn;
@@ -804,24 +921,31 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             int          direction;
             int          parts_no;
             CDungeonMap *map;
+
             if (part_frame >= 6) {
                 printf("[%d]parts num over !!\n", nowPartsCnt);
+
                 while (1) {
                 }
             }
+
             if (filePathNum >= 72) {
                 printf("filePathNumOver = %d\n", filePathNum);
+
                 while (1) {
                 }
             }
+
             strcpy(full_path, pathName);
             strcat(full_path, argStrBuff[line]);
             found = -1;
+
             for (int i = 0; i < filePathNum; i++) {
                 if (strcmp(filePathList[i], full_path) == 0) {
                     found = i;
                 }
             }
+
             if (found != -1) {
                 current_model = frameList[found];
             } else {
@@ -829,23 +953,28 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                     printf("MISS DATA %s\n", full_path);
                     exit__2(-1);
                 }
+
                 if (pack != NULL) {
                     data = GetPackFile(pack, full_path, &size);
+
                     if (data == NULL) {
                         printf("ERR = %s\n", full_path);
                     }
+
                     current_model = LoadMDSFile(data, &MapModelBuffer, 0, NULL, NULL);
                 } else {
                     LoadFile(full_path, (void *) read_buffer, NULL);
                     wait_now_loading_vsync();
                     current_model = LoadMDSFile(read_buffer, &MapModelBuffer, 0, NULL, NULL);
                 }
+
                 current_model->SetAttr(attr, 1, 0x40);
                 SetFrameAttr(current_model, 1);
                 strcpy(filePathList[filePathNum], full_path);
                 frameList[filePathNum] = current_model;
                 filePathNum++;
             }
+
             turn = (int) argValBuff[line][6];
             z = argValBuff[line][5];
             y = argValBuff[line][4];
@@ -853,6 +982,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             direction = (int) argValBuff[line][2];
             parts_no = nowPartsCnt;
             map = NowDngMap;
+
             if (parts_no < 72) {
                 map->parts[parts_no].frame[part_frame] = current_model;
                 map->parts[parts_no].frame_offset[part_frame][0] = 10.0f * x;
@@ -862,26 +992,33 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 map->parts[parts_no].frame_turn[part_frame] = (float) turn;
                 map->parts[parts_no].direction_offset = (s16) direction;
             }
+
             part_frame++;
         }
+
         if (TEIGI_PT_COLS[0] == (int) argValBuff[line][0]) {
             int          found;
             int          turn;
             int          parts_no;
             CDungeonMap *map;
+
             if (filePathColNum >= 72) {
                 printf("colNumOver = %d\n", filePathColNum);
+
                 while (1) {
                 }
             }
+
             strcpy(full_path, pathName);
             strcat(full_path, argStrBuff[line]);
             found = -1;
+
             for (int i = 0; i < filePathColNum; i++) {
                 if (strcmp(filePathColList[i], full_path) == 0) {
                     found = i;
                 }
             }
+
             if (found != -1) {
                 current_collision = frameListCol[found];
             } else {
@@ -889,50 +1026,63 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                     printf("MISS COL DATA %s\n", full_path);
                     exit__2(-1);
                 }
+
                 if (pack != NULL) {
                     data = GetPackFile(pack, full_path, &size);
+
                     if (data == NULL) {
                         printf("ERR = %s\n", full_path);
                     }
+
                     current_collision = LoadCollisionFile(data, &MapModelBuffer);
                 } else {
                     LoadFile(full_path, (void *) read_buffer, NULL);
                     wait_now_loading_vsync();
                     current_collision = LoadCollisionFile(read_buffer, &MapModelBuffer);
                 }
+
                 current_collision->flags = 1;
+
                 if (current_collision->SearchFrame("cdoor_al") != NULL) {
                     printf("****** cdoor_al\n");
                 }
+
                 strcpy(filePathColList[filePathColNum], full_path);
                 frameListCol[filePathColNum] = current_collision;
                 filePathColNum++;
             }
+
             turn = (int) argValBuff[line][2];
             parts_no = nowPartsCnt;
             map = NowDngMap;
             map->parts[parts_no].collision = current_collision;
             map->parts[parts_no].collision_turn = (s16) turn;
         }
+
         if (TEIGI_PT_CAM[0] == (int) argValBuff[line][0]) {
             int          found;
             int          turn;
             CFrame      *collision;
             int          parts_no;
             CDungeonMap *map;
+
             if (filePathColNum >= 72) {
                 printf("colNumOver = %d\n", filePathColNum);
+
                 while (1) {
                 }
             }
+
             strcpy(full_path, pathName);
             strcat(full_path, argStrBuff[line]);
             found = -1;
+
             for (int i = 0; i < filePathColNum; i++) {
                 if (strcmp(filePathColList[i], full_path) == 0) {
                     found = i;
                 }
             }
+
             if (found != -1) {
                 collision = frameListCol[found];
             } else {
@@ -940,50 +1090,64 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                     printf("MISS CAM DATA %s\n", full_path);
                     exit__2(-1);
                 }
+
                 if (pack != NULL) {
                     data = GetPackFile(pack, full_path, &size);
+
                     if (data == NULL) {
                         printf("ERR = %s\n", full_path);
+
                         while (1) {
                         }
                     }
+
                     collision = LoadCollisionFile(data, &MapModelBuffer);
                 } else {
                     LoadFile(full_path, (void *) read_buffer, NULL);
                     wait_now_loading_vsync();
                     collision = LoadCollisionFile(read_buffer, &MapModelBuffer);
                 }
+
                 collision->flags = 1;
                 strcpy(filePathColList[filePathColNum], full_path);
                 frameListCol[filePathColNum] = collision;
                 filePathColNum++;
             }
+
             turn = (int) argValBuff[line][2];
             parts_no = nowPartsCnt;
             map = NowDngMap;
             map->parts[parts_no].camera_collision = collision;
             map->parts[parts_no].camera_collision_turn = (s16) turn;
         }
+
         if (TEIGI_PT_DRAW_FLAG[0] == (int) argValBuff[line][0]) {
             char   *name = argStrBuff[line];
             CFrame *target = current_model->SearchFrame(name);
             int     draw_on;
+
             if (target == NULL) {
                 printf("**** DFLAG:%s NotFound ****\n", name);
+
                 while (1) {
                 }
             }
+
             draw_on = (int) argValBuff[line][2];
             draw_on = 2;
+
             if ((int) argValBuff[line][2] != 0) {
                 draw_on = 1;
             }
+
             target->attr.draw_on = draw_on;
             target->flags = draw_on;
         }
+
         if (TEIGI_PT_GLIGHT[0] == (int) argValBuff[line][0]) {
             sceVu0FVECTOR range = {80.0f, 80.0f, 80.0f, 80.0f};
             sceVu0FVECTOR speed = {128.0f, 128.0f, 128.0f, 128.0f};
+
             if (FrameObjAnimCnt >= 48) {
                 printf("over frame anim!\n");
             } else {
@@ -996,6 +1160,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 FrameObjAnimCnt++;
             }
         }
+
         if (TEIGI_PT_LIGHT[0] == (int) argValBuff[line][0]) {
             int          parts_no = nowPartsCnt;
             CDungeonMap *map;
@@ -1006,6 +1171,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             y = argValBuff[line][2];
             x = argValBuff[line][1];
             map = NowDngMap;
+
             if (map->parts[parts_no].fire_num < 6) {
                 map->parts[parts_no].fire_pos[map->parts[parts_no].fire_num][0] = x;
                 map->parts[parts_no].fire_pos[map->parts[parts_no].fire_num][1] = y;
@@ -1014,6 +1180,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 map->parts[parts_no].fire_num++;
             }
         }
+
         if (TEIGI_PT_HEAL_ZONE[0] == (int) argValBuff[line][0]) {
             float          position[4];
             float          radius;
@@ -1027,6 +1194,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             part = &NowDngMap->parts[nowPartsCnt];
             part->SetHealZone(position, radius, height);
         }
+
         if (TEIGI_PT_WATER[0] == (int) argValBuff[line][0]) {
             sceVu0FVECTOR  vertex0;
             sceVu0FVECTOR  vertex1;
@@ -1061,6 +1229,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             map->parts[parts_no].water.blue = blue;
             map->parts[parts_no].water.has_fall = 0;
         }
+
         if (TEIGI_PT_MARKER[0] == (int) argValBuff[line][0]) {
             char           name[32];
             float          radius;
@@ -1078,8 +1247,10 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             extra_param = (int) argValBuff[line][6];
             ext_memory = (int) argValBuff[line][7];
             event = NowEventMan->SearchSlot();
+
             if (event != NULL) {
                 int parts_id = nowPartsCnt;
+
                 if (current_collision != NULL && (event->placement_frame = current_collision, event->trigger_frame = event->placement_frame->SearchFrame(name), event->trigger_frame == NULL)) {
                     printf("*********** not fount null == %s\n", name);
                 } else {
@@ -1097,6 +1268,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 }
             }
         }
+
         if (TEIGI_PT_HIT_MARKER[0] == (int) argValBuff[line][0]) {
             char           name[32];
             float          radius;
@@ -1111,14 +1283,18 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             script_no = (int) argValBuff[line][3];
             chara_no = (int) argValBuff[line][4];
             key = (int) argValBuff[line][5];
+
             if (key == -2) {
                 key = BtRubyDoorKey;
             }
+
             extra_param = (int) argValBuff[line][6];
             ext_memory = (int) argValBuff[line][7];
             event = NowEventMan->SearchSlot();
+
             if (event != NULL) {
                 int parts_id = nowPartsCnt;
+
                 if (current_collision != NULL && (event->placement_frame = current_collision, event->trigger_frame = event->placement_frame->SearchFrame(name), event->trigger_frame == NULL)) {
                     printf("*********** not fount null == %s\n", name);
                 } else {
@@ -1136,6 +1312,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 }
             }
         }
+
         if (TEIGI_PT_ROT[0] == (int) argValBuff[line][0]) {
             if (FrameObjAnimCnt >= 48) {
                 printf("over frame anim!\n");
@@ -1154,6 +1331,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 FrameObjAnimCnt++;
             }
         }
+
         if (TEIGI_PT_SCALE[0] == (int) argValBuff[line][0]) {
             if (FrameObjAnimCnt >= 48) {
                 printf("over frame anim!\n");
@@ -1175,6 +1353,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 FrameObjAnimCnt++;
             }
         }
+
         if (TEIGI_PT_NPC[0] == (int) argValBuff[line][0]) {
             char          name[32];
             int           npc_no;
@@ -1192,15 +1371,19 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             rotation[0] = argValBuff[line][6];
             rotation[1] = argValBuff[line][7];
             rotation[2] = argValBuff[line][8];
+
             for (int i = 0; i < 3; i++) {
                 rotation[i] = (3.141592f / 180.0f) * rotation[i];
+
                 if (rotation[i] > 3.1415920f) {
                     rotation[i] -= 6.2831840f;
                 }
+
                 if (rotation[i] < -3.1415920f) {
                     rotation[i] += 6.2831840f;
                 }
             }
+
             visible = (int) argValBuff[line][9];
             motion_no = (int) argValBuff[line][10];
             {
@@ -1208,6 +1391,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
                 NowDngMap->SetNPC(npc_no, npc_file, nowPartsCnt, position, rotation, visible, motion_no, &MapModelBuffer);
             }
         }
+
         if (TEIGI_PT_FIRE[0] == (int) argValBuff[line][0]) {
             int          parts_no = nowPartsCnt;
             CDungeonMap *map;
@@ -1218,6 +1402,7 @@ void TEIGIMdsLoad(u_int *pack, int reuse_only) {
             y = argValBuff[line][2];
             x = argValBuff[line][1];
             map = NowDngMap;
+
             if (map->parts[parts_no].fire_num < 6) {
                 map->parts[parts_no].fire_pos[map->parts[parts_no].fire_num][0] = x;
                 map->parts[parts_no].fire_pos[map->parts[parts_no].fire_num][1] = y;

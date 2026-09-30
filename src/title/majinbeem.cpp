@@ -41,6 +41,7 @@ void CMajinBeem::Draw(CCamera *camera) {
         if (active != 1) {
             continue;
         }
+
         if (counters[i] < 0) {
             continue;
         }
@@ -188,6 +189,7 @@ void CMajinBeem::Step() {
             if (counters[58] >= 200) {
                 active = 0;
             }
+
             break;
     }
 }

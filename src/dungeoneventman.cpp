@@ -17,9 +17,11 @@ CDungeonEvent *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     } else {
         slot_parts_id = -1;
     }
+
     if (parts_id == slot_parts_id) {
         return &slot[index];
     }
+
     return NULL;
 }
 
@@ -29,23 +31,28 @@ CDungeonEvent *CDungeonEventMan::SearchSlot() {
             return &slot[i];
         }
     }
+
     return NULL;
 }
 
 void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
     for (int i = 0; i < 96; i++) {
         int active;
+
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
             active = 0;
         }
+
         if (active != 0) {
             int event_script_no = event[i].event->script_no;
+
             if (script_no == event_script_no) {
                 if (enable != 0) {
                     event[i].Start();
                 }
+
                 if (enable == 0) {
                     event[i].Stop();
                 }
@@ -57,11 +64,13 @@ void CDungeonEventMan::SearchDataSwitch(int script_no, int enable) {
 void CDungeonEventMan::SearchItemEventHold(int script_no) {
     for (int i = 0; i < 96; i++) {
         int active;
+
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
             active = 0;
         }
+
         if (active != 0 && script_no == event[i].event->script_no) {
             event[i].hold = 0;
         }
@@ -73,30 +82,36 @@ int CDungeonEventMan::GetDataNum() {
 
     for (int i = 0; i < 96; i++) {
         int active;
+
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
             active = 0;
         }
+
         if (active == 0) {
             count++;
         }
     }
+
     return count;
 }
 
 CDungeonEventData *CDungeonEventMan::SearchDataSlot() {
     for (int i = 0; i < 96; i++) {
         int active;
+
         if (event[i].event != NULL) {
             active = event[i].enabled;
         } else {
             active = 0;
         }
+
         if (active == 0) {
             return &event[i];
         }
     }
+
     return NULL;
 }
 
@@ -107,14 +122,17 @@ CDungeonEventData *CDungeonEventMan::CheckCollisionDataHit(int index) {
 
     chara_no = event[index].event->chara_no;
     key_id = event[index].event->key_id;
+
     if (chara_no != -1) {
         for (i = 0; i < 96; i++) {
             if (NowColData->active[i] == 0) {
                 continue;
             }
+
             if (NowColData->hit[i].owner != chara_no) {
                 continue;
             }
+
             if (key_id != -1 && NowColData->hit[i].attack_no != key_id) {
                 continue;
             }
@@ -122,29 +140,35 @@ CDungeonEventData *CDungeonEventMan::CheckCollisionDataHit(int index) {
             sceVu0FVECTOR hit_position;
             sceVu0CopyVector(hit_position, NowColData->hit[i].pos);
             float radius = event[index].event->radius;
+
             if (DistVector(hit_position, event[index].pos) <= radius) {
                 return &event[index];
             }
         }
     }
+
     return NULL;
 }
 
 CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
     for (int i = 0; i < 96; i++) {
         CDungeonEventData *event_data = &event[i];
+
         if (event_data->CheckSwitch() != 0) {
             float radius = event[i].event->radius;
+
             if (DistVector(event[i].pos, position) <= radius && event[i].event->chara_no == -1) {
                 return event_data;
             }
 
             CDungeonEventData *collision_event = CheckCollisionDataHit(i);
+
             if (collision_event != NULL) {
                 return collision_event;
             }
         }
     }
+
     return NULL;
 }
 
@@ -162,15 +186,18 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
             sceVu0CopyVector(event_position, event[i].pos);
             float height_difference = target_height - event_position[1];
             height_difference = height_difference < 0.0f ? -height_difference : height_difference;
+
             if (height_difference < 40.0f) {
                 event_position[1] = 0.0f;
                 float radius = event[i].event->radius;
+
                 if (DistVector(event_position, target_position) <= radius + 10.0f) {
                     return &event[i];
                 }
             }
         }
     }
+
     return NULL;
 }
 
@@ -187,28 +214,37 @@ void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
         for (row = 0; row < 16; row++) {
             for (column = 0; column < 16; column++) {
                 int parts_id = map->cells[column + row * 20].parts_no;
+
                 if (parts_id == MAP_PARTS_NONE) {
                     continue;
                 }
+
                 for (int slot_no = 0; slot_no < 64; slot_no++) {
                     if ((definition = SearchPartsID(slot_no, parts_id)) == NULL) {
                         continue;
                     }
+
                     runtime_event = SearchDataSlot();
+
                     if (runtime_event == NULL) {
                         printf("** eventdata err \n");
+
                         while (true) {
                         }
                     }
+
                     runtime_event->Set(definition);
                     float direction = (float) map->cells[column + row * 20].direction;
                     direction += (float) (map->cells[column + row * 20].parts_no == MAP_PARTS_NONE ? 0 : map->parts[map->cells[column + row * 20].parts_no].collision_turn);
+
                     if (direction > 3.0f) {
                         direction -= 3.0f;
                     }
+
                     if (direction == 3.0f) {
                         direction = -1.0f;
                     }
+
                     direction = (3.1415927f * (-90.0f * direction)) / 180.0f;
                     definition->placement_frame->SetRotation(0.0f, direction, 0.0f);
                     definition->trigger_frame->GetLWMatrix(matrix);
@@ -221,23 +257,29 @@ void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
                 }
             }
         }
+
         return;
     }
+
     for (int parts_id = 0; map->parts[parts_id].frame[0] != NULL; parts_id++) {
         for (int slot_no = 0; slot_no < 64; slot_no++) {
             if ((definition = SearchPartsID(slot_no, parts_id)) == NULL) {
                 continue;
             }
+
             runtime_event = SearchDataSlot();
             runtime_event->Set(definition);
             float direction = map->parts[parts_id].frame_turn[0];
             direction += (float) (parts_id == MAP_PARTS_NONE ? 0 : map->parts[parts_id].collision_turn);
+
             if (direction > 3.0f) {
                 direction -= 3.0f;
             }
+
             if (direction == 3.0f) {
                 direction = -1.0f;
             }
+
             float angle = (3.1415927f * (-90.0f * direction)) / 180.0f;
             definition->placement_frame->SetRotation(0.0f, angle, 0.0f);
             definition->trigger_frame->GetLWMatrix(part_matrix);

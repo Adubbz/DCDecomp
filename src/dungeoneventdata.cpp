@@ -5,6 +5,7 @@
 void CDungeonEventData::Set(CDungeonEvent *source) {
     if (source == NULL) {
         printf("******** event NULL !!\n");
+
         for (;;) {
         }
     }
@@ -20,9 +21,11 @@ int CDungeonEventData::CheckSwitch() {
     if (event == NULL) {
         return 0;
     }
+
     if (enabled != 0 && switch_on != 0) {
         return 1;
     }
+
     return 0;
 }
 

@@ -27,6 +27,7 @@ int CMainItemModel::GetFreeCashNo() {
             return i;
         }
     }
+
     return -1;
 }
 
@@ -36,6 +37,7 @@ int CMainItemModel::GetFreeModelNo() {
             return i;
         }
     }
+
     return -1;
 }
 
@@ -45,6 +47,7 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
     if (slot == -1) {
         return -1;
     }
+
     BtItemCashArea[slot].Reset();
     u_char         *texture_copy = BtItemCashArea[slot].base + BtItemCashArea[slot].used * 16;
     CDataAlloc2<1> *area = &BtItemCashArea[slot];
@@ -67,11 +70,13 @@ int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned
 
 void CMainItemModel::DeleteModel(int model_no) {
     cash_lock[model_cash[model_no]]--;
+
     if (cash_lock[model_cash[model_no]] <= 0) {
         cash[model_cash[model_no]] = NULL;
         cash_lock[model_cash[model_no]] = 0;
         printf(MainItemRemoveMessage);
     }
+
     model[model_no] = -1;
     model_cash[model_no] = -1;
 }
@@ -82,6 +87,7 @@ int CMainItemModel::SetHandModel(int source_no) {
     if (hand_no == -1) {
         return -1;
     }
+
     model[hand_no] = 1;
     float zero = 0.0f;
     frame[hand_no].SetPosition(zero, zero, zero);
@@ -190,15 +196,20 @@ void CMainItemModel::Step() {
                 sceVu0CopyVector(position, placement->position);
                 step_result = ItemThrowStep(position, velocity[i]);
                 placement->SetPosition(position);
+
                 if (step_result == 2) {
                     throw_time[i] = 45;
                 }
+
                 throw_time[i]++;
+
                 if (throw_time[i] < 45) {
                     break;
                 }
+
                 throw_time[i] = 0;
                 item_no = cash_item[model_cash[i]];
+
                 switch (item_no) {
                     case 0xA0:
                         NowColData->Set(position, 8, 5, 8.0f, 1.0f, 2, 2, 0, 0);
@@ -246,6 +257,7 @@ void CMainItemModel::Step() {
                         break;
                     }
                 }
+
                 break;
             }
             case 3:
@@ -262,6 +274,7 @@ void CMainItemModel::Initialize() {
         cash_lock[i] = 0;
         throw_time[i] = 0;
     }
+
     for (int i = 0; i < 16; i++) {
         model[i] = -1;
         frame[i].SetPosition(0.0f, 0.0f, 0.0f);
@@ -275,11 +288,14 @@ int CActiveItemPack::CheckStatusType() {
     if (now <= 0) {
         return 0;
     }
+
     int item_no = item[now];
     type = -1;
+
     if (item_no == -1) {
         return 0;
     }
+
     switch (item_no) {
         case 145:
         case 146:
@@ -297,14 +313,18 @@ int CActiveItemPack::CheckStatusType() {
             type = 4;
             break;
     }
+
     if (type != -1) {
         return type;
     }
+
     if (ITEM_LIST[item_no - 81].kind_flags & 2) {
         return 1;
     }
+
     if (item_no == 0xEB) {
         return 3;
     }
+
     return 0;
 }

@@ -113,16 +113,19 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     visual.vu_data = output;
     frame.GetLWMatrix(local_to_world);
     sceVu0MulMatrix(local_to_screen, info->view_screen, local_to_world);
+
     for (i = 0; i < 3; i++) {
         row_step[i] = (vertex[1][i] - vertex[0][i]) / (float) (rows - 1);
         column_step[i] = (vertex[2][i] - vertex[0][i]) / (float) (columns - 1);
     }
+
     row_step[3] = column_step[3] = 0.0f;
     row_step[1] = column_step[1] = 0.0f;
     pretest(local_to_screen, column_step);
 
     first = 0;
     position[3] = 1.0f;
+
     for (i = 0, row_f = 0.0f; i < rows; i++, row_f += 1.0f) {
         position[0] = vertex[0][0] + row_f * row_step[0];
         position[1] = vertex[0][1] + row_f * row_step[1];
@@ -130,11 +133,14 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         here = &height[i * columns];
         above = here - columns;
         below = here + columns; // Unused here, but part of the retail source.
+
         if (i == 0) {
             above = here;
         }
+
         out = vertices[i];
         uv = uvs[i];
+
         for (j = 0; j < columns; j++) {
             Trans_AddCell(*out++, position);
             position[1] = *here * height_scale;
@@ -149,6 +155,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     texture = TexManager.GetTexture(TexManager.GetTextureHandle("work", -1));
     tex0 = *(sceGsTex0 *) &texture->tex0;
     tex0.bits.tcc = 0;
+
     if (tags_built != 0) {
         word += 16;
     } else {
@@ -162,24 +169,32 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
         cell = &height[i * columns];
         below = cell + columns;
         cell_above = cell - columns;
+
         if (i == 0) {
             cell_above = cell;
         }
+
         top = (u_long128 *) vertices[i];
         bottom = (u_long128 *) vertices[i + 1];
         uv_top = (u_long128 *) uvs[i];
         uv_bottom = (u_long128 *) uvs[i + 1];
+
         while (j > 0) {
             count = 27;
+
             if (j < 27) {
                 count = j;
             }
+
             vertex_count = count * 2;
             qwc = 0;
+
             if (tags_built == 0) {
                 *(u_long128 *) &output[word] = *(u_long128 *) unpack;
             }
+
             unpack_word = word + 3;
+
             if (tags_built != 0) {
                 word += 8;
                 qwc++;
@@ -193,14 +208,17 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
                 word += 8;
                 qwc++;
             }
+
             if (tags_built == 0) {
                 output[word] = vertex_count;
             }
+
             word += 4;
             qwc++;
             xyz = (u_long128 *) &output[word];
             rgbaq = xyz + vertex_count;
             st = rgbaq + vertex_count;
+
             for (k = 0; k < count; k++) {
                 *xyz++ = *top++;
                 *xyz++ = *bottom++;
@@ -209,6 +227,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
                 *st++ = *uv_top++;
                 *st++ = *uv_bottom++;
             }
+
             // Consecutive chunks share a column so the strip stays joined.
             cell--;
             below--;
@@ -219,20 +238,25 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
             uv_bottom--;
             word += count * 24;
             qwc += count * 6;
+
             if (tags_built != 0) {
                 word += 4;
             } else {
                 output[unpack_word] |= qwc << 16;
+
                 if (first == 0) {
                     *(u_long128 *) &output[word] = *(u_long128 *) first_kick;
                     first = 1;
                 } else {
                     *(u_long128 *) &output[word] = *(u_long128 *) kick;
                 }
+
                 word += 4;
             }
+
             j -= 27;
         }
+
         if (tags_built != 0) {
             word += 4;
         } else {
@@ -240,6 +264,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
             word += 4;
         }
     }
+
     visual.vu_size = word >> 2;
     return visual.vu_size;
 }
@@ -301,6 +326,7 @@ void CWater::Hamon() {
         target = height_a;
         source = height_b;
     }
+
     height = target;
 
     float speed = wave_speed * wave_speed;
@@ -335,15 +361,19 @@ void CWater::Shake(int row, int column, float height_change) {
     if (row <= 0) {
         row = 1;
     }
+
     if (column <= 0) {
         column = 1;
     }
+
     if (row > rows - 2) {
         row = rows - 2;
     }
+
     if (column > columns - 2) {
         column = columns - 2;
     }
+
     float *cell = &height[column];
     cell[row * columns] += height_change;
 }
@@ -358,10 +388,12 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     height_b = (float *) arena->Alloc(quads);
     rows = row_count;
     columns = column_count;
+
     for (int i = 0; i < rows * columns; i++) {
         height_b[i] = 0.0f;
         height_a[i] = 0.0f;
     }
+
     height = height_a;
 
     RenderInfo info;

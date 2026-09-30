@@ -99,6 +99,7 @@ void CCollision::CreateBBox() {
     sceVu0FVECTOR *vertex;
 
     vertex = GetVertexAddress(&vertex_count);
+
     if (vertex == 0) {
         max[0] = min[0] = 0.0f;
         max[1] = min[1] = 0.0f;
@@ -117,21 +118,27 @@ void CCollision::CreateBBox() {
         if (max[0] < vertex[0][0]) {
             max[0] = vertex[0][0];
         }
+
         if (max[1] < vertex[0][1]) {
             max[1] = vertex[0][1];
         }
+
         if (max[2] < vertex[0][2]) {
             max[2] = vertex[0][2];
         }
+
         if (min[0] > vertex[0][0]) {
             min[0] = vertex[0][0];
         }
+
         if (min[1] > vertex[0][1]) {
             min[1] = vertex[0][1];
         }
+
         if (min[2] > vertex[0][2]) {
             min[2] = vertex[0][2];
         }
+
         vertex++;
     }
 }
@@ -148,6 +155,7 @@ int CCollisionMDT::GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sce
     }
 
     collision = (MDT_COLLISION *) ((char *) model + model->mesh_ofs);
+
     if (index >= collision->set.num) {
         return 0;
     }
@@ -205,6 +213,7 @@ int CCollisionMDT::GetMaxY(float *position) {
         if (position[0] < tri_min[0] || position[0] > tri_max[0]) {
             continue;
         }
+
         if (position[2] < tri_min[2] || position[2] > tri_max[2]) {
             continue;
         }
@@ -216,6 +225,7 @@ int CCollisionMDT::GetMaxY(float *position) {
         }
 
         found = 1;
+
         if (top < hit[1]) {
             top = hit[1];
         }
@@ -271,21 +281,26 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
         if (from[0] < tri_min[0] && to[0] < tri_min[0]) {
             continue;
         }
+
         if (from[0] > tri_max[0] && to[0] > tri_max[0]) {
             continue;
         }
+
         /* The far endpoint is held against the x extent in y and not the y one. That is what the
            game does and what its bytes depend on, so it is what this does; the effect is a reject
            that keeps more triangles than it needs to, and nothing below trusts it on its own. */
         if (from[1] < tri_min[1] && to[1] < tri_min[0]) {
             continue;
         }
+
         if (from[1] > tri_max[1] && to[1] > tri_max[0]) {
             continue;
         }
+
         if (from[2] < tri_min[2] && to[2] < tri_min[2]) {
             continue;
         }
+
         if (from[2] > tri_max[2] && to[2] > tri_max[2]) {
             continue;
         }
@@ -309,6 +324,7 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
         if (plane_dist - from_dist > 0.0f && plane_dist - to_dist > 0.0f) {
             continue;
         }
+
         if (plane_dist - from_dist < 0.0f && plane_dist - to_dist < 0.0f) {
             continue;
         }
@@ -331,6 +347,7 @@ int CCollisionMDT::Intersection(float *from, float *to, float *hit) {
                 best_distance = distance;
                 sceVu0CopyVector(hit, point);
             }
+
             found = 1;
         }
     }
@@ -344,6 +361,7 @@ sceVu0FVECTOR *CCollisionMDT::GetVertexAddress(int *count) {
     }
 
     *count = model->vertex_num;
+
     if (*count <= 0) {
         return 0;
     }
@@ -393,6 +411,7 @@ int CCollisionMDT::PickUpNearPoly(CCPoly *poly, float *position, float radius) {
         if (min_x > tri_max[0] || min_y > tri_max[1] || min_z > tri_max[2]) {
             continue;
         }
+
         if (max_x < tri_min[0] || max_y < tri_min[1] || max_z < tri_min[2]) {
             continue;
         }
@@ -416,18 +435,23 @@ int CCollisionMDT::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
     if (box.min[0] > max[0]) {
         return 0;
     }
+
     if (box.min[1] > max[1]) {
         return 0;
     }
+
     if (box.min[2] > max[2]) {
         return 0;
     }
+
     if (box.max[0] < min[0]) {
         return 0;
     }
+
     if (box.max[1] < min[1]) {
         return 0;
     }
+
     if (box.max[2] < min[2]) {
         return 0;
     }
@@ -444,6 +468,7 @@ int CCollisionMDT::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
     vu_hold_box(bound.max, bound.min);
 
     box_poly = mesh;
+
     for (i = 0; i < this->mesh_count; i++, box_poly++) {
         if (vu_box_missed(box_poly->box.max, box_poly->box.min) == 0) {
             *(u_long128 *) poly->vertex[0] = *(u_long128 *) box_poly->poly.vertex[0];

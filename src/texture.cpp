@@ -78,22 +78,26 @@ void CTextureManager::Initialize(int size) {
     for (i = 0; i < 72; i++) {
         blocks[i].Initialize();
     }
+
     for (i = 0; i < 196; i++) {
         textures[i].Initialize();
     }
 
     texture_max = 1;
     vram_work = 8960;
+
 #ifdef PAL
     for (i = 0; i < 72; i++) {
         blocks[i].vram_top = mgTopVRAM;
         blocks[i].vram_end = mgTopVRAM;
     }
+
 #else
     for (i = 0; i < 72; i++) {
         blocks[i].vram_top = 6720;
         blocks[i].vram_end = 6720;
     }
+
 #endif
     vram_size = size;
     vram_max = vram_size;
@@ -118,11 +122,13 @@ void CTextureManager::SetBuffer(u_long128 *buffer, int size) {
     this->buffer = buffer;
     buffer_size = size;
     misalignment = (int) this->buffer & 0x7f;
+
     if (misalignment != 0) {
         skipped_quads = (128 - misalignment) >> 4;
         this->buffer = (u_long128 *) ((int) this->buffer + skipped_quads * 16);
         buffer_size -= skipped_quads;
     }
+
     buffer_used = 0;
 }
 
@@ -139,23 +145,28 @@ int CTextureManager::SearchTextureName(char *name, int block) {
         if (tex->name[0] == 0) {
             continue;
         }
+
         if (block >= 0 && block != tex->block) {
             continue;
         }
 
         name_cursor = name;
         entry_cursor = tex->name;
+
         while ((name_char = *name_cursor) != 0 && (entry_char = *entry_cursor) != 0) {
             if (name_char != entry_char) {
                 break;
             }
+
             name_cursor++;
             entry_cursor++;
         }
+
         if (name_char == 0 && *entry_cursor == 0) {
             return i;
         }
     }
+
     return -1;
 }
 
@@ -165,6 +176,7 @@ int CTextureManager::GetTextureHandle(char *name, int block) {
     if (handle < 0) {
         return -1;
     }
+
     return handle;
 }
 
@@ -172,6 +184,7 @@ CTexture *CTextureManager::GetTexture(int handle) {
     if (handle < 0 || handle >= texture_max) {
         return &textures[0];
     }
+
     return &textures[handle];
 }
 
@@ -181,6 +194,7 @@ CTexture *CTextureManager::GetTexture(char *name, int block) {
     if (handle < 0) {
         return 0;
     }
+
     return GetTexture(handle);
 }
 
@@ -191,13 +205,16 @@ CTexture *CTextureManager::SearchTexture(char *name) {
     for (i = 1; i < 196; i++, tex++) {
         if (i == 196) {
             printf("Texture Over!!\n");
+
             while (1)
                 ;
         }
+
         if (tex->name[0] == 0) {
             break;
         }
     }
+
     SearchTextureName(name, -1);
     return tex;
 }
@@ -227,6 +244,7 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
     }
 
     tex = SearchTexture(name);
+
     if (image == 0 || mip1 == 0) {
         mipmap = 0;
     }
@@ -248,24 +266,31 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
     tw = 0;
     th = 0;
     power = width;
+
     while (power >= 2) {
         power >>= 1;
         tw++;
     }
+
     for (power = 1, bit = 0; bit < tw; bit++) {
         power <<= 1;
     }
+
     if (width != power) {
         tw++;
     }
+
     power = height;
+
     while (power >= 2) {
         power >>= 1;
         th++;
     }
+
     for (power = 1, bit = 0; bit < th; bit++) {
         power <<= 1;
     }
+
     if (height != power) {
         th++;
     }
@@ -273,9 +298,11 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
     half_width = width >> 1;
     half_height = height >> 1;
     tbw = width >> 6;
+
     if (tbw <= 0) {
         tbw = 1;
     }
+
     tbp = 0;
     cbp = 0;
 
@@ -292,9 +319,11 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
         case 0:
         case 19:
             tbp = vram_end;
+
             if (image == 0) {
                 vram_top += image_blocks;
                 vram_end = vram_top;
+
                 if (psm == 19) {
                     cbp = vram_top;
                     vram_top += 4;
@@ -304,33 +333,39 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
                 }
             } else {
                 tex->image[0] = destination;
+
                 if (psm == 19 && swizzled == 0) {
                     Conv8to32(width, height, image, (u_char *) destination);
                 } else {
                     memcpy(destination, image, image_size);
                 }
+
                 vram_end += image_blocks;
                 buffer_used += image_blocks * 16;
 
                 if (mipmap != 0) {
                     destination = (u_int *) (this->buffer + buffer_used);
                     tex->image[1] = destination;
+
                     if (psm == 19 && swizzled == 0) {
                         Conv8to32(half_width, half_height, mip1, (u_char *) destination);
                     } else {
                         memcpy(destination, mip1, image_size >> 2);
                     }
+
                     mip_blocks = image_blocks >> 2;
                     vram_end += mip_blocks;
                     buffer_used += mip_blocks * 16;
 
                     destination = (u_int *) (this->buffer + buffer_used);
                     tex->image[2] = destination;
+
                     if (psm == 19 && swizzled == 0) {
                         Conv8to32(width >> 2, height >> 2, mip2, (u_char *) destination);
                     } else {
                         memcpy(destination, mip2, image_size >> 4);
                     }
+
                     vram_end += mip_blocks >> 2;
                     buffer_used += (mip_blocks >> 2) * 16;
                 }
@@ -349,6 +384,7 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
                     tex->tex0 = TEXTURE_TEX0(tbp, tbw, psm, tw, th, 1, 0, 0, 0, 0, 0, 0);
                 }
             }
+
             break;
     }
 
@@ -361,6 +397,7 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
     }
 
     misalignment = vram_end % 32;
+
     if (misalignment != 0) {
         vram_end += 32 - misalignment;
         buffer_used += (32 - misalignment) * 16;
@@ -371,12 +408,15 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
 
     if (buffer_used >= buffer_size) {
         printf("texture buffer over!!\n");
+
         while (1)
             ;
     }
+
     if (blocks[block].vram_end > vram_max) {
         printf("VRAM is not enough\n");
         printf("%s %d\n", name, blocks[block].vram_end);
+
         while (1)
             ;
     }
@@ -389,6 +429,7 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
 
     if (bpp > 0 && mipmap != 0) {
         tex->tex1 = SCE_GS_SET_TEX1(0, 2, 1, 5, 1, 0, -120);
+
         if (tex1 != 0) {
             sceGsTex1 *lod = (sceGsTex1 *) &tex1;
             tex->tex1 = SCE_GS_SET_TEX1(0, 2, 1, 5, 1, lod->L, lod->K);
@@ -421,6 +462,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
     }
 
     tex = SearchTexture(name);
+
     if (image == 0 || mip1 == 0) {
         mipmap = 0;
     }
@@ -442,32 +484,41 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
     tw = 0;
     th = 0;
     power = width;
+
     while (power >= 2) {
         power >>= 1;
         tw++;
     }
+
     for (power = 1, bit = 0; bit < tw; bit++) {
         power <<= 1;
     }
+
     if (width != power) {
         tw++;
     }
+
     power = height;
+
     while (power >= 2) {
         power >>= 1;
         th++;
     }
+
     for (power = 1, bit = 0; bit < th; bit++) {
         power <<= 1;
     }
+
     if (height != power) {
         th++;
     }
 
     tbw = width >> 6;
+
     if (tbw <= 0) {
         tbw = 1;
     }
+
     tbp = 0;
     cbp = 0;
     image_blocks = (width * height * bpp) >> 8;
@@ -480,9 +531,11 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
         case 0:
         case 19:
             tbp = vram_end;
+
             if (image == 0) {
                 vram_top += image_blocks;
                 vram_end = vram_top;
+
                 if (psm == 19) {
                     cbp = vram_top;
                     vram_top += 4;
@@ -493,6 +546,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
             } else {
                 tex->image[0] = (u_int *) image;
                 vram_end += image_blocks;
+
                 if (mipmap != 0) {
                     tex->image[1] = (u_int *) mip1;
                     mip_blocks = image_blocks >> 2;
@@ -500,6 +554,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
                     tex->image[2] = (u_int *) mip2;
                     vram_end += mip_blocks >> 2;
                 }
+
                 if (psm == 19) {
                     cbp = vram_end;
                     tex->clut = (u_int *) clut;
@@ -510,6 +565,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
                     tex->tex0 = TEXTURE_TEX0(tbp, tbw, psm, tw, th, 1, 0, 0, 0, 0, 0, 0);
                 }
             }
+
             break;
     }
 
@@ -522,6 +578,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
     }
 
     misalignment = vram_end % 32;
+
     if (misalignment != 0) {
         vram_end += 32 - misalignment;
     }
@@ -532,6 +589,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
     if (blocks[block].vram_end > vram_max) {
         printf("VRAM is not enough\n");
         printf("%s %d\n", name, blocks[block].vram_end);
+
         while (1)
             ;
     }
@@ -545,6 +603,7 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
 
     if (bpp > 0 && mipmap != 0) {
         tex->tex1 = SCE_GS_SET_TEX1(0, 2, 1, 5, 1, 0, -120);
+
         if (tex1 != 0) {
             sceGsTex1 *lod = (sceGsTex1 *) &tex1;
             tex->tex1 = SCE_GS_SET_TEX1(0, 2, 1, 5, 1, lod->L, lod->K);
@@ -587,6 +646,7 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
     }
 
     tex = SearchTexture(name);
+
     if (image == 0 || mip1 == 0) {
         mipmap = 0;
     }
@@ -608,24 +668,31 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
     tw = 0;
     th = 0;
     power = width;
+
     while (power >= 2) {
         power >>= 1;
         tw++;
     }
+
     for (power = 1, bit = 0; bit < tw; bit++) {
         power <<= 1;
     }
+
     if (width != power) {
         tw++;
     }
+
     power = height;
+
     while (power >= 2) {
         power >>= 1;
         th++;
     }
+
     for (power = 1, bit = 0; bit < th; bit++) {
         power <<= 1;
     }
+
     if (height != power) {
         th++;
     }
@@ -635,31 +702,41 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
     quarter_width = half_width >> 1;
     quarter_height = half_height >> 1;
     tbw = width >> 6;
+
     if (tbw <= 0) {
         tbw = 1;
     }
+
     swizzled_tbw = tbw >> 1;
     mip1_tbw = swizzled_tbw;
+
     if (mip1_tbw <= 0) {
         mip1_tbw = 1;
     }
+
     mip2_tbw = mip1_tbw >> 1;
+
     if (mip2_tbw <= 0) {
         mip2_tbw = 1;
     }
+
     tbp = 0;
     cbp = 0;
 
     image_size = width * height * bpp;
     image_blocks = image_size >> 8;
+
     if (mipmap != 0) {
         mip_blocks = image_blocks >> 2;
         image_blocks = image_blocks + mip_blocks + (mip_blocks >> 2);
     }
+
     misalignment = image_blocks % 32;
+
     if (misalignment != 0) {
         image_blocks += 32 - misalignment;
     }
+
     vram_fix -= image_blocks;
     upload_address = vram_fix;
 
@@ -673,6 +750,7 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
         case 0:
         case 19:
             tbp = upload_address;
+
             if (image == 0) {
                 if (psm != 0) {
                     cbp = vram_fix;
@@ -686,16 +764,21 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
                 } else {
                     sceGifPkRefLoadImage(&packet, upload_address, psm, tbw, (u_long128 *) image, image_size >> 4, 0, 0, width, height);
                 }
+
                 upload_address += image_blocks;
+
                 if (mipmap != 0) {
                     if (mip1 != 0) {
                         sceGifPkRefLoadImage(&packet, upload_address, psm, mip1_tbw, (u_long128 *) mip1, (half_width * half_height * bpp) >> 4, 0, 0, half_width, half_height);
                     }
+
                     upload_address += image_blocks >> 2;
+
                     if (mip2 != 0) {
                         sceGifPkRefLoadImage(&packet, upload_address, psm, mip2_tbw, (u_long128 *) mip2, (quarter_width * quarter_height * bpp) >> 4, 0, 0, quarter_width, quarter_height);
                     }
                 }
+
                 if (psm == 19) {
                     vram_fix -= 32;
                     cbp = vram_fix;
@@ -706,6 +789,7 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
                     tex->tex0 = TEXTURE_TEX0(tbp, tbw, psm, tw, th, 1, 0, 0, 0, 0, 0, 0);
                 }
             }
+
             break;
     }
 
@@ -725,9 +809,11 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
     sceGifPkTerminate(&packet);
     FlushCache(0);
     channel->chcr.TTE = 1;
+
     if (image != 0) {
         sceDmaSend(channel, (void *) packet.pBase);
     }
+
     sceGsSyncPath(0, 0);
 
     strcpy(tex->name, name);
@@ -738,6 +824,7 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
 
     if (bpp > 0 && mipmap != 0) {
         tex->tex1 = SCE_GS_SET_TEX1(0, 2, 1, 5, 1, 0, -120);
+
         if (tex1 != 0) {
             sceGsTex1 *lod = (sceGsTex1 *) &tex1;
             tex->tex1 = SCE_GS_SET_TEX1(0, 2, 1, 5, 1, lod->L, lod->K);
@@ -770,19 +857,24 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     picture = (TM2_picture *) ((u_char *) head + 16);
     width = head->image_width;
     height = head->image_height;
+
     if (width != 640) {
         return;
     }
+
 #ifdef PAL
     if (height > 240) {
         return;
     }
+
 #else
     if (height != 224) {
         return;
     }
+
 #endif
     bpp = 1;
+
     if (picture->image_type != 5) {
         return;
     }
@@ -821,9 +913,11 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     sceGifPkTerminate(&packet);
     FlushCache(0);
     channel->chcr.TTE = 1;
+
     if (image != 0) {
         sceDmaSend(channel, (void *) packet.pBase);
     }
+
     sceGsSyncPath(0, 0);
 }
 
@@ -837,11 +931,13 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
     }
 
     swizzled = 0;
+
     if (memcmp(buffer, "IM2", 3) == 0) {
         swizzled = 1;
     }
 
     entry = buffer + 16;
+
     for (i = 0; i < *(u_int *) (buffer + 4); i++) {
         TM2_head    *head;
         TM2_picture *picture;
@@ -855,6 +951,7 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
         picture = (TM2_picture *) ((u_char *) head + 16);
         width = head->image_width;
         height = head->image_height;
+
         switch (head->image_type) {
             case 1:
                 bpp = 2;
@@ -878,6 +975,7 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
 
         clut = 0;
         image = (u_char *) picture + picture->header_size;
+
         if (bpp < 2) {
             clut = image + picture->image_size;
         }
@@ -886,6 +984,7 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
 
         if (picture->mipmap_count > 1) {
             u_char *mip_image = image + picture->mipmap_size[0];
+
             for (int level = 1; level < picture->mipmap_count; level++) {
                 mip[level] = mip_image;
                 mip_image += picture->mipmap_size[level];
@@ -901,6 +1000,7 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
         } else if (block >= 0) {
             EnterTextureEX(block, (char *) entry, image, width, height, bpp, clut, picture->clut_colors, mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
         }
+
         entry += 48;
     }
 }
@@ -990,6 +1090,7 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
         last_block = -1;
         return;
     }
+
     if (last_block == block && blocks[block].loaded != 0) {
         return;
     }
@@ -1010,17 +1111,20 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
         if (i == block) {
             continue;
         }
+
         if (blocks[i].vram_dirty < blocks[block].vram_end) {
             blocks[i].vram_dirty = blocks[block].vram_end;
         }
     }
 
     reload_from = blocks[block].vram_dirty;
+
     if (blocks[block].vram_end < reload_from || reload_from <= 0) {
         reload_from = blocks[block].vram_end;
     } else {
         reload_from = blocks[block].vram_top < reload_from ? reload_from : blocks[block].vram_end;
     }
+
     blocks[block].vram_dirty = 0;
 
     if (blocks[block].loaded == 0) {
@@ -1030,11 +1134,14 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
     }
 
     tex = &textures[1];
+
     for (i = 1; i < texture_max; i++, tex++) {
         if (tex->block != block) {
             continue;
         }
+
         tex0 = *(sceGsTex0 *) &tex->tex0;
+
         if (reload_from < (int) tex0.TBP0 && blocks[block].loaded != 0) {
             continue;
         }
@@ -1042,6 +1149,7 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
         width = tex->width;
         height = tex->height;
         bpp = tex->bpp;
+
         if (bpp == 1) {
             if (tex->swizzled != 0) {
                 width >>= 1;
@@ -1050,6 +1158,7 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
                 tex0.PSM = 0;
                 tex0.TBW = tex0.TBW >> 1;
             }
+
             if (tex->clut != 0) {
                 cursor += LoadImage(cursor, tex0.CBP, tex0.CPSM, 1, (u_long128 *) tex->clut, 64, 0, 0, 16, 16);
             }
@@ -1059,9 +1168,11 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
             if (tex->image[level] == 0) {
                 break;
             }
+
             if (tex0.TBW == 0) {
                 tex0.TBW = 1;
             }
+
             cursor += LoadImage(cursor, tex0.TBP0, tex0.PSM, tex0.TBW, (u_long128 *) tex->image[level], (bpp * (width * height)) >> 4, 0, 0, width, height);
             tex0.TBP0 += (width * height) >> 6;
             tex0.TBW = tex0.TBW >> 1;
@@ -1090,16 +1201,20 @@ void CTextureManager::BeginEnterTextureBlock(int block) {
     if (blocks[block].vram_top == 0) {
         blocks[block].vram_top = mgTopVRAM;
     }
+
     if (blocks[block].vram_end == 0) {
         blocks[block].vram_end = mgTopVRAM;
     }
+
 #else
     if (blocks[block].vram_top == 0) {
         blocks[block].vram_top = 6720;
     }
+
     if (blocks[block].vram_end == 0) {
         blocks[block].vram_end = 6720;
     }
+
 #endif
     blocks[block].buffer = buffer + buffer_used;
     blocks[block].buffer_end = buffer + buffer_used;
@@ -1112,17 +1227,22 @@ void CTextureManager::EndEnterTextureBlock(int block) {
     }
 
     blocks[block].buffer_end = buffer + buffer_used;
+
     if (blocks[block].buffer_end == blocks[block].buffer) {
         blocks[block].buffer = 0;
         blocks[block].buffer_end = 0;
     }
+
     if (buffer_used > buffer_size) {
         printf("texture buffer over!!\n");
+
         while (1)
             ;
     }
+
     if (vram_fix < blocks[block].vram_end) {
         printf("fix texture over!!\n");
+
         while (1)
             ;
     }
@@ -1134,17 +1254,21 @@ int CTextureManager::DeleteTextureBlock(int block) {
     if (block >= 72) {
         return 0;
     }
+
     if (block >= 0 && block < 72) {
         blocks[block].Initialize();
     }
+
     if (block < 0) {
         block = -1;
     }
+
     for (i = 0; i < 196; i++) {
         if (block < 0 || textures[i].block == block) {
             textures[i].Initialize();
         }
     }
+
     return 1;
 }
 
@@ -1161,6 +1285,7 @@ int CTextureManager::CleanUpBuffer() {
         block_start[i] = blocks[i].buffer;
         block_order[i] = i;
     }
+
     for (i = 0; i < 71; i++) {
         for (j = i + 1; j < 72; j++) {
             u_long128 **lower = &block_start[i];
@@ -1180,6 +1305,7 @@ int CTextureManager::CleanUpBuffer() {
     }
 
     buffer_used = 0;
+
     for (i = 0; i < 72; i++) {
         int        block_no = block_order[i];
         u_long128 *destination;
@@ -1192,7 +1318,9 @@ int CTextureManager::CleanUpBuffer() {
         if (block_no <= 0) {
             continue;
         }
+
         source = block_start[i];
+
         if (source == 0) {
             continue;
         }
@@ -1202,6 +1330,7 @@ int CTextureManager::CleanUpBuffer() {
         shift = (source - destination) * 16;
         blocks[block_no].buffer = destination;
         blocks[block_no].buffer_end = destination + block_quads;
+
         for (k = 0; k < block_quads; k++) {
             *destination = *source;
             source++;
@@ -1215,14 +1344,18 @@ int CTextureManager::CleanUpBuffer() {
             if (tex->block != block_no) {
                 continue;
             }
+
             for (level = 0; level < 4; level++) {
                 u_int **images = tex->image;
                 u_int **slot = &images[level];
+
                 if (tex->image[level] == 0) {
                     continue;
                 }
+
                 *slot = (u_int *) ((int) *slot - shift);
             }
+
             if (tex->clut != 0) {
                 tex->clut = (u_int *) ((int) tex->clut - shift);
             }
@@ -1230,10 +1363,12 @@ int CTextureManager::CleanUpBuffer() {
 
         buffer_used += block_quads;
         misalignment = block_quads % 8;
+
         if (misalignment != 0) {
             buffer_used += 8 - misalignment;
         }
     }
+
     return 1;
 }
 
@@ -1247,17 +1382,20 @@ int CTextureManager::CleanUpTextureList() {
         if (hole->name[0] != 0) {
             continue;
         }
+
         for (j = i + 1; j < 196; j++) {
             CTexture *tex = &textures[j];
 
             if (tex->name[0] == 0) {
                 continue;
             }
+
             *hole = *tex;
             tex->Initialize();
             break;
         }
     }
+
     return 1;
 }
 
@@ -1269,14 +1407,18 @@ static int GetStr(char *text, char *out) {
     if (*text == 0) {
         return 0;
     }
+
     while (*text != '#') {
         out[length] = *text;
         length++;
+
         if (*text == 0) {
             break;
         }
+
         text++;
     }
+
     out[length] = 0;
     return length + 1;
 }
@@ -1290,6 +1432,7 @@ static int GetDummyInfo(char *text, char *name, int *width, int *height, int *bp
     if (*text != '#') {
         return 0;
     }
+
     text++;
 
     int  parsed_width = 32;
@@ -1298,24 +1441,29 @@ static int GetDummyInfo(char *text, char *name, int *width, int *height, int *bp
     char parsed_name[32] = "";
 
     length = GetStr(text, parsed_name);
+
     if (length < 2) {
         parsed_name[0] = 0;
     }
+
     text += length;
 
     length = GetStr(text, width_text);
     text += length;
+
     if (length > 1) {
         parsed_width = atoi(width_text);
     }
 
     length = GetStr(text, height_text);
     text += length;
+
     if (length > 1) {
         parsed_height = atoi(height_text);
     }
 
     length = GetStr(text, bpp_text);
+
     if (length > 1) {
         parsed_bpp = atoi(bpp_text);
     }
@@ -1340,8 +1488,10 @@ int CTextureManager::LoadTextureBlock(int block, LOADTEXTURE_INFO *table, u_int 
         if (block >= 0 && block != i) {
             continue;
         }
+
         info = table;
         begun = 0;
+
         while (1) {
             char name[32];
             int  width;
@@ -1351,30 +1501,37 @@ int CTextureManager::LoadTextureBlock(int block, LOADTEXTURE_INFO *table, u_int 
             if (info->name == 0) {
                 break;
             }
+
             if (info->name[0] == 0) {
                 break;
             }
+
             if (info->block_no == i) {
                 if (begun == 0) {
                     BeginEnterTextureBlock(i);
                 }
+
                 begun = 1;
 
                 width = 32;
                 height = 32;
                 bpp = 4;
+
                 if (GetDummyInfo(info->name, name, &width, &height, &bpp) != 0) {
                     TexManager.EnterTexture(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0, 0, 0, 0, 0);
                 } else if (LoadFile2(info->name, buffer, 0, 0) != 0) {
                     EnterIMGFile((u_char *) buffer, info->block_no, info->mipmap, 0);
                 }
             }
+
             info++;
         }
+
         if (begun != 0) {
             EndEnterTextureBlock(i);
         }
     }
+
     return 0;
 }
 
@@ -1387,8 +1544,10 @@ int CTextureManager::LoadTextureBlock(int block, LOADTEXTURE_INFO2 *table) {
         if (block >= 0 && block != i) {
             continue;
         }
+
         info = table;
         begun = 0;
+
         while (1) {
             char name[32];
             int  width;
@@ -1398,30 +1557,37 @@ int CTextureManager::LoadTextureBlock(int block, LOADTEXTURE_INFO2 *table) {
             if (info->name == 0) {
                 break;
             }
+
             if (info->name[0] == 0) {
                 break;
             }
+
             if (info->block_no == i) {
                 if (begun == 0) {
                     BeginEnterTextureBlock(i);
                 }
+
                 begun = 1;
 
                 width = 32;
                 height = 32;
                 bpp = 4;
+
                 if (GetDummyInfo(info->name, name, &width, &height, &bpp) != 0) {
                     TexManager.EnterTexture(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0, 0, 0, 0, 0);
                 } else {
                     EnterIMGFile((u_char *) info->name, info->block_no, info->mipmap, 0);
                 }
             }
+
             info++;
         }
+
         if (begun != 0) {
             EndEnterTextureBlock(i);
         }
     }
+
     return 0;
 }
 
@@ -1434,8 +1600,10 @@ int CTextureManager::LoadTextureBlockEX(int block, LOADTEXTURE_INFO2 *table) {
         if (block >= 0 && block != i) {
             continue;
         }
+
         info = table;
         begun = 0;
+
         while (1) {
             char name[32];
             int  width;
@@ -1445,18 +1613,22 @@ int CTextureManager::LoadTextureBlockEX(int block, LOADTEXTURE_INFO2 *table) {
             if (info->name == 0) {
                 break;
             }
+
             if (info->name[0] == 0) {
                 break;
             }
+
             if (info->block_no == i) {
                 if (begun == 0) {
                     BeginEnterTextureBlock(i);
                 }
+
                 begun = 1;
 
                 width = 32;
                 height = 32;
                 bpp = 4;
+
                 if (GetDummyInfo(info->name, name, &width, &height, &bpp) != 0) {
                     TexManager.EnterTextureEX(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0, 0, 0, 0, 0);
                 } else {
@@ -1466,12 +1638,15 @@ int CTextureManager::LoadTextureBlockEX(int block, LOADTEXTURE_INFO2 *table) {
                     EnterIMGFile((u_char *) info->name, entry_block, mipmap, begun);
                 }
             }
+
             info++;
         }
+
         if (begun != 0) {
             EndEnterTextureBlock(i);
         }
     }
+
     return 0;
 }
 
@@ -1510,6 +1685,7 @@ static int PageConv8to32(int width, int height, u_char *source, u_char *destinat
     int     block_index;
 
     entry = 0;
+
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 8; j++) {
             block_column[block_table32[entry]] = j;
@@ -1535,10 +1711,12 @@ static int PageConv8to32(int width, int height, u_char *source, u_char *destinat
                 work_cursor += 16;
                 source_cursor += 128;
             }
+
             BlockConv8to32(work8, work32);
 
             work_cursor = work32;
             destination_cursor = destination + block_row[block_index] * 2048 + block_column[block_index] * 32;
+
             for (k = 0; k < 8; k++) {
                 memcpy(destination_cursor, work_cursor, 32);
                 work_cursor += 32;
@@ -1546,6 +1724,7 @@ static int PageConv8to32(int width, int height, u_char *source, u_char *destinat
             }
         }
     }
+
     return 0;
 }
 
@@ -1579,8 +1758,10 @@ static int BlockConv8to32(u_char *source, u_char *destination) {
     int   source_index;
 
     out_index = 0;
+
     for (i = 0; i < 4; i++) {
         lut_index = (i & 1) * 64;
+
         for (j = 0; j < 16; j++) {
             for (k = 0; k < 4; k++) {
                 source_index = lut[lut_index];
@@ -1589,8 +1770,10 @@ static int BlockConv8to32(u_char *source, u_char *destination) {
                 out_index++;
             }
         }
+
         source += 64;
     }
+
     return 0;
 }
 
@@ -1616,6 +1799,7 @@ static int Conv8to32(int width, int height, u_char *source, u_char *destination)
         width = 128;
         row_bytes = 256;
     }
+
     if (pages_y == 1) {
         row_count = height >> 1;
     } else {
@@ -1635,10 +1819,12 @@ static int Conv8to32(int width, int height, u_char *source, u_char *destination)
                 source_cursor += width * pages_x;
                 work_cursor += 128;
             }
+
             PageConv8to32(128, 64, work8, work32);
 
             destination_cursor = destination + i * (pages_x * (row_bytes * row_count)) + row_bytes * j;
             work_out_cursor = work32;
+
             for (k = 0; k < row_count; k++) {
                 memcpy(destination_cursor, work_out_cursor, row_bytes);
                 destination_cursor += row_bytes * pages_x;
@@ -1646,6 +1832,7 @@ static int Conv8to32(int width, int height, u_char *source, u_char *destination)
             }
         }
     }
+
     return 0;
 }
 

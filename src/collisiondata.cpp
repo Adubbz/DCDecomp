@@ -117,9 +117,11 @@ void DebugInfomationDraw() {
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "WeaponList Ver 2000/%d\n", VERSION_VOL);
             event_data = NowEventMan->SearchDataSlotPos(pos);
             event_count = 0;
+
             if (event_data != NULL) {
                 event_count = 1;
             }
+
             event_count = NowEventMan->GetDataNum();
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "EventID = %d\n", event_count);
 #ifdef PAL
@@ -129,20 +131,24 @@ void DebugInfomationDraw() {
 #endif
             DbgMsg.Draw();
         }
+
         return;
     }
+
     DbgMsg.length = sprintf(DbgMsg.text, "");
     char *on_off_names[2] = {"OFF", "ON"};
     char *main_sub_names[2] = {"MAIN", "SUB"};
     char *condition_names[6] = {"RESET", "STONE", "BIN2", "POISON", "CURSE", "NEBA2"};
     char *power_names[3] = {"HUMAN   ", "SUPERMAN", "ULTRAMAN"};
     char  bgm_text[32];
+
     for (int i = 0; DebugInfoMsg[i] != NULL; i++) {
         if (DebugInfoNowCursor == i) {
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], ">>");
         } else {
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "  ");
         }
+
         switch (DebugInfoCode[i]) {
             case 0:
                 DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i]);
@@ -157,6 +163,7 @@ void DebugInfomationDraw() {
                     sprintf(bgm_text, "%d", DebugStatus[9] + 1);
                     DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], bgm_text);
                 }
+
                 break;
             case 70:
                 DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], DebugInfoMsg[i], on_off_names[DebugStatus[10]]);
@@ -199,6 +206,7 @@ void DebugInfomationDraw() {
                 break;
         }
     }
+
 #ifdef PAL
     MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
 #else
@@ -265,16 +273,21 @@ static inline void ClearMapEvent(CDungeonMap *map) {
         map->events[i].kind = -1;
         map->events[i].reset_flag = 0;
     }
+
     for (i = 0; i < 24; i++) {
         map->boxes[i].used = 0;
         map->boxes[i].lid_angle = 0;
         map->boxes[i].trap_no = 0;
     }
+
     map->box_num = 0;
+
     for (i = 0; i < 8; i++) {
         map->atra[i].used = 0;
     }
+
     map->atra_num = 0;
+
     for (i = 0; i < 4; i++) {
         map->room_link[i].used = 0;
     }
@@ -296,6 +309,7 @@ int DebugInfomationIF() {
         GamePad.MenuModeOff();
         return 1;
     }
+
     if (GamePad.Down(0x10)) {
         switch (DebugInfoCode[DebugInfoNowCursor]) {
             case 90:
@@ -306,6 +320,7 @@ int DebugInfomationIF() {
                 return 40;
         }
     }
+
     if (GamePad.Down(0x20)) {
         switch (DebugInfoCode[DebugInfoNowCursor]) {
             case 40:
@@ -357,8 +372,10 @@ int DebugInfomationIF() {
                 return 140;
         }
     }
+
     for (line_count = 0; DebugInfoCode[line_count] != -1; line_count++) {
     }
+
     switch (DebugStatus[2]) {
         case 0:
             if (GamePad.Down(0x4000)) {
@@ -368,6 +385,7 @@ int DebugInfomationIF() {
                     DebugInfoNowCursor++;
                 }
             }
+
             if (GamePad.Down(0x1000)) {
                 if (DebugInfoNowCursor == 0) {
                     DebugInfoNowCursor = line_count - 1;
@@ -375,6 +393,7 @@ int DebugInfomationIF() {
                     DebugInfoNowCursor--;
                 }
             }
+
             if (GamePad.Down(0x2000)) {
                 switch (DebugInfoCode[DebugInfoNowCursor]) {
                     case 10:
@@ -383,6 +402,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[3] = 0;
                         }
+
                         break;
                     case 20:
                         if (DebugStatus[5] == 0) {
@@ -390,6 +410,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[5] = 0;
                         }
+
                         break;
                     case 30:
                         if (DebugStatus[6] == 0) {
@@ -397,6 +418,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[6] = 0;
                         }
+
                         break;
                     case 50:
                         if (DebugStatus[4] == 0) {
@@ -404,6 +426,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[4] = 0;
                         }
+
                         break;
                     case 70:
                         if (DebugStatus[10] == 0) {
@@ -411,6 +434,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[10] = 0;
                         }
+
                         break;
                     case 150:
                         if (DebugStatus[20] == 2) {
@@ -418,6 +442,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[20]++;
                         }
+
                         break;
                     case 100:
                         if (DebugStatus[14] < 4) {
@@ -425,15 +450,18 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[14] = 0;
                         }
+
                         break;
                     case 41:
                         DebugStatus[9]++;
+
                         if (DebugStatus[9] != -1) {
                             SndBgmLoad(DebugStatus[9] * 10 + 100);
                             SndBgmPlay(0);
                         } else {
                             SndBgmStop();
                         }
+
                         break;
                     case 90:
                         DebugStatus[11]++;
@@ -444,6 +472,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[16] = 0;
                         }
+
                         break;
                     case 120:
                         if (DebugStatus[17] == 5) {
@@ -451,6 +480,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[17]++;
                         }
+
                         break;
                     case 130:
                         DebugStatus[18]++;
@@ -461,9 +491,11 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[19]++;
                         }
+
                         break;
                 }
             }
+
             if (GamePad.Down(0x8000)) {
                 switch (DebugInfoCode[DebugInfoNowCursor]) {
                     case 10:
@@ -472,6 +504,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[3] = 0;
                         }
+
                         break;
                     case 20:
                         if (DebugStatus[5] == 0) {
@@ -479,6 +512,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[5] = 0;
                         }
+
                         break;
                     case 30:
                         if (DebugStatus[6] == 0) {
@@ -486,6 +520,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[6] = 0;
                         }
+
                         break;
                     case 50:
                         if (DebugStatus[4] == 0) {
@@ -493,6 +528,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[4] = 0;
                         }
+
                         break;
                     case 70:
                         if (DebugStatus[10] == 0) {
@@ -500,6 +536,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[10] = 0;
                         }
+
                         break;
                     case 150:
                         if (DebugStatus[20] == 0) {
@@ -507,6 +544,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[20]--;
                         }
+
                         break;
                     case 100:
                         if (DebugStatus[14] > 0) {
@@ -514,22 +552,26 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[14] = 4;
                         }
+
                         break;
                     case 41:
                         if (DebugStatus[9] > -1) {
                             DebugStatus[9]--;
                         }
+
                         if (DebugStatus[9] != -1) {
                             SndBgmLoad(DebugStatus[9] * 10 + 100);
                             SndBgmPlay(0);
                         } else {
                             SndBgmStop();
                         }
+
                         break;
                     case 90:
                         if (DebugStatus[11] > 0) {
                             DebugStatus[11]--;
                         }
+
                         break;
                     case 110:
                         if (DebugStatus[16] == 0) {
@@ -537,6 +579,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[16] = 0;
                         }
+
                         break;
                     case 120:
                         if (DebugStatus[17] == 0) {
@@ -544,6 +587,7 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[17]--;
                         }
+
                         break;
                     case 130:
                         DebugStatus[18]--;
@@ -554,18 +598,22 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[19]--;
                         }
+
                         break;
                 }
             }
+
             if (GamePad.Down(4)) {
                 switch (DebugInfoCode[DebugInfoNowCursor]) {
                     case 90:
                         if (DebugStatus[11] > 0) {
                             DebugStatus[11] -= 10;
                         }
+
                         if (DebugStatus[11] < 0) {
                             DebugStatus[11] = 0;
                         }
+
                         break;
                     case 100:
                         if (DebugStatus[15] > 0) {
@@ -573,17 +621,21 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[15] = 16;
                         }
+
                         break;
                     case 130:
                         if (DebugStatus[18] > 0) {
                             DebugStatus[18] -= 10;
                         }
+
                         if (DebugStatus[18] < 0) {
                             DebugStatus[18] = 0;
                         }
+
                         break;
                 }
             }
+
             if (GamePad.Down(8)) {
                 switch (DebugInfoCode[DebugInfoNowCursor]) {
                     case 90:
@@ -595,14 +647,17 @@ int DebugInfomationIF() {
                         } else {
                             DebugStatus[15] = 0;
                         }
+
                         break;
                     case 130:
                         DebugStatus[18] += 10;
                         break;
                 }
             }
+
             break;
     }
+
     return 0;
 }
 
@@ -645,6 +700,7 @@ void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int al
     set2DSprite(Vif1Packet, texture, CRect_i_(0x82, 0xAA, 0x17C, 0x32), CRect_i_(0, 0, 0x17C, 0x32), alpha);
 
     floor++;
+
     if (dungeon == 5) {
         floor = BtGetFloorLevel(floor - 1);
     }
@@ -703,18 +759,21 @@ int SetGateKeyStack(int item) {
     if (item == -1) {
         return 0;
     }
+
     // One of a key item is enough, so a second is refused rather than stacked.
     for (int i = 0; i < 32; i++) {
         if (item == gateKeyStack[i]) {
             return 0;
         }
     }
+
     for (int i = 0; i < 32; i++) {
         if (gateKeyStack[i] == -1) {
             gateKeyStack[i] = item;
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -786,34 +845,44 @@ int CCollisionData::CheckHitUser(float *position, int mask, float height) {
     float user_top;
     float user_bottom = position[1];
     user_top = user_bottom + height;
+
     for (int i = 0; i < 96; i++) {
         if (active[i] == 0 || (mask & hit[i].target_mask) == 0 || hit[i].phase != hit[i].ready_phase) {
             continue;
         }
+
         sceVu0CopyVector(hit_position, hit[i].pos);
         hit_position[1] = 0.0f;
+
         if (DistVector(user_position, hit_position) > hit[i].radius) {
             continue;
         }
+
         int   miss = 1;
         float hit_top = hit[i].pos[1] + hit[i].radius;
         float hit_bottom = hit[i].pos[1] - hit[i].radius;
+
         if (!(hit_top < user_top) && hit_bottom < user_top) {
             miss = 0;
         }
+
         if (!(hit_top < user_bottom) && hit_bottom < user_bottom) {
             miss = 0;
         }
+
         if (hit_top <= user_top && !(hit_bottom <= user_bottom)) {
             miss = 0;
         }
+
         if (!(hit_top < user_top) && hit_bottom < user_bottom) {
             miss = 0;
         }
+
         if (miss == 0) {
             return i;
         }
     }
+
     return -1;
 }
 

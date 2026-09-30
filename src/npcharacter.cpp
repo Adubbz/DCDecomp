@@ -10,26 +10,34 @@ void CNPCharacter::Step() {
     if (!initialized || frame == NULL) {
         return;
     }
+
     if (near_camera || step_hidden) {
         CCharacter::Step();
     }
+
     int fade_step = alpha_step;
     int override_step = alpha_step_override;
+
     if (!(float(override_step) <= 0.0f)) {
         fade_step = override_step;
     }
+
     alpha_step_override = -1;
+
     if (near_camera) {
         ambient_offset[3] += float(fade_step);
     } else {
         ambient_offset[3] -= float(fade_step);
     }
+
     if (ambient_offset[3] < 0.0f) {
         ambient_offset[3] = 0;
     }
+
     if (!(ambient_offset[3] <= 128.0f)) {
         ambient_offset[3] = 128.0f;
     }
+
     PlaySeq();
 }
 
@@ -37,6 +45,7 @@ void CNPCharacter::ShadowStep() {
     if (!initialized || frame == NULL) {
         return;
     }
+
     if (near_camera) {
         CCharacter::ShadowStep();
     }
@@ -47,11 +56,14 @@ void CNPCharacter::PlaySeq() {
     sceVu0FVECTOR movement;
     sceVu0FVECTOR destination;
     sceVu0FVECTOR flat_position;
+
     if (!CheckSeq() || !sequence_enabled) {
         return;
     }
+
     NP_SEQUENCE *sequence = GetNowSeq();
     GetPosition(position);
+
     switch (sequence->operation) {
         case NP_SEQUENCE_MOVE: {
             sceVu0SubVector(movement, sequence->destination, position);
@@ -60,6 +72,7 @@ void CNPCharacter::PlaySeq() {
             sceVu0ScaleVector(movement, movement, sequence->speed[0]);
             sceVu0CopyVector(flat_position, position);
             flat_position[1] = sequence->destination[1];
+
             if (DistVector(sequence->destination, flat_position) <= sequence->speed[0]) {
                 sceVu0CopyVector(destination, sequence->destination);
                 NextSeq();
@@ -67,6 +80,7 @@ void CNPCharacter::PlaySeq() {
             } else {
                 sceVu0AddVector(destination, position, movement);
             }
+
             float angle = AngleInterpolate(rotation.y, atan2f(movement[0], movement[2]), 0.1f, 0);
             SetRotation(0, angle, 0);
             SetPosition(destination);
@@ -75,9 +89,11 @@ void CNPCharacter::PlaySeq() {
         }
         case NP_SEQUENCE_WAIT:
             sequence->wait_frames--;
+
             if (sequence->wait_frames < 0) {
                 NextSeq();
             }
+
             SetMotion(0, 0);
             break;
     }
@@ -87,6 +103,7 @@ void CNPCharacter::ClearSeq() {
     read_index = 0;
     write_index = 0;
     sequence_enabled = 1;
+
     for (int index = 0; index < 8; index++) {
         sequences[index].operation = NP_SEQUENCE_UNUSED;
     }
@@ -116,9 +133,11 @@ int CNPCharacter::CheckSeq() {
 NP_SEQUENCE *CNPCharacter::GetNextSeq() {
     NP_SEQUENCE *sequence = &sequences[write_index];
     write_index++;
+
     if (write_index >= 8) {
         write_index = 0;
     }
+
     return sequence;
 }
 
@@ -128,8 +147,10 @@ NP_SEQUENCE *CNPCharacter::GetNowSeq() {
 
 void CNPCharacter::NextSeq() {
     GetNowSeq()->operation = NP_SEQUENCE_UNUSED;
+
     if (CheckSeq()) {
         read_index++;
+
         if (read_index >= 8) {
             read_index = 0;
         }
@@ -139,9 +160,11 @@ void CNPCharacter::NextSeq() {
 void CNPCharacter::Draw() {
     sceVu0FVECTOR saved_ambient;
     sceVu0FVECTOR ambient;
+
     if (!initialized || frame == NULL) {
         return;
     }
+
     if (!(ambient_offset[3] <= 0.0f)) {
         MGGetAmbient(saved_ambient);
         sceVu0CopyVector(ambient, saved_ambient);
@@ -159,6 +182,7 @@ void CNPCharacter::DrawShadow() {
     if (!initialized || frame == NULL) {
         return;
     }
+
     if (near_camera) {
         CCharacter::DrawShadow();
     }
@@ -168,9 +192,11 @@ int CNPCharacter::CheckDraw() {
     if (!initialized || frame == NULL) {
         return 0;
     }
+
     if (ambient_offset[3] <= 0.0f) {
         return 0;
     }
+
     return 1;
 }
 
@@ -178,6 +204,7 @@ int CNPCharacter::PickUpPoly(float *position, CCPoly *polygons) {
     if (initialized) {
         return CCharacter::PickUpPoly(position, polygons);
     }
+
     return 0;
 }
 
@@ -191,21 +218,27 @@ int CCharacter::PickUpPoly(float *position, CCPoly *polygons) {
     sceVu0FVECTOR lower_right;
     GetPosition(origin);
     float radius = body_width;
+
     if (radius < 2.0f) {
         radius = 2.0f;
     }
+
     sceVu0SubVector(direction, position, origin);
     direction[1] = 0;
     float distance = DistVector(direction);
+
     if (!(distance <= 4.0f * radius) || distance < radius) {
         return 0;
     }
+
     if (origin[1] + body_height < position[1]) {
         return 0;
     }
+
     if (!(origin[1] - body_height <= position[1])) {
         return 0;
     }
+
     sceVu0Normalize(direction, direction);
     upper_left[0] = 20.0f * -direction[2];
     upper_left[1] = 30.0f;

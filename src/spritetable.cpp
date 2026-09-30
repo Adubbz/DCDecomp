@@ -45,8 +45,10 @@ void CSpriteTable::DrawTable() {
     sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
 
     drawn = 0;
+
     for (layer = list_count - 1; layer >= 0; layer--) {
         node = heads[layer];
+
         while (node != tails[layer]) {
             q = 1.0f;
             sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(node->red, node->green, node->blue, node->alpha, *(u_int *) &q));
@@ -66,6 +68,7 @@ void CSpriteTable::DrawTable() {
             node = node->next;
             packet_entries++;
             drawn++;
+
             if (packet_entries > 128) {
                 packet_entries = 0;
                 sceVif1PkCloseGifTag(packet);
@@ -90,6 +93,7 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int alig
     if (layer < 0) {
         layer = 0;
     }
+
     if (layer >= list_count) {
         layer = list_count - 1;
     }
@@ -98,6 +102,7 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int alig
     SPRITE_TABLE *(&tail_entries)[16] = tails;
     SPRITE_TABLE **tail = &tail_entries[layer];
     node = *tail;
+
     if (node == NULL) {
         return;
     }
@@ -107,10 +112,12 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int alig
     node->y = y;
     node->width = sprite->source.width;
     node->height = sprite->source.height;
+
 #ifdef PAL
     if (node->height == 448) {
         node->height = 480;
     }
+
 #endif
     node->u = sprite->source.x;
     node->v = sprite->source.y;
@@ -125,13 +132,16 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int alig
         s16 width = node->width;
         node->x -= width;
     }
+
     if (align_flags & 2) {
         s16 height = node->height;
         node->y -= height;
     }
+
     if (align_flags & 4) {
         node->x -= (s16) (node->width >> 1);
     }
+
     if (align_flags & 8) {
         node->y -= (s16) (node->height >> 1);
     }
@@ -157,9 +167,11 @@ void CSpriteTable::AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int lay
 
 void CSpriteTable::Initialize(SPRITE_TABLE *new_pool, int entry_count, int layer_count) {
     list_count = layer_count;
+
     if (list_count > 16) {
         list_count = 16;
     }
+
     pool = new_pool;
     pool_count = entry_count;
     end = new_pool + entry_count;
@@ -173,11 +185,13 @@ SPRITE_TABLE *CSpriteTable::GetNext() {
         next = current;
         current++;
     }
+
     return next;
 }
 
 void CSpriteTable::ClearPointer() {
     current = pool;
+
     for (int layer = 0; layer < list_count; layer++) {
         heads[layer] = GetNext();
         heads[layer]->next = NULL;

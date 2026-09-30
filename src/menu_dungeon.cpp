@@ -167,9 +167,11 @@ static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scal
     for (i = 0; i < 4; i++) {
         base->status[i] += add->status[i] * scale;
     }
+
     for (i = 0; i < 5; i++) {
         base->elem[i] += add->elem[i] * scale;
     }
+
     for (i = 0; i < 10; i++) {
         base->vs_monster[i] += add->vs_monster[i] * scale;
     }
@@ -184,17 +186,20 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
     }
 
     total = 0;
+
     for (i = 0; i < 6; i++) {
         if (weapon->attach[i].item_no - 0x51 < 0) {
             continue;
         }
 
         int multiplier = 1;
+
         if (weapon->attach_kind[i] == 3) {
             multiplier = 2;
         }
 
         ATTACH_LIST *attach = &weapon->attach[i];
+
         if (stat < 5) {
             total += attach->status[stat - 1] * multiplier;
         } else if (stat >= 8 && stat < 0xD) {
@@ -203,6 +208,7 @@ int GetWeaponAttachStatusUp(WEAPON_HAVE *weapon, int stat) {
             total += attach->vs_monster[stat - 14] * multiplier;
         }
     }
+
     return total;
 }
 
@@ -212,6 +218,7 @@ void SetWeaponAttachStatus(WEAPON_HAVE *result) {
     }
 
     CDngStatusData *dng_status = SaveData->GetDngStatus();
+
     if (dng_status == NULL) {
         printf("cdng is NULL!!!!\n");
         return;
@@ -221,6 +228,7 @@ void SetWeaponAttachStatus(WEAPON_HAVE *result) {
     int          slot = dng_status->equipped_weapon_slot[chara];
     WEAPON_HAVE *weapons = dng_status->chara_weapons[chara];
     WEAPON_HAVE *equipped = &weapons[slot];
+
     if (equipped == NULL) {
         printf("actwep is NULL\n", chara);
         return;
@@ -240,75 +248,96 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
     int          value;
 
     data = GetWeaponData(weapon->item_no);
+
     if (data == NULL) {
         return;
     }
+
     attaches = weapon->attach;
     memset(&total, 0, sizeof(ATTACH_LIST));
     rate = GetNowWeaponRate(weapon);
+
     if (full) {
         rate = 1.0f;
     }
+
     flags = 0;
     flags |= weapon->flags;
     memcpy(result, weapon, sizeof(WEAPON_HAVE));
+
     for (i = 0; i < GetWeaponHoleNum(weapon->item_no); i++) {
         if (data->hole[i] <= 0) {
             break;
         }
+
         scale = 1.0f;
+
         if (weapon->attach_kind[i] == 3) {
             scale = 2.0f;
         }
+
         PlusAttachmentVolume(&total, &attaches[i], scale);
+
         if (attaches[i].item_no == 0x5A && attaches[i].sphere_flags != 0 && attaches[i].sphere_flags != 1) {
             flags |= attaches[i].sphere_flags;
         }
     }
+
     result->flags = CheckWeaponOptionStatus(flags);
     int limit[4] = {data->attack_max, 99, 99, data->magic_max};
     limit[0] *= rate;
     limit[3] *= rate;
     value = result->attack + total.status[0];
     value *= rate;
+
     if (limit[0] < value) {
         result->attack = limit[0];
     } else {
         result->attack = value;
     }
+
     value = result->endurance + total.status[1];
     value *= rate;
+
     if (limit[1] < value) {
         result->endurance = limit[1];
     } else {
         result->endurance = value;
     }
+
     value = result->speed + total.status[2];
     value *= rate;
+
     if (value >= limit[2]) {
         result->speed = limit[2];
     } else {
         result->speed = value;
     }
+
     value = result->magic + total.status[3];
     value *= rate;
+
     if (limit[3] < value) {
         result->magic = limit[3];
     } else {
         result->magic = value;
     }
+
     for (i = 0; i < 5; i++) {
         value = result->elem[i] + total.elem[i];
         value *= rate;
+
         if (value >= 99) {
             result->elem[i] = 99;
         } else {
             result->elem[i] = value;
         }
     }
+
     for (i = 0; i < 10; i++) {
         value = result->vs_monster[i] + total.vs_monster[i];
         value *= rate;
+
         if (value >= 99) {
             result->vs_monster[i] = 99;
         } else {
@@ -326,26 +355,33 @@ int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *unused) 
     if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
     }
+
     status = SaveData->GetDngStatus();
     DNG_CONSUMABLE *items = status->consumable_items;
     attach = (ATTACH_LIST *) &items[slot];
     data = GetAttachData(item_no);
     held_no = attach->item_no;
+
     if (held_no < ITEM_ATTACH_START || held_no >= ITEM_DUNGEON_START) {
         return -1;
     }
+
     memset(attach, 0, sizeof(ATTACH_LIST));
     attach->item_no = held_no;
     memcpy(attach, data, sizeof(ATTACH_LIST));
+
     if (level <= 0) {
         level = 1;
     }
+
     if (level > 3) {
         level = 3;
     }
+
     if (held_no >= ITEM_ATTACH_ATTACK && held_no <= ITEM_ATTACH_MAGICAL_POWER) {
         attach->status[held_no - ITEM_ATTACH_ATTACK] += level;
     }
+
     return 0;
 }
 
@@ -355,13 +391,17 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     if (attach == NULL) {
         return 0;
     }
+
     volume = 0;
+
     if (attach->item_no >= 0x5B && attach->item_no < 0x5F) {
         volume = attach->status[attach->item_no - 0x5B];
     }
+
     if (attach->item_no == 0x5A) {
         volume = attach->sphere_level;
     }
+
     return volume;
 }
 
@@ -395,53 +435,68 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     DEnterMenu.counter = 0;
     DEnterMenu.state = 1;
     DEnterMenu.requested_floor = requested_floor;
+
     if (requested_floor >= 0) {
         DEnterMenu.state = 3;
         return 1;
     }
+
     first_open = -1;
     floor = DEnterStatusPt->floor_reached[dungeon];
+
     if (dungeon == 5) {
         if (floor >= maxFloorTbl__4[dungeon]) {
             floor = maxFloorTbl__4[dungeon] - 1;
         }
+
         printf("maxfloor = %d\n", floor);
     }
+
     if (floor >= 0) {
         DEnterMenu.floor_count = floor + 1;
     } else {
         DEnterMenu.floor_count = 1;
     }
+
     for (floor = 0; floor < maxFloorTbl__4[dungeon]; floor++) {
         DEnterMenu.max_atra[floor] = DEnterStatusPt->GetMaxAtraNum(dungeon, floor);
         DEnterMenu.collected_atra[floor] = DEnterStatusPt->GetAtraNum(dungeon, floor);
         DEnterMenu.kills[floor] = DEnterStatusPt->ChkKills(dungeon, floor);
+
         if (DEnterMenu.kills[floor] > 999) {
             DEnterMenu.kills[floor] = 999;
         }
+
         if (first_open == -1 && (u8) DEnterMenu.max_atra[floor] != (u8) DEnterMenu.collected_atra[floor]) {
             first_open = floor;
         }
     }
+
     DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
     DEnterMenu.scroll_top = DEnterMenu.selected_floor;
+
     if (first_open > -1) {
         DEnterMenu.selected_floor = first_open;
         DEnterMenu.scroll_top = DEnterMenu.selected_floor;
     }
+
     if (DEnterMenu.scroll_top > DEnterMenu.floor_count - 5) {
         DEnterMenu.scroll_top = DEnterMenu.floor_count - 5;
+
         if (DEnterMenu.scroll_top < 0) {
             DEnterMenu.scroll_top = 0;
         }
     }
+
     printf("DEnterMenu.select = %d\n", DEnterMenu.selected_floor);
     printf("DEnterMenu.topline = %d\n", DEnterMenu.scroll_top);
     DEnterMenu.list_y = 118.0f - 40.0f * DEnterMenu.scroll_top;
     lines = DEnterMenu.floor_count;
+
     if (lines < 5) {
         lines = 5;
     }
+
     DEnterMenu.scroll_bar_y = 122.0f + 108.0f * DEnterMenu.scroll_top / lines;
     GamePad.SetAutoRepeat(0xF00F, 30, 5);
     GamePad.MenuModeOn(0x78);
@@ -470,11 +525,13 @@ int DunEnterMenuLoop() {
     int result = DunEnterMenuKey();
     DunEnterDraw();
     ItemVolumeStep.LoopStep(60);
+
     if (0 <= result) {
         ExitDunEnterMenu();
         ItemVolumeStep.CheckItemVolume();
         result = DEnterMenu.result;
     }
+
     return result;
 }
 
@@ -486,6 +543,7 @@ static int DunEnterMenuKey() {
     BG_READ_INFO *archive;
 
     result = -1;
+
     switch (DEnterMenu.state) {
         case 1:
         case 3:
@@ -511,35 +569,44 @@ static int DunEnterMenuKey() {
             } else {
                 MenuEtcErrCnt++;
             }
+
             if (DEnterMenu.textures_ready != 0) {
                 DEnterMenu.counter++;
             }
+
             if (DEnterMenu.textures_ready != 0 && DEnterMenu.counter > 30) {
                 DEnterMenu.state = 0;
                 DEnterMenu.counter = 0;
+
                 if (DEnterMenu.requested_floor >= 0) {
                     DEnterMenu.state = 2;
                     DEnterMenu.result = DEnterMenu.requested_floor;
                     result = 1;
                 }
             }
+
             break;
         case 2:
             DEnterMenu.counter++;
+
             if (DEnterMenu.counter > 46) {
                 result = 1;
             }
+
             break;
         case 0:
             selected = DEnterMenu.selected_floor;
             scroll_top = DEnterMenu.scroll_top;
+
             if (GamePad.Down(0x1000)) {
                 DEnterMenu.selected_floor--;
+
                 if (DEnterMenu.selected_floor < DEnterMenu.scroll_top) {
                     DEnterMenu.scroll_top--;
                 }
             } else if (GamePad.Down(0x4000)) {
                 DEnterMenu.selected_floor++;
+
                 if (DEnterMenu.scroll_top + 4 < DEnterMenu.selected_floor) {
                     DEnterMenu.scroll_top++;
                 }
@@ -550,47 +617,59 @@ static int DunEnterMenuKey() {
                 DEnterMenu.scroll_top -= 5;
                 DEnterMenu.selected_floor -= 5;
             }
+
             if (DEnterMenu.scroll_top < 0 || DEnterMenu.selected_floor < 0) {
                 DEnterMenu.selected_floor = 0;
                 DEnterMenu.scroll_top = 0;
             }
+
             if (DEnterMenu.floor_count - 1 < DEnterMenu.selected_floor) {
                 DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
                 DEnterMenu.scroll_top = DEnterMenu.selected_floor - 4;
+
                 if (DEnterMenu.scroll_top < 0) {
                     DEnterMenu.scroll_top = 0;
                 }
             }
+
 #ifdef PAL
             if (DebugMode) {
                 if (GamePad.Down2(8)) {
                     int max_floor = maxFloorTbl__4[DEnterMenu.dungeon];
                     DEnterMenu.floor_count = max_floor;
+
                     for (int floor = 0; floor < DEnterMenu.floor_count; floor++) {
                         DEnterMenu.max_atra[floor] = DEnterStatusPt->GetMaxAtraNum(DEnterMenu.dungeon, floor);
                         DEnterMenu.collected_atra[floor] = DEnterStatusPt->GetAtraNum(DEnterMenu.dungeon, floor);
                     }
+
                     ComMenuSePlay(1);
                 }
+
                 if (GamePad.On2(0x40)) {
                     if (DEnterMenu.kills[DEnterMenu.selected_floor] < 999) {
                         DEnterMenu.kills[DEnterMenu.selected_floor]++;
                     }
                 }
+
                 if (GamePad.On2(0x20)) {
                     if (0 < DEnterMenu.kills[DEnterMenu.selected_floor]) {
                         DEnterMenu.kills[DEnterMenu.selected_floor]--;
                     }
                 }
             }
+
 #endif
             if (DEnterMenu.selected_floor > DEnterMenu.floor_count - 1) {
                 DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
             }
+
             count = DEnterMenu.floor_count;
+
             if (count > 5) {
                 if (DEnterMenu.scroll_top > count - 5) {
                     DEnterMenu.scroll_top = count - 5;
+
                     if (DEnterMenu.scroll_top < 0) {
                         DEnterMenu.scroll_top = 0;
                         DEnterMenu.selected_floor = 0;
@@ -600,27 +679,34 @@ static int DunEnterMenuKey() {
                 DEnterMenu.selected_floor = count - 1;
                 DEnterMenu.scroll_top = 0;
             }
+
             if (DEnterMenu.scroll_top < 0 || DEnterMenu.selected_floor < 0) {
                 DEnterMenu.scroll_top = 0;
                 DEnterMenu.selected_floor = 0;
             }
+
             if (abs(DEnterMenu.scroll_top - scroll_top) > 4) {
                 DEnterMenu.list_y = 118.0f - 40.0f * DEnterMenu.scroll_top;
                 DEnterMenu.scroll_bar_y = 122.0f + 108.0f * DEnterMenu.scroll_top / DEnterMenu.floor_count;
             }
+
             if (selected != DEnterMenu.selected_floor || scroll_top != DEnterMenu.scroll_top) {
                 ComMenuSePlay(0);
             }
+
             if (GamePad.Down(0x40)) {
                 DEnterMenu.result = DEnterMenu.selected_floor;
                 DEnterMenu.state = 2;
                 ComMenuSePlay(1);
             }
+
             if (GamePad.Down(0x20)) {
                 ComMenuSePlay(2);
             }
+
             break;
     }
+
     return result;
 }
 
@@ -640,39 +726,49 @@ static void DunEnterDraw() {
     CRect_i_ screen(0, 0, 0x2800, (SCREEN_HEIGHT << 4));
     alpha = 0x80;
     fade = alpha;
+
     switch (DEnterMenu.state) {
         case 1:
             if (DEnterMenu.textures_ready != 0) {
                 fade = DEnterMenu.counter * 6;
                 alpha = fade;
             }
+
             break;
     }
+
     if (alpha < 0) {
         alpha = 0;
     }
+
     if (fade > 0x80) {
         fade = 0x80;
     }
+
     if (alpha > 0x80) {
         alpha = 0x80;
     }
+
     if (DEnterMenu.textures_ready != 0 && DEnterMenu.state != 3) {
         MenuTextureReload(DEnterMenu.texture_block);
         DrawDunEnterBack(alpha);
         DunEnterBoard(0x46, 0x5A, alpha);
         CursorVibeCnt++;
+
         if (CursorVibeCnt > 0x107AC0) {
             CursorVibeCnt = 0;
         }
+
         if (DEnterMenu.state == 0) {
             cursor_y = (DEnterMenu.selected_floor - DEnterMenu.scroll_top) * 40 + 0x74;
             static int DunWakuCnt;
             static s8  init;
+
             if (init == 0) {
                 DunWakuCnt = 0;
                 init = 1;
             }
+
             wave = 0.2f * DunWakuCnt;
             left = 94.0f + wave;
             top = cursor_y + wave;
@@ -684,13 +780,16 @@ static void DunEnterDraw() {
             DrawMenu2DSprite(DunLogBoard, CRect_i_(left, bottom, corner.width, corner.height), CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
             DrawMenu2DSprite(DunLogBoard, CRect_i_(right, bottom, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
             DunWakuCnt++;
+
             if (DunWakuCnt < 0 || DunWakuCnt >= 30) {
                 DunWakuCnt = 0;
             }
+
             CRect_i_ cursor(0x20, 0x60, 0x20, 0x20);
             DrawObjectVibe(0x49, cursor_y + 2, DunLogBoard, cursor, 0, alpha);
             DrawObjectVibe(0x46, cursor_y, DunLogBoard, cursor, 0x80, alpha);
         }
+
         MenuTextureReload(CommonMenuMes2.tex_block);
         CommonMenuMes2.stay_frame = 1;
         CommonMenuMes2.edge_alpha = alpha;
@@ -706,7 +805,9 @@ static void DunEnterDraw() {
     } else {
         MGFillBox(screen, 0, 0, 0, 0x80);
     }
+
     cover = 0x80;
+
     switch (DEnterMenu.state) {
         case 1:
             cover = 0x80 - DEnterMenu.counter * 6;
@@ -715,18 +816,22 @@ static void DunEnterDraw() {
             cover = DEnterMenu.counter * 9;
             break;
     }
+
     if (cover < 0) {
         cover = 0;
     }
+
     if (cover > 0x80) {
         cover = 0x80;
     }
+
     switch (DEnterMenu.state) {
         case 1:
         case 2:
             MGFillBox(screen, 0, 0, 0, cover);
             break;
     }
+
     setbilinear(1);
 }
 
@@ -754,15 +859,19 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
 
     // The scroll bar eases toward the list's scroll position and shrinks with a longer list.
     count = DEnterMenu.floor_count;
+
     if (count < 5) {
         count = 5;
     }
+
     draw_x = x + 0x1FC;
     draw_y = (int) (DEnterMenu.scroll_bar_y += ((int) (32.0f + y + 108.0f * DEnterMenu.scroll_top / count) - DEnterMenu.scroll_bar_y) / 4.0f);
     height = (int) (540.0f / count);
+
     while (y + 0x98 < draw_y + (height + 8)) {
         height--;
     }
+
     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y, 8, 4), CRect_i_(0x60, 0x60, 8, 4), alpha);
     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y + 4, 8, height), CRect_i_(0x60, 0x64, 8, 4), alpha);
     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y + height + 4, 8, 4), CRect_i_(0x60, 0x68, 8, 4), alpha);
@@ -771,11 +880,14 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
     draw_y = y - 0x14;
     dungeon = DEnterMenu.dungeon;
     icon = dungeon;
+
     if (icon > 5) {
         icon = 5;
     }
+
     u = (icon / 3) << 8;
     v = (icon % 3) * 40 + 0x100;
+
     if (dungeon == 6) {
         DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, draw_y, 0x80, 0x23), CRect_i_(0x20, 0x80, 0x80, 0x24), alpha);
         DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x + 0x80, draw_y, 0x80, 0x23), CRect_i_(0x20, 0xA4, 0x80, 0x24), alpha);
@@ -803,55 +915,70 @@ static void DunEnterBoard(int x, int y, int alpha) {
 
     // Short lists ease toward their scroll position; longer ones are placed by the scroll bar.
     int rows = DEnterMenu.floor_count;
+
     if (rows < 5) {
         rows = 5;
     }
+
     int target = y + 0x1C - DEnterMenu.scroll_top * 40;
     int step = (int) ((float) target - DEnterMenu.list_y);
     DEnterMenu.list_y += step >> 2;
+
     if (abs(step) < 2) {
         DEnterMenu.list_y = target;
     }
+
     row_y = (int) DEnterMenu.list_y;
 
     CRect_i_ rule_source(0x20, 0x20, 0x28, 7);
     dim = (alpha * 80) >> 7;
     rule_x = (int) (32.0f + lane);
+
     if (DEnterMenu.scroll_top == 0) {
         DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x - 10, 0x73, 10, 3), rule_source, dim);
+
         for (int segment = 0; segment < 11; segment++) {
             DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x, 0x73, 0x28, 3), rule_source, dim);
             rule_x += 0x28;
         }
+
         DrawMenu2DSprite(DunLogBoard, CRect_i_(rule_x, 0x73, 10, 3), rule_source, dim);
     }
 
     int icon = DEnterMenu.dungeon;
+
     if (icon > 5) {
         icon = 5;
     }
 
     column_x = x + 0x20;
+
     for (i = 0; i < 100; i++) {
         int source = 0x20;
         int length = 0x28;
         int position = row_y;
         lane = column_x;
+
         if (!(row_y < bottom)) {
             break;
         }
+
         if (row_y + 0x28 <= top) {
             row_y += 0x28;
             continue;
         }
+
         MenuTextureClip(position, source, length, top, bottom);
         CRect_i_ edge_source(0x20, source, 10, length);
         DrawMenu2DSprite(DunLogBoard, CRect_i_((int) (lane - 10.0f), position, 10, length), edge_source, dim);
+
         for (int segment = 0; segment < 12; segment++) {
             DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 0x28, length), CRect_i_(0x20, source, 0x28, length), dim);
             lane += 40.0f;
         }
+
         DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 10, length), edge_source, dim);
+
         if (DEnterMenu.floor_count - 1 < i) {
             row_y += 0x28;
             continue;
@@ -861,6 +988,7 @@ static void DunEnterBoard(int x, int y, int alpha) {
         DrawDunEnterFloorName(column_x, position, i + 1, top, bottom, alpha);
         int dungeon = DEnterMenu.dungeon;
         int max_floor = maxFloorTbl__4[dungeon];
+
         if (i == max_floor - 1) {
             int unused[6] = {20, 0, 30, 60, 20, 16};
             int draw_x = column_x + 0x82;
@@ -868,6 +996,7 @@ static void DunEnterBoard(int x, int y, int alpha) {
             length = 0x18;
             source = dungeon * 24 + 0x20;
             MenuTextureClip(position, source, length, top, bottom);
+
             if (position < bottom) {
                 DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0xDC, length), CRect_i_(0xFC, source, 0xDC, length), alpha);
             }
@@ -877,37 +1006,47 @@ static void DunEnterBoard(int x, int y, int alpha) {
             length = 0x20;
             source = 0x20;
             MenuTextureClip(position, source, length, top - 10, bottom);
+
             if (position < bottom) {
                 int remaining = (u8) DEnterMenu.max_atra[i] - (u8) DEnterMenu.collected_atra[i];
+
                 for (int mark = 0; mark < remaining; mark++) {
                     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length), CRect_i_(0x48, source, 0x20, length), alpha);
                     draw_x += 0x1A;
                 }
+
                 for (int mark = 0; mark < (u8) DEnterMenu.collected_atra[i]; mark++) {
                     DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length), CRect_i_(0x68, source, 0x20, length), alpha);
                     draw_x += 0x1A;
                 }
             }
         }
+
         row_y += 0x28;
     }
 
     MenuTextureReload(DunLogBoard->block);
     row_y = (int) DEnterMenu.list_y;
     row_y--;
+
     for (int floor = 0; floor < 100; floor++) {
         if (floor == maxFloorTbl__4[DEnterMenu.dungeon] - 1) {
             break;
         }
+
         if (DEnterMenu.floor_count - 1 < floor) {
             continue;
         }
+
         int board_x = x + 0x16E;
+
         if (row_y < bottom) {
             DrawGetAtoraNumBoard(floor, board_x, row_y, top, bottom, alpha);
         }
+
         row_y += 0x28;
     }
+
     DunEnterBoardWaku(x, y, alpha);
 }
 
@@ -954,14 +1093,17 @@ static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, i
     if (!(top < y + 0x24) || bottom <= y) {
         return;
     }
+
     MenuTextureClip(position, source, length, top, bottom);
     DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 0x2B, length), CRect_i_(0x88, source, 0x2B, length), alpha);
 
     position = y + 8;
     int collected = (u8) DEnterMenu.collected_atra[floor];
+
     if (top < position) {
         DrawDunNumberClip(x + 5, position, top, bottom, collected, alpha);
     }
+
     position = y + 0x10;
     int maximum = (u8) DEnterMenu.max_atra[floor];
     DrawDunNumberClip(x + 0x1B, position, top, bottom, maximum, alpha);
@@ -972,10 +1114,13 @@ static void DrawGetAtoraNumBoard(int floor, int x, int y, int top, int bottom, i
     source = 0x20;
     length = 0x23;
     MenuTextureClip(position, source, length, top, bottom);
+
     if (position < bottom) {
         DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 0x1E, length), CRect_i_(0xB3, source, 0x1E, length), alpha);
     }
+
     position = y + 0x10;
+
     if (position < bottom - 4) {
         DrawEnemyNum(x + 0x44, position, top, bottom - 6, kills, alpha);
     }
@@ -992,6 +1137,7 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
     source = 0x48;
     length = 12;
     MenuTextureClip(position, source, length, top, bottom);
+
     if (position < bottom) {
         DrawMenu2DSprite(DunLogBoard, CRect_i_(x, position, 12, length), CRect_i_(u, source, 12, length), alpha);
     }
@@ -1052,30 +1198,40 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
         height = 0x1C;
         u = 0;
         source = DEnterMenu.dungeon * 32;
+
         if (DEnterMenu.dungeon >= 6) {
             u = 0x80;
             source = (DEnterMenu.dungeon - 6) * 32;
         }
+
         MenuTextureClip(position, source, height, top, bottom);
+
         if (position + height >= top) {
             DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, position, 0x70, height), CRect_i_(u, source, 0x70, height), alpha);
         }
+
         if (DEnterMenu.dungeon == 5) {
             floor = BtGetFloorLevel(floor - 1);
         }
+
         int offset = 0;
+
         if (floor < 10) {
             offset = -6;
         }
+
         if (DEnterMenu.dungeon == 5 || DEnterMenu.dungeon == 6) {
             if (floor < 10) {
                 offset = -12;
             }
+
             if (floor >= 10 && floor < 100) {
                 offset = -6;
             }
+
             if (floor >= 100) {
                 offset = 0;
+
 #ifdef PAL
                 if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() > 0) {
                     offset += 8;
@@ -1087,6 +1243,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
 #endif
             }
         }
+
 #ifdef PAL
         s8 name_width[7][7] = {
             {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
@@ -1111,6 +1268,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
         x = offset + (x + name_width[GetMenuLangFlag()][DEnterMenu.dungeon]);
         position = y;
         RECT digits = {0, 0xC0, 0x10, 0x1C};
+
         if (y + height >= top) {
             DrawMenuNumber(floor, x, y, digits, DunLogBoard2, 0, top, bottom, alpha);
         }
@@ -1145,9 +1303,11 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     QuickCharaPos[0] = positions[0];
     QuickCharaPos[1] = positions[1];
     ChangeStatusDataPt = (CDngStatusData *) UserStatus;
+
     if (ChangeStatusDataPt == NULL) {
         return;
     }
+
     ChangeMenu.selected = ChangeStatusDataPt->cur_chara;
     ItemVolumeStep.CheckItemVolume();
     ChangeMenu.unk_4c = 0;
@@ -1160,16 +1320,19 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     ChangeMenu.change_blocked = 0;
     CUserStatus *status = (CUserStatus *) ChangeStatusDataPt;
     int          zone = status->res_limit_zone_current;
+
     if (zone < 6 && zone >= 0) {
         ChangeMenu.change_blocked = 1;
     } else if (status->cur_chara == CHARA_OSMOND && BtActStatus.ground_kind == 10) {
         ChangeMenu.change_blocked = 2;
     }
+
     if (ChangeMenu.mode != 0) {
         ChangeMenu.unk_03 = 2;
         SetChangeMenuCursor();
     } else {
         ChangeMenu.unk_03 = 0;
+
         if (ChangeMenu.change_blocked == 1) {
             ChangeMenu.cursor_row = 1;
             SetChangeMenuCursor();
@@ -1179,22 +1342,28 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
             SetChangeMenuCursor();
         }
     }
+
     ChangeMenu.party_size = ChangeStatusDataPt->party_size;
     ChangeMenu.reset_on_open = 0;
     float step = 6.2831855f / ChangeMenu.party_size;
     int   i;
+
     if (ChangeMenu.turn_direction < 0.0f) {
         i = 0;
     }
+
     for (i = 0; i < ChangeMenu.party_size; i++) {
         ChangeMenu.ring_slot[i] = i - ChangeMenu.selected;
+
         if (ChangeMenu.ring_slot[i] < 0) {
             ChangeMenu.ring_slot[i] += ChangeMenu.party_size;
         }
+
         float angle = 3.1415927f + step * ChangeMenu.ring_slot[i];
         ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
         ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
     }
+
     GamePad.SetAutoRepeat(0xF000, 30, 5);
     GamePad.MenuModeOn(0x78);
     CharaChangeTexBlock = texture_block;
@@ -1210,9 +1379,11 @@ int CharaChangeLoop() {
         table[0].block_no = CharaChangeTexBlock;
         table[1].block_no = CharaChangeTexBlock;
         BG_READ_INFO *file = GetReadBGFile(0);
+
         if (file == NULL) {
             return 1;
         }
+
         table[1].name = (char *) GetPackFile((u_int *) file->buffer, "quickchr.img", NULL);
         TexManager.DeleteTextureBlock(CharaChangeTexBlock);
         TexManager.CleanUpTextureList();
@@ -1225,22 +1396,29 @@ int CharaChangeLoop() {
         CommonMenuMes3.auto_pos = -1;
         CommonMenuMes3.Preset(1);
         int message = 1;
+
         if (ChangeMenu.change_blocked == 1) {
             message = 4;
         }
+
         if (ChangeMenu.change_blocked == 2) {
             message = 5;
         }
+
         CommonMenuMes3.MakeMesWin(message);
         CommonMenuMes1.Preset(1);
         CommonMenuMes1.MakeMesWin(3);
     }
+
     int result = 0;
+
     if (CharaChangeReadFlag != 0) {
         result = CharaChangeKey();
     }
+
     CharaChangeDraw();
     ItemVolumeStep.LoopStep(60);
+
     if (result != 0) {
         MenuTextureReload(CharaChangeTexBlock);
         DngActiveWeaponTextureCopy();
@@ -1257,6 +1435,7 @@ int CharaChangeLoop() {
         restore[0].block_no = CharaChangeTexBlock;
         TexManager.LoadTextureBlockEX(-1, restore);
     }
+
     return result;
 }
 
@@ -1271,37 +1450,46 @@ int CharaChangeKey() {
     int result = 0;
 
     ReadBG();
+
     switch (ChangeMenu.unk_03) {
         case 5:
             ChangeMenu.unk_4c++;
+
             if (ReadBGSync() == 0 && ChangeMenu.unk_4c > 0x10) {
                 BtMenuLoadChara();
                 StartReadBG();
                 CharaChangeInitToGL2(0);
                 ChangeMenu.unk_03 = 6;
             }
+
             break;
         case 6:
             ChangeMenu.unk_4c++;
+
             if (ReadBGSync() == 0 && ChangeMenu.unk_4c > 0x10) {
                 BtMenuLoad2(0);
                 LockOffTargte();
                 InitReadBG();
                 return 1;
             }
+
             break;
         case 3:
         case 4: {
             int message = 1;
+
             if (ChangeMenu.change_blocked == 1) {
                 message = 4;
             }
+
             if (ChangeMenu.change_blocked == 2) {
                 message = 5;
             }
+
             if (CommonMenuMes3.mes_made != message) {
                 CommonMenuMes3.MakeMesWin(message);
             }
+
             if (GamePad.Down(0x60)) {
                 if (ChangeMenu.mode != 0) {
                     ChangeMenu.unk_03 = 2;
@@ -1309,16 +1497,20 @@ int CharaChangeKey() {
                 } else {
                     ChangeMenu.unk_03 = 0;
                 }
+
                 ComMenuSePlay(2);
             }
+
             break;
         }
         case 1:
             ChangeMenu.turn_frame += 1.0f;
+
             if (ChangeMenu.turn_frame >= 21.0f) {
                 if (ChangeMenu.turn_direction > 0.0f) {
                     for (int i = 0; i < 6; i++) {
                         ChangeMenu.ring_slot[i]++;
+
                         if (ChangeMenu.ring_slot[i] == ChangeMenu.party_size) {
                             ChangeMenu.ring_slot[i] = 0;
                         }
@@ -1326,40 +1518,50 @@ int CharaChangeKey() {
                 } else {
                     for (int i = 0; i < ChangeMenu.party_size; i++) {
                         ChangeMenu.ring_slot[i]--;
+
                         if (ChangeMenu.ring_slot[i] == -1) {
                             ChangeMenu.ring_slot[i] = ChangeMenu.party_size - 1;
                         }
                     }
                 }
+
                 ChangeMenu.unk_03 = 0;
                 ChangeMenu.turn_frame = 0.0f;
                 ChangeMenu.turn_direction = 0.0f;
             }
+
             break;
         case 2: {
             int message = 1;
+
             if (ChangeMenu.change_blocked == 1 || ChangeMenu.change_blocked == 2) {
                 message = 2;
             }
+
             if (CommonMenuMes3.mes_made != message) {
                 CommonMenuMes3.MakeMesWin(message);
             }
+
             if (GamePad.Down(0x5000)) {
                 if (ChangeMenu.cursor_row > 0) {
                     ChangeMenu.cursor_row = 0;
                 } else {
                     ChangeMenu.cursor_row = 1;
                 }
+
                 ComMenuSePlay(0);
             }
+
 #ifdef PAL
             if (DebugMode && GamePad.Down2(0x40)) {
                 ChangeStatusDataPt->GetItem(ITEM_STAND_IN_POWDER, 0);
             }
+
 #endif
             if (GamePad.Down(0x40)) {
                 ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
                 int        count = GetNowItemNum(0xAE, pack);
+
                 if (ChangeMenu.cursor_row != 0) {
                     result = 2;
                     ComMenuSePlay(1);
@@ -1380,6 +1582,7 @@ int CharaChangeKey() {
             } else if (GamePad.Down(0x20)) {
                 ComMenuSePlay(2);
             }
+
             break;
         }
         case 0: {
@@ -1389,36 +1592,44 @@ int CharaChangeKey() {
                     ChangeMenu.unk_03 = 3;
                     return 0;
                 }
+
                 if (ChangeMenu.change_blocked == 1) {
                     ComMenuSePlay(2);
                     CommonMenuMes3.MakeMesWin(4);
                     ChangeMenu.unk_03 = 3;
                     return 0;
                 }
+
                 if (ChangeMenu.change_blocked == 2) {
                     CommonMenuMes3.MakeMesWin(5);
                     ChangeMenu.unk_03 = 3;
                     ComMenuSePlay(2);
                     return 0;
                 }
+
                 CDngStatusData *status = ChangeStatusDataPt;
                 int             hp = status->hp[ChangeMenu.selected];
                 int             flags = status->GetActiveCharaStatus(ChangeMenu.selected);
+
                 if (hp <= 0 || (flags & 2)) {
                     ComMenuSePlay(2);
                     return 0;
                 }
+
                 if (ChangeMenu.selected != status->cur_chara) {
                     ComMenuSePlay(1);
                     SetStatusChara(ChangeStatusDataPt, ChangeMenu.selected);
+
                     if (ChangeMenu.mode == 1) {
                         ChangeStatusDataPt->LostItem(0xAE);
                     }
+
                     ChangeMenu.unk_4c = 0;
                     ChangeMenu.unk_03 = 5;
                     ChangeMenu.mode = 0;
                     return 0;
                 }
+
                 ComMenuSePlay(1);
             } else if (GamePad.Down(0x20)) {
                 if (ChangeStatusDataPt->hp[ChangeStatusDataPt->cur_chara] < 0 || ChangeMenu.mode != 0) {
@@ -1429,23 +1640,30 @@ int CharaChangeKey() {
                 } else {
                     result = 1;
                 }
+
                 ComMenuSePlay(2);
             }
+
             int previous = ChangeMenu.selected;
+
             if (GamePad.Down(0x3000)) {
                 ChangeMenu.turn_direction = 1.0f;
                 ChangeMenu.selected--;
+
                 if (ChangeMenu.selected < 0) {
                     ChangeMenu.selected = ChangeMenu.party_size - 1;
                 }
             }
+
             if (GamePad.Down(0xC000)) {
                 ChangeMenu.turn_direction = -1.0f;
                 ChangeMenu.selected++;
+
                 if (ChangeMenu.party_size - 1 < ChangeMenu.selected) {
                     ChangeMenu.selected = 0;
                 }
             }
+
             if (previous != ChangeMenu.selected) {
                 ChangeMenu.unk_03 = 1;
                 BreakReadBG();
@@ -1453,15 +1671,19 @@ int CharaChangeKey() {
                 CharaChangeInitToGL(buffer, ChangeMenu.selected);
                 ComMenuSePlay(0);
             }
+
             break;
         }
         case 7:
             ChangeMenu.unk_4c += 7;
+
             if (ChangeMenu.unk_4c > 0xFA) {
                 result = 2;
             }
+
             break;
     }
+
     return result;
 }
 
@@ -1476,6 +1698,7 @@ void CharaChangeDraw() {
 
     setbilinear(0);
     FrameImageDraw(100, 0x80);
+
     if (CharaChangeReadFlag != 0) {
         MenuTextureReload(CharaChangeTexBlock);
 #ifdef PAL
@@ -1486,61 +1709,79 @@ void CharaChangeDraw() {
         int frame_x = QuickCharaPos[0] - 2.0f * changeMenu_long;
         int frame_y = QuickCharaPos[1] - 1.4f * changeMenu_long;
         alpha = 0x80;
+
         switch (ChangeMenu.unk_03) {
             case 6:
             case 5:
                 alpha = 0x80 - ChangeMenu.unk_4c * 4;
+
                 if (alpha < 0) {
                     alpha = 0;
                 }
+
                 break;
         }
+
         step = 6.2831855f / ChangeMenu.party_size;
+
         switch (ChangeMenu.unk_03) {
             case 6:
             case 5:
                 changeMenu_long += ChangeMenu.unk_4c;
                 turn = step / 20.0f;
+
                 if (ChangeMenu.turn_direction < 0.0f) {
                     turn = -turn;
                 }
+
                 for (i = 0; i < ChangeMenu.party_size; i++) {
                     angle = 3.1415927f + (step * ChangeMenu.ring_slot[i] + turn * ChangeMenu.unk_4c);
                     ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
                     ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
                 }
+
                 break;
             case 1:
                 turn = step / 20.0f;
+
                 if (ChangeMenu.turn_direction < 0.0f) {
                     turn = -turn;
                 }
+
                 for (i = 0; i < ChangeMenu.party_size; i++) {
                     angle = 3.1415927f + (step * ChangeMenu.ring_slot[i] + turn * ChangeMenu.turn_frame);
                     ChangeMenu.ring_pos[i][0] = changeMenu_long * cos(angle);
                     ChangeMenu.ring_pos[i][1] = changeMenu_long * sin(angle);
                 }
+
                 break;
         }
+
         CTexture *portraits = QuickCharaTex;
+
         for (int chara = 0; chara < ChangeMenu.party_size; chara++) {
             float x = QuickCharaPos[0] + ChangeMenu.ring_pos[chara][0];
             float y = QuickCharaPos[1] + ChangeMenu.ring_pos[chara][1];
             int   shade = 0x80;
             int   u = chara * 0x30;
             int   v = 0;
+
             if (chara > 2) {
                 u = (chara - 3) * 0x30;
                 v = 0x30;
             }
+
             if (ChangeStatusDataPt != NULL && ChangeStatusDataPt->hp[chara] <= 0) {
                 shade = 0x40;
             }
+
             DrawMenu2DSprite(portraits, CRect_i_(x, y, 0x30, 0x30), CRect_i_(u, v, 0x30, 0x30), shade, shade, shade, alpha);
         }
+
         if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 && ChangeMenu.unk_03 != 4) {
             DrawMenuWaku(QuickCharaPos[0] - changeMenu_long - 11.0f, QuickCharaPos[1] - 12, 0x34, 0x34, 0, StayTex, 0x80);
         }
+
         if (ChangeMenu.unk_03 == 2 || ChangeMenu.unk_03 == 3 || ChangeMenu.unk_03 == 4) {
             AllFadeForMenu(0x40);
             CommonMenuMes3.stay_frame = 1;
@@ -1558,15 +1799,19 @@ void CharaChangeDraw() {
             CommonMenuMes3.auto_pos = -1;
             cursor_x = QuickCharaPos[0] - changeMenu_long - 32.0f;
             cursor_y = QuickCharaPos[1] + 6;
+
             if (cursor_x < -40 || cursor_x > 640 || cursor_y < -40 || cursor_y > 450) {
                 cursor_x = 650;
                 cursor_y = 450;
             }
         }
+
         CursorVibeCnt++;
+
         if (CursorVibeCnt > 1080000) {
             CursorVibeCnt = 0;
         }
+
 #ifdef PAL
         if (ChangeMenu.mode != 0) {
             MenuTextureReload(CharaChangeTexBlock);
@@ -1584,6 +1829,7 @@ void CharaChangeDraw() {
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x164, 0x20, 0x20), CRect_i_(0, 0x60, 0x20, 0x20), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(count_x + 0x104, 0x16C, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10), alpha);
             MenuTextureReload(CommonMenuMes1.tex_block);
+
             if (lang == 0) {
                 DrawMenuClsMes(&CommonMenuMes1, 0xA0, 0x154);
             } else {
@@ -1594,6 +1840,7 @@ void CharaChangeDraw() {
                 CommonMenuMes1.Step();
                 CommonMenuMes1.DrawMesWin();
             }
+
             RECT       count_digits = {0, 0x9E, 0xC, 0x12};
             ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
             int        count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
@@ -1601,6 +1848,7 @@ void CharaChangeDraw() {
             count_x += (count_digits.width >> 1) * GetNumberKeta(count);
             DrawMenuNumber(count, count_x, 0x16C, count_digits, StayTex, 0, 0, SCREEN_HEIGHT, alpha);
         }
+
 #else
         if (ChangeMenu.mode != 0) {
             MenuTextureReload(CharaChangeTexBlock);
@@ -1627,10 +1875,12 @@ void CharaChangeDraw() {
             count_x += (count_digits.width >> 1) * GetNumberKeta(count);
             DrawMenuNumber(count, count_x, 0x158, count_digits, StayTex, 0, 0, 0x1C0, alpha);
         }
+
 #endif
         if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 && ChangeMenu.unk_03 != 4) {
             DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
         }
+
         setbilinear(1);
     }
 }
@@ -1646,13 +1896,16 @@ int DngActItemModelReadStart(u_long128 *buffer) {
 
     size = 0;
     pack = &BtlMenuStatusPt->item_pack;
+
     if (pack == NULL) {
         return 1;
     }
+
     model_buffer = MenuCalcBufAlignment(buffer);
     texture_buffer = model_buffer + 0xFA1;
     texture_buffer = MenuCalcBufAlignment(texture_buffer);
     StartReadBG();
+
     for (i = 0; i < 3; i++) {
         if (pack->quick_item_slot[i] >= 0x84) {
             printf("mds = %p\n", model_buffer);
@@ -1663,10 +1916,12 @@ int DngActItemModelReadStart(u_long128 *buffer) {
             LoadFileBG(texture_path, texture_buffer, &size);
             texture_buffer += (((size >> 6) + 1) << 6) >> 4;
         }
+
         if (pack->quick_item_slot[i] < 0x84) {
             pack->quick_item_slot[i] = -1;
         }
     }
+
     return 0;
 }
 
@@ -1688,53 +1943,69 @@ int DngActItemModelBuild(int wait) {
             return 0;
         }
     }
+
     ITEM_PACK *pack = &BtlMenuStatusPt->item_pack;
     int        items[3] = {pack->quick_item_slot[0], pack->quick_item_slot[1], pack->quick_item_slot[2]};
     read_index = 0;
+
     for (i = 0; i < 3; i++) {
         if (items[i] < ITEM_DUNGEON_START) {
             continue;
         }
+
         model = GetReadBGFile(read_index * 2);
         texture = GetReadBGFile(read_index * 2 + 1);
         read_index++;
+
         if (model != NULL) {
             model_buffer = (u_int *) model->buffer;
         }
+
         if (texture != NULL) {
             texture_buffer = (u_int *) texture->buffer;
             texture_size = texture->size;
         }
+
         if (model == NULL || texture == NULL) {
             continue;
         }
+
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
             activeItem.model[i + 1] = -1;
         }
+
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
         }
+
         activeItem.model[i + 1] = activeItem.models->SetCashModel(items[i], model_buffer, texture_buffer, texture_size);
         activeItem.model[i + 5] = 0;
         activeItem.item[i + 1] = items[i];
     }
+
     return 1;
 }
 
 int DngActiveItemTextureCopy() {
     int        i;
     ITEM_PACK *pack = &UserStatus->item_pack;
+
     if (pack == NULL) {
         return -1;
     }
+
     char source[] = "itemicon";
+
     for (i = 0; i < 3; i++) {
         int item_no = pack->quick_item_slot[i];
+
         if (item_no >= ITEM_DUNGEON_START) {
             COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
             if (info != NULL) {
                 int icon = info->icon_index;
+
                 if (icon >= 0 && icon <= 256) {
                     int u = (icon % 8) * 32;
                     int v = (icon >> 3) * 32;
@@ -1743,6 +2014,7 @@ int DngActiveItemTextureCopy() {
             }
         }
     }
+
     return 1;
 }
 
@@ -1778,6 +2050,7 @@ int DngActiveWeaponTextureCopy() {
 
     for (int i = 0; i < 3; i++) {
         COM_ITEM_INFO *info = GetCommonItemInfo(weapons[i]);
+
         if (info != NULL) {
             int icon = info->icon_index;
             int u = (icon % 8) * 32;
@@ -1785,6 +2058,7 @@ int DngActiveWeaponTextureCopy() {
             setItemToReserved(source, u, v, "itempack", pos[i][0], pos[i][1]);
         }
     }
+
     return 1;
 }
 
@@ -1794,10 +2068,13 @@ s32 GetWeaponMsgNo(WEAPON_HAVE *weapon) {
     if (weapon == NULL) {
         return 0;
     }
+
     item_no = weapon->item_no;
+
     if (item_no < 0x101) {
         return 0x3E7;
     }
+
     return GetCommonItemInfo((s32) item_no)->msg + 0x64;
 }
 
@@ -1805,9 +2082,11 @@ int GetWeaponMsgNo2(s32 item_no) {
     COM_ITEM_INFO *info;
 
     info = GetCommonItemInfo(item_no);
+
     if (info != NULL) {
         return info->msg;
     }
+
     return 0;
 }
 
@@ -1822,11 +2101,14 @@ void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     int       volume;
 
     holes = GetWeaponHoleNum(weapon->item_no);
+
     if (holes <= 0) {
         return;
     }
+
     for (i = 0; i < holes; i++) {
         item_no = weapon->attach[i].item_no;
+
         if (item_no >= 0x51) {
             size = 32.0f;
             texture = RetCTex(item_no, u, v);
@@ -1834,11 +2116,14 @@ void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
             CRect_i_ dest(x, y, size, size);
             DrawMenu2DSprite(texture, dest, src, alpha);
             volume = GetAttachVolumeForMsg(&weapon->attach[i]);
+
             if (item_no == 0x5A) {
                 volume = weapon->attach[i].sphere_weapon_no;
             }
+
             DrawAttachNumberOrWeapon(x, y, 0, 0x280, item_no, volume, alpha, 0);
         }
+
         x += 42.0f;
     }
 }
@@ -1857,26 +2142,32 @@ int GetAtraTipNowHave(int tip_no, int georama_no) {
     EDIT_PARTS_ATRA    *atra;
 
     have = 0;
+
     if (tip_no < 0x28) {
         SV_EDIT_PARTS_INFO *plot_info = SaveData->GetEditPartsInfo(georama_no, tip_no);
+
         if (plot_info != NULL && plot_info->obtained != 0) {
             have = 1;
         }
     } else {
         elem = SaveData->GetElemData(georama_no);
+
         for (i = 0; i < 0x80; i++, elem++) {
             if (*elem == tip_no - 0x28) {
                 have = 1;
                 break;
             }
         }
+
         if (have == 0) {
             for (plot = 0; plot < 0x18; plot++) {
                 info = SaveData->GetEditPartsInfo(georama_no, plot);
                 atra = GetEditAtraPartsData(georama_no, plot);
+
                 for (slot = 0; slot < 6; slot++) {
                     EDIT_CHIP_ATTACH_DATA *element = atra->elements + slot;
                     id = element->id;
+
                     if (id >= 0 && id == tip_no - 0x28 && info->element_enabled[slot] != 0) {
                         have = 1;
                     }
@@ -1884,6 +2175,7 @@ int GetAtraTipNowHave(int tip_no, int georama_no) {
             }
         }
     }
+
     return have;
 }
 
@@ -1893,9 +2185,11 @@ int GetDispVolumeForFloat(float volume) {
 
     whole = (int) volume;
     shown = whole;
+
     if (volume - (float) whole > 0.0) {
         shown += 1;
     }
+
     return shown;
 }
 
@@ -1911,18 +2205,23 @@ int InitItemPolygonView(int item_no, u_long128 *buffer) {
     if (item_no < 0x51 || item_no >= 0x101) {
         return 0;
     }
+
     BtGetItemNamePath(model_path, texture_path, item_no);
     StartReadBG();
     MDebugItemPolyViewFlag = 0;
     buffer = MenuCalcBufAlignment(buffer);
+
     if (LoadFileBG(model_path, buffer, &size) == 0) {
         return 1;
     }
+
     texture_buffer = buffer + (size >> 4) + 1;
     texture_buffer = MenuCalcBufAlignment(texture_buffer);
+
     if (LoadFileBG(texture_path, texture_buffer, &size) == 0) {
         return 1;
     }
+
     ItemPolyView = NULL;
     return 0;
 }
@@ -1966,12 +2265,15 @@ static int EnterItemPolygonView() {
         TexManager.DeleteTextureBlock(BtlMenuExReadBlock);
         TexManager.CleanUpTextureList();
         TexManager.LoadTextureBlockEX(-1, table);
+
         if (model == NULL) {
             return 0;
         }
+
         if (texture == NULL) {
             return 0;
         }
+
         MenuItemCashBuffer.base = (u_char *) (texture->buffer + (texture->size >> 4) + 1);
         MenuItemCashBuffer.limit = 0x6080;
         MenuItemCashBuffer.Reset();
@@ -1986,6 +2288,7 @@ static int EnterItemPolygonView() {
         memcpy(menudebugrscale, scale, sizeof(sceVu0FVECTOR));
         return 1;
     }
+
     return 0;
 }
 
@@ -2006,17 +2309,21 @@ static void LocalDrawItemPolygonView() {
         tilt = GamePad.GetRYf();
         menudebugrot[0] += tilt / 32.0f;
         menudebugrot[1] += turn / 32.0f;
+
         for (i = 0; i < 3; i++) {
             if (menudebugrot[i] < -3.1415927f) {
                 menudebugrot[i] += 6.2831855f;
             }
+
             if (menudebugrot[i] > 3.1415927f) {
                 menudebugrot[i] -= 6.2831855f;
             }
         }
+
         if (GamePad.Down2(0x20)) {
             MDebugItemPolyViewFlag = 0;
         }
+
         if (GamePad.On2(0x10)) {
             for (i = 0; i < 3; i++) {
                 if (menudebugrscale[i] <= 5.0f) {
@@ -2024,6 +2331,7 @@ static void LocalDrawItemPolygonView() {
                 }
             }
         }
+
         if (GamePad.On2(0x80)) {
             for (i = 0; i < 3; i++) {
                 if (0.1f < menudebugrscale[i]) {
@@ -2031,6 +2339,7 @@ static void LocalDrawItemPolygonView() {
                 }
             }
         }
+
         ItemPolyView->SetRotation(menudebugrot[0], menudebugrot[1], menudebugrot[2]);
         ItemPolyView->SetScale(menudebugrscale);
         ItemPolyView->SetPosition(menudebugpos);
@@ -2071,12 +2380,15 @@ static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;
 
     item_no = selection + 0x81;
+
     if ((item_no > 0x160) && (item_no < 0x138)) {
         return -1;
     }
+
     if ((selection >= 0xF8) && (selection < 0x120)) {
         item_no = selection - 0xA7;
     }
+
     return item_no;
 }
 
@@ -2091,61 +2403,79 @@ int DebugItemGetKey() {
     result = 0;
     selection = ItemAutoGet.selection;
     page = ItemAutoGet.page;
+
     if (GamePad.Down(0x1000)) {
         ItemAutoGet.selection -= 8;
     }
+
     if (GamePad.Down(0x4000)) {
         ItemAutoGet.selection += 8;
     }
+
     if (GamePad.Down(0x2000)) {
         ItemAutoGet.selection += 1;
     }
+
     if (GamePad.Down(0x8000)) {
         ItemAutoGet.selection -= 1;
     }
+
     if (GamePad.Down(0x100)) {
         if (ItemAutoGet.show_model) {
             ItemAutoGet.show_model = 0;
         } else {
             ItemAutoGet.show_model = 1;
         }
+
         polyreadflag = InitItemPolygonView(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), BtlMenuReadBuf);
     }
+
     if (GamePad.Down(5)) {
         ItemAutoGet.selection -= 0x40;
     }
+
     if (GamePad.Down(0xA)) {
         ItemAutoGet.selection += 0x40;
     }
+
     if (ItemAutoGet.selection < 0) {
         ItemAutoGet.selection += 0x140;
     }
+
     if (ItemAutoGet.selection > 0x13F) {
         ItemAutoGet.selection -= 0x140;
     }
+
     ItemAutoGet.page = ItemAutoGet.selection >> 6;
+
     if (selection != ItemAutoGet.selection || page != ItemAutoGet.page) {
         ComMenuSePlay(0);
     }
+
     if (GamePad.Down(0x40)) {
         ComMenuSePlay(1);
         count = rand() % 3 + 1;
         BtlMenuStatusPt->GetItem(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), count);
     }
+
     if (GamePad.Down(0x20)) {
         result = -1;
         CommonMenuMes2.mes_made = result;
         ComMenuSePlay(2);
     }
+
     if (GamePad.Down2(0x40)) {
         for (item_no = 0x101; item_no < 0x179; item_no++) {
             data = GetWeaponData(item_no);
+
             if (data != NULL && data->flags != 0 && data->flags != 1) {
                 BtlMenuStatusPt->GetItem(item_no, 0);
             }
         }
+
         ComMenuSePlay(1);
     }
+
     return result;
 }
 
@@ -2159,20 +2489,26 @@ void DebugItemGetDraw() {
     if (ItemAutoGet.page == 4) {
         height = 0x80;
     }
+
     if (sheet != NULL) {
         MenuTextureReload(sheet->block);
     }
+
     MGFillBox(CRect_i_(0x460, 0x280, 0x1000, 0x800), 0, 0, 0, 0x60);
     DrawMenu2DSprite(sheet, CRect_i_(0x46, 0x50, 0x100, height), CRect_i_(0, y, 0x100, height), 0x80);
     int item_no = ConvDebugSelectToExcelListNo(ItemAutoGet.selection);
+
     if (ItemAutoGet.show_model) {
         DrawItemDataView(item_no);
     }
+
     int cell = ItemAutoGet.selection - ItemAutoGet.page * 64;
     DrawMenuObjectVibe((cell % 8) * 32 + 0x2E, (cell / 8) * 32 + 0x50, 1, 0x40);
     COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
     if (info != NULL) {
         int message = info->msg + 500;
+
         if (CommonMenuMes2.mes_made != message) {
             CommonMenuMes2.MakeMesWin(message);
         }
@@ -2207,31 +2543,39 @@ static void DrawItemDataView(int item_no) {
             block = 0x1F;
             break;
     }
+
     MenuTextureReload(block);
     int  line = 0;
     char type[128] = "";
+
     if (0 <= item_no && item_no < ITEM_ATTACH_START) {
         return;
     }
+
     // The attachment index computed here goes unused.
     if (item_no >= ITEM_ATTACH_START && item_no < 0xFF) {
         int index = item_no - ITEM_ATTACH_START;
+
         if (index < 0) {
             index = 0;
         }
     }
+
     if (MDebugItemPolyViewFlag == 0) {
         MenuDbgMsg.length += sprintf(&MenuDbgMsg.text[MenuDbgMsg.length], "-----ItemData View-----\n");
         MenuDbgMsg.length += sprintf(&MenuDbgMsg.text[MenuDbgMsg.length], ItemTemplete[line++], item_no);
         MenuDbgMsg.length += sprintf(&MenuDbgMsg.text[MenuDbgMsg.length], ItemTemplete[line], type);
         type[0] = '\0';
     }
+
     if (GamePad.Down(0x10)) {
         polyreadflag = InitItemPolygonView(ConvDebugSelectToExcelListNo(ItemAutoGet.selection), BtlMenuReadBuf);
     }
+
     if (polyreadflag == 0) {
         polyreadflag = EnterItemPolygonView();
     }
+
     if (polyreadflag != 0) {
         DrawItemPolygonView();
     }

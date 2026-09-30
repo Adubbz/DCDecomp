@@ -9,9 +9,11 @@ u_char *CDataAlloc2<1>::Alloc(int quads) {
 
     if (used + quads > limit) {
         printf("Alocation Error! %d/%d\n", used, limit);
+
         while (1)
             ;
     }
+
     block = base + used * 16;
     used += quads;
     return block;
@@ -22,11 +24,14 @@ u_char *CDataAlloc2<1>::Alloc64(int quads) {
 
     u_char *block = base + used * 16;
     used += quads;
+
     if (used >= limit) {
         printf("Alocation Error! %d/%d\n", used, limit);
+
         while (1)
             ;
     }
+
     return block;
 }
 
@@ -41,11 +46,14 @@ void CDataAlloc2<1>::Align64() {
     if (slack) {
         used += (64 - slack) >> 4;
     }
+
     if (used >= limit) {
         printf("Alocation Error! %d/%d\n", used, limit);
+
         while (1)
             ;
     }
+
 done:;
 }
 
@@ -54,11 +62,14 @@ u_char *CDataAlloc<1, 1690000>::Alloc64(int quads) {
 
     u_char *allocation = (u_char *) this->block + used * 16;
     used += quads;
+
     if (used >= 1690000) {
         printf("Alocation Error! %d/%d\n", used, 1690000);
+
         while (1)
             ;
     }
+
     return allocation;
 }
 
@@ -73,11 +84,14 @@ void CDataAlloc<1, 1690000>::Align64() {
     if (slack) {
         used += (64 - slack) >> 4;
     }
+
     if (used >= 1690000) {
         printf("Alocation Error! %d/%d\n", used, 1690000);
+
         while (1)
             ;
     }
+
 done:;
 }
 
@@ -85,9 +99,11 @@ CDataAlloc2<1>::CDataAlloc2(int limit) {
     this->limit = limit;
     used = 0;
     buffer = 0;
+
     /* A negative limit leaves the base alone rather than pointing it at nothing. */
     if (limit < 0) {
         return;
     }
+
     base = buffer;
 }

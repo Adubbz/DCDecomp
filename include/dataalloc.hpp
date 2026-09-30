@@ -105,9 +105,11 @@ u_char *CDataAlloc<Kind, Size>::Alloc(int quads) {
 
     if (used + quads > Size) {
         printf("Alocation Error! %d/%d\n", used, Size);
+
         while (1)
             ;
     }
+
     allocation = (u_char *) block + used * 16;
     used += quads;
     return allocation;
@@ -119,11 +121,14 @@ u_char *CDataAlloc<Kind, Size>::Alloc64(int quads) {
 
     u_char *allocation = (u_char *) block + used * 16;
     used += quads;
+
     if (used >= Size) {
         printf("Alocation Error! %d/%d\n", used, Size);
+
         while (1)
             ;
     }
+
     return allocation;
 }
 
@@ -139,11 +144,14 @@ void CDataAlloc<Kind, Size>::Align64() {
     if (slack) {
         used += (64 - slack) >> 4;
     }
+
     if (used >= Size) {
         printf("Alocation Error! %d/%d\n", used, Size);
+
         while (1)
             ;
     }
+
 done:;
 }
 

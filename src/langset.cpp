@@ -47,16 +47,19 @@ void LangsetInit() {
 int LangsetLoop() {
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);
+
     switch (Proc) {
         case 0:
             if (Fade.In() != 0) {
                 Proc = 1;
             }
+
             break;
         case 1:
             if (LangsetProc() != 0) {
                 Proc = 2;
             }
+
             break;
         case 2:
             if (Fade.Out() != 0) {
@@ -65,8 +68,10 @@ int LangsetLoop() {
                 LanguageCode = Cursor + 2;
                 return 1;
             }
+
             break;
     }
+
     LangsetDraw();
     return 0;
 }
@@ -75,18 +80,23 @@ int LangsetProc() {
     if (GamePad.Down(0x1000) != 0) {
         Cursor--;
     }
+
     if (GamePad.Down(0x4000) != 0) {
         Cursor++;
     }
+
     if (Cursor < 0) {
         Cursor = 4;
     }
+
     if (Cursor > 4) {
         Cursor = 0;
     }
+
     if (GamePad.Down(0x800) != 0 || GamePad.Down(0x40) != 0) {
         return 1;
     }
+
     return 0;
 }
 
@@ -106,9 +116,11 @@ void LangsetDraw() {
     int  alpha;
 
     setbilinear(1);
+
     for (language = 0; language < 5; language++) {
         Alpha[language] = 0x40;
     }
+
     Alpha[Cursor] = 0x80;
 
     TexManager.ReloadTexture(GetVif1Packet(), 0);

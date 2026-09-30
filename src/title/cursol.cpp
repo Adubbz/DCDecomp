@@ -29,6 +29,7 @@ void CCursol::Init() {
 int CCursol::Move() {
     if (target_y > y) {
         y = y + (target_y - y) / 4.0f;
+
         if (target_y - y < 1.0f) {
             y = target_y;
             arrived = 1;
@@ -36,8 +37,10 @@ int CCursol::Move() {
             arrived = 0;
         }
     }
+
     if (target_y < y) {
         y = y - (y - target_y) / 4.0f;
+
         if (y - target_y < 1.0f) {
             y = target_y;
             arrived = 1;
@@ -51,92 +54,118 @@ int CCursol::Move() {
             if (alpha[0] < 127) {
                 alpha[0] += 8;
             }
+
             if (alpha[1] > 0) {
                 alpha[1] -= 8;
             }
+
             if (alpha[2] > 0) {
                 alpha[2] -= 8;
             }
+
             if (alpha[3] > 0) {
                 alpha[3] -= 8;
             }
+
             if (alpha[4] > 0) {
                 alpha[4] -= 8;
             }
+
             break;
         case 1:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
+
             if (alpha[1] < 127) {
                 alpha[1] += 8;
             }
+
             if (alpha[2] > 0) {
                 alpha[2] -= 8;
             }
+
             if (alpha[3] > 0) {
                 alpha[3] -= 8;
             }
+
             if (alpha[4] > 0) {
                 alpha[4] -= 8;
             }
+
             break;
         case 2:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
+
             if (alpha[1] > 0) {
                 alpha[1] -= 8;
             }
+
             if (alpha[2] < 127) {
                 alpha[2] += 8;
             }
+
             if (alpha[3] > 0) {
                 alpha[3] -= 8;
             }
+
             if (alpha[4] > 0) {
                 alpha[4] -= 8;
             }
+
             break;
         case 3:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
+
             if (alpha[1] > 0) {
                 alpha[1] -= 8;
             }
+
             if (alpha[2] > 0) {
                 alpha[2] -= 8;
             }
+
             if (alpha[3] < 127) {
                 alpha[3] += 8;
             }
+
             if (alpha[4] > 0) {
                 alpha[4] -= 8;
             }
+
             break;
         case 4:
             if (alpha[0] > 0) {
                 alpha[0] -= 8;
             }
+
             if (alpha[1] > 0) {
                 alpha[1] -= 8;
             }
+
             if (alpha[2] > 0) {
                 alpha[2] -= 8;
             }
+
             if (alpha[3] > 0) {
                 alpha[3] -= 8;
             }
+
             if (alpha[4] < 127) {
                 alpha[4] += 8;
             }
+
             break;
     }
 
     if (target_y == y) {
         return 1;
     }
+
     return 0;
 }
 

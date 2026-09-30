@@ -152,6 +152,7 @@ void EdDCheck() {
     if (DebugFont == 0) {
         return;
     }
+
     if (DebugFont->length > 500) {
         DebugFont->length = 0;
     }
@@ -163,11 +164,13 @@ void EdOutPutFile() {
     if (Debug == 0) {
         return;
     }
+
     if (DebugFont == 0) {
         return;
     }
 
     fd = sceOpen("host0:debug.txt", SCE_WRONLY | SCE_CREAT | SCE_TRUNC);
+
     if (fd < 0) {
         return;
     }
@@ -195,6 +198,7 @@ void EdDPrintChara(CMainChara *chara) {
     if (Debug == 0) {
         return;
     }
+
     if (DebugFont == 0) {
         return;
     }
@@ -206,6 +210,7 @@ void EdDPrintChara(CMainChara *chara) {
     sprintf(work, " rot = %7.2f,%7.2f,%7.2f\n", vector[0], vector[1], vector[2]);
     AddStr(DebugFont, work);
     sprintf(work, " (%d %d %d)\n", chara->move_info.ground_poly.attr.ground_kind, chara->move_info.ground_poly.attr.foot_sound, chara->move_info.ground_poly.attr.area_kind);
+
     if (chara->move_info.landed) {
         AddStr(DebugFont, work);
     }
@@ -220,6 +225,7 @@ void EdDPrintCamera(CCamera *camera) {
     if (Debug == 0) {
         return;
     }
+
     if (DebugFont == 0) {
         return;
     }
@@ -243,6 +249,7 @@ void EdDPrintVector(char *name, float *vector) {
     if (Debug == 0) {
         return;
     }
+
     if (DebugFont == 0) {
         return;
     }
@@ -255,6 +262,7 @@ void EdDPrint(char *text) {
     if (Debug == 0) {
         return;
     }
+
     if (DebugFont == 0) {
         return;
     }
@@ -288,40 +296,50 @@ void EdDMoveCamera(float *position, float *reference) {
     angle = atan2f(offset[0], offset[2]);
 
     x = -GamePad.GetLXf();
+
     if (GamePad.On(8)) {
         x = 0.02f * distance;
     }
+
     if (GamePad.On(4)) {
         x = 0.02f * -distance;
     }
+
     y = -GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
     move[0] = x * cosf(angle) + z * sinf(angle);
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
+
     if (GamePad.On(64)) {
         sceVu0ScaleVector(move, move, 3.0f);
     }
 
     sceVu0AddVector(position, position, move);
+
     if (GamePad.On(128) && !GamePad.On(12)) {
         sceVu0AddVector(reference, reference, move);
     }
 
     projection = MGGetProjection();
+
     if (GamePad.On(8192)) {
         projection += 1.0f;
     }
+
     if (GamePad.On(32768)) {
         projection -= 1.0f;
     }
+
     if (projection < 100.0f) {
         projection = 100.0f;
     }
+
     if (projection > 2000.0f) {
         projection = 2000.0f;
     }
+
     MGSetProjection(projection);
 
     {
@@ -334,6 +352,7 @@ void EdDMoveCamera(float *position, float *reference) {
             frame.corner[i][2] = unit[(i & 4) != 0];
             frame.corner[i][3] = 1.0f;
         }
+
         frame.SetPosition(reference);
         DrawBound(&frame);
     }
@@ -360,12 +379,15 @@ void EdDMoveCameraRef(float *position, float *reference) {
     angle = atan2f(offset[0], offset[2]);
 
     x = -GamePad.GetLXf();
+
     if (GamePad.On(8)) {
         x = 0.02f * -distance;
     }
+
     if (GamePad.On(4)) {
         x = 0.02f * distance;
     }
+
     y = GamePad.GetRYf();
     z = -GamePad.GetLYf();
 
@@ -374,6 +396,7 @@ void EdDMoveCameraRef(float *position, float *reference) {
     move[2] = z * cosf(angle) - x * sinf(angle);
 
     sceVu0AddVector(reference, reference, move);
+
     if (GamePad.On(128) && !GamePad.On(12)) {
         sceVu0AddVector(position, position, move);
     }
@@ -388,6 +411,7 @@ void EdDMoveCameraRef(float *position, float *reference) {
             frame.corner[i][2] = unit[(i & 4) != 0];
             frame.corner[i][3] = 1.0f;
         }
+
         frame.SetPosition(reference);
         DrawBound(&frame);
     }
@@ -434,12 +458,15 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
     if (GamePad.On(8)) {
         rot[1] += -0.06f;
     }
+
     if (GamePad.On(4)) {
         rot[1] += 0.06f;
     }
+
     if (rot[1] > 3.141592f) {
         rot[1] -= 6.283184f;
     }
+
     if (rot[1] < -3.141592f) {
         rot[1] += 6.283184f;
     }
@@ -447,6 +474,7 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
     move[0] = x * cosf(angle) + z * sinf(angle);
     move[1] = y;
     move[2] = z * cosf(angle) - x * sinf(angle);
+
     if (GamePad.On(128)) {
         speed = 1.0f;
     }
@@ -463,12 +491,15 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
     }
 
     ambient = character->ambient_offset[0];
+
     if (GamePad.On(2)) {
         ambient += 0.1f;
     }
+
     if (GamePad.On(1)) {
         ambient -= 0.1f;
     }
+
     if (ambient != character->ambient_offset[0]) {
         character->ambient_offset[0] = ambient;
         character->ambient_offset[1] = ambient;
@@ -486,6 +517,7 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
             frame.corner[i][2] = ground[(i & 4) != 0];
             frame.corner[i][3] = 1.0f;
         }
+
         frame.SetPosition(pos);
         frame.SetRotation(rot[0], rot[1], rot[2]);
         DrawBound(&frame);
@@ -511,12 +543,15 @@ void EdDebugMenu() {
     if (GamePad.Down(2)) {
         mode++;
     }
+
     if (GamePad.Down(1)) {
         mode--;
     }
+
     if (mode < 0) {
         mode = 0;
     }
+
     if (mode >= 3) {
         mode = 2;
     }
@@ -556,121 +591,153 @@ void DM_Main() {
     AddStr(DebugFont, work);
 
     EdDebugRunEventNo = -1;
+
     switch (select) {
         case 0:
             if (GamePad.Down(0x2000)) {
                 EdDebugCameraFlag = 1;
             }
+
             if (GamePad.Down(0x8000)) {
                 EdDebugCameraFlag = 0;
             }
+
             break;
         case 1:
             if (GamePad.Down(0x2000)) {
                 EdDebugParamDrawOff = 0;
             }
+
             if (GamePad.Down(0x8000)) {
                 EdDebugParamDrawOff = 1;
             }
+
             break;
         case 2:
             if (GamePad.Down(0x2000)) {
                 EdDebugCharaDrawOff = 0;
             }
+
             if (GamePad.Down(0x8000)) {
                 EdDebugCharaDrawOff = 1;
             }
+
             break;
         case 3:
             if (GamePad.Down(0x2000)) {
                 MesAbsDrawOff = 0;
             }
+
             if (GamePad.Down(0x8000)) {
                 MesAbsDrawOff = 1;
             }
+
             break;
         case 4:
             if (GamePad.Down(0x2000)) {
                 EdDebugMoveFlag++;
             }
+
             if (GamePad.Down(0x8000)) {
                 EdDebugMoveFlag--;
             }
+
             if (EdDebugMoveFlag < 0) {
                 EdDebugMoveFlag = 0;
             }
+
             if (EdDebugMoveFlag > 2) {
                 EdDebugMoveFlag = 2;
             }
+
             break;
         case 5:
             if (GamePad.Down(0x2000)) {
                 run_event++;
             }
+
             if (GamePad.Down(0x8000)) {
                 run_event--;
             }
+
             if (GamePad.Down(4)) {
                 run_event -= 10;
             }
+
             if (GamePad.Down(8)) {
                 run_event += 10;
             }
+
             if (GamePad.On(0x20)) {
                 EdDebugRunEventNo = run_event;
             }
+
             break;
         case 6:
             if (GamePad.Down(0x2000)) {
                 talk_chara++;
             }
+
             if (GamePad.Down(0x8000)) {
                 talk_chara--;
             }
+
             if (GamePad.Down(4)) {
                 talk_chara -= 10;
             }
+
             if (GamePad.Down(8)) {
                 talk_chara += 10;
             }
+
             if (GamePad.On(0x20)) {
                 EdTalkModeInit(EdVillager, talk_chara);
                 EdDebugRunEventNo = 256;
             }
+
             break;
         case 7:
             if (GamePad.Down(0x2000)) {
                 EdDebugEventEnable = 1;
             }
+
             if (GamePad.Down(0x8000)) {
                 EdDebugEventEnable = 0;
             }
+
             break;
         case 8:
             if (GamePad.Down(0x2000)) {
                 LanguageCode++;
             }
+
             if (GamePad.Down(0x8000)) {
                 LanguageCode--;
             }
+
             if (LanguageCode < 0) {
                 LanguageCode = 0;
             }
+
             if (LanguageCode > 6) {
                 LanguageCode = 6;
             }
+
             break;
     }
 
     if (GamePad.Down(0x4000)) {
         select++;
     }
+
     if (GamePad.Down(0x1000)) {
         select--;
     }
+
     if (select < 0) {
         select = 8;
     }
+
     if (select >= 9) {
         select = 0;
     }
@@ -701,94 +768,120 @@ void DM_Sound() {
             if (GamePad.Down(0x2000)) {
                 bgm_no++;
             }
+
             if (GamePad.Down(0x8000)) {
                 bgm_no--;
             }
+
             if (GamePad.Down(4)) {
                 bgm_no -= 10;
             }
+
             if (GamePad.Down(8)) {
                 bgm_no += 10;
             }
+
             if (GamePad.Down(0x10)) {
                 bgm_seq++;
             }
+
             if (GamePad.Down(0x80)) {
                 bgm_seq--;
             }
+
             if (bgm_seq < 0) {
                 bgm_seq = 0;
             }
+
             if (bgm_seq > 3) {
                 bgm_seq = 3;
             }
+
             if (GamePad.Down(0x20)) {
                 SndBgmStop();
                 SndBgmInit();
                 SndBgmLoad(bgm_no);
                 SndBgmPlay(bgm_seq);
             }
+
             if (GamePad.Down(0x40)) {
                 SndBgmStop();
                 SndBgmInit();
             }
+
             break;
         case 1:
             if (GamePad.Down(0x2000)) {
                 SndBgmDisable(1);
             }
+
             if (GamePad.Down(0x8000)) {
                 SndBgmDisable(0);
             }
+
             break;
         case 2:
             if (GamePad.Down(0x2000)) {
                 se_no++;
             }
+
             if (GamePad.Down(0x8000)) {
                 se_no--;
             }
+
             if (GamePad.Down(4)) {
                 se_no -= 10;
             }
+
             if (GamePad.Down(8)) {
                 se_no += 10;
             }
+
             if (GamePad.Down(0x20)) {
                 SndSePlay(se_no, -1, 0);
             }
+
             if (GamePad.Down(0x40)) {
                 SndSeStop(se_no, 0);
             }
+
             break;
         case 3:
             if (GamePad.Down(0x2000)) {
                 set_no++;
             }
+
             if (GamePad.Down(0x8000)) {
                 set_no--;
             }
+
             if (GamePad.Down(4)) {
                 set_no -= 10;
             }
+
             if (GamePad.Down(8)) {
                 set_no += 10;
             }
+
             if (GamePad.Down(0x20)) {
                 SndSoundLoad(set_no);
             }
+
             break;
     }
 
     if (GamePad.Down(0x4000)) {
         select++;
     }
+
     if (GamePad.Down(0x1000)) {
         select--;
     }
+
     if (select < 0) {
         select = 0;
     }
+
     if (select >= 4) {
         select = 3;
     }
@@ -822,27 +915,35 @@ void DM_Flag() {
     if (dun_map == 11) {
         dun_map = 1;
     }
+
     if (dun_map == 13) {
         dun_map = 1;
     }
+
     if (dun_map == 33) {
         dun_map = 1;
     }
+
     if (dun_map == 19) {
         dun_map = 2;
     }
+
     if (dun_map == 42) {
         dun_map = 3;
     }
+
     if (dun_map == 23) {
         dun_map = 4;
     }
+
     if (dun_map == 38) {
         dun_map = 5;
     }
+
     if (dun_map == 40) {
         dun_map = 5;
     }
+
     if (dun_map > 5) {
         dun_map = 0;
     }
@@ -869,62 +970,80 @@ void DM_Flag() {
     AddStr(DebugFont, work);
     npc = SaveData->GetGrdNPCData(MapNo, chara);
     talk = 0;
+
     if (npc) {
         talk = npc->talk_message;
     }
+
     sprintf(work, "%sTALKFLAG %3d    = %d\n", cursor[select == 7], chara, talk);
     AddStr(DebugFont, work);
 
     value = NULL;
+
     switch (select) {
         case 0:
             value = &game_no;
+
             if (GamePad.Down(0x20)) {
                 SaveData->SetGameFlag(game_no, 1);
             }
+
             if (GamePad.Down(0x40)) {
                 SaveData->SetGameFlag(game_no, 0);
             }
+
             break;
         case 1:
             value = &map_no;
+
             if (GamePad.Down(0x20)) {
                 SaveData->SetMapFlag(MapNo, map_no, 0);
             }
+
             if (GamePad.Down(0x40)) {
                 SaveData->SetMapFlag(MapNo, map_no, 1);
             }
+
             break;
         case 2:
             value = &comp_no;
+
             if (GamePad.Down(0x20)) {
                 EditPartsInfo.SetCompEvent(comp_no, 1);
             }
+
             if (GamePad.Down(0x40)) {
                 EditPartsInfo.SetCompEvent(comp_no, 0);
             }
+
             if (GamePad.Down(0x10)) {
                 SV_GEORAMA_DATA *georama;
 
                 for (i = 0; i < 24; i++) {
                     EditPartsInfo.SetCompEvent(i, 1);
                 }
+
                 georama = SaveData->GetGrdData(MapNo);
+
                 if (georama) {
                     georama->request_event_flag = 1;
                 }
             }
+
             if (GamePad.Down(0x80)) {
                 SV_GEORAMA_DATA *georama;
 
                 for (i = 0; i < 24; i++) {
                     EditPartsInfo.SetCompEvent(i, 0);
                 }
+
                 georama = SaveData->GetGrdData(MapNo);
+
                 if (georama) {
                     georama->request_event_flag = 0;
                 }
             }
+
             break;
         case 3: {
             int flag = SaveData->GetGameIntFlag(0);
@@ -932,18 +1051,23 @@ void DM_Flag() {
             if (GamePad.Down(0x2000)) {
                 flag++;
             }
+
             if (GamePad.Down(0x8000)) {
                 flag--;
             }
+
             if (GamePad.Down(8)) {
                 flag += 10;
             }
+
             if (GamePad.Down(4)) {
                 flag -= 10;
             }
+
             if (flag < 0) {
                 flag = 0;
             }
+
             SaveData->SetGameIntFlag(0, flag);
             break;
         }
@@ -951,15 +1075,19 @@ void DM_Flag() {
             if (GamePad.Down(0x2000)) {
                 SaveData->QuestDungeon(dun_map, 1);
             }
+
             if (GamePad.Down(0x8000)) {
                 SaveData->QuestDungeon(dun_map, -1);
             }
+
             if (GamePad.Down(8)) {
                 SaveData->QuestDungeon(dun_map, 10);
             }
+
             if (GamePad.Down(4)) {
                 SaveData->QuestDungeon(dun_map, -10);
             }
+
             break;
         case 5: {
             floor = status->floor_reached[dun_map];
@@ -967,15 +1095,19 @@ void DM_Flag() {
             if (GamePad.Down(0x2000)) {
                 floor++;
             }
+
             if (GamePad.Down(0x8000)) {
                 floor--;
             }
+
             if (GamePad.Down(8)) {
                 floor += 10;
             }
+
             if (GamePad.Down(4)) {
                 floor -= 10;
             }
+
             RaiseFloorReached(status, dun_map, floor);
             break;
         }
@@ -983,24 +1115,31 @@ void DM_Flag() {
             if (GamePad.Down(0x2000)) {
                 status->party_size++;
             }
+
             if (GamePad.Down(0x8000)) {
                 status->party_size--;
             }
+
             if (GamePad.Down(8)) {
                 status->party_size += 10;
             }
+
             if (GamePad.Down(4)) {
                 status->party_size -= 10;
             }
+
             break;
         case 7:
             value = &chara;
+
             if (GamePad.Down(0x20) && npc) {
                 npc->talk_message++;
             }
+
             if (GamePad.Down(0x40) && npc) {
                 npc->talk_message--;
             }
+
             if (GamePad.Down(0x10)) {
                 for (i = 0; i < 20; i++) {
                     SV_GRD_NPC *other = SaveData->GetGrdNPCData(MapNo, i);
@@ -1010,6 +1149,7 @@ void DM_Flag() {
                     }
                 }
             }
+
             if (GamePad.Down(0x80)) {
                 for (i = 0; i < 20; i++) {
                     SV_GRD_NPC *other = SaveData->GetGrdNPCData(MapNo, i);
@@ -1019,6 +1159,7 @@ void DM_Flag() {
                     }
                 }
             }
+
             break;
     }
 
@@ -1026,15 +1167,19 @@ void DM_Flag() {
         if (GamePad.Down(0x2000)) {
             (*value)++;
         }
+
         if (GamePad.Down(0x8000)) {
             (*value)--;
         }
+
         if (GamePad.Down(8)) {
             *value += 10;
         }
+
         if (GamePad.Down(4)) {
             *value -= 10;
         }
+
         if (*value < 0) {
             *value = 0;
         }
@@ -1043,12 +1188,15 @@ void DM_Flag() {
     if (GamePad.Down(0x4000)) {
         select++;
     }
+
     if (GamePad.Down(0x1000)) {
         select--;
     }
+
     if (select < 0) {
         select = 7;
     }
+
     if (select >= 8) {
         select = 0;
     }
@@ -1072,9 +1220,11 @@ static void DrawBound(CFrame *frame) {
     frame->GetLWMatrix(matrix);
     visible = 1;
     ApplyMatrixN(world, matrix, frame->corner, 8);
+
     for (i = 0; i < 8; i++) {
         visible &= MGRotTransPers(screen[i], world[i], 0);
     }
+
     if (visible == 0) {
         return;
     }
@@ -1140,14 +1290,17 @@ void EdSetBgmVol(float time) {
     if (EdCheckTime(time, 4.0f, 11.0f) != 0) {
         level = 0.0f;
     }
+
     if (!(time < 3.0f) && time < 4.0f) {
         level = 4.0f - time;
     }
 
     int volume = (int) (level * (float) SndGetDefaultBgmVol());
+
     if (volume < 2) {
         level = 0.0f;
     }
+
     if (SndBgmCheck() == 1) {
         if (volume > 0) {
             SndSetBgmVol(volume);
@@ -1167,6 +1320,7 @@ void EdAmbientPlay(float time) {
     if (++ambient_no >= 4) {
         ambient_no = 0;
     }
+
     SndAmbientPlay(ambient_no);
 }
 
@@ -1202,11 +1356,13 @@ static SOUND_SRC *get_sound_src(int se) {
             return &sound_src[i];
         }
     }
+
     for (i = 0; i < 4; i++) {
         if (sound_src[i].se < 0) {
             return &sound_src[i];
         }
     }
+
     return 0;
 }
 
@@ -1220,12 +1376,14 @@ static int check_se_play(int se) {
     if (se < 0) {
         return 0;
     }
+
     for (i = 0; i < 4; i++) {
         if (se == now_play_se[i]) {
             now_play_se_flag[i] = 1;
             return 1;
         }
     }
+
     for (i = 0; i < 4; i++) {
         if (now_play_se[i] < 0) {
             now_play_se[i] = se;
@@ -1233,6 +1391,7 @@ static int check_se_play(int se) {
             return 0;
         }
     }
+
     return -1;
 }
 
@@ -1243,6 +1402,7 @@ void EdInitSoundSrc() {
         now_play_se[i] = -1;
         now_play_se_flag[i] = 0;
     }
+
     init_sound_src();
 }
 
@@ -1262,45 +1422,62 @@ void EdPlaySoundSrc() {
     for (i = 0; i < 4; i++) {
         now_play_se_flag[i] = 0;
     }
+
     for (i = 0; i < 4; i++) {
         se = sound_src[i].se;
+
         if (se < 0) {
             continue;
         }
+
         playing = check_se_play(se);
+
         if (playing < 0) {
             continue;
         }
+
         if (playing == 0) {
             SndSePlay(se, 0, 0);
         }
+
         volume = 0.0f;
+
         for (j = 0; j < sound_src[i].num; j++) {
             volume += sound_src[i].volume[j];
         }
+
         pan = 0.0f;
+
         for (j = 0; j < sound_src[i].num; j++) {
             pan += sound_src[i].pan[j] * sound_src[i].volume[j] / volume;
         }
+
         if (volume > 1.0f) {
             volume = 1.0f;
         }
+
         SndSetSeVolf(se, volume, 0);
+
         if (pan > 1.0f) {
             pan = 1.0f;
         }
+
         if (pan < -1.0f) {
             pan = -1.0f;
         }
+
         SndSetSePanf(se, pan, 0);
     }
+
     for (i = 0; i < 4; i++) {
         if (now_play_se_flag[i]) {
             continue;
         }
+
         if (now_play_se[i] < 0) {
             continue;
         }
+
         SndSeStop(now_play_se[i], 0);
         now_play_se[i] = -1;
     }
@@ -1313,9 +1490,11 @@ void EdStopSoundSrc() {
         if (now_play_se[i] < 0) {
             continue;
         }
+
         SndSeStop(now_play_se[i], 0);
         now_play_se[i] = -1;
     }
+
     SndSeStop(54, 0);
     SndSeStop(52, 0);
 }
@@ -1339,16 +1518,20 @@ static float GetDistLine(float *point, float *from, float *to, float *near_point
     length = DistVector(line);
     length = length * length;
     fraction = -sceVu0InnerProduct(offset, line) / length;
+
     if (fraction < 0.0f || fraction > 1.0f) {
         from_dist = DistVector(point, from);
         to_dist = DistVector(point, to);
+
         if (from_dist < to_dist) {
             sceVu0CopyVector(near_point, from);
             return from_dist;
         }
+
         sceVu0CopyVector(near_point, to);
         return to_dist;
     }
+
     sceVu0ScaleVector(projection, line, fraction);
     sceVu0AddVector(projection, offset, projection);
     sceVu0AddVector(near_point, projection, point);
@@ -1382,36 +1565,48 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
 
     SndSetCamera(camera_pos, camera_dir);
     init_sound_src();
+
     for (i = 0; i < count; i++) {
         if (parts[i] == 0) {
             continue;
         }
+
         frame = parts[i]->frame[0];
+
         if (frame == 0) {
             continue;
         }
+
         parts[i]->GetPosition(position);
         frame->SetPosition(position);
         parts[i]->GetRotation(rotation);
         frame->SetRotation(rotation[0], rotation[1], rotation[2]);
+
         for (j = 0; j < 24; j++) {
             effect = parts[i]->effect[j];
+
             if (parts[i]->effect_on[j] == 0) {
                 continue;
             }
+
             if (effect == 0) {
                 continue;
             }
+
             if (effect->kind != 7 && effect->kind != 1 && effect->kind != 2) {
                 continue;
             }
+
             if (effect->frame == 0) {
                 continue;
             }
+
             if (CheckEditEffect(effect, time) == 0) {
                 continue;
             }
+
             effect->frame->GetWorldPosition(from, effect->offset);
+
             if (effect->colour[3] == 1.0f) {
                 effect->frame->GetWorldPosition(to, effect->colour);
                 sceVu0CopyVector(line, from);
@@ -1419,48 +1614,62 @@ void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_po
             } else {
                 distance = DistVector(camera_pos, from);
             }
+
             far_dist = effect->far_distance;
             near_dist = effect->near_distance;
             se = (int) effect->sound_no;
+
             /* A torch and a fire are one sound at one range whatever the description says. */
             if (effect->kind == 1 || effect->kind == 2) {
                 se = 54;
                 near_dist = 20.0f;
                 far_dist = 150.0f;
             }
+
             if (distance > far_dist) {
                 continue;
             }
+
             source = get_sound_src(se);
+
             if (source == 0) {
                 continue;
             }
+
             SndGetVolPan(&volume, &pan, from, near_dist, far_dist);
             source->se = se;
+
             if (source->num < 16) {
                 source->volume[source->num] = volume;
                 source->pan[source->num] = pan;
                 source->num++;
             }
         }
+
         if (parts[i]->subtype != 2) {
             continue;
         }
+
         if (DistVector(camera_pos, position) >= 300.0f) {
             continue;
         }
+
         door_source = get_sound_src(52);
+
         if (door_source == 0) {
             continue;
         }
+
         SndGetVolPan(&door_volume, &door_pan, position, 100.0f, 300.0f);
         door_source->se = 52;
+
         if (door_source->num < 16) {
             door_source->volume[door_source->num] = door_volume;
             door_source->pan[door_source->num] = door_pan;
             door_source->num++;
         }
     }
+
     EdPlaySoundSrc();
 }
 
@@ -1477,6 +1686,7 @@ void EdDoorOpenSe(int door_no, float *position) {
     if (door_no < 0 || door_no >= 8) {
         return;
     }
+
     SndSePlay(se_open[door_no], -1, 0);
 }
 
@@ -1493,6 +1703,7 @@ void EdDoorCloseSe(int door_no, float *position) {
     if (door_no < 0 || door_no >= 8) {
         return;
     }
+
     SndSePlay(se_close[door_no], -1, 0);
 }
 
@@ -1511,6 +1722,7 @@ int EdGetDoorMotion(int door_no, int state) {
     if (door_no < 0 || door_no >= 8) {
         return 0;
     }
+
     return motion[door_no][state != 0];
 }
 
@@ -1520,6 +1732,7 @@ static DEPTH_OF_FIELD_INFO dof;
 
 void EdSetDOFLevel(int level) {
     dof.level = level;
+
     if (level == 0) {
         dof.start = ConvertTime(0.0f);
         dof.end = ConvertTime(24.0f);
@@ -1542,12 +1755,15 @@ void EdDrawDOF(int level) {
     int drawn_level;
 
     drawn_level = dof.level;
+
     if (drawn_level < 0) {
         return;
     }
+
     if (level < drawn_level) {
         drawn_level = level;
     }
+
     DepthOfField(dof.distance, drawn_level, dof.alpha, dof.blur);
 }
 
@@ -1577,48 +1793,63 @@ void EdThunderEffect(int map, CEditGround *ground) {
 
     if (map == 40 || map == 50 || map == 24) {
         frame = ground->fixed_parts[1].frame[0];
+
         if (frame) {
             frame = frame->SearchFrame("inazuma");
         }
+
         if (frame == 0) {
             return;
         }
+
         /* The lights the map itself is lit by, kept from the first flash so that every later one
            decays back to them rather than to whatever the previous flash left. */
         if (start_thunder == 0) {
             MGGetPLight(thd_light, thd_color);
         }
+
         MGGetPLight(light, color);
+
         if (thunder_count > 0) {
             frame->attr.draw_on = 1;
         } else {
             thunder_count = 0;
+
             if (next_thunder_cnt == 0) {
                 thunder_count = 4;
+
                 for (light_no = 0; light_no < 2; light_no++) {
                     for (channel = 0; channel < 3; channel++) {
                         thd_color[light_no][channel] = 255.0f;
                     }
                 }
+
                 SndSePlay(rand() % 6 + 67, -1, 0);
+
                 if (start_thunder == 0) {
                     SndSePlay(74, -1, 0);
                     start_thunder = 1;
                 }
+
                 next_thunder_cnt = rand() % 200 + 10;
             }
+
             frame->attr.draw_on = 2;
         }
+
         thunder_count--;
         next_thunder_cnt--;
+
         for (i = 0; i < 2; i++) {
             for (j = 0; j < 3; j++) {
                 thd_color[i][j] -= 6.0f;
+
                 if (thd_color[i][j] < color[i][j]) {
                     thd_color[i][j] = color[i][j];
                 }
             }
         }
+
         MGSetPLight(light, thd_color);
     }
 }
@@ -1635,9 +1866,11 @@ static inline int IsVisible(CNPCharacter *npc) {
  */
 static inline int IsShadowVisible(CNPCharacter *npc) {
     bool visible = false;
+
     if (npc->initialized != 0 && npc->draw_enabled != 0) {
         visible = true;
     }
+
     return visible;
 }
 
@@ -1654,22 +1887,27 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
     if (EdDebugCharaDrawOff != 0) {
         player_draw_mask = 0;
     }
+
     if (event != NULL) {
         draw_shadows = 0;
         player_draw_mask = 3;
+
         if (event->player_draw == 0) {
             player_draw_mask &= ~1;
         }
+
         if (event->player_shadow_draw == 0) {
             player_draw_mask &= ~2;
         } else {
             draw_shadows |= 1;
         }
+
         if (npc_draw_masks != NULL) {
             for (i = 0; i < npc_count; i++) {
                 if (event->npc_draw[i] == 0) {
                     npc_draw_masks[i] = 0;
                 }
+
                 if (event->npc_shadow_draw[i] == 0) {
                     npc_draw_masks[i] &= ~2;
                 } else {
@@ -1677,9 +1915,11 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
                 }
             }
         }
+
         // Villagers the event wants in front are drawn before the shadows.
         for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
             CNPCharacter *npc = &npcs[i];
+
             if (npc->CheckDraw() != 0 && event->npc_draw_before[i] != 0 && (npc_draw_masks[i] & 1) != 0) {
                 if (IsVisible(&npcs[i])) {
                     npc_draw_masks[i] = 0;
@@ -1691,6 +1931,7 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
             }
         }
     }
+
     if (draw_shadows != 0) {
         sceVu0FMATRIX light_direction;
         sceVu0FMATRIX shadow_direction;
@@ -1704,9 +1945,11 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
         MGSetPLight(shadow_direction, light_colour);
         TexManager.ReloadTexture(Vif1Packet, 22);
         MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buff", -1)->tex0);
+
         if (player_draw_mask & 2) {
             player->DrawShadow();
         }
+
         for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
             if (npc_draw_masks[i] & 2) {
                 if (IsShadowVisible(&npcs[i])) {
@@ -1715,14 +1958,17 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
                 }
             }
         }
+
         MGEndDrawShadow(0x34);
         MGSetPLight(light_direction, light_colour);
     }
+
     if (player_draw_mask & 1) {
         TexManager.ReloadTexture(Vif1Packet, 8);
         player->TextureAnime(8);
         player->Draw();
     }
+
     for (i = 0; i < npc_count && npc_draw_masks != NULL; i++) {
         if (npcs[i].CheckDraw() != 0 && (npc_draw_masks[i] & 1) != 0) {
             if (IsVisible(&npcs[i])) {
@@ -1748,13 +1994,16 @@ void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func_data, EDIT_EFFECT
         if (i == count) {
             return;
         }
+
         if (effects->kind <= 0) {
             break;
         }
     }
+
     if (InitEditEffect(parts->frame[0], func_data, effects) == 0) {
         return;
     }
+
     for (j = 0; j < 24; j++) {
         if (parts->effect_on[j] == 0) {
             parts->effect_on[j] = 1;
@@ -1798,6 +2047,7 @@ void EdSetUseItem(int *items) {
 
     for (i = 0; i < 32; i++) {
         use_item_list[i] = ConvertItemNo(items[i]);
+
         if (use_item_list[i] < 0) {
             break;
         }
@@ -1819,9 +2069,11 @@ void EdSetShopNo(int shop) {
 int EdInitMenu(int mode) {
     menu_mode = mode;
     init_menu_cnt = 0;
+
     if (mode <= 0) {
         return 0;
     }
+
     MGFlipWaitVSync(1);
     EdClearSystemMes();
     ClearSystemMes();
@@ -1833,15 +2085,19 @@ int EdInitMenu(int mode) {
    draw over a still of the last game frame rather than over the game. */
 int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     init_menu_cnt++;
+
     if (init_menu_cnt > 3) {
         init_menu_cnt = 4;
     }
+
     if (init_menu_cnt < 4) {
         return 0;
     }
+
     if (texture) {
         EdSaveFrameImage(*texture);
     }
+
     GamePad.MenuModeOn(120);
 
 #ifdef PAL
@@ -1880,6 +2136,7 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
             InitFishRecordView(0, texture_block, 0);
             break;
     }
+
     return 8;
 }
 
@@ -1893,13 +2150,16 @@ int EdMenuMode() {
     int finished;
 
     finished = 0;
+
     switch (menu_mode) {
         case 2:
             finished = !BattleMenuCursor();
             BattleMenuDraw();
+
             if (finished) {
                 EdClearItemOverFlag();
             }
+
             break;
         case 3:
         case 4:
@@ -1924,6 +2184,7 @@ int EdMenuMode() {
             finished = FishRecordViewLoop();
             break;
     }
+
     return finished;
 }
 
@@ -1936,11 +2197,14 @@ void EdGetItem(int item, int count, int attachment) {
     if (count < 0) {
         count = 1;
     }
+
     status = SaveData->GetDngStatus();
     item_no = ConvertItemNo(item);
+
     if (item_no < 0) {
         return;
     }
+
     for (i = 0; i < count; i++) {
         if (attachment > 0) {
             status->GetItem(item_no, attachment);
@@ -1959,15 +2223,19 @@ int EdAddMaxItem(int amount) {
 
     pack = &SaveData->GetDngStatus()->item_pack;
     new_count = pack->num + amount;
+
     if (new_count < 0) {
         new_count = 0;
     }
+
     if (new_count > 100) {
         new_count = 100;
     }
+
     for (i = pack->num; i < new_count; i++) {
         pack->item[i] = -1;
     }
+
     pack->num = (char) new_count;
     return new_count;
 }
@@ -1986,9 +2254,11 @@ int EdCheckItem(int item) {
 
     status = SaveData->GetDngStatus();
     item_no = ConvertItemNo(item);
+
     if (item_no >= 0) {
         return status->SearchItemIndexNo(item_no);
     }
+
     return -1;
 }
 
@@ -1998,9 +2268,11 @@ int EdCheckGetItem(int item) {
 
     status = SaveData->GetDngStatus();
     item_no = ConvertItemNo(item);
+
     if (item_no >= 0) {
         return status->CheckItemGet(item_no);
     }
+
     return 0;
 }
 
@@ -2047,18 +2319,23 @@ void EdSetSystemMes(int mes_no, int count, int position, int input_key, int *arg
 
     SystemMesInputKey = input_key;
     SystemMesPosition = position;
+
     if (args) {
         for (i = 0; i < 4; i++) {
             EditSystemMes.mes_no[i] = -1;
+
             if (*args >= 0) {
                 EditSystemMes.mes_no[i] = *args;
             }
+
             args++;
         }
     }
+
     if (value >= 0) {
         EditSystemMes.value = value;
     }
+
     EditSystemMes.MakeMesWin(mes_no);
     SystemMesNo = mes_no;
     SystemMesCount = count;
@@ -2076,9 +2353,11 @@ void EdSetHelpMes(int mes_no, int count, int position, int *args, int value) {
     if (mes_no == 120) {
         indent = EditSystemMes.text_columns - 30;
         indent = 16 - indent;
+
         if (indent < 0) {
             indent = 0;
         }
+
         y = SystemMesY;
         x = SystemMesX + ((indent * EditSystemMes.char_width) >> 1);
         EditSystemMes.line_pos[0].x = x;
@@ -2096,6 +2375,7 @@ void EdSetHelpMes(int mes_no, int count, int position, int *args, int value) {
         EditSystemMes.line_pos[1].x = -1;
         EditSystemMes.line_pos[1].y = -1;
     }
+
     EditSystemMes.auto_pos = SystemMesPosition;
     EditSystemMes.text_x = SystemMesX;
     EditSystemMes.text_y = SystemMesY;
@@ -2137,17 +2417,22 @@ void EdSystemMesStep() {
         SystemMesWait--;
         return;
     }
+
     SystemMesStep();
+
     if (SystemMesCount == 1 || HelpMesCount == 1) {
         EdClearSystemMes();
     }
+
     if (SystemMesNo > 0 || HelpMesCount >= 0) {
         EditSystemMes.Step();
     }
+
     if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(64)) {
         if (SystemMesCount > 0) {
             SystemMesCount--;
         }
+
         if (HelpMesCount > 0) {
             HelpMesCount--;
         }
@@ -2160,10 +2445,13 @@ void EdSystemMesDraw() {
     if (SystemMesWait > 0) {
         return;
     }
+
     SystemMesDraw();
+
     if (HelpMesNo <= 0) {
         return;
     }
+
     TexManager.ReloadTexture(Vif1Packet, EditSystemMes.tex_block);
     setbilinear(0);
     EditSystemMes.DrawMesWin();
@@ -2195,10 +2483,12 @@ void EdEditBuildHelpMes(int part_no) {
     if (part_no < 0) {
         return;
     }
+
     if (cnt1 > 0) {
         cnt1--;
         return;
     }
+
     cnt1 = 0;
     cnt2 = 1;
 
@@ -2225,6 +2515,7 @@ void EdEditMoveHelpMes() {
         cnt2--;
         return;
     }
+
     cnt2 = 0;
     cnt1 = 1;
     SystemMesW = 0;
@@ -2250,9 +2541,11 @@ void EdFishingWalkHelpMes(int bait) {
 
     args[0] = bait + 100;
     mes_no = 200;
+
     if (bait >= 0) {
         mes_no++;
     }
+
     EdSetHelpMes(mes_no, 2, 9, args, -1);
 }
 
@@ -2309,25 +2602,31 @@ void EdStepOpenItemBox() {
     if (ibox_open_flag == 0 && ibox_open_close_flag == 0) {
         return;
     }
+
     ibox_open_cnt--;
+
     if (ibox_open_cnt < 0) {
         ibox_open_flag = 0;
         ibox_open_close_flag = 0;
         return;
     }
+
     if (ibox_frame == 0) {
         return;
     }
+
     ibox_frame->SetPosition(ibox_pos);
     ibox_frame->SetRotation(ibox_rot[0], ibox_rot[1], ibox_rot[2]);
     lid = ibox_frame->SearchFrame("top");
     lid->SetRotType(2);
+
     if (ibox_open_flag) {
         /* The lid swings over the first half of the count and then stands open through the second,
            which is the half the ambient is faded over. */
         if (ibox_open_cnt <= 20) {
             return;
         }
+
         open_angle = -(1.5707964f - 1.5707964f * (float) (ibox_open_cnt - 20) / 20.0f);
         lid->SetRotation(open_angle, 0.0f, 0.0f);
     } else {
@@ -2336,6 +2635,7 @@ void EdStepOpenItemBox() {
         } else {
             close_angle = 1.5707964f * (float) ibox_open_cnt / 5.0f;
         }
+
         lid->SetRotation(0.2f * -close_angle, 0.0f, 0.0f);
     }
 }
@@ -2467,18 +2767,23 @@ void EdDrawOpenItemBox() {
     if (ibox_open_flag == 0 && ibox_open_close_flag == 0) {
         return;
     }
+
     if (ibox_frame) {
         ibox_frame->SetPosition(ibox_pos);
         ibox_frame->SetRotation(ibox_rot[0], ibox_rot[1], ibox_rot[2]);
     }
+
     MGGetAmbient(ambient);
     sceVu0CopyVector(saved_ambient, ambient);
+
     if (ibox_open_cnt < 20) {
         ambient[3] = 128.0f * (float) ibox_open_cnt / 20.0f;
     }
+
     if (ibox_open_flag) {
         MGSetAmbient(ambient);
     }
+
     MGDraw(ibox_frame);
     MGSetAmbient(saved_ambient);
 }
@@ -2515,7 +2820,9 @@ int EdMenuLoop(ClsMes *message) {
     if (message == NULL) {
         return 1;
     }
+
     message->Step();
+
     if (GamePad.Down(0x60) != 0) {
         // A confirm on the last page closes the window and leaves it ready
         // for the next one.
@@ -2543,12 +2850,15 @@ int EdMenuLoop(ClsMes *message) {
             message->auto_page_wait = 0;
             message->mes_made = -1;
             message->edge_alpha = 0x80;
+
             for (int i = 0; i < 10; i++) {
                 message->mes_no[i] = -1;
             }
+
             for (int i = 0; i < 8; i++) {
                 message->values[i] = 0;
             }
+
             message->value = 0;
             message->value_signed = 0;
             message->value_show = 1;
@@ -2558,18 +2868,22 @@ int EdMenuLoop(ClsMes *message) {
             message->cursor_row = -1;
             message->cursor_y = 0;
             message->cursor_lit = 0;
+
             for (int i = 0; i < 10; i++) {
                 message->line_pos[i].x = -1;
                 message->line_pos[i].y = -1;
             }
+
             return 1;
         }
+
         if (message->State() == 5) {
             message->GoNextPage();
         } else {
             message->text_rate = 0.0f;
         }
     }
+
     return 0;
 }
 
@@ -2579,6 +2893,7 @@ float ConvertTime(float hour) {
     if (hour < 0.0f) {
         hour += 24.0f;
     }
+
     hour /= 2.0f;
     return hour;
 }
@@ -2590,5 +2905,6 @@ float InvertTime(float time) {
     if (time > 24.0f) {
         time -= 24.0f;
     }
+
     return time;
 }

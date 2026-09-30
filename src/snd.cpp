@@ -176,9 +176,11 @@ EDIT_ELEMENT_ATRA *GetEditAtraData(int ground, int number) {
     if (ground < 0 || ground >= 6) {
         return 0;
     }
+
     if (number < 0 || number >= 100) {
         return 0;
     }
+
     return &EditElementData[ground][number];
 }
 
@@ -186,9 +188,11 @@ EDIT_PARTS_ATRA *GetEditAtraPartsData(int ground, int number) {
     if (ground < 0 || ground >= 6) {
         return 0;
     }
+
     if (number < 0 || number >= 24) {
         return 0;
     }
+
     return &EditPartsData[ground].parts[number];
 }
 
@@ -241,12 +245,15 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         if (!(screen_x < 320)) {
             center_x = 320 - (screen_x - 320);
         }
+
         if (screen_x < 320) {
             center_x = screen_x;
         }
+
         if (!(screen_y < SCREEN_HALF_HEIGHT)) {
             center_y = SCREEN_HALF_HEIGHT - (screen_y - SCREEN_HALF_HEIGHT);
         }
+
         if (screen_y < SCREEN_HALF_HEIGHT) {
             center_y = screen_y;
         }
@@ -335,12 +342,14 @@ void SndInitSeTable() {
         if (table == 0) {
             continue;
         }
+
         for (i = 0; i < 100; i++) {
             SND_SE_INFO *info = &table[i];
 
             if (info->bank == -128) {
                 break;
             }
+
             if (info->bank >= 0) {
                 info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
             }
@@ -353,12 +362,14 @@ void SndInitSeTable() {
         if (table == 0) {
             continue;
         }
+
         for (i = 0; i < 200; i++) {
             SND_SE_INFO *info = &table[i];
 
             if (info->bank == -128) {
                 break;
             }
+
             if (info->bank >= 0) {
                 info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
             }
@@ -371,12 +382,14 @@ void SndInitSeTable() {
         if (table == 0) {
             continue;
         }
+
         for (i = 0; i < 100; i++) {
             SND_SE_INFO *info = &table[i];
 
             if (info->bank == -128) {
                 break;
             }
+
             if (info->bank >= 0) {
                 info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
             }
@@ -389,6 +402,7 @@ void SndInitSeTable() {
         if (info->bank == -128) {
             break;
         }
+
         if (info->bank >= 0) {
             info->vol_no = CSnd.GetSeNo(info->bank, info->prog);
         }
@@ -401,6 +415,7 @@ void SndSetReadBuffer(unsigned int *buffer) {
     if (misalign != 0) {
         buffer = (unsigned int *) ((int) buffer + (64 - misalign));
     }
+
     snd_read_buf = buffer;
 }
 
@@ -415,12 +430,15 @@ int SndSyncBG() {
     if (SndBgmSyncBG()) {
         return 1;
     }
+
     if (SndSoundSyncBG()) {
         return 1;
     }
+
     if (SndSPSeSyncBG()) {
         return 1;
     }
+
     return SndVoiceSyncBG() ? 1 : 0;
 }
 
@@ -477,18 +495,22 @@ static void SetBGMFile(int set_no, unsigned int *buffer, char *config_name) {
     now_bgm_play = 0;
 
     dst = base_name;
+
     while ((c = *config_name) != 0) {
         if (c == '.') {
             break;
         }
+
         *dst = c;
         config_name++;
         dst++;
     }
+
     *dst = 0;
 
     strcat(base_name, ".cfg");
     cfg_script = GetPackFile(buffer, base_name, &size);
+
     if (cfg_script != 0) {
         LoadSoundInfo(&info, (char *) cfg_script, size);
         CSnd.SetReverb(0, info.reverb_mode, info.reverb_depth);
@@ -510,6 +532,7 @@ int SndBgmInit() {
 #ifdef PAL
 void SndBgmDisable(int disable) {
     bgm_off = disable;
+
     if (disable != 0) {
         SndBgmStop();
     }
@@ -527,11 +550,14 @@ int SndBgmLoad(int set_no) {
     if (now_bgm_no == set_no) {
         return 0;
     }
+
     GetBGMFile(set_no, archive_name, config_name);
+
     if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
         SetBGMFile(set_no, snd_read_buf, config_name);
         return 1;
     }
+
     return 0;
 }
 
@@ -548,16 +574,20 @@ int SndBgmLoadBG(int set_no, u_int *buffer, int *size) {
     if (size != 0) {
         *size = 0;
     }
+
     if (now_bgm_no == set_no) {
         return 0;
     }
+
     GetBGMFile(set_no, archive_name, bgm_cfg_file);
     printf("%d\n", set_no);
+
     if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
         load_bgm_no = set_no;
         load_bgm_adr = buffer;
         return 1;
     }
+
     return 0;
 }
 
@@ -565,9 +595,11 @@ int SndBgmSyncBG() {
     if (load_bgm_no < 0 || load_bgm_adr == 0) {
         return 0;
     }
+
     if (ReadBGSync()) {
         return 1;
     }
+
     SetBGMFile(load_bgm_no, load_bgm_adr, bgm_cfg_file);
     load_bgm_no = -1;
     load_bgm_adr = 0;
@@ -618,6 +650,7 @@ void SndBgmFadeOutStop() {
         SndSetBgmVol((int) volume);
         SndStep();
     }
+
     SndBgmStop();
 }
 
@@ -641,6 +674,7 @@ void SndSetBgmVol(int volume) {
         if (volume < 0 || volume > 127) {
             return;
         }
+
         if (now_bgm_play != 0) {
             now_bgm_vol = volume;
             CSnd.SetVol(0, volume);
@@ -667,6 +701,7 @@ int SndGetDefaultBgmVol() {
     if (now_bgm_no < 0) {
         return 0;
     }
+
     return CSnd.GetMidiState()->port[0].sequence[0]->volume;
 }
 
@@ -682,10 +717,13 @@ void SndBgmFadeIn(int frames, int volume, int start_volume) {
         if (volume < 0) {
             volume = SndGetDefaultBgmVol();
         }
+
         bgm_fade_vol = volume;
+
         if (start_volume < 0) {
             start_volume = SndGetBgmVol();
         }
+
         if (start_volume != SndGetDefaultBgmVol()) {
             now_bgm_fade_vol = (float) start_volume / (float) SndGetDefaultBgmVol();
             bgm_fade = 1;
@@ -716,9 +754,11 @@ void SndBgmFadeInOut() {
     if (bgm_fade != 0) {
         now_bgm_fade_vol += bgm_fade_step;
         step = bgm_fade_step;
+
         if ((step < 0.0f ? -step : step) < 0.0001f) {
             bgm_fade = 0;
         }
+
         if (bgm_fade > 0) {
             if (now_bgm_fade_vol >= (float) bgm_fade_vol) {
                 now_bgm_fade_vol = (float) bgm_fade_vol;
@@ -728,6 +768,7 @@ void SndBgmFadeInOut() {
             now_bgm_fade_vol = (float) bgm_fade_vol;
             bgm_fade = 0;
         }
+
         SndSetBgmVol((int) now_bgm_fade_vol);
     }
 }
@@ -758,6 +799,7 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
 
     if (se_no >= 300 && se_no < 400 && se_table_no >= 0) {
         table = cap_se_info[se_table_no];
+
         if (table != 0) {
             return table + (se_no - 300);
         }
@@ -765,6 +807,7 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
 
     if (se_no >= 400 && se_no < 500 && now_voice_set >= 0) {
         table = voice_info[now_voice_set];
+
         if (table != 0) {
             return table + (se_no - 400);
         }
@@ -787,6 +830,7 @@ static int GetPortNo(int se_no) {
     if (info->port >= 0) {
         return info->port;
     }
+
     return 14;
 }
 
@@ -832,18 +876,22 @@ static void SetSoundFile(int set_no, unsigned int *buffer, char *config_name) {
     SndStopAllSe();
 
     dst = base_name;
+
     while ((c = *config_name) != 0) {
         if (c == '.') {
             break;
         }
+
         *dst = c;
         config_name++;
         dst++;
     }
+
     *dst = 0;
 
     strcat(base_name, ".cfg");
     cfg_script = GetPackFile(buffer, base_name, &size);
+
     if (cfg_script != 0) {
         LoadSoundInfo(&info, (char *) cfg_script, size);
         CSnd.SetReverb(1, info.reverb_mode, info.reverb_depth);
@@ -875,11 +923,14 @@ int SndSoundLoad(int set_no) {
     if (now_sound_set == set_no) {
         return 0;
     }
+
     GetSoundFile(set_no, archive_name, config_name);
+
     if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
         SetSoundFile(set_no, snd_read_buf, config_name);
         return 1;
     }
+
     return 0;
 }
 
@@ -896,15 +947,19 @@ int SndSoundLoadBG(int set_no, u_int *buffer, int *size) {
     if (size != 0) {
         *size = 0;
     }
+
     if (now_sound_set == set_no) {
         return 0;
     }
+
     GetSoundFile(set_no, archive_name, snd_cfg_file);
+
     if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
         load_snd_set = set_no;
         load_snd_adr = buffer;
         return 1;
     }
+
     return 0;
 }
 
@@ -912,9 +967,11 @@ int SndSoundSyncBG() {
     if (load_snd_set < 0 || load_snd_adr == 0) {
         return 0;
     }
+
     if (ReadBGSync()) {
         return 1;
     }
+
     SetSoundFile(load_snd_set, load_snd_adr, snd_cfg_file);
     load_snd_set = -1;
     load_snd_adr = 0;
@@ -928,6 +985,7 @@ void SndSePlay(int se_no, int vol, int voice) {
         if (info->vol_no < 0) {
             vol = 127;
         }
+
         int        port = GetPortNo(se_no);
         static int system_snd_id = (int) 0.0f;
 
@@ -956,6 +1014,7 @@ void SndSePlay(int se_no, float volume, float pan, int voice) {
         if (info->vol_no < 0) {
             vol = 127;
         }
+
         CSnd.SE_Play(GetPortNo(se_no), info->bank, info->prog, hw_pan, 127, vol, voice);
     }
 }
@@ -967,9 +1026,11 @@ void SndSePlay(int se_no, float *position, float near, float far) {
     if (near < 0.0f) {
         near = 20.0f;
     }
+
     if (far < 0.0f) {
         far = 500.0f;
     }
+
     SndGetVolPan(&volume, &pan, position, near, far);
     SndSePlay(se_no, volume, pan, 0);
 }
@@ -995,7 +1056,9 @@ void SndSetSeVol(int se_no, int vol, int voice) {
     if (vol < 0 || vol > 127) {
         return;
     }
+
     info = GetSeInfo(se_no);
+
     if (info != 0) {
         CSnd.SE_SetVol(GetPortNo(se_no), info->bank, info->prog, vol, voice);
     }
@@ -1009,18 +1072,24 @@ int SndGetVolf(int se_no, float vol) {
     if (info == 0) {
         return 0;
     }
+
     table = CSnd.GetSeInfTbl();
     level = 64;
+
     if (info->vol_no >= 0) {
         level = table[info->vol_no * 2 + 1];
     }
+
     level = (int) ((float) level * vol);
+
     if (level < 0) {
         level = 0;
     }
+
     if (level > 127) {
         level = 127;
     }
+
     return level;
 }
 
@@ -1028,9 +1097,11 @@ int SndGetPanf(float pan) {
     if (pan < -1.0f) {
         pan = -1.0f;
     }
+
     if (pan > 1.0f) {
         pan = 1.0f;
     }
+
     return (int) (63.0f * pan) + 64;
 }
 
@@ -1080,9 +1151,11 @@ void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
     if (distance > far) {
         level = 0.0f;
     }
+
     if (distance < near) {
         level = 1.0f;
     }
+
     *vol = level;
     *pan = 0.0f;
 
@@ -1099,9 +1172,11 @@ void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
     side = -sceVu0InnerProduct(to_source, right);
 
     sign = 1;
+
     if (side < 0.0f) {
         sign = -1;
     }
+
     weight = side < 0.0f ? -side : side;
     weight *= weight;
     weight *= weight;
@@ -1136,6 +1211,7 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
     SND_SE_SEQ *slot = 0;
 
     *found = 0;
+
     for (i = 0; i < 32; i++) {
         if (se_seq[i].se_no < 0) {
             slot = &se_seq[i];
@@ -1151,6 +1227,7 @@ static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
             }
         }
     }
+
     return slot;
 }
 
@@ -1172,11 +1249,13 @@ int SndSeSeqPlayStop(int se_no, int length, int voice) {
 
     slot->se_no = se_no;
     slot->length = length;
+
     if (found) {
         slot->step = 1;
     } else {
         slot->step = 0;
     }
+
     slot->voice = voice;
     return 1;
 }
@@ -1191,10 +1270,12 @@ static void SndSeSeqStep() {
             if (seq->step == 0) {
                 SndSePlay(seq->se_no, -1, seq->voice);
             }
+
             if (seq->step >= seq->length) {
                 SndSeStop(seq->se_no, seq->voice);
                 InitSeSeq(seq);
             }
+
             seq->step++;
         }
     }
@@ -1258,6 +1339,7 @@ void SndAmbientSetVol(int volume) {
         if (volume > 127) {
             volume = 127;
         }
+
         now_amb_vol = volume;
         CSnd.SetVol(1, volume);
     }
@@ -1282,6 +1364,7 @@ int SndGetAmbientDefaultVol() {
     if (CSnd.GetMidiState()->port[2].sequence[now_amb_no] != 0) {
         return CSnd.GetMidiState()->port[2].sequence[now_amb_no]->volume;
     }
+
     return 64;
 }
 
@@ -1320,11 +1403,14 @@ int SndVoiceLoad(int set_no) {
     if (now_voice_set == set_no) {
         return 0;
     }
+
     GetVoiceFile(set_no, archive_name, config_name);
+
     if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
         SetVoiceFile(set_no, snd_read_buf, config_name);
         return 1;
     }
+
     return 0;
 }
 
@@ -1341,15 +1427,19 @@ int SndVoiceLoadBG(int set_no, u_int *buffer, int *size) {
     if (size != 0) {
         *size = 0;
     }
+
     if (now_voice_set == set_no) {
         return 0;
     }
+
     GetVoiceFile(set_no, archive_name, voice_cfg_file);
+
     if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
         load_voice_set = set_no;
         load_voice_adr = buffer;
         return 1;
     }
+
     return 0;
 }
 
@@ -1357,9 +1447,11 @@ int SndVoiceSyncBG() {
     if (load_voice_set < 0 || load_voice_adr == 0) {
         return 0;
     }
+
     if (ReadBGSync()) {
         return 1;
     }
+
     SetVoiceFile(load_voice_set, load_voice_adr, voice_cfg_file);
     load_voice_set = -1;
     load_voice_adr = 0;
@@ -1378,6 +1470,7 @@ static SND_SE_INFO *GetSPInfo(int se_no) {
     if (se_no < 0 || se_no >= 64) {
         return 0;
     }
+
     return &special_se_info[se_no];
 }
 
@@ -1416,11 +1509,14 @@ int SndSPSeLoad(int set_no) {
     if (now_sp_no == set_no) {
         return 0;
     }
+
     GetSPSeFile(set_no, archive_name, config_name);
+
     if (LoadFile2(archive_name, snd_read_buf, 0, 0)) {
         SetSPSeFile(set_no, snd_read_buf, config_name);
         return 1;
     }
+
     return 0;
 }
 
@@ -1430,12 +1526,15 @@ int SndSPSeLoadBG(int set_no, u_int *buffer, int *size) {
     if (size != 0) {
         *size = 0;
     }
+
     GetSPSeFile(set_no, archive_name, sp_cfg_file);
+
     if (LoadFileBG(archive_name, (u_long128 *) buffer, size)) {
         load_sp_no = set_no;
         load_sp_adr = buffer;
         return 1;
     }
+
     return 0;
 }
 
@@ -1450,9 +1549,11 @@ int SndSPSeSyncBG() {
     if (load_sp_no < 0 || load_sp_adr == 0) {
         return 0;
     }
+
     if (ReadBGSync()) {
         return 1;
     }
+
     SetSPSeFile(load_sp_no, load_sp_adr, sp_cfg_file);
     load_sp_no = -1;
     load_sp_adr = 0;
@@ -1473,6 +1574,7 @@ void SndSPSePlay(int se_no, int vol) {
         if (info->vol_no < 0) {
             vol = 64;
         }
+
         if (vol < 0) {
             CSnd.SE_Play(12, info->vol_no, 0);
         } else {
@@ -1508,9 +1610,11 @@ void SndSetSPSeVolf(int se_no, float volume) {
         if (level < 0) {
             level = 0;
         }
+
         if (level > 127) {
             level = 127;
         }
+
         CSnd.SE_SetVol(12, info->bank, info->prog, level, 0);
     }
 }
@@ -1526,11 +1630,13 @@ void SndSetSPSePanf(int se_no, float pan) {
     if (pan < -1.0f) {
         pan = -1.0f;
     }
+
     if (pan > 1.0f) {
         pan = 1.0f;
     }
 
     SND_SE_INFO *info = GetSPInfo(se_no);
+
     if (info != 0) {
         CSnd.SE_SetPan(12, info->vol_no, (int) (63.0f * pan) + 64, 0);
     }
@@ -3358,6 +3464,7 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
     u8 *data = (u8 *) script;
     clear = (u8 *) info;
     memset(info, 0, sizeof(SND_INFO));
+
     for (u_int i = 0; i < sizeof(SND_INFO); i++) {
         *clear++ = 0;
     }
@@ -3367,11 +3474,14 @@ void LoadSoundInfo(SND_INFO *info, char *script, int script_size) {
     CScriptInterpreter interpreter;
     interpreter.SetScript((char *) data, script_size);
     interpreter.SetTAG((TAG_PARAM *) Command__3, 2);
+
     for (;;) {
         int tag = interpreter.GetNextTAG();
+
         if (tag < 0) {
             break;
         }
+
         CommandExe__3[tag](interpreter.arguments);
     }
 }
@@ -3414,6 +3524,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3450,6 +3561,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3486,6 +3598,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3522,6 +3635,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3558,6 +3672,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3575,6 +3690,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     zbuf.bits.zmsk = 1;
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
+
     if (mode != 0) {
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
@@ -3602,6 +3718,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     }
+
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
@@ -3647,6 +3764,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3681,6 +3799,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3711,6 +3830,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3745,6 +3865,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3831,6 +3952,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     if (texture == 0) {
         return;
     }
+
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -3851,6 +3973,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     x[1] = x[3] = (screen.x + screen.width + 1) - (screen.x + pivot_x);
     y[0] = y[1] = -pivot_y;
     y[2] = y[3] = (screen.y + screen.height + 1) - (screen.y + pivot_y);
+
     for (i = 0; i < 4; i++) {
         float turned_x = y[i] * cosf(angle) + x[i] * sinf(angle);
         float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
@@ -3904,6 +4027,7 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
     x[1] = x[3] = ((screen.width - pivot_x) << 4) - 1;
     y[0] = y[1] = pivot_y * -16;
     y[2] = y[3] = ((screen.height - pivot_y) << 4) - 1;
+
     for (i = 0; i < 4; i++) {
         float turned_x = -y[i] * sinf(angle) - x[i] * cosf(angle);
         float turned_y = -x[i] * sinf(angle) + y[i] * cosf(angle);

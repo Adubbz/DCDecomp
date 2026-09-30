@@ -20,6 +20,7 @@ void CWeaponElement::Initialize() {
         size[i] = 1.0f;
         alpha[i] = 1.0f;
     }
+
     on = 0;
 }
 
@@ -47,6 +48,7 @@ void CWeaponElement::Set(sceVu0FVECTOR *origin, float *position, float power, in
             Init_Holy(position);
             break;
     }
+
     on = 1;
 }
 
@@ -128,26 +130,32 @@ void CWeaponElement::Step_Holy() {
     int i;
 
     dead = 0;
+
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         if (alpha[i] <= 0.0f) {
             dead++;
         } else {
             offset[i][1] += 0.5f;
             shrink[i] -= 0.01f;
+
             if (shrink[i] <= 0.0f) {
                 shrink[i] = 0.0f;
                 alpha[i] = 0.0f;
             }
+
             if (frame_timer == 4) {
                 frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
+
             if (fading[i] != 0) {
                 alpha[i] -= 8.0f;
+
                 if (alpha[i] <= 0.0f) {
                     alpha[i] = 0.0f;
                 }
             } else {
                 alpha[i] += 16.0f;
+
                 if (!(alpha[i] < 128.0f)) {
                     fading[i] = 1;
                 }
@@ -156,6 +164,7 @@ void CWeaponElement::Step_Holy() {
     }
 
     frame_timer = frame_timer - 1;
+
     if (frame_timer == 0) {
         frame_timer = 4;
     }
@@ -164,6 +173,7 @@ void CWeaponElement::Step_Holy() {
     if (spawn_budget > 0) {
         spawn_budget = spawn_budget - 1;
         spawn_delay = spawn_delay - 1;
+
         if (spawn_delay <= 0) {
             for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
                 if (alpha[i] == 0.0f) {
@@ -206,13 +216,16 @@ void CWeaponElement::Draw_Holy() {
 
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         row = frame[i];
+
         if (alpha[i] <= 0.0f) {
             continue;
         }
+
         width = scale * (size[i] * shrink[i]);
         pos[0] = base[0] + offset[i][0];
         pos[1] = base[1] + offset[i][1];
         pos[2] = base[2] + offset[i][2];
+
         if (MGRotTransPers3DSprite(corner[0], corner[3], pos, width, width / 2.0f, 0) != 1) {
             continue;
         }
@@ -266,26 +279,32 @@ void CWeaponElement::Step_Cold() {
     int i;
 
     dead = 0;
+
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         if (alpha[i] <= 0.0f) {
             dead++;
         } else {
             offset[i][1] -= 0.1f + 0.3f * rand() / 2147483648.0f;
             shrink[i] -= 0.01f;
+
             if (shrink[i] <= 0.0f) {
                 shrink[i] = 0.0f;
                 alpha[i] = 0.0f;
             }
+
             if (frame_timer == 4) {
                 frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
+
             if (fading[i] != 0) {
                 alpha[i] -= 6.0f;
+
                 if (alpha[i] <= 0.0f) {
                     alpha[i] = 0.0f;
                 }
             } else {
                 alpha[i] += 12.0f;
+
                 if (!(alpha[i] < 128.0f)) {
                     fading[i] = 1;
                 }
@@ -294,6 +313,7 @@ void CWeaponElement::Step_Cold() {
     }
 
     frame_timer = frame_timer - 1;
+
     if (frame_timer == 0) {
         frame_timer = 4;
     }
@@ -301,6 +321,7 @@ void CWeaponElement::Step_Cold() {
     if (spawn_budget > 0) {
         spawn_budget = spawn_budget - 1;
         spawn_delay = spawn_delay - 1;
+
         if (spawn_delay <= 0) {
             for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
                 if (alpha[i] == 0.0f) {
@@ -343,13 +364,16 @@ void CWeaponElement::Draw_Cold() {
 
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         row = frame[i];
+
         if (alpha[i] <= 0.0f) {
             continue;
         }
+
         width = scale * (size[i] * shrink[i]);
         pos[0] = base[0] + offset[i][0];
         pos[1] = base[1] + offset[i][1];
         pos[2] = base[2] + offset[i][2];
+
         if (MGRotTransPers3DSprite(corner[0], corner[3], pos, width, width / 2.0f, 0) != 1) {
             continue;
         }
@@ -410,28 +434,35 @@ void CWeaponElement::Step_Wind() {
     int i;
 
     dead = 0;
+
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         if (alpha[i] <= 0.0f) {
             dead++;
         } else {
             if (fading[i] != 0) {
                 alpha[i] -= 4.0f;
+
                 if (alpha[i] <= 0.0f) {
                     alpha[i] = 0.0f;
                 }
             } else {
                 alpha[i] += 32.0f;
+
                 if (!(alpha[i] < 128.0f)) {
                     fading[i] = 1;
                 }
             }
+
             if (frame_timer == 4) {
                 frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
+
             spin[i] += spin_speed[i];
+
             if (!(spin[i] <= 3.141592f)) {
                 spin[i] -= 6.283184f;
             }
+
             offset[i][0] += velocity[i][0];
             offset[i][1] += 0.2f;
             offset[i][2] += velocity[i][2];
@@ -439,6 +470,7 @@ void CWeaponElement::Step_Wind() {
     }
 
     frame_timer = frame_timer - 1;
+
     if (frame_timer == 0) {
         frame_timer = 4;
     }
@@ -446,6 +478,7 @@ void CWeaponElement::Step_Wind() {
     if (spawn_budget > 0) {
         spawn_budget = spawn_budget - 1;
         spawn_delay = spawn_delay - 1;
+
         if (spawn_delay <= 0) {
             for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
                 if (alpha[i] == 0.0f) {
@@ -495,9 +528,11 @@ void CWeaponElement::Draw_Wind() {
 
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         row = frame[i];
+
         if (alpha[i] <= 0.0f) {
             continue;
         }
+
         width = scale * (size[i] * shrink[i]);
 
         // A wind spark is turned about the vertical by the spin it carries.
@@ -507,6 +542,7 @@ void CWeaponElement::Draw_Wind() {
         pos[0] += base[0];
         pos[1] += base[1];
         pos[2] += base[2];
+
         if (MGRotTransPers3DSprite(corner[0], corner[3], pos, width, width / 2.0f, 0) != 1) {
             continue;
         }
@@ -563,26 +599,32 @@ void CWeaponElement::Step_Fire() {
     int i;
 
     dead = 0;
+
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         if (alpha[i] <= 0.0f) {
             dead++;
         } else {
             offset[i][1] += 0.01f + 0.6f * rand() / 2147483648.0f;
             shrink[i] -= 0.01f;
+
             if (shrink[i] <= 0.0f) {
                 shrink[i] = 0.0f;
                 alpha[i] = 0.0f;
             }
+
             if (frame_timer == 4) {
                 frame[i] = (int) (5.0f * rand() / 2147483648.0f) * 0x30;
             }
+
             if (fading[i] != 0) {
                 alpha[i] -= 8.0f;
+
                 if (alpha[i] <= 0.0f) {
                     alpha[i] = 0.0f;
                 }
             } else {
                 alpha[i] += 16.0f;
+
                 if (!(alpha[i] < 128.0f)) {
                     fading[i] = 1;
                 }
@@ -591,6 +633,7 @@ void CWeaponElement::Step_Fire() {
     }
 
     frame_timer = frame_timer - 1;
+
     if (frame_timer == 0) {
         frame_timer = 4;
     }
@@ -598,6 +641,7 @@ void CWeaponElement::Step_Fire() {
     if (spawn_budget > 0) {
         spawn_budget = spawn_budget - 1;
         spawn_delay = spawn_delay - 1;
+
         if (spawn_delay <= 0) {
             for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
                 if (alpha[i] == 0.0f) {
@@ -640,13 +684,16 @@ void CWeaponElement::Draw_Fire() {
 
     for (i = 0; i < WEAPON_ELEMENT_SPARK_MAX; i++) {
         row = frame[i];
+
         if (alpha[i] <= 0.0f) {
             continue;
         }
+
         width = scale * (size[i] * shrink[i]);
         pos[0] = base[0] + offset[i][0];
         pos[1] = base[1] + offset[i][1];
         pos[2] = base[2] + offset[i][2];
+
         if (MGRotTransPers3DSprite(corner[0], corner[3], pos, width, width / 2.0f, 0) != 1) {
             continue;
         }
@@ -706,6 +753,7 @@ void CWeaponElement::Step_Thunder() {
     int dead;
 
     dead = 0;
+
     for (int i = 0; i < count; i++) {
         if (alpha[i] <= 0.0f) {
             dead++;
@@ -715,6 +763,7 @@ void CWeaponElement::Step_Thunder() {
             offset[i][2] += velocity[i][2];
             shrink[i] -= 0.01f;
             alpha[i] -= 4.0f;
+
             if (alpha[i] <= 3.0f) {
                 alpha[i] = 0.0f;
             }
@@ -728,6 +777,7 @@ void CWeaponElement::Step_Thunder() {
 
     for (int i = 0; i < bolt_count; i++) {
         bolt_timer[i] = bolt_timer[i] - 1;
+
         if (bolt_timer[i] <= 0) {
             bolt_head[i] = (int) ((float) count * rand() / 2147483648.0f);
             bolt_tail[i] = (int) ((float) count * rand() / 2147483648.0f);
@@ -735,6 +785,7 @@ void CWeaponElement::Step_Thunder() {
             bolt_frame[i] = (int) (4.0f * rand() / 2147483648.0f);
         } else if (bolt_timer[i] % 3 == 0) {
             bolt_frame[i] = bolt_frame[i] + 1;
+
             if (bolt_frame[i] >= 4) {
                 bolt_frame[i] = 0;
             }
@@ -758,7 +809,9 @@ void CWeaponElement::Draw_Thunder() {
         if (alpha[i] <= 0.0f) {
             continue;
         }
+
         width = size[i] * shrink[i];
+
         if (MGRotTransPers3DSprite(corner[0], corner[3], offset[i], width, width / 2.0f, 0) != 1) {
             continue;
         }

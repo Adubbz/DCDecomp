@@ -17,12 +17,15 @@ void CDngMessageMan::LimmitZone() {
         message = 0xB;
         insert_mes_1 = UserStatus->cur_chara + 0x32;
     }
+
     if (UserStatus->res_limit_zone_current == 0xA) {
         message = 0xD;
     }
+
     if (UserStatus->res_limit_zone_current == 0xB) {
         message = 0xE;
     }
+
     timer = 0xF0;
     steev_window = 0;
 }
@@ -33,14 +36,17 @@ void CDngMessageMan::SetStatus_Dry(float water_max, float water_before, float wa
     if (threshold < water_now && message == 0xAA) {
         message = -1;
     }
+
     if (0.0f < water_now && message == 0xAB) {
         message = -1;
     }
+
     if (threshold <= water_before + 0.5f && !(threshold <= water_now - 0.5f) && message == -1) {
         message = 0xAA;
         timer = 0xF0;
         steev_window = 0;
     }
+
     if (water_now <= 0.0f && (message == -1 || message == 0xAB)) {
         message = 0xAB;
         timer = 0x9FFF6;
@@ -55,6 +61,7 @@ void CDngMessageMan::SetSteevMes(int first) {
         timer = 0xF0;
         steev_window = 1;
         steev_index++;
+
         if (steev_index > 9) {
             steev_index = 0;
         }

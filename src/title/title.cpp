@@ -281,11 +281,13 @@ void DataLoad() {
             LoadFileBG("rmdat/title.pak", (u_long128 *) read_buffer, 0);
             break;
     }
+
     CScript.load_no = -1;
 
     if (CScript.init_no != -1) {
         while (ReadBGSync())
             ;
+
         StartReadBG();
     }
 
@@ -321,6 +323,7 @@ void DataLoad() {
             InitProcTitle();
             break;
     }
+
     CScript.init_no = -1;
 }
 
@@ -374,6 +377,7 @@ static void InitProcA() {
             textures[2].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -567,27 +571,34 @@ void DrawProcA() {
         if (lightcolor[i][0] < (float) col) {
             scene_color[i][0] = (float) col;
         }
+
         if (lightcolor[i][1] < (float) col) {
             scene_color[i][1] = (float) col;
         }
+
         if (lightcolor[i][2] < (float) col) {
             scene_color[i][2] = (float) col;
         }
+
         if (flash[i][0] < (float) col) {
             chara_color[i][0] = (float) col;
         }
+
         if (flash[i][1] < (float) col) {
             chara_color[i][1] = (float) col;
         }
+
         if (flash[i][2] < (float) col) {
             chara_color[i][2] = (float) col;
         }
+
         if (col > 2) {
             col -= 2;
         }
     }
 
     typedef float ap0, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, ap9, ap10, ap11, ap12, ap13, ap14, ap15;
+
     if (CScript.camera_start == 2) {
         Chara__3[6].SetScale((float) (col - col + 2), 2.0f, 2.0f);
         Chara__3[8].SetScale(2.0f, 2.0f, 2.0f);
@@ -731,6 +742,7 @@ static void InitProcB() {
             textures[4].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -1045,6 +1057,7 @@ static void InitProcC() {
             textures[4].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -1277,6 +1290,7 @@ static void InitProcD() {
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -1453,6 +1467,7 @@ static void InitProcE() {
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -1617,6 +1632,7 @@ static void InitProcF() {
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -1814,6 +1830,7 @@ static void InitProcG() {
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -1986,6 +2003,7 @@ static void InitProcH() {
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -2234,6 +2252,7 @@ static void InitProcI() {
             textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
             break;
     }
+
 #else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
 #endif
@@ -2431,8 +2450,10 @@ void DrawProcTitle() {
     set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1), CRect<int>(0, 366, 640, 48), CRect<int>(0, 208, 640, 48), TitleFade);
 
     TitleFadeCnt++;
+
     if (TitleFadeCnt >= 60) {
         TitleFade++;
+
         if (TitleFade >= 128) {
             TitleFade = 128;
         }

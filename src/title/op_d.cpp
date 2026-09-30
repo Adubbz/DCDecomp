@@ -248,6 +248,7 @@ void FaceChange(int actor_no) {
 void OpD_LoadDataBG() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn4/seirei.pak", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -257,6 +258,7 @@ void OpD_LoadDataBG2() {
 
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn4/seirei2.pak", (u_long128 *) read_buffer, &size);
     SndBgmLoadBG(0, (u_int *) ((u_long128 *) read_buffer + (size >> 4) + 1), 0);
     CScript__2.load_no = -1;
@@ -669,6 +671,7 @@ void OpD_MotionProcess() {
                 for (int i = 0; i < 20; i++) {
                     Chara__3[cloth_actor].ClothStep(0);
                 }
+
                 break;
 
             case 106:
@@ -681,6 +684,7 @@ void OpD_MotionProcess() {
                 for (int i = 0; i < 10; i++) {
                     Chara__3[cloth_actor].ClothStep(0);
                 }
+
                 break;
         }
     }
@@ -965,6 +969,7 @@ void OpD_DrawProcess() {
             if (CScript__2.mes_wait == 0) {
                 EffectSeireiKing(4.0f);
             }
+
             break;
 
         case 112:
@@ -1333,6 +1338,7 @@ static void Setsumei() {
             if (fadeB3 > 0) {
                 fadeB3 = fadeB3 - 8;
             }
+
             break;
 
         case 1:
@@ -1345,6 +1351,7 @@ static void Setsumei() {
             if (fadeB3 > 0) {
                 fadeB3 = fadeB3 - 8;
             }
+
             break;
 
         case 2:
@@ -1357,6 +1364,7 @@ static void Setsumei() {
             if (fadeB2 > 0) {
                 fadeB2 = fadeB2 - 8;
             }
+
             break;
     }
 
@@ -1616,6 +1624,7 @@ static void Setsumei() {
             if (fadeB3 > 0) {
                 fadeB3 = fadeB3 - 8;
             }
+
             break;
 
         case 1:
@@ -1628,6 +1637,7 @@ static void Setsumei() {
             if (fadeB3 > 0) {
                 fadeB3 = fadeB3 - 8;
             }
+
             break;
 
         case 2:
@@ -1640,6 +1650,7 @@ static void Setsumei() {
             if (fadeB2 > 0) {
                 fadeB2 = fadeB2 - 8;
             }
+
             break;
     }
 

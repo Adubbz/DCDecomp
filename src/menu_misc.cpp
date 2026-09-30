@@ -102,8 +102,10 @@ int NowGetGameFlagForBtlMenu(int game_flag) {
                     game_flag = 10;
                 }
             }
+
             break;
     }
+
     return game_flag;
 }
 
@@ -151,6 +153,7 @@ void DrawMenuNothing(int x, int y, int width, int height, char *name, int custom
             v = 0x159;
             break;
     }
+
     DrawMenu2DSprite(texture, CRect_i_(x, y, 0x12, 0x12), CRect_i_(u, v, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x + 0x12, y, inner_w, 0x12), CRect_i_(u + 0x10, v, 4, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y, 0x12, 0x12), CRect_i_(u + 0x12, v, 0x12, 0x12), alpha);
@@ -179,9 +182,11 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
     printf("trueNo = %d\n", item_no);
     int        value_no = 0;
     ITEM_DATA *data = GetItemData(item_no);
+
     if (data == NULL) {
         return 0;
     }
+
     if ((data->kind_flags & ITEMKINDF_CONSUMABLE) && target == 1) {
         if (item_no != ITEM_MELLOW_BANANA) {
             if ((data->use_flags & ITEMUSE_HEAL_HP) && 0 < now_hp && now_hp < max_hp) {
@@ -190,6 +195,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 status->SetNextLife(chara, now_hp + add, 5.0f);
                 used = 1;
             }
+
             if ((data->use_flags & ITEMUSE_DRINK) && 2.0f + now_water < max_water) {
                 int add = (&data->vol)[value_no];
                 value_no++;
@@ -197,9 +203,11 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 float next = status->water_now[chara];
                 limit = status->water_max[chara];
                 next += add;
+
                 if (limit < next) {
                     next = limit;
                 }
+
                 status->water_now[chara] = next;
                 used = 1;
             }
@@ -210,26 +218,32 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             used = 1;
         }
     }
+
     if ((data->kind_flags & ITEMKINDF_RANDOM) && (data->use_flags & ITEMUSE_STATUS) && item_no >= ITEM_FLUFFY_DOUGHNUT && item_no < ITEM_DUMMY) {
         if (chara == item_no - ITEM_FLUFFY_DOUGHNUT) {
             int old = status->defense[chara];
             int range = data->vol_range;
+
             if (range <= 0) {
                 printf("value=0\n");
                 range = 1;
             }
+
             int add = data->vol + rand() % range;
             MenuItemUseVolume = add;
             old += add;
+
             if (old >= 99) {
                 old = 99;
             }
+
             status->defense[chara] = old;
             used = 1;
         } else {
             used = 0;
         }
     }
+
     if (data->kind_flags & 1) {
         if (target == 1) {
             if (data->use_flags & ITEMUSE_STATUS) {
@@ -239,35 +253,44 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                         int        num;
                         ITEM_PACK *pack = &status->item_pack;
                         num = pack->num;
+
                         if (num < 0x60) {
                             pack->num += (&data->vol)[value_no];
                             MenuItemUseVolume = pack->num;
+
                             if (pack->num > 100) {
                                 pack->num = 100;
                             }
+
                             for (i = num; i < pack->num; i++) {
                                 if (pack->item[i] < ITEM_DUNGEON_START) {
                                     pack->item[i] = -1;
                                 }
                             }
+
                             used = 1;
                         }
+
                         break;
                     }
                     case ITEM_FRUIT_OF_EDEN: {
                         s16 limit[6] = {0xAA, 0x8C, 0xAA, 0x8C, 0xB4, 0xA0};
+
                         if ((old_condition & 2) || now_hp <= 0 || !((s16) max_hp < limit[chara])) {
                             used = 0;
                         } else {
                             status->max_hp[chara] = max_hp + (&data->vol)[value_no];
                             s16 next = status->max_hp[chara];
+
                             if (next >= limit[chara]) {
                                 next = limit[chara];
                                 status->max_hp[chara] = limit[chara];
                             }
+
                             status->SetNextLife(chara, next, 0.0f);
                             used = 1;
                         }
+
                         break;
                     }
                     case ITEM_GOURD:
@@ -277,11 +300,14 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                             status->water_now[chara] = next;
                             used = 1;
                         }
+
                         break;
                 }
             }
+
             printf("prev status = %d\n", old_condition);
             u32 flags = data->use_flags;
+
             if ((old_condition & 2) || now_hp <= 0) {
                 if (item_no == ITEM_REVIVAL_POWDER) {
                     status->ailments[chara] = 0;
@@ -293,18 +319,22 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     status->ailments[chara] ^= 4;
                     used = 1;
                 }
+
                 if ((data->use_flags & 0x8000) && (old_condition & 0x10)) {
                     status->ailments[chara] ^= 0x10;
                     used = 1;
                 }
+
                 if ((data->use_flags & 0x10000) && (old_condition & 0x20)) {
                     status->ailments[chara] ^= 0x20;
                     used = 1;
                 }
+
                 if ((data->use_flags & 0x20000) && (old_condition & 0x40)) {
                     status->ailments[chara] ^= 0x40;
                     used = 1;
                 }
+
                 if (item_no == ITEM_MIGHTY_HEALING && (old_condition & 0x74)) {
                     if (status->ailments[chara] & 8) {
                         status->ailments[chara] = 0;
@@ -312,10 +342,13 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                     } else {
                         status->ailments[chara] = 0;
                     }
+
                     used = 1;
                 }
+
                 if (BtlMenuMode == 0 && (data->use_flags & 0x1000)) {
                     int now = status->ailments[chara];
+
                     if (!(now & 4)) {
                         status->ailments[chara] = now | 8;
                         status->ailment_frames[chara] = 0x708;
@@ -324,31 +357,40 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 }
             }
         }
+
         if (target == 4 || target == 2) {
             if (weapon == NULL) {
                 return used;
             }
+
             int default_no = GetDefaultWeaponNo(chara);
+
             if (item_no == ITEM_REPAIR_POWDER) {
                 if (weapon->durability_f < weapon->durability) {
                     weapon->durability_f = weapon->durability;
                     int weapon_no = weapon->item_no;
+
                     if (weapon_no == default_no) {
                         weapon->item_no = weapon_no + 1;
                         WepDataListToHaveCopy(weapon->item_no, weapon);
                     }
+
                     used = 2;
                 }
             }
+
             if (item_no == ITEM_POWERUP_POWDER) {
                 if (weapon->item_no == ITEM_WEAPON_SERPENT_SWORD && GetMenuHebikiriFlag() == 0) {
                     return 0;
                 }
+
                 if (weapon->level >= 99) {
                     return 0;
                 }
+
                 if (weapon->item_no != default_no) {
                     int exp = weapon->experience;
+
                     if (exp < GetWeaponMaxExp(weapon)) {
                         WeaponLevelUpValueCalc(weapon, &level_up, 1, 0);
                         memcpy(weapon, &level_up, sizeof(WEAPON_HAVE));
@@ -360,8 +402,10 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             }
         }
     }
+
     if (BtlMenuMode == 0 && !(old_condition & 2) && now_hp > 0 && (data->kind_flags & 2) && target == 1) {
         int before = status->ailments[chara];
+
         if (data->use_flags & 0x100) {
             if (old_condition & 4) {
                 status->ailments[chara] = before ^ 4;
@@ -370,31 +414,39 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
                 status->ailments[chara] &= ~0x58;
                 status->ailment_frames[chara] = 300;
             }
+
             ComMenuSePlay(0x6B);
         }
+
         if (data->use_flags & 0x200) {
             int now = status->ailments[chara];
+
             if (!(now & 0xC)) {
                 status->ailments[chara] = now | 0x10;
                 status->ailments[chara] &= ~0x40;
                 ComMenuSePlay(0x6B);
             }
         }
+
         if (data->use_flags & 0x400) {
             status->ailments[chara] |= 0x20;
             ComMenuSePlay(0x6B);
         }
+
         if (data->use_flags & 0x800) {
             int now = status->ailments[chara];
+
             if (!(now & 0x1C)) {
                 status->ailments[chara] = now | 0x40;
                 ComMenuSePlay(0x6B);
             }
         }
+
         if (before != status->ailments[chara]) {
             used = 1;
         }
     }
+
     return used;
 }
 
@@ -407,9 +459,11 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
  */
 float GetNowWeaponRate(WEAPON_HAVE *weapon) {
     float rate = 1.0f;
+
     if (weapon != NULL && weapon->item_no == 0x110 && weapon->durability_f <= 0.2f * weapon->durability) {
         rate = 1.5f;
     }
+
     return rate;
 }
 
@@ -419,10 +473,13 @@ int WeaponStatusBreakEnable(WEAPON_HAVE *weapon) {
     if (weapon == NULL) {
         return 0;
     }
+
     enable = 0;
+
     if (weapon->level >= 5) {
         enable = 1;
     }
+
     return enable;
 }
 
@@ -442,14 +499,17 @@ int WeaponStatusBuildUp(WEAPON_HAVE *weapon, int &enabled_count) {
     EnableBuildUpModel(build_info, weapon);
 
     int total = 0;
+
     while (build_info[total].weapon_no != -1 && total < 5) {
         total++;
     }
+
     for (int i = 0; i < total; i++) {
         if (build_info[i].enabled == 1) {
             enabled_count++;
         }
     }
+
     return total;
 }
 
@@ -457,16 +517,21 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
     if (chara == NULL || weapon == NULL) {
         return;
     }
+
     if (weapon->item_no != 0x110) {
         return;
     }
+
     CFrame *whole = chara->frame->SearchFrame("w15a");
     CFrame *broken = chara->frame->SearchFrame("w15b");
+
     if (whole == NULL || broken == NULL) {
         return;
     }
+
     int show_broken;
     int show_whole;
+
     if (weapon->durability_f <= 0.2 * weapon->durability) {
         show_broken = 1;
         show_whole = 2;
@@ -474,6 +539,7 @@ void MenuWeaponSpSet(CCharacter *chara, WEAPON_HAVE *weapon) {
         show_broken = 2;
         show_whole = 1;
     }
+
     whole->attr.draw_on = show_whole;
     broken->attr.draw_on = show_broken;
 }
@@ -540,6 +606,7 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     if (ReadBGSync() == 1) {
         BreakReadBG();
     }
+
     char  path[64] = "commenu/c";
     char *numbers[6] = {"01", "04", "06", "05", "10", "18"};
     char  image[64];
@@ -549,23 +616,28 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     strcat(path, "wtes.chr");
     WeaponRead_Buf = MenuCalcBufAlignment(buffer);
     StartReadBG();
+
     if (LoadFileBG(path, buffer, &size) == 0) {
         return 0;
     }
+
     buffer += (size >> 4) + 1;
     buffer = MenuCalcBufAlignment(buffer);
     GetPathReadDifferntLang(image);
     char *names[6] = {"kgetoan", "kgesyao", "kgegoro", "kgeruby", "kgeunga", "kgeozu"};
     strcat(image, names[chara]);
     strcat(image, "2.img");
+
     if (LoadFileBG(image, buffer, &size) == 0) {
         return 0;
     }
+
     if (BtlMenuMode == 0) {
         buffer += (size >> 4) + 1;
         SetWepEffectMenuReadBuf(buffer);
         DngWepEffectReadStart();
     }
+
     return 1;
 }
 
@@ -657,16 +729,20 @@ int EnterWeaponModel(int chara, int texture_block, int weapon_slot) {
             TexManager.CleanUpTextureList();
             TexManager.LoadTextureBlockEX(-1, texture);
             WepIcon = TexManager.GetTexture("wepicon", MenuShadowReadBlock);
+
             for (int i = 0; i < weapon_max; i++) {
                 order[i] = i;
             }
+
             InitMenuWeaponModelData();
+
             for (int i = 0; i < weapon_max; i++) {
                 char *name = names[chara];
                 strcpy(image, name);
                 strcpy(model, name);
                 strcpy(chr, name);
                 int weapon_no = order[i];
+
                 if (0 <= weapon_no && weapon_no <= 9) {
                     strcat(chr, "w0%d");
                     sprintf(chr, chr, weapon_no);
@@ -686,26 +762,32 @@ int EnterWeaponModel(int chara, int texture_block, int weapon_slot) {
                     strcat(image, "w01");
                     strcat(model, "w01d");
                 }
+
                 strcat(chr, ".chr");
                 strcat(image, ".img");
                 strcat(model, ".mds");
                 u_int *file = GetPackFile((u_int *) pack->buffer, chr, NULL);
+
                 if (file != NULL) {
                     *GetMenuWeaponModelData(i) = (int) file;
                 }
             }
+
             u_long128 *build;
+
             if (effect != NULL) {
                 SetWepEffectMenuReadBuf(effect->buffer);
                 build = effect->buffer + 0x2D01;
             } else {
                 build = shadow->buffer + (shadow->size >> 4) + 1;
             }
+
             MenuWeaponModelBuildBuffer = build;
             WeaponModelBuildFunc(chara, texture_block);
             break;
         }
     }
+
     return 1;
 }
 
@@ -735,33 +817,44 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     data = (u_int **) GetMenuWeaponModelData(1);
     BtGetWeaponNamePath2(name, cfg, chara, 1);
     DngWeaponFrm[1].LoadPackData3(*data, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
+
     for (int i = 0; i < 10; i++) {
         WEAPON_HAVE *weapon = &weapons[i];
+
         if (weapon == NULL) {
             SetMenuWeaponModelReference(i, -2, -1);
             continue;
         }
+
         int item_no = weapon->item_no;
+
         if (item_no < 0x101) {
             SetMenuWeaponModelReference(i, -2, -1);
             continue;
         }
+
         unsigned int kind = item_no - default_no;
+
         if (kind < 2U) {
             SetMenuWeaponModelReference(i, kind, kind);
             continue;
         }
+
         int found = 0;
+
         for (int j = 0; j < 10; j++) {
             int *info = GetMenuWeaponModelInfo(j);
+
             if (info[1] == kind) {
                 found = 1;
                 SetMenuWeaponModelReference(i, info[0], info[1]);
                 break;
             }
         }
+
         if (found == 0) {
             u_int **pack = (u_int **) GetMenuWeaponModelData(kind);
+
             if (*pack == NULL) {
                 printf("%d pack data is NULL\n", kind);
             } else {
@@ -772,6 +865,7 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
             }
         }
     }
+
     WepMenuEffectReadBuf = (CWeaponLevelUp *) (MenuWeaponModelBuildBuffer + 0xEC01);
     WepMenuEffectReadBuf = (CWeaponLevelUp *) MenuCalcBufAlignment((u_long128 *) WepMenuEffectReadBuf);
     printf("read buffer           = %p\n", read_buffer);
@@ -786,16 +880,20 @@ int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *read_buffe
     u_int **first = (u_int **) GetMenuWeaponModelData(0);
     u_int **second = (u_int **) GetMenuWeaponModelData(1);
     int     kind = 0;
+
     if (UserStatus != NULL) {
         kind = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
         kind -= GetDefaultWeaponNo(chara);
     }
+
     u_int **equipped = (u_int **) GetMenuWeaponModelData(kind);
+
     if (equipped == NULL) {
         equipped = second;
     } else if (*equipped == NULL) {
         *equipped = *second;
     }
+
     LoadWeapon2(*first, *second, *equipped, chara, 1);
     MenuWeaponEffectSet(1);
     return 1;
@@ -810,12 +908,15 @@ int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *read_buffe
  */
 static int GetNowMotionStepCnt(int status) {
     int step = 0;
+
     if (status & 0x40) {
         step = 1;
     }
+
     if ((status & 4) || (status & 2)) {
         step = 2;
     }
+
     return step;
 }
 
@@ -830,6 +931,7 @@ int GetNowActiveCharaStatus(int chara_no) {
     if (BtlMenuStatusPt == NULL) {
         return 0;
     }
+
     return BtlMenuStatusPt->GetActiveCharaStatus(chara_no);
 }
 
@@ -845,13 +947,16 @@ void SetNowCharaMotionNo(int chara) {
     if (!(hp < 0.3f * max_hp)) {
         next = 0;
     }
+
     if ((status & 0x10) || (status & 2) || hp < 0.3f * max_hp) {
         next = 1;
     }
+
     if (next != motion) {
         MenuCharaFrame.SetMotion(next, 0);
         motion = next;
     }
+
     MOTION_INFO *info = MenuCharaFrame.GetMotionInfo(motion);
     info->speed = speed[GetNowMotionStepCnt(status)];
 }
@@ -873,36 +978,42 @@ void SetItemMenuColor(int chara) {
     MGGetAmbient(MenuCharaOldAmbient);
     status = GetNowActiveCharaStatus(chara);
     should_tint = 0;
+
     if (status & 4) {
         red = 83.0f;
         green = 104.0f;
         blue = 95.0f;
         should_tint = 1;
     }
+
     if (status & 0x40) {
         red = 36.0f;
         green = 148.0f;
         blue = 195.0f;
         should_tint = 1;
     }
+
     if (status & 0x10) {
         red = 156.0f;
         green = 122.0f;
         blue = 182.0f;
         should_tint = 1;
     }
+
     if (status & 0x20) {
         red = 171.0f;
         green = 40.0f;
         blue = 125.0f;
         should_tint = 1;
     }
+
     if (status & 8) {
         red = 230.0f;
         green = 168.0f;
         blue = 92.0f;
         should_tint = 1;
     }
+
     if (should_tint == 1) {
         float ambient[4];
         ambient[0] = red;
@@ -928,12 +1039,15 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     strcat(path, name);
     buffer = MenuCalcBufAlignment(buffer);
     CharaFileBGReadNo = read_no;
+
     if (read_no == 0) {
         StartReadBG();
     }
+
     if (LoadFileBG(path, buffer, &size) == 0) {
         return 1;
     }
+
     return 0;
 }
 
@@ -966,9 +1080,11 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     attr.fog_enable = 1;
     attr.clip_enable = 0;
     attr.program_option = 0;
+
     if (MenuCharaFrame.frame != NULL) {
         MenuCharaFrame.frame->SetAttr(attr, 1, 4);
     }
+
     sceVu0FVECTOR position[6] = {
         {-4.8f, -13.0f, 0.0f, 1.0f},
         {-5.2f, -12.8f, 0.0f, 1.0f},
@@ -989,6 +1105,7 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     SetNowCharaMotionNo(chara);
     MenuCharaFrame.SetScale(scale[chara]);
     MenuCharaFrame.Step();
+
     if (chara == 0) {
         MenuCharaFrame.ClothStep(-1);
         MenuCharaFrame.ClothStep(0);
@@ -1044,19 +1161,23 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
     WEAPON_HAVE *equipped = &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]];
     int          kind = equipped->item_no - (int) defWeapon[chara];
+
     if (kind < 0) {
         kind = 0;
     }
+
     BtGetWeaponNamePath2(name, cfg, chara, kind);
     strcpy(path, MenuWepDir);
     strcat(path, name);
     LoadFileBG(path, menud2wepReadBuf, &size);
     WepEffectMenuReadBuf = menud2wepReadBuf + (size >> 4) + 1;
     WepEffectMenuReadBuf = MenuCalcBufAlignment(WepEffectMenuReadBuf);
+
     if (UserStatus == NULL) {
         printf("USerStatus is NULL\n", UserStatus);
         return -1;
     }
+
     int          slot = UserStatus->equipped_weapon_slot[charachangeid];
     WEAPON_HAVE *weapons = UserStatus->chara_weapons[charachangeid];
     WEAPON_HAVE *weapon = &weapons[slot];
@@ -1070,13 +1191,16 @@ void CharaChangeInitToGL2(int load_icon) {
     int size;
 
     MenuWepIconCharaChangePtr = CharaChangeBaseBuf;
+
     if (load_icon != 0) {
         MenuWepIconCharaChangePtr = MenuCalcBufAlignment(MenuWepIconCharaChangePtr);
         size = LoadFileBGMenuData("wepicon.img", (u_long128 *) MenuWepIconCharaChangePtr);
         MenuWepIconCharaChangePtr = MenuWepIconCharaChangePtr + (size >> 4) + 1;
     }
+
     MenuVoiceLoadPtr = MenuWepIconCharaChangePtr;
     MenuVoiceLoadPtr = MenuCalcBufAlignment(MenuVoiceLoadPtr);
+
     if (SndVoiceLoadBG(charachangeid, (u_int *) MenuVoiceLoadPtr, &size) == 0) {
         printf("*** voice read err \n");
     }
@@ -1106,6 +1230,7 @@ void BtMenuLoad2(int load_texture) {
         MenuTextureReload(MenuShadowReadBlock);
         DngActiveWeaponTextureCopy();
     }
+
     SndVoiceSyncBG();
     BtActStatus.player_visible = 1;
     BtActStatus.motion_no = 0;
@@ -1125,11 +1250,13 @@ int EastKingCheckComplete() {
     }
 
     int complete = 1;
+
     for (int i = 0; i < 12; i++) {
         if (SaveData->GetGameFlag(i + 0xE6) == 0) {
             complete = 0;
         }
     }
+
     return complete;
 }
 
@@ -1143,10 +1270,12 @@ int GetMonsterNameDrawFlag() {
 
 void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_buffer) {
     CharaNameMes = NULL;
+
     if (mes == NULL) {
         printf("cls init failed\n");
         return;
     }
+
     CharaNameMes = mes;
     mes->text_columns = MES_WIN_COLUMNS;
     mes->text_rows = 10;
@@ -1168,12 +1297,15 @@ void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_
     mes->auto_page_wait = 0;
     mes->mes_made = -1;
     mes->edge_alpha = 0x80;
+
     for (int i = 0; i < 10; i++) {
         mes->mes_no[i] = -1;
     }
+
     for (int i = 0; i < 8; i++) {
         mes->values[i] = 0;
     }
+
     mes->value = 0;
     mes->value_signed = 0;
     mes->value_show = 1;
@@ -1183,10 +1315,12 @@ void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_
     mes->cursor_row = -1;
     mes->cursor_y = 0;
     mes->cursor_lit = 0;
+
     for (int i = 0; i < 10; i++) {
         mes->line_pos[i].x = -1;
         mes->line_pos[i].y = -1;
     }
+
     CharaNameMes->Preset(4);
     CharaNameMes->tex_block = 0x1A;
     CharaNameMes->tex_buff = texture_buffer;
@@ -1195,17 +1329,21 @@ void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_
     CharaNameMes->SetBuff_system(SystemMes);
     CharaNameDrawFlag = 1;
     int *config = (int *) SaveData->GetConfigData();
+
     if (config != NULL) {
         CharaNameDrawFlag = !config[8];
     }
+
     CharaNameDrawCase = 0;
 }
 
 void MonsterNameMake(int mes_no) {
     if (CharaNameMes != NULL) {
         int mes = mes_no + 3000;
+
         if (CharaNameMes->mes_made != mes) {
             CharaNameMes->MakeMesWin(mes);
+
             if (mes == 3000) {
                 CharaNameMes->stay_frame = 0;
             } else {
@@ -1219,9 +1357,11 @@ void MonsterNamePosSet(int x, int y) {
     if (CharaNameMes != NULL) {
         int columns = CharaNameMes->text_columns;
         CharaNameMes->text_x = x - columns * 14 / 2;
+
         if (y % 2 != 0) {
             y++;
         }
+
         CharaNameMes->text_y = y;
     }
 }
@@ -1230,15 +1370,19 @@ void MonsterNameDraw() {
     if (CharaNameMes == NULL || GetMonsterNameDrawFlag() == 0) {
         return;
     }
+
     if (((int *) SaveData->GetConfigData())[8] == 0) {
         ClsMes *mes = CharaNameMes;
+
         if (mes->mes_made >= 0) {
             int width = mes->text_columns;
             width = mes->char_width * width + 0x20;
+
             if (mes->text_x < 0x22 || mes->text_x >= 0x26D || mes->text_y < 0x1E || mes->text_y >= 0x199 || width >= 0xFB || width < 10) {
                 SetMonsterNameDrawFlag(0);
                 return;
             }
+
             mes->cursor_row = -1;
             MenuTextureReload(CharaNameMes->tex_block);
             setbilinear(0);
@@ -1262,9 +1406,11 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     if (title == NULL || choice == NULL) {
         return;
     }
+
     if (UserStatus == NULL) {
         return;
     }
+
     int georama_no = UserStatus->cur_georama + 1;
     strcpy(path, GetMenuTextureDir());
     strcat(path, "d0%do.img");
@@ -1311,6 +1457,7 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
 
 void DngEscapeMsgDraw() {
     AllFadeForMenu(0x80);
+
     if (CharaNameMes == NULL || DngMenuMes == NULL) {
         return;
     }
@@ -1327,15 +1474,18 @@ void DngEscapeMsgDraw() {
 
     if (DngEscapeEndFlag != 0) {
         DngEscapeAlpha += 3;
+
         if (DngEscapeAlpha > 0x80) {
             DngEscapeAlpha = 0x80;
         }
     } else {
         DngEscapeAlpha -= 3;
+
         if (DngEscapeAlpha < 0) {
             DngEscapeAlpha = 0;
         }
     }
+
     AllFadeForMenu(DngEscapeAlpha);
 }
 
@@ -1349,15 +1499,19 @@ int DngEscapeMsgLoop() {
             } else if (DngEscapeSelect == 1) {
                 DngEscapeSelect = 2;
             }
+
             ComMenuSePlay(0);
         }
+
         int     row = DngEscapeSelect - 1;
         ClsMes *mes = CharaNameMes;
         mes->cursor_row = row;
+
         if (GamePad.Down(0x40) != 0) {
             DngEscapeEndFlag = 1;
             ComMenuSePlay(1);
         }
+
         if (GamePad.Down(0x20) != 0) {
             ComMenuSePlay(2);
         }
@@ -1369,6 +1523,7 @@ int DngEscapeMsgLoop() {
         ClsMes *mes = CharaNameMes;
         mes->cursor_row = -1;
     }
+
     ItemVolumeStep.LoopStep(0x3C);
     DngEscapeMsgDraw();
     return result;
@@ -1387,49 +1542,65 @@ int CheckItemThrow(int *items, int *values) {
 
     for (i = 0; i < 3; i++) {
         item_no = pack->item[pack->num + i];
+
         if (item_no >= 0x84) {
             found++;
+
             if (items != NULL) {
                 items[i] = item_no;
             }
+
             if (values != NULL) {
                 values[i] = 0;
             }
         }
     }
+
     for (i = 0; i < 6; i++) {
         weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[i];
         item_no = weapons[10].item_no;
+
         if (item_no >= 0x101) {
             found++;
+
             if (items != NULL) {
                 items[3] = item_no;
             }
+
             if (values != NULL) {
                 values[3] = weapons[10].level;
             }
+
             break;
         }
     }
+
     attachments = (ATTACH_LIST *) ((CUserStatus *) BtlMenuStatusPt)->consumable_items;
+
     for (i = 0; i < 3; i++) {
         item_no = attachments[i + 40].item_no;
+
         if (item_no >= 0x51) {
             found++;
+
             if (items != NULL) {
                 items[i + 4] = item_no;
             }
+
             if (values != NULL && item_no >= 0x5B && item_no < 0x5F) {
                 values[i + 4] = (&attachments[i + 40].item_no)[item_no - 0x57];
             }
+
             if (values != NULL && item_no == 0x5A) {
                 values[i + 4] = attachments[i + 40].sphere_weapon_no;
             }
         }
     }
+
     if (found > 0) {
         any = 1;
     }
+
     return any;
 }
 
@@ -1437,6 +1608,7 @@ void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
     if (weapon->best_elem >= 5) {
         weapon = (WEAPON_HAVE *) weapon;
     }
+
     int best = 0;
 
     for (int i = 1; i < 5; i++) {
@@ -1444,6 +1616,7 @@ void SetWeaponElementStatus(WEAPON_HAVE *weapon) {
             best = i;
         }
     }
+
     weapon->best_elem = best;
 }
 
@@ -1452,15 +1625,19 @@ int CheckWeaponOptionStatus(int options) {
     if ((options & 2) && (options & 4)) {
         options &= ~6;
     }
+
     if ((options & 8) && (options & 0x10)) {
         options &= ~0x18;
     }
+
     if ((options & 0x100) && (options & 0x200)) {
         options &= ~0x300;
     }
+
     if ((options & 0x400) && (options & 0x800)) {
         options &= ~0xC00;
     }
+
     return options;
 }
 
@@ -1472,9 +1649,11 @@ int IsWeaponOptionGoodOrBad(int option) {
 
 int DefaultWeaponOptionSet(int weapon_no) {
     WEAPON_DATA *data = GetWeaponData(weapon_no);
+
     if (data == NULL) {
         return 1;
     }
+
     return data->flags;
 }
 
@@ -1485,36 +1664,47 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
 
     for (int i = 0; i < 6; i++) {
         int option = ((ATTACH_LIST *) &weapon->attach[i])->sphere_flags;
+
         if (option != 0 && option != 1) {
             flags |= option;
         }
     }
+
     flags = CheckWeaponOptionStatus(flags);
     CTexture *texture = TexManager.GetTexture("charaface", -1);
+
     if (texture == NULL) {
         return;
     }
+
     int      count = 0;
     CRect_i_ source(0xEC, 0x50, 0x14, 0x14);
+
     for (int bit = 1; bit <= 13; bit++) {
         if (bit == 8) {
             source.x -= source.width;
         }
+
         if (flags & (1 << bit)) {
             int row = bit;
+
             if (bit > 7) {
                 row = bit - 7;
             }
+
             if (bit == 8 && row == 1) {
                 row++;
             }
+
             if (bit == 9 && row == 2) {
                 row--;
             }
+
             source.y = source.height * (row - 1) + 0x50;
             DrawMenu2DSprite(texture, CRect_i_(draw_x, draw_y, 0x14, 0x15), source, alpha);
             draw_x += source.width;
             count++;
+
             if (count == 5) {
                 draw_x = x;
                 draw_y += source.height;
@@ -1527,17 +1717,23 @@ void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     if (weapon == NULL) {
         return;
     }
+
     CTexture *texture = TexManager.GetTexture("wepstatus", -1);
     int       stars = weapon->synthesis_count;
+
     if (stars > 49) {
         stars = 49;
     }
+
     int      draw_x = x + 0x4C;
     CRect_i_ big_star(0x108, 0x176, 0x18, 0x18);
+
     for (int i = 0; i < stars / 10; i++, draw_x += big_star.width) {
         DrawMenu2DSprite(texture, CRect_i_(draw_x, y, big_star.width, big_star.height), big_star, alpha);
     }
+
     x -= 6;
+
     for (int i = 0; i < stars % 10; i++, x += 0x14) {
         DrawMenu2DSprite(texture, CRect_i_(x, y + 0x16, 0x14, 0x14), CRect_i_(0x10A, 0x162, 0x14, 0x14), alpha);
     }
@@ -1560,14 +1756,18 @@ static void LocalWeaponDataChange(char *values, int count, int base, int range) 
     int   reduction = base + rand() % range;
     char *value = values;
     int   i = 0;
+
     while (i < count) {
         if (i == selected) {
             *value -= reduction;
+
             if (*value < 0) {
                 *value = 0;
             }
+
             break;
         }
+
         i++;
         value++;
     }
@@ -1577,21 +1777,26 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
     if (weapon == NULL) {
         return -1;
     }
+
     int is_default = 0;
     int i;
+
     for (i = 0; i < 6; i++) {
         if (weapon->item_no == defWeapon[i]) {
             is_default = 1;
         }
     }
+
     switch (kind) {
         case 0:
             printf("abs full\n");
+
             if (is_default == 1) {
                 printf("this weapon default\n");
             } else {
                 weapon->experience = GetWeaponMaxExp(weapon);
             }
+
             break;
         case 1:
             if (IsDefaultWeapon(weapon->item_no) >= 0) {
@@ -1599,37 +1804,48 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             } else {
                 int stat = rand() % 4;
                 int loss = rand() % 3 + 2;
+
                 switch (stat) {
                     case 0:
                         weapon->attack -= loss;
+
                         if (weapon->attack <= 0) {
                             weapon->attack = 1;
                         }
+
                         break;
                     case 1:
                         weapon->endurance -= loss;
+
                         if (weapon->endurance < 0) {
                             weapon->endurance = 0;
                         }
+
                         break;
                     case 2:
                         weapon->speed -= loss;
+
                         if (weapon->speed < 0) {
                             weapon->speed = 0;
                         }
+
                         break;
                     case 3:
                         weapon->magic -= loss;
+
                         if (weapon->magic < 0) {
                             weapon->magic = 0;
                         }
+
                         break;
                 }
+
                 LocalWeaponDataChange(weapon->elem, 5, 2, 3);
                 LocalWeaponDataChange(weapon->vs_monster, 3, 2, 2);
                 LocalWeaponDataChange(&weapon->vs_monster[3], 3, 2, 2);
                 LocalWeaponDataChange(&weapon->vs_monster[6], 4, 2, 2);
             }
+
             break;
         case 2:
             if (IsDefaultWeapon(weapon->item_no) >= 0) {
@@ -1637,38 +1853,48 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             } else {
                 int add = rand() % 3 + 3;
                 weapon->durability += add;
+
                 if (weapon->durability > 99) {
                     weapon->durability = 99;
                 }
+
                 printf("WHp up is %d\n", add);
                 printf("now MaxWHp is %d\n", weapon->durability);
             }
+
             break;
         case 3:
             if (IsDefaultWeapon(weapon->item_no) < 0) {
                 int loss = rand() % 3 + 3;
                 weapon->durability -= loss;
                 float durability = weapon->durability;
+
                 if (durability < weapon->durability_f) {
                     weapon->durability_f = durability;
                 }
+
                 if (weapon->durability <= 0) {
                     weapon->durability = 1;
                 }
+
                 printf("WHp down is %d\n", loss);
                 printf("now MaxWHp is %d\n", weapon->durability);
             }
+
             break;
         case 4:
             printf("whp cure\n");
+
             if (is_default == 1) {
                 if (UserStatus != NULL) {
                     int chara = UserStatus->cur_chara;
                     EquipWeaponFrame(&DefaultWeapon, chara, CharaMainHandViewFlag);
+
                     if (chara == 5) {
                         NowMainEffect = &CharaMainEffectCrash;
                         BtActStatus.gun_type = 0;
                     }
+
                     int          slot = UserStatus->equipped_weapon_slot[chara];
                     WEAPON_HAVE *weapons = UserStatus->chara_weapons[chara];
                     MenuWeaponSpSet(&MainWeapon, &weapons[slot]);
@@ -1677,18 +1903,22 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
             } else {
                 weapon->durability_f = weapon->durability;
             }
+
             break;
         case 5: {
             float durability = weapon->durability_f / 4.0f;
             weapon->durability_f = durability;
+
             if (durability < 1.0f) {
                 weapon->durability_f = 1.0f;
             }
+
             break;
         }
         default:
             printf("now %d  ??? \n");
             break;
     }
+
     return 1;
 }

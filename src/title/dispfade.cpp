@@ -32,11 +32,13 @@ float CDispFade::FadeOut(sceVif1Packet *packet) {
     if (mode != 1) {
         return fade_rate;
     }
+
     if (fade_rate == 0.0f && fade_speed == 0.0f) {
         return fade_rate;
     }
 
     fade_rate += fade_speed;
+
     if (fade_rate > 128.0f) {
         fade_rate = 128.0f;
     }
@@ -83,6 +85,7 @@ float CDispFade::FadeOut(sceVif1Packet *packet) {
         fade_rate = 128.0f;
         fade_speed = 0.0f;
     }
+
     return fade_rate;
 }
 
@@ -90,11 +93,13 @@ float CDispFade::FadeIn(sceVif1Packet *packet) {
     if (mode != 2) {
         return fade_rate;
     }
+
     if (fade_rate == 0.0f && fade_speed == 0.0f) {
         return fade_rate;
     }
 
     fade_rate -= fade_speed;
+
     if (fade_rate < 0.0f) {
         fade_rate = 0.0f;
     }
@@ -142,5 +147,6 @@ float CDispFade::FadeIn(sceVif1Packet *packet) {
         fade_speed = 0.0f;
         mode = -1;
     }
+
     return fade_rate;
 }

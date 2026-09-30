@@ -70,19 +70,23 @@ s16 ClsMes::GetGaijiW(int code) {
             if (code == -0x2BD) {
                 return 5;
             }
+
             if (code == -0x2BA) {
                 return 5;
             }
+
             if (code == -0x2AB) {
                 return 5;
             }
         }
+
         EDIT_GAIJI *table = (EDIT_GAIJI *) &EditPartsData[0x491C];
         EDIT_GAIJI *gaiji = &EditGaijiTbl[code];
         s16         width = this->char_width;
 
         return width * gaiji->width;
     }
+
     return this->char_width;
 }
 
@@ -90,6 +94,7 @@ int ClsMes::GetNameLen(int chara) {
     if (chara < 0) {
         return -1;
     }
+
     if (chara >= 6) {
         return -1;
     }
@@ -101,6 +106,7 @@ int ClsMes::GetNameLen(int chara) {
             return i;
         }
     }
+
     return -1;
 }
 
@@ -108,6 +114,7 @@ int ClsMes::GetNameWidth(int chara) {
     if (chara < 0) {
         return -1;
     }
+
     if (chara >= 6) {
         return -1;
     }
@@ -132,6 +139,7 @@ int ClsMes::GetNameWidth(int chara) {
             width += this->char_width;
         }
     }
+
     return -1;
 }
 
@@ -416,6 +424,7 @@ ClsMes::ClsMes() {
     for (int i = 0; i < 10; i++) {
         this->mes_no[i] = -1;
     }
+
     for (int i = 0; i < 8; i++) {
         this->values[i] = 0;
     }
@@ -573,6 +582,7 @@ void ClsMes::Step() {
         if (this->fade < 1.0f) {
             this->fade = this->fade + this->fade_speed;
         }
+
         if (1.0f < this->fade) {
             this->fade = 1.0f;
         }
@@ -580,6 +590,7 @@ void ClsMes::Step() {
         if (0.0f < this->fade) {
             this->fade = this->fade - this->fade_speed;
         }
+
         if (this->fade < 0.0f) {
             this->fade = 0.0f;
         }
@@ -627,15 +638,19 @@ int ClsMes::State() {
     if (this->fade <= 0.0f) {
         return 0;
     }
+
     if (0.0f < this->fade && this->fade < 1.0f) {
         return this->fade_in != 0 ? 1 : 4;
     }
+
     if (this->waiting != 0) {
         return 5;
     }
+
     if (this->text_no >= this->text_len) {
         return 3;
     }
+
     return 2;
 }
 
@@ -673,10 +688,12 @@ int ClsMes::MyTextureMake_sub() {
             return 0;
         case -0xFD:
             this->waiting = 1;
+
             if (this->auto_page != 0 && this->blink >= this->auto_page_wait) {
                 this->GoNextPage();
                 this->auto_page_wait = 0;
             }
+
             this->page_from = at;
             return 1;
         case -0xFF:
@@ -702,6 +719,7 @@ void ClsMes::MyTextureMake() {
             this->GoNextPage();
             this->auto_page_wait = 0;
         }
+
         return;
     }
 
@@ -727,6 +745,7 @@ void ClsMes::MyTextureMake() {
                 this->text_rate = this->text_rate_set;
                 this->text_at = this->text_no;
             }
+
             return;
         }
 
@@ -746,6 +765,7 @@ short *SetAndGetNameRegistTbl(int chara) {
     if (chara < 0) {
         return NULL;
     }
+
     if (chara >= 6) {
         return NULL;
     }
@@ -763,6 +783,7 @@ short *SetAndGetNameRegistTbl(int chara) {
             NameRegistTbl[chara][i] = NameRegistCodeJtoE(name[i] - 1);
         }
     }
+
     return NameRegistTbl[chara];
 }
 
@@ -788,36 +809,47 @@ void ClsMes::MakeMesWinTbl_value(int *x, int *y) {
         if (digit == '+') {
             code = -0x2A4;
         }
+
         if (digit == '-') {
             code = -0x2A3;
         }
+
         if (digit == '1') {
             code = -0x290;
         }
+
         if (digit == '2') {
             code = -0x28F;
         }
+
         if (digit == '3') {
             code = -0x28E;
         }
+
         if (digit == '4') {
             code = -0x28D;
         }
+
         if (digit == '5') {
             code = -0x28C;
         }
+
         if (digit == '6') {
             code = -0x28B;
         }
+
         if (digit == '7') {
             code = -0x28A;
         }
+
         if (digit == '8') {
             code = -0x289;
         }
+
         if (digit == '9') {
             code = -0x288;
         }
+
         if (digit == '0') {
             code = -0x291;
         }
@@ -858,36 +890,47 @@ void ClsMes::MakeMesWinTbl_value(int which, int *x, int *y) {
         if (digit == '+') {
             code = -0x2A4;
         }
+
         if (digit == '-') {
             code = -0x2A3;
         }
+
         if (digit == '1') {
             code = -0x290;
         }
+
         if (digit == '2') {
             code = -0x28F;
         }
+
         if (digit == '3') {
             code = -0x28E;
         }
+
         if (digit == '4') {
             code = -0x28D;
         }
+
         if (digit == '5') {
             code = -0x28C;
         }
+
         if (digit == '6') {
             code = -0x28B;
         }
+
         if (digit == '7') {
             code = -0x28A;
         }
+
         if (digit == '8') {
             code = -0x289;
         }
+
         if (digit == '9') {
             code = -0x288;
         }
+
         if (digit == '0') {
             code = -0x291;
         }
@@ -916,27 +959,35 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
         if (code == 0xFF) {
             return 0;
         }
+
         if (code == 0xFA) {
             return 0;
         }
+
         if (code == 0xF9) {
             return 0;
         }
+
         if (code == 0xF8) {
             return 0;
         }
+
         if (code == 0xF7) {
             return 0;
         }
+
         if (code == 0xF6) {
             return 0;
         }
+
         if (code == 0xF5) {
             return 0;
         }
+
         if (code == 0xF4) {
             return 0;
         }
+
         if (code == 0xF3) {
             return 0;
         }
@@ -1006,6 +1057,7 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
                     } else {
                         *x += this->char_width;
                     }
+
                     break;
 
                 case -0x100:
@@ -1027,6 +1079,7 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
                         this->SetMesWinTbl(text_code, 1, *x, *y);
                         *x += this->char_width;
                     }
+
                     break;
             }
         }
@@ -1042,30 +1095,39 @@ int ClsMes::GetMesLen_system(int mes_no) {
         if (no == 0xFF) {
             return -1;
         }
+
         if (no == 0xFA) {
             return -1;
         }
+
         if (no == 0xF9) {
             return -1;
         }
+
         if (no == 0xF8) {
             return -1;
         }
+
         if (no == 0xF7) {
             return -1;
         }
+
         if (no == 0xF6) {
             return -1;
         }
+
         if (no == 0xF5) {
             return -1;
         }
+
         if (no == 0xF4) {
             return -1;
         }
+
         if (no == 0xF3) {
             return -1;
         }
+
         if (no == 0xFE) {
             no = this->mes_no[0];
         } else if (no == 0xFD) {
@@ -1120,6 +1182,7 @@ int ClsMes::GetMesLen_system(int mes_no) {
                 if (len[0] > len[1]) {
                     return len[0];
                 }
+
                 return len[1];
         }
 
@@ -1157,6 +1220,7 @@ int ClsMes::GetMesWidth_system(int mes_no) {
                 if (width[0] > width[1]) {
                     return width[0];
                 }
+
                 return width[1];
         }
 
@@ -1181,6 +1245,7 @@ short *ClsMes::GetTextLineDataTop(int line) {
             return &body[count] + body[i * 2 + 2];
         }
     }
+
     return NULL;
 }
 
@@ -1193,6 +1258,7 @@ short *ClsMes::GetTextLineDataTop_system(int line) {
             return &body[count] + body[i * 2 + 2];
         }
     }
+
     return NULL;
 }
 
@@ -1204,6 +1270,7 @@ void ClsMes::InitMesWinTbl() {
         this->win_line[i].clut = 0;
         this->win_line[i].space = 0;
     }
+
     this->win_line_num = 0;
 }
 
@@ -1212,6 +1279,7 @@ int ClsMes::SetMesWinTbl(int code, int mode, short x, short y) {
         if (this->win_line_num > 0) {
             this->win_line[this->win_line_num - 1].space += code + 0x200;
         }
+
         return 0;
     }
 
@@ -1223,6 +1291,7 @@ int ClsMes::SetMesWinTbl(int code, int mode, short x, short y) {
         } else {
             this->clut_now = code + 0x401;
         }
+
         return 0;
     }
 
@@ -1244,6 +1313,7 @@ int ClsMes::SetMesWinTbl(int code, int mode, short x, short y) {
         this->win_line[this->win_line_num].clut = this->clut_now;
         this->win_line_num++;
     }
+
     return 1;
 }
 
@@ -1262,6 +1332,7 @@ int ClsMes::CalcSpaceW(int width, int glyph_width, short *text) {
                 if (spaces > 0) {
                     return (width - used) / spaces;
                 }
+
                 return -1;
             case -0xFE:
                 spaces++;
@@ -1337,6 +1408,7 @@ int ClsMes::MakeMesWinTbl(int mes_no) {
                 } else {
                     x += this->char_width;
                 }
+
                 break;
 
 #ifdef PAL
@@ -1377,6 +1449,7 @@ int ClsMes::MakeMesWinTbl(int mes_no) {
                         x += this->char_width;
                     }
                 }
+
                 break;
         }
     }
@@ -1388,11 +1461,13 @@ void NeedMesWinWH_sub(int *len, int *max_len, int *width, int *max_width, int ch
     }
 
     *len += count;
+
     if (*max_len < *len) {
         *max_len = *len;
     }
 
     *width += count * char_width;
+
     if (*max_width < *width) {
         *max_width = *width;
     }
@@ -1466,6 +1541,7 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                 if (*max_width < width) {
                     *max_width = width;
                 }
+
                 break;
 
             case -0x100:
@@ -1482,6 +1558,7 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                 if (*max_height < height) {
                     *max_height = height;
                 }
+
                 break;
 
             case -0xFD:
@@ -1569,6 +1646,7 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                 } else {
                     NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width, 1);
                 }
+
                 break;
         }
     }
@@ -1595,6 +1673,7 @@ int ClsMes::MakeMesWin(int mes_no) {
             this->fade_in = 1;
             GoNextPage();
         }
+
         return 0;
     }
 
@@ -1613,6 +1692,7 @@ int ClsMes::MakeMesWin(int mes_no) {
         MakeRandTbl(6.8f, 15.2f);
         MakeRandTbl2(0.42f, 0.58f);
     }
+
     return 0;
 }
 
@@ -1620,10 +1700,12 @@ void ClsMes::MakeMesTexture(int mes_no) {
     int needed[4];
 
     this->mes_made = mes_no;
+
     if (this->fukidashi != 0) {
         this->fade = 0.0f;
         this->fade_in = 1;
     }
+
     this->waiting = 0;
     this->blink = 0;
     MyTextureMake_InitAll();
@@ -1649,6 +1731,7 @@ void ClsMes::MakeMesTexture(int mes_no) {
         this->win_width = this->char_width * (int) (5.0f + (5.0f + (float) this->text_columns));
 #endif
     }
+
     this->win_height = this->char_height * (int) (1.5f + (1.5f + (float) this->text_rows));
 #ifdef PAL
     this->win_x = this->text_x - (int) (3.0f * (float) this->char_width);
@@ -1674,6 +1757,7 @@ void ClsMes::Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x
             for (int i = 0; FuchiTbl_E[i].alpha > 0; i++) {
                 set2DSprite_Core(packet, texture, CRect_i_(x + FuchiTbl_E[i].x, y + FuchiTbl_E[i].y, width, height), CRect_i_(u, v, u_width, v_height), FuchiTbl_E[i].r, FuchiTbl_E[i].g, FuchiTbl_E[i].b, this->edge_alpha < FuchiTbl_E[i].alpha ? this->edge_alpha : FuchiTbl_E[i].alpha);
             }
+
             break;
         case 4:
             set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0x40, 0x40, 0x40, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
@@ -1731,6 +1815,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
         } else {
             turn += 4.0f;
         }
+
         step++;
     }
 
@@ -1778,9 +1863,11 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         if (this->tail_left_y < top) {
             top = this->tail_left_y;
         }
+
         if (this->tail_right_y < top) {
             top = this->tail_right_y;
         }
+
         if (this->tail_tip_y < top) {
             top = this->tail_tip_y;
         }
@@ -2226,6 +2313,7 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
             } else {
                 *out_x = x;
             }
+
             break;
         case 2:
         case 5:
@@ -2240,6 +2328,7 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
             } else {
                 *out_x = x + width - win_width;
             }
+
             break;
     }
 
@@ -2252,6 +2341,7 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
             } else {
                 *out_y = y;
             }
+
             break;
         case 4:
         case 5:
@@ -2266,6 +2356,7 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
             } else {
                 *out_y = y + height - win_height;
             }
+
             break;
     }
 }
@@ -2577,6 +2668,7 @@ void ClsMes::DrawMesWin() {
             if (0 < this->stay_width) {
                 width = this->stay_width;
             }
+
             if (0 < this->stay_height) {
                 height = this->stay_height;
             }

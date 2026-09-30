@@ -77,14 +77,17 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
     first_crosses = 0;
     pair_crosses = 0;
     second_crosses = 0;
+
     for (i = 0; i < 3; i++) {
         first_distance[i] = first[i][2] - near_z;
         second_distance[i] = second[i][2] - near_z;
+
         if (!(first_distance[i] <= 0.0f)) {
             first_front++;
         } else {
             first_behind++;
         }
+
         if (!(second_distance[i] <= 0.0f)) {
             second_front++;
         } else {
@@ -95,9 +98,11 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
     if (first_distance[0] * first_distance[1] < 0.0f) {
         first_crosses++;
     }
+
     if (first_distance[1] * first_distance[2] < 0.0f) {
         first_crosses++;
     }
+
     if (first_distance[2] * first_distance[0] < 0.0f) {
         first_crosses++;
     }
@@ -105,9 +110,11 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
     if (second_distance[0] * second_distance[1] < 0.0f) {
         second_crosses++;
     }
+
     if (second_distance[1] * second_distance[2] < 0.0f) {
         second_crosses++;
     }
+
     if (second_distance[2] * second_distance[0] < 0.0f) {
         second_crosses++;
     }
@@ -115,18 +122,22 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
     if (first_distance[0] * second_distance[0] < 0.0f) {
         pair_crosses++;
     }
+
     if (first_distance[1] * second_distance[1] < 0.0f) {
         pair_crosses++;
     }
+
     if (first_distance[2] * second_distance[2] < 0.0f) {
         pair_crosses++;
     }
 
     crossing_count = first_crosses + second_crosses + pair_crosses;
+
     if (crossing_count == 0) {
         for (int j = 0; j < 5; j++) {
             *(u_long128 *) out[j] = *(u_long128 *) first[0];
         }
+
         return 0;
     }
 
@@ -134,18 +145,23 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
         if (first_distance[0] * first_distance[1] < 0.0f) {
             zcross(near_z, first[0], first[1], out[count++]);
         }
+
         if (first_distance[1] * first_distance[2] < 0.0f) {
             zcross(near_z, first[1], first[2], out[count++]);
         }
+
         if (first_distance[2] * first_distance[0] < 0.0f) {
             zcross(near_z, first[2], first[0], out[count++]);
         }
+
         if (second_distance[0] * second_distance[2] < 0.0f) {
             zcross(near_z, second[0], second[2], out[count++]);
         }
+
         if (second_distance[2] * second_distance[1] < 0.0f) {
             zcross(near_z, second[2], second[1], out[count++]);
         }
+
         if (second_distance[1] * second_distance[0] < 0.0f) {
             zcross(near_z, second[1], second[0], out[count++]);
         }
@@ -153,33 +169,42 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
         if (first_distance[0] * second_distance[0] < 0.0f) {
             zcross(near_z, first[0], second[0], out[count++]);
         }
+
         if (first_distance[0] * first_distance[1] < 0.0f) {
             zcross(near_z, first[0], first[1], out[count++]);
         }
+
         if (second_distance[0] * second_distance[1] < 0.0f) {
             zcross(near_z, second[0], second[1], out[count++]);
         }
+
         if (first_distance[1] * second_distance[1] < 0.0f) {
             zcross(near_z, first[1], second[1], out[count++]);
         }
+
         if (second_distance[1] * second_distance[2] < 0.0f) {
             zcross(near_z, second[1], second[2], out[count++]);
         }
+
         if (first_distance[1] * first_distance[2] < 0.0f) {
             zcross(near_z, first[1], first[2], out[count++]);
         }
+
         if (first_distance[2] * second_distance[2] < 0.0f) {
             zcross(near_z, first[2], second[2], out[count++]);
         }
+
         if (first_distance[2] * first_distance[0] < 0.0f) {
             zcross(near_z, first[2], first[0], out[count++]);
         }
+
         if (second_distance[2] * second_distance[0] < 0.0f) {
             zcross(near_z, second[2], second[0], out[count++]);
         }
     } else if (crossing_count == 5) {
         int vertex = 0;
         int on_second = 0;
+
         if (first_distance[0] * second_distance[0] < 0.0f) {
             zcross(near_z, first[0], second[0], out[count++]);
         } else if (first_distance[1] * second_distance[1] < 0.0f) {
@@ -192,14 +217,17 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
 
         for (int side = 0; side < 3; side++) {
             int next = vertex + 1;
+
             if (next > 2) {
                 next = 0;
             }
+
             if (on_second == 0) {
                 if (first_distance[vertex] * first_distance[next] < 0.0f) {
                     zcross(near_z, first[vertex], first[next], out[count++]);
                     on_second = 0;
                 }
+
                 if (second_distance[vertex] * second_distance[next] < 0.0f) {
                     zcross(near_z, second[vertex], second[next], out[count++]);
                     on_second = 1;
@@ -209,12 +237,15 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
                     zcross(near_z, second[vertex], second[next], out[count++]);
                     on_second = 1;
                 }
+
                 if (first_distance[vertex] * first_distance[next] < 0.0f) {
                     zcross(near_z, first[vertex], first[next], out[count++]);
                     on_second = 0;
                 }
             }
+
             vertex++;
+
             if (vertex > 2) {
                 vertex = 0;
             }
@@ -232,6 +263,7 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z) 
             *(u_long128 *) out[j] = *(u_long128 *) out[j - count];
         }
     }
+
     return count;
 }
 
@@ -269,6 +301,7 @@ int CCharacter::SetPointLight(float *pos, float inner_range, float outer_range, 
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -299,6 +332,7 @@ int CCharacter::SetFootSound(float left_frame, float right_frame, int motion_no)
     // One sound for each foot, each in the first slot that is free.
     for (i = 0; i < CHARA_FOOT_SOUND_MAX; i++) {
         sound = &this->foot_sound[i];
+
         if ((float) sound->frame < 0.0f) {
             sound->frame = (int) left_frame;
             sound->foot = 0;
@@ -306,8 +340,10 @@ int CCharacter::SetFootSound(float left_frame, float right_frame, int motion_no)
             break;
         }
     }
+
     for (i = 0; i < CHARA_FOOT_SOUND_MAX; i++) {
         sound = &this->foot_sound[i];
+
         if ((float) sound->frame < 0.0f) {
             sound->frame = (int) right_frame;
             sound->foot = 1;
@@ -315,6 +351,7 @@ int CCharacter::SetFootSound(float left_frame, float right_frame, int motion_no)
             break;
         }
     }
+
     return 1;
 }
 
@@ -336,6 +373,7 @@ void CCharacter::SetEvent(float frame, int kind, int no, int motion_no) {
 
     for (i = 0; i < CHARA_EVENT_MAX; i++) {
         event = &this->event[i];
+
         if ((float) event->frame < 0.0f) {
             event->frame = (int) frame;
             event->kind = kind;
@@ -384,20 +422,26 @@ tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *o
             if (this->motion_start[i] > motion_no) {
                 continue;
             }
+
             if (!(motion_no < this->motion_end[i])) {
                 continue;
             }
+
             index = motion_no - this->motion_start[i];
             found = this->motion[i];
+
             if (out_start != NULL) {
                 *out_start = this->motion_start[i];
             }
+
             if (out_end != NULL) {
                 *out_end = this->motion_end[i];
             }
+
             if (out_set != NULL) {
                 *out_set = i;
             }
+
             break;
         }
     }
@@ -405,6 +449,7 @@ tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *o
     if (index < 0) {
         return NULL;
     }
+
     *out_index = index;
     return found;
 }
@@ -414,12 +459,15 @@ MOTION_INFO *CCharacter::GetMotionInfo(int motion_no) {
     int             index;
 
     motion = GetMotionParam(motion_no, &index, NULL, NULL, NULL);
+
     if (motion == NULL) {
         return NULL;
     }
+
     if (motion->motion_info == NULL) {
         return NULL;
     }
+
     return &motion->motion_info[index];
 }
 
@@ -428,9 +476,11 @@ float CCharacter::GetNowTime() {
     int             index;
 
     motion = GetMotionParam(this->motion_no, &index, NULL, NULL, NULL);
+
     if (motion != NULL) {
         return motion->state.time;
     }
+
     return 0.0f;
 }
 
@@ -454,15 +504,18 @@ void CCharacter::Step() {
     sceVu0FVECTOR     position;
 
     this->motion_state = 0;
+
     if (this->motion_no < 0) {
         return;
     }
 
     index = -1;
     motion = GetMotionParam(this->motion_no, &index, NULL, NULL, &set_no);
+
     if (motion == NULL) {
         return;
     }
+
     if (motion->motion_info == NULL) {
         return;
     }
@@ -470,12 +523,15 @@ void CCharacter::Step() {
     old_time = motion->state.time;
     this->motion_state = 2;
     motion_info = &motion->motion_info[index];
+
 #ifdef PAL
     // The step the motion advances by this frame, once the character's own speed overrides it.
     step = motion_info->speed;
+
     if (this->motion_speed > 0.0f) {
         step = this->motion_speed;
     }
+
     if (motion_info != NULL) {
         if (old_time >= (float) motion_info->start && (float) motion_info->end - step - 0.01f <= old_time) {
             this->motion_state = 3;
@@ -490,6 +546,7 @@ void CCharacter::Step() {
 #endif
 
     motion->state.motion_no = index;
+
     if (motion->state.motion_no != motion->state.playing_no) {
         if (this->motion_no == 1 || this->motion_no == 2) {
             motion->state.next_frame = NextMotionTime_GET_EX(motion->motion_info, &motion->state);
@@ -502,13 +559,16 @@ void CCharacter::Step() {
 
     saved_speed = motion->motion_info[index].speed;
     saved_blend_step = motion->state.blend_step;
+
     if (this->motion_speed > 0.0f) {
         motion->motion_info[index].speed = this->motion_speed;
     }
+
     if ((this->motion_flags & 1) || MotionStopFlag) {
         motion->motion_info[index].speed = 0.0f;
         motion->state.blend_step = 0.0f;
     }
+
     if (this->motion_flags & 2) {
 #ifdef PAL
         if (!(motion->state.time + step < (float) motion->motion_info[index].end)) {
@@ -518,14 +578,17 @@ void CCharacter::Step() {
             motion->motion_info[index].speed = 0.0f;
         }
     }
+
     if (this->motion_flags & 4) {
         motion->state.blend_step = 1.0f;
         motion->state.frame = motion->motion_info[index].start;
         motion->state.next_frame = motion->motion_info[index].start;
         motion->state.time = (float) motion->motion_info[index].start;
     }
+
     this->motion_flags &= ~4;
     SetMotionEX(this->frame, motion, motion->motion_info, &motion->state, motion->frame_info);
+
     if (motion->motion_info != NULL) {
         motion->motion_info[index].speed = saved_speed;
         motion->state.blend_step = saved_blend_step;
@@ -533,11 +596,13 @@ void CCharacter::Step() {
 
     if (this->fade_out != 0) {
         this->fade[0] -= 0.08f;
+
         if (this->fade[0] < this->fade[3]) {
             this->fade[0] = this->fade[3];
         }
     } else {
         this->fade[0] += 0.08f;
+
         if (this->fade[0] > 1.0f) {
             this->fade[0] = 1.0f;
         }
@@ -547,12 +612,15 @@ void CCharacter::Step() {
         for (int j = 0; j < 3; j++) {
             if (this->ground_ambient[this->ground_ambient_no][j] > this->ambient_tint[j]) {
                 this->ambient_tint[j] += 10.0f;
+
                 if (this->ground_ambient[this->ground_ambient_no][j] < this->ambient_tint[j]) {
                     this->ambient_tint[j] = this->ground_ambient[this->ground_ambient_no][j];
                 }
             }
+
             if (this->ground_ambient[this->ground_ambient_no][j] < this->ambient_tint[j]) {
                 this->ambient_tint[j] -= 10.0f;
+
                 if (this->ground_ambient[this->ground_ambient_no][j] > this->ambient_tint[j]) {
                     this->ambient_tint[j] = this->ground_ambient[this->ground_ambient_no][j];
                 }
@@ -561,6 +629,7 @@ void CCharacter::Step() {
     } else {
         for (int j = 0; j < 3; j++) {
             this->ambient_tint[j] -= 10.0f;
+
             if (this->ambient_tint[j] < 0.0f) {
                 this->ambient_tint[j] = 0.0f;
             }
@@ -571,9 +640,11 @@ void CCharacter::Step() {
     GetWorldPosition(position);
     delta = old_time - new_time;
     abs_delta = delta < 0.0f ? -delta : delta;
+
     if (abs_delta < 1.0f) {
         for (int i = 0; i < CHARA_FOOT_SOUND_MAX && this->foot_sound_enable != 0 && this->foot_sound_id >= 0 && this->foot_sound_wait == 0; i++) {
             sound = &this->foot_sound[i];
+
             if ((float) sound->frame >= 0.0f && sound->motion_no == set_no && (float) sound->frame >= old_time && (float) sound->frame < new_time) {
                 SndPlayFootSound(this->foot_sound_id, sound->foot, position);
                 this->foot_sound_wait = 5;
@@ -582,18 +653,23 @@ void CCharacter::Step() {
     }
 
     delta = delta < 0.0f ? -delta : delta;
+
     if (delta < 1.0f) {
         for (int i = 0; i < CHARA_EVENT_MAX && this->event_enable != 0; i++) {
             event = &this->event[i];
+
             if ((float) event->frame < 0.0f || event->motion_no != set_no || (float) event->frame < old_time || (float) event->frame >= new_time) {
                 continue;
             }
+
             switch (event->kind) {
                 case 0:
                     foot_sound_enabled = this->foot_sound_enable;
+
                     if (foot_sound_enabled != 0) {
                         SndPlayFootSound(this->foot_sound_id, event->no, position);
                     }
+
                     break;
                 case 1:
                     SndSePlay(event->no, -1, 0);
@@ -603,6 +679,7 @@ void CCharacter::Step() {
     }
 
     this->foot_sound_wait--;
+
     if (this->foot_sound_wait < 0) {
         this->foot_sound_wait = 0;
     }
@@ -618,23 +695,29 @@ void CCharacter::ShadowStep() {
     float           speed;
 
     motion_no = this->motion_no;
+
     if (motion_no < 0) {
         return;
     }
 
     index = -1;
     shadow = NULL;
+
     for (i = 0; i < CHARA_MOTION_MAX; i++) {
         if (this->motion[i] == NULL) {
             continue;
         }
+
         start = this->motion_start[i];
+
         if (start > motion_no) {
             continue;
         }
+
         if (motion_no >= this->motion_end[i]) {
             continue;
         }
+
         index = motion_no - start;
         shadow = this->shadow_motion[i];
         motion = this->motion[i];
@@ -643,17 +726,21 @@ void CCharacter::ShadowStep() {
     if (shadow == NULL) {
         return;
     }
+
     if (index < 0) {
         return;
     }
+
     if (motion->motion_info == NULL || shadow->motion_info == NULL) {
         return;
     }
 
     speed = motion->motion_info[index].speed;
+
     if ((this->motion_flags & 1) || MotionStopFlag) {
         shadow->motion_info[index].speed = 0.0f;
     }
+
     if (this->motion_flags & 2) {
         // The shadow stops on the last frame rather than running past it.
         if (!(shadow->state.time + speed + 0.001f < (float) shadow->motion_info[index].end)) {
@@ -688,10 +775,12 @@ void CCharacter::ClothStep(int step) {
     }
 
     sceVu0CopyVector(world_pos, this->pos);
+
     if (this->frame != NULL) {
         this->frame->SetPosition(this->pos[0], this->pos[1], this->pos[2]);
         this->frame->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
         root = this->frame->parent;
+
         if (root != NULL) {
             this->pos[3] = 1.0f;
             root->GetWorldPosition(world_pos, this->pos);
@@ -719,9 +808,11 @@ void CCharacter::ClothFloor(int floor) {
 
 void CCharacter::SetPosition(float x, float y, float z) {
     CObject::SetPosition(x, y, z);
+
     if (this->frame != NULL) {
         this->frame->SetPosition(x, y, z);
     }
+
     if (this->shadow_frame != NULL) {
         this->shadow_frame->SetPosition(x, y, z);
     }
@@ -730,6 +821,7 @@ void CCharacter::SetPosition(float x, float y, float z) {
 void CCharacter::GetWorldPosition(float *out_position) {
     GetPosition(out_position);
     out_position[3] = 1.0f;
+
     if (this->frame->parent != NULL) {
         this->frame->parent->GetWorldPosition(out_position, out_position);
     }
@@ -749,9 +841,11 @@ void CCharacter::SetPosition(CVector3_f_ position) {
 
 void CCharacter::SetRotation(float x, float y, float z) {
     CObject::SetRotation(x, y, z);
+
     if (this->frame != NULL) {
         this->frame->SetRotation(x, y, z);
     }
+
     if (this->shadow_frame != NULL) {
         this->shadow_frame->SetRotation(x, y, z);
     }
@@ -767,9 +861,11 @@ void CCharacter::SetRotation(CVector3_f_ rotation) {
 
 void CCharacter::SetScale(float x, float y, float z) {
     CObject::SetScale(x, y, z);
+
     if (this->frame != NULL) {
         this->frame->SetScale(x, y, z);
     }
+
     if (this->shadow_frame != NULL) {
         this->shadow_frame->SetScale(x, y, z);
     }
@@ -813,26 +909,33 @@ void CCharacter::Draw() {
     sceVu0CopyVector(saved_ambient, ambient);
 
     light_slot = 3;
+
     for (i = 0; i < CHARA_POINT_LIGHT_MAX; i++) {
         // Only a light_slot that the scene leaves free can take one of its own.
         if (saved_light_direction[0][light_slot] != 0.0f) {
             break;
         }
+
         if (saved_light_direction[1][light_slot] != 0.0f) {
             break;
         }
+
         if (saved_light_direction[2][light_slot] != 0.0f) {
             break;
         }
+
         if (this->point_light[i].used == 0) {
             continue;
         }
+
         GetPosition(pos);
         sceVu0SubVector(direction, this->point_light[i].pos, pos);
         distance = DistVector(direction);
+
         if (!(distance <= this->point_light[i].outer_range)) {
             continue;
         }
+
         sceVu0Normalize(direction, direction);
         light_direction[0][light_slot] = direction[0];
         light_direction[1][light_slot] = direction[1];
@@ -841,15 +944,18 @@ void CCharacter::Draw() {
         // The light_slot gives its whole colour up to the inner range and fades
         // away over the rest.
         level = 1.0f;
+
         if (!(distance <= this->point_light[i].inner_range)) {
             level = level - (distance - this->point_light[i].inner_range) / (this->point_light[i].outer_range - this->point_light[i].inner_range);
         }
+
         light_colour[light_slot][0] = this->point_light[i].colour[0] * level;
         light_colour[light_slot][1] = this->point_light[i].colour[1] * level;
         light_colour[light_slot][2] = this->point_light[i].colour[2] * level;
         light_colour[light_slot][3] = this->point_light[i].colour[3];
 
         light_slot--;
+
         if (light_slot <= 2) {
             break;
         }
@@ -857,6 +963,7 @@ void CCharacter::Draw() {
 
     if (fading) {
         sceVu0ScaleVectorXYZ(ambient, ambient, this->fade[0]);
+
         for (colour_no = 0; colour_no < 4; colour_no++) {
             sceVu0ScaleVectorXYZ(light_colour[colour_no], light_colour[colour_no], this->fade[0]);
         }
@@ -865,6 +972,7 @@ void CCharacter::Draw() {
     ambient[0] += this->ambient_offset[0] + this->ambient_tint[0];
     ambient[1] += this->ambient_offset[1] + this->ambient_tint[1];
     ambient[2] += this->ambient_offset[2] + this->ambient_tint[2];
+
     if (!(this->ambient_offset[3] < 0.0f)) {
         ambient[3] = this->ambient_offset[3];
     }
@@ -975,9 +1083,11 @@ void CCharacter::Initialize() {
     this->motion_flags = 0;
 
     this->cloth = this->cloth_buf;
+
     for (int j = 0; j < CHARA_CLOTH_MAX; j++) {
         this->cloth[j] = NULL;
     }
+
     this->wind = 0;
 
     for (int i = 0; i < CHARA_MOTION_MAX; i++) {
@@ -1007,6 +1117,7 @@ void CCharacter::Initialize() {
     for (int i = 0; i < 2; i++) {
         sceVu0CopyVector(this->ground_ambient[i], zero);
     }
+
     sceVu0CopyVector(this->ambient_tint, zero);
 
     // The first set of motions is the one the model was loaded with.
@@ -1020,6 +1131,7 @@ void CCharacter::Initialize() {
         this->unk_1068[j].unk_00 = -1;
         this->unk_1068[j].unk_0C = 0;
     }
+
     for (int j = 0; j < CHARA_FOOT_SOUND_MAX; j++) {
         this->foot_sound[j].foot = -1;
         this->foot_sound[j].frame = -1;

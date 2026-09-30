@@ -14,6 +14,7 @@
 
 void CStealItem::Initialize(CFrameVu1 *model) {
     this->frame = model;
+
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
         this->state[i] = -1;
         this->aux_state[i] = -1;
@@ -51,6 +52,7 @@ void CStealItem::Step() {
     target[1] = 15.0f;
 
     this->angle += 0.31415927f;
+
     if (this->angle >= 6.2831855f) {
         this->angle -= 6.2831855f;
     }
@@ -77,6 +79,7 @@ void CStealItem::Step() {
                 if (this->phase[i] >= 1.5707964f) {
                     this->state[i] = 1;
                 }
+
                 break;
 
             case 1:
@@ -111,6 +114,7 @@ void CStealItem::Draw() {
         if (this->state[i] == -1) {
             continue;
         }
+
         this->frame->SetPosition(this->pos[i]);
         this->frame->SetRotation(this->angle, 0.0f, 0.0f);
         MGDraw(this->frame);
@@ -122,10 +126,12 @@ int CStealItem::checkEvent() {
         if (this->state[i] == -1) {
             continue;
         }
+
         if (this->state[i] == 2) {
             this->state[i] = -1;
             return this->item[i];
         }
     }
+
     return -1;
 }

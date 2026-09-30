@@ -60,15 +60,18 @@ void CRandomItem::Draw() {
                     texel_y = 0xC0;
                     break;
             }
+
             if (item_no[i] >= 81 && item_no[i] < 86) {
                 texel_x = 0;
                 texel_y = 0x80;
             }
+
             if (item_no[i] >= 111 && item_no[i] < 121) {
                 texel_x = 0x40;
                 texel_y = 0x80;
             }
         }
+
         BtSet3DCellModel(draw_position, gold_texture, 3.5f, texel_x, texel_y, 0x40, 0x40, 0x80);
     }
 }
@@ -88,11 +91,13 @@ void CRandomItem::MapSymbolDraw() {
 int CRandomItem::checkEvent() {
     for (int i = 0; i < 32; i++) {
         int event = pickup_event[i];
+
         if (event != -1) {
             pickup_event[i] = -1;
             return event;
         }
     }
+
     return -1;
 }
 
@@ -103,6 +108,7 @@ int CRandomItem::checkErr() {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -111,21 +117,25 @@ int CRandomItem::CheckPosition() {
     int           gold = 0;
 
     sceVu0CopyVector(player_position, CharaMain.pos);
+
     for (int i = 0; i < 32; i++) {
         if (id[i] == -1 || state[i] != 1) {
             continue;
         }
 
         distance[i] = DistVector(position[i], player_position);
+
         if (pickup_blocked[i] > 0 && distance[i] >= 8.5f) {
             pickup_blocked[i] = 0;
         }
+
         if (pickup_blocked[i] != 0 || distance[i] > 5.0f) {
             continue;
         }
 
         if (amount[i] == -1 && item_no[i] != -1) {
             int blocked = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no[i]);
+
             if (blocked == 0) {
                 pickup_event[i] = item_no[i];
                 id[i] = -1;
@@ -134,20 +144,24 @@ int CRandomItem::CheckPosition() {
             }
         } else {
             state[i] = 2;
+
             if (item_no[i] == -1) {
                 SndSePlay(0xDF, -1, 0);
             }
+
             gold += amount[i];
             position[i][1] += 5.0f;
             HitValueEntry(NowHitValue, position[i], gold, 1, NULL);
             position[i][1] -= 5.0f;
         }
     }
+
     return gold;
 }
 
 void CRandomItem::Set(float *drop_position, int slot_id, int gold, int item) {
     int slot = CheckID();
+
     if (slot != -1) {
         sceVu0CopyVector(position[slot], drop_position);
         position[slot][1] += 1.75f;
@@ -167,6 +181,7 @@ int CRandomItem::CheckID() {
             return i;
         }
     }
+
     bob_phase = 0.0f;
     return -1;
 }
@@ -177,11 +192,13 @@ int CRandomItem::CheckItemNo(int item) {
             return item;
         }
     }
+
     return 0;
 }
 
 void CRandomItem::Step() {
     bob_phase += 0.05235988f;
+
     if (bob_phase > 3.1415927f) {
         bob_phase -= 3.1415927f;
     }
@@ -190,26 +207,32 @@ void CRandomItem::Step() {
         if (id[i] == -1) {
             continue;
         }
+
         switch (state[i]) {
             case 0:
                 phase[i] += 0.10471976f;
+
                 if (phase[i] > 3.1415927f) {
                     state[i] = 1;
                     phase[i] = 0.0f;
+
                     if (item_no[i] == -1) {
                         SndSePlay(0xDD, -1, 0);
                     } else {
                         SndSePlay(0xDE, -1, 0);
                     }
                 }
+
                 break;
             case 1:
                 break;
             case 2:
                 phase[i] += 0.10471976f;
+
                 if (phase[i] > 2.5132742f) {
                     id[i] = -1;
                 }
+
                 break;
         }
     }

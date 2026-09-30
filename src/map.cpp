@@ -6,6 +6,7 @@ CMapObject *CMap::SetObject(int index, CFrameVu1 *frame, int category_no, int ha
     if (index >= 10 || index < 0) {
         return NULL;
     }
+
     object[index].handle = handle;
     object[index].category_no = category_no;
     map_object = &object[index];
@@ -21,9 +22,11 @@ CMapObject *CMap::SetObject(CFrameVu1 *frame, int category_no, int handle) {
             break;
         }
     }
+
     if (index == 10) {
         return NULL;
     }
+
     return SetObject(index, frame, category_no, handle);
 }
 
@@ -31,6 +34,7 @@ CMapObject *CMap::GetObject(int index) {
     if (index >= 10 || index < 0) {
         return NULL;
     }
+
     return &object[index];
 }
 
@@ -44,10 +48,13 @@ void CMap::Draw() {
 
         map_object = &object[index];
         category_no = map_object->category_no;
+
         if (category_no < 0) {
             continue;
         }
+
         attr = &category[category_no];
+
         if (attr->lod[0] > 0.0f && draw_on != 0) {
             map_object->DrawLOD(attr->lod, attr->lowest, attr->highest, NULL);
         } else {
@@ -64,8 +71,10 @@ void CMap::Initialize() {
         category[index].lowest = 0;
         category[index].highest = 3;
     }
+
     for (index = 0; index < 10; index++) {
         object[index].Initialize();
     }
+
     draw_on = 1;
 }

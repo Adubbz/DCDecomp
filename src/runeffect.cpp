@@ -142,21 +142,28 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
     int   bottom = 0;
     int   count = 0;
     float amplitude = 0.0f;
+
     for (y = 0; y < source.height; y += 2) {
         int index = count + (int) phase;
+
         if (index >= 8) {
             index -= 8;
         }
+
         int offset = (int) (16.0f * (depth * (amplitude * waveAnimeCnt[index])));
         bottom += 2;
         int left = (source.x << 4) + offset;
+
         if (left < 0) {
             left = 0;
         }
+
         int right = offset + ((source.x + source.width) << 4);
+
         if (right > 0x27F0) {
             right = 0x27F0;
         }
+
         sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, *(u_long *) &frame);
         sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x116);
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
@@ -166,9 +173,11 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((source.width << 4) + 0x6C00, ((y + 2) << 4) + GS_Y_OFFSET, 0, 0));
         top = bottom;
         count++;
+
         if (count >= 8) {
             amplitude = 1.3f * rand() / 2147483648.0f;
         }
+
         if (count >= 8) {
             count = 0;
         }
@@ -226,6 +235,7 @@ void CRunEffect::Draw() {
 
     CTexture *first = TexManager.GetTexture("fx_foot", -1);
     CTexture *second = TexManager.GetTexture("fx_foot2", -1);
+
     if (first == NULL || second == NULL) {
         return;
     }
@@ -235,17 +245,21 @@ void CRunEffect::Draw() {
     light[0] += 80.0f;
     light[1] += 60.0f;
     light[2] += 40.0f;
+
     if (!(light[0] <= 255.0f)) {
         light[0] = 255.0f;
     }
+
     if (!(light[1] <= 255.0f)) {
         light[1] = 255.0f;
     }
+
     if (!(light[2] <= 255.0f)) {
         light[2] = 255.0f;
     }
 
     spRGBA colour;
+
     if (lighting != 0) {
         colour.r = (int) light[0];
         colour.g = (int) light[1];
@@ -257,6 +271,7 @@ void CRunEffect::Draw() {
         colour.b = 0x80;
         colour.a = 0x80;
     }
+
     sw ^= 1;
 
     sceGsZbuf zbuffer = mgZBuffer;
@@ -273,9 +288,11 @@ void CRunEffect::Draw() {
         if (life[i] == 0) {
             continue;
         }
+
         if (MGRotTransPers3DSprite(top_left, bottom_right, position[i], 12.0f - 0.5f * life[i], 5.5f - 0.25f * life[i], 0) != 1) {
             continue;
         }
+
         top_right[0] = bottom_right[0];
         top_right[1] = top_left[1];
         top_right[2] = top_left[2];
@@ -285,6 +302,7 @@ void CRunEffect::Draw() {
         bottom_left[2] = bottom_right[2];
         bottom_left[3] = bottom_right[3];
         colour.a = life[i] * 10;
+
         if (sw != 0) {
             set3DSprite(Vif1Packet, first, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right, bottom_left, bottom_right, &colour);
         } else {
@@ -309,11 +327,13 @@ void CRunEffect::Draw() {
  */
 void CRunEffect::Set(float *origin) {
     int slot = -1;
+
     for (int i = 0; i < 8; i++) {
         if (life[i] == 0) {
             slot = i;
         }
     }
+
     if (slot != -1) {
         position[slot][0] = origin[0];
         position[slot][1] = origin[1];
@@ -353,5 +373,6 @@ CRunEffect::CRunEffect() {
         velocity_y[i] = 0.0f;
         life[i] = 0;
     }
+
     lighting = 0;
 }

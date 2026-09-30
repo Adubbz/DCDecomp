@@ -1203,53 +1203,72 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
         count0 = list[0].count[0];
         count1 = list[0].count[1];
         pick1 = pick0 = -1;
+
         while (pick0 == -1) {
             pick0 = (int) (((float) count0 * (float) rand()) / 2.1474836e9f);
+
             if (pick0 >= count0) {
                 pick0 = 0;
             }
+
             chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+
             if (rate[list[0].item[0][pick0] - 1] >= chance) {
                 pick0 = -1;
             }
         }
+
         while (pick1 == -1) {
             pick1 = (int) (((float) count1 * (float) rand()) / 2.1474836e9f);
+
             if (pick1 >= count1) {
                 pick1 = 0;
             }
+
             chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+
             if (rate[list[0].item[1][pick1] - 1] >= chance) {
                 pick1 = -1;
             }
         }
+
         *item0 = list[0].item[0][pick0];
         *item1 = list[0].item[1][pick1];
         return;
     }
+
     count0 = list[1].count[0];
     count1 = list[1].count[1];
     pick1 = pick0 = -1;
+
     while (pick0 == -1) {
         pick0 = (int) (((float) count0 * (float) rand()) / 2.1474836e9f);
+
         if (pick0 >= count0) {
             pick0 = 0;
         }
+
         chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+
         if (rate[list[1].item[0][pick0] - 1] >= chance) {
             pick0 = -1;
         }
     }
+
     while (pick1 == -1) {
         pick1 = (int) (((float) count1 * (float) rand()) / 2.1474836e9f);
+
         if (pick1 >= count1) {
             pick1 = 0;
         }
+
         chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+
         if (rate[list[1].item[1][pick1] - 1] >= chance) {
             pick1 = -1;
         }
     }
+
     *item0 = list[1].item[0][pick0];
     *item1 = list[1].item[1][pick1];
 }
@@ -1273,32 +1292,41 @@ int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small) {
 
     // Retail copies from the pointer table itself rather than from the dungeon's rate list.
     memcpy(rate, &ItemSetRateTbl[map_no], 0x17C);
+
     // Weapons the player already holds come up less often.
     for (i = 0x101; i < 0x17C; i++) {
         held = GetNumHowManyItemsHave(i);
+
         if (held > 0) {
             if (held == 1) {
                 rate[i - 1] -= 10;
             }
+
             if (held >= 2) {
                 rate[i - 1] -= 20;
             }
+
             if (rate[i - 1] <= 0) {
                 rate[i - 1] = 0;
             }
         }
     }
+
     scan = 0;
     wanted = -1;
+
     for (;; scan++) {
         item_no = list[scan].floor;
+
         if (item_no == -1) {
             break;
         }
+
         if (floor_no + 1 == item_no) {
             wanted = floor_no + 1;
         }
     }
+
     if (wanted == -1) {
         if (floor_no < floorNum[map_no]) {
             wanted = 0x100;
@@ -1306,84 +1334,113 @@ int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small) {
             wanted = 0xFF;
         }
     }
+
     list_no = 0;
+
     do {
         if (wanted == list[list_no].floor) {
             break;
         }
+
         list_no++;
+
         if (list_no >= 128) {
             printf("err itembox list \n");
             return -1;
         }
     } while (1);
+
     if (small != 0) {
         int j = 0;
         count = 0;
+
         for (; list[list_no].item[j] != -1; j++) {
             item_no = list[list_no].item[j];
+
             if (item_no >= 0x51 && item_no < 0x101) {
                 candidate[count++] = item_no;
             }
         }
+
         table = rate;
         tries = 0;
+
         do {
             roll = ((float) count * (float) rand()) / 2.1474836e9f;
             pick = (int) roll;
+
             if (roll - (float) pick > 0.0f) {
                 pick++;
             }
+
             if (pick < 0 || pick >= count) {
                 pick = 0;
             }
+
             chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
             item_no = candidate[pick];
+
             if (table[item_no - 1] < chance) {
                 break;
             }
+
             tries++;
+
             if (tries >= 0xFFFF) {
                 item_no = -1;
                 break;
             }
         } while (1);
+
         return item_no;
     }
+
     if (small == 0) {
         int j = 0;
         count = 0;
+
         for (; list[list_no].item[j] != -1; j++) {
             item_no = list[list_no].item[j];
+
             if (item_no >= 0x101) {
                 candidate[count++] = item_no;
             }
         }
+
         if (count == 0) {
             return -1;
         }
+
         table = rate;
         tries = 0;
+
         do {
             roll = ((float) count * (float) rand()) / 2.1474836e9f;
             pick = (int) roll;
+
             if (roll - (float) pick > 0.0f) {
                 pick++;
             }
+
             if (pick < 0 || pick >= count) {
                 pick = 0;
             }
+
             chance = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
             item_no = candidate[pick];
+
             if (table[item_no - 1] < chance) {
                 break;
             }
+
             tries++;
+
             if (tries >= 0xFFFF) {
                 item_no = -1;
                 break;
             }
         } while (1);
+
         return item_no;
     }
 }
@@ -1409,16 +1466,20 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
         for (int col = x; col < x + width; col++) {
             int parts_no = (cells + row * 20)[col].parts_no;
             int direction = (cells + row * 20)[col].direction;
+
             for (int area_no = 0; areas[area_no].parts_no != -1 && count < 196; area_no++) {
                 if (parts_no != areas[area_no].parts_no) {
                     continue;
                 }
+
                 for (int rect_no = 0; rect_no < areas[area_no].rect_num; rect_no++) {
                     int turn = areas[area_no].direction;
                     turn += direction;
+
                     if (turn > 3) {
                         turn -= 4;
                     }
+
                     float angle = (3.1415927f * (90.0f * (float) (4 - turn))) / 180.0f;
                     px[0] = ToWorldScale(areas[area_no].rect[rect_no].x0);
                     py[0] = areas[area_no].rect[rect_no].y0 * 10.0f;
@@ -1432,6 +1493,7 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
                     px[2] = px[0];
                     py[2] = py[0];
                     pz[2] = pz[3];
+
                     for (int corner = 0; corner < 4; corner++) {
                         if (count < 196) {
                             float corner_z;
@@ -1444,7 +1506,9 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
                             quad[count][corner][1] = py[corner];
                         }
                     }
+
                     count++;
+
                     if (count >= 196) {
                         break;
                     }
@@ -1452,25 +1516,31 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
             }
         }
     }
+
     int   pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
     float max_x = quad[pick][0][0];
     float min_x = max_x;
     float max_z = quad[pick][0][2];
     float min_z = max_z;
+
     for (int corner = 1; corner < 4; corner++) {
         if (min_x > quad[pick][corner][0]) {
             min_x = quad[pick][corner][0];
         }
+
         if (max_x < quad[pick][corner][0]) {
             max_x = quad[pick][corner][0];
         }
+
         if (min_z > quad[pick][corner][2]) {
             min_z = quad[pick][corner][2];
         }
+
         if (max_z < quad[pick][corner][2]) {
             max_z = quad[pick][corner][2];
         }
     }
+
     float span_x = max_x - min_x;
     float span_z = max_z - min_z;
     pos[0] = min_x + (span_x * (float) rand()) / 2.1474836e9f;
@@ -1491,12 +1561,15 @@ int chkAtraFloor(int dungeon, int floor) {
     if (dungeon >= 6) {
         return 0;
     }
+
     int *floors = noEntryTbl[dungeon];
+
     for (int i = 0; floors[i] != -1; i++) {
         if (floor == floors[i]) {
             return 0;
         }
     }
+
     return 1;
 }
 
@@ -1518,46 +1591,59 @@ void BtAtraListMake(int dungeon) {
     if (dungeon >= 6) {
         return;
     }
+
     ATRA_APPEAR *appear = AtraAppearData[dungeon];
     int          center = CenterFloorTbl[dungeon];
     int          max = MaxFloorTbl[dungeon];
     int          count = 0;
     int          upper = 0;
     int          lower = 0;
+
     for (; appear[count].id != -1; count++) {
         int floor = appear[count].floor;
+
         if (floor == -1) {
             upper += appear[count].count;
         }
+
         if (floor == -2) {
             lower += appear[count].count;
         }
+
         if (floor != -1 && floor != -2) {
             RegisterAtra(dungeon, --floor, count);
         }
     }
+
     int i;
+
     for (i = 0; i < upper; i++) {
         int placed = 0;
+
         while (placed == 0) {
             int floor = (int) (((float) (center - 1) * (float) rand()) / 2.1474836e9f);
+
             if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
                 RegisterAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
     }
+
     for (i = 0; i < lower; i++) {
         int placed = 0;
+
         while (placed == 0) {
             int floor = (int) (((float) ((max - center) - 1) * (float) rand()) / 2.1474836e9f);
             floor += center;
+
             if (((CDngStatusData *) UserStatus)->GetMaxAtraNum(dungeon, floor) < 8 && chkAtraFloor(dungeon, floor + 1) != 0) {
                 RegisterAtra(dungeon, floor, -2);
                 placed = 1;
             }
         }
     }
+
     for (int j = 0; j < count; j++) {
         UserStatus->atra_registry[dungeon][j].id = appear[j].id;
         UserStatus->atra_registry[dungeon][j].floor = appear[j].floor;
@@ -1581,44 +1667,57 @@ int BtAtraFloorCyoice(int map_no, int floor_no, int *atra_no) {
     if (map_no >= 6) {
         return 0;
     }
+
     ((CDngStatusData *) UserStatus)->GetMaxAtraNum(map_no, floor_no);
     int center = CenterFloorTbl[map_no];
     ((CDngStatusData *) UserStatus)->SetCopyAtraList(map_no, floor_no, atra_no);
+
     for (int j = 0; j < 100; j++) {
         registry[j].id = UserStatus->atra_registry[map_no][j].id;
         registry[j].floor = UserStatus->atra_registry[map_no][j].floor;
         registry[j].refcount = UserStatus->atra_registry[map_no][j].refcount;
     }
+
     int half = -1;
+
     if (floor_no > center - 1) {
         half = -2;
     }
+
     int count = 0;
+
     for (int i = 0; i < 8; i++) {
         if (atra_no[i] >= 0) {
             count++;
         } else if (atra_no[i] == -2) {
             int placed = 0;
+
             while (placed == 0) {
                 int pick = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
+
                 if (registry[pick].id != -1 && registry[pick].refcount > 0 && half == registry[pick].floor) {
                     atra_no[i] = pick;
                     registry[pick].refcount--;
                     placed = 1;
                 }
             }
+
             count++;
         }
     }
+
     for (int k = 0; k < 8; k++) {
         packed[k] = -1;
     }
+
     int packed_num = 0;
+
     for (int m = 0; m < 8; m++) {
         if (atra_no[m] >= 0) {
             packed[packed_num++] = atra_no[m];
         }
     }
+
     memcpy(atra_no, packed, sizeof(packed));
     return count;
 }
@@ -1630,6 +1729,7 @@ static inline CFrame *PartsCollision(CDungeonMap *map, int parts_no) {
     if (parts_no == -1) {
         return NULL;
     }
+
     return map->parts[parts_no].collision;
 }
 
@@ -1640,6 +1740,7 @@ static inline int PartsCollisionTurn(CDungeonMap *map, int parts_no) {
     if (parts_no == -1) {
         return 0;
     }
+
     return map->parts[parts_no].collision_turn;
 }
 
@@ -1667,6 +1768,7 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
         {-1, 1 },
         {1,  1 }
     };
+
     if (map->map_type != 1) {
         sceVu0FVECTOR part_pos;
 
@@ -1676,23 +1778,29 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
             } else {
                 collision = map->parts[i].collision;
             }
+
             if (collision == NULL) {
                 continue;
             }
+
             sceVu0CopyVector(part_pos, map->parts[i].frame_offset[0]);
             turn = (int) map->parts[i].frame_turn[0];
             turn += PartsCollisionTurn(map, i);
+
             if (turn > 3) {
                 turn -= 3;
             }
+
             if (turn == 3) {
                 turn = -1;
             }
+
             float angle = (3.1415927f * (-90.0f * (float) turn)) / 180.0f;
             collision->SetRotation(0.0f, angle, 0.0f);
             collision->SetPosition(part_pos);
             count += collision->PickUpNearPoly(&poly[count], box);
         }
+
         for (i = 0; i < 24; i++) {
             if (map->boxes[i].used != 0) {
                 collision = map->box_collision_model;
@@ -1700,6 +1808,7 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
                 count += collision->PickUpNearPoly(&poly[count], box);
             }
         }
+
         count = map->CreateCollision(poly, box, count);
         count = NowDranMapField->AddCollision(poly, count, box);
     } else {
@@ -1710,26 +1819,34 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
             int z = (int) (position[2] / 160.0f);
             x += around[j][0];
             z += around[j][1];
+
             if (x < 0 || x > 19 || z < 0 || z > 19) {
                 continue;
             }
+
             model = PartsCollision(map, map->cells[x + z * 20].parts_no);
+
             if (model == NULL) {
                 continue;
             }
+
             float angle = (float) map->cells[x + z * 20].direction;
             angle += (float) PartsCollisionTurn(map, map->cells[x + z * 20].parts_no);
+
             if (angle > 3.0f) {
                 angle -= 3.0f;
             }
+
             if (angle == 3.0f) {
                 angle = -1.0f;
             }
+
             angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
             model->SetRotation(0.0f, angle, 0.0f);
             model->SetPosition(160.0f * (float) x, 0.0f, 160.0f * (float) z);
             count += model->PickUpNearPoly(&poly[count], box);
         }
+
         for (int k = 0; k < 24; k++) {
             if (map->boxes[k].used != 0) {
                 model = map->box_collision_model;
@@ -1737,8 +1854,10 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
                 count += model->PickUpNearPoly(&poly[count], box);
             }
         }
+
         count = map->CreateCollision(poly, box, count);
     }
+
     return count;
 }
 
@@ -1746,24 +1865,30 @@ CFrame *CDungeonParts::GetSearchFrame(char *name) {
     for (int i = 0; i < 6; i++) {
         if (frame[i] != NULL) {
             CFrame *found = frame[i]->SearchFrame(name);
+
             if (found != NULL) {
                 return found;
             }
         }
     }
+
     // The collision and the second model are searched after the drawn ones.
     if (collision != NULL) {
         CFrame *found = collision->SearchFrame(name);
+
         if (found != NULL) {
             return found;
         }
     }
+
     if (camera_collision != NULL) {
         CFrame *found = camera_collision->SearchFrame(name);
+
         if (found != NULL) {
             return found;
         }
     }
+
     return NULL;
 }
 
@@ -1795,14 +1920,19 @@ void CDungeonParts::Draw() {
         if (frame[i] == NULL) {
             continue;
         }
+
         int turn = (int) ((float) direction + frame_turn[i]);
+
         if (turn > 3) {
             turn -= 3;
         }
+
         float angle = (float) turn;
+
         if (3.0f == angle) {
             angle = -1.0f;
         }
+
         angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
         frame[i]->SetRotation(0.0f, angle, 0.0f);
 
@@ -1828,18 +1958,23 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int map_type) {
 
     for (int i = 0; i < 6; i++) {
         CFrame *model = frame[i];
+
         if (model == NULL) {
             continue;
         }
 
         int model_turn = (int) ((float) direction + frame_turn[i]);
+
         if (model_turn > 3) {
             model_turn -= 3;
         }
+
         float angle = (float) model_turn;
+
         if (3.0f == angle) {
             angle = -1.0f;
         }
+
         angle = (3.1415927f * (-90.0f * angle)) / 180.0f;
         model->SetRotation(0.0f, angle, 0.0f);
 
@@ -1850,30 +1985,40 @@ void CDungeonParts::DrawCalc(int x, int z, int turn, int map_type) {
         position[3] = 1.0f;
         frame[i]->SetPosition(position);
     }
+
     CFrame *model = collision;
+
     if (model == NULL) {
         return;
     }
+
     if (map_type == 1) {
         int collision_turn = turn + this->collision_turn;
+
         if (collision_turn > 3) {
             collision_turn -= 3;
         }
+
         if (collision_turn == 3) {
             collision_turn = -1;
         }
+
         model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
         float y = 0.0f;
         collision->SetPosition(160.0f * (float) x, y, 160.0f * (float) z);
         return;
     }
+
     int collision_turn = (int) (frame_turn[0] + (float) this->collision_turn);
+
     if (collision_turn > 3) {
         collision_turn -= 3;
     }
+
     if (collision_turn == 3) {
         collision_turn = -1;
     }
+
     model->SetRotation(0.0f, (3.1415927f * (-90.0f * (float) collision_turn)) / 180.0f, 0.0f);
     sceVu0CopyVector(position, pos);
     position[0] += frame_offset[0][0];
@@ -1895,6 +2040,7 @@ void CDungeonParts::initalize() {
         frame[i] = NULL;
         frame_turn[i] = 0.0f;
     }
+
     direction_offset = 0;
     collision = NULL;
     camera_collision = NULL;

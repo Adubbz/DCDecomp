@@ -17,6 +17,7 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, 
     u_int  saved_size;
 
     result = 0;
+
     if (info->shadow_pass == 2) {
         saved_primary = vu_data_buffer[0];
         saved_secondary = vu_data_buffer[1];
@@ -31,6 +32,7 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, 
         vu_size = saved_size;
         return result;
     }
+
     result += CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
     return result;
 }
@@ -42,6 +44,7 @@ int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
     u_int  saved_size;
 
     result = 0;
+
     if (info->shadow_pass == 2) {
         saved_primary = vu_data_buffer[0];
         saved_secondary = vu_data_buffer[1];
@@ -56,6 +59,7 @@ int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
         vu_size = saved_size;
         return result;
     }
+
     return CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
 }
 
@@ -87,12 +91,14 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
     vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
     corner = (MDT_SVERTEX *) shadow->shape;
     shape_num = shadow->shape_num;
+
     for (shape_index = 0; shape_index < shape_num; shape_index++) {
         index_num = ((MDT_SSHAPE *) corner)->index_num;
         corner = ((MDT_SSHAPE *) corner)->vertex;
         continued = 0;
         emitted = 0;
         sceVu0FVECTOR one = {1.0f, 1.0f, 1.0f, 1.0f};
+
         while (emitted < index_num) {
             qwc = 0;
             block[word] = 0;
@@ -109,6 +115,7 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
             qwc += 1;
             source = corner;
             out = (u_long128 *) &block[word];
+
             for (triangle = 0; triangle < 10 && emitted < index_num; triangle++, emitted += 3) {
                 out[0] = *(u_long128 *) one;
                 out[1] = *(u_long128 *) one;
@@ -119,6 +126,7 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
                 out += 6;
                 source += 3;
             }
+
             word += triangle * 24;
             qwc += triangle * 6;
             corner += triangle * 3;
@@ -127,6 +135,7 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
             block[word] = 0;
             block[(u_int) (word + 1)] = 0;
             block[(u_int) (word + 2)] = 0;
+
             if (!continued) {
                 if (first) {
                     block[(u_int) (word + 3)] = 0x14000000;
@@ -136,15 +145,18 @@ int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
                     block[(u_int) (word + 3)] = 0x14000001;
                     word += 4;
                 }
+
                 continued = 1;
             } else {
                 block[(u_int) (word + 3)] = 0x17000000;
                 word += 4;
             }
         }
+
         *(u_long128 *) &block[word] = *(u_long128 *) end;
         word += 4;
     }
+
     vu_size = word >> 2;
     return vu_size;
 }
@@ -153,6 +165,7 @@ int CVisualShadow::RemakeData(u_int *block) {
     if (data == NULL) {
         return 0;
     }
+
     return CreateVUdataShadow(vu_data_buffer[DBuffID], data);
 }
 
@@ -208,6 +221,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
     if (model_data == NULL) {
         return 0;
     }
+
     light[0] = info->light_direction[0][0];
     light[1] = info->light_direction[1][0];
     light[2] = info->light_direction[2][0];
@@ -225,12 +239,14 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
     direction[2] = info->light_direction[2][0];
     direction[3] = 0.0f;
     plane_scale = sceVu0InnerProduct(normal, point);
+
     if (plane_scale == 0.0f) {
         point[0] -= 0.1f * normal[0];
         point[1] -= 0.1f * normal[1];
         point[2] -= 0.1f * normal[2];
         plane_scale = 1.0f;
     }
+
     plane_scale = 1.0f / plane_scale;
     nx = normal[0] * plane_scale;
     ny = normal[1] * plane_scale;
@@ -261,10 +277,12 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
     shape_num = shadow->shape_num;
     eye = (sceVu0FVECTOR *) 0x70000000;
     projected = &eye[model->vertex_num];
+
     for (i = 0; i < model->vertex_num; i++) {
         sceVu0ApplyMatrix((float *) eye[i], local_to_eye, vertices[i]);
         sceVu0ApplyMatrix(projected[i], shadow_to_eye, vertices[i]);
     }
+
     for (pass = 0; pass < 2; pass++) {
         block[word] = 0;
         block[(u_int) (word + 1)] = 0;
@@ -274,6 +292,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
         block[(u_int) (word + 5)] = 0x102E8000;
         block[(u_int) (word + 6)] = 0xE;
         block[(u_int) (word + 7)] = 0;
+
         if (pass == 0) {
             block[(u_int) (word + 8)] = 0x68;
             block[(u_int) (word + 9)] = 0x80;
@@ -287,13 +306,16 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
             block[(u_int) (word + 11)] = 0;
             word += 12;
         }
+
         corner = (MDT_SVERTEX *) shadow->shape;
+
         for (shape_index = 0; shape_index < shape_num; shape_index++) {
             index_num = ((MDT_SSHAPE *) corner)->index_num;
             corner = ((MDT_SSHAPE *) corner)->vertex;
             continued = 0;
             emitted = 0;
             u_int edges[4] = {0, 0, 0, 0};
+
             while (emitted < index_num) {
                 qwc = 0;
                 block[word] = 0;
@@ -314,6 +336,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                 qwc += 2;
                 out = (u_long128 *) &block[word];
                 triangle = 0;
+
                 for (count = 0; count < 12 && emitted < index_num; count++, emitted += 3, corner += 3) {
                     sceVu0FVECTOR face;
                     sceVu0FVECTOR edge0;
@@ -340,6 +363,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                     sceVu0SubVector(edge0, (float *) &out[2], (float *) &out[1]);
                     sceVu0SubVector(edge1, (float *) &out[3], (float *) &out[1]);
                     sceVu0OuterProduct(face, edge0, edge1);
+
                     if (sceVu0InnerProduct(face, local_light) <= 0.0f) {
                         out[4] = *(u_long128 *) vertices[index_c];
                         triangle++;
@@ -362,15 +386,19 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                         sceVu0ApplyMatrix(clipped[0], clip, (float *) clipped[4]);
                         int counts[4] = {0, 0, 0, 1};
                         counts[0] = clip_num;
+
                         if (clip_num > 4) {
                             counts[0] = 4;
                             counts[1] = 3;
                         }
+
                         if (pass != 0) {
                             counts[0] = 0;
                             counts[1] = 0;
                         }
+
                         out[5] = *(u_long128 *) counts;
+
                         if (pass == 0) {
                             out[6] = *(u_long128 *) clipped[0];
                             out[7] = *(u_long128 *) near_side[3];
@@ -388,6 +416,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                         }
                     }
                 }
+
                 if (triangle > 0) {
                     word += triangle * 44;
                     qwc += triangle * 11;
@@ -396,6 +425,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                     block[word] = 0;
                     block[(u_int) (word + 1)] = 0;
                     block[(u_int) (word + 2)] = 0;
+
                     if (!continued) {
                         if (first) {
                             block[(u_int) (word + 3)] = 0x14000000;
@@ -405,6 +435,7 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                             block[(u_int) (word + 3)] = 0x14000001;
                             word += 4;
                         }
+
                         continued = 1;
                     } else {
                         block[(u_int) (word + 3)] = 0x17000000;
@@ -414,10 +445,12 @@ int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, Rende
                     word -= 12;
                 }
             }
+
             *(u_long128 *) &block[word] = *(u_long128 *) end;
             word += 4;
         }
     }
+
     vu_size = word >> 2;
     return vu_size;
 }

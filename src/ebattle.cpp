@@ -451,13 +451,17 @@ void EBFinishSound(int do_fade_bgm, int do_play_fanfare) {
  */
 void EBInitIntro() {
     tex = TexManager.GetTexture("ebat", -1);
+
     if (tex == NULL) {
         return;
     }
+
     tex2 = TexManager.GetTexture("ebat2", -1);
+
     if (tex2 == NULL) {
         return;
     }
+
     eb_intro_cnt = 0;
     ebattle_intro_flag = 1;
     // The wipe opens from the right edge, so it starts with no width.
@@ -470,24 +474,32 @@ void EBSetMotion(CCharacter *character, int *motions) {
     }
 
     int i;
+
     for (i = 0;; i++) {
         int motion_no = motions[i];
+
         if (motion_no < 0) {
             break;
         }
+
         eb_motion[i].motion_no = motion_no;
     }
+
     eb_motion[i].motion_no = -1;
 
     eb_chara = character;
+
     for (i = 0;; i++) {
         if (eb_motion[i].motion_no < 0) {
             break;
         }
+
         MOTION_INFO *info = eb_chara->GetMotionInfo(eb_motion[i].motion_no);
+
         if (info == NULL) {
             return;
         }
+
         float start = (float) info->start;
         float end = (float) info->end;
         eb_motion[i].start = start;
@@ -511,22 +523,29 @@ void EBSetKey(float time, int buttons, int mode) {
     if (eb_key_num < 64) {
         EB_KEY_ENTRY *key = (EB_KEY_ENTRY *) &eb_key[eb_key_num++];
         key->frame = 0;
+
         for (int i = 0;; i++) {
             EB_MOTION *motion = &eb_motion[i];
+
             if (motion->motion_no < 0) {
                 break;
             }
+
             if (time >= motion->start && time < motion->end) {
                 key->frame += (time - motion->start) / motion->speed;
                 break;
             }
+
             key->frame += motion->frames;
         }
+
         key->buttons = buttons;
         key->pressed = 0;
+
         if (mode > 5) {
             mode = 5;
         }
+
         key->mode = mode;
         key->passed = 0;
         key->hit = 0;
@@ -541,8 +560,10 @@ void EBExit() {
     ebattle_intro_flag = 0;
     eb_finish_cnt = 0;
     init_draw_ok();
+
     do {
     } while (SndSPSeSyncBG() != 0);
+
     InitReadBG();
 }
 
@@ -562,16 +583,20 @@ int EBIntroLoop() {
 
     // The wipe crosses the screen over a hundred frames.
     width = eb_intro_cnt * 640 / 100;
+
     if (width > 640) {
         width = 640;
     }
+
     draw_rect.x = 640 - width;
     draw_rect.width = width;
     eb_intro_cnt++;
+
     if (eb_intro_cnt > 100) {
         draw_rect = CRect_i_(0, 0, 640, 448);
         return 1;
     }
+
     return 0;
 }
 
@@ -586,40 +611,49 @@ int EBLoop() {
     if (ebattle_flag == 0) {
         return 1;
     }
+
     if (eb_finish_cnt > 0) {
         if (eb_finish_cnt == 1) {
             EBExit();
             return eb_result;
         }
+
         eb_finish_cnt--;
         return 0;
     }
+
     if (eb_count == 0 && play_fanfare != 0) {
         int loaded_size;
         StartReadBG();
         SndSPSeLoadBG(0x2F, read_buffer, &loaded_size);
     }
+
     ReadBG();
 
     int     i;
     float   frame_speed = speed;
     EB_KEY *active = NULL;
     int     cool = 0;
+
     for (i = 0; i < eb_key_num; i++) {
         EB_KEY *key = &eb_key[i];
         float   distance = eb_count - key->frame;
         distance *= frame_speed;
         int early = 0;
+
         if (key->mode > 0) {
             early = (6 - key->mode) << 6;
         }
+
         key->highlight = 0;
+
         if (distance > 0.0f) {
             if (distance < 48.0f) {
                 active = key;
             } else {
                 key->passed = 1;
             }
+
             if (distance < 24.0f) {
                 cool = 1;
             }
@@ -627,10 +661,12 @@ int EBLoop() {
             if (distance > -16.0f) {
                 active = key;
             }
+
             if (early > 0 && distance <= 16.0f - early) {
                 key->highlight = 1;
             }
         }
+
         if (debug_mode != 0 && eb_count == key->frame) {
             SndSePlay(9, -1, 0);
             SndSePlay(1, -1, 0);
@@ -638,8 +674,10 @@ int EBLoop() {
     }
 
     int failed = 0;
+
     if (active != NULL) {
         active->pressed |= GamePad.GetPadDown();
+
         if (active->pressed == active->buttons) {
             if (active->hit == 0) {
                 if (cool) {
@@ -647,23 +685,29 @@ int EBLoop() {
                 } else {
                     SndSePlay(9, -1, 0);
                 }
+
                 set_draw_ok(cool, active - eb_key);
                 eb_cool_flag &= cool;
                 eb_key_count++;
             }
+
             active->hit = 1;
         }
+
         if (active->buttons != (active->buttons | active->pressed)) {
             failed = 1;
         }
     } else if (GamePad.GetPadDown()) {
         failed = 1;
     }
+
     for (i = 0; i < eb_key_num; i++) {
         EB_KEY *key = &eb_key[i];
+
         if (key->passed == 0) {
             break;
         }
+
         if (key->buttons != key->pressed) {
             failed = 1;
         }
@@ -676,19 +720,24 @@ int EBLoop() {
         eb_count++;
         return 0;
     }
+
     if (eb_count == eb_end_count - 100 && fade_bgm != 0) {
         SndBgmFadeOut(100, 0);
     }
+
     if (eb_count >= eb_end_count) {
         if (play_fanfare != 0) {
             while (SndSPSeSyncBG() != 0) {
             }
+
             SndSPSePlay(0x2F, -1);
         }
+
         eb_finish_cnt = 160;
         eb_result = (eb_cool_flag != 0) + 1;
         return 0;
     }
+
     old_time = now_time;
     draw_ok_loop();
     eb_count++;
@@ -706,58 +755,75 @@ void EBDraw() {
     if (ebattle_intro_flag == 0 && ebattle_flag == 0) {
         return;
     }
+
     setbilinear(0);
+
 #ifdef PAL
     int lang = LanguageCode;
+
     if (lang < 0 || lang >= 7) {
         lang = 1;
     }
+
 #endif
     if (EdDebugParamDrawOff != 0) {
         return;
     }
+
     if (eb_finish_cnt > 0) {
         TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
         CRect_i_ texel;
         texel.x = texel.y = texel.width = texel.height = 0;
+
 #ifdef PAL
         if (eb_result < 0) {
             texel = EbResult0[lang];
         }
+
         if (eb_result == 2) {
             texel = EbResult2[lang];
         }
+
         if (eb_result == 1) {
             texel = EbResult1[lang];
         }
+
 #else
         if (eb_result < 0) {
             texel = CRect_i_(0, 0x50, 0x92, 0x3C);
         }
+
         if (eb_result == 2) {
             texel = CRect_i_(0, 0, 0x100, 0x46);
         }
+
         if (eb_result == 1) {
             texel = CRect_i_(0, 0x92, 0xB8, 0x40);
         }
+
 #endif
         int left = 0x140 - (texel.width >> 1);
         int top = SCREEN_HALF_HEIGHT - (texel.height >> 1);
+
         if (eb_result > 0 || (eb_finish_cnt >> 2) % 2 != 0) {
             set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, texel.width, texel.height), texel.x, texel.y);
         }
+
         return;
     }
 
     CRect_i_ bar(0, 0xA00, 0x2800, 0x100);
     CRect_i_ left_edge(0xA80, 0xA00, 0x400, 0x100);
     CRect_i_ right_edge(0xC00, 0xA00, 0x100, 0x100);
+
     if (ebattle_intro_flag != 0) {
 #ifdef PAL
         int caution_lang = LanguageCode;
+
         if (caution_lang < 0 || caution_lang >= 7) {
             caution_lang = 0;
         }
+
         Caution = CautionRect[caution_lang];
 #endif
         TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
@@ -768,19 +834,24 @@ void EBDraw() {
         MGFillBox(bar, 0, 0x28, 0xA0, 0x40);
         MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
         MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
+
         if ((eb_intro_cnt >> 2) % 2 != 0) {
             int left = 0x140 - (Caution.width >> 1);
             int top = SCREEN_HALF_HEIGHT - (Caution.height >> 1);
             set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, Caution.width, Caution.height), Caution.x, Caution.y);
         }
+
         if (eb_intro_cnt % 8 == 0) {
             SndSePlay(8, -1, 0);
         }
+
         return;
     }
+
     if (ebattle_flag == 0) {
         return;
     }
+
     TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
     MGFillBox(bar, 0, 0x28, 0xA0, 0x40);
     MGFillBox(left_edge, 0xFF, 0xFF, 0xFF, 0x20);
@@ -788,6 +859,7 @@ void EBDraw() {
     eb_chara->GetMotionInfo(eb_chara->motion_no);
 
     float frame_speed = speed;
+
     for (int i = eb_key_count; i < eb_key_num; i++) {
         EB_KEY *key = &eb_key[i];
         float   delta = eb_count - key->frame;
@@ -796,6 +868,7 @@ void EBDraw() {
         int   x = position;
         DrawButton(key->buttons, x, 0x140, button_scale(i), key->highlight);
     }
+
     if (eb_key_count > 0) {
         EB_KEY *key = &eb_key[eb_key_count - 1];
         float   delta = eb_count - key->frame;
@@ -817,9 +890,11 @@ void DrawButton(int buttons, int x, int y, float scale, int early) {
     if (x < -0x20) {
         return;
     }
+
     if (x > 0x280) {
         return;
     }
+
     if (early != 0) {
         DrawButtonSub(x, y, 0, 0x60, scale);
     } else if ((buttons & 0x20) != 0) {
@@ -916,6 +991,7 @@ static void set_draw_ok(int type, int button) {
 void draw_ok_loop() {
     if (ok_draw_cnt > 0) {
         --ok_draw_cnt;
+
         if (ok_draw_cnt < 0) {
             ok_draw_cnt = 0;
         }
@@ -947,9 +1023,11 @@ static void draw_ok(int x) {
 #ifdef PAL
     CRect_i_ cool_texel(0, 0xE0, 0x32, 0x10);
     int      lang = LanguageCode;
+
     if (lang < 0 || lang >= 7) {
         lang = 1;
     }
+
     success_texel = OkRect[lang];
     cool_texel = CoolRect[lang];
 #else
@@ -958,9 +1036,11 @@ static void draw_ok(int x) {
     CRect_i_      spark_texel(0x20, 0x60, 0x20, 0x20);
     sceVu0FVECTOR offset;
     CRect_i_     *texel = &success_texel;
+
     if (ok_type != 0) {
         texel = &cool_texel;
     }
+
     if ((ok_draw_cnt / 3) % 2 != 0) {
         int      width = texel->width;
         int      left = 200 - (int) (width >> 1);
@@ -973,6 +1053,7 @@ static void draw_ok(int x) {
 
     texel = &spark_texel;
     int spark_x = x + 0x18;
+
     for (int i = 0; i < 8; ++i) {
         sceVu0Normalize(dir[i], dir[i]);
         sceVu0ScaleVector(offset, dir[i], 2.0f * (float) (30 - ok_draw_cnt));
@@ -990,6 +1071,7 @@ static void draw_ok(int x) {
         height = texel->height;
         top = bottom - height - 2;
         alpha = 0x80 - (int) ((float) (30 - ok_draw_cnt * 2) * 128.0 / 30.0);
+
         if (alpha > 0) {
             CRect_i_ screen(left, top, width, height);
             set2DSprite(GetVif1Packet(), tex, screen, spark_texel, (unsigned char) alpha);
@@ -1019,6 +1101,7 @@ static float button_scale(int button) {
     } else if (elapsed < 10) {
         scale += 0.2f * (float) (10 - elapsed);
     }
+
     return scale;
 }
 
@@ -1052,6 +1135,7 @@ static int check_key_mode(int mode) {
     if (mode == 0xFFFF) {
         return 1;
     }
+
     return (key_mode & mode) != 0;
 }
 
@@ -1063,6 +1147,7 @@ float EdGetRXf(int mode) {
     if (check_key_mode(mode)) {
         return GamePad.GetRXf();
     }
+
     return 0.0f;
 }
 
@@ -1070,6 +1155,7 @@ float EdGetRYf(int mode) {
     if (check_key_mode(mode)) {
         return GamePad.GetRYf();
     }
+
     return 0.0f;
 }
 
@@ -1077,6 +1163,7 @@ float EdGetLXf(int mode) {
     if (check_key_mode(mode)) {
         return GamePad.GetLXf();
     }
+
     return 0.0f;
 }
 
@@ -1084,6 +1171,7 @@ float EdGetLYf(int mode) {
     if (check_key_mode(mode)) {
         return GamePad.GetLYf();
     }
+
     return 0.0f;
 }
 
@@ -1091,6 +1179,7 @@ int EdPadOn(int keys, int mode) {
     if (check_key_mode(mode)) {
         return GamePad.On(keys);
     }
+
     return 0;
 }
 
@@ -1098,6 +1187,7 @@ int EdPadDown(int keys, int mode) {
     if (check_key_mode(mode)) {
         return GamePad.Down(keys);
     }
+
     return 0;
 }
 
@@ -1119,6 +1209,7 @@ static float GetRXf() {
     if (keylock() != 0) {
         return 0.0f;
     }
+
     return EdGetRXf(1);
 }
 
@@ -1129,6 +1220,7 @@ static float GetRYf() {
     if (keylock() != 0) {
         return 0.0f;
     }
+
     return EdGetRYf(1);
 }
 
@@ -1139,6 +1231,7 @@ static float GetLXf() {
     if (keylock() != 0) {
         return 0.0f;
     }
+
     return EdGetLXf(1);
 }
 
@@ -1149,6 +1242,7 @@ static float GetLYf() {
     if (keylock() != 0) {
         return 0.0f;
     }
+
     return EdGetLYf(1);
 }
 
@@ -1163,6 +1257,7 @@ static int PadOn(int keys) {
     if (keylock() != 0) {
         return 0;
     }
+
     return EdPadOn(keys, 1);
 }
 
@@ -1177,6 +1272,7 @@ static int PadDown(int keys) {
     if (keylock() != 0) {
         return 0;
     }
+
     return EdPadDown(keys, 1);
 }
 
@@ -1200,28 +1296,35 @@ static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position,
 
     step = 0.0f;
     float excess = camera->GetDistance() - camera_near_dist;
+
     if (excess < step) {
         step = -excess / 10.0f;
     }
+
     if (excess > 0.0f) {
         step = excess / 15.0f;
     }
+
     if (step > 2.0f) {
         step = 2.0f;
     }
+
     if (step < 0.05f) {
         step = 0.05f;
     }
+
     if (excess < 0.0f) {
         step *= 2.0f;
     }
 
     camera->SetAngle(atan2f(offset[0], offset[2]));
+
     if (left_distance < right_distance) {
         camera->AddAngle(0.2f * -step);
     } else {
         camera->AddAngle(0.2f * step);
     }
+
     if (camera->GetDistance() < 0.8f * camera_near_dist) {
         camera->AddHeight(1.0f);
     }
@@ -1269,28 +1372,35 @@ void EyeCamera(CCamera *camera, CCharacter *character, int right_stick) {
         stick_x = GetLXf();
         stick_y = -GetLYf();
     }
+
     if (stick_x > 0.0f) {
         float rate = 0.02f;
         viewAngleH -= stick_x * rate;
+
         if (viewAngleH < -3.1415927f) {
             viewAngleH += 6.2831855f;
         }
     }
+
     if (stick_x < -0.0f) {
         float rate = 0.02f;
         viewAngleH -= stick_x * rate;
+
         if (viewAngleH > 3.1415927f) {
             viewAngleH -= 6.2831855f;
         }
     }
+
     if (stick_y > 0.0f && viewAngleV < 0.65f) {
         float rate = 0.02f;
         viewAngleV += stick_y * rate;
     }
+
     if (stick_y < -0.0f && viewAngleV > -1.0f) {
         float rate = 0.02f;
         viewAngleV += stick_y * rate;
     }
+
     EdEyeCamera(camera, character);
 }
 
@@ -1383,9 +1493,11 @@ void EdASetViewAngle(float horizontal, float vertical) {
  */
 static inline int IsVillagerActive(CNPCharacter *villager) {
     bool active = false;
+
     if (villager->initialized != 0 && villager->draw_enabled != 0) {
         active = true;
     }
+
     return active;
 }
 
@@ -1493,9 +1605,11 @@ void EdMoveChara() {
     angle = camera->GetAngleH();
     lx = GetLXf();
     ly = GetLYf();
+
     if (key_lock != 0 || chara_fishing > 1) {
         lx = ly = 0.0f;
     }
+
     if (PadOn(0x80) != 0 && EdDebugMoveFlag > 0) {
         if (EdDebugMoveFlag > 0) {
             lx *= 2.0f;
@@ -1508,9 +1622,11 @@ void EdMoveChara() {
 
     motion = 0;
     motion_speed = -1.0f;
+
     if (viewMode == 0) {
         move_x = lx * cosf(angle) + ly * sinf(angle);
         move_z = ly * cosf(angle) - lx * sinf(angle);
+
         if (interior != 0) {
             velocity[0] = move_x;
             velocity[2] = move_z;
@@ -1518,6 +1634,7 @@ void EdMoveChara() {
             velocity[0] = 1.6f * move_x;
             velocity[2] = 1.6f * move_z;
         }
+
         // A slope slows the step by how far its floor leans.
         if (chara->move_info.landed != 0) {
             sceVu0FVECTOR normal;
@@ -1526,13 +1643,16 @@ void EdMoveChara() {
             velocity[0] *= normal[1];
             velocity[2] *= normal[1];
         }
+
         if (lx != 0.0f || ly != 0.0f) {
             stick = sqrtf(lx * lx + ly * ly);
+
             if (stick > 0.85f && EdMoveCharaInfo.fishing == 0) {
                 motion = 1;
             } else {
                 motion = 2;
                 motion_speed = 0.8f * (0.2f + stick);
+
                 if (motion_speed > 0.85f) {
                     motion_speed = 0.85f;
                 }
@@ -1540,6 +1660,7 @@ void EdMoveChara() {
         } else {
             motion = 0;
         }
+
         if (move_x != 0.0f || move_z != 0.0f) {
             chara->SetRotation(0.0f, AngleInterpolate(rot[1], atan2f(move_x, move_z), 0.2f, 0), 0.0f);
         }
@@ -1547,15 +1668,19 @@ void EdMoveChara() {
         if (lx == 0.0f) {
             lx = GetRXf();
         }
+
         sceVu0FVECTOR eye_rot;
         chara->GetRotation(eye_rot);
         eye_rot[1] -= 0.04f * lx;
+
         if (eye_rot[1] > 3.1415927f) {
             eye_rot[1] -= 6.2831855f;
         }
+
         if (eye_rot[1] < -3.1415927f) {
             eye_rot[1] += 6.2831855f;
         }
+
         angle = eye_rot[1];
         viewAngleH = angle;
         chara->SetRotation(eye_rot);
@@ -1563,6 +1688,7 @@ void EdMoveChara() {
         move_z = ly * cosf(angle);
         velocity[0] = 0.6f * -move_x;
         velocity[2] = 0.6f * -move_z;
+
         if (chara->move_info.landed != 0) {
             sceVu0FVECTOR normal;
             sceVu0Normalize(normal, chara->move_info.ground_poly.normal);
@@ -1571,10 +1697,12 @@ void EdMoveChara() {
             velocity[2] *= normal[1];
         }
     }
+
     if ((chara_mode & 6) == 0 && chara_fishing < 2) {
         chara->SetMotion(motion, 0);
         chara->SetMotionSpeed(motion_speed);
     }
+
     if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < 2) {
         CVector3_f_ jump;
         chara->GetVelocity(&jump);
@@ -1587,6 +1715,7 @@ void EdMoveChara() {
     WorkBuffer__2->used = 0;
     polys = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
     poly_count = 0;
+
     if (interior == 0) {
         poly_count = ground->PickUpPoly(polys, pos[0], pos[1], pos[2]);
     } else {
@@ -1597,22 +1726,28 @@ void EdMoveChara() {
         box.min[2] = pos[2] - 20.0f;
         box.max[1] = 1000.0f + pos[1];
         box.min[1] = pos[1] - 1000.0f;
+
         for (i = 0; i < EdMoveCharaInfo.parts_count; i++) {
             frame = EdMoveCharaInfo.parts[i].GetCollisionFrame();
+
             if (frame != NULL) {
                 poly_count += frame->PickUpNearPoly(&polys[poly_count], box);
             }
         }
     }
+
     poly_count += EdEventPointCpPoly(pos, EdMoveCharaInfo.points, EdMoveCharaInfo.point_count, &polys[poly_count], time);
+
     if (EdMoveCharaInfo.fishing != 0) {
         poly_count += FishingPickUpPoly(&polys[poly_count]);
     }
+
     for (i = 0; i < 10; i++) {
         if (IsVillagerActive(&EdVillager[i])) {
             poly_count += EdVillager[i].PickUpPoly(pos, &polys[poly_count]);
         }
     }
+
     if (poly_count > 200) {
         printf("cpoly over!!!! %d\n", poly_count);
     }
@@ -1621,6 +1756,7 @@ void EdMoveChara() {
     chara->GetVelocity(&fall);
     velocity[1] = fall.y;
     MoveCheck(pos, velocity, next, &chara->move_info, polys, poly_count, 0);
+
     if (EdDebugMoveFlag >= 2) {
         next[0] = pos[0] + velocity[0];
         next[2] = pos[2] + velocity[2];
@@ -1638,31 +1774,40 @@ void EdMoveChara() {
     ahead[2] = 7.5f * cosf(rot[1]);
     poly_event = GetEventPoly(eye, ahead, &event_poly, &event_index, event_hit, polys, poly_count, 0);
     sceVu0SubVector(move, next, pos);
+
     if (next[1] < -1000.0f) {
         next[1] = 1000.0f;
     }
+
     if (interior != 0 && next[1] < 0.0f) {
         next[1] = 0.0f;
         chara->move_info.landed = 1;
     }
+
     chara->SetPosition(next);
     fall.y += -0.1f;
+
     if (fall.y < -4.0f) {
         fall.y = -4.0f;
     }
+
     chara->SetVelocity(fall);
+
     if ((chara_mode & 2) != 0 && (chara->motion_state == 3 || viewMode != 0)) {
         chara_mode &= ~2;
     }
+
     if (chara->move_info.landed != 0) {
         if (fall.y < -1.0f) {
             chara_mode |= 2;
             chara->SetMotion(9, 6);
         }
+
         chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
         chara_mode &= ~4;
     } else {
         chara_mode |= 4;
+
         if (fall.y < -0.5f) {
             chara->SetMotion(8, 0);
         }
@@ -1679,6 +1824,7 @@ void EdMoveChara() {
     } else {
         EyeCamera(view_camera, chara, interior);
     }
+
     if (EdMoveCharaInfo.fishing == 0 && PadDown(2) != 0) {
         if (viewMode == 0) {
             sceVu0FVECTOR eye_pos;
@@ -1695,10 +1841,13 @@ void EdMoveChara() {
     }
 
     shallow = 0;
+
     if (chara->move_info.ground_found != 0 && chara->move_info.poly.attr.area_kind == 10) {
         shallow = 1;
     }
+
     right_clear = left_clear = keep_distance = 1;
+
     if (viewMode == 0 && interior == 0 && EdDebugMoveFlag < 2) {
         sceVu0FVECTOR last_hit;
         sceVu0FVECTOR eye_pos;
@@ -1740,11 +1889,13 @@ void EdMoveChara() {
         box.min[2] = eye_pos[2] - span;
         box.max[1] = 100.0f + eye_pos[1];
         box.min[1] = eye_pos[1] - 100.0f;
+
         if (EdMoveCharaInfo.fishing != 0) {
             wall_count = ground->PickUpCameraPoly(walls, box, 1);
         } else {
             wall_count = ground->PickUpCameraPoly(walls, box, 0xFFFF);
         }
+
         // A wall beside the eye turns the camera along it and stops it turning into it.
         if (CheckCameraWidth(walls, wall_count, eye_pos, 10.0f, wall, 0) != 0) {
             sceVu0SubVector(to_eye, look, eye_pos);
@@ -1755,13 +1906,16 @@ void EdMoveChara() {
             sceVu0OuterProduct(cross, to_eye, to_wall);
             camera->AddAngle(0.5f * cross[1]);
             camera->SetAngleSoon(atan2f(-to_wall[0], -to_wall[2]));
+
             if (cross[1] > 0.0f) {
                 left_clear = 0;
             }
+
             if (cross[1] < -0.0f) {
                 right_clear = 0;
             }
         }
+
         hits = CheckHits(walls, wall_count, look, behind, 32, hit_poly, hit_point, 1, 0);
         sceVu0CopyVector(origin, eye_pos);
         left[0] = forward[2];
@@ -1771,15 +1925,18 @@ void EdMoveChara() {
         sceVu0ScaleVector(reach, left, 100.0f);
         sceVu0AddVector(left_end, origin, reach);
         wall_hit = CheckHit(walls, wall_count, origin, left_end, hit, 1, 0);
+
         if (wall_hit >= 0) {
             normal = walls[wall_hit].normal;
             sceVu0Normalize(normal, normal);
+
             if (sceVu0InnerProduct(left, normal) > 0.001f) {
                 left_distance = DistVector(origin, hit);
             } else if (DistVector(origin, hit) < 5.0f) {
                 left_clear = 0;
             }
         }
+
         right[0] = -forward[2];
         right[1] = 0.0f;
         right[2] = forward[0];
@@ -1787,31 +1944,40 @@ void EdMoveChara() {
         sceVu0ScaleVector(reach, right, 100.0f);
         sceVu0AddVector(right_end, origin, reach);
         wall_hit = CheckHit(walls, wall_count, origin, right_end, hit, 1, 0);
+
         if (wall_hit >= 0) {
             normal = walls[wall_hit].normal;
             sceVu0Normalize(normal, normal);
+
             if (sceVu0InnerProduct(right, normal) > 0.001f) {
                 right_distance = DistVector(origin, hit);
             } else if (DistVector(origin, hit) < 5.0f) {
                 right_clear = 0;
             }
         }
+
         if (hits > 0) {
             camera_far_dist = 80.0f;
             last = -1;
+
             for (i = 0; i < hits; i++) {
                 sceVu0SubVector(towards, hit_point[i], eye_pos);
+
                 if (sceVu0InnerProduct(forward, towards) < 0.0f) {
                     break;
                 }
+
                 last = i;
             }
+
             if (last >= 0) {
                 keep_distance = 0;
                 sceVu0CopyVector(facing, walls[hit_poly[last]].normal);
+
                 if (sceVu0InnerProduct(direction, facing) > 0.0f) {
                     if (last + 1 < hits) {
                         away = DistVector(eye_pos, hit_point[last + 1]);
+
                         if (away - DistVector(eye_pos, hit_point[last]) < 0.0f) {
                             CameraAutoMove(camera, &walls[hit_poly[last + 1]], hit_point[last + 1], left_distance, right_distance);
                         } else {
@@ -1824,18 +1990,22 @@ void EdMoveChara() {
                 }
             } else {
                 sceVu0CopyVector(facing_first, walls[hit_poly[0]].normal);
+
                 if (sceVu0InnerProduct(forward, facing_first) < 0.0f) {
                     CameraAutoMove(camera, &walls[hit_poly[0]], hit_point[0], left_distance, right_distance);
                     keep_distance = 0;
                 }
             }
         }
+
         // The eye keeps its height above whatever floor is under it.
         sceVu0CopyVector(behind, eye_pos);
         behind[1] += 15.0f;
         floor_poly = CheckHitVertical(walls, wall_count, behind, -100.0f, hit, 0);
+
         if (floor_poly >= 0) {
             sceVu0Normalize(floor_normal, walls[floor_poly].normal);
+
             if (eye_pos[1] - hit[1] < 18.0f) {
                 if ((floor_normal[1] < 0.0f ? -floor_normal[1] : floor_normal[1]) > 0.5f) {
                     eye_pos[1] = 18.0f + hit[1];
@@ -1843,15 +2013,19 @@ void EdMoveChara() {
                 }
             }
         }
+
         float half = 0.5f;
+
         if ((camera->GetDistance() < camera_near_dist * half || camera->GetHeight() > 60.0f) && shallow == 0 && hits > 0) {
             camera->SetDistance(camera_near_dist);
             camera->SetHeight(10.0f);
             camera->SetAngleSoon(camera->GetAngle());
             camera->AddAngle(3.14f);
+
             if (MapNo == 35 && eye_pos[2] > 200.0f) {
                 camera->SetAngleSoon(3.14f);
             }
+
             camera->Step(-1);
         }
     }
@@ -1860,6 +2034,7 @@ void EdMoveChara() {
         drift = 0;
         rx = GetRXf();
         ry = GetRYf();
+
         if (EdDebugCameraFlag == 0) {
             if (camera->GetHeight() < 30.0f) {
                 camera->AddHeight(-ry);
@@ -1867,12 +2042,15 @@ void EdMoveChara() {
         } else {
             camera->AddHeight(-ry);
         }
+
         if (rx > 0.0f && left_clear != 0) {
             camera->AddAngle(0.03f * -rx);
         }
+
         if (rx < 0.0f && right_clear != 0) {
             camera->AddAngle(0.03f * -rx);
         }
+
         if (rx == 0.0f) {
             if (left_clear != 0 && PadOn(8) != 0) {
                 camera->AddAngle(-0.017453292f);
@@ -1882,90 +2060,118 @@ void EdMoveChara() {
                 drift = 1;
             }
         }
+
         if (camera->GetDistance() > camera_far_dist) {
             camera->AddDistance(-(camera->GetDistance() - camera_far_dist) / 10.0f);
         }
+
         if (camera->GetDistance() < camera_near_dist) {
             camera->AddDistance(-(camera->GetDistance() - camera_near_dist) / 10.0f);
         }
+
         // With the right stick at rest the camera swings round behind a walking character.
         if (drift != 0) {
             turn = lx;
+
             if (ly > 0.05f) {
                 if (!(lx < 0.0f) && lx < 0.5f) {
                     lx = 0.5f;
                 }
+
                 if (lx <= 0.0f && lx > -0.5f) {
                     lx = -0.5f;
                 }
+
                 if (left_clear == 0) {
                     lx = 0.5f;
                 }
+
                 if (right_clear == 0) {
                     lx = -0.5f;
                 }
             }
+
             lx *= DistVector(move) / 1.6f / 2.0f;
+
             if (lx > 0.1f && left_clear != 0) {
                 if (turn < 0.4f) {
                     turn = 0.4f;
                 }
+
                 if (turn > 1.0f) {
                     turn = 1.0f;
                 }
+
                 camera->AddAngle(2.0f * (-0.017453292f * turn));
             }
+
             if (lx < -0.1f && right_clear != 0) {
                 if (turn > -0.4f) {
                     turn = -0.4f;
                 }
+
                 if (turn < -1.0f) {
                     turn = -1.0f;
                 }
+
                 camera->AddAngle(2.0f * (-0.017453292f * turn));
             }
         }
+
         if (keep_distance != 0) {
             camera->SetDistance(camera_near_dist);
         }
+
         if (EdDebugCameraFlag == 0) {
             if (camera->GetHeight() > 60.0f) {
                 camera->SetHeight(60.0f);
             }
+
             lowest = 5.0f;
+
             if (shallow != 0) {
                 lowest = 35.0f;
             }
+
             if (camera->GetHeight() < lowest) {
                 camera->SetHeight(lowest);
             }
+
             if (camera->GetHeight() > 5.0f) {
                 drop = camera->GetHeight() - lowest;
                 drop *= 0.05f;
+
                 if (drop < 0.15f) {
                     drop = 0.15f;
                 }
+
                 if (drop > 0.5f) {
                     drop = 0.5f;
                 }
+
                 camera->AddHeight(-drop);
             }
         } else {
             if (PadOn(0x1000) != 0) {
                 reference[1] += 2.0f;
             }
+
             if (PadOn(0x4000) != 0) {
                 reference[1] -= 2.0f;
             }
         }
+
         // The button swings the camera round behind the character over thirty frames.
         static int rot_count = 0;
+
         if (PadOn(0x20) != 0 && EdDebugMoveFlag == 0) {
             rot_count = 30;
         }
+
         if (rot_count > 0) {
             behind_angle = chara->GetRotation()->y - 3.141592653589793;
             turn_side = AngleCmp(behind_angle, camera->GetAngle(), 0.1f);
+
             if (turn_side < 0) {
                 if (left_clear != 0) {
                     camera->AddAngle(-0.1f);
@@ -1973,6 +2179,7 @@ void EdMoveChara() {
                     rot_count = 0;
                 }
             }
+
             if (turn_side > 0) {
                 if (right_clear != 0) {
                     camera->AddAngle(0.1f);
@@ -1980,20 +2187,25 @@ void EdMoveChara() {
                     rot_count = 0;
                 }
             }
+
             if (turn_side == 0) {
                 rot_count = 0;
             }
         }
+
         rot_count--;
+
         if (rot_count < 0) {
             rot_count = 0;
         }
     }
 
     near_villager = EdSearchNearNPC(chara, EdVillager, 10);
+
     if (near_villager >= 0) {
         EdVillager[near_villager].talk_target = 1;
     }
+
     if (EdMoveCharaInfo.fishing == 0) {
         acted = 0;
         sceVu0FVECTOR here;
@@ -2005,16 +2217,20 @@ void EdMoveChara() {
         point_count = EdMoveCharaInfo.point_count;
         EdMoveCharaInfo.event_ready = 0;
         param = &EdMoveCharaInfo.param;
+
         if (EdGetEvent(points, point_count, param, here, heading, time) != 0) {
             if (param->kind == 2 && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0)) {
                 item = param->point->side;
                 refused = EdCheckGetItem(item);
+
                 if (refused == 0) {
                     EdSetMapFlag(param->point->completion_flag, 1);
                     attach = -1;
+
                     if (GetAddAttachItem(param->point->side) != 0) {
                         attach = rand() % 3 + 1;
                     }
+
                     EdGetItem(item, param->point->linked_value, attach);
                     EdItemGetMes(item, param->point->linked_value, attach, 40);
                     EdSetOpenItemBox(param->position, param->rotation);
@@ -2024,27 +2240,34 @@ void EdMoveChara() {
                     SndSePlay(0x99, -1, 0);
                 }
             }
+
             if (param->kind == 3 && param->point->side > 0) {
                 event_no = param->point->side;
             }
+
             if (param->kind == 4 || param->kind == 5) {
                 EdEventInfo.draw_exclamation_mark = 1;
+
                 if (PadDown(0x40) != 0 && (interior != 0 || viewMode == 0)) {
                     EdInitHashigo(&EdEventInfo, param);
                     system_event_no = 1;
                 }
             }
+
             EdMoveCharaInfo.event_ready = acted = 1;
         }
+
         if (near_villager >= 10) {
             near_villager = -1;
         }
+
         if (acted == 0 && (viewMode == 0 || interior != 0) && near_villager >= 0) {
             if (EdVillagerInfo[near_villager].talk_event_no > 0 && EdVillagerInfo[near_villager].talk_event_level != 0 && EdTalkModeInit(&EdVillager[near_villager], -1) != 0) {
                 event_no = EdVillagerInfo[near_villager].talk_event_no;
                 acted = 1;
             }
         }
+
         if (acted == 0 && PadDown(0x40) != 0 && (viewMode == 0 || interior != 0) && key_lock == 0) {
             if (near_villager >= 0) {
                 if (EdTalkModeInit(&EdVillager[near_villager], -1) != 0) {
@@ -2056,6 +2279,7 @@ void EdMoveChara() {
                 acted = 1;
             }
         }
+
         EdMoveCharaInfo.event_no = event_no;
         EdMoveCharaInfo.system_event_no = system_event_no;
         EdMoveCharaInfo.acted = acted;
@@ -2065,11 +2289,14 @@ void EdMoveChara() {
     follow_line = 0;
     static int bgm_vol = 0;
     static int load_file = 0;
+
     if (EdMoveCharaInfo.fishing != 0) {
         EdViewModeOff();
+
         if (EdDebugMoveFlag == 0) {
             camera->SetHeight(40.0f);
         }
+
         sceVu0FVECTOR stand;
         sceVu0FVECTOR facing;
         sceVu0FVECTOR float_pos;
@@ -2080,6 +2307,7 @@ void EdMoveChara() {
         fish_status = FishingFishStatus(&fish_no);
         static int st_cnt = 0;
         static int wait_cnt = 0;
+
         switch (chara_fishing) {
             case 0:
                 chara_fishing = 1;
@@ -2092,23 +2320,28 @@ void EdMoveChara() {
                 if (st_cnt > 120) {
                     EdFishingWalkHelpMes(FishingGetEsaItemNo());
                 }
+
                 FishingAngleFish(-1);
+
                 if (EdPadDown(0x40, 0xFFFF) != 0) {
                     chara_fishing = 2;
                     st_cnt = 0;
                 }
+
                 if (EdPadDown(0x20, 0xFFFF) != 0) {
                     EdMoveCharaInfo.event_no = 0x85;
                     EdMoveCharaInfo.system_event_no = -1;
                     EdMoveCharaInfo.acted = 1;
                     chara->SetMotion(0, 0);
                 }
+
                 if (EdPadDown(0x80, 0xFFFF) != 0) {
                     EdMoveCharaInfo.event_no = 0x86;
                     EdMoveCharaInfo.system_event_no = -1;
                     EdMoveCharaInfo.acted = 1;
                     chara->SetMotion(0, 0);
                 }
+
                 float_weight = 1.0f;
                 break;
             case 2:
@@ -2118,19 +2351,23 @@ void EdMoveChara() {
                 break;
             case 3:
                 chara_mode = 1;
+
                 if (st_cnt == 90) {
                     SndSePlay(0x190, pos, -1.0f, -1.0f);
                 }
+
                 if (chara->motion_state == 3) {
                     chara->SetMotion(5, 0);
                     chara_fishing = 4;
                     st_cnt = 0;
                     wait_cnt = 0;
                 }
+
                 break;
             case 4: {
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
                 chara_mode = 1;
+
                 if (wait_cnt < 600) {
                     chara->SetMotion(5, 0);
                 } else if (wait_cnt < 1200) {
@@ -2139,18 +2376,22 @@ void EdMoveChara() {
                     if (wait_cnt == 1200) {
                         chara->SetMotion(15, 6);
                     }
+
                     if (wait_cnt > 1250 && chara->motion_state == 3) {
                         chara->SetMotion(5, 4);
                         wait_cnt = 0;
                     }
                 }
+
                 reel_turn = -GamePad.GetLXf();
                 facing[1] = AngleInterpolate(facing[1], facing[1] + 0.1f * reel_turn, 0.01f, 0);
                 chara->SetRotation(facing);
+
                 if (reel_turn != 0.0f) {
                     wait_cnt = 0;
                     chara->SetMotion(13, 0);
                 }
+
                 if (EdPadDown(0x40, 0xFFFF) != 0 || (st_cnt > 30 && FishingCheckUkiHook() != 0)) {
                     chara_fishing = 5;
                     chara->SetMotion(7, 6);
@@ -2159,10 +2400,12 @@ void EdMoveChara() {
                     if (fish_status == 7) {
                         chara_fishing = 6;
                     }
+
                     if (fish_status == 8) {
                         chara_fishing = 7;
                     }
                 }
+
                 wait_cnt++;
                 follow_line = 1;
                 break;
@@ -2171,24 +2414,30 @@ void EdMoveChara() {
                 if (st_cnt == 40) {
                     sceVu0FVECTOR hook;
                     FishLineGetHook(hook);
+
                     if (hook[1] < 5.0f + FishingGetWaterLevel()) {
                         SndSePlay(0x192, float_pos, -1.0f, -1.0f);
                     }
                 }
+
                 if (chara->motion_state == 3) {
                     chara->SetMotion(0, 0);
                     chara_fishing = 1;
                     wait_cnt = 0;
                 }
+
                 if (st_cnt > 30) {
                     float_weight = 0.02f * (float) (st_cnt - 30);
                 }
+
                 if (float_weight > 1.0f) {
                     float_weight = 1.0f;
                 }
+
                 break;
             case 6: {
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
+
                 if (fish_status == 8) {
                     chara_fishing = 7;
                 } else if (fish_status != 7) {
@@ -2196,17 +2445,21 @@ void EdMoveChara() {
                     st_cnt = 0;
                     wait_cnt = 0;
                 }
+
                 if (EdPadDown(0x40, 0xFFFF) != 0) {
                     chara_fishing = 9;
                     chara->SetMotion(6, 6);
                     st_cnt = 0;
                     SndSePlay(0x192, float_pos, -1.0f, -1.0f);
+
                     if (rand() % 100 < 20) {
                         EdFishingLostEsaMes();
                         FishingDeleteEsa();
                     }
                 }
+
                 pull = -0.15f * (float) rand() / 2.1474836e9f;
+
                 if (pull < -0.1f) {
                     sceVu0FVECTOR ripple;
                     FishLineGetUki(ripple);
@@ -2214,19 +2467,23 @@ void EdMoveChara() {
                     GamePad.SetVibration(1, 80, 2);
                     EffectHamon(&EdEffectGroup, ripple, 10.0f);
                 }
+
                 FishPullHook(pull);
                 follow_line = 1;
                 break;
             }
             case 7:
                 EdFishingAngleHelpMEs(FishingGetEsaItemNo());
+
                 if (FishingFishStatus(NULL) != 8) {
                     chara_fishing = 4;
                     wait_cnt = 0;
+
                     if (rand() % 100 < 30) {
                         EdFishingLostEsaMes();
                         FishingDeleteEsa();
                     }
+
                     st_cnt = 0;
                 } else {
 #ifdef PAL
@@ -2239,26 +2496,34 @@ void EdMoveChara() {
                         chara->SetMotion(12, 2);
                         FishingBattleFish(fish_no);
                         fish_file = GetFishFileName(FishingFishKind(fish_no));
+
                         if (fish_file != NULL) {
                             StartReadBG();
                             LoadFileBG(fish_file, (u_long128 *) read_buffer, NULL);
                         }
+
                         st_cnt = 0;
                     }
+
                     tug = -(0.1f + 0.05f * (float) rand() / 2.1474836e9f);
+
                     if (tug < -0.12f) {
                         GamePad.SetVibration(1, 100, 10);
                     }
+
                     FishPullHook(tug);
                     follow_line = 1;
                 }
+
                 break;
             case 10:
                 FishingDeleteEsa();
+
                 if (st_cnt > 120 && ReadBGSync() == 0) {
                     read_info = GetReadBGFile(0);
                     fish_data = NULL;
                     CDataAlloc2<1> arena(-1);
+
                     if (read_info != NULL) {
                         fish_data = (u_int *) read_info->buffer;
                         free_blocks = EdVillagerBuffer.limit - EdVillagerBuffer.used;
@@ -2266,11 +2531,13 @@ void EdMoveChara() {
                         arena.limit = free_blocks;
                         arena.used = 0;
                     }
+
                     chara_fishing = 8;
                     chara->SetMotion(6, 6);
                     FishingBattleToAngleFish(fish_data, &arena);
                     SndSePlay(0x193, -1, 0);
                 }
+
                 GamePad.SetVibration(1, rand() % 40 + 80, 10);
                 follow_line = 1;
                 break;
@@ -2290,18 +2557,22 @@ void EdMoveChara() {
                     FishingInitFishStatus();
                     wait_cnt = 0;
                 }
+
                 if (st_cnt > 40) {
                     float_weight = 0.02f * (float) (st_cnt - 40);
                 }
+
                 if (float_weight > 1.0f) {
                     float_weight = 1.0f;
                 }
+
                 break;
             case 11:
                 camera->SetAngle(AngleLimit(facing[1]));
                 camera->SetHeight(10.0f);
                 camera->SetDistance(40.0f);
                 camera->Step(-1);
+
                 if (chara->motion_no == 10) {
                     if (chara->motion_state == 3) {
                         chara->SetMotion(8, 0);
@@ -2313,6 +2584,7 @@ void EdMoveChara() {
                             int size;
                             int fish_points;
                             fish_kind = FishingGetAngleFishSize(&size, &fish_points);
+
                             if (fish_kind < 0) {
                                 fishing_mes = 2;
                             } else {
@@ -2321,6 +2593,7 @@ void EdMoveChara() {
                                     (*caught)++;
                                     SetFishMardanGarayanNum(1);
                                 }
+
                                 SaveData->AddFishingPoint(fish_points);
                                 SaveData->SetFishingRank(fish_kind, (float) size);
                                 fishing_mes++;
@@ -2335,6 +2608,7 @@ void EdMoveChara() {
                                 int window[4];
                                 EditMes1.AutoSet(window);
                             }
+
                             break;
                         }
                         case 1:
@@ -2342,6 +2616,7 @@ void EdMoveChara() {
                                 EditMes1.auto_pos = 1;
                                 fishing_mes++;
                             }
+
                             break;
                         case 2:
                             SndBgmFadeIn(60, bgm_vol, 0);
@@ -2352,6 +2627,7 @@ void EdMoveChara() {
                             break;
                     }
                 }
+
                 hook_weight = 1.0f;
                 break;
             case 12:
@@ -2359,10 +2635,12 @@ void EdMoveChara() {
                 camera->SetHeight(10.0f);
                 camera->SetDistance(30.0f);
                 camera->Step(-1);
+
                 if (st_cnt == 120) {
                     FishingDeleteAngleFish();
                     SndSePlay(0x194, -1, 0);
                 }
+
                 if (chara->motion_state == 3) {
                     chara->SetMotion(0, 0);
                     chara_fishing = 0;
@@ -2370,9 +2648,11 @@ void EdMoveChara() {
                     FishingAngleFish(-1);
                     FishingInitFishStatus();
                 }
+
                 hook_weight = float_weight = 1.0f;
                 break;
         }
+
         // The camera watches the point halfway between the angler and the float.
         if (follow_line != 0) {
             sceVu0FVECTOR centre;
@@ -2381,57 +2661,76 @@ void EdMoveChara() {
             sceVu0ScaleVector(centre, centre, 0.5f);
             camera->SetFollow(centre[0], centre[1], centre[2]);
         }
+
         st_cnt++;
     } else {
         chara_fishing = 0;
     }
 
     chara->Step();
+
     if (viewMode == 0) {
         chara->ShadowStep();
     }
+
     if (viewMode == 0) {
         chara->ClothStep(0);
     }
+
     if (viewMode != 0) {
         chara->SetMotion(0, 0);
     }
+
     if (EdMoveCharaInfo.fishing != 0) {
         sceVu0FVECTOR rod;
         chara->GetPosition(rod);
+
         if (chara->frame != NULL) {
             sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
             sceVu0FVECTOR hook_pos;
             sceVu0FVECTOR float_pos;
             frame = chara->frame->SearchFrame("sao");
+
             if (frame != NULL) {
                 frame->GetWorldPosition(rod, origin);
             }
+
             frame = chara->frame->SearchFrame("uki");
+
             if (frame != NULL) {
                 frame->GetWorldPosition(float_pos, origin);
             }
+
             frame = chara->frame->SearchFrame("hari");
+
             if (frame != NULL) {
                 frame->GetWorldPosition(hook_pos, origin);
             }
+
             frame = chara->frame->SearchFrame("maru_uki");
+
             if (frame != NULL) {
                 frame->attr.draw_on = 2;
             }
+
             frame = chara->frame->SearchFrame("turibari");
+
             if (frame != NULL) {
                 frame->attr.draw_on = 2;
             }
+
             FishLineSetUki(float_pos, float_weight);
             FishLineSetHook(hook_pos, hook_weight);
         }
+
         fish = FishingGetBattleFish();
+
         if (fish != NULL) {
             sceVu0FVECTOR fish_pos;
             fish->GetPosition(fish_pos);
             FishLineSetHook(fish_pos, 1.0f);
         }
+
         sceVu0FVECTOR before;
         sceVu0FVECTOR after;
         FishLineGetUki(before);
@@ -2440,8 +2739,10 @@ void EdMoveChara() {
         FishLineGetUki(after);
         // The float throws up ripples where it crosses the surface.
         water_level = FishingGetWaterLevel();
+
         if (after[1] < water_level && !(before[1] < water_level)) {
             fall_height = after[1] - before[1];
+
             if ((fall_height < 0.0f ? -fall_height : fall_height) > 0.8f) {
                 SndSePlay(0x191, after, -1.0f, -1.0f);
                 after[1] = FishingGetWaterLevel();
@@ -2451,8 +2752,10 @@ void EdMoveChara() {
                 EffectHamon(&EdEffectGroup, after, 30.0f);
             }
         }
+
         if (after[1] > water_level && before[1] <= water_level) {
             rise = after[1] - before[1];
+
             if ((rise < 0.0f ? -rise : rise) > 0.1f) {
                 after[1] = FishingGetWaterLevel();
                 EffectHamon(&EdEffectGroup, after, 10.0f);
@@ -2461,33 +2764,41 @@ void EdMoveChara() {
             }
         }
     }
+
     EdStepOpenItemBox();
     time_after = chara->motion_type.state.time;
     chara->FootSoundEnable(chara->move_info.landed);
     chara->SetFootSoundID(chara->move_info.ground_poly.attr.foot_sound);
+
     // In the first-person view the feet sound by the distance walked instead of the motion.
     if (viewMode != 0 && interior != 0 && chara->move_info.landed != 0) {
         static float cnt = 0.0f;
         walked = cnt;
         velocity[1] = 0.0f;
         cnt += DistVector(velocity);
+
         if (cnt > 10.0f && walked <= 10.0f) {
             SndPlayFootSound(chara->move_info.ground_poly.attr.foot_sound, 1, pos);
         }
+
         if (cnt > 20.0f && walked <= 20.0f) {
             SndPlayFootSound(chara->move_info.ground_poly.attr.foot_sound, 0, pos);
         }
+
         if (cnt > 20.0f) {
             cnt = 0.0f;
         }
     }
+
     sceVu0CopyVector(chara->ground_ambient[0], EditMapInfo->character_ambient[0]);
     sceVu0CopyVector(chara->ground_ambient[1], EditMapInfo->character_ambient[1]);
     chara->ground_ambient_no = -1;
     chara->fade_out = 0;
     sceVu0FVECTOR unused = {0.0f, 0.0f, 0.0f, 0.0f};
+
     if (chara->move_info.ground_found != 0) {
         floor_kind = chara->move_info.poly.attr.area_kind;
+
         switch (floor_kind) {
             case 2:
                 chara->fade_out = 1;
@@ -2498,6 +2809,7 @@ void EdMoveChara() {
                 break;
         }
     }
+
     EdMoveCharaInfo.motion_time_before = time_before;
     EdMoveCharaInfo.motion_time_after = time_after;
 }
@@ -2512,6 +2824,7 @@ void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
         sceVu0CopyVector(info->vector_arguments[1], param->camera_pos);
         info->integer_arguments[0] = 1;
     }
+
     sceVu0CopyVector(info->vector_arguments[2], param->rotation);
     info->flag_arguments[0] = (int) param->point->trigger_range[3];
     info->integer_arguments[1] = param->point->side;

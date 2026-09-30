@@ -41,6 +41,7 @@ int checkItemUsed(int slot) {
     if (item == -1) {
         return 0;
     }
+
     switch (item) {
         case 0x91:
         case 0x92:
@@ -48,21 +49,25 @@ int checkItemUsed(int slot) {
             if (!(0.2f + water_now < water_max)) {
                 usable = 0;
             }
+
             break;
         case 0x97:
             if ((condition & 0x10) == 0) {
                 usable = 0;
             }
+
             break;
         case 0x99:
             if ((condition & 0x40) == 0) {
                 usable = 0;
             }
+
             break;
         case 0x9A:
             if ((condition & 0x74) == 0) {
                 usable = 0;
             }
+
             break;
         case 0x94:
         case 0x95:
@@ -71,8 +76,10 @@ int checkItemUsed(int slot) {
             if (hp >= max_hp) {
                 usable = 0;
             }
+
             break;
     }
+
     return usable;
 }
 
@@ -94,13 +101,16 @@ void usedActiveItem(CUserStatus *status, int item) {
     }
 
     item -= 0x51;
+
     if ((ITEM_LIST[item].kind_flags & ITEMKINDF_CONSUMABLE) != 0) {
         vol_index = 0;
+
         if ((ITEM_LIST[item].use_flags & ITEMUSE_HEAL_HP) != 0) {
             s16 life = ITEM_LIST[item].vol;
             status->AddNowLife(character, life, 100.0f);
             vol_index++;
         }
+
         if ((ITEM_LIST[item].use_flags & ITEMUSE_DRINK) != 0) {
             s16 drink = (&ITEM_LIST[item].vol)[vol_index];
             status->AddDrink(status->cur_chara, drink, 5.0f);
@@ -112,12 +122,15 @@ void usedActiveItem(CUserStatus *status, int item) {
             BtSetStatusErr(8);
             SndSePlay(0x6F, -1, 0);
         }
+
         if ((ITEM_LIST[item].use_flags & 0x20000) != 0 && (UserStatus->ailments[character] & 0x40) != 0) {
             UserStatus->ailments[character] = 0;
         }
+
         if ((ITEM_LIST[item].use_flags & 0x8000) != 0 && (UserStatus->ailments[character] & 0x10) != 0) {
             UserStatus->ailments[character] = 0;
         }
+
         if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 && (UserStatus->ailments[character] != 0 || UserStatus->ailments[character] != 8)) {
             UserStatus->ailments[character] = 0;
         }
@@ -142,6 +155,7 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
         NowBombEffect[bomb].SetBomb(position, scale);
         SndSePlay(0x6C, -1, 0);
         collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale, 0.0f, owner, 3, 0, 0);
+
         if (collision_slot != -1) {
             CCollisionData *collision = NowColData;
             collision->hit[collision->now_hit].phase = 10;
@@ -159,8 +173,10 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
             wave->alpha = 0.0f;
             wave->active = 1;
         }
+
         break;
     }
+
     return collision_slot;
 }
 
@@ -203,9 +219,11 @@ void CItemBombEffect::Draw(CCamera *camera) {
         }
 
         int cell = i;
+
         if (cell >= 3) {
             cell = 3;
         }
+
         int u = uvTable[cell][0] << 6;
         int v = uvTable[cell][1] << 6;
         direction[0] = camera_position[0] - positions[i][0];
@@ -221,9 +239,11 @@ void CItemBombEffect::Draw(CCamera *camera) {
         world[3] = 1.0f;
 
         float size = sizes[i] * scale;
+
         if (MGRotTransPers3DSprite(top_left, bottom_right, world, size, size / 2.0f, 0) != 1) {
             continue;
         }
+
         top_right[0] = bottom_right[0];
         top_right[1] = top_left[1];
         top_right[2] = top_left[2];
@@ -258,36 +278,44 @@ void CItemBombEffect::Step() {
                 counters[puff]++;
                 sizes[puff] += 2.0f;
                 alphas[puff] += 8.0f;
+
                 if (counters[puff] >= 3) {
                     counters[puff] = 0;
                     phases[puff]++;
                 }
+
                 break;
             case 1:
                 counters[puff]++;
                 sizes[puff] += 1.0f;
                 alphas[puff] += 8.0f;
+
                 if (counters[puff] >= 4) {
                     counters[puff] = 0;
                     phases[puff]++;
                 }
+
                 break;
             case 2:
                 counters[puff]++;
                 sizes[puff] += 0.3f;
                 alphas[puff] -= 3.0f;
+
                 if (counters[puff] >= 20) {
                     counters[puff] = 0;
                     phases[puff]++;
                 }
+
                 break;
             case 3:
                 counters[puff]++;
                 sizes[puff] += 0.1f;
                 alphas[puff] -= 2.0f;
+
                 if (counters[puff] >= 40) {
                     active[puff] = 0;
                 }
+
                 break;
         }
     }
@@ -309,6 +337,7 @@ void CItemBombEffect::SetBomb(float *position, float scale) {
         sizes[puff] = 20.0f;
         active[puff] = 1;
     }
+
     this->scale = scale;
     phases[0] = 2;
     phases[1] = 1;
@@ -327,6 +356,7 @@ int CItemBombEffect::CheckBomb() {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -391,12 +421,15 @@ void CShockWave::Draw(CCamera *camera) {
     if (MGRotTransPers(screen0, corner0, 0) == 0) {
         return;
     }
+
     if (MGRotTransPers(screen1, corner1, 0) == 0) {
         return;
     }
+
     if (MGRotTransPers(screen2, corner2, 0) == 0) {
         return;
     }
+
     if (MGRotTransPers(screen3, corner3, 0) == 0) {
         return;
     }
@@ -429,14 +462,17 @@ void CShockWave::Step() {
     }
 
     const float half_pi = 1.5707964f;
+
     if (phase < half_pi) {
         phase += half_pi / expand_steps;
         float envelope = sinf(phase);
         alpha = 160.0f * envelope;
         radius = base_radius + expand_radius * envelope;
     }
+
     if (phase >= half_pi) {
         alpha -= 5.0f;
+
         if (alpha <= 0.0f) {
             alpha = 0.0f;
             active = 0;

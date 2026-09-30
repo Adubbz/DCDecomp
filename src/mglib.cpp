@@ -100,9 +100,11 @@ static int VSyncCallBack(int id) {
     /* Bit 13 of the GS status register is the field being displayed, and what everything downstream
        offsets by is the other one. */
     VSyncField__2 = !(bool) ((*(volatile unsigned long *) 0x12001000 >> 13) & 1);
+
     if (VSyncCallBack2) {
         VSyncCallBack2(id);
     }
+
     vcount++;
     call_back_active = 0;
     /* Ordering the stores and re-enabling interrupts are both things the compiler has no way to
@@ -233,6 +235,7 @@ void MGInit() {
 void MGInitVSyncCallBack(int (*callback)(int)) {
     while (call_back_active)
         ;
+
     VSyncCallBack2 = callback;
 }
 
@@ -246,6 +249,7 @@ void MGInitVif1Packet(u_long128 *buffer0, u_long128 *buffer1) {
     if (packetbuf[0] % 4) {
         packetbuf[0] += (4 - packetbuf[0] % 4) * 4;
     }
+
     if (packetbuf[1] % 4) {
         packetbuf[1] += (4 - packetbuf[1] % 4) * 4;
     }
@@ -286,6 +290,7 @@ void StoreImage() {
     if (movie_count % 2) {
         strcpy(directory, "host0:y:/ps2/capture/");
         sprintf(name, "%si%5d.tga", directory, image_num++);
+
         /* The width the number is padded to is what makes the names sort, and a space is not a
            character a file name can carry. */
         for (mark = name; *mark; mark++) {
@@ -293,6 +298,7 @@ void StoreImage() {
                 *mark = '0';
             }
         }
+
         fd = sceOpen(name, SCE_WRONLY | SCE_CREAT | SCE_TRUNC);
     }
 
@@ -308,11 +314,13 @@ void StoreImage() {
 
     sceGsSetDefStoreImage(&gs_simage, !DBuffID * 2240, 10, 0, 0, 0, 640, SCREEN_HALF_HEIGHT);
     FlushCache(0);
+
     if (movie_count % 2) {
         sceGsExecStoreImage(&gs_simage, (u_long128 *) 0x02100000);
     } else {
         sceGsExecStoreImage(&gs_simage, (u_long128 *) 0x02300000);
     }
+
     sceGsSyncPath(0, 0);
 
     sceGsSetHalfOffset(&mgDBuff.draw0, 2048, 2048, 1);
@@ -328,18 +336,22 @@ void StoreImage() {
 
     sceGsSetDefStoreImage(&gs_simage, !DBuffID * 2240, 10, 0, 0, 0, 640, SCREEN_HALF_HEIGHT);
     FlushCache(0);
+
     if (movie_count % 2) {
         sceGsExecStoreImage(&gs_simage, (u_long128 *) 0x02200000);
     } else {
         sceGsExecStoreImage(&gs_simage, (u_long128 *) 0x02400000);
     }
+
     sceGsSyncPath(0, 0);
 
     if (movie_count % 2) {
         sceWrite(fd, tga_head, 18);
+
         for (i = 0; i < SCREEN_HALF_HEIGHT; i++) {
             field0 = (u_char *) 0x02100000 + ((((SCREEN_HALF_HEIGHT - 1) - i) * 640 >> 2) << 4);
             field1 = (u_char *) 0x02200000 + ((((SCREEN_HALF_HEIGHT - 1) - i) * 640 >> 2) << 4);
+
             /* Packed down in place and over the row it came from: three bytes out for every four
                in, and the two colour ends swapped, which is the order a TGA stores. */
             for (j = 0, k = 0; k < 2560; j += 3, k += 4) {
@@ -357,6 +369,7 @@ void StoreImage() {
                 field1[j + 1] = field1[k + 1];
                 field1[j + 2] = field1[k + 2];
             }
+
             sceWrite(fd, field1, 1920);
             sceWrite(fd, field0, 1920);
         }
@@ -365,6 +378,7 @@ void StoreImage() {
     if (movie_count % 2) {
         sceClose(fd);
     }
+
     movie_count++;
 }
 
@@ -392,6 +406,7 @@ void MGBeginFrame() {
     } else {
         ActiveData = &ActiveData1;
     }
+
     ActiveData->used = 0;
     WorkBuffer->used = 0;
 
@@ -432,15 +447,18 @@ static void WaitVSync(int count) {
 
     while (1) {
         int now = MGGetVSyncCount();
+
         /* The gap between polls has to cost something and do nothing, which is what a body that
            negates its own counter twice is: the count is the whole of the effect. */
         for (i = 0; i < 10; i++) {
             i = -i;
             i = -i;
         }
+
         if (count != now) {
             return;
         }
+
         for (j = 0; j < 10; j++) {
             j = -j;
             j = -j;
@@ -461,6 +479,7 @@ void MGEndFrame() {
 
     sceVif1PkEnd(Vif1Packet, 0);
     sceVif1PkTerminate(Vif1Packet);
+
     if (sceGsSyncPath(0, 0) < 0) {
         printf("******\n");
         printf("base = %x,cuur = %x\n", Vif1Packet->pBase, Vif1Packet->pCurrent);
@@ -489,12 +508,15 @@ void MGEndFrame() {
 
                 nearest = block[0];
                 nearest &= 0xffffff;
+
                 for (j = 0; j < 64; j++) {
                     int depth = block[j] & 0xffffff;
+
                     if (depth < nearest) {
                         nearest = depth;
                     }
                 }
+
                 mgPickZBuff[i].z = nearest;
             }
         }
@@ -507,12 +529,15 @@ void MGEndFrame() {
     /* A sync passed between the last flip and this one, so the field parity the handler recorded
        describes a field this frame is no longer in and everything keyed on it drops out. */
     over_vsync = 0;
+
     if (old_vcount != vcount) {
         over_vsync = 1;
     }
+
     if (mgWaitVSync) {
         old_vcount = vcount;
     }
+
     WaitVSync(old_vcount);
     old_vcount = vcount;
 
@@ -527,7 +552,9 @@ void MGEndFrame() {
     if (count == 0) {
         printf("FREE %4.1f%%\n", 100.0f * ((u_int) (*(volatile u_int *) 0x10000000 - flip) / 262.0f));
     }
+
     count++;
+
     if (count > 60) {
         count = 0;
     }
@@ -573,15 +600,19 @@ void MGAdjustScreen(int x, int y) {
     if (x > 32) {
         x = 0;
     }
+
     if (x < -32) {
         x = 0;
     }
+
     if (y > 32) {
         y = 0;
     }
+
     if (y < -32) {
         y = 0;
     }
+
     /* The display moves in whole pixel pairs. */
     mgAdjustX = (x >> 1) << 1;
     mgAdjustY = (y >> 1) << 1;
@@ -821,24 +852,31 @@ void MGSetBGColor(float red, float green, float blue, float alpha) {
     if (red < 0.0f) {
         red = 0.0f;
     }
+
     if (green < 0.0f) {
         green = 0.0f;
     }
+
     if (blue < 0.0f) {
         blue = 0.0f;
     }
+
     if (alpha < 0.0f) {
         alpha = 0.0f;
     }
+
     if (red > 255.0f) {
         red = 255.0f;
     }
+
     if (green > 255.0f) {
         green = 255.0f;
     }
+
     if (blue > 255.0f) {
         blue = 255.0f;
     }
+
     if (alpha > 255.0f) {
         alpha = 255.0f;
     }
@@ -881,6 +919,7 @@ int MGRotTransPers(int *screen, float *position, int fog) {
         visible = 0;
         point[2] = 1.0f;
     }
+
     w = 1.0f / point[2];
 
     point[0] *= w;
@@ -898,18 +937,22 @@ int MGRotTransPers(int *screen, float *position, int fog) {
 
     if (fog) {
         float density = mgRenderInfo.fog_a + mgRenderInfo.fog_b * w;
+
         if (mgRenderInfo.fog_far > density) {
             density = mgRenderInfo.fog_far;
         }
+
         if (mgRenderInfo.fog_near < density) {
             density = mgRenderInfo.fog_near;
         }
+
         screen[3] = (int) density;
     }
 
     if (point[0] < 0.0f || point[1] < 0.0f || point[0] > 4095 || point[1] > 4095) {
         visible = 0;
     }
+
     return visible;
 }
 
@@ -927,6 +970,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
         visible = 0;
         point[2] = 1.0f;
     }
+
     w = 1.0f / point[2];
 
     point[0] *= w;
@@ -944,12 +988,15 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
 
     if (fog) {
         float density = mgRenderInfo.fog_a + mgRenderInfo.fog_b * w;
+
         if (mgRenderInfo.fog_far > density) {
             density = mgRenderInfo.fog_far;
         }
+
         if (mgRenderInfo.fog_near < density) {
             density = mgRenderInfo.fog_near;
         }
+
         screen[3] = (int) density;
     }
 
@@ -1105,6 +1152,7 @@ int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, r
     if (visible == 0) {
         return 0;
     }
+
     return visible;
 }
 
@@ -1178,6 +1226,7 @@ int MGClipVertex(float *position) {
     if (0.0f == point[3]) {
         point[3] = 1.0f;
     }
+
     w = 1.0f / point[3];
     point[0] *= w;
     point[1] *= w;
@@ -1185,41 +1234,53 @@ int MGClipVertex(float *position) {
     if (point[3] < mgRenderInfo.near[2]) {
         outside |= 0x20;
     }
+
     if (point[3] > mgRenderInfo.far[2]) {
         outside |= 0x10;
     }
 
     if (point[3] > 0.0f) {
         offset = point[1] - mgRenderInfo.offset[1];
+
         if (offset < -half_height) {
             outside |= 0x8;
         }
+
         if (offset > half_height) {
             outside |= 0x4;
         }
+
         offset = point[0] - mgRenderInfo.offset[0];
+
         if (offset < -half_width) {
             outside |= 0x2;
         }
+
         if (offset > half_width) {
             outside |= 0x1;
         }
     } else {
         offset = point[1] - mgRenderInfo.offset[1];
+
         if (offset > -half_height) {
             outside |= 0x8;
         }
+
         if (offset < half_height) {
             outside |= 0x4;
         }
+
         offset = point[0] - mgRenderInfo.offset[0];
+
         if (offset > -half_width) {
             outside |= 0x2;
         }
+
         if (offset < half_width) {
             outside |= 0x1;
         }
     }
+
     return outside;
 }
 
@@ -1245,14 +1306,18 @@ int MGClipBox(CBoxVu0 *box) {
         corner[i][2] = extreme[(i & 4) != 0][2];
 
         int bits = MGClipVertex(corner[i]);
+
         if (!bits) {
             return 0;
         }
+
         outside &= bits;
+
         if (!outside) {
             return 0;
         }
     }
+
     return 1;
 }
 
@@ -1272,11 +1337,13 @@ void MGSetGsTEST(sceGsTest *test) {
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+
     if (test) {
         sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) test);
     } else {
         sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     }
+
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
@@ -1288,11 +1355,13 @@ void MGSetGsZBUF(sceGsZbuf *zbuf) {
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+
     if (zbuf) {
         sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) zbuf);
     } else {
         sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     }
+
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
@@ -1304,11 +1373,13 @@ void MGSetGsALPHA(sceGsAlpha *alpha) {
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+
     if (alpha) {
         sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) alpha);
     } else {
         sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
     }
+
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
@@ -1320,11 +1391,13 @@ void MGSetGsTEXA(sceGsTexa *texa) {
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
+
     if (texa) {
         sceVif1PkAddGsAD(packet, SCE_GS_TEXA, *(u_long *) texa);
     } else {
         sceVif1PkAddGsAD(packet, SCE_GS_TEXA, *(u_long *) &mgTexa);
     }
+
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
@@ -1432,6 +1505,7 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
     } else {
         dy = dyy + 16;
     }
+
     if (over_vsync) {
         dy = 0;
     }

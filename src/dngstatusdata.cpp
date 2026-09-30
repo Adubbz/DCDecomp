@@ -41,6 +41,7 @@ void CDngStatusData::SetNowFloor(int floor) {
     int cur_georama = this->cur_georama;
     s8 *reached_table = this->floor_reached;
     s8 *reached = reached_table + cur_georama;
+
     if (floor > *reached) {
         *reached = floor;
     }
@@ -81,6 +82,7 @@ int CDngStatusData::SearchItemIndexNo(int item_id) {
 
     if (!(valid = item_id < 257)) {
         int j;
+
         for (j = 0; (valid = j < this->party_size) != 0; j++) {
             for (i = 0; (valid = i < 10) != 0; i++) {
                 if (this->chara_weapons[j][i].item_no == item_id) {
@@ -143,30 +145,39 @@ void CDngStatusData::LostGateKey() {
         if (this->item_pack.item[i] == 195) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 196) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 198) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 201) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 202) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 203) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 204) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 205) {
             this->item_pack.item[i] = -1;
         }
+
         if (this->item_pack.item[i] == 206) {
             this->item_pack.item[i] = -1;
         }
+
         if (!(valid = this->item_pack.item[i] < 216) && this->item_pack.item[i] < 223) {
             this->item_pack.item[i] = -1;
         }
@@ -199,6 +210,7 @@ int CDngStatusData::CheckItemGet(int item_id) {
     {
         int valid;
         int i;
+
         if (!(valid = item_id < GetDungeonItemStart()) && item_id < GetDungeonItemEnd()) {
             int count = 0;
             int k;
@@ -228,6 +240,7 @@ int CDngStatusData::CheckItemGet(int item_id) {
 
             for (j = 0; (valid = j < 40) != 0; j++) {
                 s16 held_id = this->consumable_items[j].id;
+
                 if (!(valid = held_id < 81) && held_id < 132) {
                     count++;
                 }
@@ -255,18 +268,23 @@ int CDngStatusData::CheckWeaponUser(int weapon_id) {
     if (!(valid = weapon_id < 257) && weapon_id < 299) {
         result = 0;
     }
+
     if (!(valid = weapon_id < 299) && weapon_id < 314) {
         result = 1;
     }
+
     if (!(valid = weapon_id < 314) && weapon_id < 331) {
         result = 2;
     }
+
     if (!(valid = weapon_id < 331) && weapon_id < 347) {
         result = 3;
     }
+
     if (!(valid = weapon_id < 347) && weapon_id < 363) {
         result = 4;
     }
+
     if (!(valid = weapon_id < 363) && weapon_id < 377) {
         result = 5;
     }
@@ -277,6 +295,7 @@ int CDngStatusData::CheckWeaponUser(int weapon_id) {
 /* @ 0x1BDF90 (0xC0 bytes) -- CheckWeaponRot__14CDngStatusDataFi */
 int CDngStatusData::CheckWeaponRot(int weapon_id) {
     int chara_no = this->CheckWeaponUser(weapon_id);
+
     if (chara_no == -1) {
         return -1;
     }
@@ -286,6 +305,7 @@ int CDngStatusData::CheckWeaponRot(int weapon_id) {
      * early return -- the loop's "return count" path is emitted first.
      * The goto reproduces that exact block layout/branch-threading. */
     int valid;
+
     if ((valid = weapon_id < 257) != 0) {
         goto ret_minus1;
     }
@@ -293,11 +313,13 @@ int CDngStatusData::CheckWeaponRot(int weapon_id) {
     {
         int count = 0;
         int i;
+
         for (i = 0; (valid = i < 10) != 0; i++) {
             if (!(valid = this->chara_weapons[chara_no][i].item_no < 257)) {
                 count++;
             }
         }
+
         return count;
     }
 
@@ -325,6 +347,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
     if (!(valid = item_id < 132) && item_id < 257) {
         int i;
+
         for (i = 0; (valid = i < 103) != 0; i++) {
             if (this->item_pack.item[i] < 132) {
                 if (item_id == 238) {
@@ -334,12 +357,15 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
                 int count = 0;
                 int j;
+
                 for (j = 0; (valid = j < 103) != 0; j++) {
                     if (!(valid = this->item_pack.item[j] < 132)) {
                         count++;
                     }
                 }
+
                 int k;
+
                 for (k = 0; (valid = k < 3) != 0; k++) {
                     if (this->item_pack.quick_item_slot[k] != -1) {
                         count += this->item_pack.quick_item_qty[k];
@@ -351,8 +377,10 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                 }
 
                 int have_copy = ItemDataToHaveCopy(item_id);
+
                 if (this->overflow_flag != 0) {
                     int m;
+
                     for (m = 0; (valid = m < 3) != 0; m++) {
                         if (this->item_pack.item[this->item_pack.num + m] == -1) {
                             this->item_pack.item[this->item_pack.num + m] = item_id;
@@ -364,6 +392,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
                     this->item_pack.item[i] = item_id;
                     this->item_pack.item_vol[i] = have_copy;
                 }
+
                 return i;
             }
         }
@@ -371,6 +400,7 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
     if (!(valid = item_id < 81) && item_id < 132) {
         int n;
+
         for (n = 0; (valid = n < 43) != 0; n++) {
             if (this->consumable_items[n].id < 81) {
                 this->consumable_items[n].id = item_id;
@@ -378,15 +408,19 @@ int CDngStatusData::GetItem(int item_id, int qty) {
 
                 int count = 0;
                 int ii;
+
                 for (ii = 0; (valid = ii < 43) != 0; ii++) {
                     s16 held_id = this->consumable_items[ii].id;
+
                     if (!(valid = held_id < 81) && held_id < 132) {
                         count++;
                     }
                 }
+
                 if (count > 40) {
                     this->overflow_flag++;
                 }
+
                 return n;
             }
         }
@@ -397,20 +431,24 @@ int CDngStatusData::GetItem(int item_id, int qty) {
         int chara_no = ItemPutListTbl12_bytes[750 + item_id * 76];
 
         int jj;
+
         for (jj = 0; (valid = jj < 11) != 0; jj++) {
             if (this->chara_weapons[chara_no][jj].item_no < 257) {
                 WepDataListToHaveCopy(item_id, &this->chara_weapons[chara_no][jj]);
 
                 int count = 0;
                 int kk;
+
                 for (kk = 0; (valid = kk < 10) != 0; kk++) {
                     if (!(valid = this->chara_weapons[chara_no][kk].item_no < 257)) {
                         count++;
                     }
                 }
+
                 if (!(valid = count < 10)) {
                     this->overflow_flag = 1;
                 }
+
                 return jj;
             }
         }
@@ -438,9 +476,11 @@ int CDngStatusData::CheckActItemSlot(int item_id) {
 /* @ 0x1BE4B0 (0x60 bytes) -- CheckDefaultWeapon__14CDngStatusDataFi */
 int CDngStatusData::CheckDefaultWeapon(int chara_no) {
     s32 def_weapon = defWeapon[chara_no];
+
     if (def_weapon == this->chara_weapons[chara_no][this->equipped_weapon_slot[chara_no]].item_no) {
         return 0;
     }
+
     return 1;
 }
 
@@ -458,19 +498,23 @@ void CUserStatus::AddDrink(int chara_no, s16 amount, float ratio) {
 
     if (0.0f == ratio) {
         this->water_now[chara_no] = this->water_now[chara_no] + (float) amount;
+
         if (this->water_now[chara_no] >= this->water_max[chara_no]) {
             this->water_now[chara_no] = this->water_max[chara_no];
         }
     } else {
         this->drink_next[chara_no] = this->water_now[chara_no] + (float) amount;
+
         if (this->drink_next[chara_no] <= 0) {
             this->drink_next[chara_no] = 0;
         }
+
         if ((float) this->drink_next[chara_no] >= this->water_max[chara_no]) {
             this->drink_next[chara_no] = this->water_max[chara_no];
         }
 
         this->drink_step[chara_no] = ratio * (((float) this->drink_next[chara_no] - this->water_now[chara_no]) / 100.0f);
+
         if (this->drink_step[chara_no] == 0) {
             if ((float) this->drink_next[chara_no] - this->water_now[chara_no] < 0.0f) {
                 this->drink_step[chara_no] = -1;
@@ -493,28 +537,35 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
 
     if (0.0f == ratio) {
         this->hp[chara_no] = this->hp[chara_no] + amount;
+
         if (this->hp[chara_no] <= 0) {
             this->hp[chara_no] = 0;
         }
+
         {
             s16 life_value = this->hp[chara_no];
+
             if (!(valid = life_value < this->max_hp[chara_no])) {
                 this->hp[chara_no] = this->max_hp[chara_no];
             }
         }
     } else {
         this->next_hp[chara_no] = this->hp[chara_no] + amount;
+
         if (this->next_hp[chara_no] <= 0) {
             this->next_hp[chara_no] = 0;
         }
+
         {
             s16 life_value = this->next_hp[chara_no];
+
             if (!(valid = life_value < this->max_hp[chara_no])) {
                 this->next_hp[chara_no] = this->max_hp[chara_no];
             }
         }
 
         this->life_step[chara_no] = ratio * ((float) (this->next_hp[chara_no] - this->hp[chara_no]) / 100.0f);
+
         if (this->life_step[chara_no] == 0) {
             if (this->next_hp[chara_no] - this->hp[chara_no] < 0) {
                 this->life_step[chara_no] = -1;
@@ -532,6 +583,7 @@ int CUserStatus::CheckLife() {
     if (this->life_step[this->cur_chara] != 0 && this->next_hp[this->cur_chara] <= 0) {
         return 0;
     }
+
     if (this->hp[this->cur_chara] <= 0) {
         return 0;
     }
@@ -551,6 +603,7 @@ void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
     if (value <= 0) {
         value = 0;
     }
+
     if (value >= this->max_hp[chara_no]) {
         value = this->max_hp[chara_no];
     }
@@ -561,6 +614,7 @@ void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
         this->next_hp[chara_no] = value;
 
         this->life_step[chara_no] = ratio * ((this->next_hp[chara_no] - this->hp[chara_no]) / 100.0f);
+
         if (this->life_step[chara_no] == 0) {
             if (this->next_hp[chara_no] - this->hp[chara_no] < 0) {
                 this->life_step[chara_no] = -1;
@@ -596,15 +650,19 @@ void CUserStatus::Step(int mode) {
             if (this->res_limit_zone_current == 11) {
                 drain = 5.0f * drain;
             }
+
             if (NowWeaponHave->flags & 0x8) {
                 drain *= 0.8f;
             }
+
             if (NowWeaponHave->flags & 0x10) {
                 drain *= 2.0f;
             }
+
             if (mode == 0) {
                 this->water_now[this->cur_chara] -= drain;
             }
+
             if (this->water_now[this->cur_chara] <= 0.0f) {
                 this->water_now[this->cur_chara] = 0.0f;
             }
@@ -623,12 +681,14 @@ void CUserStatus::Step(int mode) {
     for (int i = 0; i < 6; i++) {
         if (this->drink_step[i] != 0) {
             this->water_now[i] += this->drink_step[i];
+
             if (this->drink_step[i] < 0) {
                 if (this->water_now[i] <= this->drink_next[i]) {
                     this->water_now[i] = this->drink_next[i];
                     this->drink_step[i] = 0;
                 }
             }
+
             if (this->drink_step[i] > 0) {
                 if (this->water_now[i] >= this->drink_next[i]) {
                     this->water_now[i] = this->drink_next[i];
@@ -641,12 +701,14 @@ void CUserStatus::Step(int mode) {
     for (int i = 0; i < 6; i++) {
         if (this->life_step[i] != 0) {
             this->hp[i] += this->life_step[i];
+
             if (this->life_step[i] < 0) {
                 if (this->hp[i] <= this->next_hp[i]) {
                     this->hp[i] = this->next_hp[i];
                     this->life_step[i] = 0;
                 }
             }
+
             if (this->life_step[i] > 0) {
                 if (this->hp[i] >= this->next_hp[i]) {
                     this->hp[i] = this->next_hp[i];
@@ -673,6 +735,7 @@ void CUserStatus::Init() {
     this->ClearEventFlag();
 
     int j;
+
     for (j = 0; (valid = j < 6) != 0; j++) {
         this->life_step[j] = 0;
     }
@@ -694,6 +757,7 @@ void CDngStatusData::SetDead() {
 /* @ 0x1BEF10 (0x50 bytes) -- SetResLimmitZone__14CDngStatusDataFv */
 void CDngStatusData::SetResLimmitZone() {
     int zone = this->res_limit_zone_id[this->cur_georama][this->cur_floor];
+
     if (zone != -1) {
         this->res_limit_zone_current = zone;
     }
@@ -718,6 +782,7 @@ void CDngStatusData::InitResLimmitZone() {
         int zone;
         floor_index = (int) ((15.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
+
         if (!(valid = roll < 50)) {
             zone = 10;
             valid = 0;
@@ -725,6 +790,7 @@ void CDngStatusData::InitResLimmitZone() {
             zone = 11;
             valid = 1;
         }
+
         this->res_limit_zone_id[1][floor_index] = zone;
     }
 
@@ -732,6 +798,7 @@ void CDngStatusData::InitResLimmitZone() {
         int zone;
         floor_index = (int) ((16.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
+
         if (!(valid = roll < 50)) {
             zone = 10;
             valid = 0;
@@ -739,6 +806,7 @@ void CDngStatusData::InitResLimmitZone() {
             zone = 11;
             valid = 1;
         }
+
         this->res_limit_zone_id[2][floor_index] = zone;
     }
 
@@ -746,6 +814,7 @@ void CDngStatusData::InitResLimmitZone() {
         int zone;
         floor_index = (int) ((16.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
+
         if (!(valid = roll < 50)) {
             zone = 10;
             valid = 0;
@@ -753,6 +822,7 @@ void CDngStatusData::InitResLimmitZone() {
             zone = 11;
             valid = 1;
         }
+
         this->res_limit_zone_id[3][floor_index] = zone;
     }
 
@@ -760,6 +830,7 @@ void CDngStatusData::InitResLimmitZone() {
         int zone;
         floor_index = (int) ((14.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
+
         if (!(valid = roll < 50)) {
             zone = 10;
             valid = 0;
@@ -767,6 +838,7 @@ void CDngStatusData::InitResLimmitZone() {
             zone = 11;
             valid = 1;
         }
+
         this->res_limit_zone_id[4][floor_index] = zone;
     }
 
@@ -774,6 +846,7 @@ void CDngStatusData::InitResLimmitZone() {
         int zone;
         floor_index = (int) ((23.0f * (float) rand()) / 2147483648.0f);
         roll = (int) ((100.0f * (float) rand()) / 2147483648.0f);
+
         if (!(valid = roll < 50)) {
             zone = 10;
             valid = 0;
@@ -781,6 +854,7 @@ void CDngStatusData::InitResLimmitZone() {
             zone = 11;
             valid = 1;
         }
+
         this->res_limit_zone_id[5][floor_index] = zone;
     }
 }
@@ -921,6 +995,7 @@ int CDngStatusData::GetAtraNum(int georama_no, int floor) {
     int result = 0;
     int i;
     int valid;
+
     for (i = 0; (valid = i < 8) != 0; i++) {
         if (this->atra_grid[georama_no][floor][i] == -3) {
             result++;
@@ -941,6 +1016,7 @@ int CDngStatusData::GetMaxAtraNum(int georama_no, int floor) {
     int result = 0;
     int i;
     int valid;
+
     for (i = 0; (valid = i < 8) != 0; i++) {
         if (this->atra_grid[georama_no][floor][i] != -1) {
             result++;
@@ -958,12 +1034,14 @@ int CDngStatusData::SetGetAtra(int georama_no, int floor, int atra_id) {
         i = 0;
     } else {
         int valid;
+
         for (i = 0; (valid = i < 8) != 0; i++) {
             if (this->atra_grid[georama_no][floor][i] == -1) {
                 this->atra_grid[georama_no][floor][i] = atra_id;
                 return i;
             }
         }
+
         i = -1;
     }
 
@@ -977,6 +1055,7 @@ void CDngStatusData::SetCopyAtraList(int georama_no, int floor, int *out_list) {
     if (georama_no != 6) {
         int i;
         int valid;
+
         for (i = 0; (valid = i < 8) != 0; i++) {
             out_list[i] = this->atra_grid[georama_no][floor][i];
         }
@@ -999,9 +1078,11 @@ void CDngStatusData::GetAtraData(int georama_no, int floor, int atra_id) {
             if (this->atra_grid[georama_no][floor][i] == atra_id) {
                 this->atra_grid[georama_no][floor][i] = -3;
                 this->atra_registry[georama_no][atra_id].refcount--;
+
                 if (this->atra_registry[georama_no][atra_id].refcount == 0) {
                     this->atra_registry[georama_no][atra_id].id = -1;
                 }
+
                 return;
             }
         }
@@ -1010,9 +1091,11 @@ void CDngStatusData::GetAtraData(int georama_no, int floor, int atra_id) {
             if (this->atra_grid[georama_no][floor][j] == -2) {
                 this->atra_grid[georama_no][floor][j] = -3;
                 this->atra_registry[georama_no][atra_id].refcount--;
+
                 if (this->atra_registry[georama_no][atra_id].refcount != 0) {
                     return;
                 }
+
                 this->atra_registry[georama_no][atra_id].id = -1;
                 return;
             }

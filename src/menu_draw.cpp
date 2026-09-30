@@ -71,6 +71,7 @@ char *GetNowSelectLanguage(int language) {
     if ((language < 0) || (language >= 7)) {
         language = 0;
     }
+
     return ComMenuContryName[language];
 }
 
@@ -85,6 +86,7 @@ int LoadFileBGMenuData(char *name, u_long128 *buffer) {
     if ((name == NULL) || (buffer == NULL)) {
         return -1;
     }
+
     GetPathReadDifferntLang(MenuGrobalDir);
     strcat(MenuGrobalDir, name);
     LoadFileBG(MenuGrobalDir, buffer, &size);
@@ -110,18 +112,22 @@ u_long128 *BtlMenuBufferSet(int mode) {
         case 1:
             buffer = (u_long128 *) (EdMenuBuffer.base + EdMenuBuffer.used * 0x10);
     }
+
     return buffer;
 }
 
 u_long128 *MenuCalcBufAlignment(u_long128 *buffer) {
     int offset = (int) buffer;
     int remainder = offset & 0x3F;
+
     if ((offset < 0) && (remainder != 0)) {
         remainder -= 0x40;
     }
+
     if (remainder != 0) {
         offset = ((offset >> 6) + 1) << 6;
     }
+
     return (u_long128 *) offset;
 }
 
@@ -135,12 +141,15 @@ int GetAtoraMaxVillage() {
             break;
         }
     }
+
     if (SaveData->QuestDungeon(5, 0)) {
         max_village = 8;
     }
+
     if ((max_village < 3) || (max_village > 8)) {
         max_village = 8;
     }
+
     return max_village;
 }
 
@@ -249,6 +258,7 @@ int GetMenuCommonPutXY(ClsMes *mes, int x) {
     if (mes == NULL) {
         return 0;
     }
+
     int put_x = x;
     mes->NeedMesWinWH(mes->mes_made, size);
     put_x -= size[2] >> 1;
@@ -279,12 +289,15 @@ static inline void ResetMenuMes(ClsMes *mes) {
     mes->auto_page_wait = 0;
     mes->mes_made = -1;
     mes->edge_alpha = 0x80;
+
     for (int i = 0; i < 10; i++) {
         mes->mes_no[i] = -1;
     }
+
     for (int i = 0; i < 8; i++) {
         mes->values[i] = 0;
     }
+
     mes->value = 0;
     mes->value_signed = 0;
     mes->value_show = 1;
@@ -294,6 +307,7 @@ static inline void ResetMenuMes(ClsMes *mes) {
     mes->cursor_row = -1;
     mes->cursor_y = 0;
     mes->cursor_lit = 0;
+
     for (int i = 0; i < 10; i++) {
         mes->line_pos[i].x = -1;
         mes->line_pos[i].y = -1;
@@ -325,6 +339,7 @@ void InitMenuMesSet(int mode, short *messages) {
     CommonMenuMes2.mes_made = -1;
     CommonMenuMes3.mes_made = -1;
     AtoraNameMes.mes_made = -1;
+
     switch (GetMenuLangFlag()) {
         case 0:
             CommonMenuMes1.columns = 15;
@@ -361,6 +376,7 @@ void InitMenuMesSet(int mode, short *messages) {
             AtoraNameMes.narrow_gaiji_set = 2;
             break;
     }
+
     CommonMenuMes1.stay_frame = 0;
     CommonMenuMes2.stay_frame = 0;
     CommonMenuMes3.stay_frame = 0;
@@ -373,6 +389,7 @@ void InitMenuMesSet(int mode, short *messages) {
     CommonMenuMes2.style = 0;
     CommonMenuMes3.style = 0;
     AtoraNameMes.style = 0;
+
     switch (mode) {
         case 0:
             CommonMenuMes1.Preset(1);
@@ -408,6 +425,7 @@ void InitMenuMesSet(int mode, short *messages) {
             CommonMenuMes3.fade_speed = 0.1f;
             AtoraNameMes.stay_frame = 1;
             AtoraNameMes.rows = 1;
+
             switch (GetMenuLangFlag()) {
                 case 0:
                     CommonMenuMes3.char_width = 0x10;
@@ -492,15 +510,19 @@ void AllFillBoxForMenu(unsigned char r, unsigned char g, unsigned char b, unsign
     if (r < 0 || r > 0xFF) {
         r = 0x80;
     }
+
     if (g < 0 || g > 0xFF) {
         g = 0x80;
     }
+
     if (b < 0 || b > 0xFF) {
         b = 0x80;
     }
+
     if (alpha < 0 || alpha > 0xFF) {
         alpha = 0x80;
     }
+
     MGFillBox(CRect_i_(0, 0, 0x2800, (SCREEN_HEIGHT << 4)), r, g, b, alpha);
 }
 
@@ -551,6 +573,7 @@ static void DrawDontSetItemMark(int x, int y, int top, int bottom, int alpha) {
     if (y < top - 31 || y > bottom - 1) {
         return;
     }
+
     position = y;
     length = 32;
     source = 0xC0;
@@ -569,10 +592,13 @@ void DrawIconParts(int item_no, int x, int y, int top, int bottom, int alpha, in
     if (y < top - 31 || y > bottom - 1) {
         return;
     }
+
     position = y;
     info = GetCommonItemInfo(item_no);
+
     if (info != NULL && info->icon_index >= 0) {
         texture = RetCTex(item_no, u, v);
+
         if (texture != NULL) {
             length = 32;
             MenuTextureClip(position, v, length, top, bottom);
@@ -591,6 +617,7 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
     int height;
 
     TexManager.GetTexture("wepicon", -1);
+
     if (0 < value && item_no >= 0x5B && item_no < 0x5F) {
         int number_x = x + 12;
         draw_y = y + 10;
@@ -598,8 +625,10 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
         v = 0xB0;
         height = 0x14;
         MenuTextureClip(draw_y, v, height, top, bottom - 2);
+
         if (draw_y < bottom) {
             CRect_i_ source(u, v, 0x12, height);
+
             if (vibe != 0) {
                 DrawObjectVibe(number_x, draw_y, StayTex, source, 0x80, 0x80);
             } else {
@@ -607,17 +636,21 @@ void DrawAttachNumberOrWeapon(int x, int y, int top, int bottom, int item_no, in
             }
         }
     }
+
     if (item_no == 0x5A) {
         CTexture *texture = RetCTex((s16) value, u, v);
+
         if (texture != NULL) {
             height = 0x20;
             draw_y = y;
             MenuTextureClip(draw_y, v, height, top, bottom);
             CRect_i_ source(u, v, 0x20, height);
+
             if (vibe != 0) {
                 DrawObjectVibe(x, draw_y, texture, source, 0x80, 0x80);
                 return;
             }
+
             DrawMenu2DSprite(texture, CRect_i_(x, draw_y, 0x20, height), source, (alpha * 0x80) >> 7);
         }
     }
@@ -632,6 +665,7 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     if (&texture == NULL) {
         return;
     }
+
     ((sceGsTex0 *) &texture.tex0)->bits.tcc = 0;
     sceGsTexa texa = mgTexa;
     texa.AEM = 1;
@@ -639,28 +673,36 @@ void FadeTexX(int left_x, int left_width, int right_x, int right_width, char *na
     MGSetGsTEXA(&texa);
     right.r = right.g = right.b = 0x40;
     left.r = left.g = left.b = 0x40;
+
     if (left_width != 0) {
         right.a = 0x80;
         left.a = 0x80;
         set2DSprite(GetVif1Packet(), &texture, CRect_i_(0, 0, left_x, SCREEN_HEIGHT), CRect_i_(0, 0, left_x, (SCREEN_HEIGHT - 1)), &left, &right, &left, &right, 1);
     }
+
     left.a = 0x80;
     right.a = 0;
+
     if (dim == 1) {
         right.a = 0x40;
     }
+
     set2DSprite(GetVif1Packet(), &texture, CRect_i_(left_x, 0, left_width, SCREEN_HEIGHT), CRect_i_(left_x, 0, left_width, (SCREEN_HEIGHT - 1)), &left, &right, &left, &right, 1);
     left.a = 0;
     right.a = 0x80;
+
     if (dim == 1) {
         left.a = 0x40;
     }
+
     set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x, 0, right_width, SCREEN_HEIGHT), CRect_i_(right_x, 0, right_width, (SCREEN_HEIGHT - 1)), &left, &right, &left, &right, 1);
+
     if (right_width != 0) {
         right.a = 0x80;
         left.a = 0x80;
         set2DSprite(GetVif1Packet(), &texture, CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, SCREEN_HEIGHT), CRect_i_(right_x + right_width, 0, 0x280 - right_x - right_width, (SCREEN_HEIGHT - 1)), &left, &right, &left, &right, 1);
     }
+
     MGSetGsTEXA(NULL);
 }
 
@@ -671,12 +713,16 @@ CTexture *RetCTex(short item_no, int &u, int &v) {
     if (info == NULL) {
         return NULL;
     }
+
     int icon = info->icon_index;
+
     if (icon < 0) {
         return NULL;
     }
+
     u = ((icon + 8) % 8) << 5;
     v = (icon >> 3) << 5;
+
     switch (info->kind) {
         case 1:
             texture = ItemIcon;
@@ -686,6 +732,7 @@ CTexture *RetCTex(short item_no, int &u, int &v) {
             texture = WepIcon;
             break;
     }
+
     return texture;
 }
 
@@ -695,6 +742,7 @@ void MenuTextureClip(int &position, int &source, int &length, int minimum, int m
         source += minimum - position;
         position = minimum;
     }
+
     if (position < maximum && position + length > maximum) {
         length = maximum - position;
     }
@@ -702,10 +750,12 @@ void MenuTextureClip(int &position, int &source, int &length, int minimum, int m
 
 int GetNumberKeta(int value) {
     int digits = 1;
+
     while (value >= 10) {
         value /= 10;
         digits++;
     }
+
     return digits;
 }
 
@@ -948,14 +998,18 @@ MENU_ICON_INFO *GetMenuIconInfo(int icon) {
 void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alpha) {
     if (StayTex == NULL) {
         StayTex = TexManager.GetTexture("stayframe", -1);
+
         if (StayTex == NULL) {
             return;
         }
     }
+
     MENU_ICON_INFO *info = GetMenuIconInfo(icon);
+
     if (info == NULL) {
         return;
     }
+
     int u = info->u;
     int v = info->v;
     s16 frame_size[2][2] = {
@@ -968,11 +1022,14 @@ void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alph
     if (selected) {
         u = info->selected_u;
         v = info->selected_v;
+
         if (icon == info->id) {
             width = 0x38;
         }
     }
+
     set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, width, height - 1), CRect_i_(u, v, width, height), bright, bright, bright, alpha);
+
     if (selected) {
         x += 0x44;
         y += 1;
@@ -980,6 +1037,7 @@ void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alph
         x += 0x40;
         y -= 1;
     }
+
     set2DSprite(GetVif1Packet(), StayTex, CRect_i_(x, y, info->label_width, info->label_height - 1), CRect_i_(info->label_u, info->label_v, info->label_width, info->label_height), bright, bright, bright, alpha);
 }
 
@@ -998,9 +1056,11 @@ void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int alpha) {
         DrawObjectVibe(item_x + 4, item_y + 2, texture, source, 0, 0x50);
         DrawObjectVibe(item_x, item_y, texture, source, 0x80, 0x80);
         int number = GetAttachVolumeForMsg(&PerBoardPt->held_attach);
+
         if (item_no == 0x5A) {
             number = PerBoardPt->held_attach.sphere_weapon_no;
         }
+
         DrawAttachNumberOrWeapon(item_x, item_y, 0, 0x280, item_no, number, 0x80, 1);
     }
 }
@@ -1123,6 +1183,7 @@ void SetMenuTrushMark(ITEM_PACK *items) {
     for (i = 0; i < 3; i++) {
         quick_count += items->quick_item_qty[i];
     }
+
     for (slot = items->num - 1; slot >= 0; slot--) {
         if (items->item[slot] < ITEM_DUNGEON_START && quick_count > 0) {
             MenuTrushMark[slot] = 1;
@@ -1140,9 +1201,11 @@ void DeleteMenuTrushMark() {
 void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode, int page) {
     PerBoardStatusPt = status;
     PerBoardPt = board;
+
     if (PerBoardTex == NULL) {
         PerBoardTex = TexManager.GetTexture("perbrd", -1);
     }
+
     PerBoardPt->menu_kind = mode;
     PerBoardPt->page = page;
     PerBoardPt->cursor = 0;
@@ -1150,9 +1213,11 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     PerBoardPt->item_pack = &PerBoardStatusPt->item_pack;
     PerBoardPt->consumables = PerBoardStatusPt->consumable_items;
     int rows = PersonalRetMax(PerBoardPt->page) / 5;
+
     if (rows <= 0) {
         rows = 1;
     }
+
     PerBoardPt->y = 0x7F - PerBoardPt->top_row * 0x28;
     PerBoardPt->scroll = 140.0f + 114.0f * PerBoardPt->top_row / rows;
     PerBoardPt->cursor_area = 1;
@@ -1163,20 +1228,25 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
     PerBoardPt->trash_frame = 0;
     DeleteMenuTrushMark();
     s16 full = -1;
+
     if (PerBoardStatusPt->overflow_flag != 0) {
         ITEM_PACK *pack = PerBoardPt->item_pack;
+
         if (pack->item[pack->num] >= 0x84) {
             full = 0;
         }
+
         if (PerBoardPt->consumables[41].id >= 0x51) {
             full = 2;
         }
+
         for (int i = 0; i < 6; i++) {
             if (((CUserStatus *) PerBoardStatusPt)->chara_weapons[i][10].item_no >= 0x101) {
                 full = 1;
                 break;
             }
         }
+
         switch (full) {
             case 0:
                 SetMenuTrushMark(pack);
@@ -1192,31 +1262,38 @@ int BoardModeChangeKey() {
         switch (PerBoardPt->menu_kind) {
             case 0:
                 PerBoardPt->page--;
+
                 if (PerBoardPt->page < 0) {
                     PerBoardPt->page = 2;
                 }
+
                 break;
             case 2:
             case 1:
                 break;
         }
     }
+
     if (GamePad.Down(10)) {
         switch (PerBoardPt->menu_kind) {
             case 0:
                 PerBoardPt->page++;
+
                 if (PerBoardPt->page > 2) {
                     PerBoardPt->page = 0;
                 }
+
                 break;
             case 2:
             case 1:
                 break;
         }
     }
+
     if (board_mode != PerBoardPt->page) {
         return 1;
     }
+
     return 0;
 }
 
@@ -1230,26 +1307,34 @@ void PersonalBoardLimmitCheck() {
     if (last_top < 0) {
         last_top = 0;
     }
+
     if (max - 1 < *cursor) {
         while (*cursor >= max) {
             *cursor -= 5;
         }
+
         PerBoardPt->top_row = *cursor / 5 - 3;
+
         if (PerBoardPt->top_row < 0) {
             PerBoardPt->top_row = 0;
         }
+
         PerBoardPt->y = 0x7F - PerBoardPt->top_row * 0x28;
         int rows = max / 5;
+
         if (rows <= 0) {
             rows = 4;
         }
+
         PerBoardPt->scroll = 140.0f + 114.0f * PerBoardPt->top_row / rows;
         return;
     }
+
     if (last_top < top_row) {
         if (last_top < 0) {
             last_top = 0;
         }
+
         while (last_top < PerBoardPt->top_row) {
             PerBoardPt->top_row--;
         }
@@ -1269,43 +1354,52 @@ int PersonalBoardKeySub() {
                 if (*cursor > 4) {
                     *cursor -= 5;
                 }
+
                 if (*cursor / 5 < PerBoardPt->top_row) {
                     PerBoardPt->top_row--;
                 }
+
                 break;
             case 2:
                 break;
         }
     }
+
     if (GamePad.Down(0x4000) != 0) {
         switch (PerBoardPt->cursor_area) {
             case 1:
                 if (*cursor < max - 5) {
                     *cursor += 5;
                 }
+
                 if (*cursor / 5 > PerBoardPt->top_row + 3) {
                     PerBoardPt->top_row++;
                 }
+
                 break;
             case 2:
                 break;
         }
     }
+
     if (GamePad.Down(0x2000) != 0) {
         switch (PerBoardPt->cursor_area) {
             case 2:
                 break;
             case 1: {
                 int column = *cursor % 5;
+
                 if (column < 4) {
                     (*cursor)++;
                 } else if (column == 4 && PerBoardPt->menu_kind != 2) {
                     PerBoardPt->cursor_area = 2;
                 }
+
                 break;
             }
         }
     }
+
     if (GamePad.Down(0x8000) != 0) {
         switch (PerBoardPt->cursor_area) {
             case 2:
@@ -1317,12 +1411,15 @@ int PersonalBoardKeySub() {
                 } else {
                     (*cursor)--;
                 }
+
                 break;
         }
     }
+
     if (area != PerBoardPt->cursor_area) {
         ComMenuSePlay(0);
     }
+
     return exit_left;
 }
 
@@ -1342,20 +1439,24 @@ int PersonalBoardItemPush(IHAVEITEM *item, int board_pos) {
     if (kind == 0 || kind < 0) {
         s16 *board_item = &PerBoardPt->item_pack->item[board_pos];
         s16 *board_volume = &PerBoardPt->item_pack->item_vol[board_pos];
+
         if (MenuTrushMark[board_pos] == 1) {
             enabled = 0;
         } else {
             MenuDataSwap(board_item, &item->item_no);
             MenuDataSwap(board_volume, &item->volume);
+
             if (item->item_no >= 0x51) {
                 item->from_page = 0;
                 item->from_slot = PerBoardPt->cursor;
             }
+
             if (item->item_no >= 0x84 || *board_item >= 0x84) {
                 enabled = 1;
             }
         }
     }
+
     return enabled;
 }
 
@@ -1373,20 +1474,25 @@ int PersonalBoardWeaponPush(IHAVEITEM *item, int board_pos) {
         if (weapon_no < 0x101) {
             return 0;
         }
+
         if (item->item_no == 0xB1) {
             if (weapon->durability_f < weapon->durability) {
                 weapon->durability_f = weapon->durability;
+
                 if (weapon->item_no == GetDefaultWeaponNo(chara)) {
                     weapon->item_no++;
                     WepDataListToHaveCopy(weapon->item_no, weapon);
                 }
+
                 InitHaveData(item);
                 result = 2;
             }
         }
+
         if (item->item_no == 0xB2) {
             if (weapon->experience < GetWeaponMaxExp(weapon) && weapon->level < 99) {
                 int item_no = weapon->item_no;
+
                 if (item_no != GetDefaultWeaponNo(chara)) {
                     if (item_no == 0x10C) {
                         if (GetMenuHebikiriFlag() != 0) {
@@ -1399,9 +1505,11 @@ int PersonalBoardWeaponPush(IHAVEITEM *item, int board_pos) {
             }
         }
     }
+
     if (kind == 1 || kind < 0) {
         if (kind == 1) {
             int owner = WhoIsWeaponEquip(item->item_no);
+
             if (owner != chara) {
                 result = 0;
             } else {
@@ -1410,6 +1518,7 @@ int PersonalBoardWeaponPush(IHAVEITEM *item, int board_pos) {
                 MenuDataSwap(&PerBoardPt->weapon, weapon);
                 item->item_no = placed;
                 weapon->item_no = held;
+
                 if (slot == PerBoardStatusPt->equipped_weapon_slot[owner]) {
                     PerBoardPt->held_equipped_slot = slot;
                     PerBoardStatusPt->equipped_weapon_slot[owner] = -1;
@@ -1417,27 +1526,32 @@ int PersonalBoardWeaponPush(IHAVEITEM *item, int board_pos) {
                     PerBoardStatusPt->equipped_weapon_slot[owner] = slot;
                     PerBoardPt->held_equipped_slot = -1;
                 }
+
                 result = 1;
                 item->from_page = 1;
                 item->from_slot = board_pos;
             }
         } else {
             PerBoardPt->held_equipped_slot = -1;
+
             if (slot == PerBoardStatusPt->equipped_weapon_slot[chara]) {
                 PerBoardPt->held_equipped_slot = slot;
                 PerBoardStatusPt->equipped_weapon_slot[chara] = -1;
             }
+
             item->from_page = 1;
             item->from_slot = board_pos;
             item->item_no = weapon->item_no;
             memcpy(&PerBoardPt->weapon, weapon, sizeof(WEAPON_HAVE));
             InitHaveWep(weapon);
             weapon->item_no = 0;
+
             if (weapon->item_no >= 0x101 || item->item_no >= 0x101) {
                 result = 1;
             }
         }
     }
+
     return result;
 }
 
@@ -1460,10 +1574,12 @@ int PersonalBoardAttachPush(IHAVEITEM *item, int board_pos) {
         MenuDataSwap(slot, &PerBoardPt->held_attach);
         item->item_no = slot_item_no;
         slot->item_no = item_no;
+
         if (item->item_no >= 0x51 || slot->item_no >= 0x51) {
             enabled = 1;
         }
     }
+
     return enabled;
 }
 
@@ -1482,6 +1598,7 @@ int PersonalBoardItemGetorSwap(int board_pos) {
             result = PersonalBoardAttachPush(item, board_pos);
             break;
     }
+
     return result;
 }
 
@@ -1501,6 +1618,7 @@ void PersonalBoardItemCancel() {
             int slot;
             int held;
             held = have->item_no;
+
             if (held >= 0x101) {
                 chara = cell / 10;
                 slot = cell % 10;
@@ -1510,6 +1628,7 @@ void PersonalBoardItemCancel() {
                 MenuDataSwap(&PerBoardPt->weapon, weapon);
                 have->item_no = placed;
                 weapon->item_no = held;
+
                 if (PerBoardPt->held_equipped_slot >= 0) {
                     PerBoardStatusPt->equipped_weapon_slot[chara] = PerBoardPt->held_equipped_slot;
                     PerBoardPt->held_equipped_slot = -1;
@@ -1518,6 +1637,7 @@ void PersonalBoardItemCancel() {
                     PerBoardStatusPt->equipped_weapon_slot[chara] = -1;
                 }
             }
+
             break;
         }
         case 2: {
@@ -1531,6 +1651,7 @@ void PersonalBoardItemCancel() {
             break;
         }
     }
+
     if (have->item_no <= 0x50) {
         InitHaveData(have);
         InitHaveWep(&PerBoardPt->weapon);
@@ -1560,6 +1681,7 @@ int PersonalRetMax(int board_mode) {
             max = 120;
             break;
     }
+
     return max;
 }
 
@@ -1574,19 +1696,24 @@ void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int unused) {
     row_y = row_y + 0x17 - PerBoardPt->top_row * 40;
     PerBoardPt->y += (row_y - PerBoardPt->y) / 4.0f;
     row_y = PerBoardPt->y;
+
     switch (PerBoardPt->menu_kind) {
         case 2:
         case 0:
             MenuTextureReload(PerBoardTex->block);
             break;
     }
+
     mark = 0;
+
     switch (board_mode) {
         case 1:
             mark = 2;
             break;
     }
+
     DrawPerBoardDraw(mark, max, left, row_y, top, bottom, PerBoardTex, alpha);
+
     switch (PerBoardPt->menu_kind) {
         case 2:
             MenuTextureReload(PerBoardTex->block);
@@ -1595,6 +1722,7 @@ void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int unused) {
             MenuTextureReload(ItemMenuWeaponIconReadBlock);
             break;
     }
+
     CommonIconDraw(board_mode, max, left + 2, row_y + 6, top, bottom, alpha);
     MenuTextureReload(PerBoardTex->block);
     PersonalBoardOptionDraw(board_mode, max, x, y, PerBoardTex, alpha);
@@ -1613,9 +1741,11 @@ static void DrawNowEquipWeaponMark(int x, int y, int top, int bottom, int alpha)
     int length = 0x28;
 
     MenuTextureClip(position, v, length, top, bottom);
+
     if (position + length < top || bottom <= position) {
         return;
     }
+
     MenuTextureReload(PerBoardTex->block);
     DrawMenu2DSprite(PerBoardTex, CRect_i_(x, position, 0x28, length), CRect_i_(0x114, v, 0x28, length), alpha);
 }
@@ -1633,28 +1763,36 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
                 MenuTextureReload(MenuShadowReadBlock);
             } else {
                 icon = TexManager.GetTexture("wepicon", -1);
+
                 if (icon != NULL) {
                     MenuTextureReload(icon->block);
                     WepIcon = icon;
                 }
             }
+
             draw_x = x + 2;
             ATTACH_LIST *attach = (ATTACH_LIST *) PerBoardPt->consumables;
+
             for (int i = 0; i < count; i++) {
                 int id = attach[i].item_no;
+
                 if (id >= 0x5B && id < 0x5F) {
                     value = attach[i].status[id - 0x5B];
                 }
+
                 if (id == 0x5A) {
                     value = attach[i].sphere_weapon_no;
                 }
+
                 DrawIconParts(id, draw_x, draw_y, top, bottom, alpha, value);
                 draw_x += 0x28;
+
                 if (i % 5 == 4) {
                     draw_x = x + 2;
                     draw_y += 0x28;
                 }
             }
+
             break;
         }
         case 0: {
@@ -1664,20 +1802,26 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
             ITEM_PACK *pack = PerBoardPt->item_pack;
             s16       *items = pack->item;
             quick = 0;
+
             for (slot = 0; slot < 3; slot++) {
                 quick += pack->quick_item_qty[slot];
             }
+
             for (int i = 0; i < count; i++) {
                 DrawIconParts(items[i], draw_x, draw_y, top, bottom, alpha, 0);
+
                 if (MenuTrushMark[i] != 0) {
                     DrawDontSetItemMark(draw_x, draw_y, top, bottom, alpha);
                 }
+
                 draw_x += 0x28;
+
                 if (i % 5 == 4) {
                     draw_x = x;
                     draw_y += 0x28;
                 }
             }
+
             break;
         }
         case 1: {
@@ -1687,27 +1831,35 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
             int          chara = 0;
             weapons = PerBoardStatusPt->chara_weapons[0];
             icon = TexManager.GetTexture("wepicon", -1);
+
             if (icon != NULL) {
                 MenuTextureReload(icon->block);
                 WepIcon = icon;
             }
+
             draw_x = weapon_x;
             party = PerBoardStatusPt->party_size;
+
             for (int i = 0; i < count; i++) {
                 int slot = i % 10;
                 item_no = weapons[slot].item_no;
                 int equipped = PerBoardStatusPt->equipped_weapon_slot[i / 10];
+
                 if (party >= i / 10 + 1 && equipped >= 0 && slot == equipped) {
                     DrawNowEquipWeaponMark(draw_x - 2, draw_y - 4, top + 1, bottom, alpha);
+
                     if (icon != NULL) {
                         MenuTextureReload(icon->block);
                     }
                 }
+
                 DrawIconParts(item_no, draw_x, draw_y, top, bottom, alpha, 0);
                 draw_x += 0x28;
+
                 if (i % 5 == 4) {
                     draw_x = weapon_x;
                     draw_y += 0x28;
+
                     if (i != 0 && slot == 9) {
                         chara++;
                         CUserStatus *status = PerBoardStatusPt;
@@ -1715,6 +1867,7 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
                     }
                 }
             }
+
             break;
         }
         case 3:
@@ -1725,14 +1878,17 @@ void CommonIconDraw(int page, int count, int x, int y, int top, int bottom, int 
         case 8: {
             int left = weapon_x - 2;
             draw_x = left;
+
             for (int i = 0; i < 120; i++) {
                 DrawAtoraParts(draw_x, draw_y, PerBoardPt->atla_elements[i], top, bottom - 4, alpha);
                 draw_x += 0x28;
+
                 if (i % 5 == 4) {
                     draw_x = left;
                     draw_y += 0x28;
                 }
             }
+
             break;
         }
     }
@@ -1768,6 +1924,7 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
                     set2DSprite(GetVif1Packet(), texture, CRect_i_(x, top + 2, 0x100, 0x2F), CRect_i_(0x100, row, 0x100, 0x30), bright, bright, bright, alpha);
                 }
             }
+
             top = y - 0x30;
             row = tag * 0x30;
             DrawMenu2DSprite(texture, CRect_i_(x, top + 2, 0x100, 0x2F), CRect_i_(0x100, row, 0x100, 0x30), alpha);
@@ -1807,6 +1964,7 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
 
                 x += offsets[lang][tag];
                 x += shift;
+
                 if (shift == 0) {
                     DrawMenu2DSprite(texture, CRect_i_(x, top + 1, width, 0x1B), CRect_i_(source, 0xC0, width, 0x1C), alpha);
                 }
@@ -1822,11 +1980,14 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
                 int count = 0;
 
                 top = y - 0x30;
+
                 while (step != 0) {
                     village += step;
+
                     if (max_village < village) {
                         village = max_village;
                     }
+
                     if (village == tag) {
                         if (step == 1 && village == max_village) {
                             last = 1;
@@ -1837,6 +1998,7 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
                             village = max_village;
                         }
                     }
+
                     int index = village - 3;
                     int left = x + index * 0x1A;
 
@@ -1844,20 +2006,25 @@ void PersonalBoardTagDraw(int tag, int x, int y, CTexture *texture, int shift, i
                         DrawMenu2DSprite(VillageBar, CRect_i_(x, y - 0x12, 0x100, 0x13), CRect_i_(0, 0x90, 0x100, 0x14), alpha);
                         bright = 0x80;
                     }
+
                     int column = (index % 2) * 0x60;
                     row = (index >> 1) * 0x30;
                     set2DSprite(GetVif1Packet(), VillageBar, CRect_i_(left, top + 2, 0x60, 0x2F), CRect_i_(column, row, 0x60, 0x30), bright, bright, bright, alpha);
+
                     if (last) {
                         break;
                     }
+
                     if (++count >= 7) {
                         break;
                     }
                 }
+
                 top = y - 0x5A;
                 row = (tag - 3) * 0x28;
                 DrawMenu2DSprite(VillageName, CRect_i_(x, top + 1, 0x100, 0x27), CRect_i_(0, row, 0x100, 0x28), alpha);
             }
+
             break;
     }
 }
@@ -1869,10 +2036,13 @@ void PersonalBoardScrlBarDraw(int count, int x, int y, float &scroll, unsigned c
     if (rows <= 0) {
         rows = 1;
     }
+
     int length = (int) (456.0f / rows - 8.0f);
+
     if (114.0f < (float) length) {
         length = 0x69;
     }
+
     CRect_i_ source(0xAE, 0x14, 8, 4);
     float    bar_y = (float) (y + 0x16) + 114.0f * top_row / rows;
     bar_y = scroll + (bar_y - scroll) / 4.0f;
@@ -1892,9 +2062,11 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
     RECT digits = {0x90, 0xDC, 12, 12};
     left = x + 0xF7;
     top = y - 0xE;
+
     if (PerBoardPt->menu_kind == 2) {
         left += 2;
     }
+
     DrawMenuNumber(num, left, top, texture, digits, 1, alpha);
     left = x + 0xF4;
     top = y - 0x22;
@@ -1909,15 +2081,19 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
         case 2:
             max = GetNowModeMaxNum(PerBoardPt->page, &full);
             item = PerBoardPt->held_item.item_no;
+
             if (item >= 0x51) {
                 int kind = WhatIsKindofItem(item);
+
                 if (kind == PerBoardPt->page) {
                     max++;
                 }
             }
+
             if (num < max) {
                 full = 1;
             }
+
             break;
         case 3:
         case 4:
@@ -1930,14 +2106,18 @@ void PersonalBoardMaxDraw(int num, int x, int y, CTexture *texture, int alpha) {
                     max++;
                 }
             }
+
             if (0 <= PerBoardPt->held_item.item_no) {
                 max++;
             }
+
             break;
     }
+
     if (full) {
         digits.y += digits.height;
     }
+
     DrawMenuNumber(max, left, top, texture, digits, 1, alpha);
 }
 
@@ -1959,6 +2139,7 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
     if (y < top - 39 || y > bottom - 1) {
         return;
     }
+
     v = 0x14;
     length = 0x28;
     MenuTextureClip(y, v, length, top, bottom);
@@ -1967,6 +2148,7 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
     lower.r = lower.g = lower.b = 0x80 - step;
     lower.a = alpha;
     upper.a = alpha;
+
     for (i = 0; i < count; i++) {
         set2DSprite(GetVif1Packet(), texture, CRect_i_(x, y, 0x28, length), CRect_i_(0x20, v, 0x28, length), &upper, &lower, &upper, &lower, 1);
         upper.r = upper.g = upper.b = lower.r;
@@ -1979,9 +2161,11 @@ static void DrawPersonalBoardBase(int x, int y, int top, int bottom, int count, 
 void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CTexture *texture, int alpha) {
     int row_y = y;
     int board_x = x;
+
     for (int row = 0; row < 26; row++) {
         DrawPersonalBoardBase(board_x, row_y, top, bottom, 5, texture, alpha);
         int draw_mark = 0;
+
         switch (mark) {
             case 0:
                 break;
@@ -1989,18 +2173,22 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 if (row == 2) {
                     draw_mark = 1;
                 }
+
                 break;
             case 2:
                 if (row % 2 == 0 && row != 0) {
                     draw_mark = 1;
                 }
+
                 break;
         }
+
         if (draw_mark != 0) {
             int mark_x = x - 4;
             int mark_y = row_y - 8;
             int v = 0x3C;
             int height = 0x10;
+
             if (top <= mark_y + 0x10 && mark_y < bottom) {
                 MenuTextureClip(mark_y, v, height, top, bottom);
                 int    step = 9;
@@ -2010,6 +2198,7 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 right.r = right.g = right.b = 0x80 - step;
                 right.a = alpha;
                 left.a = alpha;
+
                 for (int i = 0; i < 5; i++) {
                     set2DSprite(GetVif1Packet(), texture, CRect_i_(mark_x, mark_y, 0x28, height), CRect_i_(0x20, v, 0x28, height), &left, &right, &left, &right, 1);
                     left.r = left.g = left.b = right.r;
@@ -2019,7 +2208,9 @@ void DrawPerBoardDraw(int mark, int count, int x, int y, int top, int bottom, CT
                 }
             }
         }
+
         row_y += 0x28;
+
         if (bottom < row_y) {
             break;
         }
@@ -2042,23 +2233,28 @@ void CommonTrushDraw(int x, int y, int alpha) {
     switch (trash->anim) {
         case 1: {
             int frame = trash->frame;
+
             if (frame <= 3 || frame > 12) {
                 source.x -= 0x30;
             } else if (frame > 6 && frame <= 9) {
                 source.x += 0x30;
             }
+
             DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
             trash->frame++;
+
             if (frame > 15) {
                 trash->anim = 0;
                 trash->frame = 0;
             }
+
             break;
         }
         default:
             if (board->cursor_area == 2) {
                 source.x = 0x130;
             }
+
             DrawMenu2DSprite(PerBoardTex, dest, source, alpha);
             break;
     }
@@ -2072,37 +2268,47 @@ int IsEnableTrushThrow(int item_no) {
         CUserStatus *status = PerBoardStatusPt;
         WEAPON_HAVE *weapons = status->chara_weapons[owner];
         int          default_no = GetDefaultWeaponNo(owner);
+
         for (int i = 0; i < 11; i++) {
             int weapon_no = weapons[i].item_no;
+
             if (weapon_no == default_no || weapon_no == default_no + 1) {
                 enable = 1;
                 break;
             }
         }
+
         if (PerBoardStatusPt->party_size - 1 < owner) {
             enable = 1;
         }
+
         if (item_no == 0x10C) {
             int flag = GetMenuHebikiriFlag();
+
             if (flag == 0) {
                 enable = flag;
             }
         }
+
         if (PerBoardPt->held_equipped_slot >= 0) {
             enable = 0;
         }
     }
+
     if (item_no >= 0x51 && item_no < 0x101) {
         COM_ITEM_INFO *info = GetCommonItemInfo(item_no);
+
         if (info != NULL) {
             switch (info->kind) {
                 case 0:
                     if (GetAttachData(item_no) != NULL) {
                         enable = 1;
                     }
+
                     break;
                 case 1: {
                     ITEM_DATA *data = GetItemData(item_no);
+
                     if (data != NULL) {
                         if (data->kind_flags & 0x10) {
                             enable = 0;
@@ -2110,11 +2316,13 @@ int IsEnableTrushThrow(int item_no) {
                             enable = 1;
                         }
                     }
+
                     break;
                 }
             }
         }
     }
+
     return enable;
 }
 
@@ -2134,9 +2342,11 @@ int SearchBoardNowPosItemExist(int page, int cell) {
     switch (page) {
         case 0: {
             ITEM_PACK *pack = &PerBoardStatusPt->item_pack;
+
             if (pack != NULL) {
                 item_no = pack->item[cell];
             }
+
             break;
         }
         case 1: {
@@ -2145,19 +2355,24 @@ int SearchBoardNowPosItemExist(int page, int cell) {
             CUserStatus *status = PerBoardStatusPt;
             WEAPON_HAVE *weapons = status->chara_weapons[chara];
             WEAPON_HAVE *weapon = &weapons[slot];
+
             if (weapon != NULL) {
                 item_no = weapon->item_no;
             }
+
             break;
         }
         case 2: {
             DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
+
             if (items != NULL) {
                 item_no = items[cell].id;
             }
+
             break;
         }
     }
+
     return item_no;
 }
 
@@ -2167,8 +2382,10 @@ int GetBoardSpace(int item_no, int *page) {
     if (item_no < 0x51) {
         return -1;
     }
+
     *page = WhatIsKindofItem(item_no);
     int max = PersonalRetMax(*page);
+
     switch (*page) {
         case 0: {
             int        quick;
@@ -2179,12 +2396,14 @@ int GetBoardSpace(int item_no, int *page) {
             for (i = 0; i < 3; i++) {
                 quick += pack->quick_item_qty[i];
             }
+
             for (i = 0; i < max - quick; i++) {
                 if (pack->item[i] < 0x84 && MenuTrushMark[i] == 0) {
                     space = i;
                     break;
                 }
             }
+
             break;
         }
         case 1: {
@@ -2192,17 +2411,20 @@ int GetBoardSpace(int item_no, int *page) {
             int          i;
             CUserStatus *status = PerBoardStatusPt;
             WEAPON_HAVE *weapons = status->chara_weapons[owner];
+
             for (i = 0; i < 10; i++) {
                 if (weapons[i].item_no < 0x101) {
                     space = i + owner * 10;
                     break;
                 }
             }
+
             break;
         }
         case 2: {
             int             i;
             DNG_CONSUMABLE *items = PerBoardStatusPt->consumable_items;
+
             for (i = 0; i < max; i++) {
 
                 if (items[i].id < 0x51) {
@@ -2210,9 +2432,11 @@ int GetBoardSpace(int item_no, int *page) {
                     break;
                 }
             }
+
             break;
         }
     }
+
     return space;
 }
 
@@ -2238,27 +2462,35 @@ int CompItem(int first_item_no, int second_item_no) {
     if (first != NULL) {
         first_rank = sort_table[first->sort_key];
     }
+
     if (second != NULL) {
         second_rank = sort_table[second->sort_key];
     }
+
     if (first_item_no < ITEM_DUNGEON_START) {
         first_rank = 9;
     }
+
     if (second_item_no < ITEM_DUNGEON_START) {
         second_rank = 9;
     }
+
     if (first_rank > second_rank) {
         return 1;
     }
+
     if (first_rank < second_rank) {
         return -1;
     }
+
     if (first_item_no > second_item_no) {
         return 1;
     }
+
     if (first_item_no < second_item_no) {
         return -1;
     }
+
     return 0;
 }
 
@@ -2274,12 +2506,15 @@ int SeitonItemBoardSub(ITEM_PACK *items) {
     for (i = 0; i < 9; i++) {
         sort_table[type] = i;
         type++;
+
         if (type >= 9) {
             type = 0;
         }
     }
+
     sort_table[0] = 9;
     swapped = 0;
+
     for (i = 0; i < items->num - 1; i++) {
         for (j = i + 1; j < items->num; j++) {
             if (CompItem(items->item[i], items->item[j]) > 0) {
@@ -2288,6 +2523,7 @@ int SeitonItemBoardSub(ITEM_PACK *items) {
             }
         }
     }
+
     return swapped;
 }
 
@@ -2297,7 +2533,9 @@ void SeitonItemBoard(ITEM_PACK *items) {
             if (SeitonItemBoardSub(items) != 0) {
                 break;
             }
+
             sort_top_type++;
+
             if (sort_top_type >= 9) {
                 sort_top_type = 1;
             }
@@ -2335,21 +2573,27 @@ int CompAttach(ATTACH_LIST *first, ATTACH_LIST *second) {
     if (first->item_no < ITEM_ATTACH_START) {
         first_rank = 5;
     }
+
     if (second->item_no < ITEM_ATTACH_START) {
         second_rank = 5;
     }
+
     if (first_rank > second_rank) {
         return 1;
     }
+
     if (first_rank < second_rank) {
         return -1;
     }
+
     if (first->item_no > second->item_no) {
         return 1;
     }
+
     if (first->item_no < second->item_no) {
         return -1;
     }
+
     return 0;
 }
 
@@ -2365,12 +2609,15 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     for (i = 0; i < 5; i++) {
         asort_table[type] = i;
         type++;
+
         if (type >= 5) {
             type = 0;
         }
     }
+
     asort_table[0] = 5;
     swapped = 0;
+
     for (i = 0; i < 39; i++) {
         for (j = i + 1; j < 40; j++) {
             if (CompAttach(&attachments[i], &attachments[j]) > 0) {
@@ -2379,6 +2626,7 @@ int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
             }
         }
     }
+
     return swapped;
 }
 
@@ -2386,11 +2634,14 @@ int SeitonAttachBoard(ATTACH_LIST *attachments) {
     if (attachments == NULL) {
         return 0;
     }
+
     for (int i = 0; i < 5; i++) {
         if (SeitonAttachBoardSub(attachments) != 0) {
             break;
         }
+
         asort_top_type++;
+
         if (asort_top_type >= 5) {
             asort_top_type = 0;
         }
@@ -2403,6 +2654,7 @@ int WhatIsKindofItem(int item_no) {
     if (info == NULL) {
         return -1;
     }
+
     int board_kind[3] = {2, 0, 1};
     return board_kind[info->kind];
 }
@@ -2412,46 +2664,61 @@ int WhoIsWeaponEquip(int weapon_no) {
     WEAPON_DATA   *data;
 
     info = GetCommonItemInfo(weapon_no);
+
     if (info == NULL) {
         return -1;
     }
+
     if (info->kind != 2) {
         return -1;
     }
+
     data = GetWeaponDataInfo((s32) info->index);
+
     if (data != NULL) {
         return (s8) data->owner;
     }
+
     return -1;
 }
 
 int GetWeaponHoleNum(int weapon_no) {
     COM_ITEM_INFO *info = GetCommonItemInfo(weapon_no);
+
     if (info == NULL) {
         return 0;
     }
+
     if (info->kind != 2) {
         return 0;
     }
+
     WEAPON_DATA *data = GetWeaponData(weapon_no);
+
     if (data == NULL) {
         return 0;
     }
+
     int count = 0;
+
     for (int i = 0; i <= 5; i++) {
         if (data->hole[i] > 0) {
             count++;
         }
     }
+
     return count;
 }
 
 int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
     int count = 0;
+
     if (weapon == NULL) {
         return 0;
     }
+
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+
     if (data != NULL) {
         for (int i = 0; i < 6; i++) {
             if (data->hole[i] > 0 && weapon->attach[i].item_no >= 0x51) {
@@ -2459,6 +2726,7 @@ int GetNowWeaponAttachNum(WEAPON_HAVE *weapon) {
             }
         }
     }
+
     return count;
 }
 
@@ -2466,20 +2734,27 @@ int GetWeaponMaxExp(WEAPON_HAVE *weapon) {
     if (weapon == NULL) {
         return 0;
     }
+
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+
     if (data == NULL) {
         return 1;
     }
+
     int experience = *(s8 *) &data->exp_base;
+
     for (int i = 0; i < weapon->level; i++) {
         experience += data->exp_per_level;
     }
+
     if (experience > 999) {
         experience = 999;
     }
+
     if (experience <= 0) {
         experience = 99;
     }
+
     return experience;
 }
 
@@ -2493,11 +2768,13 @@ int GetNowItemNum(short item_no, ITEM_PACK *items) {
             count++;
         }
     }
+
     for (j = 0; j < 3; j++) {
         if (items->quick_item_slot[j] == item_no) {
             count += items->quick_item_qty[j];
         }
     }
+
     return count;
 }
 
@@ -2512,13 +2789,16 @@ void DeleteItemAfterUseItem(short item_no, ITEM_PACK *items) {
             break;
         }
     }
+
     if (deleted == 0) {
         for (i = 0; i < 3; i++) {
             if (items->quick_item_slot[i] == item_no) {
                 items->quick_item_qty[i]--;
+
                 if (items->quick_item_qty[i] <= 0) {
                     items->quick_item_slot[i] = -1;
                 }
+
                 break;
             }
         }
@@ -2535,49 +2815,60 @@ int GetNowModeMaxNum(int page, int *overflow) {
             int        j;
             ITEM_PACK *pack = &status->item_pack;
             int        num;
+
             for (i = 0; i < (num = pack->num) + 3; i++) {
                 if (pack->item[i] >= 0x84) {
                     count++;
                 }
             }
+
             for (j = 0; j < 3; j++) {
                 if (pack->quick_item_slot[j] >= 0x84) {
                     count += pack->quick_item_qty[j];
                 }
             }
+
             if (overflow != NULL && num < count) {
                 *overflow = 1;
             }
+
             break;
         }
         case 1:
             for (int chara = 0; chara < 6; chara++) {
                 int          i;
                 WEAPON_HAVE *weapons = status->chara_weapons[chara];
+
                 for (i = 0; i < 11; i++) {
                     if (weapons[i].item_no >= 0x101) {
                         count++;
+
                         if (i == 10 && overflow != NULL) {
                             *overflow = chara + 1;
                         }
                     }
                 }
             }
+
             break;
         case 2:
             int             i;
             DNG_CONSUMABLE *items = status->consumable_items;
+
             for (i = 0; i < 43; i++) {
                 if (items[i].id >= 0x51) {
                     count++;
                 }
             }
+
             if (overflow != NULL && count > 40) {
 
                 *overflow = 1;
             }
+
             break;
     }
+
     return count;
 }
 
@@ -2592,6 +2883,7 @@ void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
         if (weapon_no < 0x51) {
             weapon_no += 0x100;
         }
+
         data = GetWeaponData(weapon_no);
         memset(weapon, 0, sizeof(WEAPON_HAVE));
         weapon->item_no = weapon_no;
@@ -2603,24 +2895,32 @@ void WepDataListToHaveCopy(int weapon_no, WEAPON_HAVE *weapon) {
         weapon->durability_f = weapon->durability;
         best = 5;
         best_value = 0;
+
         for (i = 0; i < 5; i++) {
             weapon->elem[i] = data->elem[i];
+
             if (weapon->elem[i] > best_value) {
                 best_value = weapon->elem[i];
                 best = i;
             }
         }
+
         weapon->best_elem = best;
+
         for (j = 0; j < 10; j++) {
             weapon->vs_monster[j] = data->vs_monster[j];
         }
+
         weapon->flags = data->flags;
+
         if (IsDefaultWeapon(weapon->item_no) < 0) {
             int chance = rand() % 1000;
+
             if (chance < 1000) {
                 if (chance < 10) {
                     weapon->flags |= WEAPONFLAG_DURABLE;
                 }
+
                 if (chance > 989) {
                     weapon->flags |= WEAPONFLAG_FRAGILE;
                 }
@@ -2633,6 +2933,7 @@ void AttachDataListToHaveCopy(int attachment_no, ATTACH_LIST *attachment) {
     if ((attachment_no < 0x51) || (attachment_no >= 0x84)) {
         return;
     }
+
     if (attachment != NULL) {
         memcpy(attachment, GetAttachData(attachment_no), 0x20U);
     }
@@ -2644,21 +2945,29 @@ int ItemDataToHaveCopy(int item_no) {
     if (item_no < ITEM_DUNGEON_START || item_no > ITEM_WEAPON_START - 1) {
         return 0;
     }
+
     ITEM_DATA *data = GetItemData(item_no);
+
     if (data == NULL) {
         return -1;
     }
+
     vol = data->vol;
+
     if (item_no == ITEM_DRAN_S_FEATHER) {
         int angle = rand() % 360;
+
         if (angle < 180) {
             angle += 180;
         }
+
         vol = angle * 60;
     }
+
     if (item_no >= ITEM_ANTI_FREEZE_AMULET && item_no <= ITEM_ANTIDOTE_AMULET) {
         vol = rand() % 5 + 3;
     }
+
     printf("vol = %d\n", vol);
     return vol;
 }

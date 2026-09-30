@@ -95,11 +95,13 @@ static DATA_HEADER *SearchFile(char *path) {
     int               i;
 
     record = (DATA_HEADER_READ *) header_buff;
+
     for (i = 0; i < header_num; i++, record++) {
         if (strcasecmp((char *) record->name, path) == 0) {
             return (DATA_HEADER *) record;
         }
     }
+
     return 0;
 }
 #else
@@ -111,13 +113,16 @@ static DATA_HEADER *SearchFile(char *path) {
 
     word_end = word;
     node = tree;
+
     while ((ch = *path) != 0) {
         if (ch == '/') {
             *word_end = 0;
             node = search_tree(node, word);
+
             if (!node) {
                 return 0;
             }
+
             path++;
             word_end = word;
         } else {
@@ -126,11 +131,14 @@ static DATA_HEADER *SearchFile(char *path) {
             word_end++;
         }
     }
+
     *word_end = 0;
     node = search_tree(node, word);
+
     if (!node) {
         return 0;
     }
+
     return node->data;
 }
 #endif
@@ -141,6 +149,7 @@ void InitReadBG() {
     for (i = 0; i < 32; i++) {
         bg_read_info[i].busy = 0;
     }
+
     old_vsync = -1;
     start_vsync = 0;
 }
@@ -159,46 +168,60 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     if (out_size) {
         *out_size = 0;
     }
+
     if (!name) {
         return 0;
     }
+
     if (*name == 0) {
         return 0;
     }
+
     info = bg_read_info;
+
     for (i = 0; i < 32; i++, info++) {
         if (info->busy == 0) {
             break;
         }
     }
+
     if (i == 32) {
         return 0;
     }
+
     if ((int) buffer > 0x2000000) {
         printf("address error\n");
+
         for (;;)
             ;
     }
+
     if ((int) buffer % 64) {
         printf("/*/*/*/*/not 64byte align at %x %s\n", buffer, name);
     }
+
 #ifdef PAL
     header = (DATA_HEADER_READ *) SearchFile(name);
+
 #else
     header = SearchFile(name);
+
 #endif
     if (!header) {
         return 0;
     }
+
     strcpy(info->name, name);
     info->busy = 1;
     info->id = 0;
     info->done = 0;
     info->buffer = buffer;
     info->size = header->size;
+
     if (out_size) {
         *out_size = header->size;
     }
+
     info->sector = header->sector + data_sector;
     info->sectors = header->sectors;
     return 1;
@@ -208,6 +231,7 @@ BG_READ_INFO *GetReadBGFile(int index) {
     if (index < 0 || index >= 32) {
         return 0;
     }
+
     return bg_read_info[index].busy ? &bg_read_info[index] : 0;
 }
 
@@ -224,28 +248,34 @@ void ReadBG() {
     int           i;
 
     vsync = MGGetVSyncCount();
+
     if (old_vsync == vsync) {
         return;
     }
+
     old_vsync = vsync;
     start_vsync++;
     mode.trycount = 0;
     mode.spindlctrl = 1;
     mode.datapattern = 0;
     info = bg_read_info;
+
     for (i = 0; i < 32; i++, info++) {
         if (info->busy) {
             if (info->id != 0 && info->done == 0) {
                 break;
             }
+
             if (info->id == 0 && info->done == 0) {
                 break;
             }
         }
     }
+
     if (i == 32) {
         return;
     }
+
     if (info->id == 0) {
         start_vsync = 0;
         info->id = sceCdRead(info->sector, info->sectors, info->buffer, &mode);
@@ -253,11 +283,13 @@ void ReadBG() {
         if (sceCdSync(1)) {
             return;
         }
+
         if (sceCdGetError()) {
             printf("error at %s\n", info->name);
             info->id = 0;
             return;
         }
+
         info->done = 1;
     }
 }
@@ -268,19 +300,23 @@ int ReadBGSync() {
 
     ReadBG();
     info = bg_read_info;
+
     for (i = 0; i < 32; i++, info++) {
         if (info->busy) {
             if (info->id == 0) {
                 break;
             }
+
             if (info->done == 0) {
                 break;
             }
         }
     }
+
     if (i == 32) {
         return 0;
     }
+
     return 1;
 }
 
@@ -298,14 +334,19 @@ static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     if (strcasecmp(node->name, name) == 0) {
         return node;
     }
+
     node = node->child;
+
     while (node) {
         found = search_tree(node, name);
+
         if (found) {
             return found;
         }
+
         node = node->next;
     }
+
     return 0;
 }
 #endif
@@ -315,15 +356,18 @@ static void add_tree(NAME_TREE *parent, NAME_TREE *child_node) {
     NAME_TREE *sibling;
 
     sibling = parent->child;
+
     if (sibling == 0) {
         parent->child = child_node;
         return;
     }
+
     for (;;) {
         if (sibling->next == 0) {
             sibling->next = child_node;
             return;
         }
+
         sibling = sibling->next;
     }
 }
@@ -356,27 +400,36 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
     tree_buffer[16] = 0;
     bottom += 32;
     header_num = *(u_int *) index_image >> 5;
+
     for (i = 0; i < header_num; i++) {
         record = (DATA_HEADER_READ *) (index_image + i * 32);
         path = (char *) (record->name + (int) index_image);
         cursor = path;
+
         while ((ch = *cursor) != 0) {
             if (ch == '\\') {
                 *cursor = '/';
             }
+
             cursor++;
         }
+
         cursor = path;
         word_end = word;
         parent = tree;
+
         for (;;) {
             ch = *cursor;
+
             if (ch == '/' || ch == 0) {
                 *word_end = 0;
+
                 if (word[0] == 0) {
                     break;
                 }
+
                 node = search_tree(parent, word);
+
                 if (!node) {
                     node = (NAME_TREE *) bottom;
                     memset(bottom, 0, 16);
@@ -386,14 +439,17 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
                     node->name = top;
                     add_tree(parent, node);
                 }
+
                 parent = node;
                 word_end = word;
+
                 if (*cursor == 0) {
                     node->data = (DATA_HEADER *) bottom;
                     copy_data_head(node->data, record);
                     bottom += 20;
                     break;
                 }
+
                 cursor++;
             } else {
                 *word_end = ch;
@@ -402,6 +458,7 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
             }
         }
     }
+
     printf("file header size = %d\n", size - (top - bottom));
     return tree_buffer;
 }
@@ -420,20 +477,25 @@ void InitCDFile() {
     int               i;
 
     packfile_buff = 0;
+
     while (1) {
         if (sceCdSearchFile(&file, "\\DATA.DAT;1")) {
             sceCdSync(0);
+
             if (sceCdGetError() == 0) {
                 break;
             }
         }
     }
+
     data_sector = file.lsn;
     fd = sceOpen("cdrom0:\\DATA.HD2;1", SCE_RDONLY);
+
     if (fd < 0) {
         printf("File open error \"\"\n \n \n");
         __assert("etc.cpp", 565, "FALSE");
     }
+
     size = sceLseek(fd, 0, SCE_SEEK_END);
     sceLseek(fd, 0, SCE_SEEK_SET);
     sceRead(fd, header_buff, size);
@@ -441,11 +503,13 @@ void InitCDFile() {
     records = (DATA_HEADER_READ *) header_buff;
     // The names follow the last record, so the first name's offset counts the records.
     header_num = (u_int) records->name >> 5;
+
     for (i = 0; i < header_num; i++) {
         char *cursor;
         char  ch;
 
         records[i].name += (int) header_buff;
+
         for (cursor = (char *) records[i].name; (ch = *cursor) != 0; cursor++) {
             if (ch == '\\') {
                 *cursor = '/';
@@ -461,22 +525,27 @@ void InitCDFile() {
     int        size;
 
     packfile_buff = 0;
+
     while (1) {
         if (sceCdSearchFile(&file, "\\DATA.DAT;1")) {
             sceCdSync(0);
+
             if (sceCdGetError() == 0) {
                 break;
             }
         }
     }
+
     data_sector = file.lsn;
     fd = sceOpen("cdrom0:\\DATA.HD2;1", SCE_RDONLY);
+
     if (fd < 0) {
         printf("File open error \"\"\n \n \n");
         /* The file and line the original's assertion carries are spelled out: a reconstruction
            whose lines fall elsewhere cannot reach them through __FILE__ and __LINE__. */
         __assert("etc.cpp", 556, "FALSE");
     }
+
     size = sceLseek(fd, 0, SCE_SEEK_END);
     sceLseek(fd, 0, SCE_SEEK_SET);
     sceRead(fd, index_image, size);
@@ -497,6 +566,7 @@ int LoadFile(char *path, void *buffer, int *out_size) {
         __assert("etc.cpp", 740, "FALSE");
 #endif
     }
+
     return 1;
 }
 
@@ -521,26 +591,32 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
 
     cursor = path;
     device_end = device;
+
     while ((ch = *cursor) != 0) {
         if (ch == ':') {
             break;
         }
+
         *device_end = ch;
         device_end++;
         cursor++;
     }
+
     if (ch) {
         file_name = cursor + 1;
     } else {
         file_name = path;
     }
+
     /* Reading through the host machine is what the development tree was for, and the retail build
        keeps the question and does nothing with the answer. */
     if (memcmp(device, "host", 4) != 0 && memcmp(CurrentDir, "host:", 4) == 0) {
         host_file = 1;
     }
+
     if ((int) buffer > 0x2000000) {
         printf("address error\n");
+
         for (;;)
             ;
     }
@@ -561,26 +637,33 @@ static int CDRead(char *path, u_int *buffer, int *out_size) {
 
 #ifdef PAL
     header = (DATA_HEADER_READ *) SearchFile(path);
+
 #else
     header = SearchFile(path);
+
 #endif
     if (!header) {
         return 0;
     }
+
     mode.trycount = 0;
     mode.spindlctrl = 1;
     mode.datapattern = 0;
+
     while (1) {
         if (sceCdRead(header->sector + data_sector, header->sectors, buffer, &mode)) {
             sceCdSync(0);
+
             if (sceCdGetError() == 0) {
                 break;
             }
         }
     }
+
     if (out_size) {
         *out_size = header->size;
     }
+
     return 1;
 }
 
@@ -588,9 +671,11 @@ int WriteFile(char *path, void *buffer, int size) {
     int fd;
 
     fd = sceOpen(path, SCE_WRONLY | SCE_CREAT | SCE_TRUNC);
+
     if (fd < 0) {
         return 0;
     }
+
     sceWrite(fd, buffer, size);
     sceClose(fd);
     return 1;
@@ -598,10 +683,12 @@ int WriteFile(char *path, void *buffer, int size) {
 
 int LoadPackFile(char *path, u_int *buffer, int *out_size) {
     packfile_buff = buffer;
+
     if (!LoadFile2(path, buffer, out_size, 0)) {
         packfile_buff = 0;
         return 0;
     }
+
     return 1;
 }
 
@@ -620,24 +707,33 @@ u_int *GetPackFile(u_int *pack, char *name, int *out_size) {
     if (!pack) {
         return 0;
     }
+
     base_name = name;
+
     while ((ch = *name) != 0) {
         if (ch == '/') {
             base_name = name + 1;
         }
+
         name++;
     }
+
     entry = (PACK_ENTRY *) pack;
+
     while (entry->name[0]) {
         if (strcasecmp(entry->name, base_name) == 0) {
             data = (u_int *) ((char *) entry + entry->offset);
+
             if (out_size) {
                 *out_size = entry->size;
             }
+
             return data;
         }
+
         entry = (PACK_ENTRY *) ((char *) entry + entry->next);
     }
+
     return 0;
 }
 
@@ -649,20 +745,26 @@ u_int *GetPackFile(u_int *pack, int index, char **out_name, int *out_size) {
     if (!pack) {
         return 0;
     }
+
     entry = (PACK_ENTRY *) pack;
     i = 0;
+
     while (entry->name[0]) {
         if (index == i) {
             data = (u_int *) ((char *) entry + entry->offset);
+
             if (out_size) {
                 *out_size = entry->size;
             }
+
             *out_name = entry->name;
             return data;
         }
+
         entry = (PACK_ENTRY *) ((char *) entry + entry->next);
         i++;
     }
+
     return 0;
 }
 
@@ -679,33 +781,45 @@ int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, i
 
     found_count = 0;
     i = 0;
+
     for (;;) {
         data = GetPackFile(pack, i, &name, &size);
+
         if (!data) {
             break;
         }
+
         ext_start = name;
+
         while ((ch = *ext_start) != 0) {
             if (ch == '.') {
                 ext_start++;
                 break;
             }
+
             ext_start++;
         }
+
         if (strcasecmp(extension, ext_start) == 0) {
             files[found_count] = data;
+
             if (names) {
                 names[found_count] = name;
             }
+
             if (sizes) {
                 sizes[found_count] = size;
             }
+
             found_count++;
+
             if (found_count >= max_files) {
                 break;
             }
         }
+
         i++;
     }
+
     return found_count;
 }

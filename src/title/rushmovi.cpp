@@ -402,6 +402,7 @@ int RushLoop() {
         if (GamePad.Down(2048)) {
             while (ReadBGSync())
                 ;
+
             DispFade.FadeOutStart(8.0f, 0);
             bEnd = 1;
             SndBgmFadeOut(32, 0);
@@ -414,6 +415,7 @@ int RushLoop() {
         } else {
             while (ReadBGSync())
                 ;
+
             float black = 0.0f;
             MGSetBGColor(black, black, black, 128.0f);
             SndStopAllSe();
@@ -427,6 +429,7 @@ int RushLoop() {
     if (CScript.end) {
         while (ReadBGSync())
             ;
+
         float black = 0.0f;
         MGSetBGColor(black, black, black, 128.0f);
         SndStopAllSe();
@@ -819,6 +822,7 @@ static void DrawProcess() {
         if (GamePad.Down(240)) {
             StartDisp ^= 1;
         }
+
         if (!StartDisp) {
             fade = 0;
         }
@@ -967,6 +971,7 @@ static void SoundProcess() {
                     SndSetSeVolf(54, 0.75f, 0);
                     wait = 5;
                 }
+
                 break;
             case 5:
                 if (cam_frame == 10) {
@@ -974,128 +979,156 @@ static void SoundProcess() {
                     SndSePlay(616, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 17) {
                     SndSePlay(617, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 23) {
                     SndSePlay(606, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 31) {
                     SndSePlay(607, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 46) {
                     SndSePlay(155, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 50) {
                     SndSePlay(422, -1, 0);
                     SndSePlay(403, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 53) {
                     SndSePlay(610, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 62) {
                     SndSePlay(607, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 65) {
                     SndSePlay(153, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 97) {
                     SndSePlay(606, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 113) {
                     SndSePlay(400, -1, 0);
                     SndSePlay(617, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 119) {
                     SndSePlay(401, -1, 0);
                     SndSePlay(420, -1, 0);
                     SndSePlay(160, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 124) {
                     SndSePlay(612, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 130) {
                     SndSePlay(618, -1, 0);
                     wait = 5;
                 }
+
                 break;
             case 6:
                 if (cam_frame == 47) {
                     SndSePlay(345, -1, 0);
                     wait = 10;
                 }
+
                 if (cam_frame == 124) {
                     SndSeStop(54, 0);
                     wait = 5;
                 }
+
                 break;
             case 8:
                 if (cam_frame == 20) {
                     SndSePlay(395, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 37) {
                     SndSePlay(155, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 57) {
                     SndSePlay(400, -1, 0);
                     wait = 4;
                 }
+
                 if (cam_frame == 60) {
                     SndSePlay(160, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 71) {
                     SndSePlay(155, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 86) {
                     SndSePlay(396, -1, 0);
                     wait = 5;
                 }
+
                 break;
             case 11:
                 if (cam_frame == 140) {
                     SndSePlay(1746, -1, 0);
                     wait = 10;
                 }
+
                 if (cam_frame == 145) {
                     SndSePlay(1746, -1, 0);
                     wait = 10;
                 }
+
                 if (cam_frame == 158) {
                     SndSePlay(1755, -1, 0);
                     wait = 10;
                 }
+
                 break;
             case 12:
                 if (cam_frame == 117) {
                     SndSePlay(1747, -1, 0);
                     wait = 10;
                 }
+
                 if (cam_frame == 160) {
                     SndSePlay(1749, -1, 0);
                     wait = 10;
                 }
+
                 break;
             case 14:
                 if (cam_frame == 87) {
                     SndSePlay(360, -1, 0);
                     wait = 3;
                 }
+
                 break;
             case 15:
                 if (cam_frame == 10) {
@@ -1103,46 +1136,56 @@ static void SoundProcess() {
                     SndSePlay(366, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 18) {
                     SndSePlay(364, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 40) {
                     SndSePlay(363, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 52) {
                     SndSePlay(364, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 72) {
                     SndSePlay(369, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 88) {
                     SndSePlay(365, -1, 0);
                     SndSePlay(370, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 94) {
                     SndSePlay(368, -1, 0);
                     wait = 5;
                 }
+
                 break;
             case 17:
                 if (cam_frame == 2) {
                     SndSePlay(1737, -1, 0);
                     wait = 3;
                 }
+
                 if (cam_frame == 40) {
                     SndSePlay(1727, -1, 0);
                     wait = 3;
                 }
+
                 if (cam_frame == 70) {
                     SndSePlay(1737, -1, 0);
                     SndSePlay(1729, -1, 0);
                     wait = 3;
                 }
+
                 break;
             case 18:
                 if (cam_frame == 2) {
@@ -1150,25 +1193,30 @@ static void SoundProcess() {
                     SndSePlay(302, -1, 0);
                     wait = 5;
                 }
+
                 break;
             case 19:
                 if (cam_frame == 26) {
                     SndSePlay(305, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 56) {
                     SndSePlay(305, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 86) {
                     SndSePlay(305, -1, 0);
                     wait = 5;
                 }
+
                 if (cam_frame == 120) {
                     SndSeStop(300, 0);
                     SndSeStop(302, 0);
                     wait = 5;
                 }
+
                 break;
         }
     } else {

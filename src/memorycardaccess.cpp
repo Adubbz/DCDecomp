@@ -20,11 +20,13 @@ void InitSaveFileInfoTbl() {
 int GetOpenAttribute(char *name) {
     for (int i = 0; i < MC_DIR_ENTRY_MAX; i++) {
         char *entry = SaveFileInfo[i].name;
+
         if (strcmp(name, entry) == 0) {
             printf("same file existed!!!!!!\n");
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -41,11 +43,14 @@ void CMemoryCardAccess::Initialize() {
             strcpy(this->dir_name, "BASCUS-97111dkcloud");
             break;
     }
+
 #endif
     strcpy(this->file_name, "darkcloud");
+
     for (int i = 0; i < 0x40; i++) {
         this->current_dir[i] = 0;
     }
+
     this->port = 0;
     this->file_no = 0;
     this->fd = -1;
@@ -74,6 +79,7 @@ int CMemoryCardAccess::InitForMC() {
     InitSaveFileInfoTbl();
 
     int result;
+
     switch (status) {
         case 0:
             printf("Memory Card Initialized Successed!!\n\n\n\n");
@@ -92,6 +98,7 @@ int CMemoryCardAccess::InitForMC() {
             printf("mcman.irx is old file \n");
             break;
     }
+
     return result;
 }
 
@@ -112,13 +119,16 @@ void CMemoryCardAccess::SetBuff(char *buffer) {
     sum = this->check_sum;
     memset(sum, 0, 0x4C7);
     total = 0;
+
     for (i = 0; i < 0x131C0; i++) {
         total += *data++;
+
         if ((int) i % 64 == 63) {
             *sum++ = total;
             total = 0;
         }
     }
+
     this->read_buffer = (char *) ((((int) sum >> 6) + 1) << 6);
     this->load_buffer = this->read_buffer;
 }
@@ -168,9 +178,11 @@ void CMemoryCardAccess::MakeMcIconSysInfo() {
 void CMemoryCardAccess::SetFuncNo(int func_no) {
     this->func_no = func_no;
     this->step = 0;
+
     if (func_no == MC_OPERATION_IDLE) {
         this->idle_code = 0x3D;
     }
+
     sceMcSync(MC_NOWAIT, NULL, NULL);
 }
 
@@ -183,6 +195,7 @@ int CMemoryCardAccess::Step() {
     int target_file;
 
     result = 0;
+
     switch (func_no) {
         case MC_OPERATION_SEARCH_TYPE:
             result = SearchMcType();
@@ -214,6 +227,7 @@ int CMemoryCardAccess::Step() {
             } else {
                 target_file = error.file_no;
             }
+
             result = DeleteFile(target_file);
             break;
         case MC_OPERATION_LOAD_CONFIG:
@@ -229,12 +243,14 @@ int CMemoryCardAccess::Step() {
             result = Convert();
             break;
     }
+
     if (result == 1) {
         step = 0;
         SetFuncNo(MC_OPERATION_IDLE);
     } else {
         McError(result);
     }
+
     return result;
 }
 
@@ -253,28 +269,35 @@ int CMemoryCardAccess::SearchMcType() {
     int           status;
 
     card = &this->card[this->port];
+
     if (this->step == 0) {
         old_format = card->formatted;
     }
+
     switch (this->step % 2) {
         case 0:
             memset(&card->present, 0, sizeof(card->present));
+
             if (sceMcGetInfo(this->port, 1, &card->type, &card->free_size, &card->formatted) == 0) {
                 this->step++;
             } else {
                 this->step += 2;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 1) {
                 sceMcSync(MC_NOWAIT, NULL, NULL);
                 break;
             }
+
             card->present = 1;
             card->result = status;
+
             switch (status) {
                 case 0:
                     break;
@@ -288,35 +311,47 @@ int CMemoryCardAccess::SearchMcType() {
                     if (status < -10) {
                         card->present = 0;
                     }
+
                     break;
             }
+
             this->step++;
+
             if (this->step >= 2 && card->present && card->formatted) {
                 if (old_format && card->formatted) {
                     card->format_change = 0;
                 }
+
                 if (!old_format && card->formatted) {
                     card->format_change = 1;
                 }
+
                 return 1;
             }
+
             if (this->step >= 16) {
                 if (old_format && card->formatted) {
                     card->format_change = 0;
                 }
+
                 if (!old_format && !card->formatted) {
                     card->format_change = 0;
                 }
+
                 if (!old_format && card->formatted) {
                     card->format_change = 1;
                 }
+
                 if (old_format && !card->formatted) {
                     card->format_change = -1;
                 }
+
                 return 1;
             }
+
             break;
     }
+
     return 0;
 }
 
@@ -330,6 +365,7 @@ int CMemoryCardAccess::GetDir() {
     int           result;
 
     card = &this->card[this->port];
+
     switch (this->step) {
         case 0:
             strcpy(name, this->dir_name);
@@ -342,47 +378,58 @@ int CMemoryCardAccess::GetDir() {
         case 1:
             strcpy(dir, "/");
             strcat(dir, this->dir_name);
+
             if (sceMcChdir(this->port, 1, dir, this->current_dir) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 0xC) {
                 return -1;
             }
+
             if (result < 0) {
                 if (result == -4 || result == -2) {
                     return 1;
                 }
+
                 if (result < -9) {
                     return -1;
                 }
             }
+
             card->dir_exists = 1;
             result = 0;
             strcpy(pattern, this->file_name);
             strcat(pattern, "*");
+
             if (sceMcGetDir(this->port, 1, pattern, 0, 15, SaveFileInfo) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 0xD || (cmd == 0xD && result < 0)) {
                 return -1;
             }
+
             card->dir_entries = result;
             return 1;
     }
+
     return 0;
 }
 
@@ -393,6 +440,7 @@ int CMemoryCardAccess::LoadSysConfig() {
     int i;
 
     port_no = this->port;
+
     switch (this->step) {
         case 0:
             if (sceMcOpen(port_no, 1, this->dir_name, 1) == 0) {
@@ -400,55 +448,69 @@ int CMemoryCardAccess::LoadSysConfig() {
             } else {
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 2 || (cmd == 2 && result < 0)) {
                 return -1;
             }
+
             this->fd = result;
             this->transfer_size = 0x40;
             memset(&sys_config, 0, this->transfer_size + 0x40);
             sys_config.values[17] = 1;
             this->transferred = 0;
+
             if (sceMcRead(this->fd, &sys_config, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 5 || (cmd == 5 && result < 0)) {
                 return -1;
             }
+
             this->transferred += result;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
+
             if (SaveData->InvertConfig(&sys_config) != 0) {
                 for (i = 0; i < 12; i++) {
                 }
             }
+
             return 1;
     }
+
     return 0;
 }
 
@@ -459,6 +521,7 @@ int CMemoryCardAccess::SaveSysConfig() {
     int result;
 
     port_no = this->port;
+
     switch (this->step) {
         case 0:
             if (sceMcOpen(port_no, 1, this->dir_name, 2) == 0) {
@@ -466,66 +529,83 @@ int CMemoryCardAccess::SaveSysConfig() {
             } else {
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 2 || (cmd == 2 && result < 0)) {
                 return -1;
             }
+
             this->fd = result;
             this->fd = result;
             this->transferred = 0;
             this->transfer_size = 0x40;
+
             for (i = 0; i < 18; i++) {
                 printf("config%d = %d\n", i, sys_config.values[i]);
             }
+
             if (sceMcWrite(this->fd, &sys_config, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 6 || (cmd == 6 && result < 0)) {
                 return -1;
             }
+
             this->transferred += result;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcFlush(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 0xA || (cmd == 0xA && result < 0)) {
                 return -1;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 4:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
+
             return 1;
     }
+
     return 0;
 }
 
@@ -561,9 +641,12 @@ int CMemoryCardAccess::Convert() {
     sceMcChdir(this->port, 1, "/", "");
     sceMcSync(MC_WAIT, &cmd, &result);
     printf("move to dir\n");
+
     while (this->MakeDir() == 0) {
     }
+
     printf("create new dir\n");
+
     for (i = 0; i < MC_SAVE_FILE_MAX; i++) {
         strcpy(src_name, "BASCUS-97112dkcloud/");
         strcat(src_name, this->file_name);
@@ -573,13 +656,17 @@ int CMemoryCardAccess::Convert() {
         strcat(dst_name, this->file_name);
         strcat(dst_name, "%d");
         sprintf(dst_name, dst_name, i);
+
         if (sceMcOpen(this->port, 1, src_name, 1) != 0) {
             continue;
         }
+
         sceMcSync(MC_WAIT, &cmd, &result);
+
         if (cmd != 2 || (cmd == 2 && result < 0)) {
             continue;
         }
+
         fd = result;
         printf("fname = %s\n", src_name);
         memset(this->load_buffer, 0, 0x136E7);
@@ -587,13 +674,17 @@ int CMemoryCardAccess::Convert() {
         sceMcSync(MC_WAIT, &cmd, &result);
         sceMcClose(fd);
         sceMcSync(MC_WAIT, &cmd, &result);
+
         if (sceMcOpen(this->port, 1, dst_name, 0x202) != 0) {
             continue;
         }
+
         sceMcSync(MC_WAIT, &cmd, &result);
+
         if (cmd != 2 || (cmd == 2 && result < 0)) {
             continue;
         }
+
         fd = result;
         printf("fname = %s\n", dst_name);
         memset(buffer, 0, 0x136E7);
@@ -605,6 +696,7 @@ int CMemoryCardAccess::Convert() {
         sceMcClose(fd);
         sceMcSync(MC_WAIT, &cmd, &result);
     }
+
     return 1;
 }
 
@@ -621,105 +713,131 @@ int CMemoryCardAccess::MakeDir() {
             } else {
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 0xB) {
                 break;
             }
+
             if (cmd == 0xB && status < 0) {
                 return -1;
             }
+
             strcpy(path, this->dir_name);
             strcat(path, "/");
+
             if (sceMcChdir(this->port, 1, path, this->current_dir) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 0xC || (cmd == 0xC && status < 0)) {
                 return -1;
             }
+
             cmd = sceMcOpen(this->port, 1, this->dir_name, 0x202);
+
             if (cmd == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 2 || (cmd == 2 && status < 0)) {
                 return -1;
             }
+
             this->fd = status;
             this->transferred = 0;
             this->transfer_size = sizeof(mcdmybuf);
             memset(mcdmybuf, 0, sizeof(mcdmybuf));
             mcdmybuf[0x11] = 1;
+
             if (sceMcWrite(this->fd, mcdmybuf, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 4:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 6 || (cmd == 6 && status < 0)) {
                 return -1;
             }
+
             this->transferred += status;
             printf("read size = %d\n", this->transfer_size);
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 5:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && status < 0)) {
                 return -1;
             }
+
             if (sceMcOpen(this->port, 1, "icon.sys", 0x202) == 0) {
                 iconNo = -1;
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 6:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 2 || (cmd == 2 && status < 0)) {
                 printf("open error = %d\n", status);
                 return -1;
             }
+
             this->fd = status;
             this->transferred = 0;
             this->transfer_size = sizeof(sceMcIconSys);
+
             if (sceMcWrite(this->fd, &this->icon_sys, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 7:
         case 11:
@@ -728,18 +846,23 @@ int CMemoryCardAccess::MakeDir() {
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 6 || (cmd == 6 && status < 0)) {
                 return -1;
             }
+
             this->transferred += status;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcFlush(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 8:
         case 12:
@@ -748,15 +871,19 @@ int CMemoryCardAccess::MakeDir() {
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 0xA || (cmd == 0xA && status < 0)) {
                 return -1;
             }
+
             cmd = sceMcClose(this->fd);
+
             if (cmd == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 9:
         case 13:
@@ -765,12 +892,16 @@ int CMemoryCardAccess::MakeDir() {
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && status < 0)) {
                 return -1;
             }
+
             iconNo++;
+
             if (iconNo < 3) {
                 cmd = sceMcOpen(this->port, 1, (&this->icon.view)[iconNo].name, 0x203);
+
                 if (cmd == 0) {
                     this->step++;
                 } else {
@@ -779,6 +910,7 @@ int CMemoryCardAccess::MakeDir() {
             } else {
                 return 1;
             }
+
             break;
         case 10:
         case 14:
@@ -786,20 +918,25 @@ int CMemoryCardAccess::MakeDir() {
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 2 || (cmd == 2 && status < 0)) {
                 return -1;
             }
+
             this->fd = status;
             this->transferred = 0;
             this->transfer_size = (&this->icon.view)[iconNo].size;
             cmd = sceMcWrite(this->fd, (&this->icon.view)[iconNo].data, this->transfer_size);
+
             if (cmd == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
     }
+
     return 0;
 }
 
@@ -814,24 +951,29 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
     int            dungeon;
 
     info = &this->file_info[file_no];
+
     switch ((this->step - 1) % 4) {
         case 0:
             strcpy(name, this->file_name);
             strcat(name, "%d");
             sprintf(name, name, file_no);
+
             if (sceMcOpen(this->port, 1, name, 1) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 2) {
                 return -1;
             }
+
             if (result < 0) {
                 if (result == -4 || result == -2) {
                     printf("not found\n");
@@ -839,66 +981,85 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
                     this->step += 3;
                     return 1;
                 }
+
                 return -1;
             }
+
             this->fd = result;
             this->transferred = 0;
             this->transfer_size = 0x136A7;
             this->error.retry_count = 0;
             memset((void *) this->read_buffer, 0, this->transfer_size);
+
             if (sceMcRead(this->fd, this->read_buffer, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 5 || (cmd == 5 && result < 0)) {
                 return -1;
             }
+
             if (this->transferred < this->transfer_size) {
                 this->error.retry_count++;
+
                 if (this->error.retry_count > 100) {
                     printf("getinfo read error \n");
+
                     if (sceMcClose(this->fd) == 0) {
                         this->step++;
                     } else {
                         return -1;
                     }
+
                     break;
                 }
             }
+
             this->transferred += result;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
+
             i = 0;
             data = this->read_buffer;
+
             while (i < this->transfer_size) {
                 if (memcmp(data, "darkcloud", 9) == 0) {
                     i = this->transfer_size;
                     break;
                 }
+
                 data++;
                 i++;
             }
+
             error = &this->error;
+
             if (*data == 'd' && strcmp(this->GetVersion(), data) != 0) {
                 this->step++;
                 error->step = this->step;
@@ -906,6 +1067,7 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
                 error->code = 1;
                 return 1;
             }
+
             if (this->transferred < this->transfer_size) {
                 error->code = 3;
                 error->file_no = this->file_no;
@@ -913,6 +1075,7 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
                 printf("not enough size\n");
                 return 1;
             }
+
             info->state = 1;
             info->file_no = file_no + 1;
             memcpy(info->name, ((CSaveData *) this->read_buffer)->GetCharaName(0), sizeof(info->name));
@@ -920,16 +1083,21 @@ int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
             info->play_time = ((CSaveData *) this->read_buffer)->GetPlayTime();
             info->party_size = ((CSaveData *) this->read_buffer)->GetDngStatus()->GetPartySize();
             info->quest_total = 0;
+
             for (dungeon = 0; dungeon < 6; dungeon++) {
                 info->quest_total += ((CSaveData *) this->read_buffer)->QuestDungeon(dungeon, 0);
             }
+
             info->quest_total += ((CSaveData *) this->read_buffer)->QuestDungeon(6, 0);
+
             if (info->quest_total > 9999) {
                 info->quest_total = 9999;
             }
+
             this->step++;
             return 1;
     }
+
     return 0;
 }
 
@@ -943,19 +1111,24 @@ int CMemoryCardAccess::GetAllSaveFileInfo() {
             if (sceMcSync(MC_NOWAIT, NULL, &result) == 0) {
                 break;
             }
+
             this->step++;
             memset(this->file_info, 0, sizeof(this->file_info));
         default:
             file_no = (this->step - 1) >> 2;
             status = this->GetSaveFileInfoFromMc(file_no);
+
             if (status == 1 && file_no + 1 >= MC_SAVE_FILE_MAX) {
                 return 1;
             }
+
             if (status < 0) {
                 return -1;
             }
+
             break;
     }
+
     return 0;
 }
 
@@ -965,6 +1138,7 @@ int CMemoryCardAccess::CheckFileNo(int file_no) {
     if (file_no < 0) {
         return 0;
     }
+
     strcpy(name, this->file_name);
     strcat(name, "%d");
     sprintf(name, name, file_no);
@@ -983,163 +1157,204 @@ int CMemoryCardAccess::SaveToMc(int file_no) {
     strcpy(name, this->file_name);
     strcat(name, "%d");
     sprintf(name, name, file_no);
+
     switch (this->step) {
         case 0:
             sys_config.values[17] = file_no;
             sys_config.values_copy1[17] = file_no;
             sys_config.values_copy2[17] = file_no;
             cmd = sceMcOpen(this->port, 1, name, GetOpenAttribute(name) ? 2 : 0x202);
+
             if (cmd == 0) {
                 this->step++;
             } else {
                 printf("cmd = %d\n", cmd);
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 2) {
                 printf("fd = %d\n", result);
                 break;
             }
+
             if (result < 0) {
                 return -1;
             }
+
             this->fd = result;
             this->transferred = 0;
             this->transfer_size = 0x136A7;
+
             if (sceMcWrite(this->fd, this->save_buffer, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 6 || (cmd == 6 && result < 0)) {
                 return -1;
             }
+
             this->transferred += result;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcFlush(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 0xA || (cmd == 0xA && result < 0)) {
                 return -1;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 4:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
+
             strcpy(pattern, this->file_name);
             strcat(pattern, "*");
+
             if (sceMcGetDir(this->port, 1, pattern, 0, 15, SaveFileInfo) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 5:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 0xD || (cmd == 0xD && result < 0)) {
                 return -1;
             }
+
             card = &this->card[this->port];
             card->dir_exists = 1;
             this->step++;
             break;
         case 6:
             cmd = sceMcOpen(this->port, 1, this->dir_name, 2);
+
             if (cmd == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 7:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 2) {
                 return -1;
             }
+
             if (result < 0) {
                 return -1;
             }
+
             this->fd = result;
             this->transferred = 0;
             this->transfer_size = 0x40;
+
             for (i = 0; i < 12; i++) {
             }
+
             if (sceMcWrite(this->fd, &sys_config, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 8:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 6 || (cmd == 6 && result < 0)) {
                 return -1;
             }
+
             this->transferred += result;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcFlush(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 9:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 0xA || (cmd == 0xA && result < 0)) {
                 return -1;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 10:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
+
             return 1;
     }
+
     return status;
 }
 
@@ -1160,70 +1375,87 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
             strcpy(name, this->file_name);
             strcat(name, "%d");
             sprintf(name, name, file_no);
+
             if (sceMcOpen(this->port, 1, name, 1) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 2 || (cmd == 2 && result < 0)) {
                 return -1;
             }
+
             this->fd = result;
             this->transfer_size = 0x136A7;
             memset(this->load_buffer, 0, this->transfer_size + 0x40);
             this->transferred = 0;
+
             if (sceMcRead(this->fd, this->load_buffer, this->transfer_size) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 2:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 5 || (cmd == 5 && result < 0)) {
                 return -1;
             }
+
             this->transferred += result;
+
             if (this->transferred < this->transfer_size) {
                 break;
             }
+
             if (sceMcClose(this->fd) == 0) {
                 this->step++;
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &result) == 0) {
                 break;
             }
+
             if (cmd != 3 || (cmd == 3 && result < 0)) {
                 return -1;
             }
+
             ok = 1;
             data = this->load_buffer + sizeof(CSaveData);
             strcpy(version, this->GetVersion());
             memcpy(saved_version, data, sizeof(saved_version));
+
             if (saved_version[0] == version[0]) {
                 if (strcmp(version, saved_version) == 0) {
                     sum = data + 0x20;
                     data = this->load_buffer;
                     total = 0;
+
                     for (i = 0; i < sizeof(CSaveData); i++) {
                         total += *data++;
+
                         if (i % 64 == 63) {
                             if (total != *sum) {
                                 printf("save data break!!!\n");
                                 ok = 0;
                                 break;
                             }
+
                             sum++;
                             total = 0;
                         }
@@ -1233,14 +1465,17 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
                 ok = 0;
                 printf("not load\n");
             }
+
             if (ok) {
                 memcpy(SaveData, this->load_buffer, sizeof(CSaveData));
                 ((s32 *) SaveData->GetConfigData())[17] = file_no;
             } else {
                 return -1;
             }
+
             return 1;
     }
+
     return 0;
 }
 
@@ -1252,6 +1487,7 @@ int CMemoryCardAccess::FormatForMc() {
 
     result = 0;
     card = &this->card[this->port];
+
     switch (this->step) {
         case 0:
             if (sceMcFormat(this->port, 1) == 0) {
@@ -1259,18 +1495,22 @@ int CMemoryCardAccess::FormatForMc() {
             } else {
                 return -1;
             }
+
             break;
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 0x10) {
                 break;
             }
+
             if (status < 0) {
                 printf("format failed\n");
                 return -1;
             }
+
             printf("format finished\n");
             this->step++;
             break;
@@ -1280,22 +1520,28 @@ int CMemoryCardAccess::FormatForMc() {
             } else {
                 return -1;
             }
+
             break;
         case 3:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 1) {
                 return -1;
             }
+
             card->present = 1;
+
             if (status < -9) {
                 card->present = 0;
             }
+
             card->result = status;
             result = 1;
             break;
     }
+
     return result;
 }
 
@@ -1309,30 +1555,38 @@ int CMemoryCardAccess::DeleteFile(int file_no) {
 
             sprintf(name, name, file_no);
             printf("delete:%s\n", name);
+
             if (sceMcDelete(this->port, 1, name) == 0) {
                 this->step++;
             } else {
                 sceMcSync(MC_NOWAIT, NULL, NULL);
             }
+
             break;
         }
         case 1:
             if (sceMcSync(MC_NOWAIT, &cmd, &status) == 0) {
                 break;
             }
+
             if (cmd != 0xF) {
                 break;
             }
+
             if (status < 0) {
                 this->error.retry_count++;
+
                 if (this->error.retry_count > 120) {
                     printf("delete error \n");
                     return 1;
                 }
+
                 break;
             }
+
             return 1;
     }
+
     return 0;
 }
 
@@ -1370,6 +1624,7 @@ int CMemoryCardAccess::GetMsgNo(int msg_no) {
             result = msg_no + 43;
             break;
     }
+
     return result;
 }
 
@@ -1396,10 +1651,12 @@ int CMemoryCardAccess::McError(int result) {
             printf("write failed\n");
             break;
     }
+
     if (result < -10) {
         info->code = 7;
         printf("not memory card or (read write)error = %d\n", result);
     }
+
     if (result < 0) {
         printf("result = %d\n", result);
         info->func_no = this->GetFuncNo();
@@ -1408,6 +1665,7 @@ int CMemoryCardAccess::McError(int result) {
         printf("phase = %d\n", info->step);
         info->file_no = this->file_no;
     }
+
     return 0;
 }
 
@@ -1417,6 +1675,7 @@ void CMemoryCardAccess::DmySync() {
     int running;
 
     running = 0;
+
     while (running == 0) {
         running = sceMcSync(MC_WAIT, &cmd, &result);
     }
@@ -1430,27 +1689,34 @@ int CMemoryCardAccess::McUnFormatForDebug() {
     switch (this->step) {
         case 0:
             result = sceMcUnformat(this->port, 1);
+
             if (result == 0) {
                 this->step++;
             } else {
                 sceMcSync(MC_NOWAIT, &result, &status);
                 printf("dmy sync\n");
             }
+
             break;
         case 1:
             result = sceMcSync(MC_NOWAIT, &cmd, &status);
+
             if (result == 0) {
                 break;
             }
+
             if (cmd != 0x11) {
                 break;
             }
+
             if (cmd == 0x11 && status < 0) {
                 break;
             }
+
             this->card[this->port].formatted = 0;
             return 1;
     }
+
     return 0;
 }
 

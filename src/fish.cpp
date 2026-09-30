@@ -63,13 +63,17 @@ int CFish::FindFood() {
     if (food_kind < 0) {
         return 0;
     }
+
     GetPosition(position);
+
     if (food_radius <= 0.0f) {
         return 0;
     }
+
     if (DistVector(food_position, position) > food_radius) {
         return 0;
     }
+
     return rand_check(info.food_affinity[food_kind] * 0.3f) != 0 ? 1 : 0;
 }
 
@@ -77,12 +81,15 @@ int CFish::EatFood() {
     float position[4];
 
     GetPosition(position);
+
     if (food_radius <= 0.0f) {
         return 0;
     }
+
     if (DistVector(food_position, position) > 1.0f) {
         return 0;
     }
+
     return rand_check(info.food_affinity[food_kind] * 0.5f) != 0 ? 1 : 0;
 }
 
@@ -90,12 +97,15 @@ int CFish::BiteHook() {
     float position[4];
 
     GetPosition(position);
+
     if (food_radius <= 0.0f) {
         return 0;
     }
+
     if (DistVector(food_position, position) > 1.0f) {
         return 0;
     }
+
     return rand_check(info.food_affinity[food_kind] * 0.5f) != 0 ? 1 : 0;
 }
 
@@ -103,6 +113,7 @@ int CFish::LeaveFood() {
     if (food_kind < 0) {
         return 1;
     }
+
     return rand_check(0.1f) != 0 ? 1 : 0;
 }
 
@@ -110,6 +121,7 @@ int CFish::LeaveHook() {
     if (food_kind < 0) {
         return 1;
     }
+
     return rand_check(0.1f) != 0 ? 1 : 0;
 }
 
@@ -137,28 +149,34 @@ void CFish::Step() {
 
     if (action_timer < 0 || action == FISH_ACTION_NONE) {
         action_timer = GetActCnt2();
+
         switch (action) {
             case FISH_ACTION_NONE:
                 if (FindFood()) {
                     action = FISH_ACTION_APPROACH_FOOD;
                 }
+
                 break;
             case FISH_ACTION_APPROACH_FOOD:
                 if (EatFood()) {
                     action = FISH_ACTION_EAT_FOOD;
                 }
+
                 if (LeaveFood()) {
                     action = FISH_ACTION_LEAVE;
                     action_timer >>= 1;
                 }
+
                 break;
             case FISH_ACTION_EAT_FOOD:
                 if (BiteHook()) {
                     action = FISH_ACTION_BITE_HOOK;
                 }
+
                 if (LeaveHook()) {
                     action = FISH_ACTION_LEAVE;
                 }
+
                 break;
             case FISH_ACTION_BITE_HOOK:
                 action = FISH_ACTION_LEAVE;
@@ -176,8 +194,10 @@ void CFish::Step() {
         } else {
             move_mode = (FishMoveMode) (rand() % 2);
         }
+
         move_timer = GetActCnt();
         target_speed = 0.0f;
+
         if (move_mode != 0) {
             target_yaw = 6.2831855f * ((float) rand() / 2147483648.0f);
             target_yaw = AngleLimit(target_yaw);
@@ -189,20 +209,24 @@ void CFish::Step() {
     if (action == FISH_ACTION_APPROACH_FOOD) {
         target_yaw = atan2f(food_position[0] - position[0], food_position[2] - position[2]);
         target_speed = 0.1f;
+
         if (DistVector(food_position, position) < 1.0f) {
             target_speed = 0.0f;
         }
     }
+
     if (action == FISH_ACTION_EAT_FOOD) {
         target_yaw = atan2f(food_position[0] - position[0], food_position[2] - position[2]);
         target_speed = 0.0f;
     }
+
     if (action == FISH_ACTION_BITE_HOOK) {
         float food_yaw = atan2f(food_position[0] - position[0], food_position[2] - position[2]);
         target_yaw = food_yaw + 0.2f * ((float) rand() / 2147483648.0f);
         target_yaw = AngleLimit(target_yaw);
         target_speed = 0.0f;
     }
+
     if (action == FISH_ACTION_BATTLE) {
         target_yaw = 6.2831855f * ((float) rand() / 2147483648.0f);
         target_yaw = AngleLimit(target_yaw);
@@ -210,6 +234,7 @@ void CFish::Step() {
         turn_step *= 2.0f;
         speed_step *= 2.0f;
     }
+
     if (action == FISH_ACTION_LEAVE) {
         target_yaw = atan2f(food_position[0] - position[0], food_position[2] - position[2]);
         target_yaw = AngleLimit(target_yaw - 3.1415927f);
@@ -226,12 +251,15 @@ void CFish::Step() {
 
     if (speed < target_speed) {
         speed += speed_step;
+
         if (speed > target_speed) {
             speed = target_speed;
         }
     }
+
     if (speed > target_speed) {
         speed -= speed_step;
+
         if (speed < target_speed) {
             speed = target_speed;
         }
@@ -253,12 +281,14 @@ void CFish::Step() {
             SetMotion(1, 0);
             break;
     }
+
     if (action == FISH_ACTION_BITE_HOOK || action == FISH_ACTION_BATTLE) {
         SetMotion(1, 0);
     }
 
     angle_model.SetScale(angle_model_scale, angle_model_scale, angle_model_scale);
     model.SetScale(model_scale, model_scale, model_scale);
+
     if (use_angle_model) {
         angle_model.Step();
     } else {
@@ -267,6 +297,7 @@ void CFish::Step() {
 
     GetPosition(position);
     sceVu0AddVector(next_position, position, velocity);
+
     if (collision_polys != NULL) {
         box.max[0] = position[0] + 10.0f;
         box.max[1] = position[1] + 10.0f;
@@ -275,9 +306,11 @@ void CFish::Step() {
         box.min[1] = position[1];
         box.min[2] = position[2] - 10.0f;
         int count = PickUpNearPoly(nearby_polys, box, collision_polys, collision_poly_count);
+
         if (CheckHit(nearby_polys, count, position, next_position, hit_position, 0, 0) < 0) {
             SetPosition(next_position);
         }
+
         GetPosition(position);
         CheckWidth(nearby_polys, count, position, 2.0f * angle_model_scale, next_position, 0);
         SetPosition(next_position);
@@ -294,6 +327,7 @@ void CFish::Draw() {
     if (fish_kind < 0) {
         return;
     }
+
     if (use_angle_model != 0) {
         angle_model.Draw();
     } else {
@@ -321,28 +355,34 @@ void CFish::SetBattleMode() {
 void CFish::SetScale() {
     float deviation = nrnd();
     size = info.min_size;
+
     if (deviation >= 0.0f) {
         size += deviation * (info.max_size - info.min_size) / 4.0f;
     } else {
         size += deviation * (info.max_size - info.min_size) / 8.0f;
     }
+
     if (size < 0.5f * info.min_size) {
         size = 0.5f * info.min_size;
     }
+
     if (size > info.max_size) {
         size = info.max_size;
     }
+
     angle_model_scale = size / info.model_size;
     model_scale = size / 25.0f;
 }
 
 int CFish::GetFP() {
     float points;
+
     if (size >= info.min_size) {
         points = info.min_fp + (info.max_fp - info.min_fp) * (size - info.min_size) / (info.max_size - info.min_size);
     } else {
         points = info.min_fp - 0.5f * (info.min_fp * (info.min_size - size) / (info.min_size - 0.5f * info.min_size));
     }
+
     return (int) points;
 }
 
@@ -373,6 +413,7 @@ void CFish::SetReference(CFrame *reference) {
     if (model.frame != NULL) {
         model.frame->SetReference(reference);
     }
+
     if (angle_model.frame != NULL) {
         angle_model.frame->SetReference(reference);
     }
@@ -382,6 +423,7 @@ void CFish::DeleteReference() {
     if (model.frame != NULL) {
         model.frame->DeleteReference();
     }
+
     if (angle_model.frame != NULL) {
         angle_model.frame->DeleteReference();
     }
@@ -423,6 +465,7 @@ void LoadFish(CFish *fish, int fish_kind, int texture_slot, CDataAlloc2<1> *allo
     if (fish_kind < 0 || fish_kind >= 18) {
         return;
     }
+
     LoadFile("chara/f00s.chr", read_buffer, NULL);
     fish->Initialize();
     fish->model.LoadPackData3(read_buffer, "info.cfg", alloc, texture_slot, alloc, loaded_before, 0);
@@ -452,8 +495,10 @@ char *GetFishFileName(int fish_kind) {
         "chara/f17a.chr",
         "chara/f18a.chr",
     };
+
     if (fish_kind < 0 || fish_kind >= 18) {
         return NULL;
     }
+
     return name[fish_kind];
 }

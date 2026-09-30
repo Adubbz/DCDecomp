@@ -275,6 +275,7 @@ void TitleInit(int mode) {
     TexManager.LoadTextureBlock(-1, tex, read_buffer);
     LoadFileMenuData("stayframe.img", (u_int *) read_buffer);
     TexManager.EnterFixTextureZ((u_char *) read_buffer);
+
 #ifdef PAL
     switch (LanguageCode) {
         case 0:
@@ -421,6 +422,7 @@ void TitleInit(int mode) {
     if (mode == 1) {
         CCursol.select = 1;
         CCursol.Set(316.0f);
+
         for (i = 0; i < 10; i++) {
             CCursol.Move();
         }
@@ -447,19 +449,23 @@ int TitleLoop() {
             if (CFade.In()) {
                 CProcess.no = 2;
             }
+
             if (GamePad.Down(2048) && EffCnt > 16) {
                 CFade.Skip();
                 CProcess.no = 3;
             }
+
             if (EffCnt < 100) {
                 EffCnt++;
             }
+
             break;
 
         case 1:
             if (CFade.In2()) {
                 CProcess.no = 4;
             }
+
             break;
 
         case 2:
@@ -468,26 +474,32 @@ int TitleLoop() {
             } else {
                 CProcess.no = 3;
             }
+
             if (GamePad.Down(2048)) {
                 CProcess.no = 3;
             }
+
             break;
 
         case 3:
             if (CSprite.Se() == 0) {
                 TiPlayVolSE(14, 38, 21, 1.0f);
             }
+
             CSprite.Move();
+
             if (GamePad.Down(2048)) {
                 Logo.motion_type.state.time = 116.0f;
                 Fade1 = 128;
                 CSprite.x[0] = 700.0f;
             }
+
             if (CSprite.x[0] > 100.0f) {
                 if (Logo.motion_type.state.time < 116.0f) {
                     for (i = 0; i < 9; i++) {
                         Spark[i].Step();
                     }
+
                     Logo.Step();
                     CLogo.Fade();
                 } else {
@@ -496,17 +508,21 @@ int TitleLoop() {
                     } else {
                         Fade2 = (Fade2 + 2) & 0x7f;
                         keywait++;
+
                         if (keywait >= 500) {
                             keywait = 500;
                         }
                     }
+
                     CLogo.Move();
                 }
+
                 if (Fade1 > 127 && GamePad.Down(2048)) {
                     TiPlayVolSE(13, 122, 25, 1.0f);
                     CProcess.no = 4;
                     opcnt = 0;
                 }
+
                 if (Fade1 > 127) {
                     if (opcnt > 1800) {
                         CCursol.select = 3;
@@ -516,27 +532,33 @@ int TitleLoop() {
                     }
                 }
             }
+
             break;
 
         case 4:
             CLogo.Move();
+
             if (CCursol.Move()) {
                 if (GamePad.Down(4096)) {
                     CCursol.select--;
                     opcnt = 0;
                     TiPlayVolSE(13, 122, 24, 1.0f);
                 }
+
                 if (GamePad.Down(16384)) {
                     CCursol.select++;
                     opcnt = 0;
                     TiPlayVolSE(13, 122, 24, 1.0f);
                 }
+
                 if (CCursol.select < 0) {
                     CCursol.select = 2;
                 }
+
                 if (CCursol.select > 2) {
                     CCursol.select = 0;
                 }
+
                 switch (CCursol.select) {
 #ifdef PAL
                     case 0:
@@ -563,11 +585,13 @@ int TitleLoop() {
 #endif
                         break;
                 }
+
                 if (GamePad.Down(2048) || GamePad.Down(64)) {
                     TiPlayVolSE(14, 38, 20, 1.0f);
                     CProcess.no = 5;
                     opcnt = 0;
                 }
+
                 if (GamePad.Down(32)) {
                     Fade1 = Fade2 = Fade3 = Fade4 = 0;
                     CSprite.Init();
@@ -576,6 +600,7 @@ int TitleLoop() {
                     CProcess.no = 3;
                     opcnt = 0;
                 }
+
                 if (opcnt > 1800) {
                     CCursol.select = 3;
                     CProcess.no = 7;
@@ -583,19 +608,23 @@ int TitleLoop() {
                     opcnt++;
                 }
             }
+
             break;
 
         case 5:
             CLogo.Move();
             brink = 1;
             brinkcnt++;
+
             if (brinkcnt > 60) {
                 CProcess.no = 6;
             }
+
             break;
 
         case 6:
             brinkcnt++;
+
             if (CFade.Out()) {
                 switch (CCursol.GetSelect()) {
                     case 0:
@@ -609,6 +638,7 @@ int TitleLoop() {
                         break;
                 }
             }
+
             break;
 
         case 7:
@@ -618,6 +648,7 @@ int TitleLoop() {
                 CSnd.StopVoice(0);
                 CProcess.no = 14;
             }
+
             break;
 
         case 8:
@@ -643,6 +674,7 @@ int TitleLoop() {
             if (OpeningBookKey()) {
                 CProcess.no = 14;
             }
+
             break;
 
         case 10:
@@ -668,6 +700,7 @@ int TitleLoop() {
                     CProcess.no = 1;
                     break;
             }
+
             break;
 
         case 12:
@@ -677,11 +710,13 @@ int TitleLoop() {
 
         case 13:
             CFade.In();
+
             if (MenuOptionKey()) {
                 brink = 0;
                 CFade.value = 0;
                 CProcess.no = 1;
             }
+
             break;
 
         case 14:
@@ -729,6 +764,7 @@ void TitleDraw() {
     } else {
         ambient[3] = 128.0f;
     }
+
     MGSetAmbient(ambient);
 
     sceVu0Normalize(light0, light0);
@@ -742,20 +778,24 @@ void TitleDraw() {
 
         TexManager.ReloadTexture(GetVif1Packet(), 0);
         rot[1] += 0.001f;
+
         if (rot[1] > 3.14f) {
             rot[1] -= 6.28f;
         }
+
         ObjectFrame3->SetRotation(rot[0], rot[1], rot[2]);
         MGDraw(ObjectFrame3);
     }
 
     if (CProcess.no != 9 && CProcess.no != 14) {
         TexManager.ReloadTexture(GetVif1Packet(), 1);
+
         if (CProcess.no == 0 || (CProcess.no == 6 && CCursol.GetSelect() == 0) || CProcess.no == 7) {
             ambient[3] = (float) CFade.Get(100);
         } else {
             ambient[3] = 100.0f;
         }
+
         MGSetAmbient(ambient);
         Cloud__2.Draw();
     }
@@ -817,6 +857,7 @@ void TitleDraw() {
 
             ambient[3] = (float) CFade.Get(128);
             MGSetAmbient(ambient);
+
             if (CFade.Get(128) == 128) {
                 CSprite.Draw();
             }
@@ -868,6 +909,7 @@ void TitleDraw() {
                     setbilinear(1);
                 }
             }
+
             break;
 
         case 9:

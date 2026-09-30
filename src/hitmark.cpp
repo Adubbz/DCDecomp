@@ -43,6 +43,7 @@ void CHitMark::Set(float *position, float *direction, int kind, float spread, fl
         this->size[i] = 0.1f + 1.2f * rand() / 2147483648.0f;
         this->used[i] = 1;
     }
+
     this->count = HIT_MARK_MAX;
 }
 
@@ -67,10 +68,12 @@ void CHitMark::Draw() {
         if (this->used[i] == 0) {
             continue;
         }
+
         mark_pos[0] = base[0] + this->offset[i][0];
         mark_pos[1] = base[1] + this->offset[i][1];
         mark_pos[2] = base[2] + this->offset[i][2];
         mark_pos[3] = 1.0f;
+
         if (MGRotTransPers3DSprite(top_left, bottom_right, mark_pos, this->size[i], this->size[i] / 2.0f, 0) != 1) {
             continue;
         }
@@ -139,6 +142,7 @@ void CHitMark::Step() {
     int           i;
 
     sceVu0CopyVector(base, this->pos);
+
     if (this->count == 0) {
         return;
     }
@@ -147,6 +151,7 @@ void CHitMark::Step() {
         if (this->used[i] == 0) {
             continue;
         }
+
         this->offset[i][0] += this->velocity[i][0];
         this->offset[i][1] += this->velocity[i][1];
         this->offset[i][2] += this->velocity[i][2];
@@ -159,11 +164,13 @@ void CHitMark::Step() {
         }
 
         this->size[i] -= this->shrink;
+
         if (this->size[i] <= 0.1f) {
             this->used[i] = 0;
             this->count--;
         }
     }
+
     this->spread -= 0.05f;
 }
 
@@ -173,6 +180,7 @@ void CHitMark::Initialize() {
     for (i = 0; i < HIT_MARK_MAX; i++) {
         this->used[i] = 0;
     }
+
     this->capacity = HIT_MARK_MAX;
     this->count = 0;
 }
@@ -187,9 +195,11 @@ void CHitPointMark::Draw() {
     if (this->on == 0) {
         return;
     }
+
     if (MGRotTransPers3DSprite(top_left, bottom_right, this->pos, 5.0f, 2.5f, 0) != 1) {
         return;
     }
+
     if (this->blink != 1) {
         return;
     }
@@ -212,14 +222,17 @@ void CHitPointMark::Step() {
     if (this->on == 0) {
         return;
     }
+
     // The mark shows for four steps and hides for four, so that it blinks.
     if (this->timer % 4 == 0) {
         this->blink ^= 1;
     }
+
     if (this->timer == 0) {
         this->on = 0;
         return;
     }
+
     this->timer--;
 }
 

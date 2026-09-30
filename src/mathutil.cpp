@@ -134,6 +134,7 @@ void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructo
             }
         }
     }
+
     return array;
 }
 
@@ -170,10 +171,12 @@ void __dl(void *storage) throw() {
 extern "C" void *__dt__Q23std9exceptionFv(void **self, short flag) throw() {
     if (self != NULL) {
         *self = __vt__Q23std9exception;
+
         if (flag > 0) {
             __dl(self);
         }
     }
+
     return self;
 }
 
@@ -212,26 +215,32 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
     const char *caught;
 
     *pointer_adjustment = 0;
+
     if ((caught = caught_type) == NULL) {
         // catch (...)
         return true;
     }
+
     thrown = thrown_type;
 
     if (*caught == 'P') {
         caught++;
+
         if (*caught == 'C') {
             caught++;
         }
+
         if (*caught == 'V') {
             caught++;
         }
+
         if (*caught == 'v') {
             // catch (cv void *) takes any thrown pointer
             if (*thrown == 'P' || *thrown == '*') {
                 return true;
             }
         }
+
         caught = caught_type;
     }
 
@@ -242,6 +251,7 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
             if (*thrown++ != *caught++) {
                 return false;
             }
+
             for (;;) {
                 if (*thrown == *caught++) {
                     if (*thrown++ == '!') {
@@ -250,32 +260,40 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
                         for (offset = 0; *thrown != '!';) {
                             offset = offset * 10 + *thrown++ - '0';
                         }
+
                         *pointer_adjustment = offset;
                         return true;
                     }
                 } else {
                     while (*thrown++ != '!') {
                     }
+
                     while (*thrown++ != '!') {
                     }
+
                     if (*thrown == 0) {
                         return false;
                     }
+
                     caught = caught_type + 1;
                 }
             }
+
             return false;
     }
 
     while ((*thrown == 'P' || *thrown == 'R') && *thrown == *caught) {
         thrown++;
         caught++;
+
         if (*caught == 'C') {
             if (*thrown == 'C') {
                 thrown++;
             }
+
             caught++;
         }
+
         if (*thrown == 'C') {
             return false;
         }
@@ -284,8 +302,10 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
             if (*thrown == 'V') {
                 thrown++;
             }
+
             caught++;
         }
+
         if (*thrown == 'V') {
             return false;
         }
@@ -296,6 +316,7 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
             return true;
         }
     }
+
     return false;
 }
 
@@ -391,6 +412,7 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
 
 extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start, void *overlay_end) {
     void (**initializer)() = (void (**)()) first;
+
     if ((void (**)()) first < (void (**)()) last) {
         do {
             (*initializer)();
@@ -413,21 +435,26 @@ extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_star
 
 char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
     unsigned int first = (unsigned char) encoded[0];
+
     if ((first & 1) == 0) {
         *value = first >> 1;
         return encoded + 1;
     }
 
     unsigned int second = (unsigned char) encoded[1];
+
     if ((first & 2) == 0) {
         *value = ((first >> 2) << 8) | second;
         return encoded + 2;
     }
+
     unsigned int third = (unsigned char) encoded[2];
+
     if ((first & 4) == 0) {
         *value = ((first >> 3) << 16) | (second << 8) | third;
         return encoded + 3;
     }
+
     *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
@@ -444,21 +471,26 @@ char *__DecodeUnsignedNumber(char *encoded, unsigned int *value) {
 
 char *__DecodeSignedNumber(char *encoded, int *value) {
     signed char first = encoded[0];
+
     if ((first & 1) == 0) {
         *value = first >> 1;
         return encoded + 1;
     }
 
     unsigned int second = (unsigned char) encoded[1];
+
     if ((first & 2) == 0) {
         *value = ((first >> 2) << 8) | second;
         return encoded + 2;
     }
+
     unsigned int third = (unsigned char) encoded[2];
+
     if ((first & 4) == 0) {
         *value = ((first >> 3) << 16) | (second << 8) | third;
         return encoded + 3;
     }
+
     *value = ((first >> 3) << 24) | (second << 16) | (third << 8) | (unsigned char) encoded[3];
     return encoded + 4;
 }
@@ -488,12 +520,15 @@ extern "C" void __end__catch(MWCatchRecord *record) {
 static inline char __find_exception_spec(const char *type_info, MWExceptionSpecification *spec) {
     long           adjustment;
     unsigned char *types = spec->types;
+
     for (unsigned int i = 0; i < spec->count; i++) {
         if (__throw_catch_compare(type_info, (const char *) (types[0] | (types[1] << 8) | (types[2] << 16) | (types[3] << 24)), &adjustment)) {
             return true;
         }
+
         types += 4;
     }
+
     return false;
 }
 
@@ -515,11 +550,13 @@ extern "C" void __unexpected(void *exception_record) {
         unexpected__3stdFv();
     } catch (...) {
         spec.types = (unsigned char *) __DecodeSignedNumber(__DecodeUnsignedNumber(__DecodeUnsignedNumber(encoded + 1, &spec.count), &spec.unused_unsigned), &spec.unused_signed);
+
         // A new exception the specification allows propagates; otherwise it becomes a
         // std::bad_exception if that is allowed.
         if (__find_exception_spec(((MWCatchRecord *) &__exception_magic)->type_info, &spec)) {
             throw;
         }
+
         if (__find_exception_spec("!std::bad_exception!!", &spec)) {
             throw std::bad_exception();
         }
@@ -556,13 +593,16 @@ const char       BadExceptionWhat[] = "bad_exception";
 extern "C" void *__dt__Q23std13bad_exceptionFv(void **self, short flag) throw() {
     if (self != NULL) {
         *self = __vt__Q23std13bad_exception;
+
         if (self != NULL) {
             *self = __vt__Q23std9exception;
         }
+
         if (flag > 0) {
             __dl(self);
         }
     }
+
     return self;
 }
 
@@ -608,10 +648,12 @@ extern "C" void mwOverlayInit(void *overlay, int size) {
     int            bss_size = header->bss_size;
 
     FlushCache(2);
+
     if (bss_size != 0) {
         image += size;
         memset(image, 0, bss_size);
     }
+
     __initialize_cpp_rts(header->static_init, header->static_init_end, 0, 0);
 }
 
@@ -636,16 +678,20 @@ extern "C" int mwBload(char *path, void *buffer) {
     int size = 0;
 
     fd = sceOpen(path, 1);
+
     if (fd >= 0) {
         size = sceLseek(fd, 0, 2);
         sceLseek(fd, 0, 0);
     }
+
     if (size > 0) {
         size = sceRead(fd, buffer, size);
     }
+
     if (fd >= 0) {
         sceClose(fd);
     }
+
     return size;
 }
 
@@ -660,11 +706,13 @@ extern "C" int mwLoadOverlay(char *path, void *address) {
     int size;
     int result = 0;
     size = mwBload(path, address);
+
     if (size > 0) {
         MWNotifyOverlayLoaded(address);
         mwOverlayInit(address, size);
         result = 1;
     }
+
     return result;
 }
 
@@ -864,9 +912,11 @@ int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, f
     sceVu0SubVector(e2, v2, from);
     above = -sceVu0InnerProduct(normal, e0);
     along = sceVu0InnerProduct(normal, line);
+
     if (along == 0.0f) {
         return 0;
     }
+
     sceVu0ScaleVector(hit, line, -above / along);
     sceVu0AddVector(hit, hit, from);
     return Check_Point_Poly3_XYZ(hit, v0, v1, v2, normal);
@@ -898,12 +948,15 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
     d0 = sceVu0InnerProduct(c0, normal);
     d1 = sceVu0InnerProduct(c1, normal);
     d2 = sceVu0InnerProduct(c2, normal);
+
     if (d0 >= 0.0f && d1 >= 0.0f && d2 >= 0.0f) {
         return 1;
     }
+
     if (d0 <= 0.0f && d1 <= 0.0f && d2 <= 0.0f) {
         return 1;
     }
+
     return 0;
 }
 
@@ -1033,6 +1086,7 @@ void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     /* The length is measured a second time and the answer thrown away; it is a call the function
        makes, like the truncation AngleLimit repeats below. */
     DistVector(flat);
+
     if (ground == 0.0f) {
         cosine = 0.0f;
         sine = 1.0f;
@@ -1040,6 +1094,7 @@ void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
         cosine = unit[0] / ground;
         sine = unit[2] / ground;
     }
+
     pitch[1][1] = ground;
     pitch[1][2] = -unit[1];
     pitch[2][1] = unit[1];
@@ -1094,6 +1149,7 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
     float         delta;
 
     sceVu0SubVector(gap, to, from);
+
     switch (mode) {
         case 0:
             for (i = 0; i < 3; i++) {
@@ -1102,6 +1158,7 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
                    stores nothing on a value that already agrees. */
                 delta = gap[i];
                 magnitude = delta;
+
                 if (delta < 0.0f) {
                     magnitude = -delta;
                 } else {
@@ -1116,11 +1173,13 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
                     out[i] = from[i] + step;
                 }
             }
+
             break;
         case 1:
             for (i = 0; i < 3; i++) {
                 out[i] = from[i] + gap[i] / step;
             }
+
             break;
     }
 }
@@ -1135,42 +1194,55 @@ float AngleInterpolate(float from, float to, float step, int mode) {
     float result;
 
     delta = to - from;
+
     if (delta > PI) {
         delta -= PI * 2.0f;
     }
+
     if (delta <= -PI) {
         delta += PI * 2.0f;
     }
+
     offset = 0.0f;
+
     if (mode == 0 && (delta < 0.0f ? -delta : delta) < step) {
         return to;
     }
+
     switch (mode) {
         case 0:
             if (delta < 0.0f) {
                 if (step < delta) {
                     return to;
                 }
+
                 offset -= step;
             }
+
             if (delta >= 0.0f) {
                 if (step > delta) {
                     return to;
                 }
+
                 offset += step;
             }
+
             break;
         case 1:
             offset = delta / step;
             break;
     }
+
     result = from + offset;
+
     if (result > PI) {
         result -= PI * 2.0f;
     }
+
     if (result <= -PI) {
         result += PI * 2.0f;
     }
+
     return result;
 }
 
@@ -1178,21 +1250,27 @@ int AngleCmp(float a, float b, float tolerance) {
     float delta;
 
     delta = a - b;
+
     if (delta == 0.0f) {
         return 0;
     }
+
     if (delta > PI) {
         delta -= PI * 2.0f;
     }
+
     if (delta < -PI) {
         delta += PI * 2.0f;
     }
+
     if (delta > tolerance) {
         return 1;
     }
+
     if (delta < -tolerance) {
         return -1;
     }
+
     return 0;
 }
 
@@ -1203,17 +1281,21 @@ float AngleLimit(float angle) {
     if (angle < PI && angle > -PI) {
         return angle;
     }
+
     turns = angle / (PI * 2.0f);
     /* The first truncation is a call whose result nothing reads, and it is kept because it is one
        the function makes: each conversion in the source is its own call. */
     whole = (int) turns;
     angle -= PI * 2.0f * (int) turns;
+
     if (angle > PI) {
         angle -= PI * 2.0f;
     }
+
     if (angle < -PI) {
         angle += PI * 2.0f;
     }
+
     return angle;
 }
 
@@ -1230,6 +1312,7 @@ void CreateSinTable() {
 
     sin_table_num = 1024.0f;
     sin_table_unit_1 = 162.97466f;
+
     for (i = 0; i < 1024; i++) {
         SinTable[i] = sinf(PI * (2.0f * (float) i) / sin_table_num);
     }
@@ -1239,6 +1322,7 @@ float Sinf(float angle) {
     if (angle >= 0.0f) {
         return SinTable[(int) (angle * sin_table_unit_1) % 1024];
     }
+
     return -SinTable[(int) (-angle * sin_table_unit_1) % 1024];
 }
 

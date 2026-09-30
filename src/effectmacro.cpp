@@ -36,6 +36,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     effect.texel.x = effect.texel.y = effect.texel.width = effect.texel.height = 0;
     effect.Initialize();
     sceVu0CopyVector(effect.position, position);
+
     // Half the puffs drift, on a sine of their own in x and z.
     if (rand() % 2 != 0) {
         effect.position_oscillation_flags = 1;
@@ -44,6 +45,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
         effect.position_oscillation_scale[2] = 0.3f * (float) rand() / 2.1474836e9f;
         effect.position_oscillation_rate[2] = 3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
     }
+
     effect.opacity_mode = 2;
     effect.render_flags = 1;
     effect.opacity = 0.1f;
@@ -55,6 +57,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     effect.scale[1] = size;
     effect.lifetime = 0x78;
     effect.texture = smoke_tex;
+
     // The four puff shapes are the quarters of the texture.
     switch (rand() % 4) {
         case 0:
@@ -70,6 +73,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
             effect.texel = CRect_i_(0x40, 0x40, 0x40, 0x40);
             break;
     }
+
     effect.width = 10.0f;
     effect.height = 10.0f;
     group->EnterEffect(&effect);
@@ -160,6 +164,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
         {0.0f, 0.0f, focus[1] + 20.0f, 1.0f},
     };
     int screen[4][4];
+
     for (i = 0; i < 4; i++) {
         sceVu0ApplyMatrix(depth_point[i], mgRenderInfo.screen, depth_point[i]);
         depth_point[i][2] /= depth_point[i][3];
@@ -190,8 +195,10 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
         sceVif1PkCnt(Vif1Packet, 0);
         sceVif1PkOpenDirectCode(Vif1Packet, 0);
         sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+
         for (k = 0; k < 8; k++) {
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x15C);
+
             for (j = 0; j < 41; j++) {
                 int x = (j << 8) + 0x6C00;
                 int v = k << 9;
@@ -204,6 +211,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x, y + 0x200, screen[(j + phase) % 2][2], 0));
             }
         }
+
         sceVif1PkCloseGifTag(Vif1Packet);
         sceVif1PkCloseDirectCode(Vif1Packet);
     }
@@ -211,15 +219,18 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
     sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
+
     if (level >= 2) {
         if (blur > 0) {
             for (i = 0; i < 21; i++) {
                 for (j = 0; j < 15; j++) {
                     if (blur > 0) {
                         rd[i][j] += 0.2f * ((float) blur * ((float) rand() / 2147483648.0f - 0.5f));
+
                         if (rd[i][j] < 0.0f) {
                             rd[i][j] = 0.0f;
                         }
+
                         if (rd[i][j] > (float) blur) {
                             rd[i][j] = (float) blur;
                         }
@@ -229,9 +240,11 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 }
             }
         }
+
         if (blur > 0) {
             alpha = 0x80;
         }
+
 #ifdef PAL
         for (j = 0; j < 15; j++) {
 #else
@@ -239,6 +252,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
 #endif
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 0x15C);
             sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
+
             for (i = 0; i < 21; i++) {
                 int x = (i << 9) + 0x6C00;
                 int v = j << 8;
@@ -246,6 +260,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 int y_bottom = y + 0x100;
                 int u = (i << 7) + 0x1400;
                 int v_bottom = v + 0x100;
+
                 if (blur > 0) {
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x - (int) rd[i][j], y, screen[2 + i % 2][2], 0));
@@ -260,6 +275,7 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
             }
         }
     }
+
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);

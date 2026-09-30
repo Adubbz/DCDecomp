@@ -210,22 +210,29 @@ enum EFFECT_TYPE {
  */
 void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode) {
     names[0][0] = '\0';
+
     if (info == NULL) {
         return;
     }
+
     if (element < 0 || element >= 6) {
         return;
     }
+
     if (mode < 0 || mode >= 4) {
         return;
     }
+
     char *text = info->elements[element].names[mode];
+
     if (text == NULL) {
         return;
     }
+
     int  word = 0;
     int  length = 0;
     char c;
+
     while ((c = *text) != '\0') {
         if (c == ' ') {
             names[word][length] = '\0';
@@ -235,8 +242,10 @@ void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode
             names[word][length] = c;
             length++;
         }
+
         text++;
     }
+
     names[word][length] = '\0';
     word++;
     names[word][0] = '\0';
@@ -258,33 +267,41 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
     attr.fog_enable = 1;
     attr.clip_enable = 0;
     attr.alpha_ref = 0x40;
+
     for (i = 1; i < 4; i++) {
         if (frames[i] != NULL) {
             frames[i]->SetAttr(attr, 1, 0x44);
             SetFrameAttr(frames[i], 1);
         }
     }
+
     attr.clip_depth = 100.0f;
     attr.clip_enable = 1;
     frames[0]->SetAttr(attr, 1, 0);
     SetFrameAttr(frames[0], 1);
+
     for (i = 0; i < 4; i++) {
         parts->SetFrame(frames[i], i);
     }
+
     if (data[4] != NULL) {
         parts->shadow_frame = LoadMDSFile(data[4], alloc, 14, NULL, NULL);
     }
+
     if (data[5] != NULL) {
         parts->collision_frame = LoadCollisionFile(data[5], alloc);
     } else {
         parts->collision_frame = NULL;
     }
+
     if (data[6] != NULL) {
         parts->shade_frame = LoadMDSFile(data[6], alloc, 0, NULL, NULL);
     }
+
     if (data[7] != NULL) {
         parts->ripple_frame = LoadMDSFile(data[7], alloc, 0, NULL, NULL);
     }
+
     if (data[8] != NULL) {
         parts->camera_frame = LoadCollisionFile(data[8], alloc);
     }
@@ -311,46 +328,58 @@ static void LoadScript() {
     sprintf(language, "_%d.mes", LanguageCode);
     strcpy(message_path, EdInInfo->name);
     int length = strlen(message_path);
+
     if (length > 0) {
         char last = message_path[length - 1];
+
         if (last == 'm' || last == 'n' || last == 'e') {
             message_path[length - 1] = '\0';
         }
     }
+
     strcat(message_path, language);
     printf("mes = %s\n", message_path);
     strcpy(directory, EdInInfo->name);
     char *cursor = directory;
     char *slash = cursor;
     char  c;
+
     while ((c = *cursor) != '\0') {
         if (c == '/') {
             slash = cursor;
         }
+
         cursor++;
     }
+
     *slash = '\0';
     sprintf(event_path, "%s/event.stb", directory);
+
     if (LoadFile2(event_path, EdEventData, &size, 0) != 0) {
         EdScriptBuffer.Alloc((size >> 4) + 1);
         message_data = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
+
         if (LoadFile2(message_path, message_data, &size, 0) != 0) {
             EdScriptBuffer.Alloc((size >> 4) + 1);
         } else {
             message_data = NULL;
         }
+
         EdSetEventScript(EdEventData, message_data, &EdScriptBuffer);
     } else {
         EdEventData = NULL;
         EdSetEventScript(NULL, NULL, &EdScriptBuffer);
         EdInitEventParam();
     }
+
     EdScriptBuffer.Align64();
     EdSystemEventData = (char *) (EdScriptBuffer.base + EdScriptBuffer.used * 16);
+
     if (LoadFile2("gedit/system/event.stb", EdSystemEventData, &size, 0) != 0) {
         EdScriptBuffer.Alloc((size >> 4) + 1);
         return;
     }
+
     EdSystemEventData = NULL;
 }
 
@@ -375,6 +404,7 @@ static void RunEvent(int event_no, CCamera *camera) {
             EventCamera.FollowOff();
             EventCamera.SetRoll(0.0f);
         }
+
         start_event_no = event_no;
     }
 }
@@ -399,6 +429,7 @@ static void RunSystemEvent(int event_no, CCamera *camera) {
             EventCamera.SetRef(reference);
             EventCamera.FollowOff();
         }
+
         start_system_event = event_no;
     }
 }
@@ -419,9 +450,11 @@ static void InitWorkBuffer() {
     EdWorkBuffer.limit = free_quads - 4;
     EdWorkBuffer.used = 0;
     int villagers_loaded;
+
     if (EdVillagerBuffer.used > 0) {
         villagers_loaded = 1;
     }
+
     free_start = (u_char *) read_buffer;
     EdMenuBuffer.base = free_start - 0x180000;
     EdMenuBuffer.limit = 0x3A2E0;
@@ -446,17 +479,21 @@ int EditInInit(float time, char *name) {
     NowTime = time;
     int hour = (int) (time / 3.0f);
     EdNPCBuffer.used = 0;
+
     for (int i = 0; i < 10; i++) {
         EdVillager[i].Initialize();
         EdVillager[i].texture_block = 0x36;
     }
+
     LoadTexture();
     BG_READ_INFO *bg_file = GetReadBGFile(1);
+
     if (bg_file != NULL) {
         char *script_text = (char *) EdNPCBuffer.Alloc((bg_file->size >> 4) + 1);
         memcpy(script_text, bg_file->buffer, bg_file->size);
         LoadInfo(script_text, bg_file->size);
     }
+
     LoadData();
     int     used = EdNPCBuffer.used;
     u_char *start = EdNPCBuffer.base + used * 16;
@@ -472,9 +509,11 @@ int EditInInit(float time, char *name) {
     MGSetBGColor(EdInInfo->background_colour);
     Chara = EdExchangeInfo.player;
     camera_dist_mode = 1;
+
     if (Chara != NULL) {
         Chara->SetPosition(0.0f, 0.0f, 0.0f);
     }
+
     EdFadeIn(0x40, 0.0f, 0.0f, 0.0f);
     door_open_cnt = 0;
     GameMode = 0;
@@ -483,6 +522,7 @@ int EditInInit(float time, char *name) {
     Chara->SetRotation(0.0f, 0.0f, 0.0f);
     GetMapJumpPos(Chara);
     Chara->ClothStep(-1);
+
     if (EdInteriorDoorSound >= 0) {
         sceVu0FVECTOR position;
         sceVu0FVECTOR reference = {0.0f, 0.0f, 10.0f, 0.0f};
@@ -492,6 +532,7 @@ int EditInInit(float time, char *name) {
         Chara->GetPosition(position);
         EdDoorCloseSe(EdInteriorDoorSound, position);
     }
+
     EdMoveCharaInit();
     active_camera = NULL;
     camera_change_count = 0;
@@ -530,10 +571,13 @@ int EditInLoop() {
     } else {
         EdSetKeyMode(0xFFFF);
     }
+
     if (EdPadDown(0x800, 4)) {
         goto_return_menu = 1;
     }
+
     int hour = (int) (NowTime / 3.0f);
+
     if (GameMode != 14) {
         if (!EdCheckViewMode()) {
             MGSetRenderInfo(EdInInfo->projection, 5.0f, 65535.0f);
@@ -541,7 +585,9 @@ int EditInLoop() {
             MGSetRenderInfo(600.0f, 4.0f, 65535.0f);
         }
     }
+
     Chara->GetPosition(position);
+
     switch (GameMode) {
         case 6:
         case 7:
@@ -550,55 +596,72 @@ int EditInLoop() {
         default:
             int            i;
             OBJ_ANIME_SEQ *anime = EdInInfo->obj_anime;
+
             for (i = 0; i < obj_anime_num; i++, anime++) {
                 int completion_flag = anime->completion_flag;
+
                 if (completion_flag <= 0 || EdGetMapFlag(completion_flag) == 0) {
                     ObjAnimePlay(anime);
                 }
             }
+
             StepWater();
             break;
     }
+
     if (fix_camera != 0 && camera_num > 0 && GameMode == 0) {
         SetCameraPos((CFrame *) InteriorParts[0].frame[0], &MainCamera, Chara);
     }
+
     EdSetCharaCursor(0);
+
     switch (GameMode) {
         case 0:
             if (loop_counter > 0) {
                 MoveCharacter();
             }
+
             EdSetCharaCursor(1);
+
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
                 EdVillager[i].ClothStep(0);
             }
+
             NowCamera = &MainCamera;
+
             if (EdCheckViewMode() != 0) {
                 NowCamera = &ViewCamera__2;
             }
+
             break;
         case 4: {
             NowCamera = &EventCamera;
             Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
             EdEventInfo.current_time = NowTime;
             int result = EdEventMode(&EventCamera, 0);
+
             if (result != 0) {
                 GameMode = 0;
                 NowCamera = &MainCamera;
+
                 if (result == 7) {
                     if (MapNo == 3 && strcmp(EdInteriorName, "i04h04") == 0) {
                         EdInteriorDoorSound = -1;
                     }
+
                     return 1;
                 }
+
                 if (result == 8) {
                     return 99;
                 }
+
                 if (result == 9) {
                     GameMode = 3;
                 }
+
                 if (EdEventInfo.reset_camera_angle < 0) {
                     sceVu0FVECTOR event_pos;
                     sceVu0FVECTOR event_ref;
@@ -607,8 +670,10 @@ int EditInLoop() {
                     MainCamera.SetPos(event_pos);
                     MainCamera.SetRef(event_ref);
                 }
+
                 camera_change_count = 0;
             }
+
             VillagerCollision();
             EdEventNPCStep();
             goto_return_menu = 0;
@@ -623,48 +688,59 @@ int EditInLoop() {
             Chara->SetPosition(fix_chara_pos);
             Chara->SetRotation(fix_chara_rot[0], fix_chara_rot[1], fix_chara_rot[2]);
             Chara->ClothStep(0);
+
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
                 EdVillager[i].ClothStep(0);
             }
+
             door_open_cnt--;
+
             if (door_open_cnt == 100 && EdInteriorDoorSound >= 0) {
                 sceVu0FVECTOR chara_pos;
                 Chara->GetPosition(chara_pos);
                 EdDoorOpenSe(EdInteriorDoorSound, chara_pos);
             }
+
             if (door_open_cnt < 0) {
                 door_open_cnt = 0;
                 GameMode = 2;
             }
+
             break;
         }
         case 2:
             NowCamera = &MainCamera;
             EdStopSoundSrc();
+
             if (EdEventInfo.map_jump_bgm_stop != 0) {
                 SndBgmFadeOutStop();
             } else {
                 EdBeforeInBgmNo = -1;
             }
+
             return 1;
         case 3: {
             sceVu0FVECTOR direction;
             NowCamera = &MainCamera;
+
             if (EdCheckViewMode() != 0) {
                 NowCamera = &ViewCamera__2;
             }
+
             Chara->SetMotion(0, 0);
             Chara->SetVelocity(CVector3_f_(0.0f, 0.0f, 0.0f));
             Chara->Step();
             Chara->ShadowStep();
             Chara->ClothStep(0);
+
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
                 EdVillager[i].ClothStep(0);
             }
+
             CNPCharacter *talker = EdNowTalkChara();
             float         distance = Chara->GetDistance(*talker);
             Chara->GetDir(*talker, direction);
@@ -676,58 +752,73 @@ int EditInLoop() {
             view_v = AngleInterpolate(view_v, pitch, 0.03f, 0);
             EdASetViewAngle(view_h, view_v);
             EdEyeCamera(&ViewCamera__2, Chara);
+
             if (EdCheckViewMode() == 0 || ((view_h - yaw < 0.0f ? -(view_h - yaw) : view_h - yaw) < 0.001f && (view_v - pitch < 0.0f ? -(view_v - pitch) : view_v - pitch) < 0.001f)) {
                 int event_no;
                 EdASetViewAngle(yaw, pitch);
                 event_no = 0;
                 int result = EdTalkMode(Chara, NULL, EdCheckViewMode(), &event_no);
+
                 if (result != 0) {
                     if (result == 2) {
                         goto_menu = 3;
                     }
+
                     if (result == 3) {
                         goto_menu = 4;
                     }
+
                     if (result == 4 && event_no > 0) {
                         RunEvent(event_no, NowCamera);
                     }
+
                     GameMode = 0;
                 }
             }
+
             break;
         }
         case 6:
             Chara->SetMotion(Chara->motion_no, 1);
             Chara->Step();
             Chara->ShadowStep();
+
             for (int i = 0; i < 10; i++) {
                 EdVillager[i].SetMotion(EdVillager[i].motion_no, 1);
                 EdVillager[i].Step();
                 EdVillager[i].ShadowStep();
             }
+
             break;
         case 7:
             MenuMapJumpMode = -1;
+
             if (EdMenuMode() != 0) {
                 GameMode = 0;
                 EdExitMenu();
+
                 if (GetInteriorOutFlag() != 0) {
                     EdViewModeOff();
                     return 1;
                 }
+
                 for (int i = 0; i < 10; i++) {
                     EdVillager[i].SetMotion(EdVillager[i].motion_no, 0);
                     EdVillager[i].Step();
                     EdVillager[i].ShadowStep();
                 }
+
                 return 0;
             }
+
             break;
     }
+
     if (EdEventInfo.lighting_override != 0) {
         MGSetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
         MGSetAmbient(EdEventInfo.ambient_color);
     }
+
     NowCamera->Step(1);
     sceVu0FVECTOR eye;
     sceVu0FVECTOR dir;
@@ -736,50 +827,66 @@ int EditInLoop() {
     NowCamera->GetPos(eye);
     NowCamera->GetDir(dir);
     MGSetViewMatrix(view, eye);
+
     for (int i = 0; i < parts_num; i++) {
         parts[i] = &InteriorParts[i];
     }
+
     EdSetSoundSrcVol(NowTime, parts, parts_num, eye, dir);
+
     if (GameMode != 7) {
         MainDraw();
     } else {
         EdFadeInOut();
     }
+
     if (GameMode == 6 && EdInitModeFinish(NowCamera, TexManager.GetTexture("frame_image", -1)) != 0) {
         GameMode = 7;
     }
+
     EdSaveFrameImageTask();
+
     if (GameMode == 0 && ((EdPadDown(0x10, 1) != 0 && loop_counter >= 2) || goto_menu != 0 || (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
         int menu = 2;
+
         if (goto_menu != 0) {
             menu = goto_menu;
             goto_menu = 0;
             printf("%d\n", menu);
         }
+
         if (EdInitMenu(menu) != 0) {
             SndSePlay(1, -1, 0);
             GameMode = 6;
         }
     }
+
     static int event_text = 0;
+
     if (GamePad.Down2(0x80) != 0) {
         event_text = 4;
         EdEventAllClear();
         simple_event = 0;
     }
+
     event_text--;
+
     if (event_text < 0) {
         event_text = 0;
     }
+
     if (event_text == 1) {
         start_event_no = 150;
     }
+
     if (GameMode != 4 && ((CMainChara *) Chara)->move_info.landed != 0) {
         int ground_event = ((CMainChara *) Chara)->move_info.ground_poly.attr.ground_kind;
+
         if (ground_event > 0) {
             start_event_no = ground_event;
         }
     }
+
     if (EdDebugEventEnable != 0 && (start_event_no > 0 || start_system_event > 0)) {
         if (start_system_event > 0) {
             if (EdEventInit(start_system_event, &EdNPCBuffer, (char *) EdSystemEventData) != 0) {
@@ -794,12 +901,15 @@ int EditInLoop() {
             GameMode = 3;
             simple_event = 0;
         }
+
         start_event_no = -1;
         start_system_event = -1;
     } else {
         simple_event = 0;
     }
+
     static int old_mode;
+
     if (GameMode == 5 && GamePad.Down(0x800) != 0) {
         GameMode = old_mode;
         EdSePlay((ED_SOUND_ID) 2, -1);
@@ -810,32 +920,40 @@ int EditInLoop() {
         EdSePlay((ED_SOUND_ID) 1, -1);
         PlayTimeCountFlag(0);
     }
+
     goto_return_menu = 0;
     static int end_count = 0;
+
 #ifdef PAL
     if (GamePad.AllOn() != 0 || DebugMode) {
         key_counter = 0;
     }
+
     if (DebugMode && GamePad.On(0x100) && GamePad.On(0x800) && end_count == 0) {
         float zero = 0.0f;
 
         end_count = 100;
         EdFadeOut(64, zero, zero, zero);
     }
+
 #else
     if (GamePad.AllOn() != 0) {
         key_counter = 0;
     }
+
 #endif
     if (end_count == 1) {
         end_count = 0;
         MapJump(800, -1);
         return 99;
     }
+
     end_count--;
+
     if (end_count < 0) {
         end_count = 0;
     }
+
     key_counter++;
     loop_counter++;
     SndStep();
@@ -857,24 +975,29 @@ static void MainDraw() {
     if (EdDrawOffFlag != 0) {
         return;
     }
+
     if (GameMode == 5) {
         CTextureAnime::stop_anime = 1;
     } else {
         CTextureAnime::stop_anime = 0;
     }
+
     EdDrawOffMap = EdEventInfo.suppress_background;
     EdDrawOffMapShadow = EdEventInfo.suppress_shadows;
     Chara->GetPosition(position);
     int hour = (int) (NowTime / 3.0f);
+
     if (EdDrawOffMap == 0) {
         TexManager.ReloadTexture(GetVif1Packet(), 15);
         TexAnime.TexAnime(15);
         setTexAnim();
         sceVu0FVECTOR lod_distance = {0.0f, 1000.0f, 10000.0f, 1000000.0f};
+
         for (i = 0; i < parts_num; i++) {
             InteriorParts[i].DrawParts(NowTime, lod_distance, 0, 0, NULL);
         }
     }
+
     sceGsTex0 frame_tex;
     CRect_i_  screen;
     sceGsTex0 water_tex;
@@ -892,19 +1015,24 @@ static void MainDraw() {
     MGSetGsZBUF(&zbuf);
     DrawWaterSurface(NowCamera);
     MGSetGsZBUF(&mgZBuffer);
+
     if (GameMode == 4) {
         EdEventBackSpriteDraw();
     }
+
     if (GameMode == 4) {
         EdDrawItem();
     }
+
     ED_EVENT_INFO *event = NULL;
     int            detail = 3;
     int            marks_store[10];
     int           *marks = marks_store;
+
     if (EdCheckViewMode() != 0) {
         detail = 0;
     }
+
     if (GameMode == 2) {
         marks = NULL;
     } else {
@@ -912,65 +1040,83 @@ static void MainDraw() {
             marks_store[i] = 3;
         }
     }
+
     if (GameMode == 4) {
         event = &EdEventInfo;
         detail = 3;
     }
+
     EdDrawCharacter(Chara, detail, 10, EdVillager, marks, 1, event);
     TexManager.ReloadTexture(GetVif1Packet(), 0x18);
     sceVu0FVECTOR wind = {0.0f, 0.0f, 0.0f, 0.0f};
+
     if (GameMode != 5 || EdPauseFlag == 0) {
         EditEffectStep();
         EffectMacroStep(wind);
         EdEffectGroup.Step(1);
+
         for (i = 0; i < 4; i++) {
             MotionParts__2[i].Step();
         }
     }
+
     EditEffectStep2();
+
     if (EdDrawOffMap == 0) {
         EDIT_EFFECT_INFO *effect = EdInInfo->effects;
+
         for (i = 0; i < effect_num; i++, effect++) {
             if (CheckEditEffect(effect, NowTime) != 0) {
                 DrawEditEffect(effect, NowCamera, &EdEffectGroup);
             }
         }
     }
+
     EdEffectGroup.Draw();
+
     for (i = 0; i < 4; i++) {
         TexManager.ReloadTexture(GetVif1Packet(), i + 0x32);
         MotionParts__2[i].Draw();
     }
+
     TexManager.ReloadTexture(Vif1Packet, 0x14);
     EdDrawSysCursor(EdInInfo->event_points, 32);
+
     if (GameMode == 4) {
         EdEventSpriteDraw();
     }
+
     if ((unsigned int) (GameMode - 3) < 2U) {
         TexManager.ReloadTexture(Vif1Packet, EditMes1.tex_block);
         EditMes1.DrawMesWin();
+
         if (GameMode == 4) {
             EditEventMes1.DrawMesWin();
             EditSystemMes.DrawMesWin();
         }
     }
+
     if (GameMode == 0) {
         MonsterNameDraw();
     } else {
         MonsterNameMake(-1);
     }
+
     EdSystemMesStep();
     EdSystemMesDraw();
     static int debug_flag = 0;
     static int debug_menu_mode = 0;
+
 #ifdef PAL
     if (DebugMode) {
         if (GamePad.Down(0x200)) {
             debug_flag = !debug_flag;
         }
+
         if (debug_menu_mode) {
             GamePad.KeyLock(0);
             EdDebugMenu();
+
             if (GamePad.Down(0x400) || EdDebugRunEventNo > 0) {
                 debug_menu_mode = 0;
                 GamePad.AutoRepeatOff();
@@ -985,15 +1131,18 @@ static void MainDraw() {
                 debug_menu_mode = 1;
                 debug_flag = 0;
             }
+
             EdDDebug(debug_flag);
             EdDPrintChara((CMainChara *) Chara);
             EdDPrintCamera(NowCamera);
             EdDDrawFont();
         }
     }
+
 #endif
     if (EdDebugParamDrawOff == 0) {
         char pause_texture[] = "pause";
+
         if (GameMode == 5 || EdPauseFlag != 0) {
             TexManager.ReloadTexture(GetVif1Packet(), 0x14);
             CRect_i_ fade;
@@ -1017,6 +1166,7 @@ static void MainDraw() {
             set2DSprite(packet, TexManager.GetTexture(pause_texture, -1), place, texel, 0x80);
         }
     }
+
     EdFadeInOut();
 }
 
@@ -1038,21 +1188,27 @@ void DrawWaterSurface(CCamera *camera) {
     camera->GetDir(dir);
     dir[1] = 0.0f;
     sceVu0Normalize(dir, dir);
+
     for (i = 0; i < 1; i++, surface++) {
         if (surface->draw == 0) {
             continue;
         }
+
         CWater *water = &surface->water;
         sceVu0CopyVector(position, surface->offset);
+
         if (surface->follow[0]) {
             position[0] = eye[0] + 50.0f * dir[0];
         }
+
         if (surface->follow[1]) {
             position[1] = eye[1];
         }
+
         if (surface->follow[2]) {
             position[2] = eye[2] + 50.0f * dir[2];
         }
+
         CVector3_f_ rotation;
         rotation.x = rotation.y = rotation.z = 0.0f;
         water->frame.SetRotation(rotation.x, rotation.y, rotation.z);
@@ -1077,25 +1233,32 @@ static void StepWater() {
         if (surface->draw == 0) {
             continue;
         }
+
         if (surface->water.CheckClip()) {
             continue;
         }
+
         for (j = 0; j < 4; j++) {
             if (surface->ripples[j].power == 0.0f && surface->ripples[j].range == 0.0f) {
                 break;
             }
+
             int row = surface->ripples[j].row;
             int column = surface->ripples[j].column;
+
             if (row < 0) {
                 int rows = surface->water.rows;
                 row = rows * (float) rand() / 2.1474836e9f;
             }
+
             if (column < 0) {
                 int rows = surface->water.rows;
                 column = rows * (float) rand() / 2.1474836e9f;
             }
+
             surface->water.Shake(row, column, surface->ripples[j].power + surface->ripples[j].range * (float) rand() / 2.1474836e9f);
         }
+
         surface->water.Hamon();
     }
 }
@@ -1123,10 +1286,12 @@ static void MoveCharacter() {
     EdMoveCharaInfo.point_count = 32;
     EdMoveCharaInfo.acted = 0;
     EdMoveChara();
+
     if (EdDebugCameraFlag != 0 && GamePad.Down(0x20) != 0) {
         fix_camera = !fix_camera;
         MainCamera.GetPos(fix_pos);
     }
+
     if (fix_camera != 0) {
         MainCamera.FollowOff();
     } else {
@@ -1135,14 +1300,17 @@ static void MoveCharacter() {
         MainCamera.SetFollow(follow[0], 14.0f + follow[1], follow[2]);
         MoveCamera(&MainCamera);
     }
+
     if (EdMoveCharaInfo.system_event_no > 0) {
         RunSystemEvent(EdMoveCharaInfo.system_event_no, &MainCamera);
         return;
     }
+
     if (EdMoveCharaInfo.event_no > 0) {
         RunEvent(EdMoveCharaInfo.event_no, &MainCamera);
         return;
     }
+
     if (EdMoveCharaInfo.acted == 0 && EdPadDown(0x40, 1) != 0) {
         sceVu0FVECTOR position;
         sceVu0FVECTOR start = {-40.5f, 0.0f, -12.55f, 1.0f};
@@ -1150,8 +1318,10 @@ static void MoveCharacter() {
         Chara->GetPosition(position);
         Chara->GetRotation(rotation);
         EPARTS_FUNC_DATA *jump;
+
 #ifdef PAL
         jump = NULL;
+
         if ((DebugMode && GamePad.Down(0x100)) || (jump = SearchMapJump(position, rotation))) {
 #else
         if (jump = SearchMapJump(position, rotation)) {
@@ -1161,9 +1331,11 @@ static void MoveCharacter() {
             EdMoveCharaInit();
             motion = 0;
             door_open_cnt = 140;
+
             if (jump != NULL) {
                 GetDoorPos(jump->link_id, position, rotation, &EdInteriorDoorSound, &motion);
             }
+
             Chara->SetMotion(motion, 6);
             sceVu0CopyVector(fix_chara_pos, position);
             sceVu0CopyVector(fix_chara_rot, rotation);
@@ -1191,20 +1363,27 @@ static void MoveCamera(CCameraFollow *camera) {
 
     float horizontal = GamePad.GetRXf();
     camera->AddHeight(-GamePad.GetRYf());
+
     if (!(camera->GetHeight() <= 30.0f)) {
         camera->SetHeight(30.0f);
     }
+
     camera->AddAngle(0.04f * -horizontal);
+
     if (GamePad.On(8) != 0) {
         camera->AddAngle(-0.017453292f);
     }
+
     if (GamePad.On(4) != 0) {
         camera->AddAngle(0.017453292f);
     }
+
     camera->SetDistance(camera_distance[camera_dist_mode]);
+
     if (GamePad.Down(0x10) != 0) {
         camera_dist_mode++;
     }
+
     if (camera_dist_mode >= 3) {
         camera_dist_mode = 0;
     }
@@ -1228,11 +1407,13 @@ EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
             point->position[3] = 1.0f;
             frame->GetWorldPosition(world, point->position);
             EdInteriorJumpID = point->link_id;
+
             if (DistVector(position, world) < 10.0f && AngleCmp(rotation[1], point->rotation[1], 0.87f) == 0) {
                 return point;
             }
         }
     }
+
     return NULL;
 }
 
@@ -1275,6 +1456,7 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *door_s
             return point->kind == 11;
         }
     }
+
     return -1;
 }
 
@@ -1297,6 +1479,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
     INTERIOR_CAMERA cameras[8];
     sceVu0FMATRIX   matrix;
     count = 0;
+
     for (i = 0; i < func_num; i++, point++) {
         if (point->kind == 7) {
             entry = &cameras[count];
@@ -1305,58 +1488,75 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
             sceVu0CopyVector(entry->min, point->parameters);
             sceVu0CopyVector(entry->max, point->values);
             sceVu0UnitMatrix(matrix);
+
             if (owner != NULL) {
                 CFrame *found = owner->SearchFrame((char *) point->frame_name);
+
                 if (found != NULL) {
                     found->GetLWMatrix(matrix);
                 }
             }
+
             sceVu0MulMatrix(matrix, matrix, point->matrix);
             entry->frame.SetTransMatrix(matrix);
             count++;
+
             if (count >= 8) {
                 break;
             }
         }
     }
+
     if (count <= 0) {
         return;
     }
+
     INTERIOR_CAMERA *inside = NULL;
     static int       cnt = 0;
+
     for (i = 0; i < count; i++) {
         entry = &cameras[i];
+
         if (entry->link_id == 0) {
             inside = entry;
             continue;
         }
+
         float (*inverse)[4] = entry->frame.GetInverseMatrix();
         position[3] = 1.0f;
         sceVu0ApplyMatrix(local, inverse, position);
+
         if (!(local[0] < entry->min[0]) && !(local[1] < entry->min[1]) && !(local[2] < entry->min[2]) && local[0] <= entry->max[0] && local[1] <= entry->max[1] && local[2] <= entry->max[2]) {
             inside = entry;
             break;
         }
     }
+
     cnt++;
+
     if (cnt > 60) {
         cnt = 0;
     }
+
     if (active_camera == NULL) {
         active_camera = inside;
     }
+
     if (inside == NULL) {
         return;
     }
+
     if (camera_change_count <= 0) {
         active_camera = inside;
         camera_change_count = 0;
     }
+
     if (inside == active_camera) {
         camera_change_count = 20;
     } else {
         camera_change_count--;
     }
+
     if (active_camera != NULL) {
         sceVu0FVECTOR eye = {0.0f, 0.0f, 0.0f, 1.0f};
         active_camera->frame.GetWorldPosition(eye, eye);
@@ -1381,10 +1581,12 @@ static int GetCollision(CCPoly *poly, CBoxVu0 *box) {
 
     for (int i = 0; i < parts_num; i++) {
         CFrame *frame = InteriorParts[i].GetCollisionFrame();
+
         if (frame != NULL) {
             count += frame->PickUpNearPoly(&poly[count], *box);
         }
     }
+
     return count;
 }
 
@@ -1407,12 +1609,15 @@ static void VillagerCollision() {
         CCharacter   *chara;
         CNPCharacter *villager = NULL;
         int           foot_sound;
+
         if (i >= 0) {
             villager = &EdVillager[i];
             snap = EdEventInfo.npc_collision[i];
+
             if (villager->CheckDraw() == 0) {
                 continue;
             }
+
             villager->GetPosition(position);
             foot_sound = EdEventInfo.npc_foot_sound[i];
         } else {
@@ -1420,6 +1625,7 @@ static void VillagerCollision() {
             Chara->GetPosition(position);
             foot_sound = EdEventInfo.player_foot_sound;
         }
+
         WorkBuffer__2->used = 0;
         CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
         box.max[0] = 1.0f + position[0];
@@ -1428,21 +1634,27 @@ static void VillagerCollision() {
         box.min[2] = position[2] - 1.0f;
         box.max[1] = 1000.0f;
         box.min[1] = -1000.0f;
+
         if (i >= 0) {
             chara = villager;
         } else {
             chara = Chara;
         }
+
         chara->FootSoundEnable(0);
         int count = GetCollision(polys, &box);
+
         if (count > 300) {
             printf("cpoly over!!!! %d\n", count);
         }
+
         if (count > 0) {
             position[1] += 20.0f;
+
             if (GetFootPoly(position, 1000.0f, &poly, ground, polys, count, 0) != 0) {
                 sceVu0CopyVector(position, ground);
                 chara->FootSoundEnable(foot_sound);
+
                 if (foot_sound == 1) {
                     chara->SetFootSoundID(poly.attr.foot_sound);
                 }
@@ -1452,6 +1664,7 @@ static void VillagerCollision() {
         } else {
             position[1] = 0.0f;
         }
+
         if (snap != 0) {
             if (i >= 0) {
                 villager->SetPosition(position);
@@ -1476,42 +1689,54 @@ static int LoadTexture() {
     };
 
     BG_READ_INFO *file = GetReadBGFile(2);
+
     if (file == NULL) {
         return 0;
     }
+
     char *ext = file->name;
     char  c;
+
     while ((c = *ext) != '\0') {
         if (c == '.') {
             ext++;
             break;
         }
+
         ext++;
     }
+
     u_int *cfg_data = NULL;
     int    size;
     TexAnime.Initialize(NULL, 0);
+
     if (strcmp(ext, "img") == 0) {
         texdata[0].name = (char *) file->buffer;
     } else {
         u_int *found;
         int    cfg_size;
+
         if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
             texdata[0].name = (char *) found;
         }
+
         if (GetPackFileExt((u_int *) file->buffer, "cfg", &found, 1, &cfg_size, NULL) > 0) {
             TexAnime.Initialize(TexAnimeData, 64);
             cfg_data = found;
             size = cfg_size;
+
             for (int i = 0; i < 64; i++) {
                 TexAnimeData[i].Initialize();
             }
         }
     }
+
     TexManager.LoadTextureBlockEX(15, texdata);
+
     if (cfg_data != NULL) {
         TexAnime.LoadCFGFile((char *) cfg_data, size);
     }
+
     EdNPCBuffer.Alloc((file->size >> 4) + 1);
     return 0;
 }
@@ -1532,47 +1757,61 @@ static void LoadChara() {
 void LoadData() {
     func_point = new ((u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16)) EPARTS_FUNC_DATA[128];
     EdNPCBuffer.Alloc(0x600);
+
     for (int i = 0; i < 128; i++) {
         func_point[i].kind = 0;
     }
+
     func_num = 0;
     BG_READ_INFO *file = GetReadBGFile(0);
     u_int        *archive = NULL;
+
     if (file != NULL) {
         archive = (u_int *) file->buffer;
     }
+
     int count;
+
     for (count = 0;; count++) {
         u_int *part_archive = SearchPTS(archive, count);
+
         if (part_archive == NULL) {
             break;
         }
+
         CMapParts *parts = &InteriorParts[count];
         LoadPTS(parts, part_archive);
         parts->handle = count;
         parts->category_no = 15;
         int first_point = func_num;
         func_num += GetFuncPoint(count, part_archive, &func_point[first_point]);
+
         if (EdInteriorPartsNo >= 0) {
             EDITPARTS_INFO *info = EditPartsInfo.GetPartsInfo(EdInteriorPartsNo);
+
             if (info != NULL) {
                 EDITPARTS_INFO info_copy = *info;
                 EdPartsObjectOnOff(parts, info, EdInteriorJumpID + 1);
             }
         }
+
         CFrame *frames[9];
+
         for (int i = 0; i < 9; i++) {
             frames[i] = NULL;
         }
+
         for (int i = 0; i < 4; i++) {
             CFrame *frame = parts->frame[i];
             frames[i] = frame;
         }
+
         frames[4] = parts->shadow_frame;
         frames[5] = parts->GetCollisionFrame();
         frames[6] = parts->shade_frame;
         frames[7] = parts->ripple_frame;
         CFrame *extra_collision;
+
         if (parts->camera_frame == NULL) {
             extra_collision = NULL;
         } else {
@@ -1580,42 +1819,55 @@ void LoadData() {
             parts->camera_frame->SetRotation(parts->rotation.x, parts->rotation.y, parts->rotation.z);
             extra_collision = parts->camera_frame;
         }
+
         frames[8] = extra_collision;
         EPARTS_FUNC_DATA *point = &func_point[first_point];
         effect_num = 32;
+
         for (int i = 0; i < 24; i++) {
             parts->effect_on[i] = 0;
             parts->effect[i] = NULL;
         }
+
         for (; first_point < func_num; first_point++, point++) {
             EnterPartsEffect(parts, point, EdInInfo->effects, 32);
+
             if (obj_anime_num < 32) {
                 OBJ_ANIME_SEQ *seq = &EdInInfo->obj_anime[obj_anime_num];
+
                 if (InitObjAnime(frames, 9, point, seq) != 0) {
                     obj_anime_num++;
                 }
             }
         }
+
         EdInitEventPoint(parts, NULL, func_point, func_num, EdInInfo->event_points, 32);
     }
+
     parts_num = count;
+
     for (int i = 0; i < func_num; i++) {
         func_point[i].parts = (CMapParts *) InteriorParts[(int) func_point[i].parts].frame[0];
+
         if (func_point[i].completion_flag > 0 && SaveData->GetMapInitFlag(MapNo, func_point[i].completion_flag) == 0) {
             SaveData->SetMapInitFlag(MapNo, func_point[i].completion_flag, 1);
             SaveData->SetMapFlag(MapNo, func_point[i].completion_flag, !(s8) func_point[i].unk_28[0]);
         }
     }
+
     camera_num = 0;
     EPARTS_FUNC_DATA *point = func_point;
+
     for (int i = 0; i < func_num; i++, point++) {
         if (point->kind == 7) {
             camera_num++;
         }
     }
+
     for (int i = 0; i < 4; i++) {
         EDIT_MOTION_PARTS_INFO *motion = &EdInInfo->motion_parts[i];
         MotionParts__2[i].Initialize();
+
         if (motion->name[0] != '\0') {
             LoadFile(motion->name, read_buffer, NULL);
             MotionParts__2[i].LoadPackData2((u_int *) read_buffer, "info.cfg", &EdNPCBuffer, i + 0x32, &EdNPCBuffer, 0);
@@ -1624,14 +1876,18 @@ void LoadData() {
             MotionParts__2[i].SetScale(motion->values[6], motion->values[7], motion->values[8]);
         }
     }
+
     for (int i = 0; i < 1; i++) {
         Water[i].draw = 0;
     }
+
     for (int i = 0; i < 1; i++) {
         EDIT_WATER_INFO *info = &EdInInfo->water_surfaces[i];
+
         if (info->grid_rows <= 0) {
             break;
         }
+
         CWater       *water;
         int           j;
         CGroundWater *surface = &Water[i];
@@ -1645,12 +1901,15 @@ void LoadData() {
         strcpy(surface->name, info->name);
         surface->parts_no = info->parts_no;
         sceVu0CopyVector(surface->offset, info->corner_c);
+
         for (int j = 0; j < 3; j++) {
             surface->follow[j] = info->follow[j];
         }
+
         for (j = 0; j < 4; j++) {
             sceVu0CopyVector(&surface->ripples[j].row, &info->wave[j].row);
         }
+
         water->SetVertex(near_left, near_right, far_left, far_right);
         water->frame.SetPosition(info->corner_c);
         water->SetSize(info->grid_rows, info->grid_columns, &EdNPCBuffer);
@@ -1676,39 +1935,51 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
     } else {
         return 0;
     }
+
     if (pack->lod1_size > 0) {
         files[1] = (u_int *) ((char *) archive + pack->lod1_offset);
     }
+
     if (pack->lod2_size > 0) {
         files[2] = (u_int *) ((char *) archive + pack->lod2_offset);
     }
+
     if (pack->lod3_size > 0) {
         files[3] = (u_int *) ((char *) archive + pack->lod3_offset);
     }
+
     if (pack->shadow_size > 0) {
         files[4] = (u_int *) ((char *) archive + pack->shadow_offset);
     }
+
     if (pack->collision_size > 0) {
         files[5] = (u_int *) ((char *) archive + pack->collision_offset);
     }
+
     if (pack->shade_size > 0) {
         files[6] = (u_int *) ((char *) archive + pack->shade_offset);
     }
+
     if (pack->extra_size > 0) {
         files[7] = (u_int *) ((char *) archive + pack->extra_offset);
     }
+
     if (pack->camera_size > 0) {
         files[8] = (u_int *) ((char *) archive + pack->camera_offset);
     }
+
     parts->SetFrame(LoadMDSFile(files[0], &EdNPCBuffer, 0, NULL, NULL), 0);
+
     if (files[5] != NULL) {
         parts->collision_frame = LoadCollisionFile(files[5], &EdNPCBuffer);
     }
+
     if (files[8] != NULL) {
         parts->camera_frame = LoadCollisionFile(files[8], &EdNPCBuffer);
     } else {
         parts->camera_frame = NULL;
     }
+
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 1.0f};
     position[0] = header->position[0];
     position[1] = header->position[1];
@@ -1736,6 +2007,7 @@ int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
         points->parts = (CMapParts *) parts_no;
         i++;
     }
+
     return header->func_count;
 }
 
@@ -1883,13 +2155,17 @@ static void LoadInfo(char *script, int size) {
     water_list = 0;
     water_info = NULL;
     debug = 0;
+
     for (;;) {
         command = interpreter.GetNextTAG();
+
         if (command < 0) {
             break;
         }
+
         CommandExe[command](interpreter.arguments);
     }
+
     obj_anime_num = objanime_list;
     effect_num = effect_list;
 }
@@ -2184,6 +2460,7 @@ static void CommandWATER_SHAKE(void **arguments) {
 
     if (info != NULL) {
         int i = 0;
+
         while (1) {
             if (info->wave[i].power == 0.0f && info->wave[i].range == 0.0f) {
                 EDIT_WATER_WAVE_VIEW *wave = (EDIT_WATER_WAVE_VIEW *) &((EDIT_WATER_WAVE_INFO *) info)[i];
@@ -2193,6 +2470,7 @@ static void CommandWATER_SHAKE(void **arguments) {
                 wave->power = *(float *) arguments[2];
                 break;
             }
+
             i++;
         }
     }

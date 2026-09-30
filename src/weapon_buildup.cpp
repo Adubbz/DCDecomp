@@ -15,28 +15,34 @@
 
 static int BuildMenuCompVolume(char requirement, char value) {
     int passes;
+
     if (0 <= requirement) {
         if (value >= requirement) {
             passes = 1;
         } else {
             passes = 0;
         }
+
         return passes;
     }
+
     requirement = -requirement;
     return requirement < value ? 0 : 1;
 }
 
 static int BuildMenuCompVolume(short requirement, short value) {
     int passes;
+
     if (0 <= requirement) {
         if (value >= requirement) {
             passes = 1;
         } else {
             passes = 0;
         }
+
         return passes;
     }
+
     requirement = -requirement;
     return requirement < value ? 0 : 1;
 }
@@ -101,14 +107,17 @@ int IsLastWeapon(int weapon_no) {
 
     do {
         int translated_no = TransWepNo(last_weapons[i]);
+
         if (weapon_no == translated_no) {
             result = 1;
         } else {
             i++;
+
             if (translated_no > 0 && i < 15) {
                 continue;
             }
         }
+
         break;
     } while (true);
 
@@ -121,14 +130,17 @@ int IsNotBuildUpWeapon(int weapon_no) {
     }
 
     WEAPON_DATA *weapon = GetWeaponData(weapon_no);
+
     if (weapon->buildup_mask0 != 0 || weapon->buildup_mask1 != 0) {
         return 0;
     }
+
     return 1;
 }
 
 void SetWeaponBuildValue(WEAPON_HAVE *weapon, int destination_no) {
     WEAPON_DATA *destination = GetWeaponData(destination_no);
+
     if (weapon->endurance <= destination->endurance) {
         weapon->endurance = destination->endurance;
     }
@@ -144,12 +156,14 @@ void SetWeaponBuildValue(WEAPON_HAVE *weapon, int destination_no) {
 
 int EnableBuildUpModelSpecial(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
     int result = 0;
+
     if (weapon == NULL) {
         return 0;
     }
 
     build_info[0].weapon_no = -1;
     build_info[0].enabled = 0;
+
     switch (weapon->item_no) {
         case ITEM_WEAPON_MARDAN_EINS:
         case ITEM_WEAPON_MARDAN_TWEI:
@@ -158,9 +172,11 @@ int EnableBuildUpModelSpecial(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon)
 
             int fish_count = GetFishMardanGarayanNum();
             int required_fish[2] = {5, 15};
+
             if (required_fish[weapon->item_no - ITEM_WEAPON_MARDAN_EINS] > fish_count) {
                 break;
             }
+
             result = 1;
             build_info[0].enabled = 1;
             break;
@@ -177,6 +193,7 @@ int EnableBuildUpModel(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
     }
 
     int weapon_no = weapon->item_no;
+
     if (weapon_no != ITEM_WEAPON_MARDAN_EINS && weapon_no != ITEM_WEAPON_MARDAN_TWEI) {
     } else {
         EnableBuildUpModelSpecial(build_info, weapon);
@@ -197,11 +214,13 @@ int EnableBuildUpModel(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
 
             WEAPON_HAVE destination_have;
             WepDataListToHaveCopy(build_info[count].weapon_no, &destination_have);
+
             if (CompareBuildUpModelData2(&destination_have, weapon)) {
                 build_info[count].enabled = 1;
             } else {
                 build_info[count].enabled = 0;
             }
+
             count++;
         }
     }

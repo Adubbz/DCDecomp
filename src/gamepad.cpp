@@ -17,14 +17,17 @@ void CGamePad::Init() {
     key_lock = 0;
     key_lock2 = 0;
     vibration_enabled = 1;
+
     while (sceGsSyncV(0) == 0) {
     }
+
     scePadInit(0);
     unk_130[1] = 0;
     unk_130[2] = 0;
     unk_130[3] = 0;
     unk_130[4] = 0;
     int i;
+
     for (i = 0; i < 2; i++) {
         pad[i].input.status.phase = 0;
         pad[i].input.status.button = 0;
@@ -32,31 +35,38 @@ void CGamePad::Init() {
         pad[i].input.status.right_x = 0;
         pad[i].input.status.left_y = 0;
         pad[i].input.status.left_x = 0;
+
         for (int j = 0; j < 6; j++) {
             pad[i].actuator.vibration[j] = 0;
             pad[i].actuator.vibration_timer[i] = 0;
         }
+
         axis_threshold[i] = 0;
         repeat[i].enabled = 0;
         repeat[i].active = 0;
+
         for (int j = 0; j < 32; j++) {
             repeat[i].counter[j] = 0;
             repeat[i].repeat_delay[j] = 0;
             repeat[i].initial_delay[j] = 0;
         }
     }
+
     if (!scePadPortOpen(0, 0, pad_dma_buf)) {
         printf("ERROR: scePadPortOpen\n");
         return;
     }
+
     sceGsSyncV(0);
     sceGsSyncV(0);
     sceGsSyncV(0);
     sceGsSyncV(0);
+
     if (!scePadPortOpen(1, 0, pad_dma_buf2)) {
         printf("ERROR: scePadPortOpen\n");
         return;
     }
+
     sceGsSyncV(0);
     sceGsSyncV(0);
     sceGsSyncV(0);
@@ -86,10 +96,13 @@ int pad_button_read(PAD_STATUS *status, int port, int slot) {
         rpad = 0;
         init = 1;
     }
+
     int mode = 0;
+
     if (!scePadRead(port, slot, data)) {
         return 0;
     }
+
     if (data[0] == 0) {
         int button = ((data[2] << 8) | data[3]) ^ 0xffff;
         status->button = button & 0xffff;
@@ -100,6 +113,7 @@ int pad_button_read(PAD_STATUS *status, int port, int slot) {
         rpad = button;
         mode = data[1] >> 4;
     }
+
     return mode;
 }
 
@@ -111,20 +125,25 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
     int          *previous_read_result = &status->previous_pad_mode;
 
     *state = scePadGetState(port, slot);
+
     if (*state == 0) {
         *phase = 0;
     }
 
     int valid = 0;
+
     switch (*phase) {
         case 0:
             if (*state == 6 || *state == 2) {
                 int terminal_id = scePadInfoMode(port, slot, 1, 0);
+
                 if (terminal_id != 0) {
                     *mode_count = scePadInfoMode(port, slot, 2, 0);
+
                     if (*mode_count > 0) {
                         terminal_id = *mode_count;
                     }
+
                     switch (terminal_id) {
                         case 2:
                             *phase = 99;
@@ -156,46 +175,56 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
                     }
                 }
             }
+
             break;
         case 40:
             if (scePadInfoMode(port, slot, 2, 0) == 0) {
                 *phase = 99;
                 break;
             }
+
             (*phase)++;
             // Fall through.
         case 41:
             if (scePadSetMainMode(port, slot, 1, 3) == 1) {
                 (*phase)++;
             }
+
             break;
         case 42:
             if (scePadGetState(port, slot) != 5) {
                 *phase = 0;
             }
+
             break;
         case 70:
             if (scePadInfoAct(port, slot, -1, 0) == 0) {
                 *phase = 99;
             }
+
             status->actuator[0] = 0;
             status->actuator[1] = 1;
+
             for (int i = 2; i < 6; i++) {
                 status->actuator[i] = 255;
             }
+
             if (scePadSetActAlign(port, slot, status->actuator)) {
                 (*phase)++;
             }
+
             break;
         case 71:
             if (scePadGetState(port, slot) != 5) {
                 *phase = 99;
             }
+
             break;
         default:
             if (*state == 6 || *state == 2) {
                 int result = pad_button_read(status, port, slot);
                 *read_result = result;
+
                 if (result != 0) {
                     if (*previous_read_result != 0 && *read_result != *previous_read_result) {
                         *previous_read_result = 0;
@@ -203,9 +232,11 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
                     } else {
                         valid = 1;
                     }
+
                     *previous_read_result = *read_result;
                 }
             }
+
             break;
     }
 
@@ -216,18 +247,21 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
         status->right_y = 128;
         status->right_x = 128;
     }
+
     if (*read_result == 4) {
         status->left_y = 128;
         status->left_x = 128;
         status->right_y = 128;
         status->right_x = 128;
     }
+
     return 0;
 }
 
 void CGamePad::UpDate() {
     static int  cnt;
     static char init;
+
     if (!init) {
         cnt = 0;
         init = 1;
@@ -240,6 +274,7 @@ void CGamePad::UpDate() {
     source = &pad[0].input.status.button;
     destination = &previous_pad[0].input.status.button;
     copy_count = 19;
+
     do {
         value = *source;
         source++;
@@ -247,11 +282,13 @@ void CGamePad::UpDate() {
         *destination = value;
         destination++;
     } while (copy_count > 0);
+
     read_pad(&pad[0].input.status, 0, 0);
 
     source = &pad[1].input.status.button;
     destination = &previous_pad[1].input.status.button;
     copy_count = 19;
+
     do {
         value = *source;
         source++;
@@ -259,24 +296,31 @@ void CGamePad::UpDate() {
         *destination = value;
         destination++;
     } while (copy_count > 0);
+
     read_pad(&pad[1].input.status, 1, 0);
 
     int i;
+
     for (i = 0; i < 2; i++) {
         int threshold = axis_threshold[i];
+
         if (threshold < 0) {
             threshold = 0;
         }
+
         if (threshold > 0) {
             if (threshold < GetLX()) {
                 pad[i].input.status.button |= 0x2000;
             }
+
             if (GetLX() < -threshold) {
                 pad[i].input.status.button |= 0x8000;
             }
+
             if (threshold < GetLY()) {
                 pad[i].input.status.button |= 0x4000;
             }
+
             if (GetLY() < -threshold) {
                 pad[i].input.status.button |= 0x1000;
             }
@@ -285,10 +329,12 @@ void CGamePad::UpDate() {
 
     int         bit = 1;
     PAD_REPEAT *repeat_state = &repeat[0];
+
     for (i = 0; i < 32; i++, bit <<= 1) {
         if (repeat_state->enabled & bit) {
             if ((pad[0].input.status.button & repeat_state->enabled) & bit) {
                 repeat_state->counter[i]++;
+
                 if (repeat_state->counter[i] >= repeat_state->initial_delay[i]) {
                     repeat_state->active |= bit;
                 }
@@ -296,6 +342,7 @@ void CGamePad::UpDate() {
                 repeat_state->counter[i] = 0;
                 repeat_state->active &= ~bit;
             }
+
             if (repeat_state->counter[i] >= repeat_state->repeat_delay[i] && (repeat_state->active & bit)) {
                 pad[0].input.status.button &= ~bit;
                 repeat_state->counter[i] = 0;
@@ -307,6 +354,7 @@ void CGamePad::UpDate() {
         if ((pad[i].input.status.button & 0x1000) && (pad[i].input.status.button & 0x4000)) {
             pad[i].input.status.button &= ~0x5000;
         }
+
         if ((pad[i].input.status.button & 0x2000) && (pad[i].input.status.button & 0x8000)) {
             pad[i].input.status.button &= ~0xa000;
         }
@@ -319,6 +367,7 @@ void CGamePad::UpDate() {
     pad[1].input.status.right_y = 128;
     pad[1].input.status.left_x = 128;
     pad[1].input.status.left_y = 128;
+
 #endif
     if (key_lock2) {
         pad[1].input.status.button = 0;
@@ -327,6 +376,7 @@ void CGamePad::UpDate() {
         pad[1].input.status.left_x = 128;
         pad[1].input.status.left_y = 128;
     }
+
     cnt = !((bool) cnt);
 }
 
@@ -345,12 +395,14 @@ void CGamePad::Step() {
             pad[i].input.status.vibration[0] = 0;
             pad[i].input.status.vibration[1] = 0;
         }
+
         if (pad[i].input.status.vibration_timer[0] > 0) {
             pad[i].input.status.vibration_timer[0]--;
         } else {
             pad[i].input.status.vibration_timer[0] = 0;
             pad[i].input.status.vibration[0] = 0;
         }
+
         if (pad[i].input.status.vibration_timer[1] > 0) {
             pad[i].input.status.vibration_timer[1]--;
         } else {
@@ -358,6 +410,7 @@ void CGamePad::Step() {
             pad[i].input.status.vibration[1] = 0;
         }
     }
+
     scePadSetActDirect(0, 0, pad[0].input.status.vibration);
 }
 
@@ -365,6 +418,7 @@ int AxisCalibration(int axis) {
     int zero;
     int calibrated = axis - 128;
     zero = 0;
+
     if (calibrated < 50 && calibrated > -50) {
         calibrated = zero;
     } else if (calibrated > zero) {
@@ -372,6 +426,7 @@ int AxisCalibration(int axis) {
     } else {
         calibrated = ((calibrated + 50) << 7) / 78;
     }
+
     return calibrated;
 }
 
@@ -415,6 +470,7 @@ void CGamePad::CancelAutoRepeat(int mask) {
     int         i;
     int         bit = 1;
     PAD_REPEAT *auto_repeat = &repeat[0];
+
     for (i = 0; i < 32; i++, bit <<= 1) {
         if (mask & bit) {
             auto_repeat->enabled &= ~bit;
@@ -430,6 +486,7 @@ void CGamePad::SetAutoRepeat(int mask, int initial_delay, int repeat_delay) {
     int         i;
     int         bit = 1;
     PAD_REPEAT *auto_repeat = &repeat[0];
+
     for (i = 0; i < 32; i++, bit <<= 1) {
         if (!(auto_repeat->enabled & bit) && (mask & bit)) {
             auto_repeat->enabled |= bit;
@@ -453,6 +510,7 @@ int CGamePad::GetPadOn() {
     if (key_lock) {
         return 0;
     }
+
     return pad[0].input.status.button;
 }
 
@@ -460,6 +518,7 @@ int CGamePad::GetPadDown() {
     if (key_lock) {
         return 0;
     }
+
     return pad[0].input.status.button & ~previous_pad[0].input.status.button;
 }
 
@@ -467,6 +526,7 @@ int CGamePad::GetPadUp() {
     if (key_lock) {
         return 0;
     }
+
     return ~pad[0].input.status.button & previous_pad[0].input.status.button;
 }
 
@@ -498,13 +558,16 @@ int CGamePad::On(int mask) {
     if (key_lock) {
         return 0;
     }
+
 #ifdef PAL
     if (mask == 0x800 && On2(0x800)) {
         return 1;
     }
+
     if (mask != 0x800 && On2(0x100)) {
         return 1;
     }
+
 #endif
     return (pad[0].input.status.button & mask) != 0;
 }
@@ -513,6 +576,7 @@ int CGamePad::On2(int mask) {
     if (key_lock) {
         return 0;
     }
+
     return (pad[1].input.status.button & mask) != 0;
 }
 
@@ -520,13 +584,16 @@ int CGamePad::Down(int mask) {
     if (key_lock) {
         return 0;
     }
+
 #ifdef PAL
     if (mask == 0x800 && On2(0x800)) {
         return 1;
     }
+
     if (mask != 0x800 && On2(0x100)) {
         return 1;
     }
+
 #endif
     return (mask & (pad[0].input.status.button & ~previous_pad[0].input.status.button)) != 0;
 }
@@ -535,6 +602,7 @@ int CGamePad::Down2(int mask) {
     if (key_lock) {
         return 0;
     }
+
     return (mask & (pad[1].input.status.button & ~previous_pad[1].input.status.button)) != 0;
 }
 
@@ -554,14 +622,17 @@ void CGamePad::SetVibration(int motor, int intensity, int duration) {
     if (!vibration_enabled) {
         return;
     }
+
     if (motor < 0 || motor >= 2 || duration < 0 || duration > 1200) {
         return;
     }
 
     pad[0].input.status.vibration_timer[motor] = duration;
+
     if (motor == 0) {
         intensity = intensity != 0;
     }
+
     pad[0].input.status.vibration[motor] = intensity;
 }
 

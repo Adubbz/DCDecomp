@@ -19,9 +19,11 @@ struct input_str {
     int get(int *value) {
         *value = (u_char) data[pos];
         pos++;
+
         if (size < pos) {
             return 0;
         }
+
         return 1;
     }
 };

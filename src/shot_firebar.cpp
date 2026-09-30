@@ -61,6 +61,7 @@ int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, in
         damage[particle] = collision_damage;
         particle_element[particle] = element;
     }
+
     return -1;
 }
 
@@ -76,6 +77,7 @@ void CSHOT_FIREBAR::Step() {
 
     // The particles hit what they touch once every thirty steps.
     msg_cnt++;
+
     if (msg_cnt >= 30) {
         msg_cnt = 0;
     }
@@ -84,6 +86,7 @@ void CSHOT_FIREBAR::Step() {
         if (state[particle] != -1 && state[particle] == 0) {
             opacity[particle] -= 4.0f;
             size[particle] += 0.06f;
+
             if (msg_cnt == 0) {
                 NowColData->Set(position[particle], damage[particle], 2, 4.0f, 1.0f, 2, 2, 0, 0);
                 NowColData->SetUserID(5, 6);
@@ -93,9 +96,11 @@ void CSHOT_FIREBAR::Step() {
                 CCollisionData *attr_col = NowColData;
                 attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(weapon_element);
             }
+
             position[particle][0] += velocity[particle][0];
             position[particle][1] += velocity[particle][1];
             position[particle][2] += velocity[particle][2];
+
             if (opacity[particle] <= 32.0f) {
                 state[particle] = -1;
             }
@@ -115,6 +120,7 @@ void CSHOT_FIREBAR::Draw() {
         if (state[particle] == -1) {
             continue;
         }
+
         if (!texture_loaded) {
             TexManager.ReloadTexture(Vif1Packet, 0x46);
             texture_loaded = 1;
@@ -146,6 +152,7 @@ void CSHOT_FIREBAR::Draw() {
                 row = 1;
                 break;
         }
+
         set3DCellModel(position[particle], "c05w_h", size[particle], column << 7, row << 7, 0x80, 0x80, (u8) (int) opacity[particle]);
     }
 }

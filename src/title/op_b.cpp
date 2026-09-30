@@ -225,12 +225,15 @@ void FaceChange(int actor_no) {
     if (actor_no == 1) {
         return;
     }
+
     if (actor_no == 4) {
         return;
     }
+
     if (actor_no == 5) {
         return;
     }
+
     if (actor_no == 7) {
         return;
     }
@@ -252,11 +255,13 @@ void FaceChange(int actor_no) {
                             face[actor_no].blink = 2;
                         }
                     }
+
                     break;
                 case 2:
                     if (CScript__2.obj[actor_no].eye > 0) {
                         CScript__2.obj[actor_no].eye--;
                     }
+
                     break;
             }
         } else if (rand() % 200 == 0) {
@@ -288,6 +293,7 @@ void FaceChange(int actor_no) {
             if (CScript__2.obj[2].eye == 4) {
                 CScript__2.obj[2].eye = 5;
             }
+
             if (CScript__2.obj[2].eye == 6) {
                 CScript__2.obj[2].eye = 7;
             }
@@ -356,6 +362,7 @@ void LoadCharaData(int buffer_no, int actor_no) {
             if (!ReadBGSync()) {
                 CScript__2.obj[actor_no].load_step = 2;
             }
+
             break;
         case 2:
             Chara__3[actor_no].Initialize();
@@ -443,6 +450,7 @@ void LoadMotionData() {
 void OpB_LoadDataBG() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn/norn.pak", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -450,6 +458,7 @@ void OpB_LoadDataBG() {
 void OpB_LoadDataBG2() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/toan/toan.pim", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -509,6 +518,7 @@ void OpB_InitProcess() {
     texture_list[17].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
     texture_list[18].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[19].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+
 #ifdef PAL
     switch (LanguageCode) {
         case 0:
@@ -533,6 +543,7 @@ void OpB_InitProcess() {
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
+
     texture_list[21].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
 #else
     texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -651,9 +662,11 @@ void OpB_InitProcess() {
         if (i == 4) {
             DoransFuusya[0] = frame;
         }
+
         if (i == 5) {
             DoransFuusya[1] = frame;
         }
+
         if (i >= 54 && i < 66) {
             TaimatsuFrame[i - 54] = frame;
         }
@@ -847,6 +860,7 @@ void OpB_InitProcess2() {
     texture_list[13].name = (char *) GetPackFile(read_buffer, "03komono.img", 0);
     texture_list[14].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[15].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+
 #ifdef PAL
     switch (LanguageCode) {
         case 0:
@@ -871,6 +885,7 @@ void OpB_InitProcess2() {
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
+
     texture_list[17].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
 #else
     texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -1009,6 +1024,7 @@ void OpB_MotionProcess() {
 
     for (int i = 0; i < 4; i++) {
         CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
+
         if (frame) {
             frame->GetLWMatrix(matrix);
 #ifdef PAL
@@ -1041,12 +1057,15 @@ void OpB_MotionProcess() {
 
         if (camera == 51) {
             Chara__3[8].ClothStep(-1);
+
             for (int i = 0; i < 10; i++) {
                 Chara__3[8].ClothStep(0);
             }
         }
+
         if (camera == 57) {
             Chara__3[11].ClothStep(-1);
+
             for (int i = 0; i < 10; i++) {
                 Chara__3[11].ClothStep(0);
             }
@@ -1056,6 +1075,7 @@ void OpB_MotionProcess() {
     if (CScript__2.scene == 1 && !Pause) {
         ObjAnimePlay(&Fuusya[0]);
         ObjAnimePlay(&Fuusya[1]);
+
         for (int i = 0; i < 12; i++) {
             ObjAnimePlay(&Taimatsu[i]);
         }
@@ -1066,10 +1086,12 @@ void OpB_MotionProcess() {
             Door.end_value[1] = -85.0f;
             Door.step_y = -2.8f;
         }
+
         if (CScript__2.sprite == 2) {
             Door.end_value[1] = 0.0f;
             Door.step_y = 1.2f;
         }
+
         if (!Pause) {
             ObjAnimePlay(&Door);
         }
@@ -1101,6 +1123,7 @@ void OpB_SoundProcess() {
                     } else {
                         OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 32);
                     }
+
                     wait = 4;
                 } else if (motion_frame > 38 && motion_frame < 40) {
                     if (camera_time < 387.0f) {
@@ -1108,6 +1131,7 @@ void OpB_SoundProcess() {
                     } else {
                         OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 33);
                     }
+
                     wait = 4;
                 }
             } else {
@@ -1123,10 +1147,12 @@ void OpB_SoundProcess() {
             CSnd.SetVol(0, (float) (OpGetVolSQ(0) * 1.0));
             CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.7));
         }
+
         if (CScript__2.camera_start == 55) {
             CSnd.SetVol(0, (float) (OpGetVolSQ(0) * 0.5));
             CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.1));
         }
+
         if (CScript__2.camera_start == 55 && CScript__2.obj[10].motion == 6) {
             static int    wait = 0;
             sceVu0FVECTOR position;
@@ -1181,6 +1207,7 @@ void OpB_DrawProcess() {
 
                 obj->Draw();
             }
+
             break;
 
         case 2:
@@ -1238,6 +1265,7 @@ void OpB_DrawProcess() {
             if (!Pause) {
                 Chara__3[i].ShadowStep();
             }
+
             Chara__3[i].DrawShadow();
         }
     }
@@ -1252,9 +1280,11 @@ void OpB_DrawProcess() {
                 Chara__3[i].Step();
                 Chara__3[i].ClothStep(0);
             }
+
             if (i == 9) {
                 FaceChangeC(i);
             }
+
             Chara__3[i].Draw();
         }
     }
@@ -1265,6 +1295,7 @@ void OpB_DrawProcess() {
         if (!Pause) {
             Komono.Step();
         }
+
         Komono.Draw();
     }
 
@@ -1277,6 +1308,7 @@ void OpB_DrawProcess() {
                 for (int i = 0; i < 68; i++) {
                     OP_NornMapObj[i].DrawShadow(0);
                 }
+
                 break;
 
             case 2:
@@ -1342,6 +1374,7 @@ static void setTexAnime() {
     MoveImageTest(Vif1Packet, sbp, sbw, 0, CRect<int>(0, (int) cnt * 64, 64, 64), dbp, dbw, 0, 0, 0, 0);
 
     cnt += 0.5f;
+
     if (cnt > 7.0f) {
         cnt = 0.0f;
     }

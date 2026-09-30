@@ -467,9 +467,11 @@ void LoadSceneBG() {
         case 0:
             while (ReadBGSync())
                 ;
+
             if (SceneCnt % 5 == 0) {
                 StartReadBG();
             }
+
             LoadFileBG(files[SceneCnt][0], (u_long128 *) PassReadBuffer, 0);
             SceneFlg = 1;
             break;
@@ -477,15 +479,18 @@ void LoadSceneBG() {
             if (ReadBGSync()) {
                 break;
             }
+
             slot = SceneRp;
             buffer = &PassDataBuffer[slot];
             buffer->used = 0;
             Cam__2[slot].LoadPackData((u_int *) PassReadBuffer, files[SceneCnt][1], buffer, 0);
             SceneCnt++;
             SceneRp++;
+
             if (SceneRp > 2) {
                 SceneRp = 0;
             }
+
             SceneFlg = 2;
             break;
         case 2:
@@ -496,11 +501,13 @@ void LoadSceneBG() {
 int OpeningLoop() {
     ReadBG();
     PauseProcess();
+
     if (Pause == 0) {
         CScript__2.Step();
         WaitKeyProcess();
         SceneChange();
     }
+
     MotionProcess();
     SoundProcess();
     DrawProcess();
@@ -515,13 +522,16 @@ int OpeningLoop() {
             return 1;
         }
     }
+
     /* These type-only names preserve the second exit's background-colour argument state. */
     typedef float ExitState0, ExitState1;
+
     if (CScript__2.end) {
         MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
         FadeCansel();
         return 1;
     }
+
     CSnd.Step();
     return 0;
 }
@@ -615,6 +625,7 @@ static void PauseProcess() {
     if (DispFade.GetRate() != 0.0) {
         return;
     }
+
     if (!endflg) {
         if (End) {
             return;
@@ -624,10 +635,13 @@ static void PauseProcess() {
             if (!GamePad.Down(2048)) {
                 return;
             }
+
             CSnd.Stop(0);
+
             if (CScript__2.scene) {
                 CSnd.Stop(1);
             }
+
             CSnd.SetVol(15, 0);
             CSnd.SetVol(14, 0);
             CSnd.SetVol(13, 0);
@@ -642,15 +656,18 @@ static void PauseProcess() {
                 CSnd.SetVol(14, 256);
                 CSnd.SetVol(13, 256);
                 CSnd.SetVol(12, 256);
+
                 if (CScript__2.scene) {
                     CSnd.SQ_RePlay(1);
                 }
+
                 if (OpBgmSqPort != -1) {
                     CSnd.SQ_RePlay(0);
                 }
             } else if (GamePad.Down(64)) {
                 while (ReadBGSync())
                     ;
+
                 End = 1;
                 DispFade.FadeOutStart(1.0f, 0);
             }
@@ -692,9 +709,11 @@ static void WaitKeyProcess() {
             PauseFrame = Cam__2[SceneNp__2].motion_type.state.time;
             flg = 1;
         }
+
         if (Pause) {
             return;
         }
+
         if (GamePad.Down(32) || GamePad.Down(64)) {
             if (Mes1.State() == 5) {
                 Mes1.text_rate = 1.0f;
@@ -767,13 +786,17 @@ static void MotionProcess() {
             Op_MotionInfo.end = CScript__2.motion_end;
             Op_MotionInfo.speed = CScript__2.motion_step;
             CScript__2.motion_req = 0;
+
             if (SceneSw == 1) {
                 SceneNp__2++;
+
                 if (SceneNp__2 > 2) {
                     SceneNp__2 = 0;
                 }
+
                 SceneFlg = 0;
             }
+
             SceneSw = 1;
             Cam__2[SceneNp__2].motion_type.state.time = (float) CScript__2.motion_start;
         } else {
@@ -785,17 +808,22 @@ static void MotionProcess() {
     if (Cam__2[SceneNp__2].motion_type.state.time > (float) (CScript__2.motion_end - 1)) {
         Cam__2[SceneNp__2].motion_type.state.time = (float) (CScript__2.motion_end - 1);
     }
+
     if (CameraMode == 0) {
         Cam__2[SceneNp__2].motion_type.state.camera = &OP_MainCamera;
+
         if (PauseFrame > (float) (CScript__2.motion_end - 1)) {
             PauseFrame = (float) (CScript__2.motion_end - 1);
         }
+
         if (Pause) {
             Cam__2[SceneNp__2].motion_type.state.time = PauseFrame - CScript__2.motion_step;
         }
+
         if (CScript__2.mes_wait == 1) {
             Cam__2[SceneNp__2].motion_type.state.time = PauseFrame - CScript__2.motion_step;
         }
+
         SetMotionEX(Cam__2[SceneNp__2].frame, &Cam__2[SceneNp__2].motion_type, &Op_MotionInfo, &Cam__2[SceneNp__2].motion_type.state, frame_info_cam);
         LoadSceneBG();
     }
@@ -855,6 +883,7 @@ static void SoundProcess() {
                     OpPlayVolSE(12, CScript__2.se_no, CScript__2.se_voice, 1.0f);
                     break;
             }
+
             CScript__2.se_voice = 0;
         }
     } else {
@@ -866,6 +895,7 @@ static void SoundProcess() {
                 CSnd.SE_Stop(12, CScript__2.se_no, CScript__2.se_voice, 0);
                 break;
         }
+
         CScript__2.se_stop = 0;
     }
 
@@ -884,6 +914,7 @@ static void SoundProcess() {
                 CSnd.Fade(12, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
                 break;
         }
+
         CScript__2.bgm_fade = 0;
     }
 
@@ -939,16 +970,20 @@ static void DrawProcess() {
     OP_MainCamera.GetPos(position);
     SndSetCamera(&OP_MainCamera);
     OP_MainCamera.GetCameraMatrix(camera);
+
     if (CScript__2.scene == 5 || CScript__2.scene == 8) {
         OP_MainCamera.Step(1);
     }
+
     sceVu0UnitMatrix(unit);
     sceVu0MulMatrix(view, unit, camera);
+
     if (CScript__2.scene != 1) {
         MGSetViewMatrix(view, position);
     } else {
         MGSetViewMatrix(view);
     }
+
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);
 
@@ -991,6 +1026,7 @@ static void DrawProcess() {
         setbilinear(0);
         MGFillBox(CRect<int>(0, 0, 10240, SCREEN_HEIGHT * 8), 0, 0, 0, 64);
         TexManager.ReloadTexture(Vif1Packet, 19);
+
 #ifdef PAL
         switch (LanguageCode) {
             case 0:
@@ -1015,6 +1051,7 @@ static void DrawProcess() {
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_s", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
         }
+
 #else
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
 #endif
@@ -1050,6 +1087,7 @@ static void DrawMess() {
     if (CScript__2.scene > 6) {
         Mes1.auto_page = 0;
     }
+
     if (CScript__2.mes_no == 0) {
         return;
     }
@@ -1069,9 +1107,12 @@ static void DrawMess() {
                 CScript__2.mes_no = 0;
             }
         }
+
         Mes1.end_mark = 0;
+
         if (CScript__2.mes_wait) {
             CScript__2.mes_timer = 2.0f * CScript__2.motion_step;
+
             if (Mes1.State() == 3 || (Mes1.auto_page == 0 && Mes1.State() == 5)) {
                 static int cnt = 0;
 
@@ -1080,7 +1121,9 @@ static void DrawMess() {
                 } else {
                     Mes1.end_mark = 0;
                 }
+
                 cnt++;
+
                 if (cnt > 31) {
                     cnt = 0;
                 }
@@ -1093,6 +1136,7 @@ static void DrawMess() {
     Mes1.auto_page_wait = CScript__2.mes_page_wait;
     Mes1.text_x = CScript__2.mes_x;
     Mes1.text_y = CScript__2.mes_y;
+
     if (CScript__2.mes_tail_x == 0) {
         Mes1.tail_length = 0;
         Mes1.grow_x = CScript__2.mes_x;
@@ -1108,6 +1152,7 @@ static void DrawMess() {
     center = Mes1.win_x + (Mes1.win_width >> 1);
     offset = (center - Mes1.tail_to_x) >> 2;
     Mes1.tail_x = center - offset;
+
     if (CScript__2.mes_tail_x != 0) {
         if (offset > 0) {
             Mes1.tail_length += offset / 3;
@@ -1115,15 +1160,19 @@ static void DrawMess() {
             Mes1.tail_length -= offset / 3;
         }
     }
+
     if (Mes1.grow_y > Mes1.tail_to_y) {
         Mes1.tail_y = Mes1.win_y + 20;
     } else {
         Mes1.tail_y = Mes1.win_y + Mes1.win_height - 20;
     }
+
     Mes1.fade_speed = 0.1f;
+
     if (Mes1MakeFlg) {
         Mes1MakeFlg = Mes1.MakeMesWin(CScript__2.mes_no);
     }
+
     Mes1.Step();
     Mes1.AbsFukidashiIn();
     Mes1.DrawMesWin();
@@ -1137,6 +1186,7 @@ void OpBgmPlay() {
     } else {
         CSnd.SQ_Play(0, 0, 0);
     }
+
     BgmVol = volumes[BgmNo];
     BgmNo++;
 }
@@ -1151,23 +1201,29 @@ void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group,
     int    pan_level;
 
     SndGetVolPan(&volume, &pan, position, near_dist, far_dist);
+
     if (pan < -1.0f) {
         pan = -1.0f;
     }
+
     if (pan > 1.0f) {
         pan = 1.0f;
     }
+
     pan_level = (int) (63.0f * pan) + 64;
     se_index = CSnd.GetSeNo(no, voice);
     se_info = CSnd.GetSeInfTbl();
     base_volume = se_info[se_index * 2 + 1];
     level = (int) ((float) base_volume * volume);
+
     if (level < 0) {
         level = 0;
     }
+
     if (level > 127) {
         level = 127;
     }
+
     CSnd.SE_Play(group, no, voice, pan_level, 127, level, 0);
 }
 
@@ -1181,24 +1237,30 @@ void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, 
     int    pan_level;
 
     SndGetVolPan(&volume, &pan, position, near_dist, far_dist);
+
     if (pan < -1.0f) {
         pan = -1.0f;
     }
+
     if (pan > 1.0f) {
         pan = 1.0f;
     }
+
     pan_level = (int) (63.0f * pan) + 64;
     CSnd.SE_SetPan(group, no, voice, pan_level, 0);
     se_index = CSnd.GetSeNo(no, voice);
     se_info = CSnd.GetSeInfTbl();
     base_volume = se_info[se_index * 2 + 1];
     level = (int) ((float) base_volume * volume);
+
     if (level < 0) {
         level = 0;
     }
+
     if (level > 127) {
         level = 127;
     }
+
     CSnd.SE_SetVol(group, no, voice, level, 0);
 }
 
@@ -1212,12 +1274,15 @@ void OpPlayVolSE(int group, int no, int voice, float volume) {
     se_info = CSnd.GetSeInfTbl();
     base_volume = se_info[se_index * 2 + 1];
     level = (int) ((float) base_volume * volume);
+
     if (level < 0) {
         level = 0;
     }
+
     if (level > 127) {
         level = 127;
     }
+
     CSnd.SE_Play(group, no, voice, 64, 127, level, 0);
 }
 
@@ -1491,9 +1556,11 @@ void OPAnalyz(char *name) {
     for (i = 0; i < 96; i++) {
         pointLight[i].used = 0;
     }
+
     pointLightStack = 0;
 
     position = 0;
+
     while (position < teigiFileSize) {
         matched = 0;
 
@@ -1502,9 +1569,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "GRD_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_GRD_IMG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1512,9 +1581,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BLD_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_BLD_IMG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1522,9 +1593,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "SKY_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_SKY_IMG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1532,9 +1605,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "GND", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_GRD);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1542,9 +1617,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BLD", 3) == 0 && memcmp(&buffer[position], "BLD_IMG", 7) != 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_BLD);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1552,9 +1629,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "LOD", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_LOD);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1562,9 +1641,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "SKY", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_SKY);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1572,9 +1653,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FOG", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_FOG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1582,9 +1665,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "CRD", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_CRD);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1592,9 +1677,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "AMBIENT", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_AMBIENT);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1602,9 +1689,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "LIGHT_C", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_LIGHT_COL);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1612,9 +1701,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FARCLIP", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_FARCLIP);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1624,9 +1715,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BG_COL2", 7) == 0) {
             position = skipSpace(buffer, position + 6);
             position = checkArg(buffer, position, TEIGI_BG_COL2);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1634,9 +1727,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BG_COL", 6) == 0) {
             position = skipSpace(buffer, position + 6);
             position = checkArg(buffer, position, TEIGI_BG_COL);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1644,9 +1739,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "NORMALCLIP_OFF", 14) == 0) {
             position = skipSpace(buffer, position + 14);
             position = checkArg(buffer, position, TEIGI_NORMALCLIP_OFF);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1654,9 +1751,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "RUN_SPEED", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_RUN_SPEED);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1664,9 +1763,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "EDIT_FOG", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_EDIT_FOG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1674,9 +1775,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "WATER_SET", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_WATER_SET);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1684,9 +1787,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "WATER_RGB", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_WATER_RGB);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1694,9 +1799,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "WATER_PARAM", 11) == 0) {
             position = skipSpace(buffer, position + 11);
             position = checkArg(buffer, position, TEIGI_WATER_PARAM);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1704,9 +1811,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "LEVEL_FAR", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_LEVEL_FAR);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1714,9 +1823,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "DebugFlag", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_DebugFlag);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1724,9 +1835,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "AnimeSpeed", 10) == 0) {
             position = skipSpace(buffer, position + 10);
             position = checkArg(buffer, position, TEIGI_AnimeSpeed);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1734,9 +1847,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "UPER", 4) == 0) {
             position = skipSpace(buffer, position + 4);
             position = checkArg(buffer, position, TEIGI_UPER);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1744,9 +1859,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "UPR_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_UPR_IMG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1754,9 +1871,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PLIGHT", 6) == 0) {
             position = skipSpace(buffer, position + 6);
             position = checkArg(buffer, position, TEIGI_PLIGHT);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1764,9 +1883,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "ADD_CRD", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_ADD_CRD);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1788,9 +1909,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_BASE", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_PT_BASE);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1798,9 +1921,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "MAPD", 4) == 0) {
             position = skipSpace(buffer, position + 4);
             position = checkArg(buffer, position, TEIGI_MAPD);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1808,9 +1933,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_COLS", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_PT_COLS);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1818,9 +1945,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_FIRE", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_PT_FIRE);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1828,9 +1957,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_WATER", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_PT_WATER);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1838,9 +1969,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "S_VOLUME", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_S_VOLUME);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1848,9 +1981,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PROJECTION", 10) == 0) {
             position = skipSpace(buffer, position + 10);
             position = checkArg(buffer, position, TEIGI_PROJECTION);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1858,9 +1993,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "OBJ_ROT", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_OBJ_ROT);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1868,9 +2005,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "MAPINFO", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_MAPINFO);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1878,9 +2017,11 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FIRE_IMG", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_FIRE_IMG);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1888,12 +2029,15 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FIRE", 4) == 0) {
             position = skipSpace(buffer, position + 4);
             position = checkArg(buffer, position, TEIGI_FIRE);
+
             if (position != -1) {
                 matched = 1;
             }
+
             position = skipSpace(buffer, position);
             argLevel++;
         }
+
         if (!matched) {
             exit__2(-1);
         }
@@ -2345,9 +2489,11 @@ static int skipSpace(char *buffer, int position) {
         if (buffer[position] == ' ') {
             skipped = 1;
         }
+
         if (buffer[position] == '\t') {
             skipped = 1;
         }
+
         if (buffer[position] == '\0') {
             position++;
             skipped = 1;
@@ -2357,6 +2503,7 @@ static int skipSpace(char *buffer, int position) {
             while (buffer[position] != '\0') {
                 position++;
             }
+
             position++;
             skipped = 1;
         }
@@ -2364,6 +2511,7 @@ static int skipSpace(char *buffer, int position) {
         if (!skipped) {
             return position;
         }
+
         position++;
     }
 
@@ -2404,12 +2552,14 @@ static int checkArg(char *buffer, int position, int *command) {
                 }
 
                 cursor++;
+
                 for (char_count = 0; char_count < 64; char_count++) {
                     if (buffer[cursor] == '"') {
                         argStrBuff[argLevel][char_count] = '\0';
                         cursor++;
                         break;
                     }
+
                     argStrBuff[argLevel][char_count] = buffer[cursor];
                     cursor++;
                 }
@@ -2427,6 +2577,7 @@ static int checkArg(char *buffer, int position, int *command) {
                 }
 
                 cursor = skipSpace(buffer, cursor + 1);
+
                 if (memcmp(&buffer[cursor], "ON", 2) == 0) {
                     argValBuff[argLevel][1 + i] = 1.0f;
                     cursor += 2;
@@ -2435,12 +2586,15 @@ static int checkArg(char *buffer, int position, int *command) {
                     cursor += 3;
                 } else {
                     accepted = 0;
+
                     if (buffer[cursor] == '-') {
                         accepted = 1;
                     }
+
                     if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                         accepted = 1;
                     }
+
                     if (!accepted) {
                         return -1;
                     }
@@ -2449,18 +2603,22 @@ static int checkArg(char *buffer, int position, int *command) {
 
                     for (char_count = 0; char_count < 32; char_count++) {
                         accepted = 0;
+
                         if (buffer[cursor] == '-') {
                             cursor++;
                             accepted = 1;
                         }
+
                         if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                             cursor++;
                             accepted = 1;
                         }
+
                         if (buffer[cursor] == '.') {
                             cursor++;
                             accepted = 1;
                         }
+
                         if (!accepted) {
                             break;
                         }
@@ -2483,12 +2641,15 @@ static int checkArg(char *buffer, int position, int *command) {
                     cursor += 3;
                 } else {
                     accepted = 0;
+
                     if (buffer[cursor] == '-') {
                         accepted = 1;
                     }
+
                     if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                         accepted = 1;
                     }
+
                     if (!accepted) {
                         return -1;
                     }
@@ -2497,18 +2658,22 @@ static int checkArg(char *buffer, int position, int *command) {
 
                     for (char_count = 0; char_count < 32; char_count++) {
                         accepted = 0;
+
                         if (buffer[cursor] == '-') {
                             cursor++;
                             accepted = 1;
                         }
+
                         if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                             cursor++;
                             accepted = 1;
                         }
+
                         if (buffer[cursor] == '.') {
                             cursor++;
                             accepted = 1;
                         }
+
                         if (!accepted) {
                             break;
                         }

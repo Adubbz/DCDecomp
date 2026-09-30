@@ -21,6 +21,7 @@ void CCameraFollow::Step(int steps) {
             this->SetNextPos(NULL, this->follow[0] + this->distance * sinf(this->angle), this->follow[1] + this->height, this->follow[2] + this->distance * cosf(this->angle));
             this->SetNextRef(NULL, this->follow[0], this->follow[1], this->follow[2]);
         }
+
         this->CCamera::Step(steps);
     } else {
         int i;
@@ -29,6 +30,7 @@ void CCameraFollow::Step(int steps) {
         if (this->next_angle > 6.283185307179586) {
             this->next_angle -= 6.2831855f;
         }
+
         if (this->next_angle < 0.0f) {
             this->next_angle += 6.2831855f;
         }
@@ -40,6 +42,7 @@ void CCameraFollow::Step(int steps) {
                 if (turn < 1.0f) {
                     turn = 1.0f;
                 }
+
                 this->angle = AngleInterpolate(this->angle, this->next_angle, turn, 1);
 
                 // An eye that reaches its position in about one step turns at
@@ -51,6 +54,7 @@ void CCameraFollow::Step(int steps) {
                 this->SetNextPos(NULL, this->follow[0] + this->distance * sinf(this->angle), this->follow[1] + this->height, this->follow[2] + this->distance * cosf(this->angle));
                 this->SetNextRef(NULL, this->follow[0], this->follow[1], this->follow[2]);
             }
+
             this->CCamera::Step(1);
         }
 
@@ -65,6 +69,7 @@ void CCameraFollow::Step(int steps) {
 
 void CCameraFollow::Stay() {
     this->CCamera::Stay();
+
     if (this->follow_on) {
         sceVu0CopyVector(this->follow, this->next_ref);
         this->next_angle = this->angle;

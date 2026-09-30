@@ -26,18 +26,23 @@ CFireOmni::CFireOmni() {
 
 void CFireOmni::FireStep() {
     cell_phase -= 0.4f;
+
     if (cell_phase <= 0.0f) {
         cell_phase = 14.8f;
     }
+
     flame_phase += 1.0f;
+
     if (!(flame_phase < 128.0f)) {
         flame_phase = 0.0f;
     }
+
     flicker_seed = (int) (60000.0f * (float) rand() / 2.1474836e9f);
 }
 
 void CFireOmni::FireCreate() {
     CTexture *texture = TexManager.GetTexture("d01e02", -1);
+
     if (texture == NULL) {
         return;
     }
@@ -78,6 +83,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
         if (core == NULL) {
             core = TexManager.GetTexture("lightling", -1);
         }
+
         if (glow == NULL) {
             glow = TexManager.GetTexture("blender", -1);
         }
@@ -115,6 +121,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
         world[1] = pos[1] + 4.6f;
         world[2] = pos[2];
         world[3] = 1.0f;
+
         if (MGRotTransPers3DSprite(top_left, bottom_right, world, 18.0f * scale, 9.0f * scale, 1) == 1) {
             set3DSpriteFog(Vif1Packet, core, CRect_i_(0, 0, 64, 64), top_left, bottom_right, &white);
             set3DSpriteFog(Vif1Packet, glow, CRect_i_(2, 2, 124, 124), top_left, bottom_right, &white);
@@ -144,6 +151,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
 
         flicker_count++;
         srand(flicker_seed);
+
         if (flicker_count >= 5) {
             flicker_height = flicker_width = 1.0f + 0.1f * rand() / 2147483648.0f;
             flicker_count = 0;
@@ -153,6 +161,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
         world[1] = pos[1] + 4.6f;
         world[2] = pos[2];
         world[3] = 1.0f;
+
         if (MGRotTransPers3DSprite(top_left, bottom_right, world, 45.0f * flicker_width * scale, 45.0f * flicker_height * scale / 2.0f, 1) == 1) {
             top_right[0] = bottom_right[0];
             top_right[1] = top_left[1];
@@ -165,9 +174,11 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
             world[0] += camera_direction[0];
             world[1] += camera_direction[1];
             world[2] += camera_direction[2];
+
             if (MGRotTransPers3DSprite(near_top_left, near_bottom_right, world, 45.0f * scale + flicker_width, (45.0f * scale + flicker_height) / 2.0f, 0) == 1) {
                 top_right[2] = top_left[2] = bottom_left[2] = bottom_right[2] = near_top_left[2];
             }
+
             set3DSpriteFog(Vif1Packet, core, CRect_i_(0, 0, 64, 64), top_left, top_right, bottom_left, bottom_right, 0x80);
         }
     }
@@ -186,6 +197,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
 void CFireOmni::RasterStep() {
     float phase = this->raster_phase + ((2.0f * (float) rand()) / 2.1474836e9f);
     this->raster_phase = phase;
+
     if (!(phase < 8.0f)) {
         this->raster_phase = 0.0f;
     }
@@ -200,6 +212,7 @@ void CFireOmni::DrawRaster() {
     world[1] = pos[1] + 3.0f;
     world[2] = pos[2];
     world[3] = 1.0f;
+
     if (MGRotTransPers3DSprite(top_left, bottom_right, world, 15.0f, 16.0f, 0) != 1) {
         return;
     }
@@ -209,13 +222,16 @@ void CFireOmni::DrawRaster() {
     int width = (bottom_right[0] - top_left[0]) >> 4;
     int height = (bottom_right[1] - top_left[1]) >> 4;
     height >>= 1;
+
     if (x + width > 639 && x < 640) {
         width = 639 - x;
     }
+
     if (x < 0 && x + width > 0) {
         width = x + width;
         x = 0;
     }
+
     if (y < 1) {
         height += y >> 1;
         y = 0;

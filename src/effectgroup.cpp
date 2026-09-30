@@ -9,6 +9,7 @@ int CEffectGroup::EnterEffect(CEffectParam *parameters) {
             return 1;
         }
     }
+
     return 0;
 }
 

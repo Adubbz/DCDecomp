@@ -70,6 +70,14 @@ done | xargs -P "$jobs" -n 2 sh -c '
     clang-tidy --quiet --load='"$plugin"' $fix "$1" -- '"$flags"' $extra > "'"$out"'/$name.log" 2>/dev/null || true
 '
 if [ -n "$merge" ]; then
+    # clang-tidy also exports the compiler's own fix-its for the MWCC syntax clang
+    # cannot parse (inline asm functions, register variables); only the checks'
+    # fixes are applied.
+    for yaml in "$merge"/*.yaml; do
+        [ -f "$yaml" ] || continue
+        awk '/^  - DiagnosticName:/ { skip = ($3 ~ /^clang-diagnostic-/) } /^[^ ]/ { skip = 0 } !skip' "$yaml" > "$yaml.tmp"
+        mv "$yaml.tmp" "$yaml"
+    done
     clang-apply-replacements -format -style=file "$merge"
 fi
 clang-tidy --quiet "$source" -- $(llvm-config --cxxflags) > "$out/plugin.log" 2>/dev/null || true

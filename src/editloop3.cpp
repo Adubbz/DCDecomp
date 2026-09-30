@@ -63,12 +63,14 @@
 
 ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function, ED_EVENT_POINT *points, int count) {
     ED_EVENT_POINT *point = GetNewEventPoint(points, count);
+
     if (point == NULL) {
         printf("event over!!\n");
         return NULL;
     }
 
     point->enabled = 1;
+
     if (parts->parts_no >= 0) {
         point->map_object = NULL;
         point->parts_no = parts->parts_no;
@@ -76,6 +78,7 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function, E
         point->map_object = parts;
         point->parts_no = -1;
     }
+
     sceVu0CopyVector(point->position, function->position);
     sceVu0CopyVector(point->rotation, function->rotation);
     point->start_time = ConvertTime(function->start_time);
@@ -83,9 +86,11 @@ ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function, E
     point->completion_flag = function->completion_flag;
     CFrame *frame = parts->frame[0];
     point->frame = NULL;
+
     if (frame != NULL) {
         point->frame = frame->SearchFrame(function->frame_name);
     }
+
     return point;
 }
 
@@ -96,16 +101,19 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
 
     for (int i = 0; i < 8 && indices != NULL; i++) {
         int point_index = indices[i];
+
         if (point_index <= 0) {
             continue;
         }
 
         ED_EVENT_POINT *point = &points[point_index];
+
         if (point->event_type != 1) {
             continue;
         }
 
         point->enabled = 1;
+
         if (parts->parts_no >= 0) {
             point->map_object = NULL;
             point->parts_no = parts->parts_no;
@@ -116,8 +124,10 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
 
         has_extent = 0;
         EPARTS_FUNC_DATA *function = functions;
+
         for (int j = 0; j < function_count; j++, function++) {
             int kind = function->kind;
+
             if (kind != 16 && kind != 11 && kind != 10 && kind != 2) {
                 kind = function->kind;
             } else if (function->link_id == points[point_index].map_no) {
@@ -131,6 +141,7 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->start_time = ConvertTime(function->start_time);
                     point->end_time = ConvertTime(function->end_time);
                     point->completion_flag = function->completion_flag;
+
                     if (has_extent == 0) {
                         sceVu0FVECTOR offset = {40.0f, 50.0f, -80.0f, 1.0f};
                         sceVu0FMATRIX matrix;
@@ -140,16 +151,20 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                         sceVu0AddVector(point->extent, offset, point->position);
                     }
                 }
+
                 if (function->kind == 16) {
                     sceVu0CopyVector(point->extent, function->position);
                     has_extent = 1;
                 }
+
                 if (function->kind == 10) {
                     point->side = 1;
                 }
+
                 if (function->kind == 11) {
                     point->side = -1;
                 }
+
                 if (function->kind == 10 || function->kind == 11) {
                     point->linked_value = (int) function->values[0];
                 }
@@ -159,11 +174,14 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
 
     created = 0;
     EPARTS_FUNC_DATA *function = functions;
+
     for (int i = 0; i < function_count; i++, function++) {
         ED_EVENT_POINT *point = NULL;
+
         switch (function->kind) {
             case 17:
                 point = GetNewEventPoint(parts, function, points, point_count);
+
                 if (point != NULL) {
                     point->event_type = 2;
                     point->trigger_range[2] = 15.0f;
@@ -174,10 +192,12 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->minimum_progress = (int) function->values[2];
                     point->secondary_progress = (int) function->values[3];
                 }
+
                 break;
             case 18:
                 if ((int) function->values[0] > 0) {
                     point = GetNewEventPoint(parts, function, points, point_count);
+
                     if (point != NULL) {
                         point->event_type = 3;
                         sceVu0CopyVector(point->trigger_range, function->parameters);
@@ -185,9 +205,11 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                         point->linked_value = (int) function->values[1];
                     }
                 }
+
                 break;
             case 19:
                 point = GetNewEventPoint(parts, function, points, point_count);
+
                 if (point != NULL) {
                     point->event_type = 4;
                     point->trigger_range[2] = 6.0f;
@@ -195,8 +217,10 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->trigger_range[0] = 6.0f;
                     point->trigger_range[3] = function->values[0];
                     point->side = (int) function->values[1];
+
                     for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
+
                         if (other->kind == 20 && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
                             point->linked_value = (int) other->values[1];
@@ -204,9 +228,11 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                         }
                     }
                 }
+
                 break;
             case 20:
                 point = GetNewEventPoint(parts, function, points, point_count);
+
                 if (point != NULL) {
                     point->event_type = 5;
                     point->trigger_range[2] = 6.0f;
@@ -214,8 +240,10 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                     point->trigger_range[0] = 6.0f;
                     point->trigger_range[3] = function->values[0];
                     point->linked_value = (int) function->values[1];
+
                     for (j = 0; j < function_count; j++) {
                         EPARTS_FUNC_DATA *other = &functions[j];
+
                         if (other->kind == 19 && other->link_id == function->link_id) {
                             sceVu0CopyVector(point->extent, other->position);
                             point->side = (int) other->values[1];
@@ -223,12 +251,15 @@ int EdInitEventPoint(CMapParts *parts, short *indices, EPARTS_FUNC_DATA *functio
                         }
                     }
                 }
+
                 break;
         }
+
         if (point != NULL) {
             created++;
         }
     }
+
     return created;
 }
 
@@ -237,6 +268,7 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
     int             i;
     ED_EVENT_POINT *point = points;
     float           nearest = -1.0f;
+
     for (i = 0; i < count; i++, point++) {
         if (!CheckEventPoint(point, time)) {
             continue;
@@ -252,28 +284,34 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
         sceVu0CopyVector(camera_rotation, point->rotation);
 
         CMapObject *object = point->map_object;
+
         if (point->parts_no >= 0) {
             object = ground->GetPartsObject(point->parts_no);
+
             if (object == NULL) {
                 continue;
             }
+
             GetPosRot(object, event_position, event_rotation);
             GetPosRot(object, camera_position, camera_rotation);
         } else {
             if (object != NULL) {
                 GetPosRot(object, event_position, event_rotation);
             }
+
             if (object != NULL) {
                 GetPosRot(object, camera_position, camera_rotation);
             }
         }
 
         float distance;
+
         if (point->event_type == 2) {
             sceVu0FVECTOR delta;
             sceVu0SubVector(delta, event_position, position);
             delta[1] = 0.0f;
             distance = DistVector(delta);
+
             if (event_position[1] < position[1] - 1.0f || !(event_position[1] <= position[1] + 20.0f)) {
                 distance = 1000000.0f;
             }
@@ -282,22 +320,27 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
         }
 
         int selected = 0;
+
         if (distance < point->trigger_range[0]) {
             selected = 1;
+
             switch (point->event_type) {
                 case 4:
                 case 1:
                     if (AngleCmp(rotation[1], event_rotation[1], 0.8f)) {
                         selected = 0;
                     }
+
                     break;
                 case 5:
                     if (AngleCmp(AngleLimit(rotation[1] - 3.14f), event_rotation[1], 0.8f)) {
                         selected = 0;
                     }
+
                     break;
             }
         }
+
         if (selected && (nearest < 0.0f || !(nearest <= point->trigger_range[0]))) {
             nearest = point->trigger_range[0];
             param->kind = point->event_type;
@@ -315,9 +358,11 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
             param->point = point;
         }
     }
+
     if (nearest > 0.0f) {
         return 1;
     }
+
     return 0;
 }
 
@@ -332,26 +377,31 @@ void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time) {
     ED_EVENT_POINT *point = points;
     static float    roty = 0.0f;
     roty += 0.05f;
+
     if (roty > 3.141592f) {
         roty -= 6.2831855f;
     }
 
     static float sys_eff_sc = 0.0f;
     static int   sys_eff_cnt = 0;
+
     if (sys_eff_sc > 1.0f) {
         sys_eff_sc = 0.0f;
         sys_eff_cnt = rand() % 20 + 10;
     }
+
     if (sys_eff_cnt < 0) {
         sys_eff_sc += 0.3f;
         sys_eff_cnt = 0;
     }
+
     sys_eff_cnt--;
 
     for (int i = 0; i < count; i++, point++) {
         if (CheckEventPoint(point, time) == 0) {
             continue;
         }
+
         switch (point->event_type) {
             case 2:
                 break;
@@ -359,29 +409,36 @@ void EdEventPointDraw(ED_EVENT_POINT *points, int count, float time) {
                 if (point->linked_value <= 0) {
                     continue;
                 }
+
                 break;
             default:
                 continue;
         }
+
         sceVu0FVECTOR position;
         sceVu0FVECTOR rotation;
         sceVu0CopyVector(position, point->position);
         sceVu0CopyVector(rotation, point->rotation);
         CMapObject *object = point->map_object;
+
         if (point->parts_no >= 0) {
             object = ground->GetPartsObject(point->parts_no);
+
             if (object == NULL) {
                 continue;
             }
+
             GetPosRot(object, position, rotation);
         } else if (object != NULL) {
             GetPosRot(object, position, rotation);
         }
+
         if (point->event_type == 2 && marker != NULL) {
             marker->SetPosition(position);
             marker->SetRotation(0.0f, rotation[1], 0.0f);
             MGDraw(marker);
         }
+
         if (point->event_type == 3) {
             sceVu0CopyVector(effect->position, position);
             effect->half_width = 2.0f * sys_eff_sc;
@@ -398,6 +455,7 @@ int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPol
     chara.body_width = 3.0f;
     int i;
     int found = 0;
+
     for (i = 0; i < count; i++, points++) {
         if (points->event_type == 2 && CheckEventPoint(points, time)) {
             sceVu0FVECTOR event_position;
@@ -405,19 +463,24 @@ int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPol
             sceVu0CopyVector(event_position, points->position);
             sceVu0CopyVector(event_rotation, points->rotation);
             CMapObject *object = points->map_object;
+
             if (points->parts_no >= 0) {
                 object = ground->GetPartsObject(points->parts_no);
+
                 if (object == NULL) {
                     continue;
                 }
+
                 GetPosRot(object, event_position, event_rotation);
             } else if (object != NULL) {
                 GetPosRot(object, event_position, event_rotation);
             }
+
             chara.SetPosition(event_position);
             found += chara.PickUpPoly(position, polygons);
         }
     }
+
     return found;
 }
 
@@ -425,6 +488,7 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int map_no, float time) {
     int             i;
     CEditGround    *ground = EdExchangeInfo.ground;
     ED_EVENT_POINT *point = EditMapInfo->work.events.points;
+
     for (i = 0; i < 256; i++, point++) {
         if (CheckEventPoint(point, time) && strcmp(point->destination, name) == 0 && point->map_no == map_no) {
             sceVu0FVECTOR event_position;
@@ -436,11 +500,14 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int map_no, float time) {
             sceVu0CopyVector(event_rotation, point->rotation);
             sceVu0CopyVector(camera_rotation, point->rotation);
             CMapObject *object = point->map_object;
+
             if (point->parts_no >= 0) {
                 object = ground->GetPartsObject(point->parts_no);
+
                 if (object != NULL) {
                     GetPosRot(object, event_position, event_rotation);
                 }
+
                 if (object != NULL) {
                     GetPosRot(object, camera_position, camera_rotation);
                 }
@@ -448,10 +515,12 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int map_no, float time) {
                 if (object != NULL) {
                     GetPosRot(object, event_position, event_rotation);
                 }
+
                 if (object != NULL) {
                     GetPosRot(object, camera_position, camera_rotation);
                 }
             }
+
             param->kind = point->event_type;
             param->parts_no = point->parts_no;
             sceVu0CopyVector(param->position, event_position);
@@ -461,6 +530,7 @@ int EdSearchEvent(ED_EVENT_PARAM *param, char *name, int map_no, float time) {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -468,7 +538,9 @@ void EdMapJump(int kind, char *name) {
     if (name == NULL || *name == '\0') {
         return;
     }
+
     int index;
+
     if (kind >= 3) {
         index = kind;
     }
@@ -479,9 +551,11 @@ void EdMapJump(int kind, char *name) {
     char       filename[64];
     int        size;
     sprintf(filename, "%s.scn", name);
+
     if (LoadFileBG(filename, buffer, &size) == 0) {
         name[strlen(name) - 1] = '\0';
         sprintf(filename, "%s.scn", name);
+
         if (LoadFileBG(filename, buffer, &size) == 0) {
             return;
         }
@@ -492,14 +566,18 @@ void EdMapJump(int kind, char *name) {
     LoadFileBG(filename, buffer, &size);
     buffer = (u_long128 *) (EdNPCBuffer.base + EdNPCBuffer.used * 16);
     sprintf(filename, "%s.pak", name);
+
     if (LoadFileBG(filename, buffer, &size) == 0) {
         sprintf(filename, "%s.img", name);
+
         if (LoadFileBG(filename, buffer, &size) == 0) {
             return;
         }
     }
+
     if (size > 0x200000) {
         printf("img size over!!!\n");
+
         while (1) {
         }
     }
@@ -517,13 +595,16 @@ void EdPartsObjectOnOff(CMapParts *parts, EDITPARTS_INFO *info, int mode) {
         }
 
         int enabled = info->elements[element].enabled != 0;
+
         for (int i = 0; i < 32; i++) {
             names[i] = storage[i];
             names[i][0] = '\0';
         }
+
         GetElementObjName(info, names, element, mode);
 
         char prefix;
+
         for (int i = 0; (prefix = names[i][0]) != '\0'; i++) {
             if (prefix == '*') {
                 if (enabled) {
@@ -532,6 +613,7 @@ void EdPartsObjectOnOff(CMapParts *parts, EDITPARTS_INFO *info, int mode) {
                     parts->FrameObjectOnOff(names[i] + 1, 0);
                 }
             }
+
             if (names[i][0] == '-') {
                 parts->FrameObjectOnOff(names[i] + 1, draw_flag[!enabled]);
             } else {
@@ -568,15 +650,19 @@ void EdCreateVillagerTable(EDIT_MAP_INFO *info) {
     int i;
     int period;
     int candidate_count = 0;
+
     for (i = 0; i < 16; i++) {
         candidates[i] = -1;
     }
+
     for (i = 0; i < 15; i++) {
         int villager = info->people_list[i];
+
         if (villager >= 0) {
             candidates[candidate_count++] = villager;
         }
     }
+
     if (candidate_count > 0) {
         for (period = 0; period < 4; period++) {
             for (i = 0; i < 100; i++) {
@@ -586,6 +672,7 @@ void EdCreateVillagerTable(EDIT_MAP_INFO *info) {
                 candidates[first] = candidates[second];
                 candidates[second] = value;
             }
+
             for (i = 0; i < 10; i++) {
                 info->time_tables[0][period][i] = candidates[i];
             }
@@ -606,9 +693,11 @@ void EdVillagerAppearOut(int index, int priority) {
     if (index < 0 || index >= 16) {
         return;
     }
+
     if (appear[index].priority > priority) {
         return;
     }
+
     appear[index].action = 2;
     appear[index].priority = priority;
 }
@@ -617,9 +706,11 @@ void EdVillagerAppearIn(int index, int priority) {
     if (index < 0 || index >= 16) {
         return;
     }
+
     if (appear[index].priority > priority) {
         return;
     }
+
     appear[index].action = 1;
     appear[index].priority = priority;
 }
@@ -628,9 +719,11 @@ void EdVillagerAppearOff(int index, int priority) {
     if (index < 0 || index >= 16) {
         return;
     }
+
     if (appear[index].priority > priority) {
         return;
     }
+
     appear[index].action = 3;
     appear[index].priority = priority;
 }
@@ -639,9 +732,11 @@ void EdVillagerAppearOn(int index, int priority) {
     if (index < 0 || index >= 16) {
         return;
     }
+
     if (appear[index].priority > priority) {
         return;
     }
+
     appear[index].action = 4;
     appear[index].priority = priority;
 }
@@ -650,9 +745,11 @@ void EdVillagerAppearMove(int index, int destination, int priority) {
     if (index < 0 || index >= 16) {
         return;
     }
+
     if (appear[index].priority > priority) {
         return;
     }
+
     appear[index].destination = destination;
 }
 
@@ -675,36 +772,47 @@ int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_i
     EdGetTime(clock);
 
     int i;
+
     for (i = 0; i < 10; i++) {
         select_table[i] = -1;
     }
 
     int selected_count = 0;
+
     for (i = 0; i < 16 && selected_count < 6; i++) {
         int action = appear[i].action;
+
         if (action == 4 || action == 2) {
             select_table[selected_count++] = i;
         }
     }
+
     for (i = 0; i < 10 && selected_count < 6; i++) {
         int j;
         int duplicate;
         int index = appear_table[i];
+
         if (index < 0) {
             break;
         }
+
         int action = appear[index].action;
+
         if (action == 3 || action == 1) {
             continue;
         }
+
         duplicate = 0;
+
         for (j = 0; j < selected_count; j++) {
             int selected = select_table[j];
+
             if (selected == index) {
                 duplicate = 1;
                 break;
             }
         }
+
         if (duplicate == 0) {
             select_table[selected_count++] = index;
         }
@@ -712,20 +820,25 @@ int EdSelectVillager(VILLAGER_INFO *villagers, float clock, EDIT_MAP_INFO *map_i
 
     for (i = 0; i < 10; i++) {
         int index = select_table[i];
+
         if (index < 0) {
             villagers[i].name[0] = '\0';
         } else {
             villagers[i] = map_info->villagers[index];
             VILLAGER_APPEAR_STATE *state = &appear[select_table[i]];
+
             if (state->action != 0 && state->destination >= 0) {
                 villagers[i].initial_motion = state->destination;
             }
+
             restore_info[i] = villagers[i];
         }
     }
+
     if (i < 9) {
         villagers[i].name[0] = '\0';
     }
+
     return i;
 }
 
@@ -733,6 +846,7 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villager) {
     if (index < 0 || index >= 16) {
         return 0;
     }
+
     switch (appear[index].action) {
         case 3:
         case 2:
@@ -745,17 +859,23 @@ int EdCheckVillagerIn(int index, VILLAGER_INFO *villager) {
             }
         case 1: {
             int parts_no = villager->character_no;
+
             if (parts_no < 0) {
                 return 1;
             }
+
             EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(parts_no);
+
             if (parts == NULL) {
                 return 0;
             }
+
             int model = villager->model_no;
+
             if (model < 0) {
                 return 0;
             }
+
             return parts->elements[model].enabled != 0 ? 1 : 0;
         }
         default:
@@ -767,24 +887,33 @@ int EdCheckVillager(int index, VILLAGER_INFO *villager, CEditGround *ground) {
     if (index < 0 || index >= 16) {
         return 0;
     }
+
     if (ground == NULL) {
         return 0;
     }
+
     int parts_no = villager->character_no;
+
     if (parts_no < 0) {
         return 1;
     }
+
     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(parts_no);
+
     if (parts == NULL) {
         return 0;
     }
+
     if (ground->GetPartsObject(villager->character_no) == NULL) {
         return 0;
     }
+
     int model = villager->model_no;
+
     if (model < 0) {
         return 0;
     }
+
     return parts->elements[model].enabled != 0 ? 1 : 0;
 }
 
@@ -792,14 +921,17 @@ static int GetRandomVillager(VILLAGER_INFO *villagers) {
     int candidates[10] = {-1};
     int count = 0;
     int i;
+
     for (i = 0; i < 10; i++) {
         if (villagers[i].placed == 0 && villagers[i].name[0] != '\0') {
             candidates[count++] = i;
         }
     }
+
     if (count <= 0) {
         return -1;
     }
+
     return candidates[rand() % count];
 }
 
@@ -807,14 +939,17 @@ static int GetRandomMoveVillager(VILLAGER_INFO *villagers) {
     int candidates[10] = {-1};
     int count = 0;
     int i;
+
     for (i = 0; i < 10; i++) {
         if (villagers[i].placed == 0 && villagers[i].name[0] != '\0' && villagers[i].initial_motion != 0) {
             candidates[count++] = i;
         }
     }
+
     if (count <= 0) {
         return -1;
     }
+
     return candidates[rand() % count];
 }
 
@@ -825,9 +960,11 @@ void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *ground, u_long128 *buf
     int            size;
     int            i;
     u_long128     *load_buffer = (u_long128 *) read_buffer;
+
     if (buffer != NULL) {
         load_buffer = buffer;
     }
+
     for (i = 0; i < 10; i++) {
         info[i] = &villagers[i];
         villagers[i].placed = 0;
@@ -836,6 +973,7 @@ void EdInitVilager(VILLAGER_INFO *villagers, CEditGround *ground, u_long128 *buf
         strcpy(EdVillager[i].resource_name, info[i]->name);
         GetEditDataDir(directory);
         sprintf(path, "%schara/%s.chr", directory, info[i]->name);
+
         if (buffer != NULL) {
             LoadFileBG(path, load_buffer, &size);
             load_buffer += (((size >> 6) + 1) << 6) >> 4;
@@ -852,20 +990,25 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
     strcpy(copied_name, name);
     villager->texture_block = texture_set;
     strcpy(villager->resource_name, copied_name);
+
     if (GetPackFile(pack, "info.cfg", NULL) != NULL) {
         sprintf(config_name, "info.cfg");
     } else {
         sprintf(config_name, "%s.cfg", name);
     }
+
     villager->LoadPackData2(pack, config_name, arena, texture_set, arena, 0);
+
     if (villager->frame != NULL) {
         CFrameAttr attr;
         attr.clip_enable = 0;
         attr.fog_enable = 1;
         villager->frame->SetAttr(attr, 1, 4);
     }
+
     villager->initialized = 1;
     villager->alpha_step = 8;
+
     if (MapNo > 10) {
         villager->initialized = 1;
         villager->draw_enabled = 1;
@@ -879,6 +1022,7 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
         villager->motion_flags = 0;
         villager->motion_speed = -1.0f;
     }
+
     villager->texture_block = texture_set;
     return 1;
 }
@@ -886,30 +1030,39 @@ int EdLoadVillager(u_int *pack, char *name, CNPCharacter *villager, CDataAlloc2<
 int EdLoadVillager(char *name, CNPCharacter *villager, CDataAlloc2<1> *arena) {
     char path[64];
     char directory[64];
+
     if (name == NULL || *name == '\0') {
         return 0;
     }
+
     GetEditDataDir(directory);
     sprintf(path, "%schara/%s.chr", directory, name);
+
     if (LoadFile2(path, (void *) read_buffer, NULL, 0) != 0) {
         return EdLoadVillager(read_buffer, name, villager, arena);
     }
+
     return 0;
 }
 
 void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers, CEditGround *ground) {
     for (int i = 0; i < 10; i++) {
         VILLAGER_INFO *villager = &villagers[i];
+
         if (villager->placed != 0) {
             int draw = 0;
             int parts_no = villager->character_no;
+
             if (parts_no >= 0 && characters[i].villager_id >= 0) {
                 characters[i].map_parts_no = parts_no;
+
                 if (ground->GetPartsObject(villager->character_no) != NULL) {
                     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(villager->character_no);
+
                     if (parts->obtained > 0 && parts->elements[villager->model_no].enabled != 0) {
                         draw = 1;
                     }
+
                     if (EditPartsInfo.CheckComplete(villager->character_no) != 0 && EditPartsInfo.GetCompEvent(villager->character_no) == 0 && villager->hide_when_complete != 0) {
                         draw = 0;
                     }
@@ -918,6 +1071,7 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers, CEd
                 characters[i].map_parts_no = parts_no;
                 draw = 1;
             }
+
             characters[i].draw_enabled = draw;
         }
     }
@@ -928,13 +1082,16 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
 
     if (MapNo > 10) {
         RestoreVillagerInfo(info);
+
         for (i = 0; i < 10; i++) {
             int draw = 1;
+
             if (info[i].index >= 0) {
                 VILLAGER_INFO *entry = &info[i];
                 sceVu0FVECTOR  position;
                 sceVu0FVECTOR  rotation;
                 sceVu0FVECTOR  people_position;
+
                 if (ground->GetPeoplePos(entry->index, people_position) != 0) {
                     rotation[2] = 0.0f;
                     rotation[0] = 0.0f;
@@ -947,6 +1104,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                 } else {
                     draw = 0;
                 }
+
                 villagers[i].ClearSeq();
                 villagers[i].event_status = 0;
                 villagers[i].villager_id = entry->index;
@@ -955,34 +1113,42 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                 villagers[i].draw_enabled = draw;
             }
         }
+
         return;
     }
 
     int villager_count = 0;
+
     while (info[villager_count].name[0] != '\0') {
         villager_count++;
     }
+
     RestoreVillagerInfo(info);
     int stationary_target = villager_count >> 1;
     int moving_target = villager_count - stationary_target;
     int random_state = rand();
+
     for (i = 0; i < 10; i++) {
         info[i].placed = 0;
     }
+
     while (info[villager_count].name[0] != '\0') {
         villager_count++;
     }
 
     int stationary_count = 0;
+
     for (i = 0; i < 10; i++) {
         if (info[i].placed == 0 && info[i].initial_motion == 0) {
             stationary_count++;
             info[i].placed = 1;
+
             if (stationary_count >= stationary_target) {
                 break;
             }
         }
     }
+
     while (stationary_count < stationary_target) {
         int index = GetRandomVillager(info);
         info[index].placed = 1;
@@ -991,24 +1157,30 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
     }
 
     int moving_count = 0;
+
     while (moving_count < moving_target) {
         int selected = GetRandomMoveVillager(info);
+
         if (selected < 0) {
             break;
         }
+
         info[selected].placed = 1;
         info[selected].initial_motion = 1;
         int           failed = 0;
         int           avoid_count = 0;
         sceVu0FVECTOR avoid_positions[11];
+
         if (transform != NULL) {
             sceVu0CopyVector(avoid_positions[avoid_count++], *transform);
         }
+
         for (i = 0; i < 10; i++) {
             if (info[selected].initial_motion != 0) {
                 sceVu0CopyVector(avoid_positions[avoid_count++], info[i].position);
             }
         }
+
         for (i = 0; i < avoid_count; i++) {
             avoid_positions[i][3] = 200.0f;
         }
@@ -1017,33 +1189,42 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
         sceVu0FVECTOR reference;
         reference[3] = -1.0f;
         CMapObject *object = ground->GetPartsObject(info[selected].character_no);
+
         if (object != NULL) {
             sceVu0CopyVector(reference, object->pos);
             reference[3] = 200.0f;
         }
+
         for (;;) {
             if (ground->GetRandomPlanePos(random_position, avoid_positions, avoid_count, reference) != 0) {
                 sceVu0CopyVector(info[selected].position, random_position);
                 break;
             }
+
             if (reference[3] > 500.0f) {
                 reference[3] = -1.0f;
+
                 if (ground->GetRandomPlanePos(random_position, avoid_positions, avoid_count, reference) != 0) {
                     sceVu0CopyVector(info[selected].position, random_position);
                     break;
                 }
+
                 failed = 1;
                 break;
             }
+
             reference[3] += 100.0f;
         }
+
         if (failed != 0) {
             info[selected].placed = 0;
         }
+
         moving_count++;
     }
 
     int selected = GetRandomVillager(info);
+
     while (selected >= 0) {
         info[selected].placed = 1;
         info[selected].initial_motion = 0;
@@ -1052,6 +1233,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
 
     for (i = 0; i < 10; i++) {
         VILLAGER_INFO *entry = &info[i];
+
         if (entry->placed != 0) {
             sceVu0FVECTOR position;
             sceVu0FVECTOR rotation;
@@ -1059,13 +1241,17 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
             sceVu0CopyVector(rotation, entry->rotation);
             int draw = 0;
             int parts_no = entry->character_no;
+
             if (parts_no >= 0) {
                 villagers[i].map_parts_no = parts_no;
+
                 if (ground->GetPartsObject(entry->character_no) != NULL) {
                     EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(entry->character_no);
+
                     if (parts->obtained > 0 && parts->elements[entry->model_no].enabled != 0) {
                         draw = 1;
                     }
+
                     if (EditPartsInfo.CheckComplete(entry->character_no) != 0 && EditPartsInfo.GetCompEvent(entry->character_no) == 0 && entry->hide_when_complete != 0) {
                         draw = 0;
                     }
@@ -1074,8 +1260,10 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                 villagers[i].map_parts_no = parts_no;
                 draw = 1;
             }
+
             if (entry->initial_motion == 0) {
                 sceVu0FVECTOR people_position;
+
                 if (ground->GetPeoplePos(entry->index, people_position) != 0) {
                     rotation[2] = 0.0f;
                     rotation[0] = 0.0f;
@@ -1088,6 +1276,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
                     draw = 0;
                 }
             }
+
             CNPCharacter *character = &villagers[i];
             character->ClearSeq();
             villagers[i].event_status = entry->initial_motion;
@@ -1098,6 +1287,7 @@ void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGr
             villagers[i].SetMotion(0, 0);
         }
     }
+
     srand(random_state);
 }
 
@@ -1112,21 +1302,27 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
     camera->GetDir(camera_direction);
     camera->GetPos(camera_position);
     int i;
+
     for (i = 0; i < 10; i++) {
         indices[i] = i;
         distances[i] = -1.0f;
+
         if (villagers[i].near_camera != 0) {
             villagers[i].near_camera = 0;
             villagers[i].GetPosition(villager_position);
             sceVu0SubVector(camera_offset, villager_position, camera_position);
+
             if (sceVu0InnerProduct(camera_offset, camera_direction) > 0.0f) {
                 distances[i] = DistVector(player_position, villager_position);
             }
         }
     }
+
     i = 0;
+
     while (i < 9) {
         int compare_index = i + 1;
+
         while (compare_index < 10) {
             if (distances[compare_index] >= 0.0f) {
                 if (distances[i] > distances[compare_index] || distances[i] < 0.0f) {
@@ -1138,8 +1334,10 @@ static void GetNearVill(CCamera *camera, CCharacter *player, CNPCharacter *villa
                     distances[compare_index] = distance;
                 }
             }
+
             compare_index++;
         }
+
         i++;
     }
 }
@@ -1168,19 +1366,25 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         near_camera = (s32 *) ((char *) &EdVillager->near_camera + offset);
         *near_camera = 0;
         VILLAGER_INFO *info = &villagers[i];
+
         if (info->placed == 0) {
             continue;
         }
+
         sceVu0CopyVector(position, info->position);
         sceVu0CopyVector(rotation, info->rotation);
+
         if (info->character_no >= 0 && (*(s32 *) ((char *) &EdVillager->draw_enabled + offset)) == 0) {
             continue;
         }
+
         if (info->character_no >= 0 && info->initial_motion == 0) {
             EDITPARTS_INFO *parts = EditPartsInfo.GetPartsInfo(info->character_no);
+
             if (parts->obtained == 0 || parts->elements[info->model_no].enabled == 0) {
                 continue;
             }
+
             *near_camera = 1;
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
@@ -1189,6 +1393,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             sceVu0CopyVector(position, info->position);
             sceVu0CopyVector(rotation, info->rotation);
         }
+
         if (info->initial_motion == 0) {
             ((CCharacter *) ((char *) EdVillager + offset))->CCharacter::SetPosition(position);
             ((CCharacter *) ((char *) EdVillager + offset))->CCharacter::SetRotation(rotation[0], rotation[1], rotation[2]);
@@ -1200,12 +1405,14 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             sceVu0CopyVector(villager_position, npc->pos);
             float distance = DistVector(player_position, villager_position);
             (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 1;
+
             if (distance < 20.0f) {
                 (*(s32 *) ((char *) &EdVillager->sequence_enabled + offset)) = 0;
                 *(s32 *) ((char *) &EdVillager->motion_no + offset) = 0;
                 *(s32 *) ((char *) &EdVillager->motion_flags + offset) = 0;
                 *(float *) ((char *) &EdVillager->motion_speed + offset) = -1.0f;
             }
+
             EdSetVillagerNextPos(npc, info, ground);
         }
     }
@@ -1213,10 +1420,12 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
     int   indices[10];
     float distances[10];
     GetNearVill(camera, player, EdVillager, indices, distances);
+
     for (int j = 0; j < 2; j++) {
         if (distances[j] < 0.0f) {
             break;
         }
+
         if (distances[j] < 150.0f) {
             EdVillager[indices[j]].near_camera = 1;
         }
@@ -1226,6 +1435,7 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
         EdVillager[i].Step();
         EdVillager[i].ShadowStep();
         EdVillager[i].ClothStep(0);
+
         if (EdVillager[i].event_status != 0) {
             sceVu0FVECTOR position;
             sceVu0FVECTOR hit;
@@ -1233,12 +1443,14 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
             float altitude = ground->GetAlt(position[0], position[1], position[2]);
             EdVillager[i].SetPosition(position[0], altitude, position[2]);
             EdVillager[i].FootSoundEnable(0);
+
             if (EdVillager[i].CheckDraw()) {
                 EdVillager[i].FootSoundEnable(1);
                 WorkBuffer__2->used = 0;
                 CCPoly    *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
                 int        count = ground->PickUpEditAreaPoly(polys, position[0], position[1], position[2]);
                 CMapParts *parts = ground->GetParts(position[0], position[1], position[2]);
+
                 if (parts != NULL) {
                     CBoxVu0 box;
                     box.max[0] = position[0] + 20.0f;
@@ -1248,18 +1460,22 @@ void EdMoveVillager(VILLAGER_INFO *villagers) {
                     box.max[1] = 1000.0f;
                     box.min[1] = -1000.0f;
                     CFrame *frame = parts->GetCollisionFrame();
+
                     if (frame != NULL) {
                         count += frame->PickUpNearPoly(polys + count, box);
                     }
                 }
+
                 if (count > 0) {
                     CCPoly poly;
                     position[1] += 30.0f;
+
                     if (GetFootPoly(position, 1000.0f, &poly, hit, polys, count, 0)) {
                         altitude = hit[1];
                         EdVillager[i].SetFootSoundID(poly.attr.foot_sound);
                     }
                 }
+
                 position[1] = altitude;
                 EdVillager[i].SetPosition(position);
             }
@@ -1271,11 +1487,13 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
     CCharacter *player = EdExchangeInfo.player;
     CCamera    *camera = EdExchangeInfo.camera;
     int         i;
+
     for (i = 0; i < 10; i++) {
         if (EdVillager[i].villager_id >= 0) {
             EdVillager[i].near_camera = 0;
             EdVillager[i].SetPosition(villagers[i].position);
             EdVillager[i].SetRotation(villagers[i].rotation);
+
             if (EdVillager[i].frame != NULL) {
                 EdVillager[i].near_camera = 1;
             }
@@ -1285,10 +1503,12 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
     int   indices[10];
     float distances[10];
     GetNearVill(camera, player, EdVillager, indices, distances);
+
     for (int i = 0; i < 2; i++) {
         if (distances[i] < 0.0f) {
             break;
         }
+
         if (distances[i] < 150.0f) {
             EdVillager[indices[i]].near_camera = 1;
         }
@@ -1298,6 +1518,7 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers) {
         if (EdVillager[i].villager_id < 0) {
             EdVillager[i].near_camera = 1;
         }
+
         EdVillager[i].Step();
         EdVillager[i].ShadowStep();
         EdVillager[i].ClothStep(0);
@@ -1326,16 +1547,20 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
     villager->GetRotation(rotation);
 
     int nearby_count = 0;
+
     for (i = 0; i < 10; i++) {
         CNPCharacter *other = &EdVillager[i];
+
         if (villager != other) {
             int active = other->initialized != 0 && other->draw_enabled != 0;
+
             if (active && other->event_status != 0) {
                 other->GetPosition(nearby_positions[nearby_count]);
                 sceVu0SubVector(nearby_offsets[nearby_count], nearby_positions[nearby_count], position);
                 float  distance = DistVector(nearby_offsets[nearby_count]);
                 float *slot = &nearby_distances[nearby_count];
                 *slot = distance;
+
                 if (distance <= 210.0f) {
                     nearby_count++;
                 }
@@ -1344,15 +1569,19 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
     }
 
     int facing = 0;
+
     if (rotation[1] >= -0.785398f && rotation[1] < 0.785398f) {
         facing = 0;
     }
+
     if (rotation[1] >= 0.785398f && rotation[1] < 2.356194f) {
         facing = 1;
     }
+
     if (rotation[1] >= 2.356194f || rotation[1] < -2.356194f) {
         facing = 2;
     }
+
     if (rotation[1] >= -2.356194f && rotation[1] < -0.785398f) {
         facing = 3;
     }
@@ -1364,24 +1593,29 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
     weights[4] = 15;
     int        total = weights[4];
     CMapParts *current_parts = ground->GetParts(position[0], position[1], position[2]);
+
     for (i = 0; i < 4; i++) {
         int blocked;
         int direction = i + facing;
+
         if (direction > 3) {
             direction -= 4;
         }
+
         float        *offset = directions[direction];
         sceVu0FVECTOR destination;
         sceVu0AddVector(destination, position, offset);
         int weight = weights[i];
         weights[i] = 0;
         blocked = 0;
+
         for (int j = 0; j < nearby_count; j++) {
             if ((float) (int) sceVu0InnerProduct(nearby_offsets[j], offset) > 0.0f) {
                 blocked = 1;
                 break;
             }
         }
+
         if (blocked == 0) {
             CBoxVu0 box;
             ground->GetPartsBox(&box, destination[0], destination[1], destination[2]);
@@ -1389,16 +1623,21 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
             box.max[2] += 200.0f;
             box.min[0] -= 200.0f;
             box.min[2] -= 200.0f;
+
             if (destination[0] <= box.max[0] && destination[0] >= box.min[0] && destination[2] <= box.max[2] && destination[2] >= box.min[2]) {
                 CMapParts *next_parts = ground->GetParts(destination[0], destination[1], destination[2]);
+
                 if (next_parts == NULL && ground->GetAreaCode(destination[0], destination[1], destination[2]) >= 0) {
                     weight /= 5;
+
                     if (weight <= 0) {
                         weight = 1;
                     }
+
                     total += weight;
                     weights[i] = weight;
                 }
+
                 if (next_parts != NULL && (next_parts->subtype == 1 || (current_parts != NULL && current_parts->subtype != 3 && next_parts->subtype == 3))) {
                     total += weight;
                     weights[i] = weight;
@@ -1406,12 +1645,15 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
             }
         }
     }
+
     for (i = 0; i < 5; i++) {
         weights[i] = weights[i] * 100 / total;
     }
+
     for (i = 1; i < 5; i++) {
         weights[i] = weights[i] + weights[i - 1];
     }
+
     for (i = 0; i < 5; i++) {
         if (weights[i] == 0) {
             weights[i] = -1;
@@ -1419,21 +1661,26 @@ static void EdSetVillagerNextPos(CNPCharacter *villager, VILLAGER_INFO *info, CE
     }
 
     int random = rand() % 100;
+
     for (i = 0; i < 4; i++) {
         if (random < weights[i]) {
             break;
         }
     }
+
     if (i < 4) {
         int direction = i + facing;
+
         if (direction > 3) {
             direction -= 4;
         }
+
         sceVu0FVECTOR destination;
         sceVu0AddVector(destination, position, directions[direction]);
         villager->SetSeq(destination, info->move_speed);
         return;
     }
+
     villager->SetWait(60);
 }
 
@@ -1441,9 +1688,11 @@ int EdCheckTime(float time, float start, float end) {
     if (!(start <= end) && !(start <= time) && end <= time) {
         return 0;
     }
+
     if (start < end && (!(start <= time) || end <= time)) {
         return 0;
     }
+
     return 1;
 }
 
@@ -1452,23 +1701,29 @@ int EdGetTime(float time) {
     float period_end;
 
     period = (int) (time / 3.0f);
+
     if (EdCheckTime(time, 11.5f, 2.5f) != 0) {
         period = 0;
     }
+
     if (EdCheckTime(time, 2.5f, 5.5f) != 0) {
         period = 1;
     }
+
     if (EdCheckTime(time, 5.5f, 8.5f) != 0) {
         period = 2;
     }
+
     if (EdCheckTime(time, 8.5f, 11.5f) != 0) {
         period = 3;
     }
+
     return period;
 }
 
 void EdLimitShadowLight(float light[][4], float scale) {
     light[1][0] = light[1][0] * scale;
+
     if (light[1][0] < 1.0f) {
         light[1][0] = 1.0f;
     }
@@ -1499,51 +1754,66 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
     sky_index = (int) (clock / 3.0f);
     next_sky = sky_index + 1;
     previous_sky = sky_index - 1;
+
     if (EditMapInfo->time_stop != 0) {
         clock = 0.0f;
         sky_index = 0;
         next_sky = 0;
         previous_sky = 0;
     }
+
     if (next_sky > 3) {
         next_sky = 0;
     }
+
     if (previous_sky < 0) {
         previous_sky = (int) previous_sky;
     }
+
     current_sky = sky[sky_index];
     following_sky = sky[next_sky];
+
     if (current_sky != NULL && following_sky == NULL) {
         following_sky = (CFrameVu1 *) following_sky;
     }
 
     camera->GetPos(position);
+
     if (follow_axes[0] == 0) {
         position[0] = 0.0f;
     }
+
     if (follow_axes[1] == 0) {
         position[1] = 0.0f;
     }
+
     if (follow_axes[2] == 0) {
         position[2] = 0.0f;
     }
+
     sceVu0CopyVector(cloud_position, position);
     cloud_position[1] -= 50.0f;
 
     mgRenderInfo.unlit = 1;
+
     if (clouds != NULL) {
         clouds->SetPosition(cloud_position);
     }
+
     if (clouds != NULL) {
         clouds->SetScale(1.0f, 1.0f, 1.0f);
     }
+
     MGDraw(clouds);
+
     if (clouds != NULL) {
         clouds->SetPosition(cloud_position);
     }
+
     if (clouds != NULL) {
         clouds->SetScale(1.0f, -1.0f, 1.0f);
     }
+
     MGDraw(clouds);
     mgRenderInfo.unlit = 0;
 
@@ -1551,22 +1821,29 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
     sceVu0CopyVector(ambient, old_ambient);
     transition = 0;
     sun_index = 2;
+
     if (clock >= 9.0f && clock < 12.0f) {
         sun_index = 3;
     }
+
     if (clock >= 0.0f && clock < 3.5f) {
         sun_index = 0;
     }
+
     if (clock >= 3.5f && clock < 5.5f) {
         sun_index = 1;
     }
+
     next_sun = sun_index + 1;
+
     if (next_sun > 3) {
         next_sun = 0;
     }
+
     current_sun = sun[sun_index];
     following_sun = sun[next_sun];
     moon = sun[2];
+
     if (EditMapInfo->time_stop != 0) {
         next_sun = 0;
         sun_index = 0;
@@ -1574,6 +1851,7 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
         current_sun = following_sun;
         moon = following_sun;
     }
+
     if (current_sun != NULL && following_sun != NULL && moon == NULL) {
         moon = (CFrame *) moon;
     }
@@ -1582,28 +1860,38 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
         ambient[3] = 2.0f * (128.0f * (12.0f - clock));
         transition = 1;
     }
+
     if (clock > 3.0f && clock < 3.5f) {
         ambient[3] = 2.0f * (128.0f * (3.5f - clock));
         transition = 1;
     }
+
     float *ambient_alpha = &ambient[3];
     float  alpha = *ambient_alpha;
     float  adjusted_clock = clock;
+
     if (clock > 10.0f) {
         adjusted_clock = clock - 12.0f;
     }
+
     float sun_rotation = 3.141592f * ((2.0f + adjusted_clock) / 6.0f) - 1.5707964f;
+
     if (sun_rotation > 3.141592f) {
         sun_rotation -= 6.283184f;
     }
+
     float moon_rotation = 1.2f * (3.141592f * ((clock - 4.0f) / 6.0f) - 1.5707964f);
+
     if (sun_index != 2) {
         float absolute_rotation = sun_rotation < 0.0f ? -sun_rotation : sun_rotation;
+
         if (absolute_rotation < 1.57f) {
             TexManager.ReloadTexture(Vif1Packet, 7);
+
             if (transition != 0) {
                 *ambient_alpha = 128.0f - alpha;
                 MGSetAmbient(ambient);
+
                 if (next_sun != 2 && following_sun != NULL) {
                     following_sun->SetTransMatrix(identity);
                     following_sun->SetRotation(0.0f, 0.0f, sun_rotation);
@@ -1611,7 +1899,9 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
                     MGDraw(following_sun);
                 }
             }
+
             *ambient_alpha = alpha;
+
             if (sun_index != 2 && current_sun != NULL) {
                 current_sun->SetTransMatrix(identity);
                 MGSetAmbient(ambient);
@@ -1623,63 +1913,81 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
     }
 
     mgRenderInfo.unlit = 1;
+
     if (clouds != NULL) {
         clouds->SetPosition(cloud_position);
     }
+
     if (clouds != NULL) {
         clouds->SetScale(1.0f, -1.0f, 1.0f);
     }
+
     MGDraw(clouds);
     mgRenderInfo.unlit = 0;
 
     *ambient_alpha = 128.0f;
     transition = 0;
+
     if (clock > 2.0f && clock < 3.0f) {
         *ambient_alpha = 128.0f * (3.0f - clock);
         transition = 1;
     }
+
     if (clock > 5.0f && clock < 6.0f) {
         *ambient_alpha = 128.0f * (6.0f - clock);
         transition = 1;
     }
+
     if (clock > 8.0f && clock < 9.0f) {
         *ambient_alpha = 128.0f * (9.0f - clock);
         transition = 1;
     }
+
     if (clock > 11.0f) {
         *ambient_alpha = 128.0f * (12.0f - clock);
         transition = 1;
     }
+
     float sky_alpha = ambient[3];
+
     if (transition != 0) {
         *ambient_alpha = 128.0f - sky_alpha;
         MGSetAmbient(ambient);
         TexManager.ReloadTexture(Vif1Packet, next_sky + 3);
+
         if (following_sky != NULL) {
             following_sky->SetPosition(position);
         }
+
         MGDraw(following_sky);
     }
+
     *ambient_alpha = sky_alpha;
     MGSetAmbient(ambient);
     TexManager.ReloadTexture(Vif1Packet, sky_index + 3);
+
     if (current_sky != NULL) {
         current_sky->SetPosition(position);
     }
+
     MGDraw(current_sky);
     MGSetAmbient(old_ambient);
 
     if (sun_index == 2 && moon != NULL) {
         *ambient_alpha = 0.0f;
+
         if (clock > 5.5f && clock < 9.0) {
             TexManager.ReloadTexture(Vif1Packet, 7);
             *ambient_alpha = 128.0f;
+
             if (clock > 5.5f && clock < 6.0f) {
                 *ambient_alpha = 128.0f - 2.0f * (128.0f * (6.0f - clock));
             }
+
             if (clock > 8.5f && clock < 9.0f) {
                 *ambient_alpha = 2.0f * (128.0f * (9.0f - clock));
             }
+
             MGSetAmbient(ambient);
             moon->SetTransMatrix(identity);
             moon->SetRotation(0.0f, 0.0f, moon_rotation);
@@ -1687,16 +1995,19 @@ void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CC
             MGDraw(moon);
         }
     }
+
     MGSetAmbient(old_ambient);
 }
 
 void EdDrawLensFlare(float time, CFrame **sky) {
     int sky_index = (int) (time / 3.0f);
+
     if (!EdCheckTime(time, (0, 10.0f), 4.0f)) {
         return;
     }
 
     CFrame **sky_slot = &sky[sky_index];
+
     if (*sky_slot == NULL) {
         return;
     }
@@ -1705,12 +2016,15 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     int           screen[4];
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
     CFrame       *light = NULL;
+
     if (sky_index == 0) {
         light = (*sky_slot)->SearchFrame("sun1");
     }
+
     if (sky_index == 1) {
         light = (*sky_slot)->SearchFrame("sun2");
     }
+
     if (sky_index == 3) {
         light = (*sky_slot)->SearchFrame("moon");
     }
@@ -1718,6 +2032,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     if (light != NULL) {
         light->GetWorldPosition(position, origin);
     }
+
     if (position[1] < -100.0f) {
         return;
     }
@@ -1726,6 +2041,7 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     float inverse = 1.0f - fraction;
     int   current = (int) time;
     int   next = current + 1;
+
     if (next >= 12) {
         next = 0;
     }
@@ -1751,15 +2067,19 @@ void EdDrawLensFlare(float time, CFrame **sky) {
     if (!MGRotTransPers2D(screen, position, 0)) {
         return;
     }
+
     mgPickZBuff->enable = 1;
     mgPickZBuff->x = screen[0];
     mgPickZBuff->y = screen[1];
+
     if (mgPickZBuff->z >= 0) {
         if (mgPickZBuff->z > screen[2] + 100) {
             return;
         }
+
         TexManager.ReloadTexture(GetVif1Packet(), 23);
         CTexture *texture = TexManager.GetTexture("lensfler", 23);
+
         if (texture != NULL) {
             LensFlare(texture, position, red, green, blue);
         }
@@ -1769,11 +2089,14 @@ void EdDrawLensFlare(float time, CFrame **sky) {
 void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky) {
     int current = (int) clock;
     int next = (int) clock + 1;
+
     if (info->time_stop != 0) {
         next = current;
     }
+
     float current_weight = (float) next - clock;
     float next_weight = 1.0f - current_weight;
+
     if (next >= 12) {
         next = 0;
     }
@@ -1784,6 +2107,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
     sceVu0FVECTOR  background;
     sceVu0FVECTOR  current_background;
     sceVu0FVECTOR  next_background;
+
     if (fixed != 0) {
         float zero = 0.0f;
         MGSetBGColor(zero, zero, zero, zero = 0.0f);
@@ -1835,6 +2159,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
     sceVu0CopyMatrix(next_colour, info->light_colour[next]);
     sceVu0TransposeMatrix(current_direction, info->light_direction[current]);
     sceVu0TransposeMatrix(next_direction, info->light_direction[next]);
+
     for (int i = 0; i < 4; i++) {
         sceVu0ScaleVector(current_colour[i], current_colour[i], current_weight);
         sceVu0ScaleVector(next_colour[i], next_colour[i], next_weight);
@@ -1843,6 +2168,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
         sceVu0ScaleVector(next_direction[i], next_direction[i], next_weight);
         sceVu0AddVector(direction[i], current_direction[i], next_direction[i]);
     }
+
     sceVu0Normalize(direction[0], direction[0]);
     sceVu0Normalize(direction[1], direction[1]);
     sceVu0Normalize(direction[2], direction[2]);
@@ -1852,8 +2178,10 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
 
     if (sky != NULL) {
         CVisualVu1 *visual = sky->GetVisual();
+
         if (visual != NULL) {
             MDT_HEADER *model = (MDT_HEADER *) visual->GetMDTDataAddress();
+
             if (model != NULL && model->colour_count != 0) {
                 sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((char *) model + model->colour_ofs);
                 sceVu0FVECTOR  primary;
@@ -1872,6 +2200,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
                 secondary[0] /= 128.0f;
                 secondary[1] /= 128.0f;
                 secondary[2] /= 128.0f;
+
                 for (int i = 0; i < 32; i++) {
                     if (i % 4 < 2) {
                         vertices[i][0] = primary[0];
@@ -1885,6 +2214,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
                         vertices[i][3] = 1.0f;
                     }
                 }
+
                 sky->attr.remake_pending = 1;
             }
         }
@@ -1897,6 +2227,7 @@ int EdInitToEPInfo(INIT_PARTSINFO *init, EPARTS_INFO_HEADER *header) {
     header->height = init->height;
     header->kind = init->kind;
     header->cell = NULL;
+
     for (int i = 0; i < 6; i++) {
         header->element_id[i] = init->element_id[i];
         header->element_name[i] = NULL;
@@ -1904,6 +2235,7 @@ int EdInitToEPInfo(INIT_PARTSINFO *init, EPARTS_INFO_HEADER *header) {
 
     u8 *write = (u8 *) header + header->header_size;
     header->cell = write;
+
     for (int i = 0; i < header->width * header->height; i++) {
         *write++ = init->cell[i][0];
     }
@@ -1915,6 +2247,7 @@ int EdInitToEPInfo(INIT_PARTSINFO *init, EPARTS_INFO_HEADER *header) {
         *write++ = '\0';
         *write++ = '\0';
     }
+
     header->data_size = write - (u8 *) header;
     return header->data_size;
 }
@@ -1951,13 +2284,16 @@ void EdFadeIn(int frames, float red, float green, float blue) {
     if (fade_in_out == 0 || frames < 0) {
         fade_col[3] = 128.0f;
     }
+
     fade_in_out = 1;
     fade_end = 0;
+
     if (frames < 0) {
         fade_step = 0.0f;
     } else {
         fade_step = 128.0f / (float) frames;
     }
+
     fade_col[0] = red;
     fade_col[1] = green;
     fade_col[2] = blue;
@@ -1967,13 +2303,16 @@ void EdFadeOut(int frames, float red, float green, float blue) {
     if (fade_in_out == 0 || frames < 0) {
         fade_col[3] = 0.0f;
     }
+
     fade_in_out = -1;
     fade_end = 0;
+
     if (frames < 0) {
         fade_step = 0.0f;
     } else {
         fade_step = 128.0f / (float) frames;
     }
+
     fade_col[0] = red;
     fade_col[1] = green;
     fade_col[2] = blue;
@@ -2004,12 +2343,15 @@ void EdFadeInOut() {
     if (fade_in_out == 0) {
         return;
     }
+
     red = (int) fade_col[0];
     green = (int) fade_col[1];
     blue = (int) fade_col[2];
     alpha = (int) fade_col[3];
+
     if (fade_in_out > 0) {
         fade_col[3] -= fade_step;
+
         if (fade_col[3] <= 0.0f) {
             fade_col[3] = 0.0f;
             fade_in_out = 0;
@@ -2017,11 +2359,13 @@ void EdFadeInOut() {
         }
     } else {
         fade_col[3] += fade_step;
+
         if (fade_col[3] >= 128.0f) {
             fade_col[3] = 128.0f;
             fade_end = 1;
         }
     }
+
     for (x = 0; x < 640; x += 64) {
         for (y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
             rect.x = x * 16;
@@ -2036,21 +2380,27 @@ void EdFadeInOut() {
 static float GetMaxHeightCursor(float *position) {
     int height = 0;
     int count;
+
     for (count = 0; count < 8; count++) {
         EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[count];
+
         if (area->maximum[0] == area->minimum[0] || area->maximum[2] == area->minimum[0]) {
             break;
         }
     }
+
     if (count == 0) {
         return 0.0f;
     }
+
     for (int i = 0; i < count; i++) {
         EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[i];
+
         if (position[0] <= area->maximum[0] && position[2] <= area->maximum[2] && position[0] >= area->minimum[0] && position[2] >= area->minimum[2] && height < area->minimum[1]) {
             height = area->minimum[1];
         }
     }
+
     return height;
 }
 
@@ -2063,12 +2413,15 @@ void LimitEditCursorPos(float *position, float *movement) {
     sceVu0AddVector(position, position, movement);
 
     int count;
+
     for (count = 0; count < 8; count++) {
         EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[count];
+
         if (area->maximum[0] == area->minimum[0] || area->maximum[2] == area->minimum[0]) {
             break;
         }
     }
+
     if (count == 0) {
         position[1] = 0.0f;
         return;
@@ -2076,6 +2429,7 @@ void LimitEditCursorPos(float *position, float *movement) {
 
     for (int i = 0; i < count; i++) {
         EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[i];
+
         if (position[0] <= area->maximum[0] && position[2] <= area->maximum[2] && position[0] >= area->minimum[0] && position[2] >= area->minimum[2]) {
             position[1] = GetMaxHeightCursor(position);
             return;
@@ -2084,14 +2438,17 @@ void LimitEditCursorPos(float *position, float *movement) {
 
     float nearest_distance = -1.0f;
     int   nearest = -1;
+
     for (int i = 0; i < count; i++) {
         EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[i];
+
         if (previous[0] <= area->maximum[0] && previous[2] <= area->maximum[2] && previous[0] >= area->minimum[0] && previous[2] >= area->minimum[2]) {
             VectorMin(clamped, position, area->maximum);
             VectorMax(clamped, clamped, area->minimum);
             sceVu0SubVector(displacement, clamped, position);
             displacement[1] = 0.0f;
             float distance = DistVector(displacement);
+
             if (nearest < 0) {
                 nearest = i;
                 nearest_distance = distance;
@@ -2101,6 +2458,7 @@ void LimitEditCursorPos(float *position, float *movement) {
             }
         }
     }
+
     if (nearest >= 0) {
         EDIT_AREA_RECT_INFO *area = &EditMapInfo->edit_area_rects[nearest];
         VectorMin(position, position, area->maximum);
@@ -2117,84 +2475,106 @@ void LimitEditCursorPos(float *position, float *movement) {
     float                max_z_distance;
     float                x = position[0];
     max_x_distance = x - area->maximum[0];
+
     if (max_x_distance < 0.0f) {
         max_x_distance = -max_x_distance;
     } else {
         max_x_distance = max_x_distance;
     }
+
     min_x_distance = x - area->minimum[0];
+
     if (min_x_distance < 0.0f) {
         min_x_distance = -min_x_distance;
     } else {
         min_x_distance = min_x_distance;
     }
+
     float z = position[2];
     max_z_distance = z - area->maximum[2];
+
     if (max_z_distance < 0.0f) {
         max_z_distance = -max_z_distance;
     } else {
         max_z_distance = max_z_distance;
     }
+
     min_z_distance = z - area->minimum[2];
+
     if (min_z_distance < 0.0f) {
         min_z_distance = -min_z_distance;
     } else {
         min_z_distance = min_z_distance;
     }
+
     if (max_z_distance < min_z_distance) {
         max_z_distance = max_z_distance;
     } else {
         max_z_distance = min_z_distance;
     }
+
     if (max_x_distance < min_x_distance) {
         max_x_distance = max_x_distance;
     } else {
         max_x_distance = min_x_distance;
     }
+
     nearest_distance = max_x_distance + max_z_distance;
 
     for (int i = 1; i < count; i++) {
         area = &EditMapInfo->edit_area_rects[i];
         max_x_distance = x - area->maximum[0];
+
         if (max_x_distance < 0.0f) {
             max_x_distance = -max_x_distance;
         } else {
             max_x_distance = max_x_distance;
         }
+
         min_x_distance = x - area->minimum[0];
+
         if (min_x_distance < 0.0f) {
             min_x_distance = -min_x_distance;
         } else {
             min_x_distance = min_x_distance;
         }
+
         max_z_distance = z - area->maximum[2];
+
         if (max_z_distance < 0.0f) {
             max_z_distance = -max_z_distance;
         } else {
             max_z_distance = max_z_distance;
         }
+
         min_z_distance = z - area->minimum[2];
+
         if (min_z_distance < 0.0f) {
             min_z_distance = -min_z_distance;
         } else {
             min_z_distance = min_z_distance;
         }
+
         if (max_z_distance < min_z_distance) {
             max_z_distance = max_z_distance;
         } else {
             max_z_distance = min_z_distance;
         }
+
         if (max_x_distance < min_x_distance) {
             max_x_distance = max_x_distance;
         } else {
             max_x_distance = min_x_distance;
         }
+
         float distance = max_x_distance + max_z_distance;
+
         if (distance < nearest_distance) {
             nearest_distance = distance;
             nearest = i;
         }
     }
+
     area = &EditMapInfo->edit_area_rects[nearest];
     VectorMin(position, position, area->maximum);
     VectorMax(position, position, area->minimum);
@@ -2205,6 +2585,7 @@ void EdSePlay(ED_SOUND_ID sound, int pan) {
     if (sound < 0 || sound >= ED_SOUND_COUNT) {
         return;
     }
+
     SndSePlay(sound, pan, 0);
 }
 
@@ -2215,6 +2596,7 @@ static ED_SPRITE *GetSprite(int index) {
     if (index < 0 || index >= 16) {
         return NULL;
     }
+
     return &Sprite[index];
 }
 
@@ -2222,6 +2604,7 @@ static void InitSprite(ED_SPRITE *sprite) {
     if (sprite == NULL) {
         return;
     }
+
     memset(sprite, 0, sizeof(ED_SPRITE));
     sprite->alpha = 128;
     sprite->blue = 128;
@@ -2238,6 +2621,7 @@ static OBJ_ANIME_SEQ *GetObjAnime(int index) {
     if (index < 0 || index >= 16) {
         return NULL;
     }
+
     return &obj_anime[index];
 }
 
@@ -2246,9 +2630,12 @@ static void ClearObjAnime(int index) {
         for (int i = 0; i < 16; i++) {
             obj_anime[i].property = -1;
         }
+
         return;
     }
+
     OBJ_ANIME_SEQ *anime = GetObjAnime(index);
+
     if (anime != NULL) {
         anime->property = -1;
     }
@@ -2407,6 +2794,7 @@ static int SetWorkFlag(int index, int value) {
     if (index < 0 || index >= 32) {
         return 0;
     }
+
     work_flag[index] = value;
     return 1;
 }
@@ -2415,6 +2803,7 @@ static int GetWorkFlag(int index) {
     if (index < 0 || index >= 32) {
         return 0;
     }
+
     return work_flag[index];
 }
 
@@ -2425,6 +2814,7 @@ static int GetStackInt(RS_STACKDATA *stack) {
     if (stack->type == RS_FLOAT) {
         return (int) stack->f;
     }
+
     return stack->i;
 }
 
@@ -2435,6 +2825,7 @@ static float GetStackFloat(RS_STACKDATA *stack) {
     if (stack->type == RS_INT) {
         return (float) stack->i;
     }
+
     return stack->f;
 }
 
@@ -2470,17 +2861,21 @@ static OBJ_HANDLE *GetObjHandle(int index) {
     if (index < 0 || index >= 32) {
         return NULL;
     }
+
     return &ObjHandle[index];
 }
 
 static int SetObjHandle(int index, CMapParts *map_parts, char *frame_name) {
     OBJ_HANDLE *handle = GetObjHandle(index);
+
     if (handle == NULL) {
         return 0;
     }
+
     if (map_parts == NULL) {
         return 0;
     }
+
     if (frame_name == NULL) {
         return 0;
     }
@@ -2495,6 +2890,7 @@ static int SetObjHandle(int index, CMapParts *map_parts, char *frame_name) {
     handle->frames[5] = map_parts->shadow_frame;
     handle->frames[6] = map_parts->shade_frame;
     CFrame *extra_frame;
+
     if (map_parts->camera_frame == NULL) {
         extra_frame = NULL;
     } else {
@@ -2502,9 +2898,11 @@ static int SetObjHandle(int index, CMapParts *map_parts, char *frame_name) {
         map_parts->camera_frame->SetRotation(map_parts->rotation.x, map_parts->rotation.y, map_parts->rotation.z);
         extra_frame = map_parts->camera_frame;
     }
+
     handle->frames[7] = extra_frame;
     handle->frames[8] = map_parts->ripple_frame;
     i += 9;
+
     for (; i < 12; i++) {
         handle->frames[i] = NULL;
     }
@@ -2515,21 +2913,26 @@ static int SetObjHandle(int index, CMapParts *map_parts, char *frame_name) {
                 handle->frames[i] = handle->frames[i]->SearchFrame(frame_name);
             }
         }
+
         handle->map_parts = NULL;
     } else {
         handle->map_parts = map_parts;
     }
+
     return 1;
 }
 
 static int SetObjHandle(int index, CCharacter *character, char *frame_name) {
     OBJ_HANDLE *handle = GetObjHandle(index);
+
     if (handle == NULL) {
         return 0;
     }
+
     if (character == NULL) {
         return 0;
     }
+
     if (frame_name == NULL) {
         return 0;
     }
@@ -2539,6 +2942,7 @@ static int SetObjHandle(int index, CCharacter *character, char *frame_name) {
     handle->frames[0] = character->frame;
     handle->frames[1] = character->shadow_frame;
     i += 2;
+
     for (; i < 12; i++) {
         handle->frames[i] = NULL;
     }
@@ -2549,18 +2953,22 @@ static int SetObjHandle(int index, CCharacter *character, char *frame_name) {
                 handle->frames[i] = handle->frames[i]->SearchFrame(frame_name);
             }
         }
+
         handle->map_parts = NULL;
     } else {
         handle->character = character;
     }
+
     return 1;
 }
 
 static int SetObjHandle(int index, CFrame *frame) {
     OBJ_HANDLE *handle = GetObjHandle(index);
+
     if (frame == NULL) {
         return 0;
     }
+
     memset(handle, 0, sizeof(OBJ_HANDLE));
     handle->frames[0] = frame;
     return 1;
@@ -2573,14 +2981,17 @@ static void obj_draw(OBJ_HANDLE *handle, int draw) {
 
     int frame_draw = 2;
     int frame_flags = 4;
+
     if (draw != 0) {
         frame_draw = 1;
         frame_flags = 1;
     }
+
     if (handle->map_parts != NULL) {
         handle->map_parts->draw_on = draw;
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             handle->frames[i]->attr.draw_on = frame_draw;
@@ -2594,10 +3005,12 @@ static void set_obj_pos(OBJ_HANDLE *handle, float *position) {
         handle->map_parts->SetPosition(position);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->SetPosition(position);
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             handle->frames[i]->SetPosition(position);
@@ -2610,10 +3023,12 @@ static void get_obj_pos(OBJ_HANDLE *handle, float *out_position) {
         handle->map_parts->GetPosition(out_position);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->GetPosition(out_position);
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             sceVu0CopyVector(out_position, handle->frames[i]->position);
@@ -2627,11 +3042,14 @@ static void get_obj_world_pos(OBJ_HANDLE *handle, float *out_position) {
         handle->map_parts->GetPosition(out_position);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->GetPosition(out_position);
         return;
     }
+
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 1.0f};
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             handle->frames[i]->GetWorldPosition(out_position, origin);
@@ -2645,10 +3063,12 @@ static void set_obj_rot(OBJ_HANDLE *handle, float *rotation) {
         handle->map_parts->SetRotation(rotation[0], rotation[1], rotation[2]);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->SetRotation(rotation[0], rotation[1], rotation[2]);
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             handle->frames[i]->SetRotType(2);
@@ -2662,10 +3082,12 @@ static void get_obj_rot(OBJ_HANDLE *handle, float *out_rotation) {
         handle->map_parts->GetRotation(out_rotation);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->GetRotation(out_rotation);
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             handle->frames[i]->GetRotation(out_rotation);
@@ -2679,10 +3101,12 @@ static void set_obj_scale(OBJ_HANDLE *handle, float *scale) {
         handle->map_parts->SetScale(scale);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->SetScale(scale);
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         if (handle->frames[i] != NULL) {
             handle->frames[i]->SetScale(scale);
@@ -2695,12 +3119,15 @@ static void get_obj_scale(OBJ_HANDLE *handle, float *out_scale) {
         handle->map_parts->GetScale(out_scale);
         return;
     }
+
     if (handle->character != NULL) {
         handle->character->GetScale(out_scale);
         return;
     }
+
     for (int i = 0; i < 12; i++) {
         CFrame *frame = handle->frames[i];
+
         if (frame != NULL) {
             out_scale[0] = frame->scale[0];
             out_scale[1] = frame->scale[1];
@@ -2713,6 +3140,7 @@ static void get_obj_scale(OBJ_HANDLE *handle, float *out_scale) {
 static int init_obj_anime(int anime_index, int handle_index, int type, int number, float *offset, float *range, float *speed) {
     OBJ_ANIME_SEQ *anime = GetObjAnime(anime_index);
     OBJ_HANDLE    *handle = GetObjHandle(handle_index);
+
     if (anime == NULL || handle == NULL) {
         return 0;
     }
@@ -2729,12 +3157,14 @@ static int init_obj_anime(int anime_index, int handle_index, int type, int numbe
 static void sync_obj_obj(OBJ_HANDLE *source, OBJ_HANDLE *targets) {
     CFrame *reference = NULL;
     int     i;
+
     for (i = 0; i < 12; i++) {
         if (source->frames[i] != NULL) {
             reference = source->frames[i];
             break;
         }
     }
+
     if (reference != NULL) {
         for (i = 0; i < 12; i++) {
             if (targets->frames[i] != NULL) {
@@ -2770,6 +3200,7 @@ static CActionSeq *GetActSeq(int index) {
     if (index < 0 || index >= 10) {
         return NULL;
     }
+
     return &ActSeq[index];
 }
 
@@ -2794,6 +3225,7 @@ static CNPCharacter *GetNPC(int index) {
     if (index < 0 || index >= EdEventInfo.npc_count) {
         return NULL;
     }
+
     return &EdEventInfo.npcs[index];
 }
 
@@ -2801,9 +3233,11 @@ static CCharacter *GetChara(int index) {
     if (index == -1) {
         return EdEventInfo.main_character;
     }
+
     if (index < 0 || index >= EdEventInfo.npc_count) {
         return NULL;
     }
+
     return &EdEventInfo.npcs[index];
 }
 
@@ -2811,6 +3245,7 @@ static CFrame *GetItemFrame(int index) {
     if (index < 0 || index > 0) {
         return NULL;
     }
+
     return EdEventInfo.item_frame[index];
 }
 
@@ -2818,8 +3253,10 @@ static void DeleteItemFrame(int index) {
     if (index < 0 || index > 0) {
         return;
     }
+
     CFrameVu1 **frames = EdEventInfo.item_frame;
     CFrameVu1 **frame = &frames[index];
+
     if (*frame != NULL) {
         (*frame)->DeleteReference();
         *frame = NULL;
@@ -2830,6 +3267,7 @@ static VILLAGER_INFO *GetVillagerInfo(int index) {
     if (index < 0 || index >= 16) {
         return NULL;
     }
+
     return &EdEventInfo.villagers[index];
 }
 
@@ -2850,18 +3288,22 @@ static void GetWorldPos(float *out, float *position) {
         sceVu0CopyVector(out, position);
         return;
     }
+
     position[3] = 1.0f;
     sceVu0ApplyMatrix(out, world_local, position);
 }
 
 static float GetWorldRotY(float rotation) {
     rotation += world_rot[1];
+
     if (rotation > 3.141592f) {
         rotation -= 6.283184f;
     }
+
     if (rotation < -3.141592f) {
         rotation += 6.283184f;
     }
+
     return rotation;
 }
 
@@ -2875,18 +3317,22 @@ static void GetLocalPos(float *out, float *position) {
         sceVu0CopyVector(out, position);
         return;
     }
+
     position[3] = 1.0f;
     sceVu0ApplyMatrix(out, local_world, position);
 }
 
 static float GetLocalRotY(float rotation) {
     rotation -= world_rot[1];
+
     if (rotation > 3.141592f) {
         rotation -= 6.283184f;
     }
+
     if (rotation < -3.141592f) {
         rotation += 6.283184f;
     }
+
     return rotation;
 }
 
@@ -2932,6 +3378,7 @@ static void GetFileName(char *destination, char *name) {
         strcpy(destination, name + 1);
         return;
     }
+
     strcpy(destination, CurrentDir);
     strcat(destination, name);
 }
@@ -2944,12 +3391,15 @@ static int exch_ok_cancel(int buttons) {
     int confirm = buttons & ED_PAD_CONFIRM;
     int cancel = buttons & ED_PAD_CANCEL;
     buttons &= ~(ED_PAD_CONFIRM | ED_PAD_CANCEL);
+
     if (confirm) {
         buttons |= ED_PAD_CANCEL;
     }
+
     if (cancel) {
         buttons |= ED_PAD_CONFIRM;
     }
+
     return buttons;
 }
 
@@ -2957,6 +3407,7 @@ static int _GET_PADON(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, exch_ok_cancel(GamePad.GetPadOn()));
     return 1;
 }
@@ -2965,6 +3416,7 @@ static int _GET_PADDOWN(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, exch_ok_cancel(GamePad.GetPadDown()));
     return 1;
 }
@@ -2973,6 +3425,7 @@ static int _GET_PADUP(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, exch_ok_cancel(GamePad.GetPadUp()));
     return 1;
 }
@@ -2981,15 +3434,19 @@ static int _GET_APAD(RS_STACKDATA *stack, int argument_count) {
     if (argument_count > 0) {
         SetStack(stack++, GamePad.GetLXf());
     }
+
     if (argument_count > 1) {
         SetStack(stack++, GamePad.GetLYf());
     }
+
     if (argument_count > 2) {
         SetStack(stack++, GamePad.GetRXf());
     }
+
     if (argument_count > 3) {
         SetStack(stack, GamePad.GetRYf());
     }
+
     return 1;
 }
 
@@ -2997,6 +3454,7 @@ static int _GET_RANDOM(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, rand());
     return 1;
 }
@@ -3015,11 +3473,13 @@ static int _GOTO_INTERIOR(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.interior_entrance = GetStackInt(stack++);
     char *destination = GetStackString(stack++);
     strcpy(EdEventInfo.interior_name, destination);
+
     if (argument_count > 2) {
         EdEventInfo.interior_start_event = GetStackInt(stack);
     } else {
         EdEventInfo.interior_start_event = -1;
     }
+
     return EdEventInfo.return_code = 4;
 }
 
@@ -3041,6 +3501,7 @@ static int _SET_WORLD_COORD(RS_STACKDATA *stack, int argument_count) {
         sceVu0UnitMatrix(local_world);
         set_wl_matrix = 0;
     }
+
     return 1;
 }
 
@@ -3061,15 +3522,19 @@ static int _DRAW_EXCLAMATION_MARK(RS_STACKDATA *stack, int argument_count) {
 
 static int _GOTO_USE_ITEM(RS_STACKDATA *stack, int argument_count) {
     int items[32];
+
     if (stack->type != RS_PTR) {
         return 0;
     }
+
     p_use_item = stack->s;
     stack++;
     int i;
+
     for (i = 0; i < argument_count - 1; i++) {
         items[i] = GetStackInt(stack++);
     }
+
     items[i] = -1;
     EdUseItemInit();
     EdSetUseItem(items);
@@ -3087,6 +3552,7 @@ static int _WORLD_MAP(RS_STACKDATA *stack, int argument_count) {
     if (stack->type != RS_PTR) {
         return 0;
     }
+
     p_jump_map_no = stack->i;
     menu_mode = 7;
     return 1;
@@ -3111,9 +3577,11 @@ static int _FINISH(RS_STACKDATA *stack, int argument_count) {
 static int _MAP_JUMP(RS_STACKDATA *stack, int argument_count) {
     int map = GetStackInt(stack++) - 1;
     int event = -1;
+
     if (argument_count >= 2) {
         event = GetStackInt(stack);
     }
+
     MapJump(map, event);
     EdEventInfo.return_code = 8;
     return 1;
@@ -3163,6 +3631,7 @@ static int _GOTO_CHANGE_ESA(RS_STACKDATA *stack, int argument_count) {
     if (stack->type != RS_PTR) {
         return 0;
     }
+
     p_use_item = stack->s;
     int items[32] = {193, 197, 199, 166, 167, 168, 169, 170, 186, 187, 188, 189, 190, -1};
     EdUseItemInit();
@@ -3173,9 +3642,11 @@ static int _GOTO_CHANGE_ESA(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_CURRENT_DIR(RS_STACKDATA *stack, int argument_count) {
     char *directory = GetStackString(stack);
+
     if (directory == NULL) {
         return 0;
     }
+
     strcpy(CurrentDir, directory);
     return 1;
 }
@@ -3188,15 +3659,18 @@ static CDataAlloc2<1> *get_buffer() {
     if (actv_buffer == 1) {
         return &EdEventExBuffer;
     }
+
     return &EdEventBuffer;
 }
 
 static int _ACTIVE_FILE_BUFFER(RS_STACKDATA *stack, int argument_count) {
     actv_file = GetStackInt(stack++);
     actv_buffer = GetStackInt(stack);
+
     if (actv_file < 0 || actv_file >= 16) {
         actv_file = 0;
     }
+
     return 1;
 }
 
@@ -3206,11 +3680,14 @@ static int _LOAD_CHR_FILE(RS_STACKDATA *stack, int argument_count) {
     StartReadBG();
     u_long128 *buffer = (u_long128 *) read_buffer;
     int        i;
+
     for (i = 0; i < 16; i++) {
         chr_file[i] = NULL;
     }
+
     for (i = 0; i < argument_count; i++) {
         char *name = GetStackString(stack++);
+
         if (name != NULL) {
             GetFileName(path, name);
             printf("%s\n", path);
@@ -3219,6 +3696,7 @@ static int _LOAD_CHR_FILE(RS_STACKDATA *stack, int argument_count) {
             buffer += (((size >> 6) + 1) << 6) >> 4;
         }
     }
+
     return not_wait_load = 1;
 }
 
@@ -3226,6 +3704,7 @@ static int _LOAD_SYNC(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, ReadBGSync());
     not_wait_load = 0;
     return 1;
@@ -3234,16 +3713,21 @@ static int _LOAD_SYNC(RS_STACKDATA *stack, int argument_count) {
 static int _LOAD_CHARA(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *name_stack = stack + 1;
     int           index = GetStackInt(stack);
+
     if (index == -1) {
         CCharacter *character = EdEventInfo.main_character;
         char       *name = GetStackString(name_stack);
+
         if (name == NULL) {
             return 0;
         }
+
         u_int *pack = get_pack_file();
+
         if (pack == NULL) {
             return 0;
         }
+
         CDataAlloc2<1> *first = get_buffer();
         CDataAlloc2<1> *second = get_buffer();
         character->LoadPackData2(pack, name, first, EdEventInfo.player_texture_block, second, 0);
@@ -3251,18 +3735,25 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int argument_count) {
         PrintMemory();
         return 1;
     }
+
     CNPCharacter *npc = GetNPC(index);
+
     if (npc == NULL) {
         return 0;
     }
+
     char *name = GetStackString(name_stack);
+
     if (name == NULL) {
         return 0;
     }
+
     u_int *pack = get_pack_file();
+
     if (pack == NULL) {
         return 0;
     }
+
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
     npc->LoadPackData2(pack, name, first, EdEventInfo.npc_texture_block + index, second, 0);
@@ -3277,9 +3768,11 @@ static int _LOAD_CHARA(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.npc_draw[index] = 1;
     EdEventInfo.npc_shadow_draw[index] = 1;
     npc->SetMotionCamera(EdEventInfo.camera);
+
     if (npc->frame != NULL) {
         npc->frame->SetAttr(attr, 1, 4);
     }
+
     PrintMemory();
     return 1;
 }
@@ -3289,20 +3782,26 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     int               size;
     int               index = GetStackInt(stack++);
     CNPCharacter     *npc = GetNPC(index);
+
     if (npc == NULL) {
         return 0;
     }
+
     if (npc->images[0] != NULL) {
         return 1;
     }
+
     int    block = EdEventInfo.npc_texture_block + index;
     int    i;
     u_int *pack = get_pack_file();
+
     if (pack == NULL) {
         return 0;
     }
+
     for (i = 0; i < argument_count - 1; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
+
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
@@ -3311,6 +3810,7 @@ static int _LOAD_CHARA_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             textures[i].name = (char *) copy;
         }
     }
+
     textures[i].name = NULL;
     TexManager.DeleteTextureBlock(block);
     TexManager.CleanUpBuffer();
@@ -3324,11 +3824,14 @@ static int _LOAD_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     int               size;
     int               i;
     u_int            *pack = get_pack_file();
+
     if (pack == NULL) {
         return 0;
     }
+
     for (i = 0; i < argument_count; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
+
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
@@ -3337,6 +3840,7 @@ static int _LOAD_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             textures[i].name = (char *) copy;
         }
     }
+
     textures[i].name = NULL;
     TexManager.DeleteTextureBlock(45);
     TexManager.CleanUpBuffer();
@@ -3349,11 +3853,14 @@ static int _LOAD_BG_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     int               size;
     int               i;
     u_int            *pack = get_pack_file();
+
     if (pack == NULL) {
         return 0;
     }
+
     for (i = 0; i < argument_count; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
+
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
@@ -3362,6 +3869,7 @@ static int _LOAD_BG_SPRITE_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             textures[i].name = (char *) copy;
         }
     }
+
     textures[i].name = NULL;
     TexManager.DeleteTextureBlock(46);
     TexManager.CleanUpBuffer();
@@ -3373,16 +3881,21 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
     LOADTEXTURE_INFO2 textures[16];
     int               size;
     int               block = GetStackInt(stack++) + 45;
+
     if (block > 49 || block < 45) {
         return 0;
     }
+
     int    i;
     u_int *pack = get_pack_file();
+
     if (pack == NULL) {
         return 0;
     }
+
     for (i = 0; i < argument_count - 1; i++) {
         u_int *file = GetPackFile(pack, GetStackString(stack++), &size);
+
         if (file != NULL) {
             void *copy = get_buffer()->Alloc((size >> 4) + 1);
             memcpy(copy, file, size);
@@ -3391,6 +3904,7 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
             textures[i].name = (char *) copy;
         }
     }
+
     textures[i].name = NULL;
     TexManager.DeleteTextureBlock(block);
     TexManager.CleanUpBuffer();
@@ -3408,16 +3922,21 @@ static int _LOAD_TEXTURE(RS_STACKDATA *stack, int argument_count) {
 static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int           index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
+
     if (npc == NULL) {
         return 0;
     }
+
     VILLAGER_INFO *villager = GetVillagerInfo(GetStackInt(stack++));
     char          *name = GetStackString(stack++);
+
     if (name == NULL) {
         return 0;
     }
+
     npc->texture_block = index + 54;
     EdLoadVillager(name, npc, &EdVillagerBuffer);
+
     if (villager == NULL) {
         npc->map_parts_no = -1;
         npc->villager_id = -1;
@@ -3426,6 +3945,7 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         npc->map_parts_no = villager->character_no;
         npc->villager_id = villager->index;
     }
+
     npc->near_camera = 1;
     npc->initialized = 1;
     npc->draw_enabled = 1;
@@ -3433,6 +3953,7 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+
     if (argument_count > 3) {
         GetPosition(stack, position);
         stack += 3;
@@ -3441,6 +3962,7 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
+
     npc->SetPosition(position);
     npc->SetRotation(rotation);
     npc->SetMotion(0, 0);
@@ -3457,21 +3979,27 @@ static int _LOAD_IN_VILLAGER(RS_STACKDATA *stack, int argument_count) {
 static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     int           index = GetStackInt(stack++);
     CNPCharacter *npc = GetNPC(index);
+
     if (npc == NULL) {
         return 0;
     }
+
     VILLAGER_INFO *villager = GetVillagerInfo(GetStackInt(stack++));
     char          *name = GetStackString(stack++);
+
     if (name == NULL) {
         return 0;
     }
+
     npc->texture_block = index + 54;
     EdLoadVillager(name, npc, &EdVillagerBuffer);
     npc->map_parts_no = -1;
     npc->villager_id = -1;
+
     if (villager != NULL) {
         villager->index = -1;
     }
+
     npc->near_camera = 1;
     npc->initialized = 1;
     npc->draw_enabled = 1;
@@ -3479,6 +4007,7 @@ static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
     npc->ambient_offset[3] = 128.0f;
     sceVu0FVECTOR position = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+
     if (argument_count > 3) {
         GetPosition(stack, position);
         stack += 3;
@@ -3487,6 +4016,7 @@ static int _LOAD_OUT_VILLAGER(RS_STACKDATA *stack, int argument_count) {
         rotation[0] = 0.0f;
         GetWorldRot(rotation, rotation);
     }
+
     npc->SetPosition(position);
     npc->SetRotation(rotation);
     npc->SetMotion(0, 0);
@@ -3538,9 +4068,11 @@ static int _APPEAR_VILLAGER_MOVE(RS_STACKDATA *stack, int argument_count) {
 static int _DELETE_CHARA(RS_STACKDATA *stack, int argument_count) {
     int           index = GetStackInt(stack);
     CNPCharacter *npc = GetNPC(index);
+
     if (npc == NULL) {
         return 0;
     }
+
     TexManager.DeleteTextureBlock(npc->texture_block);
     npc->Initialize();
     EdEventInfo.npc_draw[index] = 0;
@@ -3551,10 +4083,12 @@ static int _DELETE_CHARA(RS_STACKDATA *stack, int argument_count) {
 static int _INIT_CHARA(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < argument_count; i++) {
         CNPCharacter *npc = GetNPC(GetStackInt(stack++));
+
         if (npc != NULL) {
             npc->Initialize();
         }
     }
+
     return 1;
 }
 
@@ -3591,102 +4125,133 @@ static int _CLEAR_EVENT_EXBUFF(RS_STACKDATA *stack, int argument_count) {
 
 static int _LOAD_SCENE(RS_STACKDATA *stack, int argument_count) {
     CCharacter *scene = GetScene(GetStackInt(stack++));
+
     if (scene == NULL) {
         return 0;
     }
+
     char *name = GetStackString(stack++);
+
     if (name == NULL) {
         return 0;
     }
+
     u_int *pack = get_pack_file();
+
     if (pack == NULL) {
         return 0;
     }
+
     CDataAlloc2<1> *first = get_buffer();
     CDataAlloc2<1> *second = get_buffer();
     scene->LoadPackData(pack, name, first, second);
     scene->motion_type.state.camera = &DmmyCamera;
+
     if (argument_count >= 3) {
         scene->motion_speed = GetStackFloat(stack);
     }
+
     return 1;
 }
 
 static int _SYNC_SCENE_CHARA(RS_STACKDATA *stack, int argument_count) {
     CCharacter *scene = GetScene(GetStackInt(stack++));
+
     if (scene == NULL) {
         return 0;
     }
+
     char       *name = GetStackString(stack++);
     int         index = GetStackInt(stack);
     CCharacter *character = EdEventInfo.main_character;
+
     if (index >= 0) {
         character = GetNPC(index);
     }
+
     if (character == NULL) {
         return 0;
     }
+
     if (scene->frame == NULL) {
         return 0;
     }
+
     CFrame *reference = scene->frame->SearchFrame(name);
+
     if (reference == NULL) {
         return 0;
     }
+
     if (character->frame == NULL) {
         return 0;
     }
+
     character->frame->SetReference(reference);
+
     if (character->shadow_frame != NULL) {
         character->shadow_frame->SetReference(reference);
     }
+
     return 1;
 }
 
 static int _SYNC_SCENE_CAMERA(RS_STACKDATA *stack, int argument_count) {
     CCharacter *scene = GetScene(GetStackInt(stack));
+
     if (scene == NULL) {
         return 0;
     }
+
     if (EdEventInfo.camera != NULL) {
         EdEventInfo.camera->FollowOff();
         scene->motion_type.state.camera = EdEventInfo.camera;
     }
+
     return 1;
 }
 
 static int _RELEASE_SCENE_CHARA(RS_STACKDATA *stack, int argument_count) {
     int         index = GetStackInt(stack);
     CCharacter *character = EdEventInfo.main_character;
+
     if (index >= 0) {
         character = GetNPC(index);
     }
+
     if (character == NULL) {
         return 0;
     }
+
     if (character->frame != NULL) {
         character->frame->DeleteReference();
     }
+
     if (character->shadow_frame != NULL) {
         character->shadow_frame->DeleteReference();
     }
+
     return 1;
 }
 
 static int _RELEASE_SCENE_CAMERA(RS_STACKDATA *stack, int argument_count) {
     CCharacter *scene = GetScene(GetStackInt(stack));
+
     if (scene == NULL) {
         return 0;
     }
+
     scene->motion_type.state.camera = &DmmyCamera;
     return 1;
 }
 
 static int _SET_SCENE_POS(RS_STACKDATA *stack, int argument_count) {
     CCharacter *scene = GetScene(GetStackInt(stack++));
+
     if (scene == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     GetPosition(stack, position);
     scene->SetPosition(position);
@@ -3695,9 +4260,11 @@ static int _SET_SCENE_POS(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_SCENE_ROT(RS_STACKDATA *stack, int argument_count) {
     CCharacter *scene = GetScene(GetStackInt(stack++));
+
     if (scene == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR rotation;
     GetRotation(stack, rotation);
     scene->SetRotation(rotation);
@@ -3709,9 +4276,11 @@ static int _LOAD_ITEM_FILE(RS_STACKDATA *stack, int argument_count) {
     char texture_path[128];
     int  size;
     EdGetItemFile(GetStackInt(stack), model_path, texture_path);
+
     if (model_path[0] == '\0' || texture_path[0] == '\0') {
         return 0;
     }
+
     StartReadBG();
     u_long128 *buffer = (u_long128 *) read_buffer;
     LoadFileBG(texture_path, buffer, &size);
@@ -3722,13 +4291,17 @@ static int _LOAD_ITEM_FILE(RS_STACKDATA *stack, int argument_count) {
 
 static int _LOAD_ITEM(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack);
+
     if (index < 0 || index > 0) {
         return 0;
     }
+
     BG_READ_INFO *read = GetReadBGFile(0);
+
     if (read == NULL) {
         return 0;
     }
+
     int        size = read->size;
     u_long128 *source = read->buffer;
     void      *copy = get_buffer()->Alloc((size >> 4) + 1);
@@ -3741,9 +4314,11 @@ static int _LOAD_ITEM(RS_STACKDATA *stack, int argument_count) {
     TexManager.DeleteTextureBlock(40);
     TexManager.LoadTextureBlockEX(40, textures);
     read = GetReadBGFile(1);
+
     if (read == NULL) {
         return 0;
     }
+
     EdEventInfo.item_frame[index] = LoadMDSFile((u_int *) read->buffer, get_buffer(), 0, NULL, NULL);
     return EdEventInfo.item_frame[index] != NULL ? 1 : 0;
 }
@@ -3752,25 +4327,32 @@ static int _SYNC_CHARA_ITEM(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack++));
     char       *name = GetStackString(stack++);
     CFrame     *reference = NULL;
+
     if (name != NULL && name[0] != '\0') {
         reference = character->frame->SearchFrame(name);
     }
+
     if (reference == NULL) {
         reference = character->frame;
     }
+
     CFrame *item = GetItemFrame(GetStackInt(stack));
+
     if (item == NULL) {
         return 0;
     }
+
     item->SetReference(reference);
     return 1;
 }
 
 static int _RELEASE_CHARA_ITEM(RS_STACKDATA *stack, int argument_count) {
     CFrame *frame = GetItemFrame(GetStackInt(stack));
+
     if (frame != NULL) {
         frame->DeleteReference();
     }
+
     return 1;
 }
 
@@ -3782,55 +4364,73 @@ static int _DELETE_ITEM(RS_STACKDATA *stack, int argument_count) {
 
 static int _SYNC_CHARA_CHARA(RS_STACKDATA *stack, int argument_count) {
     CCharacter *source = GetChara(GetStackInt(stack++));
+
     if (source == NULL) {
         return 0;
     }
+
     char *name = GetStackString(stack++);
+
     if (name == NULL) {
         return 0;
     }
+
     CFrame *reference;
+
     if (name[0] != '\0') {
         reference = source->frame->SearchFrame(name);
     } else {
         reference = source->frame;
     }
+
     if (reference == NULL) {
         return 0;
     }
+
     CCharacter *target = GetChara(GetStackInt(stack));
+
     if (target == NULL) {
         return 0;
     }
+
     if (target->frame == NULL) {
         return 0;
     }
+
     target->frame->SetReference(reference);
+
     if (target->shadow_frame != NULL) {
         target->shadow_frame->SetReference(reference);
     }
+
     return 1;
 }
 
 static int _RELEASE_CHARA_CHARA(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     if (character->frame != NULL) {
         character->frame->DeleteReference();
     }
+
     if (character->shadow_frame != NULL) {
         character->shadow_frame->DeleteReference();
     }
+
     return 1;
 }
 
 static int _GET_CHARA_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
+
     if (argument_count < 3) {
         return 0;
     }
+
     EdEventInfo.main_character->GetPosition(position);
     SetPosition(stack, position);
     return 1;
@@ -3838,9 +4438,11 @@ static int _GET_CHARA_POS(RS_STACKDATA *stack, int argument_count) {
 
 static int _GET_CHARA_TALK_POS(RS_STACKDATA *stack, int argument_count) {
     int position[2];
+
     if (argument_count < 2) {
         return 0;
     }
+
     GetScrPosFromChar(EdEventInfo.main_character, position);
     SetStack(stack++, position[0]);
     SetStack(stack, position[1]);
@@ -3856,25 +4458,30 @@ static int _SET_CHARA_POS(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_CHARA_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
+
     if (argument_count == 3) {
         GetRotation(stack, rotation);
         stack += 3;
     }
+
     if (argument_count == 1) {
         rotation[2] = 0.0f;
         rotation[0] = 0.0f;
         rotation[1] = GetStackFloat(stack);
         GetWorldRot(rotation, rotation);
     }
+
     EdEventInfo.main_character->SetRotation(rotation);
     return 1;
 }
 
 static int _GET_CHARA_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
+
     if (argument_count < 3) {
         return 0;
     }
+
     EdEventInfo.main_character->GetRotation(rotation);
     SetRotation(stack, rotation);
     return 1;
@@ -3889,17 +4496,22 @@ int _TURN_CHARA(RS_STACKDATA *stack, int argument_count) {
 
 static int _GET_NPC_TALK_POS(RS_STACKDATA *stack, int argument_count) {
     int position[2];
+
     if (argument_count < 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     int           index = GetStackInt(stack);
+
     if (index == -1) {
         return _GET_CHARA_TALK_POS(result, argument_count - 1);
     }
+
     if (index < 0 || index >= EdEventInfo.npc_count) {
         return 0;
     }
+
     GetScrPosFromChar(&EdEventInfo.npcs[index], position);
     SetStack(result++, position[0]);
     SetStack(result, position[1]);
@@ -3908,21 +4520,27 @@ static int _GET_NPC_TALK_POS(RS_STACKDATA *stack, int argument_count) {
 
 static int _GET_NPC_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
+
     if (argument_count < 4) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     CCharacter   *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     character->GetPosition(position);
+
     if (character->frame != NULL && character->frame->parent != NULL) {
         SetStack(result++, position[0]);
         SetStack(result++, position[1]);
         SetStack(result, position[2]);
         return 1;
     }
+
     SetPosition(result, position);
     return 1;
 }
@@ -3931,9 +4549,11 @@ static int _SET_NPC_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     RS_STACKDATA *argument = (0, stack + 1);
     CCharacter   *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     if (character->frame != NULL && character->frame->parent != NULL) {
         position[0] = GetStackFloat(argument++);
         position[1] = GetStackFloat(argument++);
@@ -3942,6 +4562,7 @@ static int _SET_NPC_POS(RS_STACKDATA *stack, int argument_count) {
         character->SetPosition(position);
         return 1;
     }
+
     GetPosition(argument, position);
     character->SetPosition(position);
     return 1;
@@ -3950,13 +4571,17 @@ static int _SET_NPC_POS(RS_STACKDATA *stack, int argument_count) {
 static int _SET_NPC_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
     CCharacter   *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     CFrame *parent = NULL;
+
     if (character->frame != NULL) {
         parent = character->frame->parent;
     }
+
     if (argument_count == 4) {
         if (parent != NULL) {
             rotation[0] = GetStackFloat(stack++);
@@ -3967,45 +4592,57 @@ static int _SET_NPC_ROT(RS_STACKDATA *stack, int argument_count) {
             stack += 3;
         }
     }
+
     if (argument_count == 2) {
         rotation[2] = 0.0f;
         rotation[0] = 0.0f;
         rotation[1] = GetStackFloat(stack);
+
         if (parent == NULL) {
             GetWorldRot(rotation, rotation);
         }
     }
+
     character->SetRotation(rotation);
     return 1;
 }
 
 static int _GET_NPC_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
+
     if (argument_count < 4) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     CCharacter   *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     character->GetRotation(rotation);
+
     if (character->frame != NULL && character->frame->parent != NULL) {
         SetStack(result++, rotation[0]);
         SetStack(result++, rotation[1]);
         SetStack(result, rotation[2]);
         return 1;
     }
+
     SetRotation(result, rotation);
     return 1;
 }
 
 static int _SET_NPC_SCALE(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     float x = GetStackFloat(stack++);
+
     if (argument_count == 2) {
         character->SetScale(x, x, x);
     } else {
@@ -4013,6 +4650,7 @@ static int _SET_NPC_SCALE(RS_STACKDATA *stack, int argument_count) {
         float z = GetStackFloat(stack);
         character->SetScale(x, y, z);
     }
+
     return 1;
 }
 
@@ -4020,9 +4658,11 @@ static int _GET_NPC_SCALE(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR scale;
     RS_STACKDATA *result = (0, stack + 1);
     CCharacter   *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     character->GetScale(scale);
     SetStack(result++, scale[0]);
     SetStack(result++, scale[1]);
@@ -4032,13 +4672,16 @@ static int _GET_NPC_SCALE(RS_STACKDATA *stack, int argument_count) {
 
 static int _NPC_POS_INIT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR transform = {0.0f, 0.0f, 0.0f, 0.0f};
+
     for (int i = 0; i < argument_count; i++) {
         CCharacter *character = GetChara(GetStackInt(stack++));
+
         if (character != NULL) {
             character->SetPosition(transform);
             character->SetRotation(transform);
         }
     }
+
     return 1;
 }
 
@@ -4046,10 +4689,13 @@ static int _GET_NPC_PARTS_NO(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 2) {
         return 0;
     }
+
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= 16) {
         return 0;
     }
+
     SetStack(stack++, EdEventInfo.villagers[index].character_no);
     return 1;
 }
@@ -4057,67 +4703,85 @@ static int _GET_NPC_PARTS_NO(RS_STACKDATA *stack, int argument_count) {
 static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
     int         index = GetStackInt(stack++);
     CCharacter *character;
+
     if (index == -1) {
         character = EdEventInfo.main_character;
     } else {
         character = GetNPC(index);
     }
+
     if (character == NULL) {
         return 0;
     }
+
     int   motion = GetStackInt(stack++);
     float speed = -1.0f;
+
     if (argument_count >= 3) {
         speed = GetStackFloat(stack++);
     }
+
     if (argument_count == 4) {
         character->SetMotion(motion, GetStackInt(stack));
     } else {
         character->SetMotion(motion, 0);
     }
+
     if (speed > 0.0f) {
         character->SetMotionSpeed(speed);
     }
+
     return 1;
 }
 
 static int _SET_NPC_ANIME(RS_STACKDATA *stack, int argument_count) {
     int         index = GetStackInt(stack++);
     CCharacter *character;
+
     if (index == -1) {
         character = EdEventInfo.main_character;
     } else {
         character = GetNPC(index);
     }
+
     if (character == NULL) {
         return 0;
     }
+
     int animation = GetStackInt(stack++);
     int enable = 1;
+
     if (argument_count == 3) {
         enable = GetStackInt(stack);
     }
+
     if (animation == -1 && enable == 0) {
         character->ClearTexAnime();
     }
+
     if (enable != 0) {
         character->TexAnimeOn(animation);
     } else {
         character->TexAnimeOff(animation);
     }
+
     return 1;
 }
 
 static int _TURN_NPC(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     int           index = GetStackInt(stack++);
+
     if (index == -1) {
         return _TURN_CHARA(stack, argument_count - 1);
     }
+
     CCharacter *character = GetNPC(index);
+
     if (character == NULL) {
         return 0;
     }
+
     GetPosition(stack, position);
     turn_chara(character, position, GetStackFloat(stack += 3));
     return 1;
@@ -4125,62 +4789,77 @@ static int _TURN_NPC(RS_STACKDATA *stack, int argument_count) {
 
 int _NPC_DRAW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         int index = GetStackInt(stack++);
+
         if (GetChara(index) != NULL) {
             if (index < 0) {
                 EdEventInfo.player_draw = draw;
             }
+
             if (index >= 0 && index < 16) {
                 EdEventInfo.npc_draw[index] = draw;
             }
         }
     }
+
     return 1;
 }
 
 int _NPC_DRAW_SHADOW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         int index = GetStackInt(stack++);
+
         if (GetChara(index) != NULL) {
             if (index < 0) {
                 EdEventInfo.player_shadow_draw = draw;
             }
+
             if (index >= 0 && index < 16) {
                 EdEventInfo.npc_shadow_draw[index] = draw;
             }
         }
     }
+
     return 1;
 }
 
 int _SET_NPC_FOOT_SOUND(RS_STACKDATA *stack, int argument_count) {
     int mode = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         int         index = GetStackInt(stack++);
         CCharacter *character = GetChara(index);
+
         if (character != NULL) {
             if (index < 0) {
                 EdEventInfo.player_foot_sound = mode;
             }
+
             if (index >= 0 && index < 16) {
                 EdEventInfo.npc_foot_sound[index] = mode;
             }
+
             if (mode == 2) {
                 character->FootSoundEnable(1);
             }
         }
     }
+
     return 1;
 }
 
 static int _SET_NPC_FLOOR_ID(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *argument = (0, stack + 1);
     CCharacter   *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     character->SetFootSoundID(GetStackInt(argument));
     return 1;
 }
@@ -4198,56 +4877,71 @@ static s32 _NPC_STEP(RS_STACKDATA *stack, s32 argument_count) {
 
 static int _NPC_COL(RS_STACKDATA *stack, int argument_count) {
     int collision = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         int index = GetStackInt(stack++);
+
         if (index >= 0) {
             EdEventInfo.npc_collision[index] = collision;
         }
+
         if (index == -1) {
             EdEventInfo.player_collision = collision;
         }
     }
+
     return 1;
 }
 
 static int _NPC_STOP(RS_STACKDATA *stack, int argument_count) {
     int stopped = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         int index = GetStackInt(stack++);
+
         if (index >= 0) {
             EdEventInfo.npc_stop[index] = stopped;
         }
+
         if (index == -1) {
             EdEventInfo.player_stop = stopped;
         }
     }
+
     return 1;
 }
 
 static int _NPC_DRAW_BEFORE(RS_STACKDATA *stack, int argument_count) {
     int order = GetStackInt(stack++);
     int i = 0;
+
     while (i < argument_count - 1) {
         int index = GetStackInt(stack++);
+
         if (index >= 0) {
             EdEventInfo.npc_draw_before[index] = order;
         }
+
         i++;
     }
+
     return 1;
 }
 
 static int _INIT_NPC_CLOTH(RS_STACKDATA *stack, int argument_count) {
     int         index = GetStackInt(stack);
     CCharacter *character;
+
     if (index == -1) {
         character = EdEventInfo.main_character;
     } else {
         character = GetNPC(index);
     }
+
     if (character == NULL) {
         return 0;
     }
+
     character->ClothStep(-1);
     return 1;
 }
@@ -4255,94 +4949,120 @@ static int _INIT_NPC_CLOTH(RS_STACKDATA *stack, int argument_count) {
 static int _NPC_CLOTH_FLOOR(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *argument = (0, stack + 1);
     CCharacter   *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     character->ClothFloor(GetStackInt(argument));
     return 1;
 }
 
 static int _NPC_CLOTH_STEP(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     int steps = 1;
+
     if (argument_count > 1) {
         steps = GetStackInt(stack);
     }
+
     for (int i = 0; i < steps; i++) {
         character->ClothStep(0);
     }
+
     return 1;
 }
 
 static int _SET_NPC_AMBIENT(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 128.0f};
+
     if (argument_count == 1) {
         sceVu0CopyVector(character->ambient_offset, ambient);
         return 1;
     }
+
     if ((unsigned int) (argument_count - 2) < 2) {
         float value = GetStackInt(stack++);
         character->ambient_offset[0] = value;
         character->ambient_offset[1] = value;
         character->ambient_offset[2] = value;
     }
+
     if (argument_count >= 4) {
         character->ambient_offset[0] = GetStackInt(stack++);
         character->ambient_offset[1] = GetStackInt(stack++);
         character->ambient_offset[2] = GetStackInt(stack++);
     }
+
     if (argument_count >= 5) {
         character->ambient_offset[3] = GetStackInt(stack);
     }
+
     return 1;
 }
 
 static int _SET_NPC_BODY_SIZE(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     if (argument_count > 1) {
         character->body_width = GetStackFloat(stack++);
     }
+
     if (argument_count > 2) {
         character->body_height = GetStackFloat(stack++);
     }
+
     if (argument_count > 3) {
         character->body_depth = GetStackFloat(stack);
     }
+
     return 1;
 }
 
 static int _GET_NPC_BODY_SIZE(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     if (argument_count > 1) {
         SetStack(stack++, character->body_width);
     }
+
     if (argument_count > 2) {
         SetStack(stack++, character->body_height);
     }
+
     if (argument_count > 3) {
         SetStack(stack, character->body_depth);
     }
+
     return 1;
 }
 
 static int _NPC_PLIGHT_INIT(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(GetStackInt(stack));
+
     if (character == NULL) {
         return 0;
     }
+
     character->ClearPointLight();
     return 1;
 }
@@ -4351,14 +5071,18 @@ static int _SET_NPC_PLIGHT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     float         light[5];
     CCharacter   *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     GetPosition(stack, position);
     stack += 3;
+
     for (int i = 0; i < 5; i++) {
         light[i] = GetStackFloat(stack++);
     }
+
     return character->SetPointLight(position, light[0], light[1], light[2], light[3], light[4], 128.0f);
 }
 
@@ -4366,11 +5090,14 @@ static int _SGET_NPC_TALK_MES(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     SV_GRD_NPC   *npc = SaveData->GetGrdNPCData(NowEditMap, GetStackInt(stack));
+
     if (npc == NULL) {
         return 0;
     }
+
     SetStack(result, npc->talk_message);
     return 1;
 }
@@ -4378,9 +5105,11 @@ static int _SGET_NPC_TALK_MES(RS_STACKDATA *stack, int argument_count) {
 static int _SSET_NPC_TALK_MES(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     SV_GRD_NPC   *npc = SaveData->GetGrdNPCData(NowEditMap, GetStackInt(stack));
+
     if (npc == NULL) {
         return 0;
     }
+
     npc->talk_message = GetStackInt(next);
     return 1;
 }
@@ -4389,14 +5118,17 @@ static ClsMes *GetMes(int index) {
     if (index < 0 || index >= 8) {
         return NULL;
     }
+
     return EdEventInfo.messages[index];
 }
 
 static int _MES_MAKE(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
+
     if (message == NULL) {
         return 0;
     }
+
     if (EdEventInfo.camera != NULL) {
         sceVu0FMATRIX view;
         sceVu0FVECTOR eye;
@@ -4404,29 +5136,36 @@ static int _MES_MAKE(RS_STACKDATA *stack, int argument_count) {
         EdEventInfo.camera->GetPos(eye);
         MGSetViewMatrix(view, eye);
     }
+
     int message_no = GetStackInt(stack++);
+
     if (argument_count >= 3) {
         message->value = GetStackInt(stack++);
     }
+
     if (argument_count >= 4) {
         for (int i = 0; i < 4; i++) {
             message->mes_no[i] = -1;
         }
+
         for (int i = 4; argument_count >= i; i++) {
             int slot_message = GetStackInt(stack++);
             message->mes_no[i - 4] = slot_message;
             printf("%d %d\n", i - 4, slot_message);
         }
     }
+
     message->MakeMesWin(message_no);
     return 1;
 }
 
 static int _MES_CLOSE(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->text_rate = message->text_rate_set;
     message->mes_made = -1;
     message->fade_in = 0;
@@ -4435,18 +5174,22 @@ static int _MES_CLOSE(RS_STACKDATA *stack, int argument_count) {
 
 static int _MES_NEXTPAGE(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->GoNextPage();
     return 1;
 }
 
 int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
+
     if (message == NULL) {
         return 0;
     }
+
     if (EdEventInfo.camera != NULL) {
         sceVu0FMATRIX view;
         sceVu0FVECTOR eye;
@@ -4454,15 +5197,19 @@ int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
         EdEventInfo.camera->GetPos(eye);
         MGSetViewMatrix(view, eye);
     }
+
     int position[4];
     int talk_position[4];
+
     if (argument_count == 5) {
         for (int i = 0; i < 4; i++) {
             position[i] = GetStackInt(stack++);
         }
+
         message->AutoSet(position);
         return 1;
     }
+
     if (argument_count == 3) {
         int         first_index = GetStackInt(stack++);
         int         second_index = GetStackInt(stack);
@@ -4472,30 +5219,38 @@ int _SET_MES_AUTOSET(RS_STACKDATA *stack, int argument_count) {
         message->AutoSet(talk_position);
         return 1;
     }
+
     return 0;
 }
 
 static int _SET_MES_SHIPPO(RS_STACKDATA *stack, int argument_count) {
     ClsMes *message = GetMes(GetStackInt(stack++));
+
     if (message == NULL) {
         return 0;
     }
+
     message->tail_on = GetStackInt(stack++);
+
     if (argument_count > 2) {
         message->tail_length = GetStackInt(stack++);
     }
+
     if (argument_count > 3) {
         message->tail_half_width = GetStackInt(stack);
     }
+
     return 1;
 }
 
 static int _SET_MES_POS(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->auto_pos = GetStackInt(next);
     return 1;
 }
@@ -4503,9 +5258,11 @@ static int _SET_MES_POS(RS_STACKDATA *stack, int argument_count) {
 static int _SET_MES_DRAWSPEED(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->text_rate = GetStackFloat(next);
     return 1;
 }
@@ -4513,9 +5270,11 @@ static int _SET_MES_DRAWSPEED(RS_STACKDATA *stack, int argument_count) {
 static int _SET_MES_CURSOR(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->cursor_row = GetStackInt(next);
     return 1;
 }
@@ -4523,9 +5282,11 @@ static int _SET_MES_CURSOR(RS_STACKDATA *stack, int argument_count) {
 static int _SET_MES_OKURI(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->page_arrow = GetStackInt(next);
     return 1;
 }
@@ -4533,9 +5294,11 @@ static int _SET_MES_OKURI(RS_STACKDATA *stack, int argument_count) {
 static int _SET_MES_WIN_FLAG(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->stay_frame = GetStackInt(next);
     return 1;
 }
@@ -4544,11 +5307,14 @@ static int _CHECK_MES_COMPLETE(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     SetStack(result, message->State() == 3);
     return 1;
 }
@@ -4557,11 +5323,14 @@ static int _CHECK_MES_WAIT(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     SetStack(result, message->State() == 5);
     return 1;
 }
@@ -4570,11 +5339,14 @@ static int _CHECK_MES(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     SetStack(result, message->State() == 0);
     return 1;
 }
@@ -4582,9 +5354,11 @@ static int _CHECK_MES(RS_STACKDATA *stack, int argument_count) {
 static int _SET_MES_FUKIDASHI(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     ClsMes       *message = GetMes(GetStackInt(stack));
+
     if (message == NULL) {
         return 0;
     }
+
     message->SetMesFukidashi(GetStackInt(next));
     return 1;
 }
@@ -4592,12 +5366,15 @@ static int _SET_MES_FUKIDASHI(RS_STACKDATA *stack, int argument_count) {
 static int _ITEM_GET_MES(RS_STACKDATA *stack, int argument_count) {
     int item = GetStackInt(stack++);
     int attachment = -1;
+
     if (GetAddAttachItem(item) != 0) {
         attachment = 3;
     }
+
     if (argument_count == 2) {
         attachment = GetStackInt(stack);
     }
+
     ItemGetMes(item, attachment, 40, 1);
     return 1;
 }
@@ -4614,9 +5391,11 @@ static int _SKILL_GET_MES(RS_STACKDATA *stack, int argument_count) {
 
 static int _ADD_MAXITEM_MES(RS_STACKDATA *stack, int argument_count) {
     int amount = GetStackInt(stack);
+
     if (amount < 0) {
         amount = EdAddMaxItem(0);
     }
+
     MaxUpMes(amount, 40);
     return 1;
 }
@@ -4625,6 +5404,7 @@ static int _CHECK_COMPLETE_PARTS(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     SetStack(result, (0, EditPartsInfo.CheckComplete(GetStackInt(stack))));
     return 1;
@@ -4634,22 +5414,27 @@ static int _GET_EDIT_PARTS_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
     CMapParts    *parts = EdEventInfo.edit_ground->GetPartsObject(GetStackInt(stack++));
+
     if (parts == NULL) {
         return 0;
     }
+
     if (argument_count < 4) {
         return 0;
     }
+
     parts->GetPosition(position);
     parts->GetRotation(rotation);
     SetStack(stack++, position[0]);
     SetStack(stack++, position[1]);
     SetStack(stack++, position[2]);
+
     if (argument_count == 7) {
         SetStack(stack++, rotation[0]);
         SetStack(stack++, rotation[1]);
         SetStack(stack, rotation[2]);
     }
+
     return 1;
 }
 
@@ -4710,14 +5495,18 @@ static int _HOBJ_FIXPARTS(RS_STACKDATA *stack, int argument_count) {
     if (EdEventInfo.fixed_parts == NULL) {
         return 1;
     }
+
     if (EdEventInfo.fixed_parts_count <= 0) {
         return 1;
     }
+
     int handle = GetStackInt(stack++);
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= EdEventInfo.fixed_parts_count) {
         return 0;
     }
+
     int result = 1;
     return SetObjHandle(handle, &EdEventInfo.fixed_parts[index], GetStackString(stack)) ? result : 0;
 }
@@ -4726,14 +5515,18 @@ static int _HOBJ_EDITPARTS(RS_STACKDATA *stack, int argument_count) {
     if (EdEventInfo.edit_parts == NULL) {
         return 1;
     }
+
     if (EdEventInfo.edit_parts_count <= 0) {
         return 1;
     }
+
     int handle = GetStackInt(stack++);
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= EdEventInfo.edit_parts_count) {
         return 0;
     }
+
     int result = 1;
     return SetObjHandle(handle, &EdEventInfo.edit_parts[index], GetStackString(stack)) ? result : 0;
 }
@@ -4742,14 +5535,18 @@ static int _HOBJ_INTERIORPARTS(RS_STACKDATA *stack, int argument_count) {
     if (EdEventInfo.interior_parts == NULL) {
         return 1;
     }
+
     if (EdEventInfo.interior_parts_count <= 0) {
         return 1;
     }
+
     int handle = GetStackInt(stack++);
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= EdEventInfo.interior_parts_count) {
         return 0;
     }
+
     int result = 1;
     return SetObjHandle(handle, &EdEventInfo.interior_parts[index], GetStackString(stack)) ? result : 0;
 }
@@ -4757,9 +5554,11 @@ static int _HOBJ_INTERIORPARTS(RS_STACKDATA *stack, int argument_count) {
 static int _HOBJ_CHARA(RS_STACKDATA *stack, int argument_count) {
     int         handle_index = GetStackInt(stack++);
     CCharacter *character = GetChara(GetStackInt(stack++));
+
     if (character == NULL) {
         return 0;
     }
+
     return SetObjHandle(handle_index, character, GetStackString(stack)) != 0 ? 1 : 0;
 }
 
@@ -4769,28 +5568,37 @@ static int _HOBJ_BT_HOBJ(RS_STACKDATA *stack, int argument_count) {
     int         count;
     count = argument_count;
     handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     memset(handle, 0, sizeof(OBJ_HANDLE));
+
     if (12 < count) {
         count = 12;
     }
+
     for (i = 0; i < count - 1; i++) {
         BT_OBJ_HANDLE *object = GetObjHDL(GetStackInt(stack++));
+
         if (object == NULL) {
             return 0;
         }
+
         if (object->type == 1) {
             if (2 < count) {
                 return 0;
             }
+
             handle->character = object->character;
         }
+
         if (object->type == 0) {
             handle->frames[i] = object->frame;
         }
     }
+
     return 1;
 }
 
@@ -4798,29 +5606,36 @@ static int _HOBJ_ITEM(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     int           handle_index = GetStackInt(stack);
     CFrame       *frame = GetItemFrame(GetStackInt(next));
+
     if (frame == NULL) {
         return 0;
     }
+
     return SetObjHandle(handle_index, frame) != 0 ? 1 : 0;
 }
 
 static int _OBJ_DRAW(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         OBJ_HANDLE *handle = GetObjHandle(GetStackInt(stack++));
+
         if (handle != NULL) {
             obj_draw(handle, draw);
         }
     }
+
     return 1;
 }
 
 static int _SET_OBJ_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     OBJ_HANDLE   *handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     position[0] = GetStackFloat(stack++);
     position[1] = GetStackFloat(stack++);
     position[2] = GetStackFloat(stack);
@@ -4832,12 +5647,15 @@ static int _SET_OBJ_POS(RS_STACKDATA *stack, int argument_count) {
 static int _GET_OBJ_POS(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     OBJ_HANDLE   *handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     if (argument_count < 4) {
         return 0;
     }
+
     get_obj_pos(handle, position);
     SetStack(stack++, position[0]);
     SetStack(stack++, position[1]);
@@ -4848,9 +5666,11 @@ static int _GET_OBJ_POS(RS_STACKDATA *stack, int argument_count) {
 static int _SET_OBJ_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
     OBJ_HANDLE   *handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     rotation[0] = AngleLimit(GetStackFloat(stack++));
     rotation[1] = AngleLimit(GetStackFloat(stack++));
     rotation[2] = AngleLimit(GetStackFloat(stack));
@@ -4862,12 +5682,15 @@ static int _SET_OBJ_ROT(RS_STACKDATA *stack, int argument_count) {
 static int _GET_OBJ_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
     OBJ_HANDLE   *handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     if (argument_count < 4) {
         return 0;
     }
+
     get_obj_rot(handle, rotation);
     SetStack(stack++, rotation[0]);
     SetStack(stack++, rotation[1]);
@@ -4878,9 +5701,11 @@ static int _GET_OBJ_ROT(RS_STACKDATA *stack, int argument_count) {
 static int _SET_OBJ_SCALE(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *arguments = (0, stack + 1);
     OBJ_HANDLE   *handle = GetObjHandle(GetStackInt(stack));
+
     if (handle == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR scale;
     scale[0] = GetStackFloat(arguments++);
     scale[1] = GetStackFloat(arguments++);
@@ -4893,12 +5718,15 @@ static int _SET_OBJ_SCALE(RS_STACKDATA *stack, int argument_count) {
 static int _GET_OBJ_SCALE(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR scale;
     OBJ_HANDLE   *handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     if (argument_count < 4) {
         return 0;
     }
+
     get_obj_scale(handle, scale);
     SetStack(stack++, scale[0]);
     SetStack(stack++, scale[1]);
@@ -4909,31 +5737,39 @@ static int _GET_OBJ_SCALE(RS_STACKDATA *stack, int argument_count) {
 static int _SYNC_OBJ_OBJ(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     OBJ_HANDLE   *source = GetObjHandle(GetStackInt(stack));
+
     if (source == NULL) {
         return 0;
     }
+
     OBJ_HANDLE *target = GetObjHandle(GetStackInt(next));
+
     if (target == NULL) {
         return 0;
     }
+
     sync_obj_obj(source, target);
     return 1;
 }
 
 static int _RELEASE_OBJ_OBJ(RS_STACKDATA *stack, int argument_count) {
     OBJ_HANDLE *handle = GetObjHandle(GetStackInt(stack));
+
     if (handle == NULL) {
         return 0;
     }
+
     release_obj_obj(handle);
     return 1;
 }
 
 static int _SET_OBJ_FOG(RS_STACKDATA *stack, int argument_count) {
     OBJ_HANDLE *handle = GetObjHandle(GetStackInt(stack++));
+
     if (handle == NULL) {
         return 0;
     }
+
     CFrameAttr attr;
     attr.fog_enable = GetStackInt(stack++);
     set_attr_obj(handle, attr, GetStackInt(stack), 0x40);
@@ -4944,6 +5780,7 @@ static int _GET_TALKNPC_INFO_ID(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, EdNowTalkCharaInfoID());
     return 1;
 }
@@ -4952,6 +5789,7 @@ static int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, EdEventInfo.talk_npc_id);
     return 1;
 }
@@ -4966,10 +5804,12 @@ static int _GET_TALKNPC_ID(RS_STACKDATA *stack, int argument_count) {
 static int _GET_TALKNPC_STATUS(RS_STACKDATA *stack, int argument_count) {
     int index = EdEventInfo.talk_npc_id;
     int status = 0;
+
     if (index >= 0 && index < EdEventInfo.npc_count) {
         CNPCharacter *npc = &EdEventInfo.npcs[index];
         status = npc->event_status;
     }
+
     SetStack(stack, status);
     return 1;
 }
@@ -4990,9 +5830,11 @@ static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR direction;
     EdEventInfo.main_character->GetPosition(player_position);
     EdEventInfo.npcs[EdEventInfo.talk_npc_id].GetPosition(npc_position);
+
     if (EdEventInfo.npcs[EdEventInfo.talk_npc_id].event_status == 0) {
         view = 0;
     }
+
     sceVu0SubVector(direction, npc_position, player_position);
     float         angle = atan2f(direction[0], direction[2]);
     sceVu0FVECTOR midpoint;
@@ -5000,23 +5842,28 @@ static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int argument_count) {
     sceVu0ScaleVector(midpoint, midpoint, 0.5f);
     midpoint[1] += 15.0f;
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera != NULL) {
         camera->FollowOff();
         camera->SetNextRef(NULL, midpoint[0], midpoint[1], midpoint[2]);
         camera->SetRef(midpoint);
     }
+
     sceVu0FVECTOR camera_position;
     sceVu0FMATRIX rotation;
     sceVu0UnitMatrix(rotation);
     sceVu0RotMatrixY(rotation, rotation, angle);
     sceVu0ApplyMatrix(camera_position, rotation, vv[view]);
     sceVu0AddVector(camera_position, midpoint, camera_position);
+
     if (camera != NULL) {
         camera->SetPos(camera_position);
     }
+
     if (camera != NULL) {
         camera->SetNextPos(NULL, camera_position[0], camera_position[1], camera_position[2]);
     }
+
     if (camera != NULL) {
         sceVu0FMATRIX view_matrix;
         sceVu0FVECTOR eye;
@@ -5024,6 +5871,7 @@ static int _SET_TALK_CAMERA(RS_STACKDATA *stack, int argument_count) {
         camera->GetPos(eye);
         MGSetViewMatrix(view_matrix, eye);
     }
+
     return 1;
 }
 
@@ -5031,12 +5879,15 @@ static int _SET_TALK_MES(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < 16; i++) {
         EdEventInfo.talk_messages[i] = -1;
     }
+
     for (int i = 0; i < argument_count; i++) {
         if (i >= 16) {
             return 0;
         }
+
         EdEventInfo.talk_messages[i] = GetStackInt(stack++);
     }
+
     return 1;
 }
 
@@ -5049,27 +5900,35 @@ static int _SET_TALK_SELECT_MES(RS_STACKDATA *stack, int argument_count) {
 
 static int _EVERY_TALK_EVENT(RS_STACKDATA *stack, int argument_count) {
     int villager_id = GetStackInt(stack++);
+
     if (villager_id < 0 || villager_id >= 16) {
         return 0;
     }
+
     int event_no = villager_id + 0x104;
+
     if (argument_count > 1) {
         event_no = GetStackInt(stack);
     }
+
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         CNPCharacter *npc = GetNPC(i);
+
         if (npc->villager_id == villager_id) {
             npc->recurring_talk_event = event_no;
         }
     }
+
     return 1;
 }
 
 static CCameraFollow *GetCamera() {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return NULL;
     }
+
     camera->FollowOff();
     return camera;
 }
@@ -5078,9 +5937,11 @@ static int _SET_CAMERA(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR  position;
     sceVu0FVECTOR  reference;
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     GetPosition(stack, position);
     GetPosition(stack + 3, reference);
     float speed = GetStackFloat(stack += 6);
@@ -5089,19 +5950,23 @@ static int _SET_CAMERA(RS_STACKDATA *stack, int argument_count) {
     camera->SetNextPos(NULL, position[0], position[1], position[2]);
     camera->SetNextRef(NULL, reference[0], reference[1], reference[2]);
     camera->SetSpeed(speed);
+
     if (speed <= 1.0f) {
         camera->SetPos(position);
         camera->SetRef(reference);
         camera->Step(-1);
     }
+
     return 1;
 }
 
 static int _SET_CAMERA_POS(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     follow_chara = NULL;
     camera->FollowOff();
     sceVu0FVECTOR position;
@@ -5114,9 +5979,11 @@ static int _GET_CAMERA_POS(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 3) {
         return 0;
     }
+
     if (EdEventInfo.camera == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     EdEventInfo.camera->GetPos(position);
     SetPosition(stack, position);
@@ -5125,9 +5992,11 @@ static int _GET_CAMERA_POS(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_CAMERA_REF(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     follow_chara = NULL;
     camera->FollowOff();
     sceVu0FVECTOR position;
@@ -5140,9 +6009,11 @@ static int _GET_CAMERA_REF(RS_STACKDATA *stack, int argument_count) {
     if (argument_count < 3) {
         return 0;
     }
+
     if (EdEventInfo.camera == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     EdEventInfo.camera->GetRef(position);
     SetPosition(stack, position);
@@ -5151,28 +6022,34 @@ static int _GET_CAMERA_REF(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_CAMERA_SPEED(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     camera->SetSpeed((float) GetStackInt(stack));
     return 1;
 }
 
 static int _SET_FOLLOW_CAMERA(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
 
     float         values[4];
     sceVu0FVECTOR position[2];
+
     if (stack->type == RS_INT) {
         int index = GetStackInt(stack++);
+
         if (index == -1) {
             follow_chara = EdEventInfo.main_character;
         } else {
             follow_chara = GetNPC(index);
         }
+
         if (follow_chara != NULL) {
             follow_chara->GetPosition(position[1]);
         }
@@ -5185,6 +6062,7 @@ static int _SET_FOLLOW_CAMERA(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < 4; i++) {
         values[i] = GetStackFloat(stack++);
     }
+
     sceVu0FVECTOR rotation;
     rotation[1] = values[2];
     GetWorldRot(rotation, rotation);
@@ -5195,18 +6073,22 @@ static int _SET_FOLLOW_CAMERA(RS_STACKDATA *stack, int argument_count) {
     camera->SetAngle(rotation[1]);
     camera->SetAngleSoon(rotation[1]);
     camera->SetSpeed(values[3]);
+
     if (values[3] <= 1.0f) {
         camera->Step(-1);
     }
+
     camera->FollowOn();
     return 1;
 }
 
 static int _ADD_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     camera->AddAngle(GetStackFloat(stack));
     camera->FollowOn();
     return 1;
@@ -5214,9 +6096,11 @@ static int _ADD_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
 
 static int _ADD_CAMERA_HEIGHT(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     camera->AddHeight(GetStackFloat(stack));
     camera->FollowOn();
     return 1;
@@ -5224,9 +6108,11 @@ static int _ADD_CAMERA_HEIGHT(RS_STACKDATA *stack, int argument_count) {
 
 static int _ADD_CAMERA_DIST(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     camera->AddDistance(GetStackFloat(stack));
     camera->FollowOn();
     return 1;
@@ -5234,14 +6120,17 @@ static int _ADD_CAMERA_DIST(RS_STACKDATA *stack, int argument_count) {
 
 static int _CAMERA_STEP(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 1;
     }
+
     if (follow_chara != NULL) {
         sceVu0FVECTOR position;
         follow_chara->GetPosition(position);
         camera->SetFollow(position[0], position[1] + 0.8f * follow_chara->body_height, position[2]);
     }
+
     return 1;
 }
 
@@ -5252,16 +6141,21 @@ static int _SET_PROJECTION(RS_STACKDATA *stack, int argument_count) {
 
 static int _ITEM_GET_CAMERA(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = EdEventInfo.camera;
+
     if (camera == NULL) {
         return 0;
     }
+
     float distance = GetStackFloat(stack);
+
     if (distance < 0.0f) {
         return 1;
     }
+
     if (distance < 10.0f) {
         distance = 10.0f;
     }
+
     camera->FollowOff();
     CCharacter   *character = GetChara(-1);
     sceVu0FVECTOR character_position;
@@ -5286,9 +6180,11 @@ static int _ITEM_GET_CAMERA(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
     CCamera *camera = GetCamera();
+
     if (camera == NULL) {
         return 0;
     }
+
     float yaw = AngleLimit(GetStackFloat(stack++));
     yaw = GetLocalRotY(yaw);
     sceVu0FVECTOR position;
@@ -5297,14 +6193,18 @@ static int _SET_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
     camera->GetPos(position);
     camera->GetRef(reference);
     sceVu0SubVector(direction, reference, position);
+
     if (argument_count == 1) {
         direction[1] = 0.0f;
     }
+
     float distance = DistVector(direction);
     float pitch = 0.0f;
+
     if (argument_count == 2) {
         pitch = AngleLimit(GetStackFloat(stack));
     }
+
     sceVu0FVECTOR offset = {0.0f, 0.0f, distance, 0.0f};
     sceVu0FMATRIX matrix;
     sceVu0FMATRIX rotation;
@@ -5315,18 +6215,22 @@ static int _SET_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
     sceVu0AddVector(offset, offset, position);
     reference[0] = offset[0];
     reference[2] = offset[2];
+
     if (argument_count == 2) {
         reference[1] = offset[1];
     }
+
     camera->SetRef(reference);
     return 1;
 }
 
 static int _GET_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
     CCamera *camera = GetCamera();
+
     if (camera == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     sceVu0FVECTOR reference;
     sceVu0FVECTOR direction;
@@ -5342,20 +6246,25 @@ static int _GET_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
     sceVu0Normalize(horizontal, horizontal);
     float yaw = atan2f(horizontal[0], horizontal[2]);
     float pitch = -atan2f(direction[1], distance);
+
     if (argument_count > 0) {
         SetStack(stack++, GetLocalRotY(yaw));
     }
+
     if (argument_count >= 2) {
         SetStack(stack, pitch);
     }
+
     return 1;
 }
 
 static int _SET_CAMERA_ROTATE(RS_STACKDATA *stack, int argument_count) {
     CCamera *camera = GetCamera();
+
     if (camera == NULL) {
         return 0;
     }
+
     float yaw = AngleLimit(GetStackFloat(stack));
     yaw = GetWorldRotY(yaw);
     sceVu0FVECTOR position;
@@ -5384,9 +6293,11 @@ static int _GET_CAMERA_ROTATE(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR  reference;
     sceVu0FVECTOR  direction;
     CCameraFollow *camera = GetCamera();
+
     if (camera == NULL) {
         return 0;
     }
+
     camera->GetPos(position);
     camera->GetRef(reference);
     sceVu0SubVector(direction, position, reference);
@@ -5415,6 +6326,7 @@ static int _RESET_CAMERA_ANGLE(RS_STACKDATA *stack, int argument_count) {
 
 static int _SYNC_CAMERA_REF_CHARA(RS_STACKDATA *stack, int argument_count) {
     sync_camera_ref_chara = GetChara(GetStackInt(stack++));
+
     if (argument_count == 4) {
         sync_camera_ref_offset[0] = GetStackFloat(stack++);
         sync_camera_ref_offset[1] = GetStackFloat(stack++);
@@ -5424,6 +6336,7 @@ static int _SYNC_CAMERA_REF_CHARA(RS_STACKDATA *stack, int argument_count) {
         sync_camera_ref_offset[1] = 0.0f;
         sync_camera_ref_offset[2] = 0.0f;
     }
+
     return 1;
 }
 
@@ -5434,6 +6347,7 @@ static int _RELEASE_CAMERA_REF_CHARA(RS_STACKDATA *stack, int argument_count) {
 
 static int _SYNC_CAMERA_REF_OBJ(RS_STACKDATA *stack, int argument_count) {
     sync_camera_ref_obj = GetObjHandle(GetStackInt(stack++));
+
     if (argument_count == 4) {
         sync_camera_ref_offset[0] = GetStackFloat(stack++);
         sync_camera_ref_offset[1] = GetStackFloat(stack++);
@@ -5443,6 +6357,7 @@ static int _SYNC_CAMERA_REF_OBJ(RS_STACKDATA *stack, int argument_count) {
         sync_camera_ref_offset[1] = 0.0f;
         sync_camera_ref_offset[2] = 0.0f;
     }
+
     return 1;
 }
 
@@ -5463,18 +6378,22 @@ static int _RELEASE_CAMERA_POS_OBJ(RS_STACKDATA *stack, int argument_count) {
 
 static int _SET_CAMERA_ROLL(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = GetCamera();
+
     if (camera == NULL) {
         return 0;
     }
+
     camera->SetRoll(GetStackFloat(stack));
     return 1;
 }
 
 static int _GET_CAMERA_ROLL(RS_STACKDATA *stack, int argument_count) {
     CCameraFollow *camera = GetCamera();
+
     if (camera == NULL) {
         return 0;
     }
+
     SetStack(stack, camera->GetRoll());
     return 1;
 }
@@ -5485,11 +6404,13 @@ static int _FADE_IN(RS_STACKDATA *stack, int argument_count) {
     int blue = 0;
     int green = 0;
     red = 0;
+
     if (argument_count == 4) {
         red = GetStackInt(stack++);
         green = GetStackInt(stack++);
         blue = GetStackInt(stack);
     }
+
     EdFadeIn(frames, (float) red, (float) green, (float) blue);
     return 1;
 }
@@ -5500,11 +6421,13 @@ static int _FADE_OUT(RS_STACKDATA *stack, int argument_count) {
     int blue = 0;
     int green = 0;
     red = 0;
+
     if (argument_count == 4) {
         red = GetStackInt(stack++);
         green = GetStackInt(stack++);
         blue = GetStackInt(stack);
     }
+
     EdFadeOut(frames, (float) red, (float) green, (float) blue);
     return 1;
 }
@@ -5513,6 +6436,7 @@ static int _CHECK_FADE(RS_STACKDATA *stack, int argument_count) {
     if (argument_count <= 0) {
         return 0;
     }
+
     SetStack(stack, EdFadeOutCheck());
     return 1;
 }
@@ -5533,9 +6457,11 @@ static int _DRAW_SPRITE(RS_STACKDATA *stack, int argument_count) {
     source.width = GetStackInt(stack++);
     source.height = GetStackInt(stack);
     CTexture *texture = TexManager.GetTexture(name, -1);
+
     if (texture == NULL) {
         return 0;
     }
+
     SpriteTable.AddTable(x, y, (sceGsTex0 *) &texture->tex0, &source, 0, 0);
     return 1;
 }
@@ -5550,9 +6476,11 @@ static int _DRAW_BG_SPRITE(RS_STACKDATA *stack, int argument_count) {
     source.width = GetStackInt(stack++);
     source.height = GetStackInt(stack);
     CTexture *texture = TexManager.GetTexture(name, -1);
+
     if (texture == NULL) {
         return 0;
     }
+
     SpriteTableBack.AddTable(x, y, (sceGsTex0 *) &texture->tex0, &source, 0, 0);
     return 1;
 }
@@ -5560,15 +6488,19 @@ static int _DRAW_BG_SPRITE(RS_STACKDATA *stack, int argument_count) {
 static int _DRAW_BACK(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.suppress_background = ((GetStackInt(stack++) != 0) ^ 1) & 0xFF;
     float red = -1.0f;
+
     if (argument_count > 1) {
         red = GetStackFloat(stack++);
     }
+
     float blue = red;
     float green = red;
+
     if (argument_count == 4) {
         green = GetStackFloat(stack++);
         blue = GetStackFloat(stack);
     }
+
     EdEventInfo.background_color[0] = red;
     EdEventInfo.background_color[1] = green;
     EdEventInfo.background_color[2] = blue;
@@ -5591,12 +6523,14 @@ static int _SET_CLIP_POINT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR plane;
     GetPosition(stack, plane);
     stack += 3;
+
     if (EdEventInfo.edit_ground != NULL) {
         float        distance = GetStackFloat(stack++);
         CEditGround *ground = EdEventInfo.edit_ground;
         sceVu0CopyVector(ground->clip_plane, plane);
         ground->clip_plane[3] = distance;
     }
+
     return 1;
 }
 
@@ -5604,35 +6538,43 @@ static int _DRAW_EDIT_WATER(RS_STACKDATA *stack, int argument_count) {
     if (EdEventInfo.edit_ground != NULL) {
         EdEventInfo.edit_ground->suppress_water = ((GetStackInt(stack) != 0) ^ 1) & 0xFF;
     }
+
     return 1;
 }
 
 static int _DRAW_WATER_SURFACE(RS_STACKDATA *stack, int argument_count) {
     int draw = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         if (EdEventInfo.edit_ground != NULL) {
             int index = GetStackInt(stack++);
+
             if (index >= 0 && index < 4) {
                 EdEventInfo.edit_ground->water_surfaces[index].draw = draw;
             }
         }
     }
+
     return 1;
 }
 
 static int _SCREEN_FILTER(RS_STACKDATA *stack, int argument_count) {
     int red = GetStackInt(stack++);
+
     if (red < 0) {
         EdEventInfo.screen_filter = 0;
         return 1;
     }
+
     int green = GetStackInt(stack++);
     int blue = GetStackInt(stack++);
     int alpha = GetStackInt(stack);
+
     if (alpha < 0) {
         EdEventInfo.screen_filter = 0;
         return 1;
     }
+
     EdEventInfo.screen_filter = 1;
     EdEventInfo.screen_filter_color[0] = red;
     EdEventInfo.screen_filter_color[1] = green;
@@ -5649,9 +6591,11 @@ static int _DRAW_THUNDER(RS_STACKDATA *stack, int argument_count) {
 static int _SET_LIGHT(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.lighting_override = 1;
     int index = GetStackInt(stack++);
+
     if (index < 0 || index > 3) {
         return 0;
     }
+
     sceVu0FVECTOR direction;
     direction[0] = GetStackFloat(stack++);
     direction[1] = GetStackFloat(stack++);
@@ -5661,20 +6605,24 @@ static int _SET_LIGHT(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.light_direction[0][index] = direction[0];
     EdEventInfo.light_direction[1][index] = direction[1];
     EdEventInfo.light_direction[2][index] = direction[2];
+
     if (argument_count > 4) {
         EdEventInfo.light_color[index][0] = GetStackFloat(stack++);
         EdEventInfo.light_color[index][1] = GetStackFloat(stack++);
         EdEventInfo.light_color[index][2] = GetStackFloat(stack);
     }
+
     return 1;
 }
 
 static int _SET_LIGHT_COLOR(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.lighting_override = 1;
     int index = GetStackInt(stack++);
+
     if (index < 0 || index > 3) {
         return 0;
     }
+
     EdEventInfo.light_color[index][0] = GetStackFloat(stack++);
     EdEventInfo.light_color[index][1] = GetStackFloat(stack++);
     EdEventInfo.light_color[index][2] = GetStackFloat(stack);
@@ -5687,17 +6635,21 @@ static int _SET_AMBIENT(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.ambient_color[1] = GetStackFloat(stack++);
     EdEventInfo.ambient_color[2] = GetStackFloat(stack++);
     EdEventInfo.ambient_color[3] = 128.0f;
+
     if (argument_count > 3) {
         EdEventInfo.ambient_color[3] = GetStackFloat(stack);
     }
+
     return 1;
 }
 
 static int _SAVE_LIGHT(RS_STACKDATA *stack, int argument_count) {
     int slot = GetStackInt(stack);
+
     if (slot < 0 || slot > 1) {
         return 0;
     }
+
     sceVu0CopyMatrix(save_l[slot], EdEventInfo.light_direction);
     sceVu0CopyMatrix(save_c[slot], EdEventInfo.light_color);
     sceVu0CopyVector(save_a[slot], EdEventInfo.ambient_color);
@@ -5706,14 +6658,17 @@ static int _SAVE_LIGHT(RS_STACKDATA *stack, int argument_count) {
 
 static int _LOAD_LIGHT(RS_STACKDATA *stack, int argument_count) {
     int slot = GetStackInt(stack);
+
     if (slot < 0) {
         MGGetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
         MGGetAmbient(EdEventInfo.ambient_color);
         return 1;
     }
+
     if (slot > 1) {
         return 0;
     }
+
     sceVu0CopyMatrix(EdEventInfo.light_direction, save_l[slot]);
     sceVu0CopyMatrix(EdEventInfo.light_color, save_c[slot]);
     sceVu0CopyVector(EdEventInfo.ambient_color, save_a[slot]);
@@ -5727,76 +6682,98 @@ static int _SET_DOF_LEVEL(RS_STACKDATA *stack, int argument_count) {
 
 static int _SP_INIT(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack);
+
     if (index < 0) {
         for (int i = 0;; i++) {
             ED_SPRITE *sprite = GetSprite(i);
+
             if (sprite == NULL) {
                 break;
             }
+
             InitSprite(sprite);
         }
+
         return 1;
     }
+
     ED_SPRITE *sprite = GetSprite(index);
+
     if (sprite == NULL) {
         return 0;
     }
+
     InitSprite(sprite);
     return 1;
 }
 
 static int _SP_SET_TEX(RS_STACKDATA *stack, int argument_count) {
     ED_SPRITE *sprite = GetSprite(GetStackInt(stack++));
+
     if (sprite == NULL) {
         return 0;
     }
+
     sprite->enabled = 1;
     char *name = GetStackString(stack++);
     sprite->source_x = GetStackInt(stack++);
     sprite->source_y = GetStackInt(stack++);
     sprite->source_width = GetStackInt(stack++);
     sprite->source_height = GetStackInt(stack++);
+
     if (argument_count > 6) {
         sprite->bilinear = GetStackInt(stack);
     }
+
     CTexture *texture = TexManager.GetTexture(name, -1);
+
     if (texture == NULL) {
         return 0;
     }
+
     sprite->texture = *texture;
     return 1;
 }
 
 static int _SP_SET_POS(RS_STACKDATA *stack, int argument_count) {
     ED_SPRITE *sprite = GetSprite(GetStackInt(stack++));
+
     if (sprite == NULL) {
         return 0;
     }
+
     sprite->x = (float) GetStackInt(stack++);
     sprite->y = (float) GetStackInt(stack++);
     sprite->height = -1;
     sprite->width = -1;
+
     if (argument_count > 3) {
         sprite->width = GetStackInt(stack++);
     }
+
     if (argument_count > 4) {
         sprite->height = GetStackInt(stack);
     }
+
     return 1;
 }
 
 static int _SP_SET_RGBA(RS_STACKDATA *stack, int argument_count) {
     ED_SPRITE *sprite = GetSprite(GetStackInt(stack++));
+
     if (sprite == NULL) {
         return 0;
     }
+
     sprite->red = GetStackInt(stack++);
     sprite->green = GetStackInt(stack++);
     sprite->blue = GetStackInt(stack++);
     sprite->alpha = 128;
+
     if (argument_count > 4) {
         sprite->alpha = GetStackInt(stack);
     }
+
     return 1;
 }
 
@@ -5804,9 +6781,11 @@ static int _SP_SET_ROT(RS_STACKDATA *stack, int argument_count) {
     ED_SPRITE    *sprite;
     RS_STACKDATA *arguments = (0, stack + 1);
     sprite = GetSprite(GetStackInt(stack));
+
     if (sprite == NULL) {
         return 0;
     }
+
     sprite->rotated = 1;
     sprite->rotation_x = GetStackInt(arguments++);
     sprite->rotation_y = GetStackInt(arguments++);
@@ -5817,9 +6796,11 @@ static int _SP_SET_ROT(RS_STACKDATA *stack, int argument_count) {
 static int _SP_SET_MOVE(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *arguments = (0, stack + 1);
     ED_SPRITE    *sprite = GetSprite(GetStackInt(stack));
+
     if (sprite == NULL) {
         return 0;
     }
+
     sprite->move_x = GetStackFloat(arguments++);
     sprite->move_y = GetStackFloat(arguments);
     return 1;
@@ -5827,12 +6808,15 @@ static int _SP_SET_MOVE(RS_STACKDATA *stack, int argument_count) {
 
 static int _SP_DRAW(RS_STACKDATA *stack, int argument_count) {
     int layer = GetStackInt(stack++);
+
     for (int i = 0; i < argument_count - 1; i++) {
         ED_SPRITE *sprite = GetSprite(GetStackInt(stack++));
+
         if (sprite != NULL) {
             sprite->layer = layer;
         }
     }
+
     return 1;
 }
 
@@ -5861,19 +6845,25 @@ static int _SET_WIND(RS_STACKDATA *stack, int argument_count) {
 
 static int _ASQ_INIT(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack);
+
     if (index < 0) {
         for (int i = 0; i < 10; i++) {
             CActionSeq *sequence = GetActSeq(index);
+
             if (sequence != NULL) {
                 sequence->ClearSeq();
             }
         }
+
         return 1;
     }
+
     CActionSeq *sequence = GetActSeq(index);
+
     if (sequence == NULL) {
         return 0;
     }
+
     sequence->ClearSeq();
     return 1;
 }
@@ -5882,16 +6872,21 @@ int _ASQ_SYNC_CHARA(RS_STACKDATA *stack, int argument_count) {
     int         sequence_index = GetStackInt(stack++);
     int         character_index = GetStackInt(stack);
     CActionSeq *sequence = GetActSeq(sequence_index);
+
     if (sequence == NULL) {
         return 0;
     }
+
     CCharacter *character = GetNPC(character_index);
+
     if (character_index == -1) {
         character = EdEventInfo.main_character;
     }
+
     if (character == NULL) {
         return 0;
     }
+
     sequence->SyncChara(character);
     return 1;
 }
@@ -5899,9 +6894,11 @@ int _ASQ_SYNC_CHARA(RS_STACKDATA *stack, int argument_count) {
 static int _ASQ_SET_POS(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *arguments = (0, stack + 1);
     CActionSeq   *sequence = GetActSeq(GetStackInt(stack));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     GetPosition(arguments, position);
     sequence->SetPos(position);
@@ -5911,25 +6908,31 @@ static int _ASQ_SET_POS(RS_STACKDATA *stack, int argument_count) {
 static int _ASQ_MOVE(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR position;
     CActionSeq   *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     if (argument_count == 5) {
         GetPosition(stack, position);
         stack += 3;
         sequence->MoveSeq(position, GetStackInt(stack++));
     }
+
     if (argument_count == 2) {
         sequence->MoveSeq(GetStackInt(stack));
     }
+
     return 1;
 }
 
 int _ASQ_MOVE_STEP(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     GetPosition(stack, position);
     sequence->MoveSeq(position, GetStackFloat(stack += 3));
@@ -5938,9 +6941,11 @@ int _ASQ_MOVE_STEP(RS_STACKDATA *stack, int argument_count) {
 
 int _ASQ_ROT_REF(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     GetPosition(stack, position);
     sequence->RotRefSeq(position, GetStackFloat(stack += 3));
@@ -5950,9 +6955,11 @@ int _ASQ_ROT_REF(RS_STACKDATA *stack, int argument_count) {
 static int _ASQ_ROT_ANGLE(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
     CActionSeq   *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     rotation[3] = 0.0f;
     rotation[2] = 0.0f;
     rotation[0] = 0.0f;
@@ -5964,18 +6971,22 @@ static int _ASQ_ROT_ANGLE(RS_STACKDATA *stack, int argument_count) {
 
 static int _ASQ_CLEAR_ROT(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sequence->ClearRotSeq();
     return 1;
 }
 
 static int _ASQ_WAIT_ROT(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sequence->WaitRotSeq();
     return 1;
 }
@@ -5983,9 +6994,11 @@ static int _ASQ_WAIT_ROT(RS_STACKDATA *stack, int argument_count) {
 static int _ASQ_ROT_MOVE(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     CActionSeq   *sequence = GetActSeq(GetStackInt(stack));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sequence->RotMoveSeq(GetStackFloat(next));
     return 1;
 }
@@ -5993,19 +7006,23 @@ static int _ASQ_ROT_MOVE(RS_STACKDATA *stack, int argument_count) {
 static int _ASQ_SET_ROT(RS_STACKDATA *stack, int argument_count) {
     sceVu0FVECTOR rotation;
     CActionSeq   *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     if (argument_count == 4) {
         GetRotation(stack, rotation);
         stack += 3;
     }
+
     if (argument_count == 2) {
         rotation[2] = 0.0f;
         rotation[0] = 0.0f;
         rotation[1] = GetStackFloat(stack);
         GetWorldRot(rotation, rotation);
     }
+
     sequence->SetRot(rotation);
     return 1;
 }
@@ -6013,40 +7030,52 @@ static int _ASQ_SET_ROT(RS_STACKDATA *stack, int argument_count) {
 static int _ASQ_DELAY_ROT(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA *next = (0, stack + 1);
     CActionSeq   *sequence = GetActSeq(GetStackInt(stack));
+
     if (sequence == NULL) {
         return 0;
     }
+
     sequence->SetDelayRot(GetStackInt(next));
     return 1;
 }
 
 static int _ASQ_MOTION_TRG(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     int trigger = 0;
+
     if (argument_count == 2) {
         trigger = GetStackInt(stack);
     }
+
     sequence->MotionTrg(trigger);
     return 1;
 }
 
 static int asq_motion_play(int mode, RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     int   motion = GetStackInt(stack++);
     float speed = -1.0f;
+
     if (argument_count >= 3) {
         speed = GetStackFloat(stack++);
     }
+
     int flags = 0;
+
     if (argument_count >= 4) {
         flags = (int) GetStackFloat(stack);
     }
+
     flags &= 4;
     sequence->MotionSeq(motion, mode, speed, flags);
     return 1;
@@ -6066,35 +7095,45 @@ static int _ASQ_MOTION_NEXT(RS_STACKDATA *stack, int argument_count) {
 
 static int _ASQ_ANIME_TRG(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     int trigger = 0;
+
     if (argument_count == 2) {
         trigger = GetStackInt(stack);
     }
+
     sequence->AnimeTrg(trigger);
     return 1;
 }
 
 static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     int enable = 1;
     int start = 0;
     int end = 0;
     int animation = GetStackInt(stack++);
+
     if (argument_count >= 3) {
         enable = GetStackInt(stack++);
     }
+
     if (argument_count >= 4) {
         start = GetStackInt(stack++);
     }
+
     if (argument_count >= 5) {
         end = GetStackInt(stack);
     }
+
     sequence->AnimeSeq(animation, enable, start, end);
     return 1;
 }
@@ -6108,9 +7147,11 @@ static int _ASQ_ANIME(RS_STACKDATA *stack, int argument_count) {
  */
 static int _ASQ_CHECK(RS_STACKDATA *stack, int argument_count) {
     CActionSeq *sequence = GetActSeq(GetStackInt(stack++));
+
     if (sequence == NULL) {
         return 0;
     }
+
     int end = sequence->CheckEnd();
     SetStack(stack++, ((end != 0) ^ 1) & 0xFF);
     return 1;
@@ -6120,6 +7161,7 @@ static int _OBJ_ANIME_INIT(RS_STACKDATA *stack, int argument_count) {
     for (int i = 0; i < argument_count; i++) {
         ClearObjAnime(GetStackInt(stack++));
     }
+
     return 1;
 }
 
@@ -6144,31 +7186,37 @@ static int _OBJ_ANIME(RS_STACKDATA *stack, int argument_count) {
     offset[0] = GetStackFloat(stack++);
     offset[1] = GetStackFloat(stack++);
     offset[2] = GetStackFloat(stack++);
+
     if (angle_mode == 0) {
         offset[0] = 180.0f * offset[0] / 3.141592f;
         offset[1] = 180.0f * offset[1] / 3.141592f;
         offset[2] = 180.0f * offset[2] / 3.141592f;
     }
+
     if (argument_count >= 10) {
         range[0] = GetStackFloat(stack++);
         range[1] = GetStackFloat(stack++);
         range[2] = GetStackFloat(stack++);
+
         if (angle_mode == 0) {
             range[0] = 180.0f * range[0] / 3.141592f;
             range[1] = 180.0f * range[1] / 3.141592f;
             range[2] = 180.0f * range[2] / 3.141592f;
         }
     }
+
     if (argument_count >= 13) {
         speed[0] = GetStackFloat(stack++);
         speed[1] = GetStackFloat(stack++);
         speed[2] = GetStackFloat(stack);
+
         if (angle_mode == 0) {
             speed[0] = 180.0f * speed[0] / 3.141592f;
             speed[1] = 180.0f * speed[1] / 3.141592f;
             speed[2] = 180.0f * speed[2] / 3.141592f;
         }
     }
+
     init_obj_anime(anime_index, handle_index, angle_mode, playback_mode, offset, range, speed);
     return 1;
 }
@@ -6177,6 +7225,7 @@ static int _SSET_GAME_FLAG(RS_STACKDATA *stack, int argument_count) {
     if (argument_count != 2) {
         return 0;
     }
+
     RS_STACKDATA *next = (0, stack + 1);
     int           flag = GetStackInt(stack);
     SaveData->SetGameFlag(flag, GetStackInt(next));
@@ -6187,6 +7236,7 @@ static int _SGET_GAME_FLAG(RS_STACKDATA *stack, int argument_count) {
     if (argument_count != 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     int           flag = GetStackInt(stack);
     SetStack(result, SaveData->GetGameFlag(flag));
@@ -6197,6 +7247,7 @@ static int _SSET_GAME_INT_FLAG(RS_STACKDATA *stack, int argument_count) {
     if (argument_count != 2) {
         return 0;
     }
+
     RS_STACKDATA *next = (0, stack + 1);
     int           flag = GetStackInt(stack);
     SaveData->SetGameIntFlag(flag, GetStackInt(next));
@@ -6207,6 +7258,7 @@ static int _SGET_GAME_INT_FLAG(RS_STACKDATA *stack, int argument_count) {
     if (argument_count != 2) {
         return 0;
     }
+
     RS_STACKDATA *result = (0, stack + 1);
     int           flag = GetStackInt(stack);
     SetStack(result, SaveData->GetGameIntFlag(flag));
@@ -6216,9 +7268,11 @@ static int _SGET_GAME_INT_FLAG(RS_STACKDATA *stack, int argument_count) {
 static int _SITEM_GET(RS_STACKDATA *stack, int argument_count) {
     int attachment = -1;
     int item = GetStackInt(stack);
+
     if (GetAddAttachItem(item) != 0) {
         attachment = 3;
     }
+
     EdGetItem(item, 1, attachment);
     return 1;
 }
@@ -6267,9 +7321,11 @@ static int _SITEM_CHECK_ALL(RS_STACKDATA *stack, int argument_count) {
 static int _SGET_DUNGEON_STATUS(RS_STACKDATA *stack, int argument_count) {
     CDngStatusData *status = SaveData->GetDngStatus();
     int             dungeon = GetStackInt(stack++);
+
     if (dungeon < 0 || dungeon >= 6) {
         return 0;
     }
+
     SetStack(stack++, SaveData->QuestDungeon(dungeon, 0));
     SetStack(stack, status->floor_reached[dungeon]);
     return 1;
@@ -6294,9 +7350,11 @@ static int _SSET_PARTY_NUM(RS_STACKDATA *stack, int argument_count) {
 static int _SSET_REQUEST_EVENT_FLAG(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA    *next = (0, stack + 1);
     SV_GEORAMA_DATA *georama = SaveData->GetGrdData(GetStackInt(stack) - 1);
+
     if (georama == NULL) {
         return 0;
     }
+
     georama->request_event_flag = GetStackInt(next);
     return 1;
 }
@@ -6311,22 +7369,28 @@ static int _SSET_REQUEST_EVENT_FLAG(RS_STACKDATA *stack, int argument_count) {
 static int _SADD_VISIT_MAP(RS_STACKDATA *stack, int argument_count) {
     int map = GetStackInt(stack++) - 1;
     int add = 1;
+
     if (argument_count > 1) {
         add = GetStackInt(stack++);
     }
+
     int visits = map < 200 ? SaveData->VisitMap(map, add) : SaveData->QuestDungeon(map, add);
+
     if (argument_count > 2) {
         SetStack(stack, visits);
     }
+
     return 1;
 }
 
 static int _SSKILL_GET(RS_STACKDATA *stack, int argument_count) {
     CDngStatusData *status = SaveData->GetDngStatus();
     int             character = GetStackInt(stack);
+
     if (character < 0 || character >= 6) {
         return 0;
     }
+
     status->skill_owned[character] = 1;
     return 1;
 }
@@ -6334,9 +7398,11 @@ static int _SSKILL_GET(RS_STACKDATA *stack, int argument_count) {
 static int _SGET_EQUIP_WEAPON(RS_STACKDATA *stack, int argument_count) {
     CDngStatusData *status = SaveData->GetDngStatus();
     int             character = GetStackInt(stack++);
+
     if (character < 0 || character >= 6) {
         return 0;
     }
+
     SetStack(stack, TransWepNoNewToOld(status->chara_weapons[character][status->equipped_weapon_slot[character]].item_no));
     return 1;
 }
@@ -6367,25 +7433,32 @@ static int _SATRA_CHIP_GET(RS_STACKDATA *stack, int argument_count) {
 int _SGET_REQUEST(RS_STACKDATA *stack, int argument_count) {
     RS_STACKDATA    *result = (0, stack + 1);
     SV_GEORAMA_DATA *georama = SaveData->GetGrdData(GetStackInt(stack) - 1);
+
     if (georama == NULL) {
         SetStack(result, 0);
         return 0;
     }
+
     int i;
     int completed = 0;
     i = 0;
+
     while (i < 24) {
         if (georama->request_complete[i] != 0) {
             completed++;
         }
+
         i++;
     }
+
     int total = georama->request_count;
+
     if (completed == total) {
         SetStack(result, 100);
     } else {
         SetStack(result++, completed * 100 / total);
     }
+
     return 1;
 }
 
@@ -6393,12 +7466,15 @@ static int _SGET_ATRA_PARTS_NUM(RS_STACKDATA *stack, int argument_count) {
     int           count = 0;
     RS_STACKDATA *result = (0, stack + 1);
     int           georama = GetStackInt(stack) - 1;
+
     for (int i = 0; i < 24; i++) {
         SV_EDIT_PARTS_INFO *part = SaveData->GetEditPartsInfo(georama, i);
+
         if (part != NULL && part->obtained != 0) {
             count++;
         }
     }
+
     SetStack(result, count);
     return 1;
 }
@@ -6498,12 +7574,15 @@ static int _BGM_FADE_IN(RS_STACKDATA *stack, int argument_count) {
     int bgm = GetStackInt(stack++);
     int frames = -1;
     int mode = 0;
+
     if (argument_count > 1) {
         frames = GetStackInt(stack++);
     }
+
     if (argument_count > 2) {
         mode = GetStackInt(stack);
     }
+
     SndBgmFadeIn(bgm, frames, mode);
     return 1;
 }
@@ -6511,9 +7590,11 @@ static int _BGM_FADE_IN(RS_STACKDATA *stack, int argument_count) {
 static int _BGM_FADE_OUT(RS_STACKDATA *stack, int argument_count) {
     int bgm = GetStackInt(stack++);
     int frames = 0;
+
     if (argument_count > 1) {
         frames = GetStackInt(stack);
     }
+
     SndBgmFadeOut(bgm, frames);
     return 1;
 }
@@ -6540,26 +7621,33 @@ static int _SET_AMB_VOLF(RS_STACKDATA *stack, int argument_count) {
 
 static int _PLAY_SE(RS_STACKDATA *stack, int argument_count) {
     int sound = GetStackInt(stack++);
+
     if (argument_count >= 4) {
         float position[4];
         GetPosition(stack, position);
         stack += 3;
         float near = -1.0f;
         float far = -1.0f;
+
         if (argument_count >= 5) {
             near = GetStackFloat(stack++);
         }
+
         if (argument_count >= 6) {
             far = GetStackFloat(stack);
         }
+
         SndSePlay(sound, position, near, far);
     } else {
         int voice = -1;
+
         if (argument_count == 2) {
             voice = GetStackInt(stack);
         }
+
         SndSePlay(sound, voice, 0);
     }
+
     return 1;
 }
 
@@ -6584,9 +7672,11 @@ static int _LOAD_SPECIAL_SE(RS_STACKDATA *stack, int argument_count) {
 static int _PLAY_SPECIAL_SE(RS_STACKDATA *stack, int argument_count) {
     int sound = GetStackInt(stack++);
     int voice = -1;
+
     if (argument_count >= 2) {
         voice = GetStackInt(stack);
     }
+
     SndSPSePlay(sound, voice);
     return 1;
 }
@@ -6603,12 +7693,15 @@ static int _SET_SPECIAL_SE_VOL(RS_STACKDATA *stack, int argument_count) {
     stack += 3;
     float near = 10.0f;
     float far = 500.0f;
+
     if (argument_count >= 5) {
         near = GetStackFloat(stack++);
     }
+
     if (argument_count >= 6) {
         far = GetStackFloat(stack);
     }
+
     float volume;
     float pan;
     SndGetVolPan(&volume, &pan, position, near, far);
@@ -6619,38 +7712,47 @@ static int _SET_SPECIAL_SE_VOL(RS_STACKDATA *stack, int argument_count) {
 
 static int _SOUND_OFF_COUNT(RS_STACKDATA *stack, int argument_count) {
     EdEventInfo.sound_off_count = GetStackInt(stack);
+
     if (EdEventInfo.sound_off_count > 10) {
         EdEventInfo.sound_off_count = 10;
     }
+
     EdSetSoundOffCount(EdEventInfo.sound_off_count);
     return 1;
 }
 
 static int _GET_V_ARG(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= 4) {
         return 0;
     }
+
     for (int i = 0; i < argument_count - 1; i++) {
         SetStack(stack++, EdEventInfo.vector_arguments[index][i]);
     }
+
     return 1;
 }
 
 static int _GET_I_ARG(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= 8) {
         return 0;
     }
+
     SetStack(stack++, EdEventInfo.integer_arguments[index]);
     return 1;
 }
 
 static int _GET_F_ARG(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
+
     if (index < 0 || index >= 8) {
         return 0;
     }
+
     SetStack(stack++, EdEventInfo.flag_arguments[index]);
     return 1;
 }
@@ -6662,14 +7764,18 @@ static int _EB_INIT(RS_STACKDATA *stack, int argument_count) {
 
 static int _EB_SET_MOTION(RS_STACKDATA *stack, int argument_count) {
     int motions[128];
+
     if (argument_count < 2) {
         return 0;
     }
+
     CCharacter *character = GetChara(GetStackInt(stack++));
     int         i = 0;
+
     while (i < argument_count - 1) {
         motions[i++] = GetStackInt(stack++);
     }
+
     motions[i] = -1;
     EBSetMotion(character, motions);
     return 1;
@@ -6679,9 +7785,11 @@ static int _EB_SET_KEY(RS_STACKDATA *stack, int argument_count) {
     float time = GetStackFloat(stack++);
     int   key = GetStackInt(stack++);
     int   mode = 0;
+
     if (argument_count >= 3) {
         mode = GetStackInt(stack);
     }
+
     EBSetKey(time, key, mode);
     return 1;
 }
@@ -6726,9 +7834,11 @@ static int _LOAD_MAIN_CHARA(RS_STACKDATA *stack, int argument_count) {
     char           *motion = GetStackString(stack++);
     int             use_villager_arena = GetStackInt(stack);
     CDataAlloc2<1> *arena = NULL;
+
     if (use_villager_arena == 1) {
         arena = &EdVillagerBuffer;
     }
+
     EdLoadMainChara(model, motion, arena);
     return 1;
 }
@@ -6752,15 +7862,19 @@ static int _LOAD_FISHING_DATA(RS_STACKDATA *stack, int argument_count) {
 
     CCPoly polygons[1024];
     int    polygon_count = 0;
+
     if (EdEventInfo.edit_ground != NULL) {
         polygon_count = EdEventInfo.edit_ground->PickUpPoly(polygons, bounds, 0);
         printf("poly_num = %d\n", polygon_count);
+
         if (polygon_count > 1024) {
             printf("CPOLY OVER *****************\n");
+
             while (1) {
             }
         }
     }
+
     FishingSetCPoly(polygons, polygon_count);
     return 1;
 }
@@ -6773,11 +7887,14 @@ static sceVu0FVECTOR fishing_line_origin = {0.0f, 0.0f, 0.0f, 1.0f};
 
 static int _GOTO_FISHING(RS_STACKDATA *stack, int argument_count) {
     CCharacter *character = GetChara(-1);
+
     if (character == NULL) {
         return 0;
     }
+
     sceVu0FVECTOR position;
     character->GetPosition(position);
+
     if (character->frame != NULL) {
         /** Homogeneous origin copied into the aligned stack work vector. */
         struct FishingOrigin {
@@ -6786,11 +7903,14 @@ static int _GOTO_FISHING(RS_STACKDATA *stack, int argument_count) {
 
         FishingOrigin origin = *(FishingOrigin *) fishing_line_origin;
         CFrame       *rod = character->frame->SearchFrame("sao");
+
         if (rod != NULL) {
             rod->GetWorldPosition(position, origin.value);
         }
+
         FishLineInit(position);
     }
+
     EdEventInfo.return_code = 11;
     return 1;
 }
@@ -7151,40 +8271,51 @@ int EdSetEventScript(char *common_script, char *map_script, CDataAlloc2<1> *allo
         event_enable = 0;
         return 0;
     }
+
     event_enable = 1;
     RS_STACKDATA *stack = (RS_STACKDATA *) allocator->Alloc(64);
     RS_CALLDATA  *calls = (RS_CALLDATA *) allocator->Alloc(384);
     EdEventScript.load((RS_PROG_HEADER *) common_script, stack, 128, calls, 512);
+
     if (map_script == NULL) {
         map_script = common_script + ((int *) common_script)[5];
     }
+
     if (EdEventInfo.messages[1] != NULL) {
         EdEventInfo.messages[1]->SetBuff((short *) map_script);
     }
 
     int i;
+
     for (i = 0; i < 1500; i++) {
         ext_func__2[i] = NULL;
     }
+
     for (i = 0;; i++) {
         if (ext_func_info[i].function == NULL) {
             break;
         }
+
         int j;
+
         for (j = 0; j < i; j++) {
             if (ext_func_info[i].operation == ext_func_info[j].operation) {
                 printf("same ext_func_no!!!\n");
+
                 while (1) {
                 }
             }
         }
+
         int operation = ext_func_info[i].operation;
+
         if (operation < 0 || operation >= 1500) {
             printf("ext func over!!");
         } else {
             ext_func__2[operation] = ext_func_info[i].function;
         }
     }
+
     EdEventScript.ext_func(ext_func__2, 1500);
     simple_event = 0;
     return 1;
@@ -7214,6 +8345,7 @@ int EdInitEventParamSimple() {
     EdEventInfo.player_shadow_draw = 1;
     EdEventInfo.player_foot_sound = 1;
     EdEventInfo.player_stop = 0;
+
     for (i = 0; i < 16; i++) {
         EdEventInfo.npc_collision[i] = 0;
         EdEventInfo.npc_draw[i] = 1;
@@ -7222,35 +8354,45 @@ int EdInitEventParamSimple() {
         EdEventInfo.npc_stop[i] = 0;
         EdEventInfo.npc_draw_before[i] = 0;
     }
+
     for (i = 0; i < 266; i++) {
         asq_table[i].operation = ACT_SEQ_UNUSED;
         asq_table[i].next = NULL;
     }
+
     for (i = 0; i < 10; i++) {
         ActSeq[i].Initialize(asq_table, 266);
     }
+
     SpriteTable.Initialize(sprite_table, 32, 4);
     SpriteTable.ClearPointer();
     SpriteTableBack.Initialize(sprite_table, 32, 4);
     SpriteTableBack.ClearPointer();
+
     for (i = 45; i <= 49; i++) {
         TexManager.DeleteTextureBlock(i);
     }
+
     memset(ObjHandle, 0, sizeof(ObjHandle));
     event_stop = 0;
     event_pause = 0;
+
     for (i = 0; i <= 0; i++) {
         EdEventInfo.item_frame[i] = NULL;
     }
+
     SceneData.Initialize();
+
     for (i = 0; i < 16; i++) {
         ED_SPRITE *sprite = GetSprite(i);
+
         if (sprite != NULL) {
             InitSprite(sprite);
         } else {
             break;
         }
     }
+
     ClearObjAnime(-1);
     EdEventInfo.wind[3] = -1.0f;
     EdEventInfo.sound_off_count = 0;
@@ -7260,6 +8402,7 @@ int EdInitEventParamSimple() {
 int EdInitEventParam() {
     EdInitEventParamSimple();
     CDataAlloc2<1> *allocator = (CDataAlloc2<1> *) BaseBuffer;
+
     if (allocator != NULL) {
         int     used = allocator->used;
         u_char *base = allocator->base + used * 16;
@@ -7268,20 +8411,25 @@ int EdInitEventParam() {
         EdVillagerBuffer.limit = limit;
         EdVillagerBuffer.used = 0;
     }
+
     for (int i = 0; i < 320; i++) {
         anime_data[i].Initialize();
     }
+
     if (EdEventInfo.main_texture_animation == NULL) {
         EdEventInfo.main_character->InitializeTexAnime(anime_data, 320);
     }
+
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         EdEventInfo.npcs[i].Initialize();
         EdEventInfo.npcs[i].InitializeTexAnime(anime_data, 320);
         TexManager.DeleteTextureBlock(EdEventInfo.npc_texture_block + i);
     }
+
     if (EdEventInfo.main_character != NULL) {
         EdEventInfo.main_character->SetMotion(0, 0);
     }
+
     return 1;
 }
 
@@ -7298,12 +8446,16 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
     if (program == NULL) {
         return 0;
     }
+
     run_system_event = 0;
+
     for (int i = 0; i < 8; i++) {
         ClsMes *message = EdEventInfo.messages[i];
+
         if (message == NULL) {
             continue;
         }
+
         message->text_columns = MES_WIN_COLUMNS;
         message->text_rows = 10;
         message->text_len = 0;
@@ -7324,12 +8476,15 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         message->auto_page_wait = 0;
         message->mes_made = -1;
         message->edge_alpha = 0x80;
+
         for (int j = 0; j < 10; j++) {
             message->mes_no[j] = -1;
         }
+
         for (int j = 0; j < 8; j++) {
             message->values[j] = 0;
         }
+
         message->value = 0;
         message->value_signed = 0;
         message->value_show = 1;
@@ -7339,6 +8494,7 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         message->cursor_row = -1;
         message->cursor_y = 0;
         message->cursor_lit = 0;
+
         for (int j = 0; j < 10; j++) {
             message->line_pos[j].x = -1;
             message->line_pos[j].y = -1;
@@ -7361,17 +8517,21 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
     EdEventInfo.map_jump_bgm_play = 1;
     MGGetPLight(EdEventInfo.light_direction, EdEventInfo.light_color);
     MGGetAmbient(EdEventInfo.ambient_color);
+
     if (event_enable == 0) {
         return 0;
     }
+
     EdInitEventParamSimple();
     BaseBuffer = (u_int *) arena;
+
     if (EdRunEvent(event_number, arena) <= 0) {
         simple_event = 1;
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
         return 0;
     }
+
     simple_event = 0;
     skip_enable = 0;
     return 1;
@@ -7417,36 +8577,48 @@ int EdEventSkip() {
 
 int EdEventAllClear() {
     EdEventInfo.main_character->ClearTexAnime();
+
     if (EdEventInfo.main_texture_animation != NULL) {
         for (int i = 0; i < EdEventInfo.main_texture_animation_count; i++) {
             EdEventInfo.main_texture_animation[i].Initialize();
         }
+
         EdEventInfo.main_character->InitializeTexAnime(EdEventInfo.main_texture_animation, EdEventInfo.main_texture_animation_count);
     }
+
     EdEventInfo.main_character->DeleteExtendTexture(EdEventInfo.player_texture_block);
     EdEventInfo.main_character->DeleteExtendMotion();
     EdEventInfo.main_character->SetMotion(0, 0);
+
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         CNPCharacter *npc = GetNPC(i);
+
         if (npc != NULL) {
             if (npc->texture_block >= 54) {
                 TexManager.DeleteTextureBlock(npc->texture_block);
             }
+
             npc->Initialize();
             npc->InitializeTexAnime(NULL, 0);
         }
     }
+
     EdEventInfo.main_character->SetMotionCamera(EdEventInfo.camera);
+
     for (int i = 0; i <= 0; i++) {
         DeleteItemFrame(i);
     }
+
     SceneData.Initialize();
+
     for (int i = 45; i <= 49; i++) {
         TexManager.DeleteTextureBlock(i);
     }
+
     for (int i = 0; i < 10; i++) {
         ActSeq[i].ClearSeq();
     }
+
     return 1;
 }
 
@@ -7458,9 +8630,11 @@ int EdEventFinish() {
     EdEventInfo.wind[3] = -1.0f;
     EdEventInfo.main_character->frame->DeleteReference();
     CFrame *shadow = EdEventInfo.main_character->shadow_frame;
+
     if (shadow != NULL) {
         shadow->DeleteReference();
     }
+
     return 1;
 }
 
@@ -7479,14 +8653,17 @@ int EdEventMode(CCameraFollow *camera, int kind) {
     if (DebugMode != 0 && GamePad.Down(0x400) != 0) {
         EdEventStopPlay();
     }
+
     if (DebugMode != 0 && menu_mode == 0 && GamePad.Down(0x800) != 0) {
         if (EdCheckEventPause() == 0) {
             SndBgmPause();
         } else {
             SndBgmRePlay();
         }
+
         EdEventPause();
     }
+
 #endif
     if (event_stop != 0) {
         static int    mode = 0;
@@ -7502,11 +8679,14 @@ int EdEventMode(CCameraFollow *camera, int kind) {
 
         EdDDebug(1);
         collision = &EdEventInfo.player_collision;
+
         if (select_chara >= 0) {
             collision = &EdEventInfo.npc_collision[select_chara];
         }
+
         camera->GetPos(position);
         camera->GetRef(reference);
+
         switch (mode) {
             case 0:
                 camera->FollowOff();
@@ -7523,31 +8703,40 @@ int EdEventMode(CCameraFollow *camera, int kind) {
             case 2:
                 if (GamePad.Down(0x2000) != 0) {
                     select_chara++;
+
                     if (select_chara >= EdEventInfo.npc_count) {
                         select_chara = -1;
                     }
                 }
+
                 if (GamePad.Down(0x8000) != 0) {
                     select_chara--;
+
                     if (select_chara < -1) {
                         select_chara = EdEventInfo.npc_count - 1;
                     }
                 }
+
                 if (select_chara == -1) {
                     EdDMoveChara(EdEventInfo.main_character, camera);
                 } else {
                     EdDMoveChara(&EdEventInfo.npcs[select_chara], camera);
                 }
+
                 if (GamePad.Down(0x40) != 0) {
                     *collision = !*collision;
                 }
+
                 break;
         }
+
         EdDPrint(mode_name[mode]);
         chara = EdEventInfo.main_character;
+
         if (select_chara >= 0) {
             chara = &EdEventInfo.npcs[select_chara];
         }
+
         chara->GetPosition(chara_position);
         chara->GetRotation(chara_rotation);
         GetLocalPos(chara_position, chara_position);
@@ -7579,27 +8768,35 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         sprintf(text, " projection = %7.1f\n", MGGetProjection());
         EdDPrint(text);
         EdDCheck();
+
         if (GamePad.Down(0x100) != 0) {
             EdOutPutFile();
         }
+
         if (GamePad.Down(0x1000) != 0) {
             mode--;
         }
+
         if (GamePad.Down(0x4000) != 0) {
             mode++;
         }
+
         if (mode < 0) {
             mode = 2;
         }
+
         if (mode > 2) {
             mode = 0;
         }
+
         if (EdEventInfo.projection > 0.0f) {
             MGSetProjection(EdEventInfo.projection);
         }
+
         if (EdEventInfo.suppress_background != 0 && EdEventInfo.background_color[0] >= 0.0f) {
             MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1], EdEventInfo.background_color[2], 128.0f);
         }
+
         return 0;
     }
 
@@ -7609,26 +8806,32 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         CTextureAnime::stop_anime = 1;
         ObjAnimeAllStop();
         CCamera::StopCamera = 1;
+
         if (GamePad.Down2(0x40) != 0 && menu_mode == 0) {
             SndBgmRePlay();
             BreakReadBG();
             EdEventSkip();
             EdEventPause();
         }
+
         if (EdEventInfo.projection > 0.0f) {
             MGSetProjection(EdEventInfo.projection);
         }
+
         if (EdEventInfo.suppress_background != 0 && EdEventInfo.background_color[0] >= 0.0f) {
             MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1], EdEventInfo.background_color[2], 128.0f);
         }
+
         if (GamePad.Down(0x20) != 0) {
             SndBgmRePlay();
             EdEventPause();
         }
+
         return 0;
     }
 
     EdPauseFlag = 0;
+
     if (motion_stop_flag != 0) {
         CCharacter::MotionStopFlag = 1;
         CTextureAnime::stop_anime = 1;
@@ -7640,16 +8843,20 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         ObjAnimeAllStart();
         CCamera::StopCamera = 0;
     }
+
     ReadBG();
     EdEventInfo.camera = camera;
+
     if (EdEventInfo.world_coord_enable != 0) {
         SetWorldCoord((float *) &EdEventInfo.world_coord[8], (float *) &EdEventInfo.world_coord[24]);
     }
+
     for (int i = 0; i < 8; i++) {
         if (EdEventInfo.messages[i] != NULL) {
             EdEventInfo.messages[i]->Step();
         }
     }
+
     if (SceneData.frame != NULL) {
         float speed = SceneData.motion_speed;
         SceneData.SetMotion(0, 0);
@@ -7659,37 +8866,46 @@ int EdEventMode(CCameraFollow *camera, int kind) {
 #endif
         SceneData.Step();
     }
+
     if (menu_mode == 0) {
         menu_mode_status = -1;
         EdResumeEvent();
+
         if (menu_mode != 0) {
             menu_mode_status = 0;
+
             if (EdInitMenu(menu_mode) == 0) {
                 menu_mode = 0;
             }
+
             motion_stop_flag = 1;
         }
     } else {
         switch (menu_mode_status) {
             case 0:
                 motion_stop_flag = 1;
+
                 if (EdInitModeFinish(EdEventInfo.camera, TexManager.GetTexture("frame_image", -1)) != 0) {
                     menu_mode_status = 1;
                     motion_stop_flag = 0;
                     MenuMapJumpMode = -1;
                 }
+
                 break;
             case 1:
             case 2:
                 EdDrawOffAll();
+
                 if (EdMenuMode() != 0) {
                     switch (menu_mode) {
                         case 5:
                         case 9: {
                             int item = EdGetUseItem();
+
                             if (p_use_item != NULL) {
                                 ((RS_STACKDATA *) p_use_item)->i = item;
                             }
+
                             p_use_item = NULL;
                             break;
                         }
@@ -7699,69 +8915,85 @@ int EdEventMode(CCameraFollow *camera, int kind) {
                             if (p_jump_map_no != 0) {
                                 ((RS_STACKDATA *) p_jump_map_no)->i = MenuMapJumpMode + 1;
                             }
+
                             p_jump_map_no = 0;
                             break;
                     }
+
                     menu_mode = 0;
                     EdDrawOnAll();
                     EdExitMenu();
                 }
+
                 break;
         }
     }
+
     for (int i = 0; i < 10; i++) {
         ActSeq[i].Play();
     }
+
     for (int i = 0; i < 16; i++) {
         ObjAnimePlay(&obj_anime[i]);
     }
+
     result = EdEventInfo.return_code;
+
     if (result > 0) {
         EdEventFinish();
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
     }
+
     if (EdEventInfo.projection > 0.0f) {
         MGSetProjection(EdEventInfo.projection);
     }
+
     if (EdEventInfo.suppress_background != 0 && EdEventInfo.background_color[0] >= 0.0f) {
         MGSetBGColor(EdEventInfo.background_color[0], EdEventInfo.background_color[1], EdEventInfo.background_color[2], 128.0f);
     }
+
     if (camera != NULL) {
         if (follow_chara != NULL) {
             sceVu0FVECTOR position;
             follow_chara->GetPosition(position);
             camera->SetFollow(position[0], position[1] + 0.8f * follow_chara->body_height, position[2]);
         }
+
         if (sync_camera_ref_chara != NULL) {
             sceVu0FVECTOR reference = {0.0f, 0.0f, 0.0f, 1.0f};
             sync_camera_ref_chara->GetPosition(reference);
             sceVu0AddVector(reference, reference, sync_camera_ref_offset);
             camera->SetRef(reference[0], reference[1] + 0.8f * sync_camera_ref_chara->body_height, reference[2]);
         }
+
         if (sync_camera_ref_obj != NULL) {
             sceVu0FVECTOR reference;
             get_obj_world_pos(sync_camera_ref_obj, reference);
             sceVu0AddVector(reference, reference, sync_camera_ref_offset);
             camera->SetRef(reference[0], reference[1], reference[2]);
         }
+
         if (sync_camera_pos_obj != NULL) {
             sceVu0FVECTOR position;
             get_obj_world_pos(sync_camera_pos_obj, position);
             camera->SetPos(position);
         }
     }
+
     if (result == 0 && EdEventScript.IsEnd() != 0) {
         EdEventFinish();
         GamePad.AutoRepeatOff();
         GamePad.MenuModeOff();
         result = 1;
     }
+
     return result;
 }
 
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->wind;
+
     if (EdEventInfo.player_stop == 0) {
         CVector3_f_ velocity;
         velocity.x = 0.0f;
@@ -7771,37 +9003,47 @@ int EdEventNPCStep() {
         EdEventInfo.main_character->Step();
         EdEventInfo.main_character->ShadowStep();
     }
+
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         EdEventInfo.npcs[i].wind = wind;
+
         if (EdEventInfo.npc_stop[i] == 0) {
             ((CNPCharacter *) EdEventInfo.npcs)[i].sequence_enabled = 0;
             EdEventInfo.npcs[i].Step();
             EdEventInfo.npcs[i].ShadowStep();
         }
     }
+
     if (EdEventInfo.player_stop == 0) {
         EdEventInfo.main_character->ClothStep(0);
     }
+
     for (int i = 0; i < EdEventInfo.npc_count; i++) {
         EdEventInfo.npcs[i].wind = wind;
+
         if (EdEventInfo.npc_stop[i] == 0) {
             EdEventInfo.npcs[i].ClothStep(0);
         }
     }
+
     return 1;
 }
 
 int EdEventSpriteDraw() {
     for (int block = 45; block <= 49; block++) {
         int texture_loaded = 0;
+
         for (int i = 0; i < 16; i++) {
             ED_SPRITE *sprite = GetSprite(i);
+
             if (sprite == NULL) {
                 break;
             }
+
             if (sprite->enabled == 0 || sprite->layer == 0) {
                 continue;
             }
+
             CRect_i_ screen;
             CRect_i_ texel;
             screen.x = screen.y = screen.width = screen.height = 0;
@@ -7814,22 +9056,28 @@ int EdEventSpriteDraw() {
             texel.y = sprite->source_y;
             texel.width = sprite->source_width;
             texel.height = sprite->source_height;
+
             if (screen.width < 0) {
                 screen.width = texel.width;
             }
+
             if (screen.height < 0) {
                 screen.height = texel.height;
             }
+
             if (sprite->texture.block != block) {
                 continue;
             }
+
             if (texture_loaded == 0) {
                 TexManager.ReloadTexture(GetVif1Packet(), block);
                 texture_loaded = 1;
             }
+
             setbilinear(sprite->bilinear);
             sprite->x += sprite->move_x;
             sprite->y += sprite->move_y;
+
             if (sprite->rotated == 0) {
                 set2DSprite(GetVif1Packet(), &sprite->texture, screen, texel, (u_char) sprite->red, (u_char) sprite->green, (u_char) sprite->blue, (u_char) sprite->alpha);
             } else {
@@ -7837,6 +9085,7 @@ int EdEventSpriteDraw() {
             }
         }
     }
+
     TexManager.ReloadTexture(GetVif1Packet(), 45);
     SpriteTable.DrawTable();
     return 1;
@@ -7858,41 +9107,52 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
     int           nearest = -1;
     float         nearest_distance = 0.0f;
     character->GetRotation(character_rotation);
+
     for (i = 0; i < count; i++) {
         if (npcs[i].villager_id < 0) {
             continue;
         }
+
         int available = npcs[i].initialized != 0 && npcs[i].draw_enabled != 0;
+
         if (!available) {
             continue;
         }
+
         npcs[i].talk_target = 0;
         character->GetPosition(character_position);
         npcs[i].GetPosition(npc_position);
         float height = character_position[1] - npc_position[1];
+
         if (height < 0.0f) {
             height = -height;
         } else {
             height = height;
         }
+
         if (height > character->body_height) {
             continue;
         }
+
         npc_position[1] = 0.0f;
         character_position[1] = 0.0f;
         float distance = DistVector(character_position, npc_position);
+
         if (distance > 5.0f + 1.2f * npcs[i].body_width) {
             continue;
         }
+
         character->GetDir(npcs[i], direction);
         float character_angle = atan2f(direction[0], direction[2]);
         npcs[i].GetDir(*character, direction);
         float npc_angle = atan2f(direction[0], direction[2]);
         npcs[i].GetRotation(npc_rotation);
         int talk_direction = EdEventInfo.villagers[npcs[i].villager_id].talk_direction;
+
         if (AngleCmp(npc_angle, npc_rotation[1], 1.570796f) != 0 && talk_direction == 0 && npcs[i].event_status == 0) {
             continue;
         }
+
         if (nearest < 0) {
             nearest_distance = distance;
             nearest = i;
@@ -7901,6 +9161,7 @@ int EdSearchNearNPC(CCharacter *character, CNPCharacter *npcs, int count) {
             nearest = i;
         }
     }
+
     return nearest;
 }
 
@@ -7929,19 +9190,24 @@ int EdTalkModeInit(CNPCharacter *villager, int character_info_id) {
     if (villager->villager_id < 0) {
         return 0;
     }
+
     talk_villager__2 = villager;
+
     if (character_info_id < 0) {
         talk_chara_info_id = villager->villager_id;
     } else {
         talk_chara_info_id = character_info_id;
     }
+
     talk_mode = 0;
     TalkMesMake = 1;
     TalkMesNo = 0;
     talk_camera = 0;
+
     if (villager->event_status != 0) {
         talk_camera = rand() % 3;
     }
+
     talk_select = 0;
     EdEventInfo.talk_npc_id = (villager - EdVillager);
     EdEventInfo.talk_select_prompt = -1;
@@ -7983,12 +9249,15 @@ static inline void EdCloseTalkMes() {
     EditMes1.auto_page_wait = 0;
     EditMes1.mes_made = -1;
     EditMes1.edge_alpha = 0x80;
+
     for (int i = 0; i < 10; i++) {
         EditMes1.mes_no[i] = -1;
     }
+
     for (int i = 0; i < 8; i++) {
         EditMes1.values[i] = 0;
     }
+
     EditMes1.value = 0;
     EditMes1.value_signed = 0;
     EditMes1.value_show = 1;
@@ -7998,6 +9267,7 @@ static inline void EdCloseTalkMes() {
     EditMes1.cursor_row = -1;
     EditMes1.cursor_y = 0;
     EditMes1.cursor_lit = 0;
+
     for (int i = 0; i < 10; i++) {
         EditMes1.line_pos[i].x = -1;
         EditMes1.line_pos[i].y = -1;
@@ -8023,9 +9293,11 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
 
     GamePad.MenuModeOn(0x78);
     ReadBG();
+
     if (camera != NULL) {
         camera->FollowOff();
     }
+
     EditMes1.Step();
 
     CNPCharacter *villager = talk_villager__2;
@@ -8045,6 +9317,7 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     player_rotation[1] = AngleInterpolate(player_rotation[1], player_yaw, 0.1f, 0);
     player->SetRotation(player_rotation);
     villager_rotation[1] = AngleInterpolate(villager_rotation[1], villager_yaw, 0.1f, 0);
+
     if (EdInteriorFlag == 0 || EdEventInfo.villagers[talk_chara_info_id].talk_rotation == 0) {
         villager->SetRotation(villager_rotation);
     }
@@ -8053,19 +9326,23 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     sceVu0AddVector(reference, player_position, villager_position);
     sceVu0ScaleVector(reference, reference, 0.5f);
     reference[1] += 15.0f;
+
     if (camera != NULL) {
         camera->FollowOff();
         camera->SetRef(reference);
     }
+
     sceVu0FVECTOR camera_position;
     sceVu0FMATRIX rotation;
     sceVu0UnitMatrix(rotation);
     sceVu0RotMatrixY(rotation, rotation, player_yaw);
     sceVu0ApplyMatrix(camera_position, rotation, vv[talk_camera]);
     sceVu0AddVector(camera_position, reference, camera_position);
+
     if (camera != NULL) {
         camera->SetPos(camera_position);
     }
+
     if (camera != NULL) {
         sceVu0FMATRIX view;
         sceVu0FVECTOR eye;
@@ -8082,12 +9359,15 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
     }
 
     int choice_count = 0;
+
     for (;;) {
         if (EdEventInfo.talk_messages[choice_count] < 0) {
             break;
         }
+
         choice_count++;
     }
+
     SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
 
     switch (talk_mode) {
@@ -8095,110 +9375,140 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
             if (GamePad.Down(0x60) != 0) {
                 if (EditMes1.State() == 3) {
                     EdCloseTalkMes();
+
                     if (camera != NULL) {
                         camera->FollowOn();
                     }
+
                     villager->SetMotion(0, 0);
                     GamePad.AutoRepeatOff();
                     GamePad.MenuModeOff();
                     return 1;
                 }
+
                 if (EditMes1.State() == 5) {
                     EditMes1.GoNextPage();
                 } else {
                     EditMes1.text_rate = 0.0f;
                 }
             }
+
             EditMes1.cursor_row = -1;
             villager->SetMotion(3, 0);
             break;
         case 0:
             if (GamePad.Down(0x1000) != 0) {
                 talk_select--;
+
                 if (talk_select < 0) {
                     talk_select = choice_count - 1;
                 }
             }
+
             if (GamePad.Down(0x4000) != 0) {
                 talk_select++;
+
                 if (talk_select > choice_count - 1) {
                     talk_select = 0;
                 }
             }
+
             if (GamePad.Down(0x40) != 0) {
                 if (EditMes1.State() == 3) {
                     talk_mode = 1;
                     TalkMesMake = 1;
                     TalkMesNo = EdEventInfo.talk_messages[talk_select];
+
                     if (EdEventInfo.talk_select_prompt == 0 && talk_select == 3) {
                         SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, EdNowTalkCharaInfoID());
+
                         if (npc != NULL) {
                             npc->flags |= 2;
                         }
                     }
+
                     if ((talk_select == 0 && EdEventInfo.talk_select_prompt > 0 && EdEventInfo.talk_select_prompt != 4) || (talk_select > 0 && EdEventInfo.talk_select_prompt == 4)) {
                         EdCloseTalkMes();
+
                         if (camera != NULL) {
                             camera->FollowOn();
                         }
+
                         villager->SetMotion(0, 0);
                         GamePad.AutoRepeatOff();
                         GamePad.MenuModeOff();
+
                         if (EdEventInfo.talk_select_prompt == 4) {
                             EdSetShopNo(EdEventInfo.talk_messages[talk_select]);
+
                             if (talk_select == 1) {
                                 return 2;
                             }
+
                             if (talk_select == 2) {
                                 return 3;
                             }
+
                             if (talk_select == 3) {
                                 return 2;
                             }
+
                             if (talk_select == 4) {
                                 return 2;
                             }
                         }
+
                         EdSetShopNo(EdEventInfo.talk_messages[0]);
+
                         if (EdEventInfo.talk_select_prompt == 1) {
                             return 2;
                         }
+
                         if (EdEventInfo.talk_select_prompt == 2) {
                             return 3;
                         }
+
                         if (EdEventInfo.talk_select_prompt == 3) {
                             if (selection != NULL) {
                                 *selection = EdEventInfo.talk_messages[0];
                             }
+
                             return 4;
                         }
+
                         return 1;
                     }
                 } else {
                     EditMes1.text_rate = 0.0f;
                 }
             }
+
             if (GamePad.Down(0x20) != 0) {
                 GamePad.AutoRepeatOff();
                 GamePad.MenuModeOff();
                 EdCloseTalkMes();
+
                 if (camera != NULL) {
                     camera->FollowOn();
                 }
+
                 villager->SetMotion(0, 0);
                 return 1;
             }
+
             EditMes1.cursor_row = talk_select;
             villager->SetMotion(0, 0);
             break;
     }
 
     int talk_position[4];
+
     if (talk_mode == 0) {
         if (mode != 0) {
             EditMes1.tail_on = 0;
             EditMes1.auto_pos = 8;
         }
+
         EditMes1.AutoSetSub(player, villager, talk_position);
         EditMes1.AutoSet(talk_position);
     } else {
@@ -8214,13 +9524,16 @@ int EdTalkMode(CCharacter *player, CCameraFollow *camera, int mode, int *selecti
                 EditMes1.text_rate = 0.0f;
                 TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
             }
+
             break;
         case 1:
             if (TalkMesMake != 0) {
                 TalkMesMake = EditMes1.MakeMesWin(TalkMesNo);
             }
+
             break;
     }
+
     return 0;
 }
 
@@ -8231,8 +9544,10 @@ int CheckPartsInfo(EDITPARTS_INFO *info) {
     if (info->obtained == 0) {
         return 0;
     }
+
     if (info->stock <= 0) {
         return 0;
     }
+
     return 1;
 }

@@ -250,30 +250,39 @@ static void EdMenuManualDraw();
 
 int GetNumHowManyItemsHave(int item) {
     COM_ITEM_INFO *info = GetCommonItemInfo(item);
+
     if (info == NULL) {
         return 0;
     }
+
     CDngStatusData *dungeon_status = SaveData->GetDngStatus();
+
     if (dungeon_status == NULL) {
         return 0;
     }
+
     int count = 0;
+
     switch (info->kind) {
         case ITEMKIND_WEAPON: {
             WEAPON_DATA *weapon = GetWeaponData(item);
+
             if (weapon != NULL) {
                 int          i;
                 s8           owner = weapon->owner;
                 WEAPON_HAVE *weapons = dungeon_status->chara_weapons[owner];
+
                 for (i = 0; i < 10; i++) {
                     if (item == weapons[i].item_no) {
                         count++;
                     }
                 }
             }
+
             break;
         }
     }
+
     return count;
 }
 
@@ -286,9 +295,11 @@ int GetNumHowManyItemsHave(int item) {
  */
 static int GetEditMenuMax() {
     int icon_max = 6;
+
     if (GetGameFlagForManualMenu() == 0) {
         icon_max--;
     }
+
     return icon_max;
 }
 
@@ -319,11 +330,13 @@ static void GetEditMenuIconPos(int slot, int *position) {
             x[i] = five[i];
         }
     }
+
     if (icon_max == 6) {
         for (int i = 0; i < icon_max; i++) {
             x[i] = six[i];
         }
     }
+
     position[0] = x[slot];
     position[1] = slot * 40 + 0x4A;
 }
@@ -340,19 +353,24 @@ static void DrawMoveMenuIcon() {
     int x_offset;
 
     icon_max = GetEditMenuMax();
+
     for (i = 0; i < icon_max; i++) {
         if (EditSwitch == 2) {
             brightness = 0x80;
         }
+
         if (EditSwitch >= 9 && EditSwitch < 0x10) {
             brightness = 0x80 - EdEffectCt * 8;
         }
+
         if (EditSwitch >= 0x10 && EditSwitch < 0x16) {
             brightness = EdEffectCt * 8;
         }
+
         if (brightness < 0) {
             brightness = 0;
         }
+
         if (brightness > 0x80) {
             brightness = 0x80;
         }
@@ -365,12 +383,14 @@ static void DrawMoveMenuIcon() {
         y_offset = 0;
         x_offset = 0;
         selected = 0;
+
         if (i == EdCur.selection) {
             x_offset = 6;
             y_offset = 2;
             brightness = 0x80;
             selected = 1;
         }
+
         DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
 }
@@ -394,8 +414,10 @@ static int CalMoveFromMenuIcon() {
 
     int x;
     int y;
+
     for (int i = 0; i < icon_max; i++) {
         int arrived_axes = 0;
+
         if (i != EditSwitch - 9) {
             x = target[12];
             y = (int) MenuIconPos[i][1];
@@ -406,6 +428,7 @@ static int CalMoveFromMenuIcon() {
 
         float delta_x = x - MenuIconPos[i][0];
         MenuIconPos[i][0] += delta_x / 4.0f;
+
         if (abs((int) delta_x) < 4.0f) {
             MenuIconPos[i][0] = x;
             arrived_axes++;
@@ -413,6 +436,7 @@ static int CalMoveFromMenuIcon() {
 
         float delta_y = y - MenuIconPos[i][1];
         MenuIconPos[i][1] += delta_y / 4.0f;
+
         if (abs((int) delta_y) < 4.0f) {
             MenuIconPos[i][1] = y;
             arrived_axes++;
@@ -422,9 +446,11 @@ static int CalMoveFromMenuIcon() {
             arrived_count++;
         }
     }
+
     if (arrived_count >= icon_max) {
         done = 1;
     }
+
     return done;
 }
 
@@ -444,6 +470,7 @@ static int CalMoveToMenuIcon() {
 
         float delta_x = (float) target[0] - MenuIconPos[i][0];
         MenuIconPos[i][0] += delta_x / 4.0f;
+
         if (abs((int) delta_x) < 2.0f) {
             MenuIconPos[i][0] = target[0];
             arrived_axes++;
@@ -451,6 +478,7 @@ static int CalMoveToMenuIcon() {
 
         float delta_y = (float) target[1] - MenuIconPos[i][1];
         MenuIconPos[i][1] += delta_y / 4.0f;
+
         if (abs((int) delta_y) < 2.0f) {
             MenuIconPos[i][1] = target[1];
             arrived_axes++;
@@ -460,9 +488,11 @@ static int CalMoveToMenuIcon() {
             arrived_count++;
         }
     }
+
     if (arrived_count >= icon_max) {
         done = 1;
     }
+
     return done;
 }
 
@@ -490,6 +520,7 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
     EdMenuEffectFlag = 0;
     EdMenuEffectCt = 0;
     ItemVolumeStep.CheckItemVolume();
+
     if (start_at_atora != 0) {
         EdMenuTextureReadEndFlag = 1;
         EdMenuRGB = 0x40;
@@ -505,6 +536,7 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
         CommonMenuMes3.edge_alpha = 0x80;
         return;
     }
+
     CommonMenuMes2.edge_alpha = 0;
     CommonMenuMes3.edge_alpha = 0;
     EdCur.selection = 0;
@@ -515,6 +547,7 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
     EdCur.x = 48.0f;
     EdCur.y = 76.0f;
     s16 start_x[6] = {-0xC0, -0xB0, -0xA0, -0x90, -0x80, -0x80};
+
     for (int i = 0; i < GetEditMenuMax(); i++) {
         MenuIconPos[i][0] = start_x[i];
         MenuIconPos[i][1] = i * 40 + 0x4A;
@@ -553,6 +586,7 @@ static int GetDrawHelpWindow(int draw) {
     if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {
         draw = 0;
     }
+
     return draw;
 }
 
@@ -561,6 +595,7 @@ int EditMenuLoop() {
 
     ReadBG();
     result = 0;
+
     switch (EditSwitch) {
         case 2:
             result = EditMenuSelect();
@@ -601,6 +636,7 @@ int EditMenuLoop() {
             result = EditMenuToExit();
             break;
     }
+
     EditMenuDraw();
     return result;
 }
@@ -612,6 +648,7 @@ void EditMenuDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     setbilinear(0);
     FrameImageDraw(EdMenuRGB, 0x80);
+
     switch (EditSwitch) {
         case 1:
             EditMenuStart();
@@ -655,44 +692,58 @@ void EditMenuDraw() {
             EditMenuToExitDraw();
             break;
     }
+
     CursorVibeCnt++;
+
     if (CursorVibeCnt >= 1080000000) {
         CursorVibeCnt = 0;
     }
+
     MenuTextureReload(CommonMenuMes2.tex_block);
     GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
     GetMainMenuRightHelpWinLangOffset(WindowPos[0], WindowPos[1], EditMenuWinW, EditMenuWinH);
     CommonMenuMes2.text_x = (int) (WindowPos[0] + text_x);
     CommonMenuMes2.text_y = (int) (WindowPos[1] + text_y);
+
     if (EdMenuTextureReadEndFlag != 0) {
         switch (EditSwitch) {
             case 15:
                 EdMenuHelpWinAlpha -= 8;
+
                 if (EdMenuHelpWinAlpha < 0) {
                     EdMenuHelpWinAlpha = 0;
                 }
+
                 CommonMenuMes2.edge_alpha = EdMenuHelpWinAlpha;
                 break;
             default:
                 EdMenuHelpWinAlpha += 8;
+
                 if (EdMenuHelpWinAlpha > 0x80) {
                     EdMenuHelpWinAlpha = 0x80;
                 }
+
                 CommonMenuMes2.edge_alpha += 8;
+
                 if (CommonMenuMes2.edge_alpha > 0x80) {
                     CommonMenuMes2.edge_alpha = 0x80;
                 }
+
                 break;
         }
+
         if (GetDrawHelpWindow(MakeWin2Flag) != 0) {
             MenuHelpWinDraw((int) WindowPos[0], (int) WindowPos[1], EditMenuWinW, EditMenuWinH, EdMenuHelpWinAlpha);
+
             if (EdMenuMesMake2 != 0) {
                 EdMenuMesMake2 = CommonMenuMes2.MakeMesWin(EdMenuMesNo2);
             }
+
             CommonMenuMes2.Step();
             CommonMenuMes2.DrawMesWin();
         }
     }
+
     setbilinear(1);
 }
 
@@ -712,35 +763,44 @@ static int EditMenuStart() {
             x[i] = five[i];
         }
     }
+
     if (icon_max == 6) {
         for (int i = 0; i < icon_max; i++) {
             x[i] = six[i];
         }
     }
+
     for (int i = 0; i < icon_max; i++) {
         MenuIconPos[i][0] += ((float) x[i] - MenuIconPos[i][0]) / 4.0f;
     }
+
     if (EdMenuRGB > 0x40) {
         EdMenuRGB -= 4;
     }
+
     brightness = EdEffectCt * 7;
+
     if (brightness > 0x80) {
         brightness = 0x80;
     }
+
     for (i = 0; i < GetEditMenuMax(); i++) {
         y_offset = 0;
         x_offset = 0;
         icon = EditMenuIconID[i];
         GetMenuIconInfo(icon);
         int selected = 0;
+
         if (i == EdCur.selection) {
             x_offset = 8;
             y_offset = 2;
             brightness = 0x80;
             selected = 1;
         }
+
         DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
+
     if (ReadBGSync() == 0 && EdMenuTextureReadEndFlag == 0) {
         LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#" SCREEN_HEIGHT_STR "#4"}};
         textures[1].block_no = textures[0].block_no = EdMenuTextureBlock;
@@ -763,12 +823,15 @@ static int EditMenuStart() {
         InitMenuMesSet(0, (s16 *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
         EdMenuTextureReadEndFlag = 1;
     }
+
     EdEffectCt++;
+
     if (EdEffectCt >= 17 && EdMenuTextureReadEndFlag != 0) {
         EditSwitch = 2;
         EdCur.selection = 0;
         EdEffectCt = 0;
     }
+
     return 0;
 }
 
@@ -782,17 +845,21 @@ static void EditMenuSelectDraw() {
     s8    selection = EdCur.selection;
     float slot = selection;
     float x = 48.0f + 16.0f * slot;
+
     if (icon_max == 6) {
         if (selection == icon_max - 2) {
             x -= 16.0f;
         }
+
         if (selection == icon_max - 1) {
             x -= 48.0f;
         }
     }
+
     if (icon_max == 5 && selection == icon_max - 1) {
         x -= 32.0f;
     }
+
     float y = 76.0f + 40.0f * selection;
 
     EdCur.x += (x - EdCur.x) / 4.0f;
@@ -804,6 +871,7 @@ static void EditMenuSelectDraw() {
     DrawMenuObjectVibe((int) EdCur.x, (int) EdCur.y, 1, 0x40);
 
     CommonMenuMes2.stay_frame = 0;
+
     if (CommonMenuMes2.mes_made != info->help_mes_no) {
         CommonMenuMes2.MakeMesWin(info->help_mes_no);
     }
@@ -815,19 +883,24 @@ static int EditMenuSelect() {
 
     if (GamePad.Down(0x9000) != 0) {
         EdCur.selection--;
+
         if (EdCur.selection < 0) {
             EdCur.selection = icon_max - 1;
         }
     }
+
     if (GamePad.Down(0x6000) != 0) {
         EdCur.selection++;
+
         if (icon_max - 1 <= EdCur.selection - 1) {
             EdCur.selection = 0;
         }
     }
+
     if (previous != EdCur.selection) {
         ComMenuSePlay(0);
     }
+
     if (GamePad.Down(0x20) != 0) {
         ComMenuSePlay(2);
         EditSwitch = 15;
@@ -839,15 +912,18 @@ static int EditMenuSelect() {
         EdEffectCt = 0;
         CommonMenuMes2.mes_made = -1;
         u_long128 *work = EdMenuWorkBuf;
+
         switch (EditSwitch) {
             case 9: {
                 int blocks[2] = {0, 0};
                 blocks[0] = EdMenuTextureBlock;
                 blocks[1] = EdMenuExTextureBlock;
                 int area = GetNowMapTransAtraMap(MapNo);
+
                 if (area < 0 || area > 4) {
                     area = 0;
                 }
+
                 printf("now atra load area = %d\n", area);
                 InitMenuAtora1(2, NowEditMap, blocks, work);
                 InitMenuAtoraSelect(NowEditMap);
@@ -861,13 +937,17 @@ static int EditMenuSelect() {
                 break;
             case 11:
                 CommonMenuAtoraInfo = &EditPartsInfo;
+
                 if (CommonMenuAtoraInfo == NULL) {
                     CommonMenuAtoraInfo->Load(0, SaveData, 1);
                 }
+
                 EdEffectCt = 1;
+
                 for (int i = 0; i < 3; i++) {
                     AnalyzeFill[i] = 0.0f;
                 }
+
                 ButtonAdd = 0;
                 AnalyzeBackBlockCnt = 0;
                 AnalyzeSelect = 0;
@@ -896,6 +976,7 @@ static int EditMenuSelect() {
             }
         }
     }
+
     return 0;
 }
 
@@ -908,15 +989,19 @@ static void EditMenuToExitDraw() {
  */
 static int EditMenuToExit() {
     EdMenuRGB += 3;
+
     if (EdMenuRGB > 0x80) {
         EdMenuRGB = 0x80;
     }
 
     CommonMenuMes2.edge_alpha -= 9;
+
     if (CommonMenuMes2.edge_alpha < 0) {
         CommonMenuMes2.edge_alpha = 0;
     }
+
     CommonMenuMes3.edge_alpha -= 9;
+
     if (CommonMenuMes3.edge_alpha < 0) {
         CommonMenuMes3.edge_alpha = 0;
     }
@@ -926,6 +1011,7 @@ static int EditMenuToExit() {
     }
 
     EdEffectCt++;
+
     if (EdEffectCt > 0x15) {
         EdEffectCt = 0;
         EditMenuStatus.mode = -1;
@@ -933,6 +1019,7 @@ static int EditMenuToExit() {
         EditMenuExit();
         return 1;
     }
+
     return 0;
 }
 
@@ -943,7 +1030,9 @@ static void AtoraSelectDraw() {
     if (EdMenuTextureReadEndFlag == 0 && ReadBGSync() == 0) {
         EdMenuTextureReadEndFlag = 1;
     }
+
     DrawMenuAtoraSelect();
+
     switch (EdMenuEffectFlag) {
         case 1:
         case 2:
@@ -953,6 +1042,7 @@ static void AtoraSelectDraw() {
             if (GetMenuAtraEventFlag() == 0) {
                 DrawMoveMenuIcon();
             }
+
             break;
     }
 }
@@ -970,6 +1060,7 @@ static int AtoraSelect() {
                 EdMenuEffectFlag = 0;
                 EdMenuEffectCt = 0.0f;
             }
+
             break;
         case 2:
             if (CalMoveToMenuIcon()) {
@@ -978,6 +1069,7 @@ static int AtoraSelect() {
                 EdCur.x = EdCur.selection * 16 + 0x30;
                 EdCur.y = EdCur.selection * 40 + 0x4C;
             }
+
             break;
         default:
             switch (MenuAtoraSelectKey()) {
@@ -993,6 +1085,7 @@ static int AtoraSelect() {
                 case 0:
                     break;
             }
+
             break;
     }
 
@@ -1003,6 +1096,7 @@ static int AtoraSelect() {
         EdMenuEffectCt = 0.0f;
         EdEffectCt = 0;
     }
+
     return result;
 }
 
@@ -1022,19 +1116,23 @@ static int AtoraMove() {
  */
 static void AnalyzeBackDraw(int alpha, int brightness) {
     AnalyzeBackBlockCnt++;
+
     if (AnalyzeBackBlockCnt >= 0x10E) {
         AnalyzeBackBlockCnt = 0;
     }
 
     int x = AnalyzeBackBlockCnt / 5 - 0x36;
     int y = 0x3C;
+
     for (int column = 0; column < 0xD; column++, x += 0x36, y = 0x3C) {
         for (int row = 0; row < 5; row++, y += 0x36) {
             int bottom = 0x36;
             int top = 0;
+
             if (y < 0x50) {
                 top = 0x50 - y;
             }
+
 #ifdef PAL
             if (y + 0x36 > 0x130) {
 #else
@@ -1046,6 +1144,7 @@ static void AnalyzeBackDraw(int alpha, int brightness) {
                 bottom = 0x11C - y;
 #endif
             }
+
             DrawMenu2DSprite(AnaBar, CRect_i_(x, y + top, 0x36, bottom - top), CRect_i_(0x36, top, 0x36, bottom - top), brightness, brightness, brightness, alpha);
         }
     }
@@ -1057,11 +1156,13 @@ static void AnalyzeBackDraw(int alpha, int brightness) {
 static float AnalyzeRequestPer() {
     CEditPartsInfo *info = CommonMenuAtoraInfo;
     float           total = (float) info->parts_max;
+
     if (total < 1.0f) {
         return 100.0f;
     }
 
     float done = 0.0f;
+
     for (int i = 0; i < 24; i++) {
         if (info->request[i] != 0) {
             done += 1.0f;
@@ -1069,9 +1170,11 @@ static float AnalyzeRequestPer() {
     }
 
     float percent = 100.0f * done / total;
+
     if (percent >= 100.0f) {
         percent = 100.0f;
     }
+
     return percent;
 }
 
@@ -1104,68 +1207,91 @@ static int AnalyzeBarDraw() {
     elements_total = parts_complete = parts_total = 0.0f;
     elements_done = 0;
     parts_done = 0;
+
     for (i = 0; i < 24; i++) {
         EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(i);
+
         if (info != NULL && info->stock > 0) {
             parts_total += 1.0f;
+
             if (info->obtained != 0) {
                 parts_done++;
+
                 if (CommonMenuAtoraInfo->CheckComplete(i) != 0) {
                     parts_complete += 1.0f;
                 }
             }
+
             for (int j = 0; j < 6; j++) {
                 if (info->elements[j].id < 0) {
                     break;
                 }
+
                 elements_total += 1.0f;
+
                 if (info->elements[j].enabled != 0) {
                     elements_done++;
                 }
             }
         }
     }
+
     s16 *elements = (s16 *) SaveData->GetElemData(NowEditMap);
+
     for (i = 0; i < 128; i++) {
         if (elements[i] > -1) {
             elements_done++;
         }
     }
+
     int total = (int) (parts_total + elements_total);
+
     if (total <= 0) {
         percent[0] = 0.0f;
     } else {
         percent[0] = 100.0f * (float) (parts_done + elements_done) / (float) total;
     }
+
     if ((int) parts_total <= 0) {
         percent[1] = 0.0f;
     } else {
         percent[1] = 100.0f * parts_complete / parts_total;
     }
+
     percent[2] = AnalyzeRequestPer();
+
     for (i = 0; i < 3; i++) {
         target[i] = 144.0f * percent[i] / 100.0f;
+
         if (!(target[i] <= 144.0f)) {
             target[i] = 144.0f;
         }
     }
+
     bars_started = 0;
     x = -0x3D;
+
     for (i = 0; i < 3; i++) {
         x += 0xB5;
+
         if (i != bars_started) {
             break;
         }
+
         AnalyzeFill[i] += 2.0f + 2.0f * ButtonAdd;
         goal = target[i];
+
         if (goal < AnalyzeFill[i]) {
             AnalyzeFill[i] = goal;
         }
+
         fill = AnalyzeFill[i];
         edge = 0.08f * fill;
+
         if (8.0f < edge) {
             edge = 8.0f;
         }
+
 #ifdef PAL
         top = (int) (306.0f - fill);
 #else
@@ -1185,6 +1311,7 @@ static int AnalyzeBarDraw() {
         DrawMenu2DSprite(AnaBar, bar_destination, bar_source, 0x80);
         DrawMenu2DSprite(AnaBar, CRect_i_(x, top, 0x36, (int) edge), CRect_i_(0, i * 16, 0x36, 8), 0x80);
         edge = 0.1f * AnalyzeFill[i];
+
         if (!(AnalyzeFill[i] <= 0.0f)) {
 #ifdef PAL
             DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x130 - top) - edge)), CRect_i_(0x56, 0x36, 10, 9), 0x80);
@@ -1192,35 +1319,46 @@ static int AnalyzeBarDraw() {
             DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x11C - top) - edge)), CRect_i_(0x56, 0x36, 10, 9), 0x80);
 #endif
         }
+
         number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
+
         if (percent[i] < (float) number) {
             number = (int) percent[i];
         }
+
         digit_x = x + 0x1B;
+
         for (digits = GetNumberKeta(number); digits != 0; digits--, digit_x -= 13) {
             int digit = number % 10;
             int u = digit * 13;
             int v = 0x6F;
+
             if (digit > 8) {
                 u = 0;
                 v = 0x5E;
             }
+
             DrawMenu2DSprite(AnaBar, CRect_i_(digit_x, top - 0x1E, 0x10, 0x18), CRect_i_(u, v, 13, 0x11), 0x8C);
             number /= 10;
         }
+
         DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x28, top - 0x1E, 0xF, 0x13), CRect_i_(13, 0x5E, 13, 0x11), 0x80);
+
         if (0.4f * goal <= AnalyzeFill[i]) {
             bars_started++;
         }
     }
+
     if (AnalyzeFill[2] == target[2]) {
         return 1;
     }
+
     return 0;
 }
 
 static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
+
     for (int i = 0; i < 3; i++) {
 #ifdef PAL
         DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
@@ -1228,55 +1366,74 @@ static void ToAnalyzeEditDraw() {
         DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
 #endif
     }
+
     float left = (float) (0x280 - EdEffectCt * 16);
     int   width = (int) (80.0f + left);
+
     if (left < 0.0f) {
         left = 0.0f;
     }
+
     width = (int) ((float) width - left);
+
     if (width < 0) {
         width = 0;
     }
+
     FadeTexX((int) left, width, 0x280, 0, "frame_image", 0);
     DrawMoveMenuIcon();
     int alpha = EdEffectCt * 4;
+
     if (alpha > 0x80) {
         alpha = 0x80;
     }
+
     int brightness = EdEffectCt + 16;
+
     if (brightness > 0x40) {
         brightness = 0x40;
     }
+
     AnalyzeBackDraw(alpha, brightness);
     int   done = 0;
     float bar = (float) (EdEffectCt * 20);
+
     if (640.0f < bar) {
         bar = 640.0f;
     }
+
     if (560.0f < bar) {
         done = AnalyzeBarDraw();
     }
+
     if (640.0f < bar) {
         bar = 640.0f;
     }
+
 #ifdef PAL
     DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x130, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+
 #else
     DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x11C, (int) bar, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
+
 #endif
     for (int x = 0x75; (float) x < bar; x += 0xB5) {
         int segment_width = (int) (bar - (float) x);
+
         if (segment_width > 0x3C) {
             segment_width = 0x3C;
         }
+
 #ifdef PAL
         DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x130, segment_width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
 #else
         DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, segment_width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
 #endif
     }
+
     CalMoveFromMenuIcon();
     EdEffectCt++;
+
     if (done == 1) {
         EdEffectCt = 0;
         AnalyzeSelect = 0;
@@ -1305,6 +1462,7 @@ static void AnalyzeEditDraw() {
         DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
 #endif
     }
+
     AnalyzeBarDraw();
 #ifdef PAL
     DrawMenu2DSprite(AnaBar, CRect_i_(0, 0x130, 0x280, 0x18), CRect_i_(0, 0x36, 0x20, 0x18), 0x80);
@@ -1314,11 +1472,14 @@ static void AnalyzeEditDraw() {
 
     int x = 0x75;
     int i = 0;
+
     while (x < 0x280) {
         int width = 0x280 - x;
+
         if (width > 0x3C) {
             width = 0x3C;
         }
+
         if (AnalyzeFill[i] > 0.0f) {
 #ifdef PAL
             DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x130, width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
@@ -1326,6 +1487,7 @@ static void AnalyzeEditDraw() {
             DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
 #endif
         }
+
         i++;
         x += 0xB5;
     }
@@ -1337,6 +1499,7 @@ static int AnalyzeEdit() {
         EditSwitch = 0x12;
         AnalyzeSelect = 2;
     }
+
     return 0;
 }
 
@@ -1345,9 +1508,11 @@ static void FromAnalyzeEditDraw() {
 
     DrawMoveMenuIcon();
     alpha = 0x80 - EdEffectCt * 10;
+
     if (alpha < 0) {
         alpha = 0;
     }
+
     AnalyzeBackDraw(alpha, 0x40);
 }
 
@@ -1357,6 +1522,7 @@ static void FromAnalyzeEditDraw() {
 static void FromAnalyzeEdit() {
     CalMoveToMenuIcon();
     EdEffectCt++;
+
     if (EdEffectCt >= 0x10) {
         EdEffectCt = 0;
         MakeWin2Flag = 1;
@@ -1373,6 +1539,7 @@ static void FromAnalyzeEdit() {
 static void EditSaveDraw() {
     DrawMenuSave("frame_image");
     setbilinear(0);
+
     switch (EdMenuEffectFlag) {
         case 1:
         case 2:
@@ -1390,23 +1557,29 @@ static void EditSaveKey() {
     switch (EdMenuEffectFlag) {
         case 1:
             arrived = CalMoveFromMenuIcon();
+
             if (arrived) {
                 EdMenuEffectFlag = 0;
                 EdMenuEffectCt = 0.0f;
             }
+
             break;
         case 2:
             arrived = CalMoveToMenuIcon();
             break;
     }
+
     if (EdMenuEffectFlag != 0) {
         EdMenuEffectCt += 1.0f;
     } else {
         EdMenuEffectCt = 0.0f;
     }
+
     MenuSaveKey();
+
     if (SaveMenuEffectFadeOut()) {
         EdMenuEffectFlag = 2;
+
         if (arrived) {
             EdEffectCt = 0;
             EditSwitch = 2;
@@ -1421,6 +1594,7 @@ static void EditSaveKey() {
 static void OptionDraw() {
     DrawMenuOption();
     setbilinear(0);
+
     switch (EdMenuEffectFlag) {
         case 1:
         case 2:
@@ -1439,23 +1613,29 @@ static void EdOptionSelect() {
     switch (EdMenuEffectFlag) {
         case 1:
             arrived = CalMoveFromMenuIcon();
+
             if (arrived) {
                 EdMenuEffectFlag = 0;
                 EdMenuEffectCt = 0.0f;
             }
+
             break;
         case 2:
             arrived = CalMoveToMenuIcon();
             break;
     }
+
     if (EdMenuEffectFlag != 0) {
         EdMenuEffectCt += 1.0f;
     } else {
         EdMenuEffectCt = 0.0f;
     }
+
     key = MenuOptionKey();
+
     if (OptionMenuFadeOutStart()) {
         EdMenuEffectFlag = 2;
+
         if (arrived && key) {
             EdEffectCt = 0;
             EditSwitch = 2;
@@ -1471,29 +1651,36 @@ static int EdMenuManualKey() {
     switch (EdMenuEffectFlag) {
         case 1:
             arrived = CalMoveFromMenuIcon();
+
             if (arrived) {
                 EdMenuEffectFlag = 0;
                 EdMenuEffectCt = 0.0f;
             }
+
             break;
         case 2:
             arrived = CalMoveToMenuIcon();
             break;
     }
+
     if (EdMenuEffectFlag != 0) {
         EdMenuEffectCt += 1.0f;
     } else {
         EdMenuEffectCt = 0.0f;
     }
+
     key = MenuManualKey();
+
     if (GetNowManualMenuMode() == 1) {
         EdMenuEffectFlag = 2;
+
         if (arrived && key) {
             EdEffectCt = 0;
             EditSwitch = 2;
             MakeWin2Flag = 1;
         }
     }
+
     return 0;
 }
 
@@ -1503,6 +1690,7 @@ static int EdMenuManualKey() {
 static void EdMenuManualDraw() {
     MenuManualDraw();
     setbilinear(0);
+
     switch (EdMenuEffectFlag) {
         case 1:
         case 2:

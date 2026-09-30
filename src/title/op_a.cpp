@@ -431,6 +431,7 @@ static void LoadTexture() {
     texture_list[23].name = (char *) GetPackFile(read_buffer, "e01s01.img", 0);
     texture_list[24].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[25].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+
 #ifdef PAL
     switch (LanguageCode) {
         case 0:
@@ -455,6 +456,7 @@ static void LoadTexture() {
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
+
     texture_list[27].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
 #else
     texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -689,6 +691,7 @@ void OpA_DrawProcess() {
             if (i == 2) {
                 ShisaiShadow();
             }
+
             if (i == 3) {
                 ShogunShadow();
             }
@@ -713,9 +716,11 @@ void OpA_DrawProcess() {
                 if (lightcolor[i][0] > col) {
                     lcolor[i][0] = col;
                 }
+
                 if (lightcolor[i][1] > col) {
                     lcolor[i][1] = col;
                 }
+
                 if (lightcolor[i][2] > col) {
                     lcolor[i][2] = col;
                 }
@@ -1117,12 +1122,14 @@ void OpA_MotionProcess() {
                 shake = true;
                 d = 15;
             }
+
             break;
         case 44:
             if (CloudFlag == 1) {
                 shake = true;
                 d = 5;
             }
+
             break;
     }
 
@@ -1193,6 +1200,7 @@ void OpA_MotionProcess() {
                     if (tilt > 3.14f) {
                         tilt -= 6.28f;
                     }
+
                     if (tilt < -3.14f) {
                         tilt += 6.28f;
                     }
@@ -1569,6 +1577,7 @@ void OpA_SoundProcess() {
             if (flg == 0) {
                 while (ReadBGSync())
                     ;
+
                 LoadFileBG("opdat/dungeon/o1bbgm.snd", (u_long128 *) read_buffer, 0);
                 flg = 1;
             }

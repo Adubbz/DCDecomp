@@ -47,11 +47,13 @@ int BattleSubWeaponDmg(float amount, int kind) {
     if (weapon->flags & 0x200) {
         amount *= 0.5f;
     }
+
     if (weapon->flags & 0x100) {
         amount *= 2.0f;
     }
 
     default_weapon = default_weapons[chara_no];
+
     if (default_weapon == UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no) {
         return 0;
     }
@@ -64,6 +66,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
 
     if (weapon->durability_f <= 0.0f) {
         int powder_slot = ((CDngStatusData *) UserStatus)->CheckActItemSlot(0xB7);
+
         if (powder_slot != -1) {
             DelActiveItem(powder_slot + 1);
             weapon->durability_f = weapon->durability;
@@ -79,6 +82,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
         SndSePlay(0xE0, -1, 0);
 
         int now_item = UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no;
+
         if (default_weapon + 1 == now_item) {
             DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
             DngMessMan.insert_value_1 = weapon->level;
@@ -94,6 +98,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
 
         if (default_weapon + 1 != (s16) now_item) {
             WEAPON_HAVE *replacement = UserStatus->chara_weapons[chara_no];
+
             for (int slot = 0; slot < 10; replacement++, slot++) {
                 if (replacement->item_no == default_weapon) {
                     UserStatus->equipped_weapon_slot[chara_no] = slot;
@@ -108,6 +113,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
                     weapon->item_no = -1;
                     return 1;
                 }
+
                 if (replacement->item_no == default_weapon + 1) {
                     UserStatus->equipped_weapon_slot[chara_no] = slot;
                     SetWeaponAttachStatus(NowWeaponHave);
@@ -118,9 +124,11 @@ int BattleSubWeaponDmg(float amount, int kind) {
                     DngMessMan.message = 0xA0;
                     DngMessMan.timer = 0x1E0;
                     DngMessMan.steev_window = 0;
+
                     if (chara_no == 3) {
                         replacement->best_elem = 0;
                     }
+
                     weapon->item_no = -1;
                     return 2;
                 }
@@ -135,6 +143,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
         DngMessMan.timer = 0xF0;
         DngMessMan.steev_window = 0;
     }
+
     if (0.05f * weapon->durability <= old_durability && 0.05f * weapon->durability > weapon->durability_f) {
         DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
         DngMessMan.insert_value_1 = weapon->level;
@@ -142,6 +151,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
         DngMessMan.timer = 0xF0;
         DngMessMan.steev_window = 0;
     }
+
     return 0;
 }
 
@@ -161,6 +171,7 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
         digit[i] = -1;
         phase[i] = -3.141592f;
     }
+
     this->kind = kind;
     opacity = 0.0f;
     opacity_speed = 3.0f;
@@ -178,20 +189,24 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
 
     int digit_value;
     int seen_nonzero = 0;
+
     for (int i = 4; i >= 0; i--) {
         digit_value = amount / divisor;
 
         if (digit_value > 0) {
             seen_nonzero = 1;
         }
+
         // The units place is always drawn; the rest only past the first digit.
         if (i == 0 || seen_nonzero != 0) {
             digit[i] = digit_value;
             amount -= digit_value * divisor;
+
             if (divisor < 9) {
                 last_digit = i;
             }
         }
+
         divisor /= 10;
     }
 
@@ -221,9 +236,11 @@ void CHitValue::Draw() {
     if (active == 0) {
         return;
     }
+
     if (kind == 2 && ((s32 *) SaveData->GetConfigData())[9] == 1) {
         return;
     }
+
     if ((kind == 0 || kind == -1) && ((s32 *) SaveData->GetConfigData())[10] == 1) {
         return;
     }
@@ -232,6 +249,7 @@ void CHitValue::Draw() {
     CTexture     *mark_texture = TexManager.GetTexture("itempack", -1);
     int           screen[4];
     sceVu0FVECTOR world;
+
     if (frame != NULL) {
         sceVu0CopyVector(world, frame->position);
         world[0] += pos[0];
@@ -266,6 +284,7 @@ void CHitValue::Step() {
     if (active != 0) {
         if (digits[0] == -2) {
             digit_angle[0] += 3.141592f / 20.0f;
+
             if (digit_angle[0] >= 3.141592f) {
                 digit_angle[0] = 3.141592f;
                 alpha_speed *= -1.2f;
@@ -275,8 +294,10 @@ void CHitValue::Step() {
             for (int i = 0; i < 5; i++) {
                 if (digits[i] != -1) {
                     digit_angle[i] += 3.141592f / (20.0f + 5.0f * i);
+
                     if (digit_angle[i] >= 3.141592f) {
                         digit_angle[i] = 3.141592f;
+
                         if (i == last_digit) {
                             alpha_speed *= -1.2f;
                             last_digit = -1;
@@ -288,12 +309,15 @@ void CHitValue::Step() {
 
         if (alpha_speed > 0.0f) {
             alpha += alpha_speed;
+
             if (alpha >= 128.0f) {
                 alpha = 128.0f;
             }
         }
+
         if (alpha_speed < 0.0f) {
             alpha += alpha_speed;
+
             if (alpha <= 0.0f) {
                 alpha = 0.0f;
                 active = 0;

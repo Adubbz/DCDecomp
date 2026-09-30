@@ -63,10 +63,12 @@ void CMapParts::Initialize() {
     this->parts_no = this->area = -1;
     this->lift = 0.0f;
     this->draw_distance = -1.0f;
+
     for (i = 0; i < MAP_PARTS_EFFECT_MAX; i++) {
         this->effect_on[i] = 0;
         this->effect[i] = NULL;
     }
+
     this->func_count = 0;
     this->func_data = 0;
 }
@@ -79,8 +81,10 @@ void CMapParts::FrameObjectOnOff(char *name, int on) {
     CFrame *found;
 
     CMapObject::FrameObjectOnOff(name, on);
+
     if (this->ripple_frame != NULL) {
         found = this->ripple_frame->SearchFrame(name);
+
         if (found != NULL) {
             found->attr.draw_on = on;
         }
@@ -91,13 +95,16 @@ int CMapParts::GetWidth() {
     EDITPARTS_INFO *parts_info;
 
     parts_info = this->info;
+
     if (parts_info == NULL) {
         return 1;
     }
+
     // A part that faces east or west covers the grid the other way round.
     if (this->rot_y % 2) {
         return parts_info->height;
     }
+
     return parts_info->width;
 }
 
@@ -105,12 +112,15 @@ int CMapParts::GetHeight() {
     EDITPARTS_INFO *parts_info;
 
     parts_info = this->info;
+
     if (parts_info == NULL) {
         return 1;
     }
+
     if (this->rot_y % 2) {
         return parts_info->width;
     }
+
     return parts_info->height;
 }
 
@@ -143,6 +153,7 @@ int CMapParts::GetInfoData(int x, int y) {
             value = this->info->header->cell[(width - x) + width * (height - y - 1) - 1];
             break;
     }
+
     return value;
 }
 
@@ -153,15 +164,19 @@ int CMapParts::ChangeAltData() {
     if (this->info == NULL) {
         return 0;
     }
+
     if (this->info->header == NULL) {
         return 0;
     }
+
     for (i = 0; i < this->info->width * this->info->height; i++) {
         cell = this->info->header->cell[i];
+
         if (cell != 0 && cell < 0x80) {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -172,15 +187,19 @@ int CMapParts::ChangeDigData() {
     if (this->info == NULL) {
         return 0;
     }
+
     if (this->info->header == NULL) {
         return 0;
     }
+
     for (i = 0; i < this->info->width * this->info->height; i++) {
         cell = this->info->header->cell[i];
+
         if (cell != 0 && cell == 0x81) {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -203,15 +222,19 @@ int CMapParts::CheckBox(CBoxVu0 *box) {
     if (max[0] < box->min[0]) {
         return 0;
     }
+
     if (max[2] < box->min[2]) {
         return 0;
     }
+
     if (min[0] > box->max[0]) {
         return 0;
     }
+
     if (min[2] > box->max[2]) {
         return 0;
     }
+
     return 1;
 }
 
@@ -245,15 +268,19 @@ int CMapParts::CheckBox2(CBoxVu0 *box) {
     if (max[0] < box->min[0]) {
         return 0;
     }
+
     if (max[2] < box->min[2]) {
         return 0;
     }
+
     if (min[0] > box->max[0]) {
         return 0;
     }
+
     if (min[2] > box->max[2]) {
         return 0;
     }
+
     return 1;
 }
 
@@ -267,6 +294,7 @@ void CMapParts::DrawLOD(float *distance, int lowest, int highest, int *out_level
     if (this->handle < 0) {
         return;
     }
+
     if (this->draw_on == 0) {
         return;
     }
@@ -282,12 +310,15 @@ void CMapParts::DrawLOD(float *distance, int lowest, int highest, int *out_level
         lifted_pos[3] = 1.0f;
         sceVu0ApplyMatrix(eye, mgRenderInfo.view_scaled, lifted_pos);
         depth = eye[2] / 1000.0f;
+
         if (depth < 0.1f) {
             depth = 0.02f;
         }
+
         if (depth > 2.0f) {
             depth = 2.0f;
         }
+
         if (this->lift > 1.0f) {
             lifted_pos[1] += 0.1f;
         } else {
@@ -331,6 +362,7 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
     extent = this->bound.max[0] - this->bound.min[0];
     extent += this->bound.max[2] - this->bound.min[2];
     extent *= 0.25f;
+
     for (i = 0; i < 4; i++) {
         parts_distance[i] = extent + distance[i];
     }
@@ -339,19 +371,25 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
         if (this->effect_on[i] < 0) {
             break;
         }
+
         if (this->effect_on[i] == 0) {
             continue;
         }
+
         effect_info = this->effect[i];
+
         if (effect_info == NULL) {
             continue;
         }
+
         if (effect_info->kind != 5) {
             continue;
         }
+
         if (!CheckEditEffect(effect_info, time)) {
             continue;
         }
+
         if (effect_info->frame == NULL) {
             continue;
         }
@@ -366,10 +404,12 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
             sceVu0CopyVector(saved_ambient, ambient);
             sceVu0CopyVector(part_pos, this->pos);
             sceVu0CopyVector(part_rotation, (float *) &this->rotation);
+
             if (this->frame[0] != NULL) {
                 this->frame[0]->SetPosition(part_pos);
                 this->frame[0]->SetRotation(part_rotation[0], part_rotation[1], part_rotation[2]);
             }
+
             lit = 1;
         }
 
@@ -385,6 +425,7 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
         light_colour[light][3] = 128.0f;
 
         light--;
+
         if (light < 0) {
             break;
         }
@@ -393,7 +434,9 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
     if (lit) {
         MGSetPLight(light_direction, light_colour);
     }
+
     CMapParts::DrawLOD(parts_distance, lowest, highest, out_level);
+
     if (lit) {
         MGSetAmbient(saved_ambient);
         MGSetPLight(saved_light_direction, saved_light_colour);
@@ -409,6 +452,7 @@ void CMapParts::DrawEffect(CCamera *camera, float time, CEffectGroup *group) {
     if (this->handle < 0) {
         return;
     }
+
     if (this->draw_on == 0) {
         return;
     }
@@ -417,22 +461,29 @@ void CMapParts::DrawEffect(CCamera *camera, float time, CEffectGroup *group) {
         if (this->effect_on[i] < 0) {
             break;
         }
+
         if (this->effect_on[i] == 0) {
             continue;
         }
+
         effect_info = this->effect[i];
+
         if (effect_info == NULL) {
             continue;
         }
+
         if (!CheckEditEffect(effect_info, time)) {
             continue;
         }
+
         sceVu0CopyVector(part_pos, this->pos);
         sceVu0CopyVector(part_rotation, (float *) &this->rotation);
+
         if (this->frame[0] != NULL) {
             this->frame[0]->SetPosition(part_pos);
             this->frame[0]->SetRotation(part_rotation[0], part_rotation[1], part_rotation[2]);
         }
+
         DrawEditEffect(effect_info, camera, group);
     }
 }

@@ -10,6 +10,7 @@
 void CWeaponEffect::InitSet(CFrame *frame, char *root_name, char *tip_name) {
     tip = NULL;
     root = NULL;
+
     if (frame != NULL) {
         root = frame->SearchFrame(root_name);
         tip = frame->SearchFrame(tip_name);
@@ -37,6 +38,7 @@ void CWeaponEffect::Set(int hold, float fade, float fade_out) {
     used[cursor] = 1;
 
     cursor++;
+
     if (cursor >= WEAPON_EFFECT_STEP_MAX) {
         cursor = 0;
     }
@@ -56,6 +58,7 @@ void CWeaponEffect::Step() {
         timer = timer + 1;
     } else {
         strength -= fade_out;
+
         if (strength <= 0.0f) {
             strength = 0.0f;
         }
@@ -63,9 +66,11 @@ void CWeaponEffect::Step() {
 
     if (!(strength <= 0.0f)) {
         cursor++;
+
         if (cursor >= WEAPON_EFFECT_STEP_MAX) {
             cursor = 0;
         }
+
         root->GetWorldPosition(edge[cursor * 2], centre);
         tip->GetWorldPosition(edge[cursor * 2 + 1], centre);
         edge[cursor * 2 + 1][3] = 1.0f;
@@ -77,6 +82,7 @@ void CWeaponEffect::Step() {
     for (i = 0; i < WEAPON_EFFECT_STEP_MAX; i++) {
         if (used[i] != 0) {
             alpha[i] -= fade;
+
             if (alpha[i] <= 0.0f) {
                 used[i] = 0;
             }
@@ -117,6 +123,7 @@ void CWeaponEffect::Draw() {
         } else {
             prev = i - 1;
         }
+
         if (used[i] != 0 && used[prev] != 0 && MGRotTransPers(near_root, edge[prev * 2], 0) != 0 && MGRotTransPers(near_tip, edge[prev * 2 + 1], 0) != 0 && MGRotTransPers(far_root, edge[i * 2], 0) != 0 && MGRotTransPers(far_tip, edge[i * 2 + 1], 0) != 0) {
             colour[0].a = (u8) alpha[prev];
             colour[1].a = (u8) alpha[prev];

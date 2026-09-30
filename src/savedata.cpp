@@ -83,9 +83,11 @@ void CSaveData::AddNowTime(float add) {
 
 void CSaveData::SetDay(int day) {
     this->day = day;
+
     if (this->day > 9998) {
         this->day = 9998;
     }
+
     if (this->day < 0) {
         this->day = 0;
     }
@@ -102,9 +104,11 @@ void CSaveData::AddDay(int add) {
 
 void CSaveData::AddFishingPoint(int add) {
     this->fishing_point += add;
+
     if (this->fishing_point > 0x270F) {
         this->fishing_point = 0x270F;
     }
+
     if (this->fishing_point < 0) {
         this->fishing_point = 0;
     }
@@ -112,9 +116,11 @@ void CSaveData::AddFishingPoint(int add) {
 
 void CSaveData::SetFishingPoint(int value) {
     this->fishing_point = value;
+
     if (this->fishing_point > 0x270F) {
         this->fishing_point = 0x270F;
     }
+
     if (this->fishing_point < 0) {
         this->fishing_point = 0;
     }
@@ -261,6 +267,7 @@ int CSaveData::GetGameFlag(int flag_no) {
     }
 
     bit_idx = flag_no & 0x1F;
+
     if (flag_no < 0 && bit_idx != 0) {
         bit_idx -= 32;
     }
@@ -279,17 +286,20 @@ int CSaveData::SetGameFlag(int flag_no, int value) {
     }
 
     word_idx = flag_no >> 5;
+
     if (word_idx >= 256) {
         return 0;
     }
 
     bit_idx = flag_no & 0x1F;
+
     if (flag_no < 0 && bit_idx != 0) {
         bit_idx -= 32;
     }
 
     mask = 1 << bit_idx;
     this->game_flags[word_idx] &= ~mask;
+
     if (value) {
         this->game_flags[word_idx] |= mask;
     }
@@ -328,11 +338,13 @@ int CSaveData::GetMapFlag(int map_no, int flag_no) {
     }
 
     word_idx = flag_no >> 5;
+
     if (word_idx >= 16) {
         return 0;
     }
 
     bit_idx = flag_no & 0x1F;
+
     if (flag_no < 0 && bit_idx != 0) {
         bit_idx -= 32;
     }
@@ -355,17 +367,20 @@ int CSaveData::SetMapFlag(int map_no, int flag_no, int value) {
     }
 
     word_idx = flag_no >> 5;
+
     if (word_idx >= 16) {
         return 0;
     }
 
     bit_idx = flag_no & 0x1F;
+
     if (flag_no < 0 && bit_idx != 0) {
         bit_idx -= 32;
     }
 
     mask = 1 << bit_idx;
     this->map_flags[map_no][word_idx] &= ~mask;
+
     if (value) {
         this->map_flags[map_no][word_idx] |= mask;
     }
@@ -387,11 +402,13 @@ int CSaveData::GetMapInitFlag(int map_no, int flag_no) {
     }
 
     word_idx = flag_no >> 5;
+
     if (word_idx >= 16) {
         return 0;
     }
 
     bit_idx = flag_no & 0x1F;
+
     if (flag_no < 0 && bit_idx != 0) {
         bit_idx -= 32;
     }
@@ -414,17 +431,20 @@ int CSaveData::SetMapInitFlag(int map_no, int flag_no, int value) {
     }
 
     word_idx = flag_no >> 5;
+
     if (word_idx >= 16) {
         return 0;
     }
 
     bit_idx = flag_no & 0x1F;
+
     if (flag_no < 0 && bit_idx != 0) {
         bit_idx -= 32;
     }
 
     mask = 1 << bit_idx;
     this->map_init_flags[map_no][word_idx] &= ~mask;
+
     if (value) {
         this->map_init_flags[map_no][word_idx] |= mask;
     }
@@ -437,11 +457,13 @@ int CSaveData::AtraPartsGet(int georama_no, int plot_no) {
     SV_ATRA_PARTS_DEF  *atra;
 
     info = this->GetEditPartsInfo(georama_no, plot_no);
+
     if (info == NULL) {
         return 0;
     }
 
     atra = (SV_ATRA_PARTS_DEF *) GetEditAtraPartsData(georama_no, plot_no);
+
     if (atra == NULL) {
         return 0;
     }
@@ -451,6 +473,7 @@ int CSaveData::AtraPartsGet(int georama_no, int plot_no) {
             info->stock = 5;
         } else {
             info->stock += 5;
+
             if (info->stock > atra->max_stock) {
                 info->stock = (s16) atra->max_stock;
             }
@@ -484,6 +507,7 @@ int CSaveData::AtraChipGet(int georama_no, int chip_id) {
     }
 
     slot = chips;
+
     for (i = 0; i < 128; i++, slot++) {
         if (*slot < 0) {
             *slot = chip_id;
@@ -500,6 +524,7 @@ int CSaveData::VisitMap(int map_no, int add) {
     }
 
     this->visit_map[map_no] += add;
+
     if (this->visit_map[map_no] > 0x270F) {
         this->visit_map[map_no] = 0x270F;
     }
@@ -510,9 +535,11 @@ int CSaveData::VisitMap(int map_no, int add) {
 int CSaveData::QuestDungeon(int dungeon_no, int add) {
     if (dungeon_no == 6) {
         this->quest_dungeon_total += add;
+
         if (this->quest_dungeon_total > 0x270F) {
             this->quest_dungeon_total = 0x270F;
         }
+
         return this->quest_dungeon_total;
     }
 
@@ -521,6 +548,7 @@ int CSaveData::QuestDungeon(int dungeon_no, int add) {
     }
 
     this->quest_dungeon[dungeon_no] += add;
+
     if (this->quest_dungeon[dungeon_no] > 0x270F) {
         this->quest_dungeon[dungeon_no] = 0x270F;
     }
@@ -569,6 +597,7 @@ int CSaveData::InvertConfig(SV_CONFIG_SYS *in) {
 
     s32 saved_reset_pos = this->config[16];
     this->menu_cursor.reset_pos = (s16) saved_reset_pos;
+
     if (this->menu_cursor.reset_pos != 0) {
         this->menu_cursor.InitPos();
     }

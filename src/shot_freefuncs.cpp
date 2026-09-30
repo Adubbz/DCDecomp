@@ -266,9 +266,11 @@ int CheckHealZone() {
     part = &NowDngMap->parts[parts_no];
     zone = (HEAL_ZONE *) part->heal_pos;
     hit = 0;
+
     if (part->heal_on == 0) {
         return 0;
     }
+
     sceVu0CopyVector(center, zone->pos);
     center[0] += 160.0f * column;
     center[2] += 160.0f * row;
@@ -287,6 +289,7 @@ int CheckHealZone() {
     if (zone == NULL) {
         return 0;
     }
+
     return zone->on ? hit : 0;
 }
 
@@ -392,8 +395,10 @@ void DrawWaterLing() {
             corner[3][2] = far;
 
             visible = 1;
+
             for (j = 0; j < 4; j++) {
                 corner[j][3] = 1.0f;
+
                 if (MGRotTransPers(screen[j], corner[j], 0) == 0) {
                     visible = 0;
                 }
@@ -459,6 +464,7 @@ static inline int MonstorAliveCheck(int no, int alive) {
     if (no >= 0 && no < 17) {
         alive = NowMonstorUnit->monster[no].revealed;
     }
+
     return alive;
 }
 
@@ -471,35 +477,46 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
     int           alive;
 
     sceVu0CopyVector(player, CharaMain.pos);
+
     for (int i = 0; i < 16; i++) {
         if (NowMonstorUnit->monster[i].state == -1) {
             continue;
         }
+
         alive = MonstorAliveCheck(i, alive);
+
         if (alive == 0) {
             continue;
         }
+
         NowMonstorUnit->chara[i][0].GetPosition(position);
         float distance = DistVector(player, position);
+
         if (distance < nearest) {
             nearest = distance;
         }
     }
+
     if (map_no != 5) {
         CUserStatus *status;
         int          floors = maxFloorTbl[map_no];
         status = UserStatus;
+
         if (status->cur_floor < floors - 1) {
             BtBattleMusic_Excg(nearest, &bgm_volume, &ambient_volume);
+
             if (ambient_volume > 0.0f) {
                 SndAmbientPlay(0);
             }
+
             if (preserve_bgm == 0) {
                 SndSetBgmVolf(bgm_volume);
             }
+
             SndAmbientSetVolf(ambient_volume);
         }
     }
+
     return nearest;
 }
 
@@ -515,12 +532,14 @@ int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
     int       source_y = palette * 12 + 0xB0;
     int       hundreds_shown = 0;
     int       digit = value / 100;
+
     if (digit > 0) {
         set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
         value -= digit * 100;
         x += 12;
         hundreds_shown++;
     }
+
     digit = value / 10;
     set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
     digit = value % 10;
@@ -614,6 +633,7 @@ u8 *BtGetStatusPal(int bar, float max, float value) {
         } else {
             color = statusRGBColor_weapon;
         }
+
         return color;
     }
 
@@ -640,6 +660,7 @@ u8 *BtGetStatusPal2(int bar, float max, float value) {
         } else {
             color = statusRGBColor_weapon_2;
         }
+
         return color;
     }
 
@@ -673,28 +694,38 @@ void topStatusInfo(int y, int selected_item, int floor) {
     float life = UserStatus->hp[UserStatus->cur_chara];
     float life_max = UserStatus->max_hp[UserStatus->cur_chara];
     int   length = (int) (0.74f * life_max);
+
     if (length < 2) {
         length = 2;
     }
+
     cells = (length >> 2) + 1;
+
     if (cells < 2) {
         cells = 2;
     }
+
     alpha = 0x80;
+
     if (life <= 0.2f * life_max) {
         alpha = statusAlarmRate;
     }
+
     upper = (spRGBA *) BtGetStatusPal(0, life_max, life);
     lower = (spRGBA *) BtGetStatusPal2(0, life_max, life);
     set2DSprite(Vif1Packet, icons, CRect_i_(0x30, y, 4, 0x10), CRect_i_(0x68, 0x70, 4, 0x10), alpha);
+
     for (int i = 0; i < cells - 2; i++) {
         set2DSprite(Vif1Packet, icons, CRect_i_(i * 4 + 0x34, y, 4, 0x10), CRect_i_(0x6C, 0x70, 4, 0x10), alpha);
     }
+
     set2DSprite(Vif1Packet, icons, CRect_i_((cells - 1) * 4 + 0x30, y, 4, 0x10), CRect_i_(0x70, 0x70, 4, 0x10), alpha);
+
     if (life > 0.0f) {
         length = (int) (0.74f * life);
         set2DSpriteC4(Vif1Packet, CRect_i_(0x34, y + 5, length - 2, 6), upper, lower, upper, lower);
     }
+
     cells = (cells - 1) * 4 + 0x38;
     cells += ValuePrint(cells, y + 7, (int) life, 0, alpha) * 10;
     set2DSprite(Vif1Packet, frame, CRect_i_(cells, y + 7, 0xC, 0xC), CRect_i_(0x78, 0xB0, 0xC, 0xC), alpha);
@@ -709,42 +740,56 @@ void topStatusInfo(int y, int selected_item, int floor) {
     float        durability = ((CUserStatus *) user)->chara_weapons[wielder][(s8) slots[wielder]].durability_f;
     float        bar = 1.4949495f * durability_max;
     length = (int) bar;
+
     if (length < 2) {
         length = 2;
     }
+
     cells = (length >> 2) + 2;
+
     if (cells < 2) {
         cells = 2;
     }
+
     alpha = 0x80;
+
     if (durability <= 0.2f * durability_max) {
         alpha = statusAlarmRate;
     }
+
     upper = (spRGBA *) BtGetStatusPal(1, durability_max, durability);
     lower = (spRGBA *) BtGetStatusPal2(1, durability_max, durability);
     set2DSprite(Vif1Packet, icons, CRect_i_(0x30, y + 0x11, 4, 0x10), CRect_i_(0x68, 0x70, 4, 0x10), alpha);
+
     for (int i = 0; i < cells - 2; i++) {
         set2DSprite(Vif1Packet, icons, CRect_i_(i * 4 + 0x34, y + 0x11, 4, 0x10), CRect_i_(0x6C, 0x70, 4, 0x10), alpha);
     }
+
     set2DSprite(Vif1Packet, icons, CRect_i_((cells - 1) * 4 + 0x30, y + 0x11, 4, 0x10), CRect_i_(0x70, 0x70, 4, 0x10), alpha);
+
     if (durability > 0.0f) {
         length = (int) (1.4949495f * durability);
         set2DSpriteC4(Vif1Packet, CRect_i_(0x34, y + 0x16, length - 2, 6), upper, lower, upper, lower);
     }
+
     int          width;
     WEAPON_HAVE *weapon = &UserStatus->chara_weapons[UserStatus->cur_chara][UserStatus->equipped_weapon_slot[UserStatus->cur_chara]];
     int          exp_max = GetWeaponMaxExp(weapon);
     width = (int) bar;
     MGFillBox(CRect_i_(0x340, ((y + 0x1F) >> 1) * 16, (width - 1) * 16, 0x10), 0x40, 0x40, 0x40, alpha);
+
     if (weapon->experience > 0) {
         int filled = (int) ((float) weapon->experience * ((float) width / (float) exp_max));
         MGFillBox(CRect_i_(0x340, ((y + 0x1F) >> 1) * 16, (filled - 1) * 16, 0x10), 0, 0xA2, 0xFF, alpha);
     }
+
     cells = (cells - 1) * 4 + 0x38;
     int shown = (int) durability;
+
     if (durability - (float) shown > 0.0f) {
         shown++;
     }
+
     cells += ValuePrint(cells, y + 0x18, shown, 0, alpha) * 10;
     set2DSprite(Vif1Packet, frame, CRect_i_(cells, y + 0x18, 0xC, 0xC), CRect_i_(0x78, 0xB0, 0xC, 0xC), alpha);
     ValuePrint(cells + 10, y + 0x18, (int) durability_max, 0, alpha);
@@ -754,22 +799,30 @@ void topStatusInfo(int y, int selected_item, int floor) {
     float water_max = UserStatus->water_max[UserStatus->cur_chara];
     float water = UserStatus->water_now[UserStatus->cur_chara];
     alpha = 0x80;
+
     if (water < 0.15f * water_max) {
         alpha = statusAlarmRate;
     }
+
     set2DSprite(Vif1Packet, icons, CRect_i_(0x20, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0x84, 0x12, 0x14), alpha);
     int drops = (int) water_max / 10;
+
     for (cells = 0; cells < drops; cells++) {
         set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x32, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0x98, 0x12, 0x14), alpha);
     }
+
     if ((int) water_max % 10 != 0) {
         set2DSprite(Vif1Packet, icons, CRect_i_(drops * 0x12 + 0x32, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0xAC, 0x18, 0x14), alpha);
     }
+
     int full_drops = (int) water / 10;
+
     for (cells = 0; cells < full_drops; cells++) {
         set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x33, y + 0x22, 0x10, 0x14), CRect_i_(0, 0x48, 0x10, 0x14), 0x50);
     }
+
     int leftover = (int) water % 10;
+
     if (leftover != 0) {
         set2DSprite(Vif1Packet, icons, CRect_i_(full_drops * 0x12 + 0x33, y + 0x22, 0x10, 0x14), CRect_i_((3 - (int) ((float) leftover / 2.5f)) * 16, 0x48, 0x10, 0x14), 0x50);
     }
@@ -778,31 +831,42 @@ void topStatusInfo(int y, int selected_item, int floor) {
     /** Phase of the quick-item vertical animation. */
     static float popupYRate = -3.1415927f;
     popupYRate += 0.20943952f;
+
     if (!(popupYRate < 3.1415927f)) {
         popupYRate -= 6.2831855f;
     }
+
     /** Phase of the active quick-item frame glow. */
     static float popupRGBRate = -3.1415927f;
     popupRGBRate += 0.19634955f;
+
     if (!(popupRGBRate < 0.0f)) {
         popupRGBRate -= 3.1415927f;
     }
+
     ITEM_PACK *pack = &UserStatus->item_pack;
+
     for (int i = 0; i < 3; i++) {
         int bob = 0;
         int glow = 0;
+
         if (BtBySpeedFlag != 0 && pack->quick_item_slot[i] == 0x9C) {
             glow = (int) (64.0f * sinf(popupRGBRate)) + 0x3F;
             bob = 0;
         }
+
         set2DSprite(Vif1Packet, icons, CRect_i_(i * 40 + 0x126, y + 2, 0x24, 0x24), CRect_i_(0x24, 0x5C, 0x24, 0x24), glow + 0x80);
+
         if (pack->quick_item_slot[i] != -1) {
             set2DSprite(Vif1Packet, icons, CRect_i_(i * 40 + 0x128, y + 4 + bob, 0x1F, 0x1F), CRect_i_((i << 5) + 0x20, 0, 0x1F, 0x1F));
+
             if (pack->quick_item_qty[i] > 1) {
                 int tens = pack->quick_item_qty[i] / 10;
+
                 if (tens > 0) {
                     set2DSprite(Vif1Packet, frame, CRect_i_(i * 40 + 0x12F, y + 0x17, 0xC, 0xC), CRect_i_(tens * 12, 0xD4, 0xC, 0xC));
                 }
+
                 set2DSprite(Vif1Packet, frame, CRect_i_(i * 40 + 0x13B, y + 0x17, 0xC, 0xC), CRect_i_(pack->quick_item_qty[i] % 10 * 12, 0xD4, 0xC, 0xC));
             }
         }
@@ -810,25 +874,32 @@ void topStatusInfo(int y, int selected_item, int floor) {
 
     // Floor number, or the mark of the last floor.
     set2DSprite(Vif1Packet, icons, CRect_i_(0x1FC, y, 0x66, 0x29), CRect_i_(0x9A, 1, 0x66, 0x29));
+
     if (BtUraDongeon != 0) {
         set2DSprite(Vif1Packet, icons, CRect_i_(0x23C, y, 0x26, 0x29), CRect_i_(0xDA, 0x2B, 0x26, 0x29));
     }
+
     if (BtEquipMasuisyou != 0) {
         set2DSprite(Vif1Packet, icons, CRect_i_(0x1FE, y + 5, 0x20, 0x20), CRect_i_(0, 0xA0, 0x20, 0x20));
     }
+
     if (BtEquipMap != 0) {
         set2DSprite(Vif1Packet, icons, CRect_i_(0x21E, y + 5, 0x20, 0x20), CRect_i_(0x20, 0xA0, 0x20, 0x20));
     }
+
     int last_floor = maxFloorTbl[UserStatus->cur_georama];
+
     if (floor + 1 == last_floor) {
         set2DSprite(Vif1Packet, frame, CRect_i_(0x23C, y + 0x12, 0x26, 0x11), CRect_i_(0x78, 0x9E, 0x26, 0x12));
     } else {
         int x;
+
         if (floor + 1 >= 10) {
             x = 0x245;
         } else {
             x = 0x23F;
         }
+
         if (floor + 1 >= 10) {
 #ifdef PAL
             set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0xA, 0xE, 0x11), CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
@@ -836,6 +907,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
             set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0x12, 0xE, 0x11), CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
 #endif
         }
+
 #ifdef PAL
         set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0xA, 0xE, 0x11), CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
 #else
@@ -864,12 +936,15 @@ void topStatusInfo(int y, int selected_item, int floor) {
     int u = 0;
     int v = 0;
     int item = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
+
     if (item == defWeapon[UserStatus->cur_chara] + 1) {
         v = 0x20;
     }
+
     if (item == defWeapon[UserStatus->cur_chara]) {
         v = u = 0x20;
     }
+
 #ifdef PAL
     set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x1A4, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
 #else
@@ -1004,6 +1079,7 @@ void BtSetStatusErr(int status) {
                 UserStatus->ailments[chara] |= status;
                 UserStatus->ailment_frames[chara] = 1800;
             }
+
             break;
 
         case 0x10:
@@ -1012,6 +1088,7 @@ void BtSetStatusErr(int status) {
                 UserStatus->ailments[chara] &= ~0x40;
                 SndSePlay(0x6B, -1, 0);
             }
+
             break;
 
         case 0x20:
@@ -1024,6 +1101,7 @@ void BtSetStatusErr(int status) {
                 UserStatus->ailments[chara] |= status;
                 SndSePlay(0x6B, -1, 0);
             }
+
             break;
     }
 }
@@ -1046,6 +1124,7 @@ void BtStatusErrDraw(int y) {
         {0, 2}
     };
     int status = UserStatus->ailments[UserStatus->cur_chara];
+
     for (int icon = 4; icon >= 0; icon--) {
         if (status & status_flags[icon]) {
             set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35), CRect_i_(icon_cells[icon][0] * 62 + 132, icon_cells[icon][1] * 36 + 84, 62, 36));
@@ -1148,12 +1227,15 @@ int BtMapJumpLoad(char *map_name) {
         if (floor >= 20) {
             msg_no++;
         }
+
         if (floor >= 40) {
             msg_no++;
         }
+
         if (floor >= 60) {
             msg_no++;
         }
+
         if (floor >= 80) {
             msg_no++;
         }
@@ -1162,11 +1244,13 @@ int BtMapJumpLoad(char *map_name) {
     if (msg_no != BtSteebMsgNo) {
         BtSteebMesBuffer.used = 0;
         u_char *mes = BtSteebMesBuffer.base + BtSteebMesBuffer.used * 16;
+
         if (status->cur_georama == 6) {
             sprintf(mes_path, "dun/message/ww_mes/steve07_%d_%d.mes", msg_no - 5, LanguageCode);
         } else {
             sprintf(mes_path, "dun/message/ww_mes/steve0%d_%d.mes", msg_no + 1, LanguageCode);
         }
+
         LoadFile(mes_path, mes, &mes_size);
         wait_now_loading_vsync();
         DngMesStb.SetBuff((short *) mes);
@@ -1183,6 +1267,7 @@ int BtMapJumpLoad(char *map_name) {
     if (strcmp(BtCfgCash, map_name) == 0 && BtCfgFlag != 0) {
         return 0;
     }
+
     strcpy(BtCfgCash, map_name);
 
     MapModelBuffer.used = 0;
@@ -1191,15 +1276,18 @@ int BtMapJumpLoad(char *map_name) {
 
     int                 i;
     DRAN_MAP_FIELD_SET *field_set = (DRAN_MAP_FIELD_SET *) NowDranMapField;
+
     for (i = 0; i < 12; i++) {
         field_set->field[i].Initialize();
         field_set->collision[i] = NULL;
         field_set->state[i] = 3;
     }
+
     field_set->field_count = 0;
     field_set->collision_count = 0;
 
     MainDungeonMap.initSubmap(&MapModelBuffer);
+
     for (int slot = 0; slot < 64; slot++) {
         CDungeonEvent *event = &DngEventMan.slot[slot];
         event->name[0] = '\0';
@@ -1208,6 +1296,7 @@ int BtMapJumpLoad(char *map_name) {
         event->switch_on = 0;
         event->enabled = 0;
     }
+
     for (int record = 0; record < 96; record++) {
         CDungeonEventData *data = &DngEventMan.event[record];
         data->event = NULL;
@@ -1228,6 +1317,7 @@ int BtMapJumpLoad(char *map_name) {
     size = 0;
     LoadFile(mpd_path, (void *) read_buffer, &size);
     wait_now_loading_vsync();
+
     if (size >= 6400000) {
         printf("MAPDATA BUFFER OVER!! %d\n", size);
         exit__2(1);

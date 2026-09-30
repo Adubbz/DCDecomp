@@ -38,13 +38,17 @@ int GetNowManualPartTgaNum() {
  */
 int GetGameFlagForManualMenu() {
     CDngStatusData *status = SaveData->GetDngStatus();
+
     if (status == NULL) {
         return 1;
     }
+
     int result = 0;
+
     if (status->SearchItemIndexNo(0xFD) >= 0) {
         result++;
     }
+
     return result;
 }
 
@@ -62,6 +66,7 @@ static s16 ManualImgLoad() {
     if (ReadBGSync() != 0 || ManualMenu.images_ready != 0) {
         BreakReadBG();
     }
+
     GetPathReadDifferntLang(path);
     strcat(path, "manual/m%d.pac");
     int image_no = ManualMenu.entry + (ManualMenu.category + 1) * 10;
@@ -72,12 +77,14 @@ static s16 ManualImgLoad() {
     LoadFileBG(path, buffer, &size);
     buffer += size / 16 + 1;
     buffer = MenuCalcBufAlignment(buffer);
+
     if ((u32) (image_no - 11) <= 1 || (u32) (image_no - 21) <= 1 || image_no == 31 || image_no == 42) {
         GetPathReadDifferntLang(path);
         strcat(path, "manual/m%db.pac");
         sprintf(path, path, image_no);
         LoadFileBG(path, buffer, &size);
     }
+
     ReadBG();
     ManualMenu.image_offset = 0;
     ManualMenu.image_reset = 0;
@@ -103,6 +110,7 @@ s16 ManualImgEnter() {
         TexManager.LoadTextureBlockEX(-1, image_table);
 
         BG_READ_INFO *extra = GetReadBGFile(1);
+
         if (extra != NULL) {
             LOADTEXTURE_INFO2 extra_table[] = {
                 {"#frame_image1#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
@@ -120,6 +128,7 @@ s16 ManualImgEnter() {
         }
 
         int image_count = GetNowManualPartTgaNum();
+
         for (int image = 0; image < image_count; image++) {
             char *prefix[] = {"a_", "b_", "c_", "d_"};
             char  texture_name[32];
@@ -128,28 +137,35 @@ s16 ManualImgEnter() {
             sprintf(texture_name, texture_name, ManualMenu.entry + 1, image + 1);
             ManualMenuTex[image] = TexManager.GetTexture(texture_name, -1);
         }
+
         ManualMenu.message_page = 0;
         ManualMenu.image_page = 0;
         ManualMenu.images_ready = 1;
     }
+
     return ManualMenu.images_ready;
 }
 
 void DrawPrevNextCursor() {
     CTexture *texture = TexManager.GetTexture("mncursor", -1);
+
     if (texture == NULL) {
         return;
     }
+
     CRect_i_ texel(0x40, 0, 0x20, 0x20);
     int      x[] = {0x40, 0x222};
     int      image_count = GetNowManualPartTgaNum();
+
     for (int cursor = 0; cursor < 2; cursor++, texel.y += 0x20) {
         if (cursor == 0 && ManualMenu.image_page == 0) {
             continue;
         }
+
         if (cursor == 1 && ManualMenu.image_page == image_count - 1) {
             return;
         }
+
         CRect_i_ screen(x[cursor], 0x106, texel.width, texel.height);
         DrawMenu2DSprite(texture, screen, texel, 0x80);
     }
@@ -159,20 +175,25 @@ void DrawManualMsg() {
     if (ManualMenu.messages_ready == 0) {
         return;
     }
+
     MenuTextureReload(CommonMenuMes3.tex_block);
     ManualMsg->text_x = 0x86;
     ManualMsg->text_y = 0x46;
     ClsMes *window = ManualMsg;
+
     if (ManualMenu.selection_level < 0) {
         if (ManualMenu.selection_level == -1) {
             window->edge_alpha = 0x50;
         } else {
             window->edge_alpha = 0x80;
         }
+
         ManualMsg->Step();
         ManualMsg->DrawMesWin();
     }
+
     int message_no = 0;
+
     if (ManualMenu.selection_level == -1) {
         CommonMenuMes3.auto_pos = -1;
         message_no = ManualMenu.category * 1000 + 1000;
@@ -180,6 +201,7 @@ void DrawManualMsg() {
         CommonMenuMes3.text_x = 0x86;
         CommonMenuMes3.text_y = 0xEE;
     }
+
     if (ManualMenu.mode == 4) {
         CommonMenuMes3.stay_frame = 1;
         CommonMenuMes3.auto_pos = 8;
@@ -187,12 +209,15 @@ void DrawManualMsg() {
         CommonMenuMes3.text_x = 0x78;
         CommonMenuMes3.text_y = 0x158;
     }
+
     if (CommonMenuMes3.mes_made != message_no) {
         CommonMenuMes3.MakeMesWin(message_no);
     }
+
     if (message_no <= 0) {
         CommonMenuMes3.stay_frame = 0;
     }
+
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
@@ -254,12 +279,15 @@ static inline void ResetManualMessage(ClsMes *message) {
     message->auto_page_wait = 0;
     message->mes_made = -1;
     message->edge_alpha = 0x80;
+
     for (int slot = 0; slot < 10; slot++) {
         message->mes_no[slot] = -1;
     }
+
     for (int value = 0; value < 8; value++) {
         message->values[value] = 0;
     }
+
     message->value = 0;
     message->value_signed = 0;
     message->value_show = 1;
@@ -269,6 +297,7 @@ static inline void ResetManualMessage(ClsMes *message) {
     message->cursor_row = -1;
     message->cursor_y = 0;
     message->cursor_lit = 0;
+
     for (int line = 0; line < 10; line++) {
         message->line_pos[line].x = -1;
         message->line_pos[line].y = -1;
@@ -298,10 +327,12 @@ int SetManualMsgBuffer() {
         ManualMsg->char_height = 0x16;
         ManualMsg->tex_block = 0x1A;
         ManualMsg->tex_buff = CommonMenuMes1.tex_buff;
+
         for (int slot = 0; slot < 10; slot++) {
             ClsMes *window = ManualMsg;
             window->mes_no[slot] = -1;
         }
+
         s16 *messages = (s16 *) GetPackFile((u_int *) archive->buffer, "manual.bin", NULL);
         ManualMsg->SetBuff(messages);
         ManualMsg->mes_made = -1;
@@ -314,11 +345,14 @@ int SetManualMsgBuffer() {
         CommonMenuMes3.SetBuff(messages);
         CommonMenuMes3.rows = 3;
         CommonMenuMes3.char_width = ManualMsg->char_width;
+
         for (int slot = 0; slot < 10; slot++) {
             CommonMenuMes3.mes_no[slot] = -1;
         }
+
         ManualMenu.messages_ready = 1;
     }
+
     return ManualMenu.messages_ready;
 }
 
@@ -348,49 +382,60 @@ static inline void SetCursorRow(ClsMes *message, int row) {
 int MenuManualKey() {
     ReadBG();
     int closed = 0;
+
     switch (ManualMenu.mode) {
         case 0:
             if (SetManualMsgBuffer() != 0) {
                 ManualMenu.mode = 2;
             }
+
             break;
         case 1:
             ManualMenu.transition_frame++;
+
             if (ManualMenu.transition_frame > 32) {
                 ExitManualMenu();
                 closed = 1;
             }
+
             break;
         case 2: {
             int  minimum;
             int  maximum;
             int *selection;
+
             if (ManualMenu.selection_level == -2) {
                 minimum = 0;
                 maximum = 3;
                 selection = &ManualMenu.category;
             }
+
             if (ManualMenu.selection_level == -1) {
                 int entry_max[] = {4, 4, 3, 2};
                 minimum = 0;
                 maximum = entry_max[ManualMenu.category];
                 selection = &ManualMenu.entry;
             }
+
             if (selection != NULL) {
                 if (GamePad.Down(0x1000)) {
                     (*selection)--;
                     ComMenuSePlay(0);
                 }
+
                 if (GamePad.Down(0x4000)) {
                     (*selection)++;
                     ComMenuSePlay(0);
                 }
+
                 if (*selection < minimum) {
                     *selection = maximum;
                 }
+
                 if (*selection > maximum) {
                     *selection = minimum;
                 }
+
                 if (ManualMenu.selection_level == -2) {
                     SetCursorRow(ManualMsg, *selection);
                     CommonMenuMes3.cursor_row = -1;
@@ -401,6 +446,7 @@ int MenuManualKey() {
                 ManualMenu.selection_level = -2;
                 ManualMenu.entry = 0;
             }
+
             if (GamePad.Down(0x40)) {
                 if (ManualMenu.selection_level == -1) {
                     ManualMenu.selection_level++;
@@ -411,15 +457,18 @@ int MenuManualKey() {
                     ManualMenu.selection_level++;
                     CommonMenuMes3.cursor_row = 0;
                 }
+
                 ComMenuSePlay(1);
             } else if (GamePad.Down(0x20)) {
                 if (ManualMenu.selection_level < -1) {
                     ManualMenu.mode = 1;
                     ManualMsg->Preset(1);
                     CommonMenuMes3.SetBuff(ManualMenu.common_message_buffer);
+
                     for (int slot = 0; slot < 10; slot++) {
                         CommonMenuMes3.mes_no[slot] = -1;
                     }
+
                     CommonMenuMes3.Preset(4);
                     CommonMenuMes3.char_width = ManualMenu.char_width;
                     ManualMsg->SetBuff(ManualMenu.menu_message_buffer);
@@ -428,13 +477,16 @@ int MenuManualKey() {
                     ManualMenu.selection_level--;
                     *selection = 0;
                 }
+
                 ComMenuSePlay(2);
             }
+
             break;
         }
         case 4:
             CommonMenuMes3.cursor_row = -1;
             SetCursorRow(ManualMsg, -1);
+
             if (GamePad.Down(0x204A)) {
                 if (CommonMenuMes3.State() == 5) {
                     CommonMenuMes3.GoNextPage();
@@ -442,14 +494,17 @@ int MenuManualKey() {
                     int image_count = GetNowManualPartTgaNum();
                     ManualMenu.image_page++;
                     ManualMenu.message_page++;
+
                     if ((ManualMenu.category == 0 && ManualMenu.entry == 4 && ManualMenu.message_page == 1) || (ManualMenu.category == 1 && ManualMenu.entry == 1 && ManualMenu.message_page == 5) || (ManualMenu.category == 2 && ManualMenu.entry == 3 && ManualMenu.message_page == 1)) {
                         ManualMenu.image_page--;
                     }
+
                     if (ManualMenu.image_page >= image_count) {
                         ManualMenu.mode = 2;
                         ManualMenu.selection_level = -1;
                     }
                 }
+
                 ComMenuSePlay(1);
             } else if (GamePad.Down(0x8085)) {
                 if ((ManualMenu.category == 0 && ManualMenu.entry == 4 && ManualMenu.message_page == 1) || (ManualMenu.category == 1 && ManualMenu.entry == 1 && ManualMenu.message_page == 5) || (ManualMenu.category == 2 && ManualMenu.entry == 3 && ManualMenu.message_page == 1)) {
@@ -458,32 +513,39 @@ int MenuManualKey() {
                     ManualMenu.message_page--;
                     ManualMenu.image_page--;
                 }
+
                 ComMenuSePlay(2);
             } else if (GamePad.Down(0x20)) {
                 ManualMenu.selection_level = -1;
                 ManualMenu.mode = 2;
                 ComMenuSePlay(2);
             }
+
             break;
         case 3:
             CommonMenuMes3.cursor_row = -1;
             SetCursorRow(ManualMsg, -1);
             ManualMenu.transition_frame++;
             ManualImgEnter();
+
             if (ManualMenu.images_ready != 0 && ManualMenu.transition_frame > 32) {
                 ManualMenu.mode = 5;
                 ManualMenu.transition_frame = 0;
             }
+
             break;
         case 5:
             CommonMenuMes3.cursor_row = -1;
             SetCursorRow(ManualMsg, -1);
             ManualMenu.transition_frame++;
+
             if (ManualMenu.transition_frame > 32) {
                 ManualMenu.mode = 4;
             }
+
             break;
     }
+
     return closed;
 }
 
@@ -494,30 +556,40 @@ void MenuManualDraw() {
         int   target = -(ManualMenu.image_page * 0x280);
         float distance = target - ManualMenu.image_offset;
         ManualMenu.image_offset += (int) (distance / 4.0f);
+
         if (abs((int) distance) <= 3.0) {
             ManualMenu.image_offset = target;
         }
+
         int x = ManualMenu.image_offset;
+
         for (int image = 0; image < image_count; image++, x += 0x280) {
             if (image == 3) {
                 MenuTextureReload(ManualMenu.extra_texture_block);
             }
+
             int source_x = 0;
             int screen_x = x;
+
             if (x > 0x280) {
                 break;
             }
+
             int width = 0x280;
             MenuTextureClip(screen_x, source_x, width, 0, 0x280);
+
             if (width > 0x280) {
                 width = 0x280;
             }
+
             if (width < 0) {
                 width = 0;
             }
+
             CRect_i_  screen(screen_x, 0, width, SCREEN_HEIGHT);
             CRect_i_  texel(source_x, 0, width, 0x1C0);
             CTexture *texture = ManualMenuTex[image];
+
             if (texture != NULL) {
 #ifdef PAL
                 DrawMenu2DSprite(texture, screen, texel, 100, 100, 100, 0x80);
@@ -526,11 +598,13 @@ void MenuManualDraw() {
 #endif
             } else {
                 int previous = image - 1;
+
                 while (ManualMenuTex[previous] == NULL) {
                     if (--previous <= 0) {
                         break;
                     }
                 }
+
                 if (previous >= 0) {
 #ifdef PAL
                     DrawMenu2DSprite(texture, screen, texel, 0x50, 0x50, 0x50, 0x80);
@@ -540,9 +614,11 @@ void MenuManualDraw() {
                 }
             }
         }
+
         MenuTextureReload(ManualMenu.common_texture_block);
         DrawPrevNextCursor();
     }
+
     if (ManualMenu.messages_ready != 0 && ManualMenu.mode != 1) {
         DrawManualMsg();
     }

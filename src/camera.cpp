@@ -50,12 +50,14 @@ void CCamera::Step(int steps) {
                     if (speed < 1.0f) {
                         speed = 1.0f;
                     }
+
                     move_ref = (this->next_ref[axis] - this->ref[axis]) / speed;
 
                     if (this->limit_move == 1) {
                         if (move_pos > 2.0f) {
                             move_pos = 2.0f;
                         }
+
                         if (move_pos < -2.0f) {
                             move_pos = -2.0f;
                         }
@@ -68,9 +70,11 @@ void CCamera::Step(int steps) {
                     // and the look-at point snap on once they are near enough.
                     left_pos = this->pos[axis] - this->next_pos[axis];
                     left_ref = this->ref[axis] - this->next_ref[axis];
+
                     if (left_pos < this->snap_range && left_pos > -this->snap_range) {
                         this->pos[axis] = this->next_pos[axis];
                     }
+
                     if (left_ref < this->snap_range && left_ref > -this->snap_range) {
                         this->ref[axis] = this->next_ref[axis];
                     }
@@ -165,9 +169,11 @@ void CCamera::GetCameraMatrix(float (*matrix)[4]) {
 
     length = sqrtf(dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2]);
     flat_length = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
+
     if (flat_length == 0.0f) {
         flat_length = 1.0f;
     }
+
     if (length == 0.0f) {
         length = 1.0f;
     }
@@ -198,6 +204,7 @@ void CCamera::GetCameraMatrix(float (*matrix)[4]) {
     if (this->roll > 3.1415927f) {
         this->roll -= 6.2831855f;
     }
+
     if (this->roll < -3.1415927f) {
         this->roll += 6.2831855f;
     }
@@ -244,6 +251,7 @@ CCamera::CCamera(float speed) {
     if (this->speed <= zero) {
         this->speed = 1.0f;
     }
+
     this->limit_move = 0;
     this->roll = zero;
     this->snap_range = 0.01f;

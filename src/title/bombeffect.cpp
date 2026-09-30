@@ -38,6 +38,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
         if (active[i] != 1) {
             continue;
         }
+
         if (counters[i] < 0) {
             continue;
         }
@@ -73,6 +74,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
             if (dust_only != 0) {
                 continue;
             }
+
             rect.x = 0;
             rect.y = 0;
             rect.width = 128;
@@ -106,9 +108,11 @@ void CBombEffect::Step() {
                 counters[i]++;
                 sizes[i] += 8.0f;
                 alphas[i] += 4.0f;
+
                 if (counters[i] < 3) {
                     break;
                 }
+
                 counters[i] = 0;
                 phases[i]++;
                 break;
@@ -116,9 +120,11 @@ void CBombEffect::Step() {
                 counters[i]++;
                 sizes[i] += 1.0f;
                 alphas[i] += 8.0f;
+
                 if (counters[i] < 4) {
                     break;
                 }
+
                 counters[i] = 0;
                 phases[i]++;
                 break;
@@ -126,9 +132,11 @@ void CBombEffect::Step() {
                 counters[i]++;
                 sizes[i] += 0.3f;
                 alphas[i] -= 3.0f;
+
                 if (counters[i] < 20) {
                     break;
                 }
+
                 counters[i] = 0;
                 phases[i]++;
                 break;
@@ -136,9 +144,11 @@ void CBombEffect::Step() {
                 counters[i]++;
                 sizes[i] -= 0.1f;
                 alphas[i] -= 2.0f;
+
                 if (counters[i] < 80) {
                     break;
                 }
+
                 active[i] = 0;
                 break;
         }
@@ -153,27 +163,33 @@ void CBombEffect::Step() {
             case 0:
                 counters[i]++;
                 sizes[i] += 16.0f;
+
                 if (counters[i] < 3) {
                     break;
                 }
+
                 counters[i] = 0;
                 phases[i]++;
                 break;
             case 1:
                 counters[i]++;
                 sizes[i] += 8.0f;
+
                 if (counters[i] < 4) {
                     break;
                 }
+
                 counters[i] = 0;
                 phases[i]++;
                 break;
             case 2:
                 counters[i]++;
                 sizes[i] += 0.3f;
+
                 if (counters[i] < 20) {
                     break;
                 }
+
                 counters[i] = 0;
                 phases[i]++;
                 break;
@@ -181,9 +197,11 @@ void CBombEffect::Step() {
                 counters[i]++;
                 sizes[i] -= 0.1f;
                 alphas[i] -= 2.0f;
+
                 if (counters[i] < 80) {
                     break;
                 }
+
                 active[i] = 0;
                 break;
         }

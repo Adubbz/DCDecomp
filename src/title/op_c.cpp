@@ -391,6 +391,7 @@ void FaceChange(int actor_no) {
 void OpC_LoadDataBG() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn2/norn2.pim", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -398,6 +399,7 @@ void OpC_LoadDataBG() {
 void OpC_LoadDataBG2() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn2/ndance.pak", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -405,6 +407,7 @@ void OpC_LoadDataBG2() {
 void OpC_LoadDataBG3() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn2/majin.pak", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -412,6 +415,7 @@ void OpC_LoadDataBG3() {
 void OpC_LoadDataBG4() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn2/norn2.pim", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -419,6 +423,7 @@ void OpC_LoadDataBG4() {
 void OpC_LoadDataBG5() {
     while (ReadBGSync())
         ;
+
     LoadFileBG("opdat/norn3/norn3.pak", (u_long128 *) read_buffer, 0);
     CScript__2.load_no = -1;
 }
@@ -479,6 +484,7 @@ void OpC_InitProcess() {
     tex[18].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
     tex[19].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
     tex[20].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+
 #ifdef PAL
     switch (LanguageCode) {
         case 0:
@@ -1486,9 +1492,11 @@ static void MapLoad() {
         if (i == 4) {
             DoransFuusya[0] = frame;
         }
+
         if (i == 5) {
             DoransFuusya[1] = frame;
         }
+
         if (i >= 67 && i < 75) {
             TaimatsuFrame[i - 67] = frame;
         }
@@ -1749,9 +1757,11 @@ static void MapLoad2() {
         if (i == 4) {
             DoransFuusya[0] = frame;
         }
+
         if (i == 74) {
             DoransFuusya[1] = frame;
         }
+
         if (i >= 69 && i < 74) {
             TaimatsuFrame[i - 69] = frame;
         }
@@ -1956,9 +1966,11 @@ void OpC_MotionProcess() {
             case 59:
             case 95:
                 Chara__3[11].ClothStep(-1);
+
                 for (int i = 0; i < 10; i++) {
                     Chara__3[11].ClothStep(0);
                 }
+
                 break;
 
             case 75:
@@ -2098,6 +2110,7 @@ static void LoadCharaMajin() {
             if (!ReadBGSync()) {
                 CScript__2.obj[4].load_step = 2;
             }
+
             break;
 
         case 2:
@@ -2438,6 +2451,7 @@ void OpC_DrawProcess() {
             if (CScript__2.camera_start < 72) {
                 ((CMapObject &) OP_NornMapObj3[3]).Draw();
             }
+
             break;
 
         case 7:
@@ -2518,6 +2532,7 @@ void OpC_DrawProcess() {
                 LightSet(position[0], position[1], position[2], 0);
                 object.Draw();
             }
+
             break;
 
         default:
@@ -2582,6 +2597,7 @@ void OpC_DrawProcess() {
                 LightSet(position[0], position[1], position[2], 0);
                 object.Draw();
             }
+
             break;
     }
 
@@ -2962,6 +2978,7 @@ static void DrawDancer() {
     }
 
     float unused;
+
     if (CScript__2.obj[20].disp) {
         TexManager.ReloadTexture(Vif1Packet, CharaTex__2[20]);
         CharaF[2] = Chara__3[20].frame;
@@ -3502,33 +3519,43 @@ static int KageCheck(int actor) {
     if (actor == 1) {
         return 0;
     }
+
     if (actor == 3) {
         return 0;
     }
+
     if (actor == 4) {
         return 0;
     }
+
     if (actor == 5) {
         return 0;
     }
+
     if (actor == 14) {
         return 0;
     }
+
     if (actor == 15) {
         return 0;
     }
+
     if (actor == 16) {
         return 0;
     }
+
     if (CScript__2.scene < 7 && actor == 18) {
         return 0;
     }
+
     if (actor == 17) {
         return 0;
     }
+
     if (actor == 19) {
         return 0;
     }
+
     if (actor == 20) {
         return 0;
     }

@@ -144,30 +144,40 @@ CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
     pCloth = new ((u_long128 *) alloc->Alloc(0x856)) CCloth(16, 16, 1.0f);
     ParentFrame = frame;
     pBound = NULL;
+
     if (frame == NULL) {
         return NULL;
     }
+
     if (pCloth == NULL) {
         return NULL;
     }
+
     SkipSpace(input);
+
     for (int i = 0; i < 16; i++) {
         argv[i] = arg_storage[i];
     }
+
     while (SearchCommand(input, &command) != 0) {
         if (command >= 9 || command < 0) {
             printf("unknown command!!\n");
             continue;
         }
+
         int arg_status = GetArg(input, Command[command].arg_types, (void **) argv);
+
         if (arg_status == 0) {
             break;
         }
+
         if (arg_status < 0) {
             printf("error!!\n");
         }
+
         CommandExe[command](argv);
     }
+
     return pCloth;
 }
 
@@ -178,15 +188,19 @@ static void CommandSIZE(void **argv) {
     if (num_i <= 0) {
         num_i = 1;
     }
+
     if (num_i > 16) {
         num_i = 16;
     }
+
     if (num_j <= 0) {
         num_j = 1;
     }
+
     if (num_j > 16) {
         num_j = 16;
     }
+
     pCloth->num_i = num_i;
     pCloth->num_j = num_j;
 }
@@ -202,6 +216,7 @@ static void CommandFRAME(void **argv) {
     CFrameVu1 *frame = (CFrameVu1 *) ParentFrame->SearchFrame((char *) argv[0]);
 
     pCloth->frame = frame;
+
     if (frame != NULL) {
         frame->attr.draw_on = 2;
         CVisualVu1 *visual = frame->GetVisual();
@@ -241,9 +256,11 @@ static void CommandPOLYDIVE(void **argv) {
 
     while (row < 16) {
         char flag = *flags;
+
         if (flag == 0) {
             break;
         }
+
         pCloth->polygon_divide[row] = (flag != '0');
         flags++;
         row++;
@@ -264,11 +281,14 @@ static void CommandBOUND(void **argv) {
     if (bound == NULL) {
         return;
     }
+
     int     arg_index = 0;
     CFrame *frame = ParentFrame->SearchFrame((char *) argv[arg_index++]);
+
     if (frame == NULL) {
         return;
     }
+
     for (int i = 0; i < 4; i++) {
         box_vectors[i][0] = *(float *) argv[arg_index];
         box_vectors[i][1] = *(float *) argv[(int) (arg_index + 1)];
@@ -276,6 +296,7 @@ static void CommandBOUND(void **argv) {
         arg_index += 3;
         box_vectors[i][3] = 1.0f;
     }
+
     box_vectors[0][3] = 0.0f;
     bound->SetDir(frame, box_vectors[1], box_vectors[2], box_vectors[0], box_vectors[3][0], box_vectors[3][1]);
     float half_x;
@@ -287,21 +308,27 @@ static void CommandBOUND(void **argv) {
     bound->extent[0] = half_x;
     bound->extent[1] = half_y;
     bound->extent[2] = half_z;
+
     if (bound->extent[0] > 0.0f) {
         bound->reciprocal[0] = 1.0f / half_x;
     }
+
     if (bound->extent[1] > 0.0f) {
         bound->reciprocal[1] = 1.0f / half_y;
     }
+
     if (bound->extent[2] > 0.0f) {
         bound->reciprocal[2] = 1.0f / half_z;
     }
+
     bound->friction = *(float *) argv[arg_index];
+
     if (pBound == NULL) {
         pCloth->bound = bound;
     } else {
         pBound->next = bound;
     }
+
     pBound = bound;
 }
 
@@ -319,64 +346,83 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
     if (!SkipSpace(input)) {
         return 0;
     }
+
     int arg_count = 0;
+
     while (arg_types[arg_count++] >= 0)
         ;
+
     int ch;
+
     for (int i = 0; i < arg_count - 1; i++) {
         int length = 0;
+
         if (!SkipSpace(input)) {
             return 0;
         }
+
         while (1) {
             if (input.get(&ch) == 0) {
                 return 0;
             }
+
             if (ch == ',' || !CheckChar(ch)) {
                 break;
             }
+
             word[length++] = ch;
         }
+
         word[length] = 0;
+
         switch (arg_types[i]) {
             case 0:
                 if (word[0] != '"') {
                     return -1;
                 }
+
                 for (length = 1;; length++) {
                     char letter = word[length];
+
                     if (letter == '"') {
                         word[length] = 0;
                         break;
                     }
+
                     if (letter == 0) {
                         return -1;
                     }
                 }
+
                 strcpy((char *) argv[i], word + 1);
                 break;
             case 1:
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
+
                     if (letter < '0' || letter > '9') {
                         return -1;
                     }
                 }
+
                 *(int *) argv[i] = atoi(word);
                 break;
             case 2:
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
+
                     if ((letter < '0' || letter > '9') && letter != '.' && letter != '-') {
                         return -1;
                     }
                 }
+
                 *(float *) argv[i] = (float) atof(word);
                 break;
             default:
                 return -1;
         }
     }
+
     return 1;
 }
 
@@ -394,24 +440,31 @@ static int SearchCommand(input_str &input, int *command) {
     if (!SkipSpace(input)) {
         return 0;
     }
+
     int length = 0;
     int ch;
+
     while (1) {
         if (input.get(&ch) == 0) {
             return 0;
         }
+
         if (!CheckChar(ch)) {
             break;
         }
+
         word[length++] = ch;
     }
+
     word[length] = 0;
+
     for (int i = 0; i < 9; i++) {
         if (strcmp(Command[i].name, word) == 0) {
             *command = i;
             return 1;
         }
     }
+
     *command = 10;
     return 1;
 }
@@ -430,17 +483,21 @@ static int SkipSpace(input_str &input) {
 
     text = input.data;
     pos = input.pos;
+
     while (pos < input.size) {
         if (CheckChar(text[pos])) {
             break;
         }
+
         pos++;
     }
+
     input.pos = pos;
 
     if (pos >= input.size) {
         return 0;
     }
+
     return 1;
 }
 
@@ -454,18 +511,23 @@ static int SkipSpace(input_str &input) {
  */
 static int CheckChar(char ch) {
     int is_space = 0;
+
     if (ch == ' ') {
         is_space = 1;
     }
+
     if (ch == '\t') {
         is_space = 1;
     }
+
     if (ch == '\n') {
         is_space = 1;
     }
+
     if (ch == '\r') {
         is_space = 1;
     }
+
     return !is_space;
 }
 
@@ -484,6 +546,7 @@ int keyCtrl(float stick_x, float stick_y, MOTION_INFO *motion) {
         if (stick_x < 0.0f) {
             stick_x *= -1.0f;
         }
+
         if (stick_y < 0.0f) {
             stick_y *= -1.0f;
         }
@@ -496,6 +559,7 @@ int keyCtrl(float stick_x, float stick_y, MOTION_INFO *motion) {
 
         speed = 0.8f * (0.1f + tilt);
         motion[2].speed = speed;
+
         if (speed >= 0.7f) {
             motion[2].speed = 0.7f;
         }
@@ -537,6 +601,7 @@ float unitRotation(CFrameVu1 *frame, float heading) {
 
     frame->GetRotation(rotation);
     delta = heading - rotation[1];
+
     if (delta <= 0.0f) {
         abs_delta = -1.0f * delta;
     } else {
@@ -549,6 +614,7 @@ float unitRotation(CFrameVu1 *frame, float heading) {
         }
     } else {
         abs_delta = 6.283185307179586 - abs_delta;
+
         if (abs_delta <= 0.2617993877991494) {
             delta = 0.0f;
         }
@@ -577,6 +643,7 @@ float unitRotation(CFrameVu1 *frame, float heading) {
     if (rotation[1] <= -3.141592653589793) {
         rotation[1] += 6.2831855f;
     }
+
     if (rotation[1] >= 3.141592653589793) {
         rotation[1] -= 6.2831855f;
     }

@@ -42,6 +42,7 @@ static int GetStackInt(RS_STACKDATA *argument) {
     if (argument->type == RS_FLOAT) {
         return (int) argument->f;
     }
+
     return argument->i;
 }
 
@@ -52,6 +53,7 @@ static float GetStackFloat(RS_STACKDATA *argument) {
     if (argument->type == RS_INT) {
         return (float) argument->i;
     }
+
     return argument->f;
 }
 
@@ -90,56 +92,69 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->monster[monster_no].last_hit_damage = -1;
     NowMonstorUnit->monster[monster_no].requested_motion_speed = -1.0f;
     half_speed = 0;
+
     if (NowMonstorUnit->monster[monster_no].slow_timer > 0) {
         half_speed = 1;
     }
 
     if (argc == 1) {
         float speed = NowMonstorUnit->chara[monster_no][0].motion_type.motion_info[motion_id].speed;
+
         if (half_speed) {
             speed *= 0.5f;
         }
+
         NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
         NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
         NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
         NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+
         for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
             NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
             NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
         }
     }
+
     if (argc == 2) {
         float speed = GetStackFloat(stack++);
+
         if (half_speed) {
             speed *= 0.5f;
         }
+
         NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
         NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
         NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
         NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+
         for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
             NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
             NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
         }
     }
+
     if (argc == 3) {
         float speed = GetStackFloat(stack++);
+
         if (half_speed) {
             speed *= 0.5f;
         }
+
         int mode = GetStackInt(stack++);
         NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, mode);
         NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
         NowMonstorUnit->monster[monster_no].requested_motion_flags = mode;
         NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+
         for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
             NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, mode);
             NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
         }
     }
+
     return 1;
 }
 
@@ -153,10 +168,13 @@ int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     if (!(current_frame < end_frame - 1.0f) && current_frame < end_frame) {
         done = 1;
     }
+
     SetStack(stack++, done);
+
     if (argc == 2) {
         SetStack(stack, current_frame);
     }
+
     return 1;
 }
 
@@ -180,6 +198,7 @@ int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
     float target_position[4];
 
     NowMonstorUnit->chara[monster_no][0].GetPosition(monster_position);
+
     if (argc == 1) {
         sceVu0CopyVector(target_position, CharaMain.pos);
     } else {
@@ -187,6 +206,7 @@ int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
         target_position[1] = GetStackFloat(stack++);
         target_position[2] = GetStackFloat(stack++);
     }
+
     SetStack(stack, DistVector(monster_position, target_position));
     return 1;
 }
@@ -199,9 +219,11 @@ int _GET_POSITION(RS_STACKDATA *stack, int argc) {
     if (target == -1) {
         NowMonstorUnit->chara[monster_no][0].GetPosition(position);
     }
+
     if (target == -2) {
         sceVu0CopyVector(position, CharaMain.pos);
     }
+
     SetStack(stack++, position[0]);
     SetStack(stack++, position[1]);
     SetStack(stack, position[2]);
@@ -228,6 +250,7 @@ int _SET_ROTATION(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->chara[monster_no][0].SetRotation(rotation);
         NowMonstorUnit->monster[monster_no].turn_speed = 0.0f;
     }
+
     return 1;
 }
 
@@ -238,6 +261,7 @@ int _CHK_ROTATION(RS_STACKDATA *stack, int argc) {
     if (NowMonstorUnit->monster[monster_no].turn_speed == 0.0f) {
         done = 1;
     }
+
     SetStack(stack, done);
     return 1;
 }
@@ -249,13 +273,16 @@ int _CHK_MOVE(RS_STACKDATA *stack, int argc) {
     if (NowMonstorUnit->monster[monster_no].movement_speed == 0.0f) {
         done = 1;
     }
+
     SetStack(stack++, done);
+
     if (argc == 2) {
         float position[4];
 
         NowMonstorUnit->chara[monster_no][0].GetPosition(position);
         SetStack(stack, DistVector(NowMonstorUnit->monster[monster_no].movement, position));
     }
+
     return 1;
 }
 
@@ -272,9 +299,11 @@ int _CHK_USER_INNER_PRODUCT(RS_STACKDATA *stack, int argc) {
     in_view = 0;
     min_cosine = 1.0f - 0.011111111f * GetStackInt(stack++);
     max_distance = 100000;
+
     if (argc == 3) {
         max_distance = GetStackFloat(stack++);
     }
+
     sceVu0CopyVector(player, CharaMain.pos);
     NowMonstorUnit->chara[monster_no][0].GetPosition(position);
     NowMonstorUnit->chara[monster_no][0].GetRotation(rotation);
@@ -291,9 +320,11 @@ int _CHK_USER_INNER_PRODUCT(RS_STACKDATA *stack, int argc) {
     away_from_player[1] = 0.0f;
     away_from_player[3] = 1.0f;
     sceVu0Normalize(away_from_player, away_from_player);
+
     if (sceVu0InnerProduct(direction, away_from_player) >= min_cosine && DistVector(position, player) < max_distance) {
         in_view = 1;
     }
+
     SetStack(stack, in_view);
 }
 
@@ -310,28 +341,36 @@ int _GET_VECTOR(RS_STACKDATA *stack, int argc) {
     direction[1] = GetStackFloat(stack++);
     direction[2] = GetStackFloat(stack++);
     direction[3] = 1.0f;
+
     if (argc == 7) {
         angle = GetStackFloat(stack++);
+
         if (angle >= 180.0f) {
             angle -= 360.0f;
         }
+
         angle = 0.017453292f * angle;
+
         if (angle > 6.2831855f) {
             angle -= 6.2831855f;
         }
+
         if (angle < -3.1415927f) {
             angle += 6.2831855f;
         }
     }
+
     direction[0] -= position[0];
     direction[1] -= position[1];
     direction[2] -= position[2];
     sceVu0Normalize(direction, direction);
+
     if (argc == 7) {
         sceVu0UnitMatrix(identity);
         sceVu0RotMatrixY(turn_matrix, identity, angle);
         sceVu0ApplyMatrix(direction, turn_matrix, direction);
     }
+
     SetStack(stack++, direction[0]);
     SetStack(stack++, direction[1]);
     SetStack(stack, direction[2]);
@@ -344,17 +383,21 @@ int _GET_DIRECTION(RS_STACKDATA *stack, int argc) {
     float identity[4][4];
 
     NowMonstorUnit->chara[NowMonstorUnit->current_monster][0].GetRotation(rotation);
+
     if (argc == 4) {
         float angle = GetStackFloat(stack++);
 
         rotation[1] += 0.017453292f * angle;
+
         if (rotation[1] > 3.1415927f) {
             rotation[1] -= 6.2831855f;
         }
+
         if (rotation[1] < -3.1415927f) {
             rotation[1] += 6.2831855f;
         }
     }
+
     float direction[4] = {0.0f, 0.0f, 1.0f, 0.0f};
     sceVu0UnitMatrix(identity);
     sceVu0RotMatrixY(facing_matrix, identity, rotation[1]);
@@ -383,9 +426,11 @@ int _SET_MOVE(RS_STACKDATA *stack, int argc) {
     direction[3] = 1.0f;
     sceVu0Normalize(NowMonstorUnit->monster[monster_no].movement, direction);
     speed = GetStackFloat(stack);
+
     if (NowMonstorUnit->monster[monster_no].slow_timer > 0) {
         speed *= 0.5f;
     }
+
     NowMonstorUnit->monster[monster_no].movement_speed = speed;
     return 1;
 }
@@ -404,9 +449,11 @@ int _CHK_MOVE_INFO(RS_STACKDATA *stack, int argc) {
     to[2] = GetStackFloat(stack++);
     from[1] += 5.0f;
     to[1] += 5.0f;
+
     if (CheckHit(NowMonstorUnit->monster[monster_no].collision_poly, NowMonstorUnit->monster[monster_no].collision_poly_count, from, to, hit, 0, 0) >= 0) {
         clear = 0;
     }
+
     SetStack(stack, clear);
     return 1;
 }
@@ -445,6 +492,7 @@ int _STATUS_SET_MUTEKI(RS_STACKDATA *stack, int argc) {
     if (NowMonstorUnit->monster[monster_no].hp > 0 && NowMonstorUnit->monster[monster_no].invincible_blocked != 0) {
         invincible = 0;
     }
+
     NowMonstorUnit->monster[monster_no].invincible_timer = invincible;
     return 1;
 }
@@ -453,11 +501,13 @@ int _STATUS_SET_ALPHA(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->current_monster;
 
     NowMonstorUnit->monster[monster_no].palette_alpha_step = GetStackFloat(stack++);
+
     if (argc == 2) {
         NowMonstorUnit->monster[monster_no].palette_alpha_step = GetStackInt(stack);
     } else {
         NowMonstorUnit->monster[monster_no].palette_delay = 0;
     }
+
     return 1;
 }
 
@@ -472,6 +522,7 @@ int _STATUS_CHK_ALPHA(RS_STACKDATA *stack, int argc) {
     if (argc == 2) {
         fading_in = GetStackInt(stack++);
     }
+
     if (fading_in == 0) {
         if (NowMonstorUnit->monster[monster_no].palette_alpha <= 0.0f) {
             done = 1;
@@ -479,6 +530,7 @@ int _STATUS_CHK_ALPHA(RS_STACKDATA *stack, int argc) {
     } else if (NowMonstorUnit->monster[monster_no].palette_alpha >= 128.0f) {
         done = 1;
     }
+
     SetStack(stack, done);
     return 1;
 }
@@ -526,18 +578,24 @@ int _STATUS_GET_USER_VECTOR(RS_STACKDATA *stack, int argc) {
     if (argc == 4) {
         normalize = GetStackInt(stack++);
     }
+
     angle = 0.0f;
     angle += 0.017453292f * GetStackFloat(stack++);
+
     if (angle > 3.1415927f) {
         angle -= 6.2831855f;
     }
+
     if (angle < -3.1415927f) {
         angle += 6.2831855f;
     }
+
     getCharacterVector(vector, angle);
+
     if (normalize != 0) {
         sceVu0Normalize(vector, vector);
     }
+
     SetStack(stack++, vector[0]);
     SetStack(stack++, vector[1]);
     SetStack(stack, vector[2]);
@@ -601,6 +659,7 @@ int _STATUS_SET_PALLET(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->monster[monster_no].palette_target[1] = elmColor[element][1];
         NowMonstorUnit->monster[monster_no].palette_target[2] = elmColor[element][2];
     }
+
     NowMonstorUnit->monster[monster_no].palette_cycles = GetStackInt(stack++);
     NowMonstorUnit->monster[monster_no].palette_step = GetStackFloat(stack);
     NowMonstorUnit->monster[monster_no].palette_blend = 0.0f;
@@ -656,7 +715,9 @@ int _STATUS_SET_LOCKON_TRG(RS_STACKDATA *stack, int argc) {
         scale_x = GetStackFloat(stack++);
         scale_y = GetStackFloat(stack);
     }
+
     frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+
     if (frame == NULL) {
         printf("lock:NofFountNull %s\n", name);
     } else {
@@ -664,6 +725,7 @@ int _STATUS_SET_LOCKON_TRG(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->monster[monster_no].lockon_scale_x = scale_x;
         NowMonstorUnit->monster[monster_no].lockon_scale_y = scale_y;
     }
+
     return 1;
 }
 
@@ -676,6 +738,7 @@ int _SET_MOV_COL(RS_STACKDATA *stack, int argc) {
     for (i = 0; i < 12; i++) {
         if (NowMonstorUnit->effect3[monster_no].timer[i] == 0) {
             CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+
             if (frame != NULL) {
                 NowMonstorUnit->effect3[monster_no].timer[i] = 1;
                 NowMonstorUnit->effect3[monster_no].frame[i] = frame;
@@ -683,9 +746,11 @@ int _SET_MOV_COL(RS_STACKDATA *stack, int argc) {
                 NowMonstorUnit->effect3[monster_no].count++;
                 break;
             }
+
             printf("[%d]mov col -> %s\n", NowMonstorUnit->monster[monster_no].base_model, name);
         }
     }
+
     return 1;
 }
 
@@ -702,29 +767,37 @@ int _SET_BODY_COL(RS_STACKDATA *stack, int argc) {
         start = GetStackFloat(stack++);
         end = GetStackFloat(stack);
     }
+
     monster_no = NowMonstorUnit->current_monster;
+
     for (i = 0; i < 16; i++) {
         if (NowMonstorUnit->effect[monster_no].timer[i] == 0) {
             CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+
             if (frame != NULL) {
                 NowMonstorUnit->effect[monster_no].timer[i] = 1;
                 NowMonstorUnit->effect[monster_no].frame[i] = frame;
                 NowMonstorUnit->effect[monster_no].radius[i] = radius;
                 NowMonstorUnit->effect[monster_no].motion_start[i] = start;
                 NowMonstorUnit->effect[monster_no].motion_end[i] = end;
+
                 for (j = 0; j < 5; j++) {
                     NowMonstorUnit->effect[monster_no].body_parameter[i][j] = 100;
                 }
+
                 for (j = 0; j < 6; j++) {
                     NowMonstorUnit->effect[monster_no].parameter[i][j] = 100;
                 }
+
                 bak_ColNo = i;
                 break;
             }
+
             printf("[%d]body col -> %s\n", NowMonstorUnit->monster[monster_no].base_model, name);
             bak_ColNo = -1;
         }
     }
+
     return 1;
 }
 
@@ -736,12 +809,15 @@ int _SET_BODY_COL_PARA(RS_STACKDATA *stack, int argc) {
     if (bak_ColNo == -1) {
         return 1;
     }
+
     if (parameter_no <= 9) {
         NowMonstorUnit->effect[monster_no].body_parameter[bak_ColNo][parameter_no] = value;
     }
+
     if (parameter_no >= 10) {
         NowMonstorUnit->effect[monster_no].parameter[bak_ColNo][parameter_no - 10] = value;
     }
+
     return 1;
 }
 
@@ -756,6 +832,7 @@ int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {
     for (i = 0; i < 16; i++) {
         if (NowMonstorUnit->effect2[monster_no].active[i] == 0) {
             CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
+
             if (frame != NULL) {
                 NowMonstorUnit->effect2[monster_no].active[i] = 1;
                 NowMonstorUnit->effect2[monster_no].frame[i] = frame;
@@ -765,11 +842,13 @@ int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {
                 NowMonstorUnit->effect2[monster_no].last_slot = i;
                 break;
             }
+
             printf("[%d] dcol -> %s\n", NowMonstorUnit->monster[monster_no].base_model, name);
             NowMonstorUnit->effect2[monster_no].last_slot = -1;
             return 1;
         }
     }
+
     return 1;
 }
 
@@ -782,10 +861,12 @@ int _SET_DMG_PARA(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->effect2[monster_no].flags[slot] = GetStackInt(stack++);
         NowMonstorUnit->effect2[monster_no].kind[slot] = GetStackInt(stack++);
         NowMonstorUnit->effect2[monster_no].angle[slot] = 0.0f;
+
         if (NowMonstorUnit->effect2[monster_no].kind[slot] == 3 && argc == 4) {
             NowMonstorUnit->effect2[monster_no].angle[slot] = GetStackFloat(stack);
         }
     }
+
     return 1;
 }
 
@@ -796,11 +877,13 @@ int _SET_SHOT(RS_STACKDATA *stack, int argc) {
     if (NowMonstorUnit->monster[monster_no].shot_effect == -1) {
         return 1;
     }
+
     name = GetStackString(stack++);
     NowMonstorUnit->event[monster_no].local_position[0] = GetStackFloat(stack++);
     NowMonstorUnit->event[monster_no].local_position[1] = GetStackFloat(stack++);
     NowMonstorUnit->event[monster_no].local_position[2] = GetStackFloat(stack++);
     NowMonstorUnit->event[monster_no].local_position[3] = 1.0f;
+
     if (NowMonstorUnit->event[monster_no].timer == 0) {
         CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
 
@@ -808,13 +891,17 @@ int _SET_SHOT(RS_STACKDATA *stack, int argc) {
             printf("not shot null !!\n");
             return 1;
         }
+
         NowMonstorUnit->event[monster_no].frame = frame;
         NowMonstorUnit->event[monster_no].timer = 1;
     }
+
     NowMonstorUnit->event[monster_no].damage_override = -1;
+
     if (argc == 5) {
         NowMonstorUnit->event[monster_no].damage_override = GetStackInt(stack);
     }
+
     return 1;
 }
 
@@ -825,12 +912,14 @@ int _SET_SHOT2(RS_STACKDATA *stack, int argc) {
     if (NowMonstorUnit->monster[monster_no].shot_effect2 == -1) {
         return 1;
     }
+
     printf("shot !!\n");
     name = GetStackString(stack++);
     NowMonstorUnit->event2[monster_no].local_position[0] = GetStackFloat(stack++);
     NowMonstorUnit->event2[monster_no].local_position[1] = GetStackFloat(stack++);
     NowMonstorUnit->event2[monster_no].local_position[2] = GetStackFloat(stack++);
     NowMonstorUnit->event2[monster_no].local_position[3] = 1.0f;
+
     if (NowMonstorUnit->event2[monster_no].timer == 0) {
         CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(name);
 
@@ -838,13 +927,17 @@ int _SET_SHOT2(RS_STACKDATA *stack, int argc) {
             printf("not shot null !!\n");
             return 1;
         }
+
         NowMonstorUnit->event2[monster_no].frame = frame;
         NowMonstorUnit->event2[monster_no].timer = 1;
     }
+
     NowMonstorUnit->event2[monster_no].damage_override = -1;
+
     if (argc == 5) {
         NowMonstorUnit->event2[monster_no].damage_override = GetStackInt(stack);
     }
+
     return 1;
 }
 
@@ -854,17 +947,21 @@ int _SET_SND_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->current_monster;
 
     slot = -1;
+
     for (i = 0; i < 16; i++) {
         if (NowMonstorUnit->sound[monster_no].id[i] == -1) {
             if (NowMonstorUnit->sound[monster_no].cooldown[i] == 0) {
                 slot = i;
             }
+
             break;
         }
     }
+
     if (slot == -1) {
         return 1;
     }
+
     NowMonstorUnit->sound[monster_no].start[slot] = GetStackFloat(stack++);
     NowMonstorUnit->sound[monster_no].end[slot] = GetStackFloat(stack++);
     NowMonstorUnit->sound[monster_no].id[slot] = GetStackInt(stack);
@@ -888,6 +985,7 @@ int _STOP_LOOP_SND(RS_STACKDATA *stack, int argc) {
     if (sound_id == -1) {
         return 1;
     }
+
     NowMonstorUnit->sound[monster_no].sequence_id = -1;
     SndSeStop(sound_id, monster_no * 2);
     return 1;
@@ -1010,14 +1108,17 @@ int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
 
     NowMonstorUnit->monster[monster_no].last_hit_damage = -1;
     NowMonstorUnit->monster[monster_no].requested_motion_speed = -1.0f;
+
     if (argc == 2) {
         NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, 0);
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
         NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
+
         for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
             NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
         }
     }
+
     if (argc == 3) {
         float speed = GetStackFloat(stack++);
 
@@ -1026,11 +1127,13 @@ int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
         NowMonstorUnit->monster[monster_no].requested_motion_flags = 0;
         NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+
         for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
             NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, 0);
             NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
         }
     }
+
     if (argc == 4) {
         float speed = GetStackFloat(stack++);
         int   mode = GetStackInt(stack);
@@ -1040,11 +1143,13 @@ int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->monster[monster_no].requested_motion = motion_id;
         NowMonstorUnit->monster[monster_no].requested_motion_flags = mode;
         NowMonstorUnit->monster[monster_no].requested_motion_speed = speed;
+
         for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
             NowMonstorUnit->chara[monster_no][i + 1].SetMotion(motion_id, mode);
             NowMonstorUnit->chara[monster_no][i + 1].SetMotionSpeed(speed);
         }
     }
+
     return 1;
 }
 
@@ -1116,6 +1221,7 @@ int _LOOKAT(RS_STACKDATA *stack, int argc) {
     NowMonstorUnit->chara[monster_no][0].GetRotation(rotation);
     sceVu0CopyMatrix(matrix, NowMonstorUnit->chara[monster_no][0].frame->local);
     sceVu0SubVector(direction, NowMonstorUnit->monster[monster_no].turn_target, position);
+
     if (axis == 0) {
         sceVu0Normalize(x_axis, direction);
         sceVu0OuterProduct(z_axis, x_axis, matrix[1]);
@@ -1125,6 +1231,7 @@ int _LOOKAT(RS_STACKDATA *stack, int argc) {
         sceVu0CopyVector(matrix[2], z_axis);
         NowMonstorUnit->chara[monster_no][0].frame->SetTransMatrix(matrix);
     }
+
     if (axis == 1) {
         sceVu0Normalize(y_axis, direction);
         sceVu0OuterProduct(x_axis, y_axis, matrix[2]);
@@ -1134,6 +1241,7 @@ int _LOOKAT(RS_STACKDATA *stack, int argc) {
         sceVu0CopyVector(matrix[2], z_axis);
         NowMonstorUnit->chara[monster_no][0].frame->SetTransMatrix(matrix);
     }
+
     if (axis == 2) {
         sceVu0Normalize(z_axis, direction);
         sceVu0OuterProduct(x_axis, z_axis, matrix[1]);
@@ -1143,6 +1251,7 @@ int _LOOKAT(RS_STACKDATA *stack, int argc) {
         sceVu0CopyVector(matrix[2], z_axis);
         NowMonstorUnit->chara[monster_no][0].frame->SetTransMatrix(matrix);
     }
+
     return 1;
 }
 
@@ -1151,9 +1260,11 @@ int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
     float step = GetStackFloat(stack);
 
     NowMonstorUnit->chara[monster_no][0].motion_type.state.blend_step = step;
+
     for (int i = 0; i < NowMonstorUnit->monster[monster_no].attachment_count; i++) {
         NowMonstorUnit->chara[monster_no][i + 1].motion_type.state.blend_step = step;
     }
+
     return 1;
 }
 
@@ -1170,28 +1281,36 @@ int _GET_MONSTOR_VECTOR(RS_STACKDATA *stack, int argc) {
     direction[1] = GetStackFloat(stack++);
     direction[2] = GetStackFloat(stack++);
     direction[3] = 1.0f;
+
     if (argc == 8) {
         angle = GetStackFloat(stack++);
+
         if (angle >= 180.0f) {
             angle -= 360.0f;
         }
+
         angle = 0.017453292f * angle;
+
         if (angle > 6.2831855f) {
             angle -= 6.2831855f;
         }
+
         if (angle < -3.1415927f) {
             angle += 6.2831855f;
         }
     }
+
     direction[0] -= position[0];
     direction[1] -= position[1];
     direction[2] -= position[2];
     sceVu0Normalize(direction, direction);
+
     if (argc == 8) {
         sceVu0UnitMatrix(identity);
         sceVu0RotMatrixY(turn_matrix, identity, angle);
         sceVu0ApplyMatrix(direction, turn_matrix, direction);
     }
+
     SetStack(stack++, direction[0]);
     SetStack(stack++, direction[1]);
     SetStack(stack, direction[2]);
@@ -1221,9 +1340,11 @@ int _SET_STATUS_CHANGE(RS_STACKDATA *stack, int argc) {
     if (monster_no < 0 || monster_no > 15) {
         return 1;
     }
+
     if (kind < 0 || kind > 4) {
         kind = 0;
     }
+
     NowMonstorUnit->monster[monster_no].attachment_weight[kind] = weight;
     return 1;
 }
@@ -1236,6 +1357,7 @@ int _SET_TEX_ANIME_SW(RS_STACKDATA *stack, int argc) {
     if (monster_no < 0 || monster_no > 15) {
         return 2;
     }
+
     if (enable) {
         NowMonstorUnit->chara[monster_no][0].TexAnimeOn(anime_no);
         printf("animOn %d\n", anime_no);
@@ -1243,6 +1365,7 @@ int _SET_TEX_ANIME_SW(RS_STACKDATA *stack, int argc) {
         NowMonstorUnit->chara[monster_no][0].TexAnimeOff(anime_no);
         printf("animOff %d\n", anime_no);
     }
+
     return 1;
 }
 
@@ -1273,10 +1396,12 @@ int _GET_NEAR_MONSTER(RS_STACKDATA *stack, int argc) {
 
     found = -1;
     NowMonstorUnit->chara[monster_no][0].GetPosition(position);
+
     for (i = 0; i < 16; i++) {
         if (i != monster_no && NowMonstorUnit->monster[i].state == 2) {
             NowMonstorUnit->chara[i][0].GetPosition(other_position);
             float distance = DistVector(position, other_position);
+
             if (distance < nearest) {
                 sceVu0CopyVector(found_position, other_position);
                 nearest = distance;
@@ -1284,6 +1409,7 @@ int _GET_NEAR_MONSTER(RS_STACKDATA *stack, int argc) {
             }
         }
     }
+
     SetStack(stack++, found_position[0]);
     SetStack(stack++, found_position[1]);
     SetStack(stack++, found_position[2]);
@@ -1328,9 +1454,11 @@ int _SET_GUARD_FRAME(RS_STACKDATA *stack, int argc) {
             break;
         }
     }
+
     if (slot == -1) {
         return 1;
     }
+
     NowMonstorUnit->guard[monster_no].active[slot] = 1;
     NowMonstorUnit->guard[monster_no].motion_start[slot] = start;
     NowMonstorUnit->guard[monster_no].motion_end[slot] = end;
@@ -1352,9 +1480,11 @@ int _GUARD_SEARCH(RS_STACKDATA *stack, int argc) {
     direction[2] = position[2] - player[2];
     direction[3] = 1.0f;
     sceVu0Normalize(direction, direction);
+
     if (sceVu0InnerProduct(BtActStatus.input_direction, direction) >= 0.35) {
         BtActStatus.frames_since_attack = 3600;
     }
+
     SetStack(stack++, BtActStatus.frames_since_attack);
     SetStack(stack++, distance);
     SetStack(stack, UserStatus->cur_chara);
@@ -1373,9 +1503,11 @@ int _PUSH_IGLOBAL(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->current_monster;
 
     slot = GetStackInt(stack++);
+
     if (slot < 0 || slot > 7) {
         return 0;
     }
+
     PUSH_INT_DATA[monster_no][slot] = GetStackInt(stack);
     return 1;
 }
@@ -1385,9 +1517,11 @@ int _POP_IGLOBAL(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->current_monster;
 
     slot = GetStackInt(stack++);
+
     if (slot < 0 || slot > 7) {
         return 0;
     }
+
     SetStack(stack++, PUSH_INT_DATA[monster_no][slot]);
     return 1;
 }
@@ -1400,6 +1534,7 @@ int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
     if (UserStatus->ailments[chara] != 0 && kind != 0) {
         ailment = UserStatus->ailment_frames[chara];
     }
+
     SetStack(stack, ailment);
     return 1;
 }
@@ -1414,11 +1549,14 @@ int _SET_REFERENCE(RS_STACKDATA *stack, int argc) {
     if (name == NULL) {
         return 1;
     }
+
     frame = NowMonstorUnit->chara[monster_no][0].frame;
     anchor = NowMonstorUnit->chara[target_no][0].frame->SearchFrame(name);
+
     if (anchor == NULL) {
         return 1;
     }
+
     frame->SetReference(anchor);
     return 1;
 }
@@ -1430,6 +1568,7 @@ int _DEL_REFERENCE(RS_STACKDATA *stack, int argc) {
     if (frame == NULL) {
         return 1;
     }
+
     frame->DeleteReference();
     return 1;
 }
@@ -1553,19 +1692,25 @@ void BtSetEventExtendTable() {
     for (i = 0; i < 256; i++) {
         ext_func[i] = NULL;
     }
+
     for (i = 0;; i++) {
         if (ext_func_info[i].function == NULL) {
             break;
         }
+
         int j;
+
         for (j = 0; j < i; j++) {
             if (ext_func_info[i].operation == ext_func_info[j].operation) {
                 printf("same ext_func_no!!!\n");
+
                 while (1) {
                 }
             }
         }
+
         int operation = ext_func_info[i].operation;
+
         if (operation < 0 || operation >= 256) {
             printf("ext func over!!");
         } else {

@@ -3,11 +3,14 @@
 int Fader::In() {
     if (this->value < 0x80) {
         this->value += 4;
+
         if (this->value > 0x80) {
             this->value = 0x80;
         }
+
         return 0;
     }
+
     return 1;
 }
 
@@ -16,6 +19,7 @@ int Fader::Out() {
         this->value -= 4;
         return 0;
     }
+
     return 1;
 }
 
