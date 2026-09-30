@@ -3,9 +3,8 @@
 #ifdef PAL
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
-#pragma argument_flag_ones 174, 175, 176, 177
-#pragma argument_flag_ones 213, 223, 225, 233
-#pragma argument_flag_ones 239, 242, 243, 244, 282
+#pragma argument_flag_ones 174, 175, 176, 177, 226, 228, 268, 279, 289, 538
+#pragma argument_flag_ones 548, 550, 558, 564, 567, 568, 569, 607
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
@@ -832,19 +831,6 @@ static void MotionProcess() {
  * @size 0x344
  * @unknownret
  */
-#ifdef PAL
-static void DrawProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", DrawProcess__Fv__2);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_fade_S601;
-unsigned char pal_init_S602;
-char pal_at641__5[] __attribute__((section(".rodata"))) = "start2";
-unsigned int pal_at642__7[12] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
-    0x01DE2C04, 0x01DE2C14, 0x01DE2C24, 0x01DE2C34, 0x01DE2C44, 0x01DE2C54, 0x01DE2C64,
-    0x01DE2C74, 0x01DE2C84, 0x01DE2C94,
-};
-#pragma name_counter 330
-#else
 static void DrawProcess() {
     if (DispFade.GetRate() == 128.0) {
         return;
@@ -905,9 +891,15 @@ static void DrawProcess() {
 
         if (StartDisp) {
             TexManager.ReloadTexture(Vif1Packet, 20);
+#ifdef PAL
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
+                        CRect<int>(192, 392, 256, 32), CRect<int>(0, 0, 256, 32),
+                        fade);
+#else
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
                         CRect<int>(192, 360, 256, 32), CRect<int>(0, 0, 256, 32),
                         fade);
+#endif
             fade = (fade + 2) & 127;
         }
 
@@ -927,9 +919,16 @@ static void DrawProcess() {
 
     texture.tex0 = *(u_long *) &back_tex;
     set2DSprite(Vif1Packet, &texture,
-                CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
+                CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT),
                 128, 128, 128, 35);
 }
+
+/* A string constant a marker function emits first: the PAL build reaches it by its retail name,
+   the NTSC build by the literal. */
+#ifdef PAL
+#define PAL_POOLED(retail, literal) retail
+#else
+#define PAL_POOLED(retail, literal) literal
 #endif
 
 /**
@@ -940,27 +939,6 @@ static void DrawProcess() {
  * @size 0xCF4
  * @unknownret
  */
-#ifdef PAL
-static void SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", SoundProcess__Fv__2);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_mus_S647;
-unsigned char pal_init_S648;
-unsigned int pal_ambi_S655;
-unsigned char pal_init_S656;
-unsigned int pal_bat_S663;
-unsigned char pal_init_S664;
-unsigned int pal_wait_S681;
-unsigned char pal_init_S682;
-unsigned int pal_wait_S705__2;
-unsigned char pal_init_S706__2;
-unsigned int pal_at817__4[16] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
-    0x01DE330C, 0x01DE3354, 0x01DE35F0, 0x01DE3B20, 0x01DE3644, 0x01DE3B20, 0x01DE3B20,
-    0x01DE373C, 0x01DE37BC, 0x01DE3B20, 0x01DE3814, 0x01DE3844, 0x01DE3B20, 0x01DE398C,
-    0x01DE3A20, 0x01DE3A64,
-};
-#pragma name_counter 505
-#else
 static void SoundProcess() {
     if (CScript.bgm_fade) {
         SndBgmFadeOut(64, 0);
@@ -995,7 +973,7 @@ static void SoundProcess() {
 
     if (CScript.scene == 0 && Cam[SceneNp].motion_type.state.time > 10.0f) {
         if (!bat) {
-            CFrame *frame = Cam[SceneNp].frame->SearchFrame("e04a5");
+            CFrame *frame = Cam[SceneNp].frame->SearchFrame(PAL_POOLED(pal_at451__4, "e04a5"));
 
             if (frame) {
                 sceVu0FMATRIX matrix;
@@ -1024,7 +1002,7 @@ static void SoundProcess() {
         static int wait = 0;
 
         if (CScript.scene == 0) {
-            CFrame *frame = Cam[SceneNp].frame->SearchFrame("c12a");
+            CFrame *frame = Cam[SceneNp].frame->SearchFrame(PAL_POOLED(pal_at445__3, "c12a"));
             int chara_frame = (int) Chara__3[1].motion_type.state.time;
 
             if (wait == 0) {
@@ -1048,7 +1026,7 @@ static void SoundProcess() {
                 wait--;
             }
         } else {
-            CFrame *frame = Cam[SceneNp].frame->SearchFrame("chr_a");
+            CFrame *frame = Cam[SceneNp].frame->SearchFrame(PAL_POOLED(pal_at453__4, "chr_a"));
             int chara_frame = (int) Chara__3[0].motion_type.state.time;
 
             if (wait == 0) {
@@ -1294,7 +1272,6 @@ static void SoundProcess() {
         wait--;
     }
 }
-#endif
 
 void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step) {
     OP_AnimeSeq[OP_AnimeSeqRot].Initialize();

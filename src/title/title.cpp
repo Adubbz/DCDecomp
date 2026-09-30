@@ -633,19 +633,14 @@ static void InitProcA() {
 }
 #endif
 
+/* A string constant a marker function emits first: the PAL build reaches it by its retail name,
+   the NTSC build by the literal. */
 #ifdef PAL
-void DrawProcA();
-INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcA__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_lightning_S981;
-unsigned char pal_init_S982;
-unsigned int pal_col_S984;
-unsigned char pal_init_S985;
-unsigned int pal_at980[16] __attribute__((aligned(16))) = {0x42C80000, 0x42A00000, 0x42700000, 0x00000000, 0x42B40000, 0x42B40000, 0x42480000};
-unsigned int pal_at1029[4] __attribute__((aligned(16))) = {0x42B40000, 0x42B40000, 0x42B40000, 0x43000000};
-unsigned int pal_at1035__5[4] __attribute__((aligned(16))) = {0x447A0000, 0x44FA0000, 0x453B8000};
-#pragma name_counter 232
+#define PAL_POOLED(retail, literal) retail
 #else
+#define PAL_POOLED(retail, literal) literal
+#endif
+
 void DrawProcA() {
     sceVu0FMATRIX flash = {
         {100.0f, 80.0f, 60.0f, 0.0f},
@@ -732,9 +727,9 @@ void DrawProcA() {
     object->SetPosition(camera_position);
 
     if (lightning) {
-        object->FrameObjectOnOff("inazuma", 1);
+        object->FrameObjectOnOff(PAL_POOLED(pal_at974, "inazuma"), 1);
     } else {
-        object->FrameObjectOnOff("inazuma", 0);
+        object->FrameObjectOnOff(PAL_POOLED(pal_at974, "inazuma"), 0);
         OP_AnimeSeq[OP_AnimeSeqRot - 1].step_x = (float) (rand() % 10) / 10.0f;
         ObjAnimePlay(&OP_AnimeSeq[OP_AnimeSeqRot - 1]);
     }
@@ -789,7 +784,6 @@ void DrawProcA() {
 
     DepthOfField(dof, 3, 32, 0);
 }
-#endif
 
 CFrame *ObjectFrame3;
 class CProcess CProcess;

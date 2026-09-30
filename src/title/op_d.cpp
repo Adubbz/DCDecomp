@@ -1699,13 +1699,6 @@ static void Setsumei() {
  * @size 0x330
  * @unknownret
  */
-#ifdef PAL
-static void HamonProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", HamonProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_se_S1301[8] __attribute__((aligned(16))) = {0};
-#pragma name_counter 949
-#else
 static void HamonProcess() {
     sceVu0FVECTOR ambient;
 
@@ -1771,4 +1764,3 @@ static void HamonProcess() {
 
     MGSetAmbient(ambientlight);
 }
-#endif

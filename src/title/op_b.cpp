@@ -1318,17 +1318,6 @@ void OpB_MotionProcess() {
    the wait keeps a stutter in the motion from playing the step twice. Which of the two samples a
    footfall takes is decided by how far the camera's motion has run, because the ground changes
    under the actor part way through the scene. */
-#ifdef PAL
-void OpB_SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_SoundProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_wait_S674;
-unsigned char pal_init_S675;
-unsigned int pal_wait_S705;
-unsigned char pal_init_S706;
-unsigned int pal_at693__2[4] __attribute__((aligned(16))) = {0x42480000, 0x42480000, 0xC2C80000};
-#pragma name_counter 602
-#else
 void OpB_SoundProcess() {
     if (CScript__2.scene == 1) {
         float camera_time = Cam__2[SceneNp__2].motion_type.state.time;
@@ -1402,7 +1391,6 @@ void OpB_SoundProcess() {
         OpSetVolPanSE(position, 100.0f, 200.0f, 14, 40, 39);
     }
 }
-#endif
 
 /* The scene's per-tick drawing, in the order the frame is built: the world, then the fires that
    are lights rather than models, then the actors' shadows onto the one buffer that holds them all,

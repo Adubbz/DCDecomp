@@ -1,11 +1,11 @@
 #ifdef PAL
 #pragma argument_flag 0
-#pragma argument_flag_ones 79, 99, 116, 124, 146
-#pragma argument_flag_ones 187, 188, 189, 197, 199, 202, 204, 248, 251
-#pragma argument_flag_ones 255, 256, 260, 263, 286, 297, 305, 312, 313, 314
-#pragma argument_flag_ones 317, 318, 319, 358, 368, 374, 375, 376, 382, 392
-#pragma argument_flag_ones 398, 399, 400, 406, 416, 422, 423, 424, 439
-#pragma argument_flag_ones 598
+#pragma argument_flag_ones 79, 99, 116, 124, 146, 177, 179, 197, 198, 199
+#pragma argument_flag_ones 207, 209, 212, 214, 258, 261, 265, 266, 270, 273
+#pragma argument_flag_ones 296, 307, 315, 322, 323, 324, 327, 328, 329, 368
+#pragma argument_flag_ones 378, 384, 385, 386, 392, 402, 408, 409, 410, 416
+#pragma argument_flag_ones 426, 432, 433, 434, 449, 464, 470, 471, 477, 485
+#pragma argument_flag_ones 538, 715
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 190, 210, 227, 235, 257, 288, 290, 295, 403, 428
@@ -621,34 +621,6 @@ static void SetDanceMotion() {
  * @size 0x124
  * @unknownret
  */
-#ifdef PAL
-static void InitDancerPos();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", InitDancerPos__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at406__2[140] __attribute__((aligned(16))) = {
-    0x40400000, 0x00000000, 0x41D80000, 0x00000000, 0x00000000, 0x00000000, 0x41D80000,
-    0x00000000, 0xC0400000, 0x00000000, 0x41D80000, 0x00000000, 0x3FC00000, 0x00000000,
-    0x41E80000, 0x00000000, 0xBFC00000, 0x00000000, 0x41E80000, 0x00000000, 0x40900000,
-    0x00000000, 0x41E80000, 0x00000000, 0xC0900000, 0x00000000, 0x41E80000, 0x00000000,
-    0x40400000, 0x00000000, 0x41F80000, 0x00000000, 0x00000000, 0x00000000, 0x41F80000,
-    0x00000000, 0xC0400000, 0x00000000, 0x41F80000, 0x00000000, 0x3FC00000, 0x00000000,
-    0x42040000, 0x00000000, 0xBFC00000, 0x00000000, 0x42040000, 0x00000000, 0x40900000,
-    0x00000000, 0x42040000, 0x00000000, 0xC0900000, 0x00000000, 0x42040000, 0x00000000,
-    0x40400000, 0x00000000, 0x420C0000, 0x00000000, 0x00000000, 0x00000000, 0x420C0000,
-    0x00000000, 0xC0400000, 0x00000000, 0x420C0000, 0x00000000, 0x3FC00000, 0x00000000,
-    0x42140000, 0x00000000, 0xBFC00000, 0x00000000, 0x42140000, 0x00000000, 0x40900000,
-    0x00000000, 0x42140000, 0x00000000, 0xC0900000, 0x00000000, 0x42140000, 0x00000000,
-    0x40400000, 0x00000000, 0x421C0000, 0x00000000, 0x00000000, 0x00000000, 0x421C0000,
-    0x00000000, 0xC0400000, 0x00000000, 0x421C0000, 0x00000000, 0x3FC00000, 0x00000000,
-    0x42240000, 0x00000000, 0xBFC00000, 0x00000000, 0x42240000, 0x00000000, 0x40900000,
-    0x00000000, 0x42240000, 0x00000000, 0xC0900000, 0x00000000, 0x42240000, 0x00000000,
-    0x40400000, 0x00000000, 0x422C0000, 0x00000000, 0x00000000, 0x00000000, 0x422C0000,
-    0x00000000, 0xC0400000, 0x00000000, 0x422C0000, 0x00000000, 0x3FC00000, 0x00000000,
-    0x42340000, 0x00000000, 0xBFC00000, 0x00000000, 0x42340000, 0x00000000, 0x40900000,
-    0x00000000, 0x42340000, 0x00000000, 0xC0900000, 0x00000000, 0x42340000,
-};
-#pragma name_counter 119
-#else
 static void InitDancerPos() {
     float layout[35][4] = {
         {3.0f, 0.0f, 27.0f, 0.0f},
@@ -703,7 +675,6 @@ static void InitDancerPos() {
     Chara__3[6].SetPosition(0.0f, 0.0f, 250.0f);
     Chara__3[6].SetRotation(0.0f, PI, 0.0f);
 }
-#endif
 
 /* The tick's drawing, in the order the frame is built: the ground, the buildings standing on it,
    the townspeople, the couple, the crowd behind them, the fires, the sky and last the depth of
@@ -1539,36 +1510,6 @@ static void DrawShadow(float x, float y, float z) {
    and the wait keeps a motion that stalls there from playing the step twice. The rest is the
    square's own ambience: the fountain from a fixed point, the wind while the sky is up, and the
    change of music the camera makes when it turns away. */
-#ifdef PAL
-void OpA_SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_SoundProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_mus_S973;
-unsigned char pal_init_S974__2;
-unsigned int pal_wait_S983;
-unsigned char pal_init_S984;
-unsigned int pal_wait_S998;
-unsigned char pal_init_S999__2;
-unsigned int pal_wait_S1013;
-unsigned char pal_init_S1014__2;
-unsigned int pal_wait_S1028;
-unsigned char pal_init_S1029;
-unsigned int pal_seflg_S1046;
-unsigned char pal_init_S1047;
-unsigned int pal_secnt_S1049;
-unsigned char pal_init_S1050;
-unsigned int pal_vol_S1052;
-unsigned char pal_init_S1053;
-unsigned int pal_flg_S1064;
-unsigned char pal_init_S1065;
-unsigned int pal_flg_S1077;
-unsigned char pal_init_S1078;
-unsigned int pal_at1045__3[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at1062[4] __attribute__((aligned(16))) = {0x00000000, 0x42480000};
-char pal_at1088__2[] __attribute__((section(".rodata"))) = "opdat/dungeon/o1bbgm.snd";
-char pal_at1089[] __attribute__((section(".rodata"))) = "o01b.txt";
-#pragma name_counter 778
-#else
 void OpA_SoundProcess() {
     /* These type-only names preserve the first footfall's argument-selection state. */
     typedef float SoundSetup0, SoundSetup1, SoundSetup2, SoundSetup3, SoundSetup4, SoundSetup5,
@@ -1689,7 +1630,11 @@ void OpA_SoundProcess() {
     {
         static int flg = 0;
 
+#ifdef PAL
+        if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 252.0) {
+#else
         if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 249.0) {
+#endif
             if (flg == 0) {
                 while (ReadBGSync())
                     ;
@@ -1718,7 +1663,6 @@ void OpA_SoundProcess() {
         }
     }
 }
-#endif
 
 /**
  * The waterfall behind the square. Its animation is a strip of frames in a texture of its own and
