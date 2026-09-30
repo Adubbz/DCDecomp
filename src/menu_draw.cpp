@@ -535,13 +535,6 @@ void AllFadeForMenu(int alpha) {
     AllFillBoxForMenu(0, 0, 0, (unsigned char) alpha);
 }
 
-#ifdef PAL
-void FrameImageDraw(int brightness, int alpha);
-/* Retail's data for the function the marker below supplies. */
-char pal_at764__4[0x10] __attribute__((section(".rodata"))) = "frame_image";
-INCLUDE_ASM("asm/pal/nonmatchings/menu_draw", FrameImageDraw__Fii);
-#pragma name_counter 810
-#else
 void FrameImageDraw(int brightness, int alpha) {
     sceGsTexa texa;
     CTexture *texture = TexManager.GetTexture("frame_image", -1);
@@ -553,11 +546,14 @@ void FrameImageDraw(int brightness, int alpha) {
         texa.AEM = 1;
         texa.TA0 = 0x80;
         MGSetGsTEXA(&texa);
+#ifdef PAL
+        DrawMenu2DSprite(texture, MenuDispRc, MenuDispRc, brightness, brightness, brightness, alpha);
+#else
         set2DSprite(GetVif1Packet(), texture, MenuDispRc, MenuDispRc, brightness, brightness, brightness, alpha);
+#endif
         MGSetGsTEXA(NULL);
     }
 }
-#endif
 
 void DrawMenuColorGradation(CRect_i_ &rect, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
     set2DSpriteC4(GetVif1Packet(), rect, top_left, top_right, bottom_left, bottom_right);
@@ -2679,14 +2675,13 @@ int ItemDataToHaveCopy(int item_no) {
     return vol;
 }
 
-#ifdef PAL
-void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_draw", DrawFullSizePicture__FP8CTextureiii);
-#pragma name_counter 2044
-#else
 void DrawFullSizePicture(CTexture *texture, int x, int y, int alpha) {
     if (texture != NULL) {
+#ifdef PAL
+        CRect_i_ rect(x, y, MenuDispRc.width, MenuDispRc.height);
+        DrawMenu2DSprite(texture, rect, CRect_i_(0, 0, 640, 448), alpha);
+#else
         DrawMenu2DSprite(texture, CRect_i_(x, y, MenuDispRc.width, MenuDispRc.height), MenuDispRc, alpha);
+#endif
     }
 }
-#endif

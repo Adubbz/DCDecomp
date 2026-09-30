@@ -226,13 +226,6 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
     return 0;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/gamepad", UpDate__8CGamePadFv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_cnt_S250;
-unsigned char pal_init_S251;
-#pragma name_counter 536
-#else
 void CGamePad::UpDate() {
     static int cnt;
     static char init;
@@ -317,12 +310,14 @@ void CGamePad::UpDate() {
         }
     }
 
+#ifndef PAL
     key_lock2 = 1;
     pad[1].input.status.button = 0;
     pad[1].input.status.right_x = 128;
     pad[1].input.status.right_y = 128;
     pad[1].input.status.left_x = 128;
     pad[1].input.status.left_y = 128;
+#endif
     if (key_lock2) {
         pad[1].input.status.button = 0;
         pad[1].input.status.right_x = 128;
@@ -332,7 +327,6 @@ void CGamePad::UpDate() {
     }
     cnt = !((bool) cnt);
 }
-#endif
 
 #undef PAD_STATIC_COUNTER_128
 #undef PAD_STATIC_COUNTER_64
@@ -499,17 +493,20 @@ float CGamePad::GetLYf2() {
     return (float) GetLY2() / 128.0f;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/gamepad", On__8CGamePadFi);
-#pragma name_counter 627
-#else
 int CGamePad::On(int mask) {
     if (key_lock) {
         return 0;
     }
+#ifdef PAL
+    if (mask == 0x800 && On2(0x800)) {
+        return 1;
+    }
+    if (mask != 0x800 && On2(0x100)) {
+        return 1;
+    }
+#endif
     return (pad[0].input.status.button & mask) != 0;
 }
-#endif
 
 int CGamePad::On2(int mask) {
     if (key_lock) {
@@ -518,17 +515,20 @@ int CGamePad::On2(int mask) {
     return (pad[1].input.status.button & mask) != 0;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/gamepad", Down__8CGamePadFi);
-#pragma name_counter 641
-#else
 int CGamePad::Down(int mask) {
     if (key_lock) {
         return 0;
     }
+#ifdef PAL
+    if (mask == 0x800 && On2(0x800)) {
+        return 1;
+    }
+    if (mask != 0x800 && On2(0x100)) {
+        return 1;
+    }
+#endif
     return (mask & (pad[0].input.status.button & ~previous_pad[0].input.status.button)) != 0;
 }
-#endif
 
 int CGamePad::Down2(int mask) {
     if (key_lock) {

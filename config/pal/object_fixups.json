@@ -131,17 +131,17 @@
     },
     "statics": {
       "ct$2624": "ct$4057",
-      "ct$4036": "ct$5791",
+      "ct$4035": "ct$5791",
       "init$1624": "init$2383",
       "init$1633": "init$2392",
       "init$2625": "init$4058",
       "init$2855": "init$4326",
-      "init$4037": "init$5792",
-      "init$4069": "init$5829",
+      "init$4036": "init$5792",
+      "init$4068": "init$5829",
       "init$993": "init$1690",
       "levelbrinkcnt$1632": "levelbrinkcnt$2391",
       "ncnt$2854": "ncnt$4325",
-      "statusCnt$4068": "statusCnt$5828",
+      "statusCnt$4067": "statusCnt$5828",
       "warmcnt$1623": "warmcnt$2382",
       "warningcnt$992": "warningcnt$1689"
     }
@@ -219,7 +219,11 @@
     ],
     "rodata_exports": [
       "@1073__2",
+      "@4638",
+      "@4639",
+      "@4641",
       "@4782",
+      "@4805",
       "@4967",
       "@4968",
       "@5005",
@@ -295,10 +299,10 @@
       "cnt$1791": "cnt$1704",
       "cnt$3624": "cnt$5153",
       "cnt$4112": "cnt$5825",
-      "dmgColor$4567": "dmgColor$6525",
-      "dmgFlag$4573": "dmgFlag$6531",
+      "dmgColor$4565": "dmgColor$6525",
+      "dmgFlag$4571": "dmgFlag$6531",
       "dmgSnd$3517": "dmgSnd$5056",
-      "dmgVec$4570": "dmgVec$6528",
+      "dmgVec$4568": "dmgVec$6528",
       "heal_counter$3053": "heal_counter$4377",
       "id_cnt$2237": "id_cnt$2145",
       "init$1266": "init$1046",
@@ -318,17 +322,17 @@
       "init$4020": "init$5738",
       "init$4071": "init$5791",
       "init$4113": "init$5826",
-      "init$4372": "init$6144",
-      "init$4568": "init$6526",
-      "init$4571": "init$6529",
-      "init$4627": "init$6590",
+      "init$4370": "init$6144",
+      "init$4566": "init$6526",
+      "init$4569": "init$6529",
+      "init$4625": "init$6590",
       "init2$2238": "init$2146",
       "itemposr$1373": "itemposr$1160",
       "itemposr$1380": "itemposr$1167",
       "msg_cnt$3978": "msg_cnt$5694",
-      "nowCursor$4626": "nowCursor$6589",
+      "nowCursor$4624": "nowCursor$6589",
       "rate$1265": "rate$1045",
-      "rate$4371": "rate$6143",
+      "rate$4369": "rate$6143",
       "s_cnt$3971": "s_cnt$5687",
       "snd_cnt$2235": "snd_cnt$2142",
       "wait_cnt$3992": "wait_cnt$5709",
@@ -668,9 +672,9 @@
     "statics": {
       "count$395": "count$345",
       "init$396": "init$346",
-      "se_open$737": "se_open$510",
-      "se_close$742": "se_close$515",
-      "motion$747": "motion$520"
+      "se_open$731": "se_open$510",
+      "se_close$736": "se_close$515",
+      "motion$741": "motion$520"
     }
   },
   "src/editloop.cpp": {
@@ -950,6 +954,7 @@
       "CurrentDir": "CurrentDir__2"
     },
     "rodata_exports": [
+      "@230__2",
       "@279",
       "@449",
       "@477",
@@ -1077,20 +1082,40 @@
     ],
     "statics": {
       "ambient$258": "ambient$713",
-      "cnt$285": "cnt$739",
-      "d$332": "d$775",
-      "f$400": "f$844",
+      "cnt$284": "cnt$739",
+      "d$331": "d$775",
+      "f$399": "f$844",
+      "flg$618": "flg$1064",
+      "flg$631": "flg$1077",
       "init$260": "init$715",
-      "init$286": "init$740",
-      "init$779": "init$1091",
-      "init$782": "init$1094",
-      "init$809": "init$1121",
-      "init$812": "init$1124",
+      "init$285": "init$740",
+      "init$528": "init$974__2",
+      "init$538": "init$984",
+      "init$553": "init$999__2",
+      "init$568": "init$1014__2",
+      "init$583": "init$1029",
+      "init$601": "init$1047",
+      "init$604": "init$1050",
+      "init$607": "init$1053",
+      "init$619": "init$1065",
+      "init$632": "init$1078",
+      "init$644": "init$1091",
+      "init$647": "init$1094",
+      "init$674": "init$1121",
+      "init$677": "init$1124",
+      "mus$527": "mus$973",
       "sc$259": "sc$714",
-      "setTexScrollCnt$778": "setTexScrollCnt$1090",
-      "setTexScrollCnt$808": "setTexScrollCnt$1120",
-      "setTexScrollCntf$781": "setTexScrollCntf$1093",
-      "setTexScrollCntf$811": "setTexScrollCntf$1123"
+      "secnt$603": "secnt$1049",
+      "seflg$600": "seflg$1046",
+      "setTexScrollCnt$643": "setTexScrollCnt$1090",
+      "setTexScrollCnt$673": "setTexScrollCnt$1120",
+      "setTexScrollCntf$646": "setTexScrollCntf$1093",
+      "setTexScrollCntf$676": "setTexScrollCntf$1123",
+      "vol$606": "vol$1052",
+      "wait$537": "wait$983",
+      "wait$552": "wait$998",
+      "wait$567": "wait$1013",
+      "wait$582": "wait$1028"
     }
   },
   "src/title/op_b.cpp": {
@@ -1115,7 +1140,11 @@
     ],
     "statics": {
       "cnt$684": "cnt$812",
-      "init$685": "init$813"
+      "init$557": "init$675",
+      "init$587": "init$706",
+      "init$685": "init$813",
+      "wait$556": "wait$674",
+      "wait$586": "wait$705"
     }
   },
   "src/title/op_c.cpp": {
@@ -1140,7 +1169,13 @@
       "SmokeProcess__Fv__2"
     ],
     "statics": {
-      "init$1217": "init$1063"
+      "camera$585": "camera$921",
+      "d$626": "d$962",
+      "init$1217": "init$1063",
+      "init$586": "init$922",
+      "init$624": "init$960",
+      "init$627": "init$963",
+      "step$623": "step$959"
     }
   },
   "src/title/op_d.cpp": {
@@ -1195,7 +1230,21 @@
     "globalize_symbols": [
       "DispFade__2",
       "frame_info_cam__2"
-    ]
+    ],
+    "statics": {
+      "ambi$342": "ambi$655",
+      "bat$350": "bat$663",
+      "fade$310": "fade$601",
+      "init$311": "init$602",
+      "init$335": "init$648",
+      "init$343": "init$656",
+      "init$351": "init$664",
+      "init$369": "init$682",
+      "init$393": "init$706__2",
+      "mus$334": "mus$647",
+      "wait$368": "wait$681",
+      "wait$392": "wait$705__2"
+    }
   },
   "src/title/script.cpp": {
     "symbols": {
@@ -1233,7 +1282,13 @@
     },
     "extern_functions": [
       "__ct__10CCharacterFv"
-    ]
+    ],
+    "statics": {
+      "col$170": "col$984",
+      "init$168": "init$982",
+      "init$171": "init$985",
+      "lightning$167": "lightning$981"
+    }
   },
   "src/title/titleloop.cpp": {
     "symbols": {
@@ -2372,11 +2427,11 @@
   },
   "src/texture.cpp": {
     "statics": {
-      "block_table32$944": "block_table32$991",
-      "block_table8$943": "block_table8$990",
+      "block_table32$945": "block_table32$991",
+      "block_table8$944": "block_table8$990",
       "clut_adr$374": "clut_adr$343",
       "init$375": "init$344",
-      "lut$978": "lut$1025"
+      "lut$979": "lut$1025"
     },
     "symbols": {}
   },
