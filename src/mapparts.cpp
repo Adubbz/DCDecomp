@@ -147,7 +147,7 @@ int CMapParts::GetInfoData(int x, int y) {
 }
 
 int CMapParts::ChangeAltData() {
-    int i;
+    int   i;
     short cell;
 
     if (this->info == NULL) {
@@ -166,7 +166,7 @@ int CMapParts::ChangeAltData() {
 }
 
 int CMapParts::ChangeDigData() {
-    int i;
+    int   i;
     short cell;
 
     if (this->info == NULL) {
@@ -185,7 +185,7 @@ int CMapParts::ChangeDigData() {
 }
 
 int CMapParts::CheckBox(CBoxVu0 *box) {
-    float world[4][4];
+    float         world[4][4];
     sceVu0FVECTOR min;
     sceVu0FVECTOR max;
 
@@ -216,7 +216,7 @@ int CMapParts::CheckBox(CBoxVu0 *box) {
 }
 
 int CMapParts::CheckBox2(CBoxVu0 *box) {
-    float world[4][4];
+    float         world[4][4];
     sceVu0FVECTOR corner[4];
     sceVu0FVECTOR max;
     sceVu0FVECTOR min;
@@ -262,7 +262,7 @@ void CMapParts::DrawLOD(float *distance, int lowest, int highest, int *out_level
     sceVu0FVECTOR lifted_pos;
     sceVu0FVECTOR eye;
     sceVu0FVECTOR saved_rotation;
-    float depth;
+    float         depth;
 
     if (this->handle < 0) {
         return;
@@ -302,22 +302,22 @@ void CMapParts::DrawLOD(float *distance, int lowest, int highest, int *out_level
 }
 
 void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, int *out_level) {
-    sceVu0FVECTOR ambient;
-    sceVu0FVECTOR saved_ambient;
-    float light_direction[4][4];
-    float light_colour[4][4];
-    float saved_light_colour[4][4];
-    float saved_light_direction[4][4];
-    sceVu0FVECTOR part_pos;
-    sceVu0FVECTOR part_rotation;
-    float parts_distance[4];
-    sceVu0FVECTOR effect_pos;
-    sceVu0FVECTOR direction;
-    int lit;
-    int light;
-    int i;
+    sceVu0FVECTOR     ambient;
+    sceVu0FVECTOR     saved_ambient;
+    float             light_direction[4][4];
+    float             light_colour[4][4];
+    float             saved_light_colour[4][4];
+    float             saved_light_direction[4][4];
+    sceVu0FVECTOR     part_pos;
+    sceVu0FVECTOR     part_rotation;
+    float             parts_distance[4];
+    sceVu0FVECTOR     effect_pos;
+    sceVu0FVECTOR     direction;
+    int               lit;
+    int               light;
+    int               i;
     EDIT_EFFECT_INFO *effect_info;
-    float extent;
+    float             extent;
 
     if (this->draw_on == 0) {
         return;
@@ -401,9 +401,9 @@ void CMapParts::DrawParts(float time, float *distance, int lowest, int highest, 
 }
 
 void CMapParts::DrawEffect(CCamera *camera, float time, CEffectGroup *group) {
-    sceVu0FVECTOR part_pos;
-    sceVu0FVECTOR part_rotation;
-    int i;
+    sceVu0FVECTOR     part_pos;
+    sceVu0FVECTOR     part_rotation;
+    int               i;
     EDIT_EFFECT_INFO *effect_info;
 
     if (this->handle < 0) {

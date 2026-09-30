@@ -10,50 +10,20 @@
 
 [<img src="https://decomp.dev/Adubbz/DCDecomp/ntsc.svg?w=512&h=256" width="512" height="256" alt="A visual">][progress_link]
 
-DCDecomp is a work-in-progress decompilation project for Dark Cloud for the PlayStation 2.
+DCDecomp is a decompilation project for Dark Cloud for the PlayStation 2.
 
-This project is targeting the NTSC 1.02 version of the game. Other versions may be considered in the future, though they aren't currently planned.
+This project is targeting the NTSC 1.02 and PAL review versions.
 
 The build produces the main executable `SCUS_971.11` with matching text and data sections and completely matching `TITLE.BIN` and `DUN.BIN` overlays. Matching the main executable's symbol/string tables may be explored in future, though this isn't a current priority.
 
 # Building and running
 
 1. Clone the repository with `git clone --recurse-submodules https://github.com/Adubbz/DCDecomp.git`
-2. Place the NTSC 1.02 disc image, named `Dark Cloud (NTSC).iso`, in the `rom` folder at the root of the project.
+2. Place the NTSC 1.02 disc image or PAL July 12th build, named `Dark Cloud (NTSC).iso` or `Dark Cloud (PAL).iso`, in the `rom` folder at the root of the project.
 3. Run `run.sh`.
 
-With access to the private repository, building the executables and diffing
-work without the disc image; see the reference assembly instructions below.
-
-`run.sh` builds the disc image and boots it in PCSX2. `build.sh` does the build
-alone and leaves the results in `build/ntsc/`.
-
-Everything that belongs to one release of the game sits in a directory named
-for it: the extracted disc and its checksums under `rom/ntsc/`, the split
-configuration and linker script under `config/ntsc/`, the reference assembly
-under `asm/ntsc/` and the build under `build/ntsc/`.
-`scripts/build/region.py` is the one place that says where.
-
-Both run in the `dcdecomp_dev` container image, which holds only the
-toolchain: it is built the first time and reused after that (`REBUILD_IMAGE=1`
-builds it again, for after editing the `Dockerfile`). The tree is mounted
-rather than copied in, so both are incremental. The disc is extracted and
-split once, not once per build, and each step reruns only when one of its
-inputs changes. The build runs one job per CPU the container can see. Two
-variables tune it:
-
-```
-CLEAN=1 ./build.sh       throw build/ntsc away first, so everything is rebuilt
-JOBS=8 ./build.sh        run 8 jobs rather than one per CPU
-```
-
-Only one build of the tree runs at a time: `scripts/build/cmake.sh` and
-objdiff's rebuild both take `.build.lock`, so a build that starts while
-another one is splitting the disc waits for it.
-
-On macOS and Windows that count is the podman machine's rather than the
-host's, and podman's default is well under it; both scripts say so when they
-differ.
+`run.sh` builds the disc image and boots it in PCSX2. 
+`build.sh` builds only the game.
 
 ## Diffing
 
@@ -87,28 +57,6 @@ decompile.sh SetDay__9CSaveDataFi          # found on its own
 decompile.sh title Se__7CSpriteFv          # ...or name the overlay
 decompile.sh DataLoad__Fv --stack-structs  # extra flags go to m2c
 ```
-
-## Reference assembly
-
-[splat](https://github.com/ethteck/splat) splits the disc images into the
-assembly the build compares against, driven by the configuration under
-`config/ntsc/`, which is checked in and is what `scripts/build/disassemble.py`
-splits against.
-Each translation unit becomes one segment, so its functions and its constants
-are written to a single file per unit.
-
-The result, `asm/ntsc/`, is not checked in. The build splits it on first use
-and again whenever the configuration changes. To force a fresh split:
-
-```
-scripts/build/cmake.sh disassemble
-```
-
-Without the disc image, `asm/ntsc/` can instead be split from a copy of
-`rom/ntsc/extracted/iso/SCUS_971.11`, `TITLE.BIN` and `DUN.BIN` kept in a
-private repository whose layout mirrors this one; `scripts/host/overlay_private.sh`
-copies them into place. This is how CI builds. Either way they are checked
-against `rom/ntsc/extracted.sha256` before a split.
 
 ## Documentation
 

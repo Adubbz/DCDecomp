@@ -29,7 +29,7 @@ CTexture *ManualMenuTex[6];
 /**
  * Returns the texture page for the selected manual category and entry.
  */
-int GetNowManualPartTgaNum(void) {
+int GetNowManualPartTgaNum() {
     return *(ManualMenu.entry + (ManualTgaNum + (ManualMenu.category * 6)));
 }
 
@@ -57,7 +57,7 @@ int GetGameFlagForManualMenu() {
  */
 static s16 ManualImgLoad() {
     char path[76];
-    int size;
+    int  size;
 
     if (ReadBGSync() != 0 || ManualMenu.images_ready != 0) {
         BreakReadBG();
@@ -72,8 +72,7 @@ static s16 ManualImgLoad() {
     LoadFileBG(path, buffer, &size);
     buffer += size / 16 + 1;
     buffer = MenuCalcBufAlignment(buffer);
-    if ((u32) (image_no - 11) <= 1 || (u32) (image_no - 21) <= 1 || image_no == 31 ||
-        image_no == 42) {
+    if ((u32) (image_no - 11) <= 1 || (u32) (image_no - 21) <= 1 || image_no == 31 || image_no == 42) {
         GetPathReadDifferntLang(path);
         strcat(path, "manual/m%db.pac");
         sprintf(path, path, image_no);
@@ -90,13 +89,13 @@ s16 ManualImgEnter() {
     if (ManualMenu.images_ready == 0 && ReadBGSync() == 0) {
         LOADTEXTURE_INFO2 image_table[] = {
             {manual_frame_image, 0, 0},
-            {NULL, 0, 0},
-            {NULL, 0, 0},
+            {NULL,               0, 0},
+            {NULL,               0, 0},
         };
         image_table[0].block_no = ManualMenu.image_texture_block;
         image_table[1].block_no = ManualMenu.image_texture_block;
         BG_READ_INFO *primary = GetReadBGFile(0);
-        char pack_name[32] = "%d_%d.img";
+        char          pack_name[32] = "%d_%d.img";
         sprintf(pack_name, pack_name, ManualMenu.category + 1, ManualMenu.entry + 1);
         image_table[1].name = (char *) GetPackFile((u_int *) primary->buffer, pack_name, NULL);
         TexManager.DeleteTextureBlock(ManualMenu.image_texture_block);
@@ -107,8 +106,8 @@ s16 ManualImgEnter() {
         if (extra != NULL) {
             LOADTEXTURE_INFO2 extra_table[] = {
                 {"#frame_image1#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
-                {NULL, 0, 0},
-                {NULL, 0, 0},
+                {NULL,                                        0, 0},
+                {NULL,                                        0, 0},
             };
             extra_table[0].block_no = ManualMenu.extra_texture_block;
             extra_table[1].block_no = ManualMenu.extra_texture_block;
@@ -123,7 +122,7 @@ s16 ManualImgEnter() {
         int image_count = GetNowManualPartTgaNum();
         for (int image = 0; image < image_count; image++) {
             char *prefix[] = {"a_", "b_", "c_", "d_"};
-            char texture_name[32];
+            char  texture_name[32];
             strcpy(texture_name, prefix[ManualMenu.category]);
             strcat(texture_name, "%d_%d");
             sprintf(texture_name, texture_name, ManualMenu.entry + 1, image + 1);
@@ -142,8 +141,8 @@ void DrawPrevNextCursor() {
         return;
     }
     CRect_i_ texel(0x40, 0, 0x20, 0x20);
-    int x[] = {0x40, 0x222};
-    int image_count = GetNowManualPartTgaNum();
+    int      x[] = {0x40, 0x222};
+    int      image_count = GetNowManualPartTgaNum();
     for (int cursor = 0; cursor < 2; cursor++, texel.y += 0x20) {
         if (cursor == 0 && ManualMenu.image_page == 0) {
             continue;
@@ -184,8 +183,7 @@ void DrawManualMsg() {
     if (ManualMenu.mode == 4) {
         CommonMenuMes3.stay_frame = 1;
         CommonMenuMes3.auto_pos = 8;
-        message_no = ManualMenu.category * 1000 + 1100 + (ManualMenu.entry + 1) * 10 +
-                     ManualMenu.message_page;
+        message_no = ManualMenu.category * 1000 + 1100 + (ManualMenu.entry + 1) * 10 + ManualMenu.message_page;
         CommonMenuMes3.text_x = 0x78;
         CommonMenuMes3.text_y = 0x158;
     }
@@ -222,7 +220,7 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.transition_frame = 0;
     ManualMsg = &EastKingMsgCls;
     ManualMsg->edge_alpha = 0;
-    ManualMsg->init_02C = 0x10;
+    ManualMsg->unk_02C = 0x10;
     ManualMsg->init_030 = 0x10;
     ManualMenu.common_message_buffer = CommonMenuMes3.buff;
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
@@ -279,11 +277,11 @@ static inline void ResetManualMessage(ClsMes *message) {
 
 int SetManualMsgBuffer() {
     if (ManualMenu.messages_ready == 0 && ReadBGSync() == 0) {
-        BG_READ_INFO *archive = GetReadBGFile(0);
+        BG_READ_INFO     *archive = GetReadBGFile(0);
         LOADTEXTURE_INFO2 font_table[] = {
             {manual_frame_image, 0, 0},
-            {NULL, 0, 0},
-            {NULL, 0, 0},
+            {NULL,               0, 0},
+            {NULL,               0, 0},
         };
         font_table[0].block_no = ManualMenu.common_texture_block;
         font_table[1].block_no = ManualMenu.common_texture_block;
@@ -364,8 +362,8 @@ int MenuManualKey() {
             }
             break;
         case 2: {
-            int minimum;
-            int maximum;
+            int  minimum;
+            int  maximum;
             int *selection;
             if (ManualMenu.selection_level == -2) {
                 minimum = 0;
@@ -444,12 +442,7 @@ int MenuManualKey() {
                     int image_count = GetNowManualPartTgaNum();
                     ManualMenu.image_page++;
                     ManualMenu.message_page++;
-                    if ((ManualMenu.category == 0 && ManualMenu.entry == 4 &&
-                         ManualMenu.message_page == 1) ||
-                        (ManualMenu.category == 1 && ManualMenu.entry == 1 &&
-                         ManualMenu.message_page == 5) ||
-                        (ManualMenu.category == 2 && ManualMenu.entry == 3 &&
-                         ManualMenu.message_page == 1)) {
+                    if ((ManualMenu.category == 0 && ManualMenu.entry == 4 && ManualMenu.message_page == 1) || (ManualMenu.category == 1 && ManualMenu.entry == 1 && ManualMenu.message_page == 5) || (ManualMenu.category == 2 && ManualMenu.entry == 3 && ManualMenu.message_page == 1)) {
                         ManualMenu.image_page--;
                     }
                     if (ManualMenu.image_page >= image_count) {
@@ -459,12 +452,7 @@ int MenuManualKey() {
                 }
                 ComMenuSePlay(1);
             } else if (GamePad.Down(0x8085)) {
-                if ((ManualMenu.category == 0 && ManualMenu.entry == 4 &&
-                     ManualMenu.message_page == 1) ||
-                    (ManualMenu.category == 1 && ManualMenu.entry == 1 &&
-                     ManualMenu.message_page == 5) ||
-                    (ManualMenu.category == 2 && ManualMenu.entry == 3 &&
-                     ManualMenu.message_page == 1)) {
+                if ((ManualMenu.category == 0 && ManualMenu.entry == 4 && ManualMenu.message_page == 1) || (ManualMenu.category == 1 && ManualMenu.entry == 1 && ManualMenu.message_page == 5) || (ManualMenu.category == 2 && ManualMenu.entry == 3 && ManualMenu.message_page == 1)) {
                     ManualMenu.message_page--;
                 } else if (0 < ManualMenu.image_page) {
                     ManualMenu.message_page--;
@@ -502,8 +490,8 @@ int MenuManualKey() {
 void MenuManualDraw() {
     if (ManualMenu.mode >= 3 && ManualMenu.mode < 6 && ManualMenu.images_ready != 0) {
         MenuTextureReload(ManualMenu.image_texture_block);
-        int image_count = GetNowManualPartTgaNum();
-        int target = -(ManualMenu.image_page * 0x280);
+        int   image_count = GetNowManualPartTgaNum();
+        int   target = -(ManualMenu.image_page * 0x280);
         float distance = target - ManualMenu.image_offset;
         ManualMenu.image_offset += (int) (distance / 4.0f);
         if (abs((int) distance) <= 3.0) {
@@ -527,8 +515,8 @@ void MenuManualDraw() {
             if (width < 0) {
                 width = 0;
             }
-            CRect_i_ screen(screen_x, 0, width, SCREEN_HEIGHT);
-            CRect_i_ texel(source_x, 0, width, 0x1C0);
+            CRect_i_  screen(screen_x, 0, width, SCREEN_HEIGHT);
+            CRect_i_  texel(source_x, 0, width, 0x1C0);
             CTexture *texture = ManualMenuTex[image];
             if (texture != NULL) {
 #ifdef PAL

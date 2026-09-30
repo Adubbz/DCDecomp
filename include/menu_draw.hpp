@@ -8,43 +8,39 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-struct ATTACH_LIST;
 struct DNG_CONSUMABLE;
 class CCamera;
-class CFrame;
 class CRect_i_;
 class CTexture;
 class CUserStatus;
 class CDngStatusData;
 class ClsMes;
-struct ITEM_PACK;
 struct SAVEDATA_INFO;
-struct WEAPON_HAVE;
 struct spRGBA;
 
 /**
  * State of the dungeon entrance menu, and what it shows of each floor.
  */
 struct DUN_ENTER_MENU {
-    s8 dungeon;             /**< Dungeon the menu is for. */
-    s8 scroll_top;          /**< First floor the list shows. */
-    s8 selected_floor;      /**< Floor the cursor stands on. */
-    s8 requested_floor;     /**< Floor the player asked to enter. */
-    float list_y;           /**< Screen Y of the floor list's first row, eased toward the scroll position. */
-    float scroll_bar_y;     /**< Screen Y of the scroll bar, eased toward the scroll position. */
-    s8 textures_ready;      /**< Set once the menu's textures and messages have been installed. */
-    s8 texture_block;       /**< Texture block the menu loads into. */
-    s8 loading;             /**< Set while the menu's archive is still being read. */
-    s8 floor_count;         /**< Floors the list holds. */
-    s8 result;              /**< Floor chosen, or a negative value while the menu runs. */
-    s8 max_atra[100];       /**< Atla each floor holds. */
-    s8 collected_atra[100]; /**< Atla the player has taken from each floor. */
-    u8 unk_0D9;
-    s16 kills[100]; /**< Monsters the player has defeated on each floor. */
-    u8 unk_1A2[2];
-    s16 state; /**< Step of the menu's state machine. */
-    u8 unk_1A6[2];
-    s32 counter; /**< Frames spent in the current step. */
+    s8    dungeon;             /**< Dungeon the menu is for. */
+    s8    scroll_top;          /**< First floor the list shows. */
+    s8    selected_floor;      /**< Floor the cursor stands on. */
+    s8    requested_floor;     /**< Floor the player asked to enter. */
+    float list_y;              /**< Screen Y of the floor list's first row, eased toward the scroll position. */
+    float scroll_bar_y;        /**< Screen Y of the scroll bar, eased toward the scroll position. */
+    s8    textures_ready;      /**< Set once the menu's textures and messages have been installed. */
+    s8    texture_block;       /**< Texture block the menu loads into. */
+    s8    loading;             /**< Set while the menu's archive is still being read. */
+    s8    floor_count;         /**< Floors the list holds. */
+    s8    result;              /**< Floor chosen, or a negative value while the menu runs. */
+    s8    max_atra[100];       /**< Atla each floor holds. */
+    s8    collected_atra[100]; /**< Atla the player has taken from each floor. */
+    u8    unk_0D9;
+    s16   kills[100]; /**< Monsters the player has defeated on each floor. */
+    u8    unk_1A2[2];
+    s16   state; /**< Step of the menu's state machine. */
+    u8    unk_1A6[2];
+    s32   counter; /**< Frames spent in the current step. */
 };
 
 STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
@@ -53,23 +49,23 @@ STATIC_ASSERT(sizeof(DUN_ENTER_MENU) == 0x1AC);
  * State of a personal inventory board, the item list that the item, shop and Atla menus share.
  */
 struct PERSONAL_BOARD {
-    s32 menu_kind;   /**< Menu the board belongs to: 0 the item and shop menus, 1 the weapon menu's attachment list, 2 the Atla selection. */
-    s32 page;        /**< Page of the board that is showing. */
-    s32 cursor_area; /**< Part of the board the cursor is on: 1 the cells, 2 the trash. */
-    s32 cursor;      /**< Cell that the cursor is on. */
-    float y;         /**< Screen Y the board draws at, eased toward its top row. */
-    float scroll;    /**< Scroll bar position the board draws. */
-    s32 top_row;     /**< Row the board shows first. */
-    s16 trash_anim;  /**< One while the trash can plays its throw animation. */
-    u8 unk_1E[2];
-    s32 trash_frame;             /**< Frame of the trash can's throw animation. */
-    ITEM_PACK *item_pack;        /**< Item pack the board lists. */
-    DNG_CONSUMABLE *consumables; /**< Stored attachments the board lists. */
-    s16 *atla_elements;          /**< Atla piece in each cell of a village page, or -1 for an empty cell. */
-    IHAVEITEM held_item;         /**< Item the board's cursor is holding. */
-    WEAPON_HAVE weapon;          /**< Weapon record of the weapon the cursor is holding. */
-    ATTACH_LIST held_attach;     /**< Attachment record of the attachment the cursor is holding. */
-    s32 held_equipped_slot;      /**< Slot the held weapon was equipped in, or -1 when it was not equipped. */
+    s32             menu_kind;   /**< Menu the board belongs to: 0 the item and shop menus, 1 the weapon menu's attachment list, 2 the Atla selection. */
+    s32             page;        /**< Page of the board that is showing. */
+    s32             cursor_area; /**< Part of the board the cursor is on: 1 the cells, 2 the trash. */
+    s32             cursor;      /**< Cell that the cursor is on. */
+    float           y;           /**< Screen Y the board draws at, eased toward its top row. */
+    float           scroll;      /**< Scroll bar position the board draws. */
+    s32             top_row;     /**< Row the board shows first. */
+    s16             trash_anim;  /**< One while the trash can plays its throw animation. */
+    u8              unk_1E[2];
+    s32             trash_frame;        /**< Frame of the trash can's throw animation. */
+    ITEM_PACK      *item_pack;          /**< Item pack the board lists. */
+    DNG_CONSUMABLE *consumables;        /**< Stored attachments the board lists. */
+    s16            *atla_elements;      /**< Atla piece in each cell of a village page, or -1 for an empty cell. */
+    IHAVEITEM       held_item;          /**< Item the board's cursor is holding. */
+    WEAPON_HAVE     weapon;             /**< Weapon record of the weapon the cursor is holding. */
+    ATTACH_LIST     held_attach;        /**< Attachment record of the attachment the cursor is holding. */
+    s32             held_equipped_slot; /**< Slot the held weapon was equipped in, or -1 when it was not equipped. */
 };
 
 STATIC_ASSERT(sizeof(PERSONAL_BOARD) == 0x160);
@@ -131,7 +127,7 @@ extern MENU_ICON_INFO MenuIcon[7][14];
  * @address 0x22B9F0
  * @size 0x10
  */
-char *GetMenuTextureDir(void);
+char *GetMenuTextureDir();
 
 /**
  * Returns the language the menus display in.
@@ -140,7 +136,7 @@ char *GetMenuTextureDir(void);
  * @address 0x22BA00
  * @size 0xC
  */
-int GetMenuLangFlag(void);
+int GetMenuLangFlag();
 
 /**
  * Returns the path fragment of a language.
@@ -203,7 +199,7 @@ u_long128 *MenuCalcBufAlignment(u_long128 *buffer);
  * @address 0x22BC40
  * @size 0xC8
  */
-int GetAtoraMaxVillage(void);
+int GetAtoraMaxVillage();
 
 /**
  * Converts a map number into the village the Atla menu shows, capped at the villages available.
@@ -230,7 +226,7 @@ void MenuWorldTrans(CCamera *camera);
  * @address 0x22BE90
  * @size 0x188
  */
-void MenuPolygonDraw(int ambient_alpha, void (*draw)(void));
+void MenuPolygonDraw(int ambient_alpha, void (*draw)());
 
 /**
  * Projects a frame's world position to screen coordinates.
@@ -455,7 +451,7 @@ void DrawMainMenuIcon(int x, int y, int icon, int selected, int bright, int alph
  * @address 0x22E180
  * @size 0x188
  */
-void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int);
+void DrawMenuVibeItem(int x, int y, int offset_x, int offset_y, int alpha);
 
 /**
  * Reads the selected language's offsets for the main menu's help window.
@@ -554,7 +550,7 @@ void SetMenuTrushMark(ITEM_PACK *items);
  * @address 0x22E710
  * @size 0x30
  */
-void DeleteMenuTrushMark(void);
+void DeleteMenuTrushMark();
 
 /**
  * Sets up a personal inventory board for a character.
@@ -572,7 +568,7 @@ void InitPersonalBoardMode(CUserStatus *status, PERSONAL_BOARD *board, int mode,
  * @address 0x22E9B0
  * @size 0x12C
  */
-int BoardModeChangeKey(void);
+int BoardModeChangeKey();
 
 /**
  * Keeps the personal board's cursor and scroll inside the list.
@@ -581,7 +577,7 @@ int BoardModeChangeKey(void);
  * @address 0x22EAE0
  * @size 0x19C
  */
-void PersonalBoardLimmitCheck(void);
+void PersonalBoardLimmitCheck();
 
 /**
  * Handles cursor movement on the personal board.
@@ -590,7 +586,7 @@ void PersonalBoardLimmitCheck(void);
  * @address 0x22EC80
  * @size 0x2DC
  */
-int PersonalBoardKeySub(void);
+int PersonalBoardKeySub();
 
 /**
  * Handles key input on the personal board and returns what the cursor handler returned.
@@ -599,7 +595,7 @@ int PersonalBoardKeySub(void);
  * @address 0x22EF60
  * @size 0x30
  */
-int PersonalBoardKey(void);
+int PersonalBoardKey();
 
 /**
  * Swaps an inventory entry into a personal board slot.

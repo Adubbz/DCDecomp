@@ -16,14 +16,14 @@
  */
 class CVector3_f_ {
 public:
-    CVector3_f_() {}
-
-    CVector3_f_(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
-
     float x; /**< Part of the vector along the first axis. */
     float y; /**< Part of the vector along the second axis. */
     float z; /**< Part of the vector along the third axis. */
     float w;
+
+    CVector3_f_() {}
+
+    CVector3_f_(float x, float y, float z) : x(x), y(y), z(z) {}
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(CVector3_f_) == 0x10);

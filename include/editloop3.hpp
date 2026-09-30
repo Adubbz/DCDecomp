@@ -11,28 +11,22 @@ class C3DSprite;
 class CFrame;
 class CMapParts;
 class CNPCharacter;
-struct ED_EVENT_POINT;
 struct EDITPARTS_INFO;
-template <int>
-class CDataAlloc2;
-struct EPARTS_FUNC_DATA;
 struct RS_STACKDATA;
 struct OBJ_ANIME_SEQ;
-struct VILLAGER_INFO;
 struct EDIT_MAP_INFO;
-class CEditGround;
 class CRunScript;
 
 /**
  * Shares the active editor map objects with event-point and villager helpers.
  */
 struct ED_EXCHANGE_INFO {
-    CCharacter *player; /**< Player character used for villager proximity checks. */
-    u8 unk_04[0x8];
-    CEditGround *ground;      /**< Editable ground used to resolve part-relative event points. */
-    CFrame *event_marker;     /**< Frame drawn at system event points. */
-    C3DSprite *system_effect; /**< Sprite drawn at special event points. */
-    CCamera *camera;          /**< Camera used to prioritize nearby villagers for drawing. */
+    CCharacter  *player; /**< Player character used for villager proximity checks. */
+    u8           unk_04[0x8];
+    CEditGround *ground;        /**< Editable ground used to resolve part-relative event points. */
+    CFrame      *event_marker;  /**< Frame drawn at system event points. */
+    C3DSprite   *system_effect; /**< Sprite drawn at special event points. */
+    CCamera     *camera;        /**< Camera used to prioritize nearby villagers for drawing. */
 };
 
 STATIC_ASSERT(sizeof(ED_EXCHANGE_INFO) == 0x1C);
@@ -101,8 +95,7 @@ void EdInitVillagerOnOff(CNPCharacter *characters, VILLAGER_INFO *villagers, CEd
  * @address 0x186510
  * @size 0x7E0
  */
-void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info,
-                           CEditGround *ground, float (*transform)[4]);
+void EdInitVilagerPosition(CNPCharacter *villagers, VILLAGER_INFO *info, CEditGround *ground, float (*transform)[4]);
 
 /**
  * Advances and positions the selected villagers on the editable town map.
@@ -129,8 +122,7 @@ void EdMoveVillagerSubMap(VILLAGER_INFO *villagers);
  * @address 0x184350
  * @size 0x3F4
  */
-int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *position,
-               float *rotation, float time);
+int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *position, float *rotation, float time);
 
 /**
  * Adds the collision polygons surrounding active system event points.
@@ -139,8 +131,7 @@ int EdGetEvent(ED_EVENT_POINT *points, int count, ED_EVENT_PARAM *param, float *
  * @address 0x184A50
  * @size 0x254
  */
-int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPoly *polygons,
-                       float time);
+int EdEventPointCpPoly(float *position, ED_EVENT_POINT *points, int count, CCPoly *polygons, float time);
 
 /**
  * Starts loading the editor resources belonging to a named destination map.
@@ -173,9 +164,9 @@ int EdCheckVillager(int index, VILLAGER_INFO *villager, CEditGround *ground);
  * Collects every object or frame controlled by one event-script object slot.
  */
 struct OBJ_HANDLE {
-    CMapParts *map_parts;  /**< Map part controlled directly by the slot. */
-    CCharacter *character; /**< Character controlled directly by the slot. */
-    CFrame *frames[12];    /**< Model frames controlled when no complete object is retained. */
+    CMapParts  *map_parts;  /**< Map part controlled directly by the slot. */
+    CCharacter *character;  /**< Character controlled directly by the slot. */
+    CFrame     *frames[12]; /**< Model frames controlled when no complete object is retained. */
 };
 
 STATIC_ASSERT(sizeof(OBJ_HANDLE) == 0x38);
@@ -210,13 +201,36 @@ enum ED_PAD_BUTTON {
  * @address 0x183C40
  * @size 0x110
  */
-ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function,
-                                 ED_EVENT_POINT *points, int count);
+ED_EVENT_POINT *GetNewEventPoint(CMapParts *parts, EPARTS_FUNC_DATA *function, ED_EVENT_POINT *points, int count);
 
 /**
  * Stores one script-controlled sprite drawn during an editor event.
  */
 struct ED_SPRITE {
+    s16      enabled;       /**< Whether the sprite is active. */
+    s16      layer;         /**< Drawing layer that selects when the sprite is emitted. */
+    s16      rotated;       /**< Whether the sprite uses the rotated drawing path. */
+    s16      bilinear;      /**< Texture filtering mode used while drawing the sprite. */
+    float    x;             /**< Horizontal screen position. */
+    float    y;             /**< Vertical screen position. */
+    s16      width;         /**< Destination width, or negative to use the source width. */
+    s16      height;        /**< Destination height, or negative to use the source height. */
+    s16      source_x;      /**< Horizontal texture origin. */
+    s16      source_y;      /**< Vertical texture origin. */
+    s16      source_width;  /**< Width of the source texture rectangle. */
+    s16      source_height; /**< Height of the source texture rectangle. */
+    s16      red;           /**< Red colour component. */
+    s16      green;         /**< Green colour component. */
+    s16      blue;          /**< Blue colour component. */
+    s16      alpha;         /**< Alpha colour component. */
+    s16      rotation_x;    /**< Horizontal centre used for rotation. */
+    s16      rotation_y;    /**< Vertical centre used for rotation. */
+    float    rotation;      /**< Sprite rotation angle. */
+    float    move_x;        /**< Horizontal displacement applied per frame. */
+    float    move_y;        /**< Vertical displacement applied per frame. */
+    u8       unk_34[4];
+    CTexture texture; /**< Texture rendered by this sprite. */
+
     /**
      * Constructs the texture owned by an editor event sprite.
      *
@@ -225,30 +239,6 @@ struct ED_SPRITE {
      * @size 0x34
      */
     ED_SPRITE();
-
-    s16 enabled;       /**< Whether the sprite is active. */
-    s16 layer;         /**< Drawing layer that selects when the sprite is emitted. */
-    s16 rotated;       /**< Whether the sprite uses the rotated drawing path. */
-    s16 bilinear;      /**< Texture filtering mode used while drawing the sprite. */
-    float x;           /**< Horizontal screen position. */
-    float y;           /**< Vertical screen position. */
-    s16 width;         /**< Destination width, or negative to use the source width. */
-    s16 height;        /**< Destination height, or negative to use the source height. */
-    s16 source_x;      /**< Horizontal texture origin. */
-    s16 source_y;      /**< Vertical texture origin. */
-    s16 source_width;  /**< Width of the source texture rectangle. */
-    s16 source_height; /**< Height of the source texture rectangle. */
-    s16 red;           /**< Red colour component. */
-    s16 green;         /**< Green colour component. */
-    s16 blue;          /**< Blue colour component. */
-    s16 alpha;         /**< Alpha colour component. */
-    s16 rotation_x;    /**< Horizontal centre used for rotation. */
-    s16 rotation_y;    /**< Vertical centre used for rotation. */
-    float rotation;    /**< Sprite rotation angle. */
-    float move_x;      /**< Horizontal displacement applied per frame. */
-    float move_y;      /**< Vertical displacement applied per frame. */
-    u8 unk_34[4];
-    CTexture texture; /**< Texture rendered by this sprite. */
 };
 
 STATIC_ASSERT(sizeof(ED_SPRITE) == 0x88);

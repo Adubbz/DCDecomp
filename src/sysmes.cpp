@@ -19,33 +19,39 @@
 
 extern "C" int SkipSpace__FR9input_str__3(input_str &input) {
     char *text;
-    int position;
+    int   position;
 
     text = input.data;
     position = input.pos;
     while (position < input.size) {
-        if (CheckChar__Fc__3(text[position]))
+        if (CheckChar__Fc__3(text[position])) {
             break;
+        }
         position++;
     }
     input.pos = position;
 
-    if (position >= input.size)
+    if (position >= input.size) {
         return 0;
+    }
     return 1;
 }
 
 extern "C" int CheckChar__Fc__3(char value) {
     int whitespace = 0;
 
-    if (value == ' ')
+    if (value == ' ') {
         whitespace = 1;
-    if (value == '\t')
+    }
+    if (value == '\t') {
         whitespace = 1;
-    if (value == '\n')
+    }
+    if (value == '\n') {
         whitespace = 1;
-    if (value == '\r')
+    }
+    if (value == '\r') {
         whitespace = 1;
+    }
     return !whitespace;
 }
 
@@ -56,8 +62,9 @@ extern "C" void PreProcess__FR9input_str__2(input_str &input) {
     while (position < input.size) {
         if (text[position] == '/' && text[position + 1] == '/') {
             while (position < input.size) {
-                if (text[position] == '\n' || text[position] == '\r')
+                if (text[position] == '\n' || text[position] == '\r') {
                     break;
+                }
                 text[position] = ' ';
                 position++;
             }
@@ -105,7 +112,7 @@ int SystemMesInputKey;
    fails falls back to one fixed file rather than to no text at all. */
 void InitSystemMes() {
     short *data = mes_data;
-    int size;
+    int    size;
 
     char name[64] = "meswin/system_a";
 
@@ -156,13 +163,16 @@ void SystemMesStep() {
         SystemMesWait--;
         return;
     }
-    if (SystemMesCount == 1)
+    if (SystemMesCount == 1) {
         ClearSystemMes();
-    if (SystemMesNo > 0)
+    }
+    if (SystemMesNo > 0) {
         SystemMessage.Step();
+    }
     if (SystemMesInputKey == 0 || SystemMesCount != 2 || GamePad.Down(64)) {
-        if (SystemMesCount > 0)
+        if (SystemMesCount > 0) {
             SystemMesCount--;
+        }
     }
 }
 
@@ -173,10 +183,12 @@ void SystemMesDraw() {
     int x;
     int columns;
 
-    if (SystemMesWait > 0)
+    if (SystemMesWait > 0) {
         return;
-    if (SystemMesNo <= 0)
+    }
+    if (SystemMesNo <= 0) {
         return;
+    }
     TexManager.ReloadTexture(Vif1Packet, SystemMessage.tex_block);
     columns = SystemMessage.text_columns;
     x = 320;
@@ -191,8 +203,8 @@ void SystemMesDraw() {
 /* Which message an item announces is decided by the band its number falls in, and the fourth band
    is the common items, whose message the item's own record names. */
 void ItemGetMes(int item_no, int value, int frames, int input_key) {
-    int *number_ptr;
-    int message_no;
+    int           *number_ptr;
+    int            message_no;
     COM_ITEM_INFO *info;
 
     int mes_args[4] = {-1, -1, -1, -1};
@@ -208,10 +220,12 @@ void ItemGetMes(int item_no, int value, int frames, int input_key) {
     }
     mes_args[0] = item_no + 100;
     message_no = 10;
-    if (item_no >= 81)
+    if (item_no >= 81) {
         message_no += 10;
-    if (item_no >= 145)
+    }
+    if (item_no >= 145) {
         message_no += 10;
+    }
     if (item_no >= 257) {
         message_no = 10;
         info = GetCommonItemInfo(item_no);
@@ -248,8 +262,9 @@ void MaxUpMes(int value, int frames) {
 /* A party member out of range names the first one rather than saying nothing, which is the clamp
    the message further down makes one member along. */
 void DeadMes(int member, int frames) {
-    if (member < 0 || member > 5)
+    if (member < 0 || member > 5) {
         member = 0;
+    }
 
     int mes_args[4] = {0, -1, -1, -1};
 
@@ -262,8 +277,9 @@ void AllDeadMes(int frames) {
 }
 
 void NotGetAtraMes(int member, int frames) {
-    if (member < 0 || member > 5)
+    if (member < 0 || member > 5) {
         member = 1;
+    }
 
     int mes_args[4] = {0, -1, -1, -1};
 
@@ -275,8 +291,9 @@ void DontGetItemMes(int kind) {
     int message_no;
 
     message_no = 72;
-    if (kind == 2)
+    if (kind == 2) {
         message_no = 81;
+    }
     SetSystemMes(message_no, 40, 8, 1, 0, 0);
 }
 
@@ -289,16 +306,18 @@ void SetSystemMes(int message_no, int frames, int position, int input_key, int *
     if (args) {
         for (i = 0; i < 4; i++) {
             SystemMessage.mes_no[i] = -1;
-            if (*args >= 0)
+            if (*args >= 0) {
                 SystemMessage.mes_no[i] = *args;
+            }
             args++;
         }
     }
     if (numbers) {
         for (i = 0; i < 4; i++) {
             SystemMessage.values[i] = -1;
-            if (*numbers >= 0)
+            if (*numbers >= 0) {
                 SystemMessage.values[i] = *numbers;
+            }
             numbers++;
         }
     }

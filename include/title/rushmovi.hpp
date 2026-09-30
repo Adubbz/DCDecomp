@@ -8,7 +8,6 @@ class CFireOmni;
 class CRunEffect;
 class CCharacter;
 class CCameraFollow;
-class CTexAnimeData;
 class CWater;
 class CWind;
 
@@ -29,7 +28,7 @@ extern CFrame *OP_CharaFrame;
  * @size 0x254
  * @unknownret
  */
-void RushInit(void);
+void RushInit();
 
 /**
  * @mangled RushLoop__Fv
@@ -37,7 +36,7 @@ void RushInit(void);
  * @size 0x1E4
  * @unknownret
  */
-int RushLoop(void);
+int RushLoop();
 
 /**
  * @mangled SetObjAnime__FPcP9CFrameVu1PfPf
@@ -54,7 +53,7 @@ void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step);
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-void WaterProcess(void);
+void WaterProcess();
 
 /**
  * Fire light of the rush movie.

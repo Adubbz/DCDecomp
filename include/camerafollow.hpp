@@ -19,7 +19,16 @@ public:
     float height;     /**< Height of the eye above the position. */
     float next_angle; /**< Angle, in radians, that the eye turns to. */
     float angle;      /**< Angle, in radians, of the eye about the position. */
-    s32 follow_on;    /**< 1 while the eye circles the position; 0 leaves the eye where it is. */
+    s32   follow_on;  /**< 1 while the eye circles the position; 0 leaves the eye where it is. */
+
+    /**
+     * Copies the position, the distance and the height of another camera.
+     *
+     * @mangled __as__13CCameraFollowFRC13CCameraFollow
+     * @address 0x124AA0
+     * @size 0x3C
+     */
+    CCameraFollow &operator=(const CCameraFollow &src);
 
     /**
      * Turns the eye one or more steps towards the angle that it turns to, and
@@ -42,15 +51,6 @@ public:
      * @size 0x50
      */
     virtual void Stay();
-
-    /**
-     * Copies the position, the distance and the height of another camera.
-     *
-     * @mangled __as__13CCameraFollowFRC13CCameraFollow
-     * @address 0x124AA0
-     * @size 0x3C
-     */
-    CCameraFollow &operator=(const CCameraFollow &src);
 
     /**
      * Sets the world position that the eye circles.

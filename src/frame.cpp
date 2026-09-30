@@ -18,11 +18,11 @@
 #include "renderinfo.hpp"
 #include "visualvu1.hpp"
 
-void *operator new(u_int, u_long128 *block) {
+void *operator new(u_int size, u_long128 *block) {
     return block;
 }
 
-void *operator new[](u_int, u_long128 *block) {
+void *operator new[](u_int size, u_long128 *block) {
     return block;
 }
 
@@ -366,7 +366,7 @@ void CFrame::SetScale(float *scale) {
 }
 
 int CFrame::GetFrameNum() {
-    int num;
+    int     num;
     CFrame *frame;
 
     num = 1;
@@ -442,8 +442,8 @@ void CFrame::GetLWMatrix(sceVu0FMATRIX matrix) {
     sceVu0FMATRIX parent_world;
     sceVu0FMATRIX local_matrix;
     sceVu0FVECTOR translation;
-    CFrame *frame;
-    CFrame *sibling;
+    CFrame       *frame;
+    CFrame       *sibling;
 
     /* A referenced frame follows a frame that is not its parent, so nothing on that frame's side
        clears this cache when it moves and it can never be trusted. */
@@ -557,10 +557,10 @@ void CFrame::SetTransMatrix(float *quaternion) {
 static int StrCmp(char *left, char *right) {
     char *left_cursor;
     char *right_cursor;
-    char ch;
-    int left_length;
-    int right_length;
-    int i;
+    char  ch;
+    int   left_length;
+    int   right_length;
+    int   i;
 
     left_cursor = left;
     right_cursor = right;
@@ -626,9 +626,9 @@ void CFrame::GetBoundBox(CBoxVu0 *box, int children) {
     sceVu0FVECTOR low;
     sceVu0FVECTOR high;
     sceVu0FVECTOR point;
-    CBoxVu0 child_box;
-    CFrame *frame;
-    int i;
+    CBoxVu0       child_box;
+    CFrame       *frame;
+    int           i;
 
     low[0] = min[0];
     low[1] = min[1];
@@ -670,8 +670,8 @@ void CFrame::ScaleBoundBox(float *scale) {
     sceVu0FVECTOR dmin;
     sceVu0FVECTOR new_max;
     sceVu0FVECTOR new_min;
-    float *bound[2];
-    int i;
+    float        *bound[2];
+    int           i;
 
     new_max[0] = this->max[0];
     new_max[1] = this->max[1];
@@ -846,15 +846,15 @@ static void ShadowMatrix(sceVu0FMATRIX matrix, sceVu0FMATRIX light, float *point
     sceVu0FVECTOR direction;
     sceVu0FVECTOR plane;
     sceVu0FVECTOR axis;
-    float dx;
-    float dy;
-    float dz;
-    float nx;
-    float ny;
-    float nz;
-    float depth;
-    float scale;
-    float t;
+    float         dx;
+    float         dy;
+    float         dz;
+    float         nx;
+    float         ny;
+    float         nz;
+    float         depth;
+    float         scale;
+    float         t;
 
     direction[0] = light[0][0];
     direction[1] = light[1][0];
@@ -908,8 +908,7 @@ static void ShadowMatrix(sceVu0FMATRIX matrix, sceVu0FMATRIX light, float *point
 /* The shadow doubles the volume a frame has to be clipped against: what is drawn is the box that
    holds both the frame's own corners and the same corners flattened onto the plane, so the two
    sets are reduced to one bound and that bound's own corners go to the screen. */
-static void ShadowClipBox(sceVu0FVECTOR *screen, sceVu0FVECTOR *corner, sceVu0FMATRIX matrix,
-                          RenderInfo *info) {
+static void ShadowClipBox(sceVu0FVECTOR *screen, sceVu0FVECTOR *corner, sceVu0FMATRIX matrix, RenderInfo *info) {
     sceVu0FMATRIX shadow;
     sceVu0FVECTOR flat[8];
     sceVu0FVECTOR world[8];
@@ -918,7 +917,7 @@ static void ShadowClipBox(sceVu0FVECTOR *screen, sceVu0FVECTOR *corner, sceVu0FM
     sceVu0FVECTOR extent[4];
     sceVu0FVECTOR max[4];
     sceVu0FVECTOR min[4];
-    int i;
+    int           i;
 
     ApplyMatrixN(world, matrix, corner, 8);
     MulFrameMatrix(shadow, info->shadow, matrix);
@@ -986,7 +985,7 @@ static int SetGsReg3(u_int *p, u_long *test, u_long *zbuf, u_long *alpha) {
    Its children then take the cached matrix as it stands, because the attribute that turns the
    frame is also what GetLWMatrix reads on a parent to mean exactly that. */
 int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
-    u_int *start = packet;
+    u_int        *start = packet;
     sceVu0FMATRIX matrix;
     sceVu0FMATRIX screen_matrix;
     sceVu0FMATRIX turn;
@@ -1000,26 +999,26 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     sceVu0FVECTOR screen_max;
     sceVu0FVECTOR screen_min;
     sceVu0FVECTOR color;
-    int near_clip = 0;
-    int far_clip = 0;
-    int visible = 1;
-    sceGsTest test = mgPixelTest;
-    sceGsZbuf zbuf = mgZBuffer;
-    sceGsAlpha alpha;
-    CFrame *sibling;
-    CFrame *frame;
-    float height;
-    float axis_x;
-    float axis_y;
-    float axis_z;
-    float inv_scale;
-    float flat;
-    float half_width;
-    float half_height;
-    float near_z;
-    float far_z;
-    float depth;
-    int done;
+    int           near_clip = 0;
+    int           far_clip = 0;
+    int           visible = 1;
+    sceGsTest     test = mgPixelTest;
+    sceGsZbuf     zbuf = mgZBuffer;
+    sceGsAlpha    alpha;
+    CFrame       *sibling;
+    CFrame       *frame;
+    float         height;
+    float         axis_x;
+    float         axis_y;
+    float         axis_z;
+    float         inv_scale;
+    float         flat;
+    float         half_width;
+    float         half_height;
+    float         near_z;
+    float         far_z;
+    float         depth;
+    int           done;
 
     if (attr.billboard) {
         world_valid = 0;
@@ -1091,8 +1090,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
     }
 
     if (info->shadow_pass) {
-        ShadowMatrix(info->shadow, info->light_direction, info->shadow_point,
-                     info->shadow_normal);
+        ShadowMatrix(info->shadow, info->light_direction, info->shadow_point, info->shadow_normal);
     }
 
     if (visual && attr.draw_on && attr.cull_enable) {
@@ -1237,8 +1235,7 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
         }
 
         if (!info->shadow_pass) {
-            packet += SetGsReg3(packet, (u_long *) &mgPixelTest, (u_long *) &mgZBuffer,
-                                (u_long *) &mgAlpha);
+            packet += SetGsReg3(packet, (u_long *) &mgPixelTest, (u_long *) &mgZBuffer, (u_long *) &mgAlpha);
         }
     }
 
@@ -1261,8 +1258,8 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
    The word buffer is reserved and never reached, and the cursor is what reserves it: a local
    whose address nothing takes costs no stack at all. */
 int CFrameVu1::DrawVu1(sceVif1Packet *packet, RenderInfo *info) {
-    int count;
-    u_int work[128];
+    int    count;
+    u_int  work[128];
     u_int *current = work;
 
     sceVif1PkTerminate(packet);
@@ -1378,12 +1375,12 @@ int CFrame::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
     sceVu0FVECTOR min1;
     sceVu0FVECTOR extent[2];
     sceVu0FMATRIX world_matrix;
-    CBoxVu0 bound;
-    CCPoly *found;
+    CBoxVu0       bound;
+    CCPoly       *found;
     float (*inverse_matrix)[4];
-    int num;
+    int     num;
     CFrame *frame;
-    int i;
+    int     i;
 
     found = poly;
     num = 0;
@@ -1417,8 +1414,7 @@ int CFrame::PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box) {
         pre_trance_normal(world_matrix);
 
         for (i = 0; i < num; i++, found++) {
-            trance_normal(found->vertex[0], found->vertex[1], found->vertex[2],
-                          found->normal);
+            trance_normal(found->vertex[0], found->vertex[1], found->vertex[2], found->normal);
         }
     }
 

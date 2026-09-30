@@ -9,17 +9,17 @@
  */
 class CSHOT_FIREBAR {
 public:
-    float position[64][4];    /**< World positions for the fire particles. */
-    float velocity[64][4];    /**< Per-step movement vectors for the fire particles. */
-    float size[64];           /**< Display sizes for the fire particles. */
-    float opacity[63];        /**< Current opacity values for the fire particles. */
-    s32 init_damage;          /**< Collision damage given when the stream was initialized. */
-    s32 damage[63];           /**< Collision damage values for the fire particles. */
-    s32 init_element;         /**< Element given when the stream was initialized. */
-    s32 particle_element[64]; /**< Weapon element of each fire particle, which picks its texture cell. */
-    s32 state[64];            /**< Activity states for the fire particles. */
-    s32 start_index;          /**< First particle slot that initialization lays the stream out from. */
-    u8 unk_D04[0xC];
+    float position[64][4];      /**< World positions for the fire particles. */
+    float velocity[64][4];      /**< Per-step movement vectors for the fire particles. */
+    float size[64];             /**< Display sizes for the fire particles. */
+    float opacity[63];          /**< Current opacity values for the fire particles. */
+    s32   init_damage;          /**< Collision damage given when the stream was initialized. */
+    s32   damage[63];           /**< Collision damage values for the fire particles. */
+    s32   init_element;         /**< Element given when the stream was initialized. */
+    s32   particle_element[64]; /**< Weapon element of each fire particle, which picks its texture cell. */
+    s32   state[64];            /**< Activity states for the fire particles. */
+    s32   start_index;          /**< First particle slot that initialization lays the stream out from. */
+    u8    unk_D04[0xC];
 
     /**
      *
@@ -49,7 +49,7 @@ public:
      * @address 0x1AEF60
      * @size 0x34
      */
-    void Rset(void);
+    void Rset();
 
     /**
      *
@@ -59,7 +59,7 @@ public:
      * @address 0x1AEFA0
      * @size 0x238
      */
-    void Step(void);
+    void Step();
 
     /**
      *
@@ -69,7 +69,7 @@ public:
      * @address 0x1AF1E0
      * @size 0x180
      */
-    void Draw(void);
+    void Draw();
 };
 
 STATIC_ASSERT(sizeof(CSHOT_FIREBAR) == 0xD10);

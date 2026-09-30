@@ -7,7 +7,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-void CCandleEffect::Initialize(void) {
+void CCandleEffect::Initialize() {
     this->enabled = 1;
     this->animation_frame = 0.0f;
     this->half_height = 1.0f;
@@ -15,7 +15,7 @@ void CCandleEffect::Initialize(void) {
     this->texture = NULL;
 }
 
-CCandleEffect::CCandleEffect(void) {
+CCandleEffect::CCandleEffect() {
     Initialize();
 }
 
@@ -32,21 +32,21 @@ void CCandleEffect::SetPosition(float *world) {
     sceVu0CopyVector(this->position, (float *) world);
 }
 
-void CCandleEffect::Step(void) {
+void CCandleEffect::Step() {
     this->animation_frame += 0.3f;
     if (this->animation_frame > 8.0f) {
         this->animation_frame = 0.0f;
     }
 }
 
-void CCandleEffect::Draw(void) {
+void CCandleEffect::Draw() {
     if (texture == NULL || enabled == 0) {
         return;
     }
 
     float world[4];
-    int top_left[4];
-    int bottom_right[4];
+    int   top_left[4];
+    int   bottom_right[4];
 
     world[0] = position[0];
     world[1] = position[1];
@@ -58,7 +58,7 @@ void CCandleEffect::Draw(void) {
 
     bottom_right[1] = top_left[1] + ((bottom_right[1] - top_left[1]) >> 1);
 
-    spRGBA color = {128, 128, 128, 128};
+    spRGBA     color = {128, 128, 128, 128};
     sceGsAlpha alpha = mgAlpha;
     alpha.bits.a = 0;
     alpha.bits.b = 2;

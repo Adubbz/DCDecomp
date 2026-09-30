@@ -123,13 +123,13 @@ enum MapPartsNo {
  * Describes the water surface that one map part shows.
  */
 struct PARTS_WATER {
-    s32 used; /**< 1 if the part shows water. */
-    u8 unk_04[12];
+    s32   used; /**< 1 if the part shows water. */
+    u8    unk_04[12];
     float vertex[4][4]; /**< Four corners of the water surface. */
-    s32 red;            /**< Red part of the colour of the water. */
-    s32 green;          /**< Green part of the colour of the water. */
-    s32 blue;           /**< Blue part of the colour of the water. */
-    s32 has_fall;       /**< 1 if the part shows a waterfall. */
+    s32   red;          /**< Red part of the colour of the water. */
+    s32   green;        /**< Green part of the colour of the water. */
+    s32   blue;         /**< Blue part of the colour of the water. */
+    s32   has_fall;     /**< 1 if the part shows a waterfall. */
 };
 
 /**
@@ -137,34 +137,34 @@ struct PARTS_WATER {
  */
 class CDungeonParts {
 public:
-    s16 direction_offset; /**< Direction added when the part is placed on the map grid. */
-    s16 unk_002;
-    CFrame *camera_collision;  /**< Model that the camera's collision uses. */
-    s16 camera_collision_turn; /**< Quarter turns added to the camera collision model's own. */
-    s16 unk_00A;
-    CFrame *collision;  /**< Model that the collision of the part uses. */
-    s16 collision_turn; /**< Quarter turns added to the collision model's own. */
-    s16 fire_num;       /**< Number of points of the part that show a fire. */
-    u8 unk_014[12];
-    float fire_pos[6][4]; /**< Position of each point of the part that shows a fire. */
-    s8 fire_param[16];    /**< Parameter of the fire at each point. */
-    PARTS_WATER water;    /**< Water surface that the part shows. */
-    float pos[4];         /**< World position of the part. */
-    s16 direction;        /**< Rotation that the part uses. */
-    s16 unk_102;
-    u8 unk_104[12];
-    float frame_offset[5][4]; /**< Offset of each model from the part's position. */
-    float event_direction;    /**< Additional quarter-turn applied to the part's event frames. */
-    u8 unk_164[0xC];
-    float frame_turn[6]; /**< Quarter turns added to each model's own. */
-    u8 unk_188[8];
-    float heal_pos[4]; /**< Centre of the part's healing zone. */
-    float heal_width;  /**< Width of the part's healing zone. */
-    float heal_depth;  /**< Depth of the part's healing zone. */
-    s32 heal_on;       /**< 1 if the part has a healing zone. */
-    s32 unk_1AC;
-    CFrame *frame[6]; /**< Models that draw the part; a free slot has zero in the first. */
-    u8 unk_1C8[8];
+    s16         direction_offset; /**< Direction added when the part is placed on the map grid. */
+    s16         unk_002;
+    CFrame     *camera_collision;      /**< Model that the camera's collision uses. */
+    s16         camera_collision_turn; /**< Quarter turns added to the camera collision model's own. */
+    s16         unk_00A;
+    CFrame     *collision;      /**< Model that the collision of the part uses. */
+    s16         collision_turn; /**< Quarter turns added to the collision model's own. */
+    s16         fire_num;       /**< Number of points of the part that show a fire. */
+    u8          unk_014[12];
+    float       fire_pos[6][4]; /**< Position of each point of the part that shows a fire. */
+    s8          fire_param[16]; /**< Parameter of the fire at each point. */
+    PARTS_WATER water;          /**< Water surface that the part shows. */
+    float       pos[4];         /**< World position of the part. */
+    s16         direction;      /**< Rotation that the part uses. */
+    s16         unk_102;
+    u8          unk_104[12];
+    float       frame_offset[5][4]; /**< Offset of each model from the part's position. */
+    float       event_direction;    /**< Additional quarter-turn applied to the part's event frames. */
+    u8          unk_164[0xC];
+    float       frame_turn[6]; /**< Quarter turns added to each model's own. */
+    u8          unk_188[8];
+    float       heal_pos[4]; /**< Centre of the part's healing zone. */
+    float       heal_width;  /**< Width of the part's healing zone. */
+    float       heal_depth;  /**< Depth of the part's healing zone. */
+    s32         heal_on;     /**< 1 if the part has a healing zone. */
+    s32         unk_1AC;
+    CFrame     *frame[6]; /**< Models that draw the part; a free slot has zero in the first. */
+    u8          unk_1C8[8];
 
 public:
     /**
@@ -192,7 +192,7 @@ public:
      * @address 0x1C16D0
      * @size 0x17C
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Chooses the level of detail each of a part's frames draws at.
@@ -210,7 +210,7 @@ public:
      * @address 0x1C1BA0
      * @size 0x5C
      */
-    void initalize(void);
+    void initalize();
 };
 
 STATIC_ASSERT(sizeof(PARTS_WATER) == 0x60);
@@ -284,10 +284,10 @@ struct ITEM_FREE_RECT {
  * The boxes of one map part where an item can be put down.
  */
 struct ITEM_FREE_AREA {
-    s8 parts_no;  /**< Map part the boxes lie on; -1 ends the table. */
-    s8 rect_num;  /**< Number of boxes that follow. */
-    s8 direction; /**< Quarter turns the boxes are given in. */
-    s8 unk_03;
+    s8             parts_no;  /**< Map part the boxes lie on; -1 ends the table. */
+    s8             rect_num;  /**< Number of boxes that follow. */
+    s8             direction; /**< Quarter turns the boxes are given in. */
+    s8             unk_03;
     ITEM_FREE_RECT rect[4]; /**< The boxes, in the part's own orientation. */
 };
 

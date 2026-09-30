@@ -34,8 +34,8 @@ CMenuItemStep ItemVolumeStep;
 
 void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale) {
     WEAPON_DATA *weapon_data;
-    int i;
-    int sum;
+    int          i;
+    int          sum;
 
     weapon_data = GetWeaponData(total->sphere_weapon_no);
 
@@ -71,16 +71,16 @@ void AttachMentValuePlus(ATTACH_LIST *total, ATTACH_LIST *attach, float scale) {
 }
 
 void WeaponLevelUpValueCalc(WEAPON_HAVE *src, WEAPON_HAVE *dst, int levels, int unused) {
-    ATTACH_LIST total;
-    int i;
-    int synth_count;
-    int flags;
+    ATTACH_LIST  total;
+    int          i;
+    int          synth_count;
+    int          flags;
     WEAPON_DATA *weapon_data;
     ATTACH_LIST *attach;
-    int hole;
-    int has_double;
-    int sum;
-    float scale;
+    int          hole;
+    int          has_double;
+    int          sum;
+    float        scale;
 
     if (src == NULL) {
         return;
@@ -175,9 +175,9 @@ void CWeaponLevelUp::CMenuEffectDataLoad(CWeaponLevelUp *load_buffer, int kind) 
     effect_buffer = MenuCalcBufAlignment(effect_buffer);
     {
         char *file_names[5] = {"wlevelup.pak", "s_break.pak", "buildup.chr", "menu_ex.chr", "w_recover.chr"};
-        char path[0x40] = "commenu/effect/";
-        char file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-        s16 se_table[14] = {25, 26, 28, -1, -1, -1, -1, 20, 20, -1, 20, 20, 20, 20};
+        char  path[0x40] = "commenu/effect/";
+        char  file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+        s16   se_table[14] = {25, 26, 28, -1, -1, -1, -1, 20, 20, -1, 20, 20, 20, 20};
 
         file_no = file_table[kind];
         se_no = se_table[kind];
@@ -221,19 +221,19 @@ void CWeaponLevelUp::Initialize() {
 }
 
 void CWeaponLevelUp::SetLevelUpValue(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
-    ATTACH_LIST total;
-    int i;
+    ATTACH_LIST  total;
+    int          i;
     WEAPON_DATA *weapon_data;
-    int flags;
+    int          flags;
     ATTACH_LIST *attach;
-    int j;
-    int icon_count;
-    int slot;
-    int sum;
-    int has_double;
-    int hole;
-    int option;
-    float scale;
+    int          j;
+    int          icon_count;
+    int          slot;
+    int          sum;
+    int          has_double;
+    int          hole;
+    int          option;
+    float        scale;
 
     if (have == NULL) {
         printf("src is NULL\n");
@@ -371,14 +371,14 @@ void CWeaponLevelUp::SetLevelUpWeaponData() {
 }
 
 void CWeaponLevelUp::SetStatusBreak(WEAPON_HAVE *have, CCharacter *character, CWeaponLevelUp *load_buffer, int tex_block) {
-    ATTACH_LIST total;
-    int page;
-    int i;
-    int slot_no;
-    ATTACH_LIST *items;
-    s16 flags;
-    ATTACH_LIST *slot;
-    float scale;
+    ATTACH_LIST     total;
+    int             page;
+    int             i;
+    int             slot_no;
+    ATTACH_LIST    *items;
+    s16             flags;
+    ATTACH_LIST    *slot;
+    float           scale;
     CDngStatusData *dng_status;
 
     if (have == NULL) {
@@ -556,18 +556,18 @@ void CWeaponLevelUp::CheckSnd() {
 }
 
 void CWeaponLevelUp::Step() {
-    int size;
-    int motion_state;
-    int ready_count;
-    int se_no;
-    int volume;
-    int file_no;
+    int           size;
+    int           motion_state;
+    int           ready_count;
+    int           se_no;
+    int           volume;
+    int           file_no;
     BG_READ_INFO *read_info;
-    u_int *pack_data;
-    u_long128 *cache_base;
-    int discard;
-    int option;
-    float motion_time;
+    u_int        *pack_data;
+    u_long128    *cache_base;
+    int           discard;
+    int           option;
+    float         motion_time;
 
     if (operation_kind == -1) {
         return;
@@ -602,22 +602,25 @@ void CWeaponLevelUp::Step() {
             }
             if (SndSPSeSyncBG() == 0) {
                 ready_count++;
-                if (operation_kind != 6 && operation_kind != 3 && operation_kind != 9 && operation_kind != 4 &&
-                    operation_kind != 5) {
+                if (operation_kind != 6 && operation_kind != 3 && operation_kind != 9 && operation_kind != 4 && operation_kind != 5) {
                     volume = BtlMenuBGMvol;
                     SetSnd(volume, volume >> 2, 7);
                 }
             }
             if (ready_count >= 2) {
-                LOADTEXTURE_INFO2 textures[3] = {{"#frame_menu_level#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                LOADTEXTURE_INFO2 textures[3] = {
+                    {"#frame_menu_level#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+                    {NULL,                                            0, 0},
+                    {NULL,                                            0, 0}
+                };
                 textures[0].block_no = texture_block;
                 textures[1].block_no = texture_block;
-                char file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+                char  file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
                 char *image_names[5] = {"wlevelup", "s_break", "buildup", "menu_ex", "w_recover"};
                 char *config_names[14] = {"wlevelup", "info", "buildup", "info", "w_recover",
                                           NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-                char config_name[0x20];
-                char image_name[0x20];
+                char  config_name[0x20];
+                char  image_name[0x20];
 
                 file_no = file_table[operation_kind];
                 strcpy(config_name, config_names[file_no]);
@@ -637,8 +640,7 @@ void CWeaponLevelUp::Step() {
                 MenuEffectCashBuffer.limit = 0x9100;
                 MenuEffectCashBuffer.used = 0;
                 effect.LoadPackData(pack_data, config_name, &MenuEffectCashBuffer, &MenuEffectCashBuffer);
-                effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) +
-                                               MenuEffectCashBuffer.base);
+                effect_buffer = (u_long128 *) ((MenuEffectCashBuffer.used << 4) + MenuEffectCashBuffer.base);
                 effect_state++;
                 effect_timer = 0.0f;
                 effect_active = 1;
@@ -830,11 +832,11 @@ void CWeaponLevelUp::Step() {
 }
 
 void CWeaponLevelUp::Draw() {
-    s16 icons[5];
-    s16 values[5];
-    int i;
-    int alpha;
-    int count;
+    s16   icons[5];
+    s16   values[5];
+    int   i;
+    int   alpha;
+    int   count;
     float angle_step;
     float orbit_radius;
     float angular_rate;
@@ -978,14 +980,12 @@ void CWeaponLevelUp::DrawMes() {
                 mes_no[0] = message_no + 50;
                 break;
         }
-        if (CommonMenuMes1.mes_made != mes_id || CommonMenuMes1.mes_no[0] != mes_no[0] ||
-            CommonMenuMes1.values[0] != values[0]) {
+        if (CommonMenuMes1.mes_made != mes_id || CommonMenuMes1.mes_no[0] != mes_no[0] || CommonMenuMes1.values[0] != values[0]) {
             CommonMenuMes1.value_signed = 1;
             CommonMenuMes1.value_show = 0;
             CommonMenuMes1.value_narrow = 0;
             CommonMenuMes1.auto_pos = 0;
-            if (effect_state == 29 || effect_state == 27 || effect_state == 31 || effect_state == 21 ||
-                effect_state == 23) {
+            if (effect_state == 29 || effect_state == 27 || effect_state == 31 || effect_state == 21 || effect_state == 23) {
                 CommonMenuMes1.value_signed = 0;
                 CommonMenuMes1.value_show = 1;
                 CommonMenuMes1.auto_pos = 5;
@@ -999,8 +999,7 @@ void CWeaponLevelUp::DrawMes() {
         MenuTextureReload(CommonMenuMes1.tex_block);
         x = 0x164;
         y = 0x96;
-        if (effect_state == 29 || effect_state == 27 || effect_state == 31 || effect_state == 23 ||
-            effect_state == 21) {
+        if (effect_state == 29 || effect_state == 27 || effect_state == 31 || effect_state == 23 || effect_state == 21) {
             x = 0x100;
             y = 0x96;
         }

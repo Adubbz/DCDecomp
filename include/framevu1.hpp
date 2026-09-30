@@ -17,12 +17,20 @@ public:
     CVisualVu1 *visual; /**< Model data drawn for this frame. */
 
     /**
+     * @mangled __as__9CFrameVu1FR9CFrameVu1
+     * @address 0x12A2B0
+     * @size 0x44
+     * @unknownret
+     */
+    CFrameVu1 &operator=(CFrameVu1 &other);
+
+    /**
      * @mangled DrawVu1__9CFrameVu1FPUiP10RenderInfo
      * @address 0x129400
      * @size 0xD10
      * @unknownret
      */
-    virtual int DrawVu1(unsigned int *, RenderInfo *);
+    virtual int DrawVu1(unsigned int *packet, RenderInfo *info);
 
     /**
      * @mangled DrawVu1__9CFrameVu1FP13sceVif1PacketP10RenderInfo
@@ -30,7 +38,7 @@ public:
      * @size 0x7C
      * @unknownret
      */
-    virtual int DrawVu1(sceVif1Packet *, RenderInfo *);
+    virtual int DrawVu1(sceVif1Packet *packet, RenderInfo *info);
 
     /**
      * @mangled SetVisual__9CFrameVu1FP10CVisualVu1
@@ -38,7 +46,7 @@ public:
      * @size 0xC
      * @unknownret
      */
-    void SetVisual(CVisualVu1 *);
+    void SetVisual(CVisualVu1 *visual);
 
     /**
      * @mangled GetVisual__9CFrameVu1Fv
@@ -46,7 +54,7 @@ public:
      * @size 0xC
      * @unknownret
      */
-    CVisualVu1 *GetVisual(void);
+    CVisualVu1 *GetVisual();
 
     /**
      * @mangled Initialize__9CFrameVu1Fv
@@ -54,22 +62,14 @@ public:
      * @size 0x30
      * @unknownret
      */
-    virtual void Initialize(void);
+    virtual void Initialize();
 
     /**
      * @mangled __ct__9CFrameVu1Fv
      * @address 0x12A260
      * @size 0x48
      */
-    CFrameVu1(void);
-
-    /**
-     * @mangled __as__9CFrameVu1FR9CFrameVu1
-     * @address 0x12A2B0
-     * @size 0x44
-     * @unknownret
-     */
-    CFrameVu1 &operator=(CFrameVu1 &);
+    CFrameVu1();
 };
 
 STATIC_ASSERT(sizeof(CFrameVu1) == 0x270);

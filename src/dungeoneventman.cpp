@@ -23,7 +23,7 @@ CDungeonEvent *CDungeonEventMan::SearchPartsID(int index, int parts_id) {
     return NULL;
 }
 
-CDungeonEvent *CDungeonEventMan::SearchSlot(void) {
+CDungeonEvent *CDungeonEventMan::SearchSlot() {
     for (int i = 0; i < 64; i++) {
         if (slot[i].enabled == 0) {
             return &slot[i];
@@ -68,7 +68,7 @@ void CDungeonEventMan::SearchItemEventHold(int script_no) {
     }
 }
 
-int CDungeonEventMan::GetDataNum(void) {
+int CDungeonEventMan::GetDataNum() {
     int count = 0;
 
     for (int i = 0; i < 96; i++) {
@@ -85,7 +85,7 @@ int CDungeonEventMan::GetDataNum(void) {
     return count;
 }
 
-CDungeonEventData *CDungeonEventMan::SearchDataSlot(void) {
+CDungeonEventData *CDungeonEventMan::SearchDataSlot() {
     for (int i = 0; i < 96; i++) {
         int active;
         if (event[i].event != NULL) {
@@ -149,7 +149,7 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos(float *position) {
 }
 
 CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
-    int i;
+    int           i;
     sceVu0FVECTOR event_position;
     sceVu0FVECTOR target_position;
 
@@ -175,13 +175,13 @@ CDungeonEventData *CDungeonEventMan::SearchDataSlotPos2(float *position) {
 }
 
 void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
-    sceVu0FVECTOR local_origin = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FMATRIX matrix;
-    sceVu0FMATRIX part_matrix;
-    CDungeonEvent *definition;
+    sceVu0FVECTOR      local_origin = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FMATRIX      matrix;
+    sceVu0FMATRIX      part_matrix;
+    CDungeonEvent     *definition;
     CDungeonEventData *runtime_event;
-    int column;
-    int row;
+    int                column;
+    int                row;
 
     if (mode == 1) {
         for (row = 0; row < 16; row++) {
@@ -202,9 +202,7 @@ void CDungeonEventMan::SetupEvent(CDungeonMap *map, int mode) {
                     }
                     runtime_event->Set(definition);
                     float direction = (float) map->cells[column + row * 20].direction;
-                    direction += (float) (map->cells[column + row * 20].parts_no == MAP_PARTS_NONE
-                                              ? 0
-                                              : map->parts[map->cells[column + row * 20].parts_no].collision_turn);
+                    direction += (float) (map->cells[column + row * 20].parts_no == MAP_PARTS_NONE ? 0 : map->parts[map->cells[column + row * 20].parts_no].collision_turn);
                     if (direction > 3.0f) {
                         direction -= 3.0f;
                     }

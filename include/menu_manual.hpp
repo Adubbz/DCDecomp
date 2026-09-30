@@ -9,24 +9,24 @@ class CTexture;
  * Holds the manual screen's loading, selection, transition and message state.
  */
 struct MANUAL_MENU_STATE {
-    s16 common_texture_block;   /**< Texture block containing the manual's common controls. */
-    s16 image_texture_block;    /**< Texture block containing the first three page images. */
-    s16 extra_texture_block;    /**< Texture block containing any remaining page images. */
-    s16 messages_ready;         /**< Whether the manual message archive has been installed. */
-    s16 images_ready;           /**< Whether the selected entry's images have been installed. */
-    s16 selection_level;        /**< Selects categories (-2), entries (-1), or an open entry (0). */
-    s16 mode;                   /**< Current manual screen transition and interaction mode. */
-    s16 char_width;             /**< Width of one character in the menu's preloaded message font. */
-    s32 category;               /**< Selected manual category. */
-    s32 entry;                  /**< Selected entry within the category. */
-    s32 transition_frame;       /**< Frames elapsed in the current opening or closing transition. */
-    s32 image_offset;           /**< Horizontal offset of the strip of page images. */
-    s32 image_reset;            /**< Cleared when a page image load starts; nothing reads it. */
-    s16 message_page;           /**< Page reached in the selected entry's explanatory message. */
-    s16 image_page;             /**< Page image currently displayed. */
-    s16 *common_message_buffer; /**< Message data restored while leaving an entry. */
-    s16 *menu_message_buffer;   /**< Message data used by the category menu. */
-    u_long128 *load_buffer;     /**< Aligned scratch buffer used for manual archives. */
+    s16        common_texture_block;  /**< Texture block containing the manual's common controls. */
+    s16        image_texture_block;   /**< Texture block containing the first three page images. */
+    s16        extra_texture_block;   /**< Texture block containing any remaining page images. */
+    s16        messages_ready;        /**< Whether the manual message archive has been installed. */
+    s16        images_ready;          /**< Whether the selected entry's images have been installed. */
+    s16        selection_level;       /**< Selects categories (-2), entries (-1), or an open entry (0). */
+    s16        mode;                  /**< Current manual screen transition and interaction mode. */
+    s16        char_width;            /**< Width of one character in the menu's preloaded message font. */
+    s32        category;              /**< Selected manual category. */
+    s32        entry;                 /**< Selected entry within the category. */
+    s32        transition_frame;      /**< Frames elapsed in the current opening or closing transition. */
+    s32        image_offset;          /**< Horizontal offset of the strip of page images. */
+    s32        image_reset;           /**< Cleared when a page image load starts; nothing reads it. */
+    s16        message_page;          /**< Page reached in the selected entry's explanatory message. */
+    s16        image_page;            /**< Page image currently displayed. */
+    s16       *common_message_buffer; /**< Message data restored while leaving an entry. */
+    s16       *menu_message_buffer;   /**< Message data used by the category menu. */
+    u_long128 *load_buffer;           /**< Aligned scratch buffer used for manual archives. */
 };
 
 STATIC_ASSERT(sizeof(MANUAL_MENU_STATE) == 0x34);

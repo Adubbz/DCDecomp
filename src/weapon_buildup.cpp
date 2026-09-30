@@ -184,16 +184,15 @@ int EnableBuildUpModel(WEP_BUILDUP_INFO *build_info, WEAPON_HAVE *weapon) {
     }
 
     WEAPON_DATA *weapon_data = GetWeaponData(weapon_no);
-    WEAPON_HAVE weapon_copy;
+    WEAPON_HAVE  weapon_copy;
     memcpy(&weapon_copy, weapon, sizeof(WEAPON_HAVE));
-    s8 owner = weapon_data->owner;
+    s8  owner = weapon_data->owner;
     int default_weapon_no = GetDefaultWeaponNo(owner);
     int weapon_max = MenuCharaWeaponMax[owner];
     int count = 0;
 
     for (int position = 2; position <= weapon_max; position++) {
-        if ((position > 20 || (weapon_data->buildup_mask0 & (1 << position))) &&
-            (position <= 20 || (weapon_data->buildup_mask1 & (1 << (position - 20))))) {
+        if ((position > 20 || (weapon_data->buildup_mask0 & (1 << position))) && (position <= 20 || (weapon_data->buildup_mask1 & (1 << (position - 20))))) {
             build_info[count].weapon_no = default_weapon_no + position;
 
             WEAPON_HAVE destination_have;

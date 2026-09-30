@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-int CScriptInterpreter::GetNextTAG(void) {
+int CScriptInterpreter::GetNextTAG() {
     if (tag_table == NULL) {
         return -1;
     }
@@ -51,7 +51,7 @@ void CScriptInterpreter::SetScript(char *script, int script_size) {
     PreProcess__FR9input_str__2(*this);
 }
 
-CScriptInterpreter::CScriptInterpreter(void) {
+CScriptInterpreter::CScriptInterpreter() {
     data = NULL;
     data = NULL;
     size = 0;
@@ -62,7 +62,7 @@ CScriptInterpreter::CScriptInterpreter(void) {
     function_table = NULL;
 }
 
-int CScriptInterpreter::ControlCode(void) {
+int CScriptInterpreter::ControlCode() {
     if (!SkipSpace__FR9input_str__3(*this)) {
         return 0;
     }
@@ -98,7 +98,7 @@ int CScriptInterpreter::ControlCode(void) {
 }
 
 int CScriptInterpreter::CallFunction(int *result) {
-    char call_text[512];
+    char  call_text[512];
     void *call_arguments[24];
 
     if (!SkipSpace__FR9input_str__3(*this)) {
@@ -145,8 +145,8 @@ int CScriptInterpreter::CallFunction(int *result) {
         return -1;
     }
 
-    int used = 0;
-    u8 *value_out = &function_argument_data[argument_data_used];
+    int   used = 0;
+    u8   *value_out = &function_argument_data[argument_data_used];
     char *word = call_text;
     for (length = 0; length < argc; length++) {
         int value_size = 0;

@@ -57,19 +57,17 @@
 
 /* Retail editloop.cpp: town-script parsing, map construction and pre-event editor state. */
 
-void BtSetMapJumpFloor(int floor);
-
 /* Every villager the editor can place, one record each. */
 
 /** One default villager entry stored for each map and list position. */
 struct EDIT_CHARA_DATA_ENTRY {
-    char *name;       /**< Villager resource name. */
-    s16 character_no; /**< Character definition selected for the villager. */
-    s16 model_no;     /**< Model variant selected for the villager. */
-    int unk_08;
+    char *name;         /**< Villager resource name. */
+    s16   character_no; /**< Character definition selected for the villager. */
+    s16   model_no;     /**< Model variant selected for the villager. */
+    int   unk_08;
     float unk_0c;
-    s16 hide_when_complete; /**< Whether completed town progress hides the villager. */
-    u8 unk_12[2];
+    s16   hide_when_complete; /**< Whether completed town progress hides the villager. */
+    u8    unk_12[2];
 };
 
 STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
@@ -80,59 +78,8 @@ STATIC_ASSERT(sizeof(EDIT_CHARA_DATA_ENTRY) == 0x14);
 #include "menuetc.hpp"
 #include "weaponlevelup.hpp"
 
-void CommandIMGSub(int image_type, int image_number, char *name);
-void EditSave();
-
 /* editloop's own functions, in the order the unit defines them; the prototypes
  * let each call ahead of its definition. */
-void CommandGROUND(void **arguments);
-void CommandBUILD(void **arguments);
-void CommandWATER(void **arguments);
-void CommandWATER_SURFACE(void **arguments);
-void CommandRIVER(void **arguments);
-void CommandLIGHT_C(void **arguments);
-void CommandPARTS_INFO(void **arguments);
-void CommandOBJ_ANIME(void **arguments);
-void CommandENTRANCE(void **arguments);
-void CommandMAPJUMP(void **arguments);
-void CommandREVERBE(void **arguments);
-void CommandPEOPLE2(void **arguments);
-void CopyCMapParts(CMapParts *from, CMapParts *to, CDataAlloc2<1> *arena);
-EPARTS_INFO_HEADER *LoadPTS(CMapParts *parts, unsigned int *archive, MAP_PARTS_INFO *info,
-                            OBJ_ANIME_SEQ *anime, EDIT_EFFECT_INFO *effects,
-                            EDIT_OBJECT_TIMER *timers, ED_EVENT_POINT *points,
-                            CMapParts *shared);
-void LoadPTS(CMapParts *parts, MAP_PARTS_INFO *info, OBJ_ANIME_SEQ *anime,
-             EDIT_EFFECT_INFO *effects, EDIT_OBJECT_TIMER *timers, ED_EVENT_POINT *points);
-void GenMdsName(MAP_PARTS_INFO *info, char *name);
-u_int *SearchPTS(u_int *archive, char *name);
-int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no);
-void LoadScript(void);
-void LoadObjectParts(void);
-void LoadGroundData(void);
-void LoadTexture(void);
-void InitWorkBuffer(void);
-void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena);
-void EdDeleteE05RoboParts(void);
-int CheckEventPoint(ED_EVENT_POINT *point, float time);
-int CheckEditToWalk(float *position);
-int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int start_event);
-void MoveEditCursor(void);
-int GetCollision(CCPoly *poly, CBoxVu0 *box);
-void VillagerCollision(void);
-void MoveChara(void);
-void MainEditMode(void);
-void OpenDoorMode(void);
-void TalkMode(void);
-void EventMode(void);
-void ParamDraw(void);
-void DrawDay(void);
-void EdDrawSysCursor(ED_EVENT_POINT *points, int count);
-void MainDraw(void);
-int EditInit(void *param);
-void EditLoop(void);
-void EditLoad(void);
-void EditPartsObjectOnOff();
 
 typedef void (*EDIT_SCRIPT_COMMAND)(void **arguments);
 
@@ -200,219 +147,219 @@ void CommandPEOPLE_LIST(void **arguments);
 
 /** Default direction of each of the twelve map lights. */
 float def_light[12][4] = {
-    {0.47f, 0.79f, 0.46f, 0.0f},
-    {0.0f, 0.89f, 0.46f, 0.0f},
-    {-0.47f, 0.79f, 0.41f, 0.0f},
-    {-0.83f, 0.5f, 0.25f, 0.0f},
-    {-0.996f, 0.5f, 0.02f, 0.0f},
-    {-0.9f, 0.5f, 0.02f, 0.0f},
-    {0.55f, 0.5f, 0.38f, 0.0f},
-    {0.0f, 0.5f, 0.46f, 0.0f},
-    {-0.55f, 0.5f, 0.38f, 0.0f},
-    {0.9f, 0.5f, 0.02f, 0.0f},
-    {0.996f, 0.5f, 0.02f, 0.0f},
-    {0.83f, 0.5f, 0.25f, 0.0f},
+    {0.47f,   0.79f, 0.46f, 0.0f},
+    {0.0f,    0.89f, 0.46f, 0.0f},
+    {-0.47f,  0.79f, 0.41f, 0.0f},
+    {-0.83f,  0.5f,  0.25f, 0.0f},
+    {-0.996f, 0.5f,  0.02f, 0.0f},
+    {-0.9f,   0.5f,  0.02f, 0.0f},
+    {0.55f,   0.5f,  0.38f, 0.0f},
+    {0.0f,    0.5f,  0.46f, 0.0f},
+    {-0.55f,  0.5f,  0.38f, 0.0f},
+    {0.9f,    0.5f,  0.02f, 0.0f},
+    {0.996f,  0.5f,  0.02f, 0.0f},
+    {0.83f,   0.5f,  0.25f, 0.0f},
 };
 
 /** Default villagers of each town, twenty per map. */
 EDIT_CHARA_DATA_ENTRY EditCharaData[6][20] = {
     {
-        {"p47a", 0, 4, 0, 0.3f, 0},
-        {"p12a", 4, 5, 1, 0.3f, 1},
-        {"p07a", 1, 5, 1, 0.3f, 1},
-        {"p01a", 1, 4, 1, 0.3f, 1},
-        {"p13a", 5, 5, 1, 0.3f, 1},
-        {"p06a", 3, 4, 1, 0.3f, 1},
-        {"p09a", 3, 5, 1, 0.3f, 1},
-        {"p08a", 6, 4, 1, 0.3f, 1},
-        {"p05a", 6, 3, 1, 0.17f, 1},
-        {"p03a", 2, 5, 1, 0.5f, 1},
-        {"p04a", 2, 4, 1, 0.3f, 1},
-        {"p02a", 7, 3, 0, 0.3f, 0},
-        {"p10a", 0, 3, 1, 0.2f, 1},
-        {"p14a", -1, -1, 1, 0.3f, 0},
-        {"c04cat", 0, 5, 1, 0.3f, 0},
-        {"p47a", 6, 5, 0, 0.3f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-    },
+     {"p47a", 0, 4, 0, 0.3f, 0},
+     {"p12a", 4, 5, 1, 0.3f, 1},
+     {"p07a", 1, 5, 1, 0.3f, 1},
+     {"p01a", 1, 4, 1, 0.3f, 1},
+     {"p13a", 5, 5, 1, 0.3f, 1},
+     {"p06a", 3, 4, 1, 0.3f, 1},
+     {"p09a", 3, 5, 1, 0.3f, 1},
+     {"p08a", 6, 4, 1, 0.3f, 1},
+     {"p05a", 6, 3, 1, 0.17f, 1},
+     {"p03a", 2, 5, 1, 0.5f, 1},
+     {"p04a", 2, 4, 1, 0.3f, 1},
+     {"p02a", 7, 3, 0, 0.3f, 0},
+     {"p10a", 0, 3, 1, 0.2f, 1},
+     {"p14a", -1, -1, 1, 0.3f, 0},
+     {"c04cat", 0, 5, 1, 0.3f, 0},
+     {"p47a", 6, 5, 0, 0.3f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     },
     {
-        {"p27a", 4, 4, 1, 0.3f, 1},
-        {"p30a", 2, 4, 1, 0.3f, 1},
-        {"p29a", 2, 5, 1, 0.3f, 1},
-        {"p28a", 1, 5, 1, 0.3f, 1},
-        {"p31a", 5, 3, 0, 0.3f, 1},
-        {"p25a", 6, 4, 1, 0.3f, 1},
-        {"p59a", 14, 4, 1, 0.3f, 1},
-        {"p24a", 0, 4, 1, 0.3f, 1},
-        {"p26a", 3, 4, 1, 0.3f, 0},
-        {"p23a", 3, 5, 1, 0.3f, 0},
-        {"p21a", 7, 4, 1, 0.3f, 0},
-        {"p22a", 7, 5, 1, 0.3f, 0},
-        {"", -1, -1, 1, 0.3f, 0},
-        {"", -1, -1, 1, 0.3f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-    },
+     {"p27a", 4, 4, 1, 0.3f, 1},
+     {"p30a", 2, 4, 1, 0.3f, 1},
+     {"p29a", 2, 5, 1, 0.3f, 1},
+     {"p28a", 1, 5, 1, 0.3f, 1},
+     {"p31a", 5, 3, 0, 0.3f, 1},
+     {"p25a", 6, 4, 1, 0.3f, 1},
+     {"p59a", 14, 4, 1, 0.3f, 1},
+     {"p24a", 0, 4, 1, 0.3f, 1},
+     {"p26a", 3, 4, 1, 0.3f, 0},
+     {"p23a", 3, 5, 1, 0.3f, 0},
+     {"p21a", 7, 4, 1, 0.3f, 0},
+     {"p22a", 7, 5, 1, 0.3f, 0},
+     {"", -1, -1, 1, 0.3f, 0},
+     {"", -1, -1, 1, 0.3f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     },
     {
-        {"p49a", 3, 5, 0, 0.3f, 1},
-        {"p35a", 0, 3, 0, 0.3f, 0},
-        {"p37a", 2, 3, 0, 0.3f, 0},
-        {"p36a", 1, 4, 0, 0.3f, 0},
-        {"p41a", 4, 4, 0, 0.3f, 1},
-        {"p39a", 7, 5, 0, 0.3f, 1},
-        {"p33a", 8, 5, 0, 0.3f, 1},
-        {"p40a", 8, 4, 1, 0.3f, 1},
-        {"p43a", 8, 3, 1, 0.3f, 1},
-        {"p45a", 5, 2, 0, 0.3f, 1},
-        {"p44a", 9, 5, 1, 0.3f, 1},
-        {"p34a", 9, 4, 1, 0.3f, 1},
-        {"p42a", 6, 3, 1, 0.3f, 1},
-        {"", -1, -1, 0, 0.3f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-    },
+     {"p49a", 3, 5, 0, 0.3f, 1},
+     {"p35a", 0, 3, 0, 0.3f, 0},
+     {"p37a", 2, 3, 0, 0.3f, 0},
+     {"p36a", 1, 4, 0, 0.3f, 0},
+     {"p41a", 4, 4, 0, 0.3f, 1},
+     {"p39a", 7, 5, 0, 0.3f, 1},
+     {"p33a", 8, 5, 0, 0.3f, 1},
+     {"p40a", 8, 4, 1, 0.3f, 1},
+     {"p43a", 8, 3, 1, 0.3f, 1},
+     {"p45a", 5, 2, 0, 0.3f, 1},
+     {"p44a", 9, 5, 1, 0.3f, 1},
+     {"p34a", 9, 4, 1, 0.3f, 1},
+     {"p42a", 6, 3, 1, 0.3f, 1},
+     {"", -1, -1, 0, 0.3f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     },
     {
-        {"p48a", 0, 3, 1, 0.3f, 1},
-        {"p46a", 1, 4, 1, 0.3f, 0},
-        {"p50a", 2, 4, 1, 0.3f, 0},
-        {"p51a", 3, 5, 1, 0.3f, 1},
-        {"p52a", 3, 3, 1, 0.3f, 1},
-        {"p53a", 3, 4, 1, 0.3f, 1},
-        {"p54a", 5, 5, 1, 0.3f, 1},
-        {"p55a", 4, 3, 1, 0.3f, 1},
-        {"p56a", 6, 3, 0, 0.3f, 0},
-        {"p57a", 7, 3, 1, 0.3f, 1},
-        {"p58a", 7, 4, 1, 0.3f, 1},
-        {"", -1, -1, 1, 0.3f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-    },
+     {"p48a", 0, 3, 1, 0.3f, 1},
+     {"p46a", 1, 4, 1, 0.3f, 0},
+     {"p50a", 2, 4, 1, 0.3f, 0},
+     {"p51a", 3, 5, 1, 0.3f, 1},
+     {"p52a", 3, 3, 1, 0.3f, 1},
+     {"p53a", 3, 4, 1, 0.3f, 1},
+     {"p54a", 5, 5, 1, 0.3f, 1},
+     {"p55a", 4, 3, 1, 0.3f, 1},
+     {"p56a", 6, 3, 0, 0.3f, 0},
+     {"p57a", 7, 3, 1, 0.3f, 1},
+     {"p58a", 7, 4, 1, 0.3f, 1},
+     {"", -1, -1, 1, 0.3f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     },
     {
-        {"p64a", 3, 3, 1, 0.3f, 0},
-        {"p62a", 4, 3, 1, 0.3f, 0},
-        {"p63a", 9, 1, 1, 0.3f, 0},
-        {"p61a", 10, 1, 1, 0.3f, 0},
-        {"", -1, -1, 1, 0.3f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-    },
+     {"p64a", 3, 3, 1, 0.3f, 0},
+     {"p62a", 4, 3, 1, 0.3f, 0},
+     {"p63a", 9, 1, 1, 0.3f, 0},
+     {"p61a", 10, 1, 1, 0.3f, 0},
+     {"", -1, -1, 1, 0.3f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     },
     {
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-        {"", -1, -1, 0, 0.0f, 0},
-    },
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     {"", -1, -1, 0, 0.0f, 0},
+     },
 };
 
 /** Tags the map script recognises and the arguments each one takes. */
 static TAG_PARAM Command[61] = {
-    {"SCN", {SCRIPT_ARGUMENT_STRING, -1}},
-    {"LIGHT_NO", {SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"AMBIENT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"LIGHT_C", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"FOG", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BG_COL", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BG_COL2", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"DOF", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"CD", {SCRIPT_ARGUMENT_STRING, -1}},
-    {"GRD_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"BLD_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"SKY_IMG", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"SUN_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"WATER_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"FIRE_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"FLER_IMG", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"IMG", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"SKY", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"SUN", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"GROUND", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BUILD", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"WATER", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"WATER_SURFACE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"WATER_SHAKE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"EDITAREA", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BLD_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"GRD_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"PARTS_INFO", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, -1}},
-    {"ROAD_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"ROAD", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"RIVER_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"RIVER", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}},
-    {"BRIDGE_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"LAKE_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}},
-    {"ON_RIVER_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}},
-    {"OBJ_ANIME", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"FIRE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"FLAME", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BRIGHT", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"OBJECT_TIMER", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"ENTRANCE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"MAPJUMP", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, -1}},
-    {"PEOPLE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"TIME_TABLE_NO", {SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"TIME_TABLE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"TIME_STOP", {-1}},
-    {"SKY_FOLLOW", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"SHADOW_LEVEL", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"EDITAREA_RECT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BGM_NO", {SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"SOUND_SET", {SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"REVERBE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"MOTION_PARTS", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"PEOPLE2", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"SE_AMBIENT_OFF", {-1}},
-    {"WIND", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"TALK_EVENT", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"CHARA_AMBIENT", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"TALK_ROT", {SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"TALK_DIR", {SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"PEOPLE_LIST", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"SCN",            {SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    {"LIGHT_NO",       {SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"AMBIENT",        {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    {"LIGHT_C",        {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                        },
+    {"FOG",            {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                    },
+    {"BG_COL",         {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    {"BG_COL2",        {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    {"DOF",            {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                    },
+    {"CD",             {SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    {"GRD_IMG",        {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"BLD_IMG",        {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"SKY_IMG",        {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    {"SUN_IMG",        {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"WATER_IMG",      {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"FIRE_IMG",       {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"FLER_IMG",       {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"IMG",            {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    {"SKY",            {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    {"SUN",            {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                 },
+    {"GROUND",         {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                 },
+    {"BUILD",          {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                 },
+    {"WATER",          {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                 },
+    {"WATER_SURFACE",  {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
+    {"WATER_SHAKE",    {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    {"EDITAREA",       {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                     },
+    {"BLD_PARTS",      {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"GRD_PARTS",      {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"PARTS_INFO",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                  },
+    {"ROAD_PARTS",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"ROAD",           {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"RIVER_PARTS",    {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"RIVER",          {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"BRIDGE_PARTS",   {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"LAKE_PARTS",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"ON_RIVER_PARTS", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"OBJ_ANIME",      {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                  },
+    {"FIRE",           {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                         },
+    {"FLAME",          {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                         },
+    {"BRIGHT",         {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                         },
+    {"OBJECT_TIMER",   {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                     },
+    {"ENTRANCE",       {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                    },
+    {"MAPJUMP",        {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"PEOPLE",         {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                            },
+    {"TIME_TABLE_NO",  {SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"TIME_TABLE",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                            },
+    {"TIME_STOP",      {-1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    {"SKY_FOLLOW",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
+    {"SHADOW_LEVEL",   {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"EDITAREA_RECT",  {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                 },
+    {"BGM_NO",         {SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"SOUND_SET",      {SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"REVERBE",        {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    {"MOTION_PARTS",   {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                         },
+    {"PEOPLE2",        {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                          },
+    {"SE_AMBIENT_OFF", {-1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    {"WIND",           {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                               },
+    {"TALK_EVENT",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         },
+    {"CHARA_AMBIENT",  {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                             },
+    {"TALK_ROT",       {SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"TALK_DIR",       {SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+    {"PEOPLE_LIST",    {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                    },
 };
 
 /** Handler of each map-script tag, in the order of Command. */
@@ -480,7 +427,10 @@ static EDIT_SCRIPT_COMMAND CommandExe[61] = {
     CommandPEOPLE_LIST,
 };
 
-SPI_FUNC_PARAM func_table = {"test", {SCRIPT_ARGUMENT_INTEGER, -1}, test};
+SPI_FUNC_PARAM func_table = {
+    "test", {SCRIPT_ARGUMENT_INTEGER, -1},
+     test
+};
 
 int GameMode = 1;
 
@@ -489,29 +439,29 @@ static char CurrentDir[0x40];
 /** Destination named by the last MAPJUMP tag. */
 char mapjump_name[0x80];
 
-EDIT_MAP_INFO *edit_info;
-int texture_list;
-int fobject_list;
-int mapobj_list;
-int objanime_list;
-int light_no;
-int partseffect_list;
-int objeffect_list;
-int objtimer_list;
-int event_list;
-int water_list;
-int mapjump_id;
-int people_list;
-int week_no;
-char *objframe;
-CMapObject *mapobj;
-CMapParts *mapparts;
+EDIT_MAP_INFO   *edit_info;
+int              texture_list;
+int              fobject_list;
+int              mapobj_list;
+int              objanime_list;
+int              light_no;
+int              partseffect_list;
+int              objeffect_list;
+int              objtimer_list;
+int              event_list;
+int              water_list;
+int              mapjump_id;
+int              people_list;
+int              week_no;
+char            *objframe;
+CMapObject      *mapobj;
+CMapParts       *mapparts;
 EDIT_WATER_INFO *water_info;
-VILLAGER_INFO *now_villinfo;
-int now_parts_no;
-int binary;
-int edit_rect_list;
-int motion_parts_list;
+VILLAGER_INFO   *now_villinfo;
+int              now_parts_no;
+int              binary;
+int              edit_rect_list;
+int              motion_parts_list;
 
 /**
  * Sets the directory prefix used while parsing the current map script.
@@ -567,13 +517,13 @@ void InitInfo() {
  * @size 0x74C
  */
 int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
-    int file_size;
-    int cache_buffer[16000];
+    int   file_size;
+    int   cache_buffer[16000];
     char *extension;
     char *script;
-    int *cache;
-    int command;
-    char c;
+    int  *cache;
+    int   command;
+    char  c;
 
     edit_info = info;
     extension = name;
@@ -684,7 +634,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
             CommandExe[command](arguments);
             *cache++ = command;
             int *type = Command[command].argument_types;
-            int argument = 0;
+            int  argument = 0;
             for (;;) {
                 int kind = *type++;
                 if (kind < 0) {
@@ -693,7 +643,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
                 *cache++ = kind;
                 if (kind == 0) {
                     void **text = &arguments[argument];
-                    int words = (int) (strlen((char *) *text) + 4) >> 2;
+                    int    words = (int) (strlen((char *) *text) + 4) >> 2;
                     memset(cache, 0, words * 4);
                     strcpy((char *) cache, (char *) *text);
                     cache += words;
@@ -721,7 +671,7 @@ int LoadEditMapData(EDIT_MAP_INFO *info, char *name, int map_no) {
 
     if (map_no >= 0 && map_no < 5) {
         for (int i = 0; i < 16; i++) {
-            VILLAGER_INFO *villager = &edit_info->villagers[i];
+            VILLAGER_INFO         *villager = &edit_info->villagers[i];
             EDIT_CHARA_DATA_ENTRY *defaults = &EditCharaData[map_no][i];
             strcpy(villager->name, defaults->name);
             villager->index = i;
@@ -780,8 +730,8 @@ void CommandAMBIENT(void **arguments) {
  */
 void CommandLIGHT_C(void **arguments) {
     sceVu0FVECTOR direction;
-    int light = *(int *) arguments[6];
-    int index;
+    int           light = *(int *) arguments[6];
+    int           index;
     direction[0] = *(float *) arguments[0];
     direction[1] = *(float *) arguments[1];
     direction[2] = *(float *) arguments[2];
@@ -950,7 +900,7 @@ void CommandSUN(void **arguments) {
  * Places one ground object, with its models, position and orientation.
  */
 void CommandGROUND(void **arguments) {
-    int i;
+    int             i;
     MAP_PARTS_INFO *object = &edit_info->map_objects[mapobj_list];
     object->kind = 1;
     for (i = 0; i < 9; i++) {
@@ -977,7 +927,7 @@ void CommandGROUND(void **arguments) {
  * Places one building object, with its models, position and orientation.
  */
 void CommandBUILD(void **arguments) {
-    int i;
+    int             i;
     MAP_PARTS_INFO *object = &edit_info->map_objects[mapobj_list];
     object->kind = 2;
     for (i = 0; i < 9; i++) {
@@ -1004,7 +954,7 @@ void CommandBUILD(void **arguments) {
  * Places one water object, with its models, position and orientation.
  */
 void CommandWATER(void **arguments) {
-    int i;
+    int             i;
     MAP_PARTS_INFO *object = &edit_info->map_objects[mapobj_list];
     object->kind = 0x15;
     for (i = 0; i < 9; i++) {
@@ -1092,7 +1042,7 @@ void CommandWATER_SHAKE(void **arguments) {
  */
 void CommandEDITAREA(void **arguments) {
     EDIT_AREA_INFO *area = &edit_info->parts_work.edit_areas[*(int *) arguments[0]];
-    char *name = (char *) arguments[1];
+    char           *name = (char *) arguments[1];
     if (*name != '\0') {
         sprintf(area->name, "%s%s", CurrentDir, name);
     } else {
@@ -1144,7 +1094,7 @@ void CommandBLD_PARTS(void **arguments) {
     }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1171,7 +1121,7 @@ void CommandGRD_PARTS(void **arguments) {
     }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
@@ -1199,8 +1149,8 @@ void CommandPARTS_INFO(void **arguments) {
     EDIT_PARTS_DEF *def = &edit_info->parts_work.parts_defs.defs[index];
     def->width = *(int *) arguments[0];
     def->height = *(int *) arguments[1];
-    int at = 0;
-    int count = 0;
+    int   at = 0;
+    int   count = 0;
     char *shape = (char *) arguments[2];
     for (int i = 0; i < 32; i++) {
         def->cells[i] = 0;
@@ -1240,17 +1190,19 @@ void CommandPARTS_INFO(void **arguments) {
  */
 void CommandROAD_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24)
+    if (index < 0 || index >= 24) {
         return;
+    }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1265,16 +1217,18 @@ void CommandROAD_PARTS(void **arguments) {
  */
 void CommandROAD(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 6)
+    if (index < 0 || index >= 6) {
         return;
+    }
     MAP_PARTS_INFO *parts = &edit_info->parts_work.roads.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1289,17 +1243,19 @@ void CommandROAD(void **arguments) {
  */
 void CommandRIVER_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24)
+    if (index < 0 || index >= 24) {
         return;
+    }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1314,16 +1270,18 @@ void CommandRIVER_PARTS(void **arguments) {
  */
 void CommandRIVER(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 16)
+    if (index < 0 || index >= 16) {
         return;
+    }
     MAP_PARTS_INFO *parts = &edit_info->parts_work.rivers.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1352,17 +1310,19 @@ void CommandRIVER(void **arguments) {
  */
 void CommandBRIDGE_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24)
+    if (index < 0 || index >= 24) {
         return;
+    }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1377,18 +1337,20 @@ void CommandBRIDGE_PARTS(void **arguments) {
  */
 void CommandLAKE_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24)
+    if (index < 0 || index >= 24) {
         return;
+    }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
         sprintf(parts->name[7], "%s%s", CurrentDir, (char *) arguments[4]);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1403,18 +1365,20 @@ void CommandLAKE_PARTS(void **arguments) {
  */
 void CommandON_RIVER_PARTS(void **arguments) {
     int index = *(int *) arguments[0];
-    if (index < 0 || index >= 24)
+    if (index < 0 || index >= 24) {
         return;
+    }
     now_parts_no = index;
     MAP_PARTS_INFO *parts = &edit_info->parts_work.general.parts[index];
-    char *source_name = (char *) arguments[1];
+    char           *source_name = (char *) arguments[1];
     if (*source_name != '\0') {
         char name[0x80];
         sprintf(name, "%s%s", CurrentDir, source_name);
         GenMdsName(parts, name);
         sprintf(parts->name[7], "%s%s", CurrentDir, (char *) arguments[4]);
-    } else
+    } else {
         parts->name[0][0] = '\0';
+    }
     parts->parts_no = *(int *) arguments[2];
     parts->lift = *(float *) arguments[3];
     parts->kind = 1;
@@ -1433,7 +1397,7 @@ void CommandOBJ_ANIME(void **arguments) {
         return;
     }
     OBJ_ANIME_SEQ *anime = &edit_info->work.obj_anime[objanime_list];
-    s16 *slots;
+    s16           *slots;
     anime->property = *(int *) arguments[0];
     if (anime->property < 0 || anime->property >= 4) {
         return;
@@ -1502,7 +1466,7 @@ void CommandENTRANCE(void **arguments) {
     }
     event_list--;
     ED_EVENT_POINT *point = &edit_info->work.events.points[event_list];
-    s16 *slots;
+    s16            *slots;
     point->event_type = 1;
     char *side = (char *) arguments[0];
     strcpy(point->destination, mapjump_name);
@@ -1555,7 +1519,7 @@ void CommandMAPJUMP(void **arguments) {
         return;
     }
     ED_EVENT_POINT *point = &edit_info->work.events.points[event_list];
-    s16 *slots;
+    s16            *slots;
     point->event_type = 1;
     strcpy(point->destination, mapjump_name);
     point->map_no = mapjump_id;
@@ -1699,27 +1663,31 @@ void CommandREVERBE(void **arguments) {
         "OFF", "ROOM", "STUDIO_A", "STUDIO_B", "STUDIO_C", "HALL",
         "SPACE", "ECHO", "DELAY", "PIPE", "MAX", ""};
 
-    int mode = 0;
+    int   mode = 0;
     char *name = (char *) arguments[0];
     while (*rev[mode] != '\0') {
-        if (strcasecmp(rev[mode], name) == 0)
+        if (strcasecmp(rev[mode], name) == 0) {
             break;
+        }
         mode++;
     }
-    if (10 < mode)
+    if (10 < mode) {
         mode = 0;
+    }
     edit_info->reverb_mode[0] = mode;
     edit_info->reverb_depth[0] = *(int *) arguments[1];
 
     mode = 0;
     name = (char *) arguments[2];
     while (*rev[mode] != '\0') {
-        if (strcasecmp(rev[mode], name) == 0)
+        if (strcasecmp(rev[mode], name) == 0) {
             break;
+        }
         mode++;
     }
-    if (10 < mode)
+    if (10 < mode) {
         mode = 0;
+    }
     edit_info->reverb_mode[1] = mode;
     edit_info->reverb_depth[1] = *(int *) arguments[3];
 

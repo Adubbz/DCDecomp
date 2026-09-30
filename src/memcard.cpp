@@ -44,20 +44,20 @@ struct OPTION_MENU_STATE {
 #else
     s32 mode;    /**< How the screen was opened; 0 from the main menu. */
     s32 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
-    u8 unk_08[4];
-    s32 cursor;        /**< Cell that the cursor is on, as ten times the row plus the column. */
+    u8  unk_08[4];
+    s32 cursor; /**< Cell that the cursor is on, as ten times the row plus the column. */
 #endif
-    s32 step;          /**< Stage that the screen is at, 2 once it has begun to close. */
-    s32 step_count;    /**< Frames the screen has spent at its stage. */
-    float cursor_x;    /**< Screen X of the cursor. */
-    float cursor_y;    /**< Screen Y of the cursor. */
-    float page_x;      /**< Screen X of the rows, eased toward the cursor's page. */
+    s32   step;       /**< Stage that the screen is at, 2 once it has begun to close. */
+    s32   step_count; /**< Frames the screen has spent at its stage. */
+    float cursor_x;   /**< Screen X of the cursor. */
+    float cursor_y;   /**< Screen Y of the cursor. */
+    float page_x;     /**< Screen X of the rows, eased toward the cursor's page. */
 #ifdef PAL
-    s32 flag[13];             /**< Setting of each option row. */
-    s32 prev_flag[13];        /**< Setting of each option row when the screen opened. */
-    s32 prev_screen_pos[2];   /**< Screen position offsets of the configuration when the screen opened. */
-    u8 texture_ready;         /**< Whether the screen's textures have been entered. */
-    s16 block_no;             /**< Texture block the screen's textures load into. */
+    s32 flag[13];           /**< Setting of each option row. */
+    s32 prev_flag[13];      /**< Setting of each option row when the screen opened. */
+    s32 prev_screen_pos[2]; /**< Screen position offsets of the configuration when the screen opened. */
+    u8  texture_ready;      /**< Whether the screen's textures have been entered. */
+    s16 block_no;           /**< Texture block the screen's textures load into. */
 #else
     s32 flag[12];      /**< Setting of each option row. */
     s32 prev_flag[12]; /**< Setting of each option row when the screen opened. */
@@ -75,7 +75,7 @@ STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
 /** Holds the georama parts of a town the player is not standing in. */
 CEditPartsInfo BtEditPartsInfo;
 
-MENU_ATORA_SEL MenuAtoraSel;
+MENU_ATORA_SEL    MenuAtoraSel;
 CMemoryCardAccess McAccess;
 
 /** The state of the option screen. */
@@ -112,7 +112,7 @@ CTexture *SaveBoard;
 CTexture *MenuOption;
 
 CEditPartsInfo *CommonMenuAtoraInfo;
-short *GetAtraMsgReadBuf;
+short          *GetAtraMsgReadBuf;
 
 /** The chip that the georama board's cursor has picked up. */
 ATORA_TIP_HAVE *NowTipHavePt;
@@ -132,270 +132,13 @@ u_long128 *AtoraOffsetBuf;
 s32 CursorVibeCnt;
 
 /**
- * Returns the record of the n-th valid part in the georama's part list, or NULL
- * when there are fewer.
- *
- * @mangled SearchAtoraInfo__Fi
- * @address 0x218470
- * @size 0x8C
- */
-static EDITPARTS_INFO *SearchAtoraInfo(int);
-
-/**
- * Returns whether every chip of a georama part has been acquired.
- *
- * @mangled AtoraAllTipGet__Fi
- * @address 0x218500
- * @size 0x9C
- */
-static int AtoraAllTipGet(int);
-
-/**
- * Returns whether the player has already spoken to a georama resident.
- *
- * @mangled AlreadyPeopleTalk__Fii
- * @address 0x2185A0
- * @size 0x64
- */
-static int AlreadyPeopleTalk(int, int);
-
-/**
- * Returns one when a georama part is fully built, its residents have all been
- * spoken to, and its completion event has not been flagged yet.
- *
- * @mangled AtoraCompOrEvent__FP14EDITPARTS_INFO
- * @address 0x218610
- * @size 0x164
- */
-static int AtoraCompOrEvent(EDITPARTS_INFO *);
-
-/**
- * Returns how many parts a georama ground defines, or zero for an invalid
- * ground.
- *
- * @mangled AtraBoardMaxNum__Fi
- * @address 0x218780
- * @size 0x88
- */
-static int AtraBoardMaxNum(int);
-
-/**
- * Returns the link code of a chip slot: -1 when empty, 0 without a pending
- * link, otherwise 1 or 2 by link kind plus 10 for each unplaced chip above it.
- *
- * @mangled AtoraTipStatusSearch__FP14EDITPARTS_INFOi
- * @address 0x218810
- * @size 0xC8
- */
-static int AtoraTipStatusSearch(EDITPARTS_INFO *, int);
-
-/**
- * Returns whether a chip attachment may be shown on the board.
- *
- * @mangled AtraTipCanDisplay__FP21EDIT_CHIP_ATTACH_DATA
- * @address 0x2188E0
- * @size 0x74
- */
-static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *);
-
-/**
- * Draws the arrow from a chip slot to the chip it hangs off, covering the slot
- * while that chip is missing, as the slot's link code directs.
- *
- * @mangled AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
- * @address 0x218960
- * @size 0x1F4
- */
-static void AtoraTipRelationDraw(int, int, EDITPARTS_INFO *, int, int, int);
-
-/**
- * Marks which of the six chip slots of a georama part can be selected.
- *
- * @mangled AtoraBoardEnableMovePos__FiPi
- * @address 0x218B60
- * @size 0x10C
- */
-static void AtoraBoardEnableMovePos(int, int *);
-
-/**
- * Returns the first index at or below a start whose entry in a slot table is
- * set, or the lower bound when none is.
- *
- * @mangled AtoraBoardGoToPos__FPiii
- * @address 0x218C70
- * @size 0x44
- */
-static int AtoraBoardGoToPos(int *, int, int);
-
-/**
- * Returns the message number that the board shows for a georama part or one of
- * its chip slots, or -1 when the part has no record.
- *
- * @mangled AtoraMsgNoGet__Fiii
- * @address 0x218DA0
- * @size 0x1F4
- */
-static int AtoraMsgNoGet(int, int, int);
-
-/**
- * Returns the message number of a chip from its attribute record alone, or -1
- * when it has none.
- *
- * @mangled AtoraTipOnlyMsgNoGet__Fii
- * @address 0x218FA0
- * @size 0x58
- */
-static int AtoraTipOnlyMsgNoGet(int, int);
-
-/**
- * Draws a chip's icon as either the object or the resident it stands for.
- *
- * @mangled AtoraTipObjectOrPerson__Fiiiii
- * @address 0x2190E0
- * @size 0xDC
- */
-static void AtoraTipObjectOrPerson(int, int, int, int, int);
-
-/**
- * Returns the gold socket texture when its flag is set and the grey one
- * otherwise, and writes the colour to draw it with.
- *
- * @mangled AtoraTipHoleTexInfoGet__FiPUc
- * @address 0x2191C0
- * @size 0x4C
- */
-static CTexture *AtoraTipHoleTexInfoGet(int, unsigned char *);
-
-/**
- * Draws the placement gauge of a georama part, filled in proportion to what has
- * been placed, with the placed-over-total count beside it.
- *
- * @mangled AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii
- * @address 0x219210
- * @size 0xE0
- */
-static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *, int, int, int);
-
-/**
- * Draws an empty plate of the georama board with a caption in its centre.
- *
- * @mangled DrawAtoraNothing__Fiii
- * @address 0x219CC0
- * @size 0x2F4
- */
-static void DrawAtoraNothing(int, int, int);
-
-/**
- * Shows message 200 in a message window at a position.
- *
- * @mangled DrawMsgAtraWarning__FP6ClsMesii
- * @address 0x219FC0
- * @size 0xA0
- */
-static void DrawMsgAtraWarning(ClsMes *, int, int);
-
-/**
- * Clears the georama chip selection.
- *
- * @mangled AtoraTipInfoInit__Fv
- * @address 0x21A060
- * @size 0x2C
- */
-static void AtoraTipInfoInit();
-
-/**
- * Records whether the georama menu is running an event.
- *
- * @mangled SetMenuAtraEventFlag__Fi
- * @address 0x21A0A0
- * @size 0x10
- */
-static void SetMenuAtraEventFlag(int);
-
-/**
- * Opens the board's message window on the message of the selected part.
- *
- * @mangled MenuAtoraAfterFadeIn__Fv
- * @address 0x21A0B0
- * @size 0x7C
- */
-static void MenuAtoraAfterFadeIn();
-
-/**
- * Stores the board cursor in the save data when cursor memory is on and gives
- * back the message windows that the board screen took over.
- *
- * @mangled ExitAtoraSelect__Fv
- * @address 0x21A890
- * @size 0xC8
- */
-static void ExitAtoraSelect();
-
-/**
- * Looks up the textures the georama board draws from.
- *
- * @mangled AtoraTexInfoGet__Fv
- * @address 0x21A960
- * @size 0x118
- */
-static void AtoraTexInfoGet();
-
-/**
  * Draws the georama board screen's board, panels and cursor.
  *
  * @mangled DrawAtoraSelect__Fi
  * @address 0x21AE80
  * @size 0xFEC
  */
-static void DrawAtoraSelect(int);
-
-/**
- * Loads the georama board screen's texture block.
- *
- * @mangled AtoraTextureEnter__Fv
- * @address 0x21BE70
- * @size 0x1A4
- */
-static int AtoraTextureEnter();
-
-/**
- * Returns which of the three chip groups a chip number belongs to.
- *
- * @mangled GetTipKind__Fi
- * @address 0x21C020
- * @size 0x64
- */
-static int GetTipKind(int);
-
-/**
- * Compares two chips for the board's sort by group, with empty slots last, and
- * then by number.
- *
- * @mangled CompTip__Fii
- * @address 0x21C090
- * @size 0xCC
- */
-static int CompTip(int, int);
-
-/**
- * Sorts the chip list with the current group first and empty slots last, and
- * returns whether any chip moved.
- *
- * @mangled SeitonAtoraTipBoardSub__Fv
- * @address 0x21C160
- * @size 0x108
- */
-static int SeitonAtoraTipBoardSub();
-
-/**
- * Sorts the chip list, switching which chip group comes first whenever the list
- * is already in order, up to three times.
- *
- * @mangled SeitonAtoraTipBoard__Fv
- * @address 0x21C270
- * @size 0x70
- */
-static void SeitonAtoraTipBoard();
+static void DrawAtoraSelect(int fade);
 
 /**
  * Moves the board cursor and handles its buttons, returning 10 when a part is
@@ -434,74 +177,6 @@ static void AtoraMenuTipCancel();
  * @size 0x3C8
  */
 static void AtoraBoardFadeEffect();
-
-/**
- * Draws the twelve option rows, each label with its current setting, as two
- * pages from the given position.
- *
- * @mangled OptionMenuDraw__Fiiiii
- * @address 0x21E020
- * @size 0x42C
- */
-static void OptionMenuDraw(int, int, int, int, int);
-
-/**
- * Draws the arrow that points to the other option page.
- *
- * @mangled DrawOptionLRCur__Fii
- * @address 0x21E450
- * @size 0x80
- */
-static void DrawOptionLRCur(int, int);
-
-#ifdef PAL
-/**
- * Draws the screen position adjustment frame: its centre piece, arrows and screen corners. PAL only.
- *
- * @mangled DrawOptionScreenWaku__Fv
- * @address 0x223D50
- * @size 0x1D4
- */
-static void DrawOptionScreenWaku();
-#endif
-
-/**
- * Writes the option rows back to the configuration and the menu cursor, sets
- * the stereo mode from them and restores the pad's menu repeat.
- *
- * @mangled ExitMenuOption__Fv
- * @address 0x21E780
- * @size 0x18C
- */
-static void ExitMenuOption();
-
-/**
- * Resets the option rows to their defaults.
- *
- * @mangled InitOptionFlag__Fv
- * @address 0x21E910
- * @size 0x44
- */
-static void InitOptionFlag();
-
-/**
- * Restores the option rows to the values they had when the screen opened.
- *
- * @mangled PrevOptionSetFunc__Fv
- * @address 0x21E960
- * @size 0x48
- */
-static void PrevOptionSetFunc();
-
-/**
- * Closes the save screen's message window and restores the pad, and after a
- * load sets the stereo mode from the loaded configuration.
- *
- * @mangled ExitSaveSelect__Fv
- * @address 0x21FD80
- * @size 0x144
- */
-static void ExitSaveSelect();
 
 /**
  * Waits out the save screen's fade-in and then moves on to the save file
@@ -591,8 +266,8 @@ int McCheckMCPs2(MC_CARD_INFO *card) {
 }
 
 void DrawObjectVibe(int x, int y, CTexture *texture, CRect_i_ src_rect, unsigned char alpha, int flag) {
-    float dest_x = (float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt);
-    float dest_y = (float) y + 5.0f * sinf(0.1163552850484848f * (float) CursorVibeCnt);
+    float    dest_x = (float) x + 7.0f * cosf(0.08055365830659866f * (float) CursorVibeCnt);
+    float    dest_y = (float) y + 5.0f * sinf(0.1163552850484848f * (float) CursorVibeCnt);
     CRect_i_ dest_rect((s32) dest_x, (s32) dest_y, src_rect.width, src_rect.height);
     DrawMenu2DSprite(texture, dest_rect, src_rect, alpha, alpha, alpha, flag);
 }
@@ -607,7 +282,7 @@ void DrawObjectVibe(int x, int y, CTexture *texture, RECT src_rect, unsigned cha
  */
 void DrawMenuObjectVibe(int x, int y, int shadow, int icon_u) {
     CTexture *texture = TexManager.GetTexture(AtoraVibeTextureName, -1);
-    CRect_i_ src(icon_u, 0x28, 0x20, 0x20);
+    CRect_i_  src(icon_u, 0x28, 0x20, 0x20);
 
     if (shadow != 0) {
         DrawObjectVibe(x + 5, y + 3, texture, src, 0, 100);
@@ -616,11 +291,11 @@ void DrawMenuObjectVibe(int x, int y, int shadow, int icon_u) {
 }
 
 void DrawMenuHelpWindow(CTexture *texture, int style, int x, int y, float width, float height, int alpha) {
-    int corner_u;
+    int   corner_u;
     float middle_width;
     float middle_height;
-    int middle_y;
-    int bottom_y;
+    int   middle_y;
+    int   bottom_y;
 
     if (style == 0) {
         corner_u = 24;
@@ -667,8 +342,7 @@ void MenuHelpWinDraw(int x, int y, float width, float height, int alpha, int u, 
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u, v + 42, 24, 22), (alpha * 100) >> 7);
     x += 24;
     DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 22), CRect_i_(u + 22, v, 16, 22), (alpha * 100) >> 7);
-    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20),
-                     (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20), (alpha * 100) >> 7);
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 22), CRect_i_(u + 22, v + 42, 16, 22), (alpha * 100) >> 7);
     x += middle_width;
     DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u + 38, v, 24, 22), (alpha * 100) >> 7);
@@ -694,8 +368,7 @@ void MenuHelpWinDraw2(int x, int y, float width, float height, int alpha, int u,
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, 24, 22), CRect_i_(u, v + 42, 24, 22), (alpha * 100) >> 7);
     x += 24;
     DrawMenu2DSprite(texture, CRect_i_(x, y, middle_width, 22), CRect_i_(u + 22, v, 16, 22), (alpha * 100) >> 7);
-    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20),
-                     (alpha * 100) >> 7);
+    DrawMenu2DSprite(texture, CRect_i_(x, middle_y, middle_width, middle_height), CRect_i_(u + 22, v + 22, 16, 20), (alpha * 100) >> 7);
     DrawMenu2DSprite(texture, CRect_i_(x, bottom_y, middle_width, 22), CRect_i_(u + 22, v + 42, 16, 22), (alpha * 100) >> 7);
     x += middle_width;
     DrawMenu2DSprite(texture, CRect_i_(x, y, 24, 22), CRect_i_(u + 38, v, 24, 22), (alpha * 100) >> 7);
@@ -714,10 +387,10 @@ void MenuHelpWinDraw(int x, int y, float width, float height, int alpha) {
 void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *texture, int alpha) {
     RECT *src;
     float offset;
-    int left;
-    int top;
-    int right;
-    int bottom;
+    int   left;
+    int   top;
+    int   right;
+    int   bottom;
 
     if (texture != NULL) {
         static int MenuWakuCnt = 0;
@@ -727,16 +400,15 @@ void DrawMenuWaku(float x, float y, int width, int height, int type, CTexture *t
         top = y + offset;
         right = (x + width) - offset;
         bottom = (y + height) - offset;
-        RECT corner[2] = {{74, 72, 16, 16}, {106, 72, 27, 24}};
+        RECT corner[2] = {
+            {74,  72, 16, 16},
+            {106, 72, 27, 24}
+        };
         src = &corner[type];
-        DrawMenu2DSprite(texture, CRect_i_(left, top, src->width, src->height),
-                         CRect_i_(src->x, src->y, src->width, src->height), alpha);
-        DrawMenu2DSprite(texture, CRect_i_(right, top, src->width, src->height),
-                         CRect_i_(src->x + src->width, src->y, src->width, src->height), alpha);
-        DrawMenu2DSprite(texture, CRect_i_(left, bottom, src->width, src->height),
-                         CRect_i_(src->x, src->y + src->height, src->width, src->height), alpha);
-        DrawMenu2DSprite(texture, CRect_i_(right, bottom, src->width, src->height),
-                         CRect_i_(src->x + src->width, src->y + src->height, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(left, top, src->width, src->height), CRect_i_(src->x, src->y, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(right, top, src->width, src->height), CRect_i_(src->x + src->width, src->y, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(left, bottom, src->width, src->height), CRect_i_(src->x, src->y + src->height, src->width, src->height), alpha);
+        DrawMenu2DSprite(texture, CRect_i_(right, bottom, src->width, src->height), CRect_i_(src->x + src->width, src->y + src->height, src->width, src->height), alpha);
         MenuWakuCnt++;
         if (MenuWakuCnt < 0 || MenuWakuCnt >= 30) {
             MenuWakuCnt = 0;
@@ -748,8 +420,7 @@ int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int o
     return DrawMenuNumber(number, x, y, rect, texture, overlap, 0, SCREEN_HEIGHT, flag);
 }
 
-int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
-                   unsigned char g, unsigned char b, int flag) {
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r, unsigned char g, unsigned char b, int flag) {
     int digits;
     int digit;
     int width;
@@ -786,8 +457,7 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
     return x;
 }
 
-int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom,
-                   int flag) {
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom, int flag) {
     int digits;
     int digit;
     int width;
@@ -825,7 +495,7 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
 }
 
 int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
-    int length = 0;
+    int    length = 0;
     short *code = mes->GetTextLineDataTop_system(mes_no);
 
     if (code != NULL) {
@@ -847,11 +517,9 @@ int GetMsgLengthMenu(ClsMes *mes, int mes_no) {
  * @address 0x2181E0
  * @size 0xD8
  */
-static CTexture *RetCTexAtora(int tip_no, int &x, int &y);
-
 static CTexture *RetCTexAtora(int tip_no, int &x, int &y) {
     CTexture *texture;
-    int tex_no;
+    int       tex_no;
 
     tex_no = GetEditAtraChipData(MenuAtoraSel.map_no, tip_no)->tex_no;
     x = ((tex_no + 7) % 7) * 36;
@@ -866,9 +534,9 @@ static CTexture *RetCTexAtora(int tip_no, int &x, int &y) {
 
 void DrawAtoraParts(int x, int y, int tip_no, int top, int bottom, int alpha) {
     CTexture *texture;
-    int src_x;
-    int src_y;
-    int height;
+    int       src_x;
+    int       src_y;
+    int       height;
 
     if (x < 340 || x > 600) {
         return;
@@ -895,6 +563,14 @@ void DrawAtoraParts(int x, int y, int tip_no, int top, int bottom, int alpha) {
     DrawMenu2DSprite(texture, dest, src, alpha);
 }
 
+/**
+ * Returns the record of the n-th valid part in the georama's part list, or NULL
+ * when there are fewer.
+ *
+ * @mangled SearchAtoraInfo__Fi
+ * @address 0x218470
+ * @size 0x8C
+ */
 static EDITPARTS_INFO *SearchAtoraInfo(int index) {
     int parts;
     int count;
@@ -911,10 +587,17 @@ static EDITPARTS_INFO *SearchAtoraInfo(int index) {
     return NULL;
 }
 
+/**
+ * Returns whether every chip of a georama part has been acquired.
+ *
+ * @mangled AtoraAllTipGet__Fi
+ * @address 0x218500
+ * @size 0x9C
+ */
 static int AtoraAllTipGet(int parts_no) {
-    EDITPARTS_INFO *info;
-    int result;
-    int i;
+    EDITPARTS_INFO    *info;
+    int                result;
+    int                i;
     EDITPARTS_ELEMENT *element;
 
     info = CommonMenuAtoraInfo->GetPartsInfo(parts_no);
@@ -935,6 +618,13 @@ static int AtoraAllTipGet(int parts_no) {
     return result;
 }
 
+/**
+ * Returns whether the player has already spoken to a georama resident.
+ *
+ * @mangled AlreadyPeopleTalk__Fii
+ * @address 0x2185A0
+ * @size 0x64
+ */
 static int AlreadyPeopleTalk(int map_no, int chip_no) {
     SV_GRD_NPC *npc;
 
@@ -945,15 +635,23 @@ static int AlreadyPeopleTalk(int map_no, int chip_no) {
     return npc->talk_message;
 }
 
+/**
+ * Returns one when a georama part is fully built, its residents have all been
+ * spoken to, and its completion event has not been flagged yet.
+ *
+ * @mangled AtoraCompOrEvent__FP14EDITPARTS_INFO
+ * @address 0x218610
+ * @size 0x164
+ */
 static int AtoraCompOrEvent(EDITPARTS_INFO *info) {
-    EDIT_PARTS_ATRA *atra;
+    EDIT_PARTS_ATRA   *atra;
     EDITPARTS_ELEMENT *element;
-    int complete;
-    int filled;
-    int talked;
-    int done;
-    int result;
-    int i;
+    int                complete;
+    int                filled;
+    int                talked;
+    int                done;
+    int                result;
+    int                i;
 
     atra = GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no);
     if (atra == NULL) {
@@ -991,9 +689,17 @@ static int AtoraCompOrEvent(EDITPARTS_INFO *info) {
     return result;
 }
 
+/**
+ * Returns how many parts a georama ground defines, or zero for an invalid
+ * ground.
+ *
+ * @mangled AtraBoardMaxNum__Fi
+ * @address 0x218780
+ * @size 0x88
+ */
 static int AtraBoardMaxNum(int ground) {
     EDIT_PARTS_ATRA *parts;
-    int count;
+    int              count;
 
     if (ground < 0 || ground >= 6) {
         return 0;
@@ -1008,6 +714,14 @@ static int AtraBoardMaxNum(int ground) {
     return count;
 }
 
+/**
+ * Returns the link code of a chip slot: -1 when empty, 0 without a pending
+ * link, otherwise 1 or 2 by link kind plus 10 for each unplaced chip above it.
+ *
+ * @mangled AtoraTipStatusSearch__FP14EDITPARTS_INFOi
+ * @address 0x218810
+ * @size 0xC8
+ */
 static int AtoraTipStatusSearch(EDITPARTS_INFO *info, int slot) {
     int next;
     int link;
@@ -1046,13 +760,20 @@ static int AtraTipCanDisplay(EDIT_CHIP_ATTACH_DATA *attach) {
     int display;
 
     display = 1;
-    if (attach != NULL && attach->id < 40 && attach->npc_no >= 0 &&
-        (SaveData->GetGrdNPCData(MenuAtoraSel.map_no, attach->npc_no)->flags & 2) == 0) {
+    if (attach != NULL && attach->id < 40 && attach->npc_no >= 0 && (SaveData->GetGrdNPCData(MenuAtoraSel.map_no, attach->npc_no)->flags & 2) == 0) {
         display = 0;
     }
     return display;
 }
 
+/**
+ * Draws the arrow from a chip slot to the chip it hangs off, covering the slot
+ * while that chip is missing, as the slot's link code directs.
+ *
+ * @mangled AtoraTipRelationDraw__FiiP14EDITPARTS_INFOiii
+ * @address 0x218960
+ * @size 0x1F4
+ */
 static void AtoraTipRelationDraw(int x, int y, EDITPARTS_INFO *info, int slot, int link, int alpha) {
     int dx;
     int dy;
@@ -1110,10 +831,17 @@ int CompMsgCt;
 /** The configuration words that the option screen edits. */
 s32 *OpConfigPt;
 
+/**
+ * Marks which of the six chip slots of a georama part can be selected.
+ *
+ * @mangled AtoraBoardEnableMovePos__FiPi
+ * @address 0x218B60
+ * @size 0x10C
+ */
 static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
     EDITPARTS_INFO *info;
-    int link;
-    int i;
+    int             link;
+    int             i;
 
     info = SearchAtoraInfo(parts_no);
     if (info == NULL) {
@@ -1144,6 +872,14 @@ static void AtoraBoardEnableMovePos(int parts_no, int *enable) {
     }
 }
 
+/**
+ * Returns the first index at or below a start whose entry in a slot table is
+ * set, or the lower bound when none is.
+ *
+ * @mangled AtoraBoardGoToPos__FPiii
+ * @address 0x218C70
+ * @size 0x44
+ */
 static int AtoraBoardGoToPos(int *enable, int pos, int min) {
     while (min < pos) {
         if (enable[pos] != 0) {
@@ -1182,16 +918,24 @@ int GetAtraMsgNo(int map_no, int element) {
     return mes_no;
 }
 
+/**
+ * Returns the message number that the board shows for a georama part or one of
+ * its chip slots, or -1 when the part has no record.
+ *
+ * @mangled AtoraMsgNoGet__Fiii
+ * @address 0x218DA0
+ * @size 0x1F4
+ */
 static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
-    EDITPARTS_INFO *info;
-    EDIT_PARTS_ATRA *parts;
-    int msg_no;
+    EDITPARTS_INFO        *info;
+    EDIT_PARTS_ATRA       *parts;
+    int                    msg_no;
     EDIT_CHIP_ATTACH_DATA *attach;
     EDIT_CHIP_ATTACH_DATA *elements;
-    EDIT_ELEMENT_ATRA *chip;
+    EDIT_ELEMENT_ATRA     *chip;
     EDIT_CHIP_ATTACH_DATA *shown;
-    int link;
-    int flag;
+    int                    link;
+    int                    flag;
 
     info = SearchAtoraInfo(board_pos);
     if (info == NULL) {
@@ -1240,9 +984,17 @@ static int AtoraMsgNoGet(int map_no, int board_pos, int slot) {
     return msg_no;
 }
 
+/**
+ * Returns the message number of a chip from its attribute record alone, or -1
+ * when it has none.
+ *
+ * @mangled AtoraTipOnlyMsgNoGet__Fii
+ * @address 0x218FA0
+ * @size 0x58
+ */
 static int AtoraTipOnlyMsgNoGet(int map_no, int number) {
     EDIT_ELEMENT_ATRA *chip;
-    int msg_no;
+    int                msg_no;
 
     chip = GetEditAtraChipData(map_no, number);
     if (chip == NULL) {
@@ -1275,12 +1027,19 @@ static void AtoraTipGetTexPos(int tip_no, int &x, int &y) {
     }
 }
 
+/**
+ * Draws a chip's icon as either the object or the resident it stands for.
+ *
+ * @mangled AtoraTipObjectOrPerson__Fiiiii
+ * @address 0x2190E0
+ * @size 0xDC
+ */
 static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha) {
-    int u;
-    int v;
+    int       u;
+    int       v;
     CTexture *texture = RetCTexAtora(tip_no, u, v);
-    CRect_i_ source(u, v, 0x24, 0x24);
-    int red, green, blue;
+    CRect_i_  source(u, v, 0x24, 0x24);
+    int       red, green, blue;
     blue = green = red = 0x80;
     if (dark != 0) {
         red = 0x80;
@@ -1290,6 +1049,14 @@ static void AtoraTipObjectOrPerson(int x, int y, int tip_no, int dark, int alpha
     DrawMenu2DSprite(texture, CRect_i_(x, y, source.width, source.height - 1), source, red, green, blue, alpha);
 }
 
+/**
+ * Returns the gold socket texture when its flag is set and the grey one
+ * otherwise, and writes the colour to draw it with.
+ *
+ * @mangled AtoraTipHoleTexInfoGet__FiPUc
+ * @address 0x2191C0
+ * @size 0x4C
+ */
 static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
     if (gold) {
         color[0] = 0x8C;
@@ -1303,8 +1070,16 @@ static CTexture *AtoraTipHoleTexInfoGet(int gold, unsigned char *color) {
     return HoleGray;
 }
 
+/**
+ * Draws the placement gauge of a georama part, filled in proportion to what has
+ * been placed, with the placed-over-total count beside it.
+ *
+ * @mangled AtoraPlateDrawHaichiBar__FP14EDITPARTS_INFOiii
+ * @address 0x219210
+ * @size 0xE0
+ */
 static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag) {
-    int empty = 83 - info->placed * 83 / info->stock;
+    int      empty = 83 - info->placed * 83 / info->stock;
     CRect_i_ dest;
     CRect_i_ src(244, 323 - empty, 12, empty);
 
@@ -1318,7 +1093,7 @@ static void AtoraPlateDrawHaichiBar(EDITPARTS_INFO *info, int x, int y, int flag
 
 void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
     RECT digit = {0, 212, 12, 12};
-    int num_x;
+    int  num_x;
 
     num_x = x + 8;
     if ((info->stock - info->placed) / 10 > 0) {
@@ -1337,8 +1112,8 @@ void DrawAtraBuildNum(EDITPARTS_INFO *info, int x, int y, int alpha) {
 }
 
 void DrawAtora(int x, int y, int parts_index, int alpha) {
-    int u;
-    int v;
+    int           u;
+    int           v;
     unsigned char colour[4];
 
     if (y < -100 || y > 0x1CC) {
@@ -1349,9 +1124,9 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
         return;
     }
     EDIT_PARTS_ATRA *parts = GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no);
-    int complete = CommonMenuAtoraInfo->CheckComplete(parts_index);
-    int all_tips = AtoraAllTipGet(parts_index);
-    int event = AtoraCompOrEvent(info);
+    int              complete = CommonMenuAtoraInfo->CheckComplete(parts_index);
+    int              all_tips = AtoraAllTipGet(parts_index);
+    int              event = AtoraCompOrEvent(info);
     u = 0;
     v = 0;
     if (all_tips != 0 || (info->obtained != 0 && info->elements[0].id < 0)) {
@@ -1400,15 +1175,12 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
                 if ((chip->required_element < 0 || status < 3) && status != 50) {
                     AtoraTipGetTexPos(chip->id, u, v);
                     CTexture *hole = AtoraTipHoleTexInfoGet(all_tips, colour);
-                    DrawMenu2DSprite(hole, CRect_i_(tip_x, tip_y, 0x24, 0x24), CRect_i_(u, v, 0x24, 0x25), colour[0],
-                                     colour[1], colour[2], alpha);
+                    DrawMenu2DSprite(hole, CRect_i_(tip_x, tip_y, 0x24, 0x24), CRect_i_(u, v, 0x24, 0x25), colour[0], colour[1], colour[2], alpha);
                 }
                 if (info->elements[i].enabled != 0) {
                     AtoraTipObjectOrPerson(tip_x, tip_y, info->elements[i].id, all_tips, alpha);
-                    if (complete == 0 && chip->npc_no >= 0 && AlreadyPeopleTalk(MenuAtoraSel.map_no, chip->id) == 0 &&
-                        AtoraHeyCnt % (chip->id + 0x4B) < 0x46) {
-                        DrawMenu2DSprite(CompleteTex, CRect_i_(tip_x - 9, tip_y - 7, 0x20, 0x15),
-                                         CRect_i_(0xE2, 0, 0x20, 0x16), alpha);
+                    if (complete == 0 && chip->npc_no >= 0 && AlreadyPeopleTalk(MenuAtoraSel.map_no, chip->id) == 0 && AtoraHeyCnt % (chip->id + 0x4B) < 0x46) {
+                        DrawMenu2DSprite(CompleteTex, CRect_i_(tip_x - 9, tip_y - 7, 0x20, 0x15), CRect_i_(0xE2, 0, 0x20, 0x16), alpha);
                     }
                 }
             }
@@ -1439,8 +1211,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
         (int) height;
         base_x = (int) ((float) base_x + 8.0f * cosf(3.1415927f * CompMsgCt / (180.0f + count)));
         base_y = (int) ((float) base_y + 4.0f * sinf(3.1415927f * CompMsgCt / (140.0f + count)));
-        DrawMenu2DSprite(CompleteTex, CRect_i_(base_x, base_y, (int) width, (int) height), CRect_i_(0, 0x28, 0x80, 0x58),
-                         alpha);
+        DrawMenu2DSprite(CompleteTex, CRect_i_(base_x, base_y, (int) width, (int) height), CRect_i_(0, 0x28, 0x80, 0x58), alpha);
     }
     CompMsgCt++;
     if (CompMsgCt >= 320000 || CompMsgCt < 0) {
@@ -1448,6 +1219,13 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
     }
 }
 
+/**
+ * Draws an empty plate of the georama board with a caption in its centre.
+ *
+ * @mangled DrawAtoraNothing__Fiii
+ * @address 0x219CC0
+ * @size 0x2F4
+ */
 static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 18, 18), CRect_i_(184, 346, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y, 220, 18), CRect_i_(200, 346, 4, 18), alpha);
@@ -1467,6 +1245,13 @@ static void DrawAtoraNothing(int x, int y, int alpha) {
 #endif
 }
 
+/**
+ * Shows message 200 in a message window at a position.
+ *
+ * @mangled DrawMsgAtraWarning__FP6ClsMesii
+ * @address 0x219FC0
+ * @size 0xA0
+ */
 static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
     if (mes == NULL) {
         return;
@@ -1483,6 +1268,13 @@ static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
     mes->DrawMesWin();
 }
 
+/**
+ * Clears the georama chip selection.
+ *
+ * @mangled AtoraTipInfoInit__Fv
+ * @address 0x21A060
+ * @size 0x2C
+ */
 static void AtoraTipInfoInit() {
     NowTipHavePt->mode = 0;
     NowTipHavePt->parts_no = -1;
@@ -1494,10 +1286,24 @@ int GetMenuAtraEventFlag() {
     return MenuAtoraSel.event_flag;
 }
 
+/**
+ * Records whether the georama menu is running an event.
+ *
+ * @mangled SetMenuAtraEventFlag__Fi
+ * @address 0x21A0A0
+ * @size 0x10
+ */
 static void SetMenuAtraEventFlag(int flag) {
     MenuAtoraSel.event_flag = flag;
 }
 
+/**
+ * Opens the board's message window on the message of the selected part.
+ *
+ * @mangled MenuAtoraAfterFadeIn__Fv
+ * @address 0x21A0B0
+ * @size 0x7C
+ */
 static void MenuAtoraAfterFadeIn() {
     int msg_no;
 
@@ -1571,15 +1377,15 @@ void InitMenuAtora1(int open_mode, int edit_map, int *texture_blocks, u_long128 
 }
 
 void InitMenuAtoraSelect(int map_no) {
-    int place;
-    char path[64];
-    int map;
-    int next;
-    int count;
+    int             place;
+    char            path[64];
+    int             map;
+    int             next;
+    int             count;
     EDITPARTS_INFO *info;
-    int pos;
-    int y;
-    int i;
+    int             pos;
+    int             y;
+    int             i;
 
     MenuAtoraSel.map_no = map_no;
     map = MenuAtoraSel.map_no;
@@ -1666,7 +1472,7 @@ static inline void SetCursorMode(CMenuCursor *cursor, int menu, int mode) {
  */
 static void ExitAtoraSelect() {
     CMenuCursor *cursor;
-    int pos;
+    int          pos;
 
     cursor = SaveData->GetMenuCursor();
     if (cursor->reset_pos == 0) {
@@ -1687,6 +1493,13 @@ static void ExitAtoraSelect() {
     AtoraNameMes.narrow_gaiji = 0;
 }
 
+/**
+ * Looks up the textures the georama board draws from.
+ *
+ * @mangled AtoraTexInfoGet__Fv
+ * @address 0x21A960
+ * @size 0x118
+ */
 static void AtoraTexInfoGet() {
     CompleteTex = TexManager.GetTexture("complete", -1);
     Sozai = TexManager.GetTexture("sozai", AtoraTextureReadBlock);
@@ -1789,27 +1602,27 @@ void DrawMenuAtoraSelect() {
  * @size 0xFEC
  */
 static void DrawAtoraSelect(int fade) {
-    int open_mode;
-    int event;
-    int alpha;
+    int             open_mode;
+    int             event;
+    int             alpha;
     EDITPARTS_INFO *info;
-    int settled;
-    int remaining;
-    int all_tips;
-    int parts;
-    float target;
-    float y;
-    float cursor_x;
-    float cursor_y;
-    float step;
-    int waku_size;
-    int waku_x;
-    int waku_y;
-    int odd;
-    int count;
-    int board_y;
-    int u;
-    int v;
+    int             settled;
+    int             remaining;
+    int             all_tips;
+    int             parts;
+    float           target;
+    float           y;
+    float           cursor_x;
+    float           cursor_y;
+    float           step;
+    int             waku_size;
+    int             waku_x;
+    int             waku_y;
+    int             odd;
+    int             count;
+    int             board_y;
+    int             u;
+    int             v;
 
     AtoraTexInfoGet();
     alpha = 0x80;
@@ -1882,13 +1695,12 @@ static void DrawAtoraSelect(int fade) {
         if (settled != 0 || (MenuAtoraSel.map_no == 5 && all_tips != 0)) {
             float phase = CursorVibeCnt % 89;
             phase -= 45.0f;
-            float sign_y = 208.0f + 8.0f * sinf(3.1415927f * phase / 45.0f);
+            float    sign_y = 208.0f + 8.0f * sinf(3.1415927f * phase / 45.0f);
             CRect_i_ source(0, 0, 0x50, 0x20);
             if (MenuAtoraSel.map_no == 5 && all_tips != 0) {
                 source.x += 0x50;
             }
-            DrawMenu2DSprite(CompleteTex, CRect_i_(0x83, (int) (1.0f + sign_y), source.width, source.height), source, 6, 6,
-                             6, (alpha * 0x50) >> 7);
+            DrawMenu2DSprite(CompleteTex, CRect_i_(0x83, (int) (1.0f + sign_y), source.width, source.height), source, 6, 6, 6, (alpha * 0x50) >> 7);
             DrawMenu2DSprite(CompleteTex, CRect_i_(0x80, (int) sign_y, source.width, source.height), source, alpha);
         }
         if (MenuAtoraSel.step == 4) {
@@ -2008,18 +1820,17 @@ static void DrawAtoraSelect(int fade) {
         if (tip_no > -1) {
             CTexture *texture = RetCTexAtora(tip_no, u, v);
             if (texture != NULL) {
-                float sway_x = 7.0f * cosf(0.0805536583f * CursorVibeCnt);
-                float sway_y = 5.0f * sinf(0.116355285f * CursorVibeCnt);
-                int tip_x = (int) (2.0f + (MenuAtoraSel.cursor_x + sway_x));
-                int tip_y = (int) (MenuAtoraSel.cursor_y + sway_y - 14.0f);
+                float    sway_x = 7.0f * cosf(0.0805536583f * CursorVibeCnt);
+                float    sway_y = 5.0f * sinf(0.116355285f * CursorVibeCnt);
+                int      tip_x = (int) (2.0f + (MenuAtoraSel.cursor_x + sway_x));
+                int      tip_y = (int) (MenuAtoraSel.cursor_y + sway_y - 14.0f);
                 CRect_i_ source(u, v, 0x24, 0x24);
                 DrawMenu2DSprite(texture, CRect_i_(tip_x + 5, tip_y + 3, 0x24, 0x24), source, 10, 10, 10, 0x50);
                 float hand_x = MenuAtoraSel.cursor_x + sway_x;
-                int hand_ix = (int) hand_x;
+                int   hand_ix = (int) hand_x;
                 float hand_y = MenuAtoraSel.cursor_y + sway_y;
-                int hand_iy = (int) hand_y;
-                DrawMenu2DSprite(StayTex, CRect_i_((int) hand_x + 6, (int) hand_y + 3, 0x20, 0x20),
-                                 CRect_i_(0x80, 0x28, 0x20, 0x20), 10, 10, 10, 0x50);
+                int   hand_iy = (int) hand_y;
+                DrawMenu2DSprite(StayTex, CRect_i_((int) hand_x + 6, (int) hand_y + 3, 0x20, 0x20), CRect_i_(0x80, 0x28, 0x20, 0x20), 10, 10, 10, 0x50);
                 DrawMenu2DSprite(texture, CRect_i_(tip_x, tip_y, 0x24, 0x24), source, 0x80);
             }
         }
@@ -2034,8 +1845,7 @@ static void DrawAtoraSelect(int fade) {
                 }
                 break;
         }
-        if (MenuAtoraSel.step == 3 ||
-            (MenuAtoraSel.mode == 0 && MenuAtoraSel.board.cursor == 0 && MenuAtoraSel.map_no == 5)) {
+        if (MenuAtoraSel.step == 3 || (MenuAtoraSel.mode == 0 && MenuAtoraSel.board.cursor == 0 && MenuAtoraSel.map_no == 5)) {
             draw_waku = 0;
         }
         if (draw_waku != 0) {
@@ -2044,8 +1854,19 @@ static void DrawAtoraSelect(int fade) {
     }
 }
 
+/**
+ * Loads the georama board screen's texture block.
+ *
+ * @mangled AtoraTextureEnter__Fv
+ * @address 0x21BE70
+ * @size 0x1A4
+ */
 static int AtoraTextureEnter() {
-    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 tex[3] = {
+        {"#frame_image3#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+        {NULL,                                        0, 0},
+        {NULL,                                        0, 0}
+    };
     BG_READ_INFO *bg;
 
     tex[1].block_no = tex[0].block_no = AtoraTextureReadBlock;
@@ -2072,6 +1893,13 @@ int tip_sort_type = 1;
 /** The rank that the board's sort gives each chip group, by group. */
 int tip_table[3] = {3, 1, 2};
 
+/**
+ * Returns which of the three chip groups a chip number belongs to.
+ *
+ * @mangled GetTipKind__Fi
+ * @address 0x21C020
+ * @size 0x64
+ */
 static int GetTipKind(int tip_no) {
     if (tip_no < 0 || tip_no >= 100) {
         return 0;
@@ -2087,6 +1915,14 @@ static int GetTipKind(int tip_no) {
 #endif
 }
 
+/**
+ * Compares two chips for the board's sort by group, with empty slots last, and
+ * then by number.
+ *
+ * @mangled CompTip__Fii
+ * @address 0x21C090
+ * @size 0xCC
+ */
 static int CompTip(int tip_a, int tip_b) {
     int rank_a;
     int rank_b;
@@ -2111,13 +1947,21 @@ static int CompTip(int tip_a, int tip_b) {
     return (tip_a < tip_b) ? -1 : 0;
 }
 
+/**
+ * Sorts the chip list with the current group first and empty slots last, and
+ * returns whether any chip moved.
+ *
+ * @mangled SeitonAtoraTipBoardSub__Fv
+ * @address 0x21C160
+ * @size 0x108
+ */
 static int SeitonAtoraTipBoardSub() {
-    int rank;
-    int kind;
+    int  rank;
+    int  kind;
     s16 *list;
-    int i;
-    int j;
-    int moved;
+    int  i;
+    int  j;
+    int  moved;
 
     kind = tip_sort_type;
     for (rank = 0; rank < 3; rank++) {
@@ -2141,6 +1985,14 @@ static int SeitonAtoraTipBoardSub() {
     return moved;
 }
 
+/**
+ * Sorts the chip list, switching which chip group comes first whenever the list
+ * is already in order, up to three times.
+ *
+ * @mangled SeitonAtoraTipBoard__Fv
+ * @address 0x21C270
+ * @size 0x70
+ */
 static void SeitonAtoraTipBoard() {
     int i;
 
@@ -2156,15 +2008,15 @@ static void SeitonAtoraTipBoard() {
 }
 
 int MenuAtoraSelectKey() {
-    int result;
-    int max_village;
-    int prev_village;
-    int msg_no;
-    int msg_base;
-    int max_pos;
-    int event_no;
-    int tip_no;
-    int held;
+    int             result;
+    int             max_village;
+    int             prev_village;
+    int             msg_no;
+    int             msg_base;
+    int             max_pos;
+    int             event_no;
+    int             tip_no;
+    int             held;
     EDITPARTS_INFO *info;
 
     result = 0;
@@ -2469,7 +2321,7 @@ static int AtoraBoardKey() {
     }
     if (MenuAtoraSel.mode == 0) {
         EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
-        int event = 0;
+        int             event = 0;
         if (info != NULL) {
             event = AtoraCompOrEvent(info);
         }
@@ -2533,10 +2385,9 @@ static int AtoraBoardKey() {
                             }
                         }
                     } else {
-                        EDITPARTS_ELEMENT *element = &info->elements[slot];
-                        EDIT_CHIP_ATTACH_DATA *chip =
-                            &GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no)->elements[slot];
-                        int fits = 1;
+                        EDITPARTS_ELEMENT     *element = &info->elements[slot];
+                        EDIT_CHIP_ATTACH_DATA *chip = &GetEditAtraPartsData(MenuAtoraSel.map_no, info->parts_no)->elements[slot];
+                        int                    fits = 1;
                         if (NowTipHavePt->tip_no != element->id) {
                             fits = 0;
                         }
@@ -2733,7 +2584,7 @@ static int AtoraTipKey() {
     switch (PersonalBoardKey()) {
         case 1: {
             EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
-            int event = 0;
+            int             event = 0;
             if (info != NULL) {
                 event = AtoraCompOrEvent(info);
             }
@@ -2788,9 +2639,9 @@ static int AtoraTipKey() {
 }
 
 static void AtoraMenuTipCancel() {
-    EDITPARTS_INFO *info;
+    EDITPARTS_INFO    *info;
     EDITPARTS_ELEMENT *element;
-    s16 tip_no;
+    s16                tip_no;
 
     switch (NowTipHavePt->mode) {
         case 1:
@@ -2831,34 +2682,29 @@ static void AtoraBoardFadeEffect() {
     set2DSprite(Vif1Packet, &frame, CRect_i_(0, 1, 320, 60), CRect_i_(0, 0, 320, 61), &top, &top, &bottom, &bottom, 1);
     top.a = 0x80;
     bottom.a = 0;
-    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 61, 320, 59), CRect_i_(0, 60, 320, 60), &top, &top, &bottom, &bottom,
-                1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 61, 320, 59), CRect_i_(0, 60, 320, 60), &top, &top, &bottom, &bottom, 1);
     top.a = 0;
     bottom.a = 0x80;
-    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 277, 320, 89), CRect_i_(0, 276, 320, 90), &top, &top, &bottom,
-                &bottom, 1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 277, 320, 89), CRect_i_(0, 276, 320, 90), &top, &top, &bottom, &bottom, 1);
     bottom.a = 0x80;
     top.a = 0x80;
-    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 366, 320, 1), CRect_i_(0, 366, 320, 1), &top, &top, &bottom, &bottom,
-                1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 366, 320, 1), CRect_i_(0, 366, 320, 1), &top, &top, &bottom, &bottom, 1);
 #ifdef PAL
-    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 113), CRect_i_(0, 366, 320, 114), &top, &top, &bottom,
-                &bottom, 1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 113), CRect_i_(0, 366, 320, 114), &top, &top, &bottom, &bottom, 1);
 #else
-    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 81), CRect_i_(0, 366, 320, 82), &top, &top, &bottom,
-                &bottom, 1);
+    set2DSprite(Vif1Packet, &frame, CRect_i_(0, 367, 320, 81), CRect_i_(0, 366, 320, 82), &top, &top, &bottom, &bottom, 1);
 #endif
     MGSetGsTEXA(NULL);
 }
 
-void AtoraNameDraw(int) {
-    int prev_mes_no[3];
-    int pos;
-    int y;
-    int i;
-    int mes_no;
-    int x;
-    int alpha;
+void AtoraNameDraw(int unused) {
+    int             prev_mes_no[3];
+    int             pos;
+    int             y;
+    int             i;
+    int             mes_no;
+    int             x;
+    int             alpha;
     EDITPARTS_INFO *info;
 
     MenuTextureReload(AtoraNameMes.tex_block);
@@ -2932,6 +2778,14 @@ void AtoraNameDraw(int) {
     }
 }
 
+/**
+ * Draws the twelve option rows, each label with its current setting, as two
+ * pages from the given position.
+ *
+ * @mangled OptionMenuDraw__Fiiiii
+ * @address 0x21E020
+ * @size 0x42C
+ */
 #ifdef PAL
 static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     int label[13] = {10, 8, 4, 5, 2, 3, 14, 9, 11, 12, 13, 6, 7};
@@ -2962,27 +2816,27 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
         DrawMenu2DSprite(MenuOption, dst, src, alpha);
         int row_kind = kind[i];
         // Source position of the first cell of the row, by row kind.
-        int cell_uv[5][2] = {{OptionMenu.flag[i] << 6, row_kind * 48 + 176},
-                             {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
-                             {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
-                             {128, 176},
-                             {192, 200}};
+        int cell_uv[5][2] = {
+            {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
+            {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
+            {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
+            {128,                     176                },
+            {192,                     200                }
+        };
         u = cell_uv[row_kind][0];
         v = cell_uv[row_kind][1];
         switch (row_kind) {
             case 0:
             case 1:
             case 2:
-                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
-                                 alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24), alpha);
                 if (u < 64) {
                     u = 64;
                 } else {
                     u = 0;
                 }
                 v = (row_kind * 2 + 1) * 24 + 176;
-                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
-                                 alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24), alpha);
                 break;
             case 3:
                 cell_x = row_x + 238;
@@ -2992,8 +2846,7 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
                     if (j == setting) {
                         u -= 32;
                     }
-                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 32, 23), CRect_i_(u, v + 1, 32, 24),
-                                     alpha);
+                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 32, 23), CRect_i_(u, v + 1, 32, 24), alpha);
                     v += 24;
                     cell_x += 36;
                 }
@@ -3050,16 +2903,14 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
             case 2:
                 u = OptionMenu.flag[i] << 6;
                 v = kind[i] * 48 + 176;
-                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
-                                 alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24), alpha);
                 if (u < 64) {
                     u = 64;
                 } else {
                     u = 0;
                 }
                 v = (kind[i] * 2 + 1) * 24 + 176;
-                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
-                                 alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24), alpha);
                 break;
             case 3:
                 v = 176;
@@ -3070,8 +2921,7 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
                     if (j == setting) {
                         u -= 32;
                     }
-                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 32, 23), CRect_i_(u, v + 1, 32, 24),
-                                     alpha);
+                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 32, 23), CRect_i_(u, v + 1, 32, 24), alpha);
                     v += 24;
                     cell_x += 36;
                 }
@@ -3092,6 +2942,13 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
 }
 #endif
 
+/**
+ * Draws the arrow that points to the other option page.
+ *
+ * @mangled DrawOptionLRCur__Fii
+ * @address 0x21E450
+ * @size 0x80
+ */
 static void DrawOptionLRCur(int side, int alpha) {
 #ifdef PAL
     s16 cursor_x[2] = {32, 520};
@@ -3105,33 +2962,50 @@ static void DrawOptionLRCur(int side, int alpha) {
 }
 
 #ifdef PAL
+/**
+ * Draws the screen position adjustment frame: its centre piece, arrows and screen corners. PAL only.
+ *
+ * @mangled DrawOptionScreenWaku__Fv
+ * @address 0x223D50
+ * @size 0x1D4
+ */
 static void DrawOptionScreenWaku() {
     int center_x = 320;
     int center_y = 240;
 
     DrawMenu2DSprite(MenuOption, CRect_i_(288, 208, 64, 64), CRect_i_(448, 0, 64, 64), 0x80);
     // Screen corners that the frame corner pieces sit in.
-    s16 corner[4][2] = {{4, 4}, {604, 4}, {4, 444}, {604, 444}};
+    s16 corner[4][2] = {
+        {4,   4  },
+        {604, 4  },
+        {4,   444},
+        {604, 444}
+    };
     // Positions of the four arrows around the centre piece.
-    s16 arrow[4][2] = {{center_x - 16, center_y - 96},
-                       {center_x + 64, center_y - 16},
-                       {center_x - 16, center_y + 64},
-                       {center_x - 96, center_y - 16}};
+    s16 arrow[4][2] = {
+        {center_x - 16, center_y - 96},
+        {center_x + 64, center_y - 16},
+        {center_x - 16, center_y + 64},
+        {center_x - 96, center_y - 16}
+    };
     // Source offset of each corner's piece within its group.
-    u8 piece_uv[4][2] = {{0, 0}, {32, 0}, {0, 32}, {32, 32}};
+    u8 piece_uv[4][2] = {
+        {0,  0 },
+        {32, 0 },
+        {0,  32},
+        {32, 32}
+    };
     for (int i = 0; i < 4; i++) {
-        DrawMenu2DSprite(MenuOption, CRect_i_(corner[i][0], corner[i][1], 32, 32),
-                         CRect_i_(piece_uv[i][0] + 448, piece_uv[i][1] + 64, 32, 32), 0x80);
-        DrawMenu2DSprite(MenuOption, CRect_i_(arrow[i][0], arrow[i][1], 32, 32),
-                         CRect_i_(piece_uv[i][0] + 448, piece_uv[i][1] + 128, 32, 32), 0x80);
+        DrawMenu2DSprite(MenuOption, CRect_i_(corner[i][0], corner[i][1], 32, 32), CRect_i_(piece_uv[i][0] + 448, piece_uv[i][1] + 64, 32, 32), 0x80);
+        DrawMenu2DSprite(MenuOption, CRect_i_(arrow[i][0], arrow[i][1], 32, 32), CRect_i_(piece_uv[i][0] + 448, piece_uv[i][1] + 128, 32, 32), 0x80);
     }
 }
 #endif
 
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
-    u_long128 *data;
+    u_long128   *data;
     CUserStatus *status;
-    int i;
+    int          i;
 
     switch ((int) buffer) {
         case 0:
@@ -3246,6 +3120,13 @@ static void ExitMenuOption() {
 #endif
 }
 
+/**
+ * Resets the option rows to their defaults.
+ *
+ * @mangled InitOptionFlag__Fv
+ * @address 0x21E910
+ * @size 0x44
+ */
 static void InitOptionFlag() {
     int i;
 
@@ -3264,6 +3145,13 @@ static void InitOptionFlag() {
 #endif
 }
 
+/**
+ * Restores the option rows to the values they had when the screen opened.
+ *
+ * @mangled PrevOptionSetFunc__Fv
+ * @address 0x21E960
+ * @size 0x48
+ */
 static void PrevOptionSetFunc() {
     int i;
 
@@ -3285,7 +3173,11 @@ int MenuOptionKey() {
             if (OptionMenu.texture_ready == 0) {
                 ReadBG();
                 if (ReadBGSync() == 0) {
-                    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image_option#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    LOADTEXTURE_INFO2 textures[3] = {
+                        {"#frame_image_option#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+                        {NULL,                                              0, 0},
+                        {NULL,                                              0, 0}
+                    };
                     textures[0].block_no = OptionMenu.block_no;
                     textures[1].block_no = OptionMenu.block_no;
                     BG_READ_INFO *file = GetReadBGFile(0);
@@ -3521,7 +3413,11 @@ int MenuOptionKey() {
             if (OptionMenu.texture_ready == 0) {
                 ReadBG();
                 if (ReadBGSync() == 0) {
-                    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image_option#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    LOADTEXTURE_INFO2 textures[3] = {
+                        {"#frame_image_option#640#448#4", 0, 0},
+                        {NULL,                            0, 0},
+                        {NULL,                            0, 0}
+                    };
                     textures[0].block_no = OptionMenu.block_no;
                     textures[1].block_no = OptionMenu.block_no;
                     BG_READ_INFO *file = GetReadBGFile(0);
@@ -3767,29 +3663,24 @@ void DrawMenuOption() {
         default: {
             static int OpMenuWakuCnt = 0;
             static int OptionCurCnt = 0;
-            int left = (int) ((float) (target_x + 0x14) + 0.2f * OpMenuWakuCnt);
-            int top = (int) ((float) (target_y - 9) + 0.2f * OpMenuWakuCnt);
-            int right_x = (int) ((float) (target_x + 0x14 + width) - 0.2f * OpMenuWakuCnt);
-            int bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
-            RECT corner = {0xB2, 0xF8, 0x10, 0x10};
+            int        left = (int) ((float) (target_x + 0x14) + 0.2f * OpMenuWakuCnt);
+            int        top = (int) ((float) (target_y - 9) + 0.2f * OpMenuWakuCnt);
+            int        right_x = (int) ((float) (target_x + 0x14 + width) - 0.2f * OpMenuWakuCnt);
+            int        bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
+            RECT       corner = {0xB2, 0xF8, 0x10, 0x10};
             if (OptionMenu.buttons != 2) {
-                DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height),
-                                 CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
-                DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height),
-                                 CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
-                DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height),
-                                 CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
-                DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height),
-                                 CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height), CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height), CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
                 OpMenuWakuCnt++;
                 if (OpMenuWakuCnt < 0 || OpMenuWakuCnt >= 30) {
                     OpMenuWakuCnt = 0;
                 }
-                float hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805536583f * OptionCurCnt);
-                float hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.116355285f * OptionCurCnt);
+                float    hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805536583f * OptionCurCnt);
+                float    hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.116355285f * OptionCurCnt);
                 CRect_i_ hand(0xD2, 0xF8, 0x20, 0x20);
-                DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0,
-                                 (alpha * 100) >> 7);
+                DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0, (alpha * 100) >> 7);
                 DrawMenu2DSprite(MenuOption, CRect_i_((int) hand_x, (int) hand_y, 0x20, 0x20), hand, alpha);
             }
             OptionCurCnt++;
@@ -3814,8 +3705,8 @@ void DrawMenuOption() {
             float win_y;
             float win_w;
             float win_h;
-            int text_x;
-            int text_y;
+            int   text_x;
+            int   text_y;
             DrawMenu2DSprite(MenuOption, CRect_i_(0x50, 0x28, 0xAA, 0x28), CRect_i_(0xB3, 0x118, 0xAA, 0x28), alpha);
             GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
             MenuHelpWinDraw((int) win_x, (int) win_y, win_w, win_h, alpha);
@@ -3913,28 +3804,23 @@ void DrawMenuOption() {
         default: {
             static int OpMenuWakuCnt = 0;
             static int OptionCurCnt = 0;
-            int left = (int) ((float) (target_x + 0x14) + 0.2f * OpMenuWakuCnt);
-            int top = (int) ((float) (target_y - 9) + 0.2f * OpMenuWakuCnt);
-            int right_x = (int) ((float) (target_x + 0x14 + width) - 0.2f * OpMenuWakuCnt);
-            int bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
-            RECT corner = {0xB2, 0xF8, 0x10, 0x10};
-            DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height),
-                             CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
-            DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height),
-                             CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
-            DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height),
-                             CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
-            DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height),
-                             CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
+            int        left = (int) ((float) (target_x + 0x14) + 0.2f * OpMenuWakuCnt);
+            int        top = (int) ((float) (target_y - 9) + 0.2f * OpMenuWakuCnt);
+            int        right_x = (int) ((float) (target_x + 0x14 + width) - 0.2f * OpMenuWakuCnt);
+            int        bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
+            RECT       corner = {0xB2, 0xF8, 0x10, 0x10};
+            DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height), CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height), CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
             OpMenuWakuCnt++;
             if (OpMenuWakuCnt < 0 || OpMenuWakuCnt >= 30) {
                 OpMenuWakuCnt = 0;
             }
-            float hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805536583f * OptionCurCnt);
-            float hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.116355285f * OptionCurCnt);
+            float    hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805536583f * OptionCurCnt);
+            float    hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.116355285f * OptionCurCnt);
             CRect_i_ hand(0xD2, 0xF8, 0x20, 0x20);
-            DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0,
-                             (alpha * 100) >> 7);
+            DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0, (alpha * 100) >> 7);
             DrawMenu2DSprite(MenuOption, CRect_i_((int) hand_x, (int) hand_y, 0x20, 0x20), hand, alpha);
             OptionCurCnt++;
             if (OptionCurCnt > 0x107AC0 || OptionCurCnt < 0) {
@@ -3954,8 +3840,8 @@ void DrawMenuOption() {
             float win_y;
             float win_w;
             float win_h;
-            int text_x;
-            int text_y;
+            int   text_x;
+            int   text_y;
             DrawMenu2DSprite(MenuOption, CRect_i_(0x50, 0x28, 0xAA, 0x28), CRect_i_(0xB3, 0x118, 0xAA, 0x28), alpha);
             GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
             MenuHelpWinDraw((int) win_x, (int) win_y, win_w, win_h, alpha);
@@ -3981,7 +3867,7 @@ int OptionMenuFadeOutStart() {
 
 int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
-    int clear;
+    int        clear;
 
     data = buffer;
     if (buffer == NULL) {
@@ -4016,8 +3902,7 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
         case 3:
             clear = SaveMenu.mode == 2;
             *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] = clear;
-            printf("SaveData clear flag = %d\n",
-                   *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2]);
+            printf("SaveData clear flag = %d\n", *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2]);
             GameClearFlag = SaveMenu.mode == 2;
             SaveMenu.mode = 2;
             GamePad.SetAutoRepeat(0xA000, 30, 5);
@@ -4035,6 +3920,14 @@ int InitMenuSave(int mode, int block_no, u_long128 *buffer) {
     return 1;
 }
 
+/**
+ * Closes the save screen's message window and restores the pad, and after a
+ * load sets the stereo mode from the loaded configuration.
+ *
+ * @mangled ExitSaveSelect__Fv
+ * @address 0x21FD80
+ * @size 0x144
+ */
 static void ExitSaveSelect() {
     s32 *config;
 
@@ -4120,11 +4013,11 @@ int (*SaveMenuFunc[26])() = {
 };
 
 int MenuSaveKey() {
-    int prev_func_no;
-    int result;
-    int now_func_no;
-    int msg_no;
-    int mes_value;
+    int            prev_func_no;
+    int            result;
+    int            now_func_no;
+    int            msg_no;
+    int            mes_value;
     MC_ERROR_INFO *error;
     MC_ERROR_INFO *last_error;
 
@@ -4281,7 +4174,7 @@ int MenuSaveKey() {
     return SaveMenu.result;
 }
 
-void DrawMenuSave(char *) {
+void DrawMenuSave(char *frame_name) {
     if (SaveMenu.texture_ready == 0) {
         return;
     }
@@ -4314,7 +4207,7 @@ void DrawMenuSave(char *) {
     SaveMenu.board_y += (y - SaveMenu.board_y) / 4.0f;
     y = SaveMenu.board_y;
     float board_x = 140.0f;
-    int bright = 0x80;
+    int   bright = 0x80;
     switch (SaveMenu.key_no) {
         case 9:
         case 12:
@@ -4438,12 +4331,11 @@ void DrawMenuSave(char *) {
     }
     if (0 < hand_x && 0 < hand_y) {
         static int ct = 0;
-        RECT hand = {0x160, 0xD6, 0x20, 0x20};
-        float draw_x = (float) hand_x + 7.0f * cosf(0.0805536583f * ct);
-        float draw_y = (float) hand_y + 5.0f * sinf(0.116355285f * ct);
-        CRect_i_ source(0x160, 0xD6, 0x20, 0x20);
-        DrawMenu2DSprite(SaveBoard, CRect_i_((int) (5.0f + draw_x), (int) (3.0f + draw_y), hand.width, hand.height),
-                         source, 0, 0, 0, alpha);
+        RECT       hand = {0x160, 0xD6, 0x20, 0x20};
+        float      draw_x = (float) hand_x + 7.0f * cosf(0.0805536583f * ct);
+        float      draw_y = (float) hand_y + 5.0f * sinf(0.116355285f * ct);
+        CRect_i_   source(0x160, 0xD6, 0x20, 0x20);
+        DrawMenu2DSprite(SaveBoard, CRect_i_((int) (5.0f + draw_x), (int) (3.0f + draw_y), hand.width, hand.height), source, 0, 0, 0, alpha);
         DrawMenu2DSprite(SaveBoard, CRect_i_((int) draw_x, (int) draw_y, hand.width, hand.height), source, alpha);
         ct++;
         if (!((float) ct < 105299.0f)) {
@@ -4649,7 +4541,7 @@ static int SaveMenuKeyLoadConfig() {
 }
 
 static int SaveMenuKeyFileSelect() {
-    int prev_file;
+    int            prev_file;
     SAVEDATA_INFO *info;
 
     prev_file = SaveMenu.file_no;

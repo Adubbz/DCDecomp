@@ -26,8 +26,8 @@
  * Describes one kind of bait that can be put on the hook.
  */
 struct EsaInfo {
-    int item_no;  /**< Item the bait is made from. */
-    float radius; /**< Distance from which fish notice the bait. */
+    int   item_no; /**< Item the bait is made from. */
+    float radius;  /**< Distance from which fish notice the bait. */
 };
 
 /**
@@ -49,44 +49,44 @@ static EsaInfo esa_info[13] = {
     {0xBE, 40.0f},
 };
 
-int draw_under_water = 1;
-float distp = 1.6666666f;
-float WaterLevel;
-float GroundLevel;
-float UkiGroundLevel;
-float HookGroundLevel;
-float LineGroundLevel;
-CFrameVu1 *EsaFrame;
-int esa_type;
-CFrame *HookFrame;
-CFrame *UkiFrame;
-int fishing_texb;
-int fish_texb;
-int esa_texb;
-CFish *Fish;
-CFish *AngleFish;
-CFish *BattleFish;
-int FishNum;
-CCPoly *cpoly;
-int cpoly_num;
-int set_hook_pos;
-int set_uki_pos;
-float pull_hook;
-CBoxVu0 fishing_rect;
-CBoxVu0 fish_rect;
-CFrameVu1 UkiFrameTop;
-CCharacter Rod;
+int           draw_under_water = 1;
+float         distp = 1.6666666f;
+float         WaterLevel;
+float         GroundLevel;
+float         UkiGroundLevel;
+float         HookGroundLevel;
+float         LineGroundLevel;
+CFrameVu1    *EsaFrame;
+int           esa_type;
+CFrame       *HookFrame;
+CFrame       *UkiFrame;
+int           fishing_texb;
+int           fish_texb;
+int           esa_texb;
+CFish        *Fish;
+CFish        *AngleFish;
+CFish        *BattleFish;
+int           FishNum;
+CCPoly       *cpoly;
+int           cpoly_num;
+int           set_hook_pos;
+int           set_uki_pos;
+float         pull_hook;
+CBoxVu0       fishing_rect;
+CBoxVu0       fish_rect;
+CFrameVu1     UkiFrameTop;
+CCharacter    Rod;
 sceVu0FVECTOR point[24];
 sceVu0FVECTOR old_p[24];
 sceVu0FVECTOR velo[24];
 sceVu0FVECTOR hookp[3];
 sceVu0FVECTOR hookop[3];
 sceVu0FVECTOR hookv[3];
-float hook_dist[3];
+float         hook_dist[3];
 sceVu0FVECTOR ukip[4];
 sceVu0FVECTOR ukiop[4];
 sceVu0FVECTOR ukiv[4];
-float uki_dist[6];
+float         uki_dist[6];
 sceVu0FVECTOR rod_top;
 sceVu0FVECTOR fishhook;
 sceVu0FVECTOR uki;
@@ -236,11 +236,13 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
         }
 #ifdef PAL
         if (DebugMode) {
-            static int fish_type[5][8] = {{1, 2, 6, 7, 1, 2, 6, 7},
-                                          {1, 4, 9, 10, 1, 4, 9, 10},
-                                          {2, 4, 6, 5, 17, 2, 4, 6},
-                                          {0, 3, 11, 12, 13, 0, 3, 11},
-                                          {14, 15, 16, 5, 17}};
+            static int fish_type[5][8] = {
+                {1, 2, 6, 7, 1, 2, 6, 7},
+                {1, 4, 9, 10, 1, 4, 9, 10},
+                {2, 4, 6, 5, 17, 2, 4, 6},
+                {0, 3, 11, 12, 13, 0, 3, 11},
+                {14, 15, 16, 5, 17}
+            };
             kind = fish_type[spot][i % 5];
         }
 #endif
@@ -560,16 +562,27 @@ static void GetHookPos(float *position) {
 /**
  * The pairs of hook points held apart by a fixed length.
  */
-static int hook_link[3][2] = {{0, 1}, {0, 2}, {1, 2}};
+static int hook_link[3][2] = {
+    {0, 1},
+    {0, 2},
+    {1, 2}
+};
 
 /**
  * The pairs of float points held apart by a fixed length.
  */
-static int uki_link[6][2] = {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {2, 3}, {3, 1}};
+static int uki_link[6][2] = {
+    {0, 1},
+    {0, 2},
+    {0, 3},
+    {1, 2},
+    {2, 3},
+    {3, 1}
+};
 
 void FishLineInit(float *position) {
     sceVu0FVECTOR p;
-    int i;
+    int           i;
 
     set_uki_pos = 0;
     set_hook_pos = 0;
@@ -660,7 +673,7 @@ void FishLineGetHook(float *position) {
 int FishingCheckUkiHook() {
     sceVu0FVECTOR uki_pos;
     sceVu0FVECTOR hook_pos;
-    float water;
+    float         water;
 
     FishLineGetUki(uki_pos);
     FishLineGetHook(hook_pos);
@@ -698,10 +711,10 @@ void FishLineStep(float *rod_position, float *unused) {
     sceVu0FVECTOR diff;
     sceVu0FVECTOR move0;
     sceVu0FVECTOR move1;
-    float water;
-    float weight;
-    int i;
-    int iteration;
+    float         water;
+    float         weight;
+    int           i;
+    int           iteration;
 
     if (cpoly != NULL) {
         sceVu0CopyVector(hook_from, point[23]);
@@ -765,7 +778,7 @@ void FishLineStep(float *rod_position, float *unused) {
             if (i == 23) {
                 weight = 0.9f;
             }
-            float rest = 1.0f - weight;
+            float  rest = 1.0f - weight;
             float *near = point[i - 1];
             float *far = point[i];
             sceVu0SubVector(diff, near, far);
@@ -884,18 +897,18 @@ void FishLineStep(float *rod_position, float *unused) {
 }
 
 void FishLineDraw(int above_water) {
-    int screen[4];
-    sceVu0FVECTOR center;
-    sceVu0FVECTOR direction;
-    sceVu0FMATRIX matrix;
-    sceVu0FVECTOR uki_top;
-    sceVu0FVECTOR hook_top;
-    sceVu0FVECTOR esa_position;
-    sceGsTest test;
-    int draw;
-    int visible;
-    int prev_visible;
-    int i;
+    int            screen[4];
+    sceVu0FVECTOR  center;
+    sceVu0FVECTOR  direction;
+    sceVu0FMATRIX  matrix;
+    sceVu0FVECTOR  uki_top;
+    sceVu0FVECTOR  hook_top;
+    sceVu0FVECTOR  esa_position;
+    sceGsTest      test;
+    int            draw;
+    int            visible;
+    int            prev_visible;
+    int            i;
     sceVif1Packet *packet;
 
     TexManager.ReloadTexture(GetVif1Packet(), fishing_texb);
@@ -912,7 +925,7 @@ void FishLineDraw(int above_water) {
     for (i = 0; i < 24; i++) {
         visible = MGRotTransPers(screen, point[i], 0);
         u_char above = point[i][1] > WaterLevel;
-        int reg = SCE_GS_XYZF2;
+        int    reg = SCE_GS_XYZF2;
         if (visible == 0 || prev_visible == 0) {
             reg = SCE_GS_XYZF3;
         }
@@ -923,8 +936,7 @@ void FishLineDraw(int above_water) {
         } else if (above || draw_under_water == 0) {
             reg = SCE_GS_XYZF3;
         }
-        sceVif1PkAddGsAD(packet, reg,
-                         (u_long) screen[0] | ((u_long) screen[1] << 16) | ((u_long) screen[2] << 32));
+        sceVif1PkAddGsAD(packet, reg, (u_long) screen[0] | ((u_long) screen[1] << 16) | ((u_long) screen[2] << 32));
         prev_visible = visible;
     }
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);

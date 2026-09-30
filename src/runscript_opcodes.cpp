@@ -144,11 +144,11 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
 }
 
 int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float current_frame = NowMonstorUnit->chara[monster_no][0].motion_type.state.time;
-    int motion_no = NowMonstorUnit->chara[monster_no][0].motion_no;
+    int   motion_no = NowMonstorUnit->chara[monster_no][0].motion_no;
     float end_frame = (float) NowMonstorUnit->chara[monster_no][0].motion_type.motion_info[motion_no].end;
-    int done = 0;
+    int   done = 0;
 
     if (!(current_frame < end_frame - 1.0f) && current_frame < end_frame) {
         done = 1;
@@ -175,7 +175,7 @@ int _SET_MOTION_FRM(RS_STACKDATA *stack, int argc) {
 }
 
 int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float monster_position[4];
     float target_position[4];
 
@@ -192,8 +192,8 @@ int _GET_DISTANCE(RS_STACKDATA *stack, int argc) {
 }
 
 int _GET_POSITION(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
-    int target = (int) GetStackFloat(stack++);
+    int   monster_no = NowMonstorUnit->current_monster;
+    int   target = (int) GetStackFloat(stack++);
     float position[4];
 
     if (target == -1) {
@@ -260,8 +260,8 @@ int _CHK_MOVE(RS_STACKDATA *stack, int argc) {
 }
 
 int _CHK_USER_INNER_PRODUCT(RS_STACKDATA *stack, int argc) {
-    int in_view;
-    int monster_no = NowMonstorUnit->current_monster;
+    int   in_view;
+    int   monster_no = NowMonstorUnit->current_monster;
     float min_cosine;
     float max_distance;
     float position[4];
@@ -298,7 +298,7 @@ int _CHK_USER_INNER_PRODUCT(RS_STACKDATA *stack, int argc) {
 }
 
 int _GET_VECTOR(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float angle = 0.0f;
     float direction[4];
     float position[4];
@@ -368,7 +368,7 @@ int _GET_DIRECTION(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_MOVE(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float direction[4];
     float position[4];
     float speed;
@@ -391,8 +391,8 @@ int _SET_MOVE(RS_STACKDATA *stack, int argc) {
 }
 
 int _CHK_MOVE_INFO(RS_STACKDATA *stack, int argc) {
-    int clear;
-    int monster_no = NowMonstorUnit->current_monster;
+    int   clear;
+    int   monster_no = NowMonstorUnit->current_monster;
     float from[4];
     float to[4];
     float hit[4];
@@ -404,8 +404,7 @@ int _CHK_MOVE_INFO(RS_STACKDATA *stack, int argc) {
     to[2] = GetStackFloat(stack++);
     from[1] += 5.0f;
     to[1] += 5.0f;
-    if (CheckHit(NowMonstorUnit->monster[monster_no].collision_poly, NowMonstorUnit->monster[monster_no].collision_poly_count,
-                 from, to, hit, 0, 0) >= 0) {
+    if (CheckHit(NowMonstorUnit->monster[monster_no].collision_poly, NowMonstorUnit->monster[monster_no].collision_poly_count, from, to, hit, 0, 0) >= 0) {
         clear = 0;
     }
     SetStack(stack, clear);
@@ -423,7 +422,7 @@ int _SET_ROT_CANSEL(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_POSITION(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float x = GetStackFloat(stack++);
     float y = GetStackFloat(stack++);
     float z = GetStackFloat(stack);
@@ -511,7 +510,7 @@ int _STATUS_SET_COL_OFF(RS_STACKDATA *stack, int argc) {
 }
 
 int _STATUS_GET_LIFE_RATE(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float max_hp = NowMonstorUnit->monster[monster_no].max_hp;
     float hp = NowMonstorUnit->monster[monster_no].hp;
 
@@ -520,7 +519,7 @@ int _STATUS_GET_LIFE_RATE(RS_STACKDATA *stack, int argc) {
 }
 
 int _STATUS_GET_USER_VECTOR(RS_STACKDATA *stack, int argc) {
-    int normalize = 0;
+    int   normalize = 0;
     float angle;
     float vector[4];
 
@@ -645,10 +644,10 @@ int _STATUS_SET_SHADOW_LEN(RS_STACKDATA *stack, int argc) {
 }
 
 int _STATUS_SET_LOCKON_TRG(RS_STACKDATA *stack, int argc) {
-    char *name;
-    int monster_no = NowMonstorUnit->current_monster;
-    float scale_x = 1.0f;
-    float scale_y = scale_x;
+    char   *name;
+    int     monster_no = NowMonstorUnit->current_monster;
+    float   scale_x = 1.0f;
+    float   scale_y = scale_x;
     CFrame *frame;
 
     name = GetStackString(stack++);
@@ -671,8 +670,8 @@ int _STATUS_SET_LOCKON_TRG(RS_STACKDATA *stack, int argc) {
 int _SET_MOV_COL(RS_STACKDATA *stack, int argc) {
     char *name = GetStackString(stack++);
     float radius = GetStackFloat(stack);
-    int i;
-    int monster_no = NowMonstorUnit->current_monster;
+    int   i;
+    int   monster_no = NowMonstorUnit->current_monster;
 
     for (i = 0; i < 12; i++) {
         if (NowMonstorUnit->effect3[monster_no].timer[i] == 0) {
@@ -695,9 +694,9 @@ int _SET_BODY_COL(RS_STACKDATA *stack, int argc) {
     float radius = GetStackFloat(stack++);
     float start = 0.0f;
     float end = 0.0f;
-    int i;
-    int monster_no;
-    int j;
+    int   i;
+    int   monster_no;
+    int   j;
 
     if (argc == 4) {
         start = GetStackFloat(stack++);
@@ -751,8 +750,8 @@ int _SET_DMG_COL(RS_STACKDATA *stack, int argc) {
     float radius = GetStackFloat(stack++);
     float start = GetStackFloat(stack++);
     float end = GetStackFloat(stack);
-    int i;
-    int monster_no = NowMonstorUnit->current_monster;
+    int   i;
+    int   monster_no = NowMonstorUnit->current_monster;
 
     for (i = 0; i < 16; i++) {
         if (NowMonstorUnit->effect2[monster_no].active[i] == 0) {
@@ -791,7 +790,7 @@ int _SET_DMG_PARA(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_SHOT(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     char *name;
 
     if (NowMonstorUnit->monster[monster_no].shot_effect == -1) {
@@ -820,7 +819,7 @@ int _SET_SHOT(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_SHOT2(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     char *name;
 
     if (NowMonstorUnit->monster[monster_no].shot_effect2 == -1) {
@@ -947,7 +946,7 @@ int _GET_MONSTOR_FRM(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_MONSTOR_POS(RS_STACKDATA *stack, int argc) {
-    int monster_no = GetStackInt(stack++);
+    int   monster_no = GetStackInt(stack++);
     float position[4];
 
     position[0] = GetStackFloat(stack++);
@@ -958,7 +957,7 @@ int _SET_MONSTOR_POS(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_MONSTOR_MOVE(RS_STACKDATA *stack, int argc) {
-    int monster_no = GetStackInt(stack++);
+    int   monster_no = GetStackInt(stack++);
     float direction[4];
     float position[4];
 
@@ -1034,7 +1033,7 @@ int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
     }
     if (argc == 4) {
         float speed = GetStackFloat(stack++);
-        int mode = GetStackInt(stack);
+        int   mode = GetStackInt(stack);
 
         NowMonstorUnit->chara[monster_no][0].SetMotion(motion_id, mode);
         NowMonstorUnit->chara[monster_no][0].SetMotionSpeed(speed);
@@ -1067,10 +1066,10 @@ int _GET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
  * Reads the world position of a named frame of the monster's model.
  */
 static int _GET_OBJ_POS(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int     monster_no = NowMonstorUnit->current_monster;
     CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame->SearchFrame(GetStackString(stack++));
-    float local[4];
-    float world[4];
+    float   local[4];
+    float   world[4];
 
     sceVu0CopyVector(local, frame->position);
     frame->GetWorldPosition(world, local);
@@ -1081,7 +1080,7 @@ static int _GET_OBJ_POS(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_ROTATION_X(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float position[4];
     float rotation[4];
     float direction[4];
@@ -1098,15 +1097,15 @@ int _SET_ROTATION_X(RS_STACKDATA *stack, int argc) {
 }
 
 int _LOOKAT(RS_STACKDATA *stack, int argc) {
-    int axis;
-    int monster_no = NowMonstorUnit->current_monster;
-    float position[4];
-    float rotation[4];
+    int           axis;
+    int           monster_no = NowMonstorUnit->current_monster;
+    float         position[4];
+    float         rotation[4];
     sceVu0FMATRIX matrix;
-    float direction[4];
-    float x_axis[4];
-    float y_axis[4];
-    float z_axis[4];
+    float         direction[4];
+    float         x_axis[4];
+    float         y_axis[4];
+    float         z_axis[4];
 
     NowMonstorUnit->monster[monster_no].turn_target[0] = GetStackFloat(stack++);
     NowMonstorUnit->monster[monster_no].turn_target[1] = GetStackFloat(stack++);
@@ -1148,7 +1147,7 @@ int _LOOKAT(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float step = GetStackFloat(stack);
 
     NowMonstorUnit->chara[monster_no][0].motion_type.state.blend_step = step;
@@ -1159,7 +1158,7 @@ int _SET_MOTION_CHANGE_STEP(RS_STACKDATA *stack, int argc) {
 }
 
 int _GET_MONSTOR_VECTOR(RS_STACKDATA *stack, int argc) {
-    int monster_no = GetStackInt(stack++);
+    int   monster_no = GetStackInt(stack++);
     float angle = 0.0f;
     float direction[4];
     float position[4];
@@ -1200,7 +1199,7 @@ int _GET_MONSTOR_VECTOR(RS_STACKDATA *stack, int argc) {
 }
 
 int _STATUS_SET_LIFE(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float rate = GetStackFloat(stack);
 
     NowMonstorUnit->monster[monster_no].hp = (int) (NowMonstorUnit->monster[monster_no].max_hp * rate);
@@ -1264,9 +1263,9 @@ int _SET_COLLISION_WIDTH(RS_STACKDATA *stack, int argc) {
 }
 
 int _GET_NEAR_MONSTER(RS_STACKDATA *stack, int argc) {
-    int found;
-    int i;
-    int monster_no = NowMonstorUnit->current_monster;
+    int   found;
+    int   i;
+    int   monster_no = NowMonstorUnit->current_monster;
     float nearest = 240.0f;
     float position[4];
     float other_position[4];
@@ -1339,7 +1338,7 @@ int _SET_GUARD_FRAME(RS_STACKDATA *stack, int argc) {
 }
 
 int _GUARD_SEARCH(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
+    int   monster_no = NowMonstorUnit->current_monster;
     float player[4];
     float position[4];
     float direction[4];
@@ -1406,9 +1405,9 @@ int _GET_USER_STATUS(RS_STACKDATA *stack, int argc) {
 }
 
 int _SET_REFERENCE(RS_STACKDATA *stack, int argc) {
-    int monster_no = NowMonstorUnit->current_monster;
-    int target_no = GetStackInt(stack++);
-    char *name = GetStackString(stack);
+    int     monster_no = NowMonstorUnit->current_monster;
+    int     target_no = GetStackInt(stack++);
+    char   *name = GetStackString(stack);
     CFrame *frame;
     CFrame *anchor;
 
@@ -1425,7 +1424,7 @@ int _SET_REFERENCE(RS_STACKDATA *stack, int argc) {
 }
 
 int _DEL_REFERENCE(RS_STACKDATA *stack, int argc) {
-    int monster_no = GetStackInt(stack);
+    int     monster_no = GetStackInt(stack);
     CFrame *frame = NowMonstorUnit->chara[monster_no][0].frame;
 
     if (frame == NULL) {
@@ -1454,98 +1453,98 @@ int BtSetEventScript(CRunScript *script, char *program, CDataAlloc2<1> *arena) {
  * Opcodes of the monster scripts, ended by an entry with no function.
  */
 static BT_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
-    {_GET_DISTANCE, 10},
-    {_GET_POSITION, 11},
-    {_SET_ROTATION, 12},
-    {_CHK_ROTATION, 13},
-    {_CHK_MOVE, 14},
-    {_CHK_USER_INNER_PRODUCT, 15},
-    {_GET_VECTOR, 30},
-    {_GET_DIRECTION, 31},
-    {_SET_MOVE, 32},
-    {_CHK_MOVE_INFO, 33},
-    {_SET_MOVE_CANSEL, 34},
-    {_SET_ROT_CANSEL, 35},
-    {_SET_POSITION, 36},
-    {_STATUS_SET_FALL, 100},
-    {_STATUS_SET_MUTEKI, 101},
-    {_STATUS_SET_ALPHA, 102},
-    {_STATUS_CHK_ALPHA, 103},
-    {_STATUS_SET_DEAD, 104},
-    {_STATUS_SET_PALLET, 105},
-    {_GET_RAND, 180},
-    {_GET_RANDF, 181},
-    {_SIN_DEG, 182},
-    {_COS_DEG, 183},
-    {_STATUS_SET_CLIPLEVEL, 106},
-    {_STATUS_SET_EVENT, 107},
-    {_STATUS_SET_COL_OFF, 108},
-    {_STATUS_GET_LIFE_RATE, 109},
-    {_STATUS_GET_HEIGHT, 112},
-    {_STATUS_GET_HITDMG_VOL, 113},
-    {_STATUS_GET_MOTION_ID, 114},
-    {_STATUS_GET_DMG_ID, 115},
-    {_STATUS_SET_LOCKON_DIST, 116},
-    {_STATUS_SET_SHADOW_LEN, 117},
-    {_STATUS_SET_LOCKON_TRG, 118},
-    {_STATUS_GET_USER_VECTOR, 110},
-    {_SET_MOV_COL, 136},
-    {_SET_BODY_COL, 130},
-    {_SET_BODY_COL_PARA, 134},
-    {_SET_DMG_COL, 131},
-    {_SET_DMG_PARA, 132},
-    {_SET_SHOT, 133},
-    {_SET_SHOT2, 229},
-    {_SET_SND_FRM, 140},
-    {_SET_LOOP_SND, 230},
-    {_STOP_LOOP_SND, 231},
-    {_DEL_LOOP_SND, 232},
-    {_SET_SND_NOW, 141},
-    {_SET_MOTION, 200},
-    {_CHK_MOTION_FRM, 201},
-    {_GET_MOTION_FRM, 202},
-    {_SET_MOTION_FRM, 203},
-    {_GET_CHR_ID, 210},
-    {_GET_COL_HIT_ID, 211},
-    {_GET_SCRIPT_ID, 212},
-    {_GET_MONSTOR_POS, 213},
-    {_RUN_SCRIPT, 111},
-    {_GET_MONSTOR_FRM, 214},
-    {_SET_MONSTOR_POS, 215},
-    {_SET_MONSTOR_MOVE, 216},
-    {_SET_MONSTOR_LINK_MOVE, 217},
+    {_GET_DISTANCE,            10 },
+    {_GET_POSITION,            11 },
+    {_SET_ROTATION,            12 },
+    {_CHK_ROTATION,            13 },
+    {_CHK_MOVE,                14 },
+    {_CHK_USER_INNER_PRODUCT,  15 },
+    {_GET_VECTOR,              30 },
+    {_GET_DIRECTION,           31 },
+    {_SET_MOVE,                32 },
+    {_CHK_MOVE_INFO,           33 },
+    {_SET_MOVE_CANSEL,         34 },
+    {_SET_ROT_CANSEL,          35 },
+    {_SET_POSITION,            36 },
+    {_STATUS_SET_FALL,         100},
+    {_STATUS_SET_MUTEKI,       101},
+    {_STATUS_SET_ALPHA,        102},
+    {_STATUS_CHK_ALPHA,        103},
+    {_STATUS_SET_DEAD,         104},
+    {_STATUS_SET_PALLET,       105},
+    {_GET_RAND,                180},
+    {_GET_RANDF,               181},
+    {_SIN_DEG,                 182},
+    {_COS_DEG,                 183},
+    {_STATUS_SET_CLIPLEVEL,    106},
+    {_STATUS_SET_EVENT,        107},
+    {_STATUS_SET_COL_OFF,      108},
+    {_STATUS_GET_LIFE_RATE,    109},
+    {_STATUS_GET_HEIGHT,       112},
+    {_STATUS_GET_HITDMG_VOL,   113},
+    {_STATUS_GET_MOTION_ID,    114},
+    {_STATUS_GET_DMG_ID,       115},
+    {_STATUS_SET_LOCKON_DIST,  116},
+    {_STATUS_SET_SHADOW_LEN,   117},
+    {_STATUS_SET_LOCKON_TRG,   118},
+    {_STATUS_GET_USER_VECTOR,  110},
+    {_SET_MOV_COL,             136},
+    {_SET_BODY_COL,            130},
+    {_SET_BODY_COL_PARA,       134},
+    {_SET_DMG_COL,             131},
+    {_SET_DMG_PARA,            132},
+    {_SET_SHOT,                133},
+    {_SET_SHOT2,               229},
+    {_SET_SND_FRM,             140},
+    {_SET_LOOP_SND,            230},
+    {_STOP_LOOP_SND,           231},
+    {_DEL_LOOP_SND,            232},
+    {_SET_SND_NOW,             141},
+    {_SET_MOTION,              200},
+    {_CHK_MOTION_FRM,          201},
+    {_GET_MOTION_FRM,          202},
+    {_SET_MOTION_FRM,          203},
+    {_GET_CHR_ID,              210},
+    {_GET_COL_HIT_ID,          211},
+    {_GET_SCRIPT_ID,           212},
+    {_GET_MONSTOR_POS,         213},
+    {_RUN_SCRIPT,              111},
+    {_GET_MONSTOR_FRM,         214},
+    {_SET_MONSTOR_POS,         215},
+    {_SET_MONSTOR_MOVE,        216},
+    {_SET_MONSTOR_LINK_MOVE,   217},
     {_SET_MONSTOR_MOVE_CANSEL, 218},
-    {_SET_MONSTOR_MOTION, 219},
-    {_SET_GLOBAL_INT, 220},
-    {_GET_GLOBAL_INT, 221},
-    {_GET_OBJ_POS, 222},
-    {_SET_ROTATION_X, 223},
-    {_SET_MOTION_CHANGE_STEP, 224},
-    {_GET_MONSTOR_VECTOR, 225},
-    {_SET_LOCKON_DIST, 226},
-    {_SET_LOCKON_SW, 227},
-    {_STOP_SND_NOW, 142},
-    {_STATUS_SET_LIFE, 228},
-    {_SET_BIN2, 209},
-    {_SET_STATUS_CHANGE, 204},
-    {_SET_TEX_ANIME_SW, 205},
-    {_GET_STATUS_BIN2, 208},
-    {_SET_COLLISION_WIDTH, 206},
-    {_GET_NEAR_MONSTER, 207},
-    {_BOSS_FADE_OUT, 240},
-    {_CHEKC_FADE_OUT, 241},
-    {_SET_GRAVITY, 242},
-    {_SET_GUARD_FRAME, 244},
-    {_GUARD_SEARCH, 245},
-    {_GET_MOVE_VEC, 246},
-    {_PUSH_IGLOBAL, 247},
-    {_POP_IGLOBAL, 248},
-    {_GET_USER_STATUS, 249},
-    {_SET_REFERENCE, 250},
-    {_DEL_REFERENCE, 251},
-    {_LOOKAT, 252},
-    {_SET_SHADOW_FLAG, 253},
-    {NULL, -1},
+    {_SET_MONSTOR_MOTION,      219},
+    {_SET_GLOBAL_INT,          220},
+    {_GET_GLOBAL_INT,          221},
+    {_GET_OBJ_POS,             222},
+    {_SET_ROTATION_X,          223},
+    {_SET_MOTION_CHANGE_STEP,  224},
+    {_GET_MONSTOR_VECTOR,      225},
+    {_SET_LOCKON_DIST,         226},
+    {_SET_LOCKON_SW,           227},
+    {_STOP_SND_NOW,            142},
+    {_STATUS_SET_LIFE,         228},
+    {_SET_BIN2,                209},
+    {_SET_STATUS_CHANGE,       204},
+    {_SET_TEX_ANIME_SW,        205},
+    {_GET_STATUS_BIN2,         208},
+    {_SET_COLLISION_WIDTH,     206},
+    {_GET_NEAR_MONSTER,        207},
+    {_BOSS_FADE_OUT,           240},
+    {_CHEKC_FADE_OUT,          241},
+    {_SET_GRAVITY,             242},
+    {_SET_GUARD_FRAME,         244},
+    {_GUARD_SEARCH,            245},
+    {_GET_MOVE_VEC,            246},
+    {_PUSH_IGLOBAL,            247},
+    {_POP_IGLOBAL,             248},
+    {_GET_USER_STATUS,         249},
+    {_SET_REFERENCE,           250},
+    {_DEL_REFERENCE,           251},
+    {_LOOKAT,                  252},
+    {_SET_SHADOW_FLAG,         253},
+    {NULL,                     -1 },
 };
 
 void BtSetEventExtendTable() {

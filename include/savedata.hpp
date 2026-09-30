@@ -17,6 +17,11 @@
  */
 class CMenuCursor {
 public:
+    s16 reset_pos; /**< Set to zero to keep the menu positions. Any other value discards them. */
+    s16 pos[10];   /**< Contains the cursor position of each menu. */
+    s16 mode[10];  /**< Contains the mode of each menu. */
+    s16 chara_no;  /**< Identifies the character that the item menu shows. */
+
     /**
      * Sets all menu positions and modes to their default values.
      *
@@ -25,11 +30,6 @@ public:
      * @size 0x74
      */
     void InitPos();
-
-    s16 reset_pos; /**< Set to zero to keep the menu positions. Any other value discards them. */
-    s16 pos[10];   /**< Contains the cursor position of each menu. */
-    s16 mode[10];  /**< Contains the mode of each menu. */
-    s16 chara_no;  /**< Identifies the character that the item menu shows. */
 };
 
 STATIC_ASSERT(sizeof(CMenuCursor) == 0x2C);
@@ -51,8 +51,8 @@ struct SV_CONFIG_SYS {
  * Contains one entry of the fishing leaderboard.
  */
 struct SV_FISH_DATA {
-    s32 fish_id; /**< Identifies the fish. */
-    float rank;  /**< Contains the score that gives the position in the leaderboard. */
+    s32   fish_id; /**< Identifies the fish. */
+    float rank;    /**< Contains the score that gives the position in the leaderboard. */
     float unk_8;
     float unk_C;
 };
@@ -73,38 +73,78 @@ struct SV_EDIT_PARTS_INFO {
  * Contains one Georama part that the player put on the map.
  */
 struct SV_GRD_PART {
-    s16 part_id; /**< Plot part the record places, or -1 to end the list. */
-    s16 rot_y;   /**< Quarter turns about the vertical axis that the part faces. */
-    float pos_x; /**< Contains the X position of the part. */
-    float pos_y; /**< Contains the Y position of the part. */
-    float pos_z; /**< Contains the Z position of the part. */
+    s16   part_id; /**< Plot part the record places, or -1 to end the list. */
+    s16   rot_y;   /**< Quarter turns about the vertical axis that the part faces. */
+    float pos_x;   /**< Contains the X position of the part. */
+    float pos_y;   /**< Contains the Y position of the part. */
+    float pos_z;   /**< Contains the Z position of the part. */
 };
 
 /**
  * Contains one NPC slot of a Georama town.
  */
 struct SV_GRD_NPC {
-    s32 flags; /**< State of the slot; bit one keeps the georama menu from naming its chip. */
+    s32  flags; /**< State of the slot; bit one keeps the georama menu from naming its chip. */
     char unk_4[4];
-    s32 talk_message; /**< Message number currently assigned to this NPC slot. */
+    s32  talk_message; /**< Message number currently assigned to this NPC slot. */
 };
 
 /**
  * Contains the Georama save data of one town.
  */
 struct SV_GEORAMA_DATA {
-    s32 request_count;                 /**< Number of requests defined for this town. */
-    s32 request_complete[24];          /**< Completion state of each town request. */
-    s32 request_event_flag;            /**< Event request stored for this Georama town. */
-    SV_EDIT_PARTS_INFO parts_info[24]; /**< Contains the state of each plot. */
-    SV_GRD_PART placed_parts[130];     /**< Contains the parts that the player put on the map. */
-    SV_GRD_NPC npc[20];                /**< Contains the NPC slots of the town. */
+    s32                request_count;        /**< Number of requests defined for this town. */
+    s32                request_complete[24]; /**< Completion state of each town request. */
+    s32                request_event_flag;   /**< Event request stored for this Georama town. */
+    SV_EDIT_PARTS_INFO parts_info[24];       /**< Contains the state of each plot. */
+    SV_GRD_PART        placed_parts[130];    /**< Contains the parts that the player put on the map. */
+    SV_GRD_NPC         npc[20];              /**< Contains the NPC slots of the town. */
 };
 
 /**
  * Contains the data of one save slot.
  */
 class CSaveData {
+    // CMemoryCardAccess::GetSaveFileInfoFromMc reads map_no out of the save
+    // image that it reads from the card.
+    friend class CMemoryCardAccess;
+    // EdMoveChara counts the Mardan Garayan the player lands.
+    friend void EdMoveChara();
+#ifdef PAL
+    // The fish exchange debug shortcut records a Mardan Garayan catch.
+    friend int FishingExchangeKey();
+#endif
+
+    s32             config[18];        /**< Contains the configuration values. */
+    s16             chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */
+    s32             map_no;            /**< Map that the game resumes on. */
+    s32             unk_1CC;
+    float           now_time;      /**< Contains the time of day. */
+    s32             play_time;     /**< Contains the play time. */
+    s32             day;           /**< Contains the day count. */
+    s32             fishing_point; /**< Contains the fishing points. */
+    SV_FISH_DATA    fish_data[64]; /**< Contains the fishing leaderboard. */
+    char            unk_5E0[112];
+    CMenuCursor     menu_cursor;       /**< Contains the menu positions. */
+    SV_GEORAMA_DATA georama[6];        /**< Contains the Georama data of each town. */
+    s16             elem_data[6][128]; /**< Contains the chips of each town. */
+    char            special_npc[320];  /**< Contains the NPC slots that the sub-maps share. */
+
+    // ConvertConfig and InvertConfig reach dng_status.minimap_status at 0x9748
+    // from `this`. Only a direct member access at a >0x7FFF offset emits
+    // retail's `lui at,0x1; addu at,<this>,at; lw/sw reg,-0x68b8(at)` idiom.
+    CDngStatusData dng_status;             /**< Contains the dungeon status data. */
+    CStockItem     stock_item;             /**< Contains the stock inventory. */
+    u32            game_flags[256];        /**< Contains the game flag bits. */
+    s32            game_int_flag[32];      /**< Contains the game integer flags. */
+    u32            map_flags[80][16];      /**< Contains the map flag bits of each map. */
+    u32            map_init_flags[80][16]; /**< Contains the map initialization flag bits of each map. */
+    s16            visit_map[80];          /**< Contains the visit count of each map. */
+    s16            quest_dungeon[6];       /**< Contains the quest count of each dungeon. */
+    s32            mardan_garayan_caught;  /**< Number of Mardan Garayan caught. */
+    s32            quest_dungeon_total;    /**< Contains the quest count of all the dungeons. */
+    char           unk_12F9C[548];
+
 public:
     /**
      * Sets all save data fields to their initial state.
@@ -453,47 +493,6 @@ public:
 
     /** Returns the state of the Mardan Garayan fishing quest. */
     s32 GetMardanGareyanFlag() const { return mardan_garayan_caught; }
-
-private:
-    // CMemoryCardAccess::GetSaveFileInfoFromMc reads map_no out of the save
-    // image that it reads from the card.
-    friend class CMemoryCardAccess;
-    // EdMoveChara counts the Mardan Garayan the player lands.
-    friend void EdMoveChara(void);
-#ifdef PAL
-    // The fish exchange debug shortcut records a Mardan Garayan catch.
-    friend int FishingExchangeKey(void);
-#endif
-
-    s32 config[18];        /**< Contains the configuration values. */
-    s16 chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */
-    s32 map_no;            /**< Map that the game resumes on. */
-    s32 unk_1CC;
-    float now_time;             /**< Contains the time of day. */
-    s32 play_time;              /**< Contains the play time. */
-    s32 day;                    /**< Contains the day count. */
-    s32 fishing_point;          /**< Contains the fishing points. */
-    SV_FISH_DATA fish_data[64]; /**< Contains the fishing leaderboard. */
-    char unk_5E0[112];
-    CMenuCursor menu_cursor;    /**< Contains the menu positions. */
-    SV_GEORAMA_DATA georama[6]; /**< Contains the Georama data of each town. */
-    s16 elem_data[6][128];      /**< Contains the chips of each town. */
-    char special_npc[320];      /**< Contains the NPC slots that the sub-maps share. */
-
-    // ConvertConfig and InvertConfig reach dng_status.minimap_status at 0x9748
-    // from `this`. Only a direct member access at a >0x7FFF offset emits
-    // retail's `lui at,0x1; addu at,<this>,at; lw/sw reg,-0x68b8(at)` idiom.
-    CDngStatusData dng_status;  /**< Contains the dungeon status data. */
-    CStockItem stock_item;      /**< Contains the stock inventory. */
-    u32 game_flags[256];        /**< Contains the game flag bits. */
-    s32 game_int_flag[32];      /**< Contains the game integer flags. */
-    u32 map_flags[80][16];      /**< Contains the map flag bits of each map. */
-    u32 map_init_flags[80][16]; /**< Contains the map initialization flag bits of each map. */
-    s16 visit_map[80];          /**< Contains the visit count of each map. */
-    s16 quest_dungeon[6];       /**< Contains the quest count of each dungeon. */
-    s32 mardan_garayan_caught;  /**< Number of Mardan Garayan caught. */
-    s32 quest_dungeon_total;    /**< Contains the quest count of all the dungeons. */
-    char unk_12F9C[548];
 };
 
 /** Points to the save data of the game. */

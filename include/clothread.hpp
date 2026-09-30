@@ -6,7 +6,6 @@
 
 #include "rect.hpp"
 
-class CCloth;
 class CFrameVu1;
 
 /**
@@ -31,5 +30,4 @@ float unitRotation(CFrameVu1 *frame, float heading);
  * @address 0x140660
  * @size 0x1a4
  */
-void MoveImageTest(sceVif1Packet *packet, int src_base, int src_width, int src_format, const CRect_i_ &rect,
-                   int dst_base, int dst_width, int dst_format, int dst_x, int dst_y, int direction);
+void MoveImageTest(sceVif1Packet *packet, int src_base, int src_width, int src_format, const CRect_i_ &rect, int dst_base, int dst_width, int dst_format, int dst_x, int dst_y, int direction);

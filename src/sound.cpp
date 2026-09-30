@@ -42,11 +42,11 @@ static int iopMSINBuffAddr;
 /** Bytes of bank bodies loaded into the sound processor. */
 static int bd_size_total;
 
-MIDI_STATE *CSound::GetMidiState(void) {
+MIDI_STATE *CSound::GetMidiState() {
     return &midi_state;
 }
 
-short *CSound::GetSeInfTbl(void) {
+short *CSound::GetSeInfTbl() {
     return (short *) &se_inf_tbl;
 }
 
@@ -93,10 +93,10 @@ void CSound::SetReverb(int core, int mode, int depth) {
  * @size 0x168
  */
 void set_spu(int mode0, int mode1, int depth0, int depth1) {
-    int mode[2];
-    int depth[2];
+    int             mode[2];
+    int             depth[2];
     sceSdEffectAttr attr;
-    int core;
+    int             core;
 
     mode[0] = mode0;
     mode[1] = mode1;
@@ -174,12 +174,12 @@ int TransHdBd(int hd, int hd_size, int bd, int bd_size) {
 int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
     static char wk_name[20];
     static char wk_name2[20];
-    int size;
-    int bd_size;
-    char delimiter[] = "\n";
-    char *token;
-    int hd;
-    int i;
+    int         size;
+    int         bd_size;
+    char        delimiter[] = "\n";
+    char       *token;
+    int         hd;
+    int         i;
 
     printf("SND_INF= %s \n", name);
     token = strtok((char *) GetPackFile(pack, name, &size), delimiter);
@@ -196,8 +196,7 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                     }
                 }
                 if (i < sq_inf_tbl.count) {
-                    midi_state.port[0].sequence[midi_state.port[0].sequence_count] =
-                        &sq_inf_tbl.sequence[i];
+                    midi_state.port[0].sequence[midi_state.port[0].sequence_count] = &sq_inf_tbl.sequence[i];
                     midi_state.port[0].sequence_count++;
                 } else {
                     printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
@@ -211,8 +210,7 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                     }
                 }
                 if (i < sq_inf_tbl.count) {
-                    midi_state.port[2].sequence[midi_state.port[2].sequence_count] =
-                        &sq_inf_tbl.sequence[i];
+                    midi_state.port[2].sequence[midi_state.port[2].sequence_count] = &sq_inf_tbl.sequence[i];
                     midi_state.port[2].sequence_count++;
                 } else {
                     printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
@@ -226,8 +224,7 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
                     }
                 }
                 if (i < sq_inf_tbl.count) {
-                    midi_state.port[4].sequence[midi_state.port[4].sequence_count] =
-                        &sq_inf_tbl.sequence[i];
+                    midi_state.port[4].sequence[midi_state.port[4].sequence_count] = &sq_inf_tbl.sequence[i];
                     midi_state.port[4].sequence_count++;
                 } else {
                     printf("################SQ_TBL NOT FOUND NEME=%s ##################\n", wk_name);
@@ -290,8 +287,8 @@ int CSound::LoadSoundFileFromPack(char *name, unsigned int *pack) {
 }
 
 int CSound::LoadSqInf(char *name, unsigned int *buffer) {
-    int size;
-    char number[4];
+    int   size;
+    char  number[4];
     char *token;
 
     LoadFile(name, buffer, &size);
@@ -311,8 +308,8 @@ int CSound::LoadSqInf(char *name, unsigned int *buffer) {
 }
 
 int CSound::LoadSeInf(char *name, unsigned int *buffer) {
-    int size;
-    char number[4];
+    int   size;
+    char  number[4];
     char *token;
 
     LoadFile(name, buffer, &size);
@@ -338,7 +335,7 @@ int CSound::LoadSeInf(char *name, unsigned int *buffer) {
 
 int CSound::Init(int mode0, int mode1, int depth0, int depth1) {
     static int load_m_flg = (int) 0.0f;
-    int i;
+    int        i;
 
     printf("EzMIDI initialize...\n");
     ezMidiInit();
@@ -516,7 +513,7 @@ void CSound::SQ_RePlay(int port) {
 
 void CSound::SE_Play(int port, int bank, int program, int pan, int velocity, int volume, int voice) {
     unsigned char message[8];
-    int channel;
+    int           channel;
 
     switch (port) {
         case 15:
@@ -566,8 +563,7 @@ void CSound::SE_Play(int port, int bank, int program, int pan, int velocity, int
 }
 
 void CSound::SE_Play(int port, int se_no, int voice) {
-    SE_Play(port, se_inf_tbl.entry[se_no].bank, se_inf_tbl.entry[se_no].program, 0x40, 0x7F,
-            se_inf_tbl.entry[se_no].volume, voice);
+    SE_Play(port, se_inf_tbl.entry[se_no].bank, se_inf_tbl.entry[se_no].program, 0x40, 0x7F, se_inf_tbl.entry[se_no].volume, voice);
 }
 
 void CSound::SE_Play(int port, int bank, int program, int volume, int voice) {
@@ -580,7 +576,7 @@ void CSound::SE_Play(int port, int bank, int program, int voice) {
 
 void CSound::SE_SetVol(int port, int bank, int program, int volume, int voice) {
     unsigned char message[8];
-    int channel;
+    int           channel;
 
     switch (port) {
         case 15:
@@ -615,7 +611,7 @@ void CSound::SE_SetVol(int port, int bank, int program, int volume, int voice) {
 
 void CSound::SE_SetPan(int port, int bank, int program, int pan, int voice) {
     unsigned char message[8];
-    int channel;
+    int           channel;
 
     switch (port) {
         case 15:
@@ -654,7 +650,7 @@ void CSound::SE_SetPan(int port, int se_no, int pan, int voice) {
 
 void CSound::SE_Stop(int port, int bank, int program, int voice) {
     unsigned char message[8];
-    int channel;
+    int           channel;
 
     switch (port) {
         case 15:
@@ -746,7 +742,7 @@ void CSound::Fade(int port, float step, int volume) {
     }
 }
 
-void CSound::Step(void) {
+void CSound::Step() {
     int i;
 
     if (midi_state.port[0].fade[0].active) {
@@ -861,11 +857,10 @@ void CSound::Step(void) {
     // Send each effect port's queued messages across to the stream input module.
     for (i = 0; i < 6; i++) {
         MSIN_BUFFER *buffer = &msinBf[i];
-        s32 *length = &buffer->length;
+        s32         *length = &buffer->length;
 
         if (buffer->length != 0) {
-            if (ezTransToIOP((void *) (iopMSINBuffAddr + i * sizeof(MSIN_BUFFER)), buffer,
-                             sizeof(MSIN_BUFFER)) != 0) {
+            if (ezTransToIOP((void *) (iopMSINBuffAddr + i * sizeof(MSIN_BUFFER)), buffer, sizeof(MSIN_BUFFER)) != 0) {
                 printf("EX MIDI SEND ERR!! SIZE= %d\n", *length);
             }
             *length = 0;

@@ -13,7 +13,7 @@ class CFrameVu1;
  * @size 0x4C
  * @unknownret
  */
-void OpD_LoadDataBG(void);
+void OpD_LoadDataBG();
 
 /**
  * @mangled OpD_LoadDataBG2__Fv
@@ -21,7 +21,7 @@ void OpD_LoadDataBG(void);
  * @size 0x74
  * @unknownret
  */
-void OpD_LoadDataBG2(void);
+void OpD_LoadDataBG2();
 
 /**
  * @mangled OpD_InitProcess__Fv
@@ -29,7 +29,7 @@ void OpD_LoadDataBG2(void);
  * @size 0x758
  * @unknownret
  */
-void OpD_InitProcess(void);
+void OpD_InitProcess();
 
 /**
  * @mangled OpD_InitProcess2__Fv
@@ -37,7 +37,7 @@ void OpD_InitProcess(void);
  * @size 0x650
  * @unknownret
  */
-void OpD_InitProcess2(void);
+void OpD_InitProcess2();
 
 /**
  * @mangled OpD_MotionProcess__Fv
@@ -45,7 +45,7 @@ void OpD_InitProcess2(void);
  * @size 0x52C
  * @unknownret
  */
-void OpD_MotionProcess(void);
+void OpD_MotionProcess();
 
 /**
  * @mangled OpD_SoundProcess__Fv
@@ -53,7 +53,7 @@ void OpD_MotionProcess(void);
  * @size 0x560
  * @unknownret
  */
-void OpD_SoundProcess(void);
+void OpD_SoundProcess();
 
 /**
  * @mangled OpD_DrawProcess__Fv
@@ -61,4 +61,4 @@ void OpD_SoundProcess(void);
  * @size 0x9DC
  * @unknownret
  */
-void OpD_DrawProcess(void);
+void OpD_DrawProcess();

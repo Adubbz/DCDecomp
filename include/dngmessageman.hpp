@@ -23,7 +23,7 @@ public:
      * @address 0x1B5B90
      * @size 0x98
      */
-    void LimmitZone(void);
+    void LimmitZone();
 
     /**
      * Starts or clears the warnings for a character's remaining water.

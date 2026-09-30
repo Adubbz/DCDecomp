@@ -31,7 +31,9 @@ struct StockSlotCounts {
 };
 
 /** Defines the slot limits for the stock inventory sections. */
-StockSlotCounts LIT_459 = {{60, 30, 30}};
+StockSlotCounts LIT_459 = {
+    {60, 30, 30}
+};
 
 void CStockItem::Initialize() {
     memset(this->dungeon_items, 0, sizeof(this->dungeon_items));
@@ -71,12 +73,12 @@ int CStockItem::SearchSpace(int slot_index, int search_space) {
 
 void CStockItem::SetItemToPos(int slot_index, s16 *item_no, s16 *volume) {
     s16 *item_slot = &this->dungeon_items[slot_index];
-    s16 old_item_no = *item_slot;
+    s16  old_item_no = *item_slot;
     *item_slot = *item_no;
     *item_no = old_item_no;
 
     s16 *volume_slot = &this->dungeon_item_vols[slot_index];
-    s16 old_volume = *volume_slot;
+    s16  old_volume = *volume_slot;
     *volume_slot = *volume;
     *volume = old_volume;
 }
@@ -88,7 +90,7 @@ void CStockItem::GetItemInfo(int slot_index, s16 *item_no, s16 *volume) {
 
 void CStockItem::SetWepToPos(int slot_index, WEAPON_HAVE *weapon) {
     WEAPON_HAVE *slot = &this->weapons[slot_index];
-    WEAPON_HAVE old_weapon;
+    WEAPON_HAVE  old_weapon;
     memcpy(&old_weapon, slot, sizeof(WEAPON_HAVE));
     memcpy(slot, weapon, sizeof(WEAPON_HAVE));
     memcpy(weapon, &old_weapon, sizeof(WEAPON_HAVE));
@@ -100,7 +102,7 @@ void CStockItem::GetWeaponInfo(int slot_index, WEAPON_HAVE *weapon) {
 
 void CStockItem::SetAttachToPos(int slot_index, ATTACH_LIST *attachment) {
     ATTACH_LIST *slot = &this->attachments[slot_index];
-    ATTACH_LIST old_attachment;
+    ATTACH_LIST  old_attachment;
     memcpy(&old_attachment, slot, sizeof(ATTACH_LIST));
     memcpy(slot, attachment, sizeof(ATTACH_LIST));
     memcpy(attachment, &old_attachment, sizeof(ATTACH_LIST));
@@ -193,7 +195,7 @@ int CompChargeItem(int first_item_no, int second_item_no) {
     return 0;
 }
 
-int CStockItem::SeitonChargeItemBoardSub(void) {
+int CStockItem::SeitonChargeItemBoardSub() {
     int sort_type = sort_top_type__3;
     int first_slot;
     int second_slot;
@@ -213,15 +215,9 @@ int CStockItem::SeitonChargeItemBoardSub(void) {
 
     for (first_slot = 0; first_slot < 59; first_slot++) {
         for (second_slot = first_slot + 1; second_slot < 60; second_slot++) {
-            if (CompChargeItem(
-                    this->dungeon_items[first_slot],
-                    this->dungeon_items[second_slot]) > 0) {
-                MenuDataSwap(
-                    &this->dungeon_items[first_slot],
-                    &this->dungeon_items[second_slot]);
-                MenuDataSwap(
-                    &this->dungeon_item_vols[first_slot],
-                    &this->dungeon_item_vols[second_slot]);
+            if (CompChargeItem(this->dungeon_items[first_slot], this->dungeon_items[second_slot]) > 0) {
+                MenuDataSwap(&this->dungeon_items[first_slot], &this->dungeon_items[second_slot]);
+                MenuDataSwap(&this->dungeon_item_vols[first_slot], &this->dungeon_item_vols[second_slot]);
                 moved = true;
             }
         }
@@ -230,7 +226,7 @@ int CStockItem::SeitonChargeItemBoardSub(void) {
     return moved;
 }
 
-void CStockItem::SeitonItem(void) {
+void CStockItem::SeitonItem() {
     for (int attempt = 0; attempt < 9; attempt++) {
         if (SeitonChargeItemBoardSub() != 0) {
             break;
@@ -315,7 +311,7 @@ static int SeitonAttachBoardSub(ATTACH_LIST *attachments) {
     return moved;
 }
 
-void CStockItem::SeitonAttach(void) {
+void CStockItem::SeitonAttach() {
     for (int attempt = 0; attempt < 5; attempt++) {
         if (SeitonAttachBoardSub(this->attachments) != 0) {
             break;
@@ -329,7 +325,7 @@ void CStockItem::SeitonAttach(void) {
 }
 
 int CStockItem::GetNowModeSpace(int search_space) {
-    int empty_slot = -1;
+    int             empty_slot = -1;
     StockSlotCounts slot_counts = LIT_459;
 
     for (int slot_index = 0; slot_index < slot_counts.values[search_space]; slot_index++) {

@@ -13,18 +13,9 @@ class CFrameAttr;
  */
 class CObject {
 public:
-    /**
-     * Copies one object over another, field by field.
-     *
-     * @mangled __as__7CObjectFRC7CObject
-     * @address 0x1431E0
-     * @size 0x74
-     */
-    CObject &operator=(const CObject &);
-
-    float mass; /**< Mass of the object. */
-    float unk_004[3];
-    float pos[4];                 /**< World position of the object. */
+    float       mass; /**< Mass of the object. */
+    float       unk_004[3];
+    float       pos[4];           /**< World position of the object. */
     CVector3_f_ velocity;         /**< Distance that the position moves each step. */
     CVector3_f_ acceleration;     /**< Distance that the velocity gains each step. */
     CVector3_f_ gravity;          /**< Part of the velocity that gravity gives. */
@@ -32,7 +23,16 @@ public:
     CVector3_f_ rotation;         /**< Angle, in radians, about each axis. */
     CVector3_f_ rot_velocity;     /**< Angle that the rotation turns each step. */
     CVector3_f_ rot_acceleration; /**< Angle that the rotational velocity gains each step. */
-    float scale[4];               /**< Scale of the object along each axis. */
+    float       scale[4];         /**< Scale of the object along each axis. */
+
+    /**
+     * Copies one object over another, field by field.
+     *
+     * @mangled __as__7CObjectFRC7CObject
+     * @address 0x1431E0
+     * @size 0x74
+     */
+    CObject &operator=(const CObject &source);
 
     /**
      * Steps the object. The base object does nothing.
@@ -186,7 +186,7 @@ public:
      * @address 0x156E80
      * @size 0xC
      */
-    virtual float GetMass(void);
+    virtual float GetMass();
 
     /**
      * Gets the world position of the object.
@@ -276,7 +276,7 @@ public:
      * @address 0x156F40
      * @size 0xC
      */
-    virtual CVector3_f_ *GetVelocity(void);
+    virtual CVector3_f_ *GetVelocity();
 
     /**
      * Gets the distance that the velocity gains each step.
@@ -285,7 +285,7 @@ public:
      * @address 0x156F50
      * @size 0xC
      */
-    virtual CVector3_f_ *GetAcceleration(void);
+    virtual CVector3_f_ *GetAcceleration();
 
     /**
      * Gets the part of the velocity that gravity gives.
@@ -294,7 +294,7 @@ public:
      * @address 0x156F60
      * @size 0xC
      */
-    virtual CVector3_f_ *GetGravity(void);
+    virtual CVector3_f_ *GetGravity();
 
     /**
      * Gets the moment of inertia about each axis.
@@ -303,7 +303,7 @@ public:
      * @address 0x156F70
      * @size 0xC
      */
-    virtual CVector3_f_ *GetMoment(void);
+    virtual CVector3_f_ *GetMoment();
 
     /**
      * Gets the angle of the object about each axis.
@@ -312,7 +312,7 @@ public:
      * @address 0x156F80
      * @size 0xC
      */
-    virtual CVector3_f_ *GetRotation(void);
+    virtual CVector3_f_ *GetRotation();
 
     /**
      * Gets the angle that the rotation turns each step.
@@ -321,7 +321,7 @@ public:
      * @address 0x156F90
      * @size 0xC
      */
-    virtual CVector3_f_ *GetRotVelocity(void);
+    virtual CVector3_f_ *GetRotVelocity();
 
     /**
      * Gets the angle that the rotational velocity gains each step.
@@ -330,7 +330,7 @@ public:
      * @address 0x156FA0
      * @size 0xC
      */
-    virtual CVector3_f_ *GetRotAcceleration(void);
+    virtual CVector3_f_ *GetRotAcceleration();
 
     /**
      * Sets the scale of the object along each axis.

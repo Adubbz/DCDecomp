@@ -14,8 +14,7 @@
 #include "texture.hpp"
 #include "weaponelement.hpp"
 
-int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage,
-                        int element) {
+int CSHOT_FIREBAR::Init(float *origin, float *direction, int collision_damage, int element) {
     sceVu0FVECTOR step;
 
     direction[3] = 1.0f;
@@ -53,18 +52,11 @@ int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, in
     // Each particle travels from where it is to its place along the new stream, the farther
     // ones over more steps.
     for (int particle = 0; particle < 24; particle++) {
-        velocity[particle + start_index][0] =
-            (origin[0] + step[0] * (float) particle - position[particle + start_index][0]) /
-            (1.0f + 0.5f * (float) particle);
-        velocity[particle + start_index][1] =
-            (origin[1] + step[1] * (float) particle - position[particle + start_index][1]) /
-            (1.0f + 0.5f * (float) particle);
-        velocity[particle + start_index][2] =
-            (origin[2] + step[2] * (float) particle - position[particle + start_index][2]) /
-            (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][0] = (origin[0] + step[0] * (float) particle - position[particle + start_index][0]) / (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][1] = (origin[1] + step[1] * (float) particle - position[particle + start_index][1]) / (1.0f + 0.5f * (float) particle);
+        velocity[particle + start_index][2] = (origin[2] + step[2] * (float) particle - position[particle + start_index][2]) / (1.0f + 0.5f * (float) particle);
         state[particle + start_index] = 0;
-        size[particle + start_index] =
-            3.0f + 0.3f * (float) particle + 3.0f * (float) rand() / 2147483648.0f;
+        size[particle + start_index] = 3.0f + 0.3f * (float) particle + 3.0f * (float) rand() / 2147483648.0f;
         opacity[particle + start_index] = 180.0f - 8.0f * (float) particle;
         damage[particle] = collision_damage;
         particle_element[particle] = element;
@@ -72,14 +64,14 @@ int CSHOT_FIREBAR::Set(float *origin, float *direction, int collision_damage, in
     return -1;
 }
 
-void CSHOT_FIREBAR::Rset(void) {
+void CSHOT_FIREBAR::Rset() {
     // A state of -1 is what stops a slot being drawn.
     for (int i = 0; i < 24; i++) {
         state[i] = -1;
     }
 }
 
-void CSHOT_FIREBAR::Step(void) {
+void CSHOT_FIREBAR::Step() {
     static int msg_cnt = 0;
 
     // The particles hit what they touch once every thirty steps.
@@ -97,7 +89,7 @@ void CSHOT_FIREBAR::Step(void) {
                 NowColData->SetUserID(5, 6);
                 NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
                 NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
-                s8 weapon_element = NowWeaponHave->best_elem;
+                s8              weapon_element = NowWeaponHave->best_elem;
                 CCollisionData *attr_col = NowColData;
                 attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(weapon_element);
             }
@@ -111,7 +103,7 @@ void CSHOT_FIREBAR::Step(void) {
     }
 }
 
-void CSHOT_FIREBAR::Draw(void) {
+void CSHOT_FIREBAR::Draw() {
     int texture_loaded;
     int column;
     int row;
@@ -154,7 +146,6 @@ void CSHOT_FIREBAR::Draw(void) {
                 row = 1;
                 break;
         }
-        set3DCellModel(position[particle], "c05w_h", size[particle], column << 7,
-                       row << 7, 0x80, 0x80, (u8) (int) opacity[particle]);
+        set3DCellModel(position[particle], "c05w_h", size[particle], column << 7, row << 7, 0x80, 0x80, (u8) (int) opacity[particle]);
     }
 }

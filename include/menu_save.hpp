@@ -14,12 +14,12 @@ struct SAVE_MENU_STATE {
     s32 return_key_no; /**< Step to go back to once a card operation finishes, or -1. */
     s32 file_no;       /**< Save slot the current step works on. */
     s32 board_y;       /**< Scroll position of the save boards, eased toward the selected slot. */
-    s8 result;         /**< How the screen ended: 0 while it runs, 1 after a load, 2 otherwise. */
-    u8 unk_15[3];
+    s8  result;        /**< How the screen ended: 0 while it runs, 1 after a load, 2 otherwise. */
+    u8  unk_15[3];
     s32 loaded;      /**< Whether a save file has been loaded. */
     s32 access_kind; /**< Card operation the menu performs: 1 load, 2 save. */
     s32 alert_no;    /**< Alert the alert step shows, which picks its message. */
-    u8 unk_24[4];
+    u8  unk_24[4];
     s32 step_time;     /**< Frames spent in the current fade step. */
     s32 block_no;      /**< Texture block the save board's textures load into. */
     s32 texture_ready; /**< Whether the save board's textures have been entered. */
@@ -38,18 +38,18 @@ extern CTexture *SaveMenuMojiTextbl[4];
  */
 struct MINI_MENU_INFO {
     s16 fish_mode; /**< Nonzero when the menu offers fishing bait rather than event items. */
-    u8 unk_02[2];
+    u8  unk_02[2];
     s16 event_item_num; /**< Items of the pack that events can take. */
     s16 lang;           /**< Menu language, which picks the board's layout. */
     s32 cursor;         /**< Slot the cursor is on. */
     s32 usable[13];     /**< Items the event accepts, ended by a negative number. */
     s32 selected;       /**< Item the player picked, or -1. */
-    s8 scroll_row;      /**< Row of five slots shown at the top of the board. */
-    s8 usable_num;      /**< Number of items the event accepts. */
-    u8 unk_46[2];
+    s8  scroll_row;     /**< Row of five slots shown at the top of the board. */
+    s8  usable_num;     /**< Number of items the event accepts. */
+    u8  unk_46[2];
     s32 vanish; /**< Whether the item picked is used up. */
     s16 state;  /**< 0 while choosing, 1 while a refusal shows, 2 fading in, 3 fading out. */
-    u8 unk_4E[2];
+    u8  unk_4E[2];
     s32 state_time; /**< Frames spent in the current state. */
 };
 
@@ -62,7 +62,7 @@ STATIC_ASSERT(sizeof(MINI_MENU_INFO) == 0x54);
  * @address 0x222410
  * @size 0x230
  */
-int GetSaveMenuMsgNo(void);
+int GetSaveMenuMsgNo();
 
 /**
  * Loads the save menu's textures, messages and memory card icon.
@@ -71,7 +71,7 @@ int GetSaveMenuMsgNo(void);
  * @address 0x222640
  * @size 0x2C4
  */
-int SaveMenuTextureEnter(void);
+int SaveMenuTextureEnter();
 
 /**
  * Tells whether the save menu's fade-out is running.
@@ -80,7 +80,7 @@ int SaveMenuTextureEnter(void);
  * @address 0x222910
  * @size 0x28
  */
-int SaveMenuEffectFadeOut(void);
+int SaveMenuEffectFadeOut();
 
 /**
  * Draws the board of one save slot with its save data summary.
@@ -107,7 +107,7 @@ void DrawNewFileTemplete(int x, int y, int alpha);
  * @address 0x223940
  * @size 0x174
  */
-int InitExistData(void);
+int InitExistData();
 
 /**
  * Checks whether the memory card can take a save.
@@ -116,7 +116,7 @@ int InitExistData(void);
  * @address 0x223AC0
  * @size 0x1A0
  */
-int SaveEnableCheck(void);
+int SaveEnableCheck();
 
 /**
  * Opens the event item selection menu.

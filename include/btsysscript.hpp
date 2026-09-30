@@ -23,9 +23,9 @@ class CCharacter;
 
 /** References one frame or character exposed by the battle script system. */
 struct BT_OBJ_HANDLE {
-    CFrame *frame;         /**< Frame referenced when type is zero. */
+    CFrame     *frame;     /**< Frame referenced when type is zero. */
     CCharacter *character; /**< Character referenced when type is one. */
-    s32 type;              /**< Selects whether the handle contains a frame or character. */
+    s32         type;      /**< Selects whether the handle contains a frame or character. */
 };
 
 /**
@@ -35,7 +35,7 @@ struct BT_OBJ_HANDLE {
  * @address 0x1BB060
  * @size 0x198
  */
-void BtSystemScriptEventInfoInit(void);
+void BtSystemScriptEventInfoInit();
 
 /** Table of object handles the battle script system can bind. */
 extern BT_OBJ_HANDLE BtObjHdl[32];
@@ -65,7 +65,7 @@ void BtSystemScriptLoad(int floor);
  * @address 0x1BB310
  * @size 0x2C4
  */
-void BtSystemScriptInit(void);
+void BtSystemScriptInit();
 
 /**
  * Hands control back to the player's camera and clears what the event set.
@@ -74,7 +74,7 @@ void BtSystemScriptInit(void);
  * @address 0x1BB5E0
  * @size 0x304
  */
-void BtSystemScriptAfter(void);
+void BtSystemScriptAfter();
 
 /**
  * Starts one system event script running out of an arena, giving back what
@@ -714,4 +714,4 @@ int _GET_PIERO_ITEM(RS_STACKDATA *stack, int argument_count);
  * @address 0x1BD800
  * @size 0xFC
  */
-void AddSystemEventScript(void);
+void AddSystemEventScript();

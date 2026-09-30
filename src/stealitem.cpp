@@ -43,7 +43,7 @@ void CStealItem::Set(float *position, int item_no) {
     this->angle = 0.0f;
 }
 
-void CStealItem::Step(void) {
+void CStealItem::Step() {
     sceVu0FVECTOR target;
     sceVu0FVECTOR direction;
 
@@ -106,7 +106,7 @@ void CStealItem::Step(void) {
     }
 }
 
-void CStealItem::Draw(void) {
+void CStealItem::Draw() {
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
         if (this->state[i] == -1) {
             continue;
@@ -117,7 +117,7 @@ void CStealItem::Draw(void) {
     }
 }
 
-int CStealItem::checkEvent(void) {
+int CStealItem::checkEvent() {
     for (int i = 0; i < STEAL_ITEM_MAX; i++) {
         if (this->state[i] == -1) {
             continue;

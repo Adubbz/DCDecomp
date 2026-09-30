@@ -12,7 +12,7 @@
 #include "texture.hpp"
 
 float waveAnimeCnt[32];
-int sw;
+int   sw;
 
 /**
  * Draws two textures blended over one another.
@@ -21,15 +21,12 @@ int sw;
  * @address 0x162580
  * @size 0x73C
  */
-void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
-                  CTexture *first_texture, const CRect_i_ &first_destination,
-                  const CRect_i_ &first_source, CTexture *second_texture,
-                  const CRect_i_ &second_destination, const CRect_i_ &second_source) {
-    sceGsTex0 frame;
-    sceGsTest test;
-    sceGsZbuf zbuffer;
+void blendTextuer(sceVif1Packet *packet, int destination, int width, int format, CTexture *first_texture, const CRect_i_ &first_destination, const CRect_i_ &first_source, CTexture *second_texture, const CRect_i_ &second_destination, const CRect_i_ &second_source) {
+    sceGsTex0  frame;
+    sceGsTest  test;
+    sceGsZbuf  zbuffer;
     sceGsAlpha alpha;
-    float q = 1.0f;
+    float      q = 1.0f;
 
     MGGetFBuffTex(&frame);
     sceVif1PkCnt(packet, 0);
@@ -52,32 +49,18 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, first_texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(first_source.x << 4, first_source.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00,
-                                      (first_destination.y << 4) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00, (first_destination.y << 4) + GS_Y_OFFSET, 0, 0));
     // This pass takes the bottom texel row from x rather than y.
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((first_source.x + first_source.width) << 4,
-                                   (first_source.x + first_source.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00,
-                                      ((first_destination.y + first_destination.height) << 4) + GS_Y_OFFSET,
-                                      0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((first_source.x + first_source.width) << 4, (first_source.x + first_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00, ((first_destination.y + first_destination.height) << 4) + GS_Y_OFFSET, 0, 0));
 
     sceVif1PkAddGsAD(packet, SCE_GS_PRIM, 0x156);
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, first_texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(first_source.x << 4, first_source.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00,
-                                      (first_destination.y << 4) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((first_source.x + first_source.width) << 4,
-                                   (first_source.y + first_source.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00,
-                                      ((first_destination.y + first_destination.height) << 4) + GS_Y_OFFSET,
-                                      0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((first_destination.x << 4) + 0x6C00, (first_destination.y << 4) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((first_source.x + first_source.width) << 4, (first_source.y + first_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((first_destination.x + first_destination.width) << 4) + 0x6C00, ((first_destination.y + first_destination.height) << 4) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
 
     zbuffer = mgZBuffer;
@@ -94,19 +77,11 @@ void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, second_texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(second_source.x << 4, second_source.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((second_destination.x << 4) + 0x6C00,
-                                      (second_destination.y << 4) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((second_source.x + second_source.width) << 4,
-                                   (second_source.y + second_source.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((second_destination.x + second_destination.width) << 4) + 0x6C00,
-                                      ((second_destination.y + second_destination.height) << 4) + GS_Y_OFFSET,
-                                      0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((second_destination.x << 4) + 0x6C00, (second_destination.y << 4) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((second_source.x + second_source.width) << 4, (second_source.y + second_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((second_destination.x + second_destination.width) << 4) + 0x6C00, ((second_destination.y + second_destination.height) << 4) + GS_Y_OFFSET, 0, 0));
 
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(frame.TBP0 >> 5, frame.TBW, frame.PSM, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(frame.TBP0 >> 5, frame.TBW, frame.PSM, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
@@ -137,15 +112,12 @@ void initBlendCnt(int count, float scale) {
  * @address 0x162D80
  * @size 0x6E4
  */
-void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int format,
-                      const CRect_i_ &source, CTexture *texture,
-                      const CRect_i_ &texture_destination, const CRect_i_ &texture_source,
-                      float depth, float phase) {
-    sceGsTex0 frame;
-    sceGsTest test;
-    sceGsZbuf zbuffer;
+void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int format, const CRect_i_ &source, CTexture *texture, const CRect_i_ &texture_destination, const CRect_i_ &texture_source, float depth, float phase) {
+    sceGsTex0  frame;
+    sceGsTest  test;
+    sceGsZbuf  zbuffer;
     sceGsAlpha alpha;
-    float q = 1.0f;
+    float      q = 1.0f;
 
     MGGetFBuffTex(&frame);
     depth /= 10000;
@@ -165,10 +137,10 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
     zbuffer.bits.zmsk = 1;
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuffer);
 
-    int y;
-    int top = 0;
-    int bottom = 0;
-    int count = 0;
+    int   y;
+    int   top = 0;
+    int   bottom = 0;
+    int   count = 0;
     float amplitude = 0.0f;
     for (y = 0; y < source.height; y += 2) {
         int index = count + (int) phase;
@@ -191,8 +163,7 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(left, (source.y + top) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(0x6C00, (y << 4) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(right, (source.y + bottom) << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                         SCE_GS_SET_XYZF2((source.width << 4) + 0x6C00, ((y + 2) << 4) + GS_Y_OFFSET, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((source.width << 4) + 0x6C00, ((y + 2) << 4) + GS_Y_OFFSET, 0, 0));
         top = bottom;
         count++;
         if (count >= 8) {
@@ -215,19 +186,11 @@ void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int for
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texture_source.x << 4, texture_source.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((texture_destination.x << 4) + 0x6C00,
-                                      (texture_destination.y << 4) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texture_source.x + texture_source.width) << 4,
-                                   (texture_source.y + texture_source.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((texture_destination.x + texture_destination.width) << 4) + 0x6C00,
-                                      ((texture_destination.y + texture_destination.height) << 4) + GS_Y_OFFSET,
-                                      0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((texture_destination.x << 4) + 0x6C00, (texture_destination.y << 4) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texture_source.x + texture_source.width) << 4, (texture_source.y + texture_source.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((texture_destination.x + texture_destination.width) << 4) + 0x6C00, ((texture_destination.y + texture_destination.height) << 4) + GS_Y_OFFSET, 0, 0));
 
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(frame.TBP0 >> 5, frame.TBW, frame.PSM, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(frame.TBP0 >> 5, frame.TBW, frame.PSM, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
@@ -254,11 +217,11 @@ void CRunEffect::Lighting(int enabled) {
  * @address 0x163480
  * @size 0x46C
  */
-void CRunEffect::Draw(void) {
-    int top_left[4];
-    int bottom_right[4];
-    int top_right[4];
-    int bottom_left[4];
+void CRunEffect::Draw() {
+    int           top_left[4];
+    int           bottom_right[4];
+    int           top_right[4];
+    int           bottom_left[4];
     sceVu0FVECTOR light;
 
     CTexture *first = TexManager.GetTexture("fx_foot", -1);
@@ -310,8 +273,7 @@ void CRunEffect::Draw(void) {
         if (life[i] == 0) {
             continue;
         }
-        if (MGRotTransPers3DSprite(top_left, bottom_right, position[i], 12.0f - 0.5f * life[i],
-                                   5.5f - 0.25f * life[i], 0) != 1) {
+        if (MGRotTransPers3DSprite(top_left, bottom_right, position[i], 12.0f - 0.5f * life[i], 5.5f - 0.25f * life[i], 0) != 1) {
             continue;
         }
         top_right[0] = bottom_right[0];
@@ -324,11 +286,9 @@ void CRunEffect::Draw(void) {
         bottom_left[3] = bottom_right[3];
         colour.a = life[i] * 10;
         if (sw != 0) {
-            set3DSprite(Vif1Packet, first, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right,
-                        bottom_left, bottom_right, &colour);
+            set3DSprite(Vif1Packet, first, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right, bottom_left, bottom_right, &colour);
         } else {
-            set3DSprite(Vif1Packet, second, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right,
-                        bottom_left, bottom_right, &colour);
+            set3DSprite(Vif1Packet, second, CRect_i_(0, 0, 0x20, 0x20), top_left, top_right, bottom_left, bottom_right, &colour);
         }
     }
 
@@ -371,7 +331,7 @@ void CRunEffect::Set(float *origin) {
  * @address 0x163980
  * @size 0x70
  */
-void CRunEffect::Step(void) {
+void CRunEffect::Step() {
     for (int i = 0; i < 8; i++) {
         if (life[i] != 0) {
             life[i]--;
@@ -388,7 +348,7 @@ void CRunEffect::Step(void) {
  * @address 0x1639F0
  * @size 0x3C
  */
-CRunEffect::CRunEffect(void) {
+CRunEffect::CRunEffect() {
     for (int i = 0; i < 8; i++) {
         velocity_y[i] = 0.0f;
         life[i] = 0;

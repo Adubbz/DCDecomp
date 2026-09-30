@@ -10,18 +10,18 @@ class CTexture;
 class CRandomItem {
 public:
     CTexture *gold_texture; /**< Texture that a dropped pile of gold draws with. */
-    u8 unk_004[0xC];
-    float position[32][4];  /**< World position of each dropped item. */
-    float distance[32];     /**< Distance from each item to the player. */
-    s32 id[32];             /**< Slot identifier, or -1 where the slot is free. */
-    s32 amount[32];         /**< Gold value, or -1 when the slot contains an item. */
-    s32 state[32];          /**< Appearance and pickup animation state. */
-    float phase[32];        /**< Phase of each item's appearance or pickup animation. */
-    float bob_phase;        /**< Shared phase used to make active items hover. */
-    s32 pickup_event[32];   /**< Event each dropped item raises when the party walks onto it, or -1. */
-    s32 pickup_blocked[32]; /**< Nonzero while inventory capacity prevents pickup. */
-    s32 item_no[32];        /**< Item number, or -1 when the slot contains gold. */
-    u8 unk_614[0xC];
+    u8        unk_004[0xC];
+    float     position[32][4];    /**< World position of each dropped item. */
+    float     distance[32];       /**< Distance from each item to the player. */
+    s32       id[32];             /**< Slot identifier, or -1 where the slot is free. */
+    s32       amount[32];         /**< Gold value, or -1 when the slot contains an item. */
+    s32       state[32];          /**< Appearance and pickup animation state. */
+    float     phase[32];          /**< Phase of each item's appearance or pickup animation. */
+    float     bob_phase;          /**< Shared phase used to make active items hover. */
+    s32       pickup_event[32];   /**< Event each dropped item raises when the party walks onto it, or -1. */
+    s32       pickup_blocked[32]; /**< Nonzero while inventory capacity prevents pickup. */
+    s32       item_no[32];        /**< Item number, or -1 when the slot contains gold. */
+    u8        unk_614[0xC];
 
     /**
      * Draws the items lying on the floor.
@@ -30,7 +30,7 @@ public:
      * @address 0x1D6BE0
      * @size 0x1BC
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Draws the corner-map marks of the items lying on the floor.
@@ -39,7 +39,7 @@ public:
      * @address 0x1D6DA0
      * @size 0x148
      */
-    void MapSymbolDraw(void);
+    void MapSymbolDraw();
 
     /**
      * Raises the pickup event for an item the party has walked onto.
@@ -48,7 +48,7 @@ public:
      * @address 0x1D6EF0
      * @size 0x50
      */
-    int checkEvent(void);
+    int checkEvent();
 
     /**
      * Drops items that ended up somewhere they may not lie.
@@ -57,7 +57,7 @@ public:
      * @address 0x1D6F40
      * @size 0x60
      */
-    int checkErr(void);
+    int checkErr();
 
     /**
      * Reports which lying item the party is standing on.
@@ -66,7 +66,7 @@ public:
      * @address 0x1D6FA0
      * @size 0x250
      */
-    int CheckPosition(void);
+    int CheckPosition();
 
     /**
      * Puts one item on the floor at a position.
@@ -84,7 +84,7 @@ public:
      * @address 0x1D72D0
      * @size 0x4C
      */
-    int CheckID(void);
+    int CheckID();
 
     /**
      * Reports whether one item number is already lying on the floor.
@@ -102,7 +102,7 @@ public:
      * @address 0x1D7380
      * @size 0x158
      */
-    void Step(void);
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CRandomItem) == 0x620);

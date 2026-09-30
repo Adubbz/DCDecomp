@@ -27,42 +27,42 @@ class CCameraFollow;
  * Describes the event the player is standing in, and where it puts them.
  */
 struct ED_EVENT_PARAM {
-    int kind;     /**< What kind of event the point is: 1 a door, 2 an item box, 3 a map event, 4 and 5 the two ends of a ladder. */
-    int parts_no; /**< Map part the event point hangs off, or negative for none; a door enters the interior through it. */
-    u8 unk_08[0x8];
-    sceVu0FVECTOR position;   /**< Where the player stands while the door plays. */
-    sceVu0FVECTOR camera_pos; /**< Where the camera stands while the door plays. */
-    sceVu0FVECTOR rotation;   /**< Which way the player faces while it plays. */
-    u8 unk_40[0x10];
+    int             kind;     /**< What kind of event the point is: 1 a door, 2 an item box, 3 a map event, 4 and 5 the two ends of a ladder. */
+    int             parts_no; /**< Map part the event point hangs off, or negative for none; a door enters the interior through it. */
+    u8              unk_08[0x8];
+    sceVu0FVECTOR   position;   /**< Where the player stands while the door plays. */
+    sceVu0FVECTOR   camera_pos; /**< Where the camera stands while the door plays. */
+    sceVu0FVECTOR   rotation;   /**< Which way the player faces while it plays. */
+    u8              unk_40[0x10];
     ED_EVENT_POINT *point; /**< Event point the parameters were read from. */
-    u8 unk_54[0xc];
+    u8              unk_54[0xc];
 };
 
 /**
  * What the editor hands to EdMoveChara, and what it gets back.
  */
 struct ED_MOVE_CHARA_INFO {
-    float time;            /**< Time of day the step happens at. */
-    CCharacter *chara;     /**< Character being moved. */
-    CCameraFollow *camera; /**< Camera that follows the character and the movement is relative to. */
-    CCamera *view_camera;  /**< Camera that looks from the character's eyes in the first-person view. */
-    int key_lock;          /**< Whether the pad is ignored this step. */
-    u8 unk_14[0x4];
-    int interior;        /**< Whether the character walks through an interior's parts rather than the ground. */
-    CEditGround *ground; /**< Ground the character walks on. */
-    CMapParts *parts;    /**< Parts of the interior the character walks through. */
-    int parts_count;     /**< How many of them there are. */
-    int event_ready;     /**< Whether the character stands within reach of an event point this step. */
-    u8 unk_2c[0x4];
-    ED_EVENT_PARAM param;     /**< The event the character stands in. */
-    ED_EVENT_POINT *points;   /**< Event points of the map. */
-    int point_count;          /**< How many of them there are. */
-    int event_no;             /**< Map event the step asks to run. */
-    int system_event_no;      /**< System event the step asks to run. */
-    int acted;                /**< Whether the step acted on the confirm button. */
-    int fishing;              /**< Whether the character stands fishing. */
-    float motion_time_after;  /**< Motion time once the step has advanced the character. */
-    float motion_time_before; /**< Motion time before the step advanced it. */
+    float           time;        /**< Time of day the step happens at. */
+    CCharacter     *chara;       /**< Character being moved. */
+    CCameraFollow  *camera;      /**< Camera that follows the character and the movement is relative to. */
+    CCamera        *view_camera; /**< Camera that looks from the character's eyes in the first-person view. */
+    int             key_lock;    /**< Whether the pad is ignored this step. */
+    u8              unk_14[0x4];
+    int             interior;    /**< Whether the character walks through an interior's parts rather than the ground. */
+    CEditGround    *ground;      /**< Ground the character walks on. */
+    CMapParts      *parts;       /**< Parts of the interior the character walks through. */
+    int             parts_count; /**< How many of them there are. */
+    int             event_ready; /**< Whether the character stands within reach of an event point this step. */
+    u8              unk_2c[0x4];
+    ED_EVENT_PARAM  param;              /**< The event the character stands in. */
+    ED_EVENT_POINT *points;             /**< Event points of the map. */
+    int             point_count;        /**< How many of them there are. */
+    int             event_no;           /**< Map event the step asks to run. */
+    int             system_event_no;    /**< System event the step asks to run. */
+    int             acted;              /**< Whether the step acted on the confirm button. */
+    int             fishing;            /**< Whether the character stands fishing. */
+    float           motion_time_after;  /**< Motion time once the step has advanced the character. */
+    float           motion_time_before; /**< Motion time before the step advanced it. */
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_PARAM) == 0x60);
@@ -74,17 +74,16 @@ struct EDIT_MAP_INFO;
  * Stores one script-defined timer that gates a map object.
  */
 struct EDIT_OBJECT_TIMER {
-    char name[16];      /**< Frame the timer switches; empty leaves the record unused. */
-    CMapObject *object; /**< Object the frame belongs to, where one owns it. */
-    CFrame *frame;      /**< Root the frame is searched under, where no object does. */
-    float start_time;   /**< Hour at which the frame starts being drawn. */
-    float end_time;     /**< Hour at which it stops. */
+    char        name[16];   /**< Frame the timer switches; empty leaves the record unused. */
+    CMapObject *object;     /**< Object the frame belongs to, where one owns it. */
+    CFrame     *frame;      /**< Root the frame is searched under, where no object does. */
+    float       start_time; /**< Hour at which the frame starts being drawn. */
+    float       end_time;   /**< Hour at which it stops. */
 };
 
 STATIC_ASSERT(sizeof(EDIT_OBJECT_TIMER) == 0x20);
 struct EPARTS_INFO_HEADER;
 struct INIT_PARTSINFO;
-struct MAP_PARTS_INFO;
 struct OBJ_ANIME_SEQ;
 struct VILLAGER_INFO;
 class CCameraFollow;
@@ -108,76 +107,76 @@ class CTexAnimeData;
  * fields on the way in and out.
  */
 struct ED_EVENT_INFO {
-    s32 event_no;                          /**< Number of the event script being run. */
-    s32 world_coord_enable;                /**< Whether the event's stored world coordinate is applied each step. */
-    u8 world_coord[0x28];                  /**< Stored world coordinate: position at byte 8, rotation at byte 24. */
-    s32 map_jump_bgm_stop;                 /**< Whether a map jump stops the current background music. */
-    s32 map_jump_bgm_play;                 /**< Whether a map jump starts the destination's background music. */
-    s32 sound_off_count;                   /**< Number of sound channels suppressed by the event. */
-    float projection;                      /**< Projection distance used while rendering an event. */
-    CCameraFollow *camera;                 /**< Camera controller used by the active event. */
-    s32 reset_camera_angle;                /**< Camera-angle reset mode requested by the event. */
-    float reset_camera_yaw;                /**< Yaw offset used by the requested camera reset. */
-    CCharacter *main_character;            /**< Player character controlled by the active event. */
-    CTexAnimeData *main_texture_animation; /**< Texture-animation data restored to the player after an event. */
-    s32 main_texture_animation_count;      /**< Number of saved player texture-animation records. */
-    CNPCharacter *npcs;                    /**< Contiguous array of event NPC characters. */
-    s32 player_collision;                  /**< Whether ground collision is applied to the player during the event. */
-    s32 player_draw;                       /**< Whether the player model is drawn during the event. */
-    s32 player_shadow_draw;                /**< Whether the player's shadow is drawn during the event. */
-    s32 player_foot_sound;                 /**< Footstep mode applied to the player during the event. */
-    s32 player_stop;                       /**< Whether the player's event motion is held. */
-    s32 player_texture_block;              /**< Texture block assigned to the event player model. */
-    s32 npc_collision[16];                 /**< Ground-collision mode assigned to each event NPC. */
-    s32 npc_draw[16];                      /**< Whether each event NPC model is drawn. */
-    s32 npc_shadow_draw[16];               /**< Whether each event NPC shadow is drawn. */
-    s32 npc_foot_sound[16];                /**< Footstep mode assigned to each event NPC. */
-    s32 npc_stop[16];                      /**< Whether each event NPC's motion is held. */
-    s32 npc_draw_before[16];               /**< Draw-order group assigned to each event NPC. */
-    s32 npc_texture_block;                 /**< First texture block assigned to the event NPC models. */
-    s32 npc_count;                         /**< Number of valid entries in the event NPC array. */
-    VILLAGER_INFO *villagers;              /**< Metadata array for the event villagers. */
-    ClsMes *messages[8];                   /**< Message windows owned by the active event. */
-    float current_time;                    /**< Current editor time used by time-of-day opcodes. */
-    u8 unk_224[0xC];
-    sceVu0FVECTOR wind;        /**< Wind vector applied while the event is active. */
-    CEditGround *edit_ground;  /**< Ground and placed-part database used by the active event. */
-    s32 fixed_parts_count;     /**< Number of fixed map parts available to object-handle opcodes. */
-    CMapParts *fixed_parts;    /**< Fixed map parts available to object-handle opcodes. */
-    s32 edit_parts_count;      /**< Number of placed map parts available to object-handle opcodes. */
-    CMapParts *edit_parts;     /**< Placed map parts available to object-handle opcodes. */
-    s32 interior_parts_count;  /**< Number of interior parts available to object-handle opcodes. */
-    CMapParts *interior_parts; /**< Interior parts available to object-handle opcodes. */
-    CFrameVu1 *item_frame[1];  /**< VU1 frame used for the single event-held item. */
-    s32 talk_npc_id;           /**< Identifier of the NPC currently engaged in conversation. */
-    s32 talk_messages[16];     /**< Message identifiers assigned to the current conversation sequence. */
-    s32 talk_select_message;   /**< Message selected after a conversation choice. */
-    s32 talk_select_prompt;    /**< Message containing the current conversation choices. */
-    s32 interior_entrance;     /**< Entrance of the interior a GOTO_INTERIOR event walks into. */
-    char interior_name[0x20];  /**< Name of the interior a GOTO_INTERIOR event walks into. */
-    s32 interior_start_event;  /**< Event run on arrival in that interior, or -1 for none. */
-    s32 outside_map_no;        /**< Map requested when an event exits to the outside. */
-    s32 draw_exclamation_mark; /**< Whether the event requests the attention marker. */
-    s32 suppress_background;   /**< Whether event rendering suppresses the scene background. */
-    s32 suppress_shadows;      /**< Whether event rendering suppresses character shadows. */
-    u8 unk_2e4[0xC];
-    float background_color[3]; /**< RGB override for the event background. */
-    u8 unk_2fc[4];
-    s32 screen_filter; /**< Whether a full-screen event colour filter is active. */
-    u8 unk_304[0xC];
-    sceVu0FVECTOR screen_filter_color; /**< RGBA colour of the event screen filter. */
-    s32 lighting_override;             /**< Whether script-provided scene lighting replaces the map lighting. */
-    u8 unk_324[0xC];
-    sceVu0FMATRIX light_direction;     /**< Direction vectors for the four event point lights. */
-    sceVu0FMATRIX light_color;         /**< RGB intensities for the four event point lights. */
-    sceVu0FVECTOR ambient_color;       /**< RGBA ambient-light colour for the event scene. */
-    sceVu0FVECTOR vector_arguments[4]; /**< Vector arguments supplied to the active event. */
-    s32 integer_arguments[8];          /**< Integer arguments supplied to the active event. */
-    s32 flag_arguments[8];             /**< Flag-like arguments supplied to the active event. */
-    s32 fadeout_event_no;              /**< Event started after the current fade-out completes. */
-    s32 next_event;                    /**< Event number requested by the NEXT_EVENT opcode. */
-    s32 return_code;                   /**< Result code passed from an editor event back to the game loop. */
-    s32 exit_code;                     /**< Exit status supplied by the event script. */
+    s32            event_no;                     /**< Number of the event script being run. */
+    s32            world_coord_enable;           /**< Whether the event's stored world coordinate is applied each step. */
+    u8             world_coord[0x28];            /**< Stored world coordinate: position at byte 8, rotation at byte 24. */
+    s32            map_jump_bgm_stop;            /**< Whether a map jump stops the current background music. */
+    s32            map_jump_bgm_play;            /**< Whether a map jump starts the destination's background music. */
+    s32            sound_off_count;              /**< Number of sound channels suppressed by the event. */
+    float          projection;                   /**< Projection distance used while rendering an event. */
+    CCameraFollow *camera;                       /**< Camera controller used by the active event. */
+    s32            reset_camera_angle;           /**< Camera-angle reset mode requested by the event. */
+    float          reset_camera_yaw;             /**< Yaw offset used by the requested camera reset. */
+    CCharacter    *main_character;               /**< Player character controlled by the active event. */
+    CTexAnimeData *main_texture_animation;       /**< Texture-animation data restored to the player after an event. */
+    s32            main_texture_animation_count; /**< Number of saved player texture-animation records. */
+    CNPCharacter  *npcs;                         /**< Contiguous array of event NPC characters. */
+    s32            player_collision;             /**< Whether ground collision is applied to the player during the event. */
+    s32            player_draw;                  /**< Whether the player model is drawn during the event. */
+    s32            player_shadow_draw;           /**< Whether the player's shadow is drawn during the event. */
+    s32            player_foot_sound;            /**< Footstep mode applied to the player during the event. */
+    s32            player_stop;                  /**< Whether the player's event motion is held. */
+    s32            player_texture_block;         /**< Texture block assigned to the event player model. */
+    s32            npc_collision[16];            /**< Ground-collision mode assigned to each event NPC. */
+    s32            npc_draw[16];                 /**< Whether each event NPC model is drawn. */
+    s32            npc_shadow_draw[16];          /**< Whether each event NPC shadow is drawn. */
+    s32            npc_foot_sound[16];           /**< Footstep mode assigned to each event NPC. */
+    s32            npc_stop[16];                 /**< Whether each event NPC's motion is held. */
+    s32            npc_draw_before[16];          /**< Draw-order group assigned to each event NPC. */
+    s32            npc_texture_block;            /**< First texture block assigned to the event NPC models. */
+    s32            npc_count;                    /**< Number of valid entries in the event NPC array. */
+    VILLAGER_INFO *villagers;                    /**< Metadata array for the event villagers. */
+    ClsMes        *messages[8];                  /**< Message windows owned by the active event. */
+    float          current_time;                 /**< Current editor time used by time-of-day opcodes. */
+    u8             unk_224[0xC];
+    sceVu0FVECTOR  wind;                  /**< Wind vector applied while the event is active. */
+    CEditGround   *edit_ground;           /**< Ground and placed-part database used by the active event. */
+    s32            fixed_parts_count;     /**< Number of fixed map parts available to object-handle opcodes. */
+    CMapParts     *fixed_parts;           /**< Fixed map parts available to object-handle opcodes. */
+    s32            edit_parts_count;      /**< Number of placed map parts available to object-handle opcodes. */
+    CMapParts     *edit_parts;            /**< Placed map parts available to object-handle opcodes. */
+    s32            interior_parts_count;  /**< Number of interior parts available to object-handle opcodes. */
+    CMapParts     *interior_parts;        /**< Interior parts available to object-handle opcodes. */
+    CFrameVu1     *item_frame[1];         /**< VU1 frame used for the single event-held item. */
+    s32            talk_npc_id;           /**< Identifier of the NPC currently engaged in conversation. */
+    s32            talk_messages[16];     /**< Message identifiers assigned to the current conversation sequence. */
+    s32            talk_select_message;   /**< Message selected after a conversation choice. */
+    s32            talk_select_prompt;    /**< Message containing the current conversation choices. */
+    s32            interior_entrance;     /**< Entrance of the interior a GOTO_INTERIOR event walks into. */
+    char           interior_name[0x20];   /**< Name of the interior a GOTO_INTERIOR event walks into. */
+    s32            interior_start_event;  /**< Event run on arrival in that interior, or -1 for none. */
+    s32            outside_map_no;        /**< Map requested when an event exits to the outside. */
+    s32            draw_exclamation_mark; /**< Whether the event requests the attention marker. */
+    s32            suppress_background;   /**< Whether event rendering suppresses the scene background. */
+    s32            suppress_shadows;      /**< Whether event rendering suppresses character shadows. */
+    u8             unk_2e4[0xC];
+    float          background_color[3]; /**< RGB override for the event background. */
+    u8             unk_2fc[4];
+    s32            screen_filter; /**< Whether a full-screen event colour filter is active. */
+    u8             unk_304[0xC];
+    sceVu0FVECTOR  screen_filter_color; /**< RGBA colour of the event screen filter. */
+    s32            lighting_override;   /**< Whether script-provided scene lighting replaces the map lighting. */
+    u8             unk_324[0xC];
+    sceVu0FMATRIX  light_direction;      /**< Direction vectors for the four event point lights. */
+    sceVu0FMATRIX  light_color;          /**< RGB intensities for the four event point lights. */
+    sceVu0FVECTOR  ambient_color;        /**< RGBA ambient-light colour for the event scene. */
+    sceVu0FVECTOR  vector_arguments[4];  /**< Vector arguments supplied to the active event. */
+    s32            integer_arguments[8]; /**< Integer arguments supplied to the active event. */
+    s32            flag_arguments[8];    /**< Flag-like arguments supplied to the active event. */
+    s32            fadeout_event_no;     /**< Event started after the current fade-out completes. */
+    s32            next_event;           /**< Event number requested by the NEXT_EVENT opcode. */
+    s32            return_code;          /**< Result code passed from an editor event back to the game loop. */
+    s32            exit_code;            /**< Exit status supplied by the event script. */
 };
 
 STATIC_ASSERT(sizeof(ED_EVENT_INFO) == 0x450);
@@ -259,9 +258,9 @@ struct DEPTH_OF_FIELD_INFO {
     float start;       /**< Start time on the game's twelve-unit clock. */
     float end;         /**< End time on the game's twelve-unit clock. */
     float distance[2]; /**< Near and far focus distances. */
-    int level;         /**< Strength preset selected for the effect. */
-    int alpha;         /**< Blend alpha of the effect. */
-    int blur;          /**< Blur-kernel setting of the effect. */
+    int   level;       /**< Strength preset selected for the effect. */
+    int   alpha;       /**< Blend alpha of the effect. */
+    int   blur;        /**< Blur-kernel setting of the effect. */
 };
 
 /**
@@ -446,8 +445,7 @@ void EdStopSoundSrc();
  * @address 0x171D20
  * @size 0x3E0
  */
-void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_pos,
-                      float *camera_dir);
+void EdSetSoundSrcVol(float time, CMapParts **parts, int count, float *camera_pos, float *camera_dir);
 
 /**
  * Plays the sound one kind of door makes when it opens.
@@ -519,8 +517,7 @@ void EdThunderEffect(int map, CEditGround *ground);
  * @address 0x1725F0
  * @size 0x4C8
  */
-void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CNPCharacter *npcs,
-                     int *npc_draw_masks, int draw_shadows, ED_EVENT_INFO *event);
+void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CNPCharacter *npcs, int *npc_draw_masks, int draw_shadows, ED_EVENT_INFO *event);
 
 /**
  * Starts effects attached to the supplied map parts.
@@ -529,8 +526,7 @@ void EdDrawCharacter(CCharacter *player, int player_draw_mask, int npc_count, CN
  * @address 0x172AC0
  * @size 0xC4
  */
-void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func_data, EDIT_EFFECT_INFO *effects,
-                      int count);
+void EnterPartsEffect(CMapParts *parts, EPARTS_FUNC_DATA *func_data, EDIT_EFFECT_INFO *effects, int count);
 
 /**
  * Clears the editor's pending used-item selection.
@@ -566,7 +562,7 @@ void EdGetItemFile(int item_no, char *model_path, char *texture_path);
  * @address 0x173380
  * @size 0x58
  */
-void EdDrawItem(void);
+void EdDrawItem();
 
 /**
  * Returns the item selected by the editor menu.
@@ -701,8 +697,7 @@ int EdCheckGetItem(int item);
  * @address 0x1733E0
  * @size 0xB4
  */
-void EdSetSystemMes(int mes_no, int count, int position, int input_key, int *args,
-                    int value);
+void EdSetSystemMes(int mes_no, int count, int position, int input_key, int *args, int value);
 
 /**
  * Configures the editor's contextual help message.
@@ -882,7 +877,7 @@ float InvertTime(float time);
  * @address 0x16A120
  * @size 0xC
  */
-int EdCheckViewMode(void);
+int EdCheckViewMode();
 
 /**
  * Builds the villager table a map description asks for.
@@ -919,7 +914,7 @@ int EdGetDoorMotion(int door_no, int state);
  * @address 0x197220
  * @size 0x190
  */
-int EdInitEventParam(void);
+int EdInitEventParam();
 
 /**
  * Fills the event points one map-parts entry describes.
@@ -974,7 +969,7 @@ int EdInitToEPInfo(INIT_PARTSINFO *init, EPARTS_INFO_HEADER *header);
  * @address 0x1852B0
  * @size 0x64
  */
-void EdInitVillagerControl(void);
+void EdInitVillagerControl();
 
 /**
  * Fills the villager table for one time of day.
@@ -992,7 +987,7 @@ void EdInitVillagerTable(float clock, EDIT_MAP_INFO *info);
  * @address 0x16A160
  * @size 0x35B4
  */
-void EdMoveChara(void);
+void EdMoveChara();
 
 /**
  * Clears the editor movement state before a map runs.
@@ -1001,7 +996,7 @@ void EdMoveChara(void);
  * @address 0x169FD0
  * @size 0x18
  */
-void EdMoveCharaInit(void);
+void EdMoveCharaInit();
 
 /**
  * Runs one villager for a frame on the current map.
@@ -1038,7 +1033,7 @@ extern int frame_image_flag;
  * @address 0x173E70
  * @size 0x54
  */
-void EdSaveFrameImageTask(void);
+void EdSaveFrameImageTask();
 
 /**
  * Prepares the frame capture the editor writes to a file.
@@ -1047,7 +1042,7 @@ void EdSaveFrameImageTask(void);
  * @address 0x173ED0
  * @size 0x2C
  */
-void EdSaveFrameImageInit(void);
+void EdSaveFrameImageInit();
 
 /**
  * Plays one of the editor sound effects.
@@ -1093,8 +1088,7 @@ void EdSetLightParam(float clock, int fixed, EDIT_MAP_INFO *info, CFrameVu1 *sky
  * @address 0x187F90
  * @size 0xA88
  */
-void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds,
-               CCamera *camera, int *follow_axes);
+void EdDrawSky(float clock, CFrameVu1 **sky, CFrame **sun, CFrameVu1 *clouds, CCamera *camera, int *follow_axes);
 
 /**
  * Runs the talking-to-a-villager mode for a frame.

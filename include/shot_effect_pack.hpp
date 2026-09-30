@@ -13,6 +13,8 @@ class CSHOT_EFFECT_PACK {
 public:
     CSHOT_EFFECT effect[5]; /**< The effects the dungeon can run. */
 
+    s32 current_effect; /**< Effect that SetUserID2 and SetDmg apply to. */
+
     /**
      * Fires one effect from a position in a direction, and selects it.
      */
@@ -21,8 +23,6 @@ public:
         current_effect = index;
     }
 
-    s32 current_effect; /**< Effect that SetUserID2 and SetDmg apply to. */
-
     /**
      * Loads an effect into a free slot, and returns the slot, or -1 when none is free.
      *
@@ -30,7 +30,7 @@ public:
      * @address 0x1AE4C0
      * @size 0x100
      */
-    int Entry(BT_SHOT_EFFECT *, unsigned int *, int, CDataAlloc2<1> *, int);
+    int Entry(BT_SHOT_EFFECT *description, unsigned int *resource, int texture_block, CDataAlloc2<1> *allocator, int slots);
 
     /**
      * @mangled SetUserID2__17CSHOT_EFFECT_PACKFi
@@ -38,7 +38,7 @@ public:
      * @size 0x44
      * @unknownret
      */
-    void SetUserID2(int);
+    void SetUserID2(int id);
 
     /**
      * @mangled SetDmg__17CSHOT_EFFECT_PACKFi
@@ -46,7 +46,7 @@ public:
      * @size 0x44
      * @unknownret
      */
-    void SetDmg(int);
+    void SetDmg(int damage);
 };
 
 STATIC_ASSERT(sizeof(CSHOT_EFFECT_PACK) == 0x326F0);

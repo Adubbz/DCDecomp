@@ -16,7 +16,7 @@ void MapJump(int map_no, int event_no);
  * @address 0x141D40
  * @size 0x118
  */
-void MenuInit(void);
+void MenuInit();
 
 /**
  * Updates the developer mode-selection menu.
@@ -25,7 +25,7 @@ void MenuInit(void);
  * @address 0x141E60
  * @size 0x940
  */
-int MenuLoop(void);
+int MenuLoop();
 
 /**
  * Initializes the startup memory-card check.
@@ -34,7 +34,7 @@ int MenuLoop(void);
  * @address 0x1427A0
  * @size 0xE0
  */
-void MemCheckInit(void);
+void MemCheckInit();
 
 /**
  * Updates the startup memory-card check.
@@ -43,7 +43,7 @@ void MemCheckInit(void);
  * @address 0x142880
  * @size 0x280
  */
-int MemCheckLoop(void);
+int MemCheckLoop();
 
 /**
  * Initializes the standalone save screen.
@@ -52,7 +52,7 @@ int MemCheckLoop(void);
  * @address 0x142B00
  * @size 0x110
  */
-void InitSave(void);
+void InitSave();
 
 /**
  * Updates and draws the standalone save screen.
@@ -61,7 +61,7 @@ void InitSave(void);
  * @address 0x142C10
  * @size 0x3C
  */
-int LoopSave(void);
+int LoopSave();
 
 /**
  * Initializes the trial-ending mode.
@@ -70,7 +70,7 @@ int LoopSave(void);
  * @address 0x142C50
  * @size 0x8
  */
-void TrialEndInit(void);
+void TrialEndInit();
 
 /**
  * Completes the trial-ending mode immediately.
@@ -79,7 +79,7 @@ void TrialEndInit(void);
  * @address 0x142C60
  * @size 0xC
  */
-int TrialEndLoop(void);
+int TrialEndLoop();
 
 /**
  * Starts trial-version completion tracking.
@@ -88,7 +88,7 @@ int TrialEndLoop(void);
  * @address 0x142C70
  * @size 0x8
  */
-void TrialStart(void);
+void TrialStart();
 
 /**
  * Reports whether trial-version completion has been reached.
@@ -97,4 +97,4 @@ void TrialStart(void);
  * @address 0x142C80
  * @size 0xC
  */
-int CheckTrialEnd(void);
+int CheckTrialEnd();

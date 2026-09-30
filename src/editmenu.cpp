@@ -25,112 +25,39 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-float MenuIconPos[6][2];
+float            MenuIconPos[6][2];
 EDIT_MENU_CURSOR EdCur;
-float AnalyzeFill[3];
+float            AnalyzeFill[3];
 
 s8 EditMenuIconID[6] = {13, 10, 11, 5, 4, 6};
 
-CTexture *Analyze;
-CTexture *AnaBar;
-int EdMenuTextureReadEndFlag;
-int EdMenuTextureBlock;
+CTexture  *Analyze;
+CTexture  *AnaBar;
+int        EdMenuTextureReadEndFlag;
+int        EdMenuTextureBlock;
 u_long128 *EdMenuWorkBuf;
-int EdMenuExTextureBlock;
-int EdMenuExTextureBlock1;
-int EdMenuExTextureBlock2;
-int EditSwitch;
-s16 EdMenuRGB;
-int EdEffectCt;
-s16 EdMenuHelpWinAlpha;
-s16 AnalyzeSelect;
-int EdMenuMesNo2;
-int EdMenuMesMake2;
-s16 ButtonAdd;
-s16 AnalyzeBackBlockCnt;
-s16 EdMenuEffectFlag;
-float EdMenuEffectCt;
-float WindowPos[2];
-float EditMenuWinW;
-float EditMenuWinH;
-s16 MakeWin2Flag;
+int        EdMenuExTextureBlock;
+int        EdMenuExTextureBlock1;
+int        EdMenuExTextureBlock2;
+int        EditSwitch;
+s16        EdMenuRGB;
+int        EdEffectCt;
+s16        EdMenuHelpWinAlpha;
+s16        AnalyzeSelect;
+int        EdMenuMesNo2;
+int        EdMenuMesMake2;
+s16        ButtonAdd;
+s16        AnalyzeBackBlockCnt;
+s16        EdMenuEffectFlag;
+float      EdMenuEffectCt;
+float      WindowPos[2];
+float      EditMenuWinW;
+float      EditMenuWinH;
+s16        MakeWin2Flag;
 
 #include "editloop.hpp"
 #include "mainselect.hpp"
 #include "menuitemstep.hpp"
-
-/**
- * Returns the number of edit menu icons, one fewer until the manual is available.
- *
- * @mangled GetEditMenuMax__Fv
- * @address 0x2102E0
- * @size 0x3C
- */
-static int GetEditMenuMax();
-
-/**
- * Draws one edit menu icon at its resting position.
- *
- * @mangled DrawMenuIcon__Fi
- * @address 0x210320
- * @size 0xC4
- */
-static void DrawMenuIcon(int slot);
-
-/**
- * Writes the screen position of one edit menu icon.
- *
- * @mangled GetEditMenuIconPos__FiPi
- * @address 0x2103F0
- * @size 0xFC
- */
-static void GetEditMenuIconPos(int slot, int *position);
-
-/**
- * Draws the edit menu icons at their current positions.
- *
- * @mangled DrawMoveMenuIcon__Fv
- * @address 0x2104F0
- * @size 0x1B4
- */
-static void DrawMoveMenuIcon();
-
-/**
- * Moves the edit menu icons one step away from their resting positions and reports when they have arrived.
- *
- * @mangled CalMoveFromMenuIcon__Fv
- * @address 0x2106B0
- * @size 0x240
- */
-static int CalMoveFromMenuIcon();
-
-/**
- * Moves the edit menu icons one step back to their resting positions and reports when they have arrived.
- *
- * @mangled CalMoveToMenuIcon__Fv
- * @address 0x2108F0
- * @size 0x1C0
- */
-static int CalMoveToMenuIcon();
-
-/**
- * Releases the edit menu's textures and returns the pad to normal mode.
- *
- * @mangled EditMenuExit__Fv
- * @address 0x210DA0
- * @size 0x8C
- */
-static void EditMenuExit();
-
-/**
- * Returns the help-window draw flag it is given, or 0 while the edit menu is in
- * state 3, 9 or 0x10 and the Atra event flag is set.
- *
- * @mangled GetDrawHelpWindow__Fi
- * @address 0x210E30
- * @size 0x64
- */
-static int GetDrawHelpWindow(int draw);
 
 /**
  * Draws the edit menu's opening and enters its page textures once they have been read.
@@ -212,33 +139,6 @@ static void AtoraMoveDraw();
  * @size 0x30
  */
 static int AtoraMove();
-
-/**
- * Draws the background panels of the analysis page.
- *
- * @mangled AnalyzeBackDraw__Fii
- * @address 0x212110
- * @size 0x15C
- */
-static void AnalyzeBackDraw(int alpha, int brightness);
-
-/**
- * Returns the analysis page's completion percentage, capped at 100.
- *
- * @mangled AnalyzeRequestPer__Fv
- * @address 0x212270
- * @size 0xAC
- */
-static float AnalyzeRequestPer();
-
-/**
- * Draws the analysis page's bars and reports whether the fill has reached its target.
- *
- * @mangled AnalyzeBarDraw__Fv
- * @address 0x212320
- * @size 0x69C
- */
-static int AnalyzeBarDraw();
 
 /**
  * Draws the transition into the analysis page.
@@ -362,8 +262,8 @@ int GetNumHowManyItemsHave(int item) {
         case ITEMKIND_WEAPON: {
             WEAPON_DATA *weapon = GetWeaponData(item);
             if (weapon != NULL) {
-                int i;
-                s8 owner = weapon->owner;
+                int          i;
+                s8           owner = weapon->owner;
                 WEAPON_HAVE *weapons = dungeon_status->chara_weapons[owner];
                 for (i = 0; i < 10; i++) {
                     if (item == weapons[i].item_no) {
@@ -377,6 +277,13 @@ int GetNumHowManyItemsHave(int item) {
     return count;
 }
 
+/**
+ * Returns the number of edit menu icons, one fewer until the manual is available.
+ *
+ * @mangled GetEditMenuMax__Fv
+ * @address 0x2102E0
+ * @size 0x3C
+ */
 static int GetEditMenuMax() {
     int icon_max = 6;
     if (GetGameFlagForManualMenu() == 0) {
@@ -391,14 +298,20 @@ static int GetEditMenuMax() {
 static void DrawMenuIcon(int slot) {
     MENU_ICON_INFO *info = GetMenuIconInfo(EditMenuIconID[slot]);
 
-    DrawMainMenuIcon((int) (MenuIconPos[slot][0] - 6.0f), (int) (MenuIconPos[slot][1] - 4.0f),
-                     info->id, 1, 0x80, 0x80);
+    DrawMainMenuIcon((int) (MenuIconPos[slot][0] - 6.0f), (int) (MenuIconPos[slot][1] - 4.0f), info->id, 1, 0x80, 0x80);
 }
 
+/**
+ * Writes the screen position of one edit menu icon.
+ *
+ * @mangled GetEditMenuIconPos__FiPi
+ * @address 0x2103F0
+ * @size 0xFC
+ */
 static void GetEditMenuIconPos(int slot, int *position) {
-    u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
-    u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
-    u8 x[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
+    u8  six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
+    u8  five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
+    u8  x[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     int icon_max = GetEditMenuMax();
 
     if (icon_max == 5) {
@@ -458,11 +371,17 @@ static void DrawMoveMenuIcon() {
             brightness = 0x80;
             selected = 1;
         }
-        DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset),
-                         (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
+        DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
 }
 
+/**
+ * Moves the edit menu icons one step away from their resting positions and reports when they have arrived.
+ *
+ * @mangled CalMoveFromMenuIcon__Fv
+ * @address 0x2106B0
+ * @size 0x240
+ */
 static int CalMoveFromMenuIcon() {
     int done = 0;
     int arrived_count = 0;
@@ -602,6 +521,13 @@ void EditMenuInit(int *texture_blocks, int start_at_atora) {
     }
 }
 
+/**
+ * Releases the edit menu's textures and returns the pad to normal mode.
+ *
+ * @mangled EditMenuExit__Fv
+ * @address 0x210DA0
+ * @size 0x8C
+ */
 static void EditMenuExit() {
     int blocks[5] = {0, 0, 0, 0, -1};
 
@@ -615,6 +541,14 @@ static void EditMenuExit() {
     GamePad.MenuModeOff();
 }
 
+/**
+ * Returns the help-window draw flag it is given, or 0 while the edit menu is in
+ * state 3, 9 or 0x10 and the Atra event flag is set.
+ *
+ * @mangled GetDrawHelpWindow__Fi
+ * @address 0x210E30
+ * @size 0x64
+ */
 static int GetDrawHelpWindow(int draw) {
     if ((EditSwitch == 9 || EditSwitch == 3 || EditSwitch == 0x10) && GetMenuAtraEventFlag()) {
         draw = 0;
@@ -763,10 +697,10 @@ void EditMenuDraw() {
 }
 
 static int EditMenuStart() {
-    u8 six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
-    u8 five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
+    u8  six[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
+    u8  five[5] = {0x50, 0x60, 0x70, 0x80, 0x70};
     int icon_max = GetEditMenuMax();
-    u8 x[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
+    u8  x[6] = {0x50, 0x60, 0x70, 0x80, 0x80, 0x70};
     int brightness;
     int x_offset;
     int y_offset;
@@ -844,8 +778,8 @@ static int EditMenuStart() {
 static void EditMenuSelectDraw() {
     DrawMoveMenuIcon();
 
-    int icon_max = GetEditMenuMax();
-    s8 selection = EdCur.selection;
+    int   icon_max = GetEditMenuMax();
+    s8    selection = EdCur.selection;
     float slot = selection;
     float x = 48.0f + 16.0f * slot;
     if (icon_max == 6) {
@@ -865,7 +799,7 @@ static void EditMenuSelectDraw() {
     EdCur.y += (y - EdCur.y) / 3.0f;
 
     MENU_ICON_INFO *info = GetMenuIconInfo(EditMenuIconID[EdCur.selection]);
-    int width = info->label_width + 0x4A;
+    int             width = info->label_width + 0x4A;
     DrawMenuWaku(x + 18.0f, y - 15.0f, width, 0x28, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) EdCur.x, (int) EdCur.y, 1, 0x40);
 
@@ -1112,9 +1046,7 @@ static void AnalyzeBackDraw(int alpha, int brightness) {
                 bottom = 0x11C - y;
 #endif
             }
-            DrawMenu2DSprite(AnaBar, CRect_i_(x, y + top, 0x36, bottom - top),
-                             CRect_i_(0x36, top, 0x36, bottom - top), brightness, brightness,
-                             brightness, alpha);
+            DrawMenu2DSprite(AnaBar, CRect_i_(x, y + top, 0x36, bottom - top), CRect_i_(0x36, top, 0x36, bottom - top), brightness, brightness, brightness, alpha);
         }
     }
 }
@@ -1124,7 +1056,7 @@ static void AnalyzeBackDraw(int alpha, int brightness) {
  */
 static float AnalyzeRequestPer() {
     CEditPartsInfo *info = CommonMenuAtoraInfo;
-    float total = (float) info->parts_max;
+    float           total = (float) info->parts_max;
     if (total < 1.0f) {
         return 100.0f;
     }
@@ -1143,19 +1075,26 @@ static float AnalyzeRequestPer() {
     return percent;
 }
 
+/**
+ * Draws the analysis page's bars and reports whether the fill has reached its target.
+ *
+ * @mangled AnalyzeBarDraw__Fv
+ * @address 0x212320
+ * @size 0x69C
+ */
 static int AnalyzeBarDraw() {
     float parts_total;
     float parts_complete;
     float elements_total;
-    int elements_done;
-    int parts_done;
-    int bars_started;
-    int x;
-    int i;
-    int top;
-    int digit_x;
-    int digits;
-    int number;
+    int   elements_done;
+    int   parts_done;
+    int   bars_started;
+    int   x;
+    int   i;
+    int   top;
+    int   digit_x;
+    int   digits;
+    int   number;
     float goal;
     float edge;
     float fill;
@@ -1248,11 +1187,9 @@ static int AnalyzeBarDraw() {
         edge = 0.1f * AnalyzeFill[i];
         if (!(AnalyzeFill[i] <= 0.0f)) {
 #ifdef PAL
-            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x130 - top) - edge)),
-                             CRect_i_(0x56, 0x36, 10, 9), 0x80);
+            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x130 - top) - edge)), CRect_i_(0x56, 0x36, 10, 9), 0x80);
 #else
-            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x11C - top) - edge)),
-                             CRect_i_(0x56, 0x36, 10, 9), 0x80);
+            DrawMenu2DSprite(AnaBar, CRect_i_(x + 0x36, (int) (top + edge), 10, (int) ((float) (0x11C - top) - edge)), CRect_i_(0x56, 0x36, 10, 9), 0x80);
 #endif
         }
         number = (int) (100.0f * AnalyzeFill[i] / 144.0f);
@@ -1286,15 +1223,13 @@ static void ToAnalyzeEditDraw() {
     MenuTextureReload(EdMenuTextureBlock);
     for (int i = 0; i < 3; i++) {
 #ifdef PAL
-        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50),
-                         0x80);
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
 #else
-        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50),
-                         0x80);
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
 #endif
     }
     float left = (float) (0x280 - EdEffectCt * 16);
-    int width = (int) (80.0f + left);
+    int   width = (int) (80.0f + left);
     if (left < 0.0f) {
         left = 0.0f;
     }
@@ -1313,7 +1248,7 @@ static void ToAnalyzeEditDraw() {
         brightness = 0x40;
     }
     AnalyzeBackDraw(alpha, brightness);
-    int done = 0;
+    int   done = 0;
     float bar = (float) (EdEffectCt * 20);
     if (640.0f < bar) {
         bar = 640.0f;
@@ -1365,11 +1300,9 @@ static void AnalyzeEditDraw() {
 
     for (int i = 0; i < 3; i++) {
 #ifdef PAL
-        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50),
-                         CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x14a, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
 #else
-        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50),
-                         CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
+        DrawMenu2DSprite(Analyze, CRect_i_(i * 0xB5 + 0x56, 0x136, 0x7E, 0x50), CRect_i_(0x80, i * 0x50, 0x7E, 0x50), 0x80);
 #endif
     }
     AnalyzeBarDraw();
@@ -1388,11 +1321,9 @@ static void AnalyzeEditDraw() {
         }
         if (AnalyzeFill[i] > 0.0f) {
 #ifdef PAL
-            DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x130, width, 0xF),
-                             CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+            DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x130, width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
 #else
-            DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF),
-                             CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
+            DrawMenu2DSprite(AnaBar, CRect_i_(x, 0x11C, width, 0xF), CRect_i_(0x20, 0x36, 0x36, 0xF), 0x80);
 #endif
         }
         i++;

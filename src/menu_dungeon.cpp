@@ -44,24 +44,24 @@ DUN_ENTER_MENU DEnterMenu;
  * State of the character change menu and its character positions.
  */
 struct CHARA_CHANGE_MENU {
-    s8 selected;          /**< Party member the ring has turned to. */
-    s8 cursor_row;        /**< Row the cursor is on in the message window. */
-    s8 party_size;        /**< Number of party members on the ring. */
-    s8 unk_03;            /**< Step of the menu's state machine. */
+    s8    selected;       /**< Party member the ring has turned to. */
+    s8    cursor_row;     /**< Row the cursor is on in the message window. */
+    s8    party_size;     /**< Number of party members on the ring. */
+    s8    unk_03;         /**< Step of the menu's state machine. */
     float turn_frame;     /**< Frames the ring has spent turning toward the newly selected member. */
     float ring_pos[6][2]; /**< Each member's offset from the ring's centre. */
-    s16 ring_slot[6];     /**< Each member's place on the ring, counted from the front. */
+    s16   ring_slot[6];   /**< Each member's place on the ring, counted from the front. */
     float turn_direction; /**< Direction the ring turns: 1 after selecting the previous member, -1 after the next. */
-    s16 reset_on_open;    /**< Cleared when the menu opens; nothing reads it. */
-    u8 unk_4a[2];
-    s32 unk_4c; /**< Frames spent in the closing and fade steps. */
-    u8 unk_50[2];
-    s8 change_blocked; /**< Why the leader cannot change: 0 free, 1 in a restricted zone, 2 Osmond in a state that forbids it. */
-    u8 unk_53;
+    s16   reset_on_open;  /**< Cleared when the menu opens; nothing reads it. */
+    u8    unk_4a[2];
+    s32   unk_4c; /**< Frames spent in the closing and fade steps. */
+    u8    unk_50[2];
+    s8    change_blocked; /**< Why the leader cannot change: 0 free, 1 in a restricted zone, 2 Osmond in a state that forbids it. */
+    u8    unk_53;
     float cursor_x; /**< Screen x of the cursor. */
     float cursor_y; /**< Screen y of the cursor. */
-    s16 mode;       /**< Mode the menu was opened with; 1 uses up an item when the leader changes. */
-    u8 unk_5e[2];
+    s16   mode;     /**< Mode the menu was opened with; 1 uses up an item when the leader changes. */
+    u8    unk_5e[2];
 };
 
 STATIC_ASSERT(sizeof(CHARA_CHANGE_MENU) == 0x60);
@@ -83,31 +83,13 @@ CDngStatusData *DEnterStatusPt;
 static int maxFloorTbl__4[7] = {15, 17, 18, 18, 15, 25, 100};
 
 /**
- * Adds one attachment's values into another, scaled by a factor.
- *
- * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
- * @address 0x225810
- * @size 0x158
- */
-static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale);
-
-/**
- * Restores the pad and textures when the dungeon entrance menu closes.
- *
- * @mangled ExitDunEnterMenu__Fv
- * @address 0x226520
- * @size 0x70
- */
-static void ExitDunEnterMenu(void);
-
-/**
  * Handles key input on the dungeon entrance menu.
  *
  * @mangled DunEnterMenuKey__Fv
  * @address 0x226620
  * @size 0x6EC
  */
-static int DunEnterMenuKey(void);
+static int DunEnterMenuKey();
 
 /**
  * Draws the dungeon entrance menu.
@@ -116,16 +98,7 @@ static int DunEnterMenuKey(void);
  * @address 0x226D10
  * @size 0x538
  */
-static void DunEnterDraw(void);
-
-/**
- * Draws the frame of the dungeon entrance board.
- *
- * @mangled DunEnterBoardWaku__Fiii
- * @address 0x227250
- * @size 0x4AC
- */
-static void DunEnterBoardWaku(int x, int y, int alpha);
+static void DunEnterDraw();
 
 /**
  * Draws the dungeon entry board.
@@ -135,15 +108,6 @@ static void DunEnterBoardWaku(int x, int y, int alpha);
  * @size 0x7C0
  */
 static void DunEnterBoard(int x, int y, int alpha);
-
-/**
- * Draws a number right to left, one digit at a time, clipped to the board.
- *
- * @mangled DrawEnemyNum__Fiiiiii
- * @address 0x227EC0
- * @size 0x154
- */
-static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alpha);
 
 /**
  * Draws the collected Atla count on the dungeon entrance board.
@@ -182,33 +146,6 @@ static void DrawDunEnterBack(int alpha);
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha);
 
 /**
- * Sets up the item preview's model and textures once they have been read.
- *
- * @mangled EnterItemPolygonView__Fv
- * @address 0x22AD20
- * @size 0x21C
- */
-static int EnterItemPolygonView(void);
-
-/**
- * Turns and scales the item model under pad control, then draws it.
- *
- * @mangled LocalDrawItemPolygonView__Fv
- * @address 0x22AF40
- * @size 0x26C
- */
-static void LocalDrawItemPolygonView(void);
-
-/**
- * Maps a debug item selection to its spreadsheet item number.
- *
- * @mangled ConvDebugSelectToExcelListNo__Fi
- * @address 0x22B1F0
- * @size 0x4C
- */
-static int ConvDebugSelectToExcelListNo(int selection);
-
-/**
  * Draws the debug overlay listing an item's data.
  *
  * @mangled DrawItemDataView__Fi
@@ -217,6 +154,13 @@ static int ConvDebugSelectToExcelListNo(int selection);
  */
 static void DrawItemDataView(int item_no);
 
+/**
+ * Adds one attachment's values into another, scaled by a factor.
+ *
+ * @mangled PlusAttachmentVolume__FP11ATTACH_LISTP11ATTACH_LISTf
+ * @address 0x225810
+ * @size 0x158
+ */
 static void PlusAttachmentVolume(ATTACH_LIST *base, ATTACH_LIST *add, float scale) {
     int i;
 
@@ -273,8 +217,8 @@ void SetWeaponAttachStatus(WEAPON_HAVE *result) {
         return;
     }
 
-    int chara = dng_status->cur_chara;
-    int slot = dng_status->equipped_weapon_slot[chara];
+    int          chara = dng_status->cur_chara;
+    int          slot = dng_status->equipped_weapon_slot[chara];
     WEAPON_HAVE *weapons = dng_status->chara_weapons[chara];
     WEAPON_HAVE *equipped = &weapons[slot];
     if (equipped == NULL) {
@@ -286,14 +230,14 @@ void SetWeaponAttachStatus(WEAPON_HAVE *result) {
 }
 
 void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
-    int i;
+    int          i;
     WEAPON_DATA *data;
-    int flags;
+    int          flags;
     ATTACH_LIST *attaches;
-    ATTACH_LIST total;
-    float rate;
-    float scale;
-    int value;
+    ATTACH_LIST  total;
+    float        rate;
+    float        scale;
+    int          value;
 
     data = GetWeaponData(weapon->item_no);
     if (data == NULL) {
@@ -373,11 +317,11 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full) {
     }
 }
 
-int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *) {
+int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *unused) {
     CDngStatusData *status;
-    ATTACH_LIST *attach;
-    ATTACH_DATA *data;
-    s16 held_no;
+    ATTACH_LIST    *attach;
+    ATTACH_DATA    *data;
+    s16             held_no;
 
     if (item_no < ITEM_ATTACH_START || item_no >= ITEM_DUNGEON_START) {
         return -1;
@@ -427,11 +371,11 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
 #else
     char path[76];
 #endif
-    int size;
+    int        size;
     u_long128 *buffer;
-    int first_open;
-    int floor;
-    s8 lines;
+    int        first_open;
+    int        floor;
+    s8         lines;
 
     SaveData->QuestDungeon(dungeon, 1);
     DEnterStatusPt = (CDngStatusData *) UserStatus;
@@ -504,6 +448,13 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     return 1;
 }
 
+/**
+ * Restores the pad and textures when the dungeon entrance menu closes.
+ *
+ * @mangled ExitDunEnterMenu__Fv
+ * @address 0x226520
+ * @size 0x70
+ */
 static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
@@ -527,11 +478,11 @@ int DunEnterMenuLoop() {
     return result;
 }
 
-static int DunEnterMenuKey(void) {
-    int result;
-    int selected;
-    int scroll_top;
-    int count;
+static int DunEnterMenuKey() {
+    int           result;
+    int           selected;
+    int           scroll_top;
+    int           count;
     BG_READ_INFO *archive;
 
     result = -1;
@@ -541,8 +492,8 @@ static int DunEnterMenuKey(void) {
             if (DEnterMenu.textures_ready == 0 && ReadBGSync() == 0) {
                 LOADTEXTURE_INFO2 textures[] = {
                     {(char *) "#frame_menu_enter#640#" SCREEN_HEIGHT_STR "#4", DEnterMenu.texture_block, 0},
-                    {NULL, DEnterMenu.texture_block, 0},
-                    {NULL, 0, 0},
+                    {NULL,                                                     DEnterMenu.texture_block, 0},
+                    {NULL,                                                     0,                        0},
                 };
                 archive = GetReadBGFile(0);
                 textures[1].name = (char *) GetPackFile((u_int *) archive->buffer, (char *) "dunenter.img", NULL);
@@ -673,16 +624,16 @@ static int DunEnterMenuKey(void) {
     return result;
 }
 
-static void DunEnterDraw(void) {
-    int fade;
-    int alpha;
-    int cover;
-    int half_width;
-    int cursor_y;
-    int left;
-    int top;
-    int right;
-    int bottom;
+static void DunEnterDraw() {
+    int   fade;
+    int   alpha;
+    int   cover;
+    int   half_width;
+    int   cursor_y;
+    int   left;
+    int   top;
+    int   right;
+    int   bottom;
     float wave;
 
     setbilinear(0);
@@ -717,7 +668,7 @@ static void DunEnterDraw(void) {
         if (DEnterMenu.state == 0) {
             cursor_y = (DEnterMenu.selected_floor - DEnterMenu.scroll_top) * 40 + 0x74;
             static int DunWakuCnt;
-            static s8 init;
+            static s8  init;
             if (init == 0) {
                 DunWakuCnt = 0;
                 init = 1;
@@ -728,15 +679,10 @@ static void DunEnterDraw(void) {
             right = 204.0f - wave;
             bottom = (cursor_y + 0x18) - wave;
             RECT corner = {0x40, 0x60, 0x10, 0x10};
-            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, top, corner.width, corner.height),
-                             CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
-            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, top, corner.width, corner.height),
-                             CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
-            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, bottom, corner.width, corner.height),
-                             CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
-            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, bottom, corner.width, corner.height),
-                             CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height),
-                             alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, top, corner.width, corner.height), CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, top, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(left, bottom, corner.width, corner.height), CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_(right, bottom, corner.width, corner.height), CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
             DunWakuCnt++;
             if (DunWakuCnt < 0 || DunWakuCnt >= 30) {
                 DunWakuCnt = 0;
@@ -784,6 +730,13 @@ static void DunEnterDraw(void) {
     setbilinear(1);
 }
 
+/**
+ * Draws the frame of the dungeon entrance board.
+ *
+ * @mangled DunEnterBoardWaku__Fiii
+ * @address 0x227250
+ * @size 0x4AC
+ */
 static void DunEnterBoardWaku(int x, int y, int alpha) {
     int draw_x;
     int draw_y;
@@ -836,13 +789,13 @@ static void DunEnterBoardWaku(int x, int y, int alpha) {
  */
 static void DunEnterBoard(int x, int y, int alpha) {
     float lane;
-    int top;
-    int row_y;
-    int bottom;
-    int dim;
-    int i;
-    int rule_x;
-    int column_x;
+    int   top;
+    int   row_y;
+    int   bottom;
+    int   dim;
+    int   i;
+    int   rule_x;
+    int   column_x;
 
     lane = x;
     top = y + 0x19;
@@ -895,8 +848,7 @@ static void DunEnterBoard(int x, int y, int alpha) {
         CRect_i_ edge_source(0x20, source, 10, length);
         DrawMenu2DSprite(DunLogBoard, CRect_i_((int) (lane - 10.0f), position, 10, length), edge_source, dim);
         for (int segment = 0; segment < 12; segment++) {
-            DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 0x28, length), CRect_i_(0x20, source, 0x28, length),
-                             dim);
+            DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 0x28, length), CRect_i_(0x20, source, 0x28, length), dim);
             lane += 40.0f;
         }
         DrawMenu2DSprite(DunLogBoard, CRect_i_((int) lane, position, 10, length), edge_source, dim);
@@ -917,8 +869,7 @@ static void DunEnterBoard(int x, int y, int alpha) {
             source = dungeon * 24 + 0x20;
             MenuTextureClip(position, source, length, top, bottom);
             if (position < bottom) {
-                DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0xDC, length),
-                                 CRect_i_(0xFC, source, 0xDC, length), alpha);
+                DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0xDC, length), CRect_i_(0xFC, source, 0xDC, length), alpha);
             }
         } else if (dungeon < 6) {
             int draw_x = column_x + 0x72;
@@ -929,13 +880,11 @@ static void DunEnterBoard(int x, int y, int alpha) {
             if (position < bottom) {
                 int remaining = (u8) DEnterMenu.max_atra[i] - (u8) DEnterMenu.collected_atra[i];
                 for (int mark = 0; mark < remaining; mark++) {
-                    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length),
-                                     CRect_i_(0x48, source, 0x20, length), alpha);
+                    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length), CRect_i_(0x48, source, 0x20, length), alpha);
                     draw_x += 0x1A;
                 }
                 for (int mark = 0; mark < (u8) DEnterMenu.collected_atra[i]; mark++) {
-                    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length),
-                                     CRect_i_(0x68, source, 0x20, length), alpha);
+                    DrawMenu2DSprite(DunLogBoard, CRect_i_(draw_x, position, 0x20, length), CRect_i_(0x68, source, 0x20, length), alpha);
                     draw_x += 0x1A;
                 }
             }
@@ -962,6 +911,13 @@ static void DunEnterBoard(int x, int y, int alpha) {
     DunEnterBoardWaku(x, y, alpha);
 }
 
+/**
+ * Draws a number right to left, one digit at a time, clipped to the board.
+ *
+ * @mangled DrawEnemyNum__Fiiiiii
+ * @address 0x227EC0
+ * @size 0x154
+ */
 static void DrawEnemyNum(int x, int y, int top, int bottom, int number, int alpha) {
     int digits;
     int position;
@@ -1081,8 +1037,8 @@ CTexture *QuickCharaTex;
 CDngStatusData *ChangeStatusDataPt;
 
 CFrame *ItemPolyView;
-int MDebugItemPolyViewFlag;
-int polyreadflag;
+int     MDebugItemPolyViewFlag;
+int     polyreadflag;
 
 char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#" SCREEN_HEIGHT_STR "#4";
 
@@ -1102,8 +1058,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
         }
         MenuTextureClip(position, source, height, top, bottom);
         if (position + height >= top) {
-            DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, position, 0x70, height),
-                             CRect_i_(u, source, 0x70, height), alpha);
+            DrawMenu2DSprite(DunLogBoard2, CRect_i_(x, position, 0x70, height), CRect_i_(u, source, 0x70, height), alpha);
         }
         if (DEnterMenu.dungeon == 5) {
             floor = BtGetFloorLevel(floor - 1);
@@ -1167,7 +1122,7 @@ float changeMenu_long = 60.0f;
 /**
  * Places the character change menu's cursor on its selected row.
  */
-static inline void SetChangeMenuCursor(void) {
+static inline void SetChangeMenuCursor() {
     ChangeMenu.cursor_x = CommonMenuMes3.text_x - 0x1C;
     ChangeMenu.cursor_y = CommonMenuMes3.text_y - 4 + ChangeMenu.cursor_row * 24;
 }
@@ -1175,7 +1130,7 @@ static inline void SetChangeMenuCursor(void) {
 void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int mode) {
     LOADTEXTURE_INFO2 table[] = {
         {chara_change_frame_image, 0, 0},
-        {NULL, 0, 0},
+        {NULL,                     0, 0},
     };
     table[0].block_no = texture_block;
     TexManager.DeleteTextureBlock(texture_block);
@@ -1204,7 +1159,7 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     ChangeMenu.cursor_row = 0;
     ChangeMenu.change_blocked = 0;
     CUserStatus *status = (CUserStatus *) ChangeStatusDataPt;
-    int zone = status->res_limit_zone_current;
+    int          zone = status->res_limit_zone_current;
     if (zone < 6 && zone >= 0) {
         ChangeMenu.change_blocked = 1;
     } else if (status->cur_chara == CHARA_OSMOND && BtActStatus.ground_kind == 10) {
@@ -1227,7 +1182,7 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     ChangeMenu.party_size = ChangeStatusDataPt->party_size;
     ChangeMenu.reset_on_open = 0;
     float step = 6.2831855f / ChangeMenu.party_size;
-    int i;
+    int   i;
     if (ChangeMenu.turn_direction < 0.0f) {
         i = 0;
     }
@@ -1245,12 +1200,12 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
     CharaChangeTexBlock = texture_block;
 }
 
-int CharaChangeLoop(void) {
+int CharaChangeLoop() {
     if (ReadBGSync() == 0 && CharaChangeReadFlag == 0) {
         LOADTEXTURE_INFO2 table[] = {
             {chara_change_frame_image, 0, 0},
-            {NULL, 0, 0},
-            {NULL, 0, 0},
+            {NULL,                     0, 0},
+            {NULL,                     0, 0},
         };
         table[0].block_no = CharaChangeTexBlock;
         table[1].block_no = CharaChangeTexBlock;
@@ -1297,7 +1252,7 @@ int CharaChangeLoop(void) {
         TexManager.CleanUpTextureList();
         LOADTEXTURE_INFO2 restore[] = {
             {chara_change_frame_image, 0, 0},
-            {NULL, 0, 0},
+            {NULL,                     0, 0},
         };
         restore[0].block_no = CharaChangeTexBlock;
         TexManager.LoadTextureBlockEX(-1, restore);
@@ -1312,7 +1267,7 @@ static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
     status->cur_chara = chara;
 }
 
-int CharaChangeKey(void) {
+int CharaChangeKey() {
     int result = 0;
 
     ReadBG();
@@ -1404,7 +1359,7 @@ int CharaChangeKey(void) {
 #endif
             if (GamePad.Down(0x40)) {
                 ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
-                int count = GetNowItemNum(0xAE, pack);
+                int        count = GetNowItemNum(0xAE, pack);
                 if (ChangeMenu.cursor_row != 0) {
                     result = 2;
                     ComMenuSePlay(1);
@@ -1447,8 +1402,8 @@ int CharaChangeKey(void) {
                     return 0;
                 }
                 CDngStatusData *status = ChangeStatusDataPt;
-                int hp = status->hp[ChangeMenu.selected];
-                int flags = status->GetActiveCharaStatus(ChangeMenu.selected);
+                int             hp = status->hp[ChangeMenu.selected];
+                int             flags = status->GetActiveCharaStatus(ChangeMenu.selected);
                 if (hp <= 0 || (flags & 2)) {
                     ComMenuSePlay(2);
                     return 0;
@@ -1510,11 +1465,11 @@ int CharaChangeKey(void) {
     return result;
 }
 
-void CharaChangeDraw(void) {
-    int alpha;
-    int i;
-    int cursor_x;
-    int cursor_y;
+void CharaChangeDraw() {
+    int   alpha;
+    int   i;
+    int   cursor_x;
+    int   cursor_y;
     float step;
     float turn;
     float angle;
@@ -1523,13 +1478,11 @@ void CharaChangeDraw(void) {
     FrameImageDraw(100, 0x80);
     if (CharaChangeReadFlag != 0) {
         MenuTextureReload(CharaChangeTexBlock);
-        CTexture *frame = TexManager.GetTexture(
 #ifdef PAL
-            "stayframe",
+        CTexture *frame = TexManager.GetTexture("stayframe", -1);
 #else
-            stay_frame_name,
+        CTexture *frame = TexManager.GetTexture(stay_frame_name, -1);
 #endif
-            -1);
         int frame_x = QuickCharaPos[0] - 2.0f * changeMenu_long;
         int frame_y = QuickCharaPos[1] - 1.4f * changeMenu_long;
         alpha = 0x80;
@@ -1573,9 +1526,9 @@ void CharaChangeDraw(void) {
         for (int chara = 0; chara < ChangeMenu.party_size; chara++) {
             float x = QuickCharaPos[0] + ChangeMenu.ring_pos[chara][0];
             float y = QuickCharaPos[1] + ChangeMenu.ring_pos[chara][1];
-            int shade = 0x80;
-            int u = chara * 0x30;
-            int v = 0;
+            int   shade = 0x80;
+            int   u = chara * 0x30;
+            int   v = 0;
             if (chara > 2) {
                 u = (chara - 3) * 0x30;
                 v = 0x30;
@@ -1583,13 +1536,10 @@ void CharaChangeDraw(void) {
             if (ChangeStatusDataPt != NULL && ChangeStatusDataPt->hp[chara] <= 0) {
                 shade = 0x40;
             }
-            DrawMenu2DSprite(portraits, CRect_i_(x, y, 0x30, 0x30), CRect_i_(u, v, 0x30, 0x30), shade,
-                             shade, shade, alpha);
+            DrawMenu2DSprite(portraits, CRect_i_(x, y, 0x30, 0x30), CRect_i_(u, v, 0x30, 0x30), shade, shade, shade, alpha);
         }
-        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
-            ChangeMenu.unk_03 != 4) {
-            DrawMenuWaku(QuickCharaPos[0] - changeMenu_long - 11.0f, QuickCharaPos[1] - 12, 0x34, 0x34, 0,
-                         StayTex, 0x80);
+        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 && ChangeMenu.unk_03 != 4) {
+            DrawMenuWaku(QuickCharaPos[0] - changeMenu_long - 11.0f, QuickCharaPos[1] - 12, 0x34, 0x34, 0, StayTex, 0x80);
         }
         if (ChangeMenu.unk_03 == 2 || ChangeMenu.unk_03 == 3 || ChangeMenu.unk_03 == 4) {
             AllFadeForMenu(0x40);
@@ -1623,17 +1573,16 @@ void CharaChangeDraw(void) {
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x138, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x138, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x138, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
-            int value = (u16) ChangeStatusDataPt->money_signed;
+            int  value = (u16) ChangeStatusDataPt->money_signed;
             RECT value_digits = {0x70, 0x74, 0xC, 0xC};
             DrawMenuNumber(value, 0xB7, 0x140, QuickCharaTex, value_digits, 0, alpha);
-            int lang = GetMenuLangFlag();
+            int   lang = GetMenuLangFlag();
             float help_width[7] = {10.6f, 10.6f, 10.6f, 14.0f, 12.0f, 11.8f, 10.7f};
             MenuHelpWinDraw(100, 0x154, help_width[lang], 0.9f, alpha);
-            u8 count_shift[7] = {0, 0, 0, 56, 28, 16, 0};
+            u8  count_shift[7] = {0, 0, 0, 56, 28, 16, 0};
             int count_x = count_shift[lang];
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x164, 0x20, 0x20), CRect_i_(0, 0x60, 0x20, 0x20), alpha);
-            DrawMenu2DSprite(QuickCharaTex, CRect_i_(count_x + 0x104, 0x16C, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10),
-                             alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(count_x + 0x104, 0x16C, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10), alpha);
             MenuTextureReload(CommonMenuMes1.tex_block);
             if (lang == 0) {
                 DrawMenuClsMes(&CommonMenuMes1, 0xA0, 0x154);
@@ -1645,9 +1594,9 @@ void CharaChangeDraw(void) {
                 CommonMenuMes1.Step();
                 CommonMenuMes1.DrawMesWin();
             }
-            RECT count_digits = {0, 0x9E, 0xC, 0x12};
+            RECT       count_digits = {0, 0x9E, 0xC, 0x12};
             ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
-            int count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
+            int        count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
             count_x += 0x122;
             count_x += (count_digits.width >> 1) * GetNumberKeta(count);
             DrawMenuNumber(count, count_x, 0x16C, count_digits, StayTex, 0, 0, SCREEN_HEIGHT, alpha);
@@ -1658,7 +1607,7 @@ void CharaChangeDraw(void) {
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x124, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x124, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
-            int value = (u16) ChangeStatusDataPt->money_signed;
+            int  value = (u16) ChangeStatusDataPt->money_signed;
             RECT value_digits = {0x70, 0x74, 0xC, 0xC};
             DrawMenuNumber(value, 0xB7, 0x12C, QuickCharaTex, value_digits, 0, alpha);
             MenuHelpWinDraw(100, 0x140, 10.6f, 0.9f, alpha);
@@ -1671,16 +1620,15 @@ void CharaChangeDraw(void) {
             CommonMenuMes1.line_pos[1].y = 0x15E;
             CommonMenuMes1.Step();
             CommonMenuMes1.DrawMesWin();
-            RECT count_digits = {0, 0x9E, 0xC, 0x12};
+            RECT       count_digits = {0, 0x9E, 0xC, 0x12};
             ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
-            int count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
-            int count_x = 0x122;
+            int        count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
+            int        count_x = 0x122;
             count_x += (count_digits.width >> 1) * GetNumberKeta(count);
             DrawMenuNumber(count, count_x, 0x158, count_digits, StayTex, 0, 0, 0x1C0, alpha);
         }
 #endif
-        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
-            ChangeMenu.unk_03 != 4) {
+        if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 && ChangeMenu.unk_03 != 4) {
             DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
         }
         setbilinear(1);
@@ -1688,12 +1636,12 @@ void CharaChangeDraw(void) {
 }
 
 int DngActItemModelReadStart(u_long128 *buffer) {
-    char model_path[64];
-    char texture_path[76];
-    int size;
+    char       model_path[64];
+    char       texture_path[76];
+    int        size;
     u_long128 *model_buffer;
     u_long128 *texture_buffer;
-    int i;
+    int        i;
     ITEM_PACK *pack;
 
     size = 0;
@@ -1725,11 +1673,11 @@ int DngActItemModelReadStart(u_long128 *buffer) {
 int DngActItemModelBuild(int wait) {
     BG_READ_INFO *model;
     BG_READ_INFO *texture;
-    u_int *model_buffer;
-    u_int *texture_buffer;
-    int texture_size;
-    int read_index;
-    int i;
+    u_int        *model_buffer;
+    u_int        *texture_buffer;
+    int           texture_size;
+    int           read_index;
+    int           i;
 
     if (ReadBGSync() != 0) {
         if (wait != 0) {
@@ -1741,7 +1689,7 @@ int DngActItemModelBuild(int wait) {
         }
     }
     ITEM_PACK *pack = &BtlMenuStatusPt->item_pack;
-    int items[3] = {pack->quick_item_slot[0], pack->quick_item_slot[1], pack->quick_item_slot[2]};
+    int        items[3] = {pack->quick_item_slot[0], pack->quick_item_slot[1], pack->quick_item_slot[2]};
     read_index = 0;
     for (i = 0; i < 3; i++) {
         if (items[i] < ITEM_DUNGEON_START) {
@@ -1767,16 +1715,15 @@ int DngActItemModelBuild(int wait) {
         if (activeItem.model[i + 1] != -1) {
             activeItem.models->DeleteModel(activeItem.model[i + 1]);
         }
-        activeItem.model[i + 1] =
-            activeItem.models->SetCashModel(items[i], model_buffer, texture_buffer, texture_size);
+        activeItem.model[i + 1] = activeItem.models->SetCashModel(items[i], model_buffer, texture_buffer, texture_size);
         activeItem.model[i + 5] = 0;
         activeItem.item[i + 1] = items[i];
     }
     return 1;
 }
 
-int DngActiveItemTextureCopy(void) {
-    int i;
+int DngActiveItemTextureCopy() {
+    int        i;
     ITEM_PACK *pack = &UserStatus->item_pack;
     if (pack == NULL) {
         return -1;
@@ -1815,14 +1762,18 @@ char item_templete_help_index[] __attribute__((section(".rodata"))) = "helpIndex
 char item_templete_volume[] __attribute__((section(".rodata"))) = "volume[3]:%3d, %3d, %3d\n";
 char item_templete_gold[] __attribute__((section(".rodata"))) = "gold     :%d\n";
 
-int DngActiveWeaponTextureCopy(void) {
-    int chara = UserStatus->cur_chara;
-    char source[] = "wepicon";
-    int slot = UserStatus->equipped_weapon_slot[chara];
+int DngActiveWeaponTextureCopy() {
+    int          chara = UserStatus->cur_chara;
+    char         source[] = "wepicon";
+    int          slot = UserStatus->equipped_weapon_slot[chara];
     WEAPON_HAVE *owned = UserStatus->chara_weapons[chara];
     WEAPON_HAVE *weapon = &owned[slot];
-    int default_no = GetDefaultWeaponNo(chara);
-    s16 pos[3][2] = {{0, 0}, {0, 32}, {32, 32}};
+    int          default_no = GetDefaultWeaponNo(chara);
+    s16          pos[3][2] = {
+        {0,  0 },
+        {0,  32},
+        {32, 32}
+    };
     s16 weapons[3] = {weapon->item_no, default_no + 1, default_no};
 
     for (int i = 0; i < 3; i++) {
@@ -1860,15 +1811,15 @@ int GetWeaponMsgNo2(s32 item_no) {
     return 0;
 }
 
-void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
-    int holes;
-    int item_no;
-    int i;
-    float size;
+void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
+    int       holes;
+    int       item_no;
+    int       i;
+    float     size;
     CTexture *texture;
-    int u;
-    int v;
-    int volume;
+    int       u;
+    int       v;
+    int       volume;
 
     holes = GetWeaponHoleNum(weapon->item_no);
     if (holes <= 0) {
@@ -1896,14 +1847,14 @@ void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha) {
  * Checks whether the requested Atla is present in the georama.
  */
 int GetAtraTipNowHave(int tip_no, int georama_no) {
-    int have;
-    int i;
-    int plot;
-    int slot;
-    int id;
-    s16 *elem;
+    int                 have;
+    int                 i;
+    int                 plot;
+    int                 slot;
+    int                 id;
+    s16                *elem;
     SV_EDIT_PARTS_INFO *info;
-    EDIT_PARTS_ATRA *atra;
+    EDIT_PARTS_ATRA    *atra;
 
     have = 0;
     if (tip_no < 0x28) {
@@ -1952,9 +1903,9 @@ int GetDispVolumeForFloat(float volume) {
  * Loads the selected item's model and texture files into the preview buffer.
  */
 int InitItemPolygonView(int item_no, u_long128 *buffer) {
-    char model_path[64];
-    char texture_path[76];
-    int size;
+    char       model_path[64];
+    char       texture_path[76];
+    int        size;
     u_long128 *texture_buffer;
 
     if (item_no < 0x51 || item_no >= 0x101) {
@@ -1990,15 +1941,22 @@ float menudebugrscale[3] = {3.0f, 3.0f, 3.0f};
  */
 CDataAlloc2<1> MenuItemCashBuffer(-1);
 
-static int EnterItemPolygonView(void) {
+/**
+ * Sets up the item preview's model and textures once they have been read.
+ *
+ * @mangled EnterItemPolygonView__Fv
+ * @address 0x22AD20
+ * @size 0x21C
+ */
+static int EnterItemPolygonView() {
     BG_READ_INFO *model;
     BG_READ_INFO *texture;
 
     if (ReadBGSync() == 0 && polyreadflag == 0 && MDebugItemPolyViewFlag == 0) {
         LOADTEXTURE_INFO2 table[] = {
             {item_view_frame_image, 0, 0},
-            {NULL, 0, 0},
-            {NULL, 0, 0},
+            {NULL,                  0, 0},
+            {NULL,                  0, 0},
         };
         table[0].block_no = BtlMenuExReadBlock;
         table[1].block_no = BtlMenuExReadBlock;
@@ -2020,8 +1978,8 @@ static int EnterItemPolygonView(void) {
         MDebugItemPolyViewFlag = 1;
         ItemPolyView = (CFrame *) LoadMDSFile((u_int *) model->buffer, &MenuItemCashBuffer, 0, NULL, NULL);
         sceVu0FVECTOR position = {4.0f, 0.0f, 0.0f, 1.0f};
-        float rotation[3] = {0.0f, 0.0f, 0.0f};
-        float scale[3] = {3.0f, 3.0f, 3.0f};
+        float         rotation[3] = {0.0f, 0.0f, 0.0f};
+        float         scale[3] = {3.0f, 3.0f, 3.0f};
         // Each copy moves a whole vector, one float more than the rotation and scale hold.
         memcpy(menudebugpos, position, sizeof(sceVu0FVECTOR));
         memcpy(menudebugrot, rotation, sizeof(sceVu0FVECTOR));
@@ -2031,10 +1989,17 @@ static int EnterItemPolygonView(void) {
     return 0;
 }
 
-static void LocalDrawItemPolygonView(void) {
+/**
+ * Turns and scales the item model under pad control, then draws it.
+ *
+ * @mangled LocalDrawItemPolygonView__Fv
+ * @address 0x22AF40
+ * @size 0x26C
+ */
+static void LocalDrawItemPolygonView() {
     float turn;
     float tilt;
-    int i;
+    int   i;
 
     if (MDebugItemPolyViewFlag != 0 && ItemPolyView != NULL && polyreadflag != 0) {
         turn = GamePad.GetRXf();
@@ -2073,7 +2038,7 @@ static void LocalDrawItemPolygonView(void) {
     }
 }
 
-void DrawItemPolygonView(void) {
+void DrawItemPolygonView() {
     MenuTextureReload(BtlMenuExReadBlock);
     MenuPolygonDraw(0x80, LocalDrawItemPolygonView);
 }
@@ -2081,7 +2046,7 @@ void DrawItemPolygonView(void) {
 #ifdef PAL
 extern CDebugFont MenuDbgMsg;
 
-void InitDebugItemGet(void) {
+void InitDebugItemGet() {
     ItemAutoGet.selection = 0x6A;
     ItemAutoGet.page = ItemAutoGet.selection >> 6;
     ItemAutoGet.show_model = 0;
@@ -2095,6 +2060,13 @@ void InitDebugItemGet(void) {
 }
 #endif
 
+/**
+ * Maps a debug item selection to its spreadsheet item number.
+ *
+ * @mangled ConvDebugSelectToExcelListNo__Fi
+ * @address 0x22B1F0
+ * @size 0x4C
+ */
 static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;
 
@@ -2108,13 +2080,13 @@ static int ConvDebugSelectToExcelListNo(int selection) {
     return item_no;
 }
 
-int DebugItemGetKey(void) {
-    int result;
-    int selection;
-    int page;
-    int item_no;
+int DebugItemGetKey() {
+    int          result;
+    int          selection;
+    int          page;
+    int          item_no;
     WEAPON_DATA *data;
-    int count;
+    int          count;
 
     result = 0;
     selection = ItemAutoGet.selection;
@@ -2177,12 +2149,12 @@ int DebugItemGetKey(void) {
     return result;
 }
 
-void DebugItemGetDraw(void) {
+void DebugItemGetDraw() {
     CTexture *sheets[5] = {ItemIcon, ItemIcon, WepIcon, WepIcon, WepIcon};
-    int sheet_y[5] = {0, 0x100, 0, 0x100, 0x200};
+    int       sheet_y[5] = {0, 0x100, 0, 0x100, 0x200};
     CTexture *sheet = sheets[ItemAutoGet.page];
-    int y = sheet_y[ItemAutoGet.page];
-    int height = 0x100;
+    int       y = sheet_y[ItemAutoGet.page];
+    int       height = 0x100;
 
     if (ItemAutoGet.page == 4) {
         height = 0x80;
@@ -2236,7 +2208,7 @@ static void DrawItemDataView(int item_no) {
             break;
     }
     MenuTextureReload(block);
-    int line = 0;
+    int  line = 0;
     char type[128] = "";
     if (0 <= item_no && item_no < ITEM_ATTACH_START) {
         return;

@@ -29,8 +29,8 @@ STATIC_ASSERT(sizeof(PTS_HEADER) == 0x10);
  */
 struct PTS_ENTRY {
     char name[16]; /**< Null-terminated file name. */
-    int offset;    /**< Byte offset of the file from the archive start. */
-    int unk_14[7];
+    int  offset;   /**< Byte offset of the file from the archive start. */
+    int  unk_14[7];
 };
 
 STATIC_ASSERT(sizeof(PTS_ENTRY) == 0x30);
@@ -58,32 +58,32 @@ void closeGiftag(sceVif1Packet *packet) {
 }
 
 void CDebugFont::Draw() {
-    CTexture *tex;
-    int draw_x;
-    int draw_y;
-    int draw_width;
-    int draw_height;
-    char *text_pos;
+    CTexture    *tex;
+    int          draw_x;
+    int          draw_y;
+    int          draw_width;
+    int          draw_height;
+    char        *text_pos;
     unsigned int font_tbp;
     unsigned int font_tbw;
     unsigned int dest_tbp;
     unsigned int dest_tbw;
-    sceGsTex0 font_tex0;
-    sceGsTex0 dest_tex0;
-    sceGsTest test;
-    sceGsZbuf zbuf;
-    sceGsTex0 frame_tex0;
-    float q;
-    int pen_x;
-    int pen_y;
-    CRect_i_ dst;
-    CRect_i_ src;
-    u_long bottom_y;
-    u_long right_x;
-    int character;
-    int index;
-    int column;
-    int row;
+    sceGsTex0    font_tex0;
+    sceGsTex0    dest_tex0;
+    sceGsTest    test;
+    sceGsZbuf    zbuf;
+    sceGsTex0    frame_tex0;
+    float        q;
+    int          pen_x;
+    int          pen_y;
+    CRect_i_     dst;
+    CRect_i_     src;
+    u_long       bottom_y;
+    u_long       right_x;
+    int          character;
+    int          index;
+    int          column;
+    int          row;
 
     draw_x = this->x;
     draw_y = this->y;
@@ -105,8 +105,7 @@ void CDebugFont::Draw() {
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX0_1, *reinterpret_cast<u_long *>(&dest_tex0));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(dest_tbp >> 5, dest_tbw, dest_tex0.PSM, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(dest_tbp >> 5, dest_tbw, dest_tex0.PSM, 0));
 
     mgTexa.AEM = 1;
     mgTexa.TA0 = static_cast<u_char>(this->alpha);
@@ -124,8 +123,7 @@ void CDebugFont::Draw() {
 
     q = 1.0f;
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, 4);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ,
-                     SCE_GS_SET_RGBAQ(1, 1, 1, 0x80, *reinterpret_cast<u_int *>(&q)));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(1, 1, 1, 0x80, *reinterpret_cast<u_int *>(&q)));
 
 #ifdef PAL
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZ2, 0x78806C00);
@@ -140,8 +138,7 @@ void CDebugFont::Draw() {
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
 
     MGGetFBuffTex(&frame_tex0);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(frame_tex0.TBP0 >> 5, frame_tex0.TBW, frame_tex0.PSM, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(frame_tex0.TBP0 >> 5, frame_tex0.TBW, frame_tex0.PSM, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *reinterpret_cast<u_long *>(&mgPixelTest));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *reinterpret_cast<u_long *>(&mgZBuffer));
 
@@ -164,11 +161,8 @@ void CDebugFont::Draw() {
         column = index % 16;
         row = index >> 4;
 
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_BITBLTBUF,
-                         SCE_GS_SET_BITBLTBUF(font_tbp, font_tbw, SCE_GS_PSMCT24, dest_tbp,
-                                              dest_tbw, SCE_GS_PSMCT24));
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TRXPOS,
-                         SCE_GS_SET_TRXPOS(column * 8, row * 16, pen_x, pen_y, 0));
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_BITBLTBUF, SCE_GS_SET_BITBLTBUF(font_tbp, font_tbw, SCE_GS_PSMCT24, dest_tbp, dest_tbw, SCE_GS_PSMCT24));
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TRXPOS, SCE_GS_SET_TRXPOS(column * 8, row * 16, pen_x, pen_y, 0));
         sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TRXREG, SCE_GS_SET_TRXREG(8, 16));
         sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TRXDIR, SCE_GS_SET_TRXDIR(SCE_GS_LOCAL_LOCAL));
 
@@ -193,11 +187,11 @@ void CDebugFont::Draw() {
 }
 
 u_int *SearchPTS(u_int *archive, char *name) {
-    int i;
+    int         i;
     PTS_HEADER *header;
-    PTS_ENTRY *entry;
-    char *base_name;
-    char ch;
+    PTS_ENTRY  *entry;
+    char       *base_name;
+    char        ch;
 
     header = reinterpret_cast<PTS_HEADER *>(archive);
     if (header == 0) {
@@ -248,7 +242,7 @@ void CDispCtrl::FadeInit(float start_rate) {
     mode = -1;
 }
 
-float CDispCtrl::GetRate(void) {
+float CDispCtrl::GetRate() {
     return rate;
 }
 

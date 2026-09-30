@@ -31,11 +31,11 @@ float RandTbl2[64];
 /* Every pass of the outline the message window draws behind its text. The
  * last entry's alpha ends the run. */
 MES_FUCHI FuchiTbl_E[] = {
-    {0, -2, 0, 0, 0, 128},
-    {0, 2, 0, 0, 0, 128},
-    {2, 0, 0, 0, 0, 128},
-    {-2, 0, 0, 0, 0, 128},
-    {0, 0, 0, 0, 0, -1},
+    {0,  -2, 0, 0, 0, 128},
+    {0,  2,  0, 0, 0, 128},
+    {2,  0,  0, 0, 0, 128},
+    {-2, 0,  0, 0, 0, 128},
+    {0,  0,  0, 0, 0, -1 },
 };
 
 /** What each of the eight words of a GaijiDataTbl entry says. */
@@ -79,7 +79,7 @@ s16 ClsMes::GetGaijiW(int code) {
         }
         EDIT_GAIJI *table = (EDIT_GAIJI *) &EditPartsData[0x491C];
         EDIT_GAIJI *gaiji = &EditGaijiTbl[code];
-        s16 width = this->char_width;
+        s16         width = this->char_width;
 
         return width * gaiji->width;
     }
@@ -113,7 +113,7 @@ int ClsMes::GetNameWidth(int chara) {
     }
 
     u16 *name = (u16 *) SaveData->GetCharaName(chara);
-    s16 width = 0;
+    s16  width = 0;
 
     for (int i = 0; i < 11; i++) {
         if (name[i] == 0) {
@@ -135,8 +135,7 @@ int ClsMes::GetNameWidth(int chara) {
     return -1;
 }
 
-void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src,
-                   const CRect_i_ &dst, u8 r, u8 g, u8 b, u8 a) {
+void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src, const CRect_i_ &dst, u8 r, u8 g, u8 b, u8 a) {
     float one = 1.0f;
 
     sceVif1PkCnt(packet, 0);
@@ -148,20 +147,12 @@ void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src
     sceGsZbuf depth = mgZBuffer;
 
     sceVif1PkAddGsAD(packet, 0x4E, *(unsigned long *) &depth);
-    sceVif1PkAddGsAD(packet, 1,
-                     (unsigned long) r | (unsigned long) g << 8 | (unsigned long) b << 16 |
-                         (unsigned long) a << 24 | (unsigned long) *(u32 *) &one << 32);
+    sceVif1PkAddGsAD(packet, 1, (unsigned long) r | (unsigned long) g << 8 | (unsigned long) b << 16 | (unsigned long) a << 24 | (unsigned long) *(u32 *) &one << 32);
     sceVif1PkAddGsAD(packet, 6, *(unsigned long *) &texture->tex0);
     sceVif1PkAddGsAD(packet, 3, (unsigned long) (dst.x << 4) | (unsigned long) (dst.y << 4) << 16);
-    sceVif1PkAddGsAD(packet, 4,
-                     (unsigned long) ((src.x << 4) + 0x6C00) |
-                         (unsigned long) ((src.y << 3) + GS_Y_OFFSET) << 16);
-    sceVif1PkAddGsAD(packet, 3,
-                     (unsigned long) ((dst.x + dst.width) << 4) |
-                         (unsigned long) ((dst.y + dst.height) << 4) << 16);
-    sceVif1PkAddGsAD(packet, 4,
-                     (unsigned long) (((src.x + src.width) << 4) + 0x6BFF) |
-                         (unsigned long) (((src.y + src.height) << 3) + GS_Y_OFFSET) << 16);
+    sceVif1PkAddGsAD(packet, 4, (unsigned long) ((src.x << 4) + 0x6C00) | (unsigned long) ((src.y << 3) + GS_Y_OFFSET) << 16);
+    sceVif1PkAddGsAD(packet, 3, (unsigned long) ((dst.x + dst.width) << 4) | (unsigned long) ((dst.y + dst.height) << 4) << 16);
+    sceVif1PkAddGsAD(packet, 4, (unsigned long) (((src.x + src.width) << 4) + 0x6BFF) | (unsigned long) (((src.y + src.height) << 3) + GS_Y_OFFSET) << 16);
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
@@ -172,19 +163,19 @@ void ClsMes::AutoSetSub(CCharacter *first, CCharacter *second, int *out_pos) {
 }
 
 void ClsMes::AutoSet(int *pos) {
-    RECT candidate[3][3];
-    int outside[3][3];
+    RECT  candidate[3][3];
+    int   outside[3][3];
     float clearance[3][3];
-    int speaker_x;
-    int speaker_y;
-    int other_x;
-    int other_y;
-    int width;
-    int height;
-    int col;
-    int row;
-    int best_col;
-    int best_row;
+    int   speaker_x;
+    int   speaker_y;
+    int   other_x;
+    int   other_y;
+    int   width;
+    int   height;
+    int   col;
+    int   row;
+    int   best_col;
+    int   best_row;
 
     speaker_x = pos[0];
     speaker_y = pos[1];
@@ -337,7 +328,7 @@ void ClsMes::AutoSet(int *pos) {
     }
 }
 
-void ClsMes::AbsFukidashiIn(void) {
+void ClsMes::AbsFukidashiIn() {
     if (this->win_x < 0x10) {
         this->win_x = 0x10;
 #ifdef PAL
@@ -363,7 +354,7 @@ void ClsMes::AbsFukidashiIn(void) {
     }
 }
 
-ClsMes::ClsMes(void) {
+ClsMes::ClsMes() {
     this->text_x = 0x64;
     this->text_y = 0x32;
     this->char_width = 0xB;
@@ -375,7 +366,7 @@ ClsMes::ClsMes(void) {
     this->text_len = 0;
     this->text_width = 0;
     this->text_height = 0;
-    this->init_02C = 0x10;
+    this->unk_02C = 0x10;
     this->init_030 = 0x10;
     this->fukidashi = 1;
     this->fukidashi_shape = 0;
@@ -572,7 +563,7 @@ void ClsMes::SetMesFukidashi(int style) {
     }
 }
 
-void ClsMes::Step(void) {
+void ClsMes::Step() {
     if (this->fukidashi == 0) {
         this->fade = 1.0f;
         return;
@@ -607,8 +598,7 @@ void ClsMes::Step(void) {
     centre[0] = this->tail_x;
     centre[1] = this->tail_y;
 
-    float angle = atan2((float) (this->tail_to_x - this->tail_x),
-                        (float) (this->tail_to_y - this->tail_y));
+    float angle = atan2((float) (this->tail_to_x - this->tail_x), (float) (this->tail_to_y - this->tail_y));
 
     left[0] = this->tail_x - this->tail_half_width;
     left[1] = this->tail_y;
@@ -633,7 +623,7 @@ void ClsMes::Step(void) {
     this->tail_tip_y = (int) py + this->tail_y;
 }
 
-int ClsMes::State(void) {
+int ClsMes::State() {
     if (this->fade <= 0.0f) {
         return 0;
     }
@@ -649,13 +639,13 @@ int ClsMes::State(void) {
     return 2;
 }
 
-void ClsMes::MyTextureMake_InitAll(void) {
+void ClsMes::MyTextureMake_InitAll() {
     if (this->tex_buff != NULL) {
         memset(this->tex_buff, 0, 0x100);
     }
 }
 
-void ClsMes::GoNextPage(void) {
+void ClsMes::GoNextPage() {
     if (this->waiting != 0) {
         this->waiting = 0;
         MyTextureMake_InitAll();
@@ -664,7 +654,7 @@ void ClsMes::GoNextPage(void) {
     }
 }
 
-int ClsMes::MyTextureMake_sub(void) {
+int ClsMes::MyTextureMake_sub() {
     int at = this->text_no;
 
     this->text_no = at + 1;
@@ -697,8 +687,7 @@ int ClsMes::MyTextureMake_sub(void) {
             return 0;
     }
 
-    if ((code >= -0x700 && code <= -0x601) || (code >= -0x800 && code <= -0x701) ||
-        (code >= -0x900 && code < -0x800)) {
+    if ((code >= -0x700 && code <= -0x601) || (code >= -0x800 && code <= -0x701) || (code >= -0x900 && code < -0x800)) {
         this->text_at += 1.0f;
         return 0;
     }
@@ -707,7 +696,7 @@ int ClsMes::MyTextureMake_sub(void) {
     return 0;
 }
 
-void ClsMes::MyTextureMake(void) {
+void ClsMes::MyTextureMake() {
     if (this->waiting != 0) {
         if (this->auto_page != 0 && this->blink >= this->auto_page_wait) {
             this->GoNextPage();
@@ -793,7 +782,7 @@ void ClsMes::MakeMesWinTbl_value(int *x, int *y) {
     int len = strlen(text);
 
     for (int i = 0; i < len; i++) {
-        int code = -1;
+        int  code = -1;
         char digit = text[i];
 
         if (digit == '+') {
@@ -863,7 +852,7 @@ void ClsMes::MakeMesWinTbl_value(int which, int *x, int *y) {
     int len = strlen(text);
 
     for (int i = 0; i < len; i++) {
-        int code = -1;
+        int  code = -1;
         char digit = text[i];
 
         if (digit == '+') {
@@ -919,7 +908,7 @@ void ClsMes::MakeMesWinTbl_value(int which, int *x, int *y) {
 
 int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
     short *at;
-    int text_code;
+    int    text_code;
 
     if (code >= -0x500 && code < -0x400) {
         code += 0x500;
@@ -1184,7 +1173,7 @@ int ClsMes::GetMesWidth_system(int mes_no) {
 }
 
 short *ClsMes::GetTextLineDataTop(int line) {
-    int count = this->buff[0];
+    int    count = this->buff[0];
     short *body = &this->buff[1];
 
     for (int i = 0; i < count; i++) {
@@ -1196,7 +1185,7 @@ short *ClsMes::GetTextLineDataTop(int line) {
 }
 
 short *ClsMes::GetTextLineDataTop_system(int line) {
-    int count = this->buff_system[0];
+    int    count = this->buff_system[0];
     short *body = &this->buff_system[1];
 
     for (int i = 0; i < count; i++) {
@@ -1207,7 +1196,7 @@ short *ClsMes::GetTextLineDataTop_system(int line) {
     return NULL;
 }
 
-void ClsMes::InitMesWinTbl(void) {
+void ClsMes::InitMesWinTbl() {
     for (int i = 0; i < MES_WIN_LINE_MAX; i++) {
         this->win_line[i].code = 0;
         this->win_line[i].x = 0;
@@ -1260,8 +1249,8 @@ int ClsMes::SetMesWinTbl(int code, int mode, short x, short y) {
 
 int ClsMes::CalcSpaceW(int width, int glyph_width, short *text) {
     short *at = text;
-    int used = 0;
-    int spaces = 0;
+    int    used = 0;
+    int    spaces = 0;
 
     while (1) {
         short code = *at++;
@@ -1295,9 +1284,9 @@ int ClsMes::CalcSpaceW(int width, int glyph_width, short *text) {
 
 int ClsMes::MakeMesWinTbl(int mes_no) {
     short *at;
-    int x;
-    int y;
-    int code;
+    int    x;
+    int    y;
+    int    code;
 
     if (this->buff == 0) {
         return 0;
@@ -1393,8 +1382,7 @@ int ClsMes::MakeMesWinTbl(int mes_no) {
     }
 }
 
-void NeedMesWinWH_sub(int *len, int *max_len, int *width, int *max_width, int char_width,
-                      int count) {
+void NeedMesWinWH_sub(int *len, int *max_len, int *width, int *max_width, int char_width, int count) {
     if (count <= 0) {
         return;
     }
@@ -1412,16 +1400,16 @@ void NeedMesWinWH_sub(int *len, int *max_len, int *width, int *max_width, int ch
 
 void ClsMes::NeedMesWinWH(int mes_no, int *out) {
     short *at;
-    int *max_len;
-    int *max_lines;
-    int *max_width;
-    int *max_height;
-    int code;
-    int len;
-    int width;
-    int lines;
-    int height;
-    int count;
+    int   *max_len;
+    int   *max_lines;
+    int   *max_width;
+    int   *max_height;
+    int    code;
+    int    len;
+    int    width;
+    int    lines;
+    int    height;
+    int    count;
 
     if (this->buff == 0) {
         return;
@@ -1538,11 +1526,9 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                         }
 
                         if (this->value_narrow != 0) {
-                            NeedMesWinWH_sub(&len, max_len, &width, max_width,
-                                             (this->char_width >> 2) * 3, strlen(text) - 1);
+                            NeedMesWinWH_sub(&len, max_len, &width, max_width, (this->char_width >> 2) * 3, strlen(text) - 1);
                         } else {
-                            NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width,
-                                             strlen(text) - 1);
+                            NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width, strlen(text) - 1);
                         }
                     }
                 } else if (code >= -0x40D && code < -0x405) {
@@ -1556,21 +1542,15 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                         }
 
                         if (this->value_narrow != 0) {
-                            NeedMesWinWH_sub(&len, max_len, &width, max_width,
-                                             (this->char_width >> 2) * 3, strlen(text) - 1);
+                            NeedMesWinWH_sub(&len, max_len, &width, max_width, (this->char_width >> 2) * 3, strlen(text) - 1);
                         } else {
-                            NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width,
-                                             strlen(text) - 1);
+                            NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width, strlen(text) - 1);
                         }
                     }
-                } else if (code == -0x405 || code == -0x404 || code == -0x403 ||
-                           code == -0x402 || code == -0x411 || code == -0x410 ||
-                           code == -0x40F || code == -0x40E) {
-                    NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width,
-                                     this->GetMesLen_system(code));
+                } else if (code == -0x405 || code == -0x404 || code == -0x403 || code == -0x402 || code == -0x411 || code == -0x410 || code == -0x40F || code == -0x40E) {
+                    NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width, this->GetMesLen_system(code));
                 } else if (code >= -0x506 && code < -0x500) {
-                    NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width,
-                                     this->GetNameLen(code + 0x506));
+                    NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width, this->GetNameLen(code + 0x506));
 #ifdef PAL
                 } else if (code >= -0x300 && code < -0x251) {
 #else
@@ -1682,49 +1662,33 @@ void ClsMes::MakeMesTexture(int mes_no) {
     }
 }
 
-void ClsMes::Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y,
-                                 int width, int height, int u, int v, int u_width,
-                                 int v_height) {
+void ClsMes::Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y, int width, int height, int u, int v, int u_width, int v_height) {
     switch (this->style) {
         case 1:
-            set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height),
-                             CRect_i_(u, v, u_width, v_height), 0xFF, 0xFF, 0xFF,
-                             this->edge_alpha < 0x40 ? this->edge_alpha : 0x40);
+            set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0xFF, 0xFF, 0xFF, this->edge_alpha < 0x40 ? this->edge_alpha : 0x40);
             break;
         case 2:
-            set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height),
-                             CRect_i_(u, v, u_width, v_height), 0, 0, 0,
-                             this->edge_alpha < 0x40 ? this->edge_alpha : 0x40);
+            set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0, 0, 0, this->edge_alpha < 0x40 ? this->edge_alpha : 0x40);
             break;
         case 3:
             for (int i = 0; FuchiTbl_E[i].alpha > 0; i++) {
-                set2DSprite_Core(packet, texture,
-                                 CRect_i_(x + FuchiTbl_E[i].x, y + FuchiTbl_E[i].y, width, height),
-                                 CRect_i_(u, v, u_width, v_height), FuchiTbl_E[i].r,
-                                 FuchiTbl_E[i].g, FuchiTbl_E[i].b,
-                                 this->edge_alpha < FuchiTbl_E[i].alpha ? this->edge_alpha
-                                                                        : FuchiTbl_E[i].alpha);
+                set2DSprite_Core(packet, texture, CRect_i_(x + FuchiTbl_E[i].x, y + FuchiTbl_E[i].y, width, height), CRect_i_(u, v, u_width, v_height), FuchiTbl_E[i].r, FuchiTbl_E[i].g, FuchiTbl_E[i].b, this->edge_alpha < FuchiTbl_E[i].alpha ? this->edge_alpha : FuchiTbl_E[i].alpha);
             }
             break;
         case 4:
-            set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height),
-                             CRect_i_(u, v, u_width, v_height), 0x40, 0x40, 0x40,
-                             this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
-            set2DSprite_Core(packet, texture, CRect_i_(x + 2, y + 2, width, height),
-                             CRect_i_(u, v, u_width, v_height), 0, 0, 0,
-                             this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+            set2DSprite_Core(packet, texture, CRect_i_(x + 1, y + 1, width, height), CRect_i_(u, v, u_width, v_height), 0x40, 0x40, 0x40, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+            set2DSprite_Core(packet, texture, CRect_i_(x + 2, y + 2, width, height), CRect_i_(u, v, u_width, v_height), 0, 0, 0, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
             break;
     }
 }
 
-void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int lift,
-              int unused, int rough, int prim) {
+void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int lift, int unused, int rough, int prim) {
     float across;
     float down;
     float turn;
-    int px;
-    int py;
-    int step;
+    int   px;
+    int   py;
+    int   step;
 
     sceVif1PkAddGsAD(packet, 0, ((unsigned long) prim << 7) | 0x145);
     sceVif1PkAddGsAD(packet, 1, 0x80BFBFBF | ((unsigned long) 1 << 32));
@@ -1732,9 +1696,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
     px = x + (width >> 1);
     py = y + (height >> 1) - lift;
 
-    sceVif1PkAddGsAD(packet, 4,
-                     (unsigned long) ((px << 4) + 0x6C00) |
-                         (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
+    sceVif1PkAddGsAD(packet, 4, (unsigned long) ((px << 4) + 0x6C00) | (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
     turn = 0.0f;
     step = 0;
@@ -1762,9 +1724,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
         px += x;
         py += y - lift;
 
-        sceVif1PkAddGsAD(packet, 4,
-                         (unsigned long) ((px << 4) + 0x6C00) |
-                             (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
+        sceVif1PkAddGsAD(packet, 4, (unsigned long) ((px << 4) + 0x6C00) | (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
         if (rough == 1) {
             turn += RandTbl[step];
@@ -1794,9 +1754,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
     px += x;
     py += y - lift;
 
-    sceVif1PkAddGsAD(packet, 4,
-                     (unsigned long) ((px << 4) + 0x6C00) |
-                         (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
+    sceVif1PkAddGsAD(packet, 4, (unsigned long) ((px << 4) + 0x6C00) | (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 }
 
 #pragma opt_propagation off
@@ -1804,11 +1762,11 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
 void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
     float grown_width;
     float grown_height;
-    int x;
-    int y;
-    int top;
-    int i;
-    int mirror;
+    int   x;
+    int   y;
+    int   top;
+    int   i;
+    int   mirror;
 
     top = this->win_y;
 
@@ -1838,20 +1796,20 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
     grown_height = this->win_height * this->fade;
 
     float shape[15][2] = {
-        {0.5f, 0.5f},
+        {0.5f,  0.5f },
         {0.02f, 0.29f},
         {0.22f, 0.03f},
         {0.51f, 0.06f},
-        {0.73f, 0.0f},
-        {0.92f, 0.1f},
+        {0.73f, 0.0f },
+        {0.92f, 0.1f },
         {0.98f, 0.36f},
         {0.98f, 0.74f},
-        {0.9f, 0.91f},
-        {0.7f, 0.99f},
+        {0.9f,  0.91f},
+        {0.7f,  0.99f},
         {0.43f, 0.91f},
-        {0.2f, 0.97f},
-        {0.03f, 0.8f},
-        {0.0f, 0.52f},
+        {0.2f,  0.97f},
+        {0.03f, 0.8f },
+        {0.0f,  0.52f},
         {0.02f, 0.29f},
     };
 
@@ -1881,9 +1839,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             y += base_y;
             y -= top;
 
-            sceVif1PkAddGsAD(packet, 4,
-                             (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
+            sceVif1PkAddGsAD(packet, 4, (unsigned long) ((x << 4) + 0x6C00) | (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
         }
     } else if (this->fukidashi_shape == 1 || this->fukidashi_shape == 2) {
         x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
@@ -1894,15 +1850,14 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         if (bubble_shape == 1) {
             DrawMaru(packet, x, y, (int) grown_width, (int) grown_height, top, 0x20, bubble_shape, prim);
         } else {
-            int upper_width = (int) grown_width - this->char_width;
-            int half_height = (int) grown_height >> 1;
+            int   upper_width = (int) grown_width - this->char_width;
+            int   half_height = (int) grown_height >> 1;
             float half_height_float = (float) half_height;
 
-            DrawMaru(packet, x, y, upper_width, (int) (half_height_float + 1.5f * this->char_height), top, 0x20, 0,
-                     prim);
+            DrawMaru(packet, x, y, upper_width, (int) (half_height_float + 1.5f * this->char_height), top, 0x20, 0, prim);
 
             float pad = 1.5f * this->char_height;
-            int indent = this->char_width;
+            int   indent = this->char_width;
 
             y = (int) (y + half_height - pad);
             DrawMaru(packet, x + indent, y, (int) grown_width - indent, (int) (half_height + pad), top, 0x20, 0, prim);
@@ -1922,14 +1877,12 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         px = x + (oval_width >> 1);
         py = y + (oval_height >> 1) - top;
 
-        sceVif1PkAddGsAD(packet, 4,
-                         (unsigned long) ((px << 4) + 0x6C00) |
-                             (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
+        sceVif1PkAddGsAD(packet, 4, (unsigned long) ((px << 4) + 0x6C00) | (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
         float across;
         float down;
         float turn = 0.0f;
-        int step = 0;
+        int   step = 0;
 
         while (turn < 128.0f) {
             float angle = 6.2831855f * turn / 128.0f;
@@ -1950,9 +1903,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             px += x;
             py += y - top;
 
-            sceVif1PkAddGsAD(packet, 4,
-                             (unsigned long) ((px << 4) + 0x6C00) |
-                                 (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
+            sceVif1PkAddGsAD(packet, 4, (unsigned long) ((px << 4) + 0x6C00) | (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
             turn += RandTbl[step];
             step++;
@@ -1974,17 +1925,13 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
         px += x;
         py += y - top;
 
-        sceVif1PkAddGsAD(packet, 4,
-                         (unsigned long) ((px << 4) + 0x6C00) |
-                             (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
+        sceVif1PkAddGsAD(packet, 4, (unsigned long) ((px << 4) + 0x6C00) | (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
     }
 
     if (this->tail_on != 0) {
         if (this->fukidashi_shape == 2) {
-            x = (int) LinerInterpolation(this->grow_x,
-                                         (this->tail_x + this->tail_tip_x) >> 1, this->fade);
-            y = (int) LinerInterpolation(this->grow_y,
-                                         (this->tail_y + this->tail_tip_y) >> 1, this->fade);
+            x = (int) LinerInterpolation(this->grow_x, (this->tail_x + this->tail_tip_x) >> 1, this->fade);
+            y = (int) LinerInterpolation(this->grow_y, (this->tail_y + this->tail_tip_y) >> 1, this->fade);
             DrawMaru(packet, x - 10, y - 10, 20, 20, top, 0x20, 0, prim);
 
             x = (int) LinerInterpolation(this->grow_x, this->tail_tip_x, this->fade);
@@ -1997,23 +1944,17 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             x = (int) LinerInterpolation(this->grow_x, this->tail_tip_x, this->fade);
             y = (int) LinerInterpolation(this->grow_y, this->tail_tip_y, this->fade);
             y -= top;
-            sceVif1PkAddGsAD(packet, 4,
-                             (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
+            sceVif1PkAddGsAD(packet, 4, (unsigned long) ((x << 4) + 0x6C00) | (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
 
             x = (int) LinerInterpolation(this->grow_x, this->tail_left_x, this->fade);
             y = (int) LinerInterpolation(this->grow_y, this->tail_left_y, this->fade);
             y -= top;
-            sceVif1PkAddGsAD(packet, 4,
-                             (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
+            sceVif1PkAddGsAD(packet, 4, (unsigned long) ((x << 4) + 0x6C00) | (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
 
             x = (int) LinerInterpolation(this->grow_x, this->tail_right_x, this->fade);
             y = (int) LinerInterpolation(this->grow_y, this->tail_right_y, this->fade);
             y -= top;
-            sceVif1PkAddGsAD(packet, 4,
-                             (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
+            sceVif1PkAddGsAD(packet, 4, (unsigned long) ((x << 4) + 0x6C00) | (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
         }
     }
 }
@@ -2026,8 +1967,8 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
     sceGsZbuf zbuf;
     sceGsTest test;
     CTexture *texture;
-    int row;
-    int col;
+    int       row;
+    int       col;
 
     MGGetFBuffTex(&frame);
 
@@ -2039,12 +1980,10 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
     tex0 = *(sceGsTex0 *) &TexManager.GetTexture("fukidashibase", -1)->tex0;
 
     unsigned int tbp = tex0.bits.tbp0;
-    int tbw = tex0.bits.tbw;
+    int          tbw = tex0.bits.tbw;
     unsigned int psm = tex0.bits.psm;
 
-    sceVif1PkAddGsAD(packet, 0x4C,
-                     (unsigned long) (tbp >> 5) | (unsigned long) (u32) tbw << 16 |
-                         (unsigned long) psm << 24);
+    sceVif1PkAddGsAD(packet, 0x4C, (unsigned long) (tbp >> 5) | (unsigned long) (u32) tbw << 16 | (unsigned long) psm << 24);
 
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
@@ -2091,9 +2030,7 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
 
     for (row = 0; row < 4; row++) {
         for (col = 0; col < 5; col++) {
-            Myset2DSprite(Vif1Packet, texture, CRect_i_(col * 0x80, row * 0x80, 0x80, 0x80),
-                          CRect_i_(0, 0, 0x80, 0x80), 0x80, 0x80, 0x80,
-                          this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+            Myset2DSprite(Vif1Packet, texture, CRect_i_(col * 0x80, row * 0x80, 0x80, 0x80), CRect_i_(0, 0, 0x80, 0x80), 0x80, 0x80, 0x80, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
         }
     }
 
@@ -2101,10 +2038,7 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, 0x3F, 0);
-    sceVif1PkAddGsAD(packet, 0x4C,
-                     (unsigned long) (frame.bits.tbp0 >> 5) |
-                         (unsigned long) frame.bits.tbw << 16 |
-                         (unsigned long) frame.bits.psm << 24);
+    sceVif1PkAddGsAD(packet, 0x4C, (unsigned long) (frame.bits.tbp0 >> 5) | (unsigned long) frame.bits.tbw << 16 | (unsigned long) frame.bits.psm << 24);
     sceVif1PkAddGsAD(packet, 0x47, *(unsigned long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, 0x4E, *(unsigned long *) &mgZBuffer);
     sceVif1PkAddGsAD(packet, 0x42, *(unsigned long *) &mgAlpha);
@@ -2177,33 +2111,32 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
     if (frame != 0) {
         spRGBA bright;
         spRGBA dim;
-        int outer_x;
-        int core_x;
-        int outer_y;
-        int outer_w;
-        int outer_h;
-        int core_y;
-        int core_w;
-        int core_h;
-        int core_screen_y;
-        int upper_screen_y;
-        int middle_screen_y;
-        int lower_screen_y;
-        int upper_h;
-        int lower_h;
-        int lower_tex_y;
-        int upper_tex_h;
-        int lower_tex_h;
-        int right_x;
-        int left_w;
-        int right_w;
+        int    outer_x;
+        int    core_x;
+        int    outer_y;
+        int    outer_w;
+        int    outer_h;
+        int    core_y;
+        int    core_w;
+        int    core_h;
+        int    core_screen_y;
+        int    upper_screen_y;
+        int    middle_screen_y;
+        int    lower_screen_y;
+        int    upper_h;
+        int    lower_h;
+        int    lower_tex_y;
+        int    upper_tex_h;
+        int    lower_tex_h;
+        int    right_x;
+        int    left_w;
+        int    right_w;
 
         SetspRGBA(&bright, 0x80, 0x80, 0x80, 0x80);
         SetspRGBA(&dim, 0x60, 0x60, 0x60, 0x80);
 
         if (MesAbsDrawOff == 0) {
-            set2DSprite(Vif1Packet, texture, CRect_i_(screen_x, screen_y, draw_width, draw_height),
-                        CRect_i_(tex_x, tex_y, draw_width, draw_height), &dim, &dim, &dim, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(screen_x, screen_y, draw_width, draw_height), CRect_i_(tex_x, tex_y, draw_width, draw_height), &dim, &dim, &dim, &dim, 1);
         }
 
         float win_left = this->win_x;
@@ -2242,28 +2175,18 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
         lower_tex_h = outer_y + outer_h - core_y - core_h;
 
         if (MesAbsDrawOff == 0) {
-            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, upper_screen_y, left_w, upper_h),
-                        CRect_i_(outer_x, outer_y, left_w, upper_tex_h), &dim, &dim, &dim, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, upper_screen_y, core_w, upper_h),
-                        CRect_i_(core_x, outer_y, core_w, upper_tex_h), &dim, &dim, &bright, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, upper_screen_y, right_w, upper_h),
-                        CRect_i_(right_x, outer_y, right_w, upper_tex_h), &dim, &dim, &bright, &dim, 0);
-            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, middle_screen_y, left_w, core_h),
-                        CRect_i_(outer_x, core_y, left_w, core_h), &dim, &bright, &dim, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, middle_screen_y, core_w, core_h),
-                        CRect_i_(core_x, core_y, core_w, core_h), &bright, &bright, &bright, &bright, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, middle_screen_y, right_w, core_h),
-                        CRect_i_(right_x, core_y, right_w, core_h), &bright, &dim, &bright, &dim, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, lower_screen_y, left_w, lower_h),
-                        CRect_i_(outer_x, lower_tex_y, left_w, lower_tex_h), &dim, &bright, &dim, &dim, 0);
-            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, lower_screen_y, core_w, lower_h),
-                        CRect_i_(core_x, lower_tex_y, core_w, lower_tex_h), &bright, &bright, &dim, &dim, 1);
-            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, lower_screen_y, right_w, lower_h),
-                        CRect_i_(right_x, lower_tex_y, right_w, lower_tex_h), &bright, &dim, &dim, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, upper_screen_y, left_w, upper_h), CRect_i_(outer_x, outer_y, left_w, upper_tex_h), &dim, &dim, &dim, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, upper_screen_y, core_w, upper_h), CRect_i_(core_x, outer_y, core_w, upper_tex_h), &dim, &dim, &bright, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, upper_screen_y, right_w, upper_h), CRect_i_(right_x, outer_y, right_w, upper_tex_h), &dim, &dim, &bright, &dim, 0);
+            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, middle_screen_y, left_w, core_h), CRect_i_(outer_x, core_y, left_w, core_h), &dim, &bright, &dim, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, middle_screen_y, core_w, core_h), CRect_i_(core_x, core_y, core_w, core_h), &bright, &bright, &bright, &bright, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, middle_screen_y, right_w, core_h), CRect_i_(right_x, core_y, right_w, core_h), &bright, &dim, &bright, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(outer_x, lower_screen_y, left_w, lower_h), CRect_i_(outer_x, lower_tex_y, left_w, lower_tex_h), &dim, &bright, &dim, &dim, 0);
+            set2DSprite(Vif1Packet, texture, CRect_i_(core_x, lower_screen_y, core_w, lower_h), CRect_i_(core_x, lower_tex_y, core_w, lower_tex_h), &bright, &bright, &dim, &dim, 1);
+            set2DSprite(Vif1Packet, texture, CRect_i_(right_x, lower_screen_y, right_w, lower_h), CRect_i_(right_x, lower_tex_y, right_w, lower_tex_h), &bright, &dim, &dim, &dim, 1);
         }
     } else if (MesAbsDrawOff == 0) {
-        set2DSprite(Vif1Packet, texture, CRect_i_(screen_x, screen_y, draw_width, draw_height), CRect_i_(tex_x, tex_y, draw_width, draw_height),
-                    0, 0, 0, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+        set2DSprite(Vif1Packet, texture, CRect_i_(screen_x, screen_y, draw_width, draw_height), CRect_i_(tex_x, tex_y, draw_width, draw_height), 0, 0, 0, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
     }
 }
 
@@ -2275,36 +2198,25 @@ void ClsMes::DrawMesWin_sub(CTexture *texture, int dx, int dy, int frame) {
  * @address 0x152930
  * @size 0x380
  */
-void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, int v,
-                       CTexture *texture) {
+void MyMenuHelpWinDraw(int x, int y, int width, int height, int shade, int u, int v, CTexture *texture) {
     int bar_width = width < 0x20 ? 0 : width - 0x20;
     int bar_height = height < 0x1C ? 0 : height - 0x1C;
     int alpha;
 
     setbilinear(0);
 
-    set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 0x10, 0xE),
-                CRect_i_(u, v, 0x10, 0xE), alpha = (shade * 100) >> 7);
-    set2DSprite(Vif1Packet, texture, CRect_i_(x, y + 0xE, 0x10, bar_height),
-                CRect_i_(u, v + 0xE, 0x10, 0x24), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(x, bar_height + (y + 0xE), 0x10, 0xE),
-                CRect_i_(u, v + 0x32, 0x10, 0xE), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, y, bar_width, 0xE),
-                CRect_i_(u + 0x10, v, 0x20, 0xE), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, y + 0xE, bar_width, bar_height),
-                CRect_i_(u + 0x10, v + 0xE, 0x20, 0x24), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, bar_height + (y + 0xE), bar_width, 0xE),
-                CRect_i_(u + 0x10, v + 0x32, 0x20, 0xE), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), y, 0x10, 0xE),
-                CRect_i_(u + 0x30, v, 0x10, 0xE), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), y + 0xE, 0x10, bar_height),
-                CRect_i_(u + 0x30, v + 0xE, 0x10, 0x24), alpha);
-    set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), bar_height + (y + 0xE), 0x10, 0xE),
-                CRect_i_(u + 0x30, v + 0x32, 0x10, 0xE), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 0x10, 0xE), CRect_i_(u, v, 0x10, 0xE), alpha = (shade * 100) >> 7);
+    set2DSprite(Vif1Packet, texture, CRect_i_(x, y + 0xE, 0x10, bar_height), CRect_i_(u, v + 0xE, 0x10, 0x24), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(x, bar_height + (y + 0xE), 0x10, 0xE), CRect_i_(u, v + 0x32, 0x10, 0xE), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, y, bar_width, 0xE), CRect_i_(u + 0x10, v, 0x20, 0xE), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, y + 0xE, bar_width, bar_height), CRect_i_(u + 0x10, v + 0xE, 0x20, 0x24), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x10, bar_height + (y + 0xE), bar_width, 0xE), CRect_i_(u + 0x10, v + 0x32, 0x20, 0xE), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), y, 0x10, 0xE), CRect_i_(u + 0x30, v, 0x10, 0xE), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), y + 0xE, 0x10, bar_height), CRect_i_(u + 0x30, v + 0xE, 0x10, 0x24), alpha);
+    set2DSprite(Vif1Packet, texture, CRect_i_(bar_width + (x + 0x10), bar_height + (y + 0xE), 0x10, 0xE), CRect_i_(u + 0x30, v + 0x32, 0x10, 0xE), alpha);
 }
 
-void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int win_height,
-                      int align, int *out_x, int *out_y) {
+void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int win_height, int align, int *out_x, int *out_y) {
     switch (align) {
         case 1:
         case 4:
@@ -2358,13 +2270,12 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
     }
 }
 
-void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
-                           const CRect_i_ &screen, int wide, int dark) {
-    u8 r;
-    u8 g;
-    u8 b;
-    u8 alpha;
-    u8 clut;
+void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel, const CRect_i_ &screen, int wide, int dark) {
+    u8  r;
+    u8  g;
+    u8  b;
+    u8  alpha;
+    u8  clut;
     int code;
     int u;
     int v;
@@ -2372,8 +2283,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
     code = this->win_line[index].code;
 
     if (code >= -0x300 && code < -0x2DF) {
-        set2DSprite_Core(Vif1Packet, texture, screen, texel, 0x80, 0x80, 0x80,
-                         this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+        set2DSprite_Core(Vif1Packet, texture, screen, texel, 0x80, 0x80, 0x80, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
         return;
     }
 
@@ -2471,8 +2381,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
         b = b * 2;
     }
 
-    set2DSprite_Core(Vif1Packet, texture, screen, texel, r, g, b,
-                     this->edge_alpha < alpha ? this->edge_alpha : alpha);
+    set2DSprite_Core(Vif1Packet, texture, screen, texel, r, g, b, this->edge_alpha < alpha ? this->edge_alpha : alpha);
 
 #ifdef PAL
     switch (this->win_line[index].code) {
@@ -2611,19 +2520,17 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
     }
 
 #ifdef PAL
-    this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen.x, screen.y, screen.width, screen.height, u, v,
-                              14, 20);
+    this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen.x, screen.y, screen.width, screen.height, u, v, 14, 20);
 #endif
-    set2DSprite_Core(Vif1Packet, texture, screen, CRect_i_(u, v, 14, 20), r, g, b,
-                     this->edge_alpha < alpha ? this->edge_alpha : alpha);
+    set2DSprite_Core(Vif1Packet, texture, screen, CRect_i_(u, v, 14, 20), r, g, b, this->edge_alpha < alpha ? this->edge_alpha : alpha);
 }
 
-void ClsMes::DrawMesWin(void) {
+void ClsMes::DrawMesWin() {
     CTexture *texture;
-    int offset_x;
-    int offset_y;
-    int dark;
-    int index;
+    int       offset_x;
+    int       offset_y;
+    int       dark;
+    int       index;
 
     if (this->mes_made < 0) {
         return;
@@ -2678,22 +2585,22 @@ void ClsMes::DrawMesWin(void) {
             py = this->text_y + offset_y - 0xE;
 
             if (0 < this->auto_pos) {
-                GetPos_AbsPosSet(0x10, 0x10, 0x260, 0x1A0, width, height, this->auto_pos, &px,
-                                 &py);
+                GetPos_AbsPosSet(0x10, 0x10, 0x260, 0x1A0, width, height, this->auto_pos, &px, &py);
                 this->text_x = px - offset_x + 0x10;
                 this->text_y = py - offset_y + 0xE;
             }
 
             if (MesAbsDrawOff == 0) {
-                MyMenuHelpWinDraw(px, py, width, height, 0x80, 0, 0,
-                                  TexManager.GetTexture("stayframe", -1));
+                MyMenuHelpWinDraw(px, py, width, height, 0x80, 0, 0, TexManager.GetTexture("stayframe", -1));
             }
         }
     }
 
     this->MyTextureMake();
 
-    GIFTAG tag = {{0x8000, 0x10000000, 0xE, 0}};
+    GIFTAG tag = {
+        {0x8000, 0x10000000, 0xE, 0}
+    };
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -2778,9 +2685,9 @@ void ClsMes::DrawMesWin(void) {
         int row = this->win_line[index].y / this->char_height;
 
         if (this->line_pos[row].x < 0 || this->line_pos[row].y < 0) {
-            int line_x = this->win_line[index].x + this->text_x;
-            int line_y = this->win_line[index].y + this->text_y;
-            int screen_x = offset_x + (line_x + dx);
+            int      line_x = this->win_line[index].x + this->text_x;
+            int      line_y = this->win_line[index].y + this->text_y;
+            int      screen_x = offset_x + (line_x + dx);
             CRect_i_ screen;
             screen.x = screen_x;
             int screen_y = offset_y + (line_y + dy) - 3;
@@ -2816,8 +2723,7 @@ void ClsMes::DrawMesWin(void) {
             CRect_i_ texel(u, v, glyph_width, glyph_height);
 
             if (this->win_line[index].code >= -0x2DF) {
-                this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen_x + dx,
-                                          screen_y - row * this->char_height, glyph_width, glyph_height, u, v, glyph_width, glyph_height);
+                this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen_x + dx, screen_y - row * this->char_height, glyph_width, glyph_height, u, v, glyph_width, glyph_height);
             }
 
             if (this->cursor_row < 0) {
@@ -2852,8 +2758,7 @@ void ClsMes::DrawMesWin(void) {
                 CRect_i_ texel(0, 0, 0x10, 0x10);
 
                 if (MesAbsDrawOff == 0) {
-                    set2DSprite(Vif1Packet, texture, screen, texel,
-                                this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+                    set2DSprite(Vif1Packet, texture, screen, texel, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
                 }
             }
         }
@@ -2869,8 +2774,7 @@ void ClsMes::DrawMesWin(void) {
         CRect_i_ texel(0, 0, 0x10, 0x10);
 
         if (MesAbsDrawOff == 0) {
-            set2DSprite(Vif1Packet, texture, screen, texel,
-                        this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+            set2DSprite(Vif1Packet, texture, screen, texel, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
         }
     }
 
@@ -2898,8 +2802,7 @@ void ClsMes::DrawMesWin(void) {
         CRect_i_ texel(0x60, 0x60, 0x20, 0x20);
 
         if (MesAbsDrawOff == 0) {
-            set2DSprite(Vif1Packet, texture, screen, texel,
-                        this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
+            set2DSprite(Vif1Packet, texture, screen, texel, this->edge_alpha < 0x80 ? this->edge_alpha : 0x80);
         }
     } else {
         this->cursor_y = 0;

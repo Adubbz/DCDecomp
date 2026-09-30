@@ -38,13 +38,12 @@ void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, i
    vector.h for the same reason as the extremes above: frame.cpp reaches for them and cannot see
    that header at all.
  */
-float DistVector(float *v0);
-float DistVector(float *v0, float *v1);
+float DistVector(float *vector);
+float DistVector(float *a, float *b);
 
 /**
  * Where a line meets a triangle, given the triangle's plane normal rather than deriving it.
    Answers zero when the line misses, and writes the point through the last argument otherwise.
    Defined beside the rest of the vector helpers, in vector.h's unit.
  */
-int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2,
-                                 float *normal, float *hit);
+int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2, float *normal, float *hit);

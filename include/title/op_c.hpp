@@ -10,7 +10,7 @@ class CWater;
  * @size 0x4C
  * @unknownret
  */
-void OpC_LoadDataBG(void);
+void OpC_LoadDataBG();
 
 /**
  * @mangled OpC_LoadDataBG2__Fv
@@ -18,7 +18,7 @@ void OpC_LoadDataBG(void);
  * @size 0x4C
  * @unknownret
  */
-void OpC_LoadDataBG2(void);
+void OpC_LoadDataBG2();
 
 /**
  * @mangled OpC_LoadDataBG3__Fv
@@ -26,7 +26,7 @@ void OpC_LoadDataBG2(void);
  * @size 0x4C
  * @unknownret
  */
-void OpC_LoadDataBG3(void);
+void OpC_LoadDataBG3();
 
 /**
  * @mangled OpC_LoadDataBG4__Fv
@@ -34,7 +34,7 @@ void OpC_LoadDataBG3(void);
  * @size 0x4C
  * @unknownret
  */
-void OpC_LoadDataBG4(void);
+void OpC_LoadDataBG4();
 
 /**
  * @mangled OpC_LoadDataBG5__Fv
@@ -42,7 +42,7 @@ void OpC_LoadDataBG4(void);
  * @size 0x4C
  * @unknownret
  */
-void OpC_LoadDataBG5(void);
+void OpC_LoadDataBG5();
 
 /**
  * @mangled OpC_InitProcess__Fv
@@ -50,7 +50,7 @@ void OpC_LoadDataBG5(void);
  * @size 0xD9C
  * @unknownret
  */
-void OpC_InitProcess(void);
+void OpC_InitProcess();
 
 /**
  * @mangled OpC_InitProcess2__Fv
@@ -58,7 +58,7 @@ void OpC_InitProcess(void);
  * @size 0x510
  * @unknownret
  */
-void OpC_InitProcess2(void);
+void OpC_InitProcess2();
 
 /**
  * @mangled OpC_InitProcess3__Fv
@@ -66,7 +66,7 @@ void OpC_InitProcess2(void);
  * @size 0x73C
  * @unknownret
  */
-void OpC_InitProcess3(void);
+void OpC_InitProcess3();
 
 /**
  * @mangled OpC_InitProcess4__Fv
@@ -74,7 +74,7 @@ void OpC_InitProcess3(void);
  * @size 0x2D0
  * @unknownret
  */
-void OpC_InitProcess4(void);
+void OpC_InitProcess4();
 
 /**
  * @mangled OpC_InitProcess5__Fv
@@ -82,7 +82,7 @@ void OpC_InitProcess4(void);
  * @size 0x8AC
  * @unknownret
  */
-void OpC_InitProcess5(void);
+void OpC_InitProcess5();
 
 /**
  * @mangled OpC_MotionProcess__Fv
@@ -90,7 +90,7 @@ void OpC_InitProcess5(void);
  * @size 0x808
  * @unknownret
  */
-void OpC_MotionProcess(void);
+void OpC_MotionProcess();
 
 /**
  * @mangled OpC_SoundProcess__Fv
@@ -98,7 +98,7 @@ void OpC_MotionProcess(void);
  * @size 0x924
  * @unknownret
  */
-void OpC_SoundProcess(void);
+void OpC_SoundProcess();
 
 /**
  * @mangled OpC_DrawProcess__Fv
@@ -106,7 +106,7 @@ void OpC_SoundProcess(void);
  * @size 0x14B0
  * @unknownret
  */
-void OpC_DrawProcess(void);
+void OpC_DrawProcess();
 
 /**
  * Water surface of the opening.

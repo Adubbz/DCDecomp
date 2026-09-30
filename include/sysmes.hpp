@@ -8,21 +8,22 @@ class ClsMes;
  *          Carries a mutable text buffer and the parser's current position.
  */
 struct input_str {
+    char *data; /**< Text being parsed. */
+    int   size; /**< Number of bytes available in the text. */
+    int   pos;  /**< Current byte position in the text. */
+
     input_str() : size(0), pos(0) {}
 
-    input_str(int) {}
+    input_str(int unused) {}
 
     int get(int *value) {
         *value = (u_char) data[pos];
         pos++;
-        if (size < pos)
+        if (size < pos) {
             return 0;
+        }
         return 1;
     }
-
-    char *data; /**< Text being parsed. */
-    int size;   /**< Number of bytes available in the text. */
-    int pos;    /**< Current byte position in the text. */
 };
 
 STATIC_ASSERT(sizeof(input_str) == 0xC);
@@ -63,23 +64,23 @@ extern int SystemMesInputKey;
 /**
  * Initializes the system-message window and loads its message file.
  */
-void InitSystemMes(void);
+void InitSystemMes();
 /**
  * Clears the active system message.
  */
-void ClearSystemMes(void);
+void ClearSystemMes();
 /**
  * Reports whether a system message still has display time remaining.
  */
-int SystemMesCheck(void);
+int SystemMesCheck();
 /**
  * Advances the active system message and its input wait.
  */
-void SystemMesStep(void);
+void SystemMesStep();
 /**
  * Draws the active system message.
  */
-void SystemMesDraw(void);
+void SystemMesDraw();
 /**
  * Shows the message for an acquired item.
  */

@@ -43,6 +43,11 @@
 template <class T>
 class CRect {
 public:
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
+
     CRect() {
         h = 0;
         w = 0;
@@ -50,17 +55,12 @@ public:
         x = 0;
     }
 
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
+    CRect(T left, T top, T width, T height) {
+        x = left;
+        y = top;
+        w = width;
+        h = height;
     }
-
-    T x; /**< Left edge. */
-    T y; /**< Top edge. */
-    T w; /**< Width. */
-    T h; /**< Height. */
 } __attribute__((aligned(16)));
 
 /* The two classes this scene places in the world, declared here rather than reached through headers
@@ -81,21 +81,21 @@ public:
    out of it here, which is what names the first member. */
 class CMapObject : public CObjectFrame {
 public:
+    CFrameVu1 *frame; /**< Model the object draws at its nearest level of detail. */
+    char       unk_04[32];
+    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
+    char       unk_28[8];
+    float      shadow_offset; /**< Height the shadow drops below the object. */
+    int        unk_34;        /**< Category of map part the object belongs to. */
+    int        handle;        /**< Handle the map gave the object. */
+    char       unk_3C[4];
+
     CMapObject();
 
     virtual void Draw();
 
     void Initialize();
     void DrawShadow(int fast);
-
-    CFrameVu1 *frame; /**< Model the object draws at its nearest level of detail. */
-    char unk_04[32];
-    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
-    char unk_28[8];
-    float shadow_offset; /**< Height the shadow drops below the object. */
-    int unk_34;          /**< Category of map part the object belongs to. */
-    int handle;          /**< Handle the map gave the object. */
-    char unk_3C[4];
 };
 
 /* One piece of scenery as the scene was laid out: the model, the model its shadow is drawn
@@ -112,43 +112,22 @@ struct MAPOBJ_INFO {
    right — and a tick copies the current frame of each over the model's face plate. The two offsets
    are measured from the bottom edge of the 128-pixel plate. */
 struct FACE_INFO {
-    char *plate;      /**< Texture the model draws the face with, or zero for an actor without one. */
-    char *strip;      /**< Texture holding the eye and mouth frames. */
-    int eye_bottom;   /**< Distance of the eyes' bottom edge above the plate's bottom edge. */
-    int eye_height;   /**< Height of one eye frame. */
-    int mouth_bottom; /**< Distance of the mouth's bottom edge above the plate's bottom edge. */
-    int mouth_height; /**< Height of one mouth frame. */
-    int eye;          /**< Eye frame currently shown. */
-    int mouth;        /**< Mouth frame currently shown. */
-    int strip_bottom; /**< Bottom edge of the frame strips within the strip texture. */
-    int unk_24;
-    int unk_28;
+    char *plate;        /**< Texture the model draws the face with, or zero for an actor without one. */
+    char *strip;        /**< Texture holding the eye and mouth frames. */
+    int   eye_bottom;   /**< Distance of the eyes' bottom edge above the plate's bottom edge. */
+    int   eye_height;   /**< Height of one eye frame. */
+    int   mouth_bottom; /**< Distance of the mouth's bottom edge above the plate's bottom edge. */
+    int   mouth_height; /**< Height of one mouth frame. */
+    int   eye;          /**< Eye frame currently shown. */
+    int   mouth;        /**< Mouth frame currently shown. */
+    int   strip_bottom; /**< Bottom edge of the frame strips within the strip texture. */
+    int   unk_24;
+    int   unk_28;
 };
 
-void OPAnalyz(char *name);
-void OPMdsLoad();
-void OpPlayVolSE(int group, int no, int voice, float volume);
-void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group, int no,
-                    int voice);
-void OpBgmPlay();
-void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect,
-                   int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &src,
-                 const CRect<int> &dst, u_char alpha);
-void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
-void LensFlare(CTexture *texture, float *position, u_char r, u_char g, u_char b);
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetAmbient(float *color);
-void MGDraw(CFrame *frame);
-void MGBeginDrawShadow(sceGsTex0 tex);
-void MGEndDrawShadow(u_char alpha);
-int MGRotTransPers2D(int *screen, float *position, int fog);
-sceVif1Packet *GetVif1Packet();
+void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect, int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &src, const CRect<int> &dst, u_char alpha);
 void DepthOfField(float *dist, int level, int alpha, int blur);
-int SndSyncBG();
-void SndBgmPlay(int no);
 
 static void SkyColor(CFrameVu1 *frame);
 static void EffectAtraPrizum();
@@ -157,16 +136,15 @@ static void EffectSeireiKing(float size);
 static void LensFreaProcess();
 static void Setsumei();
 static void HamonProcess();
-void FaceChange(int actor);
-void FaceChangeMovie(int actor);
+void        FaceChangeMovie(int actor);
 
-static CWind Wind;
-static CFrameVu1 *Hamon[4];
-static float HScale[5];
-static CCharacter Effect;
+static CWind       Wind;
+static CFrameVu1  *Hamon[4];
+static float       HScale[5];
+static CCharacter  Effect;
 static CSeireiKing SeireiKing;
 
-static int amb3;
+static int        amb3;
 static CFrameVu1 *SkyFrame;
 
 /* One actor's blinking and speaking. The eyes and the mouth are two strips of frames in one
@@ -174,35 +152,36 @@ static CFrameVu1 *SkyFrame;
    mouth is driven from the script's own clock rather than from a motion: while the actor is talking
    a new frame is picked at random every sixth hundredth of a second left on the timer, and the
    timer running out closes the mouth and ends the line. */
-void FaceChange(int actor) {
+void FaceChange(int actor_no) {
     static FACE_INFO face[21] = {
-        {0, 0, 42, 40, 87, 35, 0, 0, 256, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 32, 40, 84, 35, 0, 0, 448, 3, 0},
-        {"c09a01", "c09a01an", 10, 40, 73, 35, 0, 0, 448, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 8, 40, 76, 35, 0, 0, 256, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 256, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            32, 40, 84, 35, 0, 0, 448, 3, 0},
+        {"c09a01", "c09a01an",   10, 40, 73, 35, 0, 0, 448, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            8,  40, 76, 35, 0, 0, 256, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
         {"p09a01", "p09a01an_3", 44, 40, 92, 32, 0, 0, 192, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
         {"c01d01", "c01d01an_3", 27, 48, 78, 44, 0, 0, 512, 3, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0}};
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0}
+    };
     CTexture *plate;
     CTexture *strip;
-    int sbp;
-    int dbp;
-    int sbw;
-    int dbw;
+    int       sbp;
+    int       dbp;
+    int       sbw;
+    int       dbw;
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -211,12 +190,12 @@ void FaceChange(int actor) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 
-    if (face[actor].plate == 0) {
+    if (face[actor_no].plate == 0) {
         return;
     }
 
-    plate = TexManager.GetTexture(face[actor].plate, -1);
-    strip = TexManager.GetTexture(face[actor].strip, -1);
+    plate = TexManager.GetTexture(face[actor_no].plate, -1);
+    strip = TexManager.GetTexture(face[actor_no].strip, -1);
 
     if (plate == 0 || strip == 0) {
         return;
@@ -227,37 +206,32 @@ void FaceChange(int actor) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face[actor].eye = CScript__2.obj[actor].eye;
+    face[actor_no].eye = CScript__2.obj[actor_no].eye;
 
-    CRect<int> eye(0, face[actor].strip_bottom - face[actor].eye_height * (face[actor].eye + 1), 128,
-                   face[actor].eye_height);
+    CRect<int> eye(0, face[actor_no].strip_bottom - face[actor_no].eye_height * (face[actor_no].eye + 1), 128, face[actor_no].eye_height);
 
-    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eye, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[actor].eye_height - face[actor].eye_bottom, 0);
+    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eye, dbp, dbw, SCE_GS_PSMT8, 0, 128 - face[actor_no].eye_height - face[actor_no].eye_bottom, 0);
 
     if (!Pause) {
-        if (CScript__2.obj[actor].mouth_time >= CScript__2.motion_step) {
-            CScript__2.obj[actor].mouth_time -= CScript__2.motion_step;
+        if (CScript__2.obj[actor_no].mouth_time >= CScript__2.motion_step) {
+            CScript__2.obj[actor_no].mouth_time -= CScript__2.motion_step;
 
-            if (CScript__2.obj[actor].talk) {
-                if ((int) (100.0f * CScript__2.obj[actor].mouth_time) % 6 == 0) {
-                    CScript__2.obj[actor].mouth = rand() % 4;
+            if (CScript__2.obj[actor_no].talk) {
+                if ((int) (100.0f * CScript__2.obj[actor_no].mouth_time) % 6 == 0) {
+                    CScript__2.obj[actor_no].mouth = rand() % 4;
                 }
             }
         } else {
-            CScript__2.obj[actor].mouth = 0;
-            CScript__2.obj[actor].talk = 0;
+            CScript__2.obj[actor_no].mouth = 0;
+            CScript__2.obj[actor_no].talk = 0;
         }
     }
 
-    face[actor].mouth = CScript__2.obj[actor].mouth;
+    face[actor_no].mouth = CScript__2.obj[actor_no].mouth;
 
-    CRect<int> mouth(128,
-                     face[actor].strip_bottom - face[actor].mouth_height * (face[actor].mouth + 1),
-                     128, face[actor].mouth_height);
+    CRect<int> mouth(128, face[actor_no].strip_bottom - face[actor_no].mouth_height * (face[actor_no].mouth + 1), 128, face[actor_no].mouth_height);
 
-    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[actor].mouth_height - face[actor].mouth_bottom, 0);
+    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0, 128 - face[actor_no].mouth_height - face[actor_no].mouth_bottom, 0);
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -304,15 +278,16 @@ void OpD_InitProcess() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
-        {0, 11, 0},
-        {0, 11, 0},
-        {0, 4, 0},
-        {0, 4, 0},
-        {0, 4, 0},
-        {0, 4, 0},
-        {0, 4, 0},
-        {0, 0, 0}};
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0,  0},
+        {0,                                           11, 0},
+        {0,                                           11, 0},
+        {0,                                           4,  0},
+        {0,                                           4,  0},
+        {0,                                           4,  0},
+        {0,                                           4,  0},
+        {0,                                           4,  0},
+        {0,                                           0,  0}
+    };
 
     tex[1].name = (char *) GetPackFile(read_buffer, "b0401.img", 0);
     tex[2].name = (char *) GetPackFile(read_buffer, "b0402.img", 0);
@@ -342,8 +317,7 @@ void OpD_InitProcess() {
     TexManager.LoadTextureBlock(2, tex);
     MapDataBuffer.used = 0;
 
-    CFrameVu1 *frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0401.mds", 0),
-                                   &MapDataBuffer, 2, 0, 0);
+    CFrameVu1  *frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0401.mds", 0), &MapDataBuffer, 2, 0, 0);
     CMapObject &hall = OP_NornMapObj[0];
 
     hall.Initialize();
@@ -352,8 +326,7 @@ void OpD_InitProcess() {
     OP_NornMapObj[0].unk_34 = 0;
     hall.SetPosition(CVector3_f_(0.0f, 0.0f, 0.0f));
     hall.SetRotation(CVector3_f_(0.0f, 0.0f, 0.0f));
-    Hamon[0] = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0402.mds", 0),
-                           &CharaDataBuffer__2[6], 2, 0, 0);
+    Hamon[0] = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0402.mds", 0), &CharaDataBuffer__2[6], 2, 0, 0);
     Hamon[1] = Hamon[2] = Hamon[3] = Hamon[0];
     HScale[0] = 0.0f;
     HScale[1] = -0.8f;
@@ -416,18 +389,19 @@ void OpD_InitProcess() {
         {"opdat/norn4/i00002.img", 5, 0},
         {"opdat/norn4/i00006.img", 5, 0},
         {"opdat/norn4/i00022.img", 6, 0},
-        {"opdat/norn4/0519.img", 7, 0},
-        {"opdat/norn4/0519p.img", 7, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}};
+        {"opdat/norn4/0519.img",   7, 0},
+        {"opdat/norn4/0519p.img",  7, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0},
+        {0,                        0, 0}
+    };
 
     TexManager.LoadTextureBlock(-1, img, read_buffer);
     SeireiKing.Initialize();
@@ -451,9 +425,10 @@ void OpD_InitProcess2() {
         {0, 10, 0},
         {0, 10, 0},
         {0, 10, 0},
-        {0, 3, 0},
+        {0, 3,  0},
         {0, 10, 0},
-        {0, 0, 0}};
+        {0, 0,  0}
+    };
 
     tex[0].name = (char *) GetPackFile(read_buffer, "b0403.img", 0);
     tex[1].name = (char *) GetPackFile(read_buffer, "e01b01.img", 0);
@@ -467,25 +442,25 @@ void OpD_InitProcess2() {
     TexManager.LoadTextureBlock(-1, tex);
 
     MAPOBJ_INFO map[] = {
-        {"b0403.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01g02_0.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01g03_0.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01g04_0.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01h06_2.mds", 0, {0.0f, 4.7424f, 79.274f}, {0.0f, 0.0f, 0.0f}},
-        {"e01a02_2.mds", 0, {0.0f, 0.0f, 59.965f}, {0.0f, 0.0f, 0.0f}},
-        {"flower.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01s05_0.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01s01_0.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01s01_1.mds", 0, {104.195f, 3.399f, -150.395f}, {0.0f, 0.0f, 0.0f}}};
+        {"b0403.mds",    0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01g02_0.mds", 0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01g03_0.mds", 0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01g04_0.mds", 0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01h06_2.mds", 0, {0.0f, 4.7424f, 79.274f},      {0.0f, 0.0f, 0.0f}},
+        {"e01a02_2.mds", 0, {0.0f, 0.0f, 59.965f},         {0.0f, 0.0f, 0.0f}},
+        {"flower.mds",   0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01s05_0.mds", 0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01s01_0.mds", 0, {0.0f, 0.0f, 0.0f},            {0.0f, 0.0f, 0.0f}},
+        {"e01s01_1.mds", 0, {104.195f, 3.399f, -150.395f}, {0.0f, 0.0f, 0.0f}}
+    };
     CFrameAttr attr;
     CFrameVu1 *frame;
-    int i;
+    int        i;
 
     attr.fog_enable = 1;
 
     for (i = 1; i < 11; i++) {
-        frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, map[i - 1].name, 0),
-                            &MapDataBuffer, 2, 0, 0);
+        frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, map[i - 1].name, 0), &MapDataBuffer, 2, 0, 0);
 
         if (i == 7) {
             attr.use_color = 1;
@@ -516,12 +491,8 @@ void OpD_InitProcess2() {
             object.FrameObjectOnOff("flo_S", 0);
         }
 
-        object.SetPosition(CVector3_f_(10.0f * map[i - 1].position[0],
-                                       10.0f * map[i - 1].position[1],
-                                       10.0f * map[i - 1].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * map[i - 1].rotation[0] / 180),
-                                       (float) (PI * map[i - 1].rotation[1] / 180),
-                                       (float) (PI * map[i - 1].rotation[2] / 180)));
+        object.SetPosition(CVector3_f_(10.0f * map[i - 1].position[0], 10.0f * map[i - 1].position[1], 10.0f * map[i - 1].position[2]));
+        object.SetRotation(CVector3_f_((float) (PI * map[i - 1].rotation[0] / 180), (float) (PI * map[i - 1].rotation[1] / 180), (float) (PI * map[i - 1].rotation[2] / 180)));
     }
 
     Chara__3[22].LoadPackData(read_buffer, "buterfly.cfg", &CharaDataBuffer__2[6], 0);
@@ -573,8 +544,8 @@ static void SkyColor(CFrameVu1 *frame) {
             if (model) {
                 if (model->colour_count) {
                     sceVu0FVECTOR *color = (sceVu0FVECTOR *) ((char *) model + model->colour_ofs);
-                    sceVu0FVECTOR color0 = {50.0f, 100.0f, 255.0f, 0.0f};
-                    sceVu0FVECTOR color1 = {255.0f, 255.0f, 255.0f, 0.0f};
+                    sceVu0FVECTOR  color0 = {50.0f, 100.0f, 255.0f, 0.0f};
+                    sceVu0FVECTOR  color1 = {255.0f, 255.0f, 255.0f, 0.0f};
 
                     color0[0] = color0[0] / 128.0f;
                     color0[1] = color0[1] / 128.0f;
@@ -615,8 +586,7 @@ void OpD_MotionProcess() {
         for (int i = 0; i < 23; i++) {
             if (CScript__2.obj[i].disp) {
                 if (CScript__2.obj[i].motion_end != -1) {
-                    if (Chara__3[i].motion_type.state.time >
-                        (float) (Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].end - 1)) {
+                    if (Chara__3[i].motion_type.state.time > (float) (Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].end - 1)) {
                         CScript__2.obj[i].motion = CScript__2.obj[i].motion_end;
                         CScript__2.obj[i].motion_end = -1;
                     }
@@ -626,8 +596,7 @@ void OpD_MotionProcess() {
 
                 if (CScript__2.obj[i].step == 1.0f) {
                     if (CScript__2.obj[i].motion != Chara__3[i].motion_no) {
-                        Chara__3[i].motion_type.state.time =
-                            (float) Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].start;
+                        Chara__3[i].motion_type.state.time = (float) Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].start;
                     }
                 }
 
@@ -637,8 +606,8 @@ void OpD_MotionProcess() {
             }
         }
 
-        char *frame_names[23] = {"", "", "", "", "", "tyou2", "", "", "c01d", "", "", "c01d", "", "", "", "",
-                                 "", "", "", "", "", "c03c", "tyou"};
+        char         *frame_names[23] = {"", "", "", "", "", "tyou2", "", "", "c01d", "", "", "c01d", "", "", "", "",
+                                         "", "", "", "", "", "c03c", "tyou"};
         sceVu0FMATRIX matrix;
 
         for (int i = 0; i < 23; i++) {
@@ -827,9 +796,9 @@ void OpD_SoundProcess() {
     }
 
     if (CScript__2.obj[21].disp) {
-        static int wait = 0;
+        static int    wait = 0;
         sceVu0FVECTOR position;
-        float motion_frame;
+        float         motion_frame;
 
         sceVu0CopyVector(position, Chara__3[21].pos);
         motion_frame = (int) Chara__3[21].motion_type.state.time;
@@ -922,7 +891,7 @@ void OpD_DrawProcess() {
             flower.Draw();
             flower.FrameObjectOnOff("flo_S", 1);
 
-            CFrame *frame = flower.frame->SearchFrame("flo_S");
+            CFrame       *frame = flower.frame->SearchFrame("flo_S");
             sceVu0FVECTOR ambient;
 
             sceVu0CopyVector(ambient, ambientlight);
@@ -1032,20 +1001,17 @@ void OpD_DrawProcess() {
 
     if (fade1) {
         TexManager.ReloadTexture(Vif1Packet, 5);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("i00002", -1),
-                    CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), (u_char) fade1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("i00002", -1), CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), (u_char) fade1);
     }
 
     if (fade2) {
         TexManager.ReloadTexture(Vif1Packet, 5);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("i00006", -1),
-                    CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), (u_char) fade2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("i00006", -1), CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), (u_char) fade2);
     }
 
     if (fade3) {
         TexManager.ReloadTexture(Vif1Packet, 6);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("i00022", -1),
-                    CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), (u_char) fade3);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("i00022", -1), CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), (u_char) fade3);
     }
 
     switch (CScript__2.sprite) {
@@ -1278,9 +1244,9 @@ static void EffectSeireiKing(float size) {
  */
 static void LensFreaProcess() {
     sceVu0FVECTOR world;
-    int screen[4];
+    int           screen[4];
     sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 1.0f};
-    CFrame *frame = SkyFrame->SearchFrame("sun1");
+    CFrame       *frame = SkyFrame->SearchFrame("sun1");
 
     if (frame) {
         frame->GetWorldPosition(world, local);
@@ -1394,42 +1360,25 @@ static void Setsumei() {
             break;
     }
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519", -1), CRect<int>(0, 0, 640, SCREEN_HEIGHT),
-                CRect<int>(0, 0, 640, 448), 128);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(540, 254, 88, 128), CRect<int>(89, 206, 88, 119), (u_char) fadeA1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(540, 254, 88, 128), CRect<int>(0, 206, 88, 119), (u_char) fadeA2);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(450, 27, 105, 113), CRect<int>(117, 448, 105, 105), (u_char) fadeB1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(450, 27, 105, 113), CRect<int>(222, 448, 105, 105), (u_char) fadeB2);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(450, 27, 105, 113), CRect<int>(327, 448, 105, 105), (u_char) fadeB3);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(350, 139, 208, 62), CRect<int>(432, 448, 208, 58), (u_char) fadeB1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(350, 139, 208, 62), CRect<int>(432, 506, 208, 58), (u_char) fadeB2);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(350, 139, 208, 62), CRect<int>(432, 564, 208, 58), (u_char) fadeB3);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(100, 188, 117, 60), CRect<int>(0, 325, 117, 56), (u_char) fadeA1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(100, 188, 117, 60), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519", -1), CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, 448), 128);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(540, 254, 88, 128), CRect<int>(89, 206, 88, 119), (u_char) fadeA1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(540, 254, 88, 128), CRect<int>(0, 206, 88, 119), (u_char) fadeA2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(450, 27, 105, 113), CRect<int>(117, 448, 105, 105), (u_char) fadeB1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(450, 27, 105, 113), CRect<int>(222, 448, 105, 105), (u_char) fadeB2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(450, 27, 105, 113), CRect<int>(327, 448, 105, 105), (u_char) fadeB3);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(350, 139, 208, 62), CRect<int>(432, 448, 208, 58), (u_char) fadeB1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(350, 139, 208, 62), CRect<int>(432, 506, 208, 58), (u_char) fadeB2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(350, 139, 208, 62), CRect<int>(432, 564, 208, 58), (u_char) fadeB3);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 188, 117, 60), CRect<int>(0, 325, 117, 56), (u_char) fadeA1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 188, 117, 60), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
 
     if (CScript__2.sprite == 5) {
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(6, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(184, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(362, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(6, 245, 178, 191), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(184, 245, 178, 191), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(362, 245, 178, 191), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(6, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(184, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(362, 245, 178, 191), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(6, 245, 178, 191), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(184, 245, 178, 191), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(362, 245, 178, 191), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
     } else {
         static float x = 6.0f;
         static float y = 245.0f;
@@ -1473,9 +1422,7 @@ static void Setsumei() {
 
         int cut = (int) ((245.0f - y) / 2.0f);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>((int) x, (int) y, 178 - cut, 191 - cut),
-                    CRect<int>(210, 0, 178, 178), (u_char) alpha);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x, (int) y, 178 - cut, 191 - cut), CRect<int>(210, 0, 178, 178), (u_char) alpha);
 
         float heading2 = atan2f(500.0f - x2, -107.0f - y2);
 
@@ -1509,9 +1456,7 @@ static void Setsumei() {
 
         int cut2 = (int) ((245.0f - y2) / 2.0f);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>((int) x2, (int) y2, 178 - cut2, 191 - cut2),
-                    CRect<int>(210, 0, 178, 178), (u_char) alpha2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x2, (int) y2, 178 - cut2, 191 - cut2), CRect<int>(210, 0, 178, 178), (u_char) alpha2);
 
         float heading3 = atan2f(900.0f - x3, -107.0f - y3);
 
@@ -1545,9 +1490,7 @@ static void Setsumei() {
 
         int cut3 = (int) ((245.0f - y3) / 2.0f);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>((int) x3, (int) y3, 178 - cut3, 191 - cut3),
-                    CRect<int>(210, 0, 178, 178), (u_char) alpha3);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x3, (int) y3, 178 - cut3, 191 - cut3), CRect<int>(210, 0, 178, 178), (u_char) alpha3);
     }
 
     static float x = 426.0f;
@@ -1581,9 +1524,7 @@ static void Setsumei() {
         y = -221.0f;
     }
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>((int) x, (int) y, 210, 221), CRect<int>(0, 0, 210, 206),
-                (u_char) alpha);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x, (int) y, 210, 221), CRect<int>(0, 0, 210, 206), (u_char) alpha);
 
     float heading2 = atan2f(240.0f - x2, 193.0f - y2);
 
@@ -1607,14 +1548,10 @@ static void Setsumei() {
         y2 = -328.0f;
     }
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>((int) x2, (int) y2, 210, 221), CRect<int>(0, 0, 210, 206),
-                (u_char) alpha2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x2, (int) y2, 210, 221), CRect<int>(0, 0, 210, 206), (u_char) alpha2);
 
     if (CScript__2.sprite == 6) {
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(40, 193, 463, 221), CRect<int>(177, 206, 463, 242),
-                    (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(40, 193, 463, 221), CRect<int>(177, 206, 463, 242), (u_char) fadeA1);
     }
 }
 #else
@@ -1706,42 +1643,25 @@ static void Setsumei() {
             break;
     }
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519", -1), CRect<int>(0, 0, 640, 448),
-                CRect<int>(0, 0, 640, 448), 128);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(540, 237, 88, 119), CRect<int>(89, 206, 88, 119), (u_char) fadeA1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(540, 237, 88, 119), CRect<int>(0, 206, 88, 119), (u_char) fadeA2);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(450, 25, 105, 105), CRect<int>(117, 448, 105, 105), (u_char) fadeB1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(450, 25, 105, 105), CRect<int>(222, 448, 105, 105), (u_char) fadeB2);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(450, 25, 105, 105), CRect<int>(327, 448, 105, 105), (u_char) fadeB3);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(350, 130, 208, 58), CRect<int>(432, 448, 208, 58), (u_char) fadeB1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(350, 130, 208, 58), CRect<int>(432, 506, 208, 58), (u_char) fadeB2);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(350, 130, 208, 58), CRect<int>(432, 564, 208, 58), (u_char) fadeB3);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(100, 175, 117, 56), CRect<int>(0, 325, 117, 56), (u_char) fadeA1);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>(100, 175, 117, 56), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519", -1), CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 448), 128);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(540, 237, 88, 119), CRect<int>(89, 206, 88, 119), (u_char) fadeA1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(540, 237, 88, 119), CRect<int>(0, 206, 88, 119), (u_char) fadeA2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(450, 25, 105, 105), CRect<int>(117, 448, 105, 105), (u_char) fadeB1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(450, 25, 105, 105), CRect<int>(222, 448, 105, 105), (u_char) fadeB2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(450, 25, 105, 105), CRect<int>(327, 448, 105, 105), (u_char) fadeB3);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(350, 130, 208, 58), CRect<int>(432, 448, 208, 58), (u_char) fadeB1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(350, 130, 208, 58), CRect<int>(432, 506, 208, 58), (u_char) fadeB2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(350, 130, 208, 58), CRect<int>(432, 564, 208, 58), (u_char) fadeB3);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 175, 117, 56), CRect<int>(0, 325, 117, 56), (u_char) fadeA1);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(100, 175, 117, 56), CRect<int>(0, 381, 117, 56), (u_char) fadeA2);
 
     if (CScript__2.sprite == 5) {
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(6, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(184, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(362, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(6, 229, 178, 178), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(184, 229, 178, 178), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(362, 229, 178, 178), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(6, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(184, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(362, 229, 178, 178), CRect<int>(388, 0, 178, 178), (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(6, 229, 178, 178), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(184, 229, 178, 178), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(362, 229, 178, 178), CRect<int>(210, 0, 178, 178), (u_char) fadeA2);
     } else {
         static float x = 6.0f;
         static float y = 229.0f;
@@ -1785,9 +1705,7 @@ static void Setsumei() {
 
         int cut = (int) ((229.0f - y) / 2.0f);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>((int) x, (int) y, 178 - cut, 178 - cut),
-                    CRect<int>(210, 0, 178, 178), (u_char) alpha);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x, (int) y, 178 - cut, 178 - cut), CRect<int>(210, 0, 178, 178), (u_char) alpha);
 
         float heading2 = atan2f(500.0f - x2, -100.0f - y2);
 
@@ -1821,9 +1739,7 @@ static void Setsumei() {
 
         int cut2 = (int) ((229.0f - y2) / 2.0f);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>((int) x2, (int) y2, 178 - cut2, 178 - cut2),
-                    CRect<int>(210, 0, 178, 178), (u_char) alpha2);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x2, (int) y2, 178 - cut2, 178 - cut2), CRect<int>(210, 0, 178, 178), (u_char) alpha2);
 
         float heading3 = atan2f(900.0f - x3, -100.0f - y3);
 
@@ -1857,9 +1773,7 @@ static void Setsumei() {
 
         int cut3 = (int) ((229.0f - y3) / 2.0f);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>((int) x3, (int) y3, 178 - cut3, 178 - cut3),
-                    CRect<int>(210, 0, 178, 178), (u_char) alpha3);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x3, (int) y3, 178 - cut3, 178 - cut3), CRect<int>(210, 0, 178, 178), (u_char) alpha3);
     }
 
     static float x = 426.0f;
@@ -1893,9 +1807,7 @@ static void Setsumei() {
         y = -206.0f;
     }
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>((int) x, (int) y, 210, 206), CRect<int>(0, 0, 210, 206),
-                (u_char) alpha);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x, (int) y, 210, 206), CRect<int>(0, 0, 210, 206), (u_char) alpha);
 
     float heading2 = atan2f(240.0f - x2, 180.0f - y2);
 
@@ -1919,14 +1831,10 @@ static void Setsumei() {
         y2 = -306.0f;
     }
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                CRect<int>((int) x2, (int) y2, 210, 206), CRect<int>(0, 0, 210, 206),
-                (u_char) alpha2);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>((int) x2, (int) y2, 210, 206), CRect<int>(0, 0, 210, 206), (u_char) alpha2);
 
     if (CScript__2.sprite == 6) {
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1),
-                    CRect<int>(40, 180, 463, 206), CRect<int>(177, 206, 463, 242),
-                    (u_char) fadeA1);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("0519p", -1), CRect<int>(40, 180, 463, 206), CRect<int>(177, 206, 463, 242), (u_char) fadeA1);
     }
 }
 #endif

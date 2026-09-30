@@ -20,7 +20,7 @@ class CScFader;
  * @size 0x7D4
  * @unknownret
  */
-void DrawProcA(void);
+void DrawProcA();
 
 /**
  * @mangled DrawProcB__Fv
@@ -28,7 +28,7 @@ void DrawProcA(void);
  * @size 0x4B0
  * @unknownret
  */
-void DrawProcB(void);
+void DrawProcB();
 
 /**
  * @mangled DrawProcC__Fv
@@ -36,7 +36,7 @@ void DrawProcB(void);
  * @size 0x37C
  * @unknownret
  */
-void DrawProcC(void);
+void DrawProcC();
 
 /**
  * @mangled DrawProcD__Fv
@@ -44,7 +44,7 @@ void DrawProcC(void);
  * @size 0x218
  * @unknownret
  */
-void DrawProcD(void);
+void DrawProcD();
 
 /**
  * @mangled DrawProcE__Fv
@@ -52,7 +52,7 @@ void DrawProcD(void);
  * @size 0x230
  * @unknownret
  */
-void DrawProcE(void);
+void DrawProcE();
 
 /**
  * @mangled DrawProcF__Fv
@@ -60,7 +60,7 @@ void DrawProcE(void);
  * @size 0x27C
  * @unknownret
  */
-void DrawProcF(void);
+void DrawProcF();
 
 /**
  * @mangled DrawProcG__Fv
@@ -68,7 +68,7 @@ void DrawProcF(void);
  * @size 0x200
  * @unknownret
  */
-void DrawProcG(void);
+void DrawProcG();
 
 /**
  * @mangled DrawProcH__Fv
@@ -76,7 +76,7 @@ void DrawProcG(void);
  * @size 0x3BC
  * @unknownret
  */
-void DrawProcH(void);
+void DrawProcH();
 
 /**
  * @mangled DrawProcI__Fv
@@ -84,7 +84,7 @@ void DrawProcH(void);
  * @size 0x29C
  * @unknownret
  */
-void DrawProcI(void);
+void DrawProcI();
 
 /**
  * @mangled DrawProcTitle__Fv
@@ -92,7 +92,7 @@ void DrawProcI(void);
  * @size 0x2A4
  * @unknownret
  */
-void DrawProcTitle(void);
+void DrawProcTitle();
 
 /**
  * @mangled TitleInit__Fi
@@ -108,7 +108,7 @@ void TitleInit(int mode);
  * @size 0x9E4
  * @unknownret
  */
-int TitleLoop(void);
+int TitleLoop();
 
 /**
  *          Draws the active title cinematic or title-screen scene.
@@ -118,7 +118,7 @@ int TitleLoop(void);
  * @size 0x11EC
  * @unknownret
  */
-void TitleDraw(void);
+void TitleDraw();
 
 /**
  * Camera the title is drawn through.
@@ -161,10 +161,10 @@ extern CScFader CFade;
  */
 class CProcess {
 public:
-    CProcess() { no = 0; }
-
     int no; /**< Step the title screen is on. */
     int unk_04;
+
+    CProcess() { no = 0; }
 };
 
 /**

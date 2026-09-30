@@ -16,7 +16,7 @@ void CDungeonEventData::Set(CDungeonEvent *source) {
     chara_done = -1;
 }
 
-int CDungeonEventData::CheckSwitch(void) {
+int CDungeonEventData::CheckSwitch() {
     if (event == NULL) {
         return 0;
     }
@@ -26,10 +26,10 @@ int CDungeonEventData::CheckSwitch(void) {
     return 0;
 }
 
-void CDungeonEventData::Stop(void) {
+void CDungeonEventData::Stop() {
     switch_on = 0;
 }
 
-void CDungeonEventData::Start(void) {
+void CDungeonEventData::Start() {
     switch_on = 1;
 }

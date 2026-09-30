@@ -45,6 +45,11 @@
 template <class T>
 class CRect {
 public:
+    T x; /**< Left edge. */
+    T y; /**< Top edge. */
+    T w; /**< Width. */
+    T h; /**< Height. */
+
     CRect() {
         h = 0;
         w = 0;
@@ -52,17 +57,12 @@ public:
         x = 0;
     }
 
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
+    CRect(T left, T top, T width, T height) {
+        x = left;
+        y = top;
+        w = width;
+        h = height;
     }
-
-    T x; /**< Left edge. */
-    T y; /**< Top edge. */
-    T w; /**< Width. */
-    T h; /**< Height. */
 } __attribute__((aligned(16)));
 
 /* The three classes this scene places in the world, declared here rather than reached through
@@ -82,35 +82,34 @@ public:
    through the object dispatch like anything else in the world. */
 class CMapObject : public CObjectFrame {
 public:
+    char       unk_00[36];
+    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
+    char       unk_28[8];
+    float      shadow_offset; /**< Height the shadow drops below the object. */
+    int        unk_34;        /**< Category of map part the object belongs to. */
+    int        handle;        /**< Handle the map gave the object. */
+    char       unk_3C[4];
+
     CMapObject();
 
     virtual void Draw();
 
     void Initialize();
     void DrawShadow(int fast);
-
-    char unk_00[36];
-    CFrameVu1 *shadow_frame; /**< Model the object's shadow is drawn from; zero where it casts none. */
-    char unk_28[8];
-    float shadow_offset; /**< Height the shadow drops below the object. */
-    int unk_34;          /**< Category of map part the object belongs to. */
-    int handle;          /**< Handle the map gave the object. */
-    char unk_3C[4];
 };
 
 /* The scene's one fire, which is a light rather than a model. */
 class CFireOmni {
 public:
+    char          unk_00[32];
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
+    char          unk_30[16];
+
     CFireOmni();
 
     void FireStep();
     void FireCreate();
-    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale,
-                  int layers, float camera_offset);
-
-    char unk_00[32];
-    sceVu0FVECTOR position; /**< World position the fire draws at. */
-    char unk_30[16];
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale, int layers, float camera_offset);
 };
 
 /* One piece of scenery as the scene was laid out: the model, the model its shadow is drawn
@@ -124,10 +123,13 @@ struct MAPOBJ_INFO {
 
 /* The river the scene draws, which is a grid the file sizes and colours once and then shakes every
    tick. Another unit's class to type; only what this file calls and the extent are named. */
-class RenderInfo;
 
 class CWater {
 public:
+    char   unk_00[176];
+    CFrame frame; /**< Places and draws the water surface. */
+    char   unk_320[16];
+
     CWater();
 
     void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
@@ -137,30 +139,26 @@ public:
     void Shake(int x, int y, float height_change);
     void Hamon();
     void DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *buffer);
-
-    char unk_00[176];
-    CFrame frame; /**< Places and draws the water surface. */
-    char unk_320[16];
 };
 
 /* One looping object animation: a frame is found by name and then driven between two motion
    numbers at a rate, with a scale and a position offset of its own. */
 class OBJ_ANIME_SEQ {
 public:
+    char          name[16];  /**< Name of the frame the animation drives. */
+    int           anim_type; /**< What is animated: 0 rotation, 1 position, 2 scale, 3 colour. */
+    int           play_mode; /**< How the value runs between its two ends. */
+    char          unk_18[8];
+    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
+    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
+    float         step_x;      /**< Amount added to the first component each tick. */
+    float         step_y;      /**< Amount added to the second component each tick. */
+    float         step_z;      /**< Amount added to the third component each tick. */
+    char          unk_4C[60];
+
     OBJ_ANIME_SEQ();
 
     void Initialize();
-
-    char name[16]; /**< Name of the frame the animation drives. */
-    int anim_type; /**< What is animated: 0 rotation, 1 position, 2 scale, 3 colour. */
-    int play_mode; /**< How the value runs between its two ends. */
-    char unk_18[8];
-    sceVu0FVECTOR start_value; /**< Value the animation starts from. */
-    sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
-    float step_x;              /**< Amount added to the first component each tick. */
-    float step_y;              /**< Amount added to the second component each tick. */
-    float step_z;              /**< Amount added to the third component each tick. */
-    char unk_4C[60];
 };
 
 /* One particle of the smoke this scene gives off, and the pool the group hands them out of. Both
@@ -170,6 +168,8 @@ class CEffectParam;
 
 class CEffectGroup {
 public:
+    char unk_00[8];
+
     CEffectGroup() { Initialize(0, 0); }
 
     void Initialize(CEffect *table, int count);
@@ -177,42 +177,40 @@ public:
     void EnterEffect(CEffectParam *param);
     void Step(int unused);
     void Draw();
-
-    char unk_00[8];
 };
 
 /* What one particle is entered with. Only the fields the smoke sets are named; the rectangle is a
    member rather than filler because the block's own construction zeroes it. */
 class CEffectParam {
 public:
+    int           lifetime;                   /**< Number of frames before the particle is retired. */
+    int           position_oscillation_flags; /**< Bit zero enables sinusoidal position offsets. */
+    float         unk_08;                     /**< Initial unscaled sprite width. */
+    float         unk_0C;                     /**< Initial unscaled sprite height. */
+    char          unk_10[16];
+    sceVu0FVECTOR position; /**< Initial world-space position. */
+    char          unk_30[4];
+    float         rise_speed; /**< Upward velocity added to the position every step. */
+    char          unk_38[24];
+    float         wobble_scale; /**< Amplitude of the sideways position oscillation. */
+    char          unk_54[12];
+    float         wobble_rate; /**< Phase rate of the sideways position oscillation. */
+    char          unk_64[28];
+    float         width_growth;  /**< Width scale added every step. */
+    float         height_growth; /**< Height scale added every step. */
+    char          unk_88[40];
+    int           opacity_mode; /**< Selects constant, increasing, or decreasing opacity. */
+    int           render_flags; /**< Selects temporary alpha and depth-buffer state. */
+    float         opacity;      /**< Initial opacity. */
+    CTexture     *texture;      /**< Texture the particle is drawn from. */
+    CRect<int>    texel;        /**< Rectangle sampled from the texture. */
+    char          unk_D0[4];
+    int           texture_frame_period; /**< Modulus applied before selecting a texture frame. */
+    char          unk_D8[8];
+
     CEffectParam() {}
 
     void Initialize();
-
-    int lifetime;                   /**< Number of frames before the particle is retired. */
-    int position_oscillation_flags; /**< Bit zero enables sinusoidal position offsets. */
-    float unk_08;                   /**< Initial unscaled sprite width. */
-    float unk_0C;                   /**< Initial unscaled sprite height. */
-    char unk_10[16];
-    sceVu0FVECTOR position; /**< Initial world-space position. */
-    char unk_30[4];
-    float rise_speed; /**< Upward velocity added to the position every step. */
-    char unk_38[24];
-    float wobble_scale; /**< Amplitude of the sideways position oscillation. */
-    char unk_54[12];
-    float wobble_rate; /**< Phase rate of the sideways position oscillation. */
-    char unk_64[28];
-    float width_growth;  /**< Width scale added every step. */
-    float height_growth; /**< Height scale added every step. */
-    char unk_88[40];
-    int opacity_mode;  /**< Selects constant, increasing, or decreasing opacity. */
-    int render_flags;  /**< Selects temporary alpha and depth-buffer state. */
-    float opacity;     /**< Initial opacity. */
-    CTexture *texture; /**< Texture the particle is drawn from. */
-    CRect<int> texel;  /**< Rectangle sampled from the texture. */
-    char unk_D0[4];
-    int texture_frame_period; /**< Modulus applied before selecting a texture frame. */
-    char unk_D8[8];
 };
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
@@ -221,17 +219,17 @@ public:
    two offsets are measured from the bottom edge of the 128-pixel plate, and the two frame numbers
    are kept here rather than read from the script twice because the transfer needs them twice. */
 struct FACE_INFO {
-    char *plate;      /**< Texture the model draws the face with, or zero for an actor without one. */
-    char *strip;      /**< Texture holding the eye and mouth frames. */
-    int eye_bottom;   /**< Distance of the eyes' bottom edge above the plate's bottom edge. */
-    int eye_height;   /**< Height of one eye frame. */
-    int mouth_bottom; /**< Distance of the mouth's bottom edge above the plate's bottom edge. */
-    int mouth_height; /**< Height of one mouth frame. */
-    int eye;          /**< Eye frame currently shown. */
-    int mouth;        /**< Mouth frame currently shown. */
-    int strip_bottom; /**< Bottom edge of the frame strips within the strip texture. */
-    int unk_24;
-    int unk_28;
+    char *plate;        /**< Texture the model draws the face with, or zero for an actor without one. */
+    char *strip;        /**< Texture holding the eye and mouth frames. */
+    int   eye_bottom;   /**< Distance of the eyes' bottom edge above the plate's bottom edge. */
+    int   eye_height;   /**< Height of one eye frame. */
+    int   mouth_bottom; /**< Distance of the mouth's bottom edge above the plate's bottom edge. */
+    int   mouth_height; /**< Height of one mouth frame. */
+    int   eye;          /**< Eye frame currently shown. */
+    int   mouth;        /**< Mouth frame currently shown. */
+    int   strip_bottom; /**< Bottom edge of the frame strips within the strip texture. */
+    int   unk_24;
+    int   unk_28;
 };
 
 /* One sound the demon's rampage plays, timed against the scene's own tick count rather than against
@@ -246,37 +244,11 @@ struct SND_INFO {
     int unk_14;
 };
 
-void wait_now_loading_vsync();
-void OPAnalyz(char *name);
-void OPMdsLoad();
-void OpPlayVolSE(int group, int no, int voice, float volume);
-void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group, int no,
-                    int voice);
-void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, int no,
-                   int voice);
-void OpBgmPlay();
 void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
 void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
-void SetFrameAttr(CFrame *frame, int attr);
-void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect,
-                   int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &src,
-                 const CRect<int> &dst, u_char r, u_char g, u_char b, u_char a);
-float DistVector(float *from, float *to);
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float far_fog,
-                  float near_fog);
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetAmbient(float *color);
-void MGDraw(CFrame *frame);
-void MGSetGsZBUF(sceGsZbuf *zbuf);
-void MGBeginDrawShadow(sceGsTex0 tex);
-void MGEndDrawShadow(u_char alpha);
-void MGGetFBuffTex(sceGsTex0 *tex);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
-void MGMoveImage(sceGsTex0 *dst, const CRect<int> &rect, sceGsTex0 *src, int dsax, int dsay,
-                 int dir);
-sceVif1Packet *GetVif1Packet();
+void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect, int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &src, const CRect<int> &dst, u_char r, u_char g, u_char b, u_char a);
+void MGMoveImage(sceGsTex0 *dst, const CRect<int> &rect, sceGsTex0 *src, int dsax, int dsay, int dir);
 void DepthOfField(float *dist, int level, int alpha, int blur);
 
 static void MapLoad();
@@ -288,34 +260,33 @@ static void DrawShadow(int shadow_no, float x, float y, float z);
 static void MajinBeemProcess();
 static void SmokeProcess();
 static void WaterProcess();
-static int KageCheck(int actor);
+static int  KageCheck(int actor);
 static void LightSet(float x, float y, float z, int actor);
 static void setTexScroll();
 static void setTexAnim();
-void FaceChange(int actor);
-void FaceChangeD(int actor);
+void        FaceChangeD(int actor);
 
-static CFireOmni CFire;
+static CFireOmni     CFire;
 static OBJ_ANIME_SEQ Fuusya[2];
-static CWind Wind;
-static CFrame *TaimatsuFrame[12];
+static CWind         Wind;
+static CFrame       *TaimatsuFrame[12];
 static OBJ_ANIME_SEQ Taimatsu[12];
-CWater Water;
-static CMapObject OP_NornMapObj3[4];
-static CBombEffect CBomb[3];
-static CFrameVu1 *DoransFuusya[2];
-static CEffect *EffectTable;
-static CEffectGroup Smoke;
-static CMajinBeem CBeem[3];
-static CFrameVu1 *Shadow[16];
-static CFrame *CharaF[3];
+CWater               Water;
+static CMapObject    OP_NornMapObj3[4];
+static CBombEffect   CBomb[3];
+static CFrameVu1    *DoransFuusya[2];
+static CEffect      *EffectTable;
+static CEffectGroup  Smoke;
+static CMajinBeem    CBeem[3];
+static CFrameVu1    *Shadow[16];
+static CFrame       *CharaF[3];
 
-static int MBeemCnt;
+static int   MBeemCnt;
 static float FireStep;
-static int MajinBgmStart;
-static int DanceBgmStart;
-static int DanceBgmCnt;
-static int SndCnt;
+static int   MajinBgmStart;
+static int   DanceBgmStart;
+static int   DanceBgmCnt;
+static int   SndCnt;
 
 /* One actor's blinking and speaking. The mouth is driven from the script's own clock rather than
    from a motion: while the actor is talking, a new mouth frame is picked at random every sixth
@@ -323,35 +294,36 @@ static int SndCnt;
    timer running out closes the mouth and ends the line. The eyes are whatever the script last asked
    for. The cache is flushed on both sides of the two transfers because the plate is a texture the
    previous tick drew from and the next one will. */
-void FaceChange(int actor) {
+void FaceChange(int actor_no) {
     static FACE_INFO face[21] = {
-        {0, 0, 42, 40, 87, 35, 0, 0, 256, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 32, 40, 84, 35, 0, 0, 448, 3, 0},
-        {"c09a01", "c09a01an", 10, 40, 73, 35, 0, 0, 448, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 8, 40, 76, 35, 0, 0, 256, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 256, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            32, 40, 84, 35, 0, 0, 448, 3, 0},
+        {"c09a01", "c09a01an",   10, 40, 73, 35, 0, 0, 448, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            8,  40, 76, 35, 0, 0, 256, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
         {"p09a01", "p09a01an_2", 44, 40, 92, 32, 0, 0, 256, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
         {"c01d01", "c01d01an_3", 27, 48, 78, 44, 0, 0, 512, 3, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0},
-        {0, 0, 42, 40, 87, 35, 0, 0, 320, 2, 0}};
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0},
+        {0,        0,            42, 40, 87, 35, 0, 0, 320, 2, 0}
+    };
     CTexture *plate;
     CTexture *strip;
-    int sbp;
-    int dbp;
-    int sbw;
-    int dbw;
+    int       sbp;
+    int       dbp;
+    int       sbw;
+    int       dbw;
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -360,12 +332,12 @@ void FaceChange(int actor) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 
-    if (face[actor].plate == 0) {
+    if (face[actor_no].plate == 0) {
         return;
     }
 
-    plate = TexManager.GetTexture(face[actor].plate, -1);
-    strip = TexManager.GetTexture(face[actor].strip, -1);
+    plate = TexManager.GetTexture(face[actor_no].plate, -1);
+    strip = TexManager.GetTexture(face[actor_no].strip, -1);
 
     if (plate == 0 || strip == 0) {
         return;
@@ -376,39 +348,34 @@ void FaceChange(int actor) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face[actor].eye = CScript__2.obj[actor].eye;
+    face[actor_no].eye = CScript__2.obj[actor_no].eye;
 
-    CRect<int> eye(0, face[actor].strip_bottom - face[actor].eye_height * (face[actor].eye + 1), 128,
-                   face[actor].eye_height);
+    CRect<int> eye(0, face[actor_no].strip_bottom - face[actor_no].eye_height * (face[actor_no].eye + 1), 128, face[actor_no].eye_height);
 
-    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eye, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[actor].eye_height - face[actor].eye_bottom, 0);
+    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eye, dbp, dbw, SCE_GS_PSMT8, 0, 128 - face[actor_no].eye_height - face[actor_no].eye_bottom, 0);
 
-    if (CScript__2.obj[actor].mouth_time >= CScript__2.motion_step) {
-        CScript__2.obj[actor].mouth_time -= CScript__2.motion_step;
+    if (CScript__2.obj[actor_no].mouth_time >= CScript__2.motion_step) {
+        CScript__2.obj[actor_no].mouth_time -= CScript__2.motion_step;
 
-        if (CScript__2.obj[actor].talk) {
+        if (CScript__2.obj[actor_no].talk) {
 #ifdef PAL
             if (rand() % 5 == 0) {
 #else
-            if ((int) (100.0f * CScript__2.obj[actor].mouth_time) % 6 == 0) {
+            if ((int) (100.0f * CScript__2.obj[actor_no].mouth_time) % 6 == 0) {
 #endif
-                CScript__2.obj[actor].mouth = rand() % 4;
+                CScript__2.obj[actor_no].mouth = rand() % 4;
             }
         }
     } else {
-        CScript__2.obj[actor].mouth = 0;
-        CScript__2.obj[actor].talk = 0;
+        CScript__2.obj[actor_no].mouth = 0;
+        CScript__2.obj[actor_no].talk = 0;
     }
 
-    face[actor].mouth = CScript__2.obj[actor].mouth;
+    face[actor_no].mouth = CScript__2.obj[actor_no].mouth;
 
-    CRect<int> mouth(128,
-                     face[actor].strip_bottom - face[actor].mouth_height * (face[actor].mouth + 1),
-                     128, face[actor].mouth_height);
+    CRect<int> mouth(128, face[actor_no].strip_bottom - face[actor_no].mouth_height * (face[actor_no].mouth + 1), 128, face[actor_no].mouth_height);
 
-    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face[actor].mouth_height - face[actor].mouth_bottom, 0);
+    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0, 128 - face[actor_no].mouth_height - face[actor_no].mouth_bottom, 0);
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -465,36 +432,37 @@ void OpC_InitProcess() {
         ;
 
     LOADTEXTURE_INFO2 tex[] = {
-        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
-        {"#fontbase#512#256#1", 26, 0},
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4",    22, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",       0,  0},
+        {"#fontbase#512#256#1",                             26, 0},
         {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
-        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
-        {0, 0, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 10, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4",   23, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4",   22, 0},
+        {0,                                                 0,  0},
+        {0,                                                 10, 0},
+        {0,                                                 10, 0},
+        {0,                                                 10, 0},
+        {0,                                                 10, 0},
 #ifdef PAL
-        {0, 13, 0},
+        {0,                                                 13, 0},
 #else
         {0, 10, 0},
 #endif
-        {0, 10, 0},
-        {0, 11, 0},
-        {0, 11, 0},
-        {0, 11, 0},
-        {0, 11, 0},
-        {0, 26, 0},
-        {0, 26, 0},
-        {0, 26, 0},
-        {0, 19, 0},
-        {0, 19, 0},
+        {0,                                                 10, 0},
+        {0,                                                 11, 0},
+        {0,                                                 11, 0},
+        {0,                                                 11, 0},
+        {0,                                                 11, 0},
+        {0,                                                 26, 0},
+        {0,                                                 26, 0},
+        {0,                                                 26, 0},
+        {0,                                                 19, 0},
+        {0,                                                 19, 0},
 #ifndef PAL
-        {0, 19, 0},
+        {0,                                                 19, 0},
 #endif
-        {0, 0, 0}};
+        {0,                                                 0,  0}
+    };
 
     tex[6].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[7].name = (char *) GetPackFile(read_buffer, "t0203.img", 0);
@@ -798,20 +766,21 @@ void OpC_InitProcess2() {
 
     LOADTEXTURE_INFO2 tex[15] = {
         {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}};
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0}
+    };
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
@@ -837,8 +806,7 @@ void OpC_InitProcess2() {
 
     CharaDataBuffer__2[6].used = 0;
 
-    CFrameVu1 *shadow = LoadMDSFile((u_int *) GetPackFile(read_buffer, "ashikage.mds", 0),
-                                    &CharaDataBuffer__2[6], 2, 0, 0);
+    CFrameVu1 *shadow = LoadMDSFile((u_int *) GetPackFile(read_buffer, "ashikage.mds", 0), &CharaDataBuffer__2[6], 2, 0, 0);
 
     for (int i = 0; i < 16; i++) {
         Shadow[i] = shadow;
@@ -1032,8 +1000,7 @@ void OpC_InitProcess3() {
     sky_attr.use_color = 1;
     sky_attr.depth_write = 0;
 
-    CFrameVu1 *frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0203.mds", 0),
-                                   &MapDataBuffer, 2, 0, 0);
+    CFrameVu1 *frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "b0203.mds", 0), &MapDataBuffer, 2, 0, 0);
 
     frame->SetAttr(sky_attr, 1, 4608);
     CMapObject &sky0 = OP_NornMapObj3[0];
@@ -1068,8 +1035,7 @@ void OpC_InitProcess3() {
     sky2.SetPosition(CVector3_f_(-1147.01f, 2524.122f, 1603.736f));
     sky2.SetRotation(CVector3_f_(0.49406955f, 2.3992832f, -0.07209257f));
 
-    frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "tukikage.mds", 0), &MapDataBuffer, 2, 0,
-                        0);
+    frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, "tukikage.mds", 0), &MapDataBuffer, 2, 0, 0);
     OP_NornMapObj3[3].Initialize();
     OP_NornMapObj3[3].SetFrame(frame, 0);
     OP_NornMapObj3[3].handle = 0;
@@ -1105,20 +1071,21 @@ void OpC_InitProcess4() {
 
     LOADTEXTURE_INFO2 tex[15] = {
         {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}};
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0}
+    };
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
@@ -1198,20 +1165,21 @@ void OpC_InitProcess5() {
 
     LOADTEXTURE_INFO2 tex[15] = {
         {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}};
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0},
+        {0,                                           0, 0}
+    };
 
     tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
@@ -1425,84 +1393,85 @@ void OpC_InitProcess5() {
  */
 static void MapLoad() {
     MAPOBJ_INFO norn[] = {
-        {"opdat/norn2/t0207.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01h01_0.mds", "opdat/norn2/e01h01_s.mds", {-35.0f, 0.0f, -20.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01h05_2.mds", 0, {50.0f, 0.0f, 20.0f}, {0.0f, -90.0f, 0.0f}},
-        {"opdat/norn2/e01h11_2.mds", 0, {50.0f, 0.0f, -10.0f}, {0.0f, -90.0f, 0.0f}},
-        {"opdat/norn2/e01h07_2.mds", 0, {5.0f, 0.0f, -20.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01h08_2.mds", 0, {-45.0f, 0.0f, -45.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01h02_2.mds", 0, {-60.0f, 0.0f, 30.0f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/e01h06_2.mds", 0, {0.0f, 4.7424f, 79.274f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01a02_1.mds", 0, {0.0f, 0.0f, 59.965f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/t0002.mds", 0, {-23.7809f, 0.0f, 19.8331f}, {0.0f, -4.4f, 0.0f}},
-        {0, 0, {23.1908f, 0.0f, 38.0943f}, {0.0f, -170.971f, 0.0f}},
-        {"opdat/norn2/e01t01_0.mds", 0, {-45.0f, 0.1f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01t01_1.mds", 0, {65.0f, 0.1f, 45.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {55.0f, 0.1f, 55.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.1f, 55.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {55.0f, 0.1f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"opdat/norn2/e01c01_0.mds", 0, {25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"opdat/norn2/e01c02_0.mds", 0, {-45.0f, 0.0f, 25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-5.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01c06_0.mds", 0, {-45.0f, 0.0f, 35.0f}, {0.0f, 180.0f, 0.0f}},
-        {"opdat/norn2/e01c07_0.mds", 0, {-35.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {5.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/e01c08_0.mds", 0, {25.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-5.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-15.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {15.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {25.0f, -0.01f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, -0.01f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, -0.01f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 35.0f}, {0.0f, 180.0f, 0.0f}},
-        {0, 0, {-35.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {5.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/e01w01_0.mds", 0, {25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"opdat/norn2/e01w02_0.mds", 0, {-45.0f, 0.0f, 25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-5.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/e01w06_0.mds", 0, {-45.0f, 0.0f, 35.0f}, {0.0f, 180.0f, 0.0f}},
-        {"opdat/norn2/e01r02_0.mds", 0, {-35.0f, 0.05f, -35.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.05f, -35.0f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/e01r02_0.mds", 0, {-15.0f, 0.05f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-5.0f, 0.05f, -5.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.05f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.05f, -5.0f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/e01r03_0.mds", 0, {-15.0f, 0.05f, -35.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.05f, -5.0f}, {0.0f, 180.0f, 0.0f}},
-        {"opdat/norn2/e01r06_0.mds", 0, {-35.0f, 0.05f, -5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {5.0f, 0.05f, -5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"opdat/norn2/t0004.mds", 0, {-32.9331f, 0.06f, 10.3033f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-36.9302f, 0.06f, 10.3033f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-36.9302f, 0.06f, -0.0916f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-32.9331f, 0.06f, -0.0916f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {3.0797f, 0.06f, -0.0916f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {7.0849f, 0.06f, -0.0916f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {7.0849f, 0.06f, 10.3125f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {3.0797f, 0.06f, 10.3125f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/t0213.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}}};
+        {"opdat/norn2/t0207.mds",    0,                          {0.0f, 0.0f, 0.0f},           {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01h01_0.mds", "opdat/norn2/e01h01_s.mds", {-35.0f, 0.0f, -20.0f},       {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01h05_2.mds", 0,                          {50.0f, 0.0f, 20.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"opdat/norn2/e01h11_2.mds", 0,                          {50.0f, 0.0f, -10.0f},        {0.0f, -90.0f, 0.0f}   },
+        {"opdat/norn2/e01h07_2.mds", 0,                          {5.0f, 0.0f, -20.0f},         {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01h08_2.mds", 0,                          {-45.0f, 0.0f, -45.0f},       {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01h02_2.mds", 0,                          {-60.0f, 0.0f, 30.0f},        {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/e01h06_2.mds", 0,                          {0.0f, 4.7424f, 79.274f},     {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01a02_1.mds", 0,                          {0.0f, 0.0f, 59.965f},        {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/t0002.mds",    0,                          {-23.7809f, 0.0f, 19.8331f},  {0.0f, -4.4f, 0.0f}    },
+        {0,                          0,                          {23.1908f, 0.0f, 38.0943f},   {0.0f, -170.971f, 0.0f}},
+        {"opdat/norn2/e01t01_0.mds", 0,                          {-45.0f, 0.1f, -5.0f},        {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01t01_1.mds", 0,                          {65.0f, 0.1f, 45.0f},         {0.0f, -90.0f, 0.0f}   },
+        {0,                          0,                          {55.0f, 0.1f, 55.0f},         {0.0f, -90.0f, 0.0f}   },
+        {0,                          0,                          {-45.0f, 0.1f, 55.0f},        {0.0f, -90.0f, 0.0f}   },
+        {0,                          0,                          {55.0f, 0.1f, 5.0f},          {0.0f, -90.0f, 0.0f}   },
+        {"opdat/norn2/e01c01_0.mds", 0,                          {25.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-45.0f, 0.0f, 5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"opdat/norn2/e01c02_0.mds", 0,                          {-45.0f, 0.0f, 25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-45.0f, 0.0f, 15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-25.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-5.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-15.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {15.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {25.0f, 0.0f, -5.0f},         {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {25.0f, 0.0f, -15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {25.0f, 0.0f, -25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01c06_0.mds", 0,                          {-45.0f, 0.0f, 35.0f},        {0.0f, 180.0f, 0.0f}   },
+        {"opdat/norn2/e01c07_0.mds", 0,                          {-35.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {5.0f, 0.0f, 5.0f},           {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/e01c08_0.mds", 0,                          {25.0f, -0.01f, 5.0f},        {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-45.0f, -0.01f, 5.0f},       {0.0f, -90.0f, 0.0f}   },
+        {0,                          0,                          {-45.0f, -0.01f, 25.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-45.0f, -0.01f, 15.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-25.0f, -0.01f, 5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-5.0f, -0.01f, 5.0f},        {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-15.0f, -0.01f, 5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {15.0f, -0.01f, 5.0f},        {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {25.0f, -0.01f, -5.0f},       {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {25.0f, -0.01f, -15.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {25.0f, -0.01f, -25.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-45.0f, -0.01f, 35.0f},      {0.0f, 180.0f, 0.0f}   },
+        {0,                          0,                          {-35.0f, -0.01f, 5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {5.0f, -0.01f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/e01w01_0.mds", 0,                          {25.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-45.0f, 0.0f, 5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"opdat/norn2/e01w02_0.mds", 0,                          {-45.0f, 0.0f, 25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-45.0f, 0.0f, 15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-25.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-5.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-15.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {15.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {25.0f, 0.0f, -5.0f},         {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {25.0f, 0.0f, -15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {25.0f, 0.0f, -25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/e01w06_0.mds", 0,                          {-45.0f, 0.0f, 35.0f},        {0.0f, 180.0f, 0.0f}   },
+        {"opdat/norn2/e01r02_0.mds", 0,                          {-35.0f, 0.05f, -35.0f},      {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {-25.0f, 0.05f, -35.0f},      {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/e01r02_0.mds", 0,                          {-15.0f, 0.05f, -25.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-5.0f, 0.05f, -5.0f},        {0.0f, -90.0f, 0.0f}   },
+        {0,                          0,                          {-15.0f, 0.05f, -15.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-25.0f, 0.05f, -5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/e01r03_0.mds", 0,                          {-15.0f, 0.05f, -35.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-15.0f, 0.05f, -5.0f},       {0.0f, 180.0f, 0.0f}   },
+        {"opdat/norn2/e01r06_0.mds", 0,                          {-35.0f, 0.05f, -5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,                          0,                          {5.0f, 0.05f, -5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"opdat/norn2/t0004.mds",    0,                          {-32.9331f, 0.06f, 10.3033f}, {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-36.9302f, 0.06f, 10.3033f}, {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-36.9302f, 0.06f, -0.0916f}, {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {-32.9331f, 0.06f, -0.0916f}, {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {3.0797f, 0.06f, -0.0916f},   {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {7.0849f, 0.06f, -0.0916f},   {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {7.0849f, 0.06f, 10.3125f},   {0.0f, 0.0f, 0.0f}     },
+        {0,                          0,                          {3.0797f, 0.06f, 10.3125f},   {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/t0213.mds",    0,                          {0.0f, 0.0f, 0.0f},           {0.0f, 0.0f, 0.0f}     }
+    };
     CFrameAttr attr;
     CFrameVu1 *frame;
-    int i;
+    int        i;
     CFrameVu1 *ground_frame;
 
     attr.fog_enable = 1;
@@ -1514,12 +1483,15 @@ static void MapLoad() {
             frame = LoadMDSFile(read_buffer, &MapDataBuffer, 2, 0, 0);
         }
 
-        if (i == 4)
+        if (i == 4) {
             DoransFuusya[0] = frame;
-        if (i == 5)
+        }
+        if (i == 5) {
             DoransFuusya[1] = frame;
-        if (i >= 67 && i < 75)
+        }
+        if (i >= 67 && i < 75) {
             TaimatsuFrame[i - 67] = frame;
+        }
 
         SetFrameAttr(frame, 1);
         frame->SetAttr(attr, 1, 64);
@@ -1531,12 +1503,8 @@ static void MapLoad() {
         OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].unk_34 = 0;
 
-        object.SetPosition(CVector3_f_(10.0f * norn[i].position[0],
-                                       10.0f * norn[i].position[1],
-                                       10.0f * norn[i].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180),
-                                       (float) (PI * norn[i].rotation[1] / 180),
-                                       (float) (PI * norn[i].rotation[2] / 180)));
+        object.SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
+        object.SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180), (float) (PI * norn[i].rotation[1] / 180), (float) (PI * norn[i].rotation[2] / 180)));
 
         object.FrameObjectOnOff("win1", 0);
         object.FrameObjectOnOff("light1", 0);
@@ -1549,93 +1517,94 @@ static void MapLoad() {
     }
 
     MAPOBJ_INFO ground[] = {
-        {"opdat/norn/t0006.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/t0001.mds", 0, {-33.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-23.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-13.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-3.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {14.9146f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {24.9146f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {34.9146f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {36.4833f, 0.03f, 17.4747f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {36.4833f, 0.03f, 27.4747f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {36.4833f, 0.03f, 37.4747f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {36.4833f, 0.03f, 47.4747f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {34.9598f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {25.8411f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {16.0658f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {6.657f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-6.7301f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-15.4243f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-24.5027f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-33.5025f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-35.0227f, 0.03f, 47.4712f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-35.0227f, 0.03f, 37.4712f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-35.0227f, 0.03f, 27.4712f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-35.0227f, 0.03f, 17.4712f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/t0003.mds", 0, {-28.23f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-18.23f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-8.23f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {19.937f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {29.937f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {36.4365f, 0.03f, 22.4967f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {36.4365f, 0.03f, 32.4967f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {36.4365f, 0.03f, 42.4967f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {31.6374f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {21.6374f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {11.6374f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-10.1013f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-20.1013f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-30.1013f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-34.9775f, 0.03f, 42.4508f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-34.9775f, 0.03f, 32.4508f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-34.9775f, 0.03f, 22.4508f}, {0.0f, 90.0f, 0.0f}},
-        {"opdat/norn2/t0212.mds", 0, {0.0f, 0.02f, 30.0f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/t0208.mds", 0, {0.0f, 0.0f, 29.999f}, {0.0f, 0.0f, 0.0f}},
-        {"opdat/norn2/t0201.mds", 0, {8.1246f, 0.0f, 21.2374f}, {0.0f, -190.452f, 0.0f}},
-        {0, 0, {9.3114f, 0.0f, 21.4458f}, {0.0f, -243.621f, 0.0f}},
-        {0, 0, {9.8278f, 0.0f, 22.3789f}, {0.0f, -237.204f, 0.0f}},
-        {0, 0, {9.6149f, 1.2748f, 21.9196f}, {0.0f, -237.777f, 0.0f}},
-        {0, 0, {-10.8524f, 0.0f, 38.0058f}, {0.0f, 279.8325f, 0.0f}},
-        {0, 0, {-11.6807f, 0.0f, 36.7247f}, {0.0f, 281.7807f, 0.0f}},
-        {0, 0, {-11.9794f, 0.0f, 37.8902f}, {0.0f, 287.5107f, 0.0f}},
-        {0, 0, {-12.2587f, 0.0f, 39.046f}, {0.0f, 288.9999f, 0.0f}},
-        {0, 0, {-10.9969f, 0.0f, 39.1231f}, {0.0f, 280.291f, 0.0f}},
-        {0, 0, {24.4449f, 0.0f, 28.8081f}, {0.0f, -84.5684f, 0.0f}},
-        {0, 0, {24.5097f, 1.2748f, 29.317f}, {0.0f, -84.5684f, 0.0f}},
-        {0, 0, {24.7114f, 0.0f, 29.8031f}, {0.0f, -84.5684f, 0.0f}},
-        {0, 0, {24.9802f, 1.2748f, 30.2274f}, {0.0f, -84.5684f, 0.0f}},
-        {0, 0, {25.2412f, 0.0f, 30.6682f}, {0.0f, -84.5684f, 0.0f}},
-        {"opdat/norn2/t0202.mds", 0, {6.9352f, 0.0f, 22.8016f}, {0.0f, -66.4631f, 0.0f}},
-        {0, 0, {-14.5591f, 0.0f, 35.5869f}, {0.0f, 112.4143f, 0.0f}},
-        {"opdat/norn2/t0203.mds", 0, {8.5959f, 0.0f, 23.4822f}, {0.0f, -49.7327f, 0.0f}},
-        {0, 0, {-13.0716f, 0.0f, 36.4929f}, {0.0f, 129.2592f, 0.0f}},
-        {0, 0, {-14.4103f, 0.0f, 37.4364f}, {0.0f, 112.5289f, 0.0f}},
-        {"opdat/norn2/t0204.mds", 0, {-9.0122f, 0.0f, 20.8749f}, {0.0f, -234.912f, 0.0f}},
-        {0, 0, {-9.9647f, 0.0f, 21.4127f}, {0.0f, -227.234f, 0.0f}},
-        {0, 0, {-10.7374f, 0.0f, 22.1576f}, {0.0f, -223.797f, 0.0f}},
-        {0, 0, {-9.4268f, 0.9971f, 21.1822f}, {0.0f, -241.444f, 0.0f}},
-        {0, 0, {-10.3487f, 0.9971f, 21.8464f}, {0.0f, -225.287f, 0.0f}},
-        {0, 0, {-9.8716f, 1.9904f, 21.4498f}, {0.0f, -228.61f, 0.0f}},
-        {0, 0, {12.8223f, 0.0f, 26.3336f}, {0.0f, -343.545f, 0.0f}},
-        {0, 0, {11.8478f, 0.0f, 26.9861f}, {0.0f, -348.702f, 0.0f}},
-        {0, 0, {11.9701f, 0.0f, 28.1885f}, {0.0f, -354.661f, 0.0f}},
-        {0, 0, {13.085f, 0.0f, 27.3741f}, {0.0f, -346.983f, 0.0f}},
-        {0, 0, {11.7334f, 0.9971f, 27.8052f}, {0.0f, -348.358f, 0.0f}},
-        {0, 0, {12.58f, 0.9971f, 26.905f}, {0.0f, -337.013f, 0.0f}},
-        {0, 0, {12.8088f, 0.0f, 38.6433f}, {0.0f, -382.965f, 0.0f}},
-        {0, 0, {11.6416f, 0.0f, 38.5285f}, {0.0f, -388.121f, 0.0f}},
-        {0, 0, {10.9726f, 0.0f, 39.535f}, {0.0f, -394.08f, 0.0f}},
-        {0, 0, {12.3514f, 0.0f, 39.6143f}, {0.0f, -386.402f, 0.0f}},
-        {0, 0, {11.0331f, 0.9971f, 39.0886f}, {0.0f, -387.777f, 0.0f}},
-        {0, 0, {12.2587f, 0.9971f, 38.9308f}, {0.0f, -376.433f, 0.0f}},
-        {"opdat/norn2/t0205.mds", 0, {-9.8702f, 2.9808f, 21.5102f}, {0.0f, -140.374f, 0.0f}},
-        {0, 0, {-11.6688f, 1.2789f, 36.7089f}, {0.0f, -61.7649f, 0.0f}},
-        {0, 0, {12.4831f, 1.9258f, 26.9556f}, {0.0f, -84.3394f, 0.0f}},
-        {"opdat/norn2/t0206.mds", 0, {-4.3913f, 0.0f, 18.9443f}, {0.0f, 18.3347f, 0.0f}},
-        {0, 0, {-13.2586f, 0.0f, 27.5378f}, {0.0f, 77.6931f, 0.0f}},
-        {0, 0, {4.648f, 0.0f, 19.1829f}, {0.0f, -21.6578f, 0.0f}},
-        {0, 0, {13.7675f, 0.0f, 33.1962f}, {0.0f, -110.58f, 0.0f}}};
+        {"opdat/norn/t0006.mds",  0, {0.0f, 0.0f, 0.0f},             {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/t0001.mds", 0, {-33.25f, 0.03f, 13.0707f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {-23.25f, 0.03f, 13.0707f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {-13.25f, 0.03f, 13.0707f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {-3.25f, 0.03f, 13.0707f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {14.9146f, 0.03f, 13.0707f},    {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {24.9146f, 0.03f, 13.0707f},    {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {34.9146f, 0.03f, 13.0707f},    {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {36.4833f, 0.03f, 17.4747f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {36.4833f, 0.03f, 27.4747f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {36.4833f, 0.03f, 37.4747f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {36.4833f, 0.03f, 47.4747f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {34.9598f, 0.03f, 52.2721f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {25.8411f, 0.03f, 52.2721f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {16.0658f, 0.03f, 52.2721f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {6.657f, 0.03f, 52.2721f},      {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-6.7301f, 0.03f, 52.2721f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-15.4243f, 0.03f, 52.2721f},   {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-24.5027f, 0.03f, 52.2721f},   {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-33.5025f, 0.03f, 52.2721f},   {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-35.0227f, 0.03f, 47.4712f},   {0.0f, 90.0f, 0.0f}    },
+        {0,                       0, {-35.0227f, 0.03f, 37.4712f},   {0.0f, 90.0f, 0.0f}    },
+        {0,                       0, {-35.0227f, 0.03f, 27.4712f},   {0.0f, 90.0f, 0.0f}    },
+        {0,                       0, {-35.0227f, 0.03f, 17.4712f},   {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/t0003.mds", 0, {-28.23f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {-18.23f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {-8.23f, 0.03f, 13.1174f},      {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {19.937f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {29.937f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,                       0, {36.4365f, 0.03f, 22.4967f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {36.4365f, 0.03f, 32.4967f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {36.4365f, 0.03f, 42.4967f},    {0.0f, -90.0f, 0.0f}   },
+        {0,                       0, {31.6374f, 0.03f, 52.3176f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {21.6374f, 0.03f, 52.3176f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {11.6374f, 0.03f, 52.3176f},    {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-10.1013f, 0.03f, 52.3176f},   {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-20.1013f, 0.03f, 52.3176f},   {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-30.1013f, 0.03f, 52.3176f},   {0.0f, -180.0f, 0.0f}  },
+        {0,                       0, {-34.9775f, 0.03f, 42.4508f},   {0.0f, 90.0f, 0.0f}    },
+        {0,                       0, {-34.9775f, 0.03f, 32.4508f},   {0.0f, 90.0f, 0.0f}    },
+        {0,                       0, {-34.9775f, 0.03f, 22.4508f},   {0.0f, 90.0f, 0.0f}    },
+        {"opdat/norn2/t0212.mds", 0, {0.0f, 0.02f, 30.0f},           {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/t0208.mds", 0, {0.0f, 0.0f, 29.999f},          {0.0f, 0.0f, 0.0f}     },
+        {"opdat/norn2/t0201.mds", 0, {8.1246f, 0.0f, 21.2374f},      {0.0f, -190.452f, 0.0f}},
+        {0,                       0, {9.3114f, 0.0f, 21.4458f},      {0.0f, -243.621f, 0.0f}},
+        {0,                       0, {9.8278f, 0.0f, 22.3789f},      {0.0f, -237.204f, 0.0f}},
+        {0,                       0, {9.6149f, 1.2748f, 21.9196f},   {0.0f, -237.777f, 0.0f}},
+        {0,                       0, {-10.8524f, 0.0f, 38.0058f},    {0.0f, 279.8325f, 0.0f}},
+        {0,                       0, {-11.6807f, 0.0f, 36.7247f},    {0.0f, 281.7807f, 0.0f}},
+        {0,                       0, {-11.9794f, 0.0f, 37.8902f},    {0.0f, 287.5107f, 0.0f}},
+        {0,                       0, {-12.2587f, 0.0f, 39.046f},     {0.0f, 288.9999f, 0.0f}},
+        {0,                       0, {-10.9969f, 0.0f, 39.1231f},    {0.0f, 280.291f, 0.0f} },
+        {0,                       0, {24.4449f, 0.0f, 28.8081f},     {0.0f, -84.5684f, 0.0f}},
+        {0,                       0, {24.5097f, 1.2748f, 29.317f},   {0.0f, -84.5684f, 0.0f}},
+        {0,                       0, {24.7114f, 0.0f, 29.8031f},     {0.0f, -84.5684f, 0.0f}},
+        {0,                       0, {24.9802f, 1.2748f, 30.2274f},  {0.0f, -84.5684f, 0.0f}},
+        {0,                       0, {25.2412f, 0.0f, 30.6682f},     {0.0f, -84.5684f, 0.0f}},
+        {"opdat/norn2/t0202.mds", 0, {6.9352f, 0.0f, 22.8016f},      {0.0f, -66.4631f, 0.0f}},
+        {0,                       0, {-14.5591f, 0.0f, 35.5869f},    {0.0f, 112.4143f, 0.0f}},
+        {"opdat/norn2/t0203.mds", 0, {8.5959f, 0.0f, 23.4822f},      {0.0f, -49.7327f, 0.0f}},
+        {0,                       0, {-13.0716f, 0.0f, 36.4929f},    {0.0f, 129.2592f, 0.0f}},
+        {0,                       0, {-14.4103f, 0.0f, 37.4364f},    {0.0f, 112.5289f, 0.0f}},
+        {"opdat/norn2/t0204.mds", 0, {-9.0122f, 0.0f, 20.8749f},     {0.0f, -234.912f, 0.0f}},
+        {0,                       0, {-9.9647f, 0.0f, 21.4127f},     {0.0f, -227.234f, 0.0f}},
+        {0,                       0, {-10.7374f, 0.0f, 22.1576f},    {0.0f, -223.797f, 0.0f}},
+        {0,                       0, {-9.4268f, 0.9971f, 21.1822f},  {0.0f, -241.444f, 0.0f}},
+        {0,                       0, {-10.3487f, 0.9971f, 21.8464f}, {0.0f, -225.287f, 0.0f}},
+        {0,                       0, {-9.8716f, 1.9904f, 21.4498f},  {0.0f, -228.61f, 0.0f} },
+        {0,                       0, {12.8223f, 0.0f, 26.3336f},     {0.0f, -343.545f, 0.0f}},
+        {0,                       0, {11.8478f, 0.0f, 26.9861f},     {0.0f, -348.702f, 0.0f}},
+        {0,                       0, {11.9701f, 0.0f, 28.1885f},     {0.0f, -354.661f, 0.0f}},
+        {0,                       0, {13.085f, 0.0f, 27.3741f},      {0.0f, -346.983f, 0.0f}},
+        {0,                       0, {11.7334f, 0.9971f, 27.8052f},  {0.0f, -348.358f, 0.0f}},
+        {0,                       0, {12.58f, 0.9971f, 26.905f},     {0.0f, -337.013f, 0.0f}},
+        {0,                       0, {12.8088f, 0.0f, 38.6433f},     {0.0f, -382.965f, 0.0f}},
+        {0,                       0, {11.6416f, 0.0f, 38.5285f},     {0.0f, -388.121f, 0.0f}},
+        {0,                       0, {10.9726f, 0.0f, 39.535f},      {0.0f, -394.08f, 0.0f} },
+        {0,                       0, {12.3514f, 0.0f, 39.6143f},     {0.0f, -386.402f, 0.0f}},
+        {0,                       0, {11.0331f, 0.9971f, 39.0886f},  {0.0f, -387.777f, 0.0f}},
+        {0,                       0, {12.2587f, 0.9971f, 38.9308f},  {0.0f, -376.433f, 0.0f}},
+        {"opdat/norn2/t0205.mds", 0, {-9.8702f, 2.9808f, 21.5102f},  {0.0f, -140.374f, 0.0f}},
+        {0,                       0, {-11.6688f, 1.2789f, 36.7089f}, {0.0f, -61.7649f, 0.0f}},
+        {0,                       0, {12.4831f, 1.9258f, 26.9556f},  {0.0f, -84.3394f, 0.0f}},
+        {"opdat/norn2/t0206.mds", 0, {-4.3913f, 0.0f, 18.9443f},     {0.0f, 18.3347f, 0.0f} },
+        {0,                       0, {-13.2586f, 0.0f, 27.5378f},    {0.0f, 77.6931f, 0.0f} },
+        {0,                       0, {4.648f, 0.0f, 19.1829f},       {0.0f, -21.6578f, 0.0f}},
+        {0,                       0, {13.7675f, 0.0f, 33.1962f},     {0.0f, -110.58f, 0.0f} }
+    };
 
     for (int j = 0; j < 87; j++) {
         if (ground[j].name) {
@@ -1648,8 +1617,9 @@ static void MapLoad() {
             SetFrameAttr(ground_frame, 1);
         }
 
-        if (j == 41)
+        if (j == 41) {
             TaimatsuFrame[8] = ground_frame;
+        }
 
         if (j == 0) {
             CFrame *sun = ground_frame->SearchFrame("sun3");
@@ -1669,12 +1639,8 @@ static void MapLoad() {
         OP_NornMapObj2[j].handle = 0;
         OP_NornMapObj2[j].unk_34 = 0;
 
-        object.SetPosition(CVector3_f_(10.0f * ground[j].position[0],
-                                       10.0f * ground[j].position[1],
-                                       10.0f * ground[j].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * ground[j].rotation[0] / 180),
-                                       (float) (PI * ground[j].rotation[1] / 180),
-                                       (float) (PI * ground[j].rotation[2] / 180)));
+        object.SetPosition(CVector3_f_(10.0f * ground[j].position[0], 10.0f * ground[j].position[1], 10.0f * ground[j].position[2]));
+        object.SetRotation(CVector3_f_((float) (PI * ground[j].rotation[0] / 180), (float) (PI * ground[j].rotation[1] / 180), (float) (PI * ground[j].rotation[2] / 180)));
     }
 }
 
@@ -1690,85 +1656,86 @@ static void MapLoad() {
  */
 static void MapLoad2() {
     MAPOBJ_INFO norn[] = {
-        {"b0301.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01h01_1.mds", 0, {-35.0f, 0.0f, -20.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01h05_2.mds", 0, {50.0f, 0.0f, 20.0f}, {0.0f, -90.0f, 0.0f}},
-        {"e01h11_2.mds", 0, {55.0f, 0.0f, -10.0f}, {0.0f, -90.0f, 0.0f}},
-        {"e01h07_2.mds", 0, {5.0f, 0.0f, -20.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01h02_2.mds", 0, {-60.0f, 0.0f, 30.0f}, {0.0f, 90.0f, 0.0f}},
-        {"e01h06_2.mds", 0, {0.0f, 4.7424f, 79.274f}, {0.0f, 0.0f, 0.0f}},
-        {"e01a02_1.mds", 0, {0.0f, 0.0f, 59.965f}, {0.0f, 0.0f, 0.0f}},
-        {"t0304.mds", 0, {-5.0f, 0.0f, -45.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.0f, -45.0f}, {0.0f, 0.0f, 0.0f}},
-        {"t0305.mds", 0, {45.0f, 0.0f, -50.0f}, {0.0f, 0.0f, 0.0f}},
-        {"t0002.mds", 0, {-23.7809f, 0.0f, 19.8331f}, {0.0f, -4.4f, 0.0f}},
-        {0, 0, {23.1908f, 0.0f, 38.0943f}, {0.0f, -170.971f, 0.0f}},
-        {"e01t01_0.mds", 0, {-45.0f, 0.1f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {65.0f, 0.1f, 45.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01t01_1.mds", 0, {55.0f, 0.1f, -35.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.1f, 55.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-55.0f, 0.1f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"e01c01_0.mds", 0, {25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"e01c02_0.mds", 0, {-45.0f, 0.0f, 25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-5.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01c06_0.mds", 0, {-45.0f, 0.0f, 35.0f}, {0.0f, 180.0f, 0.0f}},
-        {"e01c07_0.mds", 0, {-35.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {5.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {"e01c08_0.mds", 0, {25.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-5.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-15.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {15.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {25.0f, -0.01f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, -0.01f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, -0.01f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, -0.01f, 35.0f}, {0.0f, 180.0f, 0.0f}},
-        {0, 0, {-35.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {5.0f, -0.01f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {"e01w01_0.mds", 0, {25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"e01w02_0.mds", 0, {-45.0f, 0.0f, 25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-45.0f, 0.0f, 15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-5.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {15.0f, 0.0f, 5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -5.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {25.0f, 0.0f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {"e01w06_0.mds", 0, {-45.0f, 0.0f, 35.0f}, {0.0f, 180.0f, 0.0f}},
-        {"e01r02_0.mds", 0, {-35.0f, 0.05f, -35.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.05f, -35.0f}, {0.0f, 90.0f, 0.0f}},
-        {"e01r02_0.mds", 0, {-15.0f, 0.05f, -25.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-5.0f, 0.05f, -5.0f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.05f, -15.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-25.0f, 0.05f, -5.0f}, {0.0f, 90.0f, 0.0f}},
-        {"e01r03_0.mds", 0, {-15.0f, 0.05f, -35.0f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-15.0f, 0.05f, -5.0f}, {0.0f, 180.0f, 0.0f}},
-        {"e01r06_0.mds", 0, {-35.0f, 0.05f, -5.0f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {5.0f, 0.05f, -5.0f}, {0.0f, -90.0f, 0.0f}},
-        {"t0302.mds", 0, {2.9721f, 0.06f, -0.6331f}, {0.0f, 36.2109f, 0.0f}},
-        {0, 0, {7.2685f, 0.06f, 11.4402f}, {0.0f, -116.883f, 0.0f}},
-        {0, 0, {2.9715f, 0.06f, 12.3798f}, {0.0f, 135.9057f, 0.0f}},
-        {0, 0, {7.6022f, 0.06f, -3.0402f}, {0.0f, 75.5158f, 0.0f}},
-        {0, 0, {-35.9097f, 0.06f, 12.6724f}, {0.0f, 145.6459f, 0.0f}},
-        {"t0213.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"t0306.mds", 0, {45.0f, 0.0f, 50.0f}, {0.0f, 90.0f, 0.0f}},
-        {"t0307.mds", 0, {45.0f, 0.0f, 50.0f}, {0.0f, 180.0f, 0.0f}}};
+        {"b0301.mds",    0, {0.0f, 0.0f, 0.0f},           {0.0f, 0.0f, 0.0f}     },
+        {"e01h01_1.mds", 0, {-35.0f, 0.0f, -20.0f},       {0.0f, 0.0f, 0.0f}     },
+        {"e01h05_2.mds", 0, {50.0f, 0.0f, 20.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"e01h11_2.mds", 0, {55.0f, 0.0f, -10.0f},        {0.0f, -90.0f, 0.0f}   },
+        {"e01h07_2.mds", 0, {5.0f, 0.0f, -20.0f},         {0.0f, 0.0f, 0.0f}     },
+        {"e01h02_2.mds", 0, {-60.0f, 0.0f, 30.0f},        {0.0f, 90.0f, 0.0f}    },
+        {"e01h06_2.mds", 0, {0.0f, 4.7424f, 79.274f},     {0.0f, 0.0f, 0.0f}     },
+        {"e01a02_1.mds", 0, {0.0f, 0.0f, 59.965f},        {0.0f, 0.0f, 0.0f}     },
+        {"t0304.mds",    0, {-5.0f, 0.0f, -45.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-25.0f, 0.0f, -45.0f},       {0.0f, 0.0f, 0.0f}     },
+        {"t0305.mds",    0, {45.0f, 0.0f, -50.0f},        {0.0f, 0.0f, 0.0f}     },
+        {"t0002.mds",    0, {-23.7809f, 0.0f, 19.8331f},  {0.0f, -4.4f, 0.0f}    },
+        {0,              0, {23.1908f, 0.0f, 38.0943f},   {0.0f, -170.971f, 0.0f}},
+        {"e01t01_0.mds", 0, {-45.0f, 0.1f, -5.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {65.0f, 0.1f, 45.0f},         {0.0f, 0.0f, 0.0f}     },
+        {"e01t01_1.mds", 0, {55.0f, 0.1f, -35.0f},        {0.0f, -90.0f, 0.0f}   },
+        {0,              0, {-45.0f, 0.1f, 55.0f},        {0.0f, -90.0f, 0.0f}   },
+        {0,              0, {-55.0f, 0.1f, 5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"e01c01_0.mds", 0, {25.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-45.0f, 0.0f, 5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"e01c02_0.mds", 0, {-45.0f, 0.0f, 25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-45.0f, 0.0f, 15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-25.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-5.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-15.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {15.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {25.0f, 0.0f, -5.0f},         {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {25.0f, 0.0f, -15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {25.0f, 0.0f, -25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {"e01c06_0.mds", 0, {-45.0f, 0.0f, 35.0f},        {0.0f, 180.0f, 0.0f}   },
+        {"e01c07_0.mds", 0, {-35.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {5.0f, 0.0f, 5.0f},           {0.0f, 90.0f, 0.0f}    },
+        {"e01c08_0.mds", 0, {25.0f, -0.01f, 5.0f},        {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-45.0f, -0.01f, 5.0f},       {0.0f, -90.0f, 0.0f}   },
+        {0,              0, {-45.0f, -0.01f, 25.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-45.0f, -0.01f, 15.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-25.0f, -0.01f, 5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-5.0f, -0.01f, 5.0f},        {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-15.0f, -0.01f, 5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {15.0f, -0.01f, 5.0f},        {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {25.0f, -0.01f, -5.0f},       {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {25.0f, -0.01f, -15.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {25.0f, -0.01f, -25.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-45.0f, -0.01f, 35.0f},      {0.0f, 180.0f, 0.0f}   },
+        {0,              0, {-35.0f, -0.01f, 5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {5.0f, -0.01f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {"e01w01_0.mds", 0, {25.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-45.0f, 0.0f, 5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"e01w02_0.mds", 0, {-45.0f, 0.0f, 25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-45.0f, 0.0f, 15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-25.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-5.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-15.0f, 0.0f, 5.0f},         {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {15.0f, 0.0f, 5.0f},          {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {25.0f, 0.0f, -5.0f},         {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {25.0f, 0.0f, -15.0f},        {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {25.0f, 0.0f, -25.0f},        {0.0f, 0.0f, 0.0f}     },
+        {"e01w06_0.mds", 0, {-45.0f, 0.0f, 35.0f},        {0.0f, 180.0f, 0.0f}   },
+        {"e01r02_0.mds", 0, {-35.0f, 0.05f, -35.0f},      {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {-25.0f, 0.05f, -35.0f},      {0.0f, 90.0f, 0.0f}    },
+        {"e01r02_0.mds", 0, {-15.0f, 0.05f, -25.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-5.0f, 0.05f, -5.0f},        {0.0f, -90.0f, 0.0f}   },
+        {0,              0, {-15.0f, 0.05f, -15.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-25.0f, 0.05f, -5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {"e01r03_0.mds", 0, {-15.0f, 0.05f, -35.0f},      {0.0f, 0.0f, 0.0f}     },
+        {0,              0, {-15.0f, 0.05f, -5.0f},       {0.0f, 180.0f, 0.0f}   },
+        {"e01r06_0.mds", 0, {-35.0f, 0.05f, -5.0f},       {0.0f, 90.0f, 0.0f}    },
+        {0,              0, {5.0f, 0.05f, -5.0f},         {0.0f, -90.0f, 0.0f}   },
+        {"t0302.mds",    0, {2.9721f, 0.06f, -0.6331f},   {0.0f, 36.2109f, 0.0f} },
+        {0,              0, {7.2685f, 0.06f, 11.4402f},   {0.0f, -116.883f, 0.0f}},
+        {0,              0, {2.9715f, 0.06f, 12.3798f},   {0.0f, 135.9057f, 0.0f}},
+        {0,              0, {7.6022f, 0.06f, -3.0402f},   {0.0f, 75.5158f, 0.0f} },
+        {0,              0, {-35.9097f, 0.06f, 12.6724f}, {0.0f, 145.6459f, 0.0f}},
+        {"t0213.mds",    0, {0.0f, 0.0f, 0.0f},           {0.0f, 0.0f, 0.0f}     },
+        {"t0306.mds",    0, {45.0f, 0.0f, 50.0f},         {0.0f, 90.0f, 0.0f}    },
+        {"t0307.mds",    0, {45.0f, 0.0f, 50.0f},         {0.0f, 180.0f, 0.0f}   }
+    };
     CFrameAttr attr;
     CFrameVu1 *frame;
-    int i;
+    int        i;
     CFrameVu1 *ground_frame;
 
     attr.fog_enable = 1;
@@ -1776,16 +1743,18 @@ static void MapLoad2() {
 
     for (i = 0; i < 76; i++) {
         if (norn[i].name) {
-            frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, norn[i].name, 0),
-                                &CharaDataBuffer__2[0], 2, 0, 0);
+            frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, norn[i].name, 0), &CharaDataBuffer__2[0], 2, 0, 0);
         }
 
-        if (i == 4)
+        if (i == 4) {
             DoransFuusya[0] = frame;
-        if (i == 74)
+        }
+        if (i == 74) {
             DoransFuusya[1] = frame;
-        if (i >= 69 && i < 74)
+        }
+        if (i >= 69 && i < 74) {
             TaimatsuFrame[i - 69] = frame;
+        }
 
         frame->SetAttr(attr, 1, 64);
         SetFrameAttr(frame, 1);
@@ -1797,12 +1766,8 @@ static void MapLoad2() {
         OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].unk_34 = 0;
 
-        object.SetPosition(CVector3_f_(10.0f * norn[i].position[0],
-                                       10.0f * norn[i].position[1],
-                                       10.0f * norn[i].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180),
-                                       (float) (PI * norn[i].rotation[1] / 180),
-                                       (float) (PI * norn[i].rotation[2] / 180)));
+        object.SetPosition(CVector3_f_(10.0f * norn[i].position[0], 10.0f * norn[i].position[1], 10.0f * norn[i].position[2]));
+        object.SetRotation(CVector3_f_((float) (PI * norn[i].rotation[0] / 180), (float) (PI * norn[i].rotation[1] / 180), (float) (PI * norn[i].rotation[2] / 180)));
 
         object.FrameObjectOnOff("win1", 0);
         object.FrameObjectOnOff("light1", 0);
@@ -1815,73 +1780,73 @@ static void MapLoad2() {
     }
 
     MAPOBJ_INFO ground[] = {
-        {"t0006.mds", 0, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}},
-        {"t0001.mds", 0, {-33.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-23.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-3.25f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {14.9146f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {24.9146f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {34.9146f, 0.03f, 13.0707f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {36.4833f, 0.03f, 17.4747f}, {0.0f, -90.0f, 0.0f}},
-        {0, 0, {6.657f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-24.5027f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-33.5025f, 0.03f, 52.2721f}, {0.0f, -180.0f, 0.0f}},
-        {0, 0, {-35.0227f, 0.03f, 37.4712f}, {0.0f, 90.0f, 0.0f}},
-        {0, 0, {-35.0227f, 0.03f, 27.4712f}, {0.0f, 90.0f, 0.0f}},
-        {"t0301.mds", 0, {-35.6934f, 0.0f, 20.4342f}, {0.0f, 130.0f, 0.0f}},
-        {0, 0, {-32.5089f, 0.0f, 46.7067f}, {0.0f, -74.3699f, 0.0f}},
-        {0, 0, {-10.4729f, 0.0f, 13.2973f}, {0.0f, 79.7557f, 0.0f}},
-        {0, 0, {15.1651f, 0.0f, 54.5186f}, {0.0f, 207.0f, 0.0f}},
-        {0, 0, {35.441f, 0.0f, 28.889f}, {0.0f, 156.3029f, 0.0f}},
-        {0, 0, {-6.7649f, 0.0f, 49.889f}, {0.0f, 17.6471f, 0.0f}},
-        {0, 0, {-17.6795f, 0.0f, 54.369f}, {0.0f, 105.768f, 0.0f}},
-        {0, 0, {34.153f, 0.0f, 39.193f}, {0.0f, 42.628f, 0.0f}},
-        {0, 0, {28.736f, 0.0f, 55.7777f}, {0.0f, 121.467f, 0.0f}},
-        {"t0003.mds", 0, {-28.23f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {19.937f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {29.937f, 0.03f, 13.1174f}, {0.0f, 0.0f, 0.0f}},
-        {0, 0, {-30.1013f, 0.03f, 52.3176f}, {0.0f, -180.0f, 0.0f}},
-        {"t0212.mds", 0, {0.0f, 0.02f, 30.0f}, {0.0f, 0.0f, 0.0f}},
-        {"t0208.mds", 0, {0.0f, 0.0f, 29.999f}, {0.0f, 0.0f, 0.0f}},
-        {"t0201.mds", 0, {9.8278f, 0.0f, 22.3789f}, {0.0f, -237.204f, 0.0f}},
-        {0, 0, {-11.6807f, 0.0f, 36.7247f}, {0.0f, 281.7807f, 0.0f}},
-        {"t0303.mds", 0, {5.6932f, 0.0f, 21.7183f}, {0.0f, -40.0f, 0.0f}},
-        {0, 0, {8.0326f, 0.0f, 25.0416f}, {0.0f, 57.0f, 0.0f}},
-        {0, 0, {8.1469f, 0.0f, 18.4168f}, {0.0f, 77.0f, 0.0f}},
-        {0, 0, {-11.9749f, 0.0f, 34.2407f}, {0.0f, 157.0f, 0.0f}},
-        {0, 0, {-10.5469f, 0.0f, 36.1527f}, {0.0f, 217.0f, 0.0f}},
-        {0, 0, {-18.8727f, 0.0f, 32.604f}, {0.0f, 40.0f, 0.0f}},
-        {0, 0, {12.1088f, 0.0f, 43.2429f}, {0.0f, -55.0f, 0.0f}},
-        {0, 0, {-25.5735f, 0.0f, 30.4597f}, {0.0f, -52.0f, 0.0f}},
-        {0, 0, {-27.1088f, 0.0f, 29.2536f}, {0.0f, 22.0f, 0.0f}},
-        {0, 0, {-28.1088f, 0.0f, 33.4081f}, {0.0f, 78.0f, 0.0f}},
-        {"t0202.mds", 0, {6.9352f, 0.0f, 22.8016f}, {0.0f, -66.4631f, 0.0f}},
-        {0, 0, {-14.5591f, 0.0f, 35.5869f}, {0.0f, 112.4143f, 0.0f}},
-        {"t0203.mds", 0, {8.5959f, 0.0f, 23.4822f}, {0.0f, -49.7327f, 0.0f}},
-        {0, 0, {-13.0716f, 0.0f, 36.4929f}, {0.0f, 129.2592f, 0.0f}},
-        {0, 0, {-14.4103f, 0.0f, 37.4364f}, {0.0f, 112.5289f, 0.0f}},
-        {"t0204.mds", 0, {19.0043f, 0.0f, 20.5515f}, {0.0f, 18.2201f, 0.0f}},
-        {0, 0, {23.1962f, 0.0f, 27.52f}, {0.0f, 71.7343f, 0.0f}},
-        {0, 0, {19.0335f, 0.0f, 22.3668f}, {0.0f, 39.5341f, 0.0f}},
-        {0, 0, {15.9599f, 0.0f, 27.5015f}, {0.0f, -11.6883f, 0.0f}},
-        {0, 0, {-11.7777f, 0.0f, 28.0256f}, {0.0f, -16.9596f, 0.0f}},
-        {0, 0, {-8.2194f, 0.0f, 22.6732f}, {0.0f, -23.3767f, 0.0f}},
-        {0, 0, {-8.9274f, 0.0f, 17.7011f}, {0.0f, 28.9917f, 0.0f}},
-        {0, 0, {-15.2388f, 0.0f, 22.5856f}, {0.0f, -15.5854f, 0.0f}},
-        {0, 0, {-12.4433f, 0.0f, 23.0674f}, {0.0f, 15.2407f, 0.0f}},
-        {0, 0, {-11.3862f, 0.0f, 21.697f}, {0.0f, -10.657f, 0.0f}},
-        {0, 0, {11.704f, 0.0f, 38.1355f}, {0.0f, -45.7425f, 0.0f}},
-        {0, 0, {14.5128f, 0.0f, 38.3406f}, {0.0f, -16.272f, 0.0f}},
-        {0, 0, {10.6253f, 0.0f, 40.4613f}, {0.0f, 25.3247f, 0.0f}},
-        {0, 0, {-21.0844f, 0.0f, 38.2517f}, {0.0f, 50.0f, 0.0f}},
+        {"t0006.mds", 0, {0.0f, 0.0f, 0.0f},             {0.0f, 0.0f, 0.0f}     },
+        {"t0001.mds", 0, {-33.25f, 0.03f, 13.0707f},     {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {-23.25f, 0.03f, 13.0707f},     {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {-3.25f, 0.03f, 13.0707f},      {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {14.9146f, 0.03f, 13.0707f},    {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {24.9146f, 0.03f, 13.0707f},    {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {34.9146f, 0.03f, 13.0707f},    {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {36.4833f, 0.03f, 17.4747f},    {0.0f, -90.0f, 0.0f}   },
+        {0,           0, {6.657f, 0.03f, 52.2721f},      {0.0f, -180.0f, 0.0f}  },
+        {0,           0, {-24.5027f, 0.03f, 52.2721f},   {0.0f, -180.0f, 0.0f}  },
+        {0,           0, {-33.5025f, 0.03f, 52.2721f},   {0.0f, -180.0f, 0.0f}  },
+        {0,           0, {-35.0227f, 0.03f, 37.4712f},   {0.0f, 90.0f, 0.0f}    },
+        {0,           0, {-35.0227f, 0.03f, 27.4712f},   {0.0f, 90.0f, 0.0f}    },
+        {"t0301.mds", 0, {-35.6934f, 0.0f, 20.4342f},    {0.0f, 130.0f, 0.0f}   },
+        {0,           0, {-32.5089f, 0.0f, 46.7067f},    {0.0f, -74.3699f, 0.0f}},
+        {0,           0, {-10.4729f, 0.0f, 13.2973f},    {0.0f, 79.7557f, 0.0f} },
+        {0,           0, {15.1651f, 0.0f, 54.5186f},     {0.0f, 207.0f, 0.0f}   },
+        {0,           0, {35.441f, 0.0f, 28.889f},       {0.0f, 156.3029f, 0.0f}},
+        {0,           0, {-6.7649f, 0.0f, 49.889f},      {0.0f, 17.6471f, 0.0f} },
+        {0,           0, {-17.6795f, 0.0f, 54.369f},     {0.0f, 105.768f, 0.0f} },
+        {0,           0, {34.153f, 0.0f, 39.193f},       {0.0f, 42.628f, 0.0f}  },
+        {0,           0, {28.736f, 0.0f, 55.7777f},      {0.0f, 121.467f, 0.0f} },
+        {"t0003.mds", 0, {-28.23f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {19.937f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {29.937f, 0.03f, 13.1174f},     {0.0f, 0.0f, 0.0f}     },
+        {0,           0, {-30.1013f, 0.03f, 52.3176f},   {0.0f, -180.0f, 0.0f}  },
+        {"t0212.mds", 0, {0.0f, 0.02f, 30.0f},           {0.0f, 0.0f, 0.0f}     },
+        {"t0208.mds", 0, {0.0f, 0.0f, 29.999f},          {0.0f, 0.0f, 0.0f}     },
+        {"t0201.mds", 0, {9.8278f, 0.0f, 22.3789f},      {0.0f, -237.204f, 0.0f}},
+        {0,           0, {-11.6807f, 0.0f, 36.7247f},    {0.0f, 281.7807f, 0.0f}},
+        {"t0303.mds", 0, {5.6932f, 0.0f, 21.7183f},      {0.0f, -40.0f, 0.0f}   },
+        {0,           0, {8.0326f, 0.0f, 25.0416f},      {0.0f, 57.0f, 0.0f}    },
+        {0,           0, {8.1469f, 0.0f, 18.4168f},      {0.0f, 77.0f, 0.0f}    },
+        {0,           0, {-11.9749f, 0.0f, 34.2407f},    {0.0f, 157.0f, 0.0f}   },
+        {0,           0, {-10.5469f, 0.0f, 36.1527f},    {0.0f, 217.0f, 0.0f}   },
+        {0,           0, {-18.8727f, 0.0f, 32.604f},     {0.0f, 40.0f, 0.0f}    },
+        {0,           0, {12.1088f, 0.0f, 43.2429f},     {0.0f, -55.0f, 0.0f}   },
+        {0,           0, {-25.5735f, 0.0f, 30.4597f},    {0.0f, -52.0f, 0.0f}   },
+        {0,           0, {-27.1088f, 0.0f, 29.2536f},    {0.0f, 22.0f, 0.0f}    },
+        {0,           0, {-28.1088f, 0.0f, 33.4081f},    {0.0f, 78.0f, 0.0f}    },
+        {"t0202.mds", 0, {6.9352f, 0.0f, 22.8016f},      {0.0f, -66.4631f, 0.0f}},
+        {0,           0, {-14.5591f, 0.0f, 35.5869f},    {0.0f, 112.4143f, 0.0f}},
+        {"t0203.mds", 0, {8.5959f, 0.0f, 23.4822f},      {0.0f, -49.7327f, 0.0f}},
+        {0,           0, {-13.0716f, 0.0f, 36.4929f},    {0.0f, 129.2592f, 0.0f}},
+        {0,           0, {-14.4103f, 0.0f, 37.4364f},    {0.0f, 112.5289f, 0.0f}},
+        {"t0204.mds", 0, {19.0043f, 0.0f, 20.5515f},     {0.0f, 18.2201f, 0.0f} },
+        {0,           0, {23.1962f, 0.0f, 27.52f},       {0.0f, 71.7343f, 0.0f} },
+        {0,           0, {19.0335f, 0.0f, 22.3668f},     {0.0f, 39.5341f, 0.0f} },
+        {0,           0, {15.9599f, 0.0f, 27.5015f},     {0.0f, -11.6883f, 0.0f}},
+        {0,           0, {-11.7777f, 0.0f, 28.0256f},    {0.0f, -16.9596f, 0.0f}},
+        {0,           0, {-8.2194f, 0.0f, 22.6732f},     {0.0f, -23.3767f, 0.0f}},
+        {0,           0, {-8.9274f, 0.0f, 17.7011f},     {0.0f, 28.9917f, 0.0f} },
+        {0,           0, {-15.2388f, 0.0f, 22.5856f},    {0.0f, -15.5854f, 0.0f}},
+        {0,           0, {-12.4433f, 0.0f, 23.0674f},    {0.0f, 15.2407f, 0.0f} },
+        {0,           0, {-11.3862f, 0.0f, 21.697f},     {0.0f, -10.657f, 0.0f} },
+        {0,           0, {11.704f, 0.0f, 38.1355f},      {0.0f, -45.7425f, 0.0f}},
+        {0,           0, {14.5128f, 0.0f, 38.3406f},     {0.0f, -16.272f, 0.0f} },
+        {0,           0, {10.6253f, 0.0f, 40.4613f},     {0.0f, 25.3247f, 0.0f} },
+        {0,           0, {-21.0844f, 0.0f, 38.2517f},    {0.0f, 50.0f, 0.0f}    },
         {"t0205.mds", 0, {-11.6688f, 1.2789f, 36.7089f}, {0.0f, -61.7649f, 0.0f}},
-        {"t0206.mds", 0, {-4.3913f, 0.0f, 18.9443f}, {0.0f, 18.3347f, 0.0f}},
-        {0, 0, {13.2586f, 0.0f, 33.1962f}, {0.0f, 110.58f, 0.0f}}};
+        {"t0206.mds", 0, {-4.3913f, 0.0f, 18.9443f},     {0.0f, 18.3347f, 0.0f} },
+        {0,           0, {13.2586f, 0.0f, 33.1962f},     {0.0f, 110.58f, 0.0f}  }
+    };
 
     for (int j = 0; j < 62; j++) {
         if (ground[j].name) {
-            ground_frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, ground[j].name, 0),
-                                       &CharaDataBuffer__2[6], 2, 0, 0);
+            ground_frame = LoadMDSFile((u_int *) GetPackFile(read_buffer, ground[j].name, 0), &CharaDataBuffer__2[6], 2, 0, 0);
         }
 
         if (j > 0) {
@@ -1889,8 +1854,9 @@ static void MapLoad2() {
             SetFrameAttr(ground_frame, 1);
         }
 
-        if (j == 26)
+        if (j == 26) {
             TaimatsuFrame[8] = ground_frame;
+        }
 
         CMapObject &object = OP_NornMapObj2[j];
 
@@ -1899,12 +1865,8 @@ static void MapLoad2() {
         OP_NornMapObj2[j].handle = 0;
         OP_NornMapObj2[j].unk_34 = 0;
 
-        object.SetPosition(CVector3_f_(10.0f * ground[j].position[0],
-                                       10.0f * ground[j].position[1],
-                                       10.0f * ground[j].position[2]));
-        object.SetRotation(CVector3_f_((float) (PI * ground[j].rotation[0] / 180),
-                                       (float) (PI * ground[j].rotation[1] / 180),
-                                       (float) (PI * ground[j].rotation[2] / 180)));
+        object.SetPosition(CVector3_f_(10.0f * ground[j].position[0], 10.0f * ground[j].position[1], 10.0f * ground[j].position[2]));
+        object.SetRotation(CVector3_f_((float) (PI * ground[j].rotation[0] / 180), (float) (PI * ground[j].rotation[1] / 180), (float) (PI * ground[j].rotation[2] / 180)));
 
         if (j == 0) {
             object.FrameObjectOnOff("sun3", 0);
@@ -1925,8 +1887,7 @@ void OpC_MotionProcess() {
     for (int i = 0; i < 23; i++) {
         if (CScript__2.obj[i].disp) {
             if (CScript__2.obj[i].motion_end != -1) {
-                if (Chara__3[i].motion_type.state.time >
-                    (float) (Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].end - 1)) {
+                if (Chara__3[i].motion_type.state.time > (float) (Chara__3[i].motion_type.motion_info[CScript__2.obj[i].motion].end - 1)) {
                     CScript__2.obj[i].motion = CScript__2.obj[i].motion_end;
                     CScript__2.obj[i].motion_end = -1;
                 }
@@ -1939,13 +1900,9 @@ void OpC_MotionProcess() {
         }
     }
 
-    typedef float MotionLocal0, MotionLocal1, MotionLocal2, MotionLocal3, MotionLocal4,
-        MotionLocal5, MotionLocal6, MotionLocal7, MotionLocal8, MotionLocal9,
-        MotionLocal10, MotionLocal11, MotionLocal12, MotionLocal13, MotionLocal14,
-        MotionLocal15, MotionLocal16, MotionLocal17, MotionLocal18, MotionLocal19,
-        MotionLocal20, MotionLocal21, MotionLocal22, MotionLocal23;
-    char *frame_names[21] = {"", "c08a", "", "", "c08a", "point", "", "", "", "p09a", "", "c01d", "p03a",
-                             "p08a", "p05b", "p01a", "p12a", "p07a", "p02a", "p15a", "p16a"};
+    typedef float MotionLocal0, MotionLocal1, MotionLocal2, MotionLocal3, MotionLocal4, MotionLocal5, MotionLocal6, MotionLocal7, MotionLocal8, MotionLocal9, MotionLocal10, MotionLocal11, MotionLocal12, MotionLocal13, MotionLocal14, MotionLocal15, MotionLocal16, MotionLocal17, MotionLocal18, MotionLocal19, MotionLocal20, MotionLocal21, MotionLocal22, MotionLocal23;
+    char         *frame_names[21] = {"", "c08a", "", "", "c08a", "point", "", "", "", "p09a", "", "c01d", "p03a",
+                                     "p08a", "p05b", "p01a", "p12a", "p07a", "p02a", "p15a", "p16a"};
     sceVu0FMATRIX matrix;
 
     for (int i = 0; i < 23; i++) {
@@ -2164,7 +2121,7 @@ static void LoadCharaMajin() {
    its motion has gone, because the ground under him changes part way through the scene. */
 void OpC_SoundProcess() {
     static float vol = 40.0f;
-    static int cnt = 0;
+    static int   cnt = 0;
 
     if (!DanceBgmStart) {
         vol = 40.0f;
@@ -2217,7 +2174,7 @@ void OpC_SoundProcess() {
     }
 
     static SND_INFO SndInfo[43] = {
-        {14, 40, 50, 893, 0, 90},
+        {14, 40, 50, 893,  0, 90 },
         {14, 40, 55, 1100, 0, 127},
         {14, 40, 52, 1100, 1, 127},
         {14, 40, 52, 1292, 0, 127},
@@ -2240,7 +2197,7 @@ void OpC_SoundProcess() {
         {14, 40, 53, 2275, 0, 127},
         {14, 40, 55, 2275, 1, 127},
         {14, 40, 59, 2349, 0, 127},
-        {14, 40, 71, 2441, 0, 80},
+        {14, 40, 71, 2441, 0, 80 },
         {14, 40, 61, 2445, 0, 127},
         {14, 40, 62, 2469, 0, 127},
         {14, 40, 64, 2503, 0, 127},
@@ -2254,12 +2211,13 @@ void OpC_SoundProcess() {
         {14, 40, 62, 2756, 0, 127},
         {14, 40, 69, 2810, 0, 127},
         {14, 40, 72, 3006, 3, 100},
-        {14, 1, 67, 3006, 4, 127},
+        {14, 1,  67, 3006, 4, 127},
         {14, 40, 67, 3307, 0, 127},
         {14, 40, 74, 3339, 0, 127},
         {14, 40, 74, 3572, 0, 127},
         {14, 40, 75, 4255, 0, 127},
-        {14, 40, 77, 4305, 0, 127}};
+        {14, 40, 77, 4305, 0, 127}
+    };
 
     if (!Pause && CScript__2.camera_start >= 70) {
 #ifdef PAL
@@ -2295,9 +2253,9 @@ void OpC_SoundProcess() {
     }
 
     if (CScript__2.obj[11].motion == 2 || CScript__2.obj[11].motion == 7) {
-        static int wait = 0;
+        static int    wait = 0;
         sceVu0FVECTOR position;
-        float motion_frame;
+        float         motion_frame;
 
         sceVu0CopyVector(position, Chara__3[11].pos);
         motion_frame = (int) Chara__3[11].motion_type.state.time;
@@ -2334,9 +2292,9 @@ void OpC_SoundProcess() {
     }
 
     if (CScript__2.obj[11].motion == 5) {
-        static int wait = 0;
+        static int    wait = 0;
         sceVu0FVECTOR position;
-        float motion_frame;
+        float         motion_frame;
 
         sceVu0CopyVector(position, Chara__3[11].pos);
         motion_frame = (int) Chara__3[11].motion_type.state.time;
@@ -2363,9 +2321,9 @@ void OpC_SoundProcess() {
     }
 
     if (CScript__2.obj[13].disp) {
-        static int wait = 0;
+        static int    wait = 0;
         sceVu0FVECTOR position;
-        float motion_frame;
+        float         motion_frame;
 
         sceVu0CopyVector(position, Chara__3[13].pos);
         motion_frame = (int) Chara__3[13].motion_type.state.time;
@@ -2392,9 +2350,9 @@ void OpC_SoundProcess() {
     }
 
     if (CScript__2.scene == 6 && CScript__2.obj[12].disp) {
-        static int wait = 0;
+        static int    wait = 0;
         sceVu0FVECTOR position;
-        float motion_frame;
+        float         motion_frame;
 
         sceVu0CopyVector(position, Chara__3[12].pos);
         motion_frame = (int) Chara__3[12].motion_type.state.time;
@@ -2430,7 +2388,7 @@ void OpC_SoundProcess() {
 void OpC_DrawProcess() {
     sceVu0FMATRIX light_save;
     sceVu0FVECTOR ambient_save;
-    float far_fog;
+    float         far_fog;
 
     sceVu0CopyMatrix(light_save, light);
     sceVu0CopyVector(ambient_save, ambientlight);
@@ -2467,8 +2425,7 @@ void OpC_DrawProcess() {
             break;
     }
 
-    MGSetFogParm(op_fogRate[0], far_fog, op_fogColor[0], op_fogColor[1], op_fogColor[2],
-                 op_fogRate[2], op_fogRate[3]);
+    MGSetFogParm(op_fogRate[0], far_fog, op_fogColor[0], op_fogColor[1], op_fogColor[2], op_fogRate[2], op_fogRate[3]);
 
     switch (CScript__2.scene) {
         case 5:
@@ -2493,7 +2450,7 @@ void OpC_DrawProcess() {
                     continue;
                 }
 
-                CMapObject &object = OP_NornMapObj[i];
+                CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2505,7 +2462,7 @@ void OpC_DrawProcess() {
 
             for (int i = 0; i < 74; i++) {
                 if ((i > 0 && i <= 17) || (i >= 68 && i < 73)) {
-                    CMapObject &object = OP_NornMapObj[i];
+                    CMapObject   &object = OP_NornMapObj[i];
                     sceVu0FVECTOR position;
 
                     sceVu0CopyVector(position, object.pos);
@@ -2515,7 +2472,7 @@ void OpC_DrawProcess() {
             }
 #else
             for (int i = 0; i < 74; i++) {
-                CMapObject &object = OP_NornMapObj[i];
+                CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2524,16 +2481,15 @@ void OpC_DrawProcess() {
             }
 #endif
 
-            if (CScript__2.camera_start == 100 &&
-                Cam__2[SceneNp__2].motion_type.state.time > 262.0f) {
-                CMapObject &object = OP_NornMapObj[75];
+            if (CScript__2.camera_start == 100 && Cam__2[SceneNp__2].motion_type.state.time > 262.0f) {
+                CMapObject   &object = OP_NornMapObj[75];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
                 LightSet(position[0], position[1], position[2], 0);
                 object.Draw();
             } else {
-                CMapObject &object = OP_NornMapObj[74];
+                CMapObject   &object = OP_NornMapObj[74];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2544,7 +2500,7 @@ void OpC_DrawProcess() {
             TexManager.ReloadTexture(Vif1Packet, 11);
 
             for (int i = 0; i < 26; i++) {
-                CMapObject &object = OP_NornMapObj2[i];
+                CMapObject   &object = OP_NornMapObj2[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2555,7 +2511,7 @@ void OpC_DrawProcess() {
             TexManager.ReloadTexture(Vif1Packet, 12);
 
             for (int i = 26; i < 62; i++) {
-                CMapObject &object = OP_NornMapObj2[i];
+                CMapObject   &object = OP_NornMapObj2[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2574,7 +2530,7 @@ void OpC_DrawProcess() {
                     continue;
                 }
 
-                CMapObject &object = OP_NornMapObj[i];
+                CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2586,7 +2542,7 @@ void OpC_DrawProcess() {
 
             for (int i = 0; i < 75; i++) {
                 if ((i > 0 && i <= 15) || (i >= 66 && i < 74)) {
-                    CMapObject &object = OP_NornMapObj[i];
+                    CMapObject   &object = OP_NornMapObj[i];
                     sceVu0FVECTOR position;
 
                     sceVu0CopyVector(position, object.pos);
@@ -2596,7 +2552,7 @@ void OpC_DrawProcess() {
             }
 #else
             for (int i = 0; i < 75; i++) {
-                CMapObject &object = OP_NornMapObj[i];
+                CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2608,7 +2564,7 @@ void OpC_DrawProcess() {
             TexManager.ReloadTexture(Vif1Packet, 11);
 
             for (int i = 0; i < 41; i++) {
-                CMapObject &object = OP_NornMapObj2[i];
+                CMapObject   &object = OP_NornMapObj2[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2619,7 +2575,7 @@ void OpC_DrawProcess() {
             TexManager.ReloadTexture(Vif1Packet, 12);
 
             for (int i = 41; i < 87; i++) {
-                CMapObject &object = OP_NornMapObj2[i];
+                CMapObject   &object = OP_NornMapObj2[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2709,8 +2665,7 @@ void OpC_DrawProcess() {
         CTexture texture;
 
         texture.tex0 = *(u_long *) &back;
-        set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT),
-                    CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 105);
+        set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 105);
     }
 
     for (int i = 0; i < 23; i++) {
@@ -2771,7 +2726,7 @@ void OpC_DrawProcess() {
 
         if (CScript__2.scene != 7) {
             for (int i = 0; i < 75; i++) {
-                CMapObject &object = OP_NornMapObj[i];
+                CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2780,7 +2735,7 @@ void OpC_DrawProcess() {
             }
         } else {
             for (int i = 0; i < 76; i++) {
-                CMapObject &object = OP_NornMapObj[i];
+                CMapObject   &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
 
                 sceVu0CopyVector(position, object.pos);
@@ -2820,8 +2775,7 @@ void OpC_DrawProcess() {
                 int fire_flag = OP_FireFlg[i];
 
                 if (fire_flag == 1) {
-                    CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 3,
-                                   (float) (15.0 * OP_FireScale[i]));
+                    CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 3, (float) (15.0 * OP_FireScale[i]));
                 } else {
                     CFire.DrawFire(1, 1, &OP_MainCamera, eye, OP_FireScale[i], 2, 15.0f);
                 }
@@ -2853,8 +2807,7 @@ void OpC_DrawProcess() {
     }
 
     if (CScript__2.scene >= 5) {
-        if (CScript__2.camera_start == 77 &&
-            Cam__2[SceneNp__2].motion_type.state.time > 37.5f && !MajinBgmStart) {
+        if (CScript__2.camera_start == 77 && Cam__2[SceneNp__2].motion_type.state.time > 37.5f && !MajinBgmStart) {
             MajinBgmStart = 1;
             OpBgmSqPort = 0;
             OpBgmPlay();
@@ -2875,7 +2828,7 @@ void OpC_DrawProcess() {
 
     if (CScript__2.scene >= 6) {
         if (CScript__2.bom_req) {
-            int bomb = CScript__2.bom_no;
+            int   bomb = CScript__2.bom_no;
             float size = CScript__2.bom_size[bomb];
 
             for (int i = 0; i < 8; i++) {
@@ -2935,7 +2888,7 @@ void OpC_DrawProcess() {
  * @unknownret
  */
 static void DrawDancer() {
-    sceVu0FMATRIX matrix;
+    sceVu0FMATRIX  matrix;
     register float zero = 0.0f;
 
     if (CScript__2.obj[19].disp) {
@@ -3060,7 +3013,7 @@ static void DrawDancer() {
  */
 static void InchikiShadow() {
     sceVu0FMATRIX matrix;
-    CFrame *frame;
+    CFrame       *frame;
 
     if (CScript__2.obj[14].disp) {
         frame = Chara__3[14].frame->SearchFrame("r_foot");
@@ -3244,7 +3197,7 @@ static void MajinBeemProcess() {
         if (CScript__2.beem_end) {
             static sceVu0FVECTOR pos = {0.0f, 0.0f, 0.0f, 0.0f};
             static sceVu0FVECTOR pos2 = {0.0f, 0.0f, 0.0f, 0.0f};
-            sceVu0FMATRIX matrix;
+            sceVu0FMATRIX        matrix;
 
             CFrame *frame = Chara__3[1].frame->SearchFrame(frame_names[MBeemCnt]);
 
@@ -3360,7 +3313,7 @@ static void MajinBeemProcess() {
 
     if (CScript__2.obj[1].disp && CScript__2.scene == 5) {
         sceVu0FVECTOR head;
-        int part;
+        int           part;
 
         if (MBeemCnt == 0) {
             part = 0;
@@ -3409,7 +3362,7 @@ static void SmokeProcess() {
 
     if (cnt == 0) {
         sceVu0FVECTOR position = {400.0f, 10.0f, -450.0f, 1.0f};
-        CEffectParam param;
+        CEffectParam  param;
 
         param.Initialize();
         sceVu0CopyVector(param.position, position);
@@ -3515,7 +3468,7 @@ static void WaterProcess() {
     MGGetFBuffTex(&frame_tex);
 
     CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
-    sceGsTex0 surface = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
+    sceGsTex0  surface = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
 
     MGMoveImage(&frame_tex, rect, &surface, 0, 0, 0);
 
@@ -3529,8 +3482,7 @@ static void WaterProcess() {
 
     zbuf.bits.zmsk = 1;
     MGSetGsZBUF(&zbuf);
-    Water.Shake((int) (32.0f * rand() / 2147483648.0f), (int) (32.0f * rand() / 2147483648.0f),
-                -0.5f);
+    Water.Shake((int) (32.0f * rand() / 2147483648.0f), (int) (32.0f * rand() / 2147483648.0f), -0.5f);
     Water.Hamon();
     Water.DrawVu1(&mgRenderInfo, GetVif1Packet(), 0);
     MGSetGsZBUF(&mgZBuffer);
@@ -3547,28 +3499,39 @@ static void WaterProcess() {
  * @unknownret
  */
 static int KageCheck(int actor) {
-    if (actor == 1)
+    if (actor == 1) {
         return 0;
-    if (actor == 3)
+    }
+    if (actor == 3) {
         return 0;
-    if (actor == 4)
+    }
+    if (actor == 4) {
         return 0;
-    if (actor == 5)
+    }
+    if (actor == 5) {
         return 0;
-    if (actor == 14)
+    }
+    if (actor == 14) {
         return 0;
-    if (actor == 15)
+    }
+    if (actor == 15) {
         return 0;
-    if (actor == 16)
+    }
+    if (actor == 16) {
         return 0;
-    if (CScript__2.scene < 7 && actor == 18)
+    }
+    if (CScript__2.scene < 7 && actor == 18) {
         return 0;
-    if (actor == 17)
+    }
+    if (actor == 17) {
         return 0;
-    if (actor == 19)
+    }
+    if (actor == 19) {
         return 0;
-    if (actor == 20)
+    }
+    if (actor == 20) {
         return 0;
+    }
 
     return 1;
 }
@@ -3655,9 +3618,9 @@ static void LightSet(float x, float y, float z, int actor) {
     MGSetAmbient(ambient);
 }
 
-static int setTexScrollCnt;
+static int   setTexScrollCnt;
 static float setTexScrollCntf;
-static int setTexAnimCnt;
+static int   setTexAnimCnt;
 static float setTexAnimCntf;
 
 /**
@@ -3685,10 +3648,10 @@ static void setTexScroll() {
         return;
     }
 
-    int dbp = plate->tex0 & 0x3fff;
-    int sbp = strip->tex0 & 0x3fff;
-    int dbw = (plate->tex0 >> 14) & 0x3f;
-    int sbw = (strip->tex0 >> 14) & 0x3f;
+    int       dbp = plate->tex0 & 0x3fff;
+    int       sbp = strip->tex0 & 0x3fff;
+    int       dbw = (plate->tex0 >> 14) & 0x3f;
+    int       sbw = (strip->tex0 >> 14) & 0x3f;
     sceGsTex0 dst_tex;
     sceGsTex0 src_tex;
 
@@ -3700,14 +3663,11 @@ static void setTexScroll() {
     src_tex.PSM = SCE_GS_PSMT8;
 
     if (setTexScrollCnt != 128) {
-        MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8,
-                      CRect<int>(setTexScrollCnt, 0, 128 - setTexScrollCnt, 128), dbp, dbw,
-                      SCE_GS_PSMT8, 0, 0, 0);
+        MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, CRect<int>(setTexScrollCnt, 0, 128 - setTexScrollCnt, 128), dbp, dbw, SCE_GS_PSMT8, 0, 0, 0);
     }
 
     if (setTexScrollCnt != 0) {
-        MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, CRect<int>(0, 0, setTexScrollCnt, 128),
-                      dbp, dbw, SCE_GS_PSMT8, 128 - setTexScrollCnt, 0, 0);
+        MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, CRect<int>(0, 0, setTexScrollCnt, 128), dbp, dbw, SCE_GS_PSMT8, 128 - setTexScrollCnt, 0, 0);
     }
 }
 
@@ -3744,8 +3704,7 @@ static void setTexAnim() {
         return;
     }
 
-    MGMoveImage((sceGsTex0 *) &strip->tex0, CRect<int>(0, setTexAnimCnt * 64, 64, 64),
-                (sceGsTex0 *) &plate->tex0, 0, 0, 0);
+    MGMoveImage((sceGsTex0 *) &strip->tex0, CRect<int>(0, setTexAnimCnt * 64, 64, 64), (sceGsTex0 *) &plate->tex0, 0, 0, 0);
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
     sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);

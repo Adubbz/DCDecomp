@@ -34,12 +34,12 @@ CMapObject *CMap::GetObject(int index) {
     return &object[index];
 }
 
-void CMap::Draw(void) {
+void CMap::Draw() {
     int index;
 
     for (index = 0; index < 10; index++) {
-        CMapObject *map_object;
-        int category_no;
+        CMapObject       *map_object;
+        int               category_no;
         CMapCategoryAttr *attr;
 
         map_object = &object[index];
@@ -56,7 +56,7 @@ void CMap::Draw(void) {
     }
 }
 
-void CMap::Initialize(void) {
+void CMap::Initialize() {
     int index;
 
     for (index = 0; index < 16; index++) {

@@ -4,9 +4,6 @@
 
 #include "editloop.hpp"
 
-class CMapObject;
-class CMapParts;
-struct EDIT_WATER_INFO;
 struct SPI_FUNC_PARAM;
 
 /** Functions the map script may call. */

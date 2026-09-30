@@ -38,7 +38,7 @@ void EBDebug(int mode);
 /** Advances the enemy-battle introduction and returns its state. */
 int EBIntroLoop();
 /** Advances the active enemy-battle sequence and returns its state. */
-int EBLoop();
+int  EBLoop();
 void EBFinishSound(int do_fade_bgm, int do_play_fanfare);
 
 /**

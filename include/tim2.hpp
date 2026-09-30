@@ -17,8 +17,8 @@
    file.
  */
 struct TM2_head {
-    char unk_00[35];
-    u_char image_type;    /**< TIM2 pixel-storage format. */
+    char    unk_00[35];
+    u_char  image_type;   /**< TIM2 pixel-storage format. */
     u_short image_width;  /**< Image width in pixels. */
     u_short image_height; /**< Image height in pixels. */
 };
@@ -27,18 +27,18 @@ struct TM2_head {
  * Describes one picture and its mip levels in a TIM2 image.
  */
 struct TM2_picture {
-    char unk_00[8];
-    u_int image_size;    /**< Total byte size of the picture image data. */
+    char    unk_00[8];
+    u_int   image_size;  /**< Total byte size of the picture image data. */
     u_short header_size; /**< Byte size of this picture header. */
     u_short clut_colors; /**< Number of colours stored in the palette. */
-    char unk_10;
-    u_char mipmap_count; /**< Number of mip levels stored for the picture. */
-    char unk_12;
-    u_char image_type;    /**< TIM2 pixel-storage format. */
+    char    unk_10;
+    u_char  mipmap_count; /**< Number of mip levels stored for the picture. */
+    char    unk_12;
+    u_char  image_type;   /**< TIM2 pixel-storage format. */
     u_short image_width;  /**< Base-level width in pixels. */
     u_short image_height; /**< Base-level height in pixels. */
-    char unk_18[8];
-    u_long tex1; /**< GS TEX1 register value used for sampling. */
-    char unk_28[24];
-    u_int mipmap_size[8]; /**< Byte size of each stored mip level. */
+    char    unk_18[8];
+    u_long  tex1; /**< GS TEX1 register value used for sampling. */
+    char    unk_28[24];
+    u_int   mipmap_size[8]; /**< Byte size of each stored mip level. */
 };

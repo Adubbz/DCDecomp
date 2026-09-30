@@ -28,12 +28,12 @@ void CHealEffect::Set(float *world) {
     }
 }
 
-void CHealEffect::Step(void) {
+void CHealEffect::Step() {
     if (this->active != 0) {
-        float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+        float         offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
         sceVu0FMATRIX unit;
         sceVu0FMATRIX rotation;
-        int expired = 0;
+        int           expired = 0;
 
         for (int i = 0; i < 32; i++) {
             if (this->phase[i] < 3.1415927f) {
@@ -70,11 +70,11 @@ void CHealEffect::Step(void) {
     }
 }
 
-void CHealEffect::Draw(void) {
+void CHealEffect::Draw() {
     if (this->active != 0) {
         float world[4];
         // Unread; Step builds its particle offsets from the same template.
-        float offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
+        float     offset[4] = {0.0f, 0.0f, 1.0f, 1.0f};
         CTexture *texture = TexManager.GetTexture(HealEffectTextureName, -1);
 
         sceVu0CopyVector(this->position, CharaMain.pos);
@@ -83,8 +83,7 @@ void CHealEffect::Draw(void) {
                 world[0] = this->position[0] + this->particle_offset[i][0];
                 world[1] = this->position[1] + this->particle_offset[i][1];
                 world[2] = this->position[2] + this->particle_offset[i][2];
-                BtSet3DCellModel(world, texture, this->size[i], 0x10, 0, 0x20, 0x20,
-                                 (int) this->alpha[i]);
+                BtSet3DCellModel(world, texture, this->size[i], 0x10, 0, 0x20, 0x20, (int) this->alpha[i]);
             }
         }
     }

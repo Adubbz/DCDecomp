@@ -24,19 +24,18 @@ void CHIT_MACHINGUN_EFFECT::Set(float *position) {
     }
 }
 
-void CHIT_MACHINGUN_EFFECT::Draw(void) {
+void CHIT_MACHINGUN_EFFECT::Draw() {
     s32 cell;
 
     for (s32 i = 0; i < 16; i++) {
         if (this->timer[i] >= 0) {
             cell = 2 - this->timer[i] / 6;
-            set3DCellModel(this->position[i], "basefx00", 5.0f,
-                           cell << 4, 0x70, 0x10, 0x10, 0x80);
+            set3DCellModel(this->position[i], "basefx00", 5.0f, cell << 4, 0x70, 0x10, 0x10, 0x80);
         }
     }
 }
 
-void CHIT_MACHINGUN_EFFECT::Step(void) {
+void CHIT_MACHINGUN_EFFECT::Step() {
     for (s32 i = 0; i < 16; i++) {
         if (this->timer[i] >= 0) {
             this->timer[i]--;

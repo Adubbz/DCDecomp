@@ -8,12 +8,12 @@ class CTexture;
  * Stores the texture attributes copied into one texture-animation endpoint.
  */
 struct CTextureTexAnime {
-    s16 block;   /**< Texture block containing the endpoint texture. */
-    s16 width;   /**< Endpoint texture width in pixels. */
-    s16 height;  /**< Endpoint texture height in pixels. */
-    s16 bpp;     /**< Endpoint texture bits per pixel. */
-    u_long tex0; /**< GS TEX0 register value used by the endpoint. */
-    u_long tex1; /**< GS TEX1 register value used by the endpoint. */
+    s16    block;  /**< Texture block containing the endpoint texture. */
+    s16    width;  /**< Endpoint texture width in pixels. */
+    s16    height; /**< Endpoint texture height in pixels. */
+    s16    bpp;    /**< Endpoint texture bits per pixel. */
+    u_long tex0;   /**< GS TEX0 register value used by the endpoint. */
+    u_long tex1;   /**< GS TEX1 register value used by the endpoint. */
 
     /**
      * Copies the animation-relevant attributes from a registered texture.
@@ -32,23 +32,23 @@ STATIC_ASSERT(sizeof(CTextureTexAnime) == 0x18);
  */
 class CTexAnimeData {
 public:
-    s16 kind;                        /**< Record kind: -1 free, 0 rectangle copy, 1 scrolling copy. */
-    s16 group;                       /**< Animation group the record belongs to. */
-    s16 duration;                    /**< Frames the record plays for; zero also plays the next record, -1 holds forever. */
-    s16 linked_group;                /**< Group enabled while the record plays, or -1 for none. */
+    s16              kind;           /**< Record kind: -1 free, 0 rectangle copy, 1 scrolling copy. */
+    s16              group;          /**< Animation group the record belongs to. */
+    s16              duration;       /**< Frames the record plays for; zero also plays the next record, -1 holds forever. */
+    s16              linked_group;   /**< Group enabled while the record plays, or -1 for none. */
     CTextureTexAnime first_texture;  /**< First texture endpoint used by the animation. */
     CTextureTexAnime second_texture; /**< Second texture endpoint used by the animation. */
-    s16 source_x;                    /**< Left edge of the rectangle copied from the first texture. */
-    s16 source_y;                    /**< Top edge of the rectangle copied from the first texture. */
-    s16 source_width;                /**< Width of the rectangle copied from the first texture. */
-    s16 source_height;               /**< Height of the rectangle copied from the first texture. */
-    s16 dest_x;                      /**< Left edge the rectangle is copied to in the second texture. */
-    s16 dest_y;                      /**< Top edge the rectangle is copied to in the second texture. */
-    float scroll_x_step;             /**< Horizontal texture-scroll increment per frame. */
-    float scroll_y_step;             /**< Vertical texture-scroll increment per frame. */
-    float scroll_x;                  /**< Current horizontal texture-scroll offset. */
-    float scroll_y;                  /**< Current vertical texture-scroll offset. */
-    CTexAnimeData *next;             /**< Links the record to the next animation in its group. */
+    s16              source_x;       /**< Left edge of the rectangle copied from the first texture. */
+    s16              source_y;       /**< Top edge of the rectangle copied from the first texture. */
+    s16              source_width;   /**< Width of the rectangle copied from the first texture. */
+    s16              source_height;  /**< Height of the rectangle copied from the first texture. */
+    s16              dest_x;         /**< Left edge the rectangle is copied to in the second texture. */
+    s16              dest_y;         /**< Top edge the rectangle is copied to in the second texture. */
+    float            scroll_x_step;  /**< Horizontal texture-scroll increment per frame. */
+    float            scroll_y_step;  /**< Vertical texture-scroll increment per frame. */
+    float            scroll_x;       /**< Current horizontal texture-scroll offset. */
+    float            scroll_y;       /**< Current vertical texture-scroll offset. */
+    CTexAnimeData   *next;           /**< Links the record to the next animation in its group. */
 
     /**
      * Sets the animation to play no frame.
@@ -57,7 +57,7 @@ public:
      * @address 0x1670D0
      * @size 0x9C
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Constructs an inactive texture-animation record.
@@ -66,7 +66,7 @@ public:
      * @address 0x1670A0
      * @size 0x30
      */
-    CTexAnimeData(void);
+    CTexAnimeData();
 };
 
 STATIC_ASSERT(sizeof(CTexAnimeData) == 0x58);
@@ -83,14 +83,14 @@ public:
      */
     static s32 stop_anime;
 
-    s32 enabled[24];            /**< Enables playback for each animation group. */
+    s32            enabled[24]; /**< Enables playback for each animation group. */
     CTexAnimeData *first[24];   /**< Points to each group's first animation record. */
     CTexAnimeData *last[24];    /**< Points to each group's last animation record. */
     CTexAnimeData *current[24]; /**< Points to the record being played by each group. */
-    s32 frame[24];              /**< Counts playback frames for each group's current record. */
+    s32            frame[24];   /**< Counts playback frames for each group's current record. */
     CTexAnimeData *data;        /**< Holds the animation record pool. */
-    s32 data_count;             /**< Gives the number of records in the pool. */
-    u8 unk_1e8[8];
+    s32            data_count;  /**< Gives the number of records in the pool. */
+    u8             unk_1e8[8];
 
     /**
      * Uploads one animation group's current textures to the graphics synthesizer.
@@ -127,7 +127,7 @@ public:
      * @size 0x60
      * @unknownret
      */
-    CTexAnimeData *NewTexAnimeData(void);
+    CTexAnimeData *NewTexAnimeData();
 
     /**
      * Starts a new animation group at the next available pool record.
@@ -156,7 +156,7 @@ public:
      * @address 0x167AE0
      * @size 0x58
      */
-    void DisableAll(void);
+    void DisableAll();
 
     /**
      * Enables playback of one animation group.

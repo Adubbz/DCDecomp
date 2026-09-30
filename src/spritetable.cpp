@@ -6,19 +6,19 @@
 #include "rect.hpp"
 
 void CSpriteTable::DrawTable() {
-    int packet_entries;
+    int            packet_entries;
     sceVif1Packet *packet;
-    int layer;
-    SPRITE_TABLE *node;
-    int drawn;
-    sceGsAlpha alpha;
-    sceGsTest test;
-    sceGsZbuf zbuf;
-    int x0;
-    int y0;
-    int x1;
-    int y1;
-    float q;
+    int            layer;
+    SPRITE_TABLE  *node;
+    int            drawn;
+    sceGsAlpha     alpha;
+    sceGsTest      test;
+    sceGsZbuf      zbuf;
+    int            x0;
+    int            y0;
+    int            x1;
+    int            y1;
+    float          q;
 
     packet_entries = 0;
     packet = GetVif1Packet();
@@ -42,17 +42,14 @@ void CSpriteTable::DrawTable() {
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, 1);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
 
     drawn = 0;
     for (layer = list_count - 1; layer >= 0; layer--) {
         node = heads[layer];
         while (node != tails[layer]) {
             q = 1.0f;
-            sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                             SCE_GS_SET_RGBAQ(node->red, node->green, node->blue, node->alpha,
-                                              *(u_int *) &q));
+            sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(node->red, node->green, node->blue, node->alpha, *(u_int *) &q));
             sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, node->tex0);
 
             x0 = (node->x << 4) + 27648;
@@ -62,9 +59,7 @@ void CSpriteTable::DrawTable() {
 
             sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(node->u << 4, node->v << 4));
             sceVif1PkAddGsAD(packet, SCE_GS_XYZF3, SCE_GS_SET_XYZF2(x0, y0, 0, 0));
-            sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                             SCE_GS_SET_UV((node->u + node->u_width) << 4,
-                                           (node->v + node->v_height) << 4));
+            sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((node->u + node->u_width) << 4, (node->v + node->v_height) << 4));
             sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x1, y1, 0, 0));
             sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
 
@@ -78,8 +73,7 @@ void CSpriteTable::DrawTable() {
                 sceVif1PkCnt(packet, 0);
                 sceVif1PkOpenDirectCode(packet, 0);
                 sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
-                sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                                 SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+                sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
             }
         }
     }

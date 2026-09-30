@@ -11,6 +11,18 @@ class CCamera;
 
 class CMajinBeem {
 public:
+    sceVu0FVECTOR positions[60]; /**< Trail element positions, the head first. */
+    sceVu0FVECTOR target;        /**< Point the beam is aimed at on its first step. */
+    int           state;         /**< Zero aims the beam at the target; one moves it. */
+    int           counters[60];  /**< Ages of the recorded trail elements. */
+    float         sizes[60];     /**< Draw sizes of the trail elements. */
+    float         alphas[60];    /**< Alpha values of the trail elements. */
+    int           active;        /**< Whether the beam is active. */
+    float         pitch;         /**< Vertical travel angle. */
+    float         yaw;           /**< Horizontal travel angle. */
+    float         speed;         /**< Distance travelled during each update. */
+    u8            unk_6b4[0xc];
+
     /**
      * Initializes the beam before it is fired.
      *
@@ -54,19 +66,7 @@ public:
      * @address 0x1DAE340
      * @size 0x24C
      */
-    void Step(void);
-
-    sceVu0FVECTOR positions[60]; /**< Trail element positions, the head first. */
-    sceVu0FVECTOR target;        /**< Point the beam is aimed at on its first step. */
-    int state;                   /**< Zero aims the beam at the target; one moves it. */
-    int counters[60];            /**< Ages of the recorded trail elements. */
-    float sizes[60];             /**< Draw sizes of the trail elements. */
-    float alphas[60];            /**< Alpha values of the trail elements. */
-    int active;                  /**< Whether the beam is active. */
-    float pitch;                 /**< Vertical travel angle. */
-    float yaw;                   /**< Horizontal travel angle. */
-    float speed;                 /**< Distance travelled during each update. */
-    u8 unk_6b4[0xc];
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CMajinBeem) == 0x6c0);

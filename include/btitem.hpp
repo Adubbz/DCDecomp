@@ -78,7 +78,7 @@ void selectChrUnit(int chara_no, int reload);
  * @address 0x1D13A0
  * @size 0x4C
  */
-void LoadActiveItemIcon(void);
+void LoadActiveItemIcon();
 
 /**
  * Opens the small character-select window in the given selection mode.
@@ -96,7 +96,7 @@ void BtMiniChrSelect_Init(int type);
  * @address 0x1D3400
  * @size 0x38
  */
-void BtMiniItemSelect(void);
+void BtMiniItemSelect();
 
 /**
  * Runs one frame of the small item-select window, and reports when it closes.
@@ -105,7 +105,7 @@ void BtMiniItemSelect(void);
  * @address 0x1D3440
  * @size 0x118
  */
-int BtMiniItemSelect_Loop(void);
+int BtMiniItemSelect_Loop();
 
 /**
  * Starts the gate-key pickup presentation for the given item.
@@ -132,7 +132,7 @@ void BtGetAttach_Init(int dungeon, int item_no);
  * @address 0x1D3B00
  * @size 0xF0
  */
-int BtGetAttach_Loop(void);
+int BtGetAttach_Loop();
 
 /**
  * Starts the presentation that carries the party off the floor.
@@ -141,7 +141,7 @@ int BtGetAttach_Loop(void);
  * @address 0x1D3BF0
  * @size 0x14C
  */
-void BtEscape_Init(void);
+void BtEscape_Init();
 
 /**
  * Builds the velocity of a shot fired at the given speed and angles.

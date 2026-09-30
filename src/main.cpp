@@ -53,6 +53,10 @@
  */
 class CategoryAttr {
 public:
+    float lod[4];  /**< Distances at which the category changes level of detail. */
+    int   lowest;  /**< Lowest level of detail that the category may draw. */
+    int   highest; /**< Highest level of detail that the category may draw. */
+
     /**
      * Constructs the category attributes with their starting values.
      *
@@ -70,10 +74,6 @@ public:
      * @size 0x1C
      */
     void Initialize();
-
-    float lod[4]; /**< Distances at which the category changes level of detail. */
-    int lowest;   /**< Lowest level of detail that the category may draw. */
-    int highest;  /**< Highest level of detail that the category may draw. */
 };
 
 STATIC_ASSERT(sizeof(CategoryAttr) == 0x18);
@@ -102,7 +102,7 @@ CDataAlloc<1, 6000> SystemMesBuffer;
  * from _gp = 0x2A97F0, confirmed against the `lw $4,-0x72E4($28)` preamble of
  * every CSaveData call in ref/asm/sections/dun/dun.text.s. */
 static CSaveData save_data __attribute__((aligned(64)));
-CSaveData *SaveData;
+CSaveData       *SaveData;
 
 /* main()'s own top-level game-state globals -- moved here from
  * src/mainselect.cpp/include/mainselect.hpp for the same reason as `pBound` etc. above:
@@ -112,15 +112,15 @@ CSaveData *SaveData;
  * *declared* `extern` in include/mainselect.hpp (in case another, not-yet-
  * decompiled TU needs them), just no longer *defined* there. Declaration
  * order here matches retail's exact main.sbss address order. */
-s32 GameClearFlag;
-s32 main_select_menu_no;
-s32 MapNo;
-s32 OldMapNo;
-s32 LocalMapNo;
-s32 StartEventNo;
+s32    GameClearFlag;
+s32    main_select_menu_no;
+s32    MapNo;
+s32    OldMapNo;
+s32    LocalMapNo;
+s32    StartEventNo;
 short *SystemMes;
 CSound CSnd;
-s32 main_select_padrup;
+s32    main_select_padrup;
 
 /* Scratch buffer for the "reset trial character names, keep the rest"
  * round-trip below. Retail has it as a real named static rather than a stack
@@ -156,7 +156,6 @@ CDataAlloc2<1> mainCDataAlloc2;
  * retail name use this project's "func_ADDRESS" convention. */
 extern "C" {
 void init_all__Fv();
-int sceGsSyncV(int interlace);
 void initialize_data__Fv();
 void GlobalNameInit__Fv();
 void InitReadBG__Fv();
@@ -167,7 +166,7 @@ void FlushCache(int mode);
 void init_now_loading__Fi(int map_no);
 void LoadSystemMessage__Fv();
 void SndInitialize__Fiiii(int a1, int a2, int a3, int a4);
-int InitExistData__Fv();
+int  InitExistData__Fv();
 void MapJump__Fii(int map_no, int event_no);
 void EditInit__FPv(void *param);
 void func_01DAF1C0();
@@ -185,7 +184,7 @@ void func_01DC8C50();
  * argument registers at all. An earlier pass of this file passed a saved
  * copy of `mode` here, which forced an extra callee-saved register copy
  * (`paddub s4,a0`) retail doesn't have. */
-int check_now_loading__Fv();
+int  check_now_loading__Fv();
 void MGInitVSyncCallBack__FPFi_i(void (*callback)(int));
 void PlayTimeCount__Fi(int add);
 void MGBeginFrame__Fv();
@@ -195,24 +194,24 @@ void MGBeginFrame__Fv();
  * reuse by sceVif1PkCall below. An earlier pass declared this () and made
  * the copy direction come out backwards (lw s4 then paddub a0,s4). */
 void SetEnv__FP13sceVif1Packet(sceVif1Packet *vif1_packet);
-int func_01DD2220();
-int func_01DC8EB0();
-int EditLoop__Fv();
-int func_01DAF970();
-int MenuLoop__Fv();
-int func_01DC1510();
-int MemCheckLoop__Fv();
-int TrialEndLoop__Fv();
-int LoopSave__Fv();
-int LangsetLoop__Fv();
-int func_01DAD980(int mode);
+int  func_01DD2220();
+int  func_01DC8EB0();
+int  EditLoop__Fv();
+int  func_01DAF970();
+int  MenuLoop__Fv();
+int  func_01DC1510();
+int  MemCheckLoop__Fv();
+int  TrialEndLoop__Fv();
+int  LoopSave__Fv();
+int  LangsetLoop__Fv();
+int  func_01DAD980(int mode);
 void MGEndFrame__Fv();
-int CheckTrialEnd__Fv();
+int  CheckTrialEnd__Fv();
 /* No arguments (mangled __Fv); retail's spin loop at 0x141D10 sets up no
  * argument registers. An earlier pass passed `d2` here -- `d2` is in fact
  * never referenced by retail main() at all (no -0x72B4($gp) access
  * anywhere in ref/asm/split/main/main.s). */
-int ReadBGSync__Fv();
+int  ReadBGSync__Fv();
 void TrialStart__Fv();
 }
 
@@ -224,7 +223,7 @@ void TrialStart__Fv();
  * touched by main() but must still be defined, so this object's .sbss covers
  * their retail byte range. See re/ai/build_pipeline.md. */
 /** Top-level game mode currently being updated. */
-s32 mode;
+s32         mode;
 sceDmaChan *d1;
 sceDmaChan *d2;
 sceDmaChan *d8;
@@ -266,14 +265,16 @@ static char *binfile[15] = {"TITLE.BIN", "TITLE.BIN", "", "DUN.BIN", "DUN.BIN",
 static char now_binfile[128] = "";
 
 void LoadOverlay(int mode) {
-    if (binfile[mode][0] == '\0')
+    if (binfile[mode][0] == '\0') {
         return;
-    if (strcmp(binfile[mode], now_binfile) == 0)
+    }
+    if (strcmp(binfile[mode], now_binfile) == 0) {
         return;
+    }
 
     strcpy(now_binfile, binfile[mode]);
     void *address = _overlay_group_addresses[1];
-    char path[128] = "cdrom0:\\";
+    char  path[128] = "cdrom0:\\";
     strcat(path, binfile[mode]);
     strcat(path, ";1");
     mwLoadOverlay(path, address);
@@ -325,15 +326,15 @@ sceVu0FMATRIX light = {
     {0.578f, 0.0f, 0.0f, 0.0f},
     {0.578f, 0.0f, 0.0f, 0.0f},
     {0.578f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f,   0.0f, 0.0f, 0.0f},
 };
 
 /** Initial parallel-light colour matrix used by the renderer. */
 sceVu0FMATRIX lightcolor = {
     {120.0f, 120.0f, 120.0f, 128.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f,   0.0f,   0.0f,   0.0f  },
+    {0.0f,   0.0f,   0.0f,   0.0f  },
+    {0.0f,   0.0f,   0.0f,   0.0f  },
 };
 
 /** Initial ambient-light colour used by the renderer. */
@@ -353,11 +354,12 @@ void SetEnv(sceVif1Packet *packet) {
 }
 
 void LoadSndTxt() {
-    u_char work[48000];
+    u_char  work[48000];
     u_char *buffer = work;
-    int offset = (int) buffer % 64;
-    if (offset)
+    int     offset = (int) buffer % 64;
+    if (offset) {
         buffer += 64 - offset;
+    }
     CSnd.LoadSeInf("sound/tbl/setbl.txt", (u_int *) buffer);
     CSnd.LoadSqInf("sound/tbl/sqtbl.txt", (u_int *) buffer);
     SndInitSeTable();
@@ -367,9 +369,10 @@ void PlayTimeCountFlag(int flag) {
     play_time_count = flag;
 }
 
-int PlayTimeCount(int) {
-    if (play_time_count)
+int PlayTimeCount(int unused) {
+    if (play_time_count) {
         SaveData->AddPlayTime(1);
+    }
 }
 
 void LoadSystemMessage() {
@@ -378,11 +381,13 @@ void LoadSystemMessage() {
     SystemMesBuffer.Align64();
     SystemMes = (short *) &SystemMesBuffer.block[SystemMesBuffer.used];
     char name[64] = "meswin/system";
-    if (LanguageCode > 0)
+    if (LanguageCode > 0) {
         sprintf(name, "meswin/system_%d", LanguageCode);
+    }
     strcat(name, ".mes");
-    if (!LoadFile2(name, SystemMes, &size, 0))
+    if (!LoadFile2(name, SystemMes, &size, 0)) {
         LoadFile("meswin/systeme.bin", SystemMes, &size);
+    }
     SystemMesBuffer.Alloc((size >> 4) + 1);
     InitSystemMes();
 }
@@ -405,11 +410,11 @@ int main(int argc, const char **argv, const char **envp) {
      * other signed-byte flag in this codebase (see CLAUDE.md on `s8`
      * being plain `char`, signed by default on this target). */
     static s32 depth;
-    static s8 init;
+    static s8  init;
     static s32 wt;
-    static s8 init2;
+    static s8  init2;
     static s32 init_flag;
-    static s8 init3;
+    static s8  init3;
 
     /* Locals in retail's callee-saved order; MWCC assigns s0,s1,... to
      * top-level locals in declaration order:
@@ -425,14 +430,14 @@ int main(int argc, const char **argv, const char **envp) {
      *                      callee-saved register in the second switch's case 12,
      *                      so this is declared last to take the last slot
      */
-    int loop_result;
-    int skip_title;
-    int i;
-    int exist_data;
-    int j;
-    int idle_result;
+    int  loop_result;
+    int  skip_title;
+    int  i;
+    int  exist_data;
+    int  j;
+    int  idle_result;
     char chara_names[6][64];
-    int in_range;
+    int  in_range;
 
     mwInit(argc, argv, envp);
 #ifdef PAL
@@ -675,7 +680,7 @@ int main(int argc, const char **argv, const char **envp) {
          * numbering matches retail (`lw v0,MapNo; lw v1,SaveData;
          * sw v0,0x1c8(v1)`). See re/ai/main.md. */
         {
-            s32 map_no = MapNo;
+            s32   map_no = MapNo;
             char *save_bytes = (char *) SaveData;
             *(s32 *) (save_bytes + 0x1C8) = map_no;
         }
@@ -881,8 +886,7 @@ int main(int argc, const char **argv, const char **envp) {
             MGEndFrame__Fv();
 
 #ifdef PAL
-            if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0 &&
-                GamePad.Down2(1024) != 0) {
+            if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0 && GamePad.Down2(1024) != 0) {
                 DebugMode = !DebugMode;
             }
 #else
@@ -978,8 +982,8 @@ void MenuInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" HALF_BUFFER_HEIGHT_STR "#4"},
                                            {"img/ankfont.img"},
                                            {gamemode_empty_string}};
-    float background;
-    int result;
+    float                   background;
+    int                     result;
     InitializeDataBuffer();
     SetDataBuffer(&TextureData, 100000);
     SetPacketReadBuffer(10000, 100000);
@@ -1019,7 +1023,7 @@ int MenuLoop() {
 
     DebugFont.length = 0;
 
-    int i = 0;
+    int        i = 0;
     static int select = 0;
 
     while (menu[i][0] != 0) {
@@ -1129,32 +1133,23 @@ int MenuLoop() {
     }
 
 #ifdef PAL
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
-                                "Dark Cloud Ver3.07 2001/07/12\n");
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "Dark Cloud Ver3.07 2001/07/12\n");
 #else
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
-                                "Dark Cloud Ver2.17 2001/05/11\n");
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "Dark Cloud Ver2.17 2001/05/11\n");
 #endif
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n", cursor[select == 0],
-                                menu[0]);
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[1], cursor[select == 1],
-                                edit_map + 1);
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[2], cursor[select == 2],
-                                sub_map + 1);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n", cursor[select == 0], menu[0]);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[1], cursor[select == 1], edit_map + 1);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[2], cursor[select == 2], sub_map + 1);
 
     for (i = 3; i < 6; i++) {
-        DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n",
-                                    cursor[i == select], menu[i]);
+        DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n", cursor[i == select], menu[i]);
     }
 
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select],
-                                event_no);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select], event_no);
     i++;
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select],
-                                mc_mode);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select], mc_mode);
     i++;
-    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select],
-                                LanguageCode);
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[i], cursor[i == select], LanguageCode);
 
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     DebugFont.Draw();
@@ -1231,8 +1226,9 @@ void MemCheckInit() {
     TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
-    if (sceMcInit())
+    if (sceMcInit()) {
         printf("libmc initialize faild\n");
+    }
     mem_chk_mode = 0;
     check_cancel = 2;
     taiken_cnt = 0;
@@ -1243,7 +1239,7 @@ void MemCheckInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
                                            {"img_1/memory.img"},
                                            {gamemode_empty_string}};
-    int result;
+    int                     result;
     InitializeDataBuffer();
     SetDataBuffer(&TextureData, 100000);
     SetPacketReadBuffer(10000, 100000);
@@ -1251,8 +1247,9 @@ void MemCheckInit() {
     result = TexManager.EnterTextureFile(texdata);
     TexManager.LoadTextureBlock(-1, read_buffer);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
-    if (sceMcInit())
+    if (sceMcInit()) {
         printf("libmc initialize faild\n");
+    }
     mem_chk_mode = 0;
     check_cancel = 2;
     taiken_cnt = 0;
@@ -1266,8 +1263,9 @@ int MemCheckLoop() {
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     switch (mem_chk_mode) {
         case 0:
-            if (check_cancel > 0)
+            if (check_cancel > 0) {
                 break;
+            }
             switch (SaveEnableCheck()) {
                 case 1:
                     return 1;
@@ -1298,8 +1296,9 @@ int MemCheckLoop() {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
-            if (GamePad.Down(64))
+            if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
+            }
             break;
         }
         case 3: {
@@ -1318,16 +1317,18 @@ int MemCheckLoop() {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
-            if (GamePad.Down(64))
+            if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
+            }
             break;
         }
         case 4:
             return 1;
     }
     check_cancel--;
-    if (check_cancel < 0)
+    if (check_cancel < 0) {
         check_cancel = 0;
+    }
     return 0;
 }
 #else
@@ -1336,8 +1337,9 @@ int MemCheckLoop() {
     TexManager.ReloadTexture(GetVif1Packet(), 0);
     switch (mem_chk_mode) {
         case 0:
-            if (check_cancel > 0)
+            if (check_cancel > 0) {
                 break;
+            }
             switch (SaveEnableCheck()) {
                 case 1:
                     return 1;
@@ -1362,8 +1364,9 @@ int MemCheckLoop() {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
-            if (GamePad.Down(64))
+            if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
+            }
             break;
         }
         case 3: {
@@ -1377,27 +1380,31 @@ int MemCheckLoop() {
                 mem_chk_mode = 0;
                 check_cancel = 3;
             }
-            if (GamePad.Down(64))
+            if (GamePad.Down(64)) {
                 mem_chk_mode = 4;
+            }
             break;
         }
         case 4:
             return 1;
     }
     check_cancel--;
-    if (check_cancel < 0)
+    if (check_cancel < 0) {
         check_cancel = 0;
+    }
     return 0;
 }
 #endif
 
 void InitSave() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" SCREEN_HEIGHT_STR "#4", 1},
-                                           {"#mes_frame_buff#640#" SCREEN_HEIGHT_STR "#4", 26},
-                                           {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26},
-                                           {"#fontbase#512#256#1", 26},
-                                           {"#fuki256#128#128#1", 26},
-                                           {"meswin/gaiji.img", 26}};
+    static LOADTEXTURE_INFO texdata[64] = {
+        {"#frame_buff#640#" SCREEN_HEIGHT_STR "#4",         1 },
+        {"#mes_frame_buff#640#" SCREEN_HEIGHT_STR "#4",     26},
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26},
+        {"#fontbase#512#256#1",                             26},
+        {"#fuki256#128#128#1",                              26},
+        {"meswin/gaiji.img",                                26}
+    };
     u_int *buffer;
     InitializeDataBuffer();
     SetDataBuffer(&TextureData, 100000);
@@ -1429,16 +1436,16 @@ int CheckTrialEnd() { return 0; }
 
 /* MAP_NPC_MODEL's members as its copy assignment reaches them; the tail is alignment padding. */
 struct GeneratedNpcModel {
-    CCharacter chara;      /**< Draws and moves the character. */
-    float pos[4];          /**< World position of the character. */
-    float rotation[4];     /**< Angle of the character about each axis. */
-    s32 parts_no;          /**< Index of the map part that the character stands on. */
-    s32 used;              /**< 1 if the slot is in use. */
-    s32 unk_11D8;          /**< 0 to hide the character. */
-    s32 unk_11DC;          /**< Motion the character plays; -1 to keep it still. */
-    float draw_pos[16][4]; /**< Position of each copy of the character to draw. */
-    s32 draw_param[16];    /**< Parameter of each copy of the character to draw. */
-    s32 draw_num;          /**< Number of copies of the character to draw. */
+    CCharacter chara;           /**< Draws and moves the character. */
+    float      pos[4];          /**< World position of the character. */
+    float      rotation[4];     /**< Angle of the character about each axis. */
+    s32        parts_no;        /**< Index of the map part that the character stands on. */
+    s32        used;            /**< 1 if the slot is in use. */
+    s32        unk_11D8;        /**< 0 to hide the character. */
+    s32        unk_11DC;        /**< Motion the character plays; -1 to keep it still. */
+    float      draw_pos[16][4]; /**< Position of each copy of the character to draw. */
+    s32        draw_param[16];  /**< Parameter of each copy of the character to draw. */
+    s32        draw_num;        /**< Number of copies of the character to draw. */
 };
 
 /**
@@ -1463,8 +1470,6 @@ static void CopyCharacter(CCharacter &dest, const CCharacter &src) {
     dest = src;
 }
 
-static void CopyNpcModel(GeneratedNpcModel &dest, const GeneratedNpcModel &src);
-static void CopyCharacter(CCharacter &dest, const CCharacter &src);
 #pragma pop
 
 CObject &CObject::operator=(const CObject &source) {
@@ -1492,21 +1497,21 @@ CObject &CObject::operator=(const CObject &source) {
 
 /* CWater's members as its copy assignment reaches them. */
 struct DraftWaterLayout {
-    s32 rows;                /**< Grid rows the surface is divided into. */
-    s32 columns;             /**< Grid columns the surface is divided into. */
-    float *height;           /**< Wave heights the surface currently draws from. */
-    float height_buffers[2]; /**< The two wave-height buffers. */
-    sceVu0FVECTOR vertex[4]; /**< The four corners of the surface. */
-    u_int *packet;           /**< First VU packet of the surface. */
-    float buffer_packets[2]; /**< VU packets for each display buffer. */
-    CVisualPolyVu1 visual;   /**< Draws the polygons of the surface. */
-    float color;             /**< Red, green, blue and alpha channels of the surface. */
-    float wave_speed;        /**< Speed the ripples travel across the grid at. */
-    float damping;           /**< Rate the ripples lose height at. */
-    float height_scale;      /**< Scale from a wave height to the vertical displacement of its vertex. */
-    float distortion;        /**< Scale from a height difference to the texture-coordinate shift it causes. */
-    s32 tags_built;          /**< Set once both packets hold their tags. */
-    CFrameVu1 frame;         /**< Frame that places the surface. */
+    s32            rows;              /**< Grid rows the surface is divided into. */
+    s32            columns;           /**< Grid columns the surface is divided into. */
+    float         *height;            /**< Wave heights the surface currently draws from. */
+    float          height_buffers[2]; /**< The two wave-height buffers. */
+    sceVu0FVECTOR  vertex[4];         /**< The four corners of the surface. */
+    u_int         *packet;            /**< First VU packet of the surface. */
+    float          buffer_packets[2]; /**< VU packets for each display buffer. */
+    CVisualPolyVu1 visual;            /**< Draws the polygons of the surface. */
+    float          color;             /**< Red, green, blue and alpha channels of the surface. */
+    float          wave_speed;        /**< Speed the ripples travel across the grid at. */
+    float          damping;           /**< Rate the ripples lose height at. */
+    float          height_scale;      /**< Scale from a wave height to the vertical displacement of its vertex. */
+    float          distortion;        /**< Scale from a height difference to the texture-coordinate shift it causes. */
+    s32            tags_built;        /**< Set once both packets hold their tags. */
+    CFrameVu1      frame;             /**< Frame that places the surface. */
 };
 
 CWater &CWater::operator=(CWater &src) {
@@ -1535,15 +1540,15 @@ CVisualPolyVu1 &CVisualPolyVu1::operator=(const CVisualPolyVu1 &src) {
  */
 /* The full layout: CVisual's words, then the vector-unit block and its size. */
 struct DraftVisualVu1Layout {
-    CVisual base;   /**< The base visual's words. */
-    s32 vu_state_0; /**< First word of the vector-unit visual's own state. */
-    s32 vu_state_1; /**< Second word of the vector-unit visual's own state. */
-    u_int *vu_data; /**< Vector-unit packet the visual is drawn from. */
-    u_int vu_size;  /**< Size of the vector-unit packet in quadwords. */
+    CVisual base;       /**< The base visual's words. */
+    s32     vu_state_0; /**< First word of the vector-unit visual's own state. */
+    s32     vu_state_1; /**< Second word of the vector-unit visual's own state. */
+    u_int  *vu_data;    /**< Vector-unit packet the visual is drawn from. */
+    u_int   vu_size;    /**< Size of the vector-unit packet in quadwords. */
 };
 
 CVisualVu1 &CVisualVu1::operator=(const CVisualVu1 &src) {
-    DraftVisualVu1Layout *dst_layout = (DraftVisualVu1Layout *) this;
+    DraftVisualVu1Layout       *dst_layout = (DraftVisualVu1Layout *) this;
     const DraftVisualVu1Layout *src_layout = (const DraftVisualVu1Layout *) &src;
     dst_layout->base = src_layout->base;
     dst_layout->vu_state_0 = src_layout->vu_state_0;
@@ -1651,13 +1656,10 @@ extern "C" void *__ct__10CCharacterFv(void *self) {
     GeneratedMotionParamCtor(&chara->motion_type);
     GeneratedMotionParamCtor(&chara->shadow_motion_type);
     void *params = ((CCharacter *) self)->motion_storage;
-    __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL,
-                      sizeof(MotionParam), CHARA_MOTION_MAX);
+    __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL, sizeof(MotionParam), CHARA_MOTION_MAX);
     params = ((CCharacter *) self)->shadow_motion_storage;
-    __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL,
-                      sizeof(MotionParam), CHARA_MOTION_MAX);
-    __construct_array(chara->point_light, GeneratedFakePointLightCtor, NULL, sizeof(CFakePointLight),
-                      CHARA_POINT_LIGHT_MAX);
+    __construct_array(params, (MWRuntimeObjectFunction) GeneratedMotionParamCtor, NULL, sizeof(MotionParam), CHARA_MOTION_MAX);
+    __construct_array(chara->point_light, GeneratedFakePointLightCtor, NULL, sizeof(CFakePointLight), CHARA_POINT_LIGHT_MAX);
     chara->Initialize();
     return self;
 }

@@ -34,8 +34,7 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
  * @address 0x1262B0
  * @size 0x4BC
  */
-CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
-                       char **model_name, char **texture_name);
+CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *alloc, int attr, char **double_names, char **retain_names);
 
 /**
  * Puts the camera on the two named frames of a model's path.
@@ -44,8 +43,7 @@ CFrameVu1 *LoadMDSFile(unsigned int *data, CDataAlloc2<1> *buffer, int flags,
  * @address 0x1B6E80
  * @size 0xA4
  */
-void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
-                       char *reference_name);
+void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name);
 
 /**
  * Gives the world position of one frame of a model.
@@ -110,7 +108,7 @@ void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int 
  * @address 0x1B7640
  * @size 0x48
  */
-void BtBattleMusic_Stop(void);
+void BtBattleMusic_Stop();
 
 /**
  * The model file extension.

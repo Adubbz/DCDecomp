@@ -9,15 +9,15 @@ class CTexture;
  */
 class CCandleEffect {
 public:
-    int enabled;           /**< Whether the candle sprite can be drawn. */
-    float animation_frame; /**< Fractional frame within the eight-frame flame cycle. */
-    CTexture *texture;     /**< Texture containing the 4-by-2 flame atlas. */
-    u32 unk_0c;
-    float position[4]; /**< Homogeneous world-space centre of the flame. */
-    float half_width;  /**< Half of the sprite's world-space width. */
-    float half_height; /**< Half of the sprite's world-space height. */
-    u32 unk_28;
-    u32 unk_2c;
+    int       enabled;         /**< Whether the candle sprite can be drawn. */
+    float     animation_frame; /**< Fractional frame within the eight-frame flame cycle. */
+    CTexture *texture;         /**< Texture containing the 4-by-2 flame atlas. */
+    u32       unk_0c;
+    float     position[4]; /**< Homogeneous world-space centre of the flame. */
+    float     half_width;  /**< Half of the sprite's world-space width. */
+    float     half_height; /**< Half of the sprite's world-space height. */
+    u32       unk_28;
+    u32       unk_2c;
 
     /**
      * Restores the enabled candle to its initial animation state.
@@ -26,7 +26,7 @@ public:
      * @address 0x163A30
      * @size 0x24
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Constructs a candle effect in its initial state.
@@ -35,7 +35,7 @@ public:
      * @address 0x163A60
      * @size 0x30
      */
-    CCandleEffect(void);
+    CCandleEffect();
 
     /**
      * Assigns the flame-atlas texture.
@@ -71,7 +71,7 @@ public:
      * @address 0x163AE0
      * @size 0x38
      */
-    void Step(void);
+    void Step();
 
     /**
      * Draws the current flame-atlas cell as an alpha-blended billboard.
@@ -80,7 +80,7 @@ public:
      * @address 0x163B20
      * @size 0x1F4
      */
-    void Draw(void);
+    void Draw();
 };
 
 STATIC_ASSERT(sizeof(CCandleEffect) == 0x30);

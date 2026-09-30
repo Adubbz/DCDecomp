@@ -6,8 +6,8 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
-MC_DIR_ENTRY SaveFileInfo[MC_DIR_ENTRY_MAX];
-char mcdmybuf[0x40];
+MC_DIR_ENTRY  SaveFileInfo[MC_DIR_ENTRY_MAX];
+char          mcdmybuf[0x40];
 SV_CONFIG_SYS sys_config;
 
 void InitSaveFileInfoTbl() {
@@ -98,8 +98,8 @@ int CMemoryCardAccess::InitForMC() {
 void CMemoryCardAccess::SetBuff(char *buffer) {
     char *data;
     char *sum;
-    u32 i;
-    char total;
+    u32   i;
+    char  total;
 
     buffer = (char *) ((((int) buffer >> 6) + 1) << 6);
     this->save_buffer = (CSaveData *) buffer;
@@ -131,19 +131,19 @@ void CMemoryCardAccess::SetIconData(MC_ICON_DATA *icon) {
 
 void CMemoryCardAccess::MakeMcIconSysInfo() {
     int bg_color[4][4] = {
-        {0x80, 0, 0x40, 0},
-        {0, 0x80, 0, 0},
-        {0, 0, 0x80, 0},
+        {0x80, 0,    0x40, 0},
+        {0,    0x80, 0,    0},
+        {0,    0,    0x80, 0},
         {0x80, 0x80, 0x80, 0},
     };
     float light_dir[3][4] = {
-        {0.5f, 0.5f, 0.5f, 0.0f},
-        {0.0f, -0.4f, -0.1f, 0.0f},
-        {-0.5f, -0.5f, 0.5f, 0.0f},
+        {0.5f,  0.5f,  0.5f,  0.0f},
+        {0.0f,  -0.4f, -0.1f, 0.0f},
+        {-0.5f, -0.5f, 0.5f,  0.0f},
     };
     float light_color[3][4] = {
         {0.48f, 0.48f, 0.03f, 0.0f},
-        {0.5f, 0.33f, 0.2f, 0.0f},
+        {0.5f,  0.33f, 0.2f,  0.0f},
         {0.14f, 0.14f, 0.38f, 0.0f},
     };
     float ambient[4] = {0.5f, 0.5f, 0.5f, 0.0f};
@@ -247,10 +247,10 @@ char *CMemoryCardAccess::GetVersion() {
 }
 
 int CMemoryCardAccess::SearchMcType() {
-    static int old_format;
+    static int    old_format;
     MC_CARD_INFO *card;
-    int cmd;
-    int status;
+    int           cmd;
+    int           status;
 
     card = &this->card[this->port];
     if (this->step == 0) {
@@ -322,12 +322,12 @@ int CMemoryCardAccess::SearchMcType() {
 
 int CMemoryCardAccess::GetDir() {
     MC_CARD_INFO *card;
-    char name[0x40];
-    char path[0x40];
-    char dir[0x80];
-    char pattern[0x48];
-    int cmd;
-    int result;
+    char          name[0x40];
+    char          path[0x40];
+    char          dir[0x80];
+    char          pattern[0x48];
+    int           cmd;
+    int           result;
 
     card = &this->card[this->port];
     switch (this->step) {
@@ -531,8 +531,8 @@ int CMemoryCardAccess::SaveSysConfig() {
 
 int CMemoryCardAccess::Write() {
     char buffer[0x198];
-    int result;
-    int cmd;
+    int  result;
+    int  cmd;
 
     result = 0;
     sceMcChdir(this->port, 1, "/", NULL);
@@ -550,13 +550,13 @@ int CMemoryCardAccess::Write() {
 }
 
 int CMemoryCardAccess::Convert() {
-    int result;
-    int cmd;
+    int  result;
+    int  cmd;
     char src_name[0x80];
     char dst_name[0x80];
     char buffer[0x19000];
-    int i;
-    int fd;
+    int  i;
+    int  fd;
 
     sceMcChdir(this->port, 1, "/", "");
     sceMcSync(MC_WAIT, &cmd, &result);
@@ -609,10 +609,10 @@ int CMemoryCardAccess::Convert() {
 }
 
 int CMemoryCardAccess::MakeDir() {
-    int status = 0;
+    int        status = 0;
     static int iconNo = -1;
-    char path[128];
-    int cmd;
+    char       path[128];
+    int        cmd;
 
     switch (this->step) {
         case 0:
@@ -804,14 +804,14 @@ int CMemoryCardAccess::MakeDir() {
 }
 
 int CMemoryCardAccess::GetSaveFileInfoFromMc(int file_no) {
-    char name[0x28];
-    int cmd;
-    int result;
-    char *data;
+    char           name[0x28];
+    int            cmd;
+    int            result;
+    char          *data;
     SAVEDATA_INFO *info;
-    int i;
+    int            i;
     MC_ERROR_INFO *error;
-    int dungeon;
+    int            dungeon;
 
     info = &this->file_info[file_no];
     switch ((this->step - 1) % 4) {
@@ -972,12 +972,12 @@ int CMemoryCardAccess::CheckFileNo(int file_no) {
 }
 
 int CMemoryCardAccess::SaveToMc(int file_no) {
-    char name[0x20];
-    char pattern[0x48];
-    int result;
-    int cmd;
-    int status;
-    int i;
+    char          name[0x20];
+    char          pattern[0x48];
+    int           result;
+    int           cmd;
+    int           status;
+    int           i;
     MC_CARD_INFO *card;
 
     strcpy(name, this->file_name);
@@ -1144,16 +1144,16 @@ int CMemoryCardAccess::SaveToMc(int file_no) {
 }
 
 int CMemoryCardAccess::LoadFromMc(int file_no) {
-    char name[0x80];
-    char version[0x20];
-    char saved_version[0x20];
-    int result;
-    int cmd;
-    int ok;
+    char  name[0x80];
+    char  version[0x20];
+    char  saved_version[0x20];
+    int   result;
+    int   cmd;
+    int   ok;
     char *data;
     char *sum;
-    char total;
-    int i;
+    char  total;
+    int   i;
 
     switch (this->step) {
         case 0:
@@ -1245,10 +1245,10 @@ int CMemoryCardAccess::LoadFromMc(int file_no) {
 }
 
 int CMemoryCardAccess::FormatForMc() {
-    int result;
+    int           result;
     MC_CARD_INFO *card;
-    int cmd;
-    int status;
+    int           cmd;
+    int           status;
 
     result = 0;
     card = &this->card[this->port];

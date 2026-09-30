@@ -5,10 +5,12 @@
 
 #ifndef PAL
 /** The Japanese and American dungeon image path prefixes, indexed by language. */
-char *LanguageStr[1][2] = {{"dun/img/jp/", "dun/img/us/"}};
+char *LanguageStr[1][2] = {
+    {"dun/img/jp/", "dun/img/us/"}
+};
 #endif
 
-void CDngMessageMan::LimmitZone(void) {
+void CDngMessageMan::LimmitZone() {
     int zone = UserStatus->res_limit_zone_current;
 
     if (zone >= 0 && zone < 6) {

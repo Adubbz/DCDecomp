@@ -58,22 +58,18 @@ char *charaNameTbl[6] = {
 };
 // clang-format on
 
-int BtGetTreasurebox_Sled;
-int BtGetAtraBoll_Sled;
-int TreasureboxBig_itemNo;
-int TreasureboxBig_itemType;
+int   BtGetTreasurebox_Sled;
+int   BtGetAtraBoll_Sled;
+int   TreasureboxBig_itemNo;
+int   TreasureboxBig_itemType;
 float TreasureboxBig_itemScale;
-int BtGetTreasureboxSmall_itemNo;
-int BtGetTreasureboxSmall_itemVolume;
-int BtAtraGetID;
-int BtAtraGetNo;
-int BtMiniChrSelecter_Sled;
-int BtMiniChrSel_Type;
-int BtMiniChrSelectNo;
-
-void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name);
-void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
-void getCharacterVector(float *vector, float pitch);
+int   BtGetTreasureboxSmall_itemNo;
+int   BtGetTreasureboxSmall_itemVolume;
+int   BtAtraGetID;
+int   BtAtraGetNo;
+int   BtMiniChrSelecter_Sled;
+int   BtMiniChrSel_Type;
+int   BtMiniChrSelectNo;
 
 /**
  * Computes the quantity represented by an acquired attachment.
@@ -86,7 +82,7 @@ void selectChrUnit(int chara_no, int reload) {
     char weapon2_name[64];
     char path[64];
     char effect_path[64];
-    int size;
+    int  size;
 
     printf("%d -> %d\n", UserStatus->cur_chara, chara_no);
     if (chara_no == UserStatus->cur_chara && reload == 0) {
@@ -97,11 +93,10 @@ void selectChrUnit(int chara_no, int reload) {
     wait_now_loading_vsync();
     size = (u_int) (((size >> 6) + 1) << 6) >> 2;
     u_int *weapon0 = &read_buffer[size];
-    int default_weapon = defWeapon[chara_no];
+    int    default_weapon = defWeapon[chara_no];
     BtGetWeaponNamePath3(weapon0_name, path, default_weapon);
     BtGetWeaponNamePath3(weapon1_name, path, defWeapon[chara_no] + 1);
-    BtGetWeaponNamePath3(weapon2_name, path,
-                         UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
+    BtGetWeaponNamePath3(weapon2_name, path, UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no);
     sprintf(path, "commenu/weapon/%s", weapon0_name);
     LoadFile(path, weapon0, &size);
     u_int *weapon1 = &weapon0[(u_int) (((size >> 6) + 1) << 6) >> 2];
@@ -131,7 +126,7 @@ void selectChrUnit(int chara_no, int reload) {
     nowUnitNow = UserStatus->cur_chara;
     if (UserStatus->CheckLife() == 0) {
         CUserStatus *user = UserStatus;
-        int cur_chara = user->cur_chara;
+        int          cur_chara = user->cur_chara;
         user->hp[cur_chara] = 1;
     }
 }
@@ -143,7 +138,7 @@ void selectChrUnit(int chara_no, int reload) {
  * @address 0x1D13A0
  * @size 0x4C
  */
-void LoadActiveItemIcon(void) {
+void LoadActiveItemIcon() {
     unsigned int *buffer = read_buffer;
     LoadFileMenuData("itemlst.img", buffer);
     wait_now_loading_vsync();
@@ -162,7 +157,7 @@ void BtGetTreasureboxBig_Init() {
     u_char *mds;
     u_char *img;
     u_char *chr;
-    int item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
+    int     item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
     if (((CDngStatusData *) UserStatus)->CheckWeaponRot(item_no) >= 10) {
@@ -204,9 +199,9 @@ void BtGetTreasureboxBig_Init() {
     char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
                             "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
                             "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
-    char model_path[64];
-    char texture_path[64];
-    int size;
+    char  model_path[64];
+    char  texture_path[64];
+    int   size;
 
     TreasureboxBig_itemNo = item_no;
     NowDngMap->events[iventActive].kind = -1;
@@ -251,7 +246,7 @@ void BtGetTreasureboxBig_Init() {
 int BtGetTreasureboxBig_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR item_position;
-    int done = 0;
+    int           done = 0;
 
     switch (BtGetTreasurebox_Sled) {
         case 0:
@@ -408,7 +403,7 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
     u_char *mds;
     u_char *img;
     u_char *chr;
-    int item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
+    int     item_no = NowDngMap->boxes[NowDngMap->events[iventActive].index].item_no;
 
     ResetMovePower();
     int refusal = ((CDngStatusData *) UserStatus)->CheckItemGet(item_no);
@@ -442,9 +437,9 @@ void BtGetTreasureboxSmall_Init(int dungeon) {
     char *chara_files[6] = {"dun/mainchara/c01d_ex00.chr", "dun/mainchara/c04b_ex00.chr",
                             "dun/mainchara/c06b_ex00.chr", "dun/mainchara/c05a_ex00.chr",
                             "dun/mainchara/c10b_ex00.chr", "dun/mainchara/c18a_ex00.chr"};
-    char model_path[64];
-    char texture_path[64];
-    int size;
+    char  model_path[64];
+    char  texture_path[64];
+    int   size;
 
     NowDngMap->events[iventActive].kind = -1;
     if (ITEM_NAME_TBL_NEW[item_no - ITEM_ATTACH_START] == NULL) {
@@ -649,20 +644,16 @@ void BtAtraGetShort_Init() {
     BtCashBuffer.limit = 0x445C0;
     BtCashBuffer.used = 0;
     StartReadBG();
-    LoadFileBG(BtAtraShortCharaFile,
-               (u_long128 *) (itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)),
-               &size);
+    LoadFileBG(BtAtraShortCharaFile, (u_long128 *) (itemOpenItemChr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
-    LoadFileBG(BtAtraShortEffectFile,
-               (u_long128 *) (shortAtraEffectPtr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)),
-               &size);
+    LoadFileBG(BtAtraShortEffectFile, (u_long128 *) (shortAtraEffectPtr = (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16)), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     SndSPSeLoadBG(1, (u_int *) (BtCashBuffer.base + BtCashBuffer.used * 16), &size);
     BtCashBuffer.Alloc((((size >> 6) + 1) << 6) >> 4);
     DngMessMan.enabled = 0;
     ResetMovePower();
     CUserStatus *status = UserStatus;
-    int one = 1;
+    int          one = 1;
     status->step_disable = one;
     BtAtraGetNo = iventActive;
     iventActive = -1;
@@ -681,7 +672,7 @@ char BtAtraShortEffectFile[] __attribute__((section(".rodata"))) = "dun/effect/s
  */
 int BtAtraGetShort_Loop(int map_no, int floor) {
     sceVu0FVECTOR position;
-    int done = -1;
+    int           done = -1;
 
     switch (BtGetAtraBoll_Sled) {
         case 0:
@@ -705,7 +696,7 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
                 shortAtraEffect.SetMotion(0, 6);
                 atraGetStatusRate__2 = 0.0f;
                 CDngStatusData *status = (CDngStatusData *) UserStatus;
-                int atra_id = status->atra_registry[map_no][NowDngMap->atra[index].atra_no].id;
+                int             atra_id = status->atra_registry[map_no][NowDngMap->atra[index].atra_no].id;
                 BtAtraGetID = atra_id;
                 NowDngMap->atra[NowDngMap->events[BtAtraGetNo].index].used = 0;
                 NowDngMap->events[BtAtraGetNo].kind = -1;
@@ -815,7 +806,7 @@ void BtMiniChrSelect_Init(int type) {
  */
 int BtMiniChrSelect_Loop() {
     static int frameWait;
-    int done = 0;
+    int        done = 0;
 
     switch (BtMiniChrSelecter_Sled) {
         case 0:
@@ -866,7 +857,7 @@ int escape_sled;
  * @address 0x1D3400
  * @size 0x38
  */
-void BtMiniItemSelect(void) {
+void BtMiniItemSelect() {
     SetMIniMapStatus(0);
     DngMessMan.enabled = 0;
     BtMiniItemSelect_Sled = 0;
@@ -880,7 +871,7 @@ void BtMiniItemSelect(void) {
  * @address 0x1D3440
  * @size 0x118
  */
-int BtMiniItemSelect_Loop(void) {
+int BtMiniItemSelect_Loop() {
     int done = 0;
 
     switch (BtMiniItemSelect_Sled) {
@@ -928,11 +919,11 @@ int BtMiniItemSelect_Loop(void) {
  * @size 0x13C
  */
 void BtGetGateKey_Init(int item_no) {
-    char model_path[64];
-    char texture_path[64];
+    char    model_path[64];
+    char    texture_path[64];
     u_char *model;
     u_char *texture;
-    int size;
+    int     size;
 
     GateKey_itemNo = item_no;
     BtGetItemNamePath(model_path, texture_path, item_no);
@@ -971,7 +962,7 @@ int BtGetGateKey_Loop() {
     sceVu0FVECTOR eye;
     sceVu0FVECTOR ref;
     sceVu0FVECTOR ahead;
-    int done = 0;
+    int           done = 0;
 
     switch (GateKey_Sled) {
         case 0:
@@ -1065,7 +1056,7 @@ void BtGetAttach_Init(int dungeon, int item_no) {
  * @address 0x1D3B00
  * @size 0xF0
  */
-int BtGetAttach_Loop(void) {
+int BtGetAttach_Loop() {
     int done = 0;
 
     switch (GateKey_Sled) {
@@ -1103,9 +1094,9 @@ int BtGetAttach_Loop(void) {
  * @address 0x1D3BF0
  * @size 0x14C
  */
-void BtEscape_Init(void) {
+void BtEscape_Init() {
     u_char *chr;
-    int size;
+    int     size;
 
     BtCashBuffer.base = (u_char *) read_buffer;
     BtCashBuffer.limit = 0x445C0;
@@ -1145,7 +1136,7 @@ void BtEscape_Init(void) {
 int BtEscape_Loop() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
-    int done = 0;
+    int           done = 0;
 
     switch (escape_sled) {
         case 0:
@@ -1183,15 +1174,15 @@ int BtEscape_Loop() {
  * @size 0x1B0
  */
 void BtSetActiveItemModel(u_int *buffer) {
-    u_int *texture;
-    int i;
-    int size;
+    u_int     *texture;
+    int        i;
+    int        size;
     ITEM_PACK *pack;
-    int item_no;
-    char model_path[64];
-    char texture_path[64];
-    int model_size;
-    int texture_size;
+    int        item_no;
+    char       model_path[64];
+    char       texture_path[64];
+    int        model_size;
+    int        texture_size;
     pack = &UserStatus->item_pack;
 
     for (i = 0; i < 3; i++) {
@@ -1481,7 +1472,7 @@ int ItemThrowStep(float *position, float *velocity) {
     }
     WorkBuffer__2->used = 0;
     CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(2000);
-    int hit_poly = CheckHit(polys, setCollisionData(NowDngMap, polys, position, 20.0f, 1.5f), position, next_position, hit_point, 1, 4);
+    int     hit_poly = CheckHit(polys, setCollisionData(NowDngMap, polys, position, 20.0f, 1.5f), position, next_position, hit_point, 1, 4);
     if (hit_poly >= 0) {
         sceVu0CopyVector(normal, polys[hit_poly].normal);
         sceVu0Normalize(normal, normal);

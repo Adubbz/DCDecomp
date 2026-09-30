@@ -42,24 +42,24 @@ struct DATA_HEADER_READ {
    pack can be walked without being told how many files it holds. */
 struct PACK_ENTRY {
     char name[64]; /**< Null-terminated file name; empty ends the table. */
-    int offset;    /**< Byte offset of the file data from this entry. */
-    int size;      /**< File size in bytes. */
-    int next;      /**< Byte offset of the next entry from this entry. */
+    int  offset;   /**< Byte offset of the file data from this entry. */
+    int  size;     /**< File size in bytes. */
+    int  next;     /**< Byte offset of the next entry from this entry. */
 };
 
 /* The index is turned into a tree of path components rather than a list of names, so a lookup
    costs one search per component instead of one comparison per entry. A directory carries no
    entry of its own and leaves the header null. */
 struct NAME_TREE {
-    char *name;        /**< Path component this node matches. */
-    DATA_HEADER *data; /**< File located by the path ending here, or null for a directory. */
-    NAME_TREE *child;  /**< First node one component deeper. */
-    NAME_TREE *next;   /**< Next node under the same parent. */
+    char        *name;  /**< Path component this node matches. */
+    DATA_HEADER *data;  /**< File located by the path ending here, or null for a directory. */
+    NAME_TREE   *child; /**< First node one component deeper. */
+    NAME_TREE   *next;  /**< Next node under the same parent. */
 };
 
 static char CurrentDir[256] = "y:/ps2/dc_data/";
 
-static int header_num;
+static int    header_num;
 static u_int *packfile_buff;
 #ifndef PAL
 static NAME_TREE *tree;
@@ -76,10 +76,7 @@ static u_char header_buff[0x40000];
 static BG_READ_INFO bg_read_info[32];
 
 static NAME_TREE *search_tree(NAME_TREE *node, char *name);
-static int CDRead(char *path, u_int *buffer, int *out_size);
-#ifdef PAL
-static char *create_word_tree(char *index_image, int size, char *tree_buffer);
-#endif
+static int        CDRead(char *path, u_int *buffer, int *out_size);
 
 #ifndef PAL
 static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
@@ -95,21 +92,22 @@ static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
 /* The index is searched as the list it is on the disc, one name comparison per entry. */
 static DATA_HEADER *SearchFile(char *path) {
     DATA_HEADER_READ *record;
-    int i;
+    int               i;
 
     record = (DATA_HEADER_READ *) header_buff;
     for (i = 0; i < header_num; i++, record++) {
-        if (strcasecmp((char *) record->name, path) == 0)
+        if (strcasecmp((char *) record->name, path) == 0) {
             return (DATA_HEADER *) record;
+        }
     }
     return 0;
 }
 #else
 static DATA_HEADER *SearchFile(char *path) {
     NAME_TREE *node;
-    char *word_end;
-    char ch;
-    char word[256];
+    char      *word_end;
+    char       ch;
+    char       word[256];
 
     word_end = word;
     node = tree;
@@ -117,8 +115,9 @@ static DATA_HEADER *SearchFile(char *path) {
         if (ch == '/') {
             *word_end = 0;
             node = search_tree(node, word);
-            if (!node)
+            if (!node) {
                 return 0;
+            }
             path++;
             word_end = word;
         } else {
@@ -129,8 +128,9 @@ static DATA_HEADER *SearchFile(char *path) {
     }
     *word_end = 0;
     node = search_tree(node, word);
-    if (!node)
+    if (!node) {
         return 0;
+    }
     return node->data;
 }
 #endif
@@ -138,8 +138,9 @@ static DATA_HEADER *SearchFile(char *path) {
 void InitReadBG() {
     int i;
 
-    for (i = 0; i < 32; i++)
+    for (i = 0; i < 32; i++) {
         bg_read_info[i].busy = 0;
+    }
     old_vsync = -1;
     start_vsync = 0;
 }
@@ -155,49 +156,58 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
 #endif
     int i;
 
-    if (out_size)
+    if (out_size) {
         *out_size = 0;
-    if (!name)
+    }
+    if (!name) {
         return 0;
-    if (*name == 0)
+    }
+    if (*name == 0) {
         return 0;
+    }
     info = bg_read_info;
     for (i = 0; i < 32; i++, info++) {
-        if (info->busy == 0)
+        if (info->busy == 0) {
             break;
+        }
     }
-    if (i == 32)
+    if (i == 32) {
         return 0;
+    }
     if ((int) buffer > 0x2000000) {
         printf("address error\n");
         for (;;)
             ;
     }
-    if ((int) buffer % 64)
+    if ((int) buffer % 64) {
         printf("/*/*/*/*/not 64byte align at %x %s\n", buffer, name);
+    }
 #ifdef PAL
     header = (DATA_HEADER_READ *) SearchFile(name);
 #else
     header = SearchFile(name);
 #endif
-    if (!header)
+    if (!header) {
         return 0;
+    }
     strcpy(info->name, name);
     info->busy = 1;
     info->id = 0;
     info->done = 0;
     info->buffer = buffer;
     info->size = header->size;
-    if (out_size)
+    if (out_size) {
         *out_size = header->size;
+    }
     info->sector = header->sector + data_sector;
     info->sectors = header->sectors;
     return 1;
 }
 
 BG_READ_INFO *GetReadBGFile(int index) {
-    if (index < 0 || index >= 32)
+    if (index < 0 || index >= 32) {
         return 0;
+    }
     return bg_read_info[index].busy ? &bg_read_info[index] : 0;
 }
 
@@ -209,13 +219,14 @@ void StartReadBG() {
    frames at best and the queue is walked from the front every time. */
 void ReadBG() {
     BG_READ_INFO *info;
-    sceCdRMode mode;
-    int vsync;
-    int i;
+    sceCdRMode    mode;
+    int           vsync;
+    int           i;
 
     vsync = MGGetVSyncCount();
-    if (old_vsync == vsync)
+    if (old_vsync == vsync) {
         return;
+    }
     old_vsync = vsync;
     start_vsync++;
     mode.trycount = 0;
@@ -224,20 +235,24 @@ void ReadBG() {
     info = bg_read_info;
     for (i = 0; i < 32; i++, info++) {
         if (info->busy) {
-            if (info->id != 0 && info->done == 0)
+            if (info->id != 0 && info->done == 0) {
                 break;
-            if (info->id == 0 && info->done == 0)
+            }
+            if (info->id == 0 && info->done == 0) {
                 break;
+            }
         }
     }
-    if (i == 32)
+    if (i == 32) {
         return;
+    }
     if (info->id == 0) {
         start_vsync = 0;
         info->id = sceCdRead(info->sector, info->sectors, info->buffer, &mode);
     } else if (info->id != 0) {
-        if (sceCdSync(1))
+        if (sceCdSync(1)) {
             return;
+        }
         if (sceCdGetError()) {
             printf("error at %s\n", info->name);
             info->id = 0;
@@ -248,21 +263,24 @@ void ReadBG() {
 }
 
 int ReadBGSync() {
-    int i;
+    int           i;
     BG_READ_INFO *info;
 
     ReadBG();
     info = bg_read_info;
     for (i = 0; i < 32; i++, info++) {
         if (info->busy) {
-            if (info->id == 0)
+            if (info->id == 0) {
                 break;
-            if (info->done == 0)
+            }
+            if (info->done == 0) {
                 break;
+            }
         }
     }
-    if (i == 32)
+    if (i == 32) {
         return 0;
+    }
     return 1;
 }
 
@@ -277,13 +295,15 @@ void BreakReadBG() {
 static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     NAME_TREE *found;
 
-    if (strcasecmp(node->name, name) == 0)
+    if (strcasecmp(node->name, name) == 0) {
         return node;
+    }
     node = node->child;
     while (node) {
         found = search_tree(node, name);
-        if (found)
+        if (found) {
             return found;
+        }
         node = node->next;
     }
     return 0;
@@ -315,16 +335,16 @@ static void add_tree(NAME_TREE *parent, NAME_TREE *child_node) {
 #ifndef PAL
 static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
     DATA_HEADER_READ *record;
-    NAME_TREE *parent;
-    char *bottom;
-    char *top;
-    int i;
-    char *cursor;
-    NAME_TREE *node;
-    char *path;
-    char *word_end;
-    char ch;
-    char word[256];
+    NAME_TREE        *parent;
+    char             *bottom;
+    char             *top;
+    int               i;
+    char             *cursor;
+    NAME_TREE        *node;
+    char             *path;
+    char             *word_end;
+    char              ch;
+    char              word[256];
 
     bottom = tree_buffer;
     top = tree_buffer + size - 1;
@@ -341,8 +361,9 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
         path = (char *) (record->name + (int) index_image);
         cursor = path;
         while ((ch = *cursor) != 0) {
-            if (ch == '\\')
+            if (ch == '\\') {
                 *cursor = '/';
+            }
             cursor++;
         }
         cursor = path;
@@ -352,8 +373,9 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
             ch = *cursor;
             if (ch == '/' || ch == 0) {
                 *word_end = 0;
-                if (word[0] == 0)
+                if (word[0] == 0) {
                     break;
+                }
                 node = search_tree(parent, word);
                 if (!node) {
                     node = (NAME_TREE *) bottom;
@@ -391,18 +413,19 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
 /* The index is read straight into the header buffer and kept as it is, with each entry's name
    offset turned into a pointer to the name and its path separators made forward slashes. */
 void InitCDFile() {
-    sceCdlFILE file;
-    int fd;
-    int size;
+    sceCdlFILE        file;
+    int               fd;
+    int               size;
     DATA_HEADER_READ *records;
-    int i;
+    int               i;
 
     packfile_buff = 0;
     while (1) {
         if (sceCdSearchFile(&file, "\\DATA.DAT;1")) {
             sceCdSync(0);
-            if (sceCdGetError() == 0)
+            if (sceCdGetError() == 0) {
                 break;
+            }
         }
     }
     data_sector = file.lsn;
@@ -420,28 +443,30 @@ void InitCDFile() {
     header_num = (u_int) records->name >> 5;
     for (i = 0; i < header_num; i++) {
         char *cursor;
-        char ch;
+        char  ch;
 
         records[i].name += (int) header_buff;
         for (cursor = (char *) records[i].name; (ch = *cursor) != 0; cursor++) {
-            if (ch == '\\')
+            if (ch == '\\') {
                 *cursor = '/';
+            }
         }
     }
 }
 #else
 void InitCDFile() {
-    char index_image[307200];
+    char       index_image[307200];
     sceCdlFILE file;
-    int fd;
-    int size;
+    int        fd;
+    int        size;
 
     packfile_buff = 0;
     while (1) {
         if (sceCdSearchFile(&file, "\\DATA.DAT;1")) {
             sceCdSync(0);
-            if (sceCdGetError() == 0)
+            if (sceCdGetError() == 0) {
                 break;
+            }
         }
     }
     data_sector = file.lsn;
@@ -481,12 +506,13 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
     char *cursor;
     char *device_end;
     char *file_name;
-    char ch;
-    int host_file;
-    char device[256];
+    char  ch;
+    int   host_file;
+    char  device[256];
 
-    if (out_size)
+    if (out_size) {
         *out_size = 0;
+    }
 
     /* The two devices the development build could read through instead of the disc. Nothing left
        here reads either one; they are what the test below was written against. */
@@ -496,16 +522,18 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
     cursor = path;
     device_end = device;
     while ((ch = *cursor) != 0) {
-        if (ch == ':')
+        if (ch == ':') {
             break;
+        }
         *device_end = ch;
         device_end++;
         cursor++;
     }
-    if (ch)
+    if (ch) {
         file_name = cursor + 1;
-    else
+    } else {
         file_name = path;
+    }
     /* Reading through the host machine is what the development tree was for, and the retail build
        keeps the question and does nothing with the answer. */
     if (memcmp(device, "host", 4) != 0 && memcmp(CurrentDir, "host:", 4) == 0) {
@@ -536,20 +564,23 @@ static int CDRead(char *path, u_int *buffer, int *out_size) {
 #else
     header = SearchFile(path);
 #endif
-    if (!header)
+    if (!header) {
         return 0;
+    }
     mode.trycount = 0;
     mode.spindlctrl = 1;
     mode.datapattern = 0;
     while (1) {
         if (sceCdRead(header->sector + data_sector, header->sectors, buffer, &mode)) {
             sceCdSync(0);
-            if (sceCdGetError() == 0)
+            if (sceCdGetError() == 0) {
                 break;
+            }
         }
     }
-    if (out_size)
+    if (out_size) {
         *out_size = header->size;
+    }
     return 1;
 }
 
@@ -557,8 +588,9 @@ int WriteFile(char *path, void *buffer, int size) {
     int fd;
 
     fd = sceOpen(path, SCE_WRONLY | SCE_CREAT | SCE_TRUNC);
-    if (fd < 0)
+    if (fd < 0) {
         return 0;
+    }
     sceWrite(fd, buffer, size);
     sceClose(fd);
     return 1;
@@ -580,25 +612,28 @@ u_int *GetPackFile(char *name, int *out_size) {
 /* A pack is looked up by the last component of a path, so a caller may name a file the way the
    archive spells it and still find it inside the pack it was loaded from. */
 u_int *GetPackFile(u_int *pack, char *name, int *out_size) {
-    char *base_name;
+    char       *base_name;
     PACK_ENTRY *entry;
-    u_int *data;
-    char ch;
+    u_int      *data;
+    char        ch;
 
-    if (!pack)
+    if (!pack) {
         return 0;
+    }
     base_name = name;
     while ((ch = *name) != 0) {
-        if (ch == '/')
+        if (ch == '/') {
             base_name = name + 1;
+        }
         name++;
     }
     entry = (PACK_ENTRY *) pack;
     while (entry->name[0]) {
         if (strcasecmp(entry->name, base_name) == 0) {
             data = (u_int *) ((char *) entry + entry->offset);
-            if (out_size)
+            if (out_size) {
                 *out_size = entry->size;
+            }
             return data;
         }
         entry = (PACK_ENTRY *) ((char *) entry + entry->next);
@@ -608,18 +643,20 @@ u_int *GetPackFile(u_int *pack, char *name, int *out_size) {
 
 u_int *GetPackFile(u_int *pack, int index, char **out_name, int *out_size) {
     PACK_ENTRY *entry;
-    u_int *data;
-    int i;
+    u_int      *data;
+    int         i;
 
-    if (!pack)
+    if (!pack) {
         return 0;
+    }
     entry = (PACK_ENTRY *) pack;
     i = 0;
     while (entry->name[0]) {
         if (index == i) {
             data = (u_int *) ((char *) entry + entry->offset);
-            if (out_size)
+            if (out_size) {
                 *out_size = entry->size;
+            }
             *out_name = entry->name;
             return data;
         }
@@ -632,20 +669,21 @@ u_int *GetPackFile(u_int *pack, int index, char **out_name, int *out_size) {
 /* Every file of one extension at once, which is how a pack of animations or textures is taken
    whole. The caller says how many it has room for and gets back how many it was given. */
 int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, int *sizes, char **names) {
-    int found_count;
-    int i;
+    int    found_count;
+    int    i;
     u_int *data;
-    char *ext_start;
-    char ch;
-    int size;
-    char *name;
+    char  *ext_start;
+    char   ch;
+    int    size;
+    char  *name;
 
     found_count = 0;
     i = 0;
     for (;;) {
         data = GetPackFile(pack, i, &name, &size);
-        if (!data)
+        if (!data) {
             break;
+        }
         ext_start = name;
         while ((ch = *ext_start) != 0) {
             if (ch == '.') {
@@ -656,13 +694,16 @@ int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, i
         }
         if (strcasecmp(extension, ext_start) == 0) {
             files[found_count] = data;
-            if (names)
+            if (names) {
                 names[found_count] = name;
-            if (sizes)
+            }
+            if (sizes) {
                 sizes[found_count] = size;
+            }
             found_count++;
-            if (found_count >= max_files)
+            if (found_count >= max_files) {
                 break;
+            }
         }
         i++;
     }

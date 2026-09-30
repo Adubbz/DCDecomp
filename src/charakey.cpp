@@ -40,7 +40,7 @@ void basic_damage(int kind, int owner) {
     NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
     NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
 
-    s8 elem = NowWeaponHave->best_elem;
+    s8              elem = NowWeaponHave->best_elem;
     CCollisionData *attr_col = NowColData;
 
     attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);
@@ -51,7 +51,7 @@ void basic_damage(int kind, int owner) {
     owner_col->hit[owner_col->now_hit].attack_no = kind;
 }
 
-void ToanKey_On(void) {
+void ToanKey_On() {
     if (BtActStatus.special_cooldown > 0) {
         return;
     }
@@ -73,32 +73,28 @@ void ToanKey_On(void) {
         CharaMain.GetRotation(rotation);
         BtActStatus.swing_heading = rotation[1];
     } else {
-        if (BtActStatus.action_no == 0x24 && BtActStatus.combo_window != 0 &&
-            BtActStatus.action_gauge >= 20.0f) {
+        if (BtActStatus.action_no == 0x24 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 &&
-            BtActStatus.action_gauge >= 20.0f) {
+        if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 &&
-            BtActStatus.action_gauge >= 20.0f) {
+        if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x27 && BtActStatus.combo_window != 0 &&
-            BtActStatus.action_gauge >= 20.0f) {
+        if (BtActStatus.action_no == 0x27 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 20.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
     }
 }
 
-void ToanKey_Play(void) {
+void ToanKey_Play() {
     float time = CharaMain.motion_type.state.time;
-    int damage = NowWeaponHave->attack;
+    int   damage = NowWeaponHave->attack;
 
     if (StatusErrCheck(8) != 0) {
         damage *= 2;
@@ -252,8 +248,7 @@ void ToanKey_Play(void) {
 
     if (BtActStatus.action_no == 0x25) {
         if (BtActStatus.stick_strength > 0.0f) {
-            CharaMain.frame->SetRotation(
-                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
+            CharaMain.frame->SetRotation(0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
         }
 
         BtActStatus.motion_no = 0x25;
@@ -294,8 +289,7 @@ void ToanKey_Play(void) {
 
     if (BtActStatus.action_no == 0x26) {
         if (BtActStatus.stick_strength > 0.0f) {
-            CharaMain.frame->SetRotation(
-                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
+            CharaMain.frame->SetRotation(0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
         }
 
         BtActStatus.motion_no = 0x26;
@@ -336,8 +330,7 @@ void ToanKey_Play(void) {
 
     if (BtActStatus.action_no == 0x27) {
         if (BtActStatus.stick_strength > 0.0f) {
-            CharaMain.frame->SetRotation(
-                0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
+            CharaMain.frame->SetRotation(0.0f, unitRotation((CFrameVu1 *) CharaMain.frame, BtActStatus.swing_heading), 0.0f);
         }
 
         BtActStatus.motion_no = 0x27;
@@ -413,8 +406,7 @@ void ToanKey_Play(void) {
             BtActStatus.charge_level = 1;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
-        if (UserStatus->skill_owned[0] != 0 && BtActStatus.charge_time >= 2.5f &&
-            BtActStatus.charge_level == 1) {
+        if (UserStatus->skill_owned[0] != 0 && BtActStatus.charge_time >= 2.5f && BtActStatus.charge_level == 1) {
             BtActStatus.charge_level = 2;
             setUnitAmbientAnime(15.0f, 1.0f, 0.0f, 122.0f, 208.0f);
         }
@@ -571,7 +563,7 @@ void ToanKey_Play(void) {
     }
 }
 
-void UngagaKey_On(void) {
+void UngagaKey_On() {
     if (BtActStatus.special_cooldown > 0) {
         return;
     }
@@ -597,21 +589,19 @@ void UngagaKey_On(void) {
         CharaMain.GetRotation(rotation);
         BtActStatus.swing_heading = rotation[1];
     } else {
-        if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 &&
-            BtActStatus.action_gauge >= 40.0f) {
+        if (BtActStatus.action_no == 0x25 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 40.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
-        if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 &&
-            BtActStatus.action_gauge >= 40.0f) {
+        if (BtActStatus.action_no == 0x26 && BtActStatus.combo_window != 0 && BtActStatus.action_gauge >= 40.0f) {
             BtActStatus.combo_queued = 1;
             BtActStatus.refill_frames = 0;
         }
     }
 }
 
-void UngagaKey_Play(void) {
-    float time = CharaMain.motion_type.state.time;
+void UngagaKey_Play() {
+    float         time = CharaMain.motion_type.state.time;
     sceVu0FVECTOR hit_left;
     sceVu0FVECTOR hit_right;
     sceVu0FVECTOR chara_pos;
@@ -833,7 +823,7 @@ void UngagaKey_Play(void) {
         BtActStatus.motion_no = 14;
 
         static int wait;
-        static s8 init;
+        static s8  init;
 
         if (init == 0) {
             wait = 0;
@@ -884,7 +874,7 @@ void UngagaKey_Play(void) {
     }
 }
 
-void GoroKey_On(void) {
+void GoroKey_On() {
     if (BtActStatus.action_on == 0) {
         if (BtActStatus.action_gauge >= 100.0f) {
             sceVu0FVECTOR rotation;
@@ -907,9 +897,9 @@ void GoroKey_On(void) {
     }
 }
 
-void GoroKey_Play(void) {
+void GoroKey_Play() {
     float time = CharaMain.motion_type.state.time;
-    int damage = NowWeaponHave->attack;
+    int   damage = NowWeaponHave->attack;
 
     if (StatusErrCheck(8) != 0) {
         damage *= 2;
@@ -944,7 +934,7 @@ void GoroKey_Play(void) {
         NowColData->hit[NowColData->now_hit].vs_monster = NowWeaponHave->vs_monster;
         NowColData->hit[NowColData->now_hit].weapon_flags = NowWeaponHave->flags;
 
-        s8 elem = NowWeaponHave->best_elem;
+        s8              elem = NowWeaponHave->best_elem;
         CCollisionData *attr_col = NowColData;
 
         attr_col->hit[attr_col->now_hit].flags = GetWeaponElementAttr(elem);

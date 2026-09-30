@@ -30,7 +30,7 @@
 #include "userstatus.hpp"
 
 SAVE_MENU_STATE SaveMenu;
-CTexture *SaveMenuMojiTextbl[4];
+CTexture       *SaveMenuMojiTextbl[4];
 
 /** State of the event item selection menu. */
 MINI_MENU_INFO MiniMenu;
@@ -42,178 +42,6 @@ MINI_MENU_INFO MiniMenu;
 void ExitSaveSelect();
 
 /**
- * Checks the memory card before a save and picks the save menu's next step.
- *
- * @mangled SaveMenuKeySaveCheck__Fv
- * @address 0x221730
- * @size 0x168
- */
-static int SaveMenuKeySaveCheck(void);
-
-/**
- * Handles the save menu's prompt to confirm a save.
- *
- * @mangled SaveMenuKeySaveDecide__Fv
- * @address 0x2218A0
- * @size 0xE0
- */
-static int SaveMenuKeySaveDecide(void);
-
-/**
- * Steps the save menu while the game is written to the memory card.
- *
- * @mangled SaveMenuKeySave__Fv
- * @address 0x221980
- * @size 0x130
- */
-static int SaveMenuKeySave(void);
-
-/**
- * Waits for a button press once a save has finished.
- *
- * @mangled SaveMenuKeyEndSave__Fv
- * @address 0x221AB0
- * @size 0x74
- */
-static int SaveMenuKeyEndSave(void);
-
-/**
- * Steps the save menu while a save is read from the memory card.
- *
- * @mangled SaveMenuKeyLoad__Fv
- * @address 0x221C30
- * @size 0xDC
- */
-static int SaveMenuKeyLoad(void);
-
-/**
- * Waits for a button press while the save menu shows an alert.
- *
- * @mangled SaveMenuKeyArart__Fv
- * @address 0x221D10
- * @size 0x128
- */
-static int SaveMenuKeyArart(void);
-
-/**
- * Handles the save menu's prompt to create new save data.
- *
- * @mangled SaveMenuKeyNewDirSelect__Fv
- * @address 0x221E40
- * @size 0xC8
- */
-static int SaveMenuKeyNewDirSelect(void);
-
-/**
- * Steps the save menu while new save data is created on the memory card.
- *
- * @mangled SaveMenuKeyNewDir__Fv
- * @address 0x221F10
- * @size 0x108
- */
-static int SaveMenuKeyNewDir(void);
-
-/**
- * Handles the save menu's memory card format step.
- *
- * @mangled SaveMenuKeyFormat__Fv
- * @address 0x222020
- * @size 0x150
- */
-static int SaveMenuKeyFormat(void);
-
-/**
- * Waits for a button press when the save data is of a different version.
- *
- * @mangled SaveMenuKeyDifVersion__Fv
- * @address 0x2221F0
- * @size 0x5C
- */
-static int SaveMenuKeyDifVersion(void);
-
-/**
- * Steps the delete choice of the save menu.
- *
- * @mangled SaveMenuKeyDelete__Fv
- * @address 0x222250
- * @size 0xC
- */
-static s32 SaveMenuKeyDelete(void);
-
-/**
- * Steps the copy choice of the save menu.
- *
- * @mangled SaveMenuKeyCopy__Fv
- * @address 0x222260
- * @size 0xC
- */
-static s32 SaveMenuKeyCopy(void);
-
-/**
- * Handles key input on the save menu offered after the ending.
- *
- * @mangled SaveMenuKeyAfterEnding__Fv
- * @address 0x222270
- * @size 0x7C
- */
-static int SaveMenuKeyAfterEnding(void);
-
-/**
- * Handles the prompt to confirm a save after the ending.
- *
- * @mangled SaveMenuKeySaveDecideEnding__Fv
- * @address 0x2222F0
- * @size 0x7C
- */
-static int SaveMenuKeySaveDecideEnding(void);
-
-/**
- * Steps the save menu while saving after the ending.
- *
- * @mangled SaveMenuKeySaveEnding__Fv
- * @address 0x222370
- * @size 0x3C
- */
-static int SaveMenuKeySaveEnding(void);
-
-/**
- * Waits for a button press once the save after the ending has finished.
- *
- * @mangled SaveMenuKeyEndSaveEnding__Fv
- * @address 0x2223B0
- * @size 0x58
- */
-static int SaveMenuKeyEndSaveEnding(void);
-
-/**
- * Computes the save board's alpha ramp at a position and at that position
- * offset by the second argument.
- *
- * @mangled GetSaveBoardAlphaInfo__FiiRiRii
- * @address 0x222940
- * @size 0x154
- */
-static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha);
-
-/**
- * Frees the event item selection menu's textures and releases the pad.
- *
- * @mangled EventItemSelectExit__Fv
- * @address 0x2240E0
- * @size 0x5C
- */
-static void EventItemSelectExit(void);
-
-/**
- * Draws one vertical section of the board the event and fishing menus share.
- *
- * @mangled DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii
- * @address 0x224910
- * @size 0x148
- */
-static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int src_u, int src_width, int unused, int alpha);
-
-/**
  * Draws a section of the event item board, clipped to a range.
  *
  * @mangled DrawEventItemBoard__FiiiiiP8CTexture
@@ -221,24 +49,6 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
  * @size 0x10C
  */
 static void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTexture *texture);
-
-/**
- * Handles the save menu's prompt to confirm a load.
- *
- * @mangled SaveMenuKeyLoadDecide__Fv
- * @address 0x221B30
- * @size 0x100
- */
-static int SaveMenuKeyLoadDecide(void);
-
-/**
- * Steps the save menu when the memory card is not formatted.
- *
- * @mangled SaveMenuKeyUnFormat__Fv
- * @address 0x222170
- * @size 0x78
- */
-static int SaveMenuKeyUnFormat(void);
 
 /**
  * Handles pad input for the event item selection menu.
@@ -256,18 +66,16 @@ static int EventItemSelectKey(int *result);
  * @address 0x224D50
  * @size 0x6C4
  */
-static void EventItemSelectDraw(void);
+static void EventItemSelectDraw();
 
 /**
- * Draws the board the event and fishing menus share.
+ * Checks the memory card before a save and picks the save menu's next step.
  *
- * @mangled DrawEventAndFishMenuBoard__FP8CTextureiiii
- * @address 0x224A60
- * @size 0x2E8
+ * @mangled SaveMenuKeySaveCheck__Fv
+ * @address 0x221730
+ * @size 0x168
  */
-static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang);
-
-static int SaveMenuKeySaveCheck(void) {
+static int SaveMenuKeySaveCheck() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -298,7 +106,14 @@ static int SaveMenuKeySaveCheck(void) {
     return 1;
 }
 
-static int SaveMenuKeySaveDecide(void) {
+/**
+ * Handles the save menu's prompt to confirm a save.
+ *
+ * @mangled SaveMenuKeySaveDecide__Fv
+ * @address 0x2218A0
+ * @size 0xE0
+ */
+static int SaveMenuKeySaveDecide() {
     if (GamePad.Down(0x40) != 0) {
         McAccess.SetFuncNo(0);
         int file_no = SaveMenu.file_no;
@@ -317,7 +132,14 @@ static int SaveMenuKeySaveDecide(void) {
     return 1;
 }
 
-static int SaveMenuKeySave(void) {
+/**
+ * Steps the save menu while the game is written to the memory card.
+ *
+ * @mangled SaveMenuKeySave__Fv
+ * @address 0x221980
+ * @size 0x130
+ */
+static int SaveMenuKeySave() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -341,7 +163,14 @@ static int SaveMenuKeySave(void) {
     return 1;
 }
 
-static int SaveMenuKeyEndSave(void) {
+/**
+ * Waits for a button press once a save has finished.
+ *
+ * @mangled SaveMenuKeyEndSave__Fv
+ * @address 0x221AB0
+ * @size 0x74
+ */
+static int SaveMenuKeyEndSave() {
     if ((GamePad.Down(0x40) != 0) || (GamePad.Down(0x20) != 0)) {
         McAccess.SetFuncNo(1);
         SaveMenu.key_no = 7;
@@ -356,7 +185,7 @@ static int SaveMenuKeyEndSave(void) {
  * @address 0x221B30
  * @size 0x100
  */
-static int SaveMenuKeyLoadDecide(void) {
+static int SaveMenuKeyLoadDecide() {
     if (GamePad.Down(0x40) != 0) {
         int file_no = SaveMenu.file_no;
 
@@ -380,7 +209,14 @@ static int SaveMenuKeyLoadDecide(void) {
     return 1;
 }
 
-static int SaveMenuKeyLoad(void) {
+/**
+ * Steps the save menu while a save is read from the memory card.
+ *
+ * @mangled SaveMenuKeyLoad__Fv
+ * @address 0x221C30
+ * @size 0xDC
+ */
+static int SaveMenuKeyLoad() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -399,7 +235,14 @@ static int SaveMenuKeyLoad(void) {
     return 1;
 }
 
-static int SaveMenuKeyArart(void) {
+/**
+ * Waits for a button press while the save menu shows an alert.
+ *
+ * @mangled SaveMenuKeyArart__Fv
+ * @address 0x221D10
+ * @size 0x128
+ */
+static int SaveMenuKeyArart() {
     switch (SaveMenu.alert_no) {
         case 0:
             break;
@@ -428,7 +271,14 @@ static int SaveMenuKeyArart(void) {
     return 1;
 }
 
-static int SaveMenuKeyNewDirSelect(void) {
+/**
+ * Handles the save menu's prompt to create new save data.
+ *
+ * @mangled SaveMenuKeyNewDirSelect__Fv
+ * @address 0x221E40
+ * @size 0xC8
+ */
+static int SaveMenuKeyNewDirSelect() {
     if (GamePad.Down(0x40) != 0) {
         McAccess.SetFuncNo(0);
         SaveMenu.key_no = 0xF;
@@ -445,7 +295,14 @@ static int SaveMenuKeyNewDirSelect(void) {
     return 1;
 }
 
-static int SaveMenuKeyNewDir(void) {
+/**
+ * Steps the save menu while new save data is created on the memory card.
+ *
+ * @mangled SaveMenuKeyNewDir__Fv
+ * @address 0x221F10
+ * @size 0x108
+ */
+static int SaveMenuKeyNewDir() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -467,7 +324,14 @@ static int SaveMenuKeyNewDir(void) {
     SaveMenu.key_no = 0xA;
 }
 
-static int SaveMenuKeyFormat(void) {
+/**
+ * Handles the save menu's memory card format step.
+ *
+ * @mangled SaveMenuKeyFormat__Fv
+ * @address 0x222020
+ * @size 0x150
+ */
+static int SaveMenuKeyFormat() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (McCheckMCPs2(card) == 0) {
@@ -502,7 +366,7 @@ static int SaveMenuKeyFormat(void) {
  * @address 0x222170
  * @size 0x78
  */
-static int SaveMenuKeyUnFormat(void) {
+static int SaveMenuKeyUnFormat() {
     MC_CARD_INFO *card = &McAccess.card[McAccess.port];
 
     if (card->formatted != 0) {
@@ -514,7 +378,14 @@ static int SaveMenuKeyUnFormat(void) {
     return 1;
 }
 
-static int SaveMenuKeyDifVersion(void) {
+/**
+ * Waits for a button press when the save data is of a different version.
+ *
+ * @mangled SaveMenuKeyDifVersion__Fv
+ * @address 0x2221F0
+ * @size 0x5C
+ */
+static int SaveMenuKeyDifVersion() {
     if (GamePad.Down(0xF0) != 0) {
         McAccess.SetFuncNo(7);
         int file_no = McAccess.file_no;
@@ -523,15 +394,36 @@ static int SaveMenuKeyDifVersion(void) {
     return 1;
 }
 
-static s32 SaveMenuKeyDelete(void) {
+/**
+ * Steps the delete choice of the save menu.
+ *
+ * @mangled SaveMenuKeyDelete__Fv
+ * @address 0x222250
+ * @size 0xC
+ */
+static s32 SaveMenuKeyDelete() {
     return 1;
 }
 
-static s32 SaveMenuKeyCopy(void) {
+/**
+ * Steps the copy choice of the save menu.
+ *
+ * @mangled SaveMenuKeyCopy__Fv
+ * @address 0x222260
+ * @size 0xC
+ */
+static s32 SaveMenuKeyCopy() {
     return 1;
 }
 
-static int SaveMenuKeyAfterEnding(void) {
+/**
+ * Handles key input on the save menu offered after the ending.
+ *
+ * @mangled SaveMenuKeyAfterEnding__Fv
+ * @address 0x222270
+ * @size 0x7C
+ */
+static int SaveMenuKeyAfterEnding() {
     if (GamePad.Down(0x40) != 0) {
         SaveMenu.key_no = 3;
     } else if (GamePad.Down(0x20) != 0) {
@@ -541,7 +433,14 @@ static int SaveMenuKeyAfterEnding(void) {
     return 1;
 }
 
-static int SaveMenuKeySaveDecideEnding(void) {
+/**
+ * Handles the prompt to confirm a save after the ending.
+ *
+ * @mangled SaveMenuKeySaveDecideEnding__Fv
+ * @address 0x2222F0
+ * @size 0x7C
+ */
+static int SaveMenuKeySaveDecideEnding() {
     if (GamePad.Down(0x40) != 0) {
         SaveMenu.key_no = 0x17;
     } else if (GamePad.Down(0x20) != 0) {
@@ -551,13 +450,27 @@ static int SaveMenuKeySaveDecideEnding(void) {
     return 1;
 }
 
-static int SaveMenuKeySaveEnding(void) {
+/**
+ * Steps the save menu while saving after the ending.
+ *
+ * @mangled SaveMenuKeySaveEnding__Fv
+ * @address 0x222370
+ * @size 0x3C
+ */
+static int SaveMenuKeySaveEnding() {
     SaveMenu.key_no = 0x19;
     McAccess.SetFuncNo(0xE);
     return 1;
 }
 
-static int SaveMenuKeyEndSaveEnding(void) {
+/**
+ * Waits for a button press once the save after the ending has finished.
+ *
+ * @mangled SaveMenuKeyEndSaveEnding__Fv
+ * @address 0x2223B0
+ * @size 0x58
+ */
+static int SaveMenuKeyEndSaveEnding() {
     if (GamePad.Down(0x40) != 0) {
         SaveMenu.key_no = 3;
         McAccess.SetFuncNo(1);
@@ -565,7 +478,7 @@ static int SaveMenuKeyEndSaveEnding(void) {
     return 1;
 }
 
-int GetSaveMenuMsgNo(void) {
+int GetSaveMenuMsgNo() {
     int msg_no = 0;
 
     switch (McAccess.GetFuncNo()) {
@@ -679,13 +592,17 @@ int GetSaveMenuMsgNo(void) {
     return msg_no;
 }
 
-int SaveMenuTextureEnter(void) {
+int SaveMenuTextureEnter() {
     ReadBG();
     if (ReadBGSync() == 0) {
-        LOADTEXTURE_INFO2 tex[3] = {{"#frame_image_save#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        LOADTEXTURE_INFO2 tex[3] = {
+            {"#frame_image_save#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+            {NULL,                                            0, 0},
+            {NULL,                                            0, 0}
+        };
         BG_READ_INFO *bg;
-        u_int *pack;
-        int i;
+        u_int        *pack;
+        int           i;
 
         tex[0].block_no = SaveMenu.block_no;
         tex[1].block_no = SaveMenu.block_no;
@@ -712,8 +629,12 @@ int SaveMenuTextureEnter(void) {
         CommonMenuMes2.value_signed = 0;
         CommonMenuMes2.cursor_lit = 1;
 
-        char *save_buffer = (char *) pack + bg->size;
-        MC_ICON_DATA icon = {{"dkicon.ico", NULL, 0}, {"dkicon_c.ico", NULL, 0}, {"dkicon_d.ico", NULL, 0}};
+        char        *save_buffer = (char *) pack + bg->size;
+        MC_ICON_DATA icon = {
+            {"dkicon.ico",   NULL, 0},
+            {"dkicon_c.ico", NULL, 0},
+            {"dkicon_d.ico", NULL, 0}
+        };
         for (i = 0; i < 3; i++) {
             (&icon.view)[i].data = (char *) GetPackFile((u_int *) bg->buffer, (&icon.view)[i].name, &(&icon.view)[i].size);
         }
@@ -725,13 +646,21 @@ int SaveMenuTextureEnter(void) {
     return 0;
 }
 
-int SaveMenuEffectFadeOut(void) {
+int SaveMenuEffectFadeOut() {
     if (SaveMenu.key_no == 1) {
         return 1;
     }
     return 0;
 }
 
+/**
+ * Computes the save board's alpha ramp at a position and at that position
+ * offset by the second argument.
+ *
+ * @mangled GetSaveBoardAlphaInfo__FiiRiRii
+ * @address 0x222940
+ * @size 0x154
+ */
 static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_alpha, int alpha) {
     if (x < 0) {
         start_alpha = 0;
@@ -779,8 +708,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
     GetSaveBoardAlphaInfo(y, 0x88, start_alpha, end_alpha, alpha);
     top.a = start_alpha;
     bottom.a = end_alpha;
-    DrawMenu2DSprite(SaveBoard, CRect_i_(x, y, 0x180, 0x87), CRect_i_(0, 0, 0x180, 0x88), &top, &top, &bottom,
-                     &bottom);
+    DrawMenu2DSprite(SaveBoard, CRect_i_(x, y, 0x180, 0x87), CRect_i_(0, 0, 0x180, 0x88), &top, &top, &bottom, &bottom);
 
     draw_x = x + 0x54;
 #ifdef PAL
@@ -812,8 +740,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
             src_y = number_rect.y;
             height = number_rect.height;
             MenuTextureClip(clip_y, src_y, height, 0, SCREEN_HEIGHT);
-            DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1),
-                             CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
+            DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1), CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
             number /= 10;
         }
     }
@@ -830,7 +757,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
 
     // Play time, as hours, minutes and seconds.
     RECT time_rect = {0x88, 0xB8, 0xC, 0x12};
-    int column = x + 0x92;
+    int  column = x + 0x92;
     draw_x = column + 0xA;
     draw_y = y + 0x36;
     GetSaveBoardAlphaInfo(draw_y, 0x12, start_alpha, end_alpha, alpha);
@@ -846,12 +773,8 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
     time[2] = frames % 60;
     for (int part = 2; part >= 0; part--) {
         int value = time[part];
-        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, time_rect.width, time_rect.height),
-                         CRect_i_(time_rect.x + time_rect.width * (value / 10), time_rect.y, time_rect.width, time_rect.height), &top,
-                         &top, &bottom, &bottom);
-        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x + time_rect.width, draw_y, time_rect.width, time_rect.height),
-                         CRect_i_(time_rect.x + time_rect.width * (value % 10), time_rect.y, time_rect.width, time_rect.height), &top,
-                         &top, &bottom, &bottom);
+        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, time_rect.width, time_rect.height), CRect_i_(time_rect.x + time_rect.width * (value / 10), time_rect.y, time_rect.width, time_rect.height), &top, &top, &bottom, &bottom);
+        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x + time_rect.width, draw_y, time_rect.width, time_rect.height), CRect_i_(time_rect.x + time_rect.width * (value % 10), time_rect.y, time_rect.width, time_rect.height), &top, &top, &bottom, &bottom);
         draw_x -= 0x1E;
     }
     CRect_i_ colon(0x100, 0xB8, 0xC, 0x12);
@@ -886,8 +809,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
             src_y = number_rect.y;
             height = number_rect.height;
             MenuTextureClip(clip_y, src_y, height, 0, SCREEN_HEIGHT);
-            DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1),
-                             CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
+            DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1), CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
             number /= 10;
         }
     }
@@ -912,8 +834,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
     GetSaveBoardAlphaInfo(draw_y, 0x14, start_alpha, end_alpha, alpha);
     top.a = start_alpha;
     bottom.a = end_alpha;
-    DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0x88, 0x15), CRect_i_(name_u, name_v, 0x88, 0x14), &top,
-                     &top, &bottom, &bottom);
+    DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0x88, 0x15), CRect_i_(name_u, name_v, 0x88, 0x14), &top, &top, &bottom, &bottom);
 
     // A face for each member of the party, three to a row.
     int face_x = x + 0xCF;
@@ -923,8 +844,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
     top.a = start_alpha;
     bottom.a = end_alpha;
     for (i = 0; i < info->party_size; i++) {
-        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0x30, 0x31), CRect_i_(i * 0x30, 0x88, 0x30, 0x30), &top,
-                         &top, &bottom, &bottom);
+        DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, draw_y, 0x30, 0x31), CRect_i_(i * 0x30, 0x88, 0x30, 0x30), &top, &top, &bottom, &bottom);
         draw_x += 0x38;
         if (i == 2) {
             draw_x = face_x;
@@ -952,49 +872,39 @@ void DrawNewFileTemplete(int x, int y, int alpha) {
     GetSaveBoardAlphaInfo(y, 0x10, start_alpha, end_alpha, 0x80);
     top.a = start_alpha;
     bottom.a = end_alpha;
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y, 0x10, 0xF), CRect_i_(0x120, 0x88, 0x10, 0x10), &top,
-                &top, &bottom, &bottom, 1);
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y, 0x10, 0xF), CRect_i_(0x140, 0x88, 0x10, 0x10),
-                &top, &top, &bottom, &bottom, 1);
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y, 0x160, 0xF), CRect_i_(0x130, 0x88, 0x10, 0x10),
-                &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y, 0x10, 0xF), CRect_i_(0x120, 0x88, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y, 0x10, 0xF), CRect_i_(0x140, 0x88, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y, 0x160, 0xF), CRect_i_(0x130, 0x88, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
 
     // Bottom edge.
     GetSaveBoardAlphaInfo(y + 0x78, 0x10, start_alpha, end_alpha, 0x80);
     top.a = start_alpha;
     bottom.a = end_alpha;
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0x78, 0x10, 0xF), CRect_i_(0x120, 0xA8, 0x10, 0x10),
-                &top, &top, &bottom, &bottom, 1);
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0x78, 0x10, 0xF),
-                CRect_i_(0x140, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y + 0x78, 0x160, 0xF),
-                CRect_i_(0x130, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0x78, 0x10, 0xF), CRect_i_(0x120, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0x78, 0x10, 0xF), CRect_i_(0x140, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x10, y + 0x78, 0x160, 0xF), CRect_i_(0x130, 0xA8, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
 
     // Sides.
     GetSaveBoardAlphaInfo(y + 0x10, 0x68, start_alpha, end_alpha, 0x80);
     top.a = start_alpha;
     bottom.a = end_alpha;
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0xF, 0x10, 0x69), CRect_i_(0x120, 0x98, 0x10, 0x10),
-                &top, &top, &bottom, &bottom, 1);
-    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0xF, 0x10, 0x69),
-                CRect_i_(0x140, 0x98, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x, y + 0xF, 0x10, 0x69), CRect_i_(0x120, 0x98, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(Vif1Packet, SaveBoard, CRect_i_(x + 0x170, y + 0xF, 0x10, 0x69), CRect_i_(0x140, 0x98, 0x10, 0x10), &top, &top, &bottom, &bottom, 1);
 
     // "New file".
     GetSaveBoardAlphaInfo(y + 0x35, 0x1E, start_alpha, end_alpha, 0x80);
     top.a = start_alpha;
     bottom.a = end_alpha;
 #ifdef PAL
-    s8 label_inset[] = {64, 64, 64, 64, 38, 64, 64};
+    s8  label_inset[] = {64, 64, 64, 64, 38, 64, 64};
     int label_x = 0xC0 - label_inset[GetMenuLangFlag()];
-    set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + label_x, y + 0x35, 0x74, 0x1E),
-                CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + label_x, y + 0x35, 0x74, 0x1E), CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
 #else
-    set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E),
-                CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
+    set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E), CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
 #endif
 }
 
-int InitExistData(void) {
+int InitExistData() {
     int port;
     int result;
 
@@ -1029,7 +939,7 @@ int InitExistData(void) {
     return 0;
 }
 
-int SaveEnableCheck(void) {
+int SaveEnableCheck() {
     int found;
     int free_size;
     int port;
@@ -1159,7 +1069,10 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     } else {
         printf("exist after use \n");
     }
-    LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 texture[2] = {
+        {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+        {NULL,                                       0, 0}
+    };
     texture[0].block_no = MiniEventTextureBlock;
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
     TexManager.CleanUpTextureList();
@@ -1183,7 +1096,14 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     MiniEventTexReadFlag = 0;
 }
 
-static void EventItemSelectExit(void) {
+/**
+ * Frees the event item selection menu's textures and releases the pad.
+ *
+ * @mangled EventItemSelectExit__Fv
+ * @address 0x2240E0
+ * @size 0x5C
+ */
+static void EventItemSelectExit() {
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
     TexManager.CleanUpTextureList();
     GamePad.AutoRepeatOff();
@@ -1226,18 +1146,22 @@ int EventItemSelectLoop(int *result) {
 }
 
 static int EventItemSelectKey(int *result) {
-    int done;
-    int old_cursor;
-    int slot_num;
-    int pack_index;
-    int accepted;
-    int i;
+    int  done;
+    int  old_cursor;
+    int  slot_num;
+    int  pack_index;
+    int  accepted;
+    int  i;
     s16 *slot;
 
     if (MiniEventTexReadFlag == 0) {
         if (ReadBGSync() == 0) {
             LOADTEXTURE_INFO2 texture[4] = {
-                {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+                {NULL,                                       0, 0},
+                {NULL,                                       0, 0},
+                {NULL,                                       0, 0}
+            };
             texture[0].block_no = MiniEventTextureBlock;
             texture[1].block_no = MiniEventTextureBlock;
             texture[2].block_no = MiniEventTextureBlock;
@@ -1373,6 +1297,13 @@ static int EventItemSelectKey(int *result) {
     return done;
 }
 
+/**
+ * Draws one vertical section of the board the event and fishing menus share.
+ *
+ * @mangled DrawEventAndFishMenuBoard_Ver__FP8CTexture8CRect_i_iiii
+ * @address 0x224910
+ * @size 0x148
+ */
 static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int src_u, int src_width, int unused, int alpha) {
     int y = rect.y;
 
@@ -1395,19 +1326,26 @@ s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
 s8 kakudai_yoko_lang[7] = {0, 10, 10, 10, 10, 10, 10};
 #endif
 
+/**
+ * Draws the board the event and fishing menus share.
+ *
+ * @mangled DrawEventAndFishMenuBoard__FP8CTextureiiii
+ * @address 0x224A60
+ * @size 0x2E8
+ */
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
 #ifdef PAL
     s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
     s8 kakudai_yoko_lang[7] = {0, 10, 10, 20, 10, 16, 14};
 #endif
-    int extra_height = kakudai_tate_lang[lang];
-    int extra_width = kakudai_yoko_lang[lang];
-    int rows;
+    int   extra_height = kakudai_tate_lang[lang];
+    int   extra_width = kakudai_yoko_lang[lang];
+    int   rows;
     float bar_height;
 
     CRect_i_ center(x + 0x1C, y, 0xD2, extra_height);
     DrawEventAndFishMenuBoard_Ver(texture, center, 0x1C, 0xD2, lang, alpha);
-    int edge = extra_width + 6;
+    int      edge = extra_width + 6;
     CRect_i_ left_inner(x + 0x1C - edge, y, edge, extra_height);
     CRect_i_ left_outer(x + 8 - edge, y, 0x14, extra_height);
     DrawEventAndFishMenuBoard_Ver(texture, left_inner, 0x14, 6, lang, alpha);
@@ -1431,22 +1369,22 @@ static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha
     DrawMenu2DSprite(texture, CRect_i_(bar_x, bar_y, 8, (int) bar_height), CRect_i_(0, 0xE4, 8, 0xC), alpha);
 }
 
-static void EventItemSelectDraw(void) {
-    s16 items[100];
-    float left;
-    float top;
-    float icon_x;
-    float row_top;
-    int alpha;
-    int x;
-    int y;
+static void EventItemSelectDraw() {
+    s16       items[100];
+    float     left;
+    float     top;
+    float     icon_x;
+    float     row_top;
+    int       alpha;
+    int       x;
+    int       y;
     CTexture *board;
-    int clip_bottom;
-    int row_y;
-    int i;
-    int clip_top;
-    int count;
-    int board_x;
+    int       clip_bottom;
+    int       row_y;
+    int       i;
+    int       clip_top;
+    int       count;
+    int       board_x;
 
     if (MiniEventTexReadFlag == 0) {
         return;
@@ -1528,12 +1466,27 @@ static void EventItemSelectDraw(void) {
     }
     CommonMenuMes2.edge_alpha = alpha;
 #ifdef PAL
-    s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-9, 0}, {-4, 0}, {-7, 0}, {-6, 0}};
+    s8 message_pos[7][2] = {
+        {0,  0},
+        {-4, 0},
+        {-4, 0},
+        {-9, 0},
+        {-4, 0},
+        {-7, 0},
+        {-6, 0}
+    };
 #else
-    s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}};
+    s8 message_pos[7][2] = {
+        {0,  0},
+        {-4, 0},
+        {-4, 0},
+        {-4, 0},
+        {-4, 0},
+        {-4, 0},
+        {-4, 0}
+    };
 #endif
-    DrawMenuClsMes(&CommonMenuMes2, 20.0f + left + message_pos[MiniMenu.lang][0],
-                   146.0f + top + message_pos[MiniMenu.lang][1]);
+    DrawMenuClsMes(&CommonMenuMes2, 20.0f + left + message_pos[MiniMenu.lang][0], 146.0f + top + message_pos[MiniMenu.lang][1]);
     if (MiniMenu.state == 1) {
         if (CommonMenuMes1.mes_made != 1) {
             CommonMenuMes1.MakeMesWin(1);
@@ -1564,16 +1517,15 @@ static void DrawEventItemBoard(int x, int y, int top, int bottom, int alpha, CTe
     clip_height = 0x28;
     MenuTextureClip(clip_y, clip_v, clip_height, top, bottom);
     for (int i = 0; i < 5; i++) {
-        DrawMenu2DSprite(texture, CRect_i_(pos_x, clip_y + 1, 0x28, clip_height), CRect_i_(0x116, clip_v, 0x28, clip_height),
-                         alpha);
+        DrawMenu2DSprite(texture, CRect_i_(pos_x, clip_y + 1, 0x28, clip_height), CRect_i_(0x116, clip_v, 0x28, clip_height), alpha);
         pos_x += 0x2A;
     }
 }
 
 int PlayerAllItemCheck(int item) {
     CDngStatusData *dungeon_status = SaveData->GetDngStatus();
-    CStockItem *stock = SaveData->GetStockItem();
-    int has_item = 0;
+    CStockItem     *stock = SaveData->GetStockItem();
+    int             has_item = 0;
 
     if (dungeon_status->SearchItemIndexNo(item) >= 0) {
         has_item = 1;

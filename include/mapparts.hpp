@@ -33,28 +33,28 @@ struct EDITPARTS_INFO;
  */
 class CMapParts : public CMapObject {
 public:
-    s32 parts_no;              /**< Plot the part stands on, as the part catalogue numbers it. */
-    s32 area;                  /**< Area of the ground the part stands in, or -1. */
-    s32 rot_y;                 /**< Quarter turns about the vertical axis that the part faces. */
-    s32 preview_frame;         /**< Frame drawn as the placement preview where the part fits: its finest level of detail. */
-    s32 blocked_preview_frame; /**< Frame drawn as the placement preview where the part does not fit. */
-    CFrame *ripple_frame;      /**< Extra model drawn with the part, such as a river's ripples; zero where the part has none. */
-    EDITPARTS_INFO *info;      /**< Definition of the part; zero until a map gives it one. */
-    s32 func_count;            /**< Number of function points the part's definition holds. */
-    s32 func_data;             /**< Function points of the part's definition. */
-    s32 def_parts_no;          /**< Part number that the part's definition gives. */
-    s32 subtype;               /**< Subtype of the part: 1 for a road, 2 for a river, 3 and 5 for parts a new part may replace. */
-    float lift;                /**< Scale of the height the part is raised by to keep it from cutting into the ground; above 1 raises it by a fixed step. */
-    float draw_distance;       /**< Distance beyond which the part is not drawn; zero or below to draw it at any distance. */
-    s32 unk_124;
-    s32 unk_128;
-    s32 unk_12C;
-    CBoxVu0 bound; /**< Extremes of everything the part draws, in its own space. */
-    u8 unk_150[128];
-    float unit_size; /**< Width of one grid cell of the area the part stands on. */
-    s32 unk_1D4;
+    s32             parts_no;              /**< Plot the part stands on, as the part catalogue numbers it. */
+    s32             area;                  /**< Area of the ground the part stands in, or -1. */
+    s32             rot_y;                 /**< Quarter turns about the vertical axis that the part faces. */
+    s32             preview_frame;         /**< Frame drawn as the placement preview where the part fits: its finest level of detail. */
+    s32             blocked_preview_frame; /**< Frame drawn as the placement preview where the part does not fit. */
+    CFrame         *ripple_frame;          /**< Extra model drawn with the part, such as a river's ripples; zero where the part has none. */
+    EDITPARTS_INFO *info;                  /**< Definition of the part; zero until a map gives it one. */
+    s32             func_count;            /**< Number of function points the part's definition holds. */
+    s32             func_data;             /**< Function points of the part's definition. */
+    s32             def_parts_no;          /**< Part number that the part's definition gives. */
+    s32             subtype;               /**< Subtype of the part: 1 for a road, 2 for a river, 3 and 5 for parts a new part may replace. */
+    float           lift;                  /**< Scale of the height the part is raised by to keep it from cutting into the ground; above 1 raises it by a fixed step. */
+    float           draw_distance;         /**< Distance beyond which the part is not drawn; zero or below to draw it at any distance. */
+    s32             unk_124;
+    s32             unk_128;
+    s32             unk_12C;
+    CBoxVu0         bound; /**< Extremes of everything the part draws, in its own space. */
+    u8              unk_150[128];
+    float           unit_size; /**< Width of one grid cell of the area the part stands on. */
+    s32             unk_1D4;
     /** 1 where the slot carries an effect; below zero where no slot after it does. */
-    s32 effect_on[MAP_PARTS_EFFECT_MAX];
+    s32               effect_on[MAP_PARTS_EFFECT_MAX];
     EDIT_EFFECT_INFO *effect[MAP_PARTS_EFFECT_MAX]; /**< Effect of each slot. */
 
     /**
@@ -109,7 +109,7 @@ public:
      * @address 0x19A8B0
      * @size 0xC
      */
-    int GetRotY(void);
+    int GetRotY();
 
     /**
      * Puts the part at rest at the world origin, with no definition and no
@@ -119,7 +119,7 @@ public:
      * @address 0x19A8C0
      * @size 0x9C
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Makes a part that a map has yet to define.
@@ -128,7 +128,7 @@ public:
      * @address 0x19A960
      * @size 0x48
      */
-    CMapParts(void);
+    CMapParts();
 
     /**
      * Turns a named part of every frame the part holds on or off.
@@ -146,7 +146,7 @@ public:
      * @address 0x19AA20
      * @size 0x58
      */
-    int GetWidth(void);
+    int GetWidth();
 
     /**
      * Gets the number of grid cells that the part covers from north to south.
@@ -155,7 +155,7 @@ public:
      * @address 0x19AA80
      * @size 0x58
      */
-    int GetHeight(void);
+    int GetHeight();
 
     /**
      * Reads the definition of one grid cell of the part, through the
@@ -174,7 +174,7 @@ public:
      * @address 0x19AC40
      * @size 0x98
      */
-    int ChangeAltData(void);
+    int ChangeAltData();
 
     /**
      * Gives back 1 while one cell of the part accepts digging.
@@ -183,7 +183,7 @@ public:
      * @address 0x19ACE0
      * @size 0x98
      */
-    int ChangeDigData(void);
+    int ChangeDigData();
 
     /**
      * Gives back 1 while the part meets a box.

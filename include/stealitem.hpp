@@ -19,17 +19,17 @@ class CFrameVu1;
  */
 class CStealItem {
 public:
-    CFrame *frame; /**< Model that every slot draws with. */
-    u8 unk_004[0xC];
-    sceVu0FVECTOR pos[STEAL_ITEM_MAX]; /**< Where each slot is. */
-    float base_height[STEAL_ITEM_MAX]; /**< Height each slot bobs about. */
-    float speed[STEAL_ITEM_MAX];       /**< How far each slot travels a step. */
-    s32 state[STEAL_ITEM_MAX];         /**< -1 free, 0 rising, 1 closing, 2 arrived. */
-    s32 aux_state[STEAL_ITEM_MAX];     /**< Second per-slot state, reset to -1 with state and otherwise unused. */
-    float angle;                       /**< Angle every slot spins at. */
-    float phase[STEAL_ITEM_MAX];       /**< How far through its bob each slot is. */
-    s32 item[STEAL_ITEM_MAX];          /**< Item each slot carries. */
-    u8 unk_154[0xC];
+    CFrame       *frame; /**< Model that every slot draws with. */
+    u8            unk_004[0xC];
+    sceVu0FVECTOR pos[STEAL_ITEM_MAX];         /**< Where each slot is. */
+    float         base_height[STEAL_ITEM_MAX]; /**< Height each slot bobs about. */
+    float         speed[STEAL_ITEM_MAX];       /**< How far each slot travels a step. */
+    s32           state[STEAL_ITEM_MAX];       /**< -1 free, 0 rising, 1 closing, 2 arrived. */
+    s32           aux_state[STEAL_ITEM_MAX];   /**< Second per-slot state, reset to -1 with state and otherwise unused. */
+    float         angle;                       /**< Angle every slot spins at. */
+    float         phase[STEAL_ITEM_MAX];       /**< How far through its bob each slot is. */
+    s32           item[STEAL_ITEM_MAX];        /**< Item each slot carries. */
+    u8            unk_154[0xC];
 
     /**
      * Frees every slot and gives them the model they draw with.
@@ -57,7 +57,7 @@ public:
      * @address 0x1D7600
      * @size 0x340
      */
-    void Step(void);
+    void Step();
 
     /**
      * Draws every taken slot.
@@ -66,7 +66,7 @@ public:
      * @address 0x1D7940
      * @size 0xA0
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Frees the first slot that has reached the player and returns the item
@@ -76,7 +76,7 @@ public:
      * @address 0x1D79E0
      * @size 0x60
      */
-    int checkEvent(void);
+    int checkEvent();
 };
 
 STATIC_ASSERT(sizeof(CStealItem) == 0x160);

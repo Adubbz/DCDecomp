@@ -15,13 +15,13 @@
    the movie asks for 2 and gets an offset anywhere in [-2, 2] to a hundredth. */
 void CSeireiKing::Draw(float *origin, float size, int spread) {
     sceVu0FVECTOR point;
-    int corner0[4];
-    int corner1[4];
-    int corner2[4];
-    int corner3[4];
-    sceGsAlpha blend;
-    sceGsZbuf zbuf;
-    int i;
+    int           corner0[4];
+    int           corner1[4];
+    int           corner2[4];
+    int           corner3[4];
+    sceGsAlpha    blend;
+    sceGsZbuf     zbuf;
+    int           i;
 
     blend = mgAlpha;
     blend.bits.a = 0;
@@ -40,8 +40,9 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
     position[0][2] += (float) (spread * 100 - rand() % (spread * 200)) / 100.0f;
 
     for (i = 0; i < 19; i++) {
-        if (count[i] < 0)
+        if (count[i] < 0) {
             continue;
+        }
 
         point[0] = position[i][0];
         point[1] = position[i][1];
@@ -66,8 +67,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 0;
                     rect.width = 64;
                     rect.height = 64;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef01", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef01", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
 
@@ -78,8 +78,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 0;
                     rect.width = 64;
                     rect.height = 64;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef02", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef02", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
 
@@ -90,8 +89,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 0;
                     rect.width = 64;
                     rect.height = 64;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef04", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef04", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
             }
@@ -119,8 +117,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 0;
                     rect.width = 32;
                     rect.height = 32;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
 
@@ -131,8 +128,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 0;
                     rect.width = 32;
                     rect.height = 32;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
 
@@ -143,8 +139,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 32;
                     rect.width = 32;
                     rect.height = 32;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
 
@@ -155,8 +150,7 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
                     rect.y = 32;
                     rect.width = 32;
                     rect.height = 32;
-                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2,
-                                corner3, corner1, (u8) alpha[i]);
+                    set3DSprite(Vif1Packet, TexManager.GetTexture("eef05", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[i]);
                     break;
                 }
             }
@@ -174,14 +168,14 @@ void CSeireiKing::Draw(float *origin, float size, int spread) {
 void CSeireiKing::Draw2(CCamera *camera, float *head, float *source) {
     sceVu0FVECTOR direction;
     sceVu0FVECTOR point;
-    int corner0[4];
-    int corner1[4];
-    int near0[4];
-    int near1[4];
-    int corner2[4];
-    int corner3[4];
-    sceGsAlpha blend;
-    sceGsZbuf zbuf;
+    int           corner0[4];
+    int           corner1[4];
+    int           near0[4];
+    int           near1[4];
+    int           corner2[4];
+    int           corner3[4];
+    sceGsAlpha    blend;
+    sceGsZbuf     zbuf;
 
     camera->GetPos(direction);
     direction[0] -= source[0];
@@ -239,8 +233,7 @@ void CSeireiKing::Draw2(CCamera *camera, float *head, float *source) {
             rect.y = 0;
             rect.width = 64;
             rect.height = 64;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("eef01", -1), rect, corner0, corner2,
-                        corner3, corner1, (u8) alpha[19]);
+            set3DSprite(Vif1Packet, TexManager.GetTexture("eef01", -1), rect, corner0, corner2, corner3, corner1, (u8) alpha[19]);
         }
     }
 

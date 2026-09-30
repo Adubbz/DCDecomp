@@ -6,15 +6,15 @@
 
 class CMainItemModel {
 public:
-    u_int *cash[6];     /**< Model data each cache slot holds, or zero where the slot is free. */
-    s32 cash_item[6];   /**< Item whose model each cache slot holds. */
-    s32 cash_lock[6];   /**< Number of model slots that draw each cache slot's model. */
-    s32 model[16];      /**< What each model slot holds; -1 where the slot is free. */
-    s32 model_cash[16]; /**< Cache slot whose model each model slot draws. */
-    u8 unk_0C8[8];
-    CFrame frame[16];      /**< Frame that places each model slot's model. */
-    float velocity[16][4]; /**< Distance each thrown model moves in a frame. */
-    s32 throw_time[16];    /**< Frames each thrown model has flown. */
+    u_int *cash[6];        /**< Model data each cache slot holds, or zero where the slot is free. */
+    s32    cash_item[6];   /**< Item whose model each cache slot holds. */
+    s32    cash_lock[6];   /**< Number of model slots that draw each cache slot's model. */
+    s32    model[16];      /**< What each model slot holds; -1 where the slot is free. */
+    s32    model_cash[16]; /**< Cache slot whose model each model slot draws. */
+    u8     unk_0C8[8];
+    CFrame frame[16];       /**< Frame that places each model slot's model. */
+    float  velocity[16][4]; /**< Distance each thrown model moves in a frame. */
+    s32    throw_time[16];  /**< Frames each thrown model has flown. */
 
     /**
      * Gives a free cache slot, or -1 where none is free.
@@ -23,7 +23,7 @@ public:
      * @address 0x1D4540
      * @size 0x44
      */
-    int GetFreeCashNo(void);
+    int GetFreeCashNo();
 
     /**
      * Gives a free model slot, or -1 where none is free.
@@ -32,7 +32,7 @@ public:
      * @address 0x1D4590
      * @size 0x48
      */
-    int GetFreeModelNo(void);
+    int GetFreeModelNo();
 
     /**
      * Reads one item model into a cache slot.
@@ -68,7 +68,7 @@ public:
      * @address 0x1D4940
      * @size 0x78
      */
-    void AllReleasItem(void);
+    void AllReleasItem();
 
     /**
      * Starts an item model flying from a position along a heading and returns its slot.
@@ -86,7 +86,7 @@ public:
      * @address 0x1D4AD0
      * @size 0x350
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Advances every item model by a frame.
@@ -95,7 +95,7 @@ public:
      * @address 0x1D4E20
      * @size 0x520
      */
-    void Step(void);
+    void Step();
 
     /**
      * Clears every item model and cache slot.
@@ -104,7 +104,7 @@ public:
      * @address 0x1D5340
      * @size 0xE4
      */
-    void Initialize(void);
+    void Initialize();
 };
 
 /**
@@ -112,10 +112,10 @@ public:
  */
 class CActiveItemPack {
 public:
-    s32 now;                /**< Slot the player is using now. */
-    s32 item[4];            /**< Item each slot runs. */
-    s32 model[9];           /**< Model each slot draws with, or -1 for none. */
-    CMainItemModel *models; /**< The pool the models come out of. */
+    s32             now;      /**< Slot the player is using now. */
+    s32             item[4];  /**< Item each slot runs. */
+    s32             model[9]; /**< Model each slot draws with, or -1 for none. */
+    CMainItemModel *models;   /**< The pool the models come out of. */
 
     /**
      * Gives back how the item the player is using now is run.
@@ -124,7 +124,7 @@ public:
      * @address 0x1D5430
      * @size 0x144
      */
-    int CheckStatusType(void);
+    int CheckStatusType();
 };
 
 STATIC_ASSERT(sizeof(CActiveItemPack) == 0x3C);

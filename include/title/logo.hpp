@@ -9,6 +9,12 @@
  */
 class CLogo {
 public:
+    int           alpha[9];     /**< Opacity of each letter. */
+    int           light[9];     /**< Light level each letter is drawn at. */
+    int           count;        /**< Ticks the fade has run for. */
+    int           unused_count; /**< Cleared alongside count and never read. */
+    sceVu0FVECTOR position;     /**< Where the letters hang in the world. */
+
     /**
      *          Constructs the logo in its initial animation state.
      *
@@ -16,7 +22,7 @@ public:
      * @address 0x1DD3E00
      * @size 0x3C
      */
-    CLogo(void);
+    CLogo();
 
     /**
      *          Resets the logo letters and placement.
@@ -26,7 +32,7 @@ public:
      * @size 0xC0
      * @unknownret
      */
-    void Init(void);
+    void Init();
 
     /**
      *          Reveals the logo letters in sequence.
@@ -36,7 +42,7 @@ public:
      * @size 0x80
      * @unknownret
      */
-    void Fade(void);
+    void Fade();
 
     /**
      *          Fades all logo letters out.
@@ -46,7 +52,7 @@ public:
      * @size 0x40
      * @unknownret
      */
-    void FadeOut(void);
+    void FadeOut();
 
     /**
      *          Draws the moving sparkle highlight.
@@ -56,7 +62,7 @@ public:
      * @size 0x2C8
      * @unknownret
      */
-    void Sparkdraw(float);
+    void Sparkdraw(float time);
 
     /**
      *          Draws the animated logo letters.
@@ -66,7 +72,7 @@ public:
      * @size 0x134
      * @unknownret
      */
-    void Draw(void);
+    void Draw();
 
     /**
      *          Advances the logo animation clock.
@@ -76,11 +82,5 @@ public:
      * @size 0x48
      * @unknownret
      */
-    void Move(void);
-
-    int alpha[9];           /**< Opacity of each letter. */
-    int light[9];           /**< Light level each letter is drawn at. */
-    int count;              /**< Ticks the fade has run for. */
-    int unused_count;       /**< Cleared alongside count and never read. */
-    sceVu0FVECTOR position; /**< Where the letters hang in the world. */
+    void Move();
 };

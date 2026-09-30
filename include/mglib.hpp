@@ -83,27 +83,27 @@ void MGSetBGColor(float red, float green, float blue, float alpha);
 /**
  * Index of the display buffer, and of each visual's built block, in use this frame.
  */
-extern int DBuffID;
-extern sceDmaChan *DmaCH1;
-extern sceDmaChan *DmaCH2;
-extern sceDmaChan *DmaCH8;
+extern int            DBuffID;
+extern sceDmaChan    *DmaCH1;
+extern sceDmaChan    *DmaCH2;
+extern sceDmaChan    *DmaCH8;
 extern sceVif1Packet *Vif1Packet;
 /* Retail has two distinct `VSyncField` symbols (0x2A23C8 GLOBAL -- this one
  * -- and 0x2A25DC LOCAL, in a still-raw TU); the `__2` suffix is the
  * disassembly dump's disambiguation, kept here to avoid a link collision. */
-extern s32 VSyncField__2;
-extern sceGsTex1 mgTEX1Env;
-extern s32 mgClearBackFlag;
-extern MG_PICKZ mgPickZBuff[16];
-extern sceGsDBuff mgDBuff;
+extern s32           VSyncField__2;
+extern sceGsTex1     mgTEX1Env;
+extern s32           mgClearBackFlag;
+extern MG_PICKZ      mgPickZBuff[16];
+extern sceGsDBuff    mgDBuff;
 extern sceVu0FVECTOR mgBackColor;
 
 /**
  * All-zero matrix; passed as both point-light matrices it turns the lights off.
  */
 extern sceVu0FMATRIX mgZeroMatrix;
-extern CRect_i_ mgWindowRect;
-extern sceGsTexa mgTexa;
+extern CRect_i_      mgWindowRect;
+extern sceGsTexa     mgTexa;
 #ifdef PAL
 /** First word of video memory past the frame and depth buffers. */
 extern int mgTopVRAM;
@@ -114,10 +114,10 @@ extern int mgZBufferAdr;
 /**
  * Returns the number of vertical syncs observed since initialization.
  */
-int MGGetVSyncCount(void);
-void MGClearScreen(u_char r, u_char g, u_char b, u_char a);
-void MGClearZBuffer(int mode);
-sceVif1Packet *GetVif1Packet(void);
+int            MGGetVSyncCount();
+void           MGClearScreen(u_char r, u_char g, u_char b, u_char a);
+void           MGClearZBuffer(int mode);
+sceVif1Packet *GetVif1Packet();
 
 /**
  * Register state used when configuring the depth buffer.
@@ -193,8 +193,7 @@ int MGRotTransPers(int *screen, float *position, int fog);
  * @address 0x12E740
  * @size 0x250
  */
-int MGRotTransPers3DSprite(int *top_left, int *bottom_right, float *position, float width,
-                           float height, int fog);
+int MGRotTransPers3DSprite(int *top_left, int *bottom_right, float *position, float width, float height, int fog);
 
 /**
  * Draws one model.
@@ -284,8 +283,7 @@ void MGSetGsTEST(sceGsTest *test);
  * @address 0x12FA70
  * @size 0x2C0
  */
-void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
-               unsigned char a);
+void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
 /**
  * Sets how far the fog reaches and what colour it is.
@@ -295,8 +293,7 @@ void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned 
  * @size 0x7C
  * @unknownret
  */
-void MGSetFogParm(float near_z, float far_z, unsigned char r, unsigned char g, unsigned char b,
-                  float far_fog, float near_fog);
+void MGSetFogParm(float near_z, float far_z, unsigned char r, unsigned char g, unsigned char b, float far_fog, float near_fog);
 
 /**
  * Sets the register that names how a primitive blends with the frame.
@@ -316,8 +313,7 @@ void MGSetGsALPHA(sceGsAlpha *alpha);
  * @size 0x21C
  * @unknownret
  */
-void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y,
-                 int direction);
+void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y, int direction);
 
 /**
  * Copies the frame being drawn into a texture.
@@ -347,7 +343,7 @@ void MGSetViewMatrix(float (*view)[4], float *position);
  * @address 0x12C220
  * @size 0x4E0
  */
-void MGInit(void);
+void MGInit();
 
 /**
  * Replaces the callback invoked from the vertical-sync interrupt handler.
@@ -374,7 +370,7 @@ void MGInitVif1Packet(u_long128 *buffer0, u_long128 *buffer1);
  * @address 0x12CD90
  * @size 0x2E0
  */
-void MGBeginFrame(void);
+void MGBeginFrame();
 
 /**
  * Submits the current packet, completes frame processing, and swaps buffers.
@@ -383,7 +379,7 @@ void MGBeginFrame(void);
  * @address 0x12D100
  * @size 0x5CC
  */
-void MGEndFrame(void);
+void MGEndFrame();
 
 /**
  * Selects how many vertical syncs frame completion waits for.
@@ -430,7 +426,7 @@ void MGSetProjection(float scale);
  * @address 0x12D990
  * @size 0x10
  */
-float MGGetProjection(void);
+float MGGetProjection();
 
 /**
  * Restores the default full-frame scissor rectangle.
@@ -439,7 +435,7 @@ float MGGetProjection(void);
  * @address 0x12D9A0
  * @size 0x13C
  */
-void MGSetWindowRect(void);
+void MGSetWindowRect();
 
 /**
  * Sets the scissor rectangle used for subsequent drawing.
@@ -484,8 +480,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog);
  * @address 0x158EB0
  * @size 0x2E4
  */
-void LensFlare(CTexture *texture, float *position, unsigned char red,
-               unsigned char green, unsigned char blue);
+void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green, unsigned char blue);
 
 /**
  * Calculates a lit vertex colour from a surface normal.
@@ -539,5 +534,4 @@ void MGGetFBuffBackTex(sceGsTex0 *tex0);
  * @address 0x12F430
  * @size 0x538
  */
-void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst,
-                        const CRect_i_ &dst_rect);
+void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst, const CRect_i_ &dst_rect);

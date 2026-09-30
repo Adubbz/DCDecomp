@@ -21,7 +21,7 @@ class CFrame;
  * @address 0x125990
  * @size 0xF4
  */
-void InitializeDataBuffer(void);
+void InitializeDataBuffer();
 
 /**
  * Reserves the read, packet, and scratch buffers from the global data arena.
@@ -39,7 +39,7 @@ void SetPacketReadBuffer(int packet_quads, int read_quads);
  * @address 0x125BC0
  * @size 0x254
  */
-void BufferAllClear(void);
+void BufferAllClear();
 
 /**
  * Gives a frame the attributes that it draws with.

@@ -13,32 +13,32 @@
    compared by the length the row carries rather than by its own, so a name that is another's prefix
    has to stand in front of it ([title-script.md](../../docs/formats/title-script.md)). */
 CSCRIPT_COMMAND Command[26] = {
-    {"OBJ_MOTION2", 11, 3, {2, 1, 1}},
-    {"OBJ_MOTION", 10, 3, {2, 1, 0}},
-    {"OBJ_MOVE", 8, 2, {2, 1}},
-    {"OBJ_TALK", 8, 7, {2, 1, 1, 1, 1, 1, 1}},
-    {"OBJ_EYE", 7, 3, {2, 1, 1}},
-    {"OBJ_MOUTH", 9, 3, {2, 1, 1}},
-    {"OBJ_DISP", 8, 2, {2, 1}},
-    {"OBJ_STEP", 8, 2, {2, 1}},
-    {"CAMERA", 6, 4, {2, 1, 1, 1}},
-    {"SE_STOP", 7, 3, {2, 1, 1}},
-    {"SE", 2, 4, {2, 1, 1, 1}},
-    {"SOUND_FADE", 10, 3, {2, 1, 1}},
-    {"FADE_IN", 7, 2, {2, 1}},
-    {"FADE_OUT", 8, 2, {2, 1}},
-    {"MESSAGE", 7, 6, {2, 1, 1, 1, 1, 1}},
-    {"NEXT_MES", 8, 1, {2}},
-    {"MES_CLR", 7, 0, {0}},
-    {"LOAD_OBJ", 8, 2, {2, 1}},
-    {"SPRITE", 6, 1, {2}},
-    {"BOM", 3, 4, {2, 1, 1, 1}},
-    {"BEEM", 4, 6, {2, 1, 1, 1, 1, 1}},
-    {"SCENE_LOAD", 10, 1, {2}},
-    {"SCENE", 5, 1, {2}},
-    {"END", 3, 0, {0}},
-    {"WAIT_KEY", 8, 1, {2}},
-    {"WAIT", 4, 1, {2}},
+    {"OBJ_MOTION2", 11, 3, {2, 1, 1}            },
+    {"OBJ_MOTION",  10, 3, {2, 1, 0}            },
+    {"OBJ_MOVE",    8,  2, {2, 1}               },
+    {"OBJ_TALK",    8,  7, {2, 1, 1, 1, 1, 1, 1}},
+    {"OBJ_EYE",     7,  3, {2, 1, 1}            },
+    {"OBJ_MOUTH",   9,  3, {2, 1, 1}            },
+    {"OBJ_DISP",    8,  2, {2, 1}               },
+    {"OBJ_STEP",    8,  2, {2, 1}               },
+    {"CAMERA",      6,  4, {2, 1, 1, 1}         },
+    {"SE_STOP",     7,  3, {2, 1, 1}            },
+    {"SE",          2,  4, {2, 1, 1, 1}         },
+    {"SOUND_FADE",  10, 3, {2, 1, 1}            },
+    {"FADE_IN",     7,  2, {2, 1}               },
+    {"FADE_OUT",    8,  2, {2, 1}               },
+    {"MESSAGE",     7,  6, {2, 1, 1, 1, 1, 1}   },
+    {"NEXT_MES",    8,  1, {2}                  },
+    {"MES_CLR",     7,  0, {0}                  },
+    {"LOAD_OBJ",    8,  2, {2, 1}               },
+    {"SPRITE",      6,  1, {2}                  },
+    {"BOM",         3,  4, {2, 1, 1, 1}         },
+    {"BEEM",        4,  6, {2, 1, 1, 1, 1, 1}   },
+    {"SCENE_LOAD",  10, 1, {2}                  },
+    {"SCENE",       5,  1, {2}                  },
+    {"END",         3,  0, {0}                  },
+    {"WAIT_KEY",    8,  1, {2}                  },
+    {"WAIT",        4,  1, {2}                  },
 };
 
 /* The one script the overlay runs. It is 58112 bytes because the file is held whole inside it and
@@ -74,8 +74,9 @@ void CScript::Load(const char *name) {
         se_stop = 0;
         bgm_fade = 0;
 
-        for (i = 0; i < 128; i++)
+        for (i = 0; i < 128; i++) {
             arg[i] = 0;
+        }
 
         for (i = 0; i < 23; i++) {
             obj[i].disp = 1;
@@ -102,13 +103,15 @@ void CScript::Load(const char *name) {
 void CScript::Step() {
     bool unmatched;
     bool done;
-    int i;
+    int  i;
 
-    if (this->end)
+    if (this->end) {
         return;
+    }
 
-    if (mes_wait)
+    if (mes_wait) {
         wait = 1.0f + motion_step;
+    }
 
     if (wait < 1.0f) {
         done = false;
@@ -124,15 +127,17 @@ void CScript::Step() {
                     pos = CheckScript(p, pos, &Command[i], i);
 
                     if (pos != -1) {
-                        if (i == 23 || i == 24 || i == 25)
+                        if (i == 23 || i == 24 || i == 25) {
                             done = true;
+                        }
                     }
                     break;
                 }
             }
 
-            if (unmatched)
+            if (unmatched) {
                 exit__2(-1);
+            }
         } while (!done);
     } else {
         wait = wait - motion_step;
@@ -147,8 +152,9 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
 
     cursor = position;
 
-    if (command->arg_count)
+    if (command->arg_count) {
         cursor = CheckArg(buffer, cursor, command);
+    }
 
     switch (command_no) {
         case 0:
@@ -280,8 +286,9 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
 
         case 19:
             bom_no++;
-            if (bom_no > 2)
+            if (bom_no > 2) {
                 bom_no = 0;
+            }
             bom_pos[bom_no][0] = arg[0];
             bom_pos[bom_no][1] = arg[1];
             bom_pos[bom_no][2] = arg[2];
@@ -291,8 +298,9 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
 
         case 20:
             beem_no++;
-            if (beem_no > 2)
+            if (beem_no > 2) {
                 beem_no = 0;
+            }
             if (arg[0] == -1.0f) {
                 beem_end = 1;
             } else {
@@ -347,8 +355,9 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
     for (i = 0; i < command->arg_count; i++) {
         switch (command->arg_type[i]) {
             case 1:
-                if (buffer[cursor] != ',')
+                if (buffer[cursor] != ',') {
                     return -1;
+                }
 
                 cursor = SkipSpace(buffer, cursor + 1);
                 if (memcmp(&buffer[cursor], "ON", 2) == 0) {
@@ -359,12 +368,15 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
                     cursor += 3;
                 } else {
                     accepted = 0;
-                    if (buffer[cursor] == '-')
+                    if (buffer[cursor] == '-') {
                         accepted = 1;
-                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                    }
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                         accepted = 1;
-                    if (!accepted)
+                    }
+                    if (!accepted) {
                         return -1;
+                    }
 
                     arg[i] = (float) atof(&buffer[cursor]);
 
@@ -382,12 +394,14 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
                             cursor++;
                             accepted = 1;
                         }
-                        if (!accepted)
+                        if (!accepted) {
                             break;
+                        }
                     }
 
-                    if (digit_count == 32)
+                    if (digit_count == 32) {
                         return -1;
+                    }
                 }
 
                 cursor = SkipSpace(buffer, cursor);
@@ -402,12 +416,15 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
                     cursor += 3;
                 } else {
                     accepted = 0;
-                    if (buffer[cursor] == '-')
+                    if (buffer[cursor] == '-') {
                         accepted = 1;
-                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                    }
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                         accepted = 1;
-                    if (!accepted)
+                    }
+                    if (!accepted) {
                         return -1;
+                    }
 
                     arg[i] = (float) atof(&buffer[cursor]);
 
@@ -425,12 +442,14 @@ int CScript::CheckArg(char *buffer, int position, CSCRIPT_COMMAND *command) {
                             cursor++;
                             accepted = 1;
                         }
-                        if (!accepted)
+                        if (!accepted) {
                             break;
+                        }
                     }
 
-                    if (digit_count == 32)
+                    if (digit_count == 32) {
                         return -1;
+                    }
                 }
 
                 cursor = SkipSpace(buffer, cursor);
@@ -456,10 +475,12 @@ int CScript::SkipSpace(char *buffer, int position) {
             stop = false;
         }
 
-        if (buffer[position] == ' ')
+        if (buffer[position] == ' ') {
             stop = false;
-        if (buffer[position] == '\t')
+        }
+        if (buffer[position] == '\t') {
             stop = false;
+        }
         if (buffer[position] == '\n') {
             position++;
             stop = false;
@@ -470,14 +491,16 @@ int CScript::SkipSpace(char *buffer, int position) {
         }
 
         if (memcmp(&buffer[position], "//", 2) == 0) {
-            while (buffer[position] != '\n' && buffer[position] != '\r')
+            while (buffer[position] != '\n' && buffer[position] != '\r') {
                 position++;
+            }
             position++;
             stop = false;
         }
 
-        if (stop)
+        if (stop) {
             return position;
+        }
         position++;
     }
 

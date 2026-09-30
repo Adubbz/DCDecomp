@@ -40,7 +40,7 @@ int BtBattleMusic_Wait;
 float BtBattleMusic_Vol;
 
 CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
-    int size;
+    int           size;
     unsigned int *file = GetPackFile(pack, name, &size);
 
     if (file == NULL) {
@@ -51,7 +51,7 @@ CFrame *LoadMDSFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) 
 }
 
 CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *buffer) {
-    int size;
+    int           size;
     unsigned int *file = GetPackFile(pack, name, &size);
 
     if (file == NULL) {
@@ -68,8 +68,7 @@ CFrame *LoadCollisionFilePack(unsigned int *pack, char *name, CDataAlloc2<1> *bu
  * @address 0x1B6E80
  * @size 0xA4
  */
-void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
-                       char *reference_name) {
+void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name, char *reference_name) {
     sceVu0FMATRIX matrix;
 
     // A matrix's fourth row is where the frame stands.
@@ -87,7 +86,7 @@ void setCameraPassData(CFrameVu1 *frame, CCamera *camera, char *position_name,
  * @size 0x50
  */
 void getFramePos(CFrameVu1 *frame, char *name, float *position) {
-    CFrame *named_frame = frame->SearchFrame(name);
+    CFrame       *named_frame = frame->SearchFrame(name);
     sceVu0FVECTOR origin;
 
     // The position wanted is the frame's own origin.
@@ -105,9 +104,9 @@ void getFramePos(CFrameVu1 *frame, char *name, float *position) {
  */
 void makeWeaponName(char *name, int weapon_no) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
-    int first_weapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
-    char number[16];
-    int chara_no = 0;
+    int   first_weapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+    char  number[16];
+    int   chara_no = 0;
 
     if (weapon_no >= 0x101) {
         if (weapon_no >= 0x101 && weapon_no < 0x12B) {
@@ -179,7 +178,7 @@ char nameWepBuff_img[64];
 
 void BtGetWeaponNamePath2(char *chr_name, char *cfg_name, int chara, int weapon_index) {
     char *prefix[6] = {"c01w", "c04w", "c06w", "c05w", "c10w", "c18w"};
-    char number[32];
+    char  number[32];
     char *base = prefix[chara];
 
     strcpy(nameWepBuff_mds, base);
@@ -199,7 +198,7 @@ void BtGetWeaponNamePath2(char *chr_name, char *cfg_name, int chara, int weapon_
 
 void BtGetWeaponNamePath3(char *chr_name, char *cfg_name, int weapon_no) {
     WEAPON_DATA *weapon_data;
-    int chara_no;
+    int          chara_no;
     if (weapon_no <= 0x100) {
         weapon_data = NULL;
     } else {

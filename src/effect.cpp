@@ -11,7 +11,7 @@
 #include "rect.hpp"
 #include "snd.hpp"
 
-void C3DSprite::Draw(void) {
+void C3DSprite::Draw() {
     if (texture == NULL) {
         return;
     }
@@ -46,7 +46,7 @@ void C3DSprite::Draw(void) {
     }
 }
 
-void C3DSprite::Initialize(void) {
+void C3DSprite::Initialize() {
     texture = NULL;
     texel = CRect_i_(0, 0, 0, 0);
     colour.a = 128;
@@ -145,7 +145,7 @@ void CEffect::Step(int unused) {
     }
 }
 
-void CEffect::Draw(void) {
+void CEffect::Draw() {
     if (active == 0 || texture == NULL) {
         return;
     }
@@ -153,9 +153,9 @@ void CEffect::Draw(void) {
     position[3] = 1.0f;
     float sprite_width = scale[0] * width;
     float sprite_height = scale[1] * height;
-    int top_left[4];
-    int bottom_right[4];
-    int screen[4][4];
+    int   top_left[4];
+    int   bottom_right[4];
+    int   screen[4][4];
     float corner[4][4];
     if (draw_mode != 0) {
         for (int i = 0; i < 4; i++) {
@@ -174,13 +174,12 @@ void CEffect::Draw(void) {
                 return;
             }
         }
-    } else if (MGRotTransPers3DSprite(top_left, bottom_right, position, sprite_width,
-                                      sprite_height, 0) == 0) {
+    } else if (MGRotTransPers3DSprite(top_left, bottom_right, position, sprite_width, sprite_height, 0) == 0) {
         return;
     }
 
     if (render_flags != 0) {
-        sceGsZbuf zbuffer = mgZBuffer;
+        sceGsZbuf  zbuffer = mgZBuffer;
         sceGsAlpha alpha = mgAlpha;
         zbuffer.bits.zmsk = 1;
         MGSetGsZBUF(&zbuffer);
@@ -200,8 +199,8 @@ void CEffect::Draw(void) {
     }
 
     // Texture changes lag their corresponding source rectangle by one draw.
-    CTexture *draw_texture = texture;
-    CRect_i_ draw_texel = texel;
+    CTexture            *draw_texture = texture;
+    CRect_i_             draw_texel = texel;
     CEffectTextureFrame *animation;
     if (texture_frames != NULL) {
         int animation_frame = frame;
@@ -219,8 +218,7 @@ void CEffect::Draw(void) {
 
     spRGBA colour = {0x68, 0x80, 0x80, (int) (opacity * 128.0f)};
     if (draw_mode != 0) {
-        set3DSprite(GetVif1Packet(), draw_texture, draw_texel, screen[0], screen[1], screen[2],
-                    screen[3], &colour);
+        set3DSprite(GetVif1Packet(), draw_texture, draw_texel, screen[0], screen[1], screen[2], screen[3], &colour);
     } else {
         set3DSprite(GetVif1Packet(), draw_texture, draw_texel, top_left, bottom_right, &colour);
     }
@@ -230,7 +228,7 @@ void CEffect::Draw(void) {
     }
 }
 
-void CEffectParam::Initialize(void) {
+void CEffectParam::Initialize() {
     lifetime = 0;
     draw_mode = 0;
     position_oscillation_flags = 0;
@@ -254,7 +252,7 @@ void CEffectParam::Initialize(void) {
     texture_frames = NULL;
 }
 
-void CEffect::Initialize(void) {
+void CEffect::Initialize() {
     active = 0;
     frame = 0;
     lifetime = 0;

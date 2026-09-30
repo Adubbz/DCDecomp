@@ -30,18 +30,24 @@ int CBound::InCheck(float *point, float *result) {
     result[2] = point[2] - position[2];
     result[3] = 0.0f;
     sceVu0ApplyMatrix(result, inverse, result);
-    if (result[0] > extent[0])
+    if (result[0] > extent[0]) {
         return 0;
-    if (result[1] > extent[1])
+    }
+    if (result[1] > extent[1]) {
         return 0;
-    if (result[2] > extent[2])
+    }
+    if (result[2] > extent[2]) {
         return 0;
-    if (result[0] < -extent[0])
+    }
+    if (result[0] < -extent[0]) {
         return 0;
-    if (result[1] < -extent[1])
+    }
+    if (result[1] < -extent[1]) {
         return 0;
-    if (result[2] < -extent[2])
+    }
+    if (result[2] < -extent[2]) {
         return 0;
+    }
     result[0] = result[0] * reciprocal[0];
     result[1] = result[1] * reciprocal[1];
     result[2] = result[2] * reciprocal[2];
@@ -67,8 +73,7 @@ int CBound::InCheck(float *point, float *result) {
     return 0;
 }
 
-void CBound::SetDir(CFrame *frame, float *from_position, float *to_position,
-                    float *up_direction, float half_width, float half_height) {
+void CBound::SetDir(CFrame *frame, float *from_position, float *to_position, float *up_direction, float half_width, float half_height) {
     follow_mode = 1;
     from_frame = frame;
     to_frame = NULL;
@@ -97,7 +102,7 @@ void CBound::ChangeDir(float *from_position, float *to_position, float *up_direc
     sceVu0CopyVector(up, up_direction);
 }
 
-void CBound::UpDateDir(void) {
+void CBound::UpDateDir() {
     sceVu0FVECTOR span;
     sceVu0FVECTOR world_from;
     sceVu0FVECTOR world_to;
@@ -189,7 +194,7 @@ void CBound::SetDir(float *new_direction) {
     sceVu0TransposeMatrix(matrix, inverse);
 }
 
-void CBound::UpDateDirPos(void) {
+void CBound::UpDateDirPos() {
     sceVu0FMATRIX frame_matrix;
     sceVu0FVECTOR world_from;
     sceVu0FVECTOR world_to;
@@ -253,8 +258,9 @@ void CBound::UpDate() {
             UpDateDirPos();
             break;
     }
-    if (next)
+    if (next) {
         next->UpDate();
+    }
 }
 
 void CBound::InitParam() {

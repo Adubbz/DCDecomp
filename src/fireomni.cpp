@@ -9,7 +9,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-CFireOmni::CFireOmni(void) {
+CFireOmni::CFireOmni() {
     raster_phase = 0.0f;
     flame_phase = 0.0f;
     cell_phase = 15.0f;
@@ -24,7 +24,7 @@ CFireOmni::CFireOmni(void) {
     texture_set = 0;
 }
 
-void CFireOmni::FireStep(void) {
+void CFireOmni::FireStep() {
     cell_phase -= 0.4f;
     if (cell_phase <= 0.0f) {
         cell_phase = 14.8f;
@@ -36,29 +36,21 @@ void CFireOmni::FireStep(void) {
     flicker_seed = (int) (60000.0f * (float) rand() / 2.1474836e9f);
 }
 
-void CFireOmni::FireCreate(void) {
+void CFireOmni::FireCreate() {
     CTexture *texture = TexManager.GetTexture("d01e02", -1);
     if (texture == NULL) {
         return;
     }
 
     if (texture->bpp == 1) {
-        int cell = (int) cell_phase;
-        int column = cell % 4;
-        int row = cell / 4;
-        sceGsTex0 blend =
-            *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
-        blendTextuer(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM,
-                     TexManager.GetTexture("d01e03", -1), CRect_i_(0, 0, 128, 128),
-                     CRect_i_(0, (int) flame_phase, 128, 64), TexManager.GetTexture("d01e02", -1),
-                     CRect_i_(0, 0, 128, 128), CRect_i_(column * 64, row * 64, 64, 64));
+        int       cell = (int) cell_phase;
+        int       column = cell % 4;
+        int       row = cell / 4;
+        sceGsTex0 blend = *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
+        blendTextuer(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM, TexManager.GetTexture("d01e03", -1), CRect_i_(0, 0, 128, 128), CRect_i_(0, (int) flame_phase, 128, 64), TexManager.GetTexture("d01e02", -1), CRect_i_(0, 0, 128, 128), CRect_i_(column * 64, row * 64, 64, 64));
     } else {
-        sceGsTex0 blend =
-            *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
-        blendTextuer(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM,
-                     TexManager.GetTexture("d01e03", -1), CRect_i_(0, 0, 128, 128),
-                     CRect_i_(0, (int) flame_phase, 128, 64), TexManager.GetTexture("d01e02", -1),
-                     CRect_i_(0, 0, 128, 128), CRect_i_(0, (int) cell_phase * 64, 64, 64));
+        sceGsTex0 blend = *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
+        blendTextuer(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM, TexManager.GetTexture("d01e03", -1), CRect_i_(0, 0, 128, 128), CRect_i_(0, (int) flame_phase, 128, 64), TexManager.GetTexture("d01e02", -1), CRect_i_(0, 0, 128, 128), CRect_i_(0, (int) cell_phase * 64, 64, 64));
     }
 }
 
@@ -68,20 +60,19 @@ void CFireOmni::SetTexture(CTexture *core_texture, CTexture *glow_texture) {
     this->texture_set = 1;
 }
 
-void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale,
-                         int layers, float camera_offset) {
+void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale, int layers, float camera_offset) {
     sceVu0FVECTOR camera_direction;
     sceVu0FVECTOR camera_ref;
-    int near_top_left[4];
-    int near_bottom_right[4];
+    int           near_top_left[4];
+    int           near_bottom_right[4];
     sceVu0FVECTOR world;
-    int top_left[4];
-    int bottom_right[4];
-    int top_right[4];
-    int bottom_left[4];
-    sceGsTest test;
-    sceGsZbuf zbuffer;
-    sceGsAlpha alpha;
+    int           top_left[4];
+    int           bottom_right[4];
+    int           top_right[4];
+    int           bottom_left[4];
+    sceGsTest     test;
+    sceGsZbuf     zbuffer;
+    sceGsAlpha    alpha;
 
     if (texture_set == 0) {
         if (core == NULL) {
@@ -162,8 +153,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
         world[1] = pos[1] + 4.6f;
         world[2] = pos[2];
         world[3] = 1.0f;
-        if (MGRotTransPers3DSprite(top_left, bottom_right, world, 45.0f * flicker_width * scale,
-                                   45.0f * flicker_height * scale / 2.0f, 1) == 1) {
+        if (MGRotTransPers3DSprite(top_left, bottom_right, world, 45.0f * flicker_width * scale, 45.0f * flicker_height * scale / 2.0f, 1) == 1) {
             top_right[0] = bottom_right[0];
             top_right[1] = top_left[1];
             top_right[2] = top_left[2];
@@ -175,13 +165,10 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
             world[0] += camera_direction[0];
             world[1] += camera_direction[1];
             world[2] += camera_direction[2];
-            if (MGRotTransPers3DSprite(near_top_left, near_bottom_right, world,
-                                       45.0f * scale + flicker_width,
-                                       (45.0f * scale + flicker_height) / 2.0f, 0) == 1) {
+            if (MGRotTransPers3DSprite(near_top_left, near_bottom_right, world, 45.0f * scale + flicker_width, (45.0f * scale + flicker_height) / 2.0f, 0) == 1) {
                 top_right[2] = top_left[2] = bottom_left[2] = bottom_right[2] = near_top_left[2];
             }
-            set3DSpriteFog(Vif1Packet, core, CRect_i_(0, 0, 64, 64), top_left, top_right,
-                           bottom_left, bottom_right, 0x80);
+            set3DSpriteFog(Vif1Packet, core, CRect_i_(0, 0, 64, 64), top_left, top_right, bottom_left, bottom_right, 0x80);
         }
     }
 
@@ -196,7 +183,7 @@ void CFireOmni::DrawFire(int unused0, int unused1, CCamera *camera, float *colou
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
 
-void CFireOmni::RasterStep(void) {
+void CFireOmni::RasterStep() {
     float phase = this->raster_phase + ((2.0f * (float) rand()) / 2.1474836e9f);
     this->raster_phase = phase;
     if (!(phase < 8.0f)) {
@@ -204,10 +191,10 @@ void CFireOmni::RasterStep(void) {
     }
 }
 
-void CFireOmni::DrawRaster(void) {
+void CFireOmni::DrawRaster() {
     sceVu0FVECTOR world;
-    int top_left[4];
-    int bottom_right[4];
+    int           top_left[4];
+    int           bottom_right[4];
 
     world[0] = pos[0];
     world[1] = pos[1] + 3.0f;
@@ -235,9 +222,6 @@ void CFireOmni::DrawRaster(void) {
     }
 
     sceGsTex0 blend = *reinterpret_cast<sceGsTex0 *>(&TexManager.GetTexture("blender", -1)->tex0);
-    blendTextuerTest(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM, CRect_i_(x, y >> 1, width, height),
-                     TexManager.GetTexture("alpha01", -1), CRect_i_(0, 0, width, height),
-                     CRect_i_(0, 0, 64, 64), top_left[2] >> 4, raster_phase);
-    set2DSprite(Vif1Packet, TexManager.GetTexture("blender", -1), CRect_i_(x, y, width, height * 2),
-                CRect_i_(1, 1, width - 2, height - 2));
+    blendTextuerTest(Vif1Packet, blend.TBP0, blend.TBW, blend.PSM, CRect_i_(x, y >> 1, width, height), TexManager.GetTexture("alpha01", -1), CRect_i_(0, 0, width, height), CRect_i_(0, 0, 64, 64), top_left[2] >> 4, raster_phase);
+    set2DSprite(Vif1Packet, TexManager.GetTexture("blender", -1), CRect_i_(x, y, width, height * 2), CRect_i_(1, 1, width - 2, height - 2));
 }

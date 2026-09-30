@@ -11,7 +11,7 @@ class CEffectParam;
 class CEffectGroup {
 public:
     CEffect *effect_table; /**< First effect in the caller-supplied pool. */
-    int capacity;          /**< Number of effects in the pool. */
+    int      capacity;     /**< Number of effects in the pool. */
 
     /** Starts the group with no pool. */
     CEffectGroup() { Initialize(0, 0); }
@@ -41,7 +41,7 @@ public:
      * @address 0x164A60
      * @size 0x60
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Resets every effect in the pool to its inactive state.
@@ -50,7 +50,7 @@ public:
      * @address 0x164AC0
      * @size 0x60
      */
-    void Clear(void);
+    void Clear();
 
     /**
      * Assigns the storage and capacity used by the effect pool.

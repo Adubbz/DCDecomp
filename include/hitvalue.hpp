@@ -13,8 +13,8 @@ class CFrame;
  */
 class CHitValue {
 public:
-    sceVu0FVECTOR pos; /**< World position the number is drawn above. */
-    CFrame *frame;     /**< Frame the number follows, or zero to stand still. */
+    sceVu0FVECTOR pos;   /**< World position the number is drawn above. */
+    CFrame       *frame; /**< Frame the number follows, or zero to stand still. */
 
     union {
         float digit_angle[5]; /**< Hop angle of each place, rising to pi. */
@@ -41,9 +41,9 @@ public:
         s32 unk_44;
     };
 
-    s32 kind;   /**< What took the hit, which picks the digit sheet. */
-    RECT texel; /**< Rectangle of the sheet one digit is cut from. */
-    s32 active; /**< Indicates that the slot is showing a number. */
+    s32  kind;   /**< What took the hit, which picks the digit sheet. */
+    RECT texel;  /**< Rectangle of the sheet one digit is cut from. */
+    s32  active; /**< Indicates that the slot is showing a number. */
 
     /**
      * Puts one damage number on the screen over what took the hit.
@@ -61,7 +61,7 @@ public:
      * @address 0x1B6560
      * @size 0x2F0
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Advances the damage numbers' rise and fade.
@@ -70,7 +70,7 @@ public:
      * @address 0x1B6850
      * @size 0x198
      */
-    void Step(void);
+    void Step();
 };
 
 /**

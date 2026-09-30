@@ -4,7 +4,6 @@
 
 class RenderInfo;
 class sceVif1Packet;
-class i;
 struct MDT_MATERIAL;
 
 /**
@@ -70,6 +69,11 @@ public:
  */
 class CVisualVu1 : public CVisual {
 public:
+    int    unk_00;
+    int    unk_04;
+    u_int *vu_data; /**< Vector Unit command data built for this visual. */
+    u_int  vu_size; /**< Size of the Vector Unit data in quadwords. */
+
     /**
      * Constructs a vector-unit visual and clears it.
      *
@@ -109,8 +113,8 @@ public:
      * @address 0x134EC0
      * @size 0x3C
      */
-    virtual void Initialize();
-    virtual void SetMDTDataAddress(u_int *data);
+    virtual void   Initialize();
+    virtual void   SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
     /**
      * Returns zero because this visual has no retained model data to rebuild.
@@ -119,9 +123,8 @@ public:
      * @address 0x134BB0
      * @size 0xC
      */
-    virtual int RemakeData(u_int *block);
-    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        u_long128 *draw_state, int unknown1, int unknown2);
+    virtual int RemakeData(u_int *data);
+    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
     /**
      * Draws the visual into a VIF packet and reserves the words it wrote.
      *
@@ -129,13 +132,7 @@ public:
      * @address 0x134BC0
      * @size 0xC4
      */
-    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
-
-    int unk_00;
-    int unk_04;
-    u_int *vu_data; /**< Vector Unit command data built for this visual. */
-    u_int vu_size;  /**< Size of the Vector Unit data in quadwords. */
+    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 };
 
 /**
@@ -145,6 +142,10 @@ public:
  */
 class CVisualMDTVu1 : public CVisualVu1 {
 public:
+    u_int *data;              /**< Retained source MDT image used to rebuild the visual. */
+    int    copy_on_draw;      /**< Whether each draw works from a copy of the built block in the frame's data arena. */
+    u_int *vu_data_buffer[2]; /**< Built block each display buffer draws from. */
+
     /**
      * Constructs a model visual and clears it.
      *
@@ -162,8 +163,8 @@ public:
      * @address 0x134F70
      * @size 0x3C
      */
-    virtual void Initialize();
-    virtual void SetMDTDataAddress(u_int *data);
+    virtual void   Initialize();
+    virtual void   SetMDTDataAddress(u_int *data);
     virtual u_int *GetMDTDataAddress();
     /**
      * Rebuilds VU data and returns its size in quadwords, or zero if no MDT model is retained.
@@ -181,8 +182,7 @@ public:
      * @address 0x1360E0
      * @size 0x120
      */
-    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        u_long128 *draw_state, int unknown1, int unknown2);
+    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Draws the model into a VIF packet, choosing the buffer the frame is using.
@@ -191,12 +191,7 @@ public:
      * @address 0x136200
      * @size 0x34
      */
-    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
-
-    u_int *data;              /**< Retained source MDT image used to rebuild the visual. */
-    int copy_on_draw;         /**< Whether each draw works from a copy of the built block in the frame's data arena. */
-    u_int *vu_data_buffer[2]; /**< Built block each display buffer draws from. */
+    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 };
 
 /**
@@ -214,7 +209,7 @@ public:
      * @address 0x136840
      * @size 0x48
      */
-    virtual int RemakeData(u_int *data);
+    virtual int RemakeData(u_int *block);
 
     /**
      * Draws the model, building and lending it a clipped shadow packet on the shadow pass.
@@ -223,8 +218,7 @@ public:
      * @address 0x136290
      * @size 0x14C
      */
-    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        u_long128 *draw_state, int unknown1, int unknown2);
+    virtual int DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Draws the model into a VIF packet, building and lending it a clipped shadow packet.
@@ -233,8 +227,7 @@ public:
      * @address 0x1363E0
      * @size 0x144
      */
-    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
+    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Writes one model's shadow geometry and returns its size in quadwords.

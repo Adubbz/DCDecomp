@@ -39,11 +39,11 @@
 
 BT_EVENT_INFO BtEventInfo;
 BT_OBJ_HANDLE BtObjHdl[32];
-char BtLoadMapFileName[32];
-int BtMapJumpFloor;
-s32 BtLoadMapType;
+char          BtLoadMapFileName[32];
+int           BtMapJumpFloor;
+s32           BtLoadMapType;
 
-void BtSystemScriptEventInfoInit(void) {
+void BtSystemScriptEventInfoInit() {
     BtEventInfo.script_no = -1;
     BtEventInfo.running_script_no = -1;
     BtEventInfo.init_flag_28 = 1;
@@ -90,10 +90,10 @@ BT_OBJ_HANDLE *GetObjHDL(int index) {
 
 void BtSystemScriptLoad(int floor) {
 #ifdef PAL
-    char path[32];
-    char mes_path[40];
-    int read_size;
-    int mes_size;
+    char  path[32];
+    char  mes_path[40];
+    int   read_size;
+    int   mes_size;
     char *mes;
 
     sprintf(path, "dun/script/d0%d/event.stb", floor + 1);
@@ -111,7 +111,7 @@ void BtSystemScriptLoad(int floor) {
     AddSystemEventScript();
 #else
     char path[44];
-    int read_size;
+    int  read_size;
 
     sprintf(path, "dun/script/d0%d/event.stb", floor + 1);
     BtSystemScriptFileBuffer.used = 0;
@@ -124,10 +124,10 @@ void BtSystemScriptLoad(int floor) {
 #endif
 }
 
-void BtSystemScriptInit(void) {
+void BtSystemScriptInit() {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR ref;
-    float text_rate;
+    float         text_rate;
 
     BtEventMode = 1;
     BtAllClear = 1;
@@ -186,7 +186,7 @@ void BtSystemScriptInit(void) {
     BtActStatus.unk_028 = 0;
 }
 
-void BtSystemScriptAfter(void) {
+void BtSystemScriptAfter() {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR ref;
 
@@ -361,8 +361,8 @@ int _CHECK_EVENT_FLG(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_EVENT_FLG(RS_STACKDATA *stack, int argument_count) {
-    int flag_no = GetStackInt(stack++);
-    int value = GetStackInt(stack);
+    int          flag_no = GetStackInt(stack++);
+    int          value = GetStackInt(stack);
     CUserStatus *status = UserStatus;
 
     if (flag_no >= 0 && flag_no < 50) {
@@ -372,14 +372,14 @@ int _SET_EVENT_FLG(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_OBJHDL(RS_STACKDATA *stack, int argument_count) {
-    int index = GetStackInt(stack++);
-    int parts_no = GetStackInt(stack++);
-    char *name = GetStackString(stack);
+    int            index = GetStackInt(stack++);
+    int            parts_no = GetStackInt(stack++);
+    char          *name = GetStackString(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (parts_no != -1) {
         CDungeonMap *map = NowDngMap;
-        CFrame *frame = map->parts[parts_no].GetSearchFrame(name);
+        CFrame      *frame = map->parts[parts_no].GetSearchFrame(name);
         if (frame != NULL) {
             handle->frame = frame;
             handle->type = 0;
@@ -403,10 +403,10 @@ int _GET_OBJHDL(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
-    int index = GetStackInt(stack++);
-    float x = GetStackFloat(stack++);
-    float y = GetStackFloat(stack++);
-    float z = GetStackFloat(stack);
+    int            index = GetStackInt(stack++);
+    float          x = GetStackFloat(stack++);
+    float          y = GetStackFloat(stack++);
+    float          z = GetStackFloat(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (handle->type == 0 && handle->frame != NULL) {
@@ -419,10 +419,10 @@ int _SET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
-    int index = GetStackInt(stack++);
-    float x = GetStackFloat(stack++);
-    float y = GetStackFloat(stack++);
-    float z = GetStackFloat(stack);
+    int            index = GetStackInt(stack++);
+    float          x = GetStackFloat(stack++);
+    float          y = GetStackFloat(stack++);
+    float          z = GetStackFloat(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (handle->type == 0) {
@@ -442,8 +442,8 @@ int _SET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int argument_count) {
-    int index = GetStackInt(stack++);
-    int draw = GetStackInt(stack);
+    int            index = GetStackInt(stack++);
+    int            draw = GetStackInt(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (handle->type == 0) {
@@ -474,8 +474,8 @@ int _SET_OBJHDL_DRAW_FLAG(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
-    sceVu0FVECTOR local = {0.0f, 0.0f, 0.0f, 0.0f};
-    sceVu0FVECTOR pos;
+    sceVu0FVECTOR  local = {0.0f, 0.0f, 0.0f, 0.0f};
+    sceVu0FVECTOR  pos;
     BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt(stack++));
 
     if (handle->type == 0) {
@@ -497,8 +497,8 @@ int _GET_OBJHDL_POS(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_OBJHDL_ROT(RS_STACKDATA *stack, int argument_count) {
-    sceVu0FVECTOR rot = {0.0f, 0.0f, 0.0f, 1.0f};
-    sceVu0FMATRIX matrix;
+    sceVu0FVECTOR  rot = {0.0f, 0.0f, 0.0f, 1.0f};
+    sceVu0FMATRIX  matrix;
     BT_OBJ_HANDLE *handle = GetObjHDL(GetStackInt(stack++));
 
     if (handle->type == 0) {
@@ -605,8 +605,8 @@ int _SET_EVENT_SW(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _SET_MONSTOR_ID(RS_STACKDATA *stack, int argument_count) {
-    int model_no = GetStackInt(stack++);
-    int event_flag = -1;
+    int   model_no = GetStackInt(stack++);
+    int   event_flag = -1;
     float pos[3];
 
     if (argument_count == 2) {
@@ -706,8 +706,8 @@ int _CLEAN_MONSTOR_SCRIPT_NO(RS_STACKDATA *stack, int argument_count) {
 }
 
 int _GET_NPC_OBJHDL(RS_STACKDATA *stack, int argument_count) {
-    int index = GetStackInt(stack++);
-    int npc_no = GetStackInt(stack);
+    int            index = GetStackInt(stack++);
+    int            npc_no = GetStackInt(stack);
     BT_OBJ_HANDLE *handle = GetObjHDL(index);
 
     if (npc_no < 0 || npc_no > 3) {
@@ -1010,77 +1010,77 @@ struct BT_EVENT_EXTERNAL_FUNCTION {
 
 /** Opcode functions of the system script, ended by an entry without a function. */
 static BT_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
-    {_GET_FLOOR_LEVEL, 1010},
-    {_SET_FLOOR_LEVEL, 1011},
-    {_GET_OLD_FLOOR_LEVEL, 1012},
-    {_GET_ACTION_MODE, 1020},
-    {_ITEM_USE_WINDOW, 1021},
-    {_CHECK_EVENT_FLG, 1023},
-    {_SET_EVENT_FLG, 1024},
-    {_GET_OBJHDL, 1030},
-    {_SET_OBJHDL_POS, 1031},
-    {_SET_OBJHDL_ROT, 1032},
-    {_SET_OBJHDL_DRAW_FLAG, 1033},
-    {_GET_OBJHDL_POS, 1034},
-    {_GET_OBJHDL_ROT, 1035},
-    {_SET_URA_DUNGEON, 1036},
-    {_GET_EVENT_POS, 1040},
-    {_GET_EVENT_ROT, 1041},
-    {_OPEN_ENTRANCE_WINDOW, 1022},
-    {_OPEN_ESCAPE_WINDOW, 1070},
-    {_GO_DUNGEON, 1050},
-    {_SET_DUNGEON_MAP, 1051},
-    {_LOAD_DUNGEON_MAP2, 1052},
-    {_LOAD_MONSTOR, 1053},
-    {_SET_RANDOM_MAP, 1054},
-    {_SET_EVENT_SW, 1055},
-    {_SET_MONSTOR_ID, 1056},
-    {_CHK_ATRA_HAVE, 1057},
-    {_SET_ATRA, 1058},
-    {_SET_IBOX, 1059},
-    {_GET_NOW_USER_ID, 1060},
-    {_RUN_SCRIPT_NO, 1061},
+    {_GET_FLOOR_LEVEL,         1010},
+    {_SET_FLOOR_LEVEL,         1011},
+    {_GET_OLD_FLOOR_LEVEL,     1012},
+    {_GET_ACTION_MODE,         1020},
+    {_ITEM_USE_WINDOW,         1021},
+    {_CHECK_EVENT_FLG,         1023},
+    {_SET_EVENT_FLG,           1024},
+    {_GET_OBJHDL,              1030},
+    {_SET_OBJHDL_POS,          1031},
+    {_SET_OBJHDL_ROT,          1032},
+    {_SET_OBJHDL_DRAW_FLAG,    1033},
+    {_GET_OBJHDL_POS,          1034},
+    {_GET_OBJHDL_ROT,          1035},
+    {_SET_URA_DUNGEON,         1036},
+    {_GET_EVENT_POS,           1040},
+    {_GET_EVENT_ROT,           1041},
+    {_OPEN_ENTRANCE_WINDOW,    1022},
+    {_OPEN_ESCAPE_WINDOW,      1070},
+    {_GO_DUNGEON,              1050},
+    {_SET_DUNGEON_MAP,         1051},
+    {_LOAD_DUNGEON_MAP2,       1052},
+    {_LOAD_MONSTOR,            1053},
+    {_SET_RANDOM_MAP,          1054},
+    {_SET_EVENT_SW,            1055},
+    {_SET_MONSTOR_ID,          1056},
+    {_CHK_ATRA_HAVE,           1057},
+    {_SET_ATRA,                1058},
+    {_SET_IBOX,                1059},
+    {_GET_NOW_USER_ID,         1060},
+    {_RUN_SCRIPT_NO,           1061},
     {_CLEAN_MONSTOR_SCRIPT_NO, 1066},
-    {_GET_NPC_OBJHDL, 1062},
-    {_SET_MOTION_OBJHDL, 1063},
-    {_SET_NPC_ON_OFF, 1094},
-    {_GET_GATEKEY_NO, 1064},
-    {_USER_WEAPON_DRAW, 1065},
-    {_SET_MAIN_CHR2, 1067},
-    {_RESET_MAIN_CHR, 1071},
-    {_SET_LIMMIT_ZONE, 1068},
-    {_SET_DEAD_FLAG, 1069},
-    {_ALL_DRAW_FLAG, 1072},
-    {_SET_FLOOR_TITLE, 1073},
-    {_GET_RUBY_ELEMENT, 1074},
-    {_SET_RUBY_ELEMENT, 1088},
-    {_SET_FLOOR_TITLE_OFF, 1076},
-    {_INIT_BEE, 1077},
-    {_END_BEE, 1078},
-    {_EASTKING_COMPLETE, 1079},
-    {_SET_RES_LIMMIT_ZONE, 1080},
-    {_GET_ITEM_TRAPID, 1081},
-    {_RESET_ITEM_TRAP, 1082},
-    {_BOM_SET, 1083},
-    {_SET_STATUS_ERR, 1084},
-    {_CHECK_MARDAN, 1086},
-    {_NO_RESET_CHARA_NO, 1087},
-    {_CHECK_CHR_HELP, 1089},
-    {_HOLD_ITEM_EVENT, 1090},
-    {_STOP_BATTLE_BGM, 1091},
-    {_NO_STATUS_RECOVER, 1092},
-    {_SET_QUEST_DUNGEON, 1093},
-    {_GET_MAP_CODE, 1095},
-    {_SET_ACTIVE_ITEM_ICON, 1096},
-    {_GET_ITEM_UNIT_NO, 1097},
-    {_SET_IBOX_ANGLE, 1098},
-    {_SET_IBOX_FINISH, 1099},
-    {_GET_PIERO_ITEM, 1100},
-    {_CLEAR_DEAMON_SHAFT, 1101},
-    {NULL, -1},
+    {_GET_NPC_OBJHDL,          1062},
+    {_SET_MOTION_OBJHDL,       1063},
+    {_SET_NPC_ON_OFF,          1094},
+    {_GET_GATEKEY_NO,          1064},
+    {_USER_WEAPON_DRAW,        1065},
+    {_SET_MAIN_CHR2,           1067},
+    {_RESET_MAIN_CHR,          1071},
+    {_SET_LIMMIT_ZONE,         1068},
+    {_SET_DEAD_FLAG,           1069},
+    {_ALL_DRAW_FLAG,           1072},
+    {_SET_FLOOR_TITLE,         1073},
+    {_GET_RUBY_ELEMENT,        1074},
+    {_SET_RUBY_ELEMENT,        1088},
+    {_SET_FLOOR_TITLE_OFF,     1076},
+    {_INIT_BEE,                1077},
+    {_END_BEE,                 1078},
+    {_EASTKING_COMPLETE,       1079},
+    {_SET_RES_LIMMIT_ZONE,     1080},
+    {_GET_ITEM_TRAPID,         1081},
+    {_RESET_ITEM_TRAP,         1082},
+    {_BOM_SET,                 1083},
+    {_SET_STATUS_ERR,          1084},
+    {_CHECK_MARDAN,            1086},
+    {_NO_RESET_CHARA_NO,       1087},
+    {_CHECK_CHR_HELP,          1089},
+    {_HOLD_ITEM_EVENT,         1090},
+    {_STOP_BATTLE_BGM,         1091},
+    {_NO_STATUS_RECOVER,       1092},
+    {_SET_QUEST_DUNGEON,       1093},
+    {_GET_MAP_CODE,            1095},
+    {_SET_ACTIVE_ITEM_ICON,    1096},
+    {_GET_ITEM_UNIT_NO,        1097},
+    {_SET_IBOX_ANGLE,          1098},
+    {_SET_IBOX_FINISH,         1099},
+    {_GET_PIERO_ITEM,          1100},
+    {_CLEAR_DEAMON_SHAFT,      1101},
+    {NULL,                     -1  },
 };
 
-void AddSystemEventScript(void) {
+void AddSystemEventScript() {
     for (int i = 0;; i++) {
         if (ext_func_info[i].function == NULL) {
             break;

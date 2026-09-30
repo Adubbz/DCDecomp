@@ -11,6 +11,10 @@
  */
 class CWind {
 public:
+    float         gust;     /**< Share of the speed the wind blows at now, from zero to one. */
+    sceVu0FVECTOR dir;      /**< Unit vector the wind blows along. */
+    float         velocity; /**< Speed the wind blows at when the gust is at full strength. */
+
     /**
      * Stills the wind and starts the gust strength somewhere in its range, so
      * that two scenes built in the same frame do not gust together.
@@ -19,7 +23,7 @@ public:
      * @address 0x13B5E0
      * @size 0x54
      */
-    CWind(void);
+    CWind();
 
     /**
      * Points the wind along a direction, which need not already be a unit
@@ -71,11 +75,7 @@ public:
      * @size 0xAC
      * @unknownret
      */
-    void Step(void);
-
-    float gust;        /**< Share of the speed the wind blows at now, from zero to one. */
-    sceVu0FVECTOR dir; /**< Unit vector the wind blows along. */
-    float velocity;    /**< Speed the wind blows at when the gust is at full strength. */
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CWind) == 0x30);

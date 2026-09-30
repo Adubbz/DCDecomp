@@ -22,27 +22,15 @@
 /* TEX0 with the block address ahead of the buffer width, which is not the order the SDK's own
    macro puts the two in. The order decides which term the compiler computes first, so the two
    spellings are not interchangeable and this file needs its own. */
-#define TEXTURE_TEX0(tbp0, tbw, psm, tw, th, tcc, tfx, cbp, cpsm, csm, csa, cld) \
-    ((u_long) (tbp0) | ((u_long) (tbw) << 14) | ((u_long) (psm) << 20) |         \
-     ((u_long) (tw) << 26) | ((u_long) (th) << 30) | ((u_long) (tcc) << 34) |    \
-     ((u_long) (tfx) << 35) | ((u_long) (cbp) << 37) | ((u_long) (cpsm) << 51) | \
-     ((u_long) (csm) << 55) | ((u_long) (csa) << 56) | ((u_long) (cld) << 61))
+#define TEXTURE_TEX0(tbp0, tbw, psm, tw, th, tcc, tfx, cbp, cpsm, csm, csa, cld) ((u_long) (tbp0) | ((u_long) (tbw) << 14) | ((u_long) (psm) << 20) | ((u_long) (tw) << 26) | ((u_long) (th) << 30) | ((u_long) (tcc) << 34) | ((u_long) (tfx) << 35) | ((u_long) (cbp) << 37) | ((u_long) (cpsm) << 51) | ((u_long) (csm) << 55) | ((u_long) (csa) << 56) | ((u_long) (cld) << 61))
 
 /* The IMG archive's directory as the registry walks it: a header at the start of the buffer the
    file was read into and one fixed-size entry per picture behind it. */
-void SetTextureInfo(CTexture *texture, char *name, TM2_head *head);
-void SetTextureInfo(CTexture *texture, char *name, u_char *buffer);
 
 static u_long128 texData[100];
 
-static int GetStr(char *text, char *out);
-static int GetDummyInfo(char *text, char *name, int *width, int *height, int *bpp);
-static int PageConv8to32(int width, int height, u_char *source, u_char *destination);
 static int BlockConv8to32(u_char *source, u_char *destination);
 static int Conv8to32(int width, int height, u_char *source, u_char *destination);
-
-int LoadImage(u_int *packet, int dbp, int dpsm, int dbw, u_long128 *source, int qwc, int dsax,
-              int dsay, int rrw, int rrh);
 
 CTexture::CTexture() {
     Initialize();
@@ -139,30 +127,34 @@ void CTextureManager::SetBuffer(u_long128 *buffer, int size) {
 }
 
 int CTextureManager::SearchTextureName(char *name, int block) {
-    int i = texture_max;
+    int       i = texture_max;
     CTexture *tex = &textures[i];
 
     for (; i >= 0; i--, tex--) {
         char *name_cursor;
         char *entry_cursor;
-        char name_char;
-        char entry_char;
+        char  name_char;
+        char  entry_char;
 
-        if (tex->name[0] == 0)
+        if (tex->name[0] == 0) {
             continue;
-        if (block >= 0 && block != tex->block)
+        }
+        if (block >= 0 && block != tex->block) {
             continue;
+        }
 
         name_cursor = name;
         entry_cursor = tex->name;
         while ((name_char = *name_cursor) != 0 && (entry_char = *entry_cursor) != 0) {
-            if (name_char != entry_char)
+            if (name_char != entry_char) {
                 break;
+            }
             name_cursor++;
             entry_cursor++;
         }
-        if (name_char == 0 && *entry_cursor == 0)
+        if (name_char == 0 && *entry_cursor == 0) {
             return i;
+        }
     }
     return -1;
 }
@@ -170,27 +162,30 @@ int CTextureManager::SearchTextureName(char *name, int block) {
 int CTextureManager::GetTextureHandle(char *name, int block) {
     int handle = SearchTextureName(name, block);
 
-    if (handle < 0)
+    if (handle < 0) {
         return -1;
+    }
     return handle;
 }
 
 CTexture *CTextureManager::GetTexture(int handle) {
-    if (handle < 0 || handle >= texture_max)
+    if (handle < 0 || handle >= texture_max) {
         return &textures[0];
+    }
     return &textures[handle];
 }
 
 CTexture *CTextureManager::GetTexture(char *name, int block) {
     int handle = GetTextureHandle(name, block);
 
-    if (handle < 0)
+    if (handle < 0) {
         return 0;
+    }
     return GetTexture(handle);
 }
 
 CTexture *CTextureManager::SearchTexture(char *name) {
-    int i;
+    int       i;
     CTexture *tex = &textures[1];
 
     for (i = 1; i < 196; i++, tex++) {
@@ -199,42 +194,42 @@ CTexture *CTextureManager::SearchTexture(char *name) {
             while (1)
                 ;
         }
-        if (tex->name[0] == 0)
+        if (tex->name[0] == 0) {
             break;
+        }
     }
     SearchTextureName(name, -1);
     return tex;
 }
 
-void CTextureManager::EnterTexture(int block, char *name, u_char *image, int width, int height,
-                                   int bpp, u_char *clut, int clut_colors, int mipmap,
-                                   u_char *mip1, u_char *mip2, u_char *mip3, u_long tex1,
-                                   int swizzled) {
+void CTextureManager::EnterTexture(int block, char *name, u_char *image, int width, int height, int bpp, u_char *clut, int clut_colors, int mipmap, u_char *mip1, u_char *mip2, u_char *mip3, u_long tex1, int swizzled) {
     CTexture *tex;
-    int psm;
-    int tw;
-    int th;
-    int tbw;
-    int power;
-    int bit;
-    int tbp;
-    int cbp;
-    int image_blocks;
-    int half_width;
-    int half_height;
-    int image_size;
-    int mip_blocks;
-    int vram_top;
-    int vram_end;
-    int misalignment;
-    u_int *destination;
+    int       psm;
+    int       tw;
+    int       th;
+    int       tbw;
+    int       power;
+    int       bit;
+    int       tbp;
+    int       cbp;
+    int       image_blocks;
+    int       half_width;
+    int       half_height;
+    int       image_size;
+    int       mip_blocks;
+    int       vram_top;
+    int       vram_end;
+    int       misalignment;
+    u_int    *destination;
 
-    if (name[0] == 0)
+    if (name[0] == 0) {
         return;
+    }
 
     tex = SearchTexture(name);
-    if (image == 0 || mip1 == 0)
+    if (image == 0 || mip1 == 0) {
         mipmap = 0;
+    }
 
     switch (bpp) {
         case 1:
@@ -257,25 +252,30 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
         power >>= 1;
         tw++;
     }
-    for (power = 1, bit = 0; bit < tw; bit++)
+    for (power = 1, bit = 0; bit < tw; bit++) {
         power <<= 1;
-    if (width != power)
+    }
+    if (width != power) {
         tw++;
+    }
     power = height;
     while (power >= 2) {
         power >>= 1;
         th++;
     }
-    for (power = 1, bit = 0; bit < th; bit++)
+    for (power = 1, bit = 0; bit < th; bit++) {
         power <<= 1;
-    if (height != power)
+    }
+    if (height != power) {
         th++;
+    }
 
     half_width = width >> 1;
     half_height = height >> 1;
     tbw = width >> 6;
-    if (tbw <= 0)
+    if (tbw <= 0) {
         tbw = 1;
+    }
     tbp = 0;
     cbp = 0;
 
@@ -400,31 +400,30 @@ void CTextureManager::EnterTexture(int block, char *name, u_char *image, int wid
 
 /* The extended entry point keeps the caller's own pixels rather than copying them into the block
    buffer, which is what lets a character carry textures the block was not built with. */
-void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int width, int height,
-                                     int bpp, u_char *clut, int clut_colors, int mipmap,
-                                     u_char *mip1, u_char *mip2, u_char *mip3, u_long tex1,
-                                     int swizzled) {
+void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int width, int height, int bpp, u_char *clut, int clut_colors, int mipmap, u_char *mip1, u_char *mip2, u_char *mip3, u_long tex1, int swizzled) {
     CTexture *tex;
-    int psm;
-    int tw;
-    int th;
-    int tbw;
-    int power;
-    int bit;
-    int tbp;
-    int cbp;
-    int image_blocks;
-    int mip_blocks;
-    int vram_top;
-    int vram_end;
-    int misalignment;
+    int       psm;
+    int       tw;
+    int       th;
+    int       tbw;
+    int       power;
+    int       bit;
+    int       tbp;
+    int       cbp;
+    int       image_blocks;
+    int       mip_blocks;
+    int       vram_top;
+    int       vram_end;
+    int       misalignment;
 
-    if (name[0] == 0)
+    if (name[0] == 0) {
         return;
+    }
 
     tex = SearchTexture(name);
-    if (image == 0 || mip1 == 0)
+    if (image == 0 || mip1 == 0) {
         mipmap = 0;
+    }
 
     switch (bpp) {
         case 1:
@@ -447,23 +446,28 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
         power >>= 1;
         tw++;
     }
-    for (power = 1, bit = 0; bit < tw; bit++)
+    for (power = 1, bit = 0; bit < tw; bit++) {
         power <<= 1;
-    if (width != power)
+    }
+    if (width != power) {
         tw++;
+    }
     power = height;
     while (power >= 2) {
         power >>= 1;
         th++;
     }
-    for (power = 1, bit = 0; bit < th; bit++)
+    for (power = 1, bit = 0; bit < th; bit++) {
         power <<= 1;
-    if (height != power)
+    }
+    if (height != power) {
         th++;
+    }
 
     tbw = width >> 6;
-    if (tbw <= 0)
+    if (tbw <= 0) {
         tbw = 1;
+    }
     tbp = 0;
     cbp = 0;
     image_blocks = (width * height * bpp) >> 8;
@@ -518,8 +522,9 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
     }
 
     misalignment = vram_end % 32;
-    if (misalignment != 0)
+    if (misalignment != 0) {
         vram_end += 32 - misalignment;
+    }
 
     blocks[block].vram_top = vram_top;
     blocks[block].vram_end = vram_end;
@@ -552,39 +557,39 @@ void CTextureManager::EnterTextureEX(int block, char *name, u_char *image, int w
 /* A fixed texture is uploaded on the spot down the GIF channel rather than kept in the block
    buffer for the frame packet to send, and its video memory is taken off the top of the region
    the blocks grow into from below. */
-void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int height, int bpp,
-                                      u_char *clut, int clut_colors, int mipmap, u_char *mip1,
-                                      u_char *mip2, u_char *mip3, u_long tex1, int swizzled) {
-    CTexture *tex;
+void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int height, int bpp, u_char *clut, int clut_colors, int mipmap, u_char *mip1, u_char *mip2, u_char *mip3, u_long tex1, int swizzled) {
+    CTexture    *tex;
     sceGifPacket packet;
-    int psm;
-    int tw;
-    int th;
-    int tbw;
-    int power;
-    int bit;
-    int quarter_width;
-    int quarter_height;
-    int mip1_tbw;
-    int mip2_tbw;
-    int tbp;
-    int cbp;
-    sceDmaChan *channel;
-    int half_height;
-    int half_width;
-    int image_size;
-    int swizzled_tbw;
-    int image_blocks;
-    int mip_blocks;
-    int misalignment;
-    int upload_address;
+    int          psm;
+    int          tw;
+    int          th;
+    int          tbw;
+    int          power;
+    int          bit;
+    int          quarter_width;
+    int          quarter_height;
+    int          mip1_tbw;
+    int          mip2_tbw;
+    int          tbp;
+    int          cbp;
+    sceDmaChan  *channel;
+    int          half_height;
+    int          half_width;
+    int          image_size;
+    int          swizzled_tbw;
+    int          image_blocks;
+    int          mip_blocks;
+    int          misalignment;
+    int          upload_address;
 
-    if (name[0] == 0)
+    if (name[0] == 0) {
         return;
+    }
 
     tex = SearchTexture(name);
-    if (image == 0 || mip1 == 0)
+    if (image == 0 || mip1 == 0) {
         mipmap = 0;
+    }
 
     switch (bpp) {
         case 1:
@@ -607,34 +612,41 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
         power >>= 1;
         tw++;
     }
-    for (power = 1, bit = 0; bit < tw; bit++)
+    for (power = 1, bit = 0; bit < tw; bit++) {
         power <<= 1;
-    if (width != power)
+    }
+    if (width != power) {
         tw++;
+    }
     power = height;
     while (power >= 2) {
         power >>= 1;
         th++;
     }
-    for (power = 1, bit = 0; bit < th; bit++)
+    for (power = 1, bit = 0; bit < th; bit++) {
         power <<= 1;
-    if (height != power)
+    }
+    if (height != power) {
         th++;
+    }
 
     half_width = width >> 1;
     half_height = height >> 1;
     quarter_width = half_width >> 1;
     quarter_height = half_height >> 1;
     tbw = width >> 6;
-    if (tbw <= 0)
+    if (tbw <= 0) {
         tbw = 1;
+    }
     swizzled_tbw = tbw >> 1;
     mip1_tbw = swizzled_tbw;
-    if (mip1_tbw <= 0)
+    if (mip1_tbw <= 0) {
         mip1_tbw = 1;
+    }
     mip2_tbw = mip1_tbw >> 1;
-    if (mip2_tbw <= 0)
+    if (mip2_tbw <= 0) {
         mip2_tbw = 1;
+    }
     tbp = 0;
     cbp = 0;
 
@@ -645,8 +657,9 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
         image_blocks = image_blocks + mip_blocks + (mip_blocks >> 2);
     }
     misalignment = image_blocks % 32;
-    if (misalignment != 0)
+    if (misalignment != 0) {
         image_blocks += 32 - misalignment;
+    }
     vram_fix -= image_blocks;
     upload_address = vram_fix;
 
@@ -669,22 +682,18 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
                 }
             } else {
                 if (psm == 19 && swizzled != 0) {
-                    sceGifPkRefLoadImage(&packet, upload_address, 0, swizzled_tbw, (u_long128 *) image, image_size >> 4, 0, 0,
-                                         half_width, half_height);
+                    sceGifPkRefLoadImage(&packet, upload_address, 0, swizzled_tbw, (u_long128 *) image, image_size >> 4, 0, 0, half_width, half_height);
                 } else {
-                    sceGifPkRefLoadImage(&packet, upload_address, psm, tbw, (u_long128 *) image, image_size >> 4, 0, 0,
-                                         width, height);
+                    sceGifPkRefLoadImage(&packet, upload_address, psm, tbw, (u_long128 *) image, image_size >> 4, 0, 0, width, height);
                 }
                 upload_address += image_blocks;
                 if (mipmap != 0) {
                     if (mip1 != 0) {
-                        sceGifPkRefLoadImage(&packet, upload_address, psm, mip1_tbw, (u_long128 *) mip1,
-                                             (half_width * half_height * bpp) >> 4, 0, 0, half_width, half_height);
+                        sceGifPkRefLoadImage(&packet, upload_address, psm, mip1_tbw, (u_long128 *) mip1, (half_width * half_height * bpp) >> 4, 0, 0, half_width, half_height);
                     }
                     upload_address += image_blocks >> 2;
                     if (mip2 != 0) {
-                        sceGifPkRefLoadImage(&packet, upload_address, psm, mip2_tbw, (u_long128 *) mip2,
-                                             (quarter_width * quarter_height * bpp) >> 4, 0, 0, quarter_width, quarter_height);
+                        sceGifPkRefLoadImage(&packet, upload_address, psm, mip2_tbw, (u_long128 *) mip2, (quarter_width * quarter_height * bpp) >> 4, 0, 0, quarter_width, quarter_height);
                     }
                 }
                 if (psm == 19) {
@@ -716,8 +725,9 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
     sceGifPkTerminate(&packet);
     FlushCache(0);
     channel->chcr.TTE = 1;
-    if (image != 0)
+    if (image != 0) {
         sceDmaSend(channel, (void *) packet.pBase);
+    }
     sceGsSyncPath(0, 0);
 
     strcpy(tex->name, name);
@@ -740,16 +750,16 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
 /* The Z-buffer scratch texture, which is the one fixed texture whose size and format the loader
    insists on rather than reads. */
 void CTextureManager::EnterFixTextureZ(u_char *buffer) {
-    char *name;
-    int width;
-    int height;
-    int bpp;
-    u_char *clut;
-    u_char *image;
-    CTexture *tex;
+    char        *name;
+    int          width;
+    int          height;
+    int          bpp;
+    u_char      *clut;
+    u_char      *image;
+    CTexture    *tex;
     sceGifPacket packet;
-    sceDmaChan *channel;
-    TM2_head *head;
+    sceDmaChan  *channel;
+    TM2_head    *head;
     TM2_picture *picture;
 #ifdef PAL
     int zbuffer;
@@ -760,18 +770,22 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     picture = (TM2_picture *) ((u_char *) head + 16);
     width = head->image_width;
     height = head->image_height;
-    if (width != 640)
+    if (width != 640) {
         return;
+    }
 #ifdef PAL
-    if (height > 240)
+    if (height > 240) {
         return;
+    }
 #else
-    if (height != 224)
+    if (height != 224) {
         return;
+    }
 #endif
     bpp = 1;
-    if (picture->image_type != 5)
+    if (picture->image_type != 5) {
         return;
+    }
 
     image = (u_char *) picture + picture->header_size;
     clut = image + picture->image_size;
@@ -794,11 +808,9 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     channel->chcr.TTE = 1;
     sceGifPkReset(&packet);
 #ifdef PAL
-    sceGifPkRefLoadImage(&packet, zbuffer, 27, 10, (u_long128 *) image, (width * height) >> 4, 0, 0,
-                         width, height);
+    sceGifPkRefLoadImage(&packet, zbuffer, 27, 10, (u_long128 *) image, (width * height) >> 4, 0, 0, width, height);
 #else
-    sceGifPkRefLoadImage(&packet, 4480, 27, 10, (u_long128 *) image, (width * height) >> 4, 0, 0,
-                         width, height);
+    sceGifPkRefLoadImage(&packet, 4480, 27, 10, (u_long128 *) image, (width * height) >> 4, 0, 0, width, height);
 #endif
     sceGifPkRefLoadImage(&packet, 16352, 0, bpp, (u_long128 *) clut, 64, 0, 0, 16, 16);
     sceGifPkCnt(&packet, 0, 0, 0);
@@ -809,32 +821,35 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     sceGifPkTerminate(&packet);
     FlushCache(0);
     channel->chcr.TTE = 1;
-    if (image != 0)
+    if (image != 0) {
         sceDmaSend(channel, (void *) packet.pBase);
+    }
     sceGsSyncPath(0, 0);
 }
 
 void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int extend) {
-    u_int i;
-    int swizzled;
+    u_int   i;
+    int     swizzled;
     u_char *entry;
 
-    if (buffer == 0)
+    if (buffer == 0) {
         return;
+    }
 
     swizzled = 0;
-    if (memcmp(buffer, "IM2", 3) == 0)
+    if (memcmp(buffer, "IM2", 3) == 0) {
         swizzled = 1;
+    }
 
     entry = buffer + 16;
     for (i = 0; i < *(u_int *) (buffer + 4); i++) {
-        TM2_head *head;
+        TM2_head    *head;
         TM2_picture *picture;
-        u_char *image;
-        u_char *clut;
-        int width;
-        int height;
-        int bpp;
+        u_char      *image;
+        u_char      *clut;
+        int          width;
+        int          height;
+        int          bpp;
 
         head = (TM2_head *) (buffer + *(int *) (entry + 32));
         picture = (TM2_picture *) ((u_char *) head + 16);
@@ -863,8 +878,9 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
 
         clut = 0;
         image = (u_char *) picture + picture->header_size;
-        if (bpp < 2)
+        if (bpp < 2) {
             clut = image + picture->image_size;
+        }
 
         u_char *mip[4] = {0, 0, 0, 0};
 
@@ -878,15 +894,12 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
 
         if (extend == 0) {
             if (block >= 0) {
-                EnterTexture(block, (char *) entry, image, width, height, bpp, clut,
-                             picture->clut_colors, mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
+                EnterTexture(block, (char *) entry, image, width, height, bpp, clut, picture->clut_colors, mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
             } else {
-                EnterFixTexture((char *) entry, image, width, height, bpp, clut, picture->clut_colors,
-                                mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
+                EnterFixTexture((char *) entry, image, width, height, bpp, clut, picture->clut_colors, mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
             }
         } else if (block >= 0) {
-            EnterTextureEX(block, (char *) entry, image, width, height, bpp, clut,
-                           picture->clut_colors, mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
+            EnterTextureEX(block, (char *) entry, image, width, height, bpp, clut, picture->clut_colors, mipmap, mip[1], mip[2], mip[3], picture->tex1, swizzled);
         }
         entry += 48;
     }
@@ -894,8 +907,7 @@ void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int ex
 
 /* The same region load the SDK writes into a GIF packet, written into a VIF1 chain instead so
    that a frame's own packet can carry it. */
-int LoadImage(u_int *packet, int dbp, int dpsm, int dbw, u_long128 *source, int qwc, int dsax,
-              int dsay, int rrw, int rrh) {
+int LoadImage(u_int *packet, int dbp, int dpsm, int dbw, u_long128 *source, int qwc, int dsax, int dsay, int rrw, int rrh) {
     u_int *start = packet;
     u_long bitbltbuf;
     u_long trxpos;
@@ -937,8 +949,9 @@ int LoadImage(u_int *packet, int dbp, int dpsm, int dbw, u_long128 *source, int 
     while (qwc > 0) {
         int count = 16384;
 
-        if (qwc < 16384)
+        if (qwc < 16384) {
             count = qwc;
+        }
 
         packet[0] = 0x10000001;
         packet[1] = 0;
@@ -961,24 +974,25 @@ int LoadImage(u_int *packet, int dbp, int dpsm, int dbw, u_long128 *source, int 
 }
 
 void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
-    u_int *cursor;
-    u_int *start;
-    int i;
-    int level;
+    u_int    *cursor;
+    u_int    *start;
+    int       i;
+    int       level;
     CTexture *tex;
     sceGsTex0 tex0;
-    int width;
-    int height;
-    int bpp;
-    int reload_from;
-    int reload_all;
+    int       width;
+    int       height;
+    int       bpp;
+    int       reload_from;
+    int       reload_all;
 
     if (block < 0 || block >= 72) {
         last_block = -1;
         return;
     }
-    if (last_block == block && blocks[block].loaded != 0)
+    if (last_block == block && blocks[block].loaded != 0) {
         return;
+    }
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
@@ -993,8 +1007,9 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
     last_block = block;
 
     for (i = 0; i < 72; i++) {
-        if (i == block)
+        if (i == block) {
             continue;
+        }
         if (blocks[i].vram_dirty < blocks[block].vram_end) {
             blocks[i].vram_dirty = blocks[block].vram_end;
         }
@@ -1016,11 +1031,13 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
 
     tex = &textures[1];
     for (i = 1; i < texture_max; i++, tex++) {
-        if (tex->block != block)
+        if (tex->block != block) {
             continue;
+        }
         tex0 = *(sceGsTex0 *) &tex->tex0;
-        if (reload_from < (int) tex0.TBP0 && blocks[block].loaded != 0)
+        if (reload_from < (int) tex0.TBP0 && blocks[block].loaded != 0) {
             continue;
+        }
 
         width = tex->width;
         height = tex->height;
@@ -1034,18 +1051,18 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
                 tex0.TBW = tex0.TBW >> 1;
             }
             if (tex->clut != 0) {
-                cursor += LoadImage(cursor, tex0.CBP, tex0.CPSM, 1, (u_long128 *) tex->clut, 64, 0, 0, 16,
-                                    16);
+                cursor += LoadImage(cursor, tex0.CBP, tex0.CPSM, 1, (u_long128 *) tex->clut, 64, 0, 0, 16, 16);
             }
         }
 
         for (level = 0; level < 4; level++) {
-            if (tex->image[level] == 0)
+            if (tex->image[level] == 0) {
                 break;
-            if (tex0.TBW == 0)
+            }
+            if (tex0.TBW == 0) {
                 tex0.TBW = 1;
-            cursor += LoadImage(cursor, tex0.TBP0, tex0.PSM, tex0.TBW, (u_long128 *) tex->image[level],
-                                (bpp * (width * height)) >> 4, 0, 0, width, height);
+            }
+            cursor += LoadImage(cursor, tex0.TBP0, tex0.PSM, tex0.TBW, (u_long128 *) tex->image[level], (bpp * (width * height)) >> 4, 0, 0, width, height);
             tex0.TBP0 += (width * height) >> 6;
             tex0.TBW = tex0.TBW >> 1;
             width >>= 1;
@@ -1065,19 +1082,24 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
 }
 
 void CTextureManager::BeginEnterTextureBlock(int block) {
-    if (block < 0 || block >= 72)
+    if (block < 0 || block >= 72) {
         return;
+    }
 
 #ifdef PAL
-    if (blocks[block].vram_top == 0)
+    if (blocks[block].vram_top == 0) {
         blocks[block].vram_top = mgTopVRAM;
-    if (blocks[block].vram_end == 0)
+    }
+    if (blocks[block].vram_end == 0) {
         blocks[block].vram_end = mgTopVRAM;
+    }
 #else
-    if (blocks[block].vram_top == 0)
+    if (blocks[block].vram_top == 0) {
         blocks[block].vram_top = 6720;
-    if (blocks[block].vram_end == 0)
+    }
+    if (blocks[block].vram_end == 0) {
         blocks[block].vram_end = 6720;
+    }
 #endif
     blocks[block].buffer = buffer + buffer_used;
     blocks[block].buffer_end = buffer + buffer_used;
@@ -1085,8 +1107,9 @@ void CTextureManager::BeginEnterTextureBlock(int block) {
 }
 
 void CTextureManager::EndEnterTextureBlock(int block) {
-    if (block < 0 || block >= 72)
+    if (block < 0 || block >= 72) {
         return;
+    }
 
     blocks[block].buffer_end = buffer + buffer_used;
     if (blocks[block].buffer_end == blocks[block].buffer) {
@@ -1108,15 +1131,19 @@ void CTextureManager::EndEnterTextureBlock(int block) {
 int CTextureManager::DeleteTextureBlock(int block) {
     int i;
 
-    if (block >= 72)
+    if (block >= 72) {
         return 0;
-    if (block >= 0 && block < 72)
+    }
+    if (block >= 0 && block < 72) {
         blocks[block].Initialize();
-    if (block < 0)
+    }
+    if (block < 0) {
         block = -1;
+    }
     for (i = 0; i < 196; i++) {
-        if (block < 0 || textures[i].block == block)
+        if (block < 0 || textures[i].block == block) {
             textures[i].Initialize();
+        }
     }
     return 1;
 }
@@ -1126,9 +1153,9 @@ int CTextureManager::DeleteTextureBlock(int block) {
    frame packet transfers from, so they cannot be left behind. */
 int CTextureManager::CleanUpBuffer() {
     u_long128 *block_start[72];
-    int block_order[72];
-    int i;
-    int j;
+    int        block_order[72];
+    int        i;
+    int        j;
 
     for (i = 0; i < 72; i++) {
         block_start[i] = blocks[i].buffer;
@@ -1138,12 +1165,12 @@ int CTextureManager::CleanUpBuffer() {
         for (j = i + 1; j < 72; j++) {
             u_long128 **lower = &block_start[i];
             u_long128 **upper = &block_start[j];
-            int *lower_block = &block_order[i];
-            int *upper_block = &block_order[j];
+            int        *lower_block = &block_order[i];
+            int        *upper_block = &block_order[j];
 
             if (*lower > *upper) {
                 u_long128 *swap_start = *lower;
-                int swap_block = *lower_block;
+                int        swap_block = *lower_block;
                 *lower = *upper;
                 *lower_block = *upper_block;
                 *upper = swap_start;
@@ -1154,19 +1181,21 @@ int CTextureManager::CleanUpBuffer() {
 
     buffer_used = 0;
     for (i = 0; i < 72; i++) {
-        int block_no = block_order[i];
+        int        block_no = block_order[i];
         u_long128 *destination;
         u_long128 *source;
-        int block_quads;
-        int k;
-        int misalignment;
-        int shift;
+        int        block_quads;
+        int        k;
+        int        misalignment;
+        int        shift;
 
-        if (block_no <= 0)
+        if (block_no <= 0) {
             continue;
+        }
         source = block_start[i];
-        if (source == 0)
+        if (source == 0) {
             continue;
+        }
 
         block_quads = blocks[block_no].buffer_end - blocks[block_no].buffer;
         destination = buffer + buffer_used;
@@ -1181,15 +1210,17 @@ int CTextureManager::CleanUpBuffer() {
 
         for (j = 0; j < 196 && shift != 0; j++) {
             CTexture *tex = &textures[j];
-            int level;
+            int       level;
 
-            if (tex->block != block_no)
+            if (tex->block != block_no) {
                 continue;
+            }
             for (level = 0; level < 4; level++) {
                 u_int **images = tex->image;
                 u_int **slot = &images[level];
-                if (tex->image[level] == 0)
+                if (tex->image[level] == 0) {
                     continue;
+                }
                 *slot = (u_int *) ((int) *slot - shift);
             }
             if (tex->clut != 0) {
@@ -1199,8 +1230,9 @@ int CTextureManager::CleanUpBuffer() {
 
         buffer_used += block_quads;
         misalignment = block_quads % 8;
-        if (misalignment != 0)
+        if (misalignment != 0) {
             buffer_used += 8 - misalignment;
+        }
     }
     return 1;
 }
@@ -1212,13 +1244,15 @@ int CTextureManager::CleanUpTextureList() {
     for (i = 1; i < 195; i++) {
         CTexture *hole = &textures[i];
 
-        if (hole->name[0] != 0)
+        if (hole->name[0] != 0) {
             continue;
+        }
         for (j = i + 1; j < 196; j++) {
             CTexture *tex = &textures[j];
 
-            if (tex->name[0] == 0)
+            if (tex->name[0] == 0) {
                 continue;
+            }
             *hole = *tex;
             tex->Initialize();
             break;
@@ -1232,13 +1266,15 @@ int CTextureManager::CleanUpTextureList() {
 static int GetStr(char *text, char *out) {
     int length = 0;
 
-    if (*text == 0)
+    if (*text == 0) {
         return 0;
+    }
     while (*text != '#') {
         out[length] = *text;
         length++;
-        if (*text == 0)
+        if (*text == 0) {
             break;
+        }
         text++;
     }
     out[length] = 0;
@@ -1249,35 +1285,40 @@ static int GetDummyInfo(char *text, char *name, int *width, int *height, int *bp
     char width_text[8];
     char height_text[8];
     char bpp_text[8];
-    int length;
+    int  length;
 
-    if (*text != '#')
+    if (*text != '#') {
         return 0;
+    }
     text++;
 
-    int parsed_width = 32;
-    int parsed_height = 32;
-    int parsed_bpp = 4;
+    int  parsed_width = 32;
+    int  parsed_height = 32;
+    int  parsed_bpp = 4;
     char parsed_name[32] = "";
 
     length = GetStr(text, parsed_name);
-    if (length < 2)
+    if (length < 2) {
         parsed_name[0] = 0;
+    }
     text += length;
 
     length = GetStr(text, width_text);
     text += length;
-    if (length > 1)
+    if (length > 1) {
         parsed_width = atoi(width_text);
+    }
 
     length = GetStr(text, height_text);
     text += length;
-    if (length > 1)
+    if (length > 1) {
         parsed_height = atoi(height_text);
+    }
 
     length = GetStr(text, bpp_text);
-    if (length > 1)
+    if (length > 1) {
         parsed_bpp = atoi(bpp_text);
+    }
 
     strcpy(name, parsed_name);
     *width = parsed_width;
@@ -1292,121 +1333,132 @@ int CTextureManager::LoadTextureBlock(int block, u_int *buffer) {
 
 int CTextureManager::LoadTextureBlock(int block, LOADTEXTURE_INFO *table, u_int *buffer) {
     LOADTEXTURE_INFO *info;
-    int i;
-    int begun;
+    int               i;
+    int               begun;
 
     for (i = 0; i < 72; i++) {
-        if (block >= 0 && block != i)
+        if (block >= 0 && block != i) {
             continue;
+        }
         info = table;
         begun = 0;
         while (1) {
             char name[32];
-            int width;
-            int height;
-            int bpp;
+            int  width;
+            int  height;
+            int  bpp;
 
-            if (info->name == 0)
+            if (info->name == 0) {
                 break;
-            if (info->name[0] == 0)
+            }
+            if (info->name[0] == 0) {
                 break;
+            }
             if (info->block_no == i) {
-                if (begun == 0)
+                if (begun == 0) {
                     BeginEnterTextureBlock(i);
+                }
                 begun = 1;
 
                 width = 32;
                 height = 32;
                 bpp = 4;
                 if (GetDummyInfo(info->name, name, &width, &height, &bpp) != 0) {
-                    TexManager.EnterTexture(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0,
-                                            0, 0, 0, 0);
+                    TexManager.EnterTexture(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0, 0, 0, 0, 0);
                 } else if (LoadFile2(info->name, buffer, 0, 0) != 0) {
                     EnterIMGFile((u_char *) buffer, info->block_no, info->mipmap, 0);
                 }
             }
             info++;
         }
-        if (begun != 0)
+        if (begun != 0) {
             EndEnterTextureBlock(i);
+        }
     }
     return 0;
 }
 
 int CTextureManager::LoadTextureBlock(int block, LOADTEXTURE_INFO2 *table) {
     LOADTEXTURE_INFO2 *info;
-    int i;
-    int begun;
+    int                i;
+    int                begun;
 
     for (i = 0; i < 72; i++) {
-        if (block >= 0 && block != i)
+        if (block >= 0 && block != i) {
             continue;
+        }
         info = table;
         begun = 0;
         while (1) {
             char name[32];
-            int width;
-            int height;
-            int bpp;
+            int  width;
+            int  height;
+            int  bpp;
 
-            if (info->name == 0)
+            if (info->name == 0) {
                 break;
-            if (info->name[0] == 0)
+            }
+            if (info->name[0] == 0) {
                 break;
+            }
             if (info->block_no == i) {
-                if (begun == 0)
+                if (begun == 0) {
                     BeginEnterTextureBlock(i);
+                }
                 begun = 1;
 
                 width = 32;
                 height = 32;
                 bpp = 4;
                 if (GetDummyInfo(info->name, name, &width, &height, &bpp) != 0) {
-                    TexManager.EnterTexture(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0,
-                                            0, 0, 0, 0);
+                    TexManager.EnterTexture(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0, 0, 0, 0, 0);
                 } else {
                     EnterIMGFile((u_char *) info->name, info->block_no, info->mipmap, 0);
                 }
             }
             info++;
         }
-        if (begun != 0)
+        if (begun != 0) {
             EndEnterTextureBlock(i);
+        }
     }
     return 0;
 }
 
 int CTextureManager::LoadTextureBlockEX(int block, LOADTEXTURE_INFO2 *table) {
     LOADTEXTURE_INFO2 *info;
-    int i;
-    int begun;
+    int                i;
+    int                begun;
 
     for (i = 0; i < 72; i++) {
-        if (block >= 0 && block != i)
+        if (block >= 0 && block != i) {
             continue;
+        }
         info = table;
         begun = 0;
         while (1) {
             char name[32];
-            int width;
-            int height;
-            int bpp;
+            int  width;
+            int  height;
+            int  bpp;
 
-            if (info->name == 0)
+            if (info->name == 0) {
                 break;
-            if (info->name[0] == 0)
+            }
+            if (info->name[0] == 0) {
                 break;
+            }
             if (info->block_no == i) {
-                if (begun == 0)
+                if (begun == 0) {
                     BeginEnterTextureBlock(i);
+                }
                 begun = 1;
 
                 width = 32;
                 height = 32;
                 bpp = 4;
                 if (GetDummyInfo(info->name, name, &width, &height, &bpp) != 0) {
-                    TexManager.EnterTextureEX(info->block_no, name, 0, width, height, bpp, 0, 0, 0,
-                                              0, 0, 0, 0, 0);
+                    TexManager.EnterTextureEX(info->block_no, name, 0, width, height, bpp, 0, 0, 0, 0, 0, 0, 0, 0);
                 } else {
                     int mipmap = info->mipmap;
                     int entry_block = info->block_no;
@@ -1416,8 +1468,9 @@ int CTextureManager::LoadTextureBlockEX(int block, LOADTEXTURE_INFO2 *table) {
             }
             info++;
         }
-        if (begun != 0)
+        if (begun != 0) {
             EndEnterTextureBlock(i);
+        }
     }
     return 0;
 }
@@ -1441,20 +1494,20 @@ static int PageConv8to32(int width, int height, u_char *source, u_char *destinat
         2, 3, 6, 7, 18, 19, 22, 23,
         8, 9, 12, 13, 24, 25, 28, 29,
         10, 11, 14, 15, 26, 27, 30, 31};
-    int block_column[32];
-    int block_row[32];
-    u_char work8[256];
-    u_char work32[256];
+    int     block_column[32];
+    int     block_row[32];
+    u_char  work8[256];
+    u_char  work32[256];
     u_char *work_cursor;
     u_char *source_cursor;
     u_char *destination_cursor;
-    int blocks_down;
-    int i;
-    int j;
-    int k;
-    int entry;
-    int blocks_across;
-    int block_index;
+    int     blocks_down;
+    int     i;
+    int     j;
+    int     k;
+    int     entry;
+    int     blocks_across;
+    int     block_index;
 
     entry = 0;
     for (i = 0; i < 4; i++) {
@@ -1521,9 +1574,9 @@ static int BlockConv8to32(u_char *source, u_char *destination) {
     u_int j;
     u_int k;
     u_int i;
-    int lut_index;
-    int out_index;
-    int source_index;
+    int   lut_index;
+    int   out_index;
+    int   source_index;
 
     out_index = 0;
     for (i = 0; i < 4; i++) {
@@ -1544,13 +1597,13 @@ static int BlockConv8to32(u_char *source, u_char *destination) {
 static int Conv8to32(int width, int height, u_char *source, u_char *destination) {
     u_char work8[8192];
     u_char work32[8192];
-    int i;
-    int j;
-    int k;
-    int pages_x;
-    int pages_y;
-    int row_bytes;
-    int row_count;
+    int    i;
+    int    j;
+    int    k;
+    int    pages_x;
+    int    pages_y;
+    int    row_bytes;
+    int    row_count;
 
     memset(work8, 0, 8192);
     memset(work32, 0, 8192);

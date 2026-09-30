@@ -192,6 +192,5 @@ void CObject::Initialize(float mass) {
     zero.x = 0.0f;
     zero.y = 0.0f;
     zero.z = 0.0f;
-    this->rotation = this->rot_velocity = this->rot_acceleration = this->velocity =
-        this->acceleration = this->gravity = zero;
+    this->rotation = this->rot_velocity = this->rot_acceleration = this->velocity = this->acceleration = this->gravity = zero;
 }

@@ -10,12 +10,11 @@
 #include "mglib.hpp"
 #include "renderinfo.hpp"
 
-int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
-                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
-    int result;
+int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    int    result;
     u_int *saved_primary;
     u_int *saved_secondary;
-    u_int saved_size;
+    u_int  saved_size;
 
     result = 0;
     if (info->shadow_pass == 2) {
@@ -23,12 +22,10 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
         saved_secondary = vu_data_buffer[1];
         saved_size = vu_size;
         ActiveData->Align64();
-        ActiveData->Alloc(CreateVUdataShadowCLIP(
-            (u_int *) (ActiveData->base + ActiveData->used * 16), data, info, matrix));
+        ActiveData->Alloc(CreateVUdataShadowCLIP((u_int *) (ActiveData->base + ActiveData->used * 16), data, info, matrix));
         vu_data_buffer[0] = vu_data;
         vu_data_buffer[1] = vu_data;
-        result +=
-            CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
+        result += CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
         vu_data_buffer[0] = saved_primary;
         vu_data_buffer[1] = saved_secondary;
         vu_size = saved_size;
@@ -38,12 +35,11 @@ int CVisualShadow::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
     return result;
 }
 
-int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
-    int result;
+int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    int    result;
     u_int *saved_primary;
     u_int *saved_secondary;
-    u_int saved_size;
+    u_int  saved_size;
 
     result = 0;
     if (info->shadow_pass == 2) {
@@ -51,12 +47,10 @@ int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
         saved_secondary = vu_data_buffer[1];
         saved_size = vu_size;
         ActiveData->Align64();
-        ActiveData->Alloc(CreateVUdataShadowCLIP(
-            (u_int *) (ActiveData->base + ActiveData->used * 16), data, info, matrix));
+        ActiveData->Alloc(CreateVUdataShadowCLIP((u_int *) (ActiveData->base + ActiveData->used * 16), data, info, matrix));
         vu_data_buffer[0] = vu_data;
         vu_data_buffer[1] = vu_data;
-        result +=
-            CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
+        result += CVisualMDTVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
         vu_data_buffer[0] = saved_primary;
         vu_data_buffer[1] = saved_secondary;
         vu_size = saved_size;
@@ -66,23 +60,23 @@ int CVisualShadow::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo
 }
 
 int CVisualShadow::CreateVUdataShadow(u_int *block, u_int *model_data) {
-    int first;
-    MDT_HEADER *model;
-    MDT_SHADOW *shadow;
-    int shape_index;
-    int word;
-    int unpack;
-    int qwc;
+    int            first;
+    MDT_HEADER    *model;
+    MDT_SHADOW    *shadow;
+    int            shape_index;
+    int            word;
+    int            unpack;
+    int            qwc;
     sceVu0FVECTOR *vertices;
-    int shape_num;
-    MDT_SVERTEX *corner;
-    int index_num;
-    int continued;
-    int emitted;
-    int triangle;
-    int tag;
-    MDT_SVERTEX *source;
-    u_long128 *out;
+    int            shape_num;
+    MDT_SVERTEX   *corner;
+    int            index_num;
+    int            continued;
+    int            emitted;
+    int            triangle;
+    int            tag;
+    MDT_SVERTEX   *source;
+    u_long128     *out;
 
     first = 1;
     word = 0;
@@ -162,55 +156,54 @@ int CVisualShadow::RemakeData(u_int *block) {
     return CreateVUdataShadow(vu_data_buffer[DBuffID], data);
 }
 
-int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, RenderInfo *info,
-                                          float (*matrix)[4]) {
-    int word;
-    int qwc;
-    int index_a;
-    MDT_HEADER *model;
-    int first;
-    int shape_index;
-    int unpack;
-    float nx;
-    MDT_SHADOW *shadow;
-    int pass;
+int CVisualShadow::CreateVUdataShadowCLIP(u_int *block, u_int *model_data, RenderInfo *info, float (*matrix)[4]) {
+    int            word;
+    int            qwc;
+    int            index_a;
+    MDT_HEADER    *model;
+    int            first;
+    int            shape_index;
+    int            unpack;
+    float          nx;
+    MDT_SHADOW    *shadow;
+    int            pass;
     sceVu0FVECTOR *eye;
     sceVu0FVECTOR *vertices;
-    float scale;
-    int shape_num;
-    float ny;
-    MDT_SVERTEX *corner;
-    float plane_scale;
-    float nz;
+    float          scale;
+    int            shape_num;
+    float          ny;
+    MDT_SVERTEX   *corner;
+    float          plane_scale;
+    float          nz;
     sceVu0FVECTOR *projected;
-    int index_num;
-    u_long128 *out;
-    int continued;
-    int emitted;
-    int triangle;
-    int count;
-    int tag;
-    int clip_num;
-    int index_c;
-    int offset_a;
-    int offset_b;
-    int index_b;
-    u_int i;
-    int offset_c;
-    sceVu0FMATRIX clip;
-    sceVu0FMATRIX near_shadow;
-    sceVu0FVECTOR local_light;
-    sceVu0FVECTOR light;
-    sceVu0FVECTOR eye_light;
-    sceVu0FMATRIX shadow_matrix;
-    sceVu0FMATRIX local_to_clip;
-    sceVu0FMATRIX transpose;
-    sceVu0FMATRIX local_to_eye;
-    sceVu0FMATRIX shadow_to_eye;
-    sceVu0FVECTOR point;
-    sceVu0FVECTOR normal;
-    sceVu0FVECTOR direction;
-    sceVu0FVECTOR near_light;
+    int            index_num;
+    u_long128     *out;
+    int            continued;
+    int            emitted;
+    int            triangle;
+    int            count;
+    int            tag;
+    int            clip_num;
+    int            index_c;
+    int            offset_a;
+    int            offset_b;
+    int            index_b;
+    u_int          i;
+    int            offset_c;
+    sceVu0FMATRIX  clip;
+    sceVu0FMATRIX  near_shadow;
+    sceVu0FVECTOR  local_light;
+    sceVu0FVECTOR  light;
+    sceVu0FVECTOR  eye_light;
+    sceVu0FMATRIX  shadow_matrix;
+    sceVu0FMATRIX  local_to_clip;
+    sceVu0FMATRIX  transpose;
+    sceVu0FMATRIX  local_to_eye;
+    sceVu0FMATRIX  shadow_to_eye;
+    sceVu0FVECTOR  point;
+    sceVu0FVECTOR  normal;
+    sceVu0FVECTOR  direction;
+    sceVu0FVECTOR  near_light;
 
     if (model_data == NULL) {
         return 0;

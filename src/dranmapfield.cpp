@@ -25,7 +25,7 @@ void CDranMapField::LoadModel(unsigned int *pack, CDataAlloc2<1> *arena) {
 }
 
 int CDranMapField::AddCollision(CCPoly *poly, int count, CBoxVu0 box) {
-    int i;
+    int                 i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->collision_count == 0) {
@@ -61,8 +61,8 @@ void CDranMapField::LoadCollision(unsigned int *pack, CDataAlloc2<1> *arena) {
  * @address 0x1CD720
  * @size 0xAC
  */
-void CDranMapField::Draw(void) {
-    int i;
+void CDranMapField::Draw() {
+    int                 i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->field_count != 0) {
@@ -74,8 +74,8 @@ void CDranMapField::Draw(void) {
     }
 }
 
-void CDranMapField::Step(void) {
-    int i;
+void CDranMapField::Step() {
+    int                 i;
     DRAN_MAP_FIELD_SET *set = (DRAN_MAP_FIELD_SET *) this;
 
     if (set->field_count != 0) {

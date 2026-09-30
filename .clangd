@@ -1,27 +1,9 @@
+If:
+  PathMatch: (src|include)/.*
 CompileFlags:
-  Compiler: clang
-  Add:
-    - -xc++
-    - -std=c++98
-    - -Wno-deprecated-writable-strings
-    - -nostdinc
-    - -nostdinc++
-    - --target=mipsel-unknown-elf
-    - -Iinclude
-    - -I../include
-    - -I../../include
-    - -Iinclude/std
-    - -I../include/std
-    - -I../../include/std
-    - -Iinclude/sce
-    - -I../include/sce
-    - -I../../include/sce
-    - -Ibuild/generated/asm
-    - -I../build/generated/asm
-    - -I../../build/generated/asm
-
+  Add: [-xc++, -std=c++98, --target=mipsel-unknown-elf, -nostdinc, -nostdinc++, -Wno-deprecated-writable-strings,
+        -I../include, -I../include/std, -I../include/sce, -I../../include, -I../../include/std, -I../../include/sce]
 Diagnostics:
   UnusedIncludes: None
-
 Documentation:
   CommentFormat: Doxygen

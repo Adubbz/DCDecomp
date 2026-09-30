@@ -10,4 +10,4 @@
 /**
  * The first instruction of the main image, where crt0's entry code starts.
  */
-extern "C" void func_00100000(void);
+extern "C" void func_00100000();

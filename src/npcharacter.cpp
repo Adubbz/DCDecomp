@@ -258,6 +258,6 @@ void CNPCharacter::Initialize() {
     recurring_talk_event = -1;
 }
 
-CNPCharacter::CNPCharacter(void) {
+CNPCharacter::CNPCharacter() {
     Initialize();
 }

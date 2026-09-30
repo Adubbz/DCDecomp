@@ -11,6 +11,13 @@ class CCamera;
  */
 class CBombEffect {
 public:
+    sceVu0FVECTOR positions[8]; /**< World position of each billboard. */
+    s32           phases[8];    /**< Envelope phase each billboard is in; also pushes it towards the camera. */
+    s32           counters[8];  /**< Frames elapsed in each billboard's current phase. */
+    float         sizes[8];     /**< World-space billboard widths and heights. */
+    float         alphas[8];    /**< GS alpha values used to draw the billboards. */
+    s32           active[8];    /**< One while the corresponding billboard is animated. */
+
     /**
      * Initializes the fire and dust billboards before animation begins.
      *
@@ -29,13 +36,6 @@ public:
      */
     void Initialize();
 
-    sceVu0FVECTOR positions[8]; /**< World position of each billboard. */
-    s32 phases[8];              /**< Envelope phase each billboard is in; also pushes it towards the camera. */
-    s32 counters[8];            /**< Frames elapsed in each billboard's current phase. */
-    float sizes[8];             /**< World-space billboard widths and heights. */
-    float alphas[8];            /**< GS alpha values used to draw the billboards. */
-    s32 active[8];              /**< One while the corresponding billboard is animated. */
-
     /**
      * Draws the active fire and dust billboards facing the camera.
      *
@@ -52,7 +52,7 @@ public:
      * @address 0x1DAD9C0
      * @size 0x390
      */
-    void Step(void);
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CBombEffect) == 0x120);

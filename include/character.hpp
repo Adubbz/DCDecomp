@@ -18,11 +18,7 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CCPoly;
 class CCloth;
-class CFrame;
-class CCamera;
-class CVector3_f_;
 
 /** Number of sets of motions that one character can hold. */
 #define CHARA_MOTION_MAX 8
@@ -65,11 +61,11 @@ STATIC_ASSERT(sizeof(CHARA_EVENT) == 0x14);
  * Names one thing that a motion does over a range of frames.
  */
 struct CHARA_UNK_1068 {
-    s32 unk_00;
+    s32   unk_00;
     float unk_04;
-    s32 unk_08;
-    s32 unk_0C;
-    s32 unk_10;
+    s32   unk_08;
+    s32   unk_0C;
+    s32   unk_10;
 };
 
 STATIC_ASSERT(sizeof(CHARA_UNK_1068) == 0x14);
@@ -79,6 +75,8 @@ STATIC_ASSERT(sizeof(CHARA_UNK_1068) == 0x14);
  */
 class MotionParam {
 public:
+    u8 storage[128]; /**< Room for the motions of one motion set beyond the first. */
+
     /**
      * Constructs the motion parameters.
      *
@@ -87,8 +85,6 @@ public:
      * @size 0xC
      */
     MotionParam();
-
-    u8 storage[128]; /**< Room for the motions of one motion set beyond the first. */
 };
 
 STATIC_ASSERT(sizeof(MotionParam) == 0x80);
@@ -107,6 +103,51 @@ int scissior(float out[][4], float first[][4], float second[][4], float near_z);
  */
 class CCharacter : public CObject {
 public:
+    float            body_width;                              /**< Width of the character collision body. */
+    float            body_height;                             /**< Height used for targeting and camera framing. */
+    float            body_depth;                              /**< Depth of the character collision body. */
+    CFrame          *frame;                                   /**< Frame that draws the character; zero if it has no model. */
+    CFrame          *shadow_frame;                            /**< Frame that draws the shadow; zero if it casts none. */
+    u_int           *images[4];                               /**< Texture images the character loaded; the first is its own, the rest come from extension packs. */
+    char            *config;                                  /**< Configuration text the character was loaded from, kept to reload its texture animations. */
+    s32              config_size;                             /**< Size in bytes of the configuration text. */
+    CTextureAnime    tex_anime;                               /**< Animation of every texture that the character draws. */
+    tagFRAME_INF    *frame_info;                              /**< Frame bindings every motion set of the model shares. */
+    tagFRAME_INF    *shadow_frame_info;                       /**< Frame bindings every motion set of the shadow shares. */
+    tagMOTION_TYPE   motion_type;                             /**< Motions of the model. */
+    tagMOTION_TYPE   shadow_motion_type;                      /**< Motions of the shadow. */
+    s32              motion_start[CHARA_MOTION_MAX];          /**< First motion number of each set; -1 where it holds none. */
+    s32              motion_end[CHARA_MOTION_MAX];            /**< Motion number after the last one of each set. */
+    MotionParam      motion_storage[CHARA_MOTION_MAX];        /**< Storage the motions of each set beyond the first are built in. */
+    MotionParam      shadow_motion_storage[CHARA_MOTION_MAX]; /**< Storage the shadow motions of each set beyond the first are built in. */
+    tagMOTION_TYPE  *motion[CHARA_MOTION_MAX];                /**< Motions of each set; zero where it holds none. */
+    tagMOTION_TYPE  *shadow_motion[CHARA_MOTION_MAX];         /**< Shadow motions of each set. */
+    float            motion_speed;                            /**< Speed of the motion; -1.0 for the speed the motion gives. */
+    s32              motion_flags;                            /**< Playback flags: 1 holds the motion still, 2 stops it on its last frame, 4 restarts it from its first frame without blending. */
+    s32              motion_no;                               /**< Identifier of the motion that the character plays. */
+    float            unk_C6C;
+    s32              motion_state;                       /**< 0 while no motion plays, 2 while one plays, 3 as one ends. */
+    CCloth         **cloth;                              /**< Pieces of cloth that the character wears. */
+    CCloth          *cloth_buf[8];                       /**< Storage the cloth pointers start in. */
+    s32              wind;                               /**< Wind the character's cloth sways in, or zero for none. */
+    s32              fade_out;                           /**< 1 while the ground fades the character down to its lowest alpha. */
+    s32              ground_ambient_no;                  /**< Which of the two ground ambient colours the character takes on, or -1 for neither. */
+    sceVu0FVECTOR    ground_ambient[2];                  /**< Ambient colours the character takes on over the two kinds of tinted ground. */
+    sceVu0FVECTOR    ambient_tint;                       /**< Ambient colour added while drawing, stepping towards the selected ground colour. */
+    sceVu0FVECTOR    ambient_offset;                     /**< Ambient RGB added while drawing and an optional alpha override. */
+    float            fade[4];                            /**< Alpha the character draws with, two spare values, and the alpha it fades down to. */
+    CFakePointLight  point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
+    CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];   /**< Sounds that the feet play. */
+    s32              foot_sound_id;                      /**< Set of foot sounds that the ground asks for; below zero for none. */
+    s32              foot_sound_enable;                  /**< 1 while the feet play a sound. */
+    s32              foot_sound_wait;                    /**< Frames before the feet may play another sound. */
+    s32              event_enable;                       /**< 1 while the motion fires its events. */
+    CHARA_EVENT      event[CHARA_EVENT_MAX];             /**< Events that the motions fire. */
+    CHARA_UNK_1068   unk_1068[16];
+
+    /** 1 while every character holds the motion where it stands. */
+    static s32 MotionStopFlag;
+
     /**
      * Sets a character to the state it starts in. The call goes through the
      * table: this compiler dispatches a virtual from a constructor rather
@@ -134,48 +175,6 @@ public:
 #endif
     }
 
-    float body_width;                                    /**< Width of the character collision body. */
-    float body_height;                                   /**< Height used for targeting and camera framing. */
-    float body_depth;                                    /**< Depth of the character collision body. */
-    CFrame *frame;                                       /**< Frame that draws the character; zero if it has no model. */
-    CFrame *shadow_frame;                                /**< Frame that draws the shadow; zero if it casts none. */
-    u_int *images[4];                                    /**< Texture images the character loaded; the first is its own, the rest come from extension packs. */
-    char *config;                                        /**< Configuration text the character was loaded from, kept to reload its texture animations. */
-    s32 config_size;                                     /**< Size in bytes of the configuration text. */
-    CTextureAnime tex_anime;                             /**< Animation of every texture that the character draws. */
-    tagFRAME_INF *frame_info;                            /**< Frame bindings every motion set of the model shares. */
-    tagFRAME_INF *shadow_frame_info;                     /**< Frame bindings every motion set of the shadow shares. */
-    tagMOTION_TYPE motion_type;                          /**< Motions of the model. */
-    tagMOTION_TYPE shadow_motion_type;                   /**< Motions of the shadow. */
-    s32 motion_start[CHARA_MOTION_MAX];                  /**< First motion number of each set; -1 where it holds none. */
-    s32 motion_end[CHARA_MOTION_MAX];                    /**< Motion number after the last one of each set. */
-    MotionParam motion_storage[CHARA_MOTION_MAX];        /**< Storage the motions of each set beyond the first are built in. */
-    MotionParam shadow_motion_storage[CHARA_MOTION_MAX]; /**< Storage the shadow motions of each set beyond the first are built in. */
-    tagMOTION_TYPE *motion[CHARA_MOTION_MAX];            /**< Motions of each set; zero where it holds none. */
-    tagMOTION_TYPE *shadow_motion[CHARA_MOTION_MAX];     /**< Shadow motions of each set. */
-    float motion_speed;                                  /**< Speed of the motion; -1.0 for the speed the motion gives. */
-    s32 motion_flags;                                    /**< Playback flags: 1 holds the motion still, 2 stops it on its last frame, 4 restarts it from its first frame without blending. */
-    s32 motion_no;                                       /**< Identifier of the motion that the character plays. */
-    float unk_C6C;
-    s32 motion_state;                                   /**< 0 while no motion plays, 2 while one plays, 3 as one ends. */
-    CCloth **cloth;                                     /**< Pieces of cloth that the character wears. */
-    CCloth *cloth_buf[8];                               /**< Storage the cloth pointers start in. */
-    s32 wind;                                           /**< Wind the character's cloth sways in, or zero for none. */
-    s32 fade_out;                                       /**< 1 while the ground fades the character down to its lowest alpha. */
-    s32 ground_ambient_no;                              /**< Which of the two ground ambient colours the character takes on, or -1 for neither. */
-    sceVu0FVECTOR ground_ambient[2];                    /**< Ambient colours the character takes on over the two kinds of tinted ground. */
-    sceVu0FVECTOR ambient_tint;                         /**< Ambient colour added while drawing, stepping towards the selected ground colour. */
-    sceVu0FVECTOR ambient_offset;                       /**< Ambient RGB added while drawing and an optional alpha override. */
-    float fade[4];                                      /**< Alpha the character draws with, two spare values, and the alpha it fades down to. */
-    CFakePointLight point_light[CHARA_POINT_LIGHT_MAX]; /**< Lights that the character stands in. */
-    CHARA_FOOT_SOUND foot_sound[CHARA_FOOT_SOUND_MAX];  /**< Sounds that the feet play. */
-    s32 foot_sound_id;                                  /**< Set of foot sounds that the ground asks for; below zero for none. */
-    s32 foot_sound_enable;                              /**< 1 while the feet play a sound. */
-    s32 foot_sound_wait;                                /**< Frames before the feet may play another sound. */
-    s32 event_enable;                                   /**< 1 while the motion fires its events. */
-    CHARA_EVENT event[CHARA_EVENT_MAX];                 /**< Events that the motions fire. */
-    CHARA_UNK_1068 unk_1068[16];
-
     /**
      * Clears every point light that affects the character.
      *
@@ -183,7 +182,7 @@ public:
      * @address 0x137EA0
      * @size 0x40
      */
-    void ClearPointLight(void);
+    void ClearPointLight();
 
     /**
      * Adds a point light to the first free light slot.
@@ -192,8 +191,7 @@ public:
      * @address 0x137EE0
      * @size 0x108
      */
-    int SetPointLight(float *pos, float inner_range, float outer_range, float red, float green,
-                      float blue, float alpha);
+    int SetPointLight(float *pos, float inner_range, float outer_range, float red, float green, float blue, float alpha);
 
     /**
      * Initializes the character texture animation from animation data.
@@ -211,7 +209,7 @@ public:
      * @address 0x138020
      * @size 0x24
      */
-    void ClearTexAnime(void);
+    void ClearTexAnime();
 
     /**
      * Advances the character texture animation.
@@ -310,8 +308,7 @@ public:
      * @address 0x1383B0
      * @size 0xB4
      */
-    tagMOTION_TYPE *GetMotionParam(int motion_no, int *out_index, int *out_start, int *out_end,
-                                   int *out_set);
+    tagMOTION_TYPE *GetMotionParam(int motion_no, int *out_index, int *out_start, int *out_end, int *out_set);
 
     /**
      * Gets the motion information for one motion number.
@@ -329,7 +326,7 @@ public:
      * @address 0x1384E0
      * @size 0x4C
      */
-    float GetNowTime(void);
+    float GetNowTime();
 
     /**
      * Advances the model motion and fires frame events.
@@ -338,7 +335,7 @@ public:
      * @address 0x138530
      * @size 0x75C
      */
-    virtual void Step(void);
+    virtual void Step();
 
     /**
      * Synchronizes and advances the shadow motion.
@@ -347,7 +344,7 @@ public:
      * @address 0x138C90
      * @size 0x1B8
      */
-    virtual void ShadowStep(void);
+    virtual void ShadowStep();
 
     /**
      * Advances every cloth simulation worn by the character.
@@ -482,7 +479,7 @@ public:
      * @address 0x139310
      * @size 0x3E8
      */
-    virtual void Draw(void);
+    virtual void Draw();
 
     /**
      * Draws the character shadow below the model.
@@ -491,7 +488,7 @@ public:
      * @address 0x139700
      * @size 0xE4
      */
-    virtual void DrawShadow(void);
+    virtual void DrawShadow();
 
     /**
      * Loads model and texture data from a character pack.
@@ -500,8 +497,7 @@ public:
      * @address 0x1397F0
      * @size 0x30
      */
-    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
-                              CDataAlloc2<1> *texture_alloc);
+    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *texture_alloc);
 
     /**
      * Loads model, motion, and texture data from a character pack.
@@ -510,8 +506,7 @@ public:
      * @address 0x139820
      * @size 0x30
      */
-    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
-                              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc);
+    virtual void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc);
 
     /**
      * Loads a character pack from one arena, putting its textures in the given
@@ -521,8 +516,7 @@ public:
      * @address 0x139850
      * @size 0x3C
      */
-    virtual void LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
-                               int texture_block_no, CDataAlloc2<1> *image_alloc, int visual_type);
+    virtual void LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc, int texture_block_no, CDataAlloc2<1> *image_alloc, int visual_type);
 
     /**
      * Loads a character pack from one arena into a texture block, optionally
@@ -532,9 +526,7 @@ public:
      * @address 0x139890
      * @size 0x40
      */
-    virtual void LoadPackData3(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
-                               int texture_block_no, CDataAlloc2<1> *image_alloc, int keep_textures,
-                               int visual_type);
+    virtual void LoadPackData3(unsigned int *pack, char *name, CDataAlloc2<1> *alloc, int texture_block_no, CDataAlloc2<1> *image_alloc, int keep_textures, int visual_type);
 
     /**
      * Restores a texture block after extended character textures are deleted.
@@ -552,7 +544,7 @@ public:
      * @address 0x139990
      * @size 0x40
      */
-    void DeleteExtendMotion(void);
+    void DeleteExtendMotion();
 
     /**
      * Resets the character and all animation state.
@@ -561,10 +553,7 @@ public:
      * @address 0x1399D0
      * @size 0x2C8
      */
-    virtual void Initialize(void);
-
-    /** 1 while every character holds the motion where it stands. */
-    static s32 MotionStopFlag;
+    virtual void Initialize();
 };
 
 STATIC_ASSERT(sizeof(CCharacter) == 0x11B0);
@@ -574,14 +563,14 @@ STATIC_ASSERT(sizeof(CCharacter) == 0x11B0);
  */
 class CMainChara : public CCharacter {
 public:
-    s32 unk_11B0;
-    s32 unk_11B4;
-    s32 unk_11B8;
-    s32 unk_11BC;
-    s32 unk_11C0;
-    s32 unk_11C4;
-    s32 unk_11C8;
-    s32 unk_11CC;
+    s32           unk_11B0;
+    s32           unk_11B4;
+    s32           unk_11B8;
+    s32           unk_11BC;
+    s32           unk_11C0;
+    s32           unk_11C4;
+    s32           unk_11C8;
+    s32           unk_11CC;
     MoveCheckInfo move_info; /**< What the character's last step ran into. */
 
     /** Puts a new player character at rest. */
@@ -594,7 +583,7 @@ public:
      * @address 0x139CA0
      * @size 0x20
      */
-    virtual void Draw(void);
+    virtual void Draw();
 
     /**
      * Puts the character at rest with no motion and nothing in hand.
@@ -603,7 +592,7 @@ public:
      * @address 0x139CC0
      * @size 0x48
      */
-    virtual void Initialize(void);
+    virtual void Initialize();
 };
 
 STATIC_ASSERT(sizeof(CMainChara) == 0x12A0);

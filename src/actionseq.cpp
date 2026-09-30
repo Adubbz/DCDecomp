@@ -40,7 +40,7 @@ void CActionSeq::ClearSeq() {
 
 ACT_SEQ *CActionSeq::GetNextSeq() {
     ACT_SEQ *sequence = pool;
-    int index = 0;
+    int      index = 0;
     for (; index < capacity; index++, sequence++) {
         if (sequence->operation == ACT_SEQ_UNUSED) {
             sequence->next = NULL;
@@ -122,7 +122,7 @@ void CActionSeq::MoveSeq(float *destination, int frames) {
 
 void CActionSeq::MoveSeq(float *destination, float speed) {
     float duration = DistVector(destination, queued_position) / speed;
-    int frames = duration;
+    int   frames = duration;
     if (duration - frames > 0.0) {
         frames++;
     }
@@ -282,7 +282,7 @@ static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
  * @size 0xB04
  */
 void CActionSeq::Play() {
-    int animation_shown;
+    int      animation_shown;
     ACT_SEQ *sequence;
 
     if (move_head == NULL && motion_head == NULL && anime_head == NULL) {
@@ -448,15 +448,12 @@ void CActionSeq::Play() {
                 if (character->motion_speed > 0.0f) {
                     step = character->motion_speed;
                 }
-                if (!(motion_info->end <= motion_time) && motion_info->start < motion_time &&
-                    motion_info->end - step - 0.01f <= motion_time) {
+                if (!(motion_info->end <= motion_time) && motion_info->start < motion_time && motion_info->end - step - 0.01f <= motion_time) {
 #else
-                if (!(motion_info->end <= motion_time) && motion_info->start < motion_time &&
-                    motion_info->end - motion_info->speed - 0.01f <= motion_time) {
+                if (!(motion_info->end <= motion_time) && motion_info->start < motion_time && motion_info->end - motion_info->speed - 0.01f <= motion_time) {
 #endif
-                    int motion_index;
-                    tagMOTION_TYPE *motion_type =
-                        character->GetMotionParam(character->motion_no, &motion_index, NULL, NULL, NULL);
+                    int             motion_index;
+                    tagMOTION_TYPE *motion_type = character->GetMotionParam(character->motion_no, &motion_index, NULL, NULL, NULL);
 
                     if (motion_type != NULL) {
                         motion_type->state.time = (int) (0.999f + motion_type->state.time);
@@ -550,8 +547,8 @@ void CActionSeq::Play() {
     }
     if (character != NULL) {
         sceVu0FVECTOR wrapped_rotation;
-        float turns;
-        int whole_turns;
+        float         turns;
+        int           whole_turns;
 
         character->SetPosition(position);
         wrapped_rotation[0] = rotation[0];

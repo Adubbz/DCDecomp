@@ -21,19 +21,19 @@ void *operator new[](u_int size, u_long128 *block);
 template <int Kind>
 class CDataAlloc2 {
 public:
+    u_char *base;   /**< Start of the allocator-owned storage. */
+    u_char *buffer; /**< Storage the constructor starts the arena's base at. */
+    int     used;   /**< Number of occupied quadwords. */
+    int     limit;  /**< Maximum number of available quadwords. */
+
     CDataAlloc2(int limit = -1);
 
     u_char *Alloc(int quads);
     u_char *Alloc64(int quads);
-    void Align64();
+    void    Align64();
 
     /** Hands the whole arena back, without touching what is in it. */
     void Reset() { used = 0; }
-
-    u_char *base;   /**< Start of the allocator-owned storage. */
-    u_char *buffer; /**< Storage the constructor starts the arena's base at. */
-    int used;       /**< Number of occupied quadwords. */
-    int limit;      /**< Maximum number of available quadwords. */
 };
 
 /**
@@ -42,33 +42,33 @@ public:
 template <int Kind, int Size>
 class CDataAlloc {
 public:
+    u_long128 block[Size]; /**< Embedded allocation storage. */
+    int       used;        /**< Number of occupied quadwords. */
+
     CDataAlloc() { used = 0; }
 
     u_char *Alloc(int quads);
     u_char *Alloc64(int quads);
-    void Align64();
-
-    u_long128 block[Size]; /**< Embedded allocation storage. */
-    int used;              /**< Number of occupied quadwords. */
+    void    Align64();
 };
 
 template <>
 class CDataAlloc2<1> {
 public:
+    u_char *base;   /**< Start of the allocator-owned storage. */
+    u_char *buffer; /**< Storage the constructor starts the arena's base at. */
+    int     used;   /**< Number of occupied quadwords. */
+    int     limit;  /**< Maximum number of available quadwords. */
+
     CDataAlloc2();
     CDataAlloc2(int limit);
 
     u_char *Alloc(int quads);
     u_char *Alloc64(int quads);
-    void Align64();
+    void    Align64();
 
     /** Hands the whole arena back, without touching what is in it. */
     void Reset() { used = 0; }
-
-    u_char *base;   /**< Start of the allocator-owned storage. */
-    u_char *buffer; /**< Storage the constructor starts the arena's base at. */
-    int used;       /**< Number of occupied quadwords. */
-    int limit;      /**< Maximum number of available quadwords. */
 };
 
 extern "C" void *__ct__14CDataAlloc2_1_Fi(void *self, int limit);
@@ -76,27 +76,27 @@ extern "C" void *__ct__14CDataAlloc2_1_Fi(void *self, int limit);
 template <>
 class CDataAlloc<1, 6000> {
 public:
+    u_long128 block[6000]; /**< Embedded allocation storage. */
+    int       used;        /**< Number of occupied quadwords in the embedded arena. */
+
     CDataAlloc();
 
     u_char *Alloc(int quads);
     u_char *Alloc64(int quads);
-    void Align64();
-
-    u_long128 block[6000]; /**< Embedded allocation storage. */
-    int used;              /**< Number of occupied quadwords in the embedded arena. */
+    void    Align64();
 };
 
 template <>
 class CDataAlloc<1, 1690000> {
 public:
+    u_long128 block[1690000]; /**< Embedded allocation storage. */
+    int       used;           /**< Number of occupied quadwords. */
+
     CDataAlloc() { used = 0; }
 
     u_char *Alloc(int quads);
     u_char *Alloc64(int quads);
-    void Align64();
-
-    u_long128 block[1690000]; /**< Embedded allocation storage. */
-    int used;                 /**< Number of occupied quadwords. */
+    void    Align64();
 };
 
 template <int Kind, int Size>

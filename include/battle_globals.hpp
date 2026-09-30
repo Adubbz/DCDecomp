@@ -32,7 +32,7 @@ STATIC_ASSERT(sizeof(OPENING_BOOK) == 0xE);
  * @address 0x238450
  * @size 0x48
  */
-void GlobalNameInit(void);
+void GlobalNameInit();
 
 /**
  * Opens the name-entry screen and reads its textures.
@@ -50,7 +50,7 @@ void InitNameRegist(int chara_no, int texture_block, u_long128 *buffer);
  * @address 0x238630
  * @size 0x68
  */
-void ExitNameEnterFunc(void);
+void ExitNameEnterFunc();
 
 /**
  * Gives the texture and cell one name character draws from.
@@ -106,7 +106,7 @@ void DrawEuroSpecialFont(int x, int y, int language, int brightness, int blend_m
  * @address 0x239A40
  * @size 0x160
  */
-int CheckName(void);
+int CheckName();
 
 /**
  * Draws the name-entry screen.
@@ -115,7 +115,7 @@ int CheckName(void);
  * @address 0x239BA0
  * @size 0xC9C
  */
-void NameEnterDraw(void);
+void NameEnterDraw();
 
 /**
  * Moves the cursor across the keyboard, enters a character and reports a transition.
@@ -124,7 +124,7 @@ void NameEnterDraw(void);
  * @address 0x23A840
  * @size 0x1F28
  */
-s32 NameEnterKey(void);
+s32 NameEnterKey();
 
 /**
  * Gives one party member their default name for the chosen language.
@@ -180,7 +180,7 @@ void InitOpeningBook(void /* CW back-ref target unresolved */ *buffer, int *tex_
  * @address 0x23CF10
  * @size 0x664
  */
-int OpeningBookKey(void);
+int OpeningBookKey();
 
 /**
  * Draws the storybook page by page.
@@ -189,7 +189,7 @@ int OpeningBookKey(void);
  * @address 0x23D580
  * @size 0x134
  */
-void OpeningBookDraw(void);
+void OpeningBookDraw();
 
 /**
  * @mangled runerror__FPCc
@@ -197,7 +197,7 @@ void OpeningBookDraw(void);
  * @size 0x44
  * @unknownret
  */
-void runerror(const char *);
+void runerror(const char *message);
 
 /**
  * @mangled stkoverflow__Fv
@@ -205,7 +205,7 @@ void runerror(const char *);
  * @size 0x28
  * @unknownret
  */
-void stkoverflow(void);
+void stkoverflow();
 
 /**
  * @mangled chk_int__F12RS_STACKDATAP8funcdata
@@ -213,7 +213,7 @@ void stkoverflow(void);
  * @size 0x68
  * @unknownret
  */
-int chk_int(RS_STACKDATA, funcdata *);
+int chk_int(RS_STACKDATA data, funcdata *function);
 
 /**
  * @mangled is_true__F12RS_STACKDATA
@@ -221,7 +221,7 @@ int chk_int(RS_STACKDATA, funcdata *);
  * @size 0x3C
  * @unknownret
  */
-int is_true(RS_STACKDATA);
+int is_true(RS_STACKDATA data);
 
 /**
  * @mangled divby0error__Fv
@@ -229,7 +229,7 @@ int is_true(RS_STACKDATA);
  * @size 0x28
  * @unknownret
  */
-void divby0error(void);
+void divby0error();
 
 /**
  * @mangled modby0error__Fv
@@ -237,7 +237,7 @@ void divby0error(void);
  * @size 0x28
  * @unknownret
  */
-void modby0error(void);
+void modby0error();
 
 /**
  * @mangled print__FP12RS_STACKDATAi
@@ -245,7 +245,7 @@ void modby0error(void);
  * @size 0xE8
  * @unknownret
  */
-void print(RS_STACKDATA *, int);
+void print(RS_STACKDATA *data, int count);
 
 /**
  * Packed texture file of the name-entry screen.

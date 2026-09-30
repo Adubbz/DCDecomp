@@ -9,9 +9,6 @@
 
 class CCharacter;
 
-class CCPoly;
-class CBoxVu0;
-
 /**
  * @file
  * Declares the motion data that a character plays, and the calls that step it.
@@ -55,11 +52,8 @@ extern int MesAbsDrawOff;
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
 class CCamera;
-class CFrame;
 class CRect_i_;
-class CTexture;
 struct RECT;
-struct sceVif1Packet;
 struct i;
 
 /**
@@ -69,7 +63,7 @@ struct i;
  * @address 0x147970
  * @size 0x88
  */
-int ezMidiInit(void);
+int ezMidiInit();
 
 /**
  * Sends one command to the EZMIDI RPC server and returns its response word.
@@ -139,10 +133,10 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
  * it plays.
  */
 struct MOTION_INFO {
-    s32 start;   /**< First frame of the motion. */
-    s32 end;     /**< Frame after the last one of the motion. */
+    s32   start; /**< First frame of the motion. */
+    s32   end;   /**< Frame after the last one of the motion. */
     float speed; /**< Frames that the motion plays each step. */
-    s32 unk_0C;
+    s32   unk_0C;
 };
 
 STATIC_ASSERT(sizeof(MOTION_INFO) == 0x10);
@@ -151,21 +145,21 @@ STATIC_ASSERT(sizeof(MOTION_INFO) == 0x10);
  * Records how far one model has played through the motion it holds.
  */
 struct MOTION_STATE {
-    float time;                       /**< Frame that the motion stands on. */
-    float blend;                      /**< How far the pose has blended toward the next frame or motion; 1 is all the way. */
-    float blend_step;                 /**< Amount the blend advances each step while changing motion. */
-    unsigned int frame;               /**< Whole frame that the model is posed from. */
-    unsigned int next_frame;          /**< Frame that the pose interpolates toward. */
-    s32 motion_no;                    /**< Motion that the character asks for. */
-    s32 playing_no;                   /**< Motion that plays now. */
-    s32 blending;                     /**< Set while the model blends into a newly requested motion. */
-    CCamera *camera;                  /**< Camera that the motion moves; zero where it moves none. */
-    s32 look_at;                      /**< Set when a frame of the model turns to look at a target. */
-    CFrameVu1 *look_frame;            /**< Frame that turns to look. */
-    CFrameVu1 *look_target;           /**< Frame looked at, or NULL to look at look_position. */
-    sceVu0FVECTOR look_position;      /**< Point looked at when there is no target frame. */
+    float            time;            /**< Frame that the motion stands on. */
+    float            blend;           /**< How far the pose has blended toward the next frame or motion; 1 is all the way. */
+    float            blend_step;      /**< Amount the blend advances each step while changing motion. */
+    unsigned int     frame;           /**< Whole frame that the model is posed from. */
+    unsigned int     next_frame;      /**< Frame that the pose interpolates toward. */
+    s32              motion_no;       /**< Motion that the character asks for. */
+    s32              playing_no;      /**< Motion that plays now. */
+    s32              blending;        /**< Set while the model blends into a newly requested motion. */
+    CCamera         *camera;          /**< Camera that the motion moves; zero where it moves none. */
+    s32              look_at;         /**< Set when a frame of the model turns to look at a target. */
+    CFrameVu1       *look_frame;      /**< Frame that turns to look. */
+    CFrameVu1       *look_target;     /**< Frame looked at, or NULL to look at look_position. */
+    sceVu0FVECTOR    look_position;   /**< Point looked at when there is no target frame. */
     _FRAMECONSTRAINT look_constraint; /**< Axes the looking frame may turn about. */
-    u8 unk_44[0xC];
+    u8               unk_44[0xC];
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
@@ -174,13 +168,13 @@ STATIC_ASSERT(sizeof(MOTION_STATE) == 0x50);
  * Describes the frames of one model that a motion drives.
  */
 struct tagFRAME_INF {
-    s32 parent_frame;             /**< Parent frame used to build the driven frame's transform. */
-    u32 vertex_count;             /**< Number of visual vertices copied for vertex motion. */
+    s32            parent_frame;  /**< Parent frame used to build the driven frame's transform. */
+    u32            vertex_count;  /**< Number of visual vertices copied for vertex motion. */
     sceVu0FVECTOR *base_vertices; /**< Arena copy of the visual's undeformed vertices. */
-    u8 unk_0C[4];
-    sceVu0FMATRIX matrix;           /**< Transform the driver interpolates into the frame. */
-    sceVu0FMATRIX bone_base_matrix; /**< Inverse bind pose of the bone that skins the frame. */
-    sceVu0FMATRIX bone_matrix;      /**< Accumulated transform of the bone that skins the frame. */
+    u8             unk_0C[4];
+    sceVu0FMATRIX  matrix;           /**< Transform the driver interpolates into the frame. */
+    sceVu0FMATRIX  bone_base_matrix; /**< Inverse bind pose of the bone that skins the frame. */
+    sceVu0FMATRIX  bone_matrix;      /**< Accumulated transform of the bone that skins the frame. */
 };
 
 STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
@@ -190,8 +184,8 @@ STATIC_ASSERT(sizeof(tagFRAME_INF) == 0xD0);
  * takes there.
  */
 struct Mot_Key {
-    u32 frame; /**< Motion frame that the key stands on. */
-    u8 unk_04[12];
+    u32           frame; /**< Motion frame that the key stands on. */
+    u8            unk_04[12];
     sceVu0FVECTOR value; /**< What the driver sets on that frame. */
 };
 
@@ -201,13 +195,13 @@ STATIC_ASSERT(sizeof(Mot_Key) == 0x20);
  * Drives one frame of a model from a run of motion keys.
  */
 struct Mot_List {
-    u32 frame;      /**< Frame of the model that the keys drive. */
-    u32 target;     /**< Part of the frame that the keys drive: a vertex, a material or a bone. */
-    s32 type;       /**< What the keys set: 0 rotation, 1 scale, 2 translation, 12 vertices, 30-33 camera, 40-41 material, 50-51 visibility; 200 is skipped. */
-    u32 key_count;  /**< Number of keys. */
-    Mot_Key *keys;  /**< The keys, in frame order. */
-    Mot_List *next; /**< The next driver, or NULL after the last. */
-    u8 unk_18[8];
+    u32       frame;     /**< Frame of the model that the keys drive. */
+    u32       target;    /**< Part of the frame that the keys drive: a vertex, a material or a bone. */
+    s32       type;      /**< What the keys set: 0 rotation, 1 scale, 2 translation, 12 vertices, 30-33 camera, 40-41 material, 50-51 visibility; 200 is skipped. */
+    u32       key_count; /**< Number of keys. */
+    Mot_Key  *keys;      /**< The keys, in frame order. */
+    Mot_List *next;      /**< The next driver, or NULL after the last. */
+    u8        unk_18[8];
 };
 
 STATIC_ASSERT(sizeof(Mot_List) == 0x20);
@@ -219,10 +213,10 @@ struct Mot_File_List {
     u32 frame;  /**< Frame of the model that the keys drive. */
     u32 target; /**< Part of the frame that the keys drive. */
     s32 type;   /**< What the keys set, as Mot_List::type. */
-    u8 unk_0C[4];
+    u8  unk_0C[4];
     u32 key_count; /**< Number of keys after the header. */
     u32 more;      /**< Nonzero when another driver follows this one's keys. */
-    u8 unk_18[8];
+    u8  unk_18[8];
 };
 
 STATIC_ASSERT(sizeof(Mot_File_List) == 0x20);
@@ -233,18 +227,18 @@ STATIC_ASSERT(sizeof(Mot_File_List) == 0x20);
  */
 struct tagMOTION_TYPE {
     sceVu0FMATRIX *base_matrices; /**< Bind-pose matrices loaded from the motion archive. */
-    Mot_List *proc_list;          /**< Frame drivers applied from the motion state. */
-    Mot_List *proc_list2;         /**< Frame drivers applied from the frame table. */
-    u8 unk_0C[4];
-    MOTION_STATE state;       /**< How far the set has played, and what it moves. */
-    tagFRAME_INF *frame_info; /**< Frames that the motions drive. */
-    MOTION_INFO *motion_info; /**< One entry per motion of the set. */
-    s32 unk_68;
-    s32 unk_6C;
-    s32 unk_70;
-    s32 unk_74;
-    float unk_78;
-    s32 unk_7C;
+    Mot_List      *proc_list;     /**< Frame drivers applied from the motion state. */
+    Mot_List      *proc_list2;    /**< Frame drivers applied from the frame table. */
+    u8             unk_0C[4];
+    MOTION_STATE   state;       /**< How far the set has played, and what it moves. */
+    tagFRAME_INF  *frame_info;  /**< Frames that the motions drive. */
+    MOTION_INFO   *motion_info; /**< One entry per motion of the set. */
+    s32            unk_68;
+    s32            unk_6C;
+    s32            unk_70;
+    s32            unk_74;
+    float          unk_78;
+    s32            unk_7C;
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(tagMOTION_TYPE) == 0x80);
@@ -253,9 +247,9 @@ STATIC_ASSERT(sizeof(tagMOTION_TYPE) == 0x80);
  * Names one optional motion-data file found in a model archive.
  */
 struct MOTION_FILE_INFO {
-    char *name;         /**< Name used to find the file in the archive. */
+    char         *name; /**< Name used to find the file in the archive. */
     unsigned int *data; /**< Packed file data, or NULL when the file is absent. */
-    int size;           /**< Size of the packed file in bytes. */
+    int           size; /**< Size of the packed file in bytes. */
 };
 
 STATIC_ASSERT(sizeof(MOTION_FILE_INFO) == 0xC);
@@ -276,8 +270,7 @@ int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, MOTION_FILE
  * @address 0x149300
  * @size 0x98
  */
-void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                   tagFRAME_INF **frame_info);
+void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, tagFRAME_INF **frame_info);
 
 /**
  * Builds the per-frame animation table into storage already set aside.
@@ -286,8 +279,7 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @address 0x1493A0
  * @size 0x318
  */
-int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                  tagFRAME_INF *frame_info);
+int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, tagFRAME_INF *frame_info);
 
 /**
  * Applies one motion's frame to a model's frame hierarchy, and gives back the
@@ -316,8 +308,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
  * @address 0x148D00
  * @size 0x390
  */
-void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
-                 tagFRAME_INF *frame_info);
+void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state, tagFRAME_INF *frame_info);
 
 /**
  * Maps how far the playing motion has run onto the requested motion's frames.
@@ -336,8 +327,7 @@ int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state);
  * @address 0x14A230
  * @size 0x444
  */
-int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
-              float (*hit_point)[4], int sort, int mode);
+int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly, float (*hit_point)[4], int sort, int mode);
 
 /**
  * Finds the polygon straight below a point, and gives back which one it is.
@@ -346,8 +336,7 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
  * @address 0x14A080
  * @size 0x1A4
  */
-int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point,
-                     int mode);
+int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point, int mode);
 
 /**
  * Works out where a character stands on screen, in pixels.
@@ -394,9 +383,7 @@ void RollPos(float *centre, float *point, float angle, float *out);
  * @address 0x14C3C0
  * @size 0x128
  */
-void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                      const CRect_i_ &texel, unsigned char red, unsigned char green,
-                      unsigned char blue, unsigned char alpha);
+void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
 /**
  * Tells whether a point lies inside a rectangle.
@@ -439,12 +426,12 @@ void AreaAddPos(int *area, int *pos, int *out);
  * Records what a step of a character ran into.
  */
 struct MoveCheckInfo {
-    s32 landed; /**< 1 where the step landed on a polygon. */
-    u8 unk_04[0xC];
-    CCPoly ground_poly; /**< Polygon found below the step. */
-    s32 ground_found;   /**< 1 where the step found ground below it. */
-    u8 unk_64[0xC];
-    CCPoly poly;                /**< Polygon that the step landed on. */
+    s32           landed; /**< 1 where the step landed on a polygon. */
+    u8            unk_04[0xC];
+    CCPoly        ground_poly;  /**< Polygon found below the step. */
+    s32           ground_found; /**< 1 where the step found ground below it. */
+    u8            unk_64[0xC];
+    CCPoly        poly;         /**< Polygon that the step landed on. */
     sceVu0FVECTOR ground_point; /**< Point where the step found ground below it. */
 };
 
@@ -457,8 +444,7 @@ STATIC_ASSERT(sizeof(MoveCheckInfo) == 0xD0);
  * @address 0x14A680
  * @size 0x530
  */
-int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
-              int poly_num, int mode);
+int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys, int poly_num, int mode);
 
 /**
  * Finds the collision polygon below a point and combines its surface attributes.
@@ -467,8 +453,7 @@ int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_in
  * @address 0x14ABB0
  * @size 0x1DC
  */
-int GetFootPoly(float *position, float depth, CCPoly *found, float *ground,
-                CCPoly *polys, int count, int mode);
+int GetFootPoly(float *position, float depth, CCPoly *found, float *ground, CCPoly *polys, int count, int mode);
 
 /**
  * Pushes a position out of the polygons within a radius of it.
@@ -487,8 +472,7 @@ int CheckWidth(CCPoly *polys, int count, float *position, float radius, float *o
  * @address 0x14AD90
  * @size 0x1E0
  */
-int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no, float *hit,
-                 CCPoly *polys, int count, int mode);
+int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no, float *hit, CCPoly *polys, int count, int mode);
 
 /**
  * Pushes the camera out of the polygons within a radius of it, counting only

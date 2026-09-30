@@ -20,15 +20,15 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-void CRandomItem::Draw(void) {
+void CRandomItem::Draw() {
     for (int i = 0; i < 32; i++) {
         if (id[i] == -1 || distance[i] > 200.0f) {
             continue;
         }
 
         sceVu0FVECTOR draw_position;
-        int texel_x;
-        int texel_y;
+        int           texel_x;
+        int           texel_y;
         sceVu0CopyVector(draw_position, position[i]);
         draw_position[1] += 8.0f * sinf(phase[i]);
 
@@ -69,12 +69,11 @@ void CRandomItem::Draw(void) {
                 texel_y = 0x80;
             }
         }
-        BtSet3DCellModel(draw_position, gold_texture, 3.5f, texel_x, texel_y, 0x40, 0x40,
-                         0x80);
+        BtSet3DCellModel(draw_position, gold_texture, 3.5f, texel_x, texel_y, 0x40, 0x40, 0x80);
     }
 }
 
-void CRandomItem::MapSymbolDraw(void) {
+void CRandomItem::MapSymbolDraw() {
     CTexture *texture = TexManager.GetTexture("itempack", -1);
 
     for (int i = 0; i < 32; i++) {
@@ -86,7 +85,7 @@ void CRandomItem::MapSymbolDraw(void) {
     }
 }
 
-int CRandomItem::checkEvent(void) {
+int CRandomItem::checkEvent() {
     for (int i = 0; i < 32; i++) {
         int event = pickup_event[i];
         if (event != -1) {
@@ -97,7 +96,7 @@ int CRandomItem::checkEvent(void) {
     return -1;
 }
 
-int CRandomItem::checkErr(void) {
+int CRandomItem::checkErr() {
     for (int i = 0; i < 32; i++) {
         if (pickup_blocked[i] > 0 && pickup_blocked[i] < 3) {
             pickup_blocked[i] = 3;
@@ -107,9 +106,9 @@ int CRandomItem::checkErr(void) {
     return 0;
 }
 
-int CRandomItem::CheckPosition(void) {
+int CRandomItem::CheckPosition() {
     sceVu0FVECTOR player_position;
-    int gold = 0;
+    int           gold = 0;
 
     sceVu0CopyVector(player_position, CharaMain.pos);
     for (int i = 0; i < 32; i++) {
@@ -162,7 +161,7 @@ void CRandomItem::Set(float *drop_position, int slot_id, int gold, int item) {
     }
 }
 
-int CRandomItem::CheckID(void) {
+int CRandomItem::CheckID() {
     for (int i = 0; i < 32; i++) {
         if (id[i] == -1) {
             return i;
@@ -181,7 +180,7 @@ int CRandomItem::CheckItemNo(int item) {
     return 0;
 }
 
-void CRandomItem::Step(void) {
+void CRandomItem::Step() {
     bob_phase += 0.05235988f;
     if (bob_phase > 3.1415927f) {
         bob_phase -= 3.1415927f;

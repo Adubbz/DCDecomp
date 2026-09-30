@@ -68,8 +68,9 @@ CRunScript::CRunScript() {
 }
 
 void CRunScript::check_stack() {
-    if (sp >= stack_end)
+    if (sp >= stack_end) {
         stkoverflow();
+    }
 }
 
 void CRunScript::push(RS_STACKDATA value) {
@@ -142,8 +143,7 @@ void CRunScript::ext(RS_STACKDATA *args, int argc) {
     }
 }
 
-void CRunScript::load(RS_PROG_HEADER *prog, RS_STACKDATA *stack, int stack_num, RS_CALLDATA *call,
-                      int call_num) {
+void CRunScript::load(RS_PROG_HEADER *prog, RS_STACKDATA *stack, int stack_num, RS_CALLDATA *call, int call_num) {
     this->stack = stack;
     this->stack_num = stack_num;
     this->call = call;
@@ -165,18 +165,20 @@ void CRunScript::ext_func(int (**table)(RS_STACKDATA *, int), int count) {
 }
 
 void CRunScript::resume() {
-    if (pc)
+    if (pc) {
         exe(pc);
+    }
 }
 
 int CRunScript::run(int no) {
-    RS_PROGDATA *entry;
-    int i;
+    RS_PROGDATA    *entry;
+    int             i;
     RS_PROG_HEADER *header;
-    vmcode_t *start;
+    vmcode_t       *start;
 
-    if (prog == 0)
+    if (prog == 0) {
         return -1;
+    }
 
     sp = stack;
     call_sp = call;
@@ -209,15 +211,16 @@ int CRunScript::run(int no) {
 }
 
 int CRunScript::check_program(int no) {
-    RS_PROGDATA *entry;
-    int i;
+    RS_PROGDATA    *entry;
+    int             i;
     RS_PROG_HEADER *header;
 
     header = prog;
     entry = (RS_PROGDATA *) ((char *) header + header->prog);
     for (i = 0; i < header->prog_num; i++, entry++) {
-        if (entry->no == no)
+        if (entry->no == no) {
             return 1;
+        }
     }
     return 0;
 }
@@ -235,10 +238,10 @@ void CRunScript::exe(vmcode_t *entry) {
     RS_STACKDATA value;
     RS_STACKDATA rhs;
     RS_STACKDATA lhs;
-    float rhs_f;
-    float lhs_f;
-    int rhs_i;
-    int lhs_i;
+    float        rhs_f;
+    float        lhs_f;
+    int          rhs_i;
+    int          lhs_i;
 
     pc = entry;
     for (;;) {
@@ -318,8 +321,9 @@ void CRunScript::exe(vmcode_t *entry) {
             case 18:
                 if (!skip_wait) {
                     if (is_true(pop())) {
-                        if (pc->arg2)
+                        if (pc->arg2) {
                             push_int(1);
+                        }
                         pc = (vmcode_t *) (code + (int) pc->arg1);
                         continue;
                     }
@@ -328,8 +332,9 @@ void CRunScript::exe(vmcode_t *entry) {
             case 17:
                 if (!skip_wait) {
                     if (!is_true(pop())) {
-                        if (pc->arg2)
+                        if (pc->arg2) {
                             push_int(0);
+                        }
                         pc = (vmcode_t *) (code + (int) pc->arg1);
                         continue;
                     }
@@ -372,8 +377,7 @@ void CRunScript::exe(vmcode_t *entry) {
                         rhs_f = rhs.i;
                         lhs_f = lhs.f;
                     } else {
-                        fprintf(stderr, "RUNTIME ERROR at _CMP: %s: operand is not number\n",
-                                func->name);
+                        fprintf(stderr, "RUNTIME ERROR at _CMP: %s: operand is not number\n", func->name);
                         exit__2(-1);
                     }
                     switch (pc->arg1) {
@@ -410,8 +414,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (lhs.type == RS_FLOAT && rhs.type == RS_INT) {
                     push_float(lhs.f + rhs.i);
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _ADD: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _ADD: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -427,8 +430,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (lhs.type == RS_FLOAT && rhs.type == RS_INT) {
                     push_float(lhs.f - rhs.i);
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _SUB: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _SUB: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -450,8 +452,9 @@ void CRunScript::exe(vmcode_t *entry) {
                 break;
             case 9:
                 rhs = pop();
-                if (rhs.i == 0)
+                if (rhs.i == 0) {
                     divby0error();
+                }
                 lhs = pop();
                 if (lhs.type == RS_INT && rhs.type == RS_INT) {
                     push_int(lhs.i / rhs.i);
@@ -462,15 +465,15 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (lhs.type == RS_FLOAT && rhs.type == RS_INT) {
                     push_float(lhs.f / rhs.i);
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _DIV: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _DIV: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
             case 10:
                 rhs_i = chk_int(pop(), func);
-                if (rhs_i == 0)
+                if (rhs_i == 0) {
                     modby0error();
+                }
                 push_int(chk_int(pop(), func) % rhs_i);
                 break;
             case 24:
@@ -488,8 +491,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (rhs.type == RS_FLOAT) {
                     push_float(-rhs.f);
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _INVT: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _INVT: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -500,8 +502,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (rhs.type == RS_FLOAT) {
                     push_float(sinf(rhs.f));
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _SIN: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _SIN: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -512,8 +513,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (rhs.type == RS_FLOAT) {
                     push_float(cosf(rhs.f));
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _COS: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _COS: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -522,9 +522,8 @@ void CRunScript::exe(vmcode_t *entry) {
                 if (rhs.type == RS_INT) {
                     push_int(!rhs.i);
                 } else {
-                    fprintf(stderr,
-                            "RUNTIME ERROR: %s: \220\256\220\224\202\305\202\310\202\242\203\111"
-                            "\203\171\203\211\203\223\203\150\n",
+                    fprintf(stderr, "RUNTIME ERROR: %s: \220\256\220\224\202\305\202\310\202\242\203\111"
+                                    "\203\171\203\211\203\223\203\150\n",
                             func->name);
                     exit__2(-1);
                 }
@@ -536,8 +535,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (rhs.type == RS_FLOAT) {
                     push_float(rhs.f);
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _ITOF: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _ITOF: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -548,8 +546,7 @@ void CRunScript::exe(vmcode_t *entry) {
                 } else if (rhs.type == RS_FLOAT) {
                     push_int((int) rhs.f);
                 } else {
-                    fprintf(stderr, "RUNTIME ERROR at _FTOI: %s: operand is not number\n",
-                            func->name);
+                    fprintf(stderr, "RUNTIME ERROR at _FTOI: %s: operand is not number\n", func->name);
                     exit__2(-1);
                 }
                 break;
@@ -559,8 +556,9 @@ void CRunScript::exe(vmcode_t *entry) {
                 break;
             case 21:
                 sp -= pc->arg1;
-                if (!skip_wait)
+                if (!skip_wait) {
                     ext(sp, pc->arg1);
+                }
                 break;
             case 27:
                 end = 1;

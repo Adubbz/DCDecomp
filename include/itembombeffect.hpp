@@ -16,13 +16,13 @@ class CUserStatus;
 class CItemBombEffect {
 public:
     sceVu0FVECTOR positions[5]; /**< World positions of the blast billboards. */
-    s32 phases[5];              /**< Envelope phase run by each billboard. */
-    s32 counters[5];            /**< Frames elapsed in each billboard's phase; negative while its start is delayed. */
-    float sizes[5];             /**< World-space widths of the billboards. */
-    float alphas[5];            /**< Alpha values used to draw the billboards. */
-    s32 active[5];              /**< Nonzero while each billboard is animated. */
-    float scale;                /**< Scale applied to every billboard. */
-    u8 unk_B8[0x8];
+    s32           phases[5];    /**< Envelope phase run by each billboard. */
+    s32           counters[5];  /**< Frames elapsed in each billboard's phase; negative while its start is delayed. */
+    float         sizes[5];     /**< World-space widths of the billboards. */
+    float         alphas[5];    /**< Alpha values used to draw the billboards. */
+    s32           active[5];    /**< Nonzero while each billboard is animated. */
+    float         scale;        /**< Scale applied to every billboard. */
+    u8            unk_B8[0x8];
 
     /**
      * Draws the bomb's blast and its shock wave.
@@ -40,7 +40,7 @@ public:
      * @address 0x1D5EB0
      * @size 0x1F0
      */
-    void Step(void);
+    void Step();
 
     /**
      * Places the bomb's five blast puffs around a position.
@@ -58,7 +58,7 @@ public:
      * @address 0x1D6160
      * @size 0x48
      */
-    int CheckBomb(void);
+    int CheckBomb();
 
     /**
      * Clears the bomb effect.
@@ -67,7 +67,7 @@ public:
      * @address 0x1D61B0
      * @size 0x30
      */
-    void Initialize(void);
+    void Initialize();
 };
 
 /**
@@ -75,15 +75,15 @@ public:
  */
 class CShockWave {
 public:
-    sceVu0FVECTOR position; /**< World position at the centre of the ring. */
-    float expand_radius;    /**< Radius the ring grows by at the peak of its expansion. */
-    float base_radius;      /**< Ring radius before its expansion is applied. */
-    float radius;           /**< Current world-space radius of the ring. */
-    float expand_steps;     /**< Number of frames taken to complete expansion. */
-    float phase;            /**< Sine-envelope phase of the expansion. */
-    float alpha;            /**< Alpha value used to draw the ring. */
-    s32 active;             /**< Nonzero while the ring expands and draws. */
-    u8 unk_2C[0x4];
+    sceVu0FVECTOR position;      /**< World position at the centre of the ring. */
+    float         expand_radius; /**< Radius the ring grows by at the peak of its expansion. */
+    float         base_radius;   /**< Ring radius before its expansion is applied. */
+    float         radius;        /**< Current world-space radius of the ring. */
+    float         expand_steps;  /**< Number of frames taken to complete expansion. */
+    float         phase;         /**< Sine-envelope phase of the expansion. */
+    float         alpha;         /**< Alpha value used to draw the ring. */
+    s32           active;        /**< Nonzero while the ring expands and draws. */
+    u8            unk_2C[0x4];
 
     /**
      * Draws the expanding shock-wave ring.
@@ -101,7 +101,7 @@ public:
      * @address 0x1D64E0
      * @size 0xD8
      */
-    void Step(void);
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CShockWave) == 0x30);

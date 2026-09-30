@@ -5,12 +5,6 @@
 #include "character.hpp"
 #include "dataalloc_fwd.hpp"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-class CBoxVu0;
-class CCPoly;
-
 /**
  * Loads, draws and advances one drainage-field model.
  */
@@ -21,15 +15,14 @@ public:
     /**
      * Initializes this drainage-field model's character data.
      */
-    void Initialize(void) {
+    void Initialize() {
         character.Initialize();
     }
 
     /**
      * Loads model data into this drainage-field model's character.
      */
-    void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
-                      CDataAlloc2<1> *texture_alloc) {
+    void LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *texture_alloc) {
         character.LoadPackData(pack, name, model_alloc, texture_alloc);
     }
 
@@ -81,7 +74,7 @@ public:
      * @address 0x1CD720
      * @size 0xAC
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Advances the timed state of every loaded drainage-field model.
@@ -90,7 +83,7 @@ public:
      * @address 0x1CD7D0
      * @size 0x134
      */
-    void Step(void);
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CDranMapField) == 0x11B0);
@@ -100,12 +93,12 @@ STATIC_ASSERT(sizeof(CDranMapField) == 0x11B0);
  * states.
  */
 struct DRAN_MAP_FIELD_SET {
-    CDranMapField field[12]; /**< Models drawn for the drainage fields. */
-    CFrame *collision[12];   /**< Collision frame each field stands on. */
-    s32 state[12];           /**< What each field is doing; counts down as it drains. */
-    s32 field_count;         /**< Fields the floor laid out. */
-    s32 collision_count;     /**< Collision frames read for them. */
-    u8 unk_D4A8[8];
+    CDranMapField field[12];       /**< Models drawn for the drainage fields. */
+    CFrame       *collision[12];   /**< Collision frame each field stands on. */
+    s32           state[12];       /**< What each field is doing; counts down as it drains. */
+    s32           field_count;     /**< Fields the floor laid out. */
+    s32           collision_count; /**< Collision frames read for them. */
+    u8            unk_D4A8[8];
 };
 
 STATIC_ASSERT(sizeof(DRAN_MAP_FIELD_SET) == 0xD4B0);

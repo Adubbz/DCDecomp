@@ -17,9 +17,7 @@
 /** Function used by the runtime to construct or destroy one object. */
 typedef void (*MWRuntimeObjectFunction)(void *object, int mode);
 
-extern "C" void __construct_array(void *array, MWRuntimeObjectFunction constructor,
-                                  MWRuntimeObjectFunction destructor, unsigned int element_size,
-                                  unsigned int count);
+extern "C" void __construct_array(void *array, MWRuntimeObjectFunction constructor, MWRuntimeObjectFunction destructor, unsigned int element_size, unsigned int count);
 
 /**
  * Runs a constructor over every element of a newly allocated array.
@@ -28,9 +26,7 @@ extern "C" void __construct_array(void *array, MWRuntimeObjectFunction construct
  * @address 0x122400
  * @size 0x14C
  */
-extern "C" void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
-                                       MWRuntimeObjectFunction destructor, unsigned int element_size,
-                                       unsigned int count);
+extern "C" void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor, MWRuntimeObjectFunction destructor, unsigned int element_size, unsigned int count);
 
 /**
  * Frees storage that `operator new` handed out.
@@ -39,7 +35,7 @@ extern "C" void *__construct_new_array(void *allocation, MWRuntimeObjectFunction
  * @address 0x122550
  * @size 0x40
  */
-void __dl(void *);
+void __dl(void *storage);
 
 /**
  * Reports whether a thrown type matches a catch clause's type.
@@ -48,8 +44,7 @@ void __dl(void *);
  * @address 0x122610
  * @size 0x26C
  */
-extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type,
-                                      long *pointer_adjustment);
+extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type, long *pointer_adjustment);
 
 /**
  * Calls the handler for an exception a function did not declare.
@@ -58,7 +53,7 @@ extern "C" char __throw_catch_compare(const char *thrown_type, const char *caugh
  * @address 0x122880
  * @size 0x24
  */
-extern "C" void unexpected__3stdFv(void);
+extern "C" void unexpected__3stdFv();
 
 /**
  * Calls the handler that ends the program after an unrecoverable exception.
@@ -67,7 +62,7 @@ extern "C" void unexpected__3stdFv(void);
  * @address 0x1228B0
  * @size 0x24
  */
-extern "C" void terminate__3stdFv(void);
+extern "C" void terminate__3stdFv();
 
 /**
  * The default unexpected-exception handler, which terminates.
@@ -76,7 +71,7 @@ extern "C" void terminate__3stdFv(void);
  * @address 0x1228E0
  * @size 0x24
  */
-extern "C" void duhandler__3stdFv(void);
+extern "C" void duhandler__3stdFv();
 
 /**
  * The default terminate handler, which stops the program.
@@ -85,26 +80,26 @@ extern "C" void duhandler__3stdFv(void);
  * @address 0x122910
  * @size 0x1C
  */
-extern "C" void dthandler__3stdFv(void);
+extern "C" void dthandler__3stdFv();
 
 /**
  * Links one object and its destructor into the runtime shutdown chain.
  */
 struct MWGlobalDestructor {
-    MWGlobalDestructor *next;           /**< Next object destroyed during shutdown. */
+    MWGlobalDestructor     *next;       /**< Next object destroyed during shutdown. */
     MWRuntimeObjectFunction destructor; /**< Function that destroys the registered object. */
-    void *object;                       /**< Object passed to the destructor. */
+    void                   *object;     /**< Object passed to the destructor. */
 };
 
 /**
  * Handler that std::terminate calls to end the program.
  */
-extern "C" void (*thandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8)));
+extern "C" void (*thandler__3std)() __attribute__((section(".data"))) __attribute__((aligned(8)));
 
 /**
  * Handler that std::unexpected calls for an exception a function did not declare.
  */
-extern "C" void (*uhandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8)));
+extern "C" void (*uhandler__3std)() __attribute__((section(".data"))) __attribute__((aligned(8)));
 
 /**
  * Most recently registered global object, heading the list destroyed at exit.
@@ -118,8 +113,7 @@ extern "C" MWGlobalDestructor *__global_destructor_chain __attribute__((section(
  * @address 0x122930
  * @size 0x24
  */
-extern "C" void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
-                                          MWGlobalDestructor *record);
+extern "C" void *__register_global_object(void *object, MWRuntimeObjectFunction destructor, MWGlobalDestructor *record);
 
 /**
  * Calls each static initializer in the table from the first pointer up to the second.
@@ -128,7 +122,7 @@ extern "C" void *__register_global_object(void *object, MWRuntimeObjectFunction 
  * @address 0x122960
  * @size 0x54
  */
-extern "C" void __initialize_cpp_rts(void *, void *, void *, void *);
+extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start, void *overlay_end);
 
 /**
  * Reads an unsigned number out of a mangled type name.
@@ -159,22 +153,22 @@ char *__DecodeSignedNumber(char *encoded, int *value);
  * Holds the object and cleanup routine associated with one active catch clause.
  */
 struct MWCatchRecord {
-    void *object;                       /**< Exception object owned by the catch clause. */
-    const char *type_info;              /**< Encoded type name of the exception object. */
-    MWRuntimeObjectFunction destructor; /**< Routine that destroys the exception object. */
-    void *sub_object;                   /**< Base-class subobject the catch clause receives. */
-    int pointer_copy;                   /**< Copy of a thrown pointer value. */
-    void *stack_top;                    /**< Stack pointer, or the throwing function's exception specification. */
+    void                   *object;       /**< Exception object owned by the catch clause. */
+    const char             *type_info;    /**< Encoded type name of the exception object. */
+    MWRuntimeObjectFunction destructor;   /**< Routine that destroys the exception object. */
+    void                   *sub_object;   /**< Base-class subobject the catch clause receives. */
+    int                     pointer_copy; /**< Copy of a thrown pointer value. */
+    void                   *stack_top;    /**< Stack pointer, or the throwing function's exception specification. */
 };
 
 /**
  * The decoded exception specification of a function that let an exception escape.
  */
 struct MWExceptionSpecification {
-    unsigned int count;           /**< Number of type names the specification allows. */
-    unsigned int unused_unsigned; /**< Unsigned number encoded after the count; decoded past and not read. */
-    int unused_signed;            /**< Signed number encoded after it; decoded past and not read. */
-    unsigned char *types;         /**< Unaligned little-endian pointers to the allowed type names. */
+    unsigned int   count;           /**< Number of type names the specification allows. */
+    unsigned int   unused_unsigned; /**< Unsigned number encoded after the count; decoded past and not read. */
+    int            unused_signed;   /**< Signed number encoded after it; decoded past and not read. */
+    unsigned char *types;           /**< Unaligned little-endian pointers to the allowed type names. */
 };
 
 extern "C" void __end__catch(MWCatchRecord *record);
@@ -201,11 +195,11 @@ extern "C" void mwInit(int argc, const char **argv, const char **envp);
  * The header at the start of an overlay image read off the disc.
  */
 struct OverlayHeader {
-    u8 unk_00[0x14];
-    int bss_size;          /**< Bytes of zeroed storage that follow the loaded image. */
+    u8    unk_00[0x14];
+    int   bss_size;        /**< Bytes of zeroed storage that follow the loaded image. */
     void *static_init;     /**< First entry of the overlay's static initializer table. */
     void *static_init_end; /**< End of the overlay's static initializer table. */
-    u8 unk_20[0x20];
+    u8    unk_20[0x20];
 };
 
 STATIC_ASSERT(sizeof(OverlayHeader) == 0x40);
@@ -337,8 +331,7 @@ float ReflectionPlane(float *normal, float *on_plane, float *point, float *refle
  * @address 0x123230
  * @size 0x144
  */
-int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2,
-                                 float *normal, float *hit);
+int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2, float *normal, float *hit);
 
 /**
  * @mangled Check_Point_Poly3_XYZ__FPfPfPfPfPf
@@ -432,14 +425,14 @@ float AngleLimit(float angle);
  * @address 0x123CB0
  * @size 0x3C
  */
-float rnd(void);
+float rnd();
 
 /**
  * @mangled nrnd__Fv
  * @address 0x123CF0
  * @size 0xC0
  */
-float nrnd(void);
+float nrnd();
 
 /**
  * @mangled CreateSinTable__Fv
@@ -447,7 +440,7 @@ float nrnd(void);
  * @size 0x90
  * @unknownret
  */
-void CreateSinTable(void);
+void CreateSinTable();
 
 /**
  * @mangled Sinf__Ff
@@ -468,12 +461,12 @@ float Cosf(float angle);
 /**
  * First entry of the table of static initialisers the runtime calls at startup; the linker script places it.
  */
-extern void (*__static_init[])(void);
+extern void (*__static_init[])();
 
 /**
  * End of the table of static initialisers the runtime calls at startup; the linker script places it.
  */
-extern void (*__static_init_end[])(void);
+extern void (*__static_init_end[])();
 
 /**
  * Destructor of std::exception.
@@ -522,7 +515,7 @@ struct MWBaseClass;
  * The run-time type information record of a class: its name and its bases.
  */
 struct MWTypeInfo {
-    const char *name;         /**< The class's qualified name. */
+    const char        *name;  /**< The class's qualified name. */
     const MWBaseClass *bases; /**< Its base classes, ended by a null entry, or null. */
 };
 
@@ -530,8 +523,8 @@ struct MWTypeInfo {
  * One base class in a class's run-time type information.
  */
 struct MWBaseClass {
-    const MWTypeInfo *type; /**< The base class's record, or null to end the list. */
-    int offset;             /**< Where the base sits inside the derived object. */
+    const MWTypeInfo *type;   /**< The base class's record, or null to end the list. */
+    int               offset; /**< Where the base sits inside the derived object. */
 };
 
 /**

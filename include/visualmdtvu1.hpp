@@ -26,7 +26,7 @@ public:
      * @size 0xC
      * @unknownret
      */
-    void GetMDTDataAddress(void);
+    void GetMDTDataAddress();
 
     /**
      * @mangled Initialize__13CVisualMDTVu1Fv
@@ -34,14 +34,14 @@ public:
      * @size 0x3C
      * @unknownret
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * @mangled __ct__13CVisualMDTVu1Fv
      * @address 0x134FB0
      * @size 0x48
      */
-    CVisualMDTVu1(void);
+    CVisualMDTVu1();
 
     /**
      * @mangled DrawVu1__13CVisualMDTVu1FPUiPA4_fP10RenderInfo11VU1_PROGRAMP1ii

@@ -23,25 +23,25 @@
 #include "texture.hpp"
 #include "vutext.hpp"
 
-int DBuffID;
-int mgWaitVSync;
-sceDmaChan *DmaCH1;
-sceDmaChan *DmaCH2;
-sceDmaChan *DmaCH8;
+int            DBuffID;
+int            mgWaitVSync;
+sceDmaChan    *DmaCH1;
+sceDmaChan    *DmaCH2;
+sceDmaChan    *DmaCH8;
 sceVif1Packet *Vif1Packet;
-int VSyncField__2;
-int mgClearBackFlag;
+int            VSyncField__2;
+int            mgClearBackFlag;
 #ifdef PAL
 /** Horizontal offset of the display from its default position. */
 int mgAdjustX;
 /** Vertical offset of the display from its default position. */
 int mgAdjustY;
 #endif
-sceGsTex1 mgTEX1Env;
-sceGsTest mgPixelTest;
-sceGsZbuf mgZBuffer;
+sceGsTex1  mgTEX1Env;
+sceGsTest  mgPixelTest;
+sceGsZbuf  mgZBuffer;
 sceGsAlpha mgAlpha;
-sceGsTexa mgTexa;
+sceGsTexa  mgTexa;
 #ifdef PAL
 /** First word of video memory past the frame and depth buffers. */
 int mgTopVRAM;
@@ -49,9 +49,9 @@ int mgTopVRAM;
 int mgZBufferAdr;
 #endif
 
-MG_PICKZ mgPickZBuff[16];
-sceGifTag GiftagAD;
-sceGsDBuff mgDBuff;
+MG_PICKZ      mgPickZBuff[16];
+sceGifTag     GiftagAD;
+sceGsDBuff    mgDBuff;
 sceVu0FVECTOR mgBackColor;
 
 /* The window rectangle. Its four words are written back to front at static-initialisation time,
@@ -60,34 +60,34 @@ sceVu0FVECTOR mgBackColor;
    that order, and postprocess_object.py gives it the name the rest of the game reaches it by. */
 class CWindowRect {
 public:
+    s32 x;      /**< Left edge of the window in pixels. */
+    s32 y;      /**< Top edge of the window in pixels. */
+    s32 width;  /**< Width of the window in pixels. */
+    s32 height; /**< Height of the window in pixels. */
+
     CWindowRect() {
         height = 0;
         width = 0;
         y = 0;
         x = 0;
     }
-
-    s32 x;      /**< Left edge of the window in pixels. */
-    s32 y;      /**< Top edge of the window in pixels. */
-    s32 width;  /**< Width of the window in pixels. */
-    s32 height; /**< Height of the window in pixels. */
 } __attribute__((aligned(16)));
 
 CWindowRect mgWindowRectStore;
-RenderInfo mgRenderInfo;
+RenderInfo  mgRenderInfo;
 /* The one texture manager the game has. It is built here rather than beside the textures because
    this is the unit that brings up the graphics. */
 CTextureManager TexManager;
 
-sceVu0FVECTOR mgZeroVector;
-sceVu0FVECTOR mgUnitVector;
-sceVu0FVECTOR mgUnitVector2;
-sceVu0FVECTOR mgZeroVector2;
-sceVu0FMATRIX mgUnitMatrix;
-sceVu0FMATRIX mgZeroMatrix;
+sceVu0FVECTOR        mgZeroVector;
+sceVu0FVECTOR        mgUnitVector;
+sceVu0FVECTOR        mgUnitVector2;
+sceVu0FVECTOR        mgZeroVector2;
+sceVu0FMATRIX        mgUnitMatrix;
+sceVu0FMATRIX        mgZeroMatrix;
 static sceVif1Packet vifpacket[2];
-sceGsStoreImage gs_simage;
-static int packetbuf[2];
+sceGsStoreImage      gs_simage;
+static int           packetbuf[2];
 
 static int vcount;
 static int over_vsync;
@@ -100,8 +100,9 @@ static int VSyncCallBack(int id) {
     /* Bit 13 of the GS status register is the field being displayed, and what everything downstream
        offsets by is the other one. */
     VSyncField__2 = !(bool) ((*(volatile unsigned long *) 0x12001000 >> 13) & 1);
-    if (VSyncCallBack2)
+    if (VSyncCallBack2) {
         VSyncCallBack2(id);
+    }
     vcount++;
     call_back_active = 0;
     /* Ordering the stores and re-enabling interrupts are both things the compiler has no way to
@@ -242,10 +243,12 @@ void MGInitVif1Packet(u_long128 *buffer0, u_long128 *buffer1) {
     packetbuf[0] = (int) buffer0;
     packetbuf[1] = (int) buffer1;
 
-    if (packetbuf[0] % 4)
+    if (packetbuf[0] % 4) {
         packetbuf[0] += (4 - packetbuf[0] % 4) * 4;
-    if (packetbuf[1] % 4)
+    }
+    if (packetbuf[1] % 4) {
         packetbuf[1] += (4 - packetbuf[1] % 4) * 4;
+    }
 
     sceVif1PkInit(&vifpacket[0], (u_int *) packetbuf[0]);
     sceVif1PkInit(&vifpacket[1], (u_int *) packetbuf[1]);
@@ -261,18 +264,18 @@ static int movie_count;
    of the frame buffer separately, packed from 32-bit colour down to the 24 a TGA holds, and
    written row by row from the bottom up, which is the order that format stores. */
 void StoreImage() {
-    int fd;
-    int i;
-    int j;
-    int k;
-    char *mark;
+    int            fd;
+    int            i;
+    int            j;
+    int            k;
+    char          *mark;
     sceVif1Packet *packet;
-    u_char *field0;
-    u_char *field1;
-    static int image_num = 0;
-    static u_char tga_head[18] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 2, 192, 1, 24, 0};
-    char name[128];
-    char directory[128];
+    u_char        *field0;
+    u_char        *field1;
+    static int     image_num = 0;
+    static u_char  tga_head[18] = {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 2, 192, 1, 24, 0};
+    char           name[128];
+    char           directory[128];
 
     movie_count = 1;
 
@@ -286,8 +289,9 @@ void StoreImage() {
         /* The width the number is padded to is what makes the names sort, and a space is not a
            character a file name can carry. */
         for (mark = name; *mark; mark++) {
-            if (*mark == ' ')
+            if (*mark == ' ') {
                 *mark = '0';
+            }
         }
         fd = sceOpen(name, SCE_WRONLY | SCE_CREAT | SCE_TRUNC);
     }
@@ -417,8 +421,7 @@ void MGBeginFrame() {
     mgZeroMatrix[3][3] = 0.0f;
 
     if (mgClearBackFlag) {
-        MGClearScreen(mgDBuff.clear0.rgbaq.R, mgDBuff.clear0.rgbaq.G, mgDBuff.clear0.rgbaq.B,
-                      mgDBuff.clear0.rgbaq.A);
+        MGClearScreen(mgDBuff.clear0.rgbaq.R, mgDBuff.clear0.rgbaq.G, mgDBuff.clear0.rgbaq.B, mgDBuff.clear0.rgbaq.A);
     } else {
         MGClearZBuffer(0);
     }
@@ -435,8 +438,9 @@ static void WaitVSync(int count) {
             i = -i;
             i = -i;
         }
-        if (count != now)
+        if (count != now) {
             return;
+        }
         for (j = 0; j < 10; j++) {
             j = -j;
             j = -j;
@@ -445,10 +449,10 @@ static void WaitVSync(int count) {
 }
 
 void MGEndFrame() {
-    int i;
-    int nearest;
-    int j;
-    static int count = 1;
+    int         i;
+    int         nearest;
+    int         j;
+    static int  count = 1;
     static long old_vcount = 0;
 
     if (count == 0) {
@@ -478,8 +482,7 @@ void MGEndFrame() {
                 int *block = (int *) WorkBuffer->Alloc(2048);
 
                 FlushCache(0);
-                sceGsSetDefStoreImage(&gs_simage, (mgZBuffer.bits.zbp << 11) >> 6, 10, 48,
-                                      mgPickZBuff[i].x - 4, (mgPickZBuff[i].y >> 1) - 4, 8, 8);
+                sceGsSetDefStoreImage(&gs_simage, (mgZBuffer.bits.zbp << 11) >> 6, 10, 48, mgPickZBuff[i].x - 4, (mgPickZBuff[i].y >> 1) - 4, 8, 8);
                 FlushCache(0);
                 sceGsExecStoreImage(&gs_simage, (u_long128 *) block);
                 sceGsSyncPath(0, 0);
@@ -488,8 +491,9 @@ void MGEndFrame() {
                 nearest &= 0xffffff;
                 for (j = 0; j < 64; j++) {
                     int depth = block[j] & 0xffffff;
-                    if (depth < nearest)
+                    if (depth < nearest) {
                         nearest = depth;
+                    }
                 }
                 mgPickZBuff[i].z = nearest;
             }
@@ -533,8 +537,7 @@ void MGEndFrame() {
     int display_x = mgDBuff.disp0.display.DX;
     int display_y = mgDBuff.disp0.display.DY;
 #endif
-    sceGsSetHalfOffset(DBuffID ? &mgDBuff.draw1 : &mgDBuff.draw0, 2048, 2048,
-                       (short) VSyncField__2 * !over_vsync);
+    sceGsSetHalfOffset(DBuffID ? &mgDBuff.draw1 : &mgDBuff.draw0, 2048, 2048, (short) VSyncField__2 * !over_vsync);
 #ifdef PAL
     mgDBuff.disp0.display.DX = display_x + mgAdjustX;
     mgDBuff.disp1.display.DX = display_x + mgAdjustX;
@@ -567,14 +570,18 @@ void MGFlipWaitVSync(int wait) {
 
 #ifdef PAL
 void MGAdjustScreen(int x, int y) {
-    if (x > 32)
+    if (x > 32) {
         x = 0;
-    if (x < -32)
+    }
+    if (x < -32) {
         x = 0;
-    if (y > 32)
+    }
+    if (y > 32) {
         y = 0;
-    if (y < -32)
+    }
+    if (y < -32) {
         y = 0;
+    }
     /* The display moves in whole pixel pairs. */
     mgAdjustX = (x >> 1) << 1;
     mgAdjustY = (y >> 1) << 1;
@@ -585,9 +592,9 @@ void MGAdjustScreen(int x, int y) {
    The depth it sets up runs from 16700000 at the near plane down to 1 at the far one, which is what
    both z solves below are for. */
 void MGSetRenderInfo(float scale, float near_z, float far_z) {
-    float two_near;
+    float         two_near;
     sceVu0FMATRIX perspective;
-    float w = 1.0f;
+    float         w = 1.0f;
 
     float z_range = 16699999;
 
@@ -658,7 +665,7 @@ float MGGetProjection() {
    in the draw environment: the rectangle is an origin and an extent, so the far edges are the near
    ones plus the width and the height. */
 void MGSetWindowRect() {
-    sceGsScissor scissor;
+    sceGsScissor   scissor;
     sceVif1Packet *packet;
 
     mgWindowRect.x = 0;
@@ -681,7 +688,7 @@ void MGSetWindowRect() {
 }
 
 void MGSetWindowRect(CRect_i_ rect) {
-    sceGsScissor scissor;
+    sceGsScissor   scissor;
     sceVif1Packet *packet;
 
     mgWindowRect = rect;
@@ -772,8 +779,7 @@ static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale
     flat[3] = 0.0f;
     sceVu0Normalize(flat, flat);
     mgRenderInfo.yaw = atan2f(flat[0], flat[2]);
-    mgRenderInfo.pitch =
-        -atan2f(direction[1], sqrtf(direction[0] * direction[0] + direction[2] * direction[2]));
+    mgRenderInfo.pitch = -atan2f(direction[1], sqrtf(direction[0] * direction[0] + direction[2] * direction[2]));
     /* Both angles are already stored by here, so the direction is normalised into a local that
        goes out of scope with the call and nothing ever reads. */
     direction[3] = 0.0f;
@@ -793,12 +799,10 @@ void MGSetViewMatrix(sceVu0FMATRIX view, float *position) {
     mgRenderInfo.position[3] = 0.0f;
 }
 
-void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float far_fog,
-                  float near_fog) {
+void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float far_fog, float near_fog) {
     mgRenderInfo.fog_far = far_fog;
     mgRenderInfo.fog_near = near_fog;
-    mgRenderInfo.fog_a =
-        ((far_fog + near_fog) + (far_fog - near_fog) * (far_z + near_z) / (far_z - near_z)) / 2.0f;
+    mgRenderInfo.fog_a = ((far_fog + near_fog) + (far_fog - near_fog) * (far_z + near_z) / (far_z - near_z)) / 2.0f;
     mgRenderInfo.fog_b = -far_z * near_z * (far_fog - near_fog) / (far_z - near_z);
     mgRenderInfo.fog_red = r;
     mgRenderInfo.fog_green = g;
@@ -814,22 +818,30 @@ void MGSetBGColor(float red, float green, float blue, float alpha) {
         mgClearBackFlag = 1;
     }
 
-    if (red < 0.0f)
+    if (red < 0.0f) {
         red = 0.0f;
-    if (green < 0.0f)
+    }
+    if (green < 0.0f) {
         green = 0.0f;
-    if (blue < 0.0f)
+    }
+    if (blue < 0.0f) {
         blue = 0.0f;
-    if (alpha < 0.0f)
+    }
+    if (alpha < 0.0f) {
         alpha = 0.0f;
-    if (red > 255.0f)
+    }
+    if (red > 255.0f) {
         red = 255.0f;
-    if (green > 255.0f)
+    }
+    if (green > 255.0f) {
         green = 255.0f;
-    if (blue > 255.0f)
+    }
+    if (blue > 255.0f) {
         blue = 255.0f;
-    if (alpha > 255.0f)
+    }
+    if (alpha > 255.0f) {
         alpha = 255.0f;
+    }
 
     mgBackColor[0] = red;
     mgBackColor[1] = green;
@@ -860,8 +872,8 @@ sceVif1Packet *GetVif1Packet() {
    the plane rather than divided by. */
 int MGRotTransPers(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
-    int visible = 1;
-    float w;
+    int           visible = 1;
+    float         w;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_scaled, position);
 
@@ -886,10 +898,12 @@ int MGRotTransPers(int *screen, float *position, int fog) {
 
     if (fog) {
         float density = mgRenderInfo.fog_a + mgRenderInfo.fog_b * w;
-        if (mgRenderInfo.fog_far > density)
+        if (mgRenderInfo.fog_far > density) {
             density = mgRenderInfo.fog_far;
-        if (mgRenderInfo.fog_near < density)
+        }
+        if (mgRenderInfo.fog_near < density) {
             density = mgRenderInfo.fog_near;
+        }
         screen[3] = (int) density;
     }
 
@@ -904,8 +918,8 @@ int MGRotTransPers(int *screen, float *position, int fog) {
    scaled into 12.4, and the pair is moved off the screen centre the offset put it at. */
 int MGRotTransPers2D(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
-    int visible = 1;
-    float w;
+    int           visible = 1;
+    float         w;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_scaled, position);
 
@@ -930,10 +944,12 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
 
     if (fog) {
         float density = mgRenderInfo.fog_a + mgRenderInfo.fog_b * w;
-        if (mgRenderInfo.fog_far > density)
+        if (mgRenderInfo.fog_far > density) {
             density = mgRenderInfo.fog_far;
-        if (mgRenderInfo.fog_near < density)
+        }
+        if (mgRenderInfo.fog_near < density) {
             density = mgRenderInfo.fog_near;
+        }
         screen[3] = (int) density;
     }
 
@@ -954,12 +970,11 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
    on screen is read off the Vector Unit's sticky status flags rather than compared as floats: four
    subtractions leave a bit set for any field that came out zero or negative, testing both corners
    against 0 and against 4096.0 and, through w, against the eye. */
-int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, register float *position,
-                           float width, float height, int fog) {
-    sceVu0FVECTOR half;
+int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, register float *position, float width, float height, int fog) {
+    sceVu0FVECTOR   half;
     register float *half_size;
     register float *view;
-    register int visible = 0;
+    register int    visible = 0;
 
     half[0] = 0.5f * width * mgRenderInfo.scale[0];
     half[1] = 0.5f * height * mgRenderInfo.scale[1];
@@ -1017,7 +1032,7 @@ int MGRotTransPers3DSprite(register int *top_left, register int *bottom_right, r
             andi    visible, visible, 0xff
         }
     } else {
-        sceVu0FVECTOR fog_parm = {0.0f, 0.0f, 0.0f, 0.0f};
+        sceVu0FVECTOR   fog_parm = {0.0f, 0.0f, 0.0f, 0.0f};
         register float *fog_range;
         register float *fog_view;
 
@@ -1152,11 +1167,11 @@ void MGCalcColor(register float *color, register float *normal) {
    for a corner in front and a corner behind. */
 int MGClipVertex(float *position) {
     sceVu0FVECTOR point;
-    int outside = 0;
-    float w;
-    float offset;
-    float half_width = 320.0f;
-    float half_height = SCREEN_QUARTER_HEIGHT_F;
+    int           outside = 0;
+    float         w;
+    float         offset;
+    float         half_width = 320.0f;
+    float         half_height = SCREEN_QUARTER_HEIGHT_F;
 
     sceVu0ApplyMatrix(point, mgRenderInfo.view_screen, position);
 
@@ -1167,33 +1182,43 @@ int MGClipVertex(float *position) {
     point[0] *= w;
     point[1] *= w;
 
-    if (point[3] < mgRenderInfo.near[2])
+    if (point[3] < mgRenderInfo.near[2]) {
         outside |= 0x20;
-    if (point[3] > mgRenderInfo.far[2])
+    }
+    if (point[3] > mgRenderInfo.far[2]) {
         outside |= 0x10;
+    }
 
     if (point[3] > 0.0f) {
         offset = point[1] - mgRenderInfo.offset[1];
-        if (offset < -half_height)
+        if (offset < -half_height) {
             outside |= 0x8;
-        if (offset > half_height)
+        }
+        if (offset > half_height) {
             outside |= 0x4;
+        }
         offset = point[0] - mgRenderInfo.offset[0];
-        if (offset < -half_width)
+        if (offset < -half_width) {
             outside |= 0x2;
-        if (offset > half_width)
+        }
+        if (offset > half_width) {
             outside |= 0x1;
+        }
     } else {
         offset = point[1] - mgRenderInfo.offset[1];
-        if (offset > -half_height)
+        if (offset > -half_height) {
             outside |= 0x8;
-        if (offset < half_height)
+        }
+        if (offset < half_height) {
             outside |= 0x4;
+        }
         offset = point[0] - mgRenderInfo.offset[0];
-        if (offset > -half_width)
+        if (offset > -half_width) {
             outside |= 0x2;
-        if (offset < half_width)
+        }
+        if (offset < half_width) {
             outside |= 0x1;
+        }
     }
     return outside;
 }
@@ -1206,8 +1231,8 @@ int MGClipBox(CBoxVu0 *box) {
     /* Only two of these are ever filled. The frame leaves twelve to sixteen bytes for the array,
        which is what rules two out; three and four are the same bytes and this is the tidier. */
     float *extreme[4];
-    int i;
-    int outside;
+    int    i;
+    int    outside;
 
     extreme[0] = box->min;
     extreme[1] = box->max;
@@ -1220,11 +1245,13 @@ int MGClipBox(CBoxVu0 *box) {
         corner[i][2] = extreme[(i & 4) != 0][2];
 
         int bits = MGClipVertex(corner[i]);
-        if (!bits)
+        if (!bits) {
             return 0;
+        }
         outside &= bits;
-        if (!outside)
+        if (!outside) {
             return 0;
+        }
     }
     return 1;
 }
@@ -1308,32 +1335,27 @@ void MGSetGsTEXA(sceGsTexa *texa) {
 void MGGetFBuffTex(sceGsTex0 *tex0) {
     sceGsFrame *frame = DBuffID ? &mgDBuff.draw1.frame1 : &mgDBuff.draw0.frame1;
 
-    *(u_long *) tex0 = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0,
-                                       0, 0);
+    *(u_long *) tex0 = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void MGGetFBuffBackTex(sceGsTex0 *tex0) {
     sceGsFrame *frame = DBuffID ? &mgDBuff.draw0.frame1 : &mgDBuff.draw1.frame1;
 
-    *(u_long *) tex0 = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0,
-                                       0, 0);
+    *(u_long *) tex0 = SCE_GS_SET_TEX0(frame->FBP << 5, frame->FBW, frame->PSM, 10, 8, 0, 0, 0, 0, 0, 0, 0);
 }
 
 /* A rectangle moved from one place in GS local memory to another, which is the transfer the GS
    does entirely on its own side: four registers down the frame's packet and no pixels through the
    bus. The second packet is a TEXFLUSH on its own, because the destination may be a texture the
    cache still holds the old contents of. */
-void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y,
-                 int direction) {
+void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x, int dst_y, int direction) {
     sceVif1Packet *packet;
 
     packet = Vif1Packet;
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
-    sceVif1PkAddGsAD(packet, SCE_GS_BITBLTBUF,
-                     SCE_GS_SET_BITBLTBUF(src->TBP0, src->TBW, src->PSM, dst->TBP0, dst->TBW,
-                                          dst->PSM));
+    sceVif1PkAddGsAD(packet, SCE_GS_BITBLTBUF, SCE_GS_SET_BITBLTBUF(src->TBP0, src->TBW, src->PSM, dst->TBP0, dst->TBW, dst->PSM));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXPOS, SCE_GS_SET_TRXPOS(rect.x, rect.y, dst_x, dst_y, direction));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXREG, SCE_GS_SET_TRXREG(rect.width, rect.height));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXDIR, SCE_GS_SET_TRXDIR(SCE_GS_LOCAL_LOCAL));
@@ -1355,16 +1377,15 @@ void MGMoveImage(sceGsTex0 *src, const CRect_i_ &rect, sceGsTex0 *dst, int dst_x
    frame buffer's own texture is read before anything is written and FRAME_1 restored from it at
    the end. The two offsets stay statics rather than becoming literals because they were meant to
    be adjusted, and dyy carries the interlace correction on top of its own value. */
-void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst,
-                        const CRect_i_ &dst_rect) {
+void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst, const CRect_i_ &dst_rect) {
     sceVif1Packet *packet;
-    sceGsTex0 frame_tex;
-    sceGsTest test;
-    sceGsTexa texa;
-    sceGsTex1 tex1;
-    sceGsAlpha alpha;
-    sceGsZbuf zbuf;
-    int dy;
+    sceGsTex0      frame_tex;
+    sceGsTest      test;
+    sceGsTexa      texa;
+    sceGsTex1      tex1;
+    sceGsAlpha     alpha;
+    sceGsZbuf      zbuf;
+    int            dy;
 
     packet = GetVif1Packet();
     MGGetFBuffTex(&frame_tex);
@@ -1415,24 +1436,17 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
         dy = 0;
     }
 
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(dst->TBP0 >> 5, dst->TBW, dst->PSM, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(dst->TBP0 >> 5, dst->TBW, dst->PSM, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0));
 
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(src_rect.x, src_rect.y));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dx, dst_rect.y + GS_Y_OFFSET + dy, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV(src_rect.x + src_rect.width, src_rect.y + src_rect.height));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dst_rect.width + dx,
-                                      dst_rect.y + dst_rect.height + GS_Y_OFFSET + dy, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dx, dst_rect.y + GS_Y_OFFSET + dy, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(src_rect.x + src_rect.width, src_rect.y + src_rect.height));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(dst_rect.x + 27648 + dst_rect.width + dx, dst_rect.y + dst_rect.height + GS_Y_OFFSET + dy, 0, 0));
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(frame_tex.TBP0 >> 5, frame_tex.TBW, frame_tex.PSM, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(frame_tex.TBP0 >> 5, frame_tex.TBW, frame_tex.PSM, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
@@ -1444,9 +1458,9 @@ void MGStretchMoveImage(sceGsTex0 *src, const CRect_i_ &src_rect, sceGsTex0 *dst
 /* Copies both interlaced fields into the destination, one 640-by-1 line at a time. */
 void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int direction) {
     sceGsTex0 tex[2];
-    CRect_i_ even;
-    CRect_i_ odd;
-    int i;
+    CRect_i_  even;
+    CRect_i_  odd;
+    int       i;
 
     MGGetFBuffTex(&tex[0]);
     MGGetFBuffBackTex(&tex[1]);
@@ -1466,9 +1480,8 @@ void MGMoveFrameBuffImage(sceGsTex0 *dst, int x, int y, int direction) {
     }
 }
 
-void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b,
-               unsigned char a) {
-    float q = 1.0f;
+void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+    float     q = 1.0f;
     sceGsTest test;
     sceGsZbuf zbuf;
 
@@ -1492,11 +1505,8 @@ void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, *(u_int *) &q));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(rect.x + 0x6C00, rect.y + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(rect.x + 0x6C00 + rect.width,
-                                      rect.y + GS_Y_OFFSET + rect.height, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(rect.x + 0x6C00, rect.y + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(rect.x + 0x6C00 + rect.width, rect.y + GS_Y_OFFSET + rect.height, 0, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
@@ -1506,8 +1516,8 @@ void MGFillBox(const CRect_i_ &rect, unsigned char r, unsigned char g, unsigned 
 
 /* Writes depth over the 640-by-224 field while leaving colour unchanged. */
 void MGClearZBuffer(int mode) {
-    sceGsTest test;
-    sceGsZbuf zbuf;
+    sceGsTest  test;
+    sceGsZbuf  zbuf;
     sceGsAlpha alpha;
 
     sceVif1PkCnt(Vif1Packet, 0);
@@ -1537,12 +1547,9 @@ void MGClearZBuffer(int mode) {
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET, mode, 0));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16, GS_Y_OFFSET, mode, 0));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, mode, 0));
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + 640 * 16, GS_Y_OFFSET, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, mode, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + 640 * 16, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, mode, 0));
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
@@ -1555,10 +1562,10 @@ void MGClearZBuffer(int mode) {
 
 /* Writes colour and zero depth over the 640-by-224 field in 16-pixel-wide strips. */
 void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
-    sceGsTest test;
-    sceGsZbuf zbuf;
+    sceGsTest  test;
+    sceGsZbuf  zbuf;
     sceGsAlpha alpha;
-    int x;
+    int        x;
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -1590,14 +1597,12 @@ void MGClearScreen(u_char r, u_char g, u_char b, u_char a) {
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ALPHA_1, *(u_long *) &alpha);
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 1);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(r, g, b, a, 0));
 
     for (x = 0; x < 640 * 16; x += 16 * 16) {
         sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + x, GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                         SCE_GS_SET_XYZF2(27648 + x + 16 * 16, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, 0, 0));
+        sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + x + 16 * 16, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16, 0, 0));
     }
 
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEXFLUSH, 0);
@@ -1619,8 +1624,9 @@ void MGDrawShadowFast(CFrame *frame, float *position, float *normal) {
     sceGsZbuf zbuf;
     sceGsTest test;
 
-    if (!frame)
+    if (!frame) {
         return;
+    }
 
     sceVu0CopyVector(mgRenderInfo.shadow_point, position);
     sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
@@ -1646,8 +1652,9 @@ void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
     sceGsZbuf zbuf;
     sceGsTest test;
 
-    if (!frame)
+    if (!frame) {
         return;
+    }
 
     sceVu0CopyVector(mgRenderInfo.shadow_point, position);
     sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
@@ -1672,11 +1679,12 @@ void MGDrawShadowFast2(CFrame *frame, float *position, float *normal) {
 void MGDrawShadow(CFrame *frame, float *position, float *normal) {
     sceVu0FMATRIX perspective;
     sceVu0FMATRIX viewport;
-    sceGsZbuf zbuf;
-    sceGsTest test;
+    sceGsZbuf     zbuf;
+    sceGsTest     test;
 
-    if (!frame)
+    if (!frame) {
         return;
+    }
 
     sceVu0CopyVector(mgRenderInfo.shadow_point, position);
     sceVu0CopyVector(mgRenderInfo.shadow_normal, normal);
@@ -1703,12 +1711,13 @@ void MGDrawShadow(CFrame *frame, float *position, float *normal) {
 
 /* Draws the shade pass for one model. */
 void MGDrawShade(CFrame *frame) {
-    sceGsZbuf zbuf;
-    sceGsTest test;
+    sceGsZbuf  zbuf;
+    sceGsTest  test;
     sceGsAlpha alpha;
 
-    if (!frame)
+    if (!frame) {
         return;
+    }
 
     zbuf = mgZBuffer;
     test = mgPixelTest;
@@ -1736,8 +1745,8 @@ static sceGsTex0 Shadow_WorkTex;
 
 void MGBeginDrawShadow(sceGsTex0 tex0) {
     sceVif1Packet *packet;
-    sceGsTest test;
-    sceGsZbuf zbuf;
+    sceGsTest      test;
+    sceGsZbuf      zbuf;
 
     test = mgPixelTest;
     test.bits.ate = 1;
@@ -1759,18 +1768,15 @@ void MGBeginDrawShadow(sceGsTex0 tex0) {
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
 
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(tex0.TBP0 >> 5, tex0.TBW, tex0.PSM, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(tex0.TBP0 >> 5, tex0.TBW, tex0.PSM, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEST_1, *(u_long *) &test);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_TEX1_1, 1);
-    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 0, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0, 0, 0, 128, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16 - 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16 - 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
 
     sceVif1PkCloseGifTag(packet);
@@ -1781,11 +1787,11 @@ void MGBeginDrawShadow(sceGsTex0 tex0) {
 
 void MGEndDrawShadow(u_char alpha) {
     sceVif1Packet *packet;
-    sceGsAlpha blend;
-    sceGsTest test;
-    sceGsZbuf zbuf;
-    sceGsTexa texa;
-    float q;
+    sceGsAlpha     blend;
+    sceGsTest      test;
+    sceGsZbuf      zbuf;
+    sceGsTexa      texa;
+    float          q;
 
     packet = GetVif1Packet();
 
@@ -1813,9 +1819,7 @@ void MGEndDrawShadow(u_char alpha) {
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
 
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
-    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1,
-                     SCE_GS_SET_FRAME(Shadow_SaveFrameBuff.TBP0 >> 5, Shadow_SaveFrameBuff.TBW,
-                                      Shadow_SaveFrameBuff.PSM, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_FRAME_1, SCE_GS_SET_FRAME(Shadow_SaveFrameBuff.TBP0 >> 5, Shadow_SaveFrameBuff.TBW, Shadow_SaveFrameBuff.PSM, 0));
 
     texa.AEM = 1;
     texa.TA0 = alpha;
@@ -1826,15 +1830,13 @@ void MGEndDrawShadow(u_char alpha) {
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &test);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, 1);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(128, 128, 128, 128, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, *(u_long *) &Shadow_WorkTex);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648, GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(640 * 16, SCREEN_HALF_HEIGHT * 16));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16 - 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(27648 + 640 * 16 - 1, GS_Y_OFFSET + SCREEN_HALF_HEIGHT * 16 - 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEXFLUSH, 0);
     sceVif1PkAddGsAD(packet, SCE_GS_ALPHA_1, *(u_long *) &mgAlpha);
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);

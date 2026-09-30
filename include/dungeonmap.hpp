@@ -14,12 +14,7 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CBoxVu0;
-class CCPoly;
-class CCamera;
 class CCameraFollow;
-class CFrame;
-class CFrameVu1;
 
 /**
  * @file
@@ -30,10 +25,10 @@ class CFrameVu1;
  * Describes one cell of the 20 x 20 dungeon floor grid.
  */
 struct MAPPARTS {
-    s32 parts_no;      /**< MapPartsNo of the part that the cell draws. */
-    s32 direction;     /**< Rotation that the map part uses. */
+    s32   parts_no;    /**< MapPartsNo of the part that the cell draws. */
+    s32   direction;   /**< Rotation that the map part uses. */
     float camera_dist; /**< Distance from the camera to the cell, as the last draw measured it. */
-    s32 visible;       /**< 1 if the last draw showed the cell. */
+    s32   visible;     /**< 1 if the last draw showed the cell. */
 };
 
 typedef MAPPARTS MAP_CELL;
@@ -52,26 +47,26 @@ struct ROOM_INFO {
  * Describes one treasure box, or one mimic that looks like a treasure box.
  */
 struct TREASURE_BOX {
-    s32 used; /**< 1 if the slot is in use. */
-    u8 unk_04[12];
-    sceVu0FVECTOR pos; /**< World position of the box. */
-    s32 item_no;       /**< Identifier of the item inside the box. */
-    s32 closed;        /**< 1 until the box is opened; the mini map shows only closed boxes. */
-    s32 kind;          /**< 0 for a large box, 1 for a small box. */
-    float lid_angle;   /**< Degrees the lid has swung open. */
-    s32 trap_no;       /**< Trap that opening the box sets off, or 0 for none. */
-    u8 unk_34[12];
+    s32           used; /**< 1 if the slot is in use. */
+    u8            unk_04[12];
+    sceVu0FVECTOR pos;       /**< World position of the box. */
+    s32           item_no;   /**< Identifier of the item inside the box. */
+    s32           closed;    /**< 1 until the box is opened; the mini map shows only closed boxes. */
+    s32           kind;      /**< 0 for a large box, 1 for a small box. */
+    float         lid_angle; /**< Degrees the lid has swung open. */
+    s32           trap_no;   /**< Trap that opening the box sets off, or 0 for none. */
+    u8            unk_34[12];
 };
 
 /**
  * Describes one atla ball that the player can collect.
  */
 struct ATRA_BOLL {
-    float pos[4]; /**< World position of the ball. */
-    s32 atra_no;  /**< Identifier of the atla inside the ball. */
-    s32 used;     /**< 1 if the slot is in use. */
-    float phase;  /**< Angle that makes the ball move up and down. */
-    s32 unk_1C;
+    float pos[4];  /**< World position of the ball. */
+    s32   atra_no; /**< Identifier of the atla inside the ball. */
+    s32   used;    /**< 1 if the slot is in use. */
+    float phase;   /**< Angle that makes the ball move up and down. */
+    s32   unk_1C;
 };
 
 /**
@@ -79,44 +74,56 @@ struct ATRA_BOLL {
  */
 struct MAP_TRAP_CIRCLE {
     float pos[4]; /**< World position of the circle. */
-    s32 state;    /**< 0 for a free slot, 1 while the circle waits, 2 while the circle fades. */
-    s32 kind;     /**< Identifier of the trap that the circle shows. */
+    s32   state;  /**< 0 for a free slot, 1 while the circle waits, 2 while the circle fades. */
+    s32   kind;   /**< Identifier of the trap that the circle shows. */
     float timer;  /**< Time that passed since the circle started to fade. */
-    s32 unk_1C;
+    s32   unk_1C;
 };
 
 /**
  * Places the door and the treasure box that link one pair of rooms.
  */
 struct ROOM_LINK_RESULT {
-    s32 door_x;   /**< Grid column of the door that the link opens. */
-    s32 door_y;   /**< Grid row of the door that the link opens. */
+    s32   door_x; /**< Grid column of the door that the link opens. */
+    s32   door_y; /**< Grid row of the door that the link opens. */
     float item_x; /**< Mini map position of the item that the link places. */
     float item_y; /**< Mini map position of the item that the link places. */
-    s32 used;     /**< 1 after the linked-room item and door are placed. */
-    s32 unk_14;
+    s32   used;   /**< 1 after the linked-room item and door are placed. */
+    s32   unk_14;
 };
 
 /**
  * Marks one place on the floor that starts an event when the player comes near.
  */
 struct DUNGEON_EVENT {
-    s32 origin_x;    /**< World X of the object the event belongs to, in whole units. */
-    s32 origin_z;    /**< World Z of the object the event belongs to, in whole units. */
-    s32 kind;        /**< -1 for a free slot, 2 for a treasure box, 3 for an atla ball, 8 for a mimic. */
-    s32 placed_flag; /**< Cleared when the event is placed; nothing reads it. */
-    float pos[4];    /**< World position that the event uses. */
-    s32 unk_20;
-    float radius;   /**< Distance at which the event starts. */
-    s32 index;      /**< Index of the object that the event belongs to. */
-    s32 reset_flag; /**< Cleared whenever the floor's events are reset; nothing reads it. */
-    u8 unk_30[32];
+    s32   origin_x;    /**< World X of the object the event belongs to, in whole units. */
+    s32   origin_z;    /**< World Z of the object the event belongs to, in whole units. */
+    s32   kind;        /**< -1 for a free slot, 2 for a treasure box, 3 for an atla ball, 8 for a mimic. */
+    s32   placed_flag; /**< Cleared when the event is placed; nothing reads it. */
+    float pos[4];      /**< World position that the event uses. */
+    s32   unk_20;
+    float radius;     /**< Distance at which the event starts. */
+    s32   index;      /**< Index of the object that the event belongs to. */
+    s32   reset_flag; /**< Cleared whenever the floor's events are reset; nothing reads it. */
+    u8    unk_30[32];
 };
 
 /**
  * Describes one non-player character that walks in the dungeon.
  */
 struct MAP_NPC_MODEL {
+    CCharacter chara;           /**< Draws and moves the character. */
+    float      pos[4];          /**< World position of the character. */
+    float      rot[4];          /**< Rotation of the character; its Y part turns every drawn copy. */
+    s32        parts_no;        /**< Index of the map part that the character stands on. */
+    s32        used;            /**< 1 if the slot is in use. */
+    s32        visible;         /**< 0 to hide the character. */
+    s32        motion_no;       /**< Motion that the character started with, or -1 to stop it from taking a step. */
+    float      draw_pos[16][4]; /**< Position of each copy of the character to draw. */
+    s32        draw_param[16];  /**< Parameter of each copy of the character to draw. */
+    s32        draw_num;        /**< Number of copies of the character to draw. */
+    u8         unk_1324[12];
+
     /**
      * Copies one slot over another, field by field.
      *
@@ -125,19 +132,7 @@ struct MAP_NPC_MODEL {
      * @size 0x104
      * @unknownret
      */
-    MAP_NPC_MODEL &operator=(const MAP_NPC_MODEL &);
-
-    CCharacter chara;      /**< Draws and moves the character. */
-    float pos[4];          /**< World position of the character. */
-    float rot[4];          /**< Rotation of the character; its Y part turns every drawn copy. */
-    s32 parts_no;          /**< Index of the map part that the character stands on. */
-    s32 used;              /**< 1 if the slot is in use. */
-    s32 visible;           /**< 0 to hide the character. */
-    s32 motion_no;         /**< Motion that the character started with, or -1 to stop it from taking a step. */
-    float draw_pos[16][4]; /**< Position of each copy of the character to draw. */
-    s32 draw_param[16];    /**< Parameter of each copy of the character to draw. */
-    s32 draw_num;          /**< Number of copies of the character to draw. */
-    u8 unk_1324[12];
+    MAP_NPC_MODEL &operator=(const MAP_NPC_MODEL &other);
 };
 
 /**
@@ -145,44 +140,44 @@ struct MAP_NPC_MODEL {
  */
 class CDungeonMap {
 public:
-    s32 unk_0000;
-    s32 unk_0004;
-    s32 room_seen[16];              /**< 1 for each room that the player found. */
-    CFireOmni fire;                 /**< Draws the fire and the raster of every map part. */
-    CWater water;                   /**< Draws the water surface. */
-    float draw_dist_scale;          /**< Scale that the draw distance uses. */
-    s32 bg_model_num;               /**< Number of background models loaded into bg_model. */
-    s32 dummy_frame_num;            /**< Number of models loaded into dummy_frame. */
-    sceVu0FVECTOR dummy_pos[8];     /**< World position of each dummy model. */
-    s32 dummy_model[8];             /**< Index into dummy_frame of each dummy model. */
-    s32 dummy_num;                  /**< Number of dummy models on the floor. */
-    s32 gate_key_no;                /**< Item number of the key that opens the floor's gate. */
-    s32 map_seed;                   /**< Seed that the floor was built from. */
-    CFrame *dummy_frame[3];         /**< Models that a dummy model can draw with. */
-    CFrame *bg_model[6];            /**< Models that draw behind the floor. */
-    CDungeonParts parts[72];        /**< Map parts that the floor is built from. */
-    s32 mask[400];                  /**< 1 for each grid cell that the mini map shows. */
-    DUNGEON_EVENT events[48];       /**< Places that start an event. */
-    MAP_CELL cells[400];            /**< 20 x 20 grid of the floor. */
-    ROOM_INFO rooms[16];            /**< Position and extent of each room. */
-    s32 room_num;                   /**< Number of rooms on the floor. */
-    TREASURE_BOX boxes[24];         /**< Treasure boxes that stand on the floor. */
-    s32 box_num;                    /**< Number of treasure boxes on the floor. */
-    CFrame *box_lid_model;          /**< Model that draws the lid of a wooden treasure box. */
-    CFrame *box_body_model;         /**< Model that draws a wooden treasure box. */
-    CFrame *box_collision_model;    /**< Model that the collision of a treasure box uses. */
-    CFrame *chest_lid_model;        /**< Model that draws the lid of a metal treasure box. */
-    CFrame *chest_body_model;       /**< Model that draws a metal treasure box. */
-    CFrame *chest_collision_model;  /**< Model that the collision of a metal treasure box uses. */
-    CFrame *fall_model;             /**< Model that draws the hole a fallen map part leaves. */
-    ATRA_BOLL atra[8];              /**< Atla balls that lie on the floor. */
-    s32 atra_num;                   /**< Number of atla balls on the floor. */
-    CFrame *atra_model;             /**< Model that draws an atla ball. */
-    CFrame *collision_model;        /**< Model that the collision of an atla ball uses. */
-    ROOM_LINK_RESULT room_link[4];  /**< Rooms that a door and a treasure box link. */
-    s32 map_type;                   /**< 1 for a floor laid out on the grid, otherwise a floor of freely placed parts. */
-    MAP_NPC_MODEL npc[4];           /**< Characters that walk in the dungeon. */
-    MAP_TRAP_CIRCLE trap_circle[3]; /**< Trap circles that lie on the floor. */
+    s32              unk_0000;
+    s32              unk_0004;
+    s32              room_seen[16];         /**< 1 for each room that the player found. */
+    CFireOmni        fire;                  /**< Draws the fire and the raster of every map part. */
+    CWater           water;                 /**< Draws the water surface. */
+    float            draw_dist_scale;       /**< Scale that the draw distance uses. */
+    s32              bg_model_num;          /**< Number of background models loaded into bg_model. */
+    s32              dummy_frame_num;       /**< Number of models loaded into dummy_frame. */
+    sceVu0FVECTOR    dummy_pos[8];          /**< World position of each dummy model. */
+    s32              dummy_model[8];        /**< Index into dummy_frame of each dummy model. */
+    s32              dummy_num;             /**< Number of dummy models on the floor. */
+    s32              gate_key_no;           /**< Item number of the key that opens the floor's gate. */
+    s32              map_seed;              /**< Seed that the floor was built from. */
+    CFrame          *dummy_frame[3];        /**< Models that a dummy model can draw with. */
+    CFrame          *bg_model[6];           /**< Models that draw behind the floor. */
+    CDungeonParts    parts[72];             /**< Map parts that the floor is built from. */
+    s32              mask[400];             /**< 1 for each grid cell that the mini map shows. */
+    DUNGEON_EVENT    events[48];            /**< Places that start an event. */
+    MAP_CELL         cells[400];            /**< 20 x 20 grid of the floor. */
+    ROOM_INFO        rooms[16];             /**< Position and extent of each room. */
+    s32              room_num;              /**< Number of rooms on the floor. */
+    TREASURE_BOX     boxes[24];             /**< Treasure boxes that stand on the floor. */
+    s32              box_num;               /**< Number of treasure boxes on the floor. */
+    CFrame          *box_lid_model;         /**< Model that draws the lid of a wooden treasure box. */
+    CFrame          *box_body_model;        /**< Model that draws a wooden treasure box. */
+    CFrame          *box_collision_model;   /**< Model that the collision of a treasure box uses. */
+    CFrame          *chest_lid_model;       /**< Model that draws the lid of a metal treasure box. */
+    CFrame          *chest_body_model;      /**< Model that draws a metal treasure box. */
+    CFrame          *chest_collision_model; /**< Model that the collision of a metal treasure box uses. */
+    CFrame          *fall_model;            /**< Model that draws the hole a fallen map part leaves. */
+    ATRA_BOLL        atra[8];               /**< Atla balls that lie on the floor. */
+    s32              atra_num;              /**< Number of atla balls on the floor. */
+    CFrame          *atra_model;            /**< Model that draws an atla ball. */
+    CFrame          *collision_model;       /**< Model that the collision of an atla ball uses. */
+    ROOM_LINK_RESULT room_link[4];          /**< Rooms that a door and a treasure box link. */
+    s32              map_type;              /**< 1 for a floor laid out on the grid, otherwise a floor of freely placed parts. */
+    MAP_NPC_MODEL    npc[4];                /**< Characters that walk in the dungeon. */
+    MAP_TRAP_CIRCLE  trap_circle[3];        /**< Trap circles that lie on the floor. */
 
     /**
      * Puts one non-player character on the floor.
@@ -191,8 +186,7 @@ public:
      * @address 0x1C1C00
      * @size 0x26C
      */
-    void SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVECTOR pos, sceVu0FVECTOR rot, int visible, int motion_no,
-                CDataAlloc2<1> *alloc);
+    void SetNPC(int npc_no, unsigned int *pack, int parts_no, sceVu0FVECTOR pos, sceVu0FVECTOR rot, int visible, int motion_no, CDataAlloc2<1> *alloc);
 
     /**
      * Sets the number of copies to draw of every character to zero.
@@ -201,7 +195,7 @@ public:
      * @address 0x1C1E70
      * @size 0x3C
      */
-    void ClearNPC_Cash(void);
+    void ClearNPC_Cash();
 
     /**
      * Adds one copy of a character to the list of copies to draw.
@@ -218,7 +212,7 @@ public:
      * @size 0x264
      * @unknownret
      */
-    void DrawNPCDraw(void);
+    void DrawNPCDraw();
 
     /**
      * Takes one step with every character that is active and visible.
@@ -228,7 +222,7 @@ public:
      * @size 0xC0
      * @unknownret
      */
-    void StepNPC(void);
+    void StepNPC();
 
     /**
      * Starts a motion on a character.
@@ -265,7 +259,7 @@ public:
      * @address 0x1C23C0
      * @size 0xF8
      */
-    void DrawMapFreeStyle(void);
+    void DrawMapFreeStyle();
 
     /**
      * @mangled DrawMapCalc__11CDungeonMapFi
@@ -329,7 +323,7 @@ public:
      * @address 0x1C3C00
      * @size 0xB4
      */
-    void FlushCheckMask(void);
+    void FlushCheckMask();
 
     /**
      * Draws the floor's freely placed fires.
@@ -404,7 +398,7 @@ public:
      * @address 0x1C79B0
      * @size 0x38
      */
-    void initTrapCircle(void);
+    void initTrapCircle();
 
     /**
      * Returns the trap circle that is nearer to a position than a distance, or zero if there is none.
@@ -430,7 +424,7 @@ public:
      * @size 0x1A4
      * @unknownret
      */
-    void DrawTrapCircle(void);
+    void DrawTrapCircle();
 
     /**
      * Starts the fade of the trap circle that the player stands on, and returns its position.
@@ -439,7 +433,7 @@ public:
      * @address 0x1C7D80
      * @size 0xE0
      */
-    MAP_TRAP_CIRCLE *DistTrapCircle(void);
+    MAP_TRAP_CIRCLE *DistTrapCircle();
 
     /**
      * Moves every trap circle that fades one step further, and frees the ones that finished.
@@ -448,7 +442,7 @@ public:
      * @address 0x1C7E60
      * @size 0x7C
      */
-    void StepTrapCircle(void);
+    void StepTrapCircle();
 
     /**
      * Returns 1 if no treasure box is nearer to a position than a distance.
@@ -509,7 +503,7 @@ public:
      * @address 0x1C8E50
      * @size 0x7C
      */
-    void RsetMimicEvent(void);
+    void RsetMimicEvent();
 
     /**
      * Returns the event that the player stands in, or -1 if the player stands in none.
@@ -526,7 +520,7 @@ public:
      * @size 0x5B0
      * @unknownret
      */
-    void buildDummyModel(void);
+    void buildDummyModel();
 
     /**
      * Gives the table saying which of the floor's rooms join up.
@@ -535,7 +529,7 @@ public:
      * @address 0x1C95D0
      * @size 0xC70
      */
-    void GetRoomLinkInfo(void);
+    void GetRoomLinkInfo();
 
     /**
      * Puts the part that closes the right edge of the grid in every row.
@@ -544,7 +538,7 @@ public:
      * @address 0x1CA240
      * @size 0x50
      */
-    void SetUnderLoad(void);
+    void SetUnderLoad();
 
     /**
      * @mangled CreatPartsList__11CDungeonMapFPiiii
@@ -559,7 +553,7 @@ public:
      * @size 0xDA4
      * @unknownret
      */
-    void BuildCharaSpecialParts(void);
+    void BuildCharaSpecialParts();
 
     /**
      * @mangled SetCharaDoor__11CDungeonMapFi
@@ -592,7 +586,7 @@ public:
      * @size 0x390
      * @unknownret
      */
-    void initalize(void);
+    void initalize();
 };
 
 /**
@@ -602,7 +596,7 @@ public:
  * @address 0x1C5550
  * @size 0xBDC
  */
-void mapPartsFilter(void);
+void mapPartsFilter();
 
 STATIC_ASSERT(sizeof(MAP_CELL) == 0x10);
 STATIC_ASSERT(sizeof(ROOM_INFO) == 0x10);

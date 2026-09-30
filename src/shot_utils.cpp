@@ -21,14 +21,13 @@
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float *movement,
-                                     s32 target_mode, float radius) {
+SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float *movement, s32 target_mode, float radius) {
     sceVu0FVECTOR destination;
-    int active;
+    int           active;
 
     WorkBuffer__2->used = 0;
     CCPoly *polygons = (CCPoly *) WorkBuffer__2->Alloc(0x500);
-    int polygon_count = setCollisionData(NowDngMap, polygons, position, 20.0f, 1.5f);
+    int     polygon_count = setCollisionData(NowDngMap, polygons, position, 20.0f, 1.5f);
     if (polygon_count >= 256) {
         printf(fishing_err_format, polygon_count);
     }
@@ -60,11 +59,8 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
                 continue;
             }
             for (int sphere_no = 0; sphere_no < 16; sphere_no++) {
-                if (NowMonstorUnit->effect[monster_no].timer[sphere_no] != 0 &&
-                    DistVector(NowMonstorUnit->effect[monster_no].position[sphere_no], position) <=
-                        radius + NowMonstorUnit->effect[monster_no].radius[sphere_no]) {
-                    sceVu0CopyVector(hit_position,
-                                     NowMonstorUnit->effect[monster_no].position[sphere_no]);
+                if (NowMonstorUnit->effect[monster_no].timer[sphere_no] != 0 && DistVector(NowMonstorUnit->effect[monster_no].position[sphere_no], position) <= radius + NowMonstorUnit->effect[monster_no].radius[sphere_no]) {
+                    sceVu0CopyVector(hit_position, NowMonstorUnit->effect[monster_no].position[sphere_no]);
                     return SHOT_COLLISION_MONSTER;
                 }
             }
@@ -74,7 +70,7 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
     int hit = CheckHit(polygons, polygon_count, position, destination, hit_position, 1, 4);
     if (hit >= 0) {
         CCPoly *poly = &polygons[hit];
-        int field_no = poly->attr.ground_kind;
+        int     field_no = poly->attr.ground_kind;
         if (field_no > 0 && field_no < 13) {
             DRAN_MAP_FIELD_SET *field_set = (DRAN_MAP_FIELD_SET *) NowDranMapField;
             if (field_set->state[field_no - 1] >= 2) {
@@ -88,13 +84,12 @@ SHOT_COLLISION_RESULT checkCollision(float *hit_position, float *position, float
     return SHOT_COLLISION_NONE;
 }
 
-void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width,
-                    s32 height, u8 blend) {
+void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, s32 width, s32 height, u8 blend) {
     sceVu0IVECTOR top_left;
     sceVu0IVECTOR top_right;
     sceVu0IVECTOR bottom_left;
     sceVu0IVECTOR bottom_right;
-    CTexture *texture = TexManager.GetTexture(texture_name, -1);
+    CTexture     *texture = TexManager.GetTexture(texture_name, -1);
 
     world[3] = 1.0f;
     // The sprite stands twice as wide as it is tall.
@@ -105,7 +100,6 @@ void set3DCellModel(float *world, char *texture_name, float size, s32 x, s32 y, 
         bottom_left[0] = top_left[0];
         bottom_left[1] = bottom_right[1];
         bottom_left[2] = bottom_right[2];
-        set3DSprite(Vif1Packet, texture, CRect_i_(x, y, width, height), top_left, top_right,
-                    bottom_left, bottom_right, blend);
+        set3DSprite(Vif1Packet, texture, CRect_i_(x, y, width, height), top_left, top_right, bottom_left, bottom_right, blend);
     }
 }

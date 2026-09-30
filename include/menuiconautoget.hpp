@@ -7,12 +7,12 @@
  * inventory slot it lands in.
  */
 struct MENU_AUTO_GET_ICON {
-    float x;    /**< Screen x the icon draws at, eased toward the slot. */
-    float y;    /**< Screen y the icon draws at, eased toward the slot. */
-    s16 item;   /**< Item the icon stands for; not positive while the slot is free. */
-    s16 slot;   /**< Quick item slot the icon is flying to. */
-    s16 volume; /**< Item volume the slot takes when the icon lands. */
-    u8 unk_0E[2];
+    float x;      /**< Screen x the icon draws at, eased toward the slot. */
+    float y;      /**< Screen y the icon draws at, eased toward the slot. */
+    s16   item;   /**< Item the icon stands for; not positive while the slot is free. */
+    s16   slot;   /**< Quick item slot the icon is flying to. */
+    s16   volume; /**< Item volume the slot takes when the icon lands. */
+    u8    unk_0E[2];
 };
 
 STATIC_ASSERT(sizeof(MENU_AUTO_GET_ICON) == 0x10);
@@ -31,7 +31,7 @@ public:
      * @address 0x2380B0
      * @size 0x40
      */
-    int IsMoveIcon(void);
+    int IsMoveIcon();
 
     /**
      * Counts the icons already flying with one item.
@@ -58,7 +58,7 @@ public:
      * @address 0x238180
      * @size 0x48
      */
-    int GetSpace(void);
+    int GetSpace();
 
     /**
      * Advances the flying icons, puts what lands into the inventory, and reports activity.
@@ -67,7 +67,7 @@ public:
      * @address 0x2381D0
      * @size 0x18C
      */
-    int IconAutoMove(void);
+    int IconAutoMove();
 
     /**
      * Starts one icon flying from a position to a slot.
@@ -85,5 +85,5 @@ public:
      * @address 0x238390
      * @size 0xBC
      */
-    void IconAutoMoveDraw(void);
+    void IconAutoMoveDraw();
 };

@@ -866,4 +866,4 @@ int BtSetEventScript(CRunScript *script, char *program, CDataAlloc2<1> *arena);
  * @address 0x1E67A0
  * @size 0x12C
  */
-void BtSetEventExtendTable(void);
+void BtSetEventExtendTable();

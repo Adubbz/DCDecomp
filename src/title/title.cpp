@@ -33,19 +33,19 @@
 template <class T>
 class CRect {
 public:
-    CRect() {}
-
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
-    }
-
     T x; /**< Left edge. */
     T y; /**< Top edge. */
     T w; /**< Width. */
     T h; /**< Height. */
+
+    CRect() {}
+
+    CRect(T left, T top, T width, T height) {
+        x = left;
+        y = top;
+        w = width;
+        h = height;
+    }
 };
 
 /* One piece of scenery the third scene lays out: the model file, where it stands and how far it is
@@ -56,20 +56,6 @@ struct MAP_INFO {
     float rotation;    /**< Turn about the vertical axis, in degrees. */
 };
 
-sceVif1Packet *GetVif1Packet();
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
-void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetAmbient(float *color);
-void MGDraw(CFrame *frame);
-void MGSetGsTEST(sceGsTest *test);
-void MGGetFBuffTex(sceGsTex0 *tex);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
-void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *dst,
-                        const CRect<int> &dst_rect);
-void MGClearZBuffer(int mode);
-
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
 struct RECT {
@@ -78,25 +64,6 @@ struct RECT {
     int w; /**< Width. */
     int h; /**< Height. */
 };
-
-void InitializeDataBuffer();
-void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
-void SetPacketReadBuffer(int size, int offset);
-void setbilinear(int on);
-int LoadFileMenuData(char *name, u_int *buffer);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
-void DrawObjectVibe(int id, int frame, CTexture *texture, RECT rect, u_char size, int alpha);
-
-void InitOpeningBook(u_long128 *pack, int *param);
-int OpeningBookKey();
-void OpeningBookDraw();
-int MenuSaveKey();
-void DrawMenuSave(char *name);
-int MenuOptionKey();
-void DrawMenuOption();
 
 #include "gamemode.hpp"
 #include "main.hpp"
@@ -121,18 +88,18 @@ void DrawMenuOption();
 
 class OBJ_ANIME_SEQ {
 public:
-    void Initialize();
-
-    char name[16]; /**< Name of the frame the animation drives. */
-    int anim_type; /**< What is animated: rotation, position, scale or colour. */
-    int play_mode; /**< How the value runs between its two ends. */
-    char unk_18[8];
+    char          name[16];  /**< Name of the frame the animation drives. */
+    int           anim_type; /**< What is animated: rotation, position, scale or colour. */
+    int           play_mode; /**< How the value runs between its two ends. */
+    char          unk_18[8];
     sceVu0FVECTOR start_value; /**< Value the animation starts from. */
     sceVu0FVECTOR end_value;   /**< Value the animation runs to. */
-    float step_x;              /**< Amount added to the first component each step. */
-    float step_y;              /**< Amount added to the second component each step. */
-    float step_z;              /**< Amount added to the third component each step. */
-    char unk_4C[60];
+    float         step_x;      /**< Amount added to the first component each step. */
+    float         step_y;      /**< Amount added to the second component each step. */
+    float         step_z;      /**< Amount added to the third component each step. */
+    char          unk_4C[60];
+
+    void Initialize();
 };
 
 /* The classes this movie places in the world, declared here rather than reached through headers of
@@ -143,6 +110,9 @@ public:
    world. */
 class CWater {
 public:
+    char      unk_00[176];
+    CFrameVu1 frame; /**< Places and draws the water surface. */
+
     CWater();
 
     void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
@@ -151,16 +121,12 @@ public:
     void SetColor(u_char red, u_char green, u_char blue, u_char alpha);
     void Shake(int x, int y, float height_change);
     void Hamon();
-    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
-
-    char unk_00[176];
-    CFrameVu1 frame; /**< Places and draws the water surface. */
+    int  DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
 };
 
 /* Named rather than included, because a unit's include list is a dial on the order a call's
    floating-point arguments are set up in and nothing here needs the definition: adding
    renderinfo.h alone takes RushInit's three-float SetFollow out of the order the image has. */
-class RenderInfo;
 
 /* A frame parented to an object, which is what lets the world transform drive a model. */
 class CObjectFrame : public CObject {
@@ -175,38 +141,42 @@ public:
    through the object dispatch like anything else in the world. */
 class CMapObject : public CObjectFrame {
 public:
+    char       unk_18[36];
+    CFrameVu1 *unk_D4;
+    char       unk_4C[8];
+    float      unk_E0;
+    int        category_no; /**< Category the map filed the object under. */
+    int        handle;      /**< Handle the map gave the object. */
+    char       unk_EC[4];
+
     CMapObject();
 
     virtual void Draw();
 
     void Initialize();
     void DrawShadow(int fast);
-
-    char unk_18[36];
-    CFrameVu1 *unk_D4;
-    char unk_4C[8];
-    float unk_E0;
-    int category_no; /**< Category the map filed the object under. */
-    int handle;      /**< Handle the map gave the object. */
-    char unk_EC[4];
 };
 
 /* The dust the running feet kick up, declared here for the same reason. */
 class CRunEffect {
 public:
+    char unk_00[208];
+
     CRunEffect();
 
     void Lighting(int enabled);
     void Set(float *origin);
     void Step();
     void Draw();
-
-    char unk_00[208];
 };
 
 /* The movie's one fire, which is a light rather than a model. */
 class CFireOmni {
 public:
+    char          unk_18[32];
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
+    char          unk_4C[16];
+
     CFireOmni();
 
     void FireStep();
@@ -219,96 +189,38 @@ public:
         position[3] = 1.0f;
     }
 
-    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale,
-                  int layers, float camera_offset);
-
-    char unk_18[32];
-    sceVu0FVECTOR position; /**< World position the fire draws at. */
-    char unk_4C[16];
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale, int layers, float camera_offset);
 };
 
 /* A run of frames the world draws as one. */
 class CMap {
 public:
-    void Initialize();
+    char unk_00[2800];
+
+    void        Initialize();
     CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
     CMapObject *SetObject(int index, CFrameVu1 *frame, int category_no, int handle);
     CMapObject *GetObject(int index);
-    void Draw();
-
-    char unk_00[2800];
+    void        Draw();
 };
 
 void wait_now_loading_vsync();
-void InitializeDataBuffer();
-void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
-void SetPacketReadBuffer(int size, int offset);
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
-void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
 void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
-sceVif1Packet *GetVif1Packet();
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
-void MGGetFBuffTex(sceGsTex0 *tex);
-void MGMoveImage(sceGsTex0 *src, const CRect<int> &rect, sceGsTex0 *dst, int dsax, int dsay,
-                 int dir);
-void MGSetGsZBUF(sceGsZbuf *zbuf);
-void MGSetAmbient(float *color);
-void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
-void MGBeginDrawShadow(sceGsTex0 tex);
-void MGEndDrawShadow(u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, int width, int height, float angle);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, int width, int height, float angle);
 void DepthOfField(float *dist, int level, int alpha, int blur);
-void OPAnalyz(char *name);
-void OPMdsLoad();
 
-void SndSetCamera(CCamera *camera);
-void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
-void SndSetReadBuffer(u_int *buffer);
-void SndAmbientPlay(int no);
-void SndBgmPlay(int no);
-void SndBgmFadeOut(int frames, int volume);
-void SndBgmStop();
-void SndAmbientStop();
-void SndStep();
-void SndSePlay(int se, float *position, float near_dist, float far_dist);
-
-void MotionProcess();
-void DrawProcess();
-void SoundProcess();
-void WaterProcess();
-void DataLoad();
 static void InitProcA();
-void DrawProcA();
 static void InitProcB();
-void DrawProcB();
 static void AtraLight();
 static void InitProcC();
-void DrawProcC();
 static void InitProcD();
-void DrawProcD();
 static void InitProcE();
-void DrawProcE();
 static void InitProcF();
-void DrawProcF();
 static void InitProcG();
-void DrawProcG();
 static void InitProcH();
-void DrawProcH();
 static void InitProcI();
-void DrawProcI();
 static void InitProcTitle();
-void DrawProcTitle();
-
-void TitleDraw();
-void TiPlayVolSE(int group, int no, int voice, float volume);
 
 /* Nothing reads this, and nothing in the image stands for it: the link this file was built by
    removed it. It is here because the compiler carries state from one definition to the next, and
@@ -316,11 +228,11 @@ void TiPlayVolSE(int group, int no, int voice, float volume);
    declaration that emits nothing reaches. Deleting it puts three of those four constants in the
    wrong registers. */
 
-CCamera Camera(4.0f);
+CCamera       Camera(4.0f);
 CCameraFollow FCamera(60.0f, 20.0f, 0.0f, 4.0f);
-CCharacter Cloud__2;
-CCharacter Logo;
-CCharacter Spark[9];
+CCharacter    Cloud__2;
+CCharacter    Logo;
+CCharacter    Spark[9];
 
 /* Nothing calls this and nothing reads the table it writes: the link this file was built by
    removed both. They are here because the compiler carries state from one definition to the next,
@@ -330,8 +242,9 @@ CCharacter Spark[9];
 void DataLoad() {
     if (CScript.load_no != -1) {
     load_wait:
-        if (ReadBGSync())
+        if (ReadBGSync()) {
             goto load_wait;
+        }
     }
 
     switch (CScript.load_no) {
@@ -423,18 +336,19 @@ static void InitProcA() {
     wait_now_loading_vsync();
 
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
-        {0, 20, 0},
-        {0, 0, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 3, 0},
-        {0, 4, 0},
-        {0, 5, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               0,  0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               3,  0},
+        {0,                                               4,  0},
+        {0,                                               5,  0},
+        {0,                                               10, 0},
+        {0,                                               10, 0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -616,9 +530,10 @@ static void InitProcA() {
 void DrawProcA() {
     sceVu0FMATRIX flash = {
         {100.0f, 80.0f, 60.0f, 0.0f},
-        {90.0f, 90.0f, 50.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f}};
+        {90.0f,  90.0f, 50.0f, 0.0f},
+        {0.0f,   0.0f,  0.0f,  0.0f},
+        {0.0f,   0.0f,  0.0f,  0.0f}
+    };
     sceVu0FMATRIX scene_color;
     sceVu0FMATRIX chara_color;
 
@@ -672,8 +587,7 @@ void DrawProcA() {
         }
     }
 
-    typedef float ap0, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, ap9, ap10, ap11,
-        ap12, ap13, ap14, ap15;
+    typedef float ap0, ap1, ap2, ap3, ap4, ap5, ap6, ap7, ap8, ap9, ap10, ap11, ap12, ap13, ap14, ap15;
     if (CScript.camera_start == 2) {
         Chara__3[6].SetScale((float) (col - col + 2), 2.0f, 2.0f);
         Chara__3[8].SetScale(2.0f, 2.0f, 2.0f);
@@ -692,7 +606,7 @@ void DrawProcA() {
     MGSetPLight(light, scene_color);
     TexManager.ReloadTexture(Vif1Packet, 10);
 
-    CMapObject *object = OP_GroundMap.GetObject(0);
+    CMapObject   *object = OP_GroundMap.GetObject(0);
     sceVu0FVECTOR camera_position;
 
     MainCamera__3.GetPos(camera_position);
@@ -757,12 +671,12 @@ void DrawProcA() {
     DepthOfField(dof, 3, 32, 0);
 }
 
-CFrame *ObjectFrame3;
+CFrame        *ObjectFrame3;
 class CProcess CProcess;
-CScFader CFade;
+CScFader       CFade;
 
 class CSprite CSprite;
-class CLogo CLogo;
+class CLogo   CLogo;
 class CCursol CCursol;
 
 static float TitleCameraWork[4];
@@ -777,20 +691,21 @@ static float TitleCameraWork[4];
  */
 static void InitProcB() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 21, 0},
-        {0, 20, 0},
-        {0, 0, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 3, 0},
-        {0, 4, 0},
-        {0, 8, 0},
-        {0, 9, 0},
-        {"", 0, 0}};
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4",  21, 0},
+        {0,                                               20, 0},
+        {0,                                               0,  0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               3,  0},
+        {0,                                               4,  0},
+        {0,                                               8,  0},
+        {0,                                               9,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -1092,18 +1007,19 @@ static void AtraLight() {
  */
 static void InitProcC() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 21, 0},
-        {0, 20, 0},
-        {0, 0, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 9, 0},
-        {"", 0, 0}};
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4",  21, 0},
+        {0,                                               20, 0},
+        {0,                                               0,  0},
+        {0,                                               10, 0},
+        {0,                                               10, 0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               9,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -1169,32 +1085,33 @@ static void InitProcC() {
     Chara__3[8].motion_type.state.playing_no = 0;
 
     MAP_INFO norn[] = {
-        {"s04g01_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04g02_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04g04_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04g06_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04g03_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04g05_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04r01_0.mds", 0.0f, 0.0f, 74.0f, 0.0f},
-        {"s04r02_0.mds", -56.68f, 0.0f, 47.566f, -50.0f},
-        {"s04r03_0.mds", 32.439f, 0.0f, -66.51f, 154.0f},
-        {"s04r05_0.mds", 82.0f, -10.0f, 109.0f, -90.0f},
-        {"s04r06_0.mds", 61.832f, 10.0f, -127.0f, -28.0f},
-        {"s04r07_0.mds", -54.64f, 10.0f, -115.6f, 25.0f},
-        {"s04r08_0.mds", -90.85f, 10.0f, 75.585f, 125.0f},
-        {"s04w01_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04w02_0.mds", 0.0f, 0.0f, 0.0f, 0.0f},
-        {"s04h01_0.mds", 0.0f, -10.0f, 0.0f, 0.0f},
-        {"s04h02_0.mds", 127.0f, -10.0f, 109.0f, 0.0f},
-        {"s04h03_0.mds", -140.0f, -10.0f, 110.0f, 125.0f},
-        {"s04h03_0.mds", 90.0f, -10.0f, -180.0f, -28.0f},
-        {"s04h03_0.mds", -80.0f, -10.0f, -170.0f, 25.0f},
-        {"s04a01_0.mds", -63.15f, -15.0f, 128.0f, 50.0f},
-        {"s04a01_0.mds", -126.0f, -15.0f, -110.0f, -20.0f},
-        {"s04a01_0.mds", -178.0f, -15.0f, 46.0f, 10.0f},
-        {"s04a01_0.mds", 12.0f, -15.0f, -218.0f, -70.0f},
-        {"s04a01_0.mds", 204.0f, -15.0f, -152.0f, -140.0f},
-        {"s04a01_0.mds", 244.0f, -15.0f, 14.0f, 190.0f}};
+        {"s04g01_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04g02_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04g04_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04g06_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04g03_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04g05_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04r01_0.mds", 0.0f,    0.0f,   74.0f,   0.0f   },
+        {"s04r02_0.mds", -56.68f, 0.0f,   47.566f, -50.0f },
+        {"s04r03_0.mds", 32.439f, 0.0f,   -66.51f, 154.0f },
+        {"s04r05_0.mds", 82.0f,   -10.0f, 109.0f,  -90.0f },
+        {"s04r06_0.mds", 61.832f, 10.0f,  -127.0f, -28.0f },
+        {"s04r07_0.mds", -54.64f, 10.0f,  -115.6f, 25.0f  },
+        {"s04r08_0.mds", -90.85f, 10.0f,  75.585f, 125.0f },
+        {"s04w01_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04w02_0.mds", 0.0f,    0.0f,   0.0f,    0.0f   },
+        {"s04h01_0.mds", 0.0f,    -10.0f, 0.0f,    0.0f   },
+        {"s04h02_0.mds", 127.0f,  -10.0f, 109.0f,  0.0f   },
+        {"s04h03_0.mds", -140.0f, -10.0f, 110.0f,  125.0f },
+        {"s04h03_0.mds", 90.0f,   -10.0f, -180.0f, -28.0f },
+        {"s04h03_0.mds", -80.0f,  -10.0f, -170.0f, 25.0f  },
+        {"s04a01_0.mds", -63.15f, -15.0f, 128.0f,  50.0f  },
+        {"s04a01_0.mds", -126.0f, -15.0f, -110.0f, -20.0f },
+        {"s04a01_0.mds", -178.0f, -15.0f, 46.0f,   10.0f  },
+        {"s04a01_0.mds", 12.0f,   -15.0f, -218.0f, -70.0f },
+        {"s04a01_0.mds", 204.0f,  -15.0f, -152.0f, -140.0f},
+        {"s04a01_0.mds", 244.0f,  -15.0f, 14.0f,   190.0f }
+    };
 
     OP_FireList = 0;
     OP_AnimeSeqRot = 0;
@@ -1216,8 +1133,7 @@ static void InitProcC() {
         object.SetFrame(map, 0);
         OP_NornMapObj[i].handle = 0;
         OP_NornMapObj[i].category_no = 0;
-        object.SetPosition(CVector3_f_(norn[i].position[0], norn[i].position[1],
-                                       norn[i].position[2]));
+        object.SetPosition(CVector3_f_(norn[i].position[0], norn[i].position[1], norn[i].position[2]));
         object.SetRotation(CVector3_f_(0.0f, (float) (PI * norn[i].rotation / 180), 0.0f));
     }
 
@@ -1325,16 +1241,17 @@ void DrawProcC() {
  */
 static void InitProcD() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 20, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 9, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               9,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -1416,8 +1333,7 @@ static void InitProcD() {
 
     CFrameAttr map_attr;
 
-    CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s44g01_0.mds", 0), &MapDataBuffer, 2, 0,
-                                 0);
+    CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s44g01_0.mds", 0), &MapDataBuffer, 2, 0, 0);
 
     map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
@@ -1501,16 +1417,17 @@ void DrawProcD() {
  */
 static void InitProcE() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 20, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 2, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               2,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -1624,8 +1541,7 @@ void DrawProcE() {
     TexManager.ReloadTexture(Vif1Packet, 10);
     OP_GroundMap.Draw();
 
-    if (CScript.camera_start == 10 &&
-        Cam[SceneNp].motion_type.state.time >= 70.0f) {
+    if (CScript.camera_start == 10 && Cam[SceneNp].motion_type.state.time >= 70.0f) {
         Chara__3[0].TexAnimeOn(3);
     }
 
@@ -1664,17 +1580,18 @@ void DrawProcE() {
  */
 static void InitProcF() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 20, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 3, 0},
-        {0, 9, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               3,  0},
+        {0,                                               9,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -1859,18 +1776,19 @@ void DrawProcF() {
  */
 static void InitProcG() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 20, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 2, 0},
-        {0, 2, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               10, 0},
+        {0,                                               10, 0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               2,  0},
+        {0,                                               2,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -2030,18 +1948,19 @@ void DrawProcG() {
  */
 static void InitProcH() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 20, 0},
-        {0, 0, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {0, 3, 0},
-        {0, 4, 0},
-        {0, 9, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               0,  0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {0,                                               3,  0},
+        {0,                                               4,  0},
+        {0,                                               9,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -2279,16 +2198,17 @@ void DrawProcH() {
  */
 static void InitProcI() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 20, 0},
-        {0, 3, 0},
-        {0, 10, 0},
-        {0, 10, 0},
-        {0, 1, 0},
-        {0, 2, 0},
-        {"", 0, 0}};
+        {0,                                               20, 0},
+        {0,                                               3,  0},
+        {0,                                               10, 0},
+        {0,                                               10, 0},
+        {0,                                               1,  0},
+        {0,                                               2,  0},
+        {"",                                              0,  0}
+    };
 
 #ifdef PAL
     switch (LanguageCode) {
@@ -2360,8 +2280,7 @@ static void InitProcI() {
 
     CFrameAttr map_attr;
 
-    CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s24g01_0.mds", 0), &MapDataBuffer, 2, 0,
-                                 0);
+    CFrameVu1 *map = LoadMDSFile(GetPackFile(read_buffer, "s24g01_0.mds", 0), &MapDataBuffer, 2, 0, 0);
 
     map_attr.fog_enable = 1;
     map->SetAttr(map_attr, 1, 64);
@@ -2489,11 +2408,12 @@ void DrawProcI() {
  */
 static void InitProcTitle() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4",     0,  0},
         {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
-        {0, 1, 0},
-        {"", 0, 0}};
+        {0,                                               1,  0},
+        {"",                                              0,  0}
+    };
 
     textures[3].name = (char *) GetPackFile(read_buffer, "title.img", 0);
     TexManager.Initialize(16352);
@@ -2503,20 +2423,12 @@ static void InitProcTitle() {
 void DrawProcTitle() {
     TexManager.ReloadTexture(Vif1Packet, 1);
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("bg01", -1),
-                CRect<int>(320, 224, 768, 768), CRect<int>(0, 0, 768, 768),
-                384, 384, TitleAngle);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("bg01", -1), CRect<int>(320, 224, 768, 768), CRect<int>(0, 0, 768, 768), 384, 384, TitleAngle);
     TitleAngle -= 0.0005f;
 
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1),
-                CRect<int>(0, 80, 288, 160), CRect<int>(0, 0, 288, 160),
-                128);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1),
-                CRect<int>(288, 129, 352, 160), CRect<int>(288, 49, 352, 160),
-                128);
-    set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1),
-                CRect<int>(0, 366, 640, 48), CRect<int>(0, 208, 640, 48),
-                TitleFade);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1), CRect<int>(0, 80, 288, 160), CRect<int>(0, 0, 288, 160), 128);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1), CRect<int>(288, 129, 352, 160), CRect<int>(288, 49, 352, 160), 128);
+    set2DSprite(GetVif1Packet(), TexManager.GetTexture("dc01", -1), CRect<int>(0, 366, 640, 48), CRect<int>(0, 208, 640, 48), TitleFade);
 
     TitleFadeCnt++;
     if (TitleFadeCnt >= 60) {

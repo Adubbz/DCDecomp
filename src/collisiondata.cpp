@@ -59,29 +59,29 @@ char nameblock[64];
  * @address 0x1B3780
  * @size 0xF70
  */
-void DebugInfomationDraw(void) {
+void DebugInfomationDraw() {
     if (DebugStatus[0] != 1) {
         if (DebugStatus[4] != 0) {
-            sceVu0FVECTOR pos;
-            sceVu0FVECTOR rot;
-            sceVu0FVECTOR cam_pos;
-            sceVu0FVECTOR cam_ref;
-            float angle;
-            float distance;
-            float height;
-            int tile_x;
-            float local_x;
-            int tile_z;
-            float local_z;
-            float cam_local_x;
-            float cam_local_y;
-            float cam_local_z;
-            float ref_local_x;
-            float ref_local_y;
-            float local_y;
-            float ref_local_z;
+            sceVu0FVECTOR      pos;
+            sceVu0FVECTOR      rot;
+            sceVu0FVECTOR      cam_pos;
+            sceVu0FVECTOR      cam_ref;
+            float              angle;
+            float              distance;
+            float              height;
+            int                tile_x;
+            float              local_x;
+            int                tile_z;
+            float              local_z;
+            float              cam_local_x;
+            float              cam_local_y;
+            float              cam_local_z;
+            float              ref_local_x;
+            float              ref_local_y;
+            float              local_y;
+            float              ref_local_z;
             CDungeonEventData *event_data;
-            int event_count;
+            int                event_count;
 
             DbgMsg.length = sprintf(DbgMsg.text, " ---Infomation---\n");
             sceVu0CopyVector(pos, CharaMain.pos);
@@ -136,7 +136,7 @@ void DebugInfomationDraw(void) {
     char *main_sub_names[2] = {"MAIN", "SUB"};
     char *condition_names[6] = {"RESET", "STONE", "BIN2", "POISON", "CURSE", "NEBA2"};
     char *power_names[3] = {"HUMAN   ", "SUPERMAN", "ULTRAMAN"};
-    char bgm_text[32];
+    char  bgm_text[32];
     for (int i = 0; DebugInfoMsg[i] != NULL; i++) {
         if (DebugInfoNowCursor == i) {
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], ">>");
@@ -214,7 +214,7 @@ void DebugInfomationDraw(void) {
  * @address 0x1B46F0
  * @size 0xC8
  */
-void DebugInfomationInit(void) {
+void DebugInfomationInit() {
     DebugStatus[0] = 0;
     DebugStatus[1] = 0;
     DebugStatus[2] = 0;
@@ -287,7 +287,7 @@ static inline void ClearMapEvent(CDungeonMap *map) {
  * @address 0x1B47C0
  * @size 0xE78
  */
-int DebugInfomationIF(void) {
+int DebugInfomationIF() {
     int line_count;
 
     if (GamePad.Down(0x400)) {
@@ -639,8 +639,8 @@ int *center_ptr[7] = {center_sp, center_us, center_us, center_fr, center_gr, cen
 
 void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int alpha) {
     int *centers = center_ptr[LanguageCode];
-    int x = centers[dungeon] + 0x82;
-    int digit_x;
+    int  x = centers[dungeon] + 0x82;
+    int  digit_x;
 
     set2DSprite(Vif1Packet, texture, CRect_i_(0x82, 0xAA, 0x17C, 0x32), CRect_i_(0, 0, 0x17C, 0x32), alpha);
 
@@ -652,18 +652,15 @@ void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int al
     if (floor < 10) {
         x -= 0x13;
         digit_x = floor % 10 * 0x26;
-        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
-                    alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
     }
 
     if (floor >= 10 && floor < 100) {
         x -= 0x26;
         digit_x = floor / 10 * 0x26;
-        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
-                    alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
         digit_x = floor % 10 * 0x26;
-        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x26, 0xAA, 0x26, 0x32),
-                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x26, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
     }
 
     if (floor >= 100) {
@@ -671,25 +668,20 @@ void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int al
 
         digit_x = digit * 0x26;
         floor -= digit * 100;
-        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x39, 0xAA, 0x26, 0x32),
-                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x39, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
         digit_x = floor / 10 * 0x26;
-        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x13, 0xAA, 0x26, 0x32),
-                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x13, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
         digit_x = floor % 10 * 0x26;
-        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x13, 0xAA, 0x26, 0x32),
-                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x13, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
     }
 
     if (ura != 0) {
-        set2DSprite(Vif1Packet, texture, CRect_i_(0x10E, 0xE6, 0x64, 0x32), CRect_i_(0x114, 0x7C, 0x64, 0x32),
-                    alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(0x10E, 0xE6, 0x64, 0x32), CRect_i_(0x114, 0x7C, 0x64, 0x32), alpha);
         return;
     }
 
     if (UserStatus->res_limit_zone_current >= 0) {
-        set2DSprite(Vif1Packet, texture, CRect_i_(0xC8, 0xE6, 0xF0, 0x32), CRect_i_(0, 0x7C, 0xF0, 0x32),
-                    alpha);
+        set2DSprite(Vif1Packet, texture, CRect_i_(0xC8, 0xE6, 0xF0, 0x32), CRect_i_(0, 0x7C, 0xF0, 0x32), alpha);
     }
 }
 #endif
@@ -701,7 +693,7 @@ void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int al
  * @address 0x1B5640
  * @size 0x3C
  */
-void ClearGateKeyStack(void) {
+void ClearGateKeyStack() {
     for (int i = 0; i < 32; i++) {
         gateKeyStack[i] = -1;
     }
@@ -743,8 +735,7 @@ char *NameExchg(char *name, int language) {
     return nameblock;
 }
 
-int CCollisionData::Set(float *position, int damage, int life, float radius, float scale_rate, int target_mask,
-                        int kind, int flags, int attribute) {
+int CCollisionData::Set(float *position, int damage, int life, float radius, float scale_rate, int target_mask, int kind, int flags, int attribute) {
     for (int i = 0; i < 96; i++) {
         if (active[i] == 0) {
             active[i] = 1;
@@ -804,7 +795,7 @@ int CCollisionData::CheckHitUser(float *position, int mask, float height) {
         if (DistVector(user_position, hit_position) > hit[i].radius) {
             continue;
         }
-        int miss = 1;
+        int   miss = 1;
         float hit_top = hit[i].pos[1] + hit[i].radius;
         float hit_bottom = hit[i].pos[1] - hit[i].radius;
         if (!(hit_top < user_top) && hit_bottom < user_top) {

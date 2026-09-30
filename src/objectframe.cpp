@@ -18,7 +18,7 @@ void CObjectFrame::SetFrame(CFrameVu1 *frame, int level) {
 }
 
 void CObjectFrame::FrameObjectOnOff(char *name, int on) {
-    int i;
+    int     i;
     CFrame *found;
 
     if (name == NULL) {
@@ -50,8 +50,8 @@ void CObjectFrame::Draw() {
 void CObjectFrame::DrawLOD(float *distance, int lowest, int highest, int *out_level) {
     float local_to_world[4][4];
     float local_to_eye[4][4];
-    int lod;
-    int level;
+    int   lod;
+    int   level;
     float eye_distance;
 
     if (this->draw_on == 0) {
@@ -88,9 +88,7 @@ void CObjectFrame::DrawLOD(float *distance, int lowest, int highest, int *out_le
         this->frame[0]->SetRotation(this->rotation.x, this->rotation.y, this->rotation.z);
         this->frame[0]->GetLWMatrix(local_to_world);
         MulMatrix(local_to_eye, mgRenderInfo.view_scaled, local_to_world);
-        eye_distance = local_to_eye[3][0] * local_to_eye[3][0] +
-                       local_to_eye[3][1] * local_to_eye[3][1] +
-                       local_to_eye[3][2] * local_to_eye[3][2];
+        eye_distance = local_to_eye[3][0] * local_to_eye[3][0] + local_to_eye[3][1] * local_to_eye[3][1] + local_to_eye[3][2] * local_to_eye[3][2];
 
         level = 0;
         for (lod = 0; lod < 4; lod++) {

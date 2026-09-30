@@ -7,7 +7,6 @@
 // Forward declarations for the types these declarations name. The skeleton
 // headers are generated from the retail symbol table, which knows the type
 // names but not where they live.
-class CCPoly;
 class CFrameVu1;
 class CMapParts;
 class CRect_i_;
@@ -35,23 +34,23 @@ STATIC_ASSERT(sizeof(CEditAreaCell) == 0x1C);
  */
 class CEditArea {
 public:
-    int area_id;    /**< Selects the area's special grid rules. */
-    int map_no;     /**< Identifies the map represented by the grid. */
-    int width;      /**< Gives the active grid width in cells. */
-    int height;     /**< Gives the active grid height in cells. */
-    float offset_x; /**< Gives the grid origin on the world X axis. */
-    float offset_y; /**< Gives the grid origin on the world Y axis. */
-    float offset_z; /**< Gives the grid origin on the world Z axis. */
-    int unk_1c;
-    float unit_size;            /**< Gives one cell's horizontal world-space extent. */
-    float unit_alt;             /**< Gives one elevation unit's world-space extent. */
-    CEditAreaCell grid[16][16]; /**< Stores the editable cells in grid coordinates. */
-    int chain_work[16][16];     /**< Marks cells visited while following river chains. */
-    CFrameVu1 *grid_frame;      /**< Holds the frame used to render the grid overlay. */
-    int unk_202c;
-    CBoxVu0 parts_box;     /**< Bounds all occupied cells in world space. */
-    int grid_redraw;       /**< Set to have DrawGrid rebuild the grid overlay. */
-    int grid_redraw_count; /**< Draws left that rebuild the grid overlay. */
+    int           area_id;  /**< Selects the area's special grid rules. */
+    int           map_no;   /**< Identifies the map represented by the grid. */
+    int           width;    /**< Gives the active grid width in cells. */
+    int           height;   /**< Gives the active grid height in cells. */
+    float         offset_x; /**< Gives the grid origin on the world X axis. */
+    float         offset_y; /**< Gives the grid origin on the world Y axis. */
+    float         offset_z; /**< Gives the grid origin on the world Z axis. */
+    int           unk_1c;
+    float         unit_size;          /**< Gives one cell's horizontal world-space extent. */
+    float         unit_alt;           /**< Gives one elevation unit's world-space extent. */
+    CEditAreaCell grid[16][16];       /**< Stores the editable cells in grid coordinates. */
+    int           chain_work[16][16]; /**< Marks cells visited while following river chains. */
+    CFrameVu1    *grid_frame;         /**< Holds the frame used to render the grid overlay. */
+    int           unk_202c;
+    CBoxVu0       parts_box;         /**< Bounds all occupied cells in world space. */
+    int           grid_redraw;       /**< Set to have DrawGrid rebuild the grid overlay. */
+    int           grid_redraw_count; /**< Draws left that rebuild the grid overlay. */
 
     /**
      * Sets the active grid dimensions and world-space unit scales.
@@ -258,7 +257,7 @@ public:
      * @address 0x16ECF0
      * @size 0x1D8
      */
-    void RemakeGrid(void);
+    void RemakeGrid();
 
     /**
      * Copies the occupied-parts bounding box to the caller.
@@ -276,7 +275,7 @@ public:
      * @address 0x16EF00
      * @size 0x188
      */
-    void MakePartsBox(void);
+    void MakePartsBox();
 
     /**
      * Returns whether a world position lies inside the editable area.
@@ -348,7 +347,7 @@ public:
      * @address 0x16FCA0
      * @size 0x54
      */
-    void ChainWorkClear(void);
+    void ChainWorkClear();
 
     /**
      * Returns whether two river cells belong to one connected chain.
@@ -366,7 +365,7 @@ public:
      * @address 0x16FEF0
      * @size 0xD0
      */
-    void DrawGrid(void);
+    void DrawGrid();
 
     /**
      * Resets every active grid cell to its empty state.
@@ -375,7 +374,7 @@ public:
      * @address 0x16FFC0
      * @size 0x98
      */
-    void Clear(void);
+    void Clear();
 
     /**
      * Initializes the editable area to an empty 16 by 16 grid.
@@ -384,7 +383,7 @@ public:
      * @address 0x170060
      * @size 0x78
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Selects the map number and area identifier represented by the grid.
@@ -402,7 +401,7 @@ public:
      * @address 0x1700F0
      * @size 0xC
      */
-    int GetMapNo(void);
+    int GetMapNo();
 
     /**
      * Returns the selected area identifier.
@@ -411,7 +410,7 @@ public:
      * @address 0x170100
      * @size 0xC
      */
-    int GetAreaID(void);
+    int GetAreaID();
 
     /**
      * Selects the frame used to render the grid overlay.
@@ -429,7 +428,7 @@ public:
      * @address 0x170120
      * @size 0xC
      */
-    CFrameVu1 *GetGridFrame(void);
+    CFrameVu1 *GetGridFrame();
 
     /**
      * Sets the world-space origin of the editable grid.
@@ -456,7 +455,7 @@ public:
      * @address 0x170170
      * @size 0xC
      */
-    int GetWidth(void);
+    int GetWidth();
 
     /**
      * Returns the active grid height.
@@ -465,7 +464,7 @@ public:
      * @address 0x170180
      * @size 0xC
      */
-    int GetHeight(void);
+    int GetHeight();
 
     /**
      * Adds an integral altitude delta to one grid coordinate.
@@ -483,7 +482,7 @@ public:
      * @address 0x170200
      * @size 0xC
      */
-    float GetUnitSize(void);
+    float GetUnitSize();
 
     /**
      * Returns one elevation unit's world-space extent.
@@ -492,7 +491,7 @@ public:
      * @address 0x170210
      * @size 0xC
      */
-    float GetUnitAlt(void);
+    float GetUnitAlt();
 
     /**
      * Constructs an initialized editable area.
@@ -501,7 +500,7 @@ public:
      * @address 0x170220
      * @size 0x30
      */
-    CEditArea(void);
+    CEditArea();
 };
 
 STATIC_ASSERT(sizeof(CEditArea) == 0x2060);

@@ -21,7 +21,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-int CMainItemModel::GetFreeCashNo(void) {
+int CMainItemModel::GetFreeCashNo() {
     for (int i = 0; i < 6; i++) {
         if (cash[i] == NULL) {
             return i;
@@ -30,7 +30,7 @@ int CMainItemModel::GetFreeCashNo(void) {
     return -1;
 }
 
-int CMainItemModel::GetFreeModelNo(void) {
+int CMainItemModel::GetFreeModelNo() {
     for (int i = 0; i < 16; i++) {
         if (model[i] == -1) {
             return i;
@@ -39,15 +39,14 @@ int CMainItemModel::GetFreeModelNo(void) {
     return -1;
 }
 
-int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data,
-                                 int texture_size) {
+int CMainItemModel::SetCashModel(int item_no, unsigned int *model_data, unsigned int *texture_data, int texture_size) {
     int slot = GetFreeCashNo();
 
     if (slot == -1) {
         return -1;
     }
     BtItemCashArea[slot].Reset();
-    u_char *texture_copy = BtItemCashArea[slot].base + BtItemCashArea[slot].used * 16;
+    u_char         *texture_copy = BtItemCashArea[slot].base + BtItemCashArea[slot].used * 16;
     CDataAlloc2<1> *area = &BtItemCashArea[slot];
     area->Alloc((texture_size >> 4) + 1);
     memcpy(texture_copy, texture_data, texture_size);
@@ -94,7 +93,7 @@ int CMainItemModel::SetHandModel(int source_no) {
     return hand_no;
 }
 
-void CMainItemModel::AllReleasItem(void) {
+void CMainItemModel::AllReleasItem() {
     for (int i = 0; i < 16; i++) {
         switch (model[i]) {
             case 1:
@@ -119,13 +118,13 @@ int CMainItemModel::SetThrowModel(int source_no, float *position, float *heading
     return slot;
 }
 
-void CMainItemModel::Draw(void) {
+void CMainItemModel::Draw() {
     sceVu0FVECTOR position;
     sceVu0FVECTOR rotation;
-    CFrame *hand = CharaMain.frame->SearchFrame("item");
-    int i;
-    s32 *cash_no;
-    CFrame *placement;
+    CFrame       *hand = CharaMain.frame->SearchFrame("item");
+    int           i;
+    s32          *cash_no;
+    CFrame       *placement;
 
     for (i = 0; i < 16; i++) {
         switch (model[i]) {
@@ -172,13 +171,13 @@ void CMainItemModel::Draw(void) {
 
 char MainItemRemoveMessage[] __attribute__((section(".rodata"))) = "remove !!\n";
 char MainItemHandMessage[] __attribute__((section(".rodata"))) = "code = %d, lock = %d\n";
-int ItemThrowStep(float *position, float *velocity);
+int  ItemThrowStep(float *position, float *velocity);
 
-void CMainItemModel::Step(void) {
-    int i;
-    int step_result;
-    CFrame *placement;
-    int item_no;
+void CMainItemModel::Step() {
+    int           i;
+    int           step_result;
+    CFrame       *placement;
+    int           item_no;
     sceVu0FVECTOR position;
     sceVu0FVECTOR up = {0.0f, 1.0f, 0.0f, 0.0f};
 
@@ -257,7 +256,7 @@ void CMainItemModel::Step(void) {
     }
 }
 
-void CMainItemModel::Initialize(void) {
+void CMainItemModel::Initialize() {
     for (int i = 0; i < 6; i++) {
         cash[i] = NULL;
         cash_lock[i] = 0;
@@ -270,7 +269,7 @@ void CMainItemModel::Initialize(void) {
     }
 }
 
-int CActiveItemPack::CheckStatusType(void) {
+int CActiveItemPack::CheckStatusType() {
     int type;
 
     if (now <= 0) {

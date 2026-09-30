@@ -38,7 +38,7 @@ class CDispCtrl {
 public:
     float rate;  /**< Current curtain alpha on the GS zero-to-128 scale. */
     float speed; /**< Amount that the curtain alpha changes each step. */
-    s32 mode;    /**< Selects fading out, fading in, or a fixed alpha. */
+    s32   mode;  /**< Selects fading out, fading in, or a fixed alpha. */
 
     /**
      * Starts increasing the curtain alpha at the requested speed.
@@ -74,7 +74,7 @@ public:
      * @address 0x13E670
      * @size 0xC
      */
-    float GetRate(void);
+    float GetRate();
 
     /**
      * Advances and draws a curtain that is fading to black.

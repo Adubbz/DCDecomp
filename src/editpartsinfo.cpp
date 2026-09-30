@@ -94,14 +94,14 @@ int CEditPartsInfo::GetNextParts(int index) {
     }
 }
 
-void CEditPartsInfo::Clear(void) {
+void CEditPartsInfo::Clear() {
     for (int plot = 0; plot < 24; plot++) {
         parts[plot].placed = 0;
     }
 }
 
 void CEditPartsInfo::Save(int georama_no, CSaveData *save_data) {
-    int plot;
+    int              plot;
     SV_GEORAMA_DATA *georama = save_data->GetGrdData(georama_no);
     if (georama == NULL) {
         return;
@@ -159,12 +159,12 @@ void CEditPartsInfo::Load(int georama_no, CSaveData *save_data, int load_request
 }
 
 void CEditPartsInfo::Initialize(int georama_no) {
-    int plot;
-    int name_no;
-    char **names;
-    int element;
+    int              plot;
+    int              name_no;
+    char           **names;
+    int              element;
     EDIT_PARTS_ATRA *source;
-    EDIT_PARTS_ATRA empty_part;
+    EDIT_PARTS_ATRA  empty_part;
 
     memset(&empty_part, 0, sizeof(empty_part));
     for (element = 0; element < 6; element++) {
@@ -193,8 +193,7 @@ void CEditPartsInfo::Initialize(int georama_no) {
             names[0] = NULL;
             for (name_no = 0; name_no < 4; name_no++) {
                 names[name_no] = NULL;
-                if (source->elements[element].names[name_no] != NULL &&
-                    source->elements[element].names[name_no][0] != '\0') {
+                if (source->elements[element].names[name_no] != NULL && source->elements[element].names[name_no][0] != '\0') {
                     names[name_no] = source->elements[element].names[name_no];
                 }
             }

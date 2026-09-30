@@ -24,21 +24,21 @@
  * Holds the state of the name-entry screen.
  */
 struct NAME_SELECT {
-    s16 chara_no;      /**< The party member being named. */
-    s16 area;          /**< The part of the screen the cursor is in. */
-    s16 name_pos;      /**< The position in the name the next character goes to. */
-    s16 side_row;      /**< The row of the voicing column the cursor is on, or 0 when it is on the keyboard. */
-    s16 pushed_tab;    /**< The tab that was last pressed. */
-    s16 input_mode;    /**< The keyboard being shown. */
-    s32 cursor;        /**< The key or tab the cursor is on. */
-    s16 state;         /**< What the screen is doing: fading, flashing a tab or leaving. */
-    s32 state_count;   /**< How many frames the state has lasted. */
-    float cursor_x;    /**< Where the hand cursor is drawn across the screen. */
-    float cursor_y;    /**< Where the hand cursor is drawn down the screen. */
-    s32 frame;         /**< How many frames the screen has been drawn, for the cursor's sway. */
-    s16 language;      /**< The language the menus are in. */
-    s16 texture_block; /**< The texture block the screen's textures are read into. */
-    s16 loaded;        /**< Whether the screen's textures have been read. */
+    s16   chara_no;      /**< The party member being named. */
+    s16   area;          /**< The part of the screen the cursor is in. */
+    s16   name_pos;      /**< The position in the name the next character goes to. */
+    s16   side_row;      /**< The row of the voicing column the cursor is on, or 0 when it is on the keyboard. */
+    s16   pushed_tab;    /**< The tab that was last pressed. */
+    s16   input_mode;    /**< The keyboard being shown. */
+    s32   cursor;        /**< The key or tab the cursor is on. */
+    s16   state;         /**< What the screen is doing: fading, flashing a tab or leaving. */
+    s32   state_count;   /**< How many frames the state has lasted. */
+    float cursor_x;      /**< Where the hand cursor is drawn across the screen. */
+    float cursor_y;      /**< Where the hand cursor is drawn down the screen. */
+    s32   frame;         /**< How many frames the screen has been drawn, for the cursor's sway. */
+    s16   language;      /**< The language the menus are in. */
+    s16   texture_block; /**< The texture block the screen's textures are read into. */
+    s16   loaded;        /**< Whether the screen's textures have been read. */
 };
 
 STATIC_ASSERT(sizeof(NAME_SELECT) == 0x2C);
@@ -74,10 +74,20 @@ CTexture *EuroTex;
 s8 InputModeOrikaeshi[4] = {10, 10, 13, 10};
 
 /** How far the cursor moves across and down each keyboard, per key. */
-s8 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1A}, {0x26, 0x1A}};
+s8 InputModeMovetbl[4][2] = {
+    {0x26, 0x1A},
+    {0x26, 0x1A},
+    {0x22, 0x1A},
+    {0x26, 0x1A}
+};
 #else
 /** How far the cursor moves across and down each keyboard, per key. */
-s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0x1A}};
+s16 InputModeMovetbl[4][2] = {
+    {0x26, 0x1A},
+    {0x26, 0x1A},
+    {0x22, 0x1E},
+    {0x26, 0x1A}
+};
 
 /** How many keys each keyboard has in a row. */
 s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
@@ -93,7 +103,7 @@ s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
  * @address 0x238450
  * @size 0x48
  */
-void GlobalNameInit(void) {
+void GlobalNameInit() {
     for (int chara_no = 0; chara_no < 6; chara_no++) {
         NameDefaultSet(chara_no);
     }
@@ -214,11 +224,10 @@ void DrawCharaName(int chara_no, int x, int y, int brightness, int blend_mode) {
 #endif
 
     for (int slot = 0; slot < 10; slot++) {
-        int cell_x;
-        int cell_y;
+        int       cell_x;
+        int       cell_y;
         CTexture *texture = GetNameTextureInfo(textures, CharaName[slot], cell_x, cell_y);
-        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 22, 22), CRect_i_(cell_x, cell_y, 22, 22), brightness, brightness,
-                         brightness, blend_mode);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 22, 22), CRect_i_(cell_x, cell_y, 22, 22), brightness, brightness, brightness, blend_mode);
         draw_x += 22;
     }
 }
@@ -232,18 +241,26 @@ void DrawCharaName(int chara_no, int x, int y, int brightness, int blend_mode) {
  */
 void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
     float inset = 0.1f * (NameSelect.frame % 29);
-    int edge[4];
+    int   edge[4];
 
     edge[0] = x + inset;
     edge[1] = y + inset;
     edge[2] = x + size - inset;
     edge[3] = y + size - inset;
-    s16 corner[4][2] = {{edge[0], edge[1]}, {edge[2], edge[1]}, {edge[0], edge[3]}, {edge[2], edge[3]}};
-    s16 cell[4][2] = {{480, 296}, {496, 296}, {480, 312}, {496, 312}};
+    s16 corner[4][2] = {
+        {edge[0], edge[1]},
+        {edge[2], edge[1]},
+        {edge[0], edge[3]},
+        {edge[2], edge[3]}
+    };
+    s16 cell[4][2] = {
+        {480, 296},
+        {496, 296},
+        {480, 312},
+        {496, 312}
+    };
     for (int corner_no = 0; corner_no < 4; corner_no++) {
-        DrawMenu2DSprite(NameTemp, CRect_i_(corner[corner_no][0], corner[corner_no][1], 12, 12),
-                         CRect_i_(cell[corner_no][0], cell[corner_no][1], 16, 16), (u8) brightness, (u8) brightness,
-                         (u8) brightness, blend_mode);
+        DrawMenu2DSprite(NameTemp, CRect_i_(corner[corner_no][0], corner[corner_no][1], 12, 12), CRect_i_(cell[corner_no][0], cell[corner_no][1], 16, 16), (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
     }
 }
 
@@ -270,15 +287,12 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     }
     DrawMenu2DSprite(CharaFace, CRect_i_(left, top, 88, 88), CRect_i_(face_x, face_y, 106, 106), blend_mode);
     DrawMenuHelpWindow(TexManager.GetTexture("window", -1), -1, left + 102, top + 16, 8.6f, 1.0f, blend_mode);
-    DrawMenu2DSprite(NameTemp, CRect_i_(left + 97, top + 16, 26, 23), CRect_i_(0, 256, 26, 24), (u8) brightness,
-                     (u8) brightness, (u8) brightness, blend_mode);
-    DrawMenu2DSprite(NameTemp, CRect_i_(left + 123, top + 16, 210, 23), CRect_i_(26, 256, 172, 24), (u8) brightness,
-                     (u8) brightness, (u8) brightness, blend_mode);
-    DrawMenu2DSprite(NameTemp, CRect_i_(left + 333, top + 16, 26, 23), CRect_i_(198, 256, 26, 24), (u8) brightness,
-                     (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 97, top + 16, 26, 23), CRect_i_(0, 256, 26, 24), (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 123, top + 16, 210, 23), CRect_i_(26, 256, 172, 24), (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
+    DrawMenu2DSprite(NameTemp, CRect_i_(left + 333, top + 16, 26, 23), CRect_i_(198, 256, 26, 24), (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
 
     MenuTextureReload(AtoraNameMes.tex_block);
-    int message_length = AtoraNameMes.GetMesLen_system(chara_no - 1220);
+    int   message_length = AtoraNameMes.GetMesLen_system(chara_no - 1220);
     float char_width[7] = {18.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f, 12.0f};
     float title_char_width = char_width[NameSelect.language];
     AtoraNameMes.line_pos[0].x = 290.0f - title_char_width * (message_length / 2.0f);
@@ -315,8 +329,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
         if (NameSelect.area == 7 && name_length <= slot) {
             underline_brightness = 0x38;
         }
-        DrawMenu2DSprite(NameTemp, CRect_i_(left, top, 18, 2), CRect_i_(470, 328, 18, 2), (u8) underline_brightness, (u8) underline_brightness,
-                         (u8) underline_brightness, blend_mode);
+        DrawMenu2DSprite(NameTemp, CRect_i_(left, top, 18, 2), CRect_i_(470, 328, 18, 2), (u8) underline_brightness, (u8) underline_brightness, (u8) underline_brightness, blend_mode);
         left += 22;
     }
 
@@ -338,8 +351,7 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
                     bob_frame = 0;
                 }
                 top = (top - 20) + 4.0f * sinf(0.20943952f * (bob_frame % 31));
-                DrawMenu2DSprite(NameTemp, CRect_i_(left + 20, top, 24, 24), CRect_i_(488, 328, 24, 24), (u8) brightness,
-                                 (u8) brightness, (u8) brightness, blend_mode);
+                DrawMenu2DSprite(NameTemp, CRect_i_(left + 20, top, 24, 24), CRect_i_(488, 328, 24, 24), (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
             }
             break;
     }
@@ -352,25 +364,25 @@ s8 menu_kigoutbl[40] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18
 /** Character code of each key on the accented-character keyboard, per language and row; -2 ends a row. */
 s16 menu_euro_codetbl[5][2][13] = {
     {
-        {260, 261, 262, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {260, 261, 262, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1},
-    },
+     {260, 261, 262, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+     {260, 261, 262, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1},
+     },
     {
-        {260, 290, 270, 300, 280, 265, 295, 275, 305, 285, -2, -1, -1},
-        {262, 292, 282, 267, 297, 287, 291, 296, 312, 313, -2, -1, -1},
-    },
+     {260, 290, 270, 300, 280, 265, 295, 275, 305, 285, -2, -1, -1},
+     {262, 292, 282, 267, 297, 287, 291, 296, 312, 313, -2, -1, -1},
+     },
     {
-        {260, 300, 280, 265, 305, 285, 320, -2, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-    },
+     {260, 300, 280, 265, 305, 285, 320, -2, -1, -1, -1, -1, -1},
+     {-1, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+     },
     {
-        {261, 291, 271, 301, 281, 266, 296, 276, 306, 286, -2, -1, -1},
-        {262, 292, 272, 302, 282, 267, 297, 277, 307, 285, -1, -1, 0},
-    },
+     {261, 291, 271, 301, 281, 266, 296, 276, 306, 286, -2, -1, -1},
+     {262, 292, 272, 302, 282, 267, 297, 277, 307, 285, -1, -1, 0},
+     },
     {
-        {261, 291, 271, 301, 281, 266, 296, 276, 306, 286, 280, 285, -2},
-        {-1, -1, -1, -2, -1, -1, -2, -1, -1, -1, -1, -1, -1},
-    },
+     {261, 291, 271, 301, 281, 266, 296, 276, 306, 286, 280, 285, -2},
+     {-1, -1, -1, -2, -1, -1, -2, -1, -1, -1, -1, -1, -1},
+     },
 };
 
 /** How many rows of the accented-character keyboard each language uses. */
@@ -402,10 +414,8 @@ void DrawEuroSpecialFont(int x, int y, int language, int brightness, int blend_m
                 cell_y = (char_code / 10) * 22;
                 key_x = x + column * 34;
                 key_y = y + row * 26;
-                DrawMenu2DSprite(EuroTex, CRect_i_(key_x + 1, key_y + 1, 22, 22), CRect_i_(cell_x, cell_y, 22, 23), 0, 0,
-                                 0, (blend_mode * 80) >> 7);
-                DrawMenu2DSprite(EuroTex, CRect_i_(key_x, key_y, 22, 22), CRect_i_(cell_x, cell_y, 22, 23),
-                                 (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
+                DrawMenu2DSprite(EuroTex, CRect_i_(key_x + 1, key_y + 1, 22, 22), CRect_i_(cell_x, cell_y, 22, 23), 0, 0, 0, (blend_mode * 80) >> 7);
+                DrawMenu2DSprite(EuroTex, CRect_i_(key_x, key_y, 22, 22), CRect_i_(cell_x, cell_y, 22, 23), (u8) brightness, (u8) brightness, (u8) brightness, blend_mode);
             }
         }
     }
@@ -423,12 +433,12 @@ void DrawEuroSpecialFont(int x, int y, int language, int brightness, int blend_m
 static s16 Get_NameTemp_PutX(int language, int tab) {
     s16 tab_x[7][11] = {
         {40, 125, 209, 261, 311, 378, 40, 74, 111, 168, 223},
-        {0, 0, 40, 223, 303, 384, 40, 74, 111, 168, 223},
-        {0, 0, 40, 144, 303, 384, 40, 74, 111, 168, 223},
-        {0, 0, 40, 140, 303, 384, 40, 74, 111, 168, 223},
-        {0, 0, 40, 150, 303, 384, 40, 74, 111, 168, 223},
-        {0, 0, 40, 142, 303, 384, 40, 74, 111, 168, 223},
-        {0, 0, 40, 132, 283, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  223, 303, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  144, 303, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  140, 303, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  150, 303, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  142, 303, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  132, 283, 384, 40, 74, 111, 168, 223},
     };
     return tab_x[language][tab];
 }
@@ -472,14 +482,14 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
 
     int language = NameSelect.language;
     int tab_height = 0x18;
-    u8 tab_width[7][11] = {
-        {78, 78, 44, 44, 60, 52, 24, 24, 48, 48, 112},
-        {0, 0, 176, 75, 74, 70, 24, 24, 48, 48, 112},
-        {0, 0, 96, 155, 74, 70, 24, 24, 48, 48, 112},
-        {0, 0, 92, 159, 76, 70, 24, 24, 48, 48, 112},
-        {0, 0, 103, 148, 74, 70, 24, 24, 48, 48, 112},
-        {0, 0, 94, 157, 75, 70, 24, 24, 48, 48, 112},
-        {0, 0, 86, 145, 95, 70, 24, 24, 48, 48, 112},
+    u8  tab_width[7][11] = {
+        {78, 78, 44,  44,  60, 52, 24, 24, 48, 48, 112},
+        {0,  0,  176, 75,  74, 70, 24, 24, 48, 48, 112},
+        {0,  0,  96,  155, 74, 70, 24, 24, 48, 48, 112},
+        {0,  0,  92,  159, 76, 70, 24, 24, 48, 48, 112},
+        {0,  0,  103, 148, 74, 70, 24, 24, 48, 48, 112},
+        {0,  0,  94,  157, 75, 70, 24, 24, 48, 48, 112},
+        {0,  0,  86,  145, 95, 70, 24, 24, 48, 48, 112},
     };
 
     if (NameSelect.state == 6) {
@@ -512,8 +522,8 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
     }
     DrawMenu2DSprite(NameTemp, CRect_i_(draw_x, draw_y, tab_width[language][input_mode], 0x18), CRect_i_(tex_u, 0x148, tab_width[language][input_mode], 0x18), brightness, brightness, brightness, blend_mode);
 
-    int base_x = x + 0x38;
-    int base_y = y + 0x54;
+    int       base_x = x + 0x38;
+    int       base_y = y + 0x54;
     CTexture *texture;
 
     draw_y = base_y;
@@ -637,11 +647,11 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
 
     s16 tab_x[2][11] = {
         {40, 125, 209, 261, 311, 378, 40, 74, 111, 168, 223},
-        {0, 0, 40, 223, 303, 384, 40, 74, 111, 168, 223},
+        {0,  0,   40,  223, 303, 384, 40, 74, 111, 168, 223},
     };
     s16 tab_width[2][11] = {
-        {78, 78, 44, 44, 60, 52, 24, 24, 48, 48, 112},
-        {0, 0, 176, 75, 74, 70, 24, 24, 48, 48, 112},
+        {78, 78, 44,  44, 60, 52, 24, 24, 48, 48, 112},
+        {0,  0,  176, 75, 74, 70, 24, 24, 48, 48, 112},
     };
     int tab_height = 0x18;
 
@@ -675,8 +685,8 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
     }
     DrawMenu2DSprite(NameTemp, CRect_i_(draw_x, draw_y, tab_width[language][input_mode], 0x18), CRect_i_(tex_u, 0x148, tab_width[language][input_mode], 0x18), brightness, brightness, brightness, blend_mode);
 
-    int base_x = x + 0x38;
-    int base_y = y + 0x54;
+    int       base_x = x + 0x38;
+    int       base_y = y + 0x54;
     CTexture *texture;
 
     draw_y = base_y;
@@ -839,7 +849,7 @@ static int NameCompare(short *first, short *second) {
  */
 int CheckName() {
     s16 blank_names[2][10] = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0,   0,   0,   0,   0,   0,   0,   0,   0,   0  },
         {230, 230, 230, 230, 230, 230, 230, 230, 230, 230},
     };
     int blank_count = 0;
@@ -872,11 +882,11 @@ int CheckName() {
  * @address 0x239BA0
  * @size 0xC9C
  */
-void NameEnterDraw(void) {
-    int language;
-    int chara_no;
-    int fade;
-    int brightness;
+void NameEnterDraw() {
+    int   language;
+    int   chara_no;
+    int   fade;
+    int   brightness;
     float cursor_x;
     float cursor_y;
 
@@ -888,7 +898,11 @@ void NameEnterDraw(void) {
     if (NameSelect.loaded == 0) {
         ReadBG();
         if (ReadBGSync() == 0) {
-            LOADTEXTURE_INFO2 info[3] = {{NameEntryImageDescriptor, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 info[3] = {
+                {NameEntryImageDescriptor, 0, 0},
+                {NULL,                     0, 0},
+                {NULL,                     0, 0}
+            };
 
             info[0].block_no = NameSelect.texture_block;
             info[1].block_no = NameSelect.texture_block;
@@ -913,7 +927,15 @@ void NameEnterDraw(void) {
             InitMenuMesSet(3, messages);
             CommonMenuMes2.SetBuff(messages2);
 
-            s8 char_size[7][2] = {{18, 22}, {11, 20}, {11, 20}, {11, 20}, {11, 20}, {11, 20}, {11, 20}};
+            s8 char_size[7][2] = {
+                {18, 22},
+                {11, 20},
+                {11, 20},
+                {11, 20},
+                {11, 20},
+                {11, 20},
+                {11, 20}
+            };
             CommonMenuMes2.char_width = char_size[NameSelect.language][0];
             CommonMenuMes2.char_height = char_size[NameSelect.language][1];
             CommonMenuMes2.stay_frame = 0;
@@ -1157,7 +1179,7 @@ void NameEnterDraw(void) {
  * @size 0x1F28
  */
 #ifdef PAL
-s32 NameEnterKey(void) {
+s32 NameEnterKey() {
     int language;
     int chara_no;
     int cursor;
@@ -1570,8 +1592,7 @@ s32 NameEnterKey(void) {
                                 if (0 < slot) {
                                     int previous_code = CharaName[slot - 1];
 
-                                    if ((previous_code >= 6 && previous_code < 21) || (previous_code >= 26 && previous_code < 31) || (previous_code >= 87 && previous_code < 102) ||
-                                        (previous_code >= 107 && previous_code < 112)) {
+                                    if ((previous_code >= 6 && previous_code < 21) || (previous_code >= 26 && previous_code < 31) || (previous_code >= 87 && previous_code < 102) || (previous_code >= 107 && previous_code < 112)) {
                                         CharaName[slot - 1] += 50;
                                     } else if (previous_code == 3) {
                                         CharaName[slot - 1] = 81;
@@ -1898,7 +1919,7 @@ s32 NameEnterKey(void) {
     return 0;
 }
 #else
-s32 NameEnterKey(void) {
+s32 NameEnterKey() {
     int language;
     int chara_no;
     int cursor;
@@ -2321,8 +2342,7 @@ s32 NameEnterKey(void) {
                                 if (0 < slot) {
                                     int previous_code = CharaName[slot - 1];
 
-                                    if ((previous_code >= 6 && previous_code < 21) || (previous_code >= 26 && previous_code < 31) || (previous_code >= 87 && previous_code < 102) ||
-                                        (previous_code >= 107 && previous_code < 112)) {
+                                    if ((previous_code >= 6 && previous_code < 21) || (previous_code >= 26 && previous_code < 31) || (previous_code >= 87 && previous_code < 102) || (previous_code >= 107 && previous_code < 112)) {
                                         CharaName[slot - 1] += 50;
                                     } else if (previous_code == 3) {
                                         CharaName[slot - 1] = 81;
@@ -2409,11 +2429,9 @@ s32 NameEnterKey(void) {
                 CharaName[slot] = 68;
             } else if (old_code == 68) {
                 CharaName[slot] = 18;
-            } else if ((old_code >= 6 && old_code < 21) || (old_code >= 26 && old_code < 31) || (old_code >= 87 && old_code < 102) ||
-                       (old_code >= 107 && old_code < 112)) {
+            } else if ((old_code >= 6 && old_code < 21) || (old_code >= 26 && old_code < 31) || (old_code >= 87 && old_code < 102) || (old_code >= 107 && old_code < 112)) {
                 CharaName[slot] += 50;
-            } else if ((old_code >= 56 && old_code < 71) || (old_code >= 76 && old_code < 81) || (old_code >= 137 && old_code < 152) ||
-                       (old_code >= 157 && old_code < 162)) {
+            } else if ((old_code >= 56 && old_code < 71) || (old_code >= 76 && old_code < 81) || (old_code >= 137 && old_code < 152) || (old_code >= 157 && old_code < 162)) {
                 CharaName[slot] -= 50;
             }
             if (old_code >= 162 && old_code < 188) {
@@ -2655,7 +2673,7 @@ s32 NameEnterKey(void) {
 void NameDefaultSet(int chara_no) {
     int language = GetMenuLangFlag();
     s16 default_names[7][6][11] = {
-        {{20, 1, 46}, {12, 47, 5}, {60, 43, 222}, {41, 77, 222}, {3, 46, 56, 56}, {5, 63, 35, 46, 70}},
+        {{20, 1, 46},          {12, 47, 5},          {60, 43, 222},        {41, 77, 222},        {3, 46, 56, 56},                {5, 63, 35, 46, 70}           },
         {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
         {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
         {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
@@ -2664,7 +2682,7 @@ void NameDefaultSet(int chara_no) {
         {{181, 202, 188, 201}, {185, 196, 188, 202}, {168, 202, 205, 202}, {179, 208, 189, 212}, {182, 201, 194, 188, 194, 188}, {176, 206, 200, 202, 201, 191}},
     };
     s16 *name = SaveData->GetCharaName(chara_no);
-    int length;
+    int  length;
 
     for (length = 0; default_names[language][chara_no][length] != 0 && length < 10; length++) {
         name[length] = default_names[language][chara_no][length];
@@ -2815,12 +2833,12 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int bl
  * @size 0x284
  */
 void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGBA top_color, spRGBA bottom_color) {
-    spRGBA shadow_top = {10, 10, 10, top_color.a};
-    spRGBA shadow_bottom = {10, 10, 10, bottom_color.a};
-    int condensed;
-    int draw_x;
+    spRGBA    shadow_top = {10, 10, 10, top_color.a};
+    spRGBA    shadow_bottom = {10, 10, 10, bottom_color.a};
+    int       condensed;
+    int       draw_x;
     CTexture *texture;
-    int last;
+    int       last;
 
     last = 9;
     while (name[last] == 0 && last > 0) {
@@ -2849,8 +2867,7 @@ void DrawSaveBoardCharaName2(int x, int y, s16 *name, CTexture **textures, spRGB
         texture = GetNameTextureInfo(textures, name[last], cell_x, cell_y);
         CRect_i_ cell_rect(cell_x, cell_y, 0x16, 0x17);
 
-        DrawMenu2DSprite(texture, CRect_i_(draw_x + 2, y + 2, 0x16, 0x15), cell_rect, &shadow_top, &shadow_top,
-                         &shadow_bottom, &shadow_bottom);
+        DrawMenu2DSprite(texture, CRect_i_(draw_x + 2, y + 2, 0x16, 0x15), cell_rect, &shadow_top, &shadow_top, &shadow_bottom, &shadow_bottom);
         DrawMenu2DSprite(texture, CRect_i_(draw_x, y, 0x16, 0x15), cell_rect, &top_color, &top_color, &bottom_color, &bottom_color);
 
         int kerning_step = 0;
@@ -2874,7 +2891,7 @@ int GetMsgLengthCharaName(int chara_no) {
     }
 
     s16 *name = SaveData->GetCharaName(chara_no);
-    int length = 0;
+    int  length = 0;
 
     while (*name != 0 && length < 10) {
         name++;
@@ -2928,7 +2945,11 @@ int OpeningBookKey() {
     switch (OpenBook.step) {
         case 0:
             if (OpenBook.open == 0 && ReadBGSync() == 0) {
-                LOADTEXTURE_INFO2 info[3] = {{"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                LOADTEXTURE_INFO2 info[3] = {
+                    {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
+                    {NULL,                                       0, 0},
+                    {NULL,                                       0, 0}
+                };
 
                 info[0].block_no = OpenBook.tex_block;
                 info[1].block_no = OpenBook.tex_block;
@@ -3065,7 +3086,7 @@ int OpeningBookKey() {
  * @address 0x23D580
  * @size 0x134
  */
-void OpeningBookDraw(void) {
+void OpeningBookDraw() {
     setbilinear(0);
     AllFadeForMenu(0x80);
     if (OpenBook.open == 0) {

@@ -30,11 +30,11 @@
 /* Shared helpers: the IOP midi bridge, motion interpolation, collision and
  * ground queries, and 2D sprite setup. */
 
-static s32 sbuff[16];           // RPC argument and response storage shared by MIDI calls.
-static sceSifClientData gCd;    // Client state bound to the EZMIDI IOP server.
-static sceSifDmaData transData; // Descriptor reused for synchronous EE-to-IOP transfers.
+static s32              sbuff[16]; // RPC argument and response storage shared by MIDI calls.
+static sceSifClientData gCd;       // Client state bound to the EZMIDI IOP server.
+static sceSifDmaData    transData; // Descriptor reused for synchronous EE-to-IOP transfers.
 
-int ezMidiInit(void) {
+int ezMidiInit() {
     s32 wait;
 
     sceSifInitRpc(0);
@@ -65,12 +65,10 @@ int ezMidi(int command, int argument) {
         receive_size = 64;
     }
     if ((command & 0x1000) != 0) {
-        sceSifCallRpc(&gCd, command, 0, (void *) argument, 64, (void *) sbuff,
-                      receive_size, 0, 0);
+        sceSifCallRpc(&gCd, command, 0, (void *) argument, 64, (void *) sbuff, receive_size, 0, 0);
     } else {
         sbuff[0] = argument;
-        sceSifCallRpc(&gCd, command, 0, (void *) sbuff, 16, (void *) sbuff,
-                      receive_size, 0, 0);
+        sceSifCallRpc(&gCd, command, 0, (void *) sbuff, 16, (void *) sbuff, receive_size, 0, 0);
     }
     return sbuff[0];
 }
@@ -161,8 +159,8 @@ static inline int SearchMotKey(Mot_List *list, u_int frame) {
 }
 
 Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
-    int key;
-    int next;
+    int   key;
+    int   next;
     float t;
 
     key = SearchMotKey(list, state->frame);
@@ -189,12 +187,12 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
         t = state->blend;
     }
     if (!(t < 0.0f) && t <= 1.0f && key < list->key_count && next < list->key_count) {
-        float one_minus_t;
+        float         one_minus_t;
         sceVu0FVECTOR value;
         sceVu0FVECTOR rotation;
         sceVu0FVECTOR from;
         sceVu0FVECTOR to;
-        CFrameVu1 *target = &((CFrameVu1 *) frame)[list->frame];
+        CFrameVu1    *target = &((CFrameVu1 *) frame)[list->frame];
 
         switch (list->type) {
             case 0:
@@ -244,10 +242,10 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 target->world_valid = 0;
                 break;
             case 12: {
-                int vertex;
-                MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                int            vertex;
+                MDT_HEADER    *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
-                u_int frame_no;
+                u_int          frame_no;
 
                 target->attr.remake_pending = 1;
                 frame_no = list->frame;
@@ -303,38 +301,34 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
                 }
                 break;
             case 40: {
-                MDT_HEADER *model;
+                MDT_HEADER   *model;
                 MDT_MATERIAL *material;
 
                 one_minus_t = 1.0f - t;
                 model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
-                material[list->target].diffuse[3] =
-                    1.0f - (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]);
+                material[list->target].diffuse[3] = 1.0f - (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]);
                 target->attr.remake_pending = 2;
                 break;
             }
             case 41: {
-                MDT_HEADER *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
+                MDT_HEADER   *model = (MDT_HEADER *) target->GetVisual()->GetMDTDataAddress();
                 MDT_MATERIAL *material = (MDT_MATERIAL *) ((u_char *) model + model->info_ofs);
 
-                sceVu0InterVectorXYZ(material[list->target].diffuse, list->keys[next].value,
-                                     list->keys[key].value, t);
+                sceVu0InterVectorXYZ(material[list->target].diffuse, list->keys[next].value, list->keys[key].value, t);
                 target->attr.remake_pending = 2;
                 break;
             }
             case 32:
                 if (state->camera != NULL) {
                     one_minus_t = 1.0f - t;
-                    state->camera->SetRoll(
-                        -(3.1415927f * ((one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
+                    state->camera->SetRoll(-(3.1415927f * ((one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0]) / 180.0f)));
                 }
                 break;
             case 33:
                 if (state->camera != NULL) {
                     one_minus_t = 1.0f - t;
-                    MGSetProjection(
-                        0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
+                    MGSetProjection(0.5f * (480.0f * (1.0f / tanf(3.1415927f * ((0.5f * (one_minus_t * list->keys[key].value[0] + t * list->keys[next].value[0])) / 180.0f)))));
                 }
                 break;
             case 50:
@@ -361,29 +355,27 @@ Mot_List *MotionProc(CFrame *frame, MOTION_STATE *state, Mot_List *list) {
  */
 static sceVu0FVECTOR def_vrtx[3000];
 
-Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info,
-                      Mot_List *list) {
-    static sceVu0FMATRIX Bone_Matrix;
-    static sceVu0FMATRIX Bone_Matrix_inv;
-    static sceVu0FMATRIX Bone_Matrix_Base;
+Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame_info, Mot_List *list) {
+    static sceVu0FMATRIX  Bone_Matrix;
+    static sceVu0FMATRIX  Bone_Matrix_inv;
+    static sceVu0FMATRIX  Bone_Matrix_Base;
     static sceVu0FVECTOR *vert;
-    CFrameVu1 *target;
-    u_int i;
+    CFrameVu1            *target;
+    u_int                 i;
 
     if (list->type == 200) {
         return list->next;
     }
     target = &((CFrameVu1 *) frame)[list->target];
     if (list->target == frame_info[list->frame].parent_frame) {
-        CFrameVu1 *owner = &((CFrameVu1 *) frame)[list->frame];
+        CFrameVu1  *owner = &((CFrameVu1 *) frame)[list->frame];
         MDT_HEADER *model = (MDT_HEADER *) owner->GetVisual()->GetMDTDataAddress();
 
         vert = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
         if (frame_info[list->frame].vertex_count > 3000) {
             printf("###### MAX_VERTX OVER %d/%d######\n", frame_info[list->frame].vertex_count, 3000);
         }
-        memcpy(def_vrtx, frame_info[list->frame].base_vertices,
-               frame_info[list->frame].vertex_count * sizeof(sceVu0FVECTOR));
+        memcpy(def_vrtx, frame_info[list->frame].base_vertices, frame_info[list->frame].vertex_count * sizeof(sceVu0FVECTOR));
         sceVu0UnitMatrix(Bone_Matrix);
         sceVu0UnitMatrix(Bone_Matrix_Base);
         sceVu0InversMatrix(Bone_Matrix_inv, frame_info[list->frame].matrix);
@@ -396,8 +388,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
 
         sceVu0CopyMatrix(local, target->local);
         MulMatrix(Bone_Matrix, frame_info[frame_info[list->target].parent_frame].bone_matrix, local);
-        MulMatrix(Bone_Matrix_Base, frame_info[frame_info[list->target].parent_frame].bone_base_matrix,
-                  motion->base_matrices[list->target]);
+        MulMatrix(Bone_Matrix_Base, frame_info[frame_info[list->target].parent_frame].bone_base_matrix, motion->base_matrices[list->target]);
         sceVu0CopyMatrix(frame_info[list->target].bone_base_matrix, Bone_Matrix_Base);
         sceVu0CopyMatrix(frame_info[list->target].bone_matrix, Bone_Matrix);
         sceVu0CopyVector(translation, Bone_Matrix_Base[3]);
@@ -405,7 +396,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
         sceVu0CopyVector(Bone_Matrix_Base[3], translation);
     }
     for (i = 0; i < list->key_count; i++) {
-        sceVu0FVECTOR weight;
+        sceVu0FVECTOR   weight;
         register float *weight_ptr;
         register float *bone;
         register float *base;
@@ -466,8 +457,7 @@ Mot_List *MotionProc2(CFrame *frame, tagMOTION_TYPE *motion, tagFRAME_INF *frame
     return list->next;
 }
 
-void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state,
-                 tagFRAME_INF *frame_info) {
+void SetMotionEX(CFrame *frame, tagMOTION_TYPE *motion, MOTION_INFO *info, MOTION_STATE *state, tagFRAME_INF *frame_info) {
     Mot_List *list;
     Mot_List *list2;
 
@@ -539,13 +529,13 @@ int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, MOTION_FILE
         memcpy(motion->base_matrices, files[0].data, files[0].size);
     }
     if (files[1].name != NULL) {
-        Mot_List *list;
+        Mot_List      *list;
         Mot_File_List *record;
-        u_char *data;
-        Mot_List *reversed;
-        Mot_List *previous;
-        Mot_List *node;
-        u_char *keys;
+        u_char        *data;
+        Mot_List      *reversed;
+        Mot_List      *previous;
+        Mot_List      *node;
+        u_char        *keys;
 
         data = (u_char *) files[1].data;
         motion->proc_list = NULL;
@@ -578,13 +568,13 @@ int CreateAnimeDataEX(tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, MOTION_FILE
         motion->proc_list = reversed;
     }
     if (files[2].name != NULL) {
-        Mot_List *list;
+        Mot_List      *list;
         Mot_File_List *record;
-        u_char *data;
-        Mot_List *reversed;
-        Mot_List *previous;
-        Mot_List *node;
-        u_char *keys;
+        u_char        *data;
+        Mot_List      *reversed;
+        Mot_List      *previous;
+        Mot_List      *node;
+        u_char        *keys;
 
         data = (u_char *) files[2].data;
         motion->proc_list2 = NULL;
@@ -638,15 +628,14 @@ void AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
  * @address 0x1493A0
  * @size 0x318
  */
-int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
-                  tagFRAME_INF *frame_info) {
+int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena, tagFRAME_INF *frame_info) {
     CFrameVu1 *current;
-    u32 target;
-    CFrame *parent;
-    Mot_List *list = motion->proc_list2;
-    u32 last = -1;
-    int i;
-    int count = frame->GetFrameNum();
+    u32        target;
+    CFrame    *parent;
+    Mot_List  *list = motion->proc_list2;
+    u32        last = -1;
+    int        i;
+    int        count = frame->GetFrameNum();
 
     for (i = 0; i < count; i++) {
         current = &((CFrameVu1 *) frame)[i];
@@ -680,12 +669,11 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
         CVisualVu1 *visual = current->GetVisual();
         if (visual != NULL) {
             sceVu0FVECTOR *vertices;
-            MDT_HEADER *model = (MDT_HEADER *) visual->GetMDTDataAddress();
+            MDT_HEADER    *model = (MDT_HEADER *) visual->GetMDTDataAddress();
             vertices = (sceVu0FVECTOR *) ((u_char *) model + model->vertex_ofs);
             sceVu0FMATRIX matrix;
 
-            frame_info[list->frame].base_vertices =
-                (sceVu0FVECTOR *) arena->Alloc(model->vertex_num * sizeof(sceVu0FVECTOR) / 16 + 1);
+            frame_info[list->frame].base_vertices = (sceVu0FVECTOR *) arena->Alloc(model->vertex_num * sizeof(sceVu0FVECTOR) / 16 + 1);
             frame_info[list->frame].vertex_count = model->vertex_num;
             sceVu0UnitMatrix(matrix);
             sceVu0CopyMatrix(matrix, frame_info[list->frame].matrix);
@@ -699,11 +687,11 @@ int AnimeDataInit(CFrame *frame, tagMOTION_TYPE *motion, CDataAlloc2<1> *arena,
 }
 
 int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
-    int playing_start = info[state->playing_no].start;
+    int   playing_start = info[state->playing_no].start;
     float progress = (state->time - playing_start) / (info[state->playing_no].end - playing_start);
-    int start = info[state->motion_no].start;
-    int end = info[state->motion_no].end;
-    int time = start + progress * (end - start);
+    int   start = info[state->motion_no].start;
+    int   end = info[state->motion_no].end;
+    int   time = start + progress * (end - start);
 
     if (end < time) {
         time = end;
@@ -718,9 +706,9 @@ int NextMotionTime_GET_EX(MOTION_INFO *info, MOTION_STATE *state) {
  * Builds a matrix that rotates by an angle around an arbitrary direction.
  */
 static void SetRotationMatrixFromDir(sceVu0FMATRIX matrix, float *direction, float angle) {
-    float cosine = cosf(angle);
-    float sine = sinf(angle);
-    float inverse_cosine = 1.0f - cosine;
+    float         cosine = cosf(angle);
+    float         sine = sinf(angle);
+    float         inverse_cosine = 1.0f - cosine;
     sceVu0FVECTOR axis;
 
     sceVu0UnitMatrix(matrix);
@@ -748,18 +736,21 @@ int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint) {
     sceVu0FMATRIX parent;
     sceVu0FMATRIX matrix;
     sceVu0FMATRIX rotation;
-    float angle;
+    float         angle;
 
     sceVu0UnitMatrix(parent);
     frame->parent->GetLWMatrix(parent);
     sceVu0UnitMatrix(matrix);
     sceVu0CopyMatrix(matrix, frame->local);
-    if (constraint == FRAME_CONSTRAINT_X)
+    if (constraint == FRAME_CONSTRAINT_X) {
         sceVu0Normalize(up, matrix[0]);
-    if (constraint == FRAME_CONSTRAINT_Y)
+    }
+    if (constraint == FRAME_CONSTRAINT_Y) {
         sceVu0Normalize(up, matrix[1]);
-    if (constraint == FRAME_CONSTRAINT_Z)
+    }
+    if (constraint == FRAME_CONSTRAINT_Z) {
         sceVu0Normalize(up, matrix[2]);
+    }
     up[3] = 1.0f;
     delta[3] = 1.0f;
     sceVu0SubVector(delta, target, parent[3]);
@@ -782,12 +773,14 @@ int LookAt(CFrameVu1 *frame, float *target, _FRAMECONSTRAINT constraint) {
         if (angle < 0.99999f) {
             sceVu0UnitMatrix(rotation);
             angle = acosf(angle);
-            if (angle > 0.7853982f)
+            if (angle > 0.7853982f) {
                 angle = 0.7853982f;
-            if (acosf(sceVu0InnerProduct(axis, direction)) > 1.5707964f)
+            }
+            if (acosf(sceVu0InnerProduct(axis, direction)) > 1.5707964f) {
                 SetRotationMatrixFromDir(rotation, side, -angle);
-            else
+            } else {
                 SetRotationMatrixFromDir(rotation, side, angle);
+            }
             MulMatrix(matrix, rotation, matrix);
             frame->SetTransMatrix(matrix);
         }
@@ -818,7 +811,7 @@ static inline void vu_hold_box(float *max, float *min) {
 static inline int vu_box_missed(float *max, float *min) {
     register float *p0 = max;
     register float *p1 = min;
-    register int status;
+    register int    status;
 
     asm {
         lqc2    vf12, 0(p0)
@@ -850,10 +843,10 @@ static inline int vu_box_missed(float *max, float *min) {
 int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *poly, int count) {
     sceVu0FVECTOR poly_max;
     sceVu0FVECTOR poly_min;
-    int picked = 0;
-    int i;
-    CCPoly *src;
-    CCPoly *dst;
+    int           picked = 0;
+    int           i;
+    CCPoly       *src;
+    CCPoly       *dst;
 
     vu_hold_box(box.max, box.min);
     src = poly;
@@ -870,21 +863,20 @@ int PickUpNearPoly(CCPoly *out, CBoxVu0 box, CCPoly *poly, int count) {
     return picked;
 }
 
-int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, int nearest,
-             int mode) {
+int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, int nearest, int mode) {
     sceVu0FVECTOR point;
     sceVu0FVECTOR diff;
     sceVu0FVECTOR poly_min;
     sceVu0FVECTOR poly_max;
-    CBoxVu0 line;
+    CBoxVu0       line;
     sceVu0FVECTOR offset;
-    int i;
-    int hit = -1;
-    int found = 0;
-    float best;
-    float from_side;
-    float to_side;
-    float dist;
+    int           i;
+    int           hit = -1;
+    int           found = 0;
+    float         best;
+    float         from_side;
+    float         to_side;
+    float         dist;
 
     VectorMaxMin(line.max, line.min, from, to);
     vu_hold_box(line.max, line.min);
@@ -909,8 +901,7 @@ int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, 
         if (from_side < 0.0f && to_side < 0.0f) {
             continue;
         }
-        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1],
-                                         poly->vertex[2], poly->normal, point) == 0) {
+        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1], poly->vertex[2], poly->normal, point) == 0) {
             continue;
         }
         if (nearest == 0) {
@@ -936,12 +927,11 @@ int CheckHit(CCPoly *poly, int count, float *from, float *to, float *hit_point, 
     return hit;
 }
 
-int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point,
-                     int mode) {
+int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *hit_point, int mode) {
     sceVu0FVECTOR to;
-    float best_y;
-    int i;
-    int best = -1;
+    float         best_y;
+    int           i;
+    int           best = -1;
 
     to[0] = from[0];
     to[1] = from[1] + depth;
@@ -950,8 +940,7 @@ int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *h
         if (poly->attr.ignore_mask & mode) {
             continue;
         }
-        if (!IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1], poly->vertex[2],
-                                          poly->normal, hit_point)) {
+        if (!IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1], poly->vertex[2], poly->normal, hit_point)) {
             continue;
         }
         if (depth <= 0.0f) {
@@ -972,19 +961,18 @@ int CheckHitVertical(CCPoly *poly, int count, float *from, float depth, float *h
     return best;
 }
 
-int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly,
-              float (*hit_point)[4], int sort, int mode) {
+int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit_poly, float (*hit_point)[4], int sort, int mode) {
     sceVu0FVECTOR point;
     sceVu0FVECTOR poly_min;
     sceVu0FVECTOR poly_max;
-    CBoxVu0 line;
+    CBoxVu0       line;
     sceVu0FVECTOR offset;
     sceVu0FVECTOR swap;
-    int i;
-    int j;
-    int hits;
-    float from_side;
-    float to_side;
+    int           i;
+    int           j;
+    int           hits;
+    float         from_side;
+    float         to_side;
 
     hits = 0;
     VectorMaxMin(line.max, line.min, from, to);
@@ -1010,8 +998,7 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
         if (from_side < 0.0f && to_side < 0.0f) {
             continue;
         }
-        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1],
-                                         poly->vertex[2], poly->normal, point) == 0) {
+        if (IntersectionPoint_line_poly3(from, to, poly->vertex[0], poly->vertex[1], poly->vertex[2], poly->normal, point) == 0) {
             continue;
         }
         if (hits >= max) {
@@ -1056,17 +1043,16 @@ int CheckHits(CCPoly *poly, int count, float *from, float *to, int max, int *hit
     return hits;
 }
 
-int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys,
-              int poly_num, int mode) {
-    int hit_wall;
-    CCPoly *wall;
-    int poly_no;
-    int i;
-    float drop;
+int MoveCheck(float *pos, float *velocity, float *out_pos, MoveCheckInfo *out_info, CCPoly *polys, int poly_num, int mode) {
+    int           hit_wall;
+    CCPoly       *wall;
+    int           poly_no;
+    int           i;
+    float         drop;
     sceVu0FVECTOR hit;
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
-    CCPoly poly;
+    CCPoly        poly;
     sceVu0FVECTOR probe;
     sceVu0FVECTOR centre;
 
@@ -1169,7 +1155,7 @@ struct CCPolyAttr {
     s16 foot_sound;  /**< Sound the character's feet play on it. */
     s16 light;       /**< Light or ambience the surface puts the character in. */
     s16 ignore_mask; /**< Collision query modes that pass through the surface. */
-    u8 unk_48[8];
+    u8  unk_48[8];
 };
 
 /**
@@ -1180,16 +1166,15 @@ struct CCPolyAttr {
  * @address 0x14ABB0
  * @size 0x1DC
  */
-int GetFootPoly(float *position, float depth, CCPoly *found, float *ground, CCPoly *polys,
-                int count, int mode) {
-    int hits;
-    int i;
-    int hit_no[32];
+int GetFootPoly(float *position, float depth, CCPoly *found, float *ground, CCPoly *polys, int count, int mode) {
+    int           hits;
+    int           i;
+    int           hit_no[32];
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
     sceVu0FVECTOR hit_point[64];
-    CCPolyAttr attr;
-    CCPolyAttr saved;
+    CCPolyAttr    attr;
+    CCPolyAttr    saved;
 
     sceVu0CopyVector(from, position);
     sceVu0CopyVector(to, position);
@@ -1220,15 +1205,14 @@ int GetFootPoly(float *position, float depth, CCPoly *found, float *ground, CCPo
     return hits > 0;
 }
 
-int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no, float *hit,
-                 CCPoly *polys, int count, int mode) {
-    int hits;
-    int i;
-    int hit_no[32];
+int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no, float *hit, CCPoly *polys, int count, int mode) {
+    int           hits;
+    int           i;
+    int           hit_no[32];
     sceVu0FVECTOR from;
     sceVu0FVECTOR to;
     sceVu0FVECTOR hit_point[32];
-    CCPolyAttr attr;
+    CCPolyAttr    attr;
 
     sceVu0CopyVector(from, position);
     sceVu0AddVector(to, position, velocity);
@@ -1260,11 +1244,11 @@ int GetEventPoly(float *position, float *velocity, CCPoly *found, int *found_no,
 }
 
 int CheckWidth(CCPoly *polys, int count, float *position, float radius, float *out, int flags) {
-    int hit;
-    int hit_plus;
-    int hit_minus;
-    int poly_no;
-    float step;
+    int           hit;
+    int           hit_plus;
+    int           hit_minus;
+    int           poly_no;
+    float         step;
     sceVu0FVECTOR to;
     sceVu0FVECTOR hit_a;
     sceVu0FVECTOR hit_b;
@@ -1424,11 +1408,11 @@ int CheckWidth(CCPoly *polys, int count, float *position, float radius, float *o
 }
 
 int CheckCameraWidth(CCPoly *polys, int count, float *position, float radius, float *out, int flags) {
-    int hit;
-    int hit_plus;
-    int hit_minus;
-    int poly_no;
-    float step;
+    int           hit;
+    int           hit_plus;
+    int           hit_minus;
+    int           poly_no;
+    float         step;
     sceVu0FVECTOR to;
     sceVu0FVECTOR hit_a;
     sceVu0FVECTOR hit_b;
@@ -1598,199 +1582,199 @@ u32 MesWinClut[256] = {
 // clang-format on
 
 s32 GaijiDataTbl[][8] = {
-    {-768, 0, 176, 110, 22, 0, 3, 8},
-    {-767, 0, 154, 110, 22, 0, 3, 8},
-    {-766, 32, 132, 32, 22, 0, 3, 2},
-    {-765, 64, 132, 32, 22, 0, 3, 2},
-    {-764, 0, 132, 32, 22, 0, 3, 2},
-    {-763, 96, 132, 32, 22, 0, 3, 2},
-    {-762, 0, 22, 22, 22, 0, 3, 2},
-    {-761, 22, 22, 22, 22, 0, 3, 2},
-    {-760, 66, 22, 22, 22, 0, 3, 2},
-    {-759, 44, 22, 22, 22, 0, 3, 2},
-    {-758, 0, 66, 22, 22, 0, 3, 2},
-    {-757, 44, 66, 22, 22, 0, 3, 2},
-    {-756, 22, 66, 22, 22, 0, 3, 2},
-    {-755, 0, 88, 22, 22, 0, 2, 2},
-    {-754, 22, 88, 22, 22, 0, 2, 2},
-    {-753, 44, 88, 22, 22, 0, 2, 2},
-    {-752, 66, 66, 22, 22, 0, 2, 2},
-    {-751, 66, 88, 22, 22, 0, 2, 2},
-    {-750, 0, 204, 26, 26, 0, 2, 2},
-    {-749, 26, 204, 26, 26, 0, 2, 2},
-    {-748, 0, 230, 26, 26, 0, 2, 2},
-    {-747, 26, 230, 26, 26, 0, 2, 2},
-    {-746, 0, 110, 22, 22, 0, 2, 2},
-    {-745, 22, 110, 66, 22, 8, 2, 5},
-    {-744, 0, 44, 56, 22, 0, 2, 5},
-    {-743, 88, 224, 40, 32, 0, 2, 4},
-    {-742, 88, 22, 22, 22, 0, 2, 2},
-    {-741, 100, 44, 22, 22, 0, 0, 2},
-    {-740, 56, 44, 22, 22, 0, 0, 2},
-    {-739, 100, 66, 22, 22, 0, 0, 2},
-    {-738, 78, 44, 22, 22, 0, 0, 2},
-    {-737, 52, 204, 25, 26, 0, 0, 3},
-    {-736, 52, 230, 33, 18, 0, 0, 3},
-    {-735, 128, 0, 14, 20, 0, 3, 1},
-    {-734, 142, 0, 14, 20, 0, 3, 1},
-    {-733, 156, 0, 14, 20, 0, 3, 1},
-    {-732, 170, 0, 14, 20, 0, 3, 1},
-    {-731, 184, 0, 14, 20, 0, 3, 1},
-    {-730, 198, 0, 14, 20, 0, 3, 1},
-    {-729, 212, 0, 14, 20, 0, 3, 1},
-    {-728, 226, 0, 14, 20, 0, 3, 1},
-    {-727, 240, 0, 14, 20, 0, 3, 1},
-    {-726, 128, 20, 14, 20, 0, 3, 1},
-    {-725, 142, 20, 14, 20, 0, 3, 1},
-    {-724, 156, 20, 14, 20, 0, 3, 1},
-    {-723, 170, 20, 14, 20, 0, 3, 1},
-    {-722, 184, 20, 14, 20, 0, 3, 1},
-    {-721, 198, 20, 14, 20, 0, 3, 1},
-    {-720, 212, 20, 14, 20, 0, 3, 1},
-    {-719, 226, 20, 14, 20, 0, 3, 1},
-    {-718, 240, 20, 14, 20, 0, 3, 1},
-    {-717, 128, 40, 14, 20, 0, 3, 1},
-    {-716, 142, 40, 14, 20, 0, 3, 1},
-    {-715, 156, 40, 14, 20, 0, 3, 1},
-    {-714, 170, 40, 14, 20, 0, 3, 1},
-    {-713, 184, 40, 14, 20, 0, 3, 1},
-    {-712, 198, 40, 14, 20, 0, 3, 1},
-    {-711, 212, 40, 14, 20, 0, 3, 1},
-    {-710, 226, 40, 14, 20, 0, 3, 1},
-    {-709, 240, 40, 14, 20, 0, 3, 1},
-    {-708, 128, 60, 14, 20, 0, 3, 1},
-    {-707, 142, 60, 14, 20, 0, 3, 1},
-    {-706, 156, 60, 14, 20, 0, 3, 1},
-    {-705, 170, 60, 14, 20, 0, 3, 1},
-    {-704, 184, 60, 14, 20, 0, 3, 1},
-    {-703, 198, 60, 14, 20, 0, 3, 1},
-    {-702, 212, 60, 14, 20, 0, 3, 1},
-    {-701, 226, 60, 14, 20, 0, 3, 1},
-    {-700, 240, 60, 14, 20, 0, 3, 1},
-    {-699, 128, 80, 14, 20, 0, 3, 1},
-    {-698, 142, 80, 14, 20, 0, 3, 1},
-    {-697, 156, 80, 14, 20, 0, 3, 1},
-    {-696, 170, 80, 14, 20, 0, 3, 1},
-    {-695, 184, 80, 14, 20, 0, 3, 1},
-    {-694, 198, 80, 14, 20, 0, 3, 1},
-    {-693, 212, 80, 14, 20, 0, 3, 1},
-    {-692, 226, 80, 14, 20, 0, 3, 1},
-    {-691, 240, 80, 14, 20, 0, 3, 1},
-    {-690, 128, 100, 14, 20, 0, 3, 1},
-    {-689, 142, 100, 14, 20, 0, 3, 1},
-    {-688, 156, 100, 14, 20, 0, 3, 1},
-    {-687, 170, 100, 14, 20, 0, 3, 1},
-    {-686, 184, 100, 14, 20, 0, 3, 1},
-    {-685, 198, 100, 14, 20, 0, 3, 1},
-    {-684, 212, 100, 14, 20, 0, 3, 1},
-    {-683, 226, 100, 14, 20, 0, 3, 1},
-    {-682, 240, 100, 14, 20, 0, 3, 1},
-    {-681, 128, 120, 14, 20, 0, 3, 1},
-    {-680, 142, 120, 14, 20, 0, 3, 1},
-    {-679, 156, 120, 14, 20, 0, 3, 1},
-    {-678, 170, 120, 14, 20, 0, 3, 1},
-    {-677, 184, 120, 14, 20, 0, 3, 1},
-    {-676, 198, 120, 14, 20, 0, 3, 1},
-    {-675, 212, 120, 14, 20, 0, 3, 1},
-    {-674, 226, 120, 14, 20, 0, 3, 1},
-    {-673, 240, 120, 14, 20, 0, 3, 1},
-    {-672, 128, 140, 14, 20, 0, 3, 1},
-    {-671, 142, 140, 14, 20, 0, 3, 1},
-    {-670, 156, 140, 14, 20, 0, 3, 1},
-    {-669, 170, 140, 14, 20, 0, 3, 1},
-    {-668, 184, 140, 14, 20, 0, 3, 1},
-    {-667, 198, 140, 14, 20, 0, 3, 1},
-    {-666, 212, 140, 14, 20, 0, 3, 1},
-    {-665, 226, 140, 14, 20, 0, 3, 1},
-    {-664, 240, 140, 14, 20, 0, 3, 1},
-    {-663, 128, 160, 14, 20, 0, 3, 1},
-    {-662, 142, 160, 14, 20, 0, 3, 1},
-    {-661, 156, 160, 14, 20, 0, 3, 1},
-    {-660, 170, 160, 14, 20, 0, 3, 1},
-    {-659, 184, 160, 14, 20, 0, 3, 1},
-    {-658, 198, 160, 14, 20, 0, 3, 1},
-    {-657, 212, 160, 14, 20, 0, 3, 1},
-    {-656, 226, 160, 14, 20, 0, 3, 1},
-    {-655, 240, 160, 14, 20, 0, 3, 1},
-    {-654, 128, 180, 14, 20, 0, 3, 1},
-    {-653, 142, 180, 14, 20, 0, 3, 1},
-    {-652, 156, 180, 14, 20, 0, 3, 1},
-    {-651, 170, 180, 14, 20, 0, 3, 1},
-    {-650, 184, 180, 14, 20, 0, 3, 1},
-    {-649, 198, 180, 14, 20, 0, 3, 1},
-    {-648, 212, 180, 14, 20, 0, 3, 1},
-    {-647, 226, 200, 14, 20, 0, 3, 1},
-    {-646, 198, 200, 14, 20, 0, 3, 1},
-    {-645, 184, 200, 14, 20, 0, 3, 1},
-    {-644, 128, 0, 14, 20, 0, 3, 1},
+    {-768, 0,   176, 110, 22, 0, 3, 8},
+    {-767, 0,   154, 110, 22, 0, 3, 8},
+    {-766, 32,  132, 32,  22, 0, 3, 2},
+    {-765, 64,  132, 32,  22, 0, 3, 2},
+    {-764, 0,   132, 32,  22, 0, 3, 2},
+    {-763, 96,  132, 32,  22, 0, 3, 2},
+    {-762, 0,   22,  22,  22, 0, 3, 2},
+    {-761, 22,  22,  22,  22, 0, 3, 2},
+    {-760, 66,  22,  22,  22, 0, 3, 2},
+    {-759, 44,  22,  22,  22, 0, 3, 2},
+    {-758, 0,   66,  22,  22, 0, 3, 2},
+    {-757, 44,  66,  22,  22, 0, 3, 2},
+    {-756, 22,  66,  22,  22, 0, 3, 2},
+    {-755, 0,   88,  22,  22, 0, 2, 2},
+    {-754, 22,  88,  22,  22, 0, 2, 2},
+    {-753, 44,  88,  22,  22, 0, 2, 2},
+    {-752, 66,  66,  22,  22, 0, 2, 2},
+    {-751, 66,  88,  22,  22, 0, 2, 2},
+    {-750, 0,   204, 26,  26, 0, 2, 2},
+    {-749, 26,  204, 26,  26, 0, 2, 2},
+    {-748, 0,   230, 26,  26, 0, 2, 2},
+    {-747, 26,  230, 26,  26, 0, 2, 2},
+    {-746, 0,   110, 22,  22, 0, 2, 2},
+    {-745, 22,  110, 66,  22, 8, 2, 5},
+    {-744, 0,   44,  56,  22, 0, 2, 5},
+    {-743, 88,  224, 40,  32, 0, 2, 4},
+    {-742, 88,  22,  22,  22, 0, 2, 2},
+    {-741, 100, 44,  22,  22, 0, 0, 2},
+    {-740, 56,  44,  22,  22, 0, 0, 2},
+    {-739, 100, 66,  22,  22, 0, 0, 2},
+    {-738, 78,  44,  22,  22, 0, 0, 2},
+    {-737, 52,  204, 25,  26, 0, 0, 3},
+    {-736, 52,  230, 33,  18, 0, 0, 3},
+    {-735, 128, 0,   14,  20, 0, 3, 1},
+    {-734, 142, 0,   14,  20, 0, 3, 1},
+    {-733, 156, 0,   14,  20, 0, 3, 1},
+    {-732, 170, 0,   14,  20, 0, 3, 1},
+    {-731, 184, 0,   14,  20, 0, 3, 1},
+    {-730, 198, 0,   14,  20, 0, 3, 1},
+    {-729, 212, 0,   14,  20, 0, 3, 1},
+    {-728, 226, 0,   14,  20, 0, 3, 1},
+    {-727, 240, 0,   14,  20, 0, 3, 1},
+    {-726, 128, 20,  14,  20, 0, 3, 1},
+    {-725, 142, 20,  14,  20, 0, 3, 1},
+    {-724, 156, 20,  14,  20, 0, 3, 1},
+    {-723, 170, 20,  14,  20, 0, 3, 1},
+    {-722, 184, 20,  14,  20, 0, 3, 1},
+    {-721, 198, 20,  14,  20, 0, 3, 1},
+    {-720, 212, 20,  14,  20, 0, 3, 1},
+    {-719, 226, 20,  14,  20, 0, 3, 1},
+    {-718, 240, 20,  14,  20, 0, 3, 1},
+    {-717, 128, 40,  14,  20, 0, 3, 1},
+    {-716, 142, 40,  14,  20, 0, 3, 1},
+    {-715, 156, 40,  14,  20, 0, 3, 1},
+    {-714, 170, 40,  14,  20, 0, 3, 1},
+    {-713, 184, 40,  14,  20, 0, 3, 1},
+    {-712, 198, 40,  14,  20, 0, 3, 1},
+    {-711, 212, 40,  14,  20, 0, 3, 1},
+    {-710, 226, 40,  14,  20, 0, 3, 1},
+    {-709, 240, 40,  14,  20, 0, 3, 1},
+    {-708, 128, 60,  14,  20, 0, 3, 1},
+    {-707, 142, 60,  14,  20, 0, 3, 1},
+    {-706, 156, 60,  14,  20, 0, 3, 1},
+    {-705, 170, 60,  14,  20, 0, 3, 1},
+    {-704, 184, 60,  14,  20, 0, 3, 1},
+    {-703, 198, 60,  14,  20, 0, 3, 1},
+    {-702, 212, 60,  14,  20, 0, 3, 1},
+    {-701, 226, 60,  14,  20, 0, 3, 1},
+    {-700, 240, 60,  14,  20, 0, 3, 1},
+    {-699, 128, 80,  14,  20, 0, 3, 1},
+    {-698, 142, 80,  14,  20, 0, 3, 1},
+    {-697, 156, 80,  14,  20, 0, 3, 1},
+    {-696, 170, 80,  14,  20, 0, 3, 1},
+    {-695, 184, 80,  14,  20, 0, 3, 1},
+    {-694, 198, 80,  14,  20, 0, 3, 1},
+    {-693, 212, 80,  14,  20, 0, 3, 1},
+    {-692, 226, 80,  14,  20, 0, 3, 1},
+    {-691, 240, 80,  14,  20, 0, 3, 1},
+    {-690, 128, 100, 14,  20, 0, 3, 1},
+    {-689, 142, 100, 14,  20, 0, 3, 1},
+    {-688, 156, 100, 14,  20, 0, 3, 1},
+    {-687, 170, 100, 14,  20, 0, 3, 1},
+    {-686, 184, 100, 14,  20, 0, 3, 1},
+    {-685, 198, 100, 14,  20, 0, 3, 1},
+    {-684, 212, 100, 14,  20, 0, 3, 1},
+    {-683, 226, 100, 14,  20, 0, 3, 1},
+    {-682, 240, 100, 14,  20, 0, 3, 1},
+    {-681, 128, 120, 14,  20, 0, 3, 1},
+    {-680, 142, 120, 14,  20, 0, 3, 1},
+    {-679, 156, 120, 14,  20, 0, 3, 1},
+    {-678, 170, 120, 14,  20, 0, 3, 1},
+    {-677, 184, 120, 14,  20, 0, 3, 1},
+    {-676, 198, 120, 14,  20, 0, 3, 1},
+    {-675, 212, 120, 14,  20, 0, 3, 1},
+    {-674, 226, 120, 14,  20, 0, 3, 1},
+    {-673, 240, 120, 14,  20, 0, 3, 1},
+    {-672, 128, 140, 14,  20, 0, 3, 1},
+    {-671, 142, 140, 14,  20, 0, 3, 1},
+    {-670, 156, 140, 14,  20, 0, 3, 1},
+    {-669, 170, 140, 14,  20, 0, 3, 1},
+    {-668, 184, 140, 14,  20, 0, 3, 1},
+    {-667, 198, 140, 14,  20, 0, 3, 1},
+    {-666, 212, 140, 14,  20, 0, 3, 1},
+    {-665, 226, 140, 14,  20, 0, 3, 1},
+    {-664, 240, 140, 14,  20, 0, 3, 1},
+    {-663, 128, 160, 14,  20, 0, 3, 1},
+    {-662, 142, 160, 14,  20, 0, 3, 1},
+    {-661, 156, 160, 14,  20, 0, 3, 1},
+    {-660, 170, 160, 14,  20, 0, 3, 1},
+    {-659, 184, 160, 14,  20, 0, 3, 1},
+    {-658, 198, 160, 14,  20, 0, 3, 1},
+    {-657, 212, 160, 14,  20, 0, 3, 1},
+    {-656, 226, 160, 14,  20, 0, 3, 1},
+    {-655, 240, 160, 14,  20, 0, 3, 1},
+    {-654, 128, 180, 14,  20, 0, 3, 1},
+    {-653, 142, 180, 14,  20, 0, 3, 1},
+    {-652, 156, 180, 14,  20, 0, 3, 1},
+    {-651, 170, 180, 14,  20, 0, 3, 1},
+    {-650, 184, 180, 14,  20, 0, 3, 1},
+    {-649, 198, 180, 14,  20, 0, 3, 1},
+    {-648, 212, 180, 14,  20, 0, 3, 1},
+    {-647, 226, 200, 14,  20, 0, 3, 1},
+    {-646, 198, 200, 14,  20, 0, 3, 1},
+    {-645, 184, 200, 14,  20, 0, 3, 1},
+    {-644, 128, 0,   14,  20, 0, 3, 1},
 #ifdef PAL
-    {-643, 142, 220, 14, 20, 0, 3, 1},
+    {-643, 142, 220, 14,  20, 0, 3, 1},
 #else
     {-643, 156, 0, 14, 20, 0, 3, 1},
 #endif
-    {-642, 184, 0, 14, 20, 0, 3, 1},
-    {-641, 184, 0, 14, 20, 0, 3, 1},
-    {-640, 198, 20, 14, 20, 0, 3, 1},
-    {-639, 156, 40, 14, 20, 0, 3, 1},
-    {-638, 212, 200, 14, 20, 0, 3, 1},
-    {-637, 240, 40, 14, 20, 0, 3, 1},
-    {-636, 240, 40, 14, 20, 0, 3, 1},
-    {-635, 240, 40, 14, 20, 0, 3, 1},
-    {-634, 240, 40, 14, 20, 0, 3, 1},
+    {-642, 184, 0,   14,  20, 0, 3, 1},
+    {-641, 184, 0,   14,  20, 0, 3, 1},
+    {-640, 198, 20,  14,  20, 0, 3, 1},
+    {-639, 156, 40,  14,  20, 0, 3, 1},
+    {-638, 212, 200, 14,  20, 0, 3, 1},
+    {-637, 240, 40,  14,  20, 0, 3, 1},
+    {-636, 240, 40,  14,  20, 0, 3, 1},
+    {-635, 240, 40,  14,  20, 0, 3, 1},
+    {-634, 240, 40,  14,  20, 0, 3, 1},
 #ifdef PAL
-    {-633, 156, 220, 14, 20, 0, 3, 1},
+    {-633, 156, 220, 14,  20, 0, 3, 1},
 #else
     {-633, 142, 60, 14, 20, 0, 3, 1},
 #endif
-    {-632, 170, 60, 14, 20, 0, 3, 1},
-    {-631, 170, 60, 14, 20, 0, 3, 1},
-    {-630, 170, 60, 14, 20, 0, 3, 1},
-    {-629, 170, 60, 14, 20, 0, 3, 1},
+    {-632, 170, 60,  14,  20, 0, 3, 1},
+    {-631, 170, 60,  14,  20, 0, 3, 1},
+    {-630, 170, 60,  14,  20, 0, 3, 1},
+    {-629, 170, 60,  14,  20, 0, 3, 1},
 #ifdef PAL
-    {-628, 128, 220, 14, 20, 0, 3, 1},
-    {-627, 128, 220, 14, 20, 0, 3, 1},
-    {-626, 128, 220, 14, 20, 0, 3, 1},
-    {-625, 128, 220, 14, 20, 0, 3, 1},
+    {-628, 128, 220, 14,  20, 0, 3, 1},
+    {-627, 128, 220, 14,  20, 0, 3, 1},
+    {-626, 128, 220, 14,  20, 0, 3, 1},
+    {-625, 128, 220, 14,  20, 0, 3, 1},
 #else
     {-628, 226, 60, 14, 20, 0, 3, 1},
     {-627, 226, 60, 14, 20, 0, 3, 1},
     {-626, 226, 60, 14, 20, 0, 3, 1},
     {-625, 226, 60, 14, 20, 0, 3, 1},
 #endif
-    {-624, 170, 80, 14, 20, 0, 3, 1},
-    {-623, 184, 80, 14, 20, 0, 3, 1},
-    {-622, 184, 80, 14, 20, 0, 3, 1},
-    {-621, 184, 80, 14, 20, 0, 3, 1},
-    {-620, 184, 80, 14, 20, 0, 3, 1},
-    {-619, 142, 100, 14, 20, 0, 3, 1},
-    {-618, 142, 100, 14, 20, 0, 3, 1},
-    {-617, 142, 100, 14, 20, 0, 3, 1},
-    {-616, 142, 100, 14, 20, 0, 3, 1},
-    {-615, 156, 40, 14, 20, 0, 3, 1},
-    {-614, 128, 0, 14, 20, 0, 3, 1},
-    {-613, 240, 200, 14, 20, 0, 3, 1},
-    {-612, 198, 20, 14, 20, 0, 3, 1},
+    {-624, 170, 80,  14,  20, 0, 3, 1},
+    {-623, 184, 80,  14,  20, 0, 3, 1},
+    {-622, 184, 80,  14,  20, 0, 3, 1},
+    {-621, 184, 80,  14,  20, 0, 3, 1},
+    {-620, 184, 80,  14,  20, 0, 3, 1},
+    {-619, 142, 100, 14,  20, 0, 3, 1},
+    {-618, 142, 100, 14,  20, 0, 3, 1},
+    {-617, 142, 100, 14,  20, 0, 3, 1},
+    {-616, 142, 100, 14,  20, 0, 3, 1},
+    {-615, 156, 40,  14,  20, 0, 3, 1},
+    {-614, 128, 0,   14,  20, 0, 3, 1},
+    {-613, 240, 200, 14,  20, 0, 3, 1},
+    {-612, 198, 20,  14,  20, 0, 3, 1},
 #ifdef PAL
-    {-611, 156, 120, 14, 20, 0, 3, 1},
-    {-610, 156, 120, 14, 20, 0, 3, 1},
-    {-609, 156, 120, 14, 20, 0, 3, 1},
-    {-608, 128, 0, 14, 20, 0, 3, 1},
-    {-607, 128, 0, 14, 20, 0, 3, 1},
-    {-606, 240, 0, 14, 20, 0, 3, 1},
-    {-605, 240, 0, 14, 20, 0, 3, 1},
-    {-604, 240, 0, 14, 20, 0, 3, 1},
-    {-603, 240, 0, 14, 20, 0, 3, 1},
-    {-602, 156, 40, 14, 20, 0, 3, 1},
-    {-601, 156, 40, 14, 20, 0, 3, 1},
-    {-600, 184, 0, 14, 20, 0, 3, 1},
-    {-599, 184, 0, 14, 20, 0, 3, 1},
-    {-598, 198, 20, 14, 20, 0, 3, 1},
-    {-597, 198, 20, 14, 20, 0, 3, 1},
-    {-596, 184, 20, 14, 20, 0, 3, 1},
-    {-595, 156, 120, 14, 20, 0, 3, 1},
-    {-594, 156, 120, 14, 20, 0, 3, 1},
+    {-611, 156, 120, 14,  20, 0, 3, 1},
+    {-610, 156, 120, 14,  20, 0, 3, 1},
+    {-609, 156, 120, 14,  20, 0, 3, 1},
+    {-608, 128, 0,   14,  20, 0, 3, 1},
+    {-607, 128, 0,   14,  20, 0, 3, 1},
+    {-606, 240, 0,   14,  20, 0, 3, 1},
+    {-605, 240, 0,   14,  20, 0, 3, 1},
+    {-604, 240, 0,   14,  20, 0, 3, 1},
+    {-603, 240, 0,   14,  20, 0, 3, 1},
+    {-602, 156, 40,  14,  20, 0, 3, 1},
+    {-601, 156, 40,  14,  20, 0, 3, 1},
+    {-600, 184, 0,   14,  20, 0, 3, 1},
+    {-599, 184, 0,   14,  20, 0, 3, 1},
+    {-598, 198, 20,  14,  20, 0, 3, 1},
+    {-597, 198, 20,  14,  20, 0, 3, 1},
+    {-596, 184, 20,  14,  20, 0, 3, 1},
+    {-595, 156, 120, 14,  20, 0, 3, 1},
+    {-594, 156, 120, 14,  20, 0, 3, 1},
 #endif
-    {-1, 96, 96, 32, 32, 0, 0, 1},
+    {-1,   96,  96,  32,  32, 0, 0, 1},
 };
 
 // clang-format off
@@ -1815,19 +1799,20 @@ u8 MesWinTexBuff_11[0x100];
 /** Texture buffer the name message window draws its glyphs from. */
 u8 MesWinTexBuff_12[0x100];
 
-static s32 linear;          // Nonzero selects linear filtering for sprite batches.
+static s32        linear;   // Nonzero selects linear filtering for sprite batches.
 static u_long128 *data_top; // First quadword of the open sprite batch.
 static u_long128 *pdata;    // Current write cursor of the open sprite batch.
-static u_int *dma_cnt;      // DMA and VIF tag words patched when the batch closes.
+static u_int     *dma_cnt;  // DMA and VIF tag words patched when the batch closes.
 
 void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
-    u_int *p;
-    u_long *ad;
+    u_int    *p;
+    u_long   *ad;
     sceGsTest test;
     sceGsZbuf zbuf;
 
-    if (texture == 0)
+    if (texture == 0) {
         return;
+    }
     sceVif1PkTerminate(packet);
     data_top = (u_long128 *) packet->pCurrent;
     pdata = data_top;
@@ -1864,12 +1849,12 @@ void set2DSprite_Start(sceVif1Packet *packet, CTexture *texture) {
     pdata = (u_long128 *) (ad + 12);
 }
 
-void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                      const CRect_i_ &texel, u8 red, u8 green, u8 blue, u8 alpha) {
+void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, u8 red, u8 green, u8 blue, u8 alpha) {
     u_long *ad;
 
-    if (texture == 0)
+    if (texture == 0) {
         return;
+    }
     ad = (u_long *) pdata;
     ad[0] = SCE_GS_SET_RGBAQ(red, green, blue, alpha, 0);
     ad[1] = SCE_GS_RGBAQ;
@@ -1879,16 +1864,15 @@ void set2DSprite_Core(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &
     ad[5] = SCE_GS_XYZF2;
     ad[6] = SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4);
     ad[7] = SCE_GS_UV;
-    ad[8] = SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                             ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0);
+    ad[8] = SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0);
     ad[9] = SCE_GS_XYZF2;
     pdata = (u_long128 *) (ad + 10);
 }
 
 void set2DSprite_End(sceVif1Packet *packet, CTexture *texture) {
     u_long *ad;
-    u_int *dma_count;
-    s32 qwc;
+    u_int  *dma_count;
+    s32     qwc;
 
     ad = (u_long *) pdata;
     ad[0] = *(u_long *) &mgPixelTest;
@@ -1906,8 +1890,7 @@ void set2DSprite_End(sceVif1Packet *packet, CTexture *texture) {
 
 void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut) {
     sceGsTex0 tex0 = *(sceGsTex0 *) &texture->tex0;
-    sceVif1PkRefLoadImage(packet, tex0.bits.cbp, SCE_GS_PSMCT32, 1,
-                          (u_long128 *) clut, 64, 0, 0, 16, 16);
+    sceVif1PkRefLoadImage(packet, tex0.bits.cbp, SCE_GS_PSMCT32, 1, (u_long128 *) clut, 64, 0, 0, 16, 16);
 }
 
 float LinerInterpolation(float from, float to, float at) {
@@ -1977,7 +1960,7 @@ float GetDisPosToRect(RECT *rect, int x, int y) {
 
 void GetScrPosFromChar(CCharacter *chara, int *out_pos) {
     float position[4];
-    int screen[4];
+    int   screen[4];
 
     chara->GetPosition(position);
     position[1] += 0.85f * chara->body_height;

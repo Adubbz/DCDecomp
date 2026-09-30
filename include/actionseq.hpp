@@ -30,9 +30,9 @@ enum ACT_SEQ_OPERATION {
  */
 struct ACT_SEQ {
     ACT_SEQ_OPERATION operation; /**< Selects the queued action. */
-    int duration;                /**< Frame count or trigger delay. */
-    int unk_08;
-    ACT_SEQ *next; /**< Next action in the same queue. */
+    int               duration;  /**< Frame count or trigger delay. */
+    int               unk_08;
+    ACT_SEQ          *next; /**< Next action in the same queue. */
 
     union {
         float vector[4]; /**< Position, rotation, or reference vector. */
@@ -42,9 +42,9 @@ struct ACT_SEQ {
             int mode; /**< Motion mode or animation enable state. */
 
             union {
-                float speed;       /**< Motion playback speed. */
-                int disable_after; /**< Disables texture animation after its duration. */
-            } playback;            /**< Playback parameters for the selected operation. */
+                float speed;         /**< Motion playback speed. */
+                int   disable_after; /**< Disables texture animation after its duration. */
+            } playback;              /**< Playback parameters for the selected operation. */
 
             int flags; /**< Motion transition flags. */
         } animation;   /**< Motion and texture animation arguments. */
@@ -59,36 +59,36 @@ class CCharacter;
  */
 class CActionSeq {
 public:
-    ACT_SEQ *move_head; /**< First movement action. */
-    ACT_SEQ *move_tail; /**< Last movement action. */
-    u8 unk_08[8];
-    float position[4];        /**< Current movement position. */
-    float start_position[4];  /**< Starting position for interpolation. */
-    float queued_position[4]; /**< Destination of the last queued movement. */
-    int move_frame;           /**< Elapsed movement frames. */
-    int anime_frame;          /**< Elapsed texture animation frames. */
-    int rotation_mode;        /**< Active automatic rotation: 0 none, 1 face the reference, 2 face the movement, 3 turn to an angle. */
-    int rotation_complete;    /**< Indicates that the rotation reached its target. */
-    int rotation_delay;       /**< Frames remaining before rotation advances. */
-    int motion_trigger;       /**< Enables queued motion playback. */
-    int motion_delay;         /**< Frames remaining before motion playback. */
-    int anime_trigger;        /**< Enables queued texture animation playback. */
-    int anime_delay;          /**< Frames remaining before texture animation playback. */
-    u8 unk_64[12];
-    float rotation_target[4]; /**< Reference position or target angles for rotation; the last element holds the turn speed. */
-    ACT_SEQ *rotation_head;   /**< First rotation interpolation action. */
-    ACT_SEQ *rotation_tail;   /**< Last rotation interpolation action. */
-    u8 unk_88[8];
-    float rotation[4];       /**< Current character rotation. */
-    float start_rotation[4]; /**< Starting rotation for interpolation. */
-    int rotation_frame;      /**< Elapsed rotation interpolation frames. */
-    ACT_SEQ *motion_head;    /**< First motion action. */
-    ACT_SEQ *motion_tail;    /**< Last motion action. */
-    ACT_SEQ *anime_head;     /**< First texture animation action. */
-    ACT_SEQ *anime_tail;     /**< Last texture animation action. */
-    int capacity;            /**< Number of records in the action pool. */
-    ACT_SEQ *pool;           /**< Storage for queued actions. */
-    CCharacter *character;   /**< Character receiving the actions. */
+    ACT_SEQ    *move_head; /**< First movement action. */
+    ACT_SEQ    *move_tail; /**< Last movement action. */
+    u8          unk_08[8];
+    float       position[4];        /**< Current movement position. */
+    float       start_position[4];  /**< Starting position for interpolation. */
+    float       queued_position[4]; /**< Destination of the last queued movement. */
+    int         move_frame;         /**< Elapsed movement frames. */
+    int         anime_frame;        /**< Elapsed texture animation frames. */
+    int         rotation_mode;      /**< Active automatic rotation: 0 none, 1 face the reference, 2 face the movement, 3 turn to an angle. */
+    int         rotation_complete;  /**< Indicates that the rotation reached its target. */
+    int         rotation_delay;     /**< Frames remaining before rotation advances. */
+    int         motion_trigger;     /**< Enables queued motion playback. */
+    int         motion_delay;       /**< Frames remaining before motion playback. */
+    int         anime_trigger;      /**< Enables queued texture animation playback. */
+    int         anime_delay;        /**< Frames remaining before texture animation playback. */
+    u8          unk_64[12];
+    float       rotation_target[4]; /**< Reference position or target angles for rotation; the last element holds the turn speed. */
+    ACT_SEQ    *rotation_head;      /**< First rotation interpolation action. */
+    ACT_SEQ    *rotation_tail;      /**< Last rotation interpolation action. */
+    u8          unk_88[8];
+    float       rotation[4];       /**< Current character rotation. */
+    float       start_rotation[4]; /**< Starting rotation for interpolation. */
+    int         rotation_frame;    /**< Elapsed rotation interpolation frames. */
+    ACT_SEQ    *motion_head;       /**< First motion action. */
+    ACT_SEQ    *motion_tail;       /**< Last motion action. */
+    ACT_SEQ    *anime_head;        /**< First texture animation action. */
+    ACT_SEQ    *anime_tail;        /**< Last texture animation action. */
+    int         capacity;          /**< Number of records in the action pool. */
+    ACT_SEQ    *pool;              /**< Storage for queued actions. */
+    CCharacter *character;         /**< Character receiving the actions. */
 
     /**
      * Binds the action pool and clears playback state.
@@ -106,7 +106,7 @@ public:
      * @address 0x154B80
      * @size 0x38
      */
-    CActionSeq(void);
+    CActionSeq();
 
     /**
      * Clears all queues and playback state.
@@ -115,7 +115,7 @@ public:
      * @address 0x154BC0
      * @size 0x54
      */
-    void ClearSeq(void);
+    void ClearSeq();
 
     /**
      * Finds an unused action record in the pool.
@@ -124,7 +124,7 @@ public:
      * @address 0x154C20
      * @size 0x4C
      */
-    ACT_SEQ *GetNextSeq(void);
+    ACT_SEQ *GetNextSeq();
 
     /**
      * Copies the character transform into the sequencer.
@@ -142,7 +142,7 @@ public:
      * @address 0x154D00
      * @size 0x68
      */
-    ACT_SEQ *NextMoveSeq(void);
+    ACT_SEQ *NextMoveSeq();
 
     /**
      * Appends an unused record to the motion queue.
@@ -151,7 +151,7 @@ public:
      * @address 0x154D70
      * @size 0x68
      */
-    ACT_SEQ *NextMotionSeq(void);
+    ACT_SEQ *NextMotionSeq();
 
     /**
      * Appends an unused record to the texture animation queue.
@@ -160,7 +160,7 @@ public:
      * @address 0x154DE0
      * @size 0x68
      */
-    ACT_SEQ *NextAnimeSeq(void);
+    ACT_SEQ *NextAnimeSeq();
 
     /**
      * Queues movement to a destination over the specified number of frames.
@@ -232,7 +232,7 @@ public:
      * @address 0x155160
      * @size 0x34
      */
-    void ClearRotSeq(void);
+    void ClearRotSeq();
 
     /**
      * Queues a wait for automatic rotation to finish.
@@ -241,7 +241,7 @@ public:
      * @address 0x1551A0
      * @size 0x34
      */
-    void WaitRotSeq(void);
+    void WaitRotSeq();
 
     /**
      * Queues an immediate rotation change.
@@ -304,7 +304,7 @@ public:
      * @address 0x155400
      * @size 0x68
      */
-    int CheckEnd(void);
+    int CheckEnd();
 
     /**
      * Advances queued actions and updates the character transform.
@@ -313,7 +313,7 @@ public:
      * @address 0x1554A0
      * @size 0xB04
      */
-    void Play(void);
+    void Play();
 };
 
 STATIC_ASSERT(sizeof(CActionSeq) == 0xD0);

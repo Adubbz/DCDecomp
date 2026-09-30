@@ -16,13 +16,13 @@
 void CMajinBeem::Draw(CCamera *camera) {
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR position;
-    int top_left[4];
-    int bottom_right[4];
-    int top_right[4];
-    int bottom_left[4];
-    sceGsAlpha alpha;
-    sceGsZbuf zbuf;
-    int i;
+    int           top_left[4];
+    int           bottom_right[4];
+    int           top_right[4];
+    int           bottom_left[4];
+    sceGsAlpha    alpha;
+    sceGsZbuf     zbuf;
+    int           i;
 
     camera->GetPos(camera_position);
 
@@ -38,10 +38,12 @@ void CMajinBeem::Draw(CCamera *camera) {
     MGSetGsZBUF(&zbuf);
 
     for (i = 0; i < 59; i++) {
-        if (active != 1)
+        if (active != 1) {
             continue;
-        if (counters[i] < 0)
+        }
+        if (counters[i] < 0) {
             continue;
+        }
 
         position[0] = positions[i][0];
         position[1] = positions[i][1];
@@ -68,8 +70,7 @@ void CMajinBeem::Draw(CCamera *camera) {
             rect.y = 0;
             rect.width = 128;
             rect.height = 128;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, top_left, top_right,
-                        bottom_left, bottom_right, (u_char) alphas[i]);
+            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, top_left, top_right, bottom_left, bottom_right, (u_char) alphas[i]);
         }
     }
 
@@ -85,14 +86,14 @@ void CMajinBeem::Draw(CCamera *camera) {
 void CMajinBeem::Draw2(CCamera *camera, float *head, float *source) {
     sceVu0FVECTOR direction;
     sceVu0FVECTOR position;
-    int top_left[4];
-    int bottom_right[4];
-    int near_top_left[4];
-    int near_bottom_right[4];
-    int top_right[4];
-    int bottom_left[4];
-    sceGsAlpha alpha;
-    sceGsZbuf zbuf;
+    int           top_left[4];
+    int           bottom_right[4];
+    int           near_top_left[4];
+    int           near_bottom_right[4];
+    int           top_right[4];
+    int           bottom_left[4];
+    sceGsAlpha    alpha;
+    sceGsZbuf     zbuf;
 
     camera->GetPos(direction);
     direction[0] -= source[0];
@@ -151,8 +152,7 @@ void CMajinBeem::Draw2(CCamera *camera, float *head, float *source) {
             rect.y = 0;
             rect.width = 128;
             rect.height = 128;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, top_left, top_right,
-                        bottom_left, bottom_right, (u_char) alphas[59]);
+            set3DSprite(Vif1Packet, TexManager.GetTexture("beem", -1), rect, top_left, top_right, bottom_left, bottom_right, (u_char) alphas[59]);
         }
     }
 
@@ -185,8 +185,9 @@ void CMajinBeem::Step() {
                 positions[0][2] += speed / 3.0f * cos(yaw);
             }
 
-            if (counters[58] >= 200)
+            if (counters[58] >= 200) {
                 active = 0;
+            }
             break;
     }
 }

@@ -187,37 +187,45 @@ int CEditArea::GetPartsExtra(int x, int y) {
         case 1:
             switch (area_id) {
                 case 0:
-                    if (x == 5 && y == -1)
+                    if (x == 5 && y == -1) {
                         return MAP_CONNECTION_RIVER;
-                    if (x == 2 && y == 8)
+                    }
+                    if (x == 2 && y == 8) {
                         return MAP_CONNECTION_RIVER;
+                    }
                     break;
                 case 1:
-                    if (x == 3 && y == 6)
+                    if (x == 3 && y == 6) {
                         return MAP_CONNECTION_RIVER;
-                    if (x == 12 && y == 3)
+                    }
+                    if (x == 12 && y == 3) {
                         return MAP_CONNECTION_RIVER;
+                    }
                     break;
                 case 2:
-                    if (x == 4 && y == -1)
+                    if (x == 4 && y == -1) {
                         return MAP_CONNECTION_RIVER;
-                    if (x == 3 && y == 8)
+                    }
+                    if (x == 3 && y == 8) {
                         return MAP_CONNECTION_RIVER;
+                    }
                     break;
             }
     }
-    if (x < 0 || x >= width)
+    if (x < 0 || x >= width) {
         return -1;
-    if (y < 0 || y >= height)
+    }
+    if (y < 0 || y >= height) {
         return -1;
+    }
     return grid[x][y].parts_extra;
 }
 
 int CEditArea::SetMapParts(int parts_id, CMapParts *parts, float x, float y, float z, int rot_y) {
     CVector3_i_ position;
-    int i;
-    int j;
-    CMapParts *target = &parts[parts_id];
+    int         i;
+    int         j;
+    CMapParts  *target = &parts[parts_id];
     target->unit_size = unit_size;
     int parts_width = target->GetWidth();
     int parts_height = target->GetHeight();
@@ -252,8 +260,8 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
         return 0;
     }
     CMapParts *target = &parts[parts_no];
-    int parts_width = target->GetWidth();
-    int parts_height = target->GetHeight();
+    int        parts_width = target->GetWidth();
+    int        parts_height = target->GetHeight();
     for (int i = 0; i < parts_width; i++) {
         for (int j = 0; j < parts_height; j++) {
             int half_width = parts_width >> 1;
@@ -267,7 +275,7 @@ int CEditArea::DeleteMapParts(int parts_no, CMapParts *parts, float x, float y, 
                     AddAlt(cell_x, cell_y, -cell_code);
                     if (occupant >= 0) {
                         CMapParts *occupant_parts = &parts[occupant];
-                        float occupant_position[3];
+                        float      occupant_position[3];
                         occupant_parts->GetPosition(occupant_position);
                         occupant_position[1] = GetAlt(cell_x, cell_y);
                         occupant_parts->SetPosition(occupant_position);
@@ -514,8 +522,8 @@ void CEditArea::RemakeGrid() {
         return;
     }
     sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((char *) model + model->vertex_ofs);
-    int y;
-    int x;
+    int            y;
+    int            x;
     for (x = 0; x < width; x++) {
         for (y = 0; y < height; y++) {
             int index = x + y * width;
@@ -543,21 +551,25 @@ void CEditArea::GetPartsBox(CBoxVu0 *box) {
 
 void CEditArea::MakePartsBox() {
     CVector3_f_ position;
-    int min_x = 0;
-    int max_x = 0;
-    int max_z = 0;
-    int min_z = 0;
+    int         min_x = 0;
+    int         max_x = 0;
+    int         max_z = 0;
+    int         min_z = 0;
     for (int x = 0; x < width; x++) {
         for (int z = 0; z < height; z++) {
             if (grid[x][z].parts_no >= 0 && grid[x][z].parts_id >= 0) {
-                if (max_x < x)
+                if (max_x < x) {
                     max_x = x;
-                if (max_z < z)
+                }
+                if (max_z < z) {
                     max_z = z;
-                if (min_x > x)
+                }
+                if (min_x > x) {
                     max_x = x;
-                if (z < min_z)
+                }
+                if (z < min_z) {
                     min_z = z;
+                }
             }
         }
     }
@@ -573,7 +585,7 @@ void CEditArea::MakePartsBox() {
     parts_box.min[3] = 1.0f;
 }
 
-int CEditArea::CheckArea(float x, float, float z) {
+int CEditArea::CheckArea(float x, float y, float z) {
     if (x < offset_x) {
         return 0;
     }
@@ -711,14 +723,14 @@ int CEditArea::PickUpPoly(CCPoly *polygons, float x, float y, float z) {
 
 int CEditArea::PickUpPoly(CCPoly *polygons, CRect_i_ rect) {
     static int sound[] = {0, 1, 0, 14, 2};
-    int count = 0;
+    int        count = 0;
     for (int x = rect.x; x < rect.x + rect.width; x++) {
         for (int y = rect.y; y < rect.y + rect.height; y++) {
             if (x >= 0 && x < width && y >= 0 && y < height && GetCode(x, y) != 0x81) {
-                CVector3_f_ position;
+                CVector3_f_   position;
                 sceVu0FVECTOR corner[4];
                 sceVu0FVECTOR normal;
-                GridPolyInfo surface;
+                GridPolyInfo  surface;
                 GetPos(&position, x, 0, y);
                 memset(&surface, 0, sizeof(surface));
                 surface.attr.foot_sound = sound[map_no];
@@ -757,14 +769,14 @@ int CEditArea::PickUpPoly(CCPoly *polygons, CRect_i_ rect) {
 }
 
 int CEditArea::PickUpPoly(CCPoly *polygons, CBoxVu0 box) {
-    int left, top;
+    int         left, top;
     CVector3_i_ position;
     GetPos(&position, box.min[0], box.min[1], box.min[2]);
     left = position.x;
     top = position.z;
     GetPos(&position, box.max[0], box.max[1], box.max[2]);
-    int right = position.x;
-    int bottom = position.z;
+    int      right = position.x;
+    int      bottom = position.z;
     CRect_i_ rect;
     rect.x = left - 1;
     rect.y = top - 1;
@@ -778,8 +790,9 @@ int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity) {
     int count = 0;
     for (x = rect.x; x < rect.x + rect.width; x++) {
         for (y = rect.y; y < rect.y + rect.height; y++) {
-            if (count >= capacity)
+            if (count >= capacity) {
                 break;
+            }
             int parts_id = GetPartsID(x, y);
             if (parts_id >= 0) {
                 if (count == 0) {
@@ -787,11 +800,13 @@ int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity) {
                 } else {
                     int found = 0;
                     for (int i = 0; i < count; i++) {
-                        if (parts_id == parts_ids[i])
+                        if (parts_id == parts_ids[i]) {
                             found = 1;
+                        }
                     }
-                    if (!found)
+                    if (!found) {
                         parts_ids[count++] = parts_id;
+                    }
                 }
             }
         }
@@ -799,7 +814,7 @@ int CEditArea::GetPartsRect(CRect_i_ &rect, int *parts_ids, int capacity) {
     return count;
 }
 
-void CEditArea::ChainWorkClear(void) {
+void CEditArea::ChainWorkClear() {
     for (int x = 0; x < 16; x++) {
         for (int y = 0; y < 16; y++) {
             chain_work[x][y] = 0;
@@ -835,7 +850,7 @@ int CEditArea::CheckRiverChain(int x, int y, int target_x, int target_y) {
     return CheckRiverChain(x, y + 1, target_x, target_y) ? 1 : 0;
 }
 
-void CEditArea::DrawGrid(void) {
+void CEditArea::DrawGrid() {
     sceVu0FVECTOR position;
 
     grid_redraw_count--;
@@ -863,7 +878,7 @@ void CEditArea::DrawGrid(void) {
     MGDraw(grid_frame);
 }
 
-void CEditArea::Clear(void) {
+void CEditArea::Clear() {
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
             grid[x][y].parts_no = -1;
@@ -942,6 +957,6 @@ float CEditArea::GetUnitAlt() {
     return this->unit_alt;
 }
 
-CEditArea::CEditArea(void) {
+CEditArea::CEditArea() {
     Initialize();
 }

@@ -40,34 +40,34 @@
 
 static int defWeapon[6] = {257, 299, 314, 331, 347, 363};
 
-int MenuWeaponModelData[42];
-int MenuWeaponModelInfo[10][2];
+int   MenuWeaponModelData[42];
+int   MenuWeaponModelInfo[10][2];
 float MenuCharaOldAmbient[4];
-char MenureadFile[64];
+char  MenureadFile[64];
 
-int MenuItemUseVolume;
-u_long128 *WeaponRead_Buf;
-s16 MenuCharaEffectReadFlag;
-s16 MenuCharaOldEffect;
+int             MenuItemUseVolume;
+u_long128      *WeaponRead_Buf;
+s16             MenuCharaEffectReadFlag;
+s16             MenuCharaOldEffect;
 BT_SHOT_EFFECT *WepEffectMenuPt;
-u_long128 *WepEffectMenuReadBuf;
-u_long128 *MenuWeaponModelBuildBuffer;
-int CharaFileBGReadNo;
-s16 charachangeid;
-u_long128 *CharaChangeBaseBuf;
-u_long128 *menucharReadbuf;
-u_long128 *menud0wepReadBuf;
-u_long128 *menud1wepReadBuf;
-u_long128 *menud2wepReadBuf;
-u_long128 *MenuWepIconCharaChangePtr;
-u_long128 *MenuVoiceLoadPtr;
-ClsMes *CharaNameMes;
-ClsMes *DngMenuMes;
-s16 CharaNameDrawFlag;
-s16 CharaNameDrawCase;
-CTexture *DngEscapeTex;
-s16 DngEscapeBlock;
-s16 DngEscapeEndFlag;
+u_long128      *WepEffectMenuReadBuf;
+u_long128      *MenuWeaponModelBuildBuffer;
+int             CharaFileBGReadNo;
+s16             charachangeid;
+u_long128      *CharaChangeBaseBuf;
+u_long128      *menucharReadbuf;
+u_long128      *menud0wepReadBuf;
+u_long128      *menud1wepReadBuf;
+u_long128      *menud2wepReadBuf;
+u_long128      *MenuWepIconCharaChangePtr;
+u_long128      *MenuVoiceLoadPtr;
+ClsMes         *CharaNameMes;
+ClsMes         *DngMenuMes;
+s16             CharaNameDrawFlag;
+s16             CharaNameDrawCase;
+CTexture       *DngEscapeTex;
+s16             DngEscapeBlock;
+s16             DngEscapeEndFlag;
 
 /** The weapon test number GetNowTestNo reports, initialised to 1. */
 int MenuWeaponTestCase = 1;
@@ -79,69 +79,6 @@ s16 DngEscapeAlpha = 0x80;
  * The dungeon escape prompt's chosen answer, 1 or 2.
  */
 s16 DngEscapeSelect = 1;
-
-/**
- * Sets the buffer the menu reads weapon effect files into.
- *
- * @mangled SetWepEffectMenuReadBuf__FP1
- * @address 0x20D0A0
- * @size 0xC
- */
-static void SetWepEffectMenuReadBuf(u_long128 *buffer);
-
-/**
- * Returns one entry of the menu's weapon model table.
- *
- * @mangled GetMenuWeaponModelData__Fi
- * @address 0x20D3B0
- * @size 0x18
- */
-static int *GetMenuWeaponModelData(int index);
-
-/**
- * Clears the menu's weapon model table.
- *
- * @mangled InitMenuWeaponModelData__Fv
- * @address 0x20D3D0
- * @size 0x30
- */
-static void InitMenuWeaponModelData();
-
-/**
- * Returns the two-value reference entry for one weapon model.
- *
- * @mangled GetMenuWeaponModelInfo__Fi
- * @address 0x20D400
- * @size 0x18
- */
-static int *GetMenuWeaponModelInfo(int index);
-
-/**
- * Returns the motion step a character's status bits select.
- *
- * @mangled GetNowMotionStepCnt__Fi
- * @address 0x20DE80
- * @size 0x38
- */
-static int GetNowMotionStepCnt(int status);
-
-/**
- * Writes the file path of one character's model into a buffer.
- *
- * @mangled GetCharaChangeReadCharaFilePath__FPci
- * @address 0x20E530
- * @size 0x74
- */
-static void GetCharaChangeReadCharaFilePath(char *path, int chara_no);
-
-/**
- * Randomly adjusts one value of a weapon being changed into another.
- *
- * @mangled LocalWeaponDataChange__FPciii
- * @address 0x20FBE0
- * @size 0xF8
- */
-static void LocalWeaponDataChange(char *values, int count, int base, int range);
 
 /**
  * Selects the battle-menu game flag for the current dungeon state.
@@ -183,12 +120,11 @@ int GetMenuHebikiriFlag() {
  */
 void EquipDefaultWeapon(int chara_no) {
     CDngStatusData *status = SaveData->GetDngStatus();
-    WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
-    int default_weapon_no = GetDefaultWeaponNo(chara_no);
+    WEAPON_HAVE    *weapons = status->chara_weapons[chara_no];
+    int             default_weapon_no = GetDefaultWeaponNo(chara_no);
 
     for (int slot = 0; slot < 10; slot++) {
-        if (weapons[slot].item_no == default_weapon_no ||
-            weapons[slot].item_no == default_weapon_no + 1) {
+        if (weapons[slot].item_no == default_weapon_no || weapons[slot].item_no == default_weapon_no + 1) {
             status->equipped_weapon_slot[chara_no] = slot;
             break;
         }
@@ -204,10 +140,10 @@ void EquipDefaultWeapon(int chara_no) {
  */
 void DrawMenuNothing(int x, int y, int width, int height, char *name, int custom, int alpha) {
     CTexture *texture = TexManager.GetTexture(name, -1);
-    int inner_w = width - 0x24;
-    int inner_h = height - 0x24;
-    int u;
-    int v;
+    int       inner_w = width - 0x24;
+    int       inner_h = height - 0x24;
+    int       u;
+    int       v;
 
     switch (custom) {
         case 0:
@@ -223,8 +159,7 @@ void DrawMenuNothing(int x, int y, int width, int height, char *name, int custom
     DrawMenu2DSprite(texture, CRect_i_(x, y + 0x12 + inner_h, 0x12, 0x12), CRect_i_(u, v + 0x12, 0x12, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x + 0x12, y + 0x12 + inner_h, inner_w, 0x12), CRect_i_(u + 0x10, v + 0x12, 4, 0x12), alpha);
     DrawMenu2DSprite(texture, CRect_i_(x + 0x12 + inner_w, y + 0x12 + inner_h, 0x12, 0x12), CRect_i_(u + 0x12, v + 0x12, 0x12, 0x12), alpha);
-    DrawMenu2DSprite(texture, CRect_i_(x - 0x33 + (inner_w >> 1), y - 1 + (inner_h >> 1), 0x86, 0x22),
-                     CRect_i_(0xFA, 0x1D2, 0x86, 0x22), alpha);
+    DrawMenu2DSprite(texture, CRect_i_(x - 0x33 + (inner_w >> 1), y - 1 + (inner_h >> 1), 0x86, 0x22), CRect_i_(0xFA, 0x1D2, 0x86, 0x22), alpha);
 }
 
 int GetMenuItemUseVolume() {
@@ -232,17 +167,17 @@ int GetMenuItemUseVolume() {
 }
 
 int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_HAVE *weapon) {
-    int used = 0;
+    int         used = 0;
     WEAPON_HAVE level_up;
 
     MenuItemUseVolume = 0;
-    int now_hp = status->hp[chara];
-    int max_hp = status->max_hp[chara];
-    int now_water = (int) status->water_now[chara];
+    int   now_hp = status->hp[chara];
+    int   max_hp = status->max_hp[chara];
+    int   now_water = (int) status->water_now[chara];
     float max_water = status->water_max[chara];
-    int old_condition = status->ailments[chara];
+    int   old_condition = status->ailments[chara];
     printf("trueNo = %d\n", item_no);
-    int value_no = 0;
+    int        value_no = 0;
     ITEM_DATA *data = GetItemData(item_no);
     if (data == NULL) {
         return 0;
@@ -275,8 +210,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             used = 1;
         }
     }
-    if ((data->kind_flags & ITEMKINDF_RANDOM) && (data->use_flags & ITEMUSE_STATUS) && item_no >= ITEM_FLUFFY_DOUGHNUT &&
-        item_no < ITEM_DUMMY) {
+    if ((data->kind_flags & ITEMKINDF_RANDOM) && (data->use_flags & ITEMUSE_STATUS) && item_no >= ITEM_FLUFFY_DOUGHNUT && item_no < ITEM_DUMMY) {
         if (chara == item_no - ITEM_FLUFFY_DOUGHNUT) {
             int old = status->defense[chara];
             int range = data->vol_range;
@@ -301,8 +235,8 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
             if (data->use_flags & ITEMUSE_STATUS) {
                 switch (item_no) {
                     case ITEM_POCKET: {
-                        int i;
-                        int num;
+                        int        i;
+                        int        num;
                         ITEM_PACK *pack = &status->item_pack;
                         num = pack->num;
                         if (num < 0x60) {
@@ -473,8 +407,7 @@ int ItemUseFunc(CUserStatus *status, int item_no, int chara, int target, WEAPON_
  */
 float GetNowWeaponRate(WEAPON_HAVE *weapon) {
     float rate = 1.0f;
-    if (weapon != NULL && weapon->item_no == 0x110 &&
-        weapon->durability_f <= 0.2f * weapon->durability) {
+    if (weapon != NULL && weapon->item_no == 0x110 && weapon->durability_f <= 0.2f * weapon->durability) {
         rate = 1.5f;
     }
     return rate;
@@ -565,16 +498,23 @@ void SetOldEffectKind(int kind) {
     MenuCharaOldEffect = kind;
 }
 
+/**
+ * Sets the buffer the menu reads weapon effect files into.
+ *
+ * @mangled SetWepEffectMenuReadBuf__FP1
+ * @address 0x20D0A0
+ * @size 0xC
+ */
 static void SetWepEffectMenuReadBuf(u_long128 *buffer) {
     WepEffectMenuReadBuf = buffer;
 }
 
 BT_SHOT_EFFECT *DngWepEffectReadStart() {
-    char path[64];
-    int size;
+    char         path[64];
+    int          size;
     CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-    int chara = status->cur_chara;
-    int slot = status->equipped_weapon_slot[chara];
+    int          chara = status->cur_chara;
+    int          slot = status->equipped_weapon_slot[chara];
     WEAPON_HAVE *weapons = status->chara_weapons[chara];
     WEAPON_HAVE *equipped = &weapons[slot];
 
@@ -589,8 +529,7 @@ BT_SHOT_EFFECT *DngWepEffectReadStart() {
 
 void MenuWeaponEffectSet(int effect_no) {
     SetMenuCharaEffectReadFlag(0);
-    MainChara_Effect((BT_SHOT_EFFECT *) WepEffectMenuPt, (unsigned int *) WepEffectMenuReadBuf,
-                     effect_no);
+    MainChara_Effect((BT_SHOT_EFFECT *) WepEffectMenuPt, (unsigned int *) WepEffectMenuReadBuf, effect_no);
 }
 
 int GetNowTestNo() {
@@ -601,10 +540,10 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     if (ReadBGSync() == 1) {
         BreakReadBG();
     }
-    char path[64] = "commenu/c";
+    char  path[64] = "commenu/c";
     char *numbers[6] = {"01", "04", "06", "05", "10", "18"};
-    char image[64];
-    int size;
+    char  image[64];
+    int   size;
 
     strcat(path, numbers[chara]);
     strcat(path, "wtes.chr");
@@ -630,14 +569,35 @@ int StartReadWepMDS(u_long128 *buffer, int chara) {
     return 1;
 }
 
+/**
+ * Returns one entry of the menu's weapon model table.
+ *
+ * @mangled GetMenuWeaponModelData__Fi
+ * @address 0x20D3B0
+ * @size 0x18
+ */
 static int *GetMenuWeaponModelData(int index) {
     return &MenuWeaponModelData[index];
 }
 
+/**
+ * Clears the menu's weapon model table.
+ *
+ * @mangled InitMenuWeaponModelData__Fv
+ * @address 0x20D3D0
+ * @size 0x30
+ */
 static void InitMenuWeaponModelData() {
     memset(MenuWeaponModelData, 0, sizeof(MenuWeaponModelData));
 }
 
+/**
+ * Returns the two-value reference entry for one weapon model.
+ *
+ * @mangled GetMenuWeaponModelInfo__Fi
+ * @address 0x20D400
+ * @size 0x18
+ */
 static int *GetMenuWeaponModelInfo(int index) {
     return MenuWeaponModelInfo[index];
 }
@@ -667,19 +627,19 @@ int GetMenuWeaponModelFrameNo(int index) {
  * @address 0x20D4C0
  * @size 0x464
  */
-int EnterWeaponModel(int chara, int texture_block, int) {
+int EnterWeaponModel(int chara, int texture_block, int weapon_slot) {
     BG_READ_INFO *pack = GetReadBGFile(0);
     BG_READ_INFO *shadow = GetReadBGFile(1);
     BG_READ_INFO *effect = GetReadBGFile(2);
     // Built and indexed but never read.
     char *shadows[6] = {"kagetoan", "kagesyao", "kagegoro", "kageruby", "kageunga", "kageozu"};
     char *shadow_name = shadows[chara];
-    s16 weapon_max = MenuCharaWeaponMax[chara];
+    s16   weapon_max = MenuCharaWeaponMax[chara];
     char *names[6] = {"c01", "c04", "c06", "c05", "c10", "c18"};
-    char order[42];
-    char image[32];
-    char model[32];
-    char chr[32];
+    char  order[42];
+    char  image[32];
+    char  model[32];
+    char  chr[32];
 
     switch (GetNowTestNo()) {
         case 0:
@@ -687,8 +647,8 @@ int EnterWeaponModel(int chara, int texture_block, int) {
         case 1: {
             LOADTEXTURE_INFO2 texture[3] = {
                 {"#frame_menuwep_dmy#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
-                {NULL, 0, 0},
-                {NULL, 0, 0},
+                {NULL,                                             0, 0},
+                {NULL,                                             0, 0},
             };
             texture[0].block_no = MenuShadowReadBlock;
             texture[1].block_no = MenuShadowReadBlock;
@@ -754,7 +714,7 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     InitMenuWeaponModelReference();
     LOADTEXTURE_INFO2 textures[] = {
         {(char *) "#frame_menuwep#640#" SCREEN_HEIGHT_STR "#4", texture_block, 0},
-        {NULL, 0, 0},
+        {NULL,                                                  0,             0},
     };
     char name[32];
     char cfg[32];
@@ -765,10 +725,10 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     MenuExCashBuffer.base = (u_char *) MenuWeaponModelBuildBuffer;
     MenuExCashBuffer.limit = 0xEC00;
     MenuExCashBuffer.used = 0;
-    int default_no;
+    int          default_no;
     WEAPON_HAVE *weapons = ((CUserStatus *) BtlMenuStatusPt)->chara_weapons[chara];
     default_no = GetDefaultWeaponNo(chara);
-    int next = 2;
+    int     next = 2;
     u_int **data = (u_int **) GetMenuWeaponModelData(0);
     BtGetWeaponNamePath2(name, cfg, chara, 0);
     DngWeaponFrm[0].LoadPackData3(*data, cfg, &MenuExCashBuffer, texture_block, &MenuExCashBuffer, 1, 0);
@@ -821,11 +781,11 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     printf("WepMenuEffectReadBuf = %p\n", WepMenuEffectReadBuf);
 }
 
-int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
+int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *read_buffer) {
     TexManager.DeleteTextureBlock(texture_block);
     u_int **first = (u_int **) GetMenuWeaponModelData(0);
     u_int **second = (u_int **) GetMenuWeaponModelData(1);
-    int kind = 0;
+    int     kind = 0;
     if (UserStatus != NULL) {
         kind = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
         kind -= GetDefaultWeaponNo(chara);
@@ -841,6 +801,13 @@ int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *) {
     return 1;
 }
 
+/**
+ * Returns the motion step a character's status bits select.
+ *
+ * @mangled GetNowMotionStepCnt__Fi
+ * @address 0x20DE80
+ * @size 0x38
+ */
 static int GetNowMotionStepCnt(int status) {
     int step = 0;
     if (status & 0x40) {
@@ -867,13 +834,13 @@ int GetNowActiveCharaStatus(int chara_no) {
 }
 
 void SetNowCharaMotionNo(int chara) {
-    int status = GetNowActiveCharaStatus(chara);
+    int          status = GetNowActiveCharaStatus(chara);
     CUserStatus *user_status = (CUserStatus *) BtlMenuStatusPt;
-    float max_hp = user_status->max_hp[chara];
-    float hp = user_status->hp[chara];
-    int motion = MenuCharaFrame.motion_no;
-    float speed[3] = {0.1f, 0.05f, 0.0f};
-    int next = motion;
+    float        max_hp = user_status->max_hp[chara];
+    float        hp = user_status->hp[chara];
+    int          motion = MenuCharaFrame.motion_no;
+    float        speed[3] = {0.1f, 0.05f, 0.0f};
+    int          next = motion;
 
     if (!(hp < 0.3f * max_hp)) {
         next = 0;
@@ -900,8 +867,8 @@ void SetItemMenuColor(int chara) {
     float red;
     float green;
     float blue;
-    int status;
-    int should_tint;
+    int   status;
+    int   should_tint;
 
     MGGetAmbient(MenuCharaOldAmbient);
     status = GetNowActiveCharaStatus(chara);
@@ -953,7 +920,7 @@ void SetItemMenuOldAmbient() {
 int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
     char path[64];
     char name[32];
-    int size;
+    int  size;
 
     strcpy(path, GetMenuTextureDir());
     strcat(path, "dungeon/");
@@ -972,13 +939,13 @@ int StartLoadCharaMDS(u_long128 *buffer, int chara, int read_no) {
 
 void MenuCharaMDSBuild2(int chara, int texture_block) {
     char name[32];
-    int size;
+    int  size;
 
     sprintf(name, "c0%ddmenu.img", chara + 1);
     LOADTEXTURE_INFO2 textures[3] = {
         {"#frame_menu_chara#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
-        {NULL, 0, 0},
-        {NULL, 0, 0},
+        {NULL,                                            0, 0},
+        {NULL,                                            0, 0},
     };
     textures[0].block_no = texture_block;
     textures[1].block_no = texture_block;
@@ -987,7 +954,7 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     TexManager.DeleteTextureBlock(texture_block);
     TexManager.CleanUpTextureList();
     TexManager.LoadTextureBlockEX(-1, textures);
-    u_int *pack = (u_int *) file->buffer;
+    u_int  *pack = (u_int *) file->buffer;
     u_char *model = (u_char *) ((u_long128 *) pack + (file->size >> 4) + 1);
     sprintf(name, "c0%ddmenu.cfg", chara + 1);
     MenuCharaFrame.Initialize();
@@ -1002,8 +969,22 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
     if (MenuCharaFrame.frame != NULL) {
         MenuCharaFrame.frame->SetAttr(attr, 1, 4);
     }
-    sceVu0FVECTOR position[6] = {{-4.8f, -13.0f, 0.0f, 1.0f}, {-5.2f, -12.8f, 0.0f, 1.0f}, {-5.0f, -11.4f, 0.0f, 1.0f}, {-5.0f, -15.0f, 0.0f, 1.0f}, {-5.0f, -16.0f, 0.0f, 1.0f}, {-5.0f, -15.0f, 0.0f, 1.0f}};
-    float scale[6][3] = {{1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.9f, 0.9f, 0.9f}, {0.9f, 0.9f, 0.9f}};
+    sceVu0FVECTOR position[6] = {
+        {-4.8f, -13.0f, 0.0f, 1.0f},
+        {-5.2f, -12.8f, 0.0f, 1.0f},
+        {-5.0f, -11.4f, 0.0f, 1.0f},
+        {-5.0f, -15.0f, 0.0f, 1.0f},
+        {-5.0f, -16.0f, 0.0f, 1.0f},
+        {-5.0f, -15.0f, 0.0f, 1.0f}
+    };
+    float scale[6][3] = {
+        {1.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        {0.9f, 0.9f, 0.9f},
+        {0.9f, 0.9f, 0.9f}
+    };
     MenuCharaFrame.SetPosition(position[chara]);
     SetNowCharaMotionNo(chara);
     MenuCharaFrame.SetScale(scale[chara]);
@@ -1038,7 +1019,7 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     char name[64];
     char cfg[16];
     char effect[32];
-    int size;
+    int  size;
 
     CharaChangeBaseBuf = buffer;
     charachangeid = chara;
@@ -1062,7 +1043,7 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
     menud2wepReadBuf = menud1wepReadBuf + (size >> 4) + 1;
     menud2wepReadBuf = MenuCalcBufAlignment(menud2wepReadBuf);
     WEAPON_HAVE *equipped = &UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]];
-    int kind = equipped->item_no - (int) defWeapon[chara];
+    int          kind = equipped->item_no - (int) defWeapon[chara];
     if (kind < 0) {
         kind = 0;
     }
@@ -1076,7 +1057,7 @@ int CharaChangeInitToGL(u_long128 *buffer, int chara) {
         printf("USerStatus is NULL\n", UserStatus);
         return -1;
     }
-    int slot = UserStatus->equipped_weapon_slot[charachangeid];
+    int          slot = UserStatus->equipped_weapon_slot[charachangeid];
     WEAPON_HAVE *weapons = UserStatus->chara_weapons[charachangeid];
     WEAPON_HAVE *weapon = &weapons[slot];
     WepEffectMenuPt = Get_Main_EffectPtr(charachangeid, weapon->best_elem);
@@ -1102,11 +1083,10 @@ void CharaChangeInitToGL2(int load_icon) {
 }
 
 void BtMenuLoadChara() {
-    s8 chara = charachangeid;
+    s8           chara = charachangeid;
     CUserStatus *status = UserStatus;
     status->cur_chara = chara;
-    LoadChara2((s16) charachangeid, 0, (u_int *) menucharReadbuf, (u_int *) menud0wepReadBuf,
-               (u_int *) menud1wepReadBuf, (u_int *) menud2wepReadBuf);
+    LoadChara2((s16) charachangeid, 0, (u_int *) menucharReadbuf, (u_int *) menud0wepReadBuf, (u_int *) menud1wepReadBuf, (u_int *) menud2wepReadBuf);
     SetWeaponAttachStatus(NowWeaponHave);
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
     SetWeaponColor();
@@ -1115,11 +1095,11 @@ void BtMenuLoadChara() {
 
 void BtMenuLoad2(int load_texture) {
     if (load_texture != 0) {
-        BG_READ_INFO *file = GetReadBGFile(0);
+        BG_READ_INFO     *file = GetReadBGFile(0);
         LOADTEXTURE_INFO2 textures[] = {
             {(char *) "#frame_image#640#" SCREEN_HEIGHT_STR "#4", MenuShadowReadBlock, 0},
-            {(char *) file->buffer, MenuShadowReadBlock, 0},
-            {NULL, 0, 0},
+            {(char *) file->buffer,                               MenuShadowReadBlock, 0},
+            {NULL,                                                0,                   0},
         };
         TexManager.DeleteTextureBlock(MenuShadowReadBlock);
         TexManager.LoadTextureBlockEX(-1, textures);
@@ -1255,8 +1235,7 @@ void MonsterNameDraw() {
         if (mes->mes_made >= 0) {
             int width = mes->text_columns;
             width = mes->char_width * width + 0x20;
-            if (mes->text_x < 0x22 || mes->text_x >= 0x26D || mes->text_y < 0x1E || mes->text_y >= 0x199 ||
-                width >= 0xFB || width < 10) {
+            if (mes->text_x < 0x22 || mes->text_x >= 0x26D || mes->text_y < 0x1E || mes->text_y >= 0x199 || width >= 0xFB || width < 10) {
                 SetMonsterNameDrawFlag(0);
                 return;
             }
@@ -1278,7 +1257,7 @@ void MonsterNameDraw() {
  */
 void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     char path[64];
-    int file_size;
+    int  file_size;
 
     if (title == NULL || choice == NULL) {
         return;
@@ -1291,12 +1270,12 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     strcat(path, "d0%do.img");
     sprintf(path, path, georama_no);
     LoadFile(path, read_buffer, &file_size);
-    int block = 0x17;
-    char *image = (char *) read_buffer;
+    int               block = 0x17;
+    char             *image = (char *) read_buffer;
     LOADTEXTURE_INFO2 texture[3] = {
         {(char *) FrameImageTexture, block, 0},
-        {image, block, 0},
-        {NULL, 0, 0},
+        {image,                      block, 0},
+        {NULL,                       0,     0},
     };
     int size[4];
     TexManager.DeleteTextureBlock(block);
@@ -1309,7 +1288,7 @@ void DngEscapeMsgInit(ClsMes *title, ClsMes *choice, int dungeon) {
     DngEscapeTex = TexManager.GetTexture(name, -1);
     CharaNameMes = title;
     DngMenuMes = choice;
-    int lang = GetMenuLangFlag();
+    int    lang = GetMenuLangFlag();
     u_char title_x[7] = {0xB4, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0};
     CharaNameMes->text_x = title_x[lang];
     CharaNameMes->text_y = 0x8C;
@@ -1372,7 +1351,7 @@ int DngEscapeMsgLoop() {
             }
             ComMenuSePlay(0);
         }
-        int row = DngEscapeSelect - 1;
+        int     row = DngEscapeSelect - 1;
         ClsMes *mes = CharaNameMes;
         mes->cursor_row = row;
         if (GamePad.Down(0x40) != 0) {
@@ -1396,12 +1375,12 @@ int DngEscapeMsgLoop() {
 }
 
 int CheckItemThrow(int *items, int *values) {
-    int i;
-    int any = 0;
-    int found = 0;
-    ITEM_PACK *pack;
+    int          i;
+    int          any = 0;
+    int          found = 0;
+    ITEM_PACK   *pack;
     WEAPON_HAVE *weapons;
-    int item_no;
+    int          item_no;
     ATTACH_LIST *attachments;
 
     pack = &((CUserStatus *) BtlMenuStatusPt)->item_pack;
@@ -1515,7 +1494,7 @@ void WeaponOptionStatusDraw(WEAPON_HAVE *weapon, int x, int y, int alpha) {
     if (texture == NULL) {
         return;
     }
-    int count = 0;
+    int      count = 0;
     CRect_i_ source(0xEC, 0x50, 0x14, 0x14);
     for (int bit = 1; bit <= 13; bit++) {
         if (bit == 8) {
@@ -1549,11 +1528,11 @@ void WeaponStarDraw(int x, int y, WEAPON_HAVE *weapon, int alpha) {
         return;
     }
     CTexture *texture = TexManager.GetTexture("wepstatus", -1);
-    int stars = weapon->synthesis_count;
+    int       stars = weapon->synthesis_count;
     if (stars > 49) {
         stars = 49;
     }
-    int draw_x = x + 0x4C;
+    int      draw_x = x + 0x4C;
     CRect_i_ big_star(0x108, 0x176, 0x18, 0x18);
     for (int i = 0; i < stars / 10; i++, draw_x += big_star.width) {
         DrawMenu2DSprite(texture, CRect_i_(draw_x, y, big_star.width, big_star.height), big_star, alpha);
@@ -1577,10 +1556,10 @@ static void LocalWeaponDataChange(char *values, int count, int base, int range) 
         return;
     }
 
-    int selected = rand() % count;
-    int reduction = base + rand() % range;
+    int   selected = rand() % count;
+    int   reduction = base + rand() % range;
     char *value = values;
-    int i = 0;
+    int   i = 0;
     while (i < count) {
         if (i == selected) {
             *value -= reduction;
@@ -1690,7 +1669,7 @@ int WeaponDataChangeByRGate(WEAPON_HAVE *weapon, int kind) {
                         NowMainEffect = &CharaMainEffectCrash;
                         BtActStatus.gun_type = 0;
                     }
-                    int slot = UserStatus->equipped_weapon_slot[chara];
+                    int          slot = UserStatus->equipped_weapon_slot[chara];
                     WEAPON_HAVE *weapons = UserStatus->chara_weapons[chara];
                     MenuWeaponSpSet(&MainWeapon, &weapons[slot]);
                     printf("equip default Weapon\n");

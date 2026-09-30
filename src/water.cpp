@@ -62,46 +62,46 @@ void CWater::SetColor(unsigned char red, unsigned char green, unsigned char blue
 }
 
 int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
-    float *above;
-    int word;
-    int i;
-    int k;
-    float row_f;
-    float *here;
+    float         *above;
+    int            word;
+    int            i;
+    int            k;
+    float          row_f;
+    float         *here;
     sceVu0FVECTOR *out;
     sceVu0FVECTOR *uv;
-    CTexture *texture;
-    int j;
-    float *below;
-    float *cell_above;
-    float *cell;
-    int count;
-    u_long128 *top;
-    int first;
-    u_long128 *bottom;
-    u_long128 *uv_top;
-    u_long128 *uv_bottom;
-    int vertex_count;
-    int qwc;
-    int unpack_word;
-    u_int nloop;
-    u_int *tag;
-    u_long128 *xyz;
-    u_long128 *rgbaq;
-    u_long128 *st;
+    CTexture      *texture;
+    int            j;
+    float         *below;
+    float         *cell_above;
+    float         *cell;
+    int            count;
+    u_long128     *top;
+    int            first;
+    u_long128     *bottom;
+    u_long128     *uv_top;
+    u_long128     *uv_bottom;
+    int            vertex_count;
+    int            qwc;
+    int            unpack_word;
+    u_int          nloop;
+    u_int         *tag;
+    u_long128     *xyz;
+    u_long128     *rgbaq;
+    u_long128     *st;
     word = 0;
     sceGsTex0 tex0;
-    float rgba[4];
+    float     rgba[4];
 
     rgba[0] = color[0];
     rgba[1] = color[1];
     rgba[2] = color[2];
     rgba[3] = color[3];
-    u_int end[4] = {0x11000000, 0, 0, 0};
-    float uv_base[4] = {320.0f, SCREEN_QUARTER_HEIGHT_F, 0.0f, 0.0f};
-    u_int first_kick[4] = {0, 0, 0, 0x14000000};
-    u_int kick[4] = {0, 0, 0, 0x17000000};
-    u_int unpack[4] = {0, 0, 0, 0x6C008000};
+    u_int         end[4] = {0x11000000, 0, 0, 0};
+    float         uv_base[4] = {320.0f, SCREEN_QUARTER_HEIGHT_F, 0.0f, 0.0f};
+    u_int         first_kick[4] = {0, 0, 0, 0x14000000};
+    u_int         kick[4] = {0, 0, 0, 0x17000000};
+    u_int         unpack[4] = {0, 0, 0, 0x6C008000};
     sceVu0FVECTOR row_step;
     sceVu0FVECTOR column_step;
     sceVu0FMATRIX local_to_world;
@@ -244,8 +244,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     return visual.vu_size;
 }
 
-extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
-    CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
+extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info) {
     if (water->CheckClip() != 0) {
         return 0;
     }
@@ -276,7 +275,7 @@ extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(
     return size;
 }
 
-int CWater::CheckClip(void) {
+int CWater::CheckClip() {
     sceVu0FVECTOR box[2];
     sceVu0FVECTOR corner[4];
 
@@ -288,9 +287,9 @@ int CWater::CheckClip(void) {
     return MGClipBox((CBoxVu0 *) box);
 }
 
-void CWater::Hamon(void) {
-    int i;
-    int j;
+void CWater::Hamon() {
+    int    i;
+    int    j;
     float *source;
     float *target;
 
@@ -312,7 +311,7 @@ void CWater::Hamon(void) {
         for (j = 1; j < columns - 1; j++) {
             float *cell = &source[j + i * columns];
             float *out = &target[j + i * columns];
-            float around = *(cell - columns) + (cell[-1] + cell[1] + *(cell + columns));
+            float  around = *(cell - columns) + (cell[-1] + cell[1] + *(cell + columns));
             around *= speed;
             float centre_term = centre * *cell;
             float previous = *out;
@@ -376,7 +375,7 @@ void CWater::SetSize(int row_count, int column_count, CDataAlloc2<1> *arena) {
     tags_built = 1;
 }
 
-CWater::CWater(void) {
+CWater::CWater() {
     rows = 0;
     columns = 0;
     packet[2] = NULL;

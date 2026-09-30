@@ -18,7 +18,7 @@ struct MOTION_INFO;
  * @size 0x1A8
  * @unknownret
  */
-void OpA_InitProcess(void);
+void OpA_InitProcess();
 
 /**
  *          Draws one frame of the dungeon-square scene.
@@ -28,7 +28,7 @@ void OpA_InitProcess(void);
  * @size 0xD34
  * @unknownret
  */
-void OpA_DrawProcess(void);
+void OpA_DrawProcess();
 
 /**
  *          Advances the dungeon-square scene state.
@@ -38,7 +38,7 @@ void OpA_DrawProcess(void);
  * @size 0x9E0
  * @unknownret
  */
-void OpA_MotionProcess(void);
+void OpA_MotionProcess();
 
 /**
  *          Updates sound and music for the dungeon-square scene.
@@ -48,7 +48,7 @@ void OpA_MotionProcess(void);
  * @size 0x740
  * @unknownret
  */
-void OpA_SoundProcess(void);
+void OpA_SoundProcess();
 
 /**
  * Frames the dance has run for.

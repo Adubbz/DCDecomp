@@ -14,26 +14,26 @@ class CFrame;
  */
 class CBound {
 public:
-    CBound *next; /**< 0x00: Next exclusion box in the cloth list. */
-    s32 mask_bit; /**< 0x04: Index of the bit a cloth vertex sets in its mask to be pushed by this box. */
-    u8 unk_08[8];
+    CBound       *next;     /**< 0x00: Next exclusion box in the cloth list. */
+    s32           mask_bit; /**< 0x04: Index of the bit a cloth vertex sets in its mask to be pushed by this box. */
+    u8            unk_08[8];
     sceVu0FVECTOR extent;     /**< 0x10: Half extents of the box. */
     sceVu0FVECTOR reciprocal; /**< 0x20: Reciprocals used to normalize each axis. */
-    float friction;           /**< 0x30: Contact friction read by the cloth solver. */
-    u8 unk_34[12];
-    sceVu0FMATRIX matrix;    /**< 0x40: Local-to-world orientation. */
-    sceVu0FMATRIX inverse;   /**< 0x80: World-to-local orientation. */
-    sceVu0FVECTOR position;  /**< 0xC0: World-space center. */
-    sceVu0FVECTOR direction; /**< Unit facing direction the box's orientation was last built from. */
-    s32 follow_mode;         /**< How UpDate re-places the box: 1 follows one frame, 2 spans two frames, 0 leaves it where it is. */
-    CFrame *from_frame;      /**< Frame the box follows; in span mode, the frame its start point follows. */
-    CFrame *to_frame;        /**< Frame the end point follows in span mode. */
-    u8 unk_EC[4];
-    sceVu0FVECTOR from; /**< Start point of the span, in the space of the frame it follows. */
-    sceVu0FVECTOR to;   /**< End point of the span, in the space of the frame it follows. */
-    sceVu0FVECTOR up;   /**< Up vector, in the followed frame's space, that settles the box's roll. */
-    float to_stretch;   /**< Factor the span is stretched by past its end point. */
-    float from_stretch; /**< Factor the span is stretched by before its start point. */
+    float         friction;   /**< 0x30: Contact friction read by the cloth solver. */
+    u8            unk_34[12];
+    sceVu0FMATRIX matrix;      /**< 0x40: Local-to-world orientation. */
+    sceVu0FMATRIX inverse;     /**< 0x80: World-to-local orientation. */
+    sceVu0FVECTOR position;    /**< 0xC0: World-space center. */
+    sceVu0FVECTOR direction;   /**< Unit facing direction the box's orientation was last built from. */
+    s32           follow_mode; /**< How UpDate re-places the box: 1 follows one frame, 2 spans two frames, 0 leaves it where it is. */
+    CFrame       *from_frame;  /**< Frame the box follows; in span mode, the frame its start point follows. */
+    CFrame       *to_frame;    /**< Frame the end point follows in span mode. */
+    u8            unk_EC[4];
+    sceVu0FVECTOR from;         /**< Start point of the span, in the space of the frame it follows. */
+    sceVu0FVECTOR to;           /**< End point of the span, in the space of the frame it follows. */
+    sceVu0FVECTOR up;           /**< Up vector, in the followed frame's space, that settles the box's roll. */
+    float         to_stretch;   /**< Factor the span is stretched by past its end point. */
+    float         from_stretch; /**< Factor the span is stretched by before its start point. */
 
     /**
      * Returns the storage required for this cloth exclusion box.
@@ -42,7 +42,7 @@ public:
      * @address 0x13DE90
      * @size 0xC
      */
-    virtual int Sizeof(void);
+    virtual int Sizeof();
 
     /**
      * Tests a point against the box and writes the corrected contact point.
@@ -61,8 +61,7 @@ public:
      * @address 0x13D4C0
      * @size 0x100
      */
-    void SetDir(CFrame *frame, float *from_position, float *to_position, float *up_direction,
-                float half_width, float half_height);
+    void SetDir(CFrame *frame, float *from_position, float *to_position, float *up_direction, float half_width, float half_height);
 
     /**
      * Stores the endpoints and up vector used to orient the box.
@@ -81,7 +80,7 @@ public:
      * @address 0x13D630
      * @size 0x208
      */
-    void UpDateDir(void);
+    void UpDateDir();
 
     /**
      * Orients the box along a facing direction, using an up vector to settle
@@ -111,7 +110,7 @@ public:
      * @address 0x13D9F0
      * @size 0x27C
      */
-    void UpDateDirPos(void);
+    void UpDateDirPos();
 
     /**
      * Updates this box and the remaining boxes in its linked list.
@@ -120,7 +119,7 @@ public:
      * @address 0x13DC70
      * @size 0x74
      */
-    void UpDate(void);
+    void UpDate();
 
     /**
      * Initializes the box's links, transform inputs, friction, and extension scales.
@@ -129,7 +128,7 @@ public:
      * @address 0x13DCF0
      * @size 0x7C
      */
-    void InitParam(void);
+    void InitParam();
 
     /**
      * Initializes the box and gives it the half extents it excludes cloth

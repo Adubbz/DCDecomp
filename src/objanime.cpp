@@ -21,7 +21,7 @@ CFireOmni Fire;
  * The one candle effect the editor lends to every map part with a candle.
  */
 CCandleEffect Candle;
-int all_stop;
+int           all_stop;
 
 /**
  * Clears one object-animation sequence.
@@ -30,7 +30,7 @@ int all_stop;
  * @address 0x165C90
  * @size 0x14
  */
-void OBJ_ANIME_SEQ::Initialize(void) {
+void OBJ_ANIME_SEQ::Initialize() {
     property = -1;
     completion_flag = 0;
 }
@@ -42,15 +42,15 @@ void OBJ_ANIME_SEQ::Initialize(void) {
  * @address 0x165CB0
  * @size 0x30
  */
-OBJ_ANIME_SEQ::OBJ_ANIME_SEQ(void) {
+OBJ_ANIME_SEQ::OBJ_ANIME_SEQ() {
     Initialize();
 }
 
-void ObjAnimeAllStop(void) {
+void ObjAnimeAllStop() {
     all_stop = 1;
 }
 
-void ObjAnimeAllStart(void) {
+void ObjAnimeAllStart() {
     all_stop = 0;
 }
 
@@ -206,8 +206,8 @@ void ObjAnimePlay(OBJ_ANIME_SEQ *sequence) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR scale;
     sceVu0FVECTOR rotation;
-    int i;
-    float value;
+    int           i;
+    float         value;
 
     if (all_stop != 0) {
         return;
@@ -467,12 +467,11 @@ int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time) {
  * @address 0x166D10
  * @size 0xC4
  */
-void EditEffectStep(void) {
+void EditEffectStep() {
     Fire.FireStep();
     Candle.Step();
     Candle.SetTexture(TexManager.GetTexture("rousoku", -1));
-    Fire.SetTexture(TexManager.GetTexture("lightling", -1),
-                    TexManager.GetTexture("blender", -1));
+    Fire.SetTexture(TexManager.GetTexture("lightling", -1), TexManager.GetTexture("blender", -1));
 }
 
 /**
@@ -482,7 +481,7 @@ void EditEffectStep(void) {
  * @address 0x166DE0
  * @size 0x28
  */
-void EditEffectStep2(void) {
+void EditEffectStep2() {
     Fire.FireCreate();
 }
 
@@ -495,8 +494,8 @@ void EditEffectStep2(void) {
  */
 void DrawEditEffect(EDIT_EFFECT_INFO *effect, CCamera *camera, CEffectGroup *group) {
     sceVu0FVECTOR position;
-    float scale;
-    int fire_kind;
+    float         scale;
+    int           fire_kind;
 
     if (effect == NULL) {
         return;

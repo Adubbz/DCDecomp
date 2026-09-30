@@ -35,11 +35,10 @@ char *LanguageStr[7] = {"dun/img/jp/", "dun/img/us/", "dun/img/us_e/", "dun/img/
 #endif
 
 int BattleSubWeaponDmg(float amount, int kind) {
-    int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
-    int chara_no = UserStatus->cur_chara;
-    int default_weapon;
-    WEAPON_HAVE *weapon =
-        &UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]];
+    int          default_weapons[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+    int          chara_no = UserStatus->cur_chara;
+    int          default_weapon;
+    WEAPON_HAVE *weapon = &UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]];
 
     if (weapon->item_no == 0x10C && SaveData->GetGameFlag(0x30) == 0) {
         return 0;
@@ -52,9 +51,8 @@ int BattleSubWeaponDmg(float amount, int kind) {
         amount *= 2.0f;
     }
 
-    default_weapon = defWeapon[chara_no];
-    if (default_weapon ==
-        UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no) {
+    default_weapon = default_weapons[chara_no];
+    if (default_weapon == UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no) {
         return 0;
     }
 
@@ -80,8 +78,7 @@ int BattleSubWeaponDmg(float amount, int kind) {
         weapon->durability_f = 0.0f;
         SndSePlay(0xE0, -1, 0);
 
-        int now_item =
-            UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no;
+        int now_item = UserStatus->chara_weapons[chara_no][UserStatus->equipped_weapon_slot[chara_no]].item_no;
         if (default_weapon + 1 == now_item) {
             DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
             DngMessMan.insert_value_1 = weapon->level;
@@ -131,16 +128,14 @@ int BattleSubWeaponDmg(float amount, int kind) {
         }
     }
 
-    if (0.1f * weapon->durability <= old_durability &&
-        0.1f * weapon->durability > weapon->durability_f) {
+    if (0.1f * weapon->durability <= old_durability && 0.1f * weapon->durability > weapon->durability_f) {
         DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
         DngMessMan.insert_value_1 = weapon->level;
         DngMessMan.message = 0x97;
         DngMessMan.timer = 0xF0;
         DngMessMan.steev_window = 0;
     }
-    if (0.05f * weapon->durability <= old_durability &&
-        0.05f * weapon->durability > weapon->durability_f) {
+    if (0.05f * weapon->durability <= old_durability && 0.05f * weapon->durability > weapon->durability_f) {
         DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(weapon->item_no);
         DngMessMan.insert_value_1 = weapon->level;
         DngMessMan.message = 0x98;
@@ -222,7 +217,7 @@ void CHitValue::EntryValue(float *world, int amount, int kind, CFrame *frame) {
     }
 }
 
-void CHitValue::Draw(void) {
+void CHitValue::Draw() {
     if (active == 0) {
         return;
     }
@@ -233,9 +228,9 @@ void CHitValue::Draw(void) {
         return;
     }
 
-    CTexture *digit_texture = TexManager.GetTexture("stayframe", -1);
-    CTexture *mark_texture = TexManager.GetTexture("itempack", -1);
-    int screen[4];
+    CTexture     *digit_texture = TexManager.GetTexture("stayframe", -1);
+    CTexture     *mark_texture = TexManager.GetTexture("itempack", -1);
+    int           screen[4];
     sceVu0FVECTOR world;
     if (frame != NULL) {
         sceVu0CopyVector(world, frame->position);
@@ -253,8 +248,7 @@ void CHitValue::Draw(void) {
 
     if (digit[0] == -2) {
         int bounce = (int) (48.0f * sinf(phase[0]));
-        set2DSprite(Vif1Packet, mark_texture, CRect_i_(screen[0], screen[1] - bounce - 48, 72, 24),
-                    CRect_i_(0, 128, 72, 24), (u8) opacity);
+        set2DSprite(Vif1Packet, mark_texture, CRect_i_(screen[0], screen[1] - bounce - 48, 72, 24), CRect_i_(0, 128, 72, 24), (u8) opacity);
         return;
     }
 
@@ -264,16 +258,11 @@ void CHitValue::Draw(void) {
         }
 
         int bounce = (int) (48.0f * sinf(phase[place]));
-        set2DSprite(Vif1Packet, digit_texture,
-                    CRect_i_(screen[0] - place * texel.width, screen[1] - bounce - 48, texel.width,
-                             texel.height),
-                    CRect_i_(texel.x + digit[place] * texel.width, texel.y, texel.width,
-                             texel.height),
-                    (u8) opacity);
+        set2DSprite(Vif1Packet, digit_texture, CRect_i_(screen[0] - place * texel.width, screen[1] - bounce - 48, texel.width, texel.height), CRect_i_(texel.x + digit[place] * texel.width, texel.y, texel.width, texel.height), (u8) opacity);
     }
 }
 
-void CHitValue::Step(void) {
+void CHitValue::Step() {
     if (active != 0) {
         if (digits[0] == -2) {
             digit_angle[0] += 3.141592f / 20.0f;

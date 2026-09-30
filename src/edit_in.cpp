@@ -50,29 +50,25 @@
 
 /* Where the camera sits for one camera marker of the interior, and the box the player must stand in. */
 struct INTERIOR_CAMERA {
-    u8 unk_000[0x60];
-    CFrame frame;      /**< Placement of the camera marker in the world. */
-    sceVu0FVECTOR max; /**< Greater corner of the box, in the marker's space. */
-    sceVu0FVECTOR min; /**< Lesser corner of the box, in the marker's space. */
-    int link_id;       /**< Marker number; zero marks the fallback camera. */
-    u8 unk_2e4[0xC];
+    u8            unk_000[0x60];
+    CFrame        frame;   /**< Placement of the camera marker in the world. */
+    sceVu0FVECTOR max;     /**< Greater corner of the box, in the marker's space. */
+    sceVu0FVECTOR min;     /**< Lesser corner of the box, in the marker's space. */
+    int           link_id; /**< Marker number; zero marks the fallback camera. */
+    u8            unk_2e4[0xC];
 };
 
-static void LoadScript();
 static void LoadInfo(char *script, int size);
 static void setTexAnim();
-static void RunEvent(int event_no, CCamera *camera);
-static void RunSystemEvent(int event_no, CCamera *camera);
-static void InitWorkBuffer();
 static void StepWater();
 static void MainDraw();
 static void MoveCharacter();
 static void MoveCamera(CCameraFollow *camera);
-static int GetDoorPos(int door_no, float *position, float *rotation, int *door_sound, int *motion);
+static int  GetDoorPos(int door_no, float *position, float *rotation, int *door_sound, int *motion);
 static void VillagerCollision();
-static int LoadTexture();
+static int  LoadTexture();
 static void LoadChara();
-void LoadData();
+void        LoadData();
 
 int LoadPTS(CMapParts *parts, u_int *archive);
 
@@ -83,7 +79,7 @@ struct EPARTS_FUNC_WORDS {
     u_int words[sizeof(EPARTS_FUNC_DATA) / sizeof(u_int)]; /**< The record, one word at a time. */
 };
 
-int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
+int  GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points);
 void DrawWaterSurface(CCamera *camera);
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara);
 
@@ -227,8 +223,8 @@ void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode
     if (text == NULL) {
         return;
     }
-    int word = 0;
-    int length = 0;
+    int  word = 0;
+    int  length = 0;
     char c;
     while ((c = *text) != '\0') {
         if (c == ' ') {
@@ -255,7 +251,7 @@ void GetElementObjName(EDITPARTS_INFO *info, char **names, int element, int mode
  */
 void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
     CFrameVu1 *frames[4];
-    int i;
+    int        i;
 
     LoadMDSFileLOD(frames, data, alloc, 1);
     CFrameAttr attr;
@@ -303,11 +299,11 @@ void LoadMapObject(CMapParts *parts, u_int **data, CDataAlloc2<1> *alloc) {
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
 static void LoadScript() {
-    char event_path[0x80];
-    char directory[0x40];
-    char message_path[0x40];
-    char language[0x1c];
-    int size;
+    char  event_path[0x80];
+    char  directory[0x40];
+    char  message_path[0x40];
+    char  language[0x1c];
+    int   size;
     char *message_data;
 
     EdScriptBuffer.used = 0;
@@ -326,7 +322,7 @@ static void LoadScript() {
     strcpy(directory, EdInInfo->name);
     char *cursor = directory;
     char *slash = cursor;
-    char c;
+    char  c;
     while ((c = *cursor) != '\0') {
         if (c == '/') {
             slash = cursor;
@@ -417,7 +413,7 @@ static void RunSystemEvent(int event_no, CCamera *camera) {
  */
 static void InitWorkBuffer() {
     u_char *free_start = EdNPCBuffer.base + EdNPCBuffer.used * 16;
-    int free_quads = EdNPCBuffer.limit - EdNPCBuffer.used;
+    int     free_quads = EdNPCBuffer.limit - EdNPCBuffer.used;
     free_start = (u_char *) ((((int) free_start >> 6) + 1) << 6);
     EdWorkBuffer.base = free_start;
     EdWorkBuffer.limit = free_quads - 4;
@@ -462,9 +458,9 @@ int EditInInit(float time, char *name) {
         LoadInfo(script_text, bg_file->size);
     }
     LoadData();
-    int used = EdNPCBuffer.used;
+    int     used = EdNPCBuffer.used;
     u_char *start = EdNPCBuffer.base + used * 16;
-    int remaining = EdNPCBuffer.limit - used;
+    int     remaining = EdNPCBuffer.limit - used;
     EdVillagerBuffer.base = start;
     EdVillagerBuffer.limit = remaining;
     EdVillagerBuffer.used = 0;
@@ -552,7 +548,7 @@ int EditInLoop() {
         case 5:
             break;
         default:
-            int i;
+            int            i;
             OBJ_ANIME_SEQ *anime = EdInInfo->obj_anime;
             for (i = 0; i < obj_anime_num; i++, anime++) {
                 int completion_flag = anime->completion_flag;
@@ -670,7 +666,7 @@ int EditInLoop() {
                 EdVillager[i].ClothStep(0);
             }
             CNPCharacter *talker = EdNowTalkChara();
-            float distance = Chara->GetDistance(*talker);
+            float         distance = Chara->GetDistance(*talker);
             Chara->GetDir(*talker, direction);
             float pitch = -atan2f(-Chara->body_height + (1.3f + talker->body_height + direction[1]), distance);
             float yaw = atan2f(direction[0], direction[2]);
@@ -735,7 +731,7 @@ int EditInLoop() {
     NowCamera->Step(1);
     sceVu0FVECTOR eye;
     sceVu0FVECTOR dir;
-    CMapParts *parts[64];
+    CMapParts    *parts[64];
     NowCamera->GetCameraMatrix(view);
     NowCamera->GetPos(eye);
     NowCamera->GetDir(dir);
@@ -753,8 +749,7 @@ int EditInLoop() {
         GameMode = 7;
     }
     EdSaveFrameImageTask();
-    if (GameMode == 0 && ((EdPadDown(0x10, 1) != 0 && loop_counter >= 2) || goto_menu != 0 ||
-                          (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
+    if (GameMode == 0 && ((EdPadDown(0x10, 1) != 0 && loop_counter >= 2) || goto_menu != 0 || (SystemMesCheck() == 0 && EdCheckItemOver() != 0))) {
         int menu = 2;
         if (goto_menu != 0) {
             menu = goto_menu;
@@ -857,7 +852,7 @@ int EditInLoop() {
  */
 static void MainDraw() {
     sceVu0FVECTOR position;
-    int i;
+    int           i;
 
     if (EdDrawOffFlag != 0) {
         return;
@@ -881,7 +876,7 @@ static void MainDraw() {
         }
     }
     sceGsTex0 frame_tex;
-    CRect_i_ screen;
+    CRect_i_  screen;
     sceGsTex0 water_tex;
     MGGetFBuffTex(&frame_tex);
     screen.x = 0;
@@ -904,9 +899,9 @@ static void MainDraw() {
         EdDrawItem();
     }
     ED_EVENT_INFO *event = NULL;
-    int detail = 3;
-    int marks_store[10];
-    int *marks = marks_store;
+    int            detail = 3;
+    int            marks_store[10];
+    int           *marks = marks_store;
     if (EdCheckViewMode() != 0) {
         detail = 0;
     }
@@ -970,8 +965,9 @@ static void MainDraw() {
     static int debug_menu_mode = 0;
 #ifdef PAL
     if (DebugMode) {
-        if (GamePad.Down(0x200))
+        if (GamePad.Down(0x200)) {
             debug_flag = !debug_flag;
+        }
         if (debug_menu_mode) {
             GamePad.KeyLock(0);
             EdDebugMenu();
@@ -1035,7 +1031,7 @@ void DrawWaterSurface(CCamera *camera) {
     sceVu0FVECTOR eye;
     sceVu0FVECTOR position;
     sceVu0FVECTOR dir;
-    int i;
+    int           i;
     CGroundWater *surface = Water;
 
     camera->GetPos(eye);
@@ -1073,8 +1069,8 @@ void DrawWaterSurface(CCamera *camera) {
  * @size 0x204
  */
 static void StepWater() {
-    int i;
-    int j;
+    int           i;
+    int           j;
     CGroundWater *surface = Water;
 
     for (i = 0; i < 1; i++, surface++) {
@@ -1098,9 +1094,7 @@ static void StepWater() {
                 int rows = surface->water.rows;
                 column = rows * (float) rand() / 2.1474836e9f;
             }
-            surface->water.Shake(row, column,
-                                 surface->ripples[j].power +
-                                     surface->ripples[j].range * (float) rand() / 2.1474836e9f);
+            surface->water.Shake(row, column, surface->ripples[j].power + surface->ripples[j].range * (float) rand() / 2.1474836e9f);
         }
         surface->water.Hamon();
     }
@@ -1114,7 +1108,7 @@ static void StepWater() {
  * @size 0x38C
  */
 static void MoveCharacter() {
-    sceVu0FVECTOR follow;
+    sceVu0FVECTOR        follow;
     static sceVu0FVECTOR fix_pos;
 
     EdMoveCharaInfo.time = NowTime;
@@ -1224,8 +1218,8 @@ static void MoveCamera(CCameraFollow *camera) {
  * @size 0xF4
  */
 EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
-    sceVu0FVECTOR world;
-    int i;
+    sceVu0FVECTOR     world;
+    int               i;
     EPARTS_FUNC_DATA *point = func_point;
 
     for (i = 0; i < func_num; i++, point++) {
@@ -1234,8 +1228,7 @@ EPARTS_FUNC_DATA *SearchMapJump(float *position, float *rotation) {
             point->position[3] = 1.0f;
             frame->GetWorldPosition(world, point->position);
             EdInteriorJumpID = point->link_id;
-            if (DistVector(position, world) < 10.0f &&
-                AngleCmp(rotation[1], point->rotation[1], 0.87f) == 0) {
+            if (DistVector(position, world) < 10.0f && AngleCmp(rotation[1], point->rotation[1], 0.87f) == 0) {
                 return point;
             }
         }
@@ -1293,16 +1286,16 @@ static int GetDoorPos(int door_no, float *position, float *rotation, int *door_s
  * @size 0x3F8
  */
 void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
-    sceVu0FVECTOR position;
-    sceVu0FVECTOR local;
-    int i;
+    sceVu0FVECTOR     position;
+    sceVu0FVECTOR     local;
+    int               i;
     EPARTS_FUNC_DATA *point = func_point;
-    int count;
-    INTERIOR_CAMERA *entry;
+    int               count;
+    INTERIOR_CAMERA  *entry;
 
     chara->GetPosition(position);
     INTERIOR_CAMERA cameras[8];
-    sceVu0FMATRIX matrix;
+    sceVu0FMATRIX   matrix;
     count = 0;
     for (i = 0; i < func_num; i++, point++) {
         if (point->kind == 7) {
@@ -1330,7 +1323,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         return;
     }
     INTERIOR_CAMERA *inside = NULL;
-    static int cnt = 0;
+    static int       cnt = 0;
     for (i = 0; i < count; i++) {
         entry = &cameras[i];
         if (entry->link_id == 0) {
@@ -1340,8 +1333,7 @@ void SetCameraPos(CFrame *frame, CCamera *camera, CCharacter *chara) {
         float (*inverse)[4] = entry->frame.GetInverseMatrix();
         position[3] = 1.0f;
         sceVu0ApplyMatrix(local, inverse, position);
-        if (!(local[0] < entry->min[0]) && !(local[1] < entry->min[1]) && !(local[2] < entry->min[2]) &&
-            local[0] <= entry->max[0] && local[1] <= entry->max[1] && local[2] <= entry->max[2]) {
+        if (!(local[0] < entry->min[0]) && !(local[1] < entry->min[1]) && !(local[2] < entry->min[2]) && local[0] <= entry->max[0] && local[1] <= entry->max[1] && local[2] <= entry->max[2]) {
             inside = entry;
             break;
         }
@@ -1406,15 +1398,15 @@ static int GetCollision(CCPoly *poly, CBoxVu0 *box) {
  */
 static void VillagerCollision() {
     sceVu0FVECTOR position;
-    CBoxVu0 box;
+    CBoxVu0       box;
     sceVu0FVECTOR ground;
-    CCPoly poly;
+    CCPoly        poly;
 
     for (int i = -1; i < 10; i++) {
-        int snap;
-        CCharacter *chara;
+        int           snap;
+        CCharacter   *chara;
         CNPCharacter *villager = NULL;
-        int foot_sound;
+        int           foot_sound;
         if (i >= 0) {
             villager = &EdVillager[i];
             snap = EdEventInfo.npc_collision[i];
@@ -1479,14 +1471,16 @@ static void VillagerCollision() {
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
 static int LoadTexture() {
-    static LOADTEXTURE_INFO2 texdata[16] = {{NULL, 15}};
+    static LOADTEXTURE_INFO2 texdata[16] = {
+        {NULL, 15}
+    };
 
     BG_READ_INFO *file = GetReadBGFile(2);
     if (file == NULL) {
         return 0;
     }
     char *ext = file->name;
-    char c;
+    char  c;
     while ((c = *ext) != '\0') {
         if (c == '.') {
             ext++;
@@ -1495,13 +1489,13 @@ static int LoadTexture() {
         ext++;
     }
     u_int *cfg_data = NULL;
-    int size;
+    int    size;
     TexAnime.Initialize(NULL, 0);
     if (strcmp(ext, "img") == 0) {
         texdata[0].name = (char *) file->buffer;
     } else {
         u_int *found;
-        int cfg_size;
+        int    cfg_size;
         if (GetPackFileExt((u_int *) file->buffer, "img", &found, 1, NULL, NULL) > 0) {
             texdata[0].name = (char *) found;
         }
@@ -1543,7 +1537,7 @@ void LoadData() {
     }
     func_num = 0;
     BG_READ_INFO *file = GetReadBGFile(0);
-    u_int *archive = NULL;
+    u_int        *archive = NULL;
     if (file != NULL) {
         archive = (u_int *) file->buffer;
     }
@@ -1638,8 +1632,8 @@ void LoadData() {
         if (info->grid_rows <= 0) {
             break;
         }
-        CWater *water;
-        int j;
+        CWater       *water;
+        int           j;
         CGroundWater *surface = &Water[i];
         water = &surface->water;
         sceVu0FVECTOR near_left = {info->corner_a[0], info->corner_a[1], info->corner_a[2], 1.0f};
@@ -1660,8 +1654,7 @@ void LoadData() {
         water->SetVertex(near_left, near_right, far_left, far_right);
         water->frame.SetPosition(info->corner_c);
         water->SetSize(info->grid_rows, info->grid_columns, &EdNPCBuffer);
-        water->SetParam(info->ripple_params[0], info->ripple_params[1], info->ripple_params[2],
-                        info->ripple_params[3]);
+        water->SetParam(info->ripple_params[0], info->ripple_params[1], info->ripple_params[2], info->ripple_params[3]);
         water->SetColor(info->red, info->green, info->blue, 0x80);
     }
 }
@@ -1675,8 +1668,8 @@ void LoadData() {
  */
 int LoadPTS(CMapParts *parts, u_int *archive) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    u_int *files[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-    EPARTS_ARCHIVE *pack = (EPARTS_ARCHIVE *) archive;
+    u_int              *files[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    EPARTS_ARCHIVE     *pack = (EPARTS_ARCHIVE *) archive;
 
     if (pack->lod0_size > 0) {
         files[0] = (u_int *) ((char *) archive + pack->lod0_offset);
@@ -1734,8 +1727,8 @@ int LoadPTS(CMapParts *parts, u_int *archive) {
  */
 int GetFuncPoint(int parts_no, u_int *archive, EPARTS_FUNC_DATA *points) {
     EPARTS_INFO_HEADER *header = (EPARTS_INFO_HEADER *) ((char *) archive + archive[1]);
-    int i;
-    EPARTS_FUNC_DATA *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
+    int                 i;
+    EPARTS_FUNC_DATA   *source = (EPARTS_FUNC_DATA *) ((char *) header + (int) header->func);
 
     for (i = 0; i < header->func_count; points++) {
         *(EPARTS_FUNC_RECORD *) points = *(EPARTS_FUNC_RECORD *) source;
@@ -1782,8 +1775,7 @@ static void setTexAnim() {
         return;
     }
 
-    MGMoveImage((sceGsTex0 *) &strip->tex0, CRect_i_(0, setTexAnimCnt * 64, 64, 64),
-                (sceGsTex0 *) &plate->tex0, 0, 0, 0);
+    MGMoveImage((sceGsTex0 *) &strip->tex0, CRect_i_(0, setTexAnimCnt * 64, 64, 64), (sceGsTex0 *) &plate->tex0, 0, 0, 0);
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
     sceVif1PkOpenGifTag(Vif1Packet, *(u_long128 *) &GiftagAD);
@@ -1834,21 +1826,21 @@ static void CommandWATER_SHAKE(void **arguments);
 
 /** The keywords an interior's info script may use. */
 static TAG_PARAM Command[15] = {
-    {"AMBIENT", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"LIGHT_C", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"FOG", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BG_COL", {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"PROJECTION", {SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"PEOPLE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"CD", {SCRIPT_ARGUMENT_STRING, -1}},
-    {"OBJ_ANIME", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"FIRE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"FLAME", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"BRIGHT", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
-    {"DEBUG", {-1}},
-    {"MOTION_PARTS", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"AMBIENT",       {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    {"LIGHT_C",       {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, -1}                                                                                                                                                                                                                                                                                                                                                                        },
+    {"FOG",           {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                    },
+    {"BG_COL",        {SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    {"PROJECTION",    {SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+    {"PEOPLE",        {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                      },
+    {"CD",            {SCRIPT_ARGUMENT_STRING, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
+    {"OBJ_ANIME",     {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                  },
+    {"FIRE",          {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                       },
+    {"FLAME",         {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                       },
+    {"BRIGHT",        {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                       },
+    {"DEBUG",         {-1}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           },
+    {"MOTION_PARTS",  {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                    },
     {"WATER_SURFACE", {SCRIPT_ARGUMENT_STRING, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, -1}},
-    {"WATER_SHAKE", {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}},
+    {"WATER_SHAKE",   {SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_INTEGER, SCRIPT_ARGUMENT_FLOAT, SCRIPT_ARGUMENT_FLOAT, -1}                                                                                                                                                                                                                                                                                                                                                                                                                                           },
 };
 
 /** Handlers of the info script's keywords, in the order of Command. */
@@ -1879,7 +1871,7 @@ static void (*CommandExe[15])(void **) = {
  */
 static void LoadInfo(char *script, int size) {
     CScriptInterpreter interpreter;
-    int command;
+    int                command;
 
     interpreter.SetScript(script, size);
     interpreter.SetTAG(Command, 15);
@@ -1927,7 +1919,7 @@ static void CommandAMBIENT(void **arguments) {
  */
 static void CommandLIGHT_C(void **arguments) {
     sceVu0FVECTOR direction;
-    int light = *(int *) arguments[6];
+    int           light = *(int *) arguments[6];
 
     direction[0] = *(float *) arguments[0];
     direction[1] = *(float *) arguments[1];
@@ -1997,7 +1989,7 @@ static void CommandPROJECTION(void **arguments) {
  * @size 0x8
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-static void CommandPEOPLE(void **) {
+static void CommandPEOPLE(void **arguments) {
 }
 
 /**
@@ -2022,13 +2014,13 @@ static void CommandCD(void **arguments) {
  * @size 0x8
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-static void CommandOBJ_ANIME(void **) {
+static void CommandOBJ_ANIME(void **arguments) {
 }
 
 /**
  * Reserved effect-setup hook with no operation.
  */
-static void SetEffect(EFFECT_TYPE, char *, float *, float *, float *) {
+static void SetEffect(EFFECT_TYPE type, char *name, float *position, float *scale, float *rotation) {
 }
 
 /**
@@ -2107,7 +2099,7 @@ static void CommandBRIGHT(void **arguments) {
  * @address 0x1A0130
  * @size 0x10
  */
-static void CommandDEBUG(void **) {
+static void CommandDEBUG(void **arguments) {
     debug = 1;
 }
 

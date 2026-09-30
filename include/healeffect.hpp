@@ -15,8 +15,8 @@ public:
     float alpha[32];              /**< Current opacity of each particle. */
     float phase[32];              /**< Lifetime phase controlling height and opacity. */
     float size[32];               /**< Draw size of each particle. */
-    s32 active;                   /**< Indicates that the particle effect is advancing. */
-    u8 unk_514[0xC];
+    s32   active;                 /**< Indicates that the particle effect is advancing. */
+    u8    unk_514[0xC];
 
     /**
      * Starts a healing-particle effect at the supplied world position.
@@ -34,7 +34,7 @@ public:
      * @address 0x1B2B00
      * @size 0x244
      */
-    void Step(void);
+    void Step();
 
     /**
      * Draws every live healing particle around the player character.
@@ -43,7 +43,7 @@ public:
      * @address 0x1B2D50
      * @size 0x13C
      */
-    void Draw(void);
+    void Draw();
 };
 
 STATIC_ASSERT(sizeof(CHealEffect) == 0x520);

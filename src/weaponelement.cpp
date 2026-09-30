@@ -23,8 +23,7 @@ void CWeaponElement::Initialize() {
     on = 0;
 }
 
-void CWeaponElement::Set(sceVu0FVECTOR *origin, float *position, float power, int kind,
-                         float spread) {
+void CWeaponElement::Set(sceVu0FVECTOR *origin, float *position, float power, int kind, float spread) {
     this->power = 0.01f * (1.0f + power);
     this->kind = kind;
     this->spread = spread;
@@ -192,14 +191,14 @@ void CWeaponElement::Step_Holy() {
 void CWeaponElement::Draw_Holy() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
-    int corner[4][4];
+    int           corner[4][4];
     sceVu0FVECTOR base;
     sceVu0FVECTOR pos;
-    CRect_i_ rect;
-    CTexture *texture;
-    int i;
-    float width;
-    int row;
+    CRect_i_      rect;
+    CTexture     *texture;
+    int           i;
+    float         width;
+    int           row;
 
     texture = TexManager.GetTexture("element", -1);
     sceVu0CopyVector(base, *origin);
@@ -231,8 +230,7 @@ void CWeaponElement::Draw_Holy() {
         rect.y = row;
         rect.width = 0x30;
         rect.height = 0x30;
-        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8) alpha[i]);
+        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3], (u8) alpha[i]);
     }
 }
 
@@ -330,14 +328,14 @@ void CWeaponElement::Step_Cold() {
 void CWeaponElement::Draw_Cold() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
-    int corner[4][4];
+    int           corner[4][4];
     sceVu0FVECTOR base;
     sceVu0FVECTOR pos;
-    CRect_i_ rect;
-    CTexture *texture;
-    int i;
-    float width;
-    int row;
+    CRect_i_      rect;
+    CTexture     *texture;
+    int           i;
+    float         width;
+    int           row;
 
     texture = TexManager.GetTexture("element", -1);
     sceVu0CopyVector(base, *origin);
@@ -369,8 +367,7 @@ void CWeaponElement::Draw_Cold() {
         rect.y = row;
         rect.width = 0x30;
         rect.height = 0x30;
-        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8) alpha[i]);
+        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3], (u8) alpha[i]);
     }
 }
 
@@ -481,16 +478,16 @@ void CWeaponElement::Step_Wind() {
 void CWeaponElement::Draw_Wind() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
-    int corner[4][4];
+    int           corner[4][4];
     sceVu0FVECTOR base;
     sceVu0FVECTOR pos;
     sceVu0FMATRIX unit;
     sceVu0FMATRIX turn;
-    CRect_i_ rect;
-    CTexture *texture;
-    int i;
-    float width;
-    int row;
+    CRect_i_      rect;
+    CTexture     *texture;
+    int           i;
+    float         width;
+    int           row;
 
     texture = TexManager.GetTexture("element", -1);
     sceVu0CopyVector(base, *origin);
@@ -527,8 +524,7 @@ void CWeaponElement::Draw_Wind() {
         rect.y = row;
         rect.width = 0x40;
         rect.height = 0x30;
-        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8) alpha[i]);
+        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3], (u8) alpha[i]);
     }
 }
 
@@ -629,14 +625,14 @@ void CWeaponElement::Step_Fire() {
 void CWeaponElement::Draw_Fire() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right.
-    int corner[4][4];
+    int           corner[4][4];
     sceVu0FVECTOR base;
     sceVu0FVECTOR pos;
-    CRect_i_ rect;
-    CTexture *texture;
-    int i;
-    float width;
-    int row;
+    CRect_i_      rect;
+    CTexture     *texture;
+    int           i;
+    float         width;
+    int           row;
 
     texture = TexManager.GetTexture("element", -1);
     sceVu0CopyVector(base, fire_pos);
@@ -668,8 +664,7 @@ void CWeaponElement::Draw_Fire() {
         rect.y = row;
         rect.width = 0x30;
         rect.height = 0x30;
-        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3],
-                    (u8) alpha[i]);
+        set3DSprite(Vif1Packet, texture, rect, corner[0], corner[1], corner[2], corner[3], (u8) alpha[i]);
     }
 }
 
@@ -750,11 +745,11 @@ void CWeaponElement::Step_Thunder() {
 void CWeaponElement::Draw_Thunder() {
     // The four screen corners of one sprite: top left, top right, bottom
     // left, bottom right. A bolt uses the same four as the ends of its arc.
-    int corner[4][4];
+    int           corner[4][4];
     sceVu0FVECTOR base;
-    CTexture *texture;
-    int i;
-    float width;
+    CTexture     *texture;
+    int           i;
+    float         width;
 
     texture = TexManager.GetTexture("element", -1);
     sceVu0CopyVector(base, *origin);
@@ -777,11 +772,15 @@ void CWeaponElement::Draw_Thunder() {
         corner[2][1] = corner[3][1];
         corner[2][2] = corner[3][2];
 
-        set3DSprite(Vif1Packet, texture, CRect_i_(0, 0, 0x30, 0x30), corner[0], corner[1], corner[2],
-                    corner[3], (u8) alpha[i]);
+        set3DSprite(Vif1Packet, texture, CRect_i_(0, 0, 0x30, 0x30), corner[0], corner[1], corner[2], corner[3], (u8) alpha[i]);
     }
 
-    int bolt_uv[4][2] = {{0x00, 0x30}, {0x18, 0x30}, {0x00, 0x98}, {0x00, 0x98}};
+    int bolt_uv[4][2] = {
+        {0x00, 0x30},
+        {0x18, 0x30},
+        {0x00, 0x98},
+        {0x00, 0x98}
+    };
     sceVu0FVECTOR pos;
 
     for (i = 0; i < bolt_count; i++) {
@@ -802,7 +801,6 @@ void CWeaponElement::Draw_Thunder() {
         int u = bolt_uv[shape][0];
         int v = bolt_uv[shape][1];
 
-        set3DSprite(Vif1Packet, texture, CRect_i_(u, v, 0x18, 0x68), corner[0], corner[1], corner[2],
-                    corner[3], (u8) (1.6f * alpha[bolt_head[i]]));
+        set3DSprite(Vif1Packet, texture, CRect_i_(u, v, 0x18, 0x68), corner[0], corner[1], corner[2], corner[3], (u8) (1.6f * alpha[bolt_head[i]]));
     }
 }

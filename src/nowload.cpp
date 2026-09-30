@@ -20,42 +20,42 @@
 
 int end_flag = 1;
 
-u_int now_load[2000] __attribute__((aligned(64)));
-sceGsDBuff nowloadDB;
+u_int         now_load[2000] __attribute__((aligned(64)));
+sceGsDBuff    nowloadDB;
 sceVif1Packet nlPacket;
-CTexture nl_tex;
-CTexture nl_tex2;
+CTexture      nl_tex;
+CTexture      nl_tex2;
 
-int now_loding_flag;
-int nl_start_cnt;
+int   now_loding_flag;
+int   nl_start_cnt;
 float col_cnt;
 float col_add;
-int logo_count;
+int   logo_count;
 /**
  * Frames the fade holds at full or zero brightness before it moves again.
  */
 static int count;
-int map_title_no;
-int now_loding_off;
-int now_loading_vsync_end;
+int        map_title_no;
+int        now_loding_off;
+int        now_loading_vsync_end;
 /**
  * Field parity the loading screen's vertical-sync callback last read from the GS.
  */
 static int VSyncField;
 
-int check_now_loading(void) {
+int check_now_loading() {
     return end_flag;
 }
 
-void clear_now_loading_vsync_end(void) {
+void clear_now_loading_vsync_end() {
     now_loading_vsync_end = 0;
 }
 
-int check_now_loading_vsync_end(void) {
+int check_now_loading_vsync_end() {
     return now_loading_vsync_end;
 }
 
-void wait_now_loading_vsync(void) {
+void wait_now_loading_vsync() {
     if (end_flag == 0) {
         clear_now_loading_vsync_end();
         do {
@@ -64,7 +64,7 @@ void wait_now_loading_vsync(void) {
     }
 }
 
-void now_loading_off(void) {
+void now_loading_off() {
     now_loding_off = 1;
 }
 
@@ -88,8 +88,8 @@ void init_now_loading(int title_number) {
     u_char raw_archive[64000];
 #endif
     u_char *archive = raw_archive;
-    int archive_size;
-    int misalignment = (int) archive % 64;
+    int     archive_size;
+    int     misalignment = (int) archive % 64;
 
     if (misalignment != 0) {
         archive += 64 - misalignment;
@@ -179,20 +179,16 @@ int VSyncCallBack_Load(int field) {
 #ifdef PAL
                 // Languages past the first two show a full-screen logo image instead.
                 if (LanguageCode >= 2) {
-                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0, 0x10, 0x280, 0x1C0),
-                                CRect_i_(0, 0, 0x280, 0x1C0), (u_char) (int) col_cnt);
+                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0, 0x10, 0x280, 0x1C0), CRect_i_(0, 0, 0x280, 0x1C0), (u_char) (int) col_cnt);
                 } else {
-                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
-                                CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40), CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
                 }
 #else
-                set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
-                            CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+                set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40), CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
 #endif
             }
             if (logo_count == 1) {
-                set2DSprite(&nlPacket, &nl_tex2, CRect_i_(0x100, 0xA0, 0x80, 0x80),
-                            CRect_i_(0, 0, 0x80, 0x80), (u_char) (int) col_cnt);
+                set2DSprite(&nlPacket, &nl_tex2, CRect_i_(0x100, 0xA0, 0x80, 0x80), CRect_i_(0, 0, 0x80, 0x80), (u_char) (int) col_cnt);
             }
             if (count == 0) {
                 col_cnt += col_add * 2.0f;
@@ -225,8 +221,7 @@ int VSyncCallBack_Load(int field) {
                 count = 0;
             }
         } else {
-            set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x80, 0xA0, 0x180, 0x80),
-                        CRect_i_(0, 0, 0x180, 0x80), (u_char) (int) col_cnt);
+            set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x80, 0xA0, 0x180, 0x80), CRect_i_(0, 0, 0x180, 0x80), (u_char) (int) col_cnt);
             if (count == 0) {
                 col_cnt += col_add;
             }
@@ -270,13 +265,11 @@ int VSyncCallBack_Load(int field) {
  * @address 0x154770
  * @size 0x1D4
  */
-void LoadTexture(char *name, u_char *archive, CTexture *texture, int image_address,
-                 int palette_address) {
+void LoadTexture(char *name, u_char *archive, CTexture *texture, int image_address, int palette_address) {
     SetTextureInfo(texture, name, archive);
-    sceGsTex0 *tex0 = (sceGsTex0 *) &texture->tex0;
+    sceGsTex0     *tex0 = (sceGsTex0 *) &texture->tex0;
     sceGsLoadImage load;
-    sceGsSetDefLoadImage(&load, (short) image_address, tex0->TBW, tex0->PSM, 0, 0,
-                         texture->width, texture->height);
+    sceGsSetDefLoadImage(&load, (short) image_address, tex0->TBW, tex0->PSM, 0, 0, texture->width, texture->height);
     FlushCache(0);
     sceGsExecLoadImage(&load, (u_long128 *) texture->image[0]);
     if (texture->bpp == 0) {
@@ -303,10 +296,9 @@ void LoadTexture(char *name, u_char *archive, CTexture *texture, int image_addre
  */
 void LoadTexture(TM2_head *image, CTexture *texture, int image_address, int palette_address) {
     SetTextureInfo(texture, "maptitle", image);
-    sceGsTex0 *tex0 = (sceGsTex0 *) &texture->tex0;
+    sceGsTex0     *tex0 = (sceGsTex0 *) &texture->tex0;
     sceGsLoadImage load;
-    sceGsSetDefLoadImage(&load, (short) image_address, tex0->TBW, tex0->PSM, 0, 0,
-                         texture->width, texture->height);
+    sceGsSetDefLoadImage(&load, (short) image_address, tex0->TBW, tex0->PSM, 0, 0, texture->width, texture->height);
     FlushCache(0);
     sceGsExecLoadImage(&load, (u_long128 *) texture->image[0]);
     if (texture->bpp == 0) {

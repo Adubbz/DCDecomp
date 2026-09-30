@@ -1,0 +1,20 @@
+---
+Checks: >
+  -*,
+  dcdecomp-block-spacing,
+  dcdecomp-fields-first,
+  dcdecomp-named-parameters,
+  modernize-redundant-void-arg,
+  readability-inconsistent-declaration-parameter-name,
+  readability-named-parameter,
+  readability-identifier-naming
+CheckOptions:
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.MemberIgnoredRegexp: '^unk_[0-9A-Fa-f]+$'
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.LocalVariableCase: lower_case
+  readability-identifier-naming.StaticVariableCase: aNy_CasE
+WarningsAsErrors: ''
+HeaderFilterRegex: '(^|/)include/((title|dun)/)?[^/]+\.(h|hpp)$'
+FormatStyle: file
+...

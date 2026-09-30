@@ -1192,12 +1192,12 @@ static int MaxFloorTbl[6] = {15, 17, 18, 18, 15, 25};
  */
 void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
     PIERO_ITEM_SET *list = PieroItemListPtr[map_no + ura_dungeon * 7];
-    s16 *rate = ItemSetRateTbl[map_no];
-    int count0;
-    int count1;
-    int pick0;
-    int pick1;
-    int chance;
+    s16            *rate = ItemSetRateTbl[map_no];
+    int             count0;
+    int             count1;
+    int             pick0;
+    int             pick1;
+    int             chance;
 
     if (UserStatus->cur_floor < floorNum[map_no]) {
         count0 = list[0].count[0];
@@ -1255,21 +1255,21 @@ void GetPieroItem(int map_no, int ura_dungeon, int *item0, int *item1) {
 }
 
 int PresetSmallItemNo_Get(int map_no, int floor_no, int special, int small) {
-    int candidate[144];
-    s16 rate[400];
+    int           candidate[144];
+    s16           rate[400];
     ITEM_PUT_SET *list = ItemPutListPtr[map_no + special * 7];
-    int held;
-    int count;
-    int item_no;
-    float roll;
-    int scan;
-    int wanted;
-    int i;
-    s16 *table;
-    int tries;
-    int pick;
-    int list_no;
-    int chance;
+    int           held;
+    int           count;
+    int           item_no;
+    float         roll;
+    int           scan;
+    int           wanted;
+    int           i;
+    s16          *table;
+    int           tries;
+    int           pick;
+    int           list_no;
+    int           chance;
 
     // Retail copies from the pointer table itself rather than from the dungeon's rate list.
     memcpy(rate, &ItemSetRateTbl[map_no], 0x17C);
@@ -1398,11 +1398,11 @@ static inline float ToWorldScale(float coordinate) {
 }
 
 int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float *pos) {
-    float quad[196][4][3];
-    float px[4];
-    float py[4];
-    float pz[4];
-    int count = 0;
+    float           quad[196][4][3];
+    float           px[4];
+    float           py[4];
+    float           pz[4];
+    int             count = 0;
     ITEM_FREE_AREA *areas = ItemFreeAreaAll[selectMapNo];
 
     for (int row = y; row < y + height; row++) {
@@ -1452,7 +1452,7 @@ int SearchiDoPutArea(MAPPARTS *cells, int x, int y, int width, int height, float
             }
         }
     }
-    int pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
+    int   pick = (int) (((float) count * (float) rand()) / 2.1474836e9f);
     float max_x = quad[pick][0][0];
     float min_x = max_x;
     float max_z = quad[pick][0][2];
@@ -1519,11 +1519,11 @@ void BtAtraListMake(int dungeon) {
         return;
     }
     ATRA_APPEAR *appear = AtraAppearData[dungeon];
-    int center = CenterFloorTbl[dungeon];
-    int max = MaxFloorTbl[dungeon];
-    int count = 0;
-    int upper = 0;
-    int lower = 0;
+    int          center = CenterFloorTbl[dungeon];
+    int          max = MaxFloorTbl[dungeon];
+    int          count = 0;
+    int          upper = 0;
+    int          lower = 0;
     for (; appear[count].id != -1; count++) {
         int floor = appear[count].floor;
         if (floor == -1) {
@@ -1576,7 +1576,7 @@ void BtAtraListMake(int dungeon) {
  */
 int BtAtraFloorCyoice(int map_no, int floor_no, int *atra_no) {
     ATRA_SAVE registry[128];
-    int packed[8];
+    int       packed[8];
 
     if (map_no >= 6) {
         return 0;
@@ -1601,8 +1601,7 @@ int BtAtraFloorCyoice(int map_no, int floor_no, int *atra_no) {
             int placed = 0;
             while (placed == 0) {
                 int pick = (int) ((100.0f * (float) rand()) / 2.1474836e9f);
-                if (registry[pick].id != -1 && registry[pick].refcount > 0 &&
-                    half == registry[pick].floor) {
+                if (registry[pick].id != -1 && registry[pick].refcount > 0 && half == registry[pick].floor) {
                     atra_no[i] = pick;
                     registry[pick].refcount--;
                     placed = 1;
@@ -1646,10 +1645,10 @@ static inline int PartsCollisionTurn(CDungeonMap *map, int parts_no) {
 
 int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radius, float height) {
     CBoxVu0 box;
-    int count = 0;
+    int     count = 0;
     CFrame *collision;
-    int i;
-    int turn;
+    int     i;
+    int     turn;
 
     box.max[0] = position[0] + radius;
     box.max[1] = position[1] + radius * height;
@@ -1657,7 +1656,17 @@ int setCollisionData(CDungeonMap *map, CCPoly *poly, float *position, float radi
     box.min[0] = position[0] - radius;
     box.min[1] = position[1] - radius * height;
     box.min[2] = position[2] - radius;
-    int around[9][2] = {{0, 0}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+    int around[9][2] = {
+        {0,  0 },
+        {-1, 0 },
+        {0,  -1},
+        {1,  0 },
+        {0,  1 },
+        {-1, -1},
+        {1,  -1},
+        {-1, 1 },
+        {1,  1 }
+    };
     if (map->map_type != 1) {
         sceVu0FVECTOR part_pos;
 

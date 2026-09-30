@@ -15,45 +15,45 @@ class CMenuItemStep;
  */
 class CWeaponLevelUp {
 public:
-    WEAPON_HAVE preview;    /**< Working copy of the weapon holding the level-up or build-up result the menu shows. */
-    s16 status_item_no;     /**< Item id of the synthesis item a status break produces. */
-    s16 status_weapon_no;   /**< Item id of the weapon broken down into the synthesis item. */
-    s16 status_flags;       /**< Special-behaviour flags carried by the synthesis item. */
-    s8 status_weapon_level; /**< Level of the weapon broken down, shown in the break message. */
-    u8 unk_ff;
-    s16 status_stats[4];   /**< Attack, endurance, speed and magic carried over, at 60% of the weapon's. */
-    s8 status_elements[5]; /**< Fire, ice, thunder, wind and holy values carried over, at 60% of the weapon's. */
-    s8 status_monster[10]; /**< Monster-effectiveness values carried over, at 60% of the weapon's. */
-    u8 unk_117[9];
-    CCharacter effect;        /**< Model whose motions play the menu effect. */
-    s32 reserved_word;        /**< Cleared on initialisation and never read. */
-    WEAPON_HAVE *weapon;      /**< Weapon the active effect changes. */
-    CCharacter *chara;        /**< Character whose weapon the active effect changes. */
-    s16 effect_motion;        /**< Motion number the effect model plays. */
-    s16 buildup_weapon_no;    /**< Item id of the weapon a build-up turns the weapon into. */
-    s8 buildup_complete;      /**< Set once the build-up has rewritten the weapon. */
-    s8 lost_default_weapon;   /**< Set when a status break reset a character's default weapon instead of removing it. */
-    s16 message_no;           /**< Character named in a cure message, or a message id of 0x190 and above shown on its own. */
-    s32 message_value;        /**< Number shown in a cure message. */
-    s16 synthesis_count;      /**< Number of synthesis items the level-up absorbed. */
-    s16 reserved_half;        /**< Cleared on initialisation and never read. */
-    s16 attachment_icons[5];  /**< Item ids of the attachments orbiting the level-up effect. */
-    s16 attachment_values[5]; /**< Values drawn beside the orbiting attachment icons. */
-    s16 effect_active;        /**< Nonzero while the effect plays, which holds back the result message. */
-    s16 operation_kind;       /**< Active effect: 0 level-up, 1 status break, 2 build-up, 3 recovery, 4 and above a cure, -1 idle. */
-    s16 texture_block;        /**< Texture block the effect's textures load into. */
-    u8 unk_1306[2];
-    float effect_x;     /**< Horizontal position a cure effect plays at. */
-    float effect_y;     /**< Vertical position a cure effect plays at. */
-    float effect_timer; /**< Frames since the effect started, negative before it has. */
-    s16 effect_state;   /**< Step of the effect state machine, starting at a per-operation base. */
-    s16 snd_volume;     /**< Background-music volume the fade has reached. */
-    s16 snd_from;       /**< Background-music volume the fade started from, restored afterwards. */
-    s16 snd_to;         /**< Background-music volume the fade ends at. */
-    s16 snd_step;       /**< Signed volume change per frame, zero once the fade ends. */
-    u8 unk_131e[0xA];
-    u_long128 *effect_buffer; /**< Next free position in the buffer the effect package and sound load into. */
-    u8 unk_132c[4];
+    WEAPON_HAVE  preview;             /**< Working copy of the weapon holding the level-up or build-up result the menu shows. */
+    s16          status_item_no;      /**< Item id of the synthesis item a status break produces. */
+    s16          status_weapon_no;    /**< Item id of the weapon broken down into the synthesis item. */
+    s16          status_flags;        /**< Special-behaviour flags carried by the synthesis item. */
+    s8           status_weapon_level; /**< Level of the weapon broken down, shown in the break message. */
+    u8           unk_ff;
+    s16          status_stats[4];    /**< Attack, endurance, speed and magic carried over, at 60% of the weapon's. */
+    s8           status_elements[5]; /**< Fire, ice, thunder, wind and holy values carried over, at 60% of the weapon's. */
+    s8           status_monster[10]; /**< Monster-effectiveness values carried over, at 60% of the weapon's. */
+    u8           unk_117[9];
+    CCharacter   effect;               /**< Model whose motions play the menu effect. */
+    s32          reserved_word;        /**< Cleared on initialisation and never read. */
+    WEAPON_HAVE *weapon;               /**< Weapon the active effect changes. */
+    CCharacter  *chara;                /**< Character whose weapon the active effect changes. */
+    s16          effect_motion;        /**< Motion number the effect model plays. */
+    s16          buildup_weapon_no;    /**< Item id of the weapon a build-up turns the weapon into. */
+    s8           buildup_complete;     /**< Set once the build-up has rewritten the weapon. */
+    s8           lost_default_weapon;  /**< Set when a status break reset a character's default weapon instead of removing it. */
+    s16          message_no;           /**< Character named in a cure message, or a message id of 0x190 and above shown on its own. */
+    s32          message_value;        /**< Number shown in a cure message. */
+    s16          synthesis_count;      /**< Number of synthesis items the level-up absorbed. */
+    s16          reserved_half;        /**< Cleared on initialisation and never read. */
+    s16          attachment_icons[5];  /**< Item ids of the attachments orbiting the level-up effect. */
+    s16          attachment_values[5]; /**< Values drawn beside the orbiting attachment icons. */
+    s16          effect_active;        /**< Nonzero while the effect plays, which holds back the result message. */
+    s16          operation_kind;       /**< Active effect: 0 level-up, 1 status break, 2 build-up, 3 recovery, 4 and above a cure, -1 idle. */
+    s16          texture_block;        /**< Texture block the effect's textures load into. */
+    u8           unk_1306[2];
+    float        effect_x;     /**< Horizontal position a cure effect plays at. */
+    float        effect_y;     /**< Vertical position a cure effect plays at. */
+    float        effect_timer; /**< Frames since the effect started, negative before it has. */
+    s16          effect_state; /**< Step of the effect state machine, starting at a per-operation base. */
+    s16          snd_volume;   /**< Background-music volume the fade has reached. */
+    s16          snd_from;     /**< Background-music volume the fade started from, restored afterwards. */
+    s16          snd_to;       /**< Background-music volume the fade ends at. */
+    s16          snd_step;     /**< Signed volume change per frame, zero once the fade ends. */
+    u8           unk_131e[0xA];
+    u_long128   *effect_buffer; /**< Next free position in the buffer the effect package and sound load into. */
+    u8           unk_132c[4];
 
     /**
      * Loads the package and sound data for one menu effect.

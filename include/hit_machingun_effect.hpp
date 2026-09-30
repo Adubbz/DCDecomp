@@ -7,6 +7,9 @@
  */
 class CHIT_MACHINGUN_EFFECT {
 public:
+    float position[16][4]; /**< World positions of the active flashes. */
+    s32   timer[16];       /**< Remaining frame counts of the flashes. */
+
     /**
      * Starts one flash at the specified world position.
      *
@@ -23,7 +26,7 @@ public:
      * @address 0x1AEA20
      * @size 0xB0
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Advances the lifetime of each active flash.
@@ -32,11 +35,7 @@ public:
      * @address 0x1AEAD0
      * @size 0x48
      */
-    void Step(void);
-
-public:
-    float position[16][4]; /**< World positions of the active flashes. */
-    s32 timer[16];         /**< Remaining frame counts of the flashes. */
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CHIT_MACHINGUN_EFFECT) == 0x140);

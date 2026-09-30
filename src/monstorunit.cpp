@@ -39,8 +39,8 @@
 #include "userstatus.hpp"
 #include "weaponelement.hpp"
 
-int hitCnt;
-BEE_STATE BeeTbl[800];
+int           hitCnt;
+BEE_STATE     BeeTbl[800];
 CTexAnimeData MonsterTexAnim[320];
 
 /** Number of floors in each dungeon. */
@@ -73,10 +73,10 @@ int CMonstorUnit::GetMonstorNum() {
 
 void CMonstorUnit::DrawMapSymbol(float *offset) {
     sceVu0FVECTOR position;
-    CRect_i_ screen;
-    CRect_i_ clip;
-    int i;
-    CTexture *texture = TexManager.GetTexture("itempack", -1);
+    CRect_i_      screen;
+    CRect_i_      clip;
+    int           i;
+    CTexture     *texture = TexManager.GetTexture("itempack", -1);
     for (i = 0; i < 16; i++) {
         if (monster[i].state != -1 && monster[i].revealed != 0) {
             int draw;
@@ -188,7 +188,7 @@ int CMonstorUnit::CheckEventFlag2() {
 void CMonstorUnit::ArrangementPos(CDungeonMap *map, int count, int model_no, int unused) {
     sceVu0FVECTOR position;
     sceVu0FVECTOR existing;
-    int used[10];
+    int           used[10];
     for (int i = 0; i < 10; i++) {
         used[i] = 0;
     }
@@ -310,7 +310,7 @@ void CMonstorUnit::PalletStep() {
 
 void CMonstorUnit::SoundCheck() {
     sceVu0FVECTOR position;
-    CCharacter *character = &chara[current_monster][0];
+    CCharacter   *character = &chara[current_monster][0];
     character->GetPosition(position);
     float frame = chara[current_monster][0].motion_type.state.time;
     float near_distance = 50.0f;
@@ -341,7 +341,7 @@ void CMonstorUnit::SoundCheck() {
 }
 
 void CMonstorUnit::DrawMonstor() {
-    CCharacter *character;
+    CCharacter   *character;
     sceVu0FVECTOR origin = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR ambient;
     MGGetAmbient(ambient);
@@ -417,11 +417,11 @@ void CMonstorUnit::DrawMonstorCursor() {
 }
 
 void set3DCellModel(float *world, char *name, float size, int x, int y, int width, int height) {
-    int top_left[4];
-    int top_right[4];
-    int bottom_left[4];
-    int bottom_right[4];
-    CRect_i_ clip;
+    int       top_left[4];
+    int       top_right[4];
+    int       bottom_left[4];
+    int       bottom_right[4];
+    CRect_i_  clip;
     CTexture *texture = TexManager.GetTexture(name, -1);
     world[3] = 1;
     if (MGRotTransPers3DSprite(top_left, bottom_right, world, size, size / 2.0f, 0) == 1) {
@@ -464,9 +464,9 @@ void DrawBee(CFrame *frame, int count) {
     sceVu0FMATRIX world;
     sceVu0FMATRIX parent_world;
     sceVu0FVECTOR position;
-    sceGsZbuf zbuf;
-    sceGsAlpha alpha;
-    int frame_num = frame->GetFrameNum();
+    sceGsZbuf     zbuf;
+    sceGsAlpha    alpha;
+    int           frame_num = frame->GetFrameNum();
     zbuf = mgZBuffer;
     zbuf.bits.zmsk = 1;
     MGSetGsZBUF(&zbuf);
@@ -520,8 +520,8 @@ void CMonstorUnit::DrawShadowMonstor() {
 void CMonstorUnit::CheckViewLevel() {
     sceVu0FVECTOR player_position;
     sceVu0FVECTOR monster_position;
-    int sorted[16];
-    int active[16];
+    int           sorted[16];
+    int           active[16];
     sceVu0CopyVector(player_position, CharaMain.pos);
     int active_count = 0;
     for (int i = 0; i < 16; i++) {
@@ -561,7 +561,7 @@ void CMonstorUnit::CheckViewLevel() {
             return;
         }
         for (int i = 0; i < active_count; i++) {
-            int closest = -1;
+            int   closest = -1;
             float distance = 3200.0f;
             for (int j = 0; j < active_count; j++) {
                 if (active[j] != -1 && !(distance <= monster[active[j]].player_distance)) {
@@ -615,10 +615,10 @@ int CMonstorUnit::SelectAttachi() {
 }
 
 int CMonstorUnit::CheckDmg() {
-    int result = 0;
+    int            result = 0;
     COLLISION_HIT *record;
-    int immune = 0;
-    sceVu0FVECTOR direction, position;
+    int            immune = 0;
+    sceVu0FVECTOR  direction, position;
     if (monster[current_monster].stop_timer <= 0) {
         for (int i = 0; i < 16; i++) {
             if (effect2[current_monster].active[i] != 0) {
@@ -726,7 +726,7 @@ int CMonstorUnit::CheckDmg() {
     monster[current_monster].invincible_blocked = 0;
     for (int i = 0; i < 16; i++) {
         if (effect[current_monster].timer[i] != 0) {
-            int active = 1;
+            int   active = 1;
             float incoming_time;
             if (effect[current_monster].motion_start[i] != 0.0f && (!(effect[current_monster].motion_start[i] < (incoming_time = chara[current_monster][0].motion_type.state.time)) || effect[current_monster].motion_end[i] < incoming_time)) {
                 active = 0;
@@ -744,7 +744,7 @@ int CMonstorUnit::CheckDmg() {
                     }
                     if (monster_owner != -1 && monster_owner != current_monster) {
                         COLLISION_HIT *other_record = &(*NowColData->Get(hit));
-                        float chance = 100.0f * (float) rand() / 2147483648.0f;
+                        float          chance = 100.0f * (float) rand() / 2147483648.0f;
                         if (other_record->flags & 0x1000) {
                             if (chance < (float) monster[current_monster].status_chance && monster[current_monster].anger_timer == 0) {
                                 monster[current_monster].anger_timer = 1800;
@@ -879,9 +879,9 @@ int CMonstorUnit::CheckDmg() {
                     }
                     if (element < 5) {
                         CDngStatusData *status = (CDngStatusData *) UserStatus;
-                        WEAPON_HAVE *weapon = &status->chara_weapons[owner][status->equipped_weapon_slot[owner]];
-                        float strength = (float) weapon->elem[weapon->best_elem];
-                        static int cnt = 0;
+                        WEAPON_HAVE    *weapon = &status->chara_weapons[owner][status->equipped_weapon_slot[owner]];
+                        float           strength = (float) weapon->elem[weapon->best_elem];
+                        static int      cnt = 0;
                         CWeaponElFx[cnt].Set(&effect[current_monster].position[i], effect[current_monster].position[i], strength, element, monster[current_monster].body_radius);
                         if (cnt >= 3) {
                             cnt = 0;
@@ -966,7 +966,7 @@ int CMonstorUnit::CheckDmg() {
                             printf("c_dist = %.3f\n", distance);
                         }
                     }
-                    int index = GetCurrentMonsterIndex();
+                    int   index = GetCurrentMonsterIndex();
                     float defense = (float) monster[index].defense;
                     if (owner == 3) {
                         defense /= 2.0f;
@@ -994,7 +994,7 @@ int CMonstorUnit::CheckDmg() {
                     }
                     if (owner != -1) {
                         float old_damage = damage;
-                        int multiplier = effect[index].parameter[i][owner];
+                        int   multiplier = effect[index].parameter[i][owner];
                         float damage_scale = (float) multiplier;
                         damage = damage / 100.0f * damage_scale;
                         if (damage <= 0.0f) {
@@ -1026,7 +1026,7 @@ int CMonstorUnit::CheckDmg() {
                         CUserStatus *status = UserStatus;
                         if (status->hp[(int) owner] > 0) {
                             float heal = 0.01f * damage;
-                            int ignored = (int) heal;
+                            int   ignored = (int) heal;
                             status->AddNowLife(owner, (short) (int) heal, 255.0f);
                         }
                     }
@@ -1118,7 +1118,7 @@ void CMonstorUnit::MoveCheck(float *position, float *movement, int flat) {
                 float distance = DistVector(ground, end_ground);
                 float radius = monster[i].body_radius;
                 if (distance < 6.0f + radius) {
-                    int clear = 1;
+                    int   clear = 1;
                     float ceiling = center[1] + 2.0f * radius;
                     if (!(ceiling < upper) && center[1] < upper) {
                         clear = 0;
@@ -1156,7 +1156,7 @@ void CMonstorUnit::MoveCheck(float *position, float *movement, int flat) {
                             center[1] = 1.0f;
                             lower = 1.0f;
                         }
-                        int clear = 1;
+                        int   clear = 1;
                         float bottom = center[1] - effect3[i].radius[j];
                         float ceiling = center[1] + effect3[i].radius[j];
                         if (!(bottom <= upper) && ceiling < upper) {
@@ -1241,7 +1241,7 @@ void CMonstorUnit::MoveChecMonster() {
     sceVu0FVECTOR towards_other;
     sceVu0FVECTOR flat_other;
     sceVu0FVECTOR flat_next;
-    CCharacter *character = &chara[current_monster][0];
+    CCharacter   *character = &chara[current_monster][0];
     character->GetPosition(position);
     next_position[0] = position[0] + monster[current_monster].movement[0] * monster[current_monster].movement_speed;
     next_position[1] = position[1] + monster[current_monster].movement[1] * monster[current_monster].movement_speed;
@@ -1283,7 +1283,7 @@ void CMonstorUnit::MoveChecMonster() {
 
 void CMonstorUnit::Step(int pause) {
     sceVu0FVECTOR position, destination, hit;
-    CBoxVu0 box;
+    CBoxVu0       box;
     sceVu0FVECTOR other_position, width_start, width_hit;
     sceVu0FVECTOR turn_position, rotation, direction;
     sceVu0FVECTOR drop_position, key_position, attachment_position, money_position;
@@ -1528,9 +1528,9 @@ void CMonstorUnit::Step(int pause) {
                     SoundCheck();
                     if (monster[current_monster].state == -1) {
                         CDngStatusData *status = (CDngStatusData *) UserStatus;
-                        int current_chara = UserStatus->cur_chara;
-                        int no_exp;
-                        WEAPON_HAVE *weapon = &status->chara_weapons[current_chara][status->equipped_weapon_slot[current_chara]];
+                        int             current_chara = UserStatus->cur_chara;
+                        int             no_exp;
+                        WEAPON_HAVE    *weapon = &status->chara_weapons[current_chara][status->equipped_weapon_slot[current_chara]];
                         no_exp = 0;
                         if (status->CheckDefaultWeapon(current_chara) == 0) {
                             no_exp = 1;
@@ -1713,9 +1713,9 @@ void CMonstorUnit::CleanViewMonstor(int back_floor) {
 
 int CMonstorUnit::SetupBaseModel(int slot, int model_no, int texture_block, CDataAlloc2<1> *alloc) {
     MONSTOR_MODEL *description = &MonstorTable[model_no];
-    char filename[64];
-    CFrameAttr attr;
-    int file_size;
+    char           filename[64];
+    CFrameAttr     attr;
+    int            file_size;
     attr.fog_enable = 1;
     sprintf(filename, "dun/monstor/%s.chr", description->model_name[0]);
     LoadFile(filename, read_buffer, NULL);

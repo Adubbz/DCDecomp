@@ -25,7 +25,7 @@ public:
      * @address 0x235650
      * @size 0x7C
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Accumulates one frame toward the next inventory-volume step.
@@ -43,7 +43,7 @@ public:
      * @address 0x235720
      * @size 0x2EC
      */
-    void CheckItemVolume(void);
+    void CheckItemVolume();
 };
 
 STATIC_ASSERT(sizeof(CMenuItemStep) == 0x2C);

@@ -14,8 +14,8 @@ struct spRGBA;
 struct CHECK_WATER_INFO {
     float dry_position[4];     /**< Where the party last stood out of the water. */
     float surface_position[4]; /**< Point on the water surface where the party stands. */
-    s32 in_water;              /**< Whether the party stood in the water at the last check. */
-    char unk_24[0xC];
+    s32   in_water;            /**< Whether the party stood in the water at the last check. */
+    char  unk_24[0xC];
 };
 
 STATIC_ASSERT(sizeof(CHECK_WATER_INFO) == 0x30);
@@ -26,8 +26,8 @@ STATIC_ASSERT(sizeof(CHECK_WATER_INFO) == 0x30);
 struct WATER_WAVE_LING {
     float center[4]; /**< Point on the water the ring spreads from. */
     float radius;    /**< Current radius of the ring. */
-    s32 life;        /**< Frames left before the ring fades out; 0 while the slot is free. */
-    char unk_18[8];
+    s32   life;      /**< Frames left before the ring fades out; 0 while the slot is free. */
+    char  unk_18[8];
 };
 
 STATIC_ASSERT(sizeof(WATER_WAVE_LING) == 0x20);
@@ -45,7 +45,7 @@ extern "C" float StatusColor[3];
  * @address 0x1AF360
  * @size 0x48
  */
-void WaterSplash_Init(void);
+void WaterSplash_Init();
 
 /**
  * Reports whether the party stands in the water of the nearest map part, records the surface
@@ -55,7 +55,7 @@ void WaterSplash_Init(void);
  * @address 0x1AF3B0
  * @size 0x328
  */
-int CheckHealingWater(void);
+int CheckHealingWater();
 
 /**
  * Reports whether the party stands in a healing zone.
@@ -64,7 +64,7 @@ int CheckHealingWater(void);
  * @address 0x1AF6E0
  * @size 0x29C
  */
-int CheckHealZone(void);
+int CheckHealZone();
 
 /**
  * Restores the party while they stand in healing water.
@@ -73,7 +73,7 @@ int CheckHealZone(void);
  * @address 0x1AF980
  * @size 0x158
  */
-void HealingWater(void);
+void HealingWater();
 
 /**
  * Draws the rings spreading on the water.
@@ -82,7 +82,7 @@ void HealingWater(void);
  * @address 0x1AFAE0
  * @size 0x27C
  */
-void DrawWaterLing(void);
+void DrawWaterLing();
 
 /**
  * Advances the rings spreading on the water.
@@ -91,7 +91,7 @@ void DrawWaterLing(void);
  * @address 0x1AFD60
  * @size 0x130
  */
-void StepWaterLing(void);
+void StepWaterLing();
 
 /**
  * Mixes the battle music against the ambience by the distance to the nearest active monster
@@ -119,7 +119,7 @@ int ValuePrint(int x, int y, int value, int palette, unsigned char alpha);
  * @address 0x1B0260
  * @size 0xB8
  */
-void BtStatusAlarmInit(void);
+void BtStatusAlarmInit();
 
 /**
  * Advances the pulse that warns of low life.
@@ -128,7 +128,7 @@ void BtStatusAlarmInit(void);
  * @address 0x1B0320
  * @size 0xC8
  */
-void BtStatusAlarmAnime(void);
+void BtStatusAlarmAnime();
 
 /**
  * Chooses the colour a status bar draws in from how full it is.
@@ -174,7 +174,7 @@ int StatusErrCheck(int status);
  * @size 0xE8
  * Gives the colour a status ailment tints a model with, and 1 while one runs.
  */
-int BtStatusErrColorSet(void);
+int BtStatusErrColorSet();
 
 /**
  * Advances the party's status ailments and applies what they cost.
@@ -183,7 +183,7 @@ int BtStatusErrColorSet(void);
  * @address 0x1B1A50
  * @size 0x154
  */
-void BtStatusErrStep(void);
+void BtStatusErrStep();
 
 /**
  * Inflicts one status ailment on the party.
@@ -219,7 +219,7 @@ void setItemToReserved(char *page_name, int x, int y, char *item_name, int dsax,
  * @address 0x1B20C0
  * @size 0x1C
  */
-void BtMapJumpCashClear(void);
+void BtMapJumpCashClear();
 
 /**
  * Loads the steeb message file for the current floor if it changed, then reads the map a jump
@@ -239,8 +239,7 @@ int BtMapJumpLoad(char *map_name);
  * @address 0x1B27F0
  * @size 0x108
  */
-void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y, int width,
-                      int height, int alpha);
+void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y, int width, int height, int alpha);
 
 /**
  * Gives the way a shot flies for one heading and pitch.

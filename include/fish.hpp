@@ -7,9 +7,6 @@
 #include "character.hpp"
 #include "dataalloc_fwd.hpp"
 
-class CCPoly;
-class CFrame;
-
 /** Number of bait kinds for which each fish records an attraction value. */
 enum {
     FISH_FOOD_KIND_COUNT = 13
@@ -22,8 +19,8 @@ struct FishInfo {
     float model_size;                          /**< Size represented by the unscaled fish model. */
     float min_size;                            /**< Smallest generated size of this fish kind. */
     float max_size;                            /**< Largest generated size of this fish kind. */
-    s32 min_fp;                                /**< Fishing points awarded at the minimum size. */
-    s32 max_fp;                                /**< Fishing points awarded at the maximum size. */
+    s32   min_fp;                              /**< Fishing points awarded at the minimum size. */
+    s32   max_fp;                              /**< Fishing points awarded at the maximum size. */
     float food_affinity[FISH_FOOD_KIND_COUNT]; /**< Attraction to each kind of bait. */
 };
 
@@ -59,6 +56,32 @@ enum FishAction {
  */
 class CFish {
 public:
+    s32           fish_kind;         /**< Index of the loaded fish kind, or -1 when unused. */
+    FishInfo      info;              /**< Fixed attributes copied from the fish-kind table. */
+    FishMoveMode  move_mode;         /**< Current autonomous movement behaviour. */
+    FishAction    action;            /**< Current bait or hook interaction. */
+    s32           move_timer;        /**< Steps remaining before choosing another movement. */
+    s32           action_timer;      /**< Steps remaining before updating the interaction. */
+    s32           use_angle_model;   /**< Nonzero while the angling character form is active. */
+    float         size;              /**< Generated size of this fish. */
+    float         angle_model_scale; /**< Scale applied to the angling character form. */
+    float         model_scale;       /**< Scale applied to the normal character form. */
+    s32           unk_6c;
+    s32           unk_70;
+    float         target_yaw; /**< Yaw toward which the fish turns. */
+    s32           unk_78;
+    s32           unk_7c;
+    float         target_speed;         /**< Forward speed toward which the fish accelerates. */
+    float         speed;                /**< Current forward speed. */
+    s32           food_kind;            /**< Kind of bait currently presented, or -1 for none. */
+    float         food_radius;          /**< Radius within which the fish notices the bait. */
+    sceVu0FVECTOR food_position;        /**< World position of the current bait or hook. */
+    CCharacter    model;                /**< Character used for normal swimming. */
+    CCharacter    angle_model;          /**< Character used for angling and battle. */
+    CCPoly       *collision_polys;      /**< Polygons that constrain fish movement. */
+    s32           collision_poly_count; /**< Number of collision polygons. */
+    u8            unk_2408[8];
+
     /**
      * Constructs both character forms and resets the fish.
      * @mangled __ct__5CFishFv
@@ -109,32 +132,6 @@ public:
     void DeleteReference();
     /** Resets the fish's runtime state and both character forms. */
     void Initialize();
-
-    s32 fish_kind;           /**< Index of the loaded fish kind, or -1 when unused. */
-    FishInfo info;           /**< Fixed attributes copied from the fish-kind table. */
-    FishMoveMode move_mode;  /**< Current autonomous movement behaviour. */
-    FishAction action;       /**< Current bait or hook interaction. */
-    s32 move_timer;          /**< Steps remaining before choosing another movement. */
-    s32 action_timer;        /**< Steps remaining before updating the interaction. */
-    s32 use_angle_model;     /**< Nonzero while the angling character form is active. */
-    float size;              /**< Generated size of this fish. */
-    float angle_model_scale; /**< Scale applied to the angling character form. */
-    float model_scale;       /**< Scale applied to the normal character form. */
-    s32 unk_6c;
-    s32 unk_70;
-    float target_yaw; /**< Yaw toward which the fish turns. */
-    s32 unk_78;
-    s32 unk_7c;
-    float target_speed;          /**< Forward speed toward which the fish accelerates. */
-    float speed;                 /**< Current forward speed. */
-    s32 food_kind;               /**< Kind of bait currently presented, or -1 for none. */
-    float food_radius;           /**< Radius within which the fish notices the bait. */
-    sceVu0FVECTOR food_position; /**< World position of the current bait or hook. */
-    CCharacter model;            /**< Character used for normal swimming. */
-    CCharacter angle_model;      /**< Character used for angling and battle. */
-    CCPoly *collision_polys;     /**< Polygons that constrain fish movement. */
-    s32 collision_poly_count;    /**< Number of collision polygons. */
-    u8 unk_2408[8];
 };
 
 STATIC_ASSERT(sizeof(CFish) == 0x2410);

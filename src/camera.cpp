@@ -13,15 +13,17 @@ s32 CCamera::StopCamera;
 void CCamera::Step(int steps) {
     float dir[4];
     float flat[4];
-    int i;
-    int step;
-    int axis;
+    int   i;
+    int   step;
+    int   axis;
 
-    if (CCamera::StopCamera)
+    if (CCamera::StopCamera) {
         return;
+    }
 
-    if (this->speed <= 0.0f)
+    if (this->speed <= 0.0f) {
         this->speed = 1.0f;
+    }
 
     // A step count below zero puts the eye and the look-at point onto their
     // positions without any of the steps in between.
@@ -45,15 +47,18 @@ void CCamera::Step(int steps) {
                 } else {
                     move_pos = (this->next_pos[axis] - this->pos[axis]) / speed;
 
-                    if (speed < 1.0f)
+                    if (speed < 1.0f) {
                         speed = 1.0f;
+                    }
                     move_ref = (this->next_ref[axis] - this->ref[axis]) / speed;
 
                     if (this->limit_move == 1) {
-                        if (move_pos > 2.0f)
+                        if (move_pos > 2.0f) {
                             move_pos = 2.0f;
-                        if (move_pos < -2.0f)
+                        }
+                        if (move_pos < -2.0f) {
                             move_pos = -2.0f;
+                        }
                     }
 
                     this->pos[axis] += move_pos;
@@ -63,10 +68,12 @@ void CCamera::Step(int steps) {
                     // and the look-at point snap on once they are near enough.
                     left_pos = this->pos[axis] - this->next_pos[axis];
                     left_ref = this->ref[axis] - this->next_ref[axis];
-                    if (left_pos < this->snap_range && left_pos > -this->snap_range)
+                    if (left_pos < this->snap_range && left_pos > -this->snap_range) {
                         this->pos[axis] = this->next_pos[axis];
-                    if (left_ref < this->snap_range && left_ref > -this->snap_range)
+                    }
+                    if (left_ref < this->snap_range && left_ref > -this->snap_range) {
                         this->ref[axis] = this->next_ref[axis];
+                    }
                 }
             }
         }
@@ -84,7 +91,7 @@ void CCamera::Step(int steps) {
     this->angle_v = -atan2f(dir[1], sqrtf(dir[0] * dir[0] + dir[2] * dir[2]));
 }
 
-void CCamera::Stay(void) {
+void CCamera::Stay() {
     sceVu0CopyVector(this->next_pos, this->pos);
     sceVu0CopyVector(this->next_ref, this->ref);
 }
@@ -158,10 +165,12 @@ void CCamera::GetCameraMatrix(float (*matrix)[4]) {
 
     length = sqrtf(dir[0] * dir[0] + dir[1] * dir[1] + dir[2] * dir[2]);
     flat_length = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
-    if (flat_length == 0.0f)
+    if (flat_length == 0.0f) {
         flat_length = 1.0f;
-    if (length == 0.0f)
+    }
+    if (length == 0.0f) {
         length = 1.0f;
+    }
 
     sin_h = dir[2] / flat_length;
     cos_h = dir[0] / flat_length;
@@ -181,17 +190,17 @@ void CCamera::GetCameraMatrix(float (*matrix)[4]) {
     matrix[2][2] = -sin_h * cos_v;
     matrix[2][3] = 0.0f;
     matrix[3][0] = -this->pos[0] * sin_h - this->pos[2] * cos_h;
-    matrix[3][1] = sin_v * (this->pos[0] * cos_h) + this->pos[1] * cos_v -
-                   sin_v * (this->pos[2] * sin_h);
-    matrix[3][2] = cos_v * (-this->pos[0] * cos_h) + this->pos[1] * sin_v +
-                   cos_v * (this->pos[2] * sin_h);
+    matrix[3][1] = sin_v * (this->pos[0] * cos_h) + this->pos[1] * cos_v - sin_v * (this->pos[2] * sin_h);
+    matrix[3][2] = cos_v * (-this->pos[0] * cos_h) + this->pos[1] * sin_v + cos_v * (this->pos[2] * sin_h);
     matrix[3][3] = 1.0f;
 
     // The roll turns the view about the direction that it looks along.
-    if (this->roll > 3.1415927f)
+    if (this->roll > 3.1415927f) {
         this->roll -= 6.2831855f;
-    if (this->roll < -3.1415927f)
+    }
+    if (this->roll < -3.1415927f) {
         this->roll += 6.2831855f;
+    }
 
     sceVu0UnitMatrix(roll_matrix);
     sin_roll = sinf(this->roll);
@@ -219,11 +228,11 @@ void CCamera::GetRef(float *ref) {
     sceVu0CopyVector(ref, this->ref);
 }
 
-float CCamera::GetAngleH(void) {
+float CCamera::GetAngleH() {
     return this->angle_h;
 }
 
-float CCamera::GetRoll(void) {
+float CCamera::GetRoll() {
     return this->roll;
 }
 
@@ -232,12 +241,13 @@ CCamera::CCamera(float speed) {
 
     float zero = 0.0f;
 
-    if (this->speed <= zero)
+    if (this->speed <= zero) {
         this->speed = 1.0f;
+    }
     this->limit_move = 0;
     this->roll = zero;
     this->snap_range = 0.01f;
 }
 
-CCamera::~CCamera(void) {
+CCamera::~CCamera() {
 }

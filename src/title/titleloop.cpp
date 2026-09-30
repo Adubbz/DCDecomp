@@ -49,19 +49,19 @@
 template <class T>
 class CRect {
 public:
-    CRect() {}
-
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
-    }
-
     T x; /**< Left edge. */
     T y; /**< Top edge. */
     T w; /**< Width. */
     T h; /**< Height. */
+
+    CRect() {}
+
+    CRect(T left, T top, T width, T height) {
+        x = left;
+        y = top;
+        w = width;
+        h = height;
+    }
 };
 
 /* One piece of scenery the third scene lays out: the model file, where it stands and how far it is
@@ -72,19 +72,7 @@ struct MAP_INFO {
     float rotation;    /**< Turn about the vertical axis, in degrees. */
 };
 
-sceVif1Packet *GetVif1Packet();
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
-void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetAmbient(float *color);
-void MGDraw(CFrame *frame);
-void MGSetGsTEST(sceGsTest *test);
-void MGGetFBuffTex(sceGsTex0 *tex);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
-void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *dst,
-                        const CRect<int> &dst_rect);
-void MGClearZBuffer(int mode);
+void MGStretchMoveImage(sceGsTex0 *src, const CRect<int> &src_rect, sceGsTex0 *dst, const CRect<int> &dst_rect);
 
 /* The rectangle DrawObjectVibe takes by value. It is four ints and not a CRect: the two are the
    same fields and the name the call encodes is this one. */
@@ -95,24 +83,9 @@ struct RECT {
     int h; /**< Height. */
 };
 
-void InitializeDataBuffer();
-void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
-void SetPacketReadBuffer(int size, int offset);
-void setbilinear(int on);
-int LoadFileMenuData(char *name, u_int *buffer);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
-void DrawObjectVibe(int id, int frame, CTexture *texture, RECT rect, u_char size, int alpha);
-
 void InitOpeningBook(u_long128 *pack, int *param);
-int OpeningBookKey();
+int  OpeningBookKey();
 void OpeningBookDraw();
-int MenuSaveKey();
-void DrawMenuSave(char *name);
-int MenuOptionKey();
-void DrawMenuOption();
 
 #include "editloop.hpp"
 #include "gamemode.hpp"
@@ -144,6 +117,9 @@ void DrawMenuOption();
    world. */
 class CWater {
 public:
+    char      unk_00[176];
+    CFrameVu1 frame; /**< Places and draws the water surface. */
+
     CWater();
 
     void SetVertex(float *corner0, float *corner1, float *corner2, float *corner3);
@@ -152,16 +128,12 @@ public:
     void SetColor(u_char red, u_char green, u_char blue, u_char alpha);
     void Shake(int x, int y, float height_change);
     void Hamon();
-    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
-
-    char unk_00[176];
-    CFrameVu1 frame; /**< Places and draws the water surface. */
+    int  DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
 };
 
 /* Named rather than included, because a unit's include list is a dial on the order a call's
    floating-point arguments are set up in and nothing here needs the definition: adding
    renderinfo.h alone takes RushInit's three-float SetFollow out of the order the image has. */
-class RenderInfo;
 
 /* A frame parented to an object, which is what lets the world transform drive a model. */
 class CObjectFrame : public CObject {
@@ -176,38 +148,42 @@ public:
    through the object dispatch like anything else in the world. */
 class CMapObject : public CObjectFrame {
 public:
+    char       unk_18[36];
+    CFrameVu1 *unk_D4;
+    char       unk_4C[8];
+    float      unk_E0;
+    int        category_no; /**< Category the map filed the object under. */
+    int        handle;      /**< Handle the map gave the object. */
+    char       unk_EC[4];
+
     CMapObject();
 
     virtual void Draw();
 
     void Initialize();
     void DrawShadow(int fast);
-
-    char unk_18[36];
-    CFrameVu1 *unk_D4;
-    char unk_4C[8];
-    float unk_E0;
-    int category_no; /**< Category the map filed the object under. */
-    int handle;      /**< Handle the map gave the object. */
-    char unk_EC[4];
 };
 
 /* The dust the running feet kick up, declared here for the same reason. */
 class CRunEffect {
 public:
+    char unk_00[208];
+
     CRunEffect();
 
     void Lighting(int enabled);
     void Set(float *origin);
     void Step();
     void Draw();
-
-    char unk_00[208];
 };
 
 /* The movie's one fire, which is a light rather than a model. */
 class CFireOmni {
 public:
+    char          unk_18[32];
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
+    char          unk_4C[16];
+
     CFireOmni();
 
     void FireStep();
@@ -220,93 +196,25 @@ public:
         position[3] = 1.0f;
     }
 
-    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale,
-                  int layers, float camera_offset);
-
-    char unk_18[32];
-    sceVu0FVECTOR position; /**< World position the fire draws at. */
-    char unk_4C[16];
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *eye, float scale, int layers, float camera_offset);
 };
 
 /* A run of frames the world draws as one. */
 class CMap {
 public:
-    void Initialize();
+    char unk_00[2800];
+
+    void        Initialize();
     CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
     CMapObject *SetObject(int index, CFrameVu1 *frame, int category_no, int handle);
     CMapObject *GetObject(int index);
-    void Draw();
-
-    char unk_00[2800];
+    void        Draw();
 };
 
-void wait_now_loading_vsync();
 void InitializeDataBuffer();
-void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
-void SetPacketReadBuffer(int size, int offset);
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
-sceVif1Packet *GetVif1Packet();
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
-void MGGetFBuffTex(sceGsTex0 *tex);
-void MGMoveImage(sceGsTex0 *src, const CRect<int> &rect, sceGsTex0 *dst, int dsax, int dsay,
-                 int dir);
-void MGSetGsZBUF(sceGsZbuf *zbuf);
-void MGSetAmbient(float *color);
-void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
-void MGBeginDrawShadow(sceGsTex0 tex);
-void MGEndDrawShadow(u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, int width, int height, float angle);
-void DepthOfField(float *dist, int level, int alpha, int blur);
-void OPAnalyz(char *name);
-void OPMdsLoad();
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
 
-void SndSetCamera(CCamera *camera);
-void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
-void SndSetReadBuffer(u_int *buffer);
-void SndAmbientPlay(int no);
-void SndBgmPlay(int no);
-void SndBgmFadeOut(int frames, int volume);
-void SndBgmStop();
-void SndAmbientStop();
-void SndStep();
-void SndSePlay(int se, float *position, float near_dist, float far_dist);
-
-void MotionProcess();
-void DrawProcess();
-void SoundProcess();
-void WaterProcess();
-void DataLoad();
-void InitProcA();
-void DrawProcA();
-void InitProcB();
-void DrawProcB();
-void AtraLight();
-void InitProcC();
-void DrawProcC();
-void InitProcD();
-void DrawProcD();
-void InitProcE();
-void DrawProcE();
-void InitProcF();
-void DrawProcF();
-void InitProcG();
-void DrawProcG();
-void InitProcH();
-void DrawProcH();
-void InitProcI();
-void DrawProcI();
-void InitProcTitle();
-void DrawProcTitle();
-
-void TitleDraw();
 void TiPlayVolSE(int group, int no, int voice, float volume);
 
 /* Nothing reads this, and nothing in the image stands for it: the link this file was built by
@@ -315,19 +223,19 @@ void TiPlayVolSE(int group, int no, int voice, float volume);
    declaration that emits nothing reaches. Deleting it puts three of those four constants in the
    wrong registers. */
 
-int Fade1;
-int Fade2;
-int Fade3;
-int Fade4;
-int Wait;
-int opcnt;
-int keywait;
+int    Fade1;
+int    Fade2;
+int    Fade3;
+int    Fade4;
+int    Wait;
+int    opcnt;
+int    keywait;
 u_char brink;
-int brinkcnt;
-int EffCnt;
+int    brinkcnt;
+int    EffCnt;
 
 void TitleInit(int mode) {
-    int i;
+    int   i;
     float scale = 750.0f;
     float far_z = 65535.0f;
 
@@ -353,14 +261,15 @@ void TitleInit(int mode) {
 
     LOADTEXTURE_INFO tex[] = {
 #ifndef PAL
-        {"#frame_image_mes#640#448#4", 26, 0},
+        {"#frame_image_mes#640#448#4",                      26, 0},
 #endif
         {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
-        {"#fontbase#512#256#1", 26, 0},
-        {"meswin/gaiji.img", 26, 0},
-        {"meswin/fuki256.img", 26, 0},
-        {"meswin/syst04.img", 26, 0},
-        {"", 0, 0}};
+        {"#fontbase#512#256#1",                             26, 0},
+        {"meswin/gaiji.img",                                26, 0},
+        {"meswin/fuki256.img",                              26, 0},
+        {"meswin/syst04.img",                               26, 0},
+        {"",                                                0,  0}
+    };
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, tex, read_buffer);
@@ -398,15 +307,16 @@ void TitleInit(int mode) {
     LOADTEXTURE_INFO2 tex2[] = {
         {(char *) "#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {(char *) "#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 1, 0},
-        {0, 0, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 0, 0}};
+        {0,                                                        0, 0},
+        {0,                                                        1, 0},
+        {0,                                                        1, 0},
+        {0,                                                        1, 0},
+        {0,                                                        1, 0},
+        {0,                                                        1, 0},
+        {0,                                                        1, 0},
+        {0,                                                        1, 0},
+        {0,                                                        0, 0}
+    };
 
     tex2[2].name = (char *) GetPackFile(read_buffer, "bg.img", 0);
     tex2[3].name = (char *) GetPackFile(read_buffer, "title.img", 0);
@@ -422,16 +332,17 @@ void TitleInit(int mode) {
         {(char *) "#frame_image#640#224#4", 1, 0},
         {(char *) "#frame_image#640#224#4", 2, 0},
         {(char *) "#frame_image#640#224#4", 3, 0},
-        {0, 0, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 0, 0}};
+        {0,                                 0, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 1, 0},
+        {0,                                 0, 0}
+    };
 
     tex2[4].name = (char *) GetPackFile(read_buffer, "bg.img", 0);
     tex2[5].name = (char *) GetPackFile(read_buffer, "title.img", 0);
@@ -510,8 +421,9 @@ void TitleInit(int mode) {
     if (mode == 1) {
         CCursol.select = 1;
         CCursol.Set(316.0f);
-        for (i = 0; i < 10; i++)
+        for (i = 0; i < 10; i++) {
             CCursol.Move();
+        }
     }
 
     GamePad.SetAutoRepeat(20480, 30, 9);
@@ -521,7 +433,7 @@ void TitleInit(int mode) {
 int TitleLoop() {
     sceVu0FVECTOR pos;
     sceVu0FMATRIX matrix;
-    int i;
+    int           i;
 
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     FCamera.GetPos(pos);
@@ -532,33 +444,39 @@ int TitleLoop() {
 
     switch (CProcess.no) {
         case 0:
-            if (CFade.In())
+            if (CFade.In()) {
                 CProcess.no = 2;
+            }
             if (GamePad.Down(2048) && EffCnt > 16) {
                 CFade.Skip();
                 CProcess.no = 3;
             }
-            if (EffCnt < 100)
+            if (EffCnt < 100) {
                 EffCnt++;
+            }
             break;
 
         case 1:
-            if (CFade.In2())
+            if (CFade.In2()) {
                 CProcess.no = 4;
+            }
             break;
 
         case 2:
-            if (Wait < 120)
+            if (Wait < 120) {
                 Wait++;
-            else
+            } else {
                 CProcess.no = 3;
-            if (GamePad.Down(2048))
+            }
+            if (GamePad.Down(2048)) {
                 CProcess.no = 3;
+            }
             break;
 
         case 3:
-            if (CSprite.Se() == 0)
+            if (CSprite.Se() == 0) {
                 TiPlayVolSE(14, 38, 21, 1.0f);
+            }
             CSprite.Move();
             if (GamePad.Down(2048)) {
                 Logo.motion_type.state.time = 116.0f;
@@ -567,8 +485,9 @@ int TitleLoop() {
             }
             if (CSprite.x[0] > 100.0f) {
                 if (Logo.motion_type.state.time < 116.0f) {
-                    for (i = 0; i < 9; i++)
+                    for (i = 0; i < 9; i++) {
                         Spark[i].Step();
+                    }
                     Logo.Step();
                     CLogo.Fade();
                 } else {
@@ -577,8 +496,9 @@ int TitleLoop() {
                     } else {
                         Fade2 = (Fade2 + 2) & 0x7f;
                         keywait++;
-                        if (keywait >= 500)
+                        if (keywait >= 500) {
                             keywait = 500;
+                        }
                     }
                     CLogo.Move();
                 }
@@ -611,10 +531,12 @@ int TitleLoop() {
                     opcnt = 0;
                     TiPlayVolSE(13, 122, 24, 1.0f);
                 }
-                if (CCursol.select < 0)
+                if (CCursol.select < 0) {
                     CCursol.select = 2;
-                if (CCursol.select > 2)
+                }
+                if (CCursol.select > 2) {
                     CCursol.select = 0;
+                }
                 switch (CCursol.select) {
 #ifdef PAL
                     case 0:
@@ -667,8 +589,9 @@ int TitleLoop() {
             CLogo.Move();
             brink = 1;
             brinkcnt++;
-            if (brinkcnt > 60)
+            if (brinkcnt > 60) {
                 CProcess.no = 6;
+            }
             break;
 
         case 6:
@@ -717,8 +640,9 @@ int TitleLoop() {
             break;
 
         case 9:
-            if (OpeningBookKey())
+            if (OpeningBookKey()) {
                 CProcess.no = 14;
+            }
             break;
 
         case 10:
@@ -782,21 +706,23 @@ void TitleDraw() {
     sceVu0FVECTOR light2 = {0.0f, 0.0f, -10.0f, 0.0f};
     sceVu0FMATRIX light;
     sceVu0FMATRIX color = {
-        {191.0f, 105.0f, 76.0f, 128.0f},
-        {63.0f, 51.0f, 127.0f, 128.0f},
-        {40.0f, 30.0f, 30.0f, 128.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f}};
+        {191.0f, 105.0f, 76.0f,  128.0f},
+        {63.0f,  51.0f,  127.0f, 128.0f},
+        {40.0f,  30.0f,  30.0f,  128.0f},
+        {0.0f,   0.0f,   0.0f,   0.0f  }
+    };
     sceVu0FVECTOR light0b = {0.0f, 6.0f, -8.0f, 0.0f};
     sceVu0FVECTOR light1b = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FVECTOR light2b = {0.0f, 0.0f, 0.0f, 0.0f};
     sceVu0FMATRIX lightb;
     sceVu0FMATRIX colorb = {
         {128.0f, 128.0f, 112.0f, 128.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f, 0.0f}};
+        {0.0f,   0.0f,   0.0f,   0.0f  },
+        {0.0f,   0.0f,   0.0f,   0.0f  },
+        {0.0f,   0.0f,   0.0f,   0.0f  }
+    };
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 100.0f};
-    int i;
+    int           i;
 
     if (CProcess.no == 0 || (CProcess.no == 6 && CCursol.GetSelect() == 0) || CProcess.no == 7) {
         ambient[3] = (float) CFade.Get(128);
@@ -816,8 +742,9 @@ void TitleDraw() {
 
         TexManager.ReloadTexture(GetVif1Packet(), 0);
         rot[1] += 0.001f;
-        if (rot[1] > 3.14f)
+        if (rot[1] > 3.14f) {
             rot[1] -= 6.28f;
+        }
         ObjectFrame3->SetRotation(rot[0], rot[1], rot[2]);
         MGDraw(ObjectFrame3);
     }
@@ -842,26 +769,18 @@ void TitleDraw() {
         MGSetGsTEST(&test);
         setbilinear(1);
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1),
-                    CRect<int>(0, 0, 640, 85), CRect<int>(1, 0, 639, 45),
-                    112);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect<int>(0, 0, 640, 85), CRect<int>(1, 0, 639, 45), 112);
 
         for (i = 1; i < 4; i++) {
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1),
-                        CRect<int>(0, i * 84 + 1, 640, 84), CRect<int>(1, i * 42, 639, 45),
-                        114);
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect<int>(0, i * 84 + 1, 640, 84), CRect<int>(1, i * 42, 639, 45), 114);
         }
 
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1),
-                    CRect<int>(0, 336, 640, 105), CRect<int>(1, 167, 639, 57),
-                    114);
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1),
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect<int>(0, 336, 640, 105), CRect<int>(1, 167, 639, 57), 114);
 #ifdef PAL
-                    CRect<int>(0, 441, 640, 39), CRect<int>(1, 220, 639, 19),
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect<int>(0, 441, 640, 39), CRect<int>(1, 220, 639, 19), 114);
 #else
-                    CRect<int>(0, 440, 640, 8), CRect<int>(1, 220, 639, 3),
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1), CRect<int>(0, 440, 640, 8), CRect<int>(1, 220, 639, 3), 114);
 #endif
-                    114);
 
         MGSetGsTEST(0);
     }
@@ -873,8 +792,7 @@ void TitleDraw() {
         MGGetFBuffTex(&tex0);
         image = *(sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0;
         tex0.PSM = 1;
-        MGStretchMoveImage(&tex0, CRect<int>(0, 0, 10240, SCREEN_HALF_HEIGHT * 16), &image,
-                           CRect<int>(0, 0, 10240, SCREEN_HALF_HEIGHT * 16));
+        MGStretchMoveImage(&tex0, CRect<int>(0, 0, 10240, SCREEN_HALF_HEIGHT * 16), &image, CRect<int>(0, 0, 10240, SCREEN_HALF_HEIGHT * 16));
     }
     MGClearZBuffer(0);
 
@@ -893,76 +811,50 @@ void TitleDraw() {
             CLogo.Sparkdraw(Logo.motion_type.state.time);
             CLogo.Draw();
 
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("main", -1),
-                        CRect<int>(0, 62, 288, 170), CRect<int>(0, 0, 288, 170),
-                        (u_char) CFade.Get(Fade4));
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("main", -1),
-                        CRect<int>(288, 112, 72, 190), CRect<int>(288, 50, 72, 190),
-                        (u_char) CFade.Get(Fade4));
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("main", -1),
-                        CRect<int>(360, 142, 412, 160), CRect<int>(360, 80, 412, 160),
-                        (u_char) CFade.Get(Fade4));
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("main", -1), CRect<int>(0, 62, 288, 170), CRect<int>(0, 0, 288, 170), (u_char) CFade.Get(Fade4));
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("main", -1), CRect<int>(288, 112, 72, 190), CRect<int>(288, 50, 72, 190), (u_char) CFade.Get(Fade4));
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("main", -1), CRect<int>(360, 142, 412, 160), CRect<int>(360, 80, 412, 160), (u_char) CFade.Get(Fade4));
 
             ambient[3] = (float) CFade.Get(128);
             MGSetAmbient(ambient);
-            if (CFade.Get(128) == 128)
+            if (CFade.Get(128) == 128) {
                 CSprite.Draw();
+            }
 
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start", -1),
-                        CRect<int>(64, MENU_Y(362), 512, 64), CRect<int>(0, 64, 512, 64),
-                        (u_char) CFade.Get(Fade1));
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start", -1), CRect<int>(64, MENU_Y(362), 512, 64), CRect<int>(0, 64, 512, 64), (u_char) CFade.Get(Fade1));
 
             if (CProcess.no == 3) {
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("start", -1),
-                            CRect<int>(64, MENU_Y(296), 512, 64), CRect<int>(0, 0, 512, 64),
-                            (u_char) CFade.Get(Fade2));
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("start", -1), CRect<int>(64, MENU_Y(296), 512, 64), CRect<int>(0, 0, 512, 64), (u_char) CFade.Get(Fade2));
             } else {
                 static int br = 128;
 
                 if (brink) {
-                    if (brinkcnt % 3 == 0)
+                    if (brinkcnt % 3 == 0) {
                         br = 32;
-                    else
+                    } else {
                         br = 128;
+                    }
                 } else {
                     br = 128;
                 }
 
                 switch (CCursol.GetSelect()) {
                     case 0:
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32),
-                                    (u_char) CFade.Get(br));
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32),
-                                    (u_char) CFade.Get(32));
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32),
-                                    (u_char) CFade.Get(32));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32), (u_char) CFade.Get(br));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32), (u_char) CFade.Get(32));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32), (u_char) CFade.Get(32));
                         break;
 
                     case 1:
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32),
-                                    (u_char) CFade.Get(32));
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32),
-                                    (u_char) CFade.Get(br));
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32),
-                                    (u_char) CFade.Get(32));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32), (u_char) CFade.Get(32));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32), (u_char) CFade.Get(br));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32), (u_char) CFade.Get(32));
                         break;
 
                     case 2:
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32),
-                                    (u_char) CFade.Get(32));
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32),
-                                    (u_char) CFade.Get(32));
-                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32),
-                                    (u_char) CFade.Get(br));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32), (u_char) CFade.Get(32));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32), (u_char) CFade.Get(32));
+                        set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1), CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32), (u_char) CFade.Get(br));
                         break;
                 }
 
@@ -972,8 +864,7 @@ void TitleDraw() {
 
                     RECT rect = {0, 0, 32, 32};
 
-                    DrawObjectVibe(225, CCursol.GetPos(), TexManager.GetTexture("icon01", -1), rect,
-                                   128, CFade.Get(128));
+                    DrawObjectVibe(225, CCursol.GetPos(), TexManager.GetTexture("icon01", -1), rect, 128, CFade.Get(128));
                     setbilinear(1);
                 }
             }
@@ -1003,8 +894,6 @@ void TitleDraw() {
         CTexture texture;
 
         texture.tex0 = *(u_long *) &backtex;
-        set2DSprite(Vif1Packet, &texture,
-                    CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
-                    128, 128, 128, 35);
+        set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224), 128, 128, 128, 35);
     }
 }

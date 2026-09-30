@@ -31,7 +31,7 @@ void LoadCharaData(int buffer_no, int actor_no);
  * @size 0x2E4
  * @unknownret
  */
-void LoadMotionData(void);
+void LoadMotionData();
 
 /**
  *          Loads the first village background phase.
@@ -41,7 +41,7 @@ void LoadMotionData(void);
  * @size 0x4C
  * @unknownret
  */
-void OpB_LoadDataBG(void);
+void OpB_LoadDataBG();
 
 /**
  *          Loads the second village background phase.
@@ -51,7 +51,7 @@ void OpB_LoadDataBG(void);
  * @size 0x4C
  * @unknownret
  */
-void OpB_LoadDataBG2(void);
+void OpB_LoadDataBG2();
 
 /**
  *          Initializes the first phase of the village scene.
@@ -61,7 +61,7 @@ void OpB_LoadDataBG2(void);
  * @size 0xD4C
  * @unknownret
  */
-void OpB_InitProcess(void);
+void OpB_InitProcess();
 
 /**
  *          Initializes the Toan-house phase of the village scene.
@@ -71,7 +71,7 @@ void OpB_InitProcess(void);
  * @size 0x6F4
  * @unknownret
  */
-void OpB_InitProcess2(void);
+void OpB_InitProcess2();
 
 /**
  *          Advances the village scene's scripted motion state.
@@ -81,7 +81,7 @@ void OpB_InitProcess2(void);
  * @size 0x454
  * @unknownret
  */
-void OpB_MotionProcess(void);
+void OpB_MotionProcess();
 
 /**
  *          Updates sound and music for the village scene.
@@ -91,7 +91,7 @@ void OpB_MotionProcess(void);
  * @size 0x4F4
  * @unknownret
  */
-void OpB_SoundProcess(void);
+void OpB_SoundProcess();
 
 /**
  *          Draws one frame of the village scene.
@@ -101,7 +101,7 @@ void OpB_SoundProcess(void);
  * @size 0x680
  * @unknownret
  */
-void OpB_DrawProcess(void);
+void OpB_DrawProcess();
 
 /**
  * Map objects of Norune village.

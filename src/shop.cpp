@@ -20,6 +20,7 @@
 #include "editloop.hpp"
 #include "gamepad.hpp"
 #include "itemdata.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "memcard.hpp"
 #include "menu_draw.hpp"
@@ -28,7 +29,6 @@
 #include "menu_misc.hpp"
 #include "menuetc.hpp"
 #include "menuitemstep.hpp"
-#include "mainselect.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
@@ -44,36 +44,36 @@
  * this unit's own functions are named.
  */
 struct ShopMenuWork {
-    s16 shop_no;          /**< Shop being run. */
-    s16 side;             /**< Board the cursor is on: 0 the shop's stock, 1 the player's own board. */
-    s16 mode;             /**< How the shop was opened. */
-    s16 key_used;         /**< Set once this frame's confirm or sell press has been handled, so the frame's cancel press is ignored. */
-    PERSONAL_BOARD board; /**< The player's side of the shop: the personal board and the records it holds. */
-    s32 unk_168;
-    float stock_y;        /**< Screen Y the stock board draws at, eased toward its top row. */
-    float stock_scroll;   /**< Scroll bar position of the stock board. */
-    s16 stock_row_offset; /**< Cleared with the stock board's top row whenever a shop opens. */
-    u8 stock_top_row;     /**< Row the stock board shows first. */
-    u8 unk_177;
-    float cursor_x; /**< Screen X of the cursor, eased toward its cell. */
-    float cursor_y; /**< Screen Y of the cursor, eased toward its cell. */
-    s16 talk_mode;  /**< What the shopkeeper is saying or waiting on; 0 while the player shops. */
-    s16 unk_182;
-    s32 step_count; /**< Frames the shop has spent in its talk mode. */
-    s16 ready;      /**< Nonzero once the shop's textures are entered. */
-    s16 tex_block;  /**< Texture block the shop's textures are entered into. */
-    s16 unk_18C;
-    s16 alpha; /**< Opacity the shop draws with. */
-    s16 lang;  /**< Language the shop's plates are laid out for. */
-    s16 unk_192;
-    s16 person_state;     /**< Shopkeeper model: 1 while it is read, 2 once it is built, 0 when there is none. */
-    s16 person_tex_block; /**< Texture block the shopkeeper's textures are entered into. */
-    s16 unk_198;
-    s16 msg_mode;   /**< How the shopkeeper's message is shown. */
-    s16 motion;     /**< Motion the shopkeeper's model is playing: 0 idle, 3 talking. */
-    s16 msg_no;     /**< Shopkeeper line the speech window was last made for. */
-    s32 draw_delay; /**< Frames the shopkeeper has been stepped; the model and its speech are drawn once it reaches four. */
-    s32 idle_count; /**< Frames without input; at 320 the shopkeeper starts talking. */
+    s16            shop_no;  /**< Shop being run. */
+    s16            side;     /**< Board the cursor is on: 0 the shop's stock, 1 the player's own board. */
+    s16            mode;     /**< How the shop was opened. */
+    s16            key_used; /**< Set once this frame's confirm or sell press has been handled, so the frame's cancel press is ignored. */
+    PERSONAL_BOARD board;    /**< The player's side of the shop: the personal board and the records it holds. */
+    s32            unk_168;
+    float          stock_y;          /**< Screen Y the stock board draws at, eased toward its top row. */
+    float          stock_scroll;     /**< Scroll bar position of the stock board. */
+    s16            stock_row_offset; /**< Cleared with the stock board's top row whenever a shop opens. */
+    u8             stock_top_row;    /**< Row the stock board shows first. */
+    u8             unk_177;
+    float          cursor_x;  /**< Screen X of the cursor, eased toward its cell. */
+    float          cursor_y;  /**< Screen Y of the cursor, eased toward its cell. */
+    s16            talk_mode; /**< What the shopkeeper is saying or waiting on; 0 while the player shops. */
+    s16            unk_182;
+    s32            step_count; /**< Frames the shop has spent in its talk mode. */
+    s16            ready;      /**< Nonzero once the shop's textures are entered. */
+    s16            tex_block;  /**< Texture block the shop's textures are entered into. */
+    s16            unk_18C;
+    s16            alpha; /**< Opacity the shop draws with. */
+    s16            lang;  /**< Language the shop's plates are laid out for. */
+    s16            unk_192;
+    s16            person_state;     /**< Shopkeeper model: 1 while it is read, 2 once it is built, 0 when there is none. */
+    s16            person_tex_block; /**< Texture block the shopkeeper's textures are entered into. */
+    s16            unk_198;
+    s16            msg_mode;   /**< How the shopkeeper's message is shown. */
+    s16            motion;     /**< Motion the shopkeeper's model is playing: 0 idle, 3 talking. */
+    s16            msg_no;     /**< Shopkeeper line the speech window was last made for. */
+    s32            draw_delay; /**< Frames the shopkeeper has been stepped; the model and its speech are drawn once it reaches four. */
+    s32            idle_count; /**< Frames without input; at 320 the shopkeeper starts talking. */
 };
 
 STATIC_ASSERT(sizeof(ShopMenuWork) == 0x1A8);
@@ -131,7 +131,7 @@ float ShopHelpWinH;
 /** Width of the shop's help window. */
 float ShopHelpWinW;
 
-IHAVEITEM *ShopHaveItemPt;
+IHAVEITEM   *ShopHaveItemPt;
 WEAPON_HAVE *ShopHaveWepPt;
 ATTACH_LIST *ShopHaveAttachPt;
 
@@ -144,20 +144,20 @@ static int ChargeSelectKey();
  * State of the fishing prize exchange screen.
  */
 struct FishMenuWork {
-    s16 tex_block;  /**< Texture block the exchange's textures are entered into. */
-    s16 tex_block2; /**< Second texture block lent to the exchange. */
-    s16 ready;      /**< Nonzero once the exchange's contents may be drawn. */
-    s16 warning;    /**< Which refusal the exchange shows, as an offset from its first refusal message. */
-    s32 point;      /**< Fishing points the player has left to spend. */
-    s32 cursor_y;   /**< Screen Y of the cursor, eased toward its row. */
-    s16 mode;       /**< How the exchange was opened. */
-    s16 confirm;    /**< Choice the confirmation window's cursor is on: 0 yes, 1 no. */
-    s16 cursor;     /**< Prize the cursor is on. */
-    s16 fade_mode;  /**< What the exchange is doing: 0 opening, 1 closing, 3 choosing, 4 confirming, 5 refusing. */
-    s16 top;        /**< Prize the list shows first. */
-    u8 unk_1A[6];
-    s32 fade_count;    /**< Frames the current fade has run for. */
-    u_long128 *buffer; /**< Buffer the exchange's files are read into. */
+    s16        tex_block;  /**< Texture block the exchange's textures are entered into. */
+    s16        tex_block2; /**< Second texture block lent to the exchange. */
+    s16        ready;      /**< Nonzero once the exchange's contents may be drawn. */
+    s16        warning;    /**< Which refusal the exchange shows, as an offset from its first refusal message. */
+    s32        point;      /**< Fishing points the player has left to spend. */
+    s32        cursor_y;   /**< Screen Y of the cursor, eased toward its row. */
+    s16        mode;       /**< How the exchange was opened. */
+    s16        confirm;    /**< Choice the confirmation window's cursor is on: 0 yes, 1 no. */
+    s16        cursor;     /**< Prize the cursor is on. */
+    s16        fade_mode;  /**< What the exchange is doing: 0 opening, 1 closing, 3 choosing, 4 confirming, 5 refusing. */
+    s16        top;        /**< Prize the list shows first. */
+    u8         unk_1A[6];
+    s32        fade_count; /**< Frames the current fade has run for. */
+    u_long128 *buffer;     /**< Buffer the exchange's files are read into. */
 };
 
 STATIC_ASSERT(sizeof(FishMenuWork) == 0x28);
@@ -203,302 +203,302 @@ struct ITEM_MONEY_ENTRY {
 
 /** The buy and sell price of every item from 0x51 on, indexed by item number less 0x51. */
 ITEM_MONEY_ENTRY PriceList[296] = {
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {300, 150},
-    {260, 130},
-    {260, 130},
-    {300, 150},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
-    {3000, 600},
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {300,  150 },
+    {260,  130 },
+    {260,  130 },
+    {300,  150 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
+    {3000, 600 },
     {5000, 1000},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {300, 150},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {400, 200},
-    {440, 220},
-    {380, 190},
-    {400, 200},
-    {1000, 500},
-    {1000, 500},
-    {1000, 500},
-    {1000, 500},
-    {1000, 500},
-    {1000, 500},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {10, 5},
-    {30, 15},
-    {60, 30},
-    {20, 10},
-    {130, 65},
-    {300, 150},
-    {80, 40},
-    {120, 60},
-    {100, 50},
-    {300, 150},
-    {60, 30},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {80, 40},
-    {4, 2},
-    {100, 50},
-    {100, 50},
-    {100, 50},
-    {100, 50},
-    {100, 50},
-    {100, 50},
-    {80, 40},
-    {90, 45},
-    {120, 60},
-    {80, 40},
-    {2, 1},
-    {43, 22},
-    {2, 1},
-    {50, 25},
-    {20, 10},
-    {100, 50},
-    {20, 10},
-    {1000, 500},
-    {100, 50},
-    {800, 400},
-    {800, 400},
-    {500, 250},
-    {200, 100},
-    {2, 1},
-    {500, 250},
-    {300, 150},
-    {450, 225},
-    {400, 200},
-    {420, 210},
-    {380, 190},
-    {2, 1},
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {300,  150 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {400,  200 },
+    {440,  220 },
+    {380,  190 },
+    {400,  200 },
+    {1000, 500 },
+    {1000, 500 },
+    {1000, 500 },
+    {1000, 500 },
+    {1000, 500 },
+    {1000, 500 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {10,   5   },
+    {30,   15  },
+    {60,   30  },
+    {20,   10  },
+    {130,  65  },
+    {300,  150 },
+    {80,   40  },
+    {120,  60  },
+    {100,  50  },
+    {300,  150 },
+    {60,   30  },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {80,   40  },
+    {4,    2   },
+    {100,  50  },
+    {100,  50  },
+    {100,  50  },
+    {100,  50  },
+    {100,  50  },
+    {100,  50  },
+    {80,   40  },
+    {90,   45  },
+    {120,  60  },
+    {80,   40  },
+    {2,    1   },
+    {43,   22  },
+    {2,    1   },
+    {50,   25  },
+    {20,   10  },
+    {100,  50  },
+    {20,   10  },
+    {1000, 500 },
+    {100,  50  },
+    {800,  400 },
+    {800,  400 },
+    {500,  250 },
+    {200,  100 },
+    {2,    1   },
+    {500,  250 },
+    {300,  150 },
+    {450,  225 },
+    {400,  200 },
+    {420,  210 },
+    {380,  190 },
+    {2,    1   },
     {1000, 1000},
-    {300, 150},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {400, 200},
-    {400, 200},
-    {400, 200},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {300, 150},
-    {300, 150},
-    {180, 90},
-    {2, 1},
-    {500, 250},
-    {800, 400},
-    {800, 400},
-    {1000, 500},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {50, 25},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {20, 10},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {300, 75},
-    {500, 125},
-    {2500, 625},
-    {700, 175},
-    {800, 200},
-    {1000, 250},
-    {400, 100},
-    {2000, 500},
-    {3000, 750},
-    {2000, 500},
-    {2400, 600},
-    {500, 125},
-    {3000, 750},
-    {3000, 750},
-    {2, 1},
-    {3000, 750},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 0},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {800, 200},
-    {920, 230},
-    {2, 1},
-    {900, 225},
-    {990, 248},
-    {2500, 625},
-    {1500, 375},
-    {2, 1},
-    {1000, 250},
-    {2000, 500},
-    {940, 235},
-    {1500, 375},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {360, 90},
-    {600, 150},
-    {1000, 250},
-    {400, 100},
-    {900, 225},
-    {1000, 250},
-    {1200, 300},
-    {2, 1},
-    {2, 1},
-    {500, 125},
-    {600, 150},
-    {2, 1},
-    {900, 225},
-    {2, 1},
-    {2, 1},
-    {500, 125},
-    {700, 175},
-    {800, 200},
-    {850, 212},
-    {1000, 250},
-    {400, 100},
-    {900, 225},
-    {1500, 375},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {850, 212},
-    {200, 50},
-    {2, 1},
-    {1000, 250},
-    {2, 1},
-    {2, 1},
-    {400, 100},
-    {700, 175},
-    {600, 150},
-    {720, 180},
-    {800, 200},
-    {1200, 300},
-    {1400, 350},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {400, 100},
-    {300, 75},
-    {2, 1},
-    {720, 180},
-    {2, 1},
-    {2, 1},
-    {800, 200},
-    {1000, 250},
-    {1200, 300},
-    {1500, 375},
-    {1700, 425},
-    {2000, 500},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {2, 1},
-    {300, 75},
-    {1800, 450},
-    {800, 200},
-    {1000, 250},
-    {2, 1},
-    {2, 1},
-    {3000, 750},
-    {3200, 800},
-    {3300, 825},
-    {3400, 850},
+    {300,  150 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {400,  200 },
+    {400,  200 },
+    {400,  200 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {300,  150 },
+    {300,  150 },
+    {180,  90  },
+    {2,    1   },
+    {500,  250 },
+    {800,  400 },
+    {800,  400 },
+    {1000, 500 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {50,   25  },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {20,   10  },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {300,  75  },
+    {500,  125 },
+    {2500, 625 },
+    {700,  175 },
+    {800,  200 },
+    {1000, 250 },
+    {400,  100 },
+    {2000, 500 },
+    {3000, 750 },
+    {2000, 500 },
+    {2400, 600 },
+    {500,  125 },
+    {3000, 750 },
+    {3000, 750 },
+    {2,    1   },
+    {3000, 750 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    0   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {800,  200 },
+    {920,  230 },
+    {2,    1   },
+    {900,  225 },
+    {990,  248 },
+    {2500, 625 },
+    {1500, 375 },
+    {2,    1   },
+    {1000, 250 },
+    {2000, 500 },
+    {940,  235 },
+    {1500, 375 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {360,  90  },
+    {600,  150 },
+    {1000, 250 },
+    {400,  100 },
+    {900,  225 },
+    {1000, 250 },
+    {1200, 300 },
+    {2,    1   },
+    {2,    1   },
+    {500,  125 },
+    {600,  150 },
+    {2,    1   },
+    {900,  225 },
+    {2,    1   },
+    {2,    1   },
+    {500,  125 },
+    {700,  175 },
+    {800,  200 },
+    {850,  212 },
+    {1000, 250 },
+    {400,  100 },
+    {900,  225 },
+    {1500, 375 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {850,  212 },
+    {200,  50  },
+    {2,    1   },
+    {1000, 250 },
+    {2,    1   },
+    {2,    1   },
+    {400,  100 },
+    {700,  175 },
+    {600,  150 },
+    {720,  180 },
+    {800,  200 },
+    {1200, 300 },
+    {1400, 350 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {400,  100 },
+    {300,  75  },
+    {2,    1   },
+    {720,  180 },
+    {2,    1   },
+    {2,    1   },
+    {800,  200 },
+    {1000, 250 },
+    {1200, 300 },
+    {1500, 375 },
+    {1700, 425 },
+    {2000, 500 },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {2,    1   },
+    {300,  75  },
+    {1800, 450 },
+    {800,  200 },
+    {1000, 250 },
+    {2,    1   },
+    {2,    1   },
+    {3000, 750 },
+    {3200, 800 },
+    {3300, 825 },
+    {3400, 850 },
     {4000, 1000},
     {5500, 1375},
     {6500, 1625},
-    {2, 1},
-    {2, 1},
-    {1500, 375},
-    {3400, 850},
-    {1000, 250},
+    {2,    1   },
+    {2,    1   },
+    {1500, 375 },
+    {3400, 850 },
+    {1000, 250 },
 };
 
 /**
@@ -532,8 +532,6 @@ static void DrawSellTicket_2(int x, int y, int clip_top, int clip_bottom, int al
 static void SetShopTalkMsgPos();
 
 static void DrawCheckButton(int x, int y, int alpha);
-
-static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int clip_bottom, int alpha);
 
 static void ItemShopGoodInitialize(int shop_no);
 
@@ -625,7 +623,7 @@ int ShopIconMove::IconAutoMove(int item_shop, int force_arrive) {
                 if (to_stock) {
                     ShopStockPt->SetWepToPos(slot_no, &data.weapon);
                 } else {
-                    int chara_no = slot_no / 10;
+                    int          chara_no = slot_no / 10;
                     CUserStatus *status = ShopUserStatusPt;
                     WEAPON_HAVE *row = status->chara_weapons[chara_no];
                     WEAPON_HAVE *weapon = &row[slot_no % 10];
@@ -735,87 +733,87 @@ int CommonShopLoop() {
 static void ShopPolySetInit(int shop_kind, int shop_no) {
     float place[2][18][3] = {
         {
-            {-7.84f, -15.5f, 0.9f},
-            {-7.3f, -9.555f, 0.25f},
-            {-7.04f, -21.21f, 1.0f},
-            {-7.56f, -18.967f, 1.0f},
-            {-7.0f, -14.0f, 1.0f},
-            {-7.3359f, -15.818726f, 0.95f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f},
-        },
+         {-7.84f, -15.5f, 0.9f},
+         {-7.3f, -9.555f, 0.25f},
+         {-7.04f, -21.21f, 1.0f},
+         {-7.56f, -18.967f, 1.0f},
+         {-7.0f, -14.0f, 1.0f},
+         {-7.3359f, -15.818726f, 0.95f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f},
+         },
         {
-            {-7.01f, -17.0f, 0.9f},
-            {-7.21f, -7.8f, 0.5f},
-            {-7.46f, -19.6f, 1.0f},
-            {-8.0665f, -18.923f, 1.0f},
-            {-8.0665f, -18.923f, 1.0f},
-            {-8.0665f, -18.923f, 1.0f},
-            {-8.0665f, -18.923f, 1.0f},
-            {-7.0f, -20.5f, 1.0f},
-            {-7.5378f, -15.362f, 0.8f},
-            {-7.0f, -19.0f, 0.8f},
-            {-7.0f, -15.0f, 1.0f},
-            {-7.0f, -17.0f, 1.0f},
-            {-7.6f, -18.7f, 0.8f},
-            {-7.01f, -17.2f, 0.9f},
-            {-7.21f, -7.8f, 0.5f},
-            {-7.5378f, -18.5f, 0.8f},
-            {-7.0f, -17.0f, 1.0f},
-            {-7.0f, -17.0f, 1.0f},
-        },
+         {-7.01f, -17.0f, 0.9f},
+         {-7.21f, -7.8f, 0.5f},
+         {-7.46f, -19.6f, 1.0f},
+         {-8.0665f, -18.923f, 1.0f},
+         {-8.0665f, -18.923f, 1.0f},
+         {-8.0665f, -18.923f, 1.0f},
+         {-8.0665f, -18.923f, 1.0f},
+         {-7.0f, -20.5f, 1.0f},
+         {-7.5378f, -15.362f, 0.8f},
+         {-7.0f, -19.0f, 0.8f},
+         {-7.0f, -15.0f, 1.0f},
+         {-7.0f, -17.0f, 1.0f},
+         {-7.6f, -18.7f, 0.8f},
+         {-7.01f, -17.2f, 0.9f},
+         {-7.21f, -7.8f, 0.5f},
+         {-7.5378f, -18.5f, 0.8f},
+         {-7.0f, -17.0f, 1.0f},
+         {-7.0f, -17.0f, 1.0f},
+         },
     };
     float turn[2][18][4] = {
         {
-            {0.005f, 0.26413f, 0.0f, 0.0f},
-            {0.05f, 0.249446f, 0.0f, 0.0f},
-            {-0.033f, 0.2382f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-        },
+         {0.005f, 0.26413f, 0.0f, 0.0f},
+         {0.05f, 0.249446f, 0.0f, 0.0f},
+         {-0.033f, 0.2382f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         },
         {
-            {-0.177612f, 0.23744f, 0.0f, 0.0f},
-            {-0.177612f, 0.23744f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.070679f, 0.271298f, -0.02832f, 0.0f},
-            {-0.050537f, 0.255213f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {-0.026733f, 0.251785f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 0.0f},
-        },
+         {-0.177612f, 0.23744f, 0.0f, 0.0f},
+         {-0.177612f, 0.23744f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.070679f, 0.271298f, -0.02832f, 0.0f},
+         {-0.050537f, 0.255213f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {-0.026733f, 0.251785f, 0.0f, 0.0f},
+         {0.0f, 0.0f, 0.0f, 0.0f},
+         },
     };
     float position[4];
     float scale[4];
@@ -902,7 +900,7 @@ static void ChargeShopLRDraw(int alpha) {
     }
     if (0 < x) {
         CRect_i_ texel(0x62, 0x14, 0x1A, 0x18);
-        int y = 66.0f + 4.0f * sinf(3.1415927f * (CursorVibeCnt % 79 - 40) / 40.0f);
+        int      y = 66.0f + 4.0f * sinf(3.1415927f * (CursorVibeCnt % 79 - 40) / 40.0f);
 
         DrawMenu2DSprite(PerBoardTex, CRect_i_(x, y, texel.width, texel.height), texel, alpha);
         texel.x += texel.width;
@@ -920,11 +918,11 @@ static void ChargeShopLRDraw(int alpha) {
 static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, int alpha) {
     float cur_x;
     float cur_y;
-    int frame_x;
-    int frame_y;
-    int vibe = select * 0x20 + 0x40;
-    int width;
-    int height;
+    int   frame_x;
+    int   frame_y;
+    int   vibe = select * 0x20 + 0x40;
+    int   width;
+    int   height;
 
     height = width = 0x26;
     switch (mode) {
@@ -1004,10 +1002,10 @@ static int IsEnableCharge(int item_no) {
     int enable = 0;
 
     if (item_no >= 0x101) {
-        int chara_no = WhoIsWeaponEquip(item_no);
+        int          chara_no = WhoIsWeaponEquip(item_no);
         CUserStatus *status = ShopUserStatusPt;
         WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
-        int default_no = GetDefaultWeaponNo(chara_no);
+        int          default_no = GetDefaultWeaponNo(chara_no);
 
         for (int i = 0; i < 10; i++) {
             int weapon_no = weapons[i].item_no;
@@ -1041,7 +1039,7 @@ static int IsEnableCharge(int item_no) {
  */
 static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
     u_long128 *buffer;
-    int limit;
+    int        limit;
 
     buffer = BtlMenuBufferSet(mode);
     buffer = MenuCalcBufAlignment(buffer);
@@ -1092,8 +1090,8 @@ static void ShopMenuInit(int *tex_block, int shop_no, int mode) {
  */
 static void ShopMenuExit() {
     ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
-    int i;
-    int j;
+    int        i;
+    int        j;
 
     pack->item_count = 0;
     for (i = 0; i < 3; i++) {
@@ -1119,8 +1117,8 @@ static void ShopMenuExit() {
 void ShopTextureLoadFix() {
     LOADTEXTURE_INFO2 info[3] = {
         {"#frame_imageshop#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
-        {NULL, 0, 0},
-        {NULL, 0, 0},
+        {NULL,                                           0, 0},
+        {NULL,                                           0, 0},
     };
 
     info[0].block_no = ShopMenu.tex_block;
@@ -1187,8 +1185,8 @@ static void ShopFadeoutDraw() {
  * @size 0x98
  */
 static int ShopPersonReadStart(int shop_kind, int shop_no) {
-    char file_name[76];
-    int size;
+    char       file_name[76];
+    int        size;
     u_long128 *buffer;
 
     ItemShopGetPacFileName(shop_kind, shop_no, file_name);
@@ -1209,7 +1207,7 @@ static int ShopPersonReadStart(int shop_kind, int shop_no) {
 /**
  * Sets the shopkeeper's model direction toward the menu camera.
  */
-static void ShopMasterVectorSet(int);
+static void ShopMasterVectorSet(int mode);
 
 /**
  * Stores in @p rest how many quadwords of a @p total quadword buffer are left once @p used are taken.
@@ -1227,19 +1225,19 @@ static inline void GetRestSize(int &rest, int total, int used) {
  */
 static int ShopPersonBuild(int shop_kind, int shop_no) {
     char name[64];
-    int size;
+    int  size;
 
     if (ShopMenu.person_state == 0 && ReadBGSync() != 0) {
         return 0;
     }
     ItemShopGetImgFileName(shop_kind, shop_no, name);
-    BG_READ_INFO *file = GetReadBGFile(0);
-    u_int *pack = (u_int *) file->buffer;
-    u_char *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
+    BG_READ_INFO     *file = GetReadBGFile(0);
+    u_int            *pack = (u_int *) file->buffer;
+    u_char           *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
     LOADTEXTURE_INFO2 texture[3] = {
         {"#frame_menushop_model#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
-        {NULL, 0, 0},
-        {NULL, 0, 0},
+        {NULL,                                                0, 0},
+        {NULL,                                                0, 0},
     };
     texture[0].block_no = ShopMenu.person_tex_block;
     texture[1].block_no = ShopMenu.person_tex_block;
@@ -1299,7 +1297,7 @@ static void LocalShopPersonDraw() {
  * @address 0x1E8370
  * @size 0x3C
  */
-static void ShopPersonDraw(int) {
+static void ShopPersonDraw(int shop_no) {
     MenuTextureReload(ShopMenu.person_tex_block);
     MenuPolygonDraw(0x80, LocalShopPersonDraw);
 }
@@ -1426,11 +1424,11 @@ static inline WEAPON_HAVE *ShopWeaponRow(CUserStatus *status, int chara) {
 }
 
 int ChargeShopKey() {
-    int result = 0;
+    int           result = 0;
     MENU_ITEMDATA record;
     MENU_ITEMDATA stock;
     MENU_ITEMDATA weapon;
-    ATTACH_LIST attach;
+    ATTACH_LIST   attach;
 
     if (ShopMenu.ready == 0) {
         if (ReadBGSync() == 0) {
@@ -1611,7 +1609,7 @@ int ChargeShopKey() {
                         }
                         board_exit = PersonalBoardKeySub();
                         if (board_exit == 0 && GamePad.Down(0x40) != 0) {
-                            s16 held = ShopHaveItemPt->item_no;
+                            s16             held = ShopHaveItemPt->item_no;
                             PERSONAL_BOARD *board = &ShopMenu.board;
                             switch (board->cursor_area) {
                                 case 2: {
@@ -1718,8 +1716,7 @@ int ChargeShopKey() {
                             case 0:
                                 switch (ShopHaveItemPt->from_page) {
                                     case 0:
-                                        ShopStockPt->SetItemToPos(ShopHaveItemPt->from_slot, &ShopHaveItemPt->item_no,
-                                                                  &ShopHaveItemPt->volume);
+                                        ShopStockPt->SetItemToPos(ShopHaveItemPt->from_slot, &ShopHaveItemPt->item_no, &ShopHaveItemPt->volume);
                                         break;
                                     case 1: {
                                         ShopStockPt->GetWeaponInfo(ShopHaveItemPt->from_slot, &weapon.weapon);
@@ -1757,7 +1754,7 @@ int ChargeShopKey() {
                         step--;
                     }
                     CUserStatus *status = ShopUserStatusPt;
-                    int total = status->money + step;
+                    int          total = status->money + step;
                     if (total >= 0xFFFF) {
                         status->money = 0xFFFF;
                     } else {
@@ -1770,8 +1767,7 @@ int ChargeShopKey() {
                         break;
                     case 1:
                         ShopMenu.side = 0;
-                        ShopMenu.board.cursor =
-                            (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
+                        ShopMenu.board.cursor = (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
                         break;
                 }
                 if (cursor != ShopMenu.board.cursor || page != ShopMenu.board.page) {
@@ -1853,9 +1849,9 @@ int ChargeShopKey() {
                         break;
                     }
                     case 1: {
-                        CUserStatus *status = ShopUserStatusPt;
-                        WEAPON_HAVE *row = status->chara_weapons[cursor / 10];
-                        WEAPON_HAVE *have = &row[cursor % 10];
+                        CUserStatus   *status = ShopUserStatusPt;
+                        WEAPON_HAVE   *row = status->chara_weapons[cursor / 10];
+                        WEAPON_HAVE   *have = &row[cursor % 10];
                         COM_ITEM_INFO *info = GetCommonItemInfo(have->item_no);
                         if (info != NULL) {
                             item = info->msg;
@@ -1889,8 +1885,7 @@ int ChargeShopKey() {
         if (item > 0) {
             mes_no = item + 500;
         }
-        if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes) ||
-            CommonMenuMes2.value != value) {
+        if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes) || CommonMenuMes2.value != value) {
             CommonMenuMes2.value_signed = 1;
             CommonMenuMes2.value = value;
             if (name_mes > 0) {
@@ -1951,7 +1946,7 @@ static int ChargeSelectKey() {
     }
     switch (ShopMenu.side) {
         case 0:
-            int se = 2;
+            int       se = 2;
             IHAVEITEM saved;
             memcpy(&saved, ShopHaveItemPt, sizeof(IHAVEITEM));
             if (GamePad.Down(0x40)) {
@@ -2012,13 +2007,13 @@ static int ChargeSelectKey() {
                     ComMenuSePlay(2);
                     return 0;
                 }
-                int ok = 1;
+                int         ok = 1;
                 ATTACH_LIST attach;
                 WEAPON_HAVE weapon;
-                int kind;
-                int full;
-                s16 item;
-                s16 volume;
+                int         kind;
+                int         full;
+                s16         item;
+                s16         volume;
 
                 switch (ShopMenu.board.page) {
                     case 0:
@@ -2058,7 +2053,7 @@ static int ChargeSelectKey() {
                     case 1: {
                         int i;
                         max = 10;
-                        int chara_no = WhoIsWeaponEquip(item);
+                        int          chara_no = WhoIsWeaponEquip(item);
                         CUserStatus *status = ShopUserStatusPt;
                         WEAPON_HAVE *weapons = status->chara_weapons[chara_no];
 
@@ -2123,7 +2118,7 @@ static int ChargeSelectKey() {
 /**
  * Runs the shopkeeper's speech and the model's reaction to it.
  */
-static void ShopModelMsgFunc(int);
+static void ShopModelMsgFunc(int shop_kind);
 
 void DrawChargeShop() {
     int text_x;
@@ -2231,9 +2226,25 @@ void DrawChargeShop() {
         if (ShopHaveItemPt->item_no < 0x51) {
             int mes_no = 0x519;
 #ifdef PAL
-            u8 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0x78, 0x78}, {0xAA, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+            u8 plate_x[7][2] = {
+                {0xA2, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4},
+                {0x78, 0x78},
+                {0xAA, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4}
+            };
 #else
-            s16 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+            s16 plate_x[7][2] = {
+                {0xA2, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4},
+                {0xB4, 0xB4}
+            };
 #endif
             AtoraNameMes.text_x = plate_x[ShopMenu.lang][0];
             if (ShopMenu.side == 1) {
@@ -2302,7 +2313,7 @@ static void ChargeShopMaxDraw(int max, int x, int y, int alpha) {
 
 void ChargeShopBoardDraw(int x, int y, int alpha) {
     s16 items[120];
-    u8 values[120];
+    u8  values[120];
     int top = y + 9;
     int bottom = y + 0xA9;
     int board_y;
@@ -2412,9 +2423,9 @@ static int WeaponCalMoney(WEAPON_HAVE *weapon, int sell) {
  * @size 0x1A0
  */
 static int BuyMoneyCheck2() {
-    int total = 0;
-    int board_max[3] = {100, 60, 40};
-    int i;
+    int        total = 0;
+    int        board_max[3] = {100, 60, 40};
+    int        i;
     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
 
     for (i = 0; i < 100; i++) {
@@ -2474,12 +2485,12 @@ static int SellMoneyCheck2() {
  * @size 0x1A4
  */
 static void IncludeBuyItem2() {
-    int buy = BuyMoneyCheck2();
-    int balance = SellMoneyCheck2() - buy;
+    int          buy = BuyMoneyCheck2();
+    int          balance = SellMoneyCheck2() - buy;
     CUserStatus *status;
-    int money;
-    int i;
-    int j;
+    int          money;
+    int          i;
+    int          j;
 
     for (i = 0; i < 30; i++) {
         if (ShopBoardInfo[i] == 2) {
@@ -2532,9 +2543,9 @@ static int CheckBuyItemFunc2() {
         }
     }
 
-    int carried = 0;
+    int        carried = 0;
     ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
-    int i;
+    int        i;
 
     for (i = 0; i < 3; i++) {
         if (pack->quick_item_slot[i] >= 0x84) {
@@ -2547,10 +2558,10 @@ static int CheckBuyItemFunc2() {
         }
     }
 
-    int board_max[3] = {100, 60, 40};
+    int  board_max[3] = {100, 60, 40};
     s32 *board_info[3] = {ItemBoardInfo, WeaponBoardInfo[0], AttachBoardInfo};
-    int board;
-    int slot;
+    int  board;
+    int  slot;
 
     for (board = 0; board < 3; board++) {
         for (slot = 0; slot < board_max[board]; slot++) {
@@ -2597,8 +2608,8 @@ static void ExitItemShop2() {
  * @size 0x128
  */
 static void ShopSpecialFunc() {
-    int found;
-    int i;
+    int          found;
+    int          i;
     WEAPON_HAVE *weapons;
 
     if (ShopMenu.shop_no == 1) {
@@ -2633,8 +2644,8 @@ s32 asort_top_type = 1;
 int CompItem1(int first_item_no, int second_item_no) {
     ITEM_DATA *first = GetItemData(first_item_no);
     ITEM_DATA *second = GetItemData(second_item_no);
-    int first_priority = 0;
-    int second_priority = 0;
+    int        first_priority = 0;
+    int        second_priority = 0;
 
     if (first != NULL) {
         first_priority = sort_table[first->sort_key];
@@ -2917,11 +2928,11 @@ static void DrawItemShopBoard2(int x, int y, int alpha) {
  */
 static void DrawMoneyCheckBoard2(int x, int y, int alpha) {
     DrawMenu2DSprite(ShopBoard, CRect_i_(x, y + 1, 0x60, 0x1B), CRect_i_(0xD0, 0xC0, 0x60, 0x1C), alpha);
-    int buy = BuyMoneyCheck2();
-    int balance = SellMoneyCheck2() - buy;
+    int  buy = BuyMoneyCheck2();
+    int  balance = SellMoneyCheck2() - buy;
     RECT digits = {0, 0xDC, 0xC, 0xC};
-    int u;
-    int v;
+    int  u;
+    int  v;
 
     if (balance < 0) {
         digits.y += 0xC;
@@ -2993,9 +3004,9 @@ static void DrawSmallSellTicket(int selected, int x, int y, int clip_top, int cl
  * @size 0xE0
  */
 static void DrawBigSellTicket(int selected, int money, int x, int y, int alpha) {
-    int draw_x = x + 0x12;
-    int draw_y = y + 0x14;
-    int u = 0x1A0;
+    int  draw_x = x + 0x12;
+    int  draw_y = y + 0x14;
+    int  u = 0x1A0;
     RECT clip = {0x140, 0xB0, 8, 0xC};
 
     if (selected) {
@@ -3083,14 +3094,14 @@ static void DrawLocalTicket(int x, int y, int clip_top, int clip_bottom, int slo
 }
 
 void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha) {
-    int page = ShopMenu.board.page;
-    int board_max[3] = {100, 60, 40};
-    int i;
-    int j;
-    int item_no;
-    ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
+    int             page = ShopMenu.board.page;
+    int             board_max[3] = {100, 60, 40};
+    int             i;
+    int             j;
+    int             item_no;
+    ITEM_PACK      *pack = &ShopUserStatusPt->item_pack;
     DNG_CONSUMABLE *attach = ShopUserStatusPt->consumable_items;
-    WEAPON_HAVE *weapons;
+    WEAPON_HAVE    *weapons;
 
     switch (page) {
         case 0:
@@ -3105,8 +3116,7 @@ void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha) {
             break;
         case 1:
             for (i = 0; i < 6; i++) {
-                weapons = (WEAPON_HAVE *) ((char *) ShopUserStatusPt + i * sizeof(ShopUserStatusPt->chara_weapons[0]) +
-                                           0x450C);
+                weapons = (WEAPON_HAVE *) ((char *) ShopUserStatusPt + i * sizeof(ShopUserStatusPt->chara_weapons[0]) + 0x450C);
                 for (j = 0; j < 10; j++) {
                     if (WeaponBoardInfo[i][j] == 1) {
                         item_no = weapons[j].item_no;
@@ -3138,15 +3148,15 @@ void DrawSellTicket22(int x, int y, int clip_top, int clip_bottom, int alpha) {
  * @size 0x4E0
  */
 static void ShopCancelGoodReturn2() {
-    int count = -1;
-    int page = -1;
-    s32 *info;
+    int          count = -1;
+    int          page = -1;
+    s32         *info;
     ATTACH_LIST *attach = (ATTACH_LIST *) ShopUserStatusPt->consumable_items;
-    ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
+    ITEM_PACK   *pack = ShopUserItemPack(ShopUserStatusPt);
     WEAPON_HAVE *weapon;
-    int space;
-    int chara_no;
-    int slot_no;
+    int          space;
+    int          chara_no;
+    int          slot_no;
 
     // Gather every marked item, weapon and attachment into the work buffer.
     for (int i = 0; i < 100; i++) {
@@ -3245,8 +3255,6 @@ static void ShopCancelGoodReturn2() {
  * @address 0x1ED470
  * @size 0x268
  */
-static int GetNowMasterMsgNo2(int, int);
-
 static int GetNowMasterMsgNo2(int shop_kind, int shop_no) {
     int mes_no;
     int base = shop_kind * 2000;
@@ -3421,8 +3429,8 @@ static void ShopModelMsgFunc(int shop_kind) {
  */
 static void SetShopTalkMsgPos() {
     float pos[4];
-    int screen[6];
-    int msg_pos[2];
+    int   screen[6];
+    int   msg_pos[2];
     float scale[3];
 
     sceVu0CopyVector(pos, MenuCharaFrame.pos);
@@ -3438,9 +3446,10 @@ static void SetShopTalkMsgPos() {
 
 void ItemShopGetPacFileName(int shop_kind, int shop_no, char *file_name) {
     char *names[2][18] = {
-        {"p13", "p31", "p39", "p54", "p74", "c03", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+        {"p13", "p31", "p39", "p54", "p74", "c03", NULL,  NULL,  NULL,  NULL,  NULL,  NULL,  NULL,  NULL,  NULL,  NULL,  NULL, NULL },
         {"p02", "p32", "p35", "p36", "p36", "p36", "p36", "p37", "p49", "p55", "p75", "c03", "p41", "p02", "p32", "p38",
-         "c03", "c03"}};
+         "c03",                                                                                                                "c03"}
+    };
     char file[32];
 
     strcpy(file, names[shop_kind][shop_no]);
@@ -3455,10 +3464,11 @@ void ItemShopGetPacFileName(int shop_kind, int shop_no, char *file_name) {
 
 void ItemShopGetImgFileName(int shop_kind, int shop_no, char *file_name) {
     char *names[2][18] = {
-        {"p13a", "p31a", "p39a", "p54a", "p74a", "c03c", "", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-         NULL},
+        {"p13a", "p31a", "p39a", "p54a", "p74a", "c03c", "",     NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL, NULL,   NULL,
+         NULL                                                                                                                                        },
         {"p02a", "p32a", "p35a", "p36a", "p36a", "p36a", "p36a", "p37a", "p49a", "p55a", "p75a", "c03c", "p41a", "p02a",
-         "p32a", "p38a", "c03c", "c03c"}};
+         "p32a",                                                                                                               "p38a", "c03c", "c03c"}
+    };
 
     strcpy(file_name, names[shop_kind][shop_no]);
     strcat(file_name, "01.img");
@@ -3479,8 +3489,8 @@ void ItemShopMemoryAlloc() {
 }
 
 void ItemPosInfoInit() {
-    int i;
-    int j;
+    int        i;
+    int        j;
     ITEM_PACK *pack = ShopUserItemPack(ShopUserStatusPt);
 
     for (i = 0; i < 100; i++) {
@@ -3607,9 +3617,9 @@ void InitItemShop2(int *tex_block, int shop_no, int mode) {
  * @size 0xAF0
  */
 static void ItemShopSelectKey2() {
-    int i;
+    int           i;
     MENU_ITEMDATA swap_data[2];
-    int swap_item[2];
+    int           swap_item[2];
 
     if (GamePad.Down(0x1000) != 0) {
         ShopMenu.board.cursor -= 5;
@@ -3689,8 +3699,8 @@ static void ItemShopSelectKey2() {
         int have_info = ShopHaveItemPt->slot_state;
         memset(swap_data, 0, sizeof(swap_data));
         SHOP_ITEMLIST *good = &ShopListPt[cursor];
-        int held_kind;
-        int good_kind = WhatIsKindofItem(good->item_no);
+        int            held_kind;
+        int            good_kind = WhatIsKindofItem(good->item_no);
         swap_item[0] = good->item_no;
         switch (good_kind) {
             case 0:
@@ -3783,7 +3793,7 @@ static void ItemShopSelectKey2() {
             int owner = WhoIsWeaponEquip(item_no);
             switch (page) {
                 case 0: {
-                    int j;
+                    int        j;
                     ITEM_PACK *pack = &ShopUserStatusPt->item_pack;
                     max = pack->num;
                     for (j = 0; j < 3; j++) {
@@ -3934,10 +3944,10 @@ static inline int ShopHeldInfo() {
 int ItemShopKey2() {
 #ifdef PAL
     // Declared ahead of result so the personal-board cancel path keeps retail's callee-saved registers.
-    int held_info;
+    int  held_info;
     s32 *slot;
 #endif
-    int result = 0;
+    int           result = 0;
     MENU_ITEMDATA record;
 
     if (ShopMenu.ready == 0) {
@@ -3967,10 +3977,10 @@ int ItemShopKey2() {
                 break;
             case 14:
                 if (GamePad.Down(0x50) != 0) {
-                    s16 cursor = ShopMenu.board.cursor;
-                    int item_no;
-                    int money;
-                    s32 *info;
+                    s16          cursor = ShopMenu.board.cursor;
+                    int          item_no;
+                    int          money;
+                    s32         *info;
                     WEAPON_HAVE *weapon;
                     switch (ShopMenu.board.page) {
                         case 0: {
@@ -4003,7 +4013,7 @@ int ItemShopKey2() {
                         memset(weapon, 0, sizeof(WEAPON_HAVE));
                     }
                     CUserStatus *status = ShopUserStatusPt;
-                    int total = status->money + money;
+                    int          total = status->money + money;
                     if (total >= 0xFFFF) {
                         status->money = 0xFFFF;
                     } else {
@@ -4024,11 +4034,11 @@ int ItemShopKey2() {
                 if (GamePad.Down(0x50) != 0) {
                     int item_no = ShopListPt[ShopMenu.board.cursor].item_no;
                     ShopDataMoveFinish();
-                    int price = CalItemMoney(item_no, 0);
-                    int page = WhatIsKindofItem(item_no);
-                    int space = GetBoardSpace(item_no, &page);
+                    int  price = CalItemMoney(item_no, 0);
+                    int  page = WhatIsKindofItem(item_no);
+                    int  space = GetBoardSpace(item_no, &page);
                     s32 *info;
-                    int icon = space - ShopMenu.board.top_row * 5;
+                    int  icon = space - ShopMenu.board.top_row * 5;
                     switch (page) {
                         case 0:
                             record.volume = ShopListPt[ShopMenu.board.cursor].data.volume;
@@ -4056,7 +4066,7 @@ int ItemShopKey2() {
                     PersonalBoardLimmitCheck();
                     ShopSpecialFunc();
                     CUserStatus *status = ShopUserStatusPt;
-                    int money = status->money;
+                    int          money = status->money;
                     if (money - price >= 0xFFFF) {
                         status->money = 0xFFFF;
                     } else {
@@ -4094,7 +4104,7 @@ int ItemShopKey2() {
                         ComMenuSePlay(2);
                     } else {
                         CUserStatus *status = ShopUserStatusPt;
-                        ITEM_PACK *pack = &status->item_pack;
+                        ITEM_PACK   *pack = &status->item_pack;
                         ATTACH_LIST *attach = (ATTACH_LIST *) status->consumable_items;
                         switch (page) {
                             case 0:
@@ -4102,8 +4112,8 @@ int ItemShopKey2() {
                                 pack->item_vol[space] = ShopHaveItemPt->volume;
                                 break;
                             case 1: {
-                                int chara = space / 10;
-                                int slot = space % 10;
+                                int          chara = space / 10;
+                                int          slot = space % 10;
                                 WEAPON_HAVE *row = status->chara_weapons[chara];
                                 WEAPON_HAVE *weapon = &row[slot];
                                 memcpy(weapon, ShopHaveWepPt, sizeof(WEAPON_HAVE));
@@ -4193,10 +4203,10 @@ int ItemShopKey2() {
                     case 1: {
                         int board_exit = PersonalBoardKey();
                         if (board_exit == 0 && GamePad.Down(0x40) != 0) {
-                            int pos;
-                            int slot_info;
+                            int             pos;
+                            int             slot_info;
                             PERSONAL_BOARD *board = &ShopMenu.board;
-                            int held_info = ShopHeldInfo();
+                            int             held_info = ShopHeldInfo();
                             switch (board->cursor_area) {
                                 case 2: {
                                     ComMenuSePlay(2);
@@ -4223,8 +4233,7 @@ int ItemShopKey2() {
                                             break;
                                     }
                                     slot_info = info[pos];
-                                    if (ShopMenu.board.page == 1 && held_info == 1 &&
-                                        (ShopHaveItemPt->item_no == 0xB1 || ShopHaveItemPt->item_no == 0xB2)) {
+                                    if (ShopMenu.board.page == 1 && held_info == 1 && (ShopHaveItemPt->item_no == 0xB1 || ShopHaveItemPt->item_no == 0xB2)) {
                                         ComMenuSePlay(2);
                                     } else if (PersonalBoardItemGetorSwap(pos) != 1) {
                                         ComMenuSePlay(2);
@@ -4248,7 +4257,7 @@ int ItemShopKey2() {
                                 ComMenuSePlay(2);
                                 return 0;
                             }
-                            int target = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
+                            int  target = SearchBoardNowPosItemExist(ShopMenu.board.page, ShopMenu.board.cursor);
                             s32 *slot;
                             switch (ShopMenu.board.page) {
                                 case 0:
@@ -4283,9 +4292,9 @@ int ItemShopKey2() {
                                             SetItemShopTalkMode(4, 1);
                                             enable = 0;
                                         }
-                                        int owner = ShopMenu.board.cursor / 10;
+                                        int          owner = ShopMenu.board.cursor / 10;
                                         CUserStatus *status = ShopUserStatusPt;
-                                        s8 slot = status->equipped_weapon_slot[owner];
+                                        s8           slot = status->equipped_weapon_slot[owner];
                                         if (ShopMenu.board.cursor % 10 == slot) {
                                             enable = 0;
                                             SetItemShopTalkMode(5, 1);
@@ -4319,8 +4328,7 @@ int ItemShopKey2() {
                         }
                         if (board_exit != 0) {
                             ShopMenu.side = 0;
-                            ShopMenu.board.cursor =
-                                (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
+                            ShopMenu.board.cursor = (ShopMenu.stock_top_row + (ShopMenu.board.cursor / 5 - ShopMenu.board.top_row)) * 5 + 4;
                         }
                         break;
                     }
@@ -4429,7 +4437,7 @@ int ItemShopKey2() {
                 // Debug shortcuts: add or take Gilda, and dump the shop board.
                 if (GamePad.On2(0x10)) {
                     CUserStatus *status = ShopUserStatusPt;
-                    int total = status->money + 1000;
+                    int          total = status->money + 1000;
                     if (total >= 0xFFFF) {
                         status->money = 0xFFFF;
                     } else {
@@ -4438,7 +4446,7 @@ int ItemShopKey2() {
                 }
                 if (GamePad.On2(0x40)) {
                     CUserStatus *status = ShopUserStatusPt;
-                    int money = status->money;
+                    int          money = status->money;
                     if (money - 1000 >= 0xFFFF) {
                         status->money = 0xFFFF;
                     } else {
@@ -4480,8 +4488,8 @@ int ItemShopKey2() {
                         name_mes = GetWeaponMsgNo2(ShopHaveAttachPt->sphere_weapon_no);
                     }
                 }
-                int item_no = -1;
-                int pos = ShopMenu.board.cursor;
+                int          item_no = -1;
+                int          pos = ShopMenu.board.cursor;
                 ATTACH_LIST *list;
                 switch (ShopMenu.side) {
                     case 2:
@@ -4538,8 +4546,7 @@ int ItemShopKey2() {
                         mes_no = item_info->msg + 500;
                     }
                 }
-                if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes + 100) ||
-                    CommonMenuMes2.value != value) {
+                if (CommonMenuMes2.mes_made != mes_no || (name_mes > 0 && CommonMenuMes2.mes_no[0] != name_mes + 100) || CommonMenuMes2.value != value) {
                     CommonMenuMes2.value_signed = 1;
                     CommonMenuMes2.value_show = 0;
                     CommonMenuMes2.value = value;
@@ -4678,18 +4685,18 @@ void ItemShopDraw2() {
                     switch (ShopMenu.board.page) {
                         case 0: {
                             CUserStatus *status = ShopUserStatusPt;
-                            ITEM_PACK *pack = &status->item_pack;
+                            ITEM_PACK   *pack = &status->item_pack;
                             item_no = pack->item[ShopMenu.board.cursor];
                             break;
                         }
                         case 2: {
-                            CUserStatus *status = ShopUserStatusPt;
+                            CUserStatus    *status = ShopUserStatusPt;
                             DNG_CONSUMABLE *attach = status->consumable_items;
                             item_no = attach[ShopMenu.board.cursor].id;
                             break;
                         }
                         case 1: {
-                            int chara_no = ShopMenu.board.cursor / 10;
+                            int          chara_no = ShopMenu.board.cursor / 10;
                             CUserStatus *status = ShopUserStatusPt;
                             WEAPON_HAVE *row = status->chara_weapons[chara_no];
                             item_no = row[ShopMenu.board.cursor % 10].item_no;
@@ -4699,7 +4706,7 @@ void ItemShopDraw2() {
                     int ticket_y = (int) (6.0f + ShopMenu.board.y);
                     int money = CalItemMoney(item_no, 1);
                     if (item_no >= 0x101) {
-                        int chara_no = ShopMenu.board.cursor / 10;
+                        int          chara_no = ShopMenu.board.cursor / 10;
                         CUserStatus *status = ShopUserStatusPt;
                         WEAPON_HAVE *row = status->chara_weapons[chara_no];
                         money += WeaponCalMoney(&row[ShopMenu.board.cursor % 10], 1);
@@ -4726,7 +4733,7 @@ void ItemShopDraw2() {
         CommonMenuMes2.DrawMesWin();
         if (ShopHaveItemPt->item_no < 0x51) {
 #ifdef PAL
-            s8 plate[3] = {6, 7, 8};
+            s8  plate[3] = {6, 7, 8};
             int mes_no = plate[ShopMenu.side] + 0x4B0;
 #else
             int plate[3] = {0x4B6, 0x4B7, 0x4B8};
@@ -4755,7 +4762,15 @@ void ItemShopDraw2() {
                 if (CommonMenuMes1.mes_made != mes_no) {
                     CommonMenuMes1.MakeMesWin(mes_no);
                 }
-                s8 offset[7][2] = {{0x1E, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}, {0x18, 0x32}};
+                s8 offset[7][2] = {
+                    {0x1E, 0x32},
+                    {0x18, 0x32},
+                    {0x18, 0x32},
+                    {0x18, 0x32},
+                    {0x18, 0x32},
+                    {0x18, 0x32},
+                    {0x18, 0x32}
+                };
                 CommonMenuMes1.text_x = offset[ShopMenu.lang][0] + 0x12C;
                 CommonMenuMes1.text_y = 0xBE;
                 if (ShopMenu.talk_mode == 14) {
@@ -4784,32 +4799,32 @@ void ItemShopDraw2() {
  * @size 0x18
  */
 FISH_EXCHANGE_ITEM exitemlst[35] = {
-    {151, 5},
-    {152, 5},
-    {153, 5},
-    {154, 15},
-    {111, 50},
-    {112, 50},
-    {113, 50},
-    {114, 50},
-    {115, 50},
-    {116, 50},
-    {117, 50},
-    {118, 50},
-    {119, 50},
-    {120, 50},
-    {95, 100},
-    {96, 100},
-    {97, 100},
-    {98, 100},
-    {99, 100},
-    {100, 100},
-    {101, 100},
-    {102, 100},
-    {103, 100},
-    {104, 100},
-    {105, 100},
-    {106, 100},
+    {151, 5   },
+    {152, 5   },
+    {153, 5   },
+    {154, 15  },
+    {111, 50  },
+    {112, 50  },
+    {113, 50  },
+    {114, 50  },
+    {115, 50  },
+    {116, 50  },
+    {117, 50  },
+    {118, 50  },
+    {119, 50  },
+    {120, 50  },
+    {95,  100 },
+    {96,  100 },
+    {97,  100 },
+    {98,  100 },
+    {99,  100 },
+    {100, 100 },
+    {101, 100 },
+    {102, 100 },
+    {103, 100 },
+    {104, 100 },
+    {105, 100 },
+    {106, 100 },
     {266, 1100},
     {311, 1400},
     {317, 1800},
@@ -4817,8 +4832,8 @@ FISH_EXCHANGE_ITEM exitemlst[35] = {
     {352, 1400},
     {368, 1500},
     {278, 2500},
-    {168, 2},
-    {169, 2},
+    {168, 2   },
+    {169, 2   },
 };
 
 static FISH_EXCHANGE_ITEM *GetExchangeItemList(int index) {
@@ -4919,11 +4934,11 @@ static int FishMenuTextureLoad() {
 
     if (FishMenu.ready == 0) {
         if (ReadBGSync() == 0) {
-            BG_READ_INFO *file = GetReadBGFile(0);
+            BG_READ_INFO     *file = GetReadBGFile(0);
             LOADTEXTURE_INFO2 texture[3] = {
                 {FishFrameImage, 0, 0},
-                {NULL, 0, 0},
-                {NULL, 0, 0},
+                {NULL,           0, 0},
+                {NULL,           0, 0},
             };
             texture[0].block_no = FishMenu.tex_block;
             texture[1].block_no = FishMenu.tex_block;
@@ -5080,13 +5095,13 @@ int FishingExchangeKey() {
             }
             if (GamePad.Down(0x40) != 0) {
                 CUserStatus *status = (CUserStatus *) SaveData->GetDngStatus();
-                int full = 0;
-                int kind = WhatIsKindofItem(prize->item_no);
+                int          full = 0;
+                int          kind = WhatIsKindofItem(prize->item_no);
                 count = 0;
                 switch (kind) {
                     case 0: {
-                        int i;
-                        int k;
+                        int        i;
+                        int        k;
                         ITEM_PACK *pack = &status->item_pack;
                         for (i = 0; i < 3; i++) {
                             count += pack->quick_item_qty[i];
@@ -5102,9 +5117,9 @@ int FishingExchangeKey() {
                         break;
                     }
                     case 1: {
-                        int i;
-                        int owner = WhoIsWeaponEquip(prize->item_no);
-                        int held = 0;
+                        int          i;
+                        int          owner = WhoIsWeaponEquip(prize->item_no);
+                        int          held = 0;
                         WEAPON_HAVE *weapons = status->chara_weapons[owner];
                         for (i = 0; i < 10; i++) {
                             if (weapons[i].item_no >= 0x101) {
@@ -5117,9 +5132,9 @@ int FishingExchangeKey() {
                         break;
                     }
                     case 2: {
-                        int held;
+                        int             held;
                         DNG_CONSUMABLE *attach = status->consumable_items;
-                        int entry;
+                        int             entry;
                         held = 0;
                         for (; count < 40; count++) {
                             entry = count * sizeof(DNG_CONSUMABLE);
@@ -5232,8 +5247,7 @@ int FishingExchangeKey() {
                 COM_ITEM_INFO *info = GetCommonItemInfo(prize->item_no);
                 if (info != NULL) {
                     int msg = info->msg;
-                    if (CommonMenuMes1.mes_made != 0xCA || CommonMenuMes1.mes_no[0] != msg + 100 ||
-                        CommonMenuMes1.values[0] != prize->price) {
+                    if (CommonMenuMes1.mes_made != 0xCA || CommonMenuMes1.mes_no[0] != msg + 100 || CommonMenuMes1.values[0] != prize->price) {
                         CommonMenuMes1.mes_made = -1;
                         CommonMenuMes1.mes_no[0] = msg + 100;
                         CommonMenuMes1.values[0] = prize->price;
@@ -5287,16 +5301,16 @@ static inline float AddOffset(float base, float offset) {
  * @size 0x788
  */
 static void FishExchangeItemDraw(int x, int y, int alpha) {
-    int last_prize;
-    int pos_y;
+    int   last_prize;
+    int   pos_y;
     float win_x;
     float win_y;
     float win_h;
     float win_w;
-    int text_x;
-    int text_y;
-    int i;
-    int row;
+    int   text_x;
+    int   text_y;
+    int   i;
+    int   row;
 
     MenuTextureReload(FishMenu.tex_block);
     int mardan = AlreadyGetMardanWeapon();
@@ -5310,10 +5324,10 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
     }
     DrawMenu2DSprite(FishMenuTex, CRect_i_(x, y, 0x160, 0xD0), CRect_i_(0, 0, 0x160, 0xD0), alpha);
     float rows = last_prize;
-    int bar_x = x + 0x144;
+    int   bar_x = x + 0x144;
     float step = 126.0f / rows;
     pos_y = (int) AddOffset((float) (y + 0x28), FishMenu.top * step);
-    float length = 630.0f / rows - 8.0f;
+    float    length = 630.0f / rows - 8.0f;
     CRect_i_ source(0xF0, 0xD0, 8, 4);
     DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, pos_y, 8, 4), source, alpha);
     source.y += 4;
@@ -5328,8 +5342,7 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
             prize = GetExchangeItemList(0x20);
         }
         DrawIconParts(prize->item_no, x, pos_y, y, y + 0xCE, alpha, 0);
-        DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
-                         alpha);
+        DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14), alpha);
 #ifdef PAL
 #ifdef PAL
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
@@ -5522,11 +5535,11 @@ void FishRecordTextureEnter() {
     if (ReadBGSync() != 0) {
         return;
     }
-    BG_READ_INFO *file = GetReadBGFile(0);
+    BG_READ_INFO     *file = GetReadBGFile(0);
     LOADTEXTURE_INFO2 texture[3] = {
         {FishFrameImage, 0, 0},
-        {NULL, 0, 0},
-        {NULL, 0, 0},
+        {NULL,           0, 0},
+        {NULL,           0, 0},
     };
     texture[0].block_no = FishRecordMenu.tex_block;
     texture[1].block_no = FishRecordMenu.tex_block;
@@ -5672,7 +5685,7 @@ static void FishRecordViewBoard(int x, int y, int alpha) {
     int head_y = y - 0xE;
     pos_x = x + 0x10;
     CRect_i_ head(0x160, 0x1A, 0x44, 0x1C);
-    int widths[3] = {0x54, 0x5A, 0};
+    int      widths[3] = {0x54, 0x5A, 0};
     for (int i = 0; i <= 2; i++, head.y += head.height) {
         if (i == 2) {
             head.width = 0x74;
@@ -5680,9 +5693,9 @@ static void FishRecordViewBoard(int x, int y, int alpha) {
         DrawMenu2DSprite(FishMenuTex, CRect_i_(pos_x, head_y, head.width, head.height - 1), head, alpha);
         pos_x += widths[i];
     }
-    int bar_x = x + 0x144;
-    float length = 23.5f;
-    int bar_y = (int) ((float) (y + 0x2A) + 6.3f * FishRecordMenu.top);
+    int      bar_x = x + 0x144;
+    float    length = 23.5f;
+    int      bar_y = (int) ((float) (y + 0x2A) + 6.3f * FishRecordMenu.top);
     CRect_i_ source(0x110, 0xD0, 8, 4);
     DrawMenu2DSprite(FishMenuTex, CRect_i_(bar_x, bar_y, 8, 4), source, alpha);
     source.y += 4;
@@ -5692,14 +5705,14 @@ static void FishRecordViewBoard(int x, int y, int alpha) {
     pos_x = x + 0x12;
     pos_y = y + 6;
     for (int i = 0; i < 5; i++, pos_y += 0x22) {
-        int rank_no = FishRecordMenu.top + i;
+        int           rank_no = FishRecordMenu.top + i;
         SV_FISH_DATA *record = GetFishingRankData(rank_no);
-        RECT digits = {0x158, 0xDC, 0xE, 0x12};
+        RECT          digits = {0x158, 0xDC, 0xE, 0x12};
         if (rank_no == FishRecordMenu.cursor) {
             digits.y += digits.height;
         }
         CRect_i_ medal(0x160, 0, 0x20, 0x1B);
-        int medal_x = pos_x + 0x10;
+        int      medal_x = pos_x + 0x10;
         if (rank_no != 0) {
             medal.x += 0x20;
             if (rank_no == FishRecordMenu.cursor) {
@@ -5718,8 +5731,7 @@ static void FishRecordViewBoard(int x, int y, int alpha) {
         }
         if (size > 0) {
             DrawMenuNumber(size, pos_x + 0xFE, pos_y + 0x18, FishMenuTex, digits, 1, alpha);
-            DrawMenu2DSprite(FishMenuTex, CRect_i_(pos_x + 0xFE, pos_y + 0x16, digits.width * 2, digits.height),
-                             CRect_i_(digits.x + digits.width * 10, digits.y, digits.width * 2, digits.height), alpha);
+            DrawMenu2DSprite(FishMenuTex, CRect_i_(pos_x + 0xFE, pos_y + 0x16, digits.width * 2, digits.height), CRect_i_(digits.x + digits.width * 10, digits.y, digits.width * 2, digits.height), alpha);
             if (i >= 0 && i < 10) {
                 AtoraNameMes.line_pos[i].x = pos_x + 0x3E;
                 AtoraNameMes.line_pos[i].y = pos_y + 0x14;

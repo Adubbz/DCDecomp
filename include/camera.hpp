@@ -16,17 +16,17 @@
  */
 class CCamera {
 public:
-    CFrame frame;      /**< Puts the camera in the frame hierarchy. */
-    float pos[4];      /**< World position of the eye. */
-    float ref[4];      /**< World position of the point that the eye looks at. */
-    float next_pos[4]; /**< World position that the eye moves to. */
-    float next_ref[4]; /**< World position that the look-at point moves to. */
-    float roll;        /**< Angle, in radians, that turns the view about the view direction. */
-    s32 limit_move;    /**< 1 to move the eye no more than two units in one step. */
-    float speed;       /**< Number of steps that the eye needs to reach its position; 1.0 moves it at once. */
-    float angle_h;     /**< Angle, in radians, of the view direction about the vertical axis. */
-    float angle_v;     /**< Angle, in radians, of the view direction above the horizontal plane. */
-    float snap_range;  /**< Distance at which the eye and the look-at point snap onto their positions. */
+    CFrame frame;       /**< Puts the camera in the frame hierarchy. */
+    float  pos[4];      /**< World position of the eye. */
+    float  ref[4];      /**< World position of the point that the eye looks at. */
+    float  next_pos[4]; /**< World position that the eye moves to. */
+    float  next_ref[4]; /**< World position that the look-at point moves to. */
+    float  roll;        /**< Angle, in radians, that turns the view about the view direction. */
+    s32    limit_move;  /**< 1 to move the eye no more than two units in one step. */
+    float  speed;       /**< Number of steps that the eye needs to reach its position; 1.0 moves it at once. */
+    float  angle_h;     /**< Angle, in radians, of the view direction about the vertical axis. */
+    float  angle_v;     /**< Angle, in radians, of the view direction above the horizontal plane. */
+    float  snap_range;  /**< Distance at which the eye and the look-at point snap onto their positions. */
 
     /**
      * Holds every camera still while it is not zero.
@@ -56,7 +56,7 @@ public:
      * @address 0x124210
      * @size 0x44
      */
-    virtual void Stay(void);
+    virtual void Stay();
 
     /**
      * Puts the eye onto a position at once.
@@ -183,7 +183,7 @@ public:
      * @address 0x1246D0
      * @size 0xC
      */
-    float GetAngleH(void);
+    float GetAngleH();
 
     /**
      * Returns the angle that turns the view about the view direction.
@@ -192,7 +192,7 @@ public:
      * @address 0x1246E0
      * @size 0xC
      */
-    float GetRoll(void);
+    float GetRoll();
 
     /**
      * Puts the eye at rest and gives it the number of steps that it needs to
@@ -209,7 +209,7 @@ public:
      * @address 0x124770
      * @size 0x54
      */
-    virtual ~CCamera(void);
+    virtual ~CCamera();
 };
 
 STATIC_ASSERT(sizeof(CCamera) == 0x2C0);

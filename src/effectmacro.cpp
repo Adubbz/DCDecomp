@@ -12,10 +12,10 @@
 #include "texture.hpp"
 
 sceVu0FVECTOR wind_dir = {0.0f, 0.0f, 0.0f, 0.0f};
-int effect_count;
-CTexture *smoke_tex;
-CTexture *sibuki_tex;
-CTexture *hamon_tex;
+int           effect_count;
+CTexture     *smoke_tex;
+CTexture     *sibuki_tex;
+CTexture     *hamon_tex;
 
 void EffectMacroStep(float *wind) {
     sceVu0CopyVector(wind_dir, wind);
@@ -40,11 +40,9 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     if (rand() % 2 != 0) {
         effect.position_oscillation_flags = 1;
         effect.position_oscillation_scale[0] = 0.3f * (float) rand() / 2.1474836e9f;
-        effect.position_oscillation_rate[0] =
-            3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
+        effect.position_oscillation_rate[0] = 3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
         effect.position_oscillation_scale[2] = 0.3f * (float) rand() / 2.1474836e9f;
-        effect.position_oscillation_rate[2] =
-            3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
+        effect.position_oscillation_rate[2] = 3.1415927f / (30.0f + (float) (rand() * 20) / 2.1474836e9f);
     }
     effect.opacity_mode = 2;
     effect.render_flags = 1;
@@ -77,8 +75,7 @@ void EffectSmoke(CEffectGroup *group, float *position, float size, int period) {
     group->EnterEffect(&effect);
 }
 
-void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int period,
-                      int phase) {
+void EffectWaterSpray(CEffectGroup *group, float *position, float *extent, int period, int phase) {
     CEffectParam effect;
 
     if ((effect_count + phase) % period != 0) {
@@ -141,14 +138,14 @@ void EffectHamon(CEffectGroup *group, float *position, float size) {
 
 void DepthOfField(float *focus, int level, int alpha, int blur) {
     static float rd[21][15];
-    sceGsTex0 frame;
-    sceGsTex0 image;
-    sceGsTest test;
-    sceGsZbuf zbuffer;
-    int phase;
-    int i;
-    int j;
-    int k;
+    sceGsTex0    frame;
+    sceGsTex0    image;
+    sceGsTest    test;
+    sceGsZbuf    zbuffer;
+    int          phase;
+    int          i;
+    int          j;
+    int          k;
 
     MGGetFBuffTex(&frame);
     image = *(sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0;
@@ -157,9 +154,9 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
     MGStretchMoveImage(&image, CRect_i_(0, 0, 0x1400, (SCREEN_HALF_HEIGHT << 4)), &image, CRect_i_(0x1400, 0, 0xA00, (SCREEN_HALF_HEIGHT << 4)));
 
     sceVu0FVECTOR depth_point[4] = {
-        {0.0f, 0.0f, focus[0], 1.0f},
+        {0.0f, 0.0f, focus[0],         1.0f},
         {0.0f, 0.0f, focus[0] + 30.0f, 1.0f},
-        {0.0f, 0.0f, focus[1], 1.0f},
+        {0.0f, 0.0f, focus[1],         1.0f},
         {0.0f, 0.0f, focus[1] + 20.0f, 1.0f},
     };
     int screen[4][4];
@@ -202,11 +199,9 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 int u = j << 7;
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, 0));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 SCE_GS_SET_XYZF2(x, y, screen[(j + phase) % 2][2], 0));
+                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x, y, screen[(j + phase) % 2][2], 0));
                 sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v + 0x200));
-                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                 SCE_GS_SET_XYZF2(x, y + 0x200, screen[(j + phase) % 2][2], 0));
+                sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x, y + 0x200, screen[(j + phase) % 2][2], 0));
             }
         }
         sceVif1PkCloseGifTag(Vif1Packet);
@@ -253,18 +248,14 @@ void DepthOfField(float *focus, int level, int alpha, int blur) {
                 int v_bottom = v + 0x100;
                 if (blur > 0) {
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
-                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                     SCE_GS_SET_XYZF2(x - (int) rd[i][j], y, screen[2 + i % 2][2], 0));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x - (int) rd[i][j], y, screen[2 + i % 2][2], 0));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v_bottom));
-                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                     SCE_GS_SET_XYZF2(x - (int) rd[i][j + 1], y_bottom, screen[2 + i % 2][2], 0));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x - (int) rd[i][j + 1], y_bottom, screen[2 + i % 2][2], 0));
                 } else {
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v));
-                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                     SCE_GS_SET_XYZF2(x, y, screen[2 + i % 2][2], 0));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x, y, screen[2 + i % 2][2], 0));
                     sceVif1PkAddGsAD(Vif1Packet, SCE_GS_UV, SCE_GS_SET_UV(u, v_bottom));
-                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2,
-                                     SCE_GS_SET_XYZF2(x, y_bottom, screen[2 + i % 2][2], 0));
+                    sceVif1PkAddGsAD(Vif1Packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x, y_bottom, screen[2 + i % 2][2], 0));
                 }
             }
         }

@@ -17,10 +17,8 @@ class CMotionModel;
 class CNPCharacter;
 class ClsMes;
 class CDebugFont;
-class CTexAnimeData;
 class CItemBombEffect;
 class CShockWave;
-class CTextureAnime;
 struct MOTION_INFO;
 class CHealEffect;
 
@@ -51,33 +49,33 @@ struct MAP_TRAP_CIRCLE;
  * Stores the state shared by dungeon event scripts and the dungeon loop.
  */
 struct BT_EVENT_INFO {
-    sceVu0FVECTOR position;        /**< Where the event run by the script plays. */
-    sceVu0FVECTOR direction;       /**< Which way that event faces. */
-    s32 init_flag_20;              /**< Set to 1 when the event state is initialised and never read. */
-    s32 action_mode;               /**< How the player started the event: 0 automatically, 1 with the action button, 2 with the hold button. */
-    s32 init_flag_28;              /**< Set to 1 when the event state is initialised and never read. */
-    s32 script_no;                 /**< System script the dungeon loop runs next, or -1 when none is queued. */
-    s32 running_script_no;         /**< System script currently running, or -1 when none is. */
-    s32 ext_memory;                /**< Whether the queued script runs out of the monster model arena instead of the script work buffer. */
-    s32 event_marker;              /**< Whether the event marker is drawn over the player this frame. */
-    s32 item_select_list[16];      /**< Items the script's item window offers, ended by -1. */
-    s32 item_select_filtered;      /**< Whether the script's item window is limited to item_select_list. */
-    s32 item_select_result;        /**< Address of the script stack entry the chosen item is written back to, or 0. */
-    RS_STACKDATA *entrance_result; /**< Where the floor the player chose is written back. */
-    RS_STACKDATA *escape_result;   /**< Where the escape answer is written back. */
-    s32 floor_title_off;           /**< Suppresses the floor title when the floor starts. */
-    s32 fade_on_start;             /**< Whether the next system script resets the editor fade when it starts. */
-    s32 bee_npc;                   /**< NPC unit the bee follows, or -1 when there is no bee. */
-    s32 request;                   /**< Dungeon transition requested by the event script. */
-    s32 chained_script_no;         /**< Script _RUN_SCRIPT_NO asks to run after the current one ends. */
-    s32 clear_script_no;           /**< Script to run once every monster on the floor is defeated, or -1. */
-    s32 clear_script_ext_memory;   /**< ext_memory setting for clear_script_no. */
-    s32 script_main_chr;           /**< Character _SET_MAIN_CHR2 last asked for, or -1 when none is set. */
-    s32 treasure_box;              /**< Treasure box the item-box event scripts act on. */
-    s32 no_reset_chara;            /**< Keeps the script's chosen character when the script ends. */
-    s32 chara_help;                /**< Whether the event was started by the character it asks for. */
-    s32 no_status_recover;         /**< Prevents restoring party status when entering the floor. */
-    s32 unk_BC;
+    sceVu0FVECTOR position;                /**< Where the event run by the script plays. */
+    sceVu0FVECTOR direction;               /**< Which way that event faces. */
+    s32           init_flag_20;            /**< Set to 1 when the event state is initialised and never read. */
+    s32           action_mode;             /**< How the player started the event: 0 automatically, 1 with the action button, 2 with the hold button. */
+    s32           init_flag_28;            /**< Set to 1 when the event state is initialised and never read. */
+    s32           script_no;               /**< System script the dungeon loop runs next, or -1 when none is queued. */
+    s32           running_script_no;       /**< System script currently running, or -1 when none is. */
+    s32           ext_memory;              /**< Whether the queued script runs out of the monster model arena instead of the script work buffer. */
+    s32           event_marker;            /**< Whether the event marker is drawn over the player this frame. */
+    s32           item_select_list[16];    /**< Items the script's item window offers, ended by -1. */
+    s32           item_select_filtered;    /**< Whether the script's item window is limited to item_select_list. */
+    s32           item_select_result;      /**< Address of the script stack entry the chosen item is written back to, or 0. */
+    RS_STACKDATA *entrance_result;         /**< Where the floor the player chose is written back. */
+    RS_STACKDATA *escape_result;           /**< Where the escape answer is written back. */
+    s32           floor_title_off;         /**< Suppresses the floor title when the floor starts. */
+    s32           fade_on_start;           /**< Whether the next system script resets the editor fade when it starts. */
+    s32           bee_npc;                 /**< NPC unit the bee follows, or -1 when there is no bee. */
+    s32           request;                 /**< Dungeon transition requested by the event script. */
+    s32           chained_script_no;       /**< Script _RUN_SCRIPT_NO asks to run after the current one ends. */
+    s32           clear_script_no;         /**< Script to run once every monster on the floor is defeated, or -1. */
+    s32           clear_script_ext_memory; /**< ext_memory setting for clear_script_no. */
+    s32           script_main_chr;         /**< Character _SET_MAIN_CHR2 last asked for, or -1 when none is set. */
+    s32           treasure_box;            /**< Treasure box the item-box event scripts act on. */
+    s32           no_reset_chara;          /**< Keeps the script's chosen character when the script ends. */
+    s32           chara_help;              /**< Whether the event was started by the character it asks for. */
+    s32           no_status_recover;       /**< Prevents restoring party status when entering the floor. */
+    s32           unk_BC;
 };
 
 STATIC_ASSERT(sizeof(BT_EVENT_INFO) == 0xC0);
@@ -184,7 +182,7 @@ extern u_int *old_read_buffer;
  * @size 0x14C
  * @unknownret
  */
-void LoadBaseTexture(void);
+void LoadBaseTexture();
 
 /**
  * @mangled LoadTempTexture__FPPciPc
@@ -207,7 +205,7 @@ void SetTempTexture(int block, char *name);
  * @size 0x14C
  * @unknownret
  */
-void MemoryMapDump(void);
+void MemoryMapDump();
 
 /**
  * @mangled GameInit__Fv
@@ -215,7 +213,7 @@ void MemoryMapDump(void);
  * @size 0x17B8
  * @unknownret
  */
-void GameInit(void);
+void GameInit();
 
 /**
  * @mangled GameLoop__Fv
@@ -223,7 +221,7 @@ void GameInit(void);
  * @size 0x2BC
  * @unknownret
  */
-int GameLoop(void);
+int GameLoop();
 
 /**
  * @mangled Draw_MainUnitShadow__Fv
@@ -231,7 +229,7 @@ int GameLoop(void);
  * @size 0x1D0
  * @unknownret
  */
-void Draw_MainUnitShadow(void);
+void Draw_MainUnitShadow();
 
 /**
  * @mangled Draw_MainUnit__Fv
@@ -239,7 +237,7 @@ void Draw_MainUnitShadow(void);
  * @size 0x490
  * @unknownret
  */
-void Draw_MainUnit(void);
+void Draw_MainUnit();
 
 /**
  * @mangled MainDraw__Fv__3
@@ -248,7 +246,7 @@ void Draw_MainUnit(void);
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
-void MainDraw(void);
+void MainDraw();
 
 /**
  * @mangled MoveChara__Fv__2
@@ -257,7 +255,7 @@ void MainDraw(void);
  * @unknownret
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
-void MoveChara(void);
+void MoveChara();
 
 /**
  * @mangled motionDrive__Fv
@@ -265,7 +263,7 @@ void MoveChara(void);
  * @size 0x1338
  * @unknownret
  */
-void motionDrive(void);
+void motionDrive();
 
 /**
  * @mangled BtCleatRandomMap__Fv
@@ -273,7 +271,7 @@ void motionDrive(void);
  * @size 0xA24
  * @unknownret
  */
-void BtCleatRandomMap(void);
+void BtCleatRandomMap();
 
 /**
  * @mangled BtCleatFreeMap__Fv
@@ -281,7 +279,7 @@ void BtCleatRandomMap(void);
  * @size 0x120
  * @unknownret
  */
-void BtCleatFreeMap(void);
+void BtCleatFreeMap();
 
 /**
  * Clears the monsters that the player can see and spreads them over the floor again.
@@ -290,7 +288,7 @@ void BtCleatFreeMap(void);
  * @address 0x1DB92E0
  * @size 0x48
  */
-void BtArrengeMonstor(void);
+void BtArrengeMonstor();
 
 /**
  * Loads the monsters assigned to the current floor.
@@ -325,8 +323,7 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out);
  * @address 0x1DB9840
  * @size 0x2F0
  */
-void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
-                 int chara, int reload);
+void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data, int chara, int reload);
 
 /**
  * @mangled SwordDmgCheck1__Ffi
@@ -343,7 +340,7 @@ void SwordDmgCheck1(float amount, int kind);
  * @address 0x1DB9E00
  * @size 0x260
  */
-void SetWeaponColor(void);
+void SetWeaponColor();
 
 /**
  * @mangled Get_Main_EffectPtr__Fii
@@ -367,15 +364,14 @@ void MainChara_Effect(BT_SHOT_EFFECT *effect, unsigned int *data, int reload);
  * @size 0x568
  * @unknownret
  */
-void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned int *crash_data,
-                unsigned int *default_data, unsigned int *main_data);
+void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data);
 
 /**
  * @mangled BtCheckDamageProc__Fv
  * @address 0x1DBAFD0
  * @size 0xF0C
  */
-int BtCheckDamageProc(void);
+int BtCheckDamageProc();
 
 /**
  * @mangled BattleActionThlow__Fv
@@ -383,7 +379,7 @@ int BtCheckDamageProc(void);
  * @size 0x720
  * @unknownret
  */
-void BattleActionThlow(void);
+void BattleActionThlow();
 
 /**
  * @mangled BattleActionDrink__Fv
@@ -391,7 +387,7 @@ void BattleActionThlow(void);
  * @size 0x294
  * @unknownret
  */
-void BattleActionDrink(void);
+void BattleActionDrink();
 
 /**
  * Starts Xiao's gun action, if the player is free and the gauge is full.
@@ -400,7 +396,7 @@ void BattleActionDrink(void);
  * @address 0x1DBC8A0
  * @size 0x8C
  */
-void BattleActionOn_Jinn(void);
+void BattleActionOn_Jinn();
 
 /**
  * @mangled BattleActionPlay_Jinn__FP10CCharacteri
@@ -417,7 +413,7 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed);
  * @address 0x1DBCF00
  * @size 0x78
  */
-void BattleActionOn_Ruby(void);
+void BattleActionOn_Ruby();
 
 /**
  * @mangled BattleActionShotRuby__FP10CCharacterifi
@@ -442,7 +438,7 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed);
  * @address 0x1DBDB40
  * @size 0x8C
  */
-void BattleActionOn_Ozumond(void);
+void BattleActionOn_Ozumond();
 
 /**
  * Starts Osmond's charged action, if the player is free and the gauge is full.
@@ -451,7 +447,7 @@ void BattleActionOn_Ozumond(void);
  * @address 0x1DBDBD0
  * @size 0xA0
  */
-void BattleActionOn_Ozumond_H(void);
+void BattleActionOn_Ozumond_H();
 
 /**
  * Starts Osmond's flight action, if the player is free and nothing blocks it.
@@ -460,7 +456,7 @@ void BattleActionOn_Ozumond_H(void);
  * @address 0x1DBDC70
  * @size 0x80
  */
-void BattleActionOn_Ozumond_F(void);
+void BattleActionOn_Ozumond_F();
 
 /**
  * @mangled BattleActionPlay_Ozumond__Fi
@@ -492,7 +488,7 @@ void BattleActionPlay_Ozumond_F(int aimed);
  * @size 0x1054
  * @unknownret
  */
-void autoCamTrial(void);
+void autoCamTrial();
 
 /**
  * @mangled DelActiveItem__Fi
@@ -518,7 +514,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap);
  * @address 0x1DBFCE0
  * @size 0x28
  */
-void LockOffTargte(void);
+void LockOffTargte();
 
 /**
  * Draws the life gauge of the enemy that the player has locked on to.
@@ -527,7 +523,7 @@ void LockOffTargte(void);
  * @address 0x1DBFD10
  * @size 0x1B4
  */
-void DrawTargetLife(void);
+void DrawTargetLife();
 
 /**
  * @mangled DrawtargetCursor__FPffff
@@ -575,7 +571,7 @@ float setUnitDamageColor(int hit);
  * @address 0x1DC0FF0
  * @size 0xC
  */
-void RsetUnitAmbientAnime(void);
+void RsetUnitAmbientAnime();
 
 /**
  * Starts an ambient-colour animation on the player's model.
@@ -609,7 +605,7 @@ int LoadStartLogo(int map);
  * @address 0x1DC1290
  * @size 0x24
  */
-void FloorTitleOn(void);
+void FloorTitleOn();
 
 /**
  * Takes the mini-map away, or gives back what it drew before.
@@ -627,7 +623,7 @@ void SetMIniMapStatus(int on);
  * @address 0x1DC1300
  * @size 0xF8
  */
-void ResetStatusInfo(void);
+void ResetStatusInfo();
 
 /**
  * Takes away the push that the player's action gives them.
@@ -636,7 +632,7 @@ void ResetStatusInfo(void);
  * @address 0x1DC1400
  * @size 0x18
  */
-void ResetMovePower(void);
+void ResetMovePower();
 
 /**
  * @mangled LoaderInit__Fv
@@ -644,14 +640,14 @@ void ResetMovePower(void);
  * @size 0xE4
  * @unknownret
  */
-void LoaderInit(void);
+void LoaderInit();
 
 /**
  * @mangled LoaderLoop__Fv
  * @address 0x1DC1510
  * @size 0x278
  */
-int LoaderLoop(void);
+int LoaderLoop();
 
 /**
  * Points the first-person camera the way the player faces.
@@ -660,7 +656,7 @@ int LoaderLoop(void);
  * @address 0x1DC1790
  * @size 0x48
  */
-void InitEyeCamera(void);
+void InitEyeCamera();
 
 /**
  * @mangled EyeCamera__Fv
@@ -668,7 +664,7 @@ void InitEyeCamera(void);
  * @size 0x2A0
  * @unknownret
  */
-void EyeCamera(void);
+void EyeCamera();
 
 /**
  * Carries the Georama editor's own fade on by one step.
@@ -678,7 +674,7 @@ void EyeCamera(void);
  * @size 0x1B0
  * @unknownret
  */
-void EdFadeInOut(void);
+void EdFadeInOut();
 
 /**
  * Blurs whatever lies outside the depth the focus names.
@@ -707,7 +703,7 @@ void DrawBee(CFrame *frame, int count);
  * @address 0x168B80
  * @size 0x560
  */
-void EBDraw(void);
+void EBDraw();
 
 /**
  * Draws the Georama editor's debug text.
@@ -717,7 +713,7 @@ void EBDraw(void);
  * @size 0xB0
  * @unknownret
  */
-void EdDDrawFont(void);
+void EdDDrawFont();
 
 /**
  * Draws the debug overlay.
@@ -727,7 +723,7 @@ void EdDDrawFont(void);
  * @size 0xF70
  * @unknownret
  */
-void DebugInfomationDraw(void);
+void DebugInfomationDraw();
 
 /**
  * Carries the system message on by one step.
@@ -737,7 +733,7 @@ void DebugInfomationDraw(void);
  * @size 0xB4
  * @unknownret
  */
-void SystemMesStep(void);
+void SystemMesStep();
 
 /**
  * Draws the system message.
@@ -747,7 +743,7 @@ void SystemMesStep(void);
  * @size 0xB0
  * @unknownret
  */
-void SystemMesDraw(void);
+void SystemMesDraw();
 
 /**
  * Gives back the floor number that one of the deeper dungeons shows.
@@ -766,7 +762,7 @@ int BtGetFloorLevel(int floor);
  * @size 0x104
  * @unknownret
  */
-int DngActiveItemTextureCopy(void);
+int DngActiveItemTextureCopy();
 
 /**
  * The same, for the weapon the player holds.
@@ -776,7 +772,7 @@ int DngActiveItemTextureCopy(void);
  * @size 0x130
  * @unknownret
  */
-int DngActiveWeaponTextureCopy(void);
+int DngActiveWeaponTextureCopy();
 
 /** The weapon models the player's character can hold. */
 extern CCharacter DefaultWeapon;

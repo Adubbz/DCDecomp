@@ -4,18 +4,13 @@
 
 #include "mapobject.hpp"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-class CFrameVu1;
-
 /**
  * Selects the distance range used to draw one map-object category.
  */
 struct CMapCategoryAttr {
-    float lod[4]; /**< Distances at which the category changes level of detail. */
-    s32 lowest;   /**< Lowest level of detail that the category may draw. */
-    s32 highest;  /**< Highest level of detail that the category may draw. */
+    float lod[4];  /**< Distances at which the category changes level of detail. */
+    s32   lowest;  /**< Lowest level of detail that the category may draw. */
+    s32   highest; /**< Highest level of detail that the category may draw. */
 };
 
 STATIC_ASSERT(sizeof(CMapCategoryAttr) == 0x18);
@@ -28,7 +23,7 @@ public:
     CMapCategoryAttr category[16]; /**< Level-of-detail ranges for the map's
                                       object categories. */
     CMapObject object[10];         /**< Scenery objects placed in this map. */
-    s32 draw_on;                   /**< Selects level-of-detail drawing when nonzero. */
+    s32        draw_on;            /**< Selects level-of-detail drawing when nonzero. */
 
     /**
      * @mangled SetObject__4CMapFiP9CFrameVu1ii
@@ -64,7 +59,7 @@ public:
      * Draws every placed object, using its category's level-of-detail range
      * when range selection is enabled.
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * @mangled Initialize__4CMapFv
@@ -72,7 +67,7 @@ public:
      * @size 0xAC
      * Resets the category ranges and every object slot to their defaults.
      */
-    void Initialize(void);
+    void Initialize();
 };
 
 STATIC_ASSERT(sizeof(CMap) == 0xAF0);

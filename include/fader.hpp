@@ -16,7 +16,7 @@ public:
      * @address 0x2451F0
      * @size 0x48
      */
-    int In(void);
+    int In();
 
     /**
      * Advances the fade level toward zero in steps of four.
@@ -25,7 +25,7 @@ public:
      * @address 0x245240
      * @size 0x2C
      */
-    int Out(void);
+    int Out();
 
     /**
      * Scales a requested maximum by the current fade fraction.

@@ -13,13 +13,13 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR direction;
     sceVu0FVECTOR position;
-    int top_left[4];
-    int bottom_right[4];
-    int top_right[4];
-    int bottom_left[4];
-    sceGsAlpha alpha;
-    sceGsZbuf zbuf;
-    s32 i;
+    int           top_left[4];
+    int           bottom_right[4];
+    int           top_right[4];
+    int           bottom_left[4];
+    sceGsAlpha    alpha;
+    sceGsZbuf     zbuf;
+    s32           i;
 
     camera->GetPos(camera_position);
 
@@ -35,10 +35,12 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
     MGSetGsZBUF(&zbuf);
 
     for (i = 0; i < 8; i++) {
-        if (active[i] != 1)
+        if (active[i] != 1) {
             continue;
-        if (counters[i] < 0)
+        }
+        if (counters[i] < 0) {
             continue;
+        }
 
         direction[0] = camera_position[0] - positions[i][0];
         direction[1] = 0.0f;
@@ -52,8 +54,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
         position[2] = direction[2] + positions[i][2];
         position[3] = 1.0f;
 
-        if (MGRotTransPers3DSprite(top_left, bottom_right, position, sizes[i], sizes[i] / 2.0f,
-                                   0) != 1) {
+        if (MGRotTransPers3DSprite(top_left, bottom_right, position, sizes[i], sizes[i] / 2.0f, 0) != 1) {
             continue;
         }
 
@@ -69,14 +70,14 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
         if (i < 5) {
             CRect_i_ rect;
 
-            if (dust_only != 0)
+            if (dust_only != 0) {
                 continue;
+            }
             rect.x = 0;
             rect.y = 0;
             rect.width = 128;
             rect.height = 128;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("bakuha1", -1), rect, top_left,
-                        top_right, bottom_left, bottom_right, static_cast<u8>(alphas[i]));
+            set3DSprite(Vif1Packet, TexManager.GetTexture("bakuha1", -1), rect, top_left, top_right, bottom_left, bottom_right, static_cast<u8>(alphas[i]));
         } else {
             CRect_i_ rect;
 
@@ -84,8 +85,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
             rect.y = 0;
             rect.width = 128;
             rect.height = 128;
-            set3DSprite(Vif1Packet, TexManager.GetTexture("sunakemuri", -1), rect, top_left,
-                        top_right, bottom_left, bottom_right, static_cast<u8>(alphas[i]));
+            set3DSprite(Vif1Packet, TexManager.GetTexture("sunakemuri", -1), rect, top_left, top_right, bottom_left, bottom_right, static_cast<u8>(alphas[i]));
         }
     }
 
@@ -93,7 +93,7 @@ void CBombEffect::Draw(CCamera *camera, int dust_only) {
     MGSetGsZBUF(0);
 }
 
-void CBombEffect::Step(void) {
+void CBombEffect::Step() {
     s32 i;
 
     for (i = 0; i < 5; i++) {
@@ -136,8 +136,9 @@ void CBombEffect::Step(void) {
                 counters[i]++;
                 sizes[i] -= 0.1f;
                 alphas[i] -= 2.0f;
-                if (counters[i] < 80)
+                if (counters[i] < 80) {
                     break;
+                }
                 active[i] = 0;
                 break;
         }
@@ -180,8 +181,9 @@ void CBombEffect::Step(void) {
                 counters[i]++;
                 sizes[i] -= 0.1f;
                 alphas[i] -= 2.0f;
-                if (counters[i] < 80)
+                if (counters[i] < 80) {
                     break;
+                }
                 active[i] = 0;
                 break;
         }

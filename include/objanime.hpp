@@ -18,20 +18,20 @@ class CMapParts;
  * Each record is copied verbatim from the resource before its owning part index is installed.
  */
 struct EPARTS_FUNC_DATA {
-    u8 unk_00[0x10];
-    int kind;            /**< Selects how the marker is interpreted by map setup. */
-    CMapParts *parts;    /**< Map part the marker was extracted from. */
-    float start_time;    /**< Beginning of the marker's active time interval. */
-    float end_time;      /**< End of the marker's active time interval. */
-    int link_id;         /**< Associates related markers belonging to one event. */
-    int completion_flag; /**< Map flag which suppresses the resulting event after completion. */
-    u8 unk_28[0x8];
-    char frame_name[0x10];    /**< Optional frame whose visibility gates the resulting event. */
-    sceVu0FVECTOR position;   /**< Primary position carried by the marker. */
-    sceVu0FVECTOR rotation;   /**< Primary rotation carried by the marker. */
-    sceVu0FVECTOR parameters; /**< Secondary vector whose meaning depends on the marker kind. */
-    sceVu0FVECTOR values;     /**< Scalar parameters whose meaning depends on the marker kind. */
-    sceVu0FMATRIX matrix;     /**< Placement of the marker's frame relative to its owning frame. */
+    u8            unk_00[0x10];
+    int           kind;            /**< Selects how the marker is interpreted by map setup. */
+    CMapParts    *parts;           /**< Map part the marker was extracted from. */
+    float         start_time;      /**< Beginning of the marker's active time interval. */
+    float         end_time;        /**< End of the marker's active time interval. */
+    int           link_id;         /**< Associates related markers belonging to one event. */
+    int           completion_flag; /**< Map flag which suppresses the resulting event after completion. */
+    u8            unk_28[0x8];
+    char          frame_name[0x10]; /**< Optional frame whose visibility gates the resulting event. */
+    sceVu0FVECTOR position;         /**< Primary position carried by the marker. */
+    sceVu0FVECTOR rotation;         /**< Primary rotation carried by the marker. */
+    sceVu0FVECTOR parameters;       /**< Secondary vector whose meaning depends on the marker kind. */
+    sceVu0FVECTOR values;           /**< Scalar parameters whose meaning depends on the marker kind. */
+    sceVu0FMATRIX matrix;           /**< Placement of the marker's frame relative to its owning frame. */
 };
 
 STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
@@ -42,17 +42,17 @@ STATIC_ASSERT(sizeof(EPARTS_FUNC_DATA) == 0xC0);
  * 0x1B00 bytes hold 48 of them at `FrameObjAnim`.
  */
 struct OBJ_ANIME_SEQ {
-    char frame_name[0x10]; /**< Frame the animation drives; empty for the frame it is given. */
-    int property;          /**< What the animation drives: 0 rotation in degrees, 1 position, 2 scale, 3 colour; -1 while unused. */
-    int mode;              /**< How the value moves: 0 onward, 1 wrapping, 2 back and forth, 3 once, 4 to 7 at random. */
-    u8 unk_18[0x8];
-    sceVu0FVECTOR from;    /**< Value the animation starts at, and the lower bound of a random one. */
-    sceVu0FVECTOR to;      /**< Value the animation ends at, and the upper bound of a random one. */
-    sceVu0FVECTOR step;    /**< Amount the value changes by each frame, or the spread of a random walk. */
-    sceVu0FVECTOR current; /**< Current animated value applied to the attached frames. */
-    CFrame *frames[10];    /**< Frames driven by this animation. */
-    int completion_flag;   /**< Map flag associated with the source function marker. */
-    int unk_8C;
+    char          frame_name[0x10]; /**< Frame the animation drives; empty for the frame it is given. */
+    int           property;         /**< What the animation drives: 0 rotation in degrees, 1 position, 2 scale, 3 colour; -1 while unused. */
+    int           mode;             /**< How the value moves: 0 onward, 1 wrapping, 2 back and forth, 3 once, 4 to 7 at random. */
+    u8            unk_18[0x8];
+    sceVu0FVECTOR from;            /**< Value the animation starts at, and the lower bound of a random one. */
+    sceVu0FVECTOR to;              /**< Value the animation ends at, and the upper bound of a random one. */
+    sceVu0FVECTOR step;            /**< Amount the value changes by each frame, or the spread of a random walk. */
+    sceVu0FVECTOR current;         /**< Current animated value applied to the attached frames. */
+    CFrame       *frames[10];      /**< Frames driven by this animation. */
+    int           completion_flag; /**< Map flag associated with the source function marker. */
+    int           unk_8C;
 
     /**
      * Clears one object-animation sequence.
@@ -61,7 +61,7 @@ struct OBJ_ANIME_SEQ {
      * @address 0x165C90
      * @size 0x14
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Constructs an object-animation sequence.
@@ -70,7 +70,7 @@ struct OBJ_ANIME_SEQ {
      * @address 0x165CB0
      * @size 0x30
      */
-    OBJ_ANIME_SEQ(void);
+    OBJ_ANIME_SEQ();
 };
 
 STATIC_ASSERT(sizeof(OBJ_ANIME_SEQ) == 0x90);
@@ -83,21 +83,21 @@ extern "C" OBJ_ANIME_SEQ FrameObjAnim[48];
  * that carries it.
  */
 struct EDIT_EFFECT_INFO {
-    char frame_name[16]; /**< Names the child frame that carries the effect. */
-    s32 kind;            /**< Number that names the effect; zero or below where the slot is free. */
-    s32 map_flag;        /**< Map flag that stops the effect while it is set; zero or below where none does. */
-    float start;         /**< Time of day that the effect starts at. */
-    float end;           /**< Time of day that the effect stops at. */
-    CFrame *frame;       /**< Frame that the effect stands on. */
-    s32 unk_24;
-    u8 unk_28[8];
+    char          frame_name[16]; /**< Names the child frame that carries the effect. */
+    s32           kind;           /**< Number that names the effect; zero or below where the slot is free. */
+    s32           map_flag;       /**< Map flag that stops the effect while it is set; zero or below where none does. */
+    float         start;          /**< Time of day that the effect starts at. */
+    float         end;            /**< Time of day that the effect stops at. */
+    CFrame       *frame;          /**< Frame that the effect stands on. */
+    s32           unk_24;
+    u8            unk_28[8];
     sceVu0FVECTOR offset; /**< Distance from the frame to the effect; also the first end of a line sound source. */
-    u8 unk_40[16];
-    sceVu0FVECTOR colour; /**< Colour of the light that the effect gives; also the second end of a line sound source, whose fourth component says whether that end is set. */
-    float sound_no;       /**< Sound effect emitted by this effect. */
-    float near_distance;  /**< Distance at which the sound has full volume. */
-    float far_distance;   /**< Distance beyond which the sound is inaudible. */
-    u8 unk_6C[4];
+    u8            unk_40[16];
+    sceVu0FVECTOR colour;        /**< Colour of the light that the effect gives; also the second end of a line sound source, whose fourth component says whether that end is set. */
+    float         sound_no;      /**< Sound effect emitted by this effect. */
+    float         near_distance; /**< Distance at which the sound has full volume. */
+    float         far_distance;  /**< Distance beyond which the sound is inaudible. */
+    u8            unk_6C[4];
 };
 
 STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
@@ -109,7 +109,7 @@ STATIC_ASSERT(sizeof(EDIT_EFFECT_INFO) == 0x70);
  * @address 0x165CE0
  * @size 0x10
  */
-void ObjAnimeAllStop(void);
+void ObjAnimeAllStop();
 
 /**
  * Starts every object animation.
@@ -118,7 +118,7 @@ void ObjAnimeAllStop(void);
  * @address 0x165CF0
  * @size 0xC
  */
-void ObjAnimeAllStart(void);
+void ObjAnimeAllStart();
 
 /**
  * Attaches an object animation to one frame.
@@ -200,7 +200,7 @@ int CheckEditEffect(EDIT_EFFECT_INFO *effect, float time);
  * @address 0x166D10
  * @size 0xC4
  */
-void EditEffectStep(void);
+void EditEffectStep();
 
 /**
  * Rebuilds the editor's fire texture for the frame.
@@ -209,7 +209,7 @@ void EditEffectStep(void);
  * @address 0x166DE0
  * @size 0x28
  */
-void EditEffectStep2(void);
+void EditEffectStep2();
 
 /**
  * Draws one editor effect, choosing the kind from its record.

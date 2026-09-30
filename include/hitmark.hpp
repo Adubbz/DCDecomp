@@ -22,17 +22,17 @@ class CHitMark : public CObject {
 public:
     sceVu0FVECTOR offset[HIT_MARK_MAX];   /**< Distance of each mark from the point of the hit. */
     sceVu0FVECTOR velocity[HIT_MARK_MAX]; /**< Distance that each mark moves each step. */
-    float size[HIT_MARK_MAX];             /**< Width of each mark on the screen. */
-    u8 unk_530[144];
-    float shrink;           /**< Size each mark loses each step. */
-    float spread;           /**< Scatter added to each mark's launch direction; narrows each step. */
-    float gravity;          /**< Downward speed that a mark gains each step. */
-    float speed;            /**< Speed that the burst throws its marks at. */
-    s32 capacity;           /**< Number of mark slots, set when the burst is emptied. */
-    s32 used[HIT_MARK_MAX]; /**< 1 while the mark of the slot still draws. */
-    s32 count;              /**< Number of marks that still draw. */
-    s32 kind;               /**< Part of the texture that every mark draws. */
-    float floor_y;          /**< Height that a mark bounces off. */
+    float         size[HIT_MARK_MAX];     /**< Width of each mark on the screen. */
+    u8            unk_530[144];
+    float         shrink;             /**< Size each mark loses each step. */
+    float         spread;             /**< Scatter added to each mark's launch direction; narrows each step. */
+    float         gravity;            /**< Downward speed that a mark gains each step. */
+    float         speed;              /**< Speed that the burst throws its marks at. */
+    s32           capacity;           /**< Number of mark slots, set when the burst is emptied. */
+    s32           used[HIT_MARK_MAX]; /**< 1 while the mark of the slot still draws. */
+    s32           count;              /**< Number of marks that still draw. */
+    s32           kind;               /**< Part of the texture that every mark draws. */
+    float         floor_y;            /**< Height that a mark bounces off. */
 
     /**
      * Moves every mark, and drops the ones that have shrunk away.
@@ -41,7 +41,7 @@ public:
      * @address 0x1B3490
      * @size 0x13C
      */
-    virtual void Step(void);
+    virtual void Step();
 
     /**
      * Throws a burst of marks off a point, each one in its own direction.
@@ -50,8 +50,7 @@ public:
      * @address 0x1B2E90
      * @size 0x310
      */
-    void Set(float *position, float *direction, int kind, float spread, float shrink,
-             float gravity, float speed, int count, float floor_y);
+    void Set(float *position, float *direction, int kind, float spread, float shrink, float gravity, float speed, int count, float floor_y);
 
     /**
      * Draws every mark that the burst still holds.
@@ -60,7 +59,7 @@ public:
      * @address 0x1B31A0
      * @size 0x2EC
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Empties every slot, so that the burst throws nothing.
@@ -69,7 +68,7 @@ public:
      * @address 0x1B35D0
      * @size 0x3C
      */
-    void Initialize(void);
+    void Initialize();
 };
 
 STATIC_ASSERT(sizeof(CHitMark) == 0x660);
@@ -79,6 +78,12 @@ STATIC_ASSERT(sizeof(CHitMark) == 0x660);
  */
 class CHitPointMark {
 public:
+    float pos[4]; /**< World position of the mark. */
+    s32   timer;  /**< Steps that the mark still draws for. */
+    s32   blink;  /**< 1 while the mark shows; 0 while it is hidden. */
+    s32   on;     /**< 1 while the mark is in use. */
+    s32   unk_1C;
+
     /**
      * Starts the mark over a point.
      */
@@ -89,12 +94,6 @@ public:
         timer = 16;
     }
 
-    float pos[4]; /**< World position of the mark. */
-    s32 timer;    /**< Steps that the mark still draws for. */
-    s32 blink;    /**< 1 while the mark shows; 0 while it is hidden. */
-    s32 on;       /**< 1 while the mark is in use. */
-    s32 unk_1C;
-
     /**
      * Draws the mark, unless the blink hides it.
      *
@@ -102,7 +101,7 @@ public:
      * @address 0x1B3610
      * @size 0xFC
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Counts the mark down, and turns the blink over every fourth step.
@@ -111,7 +110,7 @@ public:
      * @address 0x1B3710
      * @size 0x64
      */
-    void Step(void);
+    void Step();
 };
 
 STATIC_ASSERT(sizeof(CHitPointMark) == 0x20);

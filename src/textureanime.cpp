@@ -9,9 +9,9 @@
 #include "scriptinterpreter.hpp"
 #include "texture.hpp"
 
-s32 CTextureAnime::stop_anime;
+s32            CTextureAnime::stop_anime;
 CTextureAnime *pTexAnime;
-int now_group;
+int            now_group;
 
 static void CommandTEX_ANIME(void **arguments);
 static void CommandTEX_ANIME_DATA(void **arguments);
@@ -30,7 +30,7 @@ void CTextureTexAnime::Copy(CTexture *texture) {
     }
 }
 
-CTexAnimeData::CTexAnimeData(void) {
+CTexAnimeData::CTexAnimeData() {
     Initialize();
 }
 
@@ -81,9 +81,7 @@ void CTextureAnime::TexAnime(int texture_block) {
     }
 
     for (group = 0; group < 24; group++) {
-        if (enabled[group] == 0 || current[group] == NULL ||
-            current[group]->first_texture.block != texture_block ||
-            current[group]->second_texture.block != texture_block) {
+        if (enabled[group] == 0 || current[group] == NULL || current[group]->first_texture.block != texture_block || current[group]->second_texture.block != texture_block) {
             continue;
         }
 
@@ -91,12 +89,8 @@ void CTextureAnime::TexAnime(int texture_block) {
 
         for (;;) {
             if (record->kind == 0) {
-                MGMoveImage((sceGsTex0 *) &record->first_texture.tex0,
-                            CRect_i_(record->source_x, record->source_y, record->source_width, record->source_height),
-                            (sceGsTex0 *) &record->second_texture.tex0, record->dest_x,
-                            record->dest_y, 0);
-                if (record->source_width == record->first_texture.width &&
-                    record->source_height == record->first_texture.height && record->first_texture.bpp == 1) {
+                MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(record->source_x, record->source_y, record->source_width, record->source_height), (sceGsTex0 *) &record->second_texture.tex0, record->dest_x, record->dest_y, 0);
+                if (record->source_width == record->first_texture.width && record->source_height == record->first_texture.height && record->first_texture.bpp == 1) {
                     sceGsTex0 clut_source;
                     sceGsTex0 clut_destination;
 
@@ -121,8 +115,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 to_x = record->dest_x;
                 to_y = record->dest_y;
                 if (width > 0 && height > 0) {
-                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height),
-                                (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
+                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height), (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
                 }
 
                 x = record->source_x + scroll_x;
@@ -132,8 +125,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 to_x = record->dest_x;
                 to_y = record->dest_y + record->source_height - scroll_y;
                 if (width > 0 && height > 0) {
-                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height),
-                                (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
+                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height), (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
                 }
 
                 x = record->source_x;
@@ -143,8 +135,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 to_x = record->dest_x + record->source_width - scroll_x;
                 to_y = record->dest_y;
                 if (width > 0 && height > 0) {
-                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height),
-                                (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
+                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height), (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
                 }
 
                 x = record->source_x;
@@ -155,8 +146,7 @@ void CTextureAnime::TexAnime(int texture_block) {
                 to_x = record->source_x + record->source_width - scroll_x;
                 to_y = record->dest_y + record->source_height - scroll_y;
                 if (width > 0 && height > 0) {
-                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height),
-                                (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
+                    MGMoveImage((sceGsTex0 *) &record->first_texture.tex0, CRect_i_(x, y, width, height), (sceGsTex0 *) &record->second_texture.tex0, to_x, to_y, 0);
                 }
             }
 
@@ -227,7 +217,7 @@ CTextureAnime::CTextureAnime(CTexAnimeData *records, int count) {
     Initialize(records, count);
 }
 
-CTexAnimeData *CTextureAnime::NewTexAnimeData(void) {
+CTexAnimeData *CTextureAnime::NewTexAnimeData() {
     if (data == NULL) {
         return NULL;
     }
@@ -313,11 +303,11 @@ void CTextureAnime::Disable(int group) {
 
 /** The tags LoadCFGFile recognises, each with its argument kinds. */
 static TAG_PARAM Command[5] = {
-    {"TEX_ANIME", {1, 1, -1}},
-    {"TEX_ANIME_DATA", {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, -1}},
+    {"TEX_ANIME",       {1, 1, -1}                                    },
+    {"TEX_ANIME_DATA",  {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, -1}            },
     {"TEX_ANIME_DATA2", {0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, -1}},
-    {"TEX_SCROLL_DATA", {0, 1, 1, 1, 1, 0, 1, 1, 2, 2, 1, 1, -1}},
-    {"TEX_ANIME_END", {-1}},
+    {"TEX_SCROLL_DATA", {0, 1, 1, 1, 1, 0, 1, 1, 2, 2, 1, 1, -1}      },
+    {"TEX_ANIME_END",   {-1}                                          },
 };
 
 /** The handler LoadCFGFile calls for each of Command's tags. */

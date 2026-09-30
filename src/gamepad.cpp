@@ -78,7 +78,7 @@ int pad_button_read(PAD_STATUS *status, int port, int slot) {
     PAD_STATIC_COUNTER_4(pad_static_4_)
     PAD_STATIC_COUNTER_1(pad_static_1_)
     static short rpad;
-    static char init;
+    static char  init;
 #line 76
     unsigned char data[32];
 
@@ -105,10 +105,10 @@ int pad_button_read(PAD_STATUS *status, int port, int slot) {
 
 int read_pad(PAD_STATUS *status, int port, int slot) {
     volatile int *phase = &status->phase;
-    int *state = &status->state;
-    int *mode_count = &status->extended_id;
-    int *read_result = &status->pad_mode;
-    int *previous_read_result = &status->previous_pad_mode;
+    int          *state = &status->state;
+    int          *mode_count = &status->extended_id;
+    int          *read_result = &status->pad_mode;
+    int          *previous_read_result = &status->previous_pad_mode;
 
     *state = scePadGetState(port, slot);
     if (*state == 0) {
@@ -197,8 +197,7 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
                 int result = pad_button_read(status, port, slot);
                 *read_result = result;
                 if (result != 0) {
-                    if (*previous_read_result != 0 &&
-                        *read_result != *previous_read_result) {
+                    if (*previous_read_result != 0 && *read_result != *previous_read_result) {
                         *previous_read_result = 0;
                         *phase = 0;
                     } else {
@@ -227,15 +226,15 @@ int read_pad(PAD_STATUS *status, int port, int slot) {
 }
 
 void CGamePad::UpDate() {
-    static int cnt;
+    static int  cnt;
     static char init;
     if (!init) {
         cnt = 0;
         init = 1;
     }
 
-    int value;
-    int copy_count;
+    int  value;
+    int  copy_count;
     int *destination;
     int *source;
     source = &pad[0].input.status.button;
@@ -269,18 +268,22 @@ void CGamePad::UpDate() {
             threshold = 0;
         }
         if (threshold > 0) {
-            if (threshold < GetLX())
+            if (threshold < GetLX()) {
                 pad[i].input.status.button |= 0x2000;
-            if (GetLX() < -threshold)
+            }
+            if (GetLX() < -threshold) {
                 pad[i].input.status.button |= 0x8000;
-            if (threshold < GetLY())
+            }
+            if (threshold < GetLY()) {
                 pad[i].input.status.button |= 0x4000;
-            if (GetLY() < -threshold)
+            }
+            if (GetLY() < -threshold) {
                 pad[i].input.status.button |= 0x1000;
+            }
         }
     }
 
-    int bit = 1;
+    int         bit = 1;
     PAD_REPEAT *repeat_state = &repeat[0];
     for (i = 0; i < 32; i++, bit <<= 1) {
         if (repeat_state->enabled & bit) {
@@ -293,8 +296,7 @@ void CGamePad::UpDate() {
                 repeat_state->counter[i] = 0;
                 repeat_state->active &= ~bit;
             }
-            if (repeat_state->counter[i] >= repeat_state->repeat_delay[i] &&
-                (repeat_state->active & bit)) {
+            if (repeat_state->counter[i] >= repeat_state->repeat_delay[i] && (repeat_state->active & bit)) {
                 pad[0].input.status.button &= ~bit;
                 repeat_state->counter[i] = 0;
             }
@@ -406,13 +408,12 @@ int CGamePad::GetLY2() {
 }
 
 int CGamePad::AllOn() {
-    return pad[1].input.status.button | pad[0].input.status.button | GetRX() | GetRY() |
-           GetLX() | GetLY() | GetRX2() | GetRY2() | GetLX2() | GetLY2();
+    return pad[1].input.status.button | pad[0].input.status.button | GetRX() | GetRY() | GetLX() | GetLY() | GetRX2() | GetRY2() | GetLX2() | GetLY2();
 }
 
 void CGamePad::CancelAutoRepeat(int mask) {
-    int i;
-    int bit = 1;
+    int         i;
+    int         bit = 1;
     PAD_REPEAT *auto_repeat = &repeat[0];
     for (i = 0; i < 32; i++, bit <<= 1) {
         if (mask & bit) {
@@ -426,8 +427,8 @@ void CGamePad::CancelAutoRepeat(int mask) {
 }
 
 void CGamePad::SetAutoRepeat(int mask, int initial_delay, int repeat_delay) {
-    int i;
-    int bit = 1;
+    int         i;
+    int         bit = 1;
     PAD_REPEAT *auto_repeat = &repeat[0];
     for (i = 0; i < 32; i++, bit <<= 1) {
         if (!(auto_repeat->enabled & bit) && (mask & bit)) {

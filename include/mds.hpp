@@ -18,9 +18,9 @@ class CVisualMDTVu1;
  */
 
 struct MDS_HEADER {
-    int unk_00[2];
+    int          unk_00[2];
     unsigned int object_num; /**< Number of object records following the header. */
-    int unk_08;
+    int          unk_08;
 };
 
 /**
@@ -29,11 +29,11 @@ struct MDS_HEADER {
    in its parent's space.
  */
 struct MDS_OBJECT {
-    int unk_00[2];
-    char name[32];        /**< Null-terminated object name. */
-    int data_ofs;         /**< Model-data offset from the start of the MDS image. */
-    int parent;           /**< Parent object index, or a negative value for no parent. */
-    sceVu0FMATRIX matrix; /**< Transform relative to the parent object. */
+    int           unk_00[2];
+    char          name[32]; /**< Null-terminated object name. */
+    int           data_ofs; /**< Model-data offset from the start of the MDS image. */
+    int           parent;   /**< Parent object index, or a negative value for no parent. */
+    sceVu0FMATRIX matrix;   /**< Transform relative to the parent object. */
 };
 
 /**
@@ -48,9 +48,9 @@ extern int dset_mds_objnum;
    The two name lists select objects that get their visual built differently; either may be null.
    The three-argument form is the same thing against the global visual allocator.
  */
-CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **name0, char **name1);
-CFrameVu1 *LoadMDSFile(u_int *data, int attr, int unknown0);
-void LoadMDSFileLOD(CFrameVu1 **frame, u_int **data, CDataAlloc2<1> *alloc, int attr);
+CFrameVu1 *LoadMDSFile(u_int *data, CDataAlloc2<1> *alloc, int attr, char **double_names, char **retain_names);
+CFrameVu1 *LoadMDSFile(u_int *data, int attr, int unused);
+void       LoadMDSFileLOD(CFrameVu1 **frame, u_int **data, CDataAlloc2<1> *alloc, int attr);
 
 /**
  * The same for a collision scene, whose objects carry shapes to be asked questions of rather than
@@ -64,7 +64,7 @@ CFrameVu1 *LoadCollisionFile(u_int *data);
    copies are parented to each other rather than to the originals.
  */
 CFrameVu1 *CopyFrameVu1(CFrameVu1 *frame, CDataAlloc2<1> *alloc);
-CFrame *CopyFrame(CFrame *frame, CDataAlloc2<1> *alloc);
+CFrame    *CopyFrame(CFrame *frame, CDataAlloc2<1> *alloc);
 
 /**
  * Exported and empty, and nothing in either program calls it.

@@ -8,8 +8,6 @@ SeparateDefinitionBlocks: Always
 BreakBeforeBraces: Attach
 ---
 Language: Cpp
-
-# Include sorting
 SortIncludes: true
 IncludeBlocks: Regroup
 IncludeCategories:
@@ -36,12 +34,17 @@ IncludeCategories:
 
 AllowShortEnumsOnASingleLine: false
 AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+AlignArrayOfStructures: Left
+InsertBraces: true
+InsertNewlineAtEOF: true
 AccessModifierOffset: -4
 IndentCaseLabels: true
 PointerAlignment: Right
-
 AlwaysBreakTemplateDeclarations: Yes
-
 MaxEmptyLinesToKeep: 1
 
 # Code spacing

@@ -8,7 +8,7 @@
 #include "itemdata.hpp"
 #include "savedata.hpp"
 
-void CMenuItemStep::Initialize(void) {
+void CMenuItemStep::Initialize() {
     frame = 0;
     last_item = -1;
     last_slot = -1;
@@ -37,10 +37,10 @@ void CMenuItemStep::LoopStep(int interval) {
     }
 }
 
-void CMenuItemStep::CheckItemVolume(void) {
-    int slot;
+void CMenuItemStep::CheckItemVolume() {
+    int        slot;
     ITEM_PACK *pack;
-    int elapsed = pending_volume;
+    int        elapsed = pending_volume;
 
     if (elapsed > 0) {
         int preservation[100];
@@ -49,8 +49,7 @@ void CMenuItemStep::CheckItemVolume(void) {
         chara_no = 0;
 
         for (slot = 0; slot < pack->num; slot++) {
-            if (pack->item[slot] == ITEM_ICE_BLOCK || pack->item[slot] == ITEM_SMALL_ICE ||
-                pack->item[slot] == ITEM_TINY_ICE) {
+            if (pack->item[slot] == ITEM_ICE_BLOCK || pack->item[slot] == ITEM_SMALL_ICE || pack->item[slot] == ITEM_TINY_ICE) {
                 int neighbor[4] = {-1, -1, -1, -1};
                 int row = slot / 5;
                 if (row != 0) {

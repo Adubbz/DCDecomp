@@ -164,87 +164,31 @@ sceVu0FVECTOR camera_dir;
 SND_SE_SEQ se_seq[32];
 
 /**
- * Returns the table row for a sound effect, or zero when the number names no
- * row. The number selects between the fixed table, the current basic set, the
- * current chapter set and the current voice set.
- *
- * @mangled GetSeInfo__Fi
- * @address 0x15A0B0
- * @size 0x148
- */
-static SND_SE_INFO *GetSeInfo(int se_no);
-
-/**
- * Returns the port a sound effect plays on, or the default port when its row
- * does not name one.
- *
- * @mangled GetPortNo__Fi
- * @address 0x15A200
- * @size 0x38
- */
-static int GetPortNo(int se_no);
-
-/**
- * Returns the table row for a menu sound effect, or zero when the number names
- * no row.
- *
- * @mangled GetSPInfo__Fi
- * @address 0x15B5B0
- * @size 0x40
- */
-static SND_SE_INFO *GetSPInfo(int se_no);
-
-/**
- * Finds the sequence slot already playing a sound on a voice, and reports
- * through found that it did. Returns the first free slot instead when there is
- * no such slot, or zero when every slot is taken.
- *
- * @mangled GetSeSeq__FPiii
- * @address 0x15AE10
- * @size 0xC0
- */
-static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice);
-
-/**
- * Plays a sound effect at an explicit volume and pan.
- *
- * @mangled SndSePlay__Fiffi
- * @address 0x15A760
- * @size 0xBC
- */
-void SndSePlay(int se_no, float volume, float pan, int voice);
-
-/**
  * Advances every sound-effect sequence that is running.
  *
  * @mangled SndSeSeqStep__Fv
  * @address 0x15AFA0
  * @size 0xB8
  */
-static void SndSeSeqStep(void);
-
-/**
- * Frees one sound-effect sequence slot.
- *
- * @mangled InitSeSeq__FP10SND_SE_SEQ
- * @address 0x15AE00
- * @size 0x10
- */
-static void InitSeSeq(SND_SE_SEQ *seq);
+static void SndSeSeqStep();
 
 EDIT_ELEMENT_ATRA *GetEditAtraData(int ground, int number) {
-    if (ground < 0 || ground >= 6)
+    if (ground < 0 || ground >= 6) {
         return 0;
-    if (number < 0 || number >= 100)
+    }
+    if (number < 0 || number >= 100) {
         return 0;
+    }
     return &EditElementData[ground][number];
 }
 
 EDIT_PARTS_ATRA *GetEditAtraPartsData(int ground, int number) {
-    if (ground < 0 || ground >= 6)
+    if (ground < 0 || ground >= 6) {
         return 0;
-    if (number < 0 || number >= 24)
+    }
+    if (number < 0 || number >= 24) {
         return 0;
+    }
     return &EditPartsData[ground].parts[number];
 }
 
@@ -252,17 +196,16 @@ EDIT_ELEMENT_ATRA *GetEditAtraChipData(int ground, int number) {
     return GetEditAtraData(ground, number + 40);
 }
 
-void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green,
-               unsigned char blue) {
+void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned char green, unsigned char blue) {
     sceVu0IVECTOR screen;
 
     if (texture == 0) {
         return;
     }
 
-    int visible = MGRotTransPers2D(screen, position, 0);
-    int screen_x = screen[0];
-    int screen_y = screen[1];
+    int   visible = MGRotTransPers2D(screen, position, 0);
+    int   screen_x = screen[0];
+    int   screen_y = screen[1];
     float flare_offset[8] = {0.1f, 0.2f, 0.4f, 0.5f, 0.8f, 0.9f, 1.0f, 1.3f};
     float flare_size[8] = {0.1f, 0.2f, 1.0f, 0.3f, 2.0f, 0.5f, 3.8f, 0.5f};
 
@@ -309,7 +252,7 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         }
 
         float level = (float) ((center_x + center_y) >> 1) / 2.7f;
-        int alpha = (int) level;
+        int   alpha = (int) level;
         MGFillBox(CRect_i_(0, 0, 0x2800, (SCREEN_HALF_HEIGHT << 4)), red, green, blue, (unsigned char) (int) level);
     }
 }
@@ -321,7 +264,7 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
  * @address 0x1591A0
  * @size 0x60
  */
-void SndInit(void) {
+void SndInit() {
     if (init_snd == 0) {
         CSnd.Init(0, 0, 0, 0);
         init_snd = 1;
@@ -329,7 +272,7 @@ void SndInit(void) {
     }
 }
 
-void SndInitialize(int, int, int, int) {
+void SndInitialize(int unused0, int unused1, int unused2, int unused3) {
     snd_read_buf = read_buffer;
     SndBgmInit();
     SndAmbientInit();
@@ -521,12 +464,12 @@ static void GetBGMFile(int set_no, char *archive_name, char *config_name) {
  * @size 0x114
  */
 static void SetBGMFile(int set_no, unsigned int *buffer, char *config_name) {
-    char base_name[64];
-    char *dst;
-    char c;
+    char          base_name[64];
+    char         *dst;
+    char          c;
     unsigned int *cfg_script;
-    int size;
-    SND_INFO info;
+    int           size;
+    SND_INFO      info;
 
     SndBgmStop();
     CSnd.LoadSoundFileFromPack(config_name, buffer);
@@ -667,7 +610,7 @@ void SndBgmRePlay() {
 void SndBgmFadeOutStop() {
     float volume = SndGetBgmVol();
     float step = volume / 10.0f;
-    int i;
+    int   i;
 
     for (i = 0; i < 10; i++) {
         sceGsSyncV(0);
@@ -793,6 +736,15 @@ int SndCheckFade() {
     return bgm_fade == 0;
 }
 
+/**
+ * Returns the table row for a sound effect, or zero when the number names no
+ * row. The number selects between the fixed table, the current basic set, the
+ * current chapter set and the current voice set.
+ *
+ * @mangled GetSeInfo__Fi
+ * @address 0x15A0B0
+ * @size 0x148
+ */
 static SND_SE_INFO *GetSeInfo(int se_no) {
     SND_SE_INFO *table;
 
@@ -821,6 +773,14 @@ static SND_SE_INFO *GetSeInfo(int se_no) {
     return &se_info[se_no];
 }
 
+/**
+ * Returns the port a sound effect plays on, or the default port when its row
+ * does not name one.
+ *
+ * @mangled GetPortNo__Fi
+ * @address 0x15A200
+ * @size 0x38
+ */
 static int GetPortNo(int se_no) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -853,12 +813,12 @@ static void GetSoundFile(int set_no, char *archive_name, char *config_name) {
  * @size 0x174
  */
 static void SetSoundFile(int set_no, unsigned int *buffer, char *config_name) {
-    char base_name[64];
-    char *dst;
-    char c;
-    SND_INFO info;
+    char          base_name[64];
+    char         *dst;
+    char          c;
+    SND_INFO      info;
     unsigned int *cfg_script;
-    int size;
+    int           size;
 
     CSnd.LoadSoundFileFromPack(config_name, buffer);
     CSnd.SetVol(15, 0x100);
@@ -968,7 +928,7 @@ void SndSePlay(int se_no, int vol, int voice) {
         if (info->vol_no < 0) {
             vol = 127;
         }
-        int port = GetPortNo(se_no);
+        int        port = GetPortNo(se_no);
         static int system_snd_id = (int) 0.0f;
 
         if (vol < 0) {
@@ -979,6 +939,13 @@ void SndSePlay(int se_no, int vol, int voice) {
     }
 }
 
+/**
+ * Plays a sound effect at an explicit volume and pan.
+ *
+ * @mangled SndSePlay__Fiffi
+ * @address 0x15A760
+ * @size 0xBC
+ */
 void SndSePlay(int se_no, float volume, float pan, int voice) {
     SND_SE_INFO *info = GetSeInfo(se_no);
 
@@ -1036,8 +1003,8 @@ void SndSetSeVol(int se_no, int vol, int voice) {
 
 int SndGetVolf(int se_no, float vol) {
     SND_SE_INFO *info = GetSeInfo(se_no);
-    short *table;
-    int level;
+    short       *table;
+    int          level;
 
     if (info == 0) {
         return 0;
@@ -1086,7 +1053,7 @@ void SndSetSePanf(int se_no, float pan, int voice) {
 void SndPlayFootSound(int kind, int foot, float *position) {
     float volume;
     float pan;
-    int se_no = kind * 4 + 500 + (foot > 0);
+    int   se_no = kind * 4 + 500 + (foot > 0);
 
     float near = 50.0f;
     float far = 300.0f;
@@ -1104,11 +1071,11 @@ void SndPlayFootSound(int kind, int foot, float *position) {
 void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
     sceVu0FVECTOR to_source;
     sceVu0FVECTOR right;
-    float distance = DistVector(pos, camera_pos);
-    float level = 1.0f - (distance - near) / (far - near);
-    float side;
-    float weight;
-    int sign;
+    float         distance = DistVector(pos, camera_pos);
+    float         level = 1.0f - (distance - near) / (far - near);
+    float         side;
+    float         weight;
+    int           sign;
 
     if (distance > far) {
         level = 0.0f;
@@ -1144,12 +1111,28 @@ void SndGetVolPan(float *vol, float *pan, float *pos, float near, float far) {
     *vol *= 1.4f;
 }
 
+/**
+ * Frees one sound-effect sequence slot.
+ *
+ * @mangled InitSeSeq__FP10SND_SE_SEQ
+ * @address 0x15AE00
+ * @size 0x10
+ */
 static void InitSeSeq(SND_SE_SEQ *seq) {
     seq->se_no = -1;
 }
 
+/**
+ * Finds the sequence slot already playing a sound on a voice, and reports
+ * through found that it did. Returns the first free slot instead when there is
+ * no such slot, or zero when every slot is taken.
+ *
+ * @mangled GetSeSeq__FPiii
+ * @address 0x15AE10
+ * @size 0xC0
+ */
 static SND_SE_SEQ *GetSeSeq(int *found, int se_no, int voice) {
-    int i;
+    int         i;
     SND_SE_SEQ *slot = 0;
 
     *found = 0;
@@ -1180,7 +1163,7 @@ void SndSeSeqInit() {
 }
 
 int SndSeSeqPlayStop(int se_no, int length, int voice) {
-    int found;
+    int         found;
     SND_SE_SEQ *slot = GetSeSeq(&found, se_no, voice);
 
     if (slot == 0) {
@@ -1226,7 +1209,7 @@ static void SndSeSeqStep() {
  */
 void SndSeSeqAllStop() {
     SND_SE_SEQ *seq;
-    int i;
+    int         i;
 
     for (i = 0; i < 32; i++) {
         seq = &se_seq[i];
@@ -1383,6 +1366,14 @@ int SndVoiceSyncBG() {
     return 0;
 }
 
+/**
+ * Returns the table row for a menu sound effect, or zero when the number names
+ * no row.
+ *
+ * @mangled GetSPInfo__Fi
+ * @address 0x15B5B0
+ * @size 0x40
+ */
 static SND_SE_INFO *GetSPInfo(int se_no) {
     if (se_no < 0 || se_no >= 64) {
         return 0;
@@ -1510,7 +1501,7 @@ void SndSetSPSeVolf(int se_no, float volume) {
 
     if (info != 0) {
         short *table = CSnd.GetSeInfTbl();
-        int level = table[info->vol_no * 2 + 1];
+        int    level = table[info->vol_no * 2 + 1];
 
         level = (int) ((float) level * volume);
 
@@ -3348,7 +3339,7 @@ SND_SE_INFO special_se_info[65] = {
 
 TAG_PARAM Command__3[2] = {
     {"REVERBE", {1, 1, -1}},
-    {"TABLE", {1, 1, -1}},
+    {"TABLE",   {1, 1, -1}},
 };
 
 int se_list;
@@ -3415,11 +3406,10 @@ void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha) {
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 int u, int v) {
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, int u, int v) {
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
+    float     q;
 
     if (texture == 0) {
         return;
@@ -3429,8 +3419,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
     test = mgPixelTest;
     test.bits.ate = 0;
     test.bits.aref = 0;
@@ -3444,24 +3433,19 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(u << 4, v << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((u + screen.width) << 4, (v + screen.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((u + screen.width) << 4, (v + screen.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel) {
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel) {
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
+    float     q;
 
     if (texture == 0) {
         return;
@@ -3471,8 +3455,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
     test = mgPixelTest;
     test.bits.ate = 0;
     test.bits.aref = 0;
@@ -3486,24 +3469,19 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, 0x80, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, unsigned char alpha) {
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, unsigned char alpha) {
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
+    float     q;
 
     if (texture == 0) {
         return;
@@ -3513,8 +3491,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
     test = mgPixelTest;
     test.bits.ate = 0;
     test.bits.aref = 0;
@@ -3528,25 +3505,19 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, unsigned char red,
-                 unsigned char green, unsigned char blue, unsigned char alpha) {
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha) {
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
+    float     q;
 
     if (texture == 0) {
         return;
@@ -3556,8 +3527,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, ((u_long) linear__2 << 5) | 0x41);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 1, 1, 0, 0));
     test = mgPixelTest;
     test.bits.ate = 0;
     test.bits.aref = 0;
@@ -3571,25 +3541,19 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(red, green, blue, alpha, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left,
-                 spRGBA *bottom_right, int mode) {
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right, int mode) {
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
+    float     q;
 
     if (texture == 0) {
         return;
@@ -3612,37 +3576,29 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     if (mode != 0) {
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     } else {
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
-        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
-                         SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
+        sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
         sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     }
@@ -3652,16 +3608,13 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
-                    int *bottom_right, spRGBA *top_left_colour, spRGBA *top_right_colour,
-                    spRGBA *bottom_left_colour, spRGBA *bottom_right_colour) {
+void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left, int *bottom_right, spRGBA *top_left_colour, spRGBA *top_right_colour, spRGBA *bottom_left_colour, spRGBA *bottom_right_colour) {
     float q = 1.0f;
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left_colour->r, top_left_colour->g, top_left_colour->b, top_left_colour->a, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(top_left[0], top_left[1], top_left[2], 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right_colour->r, top_right_colour->g, top_right_colour->b, top_right_colour->a, *(u_int *) &q));
@@ -3674,8 +3627,7 @@ void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *b
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
-                 int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
     spRGBA colour = {0x80, 0x80, 0x80, 0};
 
     colour.a = alpha;
@@ -3689,8 +3641,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @address 0x15D4B0
  * @size 0x2E0
  */
-void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
-                 int *top_right, int *bottom_left, int *bottom_right, spRGBA *colour) {
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *top_right, int *bottom_left, int *bottom_right, spRGBA *colour) {
     float q;
 
     if (texture == 0) {
@@ -3701,8 +3652,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 1, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(colour->r, colour->g, colour->b, colour->a, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
@@ -3725,8 +3675,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @address 0x15D790
  * @size 0x210
  */
-void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
-                 int *bottom_right, spRGBA *colour) {
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *bottom_right, spRGBA *colour) {
     float q;
 
     if (texture == 0) {
@@ -3737,8 +3686,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 0, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(colour->r, colour->g, colour->b, colour->a, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
@@ -3757,8 +3705,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @address 0x15D9A0
  * @size 0x2FC
  */
-void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
-                    int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha) {
     float q;
 
     if (texture == 0) {
@@ -3769,8 +3716,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(4, 0, 1, 1, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 1, 1, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(0x80, 0x80, 0x80, alpha, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
@@ -3793,8 +3739,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
  * @address 0x15DCA0
  * @size 0x228
  */
-void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
-                    int *bottom_right, spRGBA *colour) {
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *bottom_right, spRGBA *colour) {
     float q;
 
     if (texture == 0) {
@@ -3805,8 +3750,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 1, 1, 0, 1, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(SCE_GS_PRIM_SPRITE, 0, 1, 1, 1, 0, 1, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(colour->r, colour->g, colour->b, colour->a, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(source.x << 4, source.y << 4));
@@ -3818,24 +3762,19 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
     sceVif1PkCloseDirectCode(packet);
 }
 
-void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
-                  int *bottom_right, unsigned char red, unsigned char green, unsigned char blue,
-                  unsigned char alpha) {
+void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left, int *bottom_right, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha) {
     float q = 1.0f;
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(4, 0, 0, 0, 1, 0, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 0, 0, 0, 1, 0, 0, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(red, green, blue, alpha, *(u_int *) &q));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) top_left[0] | ((u_long) top_left[1] << 16) | ((u_long) top_left[2] << 32));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) top_right[0] | ((u_long) top_right[1] << 16) | ((u_long) top_right[2] << 32));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2,
-                     (u_long) bottom_left[0] | ((u_long) bottom_left[1] << 16) | ((u_long) bottom_left[2] << 32));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2,
-                     (u_long) bottom_right[0] | ((u_long) bottom_right[1] << 16) | ((u_long) bottom_right[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) bottom_left[0] | ((u_long) bottom_left[1] << 16) | ((u_long) bottom_left[2] << 32));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZ2, (u_long) bottom_right[0] | ((u_long) bottom_right[1] << 16) | ((u_long) bottom_right[2] << 32));
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 
@@ -3847,18 +3786,16 @@ void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bot
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_left,
-                   spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
+void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right) {
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q = 1.0f;
+    float     q = 1.0f;
 
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
     sceVif1PkAddGsAD(packet, SCE_GS_TEX1_1, SCE_GS_SET_TEX1(1, 0, 1, 1, 0, 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_PRIM,
-                     SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 0, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_PRIM, SCE_GS_SET_PRIM(4, 1, 0, 0, 1, 0, 0, 0, 0));
     test = mgPixelTest;
     test.bits.ate = 0;
     test.bits.aref = 0;
@@ -3883,14 +3820,13 @@ void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_le
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, int pivot_x, int pivot_y, float angle) {
-    float x[4];
-    float y[4];
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, int pivot_x, int pivot_y, float angle) {
+    float     x[4];
+    float     y[4];
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
-    int i;
+    float     q;
+    int       i;
 
     if (texture == 0) {
         return;
@@ -3928,14 +3864,11 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[0], y[0], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[1], y[1], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[2], y[2], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[3], y[3], 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
@@ -3943,16 +3876,13 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkCloseDirectCode(packet);
 }
 
-void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                    const CRect_i_ &texel, int pivot_x, int pivot_y, float angle,
-                    unsigned char red, unsigned char green, unsigned char blue,
-                    unsigned char alpha) {
-    float x[4];
-    float y[4];
+void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, int pivot_x, int pivot_y, float angle, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha) {
+    float     x[4];
+    float     y[4];
     sceGsTest test;
     sceGsZbuf zbuf;
-    float q;
-    int i;
+    float     q;
+    int       i;
 
     q = 1.0f;
     sceVif1PkCnt(packet, 0);
@@ -3987,14 +3917,11 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[0], y[0], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + screen.width) << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[1], y[1], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[2], y[2], 0, 0));
-    sceVif1PkAddGsAD(packet, SCE_GS_UV,
-                     SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
+    sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(x[3], y[3], 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
@@ -4009,8 +3936,6 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
  * @address 0x15F090
  * @size 0x68
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel,
-                 unsigned char alpha) {
-    set2DSprite(packet, texture, CRect_i_(screen->x, screen->y, screen->width, screen->height),
-                CRect_i_(texel->x, texel->y, texel->width, texel->height), alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel, unsigned char alpha) {
+    set2DSprite(packet, texture, CRect_i_(screen->x, screen->y, screen->width, screen->height), CRect_i_(texel->x, texel->y, texel->width, texel->height), alpha);
 }

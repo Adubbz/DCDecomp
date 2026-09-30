@@ -7,6 +7,8 @@
  */
 class CScFader {
 public:
+    int value; /**< The fade itself, between -4 and 128. */
+
     CScFader() { value = 0; }
 
     /**
@@ -17,7 +19,7 @@ public:
      * @size 0x48
      * @unknownret
      */
-    int In(void);
+    int In();
 
     /**
      *          Advances the alternate fade-in transition.
@@ -27,7 +29,7 @@ public:
      * @size 0x48
      * @unknownret
      */
-    int In2(void);
+    int In2();
 
     /**
      *          Advances the fade-out transition.
@@ -37,7 +39,7 @@ public:
      * @size 0x48
      * @unknownret
      */
-    int Out(void);
+    int Out();
 
     /**
      *          Converts the stored fade for the requested use.
@@ -57,7 +59,5 @@ public:
      * @size 0x10
      * @unknownret
      */
-    void Skip(void);
-
-    int value; /**< The fade itself, between -4 and 128. */
+    void Skip();
 };

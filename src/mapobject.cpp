@@ -23,7 +23,7 @@ CFrame *CMapObject::GetCollisionFrame() {
 }
 
 void CMapObject::FrameObjectOnOff(char *name, int on) {
-    int i;
+    int     i;
     CFrame *found;
 
     if (name == NULL) {

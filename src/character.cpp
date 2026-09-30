@@ -58,16 +58,16 @@ void zcross(float z, float *from, float *to, float *out) {
 int scissior(float out[][4], float first[][4], float second[][4], float near_z) {
     float first_distance[4];
     float second_distance[4];
-    int count;
-    int first_front;
-    int second_front;
-    int first_behind;
-    int second_behind;
-    int first_crosses;
-    int pair_crosses;
-    int second_crosses;
-    int i;
-    int crossing_count;
+    int   count;
+    int   first_front;
+    int   second_front;
+    int   first_behind;
+    int   second_behind;
+    int   first_crosses;
+    int   pair_crosses;
+    int   second_crosses;
+    int   i;
+    int   crossing_count;
 
     count = 0;
     first_front = 0;
@@ -251,8 +251,7 @@ void CCharacter::ClearPointLight() {
     }
 }
 
-int CCharacter::SetPointLight(float *pos, float inner_range, float outer_range, float red,
-                              float green, float blue, float alpha) {
+int CCharacter::SetPointLight(float *pos, float inner_range, float outer_range, float red, float green, float blue, float alpha) {
     int i;
 
     // The light goes into the first slot that is free.
@@ -295,7 +294,7 @@ void CCharacter::TexAnimeOff(int no) {
 
 int CCharacter::SetFootSound(float left_frame, float right_frame, int motion_no) {
     CHARA_FOOT_SOUND *sound;
-    int i;
+    int               i;
 
     // One sound for each foot, each in the first slot that is free.
     for (i = 0; i < CHARA_FOOT_SOUND_MAX; i++) {
@@ -333,7 +332,7 @@ void CCharacter::EventEnable(int on) {
 
 void CCharacter::SetEvent(float frame, int kind, int no, int motion_no) {
     CHARA_EVENT *event;
-    int i;
+    int          i;
 
     for (i = 0; i < CHARA_EVENT_MAX; i++) {
         event = &this->event[i];
@@ -370,10 +369,9 @@ void CCharacter::SetMotionCamera(CCamera *camera) {
     }
 }
 
-tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *out_start,
-                                           int *out_end, int *out_set) {
-    int index;
-    int i;
+tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *out_start, int *out_end, int *out_set) {
+    int             index;
+    int             i;
     tagMOTION_TYPE *found;
 
     index = -1;
@@ -413,7 +411,7 @@ tagMOTION_TYPE *CCharacter::GetMotionParam(int motion_no, int *out_index, int *o
 
 MOTION_INFO *CCharacter::GetMotionInfo(int motion_no) {
     tagMOTION_TYPE *motion;
-    int index;
+    int             index;
 
     motion = GetMotionParam(motion_no, &index, NULL, NULL, NULL);
     if (motion == NULL) {
@@ -427,7 +425,7 @@ MOTION_INFO *CCharacter::GetMotionInfo(int motion_no) {
 
 float CCharacter::GetNowTime() {
     tagMOTION_TYPE *motion;
-    int index;
+    int             index;
 
     motion = GetMotionParam(this->motion_no, &index, NULL, NULL, NULL);
     if (motion != NULL) {
@@ -437,23 +435,23 @@ float CCharacter::GetNowTime() {
 }
 
 void CCharacter::Step() {
-    int index;
-    int set_no;
+    int             index;
+    int             set_no;
     tagMOTION_TYPE *motion;
-    float old_time;
+    float           old_time;
 #ifdef PAL
     float step;
 #endif
-    float new_time;
-    float saved_speed;
-    float saved_blend_step;
-    float delta;
-    float abs_delta;
-    MOTION_INFO *motion_info;
+    float             new_time;
+    float             saved_speed;
+    float             saved_blend_step;
+    float             delta;
+    float             abs_delta;
+    MOTION_INFO      *motion_info;
     CHARA_FOOT_SOUND *sound;
-    CHARA_EVENT *event;
-    int foot_sound_enabled;
-    sceVu0FVECTOR position;
+    CHARA_EVENT      *event;
+    int               foot_sound_enabled;
+    sceVu0FVECTOR     position;
 
     this->motion_state = 0;
     if (this->motion_no < 0) {
@@ -479,15 +477,13 @@ void CCharacter::Step() {
         step = this->motion_speed;
     }
     if (motion_info != NULL) {
-        if (old_time >= (float) motion_info->start &&
-            (float) motion_info->end - step - 0.01f <= old_time) {
+        if (old_time >= (float) motion_info->start && (float) motion_info->end - step - 0.01f <= old_time) {
             this->motion_state = 3;
         }
     }
 #else
     if (motion_info != NULL) {
-        if (old_time >= (float) motion_info->start && old_time <= (float) motion_info->end &&
-            (float) motion_info->end - motion_info->speed - 0.01f <= old_time) {
+        if (old_time >= (float) motion_info->start && old_time <= (float) motion_info->end && (float) motion_info->end - motion_info->speed - 0.01f <= old_time) {
             this->motion_state = 3;
         }
     }
@@ -517,8 +513,7 @@ void CCharacter::Step() {
 #ifdef PAL
         if (!(motion->state.time + step < (float) motion->motion_info[index].end)) {
 #else
-        if (!(motion->state.time + saved_speed + 0.01f <
-              (float) motion->motion_info[index].end)) {
+        if (!(motion->state.time + saved_speed + 0.01f < (float) motion->motion_info[index].end)) {
 #endif
             motion->motion_info[index].speed = 0.0f;
         }
@@ -577,12 +572,9 @@ void CCharacter::Step() {
     delta = old_time - new_time;
     abs_delta = delta < 0.0f ? -delta : delta;
     if (abs_delta < 1.0f) {
-        for (int i = 0; i < CHARA_FOOT_SOUND_MAX && this->foot_sound_enable != 0 &&
-                        this->foot_sound_id >= 0 && this->foot_sound_wait == 0;
-             i++) {
+        for (int i = 0; i < CHARA_FOOT_SOUND_MAX && this->foot_sound_enable != 0 && this->foot_sound_id >= 0 && this->foot_sound_wait == 0; i++) {
             sound = &this->foot_sound[i];
-            if ((float) sound->frame >= 0.0f && sound->motion_no == set_no &&
-                (float) sound->frame >= old_time && (float) sound->frame < new_time) {
+            if ((float) sound->frame >= 0.0f && sound->motion_no == set_no && (float) sound->frame >= old_time && (float) sound->frame < new_time) {
                 SndPlayFootSound(this->foot_sound_id, sound->foot, position);
                 this->foot_sound_wait = 5;
             }
@@ -593,8 +585,7 @@ void CCharacter::Step() {
     if (delta < 1.0f) {
         for (int i = 0; i < CHARA_EVENT_MAX && this->event_enable != 0; i++) {
             event = &this->event[i];
-            if ((float) event->frame < 0.0f || event->motion_no != set_no ||
-                (float) event->frame < old_time || (float) event->frame >= new_time) {
+            if ((float) event->frame < 0.0f || event->motion_no != set_no || (float) event->frame < old_time || (float) event->frame >= new_time) {
                 continue;
             }
             switch (event->kind) {
@@ -618,13 +609,13 @@ void CCharacter::Step() {
 }
 
 void CCharacter::ShadowStep() {
-    int index;
-    int i;
+    int             index;
+    int             i;
     tagMOTION_TYPE *motion;
     tagMOTION_TYPE *shadow;
-    int motion_no;
-    int start;
-    float speed;
+    int             motion_no;
+    int             start;
+    float           speed;
 
     motion_no = this->motion_no;
     if (motion_no < 0) {
@@ -683,15 +674,14 @@ void CCharacter::ShadowStep() {
     shadow->state.next_frame = motion->state.next_frame;
     shadow->state.playing_no = motion->state.playing_no;
     shadow->state.blending = motion->state.blending;
-    SetMotionEX(this->shadow_frame, shadow, shadow->motion_info, &shadow->state,
-                shadow->frame_info);
+    SetMotionEX(this->shadow_frame, shadow, shadow->motion_info, &shadow->state, shadow->frame_info);
     shadow->motion_info[index].speed = speed;
 }
 
 void CCharacter::ClothStep(int step) {
     sceVu0FVECTOR world_pos;
-    CFrame *root;
-    int i;
+    CFrame       *root;
+    int           i;
 
     if (MotionStopFlag != 0) {
         return;
@@ -792,19 +782,19 @@ void CCharacter::SetScale(float *scale) {
 void CCharacter::Draw() {
     sceVu0FVECTOR ambient;
     sceVu0FVECTOR saved_ambient;
-    float light_direction[4][4];
-    float light_colour[4][4];
-    float saved_light_colour[4][4];
-    float saved_light_direction[4][4];
+    float         light_direction[4][4];
+    float         light_colour[4][4];
+    float         saved_light_colour[4][4];
+    float         saved_light_direction[4][4];
     sceVu0FVECTOR pos;
     sceVu0FVECTOR direction;
-    int fading;
-    int light_slot;
-    int i;
-    int colour_no;
-    int cloth_no;
-    float distance;
-    float level;
+    int           fading;
+    int           light_slot;
+    int           i;
+    int           colour_no;
+    int           cloth_no;
+    float         distance;
+    float         level;
 
     if (this->frame != NULL) {
         this->frame->SetPosition(this->pos[0], this->pos[1], this->pos[2]);
@@ -852,9 +842,7 @@ void CCharacter::Draw() {
         // away over the rest.
         level = 1.0f;
         if (!(distance <= this->point_light[i].inner_range)) {
-            level = level - (distance - this->point_light[i].inner_range) /
-                                (this->point_light[i].outer_range -
-                                 this->point_light[i].inner_range);
+            level = level - (distance - this->point_light[i].inner_range) / (this->point_light[i].outer_range - this->point_light[i].inner_range);
         }
         light_colour[light_slot][0] = this->point_light[i].colour[0] * level;
         light_colour[light_slot][1] = this->point_light[i].colour[1] * level;
@@ -916,24 +904,19 @@ void CCharacter::DrawShadow() {
     MGDrawShadowFast(this->shadow_frame, transform, light_direction);
 }
 
-void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
-                              CDataAlloc2<1> *texture_alloc) {
+void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *texture_alloc) {
     LoadPackData(pack, name, model_alloc, model_alloc, texture_alloc);
 }
 
-void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
-                              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc) {
+void CCharacter::LoadPackData(unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *texture_alloc) {
     ReadInfo(this, pack, name, model_alloc, motion_alloc, texture_alloc, 0, NULL, 0, 0);
 }
 
-void CCharacter::LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
-                               int texture_block_no, CDataAlloc2<1> *image_alloc, int visual_type) {
+void CCharacter::LoadPackData2(unsigned int *pack, char *name, CDataAlloc2<1> *alloc, int texture_block_no, CDataAlloc2<1> *image_alloc, int visual_type) {
     ReadInfo(this, pack, name, alloc, alloc, alloc, texture_block_no, image_alloc, visual_type, 0);
 }
 
-void CCharacter::LoadPackData3(unsigned int *pack, char *name, CDataAlloc2<1> *alloc,
-                               int texture_block_no, CDataAlloc2<1> *image_alloc, int keep_textures,
-                               int visual_type) {
+void CCharacter::LoadPackData3(unsigned int *pack, char *name, CDataAlloc2<1> *alloc, int texture_block_no, CDataAlloc2<1> *image_alloc, int keep_textures, int visual_type) {
     ReadInfo(this, pack, name, alloc, alloc, alloc, texture_block_no, image_alloc, visual_type, keep_textures);
 }
 

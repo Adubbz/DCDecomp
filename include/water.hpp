@@ -9,14 +9,27 @@
 #include "framevu1.hpp"
 #include "visualvu1.hpp"
 
-struct RenderInfo;
-struct sceVif1Packet;
-
 /**
  * Draws the water surface of one map part.
  */
 class CWater {
 public:
+    s32            rows;         /**< Grid rows the surface is divided into. */
+    s32            columns;      /**< Grid columns the surface is divided into. */
+    float         *height;       /**< Wave heights the surface currently draws from. */
+    float         *height_a;     /**< First of the two wave-height buffers. */
+    float         *height_b;     /**< Second of the two wave-height buffers. */
+    sceVu0FVECTOR  vertex[4];    /**< The four corners of the surface. */
+    u_int         *packet[3];    /**< VU packets, including one for each display buffer. */
+    CVisualPolyVu1 visual;       /**< Draws the polygons of the surface. */
+    u8             color[4];     /**< Red, green, blue and alpha channels of the surface. */
+    float          wave_speed;   /**< Speed the ripples travel across the grid at. */
+    float          damping;      /**< Rate the ripples lose height at. */
+    float          height_scale; /**< Scale from a wave height to the vertical displacement of its vertex. */
+    float          distortion;   /**< Scale from a height difference to the texture-coordinate shift it causes. */
+    s32            tags_built;   /**< Set once both packets hold their tags, so rebuilds write only vertex data. */
+    CFrameVu1      frame;        /**< Places and draws the water surface. */
+
     /**
      * Copies one surface over another, field by field.
      *
@@ -25,23 +38,7 @@ public:
      * @size 0xF4
      * @unknownret
      */
-    CWater &operator=(CWater &);
-
-    s32 rows;                /**< Grid rows the surface is divided into. */
-    s32 columns;             /**< Grid columns the surface is divided into. */
-    float *height;           /**< Wave heights the surface currently draws from. */
-    float *height_a;         /**< First of the two wave-height buffers. */
-    float *height_b;         /**< Second of the two wave-height buffers. */
-    sceVu0FVECTOR vertex[4]; /**< The four corners of the surface. */
-    u_int *packet[3];        /**< VU packets, including one for each display buffer. */
-    CVisualPolyVu1 visual;   /**< Draws the polygons of the surface. */
-    u8 color[4];             /**< Red, green, blue and alpha channels of the surface. */
-    float wave_speed;        /**< Speed the ripples travel across the grid at. */
-    float damping;           /**< Rate the ripples lose height at. */
-    float height_scale;      /**< Scale from a wave height to the vertical displacement of its vertex. */
-    float distortion;        /**< Scale from a height difference to the texture-coordinate shift it causes. */
-    s32 tags_built;          /**< Set once both packets hold their tags, so rebuilds write only vertex data. */
-    CFrameVu1 frame;         /**< Places and draws the water surface. */
+    CWater &operator=(CWater &src);
 
     /**
      * Stores the ripple speed and damping and the two scales the surface is
@@ -89,7 +86,7 @@ public:
      * @address 0x161100
      * @size 0xC4
      */
-    int CheckClip(void);
+    int CheckClip();
 
     /**
      * Advances the ripples one step, writing into whichever of the two height
@@ -99,7 +96,7 @@ public:
      * @address 0x1611D0
      * @size 0x108
      */
-    void Hamon(void);
+    void Hamon();
 
     /**
      * Copies four corner positions into the water surface.
@@ -137,7 +134,7 @@ public:
      * @address 0x1615C0
      * @size 0x8C
      */
-    CWater(void);
+    CWater();
 };
 
 STATIC_ASSERT(sizeof(CWater) == 0x320);
@@ -146,5 +143,4 @@ STATIC_ASSERT(sizeof(CWater) == 0x320);
  * back-reference that MWCC 2.3.3 does not emit, so the member function above
  * cannot carry it. Declared here as it stands instead, for the callers that
  * have to reach it. */
-extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *info,
-                                                                sceVif1Packet *draw_packet, void *parent_info);
+extern "C" int DrawVu1__6CWaterFP10RenderInfoP13sceVif1PacketP1(CWater *water, RenderInfo *info, sceVif1Packet *draw_packet, void *parent_info);

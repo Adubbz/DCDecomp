@@ -13,8 +13,7 @@
 #include "snd.hpp"
 #include "texture.hpp"
 
-void CHitMark::Set(float *position, float *direction, int kind, float spread, float shrink,
-                   float gravity, float speed, int count, float floor_y) {
+void CHitMark::Set(float *position, float *direction, int kind, float spread, float shrink, float gravity, float speed, int count, float floor_y) {
     int i;
 
     SetPosition(position);
@@ -38,12 +37,9 @@ void CHitMark::Set(float *position, float *direction, int kind, float spread, fl
         this->offset[i][1] = rand() / 2147483648.0f - 0.5f;
         this->offset[i][2] = rand() / 2147483648.0f - 0.5f;
         this->offset[i][3] = 1.0f;
-        this->velocity[i][0] =
-            direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
-        this->velocity[i][1] =
-            direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
-        this->velocity[i][2] =
-            direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
+        this->velocity[i][0] = direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
+        this->velocity[i][1] = direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
+        this->velocity[i][2] = direction[0] + this->spread * rand() / 2147483648.0f - this->spread / 2.0f;
         this->size[i] = 0.1f + 1.2f * rand() / 2147483648.0f;
         this->used[i] = 1;
     }
@@ -51,14 +47,14 @@ void CHitMark::Set(float *position, float *direction, int kind, float spread, fl
 }
 
 void CHitMark::Draw() {
-    int top_left[4];
-    int top_right[4];
-    int bottom_left[4];
-    int bottom_right[4];
+    int           top_left[4];
+    int           top_right[4];
+    int           bottom_left[4];
+    int           bottom_right[4];
     sceVu0FVECTOR base;
     sceVu0FVECTOR mark_pos;
-    CTexture *texture;
-    int i;
+    CTexture     *texture;
+    int           i;
 
     if (this->count == 0) {
         return;
@@ -75,8 +71,7 @@ void CHitMark::Draw() {
         mark_pos[1] = base[1] + this->offset[i][1];
         mark_pos[2] = base[2] + this->offset[i][2];
         mark_pos[3] = 1.0f;
-        if (MGRotTransPers3DSprite(top_left, bottom_right, mark_pos, this->size[i],
-                                   this->size[i] / 2.0f, 0) != 1) {
+        if (MGRotTransPers3DSprite(top_left, bottom_right, mark_pos, this->size[i], this->size[i] / 2.0f, 0) != 1) {
             continue;
         }
 
@@ -96,8 +91,7 @@ void CHitMark::Draw() {
                 rect.y = 0x00;
                 rect.width = 0x10;
                 rect.height = 0x10;
-                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right,
-                            0x80);
+                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
             case 1: {
@@ -106,8 +100,7 @@ void CHitMark::Draw() {
                 rect.y = 0x10;
                 rect.width = 0x10;
                 rect.height = 0x10;
-                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right,
-                            0x80);
+                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
             case 2: {
@@ -116,8 +109,7 @@ void CHitMark::Draw() {
                 rect.y = 0x00;
                 rect.width = 0x10;
                 rect.height = 0x10;
-                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right,
-                            0x80);
+                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
             case 3: {
@@ -126,8 +118,7 @@ void CHitMark::Draw() {
                 rect.y = 0x00;
                 rect.width = 0x20;
                 rect.height = 0x20;
-                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right,
-                            0x40);
+                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x40);
                 break;
             }
             case 4: {
@@ -136,8 +127,7 @@ void CHitMark::Draw() {
                 rect.y = 0x20;
                 rect.width = 0x18;
                 rect.height = 0x18;
-                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right,
-                            0x80);
+                set3DSprite(Vif1Packet, texture, rect, top_left, top_right, bottom_left, bottom_right, 0x80);
                 break;
             }
         }
@@ -146,7 +136,7 @@ void CHitMark::Draw() {
 
 void CHitMark::Step() {
     sceVu0FVECTOR base;
-    int i;
+    int           i;
 
     sceVu0CopyVector(base, this->pos);
     if (this->count == 0) {
@@ -188,10 +178,10 @@ void CHitMark::Initialize() {
 }
 
 void CHitPointMark::Draw() {
-    int top_left[4];
-    int top_right[4];
-    int bottom_left[4];
-    int bottom_right[4];
+    int      top_left[4];
+    int      top_right[4];
+    int      bottom_left[4];
+    int      bottom_right[4];
     CRect_i_ rect;
 
     if (this->on == 0) {
@@ -215,8 +205,7 @@ void CHitPointMark::Draw() {
     rect.y = 0x20;
     rect.width = 0x30;
     rect.height = 0x30;
-    set3DSprite(Vif1Packet, TexManager.GetTexture("basefx00", -1), rect, top_left, top_right,
-                bottom_left, bottom_right, 0x80);
+    set3DSprite(Vif1Packet, TexManager.GetTexture("basefx00", -1), rect, top_left, top_right, bottom_left, bottom_right, 0x80);
 }
 
 void CHitPointMark::Step() {

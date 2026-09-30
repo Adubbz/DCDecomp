@@ -31,7 +31,7 @@ extern int Proc;
  * @address 0x244B30
  * @size 0x140
  */
-void LangsetInit(void);
+void LangsetInit();
 
 /**
  * Runs one frame of the language screen and reports that a language has been
@@ -41,7 +41,7 @@ void LangsetInit(void);
  * @address 0x244C70
  * @size 0xE4
  */
-int LangsetLoop(void);
+int LangsetLoop();
 
 /**
  * Moves the language cursor with the pad and reports that the choice was
@@ -51,7 +51,7 @@ int LangsetLoop(void);
  * @address 0x244D60
  * @size 0xD8
  */
-int LangsetProc(void);
+int LangsetProc();
 
 /**
  * Draws the language plate and its five entries, brightening the selected one.
@@ -60,4 +60,4 @@ int LangsetProc(void);
  * @address 0x244E40
  * @size 0x3A8
  */
-void LangsetDraw(void);
+void LangsetDraw();

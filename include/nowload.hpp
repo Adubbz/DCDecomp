@@ -7,9 +7,6 @@
 
 #include "texture.hpp"
 
-// Forward declarations for the types these declarations name.
-struct TM2_head;
-
 /**
  * @file
  * Declares the calls that drive the loading screen while the disc is read.
@@ -22,7 +19,7 @@ struct TM2_head;
  * @address 0x153F40
  * @size 0xC
  */
-int check_now_loading(void);
+int check_now_loading();
 
 /**
  * Clears the flag set after the loading screen completes a field.
@@ -31,7 +28,7 @@ int check_now_loading(void);
  * @address 0x153F50
  * @size 0xC
  */
-void clear_now_loading_vsync_end(void);
+void clear_now_loading_vsync_end();
 
 /**
  * Reports whether the loading screen has completed a field.
@@ -40,7 +37,7 @@ void clear_now_loading_vsync_end(void);
  * @address 0x153F60
  * @size 0xC
  */
-int check_now_loading_vsync_end(void);
+int check_now_loading_vsync_end();
 
 /**
  * Waits for the loading screen to reach the end of a field.
@@ -49,7 +46,7 @@ int check_now_loading_vsync_end(void);
  * @address 0x153F70
  * @size 0x3C
  */
-void wait_now_loading_vsync(void);
+void wait_now_loading_vsync();
 
 /**
  * Hides the active loading-screen overlay.
@@ -58,7 +55,7 @@ void wait_now_loading_vsync(void);
  * @address 0x153FB0
  * @size 0x10
  */
-void now_loading_off(void);
+void now_loading_off();
 
 /**
  * Loads the loading screen for one map, arms its vertical-sync callback, and
@@ -87,8 +84,7 @@ int VSyncCallBack_Load(int field);
  * @address 0x154770
  * @size 0x1D4
  */
-void LoadTexture(char *name, unsigned char *archive, CTexture *texture, int image_address,
-                 int palette_address);
+void LoadTexture(char *name, unsigned char *archive, CTexture *texture, int image_address, int palette_address);
 
 /**
  * Uploads one already-located image and its palette to video memory and

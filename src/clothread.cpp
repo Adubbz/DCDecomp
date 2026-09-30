@@ -93,21 +93,21 @@ static void CommandBOUND(void **argv);
  * integer, 2 for a float -- and ends at -1.
  */
 struct COMMAND_INFO {
-    char *name;        /**< Keyword the line starts with. */
-    int arg_types[16]; /**< Kind of each argument, ended by -1. */
+    char *name;          /**< Keyword the line starts with. */
+    int   arg_types[16]; /**< Kind of each argument, ended by -1. */
 };
 
 /* The keywords a cloth configuration file may use. */
 static COMMAND_INFO Command[9] = {
-    {"SIZE", {1, 1, -1}},
-    {"FRAME", {0, -1}},
-    {"NORMAL", {2, -1}},
-    {"FOLLOW", {2, 2, 2, -1}},
-    {"K", {2, 2, 2, -1}},
-    {"WINDEFFECT", {2, -1}},
-    {"GRAVITY", {2, 2, 2, -1}},
-    {"POLYDIV", {0, -1}},
-    {"BOUND", {0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, -1}},
+    {"SIZE",       {1, 1, -1}                                    },
+    {"FRAME",      {0, -1}                                       },
+    {"NORMAL",     {2, -1}                                       },
+    {"FOLLOW",     {2, 2, 2, -1}                                 },
+    {"K",          {2, 2, 2, -1}                                 },
+    {"WINDEFFECT", {2, -1}                                       },
+    {"GRAVITY",    {2, 2, 2, -1}                                 },
+    {"POLYDIV",    {0, -1}                                       },
+    {"BOUND",      {0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, -1}},
 };
 
 /* What each of those keywords does, in the same order. */
@@ -136,9 +136,9 @@ static int CheckChar(char ch);
  * @size 0x1B4
  */
 CCloth *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc) {
-    char arg_storage[16][256];
+    char  arg_storage[16][256];
     void *argv[16];
-    int command;
+    int   command;
 
     DataBuffer = alloc;
     pCloth = new ((u_long128 *) alloc->Alloc(0x856)) CCloth(16, 16, 1.0f);
@@ -175,14 +175,18 @@ static void CommandSIZE(void **argv) {
     int num_i = *(int *) argv[0];
     int num_j = *(int *) argv[1];
 
-    if (num_i <= 0)
+    if (num_i <= 0) {
         num_i = 1;
-    if (num_i > 16)
+    }
+    if (num_i > 16) {
         num_i = 16;
-    if (num_j <= 0)
+    }
+    if (num_j <= 0) {
         num_j = 1;
-    if (num_j > 16)
+    }
+    if (num_j > 16) {
         num_j = 16;
+    }
     pCloth->num_i = num_i;
     pCloth->num_j = num_j;
 }
@@ -233,12 +237,13 @@ static void CommandGRAVITY(void **argv) {
 
 static void CommandPOLYDIVE(void **argv) {
     char *flags = (char *) argv[0];
-    int row = 0;
+    int   row = 0;
 
     while (row < 16) {
         char flag = *flags;
-        if (flag == 0)
+        if (flag == 0) {
             break;
+        }
         pCloth->polygon_divide[row] = (flag != '0');
         flags++;
         row++;
@@ -254,12 +259,12 @@ static void CommandPOLYDIVE(void **argv) {
  */
 static void CommandBOUND(void **argv) {
     sceVu0FVECTOR box_vectors[4];
-    CBound *bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
+    CBound       *bound = new ((u_long128 *) DataBuffer->Alloc(0x14)) CBound(1.0f, 1.0f, 1.0f);
 
     if (bound == NULL) {
         return;
     }
-    int arg_index = 0;
+    int     arg_index = 0;
     CFrame *frame = ParentFrame->SearchFrame((char *) argv[arg_index++]);
     if (frame == NULL) {
         return;
@@ -272,8 +277,7 @@ static void CommandBOUND(void **argv) {
         box_vectors[i][3] = 1.0f;
     }
     box_vectors[0][3] = 0.0f;
-    bound->SetDir(frame, box_vectors[1], box_vectors[2], box_vectors[0], box_vectors[3][0],
-                  box_vectors[3][1]);
+    bound->SetDir(frame, box_vectors[1], box_vectors[2], box_vectors[0], box_vectors[3][0], box_vectors[3][1]);
     float half_x;
     float half_y;
     float half_z;
@@ -312,52 +316,60 @@ static void CommandBOUND(void **argv) {
 static int GetArg(input_str &input, int *arg_types, void **argv) {
     char word[256];
 
-    if (!SkipSpace(input))
+    if (!SkipSpace(input)) {
         return 0;
+    }
     int arg_count = 0;
     while (arg_types[arg_count++] >= 0)
         ;
     int ch;
     for (int i = 0; i < arg_count - 1; i++) {
         int length = 0;
-        if (!SkipSpace(input))
+        if (!SkipSpace(input)) {
             return 0;
+        }
         while (1) {
-            if (input.get(&ch) == 0)
+            if (input.get(&ch) == 0) {
                 return 0;
-            if (ch == ',' || !CheckChar(ch))
+            }
+            if (ch == ',' || !CheckChar(ch)) {
                 break;
+            }
             word[length++] = ch;
         }
         word[length] = 0;
         switch (arg_types[i]) {
             case 0:
-                if (word[0] != '"')
+                if (word[0] != '"') {
                     return -1;
+                }
                 for (length = 1;; length++) {
                     char letter = word[length];
                     if (letter == '"') {
                         word[length] = 0;
                         break;
                     }
-                    if (letter == 0)
+                    if (letter == 0) {
                         return -1;
+                    }
                 }
                 strcpy((char *) argv[i], word + 1);
                 break;
             case 1:
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
-                    if (letter < '0' || letter > '9')
+                    if (letter < '0' || letter > '9') {
                         return -1;
+                    }
                 }
                 *(int *) argv[i] = atoi(word);
                 break;
             case 2:
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
-                    if ((letter < '0' || letter > '9') && letter != '.' && letter != '-')
+                    if ((letter < '0' || letter > '9') && letter != '.' && letter != '-') {
                         return -1;
+                    }
                 }
                 *(float *) argv[i] = (float) atof(word);
                 break;
@@ -379,15 +391,18 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
 static int SearchCommand(input_str &input, int *command) {
     char word[256];
 
-    if (!SkipSpace(input))
+    if (!SkipSpace(input)) {
         return 0;
+    }
     int length = 0;
     int ch;
     while (1) {
-        if (input.get(&ch) == 0)
+        if (input.get(&ch) == 0) {
             return 0;
-        if (!CheckChar(ch))
+        }
+        if (!CheckChar(ch)) {
             break;
+        }
         word[length++] = ch;
     }
     word[length] = 0;
@@ -411,7 +426,7 @@ static int SearchCommand(input_str &input, int *command) {
  */
 static int SkipSpace(input_str &input) {
     char *text;
-    int pos;
+    int   pos;
 
     text = input.data;
     pos = input.pos;
@@ -423,8 +438,9 @@ static int SkipSpace(input_str &input) {
     }
     input.pos = pos;
 
-    if (pos >= input.size)
+    if (pos >= input.size) {
         return 0;
+    }
     return 1;
 }
 
@@ -438,14 +454,18 @@ static int SkipSpace(input_str &input) {
  */
 static int CheckChar(char ch) {
     int is_space = 0;
-    if (ch == ' ')
+    if (ch == ' ') {
         is_space = 1;
-    if (ch == '\t')
+    }
+    if (ch == '\t') {
         is_space = 1;
-    if (ch == '\n')
+    }
+    if (ch == '\n') {
         is_space = 1;
-    if (ch == '\r')
+    }
+    if (ch == '\r') {
         is_space = 1;
+    }
     return !is_space;
 }
 
@@ -461,23 +481,28 @@ int keyCtrl(float stick_x, float stick_y, MOTION_INFO *motion) {
 
         move_state = 2;
 
-        if (stick_x < 0.0f)
+        if (stick_x < 0.0f) {
             stick_x *= -1.0f;
-        if (stick_y < 0.0f)
+        }
+        if (stick_y < 0.0f) {
             stick_y *= -1.0f;
+        }
 
-        if (stick_x >= stick_y)
+        if (stick_x >= stick_y) {
             tilt = stick_x;
-        else
+        } else {
             tilt = stick_y;
+        }
 
         speed = 0.8f * (0.1f + tilt);
         motion[2].speed = speed;
-        if (speed >= 0.7f)
+        if (speed >= 0.7f) {
             motion[2].speed = 0.7f;
+        }
 
-        if (stick_x + stick_y >= 0.85f)
+        if (stick_x + stick_y >= 0.85f) {
             move_state = 1;
+        }
     }
 
     return move_state;
@@ -490,17 +515,12 @@ int keyCtrl(float stick_x, float stick_y, MOTION_INFO *motion) {
  * @address 0x140660
  * @size 0x1A4
  */
-void MoveImageTest(sceVif1Packet *packet, int src_base, int src_width, int src_format,
-                   const CRect_i_ &rect, int dst_base, int dst_width, int dst_format, int dst_x,
-                   int dst_y, int direction) {
+void MoveImageTest(sceVif1Packet *packet, int src_base, int src_width, int src_format, const CRect_i_ &rect, int dst_base, int dst_width, int dst_format, int dst_x, int dst_y, int direction) {
     sceVif1PkCnt(packet, 0);
     sceVif1PkOpenDirectCode(packet, 0);
     sceVif1PkOpenGifTag(packet, *(u_long128 *) &GiftagAD);
-    sceVif1PkAddGsAD(packet, SCE_GS_BITBLTBUF,
-                     SCE_GS_SET_BITBLTBUF(src_base, src_width, src_format, dst_base, dst_width,
-                                          dst_format));
-    sceVif1PkAddGsAD(packet, SCE_GS_TRXPOS,
-                     SCE_GS_SET_TRXPOS(rect.x, rect.y, dst_x, dst_y, direction));
+    sceVif1PkAddGsAD(packet, SCE_GS_BITBLTBUF, SCE_GS_SET_BITBLTBUF(src_base, src_width, src_format, dst_base, dst_width, dst_format));
+    sceVif1PkAddGsAD(packet, SCE_GS_TRXPOS, SCE_GS_SET_TRXPOS(rect.x, rect.y, dst_x, dst_y, direction));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXREG, SCE_GS_SET_TRXREG(rect.width, rect.height));
     sceVif1PkAddGsAD(packet, SCE_GS_TRXDIR, 2);
     sceVif1PkCloseGifTag(packet);
@@ -517,41 +537,49 @@ float unitRotation(CFrameVu1 *frame, float heading) {
 
     frame->GetRotation(rotation);
     delta = heading - rotation[1];
-    if (delta <= 0.0f)
+    if (delta <= 0.0f) {
         abs_delta = -1.0f * delta;
-    else
+    } else {
         abs_delta = delta;
+    }
 
     if (abs_delta <= 3.141592653589793) {
-        if (abs_delta <= 0.2617993877991494)
+        if (abs_delta <= 0.2617993877991494) {
             delta = 0.0f;
+        }
     } else {
         abs_delta = 6.283185307179586 - abs_delta;
-        if (abs_delta <= 0.2617993877991494)
+        if (abs_delta <= 0.2617993877991494) {
             delta = 0.0f;
+        }
     }
 
     if (delta > 0.0f) {
-        if (delta <= 3.141592653589793)
+        if (delta <= 3.141592653589793) {
             rotation[1] += 0.2617994f;
-        else
+        } else {
             rotation[1] -= 0.2617994f;
+        }
     }
 
     if (delta < 0.0f) {
-        if (delta >= -3.141592653589793)
+        if (delta >= -3.141592653589793) {
             rotation[1] -= 0.2617994f;
-        else
+        } else {
             rotation[1] += 0.2617994f;
+        }
     }
 
-    if (0.0f == delta)
+    if (0.0f == delta) {
         rotation[1] = heading;
+    }
 
-    if (rotation[1] <= -3.141592653589793)
+    if (rotation[1] <= -3.141592653589793) {
         rotation[1] += 6.2831855f;
-    if (rotation[1] >= 3.141592653589793)
+    }
+    if (rotation[1] >= 3.141592653589793) {
         rotation[1] -= 6.2831855f;
+    }
 
     return rotation[1];
 }

@@ -23,16 +23,13 @@ typedef MOTION_INFO tagMOTION_KEY;
  * Describes one command a character configuration file may contain.
  */
 struct COMMAND_INFO {
-    char *name;        /**< Keyword that introduces the command. */
-    int arg_types[16]; /**< Type of each argument (0 string, 1 integer, 2 float), ended by -1. */
+    char *name;          /**< Keyword that introduces the command. */
+    int   arg_types[16]; /**< Type of each argument (0 string, 1 integer, 2 float), ended by -1. */
 };
 
 u_int *GetPackFile(u_int *pack, char *name, int *size = 0);
-void *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc);
+void  *InitCloth(CFrameVu1 *frame, input_str &input, CDataAlloc2<1> *alloc);
 
-void ReadInfo(CCharacter *chara, u_int *pack, char *name, CDataAlloc2<1> *model_alloc,
-              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *extra_alloc, int texture_block_no,
-              CDataAlloc2<1> *image_alloc, int visual_type, int keep_textures);
 static void CommandVERTEX_ANIME(void **argv);
 static void CommandSHADOW_VERTEX_ANIME(void **argv);
 static void CommandMODEL(void **argv);
@@ -52,65 +49,66 @@ static void CommandIMG(void **argv);
 static void CommandIMG_END(void **argv);
 static void CommandFOOT(void **argv);
 static void CommandEVENT(void **argv);
-static int GetArg(input_str &input, int *arg_types, void **argv);
-static int SearchCommand(input_str &input, int *command);
-static int SkipSpace(input_str &input);
-static int CheckChar(char ch);
+static int  GetArg(input_str &input, int *arg_types, void **argv);
+static int  SearchCommand(input_str &input, int *command);
+static int  SkipSpace(input_str &input);
+static int  CheckChar(char ch);
 static void PreProcess(input_str &input);
 
 static CDataAlloc2<1> *mds_buffer;
 static CDataAlloc2<1> *buffer;
 static CDataAlloc2<1> *exbuffer;
 static CDataAlloc2<1> *img_buffer;
-static int texture_block;
-static CCharacter *character;
-static int vertex_anime;
-static int def_vtype;
-static int shadow_vertex_anime;
-static u_int *pack_data;
-static int motion_info_num;
-static int key_start;
-static int key_no;
-static tagMOTION_KEY *motion_info;
-static int cloth_cnt;
-static int now_motion_data;
-static int shadow_motion;
-static int dont_delete_texb;
-static int alloc_mdt_list;
-static int alloc_dbuff_list;
-static int alloc_smdt_list;
-static int alloc_sdbuff_list;
-static int fsound_num;
-static int tex_anime_list;
-static char *config_file;
-static int config_file_size;
+static int             texture_block;
+static CCharacter     *character;
+static int             vertex_anime;
+static int             def_vtype;
+static int             shadow_vertex_anime;
+static u_int          *pack_data;
+static int             motion_info_num;
+static int             key_start;
+static int             key_no;
+static tagMOTION_KEY  *motion_info;
+static int             cloth_cnt;
+static int             now_motion_data;
+static int             shadow_motion;
+static int             dont_delete_texb;
+static int             alloc_mdt_list;
+static int             alloc_dbuff_list;
+static int             alloc_smdt_list;
+static int             alloc_sdbuff_list;
+static int             fsound_num;
+static int             tex_anime_list;
+static char           *config_file;
+static int             config_file_size;
 
-static char alloc_mdt[9][16];
-static char alloc_dbuff[9][16];
-static char alloc_smdt[9][16];
-static char alloc_sdbuff[9][16];
+static char   alloc_mdt[9][16];
+static char   alloc_dbuff[9][16];
+static char   alloc_smdt[9][16];
+static char   alloc_sdbuff[9][16];
 static u_int *load_img[4];
 
 static COMMAND_INFO Command[19] = {
-    {"VERTEX_ANIME", {1, -1}},
-    {"SHADOW_VERTEX_ANIME", {1, -1}},
-    {"MODEL", {0, -1}},
-    {"SHADOW_MODEL", {0, -1}},
-    {"MOTION", {1, 0, 0, 0, -1}},
-    {"SHADOW_MOTION", {0, 0, 0, -1}},
-    {"KEY", {1, 1, 2, -1}},
-    {"KEY_START", {1, -1}},
-    {"MOTION_END", {-1}},
-    {"CLOTH", {0, -1}},
-    {"BODY_SIZE", {2, 2, 2, -1}},
-    {"ALLOC_MDT", {0, -1}},
-    {"ALLOC_DBUFF", {0, -1}},
-    {"ALLOC_SHADOW_MDT", {0, -1}},
-    {"ALLOC_SHADOW_DBUFF", {0, -1}},
-    {"IMG", {1, 0, -1}},
-    {"IMG_END", {-1}},
-    {"FOOT", {2, 2, -1}},
-    {"EVENT", {2, 1, 1, -1}}};
+    {"VERTEX_ANIME",        {1, -1}         },
+    {"SHADOW_VERTEX_ANIME", {1, -1}         },
+    {"MODEL",               {0, -1}         },
+    {"SHADOW_MODEL",        {0, -1}         },
+    {"MOTION",              {1, 0, 0, 0, -1}},
+    {"SHADOW_MOTION",       {0, 0, 0, -1}   },
+    {"KEY",                 {1, 1, 2, -1}   },
+    {"KEY_START",           {1, -1}         },
+    {"MOTION_END",          {-1}            },
+    {"CLOTH",               {0, -1}         },
+    {"BODY_SIZE",           {2, 2, 2, -1}   },
+    {"ALLOC_MDT",           {0, -1}         },
+    {"ALLOC_DBUFF",         {0, -1}         },
+    {"ALLOC_SHADOW_MDT",    {0, -1}         },
+    {"ALLOC_SHADOW_DBUFF",  {0, -1}         },
+    {"IMG",                 {1, 0, -1}      },
+    {"IMG_END",             {-1}            },
+    {"FOOT",                {2, 2, -1}      },
+    {"EVENT",               {2, 1, 1, -1}   }
+};
 
 static void (*CommandExe[19])(void **) = {
     CommandVERTEX_ANIME,
@@ -133,13 +131,11 @@ static void (*CommandExe[19])(void **) = {
     CommandFOOT,
     CommandEVENT};
 
-void ReadInfo(CCharacter *chara, u_int *pack, char *name, CDataAlloc2<1> *model_alloc,
-              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *extra_alloc, int texture_block_no,
-              CDataAlloc2<1> *image_alloc, int visual_type, int keep_textures) {
-    char arg_storage[16][256];
+void ReadInfo(CCharacter *chara, u_int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *extra_alloc, int texture_block_no, CDataAlloc2<1> *image_alloc, int visual_type, int keep_textures) {
+    char  arg_storage[16][256];
     char *argv[18];
-    int file_size;
-    int command;
+    int   file_size;
+    int   command;
 
     def_vtype = visual_type;
     mds_buffer = model_alloc;
@@ -216,10 +212,12 @@ static void CommandSHADOW_VERTEX_ANIME(void **argv) {
 static void CommandMODEL(void **argv) {
     character->Initialize();
     int visual_type = def_vtype;
-    if (vertex_anime != 0)
+    if (vertex_anime != 0) {
         visual_type = 6;
-    if ((def_vtype & 16) != 0)
+    }
+    if ((def_vtype & 16) != 0) {
         visual_type = 18;
+    }
     u_int *mds_file = GetPackFile(pack_data, (char *) argv[0]);
     if (mds_file == 0) {
         char *missing_name = (char *) argv[0];
@@ -228,12 +226,14 @@ static void CommandMODEL(void **argv) {
         if (alloc_dbuff_list > 0 || alloc_mdt_list > 0) {
             char *mdt_names[12];
             char *dbuff_names[12];
-            int i;
-            for (i = 0; i < alloc_mdt_list; i++)
+            int   i;
+            for (i = 0; i < alloc_mdt_list; i++) {
                 mdt_names[i] = alloc_mdt[i];
+            }
             mdt_names[i] = 0;
-            for (i = 0; i < alloc_dbuff_list; i++)
+            for (i = 0; i < alloc_dbuff_list; i++) {
                 dbuff_names[i] = alloc_dbuff[i];
+            }
             dbuff_names[i] = 0;
             character->frame = LoadMDSFile(mds_file, mds_buffer, 0, dbuff_names, mdt_names);
         } else {
@@ -247,8 +247,9 @@ static void CommandMODEL(void **argv) {
 
 static void CommandSHADOW_MODEL(void **argv) {
     int visual_type = 8;
-    if (shadow_vertex_anime != 0)
+    if (shadow_vertex_anime != 0) {
         visual_type = 14;
+    }
     u_int *mds_file = GetPackFile(pack_data, (char *) argv[0]);
     if (mds_file == 0) {
         char *missing_name = (char *) argv[0];
@@ -259,20 +260,22 @@ static void CommandSHADOW_MODEL(void **argv) {
 }
 
 static void CommandMOTION(void **argv) {
-    if (character->frame == 0)
+    if (character->frame == 0) {
         return;
+    }
     now_motion_data = *(int *) argv[0];
     character->ClearEvent(now_motion_data);
-    if (now_motion_data < 0 || now_motion_data >= 8)
+    if (now_motion_data < 0 || now_motion_data >= 8) {
         return;
-    if (now_motion_data > 0)
-        character->motion[now_motion_data] =
-            (tagMOTION_TYPE *) character->motion_storage[now_motion_data].storage;
+    }
+    if (now_motion_data > 0) {
+        character->motion[now_motion_data] = (tagMOTION_TYPE *) character->motion_storage[now_motion_data].storage;
+    }
     tagMOTION_TYPE *motion = character->motion[now_motion_data];
     memset(motion, 0, sizeof(tagMOTION_TYPE));
-    char *motion_name = (char *) argv[1];
-    char *bone_name = (char *) argv[2];
-    char *weight_name = (char *) argv[3];
+    char            *motion_name = (char *) argv[1];
+    char            *bone_name = (char *) argv[2];
+    char            *weight_name = (char *) argv[3];
     MOTION_FILE_INFO files[3];
     files[1].name = motion_name;
     files[0].name = bone_name;
@@ -283,12 +286,15 @@ static void CommandMOTION(void **argv) {
     files[0].data = GetPackFile(pack_data, bone_name, &files[0].size);
     files[1].data = GetPackFile(pack_data, motion_name, &files[1].size);
     files[2].data = GetPackFile(pack_data, weight_name, &files[2].size);
-    if (files[0].size == 0)
+    if (files[0].size == 0) {
         files[0].name = 0;
-    if (files[1].size == 0)
+    }
+    if (files[1].size == 0) {
         files[1].name = 0;
-    if (files[2].size == 0)
+    }
+    if (files[2].size == 0) {
         files[2].name = 0;
+    }
     CreateAnimeDataEX(motion, buffer, files);
     if (character->frame_info == 0) {
         AnimeDataInit(character->frame, motion, mds_buffer, &character->frame_info);
@@ -300,19 +306,21 @@ static void CommandMOTION(void **argv) {
 }
 
 static void CommandSHADOW_MOTION(void **argv) {
-    if (character->shadow_frame == 0)
+    if (character->shadow_frame == 0) {
         return;
-    if (now_motion_data < 0 || now_motion_data >= 8)
+    }
+    if (now_motion_data < 0 || now_motion_data >= 8) {
         return;
-    if (now_motion_data > 0)
-        character->shadow_motion[now_motion_data] =
-            (tagMOTION_TYPE *) character->shadow_motion_storage[now_motion_data].storage;
+    }
+    if (now_motion_data > 0) {
+        character->shadow_motion[now_motion_data] = (tagMOTION_TYPE *) character->shadow_motion_storage[now_motion_data].storage;
+    }
     tagMOTION_TYPE *motion = character->shadow_motion[now_motion_data];
     memset(motion, 0, sizeof(tagMOTION_TYPE));
     shadow_motion = 1;
-    char *motion_name = (char *) argv[0];
-    char *bone_name = (char *) argv[1];
-    char *weight_name = (char *) argv[2];
+    char            *motion_name = (char *) argv[0];
+    char            *bone_name = (char *) argv[1];
+    char            *weight_name = (char *) argv[2];
     MOTION_FILE_INFO files[3];
     files[0].size = 0;
     files[1].size = 0;
@@ -323,23 +331,26 @@ static void CommandSHADOW_MOTION(void **argv) {
     files[0].data = GetPackFile(pack_data, bone_name, &files[0].size);
     files[1].data = GetPackFile(pack_data, motion_name, &files[1].size);
     files[2].data = GetPackFile(pack_data, weight_name, &files[2].size);
-    if (bone_name[0] == 0)
+    if (bone_name[0] == 0) {
         files[0].name = 0;
-    if (weight_name[0] == 0)
+    }
+    if (weight_name[0] == 0) {
         files[2].name = 0;
-    if (files[0].data == 0 && files[1].data == 0 && files[2].data == 0)
+    }
+    if (files[0].data == 0 && files[1].data == 0 && files[2].data == 0) {
         return;
+    }
     CreateAnimeDataEX(motion, buffer, files);
     if (character->shadow_frame_info == 0) {
-        AnimeDataInit(character->shadow_frame, motion, mds_buffer,
-                      &character->shadow_frame_info);
+        AnimeDataInit(character->shadow_frame, motion, mds_buffer, &character->shadow_frame_info);
     }
     motion->frame_info = character->shadow_frame_info;
 }
 
 static void CommandKEY_START(void **argv) {
-    if (now_motion_data < 0 || now_motion_data >= 8)
+    if (now_motion_data < 0 || now_motion_data >= 8) {
         return;
+    }
     key_start = *(int *) argv[0];
     character->motion_start[now_motion_data] = key_start;
 }
@@ -359,9 +370,10 @@ static void CommandKEY(void **argv) {
     motion_info_num = key_no;
 }
 
-static void CommandMOTION_END(void **) {
-    if (now_motion_data < 0 || now_motion_data >= 8 || motion_info == 0)
+static void CommandMOTION_END(void **argv) {
+    if (now_motion_data < 0 || now_motion_data >= 8 || motion_info == 0) {
         return;
+    }
     tagMOTION_TYPE *motion = character->motion[now_motion_data];
     buffer->Alloc((((unsigned int) (motion_info_num + 1) << 4) >> 4) + 1);
     motion_info[motion_info_num].start = -1;
@@ -386,15 +398,14 @@ static void CommandMOTION_END(void **) {
 }
 
 static void CommandCLOTH(void **argv) {
-    int size;
+    int    size;
     u_int *cloth_file = GetPackFile(pack_data, (char *) argv[0], &size);
     if (cloth_file != 0) {
         input_str input;
         input.data = (char *) cloth_file;
         input.size = size;
         input.pos = 0;
-        character->cloth[cloth_cnt] =
-            (CCloth *) InitCloth((CFrameVu1 *) character->frame, input, buffer);
+        character->cloth[cloth_cnt] = (CCloth *) InitCloth((CFrameVu1 *) character->frame, input, buffer);
         cloth_cnt++;
     }
 }
@@ -406,32 +417,38 @@ static void CommandBODY_SIZE(void **argv) {
 }
 
 static void CommandALLOC_MDT(void **argv) {
-    if (alloc_mdt_list < 8)
+    if (alloc_mdt_list < 8) {
         strcpy(alloc_mdt[alloc_mdt_list++], (char *) argv[0]);
+    }
 }
 
 static void CommandALLOC_DBUFF(void **argv) {
-    if (alloc_dbuff_list < 8)
+    if (alloc_dbuff_list < 8) {
         strcpy(alloc_dbuff[alloc_dbuff_list++], (char *) argv[0]);
+    }
 }
 
 static void CommandALLOC_SHADOW_MDT(void **argv) {
-    if (alloc_smdt_list < 8)
+    if (alloc_smdt_list < 8) {
         strcpy(alloc_smdt[alloc_smdt_list++], (char *) argv[0]);
+    }
 }
 
 static void CommandALLOC_SHADOW_DBUFF(void **argv) {
-    if (alloc_sdbuff_list < 8)
+    if (alloc_sdbuff_list < 8) {
         strcpy(alloc_sdbuff[alloc_sdbuff_list++], (char *) argv[0]);
+    }
 }
 
 static void CommandIMG(void **argv) {
-    if (img_buffer == 0)
+    if (img_buffer == 0) {
         return;
+    }
     int slot = *(int *) argv[0];
-    if (slot < 0 || slot >= 4)
+    if (slot < 0 || slot >= 4) {
         return;
-    int size;
+    }
+    int    size;
     u_int *image_file = GetPackFile(pack_data, (char *) argv[1], &size);
     if (image_file != 0) {
         load_img[slot] = (u_int *) img_buffer->Alloc((size >> 4) + 1);
@@ -439,15 +456,16 @@ static void CommandIMG(void **argv) {
     }
 }
 
-static void CommandIMG_END(void **) {
+static void CommandIMG_END(void **argv) {
     LOADTEXTURE_INFO2 textures[5];
     textures[0].block_no = 0;
     textures[0].mipmap = 0;
     textures[0].name = 0;
     int i;
     int texture_count = 0;
-    if (character->images[0] != 0 && load_img[0] == 0)
+    if (character->images[0] != 0 && load_img[0] == 0) {
         load_img[0] = character->images[0];
+    }
     for (i = 0; i < 4; i++) {
         character->images[i] = load_img[i];
         if (load_img[i] != 0) {
@@ -461,8 +479,9 @@ static void CommandIMG_END(void **) {
     textures[texture_count].mipmap = 0;
     textures[texture_count].name = 0;
     if (texture_count > 0) {
-        if (dont_delete_texb == 0)
+        if (dont_delete_texb == 0) {
             TexManager.DeleteTextureBlock(texture_block);
+        }
         TexManager.LoadTextureBlockEX(texture_block, textures);
     }
     if (config_file != 0) {
@@ -482,23 +501,28 @@ static void CommandEVENT(void **argv) {
 
 static int GetArg(input_str &input, int *arg_types, void **argv) {
     char word[256];
-    if (arg_types[0] < 0)
+    if (arg_types[0] < 0) {
         return 1;
-    if (!SkipSpace(input))
+    }
+    if (!SkipSpace(input)) {
         return 0;
+    }
     int arg_count = 0;
     while (arg_types[arg_count++] >= 0)
         ;
     int ch;
     for (int i = 0; i < arg_count - 1; i++) {
         int length = 0;
-        if (!SkipSpace(input))
+        if (!SkipSpace(input)) {
             return 0;
+        }
         while (1) {
-            if (input.get(&ch) == 0)
+            if (input.get(&ch) == 0) {
                 return 0;
-            if (ch == ',' || !CheckChar(ch))
+            }
+            if (ch == ',' || !CheckChar(ch)) {
                 break;
+            }
             word[length++] = ch;
         }
         word[length] = 0;
@@ -512,16 +536,18 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
                         goto invalid_type;
                 }
                 {
-                    if (word[0] != '"')
+                    if (word[0] != '"') {
                         return -1;
+                    }
                     while (1) {
                         char letter = word[length];
                         if (letter == '"') {
                             word[length] = 0;
                             break;
                         }
-                        if (letter == 0)
+                        if (letter == 0) {
                             return -1;
+                        }
                         length++;
                     }
                     strcpy((char *) argv[i], word + 1);
@@ -530,8 +556,9 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
             } else {
                 for (length = 0; word[length] != 0; length++) {
                     char letter = word[length];
-                    if (letter < '0' || letter > '9')
+                    if (letter < '0' || letter > '9') {
                         return -1;
+                    }
                 }
                 *(int *) argv[i] = atoi(word);
                 goto next_arg;
@@ -539,8 +566,9 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
         } else {
             for (length = 0; word[length] != 0; length++) {
                 char letter = word[length];
-                if ((letter < '0' || letter > '9') && letter != '.' && letter != '-')
+                if ((letter < '0' || letter > '9') && letter != '.' && letter != '-') {
                     return -1;
+                }
             }
             *(float *) argv[i] = (float) atof(word);
             goto next_arg;
@@ -554,15 +582,18 @@ static int GetArg(input_str &input, int *arg_types, void **argv) {
 
 static int SearchCommand(input_str &input, int *command) {
     char word[256];
-    if (!SkipSpace(input))
+    if (!SkipSpace(input)) {
         return 0;
+    }
     int length = 0;
     int ch;
     while (1) {
-        if (input.get(&ch) == 0 && length == 0)
+        if (input.get(&ch) == 0 && length == 0) {
             return 0;
-        if (!CheckChar(ch))
+        }
+        if (!CheckChar(ch)) {
             break;
+        }
         word[length++] = ch;
     }
     word[length] = 0;
@@ -578,7 +609,7 @@ static int SearchCommand(input_str &input, int *command) {
 
 static int SkipSpace(input_str &input) {
     char *text;
-    int pos;
+    int   pos;
 
     text = input.data;
     pos = input.pos;
@@ -590,27 +621,32 @@ static int SkipSpace(input_str &input) {
     }
     input.pos = pos;
 
-    if (pos >= input.size)
+    if (pos >= input.size) {
         return 0;
+    }
     return 1;
 }
 
 static int CheckChar(char ch) {
     int is_space = 0;
-    if (ch == ' ')
+    if (ch == ' ') {
         is_space = 1;
-    if (ch == '\t')
+    }
+    if (ch == '\t') {
         is_space = 1;
-    if (ch == '\n')
+    }
+    if (ch == '\n') {
         is_space = 1;
-    if (ch == '\r')
+    }
+    if (ch == '\r') {
         is_space = 1;
+    }
     return !is_space;
 }
 
 static void PreProcess(input_str &input) {
     u_char *text;
-    int pos;
+    int     pos;
 
     text = (u_char *) input.data;
     pos = 0;
@@ -640,7 +676,7 @@ static void PreProcess(input_str &input) {
     }
 }
 
-void CCharacter::StopCloth(int) {
+void CCharacter::StopCloth(int unused) {
     int i;
 
     for (i = 0; i < 4; i++) {

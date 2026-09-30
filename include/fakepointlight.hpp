@@ -14,12 +14,12 @@
  */
 class CFakePointLight {
 public:
-    sceVu0FVECTOR pos; /**< World position that the light comes from. */
-    float colour[4];   /**< Colour that the light gives. */
-    float inner_range; /**< Distance up to which the light gives its whole colour. */
-    float outer_range; /**< Distance past which the light gives nothing. */
-    s32 used;          /**< 1 while the slot lights something. */
-    float source_w;    /**< W component of the position the light was set from; -1 while the slot is cleared. */
+    sceVu0FVECTOR pos;         /**< World position that the light comes from. */
+    float         colour[4];   /**< Colour that the light gives. */
+    float         inner_range; /**< Distance up to which the light gives its whole colour. */
+    float         outer_range; /**< Distance past which the light gives nothing. */
+    s32           used;        /**< 1 while the slot lights something. */
+    float         source_w;    /**< W component of the position the light was set from; -1 while the slot is cleared. */
 
     /**
      * Makes a light that is white, and that reaches from ten units away to

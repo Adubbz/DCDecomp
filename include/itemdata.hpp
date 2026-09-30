@@ -469,11 +469,11 @@ enum ItemKind {
  * Maps an item to its kind and indices.
  */
 struct COM_ITEM_INFO {
-    s8 kind; /**< Whether the item is an attachment, an item or a weapon. @see ItemKind. */
+    s8   kind; /**< Whether the item is an attachment, an item or a weapon. @see ItemKind. */
     char unk_01;
-    s16 index;      /**< Index into the attach/item/weapon list. */
-    s16 icon_index; /**< Icon the menus draw for the item, or below zero for none. */
-    s16 msg;        /**< Message id for the item's name. */
+    s16  index;      /**< Index into the attach/item/weapon list. */
+    s16  icon_index; /**< Icon the menus draw for the item, or below zero for none. */
+    s16  msg;        /**< Message id for the item's name. */
 };
 
 STATIC_ASSERT(sizeof(COM_ITEM_INFO) == 0x8);
@@ -530,9 +530,9 @@ struct ATTACH_DATA {
     s16 endurance;        /**< Endurance the attachment adds. */
     s16 speed;            /**< Speed the attachment adds. */
     s16 magic;            /**< Magic the attachment adds. */
-    u8 elem[5];           /**< AttachStat order: fire, ice, thunder, wind, holy. */
-    u8 vs_monster[10];    /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
-    u8 unk_1F;
+    u8  elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    u8  vs_monster[10];   /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    u8  unk_1F;
 };
 
 STATIC_ASSERT(sizeof(ATTACH_DATA) == 0x20);
@@ -551,12 +551,12 @@ struct ATTACH_LIST {
     s16 item_no;          /**< Identifies the attachment. */
     s16 sphere_weapon_no; /**< Weapon a synthesis sphere was made from. */
     s16 sphere_flags;     /**< Special flags of the weapon a synthesis sphere was made from. */
-    s8 sphere_level;      /**< Level of the weapon a synthesis sphere was made from. */
-    s8 unk_07;
-    s16 status[4];     /**< Attack, endurance, speed and magic: AttachStat minus one. */
-    s8 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
-    s8 vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
-    u8 unk_1F;
+    s8  sphere_level;     /**< Level of the weapon a synthesis sphere was made from. */
+    s8  unk_07;
+    s16 status[4];      /**< Attack, endurance, speed and magic: AttachStat minus one. */
+    s8  elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    s8  vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    u8  unk_1F;
 };
 
 STATIC_ASSERT(sizeof(ATTACH_LIST) == 0x20);
@@ -619,9 +619,9 @@ struct WEAPON_DATA {
     s16 endurance;      /**< Endurance the weapon starts with. */
     s16 speed;          /**< Speed the weapon starts with. */
     s16 magic;          /**< Magic the weapon starts with. */
-    u8 owner;           /**< The character who owns this weapon. @see Character. */
-    s8 hole[6];         /**< Attachment sockets. */
-    u8 hole_num;        /**< The number of attachment sockets. */
+    u8  owner;          /**< The character who owns this weapon. @see Character. */
+    s8  hole[6];        /**< Attachment sockets. */
+    u8  hole_num;       /**< The number of attachment sockets. */
     s16 elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy */
     s16 vs_monster[10]; /**< Monster effectiveness stats. */
     s16 exp_base;       /**< Base exp value. */
@@ -644,25 +644,25 @@ STATIC_ASSERT(sizeof(WEAPON_DATA) == 0x4C);
  * One weapon as the player holds it.
  */
 struct WEAPON_HAVE {
-    s16 item_no;    /**< Identifies the weapon. */
-    s16 level;      /**< Weapon level, up to 99. */
-    s16 attack;     /**< Seeded from WEAPON_DATA::attack. */
-    s16 endurance;  /**< Seeded from WEAPON_DATA::endurance. */
-    s16 speed;      /**< Seeded from WEAPON_DATA::speed. */
-    s16 magic;      /**< Seeded from WEAPON_DATA::magic. */
-    s16 durability; /**< Seeded from WEAPON_DATA::durability. */
-    s16 unk_0E;
-    float durability_f;  /**< The durability again, converted on the way in. */
-    s16 experience;      /**< Accumulated ABS toward the next weapon level. */
-    s8 best_elem;        /**< Indexes the largest entry of `elem`, or -1 for none. */
-    s8 elem[5];          /**< AttachStat order: fire, ice, thunder, wind, holy. */
-    char vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
-    char unk_26[2];
-    ATTACH_LIST attach[6]; /**< One entry per hole the weapon data gives it. */
-    s8 attach_kind[6];     /**< Three while the matching hole's attachment is doubled. */
-    s16 flags;             /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
-    s32 synthesis_count;   /**< Synthesis points the weapon has gathered over its level-ups, drawn as stars. */
-    char unk_F4[4];
+    s16         item_no;    /**< Identifies the weapon. */
+    s16         level;      /**< Weapon level, up to 99. */
+    s16         attack;     /**< Seeded from WEAPON_DATA::attack. */
+    s16         endurance;  /**< Seeded from WEAPON_DATA::endurance. */
+    s16         speed;      /**< Seeded from WEAPON_DATA::speed. */
+    s16         magic;      /**< Seeded from WEAPON_DATA::magic. */
+    s16         durability; /**< Seeded from WEAPON_DATA::durability. */
+    s16         unk_0E;
+    float       durability_f;   /**< The durability again, converted on the way in. */
+    s16         experience;     /**< Accumulated ABS toward the next weapon level. */
+    s8          best_elem;      /**< Indexes the largest entry of `elem`, or -1 for none. */
+    s8          elem[5];        /**< AttachStat order: fire, ice, thunder, wind, holy. */
+    char        vs_monster[10]; /**< Monster effectiveness, one byte per WEAPON_DATA entry. */
+    char        unk_26[2];
+    ATTACH_LIST attach[6];       /**< One entry per hole the weapon data gives it. */
+    s8          attach_kind[6];  /**< Three while the matching hole's attachment is doubled. */
+    s16         flags;           /**< Bit 3 and bit 4 each scale the water-drain rate (CUserStatus::Step). */
+    s32         synthesis_count; /**< Synthesis points the weapon has gathered over its level-ups, drawn as stars. */
+    char        unk_F4[4];
 };
 
 STATIC_ASSERT(sizeof(WEAPON_HAVE) == 0xF8);

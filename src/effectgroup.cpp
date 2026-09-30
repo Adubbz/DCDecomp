@@ -18,13 +18,13 @@ void CEffectGroup::Step(int unused) {
     }
 }
 
-void CEffectGroup::Draw(void) {
+void CEffectGroup::Draw() {
     for (int i = 0; i < capacity; i++) {
         effect_table[i].Draw();
     }
 }
 
-void CEffectGroup::Clear(void) {
+void CEffectGroup::Clear() {
     for (int i = 0; i < capacity; i++) {
         effect_table[i].Initialize();
     }

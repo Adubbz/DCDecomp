@@ -10,9 +10,6 @@
 // names but not where they live.
 class CEditPartsInfo;
 class CMemoryCardAccess;
-class CRect_i_;
-class CTexture;
-class ClsMes;
 struct EDITPARTS_INFO;
 struct MC_CARD_INFO;
 struct RECT;
@@ -35,28 +32,28 @@ STATIC_ASSERT(sizeof(ATORA_TIP_HAVE) == 0x14);
  * Holds the state of the georama board screen.
  */
 struct MENU_ATORA_SEL {
-    s32 mode;             /**< Which half of the screen holds the cursor: 0 the board, 1 the chip list. */
-    s32 open_mode;        /**< How the screen was opened: 2 lets a part be picked for placing, 1 answers a pick with a warning. */
-    s32 edit_map;         /**< Georama that the menu was opened for, which picks the chip list's first page. */
-    s16 map_no;           /**< Georama that the board shows. */
-    s16 board_pos;        /**< Board position of the part that the cursor is on. */
-    s32 scroll_y;         /**< Where the board has scrolled to, as the pixel offset of its first row. */
-    PERSONAL_BOARD board; /**< Board that lists the chips the player holds. */
-    u8 unk_174[0xA];
-    s16 last_board_pos; /**< Board position the cursor was on when the screen last handed control elsewhere. */
-    float cursor_x;     /**< Where the board's cursor icon draws, from the left of the screen. */
-    float cursor_y;     /**< Where the board's cursor icon draws, from the top of the screen. */
-    s32 cursor_icon_u;  /**< Column of the stay-frame texture that the cursor icon is cut from, which picks its pose. */
-    s32 step;           /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 3 starting an event, 4 a completion flash, 6 switching georama, 7 to 9 the completion event, 10 a warning. */
-    s32 step_count;     /**< Frames the screen has spent on its current step. */
-    s16 name_alpha;     /**< Opacity the part names draw at while the screen is not fading. */
-    u8 unk_196[2];
-    s16 event_board_pos; /**< Board position of the part whose completion event played, restored when the board reopens. */
-    s16 event_flag;      /**< Whether the georama menu is running an event. */
-    u8 unk_19C[8];
-    s16 *prev_mes_buff; /**< Message file CommonMenuMes2 held before the screen opened. */
-    s16 load_state;     /**< Cleared whenever the georama's board files start loading. */
-    u8 unk_1AA[2];
+    s32            mode;      /**< Which half of the screen holds the cursor: 0 the board, 1 the chip list. */
+    s32            open_mode; /**< How the screen was opened: 2 lets a part be picked for placing, 1 answers a pick with a warning. */
+    s32            edit_map;  /**< Georama that the menu was opened for, which picks the chip list's first page. */
+    s16            map_no;    /**< Georama that the board shows. */
+    s16            board_pos; /**< Board position of the part that the cursor is on. */
+    s32            scroll_y;  /**< Where the board has scrolled to, as the pixel offset of its first row. */
+    PERSONAL_BOARD board;     /**< Board that lists the chips the player holds. */
+    u8             unk_174[0xA];
+    s16            last_board_pos; /**< Board position the cursor was on when the screen last handed control elsewhere. */
+    float          cursor_x;       /**< Where the board's cursor icon draws, from the left of the screen. */
+    float          cursor_y;       /**< Where the board's cursor icon draws, from the top of the screen. */
+    s32            cursor_icon_u;  /**< Column of the stay-frame texture that the cursor icon is cut from, which picks its pose. */
+    s32            step;           /**< What the screen is doing: 0 running, 1 fading in, 2 fading out, 3 starting an event, 4 a completion flash, 6 switching georama, 7 to 9 the completion event, 10 a warning. */
+    s32            step_count;     /**< Frames the screen has spent on its current step. */
+    s16            name_alpha;     /**< Opacity the part names draw at while the screen is not fading. */
+    u8             unk_196[2];
+    s16            event_board_pos; /**< Board position of the part whose completion event played, restored when the board reopens. */
+    s16            event_flag;      /**< Whether the georama menu is running an event. */
+    u8             unk_19C[8];
+    s16           *prev_mes_buff; /**< Message file CommonMenuMes2 held before the screen opened. */
+    s16            load_state;    /**< Cleared whenever the georama's board files start loading. */
+    u8             unk_1AA[2];
 };
 
 STATIC_ASSERT(sizeof(MENU_ATORA_SEL) == 0x1AC);
@@ -166,8 +163,7 @@ int DrawMenuNumber(int number, int x, int y, CTexture *texture, RECT rect, int o
  * @address 0x217E20
  * @size 0x1AC
  */
-int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r,
-                   unsigned char g, unsigned char b, int flag);
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, unsigned char r, unsigned char g, unsigned char b, int flag);
 
 /**
  * Draws a number right-aligned to a position, clipped to a band of the screen,
@@ -177,8 +173,7 @@ int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int o
  * @address 0x217FD0
  * @size 0x1A0
  */
-int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom,
-                   int flag);
+int DrawMenuNumber(int number, int x, int y, RECT rect, CTexture *texture, int overlap, int top, int bottom, int flag);
 
 /**
  * Returns how many codes the first line of a system message holds, or zero when
@@ -284,7 +279,7 @@ int MenuAtoraSelectKey();
  * @address 0x21DC60
  * @size 0x3BC
  */
-void AtoraNameDraw(int);
+void AtoraNameDraw(int unused);
 
 /**
  * Starts the option screen, queueing option.pac and copying the current
@@ -352,7 +347,7 @@ int MenuSaveKey();
  * @address 0x2203D0
  * @size 0x9C0
  */
-void DrawMenuSave(char *);
+void DrawMenuSave(char *frame_name);
 
 /**
  * Holds the georama parts of a town the player is not standing in.

@@ -46,43 +46,29 @@
 template <class T>
 class CRect {
 public:
-    CRect() {}
-
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
-    }
-
     T x; /**< Left edge. */
     T y; /**< Top edge. */
     T w; /**< Width. */
     T h; /**< Height. */
+
+    CRect() {}
+
+    CRect(T left, T top, T width, T height) {
+        x = left;
+        y = top;
+        w = width;
+        h = height;
+    }
 } __attribute__((aligned(16)));
 
-sceVif1Packet *GetVif1Packet();
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
 void MGSetViewMatrix(sceVu0FMATRIX view);
-void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
 void MGFillBox(const CRect<int> &rect, u_char r, u_char g, u_char b, u_char a);
 
 void wait_now_loading_vsync();
 void InitializeDataBuffer();
-void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
-void SetPacketReadBuffer(int size, int offset);
-void setbilinear(int on);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
 
-void OpA_InitProcess();
-void OpA_MotionProcess();
-void OpA_SoundProcess();
-void OpA_DrawProcess();
 void OpB_InitProcess();
 void OpB_InitProcess2();
 void OpB_LoadDataBG();
@@ -122,9 +108,6 @@ static void SoundProcess();
 static void DrawProcess();
 static void DrawMess();
 
-void OpPlayVolSE(int group, int no, int voice, float volume);
-void FadeCansel();
-
 CDataAlloc2<1> CharaDataBuffer__2[7];
 CDataAlloc2<1> DummyBuffer(-1);
 CDataAlloc2<1> PassDataBuffer[3];
@@ -133,7 +116,7 @@ CDataAlloc2<1> WaterBuffer__2(-1);
 CDataAlloc2<1> testBuffer(-1);
 
 CCharacter Chara__3[23];
-char CharaTex__2[23];
+char       CharaTex__2[23];
 
 /* Nothing calls this and nothing reads the table it fills: the link this file was built by removed
    both. They are here because the compiler carries state from one definition to the next, and the
@@ -156,32 +139,30 @@ static void OpeningWorkInit() {
 /* Nothing reads this pointer and the link removes it. Together with the exact folded constant
    below, it preserves the camera initializer's argument order without adding retained data. */
 
-CCameraFollow OP_MainCamera(
-    60.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f,
-    20.0f, 0.0f, 4.0f);
+CCameraFollow OP_MainCamera(60.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f, 20.0f, 0.0f, 4.0f);
 
-CCharacter Cam__2[3];
-MOTION_INFO Op_MotionInfo;
-static ClsMes Mes1;
+CCharacter       Cam__2[3];
+MOTION_INFO      Op_MotionInfo;
+static ClsMes    Mes1;
 static CDispFade DispFade;
 
-u_char *PassReadBuffer;
-u_char *MesBuffer;
-int OpBgmSqPort;
+u_char              *PassReadBuffer;
+u_char              *MesBuffer;
+int                  OpBgmSqPort;
 static tagFRAME_INF *frame_info_cam;
-int SceneNp__2;
-int Pause;
-static int CameraMode;
-static int SceneRp;
-static int SceneCnt;
-static int SceneFlg;
-static int SceneSw;
-static float PauseFrame;
-static u_char End;
-static int EndCnt;
-static int BgmOff;
-static int BgmVol;
-static int BgmNo;
+int                  SceneNp__2;
+int                  Pause;
+static int           CameraMode;
+static int           SceneRp;
+static int           SceneCnt;
+static int           SceneFlg;
+static int           SceneSw;
+static float         PauseFrame;
+static u_char        End;
+static int           EndCnt;
+static int           BgmOff;
+static int           BgmVol;
+static int           BgmNo;
 
 void OpeningInit() {
     wait_now_loading_vsync();
@@ -331,7 +312,7 @@ static void LoadScene() {
     char *files[3][2] = {
         {"opdat/scene/0101acp.sne", "0101acp.cfg"},
         {"opdat/scene/0101bcp.sne", "0101bcp.cfg"},
-        {"opdat/scene/0104cp.sne", "0104cp.cfg"},
+        {"opdat/scene/0104cp.sne",  "0104cp.cfg" },
     };
     int i;
 
@@ -348,159 +329,163 @@ static void LoadScene() {
 
 void LoadSceneBG() {
     CDataAlloc2<1> *buffer;
-    int slot;
-    char *files[126][2] = {
-        {"opdat/scene/0101acp.sne", "0101acp.cfg"},
-        {"opdat/scene/0101bcp.sne", "0101bcp.cfg"},
-        {"opdat/scene/0104cp.sne", "0104cp.cfg"},
-        {"opdat/scene/0104bcp.sne", "0104bcp.cfg"},
-        {"opdat/scene/0105cp.sne", "0105cp.cfg"},
-        {"opdat/scene/0107cp.sne", "0107cp.cfg"},
-        {"opdat/scene/0108cp.sne", "0108cp.cfg"},
-        {"opdat/scene/0109cp.sne", "0109cp.cfg"},
-        {"opdat/scene/0110cp.sne", "0110cp.cfg"},
-        {"opdat/scene/0111cp.sne", "0111cp.cfg"},
-        {"opdat/scene/0112cp.sne", "0112cp.cfg"},
-        {"opdat/scene/0113cp.sne", "0113cp.cfg"},
-        {"opdat/scene/0114acp.sne", "0114acp.cfg"},
-        {"opdat/scene/0114bcp.sne", "0114bcp.cfg"},
-        {"opdat/scene/0114ccp.sne", "0114ccp.cfg"},
-        {"opdat/scene/0114dcp.sne", "0114dcp.cfg"},
-        {"opdat/scene/0114ecp.sne", "0114ecp.cfg"},
-        {"opdat/scene/0114gcp.sne", "0114gcp.cfg"},
-        {"opdat/scene/0114hcp.sne", "0114hcp.cfg"},
-        {"opdat/scene/0114icp.sne", "0114icp.cfg"},
-        {"opdat/scene/0114jcp.sne", "0114jcp.cfg"},
-        {"opdat/scene/0114kcp.sne", "0114kcp.cfg"},
+    int             slot;
+    char           *files[126][2] = {
+        {"opdat/scene/0101acp.sne",  "0101acp.cfg" },
+        {"opdat/scene/0101bcp.sne",  "0101bcp.cfg" },
+        {"opdat/scene/0104cp.sne",   "0104cp.cfg"  },
+        {"opdat/scene/0104bcp.sne",  "0104bcp.cfg" },
+        {"opdat/scene/0105cp.sne",   "0105cp.cfg"  },
+        {"opdat/scene/0107cp.sne",   "0107cp.cfg"  },
+        {"opdat/scene/0108cp.sne",   "0108cp.cfg"  },
+        {"opdat/scene/0109cp.sne",   "0109cp.cfg"  },
+        {"opdat/scene/0110cp.sne",   "0110cp.cfg"  },
+        {"opdat/scene/0111cp.sne",   "0111cp.cfg"  },
+        {"opdat/scene/0112cp.sne",   "0112cp.cfg"  },
+        {"opdat/scene/0113cp.sne",   "0113cp.cfg"  },
+        {"opdat/scene/0114acp.sne",  "0114acp.cfg" },
+        {"opdat/scene/0114bcp.sne",  "0114bcp.cfg" },
+        {"opdat/scene/0114ccp.sne",  "0114ccp.cfg" },
+        {"opdat/scene/0114dcp.sne",  "0114dcp.cfg" },
+        {"opdat/scene/0114ecp.sne",  "0114ecp.cfg" },
+        {"opdat/scene/0114gcp.sne",  "0114gcp.cfg" },
+        {"opdat/scene/0114hcp.sne",  "0114hcp.cfg" },
+        {"opdat/scene/0114icp.sne",  "0114icp.cfg" },
+        {"opdat/scene/0114jcp.sne",  "0114jcp.cfg" },
+        {"opdat/scene/0114kcp.sne",  "0114kcp.cfg" },
         {"opdat/scene/0114f1cp.sne", "0114f1cp.cfg"},
         {"opdat/scene/0114f2cp.sne", "0114f2cp.cfg"},
-        {"opdat/scene/0115cp.sne", "0115cp.cfg"},
-        {"opdat/scene/0116cp.sne", "0116cp.cfg"},
-        {"opdat/scene/0117cp.sne", "0117cp.cfg"},
-        {"opdat/scene/0118cp.sne", "0118cp.cfg"},
-        {"opdat/scene/0119cp.sne", "0119cp.cfg"},
-        {"opdat/scene/0119bcp.sne", "0119bcp.cfg"},
-        {"opdat/scene/0120cp.sne", "0120cp.cfg"},
-        {"opdat/scene/0121cp.sne", "0121cp.cfg"},
-        {"opdat/scene/0122cp.sne", "0122cp.cfg"},
-        {"opdat/scene/0123cp.sne", "0123cp.cfg"},
-        {"opdat/scene/0124cp.sne", "0124cp.cfg"},
-        {"opdat/scene/0125cp.sne", "0125cp.cfg"},
-        {"opdat/scene/0126cp.sne", "0126cp.cfg"},
-        {"opdat/scene/0120cp.sne", "0120cp.cfg"},
-        {"opdat/scene/0128cp.sne", "0128cp.cfg"},
-        {"opdat/scene/0129cp.sne", "0129cp.cfg"},
-        {"opdat/scene/0126cp.sne", "0126cp.cfg"},
-        {"opdat/scene/0130cp.sne", "0130cp.cfg"},
-        {"opdat/scene/0126cp.sne", "0126cp.cfg"},
-        {"opdat/scene/0132cp.sne", "0132cp.cfg"},
-        {"opdat/scene/0132bcp.sne", "0132bcp.cfg"},
-        {"opdat/scene/0132ccp.sne", "0132ccp.cfg"},
-        {"opdat/scene/0133cp.sne", "0133cp.cfg"},
-        {"opdat/scene/0134cp.sne", "0134cp.cfg"},
-        {"opdat/scene/0135cp.sne", "0135cp.cfg"},
-        {"opdat/scene/0136cp.sne", "0136cp.cfg"},
-        {"opdat/scene/0301cp.sne", "0301cp.cfg"},
-        {"opdat/scene/0302cp.sne", "0302cp.cfg"},
-        {"opdat/scene/0303cp.sne", "0303cp.cfg"},
-        {"opdat/scene/0304cp.sne", "0304cp.cfg"},
-        {"opdat/scene/0305cp.sne", "0305cp.cfg"},
-        {"opdat/scene/0306cp.sne", "0306cp.cfg"},
-        {"opdat/scene/0307cp.sne", "0307cp.cfg"},
-        {"opdat/scene/0308cp.sne", "0308cp.cfg"},
-        {"opdat/scene/0401cp.sne", "0401cp.cfg"},
-        {"opdat/scene/0402cp.sne", "0402cp.cfg"},
-        {"opdat/scene/0403cp.sne", "0403cp.cfg"},
-        {"opdat/scene/0404cp.sne", "0404cp.cfg"},
-        {"opdat/scene/0405cp.sne", "0405cp.cfg"},
-        {"opdat/scene/0406cp.sne", "0406cp.cfg"},
-        {"opdat/scene/0407cp.sne", "0407cp.cfg"},
-        {"opdat/scene/0408cp.sne", "0408cp.cfg"},
-        {"opdat/scene/0409cp.sne", "0409cp.cfg"},
-        {"opdat/scene/0410cp.sne", "0410cp.cfg"},
-        {"opdat/scene/0411cp.sne", "0411cp.cfg"},
-        {"opdat/scene/0412cp.sne", "0412cp.cfg"},
-        {"opdat/scene/0413cp.sne", "0413cp.cfg"},
-        {"opdat/scene/0414cp.sne", "0414cp.cfg"},
-        {"opdat/scene/0415cp.sne", "0415cp.cfg"},
-        {"opdat/scene/0416cp.sne", "0416cp.cfg"},
-        {"opdat/scene/0417cp.sne", "0417cp.cfg"},
-        {"opdat/scene/0418cp.sne", "0418cp.cfg"},
-        {"opdat/scene/0419cp.sne", "0419cp.cfg"},
-        {"opdat/scene/0420cp.sne", "0420cp.cfg"},
-        {"opdat/scene/0421cp.sne", "0421cp.cfg"},
-        {"opdat/scene/0423cp.sne", "0423cp.cfg"},
-        {"opdat/scene/0425cp.sne", "0425cp.cfg"},
-        {"opdat/scene/0426cp.sne", "0426cp.cfg"},
-        {"opdat/scene/0427cp.sne", "0427cp.cfg"},
-        {"opdat/scene/0428cp.sne", "0428cp.cfg"},
-        {"opdat/scene/0429cp.sne", "0429cp.cfg"},
-        {"opdat/scene/0430cp.sne", "0430cp.cfg"},
-        {"opdat/scene/0431cp.sne", "0431cp.cfg"},
-        {"opdat/scene/0432cp.sne", "0432cp.cfg"},
-        {"opdat/scene/0433cp.sne", "0433cp.cfg"},
-        {"opdat/scene/0434cp.sne", "0434cp.cfg"},
-        {"opdat/scene/0435cp.sne", "0435cp.cfg"},
-        {"opdat/scene/0436cp.sne", "0436cp.cfg"},
-        {"opdat/scene/0437cp.sne", "0437cp.cfg"},
-        {"opdat/scene/0438cp.sne", "0438cp.cfg"},
-        {"opdat/scene/0439cp.sne", "0439cp.cfg"},
-        {"opdat/scene/0440cp.sne", "0440cp.cfg"},
-        {"opdat/scene/0441cp.sne", "0441cp.cfg"},
-        {"opdat/scene/0442cp.sne", "0442cp.cfg"},
-        {"opdat/scene/0443cp.sne", "0443cp.cfg"},
-        {"opdat/scene/0501cp.sne", "0501cp.cfg"},
-        {"opdat/scene/0502cp.sne", "0502cp.cfg"},
-        {"opdat/scene/0503cp.sne", "0503cp.cfg"},
-        {"opdat/scene/0504cp.sne", "0504cp.cfg"},
-        {"opdat/scene/0505cp.sne", "0505cp.cfg"},
-        {"opdat/scene/0506cp.sne", "0506cp.cfg"},
-        {"opdat/scene/0510cp.sne", "0510cp.cfg"},
-        {"opdat/scene/0511cp.sne", "0511cp.cfg"},
-        {"opdat/scene/0512cp.sne", "0512cp.cfg"},
-        {"opdat/scene/0513cp.sne", "0513cp.cfg"},
-        {"opdat/scene/0514cp.sne", "0514cp.cfg"},
-        {"opdat/scene/0515cp.sne", "0515cp.cfg"},
-        {"opdat/scene/0515bcp.sne", "0515bcp.cfg"},
-        {"opdat/scene/0516cp.sne", "0516cp.cfg"},
-        {"opdat/scene/0517cp.sne", "0517cp.cfg"},
-        {"opdat/scene/0518cp.sne", "0518cp.cfg"},
-        {"opdat/scene/0520cp.sne", "0520cp.cfg"},
-        {"opdat/scene/0521cp.sne", "0521cp.cfg"},
-        {"opdat/scene/0522cp.sne", "0522cp.cfg"},
-        {"opdat/scene/0523cp.sne", "0523cp.cfg"},
-        {"opdat/scene/0524cp.sne", "0524cp.cfg"},
-        {"opdat/scene/0525cp.sne", "0525cp.cfg"},
-        {"opdat/scene/0526cp.sne", "0526cp.cfg"},
-        {"opdat/scene/0527cp.sne", "0527cp.cfg"},
-        {"opdat/scene/0528cp.sne", "0528cp.cfg"},
-        {"opdat/scene/0529cp.sne", "0529cp.cfg"},
-        {"-1", "-1"},
+        {"opdat/scene/0115cp.sne",   "0115cp.cfg"  },
+        {"opdat/scene/0116cp.sne",   "0116cp.cfg"  },
+        {"opdat/scene/0117cp.sne",   "0117cp.cfg"  },
+        {"opdat/scene/0118cp.sne",   "0118cp.cfg"  },
+        {"opdat/scene/0119cp.sne",   "0119cp.cfg"  },
+        {"opdat/scene/0119bcp.sne",  "0119bcp.cfg" },
+        {"opdat/scene/0120cp.sne",   "0120cp.cfg"  },
+        {"opdat/scene/0121cp.sne",   "0121cp.cfg"  },
+        {"opdat/scene/0122cp.sne",   "0122cp.cfg"  },
+        {"opdat/scene/0123cp.sne",   "0123cp.cfg"  },
+        {"opdat/scene/0124cp.sne",   "0124cp.cfg"  },
+        {"opdat/scene/0125cp.sne",   "0125cp.cfg"  },
+        {"opdat/scene/0126cp.sne",   "0126cp.cfg"  },
+        {"opdat/scene/0120cp.sne",   "0120cp.cfg"  },
+        {"opdat/scene/0128cp.sne",   "0128cp.cfg"  },
+        {"opdat/scene/0129cp.sne",   "0129cp.cfg"  },
+        {"opdat/scene/0126cp.sne",   "0126cp.cfg"  },
+        {"opdat/scene/0130cp.sne",   "0130cp.cfg"  },
+        {"opdat/scene/0126cp.sne",   "0126cp.cfg"  },
+        {"opdat/scene/0132cp.sne",   "0132cp.cfg"  },
+        {"opdat/scene/0132bcp.sne",  "0132bcp.cfg" },
+        {"opdat/scene/0132ccp.sne",  "0132ccp.cfg" },
+        {"opdat/scene/0133cp.sne",   "0133cp.cfg"  },
+        {"opdat/scene/0134cp.sne",   "0134cp.cfg"  },
+        {"opdat/scene/0135cp.sne",   "0135cp.cfg"  },
+        {"opdat/scene/0136cp.sne",   "0136cp.cfg"  },
+        {"opdat/scene/0301cp.sne",   "0301cp.cfg"  },
+        {"opdat/scene/0302cp.sne",   "0302cp.cfg"  },
+        {"opdat/scene/0303cp.sne",   "0303cp.cfg"  },
+        {"opdat/scene/0304cp.sne",   "0304cp.cfg"  },
+        {"opdat/scene/0305cp.sne",   "0305cp.cfg"  },
+        {"opdat/scene/0306cp.sne",   "0306cp.cfg"  },
+        {"opdat/scene/0307cp.sne",   "0307cp.cfg"  },
+        {"opdat/scene/0308cp.sne",   "0308cp.cfg"  },
+        {"opdat/scene/0401cp.sne",   "0401cp.cfg"  },
+        {"opdat/scene/0402cp.sne",   "0402cp.cfg"  },
+        {"opdat/scene/0403cp.sne",   "0403cp.cfg"  },
+        {"opdat/scene/0404cp.sne",   "0404cp.cfg"  },
+        {"opdat/scene/0405cp.sne",   "0405cp.cfg"  },
+        {"opdat/scene/0406cp.sne",   "0406cp.cfg"  },
+        {"opdat/scene/0407cp.sne",   "0407cp.cfg"  },
+        {"opdat/scene/0408cp.sne",   "0408cp.cfg"  },
+        {"opdat/scene/0409cp.sne",   "0409cp.cfg"  },
+        {"opdat/scene/0410cp.sne",   "0410cp.cfg"  },
+        {"opdat/scene/0411cp.sne",   "0411cp.cfg"  },
+        {"opdat/scene/0412cp.sne",   "0412cp.cfg"  },
+        {"opdat/scene/0413cp.sne",   "0413cp.cfg"  },
+        {"opdat/scene/0414cp.sne",   "0414cp.cfg"  },
+        {"opdat/scene/0415cp.sne",   "0415cp.cfg"  },
+        {"opdat/scene/0416cp.sne",   "0416cp.cfg"  },
+        {"opdat/scene/0417cp.sne",   "0417cp.cfg"  },
+        {"opdat/scene/0418cp.sne",   "0418cp.cfg"  },
+        {"opdat/scene/0419cp.sne",   "0419cp.cfg"  },
+        {"opdat/scene/0420cp.sne",   "0420cp.cfg"  },
+        {"opdat/scene/0421cp.sne",   "0421cp.cfg"  },
+        {"opdat/scene/0423cp.sne",   "0423cp.cfg"  },
+        {"opdat/scene/0425cp.sne",   "0425cp.cfg"  },
+        {"opdat/scene/0426cp.sne",   "0426cp.cfg"  },
+        {"opdat/scene/0427cp.sne",   "0427cp.cfg"  },
+        {"opdat/scene/0428cp.sne",   "0428cp.cfg"  },
+        {"opdat/scene/0429cp.sne",   "0429cp.cfg"  },
+        {"opdat/scene/0430cp.sne",   "0430cp.cfg"  },
+        {"opdat/scene/0431cp.sne",   "0431cp.cfg"  },
+        {"opdat/scene/0432cp.sne",   "0432cp.cfg"  },
+        {"opdat/scene/0433cp.sne",   "0433cp.cfg"  },
+        {"opdat/scene/0434cp.sne",   "0434cp.cfg"  },
+        {"opdat/scene/0435cp.sne",   "0435cp.cfg"  },
+        {"opdat/scene/0436cp.sne",   "0436cp.cfg"  },
+        {"opdat/scene/0437cp.sne",   "0437cp.cfg"  },
+        {"opdat/scene/0438cp.sne",   "0438cp.cfg"  },
+        {"opdat/scene/0439cp.sne",   "0439cp.cfg"  },
+        {"opdat/scene/0440cp.sne",   "0440cp.cfg"  },
+        {"opdat/scene/0441cp.sne",   "0441cp.cfg"  },
+        {"opdat/scene/0442cp.sne",   "0442cp.cfg"  },
+        {"opdat/scene/0443cp.sne",   "0443cp.cfg"  },
+        {"opdat/scene/0501cp.sne",   "0501cp.cfg"  },
+        {"opdat/scene/0502cp.sne",   "0502cp.cfg"  },
+        {"opdat/scene/0503cp.sne",   "0503cp.cfg"  },
+        {"opdat/scene/0504cp.sne",   "0504cp.cfg"  },
+        {"opdat/scene/0505cp.sne",   "0505cp.cfg"  },
+        {"opdat/scene/0506cp.sne",   "0506cp.cfg"  },
+        {"opdat/scene/0510cp.sne",   "0510cp.cfg"  },
+        {"opdat/scene/0511cp.sne",   "0511cp.cfg"  },
+        {"opdat/scene/0512cp.sne",   "0512cp.cfg"  },
+        {"opdat/scene/0513cp.sne",   "0513cp.cfg"  },
+        {"opdat/scene/0514cp.sne",   "0514cp.cfg"  },
+        {"opdat/scene/0515cp.sne",   "0515cp.cfg"  },
+        {"opdat/scene/0515bcp.sne",  "0515bcp.cfg" },
+        {"opdat/scene/0516cp.sne",   "0516cp.cfg"  },
+        {"opdat/scene/0517cp.sne",   "0517cp.cfg"  },
+        {"opdat/scene/0518cp.sne",   "0518cp.cfg"  },
+        {"opdat/scene/0520cp.sne",   "0520cp.cfg"  },
+        {"opdat/scene/0521cp.sne",   "0521cp.cfg"  },
+        {"opdat/scene/0522cp.sne",   "0522cp.cfg"  },
+        {"opdat/scene/0523cp.sne",   "0523cp.cfg"  },
+        {"opdat/scene/0524cp.sne",   "0524cp.cfg"  },
+        {"opdat/scene/0525cp.sne",   "0525cp.cfg"  },
+        {"opdat/scene/0526cp.sne",   "0526cp.cfg"  },
+        {"opdat/scene/0527cp.sne",   "0527cp.cfg"  },
+        {"opdat/scene/0528cp.sne",   "0528cp.cfg"  },
+        {"opdat/scene/0529cp.sne",   "0529cp.cfg"  },
+        {"-1",                       "-1"          },
     };
 
-    if (files[SceneCnt][0] == "-1")
+    if (files[SceneCnt][0] == "-1") {
         return;
+    }
 
     switch (SceneFlg) {
         case 0:
             while (ReadBGSync())
                 ;
-            if (SceneCnt % 5 == 0)
+            if (SceneCnt % 5 == 0) {
                 StartReadBG();
+            }
             LoadFileBG(files[SceneCnt][0], (u_long128 *) PassReadBuffer, 0);
             SceneFlg = 1;
             break;
         case 1:
-            if (ReadBGSync())
+            if (ReadBGSync()) {
                 break;
+            }
             slot = SceneRp;
             buffer = &PassDataBuffer[slot];
             buffer->used = 0;
             Cam__2[slot].LoadPackData((u_int *) PassReadBuffer, files[SceneCnt][1], buffer, 0);
             SceneCnt++;
             SceneRp++;
-            if (SceneRp > 2)
+            if (SceneRp > 2) {
                 SceneRp = 0;
+            }
             SceneFlg = 2;
             break;
         case 2:
@@ -627,18 +612,22 @@ static void SceneChange() {
 static void PauseProcess() {
     static int endflg = 0;
 
-    if (DispFade.GetRate() != 0.0)
+    if (DispFade.GetRate() != 0.0) {
         return;
+    }
     if (!endflg) {
-        if (End)
+        if (End) {
             return;
+        }
 
         if (Pause == 0) {
-            if (!GamePad.Down(2048))
+            if (!GamePad.Down(2048)) {
                 return;
+            }
             CSnd.Stop(0);
-            if (CScript__2.scene)
+            if (CScript__2.scene) {
                 CSnd.Stop(1);
+            }
             CSnd.SetVol(15, 0);
             CSnd.SetVol(14, 0);
             CSnd.SetVol(13, 0);
@@ -653,10 +642,12 @@ static void PauseProcess() {
                 CSnd.SetVol(14, 256);
                 CSnd.SetVol(13, 256);
                 CSnd.SetVol(12, 256);
-                if (CScript__2.scene)
+                if (CScript__2.scene) {
                     CSnd.SQ_RePlay(1);
-                if (OpBgmSqPort != -1)
+                }
+                if (OpBgmSqPort != -1) {
                     CSnd.SQ_RePlay(0);
+                }
             } else if (GamePad.Down(64)) {
                 while (ReadBGSync())
                     ;
@@ -701,8 +692,9 @@ static void WaitKeyProcess() {
             PauseFrame = Cam__2[SceneNp__2].motion_type.state.time;
             flg = 1;
         }
-        if (Pause)
+        if (Pause) {
             return;
+        }
         if (GamePad.Down(32) || GamePad.Down(64)) {
             if (Mes1.State() == 5) {
                 Mes1.text_rate = 1.0f;
@@ -777,8 +769,9 @@ static void MotionProcess() {
             CScript__2.motion_req = 0;
             if (SceneSw == 1) {
                 SceneNp__2++;
-                if (SceneNp__2 > 2)
+                if (SceneNp__2 > 2) {
                     SceneNp__2 = 0;
+                }
                 SceneFlg = 0;
             }
             SceneSw = 1;
@@ -803,8 +796,7 @@ static void MotionProcess() {
         if (CScript__2.mes_wait == 1) {
             Cam__2[SceneNp__2].motion_type.state.time = PauseFrame - CScript__2.motion_step;
         }
-        SetMotionEX(Cam__2[SceneNp__2].frame, &Cam__2[SceneNp__2].motion_type, &Op_MotionInfo,
-                    &Cam__2[SceneNp__2].motion_type.state, frame_info_cam);
+        SetMotionEX(Cam__2[SceneNp__2].frame, &Cam__2[SceneNp__2].motion_type, &Op_MotionInfo, &Cam__2[SceneNp__2].motion_type.state, frame_info_cam);
         LoadSceneBG();
     }
 
@@ -942,7 +934,7 @@ static void DrawProcess() {
     sceVu0FMATRIX camera;
     sceVu0FMATRIX view;
     sceVu0FMATRIX unit;
-    sceGsTex0 tex0;
+    sceGsTex0     tex0;
 
     OP_MainCamera.GetPos(position);
     SndSetCamera(&OP_MainCamera);
@@ -1002,37 +994,29 @@ static void DrawProcess() {
 #ifdef PAL
         switch (LanguageCode) {
             case 0:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
             case 1:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
             case 2:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
             case 3:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_f", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_f", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
             case 4:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_g", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_g", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
             case 5:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_i", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_i", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
             case 6:
-                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_s", -1),
-                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_s", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
         }
 #else
-        set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1),
-                    CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
 #endif
         setbilinear(1);
     }
@@ -1043,11 +1027,9 @@ static void DrawProcess() {
 
     texture.tex0 = *(u_long *) &tex0;
 #ifdef PAL
-    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT),
-                CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 40);
+    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 40);
 #else
-    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224), 128,
-                128, 128, 35);
+    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224), 128, 128, 128, 35);
 #endif
     DispFade.FadeIn(Vif1Packet);
     DispFade.FadeOut(Vif1Packet);
@@ -1065,10 +1047,12 @@ static void DrawMess() {
     int offset;
     int center;
 
-    if (CScript__2.scene > 6)
+    if (CScript__2.scene > 6) {
         Mes1.auto_page = 0;
-    if (CScript__2.mes_no == 0)
+    }
+    if (CScript__2.mes_no == 0) {
         return;
+    }
 
     TexManager.ReloadTexture(Vif1Packet, Mes1.tex_block);
 
@@ -1097,8 +1081,9 @@ static void DrawMess() {
                     Mes1.end_mark = 0;
                 }
                 cnt++;
-                if (cnt > 31)
+                if (cnt > 31) {
                     cnt = 0;
+                }
             } else {
                 Mes1.end_mark = 0;
             }
@@ -1157,72 +1142,82 @@ void OpBgmPlay() {
 }
 
 void OpPlayVolPanSE(float *position, float near_dist, float far_dist, int group, int no, int voice) {
-    float volume;
-    float pan;
+    float  volume;
+    float  pan;
     short *se_info;
-    short base_volume;
-    int level;
-    int se_index;
-    int pan_level;
+    short  base_volume;
+    int    level;
+    int    se_index;
+    int    pan_level;
 
     SndGetVolPan(&volume, &pan, position, near_dist, far_dist);
-    if (pan < -1.0f)
+    if (pan < -1.0f) {
         pan = -1.0f;
-    if (pan > 1.0f)
+    }
+    if (pan > 1.0f) {
         pan = 1.0f;
+    }
     pan_level = (int) (63.0f * pan) + 64;
     se_index = CSnd.GetSeNo(no, voice);
     se_info = CSnd.GetSeInfTbl();
     base_volume = se_info[se_index * 2 + 1];
     level = (int) ((float) base_volume * volume);
-    if (level < 0)
+    if (level < 0) {
         level = 0;
-    if (level > 127)
+    }
+    if (level > 127) {
         level = 127;
+    }
     CSnd.SE_Play(group, no, voice, pan_level, 127, level, 0);
 }
 
 void OpSetVolPanSE(float *position, float near_dist, float far_dist, int group, int no, int voice) {
-    float volume;
-    float pan;
+    float  volume;
+    float  pan;
     short *se_info;
-    short base_volume;
-    int level;
-    int se_index;
-    int pan_level;
+    short  base_volume;
+    int    level;
+    int    se_index;
+    int    pan_level;
 
     SndGetVolPan(&volume, &pan, position, near_dist, far_dist);
-    if (pan < -1.0f)
+    if (pan < -1.0f) {
         pan = -1.0f;
-    if (pan > 1.0f)
+    }
+    if (pan > 1.0f) {
         pan = 1.0f;
+    }
     pan_level = (int) (63.0f * pan) + 64;
     CSnd.SE_SetPan(group, no, voice, pan_level, 0);
     se_index = CSnd.GetSeNo(no, voice);
     se_info = CSnd.GetSeInfTbl();
     base_volume = se_info[se_index * 2 + 1];
     level = (int) ((float) base_volume * volume);
-    if (level < 0)
+    if (level < 0) {
         level = 0;
-    if (level > 127)
+    }
+    if (level > 127) {
         level = 127;
+    }
     CSnd.SE_SetVol(group, no, voice, level, 0);
 }
 
 void OpPlayVolSE(int group, int no, int voice, float volume) {
     short *se_info;
-    short base_volume;
-    int se_index;
-    int level;
+    short  base_volume;
+    int    se_index;
+    int    level;
 
     se_index = CSnd.GetSeNo(no, voice);
     se_info = CSnd.GetSeInfTbl();
     base_volume = se_info[se_index * 2 + 1];
     level = (int) ((float) base_volume * volume);
-    if (level < 0)
+    if (level < 0) {
         level = 0;
-    if (level > 127)
+    }
+    if (level > 127) {
         level = 127;
+    }
     CSnd.SE_Play(group, no, voice, 64, 127, level, 0);
 }
 
@@ -1276,72 +1271,67 @@ public:
    the object dispatch like anything else in the world. */
 class CMapObject : public CObjectFrame {
 public:
+    char       unk_00[36];
+    CFrameVu1 *unk_D4;
+    char       unk_28[8];
+    float      unk_E0;
+    int        unk_34; /**< Category row of the map the object draws with. */
+    int        handle; /**< Handle the map gave the object; below zero where the slot is free. */
+    char       unk_EC[4];
+
     virtual void Draw();
 
     void Initialize();
     void DrawShadow(int fast);
-
-    char unk_00[36];
-    CFrameVu1 *unk_D4;
-    char unk_28[8];
-    float unk_E0;
-    int unk_34; /**< Category row of the map the object draws with. */
-    int handle; /**< Handle the map gave the object; below zero where the slot is free. */
-    char unk_EC[4];
 };
 
 /* One row of the table a map sorts its scenery by. The loader writes row one and no other, and
    what it writes there are the four distances a level-of-detail object changes model at. */
 class CategoryAttr {
 public:
-    float lod[4]; /**< Distances at which the category changes level of detail. */
-    int lowest;   /**< Lowest level of detail that the category may draw. */
-    int highest;  /**< Highest level of detail that the category may draw. */
+    float lod[4];  /**< Distances at which the category changes level of detail. */
+    int   lowest;  /**< Lowest level of detail that the category may draw. */
+    int   highest; /**< Highest level of detail that the category may draw. */
 };
 
 /* A run of frames the world draws as one. */
 class CMap {
 public:
+    CategoryAttr category[16]; /**< Level-of-detail ranges for the map's object categories. */
+    char         unk_180[2416];
+
     CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
     CMapObject *SetObject(int no, CFrameVu1 *frame, int category_no, int handle);
     CMapObject *GetObject(int no);
-
-    CategoryAttr category[16]; /**< Level-of-detail ranges for the map's object categories. */
-    char unk_180[2416];
 };
 
 /* One looping object animation a definition file registers: a frame is found by name and then
    driven between two motion numbers at a rate, with a scale of its own. */
 class OBJ_ANIME_SEQ {
 public:
-    void Initialize();
-
-    char name[16]; /**< Name of the frame the animation drives. */
-    int type;      /**< Kind of animation the sequence plays. */
-    int number;    /**< Animation number selected within that kind. */
-    char unk_18[8];
+    char          name[16]; /**< Name of the frame the animation drives. */
+    int           type;     /**< Kind of animation the sequence plays. */
+    int           number;   /**< Animation number selected within that kind. */
+    char          unk_18[8];
     sceVu0FVECTOR start; /**< Value the animation starts from. */
     sceVu0FVECTOR unk_30;
-    float step_x; /**< Amount the first component advances each step. */
-    float step_y; /**< Amount the second component advances each step. */
-    float step_z; /**< Amount the third component advances each step. */
-    char unk_4C[60];
+    float         step_x; /**< Amount the first component advances each step. */
+    float         step_y; /**< Amount the second component advances each step. */
+    float         step_z; /**< Amount the third component advances each step. */
+    char          unk_4C[60];
+
+    void Initialize();
 };
 
 void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
-void MGSetBGColor(float r, float g, float b, float a);
-void MGSetFogParm(float near_z, float far_z, u_char r, u_char g, u_char b, float far_fog,
-                  float near_fog);
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetAmbient(float *color);
 
 /* How far the scene's fog reaches and what colour it is. The four rates are the near and far
    planes and the two densities the renderer takes; the editor's own pair below shadows them and is
    never handed to the renderer here. */
-float op_fogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
+float  op_fogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
 u_char op_fogColor[3] = {96, 160, 239};
 
-static int debugModeFlag = 1;
+static int   debugModeFlag = 1;
 static float run_speed = 1.0f;
 
 /* The water plane a definition file may place. The four corners are built from one width and one
@@ -1352,24 +1342,24 @@ static sceVu0FVECTOR WaterV2;
 static sceVu0FVECTOR WaterV3;
 static sceVu0FVECTOR WaterV4;
 static sceVu0FVECTOR WaterPos;
-static u_char WaterR;
-static u_char WaterG;
-static u_char WaterB;
-static int WaterFlag;
-static int WaterMeshW;
-static int WaterMeshH;
-static float WaterShake;
-static float WaterCourant;
-static float WaterDecline;
-static float WaterAmplitude;
-static float WaterRefraction;
+static u_char        WaterR;
+static u_char        WaterG;
+static u_char        WaterB;
+static int           WaterFlag;
+static int           WaterMeshW;
+static int           WaterMeshH;
+static float         WaterShake;
+static float         WaterCourant;
+static float         WaterDecline;
+static float         WaterAmplitude;
+static float         WaterRefraction;
 
 /* The two lists the loader appends to as it goes: the shapes a scene is asked collision questions
    against, and the models that cast its shadows. */
 static CFrameVu1 *ColModel[64];
-static int ColModelCount;
+static int        ColModelCount;
 static CFrameVu1 *ShadowModel[64];
-static int shadowModelCount;
+static int        shadowModelCount;
 
 static int animeSpeed1;
 static int animeSpeed2;
@@ -1421,9 +1411,9 @@ static int TEIGI_PT_FIRE[] = {55, 3, 2, 1, 1};
 static int TEIGI_PT_WATER[] = {56, 9, 2, 1, 1, 1, 1, 1, 1, 1, 1};
 
 /* The projection the scene is drawn with, and the editor's own fog beside the renderer's. */
-static float Projection = 800.0f;
+static float  Projection = 800.0f;
 static u_char editFogColor[3] = {96, 160, 239};
-static float editFogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
+static float  editFogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
 
 /* The four distances a level-of-detail object changes model at, which every such object in a scene
    shares because the loader copies them into the map's own row rather than into the object. */
@@ -1433,21 +1423,21 @@ static float levelOfDitialZ[4] = {200.0f, 400.0f, 800.0f, 1600.0f};
    asked for and everything after it is what it asked for it to be, which is why the parser clears
    only that word and the loader writes the rest. */
 struct POINT_LIGHT {
-    int used; /**< Whether the definition file placed this light. */
-    float x;  /**< Horizontal world position. */
-    float y;  /**< Vertical world position. */
-    float z;  /**< Depth world position. */
-    u_char r; /**< Red component of the light's colour. */
-    u_char g; /**< Green component of the light's colour. */
-    u_char b; /**< Blue component of the light's colour. */
-    char unk_13[1];
-    u_int arg7; /**< Seventh argument of the PLIGHT command, truncated to an integer. */
-    u_int arg8; /**< Eighth argument of the PLIGHT command, truncated to an integer. */
-    float arg9; /**< Ninth argument of the PLIGHT command. */
+    int    used; /**< Whether the definition file placed this light. */
+    float  x;    /**< Horizontal world position. */
+    float  y;    /**< Vertical world position. */
+    float  z;    /**< Depth world position. */
+    u_char r;    /**< Red component of the light's colour. */
+    u_char g;    /**< Green component of the light's colour. */
+    u_char b;    /**< Blue component of the light's colour. */
+    char   unk_13[1];
+    u_int  arg7; /**< Seventh argument of the PLIGHT command, truncated to an integer. */
+    u_int  arg8; /**< Eighth argument of the PLIGHT command, truncated to an integer. */
+    float  arg9; /**< Ninth argument of the PLIGHT command. */
 };
 
 static POINT_LIGHT pointLight[96];
-static int pointLightStack;
+static int         pointLightStack;
 
 /* The parse state the two readers share. `argLevel` is the nesting the caller has reached, which
    is what gives each level of a definition its own row of the two argument buffers; the file size
@@ -1457,8 +1447,8 @@ static int teigiFileSize;
 
 /* The definition file is read straight into this one off the disc, and the drive transfers by
    DMA into whole cache lines. */
-static char teigiBuff[4096] __attribute__((aligned(64)));
-static char argStrBuff[128][64];
+static char  teigiBuff[4096] __attribute__((aligned(64)));
+static char  argStrBuff[128][64];
 static float argValBuff[128][64];
 
 /* The four model names one level-of-detail object is built from, as the loader hands them to the
@@ -1480,15 +1470,16 @@ static int checkArg(char *buf, int pos, int *command);
    half a scene. */
 void OPAnalyz(char *name) {
     char *buffer;
-    int i;
-    int position;
-    int matched;
+    int   i;
+    int   position;
+    int   matched;
 
     argLevel = 0;
     buffer = teigiBuff;
 
-    if (LoadFile(name, teigiBuff, &teigiFileSize) == 0)
+    if (LoadFile(name, teigiBuff, &teigiFileSize) == 0) {
         return;
+    }
 
     for (i = 0; i < teigiFileSize; i++) {
         if (buffer[i] == 13 && buffer[i + 1] == 10) {
@@ -1497,8 +1488,9 @@ void OPAnalyz(char *name) {
         }
     }
 
-    for (i = 0; i < 96; i++)
+    for (i = 0; i < 96; i++) {
         pointLight[i].used = 0;
+    }
     pointLightStack = 0;
 
     position = 0;
@@ -1510,8 +1502,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "GRD_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_GRD_IMG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1519,8 +1512,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BLD_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_BLD_IMG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1528,8 +1522,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "SKY_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_SKY_IMG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1537,18 +1532,19 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "GND", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_GRD);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
 
-        if (memcmp(&buffer[position], "BLD", 3) == 0 &&
-            memcmp(&buffer[position], "BLD_IMG", 7) != 0) {
+        if (memcmp(&buffer[position], "BLD", 3) == 0 && memcmp(&buffer[position], "BLD_IMG", 7) != 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_BLD);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1556,8 +1552,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "LOD", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_LOD);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1565,8 +1562,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "SKY", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_SKY);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1574,8 +1572,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FOG", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_FOG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1583,8 +1582,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "CRD", 3) == 0) {
             position = skipSpace(buffer, position + 3);
             position = checkArg(buffer, position, TEIGI_CRD);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1592,8 +1592,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "AMBIENT", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_AMBIENT);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1601,8 +1602,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "LIGHT_C", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_LIGHT_COL);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1610,8 +1612,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FARCLIP", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_FARCLIP);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1621,8 +1624,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BG_COL2", 7) == 0) {
             position = skipSpace(buffer, position + 6);
             position = checkArg(buffer, position, TEIGI_BG_COL2);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1630,8 +1634,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "BG_COL", 6) == 0) {
             position = skipSpace(buffer, position + 6);
             position = checkArg(buffer, position, TEIGI_BG_COL);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1639,8 +1644,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "NORMALCLIP_OFF", 14) == 0) {
             position = skipSpace(buffer, position + 14);
             position = checkArg(buffer, position, TEIGI_NORMALCLIP_OFF);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1648,8 +1654,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "RUN_SPEED", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_RUN_SPEED);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1657,8 +1664,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "EDIT_FOG", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_EDIT_FOG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1666,8 +1674,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "WATER_SET", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_WATER_SET);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1675,8 +1684,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "WATER_RGB", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_WATER_RGB);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1684,8 +1694,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "WATER_PARAM", 11) == 0) {
             position = skipSpace(buffer, position + 11);
             position = checkArg(buffer, position, TEIGI_WATER_PARAM);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1693,8 +1704,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "LEVEL_FAR", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_LEVEL_FAR);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1702,8 +1714,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "DebugFlag", 9) == 0) {
             position = skipSpace(buffer, position + 9);
             position = checkArg(buffer, position, TEIGI_DebugFlag);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1711,8 +1724,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "AnimeSpeed", 10) == 0) {
             position = skipSpace(buffer, position + 10);
             position = checkArg(buffer, position, TEIGI_AnimeSpeed);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1720,8 +1734,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "UPER", 4) == 0) {
             position = skipSpace(buffer, position + 4);
             position = checkArg(buffer, position, TEIGI_UPER);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1729,8 +1744,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "UPR_IMG", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_UPR_IMG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1738,8 +1754,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PLIGHT", 6) == 0) {
             position = skipSpace(buffer, position + 6);
             position = checkArg(buffer, position, TEIGI_PLIGHT);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1747,8 +1764,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "ADD_CRD", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_ADD_CRD);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1770,8 +1788,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_BASE", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_PT_BASE);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1779,8 +1798,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "MAPD", 4) == 0) {
             position = skipSpace(buffer, position + 4);
             position = checkArg(buffer, position, TEIGI_MAPD);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1788,8 +1808,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_COLS", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_PT_COLS);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1797,8 +1818,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_FIRE", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_PT_FIRE);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1806,8 +1828,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PT_WATER", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_PT_WATER);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1815,8 +1838,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "S_VOLUME", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_S_VOLUME);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1824,8 +1848,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "PROJECTION", 10) == 0) {
             position = skipSpace(buffer, position + 10);
             position = checkArg(buffer, position, TEIGI_PROJECTION);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1833,8 +1858,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "OBJ_ROT", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_OBJ_ROT);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1842,8 +1868,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "MAPINFO", 7) == 0) {
             position = skipSpace(buffer, position + 7);
             position = checkArg(buffer, position, TEIGI_MAPINFO);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1851,8 +1878,9 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FIRE_IMG", 8) == 0) {
             position = skipSpace(buffer, position + 8);
             position = checkArg(buffer, position, TEIGI_FIRE_IMG);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
@@ -1860,13 +1888,15 @@ void OPAnalyz(char *name) {
         if (memcmp(&buffer[position], "FIRE", 4) == 0) {
             position = skipSpace(buffer, position + 4);
             position = checkArg(buffer, position, TEIGI_FIRE);
-            if (position != -1)
+            if (position != -1) {
                 matched = 1;
+            }
             position = skipSpace(buffer, position);
             argLevel++;
         }
-        if (!matched)
+        if (!matched) {
             exit__2(-1);
+        }
 
         position = skipSpace(buffer, position);
     }
@@ -1878,24 +1908,24 @@ void OPAnalyz(char *name) {
    as it goes is what every model it places is given, which is why the two commands that place a
    whole building save it and put it back: what they set is theirs alone. */
 void OPMdsLoad() {
-    CFrameAttr saved_attr;
-    CFrameAttr attr;
-    char path[4][128];
-    CFrameVu1 *lod_frames[4];
+    CFrameAttr    saved_attr;
+    CFrameAttr    attr;
+    char          path[4][128];
+    CFrameVu1    *lod_frames[4];
     sceVu0FVECTOR light_dir;
-    int i;
-    int j;
-    int k;
-    int light_no;
-    int light_slot;
-    CFrameVu1 *frame;
-    CFrameVu1 *rot_frame;
-    CMapObject *object;
-    CFrame *shadow;
-    float rx;
-    float ry;
-    float rz;
-    float light_x;
+    int           i;
+    int           j;
+    int           k;
+    int           light_no;
+    int           light_slot;
+    CFrameVu1    *frame;
+    CFrameVu1    *rot_frame;
+    CMapObject   *object;
+    CFrame       *shadow;
+    float         rx;
+    float         ry;
+    float         rz;
+    float         light_x;
 
     attr.clip_depth = 20.0f;
     attr.clip_enable = 1;
@@ -1968,13 +1998,11 @@ void OPMdsLoad() {
         }
 
         if (TEIGI_BG_COL2[0] == (int) argValBuff[i][0]) {
-            MGSetBGColor((float) (u_int) argValBuff[i][1], (float) (u_int) argValBuff[i][2],
-                         (float) (u_int) argValBuff[i][3], 128.0f);
+            MGSetBGColor((float) (u_int) argValBuff[i][1], (float) (u_int) argValBuff[i][2], (float) (u_int) argValBuff[i][3], 128.0f);
         }
 
         if (TEIGI_BG_COL[0] == (int) argValBuff[i][0]) {
-            MGSetBGColor((float) (u_int) argValBuff[i][1], (float) (u_int) argValBuff[i][2],
-                         (float) (u_int) argValBuff[i][3], 128.0f);
+            MGSetBGColor((float) (u_int) argValBuff[i][1], (float) (u_int) argValBuff[i][2], (float) (u_int) argValBuff[i][3], 128.0f);
         }
 
         if (TEIGI_FARCLIP[0] == (int) argValBuff[i][0]) {
@@ -2025,8 +2053,7 @@ void OPMdsLoad() {
             op_fogColor[0] = argValBuff[i][3];
             op_fogColor[1] = argValBuff[i][4];
             op_fogColor[2] = argValBuff[i][5];
-            MGSetFogParm(op_fogRate[0], op_fogRate[1], op_fogColor[0], op_fogColor[1],
-                         op_fogColor[2], op_fogRate[2], op_fogRate[3]);
+            MGSetFogParm(op_fogRate[0], op_fogRate[1], op_fogColor[0], op_fogColor[1], op_fogColor[2], op_fogRate[2], op_fogRate[3]);
             attr.fog_enable = 1;
         }
 
@@ -2064,8 +2091,7 @@ void OPMdsLoad() {
             frame->SetAttr(attr, 1, 64);
             SetFrameAttr(frame, 1);
             object = OP_GroundMap.SetObject(frame, 0, 0);
-            CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3],
-                                 10.0f * argValBuff[i][4]);
+            CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
             object->SetPosition(position);
             rx = PI * argValBuff[i][5] / 180.0f;
             ry = PI * argValBuff[i][6] / 180.0f;
@@ -2099,9 +2125,7 @@ void OPMdsLoad() {
                 object = OP_BuildingMap.SetObject(nowObjCnt++, frame, 0, 0);
                 object->handle = 1;
                 object->unk_34 = 5;
-                CVector3_f_ position(10.0f * argValBuff[i][2],
-                                     10.0f * argValBuff[i][3],
-                                     10.0f * argValBuff[i][4]);
+                CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
                 object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
@@ -2150,9 +2174,7 @@ void OPMdsLoad() {
                     }
                 }
 
-                CVector3_f_ position(10.0f * argValBuff[i][2],
-                                     10.0f * argValBuff[i][3],
-                                     10.0f * argValBuff[i][4]);
+                CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
                 object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
@@ -2177,9 +2199,7 @@ void OPMdsLoad() {
                 object = OP_BuildingMap2.SetObject(nowObjCnt2++, frame, 0, 0);
                 object->handle = 1;
                 object->unk_34 = 5;
-                CVector3_f_ position(10.0f * argValBuff[i][2],
-                                     10.0f * argValBuff[i][3],
-                                     10.0f * argValBuff[i][4]);
+                CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
                 object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
@@ -2228,9 +2248,7 @@ void OPMdsLoad() {
                     }
                 }
 
-                CVector3_f_ position(10.0f * argValBuff[i][2],
-                                     10.0f * argValBuff[i][3],
-                                     10.0f * argValBuff[i][4]);
+                CVector3_f_ position(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
                 object->SetPosition(position);
                 rx = PI * argValBuff[i][5] / 180.0f;
                 ry = PI * argValBuff[i][6] / 180.0f;
@@ -2247,9 +2265,7 @@ void OPMdsLoad() {
             strcat(path[0], argStrBuff[i]);
             LoadFile(path[0], (void *) read_buffer, 0);
             ShadowModel[shadowModelCount] = LoadMDSFile(read_buffer, 14, 0);
-            ShadowModel[shadowModelCount]->SetPosition(10.0f * argValBuff[i][2],
-                                                       10.0f * argValBuff[i][3],
-                                                       10.0f * argValBuff[i][4]);
+            ShadowModel[shadowModelCount]->SetPosition(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
             rx = PI * argValBuff[i][5] / 180.0f;
             ry = PI * argValBuff[i][6] / 180.0f;
             rz = PI * argValBuff[i][7] / 180.0f;
@@ -2262,9 +2278,7 @@ void OPMdsLoad() {
             strcat(path[0], argStrBuff[i]);
             LoadFile(path[0], (void *) read_buffer, 0);
             ColModel[ColModelCount] = LoadCollisionFile(read_buffer);
-            ColModel[ColModelCount]->SetPosition(10.0f * argValBuff[i][2],
-                                                 10.0f * argValBuff[i][3],
-                                                 10.0f * argValBuff[i][4]);
+            ColModel[ColModelCount]->SetPosition(10.0f * argValBuff[i][2], 10.0f * argValBuff[i][3], 10.0f * argValBuff[i][4]);
             rx = PI * argValBuff[i][5] / 180.0f;
             ry = PI * argValBuff[i][6] / 180.0f;
             rz = PI * argValBuff[i][7] / 180.0f;
@@ -2328,24 +2342,28 @@ static int skipSpace(char *buffer, int position) {
             skipped = 1;
         }
 
-        if (buffer[position] == ' ')
+        if (buffer[position] == ' ') {
             skipped = 1;
-        if (buffer[position] == '\t')
+        }
+        if (buffer[position] == '\t') {
             skipped = 1;
+        }
         if (buffer[position] == '\0') {
             position++;
             skipped = 1;
         }
 
         if (memcmp(&buffer[position], "//", 2) == 0) {
-            while (buffer[position] != '\0')
+            while (buffer[position] != '\0') {
                 position++;
+            }
             position++;
             skipped = 1;
         }
 
-        if (!skipped)
+        if (!skipped) {
             return position;
+        }
         position++;
     }
 
@@ -2372,16 +2390,18 @@ static int checkArg(char *buffer, int position, int *command) {
 
     cursor = position;
 
-    if (command[1] == 0)
+    if (command[1] == 0) {
         return position;
+    }
 
     for (i = 0; i < command[1]; i++) {
         argValBuff[argLevel][0] = (float) command[0];
 
         switch (command[2 + i]) {
             case 0:
-                if (buffer[cursor] != '"')
+                if (buffer[cursor] != '"') {
                     return -1;
+                }
 
                 cursor++;
                 for (char_count = 0; char_count < 64; char_count++) {
@@ -2394,15 +2414,17 @@ static int checkArg(char *buffer, int position, int *command) {
                     cursor++;
                 }
 
-                if (char_count == 64)
+                if (char_count == 64) {
                     return -1;
+                }
 
                 cursor = skipSpace(buffer, cursor);
                 break;
 
             case 1:
-                if (buffer[cursor] != ',')
+                if (buffer[cursor] != ',') {
                     return -1;
+                }
 
                 cursor = skipSpace(buffer, cursor + 1);
                 if (memcmp(&buffer[cursor], "ON", 2) == 0) {
@@ -2413,12 +2435,15 @@ static int checkArg(char *buffer, int position, int *command) {
                     cursor += 3;
                 } else {
                     accepted = 0;
-                    if (buffer[cursor] == '-')
+                    if (buffer[cursor] == '-') {
                         accepted = 1;
-                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                    }
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                         accepted = 1;
-                    if (!accepted)
+                    }
+                    if (!accepted) {
                         return -1;
+                    }
 
                     argValBuff[argLevel][1 + i] = (float) atof(&buffer[cursor]);
 
@@ -2436,12 +2461,14 @@ static int checkArg(char *buffer, int position, int *command) {
                             cursor++;
                             accepted = 1;
                         }
-                        if (!accepted)
+                        if (!accepted) {
                             break;
+                        }
                     }
 
-                    if (char_count == 32)
+                    if (char_count == 32) {
                         return -1;
+                    }
                 }
 
                 cursor = skipSpace(buffer, cursor);
@@ -2456,12 +2483,15 @@ static int checkArg(char *buffer, int position, int *command) {
                     cursor += 3;
                 } else {
                     accepted = 0;
-                    if (buffer[cursor] == '-')
+                    if (buffer[cursor] == '-') {
                         accepted = 1;
-                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9')
+                    }
+                    if (buffer[cursor] >= '0' && buffer[cursor] <= '9') {
                         accepted = 1;
-                    if (!accepted)
+                    }
+                    if (!accepted) {
                         return -1;
+                    }
 
                     argValBuff[argLevel][1 + i] = (float) atof(&buffer[cursor]);
 
@@ -2479,12 +2509,14 @@ static int checkArg(char *buffer, int position, int *command) {
                             cursor++;
                             accepted = 1;
                         }
-                        if (!accepted)
+                        if (!accepted) {
                             break;
+                        }
                     }
 
-                    if (char_count == 32)
+                    if (char_count == 32) {
                         return -1;
+                    }
                 }
 
                 cursor = skipSpace(buffer, cursor);

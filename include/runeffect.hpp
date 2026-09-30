@@ -14,10 +14,7 @@ struct sceVif1Packet;
  * @address 0x162580
  * @size 0x73C
  */
-void blendTextuer(sceVif1Packet *packet, int destination, int width, int format,
-                  CTexture *first_texture, const CRect_i_ &first_destination,
-                  const CRect_i_ &first_source, CTexture *second_texture,
-                  const CRect_i_ &second_destination, const CRect_i_ &second_source);
+void blendTextuer(sceVif1Packet *packet, int destination, int width, int format, CTexture *first_texture, const CRect_i_ &first_destination, const CRect_i_ &first_source, CTexture *second_texture, const CRect_i_ &second_destination, const CRect_i_ &second_source);
 
 /**
  * Fills the blend table with one period of a sine.
@@ -36,21 +33,18 @@ void initBlendCnt(int count, float scale);
  * @address 0x162D80
  * @size 0x6E4
  */
-void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int format,
-                      const CRect_i_ &source, CTexture *texture,
-                      const CRect_i_ &texture_destination, const CRect_i_ &texture_source,
-                      float depth, float phase);
+void blendTextuerTest(sceVif1Packet *packet, int destination, int width, int format, const CRect_i_ &source, CTexture *texture, const CRect_i_ &texture_destination, const CRect_i_ &texture_source, float depth, float phase);
 
 /**
  * Raises the puffs of dust the player's run leaves behind.
  */
 class CRunEffect {
 public:
-    int lighting; /**< Whether the dust takes light. */
-    u8 unk_04[0xC];
+    int   lighting; /**< Whether the dust takes light. */
+    u8    unk_04[0xC];
     float position[8][4]; /**< World position of each puff of dust. */
     float velocity_y[8];  /**< Speed each puff is rising at, which gravity eats into. */
-    int life[8];          /**< Frames each puff has left before it goes. */
+    int   life[8];        /**< Frames each puff has left before it goes. */
 
     /**
      * Sets whether the running effect takes light.
@@ -68,7 +62,7 @@ public:
      * @address 0x163480
      * @size 0x46C
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Starts one puff of run dust at a position.
@@ -86,7 +80,7 @@ public:
      * @address 0x163980
      * @size 0x70
      */
-    void Step(void);
+    void Step();
 
     /**
      * Constructs the run effect with no dust standing.
@@ -95,7 +89,7 @@ public:
      * @address 0x1639F0
      * @size 0x3C
      */
-    CRunEffect(void);
+    CRunEffect();
 };
 
 STATIC_ASSERT(sizeof(CRunEffect) == 0xD0);

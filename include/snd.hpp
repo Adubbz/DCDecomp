@@ -15,13 +15,10 @@ struct sceVif1Packet;
 struct RECT;
 
 /** Draws a projected sprite with one colour and fog depth. */
-void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
-                    int *top_left, int *bottom_right, spRGBA *colour);
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *bottom_right, spRGBA *colour);
 
 /** Draws a projected quadrilateral with per-corner depth and a uniform alpha. */
-void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
-                    int *top_left, int *top_right, int *bottom_left, int *bottom_right,
-                    unsigned char alpha);
+void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha);
 
 /**
  * Loads the sound-effect metadata table used by the sound manager.
@@ -30,7 +27,7 @@ void set3DSpriteFog(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &so
  * @address 0x159390
  * @size 0x298
  */
-void SndInitSeTable(void);
+void SndInitSeTable();
 
 /**
  * Loads one character voice bank.
@@ -57,7 +54,7 @@ int SndVoiceLoad(int set_no);
  * @address 0x159200
  * @size 0x8C
  */
-void SndInitialize(int, int, int, int);
+void SndInitialize(int unused0, int unused1, int unused2, int unused3);
 
 /**
  * Stops the music, the ambient loop, sound-effect ports 10 and 12 to 15 and both
@@ -68,7 +65,7 @@ void SndInitialize(int, int, int, int);
  * @address 0x159290
  * @size 0xC0
  */
-void SndExit(void);
+void SndExit();
 
 /**
  * Steps the background-music fade, the sound-effect sequences and the sound
@@ -78,7 +75,7 @@ void SndExit(void);
  * @address 0x159350
  * @size 0x34
  */
-void SndStep(void);
+void SndStep();
 
 /**
  * Resets the background music so that no set counts as loaded, playing or
@@ -88,7 +85,7 @@ void SndStep(void);
  * @address 0x159930
  * @size 0x2C
  */
-int SndBgmInit(void);
+int SndBgmInit();
 
 #ifdef PAL
 /**
@@ -107,7 +104,7 @@ void SndBgmDisable(int disable);
  * @address 0x159BB0
  * @size 0xC
  */
-int SndGetBgmDisableFlag(void);
+int SndGetBgmDisableFlag();
 #endif
 
 /**
@@ -118,7 +115,7 @@ int SndGetBgmDisableFlag(void);
  * @address 0x15A450
  * @size 0xA0
  */
-void SndStopAllSe(void);
+void SndStopAllSe();
 
 /**
  * Stops the background music at once.
@@ -127,7 +124,7 @@ void SndStopAllSe(void);
  * @address 0x159BA0
  * @size 0x58
  */
-void SndBgmStop(void);
+void SndBgmStop();
 
 #ifdef PAL
 /**
@@ -137,7 +134,7 @@ void SndBgmStop(void);
  * @address 0x159E60
  * @size 0x48
  */
-void SndBgmPause(void);
+void SndBgmPause();
 #endif
 
 /**
@@ -148,7 +145,7 @@ void SndBgmPause(void);
  * @address 0x159C00
  * @size 0x4C
  */
-void SndBgmRePlay(void);
+void SndBgmRePlay();
 
 /**
  * Fades the background music out and then stops it.
@@ -157,7 +154,7 @@ void SndBgmRePlay(void);
  * @address 0x159C50
  * @size 0xA8
  */
-void SndBgmFadeOutStop(void);
+void SndBgmFadeOutStop();
 
 /**
  * Stops the ambient loop.
@@ -166,7 +163,7 @@ void SndBgmFadeOutStop(void);
  * @address 0x15B190
  * @size 0x44
  */
-void SndAmbientStop(void);
+void SndAmbientStop();
 
 /**
  * Starts an ambient loop at its default volume, unless that loop already plays.
@@ -197,7 +194,7 @@ int SndGetAmbientDefaultVol();
  * @address 0x15B0F0
  * @size 0x1C
  */
-int SndAmbientInit(void);
+int SndAmbientInit();
 
 /**
  * Works out the volume and the pan of a sound at a position.
@@ -299,7 +296,7 @@ int SndSeSeqPlayStop(int se_no, int length, int voice);
  * @address 0x15AED0
  * @size 0x4C
  */
-void SndSeSeqInit(void);
+void SndSeSeqInit();
 
 /**
  * Turns the bilinear filter on or off for the sprites that follow.
@@ -317,8 +314,7 @@ void setbilinear(int on);
  * @address 0x15F090
  * @size 0x68
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel,
-                 unsigned char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, RECT *screen, RECT *texel, unsigned char alpha);
 
 /**
  * Opens a run of sprites that all draw out of one texture.
@@ -357,8 +353,7 @@ void SetClut(sceVif1Packet *packet, CTexture *texture, i *clut);
  * @address 0x15C310
  * @size 0x318
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, unsigned char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, unsigned char alpha);
 
 /**
  * Draws one part of a texture into a rectangle of the screen, at one colour.
@@ -367,9 +362,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @address 0x15C630
  * @size 0x350
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, unsigned char red, unsigned char green, unsigned char blue,
-                 unsigned char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
 /**
  * Draws one part of a texture into a rectangle of the screen, shading each corner with its own colour.
@@ -378,8 +371,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @address 0x15C980
  * @size 0x82C
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel,
-                 spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right, int mode);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right, int mode);
 
 /**
  * Draws one tinted texture rectangle rotated about a caller-supplied pivot.
@@ -388,10 +380,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @address 0x15EAD0
  * @size 0x5BC
  */
-void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                    const CRect_i_ &texel, int pivot_x, int pivot_y, float angle,
-                    unsigned char red, unsigned char green, unsigned char blue,
-                    unsigned char alpha);
+void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, int pivot_x, int pivot_y, float angle, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
 /**
  * Draws one part of a texture into a rectangle of the screen, turned about a point.
@@ -400,8 +389,7 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
  * @address 0x15E540
  * @size 0x58C
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, int pivot_x, int pivot_y, float angle);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, int pivot_x, int pivot_y, float angle);
 
 /**
  * Draws a whole texture into a rectangle of the screen, turned about a point.
@@ -410,20 +398,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @address 0x15BD00
  * @size 0x300
  */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, int u,
-                 int v);
-
-/**
- * Draws one part of a texture into a rectangle of the screen, with a colour
- * of its own at each corner.
- *
- * @mangled set2DSprite__FP13sceVif1PacketP8CTextureRC8CRect_i_RC8CRect_i_P6spRGBAP6spRGBAP6spRGBAP6spRGBAi
- * @address 0x15C980
- * @size 0x82C
- */
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                 const CRect_i_ &texel, spRGBA *top_left, spRGBA *top_right,
-                 spRGBA *bottom_left, spRGBA *bottom_right, int mode);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, int u, int v);
 
 /**
  * Draws an untextured rectangle with a colour at each of its four corners.
@@ -432,8 +407,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
  * @address 0x15E120
  * @size 0x41C
  */
-void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_left,
-                   spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right);
+void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_left, spRGBA *top_right, spRGBA *bottom_left, spRGBA *bottom_right);
 
 /**
  * Draws one four-cornered shape of one colour.
@@ -442,9 +416,7 @@ void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_le
  * @address 0x15DED0
  * @size 0x250
  */
-void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
-                  int *bottom_right, unsigned char red, unsigned char green, unsigned char blue,
-                  unsigned char alpha);
+void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left, int *bottom_right, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
 /**
  * Draws a four-cornered shape of the screen in a flat colour, giving each
@@ -454,9 +426,7 @@ void setColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bot
  * @address 0x15D1B0
  * @size 0x2BC
  */
-void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left,
-                    int *bottom_right, spRGBA *top_left_colour, spRGBA *top_right_colour,
-                    spRGBA *bottom_left_colour, spRGBA *bottom_right_colour);
+void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *bottom_left, int *bottom_right, spRGBA *top_left_colour, spRGBA *top_right_colour, spRGBA *bottom_left_colour, spRGBA *bottom_right_colour);
 
 /**
  * Draws one part of a texture into a four-cornered shape of the screen, at one
@@ -466,8 +436,7 @@ void set3DColSprite(sceVif1Packet *packet, int *top_left, int *top_right, int *b
  * @address 0x15D470
  * @size 0x34
  */
-void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left,
-                 int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha);
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *top_right, int *bottom_left, int *bottom_right, unsigned char alpha);
 
 /**
  * Draws one part of a texture into a projected quadrilateral with one colour.
@@ -476,9 +445,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @address 0x15D4B0
  * @size 0x2E0
  */
-void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
-                 int *top_left, int *top_right, int *bottom_left, int *bottom_right,
-                 spRGBA *colour);
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *top_right, int *bottom_left, int *bottom_right, spRGBA *colour);
 
 /**
  * Draws a textured sprite in world space between two projected corners.
@@ -487,8 +454,7 @@ void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sourc
  * @address 0x15D790
  * @size 0x210
  */
-void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source,
-                 int *top_left, int *bottom_right, spRGBA *colour);
+void set3DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &source, int *top_left, int *bottom_right, spRGBA *colour);
 
 /**
  * Tells the sound where the camera stands, so that it can pan what it plays.
@@ -577,7 +543,7 @@ int SndSyncBG();
  * @address 0x159DF0
  * @size 0x48
  */
-int SndGetDefaultBgmVol(void);
+int SndGetDefaultBgmVol();
 
 /**
  * Polls the background-music bank load, and hands the file to the driver once it lands.
@@ -586,7 +552,7 @@ int SndGetDefaultBgmVol(void);
  * @address 0x159AB0
  * @size 0x80
  */
-int SndBgmSyncBG(void);
+int SndBgmSyncBG();
 
 /**
  * Polls the sound-effect bank load, and hands the file to the driver once it lands.
@@ -595,7 +561,7 @@ int SndBgmSyncBG(void);
  * @address 0x15A630
  * @size 0x80
  */
-int SndSoundSyncBG(void);
+int SndSoundSyncBG();
 
 /**
  * Polls the voice bank load, and hands the file to the driver once it lands.
@@ -604,7 +570,7 @@ int SndSoundSyncBG(void);
  * @address 0x15B530
  * @size 0x80
  */
-int SndVoiceSyncBG(void);
+int SndVoiceSyncBG();
 
 /** Plays one menu sound effect. */
 void SndSPSePlay(int se_no, int vol);
@@ -624,7 +590,7 @@ void SndSetSPSeVolf(int se_no, float volume);
 /** Sets the normalized pan of a playing special sound effect. */
 void SndSetSPSePanf(int se_no, float pan);
 /** Returns zero once the background sound-effect load has finished. */
-int SndSPSeSyncBG(void);
+int SndSPSeSyncBG();
 
 /**
  * Reads one background-music set and hands it to the driver, and returns 1;
@@ -652,7 +618,7 @@ void SndBgmPlay(int track_no);
  * @address 0x15A440
  * @size 0xC
  */
-int SndGetNowSetNo(void);
+int SndGetNowSetNo();
 
 /**
  * Points the sound loader at its read buffer.
@@ -727,7 +693,7 @@ void SndBgmFadeOut(int frames, int volume);
  * @address 0x159F90
  * @size 0xF4
  */
-void SndBgmFadeInOut(void);
+void SndBgmFadeInOut();
 
 /**
  * Submits the blending register that sprites draw with.
@@ -756,10 +722,10 @@ extern TAG_PARAM Command__3[];
  * not use holds -1 in its bank, program and port.
  */
 struct SND_SE_INFO {
-    s8 bank; /**< Bank the sound driver loads the effect from. */
-    s8 prog; /**< Program within that bank. */
-    s8 unk_2;
-    s8 port;    /**< Port to play on; negative asks for the default port. */
+    s8  bank; /**< Bank the sound driver loads the effect from. */
+    s8  prog; /**< Program within that bank. */
+    s8  unk_2;
+    s8  port;   /**< Port to play on; negative asks for the default port. */
     s16 vol_no; /**< Row of the sound object's effect table to take the level
                      from, or negative to play at full volume. */
 };

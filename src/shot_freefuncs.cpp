@@ -50,7 +50,7 @@ static int defWeapon[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
 #include "texture.hpp"
 #include "userstatus.hpp"
 
-s32 DebugStatus[21];
+s32   DebugStatus[21];
 float StatusColor[3];
 
 /**
@@ -140,7 +140,7 @@ u8 statusRGBColor_15_2[4];
  * @address 0x1AF360
  * @size 0x48
  */
-void WaterSplash_Init(void) {
+void WaterSplash_Init() {
     int i;
 
     Water_Splash_actFlag = 0;
@@ -161,16 +161,16 @@ void WaterSplash_Init(void) {
  * @address 0x1AF3B0
  * @size 0x328
  */
-int CheckHealingWater(void) {
-    float position[4];
-    float water_position[4];
+int CheckHealingWater() {
+    float        position[4];
+    float        water_position[4];
     PARTS_WATER *nearest_water;
-    float nearest_distance;
-    float water_x;
-    float water_y;
-    float water_z;
-    int row;
-    int column;
+    float        nearest_distance;
+    float        water_x;
+    float        water_y;
+    float        water_z;
+    int          row;
+    int          column;
 
     nearest_distance = 160.0f;
     sceVu0CopyVector(position, CharaMain.pos);
@@ -181,7 +181,7 @@ int CheckHealingWater(void) {
 
             if (parts_no != -1) {
                 CDungeonParts *part = &NowDngMap->parts[parts_no];
-                PARTS_WATER *water = &part->water;
+                PARTS_WATER   *water = &part->water;
 
                 if (part->water.used != 0) {
                     water_position[0] = 160.0f * column;
@@ -202,16 +202,12 @@ int CheckHealingWater(void) {
         }
     }
 
-    if (nearest_distance < 160.0f && position[0] >= water_x + nearest_water->vertex[0][0] &&
-        position[0] < water_x + nearest_water->vertex[3][0] &&
-        position[2] >= water_z + nearest_water->vertex[0][2] &&
-        position[2] < water_z + nearest_water->vertex[3][2] && position[1] < water_y) {
+    if (nearest_distance < 160.0f && position[0] >= water_x + nearest_water->vertex[0][0] && position[0] < water_x + nearest_water->vertex[3][0] && position[2] >= water_z + nearest_water->vertex[0][2] && position[2] < water_z + nearest_water->vertex[3][2] && position[1] < water_y) {
         position[1] = water_y;
         sceVu0CopyVector(CheckWaterInfo.surface_position, position);
         BtActStatus.in_water = 1;
 
-        if (Water_Splash_actFlag == 0 && CheckWaterInfo.in_water == 0 &&
-            CheckWaterInfo.dry_position[1] - CheckWaterInfo.surface_position[1] > 0.5f) {
+        if (Water_Splash_actFlag == 0 && CheckWaterInfo.in_water == 0 && CheckWaterInfo.dry_position[1] - CheckWaterInfo.surface_position[1] > 0.5f) {
             Water_Splash.SetPosition(CheckWaterInfo.surface_position);
             Water_Splash.SetMotion(0, 6);
             SndSePlay(0x223, -1, 0);
@@ -234,7 +230,7 @@ struct HEAL_ZONE {
     float pos[4]; /**< Centre of the healing zone. */
     float width;  /**< Width of the healing zone. */
     float depth;  /**< Depth of the healing zone. */
-    s32 on;       /**< Whether the healing zone is active. */
+    s32   on;     /**< Whether the healing zone is active. */
 };
 
 /**
@@ -244,17 +240,17 @@ struct HEAL_ZONE {
  * @address 0x1AF6E0
  * @size 0x29C
  */
-int CheckHealZone(void) {
-    float position[4];
-    float center[4];
-    float low[4];
-    float high[4];
-    int column;
-    int row;
-    int parts_no;
-    int hit;
+int CheckHealZone() {
+    float          position[4];
+    float          center[4];
+    float          low[4];
+    float          high[4];
+    int            column;
+    int            row;
+    int            parts_no;
+    int            hit;
     CDungeonParts *part;
-    HEAL_ZONE *zone;
+    HEAL_ZONE     *zone;
 
     sceVu0CopyVector(position, CharaMain.pos);
     BtActStatus.in_water = 0;
@@ -283,8 +279,7 @@ int CheckHealZone(void) {
     high[0] += zone->width / 2.0f;
     high[2] += zone->depth / 2.0f;
 
-    if (position[0] >= low[0] && position[0] <= high[0] && position[2] >= low[2] &&
-        position[2] < high[2] && position[1] < center[1]) {
+    if (position[0] >= low[0] && position[0] <= high[0] && position[2] >= low[2] && position[2] < high[2] && position[1] < center[1]) {
         BtActStatus.in_water = 1;
         return 1;
     }
@@ -302,11 +297,11 @@ int CheckHealZone(void) {
  * @address 0x1AF980
  * @size 0x158
  */
-void HealingWater(void) {
+void HealingWater() {
     float position[4];
-    int chara;
-    int max_hp;
-    int now_hp;
+    int   chara;
+    int   max_hp;
+    int   now_hp;
 
     if (CheckHealZone() || CheckHealingWater()) {
         if (healingSpeed <= 0) {
@@ -342,23 +337,23 @@ void HealingWater(void) {
  * @address 0x1AFAE0
  * @size 0x27C
  */
-void DrawWaterLing(void) {
-    float corner[4][4];
-    int screen[4][4];
+void DrawWaterLing() {
+    float      corner[4][4];
+    int        screen[4][4];
     sceGsAlpha alpha;
-    sceGsZbuf zbuf;
-    CTexture *ripple;
-    int i;
-    int visible;
-    int j;
-    float radius;
-    float x;
-    float y;
-    float near;
-    float left;
-    float z;
-    float right;
-    float far;
+    sceGsZbuf  zbuf;
+    CTexture  *ripple;
+    int        i;
+    int        visible;
+    int        j;
+    float      radius;
+    float      x;
+    float      y;
+    float      near;
+    float      left;
+    float      z;
+    float      right;
+    float      far;
 
     ripple = TexManager.GetTexture("d00e01", -1);
 
@@ -406,8 +401,7 @@ void DrawWaterLing(void) {
 
             if (visible) {
                 float fade = 2.8444445f * WaterWaveLing[i].life;
-                set3DSprite(Vif1Packet, ripple, CRect_i_(0, 64, 64, 64), screen[0], screen[1],
-                            screen[2], screen[3], fade);
+                set3DSprite(Vif1Packet, ripple, CRect_i_(0, 64, 64, 64), screen[0], screen[1], screen[2], screen[3], fade);
             }
         }
     }
@@ -423,7 +417,7 @@ void DrawWaterLing(void) {
  * @address 0x1AFD60
  * @size 0x130
  */
-void StepWaterLing(void) {
+void StepWaterLing() {
     int i;
 
     if (CheckWaterInfo.in_water != 0) {
@@ -469,12 +463,12 @@ static inline int MonstorAliveCheck(int no, int alive) {
 }
 
 float SetBattleStyle(int map_no, int preserve_bgm) {
-    float nearest = 10000;
+    float         nearest = 10000;
     sceVu0FVECTOR position;
     sceVu0FVECTOR player;
-    float bgm_volume;
-    float ambient_volume;
-    int alive;
+    float         bgm_volume;
+    float         ambient_volume;
+    int           alive;
 
     sceVu0CopyVector(player, CharaMain.pos);
     for (int i = 0; i < 16; i++) {
@@ -493,7 +487,7 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
     }
     if (map_no != 5) {
         CUserStatus *status;
-        int floors = maxFloorTbl[map_no];
+        int          floors = maxFloorTbl[map_no];
         status = UserStatus;
         if (status->cur_floor < floors - 1) {
             BtBattleMusic_Excg(nearest, &bgm_volume, &ambient_volume);
@@ -518,9 +512,9 @@ float SetBattleStyle(int map_no, int preserve_bgm) {
  */
 int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
     CTexture *texture = TexManager.GetTexture("stayframe", -1);
-    int source_y = palette * 12 + 0xB0;
-    int hundreds_shown = 0;
-    int digit = value / 100;
+    int       source_y = palette * 12 + 0xB0;
+    int       hundreds_shown = 0;
+    int       digit = value / 100;
     if (digit > 0) {
         set2DSprite(Vif1Packet, texture, CRect_i_(x, y, 12, 12), CRect_i_(digit * 12, source_y, 12, 12), alpha);
         value -= digit * 100;
@@ -541,7 +535,7 @@ int ValuePrint(int x, int y, int value, int palette, unsigned char alpha) {
  * @address 0x1B0260
  * @size 0xB8
  */
-void BtStatusAlarmInit(void) {
+void BtStatusAlarmInit() {
     statusAlarmRate = 128;
     statusAlarmCounter = 0.0f;
 
@@ -593,7 +587,7 @@ void BtStatusAlarmInit(void) {
  * @address 0x1B0320
  * @size 0xC8
  */
-void BtStatusAlarmAnime(void) {
+void BtStatusAlarmAnime() {
     statusAlarmCounter += 0.10471976f;
 
     if (!(statusAlarmCounter < 3.1415927f)) {
@@ -664,12 +658,12 @@ u8 *BtGetStatusPal2(int bar, float max, float value) {
  * @size 0x1438
  */
 void topStatusInfo(int y, int selected_item, int floor) {
-    int alpha;
+    int       alpha;
     CTexture *icons;
     CTexture *frame;
-    int cells;
-    spRGBA *upper;
-    spRGBA *lower;
+    int       cells;
+    spRGBA   *upper;
+    spRGBA   *lower;
     y -= 10;
     y += BtActStatus.hud_shake_y;
     icons = TexManager.GetTexture("itempack", -1);
@@ -678,7 +672,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
     // Life: a frame stretched to the character's maximum, the bar, and "now/max".
     float life = UserStatus->hp[UserStatus->cur_chara];
     float life_max = UserStatus->max_hp[UserStatus->cur_chara];
-    int length = (int) (0.74f * life_max);
+    int   length = (int) (0.74f * life_max);
     if (length < 2) {
         length = 2;
     }
@@ -694,11 +688,9 @@ void topStatusInfo(int y, int selected_item, int floor) {
     lower = (spRGBA *) BtGetStatusPal2(0, life_max, life);
     set2DSprite(Vif1Packet, icons, CRect_i_(0x30, y, 4, 0x10), CRect_i_(0x68, 0x70, 4, 0x10), alpha);
     for (int i = 0; i < cells - 2; i++) {
-        set2DSprite(Vif1Packet, icons, CRect_i_(i * 4 + 0x34, y, 4, 0x10), CRect_i_(0x6C, 0x70, 4, 0x10),
-                    alpha);
+        set2DSprite(Vif1Packet, icons, CRect_i_(i * 4 + 0x34, y, 4, 0x10), CRect_i_(0x6C, 0x70, 4, 0x10), alpha);
     }
-    set2DSprite(Vif1Packet, icons, CRect_i_((cells - 1) * 4 + 0x30, y, 4, 0x10), CRect_i_(0x70, 0x70, 4, 0x10),
-                alpha);
+    set2DSprite(Vif1Packet, icons, CRect_i_((cells - 1) * 4 + 0x30, y, 4, 0x10), CRect_i_(0x70, 0x70, 4, 0x10), alpha);
     if (life > 0.0f) {
         length = (int) (0.74f * life);
         set2DSpriteC4(Vif1Packet, CRect_i_(0x34, y + 5, length - 2, 6), upper, lower, upper, lower);
@@ -711,11 +703,11 @@ void topStatusInfo(int y, int selected_item, int floor) {
 
     // Weapon durability and progress toward the next weapon level.
     CUserStatus *user = UserStatus;
-    s8 wielder = user->cur_chara;
-    s8 *slots = user->equipped_weapon_slot;
-    float durability_max = ((CUserStatus *) user)->chara_weapons[user->cur_chara][slots[wielder]].durability;
-    float durability = ((CUserStatus *) user)->chara_weapons[wielder][(s8) slots[wielder]].durability_f;
-    float bar = 1.4949495f * durability_max;
+    s8           wielder = user->cur_chara;
+    s8          *slots = user->equipped_weapon_slot;
+    float        durability_max = ((CUserStatus *) user)->chara_weapons[user->cur_chara][slots[wielder]].durability;
+    float        durability = ((CUserStatus *) user)->chara_weapons[wielder][(s8) slots[wielder]].durability_f;
+    float        bar = 1.4949495f * durability_max;
     length = (int) bar;
     if (length < 2) {
         length = 2;
@@ -732,19 +724,16 @@ void topStatusInfo(int y, int selected_item, int floor) {
     lower = (spRGBA *) BtGetStatusPal2(1, durability_max, durability);
     set2DSprite(Vif1Packet, icons, CRect_i_(0x30, y + 0x11, 4, 0x10), CRect_i_(0x68, 0x70, 4, 0x10), alpha);
     for (int i = 0; i < cells - 2; i++) {
-        set2DSprite(Vif1Packet, icons, CRect_i_(i * 4 + 0x34, y + 0x11, 4, 0x10),
-                    CRect_i_(0x6C, 0x70, 4, 0x10), alpha);
+        set2DSprite(Vif1Packet, icons, CRect_i_(i * 4 + 0x34, y + 0x11, 4, 0x10), CRect_i_(0x6C, 0x70, 4, 0x10), alpha);
     }
-    set2DSprite(Vif1Packet, icons, CRect_i_((cells - 1) * 4 + 0x30, y + 0x11, 4, 0x10),
-                CRect_i_(0x70, 0x70, 4, 0x10), alpha);
+    set2DSprite(Vif1Packet, icons, CRect_i_((cells - 1) * 4 + 0x30, y + 0x11, 4, 0x10), CRect_i_(0x70, 0x70, 4, 0x10), alpha);
     if (durability > 0.0f) {
         length = (int) (1.4949495f * durability);
         set2DSpriteC4(Vif1Packet, CRect_i_(0x34, y + 0x16, length - 2, 6), upper, lower, upper, lower);
     }
-    int width;
-    WEAPON_HAVE *weapon =
-        &UserStatus->chara_weapons[UserStatus->cur_chara][UserStatus->equipped_weapon_slot[UserStatus->cur_chara]];
-    int exp_max = GetWeaponMaxExp(weapon);
+    int          width;
+    WEAPON_HAVE *weapon = &UserStatus->chara_weapons[UserStatus->cur_chara][UserStatus->equipped_weapon_slot[UserStatus->cur_chara]];
+    int          exp_max = GetWeaponMaxExp(weapon);
     width = (int) bar;
     MGFillBox(CRect_i_(0x340, ((y + 0x1F) >> 1) * 16, (width - 1) * 16, 0x10), 0x40, 0x40, 0x40, alpha);
     if (weapon->experience > 0) {
@@ -759,8 +748,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
     cells += ValuePrint(cells, y + 0x18, shown, 0, alpha) * 10;
     set2DSprite(Vif1Packet, frame, CRect_i_(cells, y + 0x18, 0xC, 0xC), CRect_i_(0x78, 0xB0, 0xC, 0xC), alpha);
     ValuePrint(cells + 10, y + 0x18, (int) durability_max, 0, alpha);
-    set2DSprite(Vif1Packet, icons, CRect_i_(0x20, y + 0x10, 0x10, 0x10), CRect_i_(0x40, 0xB0, 0x10, 0x10),
-                alpha);
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x20, y + 0x10, 0x10, 0x10), CRect_i_(0x40, 0xB0, 0x10, 0x10), alpha);
 
     // Water: one drop for every ten, the empty drops behind the full ones.
     float water_max = UserStatus->water_max[UserStatus->cur_chara];
@@ -769,26 +757,21 @@ void topStatusInfo(int y, int selected_item, int floor) {
     if (water < 0.15f * water_max) {
         alpha = statusAlarmRate;
     }
-    set2DSprite(Vif1Packet, icons, CRect_i_(0x20, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0x84, 0x12, 0x14),
-                alpha);
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x20, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0x84, 0x12, 0x14), alpha);
     int drops = (int) water_max / 10;
     for (cells = 0; cells < drops; cells++) {
-        set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x32, y + 0x22, 0x12, 0x14),
-                    CRect_i_(0x64, 0x98, 0x12, 0x14), alpha);
+        set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x32, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0x98, 0x12, 0x14), alpha);
     }
     if ((int) water_max % 10 != 0) {
-        set2DSprite(Vif1Packet, icons, CRect_i_(drops * 0x12 + 0x32, y + 0x22, 0x12, 0x14),
-                    CRect_i_(0x64, 0xAC, 0x18, 0x14), alpha);
+        set2DSprite(Vif1Packet, icons, CRect_i_(drops * 0x12 + 0x32, y + 0x22, 0x12, 0x14), CRect_i_(0x64, 0xAC, 0x18, 0x14), alpha);
     }
     int full_drops = (int) water / 10;
     for (cells = 0; cells < full_drops; cells++) {
-        set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x33, y + 0x22, 0x10, 0x14),
-                    CRect_i_(0, 0x48, 0x10, 0x14), 0x50);
+        set2DSprite(Vif1Packet, icons, CRect_i_(cells * 0x12 + 0x33, y + 0x22, 0x10, 0x14), CRect_i_(0, 0x48, 0x10, 0x14), 0x50);
     }
     int leftover = (int) water % 10;
     if (leftover != 0) {
-        set2DSprite(Vif1Packet, icons, CRect_i_(full_drops * 0x12 + 0x33, y + 0x22, 0x10, 0x14),
-                    CRect_i_((3 - (int) ((float) leftover / 2.5f)) * 16, 0x48, 0x10, 0x14), 0x50);
+        set2DSprite(Vif1Packet, icons, CRect_i_(full_drops * 0x12 + 0x33, y + 0x22, 0x10, 0x14), CRect_i_((3 - (int) ((float) leftover / 2.5f)) * 16, 0x48, 0x10, 0x14), 0x50);
     }
 
     // Quick-use items; a speed-up item pulses while it is in force.
@@ -812,19 +795,15 @@ void topStatusInfo(int y, int selected_item, int floor) {
             glow = (int) (64.0f * sinf(popupRGBRate)) + 0x3F;
             bob = 0;
         }
-        set2DSprite(Vif1Packet, icons, CRect_i_(i * 40 + 0x126, y + 2, 0x24, 0x24), CRect_i_(0x24, 0x5C, 0x24, 0x24),
-                    glow + 0x80);
+        set2DSprite(Vif1Packet, icons, CRect_i_(i * 40 + 0x126, y + 2, 0x24, 0x24), CRect_i_(0x24, 0x5C, 0x24, 0x24), glow + 0x80);
         if (pack->quick_item_slot[i] != -1) {
-            set2DSprite(Vif1Packet, icons, CRect_i_(i * 40 + 0x128, y + 4 + bob, 0x1F, 0x1F),
-                        CRect_i_((i << 5) + 0x20, 0, 0x1F, 0x1F));
+            set2DSprite(Vif1Packet, icons, CRect_i_(i * 40 + 0x128, y + 4 + bob, 0x1F, 0x1F), CRect_i_((i << 5) + 0x20, 0, 0x1F, 0x1F));
             if (pack->quick_item_qty[i] > 1) {
                 int tens = pack->quick_item_qty[i] / 10;
                 if (tens > 0) {
-                    set2DSprite(Vif1Packet, frame, CRect_i_(i * 40 + 0x12F, y + 0x17, 0xC, 0xC),
-                                CRect_i_(tens * 12, 0xD4, 0xC, 0xC));
+                    set2DSprite(Vif1Packet, frame, CRect_i_(i * 40 + 0x12F, y + 0x17, 0xC, 0xC), CRect_i_(tens * 12, 0xD4, 0xC, 0xC));
                 }
-                set2DSprite(Vif1Packet, frame, CRect_i_(i * 40 + 0x13B, y + 0x17, 0xC, 0xC),
-                            CRect_i_(pack->quick_item_qty[i] % 10 * 12, 0xD4, 0xC, 0xC));
+                set2DSprite(Vif1Packet, frame, CRect_i_(i * 40 + 0x13B, y + 0x17, 0xC, 0xC), CRect_i_(pack->quick_item_qty[i] % 10 * 12, 0xD4, 0xC, 0xC));
             }
         }
     }
@@ -852,19 +831,15 @@ void topStatusInfo(int y, int selected_item, int floor) {
         }
         if (floor + 1 >= 10) {
 #ifdef PAL
-            set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0xA, 0xE, 0x11),
-                        CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
+            set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0xA, 0xE, 0x11), CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
 #else
-            set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0x12, 0xE, 0x11),
-                        CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
+            set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0x12, 0xE, 0x11), CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
 #endif
         }
 #ifdef PAL
-        set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0xA, 0xE, 0x11),
-                    CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
+        set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0xA, 0xE, 0x11), CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
 #else
-        set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0x12, 0xE, 0x11),
-                    CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
+        set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0x12, 0xE, 0x11), CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
 #endif
     }
 
@@ -920,7 +895,7 @@ int StatusErrCheck(int status) {
  * @address 0x1B1960
  * @size 0xE8
  */
-int BtStatusErrColorSet(void) {
+int BtStatusErrColorSet() {
     int status;
     int ailing;
 
@@ -970,10 +945,10 @@ int poison_counter;
  * @address 0x1B1A50
  * @size 0x154
  */
-void BtStatusErrStep(void) {
-    int flags;
+void BtStatusErrStep() {
+    int          flags;
     CUserStatus *status = UserStatus;
-    s8 *cur_chara = &status->cur_chara;
+    s8          *cur_chara = &status->cur_chara;
 
     flags = status->ailments[*cur_chara];
     poison_counter++;
@@ -1062,13 +1037,18 @@ void BtSetStatusErr(int status) {
  */
 void BtStatusErrDraw(int y) {
     CTexture *texture = TexManager.GetTexture("itempack", -1);
-    int status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
-    int icon_cells[5][2] = {{1, 0}, {0, 1}, {1, 1}, {1, 2}, {0, 2}};
+    int       status_flags[5] = {4, 8, 0x10, 0x20, 0x40};
+    int       icon_cells[5][2] = {
+        {1, 0},
+        {0, 1},
+        {1, 1},
+        {1, 2},
+        {0, 2}
+    };
     int status = UserStatus->ailments[UserStatus->cur_chara];
     for (int icon = 4; icon >= 0; icon--) {
         if (status & status_flags[icon]) {
-            set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35),
-                        CRect_i_(icon_cells[icon][0] * 62 + 132, icon_cells[icon][1] * 36 + 84, 62, 36));
+            set2DSprite(Vif1Packet, texture, CRect_i_(430, y - 10, 62, 35), CRect_i_(icon_cells[icon][0] * 62 + 132, icon_cells[icon][1] * 36 + 84, 62, 36));
         }
     }
 }
@@ -1083,10 +1063,10 @@ void BtStatusErrDraw(int y) {
 void setItemToReserved(char *page_name, int x, int y, char *item_name, int dsax, int dsay) {
     CTexture *page;
     CTexture *item;
-    int sbp;
-    int sbw;
-    int dbp;
-    int dbw;
+    int       sbp;
+    int       sbw;
+    int       dbp;
+    int       dbw;
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -1130,7 +1110,7 @@ int BtSteebMsgNo;
  * @address 0x1B20C0
  * @size 0x1C
  */
-void BtMapJumpCashClear(void) {
+void BtMapJumpCashClear() {
     BtCfgCash[0] = '\0';
     BtCfgFlag = 0;
     BtSteebMsgNo = -1;
@@ -1156,12 +1136,12 @@ int BtMapJumpLoad(char *map_name) {
     char mpd_path[64];
     char cfg_path[64];
     char mes_path[64];
-    int mes_size;
-    int size;
+    int  mes_size;
+    int  size;
 
     CUserStatus *status = UserStatus;
-    int msg_no = status->cur_georama;
-    int floor = status->cur_floor;
+    int          msg_no = status->cur_georama;
+    int          floor = status->cur_floor;
 
     // From dungeon 6 on, the message file also changes every twenty floors.
     if (msg_no >= 6) {
@@ -1209,7 +1189,7 @@ int BtMapJumpLoad(char *map_name) {
     u_int *pack = read_buffer;
     read_buffer = old_read_buffer;
 
-    int i;
+    int                 i;
     DRAN_MAP_FIELD_SET *field_set = (DRAN_MAP_FIELD_SET *) NowDranMapField;
     for (i = 0; i < 12; i++) {
         field_set->field[i].Initialize();
@@ -1263,8 +1243,7 @@ int BtMapJumpLoad(char *map_name) {
     attr.program_option = 0;
     NowDngMap->box_body_model = LoadMDSFilePack(read_buffer, "ibox_0.mds", &MapModelBuffer);
     NowDngMap->box_lid_model = LoadMDSFilePack(read_buffer, "ibox_t.mds", &MapModelBuffer);
-    NowDngMap->box_collision_model =
-        LoadCollisionFilePack(read_buffer, "ibox_a.mds", &MapModelBuffer);
+    NowDngMap->box_collision_model = LoadCollisionFilePack(read_buffer, "ibox_a.mds", &MapModelBuffer);
     NowDngMap->box_body_model->SetAttr(attr, 1, 0);
     NowDngMap->box_lid_model->SetAttr(attr, 1, 0);
     NowDngMap->chest_body_model = LoadMDSFilePack(read_buffer, "iboxs_0.mds", &MapModelBuffer);
@@ -1273,25 +1252,21 @@ int BtMapJumpLoad(char *map_name) {
     NowDngMap->chest_body_model->SetAttr(attr, 1, 0);
     NowDngMap->chest_lid_model->SetAttr(attr, 1, 0);
 
-    itemOpenSmall.LoadPack(read_buffer, "dun/etc/itemget_s/d01i02m", &MapModelBuffer,
-                           &MapModelBuffer, &itemOpenSmall_info, 0);
-    itemOpenBig.LoadPack(read_buffer, "dun/etc/itemget_b/d01i01m", &MapModelBuffer,
-                         &MapModelBuffer, &itemOpenBig_info, 0);
+    itemOpenSmall.LoadPack(read_buffer, "dun/etc/itemget_s/d01i02m", &MapModelBuffer, &MapModelBuffer, &itemOpenSmall_info, 0);
+    itemOpenBig.LoadPack(read_buffer, "dun/etc/itemget_b/d01i01m", &MapModelBuffer, &MapModelBuffer, &itemOpenBig_info, 0);
 
     // The monsters get whatever the map left of its buffer.
-    int map_used = MapModelBuffer.used;
+    int     map_used = MapModelBuffer.used;
     u_char *monster_base = MapModelBuffer.base + map_used * 16;
-    long monster_size = 0xA7F80 - map_used;
+    long    monster_size = 0xA7F80 - map_used;
     MonstorModelBuffer.base = monster_base;
     MonstorModelBuffer.limit = monster_size;
     MonstorModelBuffer.used = 0;
     read_buffer = pack;
 
     printf("TotalMem = %d\n", 0xA7F80);
-    printf("MapVisualData   [%x]  %d/%d\n", MapModelBuffer.base + MapModelBuffer.used * 16,
-           MapModelBuffer.used, ArenaLimit(MapModelBuffer));
-    printf("MonstorData     [%x]  %d/%d\n", MonstorModelBuffer.base + MonstorModelBuffer.used * 16,
-           MonstorModelBuffer.used, ArenaLimit(MonstorModelBuffer));
+    printf("MapVisualData   [%x]  %d/%d\n", MapModelBuffer.base + MapModelBuffer.used * 16, MapModelBuffer.used, ArenaLimit(MapModelBuffer));
+    printf("MonstorData     [%x]  %d/%d\n", MonstorModelBuffer.base + MonstorModelBuffer.used * 16, MonstorModelBuffer.used, ArenaLimit(MonstorModelBuffer));
     BtCfgFlag = 1;
     return 1;
 }
@@ -1303,12 +1278,11 @@ int BtMapJumpLoad(char *map_name) {
  * @address 0x1B27F0
  * @size 0x108
  */
-void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y, int width,
-                      int height, int alpha) {
-    int top_left[4];
-    int top_right[4];
-    int bottom_left[4];
-    int bottom_right[4];
+void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y, int width, int height, int alpha) {
+    int      top_left[4];
+    int      top_right[4];
+    int      bottom_left[4];
+    int      bottom_right[4];
     CRect_i_ source;
 
     world[3] = 1.0f;
@@ -1326,7 +1300,6 @@ void BtSet3DCellModel(float *world, CTexture *texture, float size, int x, int y,
         source.width = width;
         source.height = height;
 
-        set3DSprite(Vif1Packet, texture, source, top_left, top_right, bottom_left, bottom_right,
-                    alpha);
+        set3DSprite(Vif1Packet, texture, source, top_left, top_right, bottom_left, bottom_right, alpha);
     }
 }

@@ -15,13 +15,13 @@
 #include "vutext.hpp"
 
 Fader Fade;
-int Cursor;
-int Proc;
+int   Cursor;
+int   Proc;
 
 /** Opacity of each language entry. */
 int Alpha[5];
 
-void LangsetInit(void) {
+void LangsetInit() {
     InitializeDataBuffer();
     SetDataBuffer(&VisualData, 200000);
     SetDataBuffer(&MotionData, 500000);
@@ -29,11 +29,11 @@ void LangsetInit(void) {
     SetPacketReadBuffer(40000, 300000);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
     LOADTEXTURE_INFO textures[] = {
-        {"#frame_image_mes#640#" SCREEN_HEIGHT_STR "#4", 26, 0},
+        {"#frame_image_mes#640#" SCREEN_HEIGHT_STR "#4",    26, 0},
         {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
-        {"#fontbase#512#256#1", 26, 0},
-        {"titledat/lang_set.img", 0, 0},
-        {"", 0, 0},
+        {"#fontbase#512#256#1",                             26, 0},
+        {"titledat/lang_set.img",                           0,  0},
+        {"",                                                0,  0},
     };
     TexManager.Initialize(0x3FE0);
     TexManager.LoadTextureBlock(-1, textures, read_buffer);
@@ -44,7 +44,7 @@ void LangsetInit(void) {
     Proc = 0;
 }
 
-int LangsetLoop(void) {
+int LangsetLoop() {
     sceVif1PkCall(Vif1Packet, (u_long128 *) Vu_prog0f, 0);
     sceVif1PkTerminate(Vif1Packet);
     switch (Proc) {
@@ -71,7 +71,7 @@ int LangsetLoop(void) {
     return 0;
 }
 
-int LangsetProc(void) {
+int LangsetProc() {
     if (GamePad.Down(0x1000) != 0) {
         Cursor--;
     }
@@ -100,10 +100,10 @@ static inline void SetRect(RECT *rect, int x, int y, int width, int height) {
     rect->height = height;
 }
 
-void LangsetDraw(void) {
+void LangsetDraw() {
     RECT rect;
-    int language;
-    int alpha;
+    int  language;
+    int  alpha;
 
     setbilinear(1);
     for (language = 0; language < 5; language++) {

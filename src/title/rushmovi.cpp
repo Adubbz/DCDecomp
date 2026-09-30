@@ -54,18 +54,18 @@
 
 class OBJ_ANIME_SEQ {
 public:
-    void Initialize();
-
-    char name[16]; /**< Name of the frame the animation drives. */
-    int type;      /**< Kind of animation the sequence plays. */
-    int number;    /**< Animation number selected within that kind. */
-    char unk_18[8];
+    char          name[16]; /**< Name of the frame the animation drives. */
+    int           type;     /**< Kind of animation the sequence plays. */
+    int           number;   /**< Animation number selected within that kind. */
+    char          unk_18[8];
     sceVu0FVECTOR start; /**< Value the animation starts from. */
     sceVu0FVECTOR unk_30;
-    float step_x; /**< Amount the first component advances each step. */
-    float step_y; /**< Amount the second component advances each step. */
-    float step_z; /**< Amount the third component advances each step. */
-    char unk_4C[60];
+    float         step_x; /**< Amount the first component advances each step. */
+    float         step_y; /**< Amount the second component advances each step. */
+    float         step_z; /**< Amount the third component advances each step. */
+    char          unk_4C[60];
+
+    void Initialize();
 };
 
 /* The classes this movie places in the world, declared here rather than reached through headers of
@@ -76,6 +76,9 @@ public:
    world. */
 class CWater {
 public:
+    char      unk_00[176];
+    CFrameVu1 frame; /**< Frame that places the plane in the world. */
+
     CWater();
 
     void SetVertex(float *v0, float *v1, float *v2, float *v3);
@@ -84,16 +87,12 @@ public:
     void SetColor(u_char r, u_char g, u_char b, u_char a);
     void Shake(int x, int y, float power);
     void Hamon();
-    int DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
-
-    char unk_00[176];
-    CFrameVu1 frame; /**< Frame that places the plane in the world. */
+    int  DrawVu1(RenderInfo *info, sceVif1Packet *packet, u_long128 *parent_info);
 };
 
 /* Named rather than included, because a unit's include list is a dial on the order a call's
    floating-point arguments are set up in and nothing here needs the definition: adding
    renderinfo.h alone takes RushInit's three-float SetFollow out of the order the image has. */
-class RenderInfo;
 
 /* A frame parented to an object, which is what lets the world transform drive a model. */
 class CObjectFrame : public CObject {
@@ -108,38 +107,42 @@ public:
    through the object dispatch like anything else in the world. */
 class CMapObject : public CObjectFrame {
 public:
+    char       unk_18[36];
+    CFrameVu1 *unk_D4;
+    char       unk_4C[8];
+    float      unk_E0;
+    int        unk_E4;
+    int        unk_E8;
+    char       unk_EC[4];
+
     CMapObject();
 
     virtual void Draw();
 
     void Initialize();
     void DrawShadow(int fast);
-
-    char unk_18[36];
-    CFrameVu1 *unk_D4;
-    char unk_4C[8];
-    float unk_E0;
-    int unk_E4;
-    int unk_E8;
-    char unk_EC[4];
 };
 
 /* The dust the running feet kick up, declared here for the same reason. */
 class CRunEffect {
 public:
+    char unk_00[208];
+
     CRunEffect();
 
     void Lighting(int on);
     void Set(float *position);
     void Step();
     void Draw();
-
-    char unk_00[208];
 };
 
 /* The movie's one fire, which is a light rather than a model. */
 class CFireOmni {
 public:
+    char          unk_18[32];
+    sceVu0FVECTOR position; /**< World position the fire draws at. */
+    char          unk_4C[16];
+
     CFireOmni();
 
     void FireStep();
@@ -152,24 +155,19 @@ public:
         position[3] = 1.0f;
     }
 
-    void DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale,
-                  int layers, float camera_offset);
-
-    char unk_18[32];
-    sceVu0FVECTOR position; /**< World position the fire draws at. */
-    char unk_4C[16];
+    void DrawFire(int unused0, int unused1, CCamera *camera, float *colour, float scale, int layers, float camera_offset);
 };
 
 /* A run of frames the world draws as one. */
 class CMap {
 public:
-    void Initialize();
+    char unk_00[2800];
+
+    void        Initialize();
     CMapObject *SetObject(CFrameVu1 *frame, int category_no, int handle);
     CMapObject *SetObject(int no, CFrameVu1 *frame, int category_no, int handle);
     CMapObject *GetObject(int no);
-    void Draw();
-
-    char unk_00[2800];
+    void        Draw();
 };
 
 /* The overlay's own rectangle. Its constructor assigns x, y, w, h in that order, where
@@ -177,19 +175,19 @@ public:
 template <class T>
 class CRect {
 public:
-    CRect() {}
-
-    CRect(T x_, T y_, T w_, T h_) {
-        x = x_;
-        y = y_;
-        w = w_;
-        h = h_;
-    }
-
     T x; /**< Left edge. */
     T y; /**< Top edge. */
     T w; /**< Width. */
     T h; /**< Height. */
+
+    CRect() {}
+
+    CRect(T left, T top, T width, T height) {
+        x = left;
+        y = top;
+        w = width;
+        h = height;
+    }
 };
 
 /* One piece of scenery the third scene lays out: the model file, where it stands and how far it is
@@ -202,140 +200,90 @@ struct MAP_INFO {
 
 void wait_now_loading_vsync();
 void InitializeDataBuffer();
-void SetDataBuffer(CDataAlloc2<1> *buffer, int size);
-void SetPacketReadBuffer(int size, int offset);
-void MGSetRenderInfo(float scale, float near_z, float far_z);
-void MGSetBGColor(float r, float g, float b, float a);
 void InitObjAnime(CFrame *frame, OBJ_ANIME_SEQ *sequence);
 void ObjAnimePlay(OBJ_ANIME_SEQ *sequence);
-sceVif1Packet *GetVif1Packet();
-void MGSetPLight(sceVu0FMATRIX light, sceVu0FMATRIX color);
-void MGSetViewMatrix(sceVu0FMATRIX view, float *position);
-void MGGetFBuffBackTex(sceGsTex0 *tex);
-void MGGetFBuffTex(sceGsTex0 *tex);
-void MGMoveImage(sceGsTex0 *src, const CRect<int> &rect, sceGsTex0 *dst, int dsax, int dsay,
-                 int dir);
-void MGSetGsZBUF(sceGsZbuf *zbuf);
-void MGSetAmbient(float *color);
-void setAlphaFlag(sceVif1Packet *packet, sceGsAlpha *alpha);
-void MGBeginDrawShadow(sceGsTex0 tex);
-void MGEndDrawShadow(u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char alpha);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
-void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst,
-                 const CRect<int> &src, int width, int height, float angle);
-void DepthOfField(float *dist, int level, int alpha, int blur);
-void OPAnalyz(char *name);
-void OPMdsLoad();
+void MGMoveImage(sceGsTex0 *src, const CRect<int> &rect, sceGsTex0 *dst, int dsax, int dsay, int dir);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char alpha);
+void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect<int> &dst, const CRect<int> &src, u_char r, u_char g, u_char b, u_char a);
 
-void SndSetCamera(CCamera *camera);
-void SndInitialize(int unknown0, int unknown1, int unknown2, int unknown3);
-void SndSetReadBuffer(u_int *buffer);
-void SndAmbientPlay(int no);
-void SndBgmPlay(int no);
-void SndBgmFadeOut(int frames, int volume);
-void SndBgmStop();
-void SndAmbientStop();
-void SndStep();
-void SndSePlay(int se, float *position, float near_dist, float far_dist);
+void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect, int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
 
-void MoveImageTest(sceVif1Packet *packet, int sbp, int sbw, int spsm, const CRect<int> &rect,
-                   int dbp, int dbw, int dpsm, int dsax, int dsay, int dir);
-
-CCameraFollow MainCamera__3(
-    20.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f,
-    15.0f, 0.0f, 8.0f);
-static CDispFade DispFade;
-CFireOmni CFire__4;
-class CScript CScript;
-CWind Wind__4;
-CWater Water__2;
-char CharaTex[9];
-CDataAlloc2<1> CharaDataBuffer(-1);
-static tagFRAME_INF frame_info_cam[300];
-CCharacter Cam[4];
-static MOTION_INFO MotionInfo;
-CDataAlloc2<1> PathDataBuffer(-1);
-CDataAlloc2<1> WaterBuffer(-1);
+CCameraFollow         MainCamera__3(20.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f + 0.0f, 15.0f, 0.0f, 8.0f);
+static CDispFade      DispFade;
+CFireOmni             CFire__4;
+class CScript         CScript;
+CWind                 Wind__4;
+CWater                Water__2;
+char                  CharaTex[9];
+CDataAlloc2<1>        CharaDataBuffer(-1);
+static tagFRAME_INF   frame_info_cam[300];
+CCharacter            Cam[4];
+static MOTION_INFO    MotionInfo;
+CDataAlloc2<1>        PathDataBuffer(-1);
+CDataAlloc2<1>        WaterBuffer(-1);
 static CDataAlloc2<1> DummyDataBuffer(-1);
-CTexAnimeData TexAnimeDataMovie[30];
-CRunEffect CRunFx;
+CTexAnimeData         TexAnimeDataMovie[30];
+CRunEffect            CRunFx;
 
 /* The frame the opening movies point their camera at, which the dungeon also reads. */
 CFrame *OP_CharaFrame;
 
 static u_char bEnd;
-static int EndCnt;
-static int CameraMode;
-int SceneNp;
-float TitleAngle;
-static int StartDisp;
-int TitleFade;
-int TitleFadeCnt;
-int StartLightning;
-float atraGetStatusRate;
+static int    EndCnt;
+static int    CameraMode;
+int           SceneNp;
+float         TitleAngle;
+static int    StartDisp;
+int           TitleFade;
+int           TitleFadeCnt;
+int           StartLightning;
+float         atraGetStatusRate;
 
 /* One actor's face, as this scene animates it. The eyes and the mouth are two strips of frames
    stacked bottom-up in one texture, and a tick copies the current frame of each over the model's
    face plate. This scene's eye strip is three columns of ten rather than one column, which is what
    the eye number is folded into two coordinates for below. */
 struct FACE_INFO {
-    char *plate;      /**< Texture of the face plate the frames are copied over. */
-    char *strip;      /**< Texture holding the eye and mouth frame strips. */
-    int eye_bottom;   /**< Distance of the eye area above the plate's bottom edge. */
-    int eye_height;   /**< Height of one eye frame. */
-    int mouth_bottom; /**< Distance of the mouth area above the plate's bottom edge. */
-    int mouth_height; /**< Height of one mouth frame. */
-    int eye;          /**< Eye frame currently shown. */
-    int mouth;        /**< Mouth frame currently shown. */
-    int strip_bottom; /**< Bottom row of the frame strips in the strip texture. */
-    int unk_24;
-    int unk_28;
+    char *plate;        /**< Texture of the face plate the frames are copied over. */
+    char *strip;        /**< Texture holding the eye and mouth frame strips. */
+    int   eye_bottom;   /**< Distance of the eye area above the plate's bottom edge. */
+    int   eye_height;   /**< Height of one eye frame. */
+    int   mouth_bottom; /**< Distance of the mouth area above the plate's bottom edge. */
+    int   mouth_height; /**< Height of one mouth frame. */
+    int   eye;          /**< Eye frame currently shown. */
+    int   mouth;        /**< Mouth frame currently shown. */
+    int   strip_bottom; /**< Bottom row of the frame strips in the strip texture. */
+    int   unk_24;
+    int   unk_28;
 };
 
-void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step);
-void FaceChange(int no);
 static void MotionProcess();
 static void DrawProcess();
 static void SoundProcess();
-void WaterProcess();
 static void DataLoad();
-static void InitProcA();
 static void DrawProcA();
-static void InitProcB();
 static void DrawProcB();
-static void AtraLight();
-static void InitProcC();
 static void DrawProcC();
-static void InitProcD();
 static void DrawProcD();
-static void InitProcE();
 static void DrawProcE();
-static void InitProcF();
 static void DrawProcF();
-static void InitProcG();
 static void DrawProcG();
-static void InitProcH();
 static void DrawProcH();
-static void InitProcI();
 static void DrawProcI();
-static void InitProcTitle();
 static void DrawProcTitle();
 
 /* One actor's blinking and speaking. The eyes and the mouth are two strips of frames in one
    texture, and a tick copies the current frame of each over the actor's face plate. This scene's
    eye strip is three columns of ten frames rather than one column, so the eye number the script
    holds picks the column as well as the row. */
-void FaceChange(int obj_no) {
+void FaceChange(int actor_no) {
     static FACE_INFO face = {"c01d01", "c01d01an_4", 27, 48, 78, 44, 0, 0, 512, 3, 0};
-    CTexture *plate;
-    CTexture *strip;
-    int sbp;
-    int dbp;
-    int sbw;
-    int dbw;
+    CTexture        *plate;
+    CTexture        *strip;
+    int              sbp;
+    int              dbp;
+    int              sbw;
+    int              dbw;
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -360,7 +308,7 @@ void FaceChange(int obj_no) {
     sbw = (strip->tex0 >> 14) & 0x3f;
     dbw = (plate->tex0 >> 14) & 0x3f;
 
-    face.eye = CScript__2.obj[obj_no].eye;
+    face.eye = CScript__2.obj[actor_no].eye;
 
     int eye = face.eye;
     int column;
@@ -375,19 +323,15 @@ void FaceChange(int obj_no) {
         eye -= 18;
     }
 
-    CRect<int> eyes(column, face.strip_bottom - face.eye_height * (eye + 1), 128,
-                    face.eye_height);
+    CRect<int> eyes(column, face.strip_bottom - face.eye_height * (eye + 1), 128, face.eye_height);
 
-    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eyes, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face.eye_height - face.eye_bottom, 0);
+    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, eyes, dbp, dbw, SCE_GS_PSMT8, 0, 128 - face.eye_height - face.eye_bottom, 0);
 
-    face.mouth = CScript__2.obj[obj_no].mouth;
+    face.mouth = CScript__2.obj[actor_no].mouth;
 
-    CRect<int> mouth(384, face.strip_bottom - face.mouth_height * (face.mouth + 1), 128,
-                     face.mouth_height);
+    CRect<int> mouth(384, face.strip_bottom - face.mouth_height * (face.mouth + 1), 128, face.mouth_height);
 
-    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0,
-                  128 - face.mouth_height - face.mouth_bottom, 0);
+    MoveImageTest(Vif1Packet, sbp, sbw, SCE_GS_PSMT8, mouth, dbp, dbw, SCE_GS_PSMT8, 0, 128 - face.mouth_height - face.mouth_bottom, 0);
 
     sceVif1PkCnt(Vif1Packet, 0);
     sceVif1PkOpenDirectCode(Vif1Packet, 0);
@@ -583,8 +527,7 @@ static void MotionProcess() {
 
             if (CScript.obj[i].step == 1.0f) {
                 if (CScript.obj[i].motion != Chara__3[i].motion_no) {
-                    Chara__3[i].motion_type.state.time =
-                        (float) Chara__3[i].motion_type.motion_info[CScript.obj[i].motion].start;
+                    Chara__3[i].motion_type.state.time = (float) Chara__3[i].motion_type.motion_info[CScript.obj[i].motion].start;
                     Chara__3[i].motion_no = CScript.obj[i].motion;
                     Chara__3[i].motion_flags = 4;
                     Chara__3[i].motion_speed = -1.0f;
@@ -601,8 +544,7 @@ static void MotionProcess() {
         }
     }
 
-    SetMotionEX(Cam[SceneNp].frame, &Cam[SceneNp].motion_type, &MotionInfo,
-                &Cam[SceneNp].motion_type.state, frame_info_cam);
+    SetMotionEX(Cam[SceneNp].frame, &Cam[SceneNp].motion_type, &MotionInfo, &Cam[SceneNp].motion_type.state, frame_info_cam);
 
     sceVu0FVECTOR wind_dir;
 
@@ -661,16 +603,13 @@ static void MotionProcess() {
 
     Wind__4.Step();
 
-    typedef float MotionLocal0, MotionLocal1, MotionLocal2, MotionLocal3, MotionLocal4,
-        MotionLocal5, MotionLocal6, MotionLocal7, MotionLocal8, MotionLocal9,
-        MotionLocal10, MotionLocal11, MotionLocal12, MotionLocal13, MotionLocal14,
-        MotionLocal15;
-    char *opening_frames[9] = {
+    typedef float MotionLocal0, MotionLocal1, MotionLocal2, MotionLocal3, MotionLocal4, MotionLocal5, MotionLocal6, MotionLocal7, MotionLocal8, MotionLocal9, MotionLocal10, MotionLocal11, MotionLocal12, MotionLocal13, MotionLocal14, MotionLocal15;
+    char         *opening_frames[9] = {
         "c12a", "c12a", "c08a", "c08a", "e04a1", "e04a2", "e04a3", "e04a4", "e04a5"};
     char *scene_frames[9] = {
         "chr_a", "chr_b", "chr_c", "chr_d", "chr_e", "chr_f", "chr_g", "chr_h", "chr_i"};
     sceVu0FMATRIX matrix;
-    CFrame *frame;
+    CFrame       *frame;
 
     for (int i = 0; i < 9; i++) {
         if (CScript.obj[i].disp) {
@@ -738,10 +677,7 @@ static void MotionProcess() {
                 sceVu0Normalize(matrix[0], matrix[0]);
                 sceVu0Normalize(matrix[1], matrix[1]);
                 sceVu0Normalize(matrix[2], matrix[2]);
-                typedef float m7p0, m7p1, m7p2, m7p3, m7p4, m7p5, m7p6, m7p7, m7p8,
-                    m7p9, m7p10, m7p11, m7p12, m7p13, m7p14, m7p15, m7p16, m7p17,
-                    m7p18, m7p19, m7p20, m7p21, m7p22, m7p23, m7p24, m7p25, m7p26,
-                    m7p27, m7p28, m7p29, m7p30, m7p31;
+                typedef float m7p0, m7p1, m7p2, m7p3, m7p4, m7p5, m7p6, m7p7, m7p8, m7p9, m7p10, m7p11, m7p12, m7p13, m7p14, m7p15, m7p16, m7p17, m7p18, m7p19, m7p20, m7p21, m7p22, m7p23, m7p24, m7p25, m7p26, m7p27, m7p28, m7p29, m7p30, m7p31;
                 Chara__3[7].SetPosition(0.0f, 0.0f, 0.0f);
                 Chara__3[7].SetRotation(0.0f, 0.0f, 0.0f);
                 Chara__3[7].frame->SetTransMatrix(matrix);
@@ -873,13 +809,9 @@ static void DrawProcess() {
         if (StartDisp) {
             TexManager.ReloadTexture(Vif1Packet, 20);
 #ifdef PAL
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
-                        CRect<int>(192, 392, 256, 32), CRect<int>(0, 0, 256, 32),
-                        fade);
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1), CRect<int>(192, 392, 256, 32), CRect<int>(0, 0, 256, 32), fade);
 #else
-            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
-                        CRect<int>(192, 360, 256, 32), CRect<int>(0, 0, 256, 32),
-                        fade);
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1), CRect<int>(192, 360, 256, 32), CRect<int>(0, 0, 256, 32), fade);
 #endif
             fade = (fade + 2) & 127;
         }
@@ -899,9 +831,7 @@ static void DrawProcess() {
     CTexture texture;
 
     texture.tex0 = *(u_long *) &back_tex;
-    set2DSprite(Vif1Packet, &texture,
-                CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT),
-                128, 128, 128, 35);
+    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 35);
 }
 
 /**
@@ -976,7 +906,7 @@ static void SoundProcess() {
 
         if (CScript.scene == 0) {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("c12a");
-            int chara_frame = (int) Chara__3[1].motion_type.state.time;
+            int     chara_frame = (int) Chara__3[1].motion_type.state.time;
 
             if (wait == 0) {
                 if (chara_frame == 10) {
@@ -1000,7 +930,7 @@ static void SoundProcess() {
             }
         } else {
             CFrame *frame = Cam[SceneNp].frame->SearchFrame("chr_a");
-            int chara_frame = (int) Chara__3[0].motion_type.state.time;
+            int     chara_frame = (int) Chara__3[0].motion_type.state.time;
 
             if (wait == 0) {
                 if (chara_frame == 20) {
@@ -1288,8 +1218,7 @@ void WaterProcess() {
         MainCamera__3.GetRef(ref);
         ref[1] = 0.0f;
         Water__2.frame.SetPosition(ref);
-        Water__2.Shake((int) (rand() * 32.0f / 2147483648.0f),
-                       (int) (rand() * 32.0f / 2147483648.0f), -0.5f);
+        Water__2.Shake((int) (rand() * 32.0f / 2147483648.0f), (int) (rand() * 32.0f / 2147483648.0f), -0.5f);
     }
 
     Water__2.Hamon();

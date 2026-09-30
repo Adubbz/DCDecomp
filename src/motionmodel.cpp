@@ -20,17 +20,15 @@ int GetWeaponElementAttr(int element) {
     return element_tbl[element];
 }
 
-void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> *model_arena,
-                            CDataAlloc2<1> *motion_arena, MOTION_INFO *motion_info,
-                            int initialize_frames) {
+void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> *model_arena, CDataAlloc2<1> *motion_arena, MOTION_INFO *motion_info, int initialize_frames) {
     MOTION_FILE_INFO files[3];
-    char model_name[64];
-    char bone_name[64];
-    char motion_name[64];
-    char weight_name[76];
-    int model_size;
-    unsigned int *model_data;
-    int model_flags;
+    char             model_name[64];
+    char             bone_name[64];
+    char             motion_name[64];
+    char             weight_name[76];
+    int              model_size;
+    unsigned int    *model_data;
+    int              model_flags;
 
     strcpy(model_name, base_name);
     strcpy(bone_name, base_name);
@@ -82,7 +80,7 @@ void CMotionModel::LoadPack(unsigned int *pack, char *base_name, CDataAlloc2<1> 
     current_motion = 0;
 }
 
-void CMotionModel::Step(void) {
+void CMotionModel::Step() {
     motion.state.motion_no = current_motion;
     if (motion.state.motion_no != motion.state.playing_no) {
         motion.state.next_frame = motion.motion_info[current_motion].start;
@@ -90,7 +88,7 @@ void CMotionModel::Step(void) {
     SetMotionEX(frame, &motion, motion.motion_info, &motion.state, motion.frame_info);
 }
 
-void CMotionModel::Draw(void) {
+void CMotionModel::Draw() {
     if (frame != NULL) {
         MGDraw(frame);
     }

@@ -25,10 +25,10 @@ public:
     CFrame *shadow_frame;    /**< Frame that the shadow draws from; zero where the object casts none. */
     CFrame *shade_frame;     /**< Frame that the shade draws from; zero where the object takes none. */
     CFrame *camera_frame;    /**< Collision frame the camera reads; zero where the object has none. */
-    float shadow_offset;     /**< Height that the shadow drops below the object. */
-    s32 category_no;         /**< Category whose level-of-detail range and draw pass the object uses; below zero for a free slot. */
-    s32 handle;              /**< Handle the map gave the object; below zero where the slot is free. */
-    s32 unk_0EC;
+    float   shadow_offset;   /**< Height that the shadow drops below the object. */
+    s32     category_no;     /**< Category whose level-of-detail range and draw pass the object uses; below zero for a free slot. */
+    s32     handle;          /**< Handle the map gave the object; below zero where the slot is free. */
+    s32     unk_0EC;
 
     /**
      * Puts the collision frame where the object is and gives it back.
@@ -37,7 +37,7 @@ public:
      * @address 0x1574F0
      * @size 0x98
      */
-    CFrame *GetCollisionFrame(void);
+    CFrame *GetCollisionFrame();
 
     /**
      * Turns a named part of every frame the object holds on or off.
@@ -55,7 +55,7 @@ public:
      * @address 0x1576C0
      * @size 0x38
      */
-    virtual void Draw(void);
+    virtual void Draw();
 
     /**
      * Draws the object at the level of detail that suits its distance from
@@ -83,7 +83,7 @@ public:
      * @address 0x157870
      * @size 0x94
      */
-    void DrawShade(void);
+    void DrawShade();
 
     /**
      * Puts the object at rest at the world origin with no frame of its own.
@@ -92,7 +92,7 @@ public:
      * @address 0x157910
      * @size 0x54
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Makes an object that a map has yet to place.
@@ -101,7 +101,7 @@ public:
      * @address 0x157970
      * @size 0x6C
      */
-    CMapObject(void);
+    CMapObject();
 };
 
 STATIC_ASSERT(sizeof(CMapObject) == 0xF0);

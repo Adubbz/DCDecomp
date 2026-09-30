@@ -10,9 +10,9 @@ class CTexture;
 struct EDIT_MENU_STATUS {
     s32 mode;  /**< What the menu is doing; -1 while it is closed. */
     s32 parts; /**< Plot of the part the player picked, or -1. */
-    u8 unk_08[8];
+    u8  unk_08[8];
     s32 event_no; /**< Event the menu asks the loop to run. */
-    u8 unk_14[8];
+    u8  unk_14[8];
 };
 
 STATIC_ASSERT(sizeof(EDIT_MENU_STATUS) == 0x1C);
@@ -21,9 +21,9 @@ STATIC_ASSERT(sizeof(EDIT_MENU_STATUS) == 0x1C);
  * The edit menu's eased cursor position and current icon selection.
  */
 struct EDIT_MENU_CURSOR {
-    float x;      /**< Cursor's current screen x, eased toward its target. */
-    float y;      /**< Cursor's current screen y, eased toward its target. */
-    s8 selection; /**< Index of the selected icon. */
+    float x;         /**< Cursor's current screen x, eased toward its target. */
+    float y;         /**< Cursor's current screen y, eased toward its target. */
+    s8    selection; /**< Index of the selected icon. */
 };
 
 STATIC_ASSERT(sizeof(EDIT_MENU_CURSOR) == 0xC);

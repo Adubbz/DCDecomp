@@ -7,6 +7,12 @@
  */
 class CCursol {
 public:
+    float y;        /**< Height the cursor has eased to. */
+    float target_y; /**< Height the cursor is easing towards. */
+    int   alpha[5]; /**< Opacity of each menu row. */
+    int   select;   /**< Row the cursor stands on. */
+    char  arrived;  /**< Whether the cursor has reached its target. */
+
     /**
      *          Constructs a cursor in its initial menu state.
      *
@@ -14,7 +20,7 @@ public:
      * @address 0x1DD4CC0
      * @size 0x30
      */
-    CCursol(void);
+    CCursol();
 
     /**
      *          Resets the cursor selection and animation state.
@@ -24,7 +30,7 @@ public:
      * @size 0x2C
      * @unknownret
      */
-    void Init(void);
+    void Init();
 
     /**
      *          Processes input and advances cursor movement.
@@ -34,7 +40,7 @@ public:
      * @size 0x384
      * @unknownret
      */
-    int Move(void);
+    int Move();
 
     /**
      *          Sets the cursor's target vertical position.
@@ -54,7 +60,7 @@ public:
      * @size 0xC
      * @unknownret
      */
-    int GetSelect(void);
+    int GetSelect();
 
     /**
      *          Returns the cursor's current display position.
@@ -64,11 +70,5 @@ public:
      * @size 0x24
      * @unknownret
      */
-    int GetPos(void);
-
-    float y;        /**< Height the cursor has eased to. */
-    float target_y; /**< Height the cursor is easing towards. */
-    int alpha[5];   /**< Opacity of each menu row. */
-    int select;     /**< Row the cursor stands on. */
-    char arrived;   /**< Whether the cursor has reached its target. */
+    int GetPos();
 };

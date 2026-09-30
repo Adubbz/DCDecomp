@@ -48,69 +48,95 @@ int CCursol::Move() {
 
     switch (select) {
         case 0:
-            if (alpha[0] < 127)
+            if (alpha[0] < 127) {
                 alpha[0] += 8;
-            if (alpha[1] > 0)
+            }
+            if (alpha[1] > 0) {
                 alpha[1] -= 8;
-            if (alpha[2] > 0)
+            }
+            if (alpha[2] > 0) {
                 alpha[2] -= 8;
-            if (alpha[3] > 0)
+            }
+            if (alpha[3] > 0) {
                 alpha[3] -= 8;
-            if (alpha[4] > 0)
+            }
+            if (alpha[4] > 0) {
                 alpha[4] -= 8;
+            }
             break;
         case 1:
-            if (alpha[0] > 0)
+            if (alpha[0] > 0) {
                 alpha[0] -= 8;
-            if (alpha[1] < 127)
+            }
+            if (alpha[1] < 127) {
                 alpha[1] += 8;
-            if (alpha[2] > 0)
+            }
+            if (alpha[2] > 0) {
                 alpha[2] -= 8;
-            if (alpha[3] > 0)
+            }
+            if (alpha[3] > 0) {
                 alpha[3] -= 8;
-            if (alpha[4] > 0)
+            }
+            if (alpha[4] > 0) {
                 alpha[4] -= 8;
+            }
             break;
         case 2:
-            if (alpha[0] > 0)
+            if (alpha[0] > 0) {
                 alpha[0] -= 8;
-            if (alpha[1] > 0)
+            }
+            if (alpha[1] > 0) {
                 alpha[1] -= 8;
-            if (alpha[2] < 127)
+            }
+            if (alpha[2] < 127) {
                 alpha[2] += 8;
-            if (alpha[3] > 0)
+            }
+            if (alpha[3] > 0) {
                 alpha[3] -= 8;
-            if (alpha[4] > 0)
+            }
+            if (alpha[4] > 0) {
                 alpha[4] -= 8;
+            }
             break;
         case 3:
-            if (alpha[0] > 0)
+            if (alpha[0] > 0) {
                 alpha[0] -= 8;
-            if (alpha[1] > 0)
+            }
+            if (alpha[1] > 0) {
                 alpha[1] -= 8;
-            if (alpha[2] > 0)
+            }
+            if (alpha[2] > 0) {
                 alpha[2] -= 8;
-            if (alpha[3] < 127)
+            }
+            if (alpha[3] < 127) {
                 alpha[3] += 8;
-            if (alpha[4] > 0)
+            }
+            if (alpha[4] > 0) {
                 alpha[4] -= 8;
+            }
             break;
         case 4:
-            if (alpha[0] > 0)
+            if (alpha[0] > 0) {
                 alpha[0] -= 8;
-            if (alpha[1] > 0)
+            }
+            if (alpha[1] > 0) {
                 alpha[1] -= 8;
-            if (alpha[2] > 0)
+            }
+            if (alpha[2] > 0) {
                 alpha[2] -= 8;
-            if (alpha[3] > 0)
+            }
+            if (alpha[3] > 0) {
                 alpha[3] -= 8;
-            if (alpha[4] < 127)
+            }
+            if (alpha[4] < 127) {
                 alpha[4] += 8;
+            }
             break;
     }
 
-    if (target_y == y)
+    if (target_y == y) {
         return 1;
+    }
     return 0;
 }
 

@@ -8,26 +8,12 @@
 #include "edit.hpp"
 #include "objanime.hpp"
 
-class CTexAnimeData;
 class C3DSprite;
 
-class CFrame;
-class CMapParts;
-class CMapObject;
-class CCamera;
-class CCameraFollow;
-class CCharacter;
-class CDebugFont;
 class CEffect;
-class ClsMes;
-class CTexture;
 class CRect_i_;
-class CEffectGroup;
-class CEditGround;
 class CEditArea;
-class CFrameVu1;
 class CWind;
-class CMainChara;
 class CRunEffect;
 struct sceVif1Packet;
 
@@ -48,8 +34,8 @@ extern CDataAlloc2<1> EdNPCBuffer;
  */
 struct EDIT_IMAGE_INFO {
     char name[0x40]; /**< Resource path relative to the active script directory. */
-    int type;        /**< Image slot receiving the resource. */
-    int number;      /**< Image number selected within the resource. */
+    int  type;       /**< Image slot receiving the resource. */
+    int  number;     /**< Image number selected within the resource. */
 };
 
 /**
@@ -57,61 +43,61 @@ struct EDIT_IMAGE_INFO {
  */
 struct EDIT_SCENE_LAYER_INFO {
     char name[0x40]; /**< Resource path relative to the active script directory. */
-    int unk_40;
-    int unk_44;
-    int unk_48;
-    u8 unk_4c[0x4c];
-    s16 obj_anime[8]; /**< Object animations the layer plays; zero or below where a slot holds none. */
-    u8 unk_a8[0x50];
+    int  unk_40;
+    int  unk_44;
+    int  unk_48;
+    u8   unk_4c[0x4c];
+    s16  obj_anime[8]; /**< Object animations the layer plays; zero or below where a slot holds none. */
+    u8   unk_a8[0x50];
 };
 
 /**
  * Stores one editor-area definition parsed from the map script.
  */
 struct EDIT_AREA_INFO {
-    char name[0x40]; /**< Resource path relative to the active script directory. */
-    int width;       /**< Width of the editable area. */
-    int height;      /**< Height of the editable area. */
-    float unit_size; /**< World-space width of one grid cell. */
-    float unit_alt;  /**< World-space height of one elevation step. */
-    float origin_x;  /**< World-space X of the area's grid origin, before centring on the cells. */
-    float origin_y;  /**< World-space height of the area's grid origin. */
-    float origin_z;  /**< World-space Z of the area's grid origin, before centring on the cells. */
+    char  name[0x40]; /**< Resource path relative to the active script directory. */
+    int   width;      /**< Width of the editable area. */
+    int   height;     /**< Height of the editable area. */
+    float unit_size;  /**< World-space width of one grid cell. */
+    float unit_alt;   /**< World-space height of one elevation step. */
+    float origin_x;   /**< World-space X of the area's grid origin, before centring on the cells. */
+    float origin_y;   /**< World-space height of the area's grid origin. */
+    float origin_z;   /**< World-space Z of the area's grid origin, before centring on the cells. */
 };
 
 /**
  * Stores one named moving map-part range parsed from the map script.
  */
 struct EDIT_MOTION_PARTS_INFO {
-    char name[0x40]; /**< Name of the moving map part. */
-    float values[9]; /**< Motion limits and rates supplied by the script. */
+    char  name[0x40]; /**< Name of the moving map part. */
+    float values[9];  /**< Motion limits and rates supplied by the script. */
 };
 
 /**
  * Stores one map-part resource and the classification supplied by its script command.
  */
 struct MAP_PARTS_INFO {
-    char name[9][0x40]; /**< Model resource names: seven shape variants then two more. */
-    int parts_no;       /**< Part number supplied by the script. */
-    int subtype;        /**< Road, river, bridge, or surface subtype. */
-    int kind;           /**< Broad ground, building, or terrain classification. */
-    float position[3];  /**< World-space placement of the part. */
-    float rotation[3];  /**< Orientation of the part, in radians. */
-    float lift;         /**< How far the part draws above the ground so it does not cut into it; zero for none. */
-    s16 anime[8];       /**< Object animations attached to this part. */
-    u8 unk_278[0x50];
-    s16 events[8]; /**< Event points attached to this part. */
+    char  name[9][0x40]; /**< Model resource names: seven shape variants then two more. */
+    int   parts_no;      /**< Part number supplied by the script. */
+    int   subtype;       /**< Road, river, bridge, or surface subtype. */
+    int   kind;          /**< Broad ground, building, or terrain classification. */
+    float position[3];   /**< World-space placement of the part. */
+    float rotation[3];   /**< Orientation of the part, in radians. */
+    float lift;          /**< How far the part draws above the ground so it does not cut into it; zero for none. */
+    s16   anime[8];      /**< Object animations attached to this part. */
+    u8    unk_278[0x50];
+    s16   events[8]; /**< Event points attached to this part. */
 };
 
 /**
  * Stores the cell grid and attached resources of one script-defined map part.
  */
 struct EDIT_PARTS_DEF {
-    int width;                   /**< Cells the part covers from west to east. */
-    int height;                  /**< Cells the part covers from north to south. */
-    s16 cells[32];               /**< One entry per grid cell, row by row. */
-    int kind;                    /**< Parts classification copied into the packed part header. */
-    int element_ids[6];          /**< Identifier of each optional visual element. */
+    int  width;                  /**< Cells the part covers from west to east. */
+    int  height;                 /**< Cells the part covers from north to south. */
+    s16  cells[32];              /**< One entry per grid cell, row by row. */
+    int  kind;                   /**< Parts classification copied into the packed part header. */
+    int  element_ids[6];         /**< Identifier of each optional visual element. */
     char element_names[6][0x20]; /**< Name of each optional visual element. */
 };
 
@@ -122,22 +108,22 @@ union EDIT_MAP_PARTS_WORK {
     EDIT_AREA_INFO edit_areas[444]; /**< Editable-area resources parsed for this map. */
 
     struct {
-        u8 unk_0000[0x170];
+        u8             unk_0000[0x170];
         MAP_PARTS_INFO parts[24]; /**< General map-part definitions parsed for this map. */
     } general;
 
     struct {
-        u8 unk_0000[0x45b0];
+        u8             unk_0000[0x45b0];
         EDIT_PARTS_DEF defs[24]; /**< Cell grids defined for the general map parts. */
     } parts_defs;
 
     struct {
-        u8 unk_0000[0x6110];
+        u8             unk_0000[0x6110];
         MAP_PARTS_INFO parts[6]; /**< Road definitions parsed for this map. */
     } roads;
 
     struct {
-        u8 unk_0000[0x7220];
+        u8             unk_0000[0x7220];
         MAP_PARTS_INFO parts[16]; /**< River and bridge definitions parsed for this map. */
     } rivers;
 
@@ -166,21 +152,21 @@ struct EDIT_WATER_WAVE_INFO {
  * Stores transient wave offsets for editor water surfaces.
  */
 struct EDIT_WATER_INFO {
-    char name[0x10];  /**< Frame of the owning part that must be drawn for the surface to draw, or empty. */
-    int grid_rows;    /**< Rows in the surface's ripple grid; zero or below ends the list. */
-    int grid_columns; /**< Columns in the surface's ripple grid. */
-    int parts_no;     /**< Map part the surface belongs to. */
-    u8 unk_1c[0x4];
-    sceVu0FVECTOR corner_a; /**< Near-left corner of the surface, which also gives its height. */
-    sceVu0FVECTOR corner_b; /**< Far-right corner of the surface; only X and Z are read. */
-    sceVu0FVECTOR corner_c; /**< Where the surface's frame stands, relative to its part or in the world. */
-    int red;                /**< Red component of the surface colour. */
-    int green;              /**< Green component of the surface colour. */
-    int blue;               /**< Blue component of the surface colour. */
-    u8 unk_5c[0x4];
-    sceVu0FVECTOR ripple_params; /**< Ripple speed, damping, height scale and distortion. */
-    int follow[3];               /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
-    u8 unk_7c[0x4];
+    char                 name[0x10];   /**< Frame of the owning part that must be drawn for the surface to draw, or empty. */
+    int                  grid_rows;    /**< Rows in the surface's ripple grid; zero or below ends the list. */
+    int                  grid_columns; /**< Columns in the surface's ripple grid. */
+    int                  parts_no;     /**< Map part the surface belongs to. */
+    u8                   unk_1c[0x4];
+    sceVu0FVECTOR        corner_a; /**< Near-left corner of the surface, which also gives its height. */
+    sceVu0FVECTOR        corner_b; /**< Far-right corner of the surface; only X and Z are read. */
+    sceVu0FVECTOR        corner_c; /**< Where the surface's frame stands, relative to its part or in the world. */
+    int                  red;      /**< Red component of the surface colour. */
+    int                  green;    /**< Green component of the surface colour. */
+    int                  blue;     /**< Blue component of the surface colour. */
+    u8                   unk_5c[0x4];
+    sceVu0FVECTOR        ripple_params; /**< Ripple speed, damping, height scale and distortion. */
+    int                  follow[3];     /**< Whether the surface keeps ahead of the camera along X, level with it, and ahead along Z. */
+    u8                   unk_7c[0x4];
     EDIT_WATER_WAVE_INFO wave[4]; /**< Pending water-wave parameters, terminated by an empty entry. */
 };
 
@@ -188,7 +174,7 @@ struct EDIT_WATER_INFO {
  * Provides the overlapping view used to address one water-wave slot.
  */
 struct EDIT_WATER_WAVE_VIEW {
-    u8 unk_00[0x80];
+    u8    unk_00[0x80];
     float row;    /**< Grid row the ripple starts at; below zero picks one at random. */
     float column; /**< Grid column the ripple starts at; below zero picks one at random. */
     float range;  /**< Largest random height added to each push. */
@@ -199,21 +185,21 @@ struct EDIT_WATER_WAVE_VIEW {
  * Stores the editor's runtime state for one town villager.
  */
 struct VILLAGER_INFO {
-    char name[0x40];        /**< Villager resource name. */
-    int placed;             /**< Whether runtime placement has assigned this villager to a slot. */
-    int index;              /**< Position of the villager in the parsed list. */
-    int character_no;       /**< Character definition selected for the villager. */
-    int model_no;           /**< Model variant selected for the villager. */
-    int weapon_no;          /**< Equipment or prop selected for the villager. */
-    int initial_motion;     /**< Initial motion selected for the villager. */
-    float move_speed;       /**< Speed used when the villager walks to a selected destination. */
-    int hide_when_complete; /**< Whether completing the associated part suppresses this villager. */
-    int talk_event_no;      /**< Event number started when the villager is addressed. */
-    int talk_event_level;   /**< Priority or variant associated with the talk event. */
-    int talk_rotation;      /**< Rotation constraint applied while the villager talks. */
-    int talk_direction;     /**< Direction constraint applied while the villager talks. */
-    sceVu0FVECTOR position; /**< Initial villager position and scale component. */
-    sceVu0FVECTOR rotation; /**< Initial villager rotation. */
+    char          name[0x40];         /**< Villager resource name. */
+    int           placed;             /**< Whether runtime placement has assigned this villager to a slot. */
+    int           index;              /**< Position of the villager in the parsed list. */
+    int           character_no;       /**< Character definition selected for the villager. */
+    int           model_no;           /**< Model variant selected for the villager. */
+    int           weapon_no;          /**< Equipment or prop selected for the villager. */
+    int           initial_motion;     /**< Initial motion selected for the villager. */
+    float         move_speed;         /**< Speed used when the villager walks to a selected destination. */
+    int           hide_when_complete; /**< Whether completing the associated part suppresses this villager. */
+    int           talk_event_no;      /**< Event number started when the villager is addressed. */
+    int           talk_event_level;   /**< Priority or variant associated with the talk event. */
+    int           talk_rotation;      /**< Rotation constraint applied while the villager talks. */
+    int           talk_direction;     /**< Direction constraint applied while the villager talks. */
+    sceVu0FVECTOR position;           /**< Initial villager position and scale component. */
+    sceVu0FVECTOR rotation;           /**< Initial villager rotation. */
 };
 
 /** Runtime metadata for the ten villagers selected for the current period. */
@@ -225,10 +211,10 @@ extern VILLAGER_INFO EdVillagerInfo[10];
 struct EDIT_FOG_INFO {
     float near_distance; /**< Distance at which fog begins. */
     float far_distance;  /**< Distance at which fog reaches full strength. */
-    u8 red;              /**< Red component of the fog colour. */
-    u8 green;            /**< Green component of the fog colour. */
-    u8 blue;             /**< Blue component of the fog colour. */
-    u8 unk_0b;
+    u8    red;           /**< Red component of the fog colour. */
+    u8    green;         /**< Green component of the fog colour. */
+    u8    blue;          /**< Blue component of the fog colour. */
+    u8    unk_0b;
     float intensity; /**< Fog-density parameter supplied by the script. */
     float exponent;  /**< Fog falloff parameter supplied by the script. */
 };
@@ -237,22 +223,22 @@ struct EDIT_FOG_INFO {
  * Describes one spatial or scripted event trigger in an editor map.
  */
 struct ED_EVENT_POINT {
-    int enabled;            /**< Whether this event-point entry is available for evaluation. */
-    int map_no;             /**< Map the event moves the player to. */
-    int completion_flag;    /**< Map flag which suppresses an event after completion. */
-    int parts_no;           /**< Ground-parts object associated with the event. */
-    int event_type;         /**< Kind of event represented by the entry. */
-    CMapObject *map_object; /**< Optional map object associated with the event. */
-    CFrame *frame;          /**< Optional frame whose draw state gates the event. */
-    int side;               /**< Which side of the entrance the player arrives on. */
-    int linked_value;       /**< Parameter supplied by a paired or directional marker. */
-    int minimum_progress;   /**< Minimum story-progress value required by this event. */
-    int secondary_progress; /**< Additional progress parameter used by scripted event points. */
-    u8 unk_2c[0x4];
-    char destination[0x10]; /**< Name of the map the event leads to. */
-    float start_time;       /**< Beginning of the event's active time interval. */
-    float end_time;         /**< End of the event's active time interval. */
-    u8 unk_48[0x8];
+    int           enabled;            /**< Whether this event-point entry is available for evaluation. */
+    int           map_no;             /**< Map the event moves the player to. */
+    int           completion_flag;    /**< Map flag which suppresses an event after completion. */
+    int           parts_no;           /**< Ground-parts object associated with the event. */
+    int           event_type;         /**< Kind of event represented by the entry. */
+    CMapObject   *map_object;         /**< Optional map object associated with the event. */
+    CFrame       *frame;              /**< Optional frame whose draw state gates the event. */
+    int           side;               /**< Which side of the entrance the player arrives on. */
+    int           linked_value;       /**< Parameter supplied by a paired or directional marker. */
+    int           minimum_progress;   /**< Minimum story-progress value required by this event. */
+    int           secondary_progress; /**< Additional progress parameter used by scripted event points. */
+    u8            unk_2c[0x4];
+    char          destination[0x10]; /**< Name of the map the event leads to. */
+    float         start_time;        /**< Beginning of the event's active time interval. */
+    float         end_time;          /**< End of the event's active time interval. */
+    u8            unk_48[0x8];
     sceVu0FVECTOR position;      /**< Primary world-space event position. */
     sceVu0FVECTOR trigger_range; /**< Distance within which the player triggers the event; the fourth component is a flag passed to the event. */
     sceVu0FVECTOR rotation;      /**< World-space orientation associated with the event. */
@@ -266,18 +252,18 @@ union EDIT_MAP_WORK_INFO {
     OBJ_ANIME_SEQ obj_anime[128]; /**< Object animations parsed for this map. */
 
     struct {
-        u8 unk_0000[0x4800];
+        u8               unk_0000[0x4800];
         EDIT_EFFECT_INFO first[64];  /**< Effects placed on the general map parts. */
         EDIT_EFFECT_INFO second[64]; /**< Effects placed on the map objects. */
     } effects;
 
     struct {
-        u8 unk_0000[0x8000];
+        u8                unk_0000[0x8000];
         EDIT_OBJECT_TIMER timers[128]; /**< Object timers parsed for this map. */
     } object_timers;
 
     struct {
-        u8 unk_0000[0x9000];
+        u8             unk_0000[0x9000];
         ED_EVENT_POINT points[256]; /**< Event points parsed for this map. */
     } events;
 };
@@ -286,7 +272,7 @@ union EDIT_MAP_WORK_INFO {
  * Exposes the message-speed word used from the saved configuration block.
  */
 struct EDIT_CONFIG_VIEW {
-    u8 unk_00[0x8];
+    u8  unk_00[0x8];
     int clock_hidden; /**< Whether the player has turned the editor clock off. */
     int unk_0C;
     int message_speed; /**< Whether editor messages use the faster reveal rate. */
@@ -304,54 +290,54 @@ struct EDIT_ELEMENT_INFO {
  * Stores the parsed resources and environmental settings for an editor map.
  */
 struct EDIT_MAP_INFO {
-    char scene_name[0x40];            /**< Scene resource named by the map script. */
-    int time_stop;                    /**< Whether the map clock is stopped. */
-    int ambient_sound_off;            /**< Whether ambient map sound is disabled. */
-    int bgm_no;                       /**< Background-music number selected by the script. */
-    int sound_set_no;                 /**< Environmental sound-set number. */
-    int reverb_mode[2];               /**< Reverb presets selected for the two sound channels. */
-    int reverb_depth[2];              /**< Reverb strengths selected for the two sound channels. */
-    float wind[4];                    /**< Wind direction and strength parameters. */
-    float ambient[12][4];             /**< Ambient light colours for each light preset. */
-    float light_direction[12][4][4];  /**< Normalized light directions per preset, one light per column. */
-    float light_colour[12][4][4];     /**< Colours for four lights per preset. */
-    float background_colour[12][4];   /**< Primary background colours for each light preset. */
-    float background_colour_2[12][4]; /**< Secondary background colours for each light preset. */
-    EDIT_FOG_INFO fog[12];            /**< Fog parameters for each light preset. */
-    float character_ambient[4][4];    /**< Per-character ambient light colours. */
-    EDIT_IMAGE_INFO images[64];       /**< Image resources assigned to map rendering slots. */
-    int sky_follow[3];                /**< Sky-follow parameters supplied by the map script. */
-    u8 unk_1bec[0x4];
-    EDIT_SCENE_LAYER_INFO sky_layers[5]; /**< Scene layers selected by the SKY command. */
-    EDIT_SCENE_LAYER_INFO sun_layers[4]; /**< Scene layers selected by the SUN command. */
-    u8 unk_24a8[0xf8];
-    MAP_PARTS_INFO map_objects[64];         /**< Ground, building and water objects placed by the script. */
-    EDIT_MAP_PARTS_WORK parts_work;         /**< Overlapping area and part-definition work storage. */
-    EDIT_MOTION_PARTS_INFO motion_parts[4]; /**< Named map parts with scripted motion. */
-    EDIT_WATER_INFO water_surfaces[8];      /**< Water surfaces parsed for this map. */
-    EDIT_AREA_RECT_INFO edit_area_rects[8]; /**< Rectangular editor regions parsed for this map. */
-    float dof_start_time;                   /**< Time at which the depth-of-field interval begins. */
-    float dof_end_time;                     /**< Time at which the depth-of-field interval ends. */
-    float dof_near;                         /**< Near depth-of-field distance. */
-    float dof_far;                          /**< Far depth-of-field distance. */
-    int dof_near_level;                     /**< Near depth-of-field blur level. */
-    int dof_far_level;                      /**< Far depth-of-field blur level. */
-    int dof_alpha;                          /**< Alpha used while drawing depth of field. */
-    float shadow_near;                      /**< Near distance used by map shadow rendering. */
-    float shadow_far;                       /**< Far distance used by map shadow rendering. */
-    int shadow_level;                       /**< Shadow-quality level selected by the map script. */
-    int shadow_mode;                        /**< First map shadow-mode setting. */
-    int shadow_mode_2;                      /**< Second map shadow-mode setting. */
-    VILLAGER_INFO villagers[16];            /**< Villager placements parsed for this map. */
-    int time_tables[7][12][16];             /**< Weekly villager schedules parsed for this map. */
-    int people_list[16];                    /**< Villager identifiers parsed for this map. */
-    int obj_anime_count;                    /**< Number of object-animation records in use. */
-    int object_effect_count;                /**< Number of map-object effect records in use. */
-    int parts_effect_count;                 /**< Number of general map-part effect records in use. */
-    int object_timer_count;                 /**< Number of object-timer records in use. */
-    int event_count;                        /**< Number of event points the map defines. */
-    u8 unk_1a254[0xc];
-    EDIT_MAP_WORK_INFO work; /**< Overlapping work records reset during map initialization. */
+    char                   scene_name[0x40];           /**< Scene resource named by the map script. */
+    int                    time_stop;                  /**< Whether the map clock is stopped. */
+    int                    ambient_sound_off;          /**< Whether ambient map sound is disabled. */
+    int                    bgm_no;                     /**< Background-music number selected by the script. */
+    int                    sound_set_no;               /**< Environmental sound-set number. */
+    int                    reverb_mode[2];             /**< Reverb presets selected for the two sound channels. */
+    int                    reverb_depth[2];            /**< Reverb strengths selected for the two sound channels. */
+    float                  wind[4];                    /**< Wind direction and strength parameters. */
+    float                  ambient[12][4];             /**< Ambient light colours for each light preset. */
+    float                  light_direction[12][4][4];  /**< Normalized light directions per preset, one light per column. */
+    float                  light_colour[12][4][4];     /**< Colours for four lights per preset. */
+    float                  background_colour[12][4];   /**< Primary background colours for each light preset. */
+    float                  background_colour_2[12][4]; /**< Secondary background colours for each light preset. */
+    EDIT_FOG_INFO          fog[12];                    /**< Fog parameters for each light preset. */
+    float                  character_ambient[4][4];    /**< Per-character ambient light colours. */
+    EDIT_IMAGE_INFO        images[64];                 /**< Image resources assigned to map rendering slots. */
+    int                    sky_follow[3];              /**< Sky-follow parameters supplied by the map script. */
+    u8                     unk_1bec[0x4];
+    EDIT_SCENE_LAYER_INFO  sky_layers[5]; /**< Scene layers selected by the SKY command. */
+    EDIT_SCENE_LAYER_INFO  sun_layers[4]; /**< Scene layers selected by the SUN command. */
+    u8                     unk_24a8[0xf8];
+    MAP_PARTS_INFO         map_objects[64];        /**< Ground, building and water objects placed by the script. */
+    EDIT_MAP_PARTS_WORK    parts_work;             /**< Overlapping area and part-definition work storage. */
+    EDIT_MOTION_PARTS_INFO motion_parts[4];        /**< Named map parts with scripted motion. */
+    EDIT_WATER_INFO        water_surfaces[8];      /**< Water surfaces parsed for this map. */
+    EDIT_AREA_RECT_INFO    edit_area_rects[8];     /**< Rectangular editor regions parsed for this map. */
+    float                  dof_start_time;         /**< Time at which the depth-of-field interval begins. */
+    float                  dof_end_time;           /**< Time at which the depth-of-field interval ends. */
+    float                  dof_near;               /**< Near depth-of-field distance. */
+    float                  dof_far;                /**< Far depth-of-field distance. */
+    int                    dof_near_level;         /**< Near depth-of-field blur level. */
+    int                    dof_far_level;          /**< Far depth-of-field blur level. */
+    int                    dof_alpha;              /**< Alpha used while drawing depth of field. */
+    float                  shadow_near;            /**< Near distance used by map shadow rendering. */
+    float                  shadow_far;             /**< Far distance used by map shadow rendering. */
+    int                    shadow_level;           /**< Shadow-quality level selected by the map script. */
+    int                    shadow_mode;            /**< First map shadow-mode setting. */
+    int                    shadow_mode_2;          /**< Second map shadow-mode setting. */
+    VILLAGER_INFO          villagers[16];          /**< Villager placements parsed for this map. */
+    int                    time_tables[7][12][16]; /**< Weekly villager schedules parsed for this map. */
+    int                    people_list[16];        /**< Villager identifiers parsed for this map. */
+    int                    obj_anime_count;        /**< Number of object-animation records in use. */
+    int                    object_effect_count;    /**< Number of map-object effect records in use. */
+    int                    parts_effect_count;     /**< Number of general map-part effect records in use. */
+    int                    object_timer_count;     /**< Number of object-timer records in use. */
+    int                    event_count;            /**< Number of event points the map defines. */
+    u8                     unk_1a254[0xc];
+    EDIT_MAP_WORK_INFO     work; /**< Overlapping work records reset during map initialization. */
 };
 
 /** Current parsed editor-map description. */
@@ -779,7 +765,7 @@ void EditSave();
  * @address 0x177C80
  * @size 0xBC
  */
-void EditLoad(void);
+void EditLoad();
 
 /**
  * Draws one textured rectangle rotated about a caller-supplied pivot.
@@ -788,9 +774,7 @@ void EditLoad(void);
  * @address 0x1831D0
  * @size 0x590
  */
-void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen,
-                    const CRect_i_ &texel, int pivot_x, int pivot_y, float angle,
-                    unsigned char alpha);
+void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &screen, const CRect_i_ &texel, int pivot_x, int pivot_y, float angle, unsigned char alpha);
 
 /**
  * Draws the editor's system overlays for the current frame.

@@ -2,16 +2,13 @@
 
 #include "userstatus.hpp"
 
-// Forward declarations for the types these declarations name. The skeleton
-// headers are generated from the retail symbol table, which knows the type
-// names but not where they live.
-struct STATIC_ASSER;
-
 /**
  * Extends the party status with dungeon-specific save data.
  */
 class CDngStatusData : public CUserStatus {
 public:
+    char unk_8B20[0x17C];
+
     /** Returns the number of active party members. */
     s8 GetPartySize() const { return party_size; }
 
@@ -44,14 +41,14 @@ public:
      * @address 0x1BDBC0
      * @size 0x12C
      */
-    void LostGateKey(void);
+    void LostGateKey();
 
     /**
      * @mangled GetLiveUnit__14CDngStatusDataFv
      * @address 0x1BDCF0
      * @size 0x44
      */
-    int GetLiveUnit(void);
+    int GetLiveUnit();
 
     /**
      * @mangled CheckItemGet__14CDngStatusDataFi
@@ -79,7 +76,7 @@ public:
      * @address 0x1BE050
      * @size 0x10
      */
-    void ClearDeamonShaft(void);
+    void ClearDeamonShaft();
 
     /**
      * @mangled GetItem__14CDngStatusDataFii
@@ -109,35 +106,35 @@ public:
      * @address 0x1BEEF0
      * @size 0x14
      */
-    void SetDead(void);
+    void SetDead();
 
     /**
      * @mangled SetResLimmitZone__14CDngStatusDataFv
      * @address 0x1BEF10
      * @size 0x44
      */
-    void SetResLimmitZone(void);
+    void SetResLimmitZone();
 
     /**
      * @mangled InitResLimmitZone__14CDngStatusDataFv
      * @address 0x1BEF60
      * @size 0x3E0
      */
-    void InitResLimmitZone(void);
+    void InitResLimmitZone();
 
     /**
      * @mangled Initialize__14CDngStatusDataFv
      * @address 0x1BF340
      * @size 0x3BC
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * @mangled AddKills__14CDngStatusDataFv
      * @address 0x1BF700
      * @size 0x3C
      */
-    void AddKills(void);
+    void AddKills();
 
     /**
      * @mangled ChkKills__14CDngStatusDataFii
@@ -181,7 +178,6 @@ public:
      */
     void GetAtraData(int georama_no, int floor, int atra_id);
 
-public:
     /**
      * Returns one character's active battle-menu status value.
      */
@@ -191,8 +187,6 @@ public:
      * Returns the weapon slot one character has equipped.
      */
     s8 GetEquipWeaponSlot(int chara_no) { return equipped_weapon_slot[chara_no]; }
-
-    char unk_8B20[0x17C];
 };
 
 STATIC_ASSERT(sizeof(CDngStatusData) == 0x8C9C);

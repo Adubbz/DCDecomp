@@ -28,10 +28,10 @@ enum SearchSpace {
  */
 class CStockItem {
 public:
-    s16 dungeon_items[60];       /**< Contains the dungeon-item identifiers. */
-    s16 dungeon_item_vols[60];   /**< Contains the volume for each dungeon-item slot. */
-    WEAPON_HAVE weapons[30];     /**< Contains the weapon data. */
-    ATTACH_LIST attachments[30]; /**< Contains the attachment data. */
+    s16         dungeon_items[60];     /**< Contains the dungeon-item identifiers. */
+    s16         dungeon_item_vols[60]; /**< Contains the volume for each dungeon-item slot. */
+    WEAPON_HAVE weapons[30];           /**< Contains the weapon data. */
+    ATTACH_LIST attachments[30];       /**< Contains the attachment data. */
 
     /**
      * Sets all stock inventory slots to zero.
@@ -121,7 +121,7 @@ public:
      * @address 0x23FB40
      * @size 0x12C
      */
-    int SeitonChargeItemBoardSub(void);
+    int SeitonChargeItemBoardSub();
 
     /**
      * Tries item priorities until a sort operation moves a dungeon-item slot.
@@ -130,7 +130,7 @@ public:
      * @address 0x23FC70
      * @size 0x80
      */
-    void SeitonItem(void);
+    void SeitonItem();
 
     /**
      * Tries attachment priorities until a sort operation moves an attachment slot.
@@ -139,7 +139,7 @@ public:
      * @address 0x23FF10
      * @size 0x7C
      */
-    void SeitonAttach(void);
+    void SeitonAttach();
 
     /**
      * Returns the first empty slot in an inventory section or minus one if the section is full.

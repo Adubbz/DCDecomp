@@ -14,7 +14,7 @@ class CDungeonMap;
  */
 class CDungeonEventMan {
 public:
-    CDungeonEvent slot[64];      /**< Event definitions loaded for the floor's map parts. */
+    CDungeonEvent     slot[64];  /**< Event definitions loaded for the floor's map parts. */
     CDungeonEventData event[96]; /**< What each placed event is doing. */
 
     /**
@@ -33,7 +33,7 @@ public:
      * @address 0x1CC940
      * @size 0x44
      */
-    CDungeonEvent *SearchSlot(void);
+    CDungeonEvent *SearchSlot();
 
     /**
      * Enables or disables every runtime event for a requested script number.
@@ -60,7 +60,7 @@ public:
      * @address 0x1CCAD0
      * @size 0x58
      */
-    int GetDataNum(void);
+    int GetDataNum();
 
     /**
      * Returns the first unused runtime event record.
@@ -69,7 +69,7 @@ public:
      * @address 0x1CCB30
      * @size 0x64
      */
-    CDungeonEventData *SearchDataSlot(void);
+    CDungeonEventData *SearchDataSlot();
 
     /**
      * Returns this runtime event when one of its configured collision owners reaches it.

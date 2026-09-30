@@ -16,17 +16,17 @@
 
 void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
     TM2_picture *picture = (TM2_picture *) ((u_char *) head + 16);
-    int width = head->image_width;
-    int height = head->image_height;
-    int bpp;
-    int psm = 0;
-    u_char *clut;
-    u_char *image;
-    int tw;
-    int th;
-    int pow2;
-    int k;
-    int tbw;
+    int          width = head->image_width;
+    int          height = head->image_height;
+    int          bpp;
+    int          psm = 0;
+    u_char      *clut;
+    u_char      *image;
+    int          tw;
+    int          th;
+    int          pow2;
+    int          k;
+    int          tbw;
 
     switch (head->image_type) {
         case 1:
@@ -52,8 +52,9 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
 
     clut = 0;
     image = (u_char *) picture + picture->header_size;
-    if (bpp < 2)
+    if (bpp < 2) {
         clut = image + picture->image_size;
+    }
 
     u_char *mip[4] = {0, 0, 0, 0};
 
@@ -82,23 +83,28 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
         pow2 >>= 1;
         tw++;
     }
-    for (pow2 = 1, k = 0; k < tw; k++)
+    for (pow2 = 1, k = 0; k < tw; k++) {
         pow2 <<= 1;
-    if (width != pow2)
+    }
+    if (width != pow2) {
         tw++;
+    }
     pow2 = height;
     while (pow2 >= 2) {
         pow2 >>= 1;
         th++;
     }
-    for (pow2 = 1, k = 0; k < th; k++)
+    for (pow2 = 1, k = 0; k < th; k++) {
         pow2 <<= 1;
-    if (height != pow2)
+    }
+    if (height != pow2) {
         th++;
+    }
 
     tbw = width >> 6;
-    if (tbw <= 0)
+    if (tbw <= 0) {
         tbw = 1;
+    }
 
     if (tex->bpp > 1) {
         tex->tex0 = SCE_GS_SET_TEX0(0, tbw, psm, tw, th, 1, 0, 0, 0, 0, 0, 0);
@@ -108,14 +114,15 @@ void SetTextureInfo(CTexture *tex, char *name, TM2_head *head) {
 }
 
 void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
-    u_int i;
-    IMG_head *head = (IMG_head *) buffer;
+    u_int      i;
+    IMG_head  *head = (IMG_head *) buffer;
     IMG_entry *entry = (IMG_entry *) (head + 1);
 
     for (i = 0; i < head->pictures; i++, entry++) {
         if (name != 0 && name[0] != 0) {
-            if (strcmp(entry->name, name) != 0)
+            if (strcmp(entry->name, name) != 0) {
                 continue;
+            }
         }
         SetTextureInfo(tex, entry->name, (TM2_head *) ((u_char *) head + entry->offset));
     }
@@ -128,7 +135,7 @@ void SetTextureInfo(CTexture *tex, char *name, u_char *buffer) {
  * @address 0x134B50
  * @size 0x10
  */
-void CVisual::Initialize(void) {
+void CVisual::Initialize() {
     unk_00 = 0;
     unk_04 = 0;
 }
@@ -140,7 +147,7 @@ void CVisual::Initialize(void) {
  * @address 0x134B60
  * @size 0x44
  */
-CVisual::CVisual(void) {
+CVisual::CVisual() {
     Initialize();
 }
 
@@ -153,8 +160,8 @@ int CVisualVu1::RemakeData(unsigned int *data) {
  */
 static inline float InverseLength(float *vector) {
     register float *source = vector;
-    register int root;
-    register float length = 0.0f;
+    register int    root;
+    register float  length = 0.0f;
 
     asm {
         lqc2       vf4, 0(source)
@@ -198,12 +205,10 @@ static inline bool IsOff(int flag) {
  * @address 0x134BC0
  * @size 0xC4
  */
-int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                        VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+int CVisualVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     sceVif1PkTerminate(packet);
     int size;
-    sceVif1PkReserve(packet, size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info,
-                                                        program, draw_state, unknown1, unknown2));
+    sceVif1PkReserve(packet, size = CVisualVu1::DrawVu1((u_int *) packet->pCurrent, matrix, info, program, draw_state, unknown1, unknown2));
     return size;
 }
 
@@ -303,7 +308,7 @@ int SetTEX0(u_int *packet, u_long tex0, u_long tex1) {
  * @address 0x134EC0
  * @size 0x3C
  */
-void CVisualVu1::Initialize(void) {
+void CVisualVu1::Initialize() {
     CVisual::Initialize();
     vu_data = NULL;
     vu_size = 0;
@@ -318,7 +323,7 @@ void CVisualVu1::Initialize(void) {
  * @address 0x134F00
  * @size 0x50
  */
-CVisualVu1::CVisualVu1(void) {
+CVisualVu1::CVisualVu1() {
     Initialize();
 }
 
@@ -340,7 +345,7 @@ void CVisualMDTVu1::SetMDTDataAddress(u_int *data) {
  * @address 0x134F60
  * @size 0xC
  */
-u_int *CVisualMDTVu1::GetMDTDataAddress(void) {
+u_int *CVisualMDTVu1::GetMDTDataAddress() {
     return data;
 }
 
@@ -351,7 +356,7 @@ u_int *CVisualMDTVu1::GetMDTDataAddress(void) {
  * @address 0x134F70
  * @size 0x3C
  */
-void CVisualMDTVu1::Initialize(void) {
+void CVisualMDTVu1::Initialize() {
     CVisualVu1::Initialize();
     copy_on_draw = 0;
     data = NULL;
@@ -366,7 +371,7 @@ void CVisualMDTVu1::Initialize(void) {
  * @address 0x134FB0
  * @size 0x48
  */
-CVisualMDTVu1::CVisualMDTVu1(void) {
+CVisualMDTVu1::CVisualMDTVu1() {
     CVisualMDTVu1::Initialize();
 }
 
@@ -377,10 +382,9 @@ CVisualMDTVu1::CVisualMDTVu1(void) {
  * @address 0x135000
  * @size 0x964
  */
-int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                        u_long128 *draw_state, int unknown1, int unknown2) {
-    u_int *start;
-    u_int *header;
+int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+    u_int        *start;
+    u_int        *header;
     sceVu0FVECTOR shadow_point;
     sceVu0FVECTOR shadow_normal;
     sceVu0FMATRIX shadow_matrix;
@@ -389,14 +393,14 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     sceVu0FVECTOR eye;
     sceVu0FMATRIX inverse;
     sceVu0FMATRIX clip_matrix;
-    u_int *tag;
-    u_int *unpack;
-    u_int *unpack_data;
-    bool lighting;
-    u_int fog_color;
-    float inv_len_x;
-    float inv_len_y;
-    float inv_len_z;
+    u_int        *tag;
+    u_int        *unpack;
+    u_int        *unpack_data;
+    bool          lighting;
+    u_int         fog_color;
+    float         inv_len_x;
+    float         inv_len_y;
+    float         inv_len_z;
 
     if (vu_data == NULL || vu_size == 0) {
         return 0;
@@ -431,9 +435,7 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
     if (IsOff(info->shadow_pass) && IsOff(info->unlit)) {
         lighting = true;
     }
-    *packet++ = ((program == 15) << 8) |
-                ((!info->shadow_pass << 3) |
-                 (((((info->fog_enabled != 0 && !info->shadow_pass)) << 5) | 0x40) | (lighting * 16)));
+    *packet++ = ((program == 15) << 8) | ((!info->shadow_pass << 3) | (((((info->fog_enabled != 0 && !info->shadow_pass)) << 5) | 0x40) | (lighting * 16)));
     *packet++ = 0;
     *packet++ = 0x1B;
     *packet++ = 0;
@@ -610,10 +612,9 @@ int CVisualVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1
  * @address 0x135970
  * @size 0x130
  */
-static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *vertex,
-                     u_long128 *normal, u_long128 *uv, u_long128 *colour, int prim) {
-    u_int *header = (u_int *) block;
-    u_int *cursor = (u_int *) block;
+static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *vertex, u_long128 *normal, u_long128 *uv, u_long128 *colour, int prim) {
+    u_int     *header = (u_int *) block;
+    u_int     *cursor = (u_int *) block;
     u_long128 *vertex_out;
     u_long128 *normal_out;
     u_long128 *uv_out;
@@ -665,30 +666,30 @@ static int SetVuData(int count, u_long128 *block, u_int *index, u_long128 *verte
  * @size 0x3A8
  */
 int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int unknown1) {
-    int first;
-    int strip;
-    int word;
-    int stride;
-    u_long128 *colour;
-    int remaining;
-    u_int *index;
+    int           first;
+    int           strip;
+    int           word;
+    int           stride;
+    u_long128    *colour;
+    int           remaining;
+    u_int        *index;
     MDT_MATERIAL *material_entry;
-    MDT_HEADER *header;
-    u_int *mesh;
-    u_long128 *vertex;
-    u_long128 *normal;
-    u_long128 *uv;
+    MDT_HEADER   *header;
+    u_int        *mesh;
+    u_long128    *vertex;
+    u_long128    *normal;
+    u_long128    *uv;
     MDT_MATERIAL *materials;
-    int strips;
-    int prim;
-    int material;
-    int unpack;
-    int qwc;
-    int limit;
-    int handle;
-    int continued;
-    int size;
-    int count;
+    int           strips;
+    int           prim;
+    int           material;
+    int           unpack;
+    int           qwc;
+    int           limit;
+    int           handle;
+    int           continued;
+    int           size;
+    int           count;
 
     header = (MDT_HEADER *) data;
     first = 1;
@@ -721,8 +722,7 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
         index += 3;
         if (material != -1) {
             handle = TexManager.GetTextureHandle(material_entry->texture, -1);
-            word += SetTEX0(&block[word], TexManager.GetTexture(handle)->tex0,
-                            TexManager.GetTexture(handle)->tex1);
+            word += SetTEX0(&block[word], TexManager.GetTexture(handle)->tex0, TexManager.GetTexture(handle)->tex1);
             word += SetMaterial(&block[word], material_entry);
         }
         limit = 0x36;
@@ -742,8 +742,7 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
             unpack = word + 3;
             block[unpack] = 0x6C008000;
             word += 4;
-            size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv, colour,
-                             prim);
+            size = SetVuData(count, (u_long128 *) &block[word], index, vertex, normal, uv, colour, prim);
             // A strip that carries on in the next chunk repeats its last two vertices.
             if (prim == 4 && limit < remaining) {
                 index -= stride * 2;
@@ -780,14 +779,14 @@ int CVisualVu1::CreateVUdataFromMDT(u_int *block, u_int *data, int unknown0, int
 }
 
 int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown0) {
-    int strip;
+    int         strip;
     MDT_HEADER *header = (MDT_HEADER *) data;
-    int word = 0;
-    int quads = 0;
+    int         word = 0;
+    int         quads = 0;
 
     vu_data = block;
-    u_int *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
-    int stride;
+    u_int     *mesh = (u_int *) ((u_char *) data + header->mesh_ofs);
+    int        stride;
     u_long128 *vertex = (u_long128 *) ((u_char *) data + header->vertex_ofs);
     u_long128 *colour = (u_long128 *) ((u_char *) data + header->colour_ofs);
     if (header->colour_ofs <= 0) {
@@ -797,12 +796,12 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
         stride = 4;
     }
     MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) data + header->info_ofs);
-    u_int *index = mesh + 4;
-    int strips = mesh[2];
+    u_int        *index = mesh + 4;
+    int           strips = mesh[2];
     for (strip = 0; strip < strips; strip++) {
-        int remaining = index[1];
-        int prim = index[0];
-        int material = index[2];
+        int           remaining = index[1];
+        int           prim = index[0];
+        int           material = index[2];
         MDT_MATERIAL *material_entry = &materials[material];
         index += 3;
         if (material != -1) {
@@ -821,13 +820,13 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
                 count = remaining;
             }
             word += 4;
-            int i;
+            int        i;
             u_long128 *out;
-            u_int *source = index;
+            u_int     *source = index;
             index += count * stride;
             out = (u_long128 *) &block[word] + 2;
             u_long128 *colour_out = out + count * 3;
-            int size;
+            int        size;
             if (colour == NULL) {
                 for (i = count; i > 0; i--) {
                     *out++ = vertex[source[0]];
@@ -864,8 +863,7 @@ int CVisualVu1::CreateVUdataFromMDTRemake(u_int *block, u_int *data, int unknown
  * @address 0x1360E0
  * @size 0x120
  */
-int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
-                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     int result;
 
     result = 0;
@@ -886,8 +884,7 @@ int CVisualMDTVu1::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info,
  * @address 0x136200
  * @size 0x34
  */
-int CVisualMDTVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                           VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+int CVisualMDTVu1::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     vu_data = vu_data_buffer[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown1, unknown2);
 }

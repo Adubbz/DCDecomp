@@ -12,18 +12,13 @@
 struct RenderInfo;
 struct sceVif1Packet;
 
-/**
- * Draws the polygons of a water surface with the VU1 microprogram.
- *
- * Adds no method of its own: its vtable is CVisualVu1's, entry for entry.
- */
-class CVisualPolyVu1;
-
 class CVisualVu1 {
 public:
-    CVisualVu1 &operator=(const CVisualVu1 &);
     s32 flags; /**< Draw flags of the base visual, cleared when it is initialised. */
     s32 unk_04;
+
+    CVisualVu1 &operator=(const CVisualVu1 &src);
+
     /**
      * Clears the vector-unit visual's packet pointers and sizes.
      *
@@ -31,7 +26,7 @@ public:
      * @address 0x134EC0
      * @size 0x3C
      */
-    virtual void Initialize(void);
+    virtual void Initialize();
 
     /**
      * Takes the address that the model data of the object is read from. The
@@ -51,7 +46,7 @@ public:
      * @address 0x137E90
      * @size 0xC
      */
-    virtual unsigned int *GetMDTDataAddress(void);
+    virtual unsigned int *GetMDTDataAddress();
 
     /**
      * Returns zero because this visual has no retained model data to rebuild.
@@ -60,7 +55,7 @@ public:
      * @address 0x134BB0
      * @size 0xC
      */
-    virtual int RemakeData(unsigned int *);
+    virtual int RemakeData(unsigned int *data);
 
     /**
      * Draws the visual into a packet through the vector unit.
@@ -69,8 +64,7 @@ public:
      * @address 0x135000
      * @size 0x964
      */
-    virtual int DrawVu1(unsigned int *, float (*)[4], RenderInfo *, VU1_PROGRAM, u_long128 *,
-                        int, int);
+    virtual int DrawVu1(unsigned int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     /**
      * Draws the visual into a VIF packet.
@@ -79,8 +73,7 @@ public:
      * @address 0x134BC0
      * @size 0xC4
      */
-    virtual int DrawVu1(sceVif1Packet *, float (*)[4], RenderInfo *, VU1_PROGRAM, u_long128 *,
-                        int, int);
+    virtual int DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2);
 
     s32 unk_0C;
 
@@ -91,7 +84,7 @@ public:
      * @address 0x134F00
      * @size 0x50
      */
-    CVisualVu1(void);
+    CVisualVu1();
 
     /**
      * Builds a model's VU data block and returns its size in quadwords.
@@ -100,7 +93,7 @@ public:
      * @address 0x135AA0
      * @size 0x3A8
      */
-    int CreateVUdataFromMDT(unsigned int *, unsigned int *, int, int);
+    int CreateVUdataFromMDT(unsigned int *block, unsigned int *data, int unknown0, int unknown1);
 
     /**
      * Rebuilds a VU data block from retained model data and returns its size in quadwords.
@@ -109,16 +102,17 @@ public:
      * @address 0x135E50
      * @size 0x288
      */
-    int CreateVUdataFromMDTRemake(unsigned int *, unsigned int *, int);
+    int CreateVUdataFromMDTRemake(unsigned int *block, unsigned int *data, int unknown0);
 };
 
 class CVisualPolyVu1 : public CVisualVu1 {
 public:
-    CVisualPolyVu1 &operator=(const CVisualPolyVu1 &);
-    s32 unk_10;
-    s32 unk_14;
+    s32    unk_10;
+    s32    unk_14;
     u_int *vu_data; /**< Vector-unit packet the polygons are drawn from. */
-    u_int vu_size;  /**< Size of the vector-unit packet in quadwords. */
+    u_int  vu_size; /**< Size of the vector-unit packet in quadwords. */
+
+    CVisualPolyVu1 &operator=(const CVisualPolyVu1 &src);
 } __attribute__((aligned(16)));
 
 STATIC_ASSERT(sizeof(CVisualPolyVu1) == 0x20);

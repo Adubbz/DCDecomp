@@ -42,7 +42,7 @@ public:
             s16 foot_sound;  /**< Sound the character's feet play on it. */
             s16 area_kind;   /**< Kind of area the surface marks; 10 holds the battle camera higher above it. */
             s16 ignore_mask; /**< Collision query modes that pass through the surface. */
-            u8 unk_48[8];
+            u8  unk_48[8];
         } attr;
     };
 } __attribute__((aligned(16)));
@@ -52,8 +52,8 @@ public:
  */
 class CCPolyBox {
 public:
-    CCPoly poly; /**< Collision triangle. */
-    CBoxVu0 box; /**< Axis-aligned bounds of the triangle. */
+    CCPoly  poly; /**< Collision triangle. */
+    CBoxVu0 box;  /**< Axis-aligned bounds of the triangle. */
 };
 
 /**
@@ -64,14 +64,14 @@ public:
     sceVu0FVECTOR max; /**< Greater corner of the geometry's bounds. */
     sceVu0FVECTOR min; /**< Lesser corner of the geometry's bounds. */
 
-    virtual int GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
-    virtual int GetMaxY(float *position);
+    virtual int            GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
+    virtual int            GetMaxY(float *position);
     virtual sceVu0FVECTOR *GetVertexAddress(int *count);
-    virtual int Intersection(float *from, float *to, float *hit);
-    virtual int PickUpNearPoly(CCPoly *poly, float *position, float radius);
-    virtual int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
-    virtual int PickUpNearPoly(CCPoly *poly);
-    virtual void Initialize();
+    virtual int            Intersection(float *from, float *to, float *hit);
+    virtual int            PickUpNearPoly(CCPoly *poly, float *position, float radius);
+    virtual int            PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
+    virtual int            PickUpNearPoly(CCPoly *poly);
+    virtual void           Initialize();
 
     void CreateBBox();
 };
@@ -81,6 +81,10 @@ public:
  */
 class CCollisionMDT : public CCollision {
 public:
+    MDT_HEADER *model;      /**< MDT resource the collision geometry is read from. */
+    CCPolyBox  *mesh;       /**< Bounded polygons the collision tests against. */
+    int         mesh_count; /**< Number of bounded polygons in mesh. */
+
     /* The same three fields Initialize clears, cleared again here because construction cannot
        reach a virtual of its own class. */
     CCollisionMDT() {
@@ -89,18 +93,14 @@ public:
         mesh_count = 0;
     }
 
-    virtual int GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
-    virtual int GetMaxY(float *position);
+    virtual int            GetPolygon(int index, sceVu0FMATRIX v0, sceVu0FMATRIX v1, sceVu0FMATRIX v2);
+    virtual int            GetMaxY(float *position);
     virtual sceVu0FVECTOR *GetVertexAddress(int *count);
-    virtual int Intersection(float *from, float *to, float *hit);
-    virtual int PickUpNearPoly(CCPoly *poly, float *position, float radius);
-    virtual int PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
-    virtual int PickUpNearPoly(CCPoly *poly);
-    virtual void Initialize();
-
-    MDT_HEADER *model; /**< MDT resource the collision geometry is read from. */
-    CCPolyBox *mesh;   /**< Bounded polygons the collision tests against. */
-    int mesh_count;    /**< Number of bounded polygons in mesh. */
+    virtual int            Intersection(float *from, float *to, float *hit);
+    virtual int            PickUpNearPoly(CCPoly *poly, float *position, float radius);
+    virtual int            PickUpNearPoly(CCPoly *poly, const CBoxVu0 &box);
+    virtual int            PickUpNearPoly(CCPoly *poly);
+    virtual void           Initialize();
 };
 
 STATIC_ASSERT(sizeof(CCPoly) == 0x50);

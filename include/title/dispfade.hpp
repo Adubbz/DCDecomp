@@ -9,10 +9,10 @@ struct sceVif1Packet;
  */
 class CDispFade {
 public:
-    float fade_rate;  /**< Current GS alpha on the zero-to-128 scale. */
-    float fade_speed; /**< Amount by which the alpha changes each frame. */
-    s32 mode;         /**< Active direction: one fades out, two fades in, and minus one is idle. */
-    s32 fade_colour;  /**< Zero selects black and any nonzero value selects white. */
+    float fade_rate;   /**< Current GS alpha on the zero-to-128 scale. */
+    float fade_speed;  /**< Amount by which the alpha changes each frame. */
+    s32   mode;        /**< Active direction: one fades out, two fades in, and minus one is idle. */
+    s32   fade_colour; /**< Zero selects black and any nonzero value selects white. */
 
     /**
      * Starts increasing the screen-cover alpha.
@@ -48,7 +48,7 @@ public:
      * @address 0x1DAD240
      * @size 0xC
      */
-    float GetRate(void);
+    float GetRate();
 
     /**
      * Advances and draws a fade towards an opaque screen.

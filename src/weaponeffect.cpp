@@ -44,7 +44,7 @@ void CWeaponEffect::Set(int hold, float fade, float fade_out) {
 
 void CWeaponEffect::Step() {
     sceVu0FVECTOR centre = {0.0f, 0.0f, 0.0f, 1.0f};
-    int i;
+    int           i;
 
     if (root == NULL || tip == NULL) {
         return;
@@ -85,14 +85,14 @@ void CWeaponEffect::Step() {
 }
 
 void CWeaponEffect::Draw() {
-    int near_root[4];
-    int near_tip[4];
-    int far_root[4];
-    int far_tip[4];
+    int        near_root[4];
+    int        near_tip[4];
+    int        far_root[4];
+    int        far_tip[4];
     sceGsAlpha alpha_reg;
-    sceGsZbuf zbuf;
-    int prev;
-    int i;
+    sceGsZbuf  zbuf;
+    int        prev;
+    int        i;
 
     if (root == NULL || tip == NULL) {
         return;
@@ -117,17 +117,12 @@ void CWeaponEffect::Draw() {
         } else {
             prev = i - 1;
         }
-        if (used[i] != 0 && used[prev] != 0 &&
-            MGRotTransPers(near_root, edge[prev * 2], 0) != 0 &&
-            MGRotTransPers(near_tip, edge[prev * 2 + 1], 0) != 0 &&
-            MGRotTransPers(far_root, edge[i * 2], 0) != 0 &&
-            MGRotTransPers(far_tip, edge[i * 2 + 1], 0) != 0) {
+        if (used[i] != 0 && used[prev] != 0 && MGRotTransPers(near_root, edge[prev * 2], 0) != 0 && MGRotTransPers(near_tip, edge[prev * 2 + 1], 0) != 0 && MGRotTransPers(far_root, edge[i * 2], 0) != 0 && MGRotTransPers(far_tip, edge[i * 2 + 1], 0) != 0) {
             colour[0].a = (u8) alpha[prev];
             colour[1].a = (u8) alpha[prev];
             colour[2].a = (u8) alpha[i];
             colour[3].a = (u8) alpha[i];
-            set3DColSprite(Vif1Packet, near_root, far_root, near_tip, far_tip, &colour[0],
-                           &colour[2], &colour[1], &colour[3]);
+            set3DColSprite(Vif1Packet, near_root, far_root, near_tip, far_tip, &colour[0], &colour[2], &colour[1], &colour[3]);
         }
     }
 

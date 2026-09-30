@@ -2,10 +2,8 @@
 
 #include "common.h"
 
-struct ATTACH_LIST;
 class CTexture;
 struct IHAVEITEM;
-struct ITEM_PACK;
 struct WEAPON_HAVE;
 
 /** Texture sheet used to draw personal inventory boards. */
@@ -63,7 +61,7 @@ int PersonalRetMax(int board_mode);
  * @address 0x0022F7D0
  * @size 0x1FC
  */
-void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int);
+void DrawPersonalBoard(int x, int y, int board_mode, int alpha, int unused);
 
 /**
  * Draws the icons of one personal board page, five to a row, clipped to the board's top and bottom.

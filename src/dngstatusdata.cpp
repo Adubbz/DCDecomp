@@ -109,7 +109,7 @@ int CUserStatus::ChkEventFlag(int flag_no) {
 }
 
 /* @ 0x1BDB20 (0x40 bytes) -- ClearEventFlag__11CUserStatusFv */
-void CUserStatus::ClearEventFlag(void) {
+void CUserStatus::ClearEventFlag() {
     int i;
     int valid;
 
@@ -135,7 +135,7 @@ int CDngStatusData::LostItem(int item_id) {
 }
 
 /* @ 0x1BDBC0 (0x130 bytes) -- LostGateKey__14CDngStatusDataFv */
-void CDngStatusData::LostGateKey(void) {
+void CDngStatusData::LostGateKey() {
     int i;
     int valid;
 
@@ -174,7 +174,7 @@ void CDngStatusData::LostGateKey(void) {
 }
 
 /* @ 0x1BDCF0 (0x50 bytes) -- GetLiveUnit__14CDngStatusDataFv */
-int CDngStatusData::GetLiveUnit(void) {
+int CDngStatusData::GetLiveUnit() {
     int result = 0;
     int i;
     int valid;
@@ -308,7 +308,7 @@ ret_minus1:
 /* Index 6 is the bonus "Deamon Shaft" dungeon (0-5 are the six story
  * georama dungeons). */
 /* @ 0x1BE050 (0x10 bytes) -- ClearDeamonShaft__14CDngStatusDataFv */
-void CDngStatusData::ClearDeamonShaft(void) {
+void CDngStatusData::ClearDeamonShaft() {
     this->floor_reached[6] = -1;
 }
 
@@ -528,7 +528,7 @@ void CUserStatus::AddNowLife(int chara_no, s16 amount, float ratio) {
 /* Alive iff the active character has HP left -- and, while an interpolated HP
  * change is in flight, iff its target is above zero too. */
 /* @ 0x1BE890 (0x70 bytes) -- CheckLife__11CUserStatusFv */
-int CUserStatus::CheckLife(void) {
+int CUserStatus::CheckLife() {
     if (this->life_step[this->cur_chara] != 0 && this->next_hp[this->cur_chara] <= 0) {
         return 0;
     }
@@ -579,7 +579,7 @@ void CUserStatus::SetNextLife(int chara_no, s16 value, float ratio) {
 /* @ 0x1BEA50 (0x390 bytes) -- Step__11CUserStatusFi */
 void CUserStatus::Step(int mode) {
     float drain;
-    int dungeon;
+    int   dungeon;
 
     if (this->step_disable != 0) {
         return;
@@ -658,7 +658,7 @@ void CUserStatus::Step(int mode) {
 }
 
 /* @ 0x1BEDE0 (0x110 bytes) -- Init__11CUserStatusFv */
-void CUserStatus::Init(void) {
+void CUserStatus::Init() {
     int i;
     int valid;
 
@@ -685,14 +685,14 @@ void CUserStatus::Init(void) {
 }
 
 /* @ 0x1BEEF0 (0x20 bytes) -- SetDead__14CDngStatusDataFv */
-void CDngStatusData::SetDead(void) {
+void CDngStatusData::SetDead() {
     this->money_signed = (u32) (u16) this->money_signed >> 1;
 }
 
 /* Looks up the current floor's "Res Limit Zone" id and latches it into
  * res_limit_zone_current if the floor has one assigned. */
 /* @ 0x1BEF10 (0x50 bytes) -- SetResLimmitZone__14CDngStatusDataFv */
-void CDngStatusData::SetResLimmitZone(void) {
+void CDngStatusData::SetResLimmitZone() {
     int zone = this->res_limit_zone_id[this->cur_georama][this->cur_floor];
     if (zone != -1) {
         this->res_limit_zone_current = zone;
@@ -708,7 +708,7 @@ void CDngStatusData::SetResLimmitZone(void) {
  * is what keeps retail's real branch instead of a movn/movz conditional move,
  * and it forces the roll comparison into a real register rather than `at`. */
 /* @ 0x1BEF60 (0x3E0 bytes) -- InitResLimmitZone__14CDngStatusDataFv */
-void CDngStatusData::InitResLimmitZone(void) {
+void CDngStatusData::InitResLimmitZone() {
     int floor_index;
     int roll;
     int i;
@@ -793,19 +793,19 @@ void CDngStatusData::InitResLimmitZone(void) {
  * `addu index, base`, whereas the equivalent raw `s8 *` plus casts yields
  * base-first. */
 struct DNG_ITEM_BLOCK {
-    s8 item_capacity; /**< Number of inventory slots the party may fill. */
+    s8   item_capacity; /**< Number of inventory slots the party may fill. */
     char unk_01;
-    s16 quick_item_slot[3]; /**< Item ids held in the three quick slots. */
-    s16 quick_item_qty[3];  /**< Quantity held in each quick slot. */
-    s16 dungeon_items[103]; /**< Item id in each inventory slot, or -1 when empty. */
-    s16 item_vol[103];      /**< How much is left in each slot's copy of its item. */
+    s16  quick_item_slot[3]; /**< Item ids held in the three quick slots. */
+    s16  quick_item_qty[3];  /**< Quantity held in each quick slot. */
+    s16  dungeon_items[103]; /**< Item id in each inventory slot, or -1 when empty. */
+    s16  item_vol[103];      /**< How much is left in each slot's copy of its item. */
 };
 
 /* Resets the whole class to a fresh-game state: party HP/weapons/atra grid/
  * kills/restriction zones/inventory all cleared, then character 0 is given
  * the starting weapon (item 258) via GetItem. */
 /* @ 0x1BF340 (0x3C0 bytes) -- Initialize__14CDngStatusDataFv */
-void CDngStatusData::Initialize(void) {
+void CDngStatusData::Initialize() {
     this->cur_georama = -1;
     this->unk_01[0] = 0;
     this->cur_floor = -1;
@@ -901,7 +901,7 @@ void CDngStatusData::Initialize(void) {
 /* Per-(georama, floor) monster kill counter, indexed by the CURRENT
  * georama/floor for AddKills but by explicit params for ChkKills. */
 /* @ 0x1BF700 (0x40 bytes) -- AddKills__14CDngStatusDataFv */
-void CDngStatusData::AddKills(void) {
+void CDngStatusData::AddKills() {
     this->kills[this->cur_georama][this->cur_floor]++;
 }
 

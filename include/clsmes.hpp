@@ -28,11 +28,11 @@ STATIC_ASSERT(sizeof(MES_FUCHI) == 0x18);
  * One laid-out line of a message window.
  */
 struct MES_WIN_LINE {
-    s16 code; /**< The laid-out character, or the control code it stands for. */
-    s16 x;    /**< Distance of the character from the left of the window. */
-    s16 y;    /**< Distance of the character from the top of the window. */
-    u8 clut;  /**< Palette entry the character draws with. */
-    u8 space; /**< Extra width the character takes, for a justified line. */
+    s16 code;  /**< The laid-out character, or the control code it stands for. */
+    s16 x;     /**< Distance of the character from the left of the window. */
+    s16 y;     /**< Distance of the character from the top of the window. */
+    u8  clut;  /**< Palette entry the character draws with. */
+    u8  space; /**< Extra width the character takes, for a justified line. */
 };
 
 STATIC_ASSERT(sizeof(MES_WIN_LINE) == 0x8);
@@ -57,90 +57,90 @@ struct MES_LINE_POS {
 
 class ClsMes {
 public:
-    s32 text_x;                              /**< Distance of the text from the left of the screen. */
-    s32 text_y;                              /**< Distance of the text from the top of the screen. */
-    s32 char_width;                          /**< How wide one character of the font draws. */
-    s32 char_height;                         /**< How tall one character of the font draws. */
-    s32 columns;                             /**< Characters one line of the window holds. */
-    s32 rows;                                /**< Lines the window holds. */
-    s32 text_columns;                        /**< Characters the widest line of the text takes. */
-    s32 text_rows;                           /**< Lines the text takes. */
-    s32 text_len;                            /**< Characters the window has laid out to draw. */
-    s32 text_width;                          /**< How wide the laid-out text is, in pixels. */
-    s32 text_height;                         /**< How tall the laid-out text is, in pixels. */
-    s32 init_02C;                            /**< Set to 16 by the constructor and never read. */
-    s32 init_030;                            /**< Set to 16 by the constructor and never read. */
-    s32 fukidashi;                           /**< Whether the window draws as a speech bubble, not a frame. */
-    s32 fukidashi_shape;                     /**< Which shape the bubble takes, as the text asks for. */
-    s32 grow_x;                              /**< Point the window grows out of and shrinks back into, from the left. */
-    s32 grow_y;                              /**< Point the window grows out of and shrinks back into, from the top. */
-    s32 win_x;                               /**< Distance of the window from the left of the screen. */
-    s32 win_y;                               /**< Distance of the window from the top of the screen. */
-    s32 win_width;                           /**< How wide the window draws. */
-    s32 win_height;                          /**< How tall the window draws. */
-    s32 auto_pos;                            /**< Forces which of nine positions the window takes; zero picks the best. */
-    s32 tail_on;                             /**< Whether the window draws a tail pointing at its speaker. */
-    s32 tail_to_x;                           /**< Where the tail points, from the left of the screen. */
-    s32 tail_to_y;                           /**< Where the tail points, from the top of the screen. */
-    s32 tail_x;                              /**< Where the tail leaves the window, from the left. */
-    s32 tail_y;                              /**< Where the tail leaves the window, from the top. */
-    s32 tail_half_width;                     /**< Half the width of the tail where it meets the window. */
-    s32 tail_length;                         /**< How far the tail reaches towards what it points at. */
-    s32 tail_left_x;                         /**< Left corner of the tail's base, worked out by Step. */
-    s32 tail_left_y;                         /**< Left corner of the tail's base, worked out by Step. */
-    s32 tail_right_x;                        /**< Right corner of the tail's base, worked out by Step. */
-    s32 tail_right_y;                        /**< Right corner of the tail's base, worked out by Step. */
-    s32 tail_tip_x;                          /**< Point of the tail, worked out by Step. */
-    s32 tail_tip_y;                          /**< Point of the tail, worked out by Step. */
-    float fade_speed;                        /**< How much of the fade one step covers. */
-    float fade;                              /**< How far the window has faded in, from zero to one. */
-    s32 fade_in;                             /**< Whether the window is fading in rather than out. */
-    s32 stay_frame;                          /**< Whether the window draws a plain frame behind its text. */
-    s32 stay_width;                          /**< Width that frame takes; zero or less follows the text. */
-    s32 stay_height;                         /**< Height that frame takes; zero or less follows the text. */
-    float text_rate;                         /**< Characters the text reveals each step, now. */
-    float text_rate_set;                     /**< Characters the text reveals each step, as configured. */
-    s32 waiting;                             /**< Whether the text has stopped on a wait code. */
-    s32 auto_page;                           /**< Whether the window turns its own pages. */
-    float text_at;                           /**< How far through the laid-out characters the text has revealed. */
-    s32 text_no;                             /**< The laid-out character the text has revealed up to. */
-    s32 text_from;                           /**< The laid-out character the text starts drawing at. */
-    s32 page_from;                           /**< The laid-out character the next page begins at. */
+    s32          text_x;       /**< Distance of the text from the left of the screen. */
+    s32          text_y;       /**< Distance of the text from the top of the screen. */
+    s32          char_width;   /**< How wide one character of the font draws. */
+    s32          char_height;  /**< How tall one character of the font draws. */
+    s32          columns;      /**< Characters one line of the window holds. */
+    s32          rows;         /**< Lines the window holds. */
+    s32          text_columns; /**< Characters the widest line of the text takes. */
+    s32          text_rows;    /**< Lines the text takes. */
+    s32          text_len;     /**< Characters the window has laid out to draw. */
+    s32          text_width;   /**< How wide the laid-out text is, in pixels. */
+    s32          text_height;  /**< How tall the laid-out text is, in pixels. */
+    s32          unk_02C;
+    s32          init_030;                   /**< Set to 16 by the constructor and never read. */
+    s32          fukidashi;                  /**< Whether the window draws as a speech bubble, not a frame. */
+    s32          fukidashi_shape;            /**< Which shape the bubble takes, as the text asks for. */
+    s32          grow_x;                     /**< Point the window grows out of and shrinks back into, from the left. */
+    s32          grow_y;                     /**< Point the window grows out of and shrinks back into, from the top. */
+    s32          win_x;                      /**< Distance of the window from the left of the screen. */
+    s32          win_y;                      /**< Distance of the window from the top of the screen. */
+    s32          win_width;                  /**< How wide the window draws. */
+    s32          win_height;                 /**< How tall the window draws. */
+    s32          auto_pos;                   /**< Forces which of nine positions the window takes; zero picks the best. */
+    s32          tail_on;                    /**< Whether the window draws a tail pointing at its speaker. */
+    s32          tail_to_x;                  /**< Where the tail points, from the left of the screen. */
+    s32          tail_to_y;                  /**< Where the tail points, from the top of the screen. */
+    s32          tail_x;                     /**< Where the tail leaves the window, from the left. */
+    s32          tail_y;                     /**< Where the tail leaves the window, from the top. */
+    s32          tail_half_width;            /**< Half the width of the tail where it meets the window. */
+    s32          tail_length;                /**< How far the tail reaches towards what it points at. */
+    s32          tail_left_x;                /**< Left corner of the tail's base, worked out by Step. */
+    s32          tail_left_y;                /**< Left corner of the tail's base, worked out by Step. */
+    s32          tail_right_x;               /**< Right corner of the tail's base, worked out by Step. */
+    s32          tail_right_y;               /**< Right corner of the tail's base, worked out by Step. */
+    s32          tail_tip_x;                 /**< Point of the tail, worked out by Step. */
+    s32          tail_tip_y;                 /**< Point of the tail, worked out by Step. */
+    float        fade_speed;                 /**< How much of the fade one step covers. */
+    float        fade;                       /**< How far the window has faded in, from zero to one. */
+    s32          fade_in;                    /**< Whether the window is fading in rather than out. */
+    s32          stay_frame;                 /**< Whether the window draws a plain frame behind its text. */
+    s32          stay_width;                 /**< Width that frame takes; zero or less follows the text. */
+    s32          stay_height;                /**< Height that frame takes; zero or less follows the text. */
+    float        text_rate;                  /**< Characters the text reveals each step, now. */
+    float        text_rate_set;              /**< Characters the text reveals each step, as configured. */
+    s32          waiting;                    /**< Whether the text has stopped on a wait code. */
+    s32          auto_page;                  /**< Whether the window turns its own pages. */
+    float        text_at;                    /**< How far through the laid-out characters the text has revealed. */
+    s32          text_no;                    /**< The laid-out character the text has revealed up to. */
+    s32          text_from;                  /**< The laid-out character the text starts drawing at. */
+    s32          page_from;                  /**< The laid-out character the next page begins at. */
     MES_WIN_LINE win_line[MES_WIN_LINE_MAX]; /**< Every line the window lays out. */
-    s32 win_line_num;                        /**< Lines the window has laid out. */
-    s32 clut_default;                        /**< Palette entry the text draws with unless a code changes it. */
-    s32 clut_now;                            /**< Palette entry the text draws with now. */
-    s32 wait;                                /**< Steps left before the text reveals its next character. */
-    s32 blink;                               /**< Steps the window has drawn for, which drives what flashes. */
-    s32 auto_page_wait;                      /**< Steps the window holds a full page before turning it by itself. */
-    s32 mes_made;                            /**< The message the window has laid out; negative where it has none. */
-    s32 style;                               /**< Which of the window's frames and colours to draw. */
-    s32 page_arrow;                          /**< Whether the window draws the mark that says more text follows. */
-    s32 end_mark;                            /**< Whether the window always draws that mark, wherever the text is. */
-    s32 centre_rows;                         /**< Whether the text sits in the middle of the window's rows. */
-    s32 page_mark_style;                     /**< Whether the window's style asks for the more-text mark; set with the style and never read. */
-    s32 edge_alpha;                          /**< How solid the outline behind the text draws. */
-    s32 narrow_gaiji_set;                    /**< Forces the narrow gaiji page on (2) or off (1); 0 by width. */
-    s32 narrow_gaiji;                        /**< Whether the editor's external characters draw narrowed. */
-    s32 mes_no[10];                          /**< The message each of the window's slots names. */
-    s32 values[8];                           /**< The number each of the window's value slots prints. */
-    s32 value;                               /**< The number the window prints for a bare value code. */
-    s32 value_signed;                        /**< Whether a positive value prints with a leading plus. */
-    s32 value_show;                          /**< Whether a value prints even when it is zero. */
-    s32 value_narrow;                        /**< Whether a value's digits draw at three quarters width. */
-    s32 space_width;                         /**< Width one space takes on a justified line; -1 where it is not. */
-    s32 space_area;                          /**< Width a justified line spreads across; -1 where it is not. */
-    s32 cursor_row;                          /**< Line the choice cursor stands on; negative where there is none. */
-    s32 cursor_y;                            /**< Where the cursor has eased to, from the top of the text. */
-    s32 cursor_lit;                          /**< Whether the line the cursor stands on is the one drawn wide. */
-    s32 tex_block;                           /**< Texture block the window's font is loaded into. */
+    s32          win_line_num;               /**< Lines the window has laid out. */
+    s32          clut_default;               /**< Palette entry the text draws with unless a code changes it. */
+    s32          clut_now;                   /**< Palette entry the text draws with now. */
+    s32          wait;                       /**< Steps left before the text reveals its next character. */
+    s32          blink;                      /**< Steps the window has drawn for, which drives what flashes. */
+    s32          auto_page_wait;             /**< Steps the window holds a full page before turning it by itself. */
+    s32          mes_made;                   /**< The message the window has laid out; negative where it has none. */
+    s32          style;                      /**< Which of the window's frames and colours to draw. */
+    s32          page_arrow;                 /**< Whether the window draws the mark that says more text follows. */
+    s32          end_mark;                   /**< Whether the window always draws that mark, wherever the text is. */
+    s32          centre_rows;                /**< Whether the text sits in the middle of the window's rows. */
+    s32          page_mark_style;            /**< Whether the window's style asks for the more-text mark; set with the style and never read. */
+    s32          edge_alpha;                 /**< How solid the outline behind the text draws. */
+    s32          narrow_gaiji_set;           /**< Forces the narrow gaiji page on (2) or off (1); 0 by width. */
+    s32          narrow_gaiji;               /**< Whether the editor's external characters draw narrowed. */
+    s32          mes_no[10];                 /**< The message each of the window's slots names. */
+    s32          values[8];                  /**< The number each of the window's value slots prints. */
+    s32          value;                      /**< The number the window prints for a bare value code. */
+    s32          value_signed;               /**< Whether a positive value prints with a leading plus. */
+    s32          value_show;                 /**< Whether a value prints even when it is zero. */
+    s32          value_narrow;               /**< Whether a value's digits draw at three quarters width. */
+    s32          space_width;                /**< Width one space takes on a justified line; -1 where it is not. */
+    s32          space_area;                 /**< Width a justified line spreads across; -1 where it is not. */
+    s32          cursor_row;                 /**< Line the choice cursor stands on; negative where there is none. */
+    s32          cursor_y;                   /**< Where the cursor has eased to, from the top of the text. */
+    s32          cursor_lit;                 /**< Whether the line the cursor stands on is the one drawn wide. */
+    s32          tex_block;                  /**< Texture block the window's font is loaded into. */
     MES_LINE_POS line_pos[10];               /**< Where each line draws, where the window says so. */
-    short *buff;                             /**< The message file the window reads its text out of. */
-    short *buff_system;                      /**< The same, for the system messages. */
-    char *text;                              /**< Where the text of that file starts. */
-    char *text_system;                       /**< The same, for the system messages. */
-    void *tex_buff;                          /**< Buffer the window builds its text texture in, cleared to start over; null where there is none. */
-    u32 *clut;                               /**< The palette the window's font draws out of. */
+    short       *buff;                       /**< The message file the window reads its text out of. */
+    short       *buff_system;                /**< The same, for the system messages. */
+    char        *text;                       /**< Where the text of that file starts. */
+    char        *text_system;                /**< The same, for the system messages. */
+    void        *tex_buff;                   /**< Buffer the window builds its text texture in, cleared to start over; null where there is none. */
+    u32         *clut;                       /**< The palette the window's font draws out of. */
     /**
      * Gives back how wide one external character of the font draws, in pixels.
      *
@@ -198,7 +198,7 @@ public:
      * @address 0x14D660
      * @size 0x154
      */
-    void AbsFukidashiIn(void);
+    void AbsFukidashiIn();
 
     /**
      * Starts a window with nothing to say and every setting at its default.
@@ -207,7 +207,7 @@ public:
      * @address 0x14D7C0
      * @size 0x234
      */
-    ClsMes(void);
+    ClsMes();
 
     /**
      * Gives the window the message file it reads its text out of.
@@ -255,7 +255,7 @@ public:
      * @address 0x14DD90
      * @size 0x2F0
      */
-    void Step(void);
+    void Step();
 
     /**
      * Gives back what the window is doing: closed, fading in or out, revealing
@@ -265,7 +265,7 @@ public:
      * @address 0x14E080
      * @size 0xB0
      */
-    int State(void);
+    int State();
 
     /**
      * Forgets which characters of the text the window has already drawn.
@@ -274,7 +274,7 @@ public:
      * @address 0x14E130
      * @size 0x34
      */
-    void MyTextureMake_InitAll(void);
+    void MyTextureMake_InitAll();
 
     /**
      * Carries the window on to the page that follows the one it stopped at.
@@ -283,7 +283,7 @@ public:
      * @address 0x14E170
      * @size 0x48
      */
-    void GoNextPage(void);
+    void GoNextPage();
 
     /**
      * Steps the window's text on by one laid-out character and gives back
@@ -293,7 +293,7 @@ public:
      * @address 0x14E1C0
      * @size 0x1B8
      */
-    int MyTextureMake_sub(void);
+    int MyTextureMake_sub();
 
     /**
      * Reveals as much of the text as this step's rate allows.
@@ -302,7 +302,7 @@ public:
      * @address 0x14E380
      * @size 0x1FC
      */
-    void MyTextureMake(void);
+    void MyTextureMake();
 
     /**
      * Lays out the number that a bare value code prints, and moves the pen
@@ -378,7 +378,7 @@ public:
      * @address 0x14F590
      * @size 0x44
      */
-    void InitMesWinTbl(void);
+    void InitMesWinTbl();
 
     /**
      * Enters one laid-out character into the window's line table, or applies
@@ -446,8 +446,7 @@ public:
      * @address 0x150810
      * @size 0x39C
      */
-    void Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y, int width,
-                             int height, int u, int v, int u_width, int v_height);
+    void Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y, int width, int height, int u, int v, int u_width, int v_height);
 
     /**
      * Writes the points that the speech bubble's outline is drawn from into
@@ -486,8 +485,7 @@ public:
      * @address 0x152EE0
      * @size 0x430
      */
-    void DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
-                       const CRect_i_ &screen, int wide, int dark);
+    void DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel, const CRect_i_ &screen, int wide, int dark);
 
     /**
      * Draws the window: its frame, the text revealed so far, and the marks
@@ -497,7 +495,7 @@ public:
      * @address 0x153310
      * @size 0xC24
      */
-    void DrawMesWin(void);
+    void DrawMesWin();
 };
 
 #ifdef PAL

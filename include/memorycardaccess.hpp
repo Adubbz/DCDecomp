@@ -12,7 +12,7 @@ struct SV_CONFIG_SYS;
 struct MC_ICON_FILE {
     char *name; /**< Name of the icon file inside the save directory. */
     char *data; /**< Data written to the icon file. */
-    int size;   /**< Size of the icon data in bytes. */
+    int   size; /**< Size of the icon data in bytes. */
 };
 
 STATIC_ASSERT(sizeof(MC_ICON_FILE) == 0xC);
@@ -37,7 +37,7 @@ struct MC_CARD_INFO {
     s32 formatted;     /**< Format flag that sceMcGetInfo writes. */
     s32 format_change; /**< 1 once a search finds the card newly formatted, -1 once it finds it unformatted. */
     s32 dir_exists;    /**< One once GetDir has found the save directory on the card. */
-    u8 unk_14[4];
+    u8  unk_14[4];
     s32 free_size;   /**< Free space that sceMcGetInfo writes. */
     s32 dir_entries; /**< Entries that sceMcGetDir found in the save directory. */
     s32 result;      /**< Result of the last sceMcGetInfo on the card. */
@@ -49,14 +49,14 @@ STATIC_ASSERT(sizeof(MC_CARD_INFO) == 0x24);
  * Describes one save file of the card to the save and load menus.
  */
 struct SAVEDATA_INFO {
-    s32 state;       /**< One once the file is read and its version matches, zero otherwise. */
-    s32 file_no;     /**< Number that the file carries in its name, counted from one. */
-    char name[0x20]; /**< Name of the first character of the save. */
-    float play_time; /**< Play time of the save. */
-    s8 party_size;   /**< Characters in the party of the save. */
-    u8 unk_2D[3];
-    s32 map_no;      /**< Map the save was written on. */
-    s32 quest_total; /**< Sum of the quest counts of the seven dungeons of the save, held below 10000. */
+    s32   state;      /**< One once the file is read and its version matches, zero otherwise. */
+    s32   file_no;    /**< Number that the file carries in its name, counted from one. */
+    char  name[0x20]; /**< Name of the first character of the save. */
+    float play_time;  /**< Play time of the save. */
+    s8    party_size; /**< Characters in the party of the save. */
+    u8    unk_2D[3];
+    s32   map_no;      /**< Map the save was written on. */
+    s32   quest_total; /**< Sum of the quest counts of the seven dungeons of the save, held below 10000. */
 };
 
 STATIC_ASSERT(sizeof(SAVEDATA_INFO) == 0x38);
@@ -80,7 +80,7 @@ STATIC_ASSERT(sizeof(SAVEDATA_INFO) == 0x38);
  * One entry that sceMcGetDir writes into CMemoryCardAccess::dir_table.
  */
 struct MC_DIR_ENTRY {
-    u8 unk_00[0x20];
+    u8   unk_00[0x20];
     char name[0x20]; /**< Name of the file or directory. */
 };
 
@@ -127,6 +127,31 @@ STATIC_ASSERT(sizeof(MC_ERROR_INFO) == 0x14);
  */
 class CMemoryCardAccess {
 public:
+    s32           port;              /**< Port that every command of the class names. */
+    s32           file_no;           /**< Save file that the current operation works on. */
+    MC_ERROR_INFO error;             /**< What stopped the last operation. */
+    char          version[0x20];     /**< Version string that every save file carries after its data. */
+    char          dir_name[0x20];    /**< Name of the save directory on the card. */
+    char          file_name[0x20];   /**< Name that every save file of the game starts with. */
+    char          current_dir[0x40]; /**< Directory that sceMcChdir writes back. */
+    s32           func_no;           /**< Operation that the class is running. */
+    u8            unk_C0[4];
+    s32           step;                        /**< Step that the current operation has reached. */
+    s32           fd;                          /**< File that the last sceMcOpen returned, -1 until one does. */
+    MC_DIR_ENTRY *dir_table;                   /**< Table that GetDir fills with the entries of the save directory. */
+    CSaveData    *save_buffer;                 /**< Save data at the start of the save image. */
+    char         *check_sum;                   /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
+    char         *load_buffer;                 /**< Area behind the save image that a load or a conversion reads a whole save file into. */
+    char         *read_buffer;                 /**< Area behind the save image that a read fills. */
+    s32           idle_code;                   /**< Set to 61 whenever the class goes idle. */
+    s32           transferred;                 /**< Bytes that the current read or write has moved. */
+    s32           transfer_size;               /**< Bytes that the current read or write is to move. */
+    sceMcIconSys  icon_sys;                    /**< icon.sys image that MakeDir writes into the save directory. */
+    MC_ICON_DATA  icon;                        /**< Icon files that the save directory is to carry. */
+    MC_CARD_INFO  card[MC_CARD_MAX];           /**< What the class found out about the card in each port. */
+    SAVEDATA_INFO file_info[MC_SAVE_FILE_MAX]; /**< Save files of the card, as the menus show them. */
+    u8            unk_7BC[4];
+
     /**
      * Fills the class with its starting values and names the save directory
      * after the menu language.
@@ -393,32 +418,6 @@ public:
      * @size 0x110
      */
     int McUnFormatForDebug();
-
-public:
-    s32 port;               /**< Port that every command of the class names. */
-    s32 file_no;            /**< Save file that the current operation works on. */
-    MC_ERROR_INFO error;    /**< What stopped the last operation. */
-    char version[0x20];     /**< Version string that every save file carries after its data. */
-    char dir_name[0x20];    /**< Name of the save directory on the card. */
-    char file_name[0x20];   /**< Name that every save file of the game starts with. */
-    char current_dir[0x40]; /**< Directory that sceMcChdir writes back. */
-    s32 func_no;            /**< Operation that the class is running. */
-    u8 unk_C0[4];
-    s32 step;                                  /**< Step that the current operation has reached. */
-    s32 fd;                                    /**< File that the last sceMcOpen returned, -1 until one does. */
-    MC_DIR_ENTRY *dir_table;                   /**< Table that GetDir fills with the entries of the save directory. */
-    CSaveData *save_buffer;                    /**< Save data at the start of the save image. */
-    char *check_sum;                           /**< Checksum bytes of the save image, one for every 64 bytes of the save data. */
-    char *load_buffer;                         /**< Area behind the save image that a load or a conversion reads a whole save file into. */
-    char *read_buffer;                         /**< Area behind the save image that a read fills. */
-    s32 idle_code;                             /**< Set to 61 whenever the class goes idle. */
-    s32 transferred;                           /**< Bytes that the current read or write has moved. */
-    s32 transfer_size;                         /**< Bytes that the current read or write is to move. */
-    sceMcIconSys icon_sys;                     /**< icon.sys image that MakeDir writes into the save directory. */
-    MC_ICON_DATA icon;                         /**< Icon files that the save directory is to carry. */
-    MC_CARD_INFO card[MC_CARD_MAX];            /**< What the class found out about the card in each port. */
-    SAVEDATA_INFO file_info[MC_SAVE_FILE_MAX]; /**< Save files of the card, as the menus show them. */
-    u8 unk_7BC[4];
 };
 
 STATIC_ASSERT(sizeof(CMemoryCardAccess) == 0x7C0);

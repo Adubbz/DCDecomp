@@ -9,9 +9,9 @@ struct RS_STACKDATA {
     int type; /**< Identifies the active value representation. */
 
     union {
-        int i;           /**< Value of an integer. */
-        float f;         /**< Value of a float. */
-        char *s;         /**< Value of a string. */
+        int           i; /**< Value of an integer. */
+        float         f; /**< Value of a float. */
+        char         *s; /**< Value of a string. */
         RS_STACKDATA *p; /**< Stack slot a reference points at. */
     };
 };
@@ -36,19 +36,19 @@ struct vmcode_t {
  * Describes a script function's code position and stack-frame requirements.
  */
 struct funcdata {
-    int addr;   /**< Stores the function's offset in the code block. */
-    char *name; /**< Names the function for runtime diagnostics. */
-    int local;  /**< Gives the total number of frame slots. */
-    int arg;    /**< Gives the number of argument slots. */
+    int   addr;  /**< Stores the function's offset in the code block. */
+    char *name;  /**< Names the function for runtime diagnostics. */
+    int   local; /**< Gives the total number of frame slots. */
+    int   arg;   /**< Gives the number of argument slots. */
 };
 
 /**
  * Preserves interpreter state for a suspended script call.
  */
 struct RS_CALLDATA {
-    vmcode_t *ret;       /**< Points to the caller's return instruction. */
+    vmcode_t     *ret;   /**< Points to the caller's return instruction. */
     RS_STACKDATA *frame; /**< Points to the caller's stack frame. */
-    funcdata *func;      /**< Describes the caller's function. */
+    funcdata     *func;  /**< Describes the caller's function. */
 };
 
 /**
@@ -75,6 +75,25 @@ struct RS_PROG_HEADER {
  */
 class CRunScript {
 public:
+    int ext_func_num;                            /**< Gives the number of registered external functions. */
+    int (**ext_func_table)(RS_STACKDATA *, int); /**< Points to the external function table. */
+    int             stack_num;                   /**< Gives the operand stack capacity. */
+    RS_STACKDATA   *stack;                       /**< Points to the operand stack storage. */
+    RS_STACKDATA   *sp;                          /**< Points to the next operand stack slot. */
+    RS_STACKDATA   *stack_end;                   /**< Points one past the operand stack storage. */
+    int             call_num;                    /**< Gives the call stack capacity. */
+    RS_CALLDATA    *call;                        /**< Points to the call stack storage. */
+    RS_CALLDATA    *call_sp;                     /**< Points to the next call stack entry. */
+    RS_CALLDATA    *call_end;                    /**< Points one past the call stack storage. */
+    RS_STACKDATA   *frame;                       /**< Points to the active operand frame. */
+    funcdata       *func;                        /**< Describes the active script function. */
+    vmcode_t       *pc;                          /**< Points to the next instruction. */
+    int             end;                         /**< Records whether execution has completed. */
+    int             skip_wait;                   /**< Records whether wait operations should be skipped. */
+    RS_PROG_HEADER *prog;                        /**< Points to the loaded program header. */
+    char           *code;                        /**< Points to the loaded bytecode section. */
+    int             result;                      /**< Stores the script's return value. */
+
     /**
      * Nonzero once the script has run to its end.
      */
@@ -87,7 +106,7 @@ public:
      * @address 0x23D940
      * @size 0x40
      */
-    CRunScript(void);
+    CRunScript();
 
     /**
      * Stops the game when the operand stack is full.
@@ -97,7 +116,7 @@ public:
      * @size 0x34
      * @unknownret
      */
-    void check_stack(void);
+    void check_stack();
 
     /**
      * Pushes one value onto the operand stack.
@@ -157,7 +176,7 @@ public:
      * @size 0x24
      * @unknownret
      */
-    RS_STACKDATA pop(void);
+    RS_STACKDATA pop();
 
     /**
      * Enters a script function, and gives back its first instruction.
@@ -177,7 +196,7 @@ public:
      * @size 0x34
      * @unknownret
      */
-    vmcode_t *ret_func(void);
+    vmcode_t *ret_func();
 
     /**
      * Calls the external function the first argument names.
@@ -227,7 +246,7 @@ public:
      * @size 0x2C
      * @unknownret
      */
-    void resume(void);
+    void resume();
 
     /**
      * Starts a numbered program, or the main function for a negative number.
@@ -257,7 +276,7 @@ public:
      * @size 0x28
      * @unknownret
      */
-    void skip(void);
+    void skip();
 
     /**
      * Runs instructions from one until the script ends or waits.
@@ -268,23 +287,4 @@ public:
      * @unknownret
      */
     void exe(vmcode_t *entry);
-
-    int ext_func_num;                            /**< Gives the number of registered external functions. */
-    int (**ext_func_table)(RS_STACKDATA *, int); /**< Points to the external function table. */
-    int stack_num;                               /**< Gives the operand stack capacity. */
-    RS_STACKDATA *stack;                         /**< Points to the operand stack storage. */
-    RS_STACKDATA *sp;                            /**< Points to the next operand stack slot. */
-    RS_STACKDATA *stack_end;                     /**< Points one past the operand stack storage. */
-    int call_num;                                /**< Gives the call stack capacity. */
-    RS_CALLDATA *call;                           /**< Points to the call stack storage. */
-    RS_CALLDATA *call_sp;                        /**< Points to the next call stack entry. */
-    RS_CALLDATA *call_end;                       /**< Points one past the call stack storage. */
-    RS_STACKDATA *frame;                         /**< Points to the active operand frame. */
-    funcdata *func;                              /**< Describes the active script function. */
-    vmcode_t *pc;                                /**< Points to the next instruction. */
-    int end;                                     /**< Records whether execution has completed. */
-    int skip_wait;                               /**< Records whether wait operations should be skipped. */
-    RS_PROG_HEADER *prog;                        /**< Points to the loaded program header. */
-    char *code;                                  /**< Points to the loaded bytecode section. */
-    int result;                                  /**< Stores the script's return value. */
 };

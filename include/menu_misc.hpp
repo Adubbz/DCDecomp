@@ -214,7 +214,7 @@ int GetMenuWeaponModelFrameNo(int index);
  * @address 0x20D4C0
  * @size 0x464
  */
-int EnterWeaponModel(int chara, int texture_block, int);
+int EnterWeaponModel(int chara, int texture_block, int weapon_slot);
 
 /**
  * Builds the models of a character's weapons into the menu's model cache.
@@ -232,7 +232,7 @@ void WeaponModelBuildFunc(int chara, int texture_block);
  * @address 0x20DD60
  * @size 0x114
  */
-int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *);
+int DngWeaponEquipModelBuild(int chara, int texture_block, u_long128 *read_buffer);
 
 /**
  * Returns the status bits of one character, or zero when there is no dungeon status.

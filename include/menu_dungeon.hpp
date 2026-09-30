@@ -4,8 +4,6 @@
 
 #include "menu_draw.hpp"
 
-class CFrame;
-
 /**
  * State of the debug item menu, which hands out any item on request.
  */
@@ -54,7 +52,7 @@ void WeaponAllValueSet(WEAPON_HAVE *weapon, WEAPON_HAVE *result, int full);
  * @address 0x225F50
  * @size 0x154
  */
-int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *);
+int SetAttachMentValue(int item_no, int slot, short level, ATTACH_LIST *unused);
 
 /**
  * Returns the stat value an attachment adds, for its message line.
@@ -81,7 +79,7 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
  * @address 0x226590
  * @size 0x8C
  */
-int DunEnterMenuLoop(void);
+int DunEnterMenuLoop();
 
 /**
  * Opens the character change menu.
@@ -99,7 +97,7 @@ void StartQuickChange(u_long128 *buffer, int texture_block, int *positions, int 
  * @address 0x228BB0
  * @size 0x2DC
  */
-int CharaChangeLoop(void);
+int CharaChangeLoop();
 
 /**
  * Handles key input on the character change menu.
@@ -108,7 +106,7 @@ int CharaChangeLoop(void);
  * @address 0x228E90
  * @size 0x8A8
  */
-int CharaChangeKey(void);
+int CharaChangeKey();
 
 /**
  * Draws the character change menu.
@@ -117,7 +115,7 @@ int CharaChangeKey(void);
  * @address 0x229740
  * @size 0xAC4
  */
-void CharaChangeDraw(void);
+void CharaChangeDraw();
 
 /**
  * Starts reading the model of the active item.
@@ -143,7 +141,7 @@ int DngActItemModelBuild(int wait);
  * @size 0x104
  * @unknownret
  */
-int DngActiveItemTextureCopy(void);
+int DngActiveItemTextureCopy();
 
 /**
  * @mangled DngActiveWeaponTextureCopy__Fv
@@ -151,7 +149,7 @@ int DngActiveItemTextureCopy(void);
  * @size 0x130
  * @unknownret
  */
-int DngActiveWeaponTextureCopy(void);
+int DngActiveWeaponTextureCopy();
 
 /**
  * Returns the message number of a held weapon's name.
@@ -178,7 +176,7 @@ int GetWeaponMsgNo2(int item_no);
  * @address 0x22A880
  * @size 0x1B4
  */
-void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int, int alpha);
+void DrawWepAttach(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha);
 
 /**
  * Tells whether the player has an Atla piece, held or placed.
@@ -214,7 +212,7 @@ int InitItemPolygonView(int item_no, u_long128 *buffer);
  * @address 0x22B1B0
  * @size 0x38
  */
-void DrawItemPolygonView(void);
+void DrawItemPolygonView();
 
 #ifdef PAL
 /**
@@ -224,7 +222,7 @@ void DrawItemPolygonView(void);
  * @address 0x2314E0
  * @size 0x84
  */
-void InitDebugItemGet(void);
+void InitDebugItemGet();
 #endif
 
 /**
@@ -234,7 +232,7 @@ void InitDebugItemGet(void);
  * @address 0x22B240
  * @size 0x370
  */
-int DebugItemGetKey(void);
+int DebugItemGetKey();
 
 /**
  * Draws the debug item menu.
@@ -243,7 +241,7 @@ int DebugItemGetKey(void);
  * @address 0x22B5B0
  * @size 0x204
  */
-void DebugItemGetDraw(void);
+void DebugItemGetDraw();
 
 /** State of the debug item menu. */
 extern ITEM_AUTO_GET ItemAutoGet;

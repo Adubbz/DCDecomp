@@ -7,7 +7,7 @@
 #include "menu_draw.hpp"
 #include "savedata.hpp"
 
-int CMenuIconAutoGet::IsMoveIcon(void) {
+int CMenuIconAutoGet::IsMoveIcon() {
     int moving = 0;
 
     for (int i = 0; i < 3; i++) {
@@ -40,7 +40,7 @@ int CMenuIconAutoGet::GetMoveIconGole(int slot, int item) {
     return found;
 }
 
-int CMenuIconAutoGet::GetSpace(void) {
+int CMenuIconAutoGet::GetSpace() {
     for (int i = 0; i < 3; i++) {
         if (icon[i].item < 0x51) {
             return i;
@@ -49,12 +49,12 @@ int CMenuIconAutoGet::GetSpace(void) {
     return -1;
 }
 
-int CMenuIconAutoGet::IconAutoMove(void) {
-    int moving = 0;
+int CMenuIconAutoGet::IconAutoMove() {
+    int             moving = 0;
     CDngStatusData *dungeon_status = SaveData->GetDngStatus();
-    int i;
-    ITEM_PACK *pack = &dungeon_status->item_pack;
-    int destination_x[3] = {92, 156, 220};
+    int             i;
+    ITEM_PACK      *pack = &dungeon_status->item_pack;
+    int             destination_x[3] = {92, 156, 220};
 
     for (i = 0; i < 3; i++) {
         if (icon[i].item > 0) {
@@ -85,7 +85,7 @@ void CMenuIconAutoGet::IconMoveTarSet(int index, int slot, int item, int count, 
     icon[index].y = y;
 }
 
-void CMenuIconAutoGet::IconAutoMoveDraw(void) {
+void CMenuIconAutoGet::IconAutoMoveDraw() {
     for (int i = 0; i < 3; i++) {
         if (icon[i].item >= 0x84) {
             DrawIconParts(icon[i].item, (int) icon[i].x, (int) icon[i].y, 0, 640, 128, 0);

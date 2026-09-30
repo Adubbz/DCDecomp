@@ -35,32 +35,32 @@ enum WEAPON_ELEMENT_KIND {
 class CWeaponElement {
 public:
     sceVu0FVECTOR *origin; /**< Point the cloud is drawn around, held by the weapon. */
-    u8 unk_04[0xC];
-    sceVu0FVECTOR fire_pos;                           /**< Point the fire element was started at, which its sparks stay around. */
-    sceVu0FVECTOR offset[WEAPON_ELEMENT_SPARK_MAX];   /**< Distance of each spark from the origin. */
-    sceVu0FVECTOR velocity[WEAPON_ELEMENT_SPARK_MAX]; /**< Distance each spark moves per step. */
-    float size[WEAPON_ELEMENT_SPARK_MAX];             /**< Width each spark draws at before it shrinks. */
-    float shrink[WEAPON_ELEMENT_SPARK_MAX];           /**< Share of the width left, from one down to nothing. */
-    float alpha[WEAPON_ELEMENT_SPARK_MAX];            /**< Blend each spark draws at; nothing means the slot is free. */
-    float spread;                                     /**< Distance from the origin that a new spark can start. */
-    s16 kind;                                         /**< Element the weapon is charged with. */
-    float power;                                      /**< Strength of the charge, which sets the count and the size. */
-    s16 on;                                           /**< 1 while any spark still draws. */
-    s16 count;                                        /**< Number of sparks the charge starts with. */
-    float scale;                                      /**< Width every spark is drawn at, over the size it carries. */
-    float spin[WEAPON_ELEMENT_SPARK_MAX];             /**< Angle each spark is turned about the vertical. */
-    float spin_speed[WEAPON_ELEMENT_SPARK_MAX];       /**< Angle the spin turns each step. */
-    s16 spawn_delay_max;                              /**< Longest wait between two sparks being started again. */
-    s16 spawn_delay;                                  /**< Steps left before the next spark is started again. */
-    s16 spawn_budget;                                 /**< Number of sparks the charge can still start again. */
-    s16 fading[WEAPON_ELEMENT_SPARK_MAX];             /**< 0 while a spark brightens, 1 once it is fading out. */
-    s16 frame[WEAPON_ELEMENT_SPARK_MAX];              /**< Row of the texture each spark draws. */
-    s16 frame_timer;                                  /**< Counts four steps down, and the sparks pick new rows on the fourth. */
-    s16 bolt_head[WEAPON_ELEMENT_BOLT_MAX];           /**< Spark each bolt arcs from. */
-    s16 bolt_tail[WEAPON_ELEMENT_BOLT_MAX];           /**< Spark each bolt arcs to. */
-    s16 bolt_timer[WEAPON_ELEMENT_BOLT_MAX];          /**< Steps left before a bolt picks new ends. */
-    s16 bolt_frame[WEAPON_ELEMENT_BOLT_MAX];          /**< Part of the texture each bolt draws. */
-    s16 bolt_count;                                   /**< Number of bolts the charge arcs between its sparks. */
+    u8             unk_04[0xC];
+    sceVu0FVECTOR  fire_pos;                             /**< Point the fire element was started at, which its sparks stay around. */
+    sceVu0FVECTOR  offset[WEAPON_ELEMENT_SPARK_MAX];     /**< Distance of each spark from the origin. */
+    sceVu0FVECTOR  velocity[WEAPON_ELEMENT_SPARK_MAX];   /**< Distance each spark moves per step. */
+    float          size[WEAPON_ELEMENT_SPARK_MAX];       /**< Width each spark draws at before it shrinks. */
+    float          shrink[WEAPON_ELEMENT_SPARK_MAX];     /**< Share of the width left, from one down to nothing. */
+    float          alpha[WEAPON_ELEMENT_SPARK_MAX];      /**< Blend each spark draws at; nothing means the slot is free. */
+    float          spread;                               /**< Distance from the origin that a new spark can start. */
+    s16            kind;                                 /**< Element the weapon is charged with. */
+    float          power;                                /**< Strength of the charge, which sets the count and the size. */
+    s16            on;                                   /**< 1 while any spark still draws. */
+    s16            count;                                /**< Number of sparks the charge starts with. */
+    float          scale;                                /**< Width every spark is drawn at, over the size it carries. */
+    float          spin[WEAPON_ELEMENT_SPARK_MAX];       /**< Angle each spark is turned about the vertical. */
+    float          spin_speed[WEAPON_ELEMENT_SPARK_MAX]; /**< Angle the spin turns each step. */
+    s16            spawn_delay_max;                      /**< Longest wait between two sparks being started again. */
+    s16            spawn_delay;                          /**< Steps left before the next spark is started again. */
+    s16            spawn_budget;                         /**< Number of sparks the charge can still start again. */
+    s16            fading[WEAPON_ELEMENT_SPARK_MAX];     /**< 0 while a spark brightens, 1 once it is fading out. */
+    s16            frame[WEAPON_ELEMENT_SPARK_MAX];      /**< Row of the texture each spark draws. */
+    s16            frame_timer;                          /**< Counts four steps down, and the sparks pick new rows on the fourth. */
+    s16            bolt_head[WEAPON_ELEMENT_BOLT_MAX];   /**< Spark each bolt arcs from. */
+    s16            bolt_tail[WEAPON_ELEMENT_BOLT_MAX];   /**< Spark each bolt arcs to. */
+    s16            bolt_timer[WEAPON_ELEMENT_BOLT_MAX];  /**< Steps left before a bolt picks new ends. */
+    s16            bolt_frame[WEAPON_ELEMENT_BOLT_MAX];  /**< Part of the texture each bolt draws. */
+    s16            bolt_count;                           /**< Number of bolts the charge arcs between its sparks. */
 
     /**
      * Frees every spark slot, so that the cloud throws nothing.
@@ -69,7 +69,7 @@ public:
      * @address 0x1B7800
      * @size 0x3C
      */
-    void Initialize(void);
+    void Initialize();
 
     /**
      * Charges the cloud with one element and starts its first sparks.
@@ -87,7 +87,7 @@ public:
      * @address 0x1B7940
      * @size 0xB0
      */
-    void Step(void);
+    void Step();
 
     /**
      * Draws the cloud, by the way the charged element calls for.
@@ -96,7 +96,7 @@ public:
      * @address 0x1B79F0
      * @size 0xB0
      */
-    void Draw(void);
+    void Draw();
 
     /**
      * Starts a cloud of sparks that rise slowly away from the blade.
@@ -114,7 +114,7 @@ public:
      * @address 0x1B7DE0
      * @size 0x4AC
      */
-    void Step_Holy(void);
+    void Step_Holy();
 
     /**
      * Draws every holy spark that still carries a blend.
@@ -123,7 +123,7 @@ public:
      * @address 0x1B8290
      * @size 0x1EC
      */
-    void Draw_Holy(void);
+    void Draw_Holy();
 
     /**
      * Starts a cloud of sparks that fall away from the blade.
@@ -141,7 +141,7 @@ public:
      * @address 0x1B87C0
      * @size 0x4E0
      */
-    void Step_Cold(void);
+    void Step_Cold();
 
     /**
      * Draws every cold spark that still carries a blend.
@@ -150,7 +150,7 @@ public:
      * @address 0x1B8CA0
      * @size 0x1EC
      */
-    void Draw_Cold(void);
+    void Draw_Cold();
 
     /**
      * Starts a cloud of sparks that blow away on a rising wind, each spinning.
@@ -168,7 +168,7 @@ public:
      * @address 0x1B92D0
      * @size 0x5AC
      */
-    void Step_Wind(void);
+    void Step_Wind();
 
     /**
      * Draws every wind spark, turned about the vertical by the spin it carries.
@@ -177,7 +177,7 @@ public:
      * @address 0x1B9880
      * @size 0x234
      */
-    void Draw_Wind(void);
+    void Draw_Wind();
 
     /**
      * Starts a cloud of sparks that drift upward off the blade.
@@ -195,7 +195,7 @@ public:
      * @address 0x1B9E20
      * @size 0x4E0
      */
-    void Step_Fire(void);
+    void Step_Fire();
 
     /**
      * Draws every fire spark that still carries a blend.
@@ -204,7 +204,7 @@ public:
      * @address 0x1BA300
      * @size 0x1E8
      */
-    void Draw_Fire(void);
+    void Draw_Fire();
 
     /**
      * Starts a cloud of sparks that fly apart, and the bolts that arc between them.
@@ -222,7 +222,7 @@ public:
      * @address 0x1BAA20
      * @size 0x2D8
      */
-    void Step_Thunder(void);
+    void Step_Thunder();
 
     /**
      * Draws every thunder spark, then a bolt across each pair the charge picked.
@@ -231,7 +231,7 @@ public:
      * @address 0x1BAD00
      * @size 0x35C
      */
-    void Draw_Thunder(void);
+    void Draw_Thunder();
 };
 
 STATIC_ASSERT(sizeof(CWeaponElement) == 0x7C0);

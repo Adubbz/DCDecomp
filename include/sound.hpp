@@ -8,7 +8,7 @@
  */
 struct MIDI_SEQUENCE {
     char name[12]; /**< File name of the sequence, without its extension. */
-    s32 volume;    /**< Volume the sequence plays at, out of 256. */
+    s32  volume;   /**< Volume the sequence plays at, out of 256. */
 };
 
 /**
@@ -16,7 +16,7 @@ struct MIDI_SEQUENCE {
  */
 struct SQ_INF_TABLE {
     MIDI_SEQUENCE sequence[400]; /**< Each sequence's description. */
-    s32 count;                   /**< Number of entries read. */
+    s32           count;         /**< Number of entries read. */
 };
 
 STATIC_ASSERT(sizeof(SQ_INF_TABLE) == 0x1904);
@@ -25,10 +25,10 @@ STATIC_ASSERT(sizeof(SQ_INF_TABLE) == 0x1904);
  *          One volume fade the sequencer advances once a frame.
  */
 struct MIDI_FADE {
-    s32 active;        /**< Non-zero while the fade runs. */
-    s32 target_volume; /**< Volume the fade stops at. */
-    float volume;      /**< Volume the fade has reached. */
-    float step;        /**< Volume added each frame. */
+    s32   active;        /**< Non-zero while the fade runs. */
+    s32   target_volume; /**< Volume the fade stops at. */
+    float volume;        /**< Volume the fade has reached. */
+    float step;          /**< Volume added each frame. */
 };
 
 STATIC_ASSERT(sizeof(MIDI_FADE) == 0x10);
@@ -38,13 +38,13 @@ STATIC_ASSERT(sizeof(MIDI_FADE) == 0x10);
  *          sound processor, the sequences loaded beside it, and its fades.
  */
 struct MIDI_PORT {
-    void *bank;                  /**< IOP address of the port's bank header, or zero. */
-    s32 spu_address;             /**< Sound processor address the port's bank body loads to. */
-    void *sequence_address[10];  /**< IOP address of each loaded sequence. */
-    MIDI_SEQUENCE *sequence[10]; /**< Description of each loaded sequence. */
-    s32 sequence_count;          /**< Number of sequences loaded. */
-    MIDI_FADE fade[2];           /**< The port's two volume fades. */
-    u8 unk_7C[4];
+    void          *bank;                 /**< IOP address of the port's bank header, or zero. */
+    s32            spu_address;          /**< Sound processor address the port's bank body loads to. */
+    void          *sequence_address[10]; /**< IOP address of each loaded sequence. */
+    MIDI_SEQUENCE *sequence[10];         /**< Description of each loaded sequence. */
+    s32            sequence_count;       /**< Number of sequences loaded. */
+    MIDI_FADE      fade[2];              /**< The port's two volume fades. */
+    u8             unk_7C[4];
 };
 
 STATIC_ASSERT(sizeof(MIDI_PORT) == 0x80);
@@ -64,11 +64,11 @@ STATIC_ASSERT(sizeof(MIDI_STATE) == 0x400);
  *          processor.
  */
 struct MIDI_BANK {
-    void *hd_address; /**< IOP address of the bank header. */
-    void *bd_address; /**< IOP address of the bank body. */
-    s32 bd_size;      /**< Size of the bank body in bytes. */
-    s32 spu_address;  /**< Sound processor address the body loads to. */
-    u8 unk_10[0x30];
+    void *hd_address;  /**< IOP address of the bank header. */
+    void *bd_address;  /**< IOP address of the bank body. */
+    s32   bd_size;     /**< Size of the bank body in bytes. */
+    s32   spu_address; /**< Sound processor address the body loads to. */
+    u8    unk_10[0x30];
 };
 
 STATIC_ASSERT(sizeof(MIDI_BANK) == 0x40);
@@ -78,9 +78,9 @@ STATIC_ASSERT(sizeof(MIDI_BANK) == 0x40);
  *          from and its volume.
  */
 struct SE_INF {
-    s8 bank;    /**< Bank the effect plays from. */
-    s8 program; /**< Program within the bank. */
-    s16 volume; /**< Volume the effect plays at. */
+    s8  bank;    /**< Bank the effect plays from. */
+    s8  program; /**< Program within the bank. */
+    s16 volume;  /**< Volume the effect plays at. */
 };
 
 /**
@@ -88,7 +88,7 @@ struct SE_INF {
  */
 struct SE_INF_TABLE {
     SE_INF entry[3000]; /**< Each effect's description. */
-    s32 count;          /**< Number of entries read. */
+    s32    count;       /**< Number of entries read. */
 };
 
 STATIC_ASSERT(sizeof(SE_INF_TABLE) == 0x2EE4);
@@ -98,9 +98,9 @@ STATIC_ASSERT(sizeof(SE_INF_TABLE) == 0x2EE4);
  *          copied across to the IOP once a frame.
  */
 struct MSIN_BUFFER {
-    s32 size;           /**< Size of the buffer in bytes. */
-    s32 length;         /**< Bytes of messages waiting to be sent. */
-    u8 messages[0x1F8]; /**< MIDI messages the stream input library queues for the IOP. */
+    s32 size;            /**< Size of the buffer in bytes. */
+    s32 length;          /**< Bytes of messages waiting to be sent. */
+    u8  messages[0x1F8]; /**< MIDI messages the stream input library queues for the IOP. */
 };
 
 STATIC_ASSERT(sizeof(MSIN_BUFFER) == 0x200);
@@ -114,7 +114,7 @@ public:
      * @address 0x143B50
      * @size 0x10
      */
-    MIDI_STATE *GetMidiState(void);
+    MIDI_STATE *GetMidiState();
 
     /**
      * Gives the table describing each sound effect.
@@ -123,7 +123,7 @@ public:
      * @address 0x143B60
      * @size 0x10
      */
-    short *GetSeInfTbl(void);
+    short *GetSeInfTbl();
 
     /**
      * Gives the bank entry one sound effect plays from.
@@ -222,8 +222,7 @@ public:
      * @address 0x1455F0
      * @size 0x1C8
      */
-    void SE_Play(int port, int bank, int program, int pan, int velocity, int volume,
-                 int voice);
+    void SE_Play(int port, int bank, int program, int pan, int velocity, int volume, int voice);
 
     /**
      * Plays one sound effect, taking its parameters from the description table.
@@ -305,7 +304,7 @@ public:
      * @address 0x145F20
      * @size 0x9F0
      */
-    void Step(void);
+    void Step();
 
     /**
      * Stops a sequence.

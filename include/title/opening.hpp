@@ -19,7 +19,7 @@ struct MOTION_INFO;
  * @size 0x2FC
  * @unknownret
  */
-void OpeningInit(void);
+void OpeningInit();
 
 /**
  *          Loads the active opening scene's background phase.
@@ -29,7 +29,7 @@ void OpeningInit(void);
  * @size 0x188
  * @unknownret
  */
-void LoadSceneBG(void);
+void LoadSceneBG();
 
 /**
  *          Advances the opening movie and reports its completion state.
@@ -39,7 +39,7 @@ void LoadSceneBG(void);
  * @size 0x128
  * @unknownret
  */
-int OpeningLoop(void);
+int OpeningLoop();
 
 /**
  *          Starts the opening movie's selected background music.
@@ -49,7 +49,7 @@ int OpeningLoop(void);
  * @size 0x90
  * @unknownret
  */
-void OpBgmPlay(void);
+void OpBgmPlay();
 
 /**
  *          Plays a positionally panned opening sound effect.
@@ -99,7 +99,7 @@ int OpGetVolSQ(int no);
  * @size 0x98
  * @unknownret
  */
-void FadeCansel(void);
+void FadeCansel();
 
 /**
  *          Parses an opening scene definition file.
@@ -119,7 +119,7 @@ void OPAnalyz(char *name);
  * @size 0x1EFC
  * @unknownret
  */
-void OPMdsLoad(void);
+void OPMdsLoad();
 
 /**
  * Characters of the opening movie.

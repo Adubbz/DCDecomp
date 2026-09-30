@@ -15,10 +15,10 @@ struct SV_FISH_DATA;
  * The record behind one shop slot, read according to the kind of item in it.
  */
 union MENU_ITEMDATA {
-    s32 volume;         /**< A dungeon item's volume. */
-    WEAPON_HAVE weapon; /**< A weapon's record. */
-    ATTACH_LIST attach; /**< An attachment's record. */
-    s16 param[0x7C];    /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
+    s32         volume;      /**< A dungeon item's volume. */
+    WEAPON_HAVE weapon;      /**< A weapon's record. */
+    ATTACH_LIST attach;      /**< An attachment's record. */
+    s16         param[0x7C]; /**< The record read as halfwords; items 0x5B to 0x5E each set one of an attachment's stats. */
 };
 
 STATIC_ASSERT(sizeof(MENU_ITEMDATA) == 0xF8);
@@ -27,8 +27,8 @@ STATIC_ASSERT(sizeof(MENU_ITEMDATA) == 0xF8);
  * Stores one shop's item-list state.
  */
 struct SHOP_ITEMLIST {
-    s16 item_no; /**< The item, weapon or attachment on offer. */
-    u8 unk_02[2];
+    s16           item_no; /**< The item, weapon or attachment on offer. */
+    u8            unk_02[2];
     MENU_ITEMDATA data; /**< The item's record. */
 };
 
@@ -86,14 +86,14 @@ void InitShopItemListData(SHOP_ITEMLIST *item_list);
  */
 class ShopIconMove {
 public:
-    s16 to_stock; /**< Nonzero routes the icon into the shop's stock; zero writes it straight into the player's status. */
-    s16 spare;    /**< Reset to -1 whenever the flight is cleared. */
-    s16 slot_no;  /**< Indexes the board slot, and the matching CStockItem/CUserStatus entry, the icon is bound for. */
-    s16 icon_no;  /**< Indexes the icon's position on the board; divided and taken modulo five gives its row and column. */
-    float pos_x;  /**< Current horizontal screen position of the flying icon. */
-    float pos_y;  /**< Current vertical screen position of the flying icon. */
-    s16 item_no;  /**< The item, weapon or attachment identifier the icon is carrying. */
-    u8 unk_12[2];
+    s16           to_stock; /**< Nonzero routes the icon into the shop's stock; zero writes it straight into the player's status. */
+    s16           spare;    /**< Reset to -1 whenever the flight is cleared. */
+    s16           slot_no;  /**< Indexes the board slot, and the matching CStockItem/CUserStatus entry, the icon is bound for. */
+    s16           icon_no;  /**< Indexes the icon's position on the board; divided and taken modulo five gives its row and column. */
+    float         pos_x;    /**< Current horizontal screen position of the flying icon. */
+    float         pos_y;    /**< Current vertical screen position of the flying icon. */
+    s16           item_no;  /**< The item, weapon or attachment identifier the icon is carrying. */
+    u8            unk_12[2];
     MENU_ITEMDATA data; /**< A copy of the item, weapon or attachment record. */
 
     /**
@@ -121,7 +121,7 @@ public:
      * @address 0x1E6E00
      * @size 0xE8
      */
-    void IconAutoMoveDraw(void);
+    void IconAutoMoveDraw();
 };
 
 STATIC_ASSERT(sizeof(ShopIconMove) == 0x10C);
@@ -142,7 +142,7 @@ int ShopNoInput(int *tex_block, int shop_no, int mode);
  * @address 0x1E6FD0
  * @size 0x44
  */
-void InitAllHaveData(void);
+void InitAllHaveData();
 
 /**
  * Runs one frame of whichever shop is open.
@@ -151,7 +151,7 @@ void InitAllHaveData(void);
  * @address 0x1E7020
  * @size 0x5C
  */
-int CommonShopLoop(void);
+int CommonShopLoop();
 
 /**
  * Enters the shop's fixed textures into the texture manager.
@@ -160,7 +160,7 @@ int CommonShopLoop(void);
  * @address 0x1E7CD0
  * @size 0x1D0
  */
-void ShopTextureLoadFix(void);
+void ShopTextureLoadFix();
 
 /**
  * Starts the charge shop up on the player's stock.
@@ -178,7 +178,7 @@ void InitChargeShop(int *tex_block, int shop_no, int mode);
  * @address 0x1E8620
  * @size 0x274
  */
-void ChargeShopLimmitCheck(void);
+void ChargeShopLimmitCheck();
 
 /**
  * Runs one frame of the charge shop and returns the mode its input handler left.
@@ -187,7 +187,7 @@ void ChargeShopLimmitCheck(void);
  * @address 0x1E88C0
  * @size 0x50
  */
-int ChargeShopLoop(void);
+int ChargeShopLoop();
 
 /**
  * Handles one frame of charge shop input and returns the mode it leaves the shop in.
@@ -196,7 +196,7 @@ int ChargeShopLoop(void);
  * @address 0x1E8910
  * @size 0x15CC
  */
-int ChargeShopKey(void);
+int ChargeShopKey();
 
 /**
  * Draws one frame of the charge shop.
@@ -205,7 +205,7 @@ int ChargeShopKey(void);
  * @address 0x1EA7A0
  * @size 0x5A4
  */
-void DrawChargeShop(void);
+void DrawChargeShop();
 
 /**
  * Draws the charge shop's personal board: its frame, scroll bar, tags and icons.
@@ -223,7 +223,7 @@ void ChargeShopBoardDraw(int x, int y, int alpha);
  * @address 0x1EB3A0
  * @size 0x1A0
  */
-static int BuyMoneyCheck2(void);
+static int BuyMoneyCheck2();
 
 /**
  * Orders two items for the shop's sort.
@@ -268,7 +268,7 @@ int SeitonShopAttachBoardSub(ATTACH_LIST *attachments);
  * @address 0x1EC120
  * @size 0x50
  */
-int ItemShopLoop2(void);
+int ItemShopLoop2();
 
 /**
  * Moves the shop cursor between the goods side and the player's side and returns zero.
@@ -277,7 +277,7 @@ int ItemShopLoop2(void);
  * @address 0x1EC170
  * @size 0x1F4
  */
-int CheckSideKey2(void);
+int CheckSideKey2();
 
 /**
  * Draws the price tickets of everything marked on the player's side.
@@ -315,7 +315,7 @@ void ItemShopGetImgFileName(int shop_kind, int shop_no, char *file_name);
  * @size 0x10C
  * Allocates and clears the item shop's working buffer.
  */
-void ItemShopMemoryAlloc(void);
+void ItemShopMemoryAlloc();
 
 /**
  * Clears the marks on everything the player is carrying.
@@ -325,7 +325,7 @@ void ItemShopMemoryAlloc(void);
  * @size 0x194
  * Rebuilds the shop's slot table, marking each item and weapon slot as taken or free.
  */
-void ItemPosInfoInit(void);
+void ItemPosInfoInit();
 
 /**
  * Starts the item shop up: its goods, its slot table and its buffers.
@@ -343,7 +343,7 @@ void InitItemShop2(int *tex_block, int shop_no, int mode);
  * @address 0x1EED70
  * @size 0x1A90
  */
-int ItemShopKey2(void);
+int ItemShopKey2();
 
 /**
  * Draws the item shop with its boards, tickets and shopkeeper.
@@ -352,7 +352,7 @@ int ItemShopKey2(void);
  * @address 0x1F0800
  * @size 0xA4C
  */
-void ItemShopDraw2(void);
+void ItemShopDraw2();
 
 /**
  * Returns the save data's Mardan Garayan progress flag.
@@ -361,7 +361,7 @@ void ItemShopDraw2(void);
  * @address 0x1F1270
  * @size 0x18
  */
-int GetMardanGareyanFlag(void);
+int GetMardanGareyanFlag();
 
 /**
  * Records whether the player has received the Mardan Garayan weapon.
@@ -388,7 +388,7 @@ void SetFishMardanGarayanNum(int count);
  * @address 0x1F1340
  * @size 0x28
  */
-int GetFishMardanGarayanNum(void);
+int GetFishMardanGarayanNum();
 
 /**
  * Clears the fish count used for the Mardan Garayan weapon requirement.
@@ -397,7 +397,7 @@ int GetFishMardanGarayanNum(void);
  * @address 0x1F1370
  * @size 0x2C
  */
-void ClearFishMardanGarayanNum(void);
+void ClearFishMardanGarayanNum();
 
 /**
  * Opens the fishing prize exchange and reads its data.
@@ -415,7 +415,7 @@ void InitFishingExchange(u_long128 *buffer, int *tex_block, int mode);
  * @address 0x1F1880
  * @size 0xB94
  */
-int FishingExchangeKey(void);
+int FishingExchangeKey();
 
 /**
  * Draws one frame of the fishing exchange.
@@ -424,7 +424,7 @@ int FishingExchangeKey(void);
  * @address 0x1F2C10
  * @size 0x11C
  */
-void FishingExchangeDraw(void);
+void FishingExchangeDraw();
 
 /**
  * Leaves the fishing exchange and saves the fishing points it ends on.
@@ -433,7 +433,7 @@ void FishingExchangeDraw(void);
  * @address 0x1F2D30
  * @size 0x80
  */
-void ExitFishingExchange(void);
+void ExitFishingExchange();
 
 /**
  * Runs one frame of the fishing exchange and returns one once its input handler has closed it.
@@ -442,7 +442,7 @@ void ExitFishingExchange(void);
  * @address 0x1F2DB0
  * @size 0x54
  */
-int FishingExchangeLoop(void);
+int FishingExchangeLoop();
 
 /**
  * Gives the name message of one kind of fish.
@@ -478,7 +478,7 @@ void InitFishRecordView(u_long128 *buffer, int *tex_block, int mode);
  * @address 0x1F3000
  * @size 0x1DC
  */
-void FishRecordTextureEnter(void);
+void FishRecordTextureEnter();
 
 /**
  * Runs one frame of the fish record view and returns the mode its input handler left.
@@ -487,7 +487,7 @@ void FishRecordTextureEnter(void);
  * @address 0x1F3D60
  * @size 0x38
  */
-int FishRecordViewLoop(void);
+int FishRecordViewLoop();
 
 /** Message number, less thirty, naming each kind of fish. */
 extern s8 FishMsg[18];

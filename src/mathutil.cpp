@@ -20,10 +20,8 @@ extern "C" void *__vt__Q23std9exception[4] __attribute__((section(".vtables"))) 
 extern "C" void *__vt__Q23std13bad_exception[4] __attribute__((section(".vtables"))) = {
     (void *) &__RTTI__Q23std13bad_exception, 0, (void *) __dt__Q23std13bad_exceptionFv,
     (void *) what__Q23std13bad_exceptionCFv};
-void (*thandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8))) =
-    dthandler__3stdFv;
-void (*uhandler__3std)(void) __attribute__((section(".data"))) __attribute__((aligned(8))) =
-    duhandler__3stdFv;
+void (*thandler__3std)() __attribute__((section(".data"))) __attribute__((aligned(8))) = dthandler__3stdFv;
+void (*uhandler__3std)() __attribute__((section(".data"))) __attribute__((aligned(8))) = duhandler__3stdFv;
 MWGlobalDestructor *__global_destructor_chain __attribute__((section(".bss")));
 
 namespace std {
@@ -51,16 +49,15 @@ public:
  */
 class MWPartialArrayDestructor {
 private:
-    void *array;                        /**< First element of the array being built. */
-    unsigned int element_size;          /**< Bytes each element occupies. */
-    unsigned int count;                 /**< Number of elements in the array. */
-    MWRuntimeObjectFunction destructor; /**< Routine that destroys one element, or null. */
+    void                   *array;        /**< First element of the array being built. */
+    unsigned int            element_size; /**< Bytes each element occupies. */
+    unsigned int            count;        /**< Number of elements in the array. */
+    MWRuntimeObjectFunction destructor;   /**< Routine that destroys one element, or null. */
 
 public:
     unsigned int constructed; /**< Number of leading elements already constructed. */
 
-    MWPartialArrayDestructor(void *array, unsigned int element_size, unsigned int count,
-                             MWRuntimeObjectFunction destructor) {
+    MWPartialArrayDestructor(void *array, unsigned int element_size, unsigned int count, MWRuntimeObjectFunction destructor) {
         this->array = array;
         this->element_size = element_size;
         this->count = count;
@@ -72,8 +69,7 @@ public:
         unsigned char *element;
 
         if (constructed < count && destructor != NULL) {
-            for (element = (unsigned char *) array + element_size * constructed; constructed > 0;
-                 constructed--) {
+            for (element = (unsigned char *) array + element_size * constructed; constructed > 0; constructed--) {
                 element -= element_size;
                 destructor(element, -1);
             }
@@ -95,14 +91,11 @@ const char ExceptionWhat[] = "exception";
 #pragma optimize_for_size off
 #pragma alignlabel on
 
-void __construct_array(void *array, MWRuntimeObjectFunction constructor,
-                       MWRuntimeObjectFunction destructor, unsigned int element_size,
-                       unsigned int count) {
+void __construct_array(void *array, MWRuntimeObjectFunction constructor, MWRuntimeObjectFunction destructor, unsigned int element_size, unsigned int count) {
     MWPartialArrayDestructor partial(array, element_size, count, destructor);
-    unsigned char *element;
+    unsigned char           *element;
 
-    for (partial.constructed = 0, element = (unsigned char *) array; partial.constructed < count;
-         partial.constructed++, element += element_size) {
+    for (partial.constructed = 0, element = (unsigned char *) array; partial.constructed < count; partial.constructed++, element += element_size) {
         constructor(element, 1);
     }
 }
@@ -123,9 +116,7 @@ void __construct_array(void *array, MWRuntimeObjectFunction constructor,
 #pragma optimize_for_size off
 #pragma alignlabel on
 
-void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor,
-                            MWRuntimeObjectFunction destructor, unsigned int element_size,
-                            unsigned int count) {
+void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructor, MWRuntimeObjectFunction destructor, unsigned int element_size, unsigned int count) {
     char *array;
 
     if ((array = (char *) allocation) != NULL) {
@@ -136,10 +127,9 @@ void *__construct_new_array(void *allocation, MWRuntimeObjectFunction constructo
 
         if (constructor != NULL) {
             MWPartialArrayDestructor partial(array, element_size, count, destructor);
-            char *element;
+            char                    *element;
 
-            for (partial.constructed = 0, element = array; partial.constructed < count;
-                 partial.constructed++, element += element_size) {
+            for (partial.constructed = 0, element = array; partial.constructed < count; partial.constructed++, element += element_size) {
                 constructor(element, 1);
             }
         }
@@ -217,8 +207,7 @@ extern "C" const char *what__Q23std9exceptionCFv(const void *exception) {
 #pragma alignlabel on
 #pragma schedule on
 
-extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type,
-                                      long *pointer_adjustment) {
+extern "C" char __throw_catch_compare(const char *thrown_type, const char *caught_type, long *pointer_adjustment) {
     const char *thrown;
     const char *caught;
 
@@ -380,8 +369,7 @@ extern "C" void dthandler__3stdFv() {
  */
 #pragma schedule on
 
-void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
-                               MWGlobalDestructor *record) {
+void *__register_global_object(void *object, MWRuntimeObjectFunction destructor, MWGlobalDestructor *record) {
     record->next = __global_destructor_chain;
     record->destructor = destructor;
     record->object = object;
@@ -401,14 +389,13 @@ void *__register_global_object(void *object, MWRuntimeObjectFunction destructor,
 #pragma optimization_level 4
 #pragma padloop on
 
-extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start,
-                                     void *overlay_end) {
-    void (**initializer)(void) = (void (**)(void)) first;
-    if ((void (**)(void)) first < (void (**)(void)) last) {
+extern "C" void __initialize_cpp_rts(void *first, void *last, void *overlay_start, void *overlay_end) {
+    void (**initializer)() = (void (**)()) first;
+    if ((void (**)()) first < (void (**)()) last) {
         do {
             (*initializer)();
             initializer++;
-        } while (initializer < (void (**)(void)) last);
+        } while (initializer < (void (**)()) last);
     }
 }
 
@@ -499,11 +486,10 @@ extern "C" void __end__catch(MWCatchRecord *record) {
  * Reports whether a thrown type matches any type an exception specification allows.
  */
 static inline char __find_exception_spec(const char *type_info, MWExceptionSpecification *spec) {
-    long adjustment;
+    long           adjustment;
     unsigned char *types = spec->types;
     for (unsigned int i = 0; i < spec->count; i++) {
-        if (__throw_catch_compare(type_info, (const char *) (types[0] | (types[1] << 8) | (types[2] << 16) | (types[3] << 24)),
-                                  &adjustment)) {
+        if (__throw_catch_compare(type_info, (const char *) (types[0] | (types[1] << 8) | (types[2] << 16) | (types[3] << 24)), &adjustment)) {
             return true;
         }
         types += 4;
@@ -521,15 +507,14 @@ static inline char __find_exception_spec(const char *type_info, MWExceptionSpeci
 #pragma schedule on
 
 extern "C" void __unexpected(void *exception_record) {
-    char *encoded = (char *) ((MWCatchRecord *) exception_record)->stack_top;
+    char                    *encoded = (char *) ((MWCatchRecord *) exception_record)->stack_top;
     MWExceptionSpecification spec;
 
 #pragma exception_magic
     try {
         unexpected__3stdFv();
     } catch (...) {
-        spec.types = (unsigned char *) __DecodeSignedNumber(
-            __DecodeUnsignedNumber(__DecodeUnsignedNumber(encoded + 1, &spec.count), &spec.unused_unsigned), &spec.unused_signed);
+        spec.types = (unsigned char *) __DecodeSignedNumber(__DecodeUnsignedNumber(__DecodeUnsignedNumber(encoded + 1, &spec.count), &spec.unused_unsigned), &spec.unused_signed);
         // A new exception the specification allows propagates; otherwise it becomes a
         // std::bad_exception if that is allowed.
         if (__find_exception_spec(((MWCatchRecord *) &__exception_magic)->type_info, &spec)) {
@@ -549,12 +534,15 @@ extern "C" void __unexpected(void *exception_record) {
 static const int __unexpected_generated = 0;
 #pragma exceptions reset
 // The runtime's type information for std::exception and std::bad_exception.
-const char BadExceptionTypeName[] = "std::bad_exception";
-const char ExceptionTypeName[] = "std::exception";
-const MWTypeInfo ExceptionTypeInfo = {ExceptionTypeName, 0};
-const MWBaseClass BadExceptionBaseClasses[2] = {{&ExceptionTypeInfo, 0}, {0, 0}};
+const char        BadExceptionTypeName[] = "std::bad_exception";
+const char        ExceptionTypeName[] = "std::exception";
+const MWTypeInfo  ExceptionTypeInfo = {ExceptionTypeName, 0};
+const MWBaseClass BadExceptionBaseClasses[2] = {
+    {&ExceptionTypeInfo, 0},
+    {0,                  0}
+};
 const MWTypeInfo __RTTI__Q23std13bad_exception = {BadExceptionTypeName, BadExceptionBaseClasses};
-const char BadExceptionWhat[] = "bad_exception";
+const char       BadExceptionWhat[] = "bad_exception";
 /**
  * Destroys a `std::bad_exception`.
  *
@@ -615,9 +603,9 @@ void mwInit(int argc, const char **argv, const char **envp) {
  * @size 0x8C
  */
 extern "C" void mwOverlayInit(void *overlay, int size) {
-    char *image = (char *) overlay;
+    char          *image = (char *) overlay;
     OverlayHeader *header = (OverlayHeader *) overlay;
-    int bss_size = header->bss_size;
+    int            bss_size = header->bss_size;
 
     FlushCache(2);
     if (bss_size != 0) {
@@ -685,9 +673,6 @@ extern "C" int mwLoadOverlay(char *path, void *address) {
 static float sin_table_num = 1024.0f;
 static float sin_table_unit_1 = 162.97466f;
 static float SinTable[1024];
-
-float Sinf(float angle);
-float Cosf(float angle);
 
 void VectorMax(float *max, float *a, float *b) {
     register float *out = max;
@@ -856,7 +841,7 @@ float DistPlanePoint(float *normal, float *on_plane, float *point) {
 
 float ReflectionPlane(float *normal, float *on_plane, float *point, float *reflection) {
     sceVu0FVECTOR step;
-    float distance;
+    float         distance;
 
     distance = 2.0f * DistPlanePoint(normal, on_plane, point);
     sceVu0ScaleVector(step, normal, -distance);
@@ -865,14 +850,13 @@ float ReflectionPlane(float *normal, float *on_plane, float *point, float *refle
     return distance;
 }
 
-int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2,
-                                 float *normal, float *hit) {
+int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, float *v2, float *normal, float *hit) {
     sceVu0FVECTOR line;
     sceVu0FVECTOR e0;
     sceVu0FVECTOR e1;
     sceVu0FVECTOR e2;
-    float above;
-    float along;
+    float         above;
+    float         along;
 
     sceVu0SubVector(line, to, from);
     sceVu0SubVector(e0, v0, from);
@@ -880,8 +864,9 @@ int IntersectionPoint_line_poly3(float *from, float *to, float *v0, float *v1, f
     sceVu0SubVector(e2, v2, from);
     above = -sceVu0InnerProduct(normal, e0);
     along = sceVu0InnerProduct(normal, line);
-    if (along == 0.0f)
+    if (along == 0.0f) {
         return 0;
+    }
     sceVu0ScaleVector(hit, line, -above / along);
     sceVu0AddVector(hit, hit, from);
     return Check_Point_Poly3_XYZ(hit, v0, v1, v2, normal);
@@ -897,9 +882,9 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
     sceVu0FVECTOR c0;
     sceVu0FVECTOR c1;
     sceVu0FVECTOR c2;
-    float d0;
-    float d1;
-    float d2;
+    float         d0;
+    float         d1;
+    float         d2;
 
     sceVu0SubVector(p0, point, v0);
     sceVu0SubVector(p1, point, v1);
@@ -913,10 +898,12 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
     d0 = sceVu0InnerProduct(c0, normal);
     d1 = sceVu0InnerProduct(c1, normal);
     d2 = sceVu0InnerProduct(c2, normal);
-    if (d0 >= 0.0f && d1 >= 0.0f && d2 >= 0.0f)
+    if (d0 >= 0.0f && d1 >= 0.0f && d2 >= 0.0f) {
         return 1;
-    if (d0 <= 0.0f && d1 <= 0.0f && d2 <= 0.0f)
+    }
+    if (d0 <= 0.0f && d1 <= 0.0f && d2 <= 0.0f) {
         return 1;
+    }
     return 0;
 }
 
@@ -926,8 +913,8 @@ int Check_Point_Poly3_XYZ(float *point, float *v0, float *v1, float *v2, float *
    about the one nothing in C ever writes. */
 float DistVector(float *vector) {
     register float *pointer = vector;
-    register int root;
-    register float length = 0.0f;
+    register int    root;
+    register float  length = 0.0f;
 
     asm {
         lqc2     vf4, 0(pointer)
@@ -948,8 +935,8 @@ float DistVector(float *vector) {
 float DistVector(float *a, float *b) {
     register float *p0 = a;
     register float *p1 = b;
-    register int root;
-    register float length = 0.0f;
+    register int    root;
+    register float  length = 0.0f;
 
     asm {
         lqc2     vf2, 0(p0)
@@ -1008,7 +995,7 @@ void MulMatrix(sceVu0FMATRIX product, sceVu0FMATRIX left_matrix, sceVu0FMATRIX r
 
 void RotMatrixY(sceVu0FMATRIX matrix, float angle_y) {
     register float *out = (float *) matrix;
-    float angle = angle_y;
+    float           angle = angle_y;
 
     /* vf0 is the constant (0, 0, 0, 1), so three rotations of it are the other three rows and the
        identity costs four stores instead of sixteen. */
@@ -1033,9 +1020,9 @@ void LookAtMatrixZ(sceVu0FMATRIX matrix, float *direction) {
     sceVu0FMATRIX yaw;
     sceVu0FVECTOR unit;
     sceVu0FVECTOR flat;
-    float ground;
-    float cosine;
-    float sine;
+    float         ground;
+    float         cosine;
+    float         sine;
 
     sceVu0UnitMatrix(yaw);
     sceVu0CopyMatrix(pitch, yaw);
@@ -1068,7 +1055,7 @@ void ApplyMatrixN(sceVu0FVECTOR *out, sceVu0FMATRIX matrix, sceVu0FVECTOR *in, i
     register float *dst = (float *) out;
     register float *m = (float *) matrix;
     register float *src = (float *) in;
-    register int remaining = count;
+    register int    remaining = count;
 
     // clang-format off
     asm {
@@ -1102,9 +1089,9 @@ row:
 
 void VectorInterpolate(float *out, float *from, float *to, float step, int mode) {
     sceVu0FVECTOR gap;
-    int i;
-    float magnitude;
-    float delta;
+    int           i;
+    float         magnitude;
+    float         delta;
 
     sceVu0SubVector(gap, to, from);
     switch (mode) {
@@ -1115,10 +1102,11 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
                    stores nothing on a value that already agrees. */
                 delta = gap[i];
                 magnitude = delta;
-                if (delta < 0.0f)
+                if (delta < 0.0f) {
                     magnitude = -delta;
-                else
+                } else {
                     delta = magnitude;
+                }
 
                 if (magnitude < step) {
                     out[i] = to[i];
@@ -1130,8 +1118,9 @@ void VectorInterpolate(float *out, float *from, float *to, float step, int mode)
             }
             break;
         case 1:
-            for (i = 0; i < 3; i++)
+            for (i = 0; i < 3; i++) {
                 out[i] = from[i] + gap[i] / step;
+            }
             break;
     }
 }
@@ -1146,23 +1135,28 @@ float AngleInterpolate(float from, float to, float step, int mode) {
     float result;
 
     delta = to - from;
-    if (delta > PI)
+    if (delta > PI) {
         delta -= PI * 2.0f;
-    if (delta <= -PI)
+    }
+    if (delta <= -PI) {
         delta += PI * 2.0f;
+    }
     offset = 0.0f;
-    if (mode == 0 && (delta < 0.0f ? -delta : delta) < step)
+    if (mode == 0 && (delta < 0.0f ? -delta : delta) < step) {
         return to;
+    }
     switch (mode) {
         case 0:
             if (delta < 0.0f) {
-                if (step < delta)
+                if (step < delta) {
                     return to;
+                }
                 offset -= step;
             }
             if (delta >= 0.0f) {
-                if (step > delta)
+                if (step > delta) {
                     return to;
+                }
                 offset += step;
             }
             break;
@@ -1171,10 +1165,12 @@ float AngleInterpolate(float from, float to, float step, int mode) {
             break;
     }
     result = from + offset;
-    if (result > PI)
+    if (result > PI) {
         result -= PI * 2.0f;
-    if (result <= -PI)
+    }
+    if (result <= -PI) {
         result += PI * 2.0f;
+    }
     return result;
 }
 
@@ -1182,34 +1178,42 @@ int AngleCmp(float a, float b, float tolerance) {
     float delta;
 
     delta = a - b;
-    if (delta == 0.0f)
+    if (delta == 0.0f) {
         return 0;
-    if (delta > PI)
+    }
+    if (delta > PI) {
         delta -= PI * 2.0f;
-    if (delta < -PI)
+    }
+    if (delta < -PI) {
         delta += PI * 2.0f;
-    if (delta > tolerance)
+    }
+    if (delta > tolerance) {
         return 1;
-    if (delta < -tolerance)
+    }
+    if (delta < -tolerance) {
         return -1;
+    }
     return 0;
 }
 
 float AngleLimit(float angle) {
     float turns;
-    int whole;
+    int   whole;
 
-    if (angle < PI && angle > -PI)
+    if (angle < PI && angle > -PI) {
         return angle;
+    }
     turns = angle / (PI * 2.0f);
     /* The first truncation is a call whose result nothing reads, and it is kept because it is one
        the function makes: each conversion in the source is its own call. */
     whole = (int) turns;
     angle -= PI * 2.0f * (int) turns;
-    if (angle > PI)
+    if (angle > PI) {
         angle -= PI * 2.0f;
-    if (angle < -PI)
+    }
+    if (angle < -PI) {
         angle += PI * 2.0f;
+    }
     return angle;
 }
 
@@ -1226,13 +1230,15 @@ void CreateSinTable() {
 
     sin_table_num = 1024.0f;
     sin_table_unit_1 = 162.97466f;
-    for (i = 0; i < 1024; i++)
+    for (i = 0; i < 1024; i++) {
         SinTable[i] = sinf(PI * (2.0f * (float) i) / sin_table_num);
+    }
 }
 
 float Sinf(float angle) {
-    if (angle >= 0.0f)
+    if (angle >= 0.0f) {
         return SinTable[(int) (angle * sin_table_unit_1) % 1024];
+    }
     return -SinTable[(int) (-angle * sin_table_unit_1) % 1024];
 }
 

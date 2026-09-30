@@ -22,14 +22,14 @@ struct DATA_HEADER {
  * Tracks one asynchronous background file read.
  */
 struct BG_READ_INFO {
-    int busy;          /**< Whether the queue slot is allocated. */
-    int id;            /**< CD/DVD request identifier. */
-    int done;          /**< Whether the request has completed. */
-    char name[128];    /**< File name used for error reporting. */
-    u_long128 *buffer; /**< Destination buffer. */
-    int size;          /**< File size in bytes. */
-    int sector;        /**< Absolute starting sector. */
-    int sectors;       /**< Number of sectors to read. */
+    int        busy;      /**< Whether the queue slot is allocated. */
+    int        id;        /**< CD/DVD request identifier. */
+    int        done;      /**< Whether the request has completed. */
+    char       name[128]; /**< File name used for error reporting. */
+    u_long128 *buffer;    /**< Destination buffer. */
+    int        size;      /**< File size in bytes. */
+    int        sector;    /**< Absolute starting sector. */
+    int        sectors;   /**< Number of sectors to read. */
 };
 
 /**
@@ -45,12 +45,12 @@ struct BG_READ_INFO {
  * @address 0x13EE30
  * @size 0x88
  */
-int ReadBGSync(void);
+int ReadBGSync();
 
 /**
  * Initializes the background-read queue.
  */
-void InitReadBG(void);
+void InitReadBG();
 
 /**
  * Queues a file for background reading.
@@ -69,27 +69,27 @@ BG_READ_INFO *GetReadBGFile(int index);
 /**
  * Starts the background-read system.
  */
-void StartReadBG(void);
+void StartReadBG();
 
 /**
  * Advances the active background read by one vertical sync.
  */
-void ReadBG(void);
+void ReadBG();
 
 /**
  * Cancels the active CD/DVD read and resets the background queue.
  */
-void BreakReadBG(void);
+void BreakReadBG();
 
 /**
  * Initializes the DATA.DAT file index from disc.
  */
-void InitCDFile(void);
+void InitCDFile();
 
 /**
  * Initializes memory-backed file access.
  */
-void InitMemoryFile(void);
+void InitMemoryFile();
 
 /**
  * Reads a whole file off the disc.
@@ -141,8 +141,7 @@ u_int *GetPackFile(u_int *pack, int index, char **out_name, int *out_size);
 /**
  * Collects files with a requested extension from a pack.
  */
-int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, int *sizes,
-                   char **names);
+int GetPackFileExt(u_int *pack, char *extension, u_int **files, int max_files, int *sizes, char **names);
 
 /** Shared buffer used for synchronous game-data reads. */
 extern u_int *read_buffer;
@@ -163,7 +162,7 @@ void LoadOverlay(int mode);
  * @address 0x140B90
  * @size 0x210
  */
-void init_all(void);
+void init_all();
 
 /**
  * Writes the persistent GS state into the current VIF packet.
@@ -181,7 +180,7 @@ void SetEnv(sceVif1Packet *packet);
  * @address 0x140E90
  * @size 0x90
  */
-void LoadSndTxt(void);
+void LoadSndTxt();
 
 /**
  * Enables or disables accumulation of save-file play time.
@@ -208,7 +207,7 @@ int PlayTimeCount(int unused);
  * @address 0x140F70
  * @size 0x108
  */
-void LoadSystemMessage(void);
+void LoadSystemMessage();
 
 /**
  * Loads the global message and sound metadata used by game modes.
@@ -217,7 +216,7 @@ void LoadSystemMessage(void);
  * @address 0x141080
  * @size 0x30
  */
-void initialize_data(void);
+void initialize_data();
 
 /**
  * Gives one arena to the loader as its working buffer, sized in quadwords.
@@ -245,7 +244,7 @@ void SetPacketReadBuffer(int packet_quads, int read_quads);
  * @size 0xC
  * @unknownret
  */
-int check_now_loading(void);
+int check_now_loading();
 
 /** Allocator that dungeon monsters take their collision polygons from. */
 extern "C" CDataAlloc2<1> *WorkBuffer__2;

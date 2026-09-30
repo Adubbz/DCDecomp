@@ -144,10 +144,10 @@ STATIC_ASSERT(sizeof(ENEMY_LIFE_GAGE) == 0x18);
  */
 struct BOMB_INFO {
     sceVu0FVECTOR pos; /**< Where the thrown item lands. */
-    s32 unk_10;
-    s32 aiming;     /**< Whether the player is still walking the landing point around. */
-    s32 throw_step; /**< Step of the throw: 1 until the item leaves the hand, 2 while the motion ends, -1 when idle. */
-    s32 unk_1C;
+    s32           unk_10;
+    s32           aiming;     /**< Whether the player is still walking the landing point around. */
+    s32           throw_step; /**< Step of the throw: 1 until the item leaves the hand, 2 while the motion ends, -1 when idle. */
+    s32           unk_1C;
 };
 
 STATIC_ASSERT(sizeof(BOMB_INFO) == 0x20);
@@ -157,14 +157,14 @@ STATIC_ASSERT(sizeof(BOMB_INFO) == 0x20);
  */
 class CDebugFont {
 public:
-    s32 x;              /**< Distance of the left edge from the left of the screen. */
-    s32 y;              /**< Distance of the top edge from the top of the screen. */
-    s32 width;          /**< Distance from the left edge to the right edge. */
-    s32 height;         /**< Distance from the top edge to the bottom edge. */
+    s32   x;            /**< Distance of the left edge from the left of the screen. */
+    s32   y;            /**< Distance of the top edge from the top of the screen. */
+    s32   width;        /**< Distance from the left edge to the right edge. */
+    s32   height;       /**< Distance from the top edge to the bottom edge. */
     char *texture_name; /**< Name of the texture the window draws its glyphs from. */
-    s32 alpha;          /**< Alpha the window composites its texture with. */
-    s32 length;         /**< Characters the text holds now. */
-    char text[0x200];   /**< The text the window draws. */
+    s32   alpha;        /**< Alpha the window composites its texture with. */
+    s32   length;       /**< Characters the text holds now. */
+    char  text[0x200];  /**< The text the window draws. */
 
     /**
      * @mangled Draw__10CDebugFontFv
@@ -172,7 +172,7 @@ public:
      * @size 0x59C
      * @unknownret
      */
-    void Draw(void);
+    void Draw();
 };
 
 STATIC_ASSERT(sizeof(CDebugFont) == 0x21C);
@@ -202,16 +202,9 @@ static inline float CharaHeight(CUserStatus *status) {
  * Names what the dungeon hands the Georama editor to follow.
  */
 struct GAME_ENV {
-    CFrame *frame;   /**< Frame that the editor follows. */
+    CFrame  *frame;  /**< Frame that the editor follows. */
     CCamera *camera; /**< Camera that the editor draws through. */
 };
-
-/**
- * Tells how far the renderer draws, and how it fogs what it draws.
- *
- * @mangled MGSetRenderInfo__Ffff
- */
-void MGSetRenderInfo(float far_dist, float near_dist, float max_z);
 
 /**
  * Turns the stick into the motion the player's character walks with.
@@ -219,13 +212,6 @@ void MGSetRenderInfo(float far_dist, float near_dist, float max_z);
  * @mangled keyCtrl__FffP11MOTION_INFO
  */
 int keyCtrl(float x, float y, MOTION_INFO *motion);
-
-/**
- * Turns a model towards a heading, a step at a time.
- *
- * @mangled unitRotation__FP9CFrameVu1f
- */
-float unitRotation(CFrameVu1 *frame, float heading);
 
 /**
  * Puts one system message on the screen.
@@ -256,92 +242,40 @@ void DeadMes(int chara, int frames);
 void AllDeadMes(int frames);
 
 /**
- * Starts and stops the clock that counts how long the game has been played.
- *
- * @mangled PlayTimeCountFlag__Fi
- */
-void PlayTimeCountFlag(int on);
-
-/**
- * Tells whether the trial disc has run out of dungeon.
- *
- * @mangled CheckTrialEnd__Fv
- */
-int CheckTrialEnd(void);
-
-/**
- * Writes one atla back into the save data.
- *
- * @mangled getAtraToSaveData__FiiP9CSaveDataii
- */
-void getAtraToSaveData(int atra, int atra_no, CSaveData *save, int dungeon, int floor);
-
-/**
  * Runs the debug information overlay and gives back what the player chose.
  *
  * @mangled DebugInfomationIF__Fv
  */
-int DebugInfomationIF(void);
+int DebugInfomationIF();
 
 /**
  * Puts every sound effect sequence the dungeon is playing back to silence.
  *
  * @mangled SndSeSeqAllStop__Fv
  */
-void SndSeSeqAllStop(void);
-
-/**
- * @mangled SndSPSePlay__Fii
- */
-void SndSPSePlay(int se_no, int voice);
-
-/**
- * Starts the mini item menu, and steps it.
- *
- * @mangled BtMiniItemSelect__Fv
- */
-void BtMiniItemSelect(void);
-
-/**
- * @mangled BtMiniItemSelect_Loop__Fv
- */
-int BtMiniItemSelect_Loop(void);
-
-/**
- * Starts the mini character menu.
- *
- * @mangled BtMiniChrSelect_Init__Fi
- */
-void BtMiniChrSelect_Init(int dead);
+void SndSeSeqAllStop();
 
 /**
  * @mangled BtMiniChrSelect_Loop__Fv
  */
-int BtMiniChrSelect_Loop(void);
-
-/**
- * Starts the escape menu.
- *
- * @mangled BtEscape_Init__Fv
- */
-void BtEscape_Init(void);
+int BtMiniChrSelect_Loop();
 
 /**
  * @mangled BtEscape_Loop__Fv
  */
-int BtEscape_Loop(void);
+int BtEscape_Loop();
 
 /**
  * Starts the large treasure box opening.
  *
  * @mangled BtGetTreasureboxBig_Init__Fv
  */
-void BtGetTreasureboxBig_Init(void);
+void BtGetTreasureboxBig_Init();
 
 /**
  * @mangled BtGetTreasureboxBig_Loop__Fv
  */
-int BtGetTreasureboxBig_Loop(void);
+int BtGetTreasureboxBig_Loop();
 
 /**
  * Starts the small treasure box opening.
@@ -353,14 +287,14 @@ void BtGetTreasureboxSmall_Init(int dungeon);
 /**
  * @mangled BtGetTreasureboxSmall_Loop__Fv
  */
-int BtGetTreasureboxSmall_Loop(void);
+int BtGetTreasureboxSmall_Loop();
 
 /**
  * Starts the short atla pickup.
  *
  * @mangled BtAtraGetShort_Init__Fv
  */
-void BtAtraGetShort_Init(void);
+void BtAtraGetShort_Init();
 
 /**
  * @mangled BtAtraGetShort_Loop__Fii
@@ -368,117 +302,48 @@ void BtAtraGetShort_Init(void);
 int BtAtraGetShort_Loop(int dungeon, int floor);
 
 /**
- * Starts the gate key pickup.
- *
- * @mangled BtGetGateKey_Init__Fi
- */
-void BtGetGateKey_Init(int item_no);
-
-/**
  * @mangled BtGetGateKey_Loop__Fv
  */
-int BtGetGateKey_Loop(void);
-
-/**
- * Starts the attachment pickup.
- *
- * @mangled BtGetAttach_Init__Fii
- */
-void BtGetAttach_Init(int dungeon, int item_no);
-
-/**
- * @mangled BtGetAttach_Loop__Fv
- */
-int BtGetAttach_Loop(void);
+int BtGetGateKey_Loop();
 
 /**
  * Plays the action that each character fires with the action button.
  *
  * @mangled ToanKey_On__Fv
  */
-void ToanKey_On(void);
+void ToanKey_On();
 
 /**
  * @mangled ToanKey_Play__Fv
  */
-void ToanKey_Play(void);
+void ToanKey_Play();
 
 /**
  * @mangled GoroKey_On__Fv
  */
-void GoroKey_On(void);
+void GoroKey_On();
 
 /**
  * @mangled GoroKey_Play__Fv
  */
-void GoroKey_Play(void);
+void GoroKey_Play();
 
 /**
  * @mangled UngagaKey_On__Fv
  */
-void UngagaKey_On(void);
+void UngagaKey_On();
 
 /**
  * @mangled UngagaKey_Play__Fv
  */
-void UngagaKey_Play(void);
-
-/**
- * Tells whether the item in a running slot can be used now.
- *
- * @mangled checkItemUsed__Fi
- */
-int checkItemUsed(int slot);
-
-/**
- * Runs the Georama editor's event playback and gives back whether it is done.
- *
- * @mangled EdEventMode__FP13CCameraFollowi
- */
-int EdEventMode(CCameraFollow *camera, int unk);
-
-/**
- * @mangled LoadData__Fv__3
- * @address 0x1DBA930
- * @size 0x6A0
- * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
- */
-void LoadData__3(void);
-
-/**
- * Hands one allocator the block of memory it hands out.
- *
- * @mangled SetDataBuffer__FP14CDataAlloc2_1_i
- */
-void SetDataBuffer(CDataAlloc2<1> *buffer, int blocks);
-
-/**
- * Puts every allocator back to the start of the heap.
- *
- * @mangled InitializeDataBuffer__Fv
- */
-void InitializeDataBuffer(void);
-
-/**
- * Splits the read buffer between the packet builder and the file reader.
- *
- * @mangled SetPacketReadBuffer__Fii
- */
-void SetPacketReadBuffer(int packet_size, int read_size);
+void UngagaKey_Play();
 
 /**
  * Takes every system message off the screen.
  *
  * @mangled ClearSystemMes__Fv
  */
-void ClearSystemMes(void);
-
-/**
- * Enters one colour into the font palette and returns the entry it took.
- *
- * @mangled Color2Clut__FUi
- */
-unsigned int Color2Clut(unsigned int colour);
+void ClearSystemMes();
 
 /**
  * Reads the models of the items the player can run out of a pack file.
@@ -492,24 +357,7 @@ void BtSetActiveItemModel(unsigned int *pack);
  *
  * @mangled ClearGateKeyStack__Fv
  */
-void ClearGateKeyStack(void);
-
-/**
- * Hands the sound driver the buffer it reads its banks through.
- *
- * @mangled SndSetReadBuffer__FPUi
- */
-void SndSetReadBuffer(unsigned int *buffer);
-
-/**
- * @mangled SndBgmPlay__Fi
- */
-void SndBgmPlay(int bgm_no);
-
-/**
- * @mangled SndAmbientPlay__Fi
- */
-void SndAmbientPlay(int ambient_no);
+void ClearGateKeyStack();
 
 /**
  * @mangled SndAmbientSetVol__Fi
@@ -521,14 +369,7 @@ void SndAmbientSetVol(int volume);
  *
  * @mangled BtBattleMusic_Init__Fv
  */
-void BtBattleMusic_Init(void);
-
-/**
- * Sets how quickly one of the blend counters runs.
- *
- * @mangled initBlendCnt__Fif
- */
-void initBlendCnt(int counter, float speed);
+void BtBattleMusic_Init();
 
 /**
  * Builds the list of Atlamillia the dungeon lays out.
@@ -542,14 +383,7 @@ void BtAtraListMake(int dungeon);
  *
  * @mangled DebugInfomationInit__Fv
  */
-void DebugInfomationInit(void);
-
-/**
- * Hands the Georama editor the window it prints its debug text into.
- *
- * @mangled EdDSetFont__FP10CDebugFont
- */
-void EdDSetFont(CDebugFont *font);
+void DebugInfomationInit();
 
 /**
  * @mangled LoadData__Fv__3
@@ -558,9 +392,7 @@ void EdDSetFont(CDebugFont *font);
  * @unknownret
  * @note disambiguated by disassembler ("__3" suffix); real retail name has no suffix
  */
-static void LoadData(void);
-
-static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position, float from, float to);
+static void LoadData();
 
 /* The overlay's large data, in the order retail's link lays it out. */
 
@@ -651,7 +483,7 @@ CNPCharacter NPCUnit[6];
 CCharacter Water_Splash;
 
 /* The circle a trap draws on the floor, and its texture animations. */
-CCharacter Trap_Circle;
+CCharacter    Trap_Circle;
 CTexAnimeData Trap_Circle_TexAnim[16];
 
 /* The effect that plays as the player escapes the dungeon. */
@@ -707,7 +539,7 @@ ClsMes BtEventMes1;
 CHitMark WeaponCrashEffect;
 
 /* The marks the dungeon throws off a hit. */
-CHitMark HitMark[16];
+CHitMark      HitMark[16];
 CHitPointMark HitPointMark[16];
 
 /* The marks that the hits the player took have left. */
@@ -1027,7 +859,12 @@ BT_SHOT_EFFECT MyEntryEffect_Maseki04 = {
 // clang-format on
 
 /* A matrix of zeros, which every light of a field starts from. */
-sceVu0FMATRIX ZeroMatrix = {{0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
+sceVu0FMATRIX ZeroMatrix = {
+    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f, 0.0f}
+};
 
 /* How far the fog reaches and how it thickens, on the front and the back floors. */
 float main_fogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
@@ -1037,7 +874,12 @@ float sub_fogRate[4] = {1000.0f, 3500.0f, 0.0f, 255.0f};
 sceVu0FVECTOR def_ambientlight = {64.0f, 64.0f, 64.0f, 128.0f};
 
 /* The light colours every field starts from. */
-sceVu0FMATRIX def_lightcolor = {{120.0f, 120.0f, 120.0f, 128.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
+sceVu0FMATRIX def_lightcolor = {
+    {120.0f, 120.0f, 120.0f, 128.0f},
+    {0.0f,   0.0f,   0.0f,   0.0f  },
+    {0.0f,   0.0f,   0.0f,   0.0f  },
+    {0.0f,   0.0f,   0.0f,   0.0f  }
+};
 
 /* How the treasure-box models, and the effects over them, play their opening motions. */
 MOTION_INFO itemOpenSmall_info = {10, 80, 0.5f, 0};
@@ -1056,38 +898,38 @@ sceVu0FVECTOR blowVelo = {0.0f, 0.0f, 0.0f, 0.0f};
 
 /* Every texture the dungeon loads on its way in, and the block each goes to. */
 LOADTEXTURE_INFO2 texdata__2[] = {
-    {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 1, 0},
-    {"dun/etc/cursor.img", 1, 0},
-    {"gatekey00.img", 1, 0},
-    {"#water#640#" HALF_BUFFER_HEIGHT_STR "#4", 13, 0},
-    {"dun/etc/atrtx.img", 22, 0},
-    {"wepready.img", 2, 0},
+    {"#frame_image#640#" SCREEN_HEIGHT_STR "#4",     1,  0},
+    {"dun/etc/cursor.img",                           1,  0},
+    {"gatekey00.img",                                1,  0},
+    {"#water#640#" HALF_BUFFER_HEIGHT_STR "#4",      13, 0},
+    {"dun/etc/atrtx.img",                            22, 0},
+    {"wepready.img",                                 2,  0},
     {"#shadow_buf#640#" HALF_BUFFER_HEIGHT_STR "#3", 15, 0},
-    {"dun/effect/basefx00.img", 18, 0},
-    {"basefx01.img", 18, 0},
-    {"dun/d01/effect/fx_foot.img", 18, 0},
-    {"dun/effect/bombfx00.img", 19, 0},
-    {"pause.img", 7, 0},
-    {"#dbgwork#640#" SCREEN_HEIGHT_STR "#3", 12, 0},
-    {"check/ankfont.img", 12, 0},
+    {"dun/effect/basefx00.img",                      18, 0},
+    {"basefx01.img",                                 18, 0},
+    {"dun/d01/effect/fx_foot.img",                   18, 0},
+    {"dun/effect/bombfx00.img",                      19, 0},
+    {"pause.img",                                    7,  0},
+    {"#dbgwork#640#" SCREEN_HEIGHT_STR "#3",         12, 0},
+    {"check/ankfont.img",                            12, 0},
 #ifndef PAL
-    {"#mes_frame_buff#640#448#4", 26, 0},
-    {"#fontbase#512#256#1", 26, 0},
-    {"#fukidashibase#640#224#4", 26, 0},
-    {"meswin/syst04.img", 26, 0},
-    {"meswin/gaiji.img", 26, 0},
-    {"meswin/fuki256.img", 26, 0},
+    {"#mes_frame_buff#640#448#4",                    26, 0},
+    {"#fontbase#512#256#1",                          26, 0},
+    {"#fukidashibase#640#224#4",                     26, 0},
+    {"meswin/syst04.img",                            26, 0},
+    {"meswin/gaiji.img",                             26, 0},
+    {"meswin/fuki256.img",                           26, 0},
 #endif
-    {"element.img", 18, 0},
-    {"igetfx.img", 22, 0},
-    {0, 0, 0},
+    {"element.img",                                  18, 0},
+    {"igetfx.img",                                   22, 0},
+    {0,                                              0,  0},
 };
 
 /* The textures the loading screen itself draws with. */
 LOADTEXTURE_INFO texdata2[3] = {
     {"#dbgwork#640#" SCREEN_HEIGHT_STR "#3", 12, 0},
-    {"check/ankfont.img", 12, 0},
-    {"", 0, 0},
+    {"check/ankfont.img",                    12, 0},
+    {"",                                     0,  0},
 };
 
 /* The overlay's initialised small data, in the order retail's link lays it out. */
@@ -1184,8 +1026,8 @@ CDranMapField *NowDranMapField;
 
 /* The events of the floor the dungeon is drawing. */
 CDungeonEventMan *NowEventMan;
-u8 main_bgColor[3];
-u8 sub_bgColor[3];
+u8                main_bgColor[3];
+u8                sub_bgColor[3];
 
 /* Which lighting the field draws under. */
 s32 lightingMode;
@@ -1248,24 +1090,24 @@ s32 rogoY3;
 s32 NewChangeFxFlag;
 
 /* Which short Atlamillia use is running. */
-s32 atraShortGetType;
+s32   atraShortGetType;
 float atraGetStatusRate__2;
-s32 atraGetStatus;
+s32   atraGetStatus;
 
 /* Whether the Atlamillia message board is up. */
-s32 atraGetMsgBord;
-float atraGetMsgBordRate;
+s32    atraGetMsgBord;
+float  atraGetMsgBordRate;
 u_int *shortAtraEffectPtr;
-float itemNormalScale;
-s32 itemOpenSmallFlag;
-s32 itemOpenItemMds;
-s32 itemOpenItemImg;
+float  itemNormalScale;
+s32    itemOpenSmallFlag;
+s32    itemOpenItemMds;
+s32    itemOpenItemImg;
 u_int *itemOpenItemChr;
 
 /* The model the item a gate holds draws with. */
 CFrame *itemBoxModel;
-float itemWeponScale;
-s32 itemOpenBigFlag;
+float   itemWeponScale;
+s32     itemOpenBigFlag;
 
 /* How long the dungeon has waited before it opens the menu, in frames. */
 s32 battleMenuWait;
@@ -1289,7 +1131,7 @@ s32 frameCaputer;
 s32 driveNoInterpolate;
 
 /* Which character the player is walking as. */
-s32 nowUnitNow;
+s32     nowUnitNow;
 CFrame *cursorFrame;
 CFrame *bombCursorFrame;
 CFrame *bicCursorFrame;
@@ -1405,11 +1247,11 @@ s32 defCameraWait;
 s32 MonstorNameOff;
 
 #ifdef PAL
-void LoadBaseTexture(void) {
+void LoadBaseTexture() {
     LOADTEXTURE_INFO2 info[96];
-    int size;
-    int i;
-    char *name;
+    int               size;
+    int               i;
+    char             *name;
 
     sprintf(texdata__2[2].name, "gatekey0%d.img", selectMapNo + 1);
 
@@ -1447,11 +1289,11 @@ void LoadBaseTexture(void) {
     // pack supplies in place of the names written here.
     LOADTEXTURE_INFO2 mes_info[8] = {
         {"#mes_frame_buff#640#480#4", 0x1A, 0},
-        {"#fukidashibase#640#224#4", 0x1A, 0},
-        {"#fontbase#512#256#1", 0x1A, 0},
-        {"meswin/gaiji.img", 0x1A, 0},
-        {"meswin/fuki256.img", 0x1A, 0},
-        {"meswin/syst04.img", 0x1A, 0},
+        {"#fukidashibase#640#224#4",  0x1A, 0},
+        {"#fontbase#512#256#1",       0x1A, 0},
+        {"meswin/gaiji.img",          0x1A, 0},
+        {"meswin/fuki256.img",        0x1A, 0},
+        {"meswin/syst04.img",         0x1A, 0},
     };
     char mes_path[64] = "meswin/mes_tex.pak";
 
@@ -1466,11 +1308,11 @@ void LoadBaseTexture(void) {
     TexManager.LoadTextureBlock(-1, mes_info);
 }
 #else
-void LoadBaseTexture(void) {
+void LoadBaseTexture() {
     LOADTEXTURE_INFO2 info[97];
-    int size;
-    int i;
-    char *name;
+    int               size;
+    int               i;
+    char             *name;
 
     sprintf(texdata__2[2].name, "gatekey0%d.img", selectMapNo + 1);
 
@@ -1505,9 +1347,9 @@ void LoadBaseTexture(void) {
 
 int LoadTempTexture(char **files, int block, char *buffer) {
     LOADTEXTURE_INFO2 info[7] = {0};
-    int i;
-    int total;
-    int size;
+    int               i;
+    int               total;
+    int               size;
 
     i = 0;
     total = 0;
@@ -1535,7 +1377,7 @@ void SetTempTexture(int block, char *name) {
     TexManager.LoadTextureBlockEX(block, info);
 }
 
-void MemoryMapDump(void) {
+void MemoryMapDump() {
     printf("MainVisualData  \t%d/%d\n", MainModelBuffer.used, 0x9470);
     printf("MotionData      \t%d/%d\n", MotionData.used, 10000);
     printf("CharaModelBuffer\t%d/%d\n", CharaModelBuffer.used, 0x33450);
@@ -1551,10 +1393,10 @@ void MemoryMapDump(void) {
     TexManager.print_buff_info();
 }
 
-void GameInit(void) {
-    int size;
-    char name[64];
-    char gate_name[32];
+void GameInit() {
+    int    size;
+    char   name[64];
+    char   gate_name[32];
     short *mes;
 
     BtDebugFlag = 0;
@@ -1564,7 +1406,7 @@ void GameInit(void) {
     UserStatus = (CUserStatus *) SaveData->GetDngStatus();
     UserStatus->Init();
     if (BtEventInfo.no_status_recover != 1) {
-        int i;
+        int          i;
         CUserStatus *status = UserStatus;
 
         for (i = 0; i < 6; i++) {
@@ -1574,7 +1416,7 @@ void GameInit(void) {
         }
         status->res_limit_zone_current = -1;
     }
-    int map = selectMapNo;
+    int          map = selectMapNo;
     CUserStatus *status = UserStatus;
 
     status->cur_georama = map;
@@ -2075,9 +1917,9 @@ void GameInit(void) {
     gameTask = 400;
 }
 
-int GameLoop(void) {
+int GameLoop() {
     float fade[4];
-    int i;
+    int   i;
 
     switch (BtGameModeFlag) {
         case 1:
@@ -2202,11 +2044,11 @@ int GameLoop(void) {
     return 0;
 }
 
-void Draw_MainUnitShadow(void) {
+void Draw_MainUnitShadow() {
     float light[4][4];
     float colour[4][4];
     float saved[4][4];
-    int i;
+    int   i;
 
     // The shadows are drawn under a dimmed light and the real one goes back
     // afterwards.
@@ -2219,8 +2061,7 @@ void Draw_MainUnitShadow(void) {
     TexManager.ReloadTexture(Vif1Packet, 15);
     MGBeginDrawShadow(*(sceGsTex0 *) &TexManager.GetTexture("shadow_buf", -1)->tex0);
 
-    if (BtActStatus.shadow_visible != 0 && EdEventInfo.player_shadow_draw != 0 &&
-        EdEventInfo.player_draw != 0 && BtActStatus.player_visible != 0) {
+    if (BtActStatus.shadow_visible != 0 && EdEventInfo.player_shadow_draw != 0 && EdEventInfo.player_draw != 0 && BtActStatus.player_visible != 0) {
         CharaMain.DrawShadow();
     }
 
@@ -2241,11 +2082,11 @@ void Draw_MainUnitShadow(void) {
     MGSetPLight(light, colour);
 }
 
-void Draw_MainUnit(void) {
-    float light[4][4];
-    float colour[4][4];
-    float saved_light[4][4];
-    float saved_colour[4][4];
+void Draw_MainUnit() {
+    float         light[4][4];
+    float         colour[4][4];
+    float         saved_light[4][4];
+    float         saved_colour[4][4];
     sceVu0FVECTOR up;
     sceVu0FVECTOR stood;
     sceVu0FVECTOR towards;
@@ -2277,8 +2118,7 @@ void Draw_MainUnit(void) {
         towards[1] = world[1] - stood[1] - 12.0f;
         towards[2] = world[2] - stood[2];
 
-        float dist = sqrt(towards[0] * towards[0] + towards[1] * towards[1] +
-                          towards[2] * towards[2]);
+        float dist = sqrt(towards[0] * towards[0] + towards[1] * towards[1] + towards[2] * towards[2]);
 
         if (dist <= 10.0f) {
             dist = 10.0f;
@@ -2355,14 +2195,14 @@ void Draw_MainUnit(void) {
     MGSetPLight(light, colour);
 }
 
-void MainDraw(void) {
+void MainDraw() {
     sceVu0FMATRIX camera;
     sceVu0FVECTOR eye;
     sceVu0FMATRIX view;
     sceVu0FMATRIX unit;
-    sceGsTex0 frame_tex;
-    sceGsTex0 water_tex;
-    int i;
+    sceGsTex0     frame_tex;
+    sceGsTex0     water_tex;
+    int           i;
 
     EdEventInfo.main_texture_animation = NULL;
     NowCamera__3->GetPos(eye);
@@ -2388,14 +2228,12 @@ void MainDraw(void) {
         MGSetPLight(main_light, main_lightcolor);
         MGSetAmbient(main_ambientlight);
         MGSetBGColor(main_bgColor[0], main_bgColor[1], main_bgColor[2], 128.0f);
-        MGSetFogParm(main_fogRate[0], main_fogRate[1], main_fogColor[0], main_fogColor[1],
-                     main_fogColor[2], main_fogRate[2], main_fogRate[3]);
+        MGSetFogParm(main_fogRate[0], main_fogRate[1], main_fogColor[0], main_fogColor[1], main_fogColor[2], main_fogRate[2], main_fogRate[3]);
     } else {
         MGSetPLight(sub_light, sub_lightcolor);
         MGSetAmbient(sub_ambientlight);
         MGSetBGColor(sub_bgColor[0], sub_bgColor[1], sub_bgColor[2], 128.0f);
-        MGSetFogParm(sub_fogRate[0], sub_fogRate[1], sub_fogColor[0], sub_fogColor[1],
-                     sub_fogColor[2], sub_fogRate[2], sub_fogRate[3]);
+        MGSetFogParm(sub_fogRate[0], sub_fogRate[1], sub_fogColor[0], sub_fogColor[1], sub_fogColor[2], sub_fogRate[2], sub_fogRate[3]);
     }
 
     if (BtItemListCashFlag != 0) {
@@ -2465,8 +2303,7 @@ void MainDraw(void) {
             CharaHand.Draw();
         }
 
-        if (NowWeapon != NULL && UserStatus->cur_chara == 1 && NowWeapon->frame != NULL &&
-            BtActStatus.weapon_visible != 0) {
+        if (NowWeapon != NULL && UserStatus->cur_chara == 1 && NowWeapon->frame != NULL && BtActStatus.weapon_visible != 0) {
             TexManager.ReloadTexture(Vif1Packet, 0x1D);
             NowWeapon->Draw();
         }
@@ -2496,7 +2333,7 @@ void MainDraw(void) {
     }
 
     if (NowDngMap->map_type == 1) {
-        CRect_i_ area;
+        CRect_i_      area;
         sceVu0FVECTOR water_pos;
 
         TexManager.ReloadTexture(Vif1Packet, 0xD);
@@ -2692,7 +2529,7 @@ void MainDraw(void) {
 
         if (autoDemo == 0) {
             sceGsAlpha blend;
-            sceGsZbuf depth;
+            sceGsZbuf  depth;
 
             TexManager.ReloadTexture(Vif1Packet, 0x12);
 
@@ -2744,8 +2581,7 @@ void MainDraw(void) {
             }
 
             TexManager.ReloadTexture(Vif1Packet, 8);
-            StartMessageDraw(TEX_Floor1, selectMapNo, UserStatus->cur_floor, BtUraDongeon,
-                             rogoAlphaA[2]);
+            StartMessageDraw(TEX_Floor1, selectMapNo, UserStatus->cur_floor, BtUraDongeon, rogoAlphaA[2]);
         }
 #else
         if (rogoSwitch2 == 1 && BtEventInfo.floor_title_off == 0) {
@@ -2762,103 +2598,82 @@ void MainDraw(void) {
             if (LanguageCode == 0) {
                 switch (selectMapNo) {
                     case 0:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xE2, 0xAA, 0x72, 0x32),
-                                    CRect_i_(0, 0, 0x72, 0x32), rogoAlphaA[2]);
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x17D, 0xAA, 0x4C, 0x32),
-                                    CRect_i_(0x72, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xE2, 0xAA, 0x72, 0x32), CRect_i_(0, 0, 0x72, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x17D, 0xAA, 0x4C, 0x32), CRect_i_(0x72, 0, 0x4C, 0x32), rogoAlphaA[2]);
                         break;
                     case 1:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xBE, 0xAA, 0xBE, 0x32),
-                                    CRect_i_(0, 0, 0xBE, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xBE, 0xAA, 0xBE, 0x32), CRect_i_(0, 0, 0xBE, 0x32), rogoAlphaA[2]);
                         shift = 0x40;
                         break;
                     case 2:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xF5, 0xAA, 0x4C, 0x32),
-                                    CRect_i_(0, 0, 0x4C, 0x32), rogoAlphaA[2]);
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x159, 0xAA, 0x4C, 0x32),
-                                    CRect_i_(0x4C, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xF5, 0xAA, 0x4C, 0x32), CRect_i_(0, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x159, 0xAA, 0x4C, 0x32), CRect_i_(0x4C, 0, 0x4C, 0x32), rogoAlphaA[2]);
                         shift = -0x24;
                         break;
                     case 3:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xE8, 0xAA, 0x98, 0x32),
-                                    CRect_i_(0, 0, 0x98, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xE8, 0xAA, 0x98, 0x32), CRect_i_(0, 0, 0x98, 0x32), rogoAlphaA[2]);
                         shift = 0x40;
                         break;
                     case 4:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xD7, 0xAA, 0x4C, 0x32),
-                                    CRect_i_(0, 0, 0x4C, 0x32), rogoAlphaA[2]);
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x13B, 0xAA, 0xBE, 0x32),
-                                    CRect_i_(0x4C, 0, 0xBE, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xD7, 0xAA, 0x4C, 0x32), CRect_i_(0, 0, 0x4C, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x13B, 0xAA, 0xBE, 0x32), CRect_i_(0x4C, 0, 0xBE, 0x32), rogoAlphaA[2]);
                         shift = -0x40;
                         break;
                     case 5:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x135, 0xAA, 0x98, 0x32),
-                                    CRect_i_(0, 0, 0x98, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x135, 0xAA, 0x98, 0x32), CRect_i_(0, 0, 0x98, 0x32), rogoAlphaA[2]);
                         shift = -0x40;
                         break;
                 }
 
                 if (BtUraDongeon != 0) {
-                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x120, 0xE6, 0x40, 0x38),
-                                CRect_i_(0x13A, 0x78, 0x40, 0x38), rogoAlphaA[2]);
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x120, 0xE6, 0x40, 0x38), CRect_i_(0x13A, 0x78, 0x40, 0x38), rogoAlphaA[2]);
                 } else if (UserStatus->res_limit_zone_current >= 0) {
-                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xD4, 0xE6, 0xD8, 0x30),
-                                CRect_i_(0, 0x78, 0xD8, 0x30), rogoAlphaA[2]);
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xD4, 0xE6, 0xD8, 0x30), CRect_i_(0, 0x78, 0xD8, 0x30), rogoAlphaA[2]);
                 }
             }
 
             if (LanguageCode > 0) {
                 switch (selectMapNo) {
                     case 0:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0x122, 0xAA, 0x2D, 0x32),
-                                    CRect_i_(0, 0, 0x2D, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0x122, 0xAA, 0x2D, 0x32), CRect_i_(0, 0, 0x2D, 0x32), rogoAlphaA[2]);
                         shift = -0x14;
                         break;
                     case 1:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xA0, 0xAA, 0xDA, 0x32),
-                                    CRect_i_(0, 0, 0xDA, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xA0, 0xAA, 0xDA, 0x32), CRect_i_(0, 0, 0xDA, 0x32), rogoAlphaA[2]);
                         shift = 0x40;
                         if (UserStatus->cur_floor < 9) {
                             shift = 0x20;
                         }
                         break;
                     case 2:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xC8, 0xAA, 0x91, 0x32),
-                                    CRect_i_(0, 0, 0x91, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xC8, 0xAA, 0x91, 0x32), CRect_i_(0, 0, 0x91, 0x32), rogoAlphaA[2]);
                         if (UserStatus->cur_floor >= 9) {
                             shift = 0x20;
                         }
                         break;
                     case 3:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xDC, 0xAA, 0x8E, 0x32),
-                                    CRect_i_(0, 0, 0x8E, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xDC, 0xAA, 0x8E, 0x32), CRect_i_(0, 0, 0x8E, 0x32), rogoAlphaA[2]);
                         shift = 0x10;
                         break;
                     case 4:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xC3, 0xAA, 0x4B, 0x32),
-                                    CRect_i_(0, 0, 0x4B, 0x32), rogoAlphaA[2]);
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x13B, 0xAA, 0xC0, 0x32),
-                                    CRect_i_(0x60, 0, 0xC0, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xC3, 0xAA, 0x4B, 0x32), CRect_i_(0, 0, 0x4B, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x13B, 0xAA, 0xC0, 0x32), CRect_i_(0x60, 0, 0xC0, 0x32), rogoAlphaA[2]);
                         shift = -0x40;
                         break;
                     case 5:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x108, 0xAA, 0xE1, 0x32),
-                                    CRect_i_(0, 0, 0xE1, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x108, 0xAA, 0xE1, 0x32), CRect_i_(0, 0, 0xE1, 0x32), rogoAlphaA[2]);
                         shift = -0x80;
                         break;
                     case 6:
-                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xDC, 0xAA, 0x8E, 0x32),
-                                    CRect_i_(0, 0, 0x8E, 0x32), rogoAlphaA[2]);
+                        set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(floor_no + 0xDC, 0xAA, 0x8E, 0x32), CRect_i_(0, 0, 0x8E, 0x32), rogoAlphaA[2]);
                         shift = 0x10;
                         break;
                 }
 
                 if (BtUraDongeon != 0) {
-                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x110, 0xE6, 0x60, 0x38),
-                                CRect_i_(0x110, 0x78, 0x60, 0x38), rogoAlphaA[2]);
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0x110, 0xE6, 0x60, 0x38), CRect_i_(0x110, 0x78, 0x60, 0x38), rogoAlphaA[2]);
                 } else if (UserStatus->res_limit_zone_current >= 0) {
-                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xD4, 0xE6, 0xF0, 0x30),
-                                CRect_i_(0, 0x78, 0xF0, 0x30), rogoAlphaA[2]);
+                    set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(0xD4, 0xE6, 0xF0, 0x30), CRect_i_(0, 0x78, 0xF0, 0x30), rogoAlphaA[2]);
                 }
             }
 
@@ -2870,17 +2685,14 @@ void MainDraw(void) {
 
             if (floor_no < 10) {
                 digit_x = floor_no % 10 * 0x26;
-                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32),
-                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
             }
 
             if (floor_no >= 10 && floor_no < 100) {
                 digit_x = floor_no / 10 * 0x26;
-                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x136, 0xAA, 0x26, 0x32),
-                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x136, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
                 digit_x = floor_no % 10 * 0x26;
-                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32),
-                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
             }
 
             if (floor_no >= 100) {
@@ -2888,14 +2700,11 @@ void MainDraw(void) {
 
                 digit_x = digit * 0x26;
                 floor_no -= digit * 100;
-                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x112, 0xAA, 0x26, 0x32),
-                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x112, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
                 digit_x = floor_no / 10 * 0x26;
-                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x136, 0xAA, 0x26, 0x32),
-                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x136, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
                 digit_x = floor_no % 10 * 0x26;
-                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32),
-                            CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
+                set2DSprite(Vif1Packet, TEX_Floor1, CRect_i_(shift + 0x15A, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32), rogoAlphaA[2]);
             }
         }
 
@@ -2907,11 +2716,9 @@ void MainDraw(void) {
 
         if ((int) BtActStatus.action_gauge >= 100) {
             if (BtActStatus.gauge_flash == 0) {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C),
-                            CRect_i_(0, 0, 0x80, 0x1C), gauge_alpha);
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C), CRect_i_(0, 0, 0x80, 0x1C), gauge_alpha);
             } else {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C),
-                            CRect_i_(0, 0x1C, 0x80, 0x1C), gauge_alpha);
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C), CRect_i_(0, 0x1C, 0x80, 0x1C), gauge_alpha);
             }
         }
 
@@ -2920,10 +2727,8 @@ void MainDraw(void) {
         if ((int) wear < 100) {
             int left = (int) wear;
 
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C),
-                        CRect_i_(0, 0x54, 0x80, 0x1C), gauge_alpha);
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, SCREEN_HEIGHT - 0x34, left, 0x1C),
-                        CRect_i_(0x1A, 0x38, left, 0x1C), gauge_alpha);
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C), CRect_i_(0, 0x54, 0x80, 0x1C), gauge_alpha);
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, SCREEN_HEIGHT - 0x34, left, 0x1C), CRect_i_(0x1A, 0x38, left, 0x1C), gauge_alpha);
         }
 
         if (infoMap != 0 && NowDngMap->map_type == 1) {
@@ -2947,8 +2752,7 @@ void MainDraw(void) {
 
         if (exitMenuFlag != 0) {
             TexManager.ReloadTexture(Vif1Packet, 7);
-            set2DSprite(Vif1Packet, TexManager.GetTexture("pause", -1),
-                        CRect_i_(0x100, 0xCC, 0x80, 0x28), 0, 0);
+            set2DSprite(Vif1Packet, TexManager.GetTexture("pause", -1), CRect_i_(0x100, 0xCC, 0x80, 0x28), 0, 0);
         }
 
         setbilinear(1);
@@ -2964,8 +2768,7 @@ void MainDraw(void) {
         sceVu0FVECTOR fade;
 
         sceVu0CopyVector(fade, EdEventInfo.screen_filter_color);
-        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), (int) fade[0], (int) fade[1], (int) fade[2],
-                  (int) fade[3]);
+        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), (int) fade[0], (int) fade[1], (int) fade[2], (int) fade[3]);
     }
 
     if (BtEventMode != 0) {
@@ -3059,8 +2862,7 @@ void MainDraw(void) {
     if (frameCaputer != 0) {
         sceGsSyncPath(0, 0);
         TexManager.ReloadTexture(Vif1Packet, 0x17);
-        MGMoveFrameBuffImage((sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0, 0,
-                             0, 0);
+        MGMoveFrameBuffImage((sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0, 0, 0, 0);
     }
 }
 
@@ -3087,20 +2889,20 @@ static inline void DeleteItemModel(int slot) {
  * floor, and one of the other states while a menu, an event script or the
  * death sequence has the screen. Every state ends by stepping the models.
  */
-void MoveChara(void) {
+void MoveChara() {
     /* Where the camera looks relative to what it follows, before the floor's
        own offset is added. */
     static sceVu0FVECTOR reference = {0.0f, 7.5f, 0.0f, 0.0f};
-    sceVu0FVECTOR pos;
-    float move_z;
-    float move_x;
-    float ly;
-    float lx;
-    float angle;
-    float rx;
-    float ry;
-    CFrame *collision;
-    int entry_no;
+    sceVu0FVECTOR        pos;
+    float                move_z;
+    float                move_x;
+    float                ly;
+    float                lx;
+    float                angle;
+    float                rx;
+    float                ry;
+    CFrame              *collision;
+    int                  entry_no;
 
     // An event that sets its own draw distance keeps it; anything else draws
     // the whole floor.
@@ -3252,10 +3054,8 @@ void MoveChara(void) {
                     }
                 } else {
                 walk:
-                    if ((move_x != 0.0f || move_z != 0.0f) &&
-                        (BtActStatus.action_on == 0 || UserStatus->cur_chara == 5)) {
-                        CharaFrame->SetRotation(0.0f, unitRotation(CharaFrame, atan2f(move_x, move_z)),
-                                                0.0f);
+                    if ((move_x != 0.0f || move_z != 0.0f) && (BtActStatus.action_on == 0 || UserStatus->cur_chara == 5)) {
+                        CharaFrame->SetRotation(0.0f, unitRotation(CharaFrame, atan2f(move_x, move_z)), 0.0f);
                     }
                     CharaMain.motion_type.motion_info->speed = 0.05f;
                     BtActStatus.motion_no = keyCtrl(lx, ly, CharaMain.motion_type.motion_info);
@@ -3271,8 +3071,7 @@ void MoveChara(void) {
                     if (BtActStatus.invincible_frames > 0) {
                         BtActStatus.invincible_frames--;
                     }
-                    if (GamePad.Down(0x100) != 0 && UserStatus->party_size >= 2 &&
-                        BtActStatus.action_on == 0) {
+                    if (GamePad.Down(0x100) != 0 && UserStatus->party_size >= 2 && BtActStatus.action_on == 0) {
                         DngMessMan.enabled = 0;
                         DngMessMan.message = -1;
                         DngMessMan.timer = 0;
@@ -3286,8 +3085,8 @@ void MoveChara(void) {
                         gameTask = 0x127;
                         autoCamTrial();
                     } else {
-                        static int cnt;
-                        static char init;
+                        static int    cnt;
+                        static char   init;
                         sceVu0FVECTOR mask_pos;
 
                         if (init == 0) {
@@ -3325,8 +3124,7 @@ void MoveChara(void) {
                                 sceVu0FMATRIX look;
 
                                 CharaFrame->GetLWMatrix(look);
-                                NowCamera__3->SetAngle(atan2f(look[2][0], look[2][2]) -
-                                                       3.141592653589793);
+                                NowCamera__3->SetAngle(atan2f(look[2][0], look[2][2]) - 3.141592653589793);
                             } else if (lockOnTargetFlag == 0) {
                                 if (lockOnTargetNo != -1) {
                                     lockOnTargetFlag = 1;
@@ -3348,14 +3146,13 @@ void MoveChara(void) {
                                 SndSePlay(0x11, -1, 0);
                             }
                         }
-                        if (SetBattleStyle(selectMapNo, 0) <= 60.0f && move_x == 0.0f &&
-                            move_z == 0.0f) {
+                        if (SetBattleStyle(selectMapNo, 0) <= 60.0f && move_x == 0.0f && move_z == 0.0f) {
                             BtActStatus.motion_no = 0x12;
                         }
                         if (lockOnTargetFlag != 0) {
-                            CCharacter *locked = &NowMonstorUnit->chara[lockOnTargetNo][0];
+                            CCharacter   *locked = &NowMonstorUnit->chara[lockOnTargetNo][0];
                             sceVu0FVECTOR target;
-                            float face;
+                            float         face;
 
                             locked->GetPosition(target);
                             atan2f(pos[0] - target[0], pos[2] - target[2]);
@@ -3368,7 +3165,7 @@ void MoveChara(void) {
                             if (BtActStatus.action_on == 0) {
                                 float turn;
                                 float rate;
-                                int motion;
+                                int   motion;
 
                                 BtActStatus.motion_no = 0x12;
                                 CharaMain.motion_type.motion_info[18].speed = 0.2f;
@@ -3406,13 +3203,10 @@ void MoveChara(void) {
                                 }
                             }
                         }
-                        if (UserStatus->cur_chara == 1 && BtActStatus.action_no == 0xC &&
-                            (move_x != 0.0f || move_z != 0.0f)) {
-                            CharaFrame->SetRotation(
-                                0.0f, unitRotation(CharaFrame, atan2f(move_x, move_z)), 0.0f);
+                        if (UserStatus->cur_chara == 1 && BtActStatus.action_no == 0xC && (move_x != 0.0f || move_z != 0.0f)) {
+                            CharaFrame->SetRotation(0.0f, unitRotation(CharaFrame, atan2f(move_x, move_z)), 0.0f);
                         }
-                        if (GamePad.On(8) != 0 && lockOnTargetFlag != 0 && BtActStatus.movement_locked == 0 &&
-                            BtActStatus.in_water == 0 && BtActStatus.action_on == 0) {
+                        if (GamePad.On(8) != 0 && lockOnTargetFlag != 0 && BtActStatus.movement_locked == 0 && BtActStatus.in_water == 0 && BtActStatus.action_on == 0) {
                             BtActStatus.action_on = 6;
                             BtActStatus.action_no = 8;
                             driveNoInterpolate = 1;
@@ -3427,8 +3221,7 @@ void MoveChara(void) {
                             if (BtActStatus.action_no == 8) {
                                 BtActStatus.motion_no = 8;
                                 end = CharaMain.motion_type.motion_info[8].end;
-                                if (CharaMain.motion_type.state.time >= end - 1.0f &&
-                                    CharaMain.motion_type.state.time < end) {
+                                if (CharaMain.motion_type.state.time >= end - 1.0f && CharaMain.motion_type.state.time < end) {
                                     BtActStatus.action_no = 9;
                                     BtActStatus.motion_no = 9;
                                     driveNoInterpolate = 1;
@@ -3446,8 +3239,7 @@ void MoveChara(void) {
                             if (BtActStatus.action_no == 0xA) {
                                 BtActStatus.motion_no = 0xA;
                                 end = CharaMain.motion_type.motion_info[10].end;
-                                if (CharaMain.motion_type.state.time >= end - 1.5f &&
-                                    CharaMain.motion_type.state.time < end) {
+                                if (CharaMain.motion_type.state.time >= end - 1.5f && CharaMain.motion_type.state.time < end) {
                                     BtActStatus.action_on = 0;
                                 }
                             }
@@ -3469,14 +3261,11 @@ void MoveChara(void) {
                             EdFadeOut(0x78, r, g, b);
                             BtEventInfo.fade_on_start = 0;
                             gameTask = 0x226;
-                        } else if (UserStatus->CheckLife() != 0 && BtActStatus.action_on == 0 &&
-                                   (script = NowMonstorUnit->CheckEventFlag2()) != -1) {
+                        } else if (UserStatus->CheckLife() != 0 && BtActStatus.action_on == 0 && (script = NowMonstorUnit->CheckEventFlag2()) != -1) {
                             BtEventInfo.script_no = script;
                             BtEventInfo.ext_memory = 0;
                             gameTask = 0x190;
-                        } else if (UserStatus->CheckLife() != 0 && BtActStatus.action_on == 0 &&
-                                   NowMonstorUnit->GetMonstorNum() <= 0 &&
-                                   (script = BtEventInfo.clear_script_no) != -1) {
+                        } else if (UserStatus->CheckLife() != 0 && BtActStatus.action_on == 0 && NowMonstorUnit->GetMonstorNum() <= 0 && (script = BtEventInfo.clear_script_no) != -1) {
                             BtEventInfo.script_no = script;
                             BtEventInfo.ext_memory = BtEventInfo.clear_script_ext_memory;
                             BtEventInfo.clear_script_no = -1;
@@ -3485,7 +3274,7 @@ void MoveChara(void) {
                             gameTask = 0x190;
                         } else {
                             MAP_TRAP_CIRCLE *trap = NowDngMap->DistTrapCircle();
-                            int event;
+                            int              event;
 
                             if (trap != NULL) {
                                 SetSystemMes(Run_TrapCircle(trap) + 0x12C, 0x96, 8, 0, NULL, NULL);
@@ -3543,11 +3332,11 @@ void MoveChara(void) {
                                 }
                                 if (BtActStatus.can_act != 0 && BtActStatus.movement_locked == 0) {
                                     CDungeonEventData *state = NowEventMan->SearchDataSlotPos2(pos);
-                                    sceVu0FVECTOR slot_pos;
-                                    sceVu0FVECTOR slot_dir;
+                                    sceVu0FVECTOR      slot_pos;
+                                    sceVu0FVECTOR      slot_dir;
 
                                     if (state != NULL && state->event->chara_no != -1) {
-                                        s8 chara = UserStatus->cur_chara;
+                                        s8  chara = UserStatus->cur_chara;
                                         int done = state->chara_done;
 
                                         if (done == chara) {
@@ -3566,8 +3355,7 @@ void MoveChara(void) {
                                         sceVu0CopyVector(BtEventInfo.direction, slot_dir);
                                     }
                                     if (BtEventInfo.script_no != -1) {
-                                        if (state->event->chara_no != -1 &&
-                                            GamePad.Down(PadInput_OK) != 0) {
+                                        if (state->event->chara_no != -1 && GamePad.Down(PadInput_OK) != 0) {
                                             if (UserStatus->cur_chara == state->event->chara_no) {
                                                 state->chara_done = UserStatus->cur_chara;
                                             }
@@ -3605,8 +3393,7 @@ void MoveChara(void) {
                                         BtActStatus.gauge_exhausted = 0;
                                         ResetMovePower();
                                     }
-                                    if (GamePad.Down(PadInput_OK | 0x80) != 0 &&
-                                        BtActStatus.movement_locked == 0 && BtActStatus.in_water != 0) {
+                                    if (GamePad.Down(PadInput_OK | 0x80) != 0 && BtActStatus.movement_locked == 0 && BtActStatus.in_water != 0) {
                                         SetSystemMes(0x47, 0x5A, 8, 0, NULL, NULL);
                                         DngMessMan.hide_timer = 0x5A;
                                         autoCamTrial();
@@ -3618,18 +3405,13 @@ void MoveChara(void) {
                                         BtActStatus.action_gauge = 100.0f;
                                         BtActStatus.gauge_exhausted = 0;
                                         ResetMovePower();
-                                    } else if (GamePad.Down(PadInput_OK) != 0 &&
-                                               BtActStatus.ground_kind == 0xA &&
-                                               BtActStatus.movement_locked == 0 &&
-                                               UserStatus->cur_chara == 5) {
+                                    } else if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.ground_kind == 0xA && BtActStatus.movement_locked == 0 && UserStatus->cur_chara == 5) {
                                         SetSystemMes(0x50, 0x5A, 8, 0, NULL, NULL);
                                         DngMessMan.hide_timer = 0x5A;
                                         autoCamTrial();
                                     } else {
                                         BtEventItemNo = -1;
-                                        if ((iventActive = NowDngMap->GetActiveIvent(CharaFrame)) != -1 &&
-                                            BtActStatus.can_act != 0 &&
-                                            BtActStatus.movement_locked == 0) {
+                                        if ((iventActive = NowDngMap->GetActiveIvent(CharaFrame)) != -1 && BtActStatus.can_act != 0 && BtActStatus.movement_locked == 0) {
                                             iventInfo = NowDngMap->events[iventActive].kind;
                                             BtEventInfo.event_marker = 1;
                                             iventMarker = 1;
@@ -3638,8 +3420,7 @@ void MoveChara(void) {
                                             iventInfo = -1;
                                             iventMarker = 0;
                                         }
-                                        if (GamePad.Down(PadInput_OK) != 0 &&
-                                            BtActStatus.movement_locked == 0 && BtActStatus.event_block_frames == 0) {
+                                        if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.movement_locked == 0 && BtActStatus.event_block_frames == 0) {
                                             if (iventActive != -1 && BtActStatus.recoil_frames == 0) {
                                                 int done = 0;
 
@@ -3658,13 +3439,9 @@ void MoveChara(void) {
                                                                 sceVu0FVECTOR box_dir = {0.0f, 0.0f,
                                                                                          0.0f, 1.0f};
 
-                                                                sceVu0CopyVector(
-                                                                    box_pos,
-                                                                    NowDngMap->events[iventActive].pos);
-                                                                sceVu0CopyVector(BtEventInfo.position,
-                                                                                 box_pos);
-                                                                sceVu0CopyVector(BtEventInfo.direction,
-                                                                                 box_dir);
+                                                                sceVu0CopyVector(box_pos, NowDngMap->events[iventActive].pos);
+                                                                sceVu0CopyVector(BtEventInfo.position, box_pos);
+                                                                sceVu0CopyVector(BtEventInfo.direction, box_dir);
                                                                 NowDngMap->events[iventActive].kind = -1;
                                                                 BtEventInfo.script_no = 0x10;
                                                                 BtEventInfo.ext_memory = 0;
@@ -3708,7 +3485,7 @@ void MoveChara(void) {
                                                     case 8:
                                                         entry_no = NowDngMap->events[iventActive].index;
 
-                                                        int item_no = NowDngMap->boxes[entry_no].item_no;
+                                                        int           item_no = NowDngMap->boxes[entry_no].item_no;
                                                         CMonstorUnit *unit = NowMonstorUnit;
 
                                                         if (item_no >= 0 && item_no < 0x11) {
@@ -3787,17 +3564,14 @@ void MoveChara(void) {
                                                 }
                                             }
                                             BtBySpeedFlag = 0;
-                                            if (GamePad.On(0x80) != 0 && BtActStatus.movement_locked == 0 &&
-                                                lockOnTargetFlag == 0) {
+                                            if (GamePad.On(0x80) != 0 && BtActStatus.movement_locked == 0 && lockOnTargetFlag == 0) {
                                                 if (DebugStatus[5] == 0) {
                                                     BtBySpeedFlag = 1;
                                                 }
-                                                if (BtActStatus.action_on == 0 && gameTask != 0xF0 &&
-                                                    BtActStatus.can_act != 0) {
+                                                if (BtActStatus.action_on == 0 && gameTask != 0xF0 && BtActStatus.can_act != 0) {
                                                     s16 *slots = UserStatus->active_item;
 
-                                                    if (activeItem.CheckStatusType() == 3 &&
-                                                        slots[itemNowSel + 3] > 0) {
+                                                    if (activeItem.CheckStatusType() == 3 && slots[itemNowSel + 3] > 0) {
                                                         // A running item that
                                                         // boosts is spent by the
                                                         // frame while the button
@@ -3810,39 +3584,31 @@ void MoveChara(void) {
                                                         if (left <= 0) {
                                                             DelActiveItem(itemNowSel);
                                                             DngMessMan.message = 0xB6;
-                                                            DngMessMan.insert_mes_1 =
-                                                                GetCommonItemDataSystemMsg(-1);
+                                                            DngMessMan.insert_mes_1 = GetCommonItemDataSystemMsg(-1);
                                                             DngMessMan.timer = 0xB4;
                                                             DngMessMan.steev_window = 0;
                                                         }
                                                     }
                                                 }
                                             }
-                                            if (GamePad.Down(0x80) != 0 && BtActStatus.movement_locked == 0 &&
-                                                BtActStatus.action_on == 0 && gameTask != 0xF0 &&
-                                                BtActStatus.can_act != 0) {
-                                                int used;
+                                            if (GamePad.Down(0x80) != 0 && BtActStatus.movement_locked == 0 && BtActStatus.action_on == 0 && gameTask != 0xF0 && BtActStatus.can_act != 0) {
+                                                int  used;
                                                 s16 *slots = UserStatus->active_item;
 
                                                 used = checkItemUsed(itemNowSel - 1);
 
-                                                if (activeItem.CheckStatusType() == 2 && used != 0 &&
-                                                    slots[itemNowSel + 3] > 0) {
+                                                if (activeItem.CheckStatusType() == 2 && used != 0 && slots[itemNowSel + 3] > 0) {
                                                     CMonUnitHold = 1;
                                                     CEffectHold = 1;
                                                     BtActStatus.action_on = 3;
                                                     BtActStatus.can_act = 0;
                                                     BtActStatus.action_busy = 1;
                                                     if (activeItem.model[8] == -1) {
-                                                        activeItem.model[8] =
-                                                            activeItem.models->SetHandModel(
-                                                                activeItem.model[activeItem.now]);
+                                                        activeItem.model[8] = activeItem.models->SetHandModel(activeItem.model[activeItem.now]);
                                                     }
                                                 }
-                                                if (activeItem.CheckStatusType() == 4 && used != 0 &&
-                                                    slots[itemNowSel + 3] > 0) {
-                                                    setUnitAmbientAnime(64.0f, 1.0f, 0.0f, 122.0f,
-                                                                        208.0f);
+                                                if (activeItem.CheckStatusType() == 4 && used != 0 && slots[itemNowSel + 3] > 0) {
+                                                    setUnitAmbientAnime(64.0f, 1.0f, 0.0f, 122.0f, 208.0f);
                                                     SndSePlay(0x13, -1, 0);
 
                                                     s32 taken = activeItem.item[activeItem.now];
@@ -3860,10 +3626,7 @@ void MoveChara(void) {
                                                     }
                                                     SndSePlay(0x1B8, -1, 0);
                                                 }
-                                                if (activeItem.CheckStatusType() == 1 &&
-                                                    BtActStatus.can_act != 0 && used != 0 &&
-                                                    BtActStatus.action_on != 2 &&
-                                                    slots[itemNowSel + 3] > 0) {
+                                                if (activeItem.CheckStatusType() == 1 && BtActStatus.can_act != 0 && used != 0 && BtActStatus.action_on != 2 && slots[itemNowSel + 3] > 0) {
                                                     printf("throw !!\n");
                                                     if (lockOnTargetFlag == 0) {
                                                         sceVu0FVECTOR hand;
@@ -3873,18 +3636,14 @@ void MoveChara(void) {
                                                         BombInfo.throw_step = -1;
                                                         sceVu0CopyVector(hand, CharaMain.pos);
                                                         getCharacterVector(BombInfo.pos, 0.0f);
-                                                        BombInfo.pos[0] +=
-                                                            hand[0] + 30.0f * BombInfo.pos[0];
+                                                        BombInfo.pos[0] += hand[0] + 30.0f * BombInfo.pos[0];
                                                         BombInfo.pos[1] = hand[1];
-                                                        BombInfo.pos[2] +=
-                                                            hand[2] + 30.0f * BombInfo.pos[2];
+                                                        BombInfo.pos[2] += hand[2] + 30.0f * BombInfo.pos[2];
                                                         BtActStatus.motion_no = 0x1A;
                                                         BtActStatus.can_act = 0;
                                                         BtActStatus.action_busy = 1;
                                                         if (activeItem.model[8] == -1) {
-                                                            activeItem.model[8] =
-                                                                activeItem.models->SetHandModel(
-                                                                    activeItem.model[activeItem.now]);
+                                                            activeItem.model[8] = activeItem.models->SetHandModel(activeItem.model[activeItem.now]);
                                                         }
                                                     } else {
                                                         BombInfo.throw_step = 1;
@@ -3893,21 +3652,17 @@ void MoveChara(void) {
                                                         BtActStatus.can_act = 0;
                                                         BtActStatus.action_busy = 1;
                                                         if (activeItem.model[8] == -1) {
-                                                            activeItem.model[8] =
-                                                                activeItem.models->SetHandModel(
-                                                                    activeItem.model[activeItem.now]);
+                                                            activeItem.model[8] = activeItem.models->SetHandModel(activeItem.model[activeItem.now]);
                                                         }
                                                     }
                                                 }
                                             }
                                             {
-                                                CDungeonEventData *state =
-                                                    NowEventMan->SearchDataSlotPos(pos);
-                                                sceVu0FVECTOR slot_pos;
-                                                sceVu0FVECTOR slot_dir;
+                                                CDungeonEventData *state = NowEventMan->SearchDataSlotPos(pos);
+                                                sceVu0FVECTOR      slot_pos;
+                                                sceVu0FVECTOR      slot_dir;
 
-                                                if (state != NULL && BtActStatus.can_act != 0 &&
-                                                    state->event->chara_no != -1) {
+                                                if (state != NULL && BtActStatus.can_act != 0 && state->event->chara_no != -1) {
                                                     BtEventInfo.script_no = -1;
                                                     if (state->event->script_no != -1) {
                                                         BtEventInfo.script_no = state->event->script_no;
@@ -3938,12 +3693,10 @@ void MoveChara(void) {
                                                     if (BtActStatus.action_on == 1) {
                                                         int slow = 0;
 
-                                                        if (BtActStatus.action_no == 0xE &&
-                                                            UserStatus->cur_chara == 0) {
+                                                        if (BtActStatus.action_no == 0xE && UserStatus->cur_chara == 0) {
                                                             slow = 1;
                                                         }
-                                                        if (BtActStatus.action_no == 0xD &&
-                                                            UserStatus->cur_chara == 2) {
+                                                        if (BtActStatus.action_no == 0xD && UserStatus->cur_chara == 2) {
                                                             slow = 1;
                                                         }
                                                         if (slow != 0) {
@@ -3979,32 +3732,24 @@ void MoveChara(void) {
                                                     }
                                                     BtCheckDamageProc();
                                                     if (BtActStatus.action_on == 4) {
-                                                        float end =
-                                                            CharaMain.motion_type.motion_info[4].end;
+                                                        float end = CharaMain.motion_type.motion_info[4].end;
 
-                                                        if (CharaMain.motion_type.state.time >=
-                                                                end - 2.0f &&
-                                                            CharaMain.motion_type.state.time <= end) {
+                                                        if (CharaMain.motion_type.state.time >= end - 2.0f && CharaMain.motion_type.state.time <= end) {
                                                             BtActStatus.action_on = 0;
                                                         } else {
                                                             BtActStatus.motion_no = 4;
                                                         }
                                                     }
                                                     if (BtActStatus.action_on == 5) {
-                                                        float end =
-                                                            CharaMain.motion_type.motion_info[6].end;
+                                                        float end = CharaMain.motion_type.motion_info[6].end;
 
-                                                        if (CharaMain.motion_type.state.time >=
-                                                                end - 2.0f &&
-                                                            CharaMain.motion_type.state.time <= end) {
+                                                        if (CharaMain.motion_type.state.time >= end - 2.0f && CharaMain.motion_type.state.time <= end) {
                                                             BtActStatus.action_on = 0;
                                                         } else {
                                                             BtActStatus.motion_no = 6;
                                                         }
                                                     }
-                                                    if (UserStatus->CheckLife() <= 0 &&
-                                                        BtActStatus.invincible_frames == 0 &&
-                                                        BtActStatus.action_on != 5) {
+                                                    if (UserStatus->CheckLife() <= 0 && BtActStatus.invincible_frames == 0 && BtActStatus.action_on != 5) {
                                                         UserStatus->hp[UserStatus->cur_chara] = 0;
                                                         DeadKeyWait = 0x168;
                                                         DeadKeyStartWait = 0x3C;
@@ -4035,8 +3780,7 @@ void MoveChara(void) {
                                                                 }
                                                             }
                                                         }
-                                                        if (BtActStatus.jumping > 0 &&
-                                                            BtActStatus.jumping == 1) {
+                                                        if (BtActStatus.jumping > 0 && BtActStatus.jumping == 1) {
                                                             velo__2[0] += BtActStatus.jump_velocity_x;
                                                             velo__2[1] += BtActStatus.jump_velocity_y;
                                                             velo__2[2] += BtActStatus.jump_velocity_z;
@@ -4045,13 +3789,10 @@ void MoveChara(void) {
                                                         if (BtActStatus.move_power > 0.0f) {
                                                             sceVu0FVECTOR push;
 
-                                                            sceVu0ScaleVectorXYZ(
-                                                                push, BtActStatus.move_vector,
-                                                                BtActStatus.move_power);
+                                                            sceVu0ScaleVectorXYZ(push, BtActStatus.move_vector, BtActStatus.move_power);
                                                             velo__2[0] += push[0];
                                                             velo__2[2] += push[2];
-                                                            BtActStatus.move_power -=
-                                                                BtActStatus.move_power_decay;
+                                                            BtActStatus.move_power -= BtActStatus.move_power_decay;
                                                             if (BtActStatus.move_power <= 0.0f) {
                                                                 BtActStatus.move_power = 0.0f;
                                                             }
@@ -4062,14 +3803,13 @@ void MoveChara(void) {
                                                                 sceVu0FVECTOR moved;
                                                                 MoveCheckInfo info;
                                                                 sceVu0FVECTOR parts_pos;
-                                                                CBoxVu0 bound;
-                                                                CCPoly foot;
-                                                                CCPoly *polys;
-                                                                int mode;
+                                                                CBoxVu0       bound;
+                                                                CCPoly        foot;
+                                                                CCPoly       *polys;
+                                                                int           mode;
 
                                                                 WorkBuffer__2->used = 0;
-                                                                polys = (CCPoly *) WorkBuffer__2->Alloc(
-                                                                    0x7D0);
+                                                                polys = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
                                                                 bound.max[0] = 20.0f + pos[0];
                                                                 bound.max[1] = 20.0f + pos[1];
                                                                 bound.max[2] = 20.0f + pos[2];
@@ -4085,24 +3825,17 @@ void MoveChara(void) {
                                                                 int i = 0;
 
                                                                 colPolyNum = 0;
-                                                                for (; NowDngMap->parts[i].frame[0] != NULL;
-                                                                     i++) {
+                                                                for (; NowDngMap->parts[i].frame[0] != NULL; i++) {
                                                                     int turn;
 
-                                                                    collision = i == -1
-                                                                                    ? NULL
-                                                                                    : NowDngMap->parts[i]
-                                                                                          .collision;
+                                                                    collision = i == -1 ? NULL : NowDngMap->parts[i].collision;
                                                                     if (collision != NULL) {
-                                                                        CDungeonParts *part =
-                                                                            &NowDngMap->parts[i];
+                                                                        CDungeonParts *part = &NowDngMap->parts[i];
 
-                                                                        sceVu0CopyVector(parts_pos,
-                                                                                         part->frame_offset[0]);
+                                                                        sceVu0CopyVector(parts_pos, part->frame_offset[0]);
 
-                                                                        CDungeonMap *map = NowDngMap;
-                                                                        CDungeonParts *turn_part =
-                                                                            &map->parts[i];
+                                                                        CDungeonMap   *map = NowDngMap;
+                                                                        CDungeonParts *turn_part = &map->parts[i];
 
                                                                         turn = (int) turn_part->frame_turn[0];
                                                                         turn += turn_part->collision_turn;
@@ -4116,37 +3849,25 @@ void MoveChara(void) {
 
                                                                         collision->SetRotation(0.0f, rot, 0.0f);
                                                                         collision->SetPosition(parts_pos);
-                                                                        colPolyNum +=
-                                                                            collision->PickUpNearPoly(
-                                                                                &polys[colPolyNum],
-                                                                                bound);
+                                                                        colPolyNum += collision->PickUpNearPoly(&polys[colPolyNum], bound);
                                                                     }
                                                                 }
                                                                 for (entry_no = 0; entry_no < 24; entry_no++) {
                                                                     if (NowDngMap->boxes[entry_no].used != 0) {
                                                                         collision = NowDngMap->box_collision_model;
 
-                                                                        collision->SetPosition(
-                                                                            NowDngMap->boxes[entry_no].pos);
-                                                                        colPolyNum +=
-                                                                            collision->PickUpNearPoly(
-                                                                                &polys[colPolyNum],
-                                                                                bound);
+                                                                        collision->SetPosition(NowDngMap->boxes[entry_no].pos);
+                                                                        colPolyNum += collision->PickUpNearPoly(&polys[colPolyNum], bound);
                                                                     }
                                                                 }
-                                                                colPolyNum = NowDngMap->CreateCollision(
-                                                                    polys, bound, colPolyNum);
-                                                                colPolyNum =
-                                                                    NowDranMapField->AddCollision(
-                                                                        polys, colPolyNum, bound);
-                                                                NowMonstorUnit->MoveCheck(
-                                                                    pos, velo__2, lockOnTargetFlag);
+                                                                colPolyNum = NowDngMap->CreateCollision(polys, bound, colPolyNum);
+                                                                colPolyNum = NowDranMapField->AddCollision(polys, colPolyNum, bound);
+                                                                NowMonstorUnit->MoveCheck(pos, velo__2, lockOnTargetFlag);
                                                                 mode = 1;
                                                                 if (UserStatus->cur_chara == 5) {
                                                                     mode = 8;
                                                                 }
-                                                                MoveCheck(pos, velo__2, moved, &info,
-                                                                          polys, colPolyNum, mode);
+                                                                MoveCheck(pos, velo__2, moved, &info, polys, colPolyNum, mode);
                                                                 if (colPolyNum >= 0x190) {
                                                                     printf("er -> %d\n", colPolyNum);
                                                                 }
@@ -4164,18 +3885,17 @@ void MoveChara(void) {
                                                                     BtActStatus.ground_kind = foot.attr.ground_kind;
                                                                 }
                                                                 if (info.ground_found != 0) {
-                                                                    BtActStatus.ground_height =
-                                                                        pos[1] - info.ground_point[1];
+                                                                    BtActStatus.ground_height = pos[1] - info.ground_point[1];
                                                                 }
                                                             } else {
                                                                 sceVu0FVECTOR moved;
                                                                 MoveCheckInfo info;
-                                                                CBoxVu0 bound;
-                                                                CCPoly foot;
-                                                                int mode;
-                                                                int x;
-                                                                int z;
-                                                                CFrame *collision;
+                                                                CBoxVu0       bound;
+                                                                CCPoly        foot;
+                                                                int           mode;
+                                                                int           x;
+                                                                int           z;
+                                                                CFrame       *collision;
 
                                                                 WorkBuffer__2->used = 0;
                                                                 CCPoly *polys = (CCPoly *) WorkBuffer__2->Alloc(0x7D0);
@@ -4189,27 +3909,18 @@ void MoveChara(void) {
                                                                 for (z = 0; z < 20; z++) {
                                                                     for (x = 0; x < 20; x++) {
                                                                         CDungeonMap *cmap = NowDngMap;
-                                                                        int parts_no =
-                                                                            cmap->cells[x + z * 20]
-                                                                                .parts_no;
-                                                                        MAP_CELL *cell;
-                                                                        int turn;
+                                                                        int          parts_no = cmap->cells[x + z * 20]
+                                                                                                    .parts_no;
+                                                                        MAP_CELL    *cell;
+                                                                        int          turn;
 
-                                                                        collision =
-                                                                            parts_no == -1
-                                                                                ? NULL
-                                                                                : NowDngMap
-                                                                                      ->parts[parts_no]
-                                                                                      .collision;
+                                                                        collision = parts_no == -1 ? NULL : NowDngMap->parts[parts_no].collision;
                                                                         cell = &NowDngMap
                                                                                     ->cells[x + z * 20];
-                                                                        if (selectMapNo == 5 &&
-                                                                            parts_no >= 0x28 &&
-                                                                            parts_no < 0x2C) {
+                                                                        if (selectMapNo == 5 && parts_no >= 0x28 && parts_no < 0x2C) {
                                                                             cell->camera_dist -= 160.0f;
                                                                         }
-                                                                        if (collision != NULL &&
-                                                                            cell->camera_dist <= 240.0f) {
+                                                                        if (collision != NULL && cell->camera_dist <= 240.0f) {
                                                                             int dir = NowDngMap->cells[x + z * 20].direction;
                                                                             int base = parts_no == -1 ? 0 : NowDngMap->parts[parts_no].collision_turn;
 
@@ -4221,46 +3932,30 @@ void MoveChara(void) {
                                                                             if (turn == 3) {
                                                                                 turn = -1;
                                                                             }
-                                                                            float rot = 3.1415927f *
-                                                                                        (-90.0f * turn) / 180.0f;
+                                                                            float rot = 3.1415927f * (-90.0f * turn) / 180.0f;
 
-                                                                            collision->SetRotation(0.0f, rot,
-                                                                                                   0.0f);
-                                                                            collision->SetPosition(
-                                                                                160.0f * x, 0.0f,
-                                                                                160.0f * z);
-                                                                            colPolyNum +=
-                                                                                collision
-                                                                                    ->PickUpNearPoly(
-                                                                                        &polys
-                                                                                            [colPolyNum],
-                                                                                        bound);
+                                                                            collision->SetRotation(0.0f, rot, 0.0f);
+                                                                            collision->SetPosition(160.0f * x, 0.0f, 160.0f * z);
+                                                                            colPolyNum += collision
+                                                                                              ->PickUpNearPoly(&polys[colPolyNum], bound);
                                                                         }
                                                                     }
                                                                 }
                                                                 for (int i = 0; i < 24; i++) {
                                                                     if (NowDngMap->boxes[i].used != 0) {
-                                                                        collision =
-                                                                            NowDngMap->box_collision_model;
+                                                                        collision = NowDngMap->box_collision_model;
 
-                                                                        collision->SetPosition(
-                                                                            NowDngMap->boxes[i].pos);
-                                                                        colPolyNum +=
-                                                                            collision->PickUpNearPoly(
-                                                                                &polys[colPolyNum],
-                                                                                bound);
+                                                                        collision->SetPosition(NowDngMap->boxes[i].pos);
+                                                                        colPolyNum += collision->PickUpNearPoly(&polys[colPolyNum], bound);
                                                                     }
                                                                 }
-                                                                colPolyNum = NowDngMap->CreateCollision(
-                                                                    polys, bound, colPolyNum);
-                                                                NowMonstorUnit->MoveCheck(
-                                                                    pos, velo__2, lockOnTargetFlag);
+                                                                colPolyNum = NowDngMap->CreateCollision(polys, bound, colPolyNum);
+                                                                NowMonstorUnit->MoveCheck(pos, velo__2, lockOnTargetFlag);
                                                                 mode = 1;
                                                                 if (UserStatus->cur_chara == 5) {
                                                                     mode = 8;
                                                                 }
-                                                                MoveCheck(pos, velo__2, moved, &info,
-                                                                          polys, colPolyNum, mode);
+                                                                MoveCheck(pos, velo__2, moved, &info, polys, colPolyNum, mode);
                                                                 if (colPolyNum >= 0x190) {
                                                                     printf("er -> %d\n", colPolyNum);
                                                                 }
@@ -4278,8 +3973,7 @@ void MoveChara(void) {
                                                                     BtActStatus.ground_kind = foot.attr.ground_kind;
                                                                 }
                                                                 if (info.ground_found != 0) {
-                                                                    BtActStatus.ground_height =
-                                                                        pos[1] - info.ground_point[1];
+                                                                    BtActStatus.ground_height = pos[1] - info.ground_point[1];
                                                                 }
                                                             }
                                                         } else {
@@ -4290,12 +3984,11 @@ void MoveChara(void) {
                                                         if (UserStatus->cur_chara != 5) {
                                                             CharaMain.FootSoundEnable(1);
                                                             CharaMain.EventEnable(1);
-                                                            CharaMain.SetFootSoundID(
-                                                                BtActStatus.foot_sound);
+                                                            CharaMain.SetFootSoundID(BtActStatus.foot_sound);
                                                         } else {
-                                                            static int snd_cnt;
+                                                            static int  snd_cnt;
                                                             static char init;
-                                                            static int id_cnt;
+                                                            static int  id_cnt;
                                                             static char init2;
 
                                                             if (init == 0) {
@@ -4317,10 +4010,8 @@ void MoveChara(void) {
                                                             }
                                                         }
                                                         if (pos[1] <= -30.0f && selectMapNo == 0) {
-                                                            UserStatus->AddNowLife(
-                                                                UserStatus->cur_chara, -0x28, 10.0f);
-                                                            setUnitAmbientAnime(120.0f, 1.0f, 255.0f,
-                                                                                0.0f, 0.0f);
+                                                            UserStatus->AddNowLife(UserStatus->cur_chara, -0x28, 10.0f);
+                                                            setUnitAmbientAnime(120.0f, 1.0f, 255.0f, 0.0f, 0.0f);
                                                             ResetStatusInfo();
                                                             BtEventInfo.script_no = 5;
                                                             BtEventInfo.ext_memory = 0;
@@ -4329,14 +4020,10 @@ void MoveChara(void) {
                                                         } else {
                                                             float time;
 
-                                                            if (CharaMain.motion_type.state.time >=
-                                                                    (float) 0x12F &&
-                                                                CharaMain.motion_type.state.time <=
-                                                                    318.0f) {
+                                                            if (CharaMain.motion_type.state.time >= (float) 0x12F && CharaMain.motion_type.state.time <= 318.0f) {
                                                                 sceVu0FVECTOR run_pos;
 
-                                                                sceVu0CopyVector(run_pos,
-                                                                                 CharaFrame->position);
+                                                                sceVu0CopyVector(run_pos, CharaFrame->position);
                                                                 CRunFx__2.Set(run_pos);
                                                             }
                                                             if (BtActStatus.movement_locked == 0) {
@@ -4357,12 +4044,10 @@ void MoveChara(void) {
                                                                 }
                                                                 if (CharaMain.motion_no == 2) {
                                                                     if (DistVector(velo__2) >= 0.4f) {
-                                                                        if (time >= 38.0f &&
-                                                                            time <= 39.0f) {
+                                                                        if (time >= 38.0f && time <= 39.0f) {
                                                                             dust = 1;
                                                                         }
-                                                                        if (time >= 45.0f &&
-                                                                            time <= 46.0f) {
+                                                                        if (time >= 45.0f && time <= 46.0f) {
                                                                             dust = 1;
                                                                         }
                                                                     } else {
@@ -4372,8 +4057,7 @@ void MoveChara(void) {
                                                                 if (dust != 0) {
                                                                     sceVu0FVECTOR step_pos;
 
-                                                                    sceVu0CopyVector(step_pos,
-                                                                                     CharaFrame->position);
+                                                                    sceVu0CopyVector(step_pos, CharaFrame->position);
                                                                     if (UserStatus->cur_chara != 5) {
                                                                         CRunFx__2.Set(step_pos);
                                                                     }
@@ -4389,29 +4073,21 @@ void MoveChara(void) {
                                                             NowCamera__3->AddAngle(0.04f * -turn);
                                                             if (lockOnTargetFlag == 0) {
                                                                 if (GamePad.On(8) != 0) {
-                                                                    NowCamera__3->AddAngle(
-                                                                        -0.034906585f);
+                                                                    NowCamera__3->AddAngle(-0.034906585f);
                                                                 }
                                                                 if (GamePad.On(4) != 0) {
-                                                                    NowCamera__3->AddAngle(
-                                                                        0.034906585f);
+                                                                    NowCamera__3->AddAngle(0.034906585f);
                                                                 }
                                                             }
                                                             if (GamePad.On(1) != 0) {
                                                                 sceVu0FMATRIX look;
 
                                                                 CharaFrame->GetLWMatrix(look);
-                                                                NowCamera__3->SetAngle(
-                                                                    atan2f(look[2][0], look[2][2]) -
-                                                                    3.141592653589793);
+                                                                NowCamera__3->SetAngle(atan2f(look[2][0], look[2][2]) - 3.141592653589793);
                                                             }
-                                                            if (GamePad.Down(2) != 0 &&
-                                                                BtActStatus.recoil_frames == 0 &&
-                                                                BtActStatus.action_busy == 0) {
-                                                                oldCameraAngle =
-                                                                    NowCamera__3->GetAngle();
-                                                                oldCameraHeight =
-                                                                    NowCamera__3->GetHeight();
+                                                            if (GamePad.Down(2) != 0 && BtActStatus.recoil_frames == 0 && BtActStatus.action_busy == 0) {
+                                                                oldCameraAngle = NowCamera__3->GetAngle();
+                                                                oldCameraHeight = NowCamera__3->GetHeight();
                                                                 NowCamera__3->FollowOff();
                                                                 BtActStatus.player_visible = 0;
                                                                 viewMode__2 = 1;
@@ -4425,10 +4101,8 @@ void MoveChara(void) {
                                                                 BtActStatus.action_no = 0;
                                                                 LockOffTargte();
                                                                 ResetMovePower();
-                                                                if (ruby_effect_id != -1 &&
-                                                                    UserStatus->cur_chara == 3) {
-                                                                    NowMainEffect->OffEffect(
-                                                                        ruby_effect_id);
+                                                                if (ruby_effect_id != -1 && UserStatus->cur_chara == 3) {
+                                                                    NowMainEffect->OffEffect(ruby_effect_id);
                                                                     ruby_effect_id = -1;
                                                                 }
                                                                 gameTask = 0xA;
@@ -4438,24 +4112,18 @@ void MoveChara(void) {
                                                                 if (pos[1] < -100.0f) {
                                                                     pos[1] += 200.0f;
                                                                 }
-                                                                CharaFrame->SetPosition(pos[0], pos[1],
-                                                                                        pos[2]);
+                                                                CharaFrame->SetPosition(pos[0], pos[1], pos[2]);
                                                                 sceVu0CopyVector(follow, pos);
                                                                 follow[0] += 7.0f * ref_off[0];
-                                                                follow[1] +=
-                                                                    BtActStatus.camera_shake_offset +
-                                                                    (6.0f + (2.0f * ref_off[1] +
-                                                                             reference[1]));
+                                                                follow[1] += BtActStatus.camera_shake_offset + (6.0f + (2.0f * ref_off[1] + reference[1]));
                                                                 follow[2] += 7.0f * ref_off[2];
-                                                                NowCamera__3->SetFollow(
-                                                                    follow[0], follow[1], follow[2]);
+                                                                NowCamera__3->SetFollow(follow[0], follow[1], follow[2]);
                                                                 if (lockOnTargetFlag != 0) {
-                                                                    CCharacter *locked =
-                                                                        &NowMonstorUnit
-                                                                             ->chara[lockOnTargetNo][0];
+                                                                    CCharacter   *locked = &NowMonstorUnit
+                                                                                                ->chara[lockOnTargetNo][0];
                                                                     sceVu0FVECTOR to_target;
                                                                     sceVu0FVECTOR target;
-                                                                    float dist;
+                                                                    float         dist;
 
                                                                     locked->GetPosition(target);
                                                                     dist = DistVector(target, pos);
@@ -4466,18 +4134,10 @@ void MoveChara(void) {
                                                                     if (dist >= 20.0f) {
                                                                         dist = 20.0f;
                                                                     }
-                                                                    sceVu0Normalize(to_target,
-                                                                                    to_target);
-                                                                    sceVu0ScaleVectorXYZ(
-                                                                        to_target, to_target, dist);
+                                                                    sceVu0Normalize(to_target, to_target);
+                                                                    sceVu0ScaleVectorXYZ(to_target, to_target, dist);
                                                                     to_target[1] = 0.0f;
-                                                                    NowCamera__3->SetFollow(
-                                                                        pos[0] + to_target[0],
-                                                                        BtActStatus.camera_shake_offset +
-                                                                            (to_target[1] +
-                                                                             (6.0f + pos[1] +
-                                                                              reference[1])),
-                                                                        pos[2] + to_target[2]);
+                                                                    NowCamera__3->SetFollow(pos[0] + to_target[0], BtActStatus.camera_shake_offset + (to_target[1] + (6.0f + pos[1] + reference[1])), pos[2] + to_target[2]);
                                                                 }
                                                                 autoCamTrial();
                                                             }
@@ -4499,7 +4159,7 @@ void MoveChara(void) {
             break;
         case 0x226:
             if (EdFadeOutCheck() != 0) {
-                int i;
+                int           i;
                 CSHOT_EFFECT *effects = NowShotEffect->effect;
 
                 for (i = 0; i < 5; i++) {
@@ -4540,7 +4200,7 @@ void MoveChara(void) {
                 BtCashBuffer.used = 0;
             }
             if (BtEventInfo.ext_memory != 0) {
-                int i;
+                int           i;
                 CSHOT_EFFECT *effects;
 
                 printf("********** ext mem !!!\n");
@@ -4662,7 +4322,7 @@ void MoveChara(void) {
             }
             break;
         case 0xA0: {
-            int ura = BtUraDongeon;
+            int           ura = BtUraDongeon;
             CMonstorUnit *unit = NowMonstorUnit;
 
             unit->model_count = 0;
@@ -4681,7 +4341,7 @@ void MoveChara(void) {
                 RandomItem = &SubRandomItem;
                 NowMonstorUnit->CleanViewMonstor(BtUraDongeon);
 
-                int ura = BtUraDongeon;
+                int           ura = BtUraDongeon;
                 CMonstorUnit *unit_now = NowMonstorUnit;
 
                 unit_now->model_count = 0;
@@ -4777,8 +4437,7 @@ void MoveChara(void) {
                         if (atra_no != -1) {
                             int atra = UserStatus->atra_registry[selectMapNo][atra_no].id;
 
-                            getAtraToSaveData(atra, atra_no, SaveData, selectMapNo,
-                                              UserStatus->cur_floor);
+                            getAtraToSaveData(atra, atra_no, SaveData, selectMapNo, UserStatus->cur_floor);
                         }
                     }
                     driveStepHold = 0;
@@ -4831,7 +4490,7 @@ void MoveChara(void) {
             gameTask = 0x190;
             break;
         case 0xE3: {
-            int ura = BtUraDongeon;
+            int           ura = BtUraDongeon;
             CMonstorUnit *unit = NowMonstorUnit;
 
             unit->model_count = 0;
@@ -4849,7 +4508,7 @@ void MoveChara(void) {
             break;
         }
         case 0xE4: {
-            int ura = BtUraDongeon;
+            int           ura = BtUraDongeon;
             CMonstorUnit *unit = NowMonstorUnit;
 
             unit->model_count = 0;
@@ -4995,10 +4654,10 @@ void MoveChara(void) {
                     sceVu0FVECTOR moved;
                     MoveCheckInfo info;
                     sceVu0FVECTOR parts_pos;
-                    CBoxVu0 bound;
-                    CCPoly foot;
-                    CCPoly *polys;
-                    int mode;
+                    CBoxVu0       bound;
+                    CCPoly        foot;
+                    CCPoly       *polys;
+                    int           mode;
 
                     sceVu0CopyVector(pos, CharaMain.pos);
                     velo__2[2] = 0.0f;
@@ -5011,20 +4670,16 @@ void MoveChara(void) {
                     bound.min[0] = pos[0] - 20.0f;
                     bound.min[1] = pos[1] - 40.0f;
                     bound.min[2] = pos[2] - 20.0f;
-                    int i = 0;
-                    int offset;
+                    int          i = 0;
+                    int          offset;
                     unsigned int address;
 
                     colPolyNum = 0;
-                    for (; (address = (unsigned int) NowDngMap, offset = i * (int) sizeof(CDungeonParts),
-                           ((CDungeonMap *) (offset + address))->parts[0].frame[0] != NULL);
-                         i++) {
+                    for (; (address = (unsigned int) NowDngMap, offset = i * (int) sizeof(CDungeonParts), ((CDungeonMap *) (offset + address))->parts[0].frame[0] != NULL); i++) {
                         CFrame *collision;
-                        int turn;
+                        int     turn;
 
-                        collision = i == -1 ? NULL
-                                            : (address = (unsigned int) NowDngMap,
-                                               ((CDungeonMap *) (offset + address))->parts[0].collision);
+                        collision = i == -1 ? NULL : (address = (unsigned int) NowDngMap, ((CDungeonMap *) (offset + address))->parts[0].collision);
                         if (collision != NULL) {
                             CDungeonParts *part = &((CDungeonMap *) ((char *) NowDngMap + offset))->parts[0];
 
@@ -5077,22 +4732,19 @@ void MoveChara(void) {
                         leaving = 1;
                     }
                 }
-                if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.movement_locked == 0 &&
-                    BtActStatus.in_water != 0) {
+                if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.movement_locked == 0 && BtActStatus.in_water != 0) {
                     SetSystemMes(0x47, 0x5A, 8, 0, NULL, NULL);
                     DngMessMan.hide_timer = 0x5A;
                     hand_ok = 0;
                 }
-                if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.ground_kind == 0xA &&
-                    BtActStatus.movement_locked == 0 && UserStatus->cur_chara == 5) {
+                if (GamePad.Down(PadInput_OK) != 0 && BtActStatus.ground_kind == 0xA && BtActStatus.movement_locked == 0 && UserStatus->cur_chara == 5) {
                     SetSystemMes(0x50, 0x5A, 8, 0, NULL, NULL);
                     DngMessMan.hide_timer = 0x5A;
                     hand_ok = 0;
                 }
                 s8 who = UserStatus->cur_chara;
 
-                if ((UserStatus->cur_chara == 1 || who == 3 || who == 5) &&
-                    hand_ok != 0 && BtActStatus.movement_locked == 0) {
+                if ((UserStatus->cur_chara == 1 || who == 3 || who == 5) && hand_ok != 0 && BtActStatus.movement_locked == 0) {
                     float head = viewAngleH__2;
 
                     if (head - 3.1415927f <= -3.1415927f) {
@@ -5252,8 +4904,7 @@ void MoveChara(void) {
                     if (entry_no != 0) {
                         leaving = 1;
                     }
-                    if (GamePad.Down(2) != 0 || GamePad.Down(4) != 0 ||
-                        GamePad.Down(PadInput_NO) != 0 || leaving != 0) {
+                    if (GamePad.Down(2) != 0 || GamePad.Down(4) != 0 || GamePad.Down(PadInput_NO) != 0 || leaving != 0) {
                         sceVu0FVECTOR chara_rot;
 
                         CharaMainHandViewFlag = 0;
@@ -5550,12 +5201,10 @@ void MoveChara(void) {
 
                 float start = CharaMain.motion_type.motion_info[23].start;
                 float end = CharaMain.motion_type.motion_info[23].end;
-                if (CharaMain.motion_type.state.time >= 2.0f + start &&
-                    CharaMain.motion_type.state.time < 2.3f + start) {
+                if (CharaMain.motion_type.state.time >= 2.0f + start && CharaMain.motion_type.state.time < 2.3f + start) {
                     SndSePlay(0x1B1, -1, 0);
                 }
-                if (CharaMain.motion_type.state.time >= end - 2.0f &&
-                    CharaMain.motion_type.state.time <= end) {
+                if (CharaMain.motion_type.state.time >= end - 2.0f && CharaMain.motion_type.state.time <= end) {
                     CharaMain.motion_no = BtActStatus.motion_no;
                     CharaMain.motion_flags = 1;
                     CharaMain.motion_speed = -1.0f;
@@ -5711,12 +5360,12 @@ void MoveChara(void) {
     motionDrive();
 }
 
-void motionDrive(void) {
+void motionDrive() {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR rotation;
     sceVu0FVECTOR hand;
-    int chara = UserStatus->cur_chara;
-    int i;
+    int           chara = UserStatus->cur_chara;
+    int           i;
 
     if (BtAllDrawFlag == 0) {
         return;
@@ -5788,8 +5437,7 @@ void motionDrive(void) {
             }
         }
 
-        if (lockOnTargetFlag != 0 && UserStatus->cur_chara == 1 &&
-            CharaMainHandViewFlag == 0) {
+        if (lockOnTargetFlag != 0 && UserStatus->cur_chara == 1 && CharaMainHandViewFlag == 0) {
             CharaMain.motion_type.state.look_frame = (CFrameVu1 *) CharaFrame->SearchFrame("jnt2_1");
             sceVu0CopyVector(CharaMain.motion_type.state.look_position, BtActStatus.target_position);
             CharaMain.motion_type.state.look_at = 1;
@@ -5807,8 +5455,7 @@ void motionDrive(void) {
         }
     }
 
-    if ((CharaMainHandViewFlag != 0 && UserStatus->cur_chara == 1) ||
-        UserStatus->cur_chara == 3) {
+    if ((CharaMainHandViewFlag != 0 && UserStatus->cur_chara == 1) || UserStatus->cur_chara == 3) {
         sceVu0CopyVector(hand, CharaFrame->position);
 
         float height = CharaHeight(UserStatus);
@@ -5876,10 +5523,10 @@ void motionDrive(void) {
     if (BtEventMode == 0) {
         WEAPON_HAVE *weapon;
         CUserStatus *status;
-        s8 *slots;
-        s8 *check_slots;
-        s8 owner;
-        s8 check_owner;
+        s8          *slots;
+        s8          *check_slots;
+        s8           owner;
+        s8           check_owner;
 
         status = UserStatus;
         owner = check_owner = status->cur_chara;
@@ -5887,11 +5534,10 @@ void motionDrive(void) {
         check_slots = status->equipped_weapon_slot;
         weapon = &status->chara_weapons[owner][(s8) slots[owner]];
 
-        if (weapon->durability_f <= 10.0f &&
-            status->chara_weapons[check_owner][(s8) check_slots[check_owner]].item_no != defWeapon__6[(s8) owner]) {
-            static int warning_cnt;
+        if (weapon->durability_f <= 10.0f && status->chara_weapons[check_owner][(s8) check_slots[check_owner]].item_no != defWeapon__6[(s8) owner]) {
+            static int  warning_cnt;
             static char init;
-            int wait;
+            int         wait;
 
             if (init == 0) {
                 warning_cnt = 0;
@@ -5922,8 +5568,7 @@ void motionDrive(void) {
 
         float end = (float) Water_Splash.motion_type.motion_info[0].end;
 
-        if (Water_Splash.motion_type.state.time >= end - 0.5f &&
-            Water_Splash.motion_type.state.time < end) {
+        if (Water_Splash.motion_type.state.time >= end - 0.5f && Water_Splash.motion_type.state.time < end) {
             Water_Splash_actFlag = 0;
         }
     }
@@ -5972,21 +5617,20 @@ void motionDrive(void) {
         }
         collision->hit[i].radius += collision->hit[i].unk_40;
         if (collision->hit[i].scale_rate != 0.0f) {
-            sceVu0ScaleVectorXYZ(collision->hit[i].base_point, collision->hit[i].base_point,
-                                 collision->hit[i].scale_rate);
+            sceVu0ScaleVectorXYZ(collision->hit[i].base_point, collision->hit[i].base_point, collision->hit[i].scale_rate);
         }
     }
 
     if (StatusErrCheck(4) != 0 || StatusErrCheck(8) != 0) {
         CUserStatus *status = UserStatus;
-        s8 owner = status->cur_chara;
-        s16 *left = status->ailment_frames;
+        s8           owner = status->cur_chara;
+        s16         *left = status->ailment_frames;
 
         if (left[status->cur_chara] > 0) {
             left[owner]--;
 
             CUserStatus *now = UserStatus;
-            s8 who = now->cur_chara;
+            s8           who = now->cur_chara;
 
             if (now->ailment_frames[now->cur_chara] == 0) {
                 now->ailments[who] = 0;
@@ -6018,7 +5662,7 @@ void motionDrive(void) {
         }
 
         CUserStatus *status = UserStatus;
-        s8 *who_ref = &status->cur_chara;
+        s8          *who_ref = &status->cur_chara;
         if (status->cur_chara == 0) {
             if (BtActStatus.swinging == 0) {
                 gain *= 0.25f;
@@ -6081,10 +5725,10 @@ void motionDrive(void) {
     }
 
     CUserStatus *status = UserStatus;
-    s8 *healed_ref = &status->cur_chara;
-    float water_max = status->water_max[*healed_ref];
-    float water_now = status->water_now[*healed_ref];
-    static int heal_counter = 0;
+    s8          *healed_ref = &status->cur_chara;
+    float        water_max = status->water_max[*healed_ref];
+    float        water_now = status->water_now[*healed_ref];
+    static int   heal_counter = 0;
 
     heal_counter++;
     if (!(heal_counter < 240)) {
@@ -6128,8 +5772,7 @@ void motionDrive(void) {
 
         float end = (float) NewChangeFx.motion_type.motion_info[0].end;
 
-        if (NewChangeFx.motion_type.state.time >= end - 0.3f &&
-            NewChangeFx.motion_type.state.time < end) {
+        if (NewChangeFx.motion_type.state.time >= end - 0.3f && NewChangeFx.motion_type.state.time < end) {
             NewChangeFxFlag = 0;
         }
     }
@@ -6163,9 +5806,9 @@ void motionDrive(void) {
         BtActStatus.fast_camera_frames--;
     }
 
-    int picked_up = RandomItem->CheckPosition();
+    int          picked_up = RandomItem->CheckPosition();
     CUserStatus *collector = UserStatus;
-    int total = collector->money + picked_up;
+    int          total = collector->money + picked_up;
 
     if (!(total < 0xFFFF)) {
         collector->money = 0xFFFF;
@@ -6196,14 +5839,14 @@ void motionDrive(void) {
     HealEffect.Step();
 }
 
-void BtCleatRandomMap(void) {
-    CTexture *gold;
-    int i;
-    int item_slot;
-    int j;
-    int k;
+void BtCleatRandomMap() {
+    CTexture         *gold;
+    int               i;
+    int               item_slot;
+    int               j;
+    int               k;
     CDungeonEventMan *man;
-    CDungeonMap *map;
+    CDungeonMap      *map;
 
     NowDngMap = &MainDungeonMap;
     NowEventMan = &DngEventMan;
@@ -6323,7 +5966,7 @@ void BtCleatRandomMap(void) {
     BtEquipMasuisyou = 0;
 }
 
-void BtCleatFreeMap(void) {
+void BtCleatFreeMap() {
     int i;
     s32 map_no = MainDungeonMap.map_type;
 
@@ -6355,21 +5998,21 @@ void BtCleatFreeMap(void) {
     BtEquipMasuisyou = 0;
 }
 
-void BtArrengeMonstor(void) {
+void BtArrengeMonstor() {
     NowMonstorUnit->CleanViewMonstor(BtUraDongeon);
     NowMonstorUnit->ArrangementPos(&MainDungeonMap, 15, -1, 0);
 }
 
 void BtLoadMonstor(int ura) {
-    int count;
+    int             count;
     BT_ENEMY_FLOOR *layout;
-    int monster;
-    int i;
-    int slot;
+    int             monster;
+    int             i;
+    int             slot;
 
     MonstorModelBuffer.used = 0;
 
-    s32 ura_dungeon = BtUraDongeon;
+    s32           ura_dungeon = BtUraDongeon;
     CMonstorUnit *unit = NowMonstorUnit;
 
     unit->model_count = 0;
@@ -6412,8 +6055,7 @@ void BtLoadMonstor(int ura) {
         if (layout->monster[monster].monster_no == -1) {
             break;
         }
-        count += NowMonstorUnit->SetupBaseModel(count, layout->monster[monster].monster_no,
-                                                0x26, &MonstorModelBuffer);
+        count += NowMonstorUnit->SetupBaseModel(count, layout->monster[monster].monster_no, 0x26, &MonstorModelBuffer);
     }
     MemoryMapDump();
 }
@@ -6434,7 +6076,7 @@ void EquipReAttach(CCharacter *equipment, int held_out) {
 
 void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CFrame *hand;
-    int i;
+    int     i;
 
     NowWeapon = weapon;
     if (held_out != 0 && chara == 1) {
@@ -6470,10 +6112,9 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     SetWeaponColor();
 }
 
-void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data,
-                 int chara, int reload) {
-    int weapon_kind[6] = {1, 4, 6, 5, 10, 7};
-    int weapon_first[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
+void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data, int chara, int reload) {
+    int  weapon_kind[6] = {1, 4, 6, 5, 10, 7};
+    int  weapon_first[6] = {0x101, 0x12B, 0x13A, 0x14B, 0x15B, 0x16B};
     char weapon_name[64];
     char weapon_model_path[64];
     // The kind each character's weapon counts as; nothing reads it any more.
@@ -6491,16 +6132,14 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
 
     BtGetWeaponNamePath2(weapon_name, weapon_model_path, chara, 0);
     CrashWeapon.Initialize();
-    CrashWeapon.LoadPackData3(crash_data, weapon_model_path, &WeaponModelBuffer, 0x1D,
-                              &WeaponModelBuffer, 1, 0);
+    CrashWeapon.LoadPackData3(crash_data, weapon_model_path, &WeaponModelBuffer, 0x1D, &WeaponModelBuffer, 1, 0);
 
     BtGetWeaponNamePath2(weapon_name, weapon_model_path, chara, 1);
     DefaultWeapon.Initialize();
-    DefaultWeapon.LoadPackData3(default_data, weapon_model_path, &WeaponModelBuffer, 0x1D,
-                                &WeaponModelBuffer, 1, 0);
+    DefaultWeapon.LoadPackData3(default_data, weapon_model_path, &WeaponModelBuffer, 0x1D, &WeaponModelBuffer, 1, 0);
 
     CUserStatus *status = UserStatus;
-    s8 owner = status->cur_chara;
+    s8           owner = status->cur_chara;
 
     // The weapon's item number, counted from its character's first weapon.
     int model_no = status->chara_weapons[owner][status->equipped_weapon_slot[owner]].item_no;
@@ -6508,8 +6147,7 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     model_no -= weapon_first[chara];
     BtGetWeaponNamePath2(weapon_name, weapon_model_path, chara, model_no);
     MainWeapon.Initialize();
-    MainWeapon.LoadPackData3(main_data, weapon_model_path, &WeaponModelBuffer, 0x1D,
-                             &WeaponModelBuffer, 1, 0);
+    MainWeapon.LoadPackData3(main_data, weapon_model_path, &WeaponModelBuffer, 0x1D, &WeaponModelBuffer, 1, 0);
     EquipWeaponFrame(&MainWeapon, chara, CharaMainHandViewFlag);
 
     // The effect models take whatever the weapon models leave.
@@ -6526,10 +6164,9 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
     WEffectModelBuffer.used = 0;
 
     CUserStatus *equipped = UserStatus;
-    s8 chara_no = equipped->cur_chara;
+    s8           chara_no = equipped->cur_chara;
 
-    WEAPON_HAVE *have =
-        &equipped->chara_weapons[chara_no][equipped->equipped_weapon_slot[chara_no]];
+    WEAPON_HAVE *have = &equipped->chara_weapons[chara_no][equipped->equipped_weapon_slot[chara_no]];
 
     MenuWeaponSpSet(NowWeapon, have);
     BtActStatus.action_gauge = 100.0f;
@@ -6537,12 +6174,12 @@ void LoadWeapon2(unsigned int *crash_data, unsigned int *default_data, unsigned 
 }
 
 void SwordDmgCheck1(float amount, int kind) {
-    int broke;
+    int          broke;
     CUserStatus *status = UserStatus;
-    s8 chara = status->cur_chara;
+    s8           chara = status->cur_chara;
     WEAPON_HAVE *weapon = &status->chara_weapons[chara][status->equipped_weapon_slot[chara]];
-    float was = weapon->durability_f;
-    float warn = (float) (weapon->durability * 0.2);
+    float        was = weapon->durability_f;
+    float        warn = (float) (weapon->durability * 0.2);
 
     broke = BattleSubWeaponDmg(amount, kind);
 
@@ -6560,8 +6197,8 @@ void SwordDmgCheck1(float amount, int kind) {
         return;
     }
 
-    float spread[4] = {0.0f, 1.0f, 0.0f, 1.0f};
-    float offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    float         spread[4] = {0.0f, 1.0f, 0.0f, 1.0f};
+    float         offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     sceVu0FVECTOR world;
     sceVu0FVECTOR pos;
 
@@ -6604,7 +6241,7 @@ u8 wep_rgb[5][3] = {
 };
 // clang-format on
 
-void SetWeaponColor(void) {
+void SetWeaponColor() {
     u8 red, green, blue;
     s8 element = NowWeaponHave->best_elem;
 
@@ -6647,8 +6284,7 @@ BT_SHOT_EFFECT *Get_Main_EffectPtr(int chara, int form) {
             return MyEffectEntry_Tbl[8];
         case 5: {
             // Osmond draws from the weapon he has equipped rather than a form.
-            s32 weapon =
-                UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
+            s32 weapon = UserStatus->chara_weapons[chara][UserStatus->equipped_weapon_slot[chara]].item_no;
             int entry = 0;
 
             BtActStatus.gun_type = 0;
@@ -6715,24 +6351,21 @@ void MainChara_Effect(BT_SHOT_EFFECT *effect, unsigned int *data, int reload) {
     if (UserStatus->cur_chara == 5) {
         unsigned int *crash = ozumond_default_effect;
 
-        CharaMainEffectCrash.Entry2(MyEffectEntry_Tbl[9],
-                                    crash, 0x10, &WEffectModelBuffer, 6);
+        CharaMainEffectCrash.Entry2(MyEffectEntry_Tbl[9], crash, 0x10, &WEffectModelBuffer, 6);
     }
     if (UserStatus->cur_chara == 3) {
         unsigned int *crash = ozumond_default_effect;
 
-        CharaMainEffectCrash.Entry2(MyEffectEntry_Tbl[3],
-                                    crash, 0x10, &WEffectModelBuffer, 6);
+        CharaMainEffectCrash.Entry2(MyEffectEntry_Tbl[3], crash, 0x10, &WEffectModelBuffer, 6);
     }
     NowMainEffect = &CharaMainEffect;
 }
 
-void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned int *crash_data,
-                unsigned int *default_data, unsigned int *main_data) {
-    CFrameAttr frame_attr;
+void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned int *crash_data, unsigned int *default_data, unsigned int *main_data) {
+    CFrameAttr    frame_attr;
     sceVu0FVECTOR pos;
     sceVu0FVECTOR rotation;
-    int i;
+    int           i;
 
     frame_attr.fog_enable = 1;
     frame_attr.clip_enable = 0;
@@ -6756,8 +6389,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
         CharaMainTexAnim[i].Initialize();
     }
     CharaMain.InitializeTexAnime(CharaMainTexAnim, 64);
-    CharaMain.LoadPackData2(chara_data, "base.cfg", &CharaModelBuffer, 0x11,
-                            &CharaModelBuffer, 0);
+    CharaMain.LoadPackData2(chara_data, "base.cfg", &CharaModelBuffer, 0x11, &CharaModelBuffer, 0);
     NowWeapon = NULL;
     CharaHand.Initialize();
 
@@ -6766,8 +6398,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
 
         hand_attr.clip_enable = 1;
         hand_attr.unk_09 = 0;
-        CharaHand.LoadPackData(chara_data, "hand_up.cfg", &CharaModelBuffer,
-                               &CharaModelBuffer, NULL);
+        CharaHand.LoadPackData(chara_data, "hand_up.cfg", &CharaModelBuffer, &CharaModelBuffer, NULL);
         CharaHand.frame->SetAttr(hand_attr, 1, 0);
     }
     if (chara == 3) {
@@ -6775,8 +6406,7 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
 
         hand_attr.clip_enable = 1;
         hand_attr.unk_09 = 0;
-        CharaHand.LoadPackData(chara_data, "hand_up.cfg", &CharaModelBuffer,
-                               &CharaModelBuffer, NULL);
+        CharaHand.LoadPackData(chara_data, "hand_up.cfg", &CharaModelBuffer, &CharaModelBuffer, NULL);
         CharaHand.frame->SetAttr(hand_attr, 1, 0);
     }
 
@@ -6791,11 +6421,14 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
     CharaFrame = (CFrameVu1 *) CharaMain.frame;
 
     if (chara == 5) {
-        LOADTEXTURE_INFO2 info[2] = {{NULL, 0x46, 0}, {NULL, 0x46, 0}};
+        LOADTEXTURE_INFO2 info[2] = {
+            {NULL, 0x46, 0},
+            {NULL, 0x46, 0}
+        };
         int size;
 
         u_int *hand_texture = GetPackFile(chara_data, "c05w_h.img", &size);
-        u8 *at = CharaModelBuffer.base + CharaModelBuffer.used * 16;
+        u8    *at = CharaModelBuffer.base + CharaModelBuffer.used * 16;
 
         memcpy(at, hand_texture, size);
         size = (((size >> 6) + 1) << 6) >> 4;
@@ -6806,19 +6439,17 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
 
         u_int *effect = GetPackFile(chara_data, "mgan01.chr", &size);
 
-        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.base +
-                                                   CharaModelBuffer.used * 16);
+        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.base + CharaModelBuffer.used * 16);
         memcpy(ozumond_default_effect, effect, size);
         size = (((size >> 6) + 1) << 6) >> 4;
         CharaModelBuffer.Alloc(size);
     }
 
     if (chara == 3) {
-        int size;
+        int    size;
         u_int *effect = GetPackFile(chara_data, "c05_f03.chr", &size);
 
-        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.base +
-                                                   CharaModelBuffer.used * 16);
+        ozumond_default_effect = (unsigned int *) (CharaModelBuffer.base + CharaModelBuffer.used * 16);
         memcpy(ozumond_default_effect, effect, size);
         size = (((size >> 6) + 1) << 6) >> 4;
         CharaModelBuffer.Alloc(size);
@@ -6836,16 +6467,16 @@ void LoadChara2(int chara, int keep_place, unsigned int *chara_data, unsigned in
     MemoryMapDump();
 }
 
-static void LoadData(void) {
+static void LoadData() {
     CFrameAttr frame_attr;
-    char weapon_model_path[64];
-    char weapon_name[64];
-    char weapon_effect_name[64];
-    char steal_model_name[64];
-    int character_size;
-    int weapon_0_size;
-    int weapon_1_size;
-    int equipped_weapon_size;
+    char       weapon_model_path[64];
+    char       weapon_name[64];
+    char       weapon_effect_name[64];
+    char       steal_model_name[64];
+    int        character_size;
+    int        weapon_0_size;
+    int        weapon_1_size;
+    int        equipped_weapon_size;
 
     // Configure the model attributes used by the loaded dungeon objects.
     frame_attr.fog_enable = 1;
@@ -6854,20 +6485,15 @@ static void LoadData(void) {
     frame_attr.program_option = 0;
 
     UserStatus->cur_chara = 0;
-    BtGetWeaponNamePath3(
-        weapon_name,
-        weapon_effect_name,
-        UserStatus->chara_weapons[0][UserStatus->equipped_weapon_slot[0]].item_no);
-    printf("[%d] %s\n",
-           UserStatus->chara_weapons[0][UserStatus->equipped_weapon_slot[0]].item_no,
-           weapon_name);
+    BtGetWeaponNamePath3(weapon_name, weapon_effect_name, UserStatus->chara_weapons[0][UserStatus->equipped_weapon_slot[0]].item_no);
+    printf("[%d] %s\n", UserStatus->chara_weapons[0][UserStatus->equipped_weapon_slot[0]].item_no, weapon_name);
 
     strcpy(weapon_model_path, "commenu/weapon/");
     strcat(weapon_model_path, weapon_name);
 
     // Load the character and weapon data into consecutive 64-byte regions.
     LoadFile("dun/mainchara/c01d.chr", read_buffer, &character_size);
-    unsigned int aligned_size = ((character_size >> 6) + 1) << 6;
+    unsigned int  aligned_size = ((character_size >> 6) + 1) << 6;
     unsigned int *weapon_data_0 = read_buffer + (aligned_size >> 2);
 
     LoadFile("commenu/weapon/c01w00.chr", weapon_data_0, &weapon_0_size);
@@ -6880,8 +6506,7 @@ static void LoadData(void) {
 
     LoadFile(weapon_model_path, equipped_weapon_data, &equipped_weapon_size);
     wait_now_loading_vsync();
-    LoadChara2(UserStatus->cur_chara, 1, read_buffer, weapon_data_0,
-               weapon_data_1, equipped_weapon_data);
+    LoadChara2(UserStatus->cur_chara, 1, read_buffer, weapon_data_0, weapon_data_1, equipped_weapon_data);
     float chara_z = 150.0f;
 
     CharaFrame->SetPosition(200.0f, 0.0f, chara_z);
@@ -6907,39 +6532,29 @@ static void LoadData(void) {
     bicCursorFrame = LoadMDSFilePack(read_buffer, "dun/etc/bic.mds", &MainModelBuffer);
     bicCursorFrame->SetScale(0.7f, 0.7f, 0.7f);
 
-    NowDngMap->atra_model =
-        LoadMDSFilePack(read_buffer, "dun/etc/atr.mds", &MainModelBuffer);
-    NowDngMap->collision_model =
-        LoadCollisionFilePack(read_buffer, "dun/etc/atrcol.mds", &MainModelBuffer);
+    NowDngMap->atra_model = LoadMDSFilePack(read_buffer, "dun/etc/atr.mds", &MainModelBuffer);
+    NowDngMap->collision_model = LoadCollisionFilePack(read_buffer, "dun/etc/atrcol.mds", &MainModelBuffer);
     NowDngMap->atra_model->SetAttr(frame_attr, 1, 0);
 
-    NewChangeFx.LoadPackData2((unsigned int *) GetPackFile(read_buffer, "ceffe_s.chr", NULL),
-                              "info.cfg", &MainModelBuffer, 11, &MainModelBuffer, 0);
-    itemOpenSmallFx.LoadPack(read_buffer, "igetfx", &MainModelBuffer, &MotionData,
-                             &itemOpenSmallFx_info, 0);
-    itemOpenBigFx.LoadPack(read_buffer, "igetfxb", &MainModelBuffer, &MotionData,
-                           &itemOpenBigFx_info, 0);
+    NewChangeFx.LoadPackData2((unsigned int *) GetPackFile(read_buffer, "ceffe_s.chr", NULL), "info.cfg", &MainModelBuffer, 11, &MainModelBuffer, 0);
+    itemOpenSmallFx.LoadPack(read_buffer, "igetfx", &MainModelBuffer, &MotionData, &itemOpenSmallFx_info, 0);
+    itemOpenBigFx.LoadPack(read_buffer, "igetfxb", &MainModelBuffer, &MotionData, &itemOpenBigFx_info, 0);
 
-    Water_Splash.LoadPackData2((unsigned int *) GetPackFile(read_buffer, "water_sp.chr", NULL),
-                               "info.cfg", &MainModelBuffer, 6, &MainModelBuffer, 0);
+    Water_Splash.LoadPackData2((unsigned int *) GetPackFile(read_buffer, "water_sp.chr", NULL), "info.cfg", &MainModelBuffer, 6, &MainModelBuffer, 0);
 
-    unsigned int *effect_data =
-        (unsigned int *) GetPackFile(read_buffer, "trap01.chr", NULL);
+    unsigned int *effect_data = (unsigned int *) GetPackFile(read_buffer, "trap01.chr", NULL);
     Trap_Circle.InitializeTexAnime(Trap_Circle_TexAnim, 16);
-    Trap_Circle.LoadPackData2(effect_data, "info.cfg", &MainModelBuffer, 71,
-                              &MainModelBuffer, 0);
+    Trap_Circle.LoadPackData2(effect_data, "info.cfg", &MainModelBuffer, 71, &MainModelBuffer, 0);
     Trap_Circle.frame->SetAttr(frame_attr, 1, 0x40);
 
     sprintf(steal_model_name, "kara0%d.mds", selectMapNo + 1);
-    unsigned int *steal_model_data =
-        (unsigned int *) GetPackFile(read_buffer, steal_model_name, NULL);
+    unsigned int *steal_model_data = (unsigned int *) GetPackFile(read_buffer, steal_model_name, NULL);
     StealModel = (CFrameVu1 *) LoadMDSFile(steal_model_data, &MainModelBuffer, 0, NULL, NULL);
 
     MasekiModelBuffer.used = 0;
     LoadFile("dun/effect/maseki_ex.chr", read_buffer, NULL);
     wait_now_loading_vsync();
-    MasekiEffect[0].Entry2(&MyEntryEffect_Maseki00, read_buffer, 6,
-                           &MasekiModelBuffer, 3);
+    MasekiEffect[0].Entry2(&MyEntryEffect_Maseki00, read_buffer, 6, &MasekiModelBuffer, 3);
 
     memcpy(&MasekiEffect[1], &MasekiEffect[0], sizeof(CSHOT_EFFECT));
     MasekiEffect[1].ReEntry(&MyEntryEffect_Maseki01, &MasekiModelBuffer);
@@ -6951,12 +6566,12 @@ static void LoadData(void) {
     MasekiEffect[4].ReEntry(&MyEntryEffect_Maseki04, &MasekiModelBuffer);
 }
 
-int BtCheckDamageProc(void) {
+int BtCheckDamageProc() {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR from;
     sceVu0FVECTOR blow;
-    int taken = 0;
-    int blown = 0;
+    int           taken = 0;
+    int           blown = 0;
 
     static int dmgSnd = 0;
 
@@ -7005,10 +6620,10 @@ int BtCheckDamageProc(void) {
                 ruby_effect_id = -1;
             }
 
-            int damage = NowColData->Get(hit_no)->damage;
-            int guard = UserStatus->defense[UserStatus->cur_chara];
-            int monster;
-            int roll;
+            int            damage = NowColData->Get(hit_no)->damage;
+            int            guard = UserStatus->defense[UserStatus->cur_chara];
+            int            monster;
+            int            roll;
             COLLISION_HIT *hit = &NowColData->hit[hit_no];
 
             if (StatusErrCheck(8) != 0) {
@@ -7038,7 +6653,7 @@ int BtCheckDamageProc(void) {
             // whatever landed it.
             if ((hit->flags & 0x40000) && roll < 20 && monster != -1) {
                 u16 *wallet = &UserStatus->money;
-                u16 had = UserStatus->money;
+                u16  had = UserStatus->money;
 
                 if (had > 10) {
                     int drained = had / 5;
@@ -7082,8 +6697,7 @@ int BtCheckDamageProc(void) {
                 }
             }
 
-            if ((hit->flags & 0x200) && roll < 0x41 &&
-                (UserStatus->ailments[UserStatus->cur_chara] & 0x10) == 0) {
+            if ((hit->flags & 0x200) && roll < 0x41 && (UserStatus->ailments[UserStatus->cur_chara] & 0x10) == 0) {
                 int slot = ((CDngStatusData *) UserStatus)->CheckActItemSlot(0x87);
 
                 if (slot == -1) {
@@ -7108,8 +6722,7 @@ int BtCheckDamageProc(void) {
                 }
             }
 
-            if ((hit->flags & 0x400) && roll < 0x41 &&
-                (UserStatus->ailments[UserStatus->cur_chara] & 0x20) == 0) {
+            if ((hit->flags & 0x400) && roll < 0x41 && (UserStatus->ailments[UserStatus->cur_chara] & 0x20) == 0) {
                 int slot = ((CDngStatusData *) UserStatus)->CheckActItemSlot(0x85);
 
                 if (slot == -1) {
@@ -7134,8 +6747,7 @@ int BtCheckDamageProc(void) {
                 }
             }
 
-            if ((hit->flags & 0x800) && roll < 0x41 &&
-                (UserStatus->ailments[UserStatus->cur_chara] & 0x40) == 0) {
+            if ((hit->flags & 0x800) && roll < 0x41 && (UserStatus->ailments[UserStatus->cur_chara] & 0x40) == 0) {
                 int slot = ((CDngStatusData *) UserStatus)->CheckActItemSlot(0x86);
 
                 if (slot == -1) {
@@ -7201,13 +6813,11 @@ int BtCheckDamageProc(void) {
                     if (damage < UserStatus->hp[UserStatus->cur_chara]) {
                         BtActStatus.action_on = 5;
                         BtActStatus.motion_no = 6;
-                        CharaMain.motion_type.state.time =
-                            (float) CharaMain.motion_type.motion_info[6].start;
+                        CharaMain.motion_type.state.time = (float) CharaMain.motion_type.motion_info[6].start;
                     } else {
                         BtActStatus.action_on = 4;
                         BtActStatus.motion_no = 4;
-                        CharaMain.motion_type.state.time =
-                            (float) CharaMain.motion_type.motion_info[4].start;
+                        CharaMain.motion_type.state.time = (float) CharaMain.motion_type.motion_info[4].start;
                     }
                     driveNoInterpolate = 1;
                     lockOnTargetFlag = 0;
@@ -7216,7 +6826,7 @@ int BtCheckDamageProc(void) {
             }
 
             COLLISION_HIT *hits = NowColData->hit;
-            int kind = hits[hit_no].kind;
+            int            kind = hits[hit_no].kind;
 
             if (kind == 2 || hits[hit_no].kind == 4) {
                 sceVu0FVECTOR at;
@@ -7265,7 +6875,7 @@ int BtCheckDamageProc(void) {
                     heavy_number_pos[1] = CharaHeight(UserStatus);
                     HitValueEntry(NowHitValue, heavy_number_pos, damage, 2, CharaMain.frame);
 
-                    static int cnt = 0;
+                    static int     cnt = 0;
                     CHitPointMark *spot = &MyHitPointMark[cnt];
 
                     sceVu0CopyVector(spot->pos, at);
@@ -7284,8 +6894,7 @@ int BtCheckDamageProc(void) {
                     } else {
                         BtActStatus.action_on = 4;
                         BtActStatus.motion_no = 4;
-                        CharaMain.motion_type.state.time =
-                            (float) CharaMain.motion_type.motion_info[4].start;
+                        CharaMain.motion_type.state.time = (float) CharaMain.motion_type.motion_info[4].start;
                     }
                     driveNoInterpolate = 1;
                     BtActStatus.recoil_frames = 0x50;
@@ -7309,7 +6918,7 @@ int BtCheckDamageProc(void) {
     return taken;
 }
 
-void BattleActionThlow(void) {
+void BattleActionThlow() {
     sceVu0FVECTOR stood;
     sceVu0FVECTOR aim;
 
@@ -7355,8 +6964,7 @@ void BattleActionThlow(void) {
         float end = (float) CharaMain.motion_type.motion_info[27].end;
         float start = throw_frame[UserStatus->cur_chara];
 
-        if (CharaMain.motion_type.state.time >= start &&
-            CharaMain.motion_type.state.time <= end) {
+        if (CharaMain.motion_type.state.time >= start && CharaMain.motion_type.state.time <= end) {
             SndSePlay(0x96, -1, 0);
 
             s16 *slots = UserStatus->active_item;
@@ -7385,8 +6993,7 @@ void BattleActionThlow(void) {
                 sceVu0ScaleVectorXYZ(vector, vector, 0.8f);
 
                 if (activeItem.model[8] == -1) {
-                    activeItem.models->SetThrowModel(activeItem.model[activeItem.now],
-                                                     from, vector);
+                    activeItem.models->SetThrowModel(activeItem.model[activeItem.now], from, vector);
                 }
                 BombInfo.throw_step++;
             } else {
@@ -7398,7 +7005,7 @@ void BattleActionThlow(void) {
                 }
                 activeItem.model[8] = -1;
 
-                float lock_offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+                float   lock_offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
                 CFrame *hand = CharaMain.frame->SearchFrame("item");
 
                 if (hand != NULL) {
@@ -7414,8 +7021,7 @@ void BattleActionThlow(void) {
                 lock_vector[2] *= 4.5f;
 
                 if (activeItem.model[8] == -1) {
-                    activeItem.models->SetThrowModel(activeItem.model[activeItem.now],
-                                                     lock_from, lock_vector);
+                    activeItem.models->SetThrowModel(activeItem.model[activeItem.now], lock_from, lock_vector);
                 }
                 BombInfo.throw_step++;
             }
@@ -7443,7 +7049,7 @@ void BattleActionThlow(void) {
     }
 }
 
-void BattleActionDrink(void) {
+void BattleActionDrink() {
     float frame;
     float now;
 
@@ -7468,8 +7074,7 @@ void BattleActionDrink(void) {
 
     float end = (float) CharaMain.motion_type.motion_info[28].end;
 
-    if (CharaMain.motion_type.state.time >= end - 1.0f &&
-        CharaMain.motion_type.state.time <= end) {
+    if (CharaMain.motion_type.state.time >= end - 1.0f && CharaMain.motion_type.state.time <= end) {
         s32 running = activeItem.item[activeItem.now];
 
         usedActiveItem(UserStatus, running);
@@ -7511,7 +7116,7 @@ s32 ozumond_snd_cnt;
 /* How long until the player can be damaged again, in frames. */
 s32 dmg_check_wait;
 
-void BattleActionOn_Jinn(void) {
+void BattleActionOn_Jinn() {
     if (BtActStatus.action_on == 0 && (s32) BtActStatus.action_gauge == 100) {
         BtActStatus.action_step = 0;
         BtActStatus.charge_time = 0.0f;
@@ -7525,8 +7130,8 @@ void BattleActionOn_Jinn(void) {
 
 void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
     float now = chara->motion_type.state.time;
-    int damage = NowWeaponHave->attack;
-    int i;
+    int   damage = NowWeaponHave->attack;
+    int   i;
 
     // A poisoned weapon hits twice as hard.
     if (StatusErrCheck(8) != 0) {
@@ -7562,8 +7167,8 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
 
                 sceVu0FVECTOR world;
                 sceVu0FVECTOR vector;
-                float offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-                CFrame *hand = NowWeapon->frame->SearchFrame("eff30");
+                float         offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+                CFrame       *hand = NowWeapon->frame->SearchFrame("eff30");
 
                 if (hand != NULL) {
                     hand->GetWorldPosition(world, offset);
@@ -7611,8 +7216,8 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
 
                 sceVu0FVECTOR world;
                 sceVu0FVECTOR vector;
-                float offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-                CFrame *hand = NowWeapon->frame->SearchFrame("eff30");
+                float         offset[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+                CFrame       *hand = NowWeapon->frame->SearchFrame("eff30");
 
                 if (hand != NULL) {
                     hand->GetWorldPosition(world, offset);
@@ -7668,7 +7273,7 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
     }
 }
 
-void BattleActionOn_Ruby(void) {
+void BattleActionOn_Ruby() {
     if (BtActStatus.action_on == 0 && (s32) BtActStatus.action_gauge == 100) {
         BtActStatus.action_step = 0;
         BtActStatus.action_no = 11;
@@ -7681,8 +7286,8 @@ void BattleActionOn_Ruby(void) {
 
 void BattleActionShotRuby(CCharacter *chara, int aimed, float scale, int repeat) {
     WEAPON_HAVE *weapon = NowWeaponHave;
-    int element = weapon->best_elem;
-    int damage = (weapon->attack >> 1) + (weapon->magic >> 1);
+    int          element = weapon->best_elem;
+    int          damage = (weapon->attack >> 1) + (weapon->magic >> 1);
 
     damage = (int) ((float) damage * scale);
 
@@ -7745,7 +7350,7 @@ void BattleActionShotRuby(CCharacter *chara, int aimed, float scale, int repeat)
 
 void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
     float now = chara->motion_type.state.time;
-    int element = NowWeaponHave->best_elem;
+    int   element = NowWeaponHave->best_elem;
 
     if (BtActStatus.action_no == 11) {
         if (GamePad.On(PadInput_OK) == 0) {
@@ -7766,8 +7371,7 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                 BtActStatus.motion_no = 14;
                 BtActStatus.action_no = 14;
                 BtActStatus.charge_time = 0.0f;
-                ruby_effect_id = NowMainEffect->Set(pos, aim, 3, element, 0,
-                                                    chara->frame->SearchFrame("item"), 0);
+                ruby_effect_id = NowMainEffect->Set(pos, aim, 3, element, 0, chara->frame->SearchFrame("item"), 0);
                 NowMainEffect->SetLoop(1);
             }
 #ifdef PAL
@@ -7793,8 +7397,7 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                 BtActStatus.motion_no = 14;
                 BtActStatus.action_no = 14;
                 BtActStatus.charge_time = 0.0f;
-                ruby_effect_id = NowMainEffect->Set(pos, aim, 3, element, 0,
-                                                    chara->frame->SearchFrame("item"), 0);
+                ruby_effect_id = NowMainEffect->Set(pos, aim, 3, element, 0, chara->frame->SearchFrame("item"), 0);
                 NowMainEffect->SetLoop(1);
             }
 #ifdef PAL
@@ -7906,7 +7509,7 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
     }
 }
 
-void BattleActionOn_Ozumond(void) {
+void BattleActionOn_Ozumond() {
     if (BtActStatus.action_on == 0 && BtActStatus.gauge_exhausted == 0) {
         BtActStatus.action_no = 11;
         BtActStatus.action_on = 1;
@@ -7919,7 +7522,7 @@ void BattleActionOn_Ozumond(void) {
     }
 }
 
-void BattleActionOn_Ozumond_H(void) {
+void BattleActionOn_Ozumond_H() {
     if (BtActStatus.action_on == 0 && (s32) BtActStatus.action_gauge == 100) {
         BtActStatus.action_no = 11;
         BtActStatus.action_on = 1;
@@ -7933,7 +7536,7 @@ void BattleActionOn_Ozumond_H(void) {
     }
 }
 
-void BattleActionOn_Ozumond_F(void) {
+void BattleActionOn_Ozumond_F() {
     if (BtActStatus.action_on == 0 && BtActStatus.gauge_exhausted == 0) {
         BtActStatus.action_no = 0;
         BtActStatus.action_on = 1;
@@ -7950,10 +7553,10 @@ void BattleActionPlay_Ozumond(int aimed) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR aim;
     sceVu0FVECTOR shot;
-    float drain;
+    float         drain;
 
     WEAPON_HAVE *weapon = NowWeaponHave;
-    int damage = (weapon->attack >> 1) + (weapon->magic >> 1);
+    int          damage = (weapon->attack >> 1) + (weapon->magic >> 1);
 
     // A poisoned weapon hits twice as hard.
     if (StatusErrCheck(8) != 0) {
@@ -8010,8 +7613,7 @@ void BattleActionPlay_Ozumond(int aimed) {
     if (s_cnt >= 10) {
         s_cnt = 0;
         if (aimed == 0) {
-            NowMainEffect->Set(pos, aim, -1, -1, 0,
-                               NowWeapon->frame->SearchFrame("dcol0"), -1);
+            NowMainEffect->Set(pos, aim, -1, -1, 0, NowWeapon->frame->SearchFrame("dcol0"), -1);
         }
     }
 
@@ -8039,14 +7641,14 @@ void BattleActionPlay_Ozumond(int aimed) {
 }
 
 void BattleActionPlay_Ozumond_H(int aimed) {
-    static int wait_cnt;
+    static int    wait_cnt;
     sceVu0FVECTOR pos;
     sceVu0FVECTOR aim;
     sceVu0FVECTOR shot;
 
     WEAPON_HAVE *weapon = NowWeaponHave;
-    int element = weapon->best_elem;
-    int damage = weapon->attack;
+    int          element = weapon->best_elem;
+    int          damage = weapon->attack;
 
     // A poisoned weapon hits twice as hard.
     if (StatusErrCheck(8) != 0) {
@@ -8113,7 +7715,7 @@ void BattleActionPlay_Ozumond_H(int aimed) {
 }
 
 void BattleActionPlay_Ozumond_F(int aimed) {
-    static int wait_cnt = 0;
+    static int    wait_cnt = 0;
     sceVu0FVECTOR start;
     sceVu0FVECTOR start_dir;
     sceVu0FVECTOR pos;
@@ -8256,30 +7858,30 @@ static void CameraAutoMove(CCameraFollow *camera, CCPoly *poly, float *position,
     }
 }
 
-void autoCamTrial(void) {
-    static int cameraDilay = 0;
+void autoCamTrial() {
+    static int    cameraDilay = 0;
     sceVu0FVECTOR eye;
     sceVu0FVECTOR look;
     sceVu0FVECTOR along;
-    CBoxVu0 box;
+    CBoxVu0       box;
     sceVu0FVECTOR pos;
     sceVu0FVECTOR at;
     sceVu0FVECTOR ref;
     sceVu0FVECTOR reach;
     sceVu0FVECTOR forward;
     sceVu0FVECTOR towards;
-    int hit_poly[32];
-    float hit_point[32][4];
+    int           hit_poly[32];
+    float         hit_point[32][4];
     sceVu0FVECTOR facing;
     sceVu0FVECTOR facing_last;
     sceVu0FVECTOR stood;
     sceVu0FVECTOR chara;
     sceVu0FVECTOR near_chara;
     sceVu0FVECTOR locked;
-    float world[4][4];
-    CCPoly *poly;
-    int i;
-    int count;
+    float         world[4][4];
+    CCPoly       *poly;
+    int           i;
+    int           count;
 
     if (DebugStatus[5] == 0) {
         return;
@@ -8314,7 +7916,7 @@ void autoCamTrial(void) {
 
     if (NowDngMap->map_type != 1) {
         CFrame *frame;
-        int i;
+        int     i;
 
         i = 0;
         while (NowDngMap->parts[i].frame[0] != NULL) {
@@ -8330,7 +7932,7 @@ void autoCamTrial(void) {
                 sceVu0CopyVector(eye, part->frame_offset[0]);
 
                 CDungeonMap *map = NowDngMap;
-                int turn = (int) ((CDungeonMap *) map)->parts[i].frame_turn[0];
+                int          turn = (int) ((CDungeonMap *) map)->parts[i].frame_turn[0];
 
                 turn += i == -1 ? 0 : map->parts[i].camera_collision_turn;
 
@@ -8348,13 +7950,13 @@ void autoCamTrial(void) {
         }
     } else {
         CFrame *frame;
-        int i;
-        int j;
+        int     i;
+        int     j;
 
         for (j = 0; j < 20; j++) {
             for (i = 0; i < 20; i++) {
                 CDungeonMap *map = NowDngMap;
-                s32 parts_no = map->cells[i + j * 20].parts_no;
+                s32          parts_no = map->cells[i + j * 20].parts_no;
 
                 if (parts_no == -1) {
                     frame = NULL;
@@ -8434,25 +8036,20 @@ void autoCamTrial(void) {
                     float away = DistVector(pos, hit_point[last + 1]);
 
                     if (away - DistVector(pos, hit_point[last]) < 0.0f) {
-                        CameraAutoMove(NowCamera__3, &poly[hit_poly[last + 1]],
-                                       hit_point[last + 1], 1000000.0f, 1000000.0f);
+                        CameraAutoMove(NowCamera__3, &poly[hit_poly[last + 1]], hit_point[last + 1], 1000000.0f, 1000000.0f);
                     } else {
-                        CameraAutoMove(NowCamera__3, &poly[hit_poly[last]],
-                                       hit_point[last], 1000000.0f, 1000000.0f);
+                        CameraAutoMove(NowCamera__3, &poly[hit_poly[last]], hit_point[last], 1000000.0f, 1000000.0f);
                     }
-                } else if (camera_far_dist_limmit >= camera_near_dist__2 &&
-                           camera_far_dist_limmit < camera_far_dist__2) {
+                } else if (camera_far_dist_limmit >= camera_near_dist__2 && camera_far_dist_limmit < camera_far_dist__2) {
                     NowCamera__3->SetPos(hit_point[0]);
                 } else {
-                    CameraAutoMove(NowCamera__3, &poly[hit_poly[last]], hit_point[last],
-                                   1000000.0f, 1000000.0f);
+                    CameraAutoMove(NowCamera__3, &poly[hit_poly[last]], hit_point[last], 1000000.0f, 1000000.0f);
                 }
             }
         } else {
             sceVu0CopyVector(facing_last, poly[hit_poly[0]].normal);
             if (sceVu0InnerProduct(forward, facing_last) < 0.0f) {
-                CameraAutoMove(NowCamera__3, &poly[hit_poly[0]], hit_point[0],
-                               1000000.0f, 1000000.0f);
+                CameraAutoMove(NowCamera__3, &poly[hit_poly[0]], hit_point[0], 1000000.0f, 1000000.0f);
             }
         }
     }
@@ -8495,16 +8092,13 @@ void autoCamTrial(void) {
     }
 
     if (!(NowCamera__3->GetDistance() <= camera_far_dist__2)) {
-        NowCamera__3->AddDistance(-(NowCamera__3->GetDistance() - camera_far_dist__2) /
-                                  10.0f);
+        NowCamera__3->AddDistance(-(NowCamera__3->GetDistance() - camera_far_dist__2) / 10.0f);
     }
     if (NowCamera__3->GetDistance() < camera_near_dist__2) {
-        NowCamera__3->AddDistance(-(NowCamera__3->GetDistance() - camera_near_dist__2) /
-                                  10.0f);
+        NowCamera__3->AddDistance(-(NowCamera__3->GetDistance() - camera_near_dist__2) / 10.0f);
     }
     if (NowCamera__3->GetDistance() < camera_far_dist_limmit) {
-        NowCamera__3->AddDistance(
-            -(NowCamera__3->GetDistance() - camera_far_dist_limmit) / 10.0f);
+        NowCamera__3->AddDistance(-(NowCamera__3->GetDistance() - camera_far_dist_limmit) / 10.0f);
     }
 
     if (BtActStatus.slow_walking == 0 && NowCamera__3->GetDistance() < camera_far_dist__2) {
@@ -8604,16 +8198,16 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
         return;
     }
 
-    int element;
-    int se;
-    int kind;
+    int          element;
+    int          se;
+    int          kind;
     WEAPON_HAVE *weapon;
     CUserStatus *status;
-    int had;
-    u16 *wallet;
-    s8 chara;
-    s8 *slots;
-    s8 slot;
+    int          had;
+    u16         *wallet;
+    s8           chara;
+    s8          *slots;
+    s8           slot;
 
     status = UserStatus;
     wallet = &status->money;
@@ -8702,7 +8296,7 @@ int Run_TrapCircle(MAP_TRAP_CIRCLE *trap) {
 
 #pragma opt_propagation reset
 
-void LockOffTargte(void) {
+void LockOffTargte() {
     lockOnTargetDraw = 0;
     lockOnTargetNo = -1;
     lockOnTargetFlag = 0;
@@ -8711,12 +8305,12 @@ void LockOffTargte(void) {
     EnemyLifeGage.on = 0;
 }
 
-void DrawTargetLife(void) {
+void DrawTargetLife() {
     CRect_i_ border;
     CRect_i_ ground;
     CRect_i_ life;
-    s32 x;
-    s32 width;
+    s32      x;
+    s32      width;
 
     if (EnemyLifeGage.on == 0) {
         return;
@@ -8768,8 +8362,8 @@ void DrawTargetLife(void) {
 float targetCursorCnt;
 
 void DrawtargetCursor(float *world, float width, float height, float alpha) {
-    int top_left[4];
-    int bottom_right[4];
+    int       top_left[4];
+    int       bottom_right[4];
     CTexture *texture;
 
     texture = TexManager.GetTexture("d01e04", -1);
@@ -8790,14 +8384,10 @@ void DrawtargetCursor(float *world, float width, float height, float alpha) {
 
         static int rate = (int) (16.0f * alpha);
 
-        set2DSprite(Vif1Packet, texture, CRect_i_(top_left[0], top_left[1], 0x10, 0x10),
-                    CRect_i_(0, 0x20, 0x10, 0x10), rate);
-        set2DSprite(Vif1Packet, texture, CRect_i_(bottom_right[0], top_left[1], 0x10, 0x10),
-                    CRect_i_(0, 0, 0x10, 0x10), rate);
-        set2DSprite(Vif1Packet, texture, CRect_i_(top_left[0], bottom_right[1], 0x10, 0x10),
-                    CRect_i_(0, 0x30, 0x10, 0x10), rate);
-        set2DSprite(Vif1Packet, texture, CRect_i_(bottom_right[0], bottom_right[1], 0x10, 0x10),
-                    CRect_i_(0, 0x10, 0x10, 0x10), rate);
+        set2DSprite(Vif1Packet, texture, CRect_i_(top_left[0], top_left[1], 0x10, 0x10), CRect_i_(0, 0x20, 0x10, 0x10), rate);
+        set2DSprite(Vif1Packet, texture, CRect_i_(bottom_right[0], top_left[1], 0x10, 0x10), CRect_i_(0, 0, 0x10, 0x10), rate);
+        set2DSprite(Vif1Packet, texture, CRect_i_(top_left[0], bottom_right[1], 0x10, 0x10), CRect_i_(0, 0x30, 0x10, 0x10), rate);
+        set2DSprite(Vif1Packet, texture, CRect_i_(bottom_right[0], bottom_right[1], 0x10, 0x10), CRect_i_(0, 0x10, 0x10, 0x10), rate);
     }
 
     setbilinear(1);
@@ -8805,20 +8395,20 @@ void DrawtargetCursor(float *world, float width, float height, float alpha) {
 }
 
 int SetNearLockOnTarget(int from, int nearest_only) {
-    CUserStatus *status = UserStatus;
+    CUserStatus  *status = UserStatus;
     sceVu0FVECTOR at;
     sceVu0FVECTOR towards;
     sceVu0FVECTOR pos[16];
-    float dist[16];
-    int found[16];
-    float away;
-    float rate;
-    int place;
-    int i;
-    int count;
-    int slot;
-    int nearest;
-    int other;
+    float         dist[16];
+    int           found[16];
+    float         away;
+    float         rate;
+    int           place;
+    int           i;
+    int           count;
+    int           slot;
+    int           nearest;
+    int           other;
 
     rate = CharaRangeRate(status);
 
@@ -8831,8 +8421,8 @@ int SetNearLockOnTarget(int from, int nearest_only) {
     sceVu0FVECTOR forward = {0.0f, 0.0f, 1.0f, 1.0f};
     sceVu0FMATRIX unit;
     sceVu0FMATRIX turn;
-    int order[16];
-    int screen[4];
+    int           order[16];
+    int           screen[4];
 
     sceVu0UnitMatrix(unit);
     sceVu0RotMatrixY(turn, unit, at[1]);
@@ -8989,23 +8579,22 @@ int SetNearLockOnTarget(int from, int nearest_only) {
 }
 
 void setTargetCursor(int on) {
-    CUserStatus *status = UserStatus;
+    CUserStatus  *status = UserStatus;
     sceVu0FVECTOR target;
     sceVu0FVECTOR stood;
     sceVu0FVECTOR flat_stood;
     sceVu0FVECTOR flat_target;
-    int screen[4];
-    float width;
-    float height;
-    int keep;
+    int           screen[4];
+    float         width;
+    float         height;
+    int           keep;
 
     float rate = CharaRangeRate(status);
 
     if (on != 0) {
         keep = 1;
 
-        if (NowMonstorUnit->monster[lockOnTargetNo].state != 2 ||
-            NowMonstorUnit->monster[lockOnTargetNo].hp <= 0) {
+        if (NowMonstorUnit->monster[lockOnTargetNo].state != 2 || NowMonstorUnit->monster[lockOnTargetNo].hp <= 0) {
             keep = 0;
         }
         if (NowMonstorUnit->monster[lockOnTargetNo].lockon_enabled == 0) {
@@ -9029,9 +8618,7 @@ void setTargetCursor(int on) {
             flat_target[1] = 0.0f;
             flat_stood[1] = 0.0f;
 
-            if (DistVector(flat_stood, flat_target) <=
-                    8.0f + NowMonstorUnit->monster[lockOnTargetNo].body_radius &&
-                !(stood[1] <= 10.0f + target[1])) {
+            if (DistVector(flat_stood, flat_target) <= 8.0f + NowMonstorUnit->monster[lockOnTargetNo].body_radius && !(stood[1] <= 10.0f + target[1])) {
                 keep = 0;
             }
 
@@ -9052,11 +8639,9 @@ void setTargetCursor(int on) {
         sceVu0CopyVector(BtActStatus.target_position, target);
 
         width = (12.0f + targetCursorCnt) * NowMonstorUnit->monster[lockOnTargetNo].lockon_scale_x;
-        height = (6.0f + targetCursorCnt / 2.0f) *
-                 NowMonstorUnit->monster[lockOnTargetNo].lockon_scale_y;
+        height = (6.0f + targetCursorCnt / 2.0f) * NowMonstorUnit->monster[lockOnTargetNo].lockon_scale_y;
 
-        if (NowMonstorUnit->monster[lockOnTargetNo].name_no > 0 &&
-            NowMonstorUnit->monster[lockOnTargetNo].kind != 2) {
+        if (NowMonstorUnit->monster[lockOnTargetNo].name_no > 0 && NowMonstorUnit->monster[lockOnTargetNo].kind != 2) {
             EnemyLifeGage.life_max = NowMonstorUnit->monster[lockOnTargetNo].max_hp;
             EnemyLifeGage.life = NowMonstorUnit->monster[lockOnTargetNo].hp;
             EnemyLifeGage.on = 1;
@@ -9084,9 +8669,7 @@ void setTargetCursor(int on) {
         // player holds a weapon that talks to him.
         s16 weapon = NowWeaponHave->item_no;
 
-        if ((weapon == 0x12F || weapon == 0x138) && lockOnTargetFlag != 0 &&
-            NowMonstorUnit->monster[lockOnTargetNo].name_no > 0 &&
-            (int) (100.0f * (float) rand() / 2147483648.0f) < 3) {
+        if ((weapon == 0x12F || weapon == 0x138) && lockOnTargetFlag != 0 && NowMonstorUnit->monster[lockOnTargetNo].name_no > 0 && (int) (100.0f * (float) rand() / 2147483648.0f) < 3) {
             DngMessMan.SetSteevMes(NowMonstorUnit->monster[lockOnTargetNo].name_no * 10 + 4000);
         }
 
@@ -9130,7 +8713,7 @@ void unitBlowActionRot(float *velocity) {
 float setUnitDamageColor(int hit) {
     static float dmgColor = 128.0f;
     static float dmgVec = 0.0f;
-    static int dmgFlag;
+    static int   dmgFlag;
 
     if (hit != 0) {
         dmgFlag = 1;
@@ -9162,7 +8745,7 @@ s32 unitAmbientAnime_Timer;
 /* Whether the ambient-colour animation is running on the player's model. */
 s32 unitAmbientAnime_flag;
 
-void RsetUnitAmbientAnime(void) {
+void RsetUnitAmbientAnime() {
     unitAmbientAnime_flag = 0;
 }
 
@@ -9219,8 +8802,8 @@ int LoadStartLogo(int map) {
         "floor06",
     };
     char *files[5];
-    int size;
-    int blocks;
+    int   size;
+    int   blocks;
 
     // Only the one texture is loaded; the NULL after it ends the list.
     files[0] = NameExchg(dungeon_name[map], 0);
@@ -9245,7 +8828,7 @@ char *MapInfoNameArea[7] = {
 };
 // clang-format on
 
-void FloorTitleOn(void) {
+void FloorTitleOn() {
     rogoAlphaA[2] = 0;
     rogoSwitch2 = 1;
     rogoY3 = -96;
@@ -9264,7 +8847,7 @@ void SetMIniMapStatus(int on) {
     }
 }
 
-void ResetStatusInfo(void) {
+void ResetStatusInfo() {
     BtActStatus.action_on = 0;
     BtActStatus.main_motion = -1;
     BtActStatus.hand_motion = -1;
@@ -9296,12 +8879,12 @@ void ResetStatusInfo(void) {
     BtActStatus.event_block_frames = 0;
 }
 
-void ResetMovePower(void) {
+void ResetMovePower() {
     BtActStatus.move_power = 0.0f;
     BtActStatus.move_power_decay = 0.0f;
 }
 
-void LoaderInit(void) {
+void LoaderInit() {
     BufferAllClear();
     MGSetBGColor(32.0f, 96.0f, 12.0f, 128.0f);
     TexManager.Initialize(0x3FE0);
@@ -9317,23 +8900,20 @@ void LoaderInit(void) {
     EdEventInfo.map_jump_bgm_play = 1;
 }
 
-int LoaderLoop(void) {
-    char name[96];
-    int i;
-    int chosen = 0;
+int LoaderLoop() {
+    char       name[96];
+    int        i;
+    int        chosen = 0;
     static int nowCursor = 0;
 
-    CDbgMsg.length = sprintf(&CDbgMsg.text[CDbgMsg.length],
-                             "- MapInfomationFile Loader -\n");
+    CDbgMsg.length = sprintf(&CDbgMsg.text[CDbgMsg.length], "- MapInfomationFile Loader -\n");
 
     for (i = 0; i < 7; i++) {
         strcpy(name, MapInfoNameArea[i]);
         if (nowCursor == i) {
-            CDbgMsg.length += sprintf(&CDbgMsg.text[CDbgMsg.length], ">>[%2d] %s\n",
-                                      i + 1, name);
+            CDbgMsg.length += sprintf(&CDbgMsg.text[CDbgMsg.length], ">>[%2d] %s\n", i + 1, name);
         } else {
-            CDbgMsg.length += sprintf(&CDbgMsg.text[CDbgMsg.length], "  [%2d] %s\n",
-                                      i + 1, name);
+            CDbgMsg.length += sprintf(&CDbgMsg.text[CDbgMsg.length], "  [%2d] %s\n", i + 1, name);
         }
     }
 
@@ -9359,7 +8939,7 @@ int LoaderLoop(void) {
     return chosen;
 }
 
-void InitEyeCamera(void) {
+void InitEyeCamera() {
     sceVu0FVECTOR pos;
 
     viewAngleH__2 = CharaMain.GetRotation()->y;
@@ -9367,13 +8947,13 @@ void InitEyeCamera(void) {
     sceVu0CopyVector(pos, CharaMain.pos);
 }
 
-void EyeCamera(void) {
+void EyeCamera() {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR ref;
     sceVu0FMATRIX rotation;
     sceVu0FMATRIX unit;
-    float stick_x;
-    float stick_y;
+    float         stick_x;
+    float         stick_y;
 
     stick_x = GamePad.GetLXf();
     stick_y = -GamePad.GetLYf();
@@ -9423,7 +9003,7 @@ void EyeCamera(void) {
     sceVu0CopyVector(pos, CharaMain.pos);
 
     CUserStatus *status = UserStatus;
-    float height = CharaHeight(status);
+    float        height = CharaHeight(status);
 
     pos[1] += height - 1.5f;
     ref[0] += pos[0];

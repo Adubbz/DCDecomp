@@ -122,8 +122,8 @@ void CSaveData::SetFishingPoint(int value) {
 
 void CSaveData::SetFishingRank(int fish_id, float score) {
     float lowest_score = -1.0f;
-    int lowest_index = -1;
-    int i;
+    int   lowest_index = -1;
+    int   i;
 
     for (i = 0; i < 64; i++) {
         if (this->fish_data[i].rank <= 0.0f) {
@@ -188,7 +188,7 @@ SV_EDIT_PARTS_INFO *CSaveData::GetEditPartsInfo(int georama_no, int plot_no) {
 
 SV_GRD_PART *CSaveData::GetParts(int georama_no, int *out_count) {
     SV_GRD_PART *parts;
-    int count;
+    int          count;
 
     if (georama_no < 0 || georama_no >= 6) {
         return NULL;
@@ -208,7 +208,7 @@ SV_GRD_PART *CSaveData::GetParts(int georama_no, int *out_count) {
 
 SV_GRD_NPC *CSaveData::GetGrdNPCData(int map_no, int npc_no) {
     static s32 sub_map[] = {14, 23, 11, 19, 42, 38, -1, 0};
-    int i;
+    int        i;
 
     if (map_no >= 11) {
         for (i = 0;; i++) {
@@ -434,7 +434,7 @@ int CSaveData::SetMapInitFlag(int map_no, int flag_no, int value) {
 
 int CSaveData::AtraPartsGet(int georama_no, int plot_no) {
     SV_EDIT_PARTS_INFO *info;
-    SV_ATRA_PARTS_DEF *atra;
+    SV_ATRA_PARTS_DEF  *atra;
 
     info = this->GetEditPartsInfo(georama_no, plot_no);
     if (info == NULL) {
@@ -471,7 +471,7 @@ int CSaveData::AtraPartsGet(int georama_no, int plot_no) {
 int CSaveData::AtraChipGet(int georama_no, int chip_id) {
     s16 *chips;
     s16 *slot;
-    int i;
+    int  i;
 
     chips = this->GetElemData(georama_no);
 
@@ -531,8 +531,8 @@ int CSaveData::QuestDungeon(int dungeon_no, int add) {
 void CSaveData::ConvertConfig(SV_CONFIG_SYS *out) {
     char *src;
     char *dst;
-    int copy;
-    int value_no;
+    int   copy;
+    int   value_no;
 
     dst = (char *) out;
 

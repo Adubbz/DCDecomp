@@ -14,25 +14,8 @@
    vectors: x, y and z each get a scale, an offset and the two bounds they are held between.
  */
 struct RenderInfo {
-    RenderInfo() {
-        scissor = 0;
-        clip_flags = 0;
-        scissoring = 0;
-        frame_far_z = 0.0f;
-        shadow_pass = 0;
-        fog_enabled = 0;
-        fog_b = 0.0f;
-        fog_a = 0.0f;
-        fog_far = 0.0f;
-        fog_near = 255.0f;
-        fog_blue = 255;
-        fog_green = 255;
-        fog_red = 255;
-        unlit = 0;
-    }
-
-    float projection; /**< Projection scale the render info was last built from. */
-    int unk_04[3];
+    float         projection; /**< Projection scale the render info was last built from. */
+    int           unk_04[3];
     sceVu0FMATRIX view_scaled;     /**< View matrix with the screen's aspect squeeze applied. */
     sceVu0FMATRIX screen;          /**< Camera-space to screen-space projection matrix. */
     sceVu0FMATRIX view;            /**< View matrix the camera supplied. */
@@ -46,9 +29,9 @@ struct RenderInfo {
     sceVu0FVECTOR far;             /**< Upper screen bounds on x and y and far clip depth on z. */
     sceVu0FVECTOR position;        /**< Camera position. */
     sceVu0FVECTOR view_position;   /**< Eye position a caller supplied with the view matrix. */
-    float pitch;                   /**< Camera pitch derived from the view matrix. */
-    float yaw;                     /**< Camera yaw derived from the view matrix. */
-    int unk_208[2];
+    float         pitch;           /**< Camera pitch derived from the view matrix. */
+    float         yaw;             /**< Camera yaw derived from the view matrix. */
+    int           unk_208[2];
     sceVu0FVECTOR clip_max;    /**< Upper clip bounds sent to the microprograms, far depth in w. */
     sceVu0FVECTOR clip_min;    /**< Lower clip bounds sent to the microprograms, near depth in w. */
     sceVu0FMATRIX perspective; /**< Perspective matrix into clip space. */
@@ -66,25 +49,42 @@ struct RenderInfo {
        attributes, so what a microprogram reads here belongs to the frame being drawn and not to
        the scene. unk_320 is the exception and is a switch the caller sets.
  */
-    int clip_flags;    /**< Microprogram flags: 1 clips, 2 scissors, 4 is the frame's own switch. */
-    int scissor;       /**< Whether the frame being drawn crosses the near plane and must be scissored. */
-    int scissoring;    /**< Forces scissoring of every frame that crosses the near plane. */
+    int   clip_flags;  /**< Microprogram flags: 1 clips, 2 scissors, 4 is the frame's own switch. */
+    int   scissor;     /**< Whether the frame being drawn crosses the near plane and must be scissored. */
+    int   scissoring;  /**< Forces scissoring of every frame that crosses the near plane. */
     float frame_far_z; /**< Far depth from the attributes of the frame last drawn. */
-    int shadow_pass;   /**< Pass being drawn: 0 normal, 1 fast shadow, 2 shadow, 8 shade. */
-    int fog_enabled;   /**< Whether the frame being drawn takes fog. */
+    int   shadow_pass; /**< Pass being drawn: 0 normal, 1 fast shadow, 2 shadow, 8 shade. */
+    int   fog_enabled; /**< Whether the frame being drawn takes fog. */
     /**
  * Fog is applied as a + b/z, which is what makes both ends of it a division the caller never
        does: MGSetFogParm takes the two depths and the two densities and solves for the pair.
  */
-    float fog_a;      /**< Constant term of the fog factor. */
-    float fog_b;      /**< Coefficient of 1/z in the fog factor. */
-    float fog_far;    /**< Fog amount at the far fog depth. */
-    float fog_near;   /**< Fog amount at the near fog depth. */
+    float  fog_a;     /**< Constant term of the fog factor. */
+    float  fog_b;     /**< Coefficient of 1/z in the fog factor. */
+    float  fog_far;   /**< Fog amount at the far fog depth. */
+    float  fog_near;  /**< Fog amount at the near fog depth. */
     u_char fog_red;   /**< Red component of the fog colour. */
     u_char fog_green; /**< Green component of the fog colour. */
     u_char fog_blue;  /**< Blue component of the fog colour. */
     u_char unk_33B;
-    int eye_in_model; /**< Whether the frame being drawn is sent the eye position in model space for reflection. */
-    int unlit;        /**< Draws every frame without lighting while nonzero. */
-    int unk_344[3];
+    int    eye_in_model; /**< Whether the frame being drawn is sent the eye position in model space for reflection. */
+    int    unlit;        /**< Draws every frame without lighting while nonzero. */
+    int    unk_344[3];
+
+    RenderInfo() {
+        scissor = 0;
+        clip_flags = 0;
+        scissoring = 0;
+        frame_far_z = 0.0f;
+        shadow_pass = 0;
+        fog_enabled = 0;
+        fog_b = 0.0f;
+        fog_a = 0.0f;
+        fog_far = 0.0f;
+        fog_near = 255.0f;
+        fog_blue = 255;
+        fog_green = 255;
+        fog_red = 255;
+        unlit = 0;
+    }
 };

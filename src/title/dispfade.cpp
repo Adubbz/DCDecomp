@@ -24,7 +24,7 @@ void CDispFade::FadeInit(float initial_rate) {
     fade_colour = 0;
 }
 
-float CDispFade::GetRate(void) {
+float CDispFade::GetRate() {
     return fade_rate;
 }
 

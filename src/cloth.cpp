@@ -18,7 +18,7 @@
  */
 void CCloth::Draw() {
     CFrameVu1 draw_frame;
-    int i;
+    int       i;
 
     draw_frame.SetVisual(this);
     draw_frame.max[0] = 10000.0f;
@@ -59,8 +59,8 @@ void CCloth::Draw() {
  */
 void CCloth::Clear() {
     sceVu0FMATRIX matrix;
-    int i;
-    int j;
+    int           i;
+    int           j;
 
     if (frame != NULL) {
         frame->GetLWMatrix(matrix);
@@ -139,20 +139,20 @@ static float vuabs(float *vector) {
  */
 void CCloth::Step(int step) {
     float *velocity;
-    int i;
+    int    i;
     float *hit_point;
-    int j;
-    int pass;
+    int    j;
+    int    pass;
     float *scratchpad;
-    int reset;
+    int    reset;
     sceVu0FVECTOR(*work)[16];
-    float ground;
+    float  ground;
     float *vertex;
 
-    sceVu0FVECTOR root;
-    sceVu0FVECTOR delta;
-    sceVu0FMATRIX matrix;
-    sceVu0FVECTOR scratch;
+    sceVu0FVECTOR  root;
+    sceVu0FVECTOR  delta;
+    sceVu0FMATRIX  matrix;
+    sceVu0FVECTOR  scratch;
     sceVu0FVECTOR *stretch_params;
 
     if (step < 0) {
@@ -293,9 +293,9 @@ void CCloth::Step(int step) {
     }
     for (j = 1; j < num_j; j++) {
         for (i = 0; i < num_i; i++) {
-            CBound *box = bound;
-            int touched = 0;
-            float hit_count = 0.0f;
+            CBound       *box = bound;
+            int           touched = 0;
+            float         hit_count = 0.0f;
             sceVu0FVECTOR hit_sum;
             hit_sum[2] = 0.0f;
             hit_sum[1] = 0.0f;
@@ -426,8 +426,7 @@ void CCloth::Step(int step) {
  * @address 0x13C470
  * @size 0xC0
  */
-int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program,
-                    u_long128 *draw_state, int unknown1, int unknown2) {
+int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     CreateVUData(vu_block[DBuffID]);
     vu_data = vu_block[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown2, 0);
@@ -440,8 +439,7 @@ int CCloth::DrawVu1(u_int *packet, float (*matrix)[4], RenderInfo *info, VU1_PRO
  * @address 0x13C530
  * @size 0xC0
  */
-int CCloth::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info,
-                    VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
+int CCloth::DrawVu1(sceVif1Packet *packet, float (*matrix)[4], RenderInfo *info, VU1_PROGRAM program, u_long128 *draw_state, int unknown1, int unknown2) {
     CreateVUData(vu_block[DBuffID]);
     vu_data = vu_block[DBuffID];
     return CVisualVu1::DrawVu1(packet, matrix, info, program, draw_state, unknown2, 0);
@@ -458,28 +456,28 @@ int SetMaterial(u_int *packet, MDT_MATERIAL *material);
 int SetTEX0(u_int *packet, u_long tex0, u_long tex1);
 
 int CCloth::CreateVUData(u_int *packet) {
-    int j;
-    CTexture *texture;
-    int i;
-    u_int *tag;
-    int word;
-    int vertex_count;
-    int started;
-    int qwc;
-    int header_word;
-    int span;
+    int        j;
+    CTexture  *texture;
+    int        i;
+    u_int     *tag;
+    int        word;
+    int        vertex_count;
+    int        started;
+    int        qwc;
+    int        header_word;
+    int        span;
     u_long128 *vertex;
     u_long128 *normal;
-    u_int header_tag;
+    u_int      header_tag;
     u_long128 *uv;
 
     word = 0;
-    u_int end_tag[4] = {0x11000000, 0, 0, 0};
-    u_int first_kick[4] = {0, 0, 0, 0x14000000};
-    u_int kick[4] = {0, 0, 0, 0x17000000};
-    u_int unpack[4] = {0, 0, 0, 0x6C008000};
+    u_int         end_tag[4] = {0x11000000, 0, 0, 0};
+    u_int         first_kick[4] = {0, 0, 0, 0x14000000};
+    u_int         kick[4] = {0, 0, 0, 0x17000000};
+    u_int         unpack[4] = {0, 0, 0, 0x6C008000};
     sceVu0FVECTOR one = {1.0f, 1.0f, 1.0f, 1.0f};
-    MDT_MATERIAL cloth_material;
+    MDT_MATERIAL  cloth_material;
 
     cloth_material.ambient[0] = 0.3f;
     cloth_material.ambient[1] = 0.3f;
@@ -712,12 +710,12 @@ void CCloth::Initialize(MDT_HEADER *header, CDataAlloc2<1> *alloc) {
     }
     sceVu0FVECTOR *vertices = (sceVu0FVECTOR *) ((u_char *) header + header->vertex_ofs);
     sceVu0FVECTOR *uvs = (sceVu0FVECTOR *) ((u_char *) header + header->uv[1]);
-    MDT_MATERIAL *materials = (MDT_MATERIAL *) ((u_char *) header + header->info_ofs);
-    int *mesh = (int *) ((u_char *) header + header->mesh_ofs);
+    MDT_MATERIAL  *materials = (MDT_MATERIAL *) ((u_char *) header + header->info_ofs);
+    int           *mesh = (int *) ((u_char *) header + header->mesh_ofs);
     strip = mesh + 4;
     int *strips = strip;
-    int strip_count = mesh[2];
-    int match_count = 0;
+    int  strip_count = mesh[2];
+    int  match_count = 0;
 
     for (int i = 0; i < num_i; i++) {
         for (int j = 0; j < num_j; j++) {

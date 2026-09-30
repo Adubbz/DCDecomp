@@ -21,12 +21,12 @@
  * @size 0x16C
  */
 int checkItemUsed(int slot) {
-    int character;
+    int   character;
     float water_now;
     float water_max;
-    int condition;
-    s16 hp;
-    s16 max_hp;
+    int   condition;
+    s16   hp;
+    s16   max_hp;
 
     character = UserStatus->cur_chara;
     water_now = UserStatus->water_now[character];
@@ -34,9 +34,9 @@ int checkItemUsed(int slot) {
     hp = UserStatus->hp[character];
     max_hp = UserStatus->max_hp[character];
     condition = UserStatus->ailments[character];
-    int usable = 1;
+    int        usable = 1;
     ITEM_PACK *pack = &UserStatus->item_pack;
-    s16 item = pack->quick_item_slot[slot];
+    s16        item = pack->quick_item_slot[slot];
 
     if (item == -1) {
         return 0;
@@ -112,16 +112,13 @@ void usedActiveItem(CUserStatus *status, int item) {
             BtSetStatusErr(8);
             SndSePlay(0x6F, -1, 0);
         }
-        if ((ITEM_LIST[item].use_flags & 0x20000) != 0 &&
-            (UserStatus->ailments[character] & 0x40) != 0) {
+        if ((ITEM_LIST[item].use_flags & 0x20000) != 0 && (UserStatus->ailments[character] & 0x40) != 0) {
             UserStatus->ailments[character] = 0;
         }
-        if ((ITEM_LIST[item].use_flags & 0x8000) != 0 &&
-            (UserStatus->ailments[character] & 0x10) != 0) {
+        if ((ITEM_LIST[item].use_flags & 0x8000) != 0 && (UserStatus->ailments[character] & 0x10) != 0) {
             UserStatus->ailments[character] = 0;
         }
-        if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 &&
-            (UserStatus->ailments[character] != 0 || UserStatus->ailments[character] != 8)) {
+        if ((ITEM_LIST[item].use_flags & 0x3C000) != 0 && (UserStatus->ailments[character] != 0 || UserStatus->ailments[character] != 8)) {
             UserStatus->ailments[character] = 0;
         }
     }
@@ -144,8 +141,7 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
 
         NowBombEffect[bomb].SetBomb(position, scale);
         SndSePlay(0x6C, -1, 0);
-        collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale,
-                                         0.0f, owner, 3, 0, 0);
+        collision_slot = NowColData->Set(position, damage, (int) (45.0f * scale), 20.0f * scale, 0.0f, owner, 3, 0, 0);
         if (collision_slot != -1) {
             CCollisionData *collision = NowColData;
             collision->hit[collision->now_hit].phase = 10;
@@ -176,14 +172,19 @@ int SetBombEffect(float *position, int owner, int damage, float scale) {
  * @size 0x374
  */
 void CItemBombEffect::Draw(CCamera *camera) {
-    static int uvTable[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    static int uvTable[4][2] = {
+        {0, 0},
+        {0, 1},
+        {1, 0},
+        {1, 1}
+    };
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR direction;
     sceVu0FVECTOR world;
-    int top_left[4];
-    int bottom_right[4];
-    int top_right[4];
-    int bottom_left[4];
+    int           top_left[4];
+    int           bottom_right[4];
+    int           top_right[4];
+    int           bottom_left[4];
 
     camera->GetPos(camera_position);
     sceGsAlpha alpha = mgAlpha;
@@ -232,8 +233,7 @@ void CItemBombEffect::Draw(CCamera *camera) {
         bottom_left[2] = bottom_right[2];
         bottom_left[3] = bottom_right[3];
         CRect_i_ source(u, v, 0x40, 0x40);
-        set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, top_left, top_right,
-                    bottom_left, bottom_right, (u8) alphas[i]);
+        set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, top_left, top_right, bottom_left, bottom_right, (u8) alphas[i]);
     }
 
     MGSetGsALPHA(NULL);
@@ -247,7 +247,7 @@ void CItemBombEffect::Draw(CCamera *camera) {
  * @address 0x1D5EB0
  * @size 0x1F0
  */
-void CItemBombEffect::Step(void) {
+void CItemBombEffect::Step() {
     for (int puff = 0; puff < 5; puff++) {
         if (active[puff] != 1) {
             continue;
@@ -321,7 +321,7 @@ void CItemBombEffect::SetBomb(float *position, float scale) {
  * @address 0x1D6160
  * @size 0x48
  */
-int CItemBombEffect::CheckBomb(void) {
+int CItemBombEffect::CheckBomb() {
     for (int puff = 0; puff < 5; puff++) {
         if (active[puff] != 0) {
             return 1;
@@ -337,7 +337,7 @@ int CItemBombEffect::CheckBomb(void) {
  * @address 0x1D61B0
  * @size 0x30
  */
-void CItemBombEffect::Initialize(void) {
+void CItemBombEffect::Initialize() {
     for (int puff = 0; puff < 5; puff++) {
         active[puff] = 0;
     }
@@ -355,10 +355,10 @@ void CShockWave::Draw(CCamera *camera) {
     sceVu0FVECTOR corner1;
     sceVu0FVECTOR corner2;
     sceVu0FVECTOR corner3;
-    int screen0[4];
-    int screen1[4];
-    int screen2[4];
-    int screen3[4];
+    int           screen0[4];
+    int           screen1[4];
+    int           screen2[4];
+    int           screen3[4];
     sceVu0FVECTOR camera_position;
     sceVu0FVECTOR direction;
 
@@ -411,8 +411,7 @@ void CShockWave::Draw(CCamera *camera) {
     zbuffer.bits.zmsk = 1;
     MGSetGsZBUF(&zbuffer);
     CRect_i_ source(0x80, 0, 0x40, 0x40);
-    set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, screen0, screen1,
-                screen2, screen3, (u8) alpha);
+    set3DSprite(Vif1Packet, TexManager.GetTexture("bomb_ex", -1), source, screen0, screen1, screen2, screen3, (u8) alpha);
     MGSetGsALPHA(NULL);
     MGSetGsZBUF(NULL);
 }
@@ -424,7 +423,7 @@ void CShockWave::Draw(CCamera *camera) {
  * @address 0x1D64E0
  * @size 0xD8
  */
-void CShockWave::Step(void) {
+void CShockWave::Step() {
     if (active == 0) {
         return;
     }

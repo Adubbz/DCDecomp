@@ -23,9 +23,7 @@ class CCharacter;
  * @size 0x258
  * @unknownret
  */
-void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc,
-              CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *extra_alloc, int texture_block_no,
-              CDataAlloc2<1> *image_alloc, int visual_type, int keep_textures);
+void ReadInfo(CCharacter *chara, unsigned int *pack, char *name, CDataAlloc2<1> *model_alloc, CDataAlloc2<1> *motion_alloc, CDataAlloc2<1> *extra_alloc, int texture_block_no, CDataAlloc2<1> *image_alloc, int visual_type, int keep_textures);
 
 /**
  * Gives the length of a three-component vector, on the vector unit.
