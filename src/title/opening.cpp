@@ -1,9 +1,9 @@
 #ifdef PAL
 #pragma argument_flag 0
-#pragma argument_flag_ones 65, 66, 68, 74
-#pragma argument_flag_ones 859, 860
-#pragma argument_flag_ones 861, 864, 865, 866, 1128, 1148, 1149, 1235, 1237, 1238
-#pragma argument_flag_ones 1240, 1254
+#pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168
+#pragma argument_flag_ones 953, 954
+#pragma argument_flag_ones 955, 958, 959, 960, 1222, 1242, 1243, 1329, 1331, 1332
+#pragma argument_flag_ones 1334, 1348
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168, 334
@@ -184,12 +184,6 @@ static int BgmOff;
 static int BgmVol;
 static int BgmNo;
 
-#ifdef PAL
-void OpeningInit();
-INCLUDE_ASM("asm/pal/nonmatchings/title/opening", OpeningInit__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/opening", @365__4);
-#pragma name_counter 51
-#else
 void OpeningInit() {
     wait_now_loading_vsync();
     InitializeDataBuffer();
@@ -205,7 +199,11 @@ void OpeningInit() {
     PassReadBuffer = testBuffer.Alloc(15000);
     SetDataBuffer(&MapDataBuffer, 159500);
     SetDataBuffer(&WaterBuffer__2, 30000);
+#ifdef PAL
+    SetDataBuffer(&TextureData, 365000);
+#else
     SetDataBuffer(&TextureData, 355000);
+#endif
     SetPacketReadBuffer(40000, 273000);
     OP_MainCamera.SetRef(0, 0.0f, 0.0f, 0.0f);
     OP_MainCamera.SetPos(0, 0.0f, 0.0f, 0.0f);
@@ -216,7 +214,11 @@ void OpeningInit() {
     OP_MainCamera.SetSpeed(0.0f);
     MGSetRenderInfo(800.0f, 6.0f, 65535);
     wait_now_loading_vsync();
+#ifdef PAL
+    CScript__2.Load("opdat/opening.pal");
+#else
     CScript__2.Load("opdat/opening.scr");
+#endif
     wait_now_loading_vsync();
     LoadMessage();
     wait_now_loading_vsync();
@@ -238,7 +240,6 @@ void OpeningInit() {
     DispFade.FadeInit(128.0f);
     DispFade.FadeOutStart(128.0f, 0);
 }
-#endif
 
 /**
  * Loads the opening movie's localized message resources.

@@ -3,9 +3,8 @@
 #ifdef PAL
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
-#pragma argument_flag_ones 174, 175, 176, 177
-#pragma argument_flag_ones 213, 223, 225, 233
-#pragma argument_flag_ones 239, 242, 243, 244, 282
+#pragma argument_flag_ones 174, 175, 176, 177, 226, 228, 268, 279, 289, 538
+#pragma argument_flag_ones 548, 550, 558, 564, 567, 568, 569, 607
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
@@ -822,15 +821,6 @@ static void MotionProcess() {
  * @size 0x344
  * @unknownret
  */
-#ifdef PAL
-static void DrawProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", DrawProcess__Fv__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", fade$601);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$602);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @641__5);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @642__7);
-#pragma name_counter 330
-#else
 static void DrawProcess() {
     if (DispFade.GetRate() == 128.0) {
         return;
@@ -891,9 +881,15 @@ static void DrawProcess() {
 
         if (StartDisp) {
             TexManager.ReloadTexture(Vif1Packet, 20);
+#ifdef PAL
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
+                        CRect<int>(192, 392, 256, 32), CRect<int>(0, 0, 256, 32),
+                        fade);
+#else
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
                         CRect<int>(192, 360, 256, 32), CRect<int>(0, 0, 256, 32),
                         fade);
+#endif
             fade = (fade + 2) & 127;
         }
 
@@ -913,10 +909,9 @@ static void DrawProcess() {
 
     texture.tex0 = *(u_long *) &back;
     set2DSprite(Vif1Packet, &texture,
-                CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
+                CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT),
                 128, 128, 128, 35);
 }
-#endif
 
 /**
  *
@@ -926,22 +921,6 @@ static void DrawProcess() {
  * @size 0xCF4
  * @unknownret
  */
-#ifdef PAL
-static void SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", SoundProcess__Fv__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", mus$647);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$648);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", ambi$655);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$656);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", bat$663);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$664);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", wait$681);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$682);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", wait$705__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", init$706__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/rushmovi", @817__4);
-#pragma name_counter 505
-#else
 static void SoundProcess() {
     if (CScript.bgm_fade) {
         SndBgmFadeOut(64, 0);
@@ -1275,7 +1254,6 @@ static void SoundProcess() {
         wait--;
     }
 }
-#endif
 
 void SetObjAnime(char *name, CFrameVu1 *frame, float *scale, float *position) {
     OP_AnimeSeq[OP_AnimeSeqRot].Initialize();

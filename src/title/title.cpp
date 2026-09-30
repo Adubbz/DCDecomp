@@ -626,18 +626,6 @@ static void InitProcA() {
 }
 #endif
 
-#ifdef PAL
-void DrawProcA();
-INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcA__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", lightning$981);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", init$982);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", col$984);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", init$985);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", @980);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1029);
-INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1035__5);
-#pragma name_counter 232
-#else
 void DrawProcA() {
     sceVu0FMATRIX flash = {
         {100.0f, 80.0f, 60.0f, 0.0f},
@@ -781,7 +769,6 @@ void DrawProcA() {
 
     DepthOfField(dof, 3, 32, 0);
 }
-#endif
 
 CFrame *ObjectFrame3;
 class CProcess CProcess;

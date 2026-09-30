@@ -1,11 +1,11 @@
 #ifdef PAL
 #pragma argument_flag 0
-#pragma argument_flag_ones 79, 99, 116, 124, 146
-#pragma argument_flag_ones 187, 188, 189, 197, 199, 202, 204, 248, 251
-#pragma argument_flag_ones 255, 256, 260, 263, 286, 297, 305, 312, 313, 314
-#pragma argument_flag_ones 317, 318, 319, 358, 368, 374, 375, 376, 382, 392
-#pragma argument_flag_ones 398, 399, 400, 406, 416, 422, 423, 424, 439
-#pragma argument_flag_ones 598
+#pragma argument_flag_ones 79, 99, 116, 124, 146, 177, 179, 197, 198, 199
+#pragma argument_flag_ones 207, 209, 212, 214, 258, 261, 265, 266, 270, 273
+#pragma argument_flag_ones 296, 307, 315, 322, 323, 324, 327, 328, 329, 368
+#pragma argument_flag_ones 378, 384, 385, 386, 392, 402, 408, 409, 410, 416
+#pragma argument_flag_ones 426, 432, 433, 434, 449, 464, 470, 471, 477, 485
+#pragma argument_flag_ones 538, 715
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 190, 210, 227, 235, 257, 288, 290, 295, 403, 428
@@ -608,12 +608,6 @@ static void SetDanceMotion() {
  * @size 0x124
  * @unknownret
  */
-#ifdef PAL
-static void InitDancerPos();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", InitDancerPos__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @406__2);
-#pragma name_counter 119
-#else
 static void InitDancerPos() {
     float pos[35][4] = {
         {3.0f, 0.0f, 27.0f, 0.0f},
@@ -668,7 +662,6 @@ static void InitDancerPos() {
     Chara__3[6].SetPosition(0.0f, 0.0f, 250.0f);
     Chara__3[6].SetRotation(0.0f, PI, 0.0f);
 }
-#endif
 
 /* The tick's drawing, in the order the frame is built: the ground, the buildings standing on it,
    the townspeople, the couple, the crowd behind them, the fires, the sky and last the depth of
@@ -1503,35 +1496,6 @@ static void DrawShadow(float x, float y, float z) {
    and the wait keeps a motion that stalls there from playing the step twice. The rest is the
    square's own ambience: the fountain from a fixed point, the wind while the sky is up, and the
    change of music the camera makes when it turns away. */
-#ifdef PAL
-void OpA_SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_SoundProcess__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", mus$973);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$974__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$983);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$984);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$998);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$999__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$1013);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1014__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$1028);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1029);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", seflg$1046);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1047);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", secnt$1049);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1050);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", vol$1052);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1053);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", flg$1064);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1065);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", flg$1077);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$1078);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1045__3);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1062);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1088__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @1089);
-#pragma name_counter 778
-#else
 void OpA_SoundProcess() {
     /* These type-only names preserve the first footfall's argument-selection state. */
     typedef float SoundSetup0, SoundSetup1, SoundSetup2, SoundSetup3, SoundSetup4, SoundSetup5,
@@ -1652,7 +1616,11 @@ void OpA_SoundProcess() {
     {
         static int flg = 0;
 
+#ifdef PAL
+        if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 252.0) {
+#else
         if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 249.0) {
+#endif
             if (flg == 0) {
                 while (ReadBGSync())
                     ;
@@ -1681,7 +1649,6 @@ void OpA_SoundProcess() {
         }
     }
 }
-#endif
 
 /**
  * The waterfall behind the square. Its animation is a strip of frames in a texture of its own and

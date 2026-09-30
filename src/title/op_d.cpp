@@ -1697,12 +1697,6 @@ static void Setsumei() {
  * @size 0x330
  * @unknownret
  */
-#ifdef PAL
-static void HamonProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", HamonProcess__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", se$1301);
-#pragma name_counter 949
-#else
 static void HamonProcess() {
     sceVu0FVECTOR ambient;
 
@@ -1768,4 +1762,3 @@ static void HamonProcess() {
 
     MGSetAmbient(ambientlight);
 }
-#endif

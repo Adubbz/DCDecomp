@@ -1098,14 +1098,6 @@ void OpC_InitProcess3() {
 
 /* The village once the demon has been through it, which is the first scene's manifest with the
    explosion and the dust it throws up added and everything the dance needed left out. */
-#ifdef PAL
-void OpC_InitProcess4();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess4__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @614__7);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @616__5);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @617__6);
-#pragma name_counter 296
-#else
 void OpC_InitProcess4() {
     while (ReadBGSync())
         ;
@@ -1148,7 +1140,11 @@ void OpC_InitProcess4() {
     tex[5].block_no = 10;
     tex[5].unk_08 = 0;
     tex[6].name = (char *) GetPackFile(read_buffer, "e01t01.img", 0);
+#ifdef PAL
+    tex[6].block_no = 13;
+#else
     tex[6].block_no = 10;
+#endif
     tex[6].unk_08 = 0;
     tex[7].name = (char *) GetPackFile(read_buffer, "t0205.img", 0);
     tex[7].block_no = 10;
@@ -1166,17 +1162,24 @@ void OpC_InitProcess4() {
     tex[11].block_no = 11;
     tex[11].unk_08 = 0;
     tex[12].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
+#ifdef PAL
+    tex[12].block_no = 18;
+#else
     tex[12].block_no = 17;
+#endif
     tex[12].unk_08 = 0;
     tex[13].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
+#ifdef PAL
+    tex[13].block_no = 18;
+#else
     tex[13].block_no = 17;
+#endif
     tex[13].unk_08 = 0;
     tex[14].name = 0;
 
     TexManager.LoadTextureBlock(-1, tex);
     CScript__2.init_no = 0;
 }
-#endif
 
 /* The burning village: the ruined map, the smoke pool the fires feed, and the five actors who walk
    through it. The cloth Toan carries is driven by this file's own wind rather than the scene's. */
@@ -1922,33 +1925,6 @@ static void MapLoad2() {
    The last camera of the scene is the one the fire and the windmill are timed against: while it
    runs, the motion step drops to a twentieth and the camera shakes by a random amount whose spread
    narrows as the shot goes on. */
-#ifdef PAL
-void OpC_MotionProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_MotionProcess__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", camera$921);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$922);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", step$959);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$960);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", d$962);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$963);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @907__4);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @893__6);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @894__6);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @895__5);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @896__4);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @897__4);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @898__3);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @899__5);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @900__3);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @901__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @902__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @903__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @904__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @905__2);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @906__3);
-INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @997__2);
-#pragma name_counter 666
-#else
 void OpC_MotionProcess() {
     for (int i = 0; i < 23; i++) {
         if (CScript__2.obj[i].disp) {
@@ -2076,18 +2052,34 @@ void OpC_MotionProcess() {
 
     switch (CScript__2.camera_start) {
         case 96:
+#ifdef PAL
+            Fuusya[1].step = -0.12f * 1.2f;
+#else
             Fuusya[1].step = -0.12f;
+#endif
             break;
 
         case 97:
             d = 2.0f;
+#ifdef PAL
+            Fuusya[1].step = -0.04f * 1.2f;
+#else
             Fuusya[1].step = -0.04f;
+#endif
             break;
 
         case 100:
             if (Cam__2[SceneNp__2].motion_type.state.time < 258.0f) {
+#ifdef PAL
+                step = 0.025f * 1.2f;
+#else
                 step = 0.025f;
+#endif
+#ifdef PAL
+                Fuusya[1].step = -0.0048f * 1.2f;
+#else
                 Fuusya[1].step = -0.0048f;
+#endif
 
                 if (FireStep >= 1.0f) {
                     FireStep = 0.0f;
@@ -2108,8 +2100,16 @@ void OpC_MotionProcess() {
                     OP_MainCamera.SetRef(ref);
                 }
 
+#ifdef PAL
+                step = 0.5f * 1.2f;
+#else
                 step = 0.5f;
+#endif
+#ifdef PAL
+                Fuusya[1].step = -10.0f * 1.2f;
+#else
                 Fuusya[1].step = -10.0f;
+#endif
                 FireStep = 1.0f;
             }
 
@@ -2123,7 +2123,6 @@ void OpC_MotionProcess() {
         LoadCharaMajin();
     }
 }
-#endif
 
 /**
  * The demon's second half, which is loaded while the scene is already running: the script asks for
