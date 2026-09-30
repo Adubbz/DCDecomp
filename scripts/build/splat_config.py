@@ -534,6 +534,33 @@ def unit_text(carry, image, address, starts):
     return min(moved) if moved else None
 
 
+LCF_NAMED_ADDRESS = re.compile(r"^(\s*([A-Za-z_]\w*)\s*=\s*)(0x[0-9a-fA-F]{8})(;.*)$")
+
+
+def carry_relocated_address(carry, image, address):
+    """Where the target holds an address the script names outright.
+
+    Retail reaches such an address through a relocation against a symbol of
+    its own plus an addend; the target's relocation against the same symbol,
+    with the same addend, says where it is there.
+    """
+    source, target = carry.source, carry.target
+    via = None
+    for at, reached in relocated_targets(source, image):
+        if reached == address:
+            via = next(((name, address - value) for _kind, name, value in source.rel[image].get(at, [])), None)
+            if via:
+                break
+    if via is None:
+        return None
+    name, addend = via
+    for entries in target.rel.get(image, {}).values():
+        for _kind, other, value in entries:
+            if other == name:
+                return value + addend
+    return None
+
+
 def carry_lcf(carry, text, problems):
     source, target = carry.source, carry.target
     starts = defaultdict(list)
@@ -558,6 +585,17 @@ def carry_lcf(carry, text, problems):
         gp = re.match(r"^(\s*_gp\s*=\s*)(0x[0-9a-fA-F]+)(;.*)$", line)
         if gp:
             out.append(gp.group(1) + hex_like(gp.group(2), target.gp) + gp.group(3))
+            continue
+        named = LCF_NAMED_ADDRESS.match(line)
+        if named and image and target is not source:
+            address = int(named.group(3), 16)
+            if source.image_range(image)[0] <= address < source.image_range(image)[1]:
+                moved = carry_relocated_address(carry, image, address)
+                if moved is None:
+                    problems.append(f"lcf: {named.group(2)} = {named.group(3)} has no relocation to follow")
+                else:
+                    line = named.group(1) + hex_like(named.group(3), moved) + named.group(4)
+            out.append(line)
             continue
         if "//" not in line or image is None:
             out.append(line)

@@ -35,6 +35,29 @@
 /**
  * Holds the state of the option screen.
  */
+#ifdef PAL
+struct OPTION_MENU_STATE {
+    s16 mode;
+    s16 buttons;
+    s16 cursor;
+    u8 unk_06[2];
+    s32 step;
+    s32 step_count;
+    float cursor_x;
+    float cursor_y;
+    float page_x;
+    s32 flag[13];
+    s32 prev_flag[12];
+    u8 unk_80[4];
+    s32 unk_84;
+    s32 unk_88;
+    u8 texture_ready;
+    u8 unk_8D;
+    s16 block_no;
+};
+
+STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x90);
+#else
 struct OPTION_MENU_STATE {
     s32 mode;    /**< How the screen was opened; 0 from the main menu. */
     s32 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
@@ -52,6 +75,7 @@ struct OPTION_MENU_STATE {
 };
 
 STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
+#endif
 
 /** Holds the georama parts of a town the player is not standing in. */
 CEditPartsInfo BtEditPartsInfo;

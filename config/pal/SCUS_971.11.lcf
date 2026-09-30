@@ -676,7 +676,7 @@ SECTIONS
 		# The table of external characters that follows the Georama editor's
 		# parts data. Retail reaches it by its own name, not as an offset into
 		# EditPartsData, so the code carries a relocation against this address.
-		EditGaijiTbl = 0x002589ec;
+		EditGaijiTbl = 0x0025f02c;
 
 		# Entries of retail's literal pool that a compiled unit loads from.
 		# scripts/build/literals.py binds each float constant an object holds

@@ -749,7 +749,11 @@ static void BtlMenuTexBlockEnter() {
     WepIcon = TexManager.GetTexture("wepicon", -1);
     ItemIcon = TexManager.GetTexture("itemicon", BtlMenuReadBlock);
     PerBoardTex = TexManager.GetTexture("perbrd", BtlMenuReadBlock);
+#ifdef PAL
+    WepStatus = TexManager.GetTexture("wepstatus", BtlMenuExtBlock);
+#else
     WepStatus = TexManager.GetTexture("wepstatus", BtlMenuReadBlock);
+#endif
     VillageName = TexManager.GetTexture("vilname", -1);
     VillageBar = TexManager.GetTexture("viltag", -1);
 }
@@ -2564,7 +2568,11 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         }
         model->Draw();
     }
+#ifdef PAL
+    MenuTextureReload(BtlMenuExtBlock);
+#else
     MenuTextureReload(BtlMenuReadBlock);
+#endif
     switch (WepMenu.unk_02) {
         case 0:
         case 1:

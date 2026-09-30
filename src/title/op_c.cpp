@@ -862,40 +862,16 @@ void OpC_InitProcess2() {
     tex[1].name = 0;
 
     TexManager.LoadTextureBlock(4, tex);
-#ifdef PAL
-    Chara__3[15].LoadPackData(read_buffer, "04p05b.cfg", &CharaDataBuffer__2[6], 0);
-#else
     Chara__3[14].LoadPackData(read_buffer, "04p05b.cfg", &CharaDataBuffer__2[6], 0);
-#endif
 
     CFrameAttr attr14;
 
     attr14.unk_08 = 0;
-#ifdef PAL
-    Chara__3[15].frame->SetAttr(attr14, 1, 4);
-#else
     Chara__3[14].frame->SetAttr(attr14, 1, 4);
-#endif
-#ifdef PAL
-    Chara__3[15].motion_type.state.time = 1.0f;
-#else
     Chara__3[14].motion_type.state.time = 1.0f;
-#endif
-#ifdef PAL
-    Chara__3[15].motion_type.state.blend_step = 1.0f;
-#else
     Chara__3[14].motion_type.state.blend_step = 1.0f;
-#endif
-#ifdef PAL
-    Chara__3[15].motion_type.state.motion_no = 0;
-#else
     Chara__3[14].motion_type.state.motion_no = 0;
-#endif
-#ifdef PAL
-    Chara__3[15].motion_type.state.playing_no = 0;
-#else
     Chara__3[14].motion_type.state.playing_no = 0;
-#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p15a01.img", 0);
     tex[0].block_no = 9;
@@ -1330,40 +1306,16 @@ void OpC_InitProcess5() {
 #else
     TexManager.LoadTextureBlock(14, tex);
 #endif
-#ifdef PAL
-    Chara__3[14].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
-#else
     Chara__3[13].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
-#endif
 
     CFrameAttr attr13;
 
     attr13.unk_08 = 0;
-#ifdef PAL
-    Chara__3[14].frame->SetAttr(attr13, 1, 4);
-#else
     Chara__3[13].frame->SetAttr(attr13, 1, 4);
-#endif
-#ifdef PAL
-    Chara__3[14].motion_type.state.time = 5.0f;
-#else
     Chara__3[13].motion_type.state.time = 5.0f;
-#endif
-#ifdef PAL
-    Chara__3[14].motion_type.state.blend_step = 1.0f;
-#else
     Chara__3[13].motion_type.state.blend_step = 1.0f;
-#endif
-#ifdef PAL
-    Chara__3[14].motion_type.state.motion_no = 0;
-#else
     Chara__3[13].motion_type.state.motion_no = 0;
-#endif
-#ifdef PAL
-    Chara__3[14].motion_type.state.playing_no = 0;
-#else
     Chara__3[13].motion_type.state.playing_no = 0;
-#endif
 
     Chara__3[18].LoadPackData(read_buffer, "04p02a.cfg", &CharaDataBuffer__2[6], 0);
 
