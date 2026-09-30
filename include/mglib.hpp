@@ -106,6 +106,7 @@ extern CRect_i_ mgWindowRect;
 extern sceGsTexa mgTexa;
 #ifdef PAL
 extern int mgTopVRAM;
+extern int mgZBufferAdr;
 #endif
 
 /**
