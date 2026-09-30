@@ -420,6 +420,16 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     return volume;
 }
 
+#ifdef PAL
+int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
+/* Retail's data for the function the marker below supplies. */
+char pal_at762__3[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dunenter/dunenter%d.pak";
+char pal_at763__2[0x18] __attribute__((section(".rodata"))) = "maxfloor = %d\n";
+char pal_at764__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "DEnterMenu.select = %d\n";
+char pal_at765__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "DEnterMenu.topline = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
+#pragma name_counter 852
+#else
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     char path[76];
     int size;
@@ -498,6 +508,7 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     GamePad.MenuModeOn(0x78);
     return 1;
 }
+#endif
 
 static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();
@@ -522,6 +533,20 @@ int DunEnterMenuLoop() {
     return result;
 }
 
+#ifdef PAL
+static int DunEnterMenuKey(void);
+/* Retail's data for the function the marker below supplies. */
+char pal_at776[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_menu_enter#640#480#4";
+char pal_at868__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dunenter.img";
+char pal_at869__3[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dunenter";
+char pal_at870__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kaisou";
+char pal_at871__3[0x18] __attribute__((section(".rodata"))) = "dunlog.bin";
+char pal_at872__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "tex enter end \n";
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+char pal_at777__2[0x30] __attribute__((aligned(16))) = "0d*";
+#pragma name_counter 931
+#else
 static int DunEnterMenuKey(void) {
     int result;
     int selected;
@@ -644,6 +669,7 @@ static int DunEnterMenuKey(void) {
     }
     return result;
 }
+#endif
 
 static void DunEnterDraw(void) {
     int fade;
@@ -1013,10 +1039,18 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
     }
 }
 
+#ifdef PAL
+static void DrawDunEnterBack(int alpha);
+/* Retail's data for the function the marker below supplies. */
+char pal_at1280[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "frame";
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
+#pragma name_counter 1282
+#else
 static void DrawDunEnterBack(int alpha) {
     DrawMenu2DSprite(TexManager.GetTexture("frame", -1), MenuDispRc, MenuDispRc, 0x80);
     MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
 }
+#endif
 
 /**
  * Screen position of the character change ring's centre.
@@ -1052,8 +1086,16 @@ CFrame *ItemPolyView;
 int MDebugItemPolyViewFlag;
 int polyreadflag;
 
-char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#448#4";
+char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#" SCREEN_HEIGHT_STR "#4";
 
+#ifdef PAL
+static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
+/* Retail's data for the function the marker above supplies. */
+char pal_at1305[0x40] __attribute__((aligned(16))) = "PnHh80PRh``80dRh``80dRh`b80f\\h``.0dRh``80dRh``8Pd";
+unsigned int pal_at1306__2[4] __attribute__((aligned(16))) = {0x00000000, 0x000000C0, 0x00000010, 0x0000001C};
+#pragma name_counter 1323
+#else
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
     int height;
@@ -1111,6 +1153,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
         }
     }
 }
+#endif
 
 float changeMenu_long = 60.0f;
 
@@ -1262,6 +1305,11 @@ static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
     status->cur_chara = chara;
 }
 
+#ifdef PAL
+int CharaChangeKey(void);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
+#pragma name_counter 1515
+#else
 int CharaChangeKey(void) {
     int result = 0;
 
@@ -1454,7 +1502,18 @@ int CharaChangeKey(void) {
     }
     return result;
 }
+#endif
 
+#ifdef PAL
+void CharaChangeDraw(void);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1606__2[4] __attribute__((aligned(16))) = {0x00000070, 0x00000074, 0x0000000C, 0x0000000C};
+unsigned int pal_at1607__2[8] __attribute__((aligned(16))) = {0x4129999A, 0x4129999A, 0x4129999A, 0x41600000, 0x41400000, 0x413CCCCD, 0x412B3333};
+unsigned int pal_at1612__2[4] __attribute__((aligned(16))) = {0x00000000, 0x0000009E, 0x0000000C, 0x00000012};
+s8 pal_at1608__2[8] = {0, 0, 0, 56, 28, 16};
+#pragma name_counter 1614
+#else
 void CharaChangeDraw(void) {
     int alpha;
     int i;
@@ -1588,6 +1647,7 @@ void CharaChangeDraw(void) {
         setbilinear(1);
     }
 }
+#endif
 
 int DngActItemModelReadStart(u_long128 *buffer) {
     char model_path[64];
@@ -1701,7 +1761,11 @@ int DngActiveItemTextureCopy(void) {
     return 1;
 }
 
-char item_view_frame_image[] __attribute__((section(".rodata"))) = "#frame_menuwep#640#448#4";
+char item_view_frame_image[] __attribute__((section(".rodata"))) = "#frame_menuwep#640#" SCREEN_HEIGHT_STR "#4";
+#ifdef PAL
+/* Retail's data for InitDebugItemGet, which a marker below supplies. */
+char pal_at1941__2[] __attribute__((section(".rodata"))) = "dbgwork_menu";
+#endif
 char item_templete_no[] __attribute__((section(".rodata"))) = "ItemNo   :%d\n";
 char item_templete_type[] __attribute__((section(".rodata"))) = "type:    :%s\n";
 char item_templete_use[] __attribute__((section(".rodata"))) = "use      :%s\n";
@@ -1975,7 +2039,8 @@ void DrawItemPolygonView(void) {
 }
 
 #ifdef PAL
-void InitDebugItemGet() {}
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDebugItemGet__Fv);
+#pragma name_counter 1835
 #endif
 
 static int ConvDebugSelectToExcelListNo(int selection) {

@@ -65,11 +65,22 @@ CTexture *KataTex;
 /** The alphabet and symbol keyboards' characters. */
 CTexture *AlphaTex;
 
+#ifdef PAL
+/** The accented European characters' keyboard. */
+CTexture *EuroTex;
+
+/** How many keys each keyboard has in a row. */
+s8 InputModeOrikaeshi[4] = {10, 10, 13, 10};
+
+/** How far the cursor moves across and down each keyboard, per key. */
+s8 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1A}, {0x26, 0x1A}};
+#else
 /** How far the cursor moves across and down each keyboard, per key. */
 s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0x1A}};
 
 /** How many keys each keyboard has in a row. */
 s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
+#endif
 
 #include "gameutil.hpp"
 #include "snd.hpp"
@@ -94,6 +105,13 @@ void GlobalNameInit(void) {
  * @address 0x2384A0
  * @size 0x190
  */
+#ifdef PAL
+void InitNameRegist(int character, int texture_block, u_long128 *buffer);
+/* Retail's data for the function the marker below supplies. */
+char pal_at347__3[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "nameregi.pak";
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", InitNameRegist__FiiP1);
+#pragma name_counter 82
+#else
 void InitNameRegist(int chara_no, int texture_block, u_long128 *buffer) {
     StartReadBG();
     if (buffer == NULL) {
@@ -130,6 +148,7 @@ void InitNameRegist(int chara_no, int texture_block, u_long128 *buffer) {
     NameDefaultSet(NameSelect.chara_no);
     NameSelect.name_pos = 0;
 }
+#endif
 
 /**
  * Gives the name-entry screen's textures back and closes it.
@@ -153,6 +172,11 @@ void ExitNameEnterFunc() {
  * @address 0x2386A0
  * @size 0xBC
  */
+#ifdef PAL
+CTexture *GetNameTextureInfo(CTexture **textures, int code, int &cell_x, int &cell_y);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", GetNameTextureInfo__FPP8CTextureiRiRi);
+#pragma name_counter 94
+#else
 CTexture *GetNameTextureInfo(CTexture **textures, int char_code, int &cell_x, int &cell_y) {
     CTexture *texture;
 
@@ -173,6 +197,7 @@ CTexture *GetNameTextureInfo(CTexture **textures, int char_code, int &cell_x, in
     cell_y = (char_code / 10) * 0x16;
     return texture;
 }
+#endif
 
 /**
  * Draws a party member's name.
@@ -181,6 +206,13 @@ CTexture *GetNameTextureInfo(CTexture **textures, int char_code, int &cell_x, in
  * @address 0x238760
  * @size 0x118
  */
+#ifdef PAL
+void DrawCharaName(int character, int x, int y, int brightness, int blend_mode);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaName__Fiiiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at367__4[4] __attribute__((aligned(16))) = {0};
+#pragma name_counter 109
+#else
 void DrawCharaName(int chara_no, int x, int y, int brightness, int blend_mode) {
     int draw_x = x;
     CTexture *textures[3] = {AlphaTex, KataTex, HiraTex};
@@ -194,6 +226,7 @@ void DrawCharaName(int chara_no, int x, int y, int brightness, int blend_mode) {
         draw_x += 22;
     }
 }
+#endif
 
 /**
  * Draws the four corners of the frame around the name being entered, pulling them inward as the frame counter cycles.
@@ -226,6 +259,15 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
  * @address 0x238A70
  * @size 0x628
  */
+#ifdef PAL
+void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
+/* Retail's data for the function the marker below supplies. */
+char pal_at483__3[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "window";
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at419__2[8] __attribute__((aligned(16))) = {0x41900000, 0x41400000, 0x41400000, 0x41400000, 0x41400000, 0x41400000, 0x41400000};
+#pragma name_counter 202
+#else
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     int left;
     int top;
@@ -316,23 +358,70 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
             break;
     }
 }
-
-#ifdef PAL
-void DrawEuroSpecialFont(int, int, int, int, int) {}
 #endif
 
 #ifdef PAL
-int Get_NameTemp_PutX(int, int) {
-    return 0;
-}
+/** Keyboard key of each symbol, indexing the symbol keyboard's characters. */
+s8 menu_kigoutbl[40] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20, 21, 41, 42, 43, 44, 16, 16, 16, 16, 16, 16, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37};
+
+/** Character code of each key on the accented-character keyboard, per language and row; -2 ends a row. */
+s16 menu_euro_codetbl[5][2][13] = {
+    {
+        {260, 261, 262, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {260, 261, 262, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1},
+    },
+    {
+        {260, 290, 270, 300, 280, 265, 295, 275, 305, 285, -2, -1, -1},
+        {262, 292, 282, 267, 297, 287, 291, 296, 312, 313, -2, -1, -1},
+    },
+    {
+        {260, 300, 280, 265, 305, 285, 320, -2, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    },
+    {
+        {261, 291, 271, 301, 281, 266, 296, 276, 306, 286, -2, -1, -1},
+        {262, 292, 272, 302, 282, 267, 297, 277, 307, 285, -1, -1, 0},
+    },
+    {
+        {261, 291, 271, 301, 281, 266, 296, 276, 306, 286, 280, 285, -2},
+        {-1, -1, -1, -2, -1, -1, -2, -1, -1, -1, -1, -1, -1},
+    },
+};
+
+/** How many rows of the accented-character keyboard each language uses. */
+s8 euro_code_linelimmit[5] = {2, 2, 1, 2, 1};
 #endif
 
-char NameEntryImageDescriptor[] __attribute__((section(".rodata"))) = "#frame_image_name#640#448#4";
+#ifdef PAL
+/* Retail's data for the function the marker below supplies. */
+char pal_at512__4[0x8] __attribute__((section(".rodata"))) = "euro";
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawEuroSpecialFont__Fiiiii);
+#pragma name_counter 202
+#endif
+
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", Get_NameTemp_PutX__Fii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at513__3[40] __attribute__((aligned(16))) = {
+    0x007D0028, 0x010500D1, 0x017A0137, 0x004A0028, 0x00A8006F, 0x000000DF, 0x00280000,
+    0x012F00DF, 0x00280180, 0x006F004A, 0x00DF00A8, 0x00000000, 0x00900028, 0x0180012F,
+    0x004A0028, 0x00A8006F, 0x000000DF, 0x00280000, 0x012F008C, 0x00280180, 0x006F004A,
+    0x00DF00A8, 0x00000000, 0x00960028, 0x0180012F, 0x004A0028, 0x00A8006F, 0x000000DF,
+    0x00280000, 0x012F008E, 0x00280180, 0x006F004A, 0x00DF00A8, 0x00000000, 0x00840028,
+    0x0180011B, 0x004A0028, 0x00A8006F, 0x000000DF,
+};
+#pragma name_counter 202
+#endif
+
+char NameEntryImageDescriptor[] __attribute__((section(".rodata"))) = "#frame_image_name#640#" SCREEN_HEIGHT_STR "#4";
 char NameEntryTextureFile[] __attribute__((section(".rodata"))) = "nameregi.img";
 char NameEntryTempTexture[] __attribute__((section(".rodata"))) = "nametemp";
 char NameEntryHiraganaTexture[] __attribute__((section(".rodata"))) = "hira";
 char NameEntryKatakanaTexture[] __attribute__((section(".rodata"))) = "kata";
 char NameEntryAlphabetTexture[] __attribute__((section(".rodata"))) = "alphabet";
+#ifdef PAL
+char pal_at803[] __attribute__((section(".rodata"))) = "euro tex is %p\n";
+#endif
 char NameEntryFaceTexture[] __attribute__((section(".rodata"))) = "charaface";
 char NameEntryMessageFile[] __attribute__((section(".rodata"))) = "nameregi.bin";
 char NameEntryMessageFile2[] __attribute__((section(".rodata"))) = "nameregi2.bin";
@@ -345,6 +434,18 @@ char NameEntryFrameTexture[] __attribute__((section(".rodata"))) = "frame_image"
  * @address 0x2390A0
  * @size 0x930
  */
+#ifdef PAL
+static void DrawNameTemplete(int x, int y, int color, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
+/* Retail's data for the function the marker above supplies. */
+s16 pal_at515__4[4] = {0x59, 0x58, 0x34, 0x28};
+unsigned int pal_at516__3[20] __attribute__((aligned(16))) = {
+    0x2C2C4E4E, 0x1818343C, 0x00703030, 0x4A4BB000, 0x30181846, 0x00007030, 0x464A9B60,
+    0x30301818, 0x5C000070, 0x18464C9F, 0x70303018, 0x94670000, 0x1818464A, 0x00703030,
+    0x4B9D5E00, 0x30181846, 0x00007030, 0x465F9156, 0x30301818, 0x00000070,
+};
+#pragma name_counter 335
+#else
 static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
     int input_mode = NameSelect.input_mode;
     int pushed_tab = NameSelect.pushed_tab;
@@ -533,6 +634,7 @@ static void DrawNameTemplete(int x, int y, int brightness, int blend_mode) {
             break;
     }
 }
+#endif
 
 /**
  * Reports whether two names are the same.
@@ -598,6 +700,18 @@ int CheckName() {
  * @address 0x239BA0
  * @size 0xC9C
  */
+#ifdef PAL
+void NameEnterDraw(void);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", NameEnterDraw__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at671__2[10] __attribute__((aligned(16))) = {0x002A6BD0};
+unsigned int pal_at672__2[6] __attribute__((aligned(8))) = {0x140B1612, 0x140B140B, 0x140B140B, 0x0000140B};
+unsigned int pal_at698__2[8] __attribute__((aligned(16))) = {0x00A00058, 0x013600FC, 0x01A40166, 0x00720058, 0x00D8009A, 0x0000010C};
+unsigned int pal_at700__2[8] __attribute__((aligned(16))) = {0x00580058, 0x01000058, 0x01B4015E, 0x00720058, 0x00D8009A, 0x0000010C};
+unsigned int pal_lct_S730;
+unsigned char pal_init_S731;
+#pragma name_counter 492
+#else
 void NameEnterDraw(void) {
     int language;
     int chara_no;
@@ -833,6 +947,7 @@ void NameEnterDraw(void) {
         setbilinear(1);
     }
 }
+#endif
 
 /**
  * Moves the cursor across the keyboard and enters the character it settles on.
@@ -841,6 +956,19 @@ void NameEnterDraw(void) {
  * @address 0x23A840
  * @size 0x1F28
  */
+#ifdef PAL
+s32 NameEnterKey(void);
+/* Retail's data for the function the marker below supplies. */
+char pal_at1328[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "now Input CHaraID = %d\n";
+char pal_at1329[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "CharaName[%d][%d] = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", NameEnterKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+s8 pal_at938__2[8] = {0, 0, 1, 2, 3, 4, 4};
+unsigned int pal_at1012[8] __attribute__((aligned(16))) = {0x000002BC, 0x00000031, 0x000001F4, 0x00000258, 0x000000C8, 0x0000012C, 0x00000320};
+unsigned char pal_up_or_down_S956;
+unsigned char pal_init_S957;
+#pragma name_counter 1052
+#else
 s32 NameEnterKey(void) {
     int language;
     int chara_no;
@@ -1586,6 +1714,7 @@ s32 NameEnterKey(void) {
     ComMenuSePlay(sound);
     return 0;
 }
+#endif
 
 /**
  * Gives one party member their default name for the chosen language.
@@ -1619,6 +1748,31 @@ void NameDefaultSet(int chara_no) {
 
 // clang-format off
 /** The extra spacing to the left and right of each character from code 0xA2 upwards. */
+#ifdef PAL
+s8 AlphabetEtcOffset[163][2] = {
+    {1, 0}, {0, 1}, {1, 1}, {0, 1}, {1, 0}, {2, 2}, {0, 1}, {1, 2},
+    {2, 4}, {4, 4}, {2, 2}, {0, 2}, {0, 1}, {0, 2}, {2, 2}, {1, 1},
+    {0, 0}, {1, 1}, {1, 1}, {0, 0}, {2, 1}, {0, 2}, {0, 0}, {0, 2},
+    {2, 2}, {1, 2}, {2, 1}, {1, 2}, {1, 1}, {2, 1}, {2, 2}, {2, 2},
+    {1, 1}, {1, 3}, {3, 3}, {4, 2}, {1, 3}, {2, 4}, {0, 0}, {1, 1},
+    {2, 1}, {1, 2}, {2, 1}, {1, 3}, {1, 2}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 2}, {1, 2}, {1, 1}, {0, 8}, {1, 1}, {-1, 4}, {3, 4},
+    {2, 2}, {1, 0}, {0, 1}, {1, 0}, {1, 1}, {1, 2}, {0, 1}, {0, 0},
+    {0, 1}, {6, 0}, {-4, 7}, {0, 0}, {0, 0}, {1, 1}, {1, 0}, {0, 1},
+    {3, 2}, {2, 3}, {4, 3}, {3, 3}, {3, 3}, {3, 3}, {4, 3}, {3, 4},
+    {1, 2}, {4, 6}, {1, 2}, {2, 2}, {1, 2}, {2, 1}, {2, 2}, {3, 1},
+    {1, 1}, {1, 2}, {4, 6}, {2, 8}, {2, 8}, {2, 2}, {1, 3}, {1, 4},
+    {1, 2}, {0, 0}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {2, 2}, {2, 2}, {2, 2}, {2, 2},
+    {2, 2}, {2, 2}, {2, 2}, {2, 2}, {2, 2}, {2, 2}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1},
+    {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {2, 2},
+    {1, 1}, {1, 1}, {1, 1},
+};
+#else
 s8 AlphabetEtcOffset[97][2] = {
     {1, 0}, {0, 1}, {1, 1}, {0, 1}, {1, 0}, {2, 2}, {0, 1}, {1, 2},
     {2, 4}, {4, 4}, {2, 2}, {0, 2}, {0, 1}, {0, 2}, {2, 2}, {1, 1},
@@ -1634,6 +1788,7 @@ s8 AlphabetEtcOffset[97][2] = {
     {1, 1}, {1, 2}, {4, 6}, {2, 8}, {2, 8}, {2, 2}, {1, 3}, {1, 4},
     {1, 2},
 };
+#endif
 // clang-format on
 
 /**
@@ -1662,6 +1817,11 @@ static int GetFontLRTumeW(int position, int left_code, int char_code) {
  * @address 0x23C900
  * @size 0x250
  */
+#ifdef PAL
+void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int sort);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", CharaSelectNameDraw2__FiiPsPP8CTexturei);
+#pragma name_counter 1112
+#else
 void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int blend_mode) {
     if (name == NULL) {
         return;
@@ -1708,6 +1868,7 @@ void CharaSelectNameDraw2(int x, int y, short *name, CTexture **textures, int bl
         draw_x -= 0x14 - kerning_step;
     }
 }
+#endif
 
 /**
  * Draws a party member's name centred on the save board, with a shadow and a top-to-bottom gradient.
@@ -1822,6 +1983,18 @@ void InitOpeningBook(u_long128 *buffer, int *tex_blocks) {
  * @address 0x23CF10
  * @size 0x664
  */
+#ifdef PAL
+int OpeningBookKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1492[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image#640#480#4";
+char pal_at1539[0x10] __attribute__((section(".rodata"))) = "opentex.img";
+char pal_at1540[0x18] __attribute__((section(".rodata"))) = "opmes.bin";
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", OpeningBookKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1493__2[12] __attribute__((aligned(16))) = {0x002A6CD0};
+s8 pal_at1496__2[8] = {20, 16, 16, 16, 16, 16, 16};
+#pragma name_counter 1217
+#else
 int OpeningBookKey() {
     int result;
 
@@ -1954,6 +2127,7 @@ int OpeningBookKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Draws the storybook page by page.

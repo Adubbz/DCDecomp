@@ -466,7 +466,11 @@ static void DrawMoveMenuIcon() {
 static int CalMoveFromMenuIcon() {
     int done = 0;
     int arrived_count = 0;
+#ifdef PAL
+    s16 target[13] = {0x50, 0x34, 0x50, 0x34, 0x50, 0x20, 0x5E, 0x1E, 0x50, 0x34, 0x50, 0x34, -262};
+#else
     s16 target[13] = {0x50, 0x34, 0x50, 0x34, 0x50, 0x20, 0x5E, 0x1E, 0x50, 0x34, 0x50, 0x34, -250};
+#endif
     int icon_max = GetEditMenuMax();
 
     int x;
@@ -804,7 +808,7 @@ static int EditMenuStart() {
         DrawMainMenuIcon((int) (MenuIconPos[i][0] - x_offset), (int) (MenuIconPos[i][1] - y_offset), icon, selected, 0x80, brightness);
     }
     if (ReadBGSync() == 0 && EdMenuTextureReadEndFlag == 0) {
-        LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#448#4"}};
+        LOADTEXTURE_INFO2 textures[3] = {{"#frame_menuemenu#640#" SCREEN_HEIGHT_STR "#4"}};
         textures[1].block_no = textures[0].block_no = EdMenuTextureBlock;
         BG_READ_INFO *file = GetReadBGFile(0);
         textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "editmenu.img", NULL);

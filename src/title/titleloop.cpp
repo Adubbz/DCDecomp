@@ -322,6 +322,64 @@ u_char brink;
 int brinkcnt;
 int EffCnt;
 
+#ifdef PAL
+void TitleInit(int no);
+INCLUDE_ASM("asm/pal/nonmatchings/title/titleloop", TitleInit__Fi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at347__6[20] __attribute__((aligned(16))) = {
+    0x01DFA5D0, 0x0000001A, 0x00000000, 0x01DFA5F0, 0x0000001A, 0x00000000, 0x01DFA610,
+    0x0000001A, 0x00000000, 0x01DFA630, 0x0000001A, 0x00000000, 0x01DFA650, 0x0000001A,
+    0x00000000, 0x01DFA668,
+};
+unsigned int pal_at357__5[36] __attribute__((aligned(16))) = {
+    0x01DFA670, 0x00000000, 0x00000000, 0x01DFA670, 0x00000001, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001,
+    0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001, 0x00000000,
+    0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000,
+    0x00000001,
+};
+unsigned int pal_at367__8[12] __attribute__((aligned(16))) = {
+    0x01DFA688, 0x01DFA698, 0x01DFA6A8, 0x01DFA6B8, 0x01DFA6C8, 0x01DFA6D8, 0x01DFA6E8,
+    0x01DFA6F8, 0x01DFA708,
+};
+char pal_at341__3[] __attribute__((section(".rodata"))) = "#fukidashibase#640#256#4";
+char pal_at342__2[] __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
+char pal_at343__3[] __attribute__((section(".rodata"))) = "meswin/gaiji.img";
+char pal_at344__4[] __attribute__((section(".rodata"))) = "meswin/fuki256.img";
+char pal_at345__9[] __attribute__((section(".rodata"))) = "meswin/syst04.img";
+char pal_at346__5[] __attribute__((section(".rodata"))) = "";
+char pal_at356__5[] __attribute__((section(".rodata"))) = "#frame_image#640#256#4";
+char pal_at358__6[] __attribute__((section(".rodata"))) = "logo_p1.cfg";
+char pal_at359__6[] __attribute__((section(".rodata"))) = "logo_p2.cfg";
+char pal_at360__5[] __attribute__((section(".rodata"))) = "logo_p3.cfg";
+char pal_at361__4[] __attribute__((section(".rodata"))) = "logo_p4.cfg";
+char pal_at362__5[] __attribute__((section(".rodata"))) = "logo_p5.cfg";
+char pal_at363__8[] __attribute__((section(".rodata"))) = "logo_p6.cfg";
+char pal_at364__4[] __attribute__((section(".rodata"))) = "logo_p7.cfg";
+char pal_at365__10[] __attribute__((section(".rodata"))) = "logo_p8.cfg";
+char pal_at366__8[] __attribute__((section(".rodata"))) = "logo_p9.cfg";
+char pal_at385__6[] __attribute__((section(".rodata"))) = "stayframe.img";
+char pal_at386__5[] __attribute__((section(".rodata"))) = "titledat/title.pak";
+char pal_at387__4[] __attribute__((section(".rodata"))) = "titledat/title_eu.pak";
+char pal_at388__6[] __attribute__((section(".rodata"))) = "titledat/title_f.pak";
+char pal_at389__4[] __attribute__((section(".rodata"))) = "titledat/title_g.pak";
+char pal_at390__3[] __attribute__((section(".rodata"))) = "titledat/title_i.pak";
+char pal_at391__6[] __attribute__((section(".rodata"))) = "titledat/title_s.pak";
+char pal_at392__2[] __attribute__((section(".rodata"))) = "bg.img";
+char pal_at393__3[] __attribute__((section(".rodata"))) = "title.img";
+char pal_at394__5[] __attribute__((section(".rodata"))) = "main.img";
+char pal_at395__7[] __attribute__((section(".rodata"))) = "pat01.img";
+char pal_at396__5[] __attribute__((section(".rodata"))) = "pat02.img";
+char pal_at397__5[] __attribute__((section(".rodata"))) = "start.img";
+char pal_at398__6[] __attribute__((section(".rodata"))) = "start3.img";
+char pal_at399__8[] __attribute__((section(".rodata"))) = "icon01.img";
+char pal_at400__5[] __attribute__((section(".rodata"))) = "sky.mds";
+char pal_at401__4[] __attribute__((section(".rodata"))) = "cloud.cfg";
+char pal_at403__4[] __attribute__((section(".rodata"))) = "logo.cfg";
+char pal_at406__3[] __attribute__((section(".rodata"))) = "title.txt";
+unsigned int pal_at407__5[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DEB29C, 0x01DEB2BC, 0x01DEB2DC, 0x01DEB2FC, 0x01DEB31C, 0x01DEB33C, 0x01DEB35C};
+#pragma name_counter 109
+#else
 void TitleInit(int mode) {
     int i;
     float scale = 750.0f;
@@ -461,6 +519,7 @@ void TitleInit(int mode) {
     GamePad.SetAutoRepeat(20480, 30, 9);
     GamePad.MenuModeOn(120);
 }
+#endif
 
 int TitleLoop() {
     sceVu0FVECTOR pos;
@@ -716,6 +775,33 @@ int TitleLoop() {
     return 0;
 }
 
+#ifdef PAL
+void TitleDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/title/titleloop", TitleDraw__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_br_S589;
+unsigned char pal_init_S590;
+unsigned int pal_at539__4[4] __attribute__((aligned(16))) = {0x401D4C98, 0x411EDED3, 0xC033AC71};
+unsigned int pal_at540__5[4] __attribute__((aligned(16))) = {0x409379A7, 0xC12671DE, 0xBF541F21};
+unsigned int pal_at541__5[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0xC1200000};
+unsigned int pal_at542__4[16] __attribute__((aligned(16))) = {
+    0x433F0000, 0x42D20000, 0x42980000, 0x43000000, 0x427C0000, 0x424C0000, 0x42FE0000,
+    0x43000000, 0x42200000, 0x41F00000, 0x41F00000, 0x43000000,
+};
+unsigned int pal_at543__3[4] __attribute__((aligned(16))) = {0x00000000, 0x40C00000, 0xC1000000};
+unsigned int pal_at544__3[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at545__4[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at546__5[16] __attribute__((aligned(16))) = {0x43000000, 0x43000000, 0x42E00000, 0x43000000};
+unsigned int pal_at547__5[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x42C80000};
+unsigned int pal_rot_S557[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at604__6[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000020, 0x00000020};
+char pal_at773__5[] __attribute__((section(".rodata"))) = "frame_image";
+char pal_at774__2[] __attribute__((section(".rodata"))) = "main";
+char pal_at775__2[] __attribute__((section(".rodata"))) = "start";
+char pal_at776__3[] __attribute__((section(".rodata"))) = "start3";
+char pal_at777__5[] __attribute__((section(".rodata"))) = "icon01";
+#pragma name_counter 318
+#else
 void TitleDraw() {
     sceVu0FVECTOR light0 = {2.4578f, 9.9294f, -2.8074f, 0.0f};
     sceVu0FVECTOR light1 = {4.6086f, -10.4028f, -0.8286f, 0.0f};
@@ -944,3 +1030,4 @@ void TitleDraw() {
                     128, 128, 128, 35);
     }
 }
+#endif

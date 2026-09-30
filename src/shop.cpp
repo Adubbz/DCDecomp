@@ -731,6 +731,52 @@ int CommonShopLoop() {
  * @address 0x1E7080
  * @size 0x150
  */
+#ifdef PAL
+static void ShopPolySetInit(int shop_no, int person_no);
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPolySetInit__Fii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at649__2[108] __attribute__((aligned(16))) = {
+    0xC0FAE148, 0xC1780000, 0x3F666666, 0xC0E9999A, 0xC118E148, 0x3E800000, 0xC0E147AE,
+    0xC1A9AE14, 0x3F800000, 0xC0F1EB85, 0xC197BC6A, 0x3F800000, 0xC0E00000, 0xC1600000,
+    0x3F800000, 0xC0EABFB1, 0xC17D1980, 0x3F733333, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC0E051EC, 0xC1880000,
+    0x3F666666, 0xC0E6B852, 0xC0F9999A, 0x3F000000, 0xC0EEB852, 0xC19CCCCD, 0x3F800000,
+    0xC1011062, 0xC197624E, 0x3F800000, 0xC1011062, 0xC197624E, 0x3F800000, 0xC1011062,
+    0xC197624E, 0x3F800000, 0xC1011062, 0xC197624E, 0x3F800000, 0xC0E00000, 0xC1A40000,
+    0x3F800000, 0xC0F135A8, 0xC175CAC1, 0x3F4CCCCD, 0xC0E00000, 0xC1980000, 0x3F4CCCCD,
+    0xC0E00000, 0xC1700000, 0x3F800000, 0xC0E00000, 0xC1880000, 0x3F800000, 0xC0F33333,
+    0xC195999A, 0x3F4CCCCD, 0xC0E051EC, 0xC189999A, 0x3F666666, 0xC0E6B852, 0xC0F9999A,
+    0x3F000000, 0xC0F135A8, 0xC1940000, 0x3F4CCCCD, 0xC0E00000, 0xC1880000, 0x3F800000,
+    0xC0E00000, 0xC1880000, 0x3F800000,
+};
+unsigned int pal_at650__3[144] __attribute__((aligned(16))) = {
+    0x3BA3D70A, 0x3E873C0C, 0x00000000, 0x00000000, 0x3D4CCCCD, 0x3E7F6EC6, 0x00000000,
+    0x00000000, 0xBD072B02, 0x3E73EAB3, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0xBE35DFEC, 0x3E732379, 0x00000000, 0x00000000, 0xBE35DFEC,
+    0x3E732379, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000,
+    0xBD90C027, 0x3E8AE792, 0xBCE7FF58, 0x00000000, 0xBD4EFFE3, 0x3E82AB47, 0x00000000,
+    0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7,
+    0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A,
+    0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000,
+    0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000,
+    0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7,
+    0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A,
+    0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7,
+};
+#pragma name_counter 906
+#else
 static void ShopPolySetInit(int shop_kind, int shop_no) {
     float place[2][18][3] = {
         {
@@ -832,6 +878,7 @@ static void ShopPolySetInit(int shop_kind, int shop_no) {
     MenuCharaFrame.SetScale(scale);
     MenuCharaFrame.SetRotation(rotation);
 }
+#endif
 
 /**
  * Records the line the shopkeeper is to say and how it is to be shown.
@@ -1114,7 +1161,7 @@ static void ShopMenuExit() {
 
 void ShopTextureLoadFix() {
     LOADTEXTURE_INFO2 info[3] = {
-        {"#frame_imageshop#640#448#4", 0, 0},
+        {"#frame_imageshop#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };
@@ -1182,6 +1229,13 @@ static void ShopFadeoutDraw() {
  * @address 0x1E7FA0
  * @size 0x98
  */
+#ifdef PAL
+static int ShopPersonReadStart(int shop_no, int person_no);
+/* Retail's data for the function the marker below supplies. */
+char pal_at817[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "load is failed\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPersonReadStart__Fii);
+#pragma name_counter 1041
+#else
 static int ShopPersonReadStart(int shop_kind, int shop_no) {
     char file_name[76];
     int size;
@@ -1198,6 +1252,7 @@ static int ShopPersonReadStart(int shop_kind, int shop_no) {
     ShopMenu.person_state = 0;
     return 1;
 }
+#endif
 
 /**
  * Sets the shopkeeper's model direction toward the menu camera.
@@ -1230,7 +1285,7 @@ static int ShopPersonBuild(int shop_kind, int shop_no) {
     u_int *pack = (u_int *) file->buffer;
     u_char *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
     LOADTEXTURE_INFO2 texture[3] = {
-        {"#frame_menushop_model#640#448#4", 0, 0},
+        {"#frame_menushop_model#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };
@@ -1418,6 +1473,15 @@ static inline WEAPON_HAVE *ShopWeaponRow(CUserStatus *status, int chara) {
     return status->chara_weapons[chara];
 }
 
+#ifdef PAL
+int ChargeShopKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1201[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "Model Read Start\n";
+char pal_at1202__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "charge vol = %d\n";
+char pal_at1203__2[0x10] __attribute__((section(".rodata"))) = "msgno = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ChargeShopKey__Fv);
+#pragma name_counter 1370
+#else
 int ChargeShopKey() {
     int result = 0;
     MENU_ITEMDATA record;
@@ -1874,6 +1938,7 @@ int ChargeShopKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Moves the cursor across the recharge shop's list.
@@ -2093,6 +2158,14 @@ static int ChargeSelectKey() {
  */
 static void ShopModelMsgFunc(int);
 
+#ifdef PAL
+void DrawChargeShop();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", DrawChargeShop__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1385__2[4] __attribute__((aligned(16))) = {0xB4B4B4A2, 0x7878B4B4, 0xB4B4B4AA, 0x0000B4B4};
+s32 pal_at1372[2] = {0x516, 0x517};
+#pragma name_counter 1547
+#else
 void DrawChargeShop() {
     int text_x;
     int text_y;
@@ -2217,6 +2290,7 @@ void DrawChargeShop() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
+#endif
 
 /**
  * Draws the charge shop's capacity plate: how many slots the board has and how many hold a good.
@@ -3442,6 +3516,15 @@ void ItemShopMemoryAlloc() {
     ShopWorkBuf = (SHOP_ITEMLIST *) ShopCashBuffer.Alloc(0x1D88);
 }
 
+#ifdef PAL
+void ItemPosInfoInit();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2220[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d,  item exist is %d\n";
+char pal_at2221[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d,  wep exist is %d\n";
+char pal_at2222[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d,  attach exist is %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemPosInfoInit__Fv);
+#pragma name_counter 2292
+#else
 void ItemPosInfoInit() {
     int i;
     int j;
@@ -3475,6 +3558,7 @@ void ItemPosInfoInit() {
         }
     }
 }
+#endif
 
 /**
  * Fills the goods board from one shop's list.
@@ -3549,6 +3633,19 @@ void InitItemShop2(int *tex_block, int shop_no, int mode) {
  * @address 0x1EE280
  * @size 0xAF0
  */
+#ifdef PAL
+static void ItemShopSelectKey2();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2435[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "------nowHaveData---------\n";
+char pal_at2436[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "flag   = %d\n";
+char pal_at2437[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "mode = %d\n";
+char pal_at2438[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "listno = %d\n";
+char pal_at2439[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "select = %d\n";
+char pal_at2440[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pos = %d\n";
+char pal_at2441[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "wepIndex = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopSelectKey2__Fv);
+#pragma name_counter 2472
+#else
 static void ItemShopSelectKey2() {
     int i;
     MENU_ITEMDATA swap_data[2];
@@ -3801,6 +3898,7 @@ static void ItemShopSelectKey2() {
         ComMenuSePlay(0);
     }
 }
+#endif
 
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     MENU_ITEMDATA swap_data[2];
@@ -3859,6 +3957,15 @@ static inline int ShopHeldInfo() {
     return ShopHaveItemPt->slot_state;
 }
 
+#ifdef PAL
+int ItemShopKey2();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2857[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " %d \tis \t\t%d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopKey2__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2690[4] __attribute__((aligned(16))) = {0x00000064, 0x0000003C, 0x00000028};
+#pragma name_counter 2824
+#else
 int ItemShopKey2() {
     int result = 0;
     MENU_ITEMDATA record;
@@ -4434,7 +4541,17 @@ int ItemShopKey2() {
     }
     return result;
 }
+#endif
 
+#ifdef PAL
+void ItemShopDraw2();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopDraw2__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2928[4] __attribute__((aligned(16))) = {0x3218321E, 0x32183218, 0x32183218, 0x00003218};
+s8 pal_at2915[4] = {6, 7, 8};
+s16 pal_at2925[2] = {0x4B4, 0x4B5};
+#pragma name_counter 2912
+#else
 void ItemShopDraw2() {
     int cur_x;
     int pos_y;
@@ -4640,6 +4757,7 @@ void ItemShopDraw2() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
+#endif
 
 /**
  * Returns one prize the fishing exchange offers.
@@ -4770,7 +4888,7 @@ void InitFishingExchange(u_long128 *buffer, int *tex_block, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
-char FishFrameImage[] __attribute__((section(".rodata"))) = "#frame_image#640#448#4";
+char FishFrameImage[] __attribute__((section(".rodata"))) = "#frame_image#640#" SCREEN_HEIGHT_STR "#4";
 
 /**
  * Enters the fishing menu's textures once they have been read.
@@ -4831,6 +4949,13 @@ static int FishMenuTextureLoad() {
 
 char FishMessageFile[] __attribute__((section(".rodata"))) = "fishmes.bin";
 
+#ifdef PAL
+int FishingExchangeKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at3229[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "getinfo is NULL\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", FishingExchangeKey__Fv);
+#pragma name_counter 3135
+#else
 int FishingExchangeKey() {
     int result = 0;
 
@@ -5105,6 +5230,7 @@ int FishingExchangeKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Draws one fish icon.
@@ -5176,7 +5302,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
         DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
                          alpha);
 #ifdef PAL
+#ifdef PAL
+        RECT digits = {0x140, 0xEA, 0x10, 0x16};
+#else
         RECT digits = {0x160, 0xEA, 0x10, 0x16};
+#endif
 #else
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
 #endif
@@ -5399,6 +5529,11 @@ void FishRecordTextureEnter() {
  * @address 0x1F31E0
  * @size 0x410
  */
+#ifdef PAL
+static int FishRecordViewKey();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", FishRecordViewKey__Fv);
+#pragma name_counter 3296
+#else
 static int FishRecordViewKey() {
     ReadBG();
     int ret = 0;
@@ -5489,6 +5624,7 @@ static int FishRecordViewKey() {
     }
     return ret;
 }
+#endif
 
 /**
  * Draws the fishing record board: each rank, its fish and its size.

@@ -663,6 +663,16 @@ u8 *BtGetStatusPal2(int bar, float max, float value) {
  * @address 0x1B04F0
  * @size 0x1438
  */
+#ifdef PAL
+void topStatusInfo(int y, int selected_item, int floor);
+INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", topStatusInfo__Fiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_popupYRate_S864;
+unsigned char pal_init_S865;
+unsigned int pal_popupRGBRate_S869;
+unsigned char pal_init_S870;
+#pragma name_counter 532
+#else
 void topStatusInfo(int y, int selected_item, int floor) {
     int alpha;
     CTexture *icons;
@@ -882,6 +892,7 @@ void topStatusInfo(int y, int selected_item, int floor) {
     }
     set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x184, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
 }
+#endif
 
 /**
  * Reports whether the party is suffering one status ailment.
@@ -951,6 +962,13 @@ int poison_counter;
  * @address 0x1B1A50
  * @size 0x154
  */
+#ifdef PAL
+void BtStatusErrStep(void);
+INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1188__2[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
+#pragma name_counter 562
+#else
 void BtStatusErrStep(void) {
     int flags;
     CUserStatus *status = UserStatus;
@@ -977,6 +995,7 @@ void BtStatusErrStep(void) {
 
     BtStatusErrColorSet();
 }
+#endif
 
 /**
  * Inflicts one status ailment on the party.

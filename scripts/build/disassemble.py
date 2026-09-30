@@ -937,8 +937,35 @@ def write_symbol_aliases(out, objects):
     print(f"disassemble: {len(pairs)} templated symbols -> {out}")
 
 
+class ActiveSource:
+    """A source file as the release being split compiles it."""
+
+    def __init__(self, path):
+        self.path = Path(path)
+
+    def read_text(self, encoding="utf-8"):
+        return region.active_text(self.path.read_text(encoding=encoding))
+
+
+def configure_region_markers():
+    """Read a source's markers and definitions as this release compiles it.
+
+    splat decides which functions still need reference assembly from the
+    INCLUDE_ASM markers and function definitions in the source text; a marker
+    or a definition a `#ifdef PAL` guard leaves out is not this release's.
+    """
+    from splat.segtypes.common.c import CommonSegC
+
+    for name in ("get_funcs_defined_in_c", "get_global_asm_funcs",
+                 "get_global_asm_rodata_syms"):
+        original = getattr(CommonSegC, name)
+        setattr(CommonSegC, name,
+                staticmethod(lambda c_file, original=original: original(ActiveSource(c_file))))
+
+
 def split_one(config):
     """Split a single image. Runs in a process of its own; see main()."""
+    configure_region_markers()
     configure_spimdisasm()
     configure_r5900_registers()
     configure_vu_sections()

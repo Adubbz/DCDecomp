@@ -13,6 +13,7 @@ and is looked up here, so no other script names a release.
 """
 
 import os
+import re
 import sys
 
 NTSC, PAL = "NTSC", "PAL"
@@ -127,6 +128,42 @@ BUILT_ISO = _PATHS["built_iso"]
 OVERLAY_ORIGIN = CURRENT["overlay_origin"]
 SECTIONS = CURRENT["sections"]
 LITERAL_POOL = CURRENT["literal_pool"]
+
+GUARD = re.compile(r"^\s*#\s*(ifdef|ifndef|if|else|elif|endif)\b\s*(\w*)")
+
+
+def active_text(text, pal=None):
+    """`text` with the lines a `#ifdef PAL` or `#ifndef PAL` guard leaves out of
+    this release blanked, so a scan for INCLUDE_ASM markers sees what the
+    compiler compiles. Every other conditional is left as it is; the line
+    count does not change.
+    """
+    if pal is None:
+        pal = NAME == PAL
+    if "PAL" not in text:
+        return text
+    out, stack = [], []
+    for line in text.split("\n"):
+        m = GUARD.match(line)
+        if m:
+            kind, name = m.groups()
+            if kind in ("ifdef", "ifndef", "if"):
+                guard = kind in ("ifdef", "ifndef") and name == "PAL"
+                stack.append([guard, not guard or (kind == "ifdef") == pal])
+                out.append(line)
+                continue
+            if kind == "else" and stack:
+                if stack[-1][0]:
+                    stack[-1][1] = not stack[-1][1]
+                out.append(line)
+                continue
+            if kind == "endif" and stack:
+                stack.pop()
+                out.append(line)
+                continue
+        out.append(line if all(on for _guard, on in stack) else "")
+    return "\n".join(out)
+
 
 VALUES = {
     "name": NAME,

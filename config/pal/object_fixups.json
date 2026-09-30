@@ -17,7 +17,8 @@
       "init$399": "init$181",
       "init$470": "init$251",
       "rpad$398": "rpad$180"
-    }
+    },
+    "symbols": {}
   },
   "src/main.cpp": {
     "symbols": {
@@ -45,7 +46,6 @@
     ],
     "rodata_exports": [
       "@566",
-      "@567",
       "@568",
       "@578",
       "@626",
@@ -62,14 +62,13 @@
       "@658__2",
       "@678",
       "@679",
-      "@680",
-      "@876",
-      "@877"
+      "@680"
     ],
     "statics": {
       "depth$963": "depth$682",
       "event$1247": "event$992",
       "init$1163": "init$900",
+      "init$1276": "init$1014",
       "init$964": "init$683",
       "init2$966": "init$686",
       "init3$968": "init$705",
@@ -79,7 +78,7 @@
       "menu$1151": "menu$888",
       "select$1162": "select$899",
       "texdata$1146": "texdata$882",
-      "texdata$1271": "texdata$1013",
+      "texdata$1275": "texdata$1013",
       "texdata$1304": "texdata$1092",
       "wt$965": "wt$685"
     }
@@ -120,14 +119,10 @@
       "__ct__10CCharacterFv"
     ],
     "rodata_exports": [
-      "@924__2",
-      "@926__2",
-      "@927__2",
-      "@5932",
-      "@885__3"
+      "@5932"
     ],
     "symbols": {
-      "CharaStatusTextureName": "@885__3",
+      "CharaStatusTextureName": "pal_at885__3",
       "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "WepRecover__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetBuildUp__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
       "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP14CWeaponLevelUpi": "SetStatusBreak__14CWeaponLevelUpFP11WEAPON_HAVEP10CCharacterP1i",
@@ -153,26 +148,28 @@
   },
   "src/ebattle.cpp": {
     "symbols": {
-      "draw_rect_store": "draw_rect"
+      "draw_rect_store": "draw_rect",
+      "__ct__13CEbSpriteRectFv": "__ct__8CRect_i_Fv"
     },
     "rodata_exports": [
       "@366",
       "@367"
     ],
     "statics": {
-      "bgm_vol$1294": "bgm_vol$845",
-      "cnt$1462": "cnt$1011",
+      "bgm_vol$1295": "bgm_vol$845",
+      "cnt$1463": "cnt$1011",
       "dir$786": "dir$640",
-      "init$1223": "init$770",
-      "init$1295": "init$846",
-      "init$1298": "init$849",
-      "init$1305": "init$856",
-      "init$1308": "init$859",
-      "init$1463": "init$1012",
-      "load_file$1297": "load_file$848",
-      "rot_count$1222": "rot_count$769",
-      "st_cnt$1304": "st_cnt$855",
-      "wait_cnt$1307": "wait_cnt$858"
+      "init$1224": "init$770",
+      "init$1296": "init$846",
+      "init$1299": "init$849",
+      "init$1306": "init$856",
+      "init$1309": "init$859",
+      "init$1464": "init$1012",
+      "load_file$1298": "load_file$848",
+      "reference$976": "reference$516",
+      "rot_count$1223": "rot_count$769",
+      "st_cnt$1305": "st_cnt$855",
+      "wait_cnt$1308": "wait_cnt$858"
     }
   },
   "src/hitmark.cpp": {
@@ -200,9 +197,9 @@
     "rodata_exports": [
       "@821",
       "@822",
-      "@1556",
       "@1557"
-    ]
+    ],
+    "symbols": {}
   },
   "src/dun/gameloop.cpp": {
     "symbols": {
@@ -222,28 +219,7 @@
     ],
     "rodata_exports": [
       "@1073__2",
-      "@1602__2",
-      "@1611__2",
-      "@1612__3",
-      "@4193",
-      "@4203",
-      "@4204",
-      "@4208",
-      "@4212",
-      "@4213",
-      "@4214",
-      "@4215",
-      "@4216",
-      "@4217",
-      "@4218",
-      "@4219",
-      "@4638",
-      "@4639",
-      "@4641",
       "@4782",
-      "@4787",
-      "@4788",
-      "@4805",
       "@4967",
       "@4968",
       "@5005",
@@ -272,11 +248,7 @@
       "@5053",
       "@5054",
       "@5055",
-      "@5435",
-      "@5543",
       "@6173",
-      "@662__4",
-      "@664__6",
       "@683__2",
       "@684__2",
       "@685__2",
@@ -319,14 +291,14 @@
     "statics": {
       "bic_posr$1394": "bic_posr$1181",
       "bic_posr$1410": "bic_posr$1197",
-      "cameraDilay$4068": "cameraDilay$5790",
+      "cameraDilay$4070": "cameraDilay$5790",
       "cnt$1791": "cnt$1704",
       "cnt$3624": "cnt$5153",
-      "cnt$4110": "cnt$5825",
-      "dmgColor$4557": "dmgColor$6525",
-      "dmgFlag$4563": "dmgFlag$6531",
+      "cnt$4112": "cnt$5825",
+      "dmgColor$4567": "dmgColor$6525",
+      "dmgFlag$4573": "dmgFlag$6531",
       "dmgSnd$3517": "dmgSnd$5056",
-      "dmgVec$4560": "dmgVec$6528",
+      "dmgVec$4570": "dmgVec$6528",
       "heal_counter$3053": "heal_counter$4377",
       "id_cnt$2237": "id_cnt$2145",
       "init$1266": "init$1046",
@@ -344,19 +316,19 @@
       "init$3972": "init$5688",
       "init$3979": "init$5695",
       "init$4020": "init$5738",
-      "init$4069": "init$5791",
-      "init$4111": "init$5826",
-      "init$4364": "init$6144",
-      "init$4558": "init$6526",
-      "init$4561": "init$6529",
-      "init$4617": "init$6590",
+      "init$4071": "init$5791",
+      "init$4113": "init$5826",
+      "init$4372": "init$6144",
+      "init$4568": "init$6526",
+      "init$4571": "init$6529",
+      "init$4627": "init$6590",
       "init2$2238": "init$2146",
       "itemposr$1373": "itemposr$1160",
       "itemposr$1380": "itemposr$1167",
       "msg_cnt$3978": "msg_cnt$5694",
-      "nowCursor$4616": "nowCursor$6589",
+      "nowCursor$4626": "nowCursor$6589",
       "rate$1265": "rate$1045",
-      "rate$4363": "rate$6143",
+      "rate$4371": "rate$6143",
       "s_cnt$3971": "s_cnt$5687",
       "snd_cnt$2235": "snd_cnt$2142",
       "wait_cnt$3992": "wait_cnt$5709",
@@ -501,7 +473,12 @@
       "CommandFLAME__FPPv__2",
       "MoveCamera__FP13CCameraFollow__2",
       "LoadTexture__Fv__2",
-      "MainDraw__Fv__2"
+      "MainDraw__Fv__2",
+      "EventCamera__2",
+      "MainCamera__2",
+      "TexAnime__2",
+      "fix_chara_pos__2",
+      "fix_chara_rot__2"
     ],
     "rodata_exports": [
       "@1600",
@@ -691,42 +668,21 @@
     "statics": {
       "count$395": "count$345",
       "init$396": "init$346",
-      "motion$741": "motion$520",
-      "se_close$736": "se_close$515",
-      "se_open$731": "se_open$510"
+      "se_open$737": "se_open$510",
+      "se_close$742": "se_close$515",
+      "motion$747": "motion$520"
     }
   },
   "src/editloop.cpp": {
-    "extern_functions": [
-      "__ct__10CCharacterFv"
-    ],
     "rodata_exports": [
       "@414__5",
-      "@717",
-      "@2234",
       "@2445",
       "@2446",
       "@2447",
-      "@2820",
-      "@2821",
-      "@2822",
-      "@2823",
-      "@2824",
-      "@2825",
-      "@2833",
-      "@2834",
-      "@2835",
-      "@2836",
-      "@2837",
-      "@2896",
-      "@2838",
-      "@2839",
-      "@2840",
       "@2935",
       "@2936",
       "@2937",
-      "@2938",
-      "@2202"
+      "@2938"
     ],
     "globalize_symbols": [
       "RunEvent__FiP7CCamera",
@@ -737,7 +693,7 @@
     },
     "statics": {
       "a$1410": "a$1919",
-      "camera_dist_mode$2007": "camera_dist_mode$2682",
+      "camera_dist_mode$2008": "camera_dist_mode$2682",
       "cur$795": "cur$804",
       "debug_flag$1034": "debug_flag$1047",
       "debug_flag_set$698": "debug_flag_set$664",
@@ -752,8 +708,8 @@
       "init$1647": "init$2272",
       "init$1686": "init$2311",
       "init$1700": "init$2325",
-      "init$2008": "init$2683",
-      "init$2054": "init$2730",
+      "init$2009": "init$2683",
+      "init$2055": "init$2730",
       "init$688": "init$654",
       "init$699": "init$665",
       "init$759": "init$768",
@@ -766,7 +722,7 @@
       "offset$1379": "offset$1889",
       "old_mode$1085": "old_mode$1129",
       "parts$1685": "parts$2310",
-      "parts_no$2053": "parts_no$2729",
+      "parts_no$2054": "parts_no$2729",
       "select$792": "select$801",
       "time_flag$1646": "time_flag$2271",
       "top$789": "top$798"
@@ -779,9 +735,6 @@
       "menu_mode": "menu_mode__2"
     },
     "rodata_exports": [
-      "@2454",
-      "@2455",
-      "@2456",
       "@687",
       "@688__2",
       "@689",
@@ -806,16 +759,16 @@
     "statics": {
       "chara$588": "chara$631",
       "color$1490": "color$1648",
-      "init$3802": "init$2451",
-      "init$3809": "init$2458",
+      "init$3806": "init$2451",
+      "init$3813": "init$2458",
       "init$543": "init$586",
       "init$548": "init$591",
       "init$551": "init$594",
       "init$589": "init$632",
-      "mode$3801": "mode$2450",
-      "mode_name$3804": "mode_name$2453",
+      "mode$3805": "mode$2450",
+      "mode_name$3808": "mode_name$2453",
       "roty$542": "roty$585",
-      "select_chara$3808": "select_chara$2457",
+      "select_chara$3812": "select_chara$2457",
       "sys_eff_cnt$550": "sys_eff_cnt$593",
       "sys_eff_sc$547": "sys_eff_sc$590",
       "vv$3011": "vv$1647",
@@ -997,14 +950,7 @@
       "CurrentDir": "CurrentDir__2"
     },
     "rodata_exports": [
-      "@229",
-      "@230__2",
       "@279",
-      "@397",
-      "@398",
-      "@399",
-      "@400",
-      "@401",
       "@449",
       "@477",
       "@478"
@@ -1073,12 +1019,7 @@
     "rodata_exports": [
       "@250",
       "@251",
-      "@252",
-      "@414",
-      "@415",
-      "@416",
-      "@417",
-      "@418"
+      "@252"
     ],
     "globalize_symbols": [
       "__sinit_mglib.cpp"
@@ -1135,59 +1076,27 @@
       "01c11a.cfg"
     ],
     "statics": {
-      "am$155": "am$453",
-      "ambient$119": "ambient$416",
-      "ambient$404": "ambient$713",
-      "cnt$226": "cnt$525",
-      "cnt$430": "cnt$739",
-      "col$152": "col$450",
-      "d$466": "d$775",
-      "f$534": "f$844",
-      "flg$753": "flg$1064",
-      "flg$766": "flg$1077",
-      "init$153": "init$451",
-      "init$156": "init$454",
-      "init$159": "init$457",
-      "init$227": "init$526",
-      "init$230": "init$529",
-      "init$406": "init$715",
-      "init$431": "init$740",
-      "init$663": "init$974__2",
-      "init$673": "init$984",
-      "init$688": "init$999__2",
-      "init$703": "init$1014__2",
-      "init$718": "init$1029",
-      "init$736": "init$1047",
-      "init$739": "init$1050",
-      "init$742": "init$1053",
-      "init$754": "init$1065",
-      "init$767": "init$1078",
+      "ambient$258": "ambient$713",
+      "cnt$285": "cnt$739",
+      "d$332": "d$775",
+      "f$400": "f$844",
+      "init$260": "init$715",
+      "init$286": "init$740",
       "init$779": "init$1091",
       "init$782": "init$1094",
       "init$809": "init$1121",
       "init$812": "init$1124",
-      "lcolor$163": "lcolor$461",
-      "mus$662": "mus$973",
-      "sc$405": "sc$714",
-      "secnt$738": "secnt$1049",
-      "seflg$735": "seflg$1046",
+      "sc$259": "sc$714",
       "setTexScrollCnt$778": "setTexScrollCnt$1090",
       "setTexScrollCnt$808": "setTexScrollCnt$1120",
       "setTexScrollCntf$781": "setTexScrollCntf$1093",
-      "setTexScrollCntf$811": "setTexScrollCntf$1123",
-      "sw$229": "sw$528",
-      "vol$741": "vol$1052",
-      "wait$120": "wait$417",
-      "wait$158": "wait$456",
-      "wait$672": "wait$983",
-      "wait$687": "wait$998",
-      "wait$702": "wait$1013",
-      "wait$717": "wait$1028"
+      "setTexScrollCntf$811": "setTexScrollCntf$1123"
     }
   },
   "src/title/op_b.cpp": {
     "symbols": {
-      "FaceChangeC__Fi": "FaceChange__Fi__2"
+      "FaceChangeC__Fi": "FaceChange__Fi__2",
+      "CFire": "CFire__2"
     },
     "import_constants_shared": [
       "opdat/chara/01p19a1a.chr",
@@ -1201,16 +1110,12 @@
       "01c09a.cfg",
       "01c11a.cfg"
     ],
+    "globalize_symbols": [
+      "CFire__2"
+    ],
     "statics": {
-      "camera$502": "camera$619",
       "cnt$684": "cnt$812",
-      "face$46": "face$1151",
-      "init$503": "init$620",
-      "init$557": "init$675",
-      "init$587": "init$706",
-      "init$685": "init$813",
-      "wait$556": "wait$674",
-      "wait$586": "wait$705"
+      "init$685": "init$813"
     }
   },
   "src/title/op_c.cpp": {
@@ -1219,39 +1124,23 @@
       "FaceChangeD__Fi": "FaceChange__Fi__3",
       "SmokeProcess__Fv": "SmokeProcess__Fv__2",
       "setTexAnim__Fv": "setTexAnim__Fv__2",
-      "setTexScroll__Fv": "setTexScroll__Fv__2"
+      "setTexScroll__Fv": "setTexScroll__Fv__2",
+      "Fuusya": "Fuusya__2",
+      "TaimatsuFrame": "TaimatsuFrame__2",
+      "Taimatsu": "Taimatsu__2",
+      "Wind": "Wind__2",
+      "CFire": "CFire__3"
     },
+    "globalize_symbols": [
+      "Fuusya__2",
+      "TaimatsuFrame__2",
+      "Taimatsu__2",
+      "Wind__2",
+      "CFire__3",
+      "SmokeProcess__Fv__2"
+    ],
     "statics": {
-      "SndInfo$700": "SndInfo$1038",
-      "bright$853": "bright$1234",
-      "camera$584": "camera$921",
-      "cnt$1216": "cnt$1829",
-      "cnt$678": "cnt$1016",
-      "d$625": "d$962",
-      "face$45": "face$830",
-      "flg$850": "flg$1231",
-      "init$1217": "init$1830",
-      "init$585": "init$922",
-      "init$623": "init$960",
-      "init$626": "init$963",
-      "init$676": "init$1014__3",
-      "init$679": "init$1017",
-      "init$688": "init$1026",
-      "init$724": "init$1063",
-      "init$745": "init$1084",
-      "init$760": "init$1099",
-      "init$776": "init$1116",
-      "init$851": "init$1232__2",
-      "init$854": "init$1235",
-      "pos$1129": "pos$1748",
-      "pos2$1130": "pos2$1749",
-      "se$687": "se$1025",
-      "step$622": "step$959",
-      "vol$675": "vol$1013",
-      "wait$723": "wait$1062",
-      "wait$744": "wait$1083",
-      "wait$759": "wait$1098",
-      "wait$775": "wait$1115"
+      "init$1217": "init$1063"
     }
   },
   "src/title/op_d.cpp": {
@@ -1263,19 +1152,6 @@
       "angle$585": "angle$975",
       "camera$298": "camera$574",
       "cnt$606": "cnt$996",
-      "cnt1$624": "cnt1$1014",
-      "cnt2$634": "cnt2$1024",
-      "cntA$627": "cntA$1017",
-      "cntB$637": "cntB$1027",
-      "face$50": "face$1960",
-      "fade1$487": "fade1$766",
-      "fade2$490": "fade2$769",
-      "fade3$493": "fade3$772",
-      "fadeA1$644": "fadeA1$1034",
-      "fadeA2$647": "fadeA2$1037",
-      "fadeB1$657": "fadeB1$1047",
-      "fadeB2$660": "fadeB2$1050",
-      "fadeB3$663": "fadeB3$1053",
       "init$299": "init$575",
       "init$347": "init$623",
       "init$355": "init$631",
@@ -1284,58 +1160,19 @@
       "init$381": "init$657",
       "init$389": "init$665__2",
       "init$403": "init$679",
-      "init$488": "init$767",
-      "init$491": "init$770__2",
-      "init$494": "init$773",
       "init$548": "init$933",
       "init$551": "init$936",
       "init$586": "init$976",
       "init$607": "init$997",
-      "init$625": "init$1015",
-      "init$628": "init$1018",
-      "init$635": "init$1025",
-      "init$638": "init$1028",
-      "init$645": "init$1035",
-      "init$648": "init$1038",
-      "init$658": "init$1048__2",
-      "init$661": "init$1051",
-      "init$664": "init$1054",
-      "init$686": "init$1076",
-      "init$689": "init$1079",
-      "init$692": "init$1082",
-      "init$695": "init$1085",
-      "init$698": "init$1088",
-      "init$701": "init$1091__2",
-      "init$704": "init$1094__2",
-      "init$707": "init$1097",
-      "init$710": "init$1100",
-      "init$746": "init$1137",
-      "init$749": "init$1140",
-      "init$752": "init$1143",
-      "init$755": "init$1146",
       "mus$354": "mus$630",
       "mus$372": "mus$648",
       "mus$388": "mus$664",
-      "rot$691": "rot$1081",
       "rot1$547": "rot1$932",
       "rot2$550": "rot2$935",
-      "rot2$700": "rot2$1090",
-      "rot3$709": "rot3$1099",
       "se$346": "se$622",
       "se$364": "se$640",
       "se$380": "se$656",
-      "se$916": "se$1301",
-      "wait$402": "wait$678",
-      "x$685": "x$1075",
-      "x$745": "x$1136",
-      "x2$694": "x2$1084",
-      "x2$751": "x2$1142",
-      "x3$703": "x3$1093",
-      "y$688": "y$1078",
-      "y$748": "y$1139",
-      "y2$697": "y2$1087",
-      "y2$754": "y2$1145",
-      "y3$706": "y3$1096"
+      "wait$402": "wait$678"
     }
   },
   "src/title/rushmovi.cpp": {
@@ -1355,25 +1192,10 @@
     "extern_functions": [
       "__ct__10CCharacterFv"
     ],
-    "statics": {
-      "ambi$342": "ambi$655",
-      "bat$350": "bat$663",
-      "face$48": "face$1339",
-      "fade$310": "fade$601",
-      "init$222": "init$500",
-      "init$236": "init$514",
-      "init$311": "init$602",
-      "init$335": "init$648",
-      "init$343": "init$656",
-      "init$351": "init$664",
-      "init$369": "init$682",
-      "init$393": "init$706__2",
-      "iwacnt$235": "iwacnt$513",
-      "mus$334": "mus$647",
-      "old$221": "old$499",
-      "wait$368": "wait$681",
-      "wait$392": "wait$705__2"
-    }
+    "globalize_symbols": [
+      "DispFade__2",
+      "frame_info_cam__2"
+    ]
   },
   "src/title/script.cpp": {
     "symbols": {
@@ -1390,26 +1212,19 @@
       "__ct__10CCharacterFv"
     ],
     "statics": {
-      "cnt$411": "cnt$748",
-      "cnt$581": "cnt$986",
-      "endflg$373": "endflg$709",
-      "flg$408": "flg$745",
-      "init$374": "init$710__2",
-      "init$409": "init$746",
-      "init$412": "init$749",
-      "init$565": "init$970",
-      "init$582": "init$987",
-      "no$564": "no$969"
+      "cnt$413": "cnt$748",
+      "cnt$553": "cnt$986",
+      "endflg$375": "endflg$709",
+      "flg$410": "flg$745",
+      "init$376": "init$710__2",
+      "init$411": "init$746",
+      "init$414": "init$749",
+      "init$537": "init$970",
+      "init$554": "init$987",
+      "no$536": "no$969"
     }
   },
   "src/title/title.cpp": {
-    "rodata_exports": [
-      "@1326__2",
-      "@1384__2",
-      "@1385__4",
-      "@1604__3",
-      "@1605__3"
-    ],
     "drop_functions": [
       "TitleSetCamera__Ffffff"
     ],
@@ -1418,22 +1233,11 @@
     },
     "extern_functions": [
       "__ct__10CCharacterFv"
-    ],
-    "statics": {
-      "col$170": "col$984",
-      "init$168": "init$982",
-      "init$171": "init$985",
-      "lightning$167": "lightning$981"
-    }
+    ]
   },
   "src/title/titleloop.cpp": {
     "symbols": {
       "WaterProcess__Fv": "WaterProcess__Fv__2"
-    },
-    "statics": {
-      "br$259": "br$589",
-      "init$260": "init$590",
-      "rot$227": "rot$557"
     }
   },
   "src/fish.cpp": {
@@ -1552,7 +1356,7 @@
     "symbols": {
       "@1106": "@1099",
       "chara_change_frame_image": "@1326",
-      "stay_frame_name": "@1374",
+      "stay_frame_name": "pal_at1374",
       "item_view_frame_image": "@1870",
       "item_templete_no": "@2073",
       "item_templete_type": "@2074",
@@ -2203,7 +2007,8 @@
       "init$212": "init$724",
       "init$453": "init$999",
       "tipcurCnt$452": "tipcurCnt$998"
-    }
+    },
+    "symbols": {}
   },
   "src/battle_globals.cpp": {
     "symbols": {
@@ -2268,7 +2073,7 @@
   },
   "src/btitem.cpp": {
     "symbols": {
-      "BtEffectInfoFile": "@911",
+      "BtEffectInfoFile": "pal_at911",
       "BtAtraShortCharaFile": "@656__2",
       "BtAtraShortEffectFile": "@872",
       "defWeapon": "defWeapon__4",
@@ -2422,8 +2227,7 @@
       "@473": "@735__3"
     },
     "rodata_exports": [
-      "@656__2",
-      "@911"
+      "@656__2"
     ],
     "statics": {
       "frameWait$245": "frameWait$916"
@@ -2436,8 +2240,8 @@
   },
   "src/shot_freefuncs.cpp": {
     "symbols": {
-      "StatusTextureName": "@1150",
-      "StayFrameTextureName": "@778__2"
+      "StatusTextureName": "pal_at1150",
+      "StayFrameTextureName": "pal_at778__2"
     },
     "statics": {
       "init$315": "init$865",
@@ -2525,6 +2329,9 @@
   "src/fishing.cpp": {
     "symbols": {
       "fishing_err_format": "@604"
+    },
+    "statics": {
+      "fish_type$134": "fish_type$369"
     }
   },
   "src/charakey.cpp": {
@@ -2570,7 +2377,8 @@
       "clut_adr$374": "clut_adr$343",
       "init$375": "init$344",
       "lut$978": "lut$1025"
-    }
+    },
+    "symbols": {}
   },
   "src/literals.cpp": {
     "symbols": {
@@ -2580,6 +2388,31 @@
       ".rdata": [
         "_overlay_group_addresses",
         "LiteralPool"
+      ]
+    }
+  },
+  "src/actionseq.cpp": {
+    "symbols": {}
+  },
+  "src/character.cpp": {
+    "symbols": {},
+    "sections": {
+      ".vt-character": [
+        "__vt__10CCharacter"
+      ]
+    }
+  },
+  "src/eastking.cpp": {
+    "symbols": {}
+  },
+  "src/fireomni.cpp": {
+    "symbols": {}
+  },
+  "src/frame.cpp": {
+    "symbols": {},
+    "sections": {
+      ".vt-framevu1": [
+        "__vt__9CFrameVu1"
       ]
     }
   }

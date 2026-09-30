@@ -75,6 +75,21 @@ void now_loading_off(void) {
  * @address 0x153FC0
  * @size 0x354
  */
+#ifdef PAL
+void init_now_loading(int title_number);
+/* Retail's data for the function the marker below supplies. */
+char pal_at285__2[0x8] __attribute__((section(".rodata"))) = "img_%d";
+char pal_at286[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%s/mt0%d.tm2";
+char pal_at287[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%s/mt%d.tm2";
+char pal_at288[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%s/title.img";
+char pal_at289[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "SCElogo";
+char pal_at290[0x8] __attribute__((section(".rodata"))) = "L5logo";
+INCLUDE_ASM("asm/pal/nonmatchings/nowload", init_now_loading__Fi);
+/* Retail's data for the function the marker above supplies. */
+char pal_at263[0x40] __attribute__((aligned(16))) = "img";
+unsigned int pal_at266[16] __attribute__((aligned(16))) = {0};
+#pragma name_counter 86
+#else
 void init_now_loading(int title_number) {
     end_flag = 1;
     if (now_loding_off != 0) {
@@ -143,6 +158,7 @@ void init_now_loading(int title_number) {
     now_loading_vsync_end = 1;
     MGInitVSyncCallBack(VSyncCallBack_Load);
 }
+#endif
 
 /**
  * Draws the loading screen and advances its fade once per vertical sync.
@@ -151,6 +167,11 @@ void init_now_loading(int title_number) {
  * @address 0x154320
  * @size 0x450
  */
+#ifdef PAL
+int VSyncCallBack_Load(int field);
+INCLUDE_ASM("asm/pal/nonmatchings/nowload", VSyncCallBack_Load__Fi);
+#pragma name_counter 133
+#else
 int VSyncCallBack_Load(int field) {
     (void) field;
     if (end_flag) {
@@ -229,6 +250,7 @@ int VSyncCallBack_Load(int field) {
     now_loading_vsync_end = 1;
     return 0;
 }
+#endif
 
 /**
  * Uploads a named image and its palette to video memory and records where they went.

@@ -29,8 +29,8 @@ void LangsetInit(void) {
     SetPacketReadBuffer(40000, 300000);
     MGSetBGColor(0.0f, 0.0f, 0.0f, 128.0f);
     LOADTEXTURE_INFO textures[] = {
-        {"#frame_image_mes#640#448#4", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
+        {"#frame_image_mes#640#" SCREEN_HEIGHT_STR "#4", 26, 0},
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
         {"#fontbase#512#256#1", 26, 0},
         {"titledat/lang_set.img", 0, 0},
         {"", 0, 0},

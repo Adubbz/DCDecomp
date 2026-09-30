@@ -184,6 +184,13 @@ static int BgmOff;
 static int BgmVol;
 static int BgmNo;
 
+#ifdef PAL
+void OpeningInit();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", OpeningInit__Fv);
+/* Retail's data for the function the marker above supplies. */
+char pal_at365__4[] __attribute__((section(".rodata"))) = "opdat/opening.pal";
+#pragma name_counter 51
+#else
 void OpeningInit() {
     wait_now_loading_vsync();
     InitializeDataBuffer();
@@ -232,6 +239,7 @@ void OpeningInit() {
     DispFade.FadeInit(128.0f);
     DispFade.FadeOutStart(128.0f, 0);
 }
+#endif
 
 /**
  * Loads the opening movie's localized message resources.
@@ -257,6 +265,31 @@ static void LoadMessage() {
     Mes1.grow_x = 310;
     Mes1.grow_y = 210;
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            LoadFile("opdat/optext_0.mes", MesBuffer, 0);
+            break;
+        case 1:
+            LoadFile("opdat/optext_1.mes", MesBuffer, 0);
+            break;
+        case 2:
+            LoadFile("opdat/optext_2.mes", MesBuffer, 0);
+            break;
+        case 3:
+            LoadFile("opdat/optext_3.mes", MesBuffer, 0);
+            break;
+        case 4:
+            LoadFile("opdat/optext_4.mes", MesBuffer, 0);
+            break;
+        case 5:
+            LoadFile("opdat/optext_5.mes", MesBuffer, 0);
+            break;
+        case 6:
+            LoadFile("opdat/optext_6.mes", MesBuffer, 0);
+            break;
+    }
+#else
     switch (LanguageCode) {
         case 0:
             LoadFile("opdat/fconv.bin", MesBuffer, 0);
@@ -280,6 +313,7 @@ static void LoadMessage() {
             LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
             break;
     }
+#endif
 
     Mes1.buff = (short *) MesBuffer;
     Mes1.text = (char *) MesBuffer;
@@ -699,6 +733,16 @@ static void WaitKeyProcess() {
  * @size 0x3C0
  * @unknownret
  */
+#ifdef PAL
+static void MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", MotionProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at836__3[12] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DC86D8, 0x01DC86E8, 0x01DC86F8, 0x01DC8708, 0x01DC8718, 0x01DC8728, 0x01DC8738,
+    0x01DC8748, 0x01DC8758, 0x01DC8768,
+};
+#pragma name_counter 478
+#else
 static void MotionProcess() {
     switch (CScript__2.fade) {
         case 1:
@@ -793,6 +837,7 @@ static void MotionProcess() {
         }
     }
 }
+#endif
 
 /**
  * Dispatches sound processing for the active opening scene.
@@ -802,6 +847,16 @@ static void MotionProcess() {
  * @size 0x330
  * @unknownret
  */
+#ifdef PAL
+static void SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", SoundProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at866__2[10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DC8A2C, 0x01DC8A3C, 0x01DC8A4C, 0x01DC8A5C, 0x01DC8A6C, 0x01DC8A7C, 0x01DC8A8C,
+    0x01DC8A9C, 0x01DC8AAC, 0x01DC8ABC,
+};
+#pragma name_counter 508
+#else
 static void SoundProcess() {
     if (CScript__2.se_stop == 0) {
         if (CScript__2.se_voice != 0) {
@@ -875,6 +930,7 @@ static void SoundProcess() {
             break;
     }
 }
+#endif
 
 /**
  * Dispatches drawing for the active opening scene.
@@ -884,6 +940,23 @@ static void SoundProcess() {
  * @size 0x35C
  * @unknownret
  */
+#ifdef PAL
+static void DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/opening", DrawProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+char pal_at957__4[] __attribute__((section(".rodata"))) = "pause";
+char pal_at958__2[] __attribute__((section(".rodata"))) = "pause_e";
+char pal_at959__3[] __attribute__((section(".rodata"))) = "pause_f";
+char pal_at960__2[] __attribute__((section(".rodata"))) = "pause_g";
+char pal_at961__2[] __attribute__((section(".rodata"))) = "pause_i";
+char pal_at962__3[] __attribute__((section(".rodata"))) = "pause_s";
+unsigned int pal_at964[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DC8D38, 0x01DC8DB0, 0x01DC8E28, 0x01DC8EA0, 0x01DC8F18, 0x01DC8F90, 0x01DC9008};
+unsigned int pal_at963[10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DC8C04, 0x01DC8C14, 0x01DC8C24, 0x01DC8C34, 0x01DC8C44, 0x01DC8C54, 0x01DC8C64,
+    0x01DC8C74, 0x01DC8C84, 0x01DC8C94,
+};
+#pragma name_counter 532
+#else
 static void DrawProcess() {
     sceVu0FVECTOR position;
     sceVu0FMATRIX camera;
@@ -961,6 +1034,7 @@ static void DrawProcess() {
     DispFade.FadeIn(Vif1Packet);
     DispFade.FadeOut(Vif1Packet);
 }
+#endif
 
 /**
  * Draws opening subtitles and pause messages.

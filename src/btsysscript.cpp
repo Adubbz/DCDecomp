@@ -22,6 +22,9 @@
 #include "editloop3.hpp"
 #include "frame.hpp"
 #include "itembombeffect.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #include "mathutil.hpp"
 #include "menu_dungeon.hpp"
 #include "menu_misc.hpp"
@@ -86,6 +89,27 @@ BT_OBJ_HANDLE *GetObjHDL(int index) {
 }
 
 void BtSystemScriptLoad(int floor) {
+#ifdef PAL
+    char path[32];
+    char mes_path[40];
+    int read_size;
+    int mes_size;
+    char *mes;
+
+    sprintf(path, "dun/script/d0%d/event.stb", floor + 1);
+    sprintf(mes_path, "dun/script/d0%d/d0%d_%d.mes", floor + 1, floor + 1, LanguageCode);
+    BtSystemScriptFileBuffer.used = 0;
+    BtEventData = (s32) (BtSystemScriptFileBuffer.base + BtSystemScriptFileBuffer.used * 0x10);
+    LoadFile(path, (void *) BtEventData, &read_size);
+    wait_now_loading_vsync();
+    BtSystemScriptFileBuffer.Alloc((read_size >> 4) + 1);
+    mes = (char *) (BtSystemScriptFileBuffer.base + BtSystemScriptFileBuffer.used * 0x10);
+    LoadFile(mes_path, mes, &mes_size);
+    wait_now_loading_vsync();
+    BtSystemScriptFileBuffer.Alloc((mes_size >> 4) + 1);
+    EdSetEventScript((char *) BtEventData, mes, &BtSystemScriptFileBuffer);
+    AddSystemEventScript();
+#else
     char path[44];
     int read_size;
 
@@ -97,6 +121,7 @@ void BtSystemScriptLoad(int floor) {
     BtSystemScriptFileBuffer.Alloc((read_size >> 4) + 1);
     EdSetEventScript((char *) BtEventData, NULL, &BtSystemScriptFileBuffer);
     AddSystemEventScript();
+#endif
 }
 
 void BtSystemScriptInit(void) {

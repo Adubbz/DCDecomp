@@ -80,6 +80,11 @@ static void SetStack(RS_STACKDATA *argument, float value) {
     }
 }
 
+#ifdef PAL
+int _SET_MOTION(RS_STACKDATA *stack, int argc);
+INCLUDE_ASM("asm/pal/nonmatchings/runscript_opcodes", _SET_MOTION__FP12RS_STACKDATAi);
+#pragma name_counter 140
+#else
 int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     int motion_id;
     int monster_no = NowMonstorUnit->current_monster;
@@ -142,6 +147,7 @@ int _SET_MOTION(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
+#endif
 
 int _CHK_MOTION_FRM(RS_STACKDATA *stack, int argc) {
     int monster_no = NowMonstorUnit->current_monster;
@@ -1005,6 +1011,11 @@ int _SET_LOCKON_SW(RS_STACKDATA *stack, int argc) {
     return 1;
 }
 
+#ifdef PAL
+int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc);
+INCLUDE_ASM("asm/pal/nonmatchings/runscript_opcodes", _SET_MONSTOR_MOTION__FP12RS_STACKDATAi);
+#pragma name_counter 520
+#else
 int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
     int monster_no = GetStackInt(stack++);
     int motion_id = GetStackInt(stack++);
@@ -1048,6 +1059,7 @@ int _SET_MONSTOR_MOTION(RS_STACKDATA *stack, int argc) {
     }
     return 1;
 }
+#endif
 
 int _SET_GLOBAL_INT(RS_STACKDATA *stack, int argc) {
     int slot = GetStackInt(stack++);

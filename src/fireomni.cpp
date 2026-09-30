@@ -204,6 +204,12 @@ void CFireOmni::RasterStep(void) {
     }
 }
 
+#ifdef PAL
+/* Retail's data for the function the marker below supplies. */
+char pal_at328__2[0x8] __attribute__((section(".rodata"))) = "alpha01";
+INCLUDE_ASM("asm/pal/nonmatchings/fireomni", DrawRaster__9CFireOmniFv);
+#pragma name_counter 147
+#else
 void CFireOmni::DrawRaster(void) {
     sceVu0FVECTOR world;
     int top_left[4];
@@ -241,3 +247,4 @@ void CFireOmni::DrawRaster(void) {
     set2DSprite(Vif1Packet, TexManager.GetTexture("blender", -1), CRect_i_(x, y, width, height * 2),
                 CRect_i_(1, 1, width - 2, height - 2));
 }
+#endif

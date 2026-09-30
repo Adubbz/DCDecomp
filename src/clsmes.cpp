@@ -1636,6 +1636,10 @@ int ClsMes::MakeMesWin(int mes_no) {
     return 0;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/clsmes", MakeMesTexture__6ClsMesFi);
+#pragma name_counter 1786
+#else
 void ClsMes::MakeMesTexture(int mes_no) {
     int needed[4];
 
@@ -1669,6 +1673,7 @@ void ClsMes::MakeMesTexture(int mes_no) {
         this->text_len = this->win_line_num;
     }
 }
+#endif
 
 void ClsMes::Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y,
                                  int width, int height, int u, int v, int u_width,
@@ -2346,6 +2351,10 @@ void GetPos_AbsPosSet(int x, int y, int width, int height, int win_width, int wi
     }
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/clsmes", DrawGaijiFont__6ClsMesFP8CTextureiRC8CRect_i_RC8CRect_i_ii);
+#pragma name_counter 2233
+#else
 void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
                            const CRect_i_ &screen, int wide, int dark) {
     u8 r;
@@ -2532,7 +2541,19 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
     set2DSprite_Core(Vif1Packet, texture, screen, CRect_i_(u, v, 14, 20), r, g, b,
                      this->edge_alpha < alpha ? this->edge_alpha : alpha);
 }
+#endif
 
+#ifdef PAL
+/* Retail's data for the function the marker below supplies. */
+char pal_at2106[0x10] __attribute__((section(".rodata"))) = "stayframe";
+char pal_at2107[0x10] __attribute__((section(".rodata"))) = "fontbase";
+char pal_at2108[0x8] __attribute__((section(".rodata"))) = "gaiji";
+char pal_at2109[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "syst04";
+INCLUDE_ASM("asm/pal/nonmatchings/clsmes", DrawMesWin__6ClsMesFv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1971[4] __attribute__((aligned(16))) = {0x00008000, 0x10000000, 0x0000000E};
+#pragma name_counter 2405
+#else
 void ClsMes::DrawMesWin(void) {
     CTexture *texture;
     int offset_x;
@@ -2801,3 +2822,4 @@ void ClsMes::DrawMesWin(void) {
         this->cursor_y = 0;
     }
 }
+#endif

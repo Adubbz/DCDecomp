@@ -565,13 +565,13 @@ int SndBgmInit() {
 }
 
 #ifdef PAL
-void SndBgmDisable(int) {}
+INCLUDE_ASM("asm/pal/nonmatchings/snd", SndBgmDisable__Fi);
+#pragma name_counter 555
 #endif
 
 #ifdef PAL
-int SndGetBgmDisableFlag() {
-    return 0;
-}
+INCLUDE_ASM("asm/pal/nonmatchings/snd", SndGetBgmDisableFlag__Fv);
+#pragma name_counter 555
 #endif
 
 int SndBgmLoad(int set_no) {
@@ -646,7 +646,8 @@ void SndBgmStop() {
 }
 
 #ifdef PAL
-void SndBgmPause() {}
+INCLUDE_ASM("asm/pal/nonmatchings/snd", SndBgmPause__Fv);
+#pragma name_counter 583
 #endif
 
 void SndBgmRePlay() {

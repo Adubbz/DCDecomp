@@ -416,6 +416,54 @@ void DataLoad() {
  * @size 0x82C
  * @unknownret
  */
+#ifdef PAL
+static void InitProcA();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcA__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at877__3[36] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x00000000,
+    0x00000014, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001,
+    0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x00000003, 0x00000000,
+    0x00000000, 0x00000004, 0x00000000, 0x00000000, 0x00000005, 0x00000000, 0x00000000,
+    0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at891__5[8] __attribute__((aligned(16))) = {0x01DF99D0, 0x01DF99E0, 0x01DF99F0, 0x01DF9A00, 0x01DF9A10};
+unsigned int pal_at906__4[4] __attribute__((aligned(16))) = {0x01DF9A20, 0x01DF9A30, 0x01DF9A40, 0x01DF9A50};
+char pal_at874[] __attribute__((section(".rodata"))) = "#blender#640#256#4";
+char pal_at875__2[] __attribute__((section(".rodata"))) = "#frame_image#640#256#4";
+char pal_at876__3[] __attribute__((section(".rodata"))) = "";
+char pal_at886__5[] __attribute__((section(".rodata"))) = "02c01d.cfg";
+char pal_at887__6[] __attribute__((section(".rodata"))) = "02c12a.cfg";
+char pal_at888__6[] __attribute__((section(".rodata"))) = "02c08a.cfg";
+char pal_at889__6[] __attribute__((section(".rodata"))) = "02c09a.cfg";
+char pal_at890__5[] __attribute__((section(".rodata"))) = "02e04a.cfg";
+char pal_at902__3[] __attribute__((section(".rodata"))) = "0201cp.cfg";
+char pal_at903__3[] __attribute__((section(".rodata"))) = "0202cp.cfg";
+char pal_at904__3[] __attribute__((section(".rodata"))) = "0203cp.cfg";
+char pal_at905__3[] __attribute__((section(".rodata"))) = "0204cp.cfg";
+char pal_at955__3[] __attribute__((section(".rodata"))) = "start.img";
+char pal_at956__3[] __attribute__((section(".rodata"))) = "start_f.img";
+char pal_at957__5[] __attribute__((section(".rodata"))) = "start_g.img";
+char pal_at958__3[] __attribute__((section(".rodata"))) = "start_i.img";
+char pal_at959__4[] __attribute__((section(".rodata"))) = "start_s.img";
+char pal_at960__4[] __attribute__((section(".rodata"))) = "effect.img";
+char pal_at961__5[] __attribute__((section(".rodata"))) = "c01d01.img";
+char pal_at962__6[] __attribute__((section(".rodata"))) = "c12a01.img";
+char pal_at963__4[] __attribute__((section(".rodata"))) = "c08a01.img";
+char pal_at964__3[] __attribute__((section(".rodata"))) = "c09a01.img";
+char pal_at965__3[] __attribute__((section(".rodata"))) = "e04a01.img";
+char pal_at966__3[] __attribute__((section(".rodata"))) = "s1401.img";
+char pal_at967__2[] __attribute__((section(".rodata"))) = "e01s01.img";
+char pal_at969__2[] __attribute__((section(".rodata"))) = "s1402.mds";
+char pal_at971__2[] __attribute__((section(".rodata"))) = "tenkyu";
+char pal_at972__4[] __attribute__((section(".rodata"))) = "tenkyu2";
+char pal_at973__2[] __attribute__((section(".rodata"))) = "tenkyu3";
+char pal_at974[] __attribute__((section(".rodata"))) = "inazuma";
+char pal_at975[] __attribute__((section(".rodata"))) = "s1401.mds";
+char pal_at976__2[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat1.cfg";
+unsigned int pal_at977__4[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE425C, 0x01DE4280, 0x01DE42A4, 0x01DE42C8, 0x01DE42EC, 0x01DE4310, 0x01DE4334};
+#pragma name_counter 166
+#else
 static void InitProcA() {
     wait_now_loading_vsync();
 
@@ -583,7 +631,21 @@ static void InitProcA() {
     OPAnalyz("sim:rmdat/rmdat1.cfg");
     OPMdsLoad();
 }
+#endif
 
+#ifdef PAL
+void DrawProcA();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcA__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_lightning_S981;
+unsigned char pal_init_S982;
+unsigned int pal_col_S984;
+unsigned char pal_init_S985;
+unsigned int pal_at980[16] __attribute__((aligned(16))) = {0x42C80000, 0x42A00000, 0x42700000, 0x00000000, 0x42B40000, 0x42B40000, 0x42480000};
+unsigned int pal_at1029[4] __attribute__((aligned(16))) = {0x42B40000, 0x42B40000, 0x42B40000, 0x43000000};
+unsigned int pal_at1035__5[4] __attribute__((aligned(16))) = {0x447A0000, 0x44FA0000, 0x453B8000};
+#pragma name_counter 232
+#else
 void DrawProcA() {
     sceVu0FMATRIX flash = {
         {100.0f, 80.0f, 60.0f, 0.0f},
@@ -727,6 +789,7 @@ void DrawProcA() {
 
     DepthOfField(dof, 3, 32, 0);
 }
+#endif
 
 CFrame *ObjectFrame3;
 class CProcess CProcess;
@@ -746,6 +809,49 @@ static float TitleCameraWork[4];
  * @size 0x7B0
  * @unknownret
  */
+#ifdef PAL
+static void InitProcB();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcB__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1055[44] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x01DF9BD0, 0x00000015, 0x00000000, 0x00000000, 0x00000014,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000000A, 0x00000000,
+    0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x00000000,
+    0x00000003, 0x00000000, 0x00000000, 0x00000004, 0x00000000, 0x00000000, 0x00000008,
+    0x00000000, 0x00000000, 0x00000009, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1068[4] __attribute__((aligned(16))) = {0x01DF9BE8, 0x01DF9BF8, 0x01DF9C08, 0x01DF9C18};
+unsigned int pal_at1082[4] __attribute__((aligned(16))) = {0x01DF9C28, 0x01DF9C38, 0x01DF9C48};
+unsigned int pal_at1088__3[4] __attribute__((aligned(16))) = {0x43820000, 0x00000000, 0xC3C80000, 0x3F800000};
+unsigned int pal_at1089__2[4] __attribute__((aligned(16))) = {0x43BE0000, 0x00000000, 0xC3C80000, 0x3F800000};
+unsigned int pal_at1090[4] __attribute__((aligned(16))) = {0x43820000, 0x00000000, 0xC37A0000, 0x3F800000};
+unsigned int pal_at1091__2[4] __attribute__((aligned(16))) = {0x43BE0000, 0x00000000, 0xC37A0000, 0x3F800000};
+char pal_at1053[] __attribute__((section(".rodata"))) = "#shadow_buff#640#256#4";
+char pal_at1054[] __attribute__((section(".rodata"))) = "#water_buff#640#256#4";
+char pal_at1064[] __attribute__((section(".rodata"))) = "rm05c01d.cfg";
+char pal_at1065[] __attribute__((section(".rodata"))) = "rm04e01a.cfg";
+char pal_at1066__2[] __attribute__((section(".rodata"))) = "rm05saget.cfg";
+char pal_at1067__2[] __attribute__((section(".rodata"))) = "d01o03_m.cfg";
+char pal_at1079[] __attribute__((section(".rodata"))) = "rm03cam.cfg";
+char pal_at1080[] __attribute__((section(".rodata"))) = "rm04cam.cfg";
+char pal_at1081[] __attribute__((section(".rodata"))) = "rm05cam.cfg";
+char pal_at1106__3[] __attribute__((section(".rodata"))) = "d01m01.img";
+char pal_at1107__3[] __attribute__((section(".rodata"))) = "e01a01.img";
+char pal_at1108__3[] __attribute__((section(".rodata"))) = "saget.img";
+char pal_at1109__3[] __attribute__((section(".rodata"))) = "d01etc.img";
+char pal_at1110__3[] __attribute__((section(".rodata"))) = "rm04ex.img";
+char pal_at1111__3[] __attribute__((section(".rodata"))) = "c01w03.img";
+char pal_at1112[] __attribute__((section(".rodata"))) = "c01d.cfg";
+char pal_at1113[] __attribute__((section(".rodata"))) = "rm04c01d.cfg";
+char pal_at1114[] __attribute__((section(".rodata"))) = "rm04ex.cfg";
+char pal_at1115[] __attribute__((section(".rodata"))) = "c01w03.cfg";
+char pal_at1116__2[] __attribute__((section(".rodata"))) = "s4201.mds";
+char pal_at1117__3[] __attribute__((section(".rodata"))) = "s4202.mds";
+char pal_at1118__4[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat2.cfg";
+unsigned int pal_at1120[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE5368, 0x01DE538C, 0x01DE53B0, 0x01DE53D4, 0x01DE53F8, 0x01DE541C, 0x01DE5440};
+#pragma name_counter 291
+#else
 static void InitProcB() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -871,7 +977,23 @@ static void InitProcB() {
     Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
     Water__2.SetColor(100, 110, 120, 128);
 }
+#endif
 
+/* The shadow buffer's texture name, one constant every scene's draw shares. */
+#ifdef PAL
+#define SHADOW_BUFF_TEXTURE pal_at1169__3
+#else
+#define SHADOW_BUFF_TEXTURE "shadow_buff"
+#endif
+
+#ifdef PAL
+void DrawProcB();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcB__Fv);
+/* Retail's data for the function the marker above supplies. */
+float pal_at1150__4[2] __attribute__((aligned(8))) = {400.0f, 1000.0f};
+char pal_at1169__3[] __attribute__((section(".rodata"))) = "shadow_buff";
+#pragma name_counter 331
+#else
 void DrawProcB() {
     TexManager.ReloadTexture(Vif1Packet, 10);
     OP_GroundMap.Draw();
@@ -880,7 +1002,7 @@ void DrawProcB() {
     WaterProcess();
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -959,6 +1081,7 @@ void DrawProcB() {
 
     DepthOfField(dof, 2, 32, 0);
 }
+#endif
 
 /**
  *
@@ -1030,6 +1153,72 @@ static void AtraLight() {
  * @size 0x67C
  * @unknownret
  */
+#ifdef PAL
+static void InitProcC();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcC__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1188__4[36] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x01DF9BD0, 0x00000015, 0x00000000, 0x00000000, 0x00000014,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000000A, 0x00000000,
+    0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000,
+    0x00000001, 0x00000000, 0x00000000, 0x00000009, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1216[132] __attribute__((aligned(16))) = {
+    0x01DF9D78, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x01DF9D88, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x01DF9D98, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x01DF9DA8, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x01DF9DB8,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x01DF9DC8, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x01DF9DD8, 0x00000000, 0x00000000, 0x42940000, 0x00000000,
+    0x01DF9DE8, 0xC262B852, 0x00000000, 0x423E4396, 0xC2480000, 0x01DF9DF8, 0x4201C189,
+    0x00000000, 0xC285051F, 0x431A0000, 0x01DF9E08, 0x42A40000, 0xC1200000, 0x42DA0000,
+    0xC2B40000, 0x01DF9E18, 0x427753F8, 0x41200000, 0xC2FE0000, 0xC1E00000, 0x01DF9E28,
+    0xC25A8F5C, 0x41200000, 0xC2E73333, 0x41C80000, 0x01DF9E38, 0xC2B5B333, 0x41200000,
+    0x42972B85, 0x42FA0000, 0x01DF9E48, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x01DF9E58, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x01DF9E68, 0x00000000,
+    0xC1200000, 0x00000000, 0x00000000, 0x01DF9E78, 0x42FE0000, 0xC1200000, 0x42DA0000,
+    0x00000000, 0x01DF9E88, 0xC30C0000, 0xC1200000, 0x42DC0000, 0x42FA0000, 0x01DF9E88,
+    0x42B40000, 0xC1200000, 0xC3340000, 0xC1E00000, 0x01DF9E88, 0xC2A00000, 0xC1200000,
+    0xC32A0000, 0x41C80000, 0x01DF9E98, 0xC27C999A, 0xC1700000, 0x43000000, 0x42480000,
+    0x01DF9E98, 0xC2FC0000, 0xC1700000, 0xC2DC0000, 0xC1A00000, 0x01DF9E98, 0xC3320000,
+    0xC1700000, 0x42380000, 0x41200000, 0x01DF9E98, 0x41400000, 0xC1700000, 0xC35A0000,
+    0xC28C0000, 0x01DF9E98, 0x434C0000, 0xC1700000, 0xC3180000, 0xC30C0000, 0x01DF9E98,
+    0x43740000, 0xC1700000, 0x41600000, 0x433E0000,
+};
+unsigned int pal_at1223[4] __attribute__((aligned(16))) = {0x01DF9EA8};
+unsigned int pal_at1229[4] __attribute__((aligned(16))) = {0xC2F00000, 0x00000000, 0xC2F00000, 0x3F800000};
+unsigned int pal_at1230[4] __attribute__((aligned(16))) = {0x42F00000, 0x00000000, 0xC2F00000, 0x3F800000};
+unsigned int pal_at1231[4] __attribute__((aligned(16))) = {0xC2F00000, 0x00000000, 0x42F00000, 0x3F800000};
+unsigned int pal_at1232[4] __attribute__((aligned(16))) = {0xC2F00000, 0x00000000, 0x42F00000, 0x3F800000};
+char pal_at1197[] __attribute__((section(".rodata"))) = "s04g01_0.mds";
+char pal_at1198__2[] __attribute__((section(".rodata"))) = "s04g02_0.mds";
+char pal_at1199__4[] __attribute__((section(".rodata"))) = "s04g04_0.mds";
+char pal_at1200__2[] __attribute__((section(".rodata"))) = "s04g06_0.mds";
+char pal_at1201__2[] __attribute__((section(".rodata"))) = "s04g03_0.mds";
+char pal_at1202__3[] __attribute__((section(".rodata"))) = "s04g05_0.mds";
+char pal_at1203__3[] __attribute__((section(".rodata"))) = "s04r01_0.mds";
+char pal_at1204[] __attribute__((section(".rodata"))) = "s04r02_0.mds";
+char pal_at1205__2[] __attribute__((section(".rodata"))) = "s04r03_0.mds";
+char pal_at1206__2[] __attribute__((section(".rodata"))) = "s04r05_0.mds";
+char pal_at1207__3[] __attribute__((section(".rodata"))) = "s04r06_0.mds";
+char pal_at1208__2[] __attribute__((section(".rodata"))) = "s04r07_0.mds";
+char pal_at1209__3[] __attribute__((section(".rodata"))) = "s04r08_0.mds";
+char pal_at1210__2[] __attribute__((section(".rodata"))) = "s04w01_0.mds";
+char pal_at1211__2[] __attribute__((section(".rodata"))) = "s04w02_0.mds";
+char pal_at1212[] __attribute__((section(".rodata"))) = "s04h01_0.mds";
+char pal_at1213[] __attribute__((section(".rodata"))) = "s04h02_0.mds";
+char pal_at1214[] __attribute__((section(".rodata"))) = "s04h03_0.mds";
+char pal_at1215__2[] __attribute__((section(".rodata"))) = "s04a01_0.mds";
+char pal_at1222[] __attribute__((section(".rodata"))) = "rm06cam.cfg";
+char pal_at1255__3[] __attribute__((section(".rodata"))) = "s04b01.img";
+char pal_at1256__3[] __attribute__((section(".rodata"))) = "s04b02.img";
+char pal_at1257__2[] __attribute__((section(".rodata"))) = "s04w01.img";
+char pal_at1258__2[] __attribute__((section(".rodata"))) = "pat.img";
+char pal_at1259__3[] __attribute__((section(".rodata"))) = "pat.cfg";
+char pal_at1261__3[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat3.cfg";
+unsigned int pal_at1262__2[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE6364, 0x01DE6388, 0x01DE63AC, 0x01DE63D0, 0x01DE63F4, 0x01DE6418, 0x01DE643C};
+#pragma name_counter 409
+#else
 static void InitProcC() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1165,7 +1354,15 @@ static void InitProcC() {
     Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
     Water__2.SetColor(128, 128, 128, 128);
 }
+#endif
 
+#ifdef PAL
+void DrawProcC();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcC__Fv);
+/* Retail's data for the function the marker above supplies. */
+float pal_at1287__5[2] __attribute__((aligned(8))) = {400.0f, 1000.0f};
+#pragma name_counter 442
+#else
 void DrawProcC() {
     TexManager.ReloadTexture(Vif1Packet, 10);
 
@@ -1178,7 +1375,7 @@ void DrawProcC() {
     WaterProcess();
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -1228,6 +1425,7 @@ void DrawProcC() {
 
     DepthOfField(dof, 2, 32, 0);
 }
+#endif
 
 /**
  *
@@ -1237,6 +1435,33 @@ void DrawProcC() {
  * @size 0x614
  * @unknownret
  */
+#ifdef PAL
+static void InitProcD();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcD__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1327__2[1] __attribute__((aligned(8))) = {0x01DF9F70};
+unsigned int pal_at1303__2[30] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x00000000, 0x00000014, 0x00000000, 0x00000000, 0x0000000A,
+    0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001, 0x00000000,
+    0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x00000009, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1315[6] __attribute__((aligned(8))) = {0x01DF9F40, 0x01DF9F50, 0x01DF9F60};
+char pal_at1312__2[] __attribute__((section(".rodata"))) = "rm07c01d.cfg";
+char pal_at1313__2[] __attribute__((section(".rodata"))) = "rm07e54b.cfg";
+char pal_at1314__2[] __attribute__((section(".rodata"))) = "rm07e54a.cfg";
+char pal_at1326__2[] __attribute__((section(".rodata"))) = "rm07cam.cfg";
+char pal_at1347__2[] __attribute__((section(".rodata"))) = "d02i01.img";
+char pal_at1348[] __attribute__((section(".rodata"))) = "c01d01an.img";
+char pal_at1349[] __attribute__((section(".rodata"))) = "e54a01.img";
+char pal_at1350__2[] __attribute__((section(".rodata"))) = "c01w11.img";
+char pal_at1351__2[] __attribute__((section(".rodata"))) = "c01w11.cfg";
+char pal_at1352__2[] __attribute__((section(".rodata"))) = "s44g01_0.mds";
+char pal_at1353__3[] __attribute__((section(".rodata"))) = "s44g02_0.mds";
+char pal_at1354__4[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat4.cfg";
+unsigned int pal_at1355__3[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE6E60, 0x01DE6E84, 0x01DE6EA8, 0x01DE6ECC, 0x01DE6EF0, 0x01DE6F14, 0x01DE6F38};
+#pragma name_counter 486
+#else
 static void InitProcD() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1342,6 +1567,7 @@ static void InitProcD() {
     OPAnalyz("sim:rmdat/rmdat4.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcD() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1349,7 +1575,7 @@ void DrawProcD() {
     OP_BuildingMap.Draw();
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -1387,6 +1613,31 @@ void DrawProcD() {
  * @size 0x538
  * @unknownret
  */
+#ifdef PAL
+static void InitProcE();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcE__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1386__2[2] __attribute__((aligned(8))) = {0x01DFA030, 0x01DFA040};
+unsigned int pal_at1375__2[32] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x00000000, 0x00000014, 0x00000000, 0x00000000, 0x0000000A,
+    0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001, 0x00000000,
+    0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1399__3[4] __attribute__((aligned(16))) = {0x01DFA050, 0x01DFA060};
+char pal_at1384__2[] __attribute__((section(".rodata"))) = "rm09c01d.cfg";
+char pal_at1385__4[] __attribute__((section(".rodata"))) = "rm09c04b.cfg";
+char pal_at1397[] __attribute__((section(".rodata"))) = "rm08cam.cfg";
+char pal_at1398__2[] __attribute__((section(".rodata"))) = "rm09cam.cfg";
+char pal_at1415__3[] __attribute__((section(".rodata"))) = "s4501.img";
+char pal_at1416__3[] __attribute__((section(".rodata"))) = "c04b01.img";
+char pal_at1417__2[] __attribute__((section(".rodata"))) = "c04b01an.img";
+char pal_at1418__3[] __attribute__((section(".rodata"))) = "s4501.mds";
+char pal_at1419__2[] __attribute__((section(".rodata"))) = "door2";
+char pal_at1420__3[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat5.cfg";
+unsigned int pal_at1421[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE77A0, 0x01DE77C4, 0x01DE77E8, 0x01DE780C, 0x01DE7830, 0x01DE7854, 0x01DE7878};
+#pragma name_counter 543
+#else
 static void InitProcE() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1481,6 +1732,7 @@ static void InitProcE() {
     OPAnalyz("sim:rmdat/rmdat5.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcE() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1492,7 +1744,7 @@ void DrawProcE() {
     }
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -1524,6 +1776,39 @@ void DrawProcE() {
  * @size 0x690
  * @unknownret
  */
+#ifdef PAL
+static void InitProcF();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcF__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1443[36] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x00000000, 0x00000014, 0x00000000, 0x00000000, 0x0000000A,
+    0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001, 0x00000000,
+    0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x00000003, 0x00000000, 0x00000000,
+    0x00000009, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1458[8] __attribute__((aligned(16))) = {0x01DFA100, 0x01DFA110, 0x01DFA120, 0x01DFA130, 0x01DFA140, 0x01DFA150};
+unsigned int pal_at1471__2[4] __attribute__((aligned(16))) = {0x01DFA160, 0x01DFA170};
+char pal_at1452[] __attribute__((section(".rodata"))) = "rm10c01d.cfg";
+char pal_at1453[] __attribute__((section(".rodata"))) = "rm10c14a.cfg";
+char pal_at1454[] __attribute__((section(".rodata"))) = "rm10c14b.cfg";
+char pal_at1455[] __attribute__((section(".rodata"))) = "rm10c14c.cfg";
+char pal_at1456[] __attribute__((section(".rodata"))) = "rm10c14d.cfg";
+char pal_at1457[] __attribute__((section(".rodata"))) = "rm11rock.cfg";
+char pal_at1469[] __attribute__((section(".rodata"))) = "rm10cam.cfg";
+char pal_at1470__2[] __attribute__((section(".rodata"))) = "rm11cam.cfg";
+char pal_at1491[] __attribute__((section(".rodata"))) = "d02b01.img";
+char pal_at1492__2[] __attribute__((section(".rodata"))) = "c14a01.img";
+char pal_at1493__3[] __attribute__((section(".rodata"))) = "rm11rock.img";
+char pal_at1494__2[] __attribute__((section(".rodata"))) = "c01w01.img";
+char pal_at1495__2[] __attribute__((section(".rodata"))) = "c01w01.cfg";
+char pal_at1496__3[] __attribute__((section(".rodata"))) = "s4601.mds";
+char pal_at1497__3[] __attribute__((section(".rodata"))) = "s4602.mds";
+char pal_at1498__4[] __attribute__((section(".rodata"))) = "rock1";
+char pal_at1499__2[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat6.cfg";
+unsigned int pal_at1500[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE8018, 0x01DE803C, 0x01DE8060, 0x01DE8084, 0x01DE80A8, 0x01DE80CC, 0x01DE80F0};
+#pragma name_counter 613
+#else
 static void InitProcF() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1638,6 +1923,7 @@ static void InitProcF() {
     OPAnalyz("sim:rmdat/rmdat6.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcF() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1651,7 +1937,7 @@ void DrawProcF() {
     }
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -1693,6 +1979,37 @@ void DrawProcF() {
  * @size 0x5D0
  * @unknownret
  */
+#ifdef PAL
+static void InitProcG();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcG__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1526__3[36] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x00000000, 0x00000014, 0x00000000, 0x00000000, 0x0000000A,
+    0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000,
+    0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x00000000,
+    0x00000002, 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1538[4] __attribute__((aligned(16))) = {0x01DFA240, 0x01DFA250, 0x01DFA260};
+unsigned int pal_at1547__2[4] __attribute__((aligned(16))) = {0x01DFA270, 0x01DFA280, 0x01DFA290};
+char pal_at1535__2[] __attribute__((section(".rodata"))) = "rm14ebc01d.cfg";
+char pal_at1536__2[] __attribute__((section(".rodata"))) = "rm14ebc06a.cfg";
+char pal_at1537[] __attribute__((section(".rodata"))) = "rm13c06a.cfg";
+char pal_at1544__2[] __attribute__((section(".rodata"))) = "rm12cam.cfg";
+char pal_at1545__3[] __attribute__((section(".rodata"))) = "rm13cam.cfg";
+char pal_at1546__3[] __attribute__((section(".rodata"))) = "rm14cam.cfg";
+char pal_at1567[] __attribute__((section(".rodata"))) = "s4701.img";
+char pal_at1568[] __attribute__((section(".rodata"))) = "e02s01.img";
+char pal_at1569[] __attribute__((section(".rodata"))) = "e02s06.img";
+char pal_at1570[] __attribute__((section(".rodata"))) = "c06a01.img";
+char pal_at1571__2[] __attribute__((section(".rodata"))) = "c06a01an.img";
+char pal_at1572[] __attribute__((section(".rodata"))) = "c06w01.img";
+char pal_at1573[] __attribute__((section(".rodata"))) = "s4701.mds";
+char pal_at1574[] __attribute__((section(".rodata"))) = "e02s01_0.mds";
+char pal_at1575[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat7.cfg";
+unsigned int pal_at1576[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE8A28, 0x01DE8A4C, 0x01DE8A70, 0x01DE8A94, 0x01DE8AB8, 0x01DE8ADC, 0x01DE8B00};
+#pragma name_counter 680
+#else
 static void InitProcG() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1794,6 +2111,7 @@ static void InitProcG() {
     OPAnalyz("sim:rmdat/rmdat7.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcG() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -1801,7 +2119,7 @@ void DrawProcG() {
     OP_BuildingMap.Draw();
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -1838,6 +2156,37 @@ void DrawProcG() {
  * @size 0x9E8
  * @unknownret
  */
+#ifdef PAL
+static void InitProcH();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcH__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1606__3[2] __attribute__((aligned(8))) = {0x01DFA360, 0x01DFA370};
+unsigned int pal_at1595[36] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x00000000, 0x00000014, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x00000001, 0x00000000,
+    0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x00000003, 0x00000000, 0x00000000,
+    0x00000004, 0x00000000, 0x00000000, 0x00000009, 0x00000000, 0x01DF99C8,
+};
+char pal_at1604__3[] __attribute__((section(".rodata"))) = "rm15cam.cfg";
+char pal_at1605__3[] __attribute__((section(".rodata"))) = "rm16cam.cfg";
+char pal_at1642[] __attribute__((section(".rodata"))) = "fire.img";
+char pal_at1643[] __attribute__((section(".rodata"))) = "d01b01.img";
+char pal_at1644[] __attribute__((section(".rodata"))) = "f_boll_2.img";
+char pal_at1645__3[] __attribute__((section(".rodata"))) = "rm16yuka.img";
+char pal_at1646[] __attribute__((section(".rodata"))) = "rm15c12a.cfg";
+char pal_at1647__3[] __attribute__((section(".rodata"))) = "f_boll_2.cfg";
+char pal_at1648__2[] __attribute__((section(".rodata"))) = "rm16yuka.cfg";
+char pal_at1649__2[] __attribute__((section(".rodata"))) = "s4801.mds";
+char pal_at1650[] __attribute__((section(".rodata"))) = "s4802.mds";
+char pal_at1651[] __attribute__((section(".rodata"))) = "s4803.mds";
+char pal_at1652[] __attribute__((section(".rodata"))) = "s4804.mds";
+char pal_at1653[] __attribute__((section(".rodata"))) = "s4805.mds";
+char pal_at1654[] __attribute__((section(".rodata"))) = "s4806.mds";
+char pal_at1655[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat8.cfg";
+unsigned int pal_at1656[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DE9308, 0x01DE932C, 0x01DE9350, 0x01DE9374, 0x01DE9398, 0x01DE93BC, 0x01DE93E0};
+#pragma name_counter 751
+#else
 static void InitProcH() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -1988,6 +2337,7 @@ static void InitProcH() {
     OPAnalyz("sim:rmdat/rmdat8.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcH() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -2002,7 +2352,7 @@ void DrawProcH() {
     }
 
     TexManager.ReloadTexture(Vif1Packet, 23);
-    CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+    CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
     MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
 
@@ -2061,6 +2411,36 @@ void DrawProcH() {
  * @size 0x814
  * @unknownret
  */
+#ifdef PAL
+static void InitProcI();
+INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcI__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1695__2[30] __attribute__((aligned(16))) = {
+    0x01DF9990, 0x00000000, 0x00000000, 0x01DF99B0, 0x00000016, 0x00000000, 0x01DF9BB0,
+    0x00000017, 0x00000000, 0x00000000, 0x00000014, 0x00000000, 0x00000000, 0x00000003,
+    0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000,
+    0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x01DF99C8,
+};
+unsigned int pal_at1707[6] __attribute__((aligned(8))) = {0x01DFA490, 0x01DFA4A0, 0x01DFA4B0};
+unsigned int pal_at1715[4] __attribute__((aligned(16))) = {0x01DFA4C0, 0x01DFA4D0};
+char pal_at1704__2[] __attribute__((section(".rodata"))) = "rm18c01d.cfg";
+char pal_at1705__2[] __attribute__((section(".rodata"))) = "rm18ashiba.cfg";
+char pal_at1706__2[] __attribute__((section(".rodata"))) = "info2.cfg";
+char pal_at1713[] __attribute__((section(".rodata"))) = "rm17cam.cfg";
+char pal_at1714[] __attribute__((section(".rodata"))) = "rm18cam.cfg";
+char pal_at1748[] __attribute__((section(".rodata"))) = "e305ex2.img";
+char pal_at1749[] __attribute__((section(".rodata"))) = "s1202.img";
+char pal_at1750__2[] __attribute__((section(".rodata"))) = "s2401.img";
+char pal_at1751[] __attribute__((section(".rodata"))) = "m18ashiba.img";
+char pal_at1752[] __attribute__((section(".rodata"))) = "s24g01_0.mds";
+char pal_at1753[] __attribute__((section(".rodata"))) = "s24g02_0.mds";
+char pal_at1754[] __attribute__((section(".rodata"))) = "s24g03_0.mds";
+char pal_at1755__2[] __attribute__((section(".rodata"))) = "ship.mds";
+char pal_at1756[] __attribute__((section(".rodata"))) = "s24g04_0.mds";
+char pal_at1757__2[] __attribute__((section(".rodata"))) = "sim:rmdat/rmdat9.cfg";
+unsigned int pal_at1758__2[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DEA1C0, 0x01DEA1E4, 0x01DEA208, 0x01DEA22C, 0x01DEA250, 0x01DEA274, 0x01DEA298};
+#pragma name_counter 836
+#else
 static void InitProcI() {
     LOADTEXTURE_INFO2 textures[] = {
         {"#blender#640#224#4", 0, 0},
@@ -2181,6 +2561,7 @@ static void InitProcI() {
     OPAnalyz("sim:rmdat/rmdat9.cfg");
     OPMdsLoad();
 }
+#endif
 
 void DrawProcI() {
     TexManager.ReloadTexture(Vif1Packet, 10);
@@ -2213,7 +2594,7 @@ void DrawProcI() {
         MGSetPLight(light, lightcolor);
 
         TexManager.ReloadTexture(Vif1Packet, 23);
-        CTexture *texture = TexManager.GetTexture("shadow_buff", -1);
+        CTexture *texture = TexManager.GetTexture(SHADOW_BUFF_TEXTURE, -1);
 
         MGBeginDrawShadow(*(sceGsTex0 *) &texture->tex0);
         Chara__3[0].ShadowStep();
@@ -2247,11 +2628,19 @@ void DrawProcI() {
  */
 static void InitProcTitle() {
     LOADTEXTURE_INFO2 textures[] = {
+#ifdef PAL
+        {pal_at874, 0, 0},
+        {pal_at875__2, 22, 0},
+        {pal_at1053, 23, 0},
+        {0, 1, 0},
+        {pal_at876__3, 0, 0}};
+#else
         {"#blender#640#224#4", 0, 0},
         {"#frame_image#640#224#4", 22, 0},
         {"#shadow_buff#640#224#4", 23, 0},
         {0, 1, 0},
         {"", 0, 0}};
+#endif
 
     textures[3].name = (char *) GetPackFile(read_buffer, "title.img", 0);
     TexManager.Initialize(16352);

@@ -52,4 +52,8 @@ extern "C" CDngMessageMan DngMessMan;
  * of two indexed by language and takes the second of the row, so language 0
  * gives the American prefix; retail sizes the table for the one row.
  */
+#ifdef PAL
+extern char *LanguageStr[7];
+#else
 extern char *LanguageStr[1][2];
+#endif

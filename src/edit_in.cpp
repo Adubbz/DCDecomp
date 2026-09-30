@@ -525,6 +525,21 @@ int EditInInit(float time, char *name) {
  * @address 0x19C2B0
  * @size 0x1014
  */
+#ifdef PAL
+int EditInLoop();
+/* Retail's data for the function the marker below supplies. */
+char pal_at892__2[0x8] __attribute__((section(".rodata"))) = "i04h04";
+char pal_at897__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "frame_image";
+char pal_at898[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/edit_in", EditInLoop__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_event_text_S604;
+unsigned char pal_init_S605;
+unsigned int pal_old_mode_S633;
+unsigned int pal_end_count_S644;
+unsigned char pal_init_S645;
+#pragma name_counter 411
+#else
 int EditInLoop() {
     sceVu0FMATRIX view;
     sceVu0FVECTOR position;
@@ -834,6 +849,7 @@ int EditInLoop() {
     SndStep();
     return 0;
 }
+#endif
 
 /**
  * Draws the interior for one frame.
@@ -843,6 +859,21 @@ int EditInLoop() {
  * @size 0x6AC
  * @note disambiguated by disassembler ("__2" suffix); real retail name has no suffix
  */
+#ifdef PAL
+static void MainDraw();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1088[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "water_buff";
+INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MainDraw__Fv__2);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at915[4] __attribute__((aligned(16))) = {0x00000000, 0x447A0000, 0x461C4000, 0x49742400};
+unsigned int pal_at937[4] __attribute__((aligned(16))) = {0};
+char pal_at992[6] = "pause";
+unsigned int pal_debug_flag_S970;
+unsigned char pal_init_S971;
+unsigned int pal_debug_menu_mode_S973;
+unsigned char pal_init_S974;
+#pragma name_counter 491
+#else
 static void MainDraw() {
     sceVu0FVECTOR position;
     int i;
@@ -983,6 +1014,7 @@ static void MainDraw() {
     }
     EdFadeInOut();
 }
+#endif
 
 /**
  * Draws the interior's water surfaces, ordered back to front from the camera.
@@ -1073,6 +1105,15 @@ static void StepWater() {
  * @address 0x19DCF0
  * @size 0x38C
  */
+#ifdef PAL
+static void MoveCharacter();
+INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MoveCharacter__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1147[4] __attribute__((aligned(16))) = {0xC2220000, 0x00000000, 0xC148CCCD, 0x3F800000};
+unsigned int pal_at1148[4] __attribute__((aligned(16))) = {0};
+unsigned char pal_fix_pos_S1129[0x10] __attribute__((aligned(16)));
+#pragma name_counter 561
+#else
 static void MoveCharacter() {
     sceVu0FVECTOR follow;
     static sceVu0FVECTOR fix_pos;
@@ -1137,6 +1178,7 @@ static void MoveCharacter() {
         }
     }
 }
+#endif
 
 /**
  * Applies the right stick to the interior camera, holding its height and distance in

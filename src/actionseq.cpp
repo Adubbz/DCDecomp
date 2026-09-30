@@ -281,6 +281,12 @@ static ACT_SEQ *DeleteSeq(ACT_SEQ *sequence) {
  * @address 0x1554A0
  * @size 0xB04
  */
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/actionseq", Play__10CActionSeqFv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at384[4] __attribute__((aligned(16))) = {0};
+#pragma name_counter 307
+#else
 void CActionSeq::Play() {
     int animation_shown;
     ACT_SEQ *sequence;
@@ -561,3 +567,4 @@ void CActionSeq::Play() {
         character->SetRotation(wrapped_rotation);
     }
 }
+#endif

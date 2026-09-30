@@ -83,10 +83,44 @@ public:
     s32 height; /**< Distance from the top edge to the bottom edge. */
 } __attribute__((aligned(16)));
 
+#ifdef PAL
+/**
+ * Stores one rectangle of a prompt's sprite set, zeroing its members from last to first.
+ */
+class CEbSpriteRect {
+public:
+    CEbSpriteRect();
+
+    s32 x;      /**< Distance of the left edge from the left of the texture. */
+    s32 y;      /**< Distance of the top edge from the top of the texture. */
+    s32 width;  /**< Distance from the left edge to the right edge. */
+    s32 height; /**< Distance from the top edge to the bottom edge. */
+} __attribute__((aligned(16)));
+#endif
+
 /** Storage of draw_rect, the part of the screen the opening wipe has reached. */
 CEbRect draw_rect_store;
 
+#ifdef PAL
+CRect_i_ Caution(256, 0, 56, 56);
+#else
 const CRect_i_ Caution(256, 0, 56, 56);
+#endif
+
+#ifdef PAL
+/** Texture rectangles the caution prompt draws from. */
+CEbSpriteRect CautionRect[7];
+/** Texture rectangles the first result banner draws from. */
+CEbSpriteRect EbResult0[7];
+/** Texture rectangles the third result banner draws from. */
+CEbSpriteRect EbResult2[7];
+/** Texture rectangles the second result banner draws from. */
+CEbSpriteRect EbResult1[7];
+/** Texture rectangles the OK prompt draws from. */
+CEbSpriteRect OkRect[7];
+/** Texture rectangles the COOL prompt draws from. */
+CEbSpriteRect CoolRect[7];
+#endif
 
 /** Stores the key state for each event-battle prompt. */
 EB_KEY eb_key[64];
@@ -194,9 +228,15 @@ static float button_scale(int button);
 void EdEyeCamera(CCamera *camera, CCharacter *character);
 
 /* @ 0x168100 (0x10 bytes) -- EBInitialize__Fv */
+#ifdef PAL
+void EBInitialize();
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBInitialize__Fv);
+#pragma name_counter 518
+#else
 void EBInitialize() {
     ebattle_flag = 0;
 }
+#endif
 
 /* @ 0x168110 (0xE0 bytes) -- EBInit__Ff */
 void EBInit(float speed_mult) {
@@ -491,6 +531,11 @@ int EBLoop() {
  * @address 0x168B80
  * @size 0x560
  */
+#ifdef PAL
+void EBDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBDraw__Fv);
+#pragma name_counter 730
+#else
 void EBDraw() {
     if (ebattle_intro_flag == 0 && ebattle_flag == 0) {
         return;
@@ -569,6 +614,7 @@ void EBDraw() {
         draw_ok(x);
     }
 }
+#endif
 
 /**
  * Draws one button prompt of the event battle.
@@ -693,6 +739,19 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
+#ifdef PAL
+static void draw_ok(int x);
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", draw_ok__Fi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_dir_S640[32] __attribute__((aligned(16))) = {
+    0x3F800000, 0x00000000, 0x00000000, 0x00000000, 0xBF800000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3F800000, 0x00000000, 0x00000000, 0x00000000, 0xBF800000,
+    0x00000000, 0x00000000, 0x3F800000, 0x3F800000, 0x00000000, 0x00000000, 0x3F800000,
+    0xBF800000, 0x00000000, 0x00000000, 0xBF800000, 0x3F800000, 0x00000000, 0x00000000,
+    0xBF800000, 0xBF800000,
+};
+#pragma name_counter 813
+#else
 static void draw_ok(int x) {
     // clang-format off
     static sceVu0FVECTOR dir[8] = {
@@ -750,6 +809,7 @@ static void draw_ok(int x) {
         }
     }
 }
+#endif
 
 /**
  * Gives the scale a button prompt draws at while it flashes.
@@ -775,6 +835,22 @@ static float button_scale(int button) {
     }
     return scale;
 }
+
+#ifdef PAL
+/**
+ * Zeroes a prompt's sprite rectangle from its last member to its first. PAL only.
+ *
+ * @mangled __ct__8CRect_i_Fv
+ * @address 0x16a0a0
+ * @size 0x1c
+ */
+CEbSpriteRect::CEbSpriteRect() {
+    height = 0;
+    width = 0;
+    y = 0;
+    x = 0;
+}
+#endif
 
 static int key_mode = 0xFFFF;
 
@@ -1121,6 +1197,35 @@ static inline int IsVillagerActive(CNPCharacter *villager) {
     return active;
 }
 
+#ifdef PAL
+void EdMoveChara();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1688[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "cpoly over!!!! %d\n";
+char pal_at1702[0x8] __attribute__((section(".rodata"))) = "sao";
+char pal_at1703[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "uki";
+char pal_at1704[0x8] __attribute__((section(".rodata"))) = "hari";
+char pal_at1705[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "maru_uki";
+char pal_at1706[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "turibari";
+INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EdMoveChara__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_reference_S516[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at517[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at986[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
+unsigned int pal_at1022[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_rot_count_S769;
+unsigned char pal_init_S770;
+unsigned int pal_bgm_vol_S845;
+unsigned char pal_init_S846;
+unsigned int pal_load_file_S848;
+unsigned char pal_init_S849;
+unsigned int pal_st_cnt_S855;
+unsigned char pal_init_S856;
+unsigned int pal_wait_cnt_S858;
+unsigned char pal_init_S859;
+unsigned int pal_cnt_S1011;
+unsigned char pal_init_S1012;
+#pragma name_counter 1632
+#else
 void EdMoveChara() {
     int near_villager;
     CCamera *view_camera;
@@ -2237,6 +2342,7 @@ void EdMoveChara() {
     EdMoveCharaInfo.motion_time_before = time_before;
     EdMoveCharaInfo.motion_time_after = time_after;
 }
+#endif
 
 void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     if (param->kind == 4) {

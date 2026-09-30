@@ -31,11 +31,23 @@ sceDmaChan *DmaCH8;
 sceVif1Packet *Vif1Packet;
 int VSyncField__2;
 int mgClearBackFlag;
+#ifdef PAL
+/** Horizontal offset of the display from its default position. */
+int mgAdjustX;
+/** Vertical offset of the display from its default position. */
+int mgAdjustY;
+#endif
 sceGsTex1 mgTEX1Env;
 sceGsTest mgPixelTest;
 sceGsZbuf mgZBuffer;
 sceGsAlpha mgAlpha;
 sceGsTexa mgTexa;
+#ifdef PAL
+/** First word of video memory past the frame and depth buffers. */
+int mgTopVRAM;
+/** Word address of the depth buffer in video memory. */
+int mgZBufferAdr;
+#endif
 
 MG_PICKZ mgPickZBuff[16];
 sceGifTag GiftagAD;
@@ -106,6 +118,11 @@ int MGGetVSyncCount() {
     return vcount;
 }
 
+#ifdef PAL
+void MGInit();
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGInit__Fv);
+#pragma name_counter 303
+#else
 void MGInit() {
     DBuffID = 0;
     mgWaitVSync = 0;
@@ -202,6 +219,7 @@ void MGInit() {
     VSyncCallBack2 = 0;
     vcount = 0;
 }
+#endif
 
 /* Waiting out a handler that is already running is what keeps the pointer from changing under it. */
 void MGInitVSyncCallBack(int (*callback)(int)) {
@@ -419,6 +437,28 @@ static void WaitVSync(int count) {
     }
 }
 
+#ifdef PAL
+void MGEndFrame();
+/* Retail's data for the function the marker below supplies. */
+char pal_at414[0x10] __attribute__((section(".rodata"))) = "CPU %4.1f%%,";
+char pal_at415[0x8] __attribute__((section(".rodata"))) = "******\n";
+char pal_at416[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "base = %x,cuur = %x\n";
+char pal_at417[0x10] __attribute__((section(".rodata"))) = "abuff = %d\n";
+char pal_at418[0x10] __attribute__((section(".rodata"))) = "FREE %4.1f%%\n";
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGEndFrame__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_count_S298;
+unsigned char pal_init_S299;
+unsigned char pal_old_vcount_S301[0x8];
+unsigned char pal_init_S302;
+unsigned int pal_capture_S334;
+unsigned char pal_init_S335;
+unsigned int pal_capture_start_S337;
+unsigned char pal_init_S338;
+unsigned int pal_f_S347;
+unsigned char pal_init_S348;
+#pragma name_counter 471
+#else
 void MGEndFrame() {
     int i;
     int nearest;
@@ -518,13 +558,15 @@ void MGEndFrame() {
     sceDmaSend(DmaCH1, Vif1Packet->pBase);
     DBuffID = !DBuffID;
 }
+#endif
 
 void MGFlipWaitVSync(int wait) {
     mgWaitVSync = wait;
 }
 
 #ifdef PAL
-void MGAdjustScreen(int, int) {}
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGAdjustScreen__Fii);
+#pragma name_counter 472
 #endif
 
 /* Everything a frame is drawn against, recomputed from the projection scale and the two clip planes.
@@ -674,6 +716,11 @@ void MGGetAmbient(float *ambient) {
 
 /* The two overloads below are the only callers and both pass the same two scales, so the vertical
    squeeze is the engine's rather than any caller's. */
+#ifdef PAL
+static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale);
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGSetViewMatrix_sub__FPA4_fff);
+#pragma name_counter 499
+#else
 static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale) {
     sceVu0FMATRIX scale;
     sceVu0FMATRIX screen;
@@ -720,6 +767,7 @@ static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale
     direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
 }
+#endif
 
 void MGSetViewMatrix(sceVu0FMATRIX view) {
     MGSetViewMatrix_sub(view, 1.0f, 0.47f);
@@ -843,6 +891,11 @@ int MGRotTransPers(int *screen, float *position, int fog) {
 /* The same transform for something drawn flat against the screen: the vertical squeeze
    MGSetViewMatrix_sub bakes into the view is undone, the result is left in whole pixels rather than
    scaled into 12.4, and the pair is moved off the screen centre the offset put it at. */
+#ifdef PAL
+int MGRotTransPers2D(int *screen, float *position, int fog);
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGRotTransPers2D__FPiPfi);
+#pragma name_counter 572
+#else
 int MGRotTransPers2D(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
     int visible = 1;
@@ -886,6 +939,7 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
     screen[1] -= 1824;
     return visible;
 }
+#endif
 
 /* Both of a screen-facing sprite's opposite corners out of a single transform: the half-width and
    half-height are scaled by the render info once and then by the same Q the perspective divide

@@ -641,12 +641,14 @@ SECTIONS
         dataset.cpp.o (.vtables)         // 0x002a8770
         . = ALIGN(16);
         frame.cpp.o (.vtables)           // 0x002a87a0
+        frame.cpp.o (.vt-framevu1)       // 0x002a87c0
         . = ALIGN(8);
         visualvu1.cpp.o (.vt-visual)        // 0x002a87d8
         visualshadow.cpp.o (.vtables)       // 0x002a87f0
         visualvu1.cpp.o (.vt-visualmdtvu1)  // 0x002a8810
         visualvu1.cpp.o (.vt-visualvu1)     // 0x002a8830
         character.cpp.o (.vtables)       // 0x002a8850
+        character.cpp.o (.vt-character)  // 0x002a8920
         . = . + 0x8;
         dispctrl.cpp.o (.vtables)        // 0x002a89f0
         cloth.cpp.o (.vtables)           // 0x002a8a00
@@ -697,6 +699,10 @@ SECTIONS
 		func_01DC8EB0 = 0x01DE1B00;  // RushLoop__Fv
 		func_01DD1AB0 = 0x01DEB060;  // TitleInit__Fi
 		func_01DD2220 = 0x01DEB8A0;  // TitleLoop__Fv
+
+		# Data an INCLUDE_ASM marker names by retail's name, which the source
+		# spells otherwise.
+		TexAnimeData__3 = 0x01E6A5F0;  // TexAnimeDataMovie (rushmovi)
 
 		# Entries of retail's literal pool that a compiled unit loads from.
 		# scripts/build/literals.py binds each float constant an object holds

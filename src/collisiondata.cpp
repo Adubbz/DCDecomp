@@ -601,7 +601,15 @@ int DebugInfomationIF(void) {
 }
 
 #ifdef PAL
-void StartMessageDraw(CTexture *, int, int, int, int) {}
+INCLUDE_ASM("asm/pal/nonmatchings/collisiondata", StartMessageDraw__FP8CTextureiiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int center_us[8] __attribute__((aligned(16))) = {0x000000CE, 0x00000125, 0x00000101, 0x00000100, 0x00000087, 0x00000057, 0x00000101};
+unsigned int center_fr[8] __attribute__((aligned(16))) = {0x000000CD, 0x00000113, 0x000000F8, 0x000000F8, 0x000000B2, 0x00000059, 0x000000FF};
+unsigned int center_gr[8] __attribute__((aligned(16))) = {0x000000FE, 0x00000103, 0x0000013D, 0x000000FD, 0x00000078, 0x00000038, 0x000000FF};
+unsigned int center_it[8] __attribute__((aligned(16))) = {0x000000CC, 0x00000129, 0x000000F3, 0x000000FF, 0x000000FA, 0x00000075, 0x000000F9};
+unsigned int center_sp[8] __attribute__((aligned(16))) = {0x000000CE, 0x0000012C, 0x000000F2, 0x000000FA, 0x0000007C, 0x000000BA, 0x000000FA};
+unsigned int center_ptr[8] __attribute__((aligned(16))) = {0x00271BF0, 0x00271B70, 0x00271B70, 0x00271B90, 0x00271BB0, 0x00271BD0, 0x00271BF0};
+#pragma name_counter 357
 #endif
 
 /**
@@ -643,11 +651,17 @@ int SetGateKeyStack(int item) {
  * @address 0x1B5740
  * @size 0x60
  */
+#ifdef PAL
+char *NameExchg(char *name, int language);
+INCLUDE_ASM("asm/pal/nonmatchings/collisiondata", NameExchg__FPci);
+#pragma name_counter 382
+#else
 char *NameExchg(char *name, int language) {
     strcpy(nameblock, LanguageStr[language][1]);
     strcat(nameblock, name);
     return nameblock;
 }
+#endif
 
 int CCollisionData::Set(float *position, int damage, int life, float radius, float scale_rate, int target_mask,
                         int kind, int flags, int attribute) {

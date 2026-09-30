@@ -394,6 +394,21 @@ void initialize_data() {
 }
 
 /* @ 0x1410B0 (0xC80 bytes) -- main */
+#ifdef PAL
+int main(int argc, const char **argv, const char **envp);
+/* Retail's data for the function the marker below supplies. */
+char pal_at876[0x8] __attribute__((section(".rodata"))) = "e01";
+char pal_at877[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "title";
+INCLUDE_ASM("asm/pal/nonmatchings/main", main);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_depth_S682;
+unsigned char pal_init_S683;
+unsigned int pal_wt_S685;
+unsigned char pal_init_S686;
+unsigned int pal_init_flag_S704;
+unsigned char pal_init_S705;
+#pragma name_counter 1145
+#else
 int main(int argc, const char **argv, const char **envp) {
     /* Function-local statics: retail names ("depth$682", "init$683", ...)
      * confirmed via IDA's global list against this exact function; the
@@ -915,6 +930,7 @@ int main(int argc, const char **argv, const char **envp) {
         }
     }
 }
+#endif
 
 static int edit_map;
 static int sub_map;
@@ -928,6 +944,17 @@ void MapJump(int map_no, int event_no) {
     StartEventNo = event_no;
 }
 
+#ifdef PAL
+void MenuInit();
+/* Retail's data for the function the marker below supplies. */
+INCLUDE_ASM("asm/pal/nonmatchings/main", MenuInit__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_texdata_S882[192] __attribute__((aligned(16))) = {0x002A0250, 0x00000000, 0x00000000, 0x002A0270, 0x00000000, 0x00000000, 0x0029FFE8};
+char pal_at883[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_buff#640#256#4";
+char pal_at884[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "img/ankfont.img";
+char pal_at887[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "frame_buff";
+#pragma name_counter 1151
+#else
 void MenuInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
                                            {"img/ankfont.img"},
@@ -949,6 +976,7 @@ void MenuInit() {
     DebugFont.alpha = 64;
     GamePad.SetAutoRepeat(61440, 25, 3);
 }
+#endif
 
 /**
  * Draws and operates the developer's top-level map and mode selector.
@@ -1078,8 +1106,13 @@ int MenuLoop() {
         }
     }
 
+#ifdef PAL
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
+                                "Dark Cloud Ver3.07 2001/07/12\n");
+#else
     DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
                                 "Dark Cloud Ver2.17 2001/05/11\n");
+#endif
     DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n", cursor[select == 0],
                                 menu[0]);
     DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[1], cursor[select == 1],
@@ -1144,7 +1177,11 @@ int MenuLoop() {
         if (main_select_menu_no == 800) {
             MapNo++;
             main_select_menu_no = 0;
+#ifdef PAL
+            strcpy(main_select_param, pal_at877);
+#else
             strcpy(main_select_param, "title");
+#endif
             mode = 1;
         }
         if (main_select_menu_no == 400) {
@@ -1162,6 +1199,40 @@ static int check_cancel;
 static int taiken_cnt;
 static int taiken_start;
 
+#if defined(PAL) && defined(NON_MATCHING)
+void MemCheckInit() {
+    InitializeDataBuffer();
+    SetDataBuffer(&TextureData, 100000);
+    SetPacketReadBuffer(10000, 100000);
+    char filename[64] = "img/memory.img";
+    if (LanguageCode > 0 && LanguageCode < 7) {
+        sprintf(filename, "img_%d/memory.img", LanguageCode);
+    }
+    TexManager.Initialize(16352);
+    static LOADTEXTURE_INFO texdata[64] = {{filename}, {gamemode_empty_string}};
+    TexManager.EnterTextureFile(texdata);
+    TexManager.LoadTextureBlock(-1, read_buffer);
+    MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
+    if (sceMcInit())
+        printf("libmc initialize faild\n");
+    mem_chk_mode = 0;
+    check_cancel = 2;
+    taiken_cnt = 0;
+    taiken_start = 0;
+}
+#endif
+
+#ifdef PAL
+/* Retail's data for the function the marker below supplies. */
+char pal_at1020[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "img_%d/memory.img";
+char pal_at1021[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "libmc initialize faild\n";
+INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckInit__Fv);
+/* Retail's data for the function the marker above supplies. */
+char pal_at1009[0x40] __attribute__((aligned(16))) = "img/memory.img";
+unsigned int pal_texdata_S1013[192] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x0029FFE8};
+unsigned char pal_init_S1014;
+#pragma name_counter 1277
+#else
 void MemCheckInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
                                            {"img_1/memory.img"},
@@ -1181,7 +1252,16 @@ void MemCheckInit() {
     taiken_cnt = 0;
     taiken_start = 0;
 }
+#endif
 
+#ifdef PAL
+int MemCheckLoop();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1075[0x10] __attribute__((section(".rodata"))) = "memory01";
+char pal_at1076[0x18] __attribute__((section(".rodata"))) = "memory02";
+INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckLoop__Fv);
+#pragma name_counter 1304
+#else
 int MemCheckLoop() {
     DebugFont.length = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
@@ -1240,11 +1320,12 @@ int MemCheckLoop() {
         check_cancel = 0;
     return 0;
 }
+#endif
 
 void InitSave() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#448#4", 1},
-                                           {"#mes_frame_buff#640#448#4", 26},
-                                           {"#fukidashibase#640#224#4", 26},
+    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" SCREEN_HEIGHT_STR "#4", 1},
+                                           {"#mes_frame_buff#640#" SCREEN_HEIGHT_STR "#4", 26},
+                                           {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26},
                                            {"#fontbase#512#256#1", 26},
                                            {"#fuki256#128#128#1", 26},
                                            {"meswin/gaiji.img", 26}};

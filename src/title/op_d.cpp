@@ -304,7 +304,7 @@ void OpD_InitProcess() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {0, 11, 0},
         {0, 11, 0},
         {0, 4, 0},
@@ -852,6 +852,23 @@ void OpD_SoundProcess() {
    script raises a step at a time; the meadow is ten, one of which is held back because the flowers
    are drawn a second time under a light of their own. Then the shadows, the actors, the spirit
    king's effect, and last the three screen fades and the caption. */
+#ifdef PAL
+void OpD_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", OpD_DrawProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+float pal_at730__6[2] __attribute__((aligned(8))) = {400.0f, 1000.0f};
+unsigned int pal_fade1_S766;
+unsigned char pal_init_S767;
+unsigned int pal_fade2_S769;
+unsigned char pal_init_S770__2;
+unsigned int pal_fade3_S772;
+unsigned char pal_init_S773;
+char pal_at926__4[] __attribute__((section(".rodata"))) = "shadow_buff";
+char pal_at927__3[] __attribute__((section(".rodata"))) = "i00002";
+char pal_at928__3[] __attribute__((section(".rodata"))) = "i00006";
+char pal_at929__4[] __attribute__((section(".rodata"))) = "i00022";
+#pragma name_counter 545
+#else
 void OpD_DrawProcess() {
     OP_CharaFrame__2 = Cam__2[SceneNp__2].frame;
 
@@ -1056,6 +1073,7 @@ void OpD_DrawProcess() {
             break;
     }
 }
+#endif
 
 /**
  * The prism the spirit king turns above the girl: one model drawn twice, spun opposite ways about
@@ -1305,6 +1323,58 @@ static void LensFreaProcess() {
  * @size 0x178C
  * @unknownret
  */
+#ifdef PAL
+static void Setsumei();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", Setsumei__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_cnt1_S1014;
+unsigned char pal_init_S1015;
+unsigned int pal_cntA_S1017;
+unsigned char pal_init_S1018;
+unsigned int pal_cnt2_S1024;
+unsigned char pal_init_S1025;
+unsigned int pal_cntB_S1027;
+unsigned char pal_init_S1028;
+unsigned int pal_fadeA1_S1034;
+unsigned char pal_init_S1035;
+unsigned int pal_fadeA2_S1037;
+unsigned char pal_init_S1038;
+unsigned int pal_fadeB1_S1047;
+unsigned char pal_init_S1048__2;
+unsigned int pal_fadeB2_S1050;
+unsigned char pal_init_S1051;
+unsigned int pal_fadeB3_S1053;
+unsigned char pal_init_S1054;
+unsigned int pal_x_S1075;
+unsigned char pal_init_S1076;
+unsigned int pal_y_S1078;
+unsigned char pal_init_S1079;
+unsigned int pal_rot_S1081;
+unsigned char pal_init_S1082;
+unsigned int pal_x2_S1084;
+unsigned char pal_init_S1085;
+unsigned int pal_y2_S1087;
+unsigned char pal_init_S1088;
+unsigned int pal_rot2_S1090;
+unsigned char pal_init_S1091__2;
+unsigned int pal_x3_S1093;
+unsigned char pal_init_S1094__2;
+unsigned int pal_y3_S1096;
+unsigned char pal_init_S1097;
+unsigned int pal_rot3_S1099;
+unsigned char pal_init_S1100;
+unsigned int pal_x_S1136;
+unsigned char pal_init_S1137;
+unsigned int pal_y_S1139;
+unsigned char pal_init_S1140;
+unsigned int pal_x2_S1142;
+unsigned char pal_init_S1143;
+unsigned int pal_y2_S1145;
+unsigned char pal_init_S1146;
+char pal_at1283[] __attribute__((section(".rodata"))) = "0519";
+char pal_at1284__2[] __attribute__((section(".rodata"))) = "0519p";
+#pragma name_counter 912
+#else
 static void Setsumei() {
     static int cnt1 = 0;
     static int cntA = 0;
@@ -1616,6 +1686,7 @@ static void Setsumei() {
                     (u_char) fadeA1);
     }
 }
+#endif
 
 /**
  * The ripples on the hall's floor: one model drawn four times, each at its own scale and a little
@@ -1628,6 +1699,13 @@ static void Setsumei() {
  * @size 0x330
  * @unknownret
  */
+#ifdef PAL
+static void HamonProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", HamonProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_se_S1301[8] __attribute__((aligned(16))) = {0};
+#pragma name_counter 949
+#else
 static void HamonProcess() {
     sceVu0FVECTOR ambient;
 
@@ -1693,3 +1771,4 @@ static void HamonProcess() {
 
     MGSetAmbient(ambientlight);
 }
+#endif

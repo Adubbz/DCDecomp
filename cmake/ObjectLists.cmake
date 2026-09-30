@@ -199,6 +199,7 @@ function(add_object obj)
                     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/mwccgap.py
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/elf.py
+                    ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/mwccgap_region.py
             DEPFILE ${CMAKE_SOURCE_DIR}/${obj}.d
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "CC ${src}"

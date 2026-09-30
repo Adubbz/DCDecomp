@@ -503,6 +503,46 @@ int RushLoop() {
  * @size 0xDD0
  * @unknownret
  */
+#ifdef PAL
+static void MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", MotionProcess__Fv__2);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_old_S499;
+unsigned char pal_init_S500;
+unsigned int pal_iwacnt_S513;
+unsigned char pal_init_S514;
+unsigned int pal_at452__4[12] __attribute__((aligned(16))) = {
+    0x01DF96C0, 0x01DF96C0, 0x01DF96C8, 0x01DF96C8, 0x01DF96D0, 0x01DF96D8, 0x01DF96E0,
+    0x01DF96E8, 0x01DF96F0,
+};
+unsigned int pal_at462__3[12] __attribute__((aligned(16))) = {
+    0x01DF96F8, 0x01DF9700, 0x01DF9708, 0x01DF9710, 0x01DF9718, 0x01DF9720, 0x01DF9728,
+    0x01DF9730, 0x01DF9738,
+};
+char pal_at445__3[] __attribute__((section(".rodata"))) = "c12a";
+char pal_at446__5[] __attribute__((section(".rodata"))) = "c08a";
+char pal_at447__8[] __attribute__((section(".rodata"))) = "e04a1";
+char pal_at448__5[] __attribute__((section(".rodata"))) = "e04a2";
+char pal_at449__6[] __attribute__((section(".rodata"))) = "e04a3";
+char pal_at450__4[] __attribute__((section(".rodata"))) = "e04a4";
+char pal_at451__4[] __attribute__((section(".rodata"))) = "e04a5";
+char pal_at453__4[] __attribute__((section(".rodata"))) = "chr_a";
+char pal_at454__4[] __attribute__((section(".rodata"))) = "chr_b";
+char pal_at455__4[] __attribute__((section(".rodata"))) = "chr_c";
+char pal_at456__5[] __attribute__((section(".rodata"))) = "chr_d";
+char pal_at457__3[] __attribute__((section(".rodata"))) = "chr_e";
+char pal_at458__3[] __attribute__((section(".rodata"))) = "chr_f";
+char pal_at459__2[] __attribute__((section(".rodata"))) = "chr_g";
+char pal_at460__3[] __attribute__((section(".rodata"))) = "chr_h";
+char pal_at461__3[] __attribute__((section(".rodata"))) = "chr_i";
+char pal_at571__2[] __attribute__((section(".rodata"))) = "weapon";
+char pal_at572__2[] __attribute__((section(".rodata"))) = "dcol";
+unsigned int pal_at577__4[10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DE2290, 0x01DE22AC, 0x01DE22C8, 0x01DE22E4, 0x01DE2300, 0x01DE231C, 0x01DE2338,
+    0x01DE2354, 0x01DE2370, 0x01DE238C,
+};
+#pragma name_counter 295
+#else
 static void MotionProcess() {
     switch (CScript.fade) {
         case 1:
@@ -782,6 +822,7 @@ static void MotionProcess() {
         iwacnt = 0;
     }
 }
+#endif
 
 /**
  *
@@ -791,6 +832,19 @@ static void MotionProcess() {
  * @size 0x344
  * @unknownret
  */
+#ifdef PAL
+static void DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", DrawProcess__Fv__2);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_fade_S601;
+unsigned char pal_init_S602;
+char pal_at641__5[] __attribute__((section(".rodata"))) = "start2";
+unsigned int pal_at642__7[12] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DE2C04, 0x01DE2C14, 0x01DE2C24, 0x01DE2C34, 0x01DE2C44, 0x01DE2C54, 0x01DE2C64,
+    0x01DE2C74, 0x01DE2C84, 0x01DE2C94,
+};
+#pragma name_counter 330
+#else
 static void DrawProcess() {
     if (DispFade.GetRate() == 128.0) {
         return;
@@ -876,6 +930,7 @@ static void DrawProcess() {
                 CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
                 128, 128, 128, 35);
 }
+#endif
 
 /**
  *
@@ -885,6 +940,27 @@ static void DrawProcess() {
  * @size 0xCF4
  * @unknownret
  */
+#ifdef PAL
+static void SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", SoundProcess__Fv__2);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_mus_S647;
+unsigned char pal_init_S648;
+unsigned int pal_ambi_S655;
+unsigned char pal_init_S656;
+unsigned int pal_bat_S663;
+unsigned char pal_init_S664;
+unsigned int pal_wait_S681;
+unsigned char pal_init_S682;
+unsigned int pal_wait_S705__2;
+unsigned char pal_init_S706__2;
+unsigned int pal_at817__4[16] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DE330C, 0x01DE3354, 0x01DE35F0, 0x01DE3B20, 0x01DE3644, 0x01DE3B20, 0x01DE3B20,
+    0x01DE373C, 0x01DE37BC, 0x01DE3B20, 0x01DE3814, 0x01DE3844, 0x01DE3B20, 0x01DE398C,
+    0x01DE3A20, 0x01DE3A64,
+};
+#pragma name_counter 505
+#else
 static void SoundProcess() {
     if (CScript.bgm_fade) {
         SndBgmFadeOut(64, 0);
@@ -1218,6 +1294,7 @@ static void SoundProcess() {
         wait--;
     }
 }
+#endif
 
 void SetObjAnime(char *name, CFrameVu1 *frame, float *start, float *step) {
     OP_AnimeSeq[OP_AnimeSeqRot].Initialize();

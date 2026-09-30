@@ -92,6 +92,10 @@ void CSpriteTable::DrawTable() {
     sceVif1PkCloseDirectCode(packet);
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/spritetable", AddTable__12CSpriteTableFiiP9MG_SPRITEii);
+#pragma name_counter 77
+#else
 void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int align_flags) {
     if (layer < 0) {
         layer = 0;
@@ -140,6 +144,7 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int layer, int alig
     node->next = GetNext();
     *tail = node->next;
 }
+#endif
 
 void CSpriteTable::AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int layer, int align_flags) {
     union {

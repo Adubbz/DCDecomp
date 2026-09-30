@@ -699,6 +699,46 @@ void EdInitMesParam() {
 /**
  * Builds every buffer, camera, message window and map the editor loop runs on.
  */
+#ifdef PAL
+int EditInit(void *);
+/* Retail's data for the function the marker below supplies. */
+char pal_at714[0x8] __attribute__((section(".rodata"))) = "e0%d";
+char pal_at715[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "s0%d";
+char pal_at716[0x8] __attribute__((section(".rodata"))) = "s%d";
+char pal_at717[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "";
+char pal_at718[0x8] __attribute__((section(".rodata"))) = "gedit/";
+char pal_at719[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "/";
+char pal_at720[0x18] __attribute__((section(".rodata"))) = "mapinfo.cfb";
+char pal_at721[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/interior/mapinfo.cfg";
+char pal_at722[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/interior/interior.cfg";
+char pal_at723[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "font_buff";
+char pal_at724__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gdata0.edt";
+char pal_at725__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "Allocation error!!\n";
+char pal_at726__2[0x10] __attribute__((section(".rodata"))) = "chara/c01d.chr";
+char pal_at727__2[0x10] __attribute__((section(".rodata"))) = "info.cfg";
+char pal_at730__2[0x8] __attribute__((section(".rodata"))) = "talk";
+char pal_at731__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = ".mes";
+char pal_at732__2[0x18] __attribute__((section(".rodata"))) = "fconv.bin";
+char pal_at733__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/e01/fconv.bin";
+char pal_at734__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/system/editsys%s.mes";
+char pal_at735__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/system14_%d";
+char pal_at736__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/system14e.bin";
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditInit__FPv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at625[20] __attribute__((aligned(16))) = {
+    0x00030000, 0x0000000C, 0x0004000B, 0x00000001, 0x00020010, 0x00050000, 0x00060011,
+    0x000A0001, 0x00020002, 0x000F0000, 0x00010001, 0x00020001, 0x00020001, 0x0003000C,
+    0x0007000E, 0x00090008, 0x00020001, 0x00080001, 0x0000000D, 0xFFFF0000,
+};
+unsigned int pal_at639__2[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
+unsigned int pal_at640__2[4] __attribute__((aligned(16))) = {0};
+char pal_at656[0x40] __attribute__((aligned(16))) = "meswin/system14";
+unsigned char pal_init_S654;
+unsigned int pal_debug_flag_set_S664;
+unsigned char pal_init_S665;
+unsigned char pal_name_mes_S653[0x1858] __attribute__((aligned(16)));
+#pragma name_counter 743
+#else
 int EditInit(void *) {
     char map_path[0x80];
     char save_path[0x80];
@@ -1063,6 +1103,7 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
+#endif
 
 /**
  * Returns the sum of the editor category indices from zero through nine.
@@ -1082,6 +1123,38 @@ int cat_end() {
  * @address 0x1797E0
  * @size 0x1FE8
  */
+#ifdef PAL
+int EditLoop(void);
+/* Retail's data for the function the marker below supplies. */
+char pal_at827[0x8] __attribute__((section(".rodata"))) = " ";
+char pal_at828[0x8] __attribute__((section(".rodata"))) = ">";
+char pal_at1618[0x8] __attribute__((section(".rodata"))) = "%s %s\n";
+char pal_at1619[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "frame_image";
+char pal_at1620[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pos = ";
+char pal_at1621[0x18] __attribute__((section(".rodata"))) = "area = %d\n";
+char pal_at1622[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pos(grid) = (%d,%d)\n";
+char pal_at1623[0x18] __attribute__((section(".rodata"))) = "id = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditLoop__Fv);
+/* Retail's data for the function the marker above supplies. */
+char *pal_at829[2] = {pal_at827, pal_at828};
+unsigned int pal_end_count_S767;
+unsigned char pal_init_S768;
+unsigned int pal_top_S798;
+unsigned char pal_init_S799;
+unsigned int pal_select_S801;
+unsigned char pal_init_S802;
+unsigned int pal_cur_S804;
+unsigned char pal_init_S805;
+unsigned int pal_debug_flag_S1047;
+unsigned char pal_init_S1048;
+unsigned int pal_event_next_S1100;
+unsigned char pal_init_S1101;
+unsigned int pal_old_mode_S1129;
+unsigned int pal_end_code_S1144;
+unsigned char pal_init_S1145;
+unsigned char pal_menu_S807[0x100] __attribute__((aligned(16)));
+#pragma name_counter 1155
+#else
 int EditLoop(void) {
     goto_return_menu = 0;
     if (EdPadDown(0x800, 4) != 0) {
@@ -1808,6 +1881,7 @@ int EditLoop(void) {
     }
     return 0;
 }
+#endif
 
 /**
  * Draws the editor's world for one frame.
@@ -1816,6 +1890,22 @@ int EditLoop(void) {
  * @address 0x17B7D0
  * @size 0x11D8
  */
+#ifdef PAL
+void MainDraw();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1850[0x10] __attribute__((section(".rodata"))) = "water_buff";
+char pal_at1851[0x18] __attribute__((section(".rodata"))) = "shadow_buff";
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", MainDraw__Fv);
+/* Retail's data for the function the marker above supplies. */
+float pal_at1665[2] = {400.0f, 1000.0f};
+unsigned int pal_at1640[4] __attribute__((aligned(16))) = {0x42480000, 0x43AF0000, 0x44160000, 0x447A0000};
+unsigned int pal_at1645[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at1648[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at1737[4] __attribute__((aligned(16))) = {0xC2C80000};
+unsigned int pal_at1767[4] __attribute__((aligned(16))) = {0x44480000, 0xC1A00000, 0x44A28000, 0x3F800000};
+unsigned int pal_at1768[4] __attribute__((aligned(16))) = {0x41200000, 0x40E00000, 0x41200000, 0x3F800000};
+#pragma name_counter 1351
+#else
 void MainDraw() {
     ED_EVENT_INFO *event;
     int shadow_on;
@@ -2221,6 +2311,7 @@ void MainDraw() {
         clear_screen = 0;
     }
 }
+#endif
 
 /**
  * Draws the editor's map cursor, and the plate that names the part under it.
@@ -2389,6 +2480,13 @@ public:
     }
 };
 
+#ifdef PAL
+void DrawDay();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2202[0x18] __attribute__((section(".rodata"))) = "whatsday";
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", DrawDay__Fv);
+#pragma name_counter 1589
+#else
 void DrawDay() {
     if (draw_day_flag != 0) {
         int week;
@@ -2550,6 +2648,7 @@ void DrawDay() {
         }
     }
 }
+#endif
 
 /**
  * Draws the editor's clock, day display, event cursors, and pause overlay.
@@ -3024,7 +3123,11 @@ void EdDeleteE05RoboParts() {
  * Loads the interior a door leads to and places the player and camera in it.
  */
 int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int start_event) {
+#ifdef PAL
+    char *suffix[5] = {"m", "e", "n", "m", pal_at717};
+#else
     char *suffix[5] = {"m", "e", "n", "m", "\0"};
+#endif
     char path[0x40];
     ED_EVENT_PARAM entry;
     sceVu0FVECTOR position;
@@ -3645,6 +3748,60 @@ u_int *parts_read_buffer;
  * @address 0x180C00
  * @size 0x878
  */
+#ifdef PAL
+int LoadTexture();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2820[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#mes_frame_buff#640#480#4";
+char pal_at2821[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#fukidashibase#640#224#4";
+char pal_at2822[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
+char pal_at2823[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/gaiji.img";
+char pal_at2824[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/fuki256.img";
+char pal_at2825[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/syst04.img";
+char pal_at2833[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#water_buff#640#256#4";
+char pal_at2834[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#shadow_buff#640#256#4";
+char pal_at2835[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#blender#640#256#4";
+char pal_at2836[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#font_buff#640#256#4";
+char pal_at2837[0x10] __attribute__((section(".rodata"))) = "img/system.img";
+char pal_at2838[0x18] __attribute__((section(".rodata"))) = "s_eff.img";
+char pal_at2839[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "img/ankfont.img";
+char pal_at2840[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image#640#480#4";
+char pal_at2888[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/mes_tex_%d.pak";
+char pal_at2889[0x10] __attribute__((section(".rodata"))) = "gaiji.img";
+char pal_at2890[0x10] __attribute__((section(".rodata"))) = "fuki256.img";
+char pal_at2891[0x18] __attribute__((section(".rodata"))) = "syst04.img";
+char pal_at2892[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/system/esys_cmn.pak";
+char pal_at2893[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/system/sys_%d.img";
+char pal_at2894[0x10] __attribute__((section(".rodata"))) = "cursor.img";
+char pal_at2895[0x10] __attribute__((section(".rodata"))) = "e01t02.img";
+char pal_at2896[0x10] __attribute__((section(".rodata"))) = "sys_cmn.img";
+char pal_at2897[0x10] __attribute__((section(".rodata"))) = "ankfont.img";
+char pal_at2898[0x10] __attribute__((section(".rodata"))) = "cursor01.mds";
+char pal_at2899[0x10] __attribute__((section(".rodata"))) = "cursor02.mds";
+char pal_at2900[0x8] __attribute__((section(".rodata"))) = "bic.mds";
+char pal_at2901[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "ibox_0.mds";
+char pal_at2902[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "ibox_1.mds";
+char pal_at2903[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "s_ef01";
+char pal_at2904[0x8] __attribute__((section(".rodata"))) = "img.pak";
+char pal_at2905[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "stayframe.img";
+char pal_at2906[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "stayframe";
+char pal_at2907[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "texanime.cfg";
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", LoadTexture__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2826[24] __attribute__((aligned(16))) = {
+    0x002A1F30, 0x0000001A, 0x00000000, 0x002A1F50, 0x0000001A, 0x00000000, 0x002A1F70,
+    0x0000001A, 0x00000000, 0x002A1F90, 0x0000001A, 0x00000000, 0x002A1FB0, 0x0000001A,
+    0x00000000, 0x002A1FD0, 0x0000001A,
+};
+char pal_at2827[0x40] __attribute__((aligned(16))) = "meswin/mes_tex.pak";
+char pal_at2830[0x40] __attribute__((aligned(16))) = "gedit/system/sys.img";
+unsigned int pal_at2841[192] __attribute__((aligned(16))) = {
+    0x002A1FF0, 0x00000015, 0x00000000, 0x002A2010, 0x00000016, 0x00000000, 0x002A2030,
+    0x00000018, 0x00000000, 0x002A2050, 0x0000001F, 0x00000000, 0x002A2068, 0x00000014,
+    0x00000000, 0x002A1B30, 0x00000014, 0x00000000, 0x002A2078, 0x00000014, 0x00000000,
+    0x002A2090, 0x0000001F, 0x00000000, 0x002A20A0, 0x00000013,
+};
+#pragma name_counter 2199
+#else
 int LoadTexture() {
     int entered;
     int image;
@@ -3803,11 +3960,17 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
+#endif
 
 /**
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
  */
+#ifdef PAL
+void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EdLoadMainChara__FPcPcP14CDataAlloc2_1_);
+#pragma name_counter 2207
+#else
 void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena) {
     int i;
     if (arena == NULL) {
@@ -3829,6 +3992,7 @@ void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena) {
     MainChara.SetPosition(origin, origin, origin);
     Chara = &MainChara;
 }
+#endif
 
 /**
  * Reads the editor map's ground, areas and grid.
@@ -3949,8 +4113,13 @@ void LoadGroundData() {
         if (info->name[0] != '\0') {
             data = (u_int *) EdLoadFile(info->name);
             MotionParts[i].InitializeTexAnime(TexAnimeData, 64);
+#ifdef PAL
+            MotionParts[i].LoadPackData2(data, pal_at727__2, &DataBuffer__2, i + 0x1B,
+                                         &DataBuffer__2, 0);
+#else
             MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer__2, i + 0x1B,
                                          &DataBuffer__2, 0);
+#endif
             MotionParts[i].SetPosition(info->values[0], info->values[1], info->values[2]);
             MotionParts[i].SetRotation(info->values[3], info->values[4], info->values[5]);
         }

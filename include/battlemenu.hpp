@@ -941,7 +941,11 @@ extern float mapmovev[4];
 /**
  * Language the battle menu's text is drawn in.
  */
+#ifdef PAL
+extern s16 BtlMenuNowLang;
+#else
 extern s32 BtlMenuNowLang;
+#endif
 
 /**
  * Stores the active battle-menu state.
@@ -1017,6 +1021,13 @@ extern s32 ItemMenuAlreadyReadWepIconTexFlag;
  * Texture block the shadow and icon sheets load into.
  */
 extern s32 MenuShadowReadBlock;
+
+#ifdef PAL
+/**
+ * Texture block the second battle menu image loads into.
+ */
+extern s32 BtlMenuExtBlock;
+#endif
 
 /**
  * Texture block the character page's fonts and faces load into.
@@ -1102,6 +1113,13 @@ extern CTexture *BtlHira;
  * Texture holding the katakana font the character page writes with.
  */
 extern CTexture *BtlKata;
+
+#ifdef PAL
+/**
+ * Texture holding the accented European font the character page writes with.
+ */
+extern CTexture *BtlEuro;
+#endif
 
 /**
  * Screen position of the battle menu's help window.

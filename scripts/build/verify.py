@@ -102,7 +102,8 @@ def _scan(pattern, src_dir):
             if name.startswith('tmp'):
                 continue
             path = os.path.join(root, name)
-            text = open(path, encoding='utf-8', errors='replace').read()
+            # A marker under `#ifdef PAL` is the PAL build's alone.
+            text = region.active_text(open(path, encoding='utf-8', errors='replace').read())
             for symbol in pattern.findall(text):
                 out[symbol] = path
     return out

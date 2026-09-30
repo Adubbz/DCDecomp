@@ -36,22 +36,41 @@
  * Holds the state of the option screen.
  */
 struct OPTION_MENU_STATE {
+#ifdef PAL
+    s16 mode;    /**< How the screen was opened; 0 from the main menu. */
+    s16 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
+    s16 cursor;  /**< Cell that the cursor is on, as ten times the row plus the column. */
+    s16 unk_06;
+#else
     s32 mode;    /**< How the screen was opened; 0 from the main menu. */
     s32 buttons; /**< Whether the cursor is on the screen's buttons rather than its rows. */
     u8 unk_08[4];
     s32 cursor;        /**< Cell that the cursor is on, as ten times the row plus the column. */
+#endif
     s32 step;          /**< Stage that the screen is at, 2 once it has begun to close. */
     s32 step_count;    /**< Frames the screen has spent at its stage. */
     float cursor_x;    /**< Screen X of the cursor. */
     float cursor_y;    /**< Screen Y of the cursor. */
     float page_x;      /**< Screen X of the rows, eased toward the cursor's page. */
+#ifdef PAL
+    s32 flag[13];             /**< Setting of each option row. */
+    s32 prev_flag[13];        /**< Setting of each option row when the screen opened. */
+    s32 prev_screen_pos[2];   /**< Screen position offsets of the configuration when the screen opened. */
+    u8 texture_ready;         /**< Whether the screen's textures have been entered. */
+    s16 block_no;             /**< Texture block the screen's textures load into. */
+#else
     s32 flag[12];      /**< Setting of each option row. */
     s32 prev_flag[12]; /**< Setting of each option row when the screen opened. */
     s16 texture_ready; /**< Whether the screen's textures have been entered. */
     s16 block_no;      /**< Texture block the screen's textures load into. */
+#endif
 };
 
+#ifdef PAL
+STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x90);
+#else
 STATIC_ASSERT(sizeof(OPTION_MENU_STATE) == 0x88);
+#endif
 
 /** Holds the georama parts of a town the player is not standing in. */
 CEditPartsInfo BtEditPartsInfo;
@@ -1418,6 +1437,13 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
     }
 }
 
+#ifdef PAL
+static void DrawAtoraNothing(int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawAtoraNothing__Fiii);
+/* Retail's data for the function the marker above supplies. */
+s8 pal_at1269[8] = {64, 64, 64, 64, 54, 64, 64};
+#pragma name_counter 748
+#else
 static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 18, 18), CRect_i_(184, 346, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y, 220, 18), CRect_i_(200, 346, 4, 18), alpha);
@@ -1429,6 +1455,7 @@ static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x + 238, y + 102, 18, 18), CRect_i_(202, 364, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 64, y + 44, 132, 30), CRect_i_(124, 418, 132, 30), alpha);
 }
+#endif
 
 static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
     if (mes == NULL) {
@@ -2008,7 +2035,7 @@ static void DrawAtoraSelect(int fade) {
 }
 
 static int AtoraTextureEnter() {
-    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 tex[3] = {{"#frame_image3#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
     BG_READ_INFO *bg;
 
     tex[1].block_no = tex[0].block_no = AtoraTextureReadBlock;
@@ -2035,6 +2062,11 @@ int tip_sort_type = 1;
 /** The rank that the board's sort gives each chip group, by group. */
 int tip_table[3] = {3, 1, 2};
 
+#ifdef PAL
+static int GetTipKind(int tip_no);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", GetTipKind__Fi);
+#pragma name_counter 1092
+#else
 static int GetTipKind(int tip_no) {
     if (tip_no < 0 || tip_no >= 100) {
         return 0;
@@ -2046,7 +2078,13 @@ static int GetTipKind(int tip_no) {
         return 2;
     }
 }
+#endif
 
+#ifdef PAL
+static int CompTip(int tip_a, int tip_b);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", CompTip__Fii);
+#pragma name_counter 1110
+#else
 static int CompTip(int tip_a, int tip_b) {
     int rank_a;
     int rank_b;
@@ -2070,7 +2108,13 @@ static int CompTip(int tip_a, int tip_b) {
     }
     return (tip_a < tip_b) ? -1 : 0;
 }
+#endif
 
+#ifdef PAL
+static int SeitonAtoraTipBoardSub();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", SeitonAtoraTipBoardSub__Fv);
+#pragma name_counter 1132
+#else
 static int SeitonAtoraTipBoardSub() {
     int rank;
     int kind;
@@ -2100,6 +2144,7 @@ static int SeitonAtoraTipBoardSub() {
     }
     return moved;
 }
+#endif
 
 static void SeitonAtoraTipBoard() {
     int i;
@@ -2316,6 +2361,14 @@ int MenuAtoraSelectKey() {
     return result;
 }
 
+#ifdef PAL
+static int AtoraBoardKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2134__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "info----------,,,\tID \t\t%d\n";
+char pal_at2135__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "\t\tcomplete_event\t\t%d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", AtoraBoardKey__Fv);
+#pragma name_counter 1391
+#else
 static int AtoraBoardKey() {
     int movable[8];
     int open_mode = MenuAtoraSel.open_mode;
@@ -2546,6 +2599,7 @@ static int AtoraBoardKey() {
     ComMenuSePlay(se);
     return result;
 }
+#endif
 
 static int AtoraTipKey() {
     int result = 0;
@@ -2755,6 +2809,24 @@ void AtoraNameDraw(int) {
     }
 }
 
+#ifdef PAL
+static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2274[16] __attribute__((aligned(16))) = {
+    0x0000000A, 0x00000008, 0x00000004, 0x00000005, 0x00000002, 0x00000003, 0x0000000E,
+    0x00000009, 0x0000000B, 0x0000000C, 0x0000000D, 0x00000006, 0x00000007,
+};
+unsigned int pal_at2275[16] __attribute__((aligned(16))) = {
+    0x00000000, 0x00000000, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000004,
+    0x00000003,
+};
+unsigned int pal_at2283__2[12] __attribute__((aligned(16))) = {
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000080,
+    0x000000B0, 0x000000C0, 0x000000C8,
+};
+#pragma name_counter 1586
+#else
 static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     int label[12] = {10, 8, 4, 5, 2, 3, 9, 11, 12, 13, 6, 7};
     int kind[12] = {0, 0, 1, 2, 0, 1, 3, 0, 0, 0, 0, 0};
@@ -2829,7 +2901,15 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     }
     DrawMenu2DSprite(MenuOption, CRect_i_(arrow_x, arrow_y, 60, 29), CRect_i_(452, 226, 60, 29), alpha);
 }
+#endif
 
+#ifdef PAL
+static void DrawOptionLRCur(int side, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionLRCur__Fii);
+/* Retail's data for the function the marker above supplies. */
+s16 pal_at2344[4] = {0x20, 0x208};
+#pragma name_counter 1595
+#else
 static void DrawOptionLRCur(int side, int alpha) {
     int cursor_x[2] = {32, 520};
     int v;
@@ -2837,11 +2917,24 @@ static void DrawOptionLRCur(int side, int alpha) {
     v = side * 32 + 256;
     DrawMenu2DSprite(MenuOption, CRect_i_(cursor_x[side], 180, 96, 32), CRect_i_(416, v, 96, 32), alpha);
 }
-
-#ifdef PAL
-void DrawOptionScreenWaku() {}
 #endif
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionScreenWaku__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2353[4] __attribute__((aligned(16))) = {0x00040004, 0x0004025C, 0x01BC0004, 0x01BC025C};
+unsigned int pal_at2354[4] __attribute__((aligned(16))) = {0};
+s8 pal_at2355[8] = {0, 0, 32, 0, 0, 32, 32, 32};
+#pragma name_counter 1595
+#endif
+
+#ifdef PAL
+int InitMenuOption(int mode, int block_no, u_long128 *buffer);
+/* Retail's data for the function the marker below supplies. */
+char pal_at2413[0x18] __attribute__((section(".rodata"))) = "option.pac";
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitMenuOption__FiiP1);
+#pragma name_counter 1610
+#else
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
     CUserStatus *status;
@@ -2889,6 +2982,7 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     }
     return 1;
 }
+#endif
 
 /**
  * Stores whether the menus discard their saved positions in the saved menu
@@ -2902,6 +2996,11 @@ static inline void SetCursorResetPos(CMenuCursor *cursor, int reset) {
  * Closes the option screen, writing every setting the player changed back to
  * the configuration and the saved status.
  */
+#ifdef PAL
+static void ExitMenuOption();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", ExitMenuOption__Fv);
+#pragma name_counter 1620
+#else
 static void ExitMenuOption() {
     CUserStatus *status;
     CMenuCursor *cursor;
@@ -2931,7 +3030,13 @@ static void ExitMenuOption() {
     OpConfigPt[8] = OptionMenu.flag[10];
     OpConfigPt[6] = OptionMenu.flag[11];
 }
+#endif
 
+#ifdef PAL
+static void InitOptionFlag();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitOptionFlag__Fv);
+#pragma name_counter 1626
+#else
 static void InitOptionFlag() {
     int i;
 
@@ -2940,7 +3045,13 @@ static void InitOptionFlag() {
     }
     OptionMenu.flag[6] = 1;
 }
+#endif
 
+#ifdef PAL
+static void PrevOptionSetFunc();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", PrevOptionSetFunc__Fv);
+#pragma name_counter 1633
+#else
 static void PrevOptionSetFunc() {
     int i;
 
@@ -2948,7 +3059,21 @@ static void PrevOptionSetFunc() {
         OptionMenu.flag[i] = OptionMenu.prev_flag[i];
     }
 }
+#endif
 
+#ifdef PAL
+int MenuOptionKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2453[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image_option#640#480#4";
+char pal_at2608[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "option.img";
+char pal_at2609__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "option2";
+char pal_at2610__2[0x10] __attribute__((section(".rodata"))) = "allmenu.mes";
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuOptionKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+char pal_at2454__2[0x28] __attribute__((aligned(16))) = " `*";
+unsigned int pal_at2580[6] __attribute__((aligned(8))) = {0x00000000, 0x00000171, 0x0000016C};
+#pragma name_counter 1733
+#else
 int MenuOptionKey() {
     int result = 0;
 
@@ -3114,7 +3239,19 @@ int MenuOptionKey() {
     }
     return result;
 }
+#endif
 
+#ifdef PAL
+void DrawMenuOption();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawMenuOption__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2656[4] __attribute__((aligned(16))) = {0x000000B2, 0x000000F8, 0x00000010, 0x00000010};
+unsigned int pal_OpMenuWakuCnt_S2650;
+unsigned char pal_init_S2651;
+unsigned int pal_OptionCurCnt_S2653;
+unsigned char pal_init_S2654;
+#pragma name_counter 1854
+#else
 void DrawMenuOption() {
     setbilinear(0);
     if (OptionMenu.texture_ready == 0) {
@@ -3254,6 +3391,7 @@ void DrawMenuOption() {
     }
     setbilinear(1);
 }
+#endif
 
 int OptionMenuFadeOutStart() {
     int result = 0;
@@ -3404,6 +3542,13 @@ int (*SaveMenuFunc[26])() = {
     SaveMenuKeyEndSaveEnding,
 };
 
+#ifdef PAL
+int MenuSaveKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2867[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "msgno = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuSaveKey__Fv);
+#pragma name_counter 1940
+#else
 int MenuSaveKey() {
     int prev_func_no;
     int result;
@@ -3542,6 +3687,7 @@ int MenuSaveKey() {
     }
     return SaveMenu.result;
 }
+#endif
 
 void DrawMenuSave(char *) {
     if (SaveMenu.texture_ready == 0) {

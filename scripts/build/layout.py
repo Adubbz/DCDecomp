@@ -261,7 +261,8 @@ def read_sources(src_dir=SRC_DIR):
                 text = open(path, encoding="utf-8", errors="replace").read()
             except OSError:
                 continue
-            out[path] = MARKER.findall(text)
+            # A marker under `#ifdef PAL` is the PAL build's alone.
+            out[path] = MARKER.findall(region.active_text(text))
     # Whole-assembly library units have no placeholder source. Keep their
     # synthetic source identities so linker-script object names still map to
     # the units derived from the split configuration.

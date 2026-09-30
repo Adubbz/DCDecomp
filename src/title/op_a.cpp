@@ -259,6 +259,31 @@ void LoadMotionData();
 /* Each of the couple's motion files is one key range — the frame it starts at and the frame it ends
    at — written straight over the character's own first key, so that a file loaded in the background
    takes over without the motion driver being told anything. */
+#ifdef PAL
+tagMOTION_KEY noroi[10] = {
+    {100, 750, 0.5f, 0},
+    {201, 528, 0.5f, 0},
+    {103, 802, 0.5f, 0},
+    {126, 781, 0.5f, 0},
+    {1, 356, 0.5f, 0},
+    {50, 629, 0.5f, 0},
+    {185, 833, 0.5f, 0},
+    {93, 665, 0.5f, 0},
+    {124, 529, 0.5f, 0},
+    {298, 747, 0.5f, 0}};
+
+tagMOTION_KEY dancer[10] = {
+    {12, 536, 0.5f, 0},
+    {209, 536, 0.5f, 0},
+    {111, 810, 0.5f, 0},
+    {116, 771, 0.5f, 0},
+    {1, 356, 0.5f, 0},
+    {1, 629, 0.5f, 0},
+    {135, 783, 0.5f, 0},
+    {82, 660, 0.5f, 0},
+    {124, 529, 0.5f, 0},
+    {327, 782, 0.5f, 0}};
+#else
 tagMOTION_KEY noroi[10] = {
     {100, 750, 0.5f, 0},
     {201, 533, 0.5f, 0},
@@ -282,6 +307,7 @@ tagMOTION_KEY dancer[10] = {
     {92, 670, 0.5f, 0},
     {139, 542, 0.5f, 0},
     {327, 782, 0.5f, 0}};
+#endif
 
 /* The scene's own world, and the objects the configuration file fills in. Both frame pointers are
    typed from the loader that writes them rather than from anything here: title/opdata assigns
@@ -356,6 +382,62 @@ void OpA_InitProcess() {
  * @size 0x3AC
  * @unknownret
  */
+#ifdef PAL
+static void LoadTexture();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", LoadTexture__Fv__3);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at341__2[88] __attribute__((aligned(16))) = {
+    0x01DF71C0, 0x00000000, 0x00000000, 0x01DF71E0, 0x0000001A, 0x00000000, 0x01DF7200,
+    0x0000001A, 0x00000000, 0x01DF7220, 0x00000016, 0x00000000, 0x00000000, 0x0000001A,
+    0x00000000, 0x00000000, 0x0000001A, 0x00000000, 0x00000000, 0x0000001A, 0x00000000,
+    0x00000000, 0x00000001, 0x00000000, 0x00000000, 0x00000001, 0x00000000, 0x00000000,
+    0x00000006, 0x00000001, 0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x00000004,
+    0x00000000, 0x00000000, 0x00000004, 0x00000000, 0x00000000, 0x00000003, 0x00000000,
+    0x00000000, 0x00000003, 0x00000000, 0x00000000, 0x00000005, 0x00000000, 0x00000000,
+    0x00000005, 0x00000000, 0x00000000, 0x00000007, 0x00000000, 0x00000000, 0x00000008,
+    0x00000000, 0x00000000, 0x00000008, 0x00000000, 0x00000000, 0x00000008, 0x00000000,
+    0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000,
+    0x0000000B, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000013,
+    0x00000000, 0x00000000, 0x00000013, 0x00000000, 0x00000000, 0x00000006, 0x00000000,
+    0x01DF7238,
+};
+char pal_at336__4[] __attribute__((section(".rodata"))) = "#blender#640#256#4";
+char pal_at337__4[] __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
+char pal_at338__2[] __attribute__((section(".rodata"))) = "#fukidashibase#640#256#4";
+char pal_at339__3[] __attribute__((section(".rodata"))) = "#frame_image#640#256#4";
+char pal_at340__2[] __attribute__((section(".rodata"))) = "";
+char pal_at351__3[] __attribute__((section(".rodata"))) = "opdat/dungeon/dungeon.pim";
+char pal_at352__3[] __attribute__((section(".rodata"))) = "gaiji.img";
+char pal_at353__5[] __attribute__((section(".rodata"))) = "fuki256.img";
+char pal_at354__3[] __attribute__((section(".rodata"))) = "syst04.img";
+char pal_at355__4[] __attribute__((section(".rodata"))) = "c07a01.img";
+char pal_at356__4[] __attribute__((section(".rodata"))) = "c07a01an.img";
+char pal_at357__4[] __attribute__((section(".rodata"))) = "p17a01.img";
+char pal_at358__5[] __attribute__((section(".rodata"))) = "c08a01.img";
+char pal_at359__5[] __attribute__((section(".rodata"))) = "c09a01.img";
+char pal_at360__4[] __attribute__((section(".rodata"))) = "c09a01an.img";
+char pal_at361__3[] __attribute__((section(".rodata"))) = "c11a01.img";
+char pal_at362__4[] __attribute__((section(".rodata"))) = "c11a01an.img";
+char pal_at363__6[] __attribute__((section(".rodata"))) = "p19a01.img";
+char pal_at364__2[] __attribute__((section(".rodata"))) = "p19a01an.img";
+char pal_at365__5[] __attribute__((section(".rodata"))) = "ex.img";
+char pal_at366__5[] __attribute__((section(".rodata"))) = "cloud.img";
+char pal_at367__6[] __attribute__((section(".rodata"))) = "cloudan.img";
+char pal_at368__4[] __attribute__((section(".rodata"))) = "cloud2.img";
+char pal_at369__6[] __attribute__((section(".rodata"))) = "i01t01.img";
+char pal_at370__5[] __attribute__((section(".rodata"))) = "i01t02.img";
+char pal_at371__6[] __attribute__((section(".rodata"))) = "e01s01.img";
+char pal_at372__4[] __attribute__((section(".rodata"))) = "fire.img";
+char pal_at373__5[] __attribute__((section(".rodata"))) = "pause.img";
+char pal_at374__5[] __attribute__((section(".rodata"))) = "pause_e.img";
+char pal_at375__6[] __attribute__((section(".rodata"))) = "pause_f.img";
+char pal_at376__6[] __attribute__((section(".rodata"))) = "pause_g.img";
+char pal_at377__6[] __attribute__((section(".rodata"))) = "pause_i.img";
+char pal_at378__4[] __attribute__((section(".rodata"))) = "pause_s.img";
+char pal_at379__4[] __attribute__((section(".rodata"))) = "ashikage.img";
+unsigned int pal_at380__6[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DCD9D4, 0x01DCD9F8, 0x01DCDA1C, 0x01DCDA40, 0x01DCDA64, 0x01DCDA88, 0x01DCDAAC};
+#pragma name_counter 84
+#else
 static void LoadTexture() {
     LOADTEXTURE_INFO2 texture_list[] = {
         {"#blender#640#224#4", 0, 0},
@@ -429,6 +511,7 @@ static void LoadTexture() {
     CharaTex__2[6] = 5;
     CharaTex__2[7] = 6;
 }
+#endif
 
 /**
  * The scene's actors. The four in the table are the townspeople around the square, the two after
@@ -538,6 +621,34 @@ static void SetDanceMotion() {
  * @size 0x124
  * @unknownret
  */
+#ifdef PAL
+static void InitDancerPos();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", InitDancerPos__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at406__2[140] __attribute__((aligned(16))) = {
+    0x40400000, 0x00000000, 0x41D80000, 0x00000000, 0x00000000, 0x00000000, 0x41D80000,
+    0x00000000, 0xC0400000, 0x00000000, 0x41D80000, 0x00000000, 0x3FC00000, 0x00000000,
+    0x41E80000, 0x00000000, 0xBFC00000, 0x00000000, 0x41E80000, 0x00000000, 0x40900000,
+    0x00000000, 0x41E80000, 0x00000000, 0xC0900000, 0x00000000, 0x41E80000, 0x00000000,
+    0x40400000, 0x00000000, 0x41F80000, 0x00000000, 0x00000000, 0x00000000, 0x41F80000,
+    0x00000000, 0xC0400000, 0x00000000, 0x41F80000, 0x00000000, 0x3FC00000, 0x00000000,
+    0x42040000, 0x00000000, 0xBFC00000, 0x00000000, 0x42040000, 0x00000000, 0x40900000,
+    0x00000000, 0x42040000, 0x00000000, 0xC0900000, 0x00000000, 0x42040000, 0x00000000,
+    0x40400000, 0x00000000, 0x420C0000, 0x00000000, 0x00000000, 0x00000000, 0x420C0000,
+    0x00000000, 0xC0400000, 0x00000000, 0x420C0000, 0x00000000, 0x3FC00000, 0x00000000,
+    0x42140000, 0x00000000, 0xBFC00000, 0x00000000, 0x42140000, 0x00000000, 0x40900000,
+    0x00000000, 0x42140000, 0x00000000, 0xC0900000, 0x00000000, 0x42140000, 0x00000000,
+    0x40400000, 0x00000000, 0x421C0000, 0x00000000, 0x00000000, 0x00000000, 0x421C0000,
+    0x00000000, 0xC0400000, 0x00000000, 0x421C0000, 0x00000000, 0x3FC00000, 0x00000000,
+    0x42240000, 0x00000000, 0xBFC00000, 0x00000000, 0x42240000, 0x00000000, 0x40900000,
+    0x00000000, 0x42240000, 0x00000000, 0xC0900000, 0x00000000, 0x42240000, 0x00000000,
+    0x40400000, 0x00000000, 0x422C0000, 0x00000000, 0x00000000, 0x00000000, 0x422C0000,
+    0x00000000, 0xC0400000, 0x00000000, 0x422C0000, 0x00000000, 0x3FC00000, 0x00000000,
+    0x42340000, 0x00000000, 0xBFC00000, 0x00000000, 0x42340000, 0x00000000, 0x40900000,
+    0x00000000, 0x42340000, 0x00000000, 0xC0900000, 0x00000000, 0x42340000,
+};
+#pragma name_counter 119
+#else
 static void InitDancerPos() {
     float layout[35][4] = {
         {3.0f, 0.0f, 27.0f, 0.0f},
@@ -592,12 +703,36 @@ static void InitDancerPos() {
     Chara__3[6].SetPosition(0.0f, 0.0f, 250.0f);
     Chara__3[6].SetRotation(0.0f, PI, 0.0f);
 }
+#endif
 
 /* The tick's drawing, in the order the frame is built: the ground, the buildings standing on it,
    the townspeople, the couple, the crowd behind them, the fires, the sky and last the depth of
    field. The two ambients that fade are what makes the square go dark as the scene turns: one rides
    up over the buildings while the camera holds on them, the other rides the crowd down as the
    couple's motion runs out. */
+#ifdef PAL
+void OpA_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_DrawProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+float pal_at552__2 = 50.0f;
+float pal_at554__4[2] __attribute__((aligned(8))) = {200.0f, 400.0f};
+unsigned int pal_wait_S417;
+unsigned int pal_col_S450;
+unsigned char pal_init_S451;
+unsigned int pal_am_S453;
+unsigned char pal_init_S454;
+unsigned int pal_wait_S456;
+unsigned char pal_init_S457;
+unsigned int pal_cnt_S525;
+unsigned char pal_init_S526;
+unsigned int pal_sw_S528;
+unsigned char pal_init_S529;
+unsigned int pal_ambient_S416[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at478__4[4] __attribute__((aligned(16))) = {0x41B00000, 0x41B00000, 0x41400000};
+char pal_at712__2[] __attribute__((section(".rodata"))) = "ex";
+unsigned char pal_lcolor_S461[0x40] __attribute__((aligned(16)));
+#pragma name_counter 258
+#else
 void OpA_DrawProcess() {
     static sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 0.0f};
     static int wait;
@@ -893,6 +1028,7 @@ void OpA_DrawProcess() {
         } break;
     }
 }
+#endif
 
 /**
  * The sky, which is one model turned inside out and scrolled rather than a backdrop. It grows from
@@ -1403,6 +1539,36 @@ static void DrawShadow(float x, float y, float z) {
    and the wait keeps a motion that stalls there from playing the step twice. The rest is the
    square's own ambience: the fountain from a fixed point, the wind while the sky is up, and the
    change of music the camera makes when it turns away. */
+#ifdef PAL
+void OpA_SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_SoundProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_mus_S973;
+unsigned char pal_init_S974__2;
+unsigned int pal_wait_S983;
+unsigned char pal_init_S984;
+unsigned int pal_wait_S998;
+unsigned char pal_init_S999__2;
+unsigned int pal_wait_S1013;
+unsigned char pal_init_S1014__2;
+unsigned int pal_wait_S1028;
+unsigned char pal_init_S1029;
+unsigned int pal_seflg_S1046;
+unsigned char pal_init_S1047;
+unsigned int pal_secnt_S1049;
+unsigned char pal_init_S1050;
+unsigned int pal_vol_S1052;
+unsigned char pal_init_S1053;
+unsigned int pal_flg_S1064;
+unsigned char pal_init_S1065;
+unsigned int pal_flg_S1077;
+unsigned char pal_init_S1078;
+unsigned int pal_at1045__3[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at1062[4] __attribute__((aligned(16))) = {0x00000000, 0x42480000};
+char pal_at1088__2[] __attribute__((section(".rodata"))) = "opdat/dungeon/o1bbgm.snd";
+char pal_at1089[] __attribute__((section(".rodata"))) = "o01b.txt";
+#pragma name_counter 778
+#else
 void OpA_SoundProcess() {
     /* These type-only names preserve the first footfall's argument-selection state. */
     typedef float SoundSetup0, SoundSetup1, SoundSetup2, SoundSetup3, SoundSetup4, SoundSetup5,
@@ -1552,6 +1718,7 @@ void OpA_SoundProcess() {
         }
     }
 }
+#endif
 
 /**
  * The waterfall behind the square. Its animation is a strip of frames in a texture of its own and

@@ -118,6 +118,9 @@ PLACEMENT = re.compile(
 # more than one symbol with the same original name.
 NUMBERED_DATUM = re.compile(r'^@\d+(?:__\d+)?$')
 
+# A function-local static: `name$N`, with splat's `__N` on a duplicate.
+LOCAL_STATIC = re.compile(r'^[A-Za-z_]\w*\$\d+(?:__\d+)?$')
+
 # tools/mwccgap marks a `@<n>` that spliced assembly only *references* -- so
 # retail's constant rather than the one MWCC invented for this unit's compiled
 # half, which would otherwise absorb the reference. The suffix keeps the two
@@ -708,6 +711,17 @@ def resolve_names(path, addresses):
     changed = False
     for sym in obj.symbols:
         external = EXTERNAL_DATUM.match(sym.name)
+        if sym.shndx == SHN_UNDEF and LOCAL_STATIC.match(sym.name) \
+                and sym.name in addresses:
+            # A function an INCLUDE_ASM marker supplies reaches its own
+            # function-local statics under retail's names; the source defines
+            # them where retail put them, so the address is retail's.
+            sym.value = addresses[sym.name]
+            sym.size = 0
+            sym.info = STT_OBJECT
+            sym.shndx = SHN_ABS
+            changed = True
+            continue
         if not external and not NUMBERED_DATUM.match(sym.name):
             continue
         if sym.shndx == SHN_UNDEF:
@@ -733,13 +747,13 @@ def resolve_names(path, addresses):
 
 
 def retail_addresses(image, config=region.CONFIG):
-    """Return the numbered datum addresses recorded for one retail image."""
+    """Return the numbered datum and local static addresses recorded for one retail image."""
     try:
         rows = disassemble.read_symbol_table(config)[image]
     except KeyError:
         raise SystemExit(f'literals: unknown image {image!r}')
     return {name: address for name, (address, _type, _size) in rows.items()
-            if NUMBERED_DATUM.match(name)}
+            if NUMBERED_DATUM.match(name) or LOCAL_STATIC.match(name)}
 
 
 def unit_report(target, root='.'):

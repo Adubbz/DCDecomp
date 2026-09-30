@@ -135,7 +135,11 @@ GRADATION_COLOR_INFO2 MenuColorInfo2[26] = {
     {{{0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}, {0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}}},
 };
 
+#ifdef PAL
+s16 BtlMenuNowLang = 1;
+#else
 s32 BtlMenuNowLang = 1;
+#endif
 s32 BattleMenuFlag = -1;
 float chara_r_long = 118.0f;
 s16 TrushMoveMax[3] = {3, 1, 3};
@@ -152,6 +156,9 @@ s32 BtlMenuReadEndFlag;
 s32 ItemMenuWeaponIconReadBlock;
 s32 ItemMenuAlreadyReadWepIconTexFlag;
 s32 MenuShadowReadBlock;
+#ifdef PAL
+s32 BtlMenuExtBlock;
+#endif
 s32 BtlMenuExReadBlock;
 s32 BtlMenuExReadFlag;
 s32 MenuExtendReadBlock;
@@ -169,6 +176,9 @@ CTexture *WepStatus;
 CTexture *BtlAlpha;
 CTexture *BtlHira;
 CTexture *BtlKata;
+#ifdef PAL
+CTexture *BtlEuro;
+#endif
 float HelpWinHead[2];
 u8 BtlWakuMake2;
 s32 BtlHelpWinAlpha;
@@ -455,6 +465,13 @@ int GetLimmitMsg(void) {
     return message;
 }
 
+#ifdef PAL
+void DrawBattleMain();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawBattleMain__Fv);
+/* Retail's data for the function the marker above supplies. */
+s16 pal_at702__3[4] = {0x1B, 0x1C, 0xF};
+#pragma name_counter 188
+#else
 void DrawBattleMain() {
     int pos[2];
     int icons[8];
@@ -516,6 +533,7 @@ void DrawBattleMain() {
     DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, waku_y, width, 0x22, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], 1, 0x40);
 }
+#endif
 
 void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     int bar_x = x - 5;
@@ -649,6 +667,14 @@ void DngComStatus(int x, int y, int chara, int alpha) {
     }
 }
 
+#ifdef PAL
+void DrawSelCharaStatus(float x, float y, int chara, int alpha, int, int, int, int);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawSelCharaStatus__Fffiiiiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at889__3[4] __attribute__((aligned(16))) = {0x00000040, 0x00000088, 0x0000000C, 0x0000000E};
+unsigned int pal_at890__3[4] __attribute__((aligned(16))) = {0};
+#pragma name_counter 336
+#else
 void DrawSelCharaStatus(float x, float y, int chara, int alpha, int face_size, int face_alpha, int face_x, int face_y) {
     int u;
     int v;
@@ -687,6 +713,7 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int face_size, i
     px = (int) (x - 40.0f);
     CharaStatusMsgDraw(px, (int) (68.0f + y), chara, 1, alpha);
 }
+#endif
 
 /**
  * Draws the battle menu's Atora selection screen.
@@ -733,6 +760,25 @@ static void BtlMenuTexBlockEnter() {
     VillageBar = TexManager.GetTexture("viltag", -1);
 }
 
+#ifdef PAL
+void BattleMenuTexEnter();
+/* Retail's data for the function the marker below supplies. */
+char pal_at934[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image#640#480#4";
+char pal_at935__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#dbgwork_menu#256#256#3";
+char pal_at936__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image_2#640#480#4";
+char pal_at942[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "btlmenu.img";
+char pal_at943[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "btlmenu2.img";
+char pal_at944__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "atrames.bin";
+char pal_at945__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "allmenu.mes";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuTexEnter__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at937__4[18] __attribute__((aligned(16))) = {
+    0x002A4960, 0x00000000, 0x00000000, 0x002A4980, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x002A49A0,
+};
+unsigned int pal_at938[6] __attribute__((aligned(8))) = {0x00000000, 0x00000000, 0xFFFFFFFF};
+#pragma name_counter 358
+#else
 void BattleMenuTexEnter() {
     LOADTEXTURE_INFO2 textures[4] = {
         {"#frame_image#640#448#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
@@ -755,7 +801,18 @@ void BattleMenuTexEnter() {
     BtlMenuReadEndFlag = 1;
     MenuMes.SetBuffInfo(mes);
 }
+#endif
 
+#ifdef PAL
+void ExitBattleMenu(int);
+/* Retail's data for the function the marker below supplies. */
+char pal_at965[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image0#640#480#4";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ExitBattleMenu__Fi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at962[8] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF};
+unsigned int pal_at966[8] __attribute__((aligned(16))) = {0x002A4A00};
+#pragma name_counter 381
+#else
 void ExitBattleMenu(int) {
     int count = 0;
     s16 *item = MenuItemPackPt->item;
@@ -801,7 +858,21 @@ void ExitBattleMenu(int) {
     GamePad.AutoRepeatOff();
     GamePad.MenuModeOff();
 }
+#endif
 
+#ifdef PAL
+void BattleMenuInit(int *texture_blocks, int mode);
+/* Retail's data for the function the marker below supplies. */
+char pal_at1016[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dungeon/dunmenu5.pak";
+char pal_at1017[0x10] __attribute__((section(".rodata"))) = "msg work area\n";
+char pal_at1018[0x18] __attribute__((section(".rodata"))) = "stayframe";
+char pal_at1020__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "Debug Party Member Get\n";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuInit__FPii);
+/* Retail's data for the function the marker above supplies. */
+char pal_at972__2[0x20] __attribute__((aligned(16))) = "`I*";
+unsigned int pal_at973[8] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF};
+#pragma name_counter 410
+#else
 void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuMode = mode;
     BtlMenuReadBlock = texture_blocks[0];
@@ -898,6 +969,7 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     MenuWarningMsgFlag = 0;
     BtlMenuBGMvol = SndGetBgmVol();
 }
+#endif
 
 /**
  * Suppresses a draw flag while an Atla event or a character page is showing.
@@ -1303,6 +1375,17 @@ int BattleMenuSelect() {
     return 1;
 }
 
+#ifdef PAL
+int ToFromSelect(int out);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ToFromSelect__Fi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1298[16] __attribute__((aligned(16))) = {
+    0x00000046, 0x0000001C, 0x00000064, 0x00000030, 0x00000056, 0x00000026, 0x00000032,
+    0x00000028, 0x0000005A, 0x00000028, 0x0000005E, 0x0000001E, 0x00000050, 0x00000028,
+    0x00000046, 0x0000001C,
+};
+#pragma name_counter 698
+#else
 int ToFromSelect(int out) {
     if (out < 0 || out > 1) {
         return -1;
@@ -1347,6 +1430,7 @@ int ToFromSelect(int out) {
     }
     return done;
 }
+#endif
 
 /**
  * Puts the menu cursor back on the icon of the mode the menu is returning to.
@@ -1415,6 +1499,22 @@ static void InitMenuChara(u_long128 *buffer) {
 
 #pragma opt_propagation off
 
+#ifdef PAL
+int BattleMenuCharaKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1369__2[0x28] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image_charamenu#640#480#4";
+char pal_at1523__4[0x10] __attribute__((section(".rodata"))) = "nonchara";
+char pal_at1524__3[0x10] __attribute__((section(".rodata"))) = "alphabet";
+char pal_at1525__2[0x8] __attribute__((section(".rodata"))) = "hira";
+char pal_at1526__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kata";
+char pal_at1527__2[0x8] __attribute__((section(".rodata"))) = "euro";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuCharaKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1370__2[12] __attribute__((aligned(16))) = {0x002A4BB0};
+s32 pal_at1371__2[2] = {0, -1};
+s32 pal_at1385__3[2] = {0, -1};
+#pragma name_counter 844
+#else
 int BattleMenuCharaKey() {
     switch (MenuChara.state) {
         case 4:
@@ -1615,9 +1715,18 @@ int BattleMenuCharaKey() {
     }
     return 1;
 }
+#endif
 
 #pragma opt_propagation reset
 
+#ifdef PAL
+void DrawCharaSelect();
+/* Retail's data for the function the marker below supplies. */
+char pal_at1678[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dgring";
+char pal_at1681[0x18] __attribute__((section(".rodata"))) = "nonchara2";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawCharaSelect__Fv);
+#pragma name_counter 985
+#else
 void DrawCharaSelect() {
     if (BtlMenuExReadFlag == 0) {
         return;
@@ -1849,6 +1958,7 @@ void DrawCharaSelect() {
         }
     }
 }
+#endif
 
 void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     int x = rect.x;
@@ -1921,6 +2031,15 @@ void DrawWepStatus(int x, int y, WEAPON_HAVE *weapon, int selected, int alpha) {
     DrawWepDamageDraw(rect, weapon, alpha);
 }
 
+#ifdef PAL
+void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawWepVolumeDisplay__FiiP11WEAPON_HAVEi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1738[4] __attribute__((aligned(16))) = {0x000000D4, 0x000001F4, 0x0000000C, 0x0000000D};
+unsigned int pal_at1741[4] __attribute__((aligned(16))) = {0};
+unsigned int pal_at1742[4] __attribute__((aligned(16))) = {0x00000000, 0x00000063, 0x00000063};
+#pragma name_counter 1074
+#else
 void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     WEAPON_DATA *data = GetWeaponData(weapon->item_no);
     if (data == NULL) {
@@ -1951,6 +2070,7 @@ void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
         DrawMenuNumber(values[i], dest.x + source.width + digits.width * 3 - 2, dest.y + 2, WepStatus, digits, 1, alpha);
     }
 }
+#endif
 
 /**
  * Draws the board a weapon's name sits on.
@@ -2518,6 +2638,28 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
     }
 }
 
+#ifdef PAL
+void BtlWeaponDraw(int x, float depth, int chara, int alpha);
+/* Retail's data for the function the marker below supplies. */
+char pal_at2256[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kagetoan";
+char pal_at2257[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kagesyao";
+char pal_at2258[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kagegoro";
+char pal_at2259[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kageruby";
+char pal_at2260[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kageunga";
+char pal_at2261[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kageozu";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BtlWeaponDraw__Fifii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2207[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0xC2340000, 0x3F800000};
+unsigned int pal_at2208[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x42700000, 0x3F800000};
+unsigned int pal_at2209[4] __attribute__((aligned(16))) = {0x3E99999A, 0x3F800000, 0x3E99999A};
+unsigned int pal_at2210__2[16] __attribute__((aligned(16))) = {
+    0x3E99999A, 0x00000000, 0x00000000, 0x00000000, 0x3E99999A, 0x00000000, 0x00000000,
+    0x00000000, 0x3E99999A,
+};
+unsigned int pal_at2211[16] __attribute__((aligned(16))) = {0x42C00000, 0x42C00000, 0x42C00000};
+unsigned int pal_at2262[8] __attribute__((aligned(16))) = {0x002A4C80, 0x002A4C90, 0x002A4CA0, 0x002A4CB0, 0x002A4CC0, 0x002A4CD0};
+#pragma name_counter 1561
+#else
 void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
     int equipped_slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
     int cursor = WepMenu.weapon_slot;
@@ -2679,6 +2821,7 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
         MenuMes.Draw1(MenuMes.draw_x, MenuMes.draw_y, MenuMes.alpha);
     }
 }
+#endif
 
 /**
  * Reports whether a weapon can be repaired, built up, or neither, as a set of flags.
@@ -2781,6 +2924,16 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
     return refused;
 }
 
+#ifdef PAL
+void DrawWeaponSelectDialog(int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_warmcnt_S2382;
+unsigned char pal_init_S2383;
+unsigned int pal_levelbrinkcnt_S2391;
+unsigned char pal_init_S2392;
+#pragma name_counter 1674
+#else
 void DrawWeaponSelectDialog(int x, int y, int alpha) {
     s8 shift = 0;
 
@@ -2853,6 +3006,7 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
             break;
     }
 }
+#endif
 
 /**
  * Opens the weapon page in one of its modes and puts the cursor where it was left.
@@ -2861,6 +3015,11 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
  * @address 0x1FC750
  * @size 0x3CC
  */
+#ifdef PAL
+static void InitWeaponSelect(int mode, int chara);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", InitWeaponSelect__Fii);
+#pragma name_counter 1706
+#else
 static void InitWeaponSelect(int mode, int chara) {
     InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &WepMenu.board, 1, 2);
     WepMenu.open_mode = mode;
@@ -2924,6 +3083,7 @@ static void InitWeaponSelect(int mode, int chara) {
     MenuMes.message->init_02C = 0x10;
     MenuMes.message->init_030 = 0x10;
 }
+#endif
 
 /**
  * Rebuilds the player's equipped weapon model and gives the menu's textures back.
@@ -2932,6 +3092,11 @@ static void InitWeaponSelect(int mode, int chara) {
  * @address 0x1FCB20
  * @size 0x2CC
  */
+#ifdef PAL
+static void ExitWeaponMenuSelect();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
+#pragma name_counter 1726
+#else
 static void ExitWeaponMenuSelect() {
     int chara = BtlMenuStatusPt->cur_chara;
 
@@ -2993,6 +3158,7 @@ static void ExitWeaponMenuSelect() {
     ForBackMenu();
     BattleMenuFlag = 0;
 }
+#endif
 
 void WeaponMenuSelect() {
     int direction = -1;
@@ -3445,6 +3611,21 @@ static int WeaponMenuKastumSelectDown(int row, int enabled_rows) {
  * @address 0x1FDF20
  * @size 0x178C
  */
+#ifdef PAL
+static int WeaponSelectKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at3618[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "now 0%\n";
+char pal_at3619[0x10] __attribute__((section(".rodata"))) = "now 20%\n";
+char pal_at3620[0x10] __attribute__((section(".rodata"))) = "now 50%\n";
+char pal_at3621[0x18] __attribute__((section(".rodata"))) = "now 100%\n";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", WeaponSelectKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_now_S2881;
+unsigned char pal_init_S2882;
+unsigned int pal_cnt_S2884;
+unsigned char pal_init_S2885;
+#pragma name_counter 2337
+#else
 static int WeaponSelectKey() {
     int result = 0;
     int chara_num = 6;
@@ -3903,6 +4084,7 @@ static int WeaponSelectKey() {
     }
     return result;
 }
+#endif
 
 /**
  * Stores a menu's cursor position in the saved menu cursors.
@@ -4037,6 +4219,13 @@ static void WeaponMenuActWepKey() {
     }
 }
 
+#ifdef PAL
+void WeaponMenuTagKey();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+s16 pal_at3698[4] = {5, 4, 10};
+#pragma name_counter 2478
+#else
 void WeaponMenuTagKey() {
     int moved = 0;
     s16 rows[3] = {5, 4, 10};
@@ -4148,6 +4337,7 @@ void WeaponMenuTagKey() {
         }
     }
 }
+#endif
 
 /**
  * Moves the cursor across the sockets of the selected weapon and fits or takes off the attachment held.
@@ -4306,6 +4496,16 @@ static void WeaponMenuAttachKey() {
     }
 }
 
+#ifdef PAL
+void RepairAndLevelUpDraw(int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at3951[8] __attribute__((aligned(16))) = {0x412B3333, 0x412B3333, 0x412B3333, 0x4174CCCD, 0x413CCCCD, 0x41433333, 0x4144CCCD};
+s8 pal_at3952[8] = {-79, -78};
+s8 pal_at3953[8] = {0, 0, 0, 58, 8, 22, 22};
+s8 pal_at3963[8] = {20, 20, 0, 12, -6, -4};
+#pragma name_counter 2573
+#else
 void RepairAndLevelUpDraw(int x, int y, int alpha) {
     int u;
     int v;
@@ -4348,7 +4548,19 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
+#endif
 
+#ifdef PAL
+void DrawBuildUpWeaponSelect(int x, int y, int cursor);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawBuildUpWeaponSelect__Fiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at3999[14] __attribute__((aligned(16))) = {
+    0x41633333, 0x00000000, 0x41566666, 0x3F800000, 0x41566666, 0x3F800000, 0x41566666,
+    0x3F800000, 0x41566666, 0x3F800000, 0x41566666, 0x3F800000, 0x41566666, 0x3F800000,
+};
+unsigned int pal_at4000[6] __attribute__((aligned(8))) = {0xFAFA00F8, 0xFAFAFAFA, 0xFAFAFAFA, 0x0000FAFA};
+#pragma name_counter 2590
+#else
 void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
     MenuTextureReload(BtlMenuReadBlock);
     float size[7][2] = {{14.2f, 0.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}};
@@ -4382,7 +4594,31 @@ void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
     CommonMenuMes1.Step();
     CommonMenuMes1.DrawMesWin();
 }
+#endif
 
+#ifdef PAL
+void WeaponMenuDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at4118[12] __attribute__((aligned(16))) = {
+    0x00A500C0, 0x00000050, 0x0000016E, 0x00000068, 0x00000068, 0x0000004E, 0x00000068,
+    0x0000004E, 0x00AA0058, 0x00B80000,
+};
+unsigned int pal_at4123[48] __attribute__((aligned(16))) = {
+    0x000000CD, 0x00000064, 0x000000CC, 0x000000C9, 0x00000000, 0x00000000, 0x00000060,
+    0x00000018, 0x00000000, 0x00000000, 0x000000C4, 0x00000018, 0x00000000, 0x00000000,
+    0x00000060, 0x00000018, 0x00000000, 0x00000000, 0x00000060, 0x00000018, 0x00000000,
+    0x00000000, 0x000000C0, 0x00000020, 0x00000000, 0x00000000, 0x00000060, 0x00000018,
+    0x00000000, 0x00000000, 0x000000C0, 0x00000020, 0x00000000, 0x00000000, 0x0000006E,
+    0x0000006E, 0x00000000, 0x00000000, 0x00000028, 0x00000028, 0x00000000, 0x00000000,
+    0x00000026, 0x00000026, 0x000000D8, 0x00000076, 0x000000B8, 0x00000098,
+};
+unsigned int pal_at4182[4] __attribute__((aligned(16))) = {0xBCE8C4EC, 0xBCE8BCE8, 0xBCE8BCE8, 0x0000BCE8};
+unsigned int pal_ct_S4057;
+unsigned char pal_init_S4058;
+s8 pal_at4094[8] = {78, 78, 78, 26, 64, 64, 66};
+#pragma name_counter 2789
+#else
 void WeaponMenuDraw() {
     int alpha;
     int attach_mode;
@@ -4757,6 +4993,7 @@ void WeaponMenuDraw() {
         }
     }
 }
+#endif
 
 /**
  * Swaps the item the menu is holding with the one in the given slot of the page it is on.
@@ -4930,7 +5167,11 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
 
 void ReadSyncItemMenuWepIcon() {
     BG_READ_INFO *file = GetReadBGFile(0);
+#ifdef PAL
+    LOADTEXTURE_INFO2 textures[3] = {{pal_at934, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+#else
     LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+#endif
 
     textures[0].block_no = ItemMenuWeaponIconReadBlock;
     textures[1].name = (char *) file->buffer;
@@ -4951,6 +5192,11 @@ void ReadSyncItemMenuWepIcon() {
  * @address 0x2025E0
  * @size 0x624
  */
+#ifdef PAL
+static void InitItemMode(int, int chara);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", InitItemMode__Fii);
+#pragma name_counter 2965
+#else
 static void InitItemMode(int mode, int chara) {
     CMenuCursor *cursor;
     int max;
@@ -5062,6 +5308,7 @@ static void InitItemMode(int mode, int chara) {
         SetNowEquipWeaponDataForMsg(0, 0);
     }
 }
+#endif
 
 /**
  * Waits for the item page's data and opens it on the throw-away mode.
@@ -5150,6 +5397,17 @@ static void ChangeMenuChara() {
 /**
  * Handles item-menu input, item use, equipment changes, and inventory transfers.
  */
+#ifdef PAL
+int ItemMenuMainKey();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ItemMenuMainKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at4694[4] __attribute__((aligned(16))) = {0x00000002, 0x00000001, 0x00000018, 0xFFFFFFFF};
+unsigned int pal_at5029[8] __attribute__((aligned(16))) = {0xFFFFFFFF, 0x000000C1, 0x000000BF, 0x000000BD, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
+unsigned int pal_at5101[4] __attribute__((aligned(16))) = {0x00B600B4, 0x00B600B6, 0x00B600B5};
+s32 pal_at4593[2] = {1, 24};
+s16 pal_at4758[4] = {1, 24};
+#pragma name_counter 3666
+#else
 int ItemMenuMainKey() {
     float effect_x;
     float effect_y;
@@ -6156,7 +6414,19 @@ int ItemMenuMainKey() {
     }
     return 1;
 }
+#endif
 
+#ifdef PAL
+void ItemMenuModeDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ItemMenuModeDraw__Fv);
+/* Retail's data for the function the marker above supplies. */
+char pal_at5391[0x20] __attribute__((aligned(16))) = "ff6A33KA33KAffNA33KA33KA33KA";
+unsigned int pal_at5393[8] __attribute__((aligned(16))) = {0x3F99999A, 0x3F99999A, 0x3F99999A, 0x3F99999A, 0x3F99999A, 0x4019999A, 0x4019999A};
+unsigned int pal_at5396[8] __attribute__((aligned(16))) = {0x00680000, 0x00E200B2, 0x00BF002D, 0x00BF0059, 0x00000000, 0x0000011A};
+unsigned int pal_at5421[4] __attribute__((aligned(16))) = {0x00000000, 0x00180018, 0x000D001C};
+s8 pal_at5392[8] = {0, 0, 0, 0, 0, -16, -16};
+#pragma name_counter 3771
+#else
 void ItemMenuModeDraw() {
     BtlMenuTexBlockEnter();
     CharaStatus = TexManager.GetTexture("status", -1);
@@ -6374,6 +6644,7 @@ void ItemMenuModeDraw() {
             break;
     }
 }
+#endif
 
 int ItemMenuModeKey() {
     if (ItemMenuMode.mode == 5) {
@@ -6537,6 +6808,16 @@ static void MenuCharaPolyDraw() {
     SetItemMenuOldAmbient();
 }
 
+#ifdef PAL
+void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at5586[4] __attribute__((aligned(16))) = {0x00000100, 0x00000060, 0x0000000C, 0x0000000E};
+s32 pal_at5608[2] = {0, 0};
+s8 pal_at5644[8] = {8, 6, 6, 6, 6, 6, 6};
+s8 pal_at5645[8] = {0, 6, 6, 6, 6, 6, 6};
+#pragma name_counter 4010
+#else
 void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
     int draw_x;
     int draw_y;
@@ -6749,6 +7030,7 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
                        y - 0x12);
     }
 }
+#endif
 
 void ItemNaviCursor(int item_no) {
     s8 shown[3] = {0, 0, 0};
@@ -6952,7 +7234,11 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
             break;
         case 5:
             BtlMenuStatusPt = BtlMenuSaveDataPt->GetDngStatus();
+#ifdef PAL
+            StayTex = TexManager.GetTexture(pal_at1018, -1);
+#else
             StayTex = TexManager.GetTexture("stayfram", -1);
+#endif
             GamePad.MenuModeOn(0x78);
             GamePad.SetAutoRepeat(0xF000, 30, 5);
         case 1:
@@ -7035,6 +7321,23 @@ void GetTownOrDngPos() {
     }
 }
 
+#ifdef PAL
+int MenuMoveKey();
+/* Retail's data for the function the marker below supplies. */
+char pal_at6129[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "nowset mapID = %d\n";
+char pal_at6130[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " mapID = %d, visitflag=%d\n";
+char pal_at6131[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "mapID = %d ,visitflag=%d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", MenuMoveKey__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at6074[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
+unsigned int pal_at6093[16] __attribute__((aligned(16))) = {
+    0x00000000, 0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005, 0x00000006,
+    0x00000007, 0x0000000D, 0x00000008, 0x00000009, 0x0000000A, 0x0000000B, 0x0000000E,
+    0x0000000C, 0x0000000F,
+};
+s16 pal_at6033[4] = {0x131, 0x130, 0x12F};
+#pragma name_counter 4317
+#else
 int MenuMoveKey() {
     int stay = 1;
     int decided = 0;
@@ -7328,7 +7631,19 @@ int MenuMoveKey() {
     }
     return stay;
 }
+#endif
 
+#ifdef PAL
+void DrawMenuMove();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawMenuMove__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at6169[16] __attribute__((aligned(16))) = {
+    0x00B20150, 0x00000000, 0x00DC012A, 0x00000000, 0x00B40104, 0x00CE00C4, 0x00D60090,
+    0x011400F0, 0x0148013A, 0x013C0147, 0x009001D2, 0x00AB01D6, 0x009001B4, 0x012601BB,
+    0x011201C3,
+};
+#pragma name_counter 4431
+#else
 void DrawMenuMove() {
     int alpha;
     int x;
@@ -7565,7 +7880,17 @@ void DrawMenuMove() {
             break;
     }
 }
+#endif
 
+#ifdef PAL
+void DrawEscapeItem(int x, int y, int alpha);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawEscapeItem__Fiii);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at6250[8] __attribute__((aligned(16))) = {0x4109999A, 0x41100000, 0x41100000, 0x41300000, 0x41100000, 0x41100000, 0x41100000};
+unsigned int pal_at6254[4] __attribute__((aligned(16))) = {0x01A80138, 0x01A801A8, 0x01A801A8, 0x000001A8};
+s8 pal_at6253[8] = {0, 0, 0, 34};
+#pragma name_counter 4454
+#else
 void DrawEscapeItem(int x, int y, int alpha) {
     float widths[7] = {8.6f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f};
     int u;
@@ -7604,6 +7929,7 @@ void DrawEscapeItem(int x, int y, int alpha) {
     CommonMenuMes1.stay_frame = 0;
     DrawMenuClsMes(&CommonMenuMes1, x + 0x38, row_y - 0x10);
 }
+#endif
 
 /**
  * Appends the world map archive name of a region to a path.
@@ -7637,7 +7963,7 @@ int LoadWorldMap() {
         char cfg[32];
         sprintf(img, img_format, MenuMove.load_map + 1);
         sprintf(cfg, cfg_format, MenuMove.load_map + 1);
-        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
         textures[0].block_no = MenuMove.tex_block;
         textures[1].block_no = MenuMove.tex_block;
         textures[2].block_no = MenuMove.tex_block;
@@ -7654,7 +7980,11 @@ int LoadWorldMap() {
         TexManager.LoadTextureBlockEX(-1, textures);
         MenuMoveTex = TexManager.GetTexture("menumove", -1);
         if (MenuMove.mode == 5) {
+#ifdef PAL
+            InitMenuMesSet(5, (short *) GetPackFile((u_int *) file->buffer, pal_at945__2, NULL));
+#else
             InitMenuMesSet(5, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+#endif
         }
         u_long128 *model = file->buffer + ((((file->size >> 6) + 1) << 6) >> 4);
         MenuCharaFrame.Initialize();
@@ -7837,6 +8167,11 @@ static int WorldMapMoveKey() {
  * @address 0x20A9B0
  * @size 0x150
  */
+#ifdef PAL
+void DrawMapCheck(int);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawMapCheck__Fi);
+#pragma name_counter 4576
+#else
 void DrawMapCheck(int alpha) {
     s16 offset[16][2] = {0};
     CRect_i_ dst(0, 0, 0x10, 0xF);
@@ -7861,6 +8196,7 @@ void DrawMapCheck(int alpha) {
         }
     }
 }
+#endif
 
 /**
  * Gives how often a world-map place has been visited, or how far its dungeon has been cleared.
@@ -8279,6 +8615,10 @@ void MenuClsMes::InitData() {
     option_start = 0;
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
+#pragma name_counter 4735
+#else
 void MenuClsMes::SetBuffInfo(short *buffer) {
     ClsMes *mes = message;
 
@@ -8338,6 +8678,7 @@ void MenuClsMes::SetBuffInfo(short *buffer) {
     message->init_030 = 0x100;
     InitData();
 }
+#endif
 
 void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
     weapon = selected_weapon;

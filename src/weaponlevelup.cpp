@@ -14,6 +14,7 @@
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
 #include "itemdata.hpp"
+#include "mainselect.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
 #include "menu_misc.hpp"
@@ -511,6 +512,15 @@ void CWeaponLevelUp::SetSnd(int from, int to, int step) {
     if (from < to) {
         snd_step = step;
     }
+#ifdef PAL
+    if (DebugMode) {
+        printf("menu snd para:\n");
+        printf("        start:%d\n", snd_from);
+        printf("          now:%d\n", snd_volume);
+        printf("       limmit:%d\n", snd_to);
+        printf("         step:%d\n", snd_step);
+    }
+#endif
 }
 
 void CWeaponLevelUp::StepSnd() {
@@ -599,7 +609,7 @@ void CWeaponLevelUp::Step() {
                 }
             }
             if (ready_count >= 2) {
-                LOADTEXTURE_INFO2 textures[3] = {{"#frame_menu_level#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                LOADTEXTURE_INFO2 textures[3] = {{"#frame_menu_level#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
                 textures[0].block_no = texture_block;
                 textures[1].block_no = texture_block;
                 char file_table[14] = {0, 1, 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};

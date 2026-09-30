@@ -237,8 +237,9 @@ def relocations(obj):
     # readelf names the target by the reloc section: '.rel.data' etc.; map by order against -S
     secs = subprocess.run([READELF, "-S", "-W", str(obj)], capture_output=True, text=True).stdout
     info = {}
-    for m in re.finditer(r"^\s*\[\s*(\d+)\]\s+(\S+)\s+REL\s+\S+\s+\S+\s+\S+\s+\S+\s+\S*\s+\d+\s+(\d+)", secs, re.M):
-        info[m.group(2) + "@" + m.group(1)] = int(m.group(3))
+    for m in re.finditer(r"^\s*\[\s*(\d+)\]\s+(\S+)\s+REL\s+(.*)$", secs, re.M):
+        # the last three columns are Lk, Inf and Al; Flg may be empty
+        info[m.group(2) + "@" + m.group(1)] = int(m.group(3).split()[-2])
     current = None
     names = list(info)
     pos = 0

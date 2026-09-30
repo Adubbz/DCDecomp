@@ -200,6 +200,40 @@ static CMapObject OP_ToanMapObj;
    has been on screen long enough, which is how a raised eyebrow outlasts the word that raised it.
    The mouth is driven from the script's own clock, a new frame picked at random every sixth
    hundredth of a second left on the line's timer while the actor is talking. */
+#ifdef PAL
+void FaceChange(int no);
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", FaceChange__Fi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1150__3[4] __attribute__((aligned(16))) = {0x00008000, 0x10000000, 0x0000000E};
+unsigned int pal_face_S1151[88] __attribute__((aligned(16))) = {
+    0x01DF7720, 0x01DF7728, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000,
+    0x00000000, 0x00000100, 0x00000002, 0x00000000, 0x01DF7738, 0x01DF7740, 0x0000002A,
+    0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002,
+    0x00000000, 0x01DF7750, 0x01DF7758, 0x00000020, 0x00000028, 0x00000054, 0x00000023,
+    0x00000000, 0x00000000, 0x000001C0, 0x00000003, 0x00000000, 0x01DF7768, 0x01DF7770,
+    0x0000000A, 0x00000028, 0x00000049, 0x00000023, 0x00000000, 0x00000000, 0x000001C0,
+    0x00000002, 0x00000000, 0x01DF7738, 0x01DF7740, 0x0000002A, 0x00000028, 0x00000057,
+    0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002, 0x00000000, 0x01DF7738,
+    0x01DF7740, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000,
+    0x00000140, 0x00000002, 0x00000000, 0x01DF7780, 0x01DF7788, 0x00000008, 0x00000028,
+    0x0000004C, 0x00000023, 0x00000000, 0x00000000, 0x00000100, 0x00000002, 0x00000000,
+    0x01DF7798, 0x01DF77A0, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000,
+    0x00000000, 0x00000140, 0x00000002,
+};
+char pal_at1152__3[] __attribute__((section(".rodata"))) = "c07a01";
+char pal_at1153__3[] __attribute__((section(".rodata"))) = "c07a01an";
+char pal_at1154__3[] __attribute__((section(".rodata"))) = "c08a01";
+char pal_at1155__3[] __attribute__((section(".rodata"))) = "c08a01an";
+char pal_at1156__4[] __attribute__((section(".rodata"))) = "c11a01";
+char pal_at1157__2[] __attribute__((section(".rodata"))) = "c11a01an";
+char pal_at1158__2[] __attribute__((section(".rodata"))) = "c09a01";
+char pal_at1159__3[] __attribute__((section(".rodata"))) = "c09a01an";
+char pal_at1160__2[] __attribute__((section(".rodata"))) = "p19a_03";
+char pal_at1161__2[] __attribute__((section(".rodata"))) = "p19a_03an";
+char pal_at1162__2[] __attribute__((section(".rodata"))) = "p17a01";
+char pal_at1163__2[] __attribute__((section(".rodata"))) = "p17a01an";
+#pragma name_counter 124
+#else
 void FaceChange(int actor_no) {
     sceGifTag giftag = {0, 1, 0, 0, 0, 0, 1, SCE_GIF_PACKED_AD};
     static FACE_INFO face[8] = {
@@ -355,6 +389,7 @@ void FaceChange(int actor_no) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
+#endif
 
 void LoadCharaData(int buffer_no, int actor_no) {
     char *name[6][2] = {
@@ -488,6 +523,197 @@ void OpB_LoadDataBG2() {
    tenths of a world unit and a heading in degrees, one row per piece of scenery. The rows with no
    model of their own are further copies of the row above them, which is why the frame is only
    reloaded where a name is given. */
+#ifdef PAL
+void OpB_InitProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_InitProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at351__4[72] __attribute__((aligned(16))) = {
+    0x01DF7B90, 0x00000000, 0x00000000, 0x01DF7BB0, 0x0000001A, 0x00000000, 0x01DF7BD0,
+    0x0000001A, 0x00000000, 0x01DF7BF0, 0x00000017, 0x00000000, 0x01DF7C10, 0x00000015,
+    0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x00000000, 0x0000000A, 0x00000000,
+    0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000,
+    0x0000000A, 0x00000000, 0x00000000, 0x0000000B, 0x00000000, 0x00000000, 0x0000000B,
+    0x00000000, 0x00000000, 0x0000000B, 0x00000000, 0x00000000, 0x0000000B, 0x00000000,
+    0x00000000, 0x0000000B, 0x00000000, 0x00000000, 0x0000001A, 0x00000000, 0x00000000,
+    0x0000001A, 0x00000000, 0x00000000, 0x0000001A, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000013, 0x00000000, 0x00000000, 0x00000013, 0x00000000,
+    0x00000000, 0x00000002, 0x00000000, 0x01DF7C28,
+};
+unsigned int pal_at390__2[544] __attribute__((aligned(16))) = {
+    0x01DF7C30, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x01DF7C50, 0x01DF7C70, 0xC20C0000, 0x00000000, 0xC1200000, 0x00000000,
+    0x00000000, 0x00000000, 0x01DF7C90, 0x01DF7CB0, 0xC1700000, 0x00000000, 0xC2480000,
+    0x00000000, 0x00000000, 0x00000000, 0x01DF7CD0, 0x01DF7CF0, 0x41700000, 0x00000000,
+    0xC2480000, 0x00000000, 0x00000000, 0x00000000, 0x01DF7D10, 0x01DF7D30, 0x40A00000,
+    0x00000000, 0xC1200000, 0x00000000, 0x00000000, 0x00000000, 0x01DF7D50, 0x01DF7D70,
+    0xC2340000, 0x00000000, 0xC20C0000, 0x00000000, 0x00000000, 0x00000000, 0x01DF7D90,
+    0x00000000, 0xC20C0000, 0x00000000, 0xC25C0000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0xC25C0000, 0x00000000, 0xC2340000, 0x00000000, 0x00000000,
+    0x00000000, 0x01DF7DB0, 0x00000000, 0xC0A00000, 0x3DCCCCCD, 0x40A00000, 0x00000000,
+    0x00000000, 0x00000000, 0x01DF7DD0, 0x00000000, 0x41700000, 0x3DCCCCCD, 0x40A00000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC25C0000, 0x3DCCCCCD,
+    0x41700000, 0x00000000, 0x00000000, 0x00000000, 0x01DF7DF0, 0x00000000, 0xC2340000,
+    0x3DCCCCCD, 0xC25C0000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0xC25C0000, 0x3DCCCCCD, 0xC2820000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0xC2340000, 0x3DCCCCCD, 0xC2820000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0xC20C0000, 0x3DCCCCCD, 0xC2820000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC0A00000, 0x3DCCCCCD, 0xC2960000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40A00000, 0x3DCCCCCD, 0xC2960000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x41700000, 0x3DCCCCCD,
+    0xC2820000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x41C80000,
+    0x3DCCCCCD, 0xC2820000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x420C0000, 0x3DCCCCCD, 0xC25C0000, 0x00000000, 0x00000000, 0x00000000, 0x01DF7E10,
+    0x00000000, 0x41C80000, 0x00000000, 0xC20C0000, 0x00000000, 0x43340000, 0x00000000,
+    0x00000000, 0x00000000, 0xC25C0000, 0x00000000, 0xC1C80000, 0x00000000, 0x42B40000,
+    0x00000000, 0x00000000, 0x00000000, 0xC25C0000, 0x00000000, 0xC1C80000, 0x00000000,
+    0xC2B40000, 0x00000000, 0x01DF7E30, 0x00000000, 0xC1C80000, 0x00000000, 0xC20C0000,
+    0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0xC0A00000, 0x00000000,
+    0xC20C0000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0x40A00000,
+    0x00000000, 0xC20C0000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000,
+    0x41700000, 0x00000000, 0xC20C0000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000,
+    0x00000000, 0x41C80000, 0x00000000, 0xC1700000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x41C80000, 0x00000000, 0xC0A00000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x41C80000, 0x00000000, 0x40A00000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x41700000, 0x00000000, 0x41700000,
+    0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0xC0A00000, 0x00000000,
+    0x41700000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0xC1700000,
+    0x00000000, 0x41700000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000,
+    0xC20C0000, 0x00000000, 0x41700000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000,
+    0x00000000, 0xC2340000, 0x00000000, 0x41C80000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0xC2340000, 0x00000000, 0x420C0000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC2340000, 0x00000000, 0x42340000, 0x00000000,
+    0x00000000, 0x00000000, 0x01DF7E50, 0x00000000, 0xC20C0000, 0x00000000, 0xC20C0000,
+    0x00000000, 0x42B40000, 0x00000000, 0x01DF7E70, 0x00000000, 0xC1700000, 0x00000000,
+    0xC20C0000, 0x00000000, 0xC2B40000, 0x00000000, 0x00000000, 0x00000000, 0x41C80000,
+    0x00000000, 0xC1C80000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x40A00000, 0x00000000, 0x41700000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x41700000, 0x00000000, 0x42B40000, 0x00000000,
+    0x01DF7E90, 0x00000000, 0xC25C0000, 0x3D4CCCCD, 0xC20C0000, 0x00000000, 0xC2B40000,
+    0x00000000, 0x00000000, 0x00000000, 0xC25C0000, 0x3D4CCCCD, 0xC1C80000, 0x00000000,
+    0x42B40000, 0x00000000, 0x01DF7EB0, 0x00000000, 0xC2340000, 0x3D4CCCCD, 0xC1C80000,
+    0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0xC20C0000, 0x3D4CCCCD,
+    0xC1C80000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0xC1C80000,
+    0x3D4CCCCD, 0xC1C80000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000,
+    0xC0A00000, 0x3D4CCCCD, 0xC1C80000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000,
+    0x00000000, 0x40A00000, 0x3D4CCCCD, 0xC1C80000, 0x00000000, 0x42B40000, 0x00000000,
+    0x00000000, 0x00000000, 0x41700000, 0x3D4CCCCD, 0xC1C80000, 0x00000000, 0x42B40000,
+    0x00000000, 0x00000000, 0x00000000, 0xC1700000, 0x3D4CCCCD, 0xC1700000, 0x00000000,
+    0x00000000, 0x00000000, 0x01DF7ED0, 0x00000000, 0xC1700000, 0x3D4CCCCD, 0xC1C80000,
+    0x00000000, 0x00000000, 0x00000000, 0x01DF7EF0, 0x00000000, 0xC2820000, 0x3D4CCCCD,
+    0xC20C0000, 0x00000000, 0x42B40000, 0x00000000, 0x00000000, 0x00000000, 0xC1700000,
+    0x3D4CCCCD, 0xC0A00000, 0x00000000, 0x43340000, 0x00000000, 0x01DF7F10, 0x00000000,
+    0xC1B776FD, 0x3D4CCCCD, 0x411E1B09, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0xC1D7710D, 0x3D4CCCCD, 0x411E1B09, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0xC1D7710D, 0x3D4CCCCD, 0x41A255D0, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC1B776FD, 0x3D4CCCCD, 0x41A255D0, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x404519CE, 0x3D4CCCCD, 0x41A255D0,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40E2B780, 0x3D4CCCCD,
+    0x41A255D0, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x40E2B780,
+    0x3D4CCCCD, 0x411E1B09, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x404519CE, 0x3D4CCCCD, 0x411E1B09, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x419F072B, 0x3D4CCCCD, 0xC1B6BFB1, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x419F072B, 0x3D4CCCCD, 0xC1D8016F, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC14D0275, 0x3D4CCCCD, 0xC1E66944, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC1878866, 0x3D4CCCCD, 0xC1E66944,
+    0x00000000, 0x00000000, 0x00000000, 0x01DF7F30, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x01DF7F50,
+};
+unsigned int pal_at410__5[184] __attribute__((aligned(16))) = {
+    0x01DF7F70, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x01DF7F90, 0x00000000, 0xC1C82993, 0x3CF5C28F, 0xC1AAB8EF, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC20C14CA, 0x3CF5C28F, 0xC1AAB8EF,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC23414CA, 0x3CF5C28F,
+    0xC1AAB8EF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC25C14CA,
+    0x3CF5C28F, 0xC1AAB8EF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0xC23414CA, 0x3CF5C28F, 0xC1E2B8EF, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0xC20C14CA, 0x3CF5C28F, 0xC1E2B8EF, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0xC1C82993, 0x3CF5C28F, 0xC1E2B8EF, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC0A0A64C, 0x3CF5C28F, 0xC1E2B8EF, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x409F59B4, 0x3CF5C28F, 0xC1E2B8EF,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x416FACDA, 0x3CF5C28F,
+    0xC1AAB8EF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x416FACDA,
+    0x3CF5C28F, 0xC1E2B8EF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x409F59B4, 0x3CF5C28F, 0xC1AAB8EF, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0xC0A0A64C, 0x3CF5C28F, 0xC1AAB8EF, 0x00000000, 0x00000000, 0x00000000,
+    0x01DF7FB0, 0x00000000, 0xC2480000, 0x3CF5C28F, 0xC1AA5879, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC2200000, 0x3CF5C28F, 0xC1AA5879, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC1F00000, 0x3CF5C28F, 0xC1AA5879,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x3CF5C28F,
+    0xC1AA5879, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x41200000,
+    0x3CF5C28F, 0xC1AA5879, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x41200000, 0x3CF5C28F, 0xC1E25879, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0xC1F00000, 0x3CF5C28F, 0xC1E25879, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x3CF5C28F, 0xC1E25879, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0xC2200000, 0x3CF5C28F, 0xC1E25879,
+};
+char pal_at345__8[] __attribute__((section(".rodata"))) = "#blender#640#256#4";
+char pal_at346__4[] __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
+char pal_at347__5[] __attribute__((section(".rodata"))) = "#fukidashibase#640#256#4";
+char pal_at348__4[] __attribute__((section(".rodata"))) = "#shadow_buff#640#256#4";
+char pal_at349__4[] __attribute__((section(".rodata"))) = "#frame_image#640#256#4";
+char pal_at350__4[] __attribute__((section(".rodata"))) = "";
+char pal_at364__3[] __attribute__((section(".rodata"))) = "opdat/norn/t0005.mds";
+char pal_at365__6[] __attribute__((section(".rodata"))) = "opdat/norn/e01h01_0.mds";
+char pal_at366__6[] __attribute__((section(".rodata"))) = "opdat/norn/e01h01_s.mds";
+char pal_at367__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01h03_2.mds";
+char pal_at368__5[] __attribute__((section(".rodata"))) = "opdat/norn/e01h03_s.mds";
+char pal_at369__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01h10_2.mds";
+char pal_at370__6[] __attribute__((section(".rodata"))) = "opdat/norn/e01h10_s.mds";
+char pal_at371__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01h07_0.mds";
+char pal_at372__5[] __attribute__((section(".rodata"))) = "opdat/norn/e01h07_s.mds";
+char pal_at373__6[] __attribute__((section(".rodata"))) = "opdat/norn/e01h08_2.mds";
+char pal_at374__6[] __attribute__((section(".rodata"))) = "opdat/norn/e01h08_s.mds";
+char pal_at375__7[] __attribute__((section(".rodata"))) = "opdat/norn/t0002.mds";
+char pal_at376__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01t01_0.mds";
+char pal_at377__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01t01_1.mds";
+char pal_at378__5[] __attribute__((section(".rodata"))) = "opdat/norn/e01t01_2.mds";
+char pal_at379__5[] __attribute__((section(".rodata"))) = "opdat/norn/e01c01_0.mds";
+char pal_at380__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01c02_0.mds";
+char pal_at381__7[] __attribute__((section(".rodata"))) = "opdat/norn/e01c06_0.mds";
+char pal_at382__5[] __attribute__((section(".rodata"))) = "opdat/norn/e01c07_0.mds";
+char pal_at383__3[] __attribute__((section(".rodata"))) = "opdat/norn/e01r01_0.mds";
+char pal_at384__5[] __attribute__((section(".rodata"))) = "opdat/norn/e01r02_0.mds";
+char pal_at385__4[] __attribute__((section(".rodata"))) = "opdat/norn/e01r03_0.mds";
+char pal_at386__3[] __attribute__((section(".rodata"))) = "opdat/norn/e01r06_0.mds";
+char pal_at387__2[] __attribute__((section(".rodata"))) = "opdat/norn/t0004.mds";
+char pal_at388__3[] __attribute__((section(".rodata"))) = "opdat/norn/e01g02_0.mds";
+char pal_at389__3[] __attribute__((section(".rodata"))) = "opdat/norn/e01g03_0.mds";
+char pal_at407__4[] __attribute__((section(".rodata"))) = "opdat/norn/t0006.mds";
+char pal_at408__5[] __attribute__((section(".rodata"))) = "opdat/norn/t0001.mds";
+char pal_at409__6[] __attribute__((section(".rodata"))) = "opdat/norn/t0003.mds";
+char pal_at522__4[] __attribute__((section(".rodata"))) = "p09a01.img";
+char pal_at523__3[] __attribute__((section(".rodata"))) = "e01b01.img";
+char pal_at524__3[] __attribute__((section(".rodata"))) = "e01b02.img";
+char pal_at525__3[] __attribute__((section(".rodata"))) = "e01b03.img";
+char pal_at526__3[] __attribute__((section(".rodata"))) = "e01t01.img";
+char pal_at527__3[] __attribute__((section(".rodata"))) = "t0003.img";
+char pal_at528__2[] __attribute__((section(".rodata"))) = "e01s03.img";
+char pal_at529__2[] __attribute__((section(".rodata"))) = "e01s06.img";
+char pal_at530__3[] __attribute__((section(".rodata"))) = "t0001.img";
+char pal_at531__4[] __attribute__((section(".rodata"))) = "t0002.img";
+char pal_at532__3[] __attribute__((section(".rodata"))) = "gaiji.img";
+char pal_at533__3[] __attribute__((section(".rodata"))) = "fuki256.img";
+char pal_at534__5[] __attribute__((section(".rodata"))) = "syst04.img";
+char pal_at535__3[] __attribute__((section(".rodata"))) = "fire.img";
+char pal_at536__4[] __attribute__((section(".rodata"))) = "pause.img";
+char pal_at537__5[] __attribute__((section(".rodata"))) = "pause_e.img";
+char pal_at538__4[] __attribute__((section(".rodata"))) = "pause_f.img";
+char pal_at539__3[] __attribute__((section(".rodata"))) = "pause_g.img";
+char pal_at540__4[] __attribute__((section(".rodata"))) = "pause_i.img";
+char pal_at541__4[] __attribute__((section(".rodata"))) = "pause_s.img";
+char pal_at542__3[] __attribute__((section(".rodata"))) = "p09a01an.img";
+char pal_at543__2[] __attribute__((section(".rodata"))) = "o02a.txt";
+char pal_at545__2[] __attribute__((section(".rodata"))) = "opdat/norn.cfg";
+char pal_at547__3[] __attribute__((section(".rodata"))) = "win1";
+char pal_at548__4[] __attribute__((section(".rodata"))) = "light1";
+char pal_at549__5[] __attribute__((section(".rodata"))) = "sun3";
+char pal_at550__4[] __attribute__((section(".rodata"))) = "opdat/chara/03p09a.chr";
+char pal_at551__2[] __attribute__((section(".rodata"))) = "03p09a.cfg";
+char pal_at553__3[] __attribute__((section(".rodata"))) = "hane";
+char pal_at554__5[] __attribute__((section(".rodata"))) = "effect";
+unsigned int pal_at555__3[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DD1DD8, 0x01DD1DFC, 0x01DD1E20, 0x01DD1E44, 0x01DD1E68, 0x01DD1E8C, 0x01DD1EB0};
+#pragma name_counter 452
+#else
 void OpB_InitProcess() {
     LOADTEXTURE_INFO2 texture_list[] = {
         {"#blender#640#224#4", 0, 0},
@@ -798,6 +1024,7 @@ void OpB_InitProcess() {
     VolFade = 0;
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The second half of the scene, which starts when the camera cuts to Toan's house. Everything the
    first half loaded is thrown away and the pack the background read left in memory is unpacked
@@ -806,6 +1033,40 @@ void OpB_InitProcess() {
    loaded one at a time rather than through a table because each is followed by set-up of its own —
    Toan's mother has a frame turned off, Toan himself carries the cloth the wind drives, and the
    second Toan is the one the door animation is timed against. */
+#ifdef PAL
+void OpB_InitProcess2();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_InitProcess2__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at558__3[60] __attribute__((aligned(16))) = {
+    0x01DF7B90, 0x00000000, 0x00000000, 0x01DF7BB0, 0x0000001A, 0x00000000, 0x01DF7BD0,
+    0x0000001A, 0x00000000, 0x01DF7BF0, 0x00000017, 0x00000000, 0x01DF7C10, 0x00000015,
+    0x00000000, 0x00000000, 0x0000001A, 0x00000000, 0x00000000, 0x0000001A, 0x00000000,
+    0x00000000, 0x0000001A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000,
+    0x00000002, 0x00000000, 0x00000000, 0x00000016, 0x00000000, 0x00000000, 0x00000016,
+    0x00000000, 0x00000000, 0x00000016, 0x00000000, 0x00000000, 0x00000016, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000013, 0x00000000, 0x00000000,
+    0x00000013, 0x00000000, 0x00000000, 0x00000002, 0x00000000, 0x01DF7C28,
+};
+char pal_at577__3[] __attribute__((section(".rodata"))) = "i01h01n.img";
+char pal_at578__5[] __attribute__((section(".rodata"))) = "p10a01.img";
+char pal_at579__4[] __attribute__((section(".rodata"))) = "c01d01.img";
+char pal_at580__3[] __attribute__((section(".rodata"))) = "03c01d.img";
+char pal_at581__2[] __attribute__((section(".rodata"))) = "03komono.img";
+char pal_at582__3[] __attribute__((section(".rodata"))) = "opdat/toan.cfg";
+char pal_at583__3[] __attribute__((section(".rodata"))) = "opdat/toan/t0101.mds";
+char pal_at584__3[] __attribute__((section(".rodata"))) = "opdat/toan/03komono.chr";
+char pal_at585__4[] __attribute__((section(".rodata"))) = "03komono.cfg";
+char pal_at586__5[] __attribute__((section(".rodata"))) = "opdat/chara/03p10a.chr";
+char pal_at587__5[] __attribute__((section(".rodata"))) = "03p10a.cfg";
+char pal_at588__4[] __attribute__((section(".rodata"))) = "soup_nakami2";
+char pal_at589__5[] __attribute__((section(".rodata"))) = "opdat/chara/03c01d.chr";
+char pal_at590__5[] __attribute__((section(".rodata"))) = "03c01d.cfg";
+char pal_at591__3[] __attribute__((section(".rodata"))) = "opdat/chara/03c01d2.chr";
+char pal_at592__3[] __attribute__((section(".rodata"))) = "03c01d2.cfg";
+char pal_at594__5[] __attribute__((section(".rodata"))) = "door_1";
+unsigned int pal_at596__5[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DD2B98, 0x01DD2BBC, 0x01DD2BE0, 0x01DD2C04, 0x01DD2C28, 0x01DD2C4C, 0x01DD2C70};
+#pragma name_counter 480
+#else
 void OpB_InitProcess2() {
     LOADTEXTURE_INFO2 texture_list[] = {
         {"#blender#640#224#4", 0, 0},
@@ -949,12 +1210,22 @@ void OpB_InitProcess2() {
     CSnd.SetVol(1, (float) (OpGetVolSQ(1) * 0.1));
     CScript__2.init_no = 0;
 }
+#endif
 
 /* The scene's per-tick motion. Four of the actors are told what the script last asked of them —
    the loop is over the four the scene animates rather than over all of them — and a motion that
    has run past its last key falls through to whatever motion was queued behind it. Then the three
    models the camera's own frame tree carries drive three more actors: each is found by name in the
    camera model, and its world transform becomes that actor's position and heading. */
+#ifdef PAL
+void OpB_MotionProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_MotionProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_camera_S619;
+unsigned char pal_init_S620;
+unsigned int pal_at611__4[4] __attribute__((aligned(16))) = {0x01DF8320, 0x01DF8328, 0x01DF8330, 0x01DF8320};
+#pragma name_counter 552
+#else
 void OpB_MotionProcess() {
     for (int i = 8; i < 12; i++) {
         if (CScript__2.obj[i].disp) {
@@ -1039,6 +1310,7 @@ void OpB_MotionProcess() {
         }
     }
 }
+#endif
 
 /* The scene's per-tick sound. Two of the actors' footfalls are played from their own positions
    rather than from a track, which is why each is a window on the actor's motion frame with a wait
@@ -1046,6 +1318,17 @@ void OpB_MotionProcess() {
    the wait keeps a stutter in the motion from playing the step twice. Which of the two samples a
    footfall takes is decided by how far the camera's motion has run, because the ground changes
    under the actor part way through the scene. */
+#ifdef PAL
+void OpB_SoundProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_SoundProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_wait_S674;
+unsigned char pal_init_S675;
+unsigned int pal_wait_S705;
+unsigned char pal_init_S706;
+unsigned int pal_at693__2[4] __attribute__((aligned(16))) = {0x42480000, 0x42480000, 0xC2C80000};
+#pragma name_counter 602
+#else
 void OpB_SoundProcess() {
     if (CScript__2.scene == 1) {
         float camera_time = Cam__2[SceneNp__2].motion_type.state.time;
@@ -1119,12 +1402,25 @@ void OpB_SoundProcess() {
         OpSetVolPanSE(position, 100.0f, 200.0f, 14, 40, 39);
     }
 }
+#endif
 
 /* The scene's per-tick drawing, in the order the frame is built: the world, then the fires that
    are lights rather than models, then the actors' shadows onto the one buffer that holds them all,
    then the actors themselves, and last the depth of field the two outdoor scenes take. The near
    plane is pulled in to half a unit because the camera passes through the scenery, and the far one
    is the largest the Z buffer holds. */
+#ifdef PAL
+void OpB_DrawProcess();
+INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_DrawProcess__Fv);
+/* Retail's data for the function the marker above supplies. */
+float pal_at789__5[2] __attribute__((aligned(8))) = {300.0f, 1000.0f};
+char pal_at608__5[] __attribute__((section(".rodata"))) = "c01d";
+char pal_at609__4[] __attribute__((section(".rodata"))) = "p09a";
+char pal_at610__3[] __attribute__((section(".rodata"))) = "p10a";
+char pal_at806__3[] __attribute__((section(".rodata"))) = "soup_nakami";
+char pal_at807__2[] __attribute__((section(".rodata"))) = "shadow_buff";
+#pragma name_counter 680
+#else
 void OpB_DrawProcess() {
     RenderInfo *info = &mgRenderInfo;
 
@@ -1260,6 +1556,7 @@ void OpB_DrawProcess() {
         DepthOfField(dof, 2, 64, 0);
     }
 }
+#endif
 
 /**
  * The village sign's one animated texture. The animation is a strip of eight 64-pixel frames in a

@@ -12,8 +12,11 @@
 # unit link at retail's addresses -- mwcc emits a unit's functions as one
 # contiguous .text, so a hole in the middle cannot be filled from an outside .s.
 #
-# A marker names its file's directory outright -- `asm/nonmatchings/<unit>` --
-# so the prefix below is the source root and nothing has to be looked up.
+# A marker names its file's directory outright -- `asm/pal/nonmatchings/<unit>`
+# -- so the prefix below is the source root and nothing has to be looked up.
+# scripts/build/mwccgap_region.py hands mwccgap the source as the release in
+# DCDECOMP_REGION compiles it, so a marker under `#ifdef PAL` is the PAL
+# build's alone.
 #
 # A unit's markers are assembled several at a time; MWCCGAP_AS_JOBS says how
 # many, and 1 makes it one after another again.
@@ -71,7 +74,7 @@ fi
 MWCIncludes=$LIB_INCLUDE_DIRS \
 PYTHONPATH=$MWCCGAP_DIR \
 STATEFIX_SOURCE=$src \
-python3 "$MWCCGAP_DIR/mwccgap.py" "$src" "$obj" \
+python3 scripts/build/mwccgap_region.py "$src" "$obj" \
     --mwcc-path "$MW_DIR/mwccmips.exe" \
     --use-wibo \
     --wibo-path "$STATEFIX_WIBO" \

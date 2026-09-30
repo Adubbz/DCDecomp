@@ -106,7 +106,7 @@ s16 ManualImgEnter() {
         BG_READ_INFO *extra = GetReadBGFile(1);
         if (extra != NULL) {
             LOADTEXTURE_INFO2 extra_table[] = {
-                {"#frame_image1#640#448#4", 0, 0},
+                {"#frame_image1#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
                 {NULL, 0, 0},
                 {NULL, 0, 0},
             };
@@ -199,6 +199,13 @@ void DrawManualMsg() {
     CommonMenuMes3.DrawMesWin();
 }
 
+#ifdef PAL
+void InitMenuManual(int *texture_blocks, u_long128 *load_buffer);
+/* Retail's data for the function the marker below supplies. */
+char pal_at561[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "manual/mndata.pak";
+INCLUDE_ASM("asm/pal/nonmatchings/menu_manual", InitMenuManual__FPiP1);
+#pragma name_counter 134
+#else
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.load_buffer = load_buffer;
     ManualMenu.load_buffer = MenuCalcBufAlignment(ManualMenu.load_buffer);
@@ -224,6 +231,7 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
     ManualMenu.char_width = CommonMenuMes3.char_width;
 }
+#endif
 
 /**
  * Empties a message window and puts its layout back to the defaults.
@@ -492,6 +500,11 @@ int MenuManualKey() {
     return closed;
 }
 
+#ifdef PAL
+void MenuManualDraw();
+INCLUDE_ASM("asm/pal/nonmatchings/menu_manual", MenuManualDraw__Fv);
+#pragma name_counter 354
+#else
 void MenuManualDraw() {
     if (ManualMenu.mode >= 3 && ManualMenu.mode < 6 && ManualMenu.images_ready != 0) {
         MenuTextureReload(ManualMenu.image_texture_block);
@@ -544,3 +557,4 @@ void MenuManualDraw() {
         DrawManualMsg();
     }
 }
+#endif

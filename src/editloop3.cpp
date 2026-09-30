@@ -2106,7 +2106,8 @@ static void ClearObjAnime(int index) {
 }
 
 #ifdef PAL
-void EdEventStopPlay() {}
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventStopPlay__Fv);
+#pragma name_counter 1814
 #endif
 
 /** Whether the current event uses the lightweight initialization path. */
@@ -2174,9 +2175,8 @@ void EdEventPause() {
 }
 
 #ifdef PAL
-int EdCheckEventPause() {
-    return 0;
-}
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdCheckEventPause__Fv);
+#pragma name_counter 1815
 #endif
 
 /** Directory prepended to relative event resource names. */
@@ -3774,6 +3774,11 @@ static int _GET_NPC_PARTS_NO(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
+#ifdef PAL
+static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _SET_NPC_MOTION__FP12RS_STACKDATAi);
+#pragma name_counter 2581
+#else
 static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CCharacter *character;
@@ -3795,6 +3800,7 @@ static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
         character->SetMotionSpeed(speed);
     return 1;
 }
+#endif
 
 static int _SET_NPC_ANIME(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
@@ -6190,10 +6196,16 @@ static int _EB_LOOP(RS_STACKDATA *stack, int) {
     return 1;
 }
 
+#ifdef PAL
+static int _EB_INTRO_START(RS_STACKDATA *, int);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _EB_INTRO_START__FP12RS_STACKDATAi);
+#pragma name_counter 3595
+#else
 static int _EB_INTRO_START(RS_STACKDATA *, int) {
     EBInitIntro();
     return 1;
 }
+#endif
 
 static int _EB_INTRO_LOOP(RS_STACKDATA *stack, int) {
     SetStack(stack, EBIntroLoop());
@@ -6313,15 +6325,13 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
 }
 
 #ifdef PAL
-static int _GET_TV_MODE(RS_STACKDATA *stack, int argument_count) {
-    return 0;
-}
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_TV_MODE__FP12RS_STACKDATAi);
+#pragma name_counter 3628
 #endif
 
 #ifdef PAL
-static int _GET_LANG_CODE(RS_STACKDATA *stack, int argument_count) {
-    return 0;
-}
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_LANG_CODE__FP12RS_STACKDATAi);
+#pragma name_counter 3628
 #endif
 
 /* The internal operations assembly still supplies, so the registry below can name them. */
@@ -6333,6 +6343,10 @@ int _ASQ_SYNC_CHARA(RS_STACKDATA *, int);
 int _ASQ_MOVE_STEP(RS_STACKDATA *, int);
 int _ASQ_ROT_REF(RS_STACKDATA *, int);
 int _SGET_REQUEST(RS_STACKDATA *, int);
+#ifdef PAL
+int _GET_TV_MODE(RS_STACKDATA *, int);
+int _GET_LANG_CODE(RS_STACKDATA *, int);
+#endif
 
 /** Retail's ordered registry of editor-event external functions. */
 static ED_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
@@ -6642,6 +6656,10 @@ static ED_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
     {_INIT_FISH, 996},
     {_EXIT_FISHING, 995},
     {_SET_FISHING_ESA, 994},
+#ifdef PAL
+    {_GET_TV_MODE, 1001},
+    {_GET_LANG_CODE, 1002},
+#endif
     {NULL, -1},
 };
 
@@ -6955,6 +6973,33 @@ int EdEventFinish() {
  * @address 0x197AD0
  * @size 0xCFC
  */
+#ifdef PAL
+int EdEventMode(CCameraFollow *camera, int kind);
+/* Retail's data for the function the marker below supplies. */
+char pal_at2454[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "! CAMERA POS\n";
+char pal_at2455[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "# CAMERA REF\n";
+char pal_at2456[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "$ CHARACTER\n";
+char pal_at2609[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "select chara %d\ncollision %d\n";
+char pal_at2610[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " pos = ";
+char pal_at2611[0x8] __attribute__((section(".rodata"))) = " rot = ";
+char pal_at2612[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " amb %5.1f %5.1f %5.1f %5.1f\n";
+char pal_at2613[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "camera\n";
+char pal_at2614[0x8] __attribute__((section(".rodata"))) = " ref = ";
+char pal_at2615[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " angle = %4.3f\n";
+char pal_at2616__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " height = %6.2f\n";
+char pal_at2617[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " distance = %6.2f\n";
+char pal_at2618[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " projection = %7.1f\n";
+char pal_at2619[0x10] __attribute__((section(".rodata"))) = "frame_image";
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
+/* Retail's data for the function the marker above supplies. */
+char *pal_mode_name_S2453[6] __attribute__((aligned(8))) = {pal_at2454, pal_at2455, pal_at2456};
+unsigned int pal_at2575[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
+unsigned int pal_mode_S2450;
+unsigned char pal_init_S2451;
+unsigned int pal_select_chara_S2457;
+unsigned char pal_init_S2458;
+#pragma name_counter 3963
+#else
 int EdEventMode(CCameraFollow *camera, int kind) {
     int result;
 
@@ -7230,6 +7275,7 @@ int EdEventMode(CCameraFollow *camera, int kind) {
     }
     return result;
 }
+#endif
 
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->wind;

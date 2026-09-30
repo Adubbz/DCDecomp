@@ -117,6 +117,9 @@ int EdDebugCameraFlag;
 int EdDebugParamDrawOff;
 int EdDebugCharaDrawOff;
 int EdDebugMoveFlag;
+#ifdef PAL
+int EdDebugRunEventNo;
+#endif
 
 static int Debug = 1;
 static CDebugFont *DebugFont;
@@ -188,11 +191,21 @@ static int AddStr(CDebugFont *font, char *str) {
 }
 
 #ifdef PAL
-void EdDPrintChara(CMainChara *) {}
+/* Retail's data for the function the marker below supplies. */
+char pal_at380__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "chara\n pos = %7.2f,%7.2f,%7.2f\n";
+char pal_at381__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " rot = %7.2f,%7.2f,%7.2f\n";
+char pal_at382[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " (%d %d %d)\n";
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintChara__FP10CMainChara);
+#pragma name_counter 421
 #endif
 
 #ifdef PAL
-void EdDPrintCamera(CCamera *) {}
+/* Retail's data for the function the marker below supplies. */
+char pal_at391__3[0x30] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "camera\n pos = %7.2f,%7.2f,%7.2f\n";
+char pal_at392[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " ref = %7.2f,%7.2f,%7.2f\n";
+char pal_at393[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " projection = %7.1f\n";
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintCamera__FP7CCamera);
+#pragma name_counter 421
 #endif
 
 void EdDPrintVector(char *name, float *vector) {
@@ -426,19 +439,94 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
 }
 
 #ifdef PAL
-void EdDebugMenu() {}
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDebugMenu__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_mode_S505;
+unsigned char pal_init_S506;
+#pragma name_counter 521
 #endif
 
 #ifdef PAL
-void DM_Main() {}
+/* Retail's data for the function the marker below supplies. */
+char pal_at531__2[0x8] __attribute__((section(".rodata"))) = "OFF";
+char pal_at532[0x8] __attribute__((section(".rodata"))) = "ON";
+char pal_at534__2[0x8] __attribute__((section(".rodata"))) = "  ";
+char pal_at535[0x8] __attribute__((section(".rodata"))) = "->";
+char *pal_at533[2] = {pal_at531__2, pal_at532};
+char *pal_at536[2] = {pal_at534__2, pal_at535};
+char pal_at612[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "    MAIN    ->R2\n";
+char pal_at613[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sDEBUG CAMERA %s\n";
+char pal_at614__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sPARAMETER %s\n";
+char pal_at615__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sCHARACTER %s\n";
+char pal_at616__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sMESSAGE %s\n";
+char pal_at617__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sDEBUG MOVE %d\n";
+char pal_at618[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sRUN EVENT %d\n";
+char pal_at619__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sTALK EVENT %d\n";
+char pal_at620__3[0x10] __attribute__((section(".rodata"))) = "%sEVENT %s\n";
+char pal_at621__3[0x18] __attribute__((section(".rodata"))) = "%sLANGUAGE %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Main__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_select_S521;
+unsigned char pal_init_S522;
+unsigned int pal_run_event_S524;
+unsigned char pal_init_S525;
+unsigned int pal_talk_chara_S527;
+unsigned char pal_init_S528;
+#pragma name_counter 521
 #endif
 
 #ifdef PAL
-void DM_Sound() {}
+/* Retail's data for the function the marker below supplies. */
+char *pal_at639[2] = {pal_at531__2, pal_at532};
+char *pal_at640[2] = {pal_at534__2, pal_at535};
+char pal_at701[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "L2<-SOUND   ->\n";
+char pal_at702[0x30] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sBGM PLAY %d SEQ = %d o:PLAY x:STOP\n";
+char pal_at703[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sBGM OFF = %s\n";
+char pal_at704[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sSE PLAY  %d  O:PLAY X:STOP\n";
+char pal_at705[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sSOUND SET  %d  O:PLAY X:STOP\n";
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Sound__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_select_S623;
+unsigned char pal_init_S624;
+unsigned int pal_bgm_no_S626;
+unsigned char pal_init_S627;
+unsigned int pal_se_no_S629;
+unsigned char pal_init_S630;
+unsigned int pal_set_no_S632;
+unsigned char pal_init_S633;
+unsigned int pal_bgm_seq_S635;
+unsigned char pal_init_S636;
+#pragma name_counter 521
 #endif
 
 #ifdef PAL
-void DM_Flag() {}
+/* Retail's data for the function the marker below supplies. */
+char *pal_at743__2[2] = {pal_at531__2, pal_at532};
+char *pal_at744__3[2] = {pal_at534__2, pal_at535};
+char pal_at879__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "L2<-FALG   ->R\n";
+char pal_at880[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sGAMEFLAG %3d    = %s\n";
+char pal_at881[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sMAPFLAG %3d     = %s\n";
+char pal_at882[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sCOMPFLAG %3d    = %s\n";
+char pal_at883__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sGAME INT FALG 0 = %d\n";
+char pal_at884__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sQUEST DUNGEON   = %d\n";
+char pal_at885[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sDUNGEON FLOOR   = %d\n";
+char pal_at886__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sPARTY NUM       = %d\n";
+char pal_at887__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sTALKFLAG %3d    = %d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Flag__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_select_S706;
+unsigned char pal_init_S707;
+unsigned int pal_game_no_S709;
+unsigned char pal_init_S710;
+unsigned int pal_map_no_S712;
+unsigned char pal_init_S713;
+unsigned int pal_comp_no_S715;
+unsigned char pal_init_S716;
+unsigned int pal_dun_map_S718;
+unsigned char pal_init_S719;
+unsigned int pal_chara_S721;
+unsigned char pal_init_S722;
+#pragma name_counter 521
 #endif
 
 /* The box drawn as twelve edges of the frame's own corner list, taken to the screen in one go and
@@ -1183,6 +1271,13 @@ int EdInitMenu(int mode) {
 
 /* The frame the menu is actually built on: the picture behind it is kept first, because the menus
    draw over a still of the last game frame rather than over the game. */
+#ifdef PAL
+int EdInitModeFinish(CCamera *camera, CTexture *texture);
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdInitModeFinish__FP7CCameraP8CTexture);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at494__2[8] __attribute__((aligned(16))) = {0x00000010, 0x00000011, 0x00000012, 0x00000019, 0x00000020, 0x00000021};
+#pragma name_counter 944
+#else
 int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     init_menu_cnt++;
     if (init_menu_cnt > 3)
@@ -1229,6 +1324,7 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     }
     return 8;
 }
+#endif
 
 void EdExitMenu() {
     GamePad.AutoRepeatOff();

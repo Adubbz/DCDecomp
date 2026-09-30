@@ -61,12 +61,18 @@ static char CurrentDir[256] = "y:/ps2/dc_data/";
 
 static int header_num;
 static u_int *packfile_buff;
+#ifndef PAL
 static NAME_TREE *tree;
+#endif
 static int data_sector;
 static int old_vsync;
 static int start_vsync;
 
+#ifdef PAL
+static u_char header_buff[0x50000];
+#else
 static u_char header_buff[0x40000];
+#endif
 static BG_READ_INFO bg_read_info[32];
 
 static NAME_TREE *search_tree(NAME_TREE *node, char *name);
@@ -85,6 +91,11 @@ static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
 }
 #endif
 
+#ifdef PAL
+static DATA_HEADER *SearchFile(char *name);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", SearchFile__FPc);
+#pragma name_counter 295
+#else
 static DATA_HEADER *SearchFile(char *path) {
     NAME_TREE *node;
     char *word_end;
@@ -113,6 +124,7 @@ static DATA_HEADER *SearchFile(char *path) {
         return 0;
     return node->data;
 }
+#endif
 
 void InitReadBG() {
     int i;
@@ -125,6 +137,14 @@ void InitReadBG() {
 
 /* The buffer goes to the drive rather than through the processor, so an address the drive cannot
    reach is fatal rather than slow, and one that is not on a 64-byte boundary is only reported. */
+#ifdef PAL
+int LoadFileBG(char *name, u_long128 *buffer, int *size);
+/* Retail's data for the function the marker below supplies. */
+char pal_at229[0x18] __attribute__((section(".rodata"))) = "address error\n";
+char pal_at230__2[0x28] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "/*/*/*/*/not 64byte align at %x %s\n";
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", LoadFileBG__FPcP1Pi);
+#pragma name_counter 333
+#else
 int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     BG_READ_INFO *info;
     DATA_HEADER *header;
@@ -165,6 +185,7 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     info->sectors = header->sectors;
     return 1;
 }
+#endif
 
 BG_READ_INFO *GetReadBGFile(int index) {
     if (index < 0 || index >= 32)
@@ -358,6 +379,17 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
 
 /* The drive is asked for the data file itself only to learn where it starts; everything after this
    is read by sector from that base, which is why no path but the index's is ever opened. */
+#ifdef PAL
+void InitCDFile();
+/* Retail's data for the function the marker below supplies. */
+char pal_at397[0x18] __attribute__((section(".rodata"))) = "\\DATA.DAT;1";
+char pal_at398[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "cdrom0:\\DATA.HD2;1";
+char pal_at399[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "File open error \"\"\n \n \n";
+char pal_at400[0x8] __attribute__((section(".rodata"))) = "etc.cpp";
+char pal_at401[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "FALSE";
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", InitCDFile__Fv);
+#pragma name_counter 460
+#else
 void InitCDFile() {
     char index_image[307200];
     sceCdlFILE file;
@@ -386,6 +418,7 @@ void InitCDFile() {
     sceClose(fd);
     create_word_tree(index_image, sizeof header_buff, (char *) header_buff);
 }
+#endif
 
 void InitMemoryFile() {
 }
@@ -394,7 +427,7 @@ int LoadFile(char *path, void *buffer, int *out_size) {
     if (!LoadFile2(path, buffer, out_size, 0)) {
         printf("File open error \"%s\"\n \n \n", path);
 #ifdef PAL
-        __assert("etc.cpp", 753, "FALSE");
+        __assert(pal_at400, 753, pal_at401);
 #else
         __assert("etc.cpp", 740, "FALSE");
 #endif
@@ -439,7 +472,11 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
         host_file = 1;
     }
     if ((int) buffer > 0x2000000) {
+#ifdef PAL
+        printf(pal_at229);
+#else
         printf("address error\n");
+#endif
         for (;;)
             ;
     }
@@ -450,6 +487,11 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
     return CDRead(full_path, (u_int *) buffer, out_size);
 }
 
+#ifdef PAL
+static int CDRead(char *name, u_int *buffer, int *size);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", CDRead__FPcPUiPi);
+#pragma name_counter 509
+#else
 static int CDRead(char *path, u_int *buffer, int *out_size) {
     DATA_HEADER *header;
     sceCdRMode mode;
@@ -471,6 +513,7 @@ static int CDRead(char *path, u_int *buffer, int *out_size) {
         *out_size = header->size;
     return 1;
 }
+#endif
 
 int WriteFile(char *path, void *buffer, int size) {
     int fd;

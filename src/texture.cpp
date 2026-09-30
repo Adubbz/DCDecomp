@@ -79,6 +79,12 @@ void CTextureBlock::Initialize() {
     extend = 0;
 }
 
+#ifdef PAL
+/* Retail's data for the function the marker below supplies. */
+char pal_at221[0x8] __attribute__((section(".rodata"))) = "work";
+INCLUDE_ASM("asm/pal/nonmatchings/texture", Initialize__15CTextureManagerFi);
+#pragma name_counter 286
+#else
 void CTextureManager::Initialize(int size) {
     int i;
     int limit;
@@ -109,6 +115,7 @@ void CTextureManager::Initialize(int size) {
     textures[0].block = -1;
     last_block = -1;
 }
+#endif
 
 /* The buffer is taken as it comes and walked forward to the next 128-byte boundary, because every
    transfer out of it is a DMA read; the quadword count has to lose what the alignment ate. */
@@ -728,6 +735,10 @@ void CTextureManager::EnterFixTexture(char *name, u_char *image, int width, int 
 
 /* The Z-buffer scratch texture, which is the one fixed texture whose size and format the loader
    insists on rather than reads. */
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/texture", EnterFixTextureZ__15CTextureManagerFPUc);
+#pragma name_counter 598
+#else
 void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     char *name;
     int width;
@@ -784,6 +795,7 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
         sceDmaSend(channel, (void *) packet.pBase);
     sceGsSyncPath(0, 0);
 }
+#endif
 
 void CTextureManager::EnterIMGFile(u_char *buffer, int block, int mipmap, int extend) {
     u_int i;
@@ -1035,6 +1047,10 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
     sceVif1PkCloseDirectCode(packet);
 }
 
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/texture", BeginEnterTextureBlock__15CTextureManagerFi);
+#pragma name_counter 718
+#else
 void CTextureManager::BeginEnterTextureBlock(int block) {
     if (block < 0 || block >= 72)
         return;
@@ -1047,6 +1063,7 @@ void CTextureManager::BeginEnterTextureBlock(int block) {
     blocks[block].buffer_end = buffer + buffer_used;
     blocks[block].loaded = 0;
 }
+#endif
 
 void CTextureManager::EndEnterTextureBlock(int block) {
     if (block < 0 || block >= 72)

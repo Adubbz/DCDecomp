@@ -29,6 +29,9 @@ int GetOpenAttribute(char *name) {
 }
 
 void CMemoryCardAccess::Initialize() {
+#ifdef PAL
+    strcpy(this->dir_name, "BESCES-50295dkcloud");
+#else
     switch (GetMenuLangFlag()) {
         case 0:
             strcpy(this->dir_name, "BISCPS-15004dkcloud");
@@ -38,6 +41,7 @@ void CMemoryCardAccess::Initialize() {
             strcpy(this->dir_name, "BASCUS-97111dkcloud");
             break;
     }
+#endif
     strcpy(this->file_name, "darkcloud");
     for (int i = 0; i < 0x40; i++) {
         this->current_dir[i] = 0;

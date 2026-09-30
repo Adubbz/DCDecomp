@@ -142,6 +142,17 @@ void CScript::Step() {
 /* One command, once its arguments have been read: every case is a write into the object and
    nothing acts on it here, so a command is a request the overlay's own per-tick code picks up
    ([title-script.md](../../docs/formats/title-script.md)). */
+#ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/title/script", CheckScript__7CScriptFPciP15CSCRIPT_COMMANDi);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at337__3[26] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
+    0x01DC4474, 0x01DC450C, 0x01DC4590, 0x01DC4614, 0x01DC472C, 0x01DC47BC, 0x01DC484C,
+    0x01DC48E8, 0x01DC492C, 0x01DC49A4, 0x01DC49FC, 0x01DC4A64, 0x01DC4AB4, 0x01DC4B08,
+    0x01DC4B5C, 0x01DC4BF4, 0x01DC4C14, 0x01DC4C20, 0x01DC4CA0, 0x01DC4CC8, 0x01DC4D68,
+    0x01DC4E7C, 0x01DC4E9C, 0x01DC4F2C, 0x01DC4EFC, 0x01DC4ED4,
+};
+#pragma name_counter 559
+#else
 int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, int command_no) {
     int cursor;
 
@@ -327,6 +338,7 @@ int CScript::CheckScript(char *buffer, int position, CSCRIPT_COMMAND *command, i
 
     return cursor;
 }
+#endif
 
 /* One command's arguments. Both kinds read the same three forms and differ only in what stands
    before them: a kind-1 argument must be preceded by a comma and a kind-2 one stands where it is.
