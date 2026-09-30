@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "tools" / "mwccgap"))
 
 from mwccgap.elf import Elf  # noqa: E402
 from scripts.build import disassemble  # noqa: E402
+from scripts.build import region  # noqa: E402
 from scripts.build import retail  # noqa: E402
 
 
@@ -30,7 +31,7 @@ def retail_symbols(image):
     absolute addresses; those are left out.
     """
     own = {}
-    path = ROOT / "config" / f"{image}.symbols.txt"
+    path = ROOT / region.CONFIG / f"{image}.symbols.txt"
     for line in path.read_text(encoding="utf-8").splitlines():
         match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);(.*)$", line.strip())
         if match and "absolute:True" not in match.group(3):
@@ -223,7 +224,7 @@ RODATA_ALIGNMENTS = (16, 8, 4)
 def retail_addresses():
     """Every symbol the configuration gives an address, by name."""
     out = {}
-    for path in sorted(ROOT.glob("config/*.symbols.txt")):
+    for path in sorted((ROOT / region.CONFIG).glob("*.symbols.txt")):
         for line in path.read_text(encoding="utf-8").splitlines():
             match = re.match(r"(\S+) = (0x[0-9a-fA-F]+);", line.strip())
             if match:
@@ -255,6 +256,42 @@ def rodata_alignment(names, retail_names=None):
         if address:
             return next(a for a in RODATA_ALIGNMENTS if address % a == 0)
     return None
+
+
+# A datum defined for a function an INCLUDE_ASM marker supplies is named for
+# the retail datum it stands for: `pal_` + retail's name, `@` spelled `at` and
+# a static's `$` spelled `_S`.
+GENERATED_DATUM = re.compile(r"^pal_(.+)$")
+
+
+def generated_retail_name(name):
+    """The retail name a generated datum's identifier spells, or None."""
+    match = GENERATED_DATUM.match(name)
+    if not match:
+        return None
+    body = match.group(1)
+    if re.match(r"^at\d", body):
+        body = "@" + body[2:]
+    return re.sub(r"_S(\d+)((?:__\d+)?)$", r"$\1\2", body)
+
+
+def align_generated_data(elf):
+    """Give each generated datum's section the alignment retail's address implies.
+
+    The compiler gives an array of sixteen bytes or more a sixteen-byte slot
+    whatever its place, so a datum retail kept on an eight-byte boundary would
+    move everything after it.
+    """
+    for symbol in elf.symtab.symbols:
+        if not (0 < symbol.st_shndx < len(elf.sections)):
+            continue
+        name = generated_retail_name(symbol.name)
+        address = retail_addresses().get(name) if name else None
+        if address is None:
+            continue
+        section = elf.sections[symbol.st_shndx]
+        floor = SMALL_DATA_ALIGNMENT if section.name in SMALL_DATA_SECTIONS else 1
+        section.sh_addralign = max(floor, min(16, address & -address))
 
 
 def align_small_data(elf, retail_names=None):
@@ -514,7 +551,7 @@ def main():
     parser.add_argument("object", type=Path)
     parser.add_argument("source")
     parser.add_argument("--config", type=Path,
-                        default=ROOT / "config" / "object_fixups.json")
+                        default=ROOT / region.CONFIG / "object_fixups.json")
     # objdiff's base object is a plain compile of the source alone, with no
     # spliced assembly beside it. The fixups that reach a constant or a static
     # the splice supplies have nothing to act on there, and saying so is not an
@@ -543,6 +580,7 @@ def main():
         else:
             retail_names[old_name] = new_name
     align_small_data(elf, retail_names)
+    align_generated_data(elf)
     restore_transplanted_rodata(elf)
     drop_functions(elf, fixups.get("drop_functions", []), parser)
     extern_functions(elf, fixups.get("extern_functions", []), parser)

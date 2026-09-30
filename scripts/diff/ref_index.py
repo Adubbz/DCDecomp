@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Look up a retail symbol in the reference index.
 
-The splat configuration under ``config/`` carries retail's own symbol table,
+The splat configuration under ``config/<region>/`` carries retail's own symbol table,
 and splat files each function's assembly under the translation unit it belongs
 to. Together those say where every symbol lives and which file holds it, which
 makes them the project's symbol table for the retail side. They are preferred
@@ -23,14 +23,16 @@ import re
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-CONFIG_DIR = os.path.join(REPO, 'config')
 
 sys.path.insert(0, os.path.join(REPO, 'scripts', 'build'))
 import disassemble  # noqa: E402
+import region  # noqa: E402
+
+CONFIG_DIR = os.path.join(REPO, region.CONFIG)
 
 # Where splat files a function's own assembly: still supplied by a marker
 # under the first, decompiled under the second.
-ASM_DIRS = ('asm/nonmatchings', 'asm/matchings')
+ASM_DIRS = (region.ASM + '/nonmatchings', region.ASM + '/matchings')
 
 # The main executable first: it is what most lookups are for, and the overlays
 # reuse its address space, so a plain search order would otherwise be ambiguous.
@@ -89,18 +91,8 @@ class Entry:
 
 
 def overlay_origin():
-    """Where the overlays load, read from the linker script generator.
-
-    Kept out of this file deliberately: cmake/Overlays.cmake is where the
-    address is decided, and a second copy of it here would be one more thing
-    to keep in step.
-    """
-    path = os.path.join(REPO, 'cmake', 'Overlays.cmake')
-    with open(path, encoding='utf-8') as f:
-        match = re.search(r'set\(OVERLAY_ORIGIN\s+(0x[0-9A-Fa-f]+)\)', f.read())
-    if not match:
-        raise SystemExit('ref_index: no OVERLAY_ORIGIN in %s' % path)
-    return int(match.group(1), 16)
+    """Where the overlays load, which scripts/build/region.py decides."""
+    return region.OVERLAY_ORIGIN
 
 
 _CACHE = {}
@@ -122,7 +114,7 @@ def _asm_paths():
     # A translation unit that is still wholly supplied by assembly is emitted
     # as one asmtu file.  Index its glabels too so decompile.sh remains usable
     # before the first INCLUDE_ASM marker has been migrated.
-    asm_root = os.path.join(REPO, 'asm')
+    asm_root = os.path.join(REPO, region.ASM)
     if os.path.isdir(asm_root):
         for name in os.listdir(asm_root):
             if not name.endswith('.s'):
@@ -148,8 +140,8 @@ def entries(section):
 
     if not os.path.isdir(CONFIG_DIR):
         raise SystemExit(
-            'ref_index: config/ is missing; run `cmake --build build --target '
-            'setup` to split the retail binary first.')
+            'ref_index: %s/ is missing; run `scripts/build/cmake.sh setup` '
+            'to split the retail binary first.' % region.CONFIG)
 
     paths = _asm_paths()
     table = disassemble.read_symbol_table(CONFIG_DIR)

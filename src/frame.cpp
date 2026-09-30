@@ -1116,10 +1116,10 @@ int CFrameVu1::DrawVu1(unsigned int *packet, RenderInfo *info) {
 
             if (attr.remake_pending) {
                 half_width = 2.0f * (320.0f * inv_scale);
-                half_height = 2.0f * (112.0f * inv_scale);
+                half_height = 2.0f * (SCREEN_QUARTER_HEIGHT_F * inv_scale);
             } else {
                 half_width = 320.0f * inv_scale;
-                half_height = 112.0f * inv_scale;
+                half_height = SCREEN_QUARTER_HEIGHT_F * inv_scale;
             }
 
             if (screen_min[0] > half_width) {

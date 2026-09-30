@@ -14,6 +14,7 @@
 #include "editloop3.hpp"
 #include "fish.hpp"
 #include "framevu1.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
@@ -124,6 +125,11 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
     if (spot == 4) {
         FishNum = 4;
     }
+#ifdef PAL
+    if (DebugMode) {
+        FishNum = 5;
+    }
+#endif
     rare_interval = 30;
     switch (EdGetTime(SaveData->GetNowTime())) {
         case 0:
@@ -228,6 +234,16 @@ void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot) {
                 }
                 break;
         }
+#ifdef PAL
+        if (DebugMode) {
+            static int fish_type[5][8] = {{1, 2, 6, 7, 1, 2, 6, 7},
+                                          {1, 4, 9, 10, 1, 4, 9, 10},
+                                          {2, 4, 6, 5, 17, 2, 4, 6},
+                                          {0, 3, 11, 12, 13, 0, 3, 11},
+                                          {14, 15, 16, 5, 17}};
+            kind = fish_type[spot][i % 5];
+        }
+#endif
         LoadFish(&Fish[i], kind, slot, alloc, loaded);
         loaded = 1;
     }
@@ -495,6 +511,12 @@ void FishingStepFish() {
             Fish[i].SetFoodPos(-1, hook, radius);
         } else {
             float radius = esa_info[esa_type].radius;
+#ifdef PAL
+            // Debug builds let every fish notice the bait from anywhere.
+            if (DebugMode) {
+                radius = 100000000;
+            }
+#endif
             Fish[i].SetFoodPos(esa_type, hook, radius);
         }
         Fish[i].Step();

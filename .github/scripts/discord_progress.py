@@ -55,7 +55,7 @@ def progress_line(measures, units):
     )
 
 
-def payload(report):
+def payload(report, region="NTSC"):
     categories = {category["id"]: category for category in report["categories"]}
     units = report["units"]
 
@@ -66,35 +66,44 @@ def payload(report):
             if category in unit.get("metadata", {}).get("progress_categories", ())
         ]
 
-    sections = (
-        ("Overall", report["measures"], units),
-        ("Game", categories["game"]["measures"], category_units("game")),
-        ("Title", categories["title"]["measures"], category_units("title")),
-        ("DUN", categories["dun"]["measures"], category_units("dun")),
-    )
+    def embed(release):
+        prefix = f"{release.lower()}_" if region == "BOTH" else ""
+        overall = release.lower() if region == "BOTH" else None
+        sections = (
+            ("Overall", categories[overall]["measures"] if overall else report["measures"],
+             category_units(overall) if overall else units),
+            ("Game", categories[prefix + "game"]["measures"],
+             category_units(prefix + "game")),
+            ("Title", categories[prefix + "title"]["measures"],
+             category_units(prefix + "title")),
+            ("DUN", categories[prefix + "dun"]["measures"],
+             category_units(prefix + "dun")),
+        )
+        return {
+            "title": ("Dark Cloud NTSC 1.02" if release == "NTSC"
+                      else "Dark Cloud PAL prototype (12 July 2001)"),
+            "color": 0x5865F2,
+            "fields": [
+                {
+                    "name": heading(name, measures),
+                    "value": progress_line(measures, section_units),
+                    "inline": False,
+                }
+                for name, measures, section_units in sections
+            ],
+        }
 
     return {
         "username": "Osmond",
         "allowed_mentions": {"parse": []},
-        "embeds": [
-            {
-                "title": "Dark Cloud NTSC 1.02",
-                "color": 0x5865F2,
-                "fields": [
-                    {
-                        "name": heading(name, measures),
-                        "value": progress_line(measures, section_units),
-                        "inline": False,
-                    }
-                    for name, measures, section_units in sections
-                ],
-            }
-        ],
+        "embeds": [embed(release) for release in
+                   (("NTSC", "PAL") if region == "BOTH" else (region,))],
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--region", choices=("NTSC", "PAL", "BOTH"), default="NTSC")
     parser.add_argument("report", type=Path)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
@@ -102,7 +111,7 @@ def main():
     with args.report.open(encoding="utf-8") as report_file:
         report = json.load(report_file)
     with args.output.open("w", encoding="utf-8") as output_file:
-        json.dump(payload(report), output_file, ensure_ascii=False)
+        json.dump(payload(report, args.region), output_file, ensure_ascii=False)
         output_file.write("\n")
 
 

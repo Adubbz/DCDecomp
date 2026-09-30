@@ -28,6 +28,7 @@
 #include "menu_misc.hpp"
 #include "menuetc.hpp"
 #include "menuitemstep.hpp"
+#include "mainselect.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
@@ -828,6 +829,9 @@ static void ShopPolySetInit(int shop_kind, int shop_no) {
         scale[i] = place[shop_kind][shop_no][2];
         rotation[i] = turn[shop_kind][shop_no][i];
     }
+#ifdef PAL
+    position[1] -= 0.5f;
+#endif
     MenuCharaFrame.SetPosition(position);
     MenuCharaFrame.SetScale(scale);
     MenuCharaFrame.SetRotation(rotation);
@@ -935,7 +939,11 @@ static void ShopCurDraw(int x, int y, int pos, int top, int mode, int select, in
             }
             cur_y = y + row * 0x28;
             if (ShopMenu.board.cursor_area == 2) {
+#ifdef PAL
+                cur_x = x + 0xE2;
+#else
                 cur_x = x + 0xD2;
+#endif
                 cur_y = y + 0x8C;
             }
             frame_x = (int) cur_x + 0x1E;
@@ -1110,7 +1118,7 @@ static void ShopMenuExit() {
 
 void ShopTextureLoadFix() {
     LOADTEXTURE_INFO2 info[3] = {
-        {"#frame_imageshop#640#448#4", 0, 0},
+        {"#frame_imageshop#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };
@@ -1188,6 +1196,9 @@ static int ShopPersonReadStart(int shop_kind, int shop_no) {
     buffer = MenuCalcBufAlignment(buffer);
     StartReadBG();
     if (!LoadFileBG(file_name, buffer, &size)) {
+#ifdef PAL
+        printf("load is failed\n");
+#endif
         return 0;
     }
     ReadBG();
@@ -1226,7 +1237,7 @@ static int ShopPersonBuild(int shop_kind, int shop_no) {
     u_int *pack = (u_int *) file->buffer;
     u_char *model_area = (u_char *) pack + ((file->size >> 4) + 1) * 16;
     LOADTEXTURE_INFO2 texture[3] = {
-        {"#frame_menushop_model#640#448#4", 0, 0},
+        {"#frame_menushop_model#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };
@@ -1424,6 +1435,9 @@ int ChargeShopKey() {
     if (ShopMenu.ready == 0) {
         if (ReadBGSync() == 0) {
             ShopTextureLoadFix();
+#ifdef PAL
+            printf("Model Read Start\n");
+#endif
             ShopPersonReadStart(0, ShopMenu.shop_no);
         }
     } else {
@@ -1729,6 +1743,28 @@ int ChargeShopKey() {
                         }
                     }
                 }
+#ifdef PAL
+                // Debug shortcut: raises or lowers the party's Gilda.
+                if (DebugMode) {
+                    int step;
+                    int money = ShopUserStatusPt->money;
+
+                    step = 0;
+                    if (GamePad.On2(0x1000) && money < 9999) {
+                        step++;
+                    }
+                    if (GamePad.On2(0x4000) && 0 < money) {
+                        step--;
+                    }
+                    CUserStatus *status = ShopUserStatusPt;
+                    int total = status->money + step;
+                    if (total >= 0xFFFF) {
+                        status->money = 0xFFFF;
+                    } else {
+                        status->money = total;
+                    }
+                }
+#endif
                 switch (board_exit) {
                     case 0:
                         break;
@@ -2194,7 +2230,11 @@ void DrawChargeShop() {
         CommonMenuMes2.DrawMesWin();
         if (ShopHaveItemPt->item_no < 0x51) {
             int mes_no = 0x519;
+#ifdef PAL
+            u8 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0x78, 0x78}, {0xAA, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+#else
             s16 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+#endif
             AtoraNameMes.text_x = plate_x[ShopMenu.lang][0];
             if (ShopMenu.side == 1) {
                 mes_no = 0x518;
@@ -2204,7 +2244,7 @@ void DrawChargeShop() {
                 AtoraNameMes.MakeMesWin(mes_no);
             }
             AtoraNameMes.stay_frame = 1;
-            AtoraNameMes.text_y = 0x162;
+            AtoraNameMes.text_y = SCREEN_HEIGHT - 0x5E;
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
@@ -3446,6 +3486,11 @@ void ItemPosInfoInit() {
     for (i = 0; i < 100; i++) {
         if (pack->item[i] >= 0x84) {
             ItemBoardInfo[i] = 2;
+#ifdef PAL
+            if (DebugMode) {
+                printf("%d,  item exist is %d\n", i, pack->item[i]);
+            }
+#endif
         } else {
             ItemBoardInfo[i] = 0;
         }
@@ -3455,8 +3500,19 @@ void ItemPosInfoInit() {
         WEAPON_HAVE *weapons = status->chara_weapons[i];
 
         for (j = 0; j < 10; j++) {
+#ifdef PAL
+            s16 item_no = weapons[j].item_no;
+
+            if (item_no >= 0x101) {
+#else
             if (weapons[j].item_no >= 0x101) {
+#endif
                 WeaponBoardInfo[i][j] = 2;
+#ifdef PAL
+                if (DebugMode) {
+                    printf("%d,  wep exist is %d\n", i * 10 + j, item_no);
+                }
+#endif
             } else {
                 WeaponBoardInfo[i][j] = 0;
             }
@@ -3466,6 +3522,11 @@ void ItemPosInfoInit() {
     for (i = 0; i < 40; i++) {
         if (attach[i].id >= 0x51) {
             AttachBoardInfo[i] = 2;
+#ifdef PAL
+            if (DebugMode) {
+                printf("%d,  attach exist is %d\n", i, attach[i].id);
+            }
+#endif
         } else {
             AttachBoardInfo[i] = 0;
         }
@@ -3796,6 +3857,21 @@ static void ItemShopSelectKey2() {
         PersonalBoardLimmitCheck();
         ComMenuSePlay(0);
     }
+#ifdef PAL
+    // Debug shortcut: dumps the held item.
+    if (DebugMode && GamePad.Down2(0x1000)) {
+        printf("------nowHaveData---------\n");
+        printf("flag   = %d\n", ShopHaveItemPt->slot_state);
+        printf("mode = %d\n", ShopHaveItemPt->from_page);
+        printf("listno = %d\n", ShopHaveItemPt->item_no);
+        printf("select = %d\n", ShopHaveItemPt->from_slot);
+        printf("pos = %d\n", ShopHaveItemPt->last_slot);
+        printf("listno = %d\n", ShopHaveItemPt->item_no);
+        if (0 <= ShopHaveItemPt->item_no && ShopHaveItemPt->item_no < 0x51) {
+            printf("wepIndex = %d\n", ShopHaveWepPt->item_no);
+        }
+    }
+#endif
 }
 
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
@@ -3855,6 +3931,16 @@ static inline int ShopHeldInfo() {
     return ShopHaveItemPt->slot_state;
 }
 
+// PAL draft: 40 register differences remain (callee-saved permutation in the personal-board case).
+#if defined(PAL) && !defined(NON_MATCHING)
+int ItemShopKey2();
+/* Retail's data for the function the marker below supplies. */
+char pal_at2857[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " %d \tis \t\t%d\n";
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopKey2__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at2690[4] __attribute__((aligned(16))) = {0x00000064, 0x0000003C, 0x00000028};
+#pragma name_counter 2824
+#else
 int ItemShopKey2() {
     int result = 0;
     MENU_ITEMDATA record;
@@ -4338,6 +4424,47 @@ int ItemShopKey2() {
                     }
                     ComMenuSePlay(1);
                 }
+#ifdef PAL
+                // Debug shortcuts: add or take Gilda, and dump the shop board.
+                if (GamePad.On2(0x10)) {
+                    CUserStatus *status = ShopUserStatusPt;
+                    int total = status->money + 1000;
+                    if (total >= 0xFFFF) {
+                        status->money = 0xFFFF;
+                    } else {
+                        status->money = total;
+                    }
+                }
+                if (GamePad.On2(0x40)) {
+                    CUserStatus *status = ShopUserStatusPt;
+                    int money = status->money;
+                    if (money - 1000 >= 0xFFFF) {
+                        status->money = 0xFFFF;
+                    } else {
+                        status->money += -1000;
+                    }
+                }
+                if (GamePad.Down2(0x8)) {
+                    for (int i = 0; i < 30; i++) {
+                        printf(" %d \tis \t\t%d\n", i, ShopBoardInfo[i]);
+                    }
+                }
+                if (GamePad.Down2(0x2)) {
+                    int capacity[3] = {100, 60, 40};
+                    int max;
+                    switch (ShopMenu.board.page) {
+                        case 0:
+                            max = capacity[0];
+                            break;
+                        case 1:
+                            max = capacity[1];
+                            break;
+                        case 2:
+                            max = capacity[2];
+                            break;
+                    }
+                }
+#endif
                 if (cursor != ShopMenu.board.cursor || old_page != ShopMenu.board.page) {
                     ComMenuSePlay(0);
                 }
@@ -4430,6 +4557,7 @@ int ItemShopKey2() {
     }
     return result;
 }
+#endif
 
 void ItemShopDraw2() {
     int cur_x;
@@ -4597,14 +4725,25 @@ void ItemShopDraw2() {
         CommonMenuMes2.Step();
         CommonMenuMes2.DrawMesWin();
         if (ShopHaveItemPt->item_no < 0x51) {
+#ifdef PAL
+            s8 plate[3] = {6, 7, 8};
+            int mes_no = plate[ShopMenu.side] + 0x4B0;
+#else
             int plate[3] = {0x4B6, 0x4B7, 0x4B8};
             int mes_no = plate[ShopMenu.side];
+#endif
             if (AtoraNameMes.mes_made != mes_no) {
                 AtoraNameMes.MakeMesWin(mes_no);
             }
             AtoraNameMes.stay_frame = 1;
             AtoraNameMes.text_x = 0xB4;
-            AtoraNameMes.text_y = 0x168;
+            AtoraNameMes.text_y = SCREEN_HEIGHT - 0x58;
+#ifdef PAL
+            // The third plate draws further left in language 6.
+            if (GetMenuLangFlag() == 6 && mes_no == 0x4B8) {
+                AtoraNameMes.text_x -= 0x12;
+            }
+#endif
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
@@ -4766,7 +4905,7 @@ void InitFishingExchange(u_long128 *buffer, int *tex_block, int mode) {
     GamePad.MenuModeOn(0x78);
 }
 
-char FishFrameImage[] __attribute__((section(".rodata"))) = "#frame_image#640#448#4";
+char FishFrameImage[] __attribute__((section(".rodata"))) = "#frame_image#640#" SCREEN_HEIGHT_STR "#4";
 
 /**
  * Enters the fishing menu's textures once they have been read.
@@ -4831,6 +4970,15 @@ int FishingExchangeKey() {
     int result = 0;
 
     ReadBG();
+#ifdef PAL
+    // Debug shortcut: adds a Mardan Garayan catch.
+    if (DebugMode && GamePad.Down2(0x10)) {
+        s32 &caught = SaveData->mardan_garayan_caught;
+
+        caught++;
+        SetFishMardanGarayanNum(1);
+    }
+#endif
     int mardan = AlreadyGetMardanWeapon();
     int party = SaveData->GetDngStatus()->party_size;
     if (party <= 0) {
@@ -4897,6 +5045,17 @@ int FishingExchangeKey() {
                     }
                 }
             }
+#ifdef PAL
+            // Debug shortcut: raises or lowers the points to spend.
+            if (DebugMode) {
+                if (GamePad.On2(0x40) && FishMenu.point < 9999) {
+                    FishMenu.point++;
+                }
+                if (GamePad.On2(0x20) && FishMenu.point > 0) {
+                    FishMenu.point--;
+                }
+            }
+#endif
             if (last_prize < FishMenu.cursor) {
                 FishMenu.cursor = last_prize;
             }
@@ -5171,7 +5330,15 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
         DrawIconParts(prize->item_no, x, pos_y, y, y + 0xCE, alpha, 0);
         DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
                          alpha);
+#ifdef PAL
+#ifdef PAL
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
+#else
+        RECT digits = {0x160, 0xEA, 0x10, 0x16};
+#endif
+#else
+        RECT digits = {0x140, 0xEA, 0x10, 0x16};
+#endif
         DrawMenuNumber(prize->price, x + 0x106, pos_y + 6, FishMenuTex, digits, 1, alpha);
         if (i >= 0 && i < 10) {
             AtoraNameMes.line_pos[i].x = x + 0x24;
@@ -5211,7 +5378,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
     }
     CommonMenuMes3.edge_alpha = alpha;
     CommonMenuMes3.text_x = 0x46;
+#ifdef PAL
+    CommonMenuMes3.text_y = 0x160;
+#else
     CommonMenuMes3.text_y = 0x140;
+#endif
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
     if (FishMenu.fade_mode == 4 || FishMenu.fade_mode == 5) {
@@ -5458,6 +5629,13 @@ static int FishRecordViewKey() {
                 FishRecordMenu.fade_mode = 1;
                 FishRecordMenu.fade_count = 0;
             }
+#ifdef PAL
+            // Debug shortcut: records a random catch.
+            if (DebugMode && GamePad.Down2(0x40)) {
+                int fish_id = rand() % 18;
+                SaveData->SetFishingRank(fish_id, rand() % 20);
+            }
+#endif
             if (old_cursor != FishRecordMenu.cursor) {
                 ComMenuSePlay(0);
                 for (int i = 0; i < 5; i++) {

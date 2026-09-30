@@ -18,37 +18,17 @@ import sys
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-CONFIG = Path("config")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
+
+CONFIG = Path(region.CONFIG)
 SRC = Path("src")
+# Where splat writes the release's reference assembly.
+ASM = region.ASM
 
 
-SECTIONS = {
-    "main": (
-        (".text", "text", 0x00100000, 0x00245300),
-        (".vutext", "data", 0x00245300, 0x0024FAC0),
-        (".data", "data", 0x0024FAC0, 0x00296680),
-        (".vudata", "data", 0x00296680, 0x00296780),
-        (".rodata", "rodata", 0x00296780, 0x0029FE80),
-        (".rdata", "rdata", 0x0029FE80, 0x002A1E80),
-        (".sdata", "sdata", 0x002A1E80, 0x002A2380),
-        (".sbss", "sbss", 0x002A2380, 0x002A3709),
-        (".bss", "bss", 0x002A3709, 0x01DABD00),
-    ),
-    "title": (
-        ("header", "bin", 0x01DABD00, 0x01DABD40),
-        (".text", "text", 0x01DABD40, 0x01DD5380),
-        (".data", "data", 0x01DD5380, 0x01DE1AFC),
-        (".bss", "bss", 0x01DE1AFC, 0x01E5DF80),
-    ),
-    "dun": (
-        ("header", "bin", 0x01DABD00, 0x01DABD40),
-        (".text", "text", 0x01DABD40, 0x01DC1B00),
-        (".data", "data", 0x01DC1B00, 0x01DC2980),
-        (".rodata", "rodata", 0x01DC2980, 0x01DC3580),
-        (".sinit", "data", 0x01DC3580, 0x01DC4414),
-        (".bss", "bss", 0x01DC4414, 0x01F06B00),
-    ),
-}
+# Retail's section layout, per image, for the release being built.
+SECTIONS = region.SECTIONS
 
 IMAGES = tuple(SECTIONS)
 
@@ -118,8 +98,8 @@ def dump_path(name):
     image, _, section = name.partition(".")
     for section_name, kind, _start, _end in SECTIONS[image]:
         if section_name.lstrip(".") == section:
-            return f"asm/data/{image}/{section}.{kind}.s"
-    return f"asm/data/{image}/{section}.{section}.s"
+            return f"{ASM}/data/{image}/{section}.{kind}.s"
+    return f"{ASM}/data/{image}/{section}.{section}.s"
 
 
 # MWCC numbers a function-local static by appending a dot and a digit, which is
@@ -219,7 +199,7 @@ def read_units(config_dir=CONFIG, src_dir=SRC):
         if source is None:
             continue
         kind, image = classified.get(unit, ("mixed", image_of_unit(unit)))
-        reference = f"asm/{unit}.s"
+        reference = f"{ASM}/{unit}.s"
         if unit in standalone:
             reference = data_only_dump(unit, standalone[unit])
         rows.append((kind, image, source, reference))
@@ -232,12 +212,12 @@ DATA_ONLY_TYPES = (".data", ".bss", ".sdata", ".sbss")
 
 def data_only_dump(unit, kind):
     """Where splat writes a unit that is one data subsegment and nothing else."""
-    return f"asm/data/{unit}.{kind.lstrip('.')}.s"
+    return f"{ASM}/data/{unit}.{kind.lstrip('.')}.s"
 
 
 def data_only_dumps():
     """The files of the data-only units, which drop_redundant_dumps must keep."""
-    return {Path(row[3]).name for row in read_units() if row[0] == "asm" and row[3].startswith("asm/data/")}
+    return {Path(row[3]).name for row in read_units() if row[0] == "asm" and row[3].startswith(f"{ASM}/data/")}
 
 
 SYMBOL_ROW = re.compile(r"^(\S+)\s*=\s*(0x[0-9A-Fa-f]+)\s*;(?:\s*//\s*(.*))?$")
@@ -586,7 +566,7 @@ def image_of_file():
             if marker in parts:
                 index = parts.index(marker)
                 unit = "/".join(parts[index + 1 : -1])
-                return by_reference.get(f"asm/{unit}.s")
+                return by_reference.get(f"{ASM}/{unit}.s")
         if "data" in parts:
             return path.name.split("_", 1)[0]
         return None
@@ -611,7 +591,8 @@ def linked_object(path):
     if "data" in parts:
         return path.name
     posix = path.as_posix()
-    return posix[len("asm/") : -len(".s")] if posix.startswith("asm/") else None
+    prefix = f"{ASM}/"
+    return posix[len(prefix) : -len(".s")] if posix.startswith(prefix) else None
 
 
 # A generated local label, and every mention of one. gas keeps a name beginning
@@ -681,7 +662,7 @@ def restore_invented_names(text):
     return INVENTED_MENTION.sub(r'"@\1"', text)
 
 
-def restore_invented_names_in_parts(root="asm"):
+def restore_invented_names_in_parts(root=ASM):
     """Restore invented names in residual dumps excluded from label passes."""
     changed = 0
     for path in sorted(Path(root).rglob("*.s")):
@@ -783,7 +764,7 @@ def clear_generated():
     residual section parts are not splat outputs and are kept.
     """
     removed = 0
-    root = Path("asm")
+    root = Path(ASM)
     if not root.is_dir():
         return removed
     for path in sorted(root.rglob("*.s"), reverse=True):
@@ -835,7 +816,7 @@ FIRST_ADDRESS = re.compile(r"^\s*/\* [0-9A-F]+ ([0-9A-F]{8}) ", re.M)
 RODATA_SECTION = re.compile(r"^\s*\.section\s+\.(rodata|rdata)\b")
 
 
-def align_rodata(root="asm"):
+def align_rodata(root=ASM):
     """Say what each run of constants is aligned to.
 
     A run inside a function's file stops at that function's last constant, so
@@ -895,7 +876,7 @@ def drop_redundant_dumps():
     """
     keep = {Path(dump_path(name)).name for name in dump_names()} | data_only_dumps()
     removed = 0
-    data = Path("asm/data")
+    data = Path(ASM) / "data"
     if data.is_dir():
         for path in sorted(data.rglob("*.s")):
             if "parts" not in path.parts and path.name not in keep:
@@ -956,8 +937,35 @@ def write_symbol_aliases(out, objects):
     print(f"disassemble: {len(pairs)} templated symbols -> {out}")
 
 
+class ActiveSource:
+    """A source file as the release being split compiles it."""
+
+    def __init__(self, path):
+        self.path = Path(path)
+
+    def read_text(self, encoding="utf-8"):
+        return region.active_text(self.path.read_text(encoding=encoding))
+
+
+def configure_region_markers():
+    """Read a source's markers and definitions as this release compiles it.
+
+    splat decides which functions still need reference assembly from the
+    INCLUDE_ASM markers and function definitions in the source text; a marker
+    or a definition a `#ifdef PAL` guard leaves out is not this release's.
+    """
+    from splat.segtypes.common.c import CommonSegC
+
+    for name in ("get_funcs_defined_in_c", "get_global_asm_funcs",
+                 "get_global_asm_rodata_syms"):
+        original = getattr(CommonSegC, name)
+        setattr(CommonSegC, name,
+                staticmethod(lambda c_file, original=original: original(ActiveSource(c_file))))
+
+
 def split_one(config):
     """Split a single image. Runs in a process of its own; see main()."""
+    configure_region_markers()
     configure_spimdisasm()
     configure_r5900_registers()
     configure_vu_sections()
@@ -1018,7 +1026,7 @@ def main():
         import spimdisasm  # noqa: F401
     except ImportError as missing:
         print(f"disassemble: {missing.name} is not installed, so nothing can be "
-              f"split; leaving the existing asm/ alone.", file=sys.stderr)
+              f"split; leaving the existing {ASM}/ alone.", file=sys.stderr)
         return 1
 
     # splat keeps the symbol table and the disassembler's context in module
@@ -1068,7 +1076,7 @@ def main():
     if status:
         return status
 
-    unaligned = drop_rodata_alignment("asm")
+    unaligned = drop_rodata_alignment(ASM)
     if unaligned:
         print(
             f"disassemble: dropped the alignment from the constants in "
@@ -1078,7 +1086,7 @@ def main():
     if aligned:
         print(f"disassemble: aligned the constants in {aligned} file(s)")
     removed = drop_redundant_dumps()
-    changed, shared = fix_branches("asm")
+    changed, shared = fix_branches(ASM)
     changed += restore_invented_names_in_parts()
     if removed:
         print(f"disassemble: dropped {removed} duplicate per-unit section dump(s)")

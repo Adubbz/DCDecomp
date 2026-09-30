@@ -22,6 +22,7 @@
 #include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "mainitemmodel.hpp"
+#include "mainselect.hpp"
 #include "mds.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
@@ -421,7 +422,11 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
 }
 
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
+#ifdef PAL
+    char path[108];
+#else
     char path[76];
+#endif
     int size;
     u_long128 *buffer;
     int first_open;
@@ -535,7 +540,7 @@ static int DunEnterMenuKey(void) {
         case 3:
             if (DEnterMenu.textures_ready == 0 && ReadBGSync() == 0) {
                 LOADTEXTURE_INFO2 textures[] = {
-                    {(char *) "#frame_menu_enter#640#448#4", DEnterMenu.texture_block, 0},
+                    {(char *) "#frame_menu_enter#640#" SCREEN_HEIGHT_STR "#4", DEnterMenu.texture_block, 0},
                     {NULL, DEnterMenu.texture_block, 0},
                     {NULL, 0, 0},
                 };
@@ -605,6 +610,29 @@ static int DunEnterMenuKey(void) {
                     DEnterMenu.scroll_top = 0;
                 }
             }
+#ifdef PAL
+            if (DebugMode) {
+                if (GamePad.Down2(8)) {
+                    int max_floor = maxFloorTbl__4[DEnterMenu.dungeon];
+                    DEnterMenu.floor_count = max_floor;
+                    for (int floor = 0; floor < DEnterMenu.floor_count; floor++) {
+                        DEnterMenu.max_atra[floor] = DEnterStatusPt->GetMaxAtraNum(DEnterMenu.dungeon, floor);
+                        DEnterMenu.collected_atra[floor] = DEnterStatusPt->GetAtraNum(DEnterMenu.dungeon, floor);
+                    }
+                    ComMenuSePlay(1);
+                }
+                if (GamePad.On2(0x40)) {
+                    if (DEnterMenu.kills[DEnterMenu.selected_floor] < 999) {
+                        DEnterMenu.kills[DEnterMenu.selected_floor]++;
+                    }
+                }
+                if (GamePad.On2(0x20)) {
+                    if (0 < DEnterMenu.kills[DEnterMenu.selected_floor]) {
+                        DEnterMenu.kills[DEnterMenu.selected_floor]--;
+                    }
+                }
+            }
+#endif
             if (DEnterMenu.selected_floor > DEnterMenu.floor_count - 1) {
                 DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
             }
@@ -658,7 +686,7 @@ static void DunEnterDraw(void) {
     float wave;
 
     setbilinear(0);
-    CRect_i_ screen(0, 0, 0x2800, 0x1C00);
+    CRect_i_ screen(0, 0, 0x2800, (SCREEN_HEIGHT << 4));
     alpha = 0x80;
     fade = alpha;
     switch (DEnterMenu.state) {
@@ -720,7 +748,11 @@ static void DunEnterDraw(void) {
         MenuTextureReload(CommonMenuMes2.tex_block);
         CommonMenuMes2.stay_frame = 1;
         CommonMenuMes2.edge_alpha = alpha;
+#ifdef PAL
+        CommonMenuMes2.text_y = 0x16c;
+#else
         CommonMenuMes2.text_y = 0x158;
+#endif
         half_width = CommonMenuMes2.char_width >> 1;
         GetMenuCommonPutXY(&CommonMenuMes2, 0x148 - half_width);
         CommonMenuMes2.Step();
@@ -1010,8 +1042,12 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
 }
 
 static void DrawDunEnterBack(int alpha) {
+#ifdef PAL
+    DrawFullSizePicture(TexManager.GetTexture("frame", -1), 0, 0, 0x80);
+#else
     DrawMenu2DSprite(TexManager.GetTexture("frame", -1), MenuDispRc, MenuDispRc, 0x80);
-    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
+#endif
+    MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HEIGHT * 0x10), 10, 10, 10, (alpha * 4) >> 7);
 }
 
 /**
@@ -1048,7 +1084,7 @@ CFrame *ItemPolyView;
 int MDebugItemPolyViewFlag;
 int polyreadflag;
 
-char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#448#4";
+char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#" SCREEN_HEIGHT_STR "#4";
 
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
@@ -1085,11 +1121,28 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
             }
             if (floor >= 100) {
                 offset = 0;
+#ifdef PAL
+                if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() > 0) {
+                    offset += 8;
+                }
+#else
                 if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() == 1) {
                     offset += 4;
                 }
+#endif
             }
         }
+#ifdef PAL
+        s8 name_width[7][7] = {
+            {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x62, 0x38, 0x30, 0x66},
+            {0x5C, 0x68, 0x60, 0x60, 0x2E, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x50, 0x64},
+        };
+#else
         s8 name_width[7][7] = {
             {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
             {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
@@ -1099,6 +1152,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
             {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
             {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
         };
+#endif
         x = offset + (x + name_width[GetMenuLangFlag()][DEnterMenu.dungeon]);
         position = y;
         RECT digits = {0, 0xC0, 0x10, 0x1C};
@@ -1343,6 +1397,11 @@ int CharaChangeKey(void) {
                 }
                 ComMenuSePlay(0);
             }
+#ifdef PAL
+            if (DebugMode && GamePad.Down2(0x40)) {
+                ChangeStatusDataPt->GetItem(ITEM_STAND_IN_POWDER, 0);
+            }
+#endif
             if (GamePad.Down(0x40)) {
                 ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
                 int count = GetNowItemNum(0xAE, pack);
@@ -1464,7 +1523,13 @@ void CharaChangeDraw(void) {
     FrameImageDraw(100, 0x80);
     if (CharaChangeReadFlag != 0) {
         MenuTextureReload(CharaChangeTexBlock);
-        CTexture *frame = TexManager.GetTexture(stay_frame_name, -1);
+        CTexture *frame = TexManager.GetTexture(
+#ifdef PAL
+            "stayframe",
+#else
+            stay_frame_name,
+#endif
+            -1);
         int frame_x = QuickCharaPos[0] - 2.0f * changeMenu_long;
         int frame_y = QuickCharaPos[1] - 1.4f * changeMenu_long;
         alpha = 0x80;
@@ -1552,6 +1617,42 @@ void CharaChangeDraw(void) {
         if (CursorVibeCnt > 1080000) {
             CursorVibeCnt = 0;
         }
+#ifdef PAL
+        if (ChangeMenu.mode != 0) {
+            MenuTextureReload(CharaChangeTexBlock);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x138, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x138, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x138, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
+            int value = (u16) ChangeStatusDataPt->money_signed;
+            RECT value_digits = {0x70, 0x74, 0xC, 0xC};
+            DrawMenuNumber(value, 0xB7, 0x140, QuickCharaTex, value_digits, 0, alpha);
+            int lang = GetMenuLangFlag();
+            float help_width[7] = {10.6f, 10.6f, 10.6f, 14.0f, 12.0f, 11.8f, 10.7f};
+            MenuHelpWinDraw(100, 0x154, help_width[lang], 0.9f, alpha);
+            u8 count_shift[7] = {0, 0, 0, 56, 28, 16, 0};
+            int count_x = count_shift[lang];
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x164, 0x20, 0x20), CRect_i_(0, 0x60, 0x20, 0x20), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(count_x + 0x104, 0x16C, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10),
+                             alpha);
+            MenuTextureReload(CommonMenuMes1.tex_block);
+            if (lang == 0) {
+                DrawMenuClsMes(&CommonMenuMes1, 0xA0, 0x154);
+            } else {
+                CommonMenuMes1.line_pos[0].x = 0xA0;
+                CommonMenuMes1.line_pos[0].y = 0x15E;
+                CommonMenuMes1.line_pos[1].x = 0xA6;
+                CommonMenuMes1.line_pos[1].y = 0x172;
+                CommonMenuMes1.Step();
+                CommonMenuMes1.DrawMesWin();
+            }
+            RECT count_digits = {0, 0x9E, 0xC, 0x12};
+            ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
+            int count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
+            count_x += 0x122;
+            count_x += (count_digits.width >> 1) * GetNumberKeta(count);
+            DrawMenuNumber(count, count_x, 0x16C, count_digits, StayTex, 0, 0, SCREEN_HEIGHT, alpha);
+        }
+#else
         if (ChangeMenu.mode != 0) {
             MenuTextureReload(CharaChangeTexBlock);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
@@ -1577,6 +1678,7 @@ void CharaChangeDraw(void) {
             count_x += (count_digits.width >> 1) * GetNumberKeta(count);
             DrawMenuNumber(count, count_x, 0x158, count_digits, StayTex, 0, 0, 0x1C0, alpha);
         }
+#endif
         if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
             ChangeMenu.unk_03 != 4) {
             DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
@@ -1697,7 +1799,13 @@ int DngActiveItemTextureCopy(void) {
     return 1;
 }
 
-char item_view_frame_image[] __attribute__((section(".rodata"))) = "#frame_menuwep#640#448#4";
+char item_view_frame_image[] __attribute__((section(".rodata"))) = "#frame_menuwep#640#" SCREEN_HEIGHT_STR "#4";
+#ifdef PAL
+/**
+ * Texture the debug item menu's text overlay draws its glyphs from.
+ */
+char debug_item_font_texture[] __attribute__((section(".rodata"))) = "dbgwork_menu";
+#endif
 char item_templete_no[] __attribute__((section(".rodata"))) = "ItemNo   :%d\n";
 char item_templete_type[] __attribute__((section(".rodata"))) = "type:    :%s\n";
 char item_templete_use[] __attribute__((section(".rodata"))) = "use      :%s\n";
@@ -1969,6 +2077,23 @@ void DrawItemPolygonView(void) {
     MenuTextureReload(BtlMenuExReadBlock);
     MenuPolygonDraw(0x80, LocalDrawItemPolygonView);
 }
+
+#ifdef PAL
+extern CDebugFont MenuDbgMsg;
+
+void InitDebugItemGet(void) {
+    ItemAutoGet.selection = 0x6A;
+    ItemAutoGet.page = ItemAutoGet.selection >> 6;
+    ItemAutoGet.show_model = 0;
+    MenuDbgMsg.length = 0;
+    MenuDbgMsg.texture_name = debug_item_font_texture;
+    MenuDbgMsg.x = 0x15E;
+    MenuDbgMsg.y = 0x50;
+    MenuDbgMsg.width = 0x100;
+    MenuDbgMsg.height = 0xE0;
+    MenuDbgMsg.alpha = 0x60;
+}
+#endif
 
 static int ConvDebugSelectToExcelListNo(int selection) {
     int item_no;

@@ -2,7 +2,8 @@
 
 set(OVERLAYS title dun)
 
-set(OVERLAY_ORIGIN 0x01DABD00)
+# OVERLAY_ORIGIN, where the overlays load, differs between the releases;
+# CMakeLists.txt sets it from scripts/build/region.py.
 set(OVERLAY_HEADER_SIZE 0x40)
 
 set(OVERLAY_FILE_ALIGN 128)

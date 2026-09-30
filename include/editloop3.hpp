@@ -262,6 +262,26 @@ STATIC_ASSERT(sizeof(ED_SPRITE) == 0x88);
  */
 void EdEventPause();
 
+#ifdef PAL
+/**
+ * Toggles whether execution of the current event is stopped for the event debugger. PAL only.
+ *
+ * @mangled EdEventStopPlay__Fv
+ * @address 0x18D100
+ * @size 0x1C
+ */
+void EdEventStopPlay();
+
+/**
+ * Reports whether advancement of the current editor event is paused. PAL only.
+ *
+ * @mangled EdCheckEventPause__Fv
+ * @address 0x18D140
+ * @size 0xC
+ */
+int EdCheckEventPause();
+#endif
+
 /**
  * Applies one editable part definition's object visibility to its map part.
  *

@@ -88,6 +88,17 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode);
  */
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
 
+#ifdef PAL
+/**
+ * Draws the accented-character rows of the alphabet keyboard for one European language. PAL only.
+ *
+ * @mangled DrawEuroSpecialFont__Fiiiii
+ * @address 0x23F4A0
+ * @size 0x25C
+ */
+void DrawEuroSpecialFont(int x, int y, int language, int brightness, int blend_mode);
+#endif
+
 /**
  * Reports whether the entered name may be used.
  *

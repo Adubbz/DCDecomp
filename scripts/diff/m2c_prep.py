@@ -26,6 +26,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts" / "build"))
+import region  # noqa: E402
 SYMBOL = re.compile(r"^(\S+) = 0x([0-9a-fA-F]+);(.*)$")
 SIZE = re.compile(r"size:0x([0-9a-fA-F]+)")
 INSTRUCTION = re.compile(r"^\s*/\*[^*]*\*/\s+(\S+)\s+(.*?)\s*$")
@@ -38,7 +40,7 @@ def symbols(image: str) -> tuple[dict[str, int], list[tuple[int, int, str]]]:
     """Every retail symbol, by name and sorted by address with its size."""
     by_name: dict[str, int] = {}
     rows: list[tuple[int, int, str]] = []
-    for line in (ROOT / "config" / f"{image}.symbols.txt").read_text().splitlines():
+    for line in (ROOT / region.CONFIG / f"{image}.symbols.txt").read_text().splitlines():
         match = SYMBOL.match(line.strip())
         if not match:
             continue
@@ -73,7 +75,7 @@ def rename(name: str) -> str:
 
 def table_words(image: str, name: str) -> str:
     """The table's own `.word` lines, which m2c reads the case targets from."""
-    for unit in (ROOT / "asm" / "nonmatchings").iterdir():
+    for unit in (ROOT / region.ASM / "nonmatchings").iterdir():
         path = unit / f"{name}.s"
         if path.is_file():
             body = path.read_text(errors="replace")

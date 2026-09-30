@@ -13,4 +13,4 @@ ClsMes CommonMenuMes1;
 ClsMes CommonMenuMes2;
 ClsMes CommonMenuMes3;
 ClsMes AtoraNameMes;
-CRect_i_ MenuDispRc(0, 0, 640, 448);
+CRect_i_ MenuDispRc(0, 0, 640, SCREEN_HEIGHT);

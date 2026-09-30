@@ -441,6 +441,9 @@ void CCharacter::Step() {
     int set_no;
     tagMOTION_TYPE *motion;
     float old_time;
+#ifdef PAL
+    float step;
+#endif
     float new_time;
     float saved_speed;
     float saved_blend_step;
@@ -469,12 +472,26 @@ void CCharacter::Step() {
     old_time = motion->state.time;
     this->motion_state = 2;
     motion_info = &motion->motion_info[index];
+#ifdef PAL
+    // The step the motion advances by this frame, once the character's own speed overrides it.
+    step = motion_info->speed;
+    if (this->motion_speed > 0.0f) {
+        step = this->motion_speed;
+    }
+    if (motion_info != NULL) {
+        if (old_time >= (float) motion_info->start &&
+            (float) motion_info->end - step - 0.01f <= old_time) {
+            this->motion_state = 3;
+        }
+    }
+#else
     if (motion_info != NULL) {
         if (old_time >= (float) motion_info->start && old_time <= (float) motion_info->end &&
             (float) motion_info->end - motion_info->speed - 0.01f <= old_time) {
             this->motion_state = 3;
         }
     }
+#endif
 
     motion->state.motion_no = index;
     if (motion->state.motion_no != motion->state.playing_no) {
@@ -497,8 +514,12 @@ void CCharacter::Step() {
         motion->state.blend_step = 0.0f;
     }
     if (this->motion_flags & 2) {
+#ifdef PAL
+        if (!(motion->state.time + step < (float) motion->motion_info[index].end)) {
+#else
         if (!(motion->state.time + saved_speed + 0.01f <
               (float) motion->motion_info[index].end)) {
+#endif
             motion->motion_info[index].speed = 0.0f;
         }
     }

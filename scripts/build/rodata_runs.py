@@ -22,6 +22,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 SYMBOL = re.compile(
     r"^(@\d+)(?:__\d+)? = 0x([0-9a-fA-F]+); // size:0x([0-9a-fA-F]+)"
 )
@@ -35,7 +38,7 @@ VRAM = 0xFFF00
 def constants() -> list[tuple[int, int, str]]:
     """Every invented constant of the image, by address."""
     found = []
-    for line in (ROOT / "config" / "main.symbols.txt").read_text().splitlines():
+    for line in (ROOT / region.CONFIG / "main.symbols.txt").read_text().splitlines():
         match = SYMBOL.match(line.strip())
         if match:
             found.append((int(match.group(2), 16), int(match.group(3), 16), match.group(1)))
@@ -45,7 +48,7 @@ def constants() -> list[tuple[int, int, str]]:
 
 def segments() -> list[tuple[int, str]]:
     """Each `.rodata` subsegment's first address and unit name."""
-    text = (ROOT / "config" / "main.yaml").read_text()
+    text = (ROOT / region.CONFIG / "main.yaml").read_text()
     found = [(int(m.group(1), 16) + VRAM, m.group(2)) for m in SEGMENT.finditer(text)]
     found.sort()
     return found

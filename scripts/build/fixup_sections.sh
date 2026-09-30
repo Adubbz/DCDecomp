@@ -13,7 +13,7 @@
 #    for a function. The linked section dumps carry no such label, so this only
 #    ever touches the per-function objects objdiff compares against.
 # 3. Renames the templated symbols back to the spelling MWCC emits, but only
-#    for the per-function objects under asm/nonmatchings and asm/matchings --
+#    for the per-function objects under asm/<region>/{non,}matchings --
 #    the ones objdiff compares against, which nothing links. objdiff pairs a target with a base
 #    by symbol name, and `__ct__14CDataAlloc2_1_Fv` in the dump never matched
 #    the `__ct__14CDataAlloc2<1>Fv` the compiler produces. The linked objects
@@ -47,10 +47,12 @@ shift
 # definition breaks the link.
 refonly=""
 case "$obj" in
-  */asm/nonmatchings/*|*/asm/matchings/*)
+  */asm/*/nonmatchings/*|*/asm/*/matchings/*)
     refonly="-w --localize-symbol=.L*"
-    [ -f build/symbol_aliases.txt ] &&
-        refonly="$refonly --redefine-syms=build/symbol_aliases.txt"
+    # The build directory the object sits in: <build>/asm/<region>/...
+    aliases="${obj%%/asm/*}/symbol_aliases.txt"
+    [ -f "$aliases" ] &&
+        refonly="$refonly --redefine-syms=$aliases"
     ;;
 esac
 

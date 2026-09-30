@@ -22,6 +22,9 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 GLABEL = re.compile(r'^glabel\s+(?:"([^"]+)"|(\S+))', re.M)
 WORD = re.compile(r"/\*\s+[0-9A-Fa-f]+\s+([0-9A-Fa-f]{8})\s+[0-9A-Fa-f]{8}\s+\*/")
 REFERENCE = re.compile(r'%(?:hi|lo|gp_rel)\(\s*"?((?:@|[A-Za-z_]\w*\$)[\w$]*)"?\s*\)')
@@ -38,7 +41,7 @@ POOL = 0
 
 def symbol_addresses() -> dict[str, int]:
     found = {}
-    for line in (ROOT / "config" / "main.symbols.txt").read_text().splitlines():
+    for line in (ROOT / region.CONFIG / "main.symbols.txt").read_text().splitlines():
         match = SYMBOL.match(line.strip())
         if match:
             found.setdefault(match.group(1), int(match.group(2), 16))
@@ -46,7 +49,7 @@ def symbol_addresses() -> dict[str, int]:
 
 
 def subsegments(kind: str) -> list[tuple[int, str]]:
-    text = (ROOT / "config" / "main.yaml").read_text()
+    text = (ROOT / region.CONFIG / "main.yaml").read_text()
     found = [
         (int(m.group(1), 16) + VRAM, m.group(3))
         for m in SEGMENT.finditer(text) if m.group(2) == kind
@@ -56,7 +59,7 @@ def subsegments(kind: str) -> list[tuple[int, str]]:
 
 
 def pool_start() -> int:
-    match = RDATA.search((ROOT / "config" / "main.yaml").read_text())
+    match = RDATA.search((ROOT / region.CONFIG / "main.yaml").read_text())
     return int(match.group(1), 16) + VRAM if match else 1 << 32
 
 
@@ -77,10 +80,10 @@ def main() -> None:
     addresses = symbol_addresses()
     rodata = subsegments(".rodata")
     verbose = len(sys.argv) > 1
-    units = sys.argv[1:] or sorted(path.stem for path in (ROOT / "asm").glob("*.s"))
+    units = sys.argv[1:] or sorted(path.stem for path in (ROOT / region.ASM).glob("*.s"))
 
     for unit in units:
-        path = ROOT / "asm" / f"{unit}.s"
+        path = ROOT / region.ASM / f"{unit}.s"
         if not path.is_file():
             continue
         text = path.read_text(errors="replace")

@@ -104,6 +104,12 @@ extern sceVu0FVECTOR mgBackColor;
 extern sceVu0FMATRIX mgZeroMatrix;
 extern CRect_i_ mgWindowRect;
 extern sceGsTexa mgTexa;
+#ifdef PAL
+/** First word of video memory past the frame and depth buffers. */
+extern int mgTopVRAM;
+/** Word address of the depth buffer in video memory. */
+extern int mgZBufferAdr;
+#endif
 
 /**
  * Returns the number of vertical syncs observed since initialization.
@@ -387,6 +393,17 @@ void MGEndFrame(void);
  * @size 0xC
  */
 void MGFlipWaitVSync(int wait);
+
+#ifdef PAL
+/**
+ * Moves the display by an offset of at most 32 pixels each way, rounded to an even count.
+ *
+ * @mangled MGAdjustScreen__Fii
+ * @address 0x12D960
+ * @size 0x60
+ */
+void MGAdjustScreen(int x, int y);
+#endif
 
 /**
  * Rebuilds the projection and clip-volume values used for rendering.

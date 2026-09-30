@@ -12,9 +12,15 @@
 #include "gamepad.hpp"
 #include "hitmark.hpp"
 #include "itemdata.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "snd.hpp"
+#ifdef PAL
+#include "userstatus.hpp"
+#endif
 
 /**
  * The action code of each debug overlay line, ended by -1.
@@ -116,7 +122,11 @@ void DebugInfomationDraw(void) {
             }
             event_count = NowEventMan->GetDataNum();
             DbgMsg.length += sprintf(&DbgMsg.text[DbgMsg.length], "EventID = %d\n", event_count);
+#ifdef PAL
+            MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
+#else
             MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+#endif
             DbgMsg.Draw();
         }
         return;
@@ -189,7 +199,11 @@ void DebugInfomationDraw(void) {
                 break;
         }
     }
+#ifdef PAL
+    MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x780), 8, 8, 8, 0x60);
+#else
     MGFillBox(CRect_i_(0x200, 0x280, 0x1000, 0x700), 8, 8, 8, 0x60);
+#endif
     DbgMsg.Draw();
 }
 
@@ -592,6 +606,103 @@ int DebugInfomationIF(void) {
     return 0;
 }
 
+#ifdef PAL
+/**
+ * Where the English caption centres each dungeon's floor number.
+ */
+int center_us[7] = {0xCE, 0x125, 0x101, 0x100, 0x87, 0x57, 0x101};
+
+/**
+ * Where the French caption centres each dungeon's floor number.
+ */
+int center_fr[7] = {0xCD, 0x113, 0xF8, 0xF8, 0xB2, 0x59, 0xFF};
+
+/**
+ * Where the German caption centres each dungeon's floor number.
+ */
+int center_gr[7] = {0xFE, 0x103, 0x13D, 0xFD, 0x78, 0x38, 0xFF};
+
+/**
+ * Where the Italian caption centres each dungeon's floor number.
+ */
+int center_it[7] = {0xCC, 0x129, 0xF3, 0xFF, 0xFA, 0x75, 0xF9};
+
+/**
+ * Where the Spanish caption centres each dungeon's floor number.
+ */
+int center_sp[7] = {0xCE, 0x12C, 0xF2, 0xFA, 0x7C, 0xBA, 0xFA};
+
+/**
+ * Each language's floor-number centres.
+ */
+int *center_ptr[7] = {center_sp, center_us, center_us, center_fr, center_gr, center_it, center_sp};
+
+/**
+ * Draws the caption naming the dungeon and floor the party has just entered.
+ *
+ * PAL only.
+ *
+ * @mangled StartMessageDraw__FP8CTextureiiii
+ * @address 0x1B8890
+ * @size 0x4C8
+ */
+void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int alpha) {
+    int *centers = center_ptr[LanguageCode];
+    int x = centers[dungeon] + 0x82;
+    int digit_x;
+
+    set2DSprite(Vif1Packet, texture, CRect_i_(0x82, 0xAA, 0x17C, 0x32), CRect_i_(0, 0, 0x17C, 0x32), alpha);
+
+    floor++;
+    if (dungeon == 5) {
+        floor = BtGetFloorLevel(floor - 1);
+    }
+
+    if (floor < 10) {
+        x -= 0x13;
+        digit_x = floor % 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
+                    alpha);
+    }
+
+    if (floor >= 10 && floor < 100) {
+        x -= 0x26;
+        digit_x = floor / 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x, 0xAA, 0x26, 0x32), CRect_i_(digit_x, 0x32, 0x26, 0x32),
+                    alpha);
+        digit_x = floor % 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x26, 0xAA, 0x26, 0x32),
+                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+    }
+
+    if (floor >= 100) {
+        int digit = floor / 100;
+
+        digit_x = digit * 0x26;
+        floor -= digit * 100;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x39, 0xAA, 0x26, 0x32),
+                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        digit_x = floor / 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x - 0x13, 0xAA, 0x26, 0x32),
+                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+        digit_x = floor % 10 * 0x26;
+        set2DSprite(Vif1Packet, texture, CRect_i_(x + 0x13, 0xAA, 0x26, 0x32),
+                    CRect_i_(digit_x, 0x32, 0x26, 0x32), alpha);
+    }
+
+    if (ura != 0) {
+        set2DSprite(Vif1Packet, texture, CRect_i_(0x10E, 0xE6, 0x64, 0x32), CRect_i_(0x114, 0x7C, 0x64, 0x32),
+                    alpha);
+        return;
+    }
+
+    if (UserStatus->res_limit_zone_current >= 0) {
+        set2DSprite(Vif1Packet, texture, CRect_i_(0xC8, 0xE6, 0xF0, 0x32), CRect_i_(0, 0x7C, 0xF0, 0x32),
+                    alpha);
+    }
+}
+#endif
+
 /**
  * Empties the list of key items waiting to be dropped.
  *
@@ -632,7 +743,11 @@ int SetGateKeyStack(int item) {
  * @size 0x60
  */
 char *NameExchg(char *name, int language) {
+#ifdef PAL
+    strcpy(nameblock, LanguageStr[LanguageCode]);
+#else
     strcpy(nameblock, LanguageStr[language][1]);
+#endif
     strcat(nameblock, name);
     return nameblock;
 }

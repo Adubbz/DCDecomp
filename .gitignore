@@ -1,15 +1,9 @@
 # Build files
 /build/
 
-# Reference assembly, split from the disc by splat and never committed --
-# except the main executable's residual data parts, which are carved and
-# hand-edited rather than split, and so are kept here.
-/asm/*
-!/asm/data/
-/asm/data/*
-!/asm/data/main/
-/asm/data/main/*
-!/asm/data/main/parts/
+# Reference assembly, split from the disc by splat and never committed: one
+# tree per release, asm/ntsc and asm/pal.
+/asm/
 
 # A checkout of the private repository; see scripts/host/overlay_private.sh.
 /.private/
@@ -48,9 +42,6 @@ AGENTS.md
 # IDA databases (derived from binaries already in-tree)
 *.i64
 *.idb
-
-# splat scratch (the linker scripts it writes are not the ones this build uses)
-/build/splat/
 
 # The lock every build of the tree takes; see scripts/build/cmake.sh.
 /.build.lock

@@ -61,17 +61,27 @@ static char CurrentDir[256] = "y:/ps2/dc_data/";
 
 static int header_num;
 static u_int *packfile_buff;
+#ifndef PAL
 static NAME_TREE *tree;
+#endif
 static int data_sector;
 static int old_vsync;
 static int start_vsync;
 
+#ifdef PAL
+static u_char header_buff[0x50000];
+#else
 static u_char header_buff[0x40000];
+#endif
 static BG_READ_INFO bg_read_info[32];
 
 static NAME_TREE *search_tree(NAME_TREE *node, char *name);
 static int CDRead(char *path, u_int *buffer, int *out_size);
+#ifdef PAL
+static char *create_word_tree(char *index_image, int size, char *tree_buffer);
+#endif
 
+#ifndef PAL
 static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
     dest->name = record->name;
     dest->offset = record->offset;
@@ -79,7 +89,22 @@ static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
     dest->sector = record->sector;
     dest->sectors = record->sectors;
 }
+#endif
 
+#ifdef PAL
+/* The index is searched as the list it is on the disc, one name comparison per entry. */
+static DATA_HEADER *SearchFile(char *path) {
+    DATA_HEADER_READ *record;
+    int i;
+
+    record = (DATA_HEADER_READ *) header_buff;
+    for (i = 0; i < header_num; i++, record++) {
+        if (strcasecmp((char *) record->name, path) == 0)
+            return (DATA_HEADER *) record;
+    }
+    return 0;
+}
+#else
 static DATA_HEADER *SearchFile(char *path) {
     NAME_TREE *node;
     char *word_end;
@@ -108,6 +133,7 @@ static DATA_HEADER *SearchFile(char *path) {
         return 0;
     return node->data;
 }
+#endif
 
 void InitReadBG() {
     int i;
@@ -122,7 +148,11 @@ void InitReadBG() {
    reach is fatal rather than slow, and one that is not on a 64-byte boundary is only reported. */
 int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     BG_READ_INFO *info;
+#ifdef PAL
+    DATA_HEADER_READ *header;
+#else
     DATA_HEADER *header;
+#endif
     int i;
 
     if (out_size)
@@ -145,7 +175,11 @@ int LoadFileBG(char *name, u_long128 *buffer, int *out_size) {
     }
     if ((int) buffer % 64)
         printf("/*/*/*/*/not 64byte align at %x %s\n", buffer, name);
+#ifdef PAL
+    header = (DATA_HEADER_READ *) SearchFile(name);
+#else
     header = SearchFile(name);
+#endif
     if (!header)
         return 0;
     strcpy(info->name, name);
@@ -239,6 +273,7 @@ void BreakReadBG() {
 
 /* A component is looked for in the whole subtree rather than among the node's own children, so a
    path whose middle components are spelled wrong still finds its entry. */
+#ifndef PAL
 static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     NAME_TREE *found;
 
@@ -253,7 +288,9 @@ static NAME_TREE *search_tree(NAME_TREE *node, char *name) {
     }
     return 0;
 }
+#endif
 
+#ifndef PAL
 static void add_tree(NAME_TREE *parent, NAME_TREE *child_node) {
     NAME_TREE *sibling;
 
@@ -270,10 +307,12 @@ static void add_tree(NAME_TREE *parent, NAME_TREE *child_node) {
         sibling = sibling->next;
     }
 }
+#endif
 
 /* The whole tree is built inside the one buffer it is handed: the nodes and their headers grow up
    from the bottom and the names down from the top, so nothing is ever freed and the two meeting is
    what the size report at the end is for. */
+#ifndef PAL
 static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
     DATA_HEADER_READ *record;
     NAME_TREE *parent;
@@ -344,9 +383,53 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
     printf("file header size = %d\n", size - (top - bottom));
     return tree_buffer;
 }
+#endif
 
 /* The drive is asked for the data file itself only to learn where it starts; everything after this
    is read by sector from that base, which is why no path but the index's is ever opened. */
+#ifdef PAL
+/* The index is read straight into the header buffer and kept as it is, with each entry's name
+   offset turned into a pointer to the name and its path separators made forward slashes. */
+void InitCDFile() {
+    sceCdlFILE file;
+    int fd;
+    int size;
+    DATA_HEADER_READ *records;
+    int i;
+
+    packfile_buff = 0;
+    while (1) {
+        if (sceCdSearchFile(&file, "\\DATA.DAT;1")) {
+            sceCdSync(0);
+            if (sceCdGetError() == 0)
+                break;
+        }
+    }
+    data_sector = file.lsn;
+    fd = sceOpen("cdrom0:\\DATA.HD2;1", SCE_RDONLY);
+    if (fd < 0) {
+        printf("File open error \"\"\n \n \n");
+        __assert("etc.cpp", 565, "FALSE");
+    }
+    size = sceLseek(fd, 0, SCE_SEEK_END);
+    sceLseek(fd, 0, SCE_SEEK_SET);
+    sceRead(fd, header_buff, size);
+    sceClose(fd);
+    records = (DATA_HEADER_READ *) header_buff;
+    // The names follow the last record, so the first name's offset counts the records.
+    header_num = (u_int) records->name >> 5;
+    for (i = 0; i < header_num; i++) {
+        char *cursor;
+        char ch;
+
+        records[i].name += (int) header_buff;
+        for (cursor = (char *) records[i].name; (ch = *cursor) != 0; cursor++) {
+            if (ch == '\\')
+                *cursor = '/';
+        }
+    }
+}
+#else
 void InitCDFile() {
     char index_image[307200];
     sceCdlFILE file;
@@ -375,6 +458,7 @@ void InitCDFile() {
     sceClose(fd);
     create_word_tree(index_image, sizeof header_buff, (char *) header_buff);
 }
+#endif
 
 void InitMemoryFile() {
 }
@@ -382,7 +466,11 @@ void InitMemoryFile() {
 int LoadFile(char *path, void *buffer, int *out_size) {
     if (!LoadFile2(path, buffer, out_size, 0)) {
         printf("File open error \"%s\"\n \n \n", path);
+#ifdef PAL
+        __assert("etc.cpp", 753, "FALSE");
+#else
         __assert("etc.cpp", 740, "FALSE");
+#endif
     }
     return 1;
 }
@@ -436,10 +524,18 @@ int LoadFile2(char *path, void *buffer, int *out_size, int mode) {
 }
 
 static int CDRead(char *path, u_int *buffer, int *out_size) {
+#ifdef PAL
+    DATA_HEADER_READ *header;
+#else
     DATA_HEADER *header;
+#endif
     sceCdRMode mode;
 
+#ifdef PAL
+    header = (DATA_HEADER_READ *) SearchFile(path);
+#else
     header = SearchFile(path);
+#endif
     if (!header)
         return 0;
     mode.trycount = 0;

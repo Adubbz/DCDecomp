@@ -7,13 +7,13 @@
 #   diff.sh --scratch <symbol>             create a decomp.me scratch instead
 #   diff.sh --report                       whole-project progress report
 #
-# --scratch uploads the function's disassembly and build/ctx.cpp to decomp.me,
+# --scratch uploads the function's disassembly and build/ntsc/ctx.cpp to decomp.me,
 # a public site, with this project's compiler and flags, and prints the URL.
 # --report writes progress/report.json for decomp.dev; CI regenerates it, so
 # this is for looking at the number locally.
 #
 # Symbols are the mangled names the compiler uses, e.g. SetDay__9CSaveDataFi;
-# look one up with `grep <name> config/*.symbols.txt`. The work happens in
+# look one up with `grep <name> config/*/*.symbols.txt`. The work happens in
 # the container, where objdiff and the EE binutils live.
 #
 # objdiff compares object files, not disassembly text: the target is the
@@ -83,16 +83,16 @@ case $mode in
             read -r _ reference _ <<<"$located"
             # objdiff names a unit after its source, e.g. camera or
             # dun/gameloop; the reference path spells the same thing out as
-            # asm/{non,}matchings/<unit>/<symbol>.s.
-            unit=${reference#asm/nonmatchings/}
-            unit=${unit#asm/matchings/}
+            # asm/<region>/{non,}matchings/<unit>/<symbol>.s.
+            unit=${reference#asm/*/nonmatchings/}
+            unit=${unit#asm/*/matchings/}
             unit=${unit%/*}
         elif [[ ${#section[@]} -ne 0 ]]; then
             echo "$0: $symbol is not in the ${section[0]} reference index" >&2
             exit 1
         else
             echo "$0: $symbol is in no reference index -- check the spelling with" >&2
-            echo "$0: grep $symbol config/*.symbols.txt" >&2
+            echo "$0: grep $symbol config/*/*.symbols.txt" >&2
             exit 1
         fi
 

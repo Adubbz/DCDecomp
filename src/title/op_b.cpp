@@ -17,6 +17,7 @@
 #include "dataread.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
@@ -324,7 +325,11 @@ void FaceChange(int actor_no) {
             CScript__2.obj[actor_no].mouth_time -= CScript__2.motion_step;
 
             if (CScript__2.obj[actor_no].talk) {
+#ifdef PAL
+                if (rand() % 5 == 0) {
+#else
                 if ((int) (100.0f * CScript__2.obj[actor_no].mouth_time) % 6 == 0) {
+#endif
                     CScript__2.obj[actor_no].mouth = rand() % 4;
                 }
             }
@@ -490,11 +495,11 @@ void OpB_LoadDataBG2() {
    reloaded where a name is given. */
 void OpB_InitProcess() {
     LOADTEXTURE_INFO2 texture_list[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#frame_image#640#224#4", 21, 0},
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 21, 0},
         {0, 2, 0},
         {0, 10, 0},
         {0, 10, 0},
@@ -511,7 +516,9 @@ void OpB_InitProcess() {
         {0, 0, 0},
         {0, 19, 0},
         {0, 19, 0},
+#ifndef PAL
         {0, 19, 0},
+#endif
         {0, 2, 0},
         {"", 0, 0}};
 
@@ -533,9 +540,36 @@ void OpB_InitProcess() {
     texture_list[17].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
     texture_list[18].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[19].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 1:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 2:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 3:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
+            break;
+        case 4:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
+            break;
+        case 5:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
+            break;
+        case 6:
+            texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
+            break;
+    }
+    texture_list[21].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#else
     texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
     texture_list[21].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
     texture_list[22].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#endif
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, texture_list);
@@ -808,11 +842,11 @@ void OpB_InitProcess() {
    second Toan is the one the door animation is timed against. */
 void OpB_InitProcess2() {
     LOADTEXTURE_INFO2 texture_list[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#frame_image#640#224#4", 21, 0},
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 21, 0},
         {0, 26, 0},
         {0, 26, 0},
         {0, 26, 0},
@@ -825,7 +859,9 @@ void OpB_InitProcess2() {
         {0, 0, 0},
         {0, 19, 0},
         {0, 19, 0},
+#ifndef PAL
         {0, 19, 0},
+#endif
         {0, 2, 0},
         {"", 0, 0}};
 
@@ -843,9 +879,36 @@ void OpB_InitProcess2() {
     texture_list[13].name = (char *) GetPackFile(read_buffer, "03komono.img", 0);
     texture_list[14].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[15].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 1:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 2:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 3:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
+            break;
+        case 4:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
+            break;
+        case 5:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
+            break;
+        case 6:
+            texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
+            break;
+    }
+    texture_list[17].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#else
     texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
     texture_list[17].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
     texture_list[18].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#endif
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, texture_list);
@@ -975,14 +1038,23 @@ void OpB_MotionProcess() {
 
     char *frame_names[4] = {"c01d", "p09a", "p10a", "c01d"};
     sceVu0FMATRIX matrix;
+#ifndef PAL
     float zero = 0.0f;
+#endif
     sceVu0FVECTOR wind_dir;
 
     for (int i = 0; i < 4; i++) {
         CFrame *frame = Cam__2[SceneNp__2].frame->SearchFrame(frame_names[i]);
         if (frame) {
             frame->GetLWMatrix(matrix);
+#ifdef PAL
+            float rot_y = atan2f(matrix[2][0], matrix[2][2]);
+            float rot_x = 0.0f, rot_z = 0.0f;
+
+            Chara__3[i + 8].SetRotation(rot_x, rot_y, rot_z);
+#else
             Chara__3[i + 8].SetRotation(zero, atan2f(matrix[2][0], matrix[2][2]), zero);
+#endif
             float x = matrix[3][0];
             float y = matrix[3][1];
             float z = matrix[3][2];

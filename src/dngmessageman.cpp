@@ -3,8 +3,10 @@
 #include "dun/gameloop.hpp"
 #include "userstatus.hpp"
 
+#ifndef PAL
 /** The Japanese and American dungeon image path prefixes, indexed by language. */
 char *LanguageStr[1][2] = {{"dun/img/jp/", "dun/img/us/"}};
+#endif
 
 void CDngMessageMan::LimmitZone(void) {
     int zone = UserStatus->res_limit_zone_current;

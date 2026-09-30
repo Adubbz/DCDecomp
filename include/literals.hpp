@@ -15,4 +15,8 @@ extern void *_overlay_group_addresses[];
 /**
  * Retail's literal pool: every float and double constant a unit loads through $gp.
  */
+#ifdef PAL
+extern const u_int LiteralPool[438];
+#else
 extern const u_int LiteralPool[434];
+#endif

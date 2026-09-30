@@ -81,7 +81,7 @@ s8 EastKingMsgMax[12] = {2, 2, 3, 3, 2, 3, 2, 2, 2, 2, 6, 1};
  * Restores the East King message window to its initial empty state.
  */
 static inline void ResetEastKingMessage() {
-    EastKingMsgCls.text_columns = 0x46;
+    EastKingMsgCls.text_columns = MES_WIN_COLUMNS;
     EastKingMsgCls.text_rows = 10;
     EastKingMsgCls.text_len = 0;
     EastKingMsgCls.text_width = 0;
@@ -125,7 +125,7 @@ static inline void ResetEastKingMessage() {
 void EastKingTextureEnter() {
     if (EastKing.resources_ready == 0 && ReadBGSync() == 0 && SndBgmSyncBG() == 0) {
         LOADTEXTURE_INFO2 textures[] = {
-            {"#frame_image#640#448#4", EastKing.texture_block, 0},
+            {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", EastKing.texture_block, 0},
             {NULL, EastKing.texture_block, 0},
             {NULL, 0, 0},
         };
@@ -141,9 +141,17 @@ void EastKingTextureEnter() {
         s16 *messages = (s16 *) GetPackFile((u_int *) archive->buffer, "eastking.bin", NULL);
         ResetEastKingMessage();
         EastKingMsgCls.SetMesFukidashi(4);
+#ifdef PAL
+        s8 font_width[8] = {16, 14, 14, 15, 15, 15, 15};
+#else
         s8 font_width[] = {16, 14, 14, 14, 14, 14, 14};
+#endif
         EastKingMsgCls.char_width = font_width[GetMenuLangFlag()];
+#ifdef PAL
+        EastKingMsgCls.char_height = 0x1A;
+#else
         EastKingMsgCls.char_height = 0x16;
+#endif
         EastKingMsgCls.columns = 0x1E;
         EastKingMsgCls.text_rate = 0.0f;
         EastKingMsgCls.text_rate_set = 0.0f;
@@ -198,7 +206,11 @@ static void EastKingMsgDraw() {
     if (EastKing.resources_ready != 0) {
         int half_width = EastKingMsgCls.char_width >> 1;
         GetMenuCommonPutXY(&EastKingMsgCls, 0x14C - half_width);
+#ifdef PAL
+        EastKingMsgCls.text_y = 0x156;
+#else
         EastKingMsgCls.text_y = 0x132;
+#endif
         EastKingMsgCls.edge_alpha = EastKingMsg.alpha;
         EastKingMsgCls.Step();
         EastKingMsgCls.DrawMesWin();
@@ -209,7 +221,11 @@ void GetPrevEastKingSndVol() {
     PrevEastKingSndVol = SndGetBgmVol();
 }
 
+#ifdef PAL
+int InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {
+#else
 void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {
+#endif
     char path[76];
     int size;
 
@@ -237,6 +253,9 @@ void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer)
     if (SaveData->GetGameFlag(EastKing.event_no + 0xE6) == 0) {
         SaveData->SetGameFlag(EastKing.event_no + 0xE6, 1);
     }
+#ifdef PAL
+    return 1;
+#endif
 }
 
 int EastKingEventKey() {

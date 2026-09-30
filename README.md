@@ -17,14 +17,20 @@ The build produces the main executable `SCUS_971.11` with matching text and data
 # Building and running
 
 1. Clone the repository with `git clone --recurse-submodules https://github.com/Adubbz/DCDecomp.git`
-2. Place the NTSC 1.02 disc image, named `Dark Cloud (USA).iso`, in the `rom` folder at the root of the project.
+2. Place the NTSC 1.02 disc image, named `Dark Cloud (NTSC).iso`, in the `rom` folder at the root of the project.
 3. Run `run.sh`.
 
 With access to the private repository, building the executables and diffing
 work without the disc image; see the reference assembly instructions below.
 
 `run.sh` builds the disc image and boots it in PCSX2. `build.sh` does the build
-alone and leaves the results in `build/`.
+alone and leaves the results in `build/ntsc/`.
+
+Everything that belongs to one release of the game sits in a directory named
+for it: the extracted disc and its checksums under `rom/ntsc/`, the split
+configuration and linker script under `config/ntsc/`, the reference assembly
+under `asm/ntsc/` and the build under `build/ntsc/`.
+`scripts/build/region.py` is the one place that says where.
 
 Both run in the `dcdecomp_dev` container image, which holds only the
 toolchain: it is built the first time and reused after that (`REBUILD_IMAGE=1`
@@ -35,7 +41,7 @@ inputs changes. The build runs one job per CPU the container can see. Two
 variables tune it:
 
 ```
-CLEAN=1 ./build.sh       throw build/ away first, so everything is rebuilt
+CLEAN=1 ./build.sh       throw build/ntsc away first, so everything is rebuilt
 JOBS=8 ./build.sh        run 8 jobs rather than one per CPU
 ```
 
@@ -84,27 +90,23 @@ decompile.sh DataLoad__Fv --stack-structs  # extra flags go to m2c
 
 [splat](https://github.com/ethteck/splat) splits the disc images into the
 assembly the build compares against, driven by the configuration under
-`config/`, which is checked in and is what `scripts/build/disassemble.py` splits
-against.
+`config/ntsc/`, which is checked in and is what `scripts/build/disassemble.py`
+splits against.
 Each translation unit becomes one segment, so its functions and its constants
 are written to a single file per unit.
 
-The result, `asm/`, is not checked in. The build splits it on first use and
-again whenever the configuration changes. To force a fresh split:
+The result, `asm/ntsc/`, is not checked in. The build splits it on first use
+and again whenever the configuration changes. To force a fresh split:
 
 ```
-cmake --build build --target disassemble
+scripts/build/cmake.sh disassemble
 ```
 
-The exception is `asm/data/main/parts/`: the main executable's residual data
-dumps, carved and hand-edited from an earlier split. They cannot be
-regenerated from the disc, so they are checked in.
-
-Without the disc image, `asm/` can instead be split from a copy of
-`rom/extracted/iso/SCUS_971.11`, `TITLE.BIN` and `DUN.BIN` kept in a private
-repository whose layout mirrors this one; `scripts/host/overlay_private.sh`
+Without the disc image, `asm/ntsc/` can instead be split from a copy of
+`rom/ntsc/extracted/iso/SCUS_971.11`, `TITLE.BIN` and `DUN.BIN` kept in a
+private repository whose layout mirrors this one; `scripts/host/overlay_private.sh`
 copies them into place. This is how CI builds. Either way they are checked
-against `rom/extracted.sha256` before a split.
+against `rom/ntsc/extracted.sha256` before a split.
 
 ## Documentation
 

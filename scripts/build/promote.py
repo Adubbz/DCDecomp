@@ -24,6 +24,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 BLOCK = re.compile(
     r"#ifdef[ \t]+NON_MATCHING[ \t]*\n(?P<body>(?:(?!\n#(?:ifdef|endif)\b).)*?)\n#else[ \t]*\n"
     r"(?P<marker>[ \t]*INCLUDE_ASM\(\"(?P<dir>[^\"]+)\",[ \t]*(?P<name>[^)]+)\);)[ \t]*\n#endif",
@@ -75,10 +78,10 @@ def main() -> None:
     # Putting one back needs the marker it stood in front of, which the
     # promotion consumed; the manifest still knows it.
     import json
-    manifest = json.loads((ROOT / "config" / "ghidra_annotations.json").read_text())
+    manifest = json.loads((ROOT / region.CONFIG / "ghidra_annotations.json").read_text())
     markers = {
-        row["name"]: 'INCLUDE_ASM("asm/nonmatchings/%s", %s);'
-                     % (row["translation_unit"], row["name"])
+        row["name"]: 'INCLUDE_ASM("%s/nonmatchings/%s", %s);'
+                     % (region.ASM, row["translation_unit"], row["name"])
         for row in manifest["functions"]
         if row.get("assembly") and row["source"] == str(args.source)
     }

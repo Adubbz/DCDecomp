@@ -43,21 +43,37 @@ float CDispFade::FadeOut(sceVif1Packet *packet) {
 
     for (s32 x = 0; x < 640; x += 64) {
         if (fade_colour != 0) {
-            for (s32 y = 0; y < 224; y += 32) {
+#ifdef PAL
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 16) {
+#else
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
+#endif
                 CRect_i_ rect;
                 rect.x = x * 16;
                 rect.y = y * 16;
                 rect.width = 1024;
+#ifdef PAL
+                rect.height = 256;
+#else
                 rect.height = 512;
+#endif
                 MGFillBox(rect, 255, 255, 255, static_cast<u8>(fade_rate));
             }
         } else {
-            for (s32 y = 0; y < 224; y += 32) {
+#ifdef PAL
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 16) {
+#else
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
+#endif
                 CRect_i_ rect;
                 rect.x = x * 16;
                 rect.y = y * 16;
                 rect.width = 1024;
+#ifdef PAL
+                rect.height = 256;
+#else
                 rect.height = 512;
+#endif
                 MGFillBox(rect, 0, 0, 0, static_cast<u8>(fade_rate));
             }
         }
@@ -85,21 +101,37 @@ float CDispFade::FadeIn(sceVif1Packet *packet) {
 
     for (s32 x = 0; x < 640; x += 64) {
         if (fade_colour != 0) {
-            for (s32 y = 0; y < 224; y += 32) {
+#ifdef PAL
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 16) {
+#else
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
+#endif
                 CRect_i_ rect;
                 rect.x = x * 16;
                 rect.y = y * 16;
                 rect.width = 1024;
+#ifdef PAL
+                rect.height = 256;
+#else
                 rect.height = 512;
+#endif
                 MGFillBox(rect, 255, 255, 255, static_cast<u8>(fade_rate));
             }
         } else {
-            for (s32 y = 0; y < 224; y += 32) {
+#ifdef PAL
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 16) {
+#else
+            for (s32 y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
+#endif
                 CRect_i_ rect;
                 rect.x = x * 16;
                 rect.y = y * 16;
                 rect.width = 1024;
+#ifdef PAL
+                rect.height = 256;
+#else
                 rect.height = 512;
+#endif
                 MGFillBox(rect, 0, 0, 0, static_cast<u8>(fade_rate));
             }
         }

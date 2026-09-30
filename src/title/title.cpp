@@ -114,6 +114,9 @@ void DrawMenuOption();
 #include "title/titleloop.hpp"
 #include "vutext.hpp"
 #include "wind.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #define PI 3.14159265358979323846
 
 class OBJ_ANIME_SEQ {
@@ -420,8 +423,8 @@ static void InitProcA() {
     wait_now_loading_vsync();
 
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 1, 0},
@@ -433,7 +436,33 @@ static void InitProcA() {
         {0, 10, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[2].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[2].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[3].name = (char *) GetPackFile(read_buffer, "effect.img", 0);
     textures[4].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "c12a01.img", 0);
@@ -748,10 +777,10 @@ static float TitleCameraWork[4];
  */
 static void InitProcB() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#water_buff#640#224#4", 21, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 21, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 10, 0},
@@ -763,7 +792,33 @@ static void InitProcB() {
         {0, 9, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[5].name = (char *) GetPackFile(read_buffer, "effect.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "d01m01.img", 0);
     textures[7].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
@@ -865,8 +920,13 @@ static void InitProcB() {
     sceVu0FVECTOR corner3 = {380.0f, 0.0f, -250.0f, 1.0f};
 
     Water__2.SetVertex(corner0, corner1, corner2, corner3);
+#ifdef PAL
+    float zero = 0.0f;
+    Water__2.frame.SetPosition(zero, -4.0f, zero);
+#else
     typedef float bp0, bp1, bp2;
     Water__2.frame.SetPosition(0.0f, -4.0f, 0.0f);
+#endif
     Water__2.SetSize(24, 24, &WaterBuffer);
     Water__2.SetParam(0.1f, 0.015f, 0.0f, 2.0f);
     Water__2.SetColor(100, 110, 120, 128);
@@ -1032,10 +1092,10 @@ static void AtraLight() {
  */
 static void InitProcC() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#water_buff#640#224#4", 21, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 21, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 10, 0},
@@ -1045,7 +1105,33 @@ static void InitProcC() {
         {0, 9, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[4].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[4].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[5].name = (char *) GetPackFile(read_buffer, "effect.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "s04b01.img", 0);
     textures[7].name = (char *) GetPackFile(read_buffer, "s04b02.img", 0);
@@ -1239,9 +1325,9 @@ void DrawProcC() {
  */
 static void InitProcD() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 1, 0},
@@ -1250,7 +1336,33 @@ static void InitProcD() {
         {0, 9, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[4].name = (char *) GetPackFile(read_buffer, "d02i01.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
@@ -1389,9 +1501,9 @@ void DrawProcD() {
  */
 static void InitProcE() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 1, 0},
@@ -1400,7 +1512,33 @@ static void InitProcE() {
         {0, 2, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[4].name = (char *) GetPackFile(read_buffer, "s4501.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
@@ -1526,9 +1664,9 @@ void DrawProcE() {
  */
 static void InitProcF() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 1, 0},
@@ -1538,7 +1676,33 @@ static void InitProcF() {
         {0, 9, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[4].name = (char *) GetPackFile(read_buffer, "d02b01.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "c01d01.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "c01d01an.img", 0);
@@ -1695,9 +1859,9 @@ void DrawProcF() {
  */
 static void InitProcG() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 20, 0},
         {0, 10, 0},
         {0, 10, 0},
@@ -1708,7 +1872,33 @@ static void InitProcG() {
         {0, 2, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[4].name = (char *) GetPackFile(read_buffer, "s4701.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "e02s01.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "e02s06.img", 0);
@@ -1840,9 +2030,9 @@ void DrawProcG() {
  */
 static void InitProcH() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 20, 0},
         {0, 0, 0},
         {0, 10, 0},
@@ -1853,7 +2043,33 @@ static void InitProcH() {
         {0, 9, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[4].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "d01b01.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "c12a01.img", 0);
@@ -2063,9 +2279,9 @@ void DrawProcH() {
  */
 static void InitProcI() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 20, 0},
         {0, 3, 0},
         {0, 10, 0},
@@ -2074,7 +2290,33 @@ static void InitProcI() {
         {0, 2, 0},
         {"", 0, 0}};
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 1:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 2:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+            break;
+        case 3:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_f.img", 0);
+            break;
+        case 4:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_g.img", 0);
+            break;
+        case 5:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_i.img", 0);
+            break;
+        case 6:
+            textures[3].name = (char *) GetPackFile(read_buffer, "start_s.img", 0);
+            break;
+    }
+#else
     textures[3].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+#endif
     textures[4].name = (char *) GetPackFile(read_buffer, "e305ex2.img", 0);
     textures[5].name = (char *) GetPackFile(read_buffer, "s1202.img", 0);
     textures[6].name = (char *) GetPackFile(read_buffer, "s2401.img", 0);
@@ -2247,9 +2489,9 @@ void DrawProcI() {
  */
 static void InitProcTitle() {
     LOADTEXTURE_INFO2 textures[] = {
-        {"#blender#640#224#4", 0, 0},
-        {"#frame_image#640#224#4", 22, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
         {0, 1, 0},
         {"", 0, 0}};
 

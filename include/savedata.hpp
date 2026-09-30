@@ -460,6 +460,10 @@ private:
     friend class CMemoryCardAccess;
     // EdMoveChara counts the Mardan Garayan the player lands.
     friend void EdMoveChara(void);
+#ifdef PAL
+    // The fish exchange debug shortcut records a Mardan Garayan catch.
+    friend int FishingExchangeKey(void);
+#endif
 
     s32 config[18];        /**< Contains the configuration values. */
     s16 chara_name[6][32]; /**< Contains the name of each character, as sixteen-bit characters. */

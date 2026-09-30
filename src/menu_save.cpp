@@ -682,7 +682,7 @@ int GetSaveMenuMsgNo(void) {
 int SaveMenuTextureEnter(void) {
     ReadBG();
     if (ReadBGSync() == 0) {
-        LOADTEXTURE_INFO2 tex[3] = {{"#frame_image_save#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        LOADTEXTURE_INFO2 tex[3] = {{"#frame_image_save#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
         BG_READ_INFO *bg;
         u_int *pack;
         int i;
@@ -737,10 +737,10 @@ static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_a
         start_alpha = 0;
     } else if ((0 <= x) && (x < 0x81)) {
         start_alpha = (x * alpha) >> 7;
-    } else if ((x > 0x80) && (x < 0x141)) {
+    } else if ((x > 0x80) && (x < SCREEN_HEIGHT - 0x7F)) {
         start_alpha = (alpha * 0x80) >> 7;
-    } else if ((x > 0x140) && (x < 0x1C1)) {
-        start_alpha = ((0x1C0 - x) * alpha) >> 7;
+    } else if ((x > SCREEN_HEIGHT - 0x80) && (x < SCREEN_HEIGHT + 1)) {
+        start_alpha = ((SCREEN_HEIGHT - x) * alpha) >> 7;
     } else {
         start_alpha = 0;
     }
@@ -750,10 +750,10 @@ static void GetSaveBoardAlphaInfo(int x, int width, int &start_alpha, int &end_a
         end_alpha = 0;
     } else if ((0 <= x) && (x < 0x81)) {
         end_alpha = (x * alpha) >> 7;
-    } else if ((x > 0x80) && (x < 0x141)) {
+    } else if ((x > 0x80) && (x < SCREEN_HEIGHT - 0x7F)) {
         end_alpha = (alpha * 0x80) >> 7;
-    } else if ((x > 0x140) && (x < 0x1C1)) {
-        end_alpha = ((0x1C0 - x) * alpha) >> 7;
+    } else if ((x > SCREEN_HEIGHT - 0x80) && (x < SCREEN_HEIGHT + 1)) {
+        end_alpha = ((SCREEN_HEIGHT - x) * alpha) >> 7;
     } else {
         end_alpha = 0;
     }
@@ -763,7 +763,9 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
     int i;
     int draw_x;
     int draw_y;
+#ifndef PAL
     int time[3];
+#endif
 
     if (info == NULL) {
         return;
@@ -781,6 +783,11 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
                      &bottom);
 
     draw_x = x + 0x54;
+#ifdef PAL
+    s8 number_shift[] = {0, 0, 0, 10, 0, 4, 13};
+    draw_x += number_shift[GetMenuLangFlag()];
+    int time[3];
+#endif
     draw_y = y + 8;
     RECT number_rect = {0x88, 0xCA, 0xC, 0x10};
     GetSaveBoardAlphaInfo(y, 0x10, start_alpha, end_alpha, alpha);
@@ -804,7 +811,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
             src_x = number_rect.x + width * digit;
             src_y = number_rect.y;
             height = number_rect.height;
-            MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+            MenuTextureClip(clip_y, src_y, height, 0, SCREEN_HEIGHT);
             DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1),
                              CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
             number /= 10;
@@ -878,7 +885,7 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
             src_x = number_rect.x + width * digit;
             src_y = number_rect.y;
             height = number_rect.height;
-            MenuTextureClip(clip_y, src_y, height, 0, 0x1C0);
+            MenuTextureClip(clip_y, src_y, height, 0, SCREEN_HEIGHT);
             DrawMenu2DSprite(SaveBoard, CRect_i_(draw_x, clip_y, width, height - 1),
                              CRect_i_(src_x, src_y, width, height), &top, &top, &bottom, &bottom);
             number /= 10;
@@ -976,8 +983,15 @@ void DrawNewFileTemplete(int x, int y, int alpha) {
     GetSaveBoardAlphaInfo(y + 0x35, 0x1E, start_alpha, end_alpha, 0x80);
     top.a = start_alpha;
     bottom.a = end_alpha;
+#ifdef PAL
+    s8 label_inset[] = {64, 64, 64, 64, 38, 64, 64};
+    int label_x = 0xC0 - label_inset[GetMenuLangFlag()];
+    set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + label_x, y + 0x35, 0x74, 0x1E),
+                CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
+#else
     set2DSprite(GetVif1Packet(), SaveBoard, CRect_i_(x + 0x86, y + 0x35, 0x74, 0x1E),
                 CRect_i_(0x10C, 0xB8, 0x74, 0x1E), &top, &top, &bottom, &bottom, 1);
+#endif
 }
 
 int InitExistData(void) {
@@ -1119,7 +1133,11 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     MiniMenu.lang = GetMenuLangFlag();
     s8 lang_y[7] = {0, -0x10, -0x10, -0x10, -0x10, -0x10, -0x10};
     EventBoardPos[0] = x;
+#ifdef PAL
+    EventBoardPos[1] = (float) y + (float) lang_y[MiniMenu.lang] + 20.0f;
+#else
     EventBoardPos[1] = (float) y + (float) lang_y[MiniMenu.lang];
+#endif
     EventItemPackPt = pack;
     MiniMenu.event_item_num = 0;
     for (i = 0; i < pack->num; i++) {
@@ -1141,7 +1159,7 @@ void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, 
     } else {
         printf("exist after use \n");
     }
-    LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}};
     texture[0].block_no = MiniEventTextureBlock;
     TexManager.DeleteTextureBlock(MiniEventTextureBlock);
     TexManager.CleanUpTextureList();
@@ -1218,7 +1236,8 @@ static int EventItemSelectKey(int *result) {
 
     if (MiniEventTexReadFlag == 0) {
         if (ReadBGSync() == 0) {
-            LOADTEXTURE_INFO2 texture[4] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 texture[4] = {
+                {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
             texture[0].block_no = MiniEventTextureBlock;
             texture[1].block_no = MiniEventTextureBlock;
             texture[2].block_no = MiniEventTextureBlock;
@@ -1364,6 +1383,7 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
     DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(src_u, 0xC6, src_width, 0x1E), alpha);
 }
 
+#ifndef PAL
 /**
  * Extra height of the event item board in each menu language.
  */
@@ -1373,8 +1393,13 @@ s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
  * Extra width of the event item board's side pieces in each menu language.
  */
 s8 kakudai_yoko_lang[7] = {0, 10, 10, 10, 10, 10, 10};
+#endif
 
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
+#ifdef PAL
+    s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
+    s8 kakudai_yoko_lang[7] = {0, 10, 10, 20, 10, 16, 14};
+#endif
     int extra_height = kakudai_tate_lang[lang];
     int extra_width = kakudai_yoko_lang[lang];
     int rows;
@@ -1502,7 +1527,11 @@ static void EventItemSelectDraw(void) {
         CursorVibeCnt = 0;
     }
     CommonMenuMes2.edge_alpha = alpha;
+#ifdef PAL
+    s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-9, 0}, {-4, 0}, {-7, 0}, {-6, 0}};
+#else
     s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}};
+#endif
     DrawMenuClsMes(&CommonMenuMes2, 20.0f + left + message_pos[MiniMenu.lang][0],
                    146.0f + top + message_pos[MiniMenu.lang][1]);
     if (MiniMenu.state == 1) {

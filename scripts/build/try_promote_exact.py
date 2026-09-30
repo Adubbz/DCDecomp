@@ -17,12 +17,15 @@ import verify
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 TARGETS = ("SCUS_971.11", "TITLE.BIN", "DUN.BIN")
 
 
 def build() -> tuple[bool, str]:
     result = subprocess.run(
-        ["./dev.sh", "cmake", "--build", "build", "--target", *TARGETS, "-j4"],
+        ["./dev.sh", "cmake", "--build", region.BUILD, "--target", *TARGETS, "-j4"],
         cwd=ROOT, capture_output=True, text=True,
     )
     return result.returncode == 0, result.stdout + result.stderr
@@ -96,7 +99,7 @@ def main() -> int:
             # A failed candidate may leave a newer compiled object behind.
             # Remove that generated object so Ninja must compile the restored
             # source, regardless of file timestamp granularity.
-            object_path = ROOT / "build" / (str(args.source) + ".o")
+            object_path = ROOT / region.BUILD / (str(args.source) + ".o")
             object_path.unlink(missing_ok=True)
             rebuilt, log = build()
             if not rebuilt:

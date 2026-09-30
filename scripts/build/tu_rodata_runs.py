@@ -19,6 +19,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 SYMBOL = re.compile(r"^(\S+) = 0x([0-9a-fA-F]+); // size:0x([0-9a-fA-F]+)")
 INVENTED = re.compile(r"^@(\d+)(?:__\d+)?$")
 SEGMENT = re.compile(
@@ -32,7 +35,7 @@ VRAM = 0xFFF00
 
 def symbols() -> dict[str, tuple[int, int]]:
     found = {}
-    for line in (ROOT / "config" / "main.symbols.txt").read_text().splitlines():
+    for line in (ROOT / region.CONFIG / "main.symbols.txt").read_text().splitlines():
         match = SYMBOL.match(line.strip())
         if match:
             found.setdefault(match.group(1), (int(match.group(2), 16), int(match.group(3), 16)))
@@ -40,7 +43,7 @@ def symbols() -> dict[str, tuple[int, int]]:
 
 
 def subsegments() -> list[tuple[int, int, str]]:
-    text = (ROOT / "config" / "main.yaml").read_text()
+    text = (ROOT / region.CONFIG / "main.yaml").read_text()
     starts = sorted(
         (int(m.group(1), 16) + VRAM, m.group(2)) for m in SEGMENT.finditer(text)
     )
@@ -76,7 +79,7 @@ def runs(entries: list[tuple[int, int, str]]) -> list[list[tuple[int, int, str]]
 
 def readers(unit: str, addresses: dict[str, tuple[int, int]]):
     """Each function of a unit dump, with the constant addresses it reaches."""
-    path = ROOT / "asm" / f"{unit}.s"
+    path = ROOT / region.ASM / f"{unit}.s"
     if not path.is_file():
         return
     text = path.read_text(errors="replace")

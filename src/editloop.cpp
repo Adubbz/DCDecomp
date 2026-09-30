@@ -1,7 +1,9 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
+#ifndef PAL
 #pragma argument_flag_ones 0, 207, 208, 215, 626
+#endif
 
 #include "common.h"
 
@@ -28,6 +30,12 @@
 #include "dngstatusdata.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
+#ifdef PAL // P7_TMPDECL
+void EdDebugMenu();
+extern int EdDebugRunEventNo;
+void EdDPrintChara(CMainChara *chara);
+void EdDPrintCamera(CCamera *camera);
+#endif
 #include "edit_in.hpp"
 #include "editarea.hpp"
 #include "editground.hpp"
@@ -736,7 +744,11 @@ int EditInit(void *) {
     InitializeDataBuffer();
     SetDataBuffer(&VisualData, 100);
     SetDataBuffer(&EtcDataBuffer, 40000);
+#ifdef PAL
+    SetDataBuffer(&EdScriptBuffer, 20000);
+#else
     SetDataBuffer(&EdScriptBuffer, 16000);
+#endif
     SetDataBuffer(&EPartsInfoBuff, 8000);
     SetDataBuffer(&CharaBuffer, 115000);
     SetDataBuffer(&TextureData, 10);
@@ -871,7 +883,7 @@ int EditInit(void *) {
     DebugFont__3.x = 16;
     DebugFont__3.y = 16;
     DebugFont__3.width = 280;
-    DebugFont__3.height = 224;
+    DebugFont__3.height = SCREEN_HALF_HEIGHT;
     DebugFont__3.alpha = 64;
     EdDSetFont(&DebugFont__3);
     if (interior_test == 0) {
@@ -979,7 +991,12 @@ int EditInit(void *) {
     EditMes1.SetBuff(talk_mes);
     EdMesBuffer.Align64();
     short *system_mes = (short *) (EdMesBuffer.base + EdMesBuffer.used * 16);
+#ifdef PAL
+    sprintf(mes_path, "gedit/system/editsys%s.mes", language);
+    LoadFile(mes_path, system_mes, &mes_size);
+#else
     LoadFile("gedit/system/editsys.bin", system_mes, &mes_size);
+#endif
     EdMesBuffer.Alloc((mes_size >> 4) + 1);
     EditSystemMes.tex_buff = MesWinTexBuff_01;
     EditSystemMes.tex_block = 26;
@@ -1132,7 +1149,7 @@ int EditLoop(void) {
             simple_event = 0;
             LoadScript();
 
-            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
             MGEndFrame();
             TexManager.DeleteTextureBlock(0xF);
             EdNPCBuffer.used = 0;
@@ -1143,7 +1160,7 @@ int EditLoop(void) {
             EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, NULL);
             MGBeginFrame();
 
-            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
 
             ED_EVENT_PARAM entry;
 
@@ -1375,7 +1392,7 @@ int EditLoop(void) {
                 }
                 SndStep();
 
-                MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+                MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
                 MGEndFrame();
                 for (int i = 0; i < 10; i++) {
                     TexManager.DeleteTextureBlock(i + 0x36);
@@ -1388,7 +1405,7 @@ int EditLoop(void) {
                 EditInInit(NowTime, interior_map_name);
                 MGBeginFrame();
 
-                MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+                MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
                 ItemVolumeStep.CheckItemVolume();
                 return 0;
             }
@@ -1662,6 +1679,56 @@ int EditLoop(void) {
         }
     }
     static int debug_flag = 0;
+#ifdef PAL
+    // Debug builds draw the editor debug overlay and open the debug menu from the pad.
+    if (DebugMode != 0) {
+        if (GamePad.Down(0x200) != 0) {
+            debug_flag = !debug_flag;
+        }
+        EdDDebug(debug_flag);
+        if (debug_menu_mode != 0) {
+            GamePad.KeyLock(0);
+            EdDebugMenu();
+            if (GamePad.Down(0x400) != 0 || EdDebugRunEventNo > 0) {
+                debug_menu_mode = 0;
+                GamePad.AutoRepeatOff();
+                RunEvent(EdDebugRunEventNo, NowCamera);
+            } else {
+                GamePad.KeyLock(1);
+            }
+        } else {
+            if (GameMode != 0xE && GamePad.Down(0x400) != 0) {
+                GamePad.SetAutoRepeat(0xF000, 0x19, 3);
+                GamePad.SetAutoRepeat(0xC, 0x19, 3);
+                debug_menu_mode = 1;
+                debug_flag = 0;
+            }
+            if (GameMode == 4) {
+                sceVu0FVECTOR cursor_pos;
+                char text[128];
+
+                sceVu0CopyVector(cursor_pos, ECursorFrame->position);
+                EdDPrintVector("pos = ", cursor_pos);
+                int area = pEditGround->GetAreaCode(cursor_pos[0], cursor_pos[1], cursor_pos[2]);
+                sprintf(text, "area = %d\n", area);
+                EdDPrint(text);
+                if (area >= 0) {
+                    CVector3_i_ grid;
+
+                    pEditGround->areas[area]->GetPos(&grid, cursor_pos[0], cursor_pos[1], cursor_pos[2]);
+                    sprintf(text, "pos(grid) = (%d,%d)\n", grid.x, grid.z);
+                    EdDPrint(text);
+                    sprintf(text, "id = %d\n", pEditGround->areas[area]->GetPartsID(grid.x, grid.z));
+                    EdDPrint(text);
+                }
+            } else {
+                EdDPrintChara((CMainChara *) Chara);
+            }
+            EdDPrintCamera(NowCamera);
+            EdDDrawFont();
+        }
+    }
+#endif
     if (GameMode != 6 && GameMode != 4 && loop_counter > 10) {
         sceVu0FVECTOR eye_pos;
         sceVu0FVECTOR eye_dir;
@@ -1780,6 +1847,14 @@ int EditLoop(void) {
         end_code = 1;
     }
     key_counter = 0;
+#ifdef PAL
+    // Debug builds leave the editor through a fade on a two-button chord.
+    if (DebugMode != 0 && GamePad.On(0x100) != 0 && GamePad.On(0x800) != 0 && end_counter == 0) {
+        end_counter = 100;
+        EdFadeOut(0x40, 0.0f, 0.0f, 0.0f);
+        end_code = 1;
+    }
+#endif
     if (exit_loop != 0) {
         EditExit();
         return 1;
@@ -1906,7 +1981,7 @@ void MainDraw() {
                     screen.x = 0;
                     screen.y = 0;
                     screen.width = 0x280;
-                    screen.height = 0xE0;
+                    screen.height = SCREEN_HALF_HEIGHT;
                     water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
                     MGMoveImage(&frame, screen, &water, 0, 0, 0);
                     MainCamera.GetRef(ref);
@@ -2145,7 +2220,7 @@ void MainDraw() {
                 screen.x = 0;
                 screen.y = 0;
                 screen.width = 0x2800;
-                screen.height = 0xE00;
+                screen.height = SCREEN_HALF_HEIGHT * 16;
                 MGFillBox(screen, (int) fade[0] & 0xFF, (int) fade[1] & 0xFF,
                           (int) fade[2] & 0xFF, (int) fade[3] & 0xFF);
             }
@@ -2187,22 +2262,38 @@ void MainDraw() {
                 CRect_i_ bar;
                 CRect_i_ fill;
 
+#ifdef PAL
+                back.x = 0x1F20;
+#else
                 back.x = 0x1CA0;
+#endif
                 back.y = 0xBF8;
                 back.width = 0x680;
                 back.height = 0x70;
                 MGFillBox(back, 0x14, 0x14, 0x14, 0x80);
+#ifdef PAL
+                bar.x = 0x1F40;
+#else
                 bar.x = 0x1CC0;
+#endif
                 bar.y = 0xC08;
                 bar.width = 0x640;
                 bar.height = 0x50;
                 MGFillBox(bar, 0x64, 0x64, 0x64, 0x80);
+#ifdef PAL
+                fill.x = 0x1F40;
+#else
                 fill.x = 0x1CC0;
+#endif
                 fill.y = 0xC08;
                 fill.width = percent * 0x10;
                 fill.height = 0x50;
                 MGFillBox(fill, 0xB4, 0x64, 0x28, 0x80);
+#ifdef PAL
+                DrawAtraBuildNum(info, 0x1F4, 0x181, 0x80);
+#else
                 DrawAtraBuildNum(info, 0x1CC, 0x181, 0x80);
+#endif
             }
         }
         EdFadeInOut();
@@ -2212,7 +2303,7 @@ void MainDraw() {
             screen.x = 0;
             screen.y = 0;
             screen.width = 0x2800;
-            screen.height = 0xE00;
+            screen.height = SCREEN_HALF_HEIGHT * 16;
             MGFillBox(screen, 0, 0, 0, 0x80);
         }
         clear_screen = 0;
@@ -2234,7 +2325,7 @@ void ParamDraw() {
     CRect_i_ cursor(screen[0] - 10, screen[1] - 32, 32, 32);
     set2DSprite(Vif1Packet, TexManager.GetTexture("syst08", -1), cursor, 0, 0);
     screen[0] = 320;
-    screen[1] = 224;
+    screen[1] = SCREEN_HALF_HEIGHT;
     if (NowFocusParts != NULL && DrawPartsNameCount == 0) {
         int name_count = PartsNameNum;
         if (name_count > 0) {
@@ -2386,6 +2477,293 @@ public:
     }
 };
 
+#ifdef PAL
+void DrawDay() {
+    if (draw_day_flag != 0) {
+        int week;
+        int x;
+        int width;
+        int alpha;
+        int day;
+        int digit[4];
+        CTexture *texture;
+        int count;
+        int drawn;
+        int remain;
+        int value;
+
+        draw_day_cnt -= 0.02f;
+        if (draw_day_cnt < 0.0f) {
+            draw_day_cnt = 0.0f;
+            draw_day_flag = 0;
+        }
+        day = SaveData->GetDay() + 1;
+        week = EdGetTime(NowTime);
+        week++;
+        if (week > 3) {
+            week = 0;
+        }
+        x = 0x140;
+        if (draw_day_cnt > 4.0f) {
+            alpha = (int) (128.0f * (5.0f - draw_day_cnt));
+        } else if (draw_day_cnt > 1.0f) {
+            alpha = 0x80;
+        } else {
+            alpha = (int) (128.0f * draw_day_cnt);
+        }
+        count = 1;
+        digit[3] = day / 1000;
+        digit[2] = day % 1000 / 100;
+        digit[1] = day % 100 / 10;
+        digit[0] = day % 10;
+        width = 0xA8;
+        if (day >= 10) {
+            width += 0x18;
+            count++;
+        }
+        if (day >= 100) {
+            width += 0x18;
+            count++;
+        }
+        if (day >= 1000) {
+            width += 0x18;
+            count++;
+        }
+        x -= width >> 1;
+        setbilinear(0);
+        texture = TexManager.GetTexture("whatsday", -1);
+
+        CRect_i_ title(0x30, 0x58, 0x30, 0x18);
+        CRect_i_ nichi(0x64, 0x40, 0x10, 0x18);
+        CRect_i_ weekday(0, 0x40, 0x18, 0x18);
+        CRect_i_ dai(0, 0x58, 0x30, 0x18);
+        CRect_i_ bar_left(0, 0x70, 0x10, 0x10);
+        CRect_i_ bar_middle(0x10, 0x70, 0x10, 0x10);
+        CRect_i_ bar_right(0x20, 0x70, 0x10, 0x10);
+        CRect_i_ word(0x78, 0x62, 0x65, 0x20);
+        CRect_i_ word_end(0xDD, 0x62, 0x22, 0x20);
+        CRectZero week_name[4];
+        switch (LanguageCode) {
+            case 1:
+            case 2:
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x68;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x38;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xC8;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x38;
+                week_name[3].height = 0x20;
+                break;
+            case 4:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x88;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x76;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x46;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xC4;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x40;
+                week_name[3].height = 0x20;
+                break;
+            case 6:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x88;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x3E;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x46;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0x78;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x46;
+                week_name[3].height = 0x20;
+                break;
+            case 3:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x60;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x40;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x8C;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x32;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xAA;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x34;
+                week_name[3].height = 0x20;
+                break;
+            case 5:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x44;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x76;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x76;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x32;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xA4;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x38;
+                week_name[3].height = 0x20;
+                break;
+        }
+        CRectZero week_word;
+        week_word = week_name[week];
+        CRectZero cell(0, 0, 0x18, 0x20);
+        CRectZero number;
+
+        if (texture != NULL) {
+            switch (LanguageCode) {
+                case 0:
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, title.width, title.height), title, alpha);
+                    x += 0x30;
+                    break;
+                case 1:
+                case 2:
+                    width = week_word.width +
+                            (word_end.width + (word.width + ((count - 1) * 32)) + 0x48);
+                    x = 0x140 - (int) (width >> 1);
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, word.width, word.height),
+                                word, alpha);
+                    x += word.width + 0xC;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, word_end.width, word_end.height), word_end, alpha);
+                    x += word_end.width + 0xC;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    width = week_word.width +
+                            (word_end.width + (word.width + ((count - 1) * 32)) + 0x38);
+                    x = 0x140 - (int) (width >> 1);
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, word.width, word.height),
+                                word, alpha);
+                    x += word.width + 0xC;
+                    break;
+            }
+            int n;
+            for (n = count; n > 0; n--) {
+                number = cell;
+                value = digit[n - 1];
+
+                number.x += number.width * (value % 5);
+                number.y += number.height * (value / 5);
+                set2DSprite(GetVif1Packet(), texture,
+                            CRect_i_(x, 0xE2, number.width, number.height), number, alpha);
+                x += number.width;
+            }
+            switch (LanguageCode) {
+                case 0:
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, dai.width, dai.height),
+                                dai, alpha);
+                    x += dai.width;
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, nichi.width, nichi.height),
+                                nichi, alpha);
+                    x += nichi.width;
+                    weekday.x += week * 0x18;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, weekday.width, weekday.height), weekday, alpha);
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, nichi.width, nichi.height),
+                                nichi, alpha);
+                    x += nichi.width;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, week_word.width, week_word.height), week_word,
+                                alpha);
+                    break;
+            }
+            drawn = 0;
+            x = 0x134 - (int) (width >> 1);
+            set2DSprite(GetVif1Packet(), texture,
+                        CRect_i_(x, 0xFC, bar_left.width, bar_left.height), bar_left, alpha);
+            drawn += bar_left.width;
+            x += bar_left.width;
+            remain = width - (bar_right.width >> 2);
+            while (drawn < width - bar_right.width) {
+                set2DSprite(GetVif1Packet(), texture,
+                            CRect_i_(x, 0xFC, bar_middle.width, bar_middle.height), bar_middle,
+                            alpha);
+                x += bar_middle.width;
+                remain -= bar_middle.width;
+                drawn += bar_middle.width;
+            }
+            bar_right.x += bar_right.width - remain;
+            bar_right.width = remain;
+            set2DSprite(GetVif1Packet(), texture,
+                        CRect_i_(x, 0xFC, bar_right.width, bar_right.height), bar_right, alpha);
+        }
+    }
+}
+#else
 void DrawDay() {
     if (draw_day_flag != 0) {
         int week;
@@ -2547,6 +2925,7 @@ void DrawDay() {
         }
     }
 }
+#endif
 
 /**
  * Draws the editor's clock, day display, event cursors, and pause overlay.
@@ -2566,7 +2945,7 @@ void DrawSysGra() {
             fade.x = 0;
             fade.y = 0;
             fade.width = 0x2800;
-            fade.height = 0xe00;
+            fade.height = (SCREEN_HALF_HEIGHT << 4);
             MGFillBox(fade, 0, 0, 0, 0x40);
             setbilinear(0);
 
@@ -2577,7 +2956,11 @@ void DrawSysGra() {
             texel.width = 0x80;
             texel.height = 0x28;
             screen.x = 0x100;
+#ifdef PAL
+            screen.y = 0xdc;
+#else
             screen.y = 0xcc;
+#endif
             screen.width = 0x80;
             screen.height = 0x28;
             set2DSprite(GetVif1Packet(), TexManager.GetTexture(pause_texture, -1), screen, texel,
@@ -3638,6 +4021,175 @@ u_int *parts_read_buffer;
  * @address 0x180C00
  * @size 0x878
  */
+#ifdef PAL
+int LoadTexture() {
+    int entered;
+    int image;
+    u_long128 *buffer = (u_long128 *) (DataBuffer__2.base + DataBuffer__2.used * 16);
+
+    TexManager.Initialize(0x3FE0);
+    TexManager.SetBuffer(buffer, 0x4E200);
+
+    LOADTEXTURE_INFO2 mes_blocks[8] = {
+        {"#mes_frame_buff#640#" SCREEN_HEIGHT_STR "#4", 0x1A, 0},
+        {"#fukidashibase#640#224#4", 0x1A, 0},
+        {"#fontbase#512#256#1", 0x1A, 0},
+        {"meswin/gaiji.img", 0x1A, 0},
+        {"meswin/fuki256.img", 0x1A, 0},
+        {"meswin/syst04.img", 0x1A, 0},
+    };
+    char mes_path[64] = "meswin/mes_tex.pak";
+
+    if (LanguageCode > 0) {
+        sprintf(mes_path, "meswin/mes_tex_%d.pak", LanguageCode);
+    }
+    LoadFile(mes_path, read_buffer, NULL);
+    wait_now_loading_vsync();
+    mes_blocks[3].name = (char *) GetPackFile(read_buffer, "gaiji.img", NULL);
+    mes_blocks[4].name = (char *) GetPackFile(read_buffer, "fuki256.img", NULL);
+    mes_blocks[5].name = (char *) GetPackFile(read_buffer, "syst04.img", NULL);
+    TexManager.LoadTextureBlock(-1, mes_blocks);
+
+    int common_size;
+
+    LoadFile("gedit/system/esys_cmn.pak", read_buffer, &common_size);
+    wait_now_loading_vsync();
+
+    // The language's system image is read into the 1 KiB-aligned space after the common pack.
+    u_int *system_image = read_buffer + ((common_size >> 6) + 1) * 64;
+    char system_path[64] = "gedit/system/sys.img";
+
+    if (LanguageCode > 0) {
+        sprintf(system_path, "gedit/system/sys_%d.img", LanguageCode);
+    }
+    LoadFile(system_path, system_image, NULL);
+    wait_now_loading_vsync();
+    TexManager.EnterIMGFile((u_char *) GetPackFile(read_buffer, "cursor.img", NULL), -1, 0, 0);
+    TexManager.EnterIMGFile((u_char *) GetPackFile(read_buffer, "e01t02.img", NULL), -1, 0, 0);
+
+    LOADTEXTURE_INFO2 blocks[64] = {
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x15, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x16, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x18, 0},
+        {"#font_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x1F, 0},
+        {"img/system.img", 0x14, 0},
+        {"\0", 0x14, 0},
+        {"s_eff.img", 0x14, 0},
+        {"img/ankfont.img", 0x1F, 0},
+        {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0x13, 0},
+    };
+
+    blocks[4].name = (char *) GetPackFile(read_buffer, "sys_cmn.img", NULL);
+    blocks[5].name = (char *) system_image;
+    blocks[6].name = (char *) GetPackFile(read_buffer, "s_eff.img", NULL);
+    blocks[7].name = (char *) GetPackFile(read_buffer, "ankfont.img", NULL);
+    TexManager.LoadTextureBlock(-1, blocks);
+    wait_now_loading_vsync();
+
+    CFrameAttr cursor_attr;
+
+    cursor_attr.use_color = 1;
+    CharaCursor0 = LoadMDSFile(GetPackFile(read_buffer, "cursor01.mds", NULL), &EtcDataBuffer, 0,
+                               NULL, NULL);
+    CharaCursor0->SetAttr(cursor_attr, 1, 0x200);
+    CharaCursor1 = LoadMDSFile(GetPackFile(read_buffer, "cursor02.mds", NULL), &EtcDataBuffer, 0,
+                               NULL, NULL);
+    CharaCursor1->SetAttr(cursor_attr, 1, 0x200);
+
+    CharaCursor1->SetScale(2.5f, 2.5f, 2.5f);
+    CharaCursor2 = LoadMDSFile(GetPackFile(read_buffer, "bic.mds", NULL), &EtcDataBuffer, 0,
+                               NULL, NULL);
+    CharaCursor2->SetAttr(cursor_attr, 1, 0x200);
+    TreasureCursor = LoadMDSFile(GetPackFile(read_buffer, "ibox_0.mds", NULL), &EtcDataBuffer, 0,
+                                 NULL, NULL);
+    TreasureCursorOpen = LoadMDSFile(GetPackFile(read_buffer, "ibox_1.mds", NULL), &EtcDataBuffer,
+                                     0, NULL, NULL);
+
+    CFrameAttr box_attr;
+
+    box_attr.clip_enable = 0;
+    box_attr.fog_enable = 1;
+    if (TreasureCursor != NULL) {
+        TreasureCursor->SetAttr(box_attr, 1, 0x44);
+    }
+    if (TreasureCursorOpen != NULL) {
+        TreasureCursorOpen->SetAttr(box_attr, 1, 0x44);
+    }
+    SystemEffect[0].texture = TexManager.GetTexture("s_ef01", -1);
+
+    char stay_path[128];
+    LOADTEXTURE_INFO map_blocks[64];
+    CRect_i_ effect_rect;
+
+    effect_rect.x = 0;
+    effect_rect.y = 0;
+    effect_rect.width = 0x20;
+    effect_rect.height = 0x20;
+    SystemEffect[0].texel = effect_rect;
+    SystemEffect[0].alpha_blend = 1;
+    SystemEffect[0].disable_z_write = 1;
+
+    GetEditDataDir(stay_path);
+    strcat(stay_path, "img.pak");
+
+    u_int *menu_data = (u_int *) (EdNPCBuffer.base + EdNPCBuffer.used * 16);
+
+    LoadFileMenuData("stayframe.img", menu_data);
+    wait_now_loading_vsync();
+    TexManager.EnterFixTextureZ((u_char *) menu_data);
+    StayTexture = TexManager.GetTexture("stayframe", -1);
+
+    if (LoadFile2(stay_path, menu_data, NULL, 0) != 0) {
+        wait_now_loading_vsync();
+
+        entered = 0;
+        image = 0;
+        while (EditMapInfo->images[image].name[0] != '\0') {
+            blocks[entered].name =
+                (char *) GetPackFile(menu_data, EditMapInfo->images[image].name, NULL);
+            blocks[entered].block_no = EditMapInfo->images[image].type;
+            blocks[entered].mipmap = EditMapInfo->images[image].number;
+            entered++;
+            image++;
+        }
+        blocks[entered].name = NULL;
+        blocks[entered].block_no = 0;
+        blocks[entered].mipmap = 0;
+        TexManager.LoadTextureBlock(-1, blocks);
+        TexAnime.Initialize(TexAnimeData, 0x40);
+
+        int anime_size;
+        char *anime_cfg = (char *) GetPackFile(menu_data, "texanime.cfg", &anime_size);
+
+        if (anime_cfg != NULL) {
+            for (int i = 0; i < 64; i++) {
+                TexAnimeData[i].Initialize();
+            }
+            TexAnime.LoadCFGFile(anime_cfg, anime_size);
+        }
+    } else {
+        TexAnime.Initialize(NULL, 0);
+
+        entered = 0;
+        image = 0;
+        while (EditMapInfo->images[image].name[0] != '\0') {
+            map_blocks[entered].name = EditMapInfo->images[image].name;
+            map_blocks[entered].block_no = EditMapInfo->images[image].type;
+            map_blocks[entered].mipmap = EditMapInfo->images[image].number;
+            image++;
+            entered++;
+        }
+        map_blocks[entered].name = EditMapInfo->images[image].name;
+        map_blocks[entered].block_no = EditMapInfo->images[image].type;
+        map_blocks[entered].mipmap = EditMapInfo->images[image].number;
+        TexManager.LoadTextureBlock(-1, map_blocks, read_buffer);
+    }
+    TexManager.buffer_size = TexManager.buffer_used;
+    DataBuffer__2.Alloc((int) (TexManager.buffer + TexManager.buffer_size - buffer) + 16);
+    DataBuffer__2.Align64();
+    return 0;
+}
+#else
 int LoadTexture() {
     int entered;
     int image;
@@ -3796,6 +4348,7 @@ int LoadTexture() {
     DataBuffer__2.Align64();
     return 0;
 }
+#endif
 
 /**
  * Loads the player's model and motions into the arena the caller names, or
@@ -3818,8 +4371,12 @@ void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena) {
     attr.clip_enable = 0;
     attr.fog_enable = 1;
     MainChara.frame->SetAttr(attr, 1, 4);
+#ifdef PAL
+    MainChara.SetPosition(0.0f, 0.0f, 0.0f);
+#else
     float origin = 0.0f;
     MainChara.SetPosition(origin, origin, origin);
+#endif
     Chara = &MainChara;
 }
 
@@ -4489,7 +5046,7 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
         float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
 
         x[i] = (int) turned_x + (screen.x << 4) + 27648;
-        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + 30976;
+        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + GS_Y_OFFSET;
     }
 
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
@@ -4630,8 +5187,16 @@ int CheckEventPoint(ED_EVENT_POINT *point, float time) {
 }
 
 /* The order the static initialiser materialises each camera's float arguments in. */
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 1754, 1762, 1770, 1778, 1795, 1801, 1909, 1939, 1941, 1942
+#pragma argument_flag_ones 1944, 1949, 1951, 1952, 1954, 1959, 1961, 1962, 1964, 1969
+#pragma argument_flag_ones 1971, 1972, 1974, 1979, 1981, 1982, 1984, 1989, 1991, 1992
+#pragma argument_flag_ones 1994
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 3504, 3512, 3520, 3528, 3545, 3551, 3659, 3689, 3691, 3692
 #pragma argument_flag_ones 3694, 3699, 3701, 3702, 3704, 3709, 3711, 3712, 3714, 3719
 #pragma argument_flag_ones 3721, 3722, 3724, 3729, 3731, 3732, 3734, 3739, 3741, 3742
 #pragma argument_flag_ones 3744
+#endif

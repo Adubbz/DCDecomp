@@ -442,8 +442,18 @@ void CActionSeq::Play() {
             MOTION_INFO *motion_info = character->GetMotionInfo(motion_head->arguments.animation.id);
 
             if (motion_info != NULL && motion_head->arguments.animation.mode == 7) {
+#ifdef PAL
+                // The last step is the one the character plays at, once its speed is set.
+                float step = motion_info->speed;
+                if (character->motion_speed > 0.0f) {
+                    step = character->motion_speed;
+                }
+                if (!(motion_info->end <= motion_time) && motion_info->start < motion_time &&
+                    motion_info->end - step - 0.01f <= motion_time) {
+#else
                 if (!(motion_info->end <= motion_time) && motion_info->start < motion_time &&
                     motion_info->end - motion_info->speed - 0.01f <= motion_time) {
+#endif
                     int motion_index;
                     tagMOTION_TYPE *motion_type =
                         character->GetMotionParam(character->motion_no, &motion_index, NULL, NULL, NULL);

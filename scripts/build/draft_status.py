@@ -17,10 +17,14 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MANIFEST = ROOT / "config" / "ghidra_annotations.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
+MANIFEST = ROOT / region.CONFIG / "ghidra_annotations.json"
 MARKER = re.compile(r'INCLUDE_ASM\("[^"]+",\s*([^)]+)\);')
 DIRECTIVE = re.compile(r"^\s*#\s*(ifdef|ifndef|if|else|elif|endif)\b(.*)$")
 DEFINED = re.compile(r"\bdefined\s*(?:\(\s*)?NON_MATCHING\b")

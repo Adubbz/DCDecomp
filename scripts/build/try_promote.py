@@ -30,6 +30,9 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import region  # noqa: E402
+
 COUNTS = re.compile(
     r"(\S+): .*?\((\d+) perfect, (\d+) fuzzy, (\d+) asm, (\d+) unmatched"
     r"(?:, (\d+) data bytes differ)?\)")
@@ -49,7 +52,7 @@ def verify() -> dict[str, tuple[int, int, int, int, int]]:
 
 
 def build() -> None:
-    subprocess.run(["./dev.sh", "cmake", "--build", "build"],
+    subprocess.run(["./dev.sh", "cmake", "--build", region.BUILD],
                    cwd=ROOT, capture_output=True, text=True)
 
 

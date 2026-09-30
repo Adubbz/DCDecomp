@@ -686,7 +686,7 @@ int EnterWeaponModel(int chara, int texture_block, int) {
             break;
         case 1: {
             LOADTEXTURE_INFO2 texture[3] = {
-                {"#frame_menuwep_dmy#640#448#4", 0, 0},
+                {"#frame_menuwep_dmy#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
                 {NULL, 0, 0},
                 {NULL, 0, 0},
             };
@@ -753,7 +753,7 @@ void WeaponModelBuildFunc(int chara, int texture_block) {
     printf("weapon model build func start\n");
     InitMenuWeaponModelReference();
     LOADTEXTURE_INFO2 textures[] = {
-        {(char *) "#frame_menuwep#640#448#4", texture_block, 0},
+        {(char *) "#frame_menuwep#640#" SCREEN_HEIGHT_STR "#4", texture_block, 0},
         {NULL, 0, 0},
     };
     char name[32];
@@ -976,7 +976,7 @@ void MenuCharaMDSBuild2(int chara, int texture_block) {
 
     sprintf(name, "c0%ddmenu.img", chara + 1);
     LOADTEXTURE_INFO2 textures[3] = {
-        {"#frame_menu_chara#640#448#4", 0, 0},
+        {"#frame_menu_chara#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
         {NULL, 0, 0},
         {NULL, 0, 0},
     };
@@ -1117,7 +1117,7 @@ void BtMenuLoad2(int load_texture) {
     if (load_texture != 0) {
         BG_READ_INFO *file = GetReadBGFile(0);
         LOADTEXTURE_INFO2 textures[] = {
-            {(char *) "#frame_image#640#448#4", MenuShadowReadBlock, 0},
+            {(char *) "#frame_image#640#" SCREEN_HEIGHT_STR "#4", MenuShadowReadBlock, 0},
             {(char *) file->buffer, MenuShadowReadBlock, 0},
             {NULL, 0, 0},
         };
@@ -1168,7 +1168,7 @@ void MonsterNameInit(ClsMes *mes, short *message_buffer, unsigned char *texture_
         return;
     }
     CharaNameMes = mes;
-    mes->text_columns = 0x46;
+    mes->text_columns = MES_WIN_COLUMNS;
     mes->text_rows = 10;
     mes->text_len = 0;
     mes->text_width = 0;

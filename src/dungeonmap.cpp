@@ -228,6 +228,9 @@ void CDungeonMap::NPCSetMotion(int npc_no, int motion_no, float speed, int motio
     this->npc[npc_no].chara.motion_flags = motion_flags;
     this->npc[npc_no].chara.motion_speed = -1.0f;
     this->npc[npc_no].chara.motion_speed = speed;
+#ifdef PAL
+    this->npc[npc_no].chara.motion_speed = 6.0f * speed / 5.0f;
+#endif
 }
 
 CFrame *CDungeonMap::GetFrameSearch(char *name) {

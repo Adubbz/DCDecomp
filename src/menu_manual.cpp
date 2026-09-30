@@ -106,7 +106,7 @@ s16 ManualImgEnter() {
         BG_READ_INFO *extra = GetReadBGFile(1);
         if (extra != NULL) {
             LOADTEXTURE_INFO2 extra_table[] = {
-                {"#frame_image1#640#448#4", 0, 0},
+                {"#frame_image1#640#" SCREEN_HEIGHT_STR "#4", 0, 0},
                 {NULL, 0, 0},
                 {NULL, 0, 0},
             };
@@ -199,7 +199,11 @@ void DrawManualMsg() {
     CommonMenuMes3.DrawMesWin();
 }
 
+#ifdef PAL
+int InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
+#else
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
+#endif
     ManualMenu.load_buffer = load_buffer;
     ManualMenu.load_buffer = MenuCalcBufAlignment(ManualMenu.load_buffer);
     u_long128 *buffer = ManualMenu.load_buffer;
@@ -223,13 +227,16 @@ void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {
     ManualMenu.common_message_buffer = CommonMenuMes3.buff;
     ManualMenu.menu_message_buffer = CommonMenuMes1.buff;
     ManualMenu.char_width = CommonMenuMes3.char_width;
+#ifdef PAL
+    return 1;
+#endif
 }
 
 /**
  * Empties a message window and puts its layout back to the defaults.
  */
 static inline void ResetManualMessage(ClsMes *message) {
-    message->text_columns = 0x46;
+    message->text_columns = MES_WIN_COLUMNS;
     message->text_rows = 10;
     message->text_len = 0;
     message->text_width = 0;
@@ -520,11 +527,15 @@ void MenuManualDraw() {
             if (width < 0) {
                 width = 0;
             }
-            CRect_i_ screen(screen_x, 0, width, 0x1C0);
+            CRect_i_ screen(screen_x, 0, width, SCREEN_HEIGHT);
             CRect_i_ texel(source_x, 0, width, 0x1C0);
             CTexture *texture = ManualMenuTex[image];
             if (texture != NULL) {
+#ifdef PAL
+                DrawMenu2DSprite(texture, screen, texel, 100, 100, 100, 0x80);
+#else
                 set2DSprite(GetVif1Packet(), texture, screen, texel, 100, 100, 100, 0x80);
+#endif
             } else {
                 int previous = image - 1;
                 while (ManualMenuTex[previous] == NULL) {
@@ -533,7 +544,11 @@ void MenuManualDraw() {
                     }
                 }
                 if (previous >= 0) {
+#ifdef PAL
+                    DrawMenu2DSprite(texture, screen, texel, 0x50, 0x50, 0x50, 0x80);
+#else
                     set2DSprite(GetVif1Packet(), texture, screen, texel, 0x50, 0x50, 0x50, 0x80);
+#endif
                 }
             }
         }

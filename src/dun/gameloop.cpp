@@ -1,6 +1,48 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 885
+#ifdef PAL
+#pragma argument_flag_free 2936, 2937, 2938, 2939, 2940, 2941, 2942, 2943, 2944, 2945
+#pragma argument_flag_free 2946, 2947, 2948, 2949, 2950, 2951, 2952, 2953, 2954, 2955
+#pragma argument_flag_free 2956, 2957, 2958, 2959, 2960, 2961, 2962, 2963, 2964, 2965
+#pragma argument_flag_free 2966, 2967, 2968, 2969, 2970, 2971, 2972, 2973, 2974, 2975
+#pragma argument_flag_free 2976, 2977, 2978, 2979, 2980, 2981, 2982, 2983, 2984, 2985
+#pragma argument_flag_free 2986, 2987, 2988, 2989, 2990, 2991, 2992, 2993, 2994, 2995
+#pragma argument_flag_free 2996, 2997, 2998, 2999, 3000, 3001, 3002, 3003, 3004, 3005
+#pragma argument_flag_free 3006, 3007, 3008, 3009, 3010, 3011, 3012, 3013, 3014, 3015
+#pragma argument_flag_free 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025
+#pragma argument_flag_free 3026, 3027, 3028, 3029, 3030, 3031, 3032, 3033, 3034, 3035
+#pragma argument_flag_free 3036, 3037, 3038, 3039, 3040, 3041, 3042, 3043, 3044, 3045
+#pragma argument_flag_free 3046, 3047, 3048, 3049, 3050, 3051, 3052, 3053, 3054, 3055
+#pragma argument_flag_free 3056, 3057, 3058, 3059, 3060, 3061, 3062, 3063, 3064, 3065
+#pragma argument_flag_free 3066, 3067, 3068, 3069, 3070, 3071, 3072, 3073, 3074, 3075
+#pragma argument_flag_free 3076, 3077, 3078, 3079, 3080, 3081, 3082, 3083, 3084, 3085
+#pragma argument_flag_free 3086, 3087, 3088, 3089, 3090, 3091, 3092, 3093, 3094, 3095
+#pragma argument_flag_free 3096, 3097, 3098, 3099, 3100, 3101, 3102, 3103, 3104, 3105
+#pragma argument_flag_free 3106, 3107, 3108, 3109, 3110, 3111, 3112, 3113, 3114, 3115
+#pragma argument_flag_free 3116, 3117, 3118, 3119, 3120, 3121, 3122, 3123, 3124, 3125
+#pragma argument_flag_free 3126, 3127, 3128, 3129, 3130, 3131, 3132, 3133, 3134, 3135
+#pragma argument_flag_free 3136, 3137, 3138, 3139, 3140, 3141, 3142, 3143, 3144, 3145
+#pragma argument_flag_free 3146, 3147, 3148, 3149, 3150, 3151, 3152, 3153, 3154, 3155
+#pragma argument_flag_free 3156, 3157, 3158, 3159, 3160, 3161, 3162, 3163, 3164, 3165
+#pragma argument_flag_free 3166, 3167, 3168, 3169, 3170, 3171, 3172, 3173, 3174, 3175
+#pragma argument_flag_free 3176, 3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185
+#pragma argument_flag_free 3186, 3187, 3188, 3189, 3190, 3191, 3192, 3193, 3194, 3195
+#pragma argument_flag_free 3196, 3197, 3198, 3199, 3200, 3201, 3202, 3203, 3204, 3205
+#pragma argument_flag_free 3206
+#pragma argument_flag_ones 183, 488, 530, 578, 579, 614, 618, 643, 647, 655
+#pragma argument_flag_ones 659, 668, 700, 702, 747, 792, 795, 796, 800, 807
+#pragma argument_flag_ones 809, 825, 827, 841, 1091, 1092, 1146, 1147, 1151, 1152
+#pragma argument_flag_ones 1153, 1213, 1216, 1242, 1273, 1324, 1381, 1533, 1579, 1580
+#pragma argument_flag_ones 1698, 1747, 1762, 1769, 1780, 1786, 1809, 1810, 1811, 1812
+#pragma argument_flag_ones 1813, 1857, 1914, 1917, 1918, 1950, 1953, 1960, 2036, 2233
+#pragma argument_flag_ones 2255, 2360, 2645, 2673, 2849, 2851, 2904, 2906, 2923, 2926
+#pragma argument_flag_ones 3020, 3021, 3023, 3024, 3279, 3282, 3283, 3394, 3405, 3413
+#pragma argument_flag_ones 3433, 3436, 3471, 3478, 3493, 3496, 3521, 3549, 3556, 3570
+#pragma argument_flag_ones 3589, 3601, 3605, 3606, 3676, 3682, 3691, 3703, 3729, 3751
+#pragma argument_flag_ones 3758, 3765, 4037, 4038, 4039, 4082, 4085, 4146, 4147, 4149
+#pragma argument_flag 0
+#else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
 #pragma argument_flag_free 3610, 3611, 3612, 3613, 3614, 3615, 3616, 3617, 3618, 3619
 #pragma argument_flag_free 3620, 3621, 3622, 3623, 3624, 3625, 3626, 3627, 3628, 3629
@@ -44,6 +86,7 @@
 #pragma argument_flag_ones 4367, 4393, 4415, 4422, 4429, 4701, 4702, 4703, 4746, 4749
 #pragma argument_flag_ones 4810, 4811, 4813
 #pragma argument_flag 0
+#endif
 
 #include "dun/gameloop.hpp"
 
@@ -1053,27 +1096,29 @@ sceVu0FVECTOR velo2 = {0.0f, 0.0f, 0.0f, 0.0f};
 sceVu0FVECTOR blowVelo = {0.0f, 0.0f, 0.0f, 0.0f};
 
 /* Every texture the dungeon loads on its way in, and the block each goes to. */
-LOADTEXTURE_INFO2 texdata__2[23] = {
-    {"#frame_image#640#448#4", 1, 0},
+LOADTEXTURE_INFO2 texdata__2[] = {
+    {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 1, 0},
     {"dun/etc/cursor.img", 1, 0},
     {"gatekey00.img", 1, 0},
-    {"#water#640#224#4", 13, 0},
+    {"#water#640#" HALF_BUFFER_HEIGHT_STR "#4", 13, 0},
     {"dun/etc/atrtx.img", 22, 0},
     {"wepready.img", 2, 0},
-    {"#shadow_buf#640#224#3", 15, 0},
+    {"#shadow_buf#640#" HALF_BUFFER_HEIGHT_STR "#3", 15, 0},
     {"dun/effect/basefx00.img", 18, 0},
     {"basefx01.img", 18, 0},
     {"dun/d01/effect/fx_foot.img", 18, 0},
     {"dun/effect/bombfx00.img", 19, 0},
     {"pause.img", 7, 0},
-    {"#dbgwork#640#448#3", 12, 0},
+    {"#dbgwork#640#" SCREEN_HEIGHT_STR "#3", 12, 0},
     {"check/ankfont.img", 12, 0},
+#ifndef PAL
     {"#mes_frame_buff#640#448#4", 26, 0},
     {"#fontbase#512#256#1", 26, 0},
     {"#fukidashibase#640#224#4", 26, 0},
     {"meswin/syst04.img", 26, 0},
     {"meswin/gaiji.img", 26, 0},
     {"meswin/fuki256.img", 26, 0},
+#endif
     {"element.img", 18, 0},
     {"igetfx.img", 22, 0},
     {0, 0, 0},
@@ -1081,7 +1126,7 @@ LOADTEXTURE_INFO2 texdata__2[23] = {
 
 /* The textures the loading screen itself draws with. */
 LOADTEXTURE_INFO texdata2[3] = {
-    {"#dbgwork#640#448#3", 12, 0},
+    {"#dbgwork#640#" SCREEN_HEIGHT_STR "#3", 12, 0},
     {"check/ankfont.img", 12, 0},
     {"", 0, 0},
 };
@@ -1400,6 +1445,68 @@ s32 defCameraWait;
 /* Whether the monster names are hidden. */
 s32 MonstorNameOff;
 
+#ifdef PAL
+void LoadBaseTexture(void) {
+    LOADTEXTURE_INFO2 info[96];
+    int size;
+    int i;
+    char *name;
+
+    sprintf(texdata__2[2].name, "gatekey0%d.img", selectMapNo + 1);
+
+    char path[64] = "dun/pack/dun/pack/teximg2.pac";
+
+    if (LanguageCode > 0) {
+        sprintf(path, "dun/pack/teximg2_%d.pac", LanguageCode);
+    }
+    LoadFile(path, (void *) read_buffer, NULL);
+    wait_now_loading_vsync();
+
+    i = 0;
+    while ((name = texdata__2[i].name) != NULL) {
+        // A name that starts with '#' asks the manager for a blank page of
+        // that size rather than for a file inside the pack.
+        if (name[0] == '#') {
+            info[i].name = name;
+        } else {
+            u_int *found = GetPackFile(read_buffer, name, &size);
+
+            if (found != NULL) {
+                info[i].name = (char *) found;
+            } else {
+                printf("Error::Pack->FileNotFound [%d]%s!!\n", i, name);
+                exit__2(-1);
+            }
+        }
+        info[i].block_no = texdata__2[i].block_no;
+        i++;
+    }
+    info[i].name = NULL;
+    TexManager.LoadTextureBlock(-1, info);
+
+    // The message window's pages, and the three images the language's own
+    // pack supplies in place of the names written here.
+    LOADTEXTURE_INFO2 mes_info[8] = {
+        {"#mes_frame_buff#640#480#4", 0x1A, 0},
+        {"#fukidashibase#640#224#4", 0x1A, 0},
+        {"#fontbase#512#256#1", 0x1A, 0},
+        {"meswin/gaiji.img", 0x1A, 0},
+        {"meswin/fuki256.img", 0x1A, 0},
+        {"meswin/syst04.img", 0x1A, 0},
+    };
+    char mes_path[64] = "meswin/mes_tex.pak";
+
+    if (LanguageCode > 0) {
+        sprintf(mes_path, "meswin/mes_tex_%d.pak", LanguageCode);
+    }
+    LoadFile(mes_path, read_buffer, NULL);
+    wait_now_loading_vsync();
+    mes_info[3].name = (char *) GetPackFile(read_buffer, "gaiji.img", NULL);
+    mes_info[4].name = (char *) GetPackFile(read_buffer, "fuki256.img", NULL);
+    mes_info[5].name = (char *) GetPackFile(read_buffer, "syst04.img", NULL);
+    TexManager.LoadTextureBlock(-1, mes_info);
+}
+#else
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
     int size;
@@ -1435,6 +1542,7 @@ void LoadBaseTexture(void) {
     info[i].name = NULL;
     TexManager.LoadTextureBlock(-1, info);
 }
+#endif
 
 int LoadTempTexture(char **files, int block, char *buffer) {
     LOADTEXTURE_INFO2 info[7] = {0};
@@ -1750,7 +1858,7 @@ void GameInit(void) {
     DngMes2.char_height = 22;
     DngMes2.tex_buff = MesWinTexBuff_02;
 
-    DngMesStb.text_columns = 70;
+    DngMesStb.text_columns = MES_WIN_COLUMNS;
     DngMesStb.text_rows = 10;
     DngMesStb.text_len = 0;
     DngMesStb.text_width = 0;
@@ -2106,6 +2214,20 @@ int GameLoop(void) {
         return existFlag;
     }
 
+#ifdef PAL
+    // In debug mode, Start pressed while Select is held leaves the dungeon.
+    if (DebugMode != 0 && GamePad.On(0x100) != 0 && GamePad.Down(0x800) != 0) {
+        while (ReadBGSync() == 1) {
+        }
+        SndExit();
+
+        CUserStatus *leaving = UserStatus;
+
+        leaving->prev_floor = -1;
+        return 1;
+    }
+#endif
+
     if (tryalExit != 0) {
         while (ReadBGSync() == 1) {
         }
@@ -2274,6 +2396,22 @@ void Draw_MainUnit(void) {
     MGSetPLight(light, colour);
 }
 
+#ifdef PAL
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_itemposr_S1160;
+unsigned char pal_init_S1161;
+unsigned int pal_itemposr_S1167;
+unsigned char pal_init_S1168;
+unsigned int pal_bic_posr_S1181;
+unsigned char pal_init_S1182;
+unsigned int pal_bic_posr_S1197;
+unsigned char pal_init_S1198;
+unsigned int pal_at1098__2[4] __attribute__((aligned(16))) = {0x43480000, 0x43FA0000};
+char pal_at1602__2[0x8] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "water";
+char pal_at1611__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pause";
+char pal_at1612__3[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "frame_image";
+#pragma name_counter 1718
+#endif
 void MainDraw(void) {
     sceVu0FMATRIX camera;
     sceVu0FVECTOR eye;
@@ -2653,6 +2791,13 @@ void MainDraw(void) {
             MGSetGsZBUF(NULL);
         }
 
+#ifdef PAL
+        if (rogoSwitch2 == 1 && BtEventInfo.floor_title_off == 0) {
+            TEX_Floor1 = TexManager.GetTexture(floor_name, -1);
+            StartMessageDraw(TEX_Floor1, selectMapNo, UserStatus->cur_floor, BtUraDongeon,
+                             rogoAlphaA[2]);
+        }
+#else
         if (rogoSwitch2 == 1 && BtEventInfo.floor_title_off == 0) {
             TEX_Floor1 = TexManager.GetTexture(floor_name, -1);
             shift = 0;
@@ -2804,16 +2949,23 @@ void MainDraw(void) {
             }
         }
 
+#endif
+
         TexManager.ReloadTexture(Vif1Packet, 2);
 
         int gauge_alpha = rogoY3 + 0x60;
+#ifdef PAL
+        const int gauge_y = 0x1AC;
+#else
+        const int gauge_y = 0x18C;
+#endif
 
         if ((int) BtActStatus.action_gauge >= 100) {
             if (BtActStatus.gauge_flash == 0) {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
                             CRect_i_(0, 0, 0x80, 0x1C), gauge_alpha);
             } else {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
                             CRect_i_(0, 0x1C, 0x80, 0x1C), gauge_alpha);
             }
         }
@@ -2823,9 +2975,9 @@ void MainDraw(void) {
         if ((int) wear < 100) {
             int left = (int) wear;
 
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
                         CRect_i_(0, 0x54, 0x80, 0x1C), gauge_alpha);
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, 0x18C, left, 0x1C),
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, gauge_y, left, 0x1C),
                         CRect_i_(0x1A, 0x38, left, 0x1C), gauge_alpha);
         }
 
@@ -3104,6 +3256,15 @@ void MoveChara(void) {
                     velo__2[0] = move_x * run_speed;
                     velo__2[2] = move_z * run_speed;
                 }
+#ifdef PAL
+                // In debug mode, Select outside an event opens the debug menu.
+                if (DebugMode != 0 && GamePad.Down(0x400) != 0 && BtEventMode == 0) {
+                    DebugStatus[0] = 1;
+                    gameTask = 0xDC;
+                    SndSePlay(1, -1, 0);
+                    break;
+                }
+#endif
                 if (stickVector <= 0.01f) {
                     CUserStatus *drain = UserStatus;
 
@@ -5208,7 +5369,11 @@ void MoveChara(void) {
         case 0x21: {
             frameCaputer = 0;
 
+#ifdef PAL
+            s32 menu[6] = {0x17, 0x18, 0x19, 0x28, 0x29};
+#else
             s32 menu[5] = {0x17, 0x18, 0x19, 0x28, 0x29};
+#endif
 
             BattleMenuInit(menu, 0);
             BtGameModeFlag = 2;
@@ -5479,8 +5644,26 @@ void MoveChara(void) {
             if (GamePad.Down(0x60) != 0 || DeadKeyWait <= 0) {
                 ClearSystemMes();
                 BtActStatus.camera_hold = 0;
+#ifdef PAL
+                // In debug mode the party gets up again at full life.
+                if (DebugMode != 0) {
+                    CUserStatus *status = UserStatus;
+
+                    status->hp[status->cur_chara] = status->max_hp[status->cur_chara];
+                    BtActStatus.motion_no = 0;
+                    UserStatus->step_disable = 0;
+                    DngMessMan.enabled = 1;
+                    gameTask = 0;
+                    CMonUnitHold = 0;
+                    CEffectHold = 0;
+                } else {
+                    gameTask = 0xAF;
+                    ((CDngStatusData *) UserStatus)->SetDead();
+                }
+#else
                 gameTask = 0xAF;
                 ((CDngStatusData *) UserStatus)->SetDead();
+#endif
             }
             autoCamTrial();
             break;
@@ -7469,7 +7652,11 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
                 SwordDmgCheck1(1.0f, 0);
             }
         } else {
+#ifdef PAL
+            if (now > 21.0f && now < 21.8f) {
+#else
             if (now > 21.0f && now < 21.5f) {
+#endif
                 SndSePlay(0x191, -1, 0);
                 SndSePlay(0x1A5, -1, 0);
 
@@ -7619,7 +7806,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
         ruby_effect_id = -1;
 
         if (aimed == 0) {
+#ifdef PAL
+            if (now >= 125.5f && now <= 126.5f && BtActStatus.action_step == 0) {
+#else
             if (now >= 126.0f && now < 126.3f && BtActStatus.action_step == 0) {
+#endif
                 sceVu0FVECTOR pos;
                 sceVu0FVECTOR aim;
 
@@ -7630,7 +7821,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                                                     chara->frame->SearchFrame("item"), 0);
                 NowMainEffect->SetLoop(1);
             }
+#ifdef PAL
+            if (now >= 128.0f && now < 128.4f) {
+#else
             if (now >= 128.0f && now < 128.3f) {
+#endif
                 BattleActionShotRuby(chara, aimed, 1.0f, 0);
                 BtActStatus.frames_since_attack = 0;
                 SwordDmgCheck1(0.8f, 0);
@@ -7638,7 +7833,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                 SndSePlay(0x1A4, -1, 0);
             }
         } else {
+#ifdef PAL
+            if (now >= 126.0f && now <= 126.5f && BtActStatus.action_step == 0) {
+#else
             if (now >= 126.0f && now < 126.3f && BtActStatus.action_step == 0) {
+#endif
                 sceVu0FVECTOR pos;
                 sceVu0FVECTOR aim;
 
@@ -7649,7 +7848,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                                                     chara->frame->SearchFrame("item"), 0);
                 NowMainEffect->SetLoop(1);
             }
+#ifdef PAL
+            if (now >= 128.0f && now < 128.4f) {
+#else
             if (now >= 128.0f && now < 128.3f) {
+#endif
                 BattleActionShotRuby(chara, aimed, 1.0f, 0);
                 BtActStatus.frames_since_attack = 0;
                 SwordDmgCheck1(0.8f, 0);
@@ -7701,7 +7904,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                 ruby_effect_id = -1;
             }
             if (aimed == 0) {
+#ifdef PAL
+                if (now >= 216.0f && now < 216.5f) {
+#else
                 if (now >= 216.0f && now < 216.4f) {
+#endif
                     BattleActionShotRuby(chara, aimed, 2.2f, 0);
                     BattleActionShotRuby(chara, aimed, 2.2f, 1);
                     BtActStatus.frames_since_attack = 0;
@@ -7710,7 +7917,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                     SndSePlay(0x1A6, -1, 0);
                 }
             } else {
+#ifdef PAL
+                if (now >= 216.0f && now < 216.5f) {
+#else
                 if (now >= 216.0f && now < 216.3f) {
+#endif
                     BattleActionShotRuby(chara, aimed, 2.2f, 0);
                     BattleActionShotRuby(chara, aimed, 2.2f, 1);
                     BtActStatus.frames_since_attack = 0;
@@ -8620,9 +8831,9 @@ void DrawtargetCursor(float *world, float width, float height, float alpha) {
         // The two corners arrive in the fixed-point screen space the sprite
         // calls take, so they come back to pixels here.
         top_left[0] -= 0x6C08;
-        top_left[1] -= 0x7908;
+        top_left[1] -= (GS_Y_OFFSET + 8);
         bottom_right[0] -= 0x6C08;
-        bottom_right[1] -= 0x7908;
+        bottom_right[1] -= (GS_Y_OFFSET + 8);
         top_left[0] >>= 4;
         top_left[1] >>= 3;
         bottom_right[0] >>= 4;
@@ -8810,9 +9021,9 @@ int SetNearLockOnTarget(int from, int nearest_only) {
 
         if (MGRotTransPers(screen, at, 0) != 0) {
             SetMonsterNameDrawFlag(1);
-            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - 0x7900) >> 4);
+            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - GS_Y_OFFSET) >> 4);
             EnemyLifeGage.x = (screen[0] - 0x6C00) >> 4;
-            EnemyLifeGage.y = ((screen[1] - 0x7900) >> 4) + 42;
+            EnemyLifeGage.y = ((screen[1] - GS_Y_OFFSET) >> 4) + 42;
         } else {
             SetMonsterNameDrawFlag(0);
             EnemyLifeGage.on = 0;
@@ -8909,9 +9120,9 @@ void setTargetCursor(int on) {
 
         if (MGRotTransPers(screen, target, 0) != 0) {
             MonsterNameMake(NowMonstorUnit->monster[lockOnTargetNo].name_no);
-            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - 0x7900) >> 4);
+            MonsterNamePosSet((screen[0] - 0x6C00) >> 4, (screen[1] - GS_Y_OFFSET) >> 4);
             EnemyLifeGage.x = (screen[0] - 0x6C00) >> 4;
-            EnemyLifeGage.y = ((screen[1] - 0x7900) >> 4) + 42;
+            EnemyLifeGage.y = ((screen[1] - GS_Y_OFFSET) >> 4) + 42;
             SetMonsterNameDrawFlag(1);
         } else {
             SetMonsterNameDrawFlag(0);

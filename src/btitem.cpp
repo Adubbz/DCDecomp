@@ -324,6 +324,12 @@ int BtGetTreasureboxBig_Loop() {
         case 2: {
             CCameraFollow *camera = NowCamera__3;
             setCameraPassData((CFrameVu1 *) itemOpenBigFx.frame, camera, "cam", "int");
+#ifdef PAL
+            float pose_time = CharaMain.GetNowTime();
+            if (!(pose_time < 79.0f) && pose_time <= 80.0f) {
+                BtActStatus.motion_no = 0x2D;
+            }
+#endif
             float sound_time = itemOpenBigFx.motion.state.time;
             if (!(sound_time <= 14.0f) && sound_time < 15.0f) {
                 SndSePlay(0xCE, -1, 0);
@@ -543,6 +549,12 @@ int BtGetTreasureboxSmall_Loop() {
         }
         case 2: {
             setCameraPassData((CFrameVu1 *) itemOpenSmallFx.frame, NowCamera__3, "cam", "int");
+#ifdef PAL
+            float pose_time = CharaMain.GetNowTime();
+            if (!(pose_time < 79.0f) && pose_time <= 80.0f) {
+                BtActStatus.motion_no = 0x2B;
+            }
+#endif
             float sound_time = itemOpenSmallFx.motion.state.time;
             if (!(sound_time <= 19.0f) && sound_time < 20.4f) {
                 SndSePlay(0xCF, -1, 0);
@@ -712,6 +724,12 @@ int BtAtraGetShort_Loop(int map_no, int floor) {
             autoCamTrial();
             break;
         case 1: {
+#ifdef PAL
+            float pose_time = CharaMain.GetNowTime();
+            if (!(pose_time < 129.0f) && pose_time <= 130.0f) {
+                BtActStatus.motion_no = 0x2F;
+            }
+#endif
             if (atraGetStatusRate__2 < 256.0f) {
                 atraGetStatusRate__2 += 2.0f;
             }

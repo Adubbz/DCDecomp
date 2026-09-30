@@ -17,7 +17,11 @@
 # Addresses and sizes the memory layout fixes. The linker script defines the
 # stack and heap values as _stack, _stack_size and _heap_size; they are spelt
 # as constants here so that the object carries no relocation against them.
+.ifdef PAL
+.set BSS_END,        0x01F1E900  # One past the last byte of .bss.
+.else
 .set BSS_END,        0x01F06B00  # One past the last byte of .bss.
+.endif
 .set STACK_BASE,     0x01F80000  # Lowest address of the main thread's stack.
 .set STACK_SIZE,     0x00080000  # Size of the main thread's stack.
 .set HEAP_SIZE,      -1          # Heap extends to the bottom of the stack.

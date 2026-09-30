@@ -61,7 +61,11 @@ struct GIFTAG {
 STATIC_ASSERT(sizeof(GIFTAG) == 0x10);
 
 s16 ClsMes::GetGaijiW(int code) {
+#ifdef PAL
+    if (code >= -0x300 && code < -0x251) {
+#else
     if (code >= -0x300 && code < -0x263) {
+#endif
         if (this->narrow_gaiji != 0) {
             if (code == -0x2BD) {
                 return 5;
@@ -118,7 +122,11 @@ int ClsMes::GetNameWidth(int chara) {
 
         int code = NameRegistCodeJtoE(name[i] - 1);
 
+#ifdef PAL
+        if (code >= -0x300 && code < -0x250) {
+#else
         if (code >= -0x300 && code < -0x262) {
+#endif
             width += this->GetGaijiW(code);
         } else {
             width += this->char_width;
@@ -147,13 +155,13 @@ void Myset2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &src
     sceVif1PkAddGsAD(packet, 3, (unsigned long) (dst.x << 4) | (unsigned long) (dst.y << 4) << 16);
     sceVif1PkAddGsAD(packet, 4,
                      (unsigned long) ((src.x << 4) + 0x6C00) |
-                         (unsigned long) ((src.y << 3) + 0x7900) << 16);
+                         (unsigned long) ((src.y << 3) + GS_Y_OFFSET) << 16);
     sceVif1PkAddGsAD(packet, 3,
                      (unsigned long) ((dst.x + dst.width) << 4) |
                          (unsigned long) ((dst.y + dst.height) << 4) << 16);
     sceVif1PkAddGsAD(packet, 4,
                      (unsigned long) (((src.x + src.width) << 4) + 0x6BFF) |
-                         (unsigned long) (((src.y + src.height) << 3) + 0x7900) << 16);
+                         (unsigned long) (((src.y + src.height) << 3) + GS_Y_OFFSET) << 16);
     sceVif1PkCloseGifTag(packet);
     sceVif1PkCloseDirectCode(packet);
 }
@@ -295,7 +303,11 @@ void ClsMes::AutoSet(int *pos) {
         this->win_y += 0x10;
     }
 
+#ifdef PAL
+    this->text_x = this->win_x + (int) (3.0f * this->char_width);
+#else
     this->text_x = this->win_x + (int) (5.0f * this->char_width);
+#endif
     this->text_y = this->win_y + (int) (1.5f * this->char_height);
 
     if (this->tail_on != 0) {
@@ -328,10 +340,18 @@ void ClsMes::AutoSet(int *pos) {
 void ClsMes::AbsFukidashiIn(void) {
     if (this->win_x < 0x10) {
         this->win_x = 0x10;
+#ifdef PAL
+        this->text_x = this->win_x + (int) (3.0f * this->char_width);
+#else
         this->text_x = this->win_x + (int) (5.0f * this->char_width);
+#endif
     } else if (this->win_x + this->win_width >= 0x270) {
         this->win_x = 0x270 - this->win_width;
+#ifdef PAL
+        this->text_x = this->win_x + (int) (3.0f * this->char_width);
+#else
         this->text_x = this->win_x + (int) (5.0f * this->char_width);
+#endif
     }
 
     if (this->win_y < 0x10) {
@@ -348,9 +368,9 @@ ClsMes::ClsMes(void) {
     this->text_y = 0x32;
     this->char_width = 0xB;
     this->char_height = 0x14;
-    this->columns = 0x46;
+    this->columns = MES_WIN_COLUMNS;
     this->rows = 0xA;
-    this->text_columns = 0x46;
+    this->text_columns = MES_WIN_COLUMNS;
     this->text_rows = 0xA;
     this->text_len = 0;
     this->text_width = 0;
@@ -360,7 +380,7 @@ ClsMes::ClsMes(void) {
     this->fukidashi = 1;
     this->fukidashi_shape = 0;
     this->grow_x = 0x140;
-    this->grow_y = 0xE0;
+    this->grow_y = SCREEN_HALF_HEIGHT;
     this->win_x = this->text_x;
     this->win_y = this->text_y;
     this->win_width = this->char_width * this->columns;
@@ -1005,8 +1025,13 @@ int ClsMes::MakeMesWinTbl_system(int code, int *x, int *y) {
                     *y += this->char_height;
                     break;
 
+#ifdef PAL
+                default:
+                    if (text_code >= -0x300 && text_code < -0x250) {
+#else
                 default:
                     if (text_code >= -0x300 && text_code < -0x262) {
+#endif
                         this->SetMesWinTbl(text_code, 0, *x, *y);
                         *x += this->GetGaijiW(text_code);
                     } else {
@@ -1146,7 +1171,11 @@ int ClsMes::GetMesWidth_system(int mes_no) {
                 return width[1];
         }
 
+#ifdef PAL
+        if (code >= -0x300 && code < -0x250) {
+#else
         if (code >= -0x300 && code < -0x262) {
+#endif
             width[line] += this->GetGaijiW(code);
         } else {
             width[line] += this->char_width;
@@ -1250,7 +1279,11 @@ int ClsMes::CalcSpaceW(int width, int glyph_width, short *text) {
                 continue;
         }
 
+#ifdef PAL
+        if (code >= -0x300 && code < -0x250) {
+#else
         if (code >= -0x300 && code < -0x262) {
+#endif
             used += this->GetGaijiW(code);
         } else if (code >= -0x700 && code < -0x600) {
             used += code + 0x700;
@@ -1317,8 +1350,13 @@ int ClsMes::MakeMesWinTbl(int mes_no) {
                 }
                 break;
 
+#ifdef PAL
+            default:
+                if (code >= -0x300 && code < -0x250) {
+#else
             default:
                 if (code >= -0x300 && code < -0x262) {
+#endif
                     this->SetMesWinTbl(code, 0, x, y);
                     x += this->GetGaijiW(code);
                 } else if (code >= -0x900 && code < -0x800) {
@@ -1533,7 +1571,11 @@ void ClsMes::NeedMesWinWH(int mes_no, int *out) {
                 } else if (code >= -0x506 && code < -0x500) {
                     NeedMesWinWH_sub(&len, max_len, &width, max_width, this->char_width,
                                      this->GetNameLen(code + 0x506));
+#ifdef PAL
+                } else if (code >= -0x300 && code < -0x251) {
+#else
                 } else if (code >= -0x300 && code < -0x263) {
+#endif
                     len += *(int *) &EditGaijiTbl[code];
                     width += this->GetGaijiW(code);
 
@@ -1615,12 +1657,24 @@ void ClsMes::MakeMesTexture(int mes_no) {
     this->text_height = needed[3];
 
     if (this->text_columns < 4) {
+#ifdef PAL
+        this->win_width = this->char_width * 10;
+#else
         this->win_width = this->char_width * 14;
+#endif
     } else {
+#ifdef PAL
+        this->win_width = this->char_width * (int) (3.0f + (3.0f + (float) this->text_columns));
+#else
         this->win_width = this->char_width * (int) (5.0f + (5.0f + (float) this->text_columns));
+#endif
     }
     this->win_height = this->char_height * (int) (1.5f + (1.5f + (float) this->text_rows));
+#ifdef PAL
+    this->win_x = this->text_x - (int) (3.0f * (float) this->char_width);
+#else
     this->win_x = this->text_x - (int) (5.0f * (float) this->char_width);
+#endif
     this->win_y = this->text_y - (int) (1.5f * (float) this->char_height);
 
     if (MakeMesWinTbl(mes_no) != 0) {
@@ -1680,7 +1734,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
 
     sceVif1PkAddGsAD(packet, 4,
                      (unsigned long) ((px << 4) + 0x6C00) |
-                         (unsigned long) ((py << 4) + 0x7900) << 16);
+                         (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
     turn = 0.0f;
     step = 0;
@@ -1710,7 +1764,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
 
         sceVif1PkAddGsAD(packet, 4,
                          (unsigned long) ((px << 4) + 0x6C00) |
-                             (unsigned long) ((py << 4) + 0x7900) << 16);
+                             (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
         if (rough == 1) {
             turn += RandTbl[step];
@@ -1742,7 +1796,7 @@ void DrawMaru(sceVif1Packet *packet, int x, int y, int width, int height, int li
 
     sceVif1PkAddGsAD(packet, 4,
                      (unsigned long) ((px << 4) + 0x6C00) |
-                         (unsigned long) ((py << 4) + 0x7900) << 16);
+                         (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 }
 
 #pragma opt_propagation off
@@ -1829,7 +1883,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
 
             sceVif1PkAddGsAD(packet, 4,
                              (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + 0x7900) << 16);
+                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
         }
     } else if (this->fukidashi_shape == 1 || this->fukidashi_shape == 2) {
         x = (int) LinerInterpolation(this->grow_x, this->win_x, this->fade);
@@ -1870,7 +1924,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
 
         sceVif1PkAddGsAD(packet, 4,
                          (unsigned long) ((px << 4) + 0x6C00) |
-                             (unsigned long) ((py << 4) + 0x7900) << 16);
+                             (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
         float across;
         float down;
@@ -1898,7 +1952,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
 
             sceVif1PkAddGsAD(packet, 4,
                              (unsigned long) ((px << 4) + 0x6C00) |
-                                 (unsigned long) ((py << 4) + 0x7900) << 16);
+                                 (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
 
             turn += RandTbl[step];
             step++;
@@ -1922,7 +1976,7 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
 
         sceVif1PkAddGsAD(packet, 4,
                          (unsigned long) ((px << 4) + 0x6C00) |
-                             (unsigned long) ((py << 4) + 0x7900) << 16);
+                             (unsigned long) ((py << 4) + GS_Y_OFFSET) << 16);
     }
 
     if (this->tail_on != 0) {
@@ -1945,21 +1999,21 @@ void ClsMes::MakeFukidashi_sub(sceVif1Packet *packet, int prim) {
             y -= top;
             sceVif1PkAddGsAD(packet, 4,
                              (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + 0x7900) << 16);
+                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
 
             x = (int) LinerInterpolation(this->grow_x, this->tail_left_x, this->fade);
             y = (int) LinerInterpolation(this->grow_y, this->tail_left_y, this->fade);
             y -= top;
             sceVif1PkAddGsAD(packet, 4,
                              (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + 0x7900) << 16);
+                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
 
             x = (int) LinerInterpolation(this->grow_x, this->tail_right_x, this->fade);
             y = (int) LinerInterpolation(this->grow_y, this->tail_right_y, this->fade);
             y -= top;
             sceVif1PkAddGsAD(packet, 4,
                              (unsigned long) ((x << 4) + 0x6C00) |
-                                 (unsigned long) ((y << 4) + 0x7900) << 16);
+                                 (unsigned long) ((y << 4) + GS_Y_OFFSET) << 16);
         }
     }
 }
@@ -2008,7 +2062,7 @@ void ClsMes::MakeFukidashi(sceVif1Packet *packet) {
     test.bits.ztst = 1;
     MGSetGsTEST(&test);
 
-    MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0);
+    MGFillBox(CRect_i_(0, 0, 0x2800, (SCREEN_HALF_HEIGHT << 4)), 0, 0, 0, 0);
 
     MGSetGsZBUF(&zbuf);
     MGSetGsTEST(&test);
@@ -2420,6 +2474,74 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
     set2DSprite_Core(Vif1Packet, texture, screen, texel, r, g, b,
                      this->edge_alpha < alpha ? this->edge_alpha : alpha);
 
+#ifdef PAL
+    switch (this->win_line[index].code) {
+        case -0x284:
+        case -0x280:
+        case -0x27F:
+        case -0x27A:
+        case -0x275:
+        case -0x271:
+        case -0x26C:
+        case -0x268:
+        case -0x25E:
+        case -0x258:
+            u = 0xE2;
+            v = 0xB4;
+            break;
+
+        case -0x282:
+        case -0x27D:
+        case -0x278:
+        case -0x274:
+        case -0x26F:
+        case -0x26B:
+        case -0x260:
+        case -0x25C:
+        case -0x25A:
+        case -0x256:
+            u = 0xF0;
+            v = 0xB4;
+            break;
+
+        case -0x281:
+        case -0x27C:
+        case -0x277:
+        case -0x273:
+        case -0x26E:
+        case -0x26A:
+        case -0x267:
+        case -0x266:
+        case -0x264:
+        case -0x25D:
+            u = 0x80;
+            v = 0xC8;
+            break;
+
+        case -0x27B:
+        case -0x276:
+        case -0x272:
+        case -0x26D:
+        case -0x269:
+        case -0x25F:
+        case -0x25B:
+        case -0x259:
+        case -0x257:
+        case -0x255:
+            u = 0x9C;
+            v = 0xC8;
+            break;
+
+        case -0x270:
+        case -0x254:
+            u = 0x8E;
+            v = 0xC8;
+            break;
+
+        default:
+            return;
+    }
+#else
     switch (this->win_line[index].code) {
         case -0x284:
         case -0x280:
@@ -2478,6 +2600,7 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
         default:
             return;
     }
+#endif
 
     if (this->narrow_gaiji_set != 1) {
         if (this->narrow_gaiji_set == 2) {
@@ -2487,6 +2610,10 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int index, const CRect_i_ &texel,
         }
     }
 
+#ifdef PAL
+    this->Myset2DSprite_Fuchi(Vif1Packet, texture, screen.x, screen.y, screen.width, screen.height, u, v,
+                              14, 20);
+#endif
     set2DSprite_Core(Vif1Packet, texture, screen, CRect_i_(u, v, 14, 20), r, g, b,
                      this->edge_alpha < alpha ? this->edge_alpha : alpha);
 }
@@ -2603,14 +2730,22 @@ void ClsMes::DrawMesWin(void) {
 
         int code = this->win_line[index].code;
 
+#ifdef PAL
+        if (code < -0x300 || code >= -0x251) {
+#else
         if (code < -0x300 || code >= -0x263) {
+#endif
             continue;
         }
 
         int gaiji_index = code + 0x300;
         int u = GaijiDataTbl[gaiji_index][GAIJI_U];
 
+#ifdef PAL
+        if (code >= -0x2DF && code < -0x251) {
+#else
         if (code >= -0x2DF && code < -0x263) {
+#endif
             if (this->narrow_gaiji_set != 1) {
                 if (this->narrow_gaiji_set == 2) {
                     u += 0x80;
@@ -2742,13 +2877,24 @@ void ClsMes::DrawMesWin(void) {
     if (this->cursor_row >= 0) {
         texture = TexManager.GetTexture("gaiji", -1);
 
+#ifdef PAL
+        // The cursor stands two characters further left, clear of the choice text.
         int screen_x = this->text_x;
+        screen_x -= 0xC;
+        screen_x -= this->char_width * 2;
+#else
+        int screen_x = this->text_x;
+#endif
 
         this->cursor_y = (this->cursor_y + this->char_height * this->cursor_row) / 2;
 
         int screen_y = this->cursor_y + this->text_y;
 
+#ifdef PAL
+        CRect_i_ screen(screen_x + offset_x, screen_y - 4 + offset_y, 0x20, 0x20);
+#else
         CRect_i_ screen(screen_x - 0xC + offset_x, screen_y - 4 + offset_y, 0x20, 0x20);
+#endif
         CRect_i_ texel(0x60, 0x60, 0x20, 0x20);
 
         if (MesAbsDrawOff == 0) {

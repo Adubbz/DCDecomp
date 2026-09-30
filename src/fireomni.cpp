@@ -218,7 +218,7 @@ void CFireOmni::DrawRaster(void) {
     }
 
     int x = (top_left[0] - 0x6C00) >> 4;
-    int y = (top_left[1] - 0x7900) >> 3;
+    int y = (top_left[1] - GS_Y_OFFSET) >> 3;
     int width = (bottom_right[0] - top_left[0]) >> 4;
     int height = (bottom_right[1] - top_left[1]) >> 4;
     height >>= 1;

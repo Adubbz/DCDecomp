@@ -62,7 +62,7 @@ that kind `0x33` is the only kind whose own `+5` can be read without a defining
 write. Parents can explicitly derive their byte from a stale `0x33` child; that
 is contamination, not an uninitialised read of the parent field.
 
-`config/expression_node_overrides.json` makes the decision reproducible. A node
+`config/ntsc/expression_node_overrides.json` makes the decision reproducible. A node
 is keyed by the current translation-unit name, the current function's mangled
 name, binary32/binary64 type, exact IEEE bits, and its one-based occurrence
 among equal constants in that function. All fields are read from MWCC memory at

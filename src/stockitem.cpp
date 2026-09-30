@@ -140,11 +140,13 @@ int CStockItem::SearchItem(int item_no) {
         }
     }
 
+#ifndef PAL
     if (found != 0) {
         printf("itemNo [%d]  is exist!\n", item_no);
     } else {
         printf("itemNo [%d]  is none!\n", item_no);
     }
+#endif
 
     return found;
 }

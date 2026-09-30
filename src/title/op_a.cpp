@@ -1,3 +1,12 @@
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 210, 230, 247, 255, 277, 308, 310, 484, 485, 486
+#pragma argument_flag_ones 494, 496, 499, 501, 545, 548, 552, 553, 557, 560
+#pragma argument_flag_ones 583, 594, 602, 609, 610, 611, 614, 615, 616, 655
+#pragma argument_flag_ones 665, 671, 672, 673, 679, 689, 695, 696, 697, 703
+#pragma argument_flag_ones 713, 719, 720, 721, 736, 751, 757, 758, 764, 772
+#pragma argument_flag_ones 825, 1002
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 190, 210, 227, 235, 257, 288, 290, 295, 403, 428
 #pragma argument_flag_ones 430, 464, 465, 466, 474, 476, 479, 481, 525, 528
@@ -5,6 +14,7 @@
 #pragma argument_flag_ones 594, 595, 596, 635, 645, 651, 652, 653, 659, 669
 #pragma argument_flag_ones 675, 676, 677, 683, 693, 699, 700, 701, 716, 731
 #pragma argument_flag_ones 737, 738, 744, 752, 805, 982
+#endif
 #include "common.h"
 
 #include <libgraph.h>
@@ -22,6 +32,7 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "main.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
@@ -249,6 +260,31 @@ void LoadMotionData();
 /* Each of the couple's motion files is one key range — the frame it starts at and the frame it ends
    at — written straight over the character's own first key, so that a file loaded in the background
    takes over without the motion driver being told anything. */
+#ifdef PAL
+tagMOTION_KEY noroi[10] = {
+    {100, 750, 0.5f, 0},
+    {201, 528, 0.5f, 0},
+    {103, 802, 0.5f, 0},
+    {126, 781, 0.5f, 0},
+    {1, 356, 0.5f, 0},
+    {50, 629, 0.5f, 0},
+    {185, 833, 0.5f, 0},
+    {93, 665, 0.5f, 0},
+    {124, 529, 0.5f, 0},
+    {298, 747, 0.5f, 0}};
+
+tagMOTION_KEY dancer[10] = {
+    {12, 536, 0.5f, 0},
+    {209, 536, 0.5f, 0},
+    {111, 810, 0.5f, 0},
+    {116, 771, 0.5f, 0},
+    {1, 356, 0.5f, 0},
+    {1, 629, 0.5f, 0},
+    {135, 783, 0.5f, 0},
+    {82, 660, 0.5f, 0},
+    {124, 529, 0.5f, 0},
+    {327, 782, 0.5f, 0}};
+#else
 tagMOTION_KEY noroi[10] = {
     {100, 750, 0.5f, 0},
     {201, 533, 0.5f, 0},
@@ -272,6 +308,7 @@ tagMOTION_KEY dancer[10] = {
     {92, 670, 0.5f, 0},
     {139, 542, 0.5f, 0},
     {327, 782, 0.5f, 0}};
+#endif
 
 /* The scene's own world, and the objects the configuration file fills in. Both frame pointers are
    typed from the loader that writes them rather than from anything here: title/opdata assigns
@@ -348,10 +385,10 @@ void OpA_InitProcess() {
  */
 static void LoadTexture() {
     LOADTEXTURE_INFO2 texture_list[] = {
-        {"#blender#640#224#4", 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#frame_image#640#224#4", 22, 0},
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {0, 26, 0},
         {0, 26, 0},
         {0, 26, 0},
@@ -375,7 +412,9 @@ static void LoadTexture() {
         {0, 0, 0},
         {0, 19, 0},
         {0, 19, 0},
+#ifndef PAL
         {0, 19, 0},
+#endif
         {0, 6, 0},
         {"", 0, 0}};
 
@@ -404,9 +443,36 @@ static void LoadTexture() {
     texture_list[23].name = (char *) GetPackFile(read_buffer, "e01s01.img", 0);
     texture_list[24].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[25].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 1:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 2:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 3:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
+            break;
+        case 4:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
+            break;
+        case 5:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
+            break;
+        case 6:
+            texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
+            break;
+    }
+    texture_list[27].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#else
     texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
     texture_list[27].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
     texture_list[28].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#endif
 
     TexManager.LoadTextureBlock(-1, texture_list);
 
@@ -720,12 +786,21 @@ void OpA_DrawProcess() {
     }
 
     if (CScript__2.obj[6].disp && !Pause) {
+#ifdef PAL
+        if (DanceWait < 2.0f || DanceWait > 490.0f) {
+#else
         if (DanceWait < 2.0f || DanceWait > 480.0f) {
+#endif
             Chara__3[6].Step();
             Chara__3[7].Step();
         }
 
+#ifdef PAL
+        // Advanced by a fifth more per frame to keep the 60 Hz timing at 50 Hz.
+        DanceWait += 1.2f;
+#else
         DanceWait += 1.0f;
+#endif
 
         if (DanceWait > 10000) {
             DanceWait = 10000;
@@ -1513,7 +1588,11 @@ void OpA_SoundProcess() {
     {
         static int flg = 0;
 
+#ifdef PAL
+        if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 252.0) {
+#else
         if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 249.0) {
+#endif
             if (flg == 0) {
                 while (ReadBGSync())
                     ;

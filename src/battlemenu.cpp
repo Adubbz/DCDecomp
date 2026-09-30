@@ -1,6 +1,15 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 2
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 58,65,66,144,209,238,377,387,414,419,447,448,499,575,577,713,729,744,746,748,750
+#pragma argument_flag_ones 752,753,763,765,766,792,803,816,818,827,975,981,994,1033,1054,1156,1185,1325
+#pragma argument_flag_ones 1461,1463,1486,1488,2014,2172,2256,2267,2351,2358,2374,2406,2407,2433,2434,2441
+#pragma argument_flag_ones 2442,2471,2655,2656,2725,2726,2802,2803,2925,2926,2964,2965,3099,3100,3144,3156
+#pragma argument_flag_ones 3157,3164,3165,3247,3587,3595,3662,3663,3671,3672,3688,3690,3696,3697,3698,3730
+#pragma argument_flag_ones 3738,3739,3757,3758,3784,3887,3937,3939,4082,4134,4167
+#endif
 
 #include "battlemenu.hpp"
 
@@ -135,7 +144,11 @@ GRADATION_COLOR_INFO2 MenuColorInfo2[26] = {
     {{{0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}, {0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}}},
 };
 
+#ifdef PAL
+s16 BtlMenuNowLang = 1;
+#else
 s32 BtlMenuNowLang = 1;
+#endif
 s32 BattleMenuFlag = -1;
 float chara_r_long = 118.0f;
 s16 TrushMoveMax[3] = {3, 1, 3};
@@ -152,6 +165,9 @@ s32 BtlMenuReadEndFlag;
 s32 ItemMenuWeaponIconReadBlock;
 s32 ItemMenuAlreadyReadWepIconTexFlag;
 s32 MenuShadowReadBlock;
+#ifdef PAL
+s32 BtlMenuExtBlock;
+#endif
 s32 BtlMenuExReadBlock;
 s32 BtlMenuExReadFlag;
 s32 MenuExtendReadBlock;
@@ -169,6 +185,9 @@ CTexture *WepStatus;
 CTexture *BtlAlpha;
 CTexture *BtlHira;
 CTexture *BtlKata;
+#ifdef PAL
+CTexture *BtlEuro;
+#endif
 float HelpWinHead[2];
 u8 BtlWakuMake2;
 s32 BtlHelpWinAlpha;
@@ -501,10 +520,18 @@ void DrawBattleMain() {
             MenuTextureReload(CommonMenuMes1.tex_block);
             if (BtlMenuNowLang > 0) {
                 CommonMenuMes1.text_x = 0x44;
+#ifdef PAL
+                CommonMenuMes1.text_y = 0x176;
+#else
                 CommonMenuMes1.text_y = 0x156;
+#endif
             } else {
                 CommonMenuMes1.text_x = 0x50;
+#ifdef PAL
+                CommonMenuMes1.text_y = 0x16A;
+#else
                 CommonMenuMes1.text_y = 0x14A;
+#endif
             }
             CommonMenuMes1.stay_frame = 1;
             CommonMenuMes1.Step();
@@ -655,7 +682,13 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int face_size, i
     int px = (int) (x - 144.0f);
     float top = 1.0f + y;
     int py = (int) (top - 24.0f);
-    CTexture *texture = TexManager.GetTexture(CharaStatusTextureName, -1);
+    CTexture *texture = TexManager.GetTexture(
+#ifdef PAL
+        "charastb",
+#else
+        CharaStatusTextureName,
+#endif
+        -1);
 
     DrawMenu2DSprite(texture, CRect_i_(px, py - 1, 0x100, 0x88), CRect_i_(0, 0, 0x100, 0x88), alpha);
     RECT digits = {0x40, 0x88, 0xC, 0xE};
@@ -666,7 +699,11 @@ void DrawSelCharaStatus(float x, float y, int chara, int alpha, int face_size, i
     DngComStatus(px, py, chara, alpha);
     px = (int) (x - 110.0f);
     py = (int) (top - 18.0f);
+#ifdef PAL
+    CTexture *fonts[4] = {BtlAlpha, BtlKata, BtlHira, BtlEuro};
+#else
     CTexture *fonts[3] = {BtlAlpha, BtlKata, BtlHira};
+#endif
     CharaSelectNameDraw2(px, py, (short *) BtlMenuSaveDataPt->GetCharaName(chara), fonts, alpha);
     px = (int) (x - 118.0f - 12.0f);
     py = (int) (70.0f + y);
@@ -728,11 +765,47 @@ static void BtlMenuTexBlockEnter() {
     WepIcon = TexManager.GetTexture("wepicon", -1);
     ItemIcon = TexManager.GetTexture("itemicon", BtlMenuReadBlock);
     PerBoardTex = TexManager.GetTexture("perbrd", BtlMenuReadBlock);
+#ifdef PAL
+    WepStatus = TexManager.GetTexture("wepstatus", BtlMenuExtBlock);
+#else
     WepStatus = TexManager.GetTexture("wepstatus", BtlMenuReadBlock);
+#endif
     VillageName = TexManager.GetTexture("vilname", -1);
     VillageBar = TexManager.GetTexture("viltag", -1);
 }
 
+#ifdef PAL
+void BattleMenuTexEnter() {
+    LOADTEXTURE_INFO2 textures[6] = {{"#frame_image#640#480#4", 0, 0},
+                                     {"#dbgwork_menu#256#256#3", 0, 0},
+                                     {NULL, 0, 0},
+                                     {"#frame_image_2#640#480#4", 0, 0},
+                                     {NULL, 0, 0},
+                                     {NULL, 0, 0}};
+
+    textures[0].block_no = BtlMenuReadBlock;
+    textures[1].block_no = BtlMenuReadBlock;
+    textures[2].block_no = BtlMenuReadBlock;
+    textures[3].block_no = BtlMenuExtBlock;
+    textures[4].block_no = BtlMenuExtBlock;
+    BG_READ_INFO *file = GetReadBGFile(0);
+    textures[2].name = (char *) GetPackFile((u_int *) file->buffer, "btlmenu.img", NULL);
+    textures[4].name = (char *) GetPackFile((u_int *) file->buffer, "btlmenu2.img", NULL);
+    int blocks[3] = {0, 0, -1};
+    blocks[0] = BtlMenuReadBlock;
+    blocks[1] = BtlMenuExtBlock;
+    MenuTextureDelete(blocks);
+    TexManager.CleanUpTextureList();
+    TexManager.LoadTextureBlockEX(-1, textures);
+    BtlMenuTexBlockEnter();
+    GetAtraMsgReadBuf = (short *) GetPackFile((u_int *) file->buffer, "atrames.bin", NULL);
+    short *mes = (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL);
+    InitMenuMesSet(0, mes);
+    CommonMenuMes2.stay_frame = 0;
+    BtlMenuReadEndFlag = 1;
+    MenuMes.SetBuffInfo(mes);
+}
+#else
 void BattleMenuTexEnter() {
     LOADTEXTURE_INFO2 textures[4] = {
         {"#frame_image#640#448#4", 0, 0}, {"#dbgwork_menu#256#224#3", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
@@ -755,6 +828,7 @@ void BattleMenuTexEnter() {
     BtlMenuReadEndFlag = 1;
     MenuMes.SetBuffInfo(mes);
 }
+#endif
 
 void ExitBattleMenu(int) {
     int count = 0;
@@ -777,12 +851,19 @@ void ExitBattleMenu(int) {
         }
     }
     MenuItemPackPt->item_count = count;
+#ifdef PAL
+    int blocks[7] = {0, 0, 0, 0, 0, 0, -1};
+#else
     int blocks[6] = {0, 0, 0, 0, 0, -1};
+#endif
     blocks[0] = BtlMenuReadBlock;
     blocks[1] = MenuExtendReadBlock;
     blocks[2] = BtlMenuExReadBlock;
     blocks[3] = BtlMenuManualReadBlock;
     blocks[4] = MenuShadowReadBlock;
+#ifdef PAL
+    blocks[5] = BtlMenuExtBlock;
+#endif
     MenuTextureDelete(blocks);
     TexManager.CleanUpBuffer();
     TexManager.CleanUpTextureList();
@@ -790,7 +871,7 @@ void ExitBattleMenu(int) {
     MenuWepLevelUp.CheckSnd();
     switch (BtlMenuMode) {
         case 0: {
-            LOADTEXTURE_INFO2 textures[2] = {{"#frame_image0#640#448#4", 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 textures[2] = {{"#frame_image0#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}};
             textures[0].block_no = BtlMenuReadBlock;
             TexManager.LoadTextureBlock(-1, textures);
             break;
@@ -810,19 +891,29 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     BtlMenuManualReadBlock = texture_blocks[3];
     ItemMenuWeaponIconReadBlock = texture_blocks[3];
     MenuShadowReadBlock = texture_blocks[4];
+#ifdef PAL
+    BtlMenuExtBlock = texture_blocks[5];
+#endif
     BtlMenuNowLang = GetMenuLangFlag();
     GamePad.SetAutoRepeat(0xF000, 0x1E, 5);
     GamePad.MenuModeOn(0x78);
     switch (BtlMenuMode) {
         case 0: {
-            LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}};
+            LOADTEXTURE_INFO2 texture[2] = {{"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}};
             texture[0].block_no = BtlMenuReadBlock;
+#ifdef PAL
+            int blocks[7] = {0, 0, 0, 0, 0, 0, -1};
+#else
             int blocks[6] = {0, 0, 0, 0, 0, -1};
+#endif
             blocks[0] = BtlMenuReadBlock;
             blocks[1] = MenuExtendReadBlock;
             blocks[2] = BtlMenuExReadBlock;
             blocks[3] = BtlMenuManualReadBlock;
             blocks[4] = MenuShadowReadBlock;
+#ifdef PAL
+            blocks[5] = BtlMenuExtBlock;
+#endif
             MenuTextureDelete(blocks);
             TexManager.CleanUpBuffer();
             TexManager.CleanUpTextureList();
@@ -868,6 +959,15 @@ void BattleMenuInit(int *texture_blocks, int mode) {
     MenuItemPackPt = &BtlMenuStatusPt->item_pack;
     MenuChara.slot_count = 6;
     PosAngle = 6.2831855f / MenuChara.slot_count;
+#ifdef PAL
+    // Debug builds hand the controlled character a place in the party along with a weapon.
+    if (DebugMode && BtlMenuStatusPt->cur_chara > BtlMenuStatusPt->party_size - 1) {
+        BtlMenuStatusPt->party_size = BtlMenuStatusPt->cur_chara + 1;
+        BtlMenuStatusPt->GetItem(GetDefaultWeaponNo(BtlMenuStatusPt->party_size - 1) + 1, 0);
+        EquipDefaultWeapon(BtlMenuStatusPt->party_size - 1);
+        printf("Debug Party Member Get\n");
+    }
+#endif
     ItemVolumeStep.CheckItemVolume();
     CursorVibeCnt = 0;
     BtlHelpWinAlpha = 0;
@@ -1309,10 +1409,17 @@ int ToFromSelect(int out) {
     }
     int home[8][2] = {{70, 28}, {100, 48}, {86, 38}, {50, 40}, {90, 40}, {94, 30}, {80, 40}, {70, 28}};
     int pos[2];
+#ifdef PAL
+    float hide_x = -240.0f;
+    if (BtlMenuNowLang > 0) {
+        hide_x = -264.0f;
+    }
+#else
     float hide_x = -224.0f;
     if (BtlMenuNowLang > 0) {
         hide_x = -258.0f;
     }
+#endif
     int done = 0;
     int arrived = 0;
     for (int i = 0; i < GetMenuModeMax(); i++) {
@@ -1439,7 +1546,7 @@ int BattleMenuCharaKey() {
         case 1: {
             if (BtlMenuExReadFlag == 0) {
                 if (ReadBGSync() == 0) {
-                    LOADTEXTURE_INFO2 texture[3] = {{"#frame_image_charamenu#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    LOADTEXTURE_INFO2 texture[3] = {{"#frame_image_charamenu#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
                     texture[0].block_no = BtlMenuExReadBlock;
                     texture[1].block_no = BtlMenuExReadBlock;
                     BG_READ_INFO *file = GetReadBGFile(0);
@@ -1458,6 +1565,9 @@ int BattleMenuCharaKey() {
                     BtlAlpha = TexManager.GetTexture("alphabet", BtlMenuExReadBlock);
                     BtlHira = TexManager.GetTexture("hira", BtlMenuExReadBlock);
                     BtlKata = TexManager.GetTexture("kata", BtlMenuExReadBlock);
+#ifdef PAL
+                    BtlEuro = TexManager.GetTexture("euro", BtlMenuExReadBlock);
+#endif
                     BtlMenuExReadFlag = 1;
                 } else {
                     return 1;
@@ -1613,6 +1723,32 @@ int BattleMenuCharaKey() {
             break;
         }
     }
+#ifdef PAL
+    // Debug builds raise the front party member's maximum life and add or remove party members.
+    if (DebugMode) {
+        if (GamePad.On(0xA) != 0) {
+            for (int i = 0; i < MenuChara.slot_count; i++) {
+                if (SysChara[i].place == 0) {
+                    int raised = BtlMenuStatusPt->max_hp[i] + 1;
+                    if (raised < 0x80) {
+                        BtlMenuStatusPt->max_hp[i] = raised;
+                    }
+                }
+            }
+        }
+        if (GamePad.Down2(0x40) != 0 && BtlMenuStatusPt->party_size < 6) {
+            BtlMenuStatusPt->party_size++;
+            BtlMenuStatusPt->GetItem(GetDefaultWeaponNo(BtlMenuStatusPt->party_size - 1) + 1, 0);
+            int chara = BtlMenuStatusPt->party_size - 1;
+            BtlMenuStatusPt->equipped_weapon_slot[chara] = 0;
+            EquipDefaultWeapon(BtlMenuStatusPt->party_size - 1);
+            NameDefaultSet(BtlMenuStatusPt->party_size - 1);
+        }
+        if (GamePad.Down2(0x20) != 0 && BtlMenuStatusPt->party_size > 1) {
+            BtlMenuStatusPt->party_size--;
+        }
+    }
+#endif
     return 1;
 }
 
@@ -1755,7 +1891,11 @@ void DrawCharaSelect() {
             if (panel_alpha < 0) {
                 panel_alpha = 0;
             }
+#ifdef PAL
+            if (box_x < -300.0f || (float) 0x28A < box_x || face_y < -130.0f || 1280.0f < face_y) {
+#else
             if (box_x < -300.0f || (float) 0x28A < box_x || face_y < -130.0f || 448.0f < face_y) {
+#endif
                 continue;
             }
             MenuTextureReload(BtlMenuExReadBlock);
@@ -1804,7 +1944,7 @@ void DrawCharaSelect() {
                 face_alpha = 0;
             }
         }
-        if (0.0f < draw_x && draw_x < 640.0f && 0.0f < face_y && face_y < 448.0f) {
+        if (0.0f < draw_x && draw_x < 640.0f && 0.0f < face_y && face_y < SCREEN_HEIGHT_F) {
             DrawMenu2DSprite(face, CRect_i_((int) draw_x, (int) face_y, (int) size, (int) size), CRect_i_(u, v, width, width),
                              shade, shade, shade, face_alpha);
         }
@@ -1932,7 +2072,14 @@ void DrawWepVolumeDisplay(int x, int y, WEAPON_HAVE *weapon, int alpha) {
     CRect_i_ dest(x, y, source.width, source.height);
     RECT digits = {0xD4, 0x1F4, 0xC, 0xD};
     if (weapon->best_elem < 5) {
+#ifdef PAL
+        // The face sheet lives in the main block and WepStatus in the extension block; each is made resident before use.
+        MenuTextureReload(BtlMenuReadBlock);
+#endif
         DrawMenu2DSprite(MenuCharaFace, CRect_i_(x, y - 0x10, 0x20, 0x10), CRect_i_(0xE0, weapon->best_elem * 16, 0x20, 0x10), alpha);
+#ifdef PAL
+        MenuTextureReload(BtlMenuExtBlock);
+#endif
     }
     int values[4] = {0, 0, 0, 0};
     values[0] = total.attack;
@@ -2468,7 +2615,11 @@ void DrawAallWeapon(int x, int y, float depth, CCharacter *model, WEAPON_HAVE *w
         }
         model->Draw();
     }
+#ifdef PAL
+    MenuTextureReload(BtlMenuExtBlock);
+#else
     MenuTextureReload(BtlMenuReadBlock);
+#endif
     switch (WepMenu.mode) {
         case 0:
         case 1:
@@ -2623,7 +2774,11 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
                 DrawAallWeapon(x, 0xA0, depth, frame, weapon, is_equipped, is_selected, draw_alpha);
             }
         } else {
+#ifdef PAL
+            MenuTextureReload(BtlMenuExtBlock);
+#else
             MenuTextureReload(BtlMenuReadBlock);
+#endif
             if (is_selected == 0 || WepMenu.state != 8) {
                 DrawMenuNothing(x - 4, 0x82, 0xB4, 0x96, "wepstatus", 0, draw_alpha);
             }
@@ -2636,6 +2791,9 @@ void BtlWeaponDraw(int x, float depth, int chara, int alpha) {
             case 8:
                 MenuTextureReload(BtlMenuReadBlock);
                 DrawBtlMenuLRCursor(x - 0x1C, 0xE6, 0xD4, draw_alpha);
+#ifdef PAL
+                MenuTextureReload(BtlMenuExtBlock);
+#endif
                 DrawWeaponTagBoard(x - 0xC, 0xF0, weapon, 0, 0, draw_alpha);
             case 0:
                 WeaponOptionStatusDraw(weapon, x + 0x50, 0x8E, draw_alpha);
@@ -2942,7 +3100,7 @@ static void ExitWeaponMenuSelect() {
     TexManager.CleanUpTextureList();
     BtlMenuTexBlockEnter();
     BattleMenuFlag = 18;
-    CommonMenuMes3.text_columns = 70;
+    CommonMenuMes3.text_columns = MES_WIN_COLUMNS;
     CommonMenuMes3.text_rows = 10;
     CommonMenuMes3.text_len = 0;
     CommonMenuMes3.text_width = 0;
@@ -3459,6 +3617,92 @@ static int WeaponSelectKey() {
             if (GamePad.Down(0x2000) && WepMenu.weapon_slot < 9) {
                 WepMenu.weapon_slot++;
             }
+#ifdef PAL
+            // Debug builds edit the selected weapon: level, every flag, maxed stats, and a cycle of element and
+            // anti-monster values.
+            if (DebugMode) {
+                WEAPON_HAVE *weapon = GetNowSelectWeapon();
+                if (GamePad.Down2(0x40) && weapon->level < 99) {
+                    weapon->level++;
+                }
+                if (GamePad.Down2(0xA)) {
+                    for (int i = 1; i <= 13; i++) {
+                        weapon->flags |= 1 << i;
+                    }
+                }
+                if (GamePad.Down2(0x10)) {
+                    WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+                    weapon->level = 99;
+                    weapon->attack = data->attack_max;
+                    weapon->endurance = 99;
+                    weapon->speed = 99;
+                    weapon->magic = data->magic_max;
+                    weapon->durability = 99;
+                    weapon->durability_f = 99.0f;
+                    for (int i = 0; i < 5; i++) {
+                        weapon->elem[i] = 99;
+                    }
+                    for (int i = 0; i < 10; i++) {
+                        weapon->vs_monster[i] = 99;
+                    }
+                    weapon->synthesis_count = 49;
+                    for (int i = 1; i <= 13; i++) {
+                        weapon->flags |= 1 << i;
+                    }
+                }
+                if (GamePad.Down2(0x20)) {
+                    weapon->flags = 0;
+                    weapon->flags = 0x36EA;
+                }
+                static int now = 0;
+                static int cnt = 0;
+                if (GamePad.Down2(0x80)) {
+                    now++;
+                    if (now >= 4) {
+                        now = 0;
+                    }
+                    if (now == 0) {
+                        for (int i = 0; i < 5; i++) {
+                            weapon->elem[i] = 0;
+                        }
+                        for (int i = 0; i < 10; i++) {
+                            weapon->vs_monster[i] = 0;
+                        }
+                        printf("now 0%\n");
+                    }
+                    if (now == 1) {
+                        for (int i = 0; i < 5; i++) {
+                            weapon->elem[i] = 20;
+                        }
+                        for (int i = 0; i < 10; i++) {
+                            weapon->vs_monster[i] = 20;
+                        }
+                        printf("now 20%\n");
+                    }
+                    if (now == 2) {
+                        for (int i = 0; i < 5; i++) {
+                            weapon->elem[i] = 50;
+                        }
+                        for (int i = 0; i < 10; i++) {
+                            weapon->vs_monster[i] = 50;
+                        }
+                        printf("now 50%\n");
+                    }
+                    if (now == 3) {
+                        for (int i = 0; i < 5; i++) {
+                            weapon->elem[i] = 100;
+                        }
+                        for (int i = 0; i < 10; i++) {
+                            weapon->vs_monster[i] = 100;
+                        }
+                        printf("now 100%\n");
+                    }
+                    for (int i = 0; i < now; i++) {
+                        ComMenuSePlay(1);
+                    }
+                }
+            }
+#endif
             if (GamePad.Down(0x20)) {
                 ComMenuSePlay(2);
                 switch (WepMenu.open_mode) {
@@ -4068,6 +4312,117 @@ void WeaponMenuTagKey() {
                 moved = 1;
                 ComMenuSePlay(2);
             }
+#ifdef PAL
+            // Debug builds step the status row under the cursor up or down, and max it out.
+            if (DebugMode) {
+                WEAPON_HAVE total;
+                WEAPON_HAVE *weapon = GetNowSelectWeapon();
+                WEAPON_DATA *data = GetWeaponData(weapon->item_no);
+                WeaponAllValueSet(weapon, &total, 0);
+                if (GamePad.On2(0x2000)) {
+                    switch (WepMenu.tag_row) {
+                        case 0:
+                            if (weapon->durability_f < weapon->durability) {
+                                weapon->durability_f += 1.0f;
+                            }
+                            break;
+                        case 1:
+                            if (weapon->experience < GetWeaponMaxExp(weapon)) {
+                                weapon->experience++;
+                            }
+                            break;
+                        case 2:
+                            if (total.attack < data->attack_max) {
+                                weapon->attack++;
+                            }
+                            break;
+                        case 3:
+                            if (weapon->endurance < 99) {
+                                weapon->endurance++;
+                            }
+                            break;
+                        case 4:
+                            if (weapon->speed < 99) {
+                                weapon->speed++;
+                            }
+                            break;
+                        case 5:
+                            if (total.magic < data->magic_max) {
+                                weapon->magic++;
+                            }
+                            break;
+                    }
+                }
+                if (GamePad.On2(0x8000)) {
+                    switch (WepMenu.tag_row) {
+                        case 0:
+                            if (1.0f < weapon->durability_f) {
+                                weapon->durability_f -= 1.0f;
+                            }
+                            break;
+                        case 1:
+                            if (0 < weapon->experience) {
+                                weapon->experience--;
+                            }
+                            break;
+                        case 2:
+                            if (0 < weapon->attack) {
+                                weapon->attack--;
+                            }
+                            break;
+                        case 3:
+                            if (0 < weapon->endurance) {
+                                weapon->endurance--;
+                            }
+                            break;
+                        case 4:
+                            if (0 < weapon->speed) {
+                                weapon->speed--;
+                            }
+                            break;
+                        case 5:
+                            if (0 < weapon->magic) {
+                                weapon->magic--;
+                            }
+                            break;
+                    }
+                }
+                if (GamePad.On2(0x40)) {
+                    switch (WepMenu.tag_row) {
+                        case 0:
+                            if (weapon->durability < 99) {
+                                weapon->durability++;
+                            }
+                            break;
+                    }
+                }
+                if (GamePad.On2(0x20)) {
+                    switch (WepMenu.tag_row) {
+                        case 0:
+                            if (weapon->durability_f < weapon->durability) {
+                                weapon->durability--;
+                            }
+                            break;
+                    }
+                }
+                if (GamePad.Down2(0x10)) {
+                    switch (WepMenu.tag_row) {
+                        case 2:
+                            weapon->attack = 99;
+                            break;
+                        case 3:
+                            weapon->endurance = 99;
+                            break;
+                        case 4:
+                            weapon->speed = 99;
+                            break;
+                        case 5:
+                            weapon->magic = 99;
+                            break;
+                    }
+                }
+            }
+#endif
             break;
         case 1:
             if (GamePad.Down(0x1000) != 0) {
@@ -4095,6 +4450,22 @@ void WeaponMenuTagKey() {
                     ComMenuSePlay(1);
                 }
             }
+#ifdef PAL
+            if (DebugMode) {
+                if (GamePad.On2(0x2000)) {
+                    WEAPON_HAVE *weapon = GetNowSelectWeapon();
+                    if (weapon->elem[WepMenu.tag_row] < 99) {
+                        weapon->elem[WepMenu.tag_row]++;
+                    }
+                }
+                if (GamePad.On2(0x8000)) {
+                    WEAPON_HAVE *weapon = GetNowSelectWeapon();
+                    if (0 < weapon->elem[WepMenu.tag_row]) {
+                        weapon->elem[WepMenu.tag_row]--;
+                    }
+                }
+            }
+#endif
             break;
         case 2:
             if (GamePad.Down(0x1000) != 0) {
@@ -4120,6 +4491,22 @@ void WeaponMenuTagKey() {
                 moved = 1;
                 ComMenuSePlay(2);
             }
+#ifdef PAL
+            if (DebugMode) {
+                if (GamePad.On2(0x2000)) {
+                    WEAPON_HAVE *weapon = GetNowSelectWeapon();
+                    if (weapon->vs_monster[WepMenu.tag_row] < 99) {
+                        weapon->vs_monster[WepMenu.tag_row]++;
+                    }
+                }
+                if (GamePad.On2(0x8000)) {
+                    WEAPON_HAVE *weapon = GetNowSelectWeapon();
+                    if (0 < weapon->vs_monster[WepMenu.tag_row]) {
+                        weapon->vs_monster[WepMenu.tag_row]--;
+                    }
+                }
+            }
+#endif
             break;
     }
     if (moved != 0) {
@@ -4306,6 +4693,55 @@ static void WeaponMenuAttachKey() {
     }
 }
 
+#ifdef PAL
+void RepairAndLevelUpDraw(int x, int y, int alpha) {
+    int u;
+    int v;
+
+    float widths[7] = {10.7f, 10.7f, 10.7f, 15.3f, 11.8f, 12.2f, 12.3f};
+    MenuHelpWinDraw(x - 10, y, widths[BtlMenuNowLang], 2.2f, alpha);
+    int row_y = y + 0xE;
+    MenuTextureReload(BtlMenuReadBlock);
+    u8 items[2] = {0xB1, 0xB2};
+    u8 shift[7] = {0, 0, 0, 58, 8, 22, 22};
+    for (int i = 0; i < 2; i++) {
+        int count;
+        int item_no = items[i];
+        count = GetNowItemNum(item_no, MenuItemPackPt);
+        CTexture *icon = RetCTex((u8) item_no, u, v);
+        DrawMenu2DSprite(icon, CRect_i_(x + 0x10, row_y, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+        DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x9A + shift[BtlMenuNowLang], row_y + 8, 0x10, 0x10), CRect_i_(0x60, 0x58, 0x10, 0x10), alpha);
+        int number_x = x + 0xC0 + shift[BtlMenuNowLang];
+        if (count / 10 > 0) {
+            number_x += NumberSprite[1].width >> 1;
+        }
+        DrawMenuNumber(count, number_x, row_y + 8, StayTex, NumberSprite[1], 2, alpha);
+        row_y += 0x22;
+    }
+    MenuTextureReload(CommonMenuMes3.tex_block);
+    if (BtlMenuNowLang > 0) {
+        s8 count_shift[6] = {20, 20, 0, 12, -6, -4};
+        int name_x = x + 0x36;
+        int count_x;
+        CommonMenuMes3.line_pos[0].x = name_x;
+        CommonMenuMes3.line_pos[0].y = y + 0xC;
+        count_x = name_x + count_shift[BtlMenuNowLang - 1];
+        CommonMenuMes3.line_pos[1].x = count_x;
+        CommonMenuMes3.line_pos[1].y = y + 0x1C;
+        CommonMenuMes3.line_pos[2].x = name_x;
+        CommonMenuMes3.line_pos[2].y = y + 0x2E;
+        CommonMenuMes3.line_pos[3].x = count_x;
+        CommonMenuMes3.line_pos[3].y = y + 0x3E;
+    }
+    CommonMenuMes3.stay_frame = 0;
+    if (CommonMenuMes3.mes_made != 0x1A7) {
+        CommonMenuMes3.MakeMesWin(0x1A7);
+    }
+    CommonMenuMes3.edge_alpha = alpha;
+    CommonMenuMes3.Step();
+    CommonMenuMes3.DrawMesWin();
+}
+#else
 void RepairAndLevelUpDraw(int x, int y, int alpha) {
     int u;
     int v;
@@ -4348,9 +4784,12 @@ void RepairAndLevelUpDraw(int x, int y, int alpha) {
     CommonMenuMes3.Step();
     CommonMenuMes3.DrawMesWin();
 }
+#endif
 
 void DrawBuildUpWeaponSelect(int x, int y, int cursor) {
+#ifndef PAL
     MenuTextureReload(BtlMenuReadBlock);
+#endif
     float size[7][2] = {{14.2f, 0.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}, {13.4f, 1.0f}};
     s8 offset[7][2] = {{-8, 0}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}, {-6, -6}};
     int build;
@@ -4511,14 +4950,24 @@ void WeaponMenuDraw() {
     target_depth = WepPolyPos;
     BtlWeaponDraw(target_x, target_depth, WepMenu.chara, scratch);
     if (attach_mode == 0) {
+#ifdef PAL
+        u8 repair_x[7] = {78, 78, 78, 26, 64, 64, 66};
+        RepairAndLevelUpDraw(repair_x[BtlMenuNowLang], 0x164, alpha);
+#else
         RepairAndLevelUpDraw(0x4E, 0x144, alpha);
+#endif
     }
     int dialog_pos = 0x70;
+#ifndef PAL
     MenuTextureReload(BtlMenuReadBlock);
+#endif
     WEP_BUILDUP_INFO builds[4];
     switch (WepMenu.mode) {
         case 3:
         case 6:
+#ifdef PAL
+            MenuTextureReload(BtlMenuReadBlock);
+#endif
             DrawDngYesNoDialog(0x88, 0xDD, 0x80);
             MenuHelpWinDraw(0x46, 0x8C, 10.0f, 1.4f, 100);
             CommonMenuMes1.stay_frame = 0;
@@ -4527,6 +4976,9 @@ void WeaponMenuDraw() {
             DrawMenuClsMes(&CommonMenuMes1, 0x58, 0x92);
             break;
         case 4:
+#ifdef PAL
+            MenuTextureReload(BtlMenuReadBlock);
+#endif
             DrawDngYesNoDialog(0x88, 0xF3, 0x80);
             CommonMenuMes1.auto_pos = -1;
             CommonMenuMes1.stay_frame = 1;
@@ -4535,15 +4987,30 @@ void WeaponMenuDraw() {
             break;
         case 7:
             AllFadeForMenu(0x40);
+#ifdef PAL
+            MenuTextureReload(BtlMenuReadBlock);
+#endif
             DrawBtlMenuLRCursor(0x158, 0x6E, 0xD4, alpha);
             EnableBuildUpModel(builds, GetNowSelectWeapon());
+#ifdef PAL
+            MenuTextureReload(BtlMenuExtBlock);
+#endif
             DrawWeaponTagBoard(0x16C, 0x78, GetNowSelectWeapon(), 1, builds[WepMenu.board.cursor].weapon_no, 0x80);
         case 5:
+#ifdef PAL
+            MenuTextureReload(BtlMenuExtBlock);
+#endif
             DrawBuildUpWeaponSelect(0x58, 0x9C, WepMenu.board.cursor);
             break;
         case 2:
+#ifdef PAL
+            MenuTextureReload(BtlMenuExtBlock);
+#endif
             DrawWeaponTagBoard(0x18A, 0x64, GetNowSelectWeapon(), 0, 0, 0x80);
         case 1:
+#ifdef PAL
+            MenuTextureReload(BtlMenuExtBlock);
+#endif
             dialog_pos = 0x70;
             if (GetNowSelectWeapon() != NULL) {
                 DrawWeaponSelectDialog(dialog_pos, dialog_pos, scratch);
@@ -4930,7 +5397,7 @@ static void StartBGReadItemMenuWepIcon(u_long128 *buffer, int &size) {
 
 void ReadSyncItemMenuWepIcon() {
     BG_READ_INFO *file = GetReadBGFile(0);
-    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
 
     textures[0].block_no = ItemMenuWeaponIconReadBlock;
     textures[1].name = (char *) file->buffer;
@@ -5146,6 +5613,58 @@ static void ChangeMenuChara() {
         }
     }
 }
+
+#ifdef PAL
+/**
+ * Returns a party member's current life from the battle menu's status data.
+ */
+static inline int DebugGetHp(int chara) {
+    return BtlMenuStatusPt->hp[chara];
+}
+
+/**
+ * Returns a party member's maximum life from the battle menu's status data.
+ */
+static inline int DebugGetMaxHp(int chara) {
+    return BtlMenuStatusPt->max_hp[chara];
+}
+
+/**
+ * Sets a party member's current life in the battle menu's status data.
+ */
+static inline void DebugSetHp(int chara, int hp) {
+    BtlMenuStatusPt->hp[chara] = hp;
+}
+
+/**
+ * Returns the water a party member holds from the battle menu's status data.
+ */
+static inline float DebugGetWater(int chara) {
+    return BtlMenuStatusPt->water_now[chara];
+}
+
+/**
+ * Sets the water a party member holds in the battle menu's status data.
+ */
+static inline void DebugSetWater(int chara, float water) {
+    BtlMenuStatusPt->water_now[chara] = water;
+}
+
+/**
+ * Returns a party member's defense from the battle menu's status data.
+ */
+static inline int DebugGetDefense(int chara) {
+    return BtlMenuStatusPt->defense[chara];
+}
+
+/**
+ * Sets a party member's defense in the battle menu's status data.
+ */
+static inline void DebugSetDefense(int chara, int defense) {
+    BtlMenuStatusPt->defense[chara] = defense;
+}
+#endif
+
 
 /**
  * Handles item-menu input, item use, equipment changes, and inventory transfers.
@@ -5984,6 +6503,79 @@ int ItemMenuMainKey() {
                         break;
                 }
             }
+#ifdef PAL
+            // Debug builds edit the selected member's life, water and defense and the party's money, and open the
+            // debug item list.
+            if (DebugMode) {
+                switch (ItemMenuMode.mode) {
+                    case 1: {
+                        int hp = DebugGetHp(ItemMenuMode.chara);
+                        int max_hp = DebugGetMaxHp(ItemMenuMode.chara);
+                        if (GamePad.On2(0x40) && hp < max_hp) {
+                            hp++;
+                        }
+                        if (GamePad.On2(0x20) && hp > 1) {
+                            hp--;
+                        }
+                        if (GamePad.On2(0x80)) {
+                            hp = 0;
+                        }
+                        DebugSetHp(ItemMenuMode.chara, hp);
+                        if (GamePad.On2(0x10)) {
+                            float water = DebugGetWater(ItemMenuMode.chara);
+                            if (water > 0.0f) {
+                                water -= 1.0f;
+                                DebugSetWater(ItemMenuMode.chara, water);
+                            }
+                        }
+                        break;
+                    }
+                    case 3: {
+                        int defense = DebugGetDefense(ItemMenuMode.chara);
+                        if (GamePad.On2(0x40) && defense < 999) {
+                            defense++;
+                        }
+                        if (GamePad.On2(0x20) && 0 < defense) {
+                            defense--;
+                        }
+                        DebugSetDefense(ItemMenuMode.chara, defense);
+                        break;
+                    }
+                }
+                if (GamePad.On2(0x80)) {
+                    switch (ItemMenuMode.mode) {
+                        case 1: {
+                            float water = DebugGetWater(ItemMenuMode.chara) - 1.0f;
+                            if (water < 0.0f) {
+                                water = 0.0f;
+                            }
+                            DebugSetWater(ItemMenuMode.chara, water);
+                            break;
+                        }
+                    }
+                }
+                if (GamePad.On2(0x10)) {
+                    switch (ItemMenuMode.mode) {
+                        case 1:
+                            break;
+                        case 3: {
+                            CDngStatusData *status = BtlMenuStatusPt;
+                            int money = status->money + 1000;
+                            if (money >= 0xFFFF) {
+                                status->money = 0xFFFF;
+                            } else {
+                                status->money = money;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (GamePad.Down(0x100)) {
+                    ItemMenuMode.state = 5;
+                    InitDebugItemGet();
+                }
+            }
+#endif
             break;
         case 5:
             if (DebugItemGetKey() == -1) {
@@ -6205,11 +6797,22 @@ void ItemMenuModeDraw() {
     }
     if (ItemMenuMode.overflow == 0) {
         MenuTextureReload(AtoraNameMes.tex_block);
+#ifdef PAL
+        float widths[7] = {11.4f, 11.2f, 12.7f, 12.7f, 12.9f, 12.7f, 12.7f};
+        s8 shift[7] = {0, 0, 0, 0, 0, -16, -16};
+        float heights[7] = {1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 2.4f, 2.4f};
+        MenuHelpWinDraw(0x36, 0x174 + shift[BtlMenuNowLang], widths[BtlMenuNowLang], heights[BtlMenuNowLang], 0x80);
+#else
         float widths[7] = {11.4f, 12.7f, 12.7f, 12.7f, 12.7f, 12.7f, 12.7f};
         MenuHelpWinDraw(0x36, 0x154, widths[BtlMenuNowLang], 1.2f, 0x80);
+#endif
         AtoraNameMes.stay_frame = 0;
         AtoraNameMes.text_x = 0x4A;
+#ifdef PAL
+        AtoraNameMes.text_y = 0x178;
+#else
         AtoraNameMes.text_y = 0x158;
+#endif
         AtoraNameMes.edge_alpha = 0x80;
         AtoraNameMes.Step();
         AtoraNameMes.DrawMesWin();
@@ -6952,7 +7555,11 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
             break;
         case 5:
             BtlMenuStatusPt = BtlMenuSaveDataPt->GetDngStatus();
+#ifdef PAL
+            StayTex = TexManager.GetTexture("stayframe", -1);
+#else
             StayTex = TexManager.GetTexture("stayfram", -1);
+#endif
             GamePad.MenuModeOn(0x78);
             GamePad.SetAutoRepeat(0xF000, 30, 5);
         case 1:
@@ -7115,6 +7722,15 @@ int MenuMoveKey() {
                 for (int i = 0; i < 10; i++) {
                     CommonMenuMes3.mes_no[i] = -1;
                 }
+#ifdef PAL
+                for (int i = 0; i < 4; i++) {
+                    CommonMenuMes1.mes_no[i] = -1;
+                    if (i >= 0 && i < 10) {
+                        CommonMenuMes1.line_pos[i].x = -1;
+                        CommonMenuMes1.line_pos[i].y = -1;
+                    }
+                }
+#endif
             }
             break;
         }
@@ -7249,6 +7865,43 @@ int MenuMoveKey() {
                 case 1:
                 case 5:
                     WorldMapMoveKey();
+#ifdef PAL
+                    // Debug builds mark the first place not yet visited as visited, or its dungeon as entered.
+                    if (DebugMode && GamePad.Down2(0x40)) {
+                        for (int i = 0; i <= 15; i++) {
+                            if (GetVisitInfo(i, MenuMove.mode) == 0) {
+                                int map = MenuGrobalMapNoTbl[i];
+                                printf("nowset mapID = %d\n", map);
+                                if (map >= 200) {
+                                    map -= 200;
+                                }
+                                switch (i) {
+                                    case 0:
+                                    case 2:
+                                    case 4:
+                                    case 5:
+                                    case 7:
+                                    case 8:
+                                    case 10:
+                                    case 11:
+                                    case 13:
+                                    case 15:
+                                        BtlMenuSaveDataPt->VisitMap(map, 1);
+                                        if (BtlMenuSaveDataPt->VisitMap(map, 0) == 0) {
+                                            printf(" mapID = %d, visitflag=%d\n", map, BtlMenuSaveDataPt->VisitMap(map, 0));
+                                        } else {
+                                            printf("mapID = %d ,visitflag=%d\n", map, BtlMenuSaveDataPt->VisitMap(map, 0));
+                                        }
+                                        break;
+                                    default:
+                                        BtlMenuSaveDataPt->QuestDungeon(map, 1);
+                                        break;
+                                }
+                                break;
+                            }
+                        }
+                    }
+#endif
                     if (MenuMove.cursor < 0) {
                         MenuMove.cursor = 4;
                     }
@@ -7367,7 +8020,11 @@ void DrawMenuMove() {
     }
     switch (MenuMove.mode) {
         case 0: {
+#ifdef PAL
+            DrawEscapeItem(0x32, 0x160, alpha);
+#else
             DrawEscapeItem(0x32, 0x140, alpha);
+#endif
             int half = CommonMenuMes3.char_width >> 1;
             y = 0x140 - half;
             CommonMenuMes3.NeedMesWinWH(CommonMenuMes3.mes_made, size);
@@ -7485,7 +8142,11 @@ void DrawMenuMove() {
                 case 5: {
                     MenuTextureReload(MenuMove.tex_block);
                     DrawMapCheck(0x80);
+#ifdef PAL
+                    CRect_i_ texel(0xE2, 0, 0x1E, 0x20);
+#else
                     CRect_i_ texel(0xE0, 0, 0x20, 0x20);
+#endif
                     DrawObjectVibe(x + 2, y + 2, MenuMoveTex, texel, 0xA, 0x50);
                     DrawObjectVibe(x, y, MenuMoveTex, texel, 0x80, 0x80);
                     CommonMenuMes3.stay_frame = 0;
@@ -7544,7 +8205,11 @@ void DrawMenuMove() {
         MenuTextureReload(MenuMove.tex_block);
         int title_w = 0xD8;
         if (GetMenuLangFlag() > 0) {
+#ifdef PAL
+            title_w = 0xE0;
+#else
             title_w = 0xDE;
+#endif
         }
         DrawMenu2DSprite(MenuMoveTex, CRect_i_(0x3C, 0x28, title_w, 0x28), CRect_i_(0, 0, title_w, 0x28), 0x80);
     }
@@ -7567,7 +8232,11 @@ void DrawMenuMove() {
 }
 
 void DrawEscapeItem(int x, int y, int alpha) {
+#ifdef PAL
+    float widths[7] = {8.6f, 9.0f, 9.0f, 11.0f, 9.0f, 9.0f, 9.0f};
+#else
     float widths[7] = {8.6f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f};
+#endif
     int u;
     int v;
 
@@ -7580,11 +8249,19 @@ void DrawEscapeItem(int x, int y, int alpha) {
     }
     int money = ((CUserStatus *) BtlMenuStatusPt)->money;
     CommonMoneyBoardDraw(x, y - 0x1E, money, alpha);
+#ifdef PAL
+    s8 shift[7] = {0, 0, 0, 34, 0, 0, 0};
+#endif
     int count = GetNowItemNum(0xAF, MenuItemPackPt);
     CTexture *icon = RetCTex(0xAF, u, v);
     DrawMenu2DSprite(icon, CRect_i_(x + 0x14, row_y, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+#ifdef PAL
+    DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x86 + shift[BtlMenuNowLang], row_y + 8, 0x10, 0x10), CRect_i_(0x60, 0x58, 0x10, 0x10), alpha);
+    int number_x = x + 0xA2 + shift[BtlMenuNowLang];
+#else
     DrawMenu2DSprite(BtStatus, CRect_i_(x + 0x86, row_y + 8, 0x10, 0x10), CRect_i_(0x60, 0x58, 0x10, 0x10), alpha);
     int number_x = x + 0xA2;
+#endif
     number_x += GetNumberKeta(count) * 6;
     DrawMenuNumber(count, number_x, row_y + 8, StayTex, NumberSprite[1], 2, alpha);
     s16 messages[7] = {0x138, 0x1A8, 0x1A8, 0x1A8, 0x1A8, 0x1A8, 0x1A8};
@@ -7637,7 +8314,7 @@ int LoadWorldMap() {
         char cfg[32];
         sprintf(img, img_format, MenuMove.load_map + 1);
         sprintf(cfg, cfg_format, MenuMove.load_map + 1);
-        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#448#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+        LOADTEXTURE_INFO2 textures[5] = {{"#frame_imagemove#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
         textures[0].block_no = MenuMove.tex_block;
         textures[1].block_no = MenuMove.tex_block;
         textures[2].block_no = MenuMove.tex_block;
@@ -7838,7 +8515,9 @@ static int WorldMapMoveKey() {
  * @size 0x150
  */
 void DrawMapCheck(int alpha) {
+#ifndef PAL
     s16 offset[16][2] = {0};
+#endif
     CRect_i_ dst(0, 0, 0x10, 0xF);
     CRect_i_ src(0, 0x68, 0x15, 0x15);
 
@@ -7850,8 +8529,13 @@ void DrawMapCheck(int alpha) {
                 int pos[2];
 
                 Get3DPosTo2DPos(frame, pos);
+#ifdef PAL
+                dst.x = pos[0];
+                dst.y = pos[1];
+#else
                 dst.x = pos[0] + offset[i][0];
                 dst.y = pos[1] + offset[i][1];
+#endif
                 src.x = 0;
                 if (MenuMove.start_place == i) {
                     src.x += 0x14;
@@ -8282,7 +8966,7 @@ void MenuClsMes::InitData() {
 void MenuClsMes::SetBuffInfo(short *buffer) {
     ClsMes *mes = message;
 
-    mes->text_columns = 0x46;
+    mes->text_columns = MES_WIN_COLUMNS;
     mes->text_rows = 10;
     mes->text_len = 0;
     mes->text_width = 0;

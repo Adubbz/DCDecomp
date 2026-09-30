@@ -82,7 +82,11 @@ void init_now_loading(int title_number) {
         return;
     }
 
+#ifdef PAL
+    u_char raw_archive[320000];
+#else
     u_char raw_archive[64000];
+#endif
     u_char *archive = raw_archive;
     int archive_size;
     int misalignment = (int) archive % 64;
@@ -111,8 +115,13 @@ void init_now_loading(int title_number) {
         if (LoadFile2(path, archive, &archive_size, 0) == 0) {
             return;
         }
+#ifdef PAL
+        LoadTexture("SCElogo", archive, &nl_tex, 8000, 10000);
+        LoadTexture("L5logo", archive, &nl_tex2, 9500, 10100);
+#else
         LoadTexture("SCElogo", archive, &nl_tex, 0x1A40, 10000);
         LoadTexture("L5logo", archive, &nl_tex2, 8000, 0x2774);
+#endif
     } else {
         if (path[0] == '\0') {
             return;
@@ -120,12 +129,16 @@ void init_now_loading(int title_number) {
         if (LoadFile2(path, archive, &archive_size, 0) == 0) {
             return;
         }
+#ifdef PAL
+        LoadTexture((TM2_head *) archive, &nl_tex, 8000, 9000);
+#else
         LoadTexture((TM2_head *) archive, &nl_tex, 0x1A40, 8000);
+#endif
     }
 
     map_title_no = title_number;
     nl_start_cnt = 20;
-    sceGsSetDefDBuff(&nowloadDB, 0, 640, 224, 2, 0x31, 1);
+    sceGsSetDefDBuff(&nowloadDB, 0, 640, SCREEN_HALF_HEIGHT, 2, 0x31, 1);
     nowloadDB.clear0.rgbaq.R = 0;
     nowloadDB.clear0.rgbaq.G = 0;
     nowloadDB.clear0.rgbaq.B = 0;
@@ -163,8 +176,19 @@ int VSyncCallBack_Load(int field) {
         sceVif1PkReset(&nlPacket);
         if (map_title_no == 0x321) {
             if (logo_count == 0) {
+#ifdef PAL
+                // Languages past the first two show a full-screen logo image instead.
+                if (LanguageCode >= 2) {
+                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0, 0x10, 0x280, 0x1C0),
+                                CRect_i_(0, 0, 0x280, 0x1C0), (u_char) (int) col_cnt);
+                } else {
+                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
+                                CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+                }
+#else
                 set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
                             CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+#endif
             }
             if (logo_count == 1) {
                 set2DSprite(&nlPacket, &nl_tex2, CRect_i_(0x100, 0xA0, 0x80, 0x80),
@@ -174,12 +198,21 @@ int VSyncCallBack_Load(int field) {
                 col_cnt += col_add * 2.0f;
             }
             if (col_cnt > 128.0f) {
+#ifdef PAL
+                // The logo holds keep their NTSC duration at 50 fields a second.
+                count = 183;
+#else
                 count = 220;
+#endif
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }
             if (col_cnt < 0.0f) {
+#ifdef PAL
+                count = 83;
+#else
                 count = 100;
+#endif
                 col_cnt = 0.0f;
                 col_add *= -1.0f;
                 if (logo_count == 1) {

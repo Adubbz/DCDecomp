@@ -435,6 +435,9 @@ int main(int argc, const char **argv, const char **envp) {
     int in_range;
 
     mwInit(argc, argv, envp);
+#ifdef PAL
+    DebugMode = 0;
+#endif
 
     if (!init) {
         depth = 0;
@@ -482,14 +485,30 @@ int main(int argc, const char **argv, const char **envp) {
     for (i = 0; (in_range = i < 60) != 0; i++) {
         sceGsSyncV(0);
         GamePad.UpDate();
+#ifdef PAL
+        /* Holding four buttons through the first second turns on debug mode. */
+        if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0) {
+            DebugMode = 1;
+        }
+#else
         if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0) {
             GamePad.On2(1);
         }
+#endif
     }
 
+#ifdef PAL
+    /* Debug mode starts at the developer menu instead of the language select. */
+    if (!DebugMode) {
+        MapNo = -1;
+        mode = 14;
+        GamePad.KeyLock2(1);
+    }
+#else
     MapNo = -1;
     mode = 10;
     GamePad.KeyLock2(1);
+#endif
 
     i = 0;
     exist_data = 0;
@@ -508,7 +527,11 @@ int main(int argc, const char **argv, const char **envp) {
         InitReadBG__Fv();
         SndInit__Fv();
 
+#ifdef PAL
+        if (!DebugMode && mode == 7) {
+#else
         if (mode == 7) {
+#endif
             MapNo = 801;
             mode = 1;
         }
@@ -549,6 +572,11 @@ int main(int argc, const char **argv, const char **envp) {
         }
 
         GamePad.StopVibration();
+#ifdef PAL
+        if (DebugMode) {
+            LoadSystemMessage__Fv();
+        }
+#endif
 
         /* Case bodies are in retail's physical body order rather than
          * case-value order, taken from the @875 table in
@@ -653,6 +681,12 @@ int main(int argc, const char **argv, const char **envp) {
         }
 
         do {
+#ifdef PAL
+            {
+                s32 *config_words = (s32 *) SaveData->GetConfigData();
+                MGAdjustScreen(config_words[12], config_words[13]);
+            }
+#endif
             int game_clear = GameClearFlag;
             *(s32 *) &((SV_CONFIG_SYS *) SaveData->GetConfigData())->game_clear_area[2] = game_clear;
 
@@ -697,8 +731,13 @@ int main(int argc, const char **argv, const char **envp) {
                 case 14:
                     loop_result = LangsetLoop__Fv();
                     if (loop_result != 0) {
+#ifdef PAL
+                        MapNo = -1;
+                        mode = 10;
+#else
                         MapNo = 801;
                         mode = 1;
+#endif
                     }
                     break;
                 case 0:
@@ -841,9 +880,16 @@ int main(int argc, const char **argv, const char **envp) {
             GamePad.Step();
             MGEndFrame__Fv();
 
+#ifdef PAL
+            if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0 && GamePad.On2(1) != 0 &&
+                GamePad.Down2(1024) != 0) {
+                DebugMode = !DebugMode;
+            }
+#else
             if (GamePad.On2(8) != 0 && GamePad.On2(2) != 0 && GamePad.On2(4) != 0) {
                 GamePad.On2(1);
             }
+#endif
         } while (loop_result == 0);
 
         MGBeginFrame__Fv();
@@ -929,7 +975,7 @@ void MapJump(int map_no, int event_no) {
 }
 
 void MenuInit() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
+    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" HALF_BUFFER_HEIGHT_STR "#4"},
                                            {"img/ankfont.img"},
                                            {gamemode_empty_string}};
     float background;
@@ -940,12 +986,16 @@ void MenuInit() {
     TexManager.Initialize(16352);
     result = TexManager.EnterTextureFile(texdata);
     result = TexManager.LoadTextureBlock(-1, read_buffer);
+#ifdef PAL
+    MGSetBGColor(0.0f, 0.0f, 128.0f, 128.0f);
+#else
     MGSetBGColor(0.0f, 0.0f, background = 128.0f, background);
+#endif
     DebugFont.texture_name = "frame_buff";
     DebugFont.x = 16;
     DebugFont.y = 16;
     DebugFont.width = 256;
-    DebugFont.height = 224;
+    DebugFont.height = SCREEN_HALF_HEIGHT;
     DebugFont.alpha = 64;
     GamePad.SetAutoRepeat(61440, 25, 3);
 }
@@ -1078,8 +1128,13 @@ int MenuLoop() {
         }
     }
 
+#ifdef PAL
+    DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
+                                "Dark Cloud Ver3.07 2001/07/12\n");
+#else
     DebugFont.length += sprintf(&DebugFont.text[DebugFont.length],
                                 "Dark Cloud Ver2.17 2001/05/11\n");
+#endif
     DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], "%s%s\n", cursor[select == 0],
                                 menu[0]);
     DebugFont.length += sprintf(&DebugFont.text[DebugFont.length], menu[1], cursor[select == 1],
@@ -1162,6 +1217,28 @@ static int check_cancel;
 static int taiken_cnt;
 static int taiken_start;
 
+#ifdef PAL
+void MemCheckInit() {
+    InitializeDataBuffer();
+    SetDataBuffer(&TextureData, 100000);
+    SetPacketReadBuffer(10000, 100000);
+    char filename[64] = "img/memory.img";
+    if (LanguageCode > 0 && LanguageCode < 7) {
+        sprintf(filename, "img_%d/memory.img", LanguageCode);
+    }
+    TexManager.Initialize(16352);
+    static LOADTEXTURE_INFO texdata[64] = {{filename}, {gamemode_empty_string}};
+    TexManager.EnterTextureFile(texdata);
+    TexManager.LoadTextureBlock(-1, read_buffer);
+    MGSetBGColor(0.0f, 0.0f, 0.0f, 0.0f);
+    if (sceMcInit())
+        printf("libmc initialize faild\n");
+    mem_chk_mode = 0;
+    check_cancel = 2;
+    taiken_cnt = 0;
+    taiken_start = 0;
+}
+#else
 void MemCheckInit() {
     static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#224#4"},
                                            {"img_1/memory.img"},
@@ -1181,7 +1258,79 @@ void MemCheckInit() {
     taiken_cnt = 0;
     taiken_start = 0;
 }
+#endif
 
+#ifdef PAL
+int MemCheckLoop() {
+    DebugFont.length = 0;
+    TexManager.ReloadTexture(GetVif1Packet(), 0);
+    switch (mem_chk_mode) {
+        case 0:
+            if (check_cancel > 0)
+                break;
+            switch (SaveEnableCheck()) {
+                case 1:
+                    return 1;
+                case 0:
+                    mem_chk_mode = 2;
+                    break;
+                case -1:
+                    mem_chk_mode = 3;
+                    break;
+            }
+            break;
+        case 1:
+            break;
+        case 2: {
+            /* The warning images are drawn at NTSC height and stretched over the taller frame. */
+            CRect_i_ rect;
+            CRect_i_ texel;
+            texel.x = 0;
+            texel.y = 0;
+            texel.width = 640;
+            texel.height = 448;
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = 640;
+            rect.height = SCREEN_HEIGHT;
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory01", -1), rect, texel);
+            if (GamePad.Down(32)) {
+                mem_chk_mode = 0;
+                check_cancel = 3;
+            }
+            if (GamePad.Down(64))
+                mem_chk_mode = 4;
+            break;
+        }
+        case 3: {
+            CRect_i_ rect;
+            CRect_i_ texel;
+            texel.x = 0;
+            texel.y = 0;
+            texel.width = 640;
+            texel.height = 448;
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = 640;
+            rect.height = SCREEN_HEIGHT;
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("memory02", -1), rect, texel);
+            if (GamePad.Down(32)) {
+                mem_chk_mode = 0;
+                check_cancel = 3;
+            }
+            if (GamePad.Down(64))
+                mem_chk_mode = 4;
+            break;
+        }
+        case 4:
+            return 1;
+    }
+    check_cancel--;
+    if (check_cancel < 0)
+        check_cancel = 0;
+    return 0;
+}
+#else
 int MemCheckLoop() {
     DebugFont.length = 0;
     TexManager.ReloadTexture(GetVif1Packet(), 0);
@@ -1240,11 +1389,12 @@ int MemCheckLoop() {
         check_cancel = 0;
     return 0;
 }
+#endif
 
 void InitSave() {
-    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#448#4", 1},
-                                           {"#mes_frame_buff#640#448#4", 26},
-                                           {"#fukidashibase#640#224#4", 26},
+    static LOADTEXTURE_INFO texdata[64] = {{"#frame_buff#640#" SCREEN_HEIGHT_STR "#4", 1},
+                                           {"#mes_frame_buff#640#" SCREEN_HEIGHT_STR "#4", 26},
+                                           {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26},
                                            {"#fontbase#512#256#1", 26},
                                            {"#fuki256#128#128#1", 26},
                                            {"meswin/gaiji.img", 26}};

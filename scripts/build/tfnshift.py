@@ -1,14 +1,16 @@
 """Where the title overlay's functions part company with retail's."""
-import subprocess, re, os
+import subprocess, re, os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
 prefix = os.environ.get('MIPS_TOOL_PREFIX', 'mips-ps2-decompals-')
-LOW, HIGH = 0x01DABD40, 0x01DD5380
+LOW, HIGH = next(s[2:] for s in region.SECTIONS['title'] if s[0] == '.text')
 retail = {}
-for line in open('config/title.symbols.txt'):
+for line in open(f'{region.CONFIG}/title.symbols.txt'):
     m = re.match(r'(\S+) = 0x([0-9a-fA-F]+); // type:func', line)
     if m and LOW <= int(m.group(2), 16) < HIGH:
         retail.setdefault(m.group(1), int(m.group(2), 16))
 ours, dupe = {}, set()
-for line in subprocess.run([prefix + 'nm', 'build/SCUS_971.11'],
+for line in subprocess.run([prefix + 'nm', f'{region.BUILD}/SCUS_971.11'],
                            capture_output=True, text=True).stdout.splitlines():
     f = line.split()
     if len(f) == 3 and LOW <= int(f[0], 16) < HIGH:

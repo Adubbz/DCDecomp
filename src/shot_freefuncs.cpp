@@ -851,11 +851,21 @@ void topStatusInfo(int y, int selected_item, int floor) {
             x = 0x23F;
         }
         if (floor + 1 >= 10) {
+#ifdef PAL
+            set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0xA, 0xE, 0x11),
+                        CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
+#else
             set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0x12, 0xE, 0x11),
                         CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
+#endif
         }
+#ifdef PAL
+        set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0xA, 0xE, 0x11),
+                    CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
+#else
         set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0x12, 0xE, 0x11),
                     CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
+#endif
     }
 
     // Brackets enclose the selected quick-use item.
@@ -868,8 +878,13 @@ void topStatusInfo(int y, int selected_item, int floor) {
     // The equipped weapon's portrait fades in with the panel.
     y -= BtActStatus.hud_shake_y;
     alpha = y + 0x6A;
+#ifdef PAL
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x18, 0x1AC, 0x2A, 0x1D), CRect_i_(0x78, 0x37, 0x2A, 0x1D), alpha);
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x45, 0x1A8, 0x2B, 0x10), CRect_i_(0xA2, 0x37, 0x2B, 0x10), alpha);
+#else
     set2DSprite(Vif1Packet, icons, CRect_i_(0x18, 0x18C, 0x2A, 0x1D), CRect_i_(0x78, 0x37, 0x2A, 0x1D), alpha);
     set2DSprite(Vif1Packet, icons, CRect_i_(0x45, 0x188, 0x2B, 0x10), CRect_i_(0xA2, 0x37, 0x2B, 0x10), alpha);
+#endif
     int chara = UserStatus->cur_chara;
     int u = 0;
     int v = 0;
@@ -880,7 +895,11 @@ void topStatusInfo(int y, int selected_item, int floor) {
     if (item == defWeapon[UserStatus->cur_chara]) {
         v = u = 0x20;
     }
+#ifdef PAL
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x1A4, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+#else
     set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x184, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+#endif
 }
 
 /**
@@ -951,6 +970,15 @@ int poison_counter;
  * @address 0x1B1A50
  * @size 0x154
  */
+#if defined(PAL) && !defined(NON_MATCHING)
+// NON_MATCHING under PAL: 7 left -- 10.0f loads before the other arguments of AddNowLife; its
+// evaluate_first 1 orders it but swaps the status and chara registers.
+void BtStatusErrStep(void);
+INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
+/* Retail's data for the function the marker above supplies. */
+unsigned int pal_at1188__2[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
+#pragma name_counter 562
+#else
 void BtStatusErrStep(void) {
     int flags;
     CUserStatus *status = UserStatus;
@@ -977,6 +1005,7 @@ void BtStatusErrStep(void) {
 
     BtStatusErrColorSet();
 }
+#endif
 
 /**
  * Inflicts one status ailment on the party.

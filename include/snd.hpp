@@ -90,6 +90,26 @@ void SndStep(void);
  */
 int SndBgmInit(void);
 
+#ifdef PAL
+/**
+ * Sets whether the background music is switched off, stopping it when it is.
+ *
+ * @mangled SndBgmDisable__Fi
+ * @address 0x159B80
+ * @size 0x2C
+ */
+void SndBgmDisable(int disable);
+
+/**
+ * Returns whether the background music is switched off.
+ *
+ * @mangled SndGetBgmDisableFlag__Fv
+ * @address 0x159BB0
+ * @size 0xC
+ */
+int SndGetBgmDisableFlag(void);
+#endif
+
 /**
  * Stops every sound effect, the ambient loop and the second voice, and resets
  * the ambient loop so that none counts as playing.
@@ -108,6 +128,17 @@ void SndStopAllSe(void);
  * @size 0x58
  */
 void SndBgmStop(void);
+
+#ifdef PAL
+/**
+ * Stops the playing background music and marks it paused for SndBgmRePlay.
+ *
+ * @mangled SndBgmPause__Fv
+ * @address 0x159E60
+ * @size 0x48
+ */
+void SndBgmPause(void);
+#endif
 
 /**
  * Starts the background music again when a set is loaded and its play state

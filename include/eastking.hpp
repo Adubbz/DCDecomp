@@ -39,7 +39,11 @@ void GetPrevEastKingSndVol();
  * @address 0x00232E30
  * @size 0x1A8
  */
+#ifdef PAL
+int InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer);
+#else
 void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer);
+#endif
 
 /**
  * Processes input and state transitions for the East King event.

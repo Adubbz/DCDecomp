@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Build everything and leave the results in build/. Use run.sh instead if you
-# want the disc image as well, booted in PCSX2.
+# Build everything and leave the results in build/ntsc (build/pal for the PAL
+# prototype). Use run.sh instead if you want the disc image as well, booted in
+# PCSX2.
 #
 # On the host this runs the build in the dev container with the working tree
 # mounted; inside a container it drives the same targets against the tree.
 #
 #   ./build.sh              build what has changed since the last run
-#   CLEAN=1 ./build.sh      throw build/ away first, so everything is rebuilt
+#   CLEAN=1 ./build.sh      throw build/ntsc away first, so everything is rebuilt
 #   JOBS=8 ./build.sh       run 8 jobs rather than one per CPU
+#   REGION=PAL ./build.sh   build the July 12, 2001 PAL prototype instead
 #
 # What was extracted from the disc survives CLEAN: it is checked against the
 # disc rather than against a stamp. `scripts/build/extract.py --force` is the
@@ -20,18 +22,22 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 require_rom
 
 # The build itself, the same inside a container as through the one started
-# below. CLEAN discards build/ under the lock every build of the tree takes
-# (see scripts/build/cmake.sh), so it cannot pull the directory out from under
-# a build objdiff started. Verification only reports -- an unmatched build
-# still leaves its output.
+# below. CLEAN discards the region's build directory -- and nothing else under
+# build/ -- under the lock every build of the tree takes (see
+# scripts/build/cmake.sh), so it cannot pull the directory out from under a
+# build objdiff started. The region's objdiff report supplies the coloured
+# progress summary after the link.
 BUILD='
     set -e
+    export REGION="${REGION:-NTSC}"
+    dir=build/$(printf %s "$REGION" | tr "[:upper:]" "[:lower:]")
     if [ "${CLEAN:-0}" = 1 ]; then
-        echo "CLEAN=1: discarding build/; everything in it is built again."
-        flock .build.lock rm -rf build
+        echo "CLEAN=1: discarding $dir; everything in it is built again."
+        flock .build.lock rm -rf "$dir"
     fi
     scripts/build/cmake.sh elf ctx
-    scripts/build/verify_built.sh
+    scripts/build/cmake.sh objdiff
+    python3 scripts/build/progress_report.py --region "$REGION"
 '
 
 if in_container; then
@@ -51,8 +57,8 @@ report_parallelism
 TTY=()
 if [ -t 1 ]; then TTY=(-t); fi
 
-# CLEAN and JOBS are for the build inside the container.
-ENV_ARGS=(-e "CLEAN=${CLEAN:-0}")
+# CLEAN, REGION and JOBS are for the build inside the container.
+ENV_ARGS=(-e "CLEAN=${CLEAN:-0}" -e "REGION=${REGION:-NTSC}")
 if [ -n "${JOBS:-}" ]; then ENV_ARGS+=(-e "JOBS=$JOBS"); fi
 
 "$BUILDER" run --rm ${TTY[@]+"${TTY[@]}"} "${ENV_ARGS[@]}" \

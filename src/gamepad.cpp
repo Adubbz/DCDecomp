@@ -310,12 +310,14 @@ void CGamePad::UpDate() {
         }
     }
 
+#ifndef PAL
     key_lock2 = 1;
     pad[1].input.status.button = 0;
     pad[1].input.status.right_x = 128;
     pad[1].input.status.right_y = 128;
     pad[1].input.status.left_x = 128;
     pad[1].input.status.left_y = 128;
+#endif
     if (key_lock2) {
         pad[1].input.status.button = 0;
         pad[1].input.status.right_x = 128;
@@ -495,6 +497,14 @@ int CGamePad::On(int mask) {
     if (key_lock) {
         return 0;
     }
+#ifdef PAL
+    if (mask == 0x800 && On2(0x800)) {
+        return 1;
+    }
+    if (mask != 0x800 && On2(0x100)) {
+        return 1;
+    }
+#endif
     return (pad[0].input.status.button & mask) != 0;
 }
 
@@ -509,6 +519,14 @@ int CGamePad::Down(int mask) {
     if (key_lock) {
         return 0;
     }
+#ifdef PAL
+    if (mask == 0x800 && On2(0x800)) {
+        return 1;
+    }
+    if (mask != 0x800 && On2(0x100)) {
+        return 1;
+    }
+#endif
     return (mask & (pad[0].input.status.button & ~previous_pad[0].input.status.button)) != 0;
 }
 

@@ -94,17 +94,18 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import disassemble  # noqa: E402
+import region  # noqa: E402
 import retail as retail_image  # noqa: E402
 
 # Where MWLD's LITERAL directive put the pool in retail, taken from the image:
 # the 8-byte entries run from the end of .data to the first 4-byte one, and the
 # 4-byte entries run from there to the start of .sdata. Splitting the two
 # matters when the pool is searched by value -- half of an 8-byte entry can
-# read as a plausible 4-byte one.
-POOL = {8: (0x002A17B8, 0x002A1868), 4: (0x002A1868, 0x002A1E80)}
+# read as a plausible 4-byte one. The release decides where; region.py says.
+POOL = region.LITERAL_POOL
 
 # The linker script that fixes _gp.
-LCF = 'SCUS_971.11.lcf'
+LCF = region.LCF
 GP_RE = re.compile(r'^\s*_gp\s*=\s*(0x[0-9A-Fa-f]+)\s*;', re.M)
 
 # A translation unit's placement in the linker script, which is what says
@@ -116,6 +117,9 @@ PLACEMENT = re.compile(
 # Compiler-invented datum names. The disassembler adds `__N` when retail has
 # more than one symbol with the same original name.
 NUMBERED_DATUM = re.compile(r'^@\d+(?:__\d+)?$')
+
+# A function-local static: `name$N`, with splat's `__N` on a duplicate.
+LOCAL_STATIC = re.compile(r'^[A-Za-z_]\w*\$\d+(?:__\d+)?$')
 
 # tools/mwccgap marks a `@<n>` that spliced assembly only *references* -- so
 # retail's constant rather than the one MWCC invented for this unit's compiled
@@ -415,7 +419,7 @@ class Retail:
         if self._functions is None:
             by_name, by_address = {}, []
             for image in disassemble.IMAGES:
-                path = Path(self._path('config', f'{image}.symbols.txt'))
+                path = Path(self._path(region.CONFIG, f'{image}.symbols.txt'))
                 if not path.exists():
                     continue
                 for line in path.read_text(encoding='utf-8').splitlines():
@@ -707,6 +711,17 @@ def resolve_names(path, addresses):
     changed = False
     for sym in obj.symbols:
         external = EXTERNAL_DATUM.match(sym.name)
+        if sym.shndx == SHN_UNDEF and LOCAL_STATIC.match(sym.name) \
+                and sym.name in addresses:
+            # A function an INCLUDE_ASM marker supplies reaches its own
+            # function-local statics under retail's names; the source defines
+            # them where retail put them, so the address is retail's.
+            sym.value = addresses[sym.name]
+            sym.size = 0
+            sym.info = STT_OBJECT
+            sym.shndx = SHN_ABS
+            changed = True
+            continue
         if not external and not NUMBERED_DATUM.match(sym.name):
             continue
         if sym.shndx == SHN_UNDEF:
@@ -731,14 +746,14 @@ def resolve_names(path, addresses):
         obj.write()
 
 
-def retail_addresses(image, config='config'):
-    """Return the numbered datum addresses recorded for one retail image."""
+def retail_addresses(image, config=region.CONFIG):
+    """Return the numbered datum and local static addresses recorded for one retail image."""
     try:
         rows = disassemble.read_symbol_table(config)[image]
     except KeyError:
         raise SystemExit(f'literals: unknown image {image!r}')
     return {name: address for name, (address, _type, _size) in rows.items()
-            if NUMBERED_DATUM.match(name)}
+            if NUMBERED_DATUM.match(name) or LOCAL_STATIC.match(name)}
 
 
 def unit_report(target, root='.'):

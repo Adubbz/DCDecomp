@@ -1,11 +1,20 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
+#pragma argument_flag_ones 174, 175, 176, 177, 257, 258, 259, 268, 269, 270
+#pragma argument_flag_ones 304, 305, 306, 332, 334, 345, 347, 401, 403, 443
+#pragma argument_flag_ones 454, 464, 713, 723, 725, 733, 739, 742, 743, 744
+#pragma argument_flag_ones 782
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
 #pragma argument_flag_ones 174, 175, 176, 177, 252, 253, 254, 257, 258, 259
 #pragma argument_flag_ones 276, 277, 278, 304, 305, 306, 327, 329, 345, 347
 #pragma argument_flag_ones 401, 403, 442, 443, 454, 464, 713, 723, 725, 733
 #pragma argument_flag_ones 739, 742, 743, 744, 782
+#endif
 
 #include "common.h"
 
@@ -498,19 +507,35 @@ int RushLoop() {
 static void MotionProcess() {
     switch (CScript.fade) {
         case 1:
+#ifdef PAL
+            DispFade.FadeInStart(1.2f * CScript.fade_speed, 0);
+#else
             DispFade.FadeInStart(CScript.fade_speed, 0);
+#endif
             CScript.fade = 0;
             break;
         case 2:
+#ifdef PAL
+            DispFade.FadeOutStart(1.2f * CScript.fade_speed, 0);
+#else
             DispFade.FadeOutStart(CScript.fade_speed, 0);
+#endif
             CScript.fade = 0;
             break;
         case 3:
+#ifdef PAL
+            DispFade.FadeInStart(1.2f * CScript.fade_speed, 1);
+#else
             DispFade.FadeInStart(CScript.fade_speed, 1);
+#endif
             CScript.fade = 0;
             break;
         case 4:
+#ifdef PAL
+            DispFade.FadeOutStart(1.2f * CScript.fade_speed, 1);
+#else
             DispFade.FadeOutStart(CScript.fade_speed, 1);
+#endif
             CScript.fade = 0;
             break;
     }
@@ -663,10 +688,14 @@ static void MotionProcess() {
                 } else {
                     frame->GetLWMatrix(matrix);
 
+#ifdef PAL
+                    Chara__3[i].SetRotation(0.0f, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
+#else
                     float angle = atan2f(matrix[2][0], matrix[2][2]);
                     float zero = 0.0f;
 
                     Chara__3[i].SetRotation(zero, angle, zero);
+#endif
                     float x = matrix[3][0];
                     float y = matrix[3][1];
                     float z = matrix[3][2];
@@ -843,9 +872,15 @@ static void DrawProcess() {
 
         if (StartDisp) {
             TexManager.ReloadTexture(Vif1Packet, 20);
+#ifdef PAL
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
+                        CRect<int>(192, 392, 256, 32), CRect<int>(0, 0, 256, 32),
+                        fade);
+#else
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1),
                         CRect<int>(192, 360, 256, 32), CRect<int>(0, 0, 256, 32),
                         fade);
+#endif
             fade = (fade + 2) & 127;
         }
 
@@ -865,7 +900,7 @@ static void DrawProcess() {
 
     texture.tex0 = *(u_long *) &back_tex;
     set2DSprite(Vif1Packet, &texture,
-                CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
+                CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT),
                 128, 128, 128, 35);
 }
 
@@ -1233,7 +1268,7 @@ void WaterProcess() {
 
     MGGetFBuffTex(&frame_tex);
 
-    CRect<int> rect(0, 0, 640, 224);
+    CRect<int> rect(0, 0, 640, SCREEN_HALF_HEIGHT);
 
     water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&frame_tex, rect, &water_tex, 0, 0, 0);

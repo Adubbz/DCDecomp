@@ -279,7 +279,7 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         x = (int) dx;
         x += screen_x;
         x -= size >> 1;
-        float dy = (float) (224 - screen_y);
+        float dy = (float) (SCREEN_HALF_HEIGHT - screen_y);
         dy *= offset;
         y = (int) dy;
         y += screen_y;
@@ -301,16 +301,16 @@ void LensFlare(CTexture *texture, float *position, unsigned char red, unsigned c
         if (screen_x < 320) {
             center_x = screen_x;
         }
-        if (!(screen_y < 224)) {
-            center_y = 224 - (screen_y - 224);
+        if (!(screen_y < SCREEN_HALF_HEIGHT)) {
+            center_y = SCREEN_HALF_HEIGHT - (screen_y - SCREEN_HALF_HEIGHT);
         }
-        if (screen_y < 224) {
+        if (screen_y < SCREEN_HALF_HEIGHT) {
             center_y = screen_y;
         }
 
         float level = (float) ((center_x + center_y) >> 1) / 2.7f;
         int alpha = (int) level;
-        MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), red, green, blue, (unsigned char) (int) level);
+        MGFillBox(CRect_i_(0, 0, 0x2800, (SCREEN_HALF_HEIGHT << 4)), red, green, blue, (unsigned char) (int) level);
     }
 }
 
@@ -564,6 +564,19 @@ int SndBgmInit() {
     return 1;
 }
 
+#ifdef PAL
+void SndBgmDisable(int disable) {
+    bgm_off = disable;
+    if (disable != 0) {
+        SndBgmStop();
+    }
+}
+
+int SndGetBgmDisableFlag() {
+    return bgm_off;
+}
+#endif
+
 int SndBgmLoad(int set_no) {
     char archive_name[128];
     char config_name[16];
@@ -634,6 +647,15 @@ void SndBgmStop() {
         now_bgm_play = 0;
     }
 }
+
+#ifdef PAL
+void SndBgmPause() {
+    if (now_bgm_no >= 0 && now_bgm_play != 0) {
+        CSnd.Stop(0);
+        now_bgm_play = 2;
+    }
+}
+#endif
 
 void SndBgmRePlay() {
     if (now_bgm_no >= 0 && now_bgm_play == 2) {
@@ -3423,12 +3445,12 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(u << 4, v << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((u + screen.width) << 4, (v + screen.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
@@ -3465,12 +3487,12 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
@@ -3507,12 +3529,12 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
@@ -3550,12 +3572,12 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
     sceVif1PkAddGsAD(packet, SCE_GS_TEX0_1, texture->tex0);
     sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
-                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+                     SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_UV,
                      SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
     sceVif1PkAddGsAD(packet, SCE_GS_XYZF2,
                      SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647,
-                                      ((screen.y + screen.height) << 3) + 30976, 0, 0));
+                                      ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
@@ -3593,36 +3615,36 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     } else {
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, texel.y << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, texel.y << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV((texel.x + texel.width) << 4, (texel.y + texel.height) << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
         sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ,
                          SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
         sceVif1PkAddGsAD(packet, SCE_GS_UV, SCE_GS_SET_UV(texel.x << 4, (texel.y + texel.height) << 4));
-        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+        sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     }
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
@@ -3848,13 +3870,13 @@ void set2DSpriteC4(sceVif1Packet *packet, const CRect_i_ &screen, spRGBA *top_le
     zbuf.bits.zmsk = 1;
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_left->r, top_left->g, top_left->b, top_left->a, *(u_int *) &q));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(top_right->r, top_right->g, top_right->b, top_right->a, *(u_int *) &q));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, (screen.y << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_left->r, bottom_left->g, bottom_left->b, bottom_left->a, *(u_int *) &q));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2((screen.x << 4) + 27648, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_RGBAQ, SCE_GS_SET_RGBAQ(bottom_right->r, bottom_right->g, bottom_right->b, bottom_right->a, *(u_int *) &q));
-    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + 30976, 0, 0));
+    sceVif1PkAddGsAD(packet, SCE_GS_XYZF2, SCE_GS_SET_XYZF2(((screen.x + screen.width) << 4) + 27647, ((screen.y + screen.height) << 3) + GS_Y_OFFSET, 0, 0));
     sceVif1PkAddGsAD(packet, SCE_GS_TEST_1, *(u_long *) &mgPixelTest);
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &mgZBuffer);
     sceVif1PkCloseGifTag(packet);
@@ -3898,7 +3920,7 @@ void set2DSprite(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &scree
         float turned_y = x[i] * cosf(angle) - y[i] * sinf(angle);
 
         x[i] = (((int) turned_x + screen.x) << 4) + 27648;
-        y[i] = (((int) turned_y + screen.y) << 3) + 30976;
+        y[i] = (((int) turned_y + screen.y) << 3) + GS_Y_OFFSET;
     }
 
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);
@@ -3957,7 +3979,7 @@ void set2DSpriteRot(sceVif1Packet *packet, CTexture *texture, const CRect_i_ &sc
         float turned_y = -x[i] * sinf(angle) + y[i] * cosf(angle);
 
         x[i] = (int) turned_x + (screen.x << 4) + 27648;
-        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + 30976;
+        y[i] = (int) (0.5f * turned_y) + (screen.y << 3) + GS_Y_OFFSET;
     }
 
     sceVif1PkAddGsAD(packet, SCE_GS_ZBUF_1, *(u_long *) &zbuf);

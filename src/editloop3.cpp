@@ -1895,7 +1895,7 @@ void EdFadeInOut() {
         }
     }
     for (x = 0; x < 640; x += 64) {
-        for (y = 0; y < 224; y += 32) {
+        for (y = 0; y < SCREEN_HALF_HEIGHT; y += 32) {
             rect.x = x * 16;
             rect.y = y * 16;
             rect.width = 1024;
@@ -2165,9 +2165,21 @@ static int actv_file;
 /** Resource arena selected by subsequent event load commands. */
 static int actv_buffer;
 
+#ifdef PAL
+void EdEventStopPlay() {
+    event_stop = !event_stop;
+}
+#endif
+
 void EdEventPause() {
     event_pause = !event_pause;
 }
+
+#ifdef PAL
+int EdCheckEventPause() {
+    return event_pause;
+}
+#endif
 
 /** Directory prepended to relative event resource names. */
 static char CurrentDir[0x40];
@@ -3781,8 +3793,13 @@ static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
         character->SetMotion(motion, GetStackInt(stack));
     else
         character->SetMotion(motion, 0);
-    if (speed > 0.0f)
+    if (speed > 0.0f) {
         character->SetMotionSpeed(speed);
+#ifdef PAL
+        // PAL runs at 50 frames per second, so motions step 6/5 as far per frame.
+        character->motion_speed = 6.0f * speed / 5.0f;
+#endif
+    }
     return 1;
 }
 
@@ -6181,6 +6198,9 @@ static int _EB_LOOP(RS_STACKDATA *stack, int) {
 }
 
 static int _EB_INTRO_START(RS_STACKDATA *, int) {
+#ifdef PAL
+    EBInitialize();
+#endif
     EBInitIntro();
     return 1;
 }
@@ -6301,6 +6321,18 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
     FishingLoadEsa(item, EdEventInfo.item_frame[0], 40);
     return 1;
 }
+
+#ifdef PAL
+static int _GET_TV_MODE(RS_STACKDATA *stack, int) {
+    SetStack(stack, 1);
+    return 1;
+}
+
+static int _GET_LANG_CODE(RS_STACKDATA *stack, int) {
+    SetStack(stack, LanguageCode);
+    return 1;
+}
+#endif
 
 /* The internal operations assembly still supplies, so the registry below can name them. */
 int _TURN_CHARA(RS_STACKDATA *, int);
@@ -6620,6 +6652,10 @@ static ED_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
     {_INIT_FISH, 996},
     {_EXIT_FISHING, 995},
     {_SET_FISHING_ESA, 994},
+#ifdef PAL
+    {_GET_TV_MODE, 1001},
+    {_GET_LANG_CODE, 1002},
+#endif
     {NULL, -1},
 };
 
@@ -6769,7 +6805,7 @@ int EdEventInit(int event_number, CDataAlloc2<1> *arena, char *program) {
         if (message == NULL) {
             continue;
         }
-        message->text_columns = 70;
+        message->text_columns = MES_WIN_COLUMNS;
         message->text_rows = 10;
         message->text_len = 0;
         message->text_width = 0;
@@ -6936,6 +6972,20 @@ int EdEventFinish() {
 int EdEventMode(CCameraFollow *camera, int kind) {
     int result;
 
+#ifdef PAL
+    // Debug builds toggle the event debugger with one button and pause the event with another.
+    if (DebugMode != 0 && GamePad.Down(0x400) != 0) {
+        EdEventStopPlay();
+    }
+    if (DebugMode != 0 && menu_mode == 0 && GamePad.Down(0x800) != 0) {
+        if (EdCheckEventPause() == 0) {
+            SndBgmPause();
+        } else {
+            SndBgmRePlay();
+        }
+        EdEventPause();
+    }
+#endif
     if (event_stop != 0) {
         static int mode = 0;
         static char *mode_name[] = {"! CAMERA POS\n", "# CAMERA REF\n", "$ CHARACTER\n"};
@@ -7105,6 +7155,9 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         float speed = SceneData.motion_speed;
         SceneData.SetMotion(0, 0);
         SceneData.motion_speed = speed;
+#ifdef PAL
+        SceneData.motion_speed = 6.0f * speed / 5.0f;
+#endif
         SceneData.Step();
     }
     if (menu_mode == 0) {
@@ -7403,7 +7456,7 @@ static inline void EdCloseTalkMes() {
     EditMes1.text_rate = EditMes1.text_rate_set;
     EditMes1.mes_made = -1;
     EditMes1.fade_in = 0;
-    EditMes1.text_columns = 0x46;
+    EditMes1.text_columns = MES_WIN_COLUMNS;
     EditMes1.text_rows = 0xA;
     EditMes1.text_len = 0;
     EditMes1.text_width = 0;

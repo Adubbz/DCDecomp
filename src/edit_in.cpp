@@ -817,9 +817,21 @@ int EditInLoop() {
     }
     goto_return_menu = 0;
     static int end_count = 0;
+#ifdef PAL
+    if (GamePad.AllOn() != 0 || DebugMode) {
+        key_counter = 0;
+    }
+    if (DebugMode && GamePad.On(0x100) && GamePad.On(0x800) && end_count == 0) {
+        float zero = 0.0f;
+
+        end_count = 100;
+        EdFadeOut(64, zero, zero, zero);
+    }
+#else
     if (GamePad.AllOn() != 0) {
         key_counter = 0;
     }
+#endif
     if (end_count == 1) {
         end_count = 0;
         MapJump(800, -1);
@@ -875,7 +887,7 @@ static void MainDraw() {
     screen.x = 0;
     screen.y = 0;
     screen.width = 0x280;
-    screen.height = 0xE0;
+    screen.height = SCREEN_HALF_HEIGHT;
     water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
     MGMoveImage(&frame_tex, screen, &water_tex, 0, 0, 0);
     sceVu0FVECTOR ref;
@@ -956,6 +968,34 @@ static void MainDraw() {
     EdSystemMesDraw();
     static int debug_flag = 0;
     static int debug_menu_mode = 0;
+#ifdef PAL
+    if (DebugMode) {
+        if (GamePad.Down(0x200))
+            debug_flag = !debug_flag;
+        if (debug_menu_mode) {
+            GamePad.KeyLock(0);
+            EdDebugMenu();
+            if (GamePad.Down(0x400) || EdDebugRunEventNo > 0) {
+                debug_menu_mode = 0;
+                GamePad.AutoRepeatOff();
+                RunEvent(EdDebugRunEventNo, NowCamera);
+            } else {
+                GamePad.KeyLock(1);
+            }
+        } else {
+            if (GameMode != 4 && GamePad.Down(0x400)) {
+                GamePad.SetAutoRepeat(0xF000, 25, 3);
+                GamePad.SetAutoRepeat(12, 25, 3);
+                debug_menu_mode = 1;
+                debug_flag = 0;
+            }
+            EdDDebug(debug_flag);
+            EdDPrintChara((CMainChara *) Chara);
+            EdDPrintCamera(NowCamera);
+            EdDDrawFont();
+        }
+    }
+#endif
     if (EdDebugParamDrawOff == 0) {
         char pause_texture[] = "pause";
         if (GameMode == 5 || EdPauseFlag != 0) {
@@ -964,7 +1004,7 @@ static void MainDraw() {
             fade.x = 0;
             fade.y = 0;
             fade.width = 0x2800;
-            fade.height = 0xE00;
+            fade.height = SCREEN_HALF_HEIGHT * 16;
             MGFillBox(fade, 0, 0, 0, 0x40);
             setbilinear(0);
             CRect_i_ place;
@@ -974,7 +1014,7 @@ static void MainDraw() {
             texel.width = 0x80;
             texel.height = 0x28;
             place.x = 0x100;
-            place.y = 0xCC;
+            place.y = SCREEN_HALF_HEIGHT - 20;
             place.width = 0x80;
             place.height = 0x28;
             sceVif1Packet *packet = GetVif1Packet();
@@ -1116,7 +1156,12 @@ static void MoveCharacter() {
         Chara->GetPosition(position);
         Chara->GetRotation(rotation);
         EPARTS_FUNC_DATA *jump;
+#ifdef PAL
+        jump = NULL;
+        if ((DebugMode && GamePad.Down(0x100)) || (jump = SearchMapJump(position, rotation))) {
+#else
         if (jump = SearchMapJump(position, rotation)) {
+#endif
             int motion;
 
             EdMoveCharaInit();

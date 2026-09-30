@@ -13,13 +13,18 @@ say where each byte goes; the overlays are raw images loaded at one address.
 """
 
 import functools
+import os
 import struct
+import sys
 from pathlib import Path
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import region  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
-ISO = ROOT / "rom" / "extracted" / "iso"
+ISO = ROOT / region.EXTRACTED_ISO
 FILES = {"main": "SCUS_971.11", "title": "TITLE.BIN", "dun": "DUN.BIN"}
-OVERLAY_ORIGIN = 0x01DABD00
+OVERLAY_ORIGIN = region.OVERLAY_ORIGIN
 
 
 @functools.lru_cache(maxsize=None)

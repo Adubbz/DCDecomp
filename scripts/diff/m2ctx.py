@@ -2,7 +2,7 @@
 """Generate the declaration context m2c decompiles against.
 
     m2ctx.py                     whole project -> ctx.c at the repo root
-    m2ctx.py -o build/ctx.c      ...somewhere else; this is what the build runs
+    m2ctx.py -o build/ntsc/ctx.c ...somewhere else; this is what the build runs
     m2ctx.py src/savedata.cpp    one translation unit instead of the project
 
 Whole-project mode writes ctx.cpp, every header folded into one C++ file, and
@@ -245,9 +245,16 @@ def declarator(t, name=""):
     # m2c's C parser cannot spell a C++ template-id.  CodeWarrior's legacy
     # mangling already gives specializations stable C-compatible names, which
     # are sufficient here because context types only describe ABI shapes.
-    base = re.sub(r'<\s*([^<>]+?)\s*>',
-                  lambda m: '_' + re.sub(r'\W+', '_', m.group(1)) + '_', base)
-    return (base + " " + name).rstrip()
+    spelled = re.sub(r'<\s*([^<>]+?)\s*>',
+                     lambda m: '_' + re.sub(r'\W+', '_', m.group(1)) + '_', base)
+    if spelled != base:
+        TEMPLATE_NAMES.add(re.sub(r'[\s\*&]+$', '', spelled).split()[-1].rstrip('*&'))
+    return (spelled + " " + name).rstrip()
+
+
+# Every template-id spelled as a plain identifier above; each becomes an opaque
+# forward typedef so the context still parses as C.
+TEMPLATE_NAMES = set()
 
 
 ANONYMOUS = re.compile(r"\((?:unnamed|anonymous)\b")
@@ -386,6 +393,10 @@ def convert(tu, root):
         elif cur.kind == K.VAR_DECL:
             rest.append("extern %s;" % declarator(cur.type, cur.spelling))
 
+    for name in sorted(TEMPLATE_NAMES):
+        line = f"typedef struct {name} {name};"
+        if line not in fwd:
+            fwd.append(line)
     return "\n".join(enums + fwd + typedefs + records + rest) + "\n"
 
 

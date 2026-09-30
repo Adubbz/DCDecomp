@@ -1,3 +1,7 @@
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 14, 16, 20, 22, 31, 33, 45, 47, 129
+#else
 #pragma argument_flag 0
 #pragma argument_flag_ones 14, 16, 20, 22, 31, 33, 45, 47, 109, 418
 #pragma argument_flag_ones 430, 452, 453, 463, 464, 474, 475, 485, 486, 533
@@ -6,6 +10,7 @@
 #pragma argument_flag_ones 643, 644, 647, 657, 658, 661, 671, 672, 675, 685
 #pragma argument_flag_ones 686, 689, 699, 700, 703, 713, 714, 717, 727, 728
 #pragma argument_flag_ones 731, 744, 745, 748, 762, 768, 775
+#endif
 /* The title screen's own loop. Retail compiles it apart from the rest of the
    title unit: its constants are a run of their own, which is why the three
    names it shares with the code before it are spelled twice in the image. */
@@ -125,6 +130,9 @@ void DrawMenuOption();
 #include "title/title.hpp"
 #include "title/titleloop.hpp"
 #include "vutext.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #include "wind.hpp"
 #define PI 3.14159265358979323846
 
@@ -344,8 +352,10 @@ void TitleInit(int mode) {
     setbilinear(1);
 
     LOADTEXTURE_INFO tex[] = {
+#ifndef PAL
         {"#frame_image_mes#640#448#4", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
+#endif
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
         {"#fontbase#512#256#1", 26, 0},
         {"meswin/gaiji.img", 26, 0},
         {"meswin/fuki256.img", 26, 0},
@@ -356,8 +366,57 @@ void TitleInit(int mode) {
     TexManager.LoadTextureBlock(-1, tex, read_buffer);
     LoadFileMenuData("stayframe.img", (u_int *) read_buffer);
     TexManager.EnterFixTextureZ((u_char *) read_buffer);
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            LoadFile("titledat/title.pak", (void *) read_buffer, 0);
+            break;
+        case 1:
+            LoadFile("titledat/title.pak", (void *) read_buffer, 0);
+            break;
+        case 2:
+            LoadFile("titledat/title_eu.pak", (void *) read_buffer, 0);
+            break;
+        case 3:
+            LoadFile("titledat/title_f.pak", (void *) read_buffer, 0);
+            break;
+        case 4:
+            LoadFile("titledat/title_g.pak", (void *) read_buffer, 0);
+            break;
+        case 5:
+            LoadFile("titledat/title_i.pak", (void *) read_buffer, 0);
+            break;
+        case 6:
+            LoadFile("titledat/title_s.pak", (void *) read_buffer, 0);
+            break;
+    }
+#else
     LoadFile("titledat/title.pak", (void *) read_buffer, 0);
+#endif
 
+#ifdef PAL
+    LOADTEXTURE_INFO2 tex2[] = {
+        {(char *) "#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
+        {(char *) "#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 1, 0},
+        {0, 0, 0},
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 1, 0},
+        {0, 0, 0}};
+
+    tex2[2].name = (char *) GetPackFile(read_buffer, "bg.img", 0);
+    tex2[3].name = (char *) GetPackFile(read_buffer, "title.img", 0);
+    tex2[4].name = (char *) GetPackFile(read_buffer, "main.img", 0);
+    tex2[5].name = (char *) GetPackFile(read_buffer, "pat01.img", 0);
+    tex2[6].name = (char *) GetPackFile(read_buffer, "pat02.img", 0);
+    tex2[7].name = (char *) GetPackFile(read_buffer, "start.img", 0);
+    tex2[8].name = (char *) GetPackFile(read_buffer, "start3.img", 0);
+    tex2[9].name = (char *) GetPackFile(read_buffer, "icon01.img", 0);
+#else
     LOADTEXTURE_INFO2 tex2[] = {
         {(char *) "#frame_image#640#224#4", 0, 0},
         {(char *) "#frame_image#640#224#4", 1, 0},
@@ -383,6 +442,7 @@ void TitleInit(int mode) {
     tex2[10].name = (char *) GetPackFile(read_buffer, "start3.img", 0);
     tex2[11].name = (char *) GetPackFile(read_buffer, "icon01.img", 0);
     tex2[12].name = (char *) GetPackFile(read_buffer, "trial.img", 0);
+#endif
     TexManager.LoadTextureBlock(-1, tex2);
 
     sceVu0FVECTOR pos;
@@ -556,14 +616,29 @@ int TitleLoop() {
                 if (CCursol.select > 2)
                     CCursol.select = 0;
                 switch (CCursol.select) {
+#ifdef PAL
+                    case 0:
+                        CCursol.Set(304.0f);
+#else
                     case 0:
                         CCursol.Set(288.0f);
+#endif
                         break;
+#ifdef PAL
+                    case 1:
+                        CCursol.Set(332.0f);
+#else
                     case 1:
                         CCursol.Set(316.0f);
+#endif
                         break;
+#ifdef PAL
+                    case 2:
+                        CCursol.Set(364.0f);
+#else
                     case 2:
                         CCursol.Set(348.0f);
+#endif
                         break;
                 }
                 if (GamePad.Down(2048) || GamePad.Down(64)) {
@@ -697,6 +772,10 @@ int TitleLoop() {
     return 0;
 }
 
+/* A title menu row's height on screen, laid out for NTSC's picture and lowered to stay centred in
+   the taller PAL one. */
+#define MENU_Y(y) ((y) + (SCREEN_HEIGHT - 448) / 2)
+
 void TitleDraw() {
     sceVu0FVECTOR light0 = {2.4578f, 9.9294f, -2.8074f, 0.0f};
     sceVu0FVECTOR light1 = {4.6086f, -10.4028f, -0.8286f, 0.0f};
@@ -777,7 +856,11 @@ void TitleDraw() {
                     CRect<int>(0, 336, 640, 105), CRect<int>(1, 167, 639, 57),
                     114);
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("frame_image", -1),
+#ifdef PAL
+                    CRect<int>(0, 441, 640, 39), CRect<int>(1, 220, 639, 19),
+#else
                     CRect<int>(0, 440, 640, 8), CRect<int>(1, 220, 639, 3),
+#endif
                     114);
 
         MGSetGsTEST(0);
@@ -790,8 +873,8 @@ void TitleDraw() {
         MGGetFBuffTex(&tex0);
         image = *(sceGsTex0 *) &TexManager.GetTexture("frame_image", -1)->tex0;
         tex0.PSM = 1;
-        MGStretchMoveImage(&tex0, CRect<int>(0, 0, 10240, 3584), &image,
-                           CRect<int>(0, 0, 10240, 3584));
+        MGStretchMoveImage(&tex0, CRect<int>(0, 0, 10240, SCREEN_HALF_HEIGHT * 16), &image,
+                           CRect<int>(0, 0, 10240, SCREEN_HALF_HEIGHT * 16));
     }
     MGClearZBuffer(0);
 
@@ -826,12 +909,12 @@ void TitleDraw() {
                 CSprite.Draw();
 
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("start", -1),
-                        CRect<int>(64, 362, 512, 64), CRect<int>(0, 64, 512, 64),
+                        CRect<int>(64, MENU_Y(362), 512, 64), CRect<int>(0, 64, 512, 64),
                         (u_char) CFade.Get(Fade1));
 
             if (CProcess.no == 3) {
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("start", -1),
-                            CRect<int>(64, 296, 512, 64), CRect<int>(0, 0, 512, 64),
+                            CRect<int>(64, MENU_Y(296), 512, 64), CRect<int>(0, 0, 512, 64),
                             (u_char) CFade.Get(Fade2));
             } else {
                 static int br = 128;
@@ -848,37 +931,37 @@ void TitleDraw() {
                 switch (CCursol.GetSelect()) {
                     case 0:
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 280, 256, 32), CRect<int>(0, 0, 256, 32),
+                                    CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32),
                                     (u_char) CFade.Get(br));
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 312, 256, 32), CRect<int>(0, 32, 256, 32),
+                                    CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32),
                                     (u_char) CFade.Get(32));
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 344, 256, 32), CRect<int>(0, 64, 256, 32),
+                                    CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32),
                                     (u_char) CFade.Get(32));
                         break;
 
                     case 1:
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 280, 256, 32), CRect<int>(0, 0, 256, 32),
+                                    CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32),
                                     (u_char) CFade.Get(32));
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 312, 256, 32), CRect<int>(0, 32, 256, 32),
+                                    CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32),
                                     (u_char) CFade.Get(br));
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 344, 256, 32), CRect<int>(0, 64, 256, 32),
+                                    CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32),
                                     (u_char) CFade.Get(32));
                         break;
 
                     case 2:
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 280, 256, 32), CRect<int>(0, 0, 256, 32),
+                                    CRect<int>(193, MENU_Y(280), 256, 32), CRect<int>(0, 0, 256, 32),
                                     (u_char) CFade.Get(32));
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 312, 256, 32), CRect<int>(0, 32, 256, 32),
+                                    CRect<int>(193, MENU_Y(312), 256, 32), CRect<int>(0, 32, 256, 32),
                                     (u_char) CFade.Get(32));
                         set2DSprite(GetVif1Packet(), TexManager.GetTexture("start3", -1),
-                                    CRect<int>(193, 344, 256, 32), CRect<int>(0, 64, 256, 32),
+                                    CRect<int>(193, MENU_Y(344), 256, 32), CRect<int>(0, 64, 256, 32),
                                     (u_char) CFade.Get(br));
                         break;
                 }

@@ -216,6 +216,17 @@ int InitItemPolygonView(int item_no, u_long128 *buffer);
  */
 void DrawItemPolygonView(void);
 
+#ifdef PAL
+/**
+ * Puts the debug item menu's cursor and text overlay at their starting state. PAL only.
+ *
+ * @mangled InitDebugItemGet__Fv
+ * @address 0x2314E0
+ * @size 0x84
+ */
+void InitDebugItemGet(void);
+#endif
+
 /**
  * Handles key input on the debug item menu.
  *
