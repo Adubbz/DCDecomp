@@ -135,7 +135,11 @@ GRADATION_COLOR_INFO2 MenuColorInfo2[26] = {
     {{{0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}, {0xFF, 0x80, 0x00, 0x80}, {0xFF, 0x20, 0x00, 0x80}}},
 };
 
+#ifdef PAL
+s16 BtlMenuNowLang = 1;
+#else
 s32 BtlMenuNowLang = 1;
+#endif
 s32 BattleMenuFlag = -1;
 float chara_r_long = 118.0f;
 s16 TrushMoveMax[3] = {3, 1, 3};
@@ -461,12 +465,6 @@ int GetLimmitMsg(void) {
     return message;
 }
 
-#ifdef PAL
-void DrawBattleMain();
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawBattleMain__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @702__3);
-#pragma name_counter 188
-#else
 void DrawBattleMain() {
     int pos[2];
     int icons[8];
@@ -513,10 +511,18 @@ void DrawBattleMain() {
             MenuTextureReload(CommonMenuMes1.tex_block);
             if (BtlMenuNowLang > 0) {
                 CommonMenuMes1.text_x = 0x44;
+#ifdef PAL
+                CommonMenuMes1.text_y = 0x176;
+#else
                 CommonMenuMes1.text_y = 0x156;
+#endif
             } else {
                 CommonMenuMes1.text_x = 0x50;
+#ifdef PAL
+                CommonMenuMes1.text_y = 0x16A;
+#else
                 CommonMenuMes1.text_y = 0x14A;
+#endif
             }
             CommonMenuMes1.stay_frame = 1;
             CommonMenuMes1.Step();
@@ -528,7 +534,6 @@ void DrawBattleMain() {
     DrawMenuWaku(NorMenuIcon[MenuSelect[1]].x - 18.0f, waku_y, width, 0x22, 0, StayTex, 0x80);
     DrawMenuObjectVibe((int) SysCur[0], (int) SysCur[1], 1, 0x40);
 }
-#endif
 
 void DrawOtherCharaStatus(int x, int y, int chara, int alpha) {
     int bar_x = x - 5;
@@ -1364,22 +1369,23 @@ int BattleMenuSelect() {
     return 1;
 }
 
-#ifdef PAL
-int ToFromSelect(int out);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ToFromSelect__Fi);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @1298);
-#pragma name_counter 698
-#else
 int ToFromSelect(int out) {
     if (out < 0 || out > 1) {
         return -1;
     }
     int home[8][2] = {{70, 28}, {100, 48}, {86, 38}, {50, 40}, {90, 40}, {94, 30}, {80, 40}, {70, 28}};
     int pos[2];
+#ifdef PAL
+    float hide_x = -240.0f;
+    if (BtlMenuNowLang > 0) {
+        hide_x = -264.0f;
+    }
+#else
     float hide_x = -224.0f;
     if (BtlMenuNowLang > 0) {
         hide_x = -258.0f;
     }
+#endif
     int done = 0;
     int arrived = 0;
     for (int i = 0; i < GetMenuModeMax(); i++) {
@@ -1414,7 +1420,6 @@ int ToFromSelect(int out) {
     }
     return done;
 }
-#endif
 
 /**
  * Puts the menu cursor back on the icon of the mode the menu is returning to.
@@ -1701,13 +1706,6 @@ int BattleMenuCharaKey() {
 
 #pragma opt_propagation reset
 
-#ifdef PAL
-void DrawCharaSelect();
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawCharaSelect__Fv);
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1678);
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1681);
-#pragma name_counter 985
-#else
 void DrawCharaSelect() {
     if (BtlMenuExReadFlag == 0) {
         return;
@@ -1845,7 +1843,11 @@ void DrawCharaSelect() {
             if (panel_alpha < 0) {
                 panel_alpha = 0;
             }
+#ifdef PAL
+            if (box_x < -300.0f || (float) 0x28A < box_x || face_y < -130.0f || 1280.0f < face_y) {
+#else
             if (box_x < -300.0f || (float) 0x28A < box_x || face_y < -130.0f || 448.0f < face_y) {
+#endif
                 continue;
             }
             MenuTextureReload(BtlMenuExReadBlock);
@@ -1894,7 +1896,7 @@ void DrawCharaSelect() {
                 face_alpha = 0;
             }
         }
-        if (0.0f < draw_x && draw_x < 640.0f && 0.0f < face_y && face_y < 448.0f) {
+        if (0.0f < draw_x && draw_x < 640.0f && 0.0f < face_y && face_y < SCREEN_HEIGHT_F) {
             DrawMenu2DSprite(face, CRect_i_((int) draw_x, (int) face_y, (int) size, (int) size), CRect_i_(u, v, width, width),
                              shade, shade, shade, face_alpha);
         }
@@ -1939,7 +1941,6 @@ void DrawCharaSelect() {
         }
     }
 }
-#endif
 
 void DrawWepDamageDraw(RECT rect, WEAPON_HAVE *weapon, int alpha) {
     int x = rect.x;
@@ -2903,15 +2904,6 @@ static int WeaponMenuCheckEnableSetElem(WEAPON_HAVE *weapon, WEAPON_HAVE *attach
     return refused;
 }
 
-#ifdef PAL
-void DrawWeaponSelectDialog(int x, int y, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawWeaponSelectDialog__Fiii);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", warmcnt$2382);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", init$2383);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", levelbrinkcnt$2391);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", init$2392);
-#pragma name_counter 1674
-#else
 void DrawWeaponSelectDialog(int x, int y, int alpha) {
     s8 shift = 0;
 
@@ -2984,7 +2976,6 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
             break;
     }
 }
-#endif
 
 /**
  * Opens the weapon page in one of its modes and puts the cursor where it was left.
@@ -2993,11 +2984,6 @@ void DrawWeaponSelectDialog(int x, int y, int alpha) {
  * @address 0x1FC750
  * @size 0x3CC
  */
-#ifdef PAL
-static void InitWeaponSelect(int mode, int chara);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", InitWeaponSelect__Fii);
-#pragma name_counter 1706
-#else
 static void InitWeaponSelect(int mode, int chara) {
     InitPersonalBoardMode((CUserStatus *) BtlMenuStatusPt, &WepMenu.board, 1, 2);
     WepMenu.unk_00 = mode;
@@ -3061,7 +3047,6 @@ static void InitWeaponSelect(int mode, int chara) {
     MenuMes.message->unk_02C = 0x10;
     MenuMes.message->unk_030 = 0x10;
 }
-#endif
 
 /**
  * Rebuilds the player's equipped weapon model and gives the menu's textures back.
@@ -3070,11 +3055,6 @@ static void InitWeaponSelect(int mode, int chara) {
  * @address 0x1FCB20
  * @size 0x2CC
  */
-#ifdef PAL
-static void ExitWeaponMenuSelect();
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ExitWeaponMenuSelect__Fv);
-#pragma name_counter 1726
-#else
 static void ExitWeaponMenuSelect() {
     int chara = BtlMenuStatusPt->cur_chara;
 
@@ -3136,7 +3116,6 @@ static void ExitWeaponMenuSelect() {
     ForBackMenu();
     BattleMenuFlag = 0;
 }
-#endif
 
 void WeaponMenuSelect() {
     int direction = -1;
@@ -5146,11 +5125,6 @@ void ReadSyncItemMenuWepIcon() {
  * @address 0x2025E0
  * @size 0x624
  */
-#ifdef PAL
-static void InitItemMode(int, int chara);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", InitItemMode__Fii);
-#pragma name_counter 2965
-#else
 static void InitItemMode(int, int chara) {
     CMenuCursor *cursor;
     int max;
@@ -5262,7 +5236,6 @@ static void InitItemMode(int, int chara) {
         SetNowEquipWeaponDataForMsg(0, 0);
     }
 }
-#endif
 
 /**
  * Waits for the item page's data and opens it on the throw-away mode.
@@ -6760,15 +6733,6 @@ static void MenuCharaPolyDraw() {
     SetItemMenuOldAmbient();
 }
 
-#ifdef PAL
-void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5586);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5608);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5644);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5645);
-#pragma name_counter 4010
-#else
 void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
     int draw_x;
     int draw_y;
@@ -6981,7 +6945,6 @@ void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
                        y - 0x12);
     }
 }
-#endif
 
 void ItemNaviCursor(int item_no) {
     s8 shown[3] = {0, 0, 0};
@@ -8550,10 +8513,6 @@ void MenuClsMes::InitData() {
     unk_06 = 0;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", SetBuffInfo__10MenuClsMesFPs);
-#pragma name_counter 4735
-#else
 void MenuClsMes::SetBuffInfo(short *buffer) {
     ClsMes *mes = message;
 
@@ -8613,7 +8572,6 @@ void MenuClsMes::SetBuffInfo(short *buffer) {
     message->unk_030 = 0x100;
     InitData();
 }
-#endif
 
 void MenuClsMes::NowWeaponStatus(WEAPON_HAVE *selected_weapon) {
     weapon = selected_weapon;

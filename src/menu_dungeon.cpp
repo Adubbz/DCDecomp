@@ -420,20 +420,18 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
     return volume;
 }
 
-#ifdef PAL
-int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @762__3);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @763__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @764__3);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @765__3);
-#pragma name_counter 852
-#else
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
+#ifdef PAL
+    char path[108];
+    int size;
+    u_long128 *buffer;
+    int first_open;
+#else
     char path[76];
     int size;
     u_long128 *buffer;
     int first_open;
+#endif
     int floor;
     s8 lines;
 
@@ -507,7 +505,6 @@ int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
     GamePad.MenuModeOn(0x78);
     return 1;
 }
-#endif
 
 static void ExitDunEnterMenu() {
     GamePad.AutoRepeatOff();

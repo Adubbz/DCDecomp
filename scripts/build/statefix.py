@@ -126,8 +126,14 @@ try:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import region as _region
     NAME_OFFSET = _region.INVENTED_NAME_OFFSET
+    # Another release's own decisions, for the functions its compiler reached
+    # in another state; every function it does not name keeps NTSC's.
+    REGION_EXPRESSION_NODE_OVERRIDES = (
+        None if _region.NAME == _region.NTSC
+        else os.path.join(REPO, _region.CONFIG, 'expression_node_overrides.json'))
 except (ImportError, SystemExit):
     NAME_OFFSET = 0
+    REGION_EXPRESSION_NODE_OVERRIDES = None
 
 # Where the code generator is entered, and how the function it is about to
 # compile is named: the argument at esp+4 holds a record pointer at +8 whose
@@ -326,6 +332,12 @@ def install(arguments=()):
                'literals': 0}
     cur = {'name': '?'}
     expression_overrides = load_expression_node_overrides()
+    if REGION_EXPRESSION_NODE_OVERRIDES:
+        region_overrides = load_expression_node_overrides(REGION_EXPRESSION_NODE_OVERRIDES)
+        replaced = {key[:2] for key in region_overrides}
+        expression_overrides = {key: flag for key, flag in expression_overrides.items()
+                                if key[:2] not in replaced}
+        expression_overrides.update(region_overrides)
     source_hint = source_of(arguments)
     source_hint = os.path.basename(source_hint) if source_hint else None
     override_units = {key[0] for key in expression_overrides}

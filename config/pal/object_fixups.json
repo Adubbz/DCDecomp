@@ -97,7 +97,6 @@
       "@5932",
       "@885__3",
       "@4367",
-      "@928__2",
       "@930__3",
       "@931__3"
     ],
@@ -1937,10 +1936,7 @@
     "symbols": {
       "StatusTextureName": "@1150",
       "StayFrameTextureName": "@778__2"
-    },
-    "rodata_exports": [
-      "@778__2"
-    ]
+    }
   },
   "src/visualvu1.cpp": {
     "sections": {

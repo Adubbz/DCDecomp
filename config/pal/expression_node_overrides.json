@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "description": "Exact floating ExpressionNode identities grouped by translation unit and function. value_bits is authoritative and preserves sign.",
+  "translation_units": {
+    "battle_globals.cpp": {
+      "DrawCharaNameUp__Fiiii": [
+        {
+          "type": "binary32",
+          "value": "0x1.aceea00000000p-3",
+          "value_bits": "0x3e567750",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.0000000000000p+0",
+          "value_bits": "0x3f800000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.0000000000000p+1",
+          "value_bits": "0x40000000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.0000000000000p+2",
+          "value_bits": "0x40800000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.1333340000000p+3",
+          "value_bits": "0x4109999a",
+          "ordinal": 1,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "0x1.2200000000000p+8",
+          "value_bits": "0x43910000",
+          "ordinal": 1,
+          "evaluate_first": 0
+        }
+      ]
+    }
+  }
+}

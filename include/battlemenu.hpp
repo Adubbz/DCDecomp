@@ -945,7 +945,11 @@ extern float mapmovev[4];
 /**
  * Language the battle menu's text is drawn in.
  */
+#ifdef PAL
+extern s16 BtlMenuNowLang;
+#else
 extern s32 BtlMenuNowLang;
+#endif
 
 /**
  * Stores the active battle-menu state.

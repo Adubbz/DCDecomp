@@ -259,13 +259,6 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
  * @address 0x238A70
  * @size 0x628
  */
-#ifdef PAL
-void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
-INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @483__3);
-INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @419__2);
-#pragma name_counter 202
-#else
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
     int left;
     int top;
@@ -356,7 +349,6 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
             break;
     }
 }
-#endif
 
 #ifdef PAL
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawEuroSpecialFont__Fiiiii);
