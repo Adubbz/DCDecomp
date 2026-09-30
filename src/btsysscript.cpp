@@ -1,4 +1,7 @@
 #include "btsysscript.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 
 #include <cmath>
 #include <cstdio>
@@ -85,27 +88,38 @@ BT_OBJ_HANDLE *GetObjHDL(int index) {
     return &BtObjHdl[index];
 }
 
-#ifdef PAL
-void BtSystemScriptLoad(int floor);
-INCLUDE_ASM("asm/pal/nonmatchings/btsysscript", BtSystemScriptLoad__Fi);
-INCLUDE_RODATA("asm/pal/nonmatchings/btsysscript", @586);
-INCLUDE_RODATA("asm/pal/nonmatchings/btsysscript", @587);
-#pragma name_counter 83
-#else
 void BtSystemScriptLoad(int floor) {
+#ifdef PAL
+    char path[32];
+    char mes_path[40];
+    int read_size;
+    int mes_size;
+    char *mes;
+#else
     char path[44];
     int read_size;
+#endif
 
     sprintf(path, "dun/script/d0%d/event.stb", floor + 1);
+#ifdef PAL
+    sprintf(mes_path, "dun/script/d0%d/d0%d_%d.mes", floor + 1, floor + 1, LanguageCode);
+#endif
     BtSystemScriptFileBuffer.used = 0;
     BtEventData = (s32) (BtSystemScriptFileBuffer.base + BtSystemScriptFileBuffer.used * 0x10);
     LoadFile(path, (void *) BtEventData, &read_size);
     wait_now_loading_vsync();
     BtSystemScriptFileBuffer.Alloc((read_size >> 4) + 1);
+#ifdef PAL
+    mes = (char *) (BtSystemScriptFileBuffer.base + BtSystemScriptFileBuffer.used * 0x10);
+    LoadFile(mes_path, mes, &mes_size);
+    wait_now_loading_vsync();
+    BtSystemScriptFileBuffer.Alloc((mes_size >> 4) + 1);
+    EdSetEventScript((char *) BtEventData, mes, &BtSystemScriptFileBuffer);
+#else
     EdSetEventScript((char *) BtEventData, NULL, &BtSystemScriptFileBuffer);
+#endif
     AddSystemEventScript();
 }
-#endif
 
 void BtSystemScriptInit(void) {
     sceVu0FVECTOR pos;

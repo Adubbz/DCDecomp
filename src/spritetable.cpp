@@ -92,10 +92,6 @@ void CSpriteTable::DrawTable() {
     sceVif1PkCloseDirectCode(packet);
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/spritetable", AddTable__12CSpriteTableFiiP9MG_SPRITEii);
-#pragma name_counter 77
-#else
 void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags) {
     if (list < 0) {
         list = 0;
@@ -117,6 +113,11 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags
     node->y = y;
     node->width = sprite->source.width;
     node->height = sprite->source.height;
+#ifdef PAL
+    if (node->height == 448) {
+        node->height = 480;
+    }
+#endif
     node->u = sprite->source.x;
     node->v = sprite->source.y;
     node->u_width = sprite->source.width;
@@ -144,7 +145,6 @@ void CSpriteTable::AddTable(int x, int y, MG_SPRITE *sprite, int list, int flags
     node->next = GetNext();
     *tail = node->next;
 }
-#endif
 
 void CSpriteTable::AddTable(int x, int y, sceGsTex0 *tex0, RECT *source, int list, int flags) {
     union {
