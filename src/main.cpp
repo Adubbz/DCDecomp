@@ -944,11 +944,11 @@ void MapJump(int map_no, int event_no) {
 
 #ifdef PAL
 void MenuInit();
-INCLUDE_RODATA("asm/pal/nonmatchings/main", @887);
 INCLUDE_ASM("asm/pal/nonmatchings/main", MenuInit__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$882);
 INCLUDE_RODATA("asm/pal/nonmatchings/main", @883);
+INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$882);
 INCLUDE_RODATA("asm/pal/nonmatchings/main", @884);
+INCLUDE_RODATA("asm/pal/nonmatchings/main", @887);
 #pragma name_counter 1151
 #else
 void MenuInit() {
@@ -1102,8 +1102,13 @@ int MenuLoop() {
         }
     }
 
+#ifdef PAL
+    DebugFont.len += sprintf(&DebugFont.text[DebugFont.len],
+                             "Dark Cloud Ver3.07 2001/07/12\n");
+#else
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len],
                              "Dark Cloud Ver2.17 2001/05/11\n");
+#endif
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], "%s%s\n", cursor[select == 0],
                              menu[0]);
     DebugFont.len += sprintf(&DebugFont.text[DebugFont.len], menu[1], cursor[select == 1],
@@ -1188,9 +1193,9 @@ static int taiken_start;
 
 #ifdef PAL
 void MemCheckInit();
+INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckInit__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/main", @1020);
 INCLUDE_RODATA("asm/pal/nonmatchings/main", @1021);
-INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckInit__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/main", @1009);
 INCLUDE_DATA("asm/pal/nonmatchings/main", texdata$1013);
 INCLUDE_DATA("asm/pal/nonmatchings/main", init$1014);
@@ -1219,9 +1224,9 @@ void MemCheckInit() {
 
 #ifdef PAL
 int MemCheckLoop();
+INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckLoop__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/main", @1075);
 INCLUDE_RODATA("asm/pal/nonmatchings/main", @1076);
-INCLUDE_ASM("asm/pal/nonmatchings/main", MemCheckLoop__Fv);
 #pragma name_counter 1304
 #else
 int MemCheckLoop() {

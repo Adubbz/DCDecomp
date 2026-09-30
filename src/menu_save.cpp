@@ -771,6 +771,9 @@ INCLUDE_ASM("asm/pal/nonmatchings/menu_save", DrawSaveBoard__FP13SAVEDATA_INFOPP
 INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3410);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3419);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3431);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3407);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3408);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3409);
 #pragma name_counter 3461
 #else
 void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, int unused, int alpha) {
@@ -947,6 +950,9 @@ void DrawSaveBoard(SAVEDATA_INFO *info, CTexture **name_texture, int x, int y, i
 #ifdef PAL
 void DrawNewFileTemplete(int x, int y, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_save", DrawNewFileTemplete__Fiii);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3531);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3532);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3533);
 #pragma name_counter 3505
 #else
 void DrawNewFileTemplete(int x, int y, int alpha) {
@@ -1131,13 +1137,14 @@ float MiniCur[2];
 
 #ifdef PAL
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3699);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3700);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3701);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3702);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_save", InitEventItemSelect__FiPiP9ITEM_PACKiiii);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3686);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3685);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3699);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3700);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3701);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3667);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_save", @3702);
 #pragma name_counter 3606
 #else
 void InitEventItemSelect(int block, int *usable, ITEM_PACK *pack, int x, int y, int vanish, int fish_mode) {
@@ -1397,6 +1404,7 @@ static void DrawEventAndFishMenuBoard_Ver(CTexture *texture, CRect_i_ rect, int 
     DrawMenu2DSprite(texture, CRect_i_(rect.x, y, rect.width, 0x1E), CRect_i_(u, 0xC6, width, 0x1E), alpha);
 }
 
+#ifndef PAL
 /**
  * Extra height of the event item board in each menu language.
  */
@@ -1406,10 +1414,13 @@ s8 kakudai_tate_lang[7] = {0, 16, 16, 16, 16, 16, 16};
  * Extra width of the event item board's side pieces in each menu language.
  */
 s8 kakudai_yoko_lang[7] = {0, 10, 10, 10, 10, 10, 10};
+#endif
 
 #ifdef PAL
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_save", DrawEventAndFishMenuBoard__FP8CTextureiiii);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3847);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_save", @3848);
 #pragma name_counter 3761
 #else
 static void DrawEventAndFishMenuBoard(CTexture *texture, int x, int y, int alpha, int lang) {
@@ -1541,7 +1552,11 @@ static void EventItemSelectDraw(void) {
         CursorVibeCnt = 0;
     }
     CommonMenuMes2.edge_alpha = alpha;
+#ifdef PAL
+    s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-9, 0}, {-4, 0}, {-7, 0}, {-6, 0}};
+#else
     s8 message_pos[7][2] = {{0, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}, {-4, 0}};
+#endif
     DrawMenuClsMes(&CommonMenuMes2, 20.0f + left + message_pos[MiniMenu.lang][0],
                    146.0f + top + message_pos[MiniMenu.lang][1]);
     if (MiniMenu.state == 1) {

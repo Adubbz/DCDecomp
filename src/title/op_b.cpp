@@ -514,6 +514,12 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_InitProcess__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @351__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @390__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @410__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @345__8);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @346__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @347__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @348__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @349__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @350__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @364__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @365__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @366__6);
@@ -1265,6 +1271,7 @@ void OpB_SoundProcess() {
 #ifdef PAL
 void OpB_DrawProcess();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_b", OpB_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @789__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @806__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_b", @807__2);
 #pragma name_counter 680

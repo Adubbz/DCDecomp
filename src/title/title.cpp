@@ -422,6 +422,9 @@ INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcA__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @877__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @891__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @906__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @874);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @875__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @876__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @886__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @887__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @888__6);
@@ -808,6 +811,8 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1088__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1089__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1090);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1091__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1053);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1054);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1064);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1065);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1066__2);
@@ -961,6 +966,8 @@ static void InitProcB() {
 #ifdef PAL
 void DrawProcB();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcB__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1150__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1169__3);
 #pragma name_counter 331
 #else
 void DrawProcB() {
@@ -1301,6 +1308,7 @@ static void InitProcC() {
 #ifdef PAL
 void DrawProcC();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", DrawProcC__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1287__5);
 #pragma name_counter 442
 #else
 void DrawProcC() {
@@ -1378,11 +1386,13 @@ void DrawProcC() {
 #ifdef PAL
 static void InitProcD();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcD__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1327__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1303__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1315);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1312__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1313__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1314__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1326__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1347__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1348);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1349);
@@ -1548,8 +1558,11 @@ void DrawProcD() {
 #ifdef PAL
 static void InitProcE();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcE__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1386__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1375__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1399__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1384__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1385__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1397);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1398__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1415__3);
@@ -2068,7 +2081,10 @@ void DrawProcG() {
 #ifdef PAL
 static void InitProcH();
 INCLUDE_ASM("asm/pal/nonmatchings/title/title", InitProcH__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1606__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1595);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1604__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1605__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1642);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1643);
 INCLUDE_DATA("asm/pal/nonmatchings/title/title", @1644);

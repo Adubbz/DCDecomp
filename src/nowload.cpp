@@ -77,13 +77,13 @@ void now_loading_off(void) {
  */
 #ifdef PAL
 void init_now_loading(int title_number);
+INCLUDE_ASM("asm/pal/nonmatchings/nowload", init_now_loading__Fi);
 INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @285__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @286);
 INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @287);
 INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @288);
 INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @289);
 INCLUDE_RODATA("asm/pal/nonmatchings/nowload", @290);
-INCLUDE_ASM("asm/pal/nonmatchings/nowload", init_now_loading__Fi);
 INCLUDE_DATA("asm/pal/nonmatchings/nowload", @263);
 INCLUDE_DATA("asm/pal/nonmatchings/nowload", @266);
 #pragma name_counter 86

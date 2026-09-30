@@ -259,6 +259,19 @@ void LoadMotionData();
 /* Each of the couple's motion files is one key range — the frame it starts at and the frame it ends
    at — written straight over the character's own first key, so that a file loaded in the background
    takes over without the motion driver being told anything. */
+#ifdef PAL
+tagMOTION_KEY noroi[10] = {
+    {100, 750, 0.5f, 0},
+    {201, 528, 0.5f, 0},
+    {103, 802, 0.5f, 0},
+    {126, 781, 0.5f, 0},
+    {1, 356, 0.5f, 0},
+    {50, 629, 0.5f, 0},
+    {185, 833, 0.5f, 0},
+    {93, 665, 0.5f, 0},
+    {124, 529, 0.5f, 0},
+    {298, 747, 0.5f, 0}};
+#else
 tagMOTION_KEY noroi[10] = {
     {100, 750, 0.5f, 0},
     {201, 533, 0.5f, 0},
@@ -270,7 +283,21 @@ tagMOTION_KEY noroi[10] = {
     {103, 675, 0.5f, 0},
     {139, 542, 0.5f, 0},
     {298, 747, 0.5f, 0}};
+#endif
 
+#ifdef PAL
+tagMOTION_KEY dancer[10] = {
+    {12, 536, 0.5f, 0},
+    {209, 536, 0.5f, 0},
+    {111, 810, 0.5f, 0},
+    {116, 771, 0.5f, 0},
+    {1, 356, 0.5f, 0},
+    {1, 629, 0.5f, 0},
+    {135, 783, 0.5f, 0},
+    {82, 660, 0.5f, 0},
+    {124, 529, 0.5f, 0},
+    {327, 782, 0.5f, 0}};
+#else
 tagMOTION_KEY dancer[10] = {
     {12, 536, 0.5f, 0},
     {209, 541, 0.5f, 0},
@@ -282,6 +309,7 @@ tagMOTION_KEY dancer[10] = {
     {92, 670, 0.5f, 0},
     {139, 542, 0.5f, 0},
     {327, 782, 0.5f, 0}};
+#endif
 
 /* The scene's own world, and the objects the configuration file fills in. Both frame pointers are
    typed from the loader that writes them rather than from anything here: title/opdata assigns
@@ -650,6 +678,8 @@ static void InitDancerPos() {
 #ifdef PAL
 void OpA_DrawProcess();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_a", OpA_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @552__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", @554__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", wait$417);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", col$450);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_a", init$451);

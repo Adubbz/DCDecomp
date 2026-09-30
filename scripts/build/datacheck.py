@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import bisect
 import re
+from collections import Counter
 import struct
 import subprocess
 import sys
@@ -60,6 +61,62 @@ def retail_symbols():
             by_name.setdefault(name, (addr, int(size.group(1), 16) if size else None))
             by_addr.setdefault(addr, name)
     return by_name, by_addr
+
+
+SPELLED = re.compile(r"^(.*?)(?:__\d+)?$")
+
+
+class Names:
+    """Retail's spellings of the names an object uses.
+
+    A static keeps its C name in the object, while retail's lists spell each
+    one uniquely across the program (`name__2`, `name__3`, ...); the title
+    overlay's units reuse the same names many times over. A name therefore
+    stands for every retail symbol spelled from it, and the one meant is the
+    one the unit's run puts it on. In a release whose compiled constants are
+    numbered from INVENTED_NAME_OFFSET, an `@N` below it is a retail name a
+    marker or a fixup gave the object, and is looked up like any other.
+    """
+
+    def __init__(self, by_name):
+        self.by_name = by_name
+        self.spellings = defaultdict(list)
+        for name, (addr, size) in by_name.items():
+            self.spellings[SPELLED.match(name).group(1)].append((addr, size, name))
+
+    def usable(self, name):
+        if not name.startswith("@"):
+            return True
+        number = re.match(r"^@(\d+)", name)
+        return bool(region.INVENTED_NAME_OFFSET and number and int(number.group(1)) < region.INVENTED_NAME_OFFSET)
+
+    def candidates(self, name):
+        if not self.usable(name):
+            return []
+        if name.startswith("@") or name != SPELLED.match(name).group(1):
+            return [(a, s, n) for a, s, n in self.spellings.get(SPELLED.match(name).group(1), []) if n == name]
+        return self.spellings.get(name, [])
+
+    def anchor(self, placed):
+        """The base most of [(offset, name)] agree on, or None."""
+        votes = Counter()
+        first = {}
+        for i, (offset, name) in enumerate(placed):
+            cands = self.candidates(name)
+            for addr, _size, n in cands:
+                votes[addr - offset] += len(placed) + 1 if n == name and len(cands) == 1 else 1
+                first.setdefault(addr - offset, i)
+        if not votes:
+            return None
+        return max(votes, key=lambda base: (votes[base], -first[base]))
+
+    def resolve(self, name, near):
+        """(address, size) of the spelling at `near`, else the nearest one."""
+        cands = self.candidates(name)
+        if not cands:
+            return None
+        addr, size, _n = min(cands, key=lambda c: (c[0] != near, abs(c[0] - near)))
+        return addr, size
 
 
 def dump_words():
@@ -128,6 +185,7 @@ def main():
     if not obj.exists():
         sys.exit(f"{obj} does not exist; pass --build")
     by_name, by_addr = retail_symbols()
+    names = Names(by_name)
     words, labels = dump_words()
     addrs = sorted(set(by_addr) | set(labels))
 
@@ -163,24 +221,17 @@ def main():
                 off += size
             return rows, off - base
         rows, off = layout(0)
-        anchor = None
-        for o, ssize, sname, _al in rows:
-            if sname in by_name and not sname.startswith("@"):
-                anchor = by_name[sname][0] - o
-                break
+        anchor = names.anchor([(o, sname) for o, _s, sname, _al in rows])
         if anchor is not None:
             # a section aligned beyond the run's start lands where the absolute address says
             rows, off = layout(anchor)
-            for o, ssize, sname, _al in rows:
-                if sname in by_name and not sname.startswith("@"):
-                    anchor = by_name[sname][0] - o
-                    break
+            anchor = names.anchor([(o, sname) for o, _s, sname, _al in rows])
             rows, off = layout(anchor)
         print(f"\n== {kind}: {len(secs)} section(s), 0x{off:X} bytes, "
               + (f"anchored at 0x{anchor:08X}" if anchor is not None else "no retail name to anchor on"))
         for o, ssize, sname, align in rows:
             pred = anchor + o if anchor is not None else None
-            retail = None if sname.startswith("@") else by_name.get(sname)
+            retail = names.resolve(sname, pred) if pred is not None else None
             if retail and pred is not None:
                 ok = "ok " if retail[0] == pred else "BAD"
                 if ok == "BAD":
@@ -216,7 +267,7 @@ def main():
                 b = theirs[i] if i < len(theirs) else ""
                 print(f"  {a:<{width}} | {b}")
     if args.bytes:
-        bad += compare_bytes(obj, kinds, by_name, words)
+        bad += compare_bytes(obj, kinds, names, words)
     print(f"\n{bad} mismatch(es)")
     return 1 if bad else 0
 
@@ -261,7 +312,7 @@ def relocations(obj):
     return by_section
 
 
-def compare_bytes(obj, kinds, by_name, words):
+def compare_bytes(obj, kinds, names, words):
     """Compare each .data/.sdata-like section's words with retail's, resolving R_MIPS_32 by symbol."""
     relocs = relocations(obj)
     bad = 0
@@ -276,23 +327,15 @@ def compare_bytes(obj, kinds, by_name, words):
                 off += size
             return out
         laid = lay(0)
-        anchor = None
-        for idx, soff, size, syms in laid:
-            for value, _s, sname in syms:
-                if sname in by_name and not sname.startswith("@"):
-                    anchor = by_name[sname][0] - (soff + value)
-                    break
-            if anchor is not None:
-                break
+
+        def placed(laid):
+            return [(soff + value, sname) for _idx, soff, _size, syms in laid for value, _s, sname in syms]
+        anchor = names.anchor(placed(laid))
         if anchor is not None:
             # absolute alignment: a 64-aligned section lands where the address says
             for _ in range(2):
                 laid = lay(anchor)
-                for idx, soff, size, syms in laid:
-                    hit = next((by_name[n][0] - (soff + v) for v, _s, n in syms if n in by_name and not n.startswith("@")), None)
-                    if hit is not None:
-                        anchor = hit
-                        break
+                anchor = names.anchor(placed(laid))
         if anchor is None:
             print(f"\n== {kind}: bytes not compared (no anchor)")
             continue
@@ -308,7 +351,7 @@ def compare_bytes(obj, kinds, by_name, words):
                     continue
                 if o in rel:
                     typ, sym = rel[o]
-                    target = None if sym.startswith("@") or sym.startswith(".") else by_name.get(sym)
+                    target = None if sym.startswith(".") else names.resolve(sym, addr)
                     if target is None:
                         continue   # a compiler-numbered constant or a section; the link decides
                     ours = (target[0] + ours) & 0xFFFFFFFF

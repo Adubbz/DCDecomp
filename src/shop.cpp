@@ -1192,8 +1192,8 @@ static void ShopFadeoutDraw() {
  */
 #ifdef PAL
 static int ShopPersonReadStart(int shop_no, int person_no);
-INCLUDE_RODATA("asm/pal/nonmatchings/shop", @817);
 INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPersonReadStart__Fii);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @817);
 #pragma name_counter 1041
 #else
 static int ShopPersonReadStart(int shop_no, int person_no) {
@@ -1435,10 +1435,10 @@ static inline WEAPON_HAVE *ShopWeaponRow(CUserStatus *status, int chara) {
 
 #ifdef PAL
 int ChargeShopKey();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ChargeShopKey__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @1201);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @1202__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @1203__2);
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ChargeShopKey__Fv);
 #pragma name_counter 1370
 #else
 int ChargeShopKey() {
@@ -2121,6 +2121,7 @@ static void ShopModelMsgFunc(int);
 void DrawChargeShop();
 INCLUDE_ASM("asm/pal/nonmatchings/shop", DrawChargeShop__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/shop", @1385__2);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @1372);
 #pragma name_counter 1547
 #else
 void DrawChargeShop() {
@@ -3475,10 +3476,10 @@ void ItemShopMemoryAlloc() {
 
 #ifdef PAL
 void ItemPosInfoInit();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemPosInfoInit__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2220);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2221);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2222);
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemPosInfoInit__Fv);
 #pragma name_counter 2292
 #else
 void ItemPosInfoInit() {
@@ -3591,6 +3592,7 @@ void InitItemShop2(int *state, int shop_no, int mode) {
  */
 #ifdef PAL
 static void ItemShopSelectKey2();
+INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopSelectKey2__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2435);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2436);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2437);
@@ -3598,7 +3600,6 @@ INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2438);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2439);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2440);
 INCLUDE_RODATA("asm/pal/nonmatchings/shop", @2441);
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopSelectKey2__Fv);
 #pragma name_counter 2472
 #else
 static void ItemShopSelectKey2() {
@@ -4500,6 +4501,8 @@ int ItemShopKey2() {
 void ItemShopDraw2();
 INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopDraw2__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/shop", @2928);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @2915);
+INCLUDE_DATA("asm/pal/nonmatchings/shop", @2925);
 #pragma name_counter 2912
 #else
 void ItemShopDraw2() {
@@ -4901,8 +4904,8 @@ INCLUDE_RODATA("asm/ntsc/nonmatchings/shop", @2964);
 
 #ifdef PAL
 int FishingExchangeKey();
-INCLUDE_RODATA("asm/pal/nonmatchings/shop", @3229);
 INCLUDE_ASM("asm/pal/nonmatchings/shop", FishingExchangeKey__Fv);
+INCLUDE_RODATA("asm/pal/nonmatchings/shop", @3229);
 #pragma name_counter 3135
 #else
 int FishingExchangeKey() {
@@ -5251,7 +5254,11 @@ static void FishExchangeItemDraw(int x, int y, int alpha) {
         DrawMenu2DSprite(FishMenuTex, CRect_i_(x + 0x104, pos_y + 8, 0x20, 0x14), CRect_i_(0x1E0, 0xEC, 0x20, 0x14),
                          alpha);
 #ifdef PAL
+#ifdef PAL
+        RECT digits = {0x140, 0xEA, 0x10, 0x16};
+#else
         RECT digits = {0x160, 0xEA, 0x10, 0x16};
+#endif
 #else
         RECT digits = {0x140, 0xEA, 0x10, 0x16};
 #endif

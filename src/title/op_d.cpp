@@ -855,6 +855,7 @@ void OpD_SoundProcess() {
 #ifdef PAL
 void OpD_DrawProcess();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_d", OpD_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", @730__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fade1$766);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", init$767);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_d", fade2$769);

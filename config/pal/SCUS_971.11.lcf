@@ -166,7 +166,7 @@ SECTIONS
         . = ALIGN(128);
         gameloop.cpp.o     (.dbss)      // 0x01ddbf00
         *(.dbss)
-        . = ALIGN(16);
+        . = ALIGN(128);
         _dun_end = .;
     } > dun
 
@@ -634,12 +634,14 @@ SECTIONS
         dataset.cpp.o (.vtables)         // 0x002a8770
         . = ALIGN(16);
         frame.cpp.o (.vtables)           // 0x002a87a0
+        frame.cpp.o (.rdata)
         . = ALIGN(8);
         visualvu1.cpp.o (.vt-visual)        // 0x002a87d8
         visualshadow.cpp.o (.vtables)       // 0x002a87f0
         visualvu1.cpp.o (.vt-visualmdtvu1)  // 0x002a8810
         visualvu1.cpp.o (.vt-visualvu1)     // 0x002a8830
         character.cpp.o (.vtables)       // 0x002a8850
+        character.cpp.o (.rdata)
         . = . + 0x8;
         dispctrl.cpp.o (.vtables)        // 0x002a89f0
         cloth.cpp.o (.vtables)           // 0x002a8a00

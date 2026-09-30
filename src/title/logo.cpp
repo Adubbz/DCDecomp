@@ -35,7 +35,11 @@ void CLogo::Init() {
     count = 0;
     unk_4C = 0;
     position[0] = 0.0f;
+#ifdef PAL
+    position[1] = 17.599f;
+#else
     position[1] = 13.599f;
+#endif
     position[2] = -19.099f;
     Logo.frame->SetPosition(position);
     Logo.motion_type.state.time = 1.0f;

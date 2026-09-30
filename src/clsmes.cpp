@@ -2544,11 +2544,11 @@ void ClsMes::DrawGaijiFont(CTexture *texture, int no, const CRect_i_ &texel,
 #endif
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/clsmes", DrawMesWin__6ClsMesFv);
 INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2106);
 INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2107);
 INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2108);
 INCLUDE_RODATA("asm/pal/nonmatchings/clsmes", @2109);
-INCLUDE_ASM("asm/pal/nonmatchings/clsmes", DrawMesWin__6ClsMesFv);
 INCLUDE_DATA("asm/pal/nonmatchings/clsmes", @1971);
 #pragma name_counter 2405
 #else

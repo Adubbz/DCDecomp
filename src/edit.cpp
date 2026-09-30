@@ -114,6 +114,9 @@ int EdDebugCameraFlag;
 int EdDebugParamDrawOff;
 int EdDebugCharaDrawOff;
 int EdDebugMoveFlag;
+#ifdef PAL
+int EdDebugRunEventNo;
+#endif
 
 static int Debug = 1;
 static CDebugFont *DebugFont;
@@ -185,18 +188,18 @@ static int AddStr(CDebugFont *font, char *str) {
 }
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintChara__FP10CMainChara);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @380__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @381__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @382);
-INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintChara__FP10CMainChara);
 #pragma name_counter 421
 #endif
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintCamera__FP7CCamera);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @391__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @392);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @393);
-INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintCamera__FP7CCamera);
 #pragma name_counter 421
 #endif
 
@@ -438,6 +441,10 @@ INCLUDE_DATA("asm/pal/nonmatchings/edit", init$506);
 #endif
 
 #ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @531__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @532);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @534__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit", @535);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @612);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @613);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @614__2);
@@ -449,6 +456,8 @@ INCLUDE_RODATA("asm/pal/nonmatchings/edit", @619__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @620__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @621__3);
 INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Main__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @533);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @536);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", select$521);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", init$522);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", run_event$524);
@@ -459,12 +468,14 @@ INCLUDE_DATA("asm/pal/nonmatchings/edit", init$528);
 #endif
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Sound__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @639);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @640);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @701);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @702);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @703);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @704);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @705);
-INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Sound__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", select$623);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", init$624);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", bgm_no$626);
@@ -489,6 +500,8 @@ INCLUDE_RODATA("asm/pal/nonmatchings/edit", @885);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @886__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/edit", @887__2);
 INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Flag__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @743__2);
+INCLUDE_DATA("asm/pal/nonmatchings/edit", @744__3);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", select$706);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", init$707);
 INCLUDE_DATA("asm/pal/nonmatchings/edit", game_no$709);
@@ -1873,6 +1886,9 @@ void EdDrawOpenItemBox() {
 }
 
 int frame_image_flag;
+#ifdef PAL
+INCLUDE_DATA("asm/pal/nonmatchings/edit", D_002A9F3C);
+#endif
 CTexture frame_image_tex;
 
 /**

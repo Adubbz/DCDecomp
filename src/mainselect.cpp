@@ -9,3 +9,6 @@ s32 LanguageCode = 2;
 s32 LanguageCode = 1;
 #endif
 s32 old_main_mode = -1;
+#ifdef PAL
+s32 DebugMode = 1;
+#endif

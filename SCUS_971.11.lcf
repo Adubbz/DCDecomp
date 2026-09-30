@@ -166,7 +166,7 @@ SECTIONS
         . = ALIGN(128);
         gameloop.cpp.o     (.dbss)      // 0x01dc4480
         *(.dbss)
-        . = ALIGN(16);
+        . = ALIGN(128);
         _dun_end = .;
     } > dun
 

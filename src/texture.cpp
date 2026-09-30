@@ -80,8 +80,8 @@ void CTextureBlock::Initialize() {
 }
 
 #ifdef PAL
-INCLUDE_RODATA("asm/pal/nonmatchings/texture", @221);
 INCLUDE_ASM("asm/pal/nonmatchings/texture", Initialize__15CTextureManagerFi);
+INCLUDE_RODATA("asm/pal/nonmatchings/texture", @221);
 #pragma name_counter 286
 #else
 void CTextureManager::Initialize(int size) {

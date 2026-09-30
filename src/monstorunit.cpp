@@ -1282,9 +1282,9 @@ void CMonstorUnit::MoveChecMonster() {
 }
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/monstorunit", Step__12CMonstorUnitFi);
 INCLUDE_RODATA("asm/pal/nonmatchings/monstorunit", @2230);
 INCLUDE_RODATA("asm/pal/nonmatchings/monstorunit", @2234__2);
-INCLUDE_ASM("asm/pal/nonmatchings/monstorunit", Step__12CMonstorUnitFi);
 #pragma name_counter 2204
 #else
 void CMonstorUnit::Step(int pause) {

@@ -479,10 +479,12 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @422__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @423__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @424__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @393__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @394__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @395__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @396__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @397__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @398__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @485__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @486__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @487__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @488__5);
@@ -508,14 +510,21 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @507__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @508__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @509__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @510__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @511__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @512__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @513__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @514__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @515__7);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @516__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @517__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @519__3);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @520__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @521__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @522__5);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @523__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @524__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @525__4);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @526__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @529__3);
 #pragma name_counter 220
 #else
@@ -964,6 +973,9 @@ INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @590__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @591__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @592__4);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @593__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @594__6);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @595__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @596__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @597__6);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @598__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @599__3);
@@ -1114,6 +1126,8 @@ void OpC_InitProcess3() {
 void OpC_InitProcess4();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess4__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @614__7);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @616__5);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @617__6);
 #pragma name_counter 296
 #else
 void OpC_InitProcess4() {
@@ -2448,6 +2462,9 @@ void OpC_SoundProcess() {
 #ifdef PAL
 void OpC_DrawProcess();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_DrawProcess__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1256__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1261__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1263__3);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", flg$1231);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", init$1232__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", bright$1234);
@@ -2901,6 +2918,8 @@ void OpC_DrawProcess() {
 static void DrawDancer();
 INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", DrawDancer__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1677);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1678__2);
+INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1679__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1680__2);
 INCLUDE_DATA("asm/pal/nonmatchings/title/op_c", @1681__2);
 #pragma name_counter 1063

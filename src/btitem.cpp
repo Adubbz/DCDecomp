@@ -250,10 +250,10 @@ void BtGetTreasureboxBig_Init() {
  */
 #ifdef PAL
 int BtGetTreasureboxBig_Loop();
+INCLUDE_ASM("asm/pal/nonmatchings/btitem", BtGetTreasureboxBig_Loop__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @750);
 INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @757);
 INCLUDE_RODATA("asm/pal/nonmatchings/btitem", @758);
-INCLUDE_ASM("asm/pal/nonmatchings/btitem", BtGetTreasureboxBig_Loop__Fv);
 #pragma name_counter 150
 #else
 int BtGetTreasureboxBig_Loop() {

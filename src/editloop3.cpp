@@ -6973,6 +6973,10 @@ int EdEventFinish() {
  */
 #ifdef PAL
 int EdEventMode(CCameraFollow *camera, int kind);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2454);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2455);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2456);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2609);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2610);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2611);
@@ -6981,15 +6985,11 @@ INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2613);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2614);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2615);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2616__2);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", mode_name$2453);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop3", @2575);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2617);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2618);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2619);
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop3", mode_name$2453);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop3", @2575);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2454);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2455);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop3", @2456);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop3", mode$2450);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop3", init$2451);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop3", select_chara$2457);

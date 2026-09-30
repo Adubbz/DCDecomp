@@ -1421,6 +1421,7 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
 #ifdef PAL
 static void DrawAtoraNothing(int x, int y, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawAtoraNothing__Fiii);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @1269);
 #pragma name_counter 748
 #else
 static void DrawAtoraNothing(int x, int y, int alpha) {
@@ -2342,9 +2343,9 @@ int MenuAtoraSelectKey() {
 
 #ifdef PAL
 static int AtoraBoardKey();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", AtoraBoardKey__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2134__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2135__2);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", AtoraBoardKey__Fv);
 #pragma name_counter 1391
 #else
 static int AtoraBoardKey() {
@@ -2874,6 +2875,7 @@ static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
 #ifdef PAL
 static void DrawOptionLRCur(int side, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionLRCur__Fii);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2344);
 #pragma name_counter 1595
 #else
 static void DrawOptionLRCur(int side, int alpha) {
@@ -2889,13 +2891,14 @@ static void DrawOptionLRCur(int side, int alpha) {
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionScreenWaku__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2353);
 INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2354);
+INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2355);
 #pragma name_counter 1595
 #endif
 
 #ifdef PAL
 int InitMenuOption(int mode, int block_no, u_long128 *buffer);
-INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2413);
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitMenuOption__FiiP1);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2413);
 #pragma name_counter 1610
 #else
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
@@ -3026,13 +3029,13 @@ static void PrevOptionSetFunc() {
 
 #ifdef PAL
 int MenuOptionKey();
+INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuOptionKey__Fv);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2453);
 INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2608);
 INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2609__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2610__2);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuOptionKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2454__2);
 INCLUDE_DATA("asm/pal/nonmatchings/memcard", @2580);
-INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2453);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2610__2);
 #pragma name_counter 1733
 #else
 int MenuOptionKey() {
@@ -3504,8 +3507,8 @@ int (*SaveMenuFunc[26])() = {
 
 #ifdef PAL
 int MenuSaveKey();
-INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2867);
 INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuSaveKey__Fv);
+INCLUDE_RODATA("asm/pal/nonmatchings/memcard", @2867);
 #pragma name_counter 1940
 #else
 int MenuSaveKey() {

@@ -205,8 +205,8 @@ void CFireOmni::RasterStep(void) {
 }
 
 #ifdef PAL
-INCLUDE_RODATA("asm/pal/nonmatchings/fireomni", @328__2);
 INCLUDE_ASM("asm/pal/nonmatchings/fireomni", DrawRaster__9CFireOmniFv);
+INCLUDE_RODATA("asm/pal/nonmatchings/fireomni", @328__2);
 #pragma name_counter 147
 #else
 void CFireOmni::DrawRaster(void) {

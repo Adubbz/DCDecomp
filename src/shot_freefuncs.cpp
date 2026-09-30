@@ -664,8 +664,8 @@ u8 *BtGetStatusPal2(int bar, float max, float value) {
  */
 #ifdef PAL
 void topStatusInfo(int y, int selected_item, int floor);
-INCLUDE_RODATA("asm/pal/nonmatchings/shot_freefuncs", @1150);
 INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", topStatusInfo__Fiii);
+INCLUDE_RODATA("asm/pal/nonmatchings/shot_freefuncs", @1150);
 INCLUDE_DATA("asm/pal/nonmatchings/shot_freefuncs", popupYRate$864);
 INCLUDE_DATA("asm/pal/nonmatchings/shot_freefuncs", init$865);
 INCLUDE_DATA("asm/pal/nonmatchings/shot_freefuncs", popupRGBRate$869);

@@ -201,8 +201,8 @@ void DrawManualMsg() {
 
 #ifdef PAL
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_manual", @561);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_manual", InitMenuManual__FPiP1);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_manual", @561);
 #pragma name_counter 134
 #else
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer) {

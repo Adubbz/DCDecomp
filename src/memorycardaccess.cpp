@@ -29,11 +29,11 @@ int GetOpenAttribute(char *name) {
 }
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @368__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @369__4);
 INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @370__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @371__4);
-INCLUDE_ASM("asm/pal/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
 #pragma name_counter 35
 #else
 void CMemoryCardAccess::Initialize() {

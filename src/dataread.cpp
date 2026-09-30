@@ -68,7 +68,11 @@ static int data_sector;
 static int old_vsync;
 static int start_vsync;
 
+#ifdef PAL
+static u_char header_buff[0x50000];
+#else
 static u_char header_buff[0x40000];
+#endif
 static BG_READ_INFO bg_read_info[32];
 
 static NAME_TREE *search_tree(NAME_TREE *node, char *name);
@@ -134,9 +138,9 @@ void InitReadBG() {
    reach is fatal rather than slow, and one that is not on a 64-byte boundary is only reported. */
 #ifdef PAL
 int LoadFileBG(char *name, u_long128 *buffer, int *size);
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", LoadFileBG__FPcP1Pi);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @229);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @230__2);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", LoadFileBG__FPcP1Pi);
 #pragma name_counter 333
 #else
 int LoadFileBG(char *name, u_long128 *buffer, int *size) {
@@ -381,12 +385,12 @@ static char *create_word_tree(char *head, int size, char *buff) {
    is read by sector from that base, which is why no path but the index's is ever opened. */
 #ifdef PAL
 void InitCDFile();
+INCLUDE_ASM("asm/pal/nonmatchings/dataread", InitCDFile__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @397);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @398);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @399);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @400);
 INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @401);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", InitCDFile__Fv);
 #pragma name_counter 460
 #else
 void InitCDFile() {

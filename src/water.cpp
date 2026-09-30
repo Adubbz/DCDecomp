@@ -98,7 +98,7 @@ int CWater::CreateVUData(unsigned int *output, RenderInfo *info) {
     rgba[2] = color[2];
     rgba[3] = color[3];
     u_int end[4] = {0x11000000, 0, 0, 0};
-    float uv_base[4] = {320.0f, 112.0f, 0.0f, 0.0f};
+    float uv_base[4] = {320.0f, SCREEN_QUARTER_HEIGHT_F, 0.0f, 0.0f};
     u_int first_kick[4] = {0, 0, 0, 0x14000000};
     u_int kick[4] = {0, 0, 0, 0x17000000};
     u_int unpack[4] = {0, 0, 0, 0x6C008000};

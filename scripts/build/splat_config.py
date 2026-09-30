@@ -585,7 +585,45 @@ def carry_lcf(carry, text, problems):
         placed.append((len(out) - 1, image, code, comment))
     if target is not source:
         out = migrate_placements(carry, out, placed)
+        out = place_vtable_data(carry, out)
     return "\n".join(out) + "\n"
+
+
+DATA_MARKER = re.compile(r'^\s*INCLUDE_DATA\(\s*"([^"]*)"\s*,\s*([^)\s]+)\s*\)', re.M)
+LCF_VTABLES = re.compile(r"^(\s*)(\S+\.o)(\s*\(\s*)\.vt[\w-]*(\s*\)).*$")
+
+
+def place_vtable_data(carry, out):
+    """Place the vtable a spliced unit supplies as data right after its own vtables.
+
+    The compiler emits a class's vtable with the function that defines it; when
+    the target takes that function from its assembly, an INCLUDE_DATA marker
+    supplies the table, and it comes out in the section retail's dump holds it
+    in, .rdata, which the vtable run would otherwise leave to the catch-all.
+    """
+    target = carry.target
+    at = {}
+    for s in target.syms:
+        if s["idx"] in carry.target_names:
+            at.setdefault(carry.target_names[s["idx"]], (target.image_of(s), s["value"]))
+    objects = set()
+    for path in sorted(Path("src").rglob("*")):
+        if path.suffix not in (".c", ".cpp") or path.name.startswith("tmp"):
+            continue
+        text = region.active_text(path.read_text(encoding="utf-8"), pal=target.name == region.PAL, rename=False)
+        for _folder, name in DATA_MARKER.findall(text):
+            image, address = at.get(name, (None, None))
+            if name.startswith("__vt__") and image is not None and any(
+                    n == ".rdata" and lo <= address < hi for n, _k, lo, hi in target.sections[image]):
+                objects.add(path.name + ".o")
+    rows = []
+    for line in out:
+        rows.append(line)
+        m = LCF_VTABLES.match(line)
+        if m and m.group(2) in objects:
+            rows.append(m.group(1) + m.group(2) + m.group(3) + ".rdata" + m.group(4))
+            objects.discard(m.group(2))
+    return rows
 
 
 LCF_PLACEMENT = re.compile(r"^(\s*\S+\.o\s*\(\s*)(\.\w+)(\s*\)\s*//\s*)(0x[0-9a-fA-F]{8})(.*)$")

@@ -686,7 +686,9 @@ def bind_spliced_references(path):
 
 def drop_duplicate_constants(path, spliced):
     """Keep retail's one copy of a constant a spliced function and a compiled
-    one both use.
+    one both use. The spliced copy is one a marker supplies as a constant: an
+    INCLUDE_RODATA, or an INCLUDE_DATA retail holds among an overlay's
+    constants.
 
     Only another release meets this: its compiler's own names sit at
     region.INVENTED_NAME_OFFSET and above, which is what tells a copy the
@@ -697,7 +699,8 @@ def drop_duplicate_constants(path, spliced):
     symbols = elf.symtab.symbols
     held = {}
     for index, symbol in enumerate(symbols):
-        if symbol.name in spliced and 0 < symbol.st_shndx < len(elf.sections):
+        if (symbol.name in spliced and 0 < symbol.st_shndx < len(elf.sections)
+                and elf.sections[symbol.st_shndx].name.startswith(".rodata")):
             held.setdefault(bytes(elf.sections[symbol.st_shndx].data).rstrip(b"\0"), index)
     moved = {}
     for index, symbol in enumerate(symbols):
@@ -838,7 +841,8 @@ def main():
     export_constants(args.object, fixups.get("rodata_exports", []), parser,
                      assembly_constants, fixups.get("symbols", {}).values())
     if region.NAME != region.NTSC:
-        drop_duplicate_constants(args.object, assembly_constants)
+        drop_duplicate_constants(args.object, assembly_constants | set(re.findall(
+            r"INCLUDE_DATA\([^,]+,\s*([^)\s]+)\s*\)", source_text)))
     if deferred_sections:
         elf = Elf(args.object.read_bytes())
         if rename_sections(elf, deferred_sections, parser) and not args.source_only:

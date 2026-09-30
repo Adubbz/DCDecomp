@@ -859,10 +859,11 @@ int EditInLoop() {
  */
 #ifdef PAL
 static void MainDraw();
-INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @1088);
 INCLUDE_ASM("asm/pal/nonmatchings/edit_in", MainDraw__Fv__2);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @915);
+INCLUDE_RODATA("asm/pal/nonmatchings/edit_in", @1088);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @937);
+INCLUDE_DATA("asm/pal/nonmatchings/edit_in", @992);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_flag$970);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", init$971);
 INCLUDE_DATA("asm/pal/nonmatchings/edit_in", debug_menu_mode$973);

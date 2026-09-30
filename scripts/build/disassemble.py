@@ -967,6 +967,30 @@ def datum_width(line):
     return DATUM_WIDTH.get(directive, 0) * (operand.count(",") + 1)
 
 
+LCF_IMAGE = re.compile(r"^\s*\.(title|dun|main)\s*:")
+LCF_OVERLAY_CONSTANTS = re.compile(r"^\s*\S+\.o\s*\(\s*\.[a-z]rodata\s*\)\s*//\s*(0x[0-9a-fA-F]+)")
+DUMP_ADDRESS = re.compile(r"^\s*/\*\s*[0-9A-Fa-f]+\s+([0-9A-Fa-f]{8})\b")
+
+
+def overlay_constant_runs():
+    """{overlay: address its units' constants start at}, from the linker script.
+
+    An overlay keeps its constants in the same dump as its data, after every
+    unit's data; the script places each unit's constants there under the
+    overlay's own prefix.
+    """
+    runs = {}
+    image = None
+    for line in Path(region.LCF).read_text(encoding="utf-8").splitlines():
+        block = LCF_IMAGE.match(line)
+        if block:
+            image = block.group(1)
+        m = LCF_OVERLAY_CONSTANTS.match(line)
+        if m and image in ("title", "dun"):
+            runs.setdefault(image, int(m.group(1), 16))
+    return runs
+
+
 def write_data_markers(src_dir=SRC):
     """Write the file each INCLUDE_DATA marker names, from retail's section dump.
 
@@ -988,9 +1012,11 @@ def write_data_markers(src_dir=SRC):
             if size:
                 sizes.setdefault(name, size)
     found = {}
+    constants = overlay_constant_runs()
     for dump in sorted(Path(ASM, "data").rglob("*.s")):
         lines = dump.read_text(encoding="utf-8").split("\n")
         section = next((line for line in lines if line.lstrip().startswith(".section")), None)
+        overlay = dump.relative_to(Path(ASM, "data")).parts[0]
         for i, line in enumerate(lines):
             label = DUMP_LABEL.match(line)
             if not label or label.group(1) not in wanted or label.group(1) in found:
@@ -1016,7 +1042,11 @@ def write_data_markers(src_dir=SRC):
                     width = size - held
                 held += width
                 body.append(rest)
-            found[label.group(1)] = (section, line, body)
+            held_in = section
+            start = next((DUMP_ADDRESS.match(rest) for rest in body if DUMP_ADDRESS.match(rest)), None)
+            if overlay in constants and start and int(start.group(1), 16) >= constants[overlay]:
+                held_in = ".section .rodata"
+            found[label.group(1)] = (held_in, line, body)
     for name, folder in sorted(wanted.items()):
         if name not in found:
             raise SystemExit(f"disassemble: no section dump holds {name}, which an INCLUDE_DATA marker names")

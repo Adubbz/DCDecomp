@@ -31,11 +31,19 @@ sceDmaChan *DmaCH8;
 sceVif1Packet *Vif1Packet;
 int VSyncField__2;
 int mgClearBackFlag;
+#ifdef PAL
+int mgAdjustX;
+int mgAdjustY;
+#endif
 sceGsTex1 mgTEX1Env;
 sceGsTest mgPixelTest;
 sceGsZbuf mgZBuffer;
 sceGsAlpha mgAlpha;
 sceGsTexa mgTexa;
+#ifdef PAL
+int mgTopVRAM;
+int mgZBufferAdr;
+#endif
 
 MG_PICKZ mgPickZBuff[16];
 sceGifTag GiftagAD;
@@ -427,12 +435,12 @@ static void WaitVSync(int count) {
 
 #ifdef PAL
 void MGEndFrame();
+INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGEndFrame__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @414);
 INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @415);
 INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @416);
 INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @417);
 INCLUDE_RODATA("asm/pal/nonmatchings/mglib", @418);
-INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGEndFrame__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/mglib", count$298);
 INCLUDE_DATA("asm/pal/nonmatchings/mglib", init$299);
 INCLUDE_DATA("asm/pal/nonmatchings/mglib", old_vcount$301);

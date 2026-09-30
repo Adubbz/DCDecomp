@@ -702,6 +702,7 @@ void EdInitMesParam() {
  */
 #ifdef PAL
 int EditInit(void *);
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditInit__FPv);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @714);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @715);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @716);
@@ -723,7 +724,6 @@ INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @733__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @734__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @735__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @736__2);
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditInit__FPv);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @625);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @639__2);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @640__2);
@@ -1120,6 +1120,8 @@ int cat_end() {
  */
 #ifdef PAL
 int EditLoop(void);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @827);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @828);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1618);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1619);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1620);
@@ -1127,6 +1129,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1621);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1622);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @1623);
 INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditLoop__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @829);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", end_count$767);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", init$768);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", top$798);
@@ -1891,6 +1894,7 @@ INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1648);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1737);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1767);
 INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1768);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @1665);
 #pragma name_counter 1351
 #else
 void MainDraw() {
@@ -3732,7 +3736,21 @@ u_int *parts_read_buffer;
  */
 #ifdef PAL
 int LoadTexture();
+INCLUDE_ASM("asm/pal/nonmatchings/editloop", LoadTexture__Fv);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2820);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2821);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2822);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2823);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2824);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2825);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2833);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2834);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2835);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2836);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2837);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2838);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2839);
+INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2840);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2888);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2889);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2890);
@@ -3740,6 +3758,10 @@ INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2891);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2892);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2893);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2894);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2826);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2827);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2830);
+INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2841);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2895);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2896);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2897);
@@ -3753,24 +3775,6 @@ INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2904);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2905);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2906);
 INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2907);
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", LoadTexture__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2826);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2827);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2830);
-INCLUDE_DATA("asm/pal/nonmatchings/editloop", @2841);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2820);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2821);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2822);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2823);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2824);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2825);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2833);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2834);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2835);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2836);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2837);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2839);
-INCLUDE_RODATA("asm/pal/nonmatchings/editloop", @2840);
 #pragma name_counter 2199
 #else
 int LoadTexture() {

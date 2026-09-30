@@ -422,11 +422,11 @@ int GetAttachVolumeForMsg(ATTACH_LIST *attach) {
 
 #ifdef PAL
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @762__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @763__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @764__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @765__3);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDunEnterMenu__Fiii);
 #pragma name_counter 852
 #else
 int InitDunEnterMenu(int texture_block, int dungeon, int requested_floor) {
@@ -534,14 +534,14 @@ int DunEnterMenuLoop() {
 
 #ifdef PAL
 static int DunEnterMenuKey(void);
+INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @776);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @868__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @869__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @870__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @871__3);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @872__2);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @777__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @776);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @872__2);
 #pragma name_counter 931
 #else
 static int DunEnterMenuKey(void) {
@@ -1038,8 +1038,8 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
 
 #ifdef PAL
 static void DrawDunEnterBack(int alpha);
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @1280);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @1280);
 #pragma name_counter 1282
 #else
 static void DrawDunEnterBack(int alpha) {
@@ -1505,6 +1505,7 @@ INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1606__2);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1607__2);
 INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1612__2);
+INCLUDE_DATA("asm/pal/nonmatchings/menu_dungeon", @1608__2);
 #pragma name_counter 1614
 #else
 void CharaChangeDraw(void) {
@@ -1755,6 +1756,9 @@ int DngActiveItemTextureCopy(void) {
 }
 
 INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @1841);
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @1941__2);
+#endif
 INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2044);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2045);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/menu_dungeon", @2046);
@@ -2028,7 +2032,6 @@ void DrawItemPolygonView(void) {
 }
 
 #ifdef PAL
-INCLUDE_RODATA("asm/pal/nonmatchings/menu_dungeon", @1941__2);
 INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDebugItemGet__Fv);
 #pragma name_counter 1835
 #endif

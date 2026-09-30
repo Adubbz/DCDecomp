@@ -87,9 +87,9 @@ BT_OBJ_HANDLE *GetObjHDL(int index) {
 
 #ifdef PAL
 void BtSystemScriptLoad(int floor);
+INCLUDE_ASM("asm/pal/nonmatchings/btsysscript", BtSystemScriptLoad__Fi);
 INCLUDE_RODATA("asm/pal/nonmatchings/btsysscript", @586);
 INCLUDE_RODATA("asm/pal/nonmatchings/btsysscript", @587);
-INCLUDE_ASM("asm/pal/nonmatchings/btsysscript", BtSystemScriptLoad__Fi);
 #pragma name_counter 83
 #else
 void BtSystemScriptLoad(int floor) {

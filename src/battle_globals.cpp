@@ -64,6 +64,13 @@ CTexture *KataTex;
 
 /** The alphabet and symbol keyboards' characters. */
 CTexture *AlphaTex;
+#ifdef PAL
+CTexture *EuroTex;
+#endif
+
+#ifdef PAL
+s8 InputModeOrikaeshi[4] = {10, 10, 13, 10};
+#endif
 
 /** How far the cursor moves across and down each keyboard, per key. */
 #ifdef PAL
@@ -72,8 +79,10 @@ s8 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1A}, {0x26, 0x
 s16 InputModeMovetbl[4][2] = {{0x26, 0x1A}, {0x26, 0x1A}, {0x22, 0x1E}, {0x26, 0x1A}};
 #endif
 
+#ifndef PAL
 /** How many keys each keyboard has in a row. */
 s16 InputModeOrikaeshi[4] = {10, 10, 13, 10};
+#endif
 
 #include "gameutil.hpp"
 #include "snd.hpp"
@@ -100,8 +109,8 @@ void GlobalNameInit(void) {
  */
 #ifdef PAL
 void InitNameRegist(int character, int texture_block, u_long128 *buffer);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @347__3);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", InitNameRegist__FiiP1);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @347__3);
 #pragma name_counter 82
 #else
 void InitNameRegist(int character, int texture_block, u_long128 *buffer) {
@@ -252,8 +261,8 @@ void DrawNameRegiWaku(int x, int y, int size, int brightness, int blend_mode) {
  */
 #ifdef PAL
 void DrawCharaNameUp(int x, int y, int brightness, int blend_mode);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @483__3);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawCharaNameUp__Fiiii);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @483__3);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @419__2);
 #pragma name_counter 202
 #else
@@ -350,8 +359,8 @@ void DrawCharaNameUp(int x, int y, int brightness, int blend_mode) {
 #endif
 
 #ifdef PAL
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @512__4);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawEuroSpecialFont__Fiiiii);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @512__4);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_kigoutbl);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", menu_euro_codetbl);
 #pragma name_counter 202
@@ -369,6 +378,9 @@ INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @782__3);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @783__5);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @784__3);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @785);
+#ifdef PAL
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @803);
+#endif
 INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @786);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @787__2);
 INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @788__2);
@@ -382,9 +394,11 @@ INCLUDE_RODATA("asm/ntsc/nonmatchings/battle_globals", @789__4);
  * @size 0x930
  */
 #ifdef PAL
+s8 euro_code_linelimmit[5] = {2, 2, 1, 2, 1};
 static void DrawNameTemplete(int x, int y, int color, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", DrawNameTemplete__Fiiii);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @516__3);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @515__4);
 #pragma name_counter 335
 #else
 static void DrawNameTemplete(int x, int y, int color, int alpha) {
@@ -643,7 +657,6 @@ int CheckName() {
  */
 #ifdef PAL
 void NameEnterDraw(void);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @803);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", NameEnterDraw__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @671__2);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @672__2);
@@ -899,10 +912,11 @@ void NameEnterDraw(void) {
  */
 #ifdef PAL
 s32 NameEnterKey(void);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1328);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1329);
 INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", NameEnterKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @1012);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1328);
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1329);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @938__2);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", up_or_down$956);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", init$957);
 #pragma name_counter 1052
@@ -1923,11 +1937,12 @@ void InitOpeningBook(u_long128 *buffer, int *blocks) {
  */
 #ifdef PAL
 int OpeningBookKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1492);
 INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1539);
 INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1540);
-INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", OpeningBookKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @1493__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/battle_globals", @1492);
+INCLUDE_ASM("asm/pal/nonmatchings/battle_globals", OpeningBookKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battle_globals", @1496__2);
 #pragma name_counter 1217
 #else
 int OpeningBookKey() {

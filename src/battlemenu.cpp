@@ -152,6 +152,9 @@ s32 BtlMenuReadEndFlag;
 s32 ItemMenuWeaponIconReadBlock;
 s32 ItemMenuAlreadyReadWepIconTexFlag;
 s32 MenuShadowReadBlock;
+#ifdef PAL
+s32 BtlMenuExtBlock;
+#endif
 s32 BtlMenuExReadBlock;
 s32 BtlMenuExReadFlag;
 s32 MenuExtendReadBlock;
@@ -169,6 +172,9 @@ CTexture *WepStatus;
 CTexture *BtlAlpha;
 CTexture *BtlHira;
 CTexture *BtlKata;
+#ifdef PAL
+CTexture *BtlEuro;
+#endif
 float HelpWinHead[2];
 u8 BtlWakuMake2;
 s32 BtlHelpWinAlpha;
@@ -458,6 +464,7 @@ int GetLimmitMsg(void) {
 #ifdef PAL
 void DrawBattleMain();
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawBattleMain__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @702__3);
 #pragma name_counter 188
 #else
 void DrawBattleMain() {
@@ -749,15 +756,16 @@ static void BtlMenuTexBlockEnter() {
 
 #ifdef PAL
 void BattleMenuTexEnter();
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @942);
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @943);
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @944__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @945__2);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuTexEnter__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @937__4);
-INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @938);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @934);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @935__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @936__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @942);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @943);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @937__4);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @938);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @944__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @945__2);
 #pragma name_counter 358
 #else
 void BattleMenuTexEnter() {
@@ -841,11 +849,11 @@ void ExitBattleMenu(int) {
 
 #ifdef PAL
 void BattleMenuInit(int *texture_blocks, int mode);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuInit__FPii);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1016);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1017);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1018);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1020__2);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuInit__FPii);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @972__2);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @973);
 #pragma name_counter 410
@@ -1473,14 +1481,16 @@ static void InitMenuChara(u_long128 *buffer) {
 
 #ifdef PAL
 int BattleMenuCharaKey();
+INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1369__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1523__4);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1524__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1525__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1526__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1527__2);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuCharaKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @1370__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1369__2);
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", BattleMenuCharaKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @1371__2);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @1385__3);
 #pragma name_counter 844
 #else
 int BattleMenuCharaKey() {
@@ -1689,9 +1699,9 @@ int BattleMenuCharaKey() {
 
 #ifdef PAL
 void DrawCharaSelect();
+INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawCharaSelect__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1678);
 INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @1681);
-INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawCharaSelect__Fv);
 #pragma name_counter 985
 #else
 void DrawCharaSelect() {
@@ -4180,6 +4190,7 @@ static void WeaponMenuActWepKey() {
 #ifdef PAL
 void WeaponMenuTagKey();
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", WeaponMenuTagKey__Fv);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @3698);
 #pragma name_counter 2478
 #else
 void WeaponMenuTagKey() {
@@ -4456,6 +4467,9 @@ static void WeaponMenuAttachKey() {
 void RepairAndLevelUpDraw(int x, int y, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", RepairAndLevelUpDraw__Fiii);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @3951);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @3952);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @3953);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @3963);
 #pragma name_counter 2573
 #else
 void RepairAndLevelUpDraw(int x, int y, int alpha) {
@@ -4550,6 +4564,7 @@ INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", WeaponMenuDraw__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4118);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4123);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4182);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4094);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", ct$4057);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", init$4058);
 #pragma name_counter 2789
@@ -5334,6 +5349,8 @@ INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ItemMenuMainKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4694);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5029);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5101);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4593);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @4758);
 #pragma name_counter 3666
 #else
 int ItemMenuMainKey() {
@@ -6351,6 +6368,7 @@ INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5391);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5393);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5396);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5421);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5392);
 #pragma name_counter 3771
 #else
 void ItemMenuModeDraw() {
@@ -6738,6 +6756,9 @@ static void MenuCharaPolyDraw() {
 void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", ItemMenuCharaStatusDraw__Fiiii);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5586);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5608);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5644);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @5645);
 #pragma name_counter 4010
 #else
 void ItemMenuCharaStatusDraw(int x, int y, int chara, int alpha) {
@@ -7156,7 +7177,11 @@ void InitMenuMove(int mode, int texture_block, u_long128 *buffer) {
             break;
         case 5:
             BtlMenuStatusPt = BtlMenuSaveDataPt->GetDngStatus();
+#ifdef PAL
+            StayTex = TexManager.GetTexture("stayframe", -1);
+#else
             StayTex = TexManager.GetTexture("stayfram", -1);
+#endif
             GamePad.MenuModeOn(0x78);
             GamePad.SetAutoRepeat(0xF000, 30, 5);
         case 1:
@@ -7247,6 +7272,7 @@ INCLUDE_RODATA("asm/pal/nonmatchings/battlemenu", @6131);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", MenuMoveKey__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @6074);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @6093);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @6033);
 #pragma name_counter 4317
 #else
 int MenuMoveKey() {
@@ -7793,6 +7819,7 @@ void DrawEscapeItem(int x, int y, int alpha);
 INCLUDE_ASM("asm/pal/nonmatchings/battlemenu", DrawEscapeItem__Fiii);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @6250);
 INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @6254);
+INCLUDE_DATA("asm/pal/nonmatchings/battlemenu", @6253);
 #pragma name_counter 4454
 #else
 void DrawEscapeItem(int x, int y, int alpha) {

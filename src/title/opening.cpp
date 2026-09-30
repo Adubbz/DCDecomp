@@ -264,6 +264,31 @@ static void LoadMessage() {
     Mes1.grow_x = 310;
     Mes1.grow_y = 210;
 
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            LoadFile("opdat/optext_0.mes", MesBuffer, 0);
+            break;
+        case 1:
+            LoadFile("opdat/optext_1.mes", MesBuffer, 0);
+            break;
+        case 2:
+            LoadFile("opdat/optext_2.mes", MesBuffer, 0);
+            break;
+        case 3:
+            LoadFile("opdat/optext_3.mes", MesBuffer, 0);
+            break;
+        case 4:
+            LoadFile("opdat/optext_4.mes", MesBuffer, 0);
+            break;
+        case 5:
+            LoadFile("opdat/optext_5.mes", MesBuffer, 0);
+            break;
+        case 6:
+            LoadFile("opdat/optext_6.mes", MesBuffer, 0);
+            break;
+    }
+#else
     switch (LanguageCode) {
         case 0:
             LoadFile("opdat/fconv.bin", MesBuffer, 0);
@@ -287,6 +312,7 @@ static void LoadMessage() {
             LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
             break;
     }
+#endif
 
     Mes1.buff = (short *) MesBuffer;
     Mes1.text = (char *) MesBuffer;

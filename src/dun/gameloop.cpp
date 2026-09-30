@@ -1086,6 +1086,27 @@ sceVu0FVECTOR velo2 = {0.0f, 0.0f, 0.0f, 0.0f};
 sceVu0FVECTOR blowVelo = {0.0f, 0.0f, 0.0f, 0.0f};
 
 /* Every texture the dungeon loads on its way in, and the block each goes to. */
+#ifdef PAL
+LOADTEXTURE_INFO2 texdata__2[17] = {
+    {"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 1, 0},
+    {"dun/etc/cursor.img", 1, 0},
+    {"gatekey00.img", 1, 0},
+    {"#water#640#" HALF_FRAME_HEIGHT_TEXT "#4", 13, 0},
+    {"dun/etc/atrtx.img", 22, 0},
+    {"wepready.img", 2, 0},
+    {"#shadow_buf#640#" HALF_FRAME_HEIGHT_TEXT "#3", 15, 0},
+    {"dun/effect/basefx00.img", 18, 0},
+    {"basefx01.img", 18, 0},
+    {"dun/d01/effect/fx_foot.img", 18, 0},
+    {"dun/effect/bombfx00.img", 19, 0},
+    {"pause.img", 7, 0},
+    {"#dbgwork#640#" FRAME_HEIGHT_TEXT "#3", 12, 0},
+    {"check/ankfont.img", 12, 0},
+    {"element.img", 18, 0},
+    {"igetfx.img", 22, 0},
+    {0, 0, 0},
+};
+#else
 LOADTEXTURE_INFO2 texdata__2[23] = {
     {"#frame_image#640#" FRAME_HEIGHT_TEXT "#4", 1, 0},
     {"dun/etc/cursor.img", 1, 0},
@@ -1111,6 +1132,7 @@ LOADTEXTURE_INFO2 texdata__2[23] = {
     {"igetfx.img", 22, 0},
     {0, 0, 0},
 };
+#endif
 
 /* The textures the loading screen itself draws with. */
 LOADTEXTURE_INFO texdata2[3] = {
@@ -1437,23 +1459,23 @@ INCLUDE_ASM("asm/ntsc/nonmatchings/dun/gameloop", _dun_text_start);
 
 #ifdef PAL
 void LoadBaseTexture(void);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @662__4);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @663__4);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @664__6);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @665__5);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @666__5);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @667__5);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @668__5);
 INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", LoadBaseTexture__Fv);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @634__6);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @653__6);
-INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @654__6);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @647__5);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @648__5);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @649__5);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @650__7);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @651__5);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @652__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @662__4);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @634__6);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @653__6);
+INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @654__6);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @663__4);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @664__6);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @665__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @666__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @667__5);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @668__5);
 #pragma name_counter 994
 #else
 void LoadBaseTexture(void) {
@@ -2339,10 +2361,10 @@ void Draw_MainUnit(void) {
 
 #ifdef PAL
 void MainDraw(void);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MainDraw__Fv__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1602__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1611__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @1612__3);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MainDraw__Fv__3);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", itemposr$1160);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$1161);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", itemposr$1167);
@@ -5690,10 +5712,10 @@ void MoveChara(void) {
 
 #ifdef PAL
 void motionDrive(void);
+INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", motionDrive__Fv);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4638);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4639);
 INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4641);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", motionDrive__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", y$4252);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", init$4253);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", warning_cnt$4305);
@@ -6426,8 +6448,8 @@ void EquipReAttach(CCharacter *equipment, int held_out) {
 
 #ifdef PAL
 void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4805);
 INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", EquipWeaponFrame__FP10CCharacterii);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @4805);
 #pragma name_counter 3365
 #else
 void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
@@ -7536,8 +7558,8 @@ void BattleActionOn_Jinn(void) {
 
 #ifdef PAL
 void BattleActionPlay_Jinn(CCharacter *chara, int aimed);
-INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @5543);
 INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BattleActionPlay_Jinn__FP10CCharacteri);
+INCLUDE_RODATA("asm/pal/nonmatchings/dun/gameloop", @5543);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @5495);
 INCLUDE_DATA("asm/pal/nonmatchings/dun/gameloop", @5505);
 #pragma name_counter 3840

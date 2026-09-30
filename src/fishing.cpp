@@ -109,8 +109,8 @@ void FishingLoad(CDataAlloc2<1> *alloc, int slot) {
 
 #ifdef PAL
 void FishingLoadFish(int spot, CDataAlloc2<1> *alloc, int slot);
-INCLUDE_RODATA("asm/pal/nonmatchings/fishing", @436);
 INCLUDE_ASM("asm/pal/nonmatchings/fishing", FishingLoadFish__FiP14CDataAlloc2_1_i);
+INCLUDE_RODATA("asm/pal/nonmatchings/fishing", @436);
 INCLUDE_DATA("asm/pal/nonmatchings/fishing", fish_type$369);
 #pragma name_counter 134
 #else

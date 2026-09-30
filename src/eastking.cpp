@@ -124,11 +124,12 @@ static inline void ResetEastKingMessage() {
 
 #ifdef PAL
 void EastKingTextureEnter();
-INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @373__3);
 INCLUDE_ASM("asm/pal/nonmatchings/eastking", EastKingTextureEnter__Fv);
 INCLUDE_DATA("asm/pal/nonmatchings/eastking", @357__2);
-INCLUDE_DATA("asm/pal/nonmatchings/eastking", @358__3);
 INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @356__2);
+INCLUDE_DATA("asm/pal/nonmatchings/eastking", @358__3);
+INCLUDE_DATA("asm/pal/nonmatchings/eastking", @359__2);
+INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @373__3);
 #pragma name_counter 82
 #else
 void EastKingTextureEnter() {
@@ -225,8 +226,8 @@ void GetPrevEastKingSndVol() {
 
 #ifdef PAL
 void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer);
-INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @400__3);
 INCLUDE_ASM("asm/pal/nonmatchings/eastking", InitEastKingEvent__FiPiP1);
+INCLUDE_RODATA("asm/pal/nonmatchings/eastking", @400__3);
 #pragma name_counter 109
 #else
 void InitEastKingEvent(int event_no, int *texture_block, u_long128 *load_buffer) {

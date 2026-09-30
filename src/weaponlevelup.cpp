@@ -502,12 +502,12 @@ void CWeaponLevelUp::InitSnd() {
 }
 
 #ifdef PAL
+INCLUDE_ASM("asm/pal/nonmatchings/weaponlevelup", SetSnd__14CWeaponLevelUpFiii);
 INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1041__2);
 INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1042);
 INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1043);
 INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1044);
 INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1045);
-INCLUDE_ASM("asm/pal/nonmatchings/weaponlevelup", SetSnd__14CWeaponLevelUpFiii);
 #pragma name_counter 349
 #else
 void CWeaponLevelUp::SetSnd(int from, int to, int step) {
