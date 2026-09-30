@@ -171,7 +171,7 @@ SECTIONS
         . = ALIGN(128);
         gameloop.cpp.o     (.dbss)      // 0x01ddbf00
         *(.dbss)
-        . = ALIGN(16);
+        . = ALIGN(128);
         _dun_end = .;
     } > dun
 
@@ -684,7 +684,7 @@ SECTIONS
 		# The table of external characters that follows the Georama editor's
 		# parts data. Retail reaches it by its own name, not as an offset into
 		# EditPartsData, so the code carries a relocation against this address.
-		EditGaijiTbl = 0x0025f2dc;
+		EditGaijiTbl = 0x0025f02c;
 
 		# The overlays' entry points, which main calls by address: main is
 		# linked apart from the overlay that defines each. Retail's name for
@@ -745,7 +745,6 @@ SECTIONS
 		. = ALIGN(4);
 		fishing.cpp.o (.sdata)         // 0x002a9658
 		collisiondata.cpp.o (.sdata)   // 0x002a9660 @1544, @1547
-		dngmessageman.cpp.o (.sdata)   // 0x002a9670 LanguageStr
 		dungeonmap.cpp.o (.dungeonmap-c1292) // 0x002a9670 @1292
 		itemdata.cpp.o (.sdata)        // 0x002a967c
 		btitem.cpp.o (.sdata)          // 0x002a9698
@@ -812,6 +811,7 @@ SECTIONS
 		editarea.cpp.o (.sbss)         // 0x002a9e38
 		. = ALIGN(4);
 		edit.cpp.o (.sbss)             // 0x002a9e40
+		. = ALIGN(16);
 		editmapscript.cpp.o (.sbss)    // 0x002a9f40
 		editloop.cpp.o (.sbss)         // 0x002a9f9c
 		editloop3.cpp.o (.sbss)        // 0x002aa16c
