@@ -1,0 +1,860 @@
+{
+ "version": 1,
+ "translation_units": {
+  "gameloop.cpp": {
+   "BattleActionDrink__Fv": [
+    {
+     "ordinal": 5,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 6,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 8,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 9,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionPlay_Jinn__FP10CCharacteri": [
+    {
+     "ordinal": 12,
+     "kind": "0x32",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 16,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 17,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 26,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionPlay_Ozumond_F__Fi": [
+    {
+     "ordinal": 13,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 16,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 41,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionPlay_Ozumond_H__Fi": [
+    {
+     "ordinal": 15,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 18,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 53,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 60,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionPlay_Ozumond__Fi": [
+    {
+     "ordinal": 34,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 45,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 53,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionPlay_Ruby__FP10CCharacteri": [
+    {
+     "ordinal": 6,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 10,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 13,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 73,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 76,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 77,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionShotRuby__FP10CCharacterifi": [
+    {
+     "ordinal": 63,
+     "kind": "0x36",
+     "evaluate_first": 1
+    }
+   ],
+   "BattleActionThlow__Fv": [
+    {
+     "ordinal": 4,
+     "kind": "0x32",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 13,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 17,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 19,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 22,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 45,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 47,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 75,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 82,
+     "kind": "0x38",
+     "evaluate_first": 1
+    }
+   ],
+   "BtCheckDamageProc__Fv": [
+    {
+     "ordinal": 86,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 87,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 89,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 97,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 105,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 128,
+     "kind": "0x32",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 142,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 144,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 161,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 164,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "CameraAutoMove__FP13CCameraFollowP6CCPolyPfff": [
+    {
+     "ordinal": 5,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 12,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 26,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "Draw_MainUnitShadow__Fv": [
+    {
+     "ordinal": 14,
+     "kind": "0x04",
+     "evaluate_first": 1
+    }
+   ],
+   "Draw_MainUnit__Fv": [
+    {
+     "ordinal": 23,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "EquipReAttach__FP10CCharacteri": [
+    {
+     "ordinal": 13,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "EquipWeaponFrame__FP10CCharacterii": [
+    {
+     "ordinal": 16,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "GameInit__Fv": [
+    {
+     "ordinal": 70,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "LoadData__Fv": [
+    {
+     "ordinal": 100,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 128,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "LoaderInit__Fv": [
+    {
+     "ordinal": 3,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 4,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 5,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "LoaderLoop__Fv": [
+    {
+     "ordinal": 32,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 35,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "MainDraw__Fv": [
+    {
+     "ordinal": 2,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 3,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 38,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 42,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 67,
+     "kind": "0x32",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 71,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 79,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 83,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 124,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 171,
+     "kind": "0x32",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 216,
+     "kind": "0x32",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 219,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 220,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 224,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 231,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 233,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 249,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 251,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 265,
+     "kind": "0x38",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 519,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 520,
+     "kind": "0x32",
+     "evaluate_first": 1
+    }
+   ],
+   "MoveChara__Fv": [
+    {
+     "ordinal": 2,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 3,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 38,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 42,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 67,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 71,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 79,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 83,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 92,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 124,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 128,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 171,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 204,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 207,
+     "kind": "0x10",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 210,
+     "kind": "0x10",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 211,
+     "kind": "0x10",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 214,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 216,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 219,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 220,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 231,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 235,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 238,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 249,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 251,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 265,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 343,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 448,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 450,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 451,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 514,
+     "kind": "0x04",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 517,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 570,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 571,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 575,
+     "kind": "0x09",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 576,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 577,
+     "kind": "0x09",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 640,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 666,
+     "kind": "0x05",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 697,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 748,
+     "kind": "0x0f",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 805,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 957,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1003,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1004,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1121,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1122,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1171,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1186,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1193,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1204,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1210,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1234,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1236,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1244,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1283,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1338,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1339,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1340,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1341,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 1342,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "SwordDmgCheck1__Ffi": [
+    {
+     "ordinal": 27,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "__sinit_gameloop.cpp": [
+    {
+     "ordinal": 16,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 17,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 19,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "autoCamTrial__Fv": [
+    {
+     "ordinal": 18,
+     "kind": "0x0b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 30,
+     "kind": "0x0b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 34,
+     "kind": "0x09",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 35,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 105,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 111,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 120,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 132,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 158,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 180,
+     "kind": "0x0b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 187,
+     "kind": "0x0b",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 194,
+     "kind": "0x0b",
+     "evaluate_first": 1
+    }
+   ],
+   "motionDrive__Fv": [
+    {
+     "ordinal": 29,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 32,
+     "kind": "0x33",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 39,
+     "kind": "0x36",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 115,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ]
+  }
+ }
+}

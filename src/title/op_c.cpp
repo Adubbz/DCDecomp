@@ -2489,7 +2489,7 @@ void OpC_DrawProcess() {
 #ifdef PAL
             // Objects 1-17 and 68-72 take their images from block 13, so they are drawn once it is loaded.
             for (int i = 0; i < 74; i++) {
-                if ((i > 0 && i <= 17) || (i >= 68 && i <= 72)) {
+                if (i > 0 && (i <= 17 || i >= 68) && i <= 72) {
                     continue;
                 }
 
@@ -2570,7 +2570,7 @@ void OpC_DrawProcess() {
 #ifdef PAL
             // Objects 1-15 and 66-73 take their images from block 13, so they are drawn once it is loaded.
             for (int i = 0; i < 75; i++) {
-                if ((i > 0 && i <= 15) || (i >= 66 && i <= 73)) {
+                if (i > 0 && (i <= 15 || i >= 66) && i <= 73) {
                     continue;
                 }
 

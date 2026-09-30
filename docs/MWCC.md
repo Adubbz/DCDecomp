@@ -70,6 +70,16 @@ among equal constants in that function. All fields are read from MWCC memory at
 The JSON groups entries by translation unit and then function to avoid repeating
 those two components for each constant.
 
+`config/<region>/argument_read_overrides.json` keys the five reads themselves:
+translation unit, the function MWCC holds at `0x00555EC0` (the code generator's
+own name at `0x004356B0` runs one function behind), and the read's one-based
+position within that function, with the node kind as a staleness check. It
+reaches every operand kind, not only `0x33`, and does not shift when another
+function's body changes. A unit listed there is read-keyed: listed reads take
+their byte, every other read takes `0`, and the unit's `argument_flag` pragmas
+must go. `scripts/build/argument_read_overrides.py <source> --write` records a
+unit's current bytes; statefix reports rows whose kind or count no longer fits.
+
 ### 1.3 The invented-name counter
 
 `0x0052B5D0`, handed out and post-incremented by `0x0042E540`; `0x0042E550`

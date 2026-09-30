@@ -10,7 +10,10 @@ Retail compiled every unit of a program in one invocation; this build compiles
 one unit per invocation, so that state is empty where retail's was not.
 
 Expression constants are selected from
-`config/<region>/expression_node_overrides.json`. Other compiler state that cannot yet
+`config/<region>/expression_node_overrides.json`, and every argument read --
+whatever kind of expression it reads -- from
+`config/<region>/argument_read_overrides.json`, keyed by the function being
+compiled and the read's position within it. Other compiler state that cannot yet
 be identified structurally remains stated in source:
 
     #pragma helper_mask_gpr 0x30      set the integer helper-argument mask
@@ -53,6 +56,9 @@ COMPILER = os.path.join(REPO, 'tools', 'compilers', 'mw', '2.3.3', 'mwccmips.exe
 EXPRESSION_NODE_OVERRIDES = os.environ.get(
     'EXPRESSION_NODE_OVERRIDES',
     os.path.join(REPO, region.CONFIG, 'expression_node_overrides.json'))
+ARGUMENT_READ_OVERRIDES = os.environ.get(
+    'ARGUMENT_READ_OVERRIDES',
+    os.path.join(REPO, region.CONFIG, 'argument_read_overrides.json'))
 # The build image has wibo on PATH; a host checkout usually has it under
 # ~/.local/bin. WIBO overrides both.
 WIBO = (os.environ.get('WIBO')
@@ -202,6 +208,50 @@ def load_expression_node_overrides(path=EXPRESSION_NODE_OVERRIDES):
     return overrides
 
 
+def load_argument_read_overrides(path=ARGUMENT_READ_OVERRIDES):
+    """{unit: {function: {ordinal: (kind, byte)}}} from the read-override file.
+
+    A unit listed here is read-keyed: each argument read of each of its
+    functions is numbered from 1 within that function, a listed read takes its
+    byte, and every other read takes 0. The kind is the ExpressionNode kind the
+    read was taken from when the row was recorded; a read whose kind differs
+    means the function's body has changed since, and is reported.
+    """
+    try:
+        with open(path, encoding='utf-8') as f:
+            document = json.load(f)
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as error:
+        raise SystemExit('statefix: cannot read %s: %s' % (path, error))
+    if (document.get('version') != 1 or
+            not isinstance(document.get('translation_units'), dict)):
+        raise SystemExit('statefix: %s has an unsupported format' % path)
+    overrides = {}
+    for unit, functions in document['translation_units'].items():
+        if not isinstance(functions, dict):
+            raise SystemExit('statefix: %s: invalid unit %s' % (path, unit))
+        table = overrides.setdefault(unit, {})
+        for function, reads in functions.items():
+            if not isinstance(reads, list):
+                raise SystemExit('statefix: %s: invalid function %s/%s'
+                                 % (path, unit, function))
+            rows = table.setdefault(function, {})
+            for row in reads:
+                try:
+                    ordinal = int(row['ordinal'])
+                    kind = int(row['kind'], 16)
+                    flag = int(row['evaluate_first'])
+                except (KeyError, TypeError, ValueError) as error:
+                    raise SystemExit('statefix: %s: invalid read in %s/%s: %s'
+                                     % (path, unit, function, error))
+                if ordinal < 1 or flag not in (0, 1) or ordinal in rows:
+                    raise SystemExit('statefix: %s: bad read %d in %s/%s'
+                                     % (path, ordinal, unit, function))
+                rows[ordinal] = (kind, flag)
+    return overrides
+
+
 def source_of(arguments):
     """The unit being compiled.
 
@@ -321,6 +371,29 @@ def install(arguments=()):
     source_hint = source_of(arguments)
     source_hint = os.path.basename(source_hint) if source_hint else None
     override_units = {key[0] for key in expression_overrides}
+    read_overrides = load_argument_read_overrides()
+    read_rows = read_overrides.get(source_hint, {}) if source_hint else {}
+    read_keyed = source_hint in read_overrides
+    read_occurrences = {}
+    read_problems = []
+
+    def compiled_identity():
+        """(unit, function) the compiler is working on, by the source's name.
+
+        mwccgap's second compile uses a temporary filename. The live FSSpec
+        remains authoritative for ordinary compiles; STATEFIX_SOURCE supplies
+        the original identity only for a recognized temporary compilation.
+        """
+        memory_unit = current_translation_unit()
+        memory_function = current_function_name()
+        unit, function = memory_unit, memory_function
+        if (source_hint and memory_unit != source_hint and
+                (memory_unit.startswith('tmp') or
+                 memory_unit.startswith('.tmp'))):
+            unit = source_hint
+            if memory_function.startswith('__sinit_'):
+                function = '__sinit_' + source_hint
+        return memory_unit, memory_function, unit, function
     node_occurrences = {}
     # Argument/order pragmas remain source-controlled. Node-index settings are
     # ephemeral search instrumentation; persistent node choices use exact keys.
@@ -420,21 +493,9 @@ def install(arguments=()):
                 counted['nodes'] += 1
                 try:
                     node = int(gdb.parse_and_eval('$ebp')) & 0xffffffff
-                    memory_unit = current_translation_unit()
-                    memory_function = current_function_name()
-                    function = memory_function
+                    memory_unit, memory_function, unit, function = \
+                        compiled_identity()
                     value_type, bits = constant_identity(node)
-                    # mwccgap's second compile uses a temporary filename. The
-                    # live FSSpec remains authoritative for ordinary compiles;
-                    # STATEFIX_SOURCE supplies the original identity only for
-                    # a recognized temporary compilation.
-                    unit = memory_unit
-                    if (source_hint and memory_unit != source_hint and
-                            (memory_unit.startswith('tmp') or
-                             memory_unit.startswith('.tmp'))):
-                        unit = source_hint
-                        if memory_function.startswith('__sinit_'):
-                            function = '__sinit_' + source_hint
                     base = (unit, function, value_type, bits)
                     ordinal = node_occurrences.get(base, 0) + 1
                     node_occurrences[base] = ordinal
@@ -487,7 +548,7 @@ def install(arguments=()):
 
         Node()
 
-    if asks_for_arguments(arguments):
+    if asks_for_arguments(arguments) or read_keyed or verify:
         class Argument(gdb.Breakpoint):
             def __init__(self, address, register):
                 self.register = register
@@ -496,6 +557,26 @@ def install(arguments=()):
 
             def stop(self):
                 counted['arguments'] += 1
+                row = function = ordinal = kind = None
+                unit_now = None
+                if read_keyed or verify:
+                    try:
+                        _, _, unit_now, function = compiled_identity()
+                        record = int(gdb.parse_and_eval(
+                            '$' + self.register)) & 0xffffffff
+                        kind = bytes(gdb.selected_inferior().read_memory(
+                            record, 1))[0]
+                    except gdb.MemoryError:
+                        function = None
+                    if function is not None:
+                        ordinal = read_occurrences.get(function, 0) + 1
+                        read_occurrences[function] = ordinal
+                        row = read_rows.get(function, {}).get(ordinal)
+                        if row is not None and row[0] != kind:
+                            read_problems.append(
+                                '%s read %d is kind %02x, recorded as %02x'
+                                % (function, ordinal, kind, row[0]))
+                            row = None
                 if counted['arguments'] in said['argument_ones']:
                     # Naming a read explicitly always wins: a whole range can be
                     # freed for node overrides and one read of it still said
@@ -504,8 +585,12 @@ def install(arguments=()):
                     # left for whatever the node itself carries, which is what
                     # An expression-node override is where the two axes meet.
                     want = None
+                elif row is not None:
+                    want = row[1]
                 elif said['argument'] is not None:
                     want = said['argument']
+                elif read_keyed:
+                    want = 0
                 else:
                     want = None
                 try:
@@ -521,6 +606,16 @@ def install(arguments=()):
                             % (counted['arguments'], cur['name'], kind, record,
                                was, '--' if want is None else '%02x' % want,
                                self.location_address))
+                        say('statefix: read %s\n' % json.dumps({
+                            'index': counted['arguments'],
+                            'translation_unit': unit_now,
+                            'function': function,
+                            'ordinal': ordinal,
+                            'kind': '0x%02x' % kind,
+                            'was': was,
+                            'evaluate_first': was if want is None else want,
+                            'override': want,
+                        }, sort_keys=True, separators=(',', ':')))
                     if want is not None:
                         gdb.selected_inferior().write_memory(
                             record + NODE_FIELD, bytes([want]))
@@ -687,6 +782,16 @@ def install(arguments=()):
         RewindReturn()
 
     gdb.execute('continue')
+    if read_keyed:
+        for function, rows in sorted(read_rows.items()):
+            seen = read_occurrences.get(function, 0)
+            beyond = [o for o in rows if o > seen]
+            if seen and beyond:
+                read_problems.append('%s has %d reads, rows go to %d'
+                                     % (function, seen, max(beyond)))
+        for problem in read_problems:
+            sys.stderr.write('statefix: %s: stale argument-read override: %s\n'
+                             % (source_hint, problem))
     if not quiet:
         say('statefix: %d pragmas, %d constant nodes, %d argument reads\n'
             % (counted['pragmas'], counted['nodes'], counted['arguments']))

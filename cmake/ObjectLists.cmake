@@ -120,6 +120,7 @@ function(add_diff_base_object obj src)
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                 ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                 ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/expression_node_overrides.json
+                ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/argument_read_overrides.json
                 ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/object_fixups.json
                 ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -195,6 +196,7 @@ function(add_object obj)
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix.py
                     ${CMAKE_SOURCE_DIR}/${SCRIPTS_DIR}/build/statefix-wibo.sh
                     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/expression_node_overrides.json
+                    ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/argument_read_overrides.json
                     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/object_fixups.json
                     ${CMAKE_SOURCE_DIR}/${CONFIG_DIR}/${image}.symbols.txt
                     ${CMAKE_SOURCE_DIR}/${TOOLS_DIR}/mwccgap/mwccgap/mwccgap.py

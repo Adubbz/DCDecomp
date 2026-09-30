@@ -1720,35 +1720,35 @@ int BattleMenuCharaKey() {
                 BreakReadBG();
                 CharaChangeInitToGL(BtlMenuCharaChangeBuf, MenuChara.chara);
             }
+#ifdef PAL
+            // Debug builds raise the front party member's maximum life and add or remove party members.
+            if (DebugMode) {
+                if (GamePad.On(0xA) != 0) {
+                    for (int i = 0; i < MenuChara.slot_count; i++) {
+                        if (SysChara[i].place == 0) {
+                            int raised = BtlMenuStatusPt->max_hp[i] + 1;
+                            if (raised < 0x80) {
+                                BtlMenuStatusPt->max_hp[i] = raised;
+                            }
+                        }
+                    }
+                }
+                if (GamePad.Down2(0x40) != 0 && BtlMenuStatusPt->party_size < 6) {
+                    BtlMenuStatusPt->party_size++;
+                    BtlMenuStatusPt->GetItem(GetDefaultWeaponNo(BtlMenuStatusPt->party_size - 1) + 1, 0);
+                    int chara = BtlMenuStatusPt->party_size - 1;
+                    BtlMenuStatusPt->equipped_weapon_slot[chara] = 0;
+                    EquipDefaultWeapon(BtlMenuStatusPt->party_size - 1);
+                    NameDefaultSet(BtlMenuStatusPt->party_size - 1);
+                }
+                if (GamePad.Down2(0x20) != 0 && BtlMenuStatusPt->party_size > 1) {
+                    BtlMenuStatusPt->party_size--;
+                }
+            }
+#endif
             break;
         }
     }
-#ifdef PAL
-    // Debug builds raise the front party member's maximum life and add or remove party members.
-    if (DebugMode) {
-        if (GamePad.On(0xA) != 0) {
-            for (int i = 0; i < MenuChara.slot_count; i++) {
-                if (SysChara[i].place == 0) {
-                    int raised = BtlMenuStatusPt->max_hp[i] + 1;
-                    if (raised < 0x80) {
-                        BtlMenuStatusPt->max_hp[i] = raised;
-                    }
-                }
-            }
-        }
-        if (GamePad.Down2(0x40) != 0 && BtlMenuStatusPt->party_size < 6) {
-            BtlMenuStatusPt->party_size++;
-            BtlMenuStatusPt->GetItem(GetDefaultWeaponNo(BtlMenuStatusPt->party_size - 1) + 1, 0);
-            int chara = BtlMenuStatusPt->party_size - 1;
-            BtlMenuStatusPt->equipped_weapon_slot[chara] = 0;
-            EquipDefaultWeapon(BtlMenuStatusPt->party_size - 1);
-            NameDefaultSet(BtlMenuStatusPt->party_size - 1);
-        }
-        if (GamePad.Down2(0x20) != 0 && BtlMenuStatusPt->party_size > 1) {
-            BtlMenuStatusPt->party_size--;
-        }
-    }
-#endif
     return 1;
 }
 
@@ -5665,7 +5665,6 @@ static inline void DebugSetDefense(int chara, int defense) {
 }
 #endif
 
-
 /**
  * Handles item-menu input, item use, equipment changes, and inventory transfers.
  */
@@ -5840,667 +5839,667 @@ int ItemMenuMainKey() {
                     break;
                 }
             }
-            if (MenuExTextureReadFlag < 2 || MenuWepLevelUp.operation_kind != -1) {
-                break;
-            }
-            if (GamePad.Down(0x40) != 0) {
-                int cursor = ItemMenuMode.board.cursor;
-                COM_ITEM_INFO *info = GetCommonItemInfo(BtlHaveItemPt->item_no);
-                switch (ItemMenuMode.mode) {
-                    case 0: {
-                        int held = BtlHaveItemPt->item_no;
-                        if ((held >= 0x51 && held < 0x84) || held >= 0x101) {
-                            ComMenuSePlay(2);
-                        } else if (IconAutoGet.IsMoveIcon() != 0) {
-                            ComMenuSePlay(2);
-                        } else {
-                            s16 *slot_item = &MenuItemPackPt->quick_item_slot[cursor];
-                            s16 *slot_qty = &MenuItemPackPt->quick_item_qty[cursor];
-                            ITEM_DATA *slot_data = NULL;
-                            if (*slot_item >= 0x84) {
-                                slot_data = GetItemData(*slot_item);
-                            }
-                            int held_kind = 0;
-                            ITEM_DATA *held_data = NULL;
-                            if (BtlHaveItemPt->item_no >= 0x84) {
-                                held_data = GetItemData(BtlHaveItemPt->item_no);
-                                held_kind = held_data->stack_kind;
-                            }
-                            int stack = 0;
-                            int ok = 0;
-                            int take = 0;
-                            switch (held_kind) {
-                                case 2:
-                                    break;
-                                case 1:
-                                    if (slot_data == NULL) {
-                                        ok = 1;
-                                    } else {
-                                        switch (slot_data->stack_kind) {
-                                            case 1:
-                                                ok = 1;
-                                                break;
-                                            case 0:
-                                                ok = 1;
-                                                if (*slot_qty >= 2) {
-                                                    ok = 0;
-                                                }
-                                                break;
-                                        }
-                                    }
-                                    break;
-                                case 0:
-                                    if (slot_data == NULL) {
-                                        ok = 1;
-                                    } else {
-                                        ok = 1;
-                                        if (slot_data->stack_kind == 0) {
-                                            if (*slot_item == BtlHaveItemPt->item_no) {
-                                                if (*slot_qty < 9) {
-                                                    stack = 1;
-                                                } else {
-                                                    ok = 0;
-                                                }
-                                            } else if (held_data == NULL) {
-                                                take = 1;
-                                            } else if (*slot_qty >= 2) {
-                                                ok = 0;
-                                            }
-                                        }
-                                    }
-                                    break;
-                            }
-                            if (ok == 0) {
+            if (MenuExTextureReadFlag >= 2 && MenuWepLevelUp.operation_kind == -1) {
+                if (GamePad.Down(0x40) != 0) {
+                    int cursor = ItemMenuMode.board.cursor;
+                    COM_ITEM_INFO *info = GetCommonItemInfo(BtlHaveItemPt->item_no);
+                    switch (ItemMenuMode.mode) {
+                        case 0: {
+                            int held = BtlHaveItemPt->item_no;
+                            if ((held >= 0x51 && held < 0x84) || held >= 0x101) {
+                                ComMenuSePlay(2);
+                            } else if (IconAutoGet.IsMoveIcon() != 0) {
                                 ComMenuSePlay(2);
                             } else {
-                                if (stack != 0) {
-                                    if (*slot_qty == 0) {
-                                        *slot_qty = 1;
-                                    } else {
-                                        (*slot_qty)++;
-                                    }
-                                    InitHaveData(BtlHaveItemPt);
-                                } else if (take != 0) {
-                                    BtlHaveItemPt->item_no = *slot_item;
-                                    BtlHaveItemPt->slot_state = 0;
-                                    BtlHaveItemPt->from_slot = cursor;
-                                    (*slot_qty)--;
-                                    if (*slot_qty <= 0) {
-                                        *slot_item = -1;
-                                        *slot_qty = 0;
-                                    }
-                                } else if (ok != 0) {
-                                    MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
-                                    CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-                                    int vol = status->active_item_vol[cursor];
-                                    status->active_item_vol[cursor] = BtlHaveItemPt->volume;
-                                    BtlHaveItemPt->volume = vol;
-                                    if (*slot_item >= 0x84) {
-                                        *slot_qty = 1;
-                                    } else {
-                                        *slot_qty = 0;
-                                    }
-                                    if (BtlHaveItemPt->item_no >= 0x84) {
+                                s16 *slot_item = &MenuItemPackPt->quick_item_slot[cursor];
+                                s16 *slot_qty = &MenuItemPackPt->quick_item_qty[cursor];
+                                ITEM_DATA *slot_data = NULL;
+                                if (*slot_item >= 0x84) {
+                                    slot_data = GetItemData(*slot_item);
+                                }
+                                int held_kind = 0;
+                                ITEM_DATA *held_data = NULL;
+                                if (BtlHaveItemPt->item_no >= 0x84) {
+                                    held_data = GetItemData(BtlHaveItemPt->item_no);
+                                    held_kind = held_data->stack_kind;
+                                }
+                                int stack = 0;
+                                int ok = 0;
+                                int take = 0;
+                                switch (held_kind) {
+                                    case 2:
+                                        break;
+                                    case 1:
+                                        if (slot_data == NULL) {
+                                            ok = 1;
+                                        } else {
+                                            switch (slot_data->stack_kind) {
+                                                case 1:
+                                                    ok = 1;
+                                                    break;
+                                                case 0:
+                                                    ok = 1;
+                                                    if (*slot_qty >= 2) {
+                                                        ok = 0;
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case 0:
+                                        if (slot_data == NULL) {
+                                            ok = 1;
+                                        } else {
+                                            ok = 1;
+                                            if (slot_data->stack_kind == 0) {
+                                                if (*slot_item == BtlHaveItemPt->item_no) {
+                                                    if (*slot_qty < 9) {
+                                                        stack = 1;
+                                                    } else {
+                                                        ok = 0;
+                                                    }
+                                                } else if (held_data == NULL) {
+                                                    take = 1;
+                                                } else if (*slot_qty >= 2) {
+                                                    ok = 0;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                }
+                                if (ok == 0) {
+                                    ComMenuSePlay(2);
+                                } else {
+                                    if (stack != 0) {
+                                        if (*slot_qty == 0) {
+                                            *slot_qty = 1;
+                                        } else {
+                                            (*slot_qty)++;
+                                        }
+                                        InitHaveData(BtlHaveItemPt);
+                                    } else if (take != 0) {
+                                        BtlHaveItemPt->item_no = *slot_item;
                                         BtlHaveItemPt->slot_state = 0;
                                         BtlHaveItemPt->from_slot = cursor;
-                                    }
-                                }
-                                ComMenuSePlay(1);
-                            }
-                        }
-                        break;
-                    }
-                    case 1:
-                        if (info == NULL) {
-                            ComMenuSePlay(2);
-                        } else if (info->kind != 1) {
-                            ComMenuSePlay(2);
-                        } else {
-                            int chara = ItemMenuMode.chara;
-                            int result = ItemUseFunc(BtlMenuStatusPt, BtlHaveItemPt->item_no, chara, 1, NULL);
-                            int sounds[4] = {2, 1, 0x18, -1};
-                            int sound;
-                            if (result < 4) {
-                                sound = sounds[result];
-                            } else {
-                                sound = 2;
-                            }
-                            if (sound == 2) {
-                                ComMenuSePlay(2);
-                            } else {
-                                ITEM_DATA *data = GetItemData(BtlHaveItemPt->item_no);
-                                int effect = -1;
-                                if (sound > 0) {
-                                    u32 use = data->use_flags;
-                                    if ((use & 0x80) && (data->kind_flags & 4)) {
-                                        effect = 5;
-                                        effect_x = -5.0f;
-                                        effect_y = -3.0f;
-                                    }
-                                    if ((use & 0x40) && (data->kind_flags & 4)) {
-                                        effect = 4;
-                                        effect_x = -5.5f;
-                                        effect_y = -6.0f;
-                                        ComMenuSePlay(0x13);
-                                    }
-                                    if ((data->use_flags & 0x20) && (data->kind_flags & 0x20)) {
-                                        effect = 8;
-                                        effect_x = -5.5f;
-                                        effect_y = -6.0f;
-                                        int volume = GetMenuItemUseVolume();
-                                        MenuWepLevelUp.message_no = ItemMenuMode.chara;
-                                        MenuWepLevelUp.message_value = volume;
-                                    }
-                                    if ((data->kind_flags & 1) && ((data->use_flags & 0x4000) || (data->use_flags & 0x8000) ||
-                                                                   (data->use_flags & 0x10000) || (data->use_flags & 0x20000) ||
-                                                                   (data->use_flags & 0x3C000))) {
-                                        int message;
-                                        switch (BtlHaveItemPt->item_no) {
-                                            case 0x97:
-                                                message = 0x1A2;
-                                                break;
-                                            case 0x98:
-                                                message = 0x1A3;
-                                                break;
-                                            case 0x99:
-                                                message = 0x1A4;
-                                                break;
-                                            case 0x9A:
-                                                message = 0x1A5;
-                                                break;
-                                            default:
-                                                message = -1;
-                                                break;
+                                        (*slot_qty)--;
+                                        if (*slot_qty <= 0) {
+                                            *slot_item = -1;
+                                            *slot_qty = 0;
                                         }
-                                        MenuWepLevelUp.message_no = message;
-                                        MenuWepLevelUp.message_value = 0;
-                                        effect = 9;
-                                        effect_x = -6.0f;
-                                        effect_y = -2.0f;
-                                        ComMenuSePlay(0x13);
-                                    }
-                                    if ((data->kind_flags & 1) && (data->use_flags & 0x1000)) {
-                                        effect = 9;
-                                        if (BtlMenuMode == 0) {
-                                            ComMenuSePlay(0x6F);
-                                        }
-                                        effect_x = -6.0f;
-                                        effect_y = -2.0f;
-                                    }
-                                    if (BtlHaveItemPt->item_no == 0xB3) {
-                                        effect = 13;
-                                        effect_x = 19.03f;
-                                        effect_y = 9.1f;
-                                        int volume = GetMenuItemUseVolume();
-                                        MenuWepLevelUp.message_no = ItemMenuMode.chara;
-                                        MenuWepLevelUp.message_value = volume;
-                                    }
-                                    if (BtlHaveItemPt->item_no == 0xB4) {
-                                        effect = 12;
-                                        effect_x = -5.5f;
-                                        effect_y = -6.0f;
-                                        int volume = GetMenuItemUseVolume();
-                                        MenuWepLevelUp.message_no = ItemMenuMode.chara;
-                                        MenuWepLevelUp.message_value = volume;
-                                    }
-                                    if (BtlHaveItemPt->item_no == 0xB6) {
-                                        effect = 11;
-                                        effect_x = -5.5f;
-                                        effect_y = -6.0f;
-                                        int volume = GetMenuItemUseVolume();
-                                        MenuWepLevelUp.message_no = ItemMenuMode.chara;
-                                        MenuWepLevelUp.message_value = volume;
-                                    }
-                                    if (BtlHaveItemPt->item_no == 0xB0) {
-                                        effect = 10;
-                                        effect_x = -5.5f;
-                                        effect_y = -2.0f;
-                                        int volume = GetMenuItemUseVolume();
-                                        MenuWepLevelUp.message_no = ItemMenuMode.chara;
-                                        MenuWepLevelUp.message_value = volume;
-                                    }
-                                    if (effect > 0) {
-                                        ItemMenuMode.state = 4;
-                                        CWeaponLevelUp *buffer = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
-                                        MenuWepLevelUp.CureEffect((int) effect_x, (int) effect_y, buffer, BtlMenuExReadBlock, effect);
-                                    }
-                                    InitHaveData(BtlHaveItemPt);
-                                }
-                            }
-                        }
-                        break;
-                    case 2: {
-                        int chara = ItemMenuMode.chara;
-                        int slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
-                        WEAPON_HAVE *row = BtlMenuStatusPt->chara_weapons[chara];
-                        ItemMenuMode.target_weapon = &row[slot];
-                        int is_default = 0;
-                        WEAPON_HAVE *weapon = ItemMenuMode.target_weapon;
-                        int before = weapon->item_no;
-                        if (before == GetDefaultWeaponNo(ItemMenuMode.chara)) {
-                            is_default = 1;
-                        }
-                        int held = BtlHaveItemPt->item_no;
-                        if (held == 0xB2 && is_default == 0) {
-                            WEAPON_HAVE *target = ItemMenuMode.target_weapon;
-                            if (target->experience >= GetWeaponMaxExp(weapon)) {
-                                ComMenuSePlay(2);
-                            } else if (target->level >= 99) {
-                                ComMenuSePlay(2);
-                            } else if (target->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
-                                ComMenuSePlay(2);
-                            } else {
-                                ItemMenuMode.state = 6;
-                                ItemMenuMode.use_target = 2;
-                                ItemMenuMode.confirm = 1;
-                                ComMenuSePlay(1);
-                            }
-                        } else if (held != 0xB2 && held != 0xB1) {
-                            ComMenuSePlay(2);
-                        } else {
-                            int result = ItemUseFunc(BtlMenuStatusPt, held, ItemMenuMode.chara, 4, weapon);
-                            int after = ItemMenuMode.target_weapon->item_no;
-                            if ((u32) (result - 1) < 2) {
-                                s16 sounds[2] = {1, 0x18};
-                                ComMenuSePlay(sounds[result - 1]);
-                                MenuWepLevelUp.CureEffect(-0x10, 1, (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16),
-                                                          BtlMenuExReadBlock, 6);
-                                if (BtlMenuMode == 0) {
-                                    if (before != after) {
-                                        int who = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
-                                        if (ItemMenuMode.chara == who) {
-                                            EquipWeaponFrame(&DefaultWeapon, ItemMenuMode.chara, CharaMainHandViewFlag);
-                                            if (((CUserStatus *) BtlMenuStatusPt)->cur_chara == 5) {
-                                                NowMainEffect = &CharaMainEffectCrash;
-                                                BtActStatus.gun_type = 0;
-                                            }
-                                        }
-                                    }
-                                    MenuWeaponSpSet(&MainWeapon, ItemMenuMode.target_weapon);
-                                }
-                                SetNowEquipWeaponDataForMsg(ItemMenuMode.target_weapon->item_no, ItemMenuMode.target_weapon->level);
-                                InitHaveData(BtlHaveItemPt);
-                            } else {
-                                ComMenuSePlay(2);
-                            }
-                        }
-                        break;
-                    }
-                    case 3:
-                        ComMenuSePlay(2);
-                        break;
-                    case 4: {
-                        s16 held = BtlHaveItemPt->item_no;
-                        PERSONAL_BOARD *board = &ItemMenuMode.board;
-                        if (board->cursor_area == 2) {
-                            if (held < 0x51) {
-                                ComMenuSePlay(2);
-                            } else if (IsEnableTrushThrow(held) != 0) {
-                                board->trash_anim = 1;
-                                board->trash_frame = 0;
-                                InitHaveData(BtlHaveItemPt);
-                                ComMenuSePlay(1);
-                            } else {
-                                ComMenuSePlay(2);
-                            }
-                        } else {
-                            int before = -1;
-                            int item = held;
-                            if (ItemMenuMode.board.page == 1) {
-                                int chara = ItemMenuMode.board.cursor / 10;
-                                int slot = ItemMenuMode.board.cursor % 10;
-                                CDngStatusData *status = BtlMenuStatusPt;
-                                WEAPON_HAVE *row = status->chara_weapons[chara];
-                                ItemMenuMode.target_weapon = &row[slot];
-                                before = ItemMenuMode.target_weapon->item_no;
-                            }
-                            int result = PersonalBoardItemGetorSwap(ItemMenuMode.board.cursor);
-                            if (result == 0) {
-                                ComMenuSePlay(2);
-                            } else if (result == 1) {
-                                if (BtlHaveItemPt->item_no >= 0x51) {
-                                    BtlHaveItemPt->slot_state = 4;
-                                } else {
-                                    InitHaveData(BtlHaveItemPt);
-                                    InitHaveWep(&ItemMenuMode.board.weapon);
-                                    InitHaveAttach(&ItemMenuMode.board.held_attach);
-                                }
-                                ComMenuSePlay(1);
-                            } else if (result == 2) {
-                                float x = 4.3f + 3.2f * (float) (ItemMenuMode.board.cursor % 5);
-                                float y = 6.7f - 3.2f * (float) (ItemMenuMode.board.cursor / 5 - ItemMenuMode.board.top_row);
-                                if (item == 0xB1) {
-                                    CWeaponLevelUp *effect = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
-                                    MenuWepLevelUp.CureEffect((int) x, (int) y, effect, BtlMenuExReadBlock, 6);
-                                }
-                                if (ItemMenuMode.board.page == 1) {
-                                    if (item == 0xB1) {
-                                        int after = ItemMenuMode.target_weapon->item_no;
-                                        if (BtlMenuMode == 0) {
-                                            if (after != before) {
-                                                EquipWeaponFrame(&DefaultWeapon, ItemMenuMode.chara, CharaMainHandViewFlag);
-                                            }
-                                            MenuWeaponSpSet(&MainWeapon, ItemMenuMode.target_weapon);
-                                        }
-                                        ComMenuSePlay(0x18);
-                                    }
-                                    if (item == 0xB2 && before != GetDefaultWeaponNo(ItemMenuMode.board.cursor / 10)) {
-                                        ItemMenuMode.state = 6;
-                                        ItemMenuMode.use_target = 4;
-                                        ItemMenuMode.confirm = 1;
-                                        ComMenuSePlay(1);
-                                    }
-                                }
-                            } else if (result == 1) {
-                                ComMenuSePlay(1);
-                            } else {
-                                ComMenuSePlay(2);
-                            }
-                        }
-                        break;
-                    }
-                    case 5:
-                        if (ItemTrushKey(thrown, thrown_vol, ItemMenuMode.board.cursor) != 0) {
-                            BtlHaveItemPt->slot_state = 5;
-                            BtlHaveItemPt->from_slot = ItemMenuMode.board.cursor;
-                            ComMenuSePlay(1);
-                        } else {
-                            ComMenuSePlay(2);
-                        }
-                        break;
-                }
-            } else if (GamePad.Down(0x20) != 0) {
-                ComMenuSePlay(2);
-                if (BtlHaveItemPt->item_no < 0x51 && IconAutoGet.IsMoveIcon() == 0 && ItemMenuMode.overflow == 0) {
-                    BattleMenuFlag = 0x11;
-                    u_long128 *buffer = BtlMenuReadBuf;
-                    switch (BtlMenuMode) {
-                        case 0:
-                            BtlMenuExReadFlag = DngActItemModelReadStart(buffer);
-                            break;
-                    }
-                    ExitItemSelect();
-                    ItemMenuMode.state = 3;
-                    ItemMenuMode.counter = 0;
-                } else if (IconAutoGet.IsMoveIcon() != 0) {
-                    ComMenuSePlay(2);
-                } else {
-                    s16 *slot_item;
-                    s16 *slot_qty;
-                    s16 vol;
-                    s16 item_no;
-                    s16 held = BtlHaveItemPt->item_no;
-                    switch (BtlHaveItemPt->slot_state) {
-                        case 5:
-                            switch (WhatIsKindofItem(held)) {
-                                case 0:
-                                    MenuDataSwap(&BtlHaveItemPt->item_no, &MenuItemPackPt->item[MenuItemPackPt->num + BtlHaveItemPt->from_slot]);
-                                    MenuDataSwap(&BtlHaveItemPt->volume, &MenuItemPackPt->item_vol[MenuItemPackPt->num + BtlHaveItemPt->from_slot]);
-                                    break;
-                                case 1: {
-                                    int who = WhoIsWeaponEquip(held);
-                                    CDngStatusData *status = BtlMenuStatusPt;
-                                    WEAPON_HAVE *weapons = status->chara_weapons[who];
-                                    WEAPON_HAVE *weapon = &weapons[10];
-                                    item_no = weapons[10].item_no;
-                                    MenuDataSwap(weapon, &ItemMenuMode.board.weapon);
-                                    BtlHaveItemPt->item_no = item_no;
-                                    weapon->item_no = held;
-                                    if (BtlHaveItemPt->item_no < 0x101) {
-                                        InitHaveData(BtlHaveItemPt);
-                                        InitHaveWep(&ItemMenuMode.board.weapon);
-                                    }
-                                    break;
-                                }
-                                case 2: {
-                                    ATTACH_LIST *attach = &((ATTACH_LIST *) BtlMenuStatusPt->consumable_items)[BtlHaveItemPt->from_slot];
-                                    item_no = attach->item_no;
-                                    MenuDataSwap(attach, &ItemMenuMode.board.held_attach);
-                                    BtlHaveItemPt->item_no = item_no;
-                                    attach->item_no = held;
-                                    break;
-                                }
-                            }
-                            break;
-                        case 4:
-                            PersonalBoardItemCancel();
-                            break;
-                        case 0: {
-                            int slot = BtlHaveItemPt->from_slot;
-                            slot_item = &MenuItemPackPt->quick_item_slot[slot];
-                            slot_qty = &MenuItemPackPt->quick_item_qty[slot];
-                            CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-                            vol = status->active_item_vol[slot];
-                            if (*slot_qty < 2 && *slot_item != held && held >= 0x84) {
-                                MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
-                                int held_vol = BtlHaveItemPt->volume;
-                                if (held_vol <= 0) {
-                                    held_vol = 0;
-                                }
-                                status = (CUserStatus *) BtlMenuStatusPt;
-                                status->active_item_vol[slot] = held_vol;
-                                BtlHaveItemPt->volume = vol;
-                                *slot_qty = 1;
-                            } else if (*slot_item == held && held >= 0x84 && *slot_qty < 9) {
-                                switch (GetItemData(held)->stack_kind) {
-                                    case 1: {
+                                    } else if (ok != 0) {
                                         MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
-                                        int held_vol = BtlHaveItemPt->volume;
-                                        if (held_vol <= 0) {
-                                            held_vol = 0;
-                                        }
-                                        status = (CUserStatus *) BtlMenuStatusPt;
-                                        status->active_item_vol[slot] = held_vol;
+                                        CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+                                        int vol = status->active_item_vol[cursor];
+                                        status->active_item_vol[cursor] = BtlHaveItemPt->volume;
                                         BtlHaveItemPt->volume = vol;
-                                        *slot_qty = 1;
-                                        break;
+                                        if (*slot_item >= 0x84) {
+                                            *slot_qty = 1;
+                                        } else {
+                                            *slot_qty = 0;
+                                        }
+                                        if (BtlHaveItemPt->item_no >= 0x84) {
+                                            BtlHaveItemPt->slot_state = 0;
+                                            BtlHaveItemPt->from_slot = cursor;
+                                        }
                                     }
-                                    case 0:
-                                        (*slot_qty)++;
-                                        InitHaveData(BtlHaveItemPt);
-                                        break;
-                                }
-                                if (BtlHaveItemPt->item_no < 0x51) {
-                                    InitHaveData(BtlHaveItemPt);
+                                    ComMenuSePlay(1);
                                 }
                             }
                             break;
                         }
-                    }
-                }
-            } else if (GamePad.Down(0x80) != 0) {
-                switch (ItemMenuMode.mode) {
-                    case 0: {
-                        int cursor = ItemMenuMode.board.cursor;
-                        ITEM_PACK *pack = MenuItemPackPt;
-                        s16 *items = pack->item;
-                        s16 *vols = pack->item_vol;
-                        s16 *slot_item = &pack->quick_item_slot[cursor];
-                        s16 *slot_qty = &pack->quick_item_qty[cursor];
-                        int i;
-                        CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
-                        s16 vol = status->active_item_vol[cursor];
-                        if (*slot_item > 0) {
-                            for (i = 0; 0 < *slot_qty || i < MenuItemPackPt->num; i++) {
-                                if (items[i] < 0) {
-                                    items[i] = *slot_item;
-                                    vols[i] = vol;
-                                    CUserStatus *holder = (CUserStatus *) BtlMenuStatusPt;
-                                    holder->active_item_vol[cursor] = 0;
-                                    (*slot_qty)--;
-                                    if (*slot_qty <= 0) {
-                                        *slot_item = -1;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        if (((CUserStatus *) BtlMenuStatusPt)->overflow_flag != 0) {
-                            DeleteMenuTrushMark();
-                            SetMenuTrushMark((ITEM_PACK *) ((CUserStatus *) BtlMenuStatusPt)->active_item);
-                        }
-                        ComMenuSePlay(2);
-                        break;
-                    }
-                    case 4:
-                    case 3:
-                    case 1:
-                        switch (ItemMenuMode.board.page) {
-                            case 0:
-                                SeitonItemBoard(MenuItemPackPt);
-                                if (((CUserStatus *) BtlMenuStatusPt)->overflow_flag != 0) {
-                                    SetMenuTrushMark((ITEM_PACK *) ((CUserStatus *) BtlMenuStatusPt)->active_item);
-                                }
-                                ComMenuSePlay(1);
-                                break;
-                            case 2:
-                                SeitonAttachBoard((ATTACH_LIST *) BtlMenuStatusPt->consumable_items);
-                                ComMenuSePlay(1);
-                                break;
-                        }
-                        break;
-                }
-            } else if (GamePad.Down(0x10) != 0) {
-                int cursor = ItemMenuMode.board.cursor;
-                s16 *items = MenuItemPackPt->item;
-                switch (ItemMenuMode.mode) {
-                    case 0: {
-                        s16 *slot_item = &MenuItemPackPt->quick_item_slot[cursor];
-                        s16 *slot_qty = &MenuItemPackPt->quick_item_qty[cursor];
-                        if (*slot_item < 0x84) {
-                            ComMenuSePlay(2);
-                            break;
-                        }
-                        ITEM_DATA *data = GetItemData(*slot_item);
-                        if (data->stack_kind == 2) {
-                            ComMenuSePlay(2);
-                            break;
-                        }
-                        int moving = IconAutoGet.IsSameItem(*slot_item);
-                        if (moving > 0) {
-                            ComMenuSePlay(1);
-                        } else if (data->stack_kind == 1) {
-                            ComMenuSePlay(2);
-                        } else {
-                            int space = IconAutoGet.GetSpace();
-                            int qty = *slot_qty;
-                            int total = qty + moving;
-                            if (total >= 9 || space < 0) {
+                        case 1:
+                            if (info == NULL) {
+                                ComMenuSePlay(2);
+                            } else if (info->kind != 1) {
                                 ComMenuSePlay(2);
                             } else {
-                                s16 held = BtlHaveItemPt->item_no;
-                                if (held >= 0x84 && held == *slot_item && total == 8) {
-                                    *slot_qty = qty + 1;
-                                    BtlHaveItemPt->item_no = 0;
+                                int chara = ItemMenuMode.chara;
+                                int result = ItemUseFunc(BtlMenuStatusPt, BtlHaveItemPt->item_no, chara, 1, NULL);
+                                int sounds[4] = {2, 1, 0x18, -1};
+                                int sound;
+                                if (result < 4) {
+                                    sound = sounds[result];
+                                } else {
+                                    sound = 2;
+                                }
+                                if (sound == 2) {
+                                    ComMenuSePlay(2);
+                                } else {
+                                    ITEM_DATA *data = GetItemData(BtlHaveItemPt->item_no);
+                                    int effect = -1;
+                                    if (sound > 0) {
+                                        u32 use = data->use_flags;
+                                        if ((use & 0x80) && (data->kind_flags & 4)) {
+                                            effect = 5;
+                                            effect_x = -5.0f;
+                                            effect_y = -3.0f;
+                                        }
+                                        if ((use & 0x40) && (data->kind_flags & 4)) {
+                                            effect = 4;
+                                            effect_x = -5.5f;
+                                            effect_y = -6.0f;
+                                            ComMenuSePlay(0x13);
+                                        }
+                                        if ((data->use_flags & 0x20) && (data->kind_flags & 0x20)) {
+                                            effect = 8;
+                                            effect_x = -5.5f;
+                                            effect_y = -6.0f;
+                                            int volume = GetMenuItemUseVolume();
+                                            MenuWepLevelUp.message_no = ItemMenuMode.chara;
+                                            MenuWepLevelUp.message_value = volume;
+                                        }
+                                        if ((data->kind_flags & 1) && ((data->use_flags & 0x4000) || (data->use_flags & 0x8000) ||
+                                                                       (data->use_flags & 0x10000) || (data->use_flags & 0x20000) ||
+                                                                       (data->use_flags & 0x3C000))) {
+                                            int message;
+                                            switch (BtlHaveItemPt->item_no) {
+                                                case 0x97:
+                                                    message = 0x1A2;
+                                                    break;
+                                                case 0x98:
+                                                    message = 0x1A3;
+                                                    break;
+                                                case 0x99:
+                                                    message = 0x1A4;
+                                                    break;
+                                                case 0x9A:
+                                                    message = 0x1A5;
+                                                    break;
+                                                default:
+                                                    message = -1;
+                                                    break;
+                                            }
+                                            MenuWepLevelUp.message_no = message;
+                                            MenuWepLevelUp.message_value = 0;
+                                            effect = 9;
+                                            effect_x = -6.0f;
+                                            effect_y = -2.0f;
+                                            ComMenuSePlay(0x13);
+                                        }
+                                        if ((data->kind_flags & 1) && (data->use_flags & 0x1000)) {
+                                            effect = 9;
+                                            if (BtlMenuMode == 0) {
+                                                ComMenuSePlay(0x6F);
+                                            }
+                                            effect_x = -6.0f;
+                                            effect_y = -2.0f;
+                                        }
+                                        if (BtlHaveItemPt->item_no == 0xB3) {
+                                            effect = 13;
+                                            effect_x = 19.03f;
+                                            effect_y = 9.1f;
+                                            int volume = GetMenuItemUseVolume();
+                                            MenuWepLevelUp.message_no = ItemMenuMode.chara;
+                                            MenuWepLevelUp.message_value = volume;
+                                        }
+                                        if (BtlHaveItemPt->item_no == 0xB4) {
+                                            effect = 12;
+                                            effect_x = -5.5f;
+                                            effect_y = -6.0f;
+                                            int volume = GetMenuItemUseVolume();
+                                            MenuWepLevelUp.message_no = ItemMenuMode.chara;
+                                            MenuWepLevelUp.message_value = volume;
+                                        }
+                                        if (BtlHaveItemPt->item_no == 0xB6) {
+                                            effect = 11;
+                                            effect_x = -5.5f;
+                                            effect_y = -6.0f;
+                                            int volume = GetMenuItemUseVolume();
+                                            MenuWepLevelUp.message_no = ItemMenuMode.chara;
+                                            MenuWepLevelUp.message_value = volume;
+                                        }
+                                        if (BtlHaveItemPt->item_no == 0xB0) {
+                                            effect = 10;
+                                            effect_x = -5.5f;
+                                            effect_y = -2.0f;
+                                            int volume = GetMenuItemUseVolume();
+                                            MenuWepLevelUp.message_no = ItemMenuMode.chara;
+                                            MenuWepLevelUp.message_value = volume;
+                                        }
+                                        if (effect > 0) {
+                                            ItemMenuMode.state = 4;
+                                            CWeaponLevelUp *buffer = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
+                                            MenuWepLevelUp.CureEffect((int) effect_x, (int) effect_y, buffer, BtlMenuExReadBlock, effect);
+                                        }
+                                        InitHaveData(BtlHaveItemPt);
+                                    }
+                                }
+                            }
+                            break;
+                        case 2: {
+                            int chara = ItemMenuMode.chara;
+                            int slot = BtlMenuStatusPt->equipped_weapon_slot[chara];
+                            WEAPON_HAVE *row = BtlMenuStatusPt->chara_weapons[chara];
+                            ItemMenuMode.target_weapon = &row[slot];
+                            int is_default = 0;
+                            WEAPON_HAVE *weapon = ItemMenuMode.target_weapon;
+                            int before = weapon->item_no;
+                            if (before == GetDefaultWeaponNo(ItemMenuMode.chara)) {
+                                is_default = 1;
+                            }
+                            int held = BtlHaveItemPt->item_no;
+                            if (held == 0xB2 && is_default == 0) {
+                                WEAPON_HAVE *target = ItemMenuMode.target_weapon;
+                                if (target->experience >= GetWeaponMaxExp(weapon)) {
+                                    ComMenuSePlay(2);
+                                } else if (target->level >= 99) {
+                                    ComMenuSePlay(2);
+                                } else if (target->item_no == 0x10C && GetMenuHebikiriFlag() == 0) {
+                                    ComMenuSePlay(2);
+                                } else {
+                                    ItemMenuMode.state = 6;
+                                    ItemMenuMode.use_target = 2;
+                                    ItemMenuMode.confirm = 1;
+                                    ComMenuSePlay(1);
+                                }
+                            } else if (held != 0xB2 && held != 0xB1) {
+                                ComMenuSePlay(2);
+                            } else {
+                                int result = ItemUseFunc(BtlMenuStatusPt, held, ItemMenuMode.chara, 4, weapon);
+                                int after = ItemMenuMode.target_weapon->item_no;
+                                if ((u32) (result - 1) < 2) {
+                                    s16 sounds[2] = {1, 0x18};
+                                    ComMenuSePlay(sounds[result - 1]);
+                                    MenuWepLevelUp.CureEffect(-0x10, 1, (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16),
+                                                              BtlMenuExReadBlock, 6);
+                                    if (BtlMenuMode == 0) {
+                                        if (before != after) {
+                                            int who = ((CUserStatus *) BtlMenuStatusPt)->cur_chara;
+                                            if (ItemMenuMode.chara == who) {
+                                                EquipWeaponFrame(&DefaultWeapon, ItemMenuMode.chara, CharaMainHandViewFlag);
+                                                if (((CUserStatus *) BtlMenuStatusPt)->cur_chara == 5) {
+                                                    NowMainEffect = &CharaMainEffectCrash;
+                                                    BtActStatus.gun_type = 0;
+                                                }
+                                            }
+                                        }
+                                        MenuWeaponSpSet(&MainWeapon, ItemMenuMode.target_weapon);
+                                    }
+                                    SetNowEquipWeaponDataForMsg(ItemMenuMode.target_weapon->item_no, ItemMenuMode.target_weapon->level);
+                                    InitHaveData(BtlHaveItemPt);
+                                } else {
+                                    ComMenuSePlay(2);
+                                }
+                            }
+                            break;
+                        }
+                        case 3:
+                            ComMenuSePlay(2);
+                            break;
+                        case 4: {
+                            s16 held = BtlHaveItemPt->item_no;
+                            PERSONAL_BOARD *board = &ItemMenuMode.board;
+                            if (board->cursor_area == 2) {
+                                if (held < 0x51) {
+                                    ComMenuSePlay(2);
+                                } else if (IsEnableTrushThrow(held) != 0) {
+                                    board->trash_anim = 1;
+                                    board->trash_frame = 0;
+                                    InitHaveData(BtlHaveItemPt);
                                     ComMenuSePlay(1);
                                 } else {
-                                    int found = 0;
-                                    for (int i = 0; i < MenuItemPackPt->num; i++) {
-                                        int want = *slot_item;
-                                        if ((want < 0x84 || want == items[i]) && (want >= 0x84 || held == items[i])) {
-                                            int y = (int) (ItemMenuMode.board.y + (float) (i / 5 * 0x28));
-                                            if (y >= 0x78 && y < 0x119) {
-                                                int x = i % 5 * 0x28 + 0x168;
-                                                int vol = MenuItemPackPt->item_vol[cursor];
-                                                if (want < 0) {
-                                                    want = held;
+                                    ComMenuSePlay(2);
+                                }
+                            } else {
+                                int before = -1;
+                                int item = held;
+                                if (ItemMenuMode.board.page == 1) {
+                                    int chara = ItemMenuMode.board.cursor / 10;
+                                    int slot = ItemMenuMode.board.cursor % 10;
+                                    CDngStatusData *status = BtlMenuStatusPt;
+                                    WEAPON_HAVE *row = status->chara_weapons[chara];
+                                    ItemMenuMode.target_weapon = &row[slot];
+                                    before = ItemMenuMode.target_weapon->item_no;
+                                }
+                                int result = PersonalBoardItemGetorSwap(ItemMenuMode.board.cursor);
+                                if (result == 0) {
+                                    ComMenuSePlay(2);
+                                } else if (result == 1) {
+                                    if (BtlHaveItemPt->item_no >= 0x51) {
+                                        BtlHaveItemPt->slot_state = 4;
+                                    } else {
+                                        InitHaveData(BtlHaveItemPt);
+                                        InitHaveWep(&ItemMenuMode.board.weapon);
+                                        InitHaveAttach(&ItemMenuMode.board.held_attach);
+                                    }
+                                    ComMenuSePlay(1);
+                                } else if (result == 2) {
+                                    float x = 4.3f + 3.2f * (float) (ItemMenuMode.board.cursor % 5);
+                                    float y = 6.7f - 3.2f * (float) (ItemMenuMode.board.cursor / 5 - ItemMenuMode.board.top_row);
+                                    if (item == 0xB1) {
+                                        CWeaponLevelUp *effect = (CWeaponLevelUp *) (MenuExCashBuffer.base + MenuExCashBuffer.used * 16);
+                                        MenuWepLevelUp.CureEffect((int) x, (int) y, effect, BtlMenuExReadBlock, 6);
+                                    }
+                                    if (ItemMenuMode.board.page == 1) {
+                                        if (item == 0xB1) {
+                                            int after = ItemMenuMode.target_weapon->item_no;
+                                            if (BtlMenuMode == 0) {
+                                                if (after != before) {
+                                                    EquipWeaponFrame(&DefaultWeapon, ItemMenuMode.chara, CharaMainHandViewFlag);
                                                 }
-                                                IconAutoGet.IconMoveTarSet(space, cursor, want, vol, (float) x, (float) y);
-                                            } else {
-                                                if (want <= 0) {
-                                                    *slot_item = held;
-                                                }
-                                                (*slot_qty)++;
+                                                MenuWeaponSpSet(&MainWeapon, ItemMenuMode.target_weapon);
                                             }
-                                            items[i] = -1;
-                                            found = 1;
+                                            ComMenuSePlay(0x18);
+                                        }
+                                        if (item == 0xB2 && before != GetDefaultWeaponNo(ItemMenuMode.board.cursor / 10)) {
+                                            ItemMenuMode.state = 6;
+                                            ItemMenuMode.use_target = 4;
+                                            ItemMenuMode.confirm = 1;
+                                            ComMenuSePlay(1);
+                                        }
+                                    }
+                                } else if (result == 1) {
+                                    ComMenuSePlay(1);
+                                } else {
+                                    ComMenuSePlay(2);
+                                }
+                            }
+                            break;
+                        }
+                        case 5:
+                            if (ItemTrushKey(thrown, thrown_vol, ItemMenuMode.board.cursor) != 0) {
+                                BtlHaveItemPt->slot_state = 5;
+                                BtlHaveItemPt->from_slot = ItemMenuMode.board.cursor;
+                                ComMenuSePlay(1);
+                            } else {
+                                ComMenuSePlay(2);
+                            }
+                            break;
+                    }
+                } else if (GamePad.Down(0x20) != 0) {
+                    ComMenuSePlay(2);
+                    if (BtlHaveItemPt->item_no < 0x51 && IconAutoGet.IsMoveIcon() == 0 && ItemMenuMode.overflow == 0) {
+                        BattleMenuFlag = 0x11;
+                        u_long128 *buffer = BtlMenuReadBuf;
+                        switch (BtlMenuMode) {
+                            case 0:
+                                BtlMenuExReadFlag = DngActItemModelReadStart(buffer);
+                                break;
+                        }
+                        ExitItemSelect();
+                        ItemMenuMode.state = 3;
+                        ItemMenuMode.counter = 0;
+                    } else if (IconAutoGet.IsMoveIcon() != 0) {
+                        ComMenuSePlay(2);
+                        break;
+                    } else {
+                        s16 *slot_item;
+                        s16 *slot_qty;
+                        s16 vol;
+                        s16 item_no;
+                        s16 held = BtlHaveItemPt->item_no;
+                        switch (BtlHaveItemPt->slot_state) {
+                            case 5:
+                                switch (WhatIsKindofItem(held)) {
+                                    case 0:
+                                        MenuDataSwap(&BtlHaveItemPt->item_no, &MenuItemPackPt->item[MenuItemPackPt->num + BtlHaveItemPt->from_slot]);
+                                        MenuDataSwap(&BtlHaveItemPt->volume, &MenuItemPackPt->item_vol[MenuItemPackPt->num + BtlHaveItemPt->from_slot]);
+                                        break;
+                                    case 1: {
+                                        int who = WhoIsWeaponEquip(held);
+                                        CDngStatusData *status = BtlMenuStatusPt;
+                                        WEAPON_HAVE *weapons = status->chara_weapons[who];
+                                        WEAPON_HAVE *weapon = &weapons[10];
+                                        item_no = weapons[10].item_no;
+                                        MenuDataSwap(weapon, &ItemMenuMode.board.weapon);
+                                        BtlHaveItemPt->item_no = item_no;
+                                        weapon->item_no = held;
+                                        if (BtlHaveItemPt->item_no < 0x101) {
+                                            InitHaveData(BtlHaveItemPt);
+                                            InitHaveWep(&ItemMenuMode.board.weapon);
+                                        }
+                                        break;
+                                    }
+                                    case 2: {
+                                        ATTACH_LIST *attach = &((ATTACH_LIST *) BtlMenuStatusPt->consumable_items)[BtlHaveItemPt->from_slot];
+                                        item_no = attach->item_no;
+                                        MenuDataSwap(attach, &ItemMenuMode.board.held_attach);
+                                        BtlHaveItemPt->item_no = item_no;
+                                        attach->item_no = held;
+                                        break;
+                                    }
+                                }
+                                break;
+                            case 4:
+                                PersonalBoardItemCancel();
+                                break;
+                            case 0: {
+                                int slot = BtlHaveItemPt->from_slot;
+                                slot_item = &MenuItemPackPt->quick_item_slot[slot];
+                                slot_qty = &MenuItemPackPt->quick_item_qty[slot];
+                                CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+                                vol = status->active_item_vol[slot];
+                                if (*slot_qty < 2 && *slot_item != held && held >= 0x84) {
+                                    MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
+                                    int held_vol = BtlHaveItemPt->volume;
+                                    if (held_vol <= 0) {
+                                        held_vol = 0;
+                                    }
+                                    status = (CUserStatus *) BtlMenuStatusPt;
+                                    status->active_item_vol[slot] = held_vol;
+                                    BtlHaveItemPt->volume = vol;
+                                    *slot_qty = 1;
+                                } else if (*slot_item == held && held >= 0x84 && *slot_qty < 9) {
+                                    switch (GetItemData(held)->stack_kind) {
+                                        case 1: {
+                                            MenuDataSwap(slot_item, &BtlHaveItemPt->item_no);
+                                            int held_vol = BtlHaveItemPt->volume;
+                                            if (held_vol <= 0) {
+                                                held_vol = 0;
+                                            }
+                                            status = (CUserStatus *) BtlMenuStatusPt;
+                                            status->active_item_vol[slot] = held_vol;
+                                            BtlHaveItemPt->volume = vol;
+                                            *slot_qty = 1;
+                                            break;
+                                        }
+                                        case 0:
+                                            (*slot_qty)++;
+                                            InitHaveData(BtlHaveItemPt);
+                                            break;
+                                    }
+                                    if (BtlHaveItemPt->item_no < 0x51) {
+                                        InitHaveData(BtlHaveItemPt);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                } else if (GamePad.Down(0x80) != 0) {
+                    switch (ItemMenuMode.mode) {
+                        case 0: {
+                            int cursor = ItemMenuMode.board.cursor;
+                            ITEM_PACK *pack = MenuItemPackPt;
+                            s16 *items = pack->item;
+                            s16 *vols = pack->item_vol;
+                            s16 *slot_item = &pack->quick_item_slot[cursor];
+                            s16 *slot_qty = &pack->quick_item_qty[cursor];
+                            int i;
+                            CUserStatus *status = (CUserStatus *) BtlMenuStatusPt;
+                            s16 vol = status->active_item_vol[cursor];
+                            if (*slot_item > 0) {
+                                for (i = 0; 0 < *slot_qty || i < MenuItemPackPt->num; i++) {
+                                    if (items[i] < 0) {
+                                        items[i] = *slot_item;
+                                        vols[i] = vol;
+                                        CUserStatus *holder = (CUserStatus *) BtlMenuStatusPt;
+                                        holder->active_item_vol[cursor] = 0;
+                                        (*slot_qty)--;
+                                        if (*slot_qty <= 0) {
+                                            *slot_item = -1;
                                             break;
                                         }
                                     }
-                                    if (found == 0) {
-                                        if (BtlHaveItemPt->item_no > 0 && BtlHaveItemPt->item_no == *slot_item) {
-                                            (*slot_qty)++;
-                                            BtlHaveItemPt->item_no = 0;
-                                            found = 1;
-                                        }
-                                    }
-                                    if (found != 0) {
-                                        ComMenuSePlay(1);
-                                    } else {
-                                        ComMenuSePlay(2);
-                                    }
                                 }
                             }
+                            if (((CUserStatus *) BtlMenuStatusPt)->overflow_flag != 0) {
+                                DeleteMenuTrushMark();
+                                SetMenuTrushMark((ITEM_PACK *) ((CUserStatus *) BtlMenuStatusPt)->active_item);
+                            }
+                            ComMenuSePlay(2);
+                            break;
                         }
-                        break;
+                        case 4:
+                        case 3:
+                        case 1:
+                            switch (ItemMenuMode.board.page) {
+                                case 0:
+                                    SeitonItemBoard(MenuItemPackPt);
+                                    if (((CUserStatus *) BtlMenuStatusPt)->overflow_flag != 0) {
+                                        SetMenuTrushMark((ITEM_PACK *) ((CUserStatus *) BtlMenuStatusPt)->active_item);
+                                    }
+                                    ComMenuSePlay(1);
+                                    break;
+                                case 2:
+                                    SeitonAttachBoard((ATTACH_LIST *) BtlMenuStatusPt->consumable_items);
+                                    ComMenuSePlay(1);
+                                    break;
+                            }
+                            break;
                     }
-                    case 4:
-                        if (ItemMenuMode.board.cursor_area == 2) {
-                            ComMenuSePlay(2);
-                        } else if (ItemMenuMode.board.page == 1 || ItemMenuMode.board.page == 2) {
-                            ComMenuSePlay(2);
-                        } else {
-                            int space = IconAutoGet.GetSpace();
-                            if (space < 0) {
-                                break;
-                            }
-                            if (IconAutoGet.IsMoveIcon() != 0) {
+                } else if (GamePad.Down(0x10) != 0) {
+                    int cursor = ItemMenuMode.board.cursor;
+                    s16 *items = MenuItemPackPt->item;
+                    switch (ItemMenuMode.mode) {
+                        case 0: {
+                            s16 *slot_item = &MenuItemPackPt->quick_item_slot[cursor];
+                            s16 *slot_qty = &MenuItemPackPt->quick_item_qty[cursor];
+                            if (*slot_item < 0x84) {
                                 ComMenuSePlay(2);
                                 break;
                             }
-                            int pos = ItemMenuMode.board.cursor;
-                            int item_no = SearchBoardNowPosItemExist(ItemMenuMode.board.page, pos);
-                            if (item_no < 0x84) {
-                                ComMenuSePlay(2);
-                                break;
-                            }
-                            ITEM_DATA *data = GetItemData(item_no);
+                            ITEM_DATA *data = GetItemData(*slot_item);
                             if (data->stack_kind == 2) {
                                 ComMenuSePlay(2);
                                 break;
                             }
-                            int vol = MenuItemPackPt->item_vol[ItemMenuMode.board.cursor];
-                            int same = 0;
-                            int slot;
-                            int empty = -1;
-                            for (slot = 0; slot < 3; slot++) {
-                                s16 slot_item = MenuItemPackPt->quick_item_slot[slot];
-                                int moving = IconAutoGet.GetMoveIconGole(slot, slot_item);
-                                if ((data->stack_kind == 0 && slot_item == item_no &&
-                                     MenuItemPackPt->quick_item_qty[slot] + moving < 9) ||
-                                    (data->stack_kind == 1 && slot_item < 0x84)) {
-                                    same = 1;
-                                    break;
-                                }
-                                if (slot_item < 0x84) {
-                                    empty = slot;
-                                    break;
+                            int moving = IconAutoGet.IsSameItem(*slot_item);
+                            if (moving > 0) {
+                                ComMenuSePlay(1);
+                            } else if (data->stack_kind == 1) {
+                                ComMenuSePlay(2);
+                            } else {
+                                int space = IconAutoGet.GetSpace();
+                                int qty = *slot_qty;
+                                int total = qty + moving;
+                                if (total >= 9 || space < 0) {
+                                    ComMenuSePlay(2);
+                                } else {
+                                    s16 held = BtlHaveItemPt->item_no;
+                                    if (held >= 0x84 && held == *slot_item && total == 8) {
+                                        *slot_qty = qty + 1;
+                                        BtlHaveItemPt->item_no = 0;
+                                        ComMenuSePlay(1);
+                                    } else {
+                                        int found = 0;
+                                        for (int i = 0; i < MenuItemPackPt->num; i++) {
+                                            int want = *slot_item;
+                                            if ((want < 0x84 || want == items[i]) && (want >= 0x84 || held == items[i])) {
+                                                int y = (int) (ItemMenuMode.board.y + (float) (i / 5 * 0x28));
+                                                if (y >= 0x78 && y < 0x119) {
+                                                    int x = i % 5 * 0x28 + 0x168;
+                                                    int vol = MenuItemPackPt->item_vol[cursor];
+                                                    if (want < 0) {
+                                                        want = held;
+                                                    }
+                                                    IconAutoGet.IconMoveTarSet(space, cursor, want, vol, (float) x, (float) y);
+                                                } else {
+                                                    if (want <= 0) {
+                                                        *slot_item = held;
+                                                    }
+                                                    (*slot_qty)++;
+                                                }
+                                                items[i] = -1;
+                                                found = 1;
+                                                break;
+                                            }
+                                        }
+                                        if (found == 0) {
+                                            if (BtlHaveItemPt->item_no > 0 && BtlHaveItemPt->item_no == *slot_item) {
+                                                (*slot_qty)++;
+                                                BtlHaveItemPt->item_no = 0;
+                                                found = 1;
+                                            }
+                                        }
+                                        if (found != 0) {
+                                            ComMenuSePlay(1);
+                                        } else {
+                                            ComMenuSePlay(2);
+                                        }
+                                    }
                                 }
                             }
-                            if (same != 0 || empty >= 0) {
-                                int target = 0;
-                                if (same != 0) {
-                                    target = slot;
-                                    if (GetItemData(item_no)->stack_kind == 1 && MenuItemPackPt->quick_item_qty[slot] == 1) {
-                                        ComMenuSePlay(2);
+                            break;
+                        }
+                        case 4:
+                            if (ItemMenuMode.board.cursor_area == 2) {
+                                ComMenuSePlay(2);
+                            } else if (ItemMenuMode.board.page == 1 || ItemMenuMode.board.page == 2) {
+                                ComMenuSePlay(2);
+                            } else {
+                                int space = IconAutoGet.GetSpace();
+                                if (space < 0) {
+                                    break;
+                                }
+                                if (IconAutoGet.IsMoveIcon() != 0) {
+                                    ComMenuSePlay(2);
+                                    break;
+                                }
+                                int pos = ItemMenuMode.board.cursor;
+                                int item_no = SearchBoardNowPosItemExist(ItemMenuMode.board.page, pos);
+                                if (item_no < 0x84) {
+                                    ComMenuSePlay(2);
+                                    break;
+                                }
+                                ITEM_DATA *data = GetItemData(item_no);
+                                if (data->stack_kind == 2) {
+                                    ComMenuSePlay(2);
+                                    break;
+                                }
+                                int vol = MenuItemPackPt->item_vol[ItemMenuMode.board.cursor];
+                                int same = 0;
+                                int slot;
+                                int empty = -1;
+                                for (slot = 0; slot < 3; slot++) {
+                                    s16 slot_item = MenuItemPackPt->quick_item_slot[slot];
+                                    int moving = IconAutoGet.GetMoveIconGole(slot, slot_item);
+                                    if ((data->stack_kind == 0 && slot_item == item_no &&
+                                         MenuItemPackPt->quick_item_qty[slot] + moving < 9) ||
+                                        (data->stack_kind == 1 && slot_item < 0x84)) {
+                                        same = 1;
                                         break;
                                     }
-                                } else if (empty >= 0) {
-                                    target = empty;
+                                    if (slot_item < 0x84) {
+                                        empty = slot;
+                                        break;
+                                    }
                                 }
-                                int y = (int) (ItemMenuMode.board.y + (float) (pos / 5 * 0x28));
-                                if (y >= 0x78 && y < 0x119) {
-                                    IconAutoGet.IconMoveTarSet(space, target, item_no, vol, (float) (pos % 5 * 0x28 + 0x176), (float) y);
+                                if (same != 0 || empty >= 0) {
+                                    int target = 0;
+                                    if (same != 0) {
+                                        target = slot;
+                                        if (GetItemData(item_no)->stack_kind == 1 && MenuItemPackPt->quick_item_qty[slot] == 1) {
+                                            ComMenuSePlay(2);
+                                            break;
+                                        }
+                                    } else if (empty >= 0) {
+                                        target = empty;
+                                    }
+                                    int y = (int) (ItemMenuMode.board.y + (float) (pos / 5 * 0x28));
+                                    if (y >= 0x78 && y < 0x119) {
+                                        IconAutoGet.IconMoveTarSet(space, target, item_no, vol, (float) (pos % 5 * 0x28 + 0x176), (float) y);
+                                    } else {
+                                        MenuItemPackPt->quick_item_qty[target]++;
+                                    }
+                                    items[pos] = -1;
+                                    ComMenuSePlay(1);
                                 } else {
-                                    MenuItemPackPt->quick_item_qty[target]++;
+                                    ComMenuSePlay(2);
                                 }
-                                items[pos] = -1;
-                                ComMenuSePlay(1);
-                            } else {
-                                ComMenuSePlay(2);
                             }
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
 #ifdef PAL
@@ -6525,8 +6524,8 @@ int ItemMenuMainKey() {
                             float water = DebugGetWater(ItemMenuMode.chara);
                             if (water > 0.0f) {
                                 water -= 1.0f;
-                                DebugSetWater(ItemMenuMode.chara, water);
                             }
+                            DebugSetWater(ItemMenuMode.chara, water);
                         }
                         break;
                     }

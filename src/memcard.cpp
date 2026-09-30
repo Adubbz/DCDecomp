@@ -2615,7 +2615,10 @@ static int AtoraBoardKey() {
             printf("info----------,,,\tID \t\t%d\n", parts->parts_no);
             printf("\t\tcomplete_event\t\t%d\n", parts->kind);
             for (int i = 0; i < 6; i++) {
-                if (parts->elements[i].id >= 0 && parts->elements[i].enabled != 0) {
+                if (parts->elements[i].id < 0) {
+                    break;
+                }
+                if (parts->elements[i].enabled != 0) {
                     for (int j = 0; j < 120; j++) {
                         if (MenuAtoraSel.board.atla_elements[j] < 0) {
                             MenuAtoraSel.board.atla_elements[j] = parts->elements[i].id;
