@@ -136,16 +136,13 @@ void InitReadBG() {
 
 /* The buffer goes to the drive rather than through the processor, so an address the drive cannot
    reach is fatal rather than slow, and one that is not on a 64-byte boundary is only reported. */
-#ifdef PAL
-int LoadFileBG(char *name, u_long128 *buffer, int *size);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", LoadFileBG__FPcP1Pi);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @229);
-INCLUDE_RODATA("asm/pal/nonmatchings/dataread", @230__2);
-#pragma name_counter 333
-#else
 int LoadFileBG(char *name, u_long128 *buffer, int *size) {
     BG_READ_INFO *info;
+#ifdef PAL
+    DATA_HEADER_READ *head;
+#else
     DATA_HEADER *head;
+#endif
     int i;
 
     if (size)
@@ -168,7 +165,11 @@ int LoadFileBG(char *name, u_long128 *buffer, int *size) {
     }
     if ((int) buffer % 64)
         printf("/*/*/*/*/not 64byte align at %x %s\n", buffer, name);
+#ifdef PAL
+    head = (DATA_HEADER_READ *) SearchFile(name);
+#else
     head = SearchFile(name);
+#endif
     if (!head)
         return 0;
     strcpy(info->name, name);
@@ -183,7 +184,6 @@ int LoadFileBG(char *name, u_long128 *buffer, int *size) {
     info->sectors = head->sectors;
     return 1;
 }
-#endif
 
 BG_READ_INFO *GetReadBGFile(int no) {
     if (no < 0 || no >= 32)
@@ -486,16 +486,19 @@ int LoadFile2(char *name, void *buffer, int *size, int mode) {
     return CDRead(path, (u_int *) buffer, size);
 }
 
-#ifdef PAL
-static int CDRead(char *name, u_int *buffer, int *size);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", CDRead__FPcPUiPi);
-#pragma name_counter 509
-#else
 static int CDRead(char *name, u_int *buffer, int *size) {
+#ifdef PAL
+    DATA_HEADER_READ *head;
+#else
     DATA_HEADER *head;
+#endif
     sceCdRMode mode;
 
+#ifdef PAL
+    head = (DATA_HEADER_READ *) SearchFile(name);
+#else
     head = SearchFile(name);
+#endif
     if (!head)
         return 0;
     mode.trycount = 0;
@@ -512,7 +515,6 @@ static int CDRead(char *name, u_int *buffer, int *size) {
         *size = head->size;
     return 1;
 }
-#endif
 
 int WriteFile(char *name, void *buffer, int size) {
     int fd;

@@ -1046,23 +1046,25 @@ void CTextureManager::ReloadTexture(sceVif1Packet *packet, int block) {
     sceVif1PkCloseDirectCode(packet);
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/texture", BeginEnterTextureBlock__15CTextureManagerFi);
-#pragma name_counter 718
-#else
 void CTextureManager::BeginEnterTextureBlock(int block) {
     if (block < 0 || block >= 72)
         return;
 
+#ifdef PAL
+    if (blocks[block].vram_top == 0)
+        blocks[block].vram_top = mgTopVRAM;
+    if (blocks[block].vram_end == 0)
+        blocks[block].vram_end = mgTopVRAM;
+#else
     if (blocks[block].vram_top == 0)
         blocks[block].vram_top = 6720;
     if (blocks[block].vram_end == 0)
         blocks[block].vram_end = 6720;
+#endif
     blocks[block].buffer = buffer + buffer_used;
     blocks[block].buffer_end = buffer + buffer_used;
     blocks[block].loaded = 0;
 }
-#endif
 
 void CTextureManager::EndEnterTextureBlock(int block) {
     if (block < 0 || block >= 72)

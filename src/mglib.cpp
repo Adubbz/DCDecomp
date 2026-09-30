@@ -885,11 +885,6 @@ int MGRotTransPers(int *screen, float *position, int fog) {
 /* The same transform for something drawn flat against the screen: the vertical squeeze
    MGSetViewMatrix_sub bakes into the view is undone, the result is left in whole pixels rather than
    scaled into 12.4, and the pair is moved off the screen centre the offset put it at. */
-#ifdef PAL
-int MGRotTransPers2D(int *screen, float *position, int fog);
-INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGRotTransPers2D__FPiPfi);
-#pragma name_counter 572
-#else
 int MGRotTransPers2D(int *screen, float *position, int fog) {
     sceVu0FVECTOR point;
     int visible = 1;
@@ -930,10 +925,9 @@ int MGRotTransPers2D(int *screen, float *position, int fog) {
     }
 
     screen[0] -= 1728;
-    screen[1] -= 1824;
+    screen[1] -= 2048 - SCREEN_HALF_HEIGHT;
     return visible;
 }
-#endif
 
 /* Both of a screen-facing sprite's opposite corners out of a single transform: the half-width and
    half-height are scaled by the render info once and then by the same Q the perspective divide

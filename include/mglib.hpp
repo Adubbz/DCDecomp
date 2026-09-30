@@ -104,6 +104,9 @@ extern sceVu0FVECTOR mgBackColor;
 extern sceVu0FMATRIX mgZeroMatrix;
 extern CRect_i_ mgWindowRect;
 extern sceGsTexa mgTexa;
+#ifdef PAL
+extern int mgTopVRAM;
+#endif
 
 /**
  * Returns the number of vertical syncs observed since initialization.

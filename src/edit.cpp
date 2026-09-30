@@ -1259,12 +1259,6 @@ int EdInitMenu(int mode) {
 
 /* The frame the menu is actually built on: the picture behind it is kept first, because the menus
    draw over a still of the last game frame rather than over the game. */
-#ifdef PAL
-int EdInitModeFinish(CCamera *camera, CTexture *texture);
-INCLUDE_ASM("asm/pal/nonmatchings/edit", EdInitModeFinish__FP7CCameraP8CTexture);
-INCLUDE_DATA("asm/pal/nonmatchings/edit", @494__2);
-#pragma name_counter 944
-#else
 int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     init_menu_cnt++;
     if (init_menu_cnt > 3)
@@ -1275,7 +1269,11 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
         EdSaveFrameImage(*texture);
     GamePad.MenuModeOn(120);
 
+#ifdef PAL
+    int texture_block[6] = {16, 17, 18, 25, 32, 33};
+#else
     int texture_block[5] = {16, 17, 18, 25, 32};
+#endif
 
     switch (menu_mode) {
         case 1:
@@ -1311,7 +1309,6 @@ int EdInitModeFinish(CCamera *camera, CTexture *texture) {
     }
     return 8;
 }
-#endif
 
 void EdExitMenu() {
     GamePad.AutoRepeatOff();

@@ -204,11 +204,6 @@ void CFireOmni::RasterStep(void) {
     }
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/fireomni", DrawRaster__9CFireOmniFv);
-INCLUDE_RODATA("asm/pal/nonmatchings/fireomni", @328__2);
-#pragma name_counter 147
-#else
 void CFireOmni::DrawRaster(void) {
     sceVu0FVECTOR world;
     int top_left[4];
@@ -223,7 +218,7 @@ void CFireOmni::DrawRaster(void) {
     }
 
     int x = (top_left[0] - 0x6C00) >> 4;
-    int y = (top_left[1] - 0x7900) >> 3;
+    int y = (top_left[1] - GS_Y_OFFSET) >> 3;
     int width = (bottom_right[0] - top_left[0]) >> 4;
     int height = (bottom_right[1] - top_left[1]) >> 4;
     height >>= 1;
@@ -246,4 +241,3 @@ void CFireOmni::DrawRaster(void) {
     set2DSprite(Vif1Packet, TexManager.GetTexture("blender", -1), CRect_i_(x, y, width, height * 2),
                 CRect_i_(1, 1, width - 2, height - 2));
 }
-#endif

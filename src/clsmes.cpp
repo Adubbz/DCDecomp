@@ -1636,10 +1636,6 @@ int ClsMes::MakeMesWin(int mes_no) {
     return 0;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/clsmes", MakeMesTexture__6ClsMesFi);
-#pragma name_counter 1786
-#else
 void ClsMes::MakeMesTexture(int mes_no) {
     int wh[4];
 
@@ -1661,19 +1657,30 @@ void ClsMes::MakeMesTexture(int mes_no) {
     this->text_height = wh[3];
 
     if (this->text_columns < 4) {
+#ifdef PAL
+        this->win_width = this->char_width * 10;
+#else
         this->win_width = this->char_width * 14;
+#endif
     } else {
+#ifdef PAL
+        this->win_width = this->char_width * (int) (3.0f + (3.0f + (float) this->text_columns));
+#else
         this->win_width = this->char_width * (int) (5.0f + (5.0f + (float) this->text_columns));
+#endif
     }
     this->win_height = this->char_height * (int) (1.5f + (1.5f + (float) this->text_rows));
+#ifdef PAL
+    this->win_x = this->text_x - (int) (3.0f * (float) this->char_width);
+#else
     this->win_x = this->text_x - (int) (5.0f * (float) this->char_width);
+#endif
     this->win_y = this->text_y - (int) (1.5f * (float) this->char_height);
 
     if (MakeMesWinTbl(mes_no) != 0) {
         this->text_len = this->win_line_num;
     }
 }
-#endif
 
 void ClsMes::Myset2DSprite_Fuchi(sceVif1Packet *packet, CTexture *texture, int x, int y,
                                  int width, int height, int u, int v, int u_width,

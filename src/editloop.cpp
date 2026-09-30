@@ -2,6 +2,7 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
 #ifdef PAL
+#pragma argument_flag_ones 1240
 #else
 #pragma argument_flag_ones 0, 207, 208, 215, 626
 #endif
@@ -3941,11 +3942,6 @@ int LoadTexture() {
  * Loads the player's model and motions into the arena the caller names, or
  * into the character arena when it names none.
  */
-#ifdef PAL
-void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena);
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", EdLoadMainChara__FPcPcP14CDataAlloc2_1_);
-#pragma name_counter 2207
-#else
 void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     int i;
     if (arena == NULL) {
@@ -3967,7 +3963,6 @@ void EdLoadMainChara(char *pack, char *name, CDataAlloc2<1> *arena) {
     MainChara.SetPosition(origin, origin, origin);
     Chara = &MainChara;
 }
-#endif
 
 /**
  * Reads the editor map's ground, areas and grid.
@@ -4778,10 +4773,10 @@ int CheckEventPoint(ED_EVENT_POINT *point, float time) {
 /* The order the static initialiser materialises each camera's float arguments in. */
 #ifdef PAL
 #pragma argument_flag 0
-#pragma argument_flag_ones 1722, 1730, 1738, 1746, 1763, 1769, 1877, 1907, 1909, 1910
-#pragma argument_flag_ones 1912, 1917, 1919, 1920, 1922, 1927, 1929, 1930, 1932, 1937
-#pragma argument_flag_ones 1939, 1940, 1942, 1947, 1949, 1950, 1952, 1957, 1959, 1960
-#pragma argument_flag_ones 1962
+#pragma argument_flag_ones 1754, 1762, 1770, 1778, 1795, 1801, 1909, 1939, 1941, 1942
+#pragma argument_flag_ones 1944, 1949, 1951, 1952, 1954, 1959, 1961, 1962, 1964, 1969
+#pragma argument_flag_ones 1971, 1972, 1974, 1979, 1981, 1982, 1984, 1989, 1991, 1992
+#pragma argument_flag_ones 1994
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 3504, 3512, 3520, 3528, 3545, 3551, 3659, 3689, 3691, 3692
