@@ -454,6 +454,17 @@ static void OptionMenuDraw(int, int, int, int, int);
  */
 static void DrawOptionLRCur(int, int);
 
+#ifdef PAL
+/**
+ * Draws the screen position adjustment frame: its centre piece, arrows and screen corners. PAL only.
+ *
+ * @mangled DrawOptionScreenWaku__Fv
+ * @address 0x223D50
+ * @size 0x1D4
+ */
+static void DrawOptionScreenWaku();
+#endif
+
 /**
  * Writes the option rows back to the configuration and the menu cursor, sets
  * the stereo mode from them and restores the pad's menu repeat.
@@ -1437,13 +1448,6 @@ void DrawAtora(int x, int y, int parts_index, int alpha) {
     }
 }
 
-#ifdef PAL
-static void DrawAtoraNothing(int x, int y, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawAtoraNothing__Fiii);
-/* Retail's data for the function the marker above supplies. */
-s8 pal_at1269[8] = {64, 64, 64, 64, 54, 64, 64};
-#pragma name_counter 748
-#else
 static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x, y, 18, 18), CRect_i_(184, 346, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y, 220, 18), CRect_i_(200, 346, 4, 18), alpha);
@@ -1453,9 +1457,15 @@ static void DrawAtoraNothing(int x, int y, int alpha) {
     DrawMenu2DSprite(Sozai, CRect_i_(x, y + 102, 18, 18), CRect_i_(184, 364, 18, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 18, y + 102, 220, 18), CRect_i_(200, 364, 4, 18), alpha);
     DrawMenu2DSprite(Sozai, CRect_i_(x + 238, y + 102, 18, 18), CRect_i_(202, 364, 18, 18), alpha);
+#ifdef PAL
+    int lang = GetMenuLangFlag();
+    // Horizontal offset of the message, by menu language.
+    s8 message_x[7] = {64, 64, 64, 64, 54, 64, 64};
+    DrawMenu2DSprite(Sozai, CRect_i_(x + message_x[lang], y + 44, 132, 30), CRect_i_(124, 418, 132, 30), alpha);
+#else
     DrawMenu2DSprite(Sozai, CRect_i_(x + 64, y + 44, 132, 30), CRect_i_(124, 418, 132, 30), alpha);
-}
 #endif
+}
 
 static void DrawMsgAtraWarning(ClsMes *mes, int x, int y) {
     if (mes == NULL) {
@@ -2062,11 +2072,6 @@ int tip_sort_type = 1;
 /** The rank that the board's sort gives each chip group, by group. */
 int tip_table[3] = {3, 1, 2};
 
-#ifdef PAL
-static int GetTipKind(int tip_no);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", GetTipKind__Fi);
-#pragma name_counter 1092
-#else
 static int GetTipKind(int tip_no) {
     if (tip_no < 0 || tip_no >= 100) {
         return 0;
@@ -2077,14 +2082,11 @@ static int GetTipKind(int tip_no) {
     if (tip_no >= 40) {
         return 2;
     }
-}
-#endif
-
 #ifdef PAL
-static int CompTip(int tip_a, int tip_b);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", CompTip__Fii);
-#pragma name_counter 1110
-#else
+    return 0;
+#endif
+}
+
 static int CompTip(int tip_a, int tip_b) {
     int rank_a;
     int rank_b;
@@ -2108,13 +2110,7 @@ static int CompTip(int tip_a, int tip_b) {
     }
     return (tip_a < tip_b) ? -1 : 0;
 }
-#endif
 
-#ifdef PAL
-static int SeitonAtoraTipBoardSub();
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", SeitonAtoraTipBoardSub__Fv);
-#pragma name_counter 1132
-#else
 static int SeitonAtoraTipBoardSub() {
     int rank;
     int kind;
@@ -2144,7 +2140,6 @@ static int SeitonAtoraTipBoardSub() {
     }
     return moved;
 }
-#endif
 
 static void SeitonAtoraTipBoard() {
     int i;
@@ -2361,14 +2356,6 @@ int MenuAtoraSelectKey() {
     return result;
 }
 
-#ifdef PAL
-static int AtoraBoardKey();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2134__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "info----------,,,\tID \t\t%d\n";
-char pal_at2135__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "\t\tcomplete_event\t\t%d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", AtoraBoardKey__Fv);
-#pragma name_counter 1391
-#else
 static int AtoraBoardKey() {
     int movable[8];
     int open_mode = MenuAtoraSel.open_mode;
@@ -2593,13 +2580,146 @@ static int AtoraBoardKey() {
             }
         }
     }
+#ifdef PAL
+    // Debug shortcuts that fill, empty, dump or complete the parts of the board.
+    if (DebugMode) {
+        EDITPARTS_INFO *parts = CommonMenuAtoraInfo->GetPartsInfo(MenuAtoraSel.board_pos);
+        if (GamePad.Down2(0x40)) {
+            if (parts != NULL) {
+                for (int i = 0; i < 6; i++) {
+                    if (parts->elements[i].id >= 0) {
+                        parts->elements[i].enabled = 1;
+                    }
+                }
+                parts->completion_flags = 1;
+            }
+            MenuAtoraSel.board.cursor = 0;
+        }
+        if (GamePad.Down2(0x20)) {
+            if (parts != NULL) {
+                for (int i = 0; i < 6; i++) {
+                    if (parts->elements[i].id >= 0) {
+                        parts->elements[i].enabled = 0;
+                        for (int j = 0; j < 100; j++) {
+                            if (MenuAtoraSel.board.atla_elements[j] < 0) {
+                                MenuAtoraSel.board.atla_elements[j] = parts->elements[i].id;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            parts->completion_flags = 0;
+        }
+        if (GamePad.Down2(8) && parts != NULL) {
+            printf("info----------,,,\tID \t\t%d\n", parts->parts_no);
+            printf("\t\tcomplete_event\t\t%d\n", parts->kind);
+            for (int i = 0; i < 6; i++) {
+                if (parts->elements[i].id >= 0 && parts->elements[i].enabled != 0) {
+                    for (int j = 0; j < 120; j++) {
+                        if (MenuAtoraSel.board.atla_elements[j] < 0) {
+                            MenuAtoraSel.board.atla_elements[j] = parts->elements[i].id;
+                            parts->elements[i].enabled = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+            parts->completion_flags = 0;
+        }
+        if (GamePad.Down2(4)) {
+            if (parts != NULL) {
+                for (int i = 0; i < 6; i++) {
+                    if (parts->elements[i].id >= 0) {
+                        parts->elements[i].enabled = 1;
+                        int npc_no = parts->elements[i].npc_no;
+                        if (npc_no >= 0) {
+                            SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, npc_no);
+                            if (npc != NULL) {
+                                npc->talk_message++;
+                            }
+                        }
+                    }
+                }
+                parts->completion_flags = 0;
+            }
+            MenuAtoraSel.board.cursor = 0;
+        }
+        if (GamePad.Down2(0x10)) {
+            EDITPARTS_INFO *info = SearchAtoraInfo(MenuAtoraSel.board_pos);
+            if (info != NULL) {
+                for (int i = 0; i < 6; i++) {
+                    EDITPARTS_ELEMENT *element = &info->elements[i];
+                    if (info->elements[i].id >= 0) {
+                        if (info->elements[i].id >= 0) {
+                            element->enabled = 1;
+                        }
+                        int npc_no = element->npc_no;
+                        if (npc_no >= 0) {
+                            SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, npc_no);
+                            if (npc != NULL) {
+                                npc->talk_message++;
+                            }
+                        }
+                    }
+                }
+                if (AtoraCompOrEvent(info) != 0 && open_mode == 2 && NowEditMap == MenuAtoraSel.map_no) {
+                    MenuAtoraSel.step = 3;
+                }
+                ComMenuSePlay(1);
+            }
+        }
+        if (GamePad.Down2(0x40) && GamePad.Down2(0x20)) {
+            for (int k = 0; k < max; k++) {
+                EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(k);
+                if (info != NULL) {
+                    info->obtained = 1;
+                    for (int i = 0; i < 6; i++) {
+                        EDITPARTS_ELEMENT *element = &info->elements[i];
+                        if (info->elements[i].id >= 0) {
+                            if (info->elements[i].id >= 0) {
+                                element->enabled = 1;
+                            }
+                            int npc_no = element->npc_no;
+                            if (npc_no >= 0) {
+                                SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, npc_no);
+                                if (npc != NULL) {
+                                    npc->talk_message++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ComMenuSePlay(1);
+        }
+        if (GamePad.Down2(0x40) && GamePad.Down2(0x4000)) {
+            for (int k = 0; k < max; k++) {
+                EDITPARTS_INFO *info = CommonMenuAtoraInfo->GetPartsInfo(k);
+                if (info != NULL) {
+                    for (int i = 0; i < 6; i++) {
+                        EDITPARTS_ELEMENT *element = &info->elements[i];
+                        if (info->elements[i].id >= 0) {
+                            int npc_no = element->npc_no;
+                            if (npc_no >= 0) {
+                                SV_GRD_NPC *npc = SaveData->GetGrdNPCData(MapNo, npc_no);
+                                if (npc != NULL) {
+                                    npc->flags |= 2;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+#endif
     if (old_cursor != MenuAtoraSel.board.cursor || old_pos != MenuAtoraSel.board_pos) {
         se = 0;
     }
     ComMenuSePlay(se);
     return result;
 }
-#endif
 
 static int AtoraTipKey() {
     int result = 0;
@@ -2810,22 +2930,88 @@ void AtoraNameDraw(int) {
 }
 
 #ifdef PAL
-static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", OptionMenuDraw__Fiiiii);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at2274[16] __attribute__((aligned(16))) = {
-    0x0000000A, 0x00000008, 0x00000004, 0x00000005, 0x00000002, 0x00000003, 0x0000000E,
-    0x00000009, 0x0000000B, 0x0000000C, 0x0000000D, 0x00000006, 0x00000007,
-};
-unsigned int pal_at2275[16] __attribute__((aligned(16))) = {
-    0x00000000, 0x00000000, 0x00000001, 0x00000002, 0x00000000, 0x00000001, 0x00000004,
-    0x00000003,
-};
-unsigned int pal_at2283__2[12] __attribute__((aligned(16))) = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000080,
-    0x000000B0, 0x000000C0, 0x000000C8,
-};
-#pragma name_counter 1586
+static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
+    int label[13] = {10, 8, 4, 5, 2, 3, 14, 9, 11, 12, 13, 6, 7};
+    int kind[13] = {0, 0, 1, 2, 0, 1, 4, 3, 0, 0, 0, 0, 0};
+    int u;
+    int v;
+    int i;
+    int row_x;
+    int row_y;
+    int cell_x;
+    int setting;
+
+    row_x = x;
+    row_y = y;
+    for (i = 0; i < 13; i++) {
+        CRect_i_ dst(0, 0, 210, 24);
+        CRect_i_ src(0, 0, 210, 24);
+
+        if (label[i] < 7) {
+            src.x = 0;
+            src.y = label[i] * 24;
+        } else {
+            src.x = src.width;
+            src.y = (label[i] - 7) * 24;
+        }
+        dst.x = row_x;
+        dst.y = row_y + 1;
+        DrawMenu2DSprite(MenuOption, dst, src, alpha);
+        int row_kind = kind[i];
+        // Source position of the first cell of the row, by row kind.
+        int cell_uv[5][2] = {{OptionMenu.flag[i] << 6, row_kind * 48 + 176},
+                             {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
+                             {OptionMenu.flag[i] << 6, row_kind * 48 + 176},
+                             {128, 176},
+                             {192, 200}};
+        u = cell_uv[row_kind][0];
+        v = cell_uv[row_kind][1];
+        switch (row_kind) {
+            case 0:
+            case 1:
+            case 2:
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
+                                 alpha);
+                if (u < 64) {
+                    u = 64;
+                } else {
+                    u = 0;
+                }
+                v = (row_kind * 2 + 1) * 24 + 176;
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 310, row_y + 1, 64, 23), CRect_i_(u, v + 1, 64, 24),
+                                 alpha);
+                break;
+            case 3:
+                cell_x = row_x + 238;
+                setting = OptionMenu.flag[i];
+                for (int j = 0; j < 3; j++) {
+                    u = 160;
+                    if (j == setting) {
+                        u -= 32;
+                    }
+                    DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 32, 23), CRect_i_(u, v + 1, 32, 24),
+                                     alpha);
+                    v += 24;
+                    cell_x += 36;
+                }
+                int off_u = 0;
+                if (setting != 3) {
+                    off_u += 64;
+                }
+                DrawMenu2DSprite(MenuOption, CRect_i_(cell_x, row_y + 1, 64, 23), CRect_i_(off_u, 199, 64, 24), alpha);
+                break;
+            case 4:
+                DrawMenu2DSprite(MenuOption, CRect_i_(row_x + 238, row_y + 1, 64, 23), CRect_i_(u, v, 64, 24), alpha);
+                break;
+        }
+        row_y += 30;
+        if (i == 6) {
+            row_x += 560;
+            row_y = y;
+        }
+    }
+    DrawMenu2DSprite(MenuOption, CRect_i_(arrow_x, arrow_y, 60, 29), CRect_i_(452, 224, 60, 29), alpha);
+}
 #else
 static void OptionMenuDraw(int x, int y, int arrow_x, int arrow_y, int alpha) {
     int label[12] = {10, 8, 4, 5, 2, 3, 9, 11, 12, 13, 6, 7};
@@ -2916,21 +3102,29 @@ static void DrawOptionLRCur(int side, int alpha) {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawOptionScreenWaku__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at2353[4] __attribute__((aligned(16))) = {0x00040004, 0x0004025C, 0x01BC0004, 0x01BC025C};
-unsigned int pal_at2354[4] __attribute__((aligned(16))) = {0};
-s8 pal_at2355[8] = {0, 0, 32, 0, 0, 32, 32, 32};
-#pragma name_counter 1595
+static void DrawOptionScreenWaku() {
+    int center_x = 320;
+    int center_y = 240;
+
+    DrawMenu2DSprite(MenuOption, CRect_i_(288, 208, 64, 64), CRect_i_(448, 0, 64, 64), 0x80);
+    // Screen corners that the frame corner pieces sit in.
+    s16 corner[4][2] = {{4, 4}, {604, 4}, {4, 444}, {604, 444}};
+    // Positions of the four arrows around the centre piece.
+    s16 arrow[4][2] = {{center_x - 16, center_y - 96},
+                       {center_x + 64, center_y - 16},
+                       {center_x - 16, center_y + 64},
+                       {center_x - 96, center_y - 16}};
+    // Source offset of each corner's piece within its group.
+    u8 piece_uv[4][2] = {{0, 0}, {32, 0}, {0, 32}, {32, 32}};
+    for (int i = 0; i < 4; i++) {
+        DrawMenu2DSprite(MenuOption, CRect_i_(corner[i][0], corner[i][1], 32, 32),
+                         CRect_i_(piece_uv[i][0] + 448, piece_uv[i][1] + 64, 32, 32), 0x80);
+        DrawMenu2DSprite(MenuOption, CRect_i_(arrow[i][0], arrow[i][1], 32, 32),
+                         CRect_i_(piece_uv[i][0] + 448, piece_uv[i][1] + 128, 32, 32), 0x80);
+    }
+}
 #endif
 
-#ifdef PAL
-int InitMenuOption(int mode, int block_no, u_long128 *buffer);
-/* Retail's data for the function the marker below supplies. */
-char pal_at2413[0x18] __attribute__((section(".rodata"))) = "option.pac";
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitMenuOption__FiiP1);
-#pragma name_counter 1610
-#else
 int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     u_long128 *data;
     CUserStatus *status;
@@ -2957,7 +3151,11 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     OptionMenu.step_count = 0;
     OptionMenu.cursor = 10;
     OptionMenu.cursor_x = (OptionMenu.cursor % 10) * 70 + 316;
+#ifdef PAL
+    OptionMenu.cursor_y = ((OptionMenu.cursor - 10) / 10) * 30 + 86;
+#else
     OptionMenu.cursor_y = ((OptionMenu.cursor - 10) / 10) * 30 + 90;
+#endif
     OptionMenu.page_x = 136.0f;
     OpConfigPt = (s32 *) SaveData->GetConfigData();
     status = (CUserStatus *) SaveData->GetDngStatus();
@@ -2967,6 +3165,20 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     OptionMenu.flag[3] = OpConfigPt[5];
     OptionMenu.flag[4] = OpConfigPt[2];
     OptionMenu.flag[5] = OpConfigPt[3];
+#ifdef PAL
+    OptionMenu.flag[7] = status->minimap_status;
+    OptionMenu.flag[8] = OpConfigPt[10];
+    OptionMenu.flag[9] = OpConfigPt[9];
+    OptionMenu.flag[10] = OpConfigPt[11];
+    OptionMenu.flag[11] = OpConfigPt[8];
+    OptionMenu.flag[12] = OpConfigPt[6];
+    OptionMenu.prev_screen_pos[0] = OpConfigPt[12];
+    OptionMenu.prev_screen_pos[1] = OpConfigPt[13];
+    // Runs one past the rows, into the first saved screen offset.
+    for (i = 0; i < 14; i++) {
+        OptionMenu.prev_flag[i] = OptionMenu.flag[i];
+    }
+#else
     OptionMenu.flag[6] = status->minimap_status;
     OptionMenu.flag[7] = OpConfigPt[10];
     OptionMenu.flag[8] = OpConfigPt[9];
@@ -2976,9 +3188,9 @@ int InitMenuOption(int mode, int block_no, u_long128 *buffer) {
     for (i = 0; i < 12; i++) {
         OptionMenu.prev_flag[i] = OptionMenu.flag[i];
     }
+#endif
     return 1;
 }
-#endif
 
 /**
  * Stores whether the menus discard their saved positions in the saved menu
@@ -3031,47 +3243,272 @@ static void ExitMenuOption() {
 #endif
 }
 
-#ifdef PAL
-static void InitOptionFlag();
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", InitOptionFlag__Fv);
-#pragma name_counter 1626
-#else
 static void InitOptionFlag() {
     int i;
 
+#ifdef PAL
+    for (i = 0; i < 13; i++) {
+        OptionMenu.flag[i] = 0;
+    }
+    OptionMenu.flag[7] = 1;
+    OpConfigPt[13] = 0;
+    OpConfigPt[12] = 0;
+#else
     for (i = 0; i < 12; i++) {
         OptionMenu.flag[i] = 0;
     }
     OptionMenu.flag[6] = 1;
-}
 #endif
+}
 
-#ifdef PAL
-static void PrevOptionSetFunc();
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", PrevOptionSetFunc__Fv);
-#pragma name_counter 1633
-#else
 static void PrevOptionSetFunc() {
     int i;
 
     for (i = 0; i < 12; i++) {
         OptionMenu.flag[i] = OptionMenu.prev_flag[i];
     }
-}
+#ifdef PAL
+    OpConfigPt[12] = OptionMenu.prev_screen_pos[0];
+    OpConfigPt[13] = OptionMenu.prev_screen_pos[1];
 #endif
+}
 
 #ifdef PAL
-int MenuOptionKey();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2453[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image_option#640#480#4";
-char pal_at2608[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "option.img";
-char pal_at2609__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "option2";
-char pal_at2610__2[0x10] __attribute__((section(".rodata"))) = "allmenu.mes";
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuOptionKey__Fv);
-/* Retail's data for the function the marker above supplies. */
-char pal_at2454__2[0x28] __attribute__((aligned(16))) = " `*";
-unsigned int pal_at2580[6] __attribute__((aligned(8))) = {0x00000000, 0x00000171, 0x0000016C};
-#pragma name_counter 1733
+int MenuOptionKey() {
+    int result = 0;
+
+    switch (OptionMenu.step) {
+        case 1:
+            if (OptionMenu.texture_ready == 0) {
+                ReadBG();
+                if (ReadBGSync() == 0) {
+                    LOADTEXTURE_INFO2 textures[3] = {{"#frame_image_option#640#" SCREEN_HEIGHT_STR "#4", 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+                    textures[0].block_no = OptionMenu.block_no;
+                    textures[1].block_no = OptionMenu.block_no;
+                    BG_READ_INFO *file = GetReadBGFile(0);
+                    textures[1].name = (char *) GetPackFile((u_int *) file->buffer, "option.img", NULL);
+                    TexManager.DeleteTextureBlock(OptionMenu.block_no);
+                    TexManager.CleanUpTextureList();
+                    TexManager.LoadTextureBlockEX(-1, textures);
+                    MenuOption = TexManager.GetTexture("option2", -1);
+                    if (OptionMenu.mode == 0) {
+                        InitMenuMesSet(0, (short *) GetPackFile((u_int *) file->buffer, "allmenu.mes", NULL));
+                        CommonMenuMes2.MakeMesWin(0x15E);
+                    }
+                    OptionMenu.texture_ready = 1;
+                }
+            }
+            if (OptionMenu.texture_ready != 0 && OptionMenu.step_count > 12) {
+                OptionMenu.step = 0;
+                OptionMenu.step_count = 0;
+            }
+            break;
+        case 2:
+            if (OptionMenu.step_count > 24) {
+                ExitMenuOption();
+                CommonMenuMes2.mes_made = -1;
+                result = 1;
+            }
+            break;
+        default: {
+            int old_cursor = OptionMenu.cursor;
+            int old_buttons = OptionMenu.buttons;
+            if (OptionMenu.buttons != 2 && GamePad.Down(0xF) != 0) {
+                if (OptionMenu.cursor / 10 - 1 < 7) {
+                    OptionMenu.cursor += 70;
+                } else {
+                    OptionMenu.cursor -= 70;
+                }
+                if (OptionMenu.cursor / 10 - 1 >= 13) {
+                    OptionMenu.cursor -= 10;
+                }
+            }
+            switch (OptionMenu.buttons) {
+                case 2:
+                    // Moves the picture, clamped to 32 in each direction.
+                    if (GamePad.Down(0x1000) != 0) {
+                        OpConfigPt[13] -= 2;
+                    }
+                    if (GamePad.Down(0x4000) != 0) {
+                        OpConfigPt[13] += 2;
+                    }
+                    if (GamePad.Down(0x8000) != 0) {
+                        OpConfigPt[12] -= 4;
+                    }
+                    if (GamePad.Down(0x2000) != 0) {
+                        OpConfigPt[12] += 4;
+                    }
+                    if (OpConfigPt[13] < -32) {
+                        OpConfigPt[13] = -32;
+                    }
+                    if (OpConfigPt[13] > 32) {
+                        OpConfigPt[13] = 32;
+                    }
+                    if (OpConfigPt[12] < -32) {
+                        OpConfigPt[12] = -32;
+                    }
+                    if (OpConfigPt[12] > 32) {
+                        OpConfigPt[12] = 32;
+                    }
+                    if (GamePad.Down(0x80) != 0) {
+                        OpConfigPt[13] = 0;
+                        OpConfigPt[12] = 0;
+                    }
+                    if (GamePad.Down(0x60) != 0) {
+                        OptionMenu.buttons = 0;
+                    }
+                    break;
+                case 0:
+                    if (GamePad.Down(0x4000) != 0) {
+                        if (OptionMenu.cursor / 10 - 1 == 7 && OptionMenu.cursor % 10 > 1) {
+                            OptionMenu.cursor -= 2;
+                        }
+                        switch (OptionMenu.cursor / 10 - 1) {
+                            case 6:
+                            case 12:
+                                OptionMenu.buttons = 1;
+                                break;
+                            default:
+                                OptionMenu.cursor += 10;
+                                break;
+                        }
+                    }
+                    if (GamePad.Down(0x1000) != 0) {
+                        switch (OptionMenu.cursor / 10 - 1) {
+                            case 0:
+                            case 7:
+                                OptionMenu.buttons = 1;
+                                break;
+                            default:
+                                OptionMenu.cursor -= 10;
+                                break;
+                        }
+                    }
+                    if (GamePad.Down(0x2000) != 0) {
+                        if (OptionMenu.cursor / 10 - 1 == 6) {
+                            OptionMenu.cursor = 130;
+                        } else {
+                            OptionMenu.cursor++;
+                            switch (OptionMenu.cursor / 10 - 1) {
+                                case 7:
+                                    if (OptionMenu.cursor % 10 == 4) {
+                                        OptionMenu.cursor -= 74;
+                                    }
+                                    break;
+                                default:
+                                    if (OptionMenu.cursor % 10 == 2) {
+                                        OptionMenu.cursor -= 2;
+                                        OptionMenu.cursor += 70;
+                                        if (OptionMenu.cursor / 10 - 1 >= 13) {
+                                            OptionMenu.cursor -= 140;
+                                        }
+                                        if (OptionMenu.cursor / 10 - 1 > 13) {
+                                            OptionMenu.cursor -= 10;
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    if (GamePad.Down(0x8000) != 0) {
+                        if (OptionMenu.cursor % 10 != 0) {
+                            OptionMenu.cursor--;
+                        } else {
+                            int row = OptionMenu.cursor / 10 - 1;
+                            switch (row) {
+                                case 0:
+                                    OptionMenu.cursor = 0x53;
+                                    break;
+                                default:
+                                    if (row < 7) {
+                                        OptionMenu.cursor += 70;
+                                        if (OptionMenu.cursor / 10 - 1 >= 13) {
+                                            OptionMenu.cursor -= 10;
+                                        }
+                                    } else {
+                                        OptionMenu.cursor -= 70;
+                                    }
+                                    OptionMenu.cursor++;
+                                    break;
+                            }
+                        }
+                    }
+                    if (OptionMenu.cursor / 10 - 1 != 7) {
+                        if (OptionMenu.cursor % 10 >= 2) {
+                            OptionMenu.cursor--;
+                        }
+                        if (OptionMenu.cursor / 10 - 1 == 6) {
+                            OptionMenu.cursor = OptionMenu.cursor - OptionMenu.cursor % 10;
+                        }
+                    }
+                    if (GamePad.Down(0x40) != 0) {
+                        ComMenuSePlay(1);
+                        if (OptionMenu.cursor / 10 - 1 == 6) {
+                            OptionMenu.buttons = 2;
+                        } else {
+                            OptionMenu.flag[OptionMenu.cursor / 10 - 1] = OptionMenu.cursor % 10;
+                        }
+                    } else if (GamePad.Down(0x20) != 0) {
+                        OptionMenu.step = 2;
+                        OptionMenu.step_count = 0;
+                        ComMenuSePlay(2);
+                    }
+                    break;
+                case 1:
+                    if (GamePad.Down(0x4000) != 0) {
+                        OptionMenu.buttons = 0;
+                        if (OptionMenu.cursor / 10 - 1 < 7) {
+                            OptionMenu.cursor = 10;
+                        } else {
+                            OptionMenu.cursor = 70;
+                        }
+                    }
+                    if (GamePad.Down(0x1000) != 0) {
+                        OptionMenu.buttons = 0;
+                        if (OptionMenu.cursor / 10 - 1 < 7) {
+                            OptionMenu.cursor = 70;
+                        } else {
+                            OptionMenu.cursor = 130;
+                        }
+                    }
+                    if (GamePad.Down(0x40) != 0) {
+                        OptionMenu.step = 2;
+                        OptionMenu.step_count = 0;
+                        ComMenuSePlay(2);
+                    } else if (GamePad.Down(0x80) != 0) {
+                        InitOptionFlag();
+                    } else if (GamePad.Down(0x10) != 0) {
+                        PrevOptionSetFunc();
+                    } else if (GamePad.Down(0x20) != 0) {
+                        OptionMenu.step = 2;
+                        OptionMenu.step_count = 0;
+                        ComMenuSePlay(2);
+                    }
+                    break;
+            }
+            if (old_cursor != OptionMenu.cursor || old_buttons != OptionMenu.buttons) {
+                ComMenuSePlay(0);
+            }
+            // Help message by cursor area: a row's own, the buttons', the picture position's.
+            int mes_nos[3] = {OptionMenu.cursor / 10 + 0x15D, 0x171, 0x16C};
+            int mes_no = mes_nos[OptionMenu.buttons];
+            if (OptionMenu.buttons == 0) {
+                int row = OptionMenu.cursor / 10 - 1;
+                if (row >= 6) {
+                    mes_no--;
+                    if (row == 6) {
+                        mes_no = 0x16A;
+                    }
+                }
+            }
+            if (CommonMenuMes2.mes_made != mes_no) {
+                CommonMenuMes2.MakeMesWin(mes_no);
+            }
+            break;
+        }
+    }
+    return result;
+}
 #else
 int MenuOptionKey() {
     int result = 0;
@@ -3241,15 +3678,153 @@ int MenuOptionKey() {
 #endif
 
 #ifdef PAL
-void DrawMenuOption();
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", DrawMenuOption__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at2656[4] __attribute__((aligned(16))) = {0x000000B2, 0x000000F8, 0x00000010, 0x00000010};
-unsigned int pal_OpMenuWakuCnt_S2650;
-unsigned char pal_init_S2651;
-unsigned int pal_OptionCurCnt_S2653;
-unsigned char pal_init_S2654;
-#pragma name_counter 1854
+void DrawMenuOption() {
+    setbilinear(0);
+    if (OptionMenu.texture_ready == 0) {
+        return;
+    }
+    MenuTextureReload(OptionMenu.block_no);
+    int alpha = 0x80;
+    switch (OptionMenu.step) {
+        case 1:
+            alpha = OptionMenu.step_count * 7;
+            break;
+        case 2:
+            alpha = 0x80 - OptionMenu.step_count * 7;
+            break;
+        case 0:
+            alpha = 0x80;
+            break;
+    }
+    if (alpha >= 0x80) {
+        alpha = 0x80;
+    }
+    if (alpha <= 0) {
+        alpha = 0;
+    }
+    int row = OptionMenu.cursor / 10 - 1;
+    int column = OptionMenu.cursor % 10;
+    int page_x;
+    if (row < 7) {
+        page_x = 0x88;
+    } else {
+        page_x = -0x1A8;
+    }
+    OptionMenu.page_x += ((float) page_x - OptionMenu.page_x) / 4.0f;
+    int x = (int) OptionMenu.page_x;
+    if (OptionMenu.buttons != 2) {
+        OptionMenuDraw(x, 0x56, 0x1AE, 0x128, alpha);
+        int right = 1;
+        if (x < -0x90) {
+            right = 0;
+        }
+        DrawOptionLRCur(right, alpha);
+    }
+    int target_x;
+    int target_y;
+    switch (OptionMenu.buttons) {
+        case 1:
+            target_x = 0x192;
+            target_y = 0x12C;
+            break;
+        default:
+            target_x = column * 0x47 + 0x15C;
+            if (row == 7) {
+                if (column != 3) {
+                    target_x = column * 0x24 + 0x15C;
+                } else {
+                    target_x = 0x1C8;
+                }
+            }
+            if (row < 7) {
+                target_y = row * 0x1E + 0x56;
+            } else {
+                target_y = (row - 7) * 0x1E + 0x56;
+            }
+            break;
+    }
+    OptionMenu.cursor_x += ((float) target_x - OptionMenu.cursor_x) / 4.0f;
+    OptionMenu.cursor_y += ((float) target_y - OptionMenu.cursor_y) / 4.0f;
+    int width;
+    switch (OptionMenu.buttons) {
+        case 1:
+            width = 0x40;
+            break;
+        default:
+            width = 0x3C;
+            if (row == 7 && column != 3) {
+                width = 0x24;
+            }
+            break;
+    }
+    switch (OptionMenu.step) {
+        case 1:
+        case 2:
+            break;
+        default: {
+            static int OpMenuWakuCnt = 0;
+            static int OptionCurCnt = 0;
+            int left = (int) ((float) (target_x + 0x14) + 0.2f * OpMenuWakuCnt);
+            int top = (int) ((float) (target_y - 9) + 0.2f * OpMenuWakuCnt);
+            int right_x = (int) ((float) (target_x + 0x14 + width) - 0.2f * OpMenuWakuCnt);
+            int bottom = (int) ((float) (target_y + 0x11) - 0.2f * OpMenuWakuCnt);
+            RECT corner = {0xB2, 0xF8, 0x10, 0x10};
+            if (OptionMenu.buttons != 2) {
+                DrawMenu2DSprite(MenuOption, CRect_i_(left, top, corner.width, corner.height),
+                                 CRect_i_(corner.x, corner.y, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(right_x, top, corner.width, corner.height),
+                                 CRect_i_(corner.x + corner.width, corner.y, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(left, bottom, corner.width, corner.height),
+                                 CRect_i_(corner.x, corner.y + corner.height, corner.width, corner.height), alpha);
+                DrawMenu2DSprite(MenuOption, CRect_i_(right_x, bottom, corner.width, corner.height),
+                                 CRect_i_(corner.x + corner.width, corner.y + corner.height, corner.width, corner.height), alpha);
+                OpMenuWakuCnt++;
+                if (OpMenuWakuCnt < 0 || OpMenuWakuCnt >= 30) {
+                    OpMenuWakuCnt = 0;
+                }
+                float hand_x = OptionMenu.cursor_x + 7.0f * cosf(0.0805536583f * OptionCurCnt);
+                float hand_y = OptionMenu.cursor_y + 5.0f * sinf(0.116355285f * OptionCurCnt);
+                CRect_i_ hand(0xD2, 0xF8, 0x20, 0x20);
+                DrawMenu2DSprite(MenuOption, CRect_i_((int) (5.0f + hand_x), (int) (3.0f + hand_y), 0x20, 0x20), hand, 0, 0, 0,
+                                 (alpha * 100) >> 7);
+                DrawMenu2DSprite(MenuOption, CRect_i_((int) hand_x, (int) hand_y, 0x20, 0x20), hand, alpha);
+            }
+            OptionCurCnt++;
+            if (OptionCurCnt > 0x107AC0 || OptionCurCnt < 0) {
+                OptionCurCnt = 0;
+            }
+            break;
+        }
+    }
+    if (OptionMenu.buttons == 2) {
+        AllFadeForMenu(0x20);
+        DrawOptionScreenWaku();
+    }
+    if (OptionMenu.step != 0) {
+        OptionMenu.step_count++;
+    } else {
+        OptionMenu.step_count = 0;
+    }
+    switch (OptionMenu.mode) {
+        case 0: {
+            float win_x;
+            float win_y;
+            float win_w;
+            float win_h;
+            int text_x;
+            int text_y;
+            DrawMenu2DSprite(MenuOption, CRect_i_(0x50, 0x28, 0xAA, 0x28), CRect_i_(0xB3, 0x118, 0xAA, 0x28), alpha);
+            GetMainMenuRightHelpWinLangOffset(win_x, win_y, win_w, win_h);
+            MenuHelpWinDraw((int) win_x, (int) win_y, win_w, win_h, alpha);
+            GetMainMenuRightHelpMsgLangOffset(text_x, text_y);
+            CommonMenuMes2.edge_alpha = alpha;
+            MenuTextureReload(CommonMenuMes2.tex_block);
+            DrawMenuClsMes(&CommonMenuMes2, (int) (win_x + text_x), (int) (win_y + text_y));
+            break;
+        }
+    }
+    setbilinear(1);
+}
 #else
 void DrawMenuOption() {
     setbilinear(0);
@@ -3541,13 +4116,6 @@ int (*SaveMenuFunc[26])() = {
     SaveMenuKeyEndSaveEnding,
 };
 
-#ifdef PAL
-int MenuSaveKey();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2867[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "msgno = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/memcard", MenuSaveKey__Fv);
-#pragma name_counter 1940
-#else
 int MenuSaveKey() {
     int prev_func_no;
     int result;
@@ -3662,6 +4230,29 @@ int MenuSaveKey() {
     switch (McAccess.GetFuncNo()) {
         case 1:
             SaveMenuFunc[SaveMenu.key_no]();
+#ifdef PAL
+            // Debug shortcuts that jump the card access to one of its steps.
+            if (DebugMode) {
+                if (GamePad.Down2(8)) {
+                    McAccess.SetFuncNo(10);
+                    ComMenuSePlay(1);
+                }
+                if (GamePad.Down2(16)) {
+                    McAccess.SetFuncNo(9);
+                    ComMenuSePlay(1);
+                }
+                if (GamePad.Down2(64)) {
+                    McAccess.SetFuncNo(12);
+                    ComMenuSePlay(1);
+                    McAccess.Step();
+                }
+                if (GamePad.Down2(512)) {
+                    McAccess.SetFuncNo(15);
+                    ComMenuSePlay(1);
+                    McAccess.Step();
+                }
+            }
+#endif
             break;
     }
     msg_no = GetSaveMenuMsgNo();
@@ -3686,7 +4277,6 @@ int MenuSaveKey() {
     }
     return SaveMenu.result;
 }
-#endif
 
 void DrawMenuSave(char *) {
     if (SaveMenu.texture_ready == 0) {

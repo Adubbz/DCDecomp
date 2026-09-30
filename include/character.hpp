@@ -126,7 +126,13 @@ public:
     /**
      * Sets the speed of the motion the character plays.
      */
-    void SetMotionSpeed(float speed) { motion_speed = speed; }
+    void SetMotionSpeed(float speed) {
+        motion_speed = speed;
+#ifdef PAL
+        // Motion authored at 60 fields per second advances faster at 50.
+        motion_speed = 6.0f * speed / 5.0f;
+#endif
+    }
 
     float body_width;                                    /**< Width of the character collision body. */
     float body_height;                                   /**< Height used for targeting and camera framing. */

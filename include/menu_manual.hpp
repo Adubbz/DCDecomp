@@ -95,7 +95,11 @@ void DrawManualMsg();
  * @address 0x00233DD0
  * @size 0x130
  */
+#ifdef PAL
+int InitMenuManual(int *texture_blocks, u_long128 *load_buffer);
+#else
 void InitMenuManual(int *texture_blocks, u_long128 *load_buffer);
+#endif
 
 /**
  * Builds the message buffer for the current manual entry.

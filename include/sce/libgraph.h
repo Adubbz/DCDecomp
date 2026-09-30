@@ -7,6 +7,7 @@
 
 #define SCE_GS_INTERLACE 1
 #define SCE_GS_NTSC 2
+#define SCE_GS_PAL 3
 #define SCE_GS_FIELD 1
 
 #define SCE_GS_PSMCT32 0
@@ -372,11 +373,25 @@ typedef struct {
 
 /* Five registers rather than a layout the code states: nothing reconstructed reaches inside one,
    and 40 bytes each is what the double buffer's own size leaves room for. */
+/**
+ * Fields of a GS display register.
+ */
+typedef struct sceGsDisplay {
+    u_int DX : 12;  /**< Horizontal display offset. */
+    u_int DY : 11;  /**< Vertical display offset. */
+    u_int MAGH : 4; /**< Horizontal magnification. */
+    u_int MAGV : 2; /**< Vertical magnification. */
+    u_int p0 : 3;   /**< Reserved bits. */
+    u_int DW : 12;  /**< Display width. */
+    u_int DH : 11;  /**< Display height. */
+    u_int p1 : 9;   /**< Reserved bits. */
+} sceGsDisplay;
+
 typedef struct {
     u_long pmode;
     u_long smode2;
     u_long dispfb;
-    u_long display;
+    sceGsDisplay display;
     u_long bgcolor;
 } sceGsDispEnv;
 

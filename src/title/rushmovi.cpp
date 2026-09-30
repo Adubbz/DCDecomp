@@ -3,8 +3,10 @@
 #ifdef PAL
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
-#pragma argument_flag_ones 174, 175, 176, 177, 226, 228, 268, 279, 289, 538
-#pragma argument_flag_ones 548, 550, 558, 564, 567, 568, 569, 607
+#pragma argument_flag_ones 174, 175, 176, 177, 257, 258, 259, 268, 269, 270
+#pragma argument_flag_ones 304, 305, 306, 332, 334, 345, 347, 401, 403, 443
+#pragma argument_flag_ones 454, 464, 713, 723, 725, 733, 739, 742, 743, 744
+#pragma argument_flag_ones 782
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 91, 97, 98, 99, 104, 136, 164, 165, 166, 167
@@ -502,62 +504,38 @@ int RushLoop() {
  * @size 0xDD0
  * @unknownret
  */
-#ifdef PAL
-static void MotionProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/rushmovi", MotionProcess__Fv__2);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_old_S499;
-unsigned char pal_init_S500;
-unsigned int pal_iwacnt_S513;
-unsigned char pal_init_S514;
-unsigned int pal_at452__4[12] __attribute__((aligned(16))) = {
-    0x01DF96C0, 0x01DF96C0, 0x01DF96C8, 0x01DF96C8, 0x01DF96D0, 0x01DF96D8, 0x01DF96E0,
-    0x01DF96E8, 0x01DF96F0,
-};
-unsigned int pal_at462__3[12] __attribute__((aligned(16))) = {
-    0x01DF96F8, 0x01DF9700, 0x01DF9708, 0x01DF9710, 0x01DF9718, 0x01DF9720, 0x01DF9728,
-    0x01DF9730, 0x01DF9738,
-};
-char pal_at445__3[] __attribute__((section(".rodata"))) = "c12a";
-char pal_at446__5[] __attribute__((section(".rodata"))) = "c08a";
-char pal_at447__8[] __attribute__((section(".rodata"))) = "e04a1";
-char pal_at448__5[] __attribute__((section(".rodata"))) = "e04a2";
-char pal_at449__6[] __attribute__((section(".rodata"))) = "e04a3";
-char pal_at450__4[] __attribute__((section(".rodata"))) = "e04a4";
-char pal_at451__4[] __attribute__((section(".rodata"))) = "e04a5";
-char pal_at453__4[] __attribute__((section(".rodata"))) = "chr_a";
-char pal_at454__4[] __attribute__((section(".rodata"))) = "chr_b";
-char pal_at455__4[] __attribute__((section(".rodata"))) = "chr_c";
-char pal_at456__5[] __attribute__((section(".rodata"))) = "chr_d";
-char pal_at457__3[] __attribute__((section(".rodata"))) = "chr_e";
-char pal_at458__3[] __attribute__((section(".rodata"))) = "chr_f";
-char pal_at459__2[] __attribute__((section(".rodata"))) = "chr_g";
-char pal_at460__3[] __attribute__((section(".rodata"))) = "chr_h";
-char pal_at461__3[] __attribute__((section(".rodata"))) = "chr_i";
-char pal_at571__2[] __attribute__((section(".rodata"))) = "weapon";
-char pal_at572__2[] __attribute__((section(".rodata"))) = "dcol";
-unsigned int pal_at577__4[10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
-    0x01DE2290, 0x01DE22AC, 0x01DE22C8, 0x01DE22E4, 0x01DE2300, 0x01DE231C, 0x01DE2338,
-    0x01DE2354, 0x01DE2370, 0x01DE238C,
-};
-#pragma name_counter 295
-#else
 static void MotionProcess() {
     switch (CScript.fade) {
         case 1:
+#ifdef PAL
+            DispFade.FadeInStart(1.2f * CScript.fade_speed, 0);
+#else
             DispFade.FadeInStart(CScript.fade_speed, 0);
+#endif
             CScript.fade = 0;
             break;
         case 2:
+#ifdef PAL
+            DispFade.FadeOutStart(1.2f * CScript.fade_speed, 0);
+#else
             DispFade.FadeOutStart(CScript.fade_speed, 0);
+#endif
             CScript.fade = 0;
             break;
         case 3:
+#ifdef PAL
+            DispFade.FadeInStart(1.2f * CScript.fade_speed, 1);
+#else
             DispFade.FadeInStart(CScript.fade_speed, 1);
+#endif
             CScript.fade = 0;
             break;
         case 4:
+#ifdef PAL
+            DispFade.FadeOutStart(1.2f * CScript.fade_speed, 1);
+#else
             DispFade.FadeOutStart(CScript.fade_speed, 1);
+#endif
             CScript.fade = 0;
             break;
     }
@@ -710,10 +688,14 @@ static void MotionProcess() {
                 } else {
                     frame->GetLWMatrix(matrix);
 
+#ifdef PAL
+                    Chara__3[i].SetRotation(0.0f, atan2f(matrix[2][0], matrix[2][2]), 0.0f);
+#else
                     float angle = atan2f(matrix[2][0], matrix[2][2]);
                     float zero = 0.0f;
 
                     Chara__3[i].SetRotation(zero, angle, zero);
+#endif
                     float x = matrix[3][0];
                     float y = matrix[3][1];
                     float z = matrix[3][2];
@@ -821,7 +803,6 @@ static void MotionProcess() {
         iwacnt = 0;
     }
 }
-#endif
 
 /**
  *
@@ -923,14 +904,6 @@ static void DrawProcess() {
                 128, 128, 128, 35);
 }
 
-/* A string constant a marker function emits first: the PAL build reaches it by its retail name,
-   the NTSC build by the literal. */
-#ifdef PAL
-#define PAL_POOLED(retail, literal) retail
-#else
-#define PAL_POOLED(retail, literal) literal
-#endif
-
 /**
  *
  *
@@ -973,7 +946,7 @@ static void SoundProcess() {
 
     if (CScript.scene == 0 && Cam[SceneNp].motion_type.state.time > 10.0f) {
         if (!bat) {
-            CFrame *frame = Cam[SceneNp].frame->SearchFrame(PAL_POOLED(pal_at451__4, "e04a5"));
+            CFrame *frame = Cam[SceneNp].frame->SearchFrame("e04a5");
 
             if (frame) {
                 sceVu0FMATRIX matrix;
@@ -1002,7 +975,7 @@ static void SoundProcess() {
         static int wait = 0;
 
         if (CScript.scene == 0) {
-            CFrame *frame = Cam[SceneNp].frame->SearchFrame(PAL_POOLED(pal_at445__3, "c12a"));
+            CFrame *frame = Cam[SceneNp].frame->SearchFrame("c12a");
             int chara_frame = (int) Chara__3[1].motion_type.state.time;
 
             if (wait == 0) {
@@ -1026,7 +999,7 @@ static void SoundProcess() {
                 wait--;
             }
         } else {
-            CFrame *frame = Cam[SceneNp].frame->SearchFrame(PAL_POOLED(pal_at453__4, "chr_a"));
+            CFrame *frame = Cam[SceneNp].frame->SearchFrame("chr_a");
             int chara_frame = (int) Chara__3[0].motion_type.state.time;
 
             if (wait == 0) {

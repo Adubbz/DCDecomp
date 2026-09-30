@@ -24,6 +24,13 @@ script, split and build tree:
 The two builds share `.build.lock` and must not run at once: both compile the
 same sources, and the compile driver writes temporaries beside them.
 
+`build.sh` builds the selected release's objdiff objects after linking, prints
+its coloured objdiff summary, and writes `progress/ntsc/report.json` or
+`progress/pal/report.json`. The progress
+workflow builds both releases and uploads one `SCUS_971.11_report` artifact
+containing `progress/report.json`. Its units and categories identify the
+release, and the Discord message shows a separate embed for each release.
+
 ## Differences in the sources
 
 The PAL build compiles with `-DPAL` and assembles with `--defsym PAL=1`.

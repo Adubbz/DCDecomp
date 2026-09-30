@@ -75,21 +75,6 @@ void now_loading_off(void) {
  * @address 0x153FC0
  * @size 0x354
  */
-#ifdef PAL
-void init_now_loading(int title_number);
-/* Retail's data for the function the marker below supplies. */
-char pal_at285__2[0x8] __attribute__((section(".rodata"))) = "img_%d";
-char pal_at286[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%s/mt0%d.tm2";
-char pal_at287[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%s/mt%d.tm2";
-char pal_at288[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%s/title.img";
-char pal_at289[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "SCElogo";
-char pal_at290[0x8] __attribute__((section(".rodata"))) = "L5logo";
-INCLUDE_ASM("asm/pal/nonmatchings/nowload", init_now_loading__Fi);
-/* Retail's data for the function the marker above supplies. */
-char pal_at263[0x40] __attribute__((aligned(16))) = "img";
-unsigned int pal_at266[16] __attribute__((aligned(16))) = {0};
-#pragma name_counter 86
-#else
 void init_now_loading(int title_number) {
     end_flag = 1;
     if (now_loding_off != 0) {
@@ -97,7 +82,11 @@ void init_now_loading(int title_number) {
         return;
     }
 
+#ifdef PAL
+    u_char raw_archive[320000];
+#else
     u_char raw_archive[64000];
+#endif
     u_char *archive = raw_archive;
     int archive_size;
     int misalignment = (int) archive % 64;
@@ -126,8 +115,13 @@ void init_now_loading(int title_number) {
         if (LoadFile2(path, archive, &archive_size, 0) == 0) {
             return;
         }
+#ifdef PAL
+        LoadTexture("SCElogo", archive, &nl_tex, 8000, 10000);
+        LoadTexture("L5logo", archive, &nl_tex2, 9500, 10100);
+#else
         LoadTexture("SCElogo", archive, &nl_tex, 0x1A40, 10000);
         LoadTexture("L5logo", archive, &nl_tex2, 8000, 0x2774);
+#endif
     } else {
         if (path[0] == '\0') {
             return;
@@ -135,12 +129,16 @@ void init_now_loading(int title_number) {
         if (LoadFile2(path, archive, &archive_size, 0) == 0) {
             return;
         }
+#ifdef PAL
+        LoadTexture((TM2_head *) archive, &nl_tex, 8000, 9000);
+#else
         LoadTexture((TM2_head *) archive, &nl_tex, 0x1A40, 8000);
+#endif
     }
 
     map_title_no = title_number;
     nl_start_cnt = 20;
-    sceGsSetDefDBuff(&nowloadDB, 0, 640, 224, 2, 0x31, 1);
+    sceGsSetDefDBuff(&nowloadDB, 0, 640, SCREEN_HALF_HEIGHT, 2, 0x31, 1);
     nowloadDB.clear0.rgbaq.R = 0;
     nowloadDB.clear0.rgbaq.G = 0;
     nowloadDB.clear0.rgbaq.B = 0;
@@ -158,7 +156,6 @@ void init_now_loading(int title_number) {
     now_loading_vsync_end = 1;
     MGInitVSyncCallBack(VSyncCallBack_Load);
 }
-#endif
 
 /**
  * Draws the loading screen and advances its fade once per vertical sync.
@@ -167,11 +164,6 @@ void init_now_loading(int title_number) {
  * @address 0x154320
  * @size 0x450
  */
-#ifdef PAL
-int VSyncCallBack_Load(int field);
-INCLUDE_ASM("asm/pal/nonmatchings/nowload", VSyncCallBack_Load__Fi);
-#pragma name_counter 133
-#else
 int VSyncCallBack_Load(int field) {
     (void) field;
     if (end_flag) {
@@ -184,8 +176,19 @@ int VSyncCallBack_Load(int field) {
         sceVif1PkReset(&nlPacket);
         if (map_title_no == 0x321) {
             if (logo_count == 0) {
+#ifdef PAL
+                // Languages past the first two show a full-screen logo image instead.
+                if (LanguageCode >= 2) {
+                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0, 0x10, 0x280, 0x1C0),
+                                CRect_i_(0, 0, 0x280, 0x1C0), (u_char) (int) col_cnt);
+                } else {
+                    set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
+                                CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+                }
+#else
                 set2DSprite(&nlPacket, &nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40),
                             CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+#endif
             }
             if (logo_count == 1) {
                 set2DSprite(&nlPacket, &nl_tex2, CRect_i_(0x100, 0xA0, 0x80, 0x80),
@@ -195,12 +198,21 @@ int VSyncCallBack_Load(int field) {
                 col_cnt += col_add * 2.0f;
             }
             if (col_cnt > 128.0f) {
+#ifdef PAL
+                // The logo holds keep their NTSC duration at 50 fields a second.
+                count = 183;
+#else
                 count = 220;
+#endif
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }
             if (col_cnt < 0.0f) {
+#ifdef PAL
+                count = 83;
+#else
                 count = 100;
+#endif
                 col_cnt = 0.0f;
                 col_add *= -1.0f;
                 if (logo_count == 1) {
@@ -250,7 +262,6 @@ int VSyncCallBack_Load(int field) {
     now_loading_vsync_end = 1;
     return 0;
 }
-#endif
 
 /**
  * Uploads a named image and its palette to video memory and records where they went.

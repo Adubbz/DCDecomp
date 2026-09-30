@@ -436,15 +436,14 @@ float CCharacter::GetNowTime() {
     return 0.0f;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/character", Step__10CCharacterFv);
-#pragma name_counter 1076
-#else
 void CCharacter::Step() {
     int index;
     int set_no;
     tagMOTION_TYPE *motion;
     float old_time;
+#ifdef PAL
+    float step;
+#endif
     float new_time;
     float saved_speed;
     float saved_blend_step;
@@ -473,12 +472,26 @@ void CCharacter::Step() {
     old_time = motion->state.time;
     this->motion_state = 2;
     motion_info = &motion->motion_info[index];
+#ifdef PAL
+    // The step the motion advances by this frame, once the character's own speed overrides it.
+    step = motion_info->speed;
+    if (this->motion_speed > 0.0f) {
+        step = this->motion_speed;
+    }
+    if (motion_info != NULL) {
+        if (old_time >= (float) motion_info->start &&
+            (float) motion_info->end - step - 0.01f <= old_time) {
+            this->motion_state = 3;
+        }
+    }
+#else
     if (motion_info != NULL) {
         if (old_time >= (float) motion_info->start && old_time <= (float) motion_info->end &&
             (float) motion_info->end - motion_info->speed - 0.01f <= old_time) {
             this->motion_state = 3;
         }
     }
+#endif
 
     motion->state.motion_no = index;
     if (motion->state.motion_no != motion->state.playing_no) {
@@ -501,8 +514,12 @@ void CCharacter::Step() {
         motion->state.blend_step = 0.0f;
     }
     if (this->motion_flags & 2) {
+#ifdef PAL
+        if (!(motion->state.time + step < (float) motion->motion_info[index].end)) {
+#else
         if (!(motion->state.time + saved_speed + 0.01f <
               (float) motion->motion_info[index].end)) {
+#endif
             motion->motion_info[index].speed = 0.0f;
         }
     }
@@ -599,7 +616,6 @@ void CCharacter::Step() {
         this->foot_sound_wait = 0;
     }
 }
-#endif
 
 void CCharacter::ShadowStep() {
     int index;
@@ -1050,18 +1066,3 @@ void CMainChara::Initialize() {
     this->unk_11C8 = 0;
     this->unk_11CC = 0;
 }
-
-#ifdef PAL
-/* The virtual table the compiler would emit with the function a PAL marker supplies; it
-   emits a unit's virtual tables after its functions. */
-unsigned int __vt__10CCharacter[50] __attribute__((section(".vtables"))) = {
-    0x00000000, 0x00000000, 0x00138810, 0x00156EA0, 0x00139400, 0x001393D0, 0x001392A0,
-    0x00156F10, 0x00156F40, 0x00156F70, 0x00156FA0, 0x00139500, 0x00139440, 0x001394D0,
-    0x00157040, 0x00157070, 0x001570A0, 0x001570B0, 0x001570D0, 0x001570E0, 0x001570F0,
-    0x00157100, 0x00157110, 0x00157130, 0x00157140, 0x00157150, 0x00157160, 0x00157170,
-    0x00157180, 0x00157190, 0x001571A0, 0x001571B0, 0x001571C0, 0x00139540, 0x001395D0,
-    0x00157210, 0x00138F80, 0x00139140, 0x00139260, 0x0013B6A0, 0x001393A0, 0x00139330,
-    0x00156930, 0x00139600, 0x001399F0, 0x00139AE0, 0x00139B10, 0x00139B40, 0x00139B80,
-    0x00139CC0,
-};
-#endif

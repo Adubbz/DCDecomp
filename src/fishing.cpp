@@ -493,11 +493,6 @@ void FishingDeleteAngleFish() {
     }
 }
 
-#ifdef PAL
-void FishingStepFish();
-INCLUDE_ASM("asm/pal/nonmatchings/fishing", FishingStepFish__Fv);
-#pragma name_counter 291
-#else
 void FishingStepFish() {
     sceVu0FVECTOR hook;
 
@@ -516,12 +511,17 @@ void FishingStepFish() {
             Fish[i].SetFoodPos(-1, hook, radius);
         } else {
             float radius = esa_info[esa_type].radius;
+#ifdef PAL
+            // Debug builds let every fish notice the bait from anywhere.
+            if (DebugMode) {
+                radius = 100000000;
+            }
+#endif
             Fish[i].SetFoodPos(esa_type, hook, radius);
         }
         Fish[i].Step();
     }
 }
-#endif
 
 void FishingDrawFish() {
     if (Fish == NULL) {

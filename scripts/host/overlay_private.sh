@@ -6,9 +6,9 @@
 # The private repository mirrors this tree's layout and holds only files that
 # are gitignored here: retail-derived data this repository must not carry.
 #
-#   rom/ntsc/extracted/iso/{SCUS_971.11,TITLE.BIN,DUN.BIN}
-#                          what splat splits asm/ from, so no disc image is
-#                          needed to build, diff or report progress
+#   rom/{ntsc,pal}/extracted/iso/{SCUS_971.11,TITLE.BIN,DUN.BIN}
+#                          what splat splits asm/ from for each release, so
+#                          no disc image is needed to build or report progress
 #
 # Every file it tracks, bar its README, is copied to the same path here, and
 # the build finds them exactly where extracting the disc would have put them.

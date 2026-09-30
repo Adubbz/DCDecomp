@@ -22,6 +22,7 @@
 #include "gamepad.hpp"
 #include "itemdata.hpp"
 #include "mainitemmodel.hpp"
+#include "mainselect.hpp"
 #include "mds.hpp"
 #include "memcard.hpp"
 #include "memorycardaccess.hpp"
@@ -526,20 +527,6 @@ int DunEnterMenuLoop() {
     return result;
 }
 
-#ifdef PAL
-static int DunEnterMenuKey(void);
-/* Retail's data for the function the marker below supplies. */
-char pal_at776[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_menu_enter#640#480#4";
-char pal_at868__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dunenter.img";
-char pal_at869__3[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dunenter";
-char pal_at870__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "kaisou";
-char pal_at871__3[0x18] __attribute__((section(".rodata"))) = "dunlog.bin";
-char pal_at872__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "tex enter end \n";
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DunEnterMenuKey__Fv);
-/* Retail's data for the function the marker above supplies. */
-char pal_at777__2[0x30] __attribute__((aligned(16))) = "0d*";
-#pragma name_counter 931
-#else
 static int DunEnterMenuKey(void) {
     int result;
     int selected;
@@ -553,7 +540,7 @@ static int DunEnterMenuKey(void) {
         case 3:
             if (DEnterMenu.textures_ready == 0 && ReadBGSync() == 0) {
                 LOADTEXTURE_INFO2 textures[] = {
-                    {(char *) "#frame_menu_enter#640#448#4", DEnterMenu.texture_block, 0},
+                    {(char *) "#frame_menu_enter#640#" SCREEN_HEIGHT_STR "#4", DEnterMenu.texture_block, 0},
                     {NULL, DEnterMenu.texture_block, 0},
                     {NULL, 0, 0},
                 };
@@ -623,6 +610,29 @@ static int DunEnterMenuKey(void) {
                     DEnterMenu.scroll_top = 0;
                 }
             }
+#ifdef PAL
+            if (DebugMode) {
+                if (GamePad.Down2(8)) {
+                    int max_floor = maxFloorTbl__4[DEnterMenu.dungeon];
+                    DEnterMenu.floor_count = max_floor;
+                    for (int floor = 0; floor < DEnterMenu.floor_count; floor++) {
+                        DEnterMenu.max_atra[floor] = DEnterStatusPt->GetMaxAtraNum(DEnterMenu.dungeon, floor);
+                        DEnterMenu.collected_atra[floor] = DEnterStatusPt->GetAtraNum(DEnterMenu.dungeon, floor);
+                    }
+                    ComMenuSePlay(1);
+                }
+                if (GamePad.On2(0x40)) {
+                    if (DEnterMenu.kills[DEnterMenu.selected_floor] < 999) {
+                        DEnterMenu.kills[DEnterMenu.selected_floor]++;
+                    }
+                }
+                if (GamePad.On2(0x20)) {
+                    if (0 < DEnterMenu.kills[DEnterMenu.selected_floor]) {
+                        DEnterMenu.kills[DEnterMenu.selected_floor]--;
+                    }
+                }
+            }
+#endif
             if (DEnterMenu.selected_floor > DEnterMenu.floor_count - 1) {
                 DEnterMenu.selected_floor = DEnterMenu.floor_count - 1;
             }
@@ -662,7 +672,6 @@ static int DunEnterMenuKey(void) {
     }
     return result;
 }
-#endif
 
 static void DunEnterDraw(void) {
     int fade;
@@ -1032,18 +1041,14 @@ static void DrawDunNumberClip(int x, int y, int top, int bottom, int digit, int 
     }
 }
 
-#ifdef PAL
-static void DrawDunEnterBack(int alpha);
-/* Retail's data for the function the marker below supplies. */
-char pal_at1280[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "frame";
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterBack__Fi);
-#pragma name_counter 1282
-#else
 static void DrawDunEnterBack(int alpha) {
+#ifdef PAL
+    DrawFullSizePicture(TexManager.GetTexture("frame", -1), 0, 0, 0x80);
+#else
     DrawMenu2DSprite(TexManager.GetTexture("frame", -1), MenuDispRc, MenuDispRc, 0x80);
-    MGFillBox(CRect_i_(0, 0, 0x2800, 0x1C00), 10, 10, 10, (alpha * 4) >> 7);
-}
 #endif
+    MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HEIGHT * 0x10), 10, 10, 10, (alpha * 4) >> 7);
+}
 
 /**
  * Screen position of the character change ring's centre.
@@ -1081,14 +1086,6 @@ int polyreadflag;
 
 char chara_change_frame_image[] __attribute__((section(".rodata"))) = "#frame_image#640#" SCREEN_HEIGHT_STR "#4";
 
-#ifdef PAL
-static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", DrawDunEnterFloorName__Fiiiiii);
-/* Retail's data for the function the marker above supplies. */
-char pal_at1305[0x40] __attribute__((aligned(16))) = "PnHh80PRh``80dRh``80dRh`b80f\\h``.0dRh``80dRh``8Pd";
-unsigned int pal_at1306__2[4] __attribute__((aligned(16))) = {0x00000000, 0x000000C0, 0x00000010, 0x0000001C};
-#pragma name_counter 1323
-#else
 static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, int alpha) {
     int position = y;
     int height;
@@ -1124,11 +1121,28 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
             }
             if (floor >= 100) {
                 offset = 0;
+#ifdef PAL
+                if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() > 0) {
+                    offset += 8;
+                }
+#else
                 if (DEnterMenu.dungeon == 6 && GetMenuLangFlag() == 1) {
                     offset += 4;
                 }
+#endif
             }
         }
+#ifdef PAL
+        s8 name_width[7][7] = {
+            {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x62, 0x38, 0x30, 0x66},
+            {0x5C, 0x68, 0x60, 0x60, 0x2E, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
+            {0x52, 0x68, 0x60, 0x60, 0x38, 0x50, 0x64},
+        };
+#else
         s8 name_width[7][7] = {
             {0x50, 0x6E, 0x48, 0x68, 0x38, 0x30, 0x50},
             {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
@@ -1138,6 +1152,7 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
             {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
             {0x52, 0x68, 0x60, 0x60, 0x38, 0x30, 0x64},
         };
+#endif
         x = offset + (x + name_width[GetMenuLangFlag()][DEnterMenu.dungeon]);
         position = y;
         RECT digits = {0, 0xC0, 0x10, 0x1C};
@@ -1146,7 +1161,6 @@ static void DrawDunEnterFloorName(int x, int y, int floor, int top, int bottom, 
         }
     }
 }
-#endif
 
 float changeMenu_long = 60.0f;
 
@@ -1298,11 +1312,6 @@ static inline void SetStatusChara(CDngStatusData *status, s8 chara) {
     status->cur_chara = chara;
 }
 
-#ifdef PAL
-int CharaChangeKey(void);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeKey__Fv);
-#pragma name_counter 1515
-#else
 int CharaChangeKey(void) {
     int result = 0;
 
@@ -1388,6 +1397,11 @@ int CharaChangeKey(void) {
                 }
                 ComMenuSePlay(0);
             }
+#ifdef PAL
+            if (DebugMode && GamePad.Down2(0x40)) {
+                ChangeStatusDataPt->GetItem(ITEM_STAND_IN_POWDER, 0);
+            }
+#endif
             if (GamePad.Down(0x40)) {
                 ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
                 int count = GetNowItemNum(0xAE, pack);
@@ -1495,18 +1509,7 @@ int CharaChangeKey(void) {
     }
     return result;
 }
-#endif
 
-#ifdef PAL
-void CharaChangeDraw(void);
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", CharaChangeDraw__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at1606__2[4] __attribute__((aligned(16))) = {0x00000070, 0x00000074, 0x0000000C, 0x0000000C};
-unsigned int pal_at1607__2[8] __attribute__((aligned(16))) = {0x4129999A, 0x4129999A, 0x4129999A, 0x41600000, 0x41400000, 0x413CCCCD, 0x412B3333};
-unsigned int pal_at1612__2[4] __attribute__((aligned(16))) = {0x00000000, 0x0000009E, 0x0000000C, 0x00000012};
-s8 pal_at1608__2[8] = {0, 0, 0, 56, 28, 16};
-#pragma name_counter 1614
-#else
 void CharaChangeDraw(void) {
     int alpha;
     int i;
@@ -1520,7 +1523,13 @@ void CharaChangeDraw(void) {
     FrameImageDraw(100, 0x80);
     if (CharaChangeReadFlag != 0) {
         MenuTextureReload(CharaChangeTexBlock);
-        CTexture *frame = TexManager.GetTexture(stay_frame_name, -1);
+        CTexture *frame = TexManager.GetTexture(
+#ifdef PAL
+            "stayframe",
+#else
+            stay_frame_name,
+#endif
+            -1);
         int frame_x = QuickCharaPos[0] - 2.0f * changeMenu_long;
         int frame_y = QuickCharaPos[1] - 1.4f * changeMenu_long;
         alpha = 0x80;
@@ -1608,6 +1617,42 @@ void CharaChangeDraw(void) {
         if (CursorVibeCnt > 1080000) {
             CursorVibeCnt = 0;
         }
+#ifdef PAL
+        if (ChangeMenu.mode != 0) {
+            MenuTextureReload(CharaChangeTexBlock);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x138, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x138, 0x30, 0x1B), CRect_i_(0xC0, 0, 0x20, 0x1C), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0xA6, 0x138, 0x1A, 0x1B), CRect_i_(0xE0, 0, 0x1A, 0x1C), alpha);
+            int value = (u16) ChangeStatusDataPt->money_signed;
+            RECT value_digits = {0x70, 0x74, 0xC, 0xC};
+            DrawMenuNumber(value, 0xB7, 0x140, QuickCharaTex, value_digits, 0, alpha);
+            int lang = GetMenuLangFlag();
+            float help_width[7] = {10.6f, 10.6f, 10.6f, 14.0f, 12.0f, 11.8f, 10.7f};
+            MenuHelpWinDraw(100, 0x154, help_width[lang], 0.9f, alpha);
+            u8 count_shift[7] = {0, 0, 0, 56, 28, 16, 0};
+            int count_x = count_shift[lang];
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x76, 0x164, 0x20, 0x20), CRect_i_(0, 0x60, 0x20, 0x20), alpha);
+            DrawMenu2DSprite(QuickCharaTex, CRect_i_(count_x + 0x104, 0x16C, 0x10, 0x10), CRect_i_(0x20, 0x60, 0x10, 0x10),
+                             alpha);
+            MenuTextureReload(CommonMenuMes1.tex_block);
+            if (lang == 0) {
+                DrawMenuClsMes(&CommonMenuMes1, 0xA0, 0x154);
+            } else {
+                CommonMenuMes1.line_pos[0].x = 0xA0;
+                CommonMenuMes1.line_pos[0].y = 0x15E;
+                CommonMenuMes1.line_pos[1].x = 0xA6;
+                CommonMenuMes1.line_pos[1].y = 0x172;
+                CommonMenuMes1.Step();
+                CommonMenuMes1.DrawMesWin();
+            }
+            RECT count_digits = {0, 0x9E, 0xC, 0x12};
+            ITEM_PACK *pack = &ChangeStatusDataPt->item_pack;
+            int count = GetNowItemNum(ITEM_STAND_IN_POWDER, pack);
+            count_x += 0x122;
+            count_x += (count_digits.width >> 1) * GetNumberKeta(count);
+            DrawMenuNumber(count, count_x, 0x16C, count_digits, StayTex, 0, 0, SCREEN_HEIGHT, alpha);
+        }
+#else
         if (ChangeMenu.mode != 0) {
             MenuTextureReload(CharaChangeTexBlock);
             DrawMenu2DSprite(QuickCharaTex, CRect_i_(0x5C, 0x124, 0x1A, 0x1B), CRect_i_(0xA6, 0, 0x1A, 0x1C), alpha);
@@ -1633,6 +1678,7 @@ void CharaChangeDraw(void) {
             count_x += (count_digits.width >> 1) * GetNumberKeta(count);
             DrawMenuNumber(count, count_x, 0x158, count_digits, StayTex, 0, 0, 0x1C0, alpha);
         }
+#endif
         if (ChangeMenu.unk_03 != 6 && ChangeMenu.unk_03 != 5 && ChangeMenu.unk_03 != 3 &&
             ChangeMenu.unk_03 != 4) {
             DrawMenuObjectVibe(cursor_x, cursor_y, 1, 0x40);
@@ -1640,7 +1686,6 @@ void CharaChangeDraw(void) {
         setbilinear(1);
     }
 }
-#endif
 
 int DngActItemModelReadStart(u_long128 *buffer) {
     char model_path[64];
@@ -1756,8 +1801,10 @@ int DngActiveItemTextureCopy(void) {
 
 char item_view_frame_image[] __attribute__((section(".rodata"))) = "#frame_menuwep#640#" SCREEN_HEIGHT_STR "#4";
 #ifdef PAL
-/* Retail's data for InitDebugItemGet, which a marker below supplies. */
-char pal_at1941__2[] __attribute__((section(".rodata"))) = "dbgwork_menu";
+/**
+ * Texture the debug item menu's text overlay draws its glyphs from.
+ */
+char debug_item_font_texture[] __attribute__((section(".rodata"))) = "dbgwork_menu";
 #endif
 char item_templete_no[] __attribute__((section(".rodata"))) = "ItemNo   :%d\n";
 char item_templete_type[] __attribute__((section(".rodata"))) = "type:    :%s\n";
@@ -2032,8 +2079,20 @@ void DrawItemPolygonView(void) {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/menu_dungeon", InitDebugItemGet__Fv);
-#pragma name_counter 1835
+extern CDebugFont MenuDbgMsg;
+
+void InitDebugItemGet(void) {
+    ItemAutoGet.selection = 0x6A;
+    ItemAutoGet.page = ItemAutoGet.selection >> 6;
+    ItemAutoGet.show_model = 0;
+    MenuDbgMsg.length = 0;
+    MenuDbgMsg.texture_name = debug_item_font_texture;
+    MenuDbgMsg.x = 0x15E;
+    MenuDbgMsg.y = 0x50;
+    MenuDbgMsg.width = 0x100;
+    MenuDbgMsg.height = 0xE0;
+    MenuDbgMsg.alpha = 0x60;
+}
 #endif
 
 static int ConvDebugSelectToExcelListNo(int selection) {

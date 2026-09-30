@@ -565,13 +565,16 @@ int SndBgmInit() {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/snd", SndBgmDisable__Fi);
-#pragma name_counter 555
-#endif
+void SndBgmDisable(int disable) {
+    bgm_off = disable;
+    if (disable != 0) {
+        SndBgmStop();
+    }
+}
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/snd", SndGetBgmDisableFlag__Fv);
-#pragma name_counter 555
+int SndGetBgmDisableFlag() {
+    return bgm_off;
+}
 #endif
 
 int SndBgmLoad(int set_no) {
@@ -646,8 +649,12 @@ void SndBgmStop() {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/snd", SndBgmPause__Fv);
-#pragma name_counter 583
+void SndBgmPause() {
+    if (now_bgm_no >= 0 && now_bgm_play != 0) {
+        CSnd.Stop(0);
+        now_bgm_play = 2;
+    }
+}
 #endif
 
 void SndBgmRePlay() {

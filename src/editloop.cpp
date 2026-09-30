@@ -1,9 +1,7 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
-#ifdef PAL
-#pragma argument_flag_ones 1240
-#else
+#ifndef PAL
 #pragma argument_flag_ones 0, 207, 208, 215, 626
 #endif
 
@@ -32,6 +30,12 @@
 #include "dngstatusdata.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
+#ifdef PAL // P7_TMPDECL
+void EdDebugMenu();
+extern int EdDebugRunEventNo;
+void EdDPrintChara(CMainChara *chara);
+void EdDPrintCamera(CCamera *camera);
+#endif
 #include "edit_in.hpp"
 #include "editarea.hpp"
 #include "editground.hpp"
@@ -700,46 +704,6 @@ void EdInitMesParam() {
 /**
  * Builds every buffer, camera, message window and map the editor loop runs on.
  */
-#ifdef PAL
-int EditInit(void *);
-/* Retail's data for the function the marker below supplies. */
-char pal_at714[0x8] __attribute__((section(".rodata"))) = "e0%d";
-char pal_at715[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "s0%d";
-char pal_at716[0x8] __attribute__((section(".rodata"))) = "s%d";
-char pal_at717[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "";
-char pal_at718[0x8] __attribute__((section(".rodata"))) = "gedit/";
-char pal_at719[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "/";
-char pal_at720[0x18] __attribute__((section(".rodata"))) = "mapinfo.cfb";
-char pal_at721[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/interior/mapinfo.cfg";
-char pal_at722[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/interior/interior.cfg";
-char pal_at723[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "font_buff";
-char pal_at724__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gdata0.edt";
-char pal_at725__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "Allocation error!!\n";
-char pal_at726__2[0x10] __attribute__((section(".rodata"))) = "chara/c01d.chr";
-char pal_at727__2[0x10] __attribute__((section(".rodata"))) = "info.cfg";
-char pal_at730__2[0x8] __attribute__((section(".rodata"))) = "talk";
-char pal_at731__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = ".mes";
-char pal_at732__2[0x18] __attribute__((section(".rodata"))) = "fconv.bin";
-char pal_at733__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/e01/fconv.bin";
-char pal_at734__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/system/editsys%s.mes";
-char pal_at735__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/system14_%d";
-char pal_at736__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/system14e.bin";
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditInit__FPv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at625[20] __attribute__((aligned(16))) = {
-    0x00030000, 0x0000000C, 0x0004000B, 0x00000001, 0x00020010, 0x00050000, 0x00060011,
-    0x000A0001, 0x00020002, 0x000F0000, 0x00010001, 0x00020001, 0x00020001, 0x0003000C,
-    0x0007000E, 0x00090008, 0x00020001, 0x00080001, 0x0000000D, 0xFFFF0000,
-};
-unsigned int pal_at639__2[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-unsigned int pal_at640__2[4] __attribute__((aligned(16))) = {0};
-char pal_at656[0x40] __attribute__((aligned(16))) = "meswin/system14";
-unsigned char pal_init_S654;
-unsigned int pal_debug_flag_set_S664;
-unsigned char pal_init_S665;
-unsigned char pal_name_mes_S653[0x1858] __attribute__((aligned(16)));
-#pragma name_counter 743
-#else
 int EditInit(void *) {
     char map_path[0x80];
     char save_path[0x80];
@@ -780,7 +744,11 @@ int EditInit(void *) {
     InitializeDataBuffer();
     SetDataBuffer(&VisualData, 100);
     SetDataBuffer(&EtcDataBuffer, 40000);
+#ifdef PAL
+    SetDataBuffer(&EdScriptBuffer, 20000);
+#else
     SetDataBuffer(&EdScriptBuffer, 16000);
+#endif
     SetDataBuffer(&EPartsInfoBuff, 8000);
     SetDataBuffer(&CharaBuffer, 115000);
     SetDataBuffer(&TextureData, 10);
@@ -915,7 +883,7 @@ int EditInit(void *) {
     DebugFont__3.x = 16;
     DebugFont__3.y = 16;
     DebugFont__3.width = 280;
-    DebugFont__3.height = 224;
+    DebugFont__3.height = SCREEN_HALF_HEIGHT;
     DebugFont__3.alpha = 64;
     EdDSetFont(&DebugFont__3);
     if (interior_test == 0) {
@@ -1023,7 +991,12 @@ int EditInit(void *) {
     EditMes1.SetBuff(talk_mes);
     EdMesBuffer.Align64();
     short *system_mes = (short *) (EdMesBuffer.base + EdMesBuffer.used * 16);
+#ifdef PAL
+    sprintf(mes_path, "gedit/system/editsys%s.mes", language);
+    LoadFile(mes_path, system_mes, &mes_size);
+#else
     LoadFile("gedit/system/editsys.bin", system_mes, &mes_size);
+#endif
     EdMesBuffer.Alloc((mes_size >> 4) + 1);
     EditSystemMes.tex_buff = MesWinTexBuff_01;
     EditSystemMes.tex_block = 26;
@@ -1104,7 +1077,6 @@ int EditInit(void *) {
     ItemVolumeStep.CheckItemVolume();
     return 0;
 }
-#endif
 
 /**
  * Returns the sum of the editor category indices from zero through nine.
@@ -1124,38 +1096,6 @@ int cat_end() {
  * @address 0x1797E0
  * @size 0x1FE8
  */
-#ifdef PAL
-int EditLoop(void);
-/* Retail's data for the function the marker below supplies. */
-char pal_at827[0x8] __attribute__((section(".rodata"))) = " ";
-char pal_at828[0x8] __attribute__((section(".rodata"))) = ">";
-char pal_at1618[0x8] __attribute__((section(".rodata"))) = "%s %s\n";
-char pal_at1619[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "frame_image";
-char pal_at1620[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pos = ";
-char pal_at1621[0x18] __attribute__((section(".rodata"))) = "area = %d\n";
-char pal_at1622[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pos(grid) = (%d,%d)\n";
-char pal_at1623[0x18] __attribute__((section(".rodata"))) = "id = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", EditLoop__Fv);
-/* Retail's data for the function the marker above supplies. */
-char *pal_at829[2] = {pal_at827, pal_at828};
-unsigned int pal_end_count_S767;
-unsigned char pal_init_S768;
-unsigned int pal_top_S798;
-unsigned char pal_init_S799;
-unsigned int pal_select_S801;
-unsigned char pal_init_S802;
-unsigned int pal_cur_S804;
-unsigned char pal_init_S805;
-unsigned int pal_debug_flag_S1047;
-unsigned char pal_init_S1048;
-unsigned int pal_event_next_S1100;
-unsigned char pal_init_S1101;
-unsigned int pal_old_mode_S1129;
-unsigned int pal_end_code_S1144;
-unsigned char pal_init_S1145;
-unsigned char pal_menu_S807[0x100] __attribute__((aligned(16)));
-#pragma name_counter 1155
-#else
 int EditLoop(void) {
     goto_return_menu = 0;
     if (EdPadDown(0x800, 4) != 0) {
@@ -1209,7 +1149,7 @@ int EditLoop(void) {
             simple_event = 0;
             LoadScript();
 
-            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
             MGEndFrame();
             TexManager.DeleteTextureBlock(0xF);
             EdNPCBuffer.used = 0;
@@ -1220,7 +1160,7 @@ int EditLoop(void) {
             EdInitVilagerPosition(EdVillager, EdVillagerInfo, pEditGround, NULL);
             MGBeginFrame();
 
-            MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+            MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
 
             ED_EVENT_PARAM entry;
 
@@ -1452,7 +1392,7 @@ int EditLoop(void) {
                 }
                 SndStep();
 
-                MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+                MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
                 MGEndFrame();
                 for (int i = 0; i < 10; i++) {
                     TexManager.DeleteTextureBlock(i + 0x36);
@@ -1465,7 +1405,7 @@ int EditLoop(void) {
                 EditInInit(NowTime, interior_map_name);
                 MGBeginFrame();
 
-                MGFillBox(CRect_i_(0, 0, 0x2800, 0xE00), 0, 0, 0, 0x80);
+                MGFillBox(CRect_i_(0, 0, 0x2800, SCREEN_HALF_HEIGHT * 16), 0, 0, 0, 0x80);
                 ItemVolumeStep.CheckItemVolume();
                 return 0;
             }
@@ -1739,6 +1679,56 @@ int EditLoop(void) {
         }
     }
     static int debug_flag = 0;
+#ifdef PAL
+    // Debug builds draw the editor debug overlay and open the debug menu from the pad.
+    if (DebugMode != 0) {
+        if (GamePad.Down(0x200) != 0) {
+            debug_flag = !debug_flag;
+        }
+        EdDDebug(debug_flag);
+        if (debug_menu_mode != 0) {
+            GamePad.KeyLock(0);
+            EdDebugMenu();
+            if (GamePad.Down(0x400) != 0 || EdDebugRunEventNo > 0) {
+                debug_menu_mode = 0;
+                GamePad.AutoRepeatOff();
+                RunEvent(EdDebugRunEventNo, NowCamera);
+            } else {
+                GamePad.KeyLock(1);
+            }
+        } else {
+            if (GameMode != 0xE && GamePad.Down(0x400) != 0) {
+                GamePad.SetAutoRepeat(0xF000, 0x19, 3);
+                GamePad.SetAutoRepeat(0xC, 0x19, 3);
+                debug_menu_mode = 1;
+                debug_flag = 0;
+            }
+            if (GameMode == 4) {
+                sceVu0FVECTOR cursor_pos;
+                char text[128];
+
+                sceVu0CopyVector(cursor_pos, ECursorFrame->position);
+                EdDPrintVector("pos = ", cursor_pos);
+                int area = pEditGround->GetAreaCode(cursor_pos[0], cursor_pos[1], cursor_pos[2]);
+                sprintf(text, "area = %d\n", area);
+                EdDPrint(text);
+                if (area >= 0) {
+                    CVector3_i_ grid;
+
+                    pEditGround->areas[area]->GetPos(&grid, cursor_pos[0], cursor_pos[1], cursor_pos[2]);
+                    sprintf(text, "pos(grid) = (%d,%d)\n", grid.x, grid.z);
+                    EdDPrint(text);
+                    sprintf(text, "id = %d\n", pEditGround->areas[area]->GetPartsID(grid.x, grid.z));
+                    EdDPrint(text);
+                }
+            } else {
+                EdDPrintChara((CMainChara *) Chara);
+            }
+            EdDPrintCamera(NowCamera);
+            EdDDrawFont();
+        }
+    }
+#endif
     if (GameMode != 6 && GameMode != 4 && loop_counter > 10) {
         sceVu0FVECTOR eye_pos;
         sceVu0FVECTOR eye_dir;
@@ -1857,6 +1847,14 @@ int EditLoop(void) {
         end_code = 1;
     }
     key_counter = 0;
+#ifdef PAL
+    // Debug builds leave the editor through a fade on a two-button chord.
+    if (DebugMode != 0 && GamePad.On(0x100) != 0 && GamePad.On(0x800) != 0 && end_counter == 0) {
+        end_counter = 100;
+        EdFadeOut(0x40, 0.0f, 0.0f, 0.0f);
+        end_code = 1;
+    }
+#endif
     if (exit_loop != 0) {
         EditExit();
         return 1;
@@ -1882,7 +1880,6 @@ int EditLoop(void) {
     }
     return 0;
 }
-#endif
 
 /**
  * Draws the editor's world for one frame.
@@ -1891,22 +1888,6 @@ int EditLoop(void) {
  * @address 0x17B7D0
  * @size 0x11D8
  */
-#ifdef PAL
-void MainDraw();
-/* Retail's data for the function the marker below supplies. */
-char pal_at1850[0x10] __attribute__((section(".rodata"))) = "water_buff";
-char pal_at1851[0x18] __attribute__((section(".rodata"))) = "shadow_buff";
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", MainDraw__Fv);
-/* Retail's data for the function the marker above supplies. */
-float pal_at1665[2] = {400.0f, 1000.0f};
-unsigned int pal_at1640[4] __attribute__((aligned(16))) = {0x42480000, 0x43AF0000, 0x44160000, 0x447A0000};
-unsigned int pal_at1645[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at1648[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at1737[4] __attribute__((aligned(16))) = {0xC2C80000};
-unsigned int pal_at1767[4] __attribute__((aligned(16))) = {0x44480000, 0xC1A00000, 0x44A28000, 0x3F800000};
-unsigned int pal_at1768[4] __attribute__((aligned(16))) = {0x41200000, 0x40E00000, 0x41200000, 0x3F800000};
-#pragma name_counter 1351
-#else
 void MainDraw() {
     ED_EVENT_INFO *event;
     int shadow_on;
@@ -2000,7 +1981,7 @@ void MainDraw() {
                     screen.x = 0;
                     screen.y = 0;
                     screen.width = 0x280;
-                    screen.height = 0xE0;
+                    screen.height = SCREEN_HALF_HEIGHT;
                     water = *(sceGsTex0 *) &TexManager.GetTexture("water_buff", -1)->tex0;
                     MGMoveImage(&frame, screen, &water, 0, 0, 0);
                     MainCamera.GetRef(ref);
@@ -2239,7 +2220,7 @@ void MainDraw() {
                 screen.x = 0;
                 screen.y = 0;
                 screen.width = 0x2800;
-                screen.height = 0xE00;
+                screen.height = SCREEN_HALF_HEIGHT * 16;
                 MGFillBox(screen, (int) fade[0] & 0xFF, (int) fade[1] & 0xFF,
                           (int) fade[2] & 0xFF, (int) fade[3] & 0xFF);
             }
@@ -2281,22 +2262,38 @@ void MainDraw() {
                 CRect_i_ bar;
                 CRect_i_ fill;
 
+#ifdef PAL
+                back.x = 0x1F20;
+#else
                 back.x = 0x1CA0;
+#endif
                 back.y = 0xBF8;
                 back.width = 0x680;
                 back.height = 0x70;
                 MGFillBox(back, 0x14, 0x14, 0x14, 0x80);
+#ifdef PAL
+                bar.x = 0x1F40;
+#else
                 bar.x = 0x1CC0;
+#endif
                 bar.y = 0xC08;
                 bar.width = 0x640;
                 bar.height = 0x50;
                 MGFillBox(bar, 0x64, 0x64, 0x64, 0x80);
+#ifdef PAL
+                fill.x = 0x1F40;
+#else
                 fill.x = 0x1CC0;
+#endif
                 fill.y = 0xC08;
                 fill.width = percent * 0x10;
                 fill.height = 0x50;
                 MGFillBox(fill, 0xB4, 0x64, 0x28, 0x80);
+#ifdef PAL
+                DrawAtraBuildNum(info, 0x1F4, 0x181, 0x80);
+#else
                 DrawAtraBuildNum(info, 0x1CC, 0x181, 0x80);
+#endif
             }
         }
         EdFadeInOut();
@@ -2306,13 +2303,12 @@ void MainDraw() {
             screen.x = 0;
             screen.y = 0;
             screen.width = 0x2800;
-            screen.height = 0xE00;
+            screen.height = SCREEN_HALF_HEIGHT * 16;
             MGFillBox(screen, 0, 0, 0, 0x80);
         }
         clear_screen = 0;
     }
 }
-#endif
 
 /**
  * Draws the editor's map cursor, and the plate that names the part under it.
@@ -2482,11 +2478,291 @@ public:
 };
 
 #ifdef PAL
-void DrawDay();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2202[0x18] __attribute__((section(".rodata"))) = "whatsday";
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", DrawDay__Fv);
-#pragma name_counter 1589
+void DrawDay() {
+    if (draw_day_flag != 0) {
+        int week;
+        int x;
+        int width;
+        int alpha;
+        int day;
+        int digit[4];
+        CTexture *texture;
+        int count;
+        int drawn;
+        int remain;
+        int value;
+
+        draw_day_cnt -= 0.02f;
+        if (draw_day_cnt < 0.0f) {
+            draw_day_cnt = 0.0f;
+            draw_day_flag = 0;
+        }
+        day = SaveData->GetDay() + 1;
+        week = EdGetTime(NowTime);
+        week++;
+        if (week > 3) {
+            week = 0;
+        }
+        x = 0x140;
+        if (draw_day_cnt > 4.0f) {
+            alpha = (int) (128.0f * (5.0f - draw_day_cnt));
+        } else if (draw_day_cnt > 1.0f) {
+            alpha = 0x80;
+        } else {
+            alpha = (int) (128.0f * draw_day_cnt);
+        }
+        count = 1;
+        digit[3] = day / 1000;
+        digit[2] = day % 1000 / 100;
+        digit[1] = day % 100 / 10;
+        digit[0] = day % 10;
+        width = 0xA8;
+        if (day >= 10) {
+            width += 0x18;
+            count++;
+        }
+        if (day >= 100) {
+            width += 0x18;
+            count++;
+        }
+        if (day >= 1000) {
+            width += 0x18;
+            count++;
+        }
+        x -= width >> 1;
+        setbilinear(0);
+        texture = TexManager.GetTexture("whatsday", -1);
+
+        CRect_i_ title(0x30, 0x58, 0x30, 0x18);
+        CRect_i_ nichi(0x64, 0x40, 0x10, 0x18);
+        CRect_i_ weekday(0, 0x40, 0x18, 0x18);
+        CRect_i_ dai(0, 0x58, 0x30, 0x18);
+        CRect_i_ bar_left(0, 0x70, 0x10, 0x10);
+        CRect_i_ bar_middle(0x10, 0x70, 0x10, 0x10);
+        CRect_i_ bar_right(0x20, 0x70, 0x10, 0x10);
+        CRect_i_ word(0x78, 0x62, 0x65, 0x20);
+        CRect_i_ word_end(0xDD, 0x62, 0x22, 0x20);
+        CRectZero week_name[4];
+        switch (LanguageCode) {
+            case 1:
+            case 2:
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x68;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x38;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xC8;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x38;
+                week_name[3].height = 0x20;
+                break;
+            case 4:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x88;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x76;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x46;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xC4;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x40;
+                week_name[3].height = 0x20;
+                break;
+            case 6:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x88;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x3E;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x46;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0x78;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x46;
+                week_name[3].height = 0x20;
+                break;
+            case 3:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x60;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x40;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x8C;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x78;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x32;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xAA;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x34;
+                week_name[3].height = 0x20;
+                break;
+            case 5:
+                word.x = 0x78;
+                word.y = 0x62;
+                word.width = 0x44;
+                word.height = 0x20;
+                word_end.x = 0;
+                word_end.y = 0;
+                word_end.width = 0;
+                word_end.height = 0;
+                week_name[0].x = 0x78;
+                week_name[0].y = 2;
+                week_name[0].width = 0x50;
+                week_name[0].height = 0x20;
+                week_name[1].x = 0x78;
+                week_name[1].y = 0x22;
+                week_name[1].width = 0x76;
+                week_name[1].height = 0x20;
+                week_name[2].x = 0x76;
+                week_name[2].y = 0x42;
+                week_name[2].width = 0x32;
+                week_name[2].height = 0x20;
+                week_name[3].x = 0xA4;
+                week_name[3].y = 0x42;
+                week_name[3].width = 0x38;
+                week_name[3].height = 0x20;
+                break;
+        }
+        CRectZero week_word;
+        week_word = week_name[week];
+        CRectZero cell(0, 0, 0x18, 0x20);
+        CRectZero number;
+
+        if (texture != NULL) {
+            switch (LanguageCode) {
+                case 0:
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, title.width, title.height), title, alpha);
+                    x += 0x30;
+                    break;
+                case 1:
+                case 2:
+                    width = week_word.width +
+                            (word_end.width + (word.width + ((count - 1) * 32)) + 0x48);
+                    x = 0x140 - (int) (width >> 1);
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, word.width, word.height),
+                                word, alpha);
+                    x += word.width + 0xC;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, word_end.width, word_end.height), word_end, alpha);
+                    x += word_end.width + 0xC;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    width = week_word.width +
+                            (word_end.width + (word.width + ((count - 1) * 32)) + 0x38);
+                    x = 0x140 - (int) (width >> 1);
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, word.width, word.height),
+                                word, alpha);
+                    x += word.width + 0xC;
+                    break;
+            }
+            int n;
+            for (n = count; n > 0; n--) {
+                number = cell;
+                value = digit[n - 1];
+
+                number.x += number.width * (value % 5);
+                number.y += number.height * (value / 5);
+                set2DSprite(GetVif1Packet(), texture,
+                            CRect_i_(x, 0xE2, number.width, number.height), number, alpha);
+                x += number.width;
+            }
+            switch (LanguageCode) {
+                case 0:
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, dai.width, dai.height),
+                                dai, alpha);
+                    x += dai.width;
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, nichi.width, nichi.height),
+                                nichi, alpha);
+                    x += nichi.width;
+                    weekday.x += week * 0x18;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, weekday.width, weekday.height), weekday, alpha);
+                    break;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    set2DSprite(GetVif1Packet(), texture, CRect_i_(x, 0xE4, nichi.width, nichi.height),
+                                nichi, alpha);
+                    x += nichi.width;
+                    set2DSprite(GetVif1Packet(), texture,
+                                CRect_i_(x, 0xE4, week_word.width, week_word.height), week_word,
+                                alpha);
+                    break;
+            }
+            drawn = 0;
+            x = 0x134 - (int) (width >> 1);
+            set2DSprite(GetVif1Packet(), texture,
+                        CRect_i_(x, 0xFC, bar_left.width, bar_left.height), bar_left, alpha);
+            drawn += bar_left.width;
+            x += bar_left.width;
+            remain = width - (bar_right.width >> 2);
+            while (drawn < width - bar_right.width) {
+                set2DSprite(GetVif1Packet(), texture,
+                            CRect_i_(x, 0xFC, bar_middle.width, bar_middle.height), bar_middle,
+                            alpha);
+                x += bar_middle.width;
+                remain -= bar_middle.width;
+                drawn += bar_middle.width;
+            }
+            bar_right.x += bar_right.width - remain;
+            bar_right.width = remain;
+            set2DSprite(GetVif1Packet(), texture,
+                        CRect_i_(x, 0xFC, bar_right.width, bar_right.height), bar_right, alpha);
+        }
+    }
+}
 #else
 void DrawDay() {
     if (draw_day_flag != 0) {
@@ -3124,11 +3400,7 @@ void EdDeleteE05RoboParts() {
  * Loads the interior a door leads to and places the player and camera in it.
  */
 int GotoInterior(char *name, int entrance, int direction, ED_EVENT_PARAM *param, int start_event) {
-#ifdef PAL
-    char *suffix[5] = {"m", "e", "n", "m", pal_at717};
-#else
     char *suffix[5] = {"m", "e", "n", "m", "\0"};
-#endif
     char path[0x40];
     ED_EVENT_PARAM entry;
     sceVu0FVECTOR position;
@@ -3750,58 +4022,173 @@ u_int *parts_read_buffer;
  * @size 0x878
  */
 #ifdef PAL
-int LoadTexture();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2820[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#mes_frame_buff#640#480#4";
-char pal_at2821[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#fukidashibase#640#224#4";
-char pal_at2822[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
-char pal_at2823[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/gaiji.img";
-char pal_at2824[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/fuki256.img";
-char pal_at2825[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/syst04.img";
-char pal_at2833[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#water_buff#640#256#4";
-char pal_at2834[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#shadow_buff#640#256#4";
-char pal_at2835[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#blender#640#256#4";
-char pal_at2836[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#font_buff#640#256#4";
-char pal_at2837[0x10] __attribute__((section(".rodata"))) = "img/system.img";
-char pal_at2838[0x18] __attribute__((section(".rodata"))) = "s_eff.img";
-char pal_at2839[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "img/ankfont.img";
-char pal_at2840[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#frame_image#640#480#4";
-char pal_at2888[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/mes_tex_%d.pak";
-char pal_at2889[0x10] __attribute__((section(".rodata"))) = "gaiji.img";
-char pal_at2890[0x10] __attribute__((section(".rodata"))) = "fuki256.img";
-char pal_at2891[0x18] __attribute__((section(".rodata"))) = "syst04.img";
-char pal_at2892[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/system/esys_cmn.pak";
-char pal_at2893[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "gedit/system/sys_%d.img";
-char pal_at2894[0x10] __attribute__((section(".rodata"))) = "cursor.img";
-char pal_at2895[0x10] __attribute__((section(".rodata"))) = "e01t02.img";
-char pal_at2896[0x10] __attribute__((section(".rodata"))) = "sys_cmn.img";
-char pal_at2897[0x10] __attribute__((section(".rodata"))) = "ankfont.img";
-char pal_at2898[0x10] __attribute__((section(".rodata"))) = "cursor01.mds";
-char pal_at2899[0x10] __attribute__((section(".rodata"))) = "cursor02.mds";
-char pal_at2900[0x8] __attribute__((section(".rodata"))) = "bic.mds";
-char pal_at2901[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "ibox_0.mds";
-char pal_at2902[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "ibox_1.mds";
-char pal_at2903[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "s_ef01";
-char pal_at2904[0x8] __attribute__((section(".rodata"))) = "img.pak";
-char pal_at2905[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "stayframe.img";
-char pal_at2906[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "stayframe";
-char pal_at2907[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "texanime.cfg";
-INCLUDE_ASM("asm/pal/nonmatchings/editloop", LoadTexture__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at2826[24] __attribute__((aligned(16))) = {
-    0x002A1F30, 0x0000001A, 0x00000000, 0x002A1F50, 0x0000001A, 0x00000000, 0x002A1F70,
-    0x0000001A, 0x00000000, 0x002A1F90, 0x0000001A, 0x00000000, 0x002A1FB0, 0x0000001A,
-    0x00000000, 0x002A1FD0, 0x0000001A,
-};
-char pal_at2827[0x40] __attribute__((aligned(16))) = "meswin/mes_tex.pak";
-char pal_at2830[0x40] __attribute__((aligned(16))) = "gedit/system/sys.img";
-unsigned int pal_at2841[192] __attribute__((aligned(16))) = {
-    0x002A1FF0, 0x00000015, 0x00000000, 0x002A2010, 0x00000016, 0x00000000, 0x002A2030,
-    0x00000018, 0x00000000, 0x002A2050, 0x0000001F, 0x00000000, 0x002A2068, 0x00000014,
-    0x00000000, 0x002A1B30, 0x00000014, 0x00000000, 0x002A2078, 0x00000014, 0x00000000,
-    0x002A2090, 0x0000001F, 0x00000000, 0x002A20A0, 0x00000013,
-};
-#pragma name_counter 2199
+int LoadTexture() {
+    int entered;
+    int image;
+    u_long128 *buffer = (u_long128 *) (DataBuffer__2.base + DataBuffer__2.used * 16);
+
+    TexManager.Initialize(0x3FE0);
+    TexManager.SetBuffer(buffer, 0x4E200);
+
+    LOADTEXTURE_INFO2 mes_blocks[8] = {
+        {"#mes_frame_buff#640#" SCREEN_HEIGHT_STR "#4", 0x1A, 0},
+        {"#fukidashibase#640#224#4", 0x1A, 0},
+        {"#fontbase#512#256#1", 0x1A, 0},
+        {"meswin/gaiji.img", 0x1A, 0},
+        {"meswin/fuki256.img", 0x1A, 0},
+        {"meswin/syst04.img", 0x1A, 0},
+    };
+    char mes_path[64] = "meswin/mes_tex.pak";
+
+    if (LanguageCode > 0) {
+        sprintf(mes_path, "meswin/mes_tex_%d.pak", LanguageCode);
+    }
+    LoadFile(mes_path, read_buffer, NULL);
+    wait_now_loading_vsync();
+    mes_blocks[3].name = (char *) GetPackFile(read_buffer, "gaiji.img", NULL);
+    mes_blocks[4].name = (char *) GetPackFile(read_buffer, "fuki256.img", NULL);
+    mes_blocks[5].name = (char *) GetPackFile(read_buffer, "syst04.img", NULL);
+    TexManager.LoadTextureBlock(-1, mes_blocks);
+
+    int common_size;
+
+    LoadFile("gedit/system/esys_cmn.pak", read_buffer, &common_size);
+    wait_now_loading_vsync();
+
+    // The language's system image is read into the 1 KiB-aligned space after the common pack.
+    u_int *system_image = read_buffer + ((common_size >> 6) + 1) * 64;
+    char system_path[64] = "gedit/system/sys.img";
+
+    if (LanguageCode > 0) {
+        sprintf(system_path, "gedit/system/sys_%d.img", LanguageCode);
+    }
+    LoadFile(system_path, system_image, NULL);
+    wait_now_loading_vsync();
+    TexManager.EnterIMGFile((u_char *) GetPackFile(read_buffer, "cursor.img", NULL), -1, 0, 0);
+    TexManager.EnterIMGFile((u_char *) GetPackFile(read_buffer, "e01t02.img", NULL), -1, 0, 0);
+
+    LOADTEXTURE_INFO2 blocks[64] = {
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x15, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x16, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x18, 0},
+        {"#font_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 0x1F, 0},
+        {"img/system.img", 0x14, 0},
+        {"\0", 0x14, 0},
+        {"s_eff.img", 0x14, 0},
+        {"img/ankfont.img", 0x1F, 0},
+        {"#frame_image#640#" SCREEN_HEIGHT_STR "#4", 0x13, 0},
+    };
+
+    blocks[4].name = (char *) GetPackFile(read_buffer, "sys_cmn.img", NULL);
+    blocks[5].name = (char *) system_image;
+    blocks[6].name = (char *) GetPackFile(read_buffer, "s_eff.img", NULL);
+    blocks[7].name = (char *) GetPackFile(read_buffer, "ankfont.img", NULL);
+    TexManager.LoadTextureBlock(-1, blocks);
+    wait_now_loading_vsync();
+
+    CFrameAttr cursor_attr;
+
+    cursor_attr.use_color = 1;
+    CharaCursor0 = LoadMDSFile(GetPackFile(read_buffer, "cursor01.mds", NULL), &EtcDataBuffer, 0,
+                               NULL, NULL);
+    CharaCursor0->SetAttr(cursor_attr, 1, 0x200);
+    CharaCursor1 = LoadMDSFile(GetPackFile(read_buffer, "cursor02.mds", NULL), &EtcDataBuffer, 0,
+                               NULL, NULL);
+    CharaCursor1->SetAttr(cursor_attr, 1, 0x200);
+
+    CharaCursor1->SetScale(2.5f, 2.5f, 2.5f);
+    CharaCursor2 = LoadMDSFile(GetPackFile(read_buffer, "bic.mds", NULL), &EtcDataBuffer, 0,
+                               NULL, NULL);
+    CharaCursor2->SetAttr(cursor_attr, 1, 0x200);
+    TreasureCursor = LoadMDSFile(GetPackFile(read_buffer, "ibox_0.mds", NULL), &EtcDataBuffer, 0,
+                                 NULL, NULL);
+    TreasureCursorOpen = LoadMDSFile(GetPackFile(read_buffer, "ibox_1.mds", NULL), &EtcDataBuffer,
+                                     0, NULL, NULL);
+
+    CFrameAttr box_attr;
+
+    box_attr.clip_enable = 0;
+    box_attr.fog_enable = 1;
+    if (TreasureCursor != NULL) {
+        TreasureCursor->SetAttr(box_attr, 1, 0x44);
+    }
+    if (TreasureCursorOpen != NULL) {
+        TreasureCursorOpen->SetAttr(box_attr, 1, 0x44);
+    }
+    SystemEffect[0].texture = TexManager.GetTexture("s_ef01", -1);
+
+    char stay_path[128];
+    LOADTEXTURE_INFO map_blocks[64];
+    CRect_i_ effect_rect;
+
+    effect_rect.x = 0;
+    effect_rect.y = 0;
+    effect_rect.width = 0x20;
+    effect_rect.height = 0x20;
+    SystemEffect[0].texel = effect_rect;
+    SystemEffect[0].alpha_blend = 1;
+    SystemEffect[0].disable_z_write = 1;
+
+    GetEditDataDir(stay_path);
+    strcat(stay_path, "img.pak");
+
+    u_int *menu_data = (u_int *) (EdNPCBuffer.base + EdNPCBuffer.used * 16);
+
+    LoadFileMenuData("stayframe.img", menu_data);
+    wait_now_loading_vsync();
+    TexManager.EnterFixTextureZ((u_char *) menu_data);
+    StayTexture = TexManager.GetTexture("stayframe", -1);
+
+    if (LoadFile2(stay_path, menu_data, NULL, 0) != 0) {
+        wait_now_loading_vsync();
+
+        entered = 0;
+        image = 0;
+        while (EditMapInfo->images[image].name[0] != '\0') {
+            blocks[entered].name =
+                (char *) GetPackFile(menu_data, EditMapInfo->images[image].name, NULL);
+            blocks[entered].block_no = EditMapInfo->images[image].type;
+            blocks[entered].mipmap = EditMapInfo->images[image].number;
+            entered++;
+            image++;
+        }
+        blocks[entered].name = NULL;
+        blocks[entered].block_no = 0;
+        blocks[entered].mipmap = 0;
+        TexManager.LoadTextureBlock(-1, blocks);
+        TexAnime.Initialize(TexAnimeData, 0x40);
+
+        int anime_size;
+        char *anime_cfg = (char *) GetPackFile(menu_data, "texanime.cfg", &anime_size);
+
+        if (anime_cfg != NULL) {
+            for (int i = 0; i < 64; i++) {
+                TexAnimeData[i].Initialize();
+            }
+            TexAnime.LoadCFGFile(anime_cfg, anime_size);
+        }
+    } else {
+        TexAnime.Initialize(NULL, 0);
+
+        entered = 0;
+        image = 0;
+        while (EditMapInfo->images[image].name[0] != '\0') {
+            map_blocks[entered].name = EditMapInfo->images[image].name;
+            map_blocks[entered].block_no = EditMapInfo->images[image].type;
+            map_blocks[entered].mipmap = EditMapInfo->images[image].number;
+            image++;
+            entered++;
+        }
+        map_blocks[entered].name = EditMapInfo->images[image].name;
+        map_blocks[entered].block_no = EditMapInfo->images[image].type;
+        map_blocks[entered].mipmap = EditMapInfo->images[image].number;
+        TexManager.LoadTextureBlock(-1, map_blocks, read_buffer);
+    }
+    TexManager.buffer_size = TexManager.buffer_used;
+    DataBuffer__2.Alloc((int) (TexManager.buffer + TexManager.buffer_size - buffer) + 16);
+    DataBuffer__2.Align64();
+    return 0;
+}
 #else
 int LoadTexture() {
     int entered;
@@ -3984,8 +4371,12 @@ void EdLoadMainChara(char *pack_path, char *info_name, CDataAlloc2<1> *arena) {
     attr.clip_enable = 0;
     attr.fog_enable = 1;
     MainChara.frame->SetAttr(attr, 1, 4);
+#ifdef PAL
+    MainChara.SetPosition(0.0f, 0.0f, 0.0f);
+#else
     float origin = 0.0f;
     MainChara.SetPosition(origin, origin, origin);
+#endif
     Chara = &MainChara;
 }
 
@@ -4108,13 +4499,8 @@ void LoadGroundData() {
         if (info->name[0] != '\0') {
             data = (u_int *) EdLoadFile(info->name);
             MotionParts[i].InitializeTexAnime(TexAnimeData, 64);
-#ifdef PAL
-            MotionParts[i].LoadPackData2(data, pal_at727__2, &DataBuffer__2, i + 0x1B,
-                                         &DataBuffer__2, 0);
-#else
             MotionParts[i].LoadPackData2(data, "info.cfg", &DataBuffer__2, i + 0x1B,
                                          &DataBuffer__2, 0);
-#endif
             MotionParts[i].SetPosition(info->values[0], info->values[1], info->values[2]);
             MotionParts[i].SetRotation(info->values[3], info->values[4], info->values[5]);
         }

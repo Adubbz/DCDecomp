@@ -394,6 +394,17 @@ void MGEndFrame(void);
  */
 void MGFlipWaitVSync(int wait);
 
+#ifdef PAL
+/**
+ * Moves the display by an offset of at most 32 pixels each way, rounded to an even count.
+ *
+ * @mangled MGAdjustScreen__Fii
+ * @address 0x12D960
+ * @size 0x60
+ */
+void MGAdjustScreen(int x, int y);
+#endif
+
 /**
  * Rebuilds the projection and clip-volume values used for rendering.
  *

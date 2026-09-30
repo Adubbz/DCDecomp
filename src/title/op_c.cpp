@@ -16,6 +16,7 @@
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "main.hpp"
+#include "mainselect.hpp"
 #include "mathutil.hpp"
 #include "mds.hpp"
 #include "mglib.hpp"
@@ -318,64 +319,10 @@ static int SndCnt;
 
 /* One actor's blinking and speaking. The mouth is driven from the script's own clock rather than
    from a motion: while the actor is talking, a new mouth frame is picked at random every sixth
-   hundredth of a second left on the timer, and the timer running out closes the mouth and ends the
-   line. The eyes are whatever the script last asked for. The cache is flushed on both sides of the
-   two transfers because the plate is a texture the previous tick drew from and the next one will. */
-/* A string constant a marker function emits first: the PAL build reaches it by its retail name,
-   the NTSC build by the literal. */
-#ifdef PAL
-#define PAL_POOLED(retail, literal) retail
-#else
-#define PAL_POOLED(retail, literal) literal
-#endif
-
-#ifdef PAL
-void FaceChange(int no);
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", FaceChange__Fi__2);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_face_S830[232] __attribute__((aligned(16))) = {
-    0x00000000, 0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000,
-    0x00000000, 0x00000100, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A,
-    0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002,
-    0x00000000, 0x00000000, 0x00000000, 0x00000020, 0x00000028, 0x00000054, 0x00000023,
-    0x00000000, 0x00000000, 0x000001C0, 0x00000003, 0x00000000, 0x01DF8370, 0x01DF8378,
-    0x0000000A, 0x00000028, 0x00000049, 0x00000023, 0x00000000, 0x00000000, 0x000001C0,
-    0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A, 0x00000028, 0x00000057,
-    0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002, 0x00000000, 0x00000000,
-    0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000,
-    0x00000140, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000008, 0x00000028,
-    0x0000004C, 0x00000023, 0x00000000, 0x00000000, 0x00000100, 0x00000002, 0x00000000,
-    0x00000000, 0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000,
-    0x00000000, 0x00000140, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A,
-    0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002,
-    0x00000000, 0x01DF8388, 0x01DF8390, 0x0000002C, 0x00000028, 0x0000005C, 0x00000020,
-    0x00000000, 0x00000000, 0x00000100, 0x00000002, 0x00000000, 0x00000000, 0x00000000,
-    0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140,
-    0x00000002, 0x00000000, 0x01DF83A0, 0x01DF83A8, 0x0000001B, 0x00000030, 0x0000004E,
-    0x0000002C, 0x00000000, 0x00000000, 0x00000200, 0x00000003, 0x00000000, 0x00000000,
-    0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000,
-    0x00000140, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A, 0x00000028,
-    0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002, 0x00000000,
-    0x00000000, 0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000,
-    0x00000000, 0x00000140, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A,
-    0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002,
-    0x00000000, 0x00000000, 0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023,
-    0x00000000, 0x00000000, 0x00000140, 0x00000002, 0x00000000, 0x00000000, 0x00000000,
-    0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140,
-    0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A, 0x00000028, 0x00000057,
-    0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002, 0x00000000, 0x00000000,
-    0x00000000, 0x0000002A, 0x00000028, 0x00000057, 0x00000023, 0x00000000, 0x00000000,
-    0x00000140, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x0000002A, 0x00000028,
-    0x00000057, 0x00000023, 0x00000000, 0x00000000, 0x00000140, 0x00000002,
-};
-char pal_at831[] __attribute__((section(".rodata"))) = "c09a01";
-char pal_at832[] __attribute__((section(".rodata"))) = "c09a01an";
-char pal_at833[] __attribute__((section(".rodata"))) = "p09a01";
-char pal_at834[] __attribute__((section(".rodata"))) = "p09a01an_2";
-char pal_at835__2[] __attribute__((section(".rodata"))) = "c01d01";
-char pal_at836__4[] __attribute__((section(".rodata"))) = "c01d01an_3";
-#pragma name_counter 64
-#else
+   hundredth of a second left on the timer (in the PAL build, on a random one tick in five), and the
+   timer running out closes the mouth and ends the line. The eyes are whatever the script last asked
+   for. The cache is flushed on both sides of the two transfers because the plate is a texture the
+   previous tick drew from and the next one will. */
 void FaceChange(int actor) {
     static FACE_INFO face[21] = {
         {0, 0, 42, 40, 87, 35, 0, 0, 256, 2, 0},
@@ -441,7 +388,11 @@ void FaceChange(int actor) {
         CScript__2.obj[actor].mouth_time -= CScript__2.motion_step;
 
         if (CScript__2.obj[actor].talk) {
+#ifdef PAL
+            if (rand() % 5 == 0) {
+#else
             if ((int) (100.0f * CScript__2.obj[actor].mouth_time) % 6 == 0) {
+#endif
                 CScript__2.obj[actor].mouth = rand() % 4;
             }
         }
@@ -466,7 +417,6 @@ void FaceChange(int actor) {
     sceVif1PkCloseGifTag(Vif1Packet);
     sceVif1PkCloseDirectCode(Vif1Packet);
 }
-#endif
 
 /* The background loads are one wrapper per file because the script names them by index: each waits
    for the previous read to land, starts the next, and marks the load done by putting the script's
@@ -510,96 +460,27 @@ void OpC_LoadDataBG5() {
    from a configuration file rather than a table of this file's own, and its images filled into a
    manifest whose first six rows are the registry's fixed surfaces. The second manifest is the same
    array written over again, because the second pack is read only once the first block is entered. */
-#ifdef PAL
-void OpC_InitProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at399__7[72] __attribute__((aligned(16))) = {
-    0x01DF8440, 0x00000016, 0x00000000, 0x01DF8460, 0x00000000, 0x00000000, 0x01DF8480,
-    0x0000001A, 0x00000000, 0x01DF84A0, 0x0000001A, 0x00000000, 0x01DF84C0, 0x00000017,
-    0x00000000, 0x01DF84E0, 0x00000016, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000,
-    0x0000000A, 0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000D,
-    0x00000000, 0x00000000, 0x0000000A, 0x00000000, 0x00000000, 0x0000000B, 0x00000000,
-    0x00000000, 0x0000000B, 0x00000000, 0x00000000, 0x0000000B, 0x00000000, 0x00000000,
-    0x0000000B, 0x00000000, 0x00000000, 0x0000001A, 0x00000000, 0x00000000, 0x0000001A,
-    0x00000000, 0x00000000, 0x0000001A, 0x00000000, 0x00000000, 0x00000013, 0x00000000,
-    0x00000000, 0x00000013,
-};
-unsigned int pal_at408__6[4] __attribute__((aligned(16))) = {0x42480000, 0x42C80000, 0xC2C80000};
-unsigned int pal_at409__7[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at410__6[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x43960000};
-unsigned int pal_at421__5[4] __attribute__((aligned(16))) = {0xC3200000, 0x00000000, 0xC3200000, 0x3F800000};
-unsigned int pal_at422__4[4] __attribute__((aligned(16))) = {0x43200000, 0x00000000, 0xC3200000, 0x3F800000};
-unsigned int pal_at423__3[4] __attribute__((aligned(16))) = {0xC3200000, 0x00000000, 0x43200000, 0x3F800000};
-unsigned int pal_at424__4[4] __attribute__((aligned(16))) = {0x43200000, 0x00000000, 0x43200000, 0x3F800000};
-char pal_at393__2[] __attribute__((section(".rodata"))) = "#water_buff#640#256#4";
-char pal_at394__4[] __attribute__((section(".rodata"))) = "#blender#640#256#4";
-char pal_at395__6[] __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
-char pal_at396__4[] __attribute__((section(".rodata"))) = "#fukidashibase#640#256#4";
-char pal_at397__4[] __attribute__((section(".rodata"))) = "#shadow_buff#640#256#4";
-char pal_at398__5[] __attribute__((section(".rodata"))) = "#frame_image#640#256#4";
-char pal_at485__3[] __attribute__((section(".rodata"))) = "fire.img";
-char pal_at486__2[] __attribute__((section(".rodata"))) = "t0203.img";
-char pal_at487__3[] __attribute__((section(".rodata"))) = "e01b01.img";
-char pal_at488__5[] __attribute__((section(".rodata"))) = "e01b02.img";
-char pal_at489__4[] __attribute__((section(".rodata"))) = "e01b03.img";
-char pal_at490__3[] __attribute__((section(".rodata"))) = "e01t01.img";
-char pal_at491__5[] __attribute__((section(".rodata"))) = "t0205.img";
-char pal_at492__4[] __attribute__((section(".rodata"))) = "t0003.img";
-char pal_at493__4[] __attribute__((section(".rodata"))) = "e01s03.img";
-char pal_at494__5[] __attribute__((section(".rodata"))) = "e01s06.img";
-char pal_at495__4[] __attribute__((section(".rodata"))) = "t0001.img";
-char pal_at496__6[] __attribute__((section(".rodata"))) = "gaiji.img";
-char pal_at497__6[] __attribute__((section(".rodata"))) = "fuki256.img";
-char pal_at498__7[] __attribute__((section(".rodata"))) = "syst04.img";
-char pal_at499__6[] __attribute__((section(".rodata"))) = "pause.img";
-char pal_at500__5[] __attribute__((section(".rodata"))) = "pause_e.img";
-char pal_at501__6[] __attribute__((section(".rodata"))) = "pause_f.img";
-char pal_at502__5[] __attribute__((section(".rodata"))) = "pause_g.img";
-char pal_at503__4[] __attribute__((section(".rodata"))) = "pause_i.img";
-char pal_at504__3[] __attribute__((section(".rodata"))) = "pause_s.img";
-char pal_at505__3[] __attribute__((section(".rodata"))) = "opdat/norn2/norn2b.pak";
-char pal_at506__4[] __attribute__((section(".rodata"))) = "t0201.img";
-char pal_at507__6[] __attribute__((section(".rodata"))) = "t0206.img";
-char pal_at508__4[] __attribute__((section(".rodata"))) = "c01d01.img";
-char pal_at509__4[] __attribute__((section(".rodata"))) = "c01d01an.img";
-char pal_at510__4[] __attribute__((section(".rodata"))) = "p03a01.img";
-char pal_at511__5[] __attribute__((section(".rodata"))) = "p08a01.img";
-char pal_at512__6[] __attribute__((section(".rodata"))) = "p07a01.img";
-char pal_at513__5[] __attribute__((section(".rodata"))) = "yokobue.img";
-char pal_at514__6[] __attribute__((section(".rodata"))) = "p02a01.img";
-char pal_at515__7[] __attribute__((section(".rodata"))) = "guiter.img";
-char pal_at516__6[] __attribute__((section(".rodata"))) = "o03a.txt";
-char pal_at517__6[] __attribute__((section(".rodata"))) = "04c01d.cfg";
-char pal_at519__3[] __attribute__((section(".rodata"))) = "04p07a.cfg";
-char pal_at520__3[] __attribute__((section(".rodata"))) = "04p02a.cfg";
-char pal_at521__4[] __attribute__((section(".rodata"))) = "04p03a.cfg";
-char pal_at522__5[] __attribute__((section(".rodata"))) = "04p08a.cfg";
-char pal_at523__4[] __attribute__((section(".rodata"))) = "opdat/norn2.cfg";
-char pal_at524__4[] __attribute__((section(".rodata"))) = "hane";
-char pal_at525__4[] __attribute__((section(".rodata"))) = "effect";
-char pal_at526__4[] __attribute__((section(".rodata"))) = "hikari";
-unsigned int pal_at529__3[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DD4B64, 0x01DD4B88, 0x01DD4BAC, 0x01DD4BD0, 0x01DD4BF4, 0x01DD4C18, 0x01DD4C3C};
-#pragma name_counter 220
-#else
 void OpC_InitProcess() {
     while (ReadBGSync())
         ;
 
     LOADTEXTURE_INFO2 tex[] = {
-        {"#water_buff#640#224#4", 22, 0},
-        {"#blender#640#224#4", 0, 0},
+        {"#water_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {"#fontbase#512#256#1", 26, 0},
-        {"#fukidashibase#640#224#4", 26, 0},
-        {"#shadow_buff#640#224#4", 23, 0},
-        {"#frame_image#640#224#4", 22, 0},
+        {"#fukidashibase#640#" HALF_BUFFER_HEIGHT_STR "#4", 26, 0},
+        {"#shadow_buff#640#" HALF_BUFFER_HEIGHT_STR "#4", 23, 0},
+        {"#frame_image#640#" HALF_BUFFER_HEIGHT_STR "#4", 22, 0},
         {0, 0, 0},
         {0, 10, 0},
         {0, 10, 0},
         {0, 10, 0},
         {0, 10, 0},
+#ifdef PAL
+        {0, 13, 0},
+#else
         {0, 10, 0},
+#endif
         {0, 10, 0},
         {0, 11, 0},
         {0, 11, 0},
@@ -610,7 +491,9 @@ void OpC_InitProcess() {
         {0, 26, 0},
         {0, 19, 0},
         {0, 19, 0},
+#ifndef PAL
         {0, 19, 0},
+#endif
         {0, 0, 0}};
 
     tex[6].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
@@ -628,8 +511,34 @@ void OpC_InitProcess() {
     tex[18].name = (char *) GetPackFile(read_buffer, "fuki256.img", 0);
     tex[19].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
     tex[20].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
+#ifdef PAL
+    switch (LanguageCode) {
+        case 0:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 1:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 2:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+            break;
+        case 3:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_f.img", 0);
+            break;
+        case 4:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_g.img", 0);
+            break;
+        case 5:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_i.img", 0);
+            break;
+        case 6:
+            tex[21].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
+            break;
+    }
+#else
     tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
     tex[22].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+#endif
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, tex);
@@ -649,10 +558,18 @@ void OpC_InitProcess() {
     tex[3].block_no = 2;
     tex[3].mipmap = 0;
     tex[4].name = (char *) GetPackFile(read_buffer, "p03a01.img", 0);
+#ifdef PAL
+    tex[4].block_no = 14;
+#else
     tex[4].block_no = 13;
+#endif
     tex[4].mipmap = 0;
     tex[5].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
+#ifdef PAL
+    tex[5].block_no = 15;
+#else
     tex[5].block_no = 14;
+#endif
     tex[5].mipmap = 0;
     tex[6].name = (char *) GetPackFile(read_buffer, "p07a01.img", 0);
     tex[6].block_no = 7;
@@ -672,6 +589,15 @@ void OpC_InitProcess() {
 
     TexManager.LoadTextureBlock(-1, tex);
 
+#ifdef PAL
+    CharaTex__2[11] = 2;
+    CharaTex__2[12] = 14;
+    CharaTex__2[13] = 15;
+    CharaTex__2[9] = 3;
+    CharaTex__2[11] = 2;
+    CharaTex__2[12] = 14;
+    CharaTex__2[13] = 15;
+#else
     CharaTex__2[11] = 2;
     CharaTex__2[12] = 13;
     CharaTex__2[13] = 14;
@@ -679,6 +605,7 @@ void OpC_InitProcess() {
     CharaTex__2[11] = 2;
     CharaTex__2[12] = 13;
     CharaTex__2[13] = 14;
+#endif
     CharaTex__2[14] = 4;
     CharaTex__2[15] = 5;
     CharaTex__2[16] = 6;
@@ -686,10 +613,17 @@ void OpC_InitProcess() {
     CharaTex__2[18] = 8;
     CharaTex__2[19] = 9;
     CharaTex__2[20] = 9;
+#ifdef PAL
+    CharaTex__2[1] = 16;
+    CharaTex__2[4] = 16;
+    CharaTex__2[3] = 17;
+    CharaTex__2[5] = 18;
+#else
     CharaTex__2[1] = 15;
     CharaTex__2[4] = 15;
     CharaTex__2[3] = 16;
     CharaTex__2[5] = 17;
+#endif
 
     CSnd.SetReverb(0, 3, 20);
     CSnd.SetReverb(1, 4, 5);
@@ -846,7 +780,6 @@ void OpC_InitProcess() {
     FireStep = 1.0f;
     CScript__2.init_no = 0;
 }
-#endif
 
 /* The dancers, which is a texture load rather than a scene: the shadow model all sixteen actors
    share, then the five villagers who join the dance, each loaded straight after the block its
@@ -864,7 +797,7 @@ void OpC_InitProcess2() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
-        {PAL_POOLED(pal_at394__4, "#blender#640#224#4"), 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -880,7 +813,7 @@ void OpC_InitProcess2() {
         {0, 0, 0},
         {0, 0, 0}};
 
-    tex[1].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at485__3, "fire.img"), 0);
+    tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
     tex[1].mipmap = 0;
     tex[2].name = 0;
@@ -996,25 +929,6 @@ void OpC_InitProcess2() {
 /* The demon's arrival: the two halves of it the scene animates, the beam it fires, and the four
    pieces of sky and moonlight the rest of the scene is drawn against. The sky is given an attribute
    mask of its own because it is drawn behind everything rather than lit with it. */
-#ifdef PAL
-void OpC_InitProcess3();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_InitProcess3__Fv);
-/* Retail's data for the function the marker above supplies. */
-char pal_at589__6[] __attribute__((section(".rodata"))) = "b0203.img";
-char pal_at590__6[] __attribute__((section(".rodata"))) = "b0204.img";
-char pal_at591__4[] __attribute__((section(".rodata"))) = "tukikage.img";
-char pal_at592__4[] __attribute__((section(".rodata"))) = "c08a01.img";
-char pal_at593__5[] __attribute__((section(".rodata"))) = "c09a01.img";
-char pal_at594__6[] __attribute__((section(".rodata"))) = "beem.img";
-char pal_at595__5[] __attribute__((section(".rodata"))) = "04c08a.cfg";
-char pal_at596__6[] __attribute__((section(".rodata"))) = "04c09a.cfg";
-char pal_at597__6[] __attribute__((section(".rodata"))) = "b0203.mds";
-char pal_at598__3[] __attribute__((section(".rodata"))) = "b0204.mds";
-char pal_at599__3[] __attribute__((section(".rodata"))) = "b0302.mds";
-char pal_at606__6[] __attribute__((section(".rodata"))) = "tukikage.mds";
-char pal_at607__5[] __attribute__((section(".rodata"))) = "o03b.txt";
-#pragma name_counter 288
-#else
 void OpC_InitProcess3() {
     while (ReadBGSync())
         ;
@@ -1025,6 +939,9 @@ void OpC_InitProcess3() {
     TexManager.DeleteTextureBlock(4);
     TexManager.DeleteTextureBlock(9);
     TexManager.DeleteTextureBlock(10);
+#ifdef PAL
+    TexManager.DeleteTextureBlock(13);
+#endif
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[4];
@@ -1043,25 +960,49 @@ void OpC_InitProcess3() {
     TexManager.LoadTextureBlock(10, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c08a01.img", 0);
+#ifdef PAL
+    tex[0].block_no = 16;
+#else
     tex[0].block_no = 15;
+#endif
     tex[0].mipmap = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(16, tex);
+#else
     TexManager.LoadTextureBlock(15, tex);
+#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c09a01.img", 0);
+#ifdef PAL
+    tex[0].block_no = 17;
+#else
     tex[0].block_no = 16;
+#endif
     tex[0].mipmap = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(17, tex);
+#else
     TexManager.LoadTextureBlock(16, tex);
+#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
+#ifdef PAL
+    tex[0].block_no = 18;
+#else
     tex[0].block_no = 17;
+#endif
     tex[0].mipmap = 0;
     tex[1].name = 0;
 
+#ifdef PAL
+    TexManager.LoadTextureBlock(18, tex);
+#else
     TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
     Chara__3[1].LoadPackData(read_buffer, "04c08a.cfg", &CharaDataBuffer__2[6], 0);
@@ -1150,7 +1091,6 @@ void OpC_InitProcess3() {
     SndCnt = 0;
     CScript__2.init_no = 0;
 }
-#endif
 
 /* The village once the demon has been through it, which is the first scene's manifest with the
    explosion and the dust it throws up added and everything the dance needed left out. */
@@ -1164,7 +1104,7 @@ void OpC_InitProcess4() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
-        {PAL_POOLED(pal_at394__4, "#blender#640#224#4"), 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -1180,41 +1120,41 @@ void OpC_InitProcess4() {
         {0, 0, 0},
         {0, 0, 0}};
 
-    tex[1].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at485__3, "fire.img"), 0);
+    tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
     tex[1].mipmap = 0;
-    tex[2].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at486__2, "t0203.img"), 0);
+    tex[2].name = (char *) GetPackFile(read_buffer, "t0203.img", 0);
     tex[2].block_no = 10;
     tex[2].mipmap = 0;
-    tex[3].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at487__3, "e01b01.img"), 0);
+    tex[3].name = (char *) GetPackFile(read_buffer, "e01b01.img", 0);
     tex[3].block_no = 10;
     tex[3].mipmap = 0;
-    tex[4].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at488__5, "e01b02.img"), 0);
+    tex[4].name = (char *) GetPackFile(read_buffer, "e01b02.img", 0);
     tex[4].block_no = 10;
     tex[4].mipmap = 0;
-    tex[5].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at489__4, "e01b03.img"), 0);
+    tex[5].name = (char *) GetPackFile(read_buffer, "e01b03.img", 0);
     tex[5].block_no = 10;
     tex[5].mipmap = 0;
-    tex[6].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at490__3, "e01t01.img"), 0);
+    tex[6].name = (char *) GetPackFile(read_buffer, "e01t01.img", 0);
 #ifdef PAL
     tex[6].block_no = 13;
 #else
     tex[6].block_no = 10;
 #endif
     tex[6].mipmap = 0;
-    tex[7].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at491__5, "t0205.img"), 0);
+    tex[7].name = (char *) GetPackFile(read_buffer, "t0205.img", 0);
     tex[7].block_no = 10;
     tex[7].mipmap = 0;
-    tex[8].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at492__4, "t0003.img"), 0);
+    tex[8].name = (char *) GetPackFile(read_buffer, "t0003.img", 0);
     tex[8].block_no = 11;
     tex[8].mipmap = 0;
-    tex[9].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at493__4, "e01s03.img"), 0);
+    tex[9].name = (char *) GetPackFile(read_buffer, "e01s03.img", 0);
     tex[9].block_no = 11;
     tex[9].mipmap = 0;
-    tex[10].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at494__5, "e01s06.img"), 0);
+    tex[10].name = (char *) GetPackFile(read_buffer, "e01s06.img", 0);
     tex[10].block_no = 11;
     tex[10].mipmap = 0;
-    tex[11].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at495__4, "t0001.img"), 0);
+    tex[11].name = (char *) GetPackFile(read_buffer, "t0001.img", 0);
     tex[11].block_no = 11;
     tex[11].mipmap = 0;
     tex[12].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
@@ -1257,7 +1197,7 @@ void OpC_InitProcess5() {
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
-        {PAL_POOLED(pal_at394__4, "#blender#640#224#4"), 0, 0},
+        {"#blender#640#" HALF_BUFFER_HEIGHT_STR "#4", 0, 0},
         {0, 0, 0},
         {0, 0, 0},
         {0, 0, 0},
@@ -1273,7 +1213,7 @@ void OpC_InitProcess5() {
         {0, 0, 0},
         {0, 0, 0}};
 
-    tex[1].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at485__3, "fire.img"), 0);
+    tex[1].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     tex[1].block_no = 0;
     tex[1].mipmap = 0;
     tex[2].name = 0;
@@ -1287,7 +1227,7 @@ void OpC_InitProcess5() {
     tex[0].block_no = 17;
 #endif
     tex[0].mipmap = 0;
-    tex[1].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at594__6, "beem.img"), 0);
+    tex[1].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
 #ifdef PAL
     tex[1].block_no = 18;
 #else
@@ -1319,7 +1259,7 @@ void OpC_InitProcess5() {
     CharaDataBuffer__2[6].used = 0;
     MapLoad2();
 
-    Chara__3[11].LoadPackData(read_buffer, PAL_POOLED(pal_at517__6, "04c01d.cfg"), &CharaDataBuffer__2[0], 0);
+    Chara__3[11].LoadPackData(read_buffer, "04c01d.cfg", &CharaDataBuffer__2[0], 0);
 
     CFrameAttr attr11;
 
@@ -1351,7 +1291,7 @@ void OpC_InitProcess5() {
     Chara__3[9].motion_type.state.motion_no = 0;
     Chara__3[9].motion_type.state.playing_no = 0;
 
-    tex[0].name = (char *) GetPackFile(read_buffer, PAL_POOLED(pal_at511__5, "p08a01.img"), 0);
+    tex[0].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
 #ifdef PAL
     tex[0].block_no = 15;
 #else
@@ -1365,7 +1305,7 @@ void OpC_InitProcess5() {
 #else
     TexManager.LoadTextureBlock(14, tex);
 #endif
-    Chara__3[13].LoadPackData(read_buffer, PAL_POOLED(pal_at522__5, "04p08a.cfg"), &CharaDataBuffer__2[6], 0);
+    Chara__3[13].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr13;
 
@@ -1376,7 +1316,7 @@ void OpC_InitProcess5() {
     Chara__3[13].motion_type.state.motion_no = 0;
     Chara__3[13].motion_type.state.playing_no = 0;
 
-    Chara__3[18].LoadPackData(read_buffer, PAL_POOLED(pal_at520__3, "04p02a.cfg"), &CharaDataBuffer__2[6], 0);
+    Chara__3[18].LoadPackData(read_buffer, "04p02a.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr18;
 
@@ -1387,7 +1327,7 @@ void OpC_InitProcess5() {
     Chara__3[18].motion_type.state.motion_no = 0;
     Chara__3[18].motion_type.state.playing_no = 0;
 
-    Chara__3[1].LoadPackData(read_buffer, PAL_POOLED(pal_at595__5, "04c08a.cfg"), &CharaDataBuffer__2[6], 0);
+    Chara__3[1].LoadPackData(read_buffer, "04c08a.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr1;
 
@@ -1398,7 +1338,7 @@ void OpC_InitProcess5() {
     Chara__3[1].motion_type.state.motion_no = 0;
     Chara__3[1].motion_type.state.playing_no = 0;
 
-    Chara__3[3].LoadPackData(read_buffer, PAL_POOLED(pal_at596__6, "04c09a.cfg"), &CharaDataBuffer__2[6], 0);
+    Chara__3[3].LoadPackData(read_buffer, "04c09a.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr3;
 
@@ -1421,7 +1361,7 @@ void OpC_InitProcess5() {
     Fuusya[0].step_y = 0.0f;
     Fuusya[0].step_x = 0.0f;
     Fuusya[0].step_z = -0.5f;
-    strcpy(Fuusya[0].name, PAL_POOLED(pal_at524__4, "hane"));
+    strcpy(Fuusya[0].name, "hane");
     InitObjAnime(DoransFuusya[0], &Fuusya[0]);
 
     Fuusya[1].Initialize();
@@ -1449,7 +1389,7 @@ void OpC_InitProcess5() {
         Taimatsu[i].end_value[2] = 128.0f;
         Taimatsu[i].end_value[1] = 128.0f;
         Taimatsu[i].end_value[0] = 128.0f;
-        strcpy(Taimatsu[i].name, PAL_POOLED(pal_at525__4, "effect"));
+        strcpy(Taimatsu[i].name, "effect");
         InitObjAnime(TaimatsuFrame[i], &Taimatsu[i]);
     }
 
@@ -1462,7 +1402,7 @@ void OpC_InitProcess5() {
     Taimatsu[8].end_value[0] = 128.0f;
     Taimatsu[8].end_value[2] = 125.0f;
     Taimatsu[8].end_value[1] = 125.0f;
-    strcpy(Taimatsu[8].name, PAL_POOLED(pal_at526__4, "hikari"));
+    strcpy(Taimatsu[8].name, "hikari");
     InitObjAnime(TaimatsuFrame[8], &Taimatsu[8]);
 
     EffectTable = (CEffect *) CharaDataBuffer__2[0].Alloc(12800);
@@ -2222,68 +2162,6 @@ static void LoadCharaMajin() {
    with a wait behind them, so a motion that stalls inside a window plays the step once. Which of
    the two footfall samples the first actor takes is decided by which camera is running and how far
    its motion has gone, because the ground under him changes part way through the scene. */
-#ifdef PAL
-void OpC_SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_SoundProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_vol_S1013;
-unsigned char pal_init_S1014__3;
-unsigned int pal_cnt_S1016;
-unsigned char pal_init_S1017;
-unsigned int pal_se_S1025;
-unsigned char pal_init_S1026;
-unsigned int pal_wait_S1062;
-unsigned char pal_init_S1063;
-unsigned int pal_wait_S1083;
-unsigned char pal_init_S1084;
-unsigned int pal_wait_S1098;
-unsigned char pal_init_S1099;
-unsigned int pal_wait_S1115;
-unsigned char pal_init_S1116;
-unsigned int pal_at1035__4[4] __attribute__((aligned(16))) = {0x42480000, 0x42C80000, 0xC2C80000};
-unsigned int pal_at1036__3[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at1037__4[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x43960000};
-unsigned int pal_SndInfo_S1038[260] __attribute__((aligned(16))) = {
-    0x0000000E, 0x00000028, 0x00000032, 0x0000037D, 0x00000000, 0x0000005A, 0x0000000E,
-    0x00000028, 0x00000037, 0x0000044C, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028,
-    0x00000034, 0x0000044C, 0x00000001, 0x0000007F, 0x0000000E, 0x00000028, 0x00000034,
-    0x0000050C, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x00000038, 0x0000050C,
-    0x00000001, 0x0000007F, 0x0000000E, 0x00000028, 0x00000039, 0x0000050C, 0x00000002,
-    0x0000007F, 0x0000000E, 0x00000028, 0x00000034, 0x00000612, 0x00000000, 0x0000007F,
-    0x0000000E, 0x00000028, 0x00000039, 0x00000612, 0x00000001, 0x0000007F, 0x0000000E,
-    0x00000028, 0x00000035, 0x00000631, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028,
-    0x00000037, 0x00000631, 0x00000001, 0x0000007F, 0x0000000E, 0x00000028, 0x00000034,
-    0x00000747, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x00000039, 0x00000747,
-    0x00000001, 0x0000007F, 0x0000000E, 0x00000028, 0x00000034, 0x000007F1, 0x00000000,
-    0x0000007F, 0x0000000E, 0x00000028, 0x00000039, 0x000007F1, 0x00000001, 0x0000007F,
-    0x0000000E, 0x00000028, 0x00000034, 0x00000843, 0x00000000, 0x0000007F, 0x0000000E,
-    0x00000028, 0x00000039, 0x00000843, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028,
-    0x00000035, 0x0000086C, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x00000037,
-    0x0000086C, 0x00000001, 0x0000007F, 0x0000000E, 0x00000028, 0x00000035, 0x000008A9,
-    0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x00000039, 0x000008A9, 0x00000001,
-    0x0000007F, 0x0000000E, 0x00000028, 0x00000035, 0x000008E3, 0x00000000, 0x0000007F,
-    0x0000000E, 0x00000028, 0x00000037, 0x000008E3, 0x00000001, 0x0000007F, 0x0000000E,
-    0x00000028, 0x0000003B, 0x0000092D, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028,
-    0x00000047, 0x00000989, 0x00000000, 0x00000050, 0x0000000E, 0x00000028, 0x0000003D,
-    0x0000098D, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x0000003E, 0x000009A5,
-    0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x00000040, 0x000009C7, 0x00000000,
-    0x0000007F, 0x0000000E, 0x00000028, 0x00000041, 0x000009E0, 0x00000000, 0x0000007F,
-    0x0000000E, 0x00000028, 0x0000003E, 0x000009E0, 0x00000000, 0x0000007F, 0x0000000E,
-    0x00000028, 0x00000042, 0x00000A1A, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028,
-    0x0000003D, 0x00000A1C, 0x00000001, 0x0000007F, 0x0000000E, 0x00000028, 0x00000043,
-    0x00000A52, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x0000003D, 0x00000A7E,
-    0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x00000045, 0x00000AB4, 0x00000000,
-    0x0000007F, 0x0000000E, 0x00000028, 0x0000003E, 0x00000AC4, 0x00000000, 0x0000007F,
-    0x0000000E, 0x00000028, 0x00000045, 0x00000AFA, 0x00000000, 0x0000007F, 0x0000000E,
-    0x00000028, 0x00000048, 0x00000BBE, 0x00000003, 0x00000064, 0x0000000E, 0x00000001,
-    0x00000043, 0x00000BBE, 0x00000004, 0x0000007F, 0x0000000E, 0x00000028, 0x00000043,
-    0x00000CEB, 0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x0000004A, 0x00000D0B,
-    0x00000000, 0x0000007F, 0x0000000E, 0x00000028, 0x0000004A, 0x00000DF4, 0x00000000,
-    0x0000007F, 0x0000000E, 0x00000028, 0x0000004B, 0x0000109F, 0x00000000, 0x0000007F,
-    0x0000000E, 0x00000028, 0x0000004D, 0x000010D1, 0x00000000, 0x0000007F,
-};
-#pragma name_counter 792
-#else
 void OpC_SoundProcess() {
     static float vol = 40.0f;
     static int cnt = 0;
@@ -2295,7 +2173,11 @@ void OpC_SoundProcess() {
             DanceBgmCnt = DanceBgmCnt + 1;
         }
 
+#ifdef PAL
+        if (DanceBgmCnt == 53) {
+#else
         if (DanceBgmCnt == 63) {
+#endif
             OpBgmSqPort = 0;
             OpBgmPlay();
         }
@@ -2380,11 +2262,20 @@ void OpC_SoundProcess() {
         {14, 40, 77, 4305, 0, 127}};
 
     if (!Pause && CScript__2.camera_start >= 70) {
+#ifdef PAL
+        SndCnt += 1.0f;
+#else
         SndCnt = SndCnt + 1;
+#endif
     }
 
     for (int i = 0; i < 43; i++) {
+#ifdef PAL
+        // The table counts 60 Hz ticks; the 50 Hz count reaches the same moment at five sixths.
+        if (SndCnt == SndInfo[i].count * 5 / 6) {
+#else
         if (SndCnt == SndInfo[i].count) {
+#endif
             OpPlayVolSE(SndInfo[i].group, SndInfo[i].no, SndInfo[i].voice, 1.0f);
         }
     }
@@ -2412,7 +2303,11 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[11].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
+            if (motion_frame > 73.0f && motion_frame < 76.0f) {
+#else
             if (motion_frame > 73.0f && motion_frame < 75.0f) {
+#endif
                 if (footstep_ground == 40) {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
                 } else {
@@ -2420,7 +2315,11 @@ void OpC_SoundProcess() {
                 }
 
                 wait = 4;
+#ifdef PAL
+            } else if (motion_frame > 83.0f && motion_frame < 86.0f) {
+#else
             } else if (motion_frame > 83.0f && motion_frame < 85.0f) {
+#endif
                 if (footstep_ground == 40) {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 21);
                 } else {
@@ -2443,10 +2342,18 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[11].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
+            if (motion_frame > 258.0f && motion_frame < 261) {
+#else
             if (motion_frame > 258.0f && motion_frame < 260.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 20);
                 wait = 4;
+#ifdef PAL
+            } else if (motion_frame > 268.0f && motion_frame < 271) {
+#else
             } else if (motion_frame > 268.0f && motion_frame < 270.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, 400.0f, 14, 21, 21);
                 wait = 4;
             }
@@ -2464,10 +2371,18 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[13].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
+            if (motion_frame > 123.0f && motion_frame < 126.0f) {
+#else
             if (motion_frame > 123.0f && motion_frame < 125.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 20);
                 wait = 4;
+#ifdef PAL
+            } else if (motion_frame > 133.0f && motion_frame < 136.0f) {
+#else
             } else if (motion_frame > 133.0f && motion_frame < 135.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 21);
                 wait = 4;
             }
@@ -2485,10 +2400,18 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[12].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
+            if (motion_frame > 33.0f && motion_frame < 36.0f) {
+#else
             if (motion_frame > 33.0f && motion_frame < 35.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), 14, 21, 20);
                 wait = 4;
+#ifdef PAL
+            } else if (motion_frame > 43.0f && motion_frame < 46.0f) {
+#else
             } else if (motion_frame > 43.0f && motion_frame < 45.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, 300.0f, 14, 21, 21);
                 wait = 4;
             }
@@ -2497,7 +2420,6 @@ void OpC_SoundProcess() {
         }
     }
 }
-#endif
 
 /* The tick's drawing, in the order the frame is built: the fog and the projection the camera asks
    for, the world, the light the lightning flash overrides, the depth of field, the actors' shadows
@@ -2505,20 +2427,6 @@ void OpC_SoundProcess() {
    the fires, the beam and the explosions. The light and the ambient colour are saved on the way in
    and put back on the way out, because every object in the scene is lit from its own position by
    LightSet rather than from one light for the whole frame. */
-#ifdef PAL
-void OpC_DrawProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", OpC_DrawProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-float pal_at1256__2[2] __attribute__((aligned(8))) = {200.0f, 400.0f};
-float pal_at1261__2[2] __attribute__((aligned(8))) = {200.0f, 400.0f};
-float pal_at1263__3[2] __attribute__((aligned(8))) = {200.0f, 400.0f};
-unsigned int pal_flg_S1231;
-unsigned char pal_init_S1232__2;
-unsigned int pal_bright_S1234;
-unsigned char pal_init_S1235;
-char pal_at1640__2[] __attribute__((section(".rodata"))) = "shadow_buff";
-#pragma name_counter 1017
-#else
 void OpC_DrawProcess() {
     sceVu0FMATRIX light_save;
     sceVu0FVECTOR ambient_save;
@@ -2578,6 +2486,34 @@ void OpC_DrawProcess() {
         case 7:
             TexManager.ReloadTexture(Vif1Packet, 10);
 
+#ifdef PAL
+            // Objects 1-17 and 68-72 take their images from block 13, so they are drawn once it is loaded.
+            for (int i = 0; i < 74; i++) {
+                if ((i > 0 && i <= 17) || (i >= 68 && i <= 72)) {
+                    continue;
+                }
+
+                CMapObject &object = OP_NornMapObj[i];
+                sceVu0FVECTOR position;
+
+                sceVu0CopyVector(position, object.pos);
+                LightSet(position[0], position[1], position[2], 0);
+                object.Draw();
+            }
+
+            TexManager.ReloadTexture(Vif1Packet, 13);
+
+            for (int i = 0; i < 74; i++) {
+                if ((i > 0 && i <= 17) || (i >= 68 && i < 73)) {
+                    CMapObject &object = OP_NornMapObj[i];
+                    sceVu0FVECTOR position;
+
+                    sceVu0CopyVector(position, object.pos);
+                    LightSet(position[0], position[1], position[2], 0);
+                    object.Draw();
+                }
+            }
+#else
             for (int i = 0; i < 74; i++) {
                 CMapObject &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
@@ -2586,6 +2522,7 @@ void OpC_DrawProcess() {
                 LightSet(position[0], position[1], position[2], 0);
                 object.Draw();
             }
+#endif
 
             if (CScript__2.camera_start == 100 &&
                 Cam__2[SceneNp__2].motion_type.state.time > 262.0f) {
@@ -2630,6 +2567,34 @@ void OpC_DrawProcess() {
         default:
             TexManager.ReloadTexture(Vif1Packet, 10);
 
+#ifdef PAL
+            // Objects 1-15 and 66-73 take their images from block 13, so they are drawn once it is loaded.
+            for (int i = 0; i < 75; i++) {
+                if ((i > 0 && i <= 15) || (i >= 66 && i <= 73)) {
+                    continue;
+                }
+
+                CMapObject &object = OP_NornMapObj[i];
+                sceVu0FVECTOR position;
+
+                sceVu0CopyVector(position, object.pos);
+                LightSet(position[0], position[1], position[2], 0);
+                object.Draw();
+            }
+
+            TexManager.ReloadTexture(Vif1Packet, 13);
+
+            for (int i = 0; i < 75; i++) {
+                if ((i > 0 && i <= 15) || (i >= 66 && i < 74)) {
+                    CMapObject &object = OP_NornMapObj[i];
+                    sceVu0FVECTOR position;
+
+                    sceVu0CopyVector(position, object.pos);
+                    LightSet(position[0], position[1], position[2], 0);
+                    object.Draw();
+                }
+            }
+#else
             for (int i = 0; i < 75; i++) {
                 CMapObject &object = OP_NornMapObj[i];
                 sceVu0FVECTOR position;
@@ -2638,6 +2603,7 @@ void OpC_DrawProcess() {
                 LightSet(position[0], position[1], position[2], 0);
                 object.Draw();
             }
+#endif
 
             TexManager.ReloadTexture(Vif1Packet, 11);
 
@@ -2743,8 +2709,8 @@ void OpC_DrawProcess() {
         CTexture texture;
 
         texture.tex0 = *(u_long *) &back;
-        set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224),
-                    128, 128, 128, 105);
+        set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT),
+                    CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 105);
     }
 
     for (int i = 0; i < 23; i++) {
@@ -2899,7 +2865,11 @@ void OpC_DrawProcess() {
     }
 
     if (CScript__2.scene == 7) {
+#ifdef PAL
+        TexManager.ReloadTexture(Vif1Packet, 18);
+#else
         TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
         SmokeProcess();
     }
 
@@ -2925,7 +2895,11 @@ void OpC_DrawProcess() {
             CScript__2.bom_req = 0;
         }
 
+#ifdef PAL
+        TexManager.ReloadTexture(Vif1Packet, 18);
+#else
         TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
 
         int dust;
 
@@ -2949,7 +2923,6 @@ void OpC_DrawProcess() {
     MGSetPLight(light, lightcolor);
     MGSetAmbient(ambientlight);
 }
-#endif
 
 /**
  * The two dancers the crowd is watching, which are drawn from the camera's own frame tree rather
@@ -2961,17 +2934,6 @@ void OpC_DrawProcess() {
  * @size 0x4D8
  * @unknownret
  */
-#ifdef PAL
-static void DrawDancer();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", DrawDancer__Fv);
-/* Retail's data for the function the marker above supplies. */
-char pal_at1677[] __attribute__((section(".rodata"))) = "p15a1";
-char pal_at1678__2[] __attribute__((section(".rodata"))) = "r_foot";
-char pal_at1679__2[] __attribute__((section(".rodata"))) = "l_foot";
-char pal_at1680__2[] __attribute__((section(".rodata"))) = "p15a2";
-char pal_at1681__2[] __attribute__((section(".rodata"))) = "p16a1";
-#pragma name_counter 1063
-#else
 static void DrawDancer() {
     sceVu0FMATRIX matrix;
     register float zero = 0.0f;
@@ -2984,7 +2946,11 @@ static void DrawDancer() {
 
         if (frame) {
             frame->GetLWMatrix(matrix);
+#ifdef PAL
+            CharaF[0]->SetRotation((float) zero, atan2f(matrix[2][0], matrix[2][2]), zero);
+#else
             CharaF[0]->SetRotation(0.0f, atan2f(matrix[2][0], matrix[2][2]), (float) zero);
+#endif
             float x = matrix[3][0];
             float y = matrix[3][1];
             float z = matrix[3][2];
@@ -3014,7 +2980,11 @@ static void DrawDancer() {
 
         if (second_frame) {
             second_frame->GetLWMatrix(matrix);
+#ifdef PAL
+            CharaF[1]->SetRotation(0.0f, atan2f(matrix[2][0], matrix[2][2]), zero);
+#else
             CharaF[1]->SetRotation((float) zero, atan2f(matrix[2][0], matrix[2][2]), zero);
+#endif
             float x = matrix[3][0];
             float y = matrix[3][1];
             float z = matrix[3][2];
@@ -3049,7 +3019,11 @@ static void DrawDancer() {
             sceVu0FMATRIX matrix2;
 
             frame->GetLWMatrix(matrix2);
+#ifdef PAL
+            CharaF[2]->SetRotation(0.0f, atan2f(matrix2[2][0], matrix2[2][2]), zero);
+#else
             CharaF[2]->SetRotation(0.0f, atan2f(matrix2[2][0], matrix2[2][2]), (float) zero);
+#endif
             float x = matrix2[3][0];
             float y = matrix2[3][1];
             float z = matrix2[3][2];
@@ -3073,7 +3047,6 @@ static void DrawDancer() {
         }
     }
 }
-#endif
 
 /**
  * Every dancer's feet, drawn as sixteen flat models placed under the frames they belong to rather
@@ -3090,14 +3063,14 @@ static void InchikiShadow() {
     CFrame *frame;
 
     if (CScript__2.obj[14].disp) {
-        frame = Chara__3[14].frame->SearchFrame(PAL_POOLED(pal_at1678__2, "r_foot"));
+        frame = Chara__3[14].frame->SearchFrame("r_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
             DrawShadow(0, (float) matrix[3][0], (float) matrix[3][1], (float) matrix[3][2]);
         }
 
-        frame = Chara__3[14].frame->SearchFrame(PAL_POOLED(pal_at1679__2, "l_foot"));
+        frame = Chara__3[14].frame->SearchFrame("l_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
@@ -3106,14 +3079,14 @@ static void InchikiShadow() {
     }
 
     if (CScript__2.obj[15].disp) {
-        frame = Chara__3[15].frame->SearchFrame(PAL_POOLED(pal_at1678__2, "r_foot"));
+        frame = Chara__3[15].frame->SearchFrame("r_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
             DrawShadow(2, (float) matrix[3][0], (float) matrix[3][1], (float) matrix[3][2]);
         }
 
-        frame = Chara__3[15].frame->SearchFrame(PAL_POOLED(pal_at1679__2, "l_foot"));
+        frame = Chara__3[15].frame->SearchFrame("l_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
@@ -3122,14 +3095,14 @@ static void InchikiShadow() {
     }
 
     if (CScript__2.obj[16].disp) {
-        frame = Chara__3[16].frame->SearchFrame(PAL_POOLED(pal_at1678__2, "r_foot"));
+        frame = Chara__3[16].frame->SearchFrame("r_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
             DrawShadow(4, (float) matrix[3][0], (float) matrix[3][1], (float) matrix[3][2]);
         }
 
-        frame = Chara__3[16].frame->SearchFrame(PAL_POOLED(pal_at1679__2, "l_foot"));
+        frame = Chara__3[16].frame->SearchFrame("l_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
@@ -3154,14 +3127,14 @@ static void InchikiShadow() {
     }
 
     if (CScript__2.obj[18].disp) {
-        frame = Chara__3[18].frame->SearchFrame(PAL_POOLED(pal_at1678__2, "r_foot"));
+        frame = Chara__3[18].frame->SearchFrame("r_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
             DrawShadow(4, (float) matrix[3][0], (float) matrix[3][1], (float) matrix[3][2]);
         }
 
-        frame = Chara__3[18].frame->SearchFrame(PAL_POOLED(pal_at1679__2, "l_foot"));
+        frame = Chara__3[18].frame->SearchFrame("l_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
@@ -3170,14 +3143,14 @@ static void InchikiShadow() {
     }
 
     if (CScript__2.obj[19].disp) {
-        frame = Chara__3[19].frame->SearchFrame(PAL_POOLED(pal_at1678__2, "r_foot"));
+        frame = Chara__3[19].frame->SearchFrame("r_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
             DrawShadow(6, (float) matrix[3][0], (float) matrix[3][1], (float) matrix[3][2]);
         }
 
-        frame = Chara__3[19].frame->SearchFrame(PAL_POOLED(pal_at1679__2, "l_foot"));
+        frame = Chara__3[19].frame->SearchFrame("l_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
@@ -3186,14 +3159,14 @@ static void InchikiShadow() {
     }
 
     if (CScript__2.obj[20].disp) {
-        frame = Chara__3[20].frame->SearchFrame(PAL_POOLED(pal_at1678__2, "r_foot"));
+        frame = Chara__3[20].frame->SearchFrame("r_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
             DrawShadow(6, (float) matrix[3][0], (float) matrix[3][1], (float) matrix[3][2]);
         }
 
-        frame = Chara__3[20].frame->SearchFrame(PAL_POOLED(pal_at1679__2, "l_foot"));
+        frame = Chara__3[20].frame->SearchFrame("l_foot");
 
         if (frame) {
             frame->GetLWMatrix(matrix);
@@ -3245,25 +3218,6 @@ static void DrawShadow(int shadow_no, float x, float y, float z) {
  * @size 0x890
  * @unknownret
  */
-#ifdef PAL
-static void MajinBeemProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/op_c", MajinBeemProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at1740[12] __attribute__((aligned(16))) = {
-    0x01DF91D0, 0x01DF91D8, 0x01DF91E0, 0x01DF91E8, 0x01DF91F0, 0x01DF91F8, 0x01DF91D0,
-    0x01DF91D0, 0x01DF91D0, 0x01DF91D8,
-};
-unsigned int pal_pos_S1748[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_pos2_S1749[4] __attribute__((aligned(16))) = {0};
-char pal_at1734[] __attribute__((section(".rodata"))) = "yubi";
-char pal_at1735[] __attribute__((section(".rodata"))) = "heso";
-char pal_at1736__2[] __attribute__((section(".rodata"))) = "l_asi";
-char pal_at1737__2[] __attribute__((section(".rodata"))) = "r_asi";
-char pal_at1738__2[] __attribute__((section(".rodata"))) = "kuti";
-char pal_at1739[] __attribute__((section(".rodata"))) = "toutyou";
-char pal_at1820[] __attribute__((section(".rodata"))) = "end";
-#pragma name_counter 1216
-#else
 static void MajinBeemProcess() {
     char *frame_names[10] = {"yubi", "heso", "l_asi", "r_asi", "kuti", "toutyou", "yubi", "yubi", "yubi",
                              "heso"};
@@ -3271,11 +3225,19 @@ static void MajinBeemProcess() {
     if (CScript__2.beem_req) {
         float speed;
 
+#ifdef PAL
+        if (CScript__2.scene == 5) {
+            speed = 5.4f;
+        } else {
+            speed = 9.6f;
+        }
+#else
         if (CScript__2.scene == 5) {
             speed = 4.5f;
         } else {
             speed = 8.0f;
         }
+#endif
 
         int beam = CScript__2.beem_no;
 
@@ -3382,7 +3344,11 @@ static void MajinBeemProcess() {
         CScript__2.beem_req = 0;
     }
 
+#ifdef PAL
+    TexManager.ReloadTexture(Vif1Packet, 18);
+#else
     TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
 
     for (int i = 0; i < 3; i++) {
         if (!Pause) {
@@ -3420,7 +3386,6 @@ static void MajinBeemProcess() {
         }
     }
 }
-#endif
 
 /**
  * The two columns of smoke the burning village gives off, entered into the effect pool one particle

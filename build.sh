@@ -25,8 +25,8 @@ require_rom
 # below. CLEAN discards the region's build directory -- and nothing else under
 # build/ -- under the lock every build of the tree takes (see
 # scripts/build/cmake.sh), so it cannot pull the directory out from under a
-# build objdiff started. Verification only reports -- an unmatched build still
-# leaves its output.
+# build objdiff started. The region's objdiff report supplies the coloured
+# progress summary after the link.
 BUILD='
     set -e
     export REGION="${REGION:-NTSC}"
@@ -36,7 +36,8 @@ BUILD='
         flock .build.lock rm -rf "$dir"
     fi
     scripts/build/cmake.sh elf ctx
-    scripts/build/verify_built.sh
+    scripts/build/cmake.sh objdiff
+    python3 scripts/build/progress_report.py --region "$REGION"
 '
 
 if in_container; then

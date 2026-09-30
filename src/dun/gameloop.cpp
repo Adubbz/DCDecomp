@@ -2,33 +2,45 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 885
 #ifdef PAL
-#pragma argument_flag_free 1340, 1341, 1342, 1343, 1344, 1345, 1346, 1347, 1348, 1349
-#pragma argument_flag_free 1350, 1351, 1352, 1353, 1354, 1355, 1356, 1357, 1358, 1359
-#pragma argument_flag_free 1360, 1361, 1362, 1363, 1364, 1365, 1366, 1367, 1368, 1369
-#pragma argument_flag_free 1370, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379
-#pragma argument_flag_free 1380, 1381, 1382, 1383, 1384, 1385, 1386, 1387, 1388, 1389
-#pragma argument_flag_free 1390, 1391, 1392, 1393, 1394, 1395, 1396, 1397, 1398, 1399
-#pragma argument_flag_free 1400, 1401, 1402, 1403, 1404, 1405, 1406, 1407, 1408, 1409
-#pragma argument_flag_free 1410, 1411, 1412, 1413, 1414, 1415, 1416, 1417, 1418, 1419
-#pragma argument_flag_free 1420, 1421, 1422, 1423, 1424, 1425, 1426, 1427, 1428, 1429
-#pragma argument_flag_free 1430, 1431, 1432, 1433, 1434, 1435, 1436, 1437, 1438, 1439
-#pragma argument_flag_free 1440, 1441, 1442, 1443, 1444, 1445, 1446, 1447
-#pragma argument_flag_free 1448
-#pragma argument_flag_free 1449, 1450, 1451, 1452, 1453, 1454, 1455, 1456, 1457, 1458
-#pragma argument_flag_free 1459, 1460, 1461, 1462, 1463, 1464, 1465, 1466, 1467, 1468
-#pragma argument_flag_free 1469, 1470, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478
-#pragma argument_flag_free 1479, 1480, 1481, 1482, 1483, 1484, 1485, 1486, 1487, 1488
-#pragma argument_flag_free 1489, 1490, 1491, 1492, 1493, 1494, 1495, 1496, 1497, 1498
-#pragma argument_flag_free 1499, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508
-#pragma argument_flag_free 1509, 1510, 1511, 1512, 1513, 1514, 1515, 1516, 1517, 1518
-#pragma argument_flag_free 1519, 1520, 1521, 1522, 1523, 1524, 1525, 1526, 1527, 1528
-#pragma argument_flag_free 1529, 1530, 1531, 1532, 1533, 1534, 1535, 1536, 1537, 1538
-#pragma argument_flag_free 1539
-#pragma argument_flag_ones 131, 403, 445, 520, 523, 530, 606, 803, 825, 930
-#pragma argument_flag_ones 1215, 1243, 1424, 1425, 1427, 1428, 1585, 1596, 1604, 1624
-#pragma argument_flag_ones 1627, 1662, 1669, 1684, 1687, 1712, 1740, 1747, 1761, 1780
-#pragma argument_flag_ones 1792, 1796, 1797, 1867, 1873, 1882, 1894, 1920, 1942, 1949
-#pragma argument_flag_ones 1956, 2228, 2229, 2230, 2273, 2276, 2337, 2338, 2340
+#pragma argument_flag_free 2936, 2937, 2938, 2939, 2940, 2941, 2942, 2943, 2944, 2945
+#pragma argument_flag_free 2946, 2947, 2948, 2949, 2950, 2951, 2952, 2953, 2954, 2955
+#pragma argument_flag_free 2956, 2957, 2958, 2959, 2960, 2961, 2962, 2963, 2964, 2965
+#pragma argument_flag_free 2966, 2967, 2968, 2969, 2970, 2971, 2972, 2973, 2974, 2975
+#pragma argument_flag_free 2976, 2977, 2978, 2979, 2980, 2981, 2982, 2983, 2984, 2985
+#pragma argument_flag_free 2986, 2987, 2988, 2989, 2990, 2991, 2992, 2993, 2994, 2995
+#pragma argument_flag_free 2996, 2997, 2998, 2999, 3000, 3001, 3002, 3003, 3004, 3005
+#pragma argument_flag_free 3006, 3007, 3008, 3009, 3010, 3011, 3012, 3013, 3014, 3015
+#pragma argument_flag_free 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025
+#pragma argument_flag_free 3026, 3027, 3028, 3029, 3030, 3031, 3032, 3033, 3034, 3035
+#pragma argument_flag_free 3036, 3037, 3038, 3039, 3040, 3041, 3042, 3043, 3044, 3045
+#pragma argument_flag_free 3046, 3047, 3048, 3049, 3050, 3051, 3052, 3053, 3054, 3055
+#pragma argument_flag_free 3056, 3057, 3058, 3059, 3060, 3061, 3062, 3063, 3064, 3065
+#pragma argument_flag_free 3066, 3067, 3068, 3069, 3070, 3071, 3072, 3073, 3074, 3075
+#pragma argument_flag_free 3076, 3077, 3078, 3079, 3080, 3081, 3082, 3083, 3084, 3085
+#pragma argument_flag_free 3086, 3087, 3088, 3089, 3090, 3091, 3092, 3093, 3094, 3095
+#pragma argument_flag_free 3096, 3097, 3098, 3099, 3100, 3101, 3102, 3103, 3104, 3105
+#pragma argument_flag_free 3106, 3107, 3108, 3109, 3110, 3111, 3112, 3113, 3114, 3115
+#pragma argument_flag_free 3116, 3117, 3118, 3119, 3120, 3121, 3122, 3123, 3124, 3125
+#pragma argument_flag_free 3126, 3127, 3128, 3129, 3130, 3131, 3132, 3133, 3134, 3135
+#pragma argument_flag_free 3136, 3137, 3138, 3139, 3140, 3141, 3142, 3143, 3144, 3145
+#pragma argument_flag_free 3146, 3147, 3148, 3149, 3150, 3151, 3152, 3153, 3154, 3155
+#pragma argument_flag_free 3156, 3157, 3158, 3159, 3160, 3161, 3162, 3163, 3164, 3165
+#pragma argument_flag_free 3166, 3167, 3168, 3169, 3170, 3171, 3172, 3173, 3174, 3175
+#pragma argument_flag_free 3176, 3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185
+#pragma argument_flag_free 3186, 3187, 3188, 3189, 3190, 3191, 3192, 3193, 3194, 3195
+#pragma argument_flag_free 3196, 3197, 3198, 3199, 3200, 3201, 3202, 3203, 3204, 3205
+#pragma argument_flag_free 3206
+#pragma argument_flag_ones 183, 488, 530, 578, 579, 614, 618, 643, 647, 655
+#pragma argument_flag_ones 659, 668, 700, 702, 747, 792, 795, 796, 800, 807
+#pragma argument_flag_ones 809, 825, 827, 841, 1091, 1092, 1146, 1147, 1151, 1152
+#pragma argument_flag_ones 1153, 1213, 1216, 1242, 1273, 1324, 1381, 1533, 1579, 1580
+#pragma argument_flag_ones 1698, 1747, 1762, 1769, 1780, 1786, 1809, 1810, 1811, 1812
+#pragma argument_flag_ones 1813, 1857, 1914, 1917, 1918, 1950, 1953, 1960, 2036, 2233
+#pragma argument_flag_ones 2255, 2360, 2645, 2673, 2849, 2851, 2904, 2906, 2923, 2926
+#pragma argument_flag_ones 3020, 3021, 3023, 3024, 3279, 3282, 3283, 3394, 3405, 3413
+#pragma argument_flag_ones 3433, 3436, 3471, 3478, 3493, 3496, 3521, 3549, 3556, 3570
+#pragma argument_flag_ones 3589, 3601, 3605, 3606, 3676, 3682, 3691, 3703, 3729, 3751
+#pragma argument_flag_ones 3758, 3765, 4037, 4038, 4039, 4082, 4085, 4146, 4147, 4149
 #pragma argument_flag 0
 #else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
@@ -1434,30 +1446,66 @@ s32 defCameraWait;
 s32 MonstorNameOff;
 
 #ifdef PAL
-void LoadBaseTexture(void);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", LoadBaseTexture__Fv);
-/* Retail's data for the function the marker above supplies. */
-char pal_at634__6[0x40] __attribute__((aligned(16))) = "dun/pack/dun/pack/teximg2.pac";
-unsigned int pal_at653__6[24] __attribute__((aligned(16))) = {
-    0x01DDA5A0, 0x0000001A, 0x00000000, 0x01DDA5C0, 0x0000001A, 0x00000000, 0x01DDA5E0,
-    0x0000001A, 0x00000000, 0x01DDA600, 0x0000001A, 0x00000000, 0x01DDA620, 0x0000001A,
-    0x00000000, 0x01DDA640, 0x0000001A,
-};
-char pal_at654__6[0x40] __attribute__((aligned(16))) = "meswin/mes_tex.pak";
-char pal_at647__5[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#mes_frame_buff#640#480#4";
-char pal_at648__5[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#fukidashibase#640#224#4";
-char pal_at649__5[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "#fontbase#512#256#1";
-char pal_at650__7[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/gaiji.img";
-char pal_at651__5[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/fuki256.img";
-char pal_at652__5[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/syst04.img";
-char pal_at662__4[0x18] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "gatekey0%d.img";
-char pal_at663__4[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dun/pack/teximg2_%d.pac";
-char pal_at664__6[0x30] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "Error::Pack->FileNotFound [%d]%s!!\n";
-char pal_at665__5[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "meswin/mes_tex_%d.pak";
-char pal_at666__5[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "gaiji.img";
-char pal_at667__5[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "fuki256.img";
-char pal_at668__5[0x18] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "syst04.img";
-#pragma name_counter 994
+void LoadBaseTexture(void) {
+    LOADTEXTURE_INFO2 info[96];
+    int size;
+    int i;
+    char *name;
+
+    sprintf(texdata__2[2].name, "gatekey0%d.img", selectMapNo + 1);
+
+    char path[64] = "dun/pack/dun/pack/teximg2.pac";
+
+    if (LanguageCode > 0) {
+        sprintf(path, "dun/pack/teximg2_%d.pac", LanguageCode);
+    }
+    LoadFile(path, (void *) read_buffer, NULL);
+    wait_now_loading_vsync();
+
+    i = 0;
+    while ((name = texdata__2[i].name) != NULL) {
+        // A name that starts with '#' asks the manager for a blank page of
+        // that size rather than for a file inside the pack.
+        if (name[0] == '#') {
+            info[i].name = name;
+        } else {
+            u_int *found = GetPackFile(read_buffer, name, &size);
+
+            if (found != NULL) {
+                info[i].name = (char *) found;
+            } else {
+                printf("Error::Pack->FileNotFound [%d]%s!!\n", i, name);
+                exit__2(-1);
+            }
+        }
+        info[i].block_no = texdata__2[i].block_no;
+        i++;
+    }
+    info[i].name = NULL;
+    TexManager.LoadTextureBlock(-1, info);
+
+    // The message window's pages, and the three images the language's own
+    // pack supplies in place of the names written here.
+    LOADTEXTURE_INFO2 mes_info[8] = {
+        {"#mes_frame_buff#640#480#4", 0x1A, 0},
+        {"#fukidashibase#640#224#4", 0x1A, 0},
+        {"#fontbase#512#256#1", 0x1A, 0},
+        {"meswin/gaiji.img", 0x1A, 0},
+        {"meswin/fuki256.img", 0x1A, 0},
+        {"meswin/syst04.img", 0x1A, 0},
+    };
+    char mes_path[64] = "meswin/mes_tex.pak";
+
+    if (LanguageCode > 0) {
+        sprintf(mes_path, "meswin/mes_tex_%d.pak", LanguageCode);
+    }
+    LoadFile(mes_path, read_buffer, NULL);
+    wait_now_loading_vsync();
+    mes_info[3].name = (char *) GetPackFile(read_buffer, "gaiji.img", NULL);
+    mes_info[4].name = (char *) GetPackFile(read_buffer, "fuki256.img", NULL);
+    mes_info[5].name = (char *) GetPackFile(read_buffer, "syst04.img", NULL);
+    TexManager.LoadTextureBlock(-1, mes_info);
+}
 #else
 void LoadBaseTexture(void) {
     LOADTEXTURE_INFO2 info[97];
@@ -2068,11 +2116,6 @@ void GameInit(void) {
     gameTask = 400;
 }
 
-#ifdef PAL
-int GameLoop(void);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", GameLoop__Fv);
-#pragma name_counter 1231
-#else
 int GameLoop(void) {
     float fade[4];
     int i;
@@ -2171,6 +2214,20 @@ int GameLoop(void) {
         return existFlag;
     }
 
+#ifdef PAL
+    // In debug mode, Start pressed while Select is held leaves the dungeon.
+    if (DebugMode != 0 && GamePad.On(0x100) != 0 && GamePad.Down(0x800) != 0) {
+        while (ReadBGSync() == 1) {
+        }
+        SndExit();
+
+        CUserStatus *leaving = UserStatus;
+
+        leaving->prev_floor = -1;
+        return 1;
+    }
+#endif
+
     if (tryalExit != 0) {
         while (ReadBGSync() == 1) {
         }
@@ -2185,7 +2242,6 @@ int GameLoop(void) {
     SndStep();
     return 0;
 }
-#endif
 
 void Draw_MainUnitShadow(void) {
     float light[4][4];
@@ -2341,8 +2397,6 @@ void Draw_MainUnit(void) {
 }
 
 #ifdef PAL
-void MainDraw(void);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MainDraw__Fv__3);
 /* Retail's data for the function the marker above supplies. */
 unsigned int pal_itemposr_S1160;
 unsigned char pal_init_S1161;
@@ -2357,7 +2411,7 @@ char pal_at1602__2[0x8] __attribute__((aligned(8))) __attribute__((section(".rod
 char pal_at1611__2[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pause";
 char pal_at1612__3[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "frame_image";
 #pragma name_counter 1718
-#else
+#endif
 void MainDraw(void) {
     sceVu0FMATRIX camera;
     sceVu0FVECTOR eye;
@@ -2737,6 +2791,13 @@ void MainDraw(void) {
             MGSetGsZBUF(NULL);
         }
 
+#ifdef PAL
+        if (rogoSwitch2 == 1 && BtEventInfo.floor_title_off == 0) {
+            TEX_Floor1 = TexManager.GetTexture(floor_name, -1);
+            StartMessageDraw(TEX_Floor1, selectMapNo, UserStatus->cur_floor, BtUraDongeon,
+                             rogoAlphaA[2]);
+        }
+#else
         if (rogoSwitch2 == 1 && BtEventInfo.floor_title_off == 0) {
             TEX_Floor1 = TexManager.GetTexture(floor_name, -1);
             shift = 0;
@@ -2888,16 +2949,23 @@ void MainDraw(void) {
             }
         }
 
+#endif
+
         TexManager.ReloadTexture(Vif1Packet, 2);
 
         int gauge_alpha = rogoY3 + 0x60;
+#ifdef PAL
+        const int gauge_y = 0x1AC;
+#else
+        const int gauge_y = 0x18C;
+#endif
 
         if ((int) BtActStatus.action_gauge >= 100) {
             if (BtActStatus.gauge_flash == 0) {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
                             CRect_i_(0, 0, 0x80, 0x1C), gauge_alpha);
             } else {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
                             CRect_i_(0, 0x1C, 0x80, 0x1C), gauge_alpha);
             }
         }
@@ -2907,9 +2975,9 @@ void MainDraw(void) {
         if ((int) wear < 100) {
             int left = (int) wear;
 
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, 0x18C, 0x80, 0x1C),
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
                         CRect_i_(0, 0x54, 0x80, 0x1C), gauge_alpha);
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, 0x18C, left, 0x1C),
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, gauge_y, left, 0x1C),
                         CRect_i_(0x1A, 0x38, left, 0x1C), gauge_alpha);
         }
 
@@ -3050,7 +3118,6 @@ void MainDraw(void) {
                              0, 0);
     }
 }
-#endif
 
 float oldCameraHeight;
 float oldCameraAngle;
@@ -3075,35 +3142,6 @@ static inline void DeleteItemModel(int slot) {
  * floor, and one of the other states while a menu, an event script or the
  * death sequence has the screen. Every state ends by stepping the models.
  */
-#ifdef PAL
-void MoveChara(void);
-/* Retail's data for the function the marker below supplies. */
-char pal_at4193[0x18] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "pause!!\n";
-char pal_at4203[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dead script !!\n";
-char pal_at4204[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "throw !!\n";
-char pal_at4208[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "er -> %d\n";
-char pal_at4212[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "********** system mem !!!\n";
-char pal_at4213[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "********** ext mem !!!\n";
-char pal_at4214[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "exit script\n";
-char pal_at4215[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "go dungeon\n";
-char pal_at4216[0x8] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "dcol0";
-char pal_at4217[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "dcol1";
-char pal_at4218[0x10] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "se stop !!\n";
-char pal_at4219[0x18] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "itemno = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", MoveChara__Fv__2);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_cnt_S1704;
-unsigned char pal_init_S1705;
-unsigned int pal_snd_cnt_S2142;
-unsigned char pal_init_S2143;
-unsigned int pal_id_cnt_S2145;
-unsigned char pal_init_S2146;
-sceVu0FVECTOR pal_reference_S1634 = {0.0f, 7.5f, 0.0f, 0.0f};
-unsigned int pal_at1635__2[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x3F800000, 0x3F800000};
-unsigned int pal_at1908[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-unsigned int pal_at2449[8] __attribute__((aligned(16))) = {0x00000017, 0x00000018, 0x00000019, 0x00000028, 0x00000029};
-#pragma name_counter 2883
-#else
 void MoveChara(void) {
     /* Where the camera looks relative to what it follows, before the floor's
        own offset is added. */
@@ -3218,6 +3256,15 @@ void MoveChara(void) {
                     velo__2[0] = move_x * run_speed;
                     velo__2[2] = move_z * run_speed;
                 }
+#ifdef PAL
+                // In debug mode, Select outside an event opens the debug menu.
+                if (DebugMode != 0 && GamePad.Down(0x400) != 0 && BtEventMode == 0) {
+                    DebugStatus[0] = 1;
+                    gameTask = 0xDC;
+                    SndSePlay(1, -1, 0);
+                    break;
+                }
+#endif
                 if (stickVector <= 0.01f) {
                     CUserStatus *drain = UserStatus;
 
@@ -5322,7 +5369,11 @@ void MoveChara(void) {
         case 0x21: {
             frameCaputer = 0;
 
+#ifdef PAL
+            s32 menu[6] = {0x17, 0x18, 0x19, 0x28, 0x29};
+#else
             s32 menu[5] = {0x17, 0x18, 0x19, 0x28, 0x29};
+#endif
 
             BattleMenuInit(menu, 0);
             BtGameModeFlag = 2;
@@ -5593,8 +5644,26 @@ void MoveChara(void) {
             if (GamePad.Down(0x60) != 0 || DeadKeyWait <= 0) {
                 ClearSystemMes();
                 BtActStatus.camera_hold = 0;
+#ifdef PAL
+                // In debug mode the party gets up again at full life.
+                if (DebugMode != 0) {
+                    CUserStatus *status = UserStatus;
+
+                    status->hp[status->cur_chara] = status->max_hp[status->cur_chara];
+                    BtActStatus.motion_no = 0;
+                    UserStatus->step_disable = 0;
+                    DngMessMan.enabled = 1;
+                    gameTask = 0;
+                    CMonUnitHold = 0;
+                    CEffectHold = 0;
+                } else {
+                    gameTask = 0xAF;
+                    ((CDngStatusData *) UserStatus)->SetDead();
+                }
+#else
                 gameTask = 0xAF;
                 ((CDngStatusData *) UserStatus)->SetDead();
+#endif
             }
             autoCamTrial();
             break;
@@ -5692,7 +5761,6 @@ void MoveChara(void) {
     }
     motionDrive();
 }
-#endif
 
 void motionDrive(void) {
     sceVu0FVECTOR pos;
@@ -6449,11 +6517,7 @@ void EquipWeaponFrame(CCharacter *weapon, int chara, int held_out) {
     CWeaponFx.colour[1].b = CWeaponFx.colour[3].b = 6;
     CWeaponFx.cursor = 0;
     CWeaponFx.timer = 0;
-#ifdef PAL
-    CWeaponFx.InitSet(NowWeapon->frame, pal_at4216, pal_at4217);
-#else
     CWeaponFx.InitSet(NowWeapon->frame, "dcol0", "dcol1");
-#endif
     SetWeaponColor();
 }
 
@@ -6938,18 +7002,6 @@ static void LoadData(void) {
     MasekiEffect[4].ReEntry(&MyEntryEffect_Maseki04, &MasekiModelBuffer);
 }
 
-#ifdef PAL
-int BtCheckDamageProc(void);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BtCheckDamageProc__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_dmgSnd_S5056;
-unsigned char pal_init_S5057;
-unsigned int pal_cnt_S5153;
-unsigned char pal_init_S5154;
-unsigned int pal_at5137[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-unsigned int pal_at5152[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-#pragma name_counter 3690
-#else
 int BtCheckDamageProc(void) {
     sceVu0FVECTOR pos;
     sceVu0FVECTOR from;
@@ -7307,7 +7359,6 @@ int BtCheckDamageProc(void) {
     }
     return taken;
 }
-#endif
 
 void BattleActionThlow(void) {
     sceVu0FVECTOR stood;
@@ -7523,15 +7574,6 @@ void BattleActionOn_Jinn(void) {
     }
 }
 
-#ifdef PAL
-void BattleActionPlay_Jinn(CCharacter *chara, int aimed);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BattleActionPlay_Jinn__FP10CCharacteri);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at5495[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-unsigned int pal_at5505[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-char pal_at5543[0x8] __attribute__((aligned(8))) __attribute__((section(".rodata"))) = "eff30";
-#pragma name_counter 3840
-#else
 void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
     float now = chara->motion_type.state.time;
     int damage = NowWeaponHave->attack;
@@ -7610,7 +7652,11 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
                 SwordDmgCheck1(1.0f, 0);
             }
         } else {
+#ifdef PAL
+            if (now > 21.0f && now < 21.8f) {
+#else
             if (now > 21.0f && now < 21.5f) {
+#endif
                 SndSePlay(0x191, -1, 0);
                 SndSePlay(0x1A5, -1, 0);
 
@@ -7672,7 +7718,6 @@ void BattleActionPlay_Jinn(CCharacter *chara, int aimed) {
         }
     }
 }
-#endif
 
 void BattleActionOn_Ruby(void) {
     if (BtActStatus.action_on == 0 && (s32) BtActStatus.action_gauge == 100) {
@@ -7749,12 +7794,6 @@ void BattleActionShotRuby(CCharacter *chara, int aimed, float scale, int repeat)
     }
 }
 
-#ifdef PAL
-void BattleActionPlay_Ruby(CCharacter *chara, int aimed);
-INCLUDE_ASM("asm/pal/nonmatchings/dun/gameloop", BattleActionPlay_Ruby__FP10CCharacteri);
-/* Retail's data for the function the marker above supplies. */
-#pragma name_counter 3944
-#else
 void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
     float now = chara->motion_type.state.time;
     int element = NowWeaponHave->best_elem;
@@ -7767,7 +7806,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
         ruby_effect_id = -1;
 
         if (aimed == 0) {
+#ifdef PAL
+            if (now >= 125.5f && now <= 126.5f && BtActStatus.action_step == 0) {
+#else
             if (now >= 126.0f && now < 126.3f && BtActStatus.action_step == 0) {
+#endif
                 sceVu0FVECTOR pos;
                 sceVu0FVECTOR aim;
 
@@ -7778,7 +7821,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                                                     chara->frame->SearchFrame("item"), 0);
                 NowMainEffect->SetLoop(1);
             }
+#ifdef PAL
+            if (now >= 128.0f && now < 128.4f) {
+#else
             if (now >= 128.0f && now < 128.3f) {
+#endif
                 BattleActionShotRuby(chara, aimed, 1.0f, 0);
                 BtActStatus.frames_since_attack = 0;
                 SwordDmgCheck1(0.8f, 0);
@@ -7786,7 +7833,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                 SndSePlay(0x1A4, -1, 0);
             }
         } else {
+#ifdef PAL
+            if (now >= 126.0f && now <= 126.5f && BtActStatus.action_step == 0) {
+#else
             if (now >= 126.0f && now < 126.3f && BtActStatus.action_step == 0) {
+#endif
                 sceVu0FVECTOR pos;
                 sceVu0FVECTOR aim;
 
@@ -7797,7 +7848,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                                                     chara->frame->SearchFrame("item"), 0);
                 NowMainEffect->SetLoop(1);
             }
+#ifdef PAL
+            if (now >= 128.0f && now < 128.4f) {
+#else
             if (now >= 128.0f && now < 128.3f) {
+#endif
                 BattleActionShotRuby(chara, aimed, 1.0f, 0);
                 BtActStatus.frames_since_attack = 0;
                 SwordDmgCheck1(0.8f, 0);
@@ -7849,7 +7904,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                 ruby_effect_id = -1;
             }
             if (aimed == 0) {
+#ifdef PAL
+                if (now >= 216.0f && now < 216.5f) {
+#else
                 if (now >= 216.0f && now < 216.4f) {
+#endif
                     BattleActionShotRuby(chara, aimed, 2.2f, 0);
                     BattleActionShotRuby(chara, aimed, 2.2f, 1);
                     BtActStatus.frames_since_attack = 0;
@@ -7858,7 +7917,11 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
                     SndSePlay(0x1A6, -1, 0);
                 }
             } else {
+#ifdef PAL
+                if (now >= 216.0f && now < 216.5f) {
+#else
                 if (now >= 216.0f && now < 216.3f) {
+#endif
                     BattleActionShotRuby(chara, aimed, 2.2f, 0);
                     BattleActionShotRuby(chara, aimed, 2.2f, 1);
                     BtActStatus.frames_since_attack = 0;
@@ -7893,7 +7956,6 @@ void BattleActionPlay_Ruby(CCharacter *chara, int aimed) {
         }
     }
 }
-#endif
 
 void BattleActionOn_Ozumond(void) {
     if (BtActStatus.action_on == 0 && BtActStatus.gauge_exhausted == 0) {
@@ -7974,11 +8036,7 @@ void BattleActionPlay_Ozumond(int aimed) {
     BtActStatus.motion_no = 11;
 
     if (aimed == 0) {
-#ifdef PAL
-        getFramePos((CFrameVu1 *) NowWeapon->frame, pal_at4216, pos);
-#else
         getFramePos((CFrameVu1 *) NowWeapon->frame, "dcol0", pos);
-#endif
         getCharacterVector(aim, 0.0f);
     } else {
         setShotVector(aim, 3.5f, viewAngleH__2, viewAngleV__2);
@@ -8003,13 +8061,8 @@ void BattleActionPlay_Ozumond(int aimed) {
     if (s_cnt >= 10) {
         s_cnt = 0;
         if (aimed == 0) {
-#ifdef PAL
-            NowMainEffect->Set(pos, aim, -1, -1, 0,
-                               NowWeapon->frame->SearchFrame(pal_at4216), -1);
-#else
             NowMainEffect->Set(pos, aim, -1, -1, 0,
                                NowWeapon->frame->SearchFrame("dcol0"), -1);
-#endif
         }
     }
 
@@ -8067,11 +8120,7 @@ void BattleActionPlay_Ozumond_H(int aimed) {
         SndSeSeqPlayStop(0x199, 5, 0);
 
         if (aimed == 0) {
-#ifdef PAL
-            getFramePos((CFrameVu1 *) NowWeapon->frame, pal_at4216, pos);
-#else
             getFramePos((CFrameVu1 *) NowWeapon->frame, "dcol0", pos);
-#endif
             getCharacterVector(aim, 0.0f);
         } else {
             setShotVector(aim, 3.5f, viewAngleH__2, viewAngleV__2);
@@ -8140,11 +8189,7 @@ void BattleActionPlay_Ozumond_F(int aimed) {
             BtActStatus.frames_since_attack = 0;
 
             if (aimed == 0) {
-#ifdef PAL
-                getFramePos((CFrameVu1 *) NowWeapon->frame, pal_at4216, start);
-#else
                 getFramePos((CFrameVu1 *) NowWeapon->frame, "dcol0", start);
-#endif
                 getCharacterVector(start_dir, 0.0f);
             } else {
                 setShotVector(start_dir, 1.0f, viewAngleH__2, viewAngleV__2);
@@ -8185,11 +8230,7 @@ void BattleActionPlay_Ozumond_F(int aimed) {
     }
 
     if (aimed == 0) {
-#ifdef PAL
-        getFramePos((CFrameVu1 *) NowWeapon->frame, pal_at4216, pos);
-#else
         getFramePos((CFrameVu1 *) NowWeapon->frame, "dcol0", pos);
-#endif
         getCharacterVector(aim, 0.0f);
     } else {
         setShotVector(aim, 3.5f, viewAngleH__2, viewAngleV__2);

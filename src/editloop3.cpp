@@ -2105,11 +2105,6 @@ static void ClearObjAnime(int index) {
         anime->property = -1;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventStopPlay__Fv);
-#pragma name_counter 1814
-#endif
-
 /** Whether the current event uses the lightweight initialization path. */
 int simple_event;
 
@@ -2170,13 +2165,20 @@ static int actv_file;
 /** Resource arena selected by subsequent event load commands. */
 static int actv_buffer;
 
+#ifdef PAL
+void EdEventStopPlay() {
+    event_stop = !event_stop;
+}
+#endif
+
 void EdEventPause() {
     event_pause = !event_pause;
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdCheckEventPause__Fv);
-#pragma name_counter 1815
+int EdCheckEventPause() {
+    return event_pause;
+}
 #endif
 
 /** Directory prepended to relative event resource names. */
@@ -3774,11 +3776,6 @@ static int _GET_NPC_PARTS_NO(RS_STACKDATA *stack, int argument_count) {
     return 1;
 }
 
-#ifdef PAL
-static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count);
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _SET_NPC_MOTION__FP12RS_STACKDATAi);
-#pragma name_counter 2581
-#else
 static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
     CCharacter *character;
@@ -3796,11 +3793,15 @@ static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
         character->SetMotion(motion, GetStackInt(stack));
     else
         character->SetMotion(motion, 0);
-    if (speed > 0.0f)
+    if (speed > 0.0f) {
         character->SetMotionSpeed(speed);
+#ifdef PAL
+        // PAL runs at 50 frames per second, so motions step 6/5 as far per frame.
+        character->motion_speed = 6.0f * speed / 5.0f;
+#endif
+    }
     return 1;
 }
-#endif
 
 static int _SET_NPC_ANIME(RS_STACKDATA *stack, int argument_count) {
     int index = GetStackInt(stack++);
@@ -6196,16 +6197,13 @@ static int _EB_LOOP(RS_STACKDATA *stack, int) {
     return 1;
 }
 
-#ifdef PAL
-static int _EB_INTRO_START(RS_STACKDATA *, int);
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _EB_INTRO_START__FP12RS_STACKDATAi);
-#pragma name_counter 3595
-#else
 static int _EB_INTRO_START(RS_STACKDATA *, int) {
+#ifdef PAL
+    EBInitialize();
+#endif
     EBInitIntro();
     return 1;
 }
-#endif
 
 static int _EB_INTRO_LOOP(RS_STACKDATA *stack, int) {
     SetStack(stack, EBIntroLoop());
@@ -6325,13 +6323,15 @@ static int _SET_FISHING_ESA(RS_STACKDATA *stack, int) {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_TV_MODE__FP12RS_STACKDATAi);
-#pragma name_counter 3628
-#endif
+static int _GET_TV_MODE(RS_STACKDATA *stack, int) {
+    SetStack(stack, 1);
+    return 1;
+}
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", _GET_LANG_CODE__FP12RS_STACKDATAi);
-#pragma name_counter 3628
+static int _GET_LANG_CODE(RS_STACKDATA *stack, int) {
+    SetStack(stack, LanguageCode);
+    return 1;
+}
 #endif
 
 /* The internal operations assembly still supplies, so the registry below can name them. */
@@ -6343,10 +6343,6 @@ int _ASQ_SYNC_CHARA(RS_STACKDATA *, int);
 int _ASQ_MOVE_STEP(RS_STACKDATA *, int);
 int _ASQ_ROT_REF(RS_STACKDATA *, int);
 int _SGET_REQUEST(RS_STACKDATA *, int);
-#ifdef PAL
-int _GET_TV_MODE(RS_STACKDATA *, int);
-int _GET_LANG_CODE(RS_STACKDATA *, int);
-#endif
 
 /** Retail's ordered registry of editor-event external functions. */
 static ED_EVENT_EXTERNAL_FUNCTION ext_func_info[] = {
@@ -6973,36 +6969,23 @@ int EdEventFinish() {
  * @address 0x197AD0
  * @size 0xCFC
  */
-#ifdef PAL
-int EdEventMode(CCameraFollow *camera, int kind);
-/* Retail's data for the function the marker below supplies. */
-char pal_at2454[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "! CAMERA POS\n";
-char pal_at2455[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "# CAMERA REF\n";
-char pal_at2456[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "$ CHARACTER\n";
-char pal_at2609[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "select chara %d\ncollision %d\n";
-char pal_at2610[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " pos = ";
-char pal_at2611[0x8] __attribute__((section(".rodata"))) = " rot = ";
-char pal_at2612[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " amb %5.1f %5.1f %5.1f %5.1f\n";
-char pal_at2613[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "camera\n";
-char pal_at2614[0x8] __attribute__((section(".rodata"))) = " ref = ";
-char pal_at2615[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " angle = %4.3f\n";
-char pal_at2616__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " height = %6.2f\n";
-char pal_at2617[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " distance = %6.2f\n";
-char pal_at2618[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " projection = %7.1f\n";
-char pal_at2619[0x10] __attribute__((section(".rodata"))) = "frame_image";
-INCLUDE_ASM("asm/pal/nonmatchings/editloop3", EdEventMode__FP13CCameraFollowi);
-/* Retail's data for the function the marker above supplies. */
-char *pal_mode_name_S2453[6] __attribute__((aligned(8))) = {pal_at2454, pal_at2455, pal_at2456};
-unsigned int pal_at2575[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-unsigned int pal_mode_S2450;
-unsigned char pal_init_S2451;
-unsigned int pal_select_chara_S2457;
-unsigned char pal_init_S2458;
-#pragma name_counter 3963
-#else
 int EdEventMode(CCameraFollow *camera, int kind) {
     int result;
 
+#ifdef PAL
+    // Debug builds toggle the event debugger with one button and pause the event with another.
+    if (DebugMode != 0 && GamePad.Down(0x400) != 0) {
+        EdEventStopPlay();
+    }
+    if (DebugMode != 0 && menu_mode == 0 && GamePad.Down(0x800) != 0) {
+        if (EdCheckEventPause() == 0) {
+            SndBgmPause();
+        } else {
+            SndBgmRePlay();
+        }
+        EdEventPause();
+    }
+#endif
     if (event_stop != 0) {
         static int mode = 0;
         static char *mode_name[] = {"! CAMERA POS\n", "# CAMERA REF\n", "$ CHARACTER\n"};
@@ -7172,6 +7155,9 @@ int EdEventMode(CCameraFollow *camera, int kind) {
         float speed = SceneData.motion_speed;
         SceneData.SetMotion(0, 0);
         SceneData.motion_speed = speed;
+#ifdef PAL
+        SceneData.motion_speed = 6.0f * speed / 5.0f;
+#endif
         SceneData.Step();
     }
     if (menu_mode == 0) {
@@ -7275,7 +7261,6 @@ int EdEventMode(CCameraFollow *camera, int kind) {
     }
     return result;
 }
-#endif
 
 int EdEventNPCStep() {
     int wind = EdEventInfo.main_character->wind;

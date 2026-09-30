@@ -1281,13 +1281,6 @@ void CMonstorUnit::MoveChecMonster() {
     }
 }
 
-#ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char pal_at2230[0x8] __attribute__((section(".rodata"))) = "err %d\n";
-char pal_at2234__2[0x30] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "************ item = %d ************ \n";
-INCLUDE_ASM("asm/pal/nonmatchings/monstorunit", Step__12CMonstorUnitFi);
-#pragma name_counter 2204
-#else
 void CMonstorUnit::Step(int pause) {
     sceVu0FVECTOR position, destination, hit;
     CBoxVu0 box;
@@ -1631,7 +1624,6 @@ void CMonstorUnit::Step(int pause) {
         }
     }
 }
-#endif
 
 void CMonstorUnit::CleanViewMonstor(int back_floor) {
     for (int i = 0; i < 16; i++) {

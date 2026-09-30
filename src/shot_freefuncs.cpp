@@ -970,7 +970,9 @@ int poison_counter;
  * @address 0x1B1A50
  * @size 0x154
  */
-#ifdef PAL
+#if defined(PAL) && !defined(NON_MATCHING)
+// NON_MATCHING under PAL: 7 left -- 10.0f loads before the other arguments of AddNowLife; its
+// evaluate_first 1 orders it but swaps the status and chara registers.
 void BtStatusErrStep(void);
 INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
 /* Retail's data for the function the marker above supplies. */

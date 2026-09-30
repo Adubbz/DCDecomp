@@ -1,12 +1,12 @@
 # decomp.dev integration.
 #
-# decomp.dev renders its progress page from an artifact named
-# "<VERSION>_report" holding objdiff's report.json, which this job builds from
-# scratch on every push.
+# decomp.dev reads the single "SCUS_971.11_report" artifact holding an
+# objdiff report with both NTSC and PAL units. This job builds it from scratch
+# on every push.
 #
 # asm/ is not committed, so the job splits it with splat first. It needs no
-# disc for that: the private repository carries the three binaries splat
-# reads, laid out as they sit in this tree. It is checked out with a
+# disc for that: the private repository carries the three binaries for each
+# region, laid out as they sit in this tree. It is checked out with a
 # read-only deploy key -- the
 # PRIVATE_REPO_SSH_KEY secret -- and copied in by the same
 # scripts/host/overlay_private.sh a developer runs. Only report.json leaves
@@ -34,9 +34,9 @@ permissions:
 jobs:
   report:
     runs-on: ubuntu-latest
-
     env:
       HAS_PRIVATE: ${{ secrets.PRIVATE_REPO_SSH_KEY != '' && vars.PRIVATE_REPOSITORY != '' }}
+      HAS_DISCORD: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
       PRIVATE_REPOSITORY: ${{ vars.PRIVATE_REPOSITORY }}
 
     steps:
@@ -80,16 +80,16 @@ jobs:
 
       - name: Split, build and generate the report
         if: env.HAS_PRIVATE == 'true'
-        # There is no disc image, so `setup` checks the binaries copied into
-        # rom/ntsc/extracted against rom/ntsc/extracted.sha256 and splits them.
+        # There is no disc image, so each `setup` checks its copied binaries
+        # against that region's extracted.sha256 and splits them.
         run: |
           docker run --rm \
             -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
             dcdecomp_dev sh -c '
               set -e
-              scripts/build/cmake.sh objdiff
-              mkdir -p progress
-              objdiff-cli report generate -o progress/report.json
+              REGION=NTSC scripts/build/cmake.sh objdiff
+              REGION=PAL scripts/build/cmake.sh objdiff
+              python3 scripts/build/progress_report.py --region BOTH
             '
 
       - name: Summarise
@@ -97,14 +97,16 @@ jobs:
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
-          m = json.load(open("progress/report.json"))["measures"]
-          print("| Measure | Value |")
-          print("| --- | --- |")
-          print("| Code matched | %.4f%% |" % m["matched_code_percent"])
-          print("| Functions matched | %s / %s |"
-                % (m["matched_functions"], m["total_functions"]))
-          print("| Bytes matched | %s / %s |"
-                % (m["matched_code"], m["total_code"]))
+          report = json.load(open("progress/report.json"))
+          measures = {c["id"]: c["measures"] for c in report["categories"]}
+          print("| Region | Code matched | Functions matched | Bytes matched |")
+          print("| --- | ---: | ---: | ---: |")
+          for region in ("ntsc", "pal"):
+              m = measures[region]
+              print("| %s | %.4f%% | %s / %s | %s / %s |" % (
+                  region.upper(), m["matched_code_percent"],
+                  m["matched_functions"], m["total_functions"],
+                  m["matched_code"], m["total_code"]))
           PY
 
       - name: Upload the progress report
@@ -116,13 +118,14 @@ jobs:
           if-no-files-found: error
 
       - name: Create the Discord progress message
-        if: env.HAS_PRIVATE == 'true' && github.event_name != 'pull_request'
+        if: env.HAS_PRIVATE == 'true' && env.HAS_DISCORD == 'true' && github.event_name != 'pull_request'
         run: |
           python3 .github/scripts/discord_progress.py \
-            progress/report.json "$RUNNER_TEMP/discord-progress.json"
+            --region BOTH progress/report.json \
+            "$RUNNER_TEMP/discord-progress.json"
 
       - name: Send the progress message to Discord
-        if: env.HAS_PRIVATE == 'true' && github.event_name != 'pull_request'
+        if: env.HAS_PRIVATE == 'true' && env.HAS_DISCORD == 'true' && github.event_name != 'pull_request'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |

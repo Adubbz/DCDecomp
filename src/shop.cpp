@@ -28,6 +28,7 @@
 #include "menu_misc.hpp"
 #include "menuetc.hpp"
 #include "menuitemstep.hpp"
+#include "mainselect.hpp"
 #include "mglib.hpp"
 #include "rect.hpp"
 #include "savedata.hpp"
@@ -731,52 +732,6 @@ int CommonShopLoop() {
  * @address 0x1E7080
  * @size 0x150
  */
-#ifdef PAL
-static void ShopPolySetInit(int shop_no, int person_no);
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPolySetInit__Fii);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at649__2[108] __attribute__((aligned(16))) = {
-    0xC0FAE148, 0xC1780000, 0x3F666666, 0xC0E9999A, 0xC118E148, 0x3E800000, 0xC0E147AE,
-    0xC1A9AE14, 0x3F800000, 0xC0F1EB85, 0xC197BC6A, 0x3F800000, 0xC0E00000, 0xC1600000,
-    0x3F800000, 0xC0EABFB1, 0xC17D1980, 0x3F733333, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xC0E051EC, 0xC1880000,
-    0x3F666666, 0xC0E6B852, 0xC0F9999A, 0x3F000000, 0xC0EEB852, 0xC19CCCCD, 0x3F800000,
-    0xC1011062, 0xC197624E, 0x3F800000, 0xC1011062, 0xC197624E, 0x3F800000, 0xC1011062,
-    0xC197624E, 0x3F800000, 0xC1011062, 0xC197624E, 0x3F800000, 0xC0E00000, 0xC1A40000,
-    0x3F800000, 0xC0F135A8, 0xC175CAC1, 0x3F4CCCCD, 0xC0E00000, 0xC1980000, 0x3F4CCCCD,
-    0xC0E00000, 0xC1700000, 0x3F800000, 0xC0E00000, 0xC1880000, 0x3F800000, 0xC0F33333,
-    0xC195999A, 0x3F4CCCCD, 0xC0E051EC, 0xC189999A, 0x3F666666, 0xC0E6B852, 0xC0F9999A,
-    0x3F000000, 0xC0F135A8, 0xC1940000, 0x3F4CCCCD, 0xC0E00000, 0xC1880000, 0x3F800000,
-    0xC0E00000, 0xC1880000, 0x3F800000,
-};
-unsigned int pal_at650__3[144] __attribute__((aligned(16))) = {
-    0x3BA3D70A, 0x3E873C0C, 0x00000000, 0x00000000, 0x3D4CCCCD, 0x3E7F6EC6, 0x00000000,
-    0x00000000, 0xBD072B02, 0x3E73EAB3, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0xBE35DFEC, 0x3E732379, 0x00000000, 0x00000000, 0xBE35DFEC,
-    0x3E732379, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000,
-    0xBD90C027, 0x3E8AE792, 0xBCE7FF58, 0x00000000, 0xBD4EFFE3, 0x3E82AB47, 0x00000000,
-    0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7,
-    0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A,
-    0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000,
-    0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000,
-    0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7,
-    0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A,
-    0x3E80E9F7, 0x00000000, 0x00000000, 0xBCDAFF2A, 0x3E80E9F7,
-};
-#pragma name_counter 906
-#else
 static void ShopPolySetInit(int shop_kind, int shop_no) {
     float place[2][18][3] = {
         {
@@ -874,11 +829,13 @@ static void ShopPolySetInit(int shop_kind, int shop_no) {
         scale[i] = place[shop_kind][shop_no][2];
         rotation[i] = turn[shop_kind][shop_no][i];
     }
+#ifdef PAL
+    position[1] -= 0.5f;
+#endif
     MenuCharaFrame.SetPosition(position);
     MenuCharaFrame.SetScale(scale);
     MenuCharaFrame.SetRotation(rotation);
 }
-#endif
 
 /**
  * Records the line the shopkeeper is to say and how it is to be shown.
@@ -1229,13 +1186,6 @@ static void ShopFadeoutDraw() {
  * @address 0x1E7FA0
  * @size 0x98
  */
-#ifdef PAL
-static int ShopPersonReadStart(int shop_no, int person_no);
-/* Retail's data for the function the marker below supplies. */
-char pal_at817[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "load is failed\n";
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ShopPersonReadStart__Fii);
-#pragma name_counter 1041
-#else
 static int ShopPersonReadStart(int shop_kind, int shop_no) {
     char file_name[76];
     int size;
@@ -1246,13 +1196,15 @@ static int ShopPersonReadStart(int shop_kind, int shop_no) {
     buffer = MenuCalcBufAlignment(buffer);
     StartReadBG();
     if (!LoadFileBG(file_name, buffer, &size)) {
+#ifdef PAL
+        printf("load is failed\n");
+#endif
         return 0;
     }
     ReadBG();
     ShopMenu.person_state = 0;
     return 1;
 }
-#endif
 
 /**
  * Sets the shopkeeper's model direction toward the menu camera.
@@ -1473,15 +1425,6 @@ static inline WEAPON_HAVE *ShopWeaponRow(CUserStatus *status, int chara) {
     return status->chara_weapons[chara];
 }
 
-#ifdef PAL
-int ChargeShopKey();
-/* Retail's data for the function the marker below supplies. */
-char pal_at1201[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "Model Read Start\n";
-char pal_at1202__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "charge vol = %d\n";
-char pal_at1203__2[0x10] __attribute__((section(".rodata"))) = "msgno = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ChargeShopKey__Fv);
-#pragma name_counter 1370
-#else
 int ChargeShopKey() {
     int result = 0;
     MENU_ITEMDATA record;
@@ -1492,6 +1435,9 @@ int ChargeShopKey() {
     if (ShopMenu.ready == 0) {
         if (ReadBGSync() == 0) {
             ShopTextureLoadFix();
+#ifdef PAL
+            printf("Model Read Start\n");
+#endif
             ShopPersonReadStart(0, ShopMenu.shop_no);
         }
     } else {
@@ -1797,6 +1743,28 @@ int ChargeShopKey() {
                         }
                     }
                 }
+#ifdef PAL
+                // Debug shortcut: raises or lowers the party's Gilda.
+                if (DebugMode) {
+                    int step;
+                    int money = ShopUserStatusPt->money;
+
+                    step = 0;
+                    if (GamePad.On2(0x1000) && money < 9999) {
+                        step++;
+                    }
+                    if (GamePad.On2(0x4000) && 0 < money) {
+                        step--;
+                    }
+                    CUserStatus *status = ShopUserStatusPt;
+                    int total = status->money + step;
+                    if (total >= 0xFFFF) {
+                        status->money = 0xFFFF;
+                    } else {
+                        status->money = total;
+                    }
+                }
+#endif
                 switch (board_exit) {
                     case 0:
                         break;
@@ -1938,7 +1906,6 @@ int ChargeShopKey() {
     }
     return result;
 }
-#endif
 
 /**
  * Moves the cursor across the recharge shop's list.
@@ -2158,14 +2125,6 @@ static int ChargeSelectKey() {
  */
 static void ShopModelMsgFunc(int);
 
-#ifdef PAL
-void DrawChargeShop();
-INCLUDE_ASM("asm/pal/nonmatchings/shop", DrawChargeShop__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at1385__2[4] __attribute__((aligned(16))) = {0xB4B4B4A2, 0x7878B4B4, 0xB4B4B4AA, 0x0000B4B4};
-s32 pal_at1372[2] = {0x516, 0x517};
-#pragma name_counter 1547
-#else
 void DrawChargeShop() {
     int text_x;
     int text_y;
@@ -2271,7 +2230,11 @@ void DrawChargeShop() {
         CommonMenuMes2.DrawMesWin();
         if (ShopHaveItemPt->item_no < 0x51) {
             int mes_no = 0x519;
+#ifdef PAL
+            u8 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0x78, 0x78}, {0xAA, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+#else
             s16 plate_x[7][2] = {{0xA2, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}, {0xB4, 0xB4}};
+#endif
             AtoraNameMes.text_x = plate_x[ShopMenu.lang][0];
             if (ShopMenu.side == 1) {
                 mes_no = 0x518;
@@ -2281,7 +2244,7 @@ void DrawChargeShop() {
                 AtoraNameMes.MakeMesWin(mes_no);
             }
             AtoraNameMes.stay_frame = 1;
-            AtoraNameMes.text_y = 0x162;
+            AtoraNameMes.text_y = SCREEN_HEIGHT - 0x5E;
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
@@ -2290,7 +2253,6 @@ void DrawChargeShop() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
-#endif
 
 /**
  * Draws the charge shop's capacity plate: how many slots the board has and how many hold a good.
@@ -3516,15 +3478,6 @@ void ItemShopMemoryAlloc() {
     ShopWorkBuf = (SHOP_ITEMLIST *) ShopCashBuffer.Alloc(0x1D88);
 }
 
-#ifdef PAL
-void ItemPosInfoInit();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2220[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d,  item exist is %d\n";
-char pal_at2221[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d,  wep exist is %d\n";
-char pal_at2222[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%d,  attach exist is %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemPosInfoInit__Fv);
-#pragma name_counter 2292
-#else
 void ItemPosInfoInit() {
     int i;
     int j;
@@ -3533,6 +3486,11 @@ void ItemPosInfoInit() {
     for (i = 0; i < 100; i++) {
         if (pack->item[i] >= 0x84) {
             ItemBoardInfo[i] = 2;
+#ifdef PAL
+            if (DebugMode) {
+                printf("%d,  item exist is %d\n", i, pack->item[i]);
+            }
+#endif
         } else {
             ItemBoardInfo[i] = 0;
         }
@@ -3542,8 +3500,19 @@ void ItemPosInfoInit() {
         WEAPON_HAVE *weapons = status->chara_weapons[i];
 
         for (j = 0; j < 10; j++) {
+#ifdef PAL
+            s16 item_no = weapons[j].item_no;
+
+            if (item_no >= 0x101) {
+#else
             if (weapons[j].item_no >= 0x101) {
+#endif
                 WeaponBoardInfo[i][j] = 2;
+#ifdef PAL
+                if (DebugMode) {
+                    printf("%d,  wep exist is %d\n", i * 10 + j, item_no);
+                }
+#endif
             } else {
                 WeaponBoardInfo[i][j] = 0;
             }
@@ -3553,12 +3522,16 @@ void ItemPosInfoInit() {
     for (i = 0; i < 40; i++) {
         if (attach[i].id >= 0x51) {
             AttachBoardInfo[i] = 2;
+#ifdef PAL
+            if (DebugMode) {
+                printf("%d,  attach exist is %d\n", i, attach[i].id);
+            }
+#endif
         } else {
             AttachBoardInfo[i] = 0;
         }
     }
 }
-#endif
 
 /**
  * Fills the goods board from one shop's list.
@@ -3633,19 +3606,6 @@ void InitItemShop2(int *tex_block, int shop_no, int mode) {
  * @address 0x1EE280
  * @size 0xAF0
  */
-#ifdef PAL
-static void ItemShopSelectKey2();
-/* Retail's data for the function the marker below supplies. */
-char pal_at2435[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "------nowHaveData---------\n";
-char pal_at2436[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "flag   = %d\n";
-char pal_at2437[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "mode = %d\n";
-char pal_at2438[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "listno = %d\n";
-char pal_at2439[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "select = %d\n";
-char pal_at2440[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "pos = %d\n";
-char pal_at2441[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "wepIndex = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopSelectKey2__Fv);
-#pragma name_counter 2472
-#else
 static void ItemShopSelectKey2() {
     int i;
     MENU_ITEMDATA swap_data[2];
@@ -3897,8 +3857,22 @@ static void ItemShopSelectKey2() {
         PersonalBoardLimmitCheck();
         ComMenuSePlay(0);
     }
-}
+#ifdef PAL
+    // Debug shortcut: dumps the held item.
+    if (DebugMode && GamePad.Down2(0x1000)) {
+        printf("------nowHaveData---------\n");
+        printf("flag   = %d\n", ShopHaveItemPt->slot_state);
+        printf("mode = %d\n", ShopHaveItemPt->from_page);
+        printf("listno = %d\n", ShopHaveItemPt->item_no);
+        printf("select = %d\n", ShopHaveItemPt->from_slot);
+        printf("pos = %d\n", ShopHaveItemPt->last_slot);
+        printf("listno = %d\n", ShopHaveItemPt->item_no);
+        if (0 <= ShopHaveItemPt->item_no && ShopHaveItemPt->item_no < 0x51) {
+            printf("wepIndex = %d\n", ShopHaveWepPt->item_no);
+        }
+    }
 #endif
+}
 
 static inline void ShopSwapHeldGood(SHOP_ITEMLIST *good) {
     MENU_ITEMDATA swap_data[2];
@@ -3957,7 +3931,8 @@ static inline int ShopHeldInfo() {
     return ShopHaveItemPt->slot_state;
 }
 
-#ifdef PAL
+// PAL draft: 40 register differences remain (callee-saved permutation in the personal-board case).
+#if defined(PAL) && !defined(NON_MATCHING)
 int ItemShopKey2();
 /* Retail's data for the function the marker below supplies. */
 char pal_at2857[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " %d \tis \t\t%d\n";
@@ -4449,6 +4424,47 @@ int ItemShopKey2() {
                     }
                     ComMenuSePlay(1);
                 }
+#ifdef PAL
+                // Debug shortcuts: add or take Gilda, and dump the shop board.
+                if (GamePad.On2(0x10)) {
+                    CUserStatus *status = ShopUserStatusPt;
+                    int total = status->money + 1000;
+                    if (total >= 0xFFFF) {
+                        status->money = 0xFFFF;
+                    } else {
+                        status->money = total;
+                    }
+                }
+                if (GamePad.On2(0x40)) {
+                    CUserStatus *status = ShopUserStatusPt;
+                    int money = status->money;
+                    if (money - 1000 >= 0xFFFF) {
+                        status->money = 0xFFFF;
+                    } else {
+                        status->money += -1000;
+                    }
+                }
+                if (GamePad.Down2(0x8)) {
+                    for (int i = 0; i < 30; i++) {
+                        printf(" %d \tis \t\t%d\n", i, ShopBoardInfo[i]);
+                    }
+                }
+                if (GamePad.Down2(0x2)) {
+                    int capacity[3] = {100, 60, 40};
+                    int max;
+                    switch (ShopMenu.board.page) {
+                        case 0:
+                            max = capacity[0];
+                            break;
+                        case 1:
+                            max = capacity[1];
+                            break;
+                        case 2:
+                            max = capacity[2];
+                            break;
+                    }
+                }
+#endif
                 if (cursor != ShopMenu.board.cursor || old_page != ShopMenu.board.page) {
                     ComMenuSePlay(0);
                 }
@@ -4543,15 +4559,6 @@ int ItemShopKey2() {
 }
 #endif
 
-#ifdef PAL
-void ItemShopDraw2();
-INCLUDE_ASM("asm/pal/nonmatchings/shop", ItemShopDraw2__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at2928[4] __attribute__((aligned(16))) = {0x3218321E, 0x32183218, 0x32183218, 0x00003218};
-s8 pal_at2915[4] = {6, 7, 8};
-s16 pal_at2925[2] = {0x4B4, 0x4B5};
-#pragma name_counter 2912
-#else
 void ItemShopDraw2() {
     int cur_x;
     int pos_y;
@@ -4718,14 +4725,25 @@ void ItemShopDraw2() {
         CommonMenuMes2.Step();
         CommonMenuMes2.DrawMesWin();
         if (ShopHaveItemPt->item_no < 0x51) {
+#ifdef PAL
+            s8 plate[3] = {6, 7, 8};
+            int mes_no = plate[ShopMenu.side] + 0x4B0;
+#else
             int plate[3] = {0x4B6, 0x4B7, 0x4B8};
             int mes_no = plate[ShopMenu.side];
+#endif
             if (AtoraNameMes.mes_made != mes_no) {
                 AtoraNameMes.MakeMesWin(mes_no);
             }
             AtoraNameMes.stay_frame = 1;
             AtoraNameMes.text_x = 0xB4;
-            AtoraNameMes.text_y = 0x168;
+            AtoraNameMes.text_y = SCREEN_HEIGHT - 0x58;
+#ifdef PAL
+            // The third plate draws further left in language 6.
+            if (GetMenuLangFlag() == 6 && mes_no == 0x4B8) {
+                AtoraNameMes.text_x -= 0x12;
+            }
+#endif
             AtoraNameMes.Step();
             AtoraNameMes.DrawMesWin();
         }
@@ -4757,7 +4775,6 @@ void ItemShopDraw2() {
     ShopFadeoutDraw();
     setbilinear(1);
 }
-#endif
 
 /**
  * Returns one prize the fishing exchange offers.
@@ -4949,17 +4966,19 @@ static int FishMenuTextureLoad() {
 
 char FishMessageFile[] __attribute__((section(".rodata"))) = "fishmes.bin";
 
-#ifdef PAL
-int FishingExchangeKey();
-/* Retail's data for the function the marker below supplies. */
-char pal_at3229[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "getinfo is NULL\n";
-INCLUDE_ASM("asm/pal/nonmatchings/shop", FishingExchangeKey__Fv);
-#pragma name_counter 3135
-#else
 int FishingExchangeKey() {
     int result = 0;
 
     ReadBG();
+#ifdef PAL
+    // Debug shortcut: adds a Mardan Garayan catch.
+    if (DebugMode && GamePad.Down2(0x10)) {
+        s32 &caught = SaveData->mardan_garayan_caught;
+
+        caught++;
+        SetFishMardanGarayanNum(1);
+    }
+#endif
     int mardan = AlreadyGetMardanWeapon();
     int party = SaveData->GetDngStatus()->party_size;
     if (party <= 0) {
@@ -5026,6 +5045,17 @@ int FishingExchangeKey() {
                     }
                 }
             }
+#ifdef PAL
+            // Debug shortcut: raises or lowers the points to spend.
+            if (DebugMode) {
+                if (GamePad.On2(0x40) && FishMenu.point < 9999) {
+                    FishMenu.point++;
+                }
+                if (GamePad.On2(0x20) && FishMenu.point > 0) {
+                    FishMenu.point--;
+                }
+            }
+#endif
             if (last_prize < FishMenu.cursor) {
                 FishMenu.cursor = last_prize;
             }
@@ -5230,7 +5260,6 @@ int FishingExchangeKey() {
     }
     return result;
 }
-#endif
 
 /**
  * Draws one fish icon.
@@ -5529,11 +5558,6 @@ void FishRecordTextureEnter() {
  * @address 0x1F31E0
  * @size 0x410
  */
-#ifdef PAL
-static int FishRecordViewKey();
-INCLUDE_ASM("asm/pal/nonmatchings/shop", FishRecordViewKey__Fv);
-#pragma name_counter 3296
-#else
 static int FishRecordViewKey() {
     ReadBG();
     int ret = 0;
@@ -5605,6 +5629,13 @@ static int FishRecordViewKey() {
                 FishRecordMenu.fade_mode = 1;
                 FishRecordMenu.fade_count = 0;
             }
+#ifdef PAL
+            // Debug shortcut: records a random catch.
+            if (DebugMode && GamePad.Down2(0x40)) {
+                int fish_id = rand() % 18;
+                SaveData->SetFishingRank(fish_id, rand() % 20);
+            }
+#endif
             if (old_cursor != FishRecordMenu.cursor) {
                 ComMenuSePlay(0);
                 for (int i = 0; i < 5; i++) {
@@ -5624,7 +5655,6 @@ static int FishRecordViewKey() {
     }
     return ret;
 }
-#endif
 
 /**
  * Draws the fishing record board: each rank, its fish and its size.

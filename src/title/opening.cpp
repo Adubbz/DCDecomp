@@ -1,9 +1,8 @@
 #ifdef PAL
 #pragma argument_flag 0
-#pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168
-#pragma argument_flag_ones 953, 954
-#pragma argument_flag_ones 955, 958, 959, 960, 1222, 1242, 1243, 1329, 1331, 1332
-#pragma argument_flag_ones 1334, 1348
+#pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168, 1204
+#pragma argument_flag_ones 1205, 1206, 1209, 1210, 1211, 1473, 1493, 1494, 1580, 1582
+#pragma argument_flag_ones 1583, 1585, 1599
 #else
 #pragma argument_flag 0
 #pragma argument_flag_ones 47, 54, 61, 64, 66, 159, 160, 162, 168, 334
@@ -733,32 +732,39 @@ static void WaitKeyProcess() {
  * @size 0x3C0
  * @unknownret
  */
-#ifdef PAL
-static void MotionProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/opening", MotionProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at836__3[12] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
-    0x01DC86D8, 0x01DC86E8, 0x01DC86F8, 0x01DC8708, 0x01DC8718, 0x01DC8728, 0x01DC8738,
-    0x01DC8748, 0x01DC8758, 0x01DC8768,
-};
-#pragma name_counter 478
-#else
 static void MotionProcess() {
+    // PAL runs at 50 frames a second, so its fade speeds are raised by a fifth.
     switch (CScript__2.fade) {
         case 1:
+#ifdef PAL
+            DispFade.FadeInStart(1.2f * CScript__2.fade_speed, 0);
+#else
             DispFade.FadeInStart(CScript__2.fade_speed, 0);
+#endif
             CScript__2.fade = 0;
             break;
         case 2:
+#ifdef PAL
+            DispFade.FadeOutStart(1.2f * CScript__2.fade_speed, 0);
+#else
             DispFade.FadeOutStart(CScript__2.fade_speed, 0);
+#endif
             CScript__2.fade = 0;
             break;
         case 3:
+#ifdef PAL
+            DispFade.FadeInStart(1.2f * CScript__2.fade_speed, 1);
+#else
             DispFade.FadeInStart(CScript__2.fade_speed, 1);
+#endif
             CScript__2.fade = 0;
             break;
         case 4:
+#ifdef PAL
+            DispFade.FadeOutStart(1.2f * CScript__2.fade_speed, 1);
+#else
             DispFade.FadeOutStart(CScript__2.fade_speed, 1);
+#endif
             CScript__2.fade = 0;
             break;
     }
@@ -837,7 +843,6 @@ static void MotionProcess() {
         }
     }
 }
-#endif
 
 /**
  * Dispatches sound processing for the active opening scene.
@@ -847,16 +852,6 @@ static void MotionProcess() {
  * @size 0x330
  * @unknownret
  */
-#ifdef PAL
-static void SoundProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/opening", SoundProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at866__2[10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
-    0x01DC8A2C, 0x01DC8A3C, 0x01DC8A4C, 0x01DC8A5C, 0x01DC8A6C, 0x01DC8A7C, 0x01DC8A8C,
-    0x01DC8A9C, 0x01DC8AAC, 0x01DC8ABC,
-};
-#pragma name_counter 508
-#else
 static void SoundProcess() {
     if (CScript__2.se_stop == 0) {
         if (CScript__2.se_voice != 0) {
@@ -885,6 +880,9 @@ static void SoundProcess() {
     if (CScript__2.bgm_fade != 0) {
         switch (CScript__2.se_kind) {
             case -1:
+#ifdef PAL
+                CScript__2.bgm_fade = 1.2f * CScript__2.bgm_fade;
+#endif
                 CSnd.Fade(0, (float) CScript__2.bgm_fade / 2.0f, CScript__2.se_fade_time);
                 CSnd.Fade(1, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
                 CSnd.Fade(2, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
@@ -930,7 +928,6 @@ static void SoundProcess() {
             break;
     }
 }
-#endif
 
 /**
  * Dispatches drawing for the active opening scene.
@@ -940,23 +937,6 @@ static void SoundProcess() {
  * @size 0x35C
  * @unknownret
  */
-#ifdef PAL
-static void DrawProcess();
-INCLUDE_ASM("asm/pal/nonmatchings/title/opening", DrawProcess__Fv);
-/* Retail's data for the function the marker above supplies. */
-char pal_at957__4[] __attribute__((section(".rodata"))) = "pause";
-char pal_at958__2[] __attribute__((section(".rodata"))) = "pause_e";
-char pal_at959__3[] __attribute__((section(".rodata"))) = "pause_f";
-char pal_at960__2[] __attribute__((section(".rodata"))) = "pause_g";
-char pal_at961__2[] __attribute__((section(".rodata"))) = "pause_i";
-char pal_at962__3[] __attribute__((section(".rodata"))) = "pause_s";
-unsigned int pal_at964[8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {0x01DC8D38, 0x01DC8DB0, 0x01DC8E28, 0x01DC8EA0, 0x01DC8F18, 0x01DC8F90, 0x01DC9008};
-unsigned int pal_at963[10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = {
-    0x01DC8C04, 0x01DC8C14, 0x01DC8C24, 0x01DC8C34, 0x01DC8C44, 0x01DC8C54, 0x01DC8C64,
-    0x01DC8C74, 0x01DC8C84, 0x01DC8C94,
-};
-#pragma name_counter 532
-#else
 static void DrawProcess() {
     sceVu0FVECTOR position;
     sceVu0FMATRIX camera;
@@ -1017,10 +997,43 @@ static void DrawProcess() {
 
     if (Pause == 1) {
         setbilinear(0);
-        MGFillBox(CRect<int>(0, 0, 10240, 3584), 0, 0, 0, 64);
+        MGFillBox(CRect<int>(0, 0, 10240, SCREEN_HEIGHT * 8), 0, 0, 0, 64);
         TexManager.ReloadTexture(Vif1Packet, 19);
+#ifdef PAL
+        switch (LanguageCode) {
+            case 0:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+            case 1:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+            case 2:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+            case 3:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_f", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+            case 4:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_g", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+            case 5:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_i", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+            case 6:
+                set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_s", -1),
+                            CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+                break;
+        }
+#else
         set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1),
                     CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+#endif
         setbilinear(1);
     }
 
@@ -1029,12 +1042,16 @@ static void DrawProcess() {
     CTexture texture;
 
     texture.tex0 = *(u_long *) &tex0;
+#ifdef PAL
+    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT),
+                CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 40);
+#else
     set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224), 128,
                 128, 128, 35);
+#endif
     DispFade.FadeIn(Vif1Packet);
     DispFade.FadeOut(Vif1Packet);
 }
-#endif
 
 /**
  * Draws opening subtitles and pause messages.

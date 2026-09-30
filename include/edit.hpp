@@ -10,6 +10,7 @@ class CCharacter;
 class CDebugFont;
 class CEditGround;
 class CFrameVu1;
+class CMainChara;
 class CMapParts;
 class CTexture;
 struct EDIT_EFFECT_INFO;
@@ -201,6 +202,11 @@ extern int EdDebugCharaDrawOff;
 /** Whether the editor character is left to the debug controls. */
 extern int EdDebugMoveFlag;
 
+#ifdef PAL
+/** Event the debug menu asks the editor to run this frame, or -1. PAL only. */
+extern int EdDebugRunEventNo;
+#endif
+
 /**
  * Steps the editor's event system, and says what the event asks the loop to do.
  *
@@ -303,6 +309,26 @@ void EdDCheck();
  */
 void EdOutPutFile();
 
+#ifdef PAL
+/**
+ * Queues the player character's position, rotation and ground attributes in the editor debug overlay. PAL only.
+ *
+ * @mangled EdDPrintChara__FP10CMainChara
+ * @address 0x170D80
+ * @size 0x184
+ */
+void EdDPrintChara(CMainChara *chara);
+
+/**
+ * Queues the camera's position, reference point and projection in the editor debug overlay. PAL only.
+ *
+ * @mangled EdDPrintCamera__FP7CCamera
+ * @address 0x170F10
+ * @size 0x174
+ */
+void EdDPrintCamera(CCamera *camera);
+#endif
+
 /**
  * Queues a labelled vector in the editor debug overlay.
  *
@@ -347,6 +373,44 @@ void EdDMoveCameraRef(float *position, float *reference);
  * @size 0x428
  */
 void EdDMoveChara(CCharacter *character, CCamera *camera);
+
+#ifdef PAL
+/**
+ * Runs the editor debug menu page the shoulder buttons select and draws the debug overlay. PAL only.
+ *
+ * @mangled EdDebugMenu__Fv
+ * @address 0x171BE0
+ * @size 0x128
+ */
+void EdDebugMenu();
+
+/**
+ * Runs the main debug menu page of camera, drawing, movement, event and language switches. PAL only.
+ *
+ * @mangled DM_Main__Fv
+ * @address 0x171D10
+ * @size 0x7FC
+ */
+void DM_Main();
+
+/**
+ * Runs the sound debug menu page of music, sound effect and sound set tests. PAL only.
+ *
+ * @mangled DM_Sound__Fv
+ * @address 0x172510
+ * @size 0x634
+ */
+void DM_Sound();
+
+/**
+ * Runs the flag debug menu page of game, map, completion and talk flags and dungeon progress. PAL only.
+ *
+ * @mangled DM_Flag__Fv
+ * @address 0x172B50
+ * @size 0xC18
+ */
+void DM_Flag();
+#endif
 
 /**
  * Resets the positional sound-source slots.

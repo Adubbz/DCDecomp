@@ -118,11 +118,6 @@ int MGGetVSyncCount() {
     return vcount;
 }
 
-#ifdef PAL
-void MGInit();
-INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGInit__Fv);
-#pragma name_counter 303
-#else
 void MGInit() {
     DBuffID = 0;
     mgWaitVSync = 0;
@@ -140,13 +135,26 @@ void MGInit() {
     GiftagAD.NREG = 1;
     GiftagAD.REGS0 = SCE_GIF_PACKED_AD;
 
+#ifdef PAL
+    sceGsResetGraph(0, SCE_GS_INTERLACE, SCE_GS_PAL, SCE_GS_FIELD);
+    mgTopVRAM = 0x1E00;
+    mgZBufferAdr = 0x1400;
+#else
     sceGsResetGraph(0, SCE_GS_INTERLACE, SCE_GS_NTSC, SCE_GS_FIELD);
-    sceGsSetDefDBuff(&mgDBuff, SCE_GS_PSMCT32, 640, 224, SCE_GS_ZGEQUAL, SCE_GS_PSMZ24, 0);
+#endif
+    sceGsSetDefDBuff(&mgDBuff, SCE_GS_PSMCT32, 640, SCREEN_HALF_HEIGHT, SCE_GS_ZGEQUAL, SCE_GS_PSMZ24, 0);
+#ifdef PAL
+    mgDBuff.disp0.display.DY = 88;
+    mgDBuff.disp1.display.DY = 88;
+#endif
 
     mgWindowRect.x = 0;
     mgWindowRect.y = 0;
     mgWindowRect.width = 640;
-    mgWindowRect.height = 224;
+    mgWindowRect.height = SCREEN_HALF_HEIGHT;
+#ifdef PAL
+    MGAdjustScreen(0, 0);
+#endif
 
     mgBackColor[0] = 0.0f;
     mgBackColor[1] = 0.0f;
@@ -219,7 +227,6 @@ void MGInit() {
     VSyncCallBack2 = 0;
     vcount = 0;
 }
-#endif
 
 /* Waiting out a handler that is already running is what keeps the pointer from changing under it. */
 void MGInitVSyncCallBack(int (*callback)(int)) {
@@ -437,28 +444,6 @@ static void WaitVSync(int count) {
     }
 }
 
-#ifdef PAL
-void MGEndFrame();
-/* Retail's data for the function the marker below supplies. */
-char pal_at414[0x10] __attribute__((section(".rodata"))) = "CPU %4.1f%%,";
-char pal_at415[0x8] __attribute__((section(".rodata"))) = "******\n";
-char pal_at416[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "base = %x,cuur = %x\n";
-char pal_at417[0x10] __attribute__((section(".rodata"))) = "abuff = %d\n";
-char pal_at418[0x10] __attribute__((section(".rodata"))) = "FREE %4.1f%%\n";
-INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGEndFrame__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_count_S298;
-unsigned char pal_init_S299;
-unsigned char pal_old_vcount_S301[0x8];
-unsigned char pal_init_S302;
-unsigned int pal_capture_S334;
-unsigned char pal_init_S335;
-unsigned int pal_capture_start_S337;
-unsigned char pal_init_S338;
-unsigned int pal_f_S347;
-unsigned char pal_init_S348;
-#pragma name_counter 471
-#else
 void MGEndFrame() {
     int i;
     int nearest;
@@ -486,7 +471,7 @@ void MGEndFrame() {
         if (mgPickZBuff[i].enable) {
             if (mgPickZBuff[i].x < 4 || mgPickZBuff[i].x > 636) {
                 mgPickZBuff[i].z = -1;
-            } else if (mgPickZBuff[i].y < 4 || mgPickZBuff[i].y > 444) {
+            } else if (mgPickZBuff[i].y < 4 || mgPickZBuff[i].y > SCREEN_HEIGHT - 4) {
                 mgPickZBuff[i].z = -1;
             } else {
                 WorkBuffer->used = 0;
@@ -543,11 +528,28 @@ void MGEndFrame() {
         count = 0;
     }
 
+#ifdef PAL
+    /* The display position is shifted by the screen adjustment only while the swap sends it. */
+    int display_x = mgDBuff.disp0.display.DX;
+    int display_y = mgDBuff.disp0.display.DY;
+#endif
     sceGsSetHalfOffset(DBuffID ? &mgDBuff.draw1 : &mgDBuff.draw0, 2048, 2048,
                        (short) VSyncField__2 * !over_vsync);
+#ifdef PAL
+    mgDBuff.disp0.display.DX = display_x + mgAdjustX;
+    mgDBuff.disp1.display.DX = display_x + mgAdjustX;
+    mgDBuff.disp0.display.DY = display_y + mgAdjustY;
+    mgDBuff.disp1.display.DY = display_y + mgAdjustY;
+#endif
     FlushCache(0);
     sceGsSwapDBuff(&mgDBuff, DBuffID);
     sceDmaSync(DmaCH2, 0, 0);
+#ifdef PAL
+    mgDBuff.disp0.display.DX = display_x;
+    mgDBuff.disp1.display.DX = display_x;
+    mgDBuff.disp0.display.DY = display_y;
+    mgDBuff.disp1.display.DY = display_y;
+#endif
 
     static int f = 0;
     f++;
@@ -558,15 +560,25 @@ void MGEndFrame() {
     sceDmaSend(DmaCH1, Vif1Packet->pBase);
     DBuffID = !DBuffID;
 }
-#endif
 
 void MGFlipWaitVSync(int wait) {
     mgWaitVSync = wait;
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGAdjustScreen__Fii);
-#pragma name_counter 472
+void MGAdjustScreen(int x, int y) {
+    if (x > 32)
+        x = 0;
+    if (x < -32)
+        x = 0;
+    if (y > 32)
+        y = 0;
+    if (y < -32)
+        y = 0;
+    /* The display moves in whole pixel pairs. */
+    mgAdjustX = (x >> 1) << 1;
+    mgAdjustY = (y >> 1) << 1;
+}
 #endif
 
 /* Everything a frame is drawn against, recomputed from the projection scale and the two clip planes.
@@ -716,11 +728,6 @@ void MGGetAmbient(float *ambient) {
 
 /* The two overloads below are the only callers and both pass the same two scales, so the vertical
    squeeze is the engine's rather than any caller's. */
-#ifdef PAL
-static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale);
-INCLUDE_ASM("asm/pal/nonmatchings/mglib", MGSetViewMatrix_sub__FPA4_fff);
-#pragma name_counter 499
-#else
 static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale) {
     sceVu0FMATRIX scale;
     sceVu0FMATRIX screen;
@@ -735,7 +742,12 @@ static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale
 
     sceVu0UnitMatrix(scale);
     scale[0][0] = x_scale;
+#ifdef PAL
+    /* The taller PAL frame takes a fixed vertical squeeze in place of the caller's. */
+    scale[1][1] = 0.5f;
+#else
     scale[1][1] = y_scale;
+#endif
     MulMatrix(mgRenderInfo.view_scaled, scale, view);
 
     sceVu0UnitMatrix(screen);
@@ -767,7 +779,6 @@ static void MGSetViewMatrix_sub(sceVu0FMATRIX view, float x_scale, float y_scale
     direction[3] = 0.0f;
     sceVu0Normalize(direction, direction);
 }
-#endif
 
 void MGSetViewMatrix(sceVu0FMATRIX view) {
     MGSetViewMatrix_sub(view, 1.0f, 0.47f);

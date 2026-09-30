@@ -87,15 +87,10 @@ public:
 /**
  * Stores one rectangle of a prompt's sprite set, zeroing its members from last to first.
  */
-class CEbSpriteRect {
+class CEbSpriteRect : public CRect_i_ {
 public:
     CEbSpriteRect();
-
-    s32 x;      /**< Distance of the left edge from the left of the texture. */
-    s32 y;      /**< Distance of the top edge from the top of the texture. */
-    s32 width;  /**< Distance from the left edge to the right edge. */
-    s32 height; /**< Distance from the top edge to the bottom edge. */
-} __attribute__((aligned(16)));
+};
 #endif
 
 /** Storage of draw_rect, the part of the screen the opening wipe has reached. */
@@ -229,8 +224,184 @@ void EdEyeCamera(CCamera *camera, CCharacter *character);
 
 /* @ 0x168100 (0x10 bytes) -- EBInitialize__Fv */
 #ifdef PAL
-void EBInitialize();
-INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBInitialize__Fv);
+void EBInitialize() {
+    ebattle_flag = 0;
+
+    // Each prompt's sprite set holds one texture rectangle per language.
+    CautionRect[0].x = 256;
+    CautionRect[0].y = 0;
+    CautionRect[0].width = 56;
+    CautionRect[0].height = 56;
+    CautionRect[1].x = 256;
+    CautionRect[1].y = 0;
+    CautionRect[1].width = 56;
+    CautionRect[1].height = 56;
+    CautionRect[2].x = 256;
+    CautionRect[2].y = 0;
+    CautionRect[2].width = 56;
+    CautionRect[2].height = 56;
+    CautionRect[3].x = 256;
+    CautionRect[3].y = 0;
+    CautionRect[3].width = 56;
+    CautionRect[3].height = 56;
+    CautionRect[4].x = 256;
+    CautionRect[4].y = 0;
+    CautionRect[4].width = 56;
+    CautionRect[4].height = 56;
+    CautionRect[5].x = 215;
+    CautionRect[5].y = 0;
+    CautionRect[5].width = 56;
+    CautionRect[5].height = 56;
+    CautionRect[6].x = 256;
+    CautionRect[6].y = 0;
+    CautionRect[6].width = 56;
+    CautionRect[6].height = 56;
+
+    EbResult2[0].x = 0;
+    EbResult2[0].y = 0;
+    EbResult2[0].width = 256;
+    EbResult2[0].height = 70;
+    EbResult2[1].x = 0;
+    EbResult2[1].y = 0;
+    EbResult2[1].width = 256;
+    EbResult2[1].height = 70;
+    EbResult2[2].x = 0;
+    EbResult2[2].y = 0;
+    EbResult2[2].width = 256;
+    EbResult2[2].height = 70;
+    EbResult2[3].x = 0;
+    EbResult2[3].y = 0;
+    EbResult2[3].width = 256;
+    EbResult2[3].height = 70;
+    EbResult2[4].x = 0;
+    EbResult2[4].y = 0;
+    EbResult2[4].width = 256;
+    EbResult2[4].height = 70;
+    EbResult2[5].x = 0;
+    EbResult2[5].y = 0;
+    EbResult2[5].width = 214;
+    EbResult2[5].height = 70;
+    EbResult2[6].x = 0;
+    EbResult2[6].y = 0;
+    EbResult2[6].width = 256;
+    EbResult2[6].height = 70;
+
+    EbResult0[0].x = 0;
+    EbResult0[0].y = 80;
+    EbResult0[0].width = 146;
+    EbResult0[0].height = 60;
+    EbResult0[1].x = 0;
+    EbResult0[1].y = 80;
+    EbResult0[1].width = 146;
+    EbResult0[1].height = 60;
+    EbResult0[2].x = 0;
+    EbResult0[2].y = 80;
+    EbResult0[2].width = 146;
+    EbResult0[2].height = 60;
+    EbResult0[3].x = 0;
+    EbResult0[3].y = 70;
+    EbResult0[3].width = 140;
+    EbResult0[3].height = 70;
+    EbResult0[4].x = 0;
+    EbResult0[4].y = 70;
+    EbResult0[4].width = 172;
+    EbResult0[4].height = 70;
+    EbResult0[5].x = 0;
+    EbResult0[5].y = 70;
+    EbResult0[5].width = 274;
+    EbResult0[5].height = 70;
+    EbResult0[6].x = 0;
+    EbResult0[6].y = 70;
+    EbResult0[6].width = 182;
+    EbResult0[6].height = 70;
+
+    EbResult1[0].x = 0;
+    EbResult1[0].y = 146;
+    EbResult1[0].width = 184;
+    EbResult1[0].height = 64;
+    EbResult1[1].x = 0;
+    EbResult1[1].y = 146;
+    EbResult1[1].width = 184;
+    EbResult1[1].height = 64;
+    EbResult1[2].x = 0;
+    EbResult1[2].y = 146;
+    EbResult1[2].width = 184;
+    EbResult1[2].height = 64;
+    EbResult1[3].x = 0;
+    EbResult1[3].y = 140;
+    EbResult1[3].width = 180;
+    EbResult1[3].height = 70;
+    EbResult1[4].x = 0;
+    EbResult1[4].y = 140;
+    EbResult1[4].width = 168;
+    EbResult1[4].height = 70;
+    EbResult1[5].x = 0;
+    EbResult1[5].y = 140;
+    EbResult1[5].width = 298;
+    EbResult1[5].height = 70;
+    EbResult1[6].x = 0;
+    EbResult1[6].y = 140;
+    EbResult1[6].width = 230;
+    EbResult1[6].height = 70;
+
+    OkRect[0].x = 0;
+    OkRect[0].y = 208;
+    OkRect[0].width = 26;
+    OkRect[0].height = 16;
+    OkRect[1].x = 0;
+    OkRect[1].y = 208;
+    OkRect[1].width = 26;
+    OkRect[1].height = 16;
+    OkRect[2].x = 0;
+    OkRect[2].y = 208;
+    OkRect[2].width = 26;
+    OkRect[2].height = 16;
+    OkRect[3].x = 0;
+    OkRect[3].y = 208;
+    OkRect[3].width = 26;
+    OkRect[3].height = 16;
+    OkRect[4].x = 0;
+    OkRect[4].y = 208;
+    OkRect[4].width = 26;
+    OkRect[4].height = 16;
+    OkRect[5].x = 0;
+    OkRect[5].y = 208;
+    OkRect[5].width = 32;
+    OkRect[5].height = 20;
+    OkRect[6].x = 0;
+    OkRect[6].y = 208;
+    OkRect[6].width = 42;
+    OkRect[6].height = 16;
+
+    CoolRect[0].x = 0;
+    CoolRect[0].y = 224;
+    CoolRect[0].width = 50;
+    CoolRect[0].height = 16;
+    CoolRect[1].x = 0;
+    CoolRect[1].y = 224;
+    CoolRect[1].width = 50;
+    CoolRect[1].height = 16;
+    CoolRect[2].x = 0;
+    CoolRect[2].y = 224;
+    CoolRect[2].width = 50;
+    CoolRect[2].height = 16;
+    CoolRect[3].x = 0;
+    CoolRect[3].y = 224;
+    CoolRect[3].width = 50;
+    CoolRect[3].height = 16;
+    CoolRect[4].x = 0;
+    CoolRect[4].y = 224;
+    CoolRect[4].width = 50;
+    CoolRect[4].height = 16;
+    CoolRect[5].x = 0;
+    CoolRect[5].y = 230;
+    CoolRect[5].width = 60;
+    CoolRect[5].height = 20;
+    CoolRect[6].x = 0;
+    CoolRect[6].y = 224;
+    CoolRect[6].width = 62;
+    CoolRect[6].height = 16;
+}
 #pragma name_counter 518
 #else
 void EBInitialize() {
@@ -531,16 +702,17 @@ int EBLoop() {
  * @address 0x168B80
  * @size 0x560
  */
-#ifdef PAL
-void EBDraw();
-INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EBDraw__Fv);
-#pragma name_counter 730
-#else
 void EBDraw() {
     if (ebattle_intro_flag == 0 && ebattle_flag == 0) {
         return;
     }
     setbilinear(0);
+#ifdef PAL
+    int lang = LanguageCode;
+    if (lang < 0 || lang >= 7) {
+        lang = 1;
+    }
+#endif
     if (EdDebugParamDrawOff != 0) {
         return;
     }
@@ -548,6 +720,17 @@ void EBDraw() {
         TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
         CRect_i_ texel;
         texel.x = texel.y = texel.width = texel.height = 0;
+#ifdef PAL
+        if (eb_result < 0) {
+            texel = EbResult0[lang];
+        }
+        if (eb_result == 2) {
+            texel = EbResult2[lang];
+        }
+        if (eb_result == 1) {
+            texel = EbResult1[lang];
+        }
+#else
         if (eb_result < 0) {
             texel = CRect_i_(0, 0x50, 0x92, 0x3C);
         }
@@ -557,8 +740,9 @@ void EBDraw() {
         if (eb_result == 1) {
             texel = CRect_i_(0, 0x92, 0xB8, 0x40);
         }
+#endif
         int left = 0x140 - (texel.width >> 1);
-        int top = 0xE0 - (texel.height >> 1);
+        int top = SCREEN_HALF_HEIGHT - (texel.height >> 1);
         if (eb_result > 0 || (eb_finish_cnt >> 2) % 2 != 0) {
             set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, texel.width, texel.height), texel.x, texel.y);
         }
@@ -569,6 +753,13 @@ void EBDraw() {
     CRect_i_ left_edge(0xA80, 0xA00, 0x400, 0x100);
     CRect_i_ right_edge(0xC00, 0xA00, 0x100, 0x100);
     if (ebattle_intro_flag != 0) {
+#ifdef PAL
+        int caution_lang = LanguageCode;
+        if (caution_lang < 0 || caution_lang >= 7) {
+            caution_lang = 0;
+        }
+        Caution = CautionRect[caution_lang];
+#endif
         TexManager.ReloadTexture(GetVif1Packet(), 0x2D);
         int shift = draw_rect.x << 4;
         bar.x += shift;
@@ -579,7 +770,7 @@ void EBDraw() {
         MGFillBox(right_edge, 0xFF, 0xFF, 0xFF, 0x20);
         if ((eb_intro_cnt >> 2) % 2 != 0) {
             int left = 0x140 - (Caution.width >> 1);
-            int top = 0xE0 - (Caution.height >> 1);
+            int top = SCREEN_HALF_HEIGHT - (Caution.height >> 1);
             set2DSprite(GetVif1Packet(), tex2, CRect_i_(left, top, Caution.width, Caution.height), Caution.x, Caution.y);
         }
         if (eb_intro_cnt % 8 == 0) {
@@ -614,7 +805,6 @@ void EBDraw() {
         draw_ok(x);
     }
 }
-#endif
 
 /**
  * Draws one button prompt of the event battle.
@@ -739,19 +929,6 @@ void draw_ok_loop() {
  * @address 0x169490
  * @size 0x2A0
  */
-#ifdef PAL
-static void draw_ok(int x);
-INCLUDE_ASM("asm/pal/nonmatchings/ebattle", draw_ok__Fi);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_dir_S640[32] __attribute__((aligned(16))) = {
-    0x3F800000, 0x00000000, 0x00000000, 0x00000000, 0xBF800000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x3F800000, 0x00000000, 0x00000000, 0x00000000, 0xBF800000,
-    0x00000000, 0x00000000, 0x3F800000, 0x3F800000, 0x00000000, 0x00000000, 0x3F800000,
-    0xBF800000, 0x00000000, 0x00000000, 0xBF800000, 0x3F800000, 0x00000000, 0x00000000,
-    0xBF800000, 0xBF800000,
-};
-#pragma name_counter 813
-#else
 static void draw_ok(int x) {
     // clang-format off
     static sceVu0FVECTOR dir[8] = {
@@ -767,7 +944,17 @@ static void draw_ok(int x) {
     }
 
     CRect_i_ success_texel(0, 0xD0, 0x1A, 0x10);
+#ifdef PAL
+    CRect_i_ cool_texel(0, 0xE0, 0x32, 0x10);
+    int lang = LanguageCode;
+    if (lang < 0 || lang >= 7) {
+        lang = 1;
+    }
+    success_texel = OkRect[lang];
+    cool_texel = CoolRect[lang];
+#else
     CRect_i_ cool_texel(0, 0xE0, 0x28, 0x10);
+#endif
     CRect_i_ spark_texel(0x20, 0x60, 0x20, 0x20);
     sceVu0FVECTOR offset;
     CRect_i_ *texel = &success_texel;
@@ -809,7 +996,6 @@ static void draw_ok(int x) {
         }
     }
 }
-#endif
 
 /**
  * Gives the scale a button prompt draws at while it flashes.
@@ -1197,35 +1383,6 @@ static inline int IsVillagerActive(CNPCharacter *villager) {
     return active;
 }
 
-#ifdef PAL
-void EdMoveChara();
-/* Retail's data for the function the marker below supplies. */
-char pal_at1688[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "cpoly over!!!! %d\n";
-char pal_at1702[0x8] __attribute__((section(".rodata"))) = "sao";
-char pal_at1703[0x8] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "uki";
-char pal_at1704[0x8] __attribute__((section(".rodata"))) = "hari";
-char pal_at1705[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "maru_uki";
-char pal_at1706[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "turibari";
-INCLUDE_ASM("asm/pal/nonmatchings/ebattle", EdMoveChara__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_reference_S516[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at517[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_at986[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-unsigned int pal_at1022[4] __attribute__((aligned(16))) = {0};
-unsigned int pal_rot_count_S769;
-unsigned char pal_init_S770;
-unsigned int pal_bgm_vol_S845;
-unsigned char pal_init_S846;
-unsigned int pal_load_file_S848;
-unsigned char pal_init_S849;
-unsigned int pal_st_cnt_S855;
-unsigned char pal_init_S856;
-unsigned int pal_wait_cnt_S858;
-unsigned char pal_init_S859;
-unsigned int pal_cnt_S1011;
-unsigned char pal_init_S1012;
-#pragma name_counter 1632
-#else
 void EdMoveChara() {
     int near_villager;
     CCamera *view_camera;
@@ -1412,6 +1569,9 @@ void EdMoveChara() {
     if ((chara_mode & 6) == 0 && chara_fishing < 2) {
         chara->SetMotion(motion, 0);
         chara->SetMotionSpeed(motion_speed);
+#ifdef PAL
+        chara->SetMotionSpeed(6.0f * motion_speed / 5.0f);
+#endif
     }
     if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < 2) {
         CVector3_f_ jump;
@@ -2074,7 +2234,11 @@ void EdMoveChara() {
                     }
                     st_cnt = 0;
                 } else {
+#ifdef PAL
+                    if (EdPadDown(0x40, 0xFFFF) != 0 || DebugMode) {
+#else
                     if (EdPadDown(0x40, 0xFFFF) != 0) {
+#endif
                         SndSePlay(0x190, pos, -1.0f, -1.0f);
                         chara_fishing = 10;
                         chara->SetMotion(12, 2);
@@ -2342,7 +2506,6 @@ void EdMoveChara() {
     EdMoveCharaInfo.motion_time_before = time_before;
     EdMoveCharaInfo.motion_time_after = time_after;
 }
-#endif
 
 void EdInitHashigo(ED_EVENT_INFO *info, ED_EVENT_PARAM *param) {
     if (param->kind == 4) {

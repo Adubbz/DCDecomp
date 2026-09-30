@@ -23,10 +23,12 @@
 #include "edit.hpp"
 #include "editground.hpp"
 #include "editloop3.hpp"
+#include "editpartsinfo.hpp"
 #include "effectmacro.hpp"
 #include "frame.hpp"
 #include "framevu1.hpp"
 #include "gamepad.hpp"
+#include "mainselect.hpp"
 #include "mapparts.hpp"
 #include "mathutil.hpp"
 #include "mglib.hpp"
@@ -191,20 +193,47 @@ static int AddStr(CDebugFont *font, char *str) {
 }
 
 #ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char pal_at380__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "chara\n pos = %7.2f,%7.2f,%7.2f\n";
-char pal_at381__3[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " rot = %7.2f,%7.2f,%7.2f\n";
-char pal_at382[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " (%d %d %d)\n";
-INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintChara__FP10CMainChara);
-#pragma name_counter 421
+void EdDPrintChara(CMainChara *chara) {
+    sceVu0FVECTOR vector;
+    char work[128];
+
+    if (Debug == 0)
+        return;
+    if (DebugFont == 0)
+        return;
+
+    chara->GetPosition(vector);
+    sprintf(work, "chara\n pos = %7.2f,%7.2f,%7.2f\n", vector[0], vector[1], vector[2]);
+    AddStr(DebugFont, work);
+    chara->GetRotation(vector);
+    sprintf(work, " rot = %7.2f,%7.2f,%7.2f\n", vector[0], vector[1], vector[2]);
+    AddStr(DebugFont, work);
+    sprintf(work, " (%d %d %d)\n", chara->move_info.ground_poly.attr.ground_kind,
+            chara->move_info.ground_poly.attr.foot_sound, chara->move_info.ground_poly.attr.area_kind);
+    if (chara->move_info.landed)
+        AddStr(DebugFont, work);
+}
 #endif
 
 #ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char pal_at391__3[0x30] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "camera\n pos = %7.2f,%7.2f,%7.2f\n";
-char pal_at392[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " ref = %7.2f,%7.2f,%7.2f\n";
-char pal_at393[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = " projection = %7.1f\n";
-INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDPrintCamera__FP7CCamera);
+void EdDPrintCamera(CCamera *camera) {
+    sceVu0FVECTOR vector;
+    char work[128];
+
+    if (Debug == 0)
+        return;
+    if (DebugFont == 0)
+        return;
+
+    camera->GetPos(vector);
+    sprintf(work, "camera\n pos = %7.2f,%7.2f,%7.2f\n", vector[0], vector[1], vector[2]);
+    AddStr(DebugFont, work);
+    camera->GetRef(vector);
+    sprintf(work, " ref = %7.2f,%7.2f,%7.2f\n", vector[0], vector[1], vector[2]);
+    AddStr(DebugFont, work);
+    sprintf(work, " projection = %7.1f\n", MGGetProjection());
+    AddStr(DebugFont, work);
+}
 #pragma name_counter 421
 #endif
 
@@ -439,94 +468,458 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
 }
 
 #ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/edit", EdDebugMenu__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_mode_S505;
-unsigned char pal_init_S506;
-#pragma name_counter 521
+void EdDebugMenu() {
+    static int mode = 0;
+
+    switch (mode) {
+    case 0:
+        DM_Main();
+        break;
+    case 2:
+        DM_Sound();
+        break;
+    case 1:
+        DM_Flag();
+        break;
+    }
+
+    if (GamePad.Down(2))
+        mode++;
+    if (GamePad.Down(1))
+        mode--;
+    if (mode < 0)
+        mode = 0;
+    if (mode >= 3)
+        mode = 2;
+
+    TexManager.ReloadTexture(GetVif1Packet(), 31);
+    DebugFont->Draw();
+}
 #endif
 
 #ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char pal_at531__2[0x8] __attribute__((section(".rodata"))) = "OFF";
-char pal_at532[0x8] __attribute__((section(".rodata"))) = "ON";
-char pal_at534__2[0x8] __attribute__((section(".rodata"))) = "  ";
-char pal_at535[0x8] __attribute__((section(".rodata"))) = "->";
-char *pal_at533[2] = {pal_at531__2, pal_at532};
-char *pal_at536[2] = {pal_at534__2, pal_at535};
-char pal_at612[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "    MAIN    ->R2\n";
-char pal_at613[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sDEBUG CAMERA %s\n";
-char pal_at614__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sPARAMETER %s\n";
-char pal_at615__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sCHARACTER %s\n";
-char pal_at616__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sMESSAGE %s\n";
-char pal_at617__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sDEBUG MOVE %d\n";
-char pal_at618[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sRUN EVENT %d\n";
-char pal_at619__2[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sTALK EVENT %d\n";
-char pal_at620__3[0x10] __attribute__((section(".rodata"))) = "%sEVENT %s\n";
-char pal_at621__3[0x18] __attribute__((section(".rodata"))) = "%sLANGUAGE %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Main__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_select_S521;
-unsigned char pal_init_S522;
-unsigned int pal_run_event_S524;
-unsigned char pal_init_S525;
-unsigned int pal_talk_chara_S527;
-unsigned char pal_init_S528;
-#pragma name_counter 521
-#endif
+void DM_Main() {
+    static int select = 0;
+    static int run_event = 150;
+    static int talk_chara = 0;
+    char work[128];
+    char *on_off[2] = {"OFF", "ON"};
+    char *cursor[2] = {"  ", "->"};
 
-#ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char *pal_at639[2] = {pal_at531__2, pal_at532};
-char *pal_at640[2] = {pal_at534__2, pal_at535};
-char pal_at701[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "L2<-SOUND   ->\n";
-char pal_at702[0x30] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sBGM PLAY %d SEQ = %d o:PLAY x:STOP\n";
-char pal_at703[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sBGM OFF = %s\n";
-char pal_at704[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sSE PLAY  %d  O:PLAY X:STOP\n";
-char pal_at705[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sSOUND SET  %d  O:PLAY X:STOP\n";
-INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Sound__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_select_S623;
-unsigned char pal_init_S624;
-unsigned int pal_bgm_no_S626;
-unsigned char pal_init_S627;
-unsigned int pal_se_no_S629;
-unsigned char pal_init_S630;
-unsigned int pal_set_no_S632;
-unsigned char pal_init_S633;
-unsigned int pal_bgm_seq_S635;
-unsigned char pal_init_S636;
-#pragma name_counter 521
-#endif
+    AddStr(DebugFont, "    MAIN    ->R2\n");
+    sprintf(work, "%sDEBUG CAMERA %s\n", cursor[select == 0], on_off[EdDebugCameraFlag]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sPARAMETER %s\n", cursor[select == 1], on_off[!EdDebugParamDrawOff]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sCHARACTER %s\n", cursor[select == 2], on_off[!EdDebugCharaDrawOff]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sMESSAGE %s\n", cursor[select == 3], on_off[!MesAbsDrawOff]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sDEBUG MOVE %d\n", cursor[select == 4], EdDebugMoveFlag);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sRUN EVENT %d\n", cursor[select == 5], run_event);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sTALK EVENT %d\n", cursor[select == 6], talk_chara);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sEVENT %s\n", cursor[select == 7], on_off[EdDebugEventEnable]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sLANGUAGE %d\n", cursor[select == 8], LanguageCode);
+    AddStr(DebugFont, work);
 
-#ifdef PAL
-/* Retail's data for the function the marker below supplies. */
-char *pal_at743__2[2] = {pal_at531__2, pal_at532};
-char *pal_at744__3[2] = {pal_at534__2, pal_at535};
-char pal_at879__2[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "L2<-FALG   ->R\n";
-char pal_at880[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sGAMEFLAG %3d    = %s\n";
-char pal_at881[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sMAPFLAG %3d     = %s\n";
-char pal_at882[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sCOMPFLAG %3d    = %s\n";
-char pal_at883__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sGAME INT FALG 0 = %d\n";
-char pal_at884__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sQUEST DUNGEON   = %d\n";
-char pal_at885[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sDUNGEON FLOOR   = %d\n";
-char pal_at886__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sPARTY NUM       = %d\n";
-char pal_at887__2[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "%sTALKFLAG %3d    = %d\n";
-INCLUDE_ASM("asm/pal/nonmatchings/edit", DM_Flag__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_select_S706;
-unsigned char pal_init_S707;
-unsigned int pal_game_no_S709;
-unsigned char pal_init_S710;
-unsigned int pal_map_no_S712;
-unsigned char pal_init_S713;
-unsigned int pal_comp_no_S715;
-unsigned char pal_init_S716;
-unsigned int pal_dun_map_S718;
-unsigned char pal_init_S719;
-unsigned int pal_chara_S721;
-unsigned char pal_init_S722;
-#pragma name_counter 521
+    EdDebugRunEventNo = -1;
+    switch (select) {
+    case 0:
+        if (GamePad.Down(0x2000))
+            EdDebugCameraFlag = 1;
+        if (GamePad.Down(0x8000))
+            EdDebugCameraFlag = 0;
+        break;
+    case 1:
+        if (GamePad.Down(0x2000))
+            EdDebugParamDrawOff = 0;
+        if (GamePad.Down(0x8000))
+            EdDebugParamDrawOff = 1;
+        break;
+    case 2:
+        if (GamePad.Down(0x2000))
+            EdDebugCharaDrawOff = 0;
+        if (GamePad.Down(0x8000))
+            EdDebugCharaDrawOff = 1;
+        break;
+    case 3:
+        if (GamePad.Down(0x2000))
+            MesAbsDrawOff = 0;
+        if (GamePad.Down(0x8000))
+            MesAbsDrawOff = 1;
+        break;
+    case 4:
+        if (GamePad.Down(0x2000))
+            EdDebugMoveFlag++;
+        if (GamePad.Down(0x8000))
+            EdDebugMoveFlag--;
+        if (EdDebugMoveFlag < 0)
+            EdDebugMoveFlag = 0;
+        if (EdDebugMoveFlag > 2)
+            EdDebugMoveFlag = 2;
+        break;
+    case 5:
+        if (GamePad.Down(0x2000))
+            run_event++;
+        if (GamePad.Down(0x8000))
+            run_event--;
+        if (GamePad.Down(4))
+            run_event -= 10;
+        if (GamePad.Down(8))
+            run_event += 10;
+        if (GamePad.On(0x20))
+            EdDebugRunEventNo = run_event;
+        break;
+    case 6:
+        if (GamePad.Down(0x2000))
+            talk_chara++;
+        if (GamePad.Down(0x8000))
+            talk_chara--;
+        if (GamePad.Down(4))
+            talk_chara -= 10;
+        if (GamePad.Down(8))
+            talk_chara += 10;
+        if (GamePad.On(0x20)) {
+            EdTalkModeInit(EdVillager, talk_chara);
+            EdDebugRunEventNo = 256;
+        }
+        break;
+    case 7:
+        if (GamePad.Down(0x2000))
+            EdDebugEventEnable = 1;
+        if (GamePad.Down(0x8000))
+            EdDebugEventEnable = 0;
+        break;
+    case 8:
+        if (GamePad.Down(0x2000))
+            LanguageCode++;
+        if (GamePad.Down(0x8000))
+            LanguageCode--;
+        if (LanguageCode < 0)
+            LanguageCode = 0;
+        if (LanguageCode > 6)
+            LanguageCode = 6;
+        break;
+    }
+
+    if (GamePad.Down(0x4000))
+        select++;
+    if (GamePad.Down(0x1000))
+        select--;
+    if (select < 0)
+        select = 8;
+    if (select >= 9)
+        select = 0;
+}
+
+void DM_Sound() {
+    static int select = 0;
+    static int bgm_no = 0;
+    static int se_no = 0;
+    static int set_no = 0;
+    static int bgm_seq = 0;
+    char work[128];
+    char *on_off[2] = {"OFF", "ON"};
+    char *cursor[2] = {"  ", "->"};
+
+    AddStr(DebugFont, "L2<-SOUND   ->\n");
+    sprintf(work, "%sBGM PLAY %d SEQ = %d o:PLAY x:STOP\n", cursor[select == 0], bgm_no, bgm_seq);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sBGM OFF = %s\n", cursor[select == 1], on_off[SndGetBgmDisableFlag()]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sSE PLAY  %d  O:PLAY X:STOP\n", cursor[select == 2], se_no);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sSOUND SET  %d  O:PLAY X:STOP\n", cursor[select == 3], set_no);
+    AddStr(DebugFont, work);
+
+    switch (select) {
+    case 0:
+        if (GamePad.Down(0x2000))
+            bgm_no++;
+        if (GamePad.Down(0x8000))
+            bgm_no--;
+        if (GamePad.Down(4))
+            bgm_no -= 10;
+        if (GamePad.Down(8))
+            bgm_no += 10;
+        if (GamePad.Down(0x10))
+            bgm_seq++;
+        if (GamePad.Down(0x80))
+            bgm_seq--;
+        if (bgm_seq < 0)
+            bgm_seq = 0;
+        if (bgm_seq > 3)
+            bgm_seq = 3;
+        if (GamePad.Down(0x20)) {
+            SndBgmStop();
+            SndBgmInit();
+            SndBgmLoad(bgm_no);
+            SndBgmPlay(bgm_seq);
+        }
+        if (GamePad.Down(0x40)) {
+            SndBgmStop();
+            SndBgmInit();
+        }
+        break;
+    case 1:
+        if (GamePad.Down(0x2000))
+            SndBgmDisable(1);
+        if (GamePad.Down(0x8000))
+            SndBgmDisable(0);
+        break;
+    case 2:
+        if (GamePad.Down(0x2000))
+            se_no++;
+        if (GamePad.Down(0x8000))
+            se_no--;
+        if (GamePad.Down(4))
+            se_no -= 10;
+        if (GamePad.Down(8))
+            se_no += 10;
+        if (GamePad.Down(0x20))
+            SndSePlay(se_no, -1, 0);
+        if (GamePad.Down(0x40))
+            SndSeStop(se_no, 0);
+        break;
+    case 3:
+        if (GamePad.Down(0x2000))
+            set_no++;
+        if (GamePad.Down(0x8000))
+            set_no--;
+        if (GamePad.Down(4))
+            set_no -= 10;
+        if (GamePad.Down(8))
+            set_no += 10;
+        if (GamePad.Down(0x20))
+            SndSoundLoad(set_no);
+        break;
+    }
+
+    if (GamePad.Down(0x4000))
+        select++;
+    if (GamePad.Down(0x1000))
+        select--;
+    if (select < 0)
+        select = 0;
+    if (select >= 4)
+        select = 3;
+}
+
+/**
+ * Raises the deepest floor reached in one dungeon to the given floor if it lies deeper.
+ */
+static inline void RaiseFloorReached(CDngStatusData *status, int dungeon, int floor) {
+    if (floor > status->floor_reached[dungeon])
+        status->floor_reached[dungeon] = floor;
+}
+
+void DM_Flag() {
+    static int select = 0;
+    static int game_no = 0;
+    static int map_no = 0;
+    static int comp_no = 0;
+    static int dun_map = MapNo;
+    static int chara = 0;
+    char work[128];
+    CDngStatusData *status;
+    SV_GRD_NPC *npc;
+    int *value;
+    int floor;
+    int talk;
+    int i;
+
+    // Maps inside a dungeon count as that dungeon.
+    if (dun_map == 11)
+        dun_map = 1;
+    if (dun_map == 13)
+        dun_map = 1;
+    if (dun_map == 33)
+        dun_map = 1;
+    if (dun_map == 19)
+        dun_map = 2;
+    if (dun_map == 42)
+        dun_map = 3;
+    if (dun_map == 23)
+        dun_map = 4;
+    if (dun_map == 38)
+        dun_map = 5;
+    if (dun_map == 40)
+        dun_map = 5;
+    if (dun_map > 5)
+        dun_map = 0;
+
+    char *on_off[2] = {"OFF", "ON"};
+    char *cursor[2] = {"  ", "->"};
+
+    AddStr(DebugFont, "L2<-FALG   ->R\n");
+    status = SaveData->GetDngStatus();
+    sprintf(work, "%sGAMEFLAG %3d    = %s\n", cursor[select == 0], game_no,
+            on_off[SaveData->GetGameFlag(game_no)]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sMAPFLAG %3d     = %s\n", cursor[select == 1], map_no,
+            on_off[!SaveData->GetMapFlag(MapNo, map_no)]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sCOMPFLAG %3d    = %s\n", cursor[select == 2], comp_no,
+            on_off[EditPartsInfo.GetCompEvent(comp_no)]);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sGAME INT FALG 0 = %d\n", cursor[select == 3], SaveData->GetGameIntFlag(0));
+    AddStr(DebugFont, work);
+    sprintf(work, "%sQUEST DUNGEON   = %d\n", cursor[select == 4], SaveData->QuestDungeon(dun_map, 0));
+    AddStr(DebugFont, work);
+    floor = status->floor_reached[dun_map];
+    sprintf(work, "%sDUNGEON FLOOR   = %d\n", cursor[select == 5], floor);
+    AddStr(DebugFont, work);
+    sprintf(work, "%sPARTY NUM       = %d\n", cursor[select == 6], status->party_size);
+    AddStr(DebugFont, work);
+    npc = SaveData->GetGrdNPCData(MapNo, chara);
+    talk = 0;
+    if (npc)
+        talk = npc->talk_message;
+    sprintf(work, "%sTALKFLAG %3d    = %d\n", cursor[select == 7], chara, talk);
+    AddStr(DebugFont, work);
+
+    value = NULL;
+    switch (select) {
+    case 0:
+        value = &game_no;
+        if (GamePad.Down(0x20))
+            SaveData->SetGameFlag(game_no, 1);
+        if (GamePad.Down(0x40))
+            SaveData->SetGameFlag(game_no, 0);
+        break;
+    case 1:
+        value = &map_no;
+        if (GamePad.Down(0x20))
+            SaveData->SetMapFlag(MapNo, map_no, 0);
+        if (GamePad.Down(0x40))
+            SaveData->SetMapFlag(MapNo, map_no, 1);
+        break;
+    case 2:
+        value = &comp_no;
+        if (GamePad.Down(0x20))
+            EditPartsInfo.SetCompEvent(comp_no, 1);
+        if (GamePad.Down(0x40))
+            EditPartsInfo.SetCompEvent(comp_no, 0);
+        if (GamePad.Down(0x10)) {
+            SV_GEORAMA_DATA *georama;
+
+            for (i = 0; i < 24; i++)
+                EditPartsInfo.SetCompEvent(i, 1);
+            georama = SaveData->GetGrdData(MapNo);
+            if (georama)
+                georama->request_event_flag = 1;
+        }
+        if (GamePad.Down(0x80)) {
+            SV_GEORAMA_DATA *georama;
+
+            for (i = 0; i < 24; i++)
+                EditPartsInfo.SetCompEvent(i, 0);
+            georama = SaveData->GetGrdData(MapNo);
+            if (georama)
+                georama->request_event_flag = 0;
+        }
+        break;
+    case 3: {
+        int flag = SaveData->GetGameIntFlag(0);
+
+        if (GamePad.Down(0x2000))
+            flag++;
+        if (GamePad.Down(0x8000))
+            flag--;
+        if (GamePad.Down(8))
+            flag += 10;
+        if (GamePad.Down(4))
+            flag -= 10;
+        if (flag < 0)
+            flag = 0;
+        SaveData->SetGameIntFlag(0, flag);
+        break;
+    }
+    case 4:
+        if (GamePad.Down(0x2000))
+            SaveData->QuestDungeon(dun_map, 1);
+        if (GamePad.Down(0x8000))
+            SaveData->QuestDungeon(dun_map, -1);
+        if (GamePad.Down(8))
+            SaveData->QuestDungeon(dun_map, 10);
+        if (GamePad.Down(4))
+            SaveData->QuestDungeon(dun_map, -10);
+        break;
+    case 5: {
+        floor = status->floor_reached[dun_map];
+
+        if (GamePad.Down(0x2000))
+            floor++;
+        if (GamePad.Down(0x8000))
+            floor--;
+        if (GamePad.Down(8))
+            floor += 10;
+        if (GamePad.Down(4))
+            floor -= 10;
+        RaiseFloorReached(status, dun_map, floor);
+        break;
+    }
+    case 6:
+        if (GamePad.Down(0x2000))
+            status->party_size++;
+        if (GamePad.Down(0x8000))
+            status->party_size--;
+        if (GamePad.Down(8))
+            status->party_size += 10;
+        if (GamePad.Down(4))
+            status->party_size -= 10;
+        break;
+    case 7:
+        value = &chara;
+        if (GamePad.Down(0x20) && npc)
+            npc->talk_message++;
+        if (GamePad.Down(0x40) && npc)
+            npc->talk_message--;
+        if (GamePad.Down(0x10)) {
+            for (i = 0; i < 20; i++) {
+                SV_GRD_NPC *other = SaveData->GetGrdNPCData(MapNo, i);
+
+                if (other)
+                    other->talk_message = 1;
+            }
+        }
+        if (GamePad.Down(0x80)) {
+            for (i = 0; i < 20; i++) {
+                SV_GRD_NPC *other = SaveData->GetGrdNPCData(MapNo, i);
+
+                if (other)
+                    other->talk_message = 0;
+            }
+        }
+        break;
+    }
+
+    if (value) {
+        if (GamePad.Down(0x2000))
+            (*value)++;
+        if (GamePad.Down(0x8000))
+            (*value)--;
+        if (GamePad.Down(8))
+            *value += 10;
+        if (GamePad.Down(4))
+            *value -= 10;
+        if (*value < 0)
+            *value = 0;
+    }
+
+    if (GamePad.Down(0x4000))
+        select++;
+    if (GamePad.Down(0x1000))
+        select--;
+    if (select < 0)
+        select = 7;
+    if (select >= 8)
+        select = 0;
+}
 #endif
 
 /* The box drawn as twelve edges of the frame's own corner list, taken to the screen in one go and

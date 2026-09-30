@@ -92,9 +92,18 @@ static void copy_data_head(DATA_HEADER *dest, DATA_HEADER_READ *record) {
 #endif
 
 #ifdef PAL
-static DATA_HEADER *SearchFile(char *name);
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", SearchFile__FPc);
-#pragma name_counter 295
+/* The index is searched as the list it is on the disc, one name comparison per entry. */
+static DATA_HEADER *SearchFile(char *path) {
+    DATA_HEADER_READ *record;
+    int i;
+
+    record = (DATA_HEADER_READ *) header_buff;
+    for (i = 0; i < header_num; i++, record++) {
+        if (strcasecmp((char *) record->name, path) == 0)
+            return (DATA_HEADER *) record;
+    }
+    return 0;
+}
 #else
 static DATA_HEADER *SearchFile(char *path) {
     NAME_TREE *node;
@@ -379,15 +388,47 @@ static char *create_word_tree(char *index_image, int size, char *tree_buffer) {
 /* The drive is asked for the data file itself only to learn where it starts; everything after this
    is read by sector from that base, which is why no path but the index's is ever opened. */
 #ifdef PAL
-void InitCDFile();
-/* Retail's data for the function the marker below supplies. */
-char pal_at397[0x18] __attribute__((section(".rodata"))) = "\\DATA.DAT;1";
-char pal_at398[0x20] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "cdrom0:\\DATA.HD2;1";
-char pal_at399[0x18] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "File open error \"\"\n \n \n";
-char pal_at400[0x8] __attribute__((section(".rodata"))) = "etc.cpp";
-char pal_at401[0x10] __attribute__((aligned(16))) __attribute__((section(".rodata"))) = "FALSE";
-INCLUDE_ASM("asm/pal/nonmatchings/dataread", InitCDFile__Fv);
-#pragma name_counter 460
+/* The index is read straight into the header buffer and kept as it is, with each entry's name
+   offset turned into a pointer to the name and its path separators made forward slashes. */
+void InitCDFile() {
+    sceCdlFILE file;
+    int fd;
+    int size;
+    DATA_HEADER_READ *records;
+    int i;
+
+    packfile_buff = 0;
+    while (1) {
+        if (sceCdSearchFile(&file, "\\DATA.DAT;1")) {
+            sceCdSync(0);
+            if (sceCdGetError() == 0)
+                break;
+        }
+    }
+    data_sector = file.lsn;
+    fd = sceOpen("cdrom0:\\DATA.HD2;1", SCE_RDONLY);
+    if (fd < 0) {
+        printf("File open error \"\"\n \n \n");
+        __assert("etc.cpp", 565, "FALSE");
+    }
+    size = sceLseek(fd, 0, SCE_SEEK_END);
+    sceLseek(fd, 0, SCE_SEEK_SET);
+    sceRead(fd, header_buff, size);
+    sceClose(fd);
+    records = (DATA_HEADER_READ *) header_buff;
+    // The names follow the last record, so the first name's offset counts the records.
+    header_num = (u_int) records->name >> 5;
+    for (i = 0; i < header_num; i++) {
+        char *cursor;
+        char ch;
+
+        records[i].name += (int) header_buff;
+        for (cursor = (char *) records[i].name; (ch = *cursor) != 0; cursor++) {
+            if (ch == '\\')
+                *cursor = '/';
+        }
+    }
+}
 #else
 void InitCDFile() {
     char index_image[307200];
@@ -426,7 +467,7 @@ int LoadFile(char *path, void *buffer, int *out_size) {
     if (!LoadFile2(path, buffer, out_size, 0)) {
         printf("File open error \"%s\"\n \n \n", path);
 #ifdef PAL
-        __assert(pal_at400, 753, pal_at401);
+        __assert("etc.cpp", 753, "FALSE");
 #else
         __assert("etc.cpp", 740, "FALSE");
 #endif
