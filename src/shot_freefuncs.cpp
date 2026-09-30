@@ -970,15 +970,6 @@ int poison_counter;
  * @address 0x1B1A50
  * @size 0x154
  */
-#if defined(PAL) && !defined(NON_MATCHING)
-// NON_MATCHING under PAL: 7 left -- 10.0f loads before the other arguments of AddNowLife; its
-// evaluate_first 1 orders it but swaps the status and chara registers.
-void BtStatusErrStep(void);
-INCLUDE_ASM("asm/pal/nonmatchings/shot_freefuncs", BtStatusErrStep__Fv);
-/* Retail's data for the function the marker above supplies. */
-unsigned int pal_at1188__2[4] __attribute__((aligned(16))) = {0x00000000, 0x00000000, 0x00000000, 0x3F800000};
-#pragma name_counter 562
-#else
 void BtStatusErrStep(void) {
     int flags;
     CUserStatus *status = UserStatus;
@@ -992,7 +983,11 @@ void BtStatusErrStep(void) {
         int chara = *cur_chara;
         int max_hp = status->max_hp[chara];
         int damage = 0.04 * max_hp;
+#ifdef PAL
+        status->AddNowLife((s8) *cur_chara, -damage, 10.0f);
+#else
         status->AddNowLife((s8) chara, -damage, 10.0f);
+#endif
 
         float position[4] = {0.0f, 0.0f, 0.0f, 1.0f};
         position[1] = CharaHeight(UserStatus);
@@ -1004,8 +999,10 @@ void BtStatusErrStep(void) {
     }
 
     BtStatusErrColorSet();
-}
+#ifdef PAL
+#pragma name_counter 551
 #endif
+}
 
 /**
  * Inflicts one status ailment on the party.

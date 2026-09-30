@@ -855,6 +855,39 @@
      "evaluate_first": 1
     }
    ]
+  },
+  "shot_freefuncs.cpp": {
+   "BtStatusErrStep__Fv": [
+    {
+     "ordinal": 4,
+     "kind": "0x33",
+     "evaluate_first": 1
+    }
+   ],
+   "DrawWaterLing__Fv": [
+    {
+     "ordinal": 20,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ],
+   "topStatusInfo__Fiii": [
+    {
+     "ordinal": 44,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 56,
+     "kind": "0x30",
+     "evaluate_first": 1
+    },
+    {
+     "ordinal": 127,
+     "kind": "0x30",
+     "evaluate_first": 1
+    }
+   ]
   }
  }
 }
