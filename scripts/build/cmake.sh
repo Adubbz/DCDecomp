@@ -75,9 +75,11 @@ configure() {
 # Configuring takes about as long as compiling a dozen objects, and every
 # entry point starts with it. Ninja already knows when it is needed: build.ninja
 # is a target of its own, rebuilt when CMakeLists.txt, anything a
-# CMAKE_CONFIGURE_DEPENDS names, or a CONFIGURE_DEPENDS glob changes. So ask
+# CMAKE_CONFIGURE_DEPENDS names -- scripts/build/globs.sh's listing of the
+# globbed sources among them -- changes. So ask
 # for that instead, and configure outright only when there is nothing to ask.
 regenerate() {
+    scripts/build/globs.sh "$BUILD_DIR"
     if [ ! -f "$BUILD_DIR/build.ninja" ] || cache_is_stale; then
         configure
         return
@@ -109,6 +111,15 @@ build() {
     cmake --build "$BUILD_DIR" $JOB_ARGS --target "$@"
 }
 
+# Build targets only when a dry run finds something to do, so an up-to-date
+# prerequisite does not print ninja's "no work to do" ahead of the real build.
+build_if_stale() {
+    case $(cmake --build "$BUILD_DIR" --target "$@" -- -n 2>&1) in
+        *"no work to do"*) : ;;
+        *) build "$@" ;;
+    esac
+}
+
 regenerate
 
 had_asm=1
@@ -117,7 +128,7 @@ had_asm=1
 # asm/<region> is split rather than committed, from the binaries under
 # rom/<region>/extracted: the disc's once it has been extracted, or the private
 # repository's copies.
-build setup
+build_if_stale setup
 
 if [ "$had_asm" = 0 ]; then
     cmake -G Ninja -S . -B "$BUILD_DIR" -DREGION="$REGION"

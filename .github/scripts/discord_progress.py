@@ -55,29 +55,25 @@ def progress_line(measures, units):
     )
 
 
-def payload(report, region="NTSC"):
-    categories = {category["id"]: category for category in report["categories"]}
-    units = report["units"]
+def payload(reports):
+    """One embed per release, from each release's own objdiff report."""
 
-    def category_units(category):
-        return [
-            unit
-            for unit in units
-            if category in unit.get("metadata", {}).get("progress_categories", ())
-        ]
+    def embed(release, report):
+        categories = {category["id"]: category for category in report["categories"]}
+        units = report["units"]
 
-    def embed(release):
-        prefix = f"{release.lower()}_" if region == "BOTH" else ""
-        overall = release.lower() if region == "BOTH" else None
+        def category_units(category):
+            return [
+                unit
+                for unit in units
+                if category in unit.get("metadata", {}).get("progress_categories", ())
+            ]
+
         sections = (
-            ("Overall", categories[overall]["measures"] if overall else report["measures"],
-             category_units(overall) if overall else units),
-            ("Game", categories[prefix + "game"]["measures"],
-             category_units(prefix + "game")),
-            ("Title", categories[prefix + "title"]["measures"],
-             category_units(prefix + "title")),
-            ("DUN", categories[prefix + "dun"]["measures"],
-             category_units(prefix + "dun")),
+            ("Overall", report["measures"], units),
+            ("Game", categories["game"]["measures"], category_units("game")),
+            ("Title", categories["title"]["measures"], category_units("title")),
+            ("DUN", categories["dun"]["measures"], category_units("dun")),
         )
         return {
             "title": ("Dark Cloud NTSC 1.02" if release == "NTSC"
@@ -96,22 +92,26 @@ def payload(report, region="NTSC"):
     return {
         "username": "Osmond",
         "allowed_mentions": {"parse": []},
-        "embeds": [embed(release) for release in
-                   (("NTSC", "PAL") if region == "BOTH" else (region,))],
+        "embeds": [embed(release, report) for release, report in reports],
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--region", choices=("NTSC", "PAL", "BOTH"), default="NTSC")
-    parser.add_argument("report", type=Path)
+    parser.add_argument("--ntsc", type=Path, help="the NTSC 1.02 report")
+    parser.add_argument("--pal", type=Path, help="the PAL prototype report")
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
 
-    with args.report.open(encoding="utf-8") as report_file:
-        report = json.load(report_file)
+    reports = []
+    for release, path in (("NTSC", args.ntsc), ("PAL", args.pal)):
+        if path is not None:
+            with path.open(encoding="utf-8") as report_file:
+                reports.append((release, json.load(report_file)))
+    if not reports:
+        parser.error("no report given; pass --ntsc, --pal or both")
     with args.output.open("w", encoding="utf-8") as output_file:
-        json.dump(payload(report, args.region), output_file, ensure_ascii=False)
+        json.dump(payload(reports), output_file, ensure_ascii=False)
         output_file.write("\n")
 
 

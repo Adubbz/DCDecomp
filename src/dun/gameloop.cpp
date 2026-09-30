@@ -2,45 +2,48 @@
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 885
 #ifdef PAL
-#pragma argument_flag_free 2936, 2937, 2938, 2939, 2940, 2941, 2942, 2943, 2944, 2945
-#pragma argument_flag_free 2946, 2947, 2948, 2949, 2950, 2951, 2952, 2953, 2954, 2955
-#pragma argument_flag_free 2956, 2957, 2958, 2959, 2960, 2961, 2962, 2963, 2964, 2965
-#pragma argument_flag_free 2966, 2967, 2968, 2969, 2970, 2971, 2972, 2973, 2974, 2975
-#pragma argument_flag_free 2976, 2977, 2978, 2979, 2980, 2981, 2982, 2983, 2984, 2985
-#pragma argument_flag_free 2986, 2987, 2988, 2989, 2990, 2991, 2992, 2993, 2994, 2995
-#pragma argument_flag_free 2996, 2997, 2998, 2999, 3000, 3001, 3002, 3003, 3004, 3005
-#pragma argument_flag_free 3006, 3007, 3008, 3009, 3010, 3011, 3012, 3013, 3014, 3015
-#pragma argument_flag_free 3016, 3017, 3018, 3019, 3020, 3021, 3022, 3023, 3024, 3025
-#pragma argument_flag_free 3026, 3027, 3028, 3029, 3030, 3031, 3032, 3033, 3034, 3035
-#pragma argument_flag_free 3036, 3037, 3038, 3039, 3040, 3041, 3042, 3043, 3044, 3045
-#pragma argument_flag_free 3046, 3047, 3048, 3049, 3050, 3051, 3052, 3053, 3054, 3055
-#pragma argument_flag_free 3056, 3057, 3058, 3059, 3060, 3061, 3062, 3063, 3064, 3065
-#pragma argument_flag_free 3066, 3067, 3068, 3069, 3070, 3071, 3072, 3073, 3074, 3075
-#pragma argument_flag_free 3076, 3077, 3078, 3079, 3080, 3081, 3082, 3083, 3084, 3085
-#pragma argument_flag_free 3086, 3087, 3088, 3089, 3090, 3091, 3092, 3093, 3094, 3095
-#pragma argument_flag_free 3096, 3097, 3098, 3099, 3100, 3101, 3102, 3103, 3104, 3105
-#pragma argument_flag_free 3106, 3107, 3108, 3109, 3110, 3111, 3112, 3113, 3114, 3115
-#pragma argument_flag_free 3116, 3117, 3118, 3119, 3120, 3121, 3122, 3123, 3124, 3125
-#pragma argument_flag_free 3126, 3127, 3128, 3129, 3130, 3131, 3132, 3133, 3134, 3135
-#pragma argument_flag_free 3136, 3137, 3138, 3139, 3140, 3141, 3142, 3143, 3144, 3145
-#pragma argument_flag_free 3146, 3147, 3148, 3149, 3150, 3151, 3152, 3153, 3154, 3155
-#pragma argument_flag_free 3156, 3157, 3158, 3159, 3160, 3161, 3162, 3163, 3164, 3165
-#pragma argument_flag_free 3166, 3167, 3168, 3169, 3170, 3171, 3172, 3173, 3174, 3175
-#pragma argument_flag_free 3176, 3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185
-#pragma argument_flag_free 3186, 3187, 3188, 3189, 3190, 3191, 3192, 3193, 3194, 3195
-#pragma argument_flag_free 3196, 3197, 3198, 3199, 3200, 3201, 3202, 3203, 3204, 3205
-#pragma argument_flag_free 3206
+#pragma argument_flag_free 3486, 3487, 3488, 3489, 3490, 3491, 3492, 3493, 3494, 3495
+#pragma argument_flag_free 3496, 3497, 3498, 3499, 3500, 3501, 3502, 3503, 3504, 3505
+#pragma argument_flag_free 3506, 3507, 3508, 3509, 3510, 3511, 3512, 3513, 3514, 3515
+#pragma argument_flag_free 3516, 3517, 3518, 3519, 3520, 3521, 3522, 3523, 3524, 3525
+#pragma argument_flag_free 3526, 3527, 3528, 3529, 3530, 3531, 3532, 3533, 3534, 3535
+#pragma argument_flag_free 3536, 3537, 3538, 3539, 3540, 3541, 3542, 3543, 3544, 3545
+#pragma argument_flag_free 3546, 3547, 3548, 3549, 3550, 3551, 3552, 3553, 3554, 3555
+#pragma argument_flag_free 3556, 3557, 3558, 3559, 3560, 3561, 3562, 3563, 3564, 3565
+#pragma argument_flag_free 3566, 3567, 3568, 3569, 3570, 3571, 3572, 3573, 3574, 3575
+#pragma argument_flag_free 3576, 3577, 3578, 3579, 3580, 3581, 3582, 3583, 3584, 3585
+#pragma argument_flag_free 3586, 3587, 3588, 3589, 3590, 3591, 3592, 3593, 3594, 3595
+#pragma argument_flag_free 3596, 3597, 3598, 3599, 3600, 3601, 3602, 3603, 3604, 3605
+#pragma argument_flag_free 3606, 3607, 3608, 3609, 3610, 3611, 3612, 3613, 3614, 3615
+#pragma argument_flag_free 3616, 3617, 3618, 3619, 3620, 3621, 3622, 3623, 3624, 3625
+#pragma argument_flag_free 3626, 3627, 3628, 3629, 3630, 3631, 3632, 3633, 3634, 3635
+#pragma argument_flag_free 3636, 3637, 3638, 3639, 3640, 3641, 3642, 3643, 3644, 3645
+#pragma argument_flag_free 3646, 3647, 3648, 3649, 3650, 3651, 3652, 3653, 3654, 3655
+#pragma argument_flag_free 3656, 3657, 3658, 3659, 3660, 3661, 3662, 3663, 3664, 3665
+#pragma argument_flag_free 3666, 3667, 3668, 3669, 3670, 3671, 3672, 3673, 3674, 3675
+#pragma argument_flag_free 3676, 3677, 3678, 3679, 3680, 3681, 3682, 3683, 3684, 3685
+#pragma argument_flag_free 3686, 3687, 3688, 3689, 3690, 3691, 3692, 3693, 3694, 3695
+#pragma argument_flag_free 3696, 3697, 3698, 3699, 3700, 3701, 3702, 3703, 3704, 3705
+#pragma argument_flag_free 3706, 3707, 3708, 3709, 3710, 3711, 3712, 3713, 3714, 3715
+#pragma argument_flag_free 3716, 3717, 3718, 3719, 3720, 3721, 3722, 3723, 3724, 3725
+#pragma argument_flag_free 3726, 3727, 3728, 3729, 3730, 3731, 3732, 3733, 3734, 3735
+#pragma argument_flag_free 3736, 3737, 3738, 3739, 3740, 3741, 3742, 3743, 3744, 3745
+#pragma argument_flag_free 3746, 3747, 3748, 3749, 3750, 3751, 3752, 3753, 3754, 3755
+#pragma argument_flag_free 3756, 3757, 3758, 3759, 3760, 3761, 3762, 3763, 3764, 3765
+#pragma argument_flag_free 3766
 #pragma argument_flag_ones 183, 488, 530, 578, 579, 614, 618, 643, 647, 655
-#pragma argument_flag_ones 659, 668, 700, 702, 747, 792, 795, 796, 800, 807
-#pragma argument_flag_ones 809, 825, 827, 841, 1091, 1092, 1146, 1147, 1151, 1152
-#pragma argument_flag_ones 1153, 1213, 1216, 1242, 1273, 1324, 1381, 1533, 1579, 1580
-#pragma argument_flag_ones 1698, 1747, 1762, 1769, 1780, 1786, 1809, 1810, 1811, 1812
-#pragma argument_flag_ones 1813, 1857, 1914, 1917, 1918, 1950, 1953, 1960, 2036, 2233
-#pragma argument_flag_ones 2255, 2360, 2645, 2673, 2849, 2851, 2904, 2906, 2923, 2926
-#pragma argument_flag_ones 3020, 3021, 3023, 3024, 3279, 3282, 3283, 3394, 3405, 3413
-#pragma argument_flag_ones 3433, 3436, 3471, 3478, 3493, 3496, 3521, 3549, 3556, 3570
-#pragma argument_flag_ones 3589, 3601, 3605, 3606, 3676, 3682, 3691, 3703, 3729, 3751
-#pragma argument_flag_ones 3758, 3765, 4037, 4038, 4039, 4082, 4085, 4146, 4147, 4149
+#pragma argument_flag_ones 659, 700, 747, 792, 795, 796, 800, 807, 809, 825
+#pragma argument_flag_ones 827, 841, 1095, 1096, 1150, 1151, 1155, 1156, 1157, 1217
+#pragma argument_flag_ones 1220, 1246, 1277, 1328, 1385, 1537, 1583, 1584, 1702, 1751
+#pragma argument_flag_ones 1766, 1773, 1784, 1790, 1813, 1814, 1815, 1816, 1817, 1861
+#pragma argument_flag_ones 1918, 1921, 1922, 1954, 1957, 1964, 2040, 2237, 2259, 2364
+#pragma argument_flag_ones 2500, 2503, 2510, 2586, 2783, 2805, 2910, 3195, 3223, 3398
+#pragma argument_flag_ones 3409, 3417, 3440, 3475, 3482, 3497, 3500, 3525, 3553, 3560
+#pragma argument_flag_ones 3570, 3571, 3573, 3574, 3605, 3609, 3610, 3762, 3769, 3829
+#pragma argument_flag_ones 3832, 3833, 3944, 3955, 3963, 3983, 3986, 4021, 4028, 4043
+#pragma argument_flag_ones 4046, 4071, 4099, 4106, 4120, 4139, 4151, 4155, 4156, 4226
+#pragma argument_flag_ones 4232, 4241, 4253, 4279, 4301, 4308, 4315, 4587, 4588, 4589
+#pragma argument_flag_ones 4632, 4635, 4696, 4697, 4699
 #pragma argument_flag 0
 #else
 #pragma argument_flag_free 3600, 3601, 3602, 3603, 3604, 3605, 3606, 3607, 3608, 3609
@@ -2561,7 +2564,7 @@ void MainDraw(void) {
         area.x = 0;
         area.y = 0;
         area.width = 0x280;
-        area.height = 0xE0;
+        area.height = SCREEN_HALF_HEIGHT;
         water_tex = *(sceGsTex0 *) &TexManager.GetTexture("water", -1)->tex0;
         MGMoveImage(&frame_tex, area, &water_tex, 0, 0, 0);
         sceVu0CopyVector(water_pos, CharaFrame->position);
@@ -2794,6 +2797,13 @@ void MainDraw(void) {
 #ifdef PAL
         if (rogoSwitch2 == 1 && BtEventInfo.floor_title_off == 0) {
             TEX_Floor1 = TexManager.GetTexture(floor_name, -1);
+            floor_no = 0;
+
+            if (UserStatus->cur_floor >= 9) {
+                floor_no = -0x24;
+            }
+
+            TexManager.ReloadTexture(Vif1Packet, 8);
             StartMessageDraw(TEX_Floor1, selectMapNo, UserStatus->cur_floor, BtUraDongeon,
                              rogoAlphaA[2]);
         }
@@ -2954,18 +2964,13 @@ void MainDraw(void) {
         TexManager.ReloadTexture(Vif1Packet, 2);
 
         int gauge_alpha = rogoY3 + 0x60;
-#ifdef PAL
-        const int gauge_y = 0x1AC;
-#else
-        const int gauge_y = 0x18C;
-#endif
 
         if ((int) BtActStatus.action_gauge >= 100) {
             if (BtActStatus.gauge_flash == 0) {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C),
                             CRect_i_(0, 0, 0x80, 0x1C), gauge_alpha);
             } else {
-                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
+                set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C),
                             CRect_i_(0, 0x1C, 0x80, 0x1C), gauge_alpha);
             }
         }
@@ -2975,9 +2980,9 @@ void MainDraw(void) {
         if ((int) wear < 100) {
             int left = (int) wear;
 
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, gauge_y, 0x80, 0x1C),
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x28, SCREEN_HEIGHT - 0x34, 0x80, 0x1C),
                         CRect_i_(0, 0x54, 0x80, 0x1C), gauge_alpha);
-            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, gauge_y, left, 0x1C),
+            set2DSprite(Vif1Packet, TEX_WepGage, CRect_i_(0x42, SCREEN_HEIGHT - 0x34, left, 0x1C),
                         CRect_i_(0x1A, 0x38, left, 0x1C), gauge_alpha);
         }
 

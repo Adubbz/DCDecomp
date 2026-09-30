@@ -1,8 +1,9 @@
 # decomp.dev integration.
 #
-# decomp.dev reads the single "SCUS_971.11_report" artifact holding an
-# objdiff report with both NTSC and PAL units. This job builds it from scratch
-# on every push.
+# decomp.dev reads one objdiff report per release, each uploaded as an
+# artifact named "<version>_report": "ntsc_report" for NTSC 1.02 and
+# "pal_report" for the PAL prototype, shown as the versions ntsc and pal. One
+# job per release builds its report from scratch on every push.
 #
 # asm/ is not committed, so the job splits it with splat first. It needs no
 # disc for that: the private repository carries the three binaries for each
@@ -33,10 +34,14 @@ permissions:
 
 jobs:
   report:
+    name: Progress report (${{ matrix.region }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        region: [ntsc, pal]
     env:
       HAS_PRIVATE: ${{ secrets.PRIVATE_REPO_SSH_KEY != '' && vars.PRIVATE_REPOSITORY != '' }}
-      HAS_DISCORD: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
       PRIVATE_REPOSITORY: ${{ vars.PRIVATE_REPOSITORY }}
 
     steps:
@@ -80,16 +85,18 @@ jobs:
 
       - name: Split, build and generate the report
         if: env.HAS_PRIVATE == 'true'
-        # There is no disc image, so each `setup` checks its copied binaries
-        # against that region's extracted.sha256 and splits them.
+        # There is no disc image, so `setup` checks the copied binaries
+        # against the release's extracted.sha256 and splits them.
         run: |
           docker run --rm \
             -v "$PWD:/dcdecomp" -w /dcdecomp -e HOME=/tmp \
+            -e REGION=${{ matrix.region }} \
             dcdecomp_dev sh -c '
               set -e
-              REGION=NTSC scripts/build/cmake.sh objdiff
-              REGION=PAL scripts/build/cmake.sh objdiff
-              python3 scripts/build/progress_report.py --region BOTH
+              REGION=$(printf %s "$REGION" | tr "[:lower:]" "[:upper:]")
+              export REGION
+              scripts/build/cmake.sh elf objdiff
+              python3 scripts/build/progress_report.py --region "$REGION"
             '
 
       - name: Summarise
@@ -97,35 +104,57 @@ jobs:
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
-          report = json.load(open("progress/report.json"))
-          measures = {c["id"]: c["measures"] for c in report["categories"]}
+          m = json.load(open("progress/${{ matrix.region }}/report.json"))["measures"]
           print("| Region | Code matched | Functions matched | Bytes matched |")
           print("| --- | ---: | ---: | ---: |")
-          for region in ("ntsc", "pal"):
-              m = measures[region]
-              print("| %s | %.4f%% | %s / %s | %s / %s |" % (
-                  region.upper(), m["matched_code_percent"],
-                  m["matched_functions"], m["total_functions"],
-                  m["matched_code"], m["total_code"]))
+          print("| %s | %.4f%% | %s / %s | %s / %s |" % (
+              "${{ matrix.region }}".upper(), m["matched_code_percent"],
+              m["matched_functions"], m["total_functions"],
+              m["matched_code"], m["total_code"]))
           PY
 
       - name: Upload the progress report
         if: env.HAS_PRIVATE == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: SCUS_971.11_report
-          path: progress/report.json
+          name: ${{ matrix.region }}_report
+          path: progress/${{ matrix.region }}/report.json
           if-no-files-found: error
 
+  discord:
+    # One message covering both releases, once both reports exist.
+    needs: report
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      HAS_DISCORD: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
+
+    steps:
+      - name: Check out the repository
+        if: env.HAS_DISCORD == 'true'
+        uses: actions/checkout@v4
+
+      - name: Download the progress reports
+        if: env.HAS_DISCORD == 'true'
+        id: download
+        # Absent when the report jobs were skipped for want of the private
+        # repository; the message is then skipped too.
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*_report"
+          path: reports
+
       - name: Create the Discord progress message
-        if: env.HAS_PRIVATE == 'true' && env.HAS_DISCORD == 'true' && github.event_name != 'pull_request'
+        if: env.HAS_DISCORD == 'true' && steps.download.outcome == 'success'
         run: |
           python3 .github/scripts/discord_progress.py \
-            --region BOTH progress/report.json \
+            --ntsc reports/ntsc_report/report.json \
+            --pal reports/pal_report/report.json \
             "$RUNNER_TEMP/discord-progress.json"
 
       - name: Send the progress message to Discord
-        if: env.HAS_PRIVATE == 'true' && env.HAS_DISCORD == 'true' && github.event_name != 'pull_request'
+        if: env.HAS_DISCORD == 'true' && steps.download.outcome == 'success'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |

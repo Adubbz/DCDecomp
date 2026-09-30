@@ -13205,6 +13205,34 @@
         },
         {
           "type": "binary32",
+          "value": "-0x1.0000000000000p+0",
+          "value_bits": "0xbf800000",
+          "ordinal": 10,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "-0x1.0000000000000p+0",
+          "value_bits": "0xbf800000",
+          "ordinal": 11,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "-0x1.0000000000000p+0",
+          "value_bits": "0xbf800000",
+          "ordinal": 12,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
+          "value": "-0x1.0000000000000p+0",
+          "value_bits": "0xbf800000",
+          "ordinal": 13,
+          "evaluate_first": 0
+        },
+        {
+          "type": "binary32",
           "value": "-0x1.921fb60000000p+1",
           "value_bits": "0xc0490fdb",
           "ordinal": 1,

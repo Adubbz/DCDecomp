@@ -1,12 +1,14 @@
 # Dark Cloud Decompilation Project
 
-![Progress]
+[![Code NTSC Progress]](https://decomp.dev/Adubbz/DCDecomp/ntsc)
+[![Code PAL Progress]](https://decomp.dev/Adubbz/DCDecomp/pal)
 
-[Progress]: https://decomp.dev/Adubbz/DCDecomp.svg?mode=shield&measure=code&label=Code
-[progress_link]: https://decomp.dev/Adubbz/DCDecomp
+[Code NTSC Progress]: https://decomp.dev/Adubbz/DCDecomp/ntsc.svg?mode=shield&label=NTSC&measure=matched_code_percent
+[Code PAL Progress]: https://decomp.dev/Adubbz/DCDecomp/pal.svg?mode=shield&label=PAL&measure=matched_code_percent
+[progress_link]: https://decomp.dev/Adubbz/DCDecomp/ntsc
 
 
-[<img src="https://decomp.dev/Adubbz/DCDecomp.svg?w=512&h=256" width="512" height="256" alt="A visual">][progress_link]
+[<img src="https://decomp.dev/Adubbz/DCDecomp/ntsc.svg?w=512&h=256" width="512" height="256" alt="A visual">][progress_link]
 
 DCDecomp is a work-in-progress decompilation project for Dark Cloud for the PlayStation 2.
 

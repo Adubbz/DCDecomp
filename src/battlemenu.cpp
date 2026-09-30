@@ -6798,7 +6798,7 @@ void ItemMenuModeDraw() {
     if (ItemMenuMode.overflow == 0) {
         MenuTextureReload(AtoraNameMes.tex_block);
 #ifdef PAL
-        float widths[7] = {11.4f, 11.2f, 12.7f, 12.7f, 12.9f, 12.7f, 12.7f};
+        float widths[7] = {11.4f, 12.7f, 12.7f, 12.9f, 12.7f, 12.7f, 12.7f};
         s8 shift[7] = {0, 0, 0, 0, 0, -16, -16};
         float heights[7] = {1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 2.4f, 2.4f};
         MenuHelpWinDraw(0x36, 0x174 + shift[BtlMenuNowLang], widths[BtlMenuNowLang], heights[BtlMenuNowLang], 0x80);

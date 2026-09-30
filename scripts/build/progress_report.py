@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate an objdiff report for one release or for both releases together."""
+"""Generate the objdiff report for one release, as decomp.dev reads it."""
 
 import argparse
 import json
@@ -10,7 +10,6 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 REGIONS = ("NTSC", "PAL")
-SECTION_NAMES = {"game": "Game", "title": "TITLE", "dun": "DUN"}
 
 
 def load_region(region):
@@ -23,39 +22,13 @@ def load_region(region):
     return config
 
 
-def combined_config(configs):
-    result = {key: value for key, value in configs["NTSC"].items()
-              if key not in ("units", "progress_categories")}
-    result["name"] = "dcdecomp NTSC + PAL"
-    result["units"] = []
-    result["progress_categories"] = []
-    for region in REGIONS:
-        prefix = region.lower()
-        label = "NTSC 1.02" if region == "NTSC" else "PAL prototype"
-        result["progress_categories"].append({"id": prefix, "name": label})
-        result["progress_categories"].extend(
-            {"id": f"{prefix}_{section}", "name": f"{label} {name}"}
-            for section, name in SECTION_NAMES.items()
-        )
-        for unit in configs[region]["units"]:
-            unit["name"] = f"{region}/{unit['name']}"
-            metadata = unit.setdefault("metadata", {})
-            sections = metadata.get("progress_categories", ())
-            metadata["progress_categories"] = [prefix] + [
-                f"{prefix}_{section}" for section in sections
-            ]
-            result["units"].append(unit)
-    return result
-
-
-def print_summary(report, region, combined=False):
+def print_summary(report):
     red, green, yellow, gray, reset = "\033[91m", "\033[92m", "\033[93m", "\033[90m", "\033[0m"
     categories = {entry["id"]: entry["measures"] for entry in report["categories"]}
     for section, image in (("game", "SCUS_971.11"), ("title", "TITLE.BIN"),
                            ("dun", "DUN.BIN")):
-        key = f"{region.lower()}_{section}" if combined else section
-        measures = categories[key]
-        units = [unit for unit in report["units"] if key in
+        measures = categories[section]
+        units = [unit for unit in report["units"] if section in
                  unit.get("metadata", {}).get("progress_categories", ())]
         fuzzy = sum(1 for unit in units for function in unit.get("functions", ())
                     if function.get("fuzzy_match_percent", 100.0) < 100.0)
@@ -66,10 +39,8 @@ def print_summary(report, region, combined=False):
         print(f"{image}: {status} {gray}({perfect} perfect, {fuzzy} fuzzy, "
               f"0 asm, {unmatched} unmatched){reset}")
 
-    measures = categories[region.lower()] if combined else report["measures"]
-    units = ([unit for unit in report["units"] if region.lower() in
-              unit.get("metadata", {}).get("progress_categories", ())]
-             if combined else report["units"])
+    measures = report["measures"]
+    units = report["units"]
     fuzzy = sum(1 for unit in units for function in unit.get("functions", ())
                 if function.get("fuzzy_match_percent", 100.0) < 100.0)
     perfect = measures["matched_functions"]
@@ -105,30 +76,20 @@ def print_summary(report, region, combined=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--region", choices=(*REGIONS, "BOTH"),
+    parser.add_argument("--region", choices=REGIONS,
                         default=os.environ.get("REGION", "NTSC").upper())
     args = parser.parse_args()
 
-    configs = {region: load_region(region) for region in
-               (REGIONS if args.region == "BOTH" else (args.region,))}
-    config = combined_config(configs) if args.region == "BOTH" else configs[args.region]
+    config = load_region(args.region)
     project = ROOT / "build" / "report_project" / args.region.lower()
     project.mkdir(parents=True, exist_ok=True)
     (project / "objdiff.json").write_text(json.dumps(config, indent=2) + "\n",
                                           encoding="utf-8")
-    output = ROOT / "progress" / (
-        "report.json" if args.region == "BOTH" else f"{args.region.lower()}/report.json"
-    )
+    output = ROOT / "progress" / args.region.lower() / "report.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(["objdiff-cli", "report", "generate", "--project", str(project),
                     "--output", str(output)], cwd=ROOT, check=True)
-    report = json.loads(output.read_text(encoding="utf-8"))
-    if args.region == "BOTH":
-        for region in REGIONS:
-            print(f"\n{region}")
-            print_summary(report, region, combined=True)
-    else:
-        print_summary(report, args.region)
+    print_summary(json.loads(output.read_text(encoding="utf-8")))
 
 
 if __name__ == "__main__":

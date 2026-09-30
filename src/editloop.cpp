@@ -1,7 +1,24 @@
 #pragma helper_mask_gpr 0x30
 #pragma helper_mask_fpr 0x1000
 #pragma name_counter 414
-#ifndef PAL
+#ifdef PAL
+#pragma argument_flag 0
+#pragma argument_flag_ones 118,119,120,243,245,256,263,265,275,277
+#pragma argument_flag_ones 287,289,299,301,312,344,360,371,433,434
+#pragma argument_flag_ones 435,596,630,636,784,793,864,868,930,1014
+#pragma argument_flag_ones 1018,1038,1082,1122,1223,1358,1359,1360,1361,1389
+#pragma argument_flag_ones 1390,1507,1512,1538,1546,1547,1551,1564,1632,1633
+#pragma argument_flag_ones 1634,1635,1710,1722,1742,1744,1792,1799,1806,1813
+#pragma argument_flag_ones 1820,1827,1834,1841,1848,1855,1862,1869,1876,1903
+#pragma argument_flag_ones 1905,1920,1922,1931,1933,1953,2204,2205,2206,2341
+#pragma argument_flag_ones 2342,2343,2348,2405,2684,2825,2879,2889,2917,2932
+#pragma argument_flag_ones 2949,2952,2967,2977,3091,3142,3144,3177,3179,3182
+#pragma argument_flag_ones 3192,3377,3605,3613,3621,3629,3646,3652,3760,3790
+#pragma argument_flag_ones 3792,3793,3795,3796,3797,3800,3802,3803,3805,3806
+#pragma argument_flag_ones 3807,3810,3812,3813,3815,3816,3817,3820,3822,3823
+#pragma argument_flag_ones 3825,3826,3827,3830,3832,3833,3835,3836,3837,3840
+#pragma argument_flag_ones 3842,3843,3845,3846,3847
+#else
 #pragma argument_flag_ones 0, 207, 208, 215, 626
 #endif
 
@@ -30,12 +47,6 @@
 #include "dngstatusdata.hpp"
 #include "ebattle.hpp"
 #include "edit.hpp"
-#ifdef PAL // P7_TMPDECL
-void EdDebugMenu();
-extern int EdDebugRunEventNo;
-void EdDPrintChara(CMainChara *chara);
-void EdDPrintCamera(CCamera *camera);
-#endif
 #include "edit_in.hpp"
 #include "editarea.hpp"
 #include "editground.hpp"

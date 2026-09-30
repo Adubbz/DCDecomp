@@ -637,15 +637,6 @@ int center_sp[7] = {0xCE, 0x12C, 0xF2, 0xFA, 0x7C, 0xBA, 0xFA};
  */
 int *center_ptr[7] = {center_sp, center_us, center_us, center_fr, center_gr, center_it, center_sp};
 
-/**
- * Draws the caption naming the dungeon and floor the party has just entered.
- *
- * PAL only.
- *
- * @mangled StartMessageDraw__FP8CTextureiiii
- * @address 0x1B8890
- * @size 0x4C8
- */
 void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int alpha) {
     int *centers = center_ptr[LanguageCode];
     int x = centers[dungeon] + 0x82;

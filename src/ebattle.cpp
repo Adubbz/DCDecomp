@@ -1569,9 +1569,6 @@ void EdMoveChara() {
     if ((chara_mode & 6) == 0 && chara_fishing < 2) {
         chara->SetMotion(motion, 0);
         chara->SetMotionSpeed(motion_speed);
-#ifdef PAL
-        chara->SetMotionSpeed(6.0f * motion_speed / 5.0f);
-#endif
     }
     if (PadDown(0x20) != 0 && EdDebugMoveFlag != 0 && key_lock == 0 && chara_fishing < 2) {
         CVector3_f_ jump;

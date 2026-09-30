@@ -3793,13 +3793,8 @@ static int _SET_NPC_MOTION(RS_STACKDATA *stack, int argument_count) {
         character->SetMotion(motion, GetStackInt(stack));
     else
         character->SetMotion(motion, 0);
-    if (speed > 0.0f) {
+    if (speed > 0.0f)
         character->SetMotionSpeed(speed);
-#ifdef PAL
-        // PAL runs at 50 frames per second, so motions step 6/5 as far per frame.
-        character->motion_speed = 6.0f * speed / 5.0f;
-#endif
-    }
     return 1;
 }
 

@@ -129,11 +129,44 @@ OVERLAY_ORIGIN = CURRENT["overlay_origin"]
 SECTIONS = CURRENT["sections"]
 LITERAL_POOL = CURRENT["literal_pool"]
 
-GUARD = re.compile(r"^\s*#\s*(ifdef|ifndef|if|else|elif|endif)\b\s*(\w*)")
+GUARD = re.compile(r"^\s*#\s*(ifdef|ifndef|if|elif|else|endif)\b(.*)$")
+DEFINED = re.compile(r"\bdefined\s*(?:\(\s*(\w+)\s*\)|(\w+))")
+IDENTIFIER = re.compile(r"\b[A-Za-z_]\w*\b")
+
+
+def evaluate_guard(kind, expression, pal):
+    """Whether a conditional's branch is compiled, or None when it is not one
+    of this module's to decide.
+
+    Only a condition that names PAL is decided. Within one, PAL is defined for
+    the PAL release and NON_MATCHING is never defined -- the build does not
+    define it -- so `#if defined(PAL) && !defined(NON_MATCHING)` is the PAL
+    release's INCLUDE_ASM branch.
+    """
+    expression = expression.split("//", 1)[0].strip()
+    if kind in ("ifdef", "ifndef"):
+        expression = f"defined({expression})"
+        if kind == "ifndef":
+            expression = f"!{expression}"
+    if not re.search(r"\bPAL\b", expression):
+        return None
+    known = {"PAL": pal, "NON_MATCHING": False}
+    python = DEFINED.sub(lambda m: f" {known.get(m.group(1) or m.group(2), '?')} ", expression)
+    if "?" in python:
+        return None
+    python = python.replace("&&", " and ").replace("||", " or ")
+    python = re.sub(r"!(?!=)", " not ", python)
+    python = IDENTIFIER.sub(
+        lambda m: m.group(0) if m.group(0) in ("True", "False", "and", "or", "not") else "?",
+        python)
+    if "?" in python:
+        return None
+    return bool(eval(python, {"__builtins__": {}}))
 
 
 def active_text(text, pal=None):
-    """`text` with the lines a `#ifdef PAL` or `#ifndef PAL` guard leaves out of
+    """`text` with the lines a PAL conditional (`#ifdef PAL`, `#ifndef PAL`,
+    `#if defined(PAL) && !defined(NON_MATCHING)` and the like) leaves out of
     this release blanked, so a scan for INCLUDE_ASM markers sees what the
     compiler compiles. Every other conditional is left as it is; the line
     count does not change.
@@ -142,26 +175,40 @@ def active_text(text, pal=None):
         pal = NAME == PAL
     if "PAL" not in text:
         return text
+    # Each entry is [decided by us, this branch on, an earlier branch taken].
     out, stack = [], []
     for line in text.split("\n"):
         m = GUARD.match(line)
         if m:
-            kind, name = m.groups()
+            kind, expression = m.groups()
             if kind in ("ifdef", "ifndef", "if"):
-                guard = kind in ("ifdef", "ifndef") and name == "PAL"
-                stack.append([guard, not guard or (kind == "ifdef") == pal])
+                on = evaluate_guard(kind, expression, pal)
+                stack.append([on is not None, on is not False, bool(on)])
+                out.append(line)
+                continue
+            if kind == "elif" and stack:
+                entry = stack[-1]
+                if entry[0]:
+                    on = evaluate_guard("if", expression, pal)
+                    if on is None:
+                        # Undecidable after a decided branch: keep it unless one was taken.
+                        entry[1] = not entry[2]
+                    else:
+                        entry[1] = on and not entry[2]
+                        entry[2] = entry[2] or on
                 out.append(line)
                 continue
             if kind == "else" and stack:
-                if stack[-1][0]:
-                    stack[-1][1] = not stack[-1][1]
+                entry = stack[-1]
+                if entry[0]:
+                    entry[1] = not entry[2]
                 out.append(line)
                 continue
             if kind == "endif" and stack:
                 stack.pop()
                 out.append(line)
                 continue
-        out.append(line if all(on for _guard, on in stack) else "")
+        out.append(line if all(entry[1] for entry in stack) else "")
     return "\n".join(out)
 
 

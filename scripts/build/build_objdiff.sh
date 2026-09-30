@@ -20,6 +20,7 @@ REBUILD='
         cache=build/ntsc/CMakeCache.txt
         home=\$(sed -n \"s/^CMAKE_HOME_DIRECTORY:INTERNAL=//p\" \"\$cache\" 2>/dev/null | head -1)
         if [ -f build/ntsc/build.ninja ] && [ \"\$home\" = \"\$(pwd)\" ]; then
+            scripts/build/globs.sh build/ntsc
             exec cmake --build build/ntsc --target objdiff
         fi
         REGION=NTSC DCDECOMP_BUILD_LOCKED=1 exec scripts/build/cmake.sh objdiff

@@ -115,7 +115,13 @@ foreach(section IN LISTS SECTIONS)
     list(APPEND ASM_SOURCES ${section_srcs})
 endforeach()
 
-file(GLOB_RECURSE ALL_CPP_SOURCES CONFIGURE_DEPENDS
+# scripts/build/globs.sh rewrites globbed.txt when a globbed file is added or
+# removed; CONFIGURE_DEPENDS would re-check the globs on every build instead.
+if(EXISTS ${CMAKE_BINARY_DIR}/globbed.txt)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+        ${CMAKE_BINARY_DIR}/globbed.txt)
+endif()
+file(GLOB_RECURSE ALL_CPP_SOURCES
      RELATIVE ${CMAKE_SOURCE_DIR}
      ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/${SRC_DIR}/*.c)
 # tools/mwccgap compiles a temporary beside the source it came from, so a glob
@@ -255,7 +261,7 @@ file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/compiler_flags.txt
      CONTENT "${CC_MW_FLAGS_TEXT}\n")
 
 # Build a shared m2c context from project headers.
-file(GLOB CTX_HEADERS CONFIGURE_DEPENDS
+file(GLOB CTX_HEADERS
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.hpp
      ${CMAKE_SOURCE_DIR}/${INCLUDE_DIR}/*.h
      ${CMAKE_SOURCE_DIR}/${STD_INCLUDE_DIR}/*

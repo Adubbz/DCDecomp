@@ -35,8 +35,7 @@ BUILD='
         echo "CLEAN=1: discarding $dir; everything in it is built again."
         flock .build.lock rm -rf "$dir"
     fi
-    scripts/build/cmake.sh elf ctx
-    scripts/build/cmake.sh objdiff
+    scripts/build/cmake.sh elf ctx objdiff
     python3 scripts/build/progress_report.py --region "$REGION"
 '
 

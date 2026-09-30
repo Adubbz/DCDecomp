@@ -26,10 +26,10 @@ same sources, and the compile driver writes temporaries beside them.
 
 `build.sh` builds the selected release's objdiff objects after linking, prints
 its coloured objdiff summary, and writes `progress/ntsc/report.json` or
-`progress/pal/report.json`. The progress
-workflow builds both releases and uploads one `SCUS_971.11_report` artifact
-containing `progress/report.json`. Its units and categories identify the
-release, and the Discord message shows a separate embed for each release.
+`progress/pal/report.json`. The progress workflow builds each release in a
+job of its own and uploads its report as `ntsc_report` or `pal_report`, which
+decomp.dev shows as the versions `ntsc` and `pal`; the Discord message shows
+a separate embed for each release.
 
 ## Differences in the sources
 

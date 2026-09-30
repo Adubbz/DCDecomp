@@ -6,6 +6,8 @@
 
 #include "mathutil.hpp"
 
+class CTexture;
+
 /**
  * Builds a resource path by putting one of the fixed prefixes before a name.
  *
@@ -149,3 +151,14 @@ STATIC_ASSERT(sizeof(CCollisionData) == 0x3D90);
  * @size 0xB4
  */
 int SetGateKeyStack(int item);
+
+#ifdef PAL
+/**
+ * Draws the caption naming the dungeon and floor the party has just entered.
+ *
+ * @mangled StartMessageDraw__FP8CTextureiiii
+ * @address 0x1B8890
+ * @size 0x4C8
+ */
+void StartMessageDraw(CTexture *texture, int dungeon, int floor, int ura, int alpha);
+#endif
