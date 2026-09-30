@@ -28,15 +28,10 @@ int GetOpenAttribute(char *name) {
     return 0;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/memorycardaccess", Initialize__17CMemoryCardAccessFv);
-INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @368__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @369__4);
-INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @370__3);
-INCLUDE_RODATA("asm/pal/nonmatchings/memorycardaccess", @371__4);
-#pragma name_counter 35
-#else
 void CMemoryCardAccess::Initialize() {
+#ifdef PAL
+    strcpy(this->dir_name, "BESCES-50295dkcloud");
+#else
     switch (GetMenuLangFlag()) {
         case 0:
             strcpy(this->dir_name, "BISCPS-15004dkcloud");
@@ -46,6 +41,7 @@ void CMemoryCardAccess::Initialize() {
             strcpy(this->dir_name, "BASCUS-97111dkcloud");
             break;
     }
+#endif
     strcpy(this->file_name, "darkcloud");
     for (int i = 0; i < 0x40; i++) {
         this->current_dir[i] = 0;
@@ -71,7 +67,6 @@ void CMemoryCardAccess::Initialize() {
     this->card[1].present = 1;
     printf("SaveData size = %d\n", sizeof(CSaveData));
 }
-#endif
 
 int CMemoryCardAccess::InitForMC() {
     int status = sceMcInit();

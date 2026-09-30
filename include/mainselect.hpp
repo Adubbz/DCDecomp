@@ -21,3 +21,6 @@ extern s32 main_select_menu_no;
 extern char main_select_param[256];
 
 extern s32 old_main_mode;
+#ifdef PAL
+extern s32 DebugMode;
+#endif

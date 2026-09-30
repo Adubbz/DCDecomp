@@ -13,6 +13,9 @@
 #include "dataalloc.hpp"
 #include "dataread.hpp"
 #include "dngstatusdata.hpp"
+#ifdef PAL
+#include "mainselect.hpp"
+#endif
 #include "itemdata.hpp"
 #include "menu_draw.hpp"
 #include "menu_inventory.hpp"
@@ -501,15 +504,6 @@ void CWeaponLevelUp::InitSnd() {
     snd_step = 0;
 }
 
-#ifdef PAL
-INCLUDE_ASM("asm/pal/nonmatchings/weaponlevelup", SetSnd__14CWeaponLevelUpFiii);
-INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1041__2);
-INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1042);
-INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1043);
-INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1044);
-INCLUDE_RODATA("asm/pal/nonmatchings/weaponlevelup", @1045);
-#pragma name_counter 349
-#else
 void CWeaponLevelUp::SetSnd(int from, int to, int step) {
     snd_from = from;
     snd_volume = snd_from;
@@ -520,8 +514,16 @@ void CWeaponLevelUp::SetSnd(int from, int to, int step) {
     if (from < to) {
         snd_step = step;
     }
-}
+#ifdef PAL
+    if (DebugMode) {
+        printf("menu snd para:\n");
+        printf("        start:%d\n", snd_from);
+        printf("          now:%d\n", snd_volume);
+        printf("       limmit:%d\n", snd_to);
+        printf("         step:%d\n", snd_step);
+    }
 #endif
+}
 
 void CWeaponLevelUp::StepSnd() {
     if (snd_step != 0) {
