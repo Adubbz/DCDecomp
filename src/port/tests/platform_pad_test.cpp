@@ -204,3 +204,12 @@ DC_TEST(platform_input_bindings) {
     DC_CHECK(InputGetPad(0).left_x == 128);
     DC_CHECK(!InputGetPad(1).connected);
 }
+
+DC_TEST(platform_input_without_video) {
+    InputInit();
+    InputPoll();
+    DC_CHECK(InputGetPad(0).connected);
+    DC_CHECK(InputGetPad(0).buttons == 0);
+    InputSetRumble(0, {true, 255});
+    InputShutdown();
+}
