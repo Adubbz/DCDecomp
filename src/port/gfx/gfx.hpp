@@ -1,0 +1,326 @@
+#pragma once
+
+#include <cstddef>
+#include <cstdint>
+#include <filesystem>
+#include <functional>
+#include <optional>
+#include <span>
+#include <string_view>
+#include <vector>
+
+struct SDL_Window;
+
+// The port's Vulkan renderer. See src/port/gfx/README.md for the conventions: logical space,
+// colour and alpha units, reverse-Z and how GS blending maps onto Vulkan.
+namespace gfx {
+
+// The game's 2D space. 2D draws, scissors and main-target rectangles are given in it and mapped
+// to the target, letterboxed on the main target.
+inline constexpr float kLogicalWidth = 640.0f;
+inline constexpr float kLogicalHeight = 480.0f;
+
+inline constexpr uint32_t kDepthQueryCount = 16;
+
+enum class PresentMode : uint8_t {
+    Fifo,
+    Mailbox,
+};
+
+struct RendererConfig {
+    PresentMode           present_mode = PresentMode::Fifo;
+    std::filesystem::path pipeline_cache = "save/pipeline_cache.bin";
+    // Pixels per logical texel of render targets; 0 derives it from the window height at init.
+    float render_scale = 0.0f;
+#ifdef NDEBUG
+    bool validation = false;
+#else
+    bool validation = true;
+#endif
+    std::function<void(uint32_t done, uint32_t total)> progress;
+};
+
+// Exits the process with a message if no Vulkan 1.4 device can drive the window.
+void RendererInit(SDL_Window *window, const RendererConfig &config);
+void RendererShutdown();
+// The window's pixel size changed; the swapchain and main target follow at the next BeginFrame.
+void RendererResize();
+// False when no frame can be drawn (minimised window); draws until EndFrame are then dropped.
+bool BeginFrame();
+void EndFrame();
+bool InFrame();
+// Validation-layer messages seen so far (validation and performance types, warning or worse).
+uint32_t ValidationMessageCount();
+uint32_t PipelineCount();
+// Pipelines created during init versus found in the loaded pipeline cache are not
+// distinguishable through Vulkan, so this is only the time RendererInit spent creating them.
+double PipelineCompileSeconds();
+float  RenderScale();
+// Recreates every render target at the new scale, carrying its contents over.
+void SetRenderScale(float scale);
+
+// ---- Textures --------------------------------------------------------------------------------
+
+using TextureHandle = uint32_t;
+
+inline constexpr TextureHandle kNullTexture = 0;
+// The frame being drawn. A render target and a copy source or destination, never sampled.
+inline constexpr TextureHandle kMainTarget = 1;
+// The last frame EndFrame presented. Sampled like a texture in logical 640x480 space.
+inline constexpr TextureHandle kPreviousFrame = 2;
+
+enum class TextureFormat : uint8_t {
+    Rgba8,
+    Index8,
+};
+
+struct TextureDesc {
+    uint32_t      width = 0;
+    uint32_t      height = 0;
+    TextureFormat format = TextureFormat::Rgba8;
+    uint32_t      mip_levels = 1;
+    // False for 24-bit sources: the draw's TEXA state supplies alpha when the texture is sampled.
+    bool has_alpha = true;
+};
+
+struct TextureInfo {
+    uint32_t      width;  // logical texels
+    uint32_t      height; // logical texels
+    uint32_t      pixel_width;
+    uint32_t      pixel_height;
+    TextureFormat format;
+    uint32_t      mip_levels;
+    bool          has_alpha;
+    bool          render_target;
+};
+
+// Returns kNullTexture, with a message, for a size the device cannot hold. Contents start zeroed.
+TextureHandle CreateTexture(const TextureDesc &desc);
+// A 256-entry RGBA8 palette for Index8 textures.
+TextureHandle CreatePalette();
+// A texture the renderer can draw into, logical_width x logical_height scaled by the render
+// scale, with its own depth buffer. Starts black, alpha 0x80, depth far.
+TextureHandle CreateRenderTarget(uint32_t logical_width, uint32_t logical_height, bool has_alpha);
+// The render target registered under name (the game's "#name#w#h#bpp" placeholders), created on
+// first use and recreated if asked for at another size or alpha. Destroying it drops the name.
+TextureHandle NamedRenderTarget(std::string_view name, uint32_t logical_width, uint32_t logical_height,
+                                bool has_alpha);
+TextureHandle FindNamedRenderTarget(std::string_view name);
+void          DestroyTexture(TextureHandle texture);
+// Pixels are tightly packed rows of row_length texels (0: w), RGBA8 as bytes r,g,b,a, or one
+// index byte. Alpha is in the renderer's units: 0xFF is GS 0x80; ConvertPs2Alpha converts.
+bool UpdateTexture(TextureHandle texture, uint32_t mip, uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+                   const void *pixels, uint32_t row_length = 0);
+bool UpdatePalette(TextureHandle palette, const uint32_t *rgba, uint32_t first = 0, uint32_t count = 256);
+
+std::optional<TextureInfo> GetTextureInfo(TextureHandle texture);
+// GS alpha (0x80 opaque, up to 0xFF) to the renderer's (0xFF opaque), saturating.
+void ConvertPs2Alpha(uint32_t *rgba, size_t count);
+
+// ---- Meshes ----------------------------------------------------------------------------------
+
+using MeshHandle = uint32_t;
+
+inline constexpr MeshHandle kNullMesh = 0;
+
+struct Vertex3D {
+    float   position[3];
+    float   normal[3];
+    float   uv[2]; // normalised
+    uint8_t color[4];
+};
+
+MeshHandle CreateMesh(std::span<const Vertex3D> vertices, std::span<const uint32_t> indices);
+bool       UpdateMeshVertices(MeshHandle mesh, uint32_t first, std::span<const Vertex3D> vertices);
+void       DestroyMesh(MeshHandle mesh);
+
+// ---- Draw state ------------------------------------------------------------------------------
+
+enum class Filter : uint8_t {
+    Nearest,
+    Linear,
+};
+
+enum class Wrap : uint8_t {
+    Clamp,
+    Repeat,
+};
+
+struct TextureBinding {
+    TextureHandle texture = kNullTexture;
+    TextureHandle palette = kNullTexture; // required with an Index8 texture
+    Filter        filter = Filter::Linear;
+    Wrap          wrap_u = Wrap::Clamp;
+    Wrap          wrap_v = Wrap::Clamp;
+};
+
+// GS ALPHA: ((A - B) * C >> 7) + D. A, B, D: 0 source, 1 destination, 2 zero. C: 0 source
+// alpha, 1 destination alpha, 2 fix.
+struct GsBlend {
+    uint8_t a = 0;
+    uint8_t b = 1;
+    uint8_t c = 0;
+    uint8_t d = 1;
+    uint8_t fix = 0x80;
+};
+
+// GS ZTST order.
+enum class DepthTest : uint8_t {
+    Never,
+    Always,
+    GEqual,
+    Greater,
+};
+
+// GS ATST order.
+enum class AlphaFunc : uint8_t {
+    Never,
+    Always,
+    Less,
+    LEqual,
+    Equal,
+    GEqual,
+    Greater,
+    NotEqual,
+};
+
+// Front faces are counter-clockwise on the target, y down.
+enum class CullMode : uint8_t {
+    None,
+    Back,
+    Front,
+};
+
+struct LogicalRect {
+    float x;
+    float y;
+    float w;
+    float h;
+};
+
+struct DrawState {
+    bool      blend = false; // GS PRIM.ABE
+    GsBlend   alpha;
+    DepthTest depth_test = DepthTest::Always;
+    bool      depth_write = false;
+    bool      alpha_test = false;
+    AlphaFunc alpha_func = AlphaFunc::Always;
+    uint8_t   alpha_ref = 0;
+    CullMode  cull = CullMode::None;
+    bool      fog = false;
+    uint8_t   fog_color[3] = {0, 0, 0};
+    // GS TEXA for textures without alpha: AEM makes black texels transparent, TA0 is the rest.
+    bool        texa_aem = true;
+    uint8_t     texa_ta0 = 0x80;
+    bool        scissor = false;
+    LogicalRect scissor_rect = {0.0f, 0.0f, kLogicalWidth, kLogicalHeight};
+};
+
+// ---- Drawing ---------------------------------------------------------------------------------
+
+// x, y in logical space of the target, z the depth (1 near, 0 far), u, v in logical texels of
+// the texture. color is the GS vertex colour: written as is untextured, a modulation with 0x80
+// as 1.0 textured. fog is the GS per-vertex F (0xFF: no fog).
+struct Vertex2D {
+    float   x;
+    float   y;
+    float   z;
+    float   u;
+    float   v;
+    uint8_t color[4];
+    uint8_t fog = 0xFF;
+    uint8_t pad[3] = {};
+};
+
+enum class Primitive : uint8_t {
+    Triangles,
+    TriangleStrip,
+    TriangleFan,
+    Lines,
+    LineStrip,
+    // Four vertices per quad, in order around it.
+    Quads,
+};
+
+enum MeshFlags : uint32_t {
+    kMeshLit = 1u << 0,
+    kMeshVertexColor = 1u << 1,
+    kMeshFog = 1u << 2,
+    // Flat material diffuse, no lighting or vertex colour.
+    kMeshShadow = 1u << 3,
+    kMeshClip0 = 1u << 4,
+    kMeshClip1 = 1u << 5,
+};
+
+// Matches the std140 block in shaders/mesh.vert. Colours are modulations with 1.0 as GS 0x80.
+struct MeshConstants {
+    float    mvp[16];           // column-major, object to Vulkan clip space (y down, reverse-Z)
+    float    normal_matrix[12]; // three columns of xyz_, object to lighting space
+    float    light_direction[4][4];
+    float    light_color[4][4];
+    float    ambient[4];
+    float    diffuse[4]; // material; w is alpha
+    float    ambient_material[4];
+    float    specular[4];
+    float    fog[4];           // F = clamp(fog[0] + fog[1] / w, fog[2], fog[3]), GS units 0..255
+    float    clip_plane[2][4]; // object space, kept where dot(plane, (p, 1)) >= 0
+    uint32_t flags = 0;
+    uint32_t light_count = 0;
+    uint32_t pad[2] = {};
+};
+
+void Draw2D(Primitive primitive, std::span<const Vertex2D> vertices, const TextureBinding &texture,
+            const DrawState &state);
+void DrawMesh(MeshHandle mesh, uint32_t first_index, uint32_t index_count, const MeshConstants &constants,
+              const TextureBinding &texture, const DrawState &state);
+// A triangle list that lives for this frame only (cloth, water, anything rebuilt per frame).
+void DrawMeshImmediate(std::span<const Vertex3D> vertices, std::span<const uint32_t> indices,
+                       const MeshConstants &constants, const TextureBinding &texture, const DrawState &state);
+
+// ---- Targets, copies, blits ------------------------------------------------------------------
+
+// Texels of the texture's logical size; kMainTarget and kPreviousFrame are 640x480 logical.
+// A negative width or height mirrors a blit.
+struct Rect {
+    int32_t x;
+    int32_t y;
+    int32_t w;
+    int32_t h;
+};
+
+// How logical coordinates land on a target's pixels: pixel = logical * scale + offset.
+struct LogicalMapping {
+    float    scale_x;
+    float    scale_y;
+    float    offset_x;
+    float    offset_y;
+    uint32_t pixel_width;
+    uint32_t pixel_height;
+};
+
+void           SetRenderTarget(TextureHandle target);
+TextureHandle  CurrentRenderTarget();
+LogicalMapping GetLogicalMapping(TextureHandle target);
+// Clears the current target within rect (logical; null: all of it). color is GS bytes.
+void Clear(bool clear_color, const uint8_t color[4], bool clear_depth, float depth,
+           const LogicalRect *rect = nullptr);
+bool CopyTexture(TextureHandle src, Rect src_rect, TextureHandle dst, int32_t dst_x, int32_t dst_y);
+bool BlitTexture(TextureHandle src, Rect src_rect, TextureHandle dst, Rect dst_rect, Filter filter);
+// The main target's logical 640x480, as drawn so far this frame, stretched over all of dst.
+bool SnapshotFrame(TextureHandle dst);
+
+// ---- Readback --------------------------------------------------------------------------------
+
+// Queues a read of the main depth buffer over a logical rect, taken at EndFrame. The result is
+// the farthest (smallest) depth in it, 1 near and 0 far, available after EndFrame.
+void ReadDepth(uint32_t id, float x, float y, float w = 1.0f, float h = 1.0f);
+// The answer to the last ReadDepth(id); none if the rect was off the target or never asked.
+std::optional<float> DepthResult(uint32_t id);
+// The last presented frame, RGBA8 rows top to bottom. Outside a frame only.
+bool ReadbackFrame(std::vector<uint8_t> &rgba, uint32_t &width, uint32_t &height);
+// The base level at pixel size: RGBA8, or one byte per texel for Index8. Outside a frame only.
+bool ReadbackTexture(TextureHandle texture, std::vector<uint8_t> &pixels, uint32_t &width, uint32_t &height);
+// An RGB PNG from RGBA8 rows, stored uncompressed.
+bool WritePng(const std::filesystem::path &path, const uint8_t *rgba, uint32_t width, uint32_t height);
+
+} // namespace gfx

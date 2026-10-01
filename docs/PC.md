@@ -19,19 +19,24 @@ asserts.
 
 ## Platform
 
-`src/port/platform` is the host side, with no game headers or SDK types in
-its interfaces:
+`src/port/platform` and `src/port/gfx` are the host side. They build without
+`port.h` or the game's include paths, so no game header or SDK type can reach
+them:
 
-- `window.cpp` starts SDL3, opens a resizable 1280x960 window and pumps its
-  events.
-- `renderer.cpp` is a Vulkan 1.4 renderer: one graphics queue that presents,
-  a FIFO swapchain rebuilt when the window's size changes, two frames in
-  flight, dynamic rendering and synchronization2. A frame begins by clearing
-  the swapchain image.
+- `platform/window.cpp` starts SDL3, opens a resizable window (1280x960 unless
+  `--width`/`--height` say otherwise; `--headless` uses SDL's offscreen
+  driver) and pumps its events.
+- `gfx/` is a Vulkan 1.4 renderer: one graphics queue that presents, two
+  frames in flight, dynamic rendering, synchronization2, bindless textures,
+  every pipeline created at start-up against `save/pipeline_cache.bin`, and an
+  immediate draw API in the game's 640x480 logical space and in 3D.
+  `src/port/gfx/README.md` is its contract.
 
 `MGBeginFrame` and `MGEndFrame` (`src/port/mglib.cpp`) begin and present a
-frame. The Khronos validation layer is enabled when it is installed, always in
-a build without `NDEBUG` and otherwise when `DC_VULKAN_VALIDATION` is set.
+frame. `--frames N` exits after N frames and `--screenshot PATH` writes the
+last one as a PNG. The Khronos validation layer is enabled when it is
+installed, always in a build without `NDEBUG` and otherwise when
+`DC_VULKAN_VALIDATION` is set.
 
 ## Layout
 
