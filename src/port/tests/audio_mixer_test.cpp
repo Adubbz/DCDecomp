@@ -202,6 +202,24 @@ DC_TEST(audio_effect_messages) {
     DC_CHECK(mixer.ActiveVoices() == 0);
 }
 
+DC_TEST(audio_effect_split_fallback) {
+    SampleSpec spec;
+    spec.key_low = 60;
+    spec.key_high = 60;
+    const auto   bank = BuildBank(0, spec);
+    audio::Mixer mixer(kRate);
+    mixer.BindBank(12, audio::Bank::Create(bank.hd, bank.bd));
+    mixer.SetVolume(12, 256);
+    // Id 0 is outside the split's keys, so it names split 0 and sounds at the sample's own pitch.
+    const std::uint8_t on[] = {0xFD, 0x10, 0, 0, 0, 127, 0};
+    mixer.HsMessage(12, on);
+    DC_CHECK(mixer.ActiveVoices() == 1);
+    DC_CHECK_NEAR(Frequency(Pull(mixer, 0.2), 0, kRate), 441.0, 3.0);
+    const std::uint8_t missing[] = {0xFD, 0x10, 0, 5, 0, 127, 0};
+    mixer.HsMessage(12, missing);
+    DC_CHECK(mixer.ActiveVoices() == 1);
+}
+
 DC_TEST(audio_voice_stealing) {
     audio::Mixer mixer(kRate);
     mixer.BindBank(0, MakeBank());

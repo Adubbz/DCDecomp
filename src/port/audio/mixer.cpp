@@ -481,9 +481,10 @@ void Mixer::Render(float *out, int frames) {
     }
 }
 
+// Never destroyed: SDL's audio thread may still pull from it while static destructors run.
 Mixer &DefaultMixer() {
-    static Mixer mixer;
-    return mixer;
+    static Mixer *mixer = new Mixer;
+    return *mixer;
 }
 
 } // namespace audio

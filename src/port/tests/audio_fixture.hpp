@@ -125,6 +125,8 @@ struct SampleSpec {
     std::uint16_t adsr1 = 0x00FF;
     std::uint16_t adsr2 = 0x1FCA;
     int           rate = 44100;
+    int           key_low = 0;
+    int           key_high = 127;
 };
 
 struct Bank {
@@ -175,9 +177,9 @@ inline Bank BuildBank(int program_index = 0, SampleSpec spec = {}) {
         w.U8(0);
     }
     w.U16(0);
+    w.U8(spec.key_low);
     w.U8(0);
-    w.U8(0);
-    w.U8(127);
+    w.U8(spec.key_high);
     w.U8(0);
     w.U16(2);
     w.U16(2);

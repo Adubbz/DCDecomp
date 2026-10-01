@@ -55,7 +55,7 @@ std::vector<float> Pull(double seconds) {
     return out;
 }
 
-void LoadTestPack() {
+void LoadTestPack(bool init = true) {
     setenv("DC_AUDIO", "off", 1);
     const auto bank = BuildBank();
     Track      song;
@@ -68,7 +68,9 @@ void LoadTestPack() {
         {"snd00c.hd", bank.hd                                        },
         {"snd00c.bd", bank.bd                                        },
     });
-    DC_CHECK(CSnd.Init(0, 0, 0, 0) == 0);
+    if (init) {
+        DC_CHECK(CSnd.Init(0, 0, 0, 0) == 0);
+    }
     char list[] = "bgm00.txt";
     DC_CHECK(CSnd.LoadSoundFileFromPack(list, pack.data()) == 0);
 }
@@ -165,9 +167,25 @@ DC_TEST(audio_csound_effects) {
 
 DC_TEST(audio_csound_reload_frees) {
     LoadTestPack();
-    LoadTestPack();
-    MIDI_STATE *state = CSnd.GetMidiState();
+    MIDI_STATE          *state = CSnd.GetMidiState();
+    void                *first_bank = state->port[0].bank;
+    void                *first_song = state->port[0].sequence_address[0];
+    static MIDI_SEQUENCE description = {"bgm00a.sq", 100};
+    state->port[0].sequence[0] = &description;
+    state->port[0].sequence_count = 1;
+    CSnd.SQ_Play(MIDI_PORT_BGM, 0);
+    DC_CHECK(ezMidi(0x8090 + MIDI_PORT_BGM, 0) == 1);
+
+    // Loading over a bound slot stops its port and frees its bank and sequences first.
+    LoadTestPack(false);
+    DC_CHECK(ezMidi(0x8090 + MIDI_PORT_BGM, 0) == 0);
     DC_CHECK(state->port[0].bank != nullptr);
+    DC_CHECK(state->port[0].bank != first_bank);
+    DC_CHECK(state->port[0].sequence_count == 0);
+    DC_CHECK(state->port[0].sequence_address[0] != nullptr);
+    DC_CHECK(state->port[0].sequence_address[0] != first_song);
+    Pull(0.1);
+    DC_CHECK(audio::DefaultMixer().ActiveVoices() == 0);
     DC_CHECK(state->port[2].spu_address == 0x7D010 + static_cast<int>(BuildBank().bd.size()) + 0x10);
     DC_CHECK(CSnd.GetSeNo(0, 0) == -1);
 }
